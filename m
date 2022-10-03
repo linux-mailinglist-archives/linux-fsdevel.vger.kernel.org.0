@@ -2,155 +2,218 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 562BA5F2901
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Oct 2022 09:12:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EBB965F2BE4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Oct 2022 10:35:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229708AbiJCHMI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Oct 2022 03:12:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46818 "EHLO
+        id S231652AbiJCIfF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Oct 2022 04:35:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbiJCHMF (ORCPT
+        with ESMTP id S229787AbiJCIek (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Oct 2022 03:12:05 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E35D36418
-        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Oct 2022 00:12:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1664781123;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=I0LXfsSyKXGjmai9f263mAbHu12AmzCqqawR+zfFGBM=;
-        b=RhMO/y/mxirnqSG/054b5Jz7BWgAG2OIz5XOjA+DvMVu7IXKKHQ1OJMsHhDHQkaTaj3pJi
-        FdESAUwMQ2ohQSI10n5dM5hqOVDZKM9Ipo0B2KGkgpWAxkK12RVvlCLcyL4MmK5/J84Ai2
-        wMIVAZ++aQi34vGoAQnl7S88XR4Ts74=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-477-GNJWiLMGNs6-wrhEm2uRtw-1; Mon, 03 Oct 2022 03:11:59 -0400
-X-MC-Unique: GNJWiLMGNs6-wrhEm2uRtw-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 2F28D85A59D;
-        Mon,  3 Oct 2022 07:11:59 +0000 (UTC)
-Received: from starship (unknown [10.40.193.232])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id ED50440C6EC2;
-        Mon,  3 Oct 2022 07:11:56 +0000 (UTC)
-Message-ID: <2a9fe4f9759b9971e76f719f4c1295eed41ed50c.camel@redhat.com>
-Subject: Re: Commit 'iomap: add support for dma aligned direct-io' causes
- qemu/KVM boot failures
-From:   Maxim Levitsky <mlevitsk@redhat.com>
-To:     Keith Busch <kbusch@kernel.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, qemu-devel@nongnu.org,
-        kvm@vger.kernel.org, Kevin Wolf <kwolf@redhat.com>,
-        Michael Roth <mdroth@linux.vnet.ibm.com>
-In-Reply-To: <YzmYojlHKZ79mseE@kbusch-mbp>
-References: <fb869c88bd48ea9018e1cc349918aa7cdd524931.camel@redhat.com>
-         <YzW+Mz12JT1BXoZA@kbusch-mbp.dhcp.thefacebook.com>
-         <a2825beac032fd6a76838164d4e2753d30305897.camel@redhat.com>
-         <YzXJwmP8pa3WABEG@kbusch-mbp.dhcp.thefacebook.com>
-         <20220929163931.GA10232@lst.de>
-         <32db4f89-a83f-aac4-5d27-0801bdca60bf@redhat.com>
-         <28ce86c01271c1b9b8f96a7783b55a8d458325d2.camel@redhat.com>
-         <YzmYojlHKZ79mseE@kbusch-mbp>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 3 Oct 2022 04:34:40 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D80C6BD5C
+        for <linux-fsdevel@vger.kernel.org>; Mon,  3 Oct 2022 01:06:53 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id m3so13437729eda.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 03 Oct 2022 01:06:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date;
+        bh=cTF3AiWCQzUZJV3DQOd8YpyAQ0uZN+oT26/EmVI5Gno=;
+        b=DvdRFGG3GDv+8INZlnRFdJ/8sk5eEa7AareONRXiJEau+xbhzZax6uLRyfYITFWbZf
+         3NqpZEEzMP/hKmEkCARYJ5G9gzbOE0q7McTWIAngIxaTuYC1o8lT6E0RUJP/MLnLpZ7d
+         Qu+1Vd0FUnf6Z7BDCSiXfOB3Lp6wjhae3evjWtqy1Hvhcufb4H2zsgnTlazKt2OEhd79
+         BA6ZEelvKbFypTSJOPXKwWi6F96cJdE1vUQrd76EmQ0Smui1y+dlW96zT/pi7JhI5c/2
+         8NZeHRiN3xgZc7P9e5p+GcKW4B3xAZ9Q9xeU6JSlAtM3mdUAbXU1rYpnUGpgYkW0Wdos
+         uORw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date;
+        bh=cTF3AiWCQzUZJV3DQOd8YpyAQ0uZN+oT26/EmVI5Gno=;
+        b=A2jnI1L1435GZgoQk0nwNN1HWRTDuK6wUJBSYbCKHz1EgZchxFyk8p6rUkGH5IALeh
+         lRJ2i5w+1ZRQJBP/Q952Lm0q/ITQjqvXGrfVyg4HvZyoHrhCDuigMhbz8dJfjCwxRj2B
+         3IEztSk3e93bM+ajbhFSY6QbG1gD1M2tfjKRY4Ki3Kn5PD9W1KMApzJjVGVH7lQ/EyQ3
+         Ugz4AbusUDsVDWUmN6qxjVWeYzwLtLzWqnSgk9XBYeg+krBkJPNOLeJCNuRJafnoeCRp
+         Xq9h0gxzN5DKPn+Q5UiRgbU205b9GG85BMzdlCmreaXb5x6tnEkCMQvzFweJOrYrgwPW
+         hkXw==
+X-Gm-Message-State: ACrzQf3fESXlX0afIz1ySKH/wlt3hQOJPrGw8N654MQdLeujvoXjH18I
+        UqTsnjUlAmq5fLDBbpBNQFlHm8BPtrSi7alrRU8uhM6qj3stuzX/
+X-Google-Smtp-Source: AMsMyM54UDKb/wQylYbThizMTNEzG/N4GHFJjCY1YMNV55ssdwv1emM1/33fLKcW7+Q244fzhfIJ6l3JiIpmQNO4rxw=
+X-Received: by 2002:a05:6512:261b:b0:4a1:abd7:3129 with SMTP id
+ bt27-20020a056512261b00b004a1abd73129mr7271284lfb.637.1664782430012; Mon, 03
+ Oct 2022 00:33:50 -0700 (PDT)
 MIME-Version: 1.0
-Date:   Mon, 03 Oct 2022 10:06:48 +0300
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
+ <20220915142913.2213336-2-chao.p.peng@linux.intel.com> <CA+EHjTyrexb_LX7Jm9-MGwm4DBvfjCrADH4oumFyAvs2_0oSYw@mail.gmail.com>
+ <20220930162301.i226o523teuikygq@box.shutemov.name>
+In-Reply-To: <20220930162301.i226o523teuikygq@box.shutemov.name>
+From:   Fuad Tabba <tabba@google.com>
+Date:   Mon, 3 Oct 2022 08:33:13 +0100
+Message-ID: <CA+EHjTyphrouY1FV2NQOBLDG81JYhiHFGBNKjT1K2j+pVNij+A@mail.gmail.com>
+Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
+To:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, 2022-10-02 at 07:56 -0600, Keith Busch wrote:
-> On Sun, Oct 02, 2022 at 11:59:42AM +0300, Maxim Levitsky wrote:
-> > On Thu, 2022-09-29 at 19:35 +0200, Paolo Bonzini wrote:
-> > > On 9/29/22 18:39, Christoph Hellwig wrote:
-> > > > On Thu, Sep 29, 2022 at 10:37:22AM -0600, Keith Busch wrote:
-> > > > > > I am aware, and I've submitted the fix to qemu here:
-> > > > > > 
-> > > > > >   https://lists.nongnu.org/archive/html/qemu-block/2022-09/msg00398.html
-> > > > > 
-> > > > > I don't think so. Memory alignment and length granularity are two completely
-> > > > > different concepts. If anything, the kernel's ABI had been that the length
-> > > > > requirement was also required for the memory alignment, not the other way
-> > > > > around. That usage will continue working with this kernel patch.
-> > 
-> > Yes, this is how I also understand it - for example for O_DIRECT on a file which
-> > resides on 4K block device, you have to use page aligned buffers.
-> > 
-> > But here after the patch, 512 aligned buffer starts working as well - If I
-> > understand you correctly the ABI didn't guarantee that such usage would fail,
-> > but rather that it might fail.
-> 
-> The kernel patch will allow buffer alignment to work with whatever the hardware
-> reports it can support. It could even as low as byte aligned if that's the
-> hardware can use that.
-> 
-> The patch aligns direct-io with the same criteria blk_rq_map_user() has always
-> used to know if the user space buffer is compatible with the hardware's dma
-> requirements. Prior to this patch, the direct-io memory alignment was an
-> artificial software constraint, and that constraint creates a lot of
-> unnecessary memory pressure.
-> 
-> As has always been the case, each segment needs to be a logical block length
-> granularity. QEMU assumed a buffer's page offset also defined the logical block
-> size instead of using the actual logical block size that it had previously
-> discovered directly.
-> 
-> > If I understand that correctly, after the patch in question, 
-> > qemu is able to use just 512 bytes aligned buffer to read a single 4K block from the disk,
-> > which supposed to fail but wasn't guarnteed to fail.
-> > 
-> > Later qemu it submits iovec which also reads a 4K block but in two parts,
-> > and if I understand that correctly, each part (iov) is considered
-> > to be a separate IO operation,  and thus each has to be in my case 4K in size, 
-> > and its memory buffer *should* also be 4K aligned.
-> > 
-> > (but it can work with smaller alignement as well).
-> 
-> Right. The iov length needs to match the logical block size. The iov's memory
-> offset needs to align to the queue's dma_alignment attribute. The memory
-> alignment may be smaller than a block size.
->  
-> > Assuming that I understand all of this correctly, I agree with Paolo that this is qemu
-> > bug, but I do fear that it can cause quite some problems for users,
-> > especially for users that use outdated qemu version.
-> > 
-> > It might be too much to ask, but maybe add a Kconfig option to keep legacy behavier
-> > for those that need it?
-> 
-> Kconfig doesn't sound right.
-> 
-> The block layer exports all the attributes user space needs to know about for
-> direct io.
-> 
->   iov length:    /sys/block/<block-dev>/queue/logical_block_size
->   iov mem align: /sys/block/<block-dev>/queue/dma_alignment
-> 
-> If you really want to change the behavior, I think maybe we could make the
-> dma_alignment attribute writeable (or perhaps add a new attribute specifically
-> for dio_alignment) so the user can request something larger.
-> 
-All makes sense now. 
+Hi
 
-New attribute could make sense I guess, and can be set by an udev rule or something.
+On Fri, Sep 30, 2022 at 5:23 PM Kirill A . Shutemov
+<kirill.shutemov@linux.intel.com> wrote:
+>
+> On Fri, Sep 30, 2022 at 05:14:00PM +0100, Fuad Tabba wrote:
+> > Hi,
+> >
+> > <...>
+> >
+> > > diff --git a/mm/memfd_inaccessible.c b/mm/memfd_inaccessible.c
+> > > new file mode 100644
+> > > index 000000000000..2d33cbdd9282
+> > > --- /dev/null
+> > > +++ b/mm/memfd_inaccessible.c
+> > > @@ -0,0 +1,219 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +#include "linux/sbitmap.h"
+> > > +#include <linux/memfd.h>
+> > > +#include <linux/pagemap.h>
+> > > +#include <linux/pseudo_fs.h>
+> > > +#include <linux/shmem_fs.h>
+> > > +#include <uapi/linux/falloc.h>
+> > > +#include <uapi/linux/magic.h>
+> > > +
+> > > +struct inaccessible_data {
+> > > +       struct mutex lock;
+> > > +       struct file *memfd;
+> > > +       struct list_head notifiers;
+> > > +};
+> > > +
+> > > +static void inaccessible_notifier_invalidate(struct inaccessible_data *data,
+> > > +                                pgoff_t start, pgoff_t end)
+> > > +{
+> > > +       struct inaccessible_notifier *notifier;
+> > > +
+> > > +       mutex_lock(&data->lock);
+> > > +       list_for_each_entry(notifier, &data->notifiers, list) {
+> > > +               notifier->ops->invalidate(notifier, start, end);
+> > > +       }
+> > > +       mutex_unlock(&data->lock);
+> > > +}
+> > > +
+> > > +static int inaccessible_release(struct inode *inode, struct file *file)
+> > > +{
+> > > +       struct inaccessible_data *data = inode->i_mapping->private_data;
+> > > +
+> > > +       fput(data->memfd);
+> > > +       kfree(data);
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static long inaccessible_fallocate(struct file *file, int mode,
+> > > +                                  loff_t offset, loff_t len)
+> > > +{
+> > > +       struct inaccessible_data *data = file->f_mapping->private_data;
+> > > +       struct file *memfd = data->memfd;
+> > > +       int ret;
+> > > +
+> > > +       if (mode & FALLOC_FL_PUNCH_HOLE) {
+> > > +               if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
+> > > +                       return -EINVAL;
+> > > +       }
+> > > +
+> > > +       ret = memfd->f_op->fallocate(memfd, mode, offset, len);
+> >
+> > I think that shmem_file_operations.fallocate is only set if
+> > CONFIG_TMPFS is enabled (shmem.c). Should there be a check at
+> > initialization that fallocate is set, or maybe a config dependency, or
+> > can we count on it always being enabled?
+>
+> It is already there:
+>
+>         config MEMFD_CREATE
+>                 def_bool TMPFS || HUGETLBFS
+>
+> And we reject inaccessible memfd_create() for HUGETLBFS.
+>
+> But if we go with a separate syscall, yes, we need the dependency.
+
+I missed that, thanks.
+
+>
+> > > +       inaccessible_notifier_invalidate(data, offset, offset + len);
+> > > +       return ret;
+> > > +}
+> > > +
+> >
+> > <...>
+> >
+> > > +void inaccessible_register_notifier(struct file *file,
+> > > +                                   struct inaccessible_notifier *notifier)
+> > > +{
+> > > +       struct inaccessible_data *data = file->f_mapping->private_data;
+> > > +
+> > > +       mutex_lock(&data->lock);
+> > > +       list_add(&notifier->list, &data->notifiers);
+> > > +       mutex_unlock(&data->lock);
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(inaccessible_register_notifier);
+> >
+> > If the memfd wasn't marked as inaccessible, or more generally
+> > speaking, if the file isn't a memfd_inaccessible file, this ends up
+> > accessing an uninitialized pointer for the notifier list. Should there
+> > be a check for that here, and have this function return an error if
+> > that's not the case?
+>
+> I think it is "don't do that" category. inaccessible_register_notifier()
+> caller has to know what file it operates on, no?
+
+The thing is, you could oops the kernel from userspace. For that, all
+you have to do is a memfd_create without the MFD_INACCESSIBLE,
+followed by a KVM_SET_USER_MEMORY_REGION using that as the private_fd.
+I ran into this using my port of this patch series to arm64.
+
+Cheers,
+/fuad
 
 
-Anyway I won't worry about this for now, and if there are issues I'll see how we could work
-around them.
-
-Thanks for everything,
-Best regards,
-	Maxim Levitsky
-
+> --
+>   Kiryl Shutsemau / Kirill A. Shutemov
