@@ -2,180 +2,362 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B70A5F2F86
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Oct 2022 13:21:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E388B5F2F8F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  3 Oct 2022 13:26:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbiJCLVq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Oct 2022 07:21:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51586 "EHLO
+        id S229851AbiJCL0A (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Oct 2022 07:26:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229816AbiJCLVi (ORCPT
+        with ESMTP id S229830AbiJCLZy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Oct 2022 07:21:38 -0400
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 749514B4B1;
-        Mon,  3 Oct 2022 04:21:31 -0700 (PDT)
-Received: from [192.168.10.9] (unknown [39.45.148.204])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 599CA6601AED;
-        Mon,  3 Oct 2022 12:21:26 +0100 (BST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1664796089;
-        bh=QjQysDtg/rfCjFri/iGM14++at29jMbV+/m5tzwz0yg=;
-        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-        b=ILSxcT+t83n9BjP6pk9g0NC7uAYX/7KBTjTv2Gr3bt0nxGWDer5H+pITpueEVLU7w
-         jvsLqoN+IxRZ6rlYW3ZfK1AvHC8c3X4nODl6RgybJTQ3AXOm72h6N5vq4w2BmqYSwi
-         GtLWNYjG6ZXEPLaKe6ohalW4zemKyV6+eZynl2q0AFJALzQ18rzHwbLbuhEXzycluA
-         vtj86c+OhGkPJTOss8JWOOzEQTpX5sMWsqJDi+9VlMcxomERGxR+Lw1rhZXnUT/vE4
-         jITAOMOf4wQ/3lSggteA1y+GahekEQC9tpS6lyTlbE0ulUl6lbYHwrAwZHUhiLlw3K
-         G+Y8P7KajIbcQ==
-Message-ID: <2e1c33c8-a201-0f7f-17cf-22fec555c7ff@collabora.com>
-Date:   Mon, 3 Oct 2022 16:21:22 +0500
+        Mon, 3 Oct 2022 07:25:54 -0400
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78E472B183;
+        Mon,  3 Oct 2022 04:25:53 -0700 (PDT)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 293AhhTW008549;
+        Mon, 3 Oct 2022 11:25:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=1uxG6jFpjWTO2OB/M3wacn1bByYrDv1WviP40zONzyE=;
+ b=PkAlIIeZVCdW4Ke/UYKQcZ5XYA5mgOCN8Ihh357CgYrefRcUoifQ/H4+Lr/nUkFUnjmn
+ 7e9bTJSRkSc8AejvpC1aAEE+hb7u7hMeyOue7yRaPoEpvIH27IhoenSFApAm33p+2I7g
+ NfFAE9rOeJi2xx1OkEujaVGhqGf4qCa8IINhVOD08WAIQXvSQnib65Dzhvjux4jRrYPJ
+ yWQTpKVNg+LrqTOkgSvZNRBLIfsgMt0ol02rXWB6DmhMUWILW2sr7+patxWH7tk4yAWI
+ 77FCkPDBWYVJocOdtWD7rSZnZkmb8u6dYuYfHH7viKHXH4PVrD9hI1HDjVRfcx1gnpIG sA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3jyx82117s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Oct 2022 11:25:48 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 293BIbnr031331;
+        Mon, 3 Oct 2022 11:25:48 GMT
+Received: from ppma03fra.de.ibm.com (6b.4a.5195.ip4.static.sl-reverse.com [149.81.74.107])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3jyx82117a-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Oct 2022 11:25:48 +0000
+Received: from pps.filterd (ppma03fra.de.ibm.com [127.0.0.1])
+        by ppma03fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 293BL3V5019465;
+        Mon, 3 Oct 2022 11:25:46 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma03fra.de.ibm.com with ESMTP id 3jxd68stwj-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 03 Oct 2022 11:25:46 +0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 293BPh7I62521678
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 3 Oct 2022 11:25:44 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id D9CFC42049;
+        Mon,  3 Oct 2022 11:25:43 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 80A6242042;
+        Mon,  3 Oct 2022 11:25:41 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.15.122])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Mon,  3 Oct 2022 11:25:41 +0000 (GMT)
+Date:   Mon, 3 Oct 2022 16:55:38 +0530
+From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
+        Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        rookxu <brookxu.cn@gmail.com>,
+        Ritesh Harjani <ritesh.list@gmail.com>
+Subject: Re: [RFC v3 7/8] ext4: Use rbtrees to manage PAs instead of inode
+ i_prealloc_list
+Message-ID: <YzrGitBjeu5OJWda@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <cover.1664269665.git.ojaswin@linux.ibm.com>
+ <b78a3ec57625bc26f87c088c8c8165d787b15966.1664269665.git.ojaswin@linux.ibm.com>
+ <20220929123926.5jxuta43otgtcbbp@quack3>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.0
-Cc:     usama.anjum@collabora.com, Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, kernel@collabora.com,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        David Hildenbrand <david@redhat.com>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v3 0/4] Implement IOCTL to get and clear soft dirty PTE
-Content-Language: en-US
-To:     Andrei Vagin <avagin@gmail.com>
-References: <20220826064535.1941190-1-usama.anjum@collabora.com>
- <YyiDg79flhWoMDZB@gmail.com>
- <2c8b7116-56e9-3202-c47e-e42078c85793@collabora.com>
- <CANaxB-xDiTRCuWxBmrSH1u3e_ADbxCoQKmEoSsYfm4yW7k=v4A@mail.gmail.com>
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-In-Reply-To: <CANaxB-xDiTRCuWxBmrSH1u3e_ADbxCoQKmEoSsYfm4yW7k=v4A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220929123926.5jxuta43otgtcbbp@quack3>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: zWmHh9jUqttAr9lVEn8BMm6u022ZFV9K
+X-Proofpoint-GUID: pIAnWvpOwEcSi2SeGXEz1u4dwqZ11NY3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
+ definitions=2022-10-03_02,2022-09-29_03,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=838 spamscore=0
+ malwarescore=0 adultscore=0 clxscore=1015 priorityscore=1501
+ lowpriorityscore=0 bulkscore=0 impostorscore=0 phishscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2209130000 definitions=main-2210030068
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/28/22 10:24 PM, Andrei Vagin wrote:
-> On Wed, Sep 21, 2022 at 11:26 AM Muhammad Usama Anjum
-> <usama.anjum@collabora.com> wrote:
->>
->> Hi,
->>
->> Thank you for reviewing.
->>
->> On 9/19/22 7:58 PM, Andrei Vagin wrote:
->>>> This ioctl can be used by the CRIU project and other applications which
->>>> require soft-dirty PTE bit information. The following operations are
->>>> supported in this ioctl:
->>>> - Get the pages that are soft-dirty.
->>>
->>> I think this interface doesn't have to be limited by the soft-dirty
->>> bits only. For example, CRIU needs to know whether file, present and swap bits
->>> are set or not.
->> These operations can be performed by pagemap procfs file. Definitely
->> performing them through IOCTL will be faster. But I'm trying to add a
->> simple IOCTL by which some specific PTE bit can be read and cleared
->> atomically. This IOCTL can be extended to include other bits like file,
->> present and swap bits by keeping the interface simple. The following
->> mask advice is nice. But if we add that kind of masking, it'll start to
->> look like a filter on top of pagemap. My intention is to not duplicate
->> the functionality already provided by the pagemap. One may ask, then why
->> am I adding "get the soft-dirty pages" functionality? I'm adding it to
->> complement the get and clear operation. The "get" and "get and clear"
->> operations with special flag (PAGEMAP_SD_NO_REUSED_REGIONS) can give
->> results quicker by not splitting the VMAs.
-> 
-> This simple interface is good only for a limited number of use-cases.
-> The interface
-> that I suggest doesn't duplicate more code than this one, but it is much more
-> universal. It will be a big mess if you add a separate API for each
-> specific use-case.
->
->
->>> I mean we should be able to specify for what pages we need to get info
->>> for. An ioctl argument can have these four fields:
->>> * required bits (rmask & mask == mask) - all bits from this mask have to be set.
->>> * any of these bits (amask & mask != 0) - any of these bits is set.
->>> * exclude masks (emask & mask == 0) = none of these bits are set.
->>> * return mask - bits that have to be reported to user.
-The required mask (rmask) makes sense to me. At the moment, I only know
-about the practical use case for the required mask. Can you share how
-can any and exclude masks help for the CRIU?
+Hi Jan, 
 
->>>
->>>> - Clear the pages which are soft-dirty.
->>>> - The optional flag to ignore the VM_SOFTDIRTY and only track per page
->>>> soft-dirty PTE bit
->>>>
->>>> There are two decisions which have been taken about how to get the output
->>>> from the syscall.
->>>> - Return offsets of the pages from the start in the vec
->>>
->>> We can conside to return regions that contains pages with the same set
->>> of bits.
->>>
->>> struct page_region {
->>>       void *start;
->>>       long size;
->>>       u64 bitmap;
->>> }
->>>
->>> And ioctl returns arrays of page_region-s. I believe it will be more
->>> compact form for many cases.
->> Thank you for mentioning this. I'd considered this while development.
->> But I gave up and used the simple array to return the offsets of the
->> pages as in the problem I'm trying to solve, the dirty pages may be
->> present amid non-dirty pages. The range may not be useful in that case.
-> 
-> This is a good example. If we expect more than two consequent pages
-> on average, the "region" interface looks more prefered. I don't know your
-> use-case, but in the case of CRIU, this assumption looks reasonable.
-> 
->> Also we want to return only a specific number of pages of interest. The
->> following paragraph explains it.
->>
->>>
->>>> - Stop execution when vec is filled with dirty pages
->>>> These two arguments doesn't follow the mincore() philosophy where the
->>>> output array corresponds to the address range in one to one fashion, hence
->>>> the output buffer length isn't passed and only a flag is set if the page
->>>> is present. This makes mincore() easy to use with less control. We are
->>>> passing the size of the output array and putting return data consecutively
->>>> which is offset of dirty pages from the start. The user can convert these
->>>> offsets back into the dirty page addresses easily. Suppose, the user want
->>>> to get first 10 dirty pages from a total memory of 100 pages. He'll
->>>> allocate output buffer of size 10 and the ioctl will abort after finding the
->>>> 10 pages. This behaviour is needed to support Windows' getWriteWatch(). The
->>>> behaviour like mincore() can be achieved by passing output buffer of 100
->>>> size. This interface can be used for any desired behaviour.
-> 
-> Now, it is more clear where this interface came from. It repeats the interface
-> of Windows' getWriteWatch. I think we have to look wider. The
-> interface that reports
-> regions will be more efficient for many use-cases. As for
-> getWriteWatch, it will require
-> a bit more code in user-space, but this code is trivial.
-> 
-> Thanks,
-> Andrei
+Thank you for the review. I've added some comments inline.
 
--- 
-Muhammad Usama Anjum
+On Thu, Sep 29, 2022 at 02:39:26PM +0200, Jan Kara wrote:
+> On Tue 27-09-22 14:46:47, Ojaswin Mujoo wrote:
+> 
+> I've found couple of smaller issues. See below. 
+> 
+> > ---
+> >  fs/ext4/ext4.h    |   4 +-
+> >  fs/ext4/mballoc.c | 192 ++++++++++++++++++++++++++++++++--------------
+> >  fs/ext4/mballoc.h |   6 +-
+> >  fs/ext4/super.c   |   4 +-
+> >  4 files changed, 140 insertions(+), 66 deletions(-)
+> > 
+> > diff --git a/fs/ext4/ext4.h b/fs/ext4/ext4.h
+> > index 3bf9a6926798..d54b972f1f0f 100644
+> > --- a/fs/ext4/ext4.h
+> > +++ b/fs/ext4/ext4.h
+> > @@ -1120,8 +1120,8 @@ struct ext4_inode_info {
+> >  
+> >  	/* mballoc */
+> >  	atomic_t i_prealloc_active;
+> > -	struct list_head i_prealloc_list;
+> > -	spinlock_t i_prealloc_lock;
+> > +	struct rb_root i_prealloc_node;
+> > +	rwlock_t i_prealloc_lock;
+> >  
+> >  	/* extents status tree */
+> >  	struct ext4_es_tree i_es_tree;
+> > diff --git a/fs/ext4/mballoc.c b/fs/ext4/mballoc.c
+> > index b91710fe881f..cd19b9e84767 100644
+> > --- a/fs/ext4/mballoc.c
+> > +++ b/fs/ext4/mballoc.c
+> > @@ -3985,6 +3985,24 @@ static void ext4_mb_normalize_group_request(struct ext4_allocation_context *ac)
+> >  	mb_debug(sb, "goal %u blocks for locality group\n", ac->ac_g_ex.fe_len);
+> >  }
+> >  
+> > +/*
+> > + * This function returns the next element to look at during inode
+> > + * PA rbtree walk. We assume that we have held the inode PA rbtree lock
+> > + * (ei->i_prealloc_lock)
+> > + *
+> > + * new_start	The start of the range we want to compare
+> > + * cur_start	The existing start that we are comparing against
+> > + * node	The node of the rb_tree
+> > + */
+> > +static inline struct rb_node*
+> > +ext4_mb_pa_rb_next_iter(int new_start, int cur_start, struct rb_node *node)
+> 
+> These need to be ext4_lblk_t, not int.
+
+Noted. Will fix in next version.
+> 
+> > +{
+> > +	if (new_start < cur_start)
+> > +		return node->rb_left;
+> > +	else
+> > +		return node->rb_right;
+> > +}
+> > +
+> 
+> > @@ -4032,19 +4055,29 @@ ext4_mb_pa_adjust_overlap(struct ext4_allocation_context *ac,
+> >  	new_end = *end;
+> >  
+> >  	/* check we don't cross already preallocated blocks */
+> > -	rcu_read_lock();
+> > -	list_for_each_entry_rcu(tmp_pa, &ei->i_prealloc_list, pa_node.inode_list) {
+> > -		if (tmp_pa->pa_deleted)
+> > +	read_lock(&ei->i_prealloc_lock);
+> > +	iter = ei->i_prealloc_node.rb_node;
+> > +	while (iter) {
+> 
+> Perhaps this would be nicer as a for-cycle? Like:
+> 
+> 	for (iter = ei->i_prealloc_node.rb_node; iter;
+> 	     iter = ext4_mb_pa_rb_next_iter(new_start, tmp_pa_start, iter))
+> 
+
+Right, I agree. Will do.
+> > +		tmp_pa = rb_entry(iter, struct ext4_prealloc_space,
+> > +				  pa_node.inode_node);
+> > +		tmp_pa_start = tmp_pa->pa_lstart;
+> > +		tmp_pa_end = tmp_pa->pa_lstart + EXT4_C2B(sbi, tmp_pa->pa_len);
+> > +
+> > +		/*
+> > +		 * If pa is deleted, ignore overlaps and just iterate in rbtree
+> > +		 * based on tmp_pa_start
+> > +		 */
+> > +		if (tmp_pa->pa_deleted) {
+> > +			iter = ext4_mb_pa_rb_next_iter(new_start, tmp_pa_start, iter);
+> >  			continue;
+> > +		}
+> >  		spin_lock(&tmp_pa->pa_lock);
+> >  		if (tmp_pa->pa_deleted) {
+> >  			spin_unlock(&tmp_pa->pa_lock);
+> > +			iter = ext4_mb_pa_rb_next_iter(new_start, tmp_pa_start, iter);
+> >  			continue;
+> >  		}
+> >  
+> > -		tmp_pa_start = tmp_pa->pa_lstart;
+> > -		tmp_pa_end = tmp_pa->pa_lstart + EXT4_C2B(sbi, tmp_pa->pa_len);
+> > -
+> >  		/* PA must not overlap original request */
+> >  		BUG_ON(!(ac->ac_o_ex.fe_logical >= tmp_pa_end ||
+> >  			ac->ac_o_ex.fe_logical < tmp_pa_start));
+> > @@ -4052,6 +4085,7 @@ ext4_mb_pa_adjust_overlap(struct ext4_allocation_context *ac,
+> >  		/* skip PAs this normalized request doesn't overlap with */
+> >  		if (tmp_pa_start >= new_end || tmp_pa_end <= new_start) {
+> >  			spin_unlock(&tmp_pa->pa_lock);
+> > +			iter = ext4_mb_pa_rb_next_iter(new_start, tmp_pa_start, iter);
+> >  			continue;
+> >  		}
+> >  		BUG_ON(tmp_pa_start <= new_start && tmp_pa_end >= new_end);
+> > @@ -4065,8 +4099,9 @@ ext4_mb_pa_adjust_overlap(struct ext4_allocation_context *ac,
+> >  			new_end = tmp_pa_start;
+> >  		}
+> >  		spin_unlock(&tmp_pa->pa_lock);
+> > +		iter = ext4_mb_pa_rb_next_iter(new_start, tmp_pa_start, iter);
+> >  	}
+> > -	rcu_read_unlock();
+> > +	read_unlock(&ei->i_prealloc_lock);
+> 
+> ....
+> 
+> > @@ -4409,17 +4444,23 @@ ext4_mb_use_preallocated(struct ext4_allocation_context *ac)
+> >  		return false;
+> >  
+> >  	/* first, try per-file preallocation */
+> > -	rcu_read_lock();
+> > -	list_for_each_entry_rcu(tmp_pa, &ei->i_prealloc_list, pa_node.inode_list) {
+> > +	read_lock(&ei->i_prealloc_lock);
+> > +	iter = ei->i_prealloc_node.rb_node;
+> > +	while (iter) {
+> 
+> Again, for-cycle would look more natural here.
+> 
+> > +		tmp_pa = rb_entry(iter, struct ext4_prealloc_space, pa_node.inode_node);
+> >  
+> >  		/* all fields in this condition don't change,
+> >  		 * so we can skip locking for them */
+> >  		tmp_pa_start = tmp_pa->pa_lstart;
+> >  		tmp_pa_end = tmp_pa->pa_lstart + EXT4_C2B(sbi, tmp_pa->pa_len);
+> >  
+> > +		/* original request start doesn't lie in this PA */
+> >  		if (ac->ac_o_ex.fe_logical < tmp_pa_start ||
+> > -		    ac->ac_o_ex.fe_logical >= tmp_pa_end)
+> > +		    ac->ac_o_ex.fe_logical >= tmp_pa_end) {
+> > +			iter = ext4_mb_pa_rb_next_iter(ac->ac_o_ex.fe_logical,
+> > +						  tmp_pa_start, iter);
+> >  			continue;
+> > +		}
+> >  
+> >  		/* non-extent files can't have physical blocks past 2^32 */
+> >  		if (!(ext4_test_inode_flag(ac->ac_inode, EXT4_INODE_EXTENTS)) &&
+> > @@ -4439,12 +4480,14 @@ ext4_mb_use_preallocated(struct ext4_allocation_context *ac)
+> >  			ext4_mb_use_inode_pa(ac, tmp_pa);
+> >  			spin_unlock(&tmp_pa->pa_lock);
+> >  			ac->ac_criteria = 10;
+> > -			rcu_read_unlock();
+> > +			read_unlock(&ei->i_prealloc_lock);
+> >  			return true;
+> >  		}
+> >  		spin_unlock(&tmp_pa->pa_lock);
+> > +		iter = ext4_mb_pa_rb_next_iter(ac->ac_o_ex.fe_logical,
+> > +				tmp_pa_start, iter);
+> >  	}
+> > -	rcu_read_unlock();
+> > +	read_unlock(&ei->i_prealloc_lock);
+> >  
+> >  	/* can we use group allocation? */
+> >  	if (!(ac->ac_flags & EXT4_MB_HINT_GROUP_ALLOC))
+> > @@ -4596,6 +4639,7 @@ static void ext4_mb_put_pa(struct ext4_allocation_context *ac,
+> >  {
+> >  	ext4_group_t grp;
+> >  	ext4_fsblk_t grp_blk;
+> > +	struct ext4_inode_info *ei = EXT4_I(ac->ac_inode);
+> >  
+> >  	/* in this short window concurrent discard can set pa_deleted */
+> >  	spin_lock(&pa->pa_lock);
+> > @@ -4641,16 +4685,51 @@ static void ext4_mb_put_pa(struct ext4_allocation_context *ac,
+> >  	ext4_unlock_group(sb, grp);
+> >  
+> >  	if (pa->pa_type == MB_INODE_PA) {
+> > -		spin_lock(pa->pa_node_lock.inode_lock);
+> > -		list_del_rcu(&pa->pa_node.inode_list);
+> > -		spin_unlock(pa->pa_node_lock.inode_lock);
+> > +		write_lock(pa->pa_node_lock.inode_lock);
+> > +		rb_erase(&pa->pa_node.inode_node, &ei->i_prealloc_node);
+> > +		write_unlock(pa->pa_node_lock.inode_lock);
+> > +		ext4_mb_pa_free(pa);
+> >  	} else {
+> >  		spin_lock(pa->pa_node_lock.lg_lock);
+> >  		list_del_rcu(&pa->pa_node.lg_list);
+> >  		spin_unlock(pa->pa_node_lock.lg_lock);
+> > +		call_rcu(&(pa)->u.pa_rcu, ext4_mb_pa_callback);
+> >  	}
+> > +}
+> > +
+> > +static void ext4_mb_rb_insert(struct rb_root *root, struct rb_node *new,
+> > +                       int (*cmp)(struct rb_node *, struct rb_node *))
+> > +{
+> 
+> Given this has only one callsite, why not just inline ext4_mb_pa_cmp()
+> directly into this function?
+> 
+> > +       struct rb_node **iter = &root->rb_node, *parent = NULL;
+> > +
+> > +       while (*iter) {
+> > +               parent = *iter;
+> > +               if (cmp(new, *iter) > 0)
+> > +                       iter = &((*iter)->rb_left);
+> > +               else
+> > +                       iter = &((*iter)->rb_right);
+> > +       }
+> > +
+> > +       rb_link_node(new, parent, iter);
+> > +       rb_insert_color(new, root);
+> > +}
+> > +
+> > +static int ext4_mb_pa_cmp(struct rb_node *new, struct rb_node *cur)
+> > +{
+> > +	ext4_grpblk_t cur_start, new_start;
+>  
+> This should be ext4_lblk_t to match with pa->pa_lstart...
+
+Noted, thanks.
+> 
+> > +	struct ext4_prealloc_space *cur_pa = rb_entry(cur,
+> > +						      struct ext4_prealloc_space,
+> > +						      pa_node.inode_node);
+> > +	struct ext4_prealloc_space *new_pa = rb_entry(new,
+> > +						      struct ext4_prealloc_space,
+> > +						      pa_node.inode_node);
+> > +	cur_start = cur_pa->pa_lstart;
+> > +	new_start = new_pa->pa_lstart;
+> >  
+> > -	call_rcu(&(pa)->u.pa_rcu, ext4_mb_pa_callback);
+> > +	if (new_start < cur_start)
+> > +		return 1;
+> > +	else
+> > +		return -1;
+> >  }
+> 
+> Here and in ext4_mb_rb_insert() the comparison seems to be reversed (thus
+> effectively canceling out) but it is still confusing. Usually if we have
+> cmp(a,b) functions then if a < b we return -1, if a > b we return 1.
+
+Hmm so for ext4_mb_rb_insert(), it was already defined when I started
+with the pathset so I just reused it with a new comparator
+ext4_mb_pa_cmp(). While rebasing, I noticed that ext4_mb_rb_insert()
+function was removed since we didn't need the rbtree after your changes
+to CR1, so I just added it as it is. 
+
+But you are correct, we should modify ext4_mb_rb_insert to make the
+return values more intuitive. I'll fix this.
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+
+Regards,
+ojaswin
