@@ -2,53 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DEF535F39AA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Oct 2022 01:14:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BA155F39DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Oct 2022 01:30:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbiJCXOr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 3 Oct 2022 19:14:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36544 "EHLO
+        id S229692AbiJCX3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 3 Oct 2022 19:29:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229513AbiJCXOp (ORCPT
+        with ESMTP id S229614AbiJCX3s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 3 Oct 2022 19:14:45 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3541E64;
-        Mon,  3 Oct 2022 16:14:43 -0700 (PDT)
+        Mon, 3 Oct 2022 19:29:48 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BA6010075;
+        Mon,  3 Oct 2022 16:29:46 -0700 (PDT)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 0460C1F383;
-        Mon,  3 Oct 2022 23:14:42 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 0A060218A4;
+        Mon,  3 Oct 2022 23:29:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1664838882; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1664839785; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=o89FNJqcd/srxOwB7caebn/K4gYoDlX9ZBmPgRmJJfM=;
-        b=gvJGE64/tLd3vaf+tDY0kPFrWPXZy8mbHC4q6Fl5w7TffGHI+r1Q6VVPMwbqeASc37W9Ai
-        VFtNZBuf0zE8xZKhZ+c2b/b5ut57zpfFpFqMWmaSey5QdNDm2gGOfLfRmyH/+vMlRkccr6
-        AJvBWx/YubQWi4QfuioYg8t6hdtA+Tc=
+        bh=Ylh5NknchpDJmmWXadWza1FBLEcM+AFNWAGmj/nYQZQ=;
+        b=BSj3tr9sTDeqdJeGQP4ZGWYAfe2GurPqfXcrwI7dpSAUi9nnWhQ0ARkzclH16yM6OME+eo
+        WEnSo6liQ6S1JACvPEV2lFjTW1OkD4sAEMPxv8QLF80GNrfc9D73k5G3lWYskN4tzkkc/9
+        dpxpCeP7hxgrDdvoH2EnicWhSND/S6s=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1664838882;
+        s=susede2_ed25519; t=1664839785;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=o89FNJqcd/srxOwB7caebn/K4gYoDlX9ZBmPgRmJJfM=;
-        b=u7q7+Ws2ak28Xkyyj9Y16sQHmOK497L3RPiVRPZPwMHF3zXoH1U+lwjzJ9BXXrK2S6eWNl
-        2h3cmX4Xc1CIQPCQ==
+        bh=Ylh5NknchpDJmmWXadWza1FBLEcM+AFNWAGmj/nYQZQ=;
+        b=r9Bl3jZCX3+ZTbK9iFlIEEtPIebrcKn2vW6M23N/MXhRr4h2JPtKU76vRpJYtXXjvBCG6H
+        Giiony6XklzUI6Bg==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3BD2B1332F;
-        Mon,  3 Oct 2022 23:14:34 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 72DC213522;
+        Mon,  3 Oct 2022 23:29:37 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id +EJoOdpsO2NPFAAAMHmgww
-        (envelope-from <neilb@suse.de>); Mon, 03 Oct 2022 23:14:34 +0000
+        id 6XYmC2FwO2PFGAAAMHmgww
+        (envelope-from <neilb@suse.de>); Mon, 03 Oct 2022 23:29:37 +0000
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
@@ -62,16 +62,16 @@ Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
         linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org, "Jeff Layton" <jlayton@redhat.com>
-Subject: Re: [PATCH v6 3/9] vfs: plumb i_version handling into struct kstat
-In-reply-to: <20220930111840.10695-4-jlayton@kernel.org>
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v6 4/9] nfs: report the inode version in getattr if requested
+In-reply-to: <20220930111840.10695-5-jlayton@kernel.org>
 References: <20220930111840.10695-1-jlayton@kernel.org>,
- <20220930111840.10695-4-jlayton@kernel.org>
-Date:   Tue, 04 Oct 2022 10:14:32 +1100
-Message-id: <166483887224.14457.15787196896853726744@noble.neil.brown.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+ <20220930111840.10695-5-jlayton@kernel.org>
+Date:   Tue, 04 Oct 2022 10:29:33 +1100
+Message-id: <166483977325.14457.7085950126736913468@noble.neil.brown.name>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -79,115 +79,84 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Fri, 30 Sep 2022, Jeff Layton wrote:
-> From: Jeff Layton <jlayton@redhat.com>
+> Allow NFS to report the i_version in getattr requests. Since the cost to
+> fetch it is relatively cheap, do it unconditionally and just set the
+> flag if it looks like it's valid. Also, conditionally enable the
+> MONOTONIC flag when the server reports its change attr type as such.
 >=20
-> The NFS server has a lot of special handling for different types of
-> change attribute access, depending on what sort of inode we have. In
-> most cases, it's doing a getattr anyway and then fetching that value
-> after the fact.
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/nfs/inode.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 >=20
-> Rather that do that, add a new STATX_VERSION flag that is a kernel-only
-> symbol (for now). If requested and getattr can implement it, it can fill
-> out this field. For IS_I_VERSION inodes, add a generic implementation in
-> vfs_getattr_nosec. Take care to mask STATX_VERSION off in requests from
-> userland and in the result mask.
->=20
-> Eventually if we decide to make this available to userland, we can just
-> designate a field for it in struct statx, and move the STATX_VERSION
-> definition to the uapi header.
+> diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+> index bea7c005119c..5cb7017e5089 100644
+> --- a/fs/nfs/inode.c
+> +++ b/fs/nfs/inode.c
+> @@ -830,6 +830,8 @@ static u32 nfs_get_valid_attrmask(struct inode *inode)
+>  		reply_mask |=3D STATX_UID | STATX_GID;
+>  	if (!(cache_validity & NFS_INO_INVALID_BLOCKS))
+>  		reply_mask |=3D STATX_BLOCKS;
+> +	if (!(cache_validity & NFS_INO_INVALID_CHANGE))
+> +		reply_mask |=3D STATX_VERSION;
+>  	return reply_mask;
+>  }
+> =20
+> @@ -848,7 +850,7 @@ int nfs_getattr(struct user_namespace *mnt_userns, cons=
+t struct path *path,
+> =20
+>  	request_mask &=3D STATX_TYPE | STATX_MODE | STATX_NLINK | STATX_UID |
+>  			STATX_GID | STATX_ATIME | STATX_MTIME | STATX_CTIME |
+> -			STATX_INO | STATX_SIZE | STATX_BLOCKS;
+> +			STATX_INO | STATX_SIZE | STATX_BLOCKS | STATX_VERSION;
+> =20
+>  	if ((query_flags & AT_STATX_DONT_SYNC) && !force_sync) {
+>  		if (readdirplus_enabled)
+> @@ -877,7 +879,7 @@ int nfs_getattr(struct user_namespace *mnt_userns, cons=
+t struct path *path,
+>  	/* Is the user requesting attributes that might need revalidation? */
+>  	if (!(request_mask & (STATX_MODE|STATX_NLINK|STATX_ATIME|STATX_CTIME|
+>  					STATX_MTIME|STATX_UID|STATX_GID|
+> -					STATX_SIZE|STATX_BLOCKS)))
+> +					STATX_SIZE|STATX_BLOCKS|STATX_VERSION)))
+>  		goto out_no_revalidate;
+> =20
+>  	/* Check whether the cached attributes are stale */
+> @@ -915,6 +917,10 @@ int nfs_getattr(struct user_namespace *mnt_userns, con=
+st struct path *path,
+> =20
+>  	generic_fillattr(&init_user_ns, inode, stat);
+>  	stat->ino =3D nfs_compat_user_ino64(NFS_FILEID(inode));
+> +	stat->version =3D inode_peek_iversion_raw(inode);
 
-Above does not mention STATX_ATTR_VERSION_MONOTONIC, but it appears in
-that patch - which is confusing.
-But the patch is good, so
+This looks wrong.
+1/ it includes the I_VERSION_QUERIED bit, which should be hidden.
+2/ it doesn't set that bit.
 
-Reviewed-by: NeilBrown <neilb@suse.de>
+I understand that the bit was already set when the generic code called
+inode_query_iversion(), but it might have changed if we needed to
+refresh the attrs.
+
+I'm beginning to think I shouldn't have approved the 3/9 patch.  The
+stat->version shouldn't be set in vfs_getattr_nosec() - maybe in
+generic_fillattr(), but not a lot of point.
+
+> +	stat->attributes_mask |=3D STATX_ATTR_VERSION_MONOTONIC;
+> +	if (server->change_attr_type !=3D NFS4_CHANGE_TYPE_IS_UNDEFINED)
+> +		stat->attributes |=3D STATX_ATTR_VERSION_MONOTONIC;
+
+So if the server tells us that the change attrs is based on time
+metadata, we accept that it will be monotonic (and RFC7862 encourages
+this), even though we seem to worry about timestamps going backwards
+(which we know that can)...  Interesting.
 
 Thanks,
 NeilBrown
 
 
->=20
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/stat.c            | 17 +++++++++++++++--
->  include/linux/stat.h |  9 +++++++++
->  2 files changed, 24 insertions(+), 2 deletions(-)
->=20
-> diff --git a/fs/stat.c b/fs/stat.c
-> index a7930d744483..e7f8cd4b24e1 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -17,6 +17,7 @@
->  #include <linux/syscalls.h>
->  #include <linux/pagemap.h>
->  #include <linux/compat.h>
-> +#include <linux/iversion.h>
-> =20
->  #include <linux/uaccess.h>
->  #include <asm/unistd.h>
-> @@ -118,6 +119,11 @@ int vfs_getattr_nosec(const struct path *path, struct =
-kstat *stat,
->  	stat->attributes_mask |=3D (STATX_ATTR_AUTOMOUNT |
->  				  STATX_ATTR_DAX);
-> =20
-> +	if ((request_mask & STATX_VERSION) && IS_I_VERSION(inode)) {
-> +		stat->result_mask |=3D STATX_VERSION;
-> +		stat->version =3D inode_query_iversion(inode);
-> +	}
-> +
->  	mnt_userns =3D mnt_user_ns(path->mnt);
->  	if (inode->i_op->getattr)
->  		return inode->i_op->getattr(mnt_userns, path, stat,
-> @@ -587,9 +593,11 @@ cp_statx(const struct kstat *stat, struct statx __user=
- *buffer)
-> =20
->  	memset(&tmp, 0, sizeof(tmp));
-> =20
-> -	tmp.stx_mask =3D stat->result_mask;
-> +	/* STATX_VERSION is kernel-only for now */
-> +	tmp.stx_mask =3D stat->result_mask & ~STATX_VERSION;
->  	tmp.stx_blksize =3D stat->blksize;
-> -	tmp.stx_attributes =3D stat->attributes;
-> +	/* STATX_ATTR_VERSION_MONOTONIC is kernel-only for now */
-> +	tmp.stx_attributes =3D stat->attributes & ~STATX_ATTR_VERSION_MONOTONIC;
->  	tmp.stx_nlink =3D stat->nlink;
->  	tmp.stx_uid =3D from_kuid_munged(current_user_ns(), stat->uid);
->  	tmp.stx_gid =3D from_kgid_munged(current_user_ns(), stat->gid);
-> @@ -628,6 +636,11 @@ int do_statx(int dfd, struct filename *filename, unsig=
-ned int flags,
->  	if ((flags & AT_STATX_SYNC_TYPE) =3D=3D AT_STATX_SYNC_TYPE)
->  		return -EINVAL;
-> =20
-> +	/* STATX_VERSION is kernel-only for now. Ignore requests
-> +	 * from userland.
-> +	 */
-> +	mask &=3D ~STATX_VERSION;
-> +
->  	error =3D vfs_statx(dfd, filename, flags, &stat, mask);
->  	if (error)
->  		return error;
-> diff --git a/include/linux/stat.h b/include/linux/stat.h
-> index ff277ced50e9..4e9428d86a3a 100644
-> --- a/include/linux/stat.h
-> +++ b/include/linux/stat.h
-> @@ -52,6 +52,15 @@ struct kstat {
->  	u64		mnt_id;
->  	u32		dio_mem_align;
->  	u32		dio_offset_align;
-> +	u64		version;
->  };
-> =20
-> +/* These definitions are internal to the kernel for now. Mainly used by nf=
-sd. */
-> +
-> +/* mask values */
-> +#define STATX_VERSION		0x40000000U	/* Want/got stx_change_attr */
-> +
-> +/* file attribute values */
-> +#define STATX_ATTR_VERSION_MONOTONIC	0x8000000000000000ULL /* version mono=
-tonically increases */
-> +
->  #endif
+>  	if (S_ISDIR(inode->i_mode))
+>  		stat->blksize =3D NFS_SERVER(inode)->dtsize;
+>  out:
 > --=20
 > 2.37.3
 >=20
