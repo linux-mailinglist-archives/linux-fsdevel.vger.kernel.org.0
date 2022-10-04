@@ -2,100 +2,176 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 740D05F43BA
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Oct 2022 14:57:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E12CE5F442C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Oct 2022 15:21:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229705AbiJDM5s (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Oct 2022 08:57:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37674 "EHLO
+        id S229846AbiJDNUy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Oct 2022 09:20:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229539AbiJDM5Y (ORCPT
+        with ESMTP id S229748AbiJDNUe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Oct 2022 08:57:24 -0400
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5866E5F9B7;
-        Tue,  4 Oct 2022 05:54:03 -0700 (PDT)
-Received: by mail-wm1-x335.google.com with SMTP id ay36so8827082wmb.0;
-        Tue, 04 Oct 2022 05:54:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date;
-        bh=hlDBjgsrtiAB20EmVK+DqfPkxi/fwq2hkeX3Gk/vlHA=;
-        b=NC2sElPURU94A+oZT2BzfOw2kmYw3KRFHsAnXhb22SKXLi3zTGbXxZ62puTz8/F1Fb
-         Nlb98uIqmDLJycbNBoyhGYKudcng5U9JyJ4G+V/ys/U9uCqwiKRXrGHitNaInKvFYa5F
-         ZhRk/FxclhHt5Zp7aT5sjisqPIRyD0m6Xbx4FPLu0OGipVJdNiRY2IyGVMKcuCewHy/r
-         Xn9jJ7n7ZqQSZF5mXgLE9nyAJg0liZtWgFerVjYF9hYLVOuuZYfRAR/jCEcsPRPvfPTD
-         Ort5nw8wcLiHX1EfKlB7ikt07Er56GwiHDpIIhmObSpoU2FvP5m4Zd9DHlU6mWyy6aZo
-         Da/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
-        bh=hlDBjgsrtiAB20EmVK+DqfPkxi/fwq2hkeX3Gk/vlHA=;
-        b=VfA/f4FNlFLRKIwfe9Cs1Aod7FdpdwJx+YNlQf8OjOhGbyr/ZBVo4+9yuHALBz9Gy9
-         mbkTUhK+MIN3m6+OCig6T5XcuCO+7A4Pe9GCwAtwF8KRLVsS7YTs3f0811dZIEXBmbo3
-         efAxTNnICTgyJD7uGhBuFJ+VAvFAKFPQI3Leo7fftFn4kF3jRdxfHEpX01du3nTtPPiN
-         7wdQOZ3NL893lodbyKEuxCMyHRp+waZ7xPyVLaYTs1MQaA2Bkc4bvf1Uq+2gxZjgyelI
-         xfHmqSV5D98UBorlc3rzGBnZzQLwLY0MowbYfsK3K0tbWs0XXba+B8qxPC9cGJxyZ6GT
-         rSdg==
-X-Gm-Message-State: ACrzQf1uoxXe/AdKCDyn+ZQGgdmMH1V2su1Kq/snQ8NyQhTX7EsZGYz4
-        aDgh/8xXq5JQCRchbCG7FhPi26vhxw==
-X-Google-Smtp-Source: AMsMyM6gBzKWs6xHtQ1ha1QDGnLvIWXKrRpH5PfEVMSlaS5p+0i7Z7ps44ZaOrvVJrX/ZXjW+UEGCw==
-X-Received: by 2002:a7b:cb91:0:b0:3b4:75b9:5a4b with SMTP id m17-20020a7bcb91000000b003b475b95a4bmr9861463wmi.33.1664888023164;
-        Tue, 04 Oct 2022 05:53:43 -0700 (PDT)
-Received: from localhost.localdomain ([46.53.250.140])
-        by smtp.gmail.com with ESMTPSA id m38-20020a05600c3b2600b003b4ff30e566sm4017998wms.3.2022.10.04.05.53.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Oct 2022 05:53:42 -0700 (PDT)
-Date:   Tue, 4 Oct 2022 15:53:41 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     sethjenkins@google.com
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        linux-mm@kvack.org, stable@vger.kernel.org
-Subject: Re: [PATCH] mm: /proc/pid/smaps_rollup: fix no vma's null-deref
-Message-ID: <Yzws1f1ghsifXvGu@localhost.localdomain>
-References: <20221003224531.1930646-1-sethjenkins@google.com>
+        Tue, 4 Oct 2022 09:20:34 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A954F69C;
+        Tue,  4 Oct 2022 06:20:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C4723B81A6B;
+        Tue,  4 Oct 2022 13:20:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88E55C433D6;
+        Tue,  4 Oct 2022 13:20:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664889630;
+        bh=e9F9fTbSBPpOM3t2dVMwlVd/OMvpFA4AsrtFZy3az3Y=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vDgtEaax27vgMMakYcRAMllT4tvZuRVWQRO+G750hGnsrZDkaB31jtTpGeti83V+P
+         hKrQDsO8fe2nvkk/d0wZduBB9HLc2VX8AsRhq/W6uq6K8nfpq3UxuZhX96hxcl812T
+         JrJGgJUAZDsotPqpmtSQP0XDL+MgQhF+DC/haJBQ0rXy3L9KWhtfb2CpECdQEERK/F
+         H8IKVl/fYc1gBCASS6YHzGqB8fROta/8BOB3OGOpH+2EKdBRw06t5kn4EAt5m8ed3X
+         LpeRoFDawqo1NMiFDbra61G+F308SpUtz3k+xywD4lncB7Jj+jeiIJMwouHSpVWptq
+         P2Ma3jtkSI0dw==
+Date:   Tue, 4 Oct 2022 15:20:25 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        Yang Xu <xuyang2018.jy@fujitsu.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Filipe Manana <fdmanana@kernel.org>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] ovl: remove privs in ovl_fallocate()
+Message-ID: <20221004132025.fa3l6durrungs6my@wittgenstein>
+References: <20221003123040.900827-1-amir73il@gmail.com>
+ <20221003123040.900827-3-amir73il@gmail.com>
+ <20221004105932.bpvqstjrfpud5rcs@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20221003224531.1930646-1-sethjenkins@google.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20221004105932.bpvqstjrfpud5rcs@wittgenstein>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 03, 2022 at 06:45:31PM -0400, FirstName LastName wrote:
-> From: Seth Jenkins <sethjenkins@google.com>
+On Tue, Oct 04, 2022 at 12:59:37PM +0200, Christian Brauner wrote:
+> On Mon, Oct 03, 2022 at 03:30:40PM +0300, Amir Goldstein wrote:
+> > Underlying fs doesn't remove privs because fallocate is called with
+> > privileged mounter credentials.
+> > 
+> > This fixes some failure in fstests generic/683..687.
+> > 
+> > Fixes: aab8848cee5e ("ovl: add ovl_fallocate()")
+> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
+> > ---
+> >  fs/overlayfs/file.c | 12 +++++++++++-
+> >  1 file changed, 11 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
+> > index c8308da8909a..e90ac5376456 100644
+> > --- a/fs/overlayfs/file.c
+> > +++ b/fs/overlayfs/file.c
+> > @@ -517,9 +517,16 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
+> >  	const struct cred *old_cred;
+> >  	int ret;
+> >  
+> > +	inode_lock(inode);
+> > +	/* Update mode */
+> > +	ovl_copyattr(inode);
+> > +	ret = file_remove_privs(file);
 > 
-> Commit 258f669e7e88 ("mm: /proc/pid/smaps_rollup: convert to single value
-> seq_file") introduced a null-deref if there are no vma's in the task in
-> show_smaps_rollup.
+> First, thank you for picking this up!
 > 
-> Fixes: 258f669e7e88 ("mm: /proc/pid/smaps_rollup: convert to single value seq_file")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Seth Jenkins <sethjenkins@google.com>
+> Let me analyze generic/683 failure of Test1 to see why you still see
+> failures in this test:
+> 
+> echo "Test 1 - qa_user, non-exec file $verb"
+> setup_testfile
+> chmod a+rws $junk_file
+> commit_and_check "$qa_user" "$verb" 64k 64k
+> 
+> So this creates a file with 6666 permissions. While the file has the
+> S_ISUID and S_ISGID bits set it does not have the S_IXGRP set. This is
+> important in a little bit.
+> 
+> On a regular filesystem like xfs what will happen is:
+> 
+> sys_fallocate()
+> -> vfs_fallocate()
+>    -> xfs_file_fallocate()
+>       -> file_modified()
+>          -> __file_remove_privs()
+>             -> dentry_needs_remove_privs()
+>                -> should_remove_suid()
+>             -> __remove_privs()
+>                newattrs.ia_valid = ATTR_FORCE | kill;
+>                -> notify_change()
+> 
+> In should_remove_suid() we can see that ATTR_KILL_SUID is raised
+> unconditionally because the file in the test has S_ISUID set.
+> 
+> But we also see that ATTR_KILL_SGID won't be set because while the file
+> is S_ISGID it is not S_IXGRP (see above) which is a condition for
+> ATTR_KILL_SGID being raised.
+> 
+> So by the time we call notify_change() we have attr->ia_valid set to
+> ATTR_KILL_SUID | ATTR_FORCE. Now notify_change() sees that
+> ATTR_KILL_SUID is set and does:
+> 
+> ia_valid = attr->ia_valid |= ATTR_MODE
+> attr->ia_mode = (inode->i_mode & ~S_ISUID);
+> 
+> which means that when we call setattr_copy() later we will definitely
+> update inode->i_mode. Note that attr->ia_mode still contain S_ISGID.
+> 
+> Now we call into the filesystem's ->setattr() inode operation which will end up
+> calling setattr_copy(). Since ATTR_MODE is set we will hit:
+> 
+> if (ia_valid & ATTR_MODE) {
+>         umode_t mode = attr->ia_mode;
+>         vfsgid_t vfsgid = i_gid_into_vfsgid(mnt_userns, inode);
+>         if (!vfsgid_in_group_p(vfsgid) &&
+>             !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID))
+>                 mode &= ~S_ISGID;
+>         inode->i_mode = mode;
+> }
+> 
+> and since the caller in the test is neither capable nor in the group of the
+> inode the S_ISGID bit is stripped.
+> 
+> But now contrast this with overlayfs even after your changes. When
+> ovl_setattr() is hit from ovl_fallocate()'s call to file_remove_privs()
+> and calls ovl_do_notify_change() then we are doing this under the
+> mounter's creds and so the S_ISGID bit is retained:
+> 
+> sys_fallocate()
+> -> vfs_fallocate()
+>    -> ovl_fallocate()
+>       -> file_remove_privs()
+>          -> dentry_needs_remove_privs()
+>             -> should_remove_suid()
+>          -> __remove_privs()
+>             newattrs.ia_valid = attr_force | kill;
+>             -> notify_change()
+> 	       -> ovl_setattr()
 
-> --- a/fs/proc/task_mmu.c
-> +++ b/fs/proc/task_mmu.c
-> @@ -969,7 +969,7 @@ static int show_smaps_rollup(struct seq_file *m, void *v)
->  		vma = vma->vm_next;
->  	}
->  
-> -	show_vma_header_prefix(m, priv->mm->mmap->vm_start,
-> +	show_vma_header_prefix(m, priv->mm->mmap ? priv->mm->mmap->vm_start : 0,
->  			       last_vma_end, 0, 0, 0, 0);
->  	seq_pad(m, ' ');
->  	seq_puts(m, "[rollup]\n");
+Note also that the setattr_prepare() call skips setgid checks because
+ATTR_FORCE is passed from file_remove_privs().
 
-Reviewed-by: Alexey Dobriyan <adobriyan@gmail.com>
-Tested-by: Alexey Dobriyan <adobriyan@gmail.com>
-
-Now I know how to create stable process without address space.
+> 	          // TAKE ON MOUNTER'S CREDS
+> 	          -> ovl_do_notify_change()
+> 	          // GIVE UP MOUNTER'S CREDS
+>      // TAKE ON MOUNTER'S CREDS
+>      -> vfs_fallocate()
+>         -> xfs_file_fallocate()
+>            -> file_modified()
+>               -> __file_remove_privs()
+>                  -> dentry_needs_remove_privs()
+>                     -> should_remove_suid()
+>                  -> __remove_privs()
+>                     newattrs.ia_valid = attr_force | kill;
+>                     -> notify_change()
