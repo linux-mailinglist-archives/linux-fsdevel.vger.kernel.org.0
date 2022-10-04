@@ -2,70 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A90B55F3C07
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Oct 2022 06:13:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3221B5F3C1E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Oct 2022 06:34:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229728AbiJDENB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Oct 2022 00:13:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46036 "EHLO
+        id S229542AbiJDEeO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Oct 2022 00:34:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229697AbiJDEM4 (ORCPT
+        with ESMTP id S229486AbiJDEeL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Oct 2022 00:12:56 -0400
-Received: from esa9.hc1455-7.c3s2.iphmx.com (esa9.hc1455-7.c3s2.iphmx.com [139.138.36.223])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 108C326554;
-        Mon,  3 Oct 2022 21:12:54 -0700 (PDT)
-X-IronPort-AV: E=McAfee;i="6500,9779,10489"; a="79114693"
-X-IronPort-AV: E=Sophos;i="5.93,366,1654527600"; 
-   d="scan'208";a="79114693"
-Received: from unknown (HELO yto-r1.gw.nic.fujitsu.com) ([218.44.52.217])
-  by esa9.hc1455-7.c3s2.iphmx.com with ESMTP; 04 Oct 2022 13:12:51 +0900
-Received: from yto-m4.gw.nic.fujitsu.com (yto-nat-yto-m4.gw.nic.fujitsu.com [192.168.83.67])
-        by yto-r1.gw.nic.fujitsu.com (Postfix) with ESMTP id 27731DAFD0;
-        Tue,  4 Oct 2022 13:12:51 +0900 (JST)
-Received: from m3003.s.css.fujitsu.com (m3003.s.css.fujitsu.com [10.128.233.114])
-        by yto-m4.gw.nic.fujitsu.com (Postfix) with ESMTP id 57365F0FB6;
-        Tue,  4 Oct 2022 13:12:50 +0900 (JST)
-Received: from [10.14.75.87] (unknown [10.14.75.87])
-        by m3003.s.css.fujitsu.com (Postfix) with ESMTP id 8CF0F2005AD8;
-        Tue,  4 Oct 2022 13:12:47 +0900 (JST)
-Message-ID: <f196bcab-6aa2-6313-8a7c-f8ab409621b7@fujitsu.com>
-Date:   Mon, 3 Oct 2022 21:12:46 -0700
+        Tue, 4 Oct 2022 00:34:11 -0400
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04D462E6AF;
+        Mon,  3 Oct 2022 21:34:11 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id j7so14106117wrr.3;
+        Mon, 03 Oct 2022 21:34:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date;
+        bh=sXX5hX07BGx/rUvDQD47pclnXvdWt2TdZfsk0DmyS1o=;
+        b=Ag6joGOw0nFt/ikjUoadX/LWmbO2Y4s+CvAVFJ+GKUhejJhijT2cjlnHDRqmuLfqe8
+         lylGx4AYVDkLY3g2NGoRZCBD7j5YwLvfkJIIUc7xX2fcCXzriqcU8hx+fjp1AnRTI30V
+         EYLnz8tZf1F+B+ESApinPKhqKRg7tl4tQHfoSUupHAL1g9RDGSDsBUhWX18KJpgoyjDo
+         L7+np3fGiiixl2kxymfMTMI/Q+kjetK3H1QRt8UX2D8P7vjVPdQnZFH5AvN/bVAbEFSa
+         hJUBU7UgrwStNERmSCKyAPj3c/stlY1hZvSAhqjQjcxdFCwXoTZSHSuVUgnBO4TTO4w9
+         uNIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date;
+        bh=sXX5hX07BGx/rUvDQD47pclnXvdWt2TdZfsk0DmyS1o=;
+        b=yiH0be3uMH4fAgCvgwRimu5P2LI1NKYibgnz978G+EKcmaengTHSteXz/zerPNrDA2
+         Caiywk5sh30rJYX3wt7rKvFytZXJaPHYfwiZFWCxDzhLPeMX6ADlFbDNVhdFusUAn43R
+         VGbZeBef6FSPizgnfYaQ9A4wd4XPNq95h0I3SnAjValhbtUJhV8u2W/BBo6xyxwBGyME
+         X2K6QdZoWKvloU0+GxDCYY3yeAENPYkI5DSSTi4bKdVv0VQWnmCZvwoUVQaqO6r4khMY
+         hXJ3Ctyij33lU4qQtah/1SsbtjdklY3bKp89V4J0ptT1kFkslCUjkl0jZ3uDBkFMhziJ
+         ByGg==
+X-Gm-Message-State: ACrzQf2lXhGngr5x5rPkena8ftMFW97tK84Gn0/zRZjzvelfTZKkKjiD
+        YWJusfcMOQfftp3BXq0lKsTUab+UwgmSrA==
+X-Google-Smtp-Source: AMsMyM7/ZkC7rTcZwmP8+Aw/TsKUwPG9cD4Kuvg4bXZi43PX7RBEHVGW3WErXO4pDtfiSCfHrNqj3g==
+X-Received: by 2002:a5d:5849:0:b0:22b:a0e:11e0 with SMTP id i9-20020a5d5849000000b0022b0a0e11e0mr15606160wrf.72.1664858049476;
+        Mon, 03 Oct 2022 21:34:09 -0700 (PDT)
+Received: from [192.168.42.102] (mo-217-129-3-75.netvisao.pt. [217.129.3.75])
+        by smtp.gmail.com with ESMTPSA id x6-20020adfdcc6000000b0022add371ed2sm11415547wrm.55.2022.10.03.21.34.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Oct 2022 21:34:09 -0700 (PDT)
+Message-ID: <9f8c3c0e-189b-87d0-965f-fbe68ff9b883@gmail.com>
+Date:   Tue, 4 Oct 2022 05:34:07 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH] xfs: fail dax mount if reflink is enabled on a partition
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
 Content-Language: en-US
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     =?UTF-8?B?WWFuZywgWGlhby/mnagg5pmT?= <yangx.jy@fujitsu.com>,
-        Brian Foster <bfoster@redhat.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        =?UTF-8?B?UnVhbiwgU2hpeWFuZy/pmK4g5LiW6Ziz?= 
-        <ruansy.fnst@fujitsu.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        "nvdimm@lists.linux.dev" <nvdimm@lists.linux.dev>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "david@fromorbit.com" <david@fromorbit.com>, zwisler@kernel.org,
-        Jeff Moyer <jmoyer@redhat.com>, dm-devel@redhat.com,
-        toshi.kani@hpe.com
-References: <dd363bd8-2dbd-5d9c-0406-380b60c5f510@fujitsu.com>
- <Yxs5Jb7Yt2c6R6eW@bfoster> <7fdc9e88-f255-6edb-7964-a5a82e9b1292@fujitsu.com>
- <76ea04b4-bad7-8cb3-d2c6-4ad49def4e05@fujitsu.com> <YyHKUhOgHdTKPQXL@bfoster>
- <YyIBMJzmbZsUBHpy@magnolia>
- <a6e7f4eb-0664-bbe8-98d2-f8386b226113@fujitsu.com>
- <e3d51a6b-12e9-2a19-1280-5fd9dd64117c@fujitsu.com>
- <deb54a77-90d3-df44-1880-61cce6e3f670@fujitsu.com>
- <1444b9b5-363a-163c-0513-55d1ea951799@fujitsu.com>
- <Yzt6eWLuX/RTjmjj@magnolia>
-From:   =?UTF-8?B?R290b3UsIFlhc3Vub3JpL+S6lOWztiDlurfmloc=?= 
-        <y-goto@fujitsu.com>
-In-Reply-To: <Yzt6eWLuX/RTjmjj@magnolia>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Spam-Status: No, score=-5.7 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_NONE autolearn=ham
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Daniel Pinto <danielpinto52@gmail.com>
+Subject: [PATCH] fs/ntfs3: add system.ntfs_attrib_be extended attribute
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,70 +72,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/10/03 17:12, Darrick J. Wong wrote:
-> On Fri, Sep 30, 2022 at 09:56:41AM +0900, Gotou, Yasunori/五島 康文 wrote:
->> Hello everyone,
->>
->> On 2022/09/20 11:38, Yang, Xiao/杨 晓 wrote:
->>> Hi Darrick, Brian and Christoph
->>>
->>> Ping. I hope to get your feedback.
->>>
->>> 1) I have confirmed that the following patch set did not change the test
->>> result of generic/470 with thin-volume. Besides, I didn't see any
->>> failure when running generic/470 based on normal PMEM device instaed of
->>> thin-volume.
->>> https://lore.kernel.org/linux-xfs/20211129102203.2243509-1-hch@lst.de/
->>>
->>> 2) I can reproduce the failure of generic/482 without thin-volume.
->>>
->>> 3) Is it necessary to make thin-volume support DAX. Is there any use
->>> case for the requirement?
->>
->>
->> Though I asked other place(*), I really want to know the usecase of
->> dm-thin-volume with DAX and reflink.
->>
->>
->> In my understanding, dm-thin-volume seems to provide similar feature like
->> reflink of xfs. Both feature provide COW update to reduce usage of
->> its region, and snapshot feature, right?
->>
->> I found that docker seems to select one of them (or other feature which
->> supports COW). Then user don't need to use thin-volume and reflink at same
->> time.
->>
->> Database which uses FS-DAX may want to use snapshot for its data of FS-DAX,
->> its user seems to be satisfied with reflink or thin-volume.
->>
->> So I could not find on what use-case user would like to use dm-thin-volume
->> and reflink at same time.
->>
->> The only possibility is that the user has mistakenly configured dm-thinpool
->> and reflink to be used at the same time, but if that is the case, it seems
->> to be better for the user to disable one or the other.
->>
->> I really wander why dm-thin-volume must be used with reflik and FS-DAX.
-> 
-> There isn't a hard requirement between fsdax and dm-thinp.  The /test/
-> needs dm-logwrites to check that write page faults on a MAP_SYNC
-> mmapping are persisted directly to disk.  dm-logwrites requires a fast
-> way to zero an entire device for correct operation of the replay step,
-> and thinp is the only way to guarantee that.
+NTFS-3G provides the system.ntfs_attrib_be extended attribute, which
+has the same value as system.ntfs_attrib but represented in big-endian.
+Some utilities rely on the existence of this extended attribute.
 
-Thank you for your answer. But I still feel something is strange.
-Though dm-thinp may be good way to execute the test correctly,
-I suppose it seems to be likely a kind of workaround to pass the test,
-it may not be really required for actual users.
+Improves compatibility with NTFS-3G by adding the system.ntfs_attrib_be
+extended attribute.
 
-Could you tell me why passing test by workaround is so necessary?
+Signed-off-by: Daniel Pinto <danielpinto52@gmail.com>
+---
+ fs/ntfs3/xattr.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-Thanks,
-
-
-> 
-> --D
-> 
->> If my understanding is something wrong, please correct me.
->>
->> (*)https://lore.kernel.org/all/TYWPR01MB1008258F474CA2295B4CD3D9B90549@TYWPR01MB10082.jpnprd01.prod.outlook.com/
+diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
+index aeee5fb12092..8620a7b4b3e6 100644
+--- a/fs/ntfs3/xattr.c
++++ b/fs/ntfs3/xattr.c
+@@ -15,9 +15,10 @@
+ #include "ntfs_fs.h"
+ 
+ // clang-format off
+-#define SYSTEM_DOS_ATTRIB    "system.dos_attrib"
+-#define SYSTEM_NTFS_ATTRIB   "system.ntfs_attrib"
+-#define SYSTEM_NTFS_SECURITY "system.ntfs_security"
++#define SYSTEM_DOS_ATTRIB     "system.dos_attrib"
++#define SYSTEM_NTFS_ATTRIB    "system.ntfs_attrib"
++#define SYSTEM_NTFS_ATTRIB_BE "system.ntfs_attrib_be"
++#define SYSTEM_NTFS_SECURITY  "system.ntfs_security"
+ // clang-format on
+ 
+ static inline size_t unpacked_ea_size(const struct EA_FULL *ea)
+@@ -796,7 +797,8 @@ static int ntfs_getxattr(const struct xattr_handler *handler, struct dentry *de,
+ 		goto out;
+ 	}
+ 
+-	if (!strcmp(name, SYSTEM_NTFS_ATTRIB)) {
++	if (!strcmp(name, SYSTEM_NTFS_ATTRIB) ||
++	    !strcmp(name, SYSTEM_NTFS_ATTRIB_BE)) {
+ 		/* system.ntfs_attrib */
+ 		if (!buffer) {
+ 			err = sizeof(u32);
+@@ -805,6 +807,8 @@ static int ntfs_getxattr(const struct xattr_handler *handler, struct dentry *de,
+ 		} else {
+ 			err = sizeof(u32);
+ 			*(u32 *)buffer = le32_to_cpu(ni->std_fa);
++			if (!strcmp(name, SYSTEM_NTFS_ATTRIB_BE))
++				*(u32 *)buffer = cpu_to_be32(*(u32 *)buffer);
+ 		}
+ 		goto out;
+ 	}
+@@ -889,10 +893,14 @@ static noinline int ntfs_setxattr(const struct xattr_handler *handler,
+ 		goto set_new_fa;
+ 	}
+ 
+-	if (!strcmp(name, SYSTEM_NTFS_ATTRIB)) {
++	if (!strcmp(name, SYSTEM_NTFS_ATTRIB) ||
++	    !strcmp(name, SYSTEM_NTFS_ATTRIB_BE)) {
+ 		if (size != sizeof(u32))
+ 			goto out;
+-		new_fa = cpu_to_le32(*(u32 *)value);
++		if (!strcmp(name, SYSTEM_NTFS_ATTRIB_BE))
++			new_fa = cpu_to_le32(be32_to_cpu(*(u32 *)value));
++		else
++			new_fa = cpu_to_le32(*(u32 *)value);
+ 
+ 		if (S_ISREG(inode->i_mode)) {
+ 			/* Process compressed/sparsed in special way. */
