@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (unknown [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 143185F47F2
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Oct 2022 18:55:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A5B55F47F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Oct 2022 18:56:16 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229830AbiJDQzC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Oct 2022 12:55:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55496 "EHLO
+        id S229593AbiJDQ4O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Oct 2022 12:56:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58222 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbiJDQy7 (ORCPT
+        with ESMTP id S229509AbiJDQ4N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Oct 2022 12:54:59 -0400
+        Tue, 4 Oct 2022 12:56:13 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2D7F21ADA3;
-        Tue,  4 Oct 2022 09:54:58 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE2474F18E;
+        Tue,  4 Oct 2022 09:56:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
         Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To:References;
-        bh=AsTuUOYILwvkkbCujqdmHs6n+Rpe+EW6I7v3NG7bw4o=; b=Yr59Bjm9ZC4uRx5sohE6zKmVfl
-        3cfGNAxeCcZE9UpGsy9GfFIa2CZ7VlhBaj8kpKnop8pxOMuyNrbIfQBr+CY3vhNYB1FQYp6ojFfq9
-        SdF2a9/tBlZCoob1YlgU3qtmTPnQcbYAoSkuTZOX6aUipJj3avVNvdOj4rney46b1r7ROb+/BkrDo
-        ueZYDH0xJljmHuEWYLXmKTifzo2GO07y36SEK+hJ5rK0yaPfuRKYBrJRUjanZ3Bqt361JyRak+iqa
-        Cg21KEm4J5/ybug79BaP4H2jld72fNsHlBLmoAMWiYyjHQXyo3MNmXxg+wzprtJMRA/m7Wbs4BmL2
-        WYLgiMVA==;
+        bh=pWqBOpi2UwbYFYN/Ld2WJlUM8sZ9zCHe2jy9DCGouMY=; b=f7AqDnT6ipMtbO+xw8MJ2JYch6
+        y1JUZ/yGNu3aHtulRBrhr0U+RHTeDmRgZVEyHxSLG4UZ048M8QaZ+Q4rzsuI6eeRVxpE3nXW9Y+jh
+        aXO3BKbZdq/Bc9jdA5i6QfD0H9Co1/u5HAB1a6OXwYYz+/LnAzkrOG/dkwPPgDkKshZWdvoK/5Nrc
+        8k+0NB49H7HEkpNoLYupeM2erug2cg77BXtQ1wCOc3ZK1mGriY1NmEYs7ho3/tqQHrAcpvkVR1f6B
+        Gcyt6BMRippZPooRnDnF7R0jxK8CRQ5HT1exXI8xwH5d59wFJMGk9RSxF/W16ke5yTT1UFFxqa3Ow
+        5terW2Dw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1oflC4-0072Im-1a;
-        Tue, 04 Oct 2022 16:54:56 +0000
-Date:   Tue, 4 Oct 2022 17:54:56 +0100
+        id 1oflDG-0072LB-0y;
+        Tue, 04 Oct 2022 16:56:10 +0000
+Date:   Tue, 4 Oct 2022 17:56:10 +0100
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] vfs.git pile 3 (file)
-Message-ID: <YzxlYFiWmx5nK+gT@ZenIV>
+Subject: [git pull] vfs.git pile 4 (file_inode)
+Message-ID: <YzxlqrEtoV37hm3l@ZenIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -47,52 +47,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The non-trivial part here is filldir_t calling conventions change.
-
 The following changes since commit 568035b01cfb107af8d2e4bd2fb9aea22cf5b868:
 
   Linux 6.0-rc1 (2022-08-14 15:50:18 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-file
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-file_inode
 
-for you to fetch changes up to 47091e4ed9af648d6cfa3a5f0809ece371294ecb:
+for you to fetch changes up to 4094d98e3375833737b467998219338ffd46a68b:
 
-  dma_buf_getfile(): don't bother with ->f_flags reassignments (2022-08-17 17:25:54 -0400)
-
-----------------------------------------------------------------
-struct file-related stuff
+  orangefs: use ->f_mapping (2022-09-01 17:46:06 -0400)
 
 ----------------------------------------------------------------
-Al Viro (2):
-      Change calling conventions for filldir_t
-      dma_buf_getfile(): don't bother with ->f_flags reassignments
+whack-a-mole: cropped up open-coded file_inode() uses...
 
-Amir Goldstein (1):
-      locks: fix TOCTOU race when granting write lease
+----------------------------------------------------------------
+Al Viro (8):
+      ibmvmc: don't open-code file_inode()
+      exfat_iterate(): don't open-code file_inode(file)
+      sgx: use ->f_mapping...
+      bprm_fill_uid(): don't open-code file_inode()
+      nfs_finish_open(): don't open-code file_inode()
+      dma_buf: no need to bother with file_inode()->i_mapping
+      _nfs42_proc_copy(): use ->f_mapping instead of file_inode()->i_mapping
+      orangefs: use ->f_mapping
 
- Documentation/filesystems/porting.rst | 11 ++++++
- arch/alpha/kernel/osf_sys.c           | 10 +++---
- drivers/dma-buf/dma-buf.c             |  2 +-
- fs/afs/dir.c                          | 23 ++++++------
- fs/ecryptfs/file.c                    | 38 +++++++++-----------
- fs/exportfs/expfs.c                   |  7 ++--
- fs/fat/dir.c                          |  8 ++---
- fs/file_table.c                       |  7 +---
- fs/gfs2/export.c                      |  6 ++--
- fs/internal.h                         | 10 ++++++
- fs/ksmbd/smb2pdu.c                    | 16 ++++-----
- fs/ksmbd/vfs.c                        | 14 ++++----
- fs/nfsd/nfs4recover.c                 |  8 ++---
- fs/nfsd/vfs.c                         |  6 ++--
- fs/ocfs2/dir.c                        | 10 +++---
- fs/ocfs2/journal.c                    | 14 ++++----
- fs/open.c                             | 11 +++---
- fs/overlayfs/readdir.c                | 28 +++++++--------
- fs/readdir.c                          | 68 +++++++++++++++++------------------
- fs/reiserfs/xattr.c                   | 20 +++++------
- fs/xfs/scrub/dir.c                    |  8 ++---
- fs/xfs/scrub/parent.c                 |  4 +--
- include/linux/fs.h                    |  9 ++---
- 23 files changed, 169 insertions(+), 169 deletions(-)
+ arch/x86/kernel/cpu/sgx/encl.c | 3 +--
+ drivers/dma-buf/udmabuf.c      | 2 +-
+ drivers/misc/ibmvmc.c          | 6 ++++--
+ fs/exec.c                      | 3 +--
+ fs/exfat/dir.c                 | 6 +++---
+ fs/nfs/dir.c                   | 2 +-
+ fs/nfs/nfs42proc.c             | 2 +-
+ fs/orangefs/file.c             | 4 +---
+ 8 files changed, 13 insertions(+), 15 deletions(-)
