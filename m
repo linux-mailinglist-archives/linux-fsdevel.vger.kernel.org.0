@@ -2,176 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E12CE5F442C
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Oct 2022 15:21:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B6F2F5F44EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  4 Oct 2022 15:58:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229846AbiJDNUy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 4 Oct 2022 09:20:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53102 "EHLO
+        id S229678AbiJDN6M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 4 Oct 2022 09:58:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229748AbiJDNUe (ORCPT
+        with ESMTP id S229750AbiJDN6K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 4 Oct 2022 09:20:34 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 39A954F69C;
-        Tue,  4 Oct 2022 06:20:33 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 4 Oct 2022 09:58:10 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01CD35C351
+        for <linux-fsdevel@vger.kernel.org>; Tue,  4 Oct 2022 06:58:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1664891888;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=FovgkzjBCd5eiueFMUNM+DsFnQ3oZ8WMZkVXqv5D0IQ=;
+        b=GHtT+ehXFErbEsM4kOMManWp1hbIOrjk4EjVqab9nLTTVjKUesbzO0TQ3QcSdUW458ZFbN
+        3m6Ald6V2bFhDauJAPaqcfPoYJF8Y1MZ2lleyIsGjMxTGoyBtwvrLI/vC3AJ9RZ4BsqUkJ
+        5P1vk+YlgDff3a/c0+EE0r43TSgyMOw=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-486-xLaMWaGeOfewNU4n5bQEYQ-1; Tue, 04 Oct 2022 09:58:05 -0400
+X-MC-Unique: xLaMWaGeOfewNU4n5bQEYQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C4723B81A6B;
-        Tue,  4 Oct 2022 13:20:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88E55C433D6;
-        Tue,  4 Oct 2022 13:20:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1664889630;
-        bh=e9F9fTbSBPpOM3t2dVMwlVd/OMvpFA4AsrtFZy3az3Y=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vDgtEaax27vgMMakYcRAMllT4tvZuRVWQRO+G750hGnsrZDkaB31jtTpGeti83V+P
-         hKrQDsO8fe2nvkk/d0wZduBB9HLc2VX8AsRhq/W6uq6K8nfpq3UxuZhX96hxcl812T
-         JrJGgJUAZDsotPqpmtSQP0XDL+MgQhF+DC/haJBQ0rXy3L9KWhtfb2CpECdQEERK/F
-         H8IKVl/fYc1gBCASS6YHzGqB8fROta/8BOB3OGOpH+2EKdBRw06t5kn4EAt5m8ed3X
-         LpeRoFDawqo1NMiFDbra61G+F308SpUtz3k+xywD4lncB7Jj+jeiIJMwouHSpVWptq
-         P2Ma3jtkSI0dw==
-Date:   Tue, 4 Oct 2022 15:20:25 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        Yang Xu <xuyang2018.jy@fujitsu.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Filipe Manana <fdmanana@kernel.org>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/2] ovl: remove privs in ovl_fallocate()
-Message-ID: <20221004132025.fa3l6durrungs6my@wittgenstein>
-References: <20221003123040.900827-1-amir73il@gmail.com>
- <20221003123040.900827-3-amir73il@gmail.com>
- <20221004105932.bpvqstjrfpud5rcs@wittgenstein>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 42B32857D0B;
+        Tue,  4 Oct 2022 13:58:05 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.40.193.104])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9249214152E8;
+        Tue,  4 Oct 2022 13:58:04 +0000 (UTC)
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     linux-ext4@vger.kernel.org
+Cc:     tytso@mit.edu, linux-fsdevel@vger.kernel.org
+Subject: [PATCH] ext4: journal_path mount options should follow links
+Date:   Tue,  4 Oct 2022 15:58:03 +0200
+Message-Id: <20221004135803.32283-1-lczerner@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20221004105932.bpvqstjrfpud5rcs@wittgenstein>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 04, 2022 at 12:59:37PM +0200, Christian Brauner wrote:
-> On Mon, Oct 03, 2022 at 03:30:40PM +0300, Amir Goldstein wrote:
-> > Underlying fs doesn't remove privs because fallocate is called with
-> > privileged mounter credentials.
-> > 
-> > This fixes some failure in fstests generic/683..687.
-> > 
-> > Fixes: aab8848cee5e ("ovl: add ovl_fallocate()")
-> > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > ---
-> >  fs/overlayfs/file.c | 12 +++++++++++-
-> >  1 file changed, 11 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> > index c8308da8909a..e90ac5376456 100644
-> > --- a/fs/overlayfs/file.c
-> > +++ b/fs/overlayfs/file.c
-> > @@ -517,9 +517,16 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
-> >  	const struct cred *old_cred;
-> >  	int ret;
-> >  
-> > +	inode_lock(inode);
-> > +	/* Update mode */
-> > +	ovl_copyattr(inode);
-> > +	ret = file_remove_privs(file);
-> 
-> First, thank you for picking this up!
-> 
-> Let me analyze generic/683 failure of Test1 to see why you still see
-> failures in this test:
-> 
-> echo "Test 1 - qa_user, non-exec file $verb"
-> setup_testfile
-> chmod a+rws $junk_file
-> commit_and_check "$qa_user" "$verb" 64k 64k
-> 
-> So this creates a file with 6666 permissions. While the file has the
-> S_ISUID and S_ISGID bits set it does not have the S_IXGRP set. This is
-> important in a little bit.
-> 
-> On a regular filesystem like xfs what will happen is:
-> 
-> sys_fallocate()
-> -> vfs_fallocate()
->    -> xfs_file_fallocate()
->       -> file_modified()
->          -> __file_remove_privs()
->             -> dentry_needs_remove_privs()
->                -> should_remove_suid()
->             -> __remove_privs()
->                newattrs.ia_valid = ATTR_FORCE | kill;
->                -> notify_change()
-> 
-> In should_remove_suid() we can see that ATTR_KILL_SUID is raised
-> unconditionally because the file in the test has S_ISUID set.
-> 
-> But we also see that ATTR_KILL_SGID won't be set because while the file
-> is S_ISGID it is not S_IXGRP (see above) which is a condition for
-> ATTR_KILL_SGID being raised.
-> 
-> So by the time we call notify_change() we have attr->ia_valid set to
-> ATTR_KILL_SUID | ATTR_FORCE. Now notify_change() sees that
-> ATTR_KILL_SUID is set and does:
-> 
-> ia_valid = attr->ia_valid |= ATTR_MODE
-> attr->ia_mode = (inode->i_mode & ~S_ISUID);
-> 
-> which means that when we call setattr_copy() later we will definitely
-> update inode->i_mode. Note that attr->ia_mode still contain S_ISGID.
-> 
-> Now we call into the filesystem's ->setattr() inode operation which will end up
-> calling setattr_copy(). Since ATTR_MODE is set we will hit:
-> 
-> if (ia_valid & ATTR_MODE) {
->         umode_t mode = attr->ia_mode;
->         vfsgid_t vfsgid = i_gid_into_vfsgid(mnt_userns, inode);
->         if (!vfsgid_in_group_p(vfsgid) &&
->             !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID))
->                 mode &= ~S_ISGID;
->         inode->i_mode = mode;
-> }
-> 
-> and since the caller in the test is neither capable nor in the group of the
-> inode the S_ISGID bit is stripped.
-> 
-> But now contrast this with overlayfs even after your changes. When
-> ovl_setattr() is hit from ovl_fallocate()'s call to file_remove_privs()
-> and calls ovl_do_notify_change() then we are doing this under the
-> mounter's creds and so the S_ISGID bit is retained:
-> 
-> sys_fallocate()
-> -> vfs_fallocate()
->    -> ovl_fallocate()
->       -> file_remove_privs()
->          -> dentry_needs_remove_privs()
->             -> should_remove_suid()
->          -> __remove_privs()
->             newattrs.ia_valid = attr_force | kill;
->             -> notify_change()
-> 	       -> ovl_setattr()
+Before the commit 461c3af045d3 ("ext4: Change handle_mount_opt() to use
+fs_parameter") ext4 mount option journal_path did follow links in the
+provided path.
 
-Note also that the setattr_prepare() call skips setgid checks because
-ATTR_FORCE is passed from file_remove_privs().
+Bring this behavior back by allowing to pass pathwalk flags to
+fs_lookup_param().
 
-> 	          // TAKE ON MOUNTER'S CREDS
-> 	          -> ovl_do_notify_change()
-> 	          // GIVE UP MOUNTER'S CREDS
->      // TAKE ON MOUNTER'S CREDS
->      -> vfs_fallocate()
->         -> xfs_file_fallocate()
->            -> file_modified()
->               -> __file_remove_privs()
->                  -> dentry_needs_remove_privs()
->                     -> should_remove_suid()
->                  -> __remove_privs()
->                     newattrs.ia_valid = attr_force | kill;
->                     -> notify_change()
+Fixes: 461c3af045d3 ("ext4: Change handle_mount_opt() to use fs_parameter")
+Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+---
+ Documentation/filesystems/mount_api.rst | 1 +
+ fs/ext4/super.c                         | 2 +-
+ fs/fs_parser.c                          | 3 ++-
+ include/linux/fs_parser.h               | 1 +
+ 4 files changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
+index eb358a00be27..1d16787a00e9 100644
+--- a/Documentation/filesystems/mount_api.rst
++++ b/Documentation/filesystems/mount_api.rst
+@@ -814,6 +814,7 @@ process the parameters it is given.
+        int fs_lookup_param(struct fs_context *fc,
+ 			   struct fs_parameter *value,
+ 			   bool want_bdev,
++			   unsigned int flags,
+ 			   struct path *_path);
+ 
+      This takes a parameter that carries a string or filename type and attempts
+diff --git a/fs/ext4/super.c b/fs/ext4/super.c
+index 9a66abcca1a8..4c1b3972d53f 100644
+--- a/fs/ext4/super.c
++++ b/fs/ext4/super.c
+@@ -2271,7 +2271,7 @@ static int ext4_parse_param(struct fs_context *fc, struct fs_parameter *param)
+ 			return -EINVAL;
+ 		}
+ 
+-		error = fs_lookup_param(fc, param, 1, &path);
++		error = fs_lookup_param(fc, param, 1, LOOKUP_FOLLOW, &path);
+ 		if (error) {
+ 			ext4_msg(NULL, KERN_ERR, "error: could not find "
+ 				 "journal device path");
+diff --git a/fs/fs_parser.c b/fs/fs_parser.c
+index ed40ce5742fd..edb3712dcfa5 100644
+--- a/fs/fs_parser.c
++++ b/fs/fs_parser.c
+@@ -138,15 +138,16 @@ EXPORT_SYMBOL(__fs_parse);
+  * @fc: The filesystem context to log errors through.
+  * @param: The parameter.
+  * @want_bdev: T if want a blockdev
++ * @flags: Pathwalk flags passed to filename_lookup()
+  * @_path: The result of the lookup
+  */
+ int fs_lookup_param(struct fs_context *fc,
+ 		    struct fs_parameter *param,
+ 		    bool want_bdev,
++		    unsigned int flags,
+ 		    struct path *_path)
+ {
+ 	struct filename *f;
+-	unsigned int flags = 0;
+ 	bool put_f;
+ 	int ret;
+ 
+diff --git a/include/linux/fs_parser.h b/include/linux/fs_parser.h
+index f103c91139d4..01542c4b87a2 100644
+--- a/include/linux/fs_parser.h
++++ b/include/linux/fs_parser.h
+@@ -76,6 +76,7 @@ static inline int fs_parse(struct fs_context *fc,
+ extern int fs_lookup_param(struct fs_context *fc,
+ 			   struct fs_parameter *param,
+ 			   bool want_bdev,
++			   unsigned int flags,
+ 			   struct path *_path);
+ 
+ extern int lookup_constant(const struct constant_table tbl[], const char *name, int not_found);
+-- 
+2.37.3
+
