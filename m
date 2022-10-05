@@ -2,73 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DD89A5F50A4
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 10:12:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 07E765F5148
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 11:03:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229890AbiJEIMF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Oct 2022 04:12:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36592 "EHLO
+        id S229769AbiJEJDe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Oct 2022 05:03:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbiJEIMC (ORCPT
+        with ESMTP id S229981AbiJEJDa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Oct 2022 04:12:02 -0400
-X-Greylist: delayed 392 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 05 Oct 2022 01:12:01 PDT
-Received: from mail.peston.pl (mail.peston.pl [5.196.8.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CB1B726B9
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Oct 2022 01:12:00 -0700 (PDT)
-Received: by mail.peston.pl (Postfix, from userid 1002)
-        id 17D51A248A; Wed,  5 Oct 2022 08:05:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=peston.pl; s=mail;
-        t=1664957127; bh=Cc29BCeGAXKamRAYF1RC3YwJiZOOIdJ1fkzOKoOmzTc=;
-        h=Date:From:To:Subject:From;
-        b=5az3aXr7MLWtUIYJsOihvyD1I2Y9vkxDC1zJsxEdJ7yDXK8RiiuUp+7lg14hyJ4Hk
-         z1Odf4s3p1dwBHVndHc7c+1ERBh2I4qLDBOzKfQpYSWbMCr9JMl9IYUCaGlGTmkW1O
-         aCDGzmTWy+jd+0lpojhp6LSh06PpKotF+HW4mc14GZQ2Dr4yQkjfwlkOTPKpoOnamF
-         awaqnYqzIH6v8TZ83sG5AyojDSOvDxlR61FwqQqzRdujGzYGivtqZVQnbHGf8ytMD4
-         tVZBEueI4pNW1nyyFBBRLjQ/1fa6Ooo1/w9vz09N9Zrr7NWxdw7bWauggmBmoUKg8j
-         1ubnZkJTPxAMg==
-Received: by mail.peston.pl for <linux-fsdevel@vger.kernel.org>; Wed,  5 Oct 2022 08:05:26 GMT
-Message-ID: <20221005064500-0.1.4x.c7fu.0.idev55ggd5@peston.pl>
-Date:   Wed,  5 Oct 2022 08:05:26 GMT
-From:   "Igor Ferenz" <igor.ferenz@peston.pl>
-To:     <linux-fsdevel@vger.kernel.org>
-Subject: Biznesowy angielski
-X-Mailer: mail.peston.pl
+        Wed, 5 Oct 2022 05:03:30 -0400
+Received: from relay.virtuozzo.com (relay.virtuozzo.com [130.117.225.111])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A10AE5BC36;
+        Wed,  5 Oct 2022 02:03:29 -0700 (PDT)
+Received: from dev011.ch-qa.sw.ru ([172.29.1.16])
+        by relay.virtuozzo.com with esmtp (Exim 4.95)
+        (envelope-from <alexander.atanasov@virtuozzo.com>)
+        id 1og0GN-007ckN-1e;
+        Wed, 05 Oct 2022 11:02:47 +0200
+From:   Alexander Atanasov <alexander.atanasov@virtuozzo.com>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     kernel@openvz.org,
+        Alexander Atanasov <alexander.atanasov@virtuozzo.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org
+Subject: [PATCH v4 3/7] Display inflated memory to users
+Date:   Wed,  5 Oct 2022 12:01:53 +0300
+Message-Id: <20221005090158.2801592-4-alexander.atanasov@virtuozzo.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20221005090158.2801592-1-alexander.atanasov@virtuozzo.com>
+References: <20221005090158.2801592-1-alexander.atanasov@virtuozzo.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dzie=C5=84 dobry,=20
+Add InflatedTotal and InflatedFree to /proc/meminfo
 
-czy rozwa=C5=BCali Pa=C5=84stwo rozw=C3=B3j kwalifikacji j=C4=99zykowych =
-swoich pracownik=C3=B3w?
+Signed-off-by: Alexander Atanasov <alexander.atanasov@virtuozzo.com>
+---
+ Documentation/filesystems/proc.rst |  6 ++++++
+ fs/proc/meminfo.c                  | 10 ++++++++++
+ 2 files changed, 16 insertions(+)
 
-Opracowali=C5=9Bmy kursy j=C4=99zykowe dla r=C3=B3=C5=BCnych bran=C5=BC, =
-w kt=C3=B3rych koncentrujemy si=C4=99 na podniesieniu poziomu s=C5=82owni=
-ctwa i jako=C5=9Bci komunikacji wykorzystuj=C4=85c autorsk=C4=85 metod=C4=
-=99, stworzon=C4=85 specjalnie dla wymagaj=C4=85cego biznesu.=20
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index e7aafc82be99..690e1b90ffee 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -991,6 +991,8 @@ Example output. You may not have all of these fields.
+     VmallocUsed:       40444 kB
+     VmallocChunk:          0 kB
+     Percpu:            29312 kB
++    InflatedTotal:   2097152 kB
++    InflatedFree:          0 kB
+     HardwareCorrupted:     0 kB
+     AnonHugePages:   4149248 kB
+     ShmemHugePages:        0 kB
+@@ -1138,6 +1140,10 @@ VmallocChunk
+ Percpu
+               Memory allocated to the percpu allocator used to back percpu
+               allocations. This stat excludes the cost of metadata.
++InflatedTotal and InflatedFree
++               Amount of memory that is inflated by the balloon driver.
++               Due to differences among the drivers inflated memory
++               is subtracted from TotalRam or from MemFree.
+ HardwareCorrupted
+               The amount of RAM/memory in KB, the kernel identifies as
+               corrupted.
+diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
+index 6e89f0e2fd20..7182886efdbf 100644
+--- a/fs/proc/meminfo.c
++++ b/fs/proc/meminfo.c
+@@ -16,6 +16,9 @@
+ #ifdef CONFIG_CMA
+ #include <linux/cma.h>
+ #endif
++#ifdef CONFIG_MEMORY_BALLOON
++#include <linux/balloon.h>
++#endif
+ #include <asm/page.h>
+ #include "internal.h"
+ 
+@@ -153,6 +156,13 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
+ 		    global_zone_page_state(NR_FREE_CMA_PAGES));
+ #endif
+ 
++#ifdef CONFIG_MEMORY_BALLOON
++	seq_printf(m,  "InflatedTotal:  %8ld kB\n",
++		atomic_long_read(&mem_balloon_inflated_total_kb));
++	seq_printf(m,  "InflatedFree:   %8ld kB\n",
++		atomic_long_read(&mem_balloon_inflated_free_kb));
++#endif
++
+ 	hugetlb_report_meminfo(m);
+ 
+ 	arch_report_meminfo(m);
+-- 
+2.31.1
 
-Niestandardowy kurs on-line, dopasowany do profilu firmy i obszar=C3=B3w =
-=C5=9Bwiadczonych us=C5=82ug, w szybkim czasie przyniesie efekty, kt=C3=B3=
-re zwi=C4=99ksz=C4=85 komfort i jako=C5=9B=C4=87 pracy, rozwijaj=C4=85c m=
-o=C5=BCliwo=C5=9Bci biznesowe.=20
-
-Zdalne szkolenie j=C4=99zykowe to m.in. zaj=C4=99cia z native speakerami,=
- kt=C3=B3re w szybkim czasie naucz=C4=85 pracownik=C3=B3w rozmawia=C4=87 =
-za pomoc=C4=85 jasnego i zwi=C4=99z=C5=82ego j=C4=99zyka Business English=
-=2E
-
-Czy m=C3=B3g=C5=82bym przedstawi=C4=87 wi=C4=99cej szczeg=C3=B3=C5=82=C3=B3=
-w i opowiedzie=C4=87 jak dzia=C5=82amy?=20
-
-
-Pozdrawiam
-Igor Ferenz
