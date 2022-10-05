@@ -2,272 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BCF0E5F5BD8
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 23:40:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B9F8C5F5C61
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 00:06:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231277AbiJEVkz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Oct 2022 17:40:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54712 "EHLO
+        id S229650AbiJEWGJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Oct 2022 18:06:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230022AbiJEVkx (ORCPT
+        with ESMTP id S229495AbiJEWGH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Oct 2022 17:40:53 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6273182742;
-        Wed,  5 Oct 2022 14:40:51 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Wed, 5 Oct 2022 18:06:07 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79CDF558FE;
+        Wed,  5 Oct 2022 15:06:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id A8EE81F6E6;
-        Wed,  5 Oct 2022 21:40:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1665006050; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZvDPRL3X/Z+TkKSypMGQGSD04xqGO5RubhYnrEX6MMs=;
-        b=QgHHXMecqBbSMnfU0knnwzskQDXy4zhWqL4DR/r5H5z1BvLvcZL8Z0NqCf5hQnXLJ9UsJB
-        Owwt8GQyQuENDCv6EBp4JN1JSrS+rYhLImoD3cT2n97rMIGPB6pufZuSY+kj2MzhAv1u5f
-        ZJyC8y8CdMfYUNq4DZlYs1vM9nKbjE0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1665006050;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=ZvDPRL3X/Z+TkKSypMGQGSD04xqGO5RubhYnrEX6MMs=;
-        b=mtSjx5nrRkv3JWj3hT3OCFo8Bkun3pyYfchcnJzvScIis+p0UMtAEV22XlVgrV46593h3l
-        X0iNI1P7ASbpPtCw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D09A513ABD;
-        Wed,  5 Oct 2022 21:40:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id WNQDItv5PWN+TQAAMHmgww
-        (envelope-from <neilb@suse.de>); Wed, 05 Oct 2022 21:40:43 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+        by ams.source.kernel.org (Postfix) with ESMTPS id 249DAB81F47;
+        Wed,  5 Oct 2022 22:06:03 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62B71C433C1;
+        Wed,  5 Oct 2022 22:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665007561;
+        bh=FZGWwvWcMPwpxhSCd2CpWK7kBaSufMBeg2cE71W2BOY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kdwp8mBwA4DxgGXMH8RNJfp6niTBmA+A9hvnQifpjbB/DwhTINU4J92nzxhIihcHU
+         3HR6iqLo8aUthnB8oK7k1r0em3qa9j73goc4WNh/TYrAcrV/j62fbfBQtjg7XtfHWo
+         qCO/KBvOtXmtDmsgBesgS10c3dnJ6gGWsOHMnVypAyumop+29fsWTApZgz7r0wS7/X
+         6z0++64qq/oG9Y0sPvjb+ba5dE+/RUzUVbhDILKLMRTsU88wTBvOOBUUs6KszlPfrC
+         f5joADFiEGvpbEDfO8T7W7oqNqs7Hg84FMWv/ZXI4zp9NyZbNLqY+wby7ze6dNi6ti
+         3a8z6u/Jb6R5g==
+Date:   Thu, 6 Oct 2022 01:05:57 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v8 2/8] KVM: Extend the memslot to support fd-based
+ private memory
+Message-ID: <Yz3/xWWaIRr6k1d3@kernel.org>
+References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
+ <20220915142913.2213336-3-chao.p.peng@linux.intel.com>
+ <Yz2AwVjymt7xb1sL@kernel.org>
 MIME-Version: 1.0
-From:   "NeilBrown" <neilb@suse.de>
-To:     "Jeff Layton" <jlayton@kernel.org>
-Cc:     "Amir Goldstein" <amir73il@gmail.com>, tytso@mit.edu,
-        adilger.kernel@dilger.ca, djwong@kernel.org, david@fromorbit.com,
-        trondmy@hammerspace.com, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, jack@suse.cz, bfields@fieldses.org,
-        brauner@kernel.org, fweimer@redhat.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v6 8/9] vfs: update times after copying data in
- __generic_file_write_iter
-In-reply-to: <66714195b93e05a97c2cd09e5d21ca47203366cf.camel@kernel.org>
-References: <20220930111840.10695-1-jlayton@kernel.org>,
- <20220930111840.10695-9-jlayton@kernel.org>,
- <CAOQ4uxgofERYwN7AfYFWqQMpQH5y3LV+6UuGfjU29gZXNf7-vQ@mail.gmail.com>,
- <df91b9ec61bc49aa5330714e3319dcea2531953b.camel@kernel.org>,
- <CAOQ4uxi6pPDexF7Z1wshnpV0kbSKsHUeawaUkhjq4FNGbqWU+A@mail.gmail.com>,
- <166483780286.14457.1388505585556274283@noble.neil.brown.name>,
- <66714195b93e05a97c2cd09e5d21ca47203366cf.camel@kernel.org>
-Date:   Thu, 06 Oct 2022 08:40:40 +1100
-Message-id: <166500604072.16615.966170222751267937@noble.neil.brown.name>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yz2AwVjymt7xb1sL@kernel.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 06 Oct 2022, Jeff Layton wrote:
-> On Tue, 2022-10-04 at 09:56 +1100, NeilBrown wrote:
-> > On Tue, 04 Oct 2022, Amir Goldstein wrote:
-> > > On Mon, Oct 3, 2022 at 4:01 PM Jeff Layton <jlayton@kernel.org> wrote:
-> > > >=20
-> > > > On Sun, 2022-10-02 at 10:08 +0300, Amir Goldstein wrote:
-> > > > > On Fri, Sep 30, 2022 at 2:30 PM Jeff Layton <jlayton@kernel.org> wr=
-ote:
-> > > > > >=20
-> > > > > > The c/mtime and i_version currently get updated before the data is
-> > > > > > copied (or a DIO write is issued), which is problematic for NFS.
-> > > > > >=20
-> > > > > > READ+GETATTR can race with a write (even a local one) in such a w=
-ay as
-> > > > > > to make the client associate the state of the file with the wrong=
- change
-> > > > > > attribute. That association can persist indefinitely if the file =
-sees no
-> > > > > > further changes.
-> > > > > >=20
-> > > > > > Move the setting of times to the bottom of the function in
-> > > > > > __generic_file_write_iter and only update it if something was
-> > > > > > successfully written.
-> > > > > >=20
-> > > > >=20
-> > > > > This solution is wrong for several reasons:
-> > > > >=20
-> > > > > 1. There is still file_update_time() in ->page_mkwrite() so you hav=
-en't
-> > > > >     solved the problem completely
-> > > >=20
-> > > > Right. I don't think there is a way to solve the problem vs. mmap.
-> > > > Userland can write to a writeable mmap'ed page at any time and we'd
-> > > > never know. We have to specifically carve out mmap as an exception he=
-re.
-> > > > I'll plan to add something to the manpage patch for this.
-> > > >=20
-> > > > > 2. The other side of the coin is that post crash state is more like=
-ly to end
-> > > > >     up data changes without mtime/ctime change
-> > > > >=20
-> > > >=20
-> > > > Is this really something filesystems rely on? I suppose the danger is
-> > > > that some cached data gets written to disk before the write returns a=
-nd
-> > > > the inode on disk never gets updated.
-> > > >=20
-> > > > But...isn't that a danger now? Some of the cached data could get writ=
-ten
-> > > > out and the updated inode just never makes it to disk before a crash
-> > > > (AFAIU). I'm not sure that this increases our exposure to that proble=
-m.
-> > > >=20
-> > > >=20
-> > >=20
-> > > You are correct that that danger exists, but it only exists for overwri=
-ting
-> > > to allocated blocks.
-> > >=20
-> > > For writing to new blocks, mtime change is recorded in transaction
-> > > before the block mapping is recorded in transaction so there is no
-> > > danger in this case (before your patch).
-> > >=20
-> > > Also, observing size change without observing mtime change
-> > > after crash seems like a very bad outcome that may be possible
-> > > after your change.
-> > >=20
-> > > These are just a few cases that I could think of, they may be filesystem
-> > > dependent, but my gut feeling is that if you remove the time update bef=
-ore
-> > > the operation, that has been like that forever, a lot of s#!t is going =
-to float
-> > > for various filesystems and applications.
-> > >=20
-> > > And it is not one of those things that are discovered  during rc or even
-> > > stable kernel testing - they are discovered much later when users start=
- to
-> > > realize their applications got bogged up after crash, so it feels like =
-to me
-> > > like playing with fire.
-> > >=20
-> > > > > If I read the problem description correctly, then a solution that i=
-nvalidates
-> > > > > the NFS cache before AND after the write would be acceptable. Right?
-> > > > > Would an extra i_version bump after the write solve the race?
-> > > > >=20
-> > > >=20
-> > > > I based this patch on Neil's assertion that updating the time before =
-an
-> > > > operation was pointless if we were going to do it afterward. The NFS
-> > > > client only really cares about seeing it change after a write.
-> > > >=20
-> > >=20
-> > > Pointless to NFS client maybe.
-> > > Whether or not this is not changing user behavior for other applications
-> > > is up to you to prove and I doubt that you can prove it because I doubt
-> > > that it is true.
-> > >=20
-> > > > Doing both would be fine from a correctness standpoint, and in most
-> > > > cases, the second would be a no-op anyway since a query would have to
-> > > > race in between the two for that to happen.
-> > > >=20
-> > > > FWIW, I think we should update the m/ctime and version at the same ti=
-me.
-> > > > If the version changes, then there is always the potential that a tim=
-er
-> > > > tick has occurred. So, that would translate to a second call to
-> > > > file_update_time in here.
-> > > >=20
-> > > > The downside of bumping the times/version both before and after is th=
-at
-> > > > these are hot codepaths, and we'd be adding extra operations there. E=
-ven
-> > > > in the case where nothing has changed, we'd have to call
-> > > > inode_needs_update_time a second time for every write. Is that worth =
-the
-> > > > cost?
-> > >=20
-> > > Is there a practical cost for iversion bump AFTER write as I suggested?
-> > > If you NEED m/ctime update AFTER write and iversion update is not enough
-> > > then I did not understand from your commit message why that is.
-> > >=20
-> > > Thanks,
-> > > Amir.
-> > >=20
-> >=20
-> > Maybe we should split i_version updates from ctime updates.
-> >=20
-> > While it isn't true that ctime updates have happened before the write
-> > "forever" it has been true since 2.3.43[1] which is close to forever.
-> >=20
-> > For ctime there doesn't appear to be a strong specification of when the
-> > change happens, so history provides a good case for leaving it before.
-> > For i_version we want to provide clear and unambiguous semantics.
-> > Performing 2 updates makes the specification muddy.
-> >=20
-> > So I would prefer a single update for i_version, performed after the
-> > change becomes visible.  If that means it has to be separate from ctime,
-> > then so be it.
-> >=20
-> > NeilBrown
-> >=20
-> >=20
-> > [1]:  https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git=
-/commit/?id=3D636b38438001a00b25f23e38747a91cb8428af29
->=20
->=20
-> Not necessarily. We can document it in such a way that bumping it twice
-> is allowed, but not required.
->=20
-> My main concern with splitting them up is that we'd have to dirty the
-> inode twice if both the times and the i_version need updating. If the
-> inode gets written out in between, then we end up doing twice the I/O.
-> The interim on-disk metadata would be in sort of a weird state too --
-> the ctime would have changed but the version would still be old.
->=20
-> It might be worthwhile to just go ahead and continue bumping it in
-> file_update_time, and then we'd just attempt to bump the i_version again
-> afterward. The second bump will almost always be a no-op anyway.
+On Wed, Oct 05, 2022 at 04:04:05PM +0300, Jarkko Sakkinen wrote:
+> On Thu, Sep 15, 2022 at 10:29:07PM +0800, Chao Peng wrote:
+> > In memory encryption usage, guest memory may be encrypted with special
+> > key and can be accessed only by the VM itself. We call such memory
+> > private memory. It's valueless and sometimes can cause problem to allow
+> > userspace to access guest private memory. This patch extends the KVM
+> > memslot definition so that guest private memory can be provided though
+> > an inaccessible_notifier enlightened file descriptor (fd), without being
+> > mmaped into userspace.
+> > 
+> > This new extension, indicated by the new flag KVM_MEM_PRIVATE, adds two
+> > additional KVM memslot fields private_fd/private_offset to allow
+> > userspace to specify that guest private memory provided from the
+> > private_fd and guest_phys_addr mapped at the private_offset of the
+> > private_fd, spanning a range of memory_size.
+> > 
+> > The extended memslot can still have the userspace_addr(hva). When use, a
+> > single memslot can maintain both private memory through private
+> > fd(private_fd/private_offset) and shared memory through
+> > hva(userspace_addr). Whether the private or shared part is visible to
+> > guest is maintained by other KVM code.
+> > 
+> > Since there is no userspace mapping for private fd so we cannot
+> > get_user_pages() to get the pfn in KVM, instead we add a new
+> > inaccessible_notifier in the internal memslot structure and rely on it
+> > to get pfn by interacting with the memory file systems.
+> > 
+> > Together with the change, a new config HAVE_KVM_PRIVATE_MEM is added and
+> > right now it is selected on X86_64 for Intel TDX usage.
+> > 
+> > To make code maintenance easy, internally we use a binary compatible
+> > alias struct kvm_user_mem_region to handle both the normal and the
+> > '_ext' variants.
+> > 
+> > Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> 
+> What if userspace_addr would contain address of an extension structure,
+> if the flag is set, instead of shared address? I.e. interpret that field
+> differently (could be turned into union too ofc).
+> 
+> That idea could be at least re-used, if there's ever any new KVM_MEM_*
+> flags that would need an extension.
+> 
+> E.g. have struct kvm_userspace_memory_private, which contains shared
+> address, fd and the offset.
 
-I"m probably starting to sound like a scratched record here, but this is
-why I think it should be up to the filesystem to bump i_version when it
-determines that it should.  It should be in a position to include the
-i_version update any time that it writes the inode and so avoid a double
-write.
+Or add a new ioctl number instead of messing with the existing
+parameter structure, e.g. KVM_SET_USER_MEMORY_REGION_PRIVATE.
 
-Having that vfs/mm do so much of the work makes it hard for the
-filesystem to do the right amount of work.  The common code should
-provide libraries of useful code, the filesystems should call that as
-appropriate. Some of our code is structured that way, some of it isn't.
+With this alternative and the current approach in the patch,
+it would be better just to redefine the struct fields that are
+common.
 
-Most callers of file_update_time() are inside filesystems and that is
-good - they are in control.
-There are 3 in mm/*.c.  Those are all in callbacks from the filesystem,
-so the fs could avoid them, but only by duplicating lots of code to
-avoid using the callback.  Instead these file_update_time() calls should
-become more explicit calls into the filesystem telling the filesystem
-what has just happened, or is about to happen.  Then the filesystem can
-do the right thing, rather than having something done to it.
+It actually would reduce redundancy because then there is no
+need to create that somewhat confusing kernel version of the
+same struct, right? You don't save any redundancy with this
+"embedded struct" approach.
 
-See also https://lwn.net/Articles/336262/ and the "midlayer mistake".
-
-But yes, doing the bump afterwards as well is likely to be a no-op most
-of the time and is probably the easy solution.  Ugly, but easy.
-
-NeilBrown
+BR, Jarkko
