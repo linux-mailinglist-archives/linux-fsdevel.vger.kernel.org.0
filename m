@@ -2,433 +2,318 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C6F05F55F1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 15:56:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 837E85F55FA
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 15:57:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230089AbiJEN4k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Oct 2022 09:56:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46618 "EHLO
+        id S230143AbiJEN5m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Oct 2022 09:57:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229681AbiJEN4j (ORCPT
+        with ESMTP id S229736AbiJEN5l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Oct 2022 09:56:39 -0400
-Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA59A66A48;
-        Wed,  5 Oct 2022 06:56:35 -0700 (PDT)
-Received: by mail-ua1-x933.google.com with SMTP id a8so4539556uaj.11;
-        Wed, 05 Oct 2022 06:56:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RXx1U3QfnBf5IFkviimfMxa0JfNPo16fULFOjXFWfzw=;
-        b=cHAwVJYQxID4rP7cLQdbC7/jzTFtONosSbhr34QDNvw432z7pNXopeMfkUifXqj7yi
-         MWU9RLp5Tz5bmgfLdSdzTG//7a4Nl0QpycYh+g1rsJYTfmy9tU7L2aeVV4Uh/IIFRRFj
-         CInc/gNNKJAvUDZfz8USWIeueYc6qfcpyc9GWmx1V2ML6oWcOmsoiJH+lanSh3G1Xzlj
-         +g0zW7ktHozCmX/o3uKipALzN2nmCd4X0jS5Lv+4RL2MM5H9bddMIwFBvenN6i3yVHJ4
-         68E+q1bwhOTYA672d4kwA+byo8IahbgFcbCKJPxSI1V0886ywPHXht6ZfpZAhyp5lm22
-         0tfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RXx1U3QfnBf5IFkviimfMxa0JfNPo16fULFOjXFWfzw=;
-        b=pkGEGDCkzosyvR4Fw3lCPK62zKdFhUt5v+57JiBaHahuGmu00a/58cP3MICrwpPqJ0
-         mUK1rWJf+/UL4UjmlGHTyGCBLeJEtAnFM0uNrzDx/gj6FkRtClMrXCNpKMqUELKEyzXN
-         elI2oRHebhitb9II1ZfruvBRVXYL5AIl2dmOSP+PxuosUmB7nu9Rs2lNdPW9x/1vEUih
-         br/SZJZ28rVxjrSiJQz5VVuSezffM2LCuJPgX9tmaP0SkkA2p0aOM7y6c2g//pXgoVMh
-         9JlGYR8Nj5GZehDor40AnDNpCTAhTa1AL8iZUnH93FQwM8zMoV+vrrTCgCgkqDgJlK0K
-         qsew==
-X-Gm-Message-State: ACrzQf1xsumNGT3cONiZpQlEXyA04IQLmhrg3ucLth4enJDzhjB47f5U
-        YCphpQeGEjxDNLeyu/DhcfD79Z6EyvNrFaWTpuE=
-X-Google-Smtp-Source: AMsMyM60lLl96Hy43e8Y7xcXPuafpPVQrKTV9ZcAnUPeFDQNBkW1Oi3pODf86XkccoJkhtA0iS7vFDre9qSWtCANtDk=
-X-Received: by 2002:ab0:7509:0:b0:3d6:9dcb:b3db with SMTP id
- m9-20020ab07509000000b003d69dcbb3dbmr10033219uap.9.1664978194845; Wed, 05 Oct
- 2022 06:56:34 -0700 (PDT)
+        Wed, 5 Oct 2022 09:57:41 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 952717C1D1;
+        Wed,  5 Oct 2022 06:57:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 01C19B81B58;
+        Wed,  5 Oct 2022 13:57:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B68FCC433D6;
+        Wed,  5 Oct 2022 13:57:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664978256;
+        bh=4o5uAc68TgM91z72jHrenYorQWCxkZ8HM/tP6gKu8c4=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=GOTGptbGKp4Y0qn0o7jHwhi/FMFcBlbxswxoALLA2aFncn3rglq4F7K/9NcKvrI9S
+         vF3o7B0o08Vu04iMuTbHKvRm19NuKLh97jti10YwhQfgZotWK/6Pn/4W9sd5Ww4v6S
+         HOh1WeDZ5caoK9KscHy25ngX4AqNDICiuTujIP32d57F52HVdHlA8QsUUCjrgtJ0Yt
+         mBvKK1EekUa9JvyeIbwxcECynGhiIWrDxz0KUEwsZ6nV+ON19WM0mV5kboZ6oG3T/q
+         XMGbmEyn4dzuFc2VKHoPkLA8zUg/ZuJp3AuFzi4dq8shvzxNVy4YW76fn2jd8uCDKY
+         U0XTZSnt9nWwQ==
+Message-ID: <04663cb6b2fa64d540575302e2e8b74e38c9b726.camel@kernel.org>
+Subject: Re: [PATCH v6 6/9] nfsd: use the getattr operation to fetch
+ i_version
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Trond Myklebust <trondmy@hammerspace.com>,
+        "neilb@suse.de" <neilb@suse.de>
+Cc:     "zohar@linux.ibm.com" <zohar@linux.ibm.com>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "xiubli@redhat.com" <xiubli@redhat.com>,
+        "brauner@kernel.org" <brauner@kernel.org>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+        "david@fromorbit.com" <david@fromorbit.com>,
+        "fweimer@redhat.com" <fweimer@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>,
+        "tytso@mit.edu" <tytso@mit.edu>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "jack@suse.cz" <jack@suse.cz>,
+        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "lczerner@redhat.com" <lczerner@redhat.com>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>
+Date:   Wed, 05 Oct 2022 09:57:33 -0400
+In-Reply-To: <cdbd9c6917ab66164596b95dad90625f46221b70.camel@hammerspace.com>
+References: <20220930111840.10695-1-jlayton@kernel.org>
+                 , <20220930111840.10695-7-jlayton@kernel.org>
+         <166484034920.14457.15225090674729127890@noble.neil.brown.name>
+         <13714490816df1ff36ab06bbf32df5440cad7913.camel@kernel.org>
+         <cdbd9c6917ab66164596b95dad90625f46221b70.camel@hammerspace.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-References: <20221003123040.900827-1-amir73il@gmail.com> <20221003123040.900827-3-amir73il@gmail.com>
- <20221004105932.bpvqstjrfpud5rcs@wittgenstein> <CAOQ4uxgXYTdUoE5MpG-UzdZUtVYQ1FpjTHEc8FjEQAmgqj0hyQ@mail.gmail.com>
- <20221004141259.72gdvmzm3jwxpsva@wittgenstein> <20221004155216.f3bzwbcwncl6jyq2@wittgenstein>
-In-Reply-To: <20221004155216.f3bzwbcwncl6jyq2@wittgenstein>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 5 Oct 2022 16:56:23 +0300
-Message-ID: <CAOQ4uxik2Q9x4WsdO7bnJUNWCScZr=1=aMhFKPqM57yU5LED_g@mail.gmail.com>
-Subject: Re: [PATCH 2/2] ovl: remove privs in ovl_fallocate()
-To:     Christian Brauner <brauner@kernel.org>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Yang Xu <xuyang2018.jy@fujitsu.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Filipe Manana <fdmanana@kernel.org>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 4, 2022 at 6:52 PM Christian Brauner <brauner@kernel.org> wrote:
->
-> On Tue, Oct 04, 2022 at 04:13:05PM +0200, Christian Brauner wrote:
-> > On Tue, Oct 04, 2022 at 05:01:06PM +0300, Amir Goldstein wrote:
-> > > On Tue, Oct 4, 2022 at 1:59 PM Christian Brauner <brauner@kernel.org> wrote:
-> > > >
-> > > > On Mon, Oct 03, 2022 at 03:30:40PM +0300, Amir Goldstein wrote:
-> > > > > Underlying fs doesn't remove privs because fallocate is called with
-> > > > > privileged mounter credentials.
-> > > > >
-> > > > > This fixes some failure in fstests generic/683..687.
-> > > > >
-> > > > > Fixes: aab8848cee5e ("ovl: add ovl_fallocate()")
-> > > > > Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> > > > > ---
-> > > > >  fs/overlayfs/file.c | 12 +++++++++++-
-> > > > >  1 file changed, 11 insertions(+), 1 deletion(-)
-> > > > >
-> > > > > diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-> > > > > index c8308da8909a..e90ac5376456 100644
-> > > > > --- a/fs/overlayfs/file.c
-> > > > > +++ b/fs/overlayfs/file.c
-> > > > > @@ -517,9 +517,16 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
-> > > > >       const struct cred *old_cred;
-> > > > >       int ret;
-> > > > >
-> > > > > +     inode_lock(inode);
-> > > > > +     /* Update mode */
-> > > > > +     ovl_copyattr(inode);
-> > > > > +     ret = file_remove_privs(file);
-> > > >
-> > > > First, thank you for picking this up!
-> > > >
-> > > > Let me analyze generic/683 failure of Test1 to see why you still see
-> > > > failures in this test:
-> > > >
-> > > > echo "Test 1 - qa_user, non-exec file $verb"
-> > > > setup_testfile
-> > > > chmod a+rws $junk_file
-> > > > commit_and_check "$qa_user" "$verb" 64k 64k
-> > > >
-> > > > So this creates a file with 6666 permissions. While the file has the
-> > > > S_ISUID and S_ISGID bits set it does not have the S_IXGRP set. This is
-> > > > important in a little bit.
-> > > >
-> > > > On a regular filesystem like xfs what will happen is:
-> > > >
-> > > > sys_fallocate()
-> > > > -> vfs_fallocate()
-> > > >    -> xfs_file_fallocate()
-> > > >       -> file_modified()
-> > > >          -> __file_remove_privs()
-> > > >             -> dentry_needs_remove_privs()
-> > > >                -> should_remove_suid()
-> > > >             -> __remove_privs()
-> > > >                newattrs.ia_valid = ATTR_FORCE | kill;
-> > > >                -> notify_change()
-> > > >
-> > > > In should_remove_suid() we can see that ATTR_KILL_SUID is raised
-> > > > unconditionally because the file in the test has S_ISUID set.
-> > > >
-> > > > But we also see that ATTR_KILL_SGID won't be set because while the file
-> > > > is S_ISGID it is not S_IXGRP (see above) which is a condition for
-> > > > ATTR_KILL_SGID being raised.
-> > > >
-> > > > So by the time we call notify_change() we have attr->ia_valid set to
-> > > > ATTR_KILL_SUID | ATTR_FORCE. Now notify_change() sees that
-> > > > ATTR_KILL_SUID is set and does:
-> > > >
-> > > > ia_valid = attr->ia_valid |= ATTR_MODE
-> > > > attr->ia_mode = (inode->i_mode & ~S_ISUID);
-> > > >
-> > > > which means that when we call setattr_copy() later we will definitely
-> > > > update inode->i_mode. Note that attr->ia_mode still contain S_ISGID.
-> > > >
-> > > > Now we call into the filesystem's ->setattr() inode operation which will end up
-> > > > calling setattr_copy(). Since ATTR_MODE is set we will hit:
-> > > >
-> > > > if (ia_valid & ATTR_MODE) {
-> > > >         umode_t mode = attr->ia_mode;
-> > > >         vfsgid_t vfsgid = i_gid_into_vfsgid(mnt_userns, inode);
-> > > >         if (!vfsgid_in_group_p(vfsgid) &&
-> > > >             !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID))
-> > > >                 mode &= ~S_ISGID;
-> > > >         inode->i_mode = mode;
-> > > > }
-> > > >
-> > >
-> > > Can you think of a reason why the above should not be done
-> > > in notify_change() before even calling to ->setattr()?
-> > >
-> > > Although, it wouldn't help because ovl_setattr() does:
-> > >
-> > >     if (attr->ia_valid & (ATTR_KILL_SUID|ATTR_KILL_SGID))
-> > >         attr->ia_valid &= ~ATTR_MODE;
-> > >
-> > > > and since the caller in the test is neither capable nor in the group of the
-> > > > inode the S_ISGID bit is stripped.
-> > > >
-> > > > But now contrast this with overlayfs even after your changes. When
-> > > > ovl_setattr() is hit from ovl_fallocate()'s call to file_remove_privs()
-> > > > and calls ovl_do_notify_change() then we are doing this under the
-> > > > mounter's creds and so the S_ISGID bit is retained:
-> > > >
-> > > > sys_fallocate()
-> > > > -> vfs_fallocate()
-> > > >    -> ovl_fallocate()
-> > > >       -> file_remove_privs()
-> > > >          -> dentry_needs_remove_privs()
-> > > >             -> should_remove_suid()
-> > > >          -> __remove_privs()
-> > > >             newattrs.ia_valid = attr_force | kill;
-> > > >             -> notify_change()
-> > > >                -> ovl_setattr()
-> > > >                   // TAKE ON MOUNTER'S CREDS
-> > > >                   -> ovl_do_notify_change()
-> > > >                   // GIVE UP MOUNTER'S CREDS
-> > > >      // TAKE ON MOUNTER'S CREDS
-> > > >      -> vfs_fallocate()
-> > > >         -> xfs_file_fallocate()
-> > > >            -> file_modified()
-> > > >               -> __file_remove_privs()
-> > > >                  -> dentry_needs_remove_privs()
-> > > >                     -> should_remove_suid()
-> > > >                  -> __remove_privs()
-> > > >                     newattrs.ia_valid = attr_force | kill;
-> > > >                     -> notify_change()
-> > >
-> > > The model in overlayfs is that security is checked twice
-> > > once on overlay inode with caller creds and once again
-> > > on xfs inode with mounter creds. Either of these checks
-> > > could result in clearing SUID/SGID bits.
-> >
-> > Yep.
-> >
-> > >
-> > > In the call stack above, the outer should_remove_suid()
-> > > with caller creds sets ATTR_KILL_SUID and then the outer
-> > > notify_change() clears SUID and sets ATTR_MODE,
-> >
-> > Yes.
-> >
-> > > but ovl_setattr() clears ATTR_MODE and then the inner
-> > > notify_change() re-clears SUID and sets ATTR_MODE again.
-> >
-> > Yes.
-> >
-> > >
-> > > If the outer notify_change() would have checked the in_group_p()
-> > > condition, clear SGID and set a flag ATTR_KILL_SGID_FORCE
-> > > then the inner notify_change() would see this flag and re-clear
-> > > SGID bit, just the same as it does with SUID bit in the stack stace
-> > > above.
-> > >
-> > > Is this making any sense?
-> >
-> > What I kept thinking was sm along the lines of:
-> >
-> > diff --git a/fs/inode.c b/fs/inode.c
-> > index ba1de23c13c1..e62a564201b7 100644
-> > --- a/fs/inode.c
-> > +++ b/fs/inode.c
-> > @@ -1968,8 +1968,12 @@ int should_remove_suid(struct dentry *dentry)
-> >          * sgid without any exec bits is just a mandatory locking mark; leave
-> >          * it alone.  If some exec bits are set, it's a real sgid; kill it.
-> >          */
-> > -       if (unlikely((mode & S_ISGID) && (mode & S_IXGRP)))
-> > -               kill |= ATTR_KILL_SGID;
-> > +       if (unlikely(mode & S_ISGID)) {
-> > +               if ((mode & S_IXGRP) ||
-> > +                   (!vfsgid_in_group_p(vfsgid) &&
-> > +                    !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID)))
-> > +                       kill |= ATTR_KILL_SGID;
-> > +       }
-> >
-> >         if (unlikely(kill && !capable(CAP_FSETID) && S_ISREG(mode)))
-> >                 return kill;
-> >
-> > mandatory locks have been removed as well so that remark seems pointless
-> > as well?
->
-> My feeling here is that both should_remove_suid() and notify_change()
-> need to apply the same permission checks as setattr_prepare() and
-> setattr_copy() instead of all this special casing them. I don't see a
-> good reason to not require the same checks. So sm like (__completely
-> untested__):
+On Wed, 2022-10-05 at 13:34 +0000, Trond Myklebust wrote:
+> On Wed, 2022-10-05 at 06:06 -0400, Jeff Layton wrote:
+> > On Tue, 2022-10-04 at 10:39 +1100, NeilBrown wrote:
+> > > On Fri, 30 Sep 2022, Jeff Layton wrote:
+> > > > Now that we can call into vfs_getattr to get the i_version field,
+> > > > use
+> > > > that facility to fetch it instead of doing it in
+> > > > nfsd4_change_attribute.
+> > > >=20
+> > > > Neil also pointed out recently that IS_I_VERSION directory
+> > > > operations
+> > > > are always logged, and so we only need to mitigate the rollback
+> > > > problem
+> > > > on regular files. Also, we don't need to factor in the ctime when
+> > > > reexporting NFS or Ceph.
+> > > >=20
+> > > > Set the STATX_VERSION (and BTIME) bits in the request when we're
+> > > > dealing
+> > > > with a v4 request. Then, instead of looking at IS_I_VERSION when
+> > > > generating the change attr, look at the result mask and only use
+> > > > it if
+> > > > STATX_VERSION is set. With this change, we can drop the
+> > > > fetch_iversion
+> > > > export operation as well.
+> > > >=20
+> > > > Move nfsd4_change_attribute into nfsfh.c, and change it to only
+> > > > factor
+> > > > in the ctime if it's a regular file and the fs doesn't advertise
+> > > > STATX_ATTR_VERSION_MONOTONIC.
+> > > >=20
+> > > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > > ---
+> > > > =A0fs/nfs/export.c=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0 7 -------
+> > > > =A0fs/nfsd/nfs4xdr.c=A0=A0=A0=A0=A0=A0=A0 |=A0 4 +++-
+> > > > =A0fs/nfsd/nfsfh.c=A0=A0=A0=A0=A0=A0=A0=A0=A0 | 40
+> > > > ++++++++++++++++++++++++++++++++++++++++
+> > > > =A0fs/nfsd/nfsfh.h=A0=A0=A0=A0=A0=A0=A0=A0=A0 | 29 +---------------=
+-------------
+> > > > =A0fs/nfsd/vfs.h=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 |=A0 7 ++++++-
+> > > > =A0include/linux/exportfs.h |=A0 1 -
+> > > > =A06 files changed, 50 insertions(+), 38 deletions(-)
+> > > >=20
+> > > > diff --git a/fs/nfs/export.c b/fs/nfs/export.c
+> > > > index 01596f2d0a1e..1a9d5aa51dfb 100644
+> > > > --- a/fs/nfs/export.c
+> > > > +++ b/fs/nfs/export.c
+> > > > @@ -145,17 +145,10 @@ nfs_get_parent(struct dentry *dentry)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0return parent;
+> > > > =A0}
+> > > > =A0
+> > > > -static u64 nfs_fetch_iversion(struct inode *inode)
+> > > > -{
+> > > > -=A0=A0=A0=A0=A0=A0=A0nfs_revalidate_inode(inode, NFS_INO_INVALID_C=
+HANGE);
+> > > > -=A0=A0=A0=A0=A0=A0=A0return inode_peek_iversion_raw(inode);
+> > > > -}
+> > > > -
+> > > > =A0const struct export_operations nfs_export_ops =3D {
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0.encode_fh =3D nfs_encode_fh,
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0.fh_to_dentry =3D nfs_fh_to_dentry,
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0.get_parent =3D nfs_get_parent,
+> > > > -=A0=A0=A0=A0=A0=A0=A0.fetch_iversion =3D nfs_fetch_iversion,
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0.flags =3D EXPORT_OP_NOWCC|EXPORT_OP_NOSUBT=
+REECHK|
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0EXPORT_OP_CLOSE_BEF=
+ORE_UNLINK|EXPORT_OP_REMOTE_FS
+> > > > >=20
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0EXPORT_OP_NOATOMIC_=
+ATTR,
+> > > > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+> > > > index 1e9690a061ec..779c009314c6 100644
+> > > > --- a/fs/nfsd/nfs4xdr.c
+> > > > +++ b/fs/nfsd/nfs4xdr.c
+> > > > @@ -2869,7 +2869,9 @@ nfsd4_encode_fattr(struct xdr_stream *xdr,
+> > > > struct svc_fh *fhp,
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0goto out;
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0}
+> > > > =A0
+> > > > -=A0=A0=A0=A0=A0=A0=A0err =3D vfs_getattr(&path, &stat, STATX_BASIC=
+_STATS,
+> > > > AT_STATX_SYNC_AS_STAT);
+> > > > +=A0=A0=A0=A0=A0=A0=A0err =3D vfs_getattr(&path, &stat,
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 STATX_BASIC_STATS | STATX_BTIME |
+> > > > STATX_VERSION,
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0=A0 AT_STATX_SYNC_AS_STAT);
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0if (err)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0goto out_nfserr;
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0if (!(stat.result_mask & STATX_BTIME))
+> > > > diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> > > > index a5b71526cee0..9168bc657378 100644
+> > > > --- a/fs/nfsd/nfsfh.c
+> > > > +++ b/fs/nfsd/nfsfh.c
+> > > > @@ -634,6 +634,10 @@ void fh_fill_pre_attrs(struct svc_fh *fhp)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0stat.mtime =3D inod=
+e->i_mtime;
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0stat.ctime =3D inod=
+e->i_ctime;
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0stat.size=A0 =3D in=
+ode->i_size;
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0if (v4 && IS_I_VERSIO=
+N(inode)) {
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0stat.version =3D
+> > > > inode_query_iversion(inode);
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0stat.result_mask |=3D STATX_VERSION;
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0}
+> > >=20
+> > > This is increasingly ugly.=A0 I wonder if it is justified at all...
+> > >=20
+> >=20
+> > I'm fine with dropping that. So if the getattrs fail, we should just
+> > not
+> > offer up pre/post attrs?
+> >=20
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0}
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0if (v4)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0fhp->fh_pre_change =
+=3D
+> > > > nfsd4_change_attribute(&stat, inode);
+> > > > @@ -665,6 +669,8 @@ void fh_fill_post_attrs(struct svc_fh *fhp)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0if (err) {
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0fhp->fh_post_saved =
+=3D false;
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0fhp->fh_post_attr.c=
+time =3D inode->i_ctime;
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0if (v4 && IS_I_VERSIO=
+N(inode))
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
+=A0fhp->fh_post_attr.version =3D
+> > > > inode_query_iversion(inode);
+> > >=20
+> > > ... ditto ...
+> > >=20
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0} else
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0fhp->fh_post_saved =
+=3D true;
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0if (v4)
+> > > > @@ -754,3 +760,37 @@ enum fsid_source fsid_source(const struct
+> > > > svc_fh *fhp)
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0return FSIDSOURCE_U=
+UID;
+> > > > =A0=A0=A0=A0=A0=A0=A0=A0return FSIDSOURCE_DEV;
+> > > > =A0}
+> > > > +
+> > > > +/*
+> > > > + * We could use i_version alone as the change attribute.=A0
+> > > > However, i_version
+> > > > + * can go backwards on a regular file after an unclean
+> > > > shutdown.=A0 On its own
+> > > > + * that doesn't necessarily cause a problem, but if i_version
+> > > > goes backwards
+> > > > + * and then is incremented again it could reuse a value that was
+> > > > previously
+> > > > + * used before boot, and a client who queried the two values
+> > > > might incorrectly
+> > > > + * assume nothing changed.
+> > > > + *
+> > > > + * By using both ctime and the i_version counter we guarantee
+> > > > that as long as
+> > > > + * time doesn't go backwards we never reuse an old value. If the
+> > > > filesystem
+> > > > + * advertises STATX_ATTR_VERSION_MONOTONIC, then this mitigation
+> > > > is not needed.
+> > > > + *
+> > > > + * We only need to do this for regular files as well. For
+> > > > directories, we
+> > > > + * assume that the new change attr is always logged to stable
+> > > > storage in some
+> > > > + * fashion before the results can be seen.
+> > > > + */
+> > > > +u64 nfsd4_change_attribute(struct kstat *stat, struct inode
+> > > > *inode)
+> > > > +{
+> > > > +=A0=A0=A0=A0=A0=A0=A0u64 chattr;
+> > > > +
+> > > > +=A0=A0=A0=A0=A0=A0=A0if (stat->result_mask & STATX_VERSION) {
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0chattr =3D stat->vers=
+ion;
+> > > > +
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0if (S_ISREG(inode->i_=
+mode) &&
+> > > > +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 !(stat->att=
+ributes &
+> > > > STATX_ATTR_VERSION_MONOTONIC)) {
+> > >=20
+> > > I would really rather that the fs got to make this decision.
+> > > If it can guarantee that the i_version is monotonic even over a
+> > > crash
+> > > (which is probably can for directory, and might need changes to do
+> > > for
+> > > files) then it sets STATX_ATTR_VERSION_MONOTONIC and nfsd trusts it
+> > > completely.
+> > > If it cannot, then it doesn't set the flag.
+> > > i.e. the S_ISREG() test should be in the filesystem, not in nfsd.
+> > >=20
+> >=20
+> > This sounds reasonable, but for one thing.
+> >=20
+> > From RFC 7862:
+> >=20
+> > =A0=A0 While Section 5.4 of [RFC5661] discusses
+> > =A0=A0 per-file system attributes, it is expected that the value of
+> > =A0=A0 change_attr_type will not depend on the value of "homogeneous" a=
+nd
+> > =A0=A0 will only change in the event of a migration.
+> >=20
+> > The change_attr_type4 must be the same for all filehandles under a
+> > particular filesystem.
+> >=20
+> > If we do what you suggest though, then it's easily possible for the
+> > fs
+> > to set STATX_ATTR_VERSION_MONOTONIC on=A0directories but not files. If
+> > we
+> > later want to allow nfsd to advertise a change_attr_type4, we won't
+> > be
+> > able to rely on the STATX_ATTR_VERSION_MONOTONIC to tell us how to
+> > fill
+> > that out.
+>=20
+> That will break clients. So no, that's not acceptable.
+>=20
 
-I like it :)
-Few small nits. Some you may have already noticed after testing...
+Yeah. This is why I mentioned that this flag would have been better
+advertised via fsinfo(), had that been a thing.
 
->
-> From 922f9f123ab6531c29bf05585ef88c17fe65dba3 Mon Sep 17 00:00:00 2001
-> From: Christian Brauner <brauner@kernel.org>
-> Date: Tue, 4 Oct 2022 16:13:34 +0200
-> Subject: [UNTESTED PATCH] attr: use consistent sgid stripping checks
->
-> Require the same permissions as setattr_prepare() and setattr_copy() have
-> instead of all these special cases. We can probably consolidate this even
-> more...
->
-> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> ---
->  fs/attr.c          |  2 +-
->  fs/fuse/file.c     |  2 +-
->  fs/inode.c         | 41 ++++++++++++++++++++++++-----------------
->  fs/internal.h      |  4 +++-
->  fs/ocfs2/file.c    |  4 ++--
->  fs/open.c          |  2 +-
->  include/linux/fs.h |  2 +-
->  7 files changed, 33 insertions(+), 24 deletions(-)
->
-> diff --git a/fs/attr.c b/fs/attr.c
-> index 1552a5f23d6b..9262c6b31c26 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -375,7 +375,7 @@ int notify_change(struct user_namespace *mnt_userns, struct dentry *dentry,
->                 }
->         }
->         if (ia_valid & ATTR_KILL_SGID) {
-> -               if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP)) {
-> +               if (should_remove_sgid(mnt_userns, dentry)) {
+One option is to just document that an fs must advertise the same flag
+value for all inodes.
 
-This should just be:
-+               if (mode & S_ISGID) {
-
-Just like the case with ATTR_KILL_SUID,
-notify_change() should follow ATTR_KILL_* hints issued by
-dentry_needs_remove_privs() without re-checking the conditions.
-This is what makes overlayfs SUID stripping work in current code.
-
->                         if (!(ia_valid & ATTR_MODE)) {
->                                 ia_valid = attr->ia_valid |= ATTR_MODE;
->                                 attr->ia_mode = inode->i_mode;
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 1a3afd469e3a..fccc2c7e88fd 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -1313,7 +1313,7 @@ static ssize_t fuse_cache_write_iter(struct kiocb *iocb, struct iov_iter *from)
->                         return err;
->
->                 if (fc->handle_killpriv_v2 &&
-> -                   should_remove_suid(file_dentry(file))) {
-> +                   should_remove_suid(&init_user_ns, file_dentry(file))) {
->                         goto writethrough;
->                 }
->
-> diff --git a/fs/inode.c b/fs/inode.c
-> index ba1de23c13c1..c639aefe01c3 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1949,27 +1949,33 @@ void touch_atime(const struct path *path)
->  }
->  EXPORT_SYMBOL(touch_atime);
->
-> -/*
-> - * The logic we want is
-> - *
-> - *     if suid or (sgid and xgrp)
-> - *             remove privs
-> - */
-> -int should_remove_suid(struct dentry *dentry)
-> +bool should_remove_sgid(struct user_namespace *mnt_userns, struct dentry *dentry)
-> +{
-> +       struct inode *inode = d_inode(dentry);
-> +       umode_t mode = inode->i_mode;
-> +
-> +       if (unlikely(mode & S_ISGID)) {
-> +               if ((mode & S_IXGRP) ||
-> +                   (!vfsgid_in_group_p(i_gid_into_vfsgid(mnt_userns, inode)) &&
-> +                    !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID)))
-> +                       return true;
-> +       }
-> +
-> +       return false;
-> +}
-> +
-> +int should_remove_suid(struct user_namespace *mnt_userns, struct dentry *dentry)
->  {
-> -       umode_t mode = d_inode(dentry)->i_mode;
-> +       struct inode *inode = d_inode(dentry);
-> +       umode_t mode = inode->i_mode;
->         int kill = 0;
->
->         /* suid always must be killed */
->         if (unlikely(mode & S_ISUID))
->                 kill = ATTR_KILL_SUID;
->
-> -       /*
-> -        * sgid without any exec bits is just a mandatory locking mark; leave
-> -        * it alone.  If some exec bits are set, it's a real sgid; kill it.
-> -        */
-> -       if (unlikely((mode & S_ISGID) && (mode & S_IXGRP)))
-> -               kill |= ATTR_KILL_SGID;
-> +       if (should_remove_sgid(mnt_userns, dentry))
-> +               kill = ATTR_KILL_SGID;
-
-kill |= ATTR_KILL_SGID;
-
->
->         if (unlikely(kill && !capable(CAP_FSETID) && S_ISREG(mode)))
->                 return kill;
-> @@ -1983,7 +1989,8 @@ EXPORT_SYMBOL(should_remove_suid);
->   * response to write or truncate. Return 0 if nothing has to be changed.
->   * Negative value on error (change should be denied).
->   */
-> -int dentry_needs_remove_privs(struct dentry *dentry)
-> +int dentry_needs_remove_privs(struct user_namespace *mnt_userns,
-> +                             struct dentry *dentry)
->  {
->         struct inode *inode = d_inode(dentry);
->         int mask = 0;
-> @@ -1992,7 +1999,7 @@ int dentry_needs_remove_privs(struct dentry *dentry)
->         if (IS_NOSEC(inode))
->                 return 0;
->
-> -       mask = should_remove_suid(dentry);
-> +       mask = should_remove_suid(mnt_userns, dentry);
->         ret = security_inode_need_killpriv(dentry);
->         if (ret < 0)
->                 return ret;
-> @@ -2024,7 +2031,7 @@ static int __file_remove_privs(struct file *file, unsigned int flags)
->         if (IS_NOSEC(inode) || !S_ISREG(inode->i_mode))
->                 return 0;
->
-> -       kill = dentry_needs_remove_privs(dentry);
-> +       kill = dentry_needs_remove_privs(file_mnt_user_ns(file), dentry);
->         if (kill < 0)
->                 return kill;
->
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 1e67b4b9a4d1..ae152ded227c 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -139,7 +139,8 @@ extern int vfs_open(const struct path *, struct file *);
->   * inode.c
->   */
->  extern long prune_icache_sb(struct super_block *sb, struct shrink_control *sc);
-> -extern int dentry_needs_remove_privs(struct dentry *dentry);
-> +extern int dentry_needs_remove_privs(struct user_namespace *,
-> +                                    struct dentry *dentry);
->
->  /*
->   * fs-writeback.c
-> @@ -226,3 +227,4 @@ int do_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
->                const char *acl_name, const void *kvalue, size_t size);
->  ssize_t do_get_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
->                    const char *acl_name, void *kvalue, size_t size);
-> +int should_remove_sgid(struct user_namespace *mnt_userns, struct dentry *dentry);
-
-Pls move this up to /* inode.c */ section
-
-Miklos,
-
-Do you want to ACK the ovl_fallocate() and ovl_copyfile() patches
-so Chritain can pick them to his tree or do you prefer to take them
-through your tree? They fix SUID stripping bugs regardless of
-Christain's extra patch for fixing vfs SGID stripping.
-
-Thanks,
-Amir.
+Alternately, we could allow the fs to set the STATX_ATTR_* flag with
+per-inode granularity, and for nfsd, just add a new change_attr_type()
+op to export_operations. Most filesystems would just have that return a
+hardcoded value, but an nfs reexport could just pass through whatever
+value it got from the server.
+--=20
+Jeff Layton <jlayton@kernel.org>
