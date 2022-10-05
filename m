@@ -2,220 +2,234 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B67CB5F583B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 18:21:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3D9325F5871
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 18:40:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229813AbiJEQVg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Oct 2022 12:21:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37902 "EHLO
+        id S229985AbiJEQk1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Oct 2022 12:40:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35320 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbiJEQVf (ORCPT
+        with ESMTP id S229774AbiJEQk0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Oct 2022 12:21:35 -0400
-Received: from mail-vs1-xe34.google.com (mail-vs1-xe34.google.com [IPv6:2607:f8b0:4864:20::e34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 526856C74C;
-        Wed,  5 Oct 2022 09:21:34 -0700 (PDT)
-Received: by mail-vs1-xe34.google.com with SMTP id t18so11528703vsr.12;
-        Wed, 05 Oct 2022 09:21:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=msMM6KzVUNtp5lXJeF0/mwiQThCb2ZAuVam6wM5kLFQ=;
-        b=pteMfjoJxUtBKbv+DevwDlV1FjQJIN5SppkK8BfkVopCImDWvbnjyw1ZPhTCBymR3p
-         3se//yx6Kb/e1hY9w77+kbLCcQhWXmgOFAK7RYutdcpMqpsAbyDViQjJQ1BB8tTt6UxP
-         EtFxrhYV0o3fYdNTHgULqQTgxUQKoVvE1mmiX9vmJSHF+Fu+ubmJPd/pi0bKQ1AZSDkS
-         pCkY/FYZeySq6KxfBEepiSkgnbNiCqFadYLB1jcO08BxOiDF/WFTdeDJy3YGzYcLNN8H
-         sImcFL86fig9tx7hCYGvh/SHq5+9izyizbQq2mAdOyGQgFxNqYUXLwYUPeVHH1QmFWuC
-         Vafg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=msMM6KzVUNtp5lXJeF0/mwiQThCb2ZAuVam6wM5kLFQ=;
-        b=YVn9feBom6ZhWNONguI1sYMhua9jDBIA1vhFMV0xi4LJk/8Vf+Zp3X3PcOpu6E0dDb
-         6wdp4zdfdKU/2/qZhy6BF/r94J3qXb70y9enr9x/zwT5kGZrZ6r3QWdysIoAxW5TM3bl
-         N08GqAZ5Ns7hPML9XuQM2xRH6d4uObWQFDdb8J4vSJHqiWc0fRoP0tdpBK4vaYI3EruE
-         HDCw+GybMsCRnV/VIV6z7tzi1OgMW7IIj5I+W9QB3VvBCJkG8l9+sG4f2iaGPys8MoVp
-         YGmNKvMF2rxNVTYswbzUCmqXAIeFWnT4JvXEt61xrwFF3vTGAExSHnKS3Wb+isyN/xNP
-         +5mQ==
-X-Gm-Message-State: ACrzQf3FnBqiErKteddRkIr7d5GBROhDyv0ISKGsYqeRXGfuHGtRdBJT
-        uEVP1bPqRsPHAnUHiiKd5pQOUDl8IbdYcHusbPI=
-X-Google-Smtp-Source: AMsMyM6STjFO6iLw6sunBOugQUwsDJ2bwsBONTl2Pm0Jbv1ccuRnJlZf8p2bNEJR/Du0JUy8rVlBKaS9pKOXAxh++dA=
-X-Received: by 2002:a67:e408:0:b0:3a6:89a9:d1ff with SMTP id
- d8-20020a67e408000000b003a689a9d1ffmr284715vsf.72.1664986893316; Wed, 05 Oct
- 2022 09:21:33 -0700 (PDT)
+        Wed, 5 Oct 2022 12:40:26 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AE7F20356;
+        Wed,  5 Oct 2022 09:40:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B0FA0B81DE0;
+        Wed,  5 Oct 2022 16:40:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43E3EC433D6;
+        Wed,  5 Oct 2022 16:40:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1664988022;
+        bh=PFLhkFtwkoFOvEH1cLHwmK2JKBgWdlPw1bvH2RLTQS8=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=M+QxPavX/Wlovs2EPzg2SZ1esj4fmGj0ZmvQ3FhBVmGprs3Jxml3XOq95uMdt+Mqz
+         VWLkvXn5NHEO2utNC6f31e7iZv9vn8sXdQFmPEjUxmVQyxqHCMLShMv+sjAvulnfE3
+         K2aA2/0urEAUWbh/6LGrZFgU3DoMSGPQ6YdsuV15/i8VRuze/1vsTmnKcF45y8DEq+
+         QF3/ZwvNUf+LegLBGXsDappNcIHH0BZM5OmwhAPGLEwbdmk/Jyb1xE1MzmyTYJCU+D
+         zWi5UEj+zAM5SsH9dZBHc/4GMGziiZwGiiHKAwDEg7lqo2HzbbWQm5Wfd3XEtWE6zK
+         RbxSVjsJW0/aw==
+Message-ID: <66714195b93e05a97c2cd09e5d21ca47203366cf.camel@kernel.org>
+Subject: Re: [PATCH v6 8/9] vfs: update times after copying data in
+ __generic_file_write_iter
+From:   Jeff Layton <jlayton@kernel.org>
+To:     NeilBrown <neilb@suse.de>, Amir Goldstein <amir73il@gmail.com>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
+        david@fromorbit.com, trondmy@hammerspace.com,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
+        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
+        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Date:   Wed, 05 Oct 2022 12:40:18 -0400
+In-Reply-To: <166483780286.14457.1388505585556274283@noble.neil.brown.name>
+References: <20220930111840.10695-1-jlayton@kernel.org>
+        , <20220930111840.10695-9-jlayton@kernel.org>
+        , <CAOQ4uxgofERYwN7AfYFWqQMpQH5y3LV+6UuGfjU29gZXNf7-vQ@mail.gmail.com>
+        , <df91b9ec61bc49aa5330714e3319dcea2531953b.camel@kernel.org>
+        , <CAOQ4uxi6pPDexF7Z1wshnpV0kbSKsHUeawaUkhjq4FNGbqWU+A@mail.gmail.com>
+         <166483780286.14457.1388505585556274283@noble.neil.brown.name>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-References: <20221005151433.898175-1-brauner@kernel.org> <20221005151433.898175-2-brauner@kernel.org>
-In-Reply-To: <20221005151433.898175-2-brauner@kernel.org>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 5 Oct 2022 19:21:21 +0300
-Message-ID: <CAOQ4uxhkrd_qbJPD-_TDkcL6GMs3O+U+Q7ftDri_zig7HD3D1g@mail.gmail.com>
-Subject: Re: [PATCH 1/3] attr: use consistent sgid stripping checks
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Seth Forshee <sforshee@kernel.org>,
-        Yang Xu <xuyang2018.jy@fujitsu.com>,
-        Filipe Manana <fdmanana@kernel.org>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 5, 2022 at 6:14 PM Christian Brauner <brauner@kernel.org> wrote:
->
-> Currently setgid stripping in file_remove_privs()'s should_remove_suid()
-> helper is inconsistent with other parts of the vfs. Specifically, it only
-> raises ATTR_KILL_SGID if the inode is S_ISGID and S_IXGRP but not if the
-> inode isn't in the caller's groups and the caller isn't privileged over the
-> inode although we require this already in setattr_prepare() and
-> setattr_copy() and so all filesystem implement this requirement implicitly
-> because they have to use setattr_{prepare,copy}() anyway.
->
-> But the inconsistency shows up in setgid stripping bugs for overlayfs in
-> xfstests. For example, we test whether suid and setgid stripping works
-> correctly when performing various write-like operations as an unprivileged
-> user (fallocate, reflink, write, etc.):
+On Tue, 2022-10-04 at 09:56 +1100, NeilBrown wrote:
+> On Tue, 04 Oct 2022, Amir Goldstein wrote:
+> > On Mon, Oct 3, 2022 at 4:01 PM Jeff Layton <jlayton@kernel.org> wrote:
+> > >=20
+> > > On Sun, 2022-10-02 at 10:08 +0300, Amir Goldstein wrote:
+> > > > On Fri, Sep 30, 2022 at 2:30 PM Jeff Layton <jlayton@kernel.org> wr=
+ote:
+> > > > >=20
+> > > > > The c/mtime and i_version currently get updated before the data i=
+s
+> > > > > copied (or a DIO write is issued), which is problematic for NFS.
+> > > > >=20
+> > > > > READ+GETATTR can race with a write (even a local one) in such a w=
+ay as
+> > > > > to make the client associate the state of the file with the wrong=
+ change
+> > > > > attribute. That association can persist indefinitely if the file =
+sees no
+> > > > > further changes.
+> > > > >=20
+> > > > > Move the setting of times to the bottom of the function in
+> > > > > __generic_file_write_iter and only update it if something was
+> > > > > successfully written.
+> > > > >=20
+> > > >=20
+> > > > This solution is wrong for several reasons:
+> > > >=20
+> > > > 1. There is still file_update_time() in ->page_mkwrite() so you hav=
+en't
+> > > >     solved the problem completely
+> > >=20
+> > > Right. I don't think there is a way to solve the problem vs. mmap.
+> > > Userland can write to a writeable mmap'ed page at any time and we'd
+> > > never know. We have to specifically carve out mmap as an exception he=
+re.
+> > > I'll plan to add something to the manpage patch for this.
+> > >=20
+> > > > 2. The other side of the coin is that post crash state is more like=
+ly to end
+> > > >     up data changes without mtime/ctime change
+> > > >=20
+> > >=20
+> > > Is this really something filesystems rely on? I suppose the danger is
+> > > that some cached data gets written to disk before the write returns a=
+nd
+> > > the inode on disk never gets updated.
+> > >=20
+> > > But...isn't that a danger now? Some of the cached data could get writ=
+ten
+> > > out and the updated inode just never makes it to disk before a crash
+> > > (AFAIU). I'm not sure that this increases our exposure to that proble=
+m.
+> > >=20
+> > >=20
+> >=20
+> > You are correct that that danger exists, but it only exists for overwri=
+ting
+> > to allocated blocks.
+> >=20
+> > For writing to new blocks, mtime change is recorded in transaction
+> > before the block mapping is recorded in transaction so there is no
+> > danger in this case (before your patch).
+> >=20
+> > Also, observing size change without observing mtime change
+> > after crash seems like a very bad outcome that may be possible
+> > after your change.
+> >=20
+> > These are just a few cases that I could think of, they may be filesyste=
+m
+> > dependent, but my gut feeling is that if you remove the time update bef=
+ore
+> > the operation, that has been like that forever, a lot of s#!t is going =
+to float
+> > for various filesystems and applications.
+> >=20
+> > And it is not one of those things that are discovered  during rc or eve=
+n
+> > stable kernel testing - they are discovered much later when users start=
+ to
+> > realize their applications got bogged up after crash, so it feels like =
+to me
+> > like playing with fire.
+> >=20
+> > > > If I read the problem description correctly, then a solution that i=
+nvalidates
+> > > > the NFS cache before AND after the write would be acceptable. Right=
+?
+> > > > Would an extra i_version bump after the write solve the race?
+> > > >=20
+> > >=20
+> > > I based this patch on Neil's assertion that updating the time before =
+an
+> > > operation was pointless if we were going to do it afterward. The NFS
+> > > client only really cares about seeing it change after a write.
+> > >=20
+> >=20
+> > Pointless to NFS client maybe.
+> > Whether or not this is not changing user behavior for other application=
+s
+> > is up to you to prove and I doubt that you can prove it because I doubt
+> > that it is true.
+> >=20
+> > > Doing both would be fine from a correctness standpoint, and in most
+> > > cases, the second would be a no-op anyway since a query would have to
+> > > race in between the two for that to happen.
+> > >=20
+> > > FWIW, I think we should update the m/ctime and version at the same ti=
+me.
+> > > If the version changes, then there is always the potential that a tim=
+er
+> > > tick has occurred. So, that would translate to a second call to
+> > > file_update_time in here.
+> > >=20
+> > > The downside of bumping the times/version both before and after is th=
+at
+> > > these are hot codepaths, and we'd be adding extra operations there. E=
+ven
+> > > in the case where nothing has changed, we'd have to call
+> > > inode_needs_update_time a second time for every write. Is that worth =
+the
+> > > cost?
+> >=20
+> > Is there a practical cost for iversion bump AFTER write as I suggested?
+> > If you NEED m/ctime update AFTER write and iversion update is not enoug=
+h
+> > then I did not understand from your commit message why that is.
+> >=20
+> > Thanks,
+> > Amir.
+> >=20
+>=20
+> Maybe we should split i_version updates from ctime updates.
+>=20
+> While it isn't true that ctime updates have happened before the write
+> "forever" it has been true since 2.3.43[1] which is close to forever.
+>=20
+> For ctime there doesn't appear to be a strong specification of when the
+> change happens, so history provides a good case for leaving it before.
+> For i_version we want to provide clear and unambiguous semantics.
+> Performing 2 updates makes the specification muddy.
+>=20
+> So I would prefer a single update for i_version, performed after the
+> change becomes visible.  If that means it has to be separate from ctime,
+> then so be it.
+>=20
+> NeilBrown
+>=20
+>=20
+> [1]:  https://git.kernel.org/pub/scm/linux/kernel/git/history/history.git=
+/commit/?id=3D636b38438001a00b25f23e38747a91cb8428af29
 
-Maybe spell out the failing fstests numbers?
 
->
-> echo "Test 1 - qa_user, non-exec file $verb"
-> setup_testfile
-> chmod a+rws $junk_file
-> commit_and_check "$qa_user" "$verb" 64k 64k
->
-> The test basically creates a file with 6666 permissions. While the file has
-> the S_ISUID and S_ISGID bits set it does not have the S_IXGRP set. On a
-> regular filesystem like xfs what will happen is:
->
-> sys_fallocate()
-> -> vfs_fallocate()
->    -> xfs_file_fallocate()
->       -> file_modified()
->          -> __file_remove_privs()
->             -> dentry_needs_remove_privs()
->                -> should_remove_suid()
->             -> __remove_privs()
->                newattrs.ia_valid = ATTR_FORCE | kill;
->                -> notify_change()
->                   -> setattr_copy()
->
-> In should_remove_suid() we can see that ATTR_KILL_SUID is raised
-> unconditionally because the file in the test has S_ISUID set.
->
-> But we also see that ATTR_KILL_SGID won't be set because while the file
-> is S_ISGID it is not S_IXGRP (see above) which is a condition for
-> ATTR_KILL_SGID being raised.
->
-> So by the time we call notify_change() we have attr->ia_valid set to
-> ATTR_KILL_SUID | ATTR_FORCE. Now notify_change() sees that
-> ATTR_KILL_SUID is set and does:
->
-> ia_valid = attr->ia_valid |= ATTR_MODE
-> attr->ia_mode = (inode->i_mode & ~S_ISUID);
->
-> which means that when we call setattr_copy() later we will definitely
-> update inode->i_mode. Note that attr->ia_mode still contains S_ISGID.
->
-> Now we call into the filesystem's ->setattr() inode operation which will
-> end up calling setattr_copy(). Since ATTR_MODE is set we will hit:
->
-> if (ia_valid & ATTR_MODE) {
->         umode_t mode = attr->ia_mode;
->         vfsgid_t vfsgid = i_gid_into_vfsgid(mnt_userns, inode);
->         if (!vfsgid_in_group_p(vfsgid) &&
->             !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID))
->                 mode &= ~S_ISGID;
->         inode->i_mode = mode;
-> }
->
-> and since the caller in the test is neither capable nor in the group of the
-> inode the S_ISGID bit is stripped.
->
-> But assume the file isn't suid then ATTR_KILL_SUID won't be raised which
-> has the consequence that neither the setgid nor the suid bits are stripped
-> even though it should be stripped because the inode isn't in the caller's
-> groups and the caller isn't privileged over the inode.
->
-> If overlayfs is in the mix things become a bit more complicated and the bug
-> shows up more clearly. When e.g., ovl_setattr() is hit from
-> ovl_fallocate()'s call to file_remove_privs() then ATTR_KILL_SUID and
-> ATTR_KILL_SGID might be raised but because the check in notify_change() is
-> questioning the ATTR_KILL_SGID flag again by requiring S_IXGRP for it to be
-> stripped the S_ISGID bit isn't removed even though it should be stripped:
->
-> sys_fallocate()
-> -> vfs_fallocate()
->    -> ovl_fallocate()
->       -> file_remove_privs()
->          -> dentry_needs_remove_privs()
->             -> should_remove_suid()
->          -> __remove_privs()
->             newattrs.ia_valid = ATTR_FORCE | kill;
->             -> notify_change()
->                -> ovl_setattr()
->                   // TAKE ON MOUNTER'S CREDS
->                   -> ovl_do_notify_change()
->                      -> notify_change()
->                   // GIVE UP MOUNTER'S CREDS
->      // TAKE ON MOUNTER'S CREDS
->      -> vfs_fallocate()
->         -> xfs_file_fallocate()
->            -> file_modified()
->               -> __file_remove_privs()
->                  -> dentry_needs_remove_privs()
->                     -> should_remove_suid()
->                  -> __remove_privs()
->                     newattrs.ia_valid = attr_force | kill;
->                     -> notify_change()
->
-> The fix for all of this is to make file_remove_privs()'s
-> should_remove_suid() helper to perform the same checks as we already
-> require in setattr_prepare() and setattr_copy() and have notify_change()
-> not pointlessly requiring S_IXGRP again. It doesn't make any sense in the
-> first place because the caller must calculate the flags via
-> should_remove_suid() anyway which would raise ATTR_KILL_SGID.
->
-> Running xfstests with this doesn't report any regressions. We should really
-> try and use consistent checks.
->
-> Co-Developed-by: Amir Goldstein <amir73il@gmail.com>
-> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> ---
->  fs/attr.c          |  4 +++-
->  fs/fuse/file.c     |  2 +-
->  fs/inode.c         | 47 ++++++++++++++++++++++++++++++++--------------
->  fs/internal.h      |  3 ++-
->  fs/ocfs2/file.c    |  4 ++--
->  fs/open.c          |  2 +-
->  include/linux/fs.h |  2 +-
->  7 files changed, 43 insertions(+), 21 deletions(-)
->
-> diff --git a/fs/attr.c b/fs/attr.c
-> index 1552a5f23d6b..7573bc33e490 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -18,6 +18,8 @@
->  #include <linux/evm.h>
->  #include <linux/ima.h>
->
-> +#include "internal.h"
-> +
+Not necessarily. We can document it in such a way that bumping it twice
+is allowed, but not required.
 
-Leftover, not needed.
+My main concern with splitting them up is that we'd have to dirty the
+inode twice if both the times and the i_version need updating. If the
+inode gets written out in between, then we end up doing twice the I/O.
+The interim on-disk metadata would be in sort of a weird state too --
+the ctime would have changed but the version would still be old.
 
-Thanks for the fast response :)
-
-Amir.
+It might be worthwhile to just go ahead and continue bumping it in
+file_update_time, and then we'd just attempt to bump the i_version again
+afterward. The second bump will almost always be a no-op anyway.
+--=20
+Jeff Layton <jlayton@kernel.org>
