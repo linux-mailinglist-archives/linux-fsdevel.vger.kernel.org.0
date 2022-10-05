@@ -2,343 +2,285 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FBBF5F5A8B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 21:18:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F6BD5F5B87
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 23:14:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230100AbiJETSK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Oct 2022 15:18:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37940 "EHLO
+        id S231220AbiJEVOg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Oct 2022 17:14:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229608AbiJETSJ (ORCPT
+        with ESMTP id S231210AbiJEVOa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Oct 2022 15:18:09 -0400
-Received: from smtp-190e.mail.infomaniak.ch (smtp-190e.mail.infomaniak.ch [IPv6:2001:1600:4:17::190e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1794513D29
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Oct 2022 12:18:07 -0700 (PDT)
-Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MjPVN5nhqzMq2g2;
-        Wed,  5 Oct 2022 21:18:04 +0200 (CEST)
-Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MjPVL6KgFzx4;
-        Wed,  5 Oct 2022 21:18:02 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1664997484;
-        bh=S/siV5PRviBeyZ1OcEosTCZCN+RnCXzNAgzfLNJAJ6I=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=yLOm/397ilOSwpQmGq1urCOZz6hhQPiGMwt8Hf5L/rLMVzCnQb4N/2j5qLZ7MTNug
-         ntANqlHH2J961rEH5UC//eGF4eOraGmEfe6MN2MQ8WnOj2SkQOKvUOh4rwvCHgcsCa
-         xDP/1higQ7edJ0MxfxCFYCs8CWZnBA2P/L5hUHfk=
-Message-ID: <971872fe-f2ae-ca6a-5b58-019fed8c9952@digikod.net>
-Date:   Wed, 5 Oct 2022 21:18:02 +0200
+        Wed, 5 Oct 2022 17:14:30 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 361097539B;
+        Wed,  5 Oct 2022 14:14:27 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 5DB522191A;
+        Wed,  5 Oct 2022 21:14:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1665004466; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=01sgoEm54YTMwT5GObElbBalf5G3CbGpxBxdCVhq1Pw=;
+        b=HOBDxms5f1DZa0kq0S2PE0X76B3PZFp3+ZcEUrQ7ufALeM+9RutSRpx/kWEF+GgrWgmgoE
+        +UJNyRWei/WMNITz7p5p83jv1Iy6Vz0CYmLw8+EgT6wsgKt5m3j+hgIbO86GKRRo2BOqvf
+        XnCLX0npbTInOVFKucSlWG5xGo7Kckc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1665004466;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=01sgoEm54YTMwT5GObElbBalf5G3CbGpxBxdCVhq1Pw=;
+        b=UwVsJ+/pT0W4J4hWxz0reUKGR1ZbPK98QiHRwgavUFkUb2vzYAePozrBGR6uJaWA4wXdm9
+        RAryWAN1Pr6EajBA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3152B13345;
+        Wed,  5 Oct 2022 21:14:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id nmkHNqrzPWNYRQAAMHmgww
+        (envelope-from <neilb@suse.de>); Wed, 05 Oct 2022 21:14:18 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-User-Agent: 
-Subject: Re: [PATCH v8 0/9] landlock: truncate support
-Content-Language: en-US
-To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
-        linux-security-module@vger.kernel.org
-Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-References: <20221001154908.49665-1-gnoack3000@gmail.com>
-From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20221001154908.49665-1-gnoack3000@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From:   "NeilBrown" <neilb@suse.de>
+To:     "Jeff Layton" <jlayton@kernel.org>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
+        david@fromorbit.com, trondmy@hammerspace.com,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
+        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
+        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v6 6/9] nfsd: use the getattr operation to fetch i_version
+In-reply-to: <13714490816df1ff36ab06bbf32df5440cad7913.camel@kernel.org>
+References: <20220930111840.10695-1-jlayton@kernel.org>,
+ <20220930111840.10695-7-jlayton@kernel.org>,
+ <166484034920.14457.15225090674729127890@noble.neil.brown.name>,
+ <13714490816df1ff36ab06bbf32df5440cad7913.camel@kernel.org>
+Date:   Thu, 06 Oct 2022 08:14:04 +1100
+Message-id: <166500444418.16615.7547789313879225413@noble.neil.brown.name>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch series is almost ready, I guess the next one will be the 
-final one.
+On Wed, 05 Oct 2022, Jeff Layton wrote:
+> On Tue, 2022-10-04 at 10:39 +1100, NeilBrown wrote:
+> > On Fri, 30 Sep 2022, Jeff Layton wrote:
+> > > Now that we can call into vfs_getattr to get the i_version field, use
+> > > that facility to fetch it instead of doing it in nfsd4_change_attribute.
+> > >=20
+> > > Neil also pointed out recently that IS_I_VERSION directory operations
+> > > are always logged, and so we only need to mitigate the rollback problem
+> > > on regular files. Also, we don't need to factor in the ctime when
+> > > reexporting NFS or Ceph.
+> > >=20
+> > > Set the STATX_VERSION (and BTIME) bits in the request when we're dealing
+> > > with a v4 request. Then, instead of looking at IS_I_VERSION when
+> > > generating the change attr, look at the result mask and only use it if
+> > > STATX_VERSION is set. With this change, we can drop the fetch_iversion
+> > > export operation as well.
+> > >=20
+> > > Move nfsd4_change_attribute into nfsfh.c, and change it to only factor
+> > > in the ctime if it's a regular file and the fs doesn't advertise
+> > > STATX_ATTR_VERSION_MONOTONIC.
+> > >=20
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >  fs/nfs/export.c          |  7 -------
+> > >  fs/nfsd/nfs4xdr.c        |  4 +++-
+> > >  fs/nfsd/nfsfh.c          | 40 ++++++++++++++++++++++++++++++++++++++++
+> > >  fs/nfsd/nfsfh.h          | 29 +----------------------------
+> > >  fs/nfsd/vfs.h            |  7 ++++++-
+> > >  include/linux/exportfs.h |  1 -
+> > >  6 files changed, 50 insertions(+), 38 deletions(-)
+> > >=20
+> > > diff --git a/fs/nfs/export.c b/fs/nfs/export.c
+> > > index 01596f2d0a1e..1a9d5aa51dfb 100644
+> > > --- a/fs/nfs/export.c
+> > > +++ b/fs/nfs/export.c
+> > > @@ -145,17 +145,10 @@ nfs_get_parent(struct dentry *dentry)
+> > >  	return parent;
+> > >  }
+> > > =20
+> > > -static u64 nfs_fetch_iversion(struct inode *inode)
+> > > -{
+> > > -	nfs_revalidate_inode(inode, NFS_INO_INVALID_CHANGE);
+> > > -	return inode_peek_iversion_raw(inode);
+> > > -}
+> > > -
+> > >  const struct export_operations nfs_export_ops =3D {
+> > >  	.encode_fh =3D nfs_encode_fh,
+> > >  	.fh_to_dentry =3D nfs_fh_to_dentry,
+> > >  	.get_parent =3D nfs_get_parent,
+> > > -	.fetch_iversion =3D nfs_fetch_iversion,
+> > >  	.flags =3D EXPORT_OP_NOWCC|EXPORT_OP_NOSUBTREECHK|
+> > >  		EXPORT_OP_CLOSE_BEFORE_UNLINK|EXPORT_OP_REMOTE_FS|
+> > >  		EXPORT_OP_NOATOMIC_ATTR,
+> > > diff --git a/fs/nfsd/nfs4xdr.c b/fs/nfsd/nfs4xdr.c
+> > > index 1e9690a061ec..779c009314c6 100644
+> > > --- a/fs/nfsd/nfs4xdr.c
+> > > +++ b/fs/nfsd/nfs4xdr.c
+> > > @@ -2869,7 +2869,9 @@ nfsd4_encode_fattr(struct xdr_stream *xdr, struct=
+ svc_fh *fhp,
+> > >  			goto out;
+> > >  	}
+> > > =20
+> > > -	err =3D vfs_getattr(&path, &stat, STATX_BASIC_STATS, AT_STATX_SYNC_AS=
+_STAT);
+> > > +	err =3D vfs_getattr(&path, &stat,
+> > > +			  STATX_BASIC_STATS | STATX_BTIME | STATX_VERSION,
+> > > +			  AT_STATX_SYNC_AS_STAT);
+> > >  	if (err)
+> > >  		goto out_nfserr;
+> > >  	if (!(stat.result_mask & STATX_BTIME))
+> > > diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
+> > > index a5b71526cee0..9168bc657378 100644
+> > > --- a/fs/nfsd/nfsfh.c
+> > > +++ b/fs/nfsd/nfsfh.c
+> > > @@ -634,6 +634,10 @@ void fh_fill_pre_attrs(struct svc_fh *fhp)
+> > >  		stat.mtime =3D inode->i_mtime;
+> > >  		stat.ctime =3D inode->i_ctime;
+> > >  		stat.size  =3D inode->i_size;
+> > > +		if (v4 && IS_I_VERSION(inode)) {
+> > > +			stat.version =3D inode_query_iversion(inode);
+> > > +			stat.result_mask |=3D STATX_VERSION;
+> > > +		}
+> >=20
+> > This is increasingly ugly.  I wonder if it is justified at all...
+> >=20
+>=20
+> I'm fine with dropping that. So if the getattrs fail, we should just not
+> offer up pre/post attrs?
+>=20
+> > >  	}
+> > >  	if (v4)
+> > >  		fhp->fh_pre_change =3D nfsd4_change_attribute(&stat, inode);
+> > > @@ -665,6 +669,8 @@ void fh_fill_post_attrs(struct svc_fh *fhp)
+> > >  	if (err) {
+> > >  		fhp->fh_post_saved =3D false;
+> > >  		fhp->fh_post_attr.ctime =3D inode->i_ctime;
+> > > +		if (v4 && IS_I_VERSION(inode))
+> > > +			fhp->fh_post_attr.version =3D inode_query_iversion(inode);
+> >=20
+> > ... ditto ...
+> >=20
+> > >  	} else
+> > >  		fhp->fh_post_saved =3D true;
+> > >  	if (v4)
+> > > @@ -754,3 +760,37 @@ enum fsid_source fsid_source(const struct svc_fh *=
+fhp)
+> > >  		return FSIDSOURCE_UUID;
+> > >  	return FSIDSOURCE_DEV;
+> > >  }
+> > > +
+> > > +/*
+> > > + * We could use i_version alone as the change attribute.  However, i_v=
+ersion
+> > > + * can go backwards on a regular file after an unclean shutdown.  On i=
+ts own
+> > > + * that doesn't necessarily cause a problem, but if i_version goes bac=
+kwards
+> > > + * and then is incremented again it could reuse a value that was previ=
+ously
+> > > + * used before boot, and a client who queried the two values might inc=
+orrectly
+> > > + * assume nothing changed.
+> > > + *
+> > > + * By using both ctime and the i_version counter we guarantee that as =
+long as
+> > > + * time doesn't go backwards we never reuse an old value. If the files=
+ystem
+> > > + * advertises STATX_ATTR_VERSION_MONOTONIC, then this mitigation is no=
+t needed.
+> > > + *
+> > > + * We only need to do this for regular files as well. For directories,=
+ we
+> > > + * assume that the new change attr is always logged to stable storage =
+in some
+> > > + * fashion before the results can be seen.
+> > > + */
+> > > +u64 nfsd4_change_attribute(struct kstat *stat, struct inode *inode)
+> > > +{
+> > > +	u64 chattr;
+> > > +
+> > > +	if (stat->result_mask & STATX_VERSION) {
+> > > +		chattr =3D stat->version;
+> > > +
+> > > +		if (S_ISREG(inode->i_mode) &&
+> > > +		    !(stat->attributes & STATX_ATTR_VERSION_MONOTONIC)) {
+> >=20
+> > I would really rather that the fs got to make this decision.
+> > If it can guarantee that the i_version is monotonic even over a crash
+> > (which is probably can for directory, and might need changes to do for
+> > files) then it sets STATX_ATTR_VERSION_MONOTONIC and nfsd trusts it
+> > completely.
+> > If it cannot, then it doesn't set the flag.
+> > i.e. the S_ISREG() test should be in the filesystem, not in nfsd.
+> >=20
+>=20
+> This sounds reasonable, but for one thing.
+>=20
+> From RFC 7862:
+>=20
+>    While Section 5.4 of [RFC5661] discusses
+>    per-file system attributes, it is expected that the value of
+>    change_attr_type will not depend on the value of "homogeneous" and
+>    will only change in the event of a migration.
+>=20
+> The change_attr_type4 must be the same for all filehandles under a
+> particular filesystem.
+>=20
+> If we do what you suggest though, then it's easily possible for the fs
+> to set STATX_ATTR_VERSION_MONOTONIC on=C2=A0directories but not files. If we
+> later want to allow nfsd to advertise a change_attr_type4, we won't be
+> able to rely on the STATX_ATTR_VERSION_MONOTONIC to tell us how to fill
+> that out.
+>=20
+> Maybe that's ok. I suppose we could add a new field to the export
+> options that filesystems can set to advertise what sort of change attr
+> they offer?
+>=20
 
-I sent a related PR for syzkaller: 
-https://github.com/google/syzkaller/pull/3423
+There are 3 cases:
+1/ a file/dir which advertises MONOTONIC is easy to handle.
+2/ an IS_I_VERSION file/dir that does not advertise MONOTONIC will only fail
+   to be MONOTONIC across unclean restart (correct?).  nfsd can
+   compensate using an xattr on the root to count crashes, or just adding cti=
+me.
+3/ a non-IS_I_VERSION fs that does not advertise MONOTONIC cannot
+   be compensated for by nfsd.
 
+If we ever want nfsd to advertise MONOTONIC, then we must be able to
+reject non-IS_I_VERSION filesystems that don't advertise MONOTONIC on
+all files.
 
-On 01/10/2022 17:48, Günther Noack wrote:
-> The goal of these patches is to work towards a more complete coverage
-> of file system operations that are restrictable with Landlock.
-> 
-> Motivation
-> ----------
-> 
-> The known set of currently unsupported file system operations in
-> Landlock is described at [1]. Out of the operations listed there,
-> truncate is the only one that modifies file contents, so these patches
-> should make it possible to prevent the direct modification of file
-> contents with Landlock.
-> 
-> Apart from Landlock, file truncation can also be restricted using
-> seccomp-bpf, but it is more difficult to use (requires BPF, requires
-> keeping up-to-date syscall lists) and it is not configurable by file
-> hierarchy, as Landlock is. The simplicity and flexibility of the
-> Landlock approach makes it worthwhile adding.
-> 
-> Implementation overview
-> -----------------------
-> 
-> The patch introduces the truncation restriction feature as an
-> additional bit in the access_mask_t bitmap, in line with the existing
-> supported operations.
-> 
-> The truncation flag covers both the truncate(2) and ftruncate(2)
-> families of syscalls, as well as open(2) with the O_TRUNC flag.
-> This includes usages of creat() in the case where existing regular
-> files are overwritten.
-> 
-> Additionally, this patch set introduces a new Landlock security blob
-> associated with opened files, to track the available Landlock access
-> rights at the time of opening the file. This is in line with Unix's
-> general approach of checking the read and write permissions during
-> open(), and associating this previously checked authorization with the
-> opened file.
-> 
-> In order to treat truncate(2) and ftruncate(2) calls differently in an
-> LSM hook, we split apart the existing security_path_truncate hook into
-> security_path_truncate (for truncation by path) and
-> security_file_truncate (for truncation of previously opened files).
-> 
-> Relationship between "truncate" and "write" rights
-> --------------------------------------------------
-> 
-> While it's possible to use the "write file" and "truncate" rights
-> independent of each other, it simplifies the mental model for
-> userspace callers to always use them together.
-> 
-> Specifically, the following behaviours might be surprising for users
-> when using these independently:
-> 
->   * The commonly creat() syscall requires the truncate right when
->     overwriting existing files, as it is equivalent to open(2) with
->     O_TRUNC|O_CREAT|O_WRONLY.
->   * The "write file" right is not always required to truncate a file,
->     even through the open(2) syscall (when using O_RDONLY|O_TRUNC).
-> 
-> Nevertheless, keeping the two flags separate is the correct approach
-> to guarantee backwards compatibility for existing Landlock users.
-> 
-> When the "truncate" right is checked for ftruncate(2)
-> -----------------------------------------------------
-> 
-> Notably, for the purpose of ftruncate(2), the Landlock truncation
-> access right is looked up when *opening* the file, not when calling
-> ftruncate(). The availability of the truncate right is associated with
-> the opened file and is later checked to authorize ftruncate(2)
-> operations.
-> 
-> This is similar to how the write mode gets remembered after a
-> open(..., O_WRONLY) to authorize later write() operations.
-> 
-> These opened file descriptors can also be passed between processes and
-> will continue to enforce their truncation properties when these
-> processes attempt an ftruncate().
-> 
-> Ongoing discussions
-> -------------------
-> 
-> The one remaining ongoing discussion from v6 of the patch set is the
-> question whether we need to touch fs/ksmbd and fs/cachefiles, which
-> are both using vfs_truncate() to truncate files by path, even though
-> they already have the same struct file open. The proposal was to
-> introduce a "vfs_ftruncate()" that would work on opened files.
-> 
-> I think we should decouple this from the truncate patch set, with the
-> reasoning that:
-> 
-> (a) it would be a bigger change to create a "vfs_ftruncate()" which
-> would reach beyond the scope of this patch set.
-> 
-> (b) it seems likely that both components do not need to run under
-> Landlock at the moment and can be updated independently (just like it
-> needs to happen for normal userspace software in order to run it under
-> Landlock).
-> 
-> (c) vfs_truncate() is not the perfectly narrowest API for truncating
-> an opened file, but it's a legitimate way to do that and the operation
-> *is* checked with a Landlock LSM hook, although it might potentially
-> permit for a narrower sandboxing if that was done differently. That's
-> speculative though.
-> 
-> Overall, it's unclear whether doing this has any sandboxing benefits
-> for ksmbd and cachefiles, whereas on the downside, it would expand the
-> scope of the patch set quite a bit and would have to touch core parts
-> of the kernel (fs/open.c).
-> 
-> These patches are based on version 6.0-rc7.
-> 
-> Best regards,
-> Günther
-> 
-> [1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
-> 
-> Past discussions:
-> V1: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
-> V2: https://lore.kernel.org/all/20220712211405.14705-1-gnoack3000@gmail.com/
-> V3: https://lore.kernel.org/all/20220804193746.9161-1-gnoack3000@gmail.com/
-> V4: https://lore.kernel.org/all/20220814192603.7387-1-gnoack3000@gmail.com/
-> V5: https://lore.kernel.org/all/20220817203006.21769-1-gnoack3000@gmail.com/
-> V6: https://lore.kernel.org/all/20220908195805.128252-1-gnoack3000@gmail.com/
-> V7: https://lore.kernel.org/all/20220930160144.141504-1-gnoack3000@gmail.com/
-> 
-> Changelog:
-> 
-> V8:
-> * landlock: Refactor check_access_path_dual() into
->    is_access_to_paths_allowed(), as suggested by Mickaël Salaün on the
->    v7 review. Added this as a separate commit.
-> * landlock truncate feature: inline get_path_access()
-> * Documentation: update documentation date to October 2022
-> * selftests: locally #define __maybe_unused (checkpatch started
->    complaining about it, but the header where it's defined is not
->    usable from selftests)
-> 
-> V7:
-> * security: Create file_truncate hook
->    * Fix the build on kernels without CONFIG_SECURITY_PATH (fixed by
->      Mickaël Salaün)
->    * lsm_hooks.h: Document file_truncate hook
->    * fs/open.c: undo accidental indentation changes
-> * landlock: Support file truncation
->    * Use the init_layer_masks() result as input for
->      check_access_path_dual()
->    * Naming
->      * Rename the landlock_file_security.allowed_access field
->        (previously called "rights")
->      * Rename get_path_access_rights() to get_path_access()
->      * Rename get_file_access() to get_required_file_open_access() to
->        avoid confusion with get_path_access()
->      * Use "access_request" for access_mask_t variables, access_req for
->        unsigned long
->    * Documentation:
->      * Fixed some comments according to review
->      * Added comments to get_required_file_open_access() and
->        init_layer_masks()
-> * selftests:
->    * remove unused variables
->    * rename fd0,...,fd3 to fd_layer0,...,fd_layer3.
->    * test_ftruncate: define layers on top and inline the helper function
-> * New tests (both added as separate commits)
->    * More exhaustive ftruncate test: Add open_and_ftruncate test that
->      exercises ftruncate more thoroughly with fixture variants
->    * FD-passing test: exercise restricted file descriptors getting
->      passed between processes, also using the same fixture variants
-> * Documentation: integrate review comments by Mickaël Salaün
->    * do not use contraptions (don't)
->    * use double backquotes in all touched lines
->    * add the read/write open() analogy to the truncation docs
->    * in code example, check for abi<0 explicitly and fix indentation
-> 
-> V6:
-> * LSM hooks: create file_truncate hook in addition to path_truncate.
->    Use it in the existing path_truncate call sites where appropriate.
-> * landlock: check LANDLOCK_ACCESS_FS_TRUNCATE right during open(), and
->    associate that right with the opened struct file in a security blob.
->    Introduce get_path_access_rights() helper function.
-> * selftests: test ftruncate in a separate test, to exercise that
->    the rights are associated with the file descriptor.
-> * Documentation: Rework documentation to reflect new ftruncate() semantics.
-> * Applied small fixes by Mickaël Salaün which he added on top of V5, in
->    https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
->    (I hope I found them all.)
-> 
-> V5:
-> * Documentation
->    * Fix wording in userspace-api headers and in landlock.rst.
->    * Move the truncation limitation section one to the bottom.
->    * Move all .rst changes into the documentation commit.
-> * selftests
->    * Remove _metadata argument from helpers where it became unnecessary.
->    * Open writable file descriptors at the top of both tests, before Landlock
->      is enabled, to exercise ftruncate() independently from open().
->    * Simplify test_ftruncate and decouple it from exercising open().
->    * test_creat(): Return errno on close() failure (it does not conflict).
->    * Fix /* comment style */
->    * Reorder blocks of EXPECT_EQ checks to be consistent within a test.
->    * Add missing |O_TRUNC to a check in one test.
->    * Put the truncate_unhandled test before the other.
-> 
-> V4:
->   * Documentation
->     * Clarify wording and syntax as discussed in review.
->     * Use a less confusing error message in the example.
->   * selftests:
->     * Stop using ASSERT_EQ in test helpers, return EBADFD instead.
->       (This is an intentionally uncommon error code, so that the source
->       of the error is clear and the test can distinguish test setup
->       failures from failures in the actual system call under test.)
->   * samples/Documentation:
->     * Use additional clarifying comments in the kernel backwards
->       compatibility logic.
-> 
-> V3:
->   * selftests:
->     * Explicitly test ftruncate with readonly file descriptors
->       (returns EINVAL).
->     * Extract test_ftruncate, test_truncate, test_creat helpers,
->       which simplified the previously mixed usage of EXPECT/ASSERT.
->     * Test creat() behaviour as part of the big truncation test.
->     * Stop testing the truncate64(2) and ftruncate64(2) syscalls.
->       This simplifies the tests a bit. The kernel implementations are the
->       same as for truncate(2) and ftruncate(2), so there is little benefit
->       from testing them exhaustively. (We aren't testing all open(2)
->       variants either.)
->   * samples/landlock/sandboxer.c:
->     * Use switch() to implement best effort mode.
->   * Documentation:
->     * Give more background on surprising truncation behaviour.
->     * Use switch() in the example too, to stay in-line with the sample tool.
->     * Small fixes in header file to address previous comments.
-> * misc:
->    * Fix some typos and const usages.
-> 
-> V2:
->   * Documentation: Mention the truncation flag where needed.
->   * Documentation: Point out connection between truncation and file writing.
->   * samples: Add file truncation to the landlock/sandboxer.c sample tool.
->   * selftests: Exercise open(2) with O_TRUNC and creat(2) exhaustively.
->   * selftests: Exercise truncation syscalls when the truncate right
->     is not handled by Landlock.
-> 
-> Günther Noack (9):
->    security: Create file_truncate hook from path_truncate hook
->    selftests/landlock: Locally define __maybe_unused
->    landlock: Refactor check_access_path_dual() into
->      is_access_to_paths_allowed()
->    landlock: Support file truncation
->    selftests/landlock: Selftests for file truncation support
->    selftests/landlock: Test open() and ftruncate() in multiple scenarios
->    selftests/landlock: Test FD passing from a Landlock-restricted to an
->      unrestricted process
->    samples/landlock: Extend sample tool to support
->      LANDLOCK_ACCESS_FS_TRUNCATE
->    landlock: Document Landlock's file truncation support
-> 
->   Documentation/userspace-api/landlock.rst     |  66 ++-
->   fs/namei.c                                   |   2 +-
->   fs/open.c                                    |   2 +-
->   include/linux/lsm_hook_defs.h                |   1 +
->   include/linux/lsm_hooks.h                    |  10 +-
->   include/linux/security.h                     |   6 +
->   include/uapi/linux/landlock.h                |  21 +-
->   samples/landlock/sandboxer.c                 |  23 +-
->   security/apparmor/lsm.c                      |   6 +
->   security/landlock/fs.c                       | 191 +++++---
->   security/landlock/fs.h                       |  24 +
->   security/landlock/limits.h                   |   2 +-
->   security/landlock/setup.c                    |   1 +
->   security/landlock/syscalls.c                 |   2 +-
->   security/security.c                          |   5 +
->   security/tomoyo/tomoyo.c                     |  13 +
->   tools/testing/selftests/landlock/base_test.c |  38 +-
->   tools/testing/selftests/landlock/common.h    |  85 +++-
->   tools/testing/selftests/landlock/fs_test.c   | 452 ++++++++++++++++++-
->   19 files changed, 828 insertions(+), 122 deletions(-)
-> 
-> 
-> base-commit: f76349cf41451c5c42a99f18a9163377e4b364ff
+Maybe we need a global nfsd option which defaults to "monotoric" and
+causes those files to be rejected, but can be set to "non-monotonic" and
+then allows all files to be exported.
+
+It would be nice to make it easy to run multiple nfsd instances each on a
+different IP address.  Each can then have different options.  This could
+also be used to reexport an NFS mount using unmodified filehandles.
+
+Currently you need a network namespace to create a new nfsd.  I wonder
+if that is a little too much of a barrier.  But maybe we could automate
+the creation of working network namespaces for nfsd....
+
+NeilBrown
