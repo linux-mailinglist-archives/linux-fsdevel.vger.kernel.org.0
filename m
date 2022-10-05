@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 057885F5A25
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 20:53:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 69BFF5F5A27
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 20:54:10 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231403AbiJESxo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Oct 2022 14:53:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59582 "EHLO
+        id S230450AbiJESyI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Oct 2022 14:54:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231409AbiJESxk (ORCPT
+        with ESMTP id S231434AbiJESyB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Oct 2022 14:53:40 -0400
-Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A83576CF5B
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Oct 2022 11:53:39 -0700 (PDT)
-Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MjNy94GR1zMqV3g;
-        Wed,  5 Oct 2022 20:53:37 +0200 (CEST)
+        Wed, 5 Oct 2022 14:54:01 -0400
+X-Greylist: delayed 74 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Wed, 05 Oct 2022 11:54:00 PDT
+Received: from smtp-bc08.mail.infomaniak.ch (smtp-bc08.mail.infomaniak.ch [45.157.188.8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461686E889
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Oct 2022 11:53:59 -0700 (PDT)
+Received: from smtp-3-0000.mail.infomaniak.ch (unknown [10.4.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MjNyY57T3zMqGXm;
+        Wed,  5 Oct 2022 20:53:57 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MjNy80fWnzMpnPg;
-        Wed,  5 Oct 2022 20:53:36 +0200 (CEST)
+        by smtp-3-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MjNyX6tDfz3k;
+        Wed,  5 Oct 2022 20:53:56 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1664996017;
-        bh=hImWzEg4K3pMwtx6TVIjAq35QQqXG4vqj+KseSmpkTM=;
+        s=20191114; t=1664996037;
+        bh=ljZRze/N/m9CPBbrjY5RWsT55yRxL6hGaxZnan724g0=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=wv168OsOmLM+cIoocUgM9W2sbknzdKZ+c9dx5Fxjr86H6owiY+dsNcWG97NmbrhCf
-         JcBWXiX7qWUKhGsgcnTKr/NeB4LCFM/buagROjR0vIV5kSTh7dySpv4A85guRh8GDj
-         Rnkj1SYrTBS30SIiqo6g1P5CvxhYJfZkX1r2Bgd8=
-Message-ID: <f1f25fa2-565f-635c-1477-4036f64588e1@digikod.net>
-Date:   Wed, 5 Oct 2022 20:53:35 +0200
+        b=JKxnmzq8JABtbqJNCp8orWwIluxUpJ41CZjEHY7+0VnddzsxzFPkYAcwDMjtaUC61
+         qPX474+zaDpme2A4BX4yyYKV4NeX+kSuq28NpVxnMV3uXBQx28G7P/lGXcbDQb1Z3D
+         eppc2o1jWMFhIP28VdJHVKq31RHpxOOyg4UlbpME=
+Message-ID: <beb43471-48fa-9f8f-767c-a025db3bd660@digikod.net>
+Date:   Wed, 5 Oct 2022 20:53:56 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v8 1/9] security: Create file_truncate hook from
- path_truncate hook
+Subject: Re: [PATCH v8 2/9] selftests/landlock: Locally define __maybe_unused
 Content-Language: en-US
 To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
         linux-security-module@vger.kernel.org
@@ -41,213 +41,87 @@ Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
         linux-fsdevel@vger.kernel.org,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        John Johansen <john.johansen@canonical.com>
+        linux-kselftest@vger.kernel.org,
+        Shuah Khan <skhan@linuxfoundation.org>
 References: <20221001154908.49665-1-gnoack3000@gmail.com>
- <20221001154908.49665-2-gnoack3000@gmail.com>
+ <20221001154908.49665-3-gnoack3000@gmail.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <20221001154908.49665-2-gnoack3000@gmail.com>
+In-Reply-To: <20221001154908.49665-3-gnoack3000@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thanks for the doc.
+Thanks for cleaning this. Can you please move this patch just before the 
+test patches?
+
 
 On 01/10/2022 17:49, Günther Noack wrote:
-> Like path_truncate, the file_truncate hook also restricts file
-> truncation, but is called in the cases where truncation is attempted
-> on an already-opened file.
+> The checkpatch tool started to flag __attribute__(__unused__), which
+> we previously used. The header where this is normally defined is not
+> currently compatible with selftests.
 > 
-> This is required in a subsequent commit to handle ftruncate()
-> operations differently to truncate() operations.
+> This is the same approach as used in selftests/net/psock_lib.h.
 > 
-> Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Acked-by: John Johansen <john.johansen@canonical.com>
 > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 > ---
->   fs/namei.c                    |  2 +-
->   fs/open.c                     |  2 +-
->   include/linux/lsm_hook_defs.h |  1 +
->   include/linux/lsm_hooks.h     | 10 +++++++++-
->   include/linux/security.h      |  6 ++++++
->   security/apparmor/lsm.c       |  6 ++++++
->   security/security.c           |  5 +++++
->   security/tomoyo/tomoyo.c      | 13 +++++++++++++
->   8 files changed, 42 insertions(+), 3 deletions(-)
+>   tools/testing/selftests/landlock/common.h | 18 ++++++++++--------
+>   1 file changed, 10 insertions(+), 8 deletions(-)
 > 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 53b4bc094db2..0e419bd30f8e 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3211,7 +3211,7 @@ static int handle_truncate(struct user_namespace *mnt_userns, struct file *filp)
->   	if (error)
->   		return error;
+> diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
+> index 7ba18eb23783..7d34592471db 100644
+> --- a/tools/testing/selftests/landlock/common.h
+> +++ b/tools/testing/selftests/landlock/common.h
+> @@ -17,6 +17,10 @@
 >   
-> -	error = security_path_truncate(path);
-> +	error = security_file_truncate(filp);
->   	if (!error) {
->   		error = do_truncate(mnt_userns, path->dentry, 0,
->   				    ATTR_MTIME|ATTR_CTIME|ATTR_OPEN,
-> diff --git a/fs/open.c b/fs/open.c
-> index cf7e5c350a54..0fa861873245 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -188,7 +188,7 @@ long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
->   	if (IS_APPEND(file_inode(f.file)))
->   		goto out_putf;
->   	sb_start_write(inode->i_sb);
-> -	error = security_path_truncate(&f.file->f_path);
-> +	error = security_file_truncate(f.file);
->   	if (!error)
->   		error = do_truncate(file_mnt_user_ns(f.file), dentry, length,
->   				    ATTR_MTIME | ATTR_CTIME, f.file);
-> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-> index 60fff133c0b1..dee35ab253ba 100644
-> --- a/include/linux/lsm_hook_defs.h
-> +++ b/include/linux/lsm_hook_defs.h
-> @@ -177,6 +177,7 @@ LSM_HOOK(int, 0, file_send_sigiotask, struct task_struct *tsk,
->   	 struct fown_struct *fown, int sig)
->   LSM_HOOK(int, 0, file_receive, struct file *file)
->   LSM_HOOK(int, 0, file_open, struct file *file)
-> +LSM_HOOK(int, 0, file_truncate, struct file *file)
->   LSM_HOOK(int, 0, task_alloc, struct task_struct *task,
->   	 unsigned long clone_flags)
->   LSM_HOOK(void, LSM_RET_VOID, task_free, struct task_struct *task)
-> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-> index 3aa6030302f5..4acc975f28d9 100644
-> --- a/include/linux/lsm_hooks.h
-> +++ b/include/linux/lsm_hooks.h
-> @@ -409,7 +409,9 @@
->    *	@attr is the iattr structure containing the new file attributes.
->    *	Return 0 if permission is granted.
->    * @path_truncate:
-> - *	Check permission before truncating a file.
-> + *	Check permission before truncating the file indicated by path.
-> + *      Note that truncation permissions may also be checked based on
-> + *      already opened files, using the @file_truncate hook.
-
-The documentation comments (mostly) use tabs, not spaces.
-
-
->    *	@path contains the path structure for the file.
->    *	Return 0 if permission is granted.
->    * @inode_getattr:
-> @@ -598,6 +600,12 @@
->    *	to receive an open file descriptor via socket IPC.
->    *	@file contains the file structure being received.
->    *	Return 0 if permission is granted.
-> + * @file_truncate:
-> + *	Check permission before truncating a file, i.e. using ftruncate.
-> + *	Note that truncation permission may also be checked based on the path,
-> + *      using the @path_truncate hook.
-
-Same here.
-
-
-> + *	@file contains the file structure for the file.
-> + *	Return 0 if permission is granted.
->    * @file_open:
->    *	Save open-time permission checking state for later use upon
->    *	file_permission, and recheck access if anything has changed
-> diff --git a/include/linux/security.h b/include/linux/security.h
-> index 7bd0c490703d..f80b23382dd9 100644
-> --- a/include/linux/security.h
-> +++ b/include/linux/security.h
-> @@ -394,6 +394,7 @@ int security_file_send_sigiotask(struct task_struct *tsk,
->   				 struct fown_struct *fown, int sig);
->   int security_file_receive(struct file *file);
->   int security_file_open(struct file *file);
-> +int security_file_truncate(struct file *file);
->   int security_task_alloc(struct task_struct *task, unsigned long clone_flags);
->   void security_task_free(struct task_struct *task);
->   int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
-> @@ -1011,6 +1012,11 @@ static inline int security_file_open(struct file *file)
->   	return 0;
+>   #include "../kselftest_harness.h"
+>   
+> +#ifndef __maybe_unused
+> +#define __maybe_unused __attribute__((__unused__))
+> +#endif
+> +
+>   /*
+>    * TEST_F_FORK() is useful when a test drop privileges but the corresponding
+>    * FIXTURE_TEARDOWN() requires them (e.g. to remove files from a directory
+> @@ -140,14 +144,12 @@ static void _init_caps(struct __test_metadata *const _metadata, bool drop_all)
 >   }
 >   
-> +static inline int security_file_truncate(struct file *file)
-> +{
-> +	return 0;
-> +}
-> +
->   static inline int security_task_alloc(struct task_struct *task,
->   				      unsigned long clone_flags)
+>   /* We cannot put such helpers in a library because of kselftest_harness.h . */
+> -__attribute__((__unused__)) static void
+> -disable_caps(struct __test_metadata *const _metadata)
+> +static void __maybe_unused disable_caps(struct __test_metadata *const _metadata)
 >   {
-> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-> index e29cade7b662..98ecb7f221b8 100644
-> --- a/security/apparmor/lsm.c
-> +++ b/security/apparmor/lsm.c
-> @@ -329,6 +329,11 @@ static int apparmor_path_truncate(const struct path *path)
->   	return common_perm_cond(OP_TRUNC, path, MAY_WRITE | AA_MAY_SETATTR);
+>   	_init_caps(_metadata, false);
 >   }
 >   
-> +static int apparmor_file_truncate(struct file *file)
-> +{
-> +	return apparmor_path_truncate(&file->f_path);
-> +}
-> +
->   static int apparmor_path_symlink(const struct path *dir, struct dentry *dentry,
->   				 const char *old_name)
+> -__attribute__((__unused__)) static void
+> -drop_caps(struct __test_metadata *const _metadata)
+> +static void __maybe_unused drop_caps(struct __test_metadata *const _metadata)
 >   {
-> @@ -1232,6 +1237,7 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
->   	LSM_HOOK_INIT(mmap_file, apparmor_mmap_file),
->   	LSM_HOOK_INIT(file_mprotect, apparmor_file_mprotect),
->   	LSM_HOOK_INIT(file_lock, apparmor_file_lock),
-> +	LSM_HOOK_INIT(file_truncate, apparmor_file_truncate),
->   
->   	LSM_HOOK_INIT(getprocattr, apparmor_getprocattr),
->   	LSM_HOOK_INIT(setprocattr, apparmor_setprocattr),
-> diff --git a/security/security.c b/security/security.c
-> index 4b95de24bc8d..d73e423005c3 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -1650,6 +1650,11 @@ int security_file_open(struct file *file)
->   	return fsnotify_perm(file, MAY_OPEN);
+>   	_init_caps(_metadata, true);
+>   }
+> @@ -176,14 +178,14 @@ static void _effective_cap(struct __test_metadata *const _metadata,
+>   	}
 >   }
 >   
-> +int security_file_truncate(struct file *file)
-> +{
-> +	return call_int_hook(file_truncate, 0, file);
-> +}
-> +
->   int security_task_alloc(struct task_struct *task, unsigned long clone_flags)
+> -__attribute__((__unused__)) static void
+> -set_cap(struct __test_metadata *const _metadata, const cap_value_t caps)
+> +static void __maybe_unused set_cap(struct __test_metadata *const _metadata,
+> +				   const cap_value_t caps)
 >   {
->   	int rc = lsm_task_alloc(task);
-> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-> index 71e82d855ebf..af04a7b7eb28 100644
-> --- a/security/tomoyo/tomoyo.c
-> +++ b/security/tomoyo/tomoyo.c
-> @@ -134,6 +134,18 @@ static int tomoyo_path_truncate(const struct path *path)
->   	return tomoyo_path_perm(TOMOYO_TYPE_TRUNCATE, path, NULL);
+>   	_effective_cap(_metadata, caps, CAP_SET);
 >   }
 >   
-> +/**
-> + * tomoyo_file_truncate - Target for security_file_truncate().
-> + *
-> + * @file: Pointer to "struct file".
-> + *
-> + * Returns 0 on success, negative value otherwise.
-> + */
-> +static int tomoyo_file_truncate(struct file *file)
-> +{
-> +	return tomoyo_path_truncate(&file->f_path);
-> +}
-> +
->   /**
->    * tomoyo_path_unlink - Target for security_path_unlink().
->    *
-> @@ -545,6 +557,7 @@ static struct security_hook_list tomoyo_hooks[] __lsm_ro_after_init = {
->   	LSM_HOOK_INIT(bprm_check_security, tomoyo_bprm_check_security),
->   	LSM_HOOK_INIT(file_fcntl, tomoyo_file_fcntl),
->   	LSM_HOOK_INIT(file_open, tomoyo_file_open),
-> +	LSM_HOOK_INIT(file_truncate, tomoyo_file_truncate),
->   	LSM_HOOK_INIT(path_truncate, tomoyo_path_truncate),
->   	LSM_HOOK_INIT(path_unlink, tomoyo_path_unlink),
->   	LSM_HOOK_INIT(path_mkdir, tomoyo_path_mkdir),
+> -__attribute__((__unused__)) static void
+> -clear_cap(struct __test_metadata *const _metadata, const cap_value_t caps)
+> +static void __maybe_unused clear_cap(struct __test_metadata *const _metadata,
+> +				     const cap_value_t caps)
+>   {
+>   	_effective_cap(_metadata, caps, CAP_CLEAR);
+>   }
