@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B39BA5F5A1F
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 20:53:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 057885F5A25
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  5 Oct 2022 20:53:48 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231197AbiJESw6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Oct 2022 14:52:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59476 "EHLO
+        id S231403AbiJESxo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Oct 2022 14:53:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231199AbiJESwv (ORCPT
+        with ESMTP id S231409AbiJESxk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Oct 2022 14:52:51 -0400
-Received: from smtp-bc0c.mail.infomaniak.ch (smtp-bc0c.mail.infomaniak.ch [IPv6:2001:1600:4:17::bc0c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 779C26B8E5
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Oct 2022 11:52:47 -0700 (PDT)
+        Wed, 5 Oct 2022 14:53:40 -0400
+Received: from smtp-bc0d.mail.infomaniak.ch (smtp-bc0d.mail.infomaniak.ch [IPv6:2001:1600:3:17::bc0d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A83576CF5B
+        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Oct 2022 11:53:39 -0700 (PDT)
 Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
-        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MjNx70T3gzMqHF5;
-        Wed,  5 Oct 2022 20:52:43 +0200 (CEST)
+        by smtp-2-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4MjNy94GR1zMqV3g;
+        Wed,  5 Oct 2022 20:53:37 +0200 (CEST)
 Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
-        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MjNx601B0zMppDP;
-        Wed,  5 Oct 2022 20:52:41 +0200 (CEST)
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4MjNy80fWnzMpnPg;
+        Wed,  5 Oct 2022 20:53:36 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
-        s=20191114; t=1664995963;
-        bh=vZn9Z/mB+kBdgt4mEB6Y23TDD4U+fH6qbo78+xWpuYQ=;
+        s=20191114; t=1664996017;
+        bh=hImWzEg4K3pMwtx6TVIjAq35QQqXG4vqj+KseSmpkTM=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=pEz4oN7sUYON0JpZHpTERU4Ltbl/WtGBHNpSqWjGPVK8l8YNdVyMRIeRTo1hpURaB
-         VngmfhSZ5C0BY6zGw5Eoca9x5O7vdLovAgH6sZ8LuU6nvDQ3A8rk71zAUt2ztKhd+s
-         JcjdxFQp7+EnVRDjPnd2fSRcqxp57V/gSdfOfun4=
-Message-ID: <cdfdedad-a162-6608-a86e-8b2d47d6d8d8@digikod.net>
-Date:   Wed, 5 Oct 2022 20:52:41 +0200
+        b=wv168OsOmLM+cIoocUgM9W2sbknzdKZ+c9dx5Fxjr86H6owiY+dsNcWG97NmbrhCf
+         JcBWXiX7qWUKhGsgcnTKr/NeB4LCFM/buagROjR0vIV5kSTh7dySpv4A85guRh8GDj
+         Rnkj1SYrTBS30SIiqo6g1P5CvxhYJfZkX1r2Bgd8=
+Message-ID: <f1f25fa2-565f-635c-1477-4036f64588e1@digikod.net>
+Date:   Wed, 5 Oct 2022 20:53:35 +0200
 MIME-Version: 1.0
 User-Agent: 
-Subject: Re: [PATCH v8 4/9] landlock: Support file truncation
+Subject: Re: [PATCH v8 1/9] security: Create file_truncate hook from
+ path_truncate hook
 Content-Language: en-US
-To:     Nathan Chancellor <nathan@kernel.org>,
-        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
+To:     =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>,
+        linux-security-module@vger.kernel.org
+Cc:     James Morris <jmorris@namei.org>, Paul Moore <paul@paul-moore.com>,
         "Serge E . Hallyn" <serge@hallyn.com>,
         linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        John Johansen <john.johansen@canonical.com>
 References: <20221001154908.49665-1-gnoack3000@gmail.com>
- <20221001154908.49665-5-gnoack3000@gmail.com>
- <YzyQASSaeVqRlTsO@dev-arch.thelio-3990X>
+ <20221001154908.49665-2-gnoack3000@gmail.com>
 From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
-In-Reply-To: <YzyQASSaeVqRlTsO@dev-arch.thelio-3990X>
+In-Reply-To: <20221001154908.49665-2-gnoack3000@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -58,141 +58,196 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Thanks for the doc.
+
+On 01/10/2022 17:49, Günther Noack wrote:
+> Like path_truncate, the file_truncate hook also restricts file
+> truncation, but is called in the cases where truncation is attempted
+> on an already-opened file.
+> 
+> This is required in a subsequent commit to handle ftruncate()
+> operations differently to truncate() operations.
+> 
+> Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Acked-by: John Johansen <john.johansen@canonical.com>
+> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> ---
+>   fs/namei.c                    |  2 +-
+>   fs/open.c                     |  2 +-
+>   include/linux/lsm_hook_defs.h |  1 +
+>   include/linux/lsm_hooks.h     | 10 +++++++++-
+>   include/linux/security.h      |  6 ++++++
+>   security/apparmor/lsm.c       |  6 ++++++
+>   security/security.c           |  5 +++++
+>   security/tomoyo/tomoyo.c      | 13 +++++++++++++
+>   8 files changed, 42 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/namei.c b/fs/namei.c
+> index 53b4bc094db2..0e419bd30f8e 100644
+> --- a/fs/namei.c
+> +++ b/fs/namei.c
+> @@ -3211,7 +3211,7 @@ static int handle_truncate(struct user_namespace *mnt_userns, struct file *filp)
+>   	if (error)
+>   		return error;
+>   
+> -	error = security_path_truncate(path);
+> +	error = security_file_truncate(filp);
+>   	if (!error) {
+>   		error = do_truncate(mnt_userns, path->dentry, 0,
+>   				    ATTR_MTIME|ATTR_CTIME|ATTR_OPEN,
+> diff --git a/fs/open.c b/fs/open.c
+> index cf7e5c350a54..0fa861873245 100644
+> --- a/fs/open.c
+> +++ b/fs/open.c
+> @@ -188,7 +188,7 @@ long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
+>   	if (IS_APPEND(file_inode(f.file)))
+>   		goto out_putf;
+>   	sb_start_write(inode->i_sb);
+> -	error = security_path_truncate(&f.file->f_path);
+> +	error = security_file_truncate(f.file);
+>   	if (!error)
+>   		error = do_truncate(file_mnt_user_ns(f.file), dentry, length,
+>   				    ATTR_MTIME | ATTR_CTIME, f.file);
+> diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
+> index 60fff133c0b1..dee35ab253ba 100644
+> --- a/include/linux/lsm_hook_defs.h
+> +++ b/include/linux/lsm_hook_defs.h
+> @@ -177,6 +177,7 @@ LSM_HOOK(int, 0, file_send_sigiotask, struct task_struct *tsk,
+>   	 struct fown_struct *fown, int sig)
+>   LSM_HOOK(int, 0, file_receive, struct file *file)
+>   LSM_HOOK(int, 0, file_open, struct file *file)
+> +LSM_HOOK(int, 0, file_truncate, struct file *file)
+>   LSM_HOOK(int, 0, task_alloc, struct task_struct *task,
+>   	 unsigned long clone_flags)
+>   LSM_HOOK(void, LSM_RET_VOID, task_free, struct task_struct *task)
+> diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
+> index 3aa6030302f5..4acc975f28d9 100644
+> --- a/include/linux/lsm_hooks.h
+> +++ b/include/linux/lsm_hooks.h
+> @@ -409,7 +409,9 @@
+>    *	@attr is the iattr structure containing the new file attributes.
+>    *	Return 0 if permission is granted.
+>    * @path_truncate:
+> - *	Check permission before truncating a file.
+> + *	Check permission before truncating the file indicated by path.
+> + *      Note that truncation permissions may also be checked based on
+> + *      already opened files, using the @file_truncate hook.
+
+The documentation comments (mostly) use tabs, not spaces.
 
 
-On 04/10/2022 21:56, Nathan Chancellor wrote:
-> Hi Günther,
-> 
-> On Sat, Oct 01, 2022 at 05:49:03PM +0200, Günther Noack wrote:
->> Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
->>
->> This flag hooks into the path_truncate LSM hook and covers file
->> truncation using truncate(2), ftruncate(2), open(2) with O_TRUNC, as
->> well as creat().
->>
->> This change also increments the Landlock ABI version, updates
->> corresponding selftests, and updates code documentation to document
->> the flag.
->>
->> The following operations are restricted:
->>
->> open(): requires the LANDLOCK_ACCESS_FS_TRUNCATE right if a file gets
->> implicitly truncated as part of the open() (e.g. using O_TRUNC).
->>
->> Notable special cases:
->> * open(..., O_RDONLY|O_TRUNC) can truncate files as well in Linux
->> * open() with O_TRUNC does *not* need the TRUNCATE right when it
->>    creates a new file.
->>
->> truncate() (on a path): requires the LANDLOCK_ACCESS_FS_TRUNCATE
->> right.
->>
->> ftruncate() (on a file): requires that the file had the TRUNCATE right
->> when it was previously opened.
->>
->> Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> 
-> I just bisected a crash in QEMU with Debian's arm64 configuration to
-> this change in -next as commit b40deebe7679 ("landlock: Support file
-> truncation"), which I was able to reproduce like so:
+>    *	@path contains the path structure for the file.
+>    *	Return 0 if permission is granted.
+>    * @inode_getattr:
+> @@ -598,6 +600,12 @@
+>    *	to receive an open file descriptor via socket IPC.
+>    *	@file contains the file structure being received.
+>    *	Return 0 if permission is granted.
+> + * @file_truncate:
+> + *	Check permission before truncating a file, i.e. using ftruncate.
+> + *	Note that truncation permission may also be checked based on the path,
+> + *      using the @path_truncate hook.
 
-Thanks for the report Nathan. I've found an issue in this patch and 
-fixed it in -next with this (rebased) commit: 
-https://git.kernel.org/mic/c/b40deebe7679b05d4852488ef531e189a9621f2e
-You should already have this update since I pushed it Monday.
-Please let us know if this fixed the issue.
+Same here.
 
 
-> 
-> $ mkdir -p build/deb
-> 
-> $ cd build/deb
-> 
-> $ curl -LSsO http://ftp.us.debian.org/debian/pool/main/l/linux-signed-arm64/linux-image-5.19.0-2-arm64_5.19.11-1_arm64.deb
-> 
-> $ ar x linux-image-5.19.0-2-arm64_5.19.11-1_arm64.deb
-> 
-> $ tar xJf data.tar.xz
-> 
-> $ cp boot/config-5.19.0-2-arm64 ../.config
-> 
-> $ cd ../..
-> 
-> $ make -skj"$(nproc)" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- O=build olddefconfig Image.gz
-> 
-> $ qemu-system-aarch64 \
-> -machine virt,gic-version=max,virtualization=true \
-> -cpu max,pauth-impdef=true \
-> -kernel build/arch/arm64/boot/Image.gz \
-> -append "console=ttyAMA0 earlycon" \
-> -display none \
-> -initrd .../rootfs.cpio \
-> -m 512m \
-> -nodefaults \
-> -no-reboot \
-> -serial mon:stdio
-> ...
-> [    0.000000] Linux version 6.0.0-rc7+ (nathan@dev-arch.thelio-3990X) (aarch64-linux-gnu-gcc (GCC) 12.2.0, GNU ld (GNU Binutils) 2.39) #1 SMP Tue Oct 4 12:48:50 MST 2022
-> ...
-> [    0.518570] Unable to handle kernel paging request at virtual address ffff00000851ff8a
-> [    0.518785] Mem abort info:
-> [    0.518867]   ESR = 0x0000000097c0c061
-> [    0.519001]   EC = 0x25: DABT (current EL), IL = 32 bits
-> [    0.519155]   SET = 0, FnV = 0
-> [    0.519267]   EA = 0, S1PTW = 0
-> [    0.519386]   FSC = 0x21: alignment fault
-> [    0.519524] Data abort info:
-> [    0.519615]   Access size = 8 byte(s)
-> [    0.519722]   SSE = 0, SRT = 0
-> [    0.519817]   SF = 1, AR = 1
-> [    0.519920]   CM = 0, WnR = 1
-> [    0.520040] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000041711000
-> [    0.520225] [ffff00000851ff8a] pgd=180000005fff8003, p4d=180000005fff8003, pud=180000005fff7003, pmd=180000005ffbd003, pte=006800004851ff07
-> [    0.521121] Internal error: Oops: 97c0c061 [#1] SMP
-> [    0.521364] Modules linked in:
-> [    0.521592] CPU: 0 PID: 9 Comm: kworker/u2:0 Not tainted 6.0.0-rc7+ #1
-> [    0.521863] Hardware name: linux,dummy-virt (DT)
-> [    0.522325] Workqueue: events_unbound async_run_entry_fn
-> [    0.522973] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [    0.523193] pc : apparmor_file_alloc_security+0x98/0x1e0
-> [    0.523431] lr : apparmor_file_alloc_security+0x48/0x1e0
-> [    0.523594] sp : ffff800008093960
-> [    0.523708] x29: ffff800008093960 x28: ffff800008093b30 x27: ffff000002602600
-> [    0.523978] x26: ffffd79796ecf8c0 x25: ffff00000241e705 x24: ffffd79797d98068
-> [    0.524199] x23: ffff00000851ff82 x22: ffff00000851ff80 x21: 0000000000000002
-> [    0.524431] x20: ffffd79796ff5000 x19: ffff00000241ceb0 x18: ffffffffffffffff
-> [    0.524647] x17: 000000000000003f x16: ffffd79797678008 x15: 0000000000000000
-> [    0.524850] x14: 0000000000000001 x13: 0000000000000000 x12: 0000000000000006
-> [    0.525087] x11: ffff00001feef940 x10: ffffd7979768f8a0 x9 : ffffd79796c1e51c
-> [    0.525325] x8 : ffff00000851ffa0 x7 : 0000000000000000 x6 : 0000000000001e0b
-> [    0.525531] x5 : ffff00000851ff80 x4 : ffff800008093990 x3 : ffff000002419700
-> [    0.525745] x2 : 0000000000000001 x1 : ffff00000851ff8a x0 : ffff00000241ceb0
-> [    0.526034] Call trace:
-> [    0.526166]  apparmor_file_alloc_security+0x98/0x1e0
-> [    0.526424]  security_file_alloc+0x6c/0xf0
-> [    0.526570]  __alloc_file+0x5c/0xf0
-> [    0.526699]  alloc_empty_file+0x68/0x10c
-> [    0.526816]  path_openat+0x50/0x106c
-> [    0.526929]  do_filp_open+0x88/0x13c
-> [    0.527041]  filp_open+0x110/0x1b0
-> [    0.527143]  do_name+0xbc/0x230
-> [    0.527256]  write_buffer+0x40/0x60
-> [    0.527359]  unpack_to_rootfs+0x100/0x2bc
-> [    0.527479]  do_populate_rootfs+0x70/0x134
-> [    0.527602]  async_run_entry_fn+0x40/0x1c0
-> [    0.527723]  process_one_work+0x1f4/0x450
-> [    0.527851]  worker_thread+0x188/0x4c0
-> [    0.527980]  kthread+0xe0/0xe4
-> [    0.528066]  ret_from_fork+0x10/0x20
-> [    0.528317] Code: 52800002 d2800000 d2800013 910022e1 (c89ffc20)
-> [    0.528736] ---[ end trace 0000000000000000 ]---
-> ...
-> 
-> A rootfs is available at [1] but I don't think it should be necessary
-> for reproducing this. If there is any additional information I can
-> provide or patches I can test, I am more than happy to do so!
-> 
-> [1]: https://github.com/ClangBuiltLinux/boot-utils/raw/bf2fd3500d87f78a914bfc3769b2240f5632e5b9/images/arm64/rootfs.cpio.zst
-> 
-> Cheers,
-> Nathan
+> + *	@file contains the file structure for the file.
+> + *	Return 0 if permission is granted.
+>    * @file_open:
+>    *	Save open-time permission checking state for later use upon
+>    *	file_permission, and recheck access if anything has changed
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 7bd0c490703d..f80b23382dd9 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -394,6 +394,7 @@ int security_file_send_sigiotask(struct task_struct *tsk,
+>   				 struct fown_struct *fown, int sig);
+>   int security_file_receive(struct file *file);
+>   int security_file_open(struct file *file);
+> +int security_file_truncate(struct file *file);
+>   int security_task_alloc(struct task_struct *task, unsigned long clone_flags);
+>   void security_task_free(struct task_struct *task);
+>   int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
+> @@ -1011,6 +1012,11 @@ static inline int security_file_open(struct file *file)
+>   	return 0;
+>   }
+>   
+> +static inline int security_file_truncate(struct file *file)
+> +{
+> +	return 0;
+> +}
+> +
+>   static inline int security_task_alloc(struct task_struct *task,
+>   				      unsigned long clone_flags)
+>   {
+> diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+> index e29cade7b662..98ecb7f221b8 100644
+> --- a/security/apparmor/lsm.c
+> +++ b/security/apparmor/lsm.c
+> @@ -329,6 +329,11 @@ static int apparmor_path_truncate(const struct path *path)
+>   	return common_perm_cond(OP_TRUNC, path, MAY_WRITE | AA_MAY_SETATTR);
+>   }
+>   
+> +static int apparmor_file_truncate(struct file *file)
+> +{
+> +	return apparmor_path_truncate(&file->f_path);
+> +}
+> +
+>   static int apparmor_path_symlink(const struct path *dir, struct dentry *dentry,
+>   				 const char *old_name)
+>   {
+> @@ -1232,6 +1237,7 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
+>   	LSM_HOOK_INIT(mmap_file, apparmor_mmap_file),
+>   	LSM_HOOK_INIT(file_mprotect, apparmor_file_mprotect),
+>   	LSM_HOOK_INIT(file_lock, apparmor_file_lock),
+> +	LSM_HOOK_INIT(file_truncate, apparmor_file_truncate),
+>   
+>   	LSM_HOOK_INIT(getprocattr, apparmor_getprocattr),
+>   	LSM_HOOK_INIT(setprocattr, apparmor_setprocattr),
+> diff --git a/security/security.c b/security/security.c
+> index 4b95de24bc8d..d73e423005c3 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -1650,6 +1650,11 @@ int security_file_open(struct file *file)
+>   	return fsnotify_perm(file, MAY_OPEN);
+>   }
+>   
+> +int security_file_truncate(struct file *file)
+> +{
+> +	return call_int_hook(file_truncate, 0, file);
+> +}
+> +
+>   int security_task_alloc(struct task_struct *task, unsigned long clone_flags)
+>   {
+>   	int rc = lsm_task_alloc(task);
+> diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
+> index 71e82d855ebf..af04a7b7eb28 100644
+> --- a/security/tomoyo/tomoyo.c
+> +++ b/security/tomoyo/tomoyo.c
+> @@ -134,6 +134,18 @@ static int tomoyo_path_truncate(const struct path *path)
+>   	return tomoyo_path_perm(TOMOYO_TYPE_TRUNCATE, path, NULL);
+>   }
+>   
+> +/**
+> + * tomoyo_file_truncate - Target for security_file_truncate().
+> + *
+> + * @file: Pointer to "struct file".
+> + *
+> + * Returns 0 on success, negative value otherwise.
+> + */
+> +static int tomoyo_file_truncate(struct file *file)
+> +{
+> +	return tomoyo_path_truncate(&file->f_path);
+> +}
+> +
+>   /**
+>    * tomoyo_path_unlink - Target for security_path_unlink().
+>    *
+> @@ -545,6 +557,7 @@ static struct security_hook_list tomoyo_hooks[] __lsm_ro_after_init = {
+>   	LSM_HOOK_INIT(bprm_check_security, tomoyo_bprm_check_security),
+>   	LSM_HOOK_INIT(file_fcntl, tomoyo_file_fcntl),
+>   	LSM_HOOK_INIT(file_open, tomoyo_file_open),
+> +	LSM_HOOK_INIT(file_truncate, tomoyo_file_truncate),
+>   	LSM_HOOK_INIT(path_truncate, tomoyo_path_truncate),
+>   	LSM_HOOK_INIT(path_unlink, tomoyo_path_unlink),
+>   	LSM_HOOK_INIT(path_mkdir, tomoyo_path_mkdir),
