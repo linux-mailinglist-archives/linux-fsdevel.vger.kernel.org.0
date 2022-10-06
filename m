@@ -2,91 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E385D5F647B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 12:46:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 826F75F6482
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 12:48:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230383AbiJFKqA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Oct 2022 06:46:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58262 "EHLO
+        id S231252AbiJFKsq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Oct 2022 06:48:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60174 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230400AbiJFKp6 (ORCPT
+        with ESMTP id S230359AbiJFKsp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Oct 2022 06:45:58 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2357598345;
-        Thu,  6 Oct 2022 03:45:57 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id s30so2230068eds.1;
-        Thu, 06 Oct 2022 03:45:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date;
-        bh=JlewNC+bXlKO7hBF9QOboFp9ra4eqjAA0Th/QL6KAjs=;
-        b=V5+22EF0z9JU3TfI7zxVGI90zPEHaY34y3h0majEKYCjGaxXZDT37hKKKI2ShmVu1M
-         RzY8kc3+Wqfr+m7saN4YLi14O7o3qH3nz4Bs8f6XSSJIhQb+MNJDTpih29LFpDiEsPTk
-         qOdsENd7pDSqzB+dtQAmBMyDgk9lRMhVbTdy2zWul19DJPGScWzerIbCcfo2JOoXg01V
-         GSEutzkRW4r1nIEAIhP5wOIyTJ24zDk07ILyK8iTQJgLVNg7mSR/xsYv4/Cd4RDxPYZc
-         mrXuYSYrOkdgWhL4GZMGOy50WSwXBW96EZ0jocVGE/+CcaFlivqSN3epjzlWXreIjKog
-         KRLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date;
-        bh=JlewNC+bXlKO7hBF9QOboFp9ra4eqjAA0Th/QL6KAjs=;
-        b=6DtqucRiRGVeU/0rjt8zj91nlgp428L3YuD9v54LqNLbxoaC6AH2USjH46PYdTiY+O
-         KKuqMvFT3PjyWTTcmJSOGoZ7/L3ChoLxqe2osojI6gtr4yt6wMWpVzsNCdSSWiOmh75N
-         x671Eq6AEOOeI0o0tpJz2mHq3C2j5Fd+zlyjtTaoAbMqi3BB4hd7zA7uO8P+5mET1c0X
-         4mchSxppT4BrttrJF2EMRMlgsDJ0pe/3id/nW3vmY3lQbFWR4u0EedOt/nQM1/uE8sYi
-         GsfE1s+IkOGHXN4ILeyr/RrcbAZY1qbz+r0CzSvRvJqg/K9KI9z24TOsWgZ+8jA4OzcK
-         CzMw==
-X-Gm-Message-State: ACrzQf3VlqL4FWM9x4u5kQBwdfwJtvOxVse8gE+779jpW6TC0BhgUutz
-        zAJvdjAsnhztlzrq7VYtx+fRc63v8RI=
-X-Google-Smtp-Source: AMsMyM7ed9G8B2olEg4hdfNCZCSrGATCWwkhVigJk1KTXGizVbtVMH8ibbpRk9eXGGw6rmS3Tw1E+Q==
-X-Received: by 2002:a05:6402:280f:b0:458:ea37:7f00 with SMTP id h15-20020a056402280f00b00458ea377f00mr3909895ede.1.1665053155458;
-        Thu, 06 Oct 2022 03:45:55 -0700 (PDT)
-Received: from masalkhi.. (p5ddb3856.dip0.t-ipconnect.de. [93.219.56.86])
-        by smtp.gmail.com with ESMTPSA id d1-20020a056402144100b00456f2dbb379sm2369104edx.62.2022.10.06.03.45.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Oct 2022 03:45:55 -0700 (PDT)
-From:   Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: A field in files_struct has been used without initialization
-Date:   Thu,  6 Oct 2022 12:44:39 +0200
-Message-Id: <20221006104439.46235-1-abd.masalkhi@gmail.com>
-X-Mailer: git-send-email 2.29.0.rc1.dirty
+        Thu, 6 Oct 2022 06:48:45 -0400
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9521398CB0
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Oct 2022 03:48:42 -0700 (PDT)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-405-DgXWoVwcNIW55WKjoHfY8Q-1; Thu, 06 Oct 2022 11:48:39 +0100
+X-MC-Unique: DgXWoVwcNIW55WKjoHfY8Q-1
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Thu, 6 Oct
+ 2022 11:48:37 +0100
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.040; Thu, 6 Oct 2022 11:48:37 +0100
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Christian Brauner' <brauner@kernel.org>,
+        Kees Cook <keescook@chromium.org>
+CC:     Eric Biederman <ebiederm@xmission.com>,
+        Jorge Merlino <jorge.merlino@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "John Johansen" <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Todd Kjos <tkjos@google.com>,
+        "Ondrej Mosnacek" <omosnace@redhat.com>,
+        Prashanth Prahlad <pprahlad@redhat.com>,
+        Micah Morton <mortonm@chromium.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
+        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
+Subject: RE: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
+Thread-Topic: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
+Thread-Index: AQHY2WLGFfe2CPUaDEa6axdLVGgCBq4BLZlw
+Date:   Thu, 6 Oct 2022 10:48:36 +0000
+Message-ID: <cd4c600f91404387bb7be0d727c3c337@AcuMS.aculab.com>
+References: <20221006082735.1321612-1-keescook@chromium.org>
+ <20221006082735.1321612-2-keescook@chromium.org>
+ <20221006090506.paqjf537cox7lqrq@wittgenstein>
+In-Reply-To: <20221006090506.paqjf537cox7lqrq@wittgenstein>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello Linux community,
+RnJvbTogQ2hyaXN0aWFuIEJyYXVuZXINCj4gU2VudDogMDYgT2N0b2JlciAyMDIyIDEwOjA1DQo+
+IA0KPiBPbiBUaHUsIE9jdCAwNiwgMjAyMiBhdCAwMToyNzozNEFNIC0wNzAwLCBLZWVzIENvb2sg
+d3JvdGU6DQo+ID4gVGhlIGNoZWNrX3Vuc2FmZV9leGVjKCkgY291bnRpbmcgb2Ygbl9mcyB3b3Vs
+ZCBub3QgYWRkIHVwIHVuZGVyIGEgaGVhdmlseQ0KPiA+IHRocmVhZGVkIHByb2Nlc3MgdHJ5aW5n
+IHRvIHBlcmZvcm0gYSBzdWlkIGV4ZWMsIGNhdXNpbmcgdGhlIHN1aWQgcG9ydGlvbg0KPiA+IHRv
+IGZhaWwuIFRoaXMgY291bnRpbmcgZXJyb3IgYXBwZWFycyB0byBiZSB1bm5lZWRlZCwgYnV0IHRv
+IGNhdGNoIGFueQ0KPiA+IHBvc3NpYmxlIGNvbmRpdGlvbnMsIGV4cGxpY2l0bHkgdW5zaGFyZSBm
+c19zdHJ1Y3Qgb24gZXhlYywgaWYgaXQgZW5kcyB1cA0KPiANCj4gSXNuJ3QgdGhpcyBhIHBvdGVu
+dGlhbCB1YXBpIGJyZWFrPyBBZmFpY3QsIGJlZm9yZSB0aGlzIGNoYW5nZSBhIGNhbGwgdG8NCj4g
+Y2xvbmV7M30oQ0xPTkVfRlMpIGZvbGxvd2VkIGJ5IGFuIGV4ZWMgaW4gdGhlIGNoaWxkIHdvdWxk
+IGhhdmUgdGhlDQo+IHBhcmVudCBhbmQgY2hpbGQgc2hhcmUgZnMgaW5mb3JtYXRpb24uIFNvIGlm
+IHRoZSBjaGlsZCBlLmcuLCBjaGFuZ2VzIHRoZQ0KPiB3b3JraW5nIGRpcmVjdG9yeSBwb3N0IGV4
+ZWMgaXQgd291bGQgYWxzbyBhZmZlY3QgdGhlIHBhcmVudC4gQnV0IGFmdGVyDQo+IHRoaXMgY2hh
+bmdlIGhlcmUgdGhpcyB3b3VsZCBubyBsb25nZXIgYmUgdHJ1ZS4gU28gYSBjaGlsZCBjaGFuZ2lu
+ZyBhDQo+IHdvcmtkaW5nIGRpcmVjdG9ybyB3b3VsZCBub3QgYWZmZWN0IHRoZSBwYXJlbnQgYW55
+bW9yZS4gSU9XLCBhbiBleGVjIGlzDQo+IGFjY29tcGFuaWVkIGJ5IGFuIHVuc2hhcmUoQ0xPTkVf
+RlMpLiBNaWdodCBzdGlsbCBiZSB3b3J0aCB0cnlpbmcgb2ZjIGJ1dA0KPiBpdCBzZWVtcyBsaWtl
+IGEgbm9uLXRyaXZpYWwgdWFwaSBjaGFuZ2UgYnV0IHRoZXJlIG1pZ2h0IGJlIGZldyB1c2Vycw0K
+PiB0aGF0IGRvIGNsb25lezN9KENMT05FX0ZTKSBmb2xsb3dlZCBieSBhbiBleGVjLg0KDQpUaGUg
+dGhvdWdodCBvZiB0aGF0IGlzIGVudGlyZWx5IGhvcnJpZC4uLg0KDQpJIHByZXN1bWUgYSBzdWlk
+IGV4ZWMgd2lsbCBmYWlsIGluIHRoYXQgY2FzZT8NCg0KSWYgdGhlIG9sZCBjb2RlIGlzIHRyeWlu
+ZyB0byBjb21wYXJlIHRoZSBudW1iZXIgb2YgdGhyZWFkcw0Kd2l0aCB0aGUgbnVtYmVyIG9mIHVz
+ZXJzIG9mIHRoZSBmcyB0YWJsZSBpc24ndCBpcyBqdXN0IGJ1Z2d5Pw0KSWYgYSB0aHJlYWQgdW5z
+aGFyZXMgdGhlIGZzIHRhYmxlIHRoZXJlIGNhbiBiZSBhbm90aGVyDQpyZWZlcmVuY2Ugc29tZXdo
+ZXJlIGVsc2UgLSB3aGljaCBpcyB3aGF0IChJIHByZXN1bWUpIGlzIGJlaW5nDQp0ZXN0ZWQgZm9y
+Lg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJv
+YWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24g
+Tm86IDEzOTczODYgKFdhbGVzKQ0K
 
-I have came acrose the following code in dup_fd()
-
-1	newf = kmem_cache_alloc(files_cachep, GFP_KERNEL);
-2	if (!newf)
-3		goto out;
-4
-5	atomic_set(&newf->count, 1);
-6
-7	spin_lock_init(&newf->file_lock);
-8	newf->resize_in_progress = false;
-9	init_waitqueue_head(&newf->resize_wait);
-10	newf->next_fd = 0;
-11	new_fdt = &newf->fdtab;
-12	new_fdt->max_fds = NR_OPEN_DEFAULT;
-13	new_fdt->close_on_exec = newf->close_on_exec_init;
-
-On line 13 new_fdt->close_on_exec has given the value of
-newf->close_on_exec_init, but new_fdt->close_on_exec itself has not
-been initialized, is it intended to be like this.
-
-Thanky you very much!
