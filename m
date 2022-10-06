@@ -2,210 +2,285 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CCD645F6D1B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 19:43:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4D63A5F6ED1
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 22:19:45 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231499AbiJFRnF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Oct 2022 13:43:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43752 "EHLO
+        id S230493AbiJFUTn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Oct 2022 16:19:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43672 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230039AbiJFRnD (ORCPT
+        with ESMTP id S230148AbiJFUTl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Oct 2022 13:43:03 -0400
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83E72B40E8;
-        Thu,  6 Oct 2022 10:43:01 -0700 (PDT)
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-        by localhost (Postfix) with ESMTP id 4MjzLB6Ky2z9t0M;
-        Thu,  6 Oct 2022 19:42:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-        by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Fq7hDkCWiCvc; Thu,  6 Oct 2022 19:42:58 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase2.c-s.fr (Postfix) with ESMTP id 4MjzLB4vNFz9syB;
-        Thu,  6 Oct 2022 19:42:58 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 84B508B78B;
-        Thu,  6 Oct 2022 19:42:58 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id mbcF0I0xUYNn; Thu,  6 Oct 2022 19:42:58 +0200 (CEST)
-Received: from [192.168.233.27] (po19210.idsi0.si.c-s.fr [192.168.233.27])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4E53E8B77D;
-        Thu,  6 Oct 2022 19:42:56 +0200 (CEST)
-Message-ID: <6396875c-146a-acf5-dd9e-7f93ba1b4bc3@csgroup.eu>
-Date:   Thu, 6 Oct 2022 19:42:55 +0200
+        Thu, 6 Oct 2022 16:19:41 -0400
+Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45EA9646F;
+        Thu,  6 Oct 2022 13:19:40 -0700 (PDT)
+Received: by mail-ed1-x52b.google.com with SMTP id x59so4403541ede.7;
+        Thu, 06 Oct 2022 13:19:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=UQXEwyZOAQoIktw9AzUUz6hKteDe+hT/LCfTM1GZpBk=;
+        b=H87b+tJCOwZEl9adqtmMM2c56FUJPM3f6+XT4E3+R3cqkCgaEAjE8hitEgQiNQqEB6
+         MjvlWkwR6GhDOcAWPckoGP7nRREn4KB1UVi9kbeu/5Vi4F+NiXMnewD+Adc/bjfgT+ZB
+         Vko+Mt0hW/S1R1yEPeO/7bvf2L21F7Uo352PvaXpd8sbIBvreRFjMbYCsM2FLw10XABi
+         1qQzFUMn5nvMmcupuL9vjY+U2Z6cLfD7Iq8aKOu2/B/ODrpsYENa82mIRw495OMKwLA2
+         pOzZF7c+IiKKTmbILHc3GA7GlNE7w30UNQusVtgt8NESoUitz3QZ2bliPUexpZdDBIc4
+         kNwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UQXEwyZOAQoIktw9AzUUz6hKteDe+hT/LCfTM1GZpBk=;
+        b=XIKce87ZJuzE7RTEbmqqO+1VtDxPfBFPSSTHvhmhi8zJ7+oSRNRdqCC67PaQVB4hxB
+         D3wIp8nJKz55fMtsKEcJSj2ujBQWw6T5COPnQ8GRAEA4FTZePg/5hQR+sZ6YWjCHYRnX
+         vo8Bq/1rFXhn42RjzaUN1PHvAp0aTIGf8zQF76wHNcy33YGNSNtAPL8E985Ri47AUQwl
+         pkNqR7+fKz70Ku4rjbjEBnZmMP726CnWstVBmkuAeHnRQPSE5m7uk9Ep7oeIMsPbdUQz
+         ITpDGf+CbPunGK7sWPmDXD6tfpha+Yej0WCUk8FFFd2Sz5ToOQNaIiOBdpiMc70wO7MI
+         e2iA==
+X-Gm-Message-State: ACrzQf2+Zpp3f3tWf0Swc4N/y5mNjFRtdq6bLqyCH30gPo9btuJNhTC5
+        7y+sNepzzAJN+tx6lqn4aeBX1s+YWOA=
+X-Google-Smtp-Source: AMsMyM4q03okKEhXxdIj6EPKlrau+t/XMmKKCP1nKSz2L/w1IWQO62k7quLEZOXdiXmrd6qIhxnsLw==
+X-Received: by 2002:a05:6402:2994:b0:453:4c5c:d31c with SMTP id eq20-20020a056402299400b004534c5cd31cmr1472869edb.412.1665087578744;
+        Thu, 06 Oct 2022 13:19:38 -0700 (PDT)
+Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
+        by smtp.gmail.com with ESMTPSA id g18-20020a17090604d200b0073c10031dc9sm170022eja.80.2022.10.06.13.19.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Oct 2022 13:19:37 -0700 (PDT)
+Date:   Thu, 6 Oct 2022 22:19:36 +0200
+From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
+Cc:     Nathan Chancellor <nathan@kernel.org>,
+        linux-security-module@vger.kernel.org,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Subject: Re: [PATCH v8 4/9] landlock: Support file truncation
+Message-ID: <Yz84WNvpFxSYiCVb@nuc>
+References: <20221001154908.49665-1-gnoack3000@gmail.com>
+ <20221001154908.49665-5-gnoack3000@gmail.com>
+ <YzyQASSaeVqRlTsO@dev-arch.thelio-3990X>
+ <cdfdedad-a162-6608-a86e-8b2d47d6d8d8@digikod.net>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH v3 3/5] treewide: use get_random_u32() when possible
-Content-Language: fr-FR
-From:   Christophe Leroy <christophe.leroy@csgroup.eu>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "patches@lists.linux.dev" <patches@lists.linux.dev>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        =?UTF-8?Q?Christoph_B=c3=b6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Helge Deller <deller@gmx.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Marco Elver <elver@google.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Russell King <linux@armlinux.org.uk>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Graf <tgraf@suug.ch>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        =?UTF-8?Q?Toke_H=c3=b8iland-J=c3=b8rgens?= =?UTF-8?Q?en?= 
-        <toke@toke.dk>, Chuck Lever <chuck.lever@oracle.com>,
-        Jan Kara <jack@suse.cz>
-References: <20221006165346.73159-1-Jason@zx2c4.com>
- <20221006165346.73159-4-Jason@zx2c4.com>
- <848ed24c-13ef-6c38-fd13-639b33809194@csgroup.eu>
- <CAHmME9raQ4E00r9r8NyWJ17iSXE_KniTG0onCNAfMmfcGar1eg@mail.gmail.com>
- <f10fcfbf-2da6-cf2d-6027-fbf8b52803e9@csgroup.eu>
-In-Reply-To: <f10fcfbf-2da6-cf2d-6027-fbf8b52803e9@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <cdfdedad-a162-6608-a86e-8b2d47d6d8d8@digikod.net>
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-Le 06/10/2022 à 19:31, Christophe Leroy a écrit :
+On Wed, Oct 05, 2022 at 08:52:41PM +0200, Mickaël Salaün wrote:
+> On 04/10/2022 21:56, Nathan Chancellor wrote:
+> > Hi Günther,
+> > 
+> > On Sat, Oct 01, 2022 at 05:49:03PM +0200, Günther Noack wrote:
+> > > Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
+> > > 
+> > > This flag hooks into the path_truncate LSM hook and covers file
+> > > truncation using truncate(2), ftruncate(2), open(2) with O_TRUNC, as
+> > > well as creat().
+> > > 
+> > > This change also increments the Landlock ABI version, updates
+> > > corresponding selftests, and updates code documentation to document
+> > > the flag.
+> > > 
+> > > The following operations are restricted:
+> > > 
+> > > open(): requires the LANDLOCK_ACCESS_FS_TRUNCATE right if a file gets
+> > > implicitly truncated as part of the open() (e.g. using O_TRUNC).
+> > > 
+> > > Notable special cases:
+> > > * open(..., O_RDONLY|O_TRUNC) can truncate files as well in Linux
+> > > * open() with O_TRUNC does *not* need the TRUNCATE right when it
+> > >    creates a new file.
+> > > 
+> > > truncate() (on a path): requires the LANDLOCK_ACCESS_FS_TRUNCATE
+> > > right.
+> > > 
+> > > ftruncate() (on a file): requires that the file had the TRUNCATE right
+> > > when it was previously opened.
+> > > 
+> > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
+> > 
+> > I just bisected a crash in QEMU with Debian's arm64 configuration to
+> > this change in -next as commit b40deebe7679 ("landlock: Support file
+> > truncation"), which I was able to reproduce like so:
 > 
-> 
-> Le 06/10/2022 à 19:24, Jason A. Donenfeld a écrit :
->> Hi Christophe,
->>
->> On Thu, Oct 6, 2022 at 11:21 AM Christophe Leroy
->> <christophe.leroy@csgroup.eu> wrote:
->>> Le 06/10/2022 à 18:53, Jason A. Donenfeld a écrit :
->>>> The prandom_u32() function has been a deprecated inline wrapper around
->>>> get_random_u32() for several releases now, and compiles down to the
->>>> exact same code. Replace the deprecated wrapper with a direct call to
->>>> the real function. The same also applies to get_random_int(), which is
->>>> just a wrapper around get_random_u32().
->>>>
->>>> Reviewed-by: Kees Cook <keescook@chromium.org>
->>>> Acked-by: Toke Høiland-Jørgensen <toke@toke.dk> # for sch_cake
->>>> Acked-by: Chuck Lever <chuck.lever@oracle.com> # for nfsd
->>>> Reviewed-by: Jan Kara <jack@suse.cz> # for ext4
->>>> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
->>>> ---
->>>
->>>> diff --git a/arch/powerpc/kernel/process.c 
->>>> b/arch/powerpc/kernel/process.c
->>>> index 0fbda89cd1bb..9c4c15afbbe8 100644
->>>> --- a/arch/powerpc/kernel/process.c
->>>> +++ b/arch/powerpc/kernel/process.c
->>>> @@ -2308,6 +2308,6 @@ void notrace __ppc64_runlatch_off(void)
->>>>    unsigned long arch_align_stack(unsigned long sp)
->>>>    {
->>>>        if (!(current->personality & ADDR_NO_RANDOMIZE) && 
->>>> randomize_va_space)
->>>> -             sp -= get_random_int() & ~PAGE_MASK;
->>>> +             sp -= get_random_u32() & ~PAGE_MASK;
->>>>        return sp & ~0xf;
->>>
->>> Isn't that a candidate for prandom_u32_max() ?
->>>
->>> Note that sp is deemed to be 16 bytes aligned at all time.
->>
->> Yes, probably. It seemed non-trivial to think about, so I didn't. But
->> let's see here... maybe it's not too bad:
->>
->> If PAGE_MASK is always ~(PAGE_SIZE-1), then ~PAGE_MASK is
->> (PAGE_SIZE-1), so prandom_u32_max(PAGE_SIZE) should yield the same
->> thing? Is that accurate? And holds across platforms (this comes up a
->> few places)? If so, I'll do that for a v4.
->>
-> 
-> On powerpc it is always (from arch/powerpc/include/asm/page.h) :
-> 
-> /*
->   * Subtle: (1 << PAGE_SHIFT) is an int, not an unsigned long. So if we
->   * assign PAGE_MASK to a larger type it gets extended the way we want
->   * (i.e. with 1s in the high bits)
->   */
-> #define PAGE_MASK      (~((1 << PAGE_SHIFT) - 1))
-> 
-> #define PAGE_SIZE        (1UL << PAGE_SHIFT)
-> 
-> 
-> So it would work I guess.
+> Thanks for the report Nathan. I've found an issue in this patch and fixed it
+> in -next with this (rebased) commit:
+> https://git.kernel.org/mic/c/b40deebe7679b05d4852488ef531e189a9621f2e
+> You should already have this update since I pushed it Monday.
+> Please let us know if this fixed the issue.
 
-But taking into account that sp must remain 16 bytes aligned, would it 
-be better to do something like ?
+I'm afraid Nathan already tested it with the version from the mic
+-next branch b40deebe7679 ("landlock: Support file truncation")
 
-	sp -= prandom_u32_max(PAGE_SIZE >> 4) << 4;
+Nathan, thank you for the report and especially for the detailed step
+by step instructions! I have tried to reproduce it with the steps you
+suggested with the root file system you linked to, but I'm afraid I
+was unable to reproduce the crash.
 
-	return sp;
+When I've tried it, the kernel boots up to init and shuts down again,
+but does not run into the issue you're reporting:
 
+...
+[    1.165628] Run /init as init process
+Starting syslogd: OK
+Starting klogd: OK
+Running sysctl: OK
+Saving random seed: OK
+Starting network: OK
+Linux version 6.0.0-rc7-00004-gb40deebe7679 (gnoack@nuc) (aarch64-linux-gnu-gcc (GCC) 12.2.0, GNU ld (GNU Binutils) 2.39) #4 SMP PREEMPT Thu Oct 6 21:45:59 CEST 2022
+Stopping network: OK
+Saving random seed: OK
+Stopping klogd: OK
+Stopping syslogd: OK
+umount: devtmpfs busy - remounted read-only
+umount: can't unmount /: Invalid argument
+The system is going down NOW!
+Sent SIGTERM to all processes
+Sent SIGKILL to all processes
+Requesting system poweroff
+[    5.303758] kvm: exiting hardware virtualization
+[    5.315878] Flash device refused suspend due to active operation (state 20)
+[    5.318164] Flash device refused suspend due to active operation (state 20)
+[    5.322274] reboot: Power down
 
+I've been compiling the kernel using
+
+make -j8 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- O=build olddefconfig Image.gz
+
+and started the emulator using
+
+qemu-system-aarch64 -machine virt,gic-version=max,virtualization=true \
+  -cpu max,pauth-impdef=true \
+  -kernel /home/gnoack/linux/build/arch/arm64/boot/Image.gz \
+  -append "console=ttyAMA0 earlycon" \
+  -display none -m 512m -nodefaults -no-reboot -serial mon:stdio \
+  -initrd /tmp/rootfs.cpio
+
+I have attempted it with both the commit from the mic -next branch, as
+well as with my own client that is still lacking Mickaël's LSM hook
+fix. The commits I've tried are:
+
+* b40deebe7679 ("landlock: Support file truncation")
+* 224e66a32f16 ("landlock: Document Landlock's file truncation support")
+
+I've built the kernel from scratch from the config file you suggested,
+to be sure.
+
+I used the rootfs.cpio file you provided from Github, and gcc 12.2.0
+and qemu 7.1.0 from the Arch Linux repositories.
+
+At this point, I don't know what else I can try to get it to crash...
+it seems to work fine for me.
+
+—Günther
+
+> > 
+> > $ mkdir -p build/deb
+> > 
+> > $ cd build/deb
+> > 
+> > $ curl -LSsO http://ftp.us.debian.org/debian/pool/main/l/linux-signed-arm64/linux-image-5.19.0-2-arm64_5.19.11-1_arm64.deb
+> > 
+> > $ ar x linux-image-5.19.0-2-arm64_5.19.11-1_arm64.deb
+> > 
+> > $ tar xJf data.tar.xz
+> > 
+> > $ cp boot/config-5.19.0-2-arm64 ../.config
+> > 
+> > $ cd ../..
+> > 
+> > $ make -skj"$(nproc)" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- O=build olddefconfig Image.gz
+> > 
+> > $ qemu-system-aarch64 \
+> > -machine virt,gic-version=max,virtualization=true \
+> > -cpu max,pauth-impdef=true \
+> > -kernel build/arch/arm64/boot/Image.gz \
+> > -append "console=ttyAMA0 earlycon" \
+> > -display none \
+> > -initrd .../rootfs.cpio \
+> > -m 512m \
+> > -nodefaults \
+> > -no-reboot \
+> > -serial mon:stdio
+> > ...
+> > [    0.000000] Linux version 6.0.0-rc7+ (nathan@dev-arch.thelio-3990X) (aarch64-linux-gnu-gcc (GCC) 12.2.0, GNU ld (GNU Binutils) 2.39) #1 SMP Tue Oct 4 12:48:50 MST 2022
+> > ...
+> > [    0.518570] Unable to handle kernel paging request at virtual address ffff00000851ff8a
+> > [    0.518785] Mem abort info:
+> > [    0.518867]   ESR = 0x0000000097c0c061
+> > [    0.519001]   EC = 0x25: DABT (current EL), IL = 32 bits
+> > [    0.519155]   SET = 0, FnV = 0
+> > [    0.519267]   EA = 0, S1PTW = 0
+> > [    0.519386]   FSC = 0x21: alignment fault
+> > [    0.519524] Data abort info:
+> > [    0.519615]   Access size = 8 byte(s)
+> > [    0.519722]   SSE = 0, SRT = 0
+> > [    0.519817]   SF = 1, AR = 1
+> > [    0.519920]   CM = 0, WnR = 1
+> > [    0.520040] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000041711000
+> > [    0.520225] [ffff00000851ff8a] pgd=180000005fff8003, p4d=180000005fff8003, pud=180000005fff7003, pmd=180000005ffbd003, pte=006800004851ff07
+> > [    0.521121] Internal error: Oops: 97c0c061 [#1] SMP
+> > [    0.521364] Modules linked in:
+> > [    0.521592] CPU: 0 PID: 9 Comm: kworker/u2:0 Not tainted 6.0.0-rc7+ #1
+> > [    0.521863] Hardware name: linux,dummy-virt (DT)
+> > [    0.522325] Workqueue: events_unbound async_run_entry_fn
+> > [    0.522973] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > [    0.523193] pc : apparmor_file_alloc_security+0x98/0x1e0
+> > [    0.523431] lr : apparmor_file_alloc_security+0x48/0x1e0
+> > [    0.523594] sp : ffff800008093960
+> > [    0.523708] x29: ffff800008093960 x28: ffff800008093b30 x27: ffff000002602600
+> > [    0.523978] x26: ffffd79796ecf8c0 x25: ffff00000241e705 x24: ffffd79797d98068
+> > [    0.524199] x23: ffff00000851ff82 x22: ffff00000851ff80 x21: 0000000000000002
+> > [    0.524431] x20: ffffd79796ff5000 x19: ffff00000241ceb0 x18: ffffffffffffffff
+> > [    0.524647] x17: 000000000000003f x16: ffffd79797678008 x15: 0000000000000000
+> > [    0.524850] x14: 0000000000000001 x13: 0000000000000000 x12: 0000000000000006
+> > [    0.525087] x11: ffff00001feef940 x10: ffffd7979768f8a0 x9 : ffffd79796c1e51c
+> > [    0.525325] x8 : ffff00000851ffa0 x7 : 0000000000000000 x6 : 0000000000001e0b
+> > [    0.525531] x5 : ffff00000851ff80 x4 : ffff800008093990 x3 : ffff000002419700
+> > [    0.525745] x2 : 0000000000000001 x1 : ffff00000851ff8a x0 : ffff00000241ceb0
+> > [    0.526034] Call trace:
+> > [    0.526166]  apparmor_file_alloc_security+0x98/0x1e0
+> > [    0.526424]  security_file_alloc+0x6c/0xf0
+> > [    0.526570]  __alloc_file+0x5c/0xf0
+> > [    0.526699]  alloc_empty_file+0x68/0x10c
+> > [    0.526816]  path_openat+0x50/0x106c
+> > [    0.526929]  do_filp_open+0x88/0x13c
+> > [    0.527041]  filp_open+0x110/0x1b0
+> > [    0.527143]  do_name+0xbc/0x230
+> > [    0.527256]  write_buffer+0x40/0x60
+> > [    0.527359]  unpack_to_rootfs+0x100/0x2bc
+> > [    0.527479]  do_populate_rootfs+0x70/0x134
+> > [    0.527602]  async_run_entry_fn+0x40/0x1c0
+> > [    0.527723]  process_one_work+0x1f4/0x450
+> > [    0.527851]  worker_thread+0x188/0x4c0
+> > [    0.527980]  kthread+0xe0/0xe4
+> > [    0.528066]  ret_from_fork+0x10/0x20
+> > [    0.528317] Code: 52800002 d2800000 d2800013 910022e1 (c89ffc20)
+> > [    0.528736] ---[ end trace 0000000000000000 ]---
+> > ...
+> > 
+> > A rootfs is available at [1] but I don't think it should be necessary
+> > for reproducing this. If there is any additional information I can
+> > provide or patches I can test, I am more than happy to do so!
+> > 
+> > [1]: https://github.com/ClangBuiltLinux/boot-utils/raw/bf2fd3500d87f78a914bfc3769b2240f5632e5b9/images/arm64/rootfs.cpio.zst
+> > 
+> > Cheers,
+> > Nathan
+
+-- 
