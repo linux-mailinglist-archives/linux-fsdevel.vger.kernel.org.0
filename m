@@ -2,173 +2,272 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 935805F7058
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 23:29:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 71D885F7195
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 01:16:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231871AbiJFV3B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Oct 2022 17:29:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36264 "EHLO
+        id S232066AbiJFXQU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Oct 2022 19:16:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230284AbiJFV27 (ORCPT
+        with ESMTP id S231871AbiJFXQS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Oct 2022 17:28:59 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2106.outbound.protection.outlook.com [40.107.244.106])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFD2BBA244;
-        Thu,  6 Oct 2022 14:28:58 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Glpg9NaMNBwVZ47EAqJhmoQy5Ovde5grQOUSu1P8ddEhHHUCpi5l3DeNn6AvMl2iPdz6+1fR1ug0ETcNCypoU/IHCnjqBVratqTF3ArxuGKS7QUDTPsIr14f05mD8wZaCJTMXOK75eEfib44k48aJ0InehR/m3qs9QTki+bljnb1htE/InkjGwh56fQxJHCHLo+pkSXIjjYgecBqFIcNBxvg9C2v7F9h0rwQQqqh5epGNe/TWp+1cVzy5TXoXE8Rx+JSXwmE1yW0VGMWVehpPQy/0CtNYsm4ze0RGPbAOZRc0MCUaqBAqghdZsAck47DyMwHs788nTE/E53Q1OsIKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rH+4zZeyHoHjTmvRfvMSJcdsMjs4MLvjwFEQuPd9oco=;
- b=FGgZ7Lv90mQPPkWoptvjSXWtId/IAj1PS9aBk0IcLmbBEmpvmjlH1pcEeKD6iX9yOqqgW5/AMbgXDV6J97hk7wVgwTscdT4SflpTRDFERb4ijAd+YlLxpLaDFR/G9G9wQKL4IwICBkPVRSB0V2EaKs5UOZ+XLT6QDTQTllJv1ctkDCOEmvPD2jFu6vGZ/Fj44GBQHwK873vNaN0/dHh5dOyzcXOrUu6iI3bddOEAJ4Hiikm2E6/5FnXdtNvV5pUvpKTQIKXgiaWvno5xo6DkSNReYDvoIKvWteeh1BXxkxLvvCs3S7Oo/yXaVx8G6/L5VESw4PihbTXWKp3QO3u/CQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bu.edu; dmarc=pass action=none header.from=bu.edu; dkim=pass
- header.d=bu.edu; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bu.edu; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rH+4zZeyHoHjTmvRfvMSJcdsMjs4MLvjwFEQuPd9oco=;
- b=KwL8SqcLI04TLj1iRqs3LU4hMDG8i0DpmxGxrqNr85l+hVievaUzy+oO53tAinLsJJ+Y+k+dmmXzQM4iNhbgP8AuIS76vua69B7GL5GQdELpE8U3RaIq1aBh0sFg5FapbEnbFPQZvxGS9bNTf2ZPac+BLNpGUtJUqpdvd7q5nxSFo/jUFYv11yPQgBrnLn+YzvwRqeTcP7W8U4gTPJ8171n31FvgsICGImxaC3fd2r/IPAcKMgvff+29JSU+vXS5ox9WzkAurjM5mh1oLa0uEnYKUZDFJoEZ/xNbBEfceRxMltcncGTZcdohIWm8mKhYQabnJ029TcpliI/kojVJTA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bu.edu;
-Received: from BL0PR03MB4129.namprd03.prod.outlook.com (2603:10b6:208:65::33)
- by MN2PR03MB5007.namprd03.prod.outlook.com (2603:10b6:208:1b1::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5676.24; Thu, 6 Oct
- 2022 21:28:55 +0000
-Received: from BL0PR03MB4129.namprd03.prod.outlook.com
- ([fe80::9e2b:bf05:79ec:581]) by BL0PR03MB4129.namprd03.prod.outlook.com
- ([fe80::9e2b:bf05:79ec:581%4]) with mapi id 15.20.5676.034; Thu, 6 Oct 2022
- 21:28:55 +0000
-Message-ID: <53c84c25-31ff-29d5-c6fb-85cb307f1704@bu.edu>
-Date:   Thu, 6 Oct 2022 17:28:53 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.1
-Subject: Re: [RFC UKL 10/10] Kconfig: Add config option for enabling and
- sample for testing UKL
-Content-Language: en-US
-To:     Bagas Sanjaya <bagasdotme@gmail.com>, linux-kernel@vger.kernel.org
-Cc:     corbet@lwn.net, masahiroy@kernel.org, michal.lkml@markovi.net,
+        Thu, 6 Oct 2022 19:16:18 -0400
+X-Greylist: delayed 3595 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 06 Oct 2022 16:16:15 PDT
+Received: from mail.zytor.com (unknown [IPv6:2607:7c80:54:3::138])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A05AA94120;
+        Thu,  6 Oct 2022 16:16:14 -0700 (PDT)
+Received: from [127.0.0.1] ([73.223.250.219])
+        (authenticated bits=0)
+        by mail.zytor.com (8.17.1/8.17.1) with ESMTPSA id 296LRJ1M3706824
+        (version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+        Thu, 6 Oct 2022 14:27:19 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 296LRJ1M3706824
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+        s=2022090501; t=1665091641;
+        bh=83oafeKZfAlix6QiAi5tyBeuvZ5eUW0hhmVMZremg+o=;
+        h=Date:From:To:CC:Subject:In-Reply-To:References:From;
+        b=he58tKmvIQguFWQuXk4StAkobvC4MMRcgWm5oocTjATGRjxGaMUIwUgQuvmY5viZp
+         OdiI5JtB78Nl6Q1Or4ZYxFqSiYbDj5OE1/uFwvcSGRkGH9dGkt9d879hBtR0vH2bGc
+         7aH12+QOMsIw09wrwwGzj2TSdqLbgGqiZuNdlE8L9+qEaqPDRyBgWXppvye9w/e69Z
+         IOaxQKuLoOW8QXyzS/uMpO/UHI9HiQCdbc5SdJmT/mKBZrAn0s6hAWyQl9aY9IVHYZ
+         DtSBH3xBedi5AtXWjOr9sBXBoZLsUc4D7Mvh3VswLI+oqxa63rPjDEAwHeVQp+3PDI
+         GTqTedLcwbnfQ==
+Date:   Thu, 06 Oct 2022 14:27:18 -0700
+From:   "H. Peter Anvin" <hpa@zytor.com>
+To:     Ali Raza <aliraza@bu.edu>, linux-kernel@vger.kernel.org
+CC:     corbet@lwn.net, masahiroy@kernel.org, michal.lkml@markovi.net,
         ndesaulniers@google.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-        luto@kernel.org, ebiederm@xmission.com, keescook@chromium.org,
-        peterz@infradead.org, viro@zeniv.linux.org.uk, arnd@arndb.de,
-        juri.lelli@redhat.com, vincent.guittot@linaro.org,
-        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-        pbonzini@redhat.com, jpoimboe@kernel.org,
-        linux-doc@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, x86@kernel.org, rjones@redhat.com,
-        munsoner@bu.edu, tommyu@bu.edu, drepper@redhat.com,
-        lwoodman@redhat.com, mboydmcse@gmail.com, okrieg@bu.edu,
-        rmancuso@bu.edu
+        bp@alien8.de, dave.hansen@linux.intel.com, luto@kernel.org,
+        ebiederm@xmission.com, keescook@chromium.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, arnd@arndb.de, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, pbonzini@redhat.com,
+        jpoimboe@kernel.org, linux-doc@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        x86@kernel.org, rjones@redhat.com, munsoner@bu.edu, tommyu@bu.edu,
+        drepper@redhat.com, lwoodman@redhat.com, mboydmcse@gmail.com,
+        okrieg@bu.edu, rmancuso@bu.edu
+Subject: Re: [RFC UKL 00/10] Unikernel Linux (UKL)
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20221003222133.20948-1-aliraza@bu.edu>
 References: <20221003222133.20948-1-aliraza@bu.edu>
- <20221003222133.20948-11-aliraza@bu.edu>
- <d2089a89-21a9-1e05-5d58-91b8411f7141@gmail.com>
-From:   Ali Raza <aliraza@bu.edu>
-In-Reply-To: <d2089a89-21a9-1e05-5d58-91b8411f7141@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MN2PR16CA0018.namprd16.prod.outlook.com
- (2603:10b6:208:134::31) To BL0PR03MB4129.namprd03.prod.outlook.com
- (2603:10b6:208:65::33)
+Message-ID: <85EF9D5D-6DCC-410C-96F5-C16F0E62BF22@zytor.com>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL0PR03MB4129:EE_|MN2PR03MB5007:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2de5ff61-d8c8-452c-0728-08daa7e1c59e
-X-LD-Processed: d57d32cc-c121-488f-b07b-dfe705680c71,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 0GKCxcmd5oR5bMTnGakK2qc7W8s1WnHUKKXfnYAtifdVmjjKoS2MTfqIR80bR3oo+wUxyNecTP+xVX08ZP/ZU+YeYMV75jKfifhzO/zMUczwhapHBZ/i3n84oTrGfBMfUw/rJ/ydXqubF2RMUQfGMvV7IATltwGv+Cjzx0IYmryTEDvX9L4Vj4XMG3i7UVlZrQaljNsr+TMN4XolBcjNuy8FQQF0jIDfbLYK6ldHm5WO9u3rDIE9bna6+YFSsedYSgomzPD14pTJJpWvDD70sPlu95+q4qioURct4vfovwMCv421m0NzznhSAU1RVzfp2Wgpf207cPrQsgu0AjoDBHx5+szCMCnjoUVwi5BiyS/fyUUJpVPmUcj3E06g35u+T88aNSMUECrS0ewLrK570URVf6HeCBa0Rrxr5W33sI1eOBg7x5mgOmgl4ogo4eW1BdBd/WFHRGgJjlelyier/NZz7EIkTmujuYABTg6/fC4oxUM77UiN3WHUQRmSBel8C1dxR5RJh6V7f/Q98VWdmkz6amQq6D7ynwXCuJ38ZzJR+sYtsUc8lCF6F5lK6rS8izd6e8ZoLYZULCSLVD+K5py6Vk4pR68RA63DiOQwwNshL5n3lldlXIV9m3+W6ND7KDZVZcJeevZt4YvsXrNIoumKn+IFsHM0RPbnlPf68Q2V6qppUxswc8kEDY36IvkDAQR9XeDhq06EhJ3qequyfy46F1NCPTkNpcHIL8Rx3DXyNGNZynWSipXepSLaSFrtprclz+VlMyACx2zP/OdWQvVZ9dxsrwTt6+qQdVfzsLo=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL0PR03MB4129.namprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(346002)(396003)(366004)(136003)(376002)(451199015)(186003)(6512007)(5660300002)(2616005)(38100700002)(786003)(7406005)(7416002)(2906002)(8936002)(75432002)(41300700001)(41320700001)(478600001)(53546011)(6486002)(26005)(6506007)(4326008)(66556008)(8676002)(316002)(66476007)(66946007)(31696002)(36756003)(31686004)(86362001)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dWdaR2dHVElsZEF1NjZSbUZlY0xkMzgxL01pbllGbnIrZ3YyNlFWZmpWd0VB?=
- =?utf-8?B?VVhDNjVhMUR2alFRUkpTbWxYSXRRS2JLZTQ2cEdJalhHN3ZSVXpDY2RKUFVw?=
- =?utf-8?B?TVJZbU9OL3Rxb2YwVlRjaWVOMXVHZjR2OFhrdmRmQTFTS0RiTnN4RUNScDZP?=
- =?utf-8?B?YjRTcFpWd3ozTlJpVFFldm1WQjAvM1pZMnRiaWMvc3JJbnIvekR5VmlNUjRh?=
- =?utf-8?B?N2tkOVlEYmZOdG9iRlMwSkxhYzgvdWxRV3NFbVYzaGE0Yk54cjZmeEkyYnIz?=
- =?utf-8?B?R0RQQUI0T0lvYUZzWXlEUytycnZmcEpadTJpYS9kUTNvQTIvVFBxcUEyaXNZ?=
- =?utf-8?B?VU9QcWFhTmNxSVFVY01UZTliTHM5dWUrSVpUdWQ1Qi9CanBLMStpTUFTQ0JP?=
- =?utf-8?B?K0hJc0tKcVdIQXlpbUpvWVBCZUovMjJvRzF4R3JhRWl0L1B4amxMT0tqK1Bt?=
- =?utf-8?B?ME9xT1hYbFBYUWNCa2hRSVdrRytnMVYwRkttNlJkdWNIb2Q0bHo2dG4wUVVh?=
- =?utf-8?B?cDF4a3c3M2FlWUgzdUJ6dk9obW56c0gxNDNJMzNIaXp4blJOV05pamFBcnFx?=
- =?utf-8?B?eDhxREZEMi84WXRRaHhLYW1kY1l4UmdMY2xRTFNZUDBaV0FrWmdLSTRET3Bq?=
- =?utf-8?B?dWlyMUlxRlcycHhOQWpHakZnRVd1RFU5UUNRMHhUUjE4YXF3MjhOd0x0SzhP?=
- =?utf-8?B?K3BDRWpDTitPNGRkMXFsRldrVEVwSFk1YnQwcUxWRnAxM0I3Ny92TFVITDJP?=
- =?utf-8?B?YkV4OGNMSTl1MDBrNFo1RjdyZ1dFdk1CTENuTzR2OVBzSWtaZmJ4UDIvRlRS?=
- =?utf-8?B?bFVXWWVSUm5jY3pIeGpXQlN2blVuaGd3bStwSDNLQ3lGcDJGZ1k4WHdlNFNp?=
- =?utf-8?B?RHR6S0NiZHIwWmNJKy9haG9qOEtPRUgzT2ZMMWhmQnovbDFQNkJydXBtckFR?=
- =?utf-8?B?MjN6c0FVOGZZU2JiM241b0llSFBtckExMEFUT2ZsVmsvN2d2WUZKS1BVbDRw?=
- =?utf-8?B?ZTJ2d1Z2aEY3SWlxSURIdFU4Rmp6Nko2cStRMHdzVXlKcGJwMXdZZWJyMUlY?=
- =?utf-8?B?MHh4S1dCUllaV0RmeUhZaWtreG1VaTVmd2JQQmpRU2ZYbkFvd2tJK2hSMW16?=
- =?utf-8?B?N05NbmZkYkduVUR4UlBKc0tUdmxnbXk1OUlGb2NJTU1Eb1Rva2oxWnpUSzV6?=
- =?utf-8?B?UUtHV3hWTGc5ajZ6Z05OZTJ6c3VxcERkR0ZCTVBzVDkrQjNuaUpwYTZRNkRs?=
- =?utf-8?B?Tnl4QUpkdjFXaFpGZCsra2pNRm8rWEdtTFVpc2x4UEU5Mi82M3pNaVI2a2hq?=
- =?utf-8?B?WDIvSzhPY1NVc3lMRThac1g0VTFDMWh0OGw1c1lmTS9IRzBJSkxYWitTTEpz?=
- =?utf-8?B?TVhONE1HMjlaZTFLWkZWdXRPU3kyOEpUcFVMREQ3T0RGZ3VXalcvcS9BaUpB?=
- =?utf-8?B?eThGeUJpbWRCSUVLOE4vanhUNmxZblp3Z0JSWWlsQWlLMzlBdzJTcm5mSjVL?=
- =?utf-8?B?VWx4M0FKUFh4L0ZvcCttaTYxWTBhQVJ0aHRNSFQ3VHRwZG5GODFzdDVpaEN5?=
- =?utf-8?B?SXI4VytIQUI4eDFMbnM3VU1Ob0h0a1I3dzEzSFUvN29zNHMyUm8ySHlRZUF1?=
- =?utf-8?B?aE93UHduOEZrcElFS3NMekpIdlZlWnkrK0dRazQyQlBCZER5MlJxTWdRbGdF?=
- =?utf-8?B?NTFSRU4zeE9VVE15bnN0WWpZZTlZMmVNNFY4N0pNWCtITzRFRE1mZ1RrOUph?=
- =?utf-8?B?YnJHQzl1N0trSnltU00yU2pXTjZSZ2VhZXY1YmZHL0RwLytnWHhFVmFleHJG?=
- =?utf-8?B?dmdXNUZzTHhTRG9UVDJGR0VjOHBsY1VKVVpMQXN0amR2ZWtINWNHcFZIQzcz?=
- =?utf-8?B?dFNXdWp0bXcyUisvd01zZHJlaHdnYWs4M1VyOWNsdW5uaDl3MFFFa0FPbk4v?=
- =?utf-8?B?NU5lK3k3Yncvb2FRcnBRa3pvanZkT2hPWTlyRWpHdTQzMWpCRFZucG1CTjg1?=
- =?utf-8?B?U2M2NmVTaU82WHBSY1J1eE44QjFPK01UbzBnZUtsUjNReStGVHBGT1k4c0t3?=
- =?utf-8?B?THpjNVNDdm9MTDNYd3JvTlEvNmszSC9rNTlDMHNlT0VvejZ1QUcrVmsrRHMz?=
- =?utf-8?Q?2I9gfV3p/zj0nXZdLRq4+Op/Y?=
-X-OriginatorOrg: bu.edu
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2de5ff61-d8c8-452c-0728-08daa7e1c59e
-X-MS-Exchange-CrossTenant-AuthSource: BL0PR03MB4129.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Oct 2022 21:28:55.3950
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: d57d32cc-c121-488f-b07b-dfe705680c71
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: kleVeVS18y3QLTJpbYaFnYbAcYgznyCbvL6cTSD/8DzUBIzORvlSeSIWq5gxsepF
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR03MB5007
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RDNS_NONE,SPF_HELO_PASS,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/3/22 22:11, Bagas Sanjaya wrote:
-> On 10/4/22 05:21, Ali Raza wrote:
->> Add the KConfig file that will enable building UKL. Documentation
->> introduces the technical details for how UKL works and the motivations
->> behind why it is useful. Sample provides a simple program that still uses
->> the standard system call interface, but does not require a modified C
->> library.
->>
-> <snipped>
->>  Documentation/index.rst   |   1 +
->>  Documentation/ukl/ukl.rst | 104 ++++++++++++++++++++++++++++++++++++++
->>  Kconfig                   |   2 +
->>  kernel/Kconfig.ukl        |  41 +++++++++++++++
->>  samples/ukl/Makefile      |  16 ++++++
->>  samples/ukl/README        |  17 +++++++
->>  samples/ukl/syscall.S     |  28 ++++++++++
->>  samples/ukl/tcp_server.c  |  99 ++++++++++++++++++++++++++++++++++++
->>  8 files changed, 308 insertions(+)
->>  create mode 100644 Documentation/ukl/ukl.rst
->>  create mode 100644 kernel/Kconfig.ukl
->>  create mode 100644 samples/ukl/Makefile
->>  create mode 100644 samples/ukl/README
->>  create mode 100644 samples/ukl/syscall.S
->>  create mode 100644 samples/ukl/tcp_server.c
-> 
-> Shouldn't the documentation be split into its own patch?
-> 
-Thanks for pointing that out.
+On October 3, 2022 3:21:23 PM PDT, Ali Raza <aliraza@bu=2Eedu> wrote:
+>Unikernel Linux (UKL) is a research project aimed at integrating
+>application specific optimizations to the Linux kernel=2E This RFC aims t=
+o
+>introduce this research to the community=2E Any feedback regarding the id=
+ea,
+>goals, implementation and research is highly appreciated=2E
+>
+>Unikernels are specialized operating systems where an application is link=
+ed
+>directly with the kernel and runs in supervisor mode=2E This allows the
+>developers to implement application specific optimizations to the kernel,
+>which can be directly invoked by the application (without going through t=
+he
+>syscall path)=2E An application can control scheduling and resource
+>management and directly access the hardware=2E Application and the kernel=
+ can
+>be co-optimized, e=2Eg=2E, through LTO, PGO, etc=2E All of these optimiza=
+tions,
+>and others, provide applications with huge performance benefits over
+>general purpose operating systems=2E
+>
+>Linux is the de-facto operating system of today=2E Applications depend on=
+ its
+>battle tested code base, large developer community, support for legacy
+>code, a huge ecosystem of tools and utilities, and a wide range of
+>compatible hardware and device drivers=2E Linux also allows some degree o=
+f
+>application specific optimizations through build time config options,
+>runtime configuration, and recently through eBPF=2E But still, there is a
+>need for even more fine-grained application specific optimizations, and
+>some developers resort to kernel bypass techniques=2E
+>
+>Unikernel Linux (UKL) aims to get the best of both worlds by bringing
+>application specific optimizations to the Linux ecosystem=2E This way,
+>unmodified applications can keep getting the benefits of Linux while taki=
+ng
+>advantage of the unikernel-style optimizations=2E Optionally, application=
+s
+>can be modified to invoke deeper optimizations=2E
+>
+>There are two steps to unikernel-izing Linux, i=2Ee=2E, first, equip Linu=
+x with
+>a unikernel model, and second, actually use that model to implement
+>application specific optimizations=2E This patch focuses on the first par=
+t=2E
+>Through this patch, unmodified applications can be built as Linux
+>unikernels, albeit with only modest performance advantages=2E Like
+>unikernels, UKL would allow an application to be statically linked into t=
+he
+>kernel and executed in supervisor mode=2E However, UKL preserves most of =
+the
+>invariants and design of Linux, including a separate page-able applicatio=
+n
+>portion of the address space and a pinned kernel portion, the ability to
+>run multiple processes, and distinct execution modes for application and
+>kernel code=2E Kernel execution mode and application execution mode are
+>different, e=2Eg=2E, the application execution mode allows application th=
+reads
+>to be scheduled, handle signals, etc=2E, which do not apply to kernel
+>threads=2E Application built as a Linux unikernel will have its text and =
+data
+>loaded with the kernel at boot time, while the rest of the address space
+>would remain unchanged=2E These applications invoke the system call
+>functionality through a function call into the kernel system call entry
+>point instead of through the syscall assembly instruction=2E UKL would
+>support a normal userspace so the UKL application can be started, managed=
+,
+>profiled, etc=2E, using normal command line utilities=2E
+>
+>Once Linux has a unikernel model, different application specific
+>optimizations are possible=2E We have tried a few, e=2Eg=2E, fast system =
+call
+>transitions, shared stacks to allow LTO, invoking kernel functions
+>directly, etc=2E We have seen huge performance benefits, details of which=
+ are
+>not relevant to this patch and can be found in our paper=2E
+>(https://arxiv=2Eorg/pdf/2206=2E00789=2Epdf)
+>
+>UKL differs significantly from previous projects, e=2Eg=2E, UML, KML and =
+LKL=2E
+>User Mode Linux (UML) is a virtual machine monitor implemented on syscall
+>interface, a very different goal from UKL=2E Kernel Mode Linux (KML) allo=
+ws
+>applications to run in kernel mode and replaces syscalls with function
+>calls=2E While KML stops there, UKL goes further=2E UKL links application=
+s and
+>kernel together which allows further optimizations e=2Eg=2E, fast system =
+call
+>transitions, shared stacks to allow LTO, invoking kernel functions direct=
+ly
+>etc=2E Details can be found in the paper linked above=2E Linux Kernel Lib=
+rary
+>(LKL) harvests arch independent code from Linux, takes it to userspace as=
+ a
+>library to be linked with applications=2E A host needs to provide arch
+>dependent functionality=2E This model is very different from UKL=2E A det=
+ailed
+>discussion of related work is present in the paper linked above=2E
+>
+>See samples/ukl for a simple TCP echo server example which can be built a=
+s
+>a normal user space application and also as a UKL application=2E In the L=
+inux
+>config options, a path to the compiled and partially linked application
+>binary can be specified=2E Kernel built with UKL enabled will search this
+>location for the binary and link with the kernel=2E Applications and requ=
+ired
+>libraries need to be compiled with -mno-red-zone -mcmodel=3Dkernel flags
+>because kernel mode execution can trample on application red zones and in
+>order to link with the kernel and be loaded in the high end of the addres=
+s
+>space, application should have the correct memory model=2E Examples of ot=
+her
+>applications like Redis, Memcached etc along with glibc and libgcc etc=2E=
+,
+>can be found at https://github=2Ecom/unikernelLinux/ukl
+>
+>List of authors and contributors:
+>=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>
+>Ali Raza - aliraza@bu=2Eedu
+>Thomas Unger - tommyu@bu=2Eedu
+>Matthew Boyd - mboydmcse@gmail=2Ecom
+>Eric Munson - munsoner@bu=2Eedu
+>Parul Sohal - psohal@bu=2Eedu
+>Ulrich Drepper - drepper@redhat=2Ecom
+>Richard W=2EM=2E Jones - rjones@redhat=2Ecom
+>Daniel Bristot de Oliveira - bristot@kernel=2Eorg
+>Larry Woodman - lwoodman@redhat=2Ecom
+>Renato Mancuso - rmancuso@bu=2Eedu
+>Jonathan Appavoo - jappavoo@bu=2Eedu
+>Orran Krieger - okrieg@bu=2Eedu
+>
+>Ali Raza (9):
+>  kbuild: Add sections and symbols to linker script for UKL support
+>  x86/boot: Load the PT_TLS segment for Unikernel configs
+>  sched: Add task_struct tracking of kernel or application execution
+>  x86/entry: Create alternate entry path for system calls
+>  x86/uaccess: Make access_ok UKL aware
+>  x86/fault: Skip checking kernel mode access to user address space for
+>    UKL
+>  x86/signal: Adjust signal handler register values and return frame
+>  exec: Make exec path for starting UKL application
+>  Kconfig: Add config option for enabling and sample for testing UKL
+>
+>Eric B Munson (1):
+>  exec: Give userspace a method for starting UKL process
+>
+> Documentation/index=2Erst           |   1 +
+> Documentation/ukl/ukl=2Erst         | 104 +++++++++++++++++++++++
+> Kconfig                           |   2 +
+> Makefile                          |   4 +
+> arch/x86/boot/compressed/misc=2Ec   |   3 +
+> arch/x86/entry/entry_64=2ES         | 133 ++++++++++++++++++++++++++++++
+> arch/x86/include/asm/elf=2Eh        |   9 +-
+> arch/x86/include/asm/uaccess=2Eh    |   8 ++
+> arch/x86/kernel/process=2Ec         |  13 +++
+> arch/x86/kernel/process_64=2Ec      |  49 ++++++++---
+> arch/x86/kernel/signal=2Ec          |  22 +++--
+> arch/x86/kernel/vmlinux=2Elds=2ES     |  98 ++++++++++++++++++++++
+> arch/x86/mm/fault=2Ec               |   7 +-
+> fs/binfmt_elf=2Ec                   |  28 +++++++
+> fs/exec=2Ec                         |  75 +++++++++++++----
+> include/asm-generic/sections=2Eh    |   4 +
+> include/asm-generic/vmlinux=2Elds=2Eh |  32 ++++++-
+> include/linux/sched=2Eh             |  26 ++++++
+> kernel/Kconfig=2Eukl                |  41 +++++++++
+> samples/ukl/Makefile              |  16 ++++
+> samples/ukl/README                |  17 ++++
+> samples/ukl/syscall=2ES             |  28 +++++++
+> samples/ukl/tcp_server=2Ec          |  99 ++++++++++++++++++++++
+> scripts/mod/modpost=2Ec             |   4 +
+> 24 files changed, 785 insertions(+), 38 deletions(-)
+> create mode 100644 Documentation/ukl/ukl=2Erst
+> create mode 100644 kernel/Kconfig=2Eukl
+> create mode 100644 samples/ukl/Makefile
+> create mode 100644 samples/ukl/README
+> create mode 100644 samples/ukl/syscall=2ES
+> create mode 100644 samples/ukl/tcp_server=2Ec
+>
+>
+>base-commit: 4fe89d07dcc2804c8b562f6c7896a45643d34b2f
 
---Ali
+This is basically taking Linux and turning it into a whole new operating s=
+ystem, while expecting the Linux kernel community to carry the support burd=
+en thereof=2E
+
+We have seen this before, notably with Xen=2E It is *expensive* and *painf=
+ul* for the maintenance of the mainstream kernel=2E
+
+Linux already has a notion of "kernel mode applications", they are called =
+kernel modules and kernel threads=2E It seems to me that you are trying to =
+introduce a user space compatibility layer into the kernel, with the only b=
+enefit being avoiding the syscall overhead=2E The latter is bigger than we =
+would like, which is why we are changing the x86 hardware architecture to i=
+mprove it=2E
+
+In my opinion, this would require *enormous* justification to put it into =
+mainline=2E
+
+
 
