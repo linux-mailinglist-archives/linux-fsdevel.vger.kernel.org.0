@@ -2,81 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B7BF05F6A3E
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 17:07:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F2E615F6A82
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 17:25:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231757AbiJFPHR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Oct 2022 11:07:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33494 "EHLO
+        id S231631AbiJFPZL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Oct 2022 11:25:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbiJFPHQ (ORCPT
+        with ESMTP id S231693AbiJFPZH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Oct 2022 11:07:16 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CE3B88DFB;
-        Thu,  6 Oct 2022 08:07:15 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2CA4CB820D6;
-        Thu,  6 Oct 2022 15:07:14 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FB2EC433D6;
-        Thu,  6 Oct 2022 15:07:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665068832;
-        bh=aOkXuECcbSjQISc+01I1tvXXXenJbSlH28e8M1BvI94=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ipL5LglSgB96d6J8L2HRVMl+jXPn9WaZCDeQ01bYQBl4fNvQ1dM3lsq4Q1rZT43/e
-         04qttZa16SWURI2GfkK0oPR51suEX+KmL9EsCjFdWia96LnfzBWvtuqNVtpUW3BtJU
-         vcNgsuDIFvSsLikBs88sxH/LdhpbfjE4y6loO4Mu7LZwOPT9sRBT/8sLT04H22RAal
-         QWzkjxZVHXql+4CQTc3Zt3ML52Z7jwbzo3dBaWVQ7tNHxkNILSrzI4WPmGEaVVk6pI
-         qS7RDP6QwQGatrjUNvs0hohnNuzTtFZ1Mq8tk9g2NPUW0j9qCUC4fQjJGqzWtnoJZi
-         NyQ6cXDs2lPnw==
-Date:   Thu, 6 Oct 2022 18:07:09 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
+        Thu, 6 Oct 2022 11:25:07 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07B5A8E0C4
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Oct 2022 08:25:06 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id h13so913489pfr.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Oct 2022 08:25:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date;
+        bh=OtDkks39cgYVeSHQm8gd1cyY+JEJiwboAG4vuizNOOQ=;
+        b=bwYKBKdRbKMXUGR+1Ba8s3APih/vqE4MzepUDPFpZZHmlwMDQPXFSRTr6JI2afx1mB
+         5cCbkbKmfA/SsPQewwxLX0n1fuUOpqCqwDg8icP+4MjefbAGmbzfdCmtuHboewFG1cgf
+         2Xuw32nN44/m5B/9jthRwgcr/98+HiByIIItU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date;
+        bh=OtDkks39cgYVeSHQm8gd1cyY+JEJiwboAG4vuizNOOQ=;
+        b=kk1pu1pweHg3WBfxE7s6pl3pvqOGzxAdTdFYWfwNj7hgqHEoSvI4o7gEqS6YwzbI6Z
+         DpI37hBOwbVUhX0P6aoweWpOIyXrro+fmBxL7DKSphoM9/30yQAaLdQ6cQ17nYkWTmtE
+         mlJknvsKi3XyHovQXIsm5dotsjZDj1yzQgNNjDWuUl+/ecddAwF8TSefIfVVBiEmRcti
+         1uraG+1/6WoRdQwu9M8RBSFg8sZ0jinyBtrcq5cErtMJKmBR5Wfz8SYNhkiwGJsXxj84
+         fZtf0XTJP7gGEdlJT3xn9feYehm1pJot7G8iRz+GiI5dHmzpj3W0Qw/+0BDFZRi2dqlm
+         +Alg==
+X-Gm-Message-State: ACrzQf3tKB89/5Nl+upw0XuiBRbHKubGYJgQwTV+FCD6oSUHrVjLjOc4
+        HqA+bmsaWYpYxQmi66eJZLe5cA==
+X-Google-Smtp-Source: AMsMyM5z1VQ/jYK2JD6/gNJiBdecIUmzcUy8MsflqoW0L8g/0cewBDfu6RFeroKPJlKOEYkHIn4RBA==
+X-Received: by 2002:a05:6a00:22c9:b0:561:8635:7b35 with SMTP id f9-20020a056a0022c900b0056186357b35mr334380pfj.3.1665069905412;
+        Thu, 06 Oct 2022 08:25:05 -0700 (PDT)
+Received: from [127.0.0.1] (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id 73-20020a63054c000000b0042fe1914e26sm2006066pgf.37.2022.10.06.08.25.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Oct 2022 08:25:04 -0700 (PDT)
+Date:   Thu, 06 Oct 2022 08:25:01 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Jann Horn <jannh@google.com>,
+        Christian Brauner <brauner@kernel.org>
+CC:     Eric Biederman <ebiederm@xmission.com>,
+        Jorge Merlino <jorge.merlino@canonical.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v8 2/8] KVM: Extend the memslot to support fd-based
- private memory
-Message-ID: <Yz7vHXZmU3EpmI0j@kernel.org>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-3-chao.p.peng@linux.intel.com>
- <Yz7s+JIexAHJm5dc@kernel.org>
+        Andy Lutomirski <luto@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Todd Kjos <tkjos@google.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Prashanth Prahlad <pprahlad@redhat.com>,
+        Micah Morton <mortonm@chromium.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Andrei Vagin <avagin@gmail.com>, linux-kernel@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
+User-Agent: K-9 Mail for Android
+In-Reply-To: <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
+References: <20221006082735.1321612-1-keescook@chromium.org> <20221006082735.1321612-2-keescook@chromium.org> <20221006090506.paqjf537cox7lqrq@wittgenstein> <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
+Message-ID: <86CE201B-5632-4BB7-BCF6-7CB2C2895409@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yz7s+JIexAHJm5dc@kernel.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -84,35 +95,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 06, 2022 at 05:58:03PM +0300, Jarkko Sakkinen wrote:
-> On Thu, Sep 15, 2022 at 10:29:07PM +0800, Chao Peng wrote:
-> > This new extension, indicated by the new flag KVM_MEM_PRIVATE, adds two
-> > additional KVM memslot fields private_fd/private_offset to allow
-> > userspace to specify that guest private memory provided from the
-> > private_fd and guest_phys_addr mapped at the private_offset of the
-> > private_fd, spanning a range of memory_size.
-> > 
-> > The extended memslot can still have the userspace_addr(hva). When use, a
-> > single memslot can maintain both private memory through private
-> > fd(private_fd/private_offset) and shared memory through
-> > hva(userspace_addr). Whether the private or shared part is visible to
-> > guest is maintained by other KVM code.
-> 
-> What is anyway the appeal of private_offset field, instead of having just
-> 1:1 association between regions and files, i.e. one memfd per region?
-> 
-> If this was the case, then an extended struct would not be needed in the
-> first place. A simple union inside the existing struct would do:
-> 
->         union {
->                 __u64 userspace_addr,
->                 __u64 private_fd,
->         };
 
-Also, why is this mechanism just for fd's with MFD_INACCESSIBLE flag? I'd
-consider instead having KVM_MEM_FD flag. For generic KVM (if memfd does not
-have MFD_INACCESSIBLE set), KVM could just use the memory as it is using
-mapped memory. This would simplify user space code, as you can the use the
-same thing for both cases.
 
-BR, Jarkko
+On October 6, 2022 7:13:37 AM PDT, Jann Horn <jannh@google=2Ecom> wrote:
+>On Thu, Oct 6, 2022 at 11:05 AM Christian Brauner <brauner@kernel=2Eorg> =
+wrote:
+>> On Thu, Oct 06, 2022 at 01:27:34AM -0700, Kees Cook wrote:
+>> > The check_unsafe_exec() counting of n_fs would not add up under a hea=
+vily
+>> > threaded process trying to perform a suid exec, causing the suid port=
+ion
+>> > to fail=2E This counting error appears to be unneeded, but to catch a=
+ny
+>> > possible conditions, explicitly unshare fs_struct on exec, if it ends=
+ up
+>>
+>> Isn't this a potential uapi break? Afaict, before this change a call to
+>> clone{3}(CLONE_FS) followed by an exec in the child would have the
+>> parent and child share fs information=2E So if the child e=2Eg=2E, chan=
+ges the
+>> working directory post exec it would also affect the parent=2E But afte=
+r
+>> this change here this would no longer be true=2E So a child changing a
+>> workding directoro would not affect the parent anymore=2E IOW, an exec =
+is
+>> accompanied by an unshare(CLONE_FS)=2E Might still be worth trying ofc =
+but
+>> it seems like a non-trivial uapi change but there might be few users
+>> that do clone{3}(CLONE_FS) followed by an exec=2E
+>
+>I believe the following code in Chromium explicitly relies on this
+>behavior, but I'm not sure whether this code is in active use anymore:
+>
+>https://source=2Echromium=2Eorg/chromium/chromium/src/+/main:sandbox/linu=
+x/suid/sandbox=2Ec;l=3D101?q=3DCLONE_FS&sq=3D&ss=3Dchromium
+
+Oh yes=2E I think I had tried to forget this existed=2E Ugh=2E Okay, so ba=
+ck to the drawing board, I guess=2E The counting will need to be fixed=2E=
+=2E=2E
+
+It's possible we can move the counting after dethread -- it seems the earl=
+y count was just to avoid setting flags after the point of no return, but i=
+t's not an error condition=2E=2E=2E
+
+--=20
+Kees Cook
