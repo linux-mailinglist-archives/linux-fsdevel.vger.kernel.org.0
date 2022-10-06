@@ -2,117 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 826F75F6482
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 12:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B299B5F64A4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 12:58:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231252AbiJFKsq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Oct 2022 06:48:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60174 "EHLO
+        id S230384AbiJFK6h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Oct 2022 06:58:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44696 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230359AbiJFKsp (ORCPT
+        with ESMTP id S231381AbiJFK6c (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Oct 2022 06:48:45 -0400
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9521398CB0
-        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Oct 2022 03:48:42 -0700 (PDT)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-405-DgXWoVwcNIW55WKjoHfY8Q-1; Thu, 06 Oct 2022 11:48:39 +0100
-X-MC-Unique: DgXWoVwcNIW55WKjoHfY8Q-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.38; Thu, 6 Oct
- 2022 11:48:37 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.040; Thu, 6 Oct 2022 11:48:37 +0100
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Christian Brauner' <brauner@kernel.org>,
-        Kees Cook <keescook@chromium.org>
-CC:     Eric Biederman <ebiederm@xmission.com>,
-        Jorge Merlino <jorge.merlino@canonical.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "John Johansen" <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Todd Kjos <tkjos@google.com>,
-        "Ondrej Mosnacek" <omosnace@redhat.com>,
-        Prashanth Prahlad <pprahlad@redhat.com>,
-        Micah Morton <mortonm@chromium.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "apparmor@lists.ubuntu.com" <apparmor@lists.ubuntu.com>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        "selinux@vger.kernel.org" <selinux@vger.kernel.org>,
-        "linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>
-Subject: RE: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
-Thread-Topic: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
-Thread-Index: AQHY2WLGFfe2CPUaDEa6axdLVGgCBq4BLZlw
-Date:   Thu, 6 Oct 2022 10:48:36 +0000
-Message-ID: <cd4c600f91404387bb7be0d727c3c337@AcuMS.aculab.com>
-References: <20221006082735.1321612-1-keescook@chromium.org>
- <20221006082735.1321612-2-keescook@chromium.org>
- <20221006090506.paqjf537cox7lqrq@wittgenstein>
-In-Reply-To: <20221006090506.paqjf537cox7lqrq@wittgenstein>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Thu, 6 Oct 2022 06:58:32 -0400
+Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E4D9698CAF;
+        Thu,  6 Oct 2022 03:58:31 -0700 (PDT)
+Received: by mail-ej1-x62b.google.com with SMTP id qn17so3813584ejb.0;
+        Thu, 06 Oct 2022 03:58:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date;
+        bh=dtuWscWrUWja3PJx/MNBAlClayApddB5Fza3lHyp908=;
+        b=q2CwkQN0dNAyhiSkuBngj29o+W0Gv8dH9ZUumeFaXEBIkVcPNiivCZF2obZbN1wrm4
+         9mLj3p0qd0GWaL30pPva/jYEBbgIhThYEYXwKjsOkyXgKWHq4ztjv5C0wL4DDaHcbDK2
+         cSBLT57T61eu/72etWy7BUMGY00vrlzDHJcAtVyfK+3vCdtp70VjKigmHE0/hAQIueEN
+         Z/t7RB3y6zNpQjTED3o7WjIH8UVzc3fuhs8gafxVItt+1gBgA2QPvOnr9P+gHkOMLF4T
+         EVZAj2ko1K98uSwyeUUXJNaTAndE6sIiOeCVo5RfLaE59oImd9yi4GaPao3EXmbQgzjX
+         /D1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date;
+        bh=dtuWscWrUWja3PJx/MNBAlClayApddB5Fza3lHyp908=;
+        b=OJ8p9qgTWqraZpmerFxyHdvmmE6eE9J9JInnEMOSQSQ26HUIiRDQUTz2ubPPryoJJn
+         BkbonE8ZWnDbWBiQSid+Gd5eFkgDEGF6qJdQ32Cho10gw5GEs3qavk6MsAlna5TDsq6m
+         wMMtQsj3yAjhNN+vZblMpDmAByQFw7mOam7RLUIQPlS6y3dd5vDjbgo9ZQVmbeW7/8pB
+         18N38lFsy85m4hMQFU2zeSIikx8yGZ6eiejlVHGfMwv/fyf/8Aeamg7IccvLMoglWB+6
+         cqMMNk251eTTW+cUZED7SAyRduvA61WKqIKR096tfl1+I/TPOWrdXuxkRD5m34CAJnlw
+         TDkA==
+X-Gm-Message-State: ACrzQf0LXuggGX3AQ9/KbsSCxLbg5XpkNWcqblDxsvPsPn97USoolgvp
+        3NFeGHOqEY0ArHdmUda/DguqpaK+xJs=
+X-Google-Smtp-Source: AMsMyM6MLDP/agBnw6nYvX0NbkG+NdXn/iaPFI8tmlxK6KiJkWX380E9kU434k5TAZwXugX3trWWJQ==
+X-Received: by 2002:a17:907:97d5:b0:782:23b0:ecb8 with SMTP id js21-20020a17090797d500b0078223b0ecb8mr3615440ejc.100.1665053910135;
+        Thu, 06 Oct 2022 03:58:30 -0700 (PDT)
+Received: from masalkhi.. (p5ddb3856.dip0.t-ipconnect.de. [93.219.56.86])
+        by smtp.gmail.com with ESMTPSA id n19-20020aa7c693000000b00458a03203b1sm5677703edq.31.2022.10.06.03.58.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Oct 2022 03:58:29 -0700 (PDT)
+From:   Abd-Alrhman Masalkhi <abd.masalkhi@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: RE: A field in files_struct has been used without initialization
+Date:   Thu,  6 Oct 2022 12:57:28 +0200
+Message-Id: <20221006105728.47115-1-abd.masalkhi@gmail.com>
+X-Mailer: git-send-email 2.29.0.rc1.dirty
+In-Reply-To: <20221006104439.46235-1-abd.masalkhi@gmail.com>
+References: <20221006104439.46235-1-abd.masalkhi@gmail.com>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-RnJvbTogQ2hyaXN0aWFuIEJyYXVuZXINCj4gU2VudDogMDYgT2N0b2JlciAyMDIyIDEwOjA1DQo+
-IA0KPiBPbiBUaHUsIE9jdCAwNiwgMjAyMiBhdCAwMToyNzozNEFNIC0wNzAwLCBLZWVzIENvb2sg
-d3JvdGU6DQo+ID4gVGhlIGNoZWNrX3Vuc2FmZV9leGVjKCkgY291bnRpbmcgb2Ygbl9mcyB3b3Vs
-ZCBub3QgYWRkIHVwIHVuZGVyIGEgaGVhdmlseQ0KPiA+IHRocmVhZGVkIHByb2Nlc3MgdHJ5aW5n
-IHRvIHBlcmZvcm0gYSBzdWlkIGV4ZWMsIGNhdXNpbmcgdGhlIHN1aWQgcG9ydGlvbg0KPiA+IHRv
-IGZhaWwuIFRoaXMgY291bnRpbmcgZXJyb3IgYXBwZWFycyB0byBiZSB1bm5lZWRlZCwgYnV0IHRv
-IGNhdGNoIGFueQ0KPiA+IHBvc3NpYmxlIGNvbmRpdGlvbnMsIGV4cGxpY2l0bHkgdW5zaGFyZSBm
-c19zdHJ1Y3Qgb24gZXhlYywgaWYgaXQgZW5kcyB1cA0KPiANCj4gSXNuJ3QgdGhpcyBhIHBvdGVu
-dGlhbCB1YXBpIGJyZWFrPyBBZmFpY3QsIGJlZm9yZSB0aGlzIGNoYW5nZSBhIGNhbGwgdG8NCj4g
-Y2xvbmV7M30oQ0xPTkVfRlMpIGZvbGxvd2VkIGJ5IGFuIGV4ZWMgaW4gdGhlIGNoaWxkIHdvdWxk
-IGhhdmUgdGhlDQo+IHBhcmVudCBhbmQgY2hpbGQgc2hhcmUgZnMgaW5mb3JtYXRpb24uIFNvIGlm
-IHRoZSBjaGlsZCBlLmcuLCBjaGFuZ2VzIHRoZQ0KPiB3b3JraW5nIGRpcmVjdG9yeSBwb3N0IGV4
-ZWMgaXQgd291bGQgYWxzbyBhZmZlY3QgdGhlIHBhcmVudC4gQnV0IGFmdGVyDQo+IHRoaXMgY2hh
-bmdlIGhlcmUgdGhpcyB3b3VsZCBubyBsb25nZXIgYmUgdHJ1ZS4gU28gYSBjaGlsZCBjaGFuZ2lu
-ZyBhDQo+IHdvcmtkaW5nIGRpcmVjdG9ybyB3b3VsZCBub3QgYWZmZWN0IHRoZSBwYXJlbnQgYW55
-bW9yZS4gSU9XLCBhbiBleGVjIGlzDQo+IGFjY29tcGFuaWVkIGJ5IGFuIHVuc2hhcmUoQ0xPTkVf
-RlMpLiBNaWdodCBzdGlsbCBiZSB3b3J0aCB0cnlpbmcgb2ZjIGJ1dA0KPiBpdCBzZWVtcyBsaWtl
-IGEgbm9uLXRyaXZpYWwgdWFwaSBjaGFuZ2UgYnV0IHRoZXJlIG1pZ2h0IGJlIGZldyB1c2Vycw0K
-PiB0aGF0IGRvIGNsb25lezN9KENMT05FX0ZTKSBmb2xsb3dlZCBieSBhbiBleGVjLg0KDQpUaGUg
-dGhvdWdodCBvZiB0aGF0IGlzIGVudGlyZWx5IGhvcnJpZC4uLg0KDQpJIHByZXN1bWUgYSBzdWlk
-IGV4ZWMgd2lsbCBmYWlsIGluIHRoYXQgY2FzZT8NCg0KSWYgdGhlIG9sZCBjb2RlIGlzIHRyeWlu
-ZyB0byBjb21wYXJlIHRoZSBudW1iZXIgb2YgdGhyZWFkcw0Kd2l0aCB0aGUgbnVtYmVyIG9mIHVz
-ZXJzIG9mIHRoZSBmcyB0YWJsZSBpc24ndCBpcyBqdXN0IGJ1Z2d5Pw0KSWYgYSB0aHJlYWQgdW5z
-aGFyZXMgdGhlIGZzIHRhYmxlIHRoZXJlIGNhbiBiZSBhbm90aGVyDQpyZWZlcmVuY2Ugc29tZXdo
-ZXJlIGVsc2UgLSB3aGljaCBpcyB3aGF0IChJIHByZXN1bWUpIGlzIGJlaW5nDQp0ZXN0ZWQgZm9y
-Lg0KDQoJRGF2aWQNCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJv
-YWQsIE1vdW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24g
-Tm86IDEzOTczODYgKFdhbGVzKQ0K
+> new_fdt->close_on_exec itself has not been initialized, is it intended
+> to be like this.
+
+I meant:
+
+newf->close_on_exec_init itself has not been initialized ...
 
