@@ -2,285 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D63A5F6ED1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 22:19:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13FCA5F6ED7
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 22:20:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230493AbiJFUTn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Oct 2022 16:19:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43672 "EHLO
+        id S231597AbiJFUUn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Oct 2022 16:20:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230148AbiJFUTl (ORCPT
+        with ESMTP id S231207AbiJFUUj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Oct 2022 16:19:41 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45EA9646F;
-        Thu,  6 Oct 2022 13:19:40 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id x59so4403541ede.7;
-        Thu, 06 Oct 2022 13:19:40 -0700 (PDT)
+        Thu, 6 Oct 2022 16:20:39 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9301F17279B
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Oct 2022 13:20:38 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id x1-20020a17090ab00100b001fda21bbc90so5361620pjq.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Oct 2022 13:20:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UQXEwyZOAQoIktw9AzUUz6hKteDe+hT/LCfTM1GZpBk=;
-        b=H87b+tJCOwZEl9adqtmMM2c56FUJPM3f6+XT4E3+R3cqkCgaEAjE8hitEgQiNQqEB6
-         MjvlWkwR6GhDOcAWPckoGP7nRREn4KB1UVi9kbeu/5Vi4F+NiXMnewD+Adc/bjfgT+ZB
-         Vko+Mt0hW/S1R1yEPeO/7bvf2L21F7Uo352PvaXpd8sbIBvreRFjMbYCsM2FLw10XABi
-         1qQzFUMn5nvMmcupuL9vjY+U2Z6cLfD7Iq8aKOu2/B/ODrpsYENa82mIRw495OMKwLA2
-         pOzZF7c+IiKKTmbILHc3GA7GlNE7w30UNQusVtgt8NESoUitz3QZ2bliPUexpZdDBIc4
-         kNwA==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date;
+        bh=Rk5zz4A39+pbcgAoB20NzVrsEawygpTbgx4vBx4ppIs=;
+        b=BYx3cjQRaQ61qD4kci8lj8sUlKGwxBQTGugOVwVFovwHCmI/LQDbCjb+DkICpsvW4m
+         STdWXo4QVJpb8zGJImpu91r/m8zGJm3KZaeFnkzRlgCgjI+0GDcxB5MTmrhucCW633IN
+         I6hYYHjSrLy5aixD/PhLwPqvTzNVP1wuQopiQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UQXEwyZOAQoIktw9AzUUz6hKteDe+hT/LCfTM1GZpBk=;
-        b=XIKce87ZJuzE7RTEbmqqO+1VtDxPfBFPSSTHvhmhi8zJ7+oSRNRdqCC67PaQVB4hxB
-         D3wIp8nJKz55fMtsKEcJSj2ujBQWw6T5COPnQ8GRAEA4FTZePg/5hQR+sZ6YWjCHYRnX
-         vo8Bq/1rFXhn42RjzaUN1PHvAp0aTIGf8zQF76wHNcy33YGNSNtAPL8E985Ri47AUQwl
-         pkNqR7+fKz70Ku4rjbjEBnZmMP726CnWstVBmkuAeHnRQPSE5m7uk9Ep7oeIMsPbdUQz
-         ITpDGf+CbPunGK7sWPmDXD6tfpha+Yej0WCUk8FFFd2Sz5ToOQNaIiOBdpiMc70wO7MI
-         e2iA==
-X-Gm-Message-State: ACrzQf2+Zpp3f3tWf0Swc4N/y5mNjFRtdq6bLqyCH30gPo9btuJNhTC5
-        7y+sNepzzAJN+tx6lqn4aeBX1s+YWOA=
-X-Google-Smtp-Source: AMsMyM4q03okKEhXxdIj6EPKlrau+t/XMmKKCP1nKSz2L/w1IWQO62k7quLEZOXdiXmrd6qIhxnsLw==
-X-Received: by 2002:a05:6402:2994:b0:453:4c5c:d31c with SMTP id eq20-20020a056402299400b004534c5cd31cmr1472869edb.412.1665087578744;
-        Thu, 06 Oct 2022 13:19:38 -0700 (PDT)
-Received: from nuc ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id g18-20020a17090604d200b0073c10031dc9sm170022eja.80.2022.10.06.13.19.37
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=Rk5zz4A39+pbcgAoB20NzVrsEawygpTbgx4vBx4ppIs=;
+        b=M/oOTTic4CnagwXkWytw4ytOP2r0YAJUNTqWEVhAFWZsyToILlayLlApkxdqCqBX67
+         HyPb9KmwwBJ5nbnFvU1Y776lcKqrXGVRveJKo+dH89BcMy8hYY9OsLCVf5GuopSgVSLo
+         /A0wKNYJoBBRrKMAURwS35cMgED4wSCVOdmpk6AI5CmoSo1YGXC6NFH3zxDNJcgQ5dgh
+         ga6fladJO60EFMVK2I1xCR6Ljt+sVLHenjJY2b0VrcSF5po2GFNURB+DQEw9ZXL73vhb
+         FyYNFXsiSf4fRDi/frPM0SOfpdolfLIoH+EU9L7F8h6p/3jEFS32Hv6LjpOh2unLz9Es
+         ZdXg==
+X-Gm-Message-State: ACrzQf11MK9VkyMHZM9VUhIhwsj73Mer4GpCbfBQ7szq03Z5S1u0xGyJ
+        NbPs/vGc2aZdcO+Pwbced/geOw==
+X-Google-Smtp-Source: AMsMyM6jQK6faWu8ciVNIyHuo5DdhGUHU792hu5M2+fkiWdd1JDFyJ7HN7J/+hDDUVtrL381rrTPHQ==
+X-Received: by 2002:a17:902:864c:b0:179:fe02:611e with SMTP id y12-20020a170902864c00b00179fe02611emr1539895plt.10.1665087637621;
+        Thu, 06 Oct 2022 13:20:37 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id p8-20020a635b08000000b0045328df8bd0sm148201pgb.71.2022.10.06.13.20.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Oct 2022 13:19:37 -0700 (PDT)
-Date:   Thu, 6 Oct 2022 22:19:36 +0200
-From:   =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
-To:     =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>
-Cc:     Nathan Chancellor <nathan@kernel.org>,
-        linux-security-module@vger.kernel.org,
-        James Morris <jmorris@namei.org>,
-        Paul Moore <paul@paul-moore.com>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
+        Thu, 06 Oct 2022 13:20:36 -0700 (PDT)
+Date:   Thu, 6 Oct 2022 13:20:35 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Jorge Merlino <jorge.merlino@canonical.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Jann Horn <jannh@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Subject: Re: [PATCH v8 4/9] landlock: Support file truncation
-Message-ID: <Yz84WNvpFxSYiCVb@nuc>
-References: <20221001154908.49665-1-gnoack3000@gmail.com>
- <20221001154908.49665-5-gnoack3000@gmail.com>
- <YzyQASSaeVqRlTsO@dev-arch.thelio-3990X>
- <cdfdedad-a162-6608-a86e-8b2d47d6d8d8@digikod.net>
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Todd Kjos <tkjos@google.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Prashanth Prahlad <pprahlad@redhat.com>,
+        Micah Morton <mortonm@chromium.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Andrei Vagin <avagin@gmail.com>, linux-kernel@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] Fix race condition when exec'ing setuid files
+Message-ID: <202210061301.207A20C8E5@keescook>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cdfdedad-a162-6608-a86e-8b2d47d6d8d8@digikod.net>
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <202209131456.76A13BC5E4@keescook>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 05, 2022 at 08:52:41PM +0200, Mickaël Salaün wrote:
-> On 04/10/2022 21:56, Nathan Chancellor wrote:
-> > Hi Günther,
-> > 
-> > On Sat, Oct 01, 2022 at 05:49:03PM +0200, Günther Noack wrote:
-> > > Introduce the LANDLOCK_ACCESS_FS_TRUNCATE flag for file truncation.
-> > > 
-> > > This flag hooks into the path_truncate LSM hook and covers file
-> > > truncation using truncate(2), ftruncate(2), open(2) with O_TRUNC, as
-> > > well as creat().
-> > > 
-> > > This change also increments the Landlock ABI version, updates
-> > > corresponding selftests, and updates code documentation to document
-> > > the flag.
-> > > 
-> > > The following operations are restricted:
-> > > 
-> > > open(): requires the LANDLOCK_ACCESS_FS_TRUNCATE right if a file gets
-> > > implicitly truncated as part of the open() (e.g. using O_TRUNC).
-> > > 
-> > > Notable special cases:
-> > > * open(..., O_RDONLY|O_TRUNC) can truncate files as well in Linux
-> > > * open() with O_TRUNC does *not* need the TRUNCATE right when it
-> > >    creates a new file.
-> > > 
-> > > truncate() (on a path): requires the LANDLOCK_ACCESS_FS_TRUNCATE
-> > > right.
-> > > 
-> > > ftruncate() (on a file): requires that the file had the TRUNCATE right
-> > > when it was previously opened.
-> > > 
-> > > Signed-off-by: Günther Noack <gnoack3000@gmail.com>
-> > 
-> > I just bisected a crash in QEMU with Debian's arm64 configuration to
-> > this change in -next as commit b40deebe7679 ("landlock: Support file
-> > truncation"), which I was able to reproduce like so:
-> 
-> Thanks for the report Nathan. I've found an issue in this patch and fixed it
-> in -next with this (rebased) commit:
-> https://git.kernel.org/mic/c/b40deebe7679b05d4852488ef531e189a9621f2e
-> You should already have this update since I pushed it Monday.
-> Please let us know if this fixed the issue.
+On Thu, Sep 13, 2022 at 15:03:38 -0700, Kees Cook wrote:
+> It seems quite unusual to have a high-load heavily threaded
+> process decide to exec.
 
-I'm afraid Nathan already tested it with the version from the mic
--next branch b40deebe7679 ("landlock: Support file truncation")
+In looking at this a bunch more, I actually think everything is working
+as intended. If a process is actively launching threads while also trying
+to exec, they're going to create races for themselves.
 
-Nathan, thank you for the report and especially for the detailed step
-by step instructions! I have tried to reproduce it with the steps you
-suggested with the root file system you linked to, but I'm afraid I
-was unable to reproduce the crash.
+So the question, then, is "why are they trying to exec while actively
+spawning new threads?" That appears to be the core problem here, and as
+far as I can tell, the kernel has behaved this way for a very long time.
+I don't think the kernel should fix this, either, because it leads to a
+very weird state for userspace, where the thread spawner may suddenly
+die due to the exec happening in another thread. This really looks like
+something userspace needs to handle correctly (i.e. don't try to exec
+while actively spawning threads).
 
-When I've tried it, the kernel boots up to init and shuts down again,
-but does not run into the issue you're reporting:
+For example, here's a fix to the original PoC:
 
-...
-[    1.165628] Run /init as init process
-Starting syslogd: OK
-Starting klogd: OK
-Running sysctl: OK
-Saving random seed: OK
-Starting network: OK
-Linux version 6.0.0-rc7-00004-gb40deebe7679 (gnoack@nuc) (aarch64-linux-gnu-gcc (GCC) 12.2.0, GNU ld (GNU Binutils) 2.39) #4 SMP PREEMPT Thu Oct 6 21:45:59 CEST 2022
-Stopping network: OK
-Saving random seed: OK
-Stopping klogd: OK
-Stopping syslogd: OK
-umount: devtmpfs busy - remounted read-only
-umount: can't unmount /: Invalid argument
-The system is going down NOW!
-Sent SIGTERM to all processes
-Sent SIGKILL to all processes
-Requesting system poweroff
-[    5.303758] kvm: exiting hardware virtualization
-[    5.315878] Flash device refused suspend due to active operation (state 20)
-[    5.318164] Flash device refused suspend due to active operation (state 20)
-[    5.322274] reboot: Power down
+--- a.c.original        2022-10-06 13:07:13.279845619 -0700
++++ a.c 2022-10-06 13:10:27.702941645 -0700
+@@ -8,8 +8,10 @@
+        return NULL;
+ }
+ 
++int stop_spawning;
++
+ void *target(void *p) {
+-       for (;;) {
++       while (!stop_spawning) {
+                pthread_t t;
+                if (pthread_create(&t, NULL, nothing, NULL) == 0)
+                        pthread_join(t, NULL);
+@@ -17,18 +19,26 @@
+        return NULL;
+ }
+ 
++#define MAX_THREADS    10
++
+ int main(void)
+ {
++       pthread_t threads[MAX_THREADS];
+        struct timespec tv;
+        int i;
+ 
+-       for (i = 0; i < 10; i++) {
+-               pthread_t t;
+-               pthread_create(&t, NULL, target, NULL);
++       for (i = 0; i < MAX_THREADS; i++) {
++               pthread_create(&threads[i], NULL, target, NULL);
+        }
+        tv.tv_sec = 0;
+        tv.tv_nsec = 100000;
+        nanosleep(&tv, NULL);
++
++       /* Signal shut down, and collect spawners. */
++       stop_spawning = 1;
++       for (i = 0; i < MAX_THREADS; i++)
++               pthread_join(threads[i], NULL);
++
+        if (execl("./b", "./b", NULL) < 0)
+                perror("execl");
+        return 0;
 
-I've been compiling the kernel using
-
-make -j8 ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- O=build olddefconfig Image.gz
-
-and started the emulator using
-
-qemu-system-aarch64 -machine virt,gic-version=max,virtualization=true \
-  -cpu max,pauth-impdef=true \
-  -kernel /home/gnoack/linux/build/arch/arm64/boot/Image.gz \
-  -append "console=ttyAMA0 earlycon" \
-  -display none -m 512m -nodefaults -no-reboot -serial mon:stdio \
-  -initrd /tmp/rootfs.cpio
-
-I have attempted it with both the commit from the mic -next branch, as
-well as with my own client that is still lacking Mickaël's LSM hook
-fix. The commits I've tried are:
-
-* b40deebe7679 ("landlock: Support file truncation")
-* 224e66a32f16 ("landlock: Document Landlock's file truncation support")
-
-I've built the kernel from scratch from the config file you suggested,
-to be sure.
-
-I used the rootfs.cpio file you provided from Github, and gcc 12.2.0
-and qemu 7.1.0 from the Arch Linux repositories.
-
-At this point, I don't know what else I can try to get it to crash...
-it seems to work fine for me.
-
-—Günther
-
-> > 
-> > $ mkdir -p build/deb
-> > 
-> > $ cd build/deb
-> > 
-> > $ curl -LSsO http://ftp.us.debian.org/debian/pool/main/l/linux-signed-arm64/linux-image-5.19.0-2-arm64_5.19.11-1_arm64.deb
-> > 
-> > $ ar x linux-image-5.19.0-2-arm64_5.19.11-1_arm64.deb
-> > 
-> > $ tar xJf data.tar.xz
-> > 
-> > $ cp boot/config-5.19.0-2-arm64 ../.config
-> > 
-> > $ cd ../..
-> > 
-> > $ make -skj"$(nproc)" ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- O=build olddefconfig Image.gz
-> > 
-> > $ qemu-system-aarch64 \
-> > -machine virt,gic-version=max,virtualization=true \
-> > -cpu max,pauth-impdef=true \
-> > -kernel build/arch/arm64/boot/Image.gz \
-> > -append "console=ttyAMA0 earlycon" \
-> > -display none \
-> > -initrd .../rootfs.cpio \
-> > -m 512m \
-> > -nodefaults \
-> > -no-reboot \
-> > -serial mon:stdio
-> > ...
-> > [    0.000000] Linux version 6.0.0-rc7+ (nathan@dev-arch.thelio-3990X) (aarch64-linux-gnu-gcc (GCC) 12.2.0, GNU ld (GNU Binutils) 2.39) #1 SMP Tue Oct 4 12:48:50 MST 2022
-> > ...
-> > [    0.518570] Unable to handle kernel paging request at virtual address ffff00000851ff8a
-> > [    0.518785] Mem abort info:
-> > [    0.518867]   ESR = 0x0000000097c0c061
-> > [    0.519001]   EC = 0x25: DABT (current EL), IL = 32 bits
-> > [    0.519155]   SET = 0, FnV = 0
-> > [    0.519267]   EA = 0, S1PTW = 0
-> > [    0.519386]   FSC = 0x21: alignment fault
-> > [    0.519524] Data abort info:
-> > [    0.519615]   Access size = 8 byte(s)
-> > [    0.519722]   SSE = 0, SRT = 0
-> > [    0.519817]   SF = 1, AR = 1
-> > [    0.519920]   CM = 0, WnR = 1
-> > [    0.520040] swapper pgtable: 4k pages, 48-bit VAs, pgdp=0000000041711000
-> > [    0.520225] [ffff00000851ff8a] pgd=180000005fff8003, p4d=180000005fff8003, pud=180000005fff7003, pmd=180000005ffbd003, pte=006800004851ff07
-> > [    0.521121] Internal error: Oops: 97c0c061 [#1] SMP
-> > [    0.521364] Modules linked in:
-> > [    0.521592] CPU: 0 PID: 9 Comm: kworker/u2:0 Not tainted 6.0.0-rc7+ #1
-> > [    0.521863] Hardware name: linux,dummy-virt (DT)
-> > [    0.522325] Workqueue: events_unbound async_run_entry_fn
-> > [    0.522973] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > [    0.523193] pc : apparmor_file_alloc_security+0x98/0x1e0
-> > [    0.523431] lr : apparmor_file_alloc_security+0x48/0x1e0
-> > [    0.523594] sp : ffff800008093960
-> > [    0.523708] x29: ffff800008093960 x28: ffff800008093b30 x27: ffff000002602600
-> > [    0.523978] x26: ffffd79796ecf8c0 x25: ffff00000241e705 x24: ffffd79797d98068
-> > [    0.524199] x23: ffff00000851ff82 x22: ffff00000851ff80 x21: 0000000000000002
-> > [    0.524431] x20: ffffd79796ff5000 x19: ffff00000241ceb0 x18: ffffffffffffffff
-> > [    0.524647] x17: 000000000000003f x16: ffffd79797678008 x15: 0000000000000000
-> > [    0.524850] x14: 0000000000000001 x13: 0000000000000000 x12: 0000000000000006
-> > [    0.525087] x11: ffff00001feef940 x10: ffffd7979768f8a0 x9 : ffffd79796c1e51c
-> > [    0.525325] x8 : ffff00000851ffa0 x7 : 0000000000000000 x6 : 0000000000001e0b
-> > [    0.525531] x5 : ffff00000851ff80 x4 : ffff800008093990 x3 : ffff000002419700
-> > [    0.525745] x2 : 0000000000000001 x1 : ffff00000851ff8a x0 : ffff00000241ceb0
-> > [    0.526034] Call trace:
-> > [    0.526166]  apparmor_file_alloc_security+0x98/0x1e0
-> > [    0.526424]  security_file_alloc+0x6c/0xf0
-> > [    0.526570]  __alloc_file+0x5c/0xf0
-> > [    0.526699]  alloc_empty_file+0x68/0x10c
-> > [    0.526816]  path_openat+0x50/0x106c
-> > [    0.526929]  do_filp_open+0x88/0x13c
-> > [    0.527041]  filp_open+0x110/0x1b0
-> > [    0.527143]  do_name+0xbc/0x230
-> > [    0.527256]  write_buffer+0x40/0x60
-> > [    0.527359]  unpack_to_rootfs+0x100/0x2bc
-> > [    0.527479]  do_populate_rootfs+0x70/0x134
-> > [    0.527602]  async_run_entry_fn+0x40/0x1c0
-> > [    0.527723]  process_one_work+0x1f4/0x450
-> > [    0.527851]  worker_thread+0x188/0x4c0
-> > [    0.527980]  kthread+0xe0/0xe4
-> > [    0.528066]  ret_from_fork+0x10/0x20
-> > [    0.528317] Code: 52800002 d2800000 d2800013 910022e1 (c89ffc20)
-> > [    0.528736] ---[ end trace 0000000000000000 ]---
-> > ...
-> > 
-> > A rootfs is available at [1] but I don't think it should be necessary
-> > for reproducing this. If there is any additional information I can
-> > provide or patches I can test, I am more than happy to do so!
-> > 
-> > [1]: https://github.com/ClangBuiltLinux/boot-utils/raw/bf2fd3500d87f78a914bfc3769b2240f5632e5b9/images/arm64/rootfs.cpio.zst
-> > 
-> > Cheers,
-> > Nathan
 
 -- 
+Kees Cook
