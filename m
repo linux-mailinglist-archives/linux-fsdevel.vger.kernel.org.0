@@ -2,133 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1AD315F6BC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 18:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 95E635F6BCB
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 18:32:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231814AbiJFQ1e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Oct 2022 12:27:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57668 "EHLO
+        id S230345AbiJFQck (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Oct 2022 12:32:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44744 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231789AbiJFQZv (ORCPT
+        with ESMTP id S229540AbiJFQcj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Oct 2022 12:25:51 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DFCE4E607;
-        Thu,  6 Oct 2022 09:25:48 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Thu, 6 Oct 2022 12:32:39 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D172B3B1A;
+        Thu,  6 Oct 2022 09:32:39 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 2FBBB218E0;
-        Thu,  6 Oct 2022 16:25:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1665073547; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XCQ01W/Zak7b1/Z15iSFiNNO+LnDKjRUCwgq9owN358=;
-        b=BuCJHwpPWmPIMX1bCVa8JvF5Z7d74n/yJTO58u9Flcub7+SsSH8xi8XlpREVi0km3sCU9I
-        n49kVMdngxh5xHUcQ7JaAcHnUNwcTFTbcX666mAdObWVWWOiQa+NDqw9MObg2XVpG17TSv
-        v1FutPp1yNGHL7WKXiiXO6EFByUMvOk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1665073547;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XCQ01W/Zak7b1/Z15iSFiNNO+LnDKjRUCwgq9owN358=;
-        b=SBbeuIQGR7WWo1BYruUMTbe52g3YJZXPJmGbNwSK0jCwlB3l1oeiG8qTbAyyKKzsNlfKnK
-        YUPXB99RMPIak5BQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E0B0413AC8;
-        Thu,  6 Oct 2022 16:25:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id UOdXNooBP2OJIwAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 06 Oct 2022 16:25:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 30DD3A06E9; Thu,  6 Oct 2022 18:25:46 +0200 (CEST)
-Date:   Thu, 6 Oct 2022 18:25:46 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Christoph =?utf-8?Q?B=C3=B6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Hugh Dickins <hughd@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Marco Elver <elver@google.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Paolo Abeni <pabeni@redhat.com>, Theodore Ts'o <tytso@mit.edu>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Graf <tgraf@suug.ch>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        Yury Norov <yury.norov@gmail.com>,
-        dri-devel@lists.freedesktop.org, kasan-dev@googlegroups.com,
-        kernel-janitors@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mm@kvack.org, linux-mmc@vger.kernel.org,
-        linux-mtd@lists.infradead.org, linux-nvme@lists.infradead.org,
-        linux-rdma@vger.kernel.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] treewide: use get_random_u32() when possible
-Message-ID: <20221006162546.hgkrftnsk5p3sug7@quack3>
-References: <20221006132510.23374-1-Jason@zx2c4.com>
- <20221006132510.23374-4-Jason@zx2c4.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 948C361A22;
+        Thu,  6 Oct 2022 16:32:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECF77C433D6;
+        Thu,  6 Oct 2022 16:32:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665073958;
+        bh=EpiLhU9Vopf2fm0LDuMXBE1GSbO3K9x1KfL5hJfKdU0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=BfWleTUhRNqsI+maojBT7rGzIWgqvXoBiV0VQVtNdYcAwLRLn3oSWOlWEokzJwW9E
+         oBChMo9X78YlxVggVl19ZnLJPpMrFCvpYDdYt64FWpe2ON7JmQUcWtD/avdUgySgm/
+         dbNpGVE2oOEdXvir0obKPKdFsxNRDKP1G0vg0LtXT/fvzEeo0fXvves6BZsJxLLK/h
+         +2anJgh1iHcX+D0vZ2pqy+ae58mtEqUr1bAensM/YvIkoE3ifuoj4C6TXJYkZm31Fk
+         SZJX80WXRMIxoYkNMIaagConJqkM70l/K4uj9BB8vk50Oh77cJ1XRbW2IwYTc7NhR8
+         GwncyKKF7SAxg==
+Date:   Thu, 6 Oct 2022 09:32:37 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com,
+        Daeho Jeong <daehojeong@google.com>,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] f2fs: introduce F2FS_IOC_START_ATOMIC_REPLACE
+Message-ID: <Yz8DJROpwCcNyxVX@magnolia>
+References: <20221004171351.3678194-1-daeho43@gmail.com>
+ <20221004171351.3678194-2-daeho43@gmail.com>
+ <Yz6S3kP4rjm5/30N@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221006132510.23374-4-Jason@zx2c4.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
+In-Reply-To: <Yz6S3kP4rjm5/30N@infradead.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 06-10-22 07:25:08, Jason A. Donenfeld wrote:
-> The prandom_u32() function has been a deprecated inline wrapper around
-> get_random_u32() for several releases now, and compiles down to the
-> exact same code. Replace the deprecated wrapper with a direct call to
-> the real function.
+On Thu, Oct 06, 2022 at 01:33:34AM -0700, Christoph Hellwig wrote:
+> On Tue, Oct 04, 2022 at 10:13:51AM -0700, Daeho Jeong wrote:
+> > From: Daeho Jeong <daehojeong@google.com>
+> > 
+> > introduce a new ioctl to replace the whole content of a file atomically,
+> > which means it induces truncate and content update at the same time.
+> > We can start it with F2FS_IOC_START_ATOMIC_REPLACE and complete it with
+> > F2FS_IOC_COMMIT_ATOMIC_WRITE. Or abort it with
+> > F2FS_IOC_ABORT_ATOMIC_WRITE.
 > 
-> Reviewed-by: Kees Cook <keescook@chromium.org>
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+> It would be great to Cc Darrick and linux-fsdevel as there have been
+> attempts to do this properly at the VFS level instead of a completely
+> undocumented ioctl.
 
-Looks good. Feel free to add:
+It's been a while since I sent the last RFC, but yes, it's still in my
+queue as part of the xfs online fsck patchserieses.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+https://lore.kernel.org/linux-fsdevel/161723932606.3149451.12366114306150243052.stgit@magnolia/
 
-for the ext4 bits.
+More recent git branch:
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=atomic-file-updates
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+--D
