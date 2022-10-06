@@ -2,161 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 446C75F6143
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 08:55:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E812C5F614F
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 09:01:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229800AbiJFGzi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Oct 2022 02:55:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57920 "EHLO
+        id S229814AbiJFHBi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Oct 2022 03:01:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229899AbiJFGzc (ORCPT
+        with ESMTP id S229468AbiJFHBe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Oct 2022 02:55:32 -0400
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 422A14C620;
-        Wed,  5 Oct 2022 23:55:28 -0700 (PDT)
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2966mJNR029984;
-        Thu, 6 Oct 2022 06:55:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
- subject : message-id : references : content-type : in-reply-to :
- mime-version; s=pp1; bh=LK4wddnx9ZBpFC32BkC9Gm2nZqLG6Abi1YuiNhae6Nw=;
- b=HRSQrEck+56L3f9JoSQuIs+QAhipxV5BQiP4uO0Jge21w11E7Fe2+B73eNsCLBrGTbJX
- uFVofnLwMOGJwA9XD0hx68gyqIL4oi9sJRi8ko/EEzBWZNnvTlCTvDoPTaZTCdeB3QHh
- ZMu2qE959Yh8YAUt4w595INiz+oBGOlo7I0q+2MF0jlp5kSJO0AeJWjL/xKEMITR3ZHA
- leTub1V8/S4PSgZxFkOquddAUD5zNn1md/D4Ev7SKiMX/527KritbcvUjeVM58bYCOaD
- GOPlbefNlLGVVnRDcWLfEnb+DDTwNyiZc2StDB+CkLJ1iuyH3q80CvtEJEpyt4/+z2Jx xg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3k1t2vg4ft-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Oct 2022 06:55:21 +0000
-Received: from m0098420.ppops.net (m0098420.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2966mnpF030975;
-        Thu, 6 Oct 2022 06:55:21 GMT
-Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3k1t2vg4ac-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Oct 2022 06:55:10 +0000
-Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
-        by ppma03ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2966oETV030576;
-        Thu, 6 Oct 2022 06:55:08 GMT
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (d06relay09.portsmouth.uk.ibm.com [9.149.109.194])
-        by ppma03ams.nl.ibm.com with ESMTP id 3jxd696k2p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 06 Oct 2022 06:55:08 +0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2966t6aZ59703742
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 6 Oct 2022 06:55:06 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 457694C044;
-        Thu,  6 Oct 2022 06:55:06 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C861A4C040;
-        Thu,  6 Oct 2022 06:55:03 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.43.110.181])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu,  6 Oct 2022 06:55:03 +0000 (GMT)
-Date:   Thu, 6 Oct 2022 12:25:00 +0530
-From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        rookxu <brookxu.cn@gmail.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>
-Subject: Re: [RFC v3 8/8] ext4: Remove the logic to trim inode PAs
-Message-ID: <Yz57xJSoksI5rHwL@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <cover.1664269665.git.ojaswin@linux.ibm.com>
- <a26fdd12f4f60cf506a42b6a95e8014e5f380b05.1664269665.git.ojaswin@linux.ibm.com>
- <20220929125311.bmkta7gp4a2hmcny@quack3>
+        Thu, 6 Oct 2022 03:01:34 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56614895F6
+        for <linux-fsdevel@vger.kernel.org>; Thu,  6 Oct 2022 00:01:33 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id c24so927596plo.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 06 Oct 2022 00:01:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date;
+        bh=+lbQl0rCWp6tUyMuSCFzB+6AqJEUrQkOLadwCqKXhk8=;
+        b=P95tTnDc1Zlo/FcKgRsnGgHRjJuXF/BFr+q4DuBF33xCmhNVRs6A28XD98ty9ydWhR
+         I0fNfA9HigrTrxzxM8SRehh5Ge3szOsR8uqcuHDzpkuDwL28EF8Nx7W6Jtxnf4ewqv7c
+         vZdNf5PJ4XLSjhccFK2aEjcik36/tWfKRJXjg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date;
+        bh=+lbQl0rCWp6tUyMuSCFzB+6AqJEUrQkOLadwCqKXhk8=;
+        b=kRpUkhJKowIkG/WNbY8vmfk0H0PgHsANHzmVS+DQDejAk/XInKSUs5k3WBJFquHS37
+         Zu4rz8TpgXTRvZuVBIBy+bZ4NR/u+M3GY+ZC1Mn0Q6p1Rsssb/3Gduv7/EkX9nCNwjgx
+         EQj4mk7QBaPv9gGVAwe/I58n4LcXcMawLVzHXnHW+oZKl8q2Rz4HaeJAKCZjuGcgW/Bp
+         jl3sBluakNheE0wdnNpkMBSIu4nvbb1tMa0qlEf0CwzFlKBT9iNsAojwbo5c/01wm3pD
+         RTvXdLyR9JWL3dQC8LzrQffKyXtflr31jqw/ugo44QUwW1uMyWj78CLJ+zFhYQD9RgZw
+         mFJg==
+X-Gm-Message-State: ACrzQf3G9hM/XZlSrK7DyRj0xe6JGzIcOek7ha5OMWt1/pyj4VFRqyp4
+        dvjBhf94eqGXQ+tQqUICo+18Sg==
+X-Google-Smtp-Source: AMsMyM6P4p2fzjX7EoySe3pBKUHcQlET2UNqLJholUcyZnckHtT8XafYbihl5e+uuD/gwL/5Z3GhKA==
+X-Received: by 2002:a17:902:ed97:b0:17f:7ad0:16cb with SMTP id e23-20020a170902ed9700b0017f7ad016cbmr3342781plj.97.1665039692613;
+        Thu, 06 Oct 2022 00:01:32 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id k12-20020a17090a62cc00b002008d0df002sm2173296pjs.50.2022.10.06.00.01.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Oct 2022 00:01:31 -0700 (PDT)
+Date:   Thu, 6 Oct 2022 00:01:30 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Jorge Merlino <jorge.merlino@canonical.com>,
+        David Howells <dhowells@redhat.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Hugh Dickins <hughd@google.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        Valentin Schneider <vschneid@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Fix race condition when exec'ing setuid files
+Message-ID: <202210052326.5CF2AF342@keescook>
+References: <20220910211215.140270-1-jorge.merlino@canonical.com>
+ <202209131456.76A13BC5E4@keescook>
+ <c9ca551b-070b-dcee-b4b4-b7fbfc33ab5d@canonical.com>
+ <202210051950.CAF8CDBF@keescook>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220929125311.bmkta7gp4a2hmcny@quack3>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: tSyBPJVk9wHcWcVc4GyPA8hL9UkB7Zs2
-X-Proofpoint-ORIG-GUID: R9VrF9AND9D9F820vx1-Zxp9PAQEjzcG
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.528,FMLib:17.11.122.1
- definitions=2022-10-05_05,2022-10-05_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- mlxlogscore=681 lowpriorityscore=0 clxscore=1015 bulkscore=0 adultscore=0
- priorityscore=1501 spamscore=0 impostorscore=0 malwarescore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2209130000
- definitions=main-2210060038
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <202210051950.CAF8CDBF@keescook>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 29, 2022 at 02:53:11PM +0200, Jan Kara wrote:
-> On Tue 27-09-22 14:46:48, Ojaswin Mujoo wrote:
-> > Earlier, inode PAs were stored in a linked list. This caused a need to
-> > periodically trim the list down inorder to avoid growing it to a very
-> > large size, as this would severly affect performance during list
-> > iteration.
-> > 
-> > Recent patches changed this list to an rbtree, and since the tree scales
-> > up much better, we no longer need to have the trim functionality, hence
-> > remove it.
-> > 
-> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> 
-> I'm kind of wondering: Now there won't be performance issues with much
-> more inode PAs but probably we don't want to let them grow completely out
-> of control? E.g. I can imagine that if we'd have 1 billion of inode PAs
-> attached to an inode, things would get wonky both in terms of memory
-> consumption and also in terms of CPU time spent for the cases where we
-> still do iterate all of the PAs... Is there anything which keeps inode PAs
-> reasonably bounded?
-> 
-> 								Honza
-> 
-Hi Jan,
+On Wed, Oct 05, 2022 at 08:06:15PM -0700, Kees Cook wrote:
+> Dave, this tracks back to commit a6f76f23d297 ("CRED: Make execve() take
+> advantage of copy-on-write credentials") ... any ideas what's happening
+> here?
 
-Sorry for the delay in response, I was on leave for the last few days.
+Er, rather, it originates before git history, but moved under lock in
+commit 0bf2f3aec547 ("CRED: Fix SUID exec regression").
 
-So as per my understanding, after this patch, the only path where we
-would need to traverse all the PAs is the ext4_discard_preallocations()
-call where we discard all the PAs of an inode one by one (eg when
-closing the file etc).  Such a discard is a colder path as we don't
-usually expect to do it as often as say allocating blocks to an inode.
+Eric, Al, Hugh, does this ring a bell?
 
-Originally, the limit was added in this patch [1] because of the time
-lost in O(N) traversal in the allocation path (ext4_mb_use_preallocated
-and ext4_mb_normalize_request). Since the rbtree addressed this
-scalability issue we had decided to remove the trim logic in this
-patchset.
+It originates from 1da177e4c3f4 ("Linux-2.6.12-rc2") in git...
 
-[1]
-https://lore.kernel.org/all/d7a98178-056b-6db5-6bce-4ead23f4a257@gmail.com/
+static inline int unsafe_exec(struct task_struct *p)
+{
+       int unsafe = 0;
+...
+       if (atomic_read(&p->fs->count) > 1 ||
+           atomic_read(&p->files->count) > 1 ||
+           atomic_read(&p->sighand->count) > 1)
+               unsafe |= LSM_UNSAFE_SHARE;
 
-That being said, I do agree that there should be some way to limit the
-PAs from taking up an unreasonable amount of buddy space, memory and CPU
-cycles in use cases like database files and disk files of long running
-VMs. Previously the limit was 512 PAs per inode and trim was happening
-in an LRU fashion, which is not very straightforward to implement in
-trees. 
+       return unsafe;
+}
 
-Another approach is rather than having a hard limit, we can throttle the
-PAs based on some parameter like total active PAs in FS or FSUtil% of
-the PAs but we might need to take care of fairness so one inode is not
-holding all the PAs while others get throttled.
+Current code is:
 
-Anyways, I think the trimming part would need some brainstorming to get
-right so just wondering if we could keep that as part of a separate
-patchset and remove the trimming logic for now since rbtree has
-addressed the scalability concerns in allocation path.
+static void check_unsafe_exec(struct linux_binprm *bprm)
+{
+        struct task_struct *p = current, *t;
+        unsigned n_fs;
+...
+        t = p;
+        n_fs = 1;
+        spin_lock(&p->fs->lock);
+        rcu_read_lock();
+        while_each_thread(p, t) {
+                if (t->fs == p->fs)
+                        n_fs++;
+        }
+        rcu_read_unlock();
 
-Do let me know your thoughts on this.
+        if (p->fs->users > n_fs)
+                bprm->unsafe |= LSM_UNSAFE_SHARE;
+        else
+                p->fs->in_exec = 1;
+        spin_unlock(&p->fs->lock);
+}
 
-Regards,
-Ojaswin
+
+Which seemed to take its form from:
+
+0bf2f3aec547 ("CRED: Fix SUID exec regression")
+
+Quoting the rationale for the checks:
+    ...
+    moved the place in which the 'safeness' of a SUID/SGID exec was performed to
+    before de_thread() was called.  This means that LSM_UNSAFE_SHARE is now
+    calculated incorrectly.  This flag is set if any of the usage counts for
+    fs_struct, files_struct and sighand_struct are greater than 1 at the time the
+    determination is made.  All of which are true for threads created by the
+    pthread library.
+
+    So, instead, we count up the number of threads (CLONE_THREAD) that are sharing
+    our fs_struct (CLONE_FS), files_struct (CLONE_FILES) and sighand_structs
+    (CLONE_SIGHAND/CLONE_THREAD) with us.  These will be killed by de_thread() and
+    so can be discounted by check_unsafe_exec().
+
+So, I think this is verifying that when attempting a suid exec, there is
+no process out there with our fs_struct, file_struct, or sighand_struct
+that would survive the de_thread() and be able to muck with the suid's
+shared environment:
+
+       if (atomic_read(&p->fs->count) > n_fs ||
+           atomic_read(&p->files->count) > n_files ||
+           atomic_read(&p->sighand->count) > n_sighand)
+
+Current code has eliminated the n_files and n_sighand tests:
+
+n_sighand was removed by commit
+f1191b50ec11 ("check_unsafe_exec() doesn't care about signal handlers sharing")
+
+n_files was removed by commit
+e426b64c412a ("fix setuid sometimes doesn't")
+
+The latter reads very much like the current bug report. :) So likely the n_fs
+test is buggy too...
+
+After de_thread(), I see the calls to unshare_sighand() and
+unshare_files(), so those check out.
+
+What's needed to make p->fs safe? Doing an unshare of it seems possible,
+since it exists half as a helper, unshare_fs(), and half open-coded in
+ksys_unshare (see "new_fw").
+
+Should we wire this up after de_thread() like the other two?
+
+-Kees
+
+-- 
+Kees Cook
