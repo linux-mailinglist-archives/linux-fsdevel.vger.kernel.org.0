@@ -2,108 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EC20A5F5E51
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 03:11:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D416C5F5E82
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  6 Oct 2022 03:58:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229875AbiJFBLC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 5 Oct 2022 21:11:02 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33798 "EHLO
+        id S229924AbiJFB6Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 5 Oct 2022 21:58:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58302 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229900AbiJFBLA (ORCPT
+        with ESMTP id S229750AbiJFB6X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 5 Oct 2022 21:11:00 -0400
-Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 320544150A
-        for <linux-fsdevel@vger.kernel.org>; Wed,  5 Oct 2022 18:10:58 -0700 (PDT)
-Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-354c7abf786so5156257b3.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 05 Oct 2022 18:10:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kd6uSgjH1+Yt+U7MvGJA0bVOBesvmMMXybPQlHwpLU8=;
-        b=dQD5/Hi56H7YE2l1G+d6UMrNAiTB/eymMdbuJOr7YWNuCh4+aDTv4xamvZrzrdhw5Z
-         5Q2akDPDSTkI+2UDB2B85ky7RGLQKdxmFEutX6OjSHHEJv0CculN0D3r0zVIwO71SMjS
-         9gQmBpCWPrr0V3q2OxUGGDW6Kte2uJvBGKpBHhinReEa0AtW+HydOieI+iIgc1ey/0lR
-         6P14xyNSrX0BsYl0IoUItQYuas3adwL8FVP1BlgwYsIl9idxE5qJzs9/qmf2BnpqPSCa
-         j+CypBSy6MVEas51zjYtlduisMIM3xpeBhzGa8kj5b5zn/t8kwBo6IFN9d3FQbpnpJS9
-         3F4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kd6uSgjH1+Yt+U7MvGJA0bVOBesvmMMXybPQlHwpLU8=;
-        b=7xP+PFZVmGfXI22+aHIb1jaa23AxyTproeOHgPjGlTzlwgLPnNntT7eP+HuVFn0e1O
-         J6rSexP1aeuGDsgOSjr4GwOZHg0vA73nCuzt+6W6sFoyoGd6wtwwrwnTQ5VK0S2HbHls
-         vP86ksDlZIuPE5D1pLjfeku13uzkcfGQxWy+7h/gOzihvM5cN87hQeMZa/UpfZRMB0W8
-         u9pMVX71bTdtXPAjJdI0TQuxH8eHUwy0QJrKZdgi4Rfe4Zje10bmXwT8ZSjYeVldaOOT
-         kiaFbJi0DF8tK+hGkUlDlmENwK1e6zAbefYjafXSQJnQqdwnEp5ozHk9oovSqRKGuUDS
-         erYA==
-X-Gm-Message-State: ACrzQf1iskOhVY3nVmSCzUAiJOR7y9SmwsbihasX++IX+iLg0mK37QSb
-        7RbWu7xubiTE/5cJqt3eH9cQIyPgfvB3j1SBukrQ
-X-Google-Smtp-Source: AMsMyM4xPUs8z6Cc1VNpk6wu4Gy3keHf3cvXZlVatZFo61KH/uy5JR1qmd8ZH0BhcOeT9mVzAt8Ryr3VwA2/4zeI1Vs=
-X-Received: by 2002:a81:1b09:0:b0:35d:cf91:aadc with SMTP id
- b9-20020a811b09000000b0035dcf91aadcmr2440333ywb.47.1665018657331; Wed, 05 Oct
- 2022 18:10:57 -0700 (PDT)
+        Wed, 5 Oct 2022 21:58:23 -0400
+Received: from out2.migadu.com (out2.migadu.com [IPv6:2001:41d0:2:aacc::])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DF7E1D0F6;
+        Wed,  5 Oct 2022 18:58:20 -0700 (PDT)
+Message-ID: <25968b7b-7662-303e-c280-931e6330927e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1665021497;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=LY2hnP1nNE0HYnTSxbNKf79QUruu2XPr8HxWVKrvw2k=;
+        b=g6u09OrDC3nXdKT9uCiHyrW3IZn1ueVxtC/U83wwYQRWorBZB9NR4nR6Z72k9QMYW4PWsk
+        oEayfraYxeWemOHVz2G7DRfPxmsE4R3lImrWfZZjRIeGFpQA5O9wtCxVDEgORjzzhCrmPy
+        R9iEZ6+Pcq0vDqJxVyxYO/Wfmewmbxc=
+Date:   Wed, 5 Oct 2022 18:58:03 -0700
 MIME-Version: 1.0
-References: <20221001154908.49665-1-gnoack3000@gmail.com> <20221001154908.49665-2-gnoack3000@gmail.com>
-In-Reply-To: <20221001154908.49665-2-gnoack3000@gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 5 Oct 2022 21:10:46 -0400
-Message-ID: <CAHC9VhRB1h4syH_5=Ezg5uAvxbVQ-Va8eRhW5rdLJZQ-GafqEA@mail.gmail.com>
-Subject: Re: [PATCH v8 1/9] security: Create file_truncate hook from
- path_truncate hook
-To:     =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        John Johansen <john.johansen@canonical.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Subject: Re: [PATCH 00/26] FUSE BPF: A Stacked Filesystem Extension for FUSE
+Content-Language: en-US
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>,
+        Yonghong Song <yhs@fb.com>, KP Singh <kpsingh@kernel.org>,
+        Stanislav Fomichev <sdf@google.com>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Alessio Balsini <balsini@google.com>,
+        David Anderson <dvander@google.com>,
+        Sandeep Patil <sspatil@google.com>,
+        linux-fsdevel@vger.kernel.org, bpf@vger.kernel.org,
+        kernel-team@android.com, Miklos Szeredi <miklos@szeredi.hu>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        John Fastabend <john.fastabend@gmail.com>
+References: <20220926231822.994383-1-drosen@google.com>
+ <1fc38ba0-2bbe-a496-604d-7deeb4e72787@linux.dev>
+ <CA+PiJmQM_Fi-W7ZaPQHiM6w6eqo0TSpTh3rUz+CnmXRbp_PUBA@mail.gmail.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <CA+PiJmQM_Fi-W7ZaPQHiM6w6eqo0TSpTh3rUz+CnmXRbp_PUBA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 1, 2022 at 11:49 AM G=C3=BCnther Noack <gnoack3000@gmail.com> w=
-rote:
->
-> Like path_truncate, the file_truncate hook also restricts file
-> truncation, but is called in the cases where truncation is attempted
-> on an already-opened file.
->
-> This is required in a subsequent commit to handle ftruncate()
-> operations differently to truncate() operations.
->
-> Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Acked-by: John Johansen <john.johansen@canonical.com>
-> Signed-off-by: G=C3=BCnther Noack <gnoack3000@gmail.com>
-> ---
->  fs/namei.c                    |  2 +-
->  fs/open.c                     |  2 +-
->  include/linux/lsm_hook_defs.h |  1 +
->  include/linux/lsm_hooks.h     | 10 +++++++++-
->  include/linux/security.h      |  6 ++++++
->  security/apparmor/lsm.c       |  6 ++++++
->  security/security.c           |  5 +++++
->  security/tomoyo/tomoyo.c      | 13 +++++++++++++
->  8 files changed, 42 insertions(+), 3 deletions(-)
+On 9/30/22 5:05 PM, Daniel Rosenberg wrote:
+> On Tue, Sep 27, 2022 at 11:41 PM Martin KaFai Lau <martin.lau@linux.dev> wrote:
+>>
+>> Interesting idea.
+>>
+>> Some comments on review logistics:
+>> - The set is too long and some of the individual patches are way too long for
+>> one single patch to review.  Keep in mind that not all of us here are experts in
+>> both fuse and bpf.  Making it easier to review first will help at the beginning.
+>>    Some ideas:
+>>
+>>     - Only implement a few ops in the initial revision. From quickly browsing the
+>> set, it is implementing the 'struct file_operations fuse_file_operations'?
+>> Maybe the first few revisions can start with a few of the ops first.
+>>
+> 
+> I've split it up a fair bit already, do you mean just sending a subset
+> of them at a time? I think the current splitting roughly allows for
+> that. Patch 1-4 and 5 deal with bpf/verifier code which isn't used
+> until patch 24. I can reorder/split up the opcodes arbitrarily.
 
-I agree with Micka=C3=ABl's comments regarding the formatting, but
-otherwise it looks okay to me from a LSM perspective.  If you make the
-whitespace changes you can add my ACK.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+> Putting the op codes that implement file passthrough first makes
+> sense. The code is much easier to test when all/most are present,
+> since then I can just use patch 23 to mount without a daemon and run
+> xfs tests on them. At least initially I felt the whole stack was
+> useful to give the full picture.
 
---=20
-paul-moore.com
+I don't mind to have all op codes in each re-spin as long as it can apply 
+cleanly to bpf-next where the bpf implementation part will eventually land. 
+Patch 26 has to split up though.  It is a few thousand lines in one patch.
+
+I was just thinking to only do a few op codes, eg. the few android use cases you 
+have mentioned.  My feeling is other op codes should not be very different in 
+term of the bpf side implementation (or it is not true?).  When the patch set 
+getting enough traction, then start adding more op codes in the later revisions. 
+  That will likely help to re-spin faster and save you time also.
+
+
+>> - iiuc, the idea is to allow bpf prog to optionally handle the 'struct
+>> file_operations' without going back to the user daemon? Have you looked at
+>> struct_ops which seems to be a better fit here?  If the bpf prog does not know
+>> how to handle an operation (or file?), it can call fuse_file_llseek (for
+>> example) as a kfunc to handle the request.
+>>
+> 
+> I wasn't aware of struct_ops. It looks like that may work for us
+> instead of making a new prog type. I'll definitely look into that.
+> I'll likely sign up for the bpf office hours next week.
+
+You can take a look at the tools/testing/selftests/bpf/progs/bpf_cubic.c.
+It implements the whole tcp congestion in bpf. In particular, the bpf prog is 
+implementing the kernel 'struct tcp_congestion_ops'.  That selftest example is 
+pretty much a direct copy from the kernel net/ipv4/tcp_cubic.c.  Also, in 
+BPF_STRUCT_OPS(bpf_cubic_undo_cwnd, ...), it is directly calling the kfunc's 
+tcp_reno_undo_cwnd() when the bpf prog does not need to do anything different 
+from the kernel's tcp_reno_undo_cwnd().  Look at how it is marked as __ksym in 
+bpf_cubic.c
+
+However, echoing Alexei's earlier reply, struct_ops is good when it needs to 
+implement a well defined 'struct xyz_operations' that has all function pointer 
+in it.  Taking another skim at the set, it seems like it is mostly trying to 
+intercept the fuse_simple_request() call?
+
