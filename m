@@ -2,99 +2,226 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 19AFC5F71D5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 01:35:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 319495F71DD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 01:37:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232142AbiJFXfq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Oct 2022 19:35:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42650 "EHLO
+        id S232308AbiJFXhL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Oct 2022 19:37:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231941AbiJFXfn (ORCPT
+        with ESMTP id S232217AbiJFXhF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Oct 2022 19:35:43 -0400
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 711A5CD5D0;
-        Thu,  6 Oct 2022 16:35:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=lhumk7loW+962AX8hCR6F46wrrP6cqHeoz6oa2OTOgg=; b=ad5c8QOxs2lMH8kVtuyYZJuzDS
-        nTyJaJ7eg80mUv+CymZPJ6Aj+cjb84t6D8kFjd6lOX5pQxHeah614bgQG4ejvj9kEK5UcdiSIOkt3
-        Vja+nCHb4FghEJMNt8OAI7lKAdrrJPNv3Mbrle+XIqiTw1H6bR6Zpxk1sTs86qwPFBO3SaoZEZE6K
-        V5mngGTdQXfEZXA4ITuBQxlIyw4pKP97r8uc1AIHJtVempgiC/z78pY5wWO2EJzu3nKQUlZDl+zFH
-        iVGamMlm9IfZ0HqVxm0BE/qESVN7o7b+E0Usj6Sf7YlONDMvgGTZNiucMgND8siVbGxhHvW1z/qdm
-        td+BivRQ==;
-Received: from 201-43-120-40.dsl.telesp.net.br ([201.43.120.40] helo=[192.168.1.60])
-        by fanzine2.igalia.com with esmtpsa 
-        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-        id 1ogaOy-00C7OK-Ez; Fri, 07 Oct 2022 01:35:40 +0200
-Message-ID: <d0fb08ca-872e-1b46-9c6c-4896fdaebb0a@igalia.com>
-Date:   Thu, 6 Oct 2022 20:35:27 -0300
+        Thu, 6 Oct 2022 19:37:05 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F03EEB7E1;
+        Thu,  6 Oct 2022 16:37:04 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B07B7B821EA;
+        Thu,  6 Oct 2022 23:37:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08300C433C1;
+        Thu,  6 Oct 2022 23:36:59 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="IOQ1bXhF"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+        t=1665099413;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=eDWvYu+uSvuLU1D2yrcps4Uxg3s4afpQR1DZP1HAENk=;
+        b=IOQ1bXhFd3q9+RqlaN9MoWoMb9hyeq0A9ZZHsjT7H7aJth5PyzgIFsO5RZ+IGkqpoVM4vs
+        G1fhQ2wIq1VD89DBIQN9w7YwWxcZC7kUxAooqITvAEdpg/3zs8L5I8+aGBoP4EPhTcYjjM
+        7a1SFu0rQgOf0f04kGQaSuHs/qYIRR4=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id e1098d12 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Thu, 6 Oct 2022 23:36:53 +0000 (UTC)
+Received: by mail-vs1-f44.google.com with SMTP id h4so3494548vsr.11;
+        Thu, 06 Oct 2022 16:36:52 -0700 (PDT)
+X-Gm-Message-State: ACrzQf1TOlBL9WnO/NrZIZyjGBn5ukDeQw/0ECGPpkR+WaKxQK8erd/2
+        /cQN6L+VjtaxFvYQwZI/iE1XpRFjd/wCVAQO/xs=
+X-Google-Smtp-Source: AMsMyM5tvZWHSrcOLtkY/lX0Q7Qvr/oXlGj5vIRT4adjylKOfvaHnErU8AKkQNdqtGo/HZJDgntpViQRNpApZtsIptY=
+X-Received: by 2002:a05:6102:2908:b0:398:ac40:d352 with SMTP id
+ cz8-20020a056102290800b00398ac40d352mr1292105vsb.55.1665099409449; Thu, 06
+ Oct 2022 16:36:49 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.2
-Subject: Re: [PATCH 1/8] pstore: Improve error reporting in case of backend
- overlap
-Content-Language: en-US
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, anton@enomsg.org,
-        ccross@android.com, tony.luck@intel.com
-References: <20221006224212.569555-1-gpiccoli@igalia.com>
- <20221006224212.569555-2-gpiccoli@igalia.com>
- <202210061627.E29FCDBE1@keescook>
-From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-In-Reply-To: <202210061627.E29FCDBE1@keescook>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:ab0:6ed0:0:b0:3d9:6dfd:499 with HTTP; Thu, 6 Oct 2022
+ 16:36:48 -0700 (PDT)
+In-Reply-To: <6396875c-146a-acf5-dd9e-7f93ba1b4bc3@csgroup.eu>
+References: <20221006165346.73159-1-Jason@zx2c4.com> <20221006165346.73159-4-Jason@zx2c4.com>
+ <848ed24c-13ef-6c38-fd13-639b33809194@csgroup.eu> <CAHmME9raQ4E00r9r8NyWJ17iSXE_KniTG0onCNAfMmfcGar1eg@mail.gmail.com>
+ <f10fcfbf-2da6-cf2d-6027-fbf8b52803e9@csgroup.eu> <6396875c-146a-acf5-dd9e-7f93ba1b4bc3@csgroup.eu>
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+Date:   Thu, 6 Oct 2022 17:36:48 -0600
+X-Gmail-Original-Message-ID: <CAHmME9pE4saqnwxhsAwt-xegYGjsavPOGnHCbZhUXD7kaJ+GAA@mail.gmail.com>
+Message-ID: <CAHmME9pE4saqnwxhsAwt-xegYGjsavPOGnHCbZhUXD7kaJ+GAA@mail.gmail.com>
+Subject: Re: [PATCH v3 3/5] treewide: use get_random_u32() when possible
+To:     Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "patches@lists.linux.dev" <patches@lists.linux.dev>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= 
+        <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Helge Deller <deller@gmx.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        KP Singh <kpsingh@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Marco Elver <elver@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Graf <tgraf@suug.ch>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
+        Yury Norov <yury.norov@gmail.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 10/6/22, Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
+>
+>
+> Le 06/10/2022 =C3=A0 19:31, Christophe Leroy a =C3=A9crit :
+>>
+>>
+>> Le 06/10/2022 =C3=A0 19:24, Jason A. Donenfeld a =C3=A9crit :
+>>> Hi Christophe,
+>>>
+>>> On Thu, Oct 6, 2022 at 11:21 AM Christophe Leroy
+>>> <christophe.leroy@csgroup.eu> wrote:
+>>>> Le 06/10/2022 =C3=A0 18:53, Jason A. Donenfeld a =C3=A9crit :
+>>>>> The prandom_u32() function has been a deprecated inline wrapper aroun=
+d
+>>>>> get_random_u32() for several releases now, and compiles down to the
+>>>>> exact same code. Replace the deprecated wrapper with a direct call to
+>>>>> the real function. The same also applies to get_random_int(), which i=
+s
+>>>>> just a wrapper around get_random_u32().
+>>>>>
+>>>>> Reviewed-by: Kees Cook <keescook@chromium.org>
+>>>>> Acked-by: Toke H=C3=B8iland-J=C3=B8rgensen <toke@toke.dk> # for sch_c=
+ake
+>>>>> Acked-by: Chuck Lever <chuck.lever@oracle.com> # for nfsd
+>>>>> Reviewed-by: Jan Kara <jack@suse.cz> # for ext4
+>>>>> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
+>>>>> ---
+>>>>
+>>>>> diff --git a/arch/powerpc/kernel/process.c
+>>>>> b/arch/powerpc/kernel/process.c
+>>>>> index 0fbda89cd1bb..9c4c15afbbe8 100644
+>>>>> --- a/arch/powerpc/kernel/process.c
+>>>>> +++ b/arch/powerpc/kernel/process.c
+>>>>> @@ -2308,6 +2308,6 @@ void notrace __ppc64_runlatch_off(void)
+>>>>>    unsigned long arch_align_stack(unsigned long sp)
+>>>>>    {
+>>>>>        if (!(current->personality & ADDR_NO_RANDOMIZE) &&
+>>>>> randomize_va_space)
+>>>>> -             sp -=3D get_random_int() & ~PAGE_MASK;
+>>>>> +             sp -=3D get_random_u32() & ~PAGE_MASK;
+>>>>>        return sp & ~0xf;
+>>>>
+>>>> Isn't that a candidate for prandom_u32_max() ?
+>>>>
+>>>> Note that sp is deemed to be 16 bytes aligned at all time.
+>>>
+>>> Yes, probably. It seemed non-trivial to think about, so I didn't. But
+>>> let's see here... maybe it's not too bad:
+>>>
+>>> If PAGE_MASK is always ~(PAGE_SIZE-1), then ~PAGE_MASK is
+>>> (PAGE_SIZE-1), so prandom_u32_max(PAGE_SIZE) should yield the same
+>>> thing? Is that accurate? And holds across platforms (this comes up a
+>>> few places)? If so, I'll do that for a v4.
+>>>
+>>
+>> On powerpc it is always (from arch/powerpc/include/asm/page.h) :
+>>
+>> /*
+>>   * Subtle: (1 << PAGE_SHIFT) is an int, not an unsigned long. So if we
+>>   * assign PAGE_MASK to a larger type it gets extended the way we want
+>>   * (i.e. with 1s in the high bits)
+>>   */
+>> #define PAGE_MASK      (~((1 << PAGE_SHIFT) - 1))
+>>
+>> #define PAGE_SIZE        (1UL << PAGE_SHIFT)
+>>
+>>
+>> So it would work I guess.
+>
+> But taking into account that sp must remain 16 bytes aligned, would it
+> be better to do something like ?
+>
+> 	sp -=3D prandom_u32_max(PAGE_SIZE >> 4) << 4;
+>
+> 	return sp;
 
+Does this assume that sp is already aligned at the beginning of the
+function? I'd assume from the function's name that this isn't the
+case?
 
-On 06/10/2022 20:27, Kees Cook wrote:
-> On Thu, Oct 06, 2022 at 07:42:05PM -0300, Guilherme G. Piccoli wrote:
->> The pstore infrastructure supports one single backend at a time;
->> trying to load a another backend causes an error and displays a
->> message, introduced on commit 0d7cd09a3dbb ("pstore: Improve
->> register_pstore() error reporting").
->>
->> Happens that this message is not really clear about the situation,
->> also the current error returned (-EPERM) isn't accurate, whereas
->> -EBUSY makes more sense. We have another place in the code that
->> relies in the -EBUSY return for a similar check.
->>
->> So, make it consistent here by returning -EBUSY and using a
->> similar message in both scenarios.
->>
->> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
->> ---
->>  fs/pstore/platform.c | 5 +++--
->>  1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
->> index 0c034ea39954..c32957e4b256 100644
->> --- a/fs/pstore/platform.c
->> +++ b/fs/pstore/platform.c
->> @@ -562,8 +562,9 @@ static int pstore_write_user_compat(struct pstore_record *record,
->>  int pstore_register(struct pstore_info *psi)
->>  {
->>  	if (backend && strcmp(backend, psi->name)) {
->> -		pr_warn("ignoring unexpected backend '%s'\n", psi->name);
->> -		return -EPERM;
->> +		pr_warn("backend '%s' already in use: ignoring '%s'\n",
->> +			backend, psi->name);
->> +		return -EBUSY;
-> 
-> Thank you! Yes, this has bothered me for a while. :)
-
-Heheh ditto! Thank you for the great and fast review =)
+Jason
