@@ -2,128 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 606F85F7627
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 11:26:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C5F55F76CA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 12:22:33 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229641AbiJGJ0P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Oct 2022 05:26:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59550 "EHLO
+        id S229642AbiJGKWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Oct 2022 06:22:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229559AbiJGJ0M (ORCPT
+        with ESMTP id S229452AbiJGKW3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Oct 2022 05:26:12 -0400
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B844F2513;
-        Fri,  7 Oct 2022 02:26:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665134771; x=1696670771;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YIsvu8HuZoKfT0WBNxjXL2VasbVdSxWppe8Gs3rIq6U=;
-  b=lgV+Escms5zyViBvmedV3BHNjjb3FjjYj3Vz3SzYv4k0JXq+4hjSlm7Z
-   r4wxpTH0Ri9xpOMDvtHwj7d93ePr3ndqye1fjavDVQQ+SETk4itjJWcSm
-   wa8rwMZIT/8eJXO8VmESYry5dyAie8TXc4x4yNV3pM5aWwoQPO3bkgpkS
-   5FwlBOd0Tn2PaEuo4c362qsQW98fTFbIC1/XD4vUU2g+dv369hvJQlOyO
-   kia5cm/CgIT7PszSeLeDt+YUCfvMLXWgB9lh/d1JZONjtIsUmsVYuIlsY
-   aADoUXeW7RL6U688rIGXycyhSIPVhJPCvgocB1YG8oOBtTC77bqJsmGC+
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10492"; a="302414297"
-X-IronPort-AV: E=Sophos;i="5.95,166,1661842800"; 
-   d="scan'208";a="302414297"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Oct 2022 02:26:10 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10492"; a="658277156"
-X-IronPort-AV: E=Sophos;i="5.95,166,1661842800"; 
-   d="scan'208";a="658277156"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga001.jf.intel.com with ESMTP; 07 Oct 2022 02:26:03 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-        id 6645E17E; Fri,  7 Oct 2022 12:26:23 +0300 (EEST)
-Date:   Fri, 7 Oct 2022 12:26:23 +0300
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph B??hmwalder <christoph.boehmwalder@linbit.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Helge Deller <deller@gmx.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Marco Elver <elver@google.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Russell King <linux@armlinux.org.uk>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Graf <tgraf@suug.ch>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>,
-        dri-devel@lists.freedesktop.org, kasan-dev@googlegroups.com,
-        kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-mm@kvack.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-nvme@lists.infradead.org, linux-parisc@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        loongarch@lists.linux.dev, netdev@vger.kernel.org,
-        sparclinux@vger.kernel.org, x86@kernel.org,
-        Toke H??iland-J??rgensen <toke@toke.dk>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v3 3/5] treewide: use get_random_u32() when possible
-Message-ID: <Yz/wv0sqBR+J+jy+@black.fi.intel.com>
-References: <20221006165346.73159-1-Jason@zx2c4.com>
- <20221006165346.73159-4-Jason@zx2c4.com>
+        Fri, 7 Oct 2022 06:22:29 -0400
+Received: from conssluserg-02.nifty.com (conssluserg-02.nifty.com [210.131.2.81])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B833DBED;
+        Fri,  7 Oct 2022 03:22:27 -0700 (PDT)
+Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id 297AMEvQ026718;
+        Fri, 7 Oct 2022 19:22:15 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 297AMEvQ026718
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1665138135;
+        bh=v6R9VW9CvNnIPxZU2kpYVPvJFCqUvYSumQarCG0Cerk=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=zLSJjHLIQJAkeagXnGYLwewIgt97fZLTzOId4Oe8VaS10oWFyd9D+CNgzkwUOlRVc
+         JEegGYepg822P00bA0N/ktpVz7Od6lVius4h4rtoHWlOyeCjUr5oe1C+457OTZMnH6
+         QpW6iUVrYSxr6ZVPRf9Q70yrdcFpTo9/FOMR94tiJQzy6ffL7ZhTV3Alj8dKKyMVEO
+         QZ/hH9OaK0hEKBFTCMTRouTa0vWlvOIqhjj4/mp0hoTjOwrtCiOTw3S+mVoNi9UTlR
+         AroDM6GIpTyuc9c4CJ50gO+3diiSvj1ja4wW9v2V1Cu8p4dyVdfKWUepyeXpj49acI
+         6K0wXPsNUgySQ==
+X-Nifty-SrcIP: [209.85.160.44]
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-132fb4fd495so5076569fac.12;
+        Fri, 07 Oct 2022 03:22:15 -0700 (PDT)
+X-Gm-Message-State: ACrzQf2nYq3OFkh3JYTwcuc+uyA9Vw1fzimcAUwgm1YcYBxlcmWV11V7
+        HCEOSdddAx0zpIS6Ro9B8aMY0ypJhJMeCOxv7RA=
+X-Google-Smtp-Source: AMsMyM6p4RmVl0lWCJhJ6LJiYVBZr+poUdbCGiq93ZYl33z69uioaMPeZvHhvZHGTn59a1RuLFsTqu2SZdyREGXDS0k=
+X-Received: by 2002:a05:6870:c58b:b0:10b:d21d:ad5e with SMTP id
+ ba11-20020a056870c58b00b0010bd21dad5emr2087845oab.287.1665138134138; Fri, 07
+ Oct 2022 03:22:14 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221006165346.73159-4-Jason@zx2c4.com>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20221003222133.20948-1-aliraza@bu.edu> <20221003222133.20948-11-aliraza@bu.edu>
+ <d2089a89-21a9-1e05-5d58-91b8411f7141@gmail.com> <53c84c25-31ff-29d5-c6fb-85cb307f1704@bu.edu>
+In-Reply-To: <53c84c25-31ff-29d5-c6fb-85cb307f1704@bu.edu>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Fri, 7 Oct 2022 19:21:37 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAT-Q=sS-9L1eRuOnomqqDNyRp2knZh+2SYLqB2Gn8ekHg@mail.gmail.com>
+Message-ID: <CAK7LNAT-Q=sS-9L1eRuOnomqqDNyRp2knZh+2SYLqB2Gn8ekHg@mail.gmail.com>
+Subject: Re: [RFC UKL 10/10] Kconfig: Add config option for enabling and
+ sample for testing UKL
+To:     Ali Raza <aliraza@bu.edu>
+Cc:     Bagas Sanjaya <bagasdotme@gmail.com>, linux-kernel@vger.kernel.org,
+        corbet@lwn.net, michal.lkml@markovi.net, ndesaulniers@google.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, hpa@zytor.com, luto@kernel.org,
+        ebiederm@xmission.com, keescook@chromium.org, peterz@infradead.org,
+        viro@zeniv.linux.org.uk, arnd@arndb.de, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        bristot@redhat.com, vschneid@redhat.com, pbonzini@redhat.com,
+        jpoimboe@kernel.org, linux-doc@vger.kernel.org,
+        linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        x86@kernel.org, rjones@redhat.com, munsoner@bu.edu, tommyu@bu.edu,
+        drepper@redhat.com, lwoodman@redhat.com, mboydmcse@gmail.com,
+        okrieg@bu.edu, rmancuso@bu.edu
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 06, 2022 at 10:53:44AM -0600, Jason A. Donenfeld wrote:
->  drivers/thunderbolt/xdomain.c                  |  2 +-
+On Fri, Oct 7, 2022 at 6:29 AM Ali Raza <aliraza@bu.edu> wrote:
+>
+> On 10/3/22 22:11, Bagas Sanjaya wrote:
+> > On 10/4/22 05:21, Ali Raza wrote:
+> >> Add the KConfig file that will enable building UKL. Documentation
+> >> introduces the technical details for how UKL works and the motivations
+> >> behind why it is useful. Sample provides a simple program that still uses
+> >> the standard system call interface, but does not require a modified C
+> >> library.
+> >>
+> > <snipped>
+> >>  Documentation/index.rst   |   1 +
+> >>  Documentation/ukl/ukl.rst | 104 ++++++++++++++++++++++++++++++++++++++
+> >>  Kconfig                   |   2 +
+> >>  kernel/Kconfig.ukl        |  41 +++++++++++++++
+> >>  samples/ukl/Makefile      |  16 ++++++
+> >>  samples/ukl/README        |  17 +++++++
+> >>  samples/ukl/syscall.S     |  28 ++++++++++
+> >>  samples/ukl/tcp_server.c  |  99 ++++++++++++++++++++++++++++++++++++
+> >>  8 files changed, 308 insertions(+)
+> >>  create mode 100644 Documentation/ukl/ukl.rst
+> >>  create mode 100644 kernel/Kconfig.ukl
+> >>  create mode 100644 samples/ukl/Makefile
+> >>  create mode 100644 samples/ukl/README
+> >>  create mode 100644 samples/ukl/syscall.S
+> >>  create mode 100644 samples/ukl/tcp_server.c
+> >
+> > Shouldn't the documentation be split into its own patch?
+> >
+> Thanks for pointing that out.
+>
+> --Ali
+>
 
-Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+
+The commit subject "Kconfig:" is used for changes
+under scripts/kconfig/.
+
+Please use something else.
+
+
+-- 
+Best Regards
+Masahiro Yamada
