@@ -2,105 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E50A05F7A3F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 17:07:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DA405F7AA6
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 17:37:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229916AbiJGPHB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Oct 2022 11:07:01 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54938 "EHLO
+        id S229847AbiJGPhb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Oct 2022 11:37:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53354 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229799AbiJGPG7 (ORCPT
+        with ESMTP id S229494AbiJGPha (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Oct 2022 11:06:59 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 14AF1102500;
-        Fri,  7 Oct 2022 08:06:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 75B8561CEB;
-        Fri,  7 Oct 2022 15:06:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDDA1C433D7;
-        Fri,  7 Oct 2022 15:06:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665155217;
-        bh=IN+0DhFSUK/4ORNgGRuJj2lCVEnl1xihbqgCujXi5G4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=pC4QCIoQ+N6IKtk4PcB3/Kk7lzz/cRkmUPon0xWkVlXw17+EowJJtuXUUYQTk+aDC
-         fC+WqtLKd/bG9Cy+UUJSEyKisKFQtPSD0NTEDBYYVHqujccGYLHtVZHTM+LF4ZN7Cs
-         XnLu0czD8+Y/XnippbHhr5u8b80eTYkCElbUGWGM09hwlg0c97VAlZxHv5QKh17c9O
-         1H5aIJ7G+TgL+5aFYrjY7vBetQeM+0iQ/1+HxIq0mKCSGIvoGCtZDuJZCAw5CgZoYI
-         HQwJNJpbD0l0f+/UAo7LTAZV1KS7qljNb+AaFNHpDhvhYATW0YUnHI/W9+AHYpL1T1
-         jWoAKsOc4Z2XQ==
-Received: by mail-lf1-f48.google.com with SMTP id r14so7733856lfm.2;
-        Fri, 07 Oct 2022 08:06:57 -0700 (PDT)
-X-Gm-Message-State: ACrzQf1cyT7I4gzqP0U2Ky4GMyqoZGp6ykiyAmRcKQ6Z1chjXD2MjCe+
-        bnV3slCWPpBndHhIeTfbVqpamta7uRgO6gOwPso=
-X-Google-Smtp-Source: AMsMyM7tD3oOF++5UtXKt3rRY/6vcQkaJ6df4pftKRuh41V23hdLuIH9MNAK/WNLzPrW3/DPzpOV1TNLrc4nluEzUBY=
-X-Received: by 2002:a19:c20b:0:b0:4a2:40e5:78b1 with SMTP id
- l11-20020a19c20b000000b004a240e578b1mr2034056lfc.228.1665155215821; Fri, 07
- Oct 2022 08:06:55 -0700 (PDT)
+        Fri, 7 Oct 2022 11:37:30 -0400
+Received: from mail-oa1-x2e.google.com (mail-oa1-x2e.google.com [IPv6:2001:4860:4864:20::2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A813B7EC8
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Oct 2022 08:37:29 -0700 (PDT)
+Received: by mail-oa1-x2e.google.com with SMTP id 586e51a60fabf-132e9bc5ff4so5948758fac.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Oct 2022 08:37:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=T7SBjW2G2ytKmdGlf5aETlIJtNs0u+oSrdZIFHs0Id0=;
+        b=EWGo1fJVCxQRjb505aksBJ2okwddGhNV46yWwoXr3CqVIQrHjvHawMtsGOXI4HwI+i
+         zCeRP0aiBzcoX5cxoTb9OuzoOxmA5quovOU/FKX9C7NdWSw+jAdM4hzwNlwAzlhAj56m
+         TxywUrfXvBsdPrCLRrAzxqfZ8vYST8PReKVCw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T7SBjW2G2ytKmdGlf5aETlIJtNs0u+oSrdZIFHs0Id0=;
+        b=z89L+Uq/ig3ATowQ60TLuIzOnEPd+QNpUmk3h//QSEAt58HhUxyed3fH06eyyppAKK
+         OYbiSWafD8GmPSQWTFyY5wJ8/g2F1TTHmkyauj2A2yadKQwQ0dYmCfTJNWteYugAEWDC
+         sdO6ni523IakBuPKk9em2tEHzH/JNoSbJdk3fkutJ26geX3m88y3OxGKjxQ76CmRmJ2E
+         sRgdVPtMKsliM0GBnt+ce/NwLzq/phAvAE7ddQWzPPUTkK3KqKHlXWCTP709tOgJw1Pb
+         epz7wbbja9M4HBOAr0frfjwZ/otReEnzAct+H6vkmvKjnbIqL47hXGKBIPyvf5rrRVtD
+         Y2Nw==
+X-Gm-Message-State: ACrzQf1SlGg1JoLHK6o13HMwJldfbyoSDy2OaUgDLcmuB2456YkOehey
+        U43zFUYMss+ikvGRQ9L7H7LJBPSBTXE+vw==
+X-Google-Smtp-Source: AMsMyM7b6MNSe8QI+cdMKmv+sLghInVA/b3jjnOCoHEH0N7qZBf+W3/w7ndabUjx3qDDNjT48/fLlg==
+X-Received: by 2002:a05:6870:8317:b0:131:a61a:60fe with SMTP id p23-20020a056870831700b00131a61a60femr8418846oae.30.1665157048080;
+        Fri, 07 Oct 2022 08:37:28 -0700 (PDT)
+Received: from mail-oi1-f171.google.com (mail-oi1-f171.google.com. [209.85.167.171])
+        by smtp.gmail.com with ESMTPSA id v186-20020a4a7cc3000000b004761ac650e1sm1020614ooc.42.2022.10.07.08.37.27
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Oct 2022 08:37:27 -0700 (PDT)
+Received: by mail-oi1-f171.google.com with SMTP id r130so806285oie.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Oct 2022 08:37:27 -0700 (PDT)
+X-Received: by 2002:aca:b957:0:b0:351:4ecf:477d with SMTP id
+ j84-20020acab957000000b003514ecf477dmr2693649oif.126.1665157046993; Fri, 07
+ Oct 2022 08:37:26 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221006224212.569555-1-gpiccoli@igalia.com> <20221006224212.569555-9-gpiccoli@igalia.com>
- <202210061614.8AA746094A@keescook> <CAMj1kXF4UyRMh2Y_KakeNBHvkHhTtavASTAxXinDO1rhPe_wYg@mail.gmail.com>
- <f857b97c-9fb5-8ef6-d1cb-3b8a02d0e655@igalia.com> <CAMj1kXFy-2KddGu+dgebAdU9v2sindxVoiHLWuVhqYw+R=kqng@mail.gmail.com>
- <2a341c4d-763e-cfa4-0537-93451d8614fa@igalia.com>
-In-Reply-To: <2a341c4d-763e-cfa4-0537-93451d8614fa@igalia.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Fri, 7 Oct 2022 17:06:44 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXE6aObn7hGneGMMiJ-ss7YaiYDFL+HqktYt2WMUpZnFjQ@mail.gmail.com>
-Message-ID: <CAMj1kXE6aObn7hGneGMMiJ-ss7YaiYDFL+HqktYt2WMUpZnFjQ@mail.gmail.com>
-Subject: Re: [PATCH 8/8] efi: pstore: Add module parameter for setting the
- record size
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, kernel-dev@igalia.com,
-        kernel@gpiccoli.net, anton@enomsg.org, ccross@android.com,
-        tony.luck@intel.com, linux-efi@vger.kernel.org
+References: <20221007124834.4guduq5n5c6argve@quack3>
+In-Reply-To: <20221007124834.4guduq5n5c6argve@quack3>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 7 Oct 2022 08:37:10 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wh1uSKn+_grsPF+1nhpQ25o4ZsGJO0mEpHQpftD=GvkTA@mail.gmail.com>
+Message-ID: <CAHk-=wh1uSKn+_grsPF+1nhpQ25o4ZsGJO0mEpHQpftD=GvkTA@mail.gmail.com>
+Subject: Re: [GIT PULL] fsnotify changes for v6.1-rc1
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 7 Oct 2022 at 15:46, Guilherme G. Piccoli <gpiccoli@igalia.com> wrote:
+On Fri, Oct 7, 2022 at 5:48 AM Jan Kara <jack@suse.cz> wrote:
 >
-> On 07/10/2022 10:19, Ard Biesheuvel wrote:
-> > [...]
-> >
-> > OVMF has
-> >
-> > OvmfPkg/OvmfPkgX64.dsc:
-> > gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x2000
-> > OvmfPkg/OvmfPkgX64.dsc:
-> > gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x8400
-> >
-> > where the first one is without secure boot and the second with secure boot.
-> >
-> > Interestingly, the default is
-> >
-> > gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x400
-> >
-> > so this is probably where this 1k number comes from. So perhaps it is
-> > better to leave it at 1k after all :-(
-> >
->
-> Oh darn...
->
-> So, let's stick with 1024 then? If so, no need for re-submitting right?
+> git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fsnotify-for_v6.1-rc1
 
-Well, I did spot this oddity
+Oh, I only now noticed that your recent pull requests have been
+tagged, but the tags haven't been signed.
 
-        efi_pstore_info.buf = kmalloc(4096, GFP_KERNEL);
-        if (!efi_pstore_info.buf)
-                return -ENOMEM;
+The first time this happened (middle of June), you made me aware of it
+("not signed because I'm travelling until Sunday"), but then the
+signatures never came back, and I forgot all about it until this one
+..
 
-       efi_pstore_info.bufsize = 1024;
+Mind reinstating the signing?
 
-So that hardcoded 4096 looks odd, but at least it is larger than the
-default 1024. So what happens if you increase the record size to >
-4096?
+                 Linus
