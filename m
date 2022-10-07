@@ -2,111 +2,210 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D04625F7951
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 15:58:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 664E55F796D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 16:06:09 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229508AbiJGN6k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Oct 2022 09:58:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46920 "EHLO
+        id S229760AbiJGOGG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Oct 2022 10:06:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229526AbiJGN6i (ORCPT
+        with ESMTP id S229556AbiJGOGE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Oct 2022 09:58:38 -0400
-Received: from mail-vs1-xe32.google.com (mail-vs1-xe32.google.com [IPv6:2607:f8b0:4864:20::e32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87193CAE78
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Oct 2022 06:58:33 -0700 (PDT)
-Received: by mail-vs1-xe32.google.com with SMTP id l127so5110280vsc.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Oct 2022 06:58:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jCSk+G0cFp046ENaCMjY1tj8PaqTh0kkUHLyrVImswE=;
-        b=f/yhQELSdgiXsu21+IqMshvVKBYa9wBY3N0E/ma6yWDMnjlL4PDcho41mvjEuXis8u
-         DG3mCxQc187rd3vTqxiskIvgyZZQ5Boxb+wYnjjH34wlS7bVpaevpkUznK4hTe9znjCe
-         4/38giuKYsM/CG8ywFSEzJH40yiHtQqICHXFU1B7ho62wdF7hlKUoBqPTTtlU4ptC3wf
-         esx3qUnf5ahUcvJ/eln+HUHlhrEnkDz8N9pcFVxQgJJmGboJmvvs1EyrtGhuo+VQtmL2
-         6D2RM4hMZ46AhverXdEBlGx7pEP5CBhnu1Lk228PdZjptEhPoIDbqirtCC1QSdXttGdr
-         DoFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jCSk+G0cFp046ENaCMjY1tj8PaqTh0kkUHLyrVImswE=;
-        b=yt9pQ0eSrAYiYfnkSZlp54b4Wi1P9blpMWF3yrvHTC7E+6WkaeHAiFe1jjgikGHNrD
-         jmhqZYUWtJJwwMXsmReBHkoz7bpSHQx05bJa5siN8YGEMp9xtpVeqZLJ+NwJE2sQhyxC
-         vXNYfqAfUgDamD26BPLx548364PCZorou59otLqK8korE38zq1GEH1FVtaosp0KZgJqG
-         xSVOevkDomttpghky0iT6tlwmnHFo5LClFH9omOsMr1wDRE+ANu0jfuMcgVRCN9C0Ssb
-         YMsT7VvFYr9xW3wDQ046nHQ1m/MgAxrge3RhYKRVArbSp5Gb1imvSMK5/eN1VTcuIFPU
-         UCWQ==
-X-Gm-Message-State: ACrzQf03GertktyxXgOMr8BeE9lCQR0TghYF+VLwsMW3+kN/HG+gMLmq
-        V4Vle5PIbYxQIo6ok1ZsMCZvmXuoxfDUYVq16Pw=
-X-Google-Smtp-Source: AMsMyM4vM6olU6QvL8xNyxo3el3UP3Dj8t1s5BCcGQvOvbCW13cZBQpPHyexht9jw6jT16APYHtv5Ud0Nsu8ILPsr8o=
-X-Received: by 2002:a67:c099:0:b0:39b:342:3c0d with SMTP id
- x25-20020a67c099000000b0039b03423c0dmr2805903vsi.3.1665151112626; Fri, 07 Oct
- 2022 06:58:32 -0700 (PDT)
+        Fri, 7 Oct 2022 10:06:04 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7227114DF6;
+        Fri,  7 Oct 2022 07:06:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 685BBB8233B;
+        Fri,  7 Oct 2022 14:06:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC963C433D6;
+        Fri,  7 Oct 2022 14:05:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665151560;
+        bh=9F8LnVhypCVbAEjMY52MuA8FAoZt2lfR9cmWQLPDSQ4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hy6ua5Ef++vsD5aVa9YH8WOe5naV+655Risij8V6RXWX7mtrWeJF9SDZYlZySjmLe
+         kr61iV+zTZtws4FiyG67BY4qPfLOGl3U/GTX0Xxz6a92F1VDIhu5ECQNVd+CIbU0Cl
+         lv6bQ8kmc7FavX5ihaSYQ5H6/VMkvoRWyEYcQ2fV/OoTbCmGqI8ykeVnS7cINZNID/
+         c75r3MxL4EH8vmeZYM4RcEyFYKNpLUm4iQSE6STNUAxrN7zmMamzkm7dNBy626PetO
+         vEfftQ/LrEqqZxQbJVepCgYzw/PNlR8PRqlxDGVVSXfICllpGiVVqfgDaqGIIDujjt
+         WHZixYrKwpizQ==
+From:   Christian Brauner <brauner@kernel.org>
+To:     Amir Goldstein <amir73il@gmail.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J . Wong" <djwong@kernel.org>
+Cc:     "Christian Brauner (Microsoft)" <brauner@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Seth Forshee <sforshee@kernel.org>,
+        Yang Xu <xuyang2018.jy@fujitsu.com>,
+        Filipe Manana <fdmanana@kernel.org>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/5] fs: improve setgid stripping consistency even more
+Date:   Fri,  7 Oct 2022 16:05:38 +0200
+Message-Id: <20221007140543.1039983-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-References: <20220912125734.wpcw3udsqri4juuh@quack3> <CAOQ4uxgE5Wicsq_O+Vc6aOaLeYMhCEWrRVvAW9C1kEMMqBwJ9Q@mail.gmail.com>
- <CAOQ4uxgyWEvsTATzimYxuKNkdVA5OcfzQOc1he5=r-t=GX-z6g@mail.gmail.com>
- <20220914103006.daa6nkqzehxppdf5@quack3> <CAOQ4uxh6C=jMftsFQD3s1u7D_niRDmBaxKTymboJQGTmPD6bXQ@mail.gmail.com>
- <CAOQ4uxjHu4k2-sdM1qtnFPvKRHv-OFWo0cYDZbvjv0sd9bXGZQ@mail.gmail.com>
- <20220922104823.z6465rfro7ataw2i@quack3> <CAOQ4uxj_xr4WvHNneeswZO2GEtEGgabc6r-91YR-1P+gPHPhdA@mail.gmail.com>
- <20220926152735.fgvx37rppdfhuokz@quack3> <CAOQ4uxgU4q1Pj2-9q7DZGZiw1EPZKXbc_Cp=H_Tu5_sxD6-twA@mail.gmail.com>
- <20220929100145.wruxmbwapjn6dapy@quack3>
-In-Reply-To: <20220929100145.wruxmbwapjn6dapy@quack3>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 7 Oct 2022 16:58:21 +0300
-Message-ID: <CAOQ4uxjAn50Z03SysRT0v8AVmtvDHpFUMG6_TYCCX_L9zBD+fg@mail.gmail.com>
-Subject: Re: thoughts about fanotify and HSM
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5984; i=brauner@kernel.org; h=from:subject; bh=WKXNTmpCAwOaeD0nIX2om2wGZiw40YWrUTl35MBj7mg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSQ7GOmXrPeYZM4mkWIgFNg1L9lZ8lLWtmZ2N+7GWT16VQL8 t507SlkYxLgYZMUUWRzaTcLllvNUbDbK1ICZw8oEMoSBi1MAJnJ8JiPDvxUngnfkFtp/YOqxPsdeZi Lxm8nlXr20acmPUz6dNgviGBmaD97mnvZjYa/KczZfMX7BKSrulnw5xzh63N5EsNtmreMEAA==
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[reducing CC]
+From: "Christian Brauner (Microsoft)" <brauner@kernel.org>
 
-> > The other use case of automatic inode marks I was thinking about,
-> > which are even more relevant for $SUBJECT is this:
-> > When instantiating a dentry with an inode that has xattr
-> > "security.fanotify.mask" (a.k.a. persistent inode mark), an inode
-> > mark could be auto created and attached to a group with a special sb
-> > mark (we can limit a single special mark per sb).
-> > This could be implemented similar to get_acl(), where i_fsnotify_mask
-> > is always initialized with a special value (i.e. FS_UNINITIALIZED)
-> > which is set to either 0 or non-zero if "security.fanotify.mask" exists.
-> >
-> > The details of how such an API would look like are very unclear to me,
-> > so I will try to focus on the recursive auto inode mark idea.
->
-> Yeah, although initializing fanotify marks based on xattrs does not look
-> completely crazy I can see a lot of open questions there so I think
-> automatic inode mark idea has more chances for success at this point :).
+Hey everyone,
 
-I realized that there is one sort of "persistent mark" who raises
-less questions - one that only has an ignore mask.
+A long while ago I found a few setgid inheritance bugs in overlayfs in
+certain conditions. Amir recently picked this back up in
+https://lore.kernel.org/linux-fsdevel/20221003123040.900827-1-amir73il@gmail.com
+and I jumped on board to fix this more generally. This series should
+make setgid stripping more consistent and fix the related overlayfs bugs.
 
-ignore masks can have a "static" namespace that is not bound to any
-specific group, but rather a set of groups that join this namespace.
+Currently setgid stripping in file_remove_privs()'s should_remove_suid()
+helper is inconsistent with other parts of the vfs. Specifically, it only
+raises ATTR_KILL_SGID if the inode is S_ISGID and S_IXGRP but not if the
+inode isn't in the caller's groups and the caller isn't privileged over the
+inode although we require this already in setattr_prepare() and
+setattr_copy() and so all filesystem implement this requirement implicitly
+because they have to use setattr_{prepare,copy}() anyway.
 
-I played with this idea and wrote some patches:
-https://github.com/amir73il/linux/commits/fan_xattr_ignore_mask
+But the inconsistency shows up in setgid stripping bugs for overlayfs in
+xfstests (e.g., generic/673, generic/683, generic/685, generic/686,
+generic/687). For example, we test whether suid and setgid stripping works
+correctly when performing various write-like operations as an unprivileged
+user (fallocate, reflink, write, etc.):
 
-This may end up being useful in the HSM POC - i.e., HSM places
-persistent ignore mask for permission events for populated dirs/files
-and removes the persistent mask before punching a hole.
+echo "Test 1 - qa_user, non-exec file $verb"
+setup_testfile
+chmod a+rws $junk_file
+commit_and_check "$qa_user" "$verb" 64k 64k
 
-Haven't forgotten about the promised wiki.
-For now, I just wanted to share this idea.
+The test basically creates a file with 6666 permissions. While the file has
+the S_ISUID and S_ISGID bits set it does not have the S_IXGRP set. On a
+regular filesystem like xfs what will happen is:
 
-Thanks,
-Amir.
+sys_fallocate()
+-> vfs_fallocate()
+   -> xfs_file_fallocate()
+      -> file_modified()
+         -> __file_remove_privs()
+            -> dentry_needs_remove_privs()
+               -> should_remove_suid()
+            -> __remove_privs()
+               newattrs.ia_valid = ATTR_FORCE | kill;
+               -> notify_change()
+                  -> setattr_copy()
+
+In should_remove_suid() we can see that ATTR_KILL_SUID is raised
+unconditionally because the file in the test has S_ISUID set.
+
+But we also see that ATTR_KILL_SGID won't be set because while the file
+is S_ISGID it is not S_IXGRP (see above) which is a condition for
+ATTR_KILL_SGID being raised.
+
+So by the time we call notify_change() we have attr->ia_valid set to
+ATTR_KILL_SUID | ATTR_FORCE. Now notify_change() sees that
+ATTR_KILL_SUID is set and does:
+
+ia_valid = attr->ia_valid |= ATTR_MODE
+attr->ia_mode = (inode->i_mode & ~S_ISUID);
+
+which means that when we call setattr_copy() later we will definitely
+update inode->i_mode. Note that attr->ia_mode still contains S_ISGID.
+
+Now we call into the filesystem's ->setattr() inode operation which will
+end up calling setattr_copy(). Since ATTR_MODE is set we will hit:
+
+if (ia_valid & ATTR_MODE) {
+        umode_t mode = attr->ia_mode;
+        vfsgid_t vfsgid = i_gid_into_vfsgid(mnt_userns, inode);
+        if (!vfsgid_in_group_p(vfsgid) &&
+            !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FSETID))
+                mode &= ~S_ISGID;
+        inode->i_mode = mode;
+}
+
+and since the caller in the test is neither capable nor in the group of the
+inode the S_ISGID bit is stripped.
+
+But assume the file isn't suid then ATTR_KILL_SUID won't be raised which
+has the consequence that neither the setgid nor the suid bits are stripped
+even though it should be stripped because the inode isn't in the caller's
+groups and the caller isn't privileged over the inode.
+
+If overlayfs is in the mix things become a bit more complicated and the bug
+shows up more clearly. When e.g., ovl_setattr() is hit from
+ovl_fallocate()'s call to file_remove_privs() then ATTR_KILL_SUID and
+ATTR_KILL_SGID might be raised but because the check in notify_change() is
+questioning the ATTR_KILL_SGID flag again by requiring S_IXGRP for it to be
+stripped the S_ISGID bit isn't removed even though it should be stripped:
+
+sys_fallocate()
+-> vfs_fallocate()
+   -> ovl_fallocate()
+      -> file_remove_privs()
+         -> dentry_needs_remove_privs()
+            -> should_remove_suid()
+         -> __remove_privs()
+            newattrs.ia_valid = ATTR_FORCE | kill;
+            -> notify_change()
+               -> ovl_setattr()
+                  // TAKE ON MOUNTER'S CREDS
+                  -> ovl_do_notify_change()
+                     -> notify_change()
+                  // GIVE UP MOUNTER'S CREDS
+     // TAKE ON MOUNTER'S CREDS
+     -> vfs_fallocate()
+        -> xfs_file_fallocate()
+           -> file_modified()
+              -> __file_remove_privs()
+                 -> dentry_needs_remove_privs()
+                    -> should_remove_suid()
+                 -> __remove_privs()
+                    newattrs.ia_valid = attr_force | kill;
+                    -> notify_change()
+
+The fix for all of this is to make file_remove_privs()'s
+should_remove_suid() helper to perform the same checks as we already
+require in setattr_prepare() and setattr_copy() and have notify_change()
+not pointlessly requiring S_IXGRP again. It doesn't make any sense in the
+first place because the caller must calculate the flags via
+should_remove_suid() anyway which would raise ATTR_KILL_SGID.
+
+Running xfstests with this doesn't report any regressions. We should really
+try and use consistent checks.
+
+Thanks!
+Christian
+
+Amir Goldstein (2):
+  ovl: remove privs in ovl_copyfile()
+  ovl: remove privs in ovl_fallocate()
+
+Christian Brauner (3):
+  attr: add setattr_drop_sgid()
+  attr: add should_remove_sgid()
+  attr: use consistent sgid stripping checks
+
+ fs/attr.c           | 58 ++++++++++++++++++++++++++++++++++++++++-----
+ fs/fuse/file.c      |  2 +-
+ fs/inode.c          | 24 +++++++------------
+ fs/internal.h       |  5 +++-
+ fs/ocfs2/file.c     |  4 ++--
+ fs/open.c           |  8 +++----
+ fs/overlayfs/file.c | 28 +++++++++++++++++++---
+ include/linux/fs.h  |  2 +-
+ 8 files changed, 97 insertions(+), 34 deletions(-)
+
+-- 
+2.34.1
+
