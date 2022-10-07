@@ -2,107 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 09AF05F728F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 03:40:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AB415F7296
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 03:41:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229955AbiJGBky (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Oct 2022 21:40:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56002 "EHLO
+        id S231796AbiJGBlp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Oct 2022 21:41:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230315AbiJGBkw (ORCPT
+        with ESMTP id S230315AbiJGBlo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Oct 2022 21:40:52 -0400
-Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05208A4874;
-        Thu,  6 Oct 2022 18:40:51 -0700 (PDT)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 85248C020; Fri,  7 Oct 2022 03:40:49 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1665106849; bh=rzoBfsAiCdEWZQ20WCaCW3PZC2FVyXXDBzt8MmnFLEA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VXpSDetbKGqvRvd3qmLOF2C2HLYQ5r5IFfpIKb9JQMZ65k3L9xxAGgRIPChT4vRX5
-         UpqY1f080hL8BUWwivmThmEbtlLXunQrbvX78eyw8vtoxTYAJaH1Fv2DwvY0s7i7kc
-         WHEN8NbB7DkPnn1V8xfboBc2n5gzqVr8fOYGufKlOx3fp4QtKFnoRtIQEMHf4rt++Q
-         A8solBbRy+pldK9SJc6RT0rKbwUTgN7DyJwRgalj2PN+4KIo8SSw6g1ISJRuMCt3ms
-         pJ2VDHYigwxvclJJwgPrpWZEbbieTg4rXK54B5LDXHL89aj0gPr6P88745BRnVmSeL
-         ih+McuJgH16/A==
+        Thu, 6 Oct 2022 21:41:44 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F73F2536;
+        Thu,  6 Oct 2022 18:41:42 -0700 (PDT)
+Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 2971ecnl032685
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 6 Oct 2022 21:40:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1665106847; bh=qaGXQZPJ+DMM6m33/wU4mECLmQpjFLtDJn6CdcOWtKQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=KSalaJnH4Pyw9am3lmnE824Wr2kBhNth9uCO4mXO5AzKtequoJLzjonneUAC8ZhxR
+         4Hz1eaUw7xthlsGZIvbrKDmeqfMsaZL0mX9jE1bwkYelTLIujVkzCQre3la+eHpRvk
+         jehUy8nGH756ojGWF+Lya0ILI+OcQWLFjLYpTrHqGQ5P8VsLDrkkyMAy5y7ZgOktww
+         VOQvAZIroJGMqt4qSIuhel3Tn9O/0JEpicFLNkngkAJ7T5kP6qkzL5z4U+3ELVIhC1
+         z6ZBz5xcg7Vu7b4LWp9pQf8jyIsi6uPKcXUiiBI32krkxUNWm4c1/xFR2R+71IKcQi
+         mHXaABEZ7m0DA==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id C2CF515C35F2; Thu,  6 Oct 2022 21:40:38 -0400 (EDT)
+Date:   Thu, 6 Oct 2022 21:40:38 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Jorge Merlino <jorge.merlino@canonical.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Jann Horn <jannh@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andy Lutomirski <luto@kernel.org>,
+        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        John Johansen <john.johansen@canonical.com>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Richard Haines <richard_c_haines@btinternet.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Todd Kjos <tkjos@google.com>,
+        Ondrej Mosnacek <omosnace@redhat.com>,
+        Prashanth Prahlad <pprahlad@redhat.com>,
+        Micah Morton <mortonm@chromium.org>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Andrei Vagin <avagin@gmail.com>, linux-kernel@vger.kernel.org,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] Fix race condition when exec'ing setuid files
+Message-ID: <Yz+Dln7AAMU+Oj9X@mit.edu>
+References: <202209131456.76A13BC5E4@keescook>
+ <202210061301.207A20C8E5@keescook>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202210061301.207A20C8E5@keescook>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 14BF6C009;
-        Fri,  7 Oct 2022 03:40:45 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1665106848; bh=rzoBfsAiCdEWZQ20WCaCW3PZC2FVyXXDBzt8MmnFLEA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lG/j5Hy41YweyC74PFrJP4/crGLUSOa5BMJbxgJ3I5Ly6Qfa3KZMoLuVV17hvKzMA
-         W9mn/2gismC43drGOrsegXOqEoGQyIfKV9gBy5vl5B8OWKB2WmHnw3hwJsTAiAxu0c
-         ku4cHwyp8yUuo/dYiBj+lq2Q2eV5CuHcvUQoFGldBHhyUPUWtNLJDpvOUz/UOERQOg
-         6Jp2wLU2Ogz78EUC7Nvd6IbygR8Xq7SXQFeQtII4qiSY87o0QRhRo/gmMC1h92DEFT
-         R09SBdhD5YlcV9SKn7Z2QKLtVeHpZ4Tc+RPKmONracCekA7SL2omodZaEkF2O0Axz/
-         xGTg8Txpqa3QQ==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id e4b8ba3e;
-        Fri, 7 Oct 2022 01:40:42 +0000 (UTC)
-Date:   Fri, 7 Oct 2022 10:40:27 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Christian Schoenebeck <linux_oss@crudebyte.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        syzbot <syzbot+8b41a1365f1106fd0f33@syzkaller.appspotmail.com>,
-        v9fs-developer@lists.sourceforge.net,
-        syzkaller-bugs@googlegroups.com, netdev@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v2] 9p/trans_fd: perform read/write with TIF_SIGPENDING
- set
-Message-ID: <Yz+Di8tJiyPPJUaK@codewreck.org>
-References: <00000000000039af4d05915a9f56@google.com>
- <345de429-a88b-7097-d177-adecf9fed342@I-love.SAKURA.ne.jp>
- <4293faaf-8279-77e2-8b1a-aff765416980@I-love.SAKURA.ne.jp>
- <69253379.JACLdFHAbQ@silver>
- <e96a8dce-9444-c363-2dfa-83fe5c7012b5@I-love.SAKURA.ne.jp>
- <YxPlzlJAKObm88p8@codewreck.org>
- <38d892bd-8ace-c4e9-9d73-777d3828acbc@I-love.SAKURA.ne.jp>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <38d892bd-8ace-c4e9-9d73-777d3828acbc@I-love.SAKURA.ne.jp>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Tetsuo Handa wrote on Sun, Sep 04, 2022 at 09:27:22AM +0900:
-> On 2022/09/04 8:39, Dominique Martinet wrote:
-> > Is there any reason you spent time working on v2, or is that just
-> > theorical for not messing with userland fd ?
+On Thu, Oct 06, 2022 at 01:20:35PM -0700, Kees Cook wrote:
 > 
-> Just theoretical for not messing with userland fd, for programs generated
-> by fuzzers might use fds passed to the mount() syscall. I imagined that
-> syzbot again reports this problem when it started playing with fcntl().
-> 
-> For robustness, not messing with userland fd is the better. ;-)
+> So the question, then, is "why are they trying to exec while actively
+> spawning new threads?" That appears to be the core problem here, and as
+> far as I can tell, the kernel has behaved this way for a very long time.
+> I don't think the kernel should fix this, either, because it leads to a
+> very weird state for userspace, where the thread spawner may suddenly
+> die due to the exec happening in another thread. This really looks like
+> something userspace needs to handle correctly (i.e. don't try to exec
+> while actively spawning threads).
 
-By the way digging this back made me think about this a bit again.
-My opinion hasn't really changed that if you want to shoot yourself in
-the foot I don't think we're crossing any priviledge boundary here, but
-we could probably prevent it by saying the mount call with close that fd
-and somehow steal it? (drop the fget, close_fd after get_file perhaps?)
+One of the classic failure modes is when a threaded program calls a
+library, and that library might try to do a fork/exec (or call
+system(3) to run some command.  e.g., such as running "lvm create ..."
+or to spawn some kind of helper daemon.
 
-That should address your concern about robustess and syzbot will no
-longer be able to play with fcntl on "our" end of the pipe. I think it's
-fair to say that once you pass it to the kernel all bets are off, so
-closing it for the userspace application could make sense, and the mount
-already survives when short processes do the mount call and immediately
-exit so it's not like we need that fd to be open...
+There are a number of stack overflow questions about this, and there
+are some solutions to _some_ of the problems, such as using
+pthread_atfork(), and knowing that you are about to call fork/exec,
+and use some out of band mechanism to to make sure no threads get
+spawned until the fork/exec is completed --- but if you don't know
+that a library is going to do a fork/exec, well, life is tough. 
 
+One technique even advocated by a stack overflow article is "avoid
+using threads whenver possible".  :-/
 
-What do you think?
-
-(either way would be for 6.2, the patch is already good enough as is for
-me)
---
-Dominique
+	       	       	  	   - Ted
