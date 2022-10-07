@@ -2,140 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C0BD05F8053
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 23:54:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 382995F80A9
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Oct 2022 00:08:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229579AbiJGVyl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Oct 2022 17:54:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36170 "EHLO
+        id S229646AbiJGWIY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Oct 2022 18:08:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229459AbiJGVyj (ORCPT
+        with ESMTP id S229452AbiJGWIX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Oct 2022 17:54:39 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8292FCD3;
-        Fri,  7 Oct 2022 14:54:35 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1D4E061DF3;
-        Fri,  7 Oct 2022 21:54:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B8EC433C1;
-        Fri,  7 Oct 2022 21:54:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665179674;
-        bh=G2Bpq4X4c8Ld9teic5MSWuwfYmtsWLlVtQM7SvLz7EM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=NJdWRQVjYLReY1JTMnenjvtgVCZt4egbIwOAesAgJ0c5LRyiJ6FS2Is1wil1ZXdTz
-         AJ1kwpOlrcj05wS26ZoEzT3/8h530P4CX+wFcr9u1OEiqHvLE+PC7ho2e7GJFdEUru
-         7tzvwEpp+KSGnrXLeNvlQNkIzXs14GKQ2UEf9fckV+owFuT9iIYNbE89lYFrF4/9i6
-         RXxYXRFq8nqmJMmmQd4o6QJMRj+U707HR9qwU7r4/1xjmo4p6qYx/RPgcl8VWzrfqq
-         vMBKtC9AalFy4+WmipyZkd+XoDdrkbKg+xypPSWQwhnm8oQlSaLdzQoYjHHrShp+pT
-         +BMOJNADjwkmA==
-Date:   Sat, 8 Oct 2022 00:54:28 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v8 2/8] KVM: Extend the memslot to support fd-based
- private memory
-Message-ID: <Y0CgFIq6JnHmdWrL@kernel.org>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-3-chao.p.peng@linux.intel.com>
- <Yz7s+JIexAHJm5dc@kernel.org>
- <Yz7vHXZmU3EpmI0j@kernel.org>
- <Yz71ogila0mSHxxJ@google.com>
- <Y0AJ++m/TxoscOZg@kernel.org>
- <Y0A+rogB6TRDtbyE@google.com>
+        Fri, 7 Oct 2022 18:08:23 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4803D18F2
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Oct 2022 15:08:22 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id f25-20020a5d8799000000b006a44e33ddb6so4078942ion.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Oct 2022 15:08:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3MLPU74F3+6QXZTh1Q2e+ffMXLmh8O9A6adbCsWIvZM=;
+        b=EQCRSoK4RbbFudQEGt86zSPN+IMI3IE4q6XO0CW7QF2nQJjwUnXSlmC1qZEGEU5MCy
+         iL/i9bIRMZ+jwMzCIRSfR9sFAfeufrajVUb/owbylm6UdCAhDsW/WEMt3szK7dttgG+P
+         +78/7GdBgKbK53M3ye12OA2n54Ucwr5iJU6zMFrxBZPL0yOcDvFCd60QoaKaaSHZm/JN
+         I2c/HRrt2OIwoULwvLpbSagtdBnRqCVrFO0uNXq1+rUy0uR3+Xw3p8XLUnM/vdKXWYp3
+         NUOOPSFDpSHqkNVukUJROW5gPFOJZ1oBWyWYkj5Iyw4pOeG0zoPeZYD/v61r4uL+cJRr
+         ZHNQ==
+X-Gm-Message-State: ACrzQf17fgmm4dCG+vny6T6EsgSYqpyjo7odFPhQ94ZSgWMVS/eWUB/m
+        A0d5SF9h9Fx8el8slc+ajXNBg5Ztwaj1moJaAbxXTLhZh2iH
+X-Google-Smtp-Source: AMsMyM4rH+FKGccUJ4CIIG5AIA9SpJMi9/O5BpcI21Jrn8IuicbbBHVI6C+JFM4YFp9t6GVA/uE3aF45zbzLjNQGVKCL68ohr2WE
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y0A+rogB6TRDtbyE@google.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6602:2dd5:b0:6a2:38e6:eaad with SMTP id
+ l21-20020a0566022dd500b006a238e6eaadmr3289919iow.144.1665180502019; Fri, 07
+ Oct 2022 15:08:22 -0700 (PDT)
+Date:   Fri, 07 Oct 2022 15:08:22 -0700
+In-Reply-To: <000000000000495a9305e9dea876@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000004f5d5205ea790cf0@google.com>
+Subject: Re: [syzbot] WARNING in change_pte_range
+From:   syzbot <syzbot+2c2bb573a9524a95e787@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, david@redhat.com, jack@suse.cz,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, namit@vmware.com, peterx@redhat.com,
+        rppt@kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 07, 2022 at 02:58:54PM +0000, Sean Christopherson wrote:
-> On Fri, Oct 07, 2022, Jarkko Sakkinen wrote:
-> > On Thu, Oct 06, 2022 at 03:34:58PM +0000, Sean Christopherson wrote:
-> > > On Thu, Oct 06, 2022, Jarkko Sakkinen wrote:
-> > > > On Thu, Oct 06, 2022 at 05:58:03PM +0300, Jarkko Sakkinen wrote:
-> > > > > On Thu, Sep 15, 2022 at 10:29:07PM +0800, Chao Peng wrote:
-> > > > > > This new extension, indicated by the new flag KVM_MEM_PRIVATE, adds two
-> > > > > > additional KVM memslot fields private_fd/private_offset to allow
-> > > > > > userspace to specify that guest private memory provided from the
-> > > > > > private_fd and guest_phys_addr mapped at the private_offset of the
-> > > > > > private_fd, spanning a range of memory_size.
-> > > > > > 
-> > > > > > The extended memslot can still have the userspace_addr(hva). When use, a
-> > > > > > single memslot can maintain both private memory through private
-> > > > > > fd(private_fd/private_offset) and shared memory through
-> > > > > > hva(userspace_addr). Whether the private or shared part is visible to
-> > > > > > guest is maintained by other KVM code.
-> > > > > 
-> > > > > What is anyway the appeal of private_offset field, instead of having just
-> > > > > 1:1 association between regions and files, i.e. one memfd per region?
-> > > 
-> > > Modifying memslots is slow, both in KVM and in QEMU (not sure about Google's VMM).
-> > > E.g. if a vCPU converts a single page, it will be forced to wait until all other
-> > > vCPUs drop SRCU, which can have severe latency spikes, e.g. if KVM is faulting in
-> > > memory.  KVM's memslot updates also hold a mutex for the entire duration of the
-> > > update, i.e. conversions on different vCPUs would be fully serialized, exacerbating
-> > > the SRCU problem.
-> > > 
-> > > KVM also has historical baggage where it "needs" to zap _all_ SPTEs when any
-> > > memslot is deleted.
-> > > 
-> > > Taking both a private_fd and a shared userspace address allows userspace to convert
-> > > between private and shared without having to manipulate memslots.
-> > 
-> > Right, this was really good explanation, thank you.
-> > 
-> > Still wondering could this possibly work (or not):
-> > 
-> > 1. Union userspace_addr and private_fd.
-> 
-> No, because userspace needs to be able to provide both userspace_addr (shared
-> memory) and private_fd (private memory) for a single memslot.
+syzbot has bisected this issue to:
 
-Got it, thanks for clearing my misunderstandings on this topic, and it
-is quite obviously visible in 5/8 and 7/8. I.e. if I got it right,
-memblock can be partially private, and you dig the shared holes with
-KVM_MEMORY_ENCRYPT_UNREG_REGION. We have (in Enarx) ATM have memblock
-per host mmap, I was looking into this dilated by that mindset but makes
-definitely sense to support that.
+commit b1f9e876862d8f7176299ec4fb2108bc1045cbc8
+Author: Peter Xu <peterx@redhat.com>
+Date:   Fri May 13 03:22:56 2022 +0000
 
-BR, Jarkko
+    mm/uffd: enable write protection for shmem & hugetlbfs
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=108e8fb8880000
+start commit:   511cce163b75 Merge tag 'net-6.0-rc8' of git://git.kernel.o..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=128e8fb8880000
+console output: https://syzkaller.appspot.com/x/log.txt?x=148e8fb8880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4520785fccee9b40
+dashboard link: https://syzkaller.appspot.com/bug?extid=2c2bb573a9524a95e787
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ecac35080000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15668b38880000
+
+Reported-by: syzbot+2c2bb573a9524a95e787@syzkaller.appspotmail.com
+Fixes: b1f9e876862d ("mm/uffd: enable write protection for shmem & hugetlbfs")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
