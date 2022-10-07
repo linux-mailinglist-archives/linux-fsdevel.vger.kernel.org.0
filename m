@@ -2,128 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C4E445F7737
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 13:14:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2DE985F77B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 13:53:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229555AbiJGLOL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Oct 2022 07:14:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58140 "EHLO
+        id S229581AbiJGLxk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Oct 2022 07:53:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38290 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229643AbiJGLOK (ORCPT
+        with ESMTP id S229661AbiJGLxd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Oct 2022 07:14:10 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1519A223C;
-        Fri,  7 Oct 2022 04:14:09 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8372961C4E;
-        Fri,  7 Oct 2022 11:14:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FF19C433C1;
-        Fri,  7 Oct 2022 11:14:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665141248;
-        bh=iGUUEynvCAjegBrsy6JU4OD39853Ax+NThhfisNR9Vo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fmKEzZfv+NcFm5KZPC8vC7ZMGO+4smagpqxidG4f8sTZ/z8q2aoMCJSNtysPorB+u
-         kk9P97XlyfQbbtnFo8LHPNJFX9dz+rglzxIJfihqhOEfRZ95SMPj67dZ/fvnuNbSqC
-         jqfHkAdl/kZOqmVgzI+rs0S1M/uPV1KhYkYw7RvKkChyMhuiR2/2wEETdeyyy8vdL+
-         xSn8DoYpH/zTYYkmMvP9NOyVC0t2HvDfp9uL80OcPykiAatvUGYg8ebg5q6VkchIVf
-         DXvK7t9XwhCTk3XnR5NXjkt3/qkelWVMPuwnPC3EPAwGRYke53ktd+UBomw4T2mbx6
-         O0+yu62YgKnxg==
-Date:   Fri, 7 Oct 2022 14:14:03 +0300
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v8 2/8] KVM: Extend the memslot to support fd-based
- private memory
-Message-ID: <Y0AJ++m/TxoscOZg@kernel.org>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-3-chao.p.peng@linux.intel.com>
- <Yz7s+JIexAHJm5dc@kernel.org>
- <Yz7vHXZmU3EpmI0j@kernel.org>
- <Yz71ogila0mSHxxJ@google.com>
+        Fri, 7 Oct 2022 07:53:33 -0400
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D232FB7ECB;
+        Fri,  7 Oct 2022 04:53:31 -0700 (PDT)
+Received: from fsav113.sakura.ne.jp (fsav113.sakura.ne.jp [27.133.134.240])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 297Bqjsi041794;
+        Fri, 7 Oct 2022 20:52:45 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav113.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav113.sakura.ne.jp);
+ Fri, 07 Oct 2022 20:52:45 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav113.sakura.ne.jp)
+Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 297Bqi3r041791
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 7 Oct 2022 20:52:45 +0900 (JST)
+        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <0362d03f-9332-0b37-02e0-2b1b169f4c6f@I-love.SAKURA.ne.jp>
+Date:   Fri, 7 Oct 2022 20:52:44 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Yz71ogila0mSHxxJ@google.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [PATCH v2] 9p/trans_fd: perform read/write with TIF_SIGPENDING
+ set
+Content-Language: en-US
+To:     Dominique Martinet <asmadeus@codewreck.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Christian Schoenebeck <linux_oss@crudebyte.com>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        syzbot <syzbot+8b41a1365f1106fd0f33@syzkaller.appspotmail.com>,
+        v9fs-developer@lists.sourceforge.net,
+        syzkaller-bugs@googlegroups.com, netdev@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <00000000000039af4d05915a9f56@google.com>
+ <345de429-a88b-7097-d177-adecf9fed342@I-love.SAKURA.ne.jp>
+ <4293faaf-8279-77e2-8b1a-aff765416980@I-love.SAKURA.ne.jp>
+ <69253379.JACLdFHAbQ@silver>
+ <e96a8dce-9444-c363-2dfa-83fe5c7012b5@I-love.SAKURA.ne.jp>
+ <YxPlzlJAKObm88p8@codewreck.org>
+ <38d892bd-8ace-c4e9-9d73-777d3828acbc@I-love.SAKURA.ne.jp>
+ <Yz+Di8tJiyPPJUaK@codewreck.org>
+From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <Yz+Di8tJiyPPJUaK@codewreck.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 06, 2022 at 03:34:58PM +0000, Sean Christopherson wrote:
-> On Thu, Oct 06, 2022, Jarkko Sakkinen wrote:
-> > On Thu, Oct 06, 2022 at 05:58:03PM +0300, Jarkko Sakkinen wrote:
-> > > On Thu, Sep 15, 2022 at 10:29:07PM +0800, Chao Peng wrote:
-> > > > This new extension, indicated by the new flag KVM_MEM_PRIVATE, adds two
-> > > > additional KVM memslot fields private_fd/private_offset to allow
-> > > > userspace to specify that guest private memory provided from the
-> > > > private_fd and guest_phys_addr mapped at the private_offset of the
-> > > > private_fd, spanning a range of memory_size.
-> > > > 
-> > > > The extended memslot can still have the userspace_addr(hva). When use, a
-> > > > single memslot can maintain both private memory through private
-> > > > fd(private_fd/private_offset) and shared memory through
-> > > > hva(userspace_addr). Whether the private or shared part is visible to
-> > > > guest is maintained by other KVM code.
-> > > 
-> > > What is anyway the appeal of private_offset field, instead of having just
-> > > 1:1 association between regions and files, i.e. one memfd per region?
+On 2022/10/07 10:40, Dominique Martinet wrote:
+> Tetsuo Handa wrote on Sun, Sep 04, 2022 at 09:27:22AM +0900:
+>> On 2022/09/04 8:39, Dominique Martinet wrote:
+>>> Is there any reason you spent time working on v2, or is that just
+>>> theorical for not messing with userland fd ?
+>>
+>> Just theoretical for not messing with userland fd, for programs generated
+>> by fuzzers might use fds passed to the mount() syscall. I imagined that
+>> syzbot again reports this problem when it started playing with fcntl().
+>>
+>> For robustness, not messing with userland fd is the better. ;-)
 > 
-> Modifying memslots is slow, both in KVM and in QEMU (not sure about Google's VMM).
-> E.g. if a vCPU converts a single page, it will be forced to wait until all other
-> vCPUs drop SRCU, which can have severe latency spikes, e.g. if KVM is faulting in
-> memory.  KVM's memslot updates also hold a mutex for the entire duration of the
-> update, i.e. conversions on different vCPUs would be fully serialized, exacerbating
-> the SRCU problem.
+> By the way digging this back made me think about this a bit again.
+> My opinion hasn't really changed that if you want to shoot yourself in
+> the foot I don't think we're crossing any priviledge boundary here, but
+> we could probably prevent it by saying the mount call with close that fd
+> and somehow steal it? (drop the fget, close_fd after get_file perhaps?)
 > 
-> KVM also has historical baggage where it "needs" to zap _all_ SPTEs when any
-> memslot is deleted.
+> That should address your concern about robustess and syzbot will no
+> longer be able to play with fcntl on "our" end of the pipe. I think it's
+> fair to say that once you pass it to the kernel all bets are off, so
+> closing it for the userspace application could make sense, and the mount
+> already survives when short processes do the mount call and immediately
+> exit so it's not like we need that fd to be open...
 > 
-> Taking both a private_fd and a shared userspace address allows userspace to convert
-> between private and shared without having to manipulate memslots.
+> 
+> What do you think?
 
-Right, this was really good explanation, thank you.
+I found that pipe is using alloc_file_clone() which allocates "struct file"
+instead of just incrementing "struct file"->f_count.
 
-Still wondering could this possibly work (or not):
+Then, can we add EXPORT_SYMBOL_GPL(alloc_file_clone) to fs/file_table.c and
+use it like
 
-1. Union userspace_addr and private_fd.
-2. Instead of introducing private_offset, use guest_phys_addr as the
-   offset.
-  
-BR, Jarkko
+  struct file *f;
+
+  ts->rd = fget(rfd);
+  if (!ts->rd)
+    goto out_free_ts;
+  if (!(ts->rd->f_mode & FMODE_READ))
+    goto out_put_rd;
+  f = alloc_file_clone(ts->rd, ts->rd->f_flags | O_NONBLOCK, ts->rd->f_op);
+  if (IS_ERR(f))
+    goto out_put_rd;
+  fput(ts->rd);
+  ts->rd = f;
+
+  ts->wr = fget(wfd);
+  if (!ts->wr)
+    goto out_put_rd;
+  if (!(ts->wr->f_mode & FMODE_WRITE))
+    goto out_put_wr;
+  f = alloc_file_clone(ts->wr, ts->wr->f_flags | O_NONBLOCK, ts->wr->f_op);
+  if (IS_ERR(f))
+    goto out_put_wr;
+  fput(ts->wr);
+  ts->wr = f;
+
+ from p9_fd_open() for cloning "struct file" with O_NONBLOCK flag added?
+Just an idea. I don't know whether alloc_file_clone() arguments are correct...
+
