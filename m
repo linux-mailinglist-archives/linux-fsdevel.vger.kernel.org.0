@@ -2,62 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8DF835F785B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 14:54:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 02B075F788A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 15:01:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229731AbiJGMyK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Oct 2022 08:54:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46676 "EHLO
+        id S229625AbiJGNBu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Oct 2022 09:01:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59940 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229592AbiJGMyI (ORCPT
+        with ESMTP id S229925AbiJGNBZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Oct 2022 08:54:08 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34B19F4738;
-        Fri,  7 Oct 2022 05:54:08 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id DB7E21F8A8;
-        Fri,  7 Oct 2022 12:54:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1665147246; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type;
-        bh=2yea1I8bUHEi+w/xoHS0s9Q7Pp5CV/eDJLs78hkBV8I=;
-        b=BS0NWwnh0RrdSyqkC3BGUcRthX7wu3nZ5yfKqp3vY91QqcM2t57veK8w08fH6Obru/TIAg
-        MBa1bDoJAT6VIfIg71MBZ+gCXdlyjXH8nvfD2S/tjWZ0sgKg+i/Z8NgGnM5sOE7kBRMSnb
-        xRPxCiGJG2ejBogdkAes0ix8OyNrKAc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1665147246;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type;
-        bh=2yea1I8bUHEi+w/xoHS0s9Q7Pp5CV/eDJLs78hkBV8I=;
-        b=s2J0xuBqdfWa0kjXtXzWRpQoGGTCedTyJ8oOBJWpDvaoAcSSEih1o8/KkKvNlbFNsQNKju
-        PR2+e/tPVhOtUhDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B555213A9A;
-        Fri,  7 Oct 2022 12:54:06 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id EnbBK24hQGPTaQAAMHmgww
-        (envelope-from <jack@suse.cz>); Fri, 07 Oct 2022 12:54:06 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 25D1EA06E9; Fri,  7 Oct 2022 14:54:06 +0200 (CEST)
-Date:   Fri, 7 Oct 2022 14:54:06 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
-Subject: [GIT PULL] ext2, udf, reiserfs, and quota fixes for v6.1-rc1
-Message-ID: <20221007125406.oaw57vy5zmino5rj@quack3>
+        Fri, 7 Oct 2022 09:01:25 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 364F1D8EE9;
+        Fri,  7 Oct 2022 06:00:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Ww71LiFniQjR5k5o8LQpT64qpooOFLpcZ6GdALllUYo=; b=QhF6ALFmPBkkfK6dFkkN1oSJqI
+        uszNgfRnVgnIbozx+cHW+7YAlwnmg4JY9ccZb6r6pv4elr/ccksmt3xqWLEkSx+Elil58cS7l3hfm
+        qsj/bwmM3vrbZ3F3U6Jjo3U8EWQHPTCab+H5cbpieiGb0J7VBFdVXxhVhasLMHop8/OTpb4Iel8vP
+        SQIDTuVq/oDsSFltZ4xjdisFnOPYks7Exn+pdebCExuQxfE4qy98LXWB47JBnYOmm3cIUw9O8oUbS
+        RzZGAnWBo24EMKMiqdR8obYjiYOOuRriCmfNbf7WyPpe0+Upwk92te3qLusIkhSkVbIR30PdfYQMm
+        oLZQCc5g==;
+Received: from 201-43-120-40.dsl.telesp.net.br ([201.43.120.40] helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1ogmxe-00D5Pa-8o; Fri, 07 Oct 2022 15:00:18 +0200
+Message-ID: <f857b97c-9fb5-8ef6-d1cb-3b8a02d0e655@igalia.com>
+Date:   Fri, 7 Oct 2022 10:00:02 -0300
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.2
+Subject: Re: [PATCH 8/8] efi: pstore: Add module parameter for setting the
+ record size
+Content-Language: en-US
+To:     Ard Biesheuvel <ardb@kernel.org>, Kees Cook <keescook@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, anton@enomsg.org,
+        ccross@android.com, tony.luck@intel.com, linux-efi@vger.kernel.org
+References: <20221006224212.569555-1-gpiccoli@igalia.com>
+ <20221006224212.569555-9-gpiccoli@igalia.com>
+ <202210061614.8AA746094A@keescook>
+ <CAMj1kXF4UyRMh2Y_KakeNBHvkHhTtavASTAxXinDO1rhPe_wYg@mail.gmail.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <CAMj1kXF4UyRMh2Y_KakeNBHvkHhTtavASTAxXinDO1rhPe_wYg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
         SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -65,50 +60,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-  Hello Linus,
+First of all, thanks Ard for the historical explanation!
 
-  could you please pull from
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fs-for_v6.1-rc1
+On 07/10/2022 06:11, Ard Biesheuvel wrote:
+> [...]
+>> I think it'd be great to make it configurable! Ard, do you have any
+>> sense of what the max/min, etc, should be here?
+>>
+> 
+> Given that dbx on an arbitrary EFI system with secure boot enabled is
+> already almost 4k, that seems like a reasonable default. As for the
+> upper bound, there is no way to know what weird firmware bugs you
+> might tickle by choosing highly unusual values here.
+> 
+> If you need to store lots of data, you might want to look at [0] for
+> some work done in the past on using capsule update for preserving data
+> across a reboot. In the general case, this is not as useful, as the
+> capsule is only delivered to the firmware after invoking the
+> ResetSystem() EFI runtime service (as opposed to SetVariable() calls
+> taking effect immediately). However, if you need to capture large
+> amounts of data, and can tolerate the uncertainty involved in the
+> capsule approach, it might be a reasonable option.
+> 
+> [0] https://lore.kernel.org/all/20200312011335.70750-1-qiuxu.zhuo@intel.com/
 
-to get:
-* Fix for udf to make splicing work again
-* More disk format sanity checks for ext2 to avoid crashes found by syzbot
-* More quota disk format checks to avoid crashes found by fuzzing
-* Reiserfs & isofs cleanups
+So, you mean 4K as the default? I can change, but I would try to not
+mess with the current users, is there a case you can imagine something
+like 4k would fail? Maybe 2K is safer?
 
-Top of the tree is 191249f70889. The full shortlog is:
+As for the maximum, I've tested with many values, and when it's larger
+than ~30000 for edk2/ovmf, it fails with EFI_OUT_OF_RESOURCES and
+doesn't collect the log; other than that, no issues observed.
 
-Jan Kara (3):
-      udf: Support splicing to file
-      ext2: Add sanity checks for group and filesystem size
-      ext2: Use kvmalloc() for group descriptor array
+When set to ~24000, the interesting is that we have fewer big logs in
+/sys/fs/pstore, so it's nice to see compared to the bunch of 1K files heheh
 
-Jiangshan Yi (1):
-      fs/reiserfs: replace ternary operator with min() and min_t()
+Anyway, let's agree on the default and then I can resubmit that, I'm
+glad you both consider that it's a good idea =)
 
-Minghao Chi (1):
-      isofs: delete unnecessary checks before brelse()
+Thanks,
 
-Zhihao Cheng (3):
-      quota: Check next/prev free block number after reading from quota file
-      quota: Replace all block number checking with helper function
-      quota: Add more checking after reading from quota file
 
-The diffstat is
-
- fs/ext2/super.c       | 22 ++++++++++++----
- fs/isofs/inode.c      |  9 +++----
- fs/quota/quota_tree.c | 73 ++++++++++++++++++++++++++++++++++++++++++---------
- fs/reiserfs/prints.c  |  2 +-
- fs/reiserfs/resize.c  |  2 +-
- fs/reiserfs/super.c   |  7 ++---
- fs/udf/file.c         |  1 +
- 7 files changed, 86 insertions(+), 30 deletions(-)
-
-							Thanks
-								Honza
-
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Guilherme
