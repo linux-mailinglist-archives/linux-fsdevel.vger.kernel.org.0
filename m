@@ -2,77 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9AB415F7296
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 03:41:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B9375F72CE
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 04:35:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231796AbiJGBlp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 6 Oct 2022 21:41:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57228 "EHLO
+        id S232088AbiJGCft (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 6 Oct 2022 22:35:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44376 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230315AbiJGBlo (ORCPT
+        with ESMTP id S229919AbiJGCfq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 6 Oct 2022 21:41:44 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8F73F2536;
-        Thu,  6 Oct 2022 18:41:42 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 2971ecnl032685
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 6 Oct 2022 21:40:39 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1665106847; bh=qaGXQZPJ+DMM6m33/wU4mECLmQpjFLtDJn6CdcOWtKQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=KSalaJnH4Pyw9am3lmnE824Wr2kBhNth9uCO4mXO5AzKtequoJLzjonneUAC8ZhxR
-         4Hz1eaUw7xthlsGZIvbrKDmeqfMsaZL0mX9jE1bwkYelTLIujVkzCQre3la+eHpRvk
-         jehUy8nGH756ojGWF+Lya0ILI+OcQWLFjLYpTrHqGQ5P8VsLDrkkyMAy5y7ZgOktww
-         VOQvAZIroJGMqt4qSIuhel3Tn9O/0JEpicFLNkngkAJ7T5kP6qkzL5z4U+3ELVIhC1
-         z6ZBz5xcg7Vu7b4LWp9pQf8jyIsi6uPKcXUiiBI32krkxUNWm4c1/xFR2R+71IKcQi
-         mHXaABEZ7m0DA==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id C2CF515C35F2; Thu,  6 Oct 2022 21:40:38 -0400 (EDT)
-Date:   Thu, 6 Oct 2022 21:40:38 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Jorge Merlino <jorge.merlino@canonical.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Jann Horn <jannh@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andy Lutomirski <luto@kernel.org>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Todd Kjos <tkjos@google.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Prashanth Prahlad <pprahlad@redhat.com>,
-        Micah Morton <mortonm@chromium.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Andrei Vagin <avagin@gmail.com>, linux-kernel@vger.kernel.org,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] Fix race condition when exec'ing setuid files
-Message-ID: <Yz+Dln7AAMU+Oj9X@mit.edu>
-References: <202209131456.76A13BC5E4@keescook>
- <202210061301.207A20C8E5@keescook>
+        Thu, 6 Oct 2022 22:35:46 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A4F00B48A1;
+        Thu,  6 Oct 2022 19:35:43 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7D27461B27;
+        Fri,  7 Oct 2022 02:35:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C611AC433C1;
+        Fri,  7 Oct 2022 02:35:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665110142;
+        bh=cQuKCiWfU/2J+LYO5sPPzD/nSjKkEzACVE1++kaEJxg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SxpaYvLSh3p1Dakz0anXXycu0YeCICXXKUP0me6Payo0t3NVqdHG/0PBQ9eATaADq
+         pN5iZKhCIzmlM+q+0Epi9k2bS3Q7g5qa4kbfd4JynzFPAfJ3rWzhTHvlFBx/cinBzp
+         N4wwdemWu6S1I2k/+iFfxxexKPvLLXkKVioucyQyx3Y4hMFZtJv/+XRjVlTzT/niRX
+         fiPXwLjoflavHYOBZQPvHLe1hYCZ8IM1Qve4tQRP38NcqxuEX3LB1uj51Qs53QIAE4
+         BjKa2PvEG6p+7BnVCUC/4OZFXQwpEsLsvRiBtjNReUiibdx8jsYJH8GSmJ7/elcQH9
+         wvYBTmWSkfb0w==
+Date:   Thu, 6 Oct 2022 19:35:42 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-man@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-xfs@vger.kernel.org, linux-fscrypt@vger.kernel.org,
+        linux-block@vger.kernel.org
+Subject: Re: [man-pages PATCH v3] statx.2, open.2: document STATX_DIOALIGN
+Message-ID: <Yz+QflrzmdpF7g70@magnolia>
+References: <20221004174307.6022-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202210061301.207A20C8E5@keescook>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+In-Reply-To: <20221004174307.6022-1-ebiggers@kernel.org>
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,30 +57,148 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 06, 2022 at 01:20:35PM -0700, Kees Cook wrote:
+On Tue, Oct 04, 2022 at 10:43:07AM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
 > 
-> So the question, then, is "why are they trying to exec while actively
-> spawning new threads?" That appears to be the core problem here, and as
-> far as I can tell, the kernel has behaved this way for a very long time.
-> I don't think the kernel should fix this, either, because it leads to a
-> very weird state for userspace, where the thread spawner may suddenly
-> die due to the exec happening in another thread. This really looks like
-> something userspace needs to handle correctly (i.e. don't try to exec
-> while actively spawning threads).
+> Document the STATX_DIOALIGN support for statx()
+> (https://git.kernel.org/linus/725737e7c21d2d25).
+> 
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> 
+> I'm resending this now that support for STATX_DIOALIGN has been merged
+> upstream.
 
-One of the classic failure modes is when a threaded program calls a
-library, and that library might try to do a fork/exec (or call
-system(3) to run some command.  e.g., such as running "lvm create ..."
-or to spawn some kind of helper daemon.
+Woo!  Thank you for getting this over the line! :)
 
-There are a number of stack overflow questions about this, and there
-are some solutions to _some_ of the problems, such as using
-pthread_atfork(), and knowing that you are about to call fork/exec,
-and use some out of band mechanism to to make sure no threads get
-spawned until the fork/exec is completed --- but if you don't know
-that a library is going to do a fork/exec, well, life is tough. 
+--D
 
-One technique even advocated by a stack overflow article is "avoid
-using threads whenver possible".  :-/
-
-	       	       	  	   - Ted
+> v3: updated mentions of Linux version, fixed some punctuation, and added
+>     a Reviewed-by
+> 
+> v2: rebased onto man-pages master branch, mentioned xfs, and updated
+>     link to patchset
+> 
+>  man2/open.2  | 43 ++++++++++++++++++++++++++++++++-----------
+>  man2/statx.2 | 29 +++++++++++++++++++++++++++++
+>  2 files changed, 61 insertions(+), 11 deletions(-)
+> 
+> diff --git a/man2/open.2 b/man2/open.2
+> index deba7e4ea..b8617e0d2 100644
+> --- a/man2/open.2
+> +++ b/man2/open.2
+> @@ -1732,21 +1732,42 @@ of user-space buffers and the file offset of I/Os.
+>  In Linux alignment
+>  restrictions vary by filesystem and kernel version and might be
+>  absent entirely.
+> -However there is currently no filesystem\-independent
+> -interface for an application to discover these restrictions for a given
+> -file or filesystem.
+> -Some filesystems provide their own interfaces
+> -for doing so, for example the
+> +The handling of misaligned
+> +.B O_DIRECT
+> +I/Os also varies; they can either fail with
+> +.B EINVAL
+> +or fall back to buffered I/O.
+> +.PP
+> +Since Linux 6.1,
+> +.B O_DIRECT
+> +support and alignment restrictions for a file can be queried using
+> +.BR statx (2),
+> +using the
+> +.B STATX_DIOALIGN
+> +flag.
+> +Support for
+> +.B STATX_DIOALIGN
+> +varies by filesystem; see
+> +.BR statx (2).
+> +.PP
+> +Some filesystems provide their own interfaces for querying
+> +.B O_DIRECT
+> +alignment restrictions, for example the
+>  .B XFS_IOC_DIOINFO
+>  operation in
+>  .BR xfsctl (3).
+> +.B STATX_DIOALIGN
+> +should be used instead when it is available.
+>  .PP
+> -Under Linux 2.4, transfer sizes, the alignment of the user buffer,
+> -and the file offset must all be multiples of the logical block size
+> -of the filesystem.
+> -Since Linux 2.6.0, alignment to the logical block size of the
+> -underlying storage (typically 512 bytes) suffices.
+> -The logical block size can be determined using the
+> +If none of the above is available, then direct I/O support and alignment
+> +restrictions can only be assumed from known characteristics of the filesystem,
+> +the individual file, the underlying storage device(s), and the kernel version.
+> +In Linux 2.4, most block device based filesystems require that the file offset
+> +and the length and memory address of all I/O segments be multiples of the
+> +filesystem block size (typically 4096 bytes).
+> +In Linux 2.6.0, this was relaxed to the logical block size of the block device
+> +(typically 512 bytes).
+> +A block device's logical block size can be determined using the
+>  .BR ioctl (2)
+>  .B BLKSSZGET
+>  operation or from the shell using the command:
+> diff --git a/man2/statx.2 b/man2/statx.2
+> index 0d1b4591f..50397057d 100644
+> --- a/man2/statx.2
+> +++ b/man2/statx.2
+> @@ -61,7 +61,12 @@ struct statx {
+>         containing the filesystem where the file resides */
+>      __u32 stx_dev_major;   /* Major ID */
+>      __u32 stx_dev_minor;   /* Minor ID */
+> +
+>      __u64 stx_mnt_id;      /* Mount ID */
+> +
+> +    /* Direct I/O alignment restrictions */
+> +    __u32 stx_dio_mem_align;
+> +    __u32 stx_dio_offset_align;
+>  };
+>  .EE
+>  .in
+> @@ -247,6 +252,8 @@ STATX_BTIME	Want stx_btime
+>  STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
+>  	It is deprecated and should not be used.
+>  STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
+> +STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align
+> +	(since Linux 6.1; support varies by filesystem)
+>  .TE
+>  .in
+>  .PP
+> @@ -407,6 +414,28 @@ This is the same number reported by
+>  .BR name_to_handle_at (2)
+>  and corresponds to the number in the first field in one of the records in
+>  .IR /proc/self/mountinfo .
+> +.TP
+> +.I stx_dio_mem_align
+> +The alignment (in bytes) required for user memory buffers for direct I/O
+> +.BR "" ( O_DIRECT )
+> +on this file, or 0 if direct I/O is not supported on this file.
+> +.IP
+> +.B STATX_DIOALIGN
+> +.IR "" ( stx_dio_mem_align
+> +and
+> +.IR stx_dio_offset_align )
+> +is supported on block devices since Linux 6.1.
+> +The support on regular files varies by filesystem; it is supported by ext4,
+> +f2fs, and xfs since Linux 6.1.
+> +.TP
+> +.I stx_dio_offset_align
+> +The alignment (in bytes) required for file offsets and I/O segment lengths for
+> +direct I/O
+> +.BR "" ( O_DIRECT )
+> +on this file, or 0 if direct I/O is not supported on this file.
+> +This will only be nonzero if
+> +.I stx_dio_mem_align
+> +is nonzero, and vice versa.
+>  .PP
+>  For further information on the above fields, see
+>  .BR inode (7).
+> 
+> base-commit: bc28d289e5066fc626df260bafc249846a0f6ae6
+> -- 
+> 2.37.3
+> 
