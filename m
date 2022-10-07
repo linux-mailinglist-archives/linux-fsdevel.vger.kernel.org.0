@@ -2,119 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C5F55F76CA
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 12:22:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4E445F7737
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 13:14:14 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229642AbiJGKWb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Oct 2022 06:22:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42954 "EHLO
+        id S229555AbiJGLOL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Oct 2022 07:14:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbiJGKW3 (ORCPT
+        with ESMTP id S229643AbiJGLOK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Oct 2022 06:22:29 -0400
-Received: from conssluserg-02.nifty.com (conssluserg-02.nifty.com [210.131.2.81])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1B833DBED;
-        Fri,  7 Oct 2022 03:22:27 -0700 (PDT)
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id 297AMEvQ026718;
-        Fri, 7 Oct 2022 19:22:15 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com 297AMEvQ026718
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1665138135;
-        bh=v6R9VW9CvNnIPxZU2kpYVPvJFCqUvYSumQarCG0Cerk=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=zLSJjHLIQJAkeagXnGYLwewIgt97fZLTzOId4Oe8VaS10oWFyd9D+CNgzkwUOlRVc
-         JEegGYepg822P00bA0N/ktpVz7Od6lVius4h4rtoHWlOyeCjUr5oe1C+457OTZMnH6
-         QpW6iUVrYSxr6ZVPRf9Q70yrdcFpTo9/FOMR94tiJQzy6ffL7ZhTV3Alj8dKKyMVEO
-         QZ/hH9OaK0hEKBFTCMTRouTa0vWlvOIqhjj4/mp0hoTjOwrtCiOTw3S+mVoNi9UTlR
-         AroDM6GIpTyuc9c4CJ50gO+3diiSvj1ja4wW9v2V1Cu8p4dyVdfKWUepyeXpj49acI
-         6K0wXPsNUgySQ==
-X-Nifty-SrcIP: [209.85.160.44]
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-132fb4fd495so5076569fac.12;
-        Fri, 07 Oct 2022 03:22:15 -0700 (PDT)
-X-Gm-Message-State: ACrzQf2nYq3OFkh3JYTwcuc+uyA9Vw1fzimcAUwgm1YcYBxlcmWV11V7
-        HCEOSdddAx0zpIS6Ro9B8aMY0ypJhJMeCOxv7RA=
-X-Google-Smtp-Source: AMsMyM6p4RmVl0lWCJhJ6LJiYVBZr+poUdbCGiq93ZYl33z69uioaMPeZvHhvZHGTn59a1RuLFsTqu2SZdyREGXDS0k=
-X-Received: by 2002:a05:6870:c58b:b0:10b:d21d:ad5e with SMTP id
- ba11-20020a056870c58b00b0010bd21dad5emr2087845oab.287.1665138134138; Fri, 07
- Oct 2022 03:22:14 -0700 (PDT)
+        Fri, 7 Oct 2022 07:14:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1519A223C;
+        Fri,  7 Oct 2022 04:14:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8372961C4E;
+        Fri,  7 Oct 2022 11:14:09 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FF19C433C1;
+        Fri,  7 Oct 2022 11:14:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665141248;
+        bh=iGUUEynvCAjegBrsy6JU4OD39853Ax+NThhfisNR9Vo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fmKEzZfv+NcFm5KZPC8vC7ZMGO+4smagpqxidG4f8sTZ/z8q2aoMCJSNtysPorB+u
+         kk9P97XlyfQbbtnFo8LHPNJFX9dz+rglzxIJfihqhOEfRZ95SMPj67dZ/fvnuNbSqC
+         jqfHkAdl/kZOqmVgzI+rs0S1M/uPV1KhYkYw7RvKkChyMhuiR2/2wEETdeyyy8vdL+
+         xSn8DoYpH/zTYYkmMvP9NOyVC0t2HvDfp9uL80OcPykiAatvUGYg8ebg5q6VkchIVf
+         DXvK7t9XwhCTk3XnR5NXjkt3/qkelWVMPuwnPC3EPAwGRYke53ktd+UBomw4T2mbx6
+         O0+yu62YgKnxg==
+Date:   Fri, 7 Oct 2022 14:14:03 +0300
+From:   Jarkko Sakkinen <jarkko@kernel.org>
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v8 2/8] KVM: Extend the memslot to support fd-based
+ private memory
+Message-ID: <Y0AJ++m/TxoscOZg@kernel.org>
+References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
+ <20220915142913.2213336-3-chao.p.peng@linux.intel.com>
+ <Yz7s+JIexAHJm5dc@kernel.org>
+ <Yz7vHXZmU3EpmI0j@kernel.org>
+ <Yz71ogila0mSHxxJ@google.com>
 MIME-Version: 1.0
-References: <20221003222133.20948-1-aliraza@bu.edu> <20221003222133.20948-11-aliraza@bu.edu>
- <d2089a89-21a9-1e05-5d58-91b8411f7141@gmail.com> <53c84c25-31ff-29d5-c6fb-85cb307f1704@bu.edu>
-In-Reply-To: <53c84c25-31ff-29d5-c6fb-85cb307f1704@bu.edu>
-From:   Masahiro Yamada <masahiroy@kernel.org>
-Date:   Fri, 7 Oct 2022 19:21:37 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAT-Q=sS-9L1eRuOnomqqDNyRp2knZh+2SYLqB2Gn8ekHg@mail.gmail.com>
-Message-ID: <CAK7LNAT-Q=sS-9L1eRuOnomqqDNyRp2knZh+2SYLqB2Gn8ekHg@mail.gmail.com>
-Subject: Re: [RFC UKL 10/10] Kconfig: Add config option for enabling and
- sample for testing UKL
-To:     Ali Raza <aliraza@bu.edu>
-Cc:     Bagas Sanjaya <bagasdotme@gmail.com>, linux-kernel@vger.kernel.org,
-        corbet@lwn.net, michal.lkml@markovi.net, ndesaulniers@google.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, hpa@zytor.com, luto@kernel.org,
-        ebiederm@xmission.com, keescook@chromium.org, peterz@infradead.org,
-        viro@zeniv.linux.org.uk, arnd@arndb.de, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        bristot@redhat.com, vschneid@redhat.com, pbonzini@redhat.com,
-        jpoimboe@kernel.org, linux-doc@vger.kernel.org,
-        linux-kbuild@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        x86@kernel.org, rjones@redhat.com, munsoner@bu.edu, tommyu@bu.edu,
-        drepper@redhat.com, lwoodman@redhat.com, mboydmcse@gmail.com,
-        okrieg@bu.edu, rmancuso@bu.edu
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_SOFTFAIL autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Yz71ogila0mSHxxJ@google.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 7, 2022 at 6:29 AM Ali Raza <aliraza@bu.edu> wrote:
->
-> On 10/3/22 22:11, Bagas Sanjaya wrote:
-> > On 10/4/22 05:21, Ali Raza wrote:
-> >> Add the KConfig file that will enable building UKL. Documentation
-> >> introduces the technical details for how UKL works and the motivations
-> >> behind why it is useful. Sample provides a simple program that still uses
-> >> the standard system call interface, but does not require a modified C
-> >> library.
-> >>
-> > <snipped>
-> >>  Documentation/index.rst   |   1 +
-> >>  Documentation/ukl/ukl.rst | 104 ++++++++++++++++++++++++++++++++++++++
-> >>  Kconfig                   |   2 +
-> >>  kernel/Kconfig.ukl        |  41 +++++++++++++++
-> >>  samples/ukl/Makefile      |  16 ++++++
-> >>  samples/ukl/README        |  17 +++++++
-> >>  samples/ukl/syscall.S     |  28 ++++++++++
-> >>  samples/ukl/tcp_server.c  |  99 ++++++++++++++++++++++++++++++++++++
-> >>  8 files changed, 308 insertions(+)
-> >>  create mode 100644 Documentation/ukl/ukl.rst
-> >>  create mode 100644 kernel/Kconfig.ukl
-> >>  create mode 100644 samples/ukl/Makefile
-> >>  create mode 100644 samples/ukl/README
-> >>  create mode 100644 samples/ukl/syscall.S
-> >>  create mode 100644 samples/ukl/tcp_server.c
-> >
-> > Shouldn't the documentation be split into its own patch?
-> >
-> Thanks for pointing that out.
->
-> --Ali
->
+On Thu, Oct 06, 2022 at 03:34:58PM +0000, Sean Christopherson wrote:
+> On Thu, Oct 06, 2022, Jarkko Sakkinen wrote:
+> > On Thu, Oct 06, 2022 at 05:58:03PM +0300, Jarkko Sakkinen wrote:
+> > > On Thu, Sep 15, 2022 at 10:29:07PM +0800, Chao Peng wrote:
+> > > > This new extension, indicated by the new flag KVM_MEM_PRIVATE, adds two
+> > > > additional KVM memslot fields private_fd/private_offset to allow
+> > > > userspace to specify that guest private memory provided from the
+> > > > private_fd and guest_phys_addr mapped at the private_offset of the
+> > > > private_fd, spanning a range of memory_size.
+> > > > 
+> > > > The extended memslot can still have the userspace_addr(hva). When use, a
+> > > > single memslot can maintain both private memory through private
+> > > > fd(private_fd/private_offset) and shared memory through
+> > > > hva(userspace_addr). Whether the private or shared part is visible to
+> > > > guest is maintained by other KVM code.
+> > > 
+> > > What is anyway the appeal of private_offset field, instead of having just
+> > > 1:1 association between regions and files, i.e. one memfd per region?
+> 
+> Modifying memslots is slow, both in KVM and in QEMU (not sure about Google's VMM).
+> E.g. if a vCPU converts a single page, it will be forced to wait until all other
+> vCPUs drop SRCU, which can have severe latency spikes, e.g. if KVM is faulting in
+> memory.  KVM's memslot updates also hold a mutex for the entire duration of the
+> update, i.e. conversions on different vCPUs would be fully serialized, exacerbating
+> the SRCU problem.
+> 
+> KVM also has historical baggage where it "needs" to zap _all_ SPTEs when any
+> memslot is deleted.
+> 
+> Taking both a private_fd and a shared userspace address allows userspace to convert
+> between private and shared without having to manipulate memslots.
 
+Right, this was really good explanation, thank you.
 
-The commit subject "Kconfig:" is used for changes
-under scripts/kconfig/.
+Still wondering could this possibly work (or not):
 
-Please use something else.
-
-
--- 
-Best Regards
-Masahiro Yamada
+1. Union userspace_addr and private_fd.
+2. Instead of introducing private_offset, use guest_phys_addr as the
+   offset.
+  
+BR, Jarkko
