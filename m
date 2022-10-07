@@ -2,77 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1BC075F80D0
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Oct 2022 00:36:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBDF95F80F3
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Oct 2022 00:48:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229596AbiJGWgj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Oct 2022 18:36:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43950 "EHLO
+        id S229665AbiJGWr4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Oct 2022 18:47:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229452AbiJGWgh (ORCPT
+        with ESMTP id S229711AbiJGWrx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Oct 2022 18:36:37 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6486582620
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Oct 2022 15:36:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1665182195;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=r6bv2go9G+BjO6JEUVB2l8Xszg9KiwwYaLXejJm6qDg=;
-        b=CIyTD0CJdQXhn5Lh6ojQDDMYJuQfZ4ZodwaTpthoAxNV/7TaYL6O8TR0U2mD+zHy9e/q3n
-        51G5vYwXF77rqtS5G6agMUbIBtWUNT97LWsvHKrRJotSK3ypuuCXdFmMwkwSNorjrEZGJ5
-        w+lBp/u3JdXH0AtMFZg7t1o9yyFpZ98=
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
- [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-460-vVlVjoWNMuy1bzr9M4DRSA-1; Fri, 07 Oct 2022 18:36:34 -0400
-X-MC-Unique: vVlVjoWNMuy1bzr9M4DRSA-1
-Received: by mail-qv1-f71.google.com with SMTP id eu10-20020ad44f4a000000b004b18126c4bfso3713275qvb.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Oct 2022 15:36:34 -0700 (PDT)
+        Fri, 7 Oct 2022 18:47:53 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 949B711C24B
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Oct 2022 15:47:46 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id d24so5774455pls.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Oct 2022 15:47:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yZqaicka3IU4vV1MYdOWb5w3mOcfwDVNwAUulPcr27Y=;
+        b=iXQ9UvdzaG3zByw2GBNLz3/YVU1qnMbHWTkFhauTR657sXRQGAG+NlE+Q9rJd5luVx
+         INuHridXF4858oAPsKtGfjtbkx2VdjBSQCDETBbwUrSMqp7tkUzuQxOHz4Iev7dLesfK
+         vpnuiiKohn9Hx+Mnal9EiATSUtY0yZ8+mCOj4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r6bv2go9G+BjO6JEUVB2l8Xszg9KiwwYaLXejJm6qDg=;
-        b=xA+tDPL7jcDjv/VP3gZRrVqzaieoQxOY4AZrd+jlfuQ9puc4E1AUH1woyZR96+6qLT
-         dhTw387L6d0upF8uKeiczUg8+XIgPsFBCjOCLuUKfznlGFYyHZh8jPZsSV8bSp2J4JZi
-         QPQDrMyVh5IqxnNLpSIDG4QdZLnRz2xnnxzuGVZdD3Usec+kTgFMT7RwGuQ4TD1e02Pq
-         3CuqOXDXTzyy91EsABqhqP0nCHQ99V1ytRqfOeeofz4cvu/HCjYuVKVE1N0ocTyKC/Rg
-         9fJukHrJACtBX00/qUpqVTtK/pwHgo4o6iI5oZmstBN0SX/71lGqZ43SHSkVxadhv52+
-         aeVw==
-X-Gm-Message-State: ACrzQf0Pm9KAlMrYsHINO8HXbX/Ru/d4s++16cFQO1jKdsV9C78jdSHx
-        wIp5ggHKw4vDePDZ1atavAMTs8mPH7Uynp8vh1bYoJ/C5djHNiBK9jv3WyWhBqlvCHYxbU/1cqg
-        e+wFukOw8QX0eNjbYzw+rhJDDbQ==
-X-Received: by 2002:ad4:5bc5:0:b0:4af:b73f:1914 with SMTP id t5-20020ad45bc5000000b004afb73f1914mr6080924qvt.117.1665182194075;
-        Fri, 07 Oct 2022 15:36:34 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM78p2McfJOYHRwtugZaxb3pWVgHssIx6T2xoDstxpOxZiXQBQs1wSoGi63opRGYZnFej6t5Pw==
-X-Received: by 2002:ad4:5bc5:0:b0:4af:b73f:1914 with SMTP id t5-20020ad45bc5000000b004afb73f1914mr6080907qvt.117.1665182193919;
-        Fri, 07 Oct 2022 15:36:33 -0700 (PDT)
-Received: from xz-m1.local (bras-base-aurron9127w-grc-46-70-31-27-79.dsl.bell.ca. [70.31.27.79])
-        by smtp.gmail.com with ESMTPSA id r23-20020ae9d617000000b006ce5ba64e30sm2958721qkk.136.2022.10.07.15.36.31
+        bh=yZqaicka3IU4vV1MYdOWb5w3mOcfwDVNwAUulPcr27Y=;
+        b=K8cvKiJk8FUrT6vXvfd2c7hJ+Z1HSI5w7SETqjPUuoMht64R+nMR5jEYR1IQ8QDKt0
+         BikY18LM1dA9nhAu54h0QQxFRDjPiSbKVb3WJFZ/vmWc3NTgJWQZWQgllXjdI8DXjx0m
+         VT/ia40AuLx/D8MJvo+qkdV/7VBAQlkahGE+S+BTp/ApRv1knmGazyMom38vFRLJ9lYn
+         Idi5fYGVsjSmJ05a0905ZZIv7e5BSwhyL1SFBBNxYF33S/5Op89KVKtCmzqg0xfuMRXX
+         bMNhQxQLCNXbVAOggt1P0uq+3TFhKeod0nh+eY1GCi7dKS9nNNpeSuPURdghrPWcz/XR
+         JRGg==
+X-Gm-Message-State: ACrzQf3YnkNqeZ5mYW1mHtGUKhPVsOoRVHgPoD1P2Y30UC0htALC1xic
+        kFgjxVNZj3Ruuv8zxCbSITj4HA==
+X-Google-Smtp-Source: AMsMyM69gQJ00Sz5u9R9f9VP3RUWXmTzR4M6xX7XuJJaYjHWOM1kbOa6WmdFAYvizvrv4fE33FE/eQ==
+X-Received: by 2002:a17:902:6945:b0:17b:f38b:900f with SMTP id k5-20020a170902694500b0017bf38b900fmr6900771plt.85.1665182865829;
+        Fri, 07 Oct 2022 15:47:45 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id q27-20020aa7983b000000b005625d5ae760sm2210282pfl.11.2022.10.07.15.47.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 15:36:33 -0700 (PDT)
-Date:   Fri, 7 Oct 2022 18:36:30 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     syzbot <syzbot+2c2bb573a9524a95e787@syzkaller.appspotmail.com>
-Cc:     akpm@linux-foundation.org, david@redhat.com, jack@suse.cz,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, namit@vmware.com, rppt@kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Subject: Re: [syzbot] WARNING in change_pte_range
-Message-ID: <Y0Cp7uHwq4yWMiDN@xz-m1.local>
-References: <000000000000495a9305e9dea876@google.com>
- <0000000000004f5d5205ea790cf0@google.com>
+        Fri, 07 Oct 2022 15:47:45 -0700 (PDT)
+Date:   Fri, 7 Oct 2022 15:47:44 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph =?iso-8859-1?Q?B=F6hmwalder?= 
+        <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Helge Deller <deller@gmx.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        KP Singh <kpsingh@kernel.org>, Marco Elver <elver@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Graf <tgraf@suug.ch>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
+        Yury Norov <yury.norov@gmail.com>,
+        dri-devel@lists.freedesktop.org, kasan-dev@googlegroups.com,
+        kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-mm@kvack.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-nvme@lists.infradead.org, linux-parisc@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        loongarch@lists.linux.dev, netdev@vger.kernel.org,
+        sparclinux@vger.kernel.org, x86@kernel.org, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v4 2/6] treewide: use prandom_u32_max() when possible
+Message-ID: <202210071241.445289C5@keescook>
+References: <20221007180107.216067-1-Jason@zx2c4.com>
+ <20221007180107.216067-3-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0000000000004f5d5205ea790cf0@google.com>
-X-Spam-Status: No, score=0.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+In-Reply-To: <20221007180107.216067-3-Jason@zx2c4.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_NONE autolearn=no autolearn_force=no
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,33 +125,280 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 07, 2022 at 03:08:22PM -0700, syzbot wrote:
-> syzbot has bisected this issue to:
-> 
-> commit b1f9e876862d8f7176299ec4fb2108bc1045cbc8
-> Author: Peter Xu <peterx@redhat.com>
-> Date:   Fri May 13 03:22:56 2022 +0000
-> 
->     mm/uffd: enable write protection for shmem & hugetlbfs
-> 
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=108e8fb8880000
-> start commit:   511cce163b75 Merge tag 'net-6.0-rc8' of git://git.kernel.o..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=128e8fb8880000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=148e8fb8880000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=4520785fccee9b40
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2c2bb573a9524a95e787
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ecac35080000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15668b38880000
-> 
-> Reported-by: syzbot+2c2bb573a9524a95e787@syzkaller.appspotmail.com
-> Fixes: b1f9e876862d ("mm/uffd: enable write protection for shmem & hugetlbfs")
-> 
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
-> 
+On Fri, Oct 07, 2022 at 12:01:03PM -0600, Jason A. Donenfeld wrote:
+> Rather than incurring a division or requesting too many random bytes for
+> the given range, use the prandom_u32_max() function, which only takes
+> the minimum required bytes from the RNG and avoids divisions.
 
-#syz dup: WARNING in change_protection
+I actually meant splitting the by-hand stuff by subsystem, but nearly
+all of these can be done mechanically too, so it shouldn't be bad. Notes
+below...
+
+> 
+> [...]
+> diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
+> index 92bcc1768f0b..87203429f802 100644
+> --- a/arch/arm64/kernel/process.c
+> +++ b/arch/arm64/kernel/process.c
+> @@ -595,7 +595,7 @@ unsigned long __get_wchan(struct task_struct *p)
+>  unsigned long arch_align_stack(unsigned long sp)
+>  {
+>  	if (!(current->personality & ADDR_NO_RANDOMIZE) && randomize_va_space)
+> -		sp -= get_random_int() & ~PAGE_MASK;
+> +		sp -= prandom_u32_max(PAGE_SIZE);
+>  	return sp & ~0xf;
+>  }
+>  
+
+@mask@
+expression MASK;
+@@
+
+- (get_random_int() & ~(MASK))
++ prandom_u32_max(MASK)
+
+> diff --git a/arch/loongarch/kernel/vdso.c b/arch/loongarch/kernel/vdso.c
+> index f32c38abd791..8c9826062652 100644
+> --- a/arch/loongarch/kernel/vdso.c
+> +++ b/arch/loongarch/kernel/vdso.c
+> @@ -78,7 +78,7 @@ static unsigned long vdso_base(void)
+>  	unsigned long base = STACK_TOP;
+>  
+>  	if (current->flags & PF_RANDOMIZE) {
+> -		base += get_random_int() & (VDSO_RANDOMIZE_SIZE - 1);
+> +		base += prandom_u32_max(VDSO_RANDOMIZE_SIZE);
+>  		base = PAGE_ALIGN(base);
+>  	}
+>  
+
+@minus_one@
+expression FULL;
+@@
+
+- (get_random_int() & ((FULL) - 1)
++ prandom_u32_max(FULL)
+
+> diff --git a/arch/parisc/kernel/vdso.c b/arch/parisc/kernel/vdso.c
+> index 63dc44c4c246..47e5960a2f96 100644
+> --- a/arch/parisc/kernel/vdso.c
+> +++ b/arch/parisc/kernel/vdso.c
+> @@ -75,7 +75,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
+>  
+>  	map_base = mm->mmap_base;
+>  	if (current->flags & PF_RANDOMIZE)
+> -		map_base -= (get_random_int() & 0x1f) * PAGE_SIZE;
+> +		map_base -= prandom_u32_max(0x20) * PAGE_SIZE;
+>  
+>  	vdso_text_start = get_unmapped_area(NULL, map_base, vdso_text_len, 0, 0);
+>  
+
+These are more fun, but Coccinelle can still do them with a little
+Pythonic help:
+
+// Find a potential literal
+@literal_mask@
+expression LITERAL;
+identifier randfunc =~ "get_random_int|prandom_u32|get_random_u32";
+position p;
+@@
+
+        (randfunc()@p & (LITERAL))
+
+// Add one to the literal.
+@script:python add_one@
+literal << literal_mask.LITERAL;
+RESULT;
+@@
+
+if literal.startswith('0x'):
+        value = int(literal, 16) + 1
+        coccinelle.RESULT = cocci.make_expr("0x%x" % (value))
+elif literal[0] in '123456789':
+        value = int(literal, 10) + 1
+        coccinelle.RESULT = cocci.make_expr("%d" % (value))
+else:
+        print("I don't know how to handle: %s" % (literal))
+
+// Replace the literal mask with the calculated result.
+@plus_one@
+expression literal_mask.LITERAL;
+position literal_mask.p;
+expression add_one.RESULT;
+identifier FUNC;
+@@
+
+-       (FUNC()@p & (LITERAL))
++       prandom_u32_max(RESULT)
+
+> diff --git a/drivers/mtd/tests/stresstest.c b/drivers/mtd/tests/stresstest.c
+> index cb29c8c1b370..d2faaca7f19d 100644
+> --- a/drivers/mtd/tests/stresstest.c
+> +++ b/drivers/mtd/tests/stresstest.c
+> @@ -45,9 +45,8 @@ static int rand_eb(void)
+>  	unsigned int eb;
+>  
+>  again:
+> -	eb = prandom_u32();
+>  	/* Read or write up 2 eraseblocks at a time - hence 'ebcnt - 1' */
+> -	eb %= (ebcnt - 1);
+> +	eb = prandom_u32_max(ebcnt - 1);
+>  	if (bbt[eb])
+>  		goto again;
+>  	return eb;
+
+This can also be done mechanically:
+
+@multi_line@
+identifier randfunc =~ "get_random_int|prandom_u32|get_random_u32";
+identifier RAND;
+expression E;
+@@
+
+-       RAND = randfunc();
+        ... when != RAND
+-       RAND %= (E);
++       RAND = prandom_u32_max(E);
+
+@collapse_ret@
+type TYPE;
+identifier VAR;
+expression E;
+@@
+
+ {
+-       TYPE VAR;
+-       VAR = (E);
+-       return VAR;
++       return E;
+ }
+
+@drop_var@
+type TYPE;
+identifier VAR;
+@@
+
+ {
+-       TYPE VAR;
+        ... when != VAR
+ }
+
+> diff --git a/fs/ext2/ialloc.c b/fs/ext2/ialloc.c
+> index 998dd2ac8008..f4944c4dee60 100644
+> --- a/fs/ext2/ialloc.c
+> +++ b/fs/ext2/ialloc.c
+> @@ -277,8 +277,7 @@ static int find_group_orlov(struct super_block *sb, struct inode *parent)
+>  		int best_ndir = inodes_per_group;
+>  		int best_group = -1;
+>  
+> -		group = prandom_u32();
+> -		parent_group = (unsigned)group % ngroups;
+> +		parent_group = prandom_u32_max(ngroups);
+>  		for (i = 0; i < ngroups; i++) {
+>  			group = (parent_group + i) % ngroups;
+>  			desc = ext2_get_group_desc (sb, group, NULL);
+
+Okay, that one is too much for me -- checking that group is never used
+after the assignment removal is likely possible, but beyond my cocci
+know-how. :)
+
+> diff --git a/fs/ext4/ialloc.c b/fs/ext4/ialloc.c
+> index f73e5eb43eae..36d5bc595cc2 100644
+> --- a/fs/ext4/ialloc.c
+> +++ b/fs/ext4/ialloc.c
+> @@ -463,10 +463,9 @@ static int find_group_orlov(struct super_block *sb, struct inode *parent,
+>  			hinfo.hash_version = DX_HASH_HALF_MD4;
+>  			hinfo.seed = sbi->s_hash_seed;
+>  			ext4fs_dirhash(parent, qstr->name, qstr->len, &hinfo);
+> -			grp = hinfo.hash;
+> +			parent_group = hinfo.hash % ngroups;
+>  		} else
+> -			grp = prandom_u32();
+> -		parent_group = (unsigned)grp % ngroups;
+> +			parent_group = prandom_u32_max(ngroups);
+>  		for (i = 0; i < ngroups; i++) {
+>  			g = (parent_group + i) % ngroups;
+>  			get_orlov_stats(sb, g, flex_size, &stats);
+
+Much less easy mechanically. :)
+
+> diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
+> index 0927f44cd478..41a0321f641a 100644
+> --- a/lib/test_hexdump.c
+> +++ b/lib/test_hexdump.c
+> @@ -208,7 +208,7 @@ static void __init test_hexdump_overflow(size_t buflen, size_t len,
+>  static void __init test_hexdump_overflow_set(size_t buflen, bool ascii)
+>  {
+>  	unsigned int i = 0;
+> -	int rs = (prandom_u32_max(2) + 1) * 16;
+> +	int rs = prandom_u32_max(2) + 1 * 16;
+>  
+>  	do {
+>  		int gs = 1 << i;
+
+This looks wrong. Cocci says:
+
+-       int rs = (get_random_int() % 2 + 1) * 16;
++       int rs = (prandom_u32_max(2) + 1) * 16;
+
+> diff --git a/lib/test_vmalloc.c b/lib/test_vmalloc.c
+> index 4f2f2d1bac56..56ffaa8dd3f6 100644
+> --- a/lib/test_vmalloc.c
+> +++ b/lib/test_vmalloc.c
+> @@ -151,9 +151,7 @@ static int random_size_alloc_test(void)
+>  	int i;
+>  
+>  	for (i = 0; i < test_loop_count; i++) {
+> -		n = prandom_u32();
+> -		n = (n % 100) + 1;
+> -
+> +		n = prandom_u32_max(n % 100) + 1;
+>  		p = vmalloc(n * PAGE_SIZE);
+>  
+>  		if (!p)
+
+This looks wrong. Cocci says:
+
+-               n = prandom_u32();
+-               n = (n % 100) + 1;
++               n = prandom_u32_max(100) + 1;
+
+> @@ -293,16 +291,12 @@ pcpu_alloc_test(void)
+>  		return -1;
+>  
+>  	for (i = 0; i < 35000; i++) {
+> -		unsigned int r;
+> -
+> -		r = prandom_u32();
+> -		size = (r % (PAGE_SIZE / 4)) + 1;
+> +		size = prandom_u32_max(PAGE_SIZE / 4) + 1;
+>  
+>  		/*
+>  		 * Maximum PAGE_SIZE
+>  		 */
+> -		r = prandom_u32();
+> -		align = 1 << ((r % 11) + 1);
+> +		align = 1 << (prandom_u32_max(11) + 1);
+>  
+>  		pcpu[i] = __alloc_percpu(size, align);
+>  		if (!pcpu[i])
+> @@ -393,14 +387,11 @@ static struct test_driver {
+>  
+>  static void shuffle_array(int *arr, int n)
+>  {
+> -	unsigned int rnd;
+>  	int i, j;
+>  
+>  	for (i = n - 1; i > 0; i--)  {
+> -		rnd = prandom_u32();
+> -
+>  		/* Cut the range. */
+> -		j = rnd % i;
+> +		j = prandom_u32_max(i);
+>  
+>  		/* Swap indexes. */
+>  		swap(arr[i], arr[j]);
+
+Yup, agrees with Cocci on these.
 
 -- 
-Peter Xu
-
+Kees Cook
