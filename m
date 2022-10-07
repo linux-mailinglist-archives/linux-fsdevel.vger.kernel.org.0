@@ -2,136 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A98BF5F7982
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 16:08:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6BF3B5F7A2A
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 16:59:23 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229713AbiJGOIW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Oct 2022 10:08:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34442 "EHLO
+        id S229737AbiJGO7V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Oct 2022 10:59:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229445AbiJGOIU (ORCPT
+        with ESMTP id S229992AbiJGO7D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Oct 2022 10:08:20 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74FBC120EE1;
-        Fri,  7 Oct 2022 07:08:19 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E2A6961D16;
-        Fri,  7 Oct 2022 14:08:18 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070E7C433C1;
-        Fri,  7 Oct 2022 14:08:11 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="nfYgePI9"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-        t=1665151688;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=GwMExxyHWRhjupCjy80ATuiTjwid+3186g/nbW9UcWo=;
-        b=nfYgePI9KM8BlGnmbR3ouUoTgbqX0bmg+MHxz9qox2mDg1Ao4QNQA34F1ojE6QWVH7lnMZ
-        JCnOmfX2/22xviCjt9MflZdzSKJ6jqjmdSwH6RCVEhuoe4krJ9q8+B6hn4YxZ0DzwoUloS
-        EW51bMUr/eMjeREL5G2BmpFXN0LLrR0=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 7db71c1d (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-        Fri, 7 Oct 2022 14:08:08 +0000 (UTC)
-Date:   Fri, 7 Oct 2022 08:07:58 -0600
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "patches@lists.linux.dev" <patches@lists.linux.dev>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph =?utf-8?Q?B=C3=B6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Helge Deller <deller@gmx.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Berg <johannes@sipsolutions.net>,
+        Fri, 7 Oct 2022 10:59:03 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3ACC0DD8A8
+        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Oct 2022 07:58:59 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id h10so4781481plb.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Oct 2022 07:58:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ApS1gjiguDXZcZz0fMT7VsMAGGvTEXNN7etXS65aF2E=;
+        b=P9at1gy00LaQ67U9E1PqFxXj/+/Ep5lZ2MxNKcytXi47pMqLiyWzEa/Xe2j6FHWM4y
+         /hs7KujqnFNPAE3jZS5MWMfe3+xQAhIhJuW1dyoA1ekhjNaxULNBuqb/2klgeUPGWkYF
+         5S5WGPJDOLGI8G3dhBrFVznCIwrT7f7u07MoT7kQCn0HddgT1cP9+6D1aAApMjbGxIQJ
+         KQ5lGGS71MMnAnQJ7FClUslBS7YWByNlLuUfhv2PRp7+0dcRnApGUnnJxK061ld3oLrF
+         aqw3+neqPNcUW0v6HArS65p+1L4Mc4p5Eyi3bOlG00rA6Ll3S9qG/ECPlhkMQusT3cha
+         xF/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ApS1gjiguDXZcZz0fMT7VsMAGGvTEXNN7etXS65aF2E=;
+        b=l8Gff+JOtmjSJH1DJi0KwYwO4l1wKmiuXuDttL1yc6sM3lz6KMq65+9J3nKm4hXb3P
+         ftbHSktwTpT3VKMAF4c5toz6FkifapTvC7Pp/C+Jyj2A2Z3crZ1DpqcL8WrOpj65R8Fv
+         i88G1Xi4X14E3jxsivHIVvHHEndBTXrOgwGibGyBoRm49+zUDl60qriLhXoOHQp68TyW
+         0bEmV5X21tUc5fyrLbgSppVyW9QbQHAHldi1SaBhNRQrp5AAo4UduHD9YEAPXZlqBVMR
+         rSEAGwyNCz74xFecNpxmL6g27CnIuQ528Nz3QHu4flOz7COKerCra6PJyJ+1C20zMZTB
+         OoKQ==
+X-Gm-Message-State: ACrzQf3xsyd5evar4z/7khKNt31ysuZjTtpheenoEg7qV80MwKcG6PoD
+        juoBOuLi0w9cY3CLdgECGO8QZw==
+X-Google-Smtp-Source: AMsMyM642quwEQBN0ZX14M9u9coJDsTKuGQ1cCzLKA6Dq2TZW06v6vpj0wGS9syx5rD7OWwlzHZvqw==
+X-Received: by 2002:a17:90b:3ec1:b0:202:f490:e508 with SMTP id rm1-20020a17090b3ec100b00202f490e508mr5980841pjb.156.1665154738493;
+        Fri, 07 Oct 2022 07:58:58 -0700 (PDT)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id m22-20020a63ed56000000b0043a0de69c94sm1750587pgk.14.2022.10.07.07.58.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 07 Oct 2022 07:58:57 -0700 (PDT)
+Date:   Fri, 7 Oct 2022 14:58:54 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Marco Elver <elver@google.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Russell King <linux@armlinux.org.uk>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Graf <tgraf@suug.ch>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v3 3/5] treewide: use get_random_u32() when possible
-Message-ID: <Y0Ayvov/KQmrIwTS@zx2c4.com>
-References: <20221006165346.73159-1-Jason@zx2c4.com>
- <20221006165346.73159-4-Jason@zx2c4.com>
- <848ed24c-13ef-6c38-fd13-639b33809194@csgroup.eu>
- <CAHmME9raQ4E00r9r8NyWJ17iSXE_KniTG0onCNAfMmfcGar1eg@mail.gmail.com>
- <f10fcfbf-2da6-cf2d-6027-fbf8b52803e9@csgroup.eu>
- <6396875c-146a-acf5-dd9e-7f93ba1b4bc3@csgroup.eu>
- <CAHmME9pE4saqnwxhsAwt-xegYGjsavPOGnHCbZhUXD7kaJ+GAA@mail.gmail.com>
- <501b0fc3-6c67-657f-781e-25ee0283bc2e@csgroup.eu>
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v8 2/8] KVM: Extend the memslot to support fd-based
+ private memory
+Message-ID: <Y0A+rogB6TRDtbyE@google.com>
+References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
+ <20220915142913.2213336-3-chao.p.peng@linux.intel.com>
+ <Yz7s+JIexAHJm5dc@kernel.org>
+ <Yz7vHXZmU3EpmI0j@kernel.org>
+ <Yz71ogila0mSHxxJ@google.com>
+ <Y0AJ++m/TxoscOZg@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <501b0fc3-6c67-657f-781e-25ee0283bc2e@csgroup.eu>
-X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+In-Reply-To: <Y0AJ++m/TxoscOZg@kernel.org>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -139,90 +106,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 07, 2022 at 04:57:24AM +0000, Christophe Leroy wrote:
-> 
-> 
-> Le 07/10/2022 à 01:36, Jason A. Donenfeld a écrit :
-> > On 10/6/22, Christophe Leroy <christophe.leroy@csgroup.eu> wrote:
-> >>
-> >>
-> >> Le 06/10/2022 à 19:31, Christophe Leroy a écrit :
-> >>>
-> >>>
-> >>> Le 06/10/2022 à 19:24, Jason A. Donenfeld a écrit :
-> >>>> Hi Christophe,
-> >>>>
-> >>>> On Thu, Oct 6, 2022 at 11:21 AM Christophe Leroy
-> >>>> <christophe.leroy@csgroup.eu> wrote:
-> >>>>> Le 06/10/2022 à 18:53, Jason A. Donenfeld a écrit :
-> >>>>>> The prandom_u32() function has been a deprecated inline wrapper around
-> >>>>>> get_random_u32() for several releases now, and compiles down to the
-> >>>>>> exact same code. Replace the deprecated wrapper with a direct call to
-> >>>>>> the real function. The same also applies to get_random_int(), which is
-> >>>>>> just a wrapper around get_random_u32().
-> >>>>>>
-> >>>>>> Reviewed-by: Kees Cook <keescook@chromium.org>
-> >>>>>> Acked-by: Toke Høiland-Jørgensen <toke@toke.dk> # for sch_cake
-> >>>>>> Acked-by: Chuck Lever <chuck.lever@oracle.com> # for nfsd
-> >>>>>> Reviewed-by: Jan Kara <jack@suse.cz> # for ext4
-> >>>>>> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> >>>>>> ---
-> >>>>>
-> >>>>>> diff --git a/arch/powerpc/kernel/process.c
-> >>>>>> b/arch/powerpc/kernel/process.c
-> >>>>>> index 0fbda89cd1bb..9c4c15afbbe8 100644
-> >>>>>> --- a/arch/powerpc/kernel/process.c
-> >>>>>> +++ b/arch/powerpc/kernel/process.c
-> >>>>>> @@ -2308,6 +2308,6 @@ void notrace __ppc64_runlatch_off(void)
-> >>>>>>     unsigned long arch_align_stack(unsigned long sp)
-> >>>>>>     {
-> >>>>>>         if (!(current->personality & ADDR_NO_RANDOMIZE) &&
-> >>>>>> randomize_va_space)
-> >>>>>> -             sp -= get_random_int() & ~PAGE_MASK;
-> >>>>>> +             sp -= get_random_u32() & ~PAGE_MASK;
-> >>>>>>         return sp & ~0xf;
-> >>>>>
-> >>>>> Isn't that a candidate for prandom_u32_max() ?
-> >>>>>
-> >>>>> Note that sp is deemed to be 16 bytes aligned at all time.
-> >>>>
-> >>>> Yes, probably. It seemed non-trivial to think about, so I didn't. But
-> >>>> let's see here... maybe it's not too bad:
-> >>>>
-> >>>> If PAGE_MASK is always ~(PAGE_SIZE-1), then ~PAGE_MASK is
-> >>>> (PAGE_SIZE-1), so prandom_u32_max(PAGE_SIZE) should yield the same
-> >>>> thing? Is that accurate? And holds across platforms (this comes up a
-> >>>> few places)? If so, I'll do that for a v4.
-> >>>>
-> >>>
-> >>> On powerpc it is always (from arch/powerpc/include/asm/page.h) :
-> >>>
-> >>> /*
-> >>>    * Subtle: (1 << PAGE_SHIFT) is an int, not an unsigned long. So if we
-> >>>    * assign PAGE_MASK to a larger type it gets extended the way we want
-> >>>    * (i.e. with 1s in the high bits)
-> >>>    */
-> >>> #define PAGE_MASK      (~((1 << PAGE_SHIFT) - 1))
-> >>>
-> >>> #define PAGE_SIZE        (1UL << PAGE_SHIFT)
-> >>>
-> >>>
-> >>> So it would work I guess.
-> >>
-> >> But taking into account that sp must remain 16 bytes aligned, would it
-> >> be better to do something like ?
-> >>
-> >> 	sp -= prandom_u32_max(PAGE_SIZE >> 4) << 4;
-> >>
-> >> 	return sp;
+On Fri, Oct 07, 2022, Jarkko Sakkinen wrote:
+> On Thu, Oct 06, 2022 at 03:34:58PM +0000, Sean Christopherson wrote:
+> > On Thu, Oct 06, 2022, Jarkko Sakkinen wrote:
+> > > On Thu, Oct 06, 2022 at 05:58:03PM +0300, Jarkko Sakkinen wrote:
+> > > > On Thu, Sep 15, 2022 at 10:29:07PM +0800, Chao Peng wrote:
+> > > > > This new extension, indicated by the new flag KVM_MEM_PRIVATE, adds two
+> > > > > additional KVM memslot fields private_fd/private_offset to allow
+> > > > > userspace to specify that guest private memory provided from the
+> > > > > private_fd and guest_phys_addr mapped at the private_offset of the
+> > > > > private_fd, spanning a range of memory_size.
+> > > > > 
+> > > > > The extended memslot can still have the userspace_addr(hva). When use, a
+> > > > > single memslot can maintain both private memory through private
+> > > > > fd(private_fd/private_offset) and shared memory through
+> > > > > hva(userspace_addr). Whether the private or shared part is visible to
+> > > > > guest is maintained by other KVM code.
+> > > > 
+> > > > What is anyway the appeal of private_offset field, instead of having just
+> > > > 1:1 association between regions and files, i.e. one memfd per region?
 > > 
-> > Does this assume that sp is already aligned at the beginning of the
-> > function? I'd assume from the function's name that this isn't the
-> > case?
+> > Modifying memslots is slow, both in KVM and in QEMU (not sure about Google's VMM).
+> > E.g. if a vCPU converts a single page, it will be forced to wait until all other
+> > vCPUs drop SRCU, which can have severe latency spikes, e.g. if KVM is faulting in
+> > memory.  KVM's memslot updates also hold a mutex for the entire duration of the
+> > update, i.e. conversions on different vCPUs would be fully serialized, exacerbating
+> > the SRCU problem.
+> > 
+> > KVM also has historical baggage where it "needs" to zap _all_ SPTEs when any
+> > memslot is deleted.
+> > 
+> > Taking both a private_fd and a shared userspace address allows userspace to convert
+> > between private and shared without having to manipulate memslots.
 > 
-> Ah you are right, I overlooked it.
+> Right, this was really good explanation, thank you.
+> 
+> Still wondering could this possibly work (or not):
+> 
+> 1. Union userspace_addr and private_fd.
 
-So I think to stay on the safe side, I'm going to go with
-`prandom_u32_max(PAGE_SIZE)`. Sound good?
+No, because userspace needs to be able to provide both userspace_addr (shared
+memory) and private_fd (private memory) for a single memslot.
 
-Jason
+> 2. Instead of introducing private_offset, use guest_phys_addr as the
+>    offset.
+
+No, because that would force userspace to use a single private_fd for all of guest
+memory since it effectively means private_offset=0.  And userspace couldn't skip
+over holes in guest memory, i.e. the size of the memfd would need to follow the
+max guest gpa.  In other words, dropping private_offset could work, but it'd be
+quite kludgy and not worth saving 8 bytes.
