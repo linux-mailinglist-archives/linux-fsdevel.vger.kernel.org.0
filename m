@@ -2,128 +2,315 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2DE985F77B3
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 13:53:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 052C55F77B7
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  7 Oct 2022 13:55:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbiJGLxk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Oct 2022 07:53:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38290 "EHLO
+        id S229692AbiJGLzs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 7 Oct 2022 07:55:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229661AbiJGLxd (ORCPT
+        with ESMTP id S229513AbiJGLzr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Oct 2022 07:53:33 -0400
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D232FB7ECB;
-        Fri,  7 Oct 2022 04:53:31 -0700 (PDT)
-Received: from fsav113.sakura.ne.jp (fsav113.sakura.ne.jp [27.133.134.240])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 297Bqjsi041794;
-        Fri, 7 Oct 2022 20:52:45 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav113.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav113.sakura.ne.jp);
- Fri, 07 Oct 2022 20:52:45 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav113.sakura.ne.jp)
-Received: from [192.168.1.9] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 297Bqi3r041791
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-        Fri, 7 Oct 2022 20:52:45 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <0362d03f-9332-0b37-02e0-2b1b169f4c6f@I-love.SAKURA.ne.jp>
-Date:   Fri, 7 Oct 2022 20:52:44 +0900
+        Fri, 7 Oct 2022 07:55:47 -0400
+Received: from mail-wr1-x432.google.com (mail-wr1-x432.google.com [IPv6:2a00:1450:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7D80CBFD2;
+        Fri,  7 Oct 2022 04:55:43 -0700 (PDT)
+Received: by mail-wr1-x432.google.com with SMTP id f11so6957488wrm.6;
+        Fri, 07 Oct 2022 04:55:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1aFea0r2fAo46iHuuD/8q5QBNTkdkO/FbrfoD+Dc6iI=;
+        b=HCKnImP9tEb00wIe5Ke0GA0rbK8jB60XbKmTckTIQWcpeZ2Vri1WDA5jMQY/vV3gD3
+         a+xizNlkAQLfAvI8VEtuj3PoD/a+wH5DsdYEGJwacISicWTtk6zN0xC4ZdHUN4mAs1jE
+         fGzaW3af2kq9WtJdDqanA2nxIvq6dJbYnYIR9fXyoOTMosEXcioxL3kzdbsRoCOY6rOL
+         SeMOXbD8j5YLeveanmE4Cg0G0g+Akh6IpqhtM1VvYO1bNNtMxrIa3qMpWEyLG9Z8eHrv
+         /FEYzX+CpmwzORksXPqs4juxABLnzl4bfi2JpID9nacDP6lMy+ZedhLeFtcT2aY+HZrz
+         Idrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:subject:from:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1aFea0r2fAo46iHuuD/8q5QBNTkdkO/FbrfoD+Dc6iI=;
+        b=IbX/LvHDEAP8op/4WKuuIu1aRzjhsHc8sVgSnzs+lbMFcJf5t2v95q8CjGx0w8DVQF
+         lQotWv7pcE6aaophR49DNvc3iNCxQE5oth/TNVKxR7BwROofKrM4drqJE5Pmx/t6UC1q
+         rQ4VFqsKCXC1k6ZvUPBHdonlZV1G6Vzih0bvbcLa64b/Jherc5tM2/tJfhJEvtynw/h4
+         WmjvCvjpv5vWoUs+wtBFvW5bVBqlH7qFE94DyxkUBndVkXjZoRRXL0iAyF3EvehXoNdb
+         v2vr8VlT6ZVjBCpW44s7L4jMDm2ef38SjMS+mDr8o+Txil1yiJpRKMJ9sCBXT6Qtc4Cb
+         H3Lg==
+X-Gm-Message-State: ACrzQf0DrviMIvGBm8oJS00xvfNK9e78EV7FyM0QvalKHgO6WpZtNv8z
+        Q3YXoPxIU8cOAA2isjLQlww=
+X-Google-Smtp-Source: AMsMyM73AuF2+zaFLwxsJuiWZF1QmbOQkFF/DyU978CnC3NkiPnwzgGlsTBfeBo316oPkJOQ8GAsyw==
+X-Received: by 2002:a5d:4f12:0:b0:22e:3920:a09c with SMTP id c18-20020a5d4f12000000b0022e3920a09cmr2875359wru.95.1665143742043;
+        Fri, 07 Oct 2022 04:55:42 -0700 (PDT)
+Received: from [192.168.42.102] (mo-217-129-7-245.netvisao.pt. [217.129.7.245])
+        by smtp.gmail.com with ESMTPSA id c8-20020a05600c0a4800b003b4fdbb6319sm8722340wmq.21.2022.10.07.04.55.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 07 Oct 2022 04:55:41 -0700 (PDT)
+Message-ID: <c7a64cb8-5b67-bb9f-01ef-65b655cb2a92@gmail.com>
+Date:   Fri, 7 Oct 2022 12:55:40 +0100
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 6.3; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH v2] 9p/trans_fd: perform read/write with TIF_SIGPENDING
- set
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.13.0
 Content-Language: en-US
-To:     Dominique Martinet <asmadeus@codewreck.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Christian Schoenebeck <linux_oss@crudebyte.com>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        syzbot <syzbot+8b41a1365f1106fd0f33@syzkaller.appspotmail.com>,
-        v9fs-developer@lists.sourceforge.net,
-        syzkaller-bugs@googlegroups.com, netdev@vger.kernel.org,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-References: <00000000000039af4d05915a9f56@google.com>
- <345de429-a88b-7097-d177-adecf9fed342@I-love.SAKURA.ne.jp>
- <4293faaf-8279-77e2-8b1a-aff765416980@I-love.SAKURA.ne.jp>
- <69253379.JACLdFHAbQ@silver>
- <e96a8dce-9444-c363-2dfa-83fe5c7012b5@I-love.SAKURA.ne.jp>
- <YxPlzlJAKObm88p8@codewreck.org>
- <38d892bd-8ace-c4e9-9d73-777d3828acbc@I-love.SAKURA.ne.jp>
- <Yz+Di8tJiyPPJUaK@codewreck.org>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <Yz+Di8tJiyPPJUaK@codewreck.org>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Daniel Pinto <danielpinto52@gmail.com>
+Subject: [PATCH] fs/ntfs3: Add windows_names mount option
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/10/07 10:40, Dominique Martinet wrote:
-> Tetsuo Handa wrote on Sun, Sep 04, 2022 at 09:27:22AM +0900:
->> On 2022/09/04 8:39, Dominique Martinet wrote:
->>> Is there any reason you spent time working on v2, or is that just
->>> theorical for not messing with userland fd ?
->>
->> Just theoretical for not messing with userland fd, for programs generated
->> by fuzzers might use fds passed to the mount() syscall. I imagined that
->> syzbot again reports this problem when it started playing with fcntl().
->>
->> For robustness, not messing with userland fd is the better. ;-)
-> 
-> By the way digging this back made me think about this a bit again.
-> My opinion hasn't really changed that if you want to shoot yourself in
-> the foot I don't think we're crossing any priviledge boundary here, but
-> we could probably prevent it by saying the mount call with close that fd
-> and somehow steal it? (drop the fget, close_fd after get_file perhaps?)
-> 
-> That should address your concern about robustess and syzbot will no
-> longer be able to play with fcntl on "our" end of the pipe. I think it's
-> fair to say that once you pass it to the kernel all bets are off, so
-> closing it for the userspace application could make sense, and the mount
-> already survives when short processes do the mount call and immediately
-> exit so it's not like we need that fd to be open...
-> 
-> 
-> What do you think?
+When enabled, the windows_names mount option prevents the creation
+of files or directories with names not allowed by Windows. Use
+the same option name as NTFS-3G for compatibility.
 
-I found that pipe is using alloc_file_clone() which allocates "struct file"
-instead of just incrementing "struct file"->f_count.
+Signed-off-by: Daniel Pinto <danielpinto52@gmail.com>
+---
+ fs/ntfs3/frecord.c |   7 ++-
+ fs/ntfs3/fsntfs.c  | 104 +++++++++++++++++++++++++++++++++++++++++++++
+ fs/ntfs3/inode.c   |   7 +++
+ fs/ntfs3/ntfs_fs.h |   2 +
+ fs/ntfs3/super.c   |   7 +++
+ 5 files changed, 126 insertions(+), 1 deletion(-)
 
-Then, can we add EXPORT_SYMBOL_GPL(alloc_file_clone) to fs/file_table.c and
-use it like
-
-  struct file *f;
-
-  ts->rd = fget(rfd);
-  if (!ts->rd)
-    goto out_free_ts;
-  if (!(ts->rd->f_mode & FMODE_READ))
-    goto out_put_rd;
-  f = alloc_file_clone(ts->rd, ts->rd->f_flags | O_NONBLOCK, ts->rd->f_op);
-  if (IS_ERR(f))
-    goto out_put_rd;
-  fput(ts->rd);
-  ts->rd = f;
-
-  ts->wr = fget(wfd);
-  if (!ts->wr)
-    goto out_put_rd;
-  if (!(ts->wr->f_mode & FMODE_WRITE))
-    goto out_put_wr;
-  f = alloc_file_clone(ts->wr, ts->wr->f_flags | O_NONBLOCK, ts->wr->f_op);
-  if (IS_ERR(f))
-    goto out_put_wr;
-  fput(ts->wr);
-  ts->wr = f;
-
- from p9_fd_open() for cloning "struct file" with O_NONBLOCK flag added?
-Just an idea. I don't know whether alloc_file_clone() arguments are correct...
-
+diff --git a/fs/ntfs3/frecord.c b/fs/ntfs3/frecord.c
+index 70a80f9412f7..ce5e8f3b1aca 100644
+--- a/fs/ntfs3/frecord.c
++++ b/fs/ntfs3/frecord.c
+@@ -3011,6 +3011,7 @@ int ni_add_name(struct ntfs_inode *dir_ni, struct ntfs_inode *ni,
+ 		struct NTFS_DE *de)
+ {
+ 	int err;
++	struct ntfs_sb_info *sbi = ni->mi.sbi;
+ 	struct ATTRIB *attr;
+ 	struct ATTR_LIST_ENTRY *le;
+ 	struct mft_inode *mi;
+@@ -3018,6 +3019,10 @@ int ni_add_name(struct ntfs_inode *dir_ni, struct ntfs_inode *ni,
+ 	struct ATTR_FILE_NAME *de_name = (struct ATTR_FILE_NAME *)(de + 1);
+ 	u16 de_key_size = le16_to_cpu(de->key_size);
+ 
++	if (sbi->options->windows_names &&
++	    !valid_windows_name(sbi, (struct le_str *)&de_name->name_len))
++		return -EINVAL;
++
+ 	mi_get_ref(&ni->mi, &de->ref);
+ 	mi_get_ref(&dir_ni->mi, &de_name->home);
+ 
+@@ -3036,7 +3041,7 @@ int ni_add_name(struct ntfs_inode *dir_ni, struct ntfs_inode *ni,
+ 	memcpy(Add2Ptr(attr, SIZEOF_RESIDENT), de_name, de_key_size);
+ 
+ 	/* Insert new name into directory. */
+-	err = indx_insert_entry(&dir_ni->dir, dir_ni, de, ni->mi.sbi, NULL, 0);
++	err = indx_insert_entry(&dir_ni->dir, dir_ni, de, sbi, NULL, 0);
+ 	if (err)
+ 		ni_remove_attr_le(ni, attr, mi, le);
+ 
+diff --git a/fs/ntfs3/fsntfs.c b/fs/ntfs3/fsntfs.c
+index 4ed15f64b17f..674b644e1070 100644
+--- a/fs/ntfs3/fsntfs.c
++++ b/fs/ntfs3/fsntfs.c
+@@ -98,6 +98,30 @@ const __le16 WOF_NAME[17] = {
+ };
+ #endif
+ 
++static const __le16 CON_NAME[3] = {
++	cpu_to_le16('C'), cpu_to_le16('O'), cpu_to_le16('N'),
++};
++
++static const __le16 NUL_NAME[3] = {
++	cpu_to_le16('N'), cpu_to_le16('U'), cpu_to_le16('L'),
++};
++
++static const __le16 AUX_NAME[3] = {
++	cpu_to_le16('A'), cpu_to_le16('U'), cpu_to_le16('X'),
++};
++
++static const __le16 PRN_NAME[3] = {
++	cpu_to_le16('P'), cpu_to_le16('R'), cpu_to_le16('N'),
++};
++
++static const __le16 COM_NAME[3] = {
++	cpu_to_le16('C'), cpu_to_le16('O'), cpu_to_le16('M'),
++};
++
++static const __le16 LPT_NAME[3] = {
++	cpu_to_le16('L'), cpu_to_le16('P'), cpu_to_le16('T'),
++};
++
+ // clang-format on
+ 
+ /*
+@@ -2502,3 +2526,83 @@ int run_deallocate(struct ntfs_sb_info *sbi, struct runs_tree *run, bool trim)
+ 
+ 	return 0;
+ }
++
++static inline bool name_has_forbidden_chars(const struct le_str *fname)
++{
++	int i, ch;
++
++	/* check for forbidden chars */
++	for (i = 0; i < fname->len; ++i) {
++		ch = le16_to_cpu(fname->name[i]);
++
++		/* control chars */
++		if (ch < 0x20)
++			return true;
++
++		switch (ch) {
++		/* disallowed by Windows */
++		case '\\':
++		case '/':
++		case ':':
++		case '*':
++		case '?':
++		case '<':
++		case '>':
++		case '|':
++		case '\"':
++			return true;
++
++		default:
++			/* allowed char */
++			break;
++		}
++	}
++
++	/* file names cannot end with space or . */
++	if (fname->len > 0) {
++		ch = le16_to_cpu(fname->name[fname->len - 1]);
++		if (ch == ' ' || ch == '.')
++			return true;
++	}
++
++	return false;
++}
++
++static inline bool is_reserved_name(struct ntfs_sb_info *sbi,
++				    const struct le_str *fname)
++{
++	int port_digit;
++	const __le16 *name = fname->name;
++	int len = fname->len;
++	u16 *upcase = sbi->upcase;
++
++	/* check for 3 chars reserved names (device names) */
++	/* name by itself or with any extension is forbidden */
++	if (len == 3 || (len > 3 && le16_to_cpu(name[3]) == '.'))
++		if (!ntfs_cmp_names(name, 3, CON_NAME, 3, upcase, false) ||
++		    !ntfs_cmp_names(name, 3, NUL_NAME, 3, upcase, false) ||
++		    !ntfs_cmp_names(name, 3, AUX_NAME, 3, upcase, false) ||
++		    !ntfs_cmp_names(name, 3, PRN_NAME, 3, upcase, false))
++			return true;
++
++	/* check for 4 chars reserved names (port name followed by 1..9) */
++	/* name by itself or with any extension is forbidden */
++	if (len == 4 || (len > 4 && le16_to_cpu(name[4]) == '.')) {
++		port_digit = le16_to_cpu(name[3]);
++		if (port_digit >= '1' && port_digit <= '9')
++			if (!ntfs_cmp_names(name, 3, COM_NAME, 3, upcase, false) ||
++			    !ntfs_cmp_names(name, 3, LPT_NAME, 3, upcase, false))
++				return true;
++	}
++
++	return false;
++}
++
++/*
++ * valid_windows_name - Check if a file name is valid in Windows.
++ */
++bool valid_windows_name(struct ntfs_sb_info *sbi, const struct le_str *fname)
++{
++	return !name_has_forbidden_chars(fname) &&
++	       !is_reserved_name(sbi, fname);
++}
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index e9cf00d14733..4eb298e2ee98 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -1361,6 +1361,13 @@ struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
+ 	mi_get_ref(&ni->mi, &new_de->ref);
+ 
+ 	fname = (struct ATTR_FILE_NAME *)(new_de + 1);
++
++	if (sbi->options->windows_names &&
++	    !valid_windows_name(sbi, (struct le_str *)&fname->name_len)) {
++		err = -EINVAL;
++		goto out4;
++	}
++
+ 	mi_get_ref(&dir_ni->mi, &fname->home);
+ 	fname->dup.cr_time = fname->dup.m_time = fname->dup.c_time =
+ 		fname->dup.a_time = std5->cr_time;
+diff --git a/fs/ntfs3/ntfs_fs.h b/fs/ntfs3/ntfs_fs.h
+index 6c1c7ef3b2d6..ebfb720fc4fd 100644
+--- a/fs/ntfs3/ntfs_fs.h
++++ b/fs/ntfs3/ntfs_fs.h
+@@ -98,6 +98,7 @@ struct ntfs_mount_options {
+ 	unsigned showmeta : 1; /* Show meta files. */
+ 	unsigned nohidden : 1; /* Do not show hidden files. */
+ 	unsigned hide_dot_files : 1; /* Set hidden flag on dot files. */
++	unsigned windows_names : 1; /* Disallow names forbidden by Windows. */
+ 	unsigned force : 1; /* RW mount dirty volume. */
+ 	unsigned noacsrules : 1; /* Exclude acs rules. */
+ 	unsigned prealloc : 1; /* Preallocate space when file is growing. */
+@@ -645,6 +646,7 @@ int ntfs_remove_reparse(struct ntfs_sb_info *sbi, __le32 rtag,
+ 			const struct MFT_REF *ref);
+ void mark_as_free_ex(struct ntfs_sb_info *sbi, CLST lcn, CLST len, bool trim);
+ int run_deallocate(struct ntfs_sb_info *sbi, struct runs_tree *run, bool trim);
++bool valid_windows_name(struct ntfs_sb_info *sbi, const struct le_str *name);
+ 
+ /* Globals from index.c */
+ int indx_used_bit(struct ntfs_index *indx, struct ntfs_inode *ni, size_t *bit);
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 1e2c04e48f98..6f3485fad417 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -248,6 +248,7 @@ enum Opt {
+ 	Opt_sparse,
+ 	Opt_nohidden,
+ 	Opt_hide_dot_files,
++	Opt_windows_names,
+ 	Opt_showmeta,
+ 	Opt_acl,
+ 	Opt_iocharset,
+@@ -269,6 +270,7 @@ static const struct fs_parameter_spec ntfs_fs_parameters[] = {
+ 	fsparam_flag_no("sparse",		Opt_sparse),
+ 	fsparam_flag_no("hidden",		Opt_nohidden),
+ 	fsparam_flag_no("hidedotfiles",		Opt_hide_dot_files),
++	fsparam_flag_no("windows_names",	Opt_windows_names),
+ 	fsparam_flag_no("acl",			Opt_acl),
+ 	fsparam_flag_no("showmeta",		Opt_showmeta),
+ 	fsparam_flag_no("prealloc",		Opt_prealloc),
+@@ -361,6 +363,9 @@ static int ntfs_fs_parse_param(struct fs_context *fc,
+ 	case Opt_hide_dot_files:
+ 		opts->hide_dot_files = result.negated ? 1 : 0;
+ 		break;
++	case Opt_windows_names:
++		opts->windows_names = result.negated ? 0 : 1;
++		break;
+ 	case Opt_acl:
+ 		if (!result.negated)
+ #ifdef CONFIG_NTFS3_FS_POSIX_ACL
+@@ -561,6 +566,8 @@ static int ntfs_show_options(struct seq_file *m, struct dentry *root)
+ 		seq_puts(m, ",showmeta");
+ 	if (opts->nohidden)
+ 		seq_puts(m, ",nohidden");
++	if (opts->windows_names)
++		seq_puts(m, ",windows_names");
+ 	if (opts->force)
+ 		seq_puts(m, ",force");
+ 	if (opts->noacsrules)
