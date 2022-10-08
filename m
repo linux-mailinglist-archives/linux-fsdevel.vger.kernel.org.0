@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D25E5F8835
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Oct 2022 00:20:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 181675F884E
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Oct 2022 00:37:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229602AbiJHWUQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Oct 2022 18:20:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58240 "EHLO
+        id S229641AbiJHWhp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Oct 2022 18:37:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiJHWUN (ORCPT
+        with ESMTP id S229463AbiJHWho (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Oct 2022 18:20:13 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8605C24BE2;
-        Sat,  8 Oct 2022 15:20:12 -0700 (PDT)
+        Sat, 8 Oct 2022 18:37:44 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D31B2F661;
+        Sat,  8 Oct 2022 15:37:42 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0C124B80C67;
-        Sat,  8 Oct 2022 22:20:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70236C433C1;
-        Sat,  8 Oct 2022 22:20:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 72FD660B29;
+        Sat,  8 Oct 2022 22:37:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DFC7C433C1;
+        Sat,  8 Oct 2022 22:37:35 +0000 (UTC)
 Authentication-Results: smtp.kernel.org;
-        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="QmEOahoB"
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="XGhFZP09"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-        t=1665267601;
+        t=1665268654;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=P/cyFerOrVR1hjiF/QX04AV2aA5aZrHQbK/mKyxjv9I=;
-        b=QmEOahoBx06KMjDzLtZ7ejYlSXdX3xXDEfCsWADs48NoQdJjnF97KJ2e9Xd8nbc1t03bHc
-        iLLQvFEr+bqjH8bhenqpSsnO09+GKMG/IoUml8RmXTmxGyb7ZNYDfXX5MlPSK23GrIkSgB
-        X2xrqLLCtqWzb7N/605l/YH3w7HZ3qs=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 6a6d913c (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-        Sat, 8 Oct 2022 22:20:01 +0000 (UTC)
-Date:   Sun, 9 Oct 2022 00:19:59 +0200
+        bh=KIVWIkgHNJFfTR3APACYr63A/xqCM59y71KVcO4sCaY=;
+        b=XGhFZP09vIl+/5CeKrUwcn8D5G2fzzZUueDyYoC0ioAptMgCsgW2Y/nAMxGX3+Jlr3Pqzf
+        DPqqLFSnwZy5zrGQ0qIoQsckZXAODZVAUr3JPUklU2lLbHkSxIaLy6qBIDsRl1J6fqnfqB
+        i4V7yDQrjT6b8E+OkiJdDj+99/oMH4o=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id c941732b (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Sat, 8 Oct 2022 22:37:33 +0000 (UTC)
+Date:   Sun, 9 Oct 2022 00:37:33 +0200
 From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
 To:     David Laight <David.Laight@ACULAB.COM>
 Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -111,16 +111,19 @@ Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v4 2/6] treewide: use prandom_u32_max() when possible
-Message-ID: <Y0H3jzGE1oiwEYa5@zx2c4.com>
+        "x86@kernel.org" <x86@kernel.org>,
+        Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
+        Mika Westerberg <mika.westerberg@linux.intel.com>
+Subject: Re: [PATCH v4 4/6] treewide: use get_random_u32() when possible
+Message-ID: <Y0H7rcJ3/JOyDYU8@zx2c4.com>
 References: <20221007180107.216067-1-Jason@zx2c4.com>
- <20221007180107.216067-3-Jason@zx2c4.com>
- <01fafe0e56554b1c9c934c458b93473a@AcuMS.aculab.com>
+ <20221007180107.216067-5-Jason@zx2c4.com>
+ <f1ca1b53bc104065a83da60161a4c7b6@AcuMS.aculab.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <01fafe0e56554b1c9c934c458b93473a@AcuMS.aculab.com>
+In-Reply-To: <f1ca1b53bc104065a83da60161a4c7b6@AcuMS.aculab.com>
 X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
         RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -131,40 +134,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 08, 2022 at 10:08:03PM +0000, David Laight wrote:
+On Sat, Oct 08, 2022 at 10:18:45PM +0000, David Laight wrote:
 > From: Jason A. Donenfeld
 > > Sent: 07 October 2022 19:01
 > > 
-> > Rather than incurring a division or requesting too many random bytes for
-> > the given range, use the prandom_u32_max() function, which only takes
-> > the minimum required bytes from the RNG and avoids divisions.
+> > The prandom_u32() function has been a deprecated inline wrapper around
+> > get_random_u32() for several releases now, and compiles down to the
+> > exact same code. Replace the deprecated wrapper with a direct call to
+> > the real function. The same also applies to get_random_int(), which is
+> > just a wrapper around get_random_u32().
 > > 
 > ...
-> > --- a/lib/cmdline_kunit.c
-> > +++ b/lib/cmdline_kunit.c
-> > @@ -76,7 +76,7 @@ static void cmdline_test_lead_int(struct kunit *test)
-> >  		int rc = cmdline_test_values[i];
-> >  		int offset;
+> > diff --git a/net/802/garp.c b/net/802/garp.c
+> > index f6012f8e59f0..c1bb67e25430 100644
+> > --- a/net/802/garp.c
+> > +++ b/net/802/garp.c
+> > @@ -407,7 +407,7 @@ static void garp_join_timer_arm(struct garp_applicant *app)
+> >  {
+> >  	unsigned long delay;
 > > 
-> > -		sprintf(in, "%u%s", prandom_u32_max(256), str);
-> > +		sprintf(in, "%u%s", get_random_int() % 256, str);
-> >  		/* Only first '-' after the number will advance the pointer */
-> >  		offset = strlen(in) - strlen(str) + !!(rc == 2);
-> >  		cmdline_do_one_test(test, in, rc, offset);
-> > @@ -94,7 +94,7 @@ static void cmdline_test_tail_int(struct kunit *test)
-> >  		int rc = strcmp(str, "") ? (strcmp(str, "-") ? 0 : 1) : 1;
-> >  		int offset;
+> > -	delay = (u64)msecs_to_jiffies(garp_join_time) * prandom_u32() >> 32;
+> > +	delay = (u64)msecs_to_jiffies(garp_join_time) * get_random_u32() >> 32;
+> >  	mod_timer(&app->join_timer, jiffies + delay);
+> >  }
 > > 
-> > -		sprintf(in, "%s%u", str, prandom_u32_max(256));
-> > +		sprintf(in, "%s%u", str, get_random_int() % 256);
-> >  		/*
-> >  		 * Only first and leading '-' not followed by integer
-> >  		 * will advance the pointer.
+> > diff --git a/net/802/mrp.c b/net/802/mrp.c
+> > index 35e04cc5390c..3e9fe9f5d9bf 100644
+> > --- a/net/802/mrp.c
+> > +++ b/net/802/mrp.c
+> > @@ -592,7 +592,7 @@ static void mrp_join_timer_arm(struct mrp_applicant *app)
+> >  {
+> >  	unsigned long delay;
+> > 
+> > -	delay = (u64)msecs_to_jiffies(mrp_join_time) * prandom_u32() >> 32;
+> > +	delay = (u64)msecs_to_jiffies(mrp_join_time) * get_random_u32() >> 32;
+> >  	mod_timer(&app->join_timer, jiffies + delay);
+> >  }
+> > 
 > 
-> Something has gone backwards here....
-> And get_random_u8() looks a better fit.
+> Aren't those:
+> 	delay = prandom_u32_max(msecs_to_jiffies(xxx_join_time));
 
-Wrong patch version.
+Probably, but too involved and peculiar for this cleanup.
+
+Feel free to send a particular patch to that maintainer.
 
 > 
 > 	David
