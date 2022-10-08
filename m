@@ -2,76 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C0CD35F83B8
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Oct 2022 07:59:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 88E855F8406
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Oct 2022 09:34:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230018AbiJHF63 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Oct 2022 01:58:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46930 "EHLO
+        id S229717AbiJHHeb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Oct 2022 03:34:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49620 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229886AbiJHF5P (ORCPT
+        with ESMTP id S229469AbiJHHe3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Oct 2022 01:57:15 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9B3DD9966;
-        Fri,  7 Oct 2022 22:56:24 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3093A60BEF;
-        Sat,  8 Oct 2022 05:56:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87B57C433C1;
-        Sat,  8 Oct 2022 05:56:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665208583;
-        bh=s0LjJFfi+hfHWwyYzeazkY4sx1RI6b2GS+sMxd09+dQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QFSnyER77mdb0qwHg5PA4HkheV448oi8kv9npavvKSc+uciqbe7TxsDNYsHY+s0VL
-         XnNIvoKvJLvpt4s8CQQRiWJh1MtyzzA84puETvSKPvUS4sWGXaRJQllJiRltcy8Tfq
-         q//9aShAOk8zeNIBmZbyH+46LVLYr3M9z43NYPPtKUuh/LJY2VWern39oWYngvwmRS
-         E6XEsEE9xIQlAmPkTBgUu3c/T29c6Tg3Dy1IlGhbmPOuzFuj9a4MC8Ja0q0M/xs0zy
-         CiOA5UHCnEnaBt9rlUGgp0lm+UyXOrs+sNoml0srTYwPuxuaWMODRYWCl5n+7ySug8
-         NROfNan6f27sA==
-Date:   Sat, 8 Oct 2022 07:56:17 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     kernel test robot <lkp@intel.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "Darrick J . Wong" <djwong@kernel.org>, llvm@lists.linux.dev,
-        kbuild-all@lists.01.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Seth Forshee <sforshee@kernel.org>,
-        Yang Xu <xuyang2018.jy@fujitsu.com>,
-        Filipe Manana <fdmanana@kernel.org>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] attr: add should_remove_sgid()
-Message-ID: <20221008055617.ssv7sbe4gj556oxq@wittgenstein>
-References: <20221007140543.1039983-3-brauner@kernel.org>
- <202210080357.inSALqdT-lkp@intel.com>
+        Sat, 8 Oct 2022 03:34:29 -0400
+X-Greylist: delayed 69 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 08 Oct 2022 00:34:24 PDT
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E48C668883;
+        Sat,  8 Oct 2022 00:34:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=zZQ88pPgtouR86lBpg+x1aw/csf1v9uxp8peXKk1cb0=;
+  b=j3ST7SGnTYT/Y5wi6lWHZVyoTN6fTohW3n4oD0o9maLZmdhUccDAwXNB
+   CrIK4oBY5dqegOsWJRE3rrwkzrofbuFPsdX2RZ0LPGmouitc76P+QhHmS
+   HaFrH+aHq9cCtdo04t374NKt8+gA8QS7/hDJOozImMV5dxKm1CxmPsJ2W
+   U=;
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="5.95,169,1661810400"; 
+   d="scan'208";a="56593050"
+Received: from 51.123.68.85.rev.sfr.net (HELO hadrien) ([85.68.123.51])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Oct 2022 09:33:09 +0200
+Date:   Sat, 8 Oct 2022 09:33:08 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@inria.fr>
+X-X-Sender: jll@hadrien
+To:     Kees Cook <keescook@chromium.org>
+cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        =?ISO-8859-15?Q?Christoph_B=F6hmwalder?= 
+        <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Helge Deller <deller@gmx.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "James E. J. Bottomley" <jejb@linux.ibm.com>,
+        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        KP Singh <kpsingh@kernel.org>, Marco Elver <elver@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Graf <tgraf@suug.ch>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
+        Yury Norov <yury.norov@gmail.com>,
+        dri-devel@lists.freedesktop.org, kasan-dev@googlegroups.com,
+        kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-mm@kvack.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-nvme@lists.infradead.org, linux-parisc@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        loongarch@lists.linux.dev, netdev@vger.kernel.org,
+        sparclinux@vger.kernel.org, x86@kernel.org, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v4 2/6] treewide: use prandom_u32_max() when possible
+In-Reply-To: <53DD0148-ED15-4294-8496-9E4B4C7AD061@chromium.org>
+Message-ID: <alpine.DEB.2.22.394.2210080925390.2928@hadrien>
+References: <53DD0148-ED15-4294-8496-9E4B4C7AD061@chromium.org>
+User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202210080357.inSALqdT-lkp@intel.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 08, 2022 at 03:16:04AM +0800, kernel test robot wrote:
-> Hi Christian,
-> 
-> I love your patch! Perhaps something to improve:
-> 
-> [auto build test WARNING on mszeredi-vfs/overlayfs-next]
-> [cannot apply to linus/master mszeredi-fuse/for-next v6.0 next-20221007]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> >> @minus_one@
+> >> expression FULL;
+> >> @@
+> >>
+> >> - (get_random_int() & ((FULL) - 1)
+> >> + prandom_u32_max(FULL)
+> >
+> >Ahh, well, okay, this is the example I mentioned above. Only works if
+> >FULL is saturated. Any clever way to get coccinelle to prove that? Can
+> >it look at the value of constants?
+>
+> I'm not sure if Cocci will do that without a lot of work. The literals trick I used below would need a lot of fanciness. :)
 
-This isn't rebased and thus will fail to apply. There'll be a merge
-conflict with changes to fs/internal.h for current master. Best to wait
-until I have rebased this after v6.0-rc1 is out.
+If FULL is an arbitrary expression, it would not be easy to automate.  If
+it is a constant then you can use python/ocaml to analyze its value.  But
+if it's a #define constant then you would need a previous rule to match the
+#define and find that value.
+
+For LITERAL, I think you could just do constant int LITERAL; for the
+metavariable declaration.
+
+julia
