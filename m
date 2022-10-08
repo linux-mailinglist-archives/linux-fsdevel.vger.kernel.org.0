@@ -2,82 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D8DB5F82DD
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Oct 2022 05:51:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B64E5F8330
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Oct 2022 07:55:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbiJHDvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 7 Oct 2022 23:51:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42428 "EHLO
+        id S229651AbiJHFzW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Oct 2022 01:55:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229512AbiJHDuu (ORCPT
+        with ESMTP id S229458AbiJHFzT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 7 Oct 2022 23:50:50 -0400
-Received: from mail-pf1-x436.google.com (mail-pf1-x436.google.com [IPv6:2607:f8b0:4864:20::436])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A34650FAE
-        for <linux-fsdevel@vger.kernel.org>; Fri,  7 Oct 2022 20:50:46 -0700 (PDT)
-Received: by mail-pf1-x436.google.com with SMTP id v186so6448263pfv.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 07 Oct 2022 20:50:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/+M2MWnKezzvwUdnzvMnzBe5u7rJCxF/Jt+qZLDkYO0=;
-        b=FTiUCKipmqUFH72GOvNGAiS4z04PbOMknPHSePECxyT+NR1MKehdmNkDokls+RTwtz
-         36ZKjqvAgPt8zH/PagzHgUWgsK7jRV+Fodw+XGTQ49lxGfaN2UCRznQ1vjEUvfGAJQxE
-         GFWrUL9ion4oE/GNeI8pk6ab24JqoBKXYgp6c=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/+M2MWnKezzvwUdnzvMnzBe5u7rJCxF/Jt+qZLDkYO0=;
-        b=Iw2h6K73ix2Pmk4opVoz4yyqn69gwY1MfGuuzySZiMus8P/lXjDzArevhifFM1+TxM
-         J0tgcd5niYglrxXMU95KGbVrAVdtOCwKJ8t6mDPSaKLq0qQ3fIIa8ZyYrlrB+adOHEGU
-         XExqbFXAg7/22ePkuQj+cSlt+SWoclayoh6Jyn8Df3Zt6+triqljqjDuIeWTt8X3fbWf
-         YSttLFPee5cmkK78uPOVZXglYt+YjMbr+V4o7gq4Po8tOk5ZYcNvWEPMN+4igyoePeWr
-         dMVZhdCtceEq6qxA6GLIpBHWg/Gk5gcwCywiZ/TQRh1aZ6EME4Gi4uvZhQISSbwodK3f
-         p69A==
-X-Gm-Message-State: ACrzQf3z/4a6drs+Wv6q/IIBvUuHHTUKvxA8NDrzXXr08c4S0AnAnKb2
-        2ZuiX44GGAJb3oCZDABbuzoA5g==
-X-Google-Smtp-Source: AMsMyM4INOCYNV6QQEtiLxqiwgdjxt33WIim/WmJWLMb2Koq8s6fKC3bMA6hT6FDEf46oKUeZwL22Q==
-X-Received: by 2002:a05:6a00:1d83:b0:561:d2f8:b86d with SMTP id z3-20020a056a001d8300b00561d2f8b86dmr8148626pfw.57.1665201045445;
-        Fri, 07 Oct 2022 20:50:45 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id i11-20020a17090332cb00b00174c235e1fdsm2288651plr.199.2022.10.07.20.50.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 07 Oct 2022 20:50:44 -0700 (PDT)
-Date:   Fri, 7 Oct 2022 20:50:43 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+        Sat, 8 Oct 2022 01:55:19 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3557D4D83E;
+        Fri,  7 Oct 2022 22:55:17 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BB757B803F2;
+        Sat,  8 Oct 2022 05:55:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63C72C433D6;
+        Sat,  8 Oct 2022 05:55:08 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="MUisIXJR"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+        t=1665208506;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=uodUNetgnawAm+SOTTtEpDSanhr+7/wxVqt9qqs9FW0=;
+        b=MUisIXJRxr86GZJGsyixsucWfwtIcOZwoj9bfqBFAfNZmkNLQaK0SgrTJ9BZ8pEuGPZDh3
+        HkzerZ4c9Z3jGjbvUFDfme65TdlBxp5MzwkEBRxDx5603rFbf+xFT3moZYHHKqizcFREs8
+        Td8Z4lVpcfuxiLOhndNdwhqrvy0R6b4=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 10d02c6a (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Sat, 8 Oct 2022 05:55:05 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     linux-kernel@vger.kernel.org, patches@lists.linux.dev
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
         Andreas Noever <andreas.noever@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Borislav Petkov <bp@alien8.de>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph =?iso-8859-1?Q?B=F6hmwalder?= 
+        =?UTF-8?q?Christoph=20B=C3=B6hmwalder?= 
         <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
         Christophe Leroy <christophe.leroy@csgroup.eu>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Dave Airlie <airlied@redhat.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        "David S . Miller" <davem@davemloft.net>,
         Eric Dumazet <edumazet@google.com>,
         Florian Westphal <fw@strlen.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H. Peter Anvin" <hpa@zytor.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
         Heiko Carstens <hca@linux.ibm.com>,
         Helge Deller <deller@gmx.de>,
         Herbert Xu <herbert@gondor.apana.org.au>,
         Huacai Chen <chenhuacai@kernel.org>,
         Hugh Dickins <hughd@google.com>,
         Jakub Kicinski <kuba@kernel.org>,
-        "James E. J. Bottomley" <jejb@linux.ibm.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
         Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
         Jens Axboe <axboe@kernel.dk>,
         Johannes Berg <johannes@sipsolutions.net>,
         Jonathan Corbet <corbet@lwn.net>,
         Jozsef Kadlecsik <kadlec@netfilter.org>,
-        KP Singh <kpsingh@kernel.org>, Marco Elver <elver@google.com>,
+        KP Singh <kpsingh@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Marco Elver <elver@google.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
@@ -105,240 +96,383 @@ Cc:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
         linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
         linux-wireless@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         loongarch@lists.linux.dev, netdev@vger.kernel.org,
-        sparclinux@vger.kernel.org, x86@kernel.org, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v4 2/6] treewide: use prandom_u32_max() when possible
-Message-ID: <53DD0148-ED15-4294-8496-9E4B4C7AD061@chromium.org>
+        sparclinux@vger.kernel.org, x86@kernel.org
+Subject: [PATCH v5 0/7] treewide cleanup of random integer usage
+Date:   Fri,  7 Oct 2022 23:53:52 -0600
+Message-Id: <20221008055359.286426-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[resending because I failed to CC]
+Changes v4->v5:
+- Coccinelle is now used for as much mechanical aspects as possible,
+  with mechanical parts split off from non-mechanical parts. This should
+  drastically reduce the amount of code that needs to be reviewed
+  carefully. Each commit mentions now if it was done by hand or is
+  mechanical.
 
-On October 7, 2022 7:21:28 PM PDT, "Jason A. Donenfeld" <Jason@zx2c4.com> wrote:
->On Fri, Oct 07, 2022 at 03:47:44PM -0700, Kees Cook wrote:
->> On Fri, Oct 07, 2022 at 12:01:03PM -0600, Jason A. Donenfeld wrote:
->> > Rather than incurring a division or requesting too many random bytes for
->> > the given range, use the prandom_u32_max() function, which only takes
->> > the minimum required bytes from the RNG and avoids divisions.
->> 
->> I actually meant splitting the by-hand stuff by subsystem, but nearly
->> all of these can be done mechanically too, so it shouldn't be bad. Notes
->> below...
->
->Oh, cool, more coccinelle. You're basically giving me a class on these
->recipes. Much appreciated.
+Hi folks,
 
-You're welcome! This was a fun exercise. :)
+This is a five part treewide cleanup of random integer handling. The
+rules for random integers are:
 
->
->> > [...]
->> > diff --git a/arch/arm64/kernel/process.c b/arch/arm64/kernel/process.c
->> > index 92bcc1768f0b..87203429f802 100644
->> > --- a/arch/arm64/kernel/process.c
->> > +++ b/arch/arm64/kernel/process.c
->> > @@ -595,7 +595,7 @@ unsigned long __get_wchan(struct task_struct *p)
->> >  unsigned long arch_align_stack(unsigned long sp)
->> >  {
->> >  	if (!(current->personality & ADDR_NO_RANDOMIZE) && randomize_va_space)
->> > -		sp -= get_random_int() & ~PAGE_MASK;
->> > +		sp -= prandom_u32_max(PAGE_SIZE);
->> >  	return sp & ~0xf;
->> >  }
->> >  
->> 
->> @mask@
->> expression MASK;
->> @@
->> 
->> - (get_random_int() & ~(MASK))
->> + prandom_u32_max(MASK)
->
->Not quite! PAGE_MASK != PAGE_SIZE. In this case, things get a litttttle
->more complicated where you can do:
->
->get_random_int() & MASK == prandom_u32_max(MASK + 1)
->*only if all the top bits of MASK are set* That is, if MASK one less
+- If you want a secure or an insecure random u64, use get_random_u64().
+- If you want a secure or an insecure random u32, use get_random_u32().
+  * The old function prandom_u32() has been deprecated for a while now
+    and is just a wrapper around get_random_u32(). Same for
+    get_random_int().
+- If you want a secure or an insecure random u16, use get_random_u16().
+- If you want a secure or an insecure random u8, use get_random_u8().
+- If you want secure or insecure random bytes, use get_random_bytes().
+  * The old function prandom_bytes() has been deprecated for a while now
+    and has long been a wrapper around get_random_bytes().
+- If you want a non-uniform random u32, u16, or u8 bounded by a certain
+  open interval maximum, use prandom_u32_max().
+  * I say "non-uniform", because it doesn't do any rejection sampling or
+    divisions. Hence, it stays within the prandom_* namespace.
 
-Oh whoops! Yes, right, I totally misread SIZE as MASK.
+These rules ought to be applied uniformly, so that we can clean up the
+deprecated functions, and earn the benefits of using the modern
+functions. In particular, in addition to the boring substitutions, this
+patchset accomplishes a few nice effects:
 
->than a power of two. Or if MASK & (MASK + 1) == 0.
->
->(If those top bits aren't set, you can technically do
->prandom_u32_max(MASK >> n + 1) << n. That'd be a nice thing to work out.
->But yeesh, maybe a bit much for the time being and probably a bit beyond
->coccinelle.)
->
->This case here, though, is a bit more special, where we can just rely on
->an obvious given kernel identity. Namely, PAGE_MASK == ~(PAGE_SIZE - 1).
->So ~PAGE_MASK == PAGE_SIZE - 1.
->So get_random_int() & ~PAGE_MASK == prandom_u32_max(PAGE_SIZE - 1 + 1).
->So get_random_int() & ~PAGE_MASK == prandom_u32_max(PAGE_SIZE).
->
->And most importantly, this makes the code more readable, since everybody
->knows what bounding by PAGE_SIZE means, where as what on earth is
->happening with the &~PAGE_MASK thing. So it's a good change. I'll try to
->teach coccinelle about that special case.
+- By using prandom_u32_max() with an upper-bound that the compiler can
+  prove at compile-time is ≤65536 or ≤256, internally get_random_u16()
+  or get_random_u8() is used, which wastes fewer batched random bytes,
+  and hence has higher throughput.
 
-Yeah, it should be possible to just check for the literal.
+- By using prandom_u32_max() instead of %, when the upper-bound is not a
+  constant, division is still avoided, because prandom_u32_max() uses
+  a faster multiplication-based trick instead.
 
->
->
->
->> > diff --git a/arch/loongarch/kernel/vdso.c b/arch/loongarch/kernel/vdso.c
->> > index f32c38abd791..8c9826062652 100644
->> > --- a/arch/loongarch/kernel/vdso.c
->> > +++ b/arch/loongarch/kernel/vdso.c
->> > @@ -78,7 +78,7 @@ static unsigned long vdso_base(void)
->> >  	unsigned long base = STACK_TOP;
->> >  
->> >  	if (current->flags & PF_RANDOMIZE) {
->> > -		base += get_random_int() & (VDSO_RANDOMIZE_SIZE - 1);
->> > +		base += prandom_u32_max(VDSO_RANDOMIZE_SIZE);
->> >  		base = PAGE_ALIGN(base);
->> >  	}
->> >  
->> 
->> @minus_one@
->> expression FULL;
->> @@
->> 
->> - (get_random_int() & ((FULL) - 1)
->> + prandom_u32_max(FULL)
->
->Ahh, well, okay, this is the example I mentioned above. Only works if
->FULL is saturated. Any clever way to get coccinelle to prove that? Can
->it look at the value of constants?
+- By using get_random_u16() or get_random_u8() in cases where the return
+  value is intended to indeed be a u16 or a u8, we waste fewer batched
+  random bytes, and hence have higher throughput.
 
-I'm not sure if Cocci will do that without a lot of work. The literals trick I used below would need a lot of fanciness. :)
+So, based on those rules and benefits from following them, this patchset
+breaks down into the following five steps:
 
->
->> 
->> > diff --git a/arch/parisc/kernel/vdso.c b/arch/parisc/kernel/vdso.c
->> > index 63dc44c4c246..47e5960a2f96 100644
->> > --- a/arch/parisc/kernel/vdso.c
->> > +++ b/arch/parisc/kernel/vdso.c
->> > @@ -75,7 +75,7 @@ int arch_setup_additional_pages(struct linux_binprm *bprm,
->> >  
->> >  	map_base = mm->mmap_base;
->> >  	if (current->flags & PF_RANDOMIZE)
->> > -		map_base -= (get_random_int() & 0x1f) * PAGE_SIZE;
->> > +		map_base -= prandom_u32_max(0x20) * PAGE_SIZE;
->> >  
->> >  	vdso_text_start = get_unmapped_area(NULL, map_base, vdso_text_len, 0, 0);
->> >  
->> 
->> These are more fun, but Coccinelle can still do them with a little
->> Pythonic help:
->> 
->> // Find a potential literal
->> @literal_mask@
->> expression LITERAL;
->> identifier randfunc =~ "get_random_int|prandom_u32|get_random_u32";
->> position p;
->> @@
->> 
->>         (randfunc()@p & (LITERAL))
->> 
->> // Add one to the literal.
->> @script:python add_one@
->> literal << literal_mask.LITERAL;
->> RESULT;
->> @@
->> 
->> if literal.startswith('0x'):
->>         value = int(literal, 16) + 1
->>         coccinelle.RESULT = cocci.make_expr("0x%x" % (value))
->> elif literal[0] in '123456789':
->>         value = int(literal, 10) + 1
->>         coccinelle.RESULT = cocci.make_expr("%d" % (value))
->> else:
->>         print("I don't know how to handle: %s" % (literal))
->> 
->> // Replace the literal mask with the calculated result.
->> @plus_one@
->> expression literal_mask.LITERAL;
->> position literal_mask.p;
->> expression add_one.RESULT;
->> identifier FUNC;
->> @@
->> 
->> -       (FUNC()@p & (LITERAL))
->> +       prandom_u32_max(RESULT)
->
->Oh that's pretty cool. I can do the saturation check in python, since
->`value` holds the parsed result. Neat.
+1) Replace `prandom_u32() % max` and variants thereof with
+   prandom_u32_max(max).
 
-It is (at least how I have it here) just the string, so YMMV.
+   * Part 1 is done with Coccinelle. Part 2 is done by hand.
 
->
->> > diff --git a/fs/ext2/ialloc.c b/fs/ext2/ialloc.c
->> > index 998dd2ac8008..f4944c4dee60 100644
->> > --- a/fs/ext2/ialloc.c
->> > +++ b/fs/ext2/ialloc.c
->> > @@ -277,8 +277,7 @@ static int find_group_orlov(struct super_block *sb, struct inode *parent)
->> >  		int best_ndir = inodes_per_group;
->> >  		int best_group = -1;
->> >  
->> > -		group = prandom_u32();
->> > -		parent_group = (unsigned)group % ngroups;
->> > +		parent_group = prandom_u32_max(ngroups);
->> >  		for (i = 0; i < ngroups; i++) {
->> >  			group = (parent_group + i) % ngroups;
->> >  			desc = ext2_get_group_desc (sb, group, NULL);
->> 
->> Okay, that one is too much for me -- checking that group is never used
->> after the assignment removal is likely possible, but beyond my cocci
->> know-how. :)
->
->Yea this is a tricky one, which I initially didn't do by hand, but Jan
->seemed fine with it, and it's clear if you look at it. Trixy cocci
->indeed.
+2) Replace `(type)get_random_u32()` and variants thereof with
+   get_random_u16() or get_random_u8(). I took the pains to actually
+   look and see what every lvalue type was across the entire tree.
 
-I asked on the Cocci list[1], since by the time I got to the end of your "by hand" patch I *really* wanted to have it work. I was so close!
+   * Part 1 is done with Coccinelle. Part 2 is done by hand.
+
+3) Replace remaining deprecated uses of prandom_u32() and
+   get_random_int() with get_random_u32(). 
+
+   * A boring search and replace operation.
+
+4) Replace remaining deprecated uses of prandom_bytes() with
+   get_random_bytes().
+
+   * A boring search and replace operation.
+
+5) Remove the deprecated and now-unused prandom_u32() and
+   prandom_bytes() inline wrapper functions.
+
+   * Just deleting code and updating comments.
+
+I was thinking of taking this through my random.git tree (on which this
+series is currently based) and submitting it near the end of the merge
+window, or waiting for the very end of the 6.1 cycle when there will be
+the fewest new patches brewing. If somebody with some treewide-cleanup
+experience might share some wisdom about what the best timing usually
+winds up being, I'm all ears.
+
+Please take a look! The number of lines touched is quite small, so this
+should be reviewable, and as much as is possible has been pushed into
+Coccinelle scripts.
+
+Thanks,
+Jason
+
+Cc: Andreas Noever <andreas.noever@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Christoph Böhmwalder <christoph.boehmwalder@linbit.com>
+Cc: Christoph Hellwig <hch@lst.de>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Dave Airlie <airlied@redhat.com>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: David S. Miller <davem@davemloft.net>
+Cc: Eric Dumazet <edumazet@google.com>
+Cc: Florian Westphal <fw@strlen.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Helge Deller <deller@gmx.de>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Huacai Chen <chenhuacai@kernel.org>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: James E.J. Bottomley <jejb@linux.ibm.com>
+Cc: Jan Kara <jack@suse.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: Jens Axboe <axboe@kernel.dk>
+Cc: Johannes Berg <johannes@sipsolutions.net>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Jozsef Kadlecsik <kadlec@netfilter.org>
+Cc: KP Singh <kpsingh@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Marco Elver <elver@google.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>
+Cc: Paolo Abeni <pabeni@redhat.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thomas Graf <tgraf@suug.ch>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Vignesh Raghavendra <vigneshr@ti.com>
+Cc: WANG Xuerui <kernel@xen0n.name>
+Cc: Will Deacon <will@kernel.org>
+Cc: Yury Norov <yury.norov@gmail.com>
+Cc: dri-devel@lists.freedesktop.org
+Cc: kasan-dev@googlegroups.com
+Cc: kernel-janitors@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-block@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-doc@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-media@vger.kernel.org
+Cc: linux-mips@vger.kernel.org
+Cc: linux-mm@kvack.org
+Cc: linux-mmc@vger.kernel.org
+Cc: linux-mtd@lists.infradead.org
+Cc: linux-nvme@lists.infradead.org
+Cc: linux-parisc@vger.kernel.org
+Cc: linux-rdma@vger.kernel.org
+Cc: linux-s390@vger.kernel.org
+Cc: linux-um@lists.infradead.org
+Cc: linux-usb@vger.kernel.org
+Cc: linux-wireless@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: loongarch@lists.linux.dev
+Cc: netdev@vger.kernel.org
+Cc: sparclinux@vger.kernel.org
+Cc: x86@kernel.org
 
 
->
->> > diff --git a/lib/test_hexdump.c b/lib/test_hexdump.c
->> > index 0927f44cd478..41a0321f641a 100644
->> > --- a/lib/test_hexdump.c
->> > +++ b/lib/test_hexdump.c
->> > @@ -208,7 +208,7 @@ static void __init test_hexdump_overflow(size_t buflen, size_t len,
->> >  static void __init test_hexdump_overflow_set(size_t buflen, bool ascii)
->> >  {
->> >  	unsigned int i = 0;
->> > -	int rs = (prandom_u32_max(2) + 1) * 16;
->> > +	int rs = prandom_u32_max(2) + 1 * 16;
->> >  
->> >  	do {
->> >  		int gs = 1 << i;
->> 
->> This looks wrong. Cocci says:
->> 
->> -       int rs = (get_random_int() % 2 + 1) * 16;
->> +       int rs = (prandom_u32_max(2) + 1) * 16;
->
->!! Nice catch.
->
->Alright, I'll give this a try with more cocci. The big difficulty at the
->moment is the power of 2 constant checking thing. If you have any
->pointers on that, would be nice.
->
->Thanks a bunch for the guidance.
+Jason A. Donenfeld (7):
+  treewide: use prandom_u32_max() when possible, part 1
+  treewide: use prandom_u32_max() when possible, part 2
+  treewide: use get_random_{u8,u16}() when possible, part 1
+  treewide: use get_random_{u8,u16}() when possible, part 2
+  treewide: use get_random_u32() when possible
+  treewide: use get_random_bytes when possible
+  prandom: remove unused functions
 
-Sure thing! I was pleased to figure out how to do the python bit.
-
--Kees
-
-[1] actually, I don't see it on lore... I will resend it
+ Documentation/networking/filter.rst           |  2 +-
+ arch/arm/kernel/process.c                     |  2 +-
+ arch/arm/kernel/signal.c                      |  2 +-
+ arch/arm64/kernel/process.c                   |  2 +-
+ arch/arm64/kernel/syscall.c                   |  2 +-
+ arch/loongarch/kernel/process.c               |  2 +-
+ arch/loongarch/kernel/vdso.c                  |  2 +-
+ arch/mips/kernel/process.c                    |  2 +-
+ arch/mips/kernel/vdso.c                       |  2 +-
+ arch/parisc/kernel/process.c                  |  2 +-
+ arch/parisc/kernel/sys_parisc.c               |  4 +-
+ arch/parisc/kernel/vdso.c                     |  2 +-
+ arch/powerpc/crypto/crc-vpmsum_test.c         |  2 +-
+ arch/powerpc/kernel/process.c                 |  2 +-
+ arch/s390/kernel/process.c                    |  4 +-
+ arch/s390/kernel/vdso.c                       |  2 +-
+ arch/s390/mm/mmap.c                           |  2 +-
+ arch/sparc/vdso/vma.c                         |  2 +-
+ arch/um/kernel/process.c                      |  2 +-
+ arch/x86/entry/vdso/vma.c                     |  2 +-
+ arch/x86/kernel/cpu/amd.c                     |  2 +-
+ arch/x86/kernel/module.c                      |  2 +-
+ arch/x86/kernel/process.c                     |  2 +-
+ arch/x86/mm/pat/cpa-test.c                    |  4 +-
+ block/blk-crypto-fallback.c                   |  2 +-
+ crypto/async_tx/raid6test.c                   |  2 +-
+ crypto/testmgr.c                              | 94 +++++++++----------
+ drivers/block/drbd/drbd_receiver.c            |  4 +-
+ drivers/char/random.c                         | 11 +--
+ drivers/dma/dmatest.c                         |  2 +-
+ .../gpu/drm/i915/gem/i915_gem_execbuffer.c    |  2 +-
+ drivers/gpu/drm/i915/i915_gem_gtt.c           |  6 +-
+ .../gpu/drm/i915/selftests/i915_selftest.c    |  2 +-
+ drivers/gpu/drm/selftests/test-drm_buddy.c    |  2 +-
+ drivers/gpu/drm/selftests/test-drm_mm.c       |  2 +-
+ drivers/infiniband/core/cma.c                 |  2 +-
+ drivers/infiniband/hw/cxgb4/cm.c              |  4 +-
+ drivers/infiniband/hw/cxgb4/id_table.c        |  4 +-
+ drivers/infiniband/hw/hfi1/tid_rdma.c         |  2 +-
+ drivers/infiniband/hw/hns/hns_roce_ah.c       |  5 +-
+ drivers/infiniband/hw/mlx4/mad.c              |  2 +-
+ drivers/infiniband/ulp/ipoib/ipoib_cm.c       |  2 +-
+ drivers/infiniband/ulp/rtrs/rtrs-clt.c        |  3 +-
+ drivers/md/bcache/request.c                   |  2 +-
+ drivers/md/raid5-cache.c                      |  2 +-
+ drivers/media/common/v4l2-tpg/v4l2-tpg-core.c |  2 +-
+ .../media/test-drivers/vivid/vivid-radio-rx.c |  4 +-
+ .../test-drivers/vivid/vivid-touch-cap.c      |  6 +-
+ drivers/misc/habanalabs/gaudi2/gaudi2.c       |  2 +-
+ drivers/mmc/core/core.c                       |  4 +-
+ drivers/mmc/host/dw_mmc.c                     |  2 +-
+ drivers/mtd/nand/raw/nandsim.c                |  8 +-
+ drivers/mtd/tests/mtd_nandecctest.c           | 12 +--
+ drivers/mtd/tests/speedtest.c                 |  2 +-
+ drivers/mtd/tests/stresstest.c                | 19 +---
+ drivers/mtd/ubi/debug.c                       |  2 +-
+ drivers/mtd/ubi/debug.h                       |  6 +-
+ drivers/net/bonding/bond_main.c               |  2 +-
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c     |  2 +-
+ drivers/net/ethernet/broadcom/cnic.c          |  5 +-
+ .../chelsio/inline_crypto/chtls/chtls_cm.c    |  4 +-
+ .../chelsio/inline_crypto/chtls/chtls_io.c    |  4 +-
+ drivers/net/ethernet/rocker/rocker_main.c     |  8 +-
+ drivers/net/hamradio/baycom_epp.c             |  2 +-
+ drivers/net/hamradio/hdlcdrv.c                |  2 +-
+ drivers/net/hamradio/yam.c                    |  2 +-
+ drivers/net/phy/at803x.c                      |  2 +-
+ drivers/net/wireguard/selftest/allowedips.c   | 16 ++--
+ .../broadcom/brcm80211/brcmfmac/p2p.c         |  2 +-
+ .../broadcom/brcm80211/brcmfmac/pno.c         |  2 +-
+ .../net/wireless/intel/iwlwifi/mvm/mac-ctxt.c |  2 +-
+ .../net/wireless/marvell/mwifiex/cfg80211.c   |  4 +-
+ .../wireless/microchip/wilc1000/cfg80211.c    |  2 +-
+ .../net/wireless/quantenna/qtnfmac/cfg80211.c |  2 +-
+ drivers/net/wireless/st/cw1200/wsm.c          |  2 +-
+ drivers/net/wireless/ti/wlcore/main.c         |  2 +-
+ drivers/nvme/common/auth.c                    |  2 +-
+ drivers/scsi/cxgbi/cxgb4i/cxgb4i.c            |  4 +-
+ drivers/scsi/fcoe/fcoe_ctlr.c                 |  4 +-
+ drivers/scsi/lpfc/lpfc_hbadisc.c              |  6 +-
+ drivers/scsi/qedi/qedi_main.c                 |  2 +-
+ drivers/target/iscsi/cxgbit/cxgbit_cm.c       |  2 +-
+ drivers/thunderbolt/xdomain.c                 |  2 +-
+ drivers/video/fbdev/uvesafb.c                 |  2 +-
+ fs/ceph/inode.c                               |  2 +-
+ fs/ceph/mdsmap.c                              |  2 +-
+ fs/exfat/inode.c                              |  2 +-
+ fs/ext2/ialloc.c                              |  3 +-
+ fs/ext4/ialloc.c                              |  7 +-
+ fs/ext4/ioctl.c                               |  4 +-
+ fs/ext4/mmp.c                                 |  2 +-
+ fs/ext4/super.c                               |  7 +-
+ fs/f2fs/gc.c                                  |  2 +-
+ fs/f2fs/namei.c                               |  2 +-
+ fs/f2fs/segment.c                             |  8 +-
+ fs/fat/inode.c                                |  2 +-
+ fs/nfsd/nfs4state.c                           |  4 +-
+ fs/ntfs3/fslog.c                              |  6 +-
+ fs/ubifs/debug.c                              | 10 +-
+ fs/ubifs/journal.c                            |  2 +-
+ fs/ubifs/lpt_commit.c                         | 14 +--
+ fs/ubifs/tnc_commit.c                         |  2 +-
+ fs/xfs/libxfs/xfs_alloc.c                     |  2 +-
+ fs/xfs/libxfs/xfs_ialloc.c                    |  4 +-
+ fs/xfs/xfs_error.c                            |  2 +-
+ fs/xfs/xfs_icache.c                           |  2 +-
+ fs/xfs/xfs_log.c                              |  2 +-
+ include/linux/nodemask.h                      |  2 +-
+ include/linux/prandom.h                       | 12 ---
+ include/linux/random.h                        |  5 -
+ include/net/netfilter/nf_queue.h              |  2 +-
+ include/net/red.h                             |  2 +-
+ include/net/sock.h                            |  2 +-
+ kernel/bpf/bloom_filter.c                     |  2 +-
+ kernel/bpf/core.c                             |  6 +-
+ kernel/bpf/hashtab.c                          |  2 +-
+ kernel/bpf/verifier.c                         |  2 +-
+ kernel/kcsan/selftest.c                       |  4 +-
+ kernel/locking/test-ww_mutex.c                |  4 +-
+ kernel/time/clocksource.c                     |  2 +-
+ lib/cmdline_kunit.c                           |  4 +-
+ lib/fault-inject.c                            |  2 +-
+ lib/find_bit_benchmark.c                      |  4 +-
+ lib/kobject.c                                 |  2 +-
+ lib/random32.c                                |  4 +-
+ lib/reed_solomon/test_rslib.c                 | 12 +--
+ lib/sbitmap.c                                 |  4 +-
+ lib/test-string_helpers.c                     |  2 +-
+ lib/test_fprobe.c                             |  2 +-
+ lib/test_hexdump.c                            | 10 +-
+ lib/test_kasan.c                              |  6 +-
+ lib/test_kprobes.c                            |  2 +-
+ lib/test_list_sort.c                          |  2 +-
+ lib/test_min_heap.c                           |  6 +-
+ lib/test_objagg.c                             |  2 +-
+ lib/test_rhashtable.c                         |  6 +-
+ lib/test_vmalloc.c                            | 19 +---
+ lib/uuid.c                                    |  2 +-
+ mm/migrate.c                                  |  2 +-
+ mm/shmem.c                                    |  2 +-
+ mm/slab.c                                     |  2 +-
+ mm/slub.c                                     |  2 +-
+ net/802/garp.c                                |  2 +-
+ net/802/mrp.c                                 |  2 +-
+ net/ceph/mon_client.c                         |  2 +-
+ net/ceph/osd_client.c                         |  2 +-
+ net/core/neighbour.c                          |  2 +-
+ net/core/pktgen.c                             | 47 +++++-----
+ net/core/stream.c                             |  2 +-
+ net/dccp/ipv4.c                               |  4 +-
+ net/ipv4/datagram.c                           |  2 +-
+ net/ipv4/igmp.c                               |  6 +-
+ net/ipv4/inet_connection_sock.c               |  2 +-
+ net/ipv4/inet_hashtables.c                    |  2 +-
+ net/ipv4/ip_output.c                          |  2 +-
+ net/ipv4/route.c                              |  4 +-
+ net/ipv4/tcp_cdg.c                            |  2 +-
+ net/ipv4/tcp_ipv4.c                           |  4 +-
+ net/ipv4/udp.c                                |  2 +-
+ net/ipv6/addrconf.c                           |  8 +-
+ net/ipv6/ip6_flowlabel.c                      |  2 +-
+ net/ipv6/mcast.c                              | 10 +-
+ net/ipv6/output_core.c                        |  2 +-
+ net/mac80211/rc80211_minstrel_ht.c            |  2 +-
+ net/mac80211/scan.c                           |  2 +-
+ net/netfilter/ipvs/ip_vs_conn.c               |  2 +-
+ net/netfilter/ipvs/ip_vs_twos.c               |  4 +-
+ net/netfilter/nf_nat_core.c                   |  4 +-
+ net/netfilter/xt_statistic.c                  |  2 +-
+ net/openvswitch/actions.c                     |  2 +-
+ net/packet/af_packet.c                        |  2 +-
+ net/rds/bind.c                                |  2 +-
+ net/sched/act_gact.c                          |  2 +-
+ net/sched/act_sample.c                        |  2 +-
+ net/sched/sch_cake.c                          |  8 +-
+ net/sched/sch_netem.c                         | 22 ++---
+ net/sched/sch_pie.c                           |  2 +-
+ net/sched/sch_sfb.c                           |  2 +-
+ net/sctp/socket.c                             |  4 +-
+ net/sunrpc/auth_gss/gss_krb5_wrap.c           |  4 +-
+ net/sunrpc/cache.c                            |  2 +-
+ net/sunrpc/xprt.c                             |  2 +-
+ net/sunrpc/xprtsock.c                         |  2 +-
+ net/tipc/socket.c                             |  2 +-
+ net/unix/af_unix.c                            |  2 +-
+ net/xfrm/xfrm_state.c                         |  2 +-
+ 186 files changed, 379 insertions(+), 422 deletions(-)
 
 -- 
-Kees Cook
+2.37.3
+
