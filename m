@@ -2,96 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 80DC45F8706
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Oct 2022 21:12:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 915455F8730
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  8 Oct 2022 21:44:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229761AbiJHTMf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Oct 2022 15:12:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39354 "EHLO
+        id S229821AbiJHTo2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Oct 2022 15:44:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49546 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbiJHTMe (ORCPT
+        with ESMTP id S229538AbiJHTo0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Oct 2022 15:12:34 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C787B2F64D;
-        Sat,  8 Oct 2022 12:12:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=jltrTTngI5+i4SrxqnMducvxr3z9ztoNRgWqy5Yg5Vc=; b=FRd/EQ0pfESUdqddbaFYYHkSOB
-        knXxf8NqJUPmkij9EHZ/XMf1uihqgy6aFxGatF2c2c+MPn2VjCzjrauucZ3vvc4c6CRVWHuLvm2tn
-        9TzuHyTdj81e4OhdbxFP66MtBMudFWz6UC0AF1pPvbv1lnSQThfunqLZ7SZXlSxFlwFJSXF+X+Uju
-        c4ganqrcx6NWXJMGsCJNKV8yrJT4xNALl0T0kaR3I0xoDUCh2jc6/PMlvcpVoKO5PQi7WhNx88LFe
-        dQVbBEhO8W+0GqaA5MZutsAT4xuSEe+M4y0s3/hku4/n6Vr371DyP1UbUuYTIJdaG0RATIcBgwKqb
-        W5L2d3/Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ohFFO-002tNm-Nv; Sat, 08 Oct 2022 19:12:30 +0000
-Date:   Sat, 8 Oct 2022 20:12:30 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     syzbot <syzbot+5867885efe39089b339b@syzkaller.appspotmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
-        Vishal Moola <vishal.moola@gmail.com>
-Subject: Re: [syzbot] UBSAN: array-index-out-of-bounds in
- truncate_inode_pages_range
-Message-ID: <Y0HLnmzlmJRK/tHF@casper.infradead.org>
-References: <000000000000117c7505e7927cb4@google.com>
- <20220901162459.431c49b3925e99ddb448e1b3@linux-foundation.org>
+        Sat, 8 Oct 2022 15:44:26 -0400
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 352A22EF1C
+        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Oct 2022 12:44:26 -0700 (PDT)
+Received: by mail-pj1-x1030.google.com with SMTP id n18-20020a17090ade9200b0020b0012097cso5918493pjv.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Oct 2022 12:44:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=mAgGQiYibt6/W5CAo+9L5oS3sdpJlLe5MrCeTey7nag=;
+        b=J+8YFK6iUM86zYLhmFX3+t7qRzul/K4tXXW0089HqM4aCs4d/CCqPjf7/fv65zexgD
+         XdhVVzx+W1tmmk8HUs48KiXHOjR0EtbRpYzJxa511QAN+oE4KpqYCS7blqqBQAVGwfYJ
+         iQ5bB4mISKlyHvN15qjmcYHOxWgwHQyArJVN8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=mAgGQiYibt6/W5CAo+9L5oS3sdpJlLe5MrCeTey7nag=;
+        b=hsuI/jCzYEpQ2M11i5pR9kP1b5CaxiXNgVqYwmMjHav5Op7VSpbaisJegF0t6bItnB
+         ENQGcHF5DtVZwvjnB3Z1j2nX748ibVoEpruD9LNPnv0ev9d0ENrCHmF9O5TiTZ/69Pha
+         DpWZ36i/PfPLvflFW4Bjq8a3aUzusoRd7/fmenvAvqPnyonxEw1p1BgA8DQJDnUpgXhs
+         RmhLyuWrpCUwzVg+eDRXkWBzcPkBZv4hHcBmQ5V1cedDEmirdlISvGtEbrpGsn37keHV
+         ElwPTGRnpuIJMl3gfpQ6fpgyW2bjfJGwmzWCf6z+n0DQwQwJfaCQWTZWGfJlwaLCis/o
+         JNew==
+X-Gm-Message-State: ACrzQf08Gq7Wo2XbQ6zMxN/nlJ+Av5Hf+6qSI1lemUDTYsRd85e2xpYH
+        m7Y1tEpnUMbQ+mfRibXK1Opfcg==
+X-Google-Smtp-Source: AMsMyM5Z5KYwFCcKEpXGtIhO2+5Vjeb7DMKrGFgP2q/DnCM8F5oFUxdFuQDUtO23wSnmxSQlSSWygA==
+X-Received: by 2002:a17:902:e808:b0:17f:92cb:2fdd with SMTP id u8-20020a170902e80800b0017f92cb2fddmr7914995plg.137.1665258265543;
+        Sat, 08 Oct 2022 12:44:25 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b1-20020a17090a100100b002005fcd2cb4sm6673353pja.2.2022.10.08.12.44.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Oct 2022 12:44:24 -0700 (PDT)
+Date:   Sat, 8 Oct 2022 12:44:23 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     Ard Biesheuvel <ardb@kernel.org>
+Cc:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        kernel-dev@igalia.com, kernel@gpiccoli.net, anton@enomsg.org,
+        ccross@android.com, tony.luck@intel.com
+Subject: Re: [PATCH 5/8] pstore: Fix long-term implicit conversions in the
+ compression routines
+Message-ID: <202210081242.0B0F8B7@keescook>
+References: <20221006224212.569555-1-gpiccoli@igalia.com>
+ <20221006224212.569555-6-gpiccoli@igalia.com>
+ <202210061634.758D083D5@keescook>
+ <CAMj1kXF27wZYzXm1u3kKSBtbG=tcK7wOwq6YTwpFg+Z7ic4siQ@mail.gmail.com>
+ <202210071234.D289C8C@keescook>
+ <11e03e8d-7711-330d-e0d4-808ef9acec3a@igalia.com>
+ <CAMj1kXHSSSZ59tihHDNDamczxFCRH8NHzT-eKaZ7xNyqVXW1Hw@mail.gmail.com>
+ <dbe57a5e-7486-649f-7093-6da6312a71ee@igalia.com>
+ <CAMj1kXHjS+gywpoZ26_Bn76Z_5ohhtoD7ruH0bBYaAQzBY9tuw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20220901162459.431c49b3925e99ddb448e1b3@linux-foundation.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CAMj1kXHjS+gywpoZ26_Bn76Z_5ohhtoD7ruH0bBYaAQzBY9tuw@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 01, 2022 at 04:24:59PM -0700, Andrew Morton wrote:
-> On Wed, 31 Aug 2022 17:13:36 -0700 syzbot <syzbot+5867885efe39089b339b@syzkaller.appspotmail.com> wrote:
-> 
-> > Hello,
-> > 
-> > syzbot found the following issue on:
-> > 
-> > HEAD commit:    89b749d8552d Merge tag 'fbdev-for-6.0-rc3' of git://git.ke..
-> > git tree:       upstream
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=14b9661b080000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=911efaff115942bb
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=5867885efe39089b339b
-> > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> > userspace arch: i386
-> > 
-> > Unfortunately, I don't have any reproducer for this issue yet.
-> > 
-> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > Reported-by: syzbot+5867885efe39089b339b@syzkaller.appspotmail.com
-> > 
-> > ntfs3: loop0: Different NTFS' sector size (1024) and media sector size (512)
-> > ntfs3: loop0: RAW NTFS volume: Filesystem size 0.00 Gb > volume size 0.00 Gb. Mount in read-only
-> > ================================================================================
-> > UBSAN: array-index-out-of-bounds in mm/truncate.c:366:18
-> > index 254 is out of range for type 'long unsigned int [15]'
-> 
-> That's
-> 
-> 		index = indices[folio_batch_count(&fbatch) - 1] + 1;
-> 
-> I looked.  I see no way in which fbatch.nr got a value of 255.
+On Sat, Oct 08, 2022 at 07:52:48PM +0200, Ard Biesheuvel wrote:
+> Again, please correct me if I am missing something here (Kees?). Are
+> there cases where we compress data that may be compressed already?
 
-NTFS is involved.  I stopped looking at that point; it seems to be
-riddled with buffer overflows.
+Nope, for dmesg, it should all only be text. I'd agree -- the worst case
+seems a weird thing to need.
 
-> I must say, the the code looks rather hacky.  Isn't there a more
-> type-friendly way of doing this?
-
-Looking at the three callers, they all want to advance index.  We
-should probably pass &index instead of index and have find_lock_entries
-advance it for them.
-
-Vishal, want to take this on?
+-- 
+Kees Cook
