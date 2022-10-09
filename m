@@ -2,82 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B499B5F89CC
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Oct 2022 08:49:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BC99E5F8A5F
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Oct 2022 11:28:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229953AbiJIGtl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Oct 2022 02:49:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40306 "EHLO
+        id S229899AbiJIJ2N (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Oct 2022 05:28:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229840AbiJIGti (ORCPT
+        with ESMTP id S229699AbiJIJ2L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Oct 2022 02:49:38 -0400
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5FED188
-        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Oct 2022 23:49:34 -0700 (PDT)
-Received: by mail-ej1-x62b.google.com with SMTP id k2so19130490ejr.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Oct 2022 23:49:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ZLfh/kJniA0SsDArOwtDJ/ZRi0BuiUdpe++i/ajh6o=;
-        b=fZfiGufQQshb7+Pel1YdxHFn0kuiiQg+LQo7JfynFTNca1yj3Q5JPSqnGQ8k7iYGBb
-         pV/vL7MW8rrisN01RF+EdpJGjhwu2D0hwZC+2KG2fckSwXoCoYeIIbteLi7+ybu98YNb
-         zsO5YcK5T45hXYJTaOMW7o2JHrjT0dcgKTixOZE4gKzG8LUXd49qtHe+65wZ9Urs6+J6
-         n6inPPDvYzxbpokD2AoFX6gskwdQ+cY4CuWcc0WUUnODV7h/76tuKsfSceBveAToYi65
-         R7bC5UHDhD5RzfNt/PxEGf+i+79gGxe440nmkew6sdlAs9CAX+iedW9sdQotybWxsGSP
-         y/dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1ZLfh/kJniA0SsDArOwtDJ/ZRi0BuiUdpe++i/ajh6o=;
-        b=o489cGecmjkvv3sg4TtdQ9D+gFgdkI2yXFQRq4i+owAj+GQDeXVaHw9jheFfp/yB5p
-         14UtJu+SFiqKmp4MJ2RqY/32XmRgIbCCHS4oKQQnYbQDb4DwXcTswjRiVHcYY/xOx2Hy
-         Er6mrEVe2zAbB82E2BbBp0ziuINFOPi4FtJS6dEWpACprqRzdGtfVLbFkND/FwLCZtwn
-         iuas7BBxSKonnRu6EEdQWLzBXfU+tMfUM1OSI4d/xVVz9ICFxnhAjoFVFlkablIkFXuf
-         tkXv/ckx9ioXey9NjU5PzPtU+Du0ARB2OvJPCAguGGAFkfpGjyCb2fA/7z0dMIQG5oN5
-         Ktag==
-X-Gm-Message-State: ACrzQf3xSDAeJqXwyacdsfOj/0/ELF0ZmEd5l8nzRGQB0vbGkAKBWEze
-        QKl3lzGZwcgfxfoHd5OGyaHYOJg+s0513yP6F+YJlQ==
-X-Google-Smtp-Source: AMsMyM6ouWinsTaRGvOfpoqS+hMn/fYxvHX7lpgdiZ2lzKXkmaY1hziY4YGjX7yXGTpOSHHPXr9bgoogFgcLdAZf5eo=
-X-Received: by 2002:a17:907:25c5:b0:782:978d:c3da with SMTP id
- ae5-20020a17090725c500b00782978dc3damr9999283ejc.623.1665298171163; Sat, 08
- Oct 2022 23:49:31 -0700 (PDT)
+        Sun, 9 Oct 2022 05:28:11 -0400
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0E2C2CC90;
+        Sun,  9 Oct 2022 02:28:08 -0700 (PDT)
+Received: from kwepemi500022.china.huawei.com (unknown [172.30.72.54])
+        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Mlc6c1Qxqz1P75R;
+        Sun,  9 Oct 2022 17:23:36 +0800 (CST)
+Received: from huawei.com (10.67.175.34) by kwepemi500022.china.huawei.com
+ (7.221.188.64) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Sun, 9 Oct
+ 2022 17:28:06 +0800
+From:   Ren Zhijie <renzhijie2@huawei.com>
+To:     <viro@zeniv.linux.org.uk>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ren Zhijie <renzhijie2@huawei.com>
+Subject: [PATCH -next] coredump: fix unused-function warning
+Date:   Sun, 9 Oct 2022 09:24:20 +0000
+Message-ID: <20221009092420.32850-1-renzhijie2@huawei.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20220927120857.639461-1-max.kellermann@ionos.com> <88f8941f-82bf-5152-b49a-56cb2e465abb@redhat.com>
-In-Reply-To: <88f8941f-82bf-5152-b49a-56cb2e465abb@redhat.com>
-From:   Max Kellermann <max.kellermann@ionos.com>
-Date:   Sun, 9 Oct 2022 08:49:19 +0200
-Message-ID: <CAKPOu+88FT1SeFDhvnD_NC7aEJBxd=-T99w67mA-s4SXQXjQNw@mail.gmail.com>
-Subject: Re: [PATCH] fs/ceph/super: add mount options "snapdir{mode,uid,gid}"
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     idryomov@gmail.com, jlayton@kernel.org, ceph-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.175.34]
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemi500022.china.huawei.com (7.221.188.64)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Oct 9, 2022 at 8:23 AM Xiubo Li <xiubli@redhat.com> wrote:
-> I don't think this is a good place to implement this in client side.
-> Should this be a feature in cephx.
+If CONFIG_ELF_CORE is not set,
+gcc warns about unused function:
 
-What's cephx? "git grep cephx" didn't reveal anything that looked useful to me.
+fs/coredump.c:839:12: error: ‘dump_emit_page’ defined but not used [-Werror=unused-function]
+ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+            ^~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
 
-> With this for the same directories in different mounts will behave
-> differently. Isn't that odd ?
+dump_emit_page() only be called by dump_user_range(),
+so move it under the CONFIG_ELF_CORE.
 
-Just like different mounts can have different snapdir names currently.
-That's just as odd, and I tried to imitate what's already there.
+Fixes: 06bbaa6dc53c ("[coredump] don't use __kernel_write() on kmap_local_page()")
+Signed-off-by: Ren Zhijie <renzhijie2@huawei.com>
+---
+ fs/coredump.c | 48 ++++++++++++++++++++++++------------------------
+ 1 file changed, 24 insertions(+), 24 deletions(-)
 
-I don't have an opinion on how this should be implemented, all I want
-is restrict who gets access to cephfs snapshots. Please explain how
-you want it, and I'll send an amended patch.
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 3e8630c8d627..dc1cb8440bc9 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -836,6 +836,30 @@ static int __dump_skip(struct coredump_params *cprm, size_t nr)
+ 	}
+ }
+ 
++int dump_emit(struct coredump_params *cprm, const void *addr, int nr)
++{
++	if (cprm->to_skip) {
++		if (!__dump_skip(cprm, cprm->to_skip))
++			return 0;
++		cprm->to_skip = 0;
++	}
++	return __dump_emit(cprm, addr, nr);
++}
++EXPORT_SYMBOL(dump_emit);
++
++void dump_skip_to(struct coredump_params *cprm, unsigned long pos)
++{
++	cprm->to_skip = pos - cprm->pos;
++}
++EXPORT_SYMBOL(dump_skip_to);
++
++void dump_skip(struct coredump_params *cprm, size_t nr)
++{
++	cprm->to_skip += nr;
++}
++EXPORT_SYMBOL(dump_skip);
++
++#ifdef CONFIG_ELF_CORE
+ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ {
+ 	struct bio_vec bvec = {
+@@ -869,30 +893,6 @@ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ 	return 1;
+ }
+ 
+-int dump_emit(struct coredump_params *cprm, const void *addr, int nr)
+-{
+-	if (cprm->to_skip) {
+-		if (!__dump_skip(cprm, cprm->to_skip))
+-			return 0;
+-		cprm->to_skip = 0;
+-	}
+-	return __dump_emit(cprm, addr, nr);
+-}
+-EXPORT_SYMBOL(dump_emit);
+-
+-void dump_skip_to(struct coredump_params *cprm, unsigned long pos)
+-{
+-	cprm->to_skip = pos - cprm->pos;
+-}
+-EXPORT_SYMBOL(dump_skip_to);
+-
+-void dump_skip(struct coredump_params *cprm, size_t nr)
+-{
+-	cprm->to_skip += nr;
+-}
+-EXPORT_SYMBOL(dump_skip);
+-
+-#ifdef CONFIG_ELF_CORE
+ int dump_user_range(struct coredump_params *cprm, unsigned long start,
+ 		    unsigned long len)
+ {
+-- 
+2.17.1
+
