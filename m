@@ -2,53 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CED655F8906
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Oct 2022 04:58:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 293FE5F893C
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Oct 2022 05:41:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229639AbiJIC6P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Oct 2022 22:58:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35812 "EHLO
+        id S229840AbiJIDlu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Oct 2022 23:41:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229552AbiJIC6N (ORCPT
+        with ESMTP id S229895AbiJIDlW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Oct 2022 22:58:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 579E42F3B4;
-        Sat,  8 Oct 2022 19:58:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CDF9A60A39;
-        Sun,  9 Oct 2022 02:58:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F02C433D6;
-        Sun,  9 Oct 2022 02:58:04 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="BCnShyLw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-        t=1665284282;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=PTr9nvXhCIMgKxMMIHmKX/lEwOczzX2VojqQXIdEQXM=;
-        b=BCnShyLwlwmwAtXh10NutIMIlSIhkA3vRZVyN65BKsRj3tXHWyoCFyOeejJMpbUNI3Ekb8
-        49UE+EpPryrYxycNRVtDAFnXtv9x21EZGJQQn9h5YttxW9h0hZ/Z324YkU/7vcz00VHicb
-        bpNHNFK7pnOsAXwDr3Q1vkS9s34eCwg=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b38280f4 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-        Sun, 9 Oct 2022 02:58:02 +0000 (UTC)
-Date:   Sat, 8 Oct 2022 20:57:54 -0600
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     David Laight <David.Laight@ACULAB.COM>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "patches@lists.linux.dev" <patches@lists.linux.dev>,
+        Sat, 8 Oct 2022 23:41:22 -0400
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6A89356C2
+        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Oct 2022 20:41:16 -0700 (PDT)
+Received: by mail-pf1-x435.google.com with SMTP id 67so8104443pfz.12
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Oct 2022 20:41:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Jc9wqi9hH7sDAuXmZMPHByefEvgO0MbR3+ZEqDB7Wuk=;
+        b=ZhbF7aukJSn3TNMRwCJkZSqm1r+X38mJ2RxvPJW6Z+9mn1TOlxypOyituNx8mz1HVC
+         FGqxSiHSDomVzpOPFi9kka3+6Rdn9v0XaNwqyXLdtOhmQI0POv0z39c8Rsj4C7/d+KIP
+         fJKzHg6Na0ETg2nVHR+d6vQT/rsL3lGZwlInw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Jc9wqi9hH7sDAuXmZMPHByefEvgO0MbR3+ZEqDB7Wuk=;
+        b=V5+JvqHwcpUUxDL6xFAyyh6BrxJenwq+wbzjgLFfvEgEkEZIW54d6oKfWYYnPDZcJZ
+         UM7dSN1U+w2H8Ku44Nexn5xNS3xctDW/ZbPqAciLX3Krw7uWJocgpEhxfsU69YKPrgF5
+         g4pcrZPksEZghLI8KJq4qbnJ/VBDXLlUUrlGVI3T18TqsOK9mD9Yfed/XMqjUKUnl7Dy
+         Ebvdn5FJMse94x/bRHawuGbgb3qia4z3oGeKqQqAe/LhpDknrWZUMi3Pt9ha3sTJcnC6
+         llI5BZW3T6/W9ezwZAnrdFpWG39QLfx561P+9wIdr+SKMef6+Rg+HxjchD6VmTjV8ioq
+         jb9A==
+X-Gm-Message-State: ACrzQf1p53C3vOktxyPL++0SMBqmTtuqKaHDkLrCWfnfl+L+uuUwNLL/
+        s0P+p3Dm+tCOU+EVuDRjShcEeA==
+X-Google-Smtp-Source: AMsMyM7YoBLGpPreiN9760Jo2f1/EfVU3YsZS0ZZ4a+XLEChtkH8ZIzixkyyCKOXZUBZ1uN6dxOluQ==
+X-Received: by 2002:a63:5a44:0:b0:431:fa3a:f92c with SMTP id k4-20020a635a44000000b00431fa3af92cmr11522888pgm.471.1665286876368;
+        Sat, 08 Oct 2022 20:41:16 -0700 (PDT)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id w2-20020a626202000000b0053e8f4a10c1sm4198763pfb.217.2022.10.08.20.41.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 08 Oct 2022 20:41:15 -0700 (PDT)
+Date:   Sat, 8 Oct 2022 20:41:14 -0700
+From:   Kees Cook <keescook@chromium.org>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
         Andreas Noever <andreas.noever@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Borislav Petkov <bp@alien8.de>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph =?utf-8?Q?B=C3=B6hmwalder?= 
+        Christoph =?iso-8859-1?Q?B=F6hmwalder?= 
         <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Dave Airlie <airlied@redhat.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -85,109 +94,75 @@ Cc:     Kees Cook <keescook@chromium.org>,
         Vignesh Raghavendra <vigneshr@ti.com>,
         WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
         Yury Norov <yury.norov@gmail.com>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
-        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
-        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>,
-        Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>
-Subject: Re: [PATCH v3 3/5] treewide: use get_random_u32() when possible
-Message-ID: <Y0I4si9+cMracPAq@zx2c4.com>
-References: <848ed24c-13ef-6c38-fd13-639b33809194@csgroup.eu>
- <CAHmME9raQ4E00r9r8NyWJ17iSXE_KniTG0onCNAfMmfcGar1eg@mail.gmail.com>
- <f10fcfbf-2da6-cf2d-6027-fbf8b52803e9@csgroup.eu>
- <6396875c-146a-acf5-dd9e-7f93ba1b4bc3@csgroup.eu>
- <CAHmME9pE4saqnwxhsAwt-xegYGjsavPOGnHCbZhUXD7kaJ+GAA@mail.gmail.com>
- <501b0fc3-6c67-657f-781e-25ee0283bc2e@csgroup.eu>
- <Y0Ayvov/KQmrIwTS@zx2c4.com>
- <202210071010.52C672FA9@keescook>
- <Y0BoQmVauPLC2uW5@zx2c4.com>
- <69080fb8cace486db4e28e2e90f1d550@AcuMS.aculab.com>
+        dri-devel@lists.freedesktop.org, kasan-dev@googlegroups.com,
+        kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-mm@kvack.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-nvme@lists.infradead.org, linux-parisc@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        loongarch@lists.linux.dev, netdev@vger.kernel.org,
+        sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v5 0/7] treewide cleanup of random integer usage
+Message-ID: <202210082028.692DFA21@keescook>
+References: <20221008055359.286426-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <69080fb8cace486db4e28e2e90f1d550@AcuMS.aculab.com>
-X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20221008055359.286426-1-Jason@zx2c4.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 08, 2022 at 09:53:33PM +0000, David Laight wrote:
-> From: Jason A. Donenfeld
-> > Sent: 07 October 2022 18:56
-> ...
-> > > Given these kinds of less mechanical changes, it may make sense to split
-> > > these from the "trivial" conversions in a treewide patch. The chance of
-> > > needing a revert from the simple 1:1 conversions is much lower than the
-> > > need to revert by-hand changes.
-> > >
-> > > The Cocci script I suggested in my v1 review gets 80% of the first
-> > > patch, for example.
-> > 
-> > I'll split things up into a mechanical step and a non-mechanical step.
-> > Good idea.
-> 
-> I'd also do something about the 'get_random_int() & 3' cases.
-> (ie remainder by 2^n-1)
-> These can be converted to 'get_random_u8() & 3' (etc).
-> So they only need one random byte (not 4) and no multiply.
-> 
-> Possibly something based on (the quickly typed, and not C):
-> #define get_random_below(val) [
-> 	if (builtin_constant(val))
-> 		BUILD_BUG_ON(!val || val > 0x100000000ull)
-> 		if (!(val & (val - 1)) {
-> 			if (val <= 0x100)
-> 				return get_random_u8() & (val - 1);
-> 			if (val <= 0x10000)
-> 				return get_random_u16() & (val - 1);
-> 			return get_random_u32() & (val - 1);
-> 		}
-> 	}
-> 	BUILD_BUG_ON(sizeof (val) > 4);
-> 	return ((u64)get_random_u32() * val) >> 32;
+On Fri, Oct 07, 2022 at 11:53:52PM -0600, Jason A. Donenfeld wrote:
+> This is a five part treewide cleanup of random integer handling. The
+> rules for random integers are:
 
-This is already how the prandom_u32_max() implementation works, as
-suggested in the cover letter. The multiplication by constants in it
-reduces to bit shifts and you already get all the manual masking
-possible.
+Reviewing the delta between of my .cocci rules and your v5, everything
+matches, except for get_random_int() conversions for files not in
+your tree:
 
-> get_random_below() is a much better name than prandom_u32_max().
+diff --git a/drivers/gpu/drm/tests/drm_buddy_test.c b/drivers/gpu/drm/tests/drm_buddy_test.c
+index 7a2b2d6bc3fe..62f69589a72d 100644
+--- a/drivers/gpu/drm/tests/drm_buddy_test.c
++++ b/drivers/gpu/drm/tests/drm_buddy_test.c
+@@ -729,7 +729,7 @@ static void drm_test_buddy_alloc_limit(struct kunit *test)
+ static int drm_buddy_init_test(struct kunit *test)
+ {
+ 	while (!random_seed)
+-		random_seed = get_random_int();
++		random_seed = get_random_u32();
+ 
+ 	return 0;
+ }
+diff --git a/drivers/gpu/drm/tests/drm_mm_test.c b/drivers/gpu/drm/tests/drm_mm_test.c
+index 659d1af4dca7..c4b66eeae203 100644
+--- a/drivers/gpu/drm/tests/drm_mm_test.c
++++ b/drivers/gpu/drm/tests/drm_mm_test.c
+@@ -2212,7 +2212,7 @@ static void drm_test_mm_color_evict_range(struct kunit *test)
+ static int drm_mm_init_test(struct kunit *test)
+ {
+ 	while (!random_seed)
+-		random_seed = get_random_int();
++		random_seed = get_random_u32();
+ 
+ 	return 0;
+ }
 
-Yes, but that name is reserved for when I succeed at making a function
-that bounds with a uniform distribution. prandom_u32_max()'s
-distribution is non-uniform since it doesn't do rejection sampling. Work
-in progress is on https://git.zx2c4.com/linux-rng/commit/?h=jd/get_random_u32_below .
-But out of common respect for this already huge thread with a massive
-CC list, if you want to bikeshed my WIP stuff, please start a new thread
-for that and not bog this one down. IOW, no need to reply here directly.
-That'd annoy me.
+So, I guess I mean to say that "prandom: remove unused functions" is
+going to cause some pain. :) Perhaps don't push that to -next, and do a
+final pass next merge window to catch any new stuff, and then send those
+updates and the removal before -rc1 closes?
 
-Jason
+-- 
+Kees Cook
