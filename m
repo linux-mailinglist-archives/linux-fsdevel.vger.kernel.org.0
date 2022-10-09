@@ -2,170 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 53FBF5F8A72
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Oct 2022 11:52:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D42D65F8A91
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Oct 2022 12:28:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229657AbiJIJwj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 9 Oct 2022 05:52:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35768 "EHLO
+        id S229984AbiJIK2G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Oct 2022 06:28:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229797AbiJIJwi (ORCPT
+        with ESMTP id S229979AbiJIK2E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 9 Oct 2022 05:52:38 -0400
-Received: from mail-pg1-x52e.google.com (mail-pg1-x52e.google.com [IPv6:2607:f8b0:4864:20::52e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1C9C1B9CE
-        for <linux-fsdevel@vger.kernel.org>; Sun,  9 Oct 2022 02:52:37 -0700 (PDT)
-Received: by mail-pg1-x52e.google.com with SMTP id f193so8204372pgc.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Oct 2022 02:52:37 -0700 (PDT)
+        Sun, 9 Oct 2022 06:28:04 -0400
+Received: from mail-ej1-x62e.google.com (mail-ej1-x62e.google.com [IPv6:2a00:1450:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2C0A2A42F
+        for <linux-fsdevel@vger.kernel.org>; Sun,  9 Oct 2022 03:28:02 -0700 (PDT)
+Received: by mail-ej1-x62e.google.com with SMTP id y14so2427910ejd.9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 09 Oct 2022 03:28:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vSVDnAgp4oFS6GtK5rwH8v4//Iq76mLV9/G+ci+5hkU=;
-        b=5X6uW2V+efbPbpyDNO3HlTgh8q1X5rnRaOc6ctfh4Nyq+P+npywuh1EOO5ouC2B8Pj
-         S//KvKWa8t5eAgr4fmtMzJBmpY27L5ZomycvSDcVYpkoDjD4DkKEaGBQhHXrpvlpTJf+
-         /vywDKTauGCQoTz02QOGcT95fyWQEQMOVMp9BfI8nD+HDUnp8CBQ6a4V/zqSPqpUe9eQ
-         Ih3Bnk4n+7voDmxcf/d+fCO9EnGN6uOlOe1K0oGr7j0ePkR5XiTBTB8h4AegVlCAkUmx
-         CSr3ILx2UbazKdN2vbowNDI43x6gdknGrj1pO4/hL+yfEeK3vdle+o6mDaea1gxUZwlN
-         vYzw==
+        d=ionos.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ucto18LgoEv5+ynUqvo1ZWAC+UUGL5/WVlhSeckRLK0=;
+        b=PWSQ3Q8kYqxErLOrdWe7bQBGHUYVGp/JFkzqyRwFKxUXzH38xKyUPgfNc3qPYTjm/c
+         jc30LY6aBNyOPjnnqZQLkoyx3oe9BU+vMvSFHXdqFhbRk0fnRQ6ERI9YzRgI4qCzful8
+         DV1kM+49C6wYuI4Hs1QqaZo/jgp28qRLs/1KDe55mM4Ndl56SFAPK1cPjuz4lz3R4q6B
+         X2unAD8mwvKA6QzGellvYmxEOiiBGuwwrfvLqftbxEVAFLW1s0KCADPDF+r6mQobFDEt
+         DygAi/yfqYfLyBsxbC01STKU2w8BbryI4AqVGyrBZEtKiVA33mf01viklrONBZ8ss8qv
+         zbVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vSVDnAgp4oFS6GtK5rwH8v4//Iq76mLV9/G+ci+5hkU=;
-        b=sX4VLpSxEVAPa1+OVgK7ZCQuknjZ9dAYpBJDHHkHiuPMLDumB7dGYbff/W4HbdyAa9
-         Akz6tm+roLe7U7zjkvBhTumcVw+y/reVi87x0Qi0zS6ElzMJJvvvSG//N1mao8XALKiB
-         HgvuIrKkDOvGpSrZR4RlWKlv4wgI8NJ6zTp1cXaNJLLEyWNoEw/tCTD65SReb0TOpsGj
-         kSl4hHCkN67a5ZwjotyWeeAr+7seerYt93646OujcLO8+zOhcIzwU/ps9sDzrMaM7kwi
-         ush8yx0AAWB2OmQvIzroEGOA2fdoU4T8Yj4mLmStUsx6rCiojGAKJ2SsfjbNICE/lYfW
-         z0Ug==
-X-Gm-Message-State: ACrzQf0nHutCRCf3wD8l7TpRQffBnllWDj0DzUfSunvc+ng9dfUUawXV
-        MD8+lKlPjSVjtH3VjMkZHomVGg==
-X-Google-Smtp-Source: AMsMyM7IzOZu1tCczAGU+xbSMs7nJWyuEw0Ic2cn/6a4gM+q7tFnu7M34AMMxZfdqitGv9f1oFrLDg==
-X-Received: by 2002:a65:44c1:0:b0:428:ab8f:62dd with SMTP id g1-20020a6544c1000000b00428ab8f62ddmr11994518pgs.211.1665309157196;
-        Sun, 09 Oct 2022 02:52:37 -0700 (PDT)
-Received: from [10.3.156.122] ([63.216.146.187])
-        by smtp.gmail.com with ESMTPSA id c82-20020a624e55000000b0056265011136sm4678686pfb.112.2022.10.09.02.52.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 09 Oct 2022 02:52:36 -0700 (PDT)
-Message-ID: <bdbf258d-096c-4c44-c195-0ecff7504a32@bytedance.com>
-Date:   Sun, 9 Oct 2022 17:52:32 +0800
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ucto18LgoEv5+ynUqvo1ZWAC+UUGL5/WVlhSeckRLK0=;
+        b=apyrW89LCOsRDfqF+nUwzdAV/PDv9qz2mQAJZuYItfP0kOMvm2FceyaanfKruklLcN
+         +vrtIaw4B0DDc1/kQ8lntmce7v6bP1BKY5b7HMsAnLHoDYlnQdr2axNkj5UDJfOATk0+
+         IRyLEYH7RcvQBfE1DqtVXIrkhptB9rErHMqlMXBbF2INK3DtchGo9hWsRlhIntRZ3yla
+         FitffUMYy3eEBYro6q8eZSF0l9G3S6oDI20fEBWHV8sO1754azQK0ZrJDcv61p6q+Kvy
+         HSVIiJvaw7bReyRWh9n/DSnjhsN8i/VQ2ecn73SHOdXKuKxnC/OYZktX2LkX/KAkA1kO
+         7c+w==
+X-Gm-Message-State: ACrzQf0sUUJreY4PLAc3F3VBaAEZna5vdNk1HhLWCn/xRHep8WoJJJhU
+        dEjgRkdpaw3hp+BFpUFI+XMpLCx+X5Vz7X53l+9VrA==
+X-Google-Smtp-Source: AMsMyM7wHEfKvtNwcKkbX4Ry2Y89datbdz7sRkHgWEQla5i5YlGD3WJ0hyasdkZdb9Svew+M+8y25lfx55C8mG1OXWU=
+X-Received: by 2002:a17:907:8a1f:b0:78d:3dbb:a017 with SMTP id
+ sc31-20020a1709078a1f00b0078d3dbba017mr11003309ejc.54.1665311281487; Sun, 09
+ Oct 2022 03:28:01 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.3.0
-Subject: Re: [External] Re: [RFC PATCH 5/5] cachefiles: add restore command to
- recover inflight ondemand read requests
-To:     JeffleXu <jefflexu@linux.alibaba.com>, dhowells@redhat.com,
-        xiang@kernel.org
-Cc:     linux-cachefs@redhat.com, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yinxin.x@bytedance.com, Gao Xiang <hsiangkao@linux.alibaba.com>
-References: <20220818135204.49878-1-zhujia.zj@bytedance.com>
- <20220818135204.49878-6-zhujia.zj@bytedance.com>
- <514c06f7-017d-bca5-6a87-0dae54c0d83d@linux.alibaba.com>
-From:   Jia Zhu <zhujia.zj@bytedance.com>
-In-Reply-To: <514c06f7-017d-bca5-6a87-0dae54c0d83d@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20220927120857.639461-1-max.kellermann@ionos.com>
+ <88f8941f-82bf-5152-b49a-56cb2e465abb@redhat.com> <CAKPOu+88FT1SeFDhvnD_NC7aEJBxd=-T99w67mA-s4SXQXjQNw@mail.gmail.com>
+ <75e7f676-8c85-af0a-97b2-43664f60c811@redhat.com>
+In-Reply-To: <75e7f676-8c85-af0a-97b2-43664f60c811@redhat.com>
+From:   Max Kellermann <max.kellermann@ionos.com>
+Date:   Sun, 9 Oct 2022 12:27:50 +0200
+Message-ID: <CAKPOu+-rKOVsZ1T=1X-T-Y5Fe1MW2Fs9ixQh8rgq3S9shi8Thw@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/super: add mount options "snapdir{mode,uid,gid}"
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     idryomov@gmail.com, jlayton@kernel.org, ceph-devel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Sun, Oct 9, 2022 at 10:43 AM Xiubo Li <xiubli@redhat.com> wrote:
+> I mean CEPHFS CLIENT CAPABILITIES [1].
 
+I know that, but that's suitable for me. This is client-specific, not
+user (uid/gid) specific.
 
-在 2022/10/8 17:00, JeffleXu 写道:
-> 
-> 
-> On 8/18/22 9:52 PM, Jia Zhu wrote:
->> Previously, in ondemand read scenario, if the anonymous fd was closed by
->> user daemon, inflight and subsequent read requests would return EIO.
->> As long as the device connection is not released, user daemon can hold
->> and restore inflight requests by setting the request flag to
->> CACHEFILES_REQ_NEW.
->>
->> Suggested-by: Gao Xiang <hsiangkao@linux.alibaba.com>
->> Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
->> Signed-off-by: Xin Yin <yinxin.x@bytedance.com>
->> ---
->>   fs/cachefiles/daemon.c   |  1 +
->>   fs/cachefiles/internal.h |  3 +++
->>   fs/cachefiles/ondemand.c | 23 +++++++++++++++++++++++
->>   3 files changed, 27 insertions(+)
->>
->> diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
->> index c74bd1f4ecf5..014369266cb2 100644
->> --- a/fs/cachefiles/daemon.c
->> +++ b/fs/cachefiles/daemon.c
->> @@ -77,6 +77,7 @@ static const struct cachefiles_daemon_cmd cachefiles_daemon_cmds[] = {
->>   	{ "tag",	cachefiles_daemon_tag		},
->>   #ifdef CONFIG_CACHEFILES_ONDEMAND
->>   	{ "copen",	cachefiles_ondemand_copen	},
->> +	{ "restore",	cachefiles_ondemand_restore	},
->>   #endif
->>   	{ "",		NULL				}
->>   };
->> diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
->> index b4af67f1cbd6..d504c61a5f03 100644
->> --- a/fs/cachefiles/internal.h
->> +++ b/fs/cachefiles/internal.h
->> @@ -303,6 +303,9 @@ extern ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
->>   extern int cachefiles_ondemand_copen(struct cachefiles_cache *cache,
->>   				     char *args);
->>   
->> +extern int cachefiles_ondemand_restore(struct cachefiles_cache *cache,
->> +					char *args);
->> +
->>   extern int cachefiles_ondemand_init_object(struct cachefiles_object *object);
->>   extern void cachefiles_ondemand_clean_object(struct cachefiles_object *object);
->>   
->> diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
->> index 79ffb19380cd..5b1c447da976 100644
->> --- a/fs/cachefiles/ondemand.c
->> +++ b/fs/cachefiles/ondemand.c
->> @@ -178,6 +178,29 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
->>   	return ret;
->>   }
->>   
->> +int cachefiles_ondemand_restore(struct cachefiles_cache *cache, char *args)
->> +{
->> +	struct cachefiles_req *req;
->> +
->> +	XA_STATE(xas, &cache->reqs, 0);
->> +
->> +	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
->> +		return -EOPNOTSUPP;
->> +
->> +	/*
->> +	 * Search the requests which being processed before
->> +	 * the user daemon crashed.
->> +	 * Set the CACHEFILES_REQ_NEW flag and user daemon will reprocess it.
->> +	 */
-> 
-> The comment can be improved as:
-> 
-> 	Reset the requests to CACHEFILES_REQ_NEW state, so that the
->          requests have been processed halfway before the crash of the
->          user daemon could be reprocessed after the recovery.
-> 
-Thanks, I'll apply it.
-> 
->> +	xas_lock(&xas);
->> +	xas_for_each(&xas, req, ULONG_MAX)
->> +		xas_set_mark(&xas, CACHEFILES_REQ_NEW);
->> +	xas_unlock(&xas);
->> +
->> +	wake_up_all(&cache->daemon_pollwq);
->> +	return 0;
->> +}
->> +
->>   static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
->>   {
->>   	struct cachefiles_object *object;
-> 
+In my use case, a server can run unprivileged user processes which
+should not be able create snapshots for their own home directory, and
+ideally they should not even be able to traverse into the ".snap"
+directory and access the snapshots created of their home directory.
+Other (non-superuser) system processes however should be able to
+manage snapshots. It should be possible to bind-mount snapshots into
+the user's mount namespace.
+
+All of that is possible with my patch, but impossible with your
+suggestion. The client-specific approach is all-or-nothing (unless I
+miss something vital).
+
+> The snapdir name is a different case.
+
+But this is only about the snapdir. The snapdir does not exist on the
+server, it is synthesized on the client (in the Linux kernel cephfs
+code).
+
+> But your current approach will introduce issues when an UID/GID is reused after an user/groud is deleted ?
+
+The UID I would specify is one which exists on the client, for a
+dedicated system user whose purpose is to manage cephfs snapshots of
+all users. The UID is created when the machine is installed, and is
+never deleted.
+
+> Maybe the proper approach is the posix acl. Then by default the .snap dir will inherit the permission from its parent and you can change it as you wish. This permission could be spread to all the other clients too ?
+
+No, that would be impractical and unreliable.
+Impractical because it would require me to walk the whole filesystem
+tree and let the kernel synthesize the snapdir inode for all
+directories and change its ACL; impractical because walking millions
+of directories takes longer than I am willing to wait.
+Unreliable because there would be race problems when another client
+(or even the local client) creates a new directory. Until my local
+"snapdir ACL daemon" learns about the existence of the new directory
+and is able to update its ACL, the user can already have messed with
+it.
+Both of that is not a problem with my patch.
