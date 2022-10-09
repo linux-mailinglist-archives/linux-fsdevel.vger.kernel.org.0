@@ -2,67 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D73015F8894
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Oct 2022 02:26:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CED655F8906
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Oct 2022 04:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229697AbiJIA01 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Oct 2022 20:26:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59700 "EHLO
+        id S229639AbiJIC6P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 8 Oct 2022 22:58:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229563AbiJIA0Z (ORCPT
+        with ESMTP id S229552AbiJIC6N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Oct 2022 20:26:25 -0400
+        Sat, 8 Oct 2022 22:58:13 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F5D22E9FB;
-        Sat,  8 Oct 2022 17:26:24 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 579E42F3B4;
+        Sat,  8 Oct 2022 19:58:12 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BA4A960B29;
-        Sun,  9 Oct 2022 00:26:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A7A8C43142;
-        Sun,  9 Oct 2022 00:26:21 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CDF9A60A39;
+        Sun,  9 Oct 2022 02:58:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6F02C433D6;
+        Sun,  9 Oct 2022 02:58:04 +0000 (UTC)
 Authentication-Results: smtp.kernel.org;
-        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="PX4nnIOK"
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="BCnShyLw"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-        t=1665275176;
+        t=1665284282;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=7zZXtzJcFLYkSrXJJYKIVFffp4v7t60F00p3NU1sSks=;
-        b=PX4nnIOKh3FHa9d1G132kBTXFxz7qYQBOTukTgSGG6fc4aKl+1ua8ttlw/vsoBqgsW+CHC
-        NTGzZbQmolIFuqf8+kDGOqJtdV61Oxsts7vNgF2zGCk6Fi2PVF9YyHTL3BJyD+I6xXQNse
-        S5HVOwfe+G2V37JJFP20h8mZS0WLTwM=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 9a9a9268 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-        Sun, 9 Oct 2022 00:26:15 +0000 (UTC)
-Received: by mail-ua1-f42.google.com with SMTP id i20so2853853ual.4;
-        Sat, 08 Oct 2022 17:26:12 -0700 (PDT)
-X-Gm-Message-State: ACrzQf3Wjg3OFrVFWd3xt6aGIRFkt/c9uMxhTuPtcyIAkwN2yc3FLGiN
-        2KRFuspzQ4ilrmTnT6wNLAZnPPKKcFMMdZKoRuc=
-X-Google-Smtp-Source: AMsMyM7Ghd+rNLLkdUe772S1SZ8rADl1G6UAF0aO2TFON1i86eRArx6SOwts50zdZDWmmLpyXWt8nLKkLulPCRn4G5w=
-X-Received: by 2002:ab0:70b9:0:b0:3d7:84d8:35ae with SMTP id
- q25-20020ab070b9000000b003d784d835aemr6771029ual.24.1665275171232; Sat, 08
- Oct 2022 17:26:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221007180107.216067-1-Jason@zx2c4.com> <20221007180107.216067-5-Jason@zx2c4.com>
- <f1ca1b53bc104065a83da60161a4c7b6@AcuMS.aculab.com> <Y0H7rcJ3/JOyDYU8@zx2c4.com>
-In-Reply-To: <Y0H7rcJ3/JOyDYU8@zx2c4.com>
+        bh=PTr9nvXhCIMgKxMMIHmKX/lEwOczzX2VojqQXIdEQXM=;
+        b=BCnShyLwlwmwAtXh10NutIMIlSIhkA3vRZVyN65BKsRj3tXHWyoCFyOeejJMpbUNI3Ekb8
+        49UE+EpPryrYxycNRVtDAFnXtv9x21EZGJQQn9h5YttxW9h0hZ/Z324YkU/7vcz00VHicb
+        bpNHNFK7pnOsAXwDr3Q1vkS9s34eCwg=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id b38280f4 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Sun, 9 Oct 2022 02:58:02 +0000 (UTC)
+Date:   Sat, 8 Oct 2022 20:57:54 -0600
 From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-Date:   Sat, 8 Oct 2022 18:26:00 -0600
-X-Gmail-Original-Message-ID: <CAHmME9ojgUnrp+Mys3pzJZ=0C7RHbgsm-wOkWk-GdW2dnJwf8g@mail.gmail.com>
-Message-ID: <CAHmME9ojgUnrp+Mys3pzJZ=0C7RHbgsm-wOkWk-GdW2dnJwf8g@mail.gmail.com>
-Subject: Re: [PATCH v4 4/6] treewide: use get_random_u32() when possible
-To:     David Laight <David.Laight@aculab.com>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+To:     David Laight <David.Laight@ACULAB.COM>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "patches@lists.linux.dev" <patches@lists.linux.dev>,
         Andreas Noever <andreas.noever@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Borislav Petkov <bp@alien8.de>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        =?UTF-8?Q?Christoph_B=C3=B6hmwalder?= 
+        Christoph =?utf-8?Q?B=C3=B6hmwalder?= 
         <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
         Daniel Borkmann <daniel@iogearbox.net>,
         Dave Airlie <airlied@redhat.com>,
         Dave Hansen <dave.hansen@linux.intel.com>,
@@ -83,9 +69,7 @@ Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Johannes Berg <johannes@sipsolutions.net>,
         Jonathan Corbet <corbet@lwn.net>,
         Jozsef Kadlecsik <kadlec@netfilter.org>,
-        KP Singh <kpsingh@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Marco Elver <elver@google.com>,
+        KP Singh <kpsingh@kernel.org>, Marco Elver <elver@google.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
@@ -93,7 +77,7 @@ Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
         Richard Weinberger <richard@nod.at>,
         Russell King <linux@armlinux.org.uk>,
-        "Theodore Ts'o" <tytso@mit.edu>,
+        Theodore Ts'o <tytso@mit.edu>,
         Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
         Thomas Gleixner <tglx@linutronix.de>,
         Thomas Graf <tgraf@suug.ch>,
@@ -127,10 +111,24 @@ Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
         "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
         "x86@kernel.org" <x86@kernel.org>,
-        =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>,
-        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
+        Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+        Chuck Lever <chuck.lever@oracle.com>, Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH v3 3/5] treewide: use get_random_u32() when possible
+Message-ID: <Y0I4si9+cMracPAq@zx2c4.com>
+References: <848ed24c-13ef-6c38-fd13-639b33809194@csgroup.eu>
+ <CAHmME9raQ4E00r9r8NyWJ17iSXE_KniTG0onCNAfMmfcGar1eg@mail.gmail.com>
+ <f10fcfbf-2da6-cf2d-6027-fbf8b52803e9@csgroup.eu>
+ <6396875c-146a-acf5-dd9e-7f93ba1b4bc3@csgroup.eu>
+ <CAHmME9pE4saqnwxhsAwt-xegYGjsavPOGnHCbZhUXD7kaJ+GAA@mail.gmail.com>
+ <501b0fc3-6c67-657f-781e-25ee0283bc2e@csgroup.eu>
+ <Y0Ayvov/KQmrIwTS@zx2c4.com>
+ <202210071010.52C672FA9@keescook>
+ <Y0BoQmVauPLC2uW5@zx2c4.com>
+ <69080fb8cace486db4e28e2e90f1d550@AcuMS.aculab.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <69080fb8cace486db4e28e2e90f1d550@AcuMS.aculab.com>
 X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
         RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -141,60 +139,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 8, 2022 at 4:37 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->
-> On Sat, Oct 08, 2022 at 10:18:45PM +0000, David Laight wrote:
-> > From: Jason A. Donenfeld
-> > > Sent: 07 October 2022 19:01
+On Sat, Oct 08, 2022 at 09:53:33PM +0000, David Laight wrote:
+> From: Jason A. Donenfeld
+> > Sent: 07 October 2022 18:56
+> ...
+> > > Given these kinds of less mechanical changes, it may make sense to split
+> > > these from the "trivial" conversions in a treewide patch. The chance of
+> > > needing a revert from the simple 1:1 conversions is much lower than the
+> > > need to revert by-hand changes.
 > > >
-> > > The prandom_u32() function has been a deprecated inline wrapper around
-> > > get_random_u32() for several releases now, and compiles down to the
-> > > exact same code. Replace the deprecated wrapper with a direct call to
-> > > the real function. The same also applies to get_random_int(), which is
-> > > just a wrapper around get_random_u32().
-> > >
-> > ...
-> > > diff --git a/net/802/garp.c b/net/802/garp.c
-> > > index f6012f8e59f0..c1bb67e25430 100644
-> > > --- a/net/802/garp.c
-> > > +++ b/net/802/garp.c
-> > > @@ -407,7 +407,7 @@ static void garp_join_timer_arm(struct garp_applicant *app)
-> > >  {
-> > >     unsigned long delay;
-> > >
-> > > -   delay = (u64)msecs_to_jiffies(garp_join_time) * prandom_u32() >> 32;
-> > > +   delay = (u64)msecs_to_jiffies(garp_join_time) * get_random_u32() >> 32;
-> > >     mod_timer(&app->join_timer, jiffies + delay);
-> > >  }
-> > >
-> > > diff --git a/net/802/mrp.c b/net/802/mrp.c
-> > > index 35e04cc5390c..3e9fe9f5d9bf 100644
-> > > --- a/net/802/mrp.c
-> > > +++ b/net/802/mrp.c
-> > > @@ -592,7 +592,7 @@ static void mrp_join_timer_arm(struct mrp_applicant *app)
-> > >  {
-> > >     unsigned long delay;
-> > >
-> > > -   delay = (u64)msecs_to_jiffies(mrp_join_time) * prandom_u32() >> 32;
-> > > +   delay = (u64)msecs_to_jiffies(mrp_join_time) * get_random_u32() >> 32;
-> > >     mod_timer(&app->join_timer, jiffies + delay);
-> > >  }
-> > >
-> >
-> > Aren't those:
-> >       delay = prandom_u32_max(msecs_to_jiffies(xxx_join_time));
->
-> Probably, but too involved and peculiar for this cleanup.
->
-> Feel free to send a particular patch to that maintainer.
+> > > The Cocci script I suggested in my v1 review gets 80% of the first
+> > > patch, for example.
+> > 
+> > I'll split things up into a mechanical step and a non-mechanical step.
+> > Good idea.
+> 
+> I'd also do something about the 'get_random_int() & 3' cases.
+> (ie remainder by 2^n-1)
+> These can be converted to 'get_random_u8() & 3' (etc).
+> So they only need one random byte (not 4) and no multiply.
+> 
+> Possibly something based on (the quickly typed, and not C):
+> #define get_random_below(val) [
+> 	if (builtin_constant(val))
+> 		BUILD_BUG_ON(!val || val > 0x100000000ull)
+> 		if (!(val & (val - 1)) {
+> 			if (val <= 0x100)
+> 				return get_random_u8() & (val - 1);
+> 			if (val <= 0x10000)
+> 				return get_random_u16() & (val - 1);
+> 			return get_random_u32() & (val - 1);
+> 		}
+> 	}
+> 	BUILD_BUG_ON(sizeof (val) > 4);
+> 	return ((u64)get_random_u32() * val) >> 32;
 
-I guess the cocci patch looks like this, so maybe I'll put that in 1/7
-if I respin this.
+This is already how the prandom_u32_max() implementation works, as
+suggested in the cover letter. The multiplication by constants in it
+reduces to bit shifts and you already get all the manual masking
+possible.
 
-@@
-expression E;
-identifier get_random_u32 =~ "get_random_int|prandom_u32|get_random_u32";
-typedef u64;
-@@
-- ((u64)(E) * get_random_u32() >> 32)
-+ prandom_u32_max(E)
+> get_random_below() is a much better name than prandom_u32_max().
+
+Yes, but that name is reserved for when I succeed at making a function
+that bounds with a uniform distribution. prandom_u32_max()'s
+distribution is non-uniform since it doesn't do rejection sampling. Work
+in progress is on https://git.zx2c4.com/linux-rng/commit/?h=jd/get_random_u32_below .
+But out of common respect for this already huge thread with a massive
+CC list, if you want to bikeshed my WIP stuff, please start a new thread
+for that and not bog this one down. IOW, no need to reply here directly.
+That'd annoy me.
+
+Jason
