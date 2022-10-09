@@ -2,167 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 293FE5F893C
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Oct 2022 05:41:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F39045F898B
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  9 Oct 2022 07:55:44 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229840AbiJIDlu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 8 Oct 2022 23:41:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42398 "EHLO
+        id S229839AbiJIFzm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 9 Oct 2022 01:55:42 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229895AbiJIDlW (ORCPT
+        with ESMTP id S229758AbiJIFzk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 8 Oct 2022 23:41:22 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6A89356C2
-        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Oct 2022 20:41:16 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id 67so8104443pfz.12
-        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Oct 2022 20:41:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Jc9wqi9hH7sDAuXmZMPHByefEvgO0MbR3+ZEqDB7Wuk=;
-        b=ZhbF7aukJSn3TNMRwCJkZSqm1r+X38mJ2RxvPJW6Z+9mn1TOlxypOyituNx8mz1HVC
-         FGqxSiHSDomVzpOPFi9kka3+6Rdn9v0XaNwqyXLdtOhmQI0POv0z39c8Rsj4C7/d+KIP
-         fJKzHg6Na0ETg2nVHR+d6vQT/rsL3lGZwlInw=
+        Sun, 9 Oct 2022 01:55:40 -0400
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D8862F38B
+        for <linux-fsdevel@vger.kernel.org>; Sat,  8 Oct 2022 22:55:35 -0700 (PDT)
+Received: by mail-il1-f200.google.com with SMTP id a9-20020a056e0208a900b002f6b21181f5so6674311ilt.10
+        for <linux-fsdevel@vger.kernel.org>; Sat, 08 Oct 2022 22:55:35 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jc9wqi9hH7sDAuXmZMPHByefEvgO0MbR3+ZEqDB7Wuk=;
-        b=V5+JvqHwcpUUxDL6xFAyyh6BrxJenwq+wbzjgLFfvEgEkEZIW54d6oKfWYYnPDZcJZ
-         UM7dSN1U+w2H8Ku44Nexn5xNS3xctDW/ZbPqAciLX3Krw7uWJocgpEhxfsU69YKPrgF5
-         g4pcrZPksEZghLI8KJq4qbnJ/VBDXLlUUrlGVI3T18TqsOK9mD9Yfed/XMqjUKUnl7Dy
-         Ebvdn5FJMse94x/bRHawuGbgb3qia4z3oGeKqQqAe/LhpDknrWZUMi3Pt9ha3sTJcnC6
-         llI5BZW3T6/W9ezwZAnrdFpWG39QLfx561P+9wIdr+SKMef6+Rg+HxjchD6VmTjV8ioq
-         jb9A==
-X-Gm-Message-State: ACrzQf1p53C3vOktxyPL++0SMBqmTtuqKaHDkLrCWfnfl+L+uuUwNLL/
-        s0P+p3Dm+tCOU+EVuDRjShcEeA==
-X-Google-Smtp-Source: AMsMyM7YoBLGpPreiN9760Jo2f1/EfVU3YsZS0ZZ4a+XLEChtkH8ZIzixkyyCKOXZUBZ1uN6dxOluQ==
-X-Received: by 2002:a63:5a44:0:b0:431:fa3a:f92c with SMTP id k4-20020a635a44000000b00431fa3af92cmr11522888pgm.471.1665286876368;
-        Sat, 08 Oct 2022 20:41:16 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w2-20020a626202000000b0053e8f4a10c1sm4198763pfb.217.2022.10.08.20.41.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 08 Oct 2022 20:41:15 -0700 (PDT)
-Date:   Sat, 8 Oct 2022 20:41:14 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoph =?iso-8859-1?Q?B=F6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Dave Airlie <airlied@redhat.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Florian Westphal <fw@strlen.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Helge Deller <deller@gmx.de>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        Hugh Dickins <hughd@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        "James E . J . Bottomley" <jejb@linux.ibm.com>,
-        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        Jens Axboe <axboe@kernel.dk>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Jozsef Kadlecsik <kadlec@netfilter.org>,
-        KP Singh <kpsingh@kernel.org>, Marco Elver <elver@google.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Richard Weinberger <richard@nod.at>,
-        Russell King <linux@armlinux.org.uk>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Thomas Graf <tgraf@suug.ch>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>,
-        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
-        Yury Norov <yury.norov@gmail.com>,
-        dri-devel@lists.freedesktop.org, kasan-dev@googlegroups.com,
-        kernel-janitors@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-mm@kvack.org,
-        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-nvme@lists.infradead.org, linux-parisc@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-wireless@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        loongarch@lists.linux.dev, netdev@vger.kernel.org,
-        sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v5 0/7] treewide cleanup of random integer usage
-Message-ID: <202210082028.692DFA21@keescook>
-References: <20221008055359.286426-1-Jason@zx2c4.com>
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1e49F6pdV+AWMuuc3KbRnlfX9XsIRyk9pFi0eLPFLzI=;
+        b=bDygCkOcGXQoxAydtS9O7BoWh8/BdgaHW+eT/b1QVvK5K1+AAeladdi1wtFMPk5uFR
+         a87MovIl9VIUmGdg5Wm4vkGX/9TgY54y55fqyiHYSa4Nd3f1BL4vaPOynl9yfPPQXmxT
+         Bu74Rox7BHaoE4zJ/a0u4xBUjDqgs0Fy2sT98hHBg5kKDFfK5yGDrX/Vvs3N+oYQyvRG
+         HScBpnij9z+jGeIWoikUcfj1fb35xhxfWgKj9tB1R7Klyur8GUDdMpIoHh85qxpQzsHf
+         Ii+3C0gW5CEsxyUnVTDMF8Mu/AfWieSWBwOfPiVcRlqfVQBvzfUhwl0irnLCfexQe/Wd
+         bVmg==
+X-Gm-Message-State: ACrzQf2I9xNzHROU4bJ52VLYhWA3krNrMBU257mLDGuq5QyLtLm7UARR
+        E9RW6Vb9WQAvnJQ1rVilye2tcx3bhaqfrxZfwnBaS8bU+Q4y
+X-Google-Smtp-Source: AMsMyM7JfrVM7uYLXXaZRLXDOALw+Kpkyol8U8DnxEbbYe9HVN1B+TnzFqpzH2lUNzmB0rplo6I1/rKLlVBTw/ge+E0EUV1PfVVX
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221008055359.286426-1-Jason@zx2c4.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Received: by 2002:a05:6602:1592:b0:6a2:1feb:4809 with SMTP id
+ e18-20020a056602159200b006a21feb4809mr5943533iow.214.1665294934647; Sat, 08
+ Oct 2022 22:55:34 -0700 (PDT)
+Date:   Sat, 08 Oct 2022 22:55:34 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000006aa2405ea93b166@google.com>
+Subject: [syzbot] BUG: scheduling while atomic in exit_to_user_mode_loop
+From:   syzbot <syzbot+cceb1394467dba9c62d9@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 07, 2022 at 11:53:52PM -0600, Jason A. Donenfeld wrote:
-> This is a five part treewide cleanup of random integer handling. The
-> rules for random integers are:
+Hello,
 
-Reviewing the delta between of my .cocci rules and your v5, everything
-matches, except for get_random_int() conversions for files not in
-your tree:
+syzbot found the following issue on:
 
-diff --git a/drivers/gpu/drm/tests/drm_buddy_test.c b/drivers/gpu/drm/tests/drm_buddy_test.c
-index 7a2b2d6bc3fe..62f69589a72d 100644
---- a/drivers/gpu/drm/tests/drm_buddy_test.c
-+++ b/drivers/gpu/drm/tests/drm_buddy_test.c
-@@ -729,7 +729,7 @@ static void drm_test_buddy_alloc_limit(struct kunit *test)
- static int drm_buddy_init_test(struct kunit *test)
- {
- 	while (!random_seed)
--		random_seed = get_random_int();
-+		random_seed = get_random_u32();
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/tests/drm_mm_test.c b/drivers/gpu/drm/tests/drm_mm_test.c
-index 659d1af4dca7..c4b66eeae203 100644
---- a/drivers/gpu/drm/tests/drm_mm_test.c
-+++ b/drivers/gpu/drm/tests/drm_mm_test.c
-@@ -2212,7 +2212,7 @@ static void drm_test_mm_color_evict_range(struct kunit *test)
- static int drm_mm_init_test(struct kunit *test)
- {
- 	while (!random_seed)
--		random_seed = get_random_int();
-+		random_seed = get_random_u32();
- 
- 	return 0;
- }
+HEAD commit:    0326074ff465 Merge tag 'net-next-6.1' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15b1382a880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d323d85b1f8a4ed7
+dashboard link: https://syzkaller.appspot.com/bug?extid=cceb1394467dba9c62d9
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1755e8b2880000
 
-So, I guess I mean to say that "prandom: remove unused functions" is
-going to cause some pain. :) Perhaps don't push that to -next, and do a
-final pass next merge window to catch any new stuff, and then send those
-updates and the removal before -rc1 closes?
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/c40d70ae7512/disk-0326074f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3603ce065271/vmlinux-0326074f.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/738016e3c6ba/mount_1.gz
 
--- 
-Kees Cook
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+cceb1394467dba9c62d9@syzkaller.appspotmail.com
+
+ntfs3: loop2: Different NTFS' sector size (1024) and media sector size (512)
+BUG: scheduling while atomic: syz-executor.2/9901/0x00000002
+2 locks held by syz-executor.2/9901:
+ #0: ffff888075f880e0 (&type->s_umount_key#47/1){+.+.}-{3:3}, at: alloc_super+0x212/0x920 fs/super.c:228
+ #1: ffff8880678e78f0 (&sb->s_type->i_lock_key#33){+.+.}-{2:2}, at: spin_lock include/linux/spinlock.h:349 [inline]
+ #1: ffff8880678e78f0 (&sb->s_type->i_lock_key#33){+.+.}-{2:2}, at: _atomic_dec_and_lock+0x9d/0x110 lib/dec_and_lock.c:28
+Modules linked in:
+Preemption disabled at:
+[<0000000000000000>] 0x0
+Kernel panic - not syncing: scheduling while atomic
+CPU: 1 PID: 9901 Comm: syz-executor.2 Not tainted 6.0.0-syzkaller-02734-g0326074ff465 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
+ panic+0x2d6/0x715 kernel/panic.c:274
+ __schedule_bug+0x1ff/0x250 kernel/sched/core.c:5725
+ schedule_debug+0x1d3/0x3c0 kernel/sched/core.c:5754
+ __schedule+0xfb/0xdf0 kernel/sched/core.c:6389
+ schedule+0xcb/0x190 kernel/sched/core.c:6571
+ exit_to_user_mode_loop+0xe5/0x150 kernel/entry/common.c:157
+ exit_to_user_mode_prepare+0xb2/0x140 kernel/entry/common.c:201
+ irqentry_exit_to_user_mode+0x5/0x30 kernel/entry/common.c:307
+ asm_sysvec_apic_timer_interrupt+0x16/0x20 arch/x86/include/asm/idtentry.h:649
+RIP: 000f:lock_acquire+0x1e1/0x3c0
+RSP: 0018:ffffc9000563f900 EFLAGS: 00000206
+RAX: 1ffff92000ac7f28 RBX: 0000000000000001 RCX: ffff8880753be2f0
+RDX: dffffc0000000000 RSI: ffffffff8a8d9060 RDI: ffffffff8aecb5e0
+RBP: ffffc9000563fa28 R08: dffffc0000000000 R09: fffffbfff1fc4229
+R10: fffffbfff1fc4229 R11: 1ffffffff1fc4228 R12: dffffc0000000000
+R13: 1ffff92000ac7f24 R14: ffffc9000563f940 R15: 0000000000000246
+ </TASK>
+Kernel Offset: disabled
+Rebooting in 86400 seconds..
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
