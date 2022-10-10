@@ -2,60 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A0D885F9FA8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Oct 2022 15:53:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AD4A65FA10E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Oct 2022 17:22:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229719AbiJJNxs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Oct 2022 09:53:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58554 "EHLO
+        id S229806AbiJJPWJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Oct 2022 11:22:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbiJJNxq (ORCPT
+        with ESMTP id S229779AbiJJPWI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Oct 2022 09:53:46 -0400
-Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BD4F5509F;
-        Mon, 10 Oct 2022 06:53:45 -0700 (PDT)
-Received: by mail-ej1-x635.google.com with SMTP id a26so25040011ejc.4;
-        Mon, 10 Oct 2022 06:53:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=G/dWkZH/lcZFThQ5CYaiL4o71iPPfb4HHLZtOwpAOpQ=;
-        b=IyMDWqzBFEoqxjiqXo5pp1MSzPOPqbHsmHStcHIiPmMyRhKznQf8IQoQHsfQtRYbjk
-         S+qbQRqjxGyN8jkqoQVAGmNvmEl+6dCdRxE0lud4UuDeZdd5ycNSvs7Meh4zagm839WE
-         Gwy+ZLuogHQsSN3NBQ242raRFay3NSwmJp/67TV1PKbHKzf4/GN7fhzV1imv94IbsAjm
-         ZYop5MOjXahfBX+utKLglhQKtkAnhAAh3fGHDd74dVEptZX2WunlXWVGH4DUwZBOAFYz
-         0WUlHA9w18JT8fb7dU/WyiiSgS/Hstk3lzcK19P6IDQxOF8dSzbTw3WcZzxXJwt3L72n
-         ZAwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G/dWkZH/lcZFThQ5CYaiL4o71iPPfb4HHLZtOwpAOpQ=;
-        b=FYdi4V+4YxNWYPeMKkxBDUREx5QRm/FD/3fJIIk7z+swEsByTeIx2sk0PP4HkA/CZw
-         t2oZ1SYxXmTKZtRsKq0+NCSViqlZHWscNwnmqwfUsv3Sj4zdyGEPUL0eckgeSk3jOBET
-         C2RcIZ+Op5lyVwSgLxB++n6cQs/lVBI9VkSMDTVh9yVnBN7brgnMqERnn/kiHsCVmtBX
-         zrNWQWcSOYX3ie1YBhLy04Q9mmpA/LNx6anQo04RNPeW8UYefNA7q6gltdSinewdqYVz
-         ygiApsy4C1U9x2w2HTvO4a8ZmtAZHa+uYNlV0K5L0RkgnylMo1JbR0l8mVrSgKMGNTF8
-         iGaA==
-X-Gm-Message-State: ACrzQf0fehWk3KPVgjN+LtPCDOrh/UMowIOaBPAiqe5zbg2/EZnwL0LK
-        5O6VTOh58RNl+V2XuynZtb84AUbTb9qyMe+xpuY/gXDJE8yjwQ==
-X-Google-Smtp-Source: AMsMyM5Obm79nPTvVozOOwA1HntH8OU44ldvrUCW7EjQd9Idov8c+JaplIuTV4+O5Qt338v1RR/ZEgAKz61SQfHCGgs=
-X-Received: by 2002:a17:907:75ed:b0:78d:97ed:2894 with SMTP id
- jz13-20020a17090775ed00b0078d97ed2894mr8992282ejc.739.1665410023250; Mon, 10
- Oct 2022 06:53:43 -0700 (PDT)
+        Mon, 10 Oct 2022 11:22:08 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B2D772FD8;
+        Mon, 10 Oct 2022 08:22:06 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 18A6EB80F9C;
+        Mon, 10 Oct 2022 15:22:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC74AC433D6;
+        Mon, 10 Oct 2022 15:22:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665415323;
+        bh=no8M4HUxUtn5Brrmm9/Iz2cSzyV90e+SLK8FcxAraaQ=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=R2tYg+5KCSYc6jNCKReLmD6NGukEbLxjOw6Ke9/ZGGzU6X0QkmgPVG7y8QDl5PdDH
+         A6/eBBN0s91iP9x57tXd0mgu+JbObaMe679zYY64fKSllcg1Yp9NT5KUKaAWSkxps/
+         WQN8v9qzBdTAR5Zwb2sN1xZCjegHDRX/Ck7UkOe0NVV7/N43RVWA1Nz7iPgk0jl6cb
+         l2U0A/7uDEXYEnNXCCu37Z8bosr1ZywkOAQpj8qj12dmsQpHIkDda3KkaS+Iy17XXR
+         Pvn2BXARrTdcMrMCXuV/xDh7yhRcnMBZIl2BKXEmnmmPHOg4EHte7ZTfQjKGpoqLU6
+         mqCUxVAhSe09A==
+Date:   Mon, 10 Oct 2022 08:22:03 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Alejandro Colomar <alx.manpages@gmail.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-man@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org
+Subject: Re: [man-pages PATCH v3] statx.2, open.2: document STATX_DIOALIGN
+Message-ID: <Y0Q4m9mj3DUZEkrW@magnolia>
+References: <20221004174307.6022-1-ebiggers@kernel.org>
+ <26cafc28-e63a-6f13-df70-8ccec85a4ef0@gmail.com>
 MIME-Version: 1.0
-From:   Wei Chen <harperchen1110@gmail.com>
-Date:   Mon, 10 Oct 2022 21:53:07 +0800
-Message-ID: <CAO4mrfcEivHWx3Ch3VA4tMWC3nVi7Nv1XR4WZ5XLxyKS9mZxYQ@mail.gmail.com>
-Subject: general protection fault in fuse_test_super
-To:     linux-fsdevel@vger.kernel.org, miklos@szeredi.hu
-Cc:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <26cafc28-e63a-6f13-df70-8ccec85a4ef0@gmail.com>
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,107 +59,225 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Dear Linux Developer,
+On Sat, Oct 08, 2022 at 03:56:22AM +0200, Alejandro Colomar wrote:
+> Hi Eric,
+> 
+> On 10/4/22 19:43, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > Document the STATX_DIOALIGN support for statx()
+> > (https://git.kernel.org/linus/725737e7c21d2d25).
+> > 
+> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> 
+> Please see some formatting comments below.
+> 
+> > ---
+> > 
+> > I'm resending this now that support for STATX_DIOALIGN has been merged
+> > upstream.
+> 
+> Thanks.
+> 
+> Cheers,
+> Alex
+> 
+> > 
+> > v3: updated mentions of Linux version, fixed some punctuation, and added
+> >      a Reviewed-by
+> > 
+> > v2: rebased onto man-pages master branch, mentioned xfs, and updated
+> >      link to patchset
+> > 
+> >   man2/open.2  | 43 ++++++++++++++++++++++++++++++++-----------
+> >   man2/statx.2 | 29 +++++++++++++++++++++++++++++
+> >   2 files changed, 61 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/man2/open.2 b/man2/open.2
+> > index deba7e4ea..b8617e0d2 100644
+> > --- a/man2/open.2
+> > +++ b/man2/open.2
+> > @@ -1732,21 +1732,42 @@ of user-space buffers and the file offset of I/Os.
+> >   In Linux alignment
+> >   restrictions vary by filesystem and kernel version and might be
+> >   absent entirely.
+> > -However there is currently no filesystem\-independent
+> > -interface for an application to discover these restrictions for a given
+> > -file or filesystem.
+> > -Some filesystems provide their own interfaces
+> > -for doing so, for example the
+> > +The handling of misaligned
+> > +.B O_DIRECT
+> > +I/Os also varies; they can either fail with
+> > +.B EINVAL
+> > +or fall back to buffered I/O.
+> > +.PP
+> > +Since Linux 6.1,
+> > +.B O_DIRECT
+> > +support and alignment restrictions for a file can be queried using
+> > +.BR statx (2),
+> > +using the
+> > +.B STATX_DIOALIGN
+> > +flag.
+> > +Support for
+> > +.B STATX_DIOALIGN
+> > +varies by filesystem; see
+> > +.BR statx (2).
+> > +.PP
+> > +Some filesystems provide their own interfaces for querying
+> > +.B O_DIRECT
+> > +alignment restrictions, for example the
+> >   .B XFS_IOC_DIOINFO
+> >   operation in
+> >   .BR xfsctl (3).
+> > +.B STATX_DIOALIGN
+> > +should be used instead when it is available.
+> >   .PP
+> > -Under Linux 2.4, transfer sizes, the alignment of the user buffer,
+> > -and the file offset must all be multiples of the logical block size
+> > -of the filesystem.
+> > -Since Linux 2.6.0, alignment to the logical block size of the
+> > -underlying storage (typically 512 bytes) suffices.
+> > -The logical block size can be determined using the
 
-Recently when using our tool to fuzz kernel, the following crash was triggered:
+I'm not so familiar with semantic newlines-- is there an automated
+reflow program that fixes these problems mechanically, or is this
+expected to be performed manually by manpage authors?
 
-HEAD commit: 64570fbc14f8 Linux 5.15-rc5
-git tree: upstream
-compiler: clang 12.0.0
-console output:
-https://drive.google.com/file/d/1EV0R2yutxfhDNK7k-qzCsfy0Y7cRjSxK/view?usp=sharing
-kernel config: https://drive.google.com/file/d/1lNwvovjLNrcuyFGrg05IoSmgO5jaKBBJ/view?usp=sharing
+If manually, do the items in a comma-separated list count as clauses?
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Would the next two paragraphs of this email reformat into semantic
+newlines like so?
 
-general protection fault, probably for non-canonical address
-0xdffffc0000000000: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000000-0x0000000000000007]
-CPU: 0 PID: 580 Comm: syz-executor Not tainted 5.15.0-rc5 #4
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS
-1.13.0-1ubuntu1.1 04/01/2014
-RIP: 0010:get_fuse_conn_super fs/fuse/fuse_i.h:844 [inline]
-RIP: 0010:fuse_test_super+0x68/0xa0 fs/fuse/inode.c:1633
-Code: 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 3a 48 8b 9b
-78 06 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03 <80> 3c
-02 00 75 12 31 c0 48 39 2b 5b 5d 0f 94 c0 c3 e8 b2 0d 0a ff
-RSP: 0018:ffffc90008bdfca0 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000040000
-RDX: 0000000000000000 RSI: ffff88802329a380 RDI: ffff88800ec68678
-RBP: ffff88802a2fc800 R08: ffffffff82b3dfbd R09: fffff5200117bf8a
-R10: 0000000000000003 R11: fffff5200117bf89 R12: dffffc0000000000
-R13: ffffffff82b3dfb0 R14: 0000000000000000 R15: 0000000000000002
-FS:  00007ff8f37f0700(0000) GS:ffff888063e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055d548d9cbf0 CR3: 000000004d5c6000 CR4: 0000000000752ef0
-DR0: 0000000020000080 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-PKRU: 55555554
-Call Trace:
- sget_fc+0x1ff/0x7e0 fs/super.c:525
- fuse_get_tree+0x201/0x3f0 fs/fuse/inode.c:1664
- vfs_get_tree+0x89/0x2f0 fs/super.c:1498
- do_new_mount fs/namespace.c:2988 [inline]
- path_mount+0x1228/0x1cb0 fs/namespace.c:3318
- do_mount+0xf3/0x110 fs/namespace.c:3331
- __do_sys_mount fs/namespace.c:3539 [inline]
- __se_sys_mount fs/namespace.c:3516 [inline]
- __x64_sys_mount+0x18f/0x230 fs/namespace.c:3516
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-RIP: 0033:0x7ff8f62cc5de
-Code: 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f
-84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d
-01 f0 ff ff 73 01 c3 48 c7 c1 bc ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ff8f37efa68 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007ff8f62cc5de
-RDX: 00000000200075c0 RSI: 0000000020007600 RDI: 0000000000000000
-RBP: 00007ff8f37efb00 R08: 00007ff8f37efb00 R09: 00000000200075c0
-R10: 0000000000000004 R11: 0000000000000202 R12: 00000000200075c0
-R13: 0000000020007600 R14: 00007ff8f37efac0 R15: 0000000020007600
-Modules linked in:
-Dumping ftrace buffer:
-   (ftrace buffer empty)
----[ end trace 361dd1df065c6dad ]---
-RIP: 0010:get_fuse_conn_super fs/fuse/fuse_i.h:844 [inline]
-RIP: 0010:fuse_test_super+0x68/0xa0 fs/fuse/inode.c:1633
-Code: 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 3a 48 8b 9b
-78 06 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 da 48 c1 ea 03 <80> 3c
-02 00 75 12 31 c0 48 39 2b 5b 5d 0f 94 c0 c3 e8 b2 0d 0a ff
-RSP: 0018:ffffc90008bdfca0 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000040000
-RDX: 0000000000000000 RSI: ffff88802329a380 RDI: ffff88800ec68678
-RBP: ffff88802a2fc800 R08: ffffffff82b3dfbd R09: fffff5200117bf8a
-R10: 0000000000000003 R11: fffff5200117bf89 R12: dffffc0000000000
-R13: ffffffff82b3dfb0 R14: 0000000000000000 R15: 0000000000000002
-FS:  00007ff8f37f0700(0000) GS:ffff888063e00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055d548d9cbf0 CR3: 000000004d5c6000 CR4: 0000000000752ef0
-DR0: 0000000020000080 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-PKRU: 55555554
-----------------
-Code disassembly (best guess), 4 bytes skipped:
-   0: df 48 89              fisttps -0x77(%rax)
-   3: fa                    cli
-   4: 48 c1 ea 03          shr    $0x3,%rdx
-   8: 80 3c 02 00          cmpb   $0x0,(%rdx,%rax,1)
-   c: 75 3a                jne    0x48
-   e: 48 8b 9b 78 06 00 00 mov    0x678(%rbx),%rbx
-  15: 48 b8 00 00 00 00 00 movabs $0xdffffc0000000000,%rax
-  1c: fc ff df
-  1f: 48 89 da              mov    %rbx,%rdx
-  22: 48 c1 ea 03          shr    $0x3,%rdx
-* 26: 80 3c 02 00          cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
-  2a: 75 12                jne    0x3e
-  2c: 31 c0                xor    %eax,%eax
-  2e: 48 39 2b              cmp    %rbp,(%rbx)
-  31: 5b                    pop    %rbx
-  32: 5d                    pop    %rbp
-  33: 0f 94 c0              sete   %al
-  36: c3                    retq
-  37: e8 b2 0d 0a ff        callq  0xff0a0dee
+	In the source of a manual page,
+	new sentences should  be started on new lines,
+	long sentences should be split into lines at clause breaks
+	(commas, semicolons, colons, and so on),
+	and long clauses should be split at phrase boundaries.
+	This convention,
+	sometimes known as "semantic newlines",
+	makes it easier to see the effect of patches,
+	which often operate at the level of individual sentences, clauses, or phrases.
 
-Best,
-Wei
+Do we still line-wrap at 72^W74^W78^W80 columns?
+
+and would the proposed manpage text read:
+
+	If none of the above is available,
+	then direct I/O support and alignment restrictions can only be assumed
+	from known characteristics of the filesystem,
+	the individual file,
+	the underlying storage device(s),
+	and the kernel version.
+	In Linux 2.4,
+	most block device based filesystems require that the file offset and the
+	length and memory address of all I/O segments be multiples of the
+	filesystem block size
+	(typically 4096 bytes).
+	In Linux 2.6.0,
+	this was relaxed to the logical block size of the block device
+	(typically 512 bytes).
+	A block device's logical block size can be determined using the
+	.BR ioctl (2)
+	.B BLKSSZGET
+	operation or from the shell using the command:
+
+--D
+
+> > +If none of the above is available, then direct I/O support and alignment
+> 
+> Please use semantic newlines.
+> 
+> See man-pages(7):
+>    Use semantic newlines
+>        In the source of a manual page, new sentences  should  be
+>        started on new lines, long sentences should be split into
+>        lines  at  clause breaks (commas, semicolons, colons, and
+>        so on), and long clauses should be split at phrase bound‐
+>        aries.  This convention,  sometimes  known  as  "semantic
+>        newlines",  makes it easier to see the effect of patches,
+>        which often operate at the level of individual sentences,
+>        clauses, or phrases.
+> 
+> 
+> > +restrictions can only be assumed from known characteristics of the filesystem,
+> > +the individual file, the underlying storage device(s), and the kernel version.
+> > +In Linux 2.4, most block device based filesystems require that the file offset
+> > +and the length and memory address of all I/O segments be multiples of the
+> > +filesystem block size (typically 4096 bytes).
+> > +In Linux 2.6.0, this was relaxed to the logical block size of the block device
+> > +(typically 512 bytes).
+> > +A block device's logical block size can be determined using the
+> >   .BR ioctl (2)
+> >   .B BLKSSZGET
+> >   operation or from the shell using the command:
+> > diff --git a/man2/statx.2 b/man2/statx.2
+> > index 0d1b4591f..50397057d 100644
+> > --- a/man2/statx.2
+> > +++ b/man2/statx.2
+> > @@ -61,7 +61,12 @@ struct statx {
+> >          containing the filesystem where the file resides */
+> >       __u32 stx_dev_major;   /* Major ID */
+> >       __u32 stx_dev_minor;   /* Minor ID */
+> > +
+> >       __u64 stx_mnt_id;      /* Mount ID */
+> > +
+> > +    /* Direct I/O alignment restrictions */
+> > +    __u32 stx_dio_mem_align;
+> > +    __u32 stx_dio_offset_align;
+> >   };
+> >   .EE
+> >   .in
+> > @@ -247,6 +252,8 @@ STATX_BTIME	Want stx_btime
+> >   STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
+> >   	It is deprecated and should not be used.
+> >   STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
+> > +STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align
+> > +	(since Linux 6.1; support varies by filesystem)
+> >   .TE
+> >   .in
+> >   .PP
+> > @@ -407,6 +414,28 @@ This is the same number reported by
+> >   .BR name_to_handle_at (2)
+> >   and corresponds to the number in the first field in one of the records in
+> >   .IR /proc/self/mountinfo .
+> > +.TP
+> > +.I stx_dio_mem_align
+> > +The alignment (in bytes) required for user memory buffers for direct I/O
+> > +.BR "" ( O_DIRECT )
+> 
+> .RB and remove the "".
+> 
+> > +on this file, or 0 if direct I/O is not supported on this file.
+> > +.IP
+> > +.B STATX_DIOALIGN
+> > +.IR "" ( stx_dio_mem_align
+> 
+> .RI
+> 
+> > +and
+> > +.IR stx_dio_offset_align )
+> > +is supported on block devices since Linux 6.1.
+> > +The support on regular files varies by filesystem; it is supported by ext4,
+> > +f2fs, and xfs since Linux 6.1.
+> > +.TP
+> > +.I stx_dio_offset_align
+> > +The alignment (in bytes) required for file offsets and I/O segment lengths for
+> > +direct I/O
+> > +.BR "" ( O_DIRECT )
+> > +on this file, or 0 if direct I/O is not supported on this file.
+> > +This will only be nonzero if
+> > +.I stx_dio_mem_align
+> > +is nonzero, and vice versa.
+> >   .PP
+> >   For further information on the above fields, see
+> >   .BR inode (7).
+> > 
+> > base-commit: bc28d289e5066fc626df260bafc249846a0f6ae6
+> 
+> -- 
+> <http://www.alejandro-colomar.es/>
+
+
+
