@@ -2,99 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6DB4F5F9DD2
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Oct 2022 13:46:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 57D8E5F9DF2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Oct 2022 13:50:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232228AbiJJLqT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Oct 2022 07:46:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44482 "EHLO
+        id S230496AbiJJLur (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Oct 2022 07:50:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57392 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232213AbiJJLqR (ORCPT
+        with ESMTP id S230164AbiJJLuq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Oct 2022 07:46:17 -0400
+        Mon, 10 Oct 2022 07:50:46 -0400
 Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 441FD57E2C;
-        Mon, 10 Oct 2022 04:46:15 -0700 (PDT)
-Received: by mail-wr1-x433.google.com with SMTP id r13so16603684wrj.11;
-        Mon, 10 Oct 2022 04:46:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 21F085A894;
+        Mon, 10 Oct 2022 04:50:45 -0700 (PDT)
+Received: by mail-wr1-x433.google.com with SMTP id a3so16700882wrt.0;
+        Mon, 10 Oct 2022 04:50:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:to:from
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=NsnSeVEjMZcjnL6/NlJDc2TDG47KOTr9/3jGBVyFfu4=;
-        b=V4koQH5PfgZ4cfQzB+jfdUrdh2P5AxTeXhG0JeIMZtmhW6ST47raSZ4v6hBWyakPNp
-         jFNSeAVYH8dgzTUJT1T67SRGndIeKurUd6PDIhJ5iMyP8zIsyEWtYFHrAn1jH9zne6vI
-         rDg4S+hg6vaRrJUoNNM6+zHQikWQ7nQZHpUIJAmOHwZG5wNFP4624lYUgN9xUM5C93gx
-         xAkepZHstu0yPmjx5KmQNLi543GMYwLjinaG1Tv8l/6vNZfyno465u0vdTEIthf6rTHy
-         3muBYw61N+X4tny8LZ6dFG9SOFP2JudrkcAnmwxsWTHPobocKwNeJENq6NGpxKFltYIl
-         yZzA==
+        bh=AV5pUwiXA+PA3Jd/giIxumbszKFu5s2N0TiGrAZugtw=;
+        b=d44BYDTufJs42ogPANgNIKRTei3bJOR/4RS3XD0EeYj25A2X6WLpRAPGd3AA98o8OJ
+         VnVdqyjJHLmNPw9NM+xFRHhAPD/kDyuDksF/FvDehSL3Hv9rvg4Pv1tSv725eBmZPlXp
+         Or7hhMtR3jE5AA8F8/g3kbnIuOCqqgnDFfuDz2/BlOY1xdsgA8vCERkArbHZ20Pg4ZuI
+         DYKJizPdobqGsjjajWr3kjORzznaQWhRO58vwTEduzxGXgYPVTZw++u9Uy2LPkSKoH/x
+         u9Nl0A08EpuZglLjY5ibAlITvx8HLfJ/8jW6JChQBNgL3SurOcH5tVjB2URh/7v9DObh
+         kJfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:references:to:from
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NsnSeVEjMZcjnL6/NlJDc2TDG47KOTr9/3jGBVyFfu4=;
-        b=NXUt4+/QDAQrbcgfxpvCAUL/5Yurjj74JZJPZsyC9ty2NCk/BHSaQIvZ4Aj0kx12/n
-         cSDrQR1R+kfr9NKuQjsKP/YV0YHWtmmOb+RLy5FwgWG2r3K+yrHRuxPWiff85GpwA+NQ
-         sLpUg6C+fCTDZHkWHdFXJXq2bsF5gdeUh9ycHJxEf8dsXyvEN9aKEWmILXE3XZ+jfHhr
-         Ibt/THB75NSiB1QW0WOLvpYUEQ5ZMtcwrkpFE94s3Ojf5mviXEYcZ6sUBtc1nX8d9ecC
-         g1rspcpnCBdwTVu042d5Qpn4Qm1GYeB1yiZzExaS2LRSCtXKAfkE4GujzhY1YeiXawZk
-         vlyQ==
-X-Gm-Message-State: ACrzQf3nRTcd9JYRIyORSyYNzAn6sjV46DVqvcpyPynQlfeAXybLocOq
-        5H+Rc2xwHrEB6Q66HUk1j7wK4p2EgwY=
-X-Google-Smtp-Source: AMsMyM4WZX71Z8e4s4reevWN6BC4ev4WUdvCd7/gogkoF7ELZ7KnKY7RCatXSa7DbyX05e43x8a9dQ==
-X-Received: by 2002:a5d:4f10:0:b0:231:1c7b:e42 with SMTP id c16-20020a5d4f10000000b002311c7b0e42mr432011wru.568.1665402373719;
-        Mon, 10 Oct 2022 04:46:13 -0700 (PDT)
+        bh=AV5pUwiXA+PA3Jd/giIxumbszKFu5s2N0TiGrAZugtw=;
+        b=c1cq2X1aNmMoyCCa2DjVlHX1Y13iV39iizmzZq4znv3dda2pD1lLpWF6fwLEGCqUCo
+         v7VSKb7+3FDGkdqWKnVG4Fg+bVrO4RYDJd1qP48M0z+tL+G4N6uueoYDhsBTOFhc36PU
+         TkgOuXgFKxTB0Gtthxo42PWkEL3AJtEb8K7Xy98OahvjYjvLhXeePtc6ILxX54PD7ITu
+         UXnCbrqvpAsJDqW/XVr8xcLklX0Y2hjfEpJlphyIwBtFLj6fDW+Ya8JOanIgW9k06Gl7
+         5Pyr23/DDoTCDiWwnLpmGzBZxXxvkXORpeZTLgtEjD1XIIiaYaCI5NDwDW/9cZkEwh8p
+         GwOA==
+X-Gm-Message-State: ACrzQf2t+R2/e377cCc4DPOX3JBEyB726I2CGIjHh5eRW42Y7QG/XbAm
+        8WO4m+TLRb5f/K4CSue1BNDWGAty60LWJw==
+X-Google-Smtp-Source: AMsMyM4xRBN4MZsrdGwinGZRaEM70/3RYMhGzkKcAD3VtJxeVyY5G0Lf1ViHWa+4wBiXVCFdvHR9LA==
+X-Received: by 2002:a05:6000:1244:b0:22e:4d39:a0e3 with SMTP id j4-20020a056000124400b0022e4d39a0e3mr10745854wrx.509.1665402643675;
+        Mon, 10 Oct 2022 04:50:43 -0700 (PDT)
 Received: from [192.168.42.102] (sm4-84-91-228-85.netvisao.pt. [84.91.228.85])
-        by smtp.gmail.com with ESMTPSA id k13-20020adff28d000000b0022ac672654dsm8500759wro.58.2022.10.10.04.46.12
+        by smtp.gmail.com with ESMTPSA id m4-20020adfe0c4000000b0022cdf2179b2sm8889001wri.68.2022.10.10.04.50.42
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Oct 2022 04:46:13 -0700 (PDT)
-Message-ID: <54400493-6179-c702-90b4-665b7e93467f@gmail.com>
-Date:   Mon, 10 Oct 2022 12:46:12 +0100
+        Mon, 10 Oct 2022 04:50:43 -0700 (PDT)
+Message-ID: <d67639e4-565f-e30a-eef8-da28fc5bca8d@gmail.com>
+Date:   Mon, 10 Oct 2022 12:50:42 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.2
-Subject: [PATCH v2 2/2] fs/ntfs3: document system.ntfs_attrib_be extended
- attribute
+Subject: Re: [PATCH 0/4] fs/ntfs3: Fix and rename hidedotfiles mount option
 Content-Language: pt-PT
-From:   Daniel Pinto <danielpinto52@gmail.com>
-To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+To:     Kari Argillander <kari.argillander@gmail.com>
+Cc:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
         ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <c9b467dd-9294-232b-b808-48f62c3c2186@gmail.com>
-In-Reply-To: <c9b467dd-9294-232b-b808-48f62c3c2186@gmail.com>
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <536f13a9-0890-7e69-65e9-5fe1a30e04ef@gmail.com>
+ <CAKBF=ps4CUA3crkzUUn8J-0WC-6bGb3Z9PPugzebTajGJ+=rSA@mail.gmail.com>
+From:   Daniel Pinto <danielpinto52@gmail.com>
+In-Reply-To: <CAKBF=ps4CUA3crkzUUn8J-0WC-6bGb3Z9PPugzebTajGJ+=rSA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add documentation for system.ntfs_attrib_be extended attribute.
+Às 09:08 de 09/10/22, Kari Argillander escreveu:
+> On Fri, 7 Oct 2022 at 15:32, Daniel Pinto <danielpinto52@gmail.com> wrote:
+>>
+>> The current implementation of the hidedotfiles has some problems, namely:
+>>  - there is a bug where enabling it actually disables it and vice versa
+>>  - it only works when creating files, not when moving or renaming them
+>>  - is is not listed in the enabled options list by the mount command
+>>  - its name differs from the equivalent hide_dot_files mount option
+>>    used by NTFS-3G, making it incompatible with it for no reason
+>>
+>> This series of patches tries to fix those problems.
+> 
+> While you are fixing this can you also make patch to add documentation
+> for this mount option. I also think we really should not make new mount
+> option names so I would vote hide_dot_files name as you did. We still have
+> time for this change as this is not yet in upstream.
+> 
 
-Signed-off-by: Daniel Pinto <danielpinto52@gmail.com>
----
- Documentation/filesystems/ntfs3.rst | 5 +++++
- 1 file changed, 5 insertions(+)
+I have submitted a v2 of the patch which includes a commit with the
+documentation.
 
-diff --git a/Documentation/filesystems/ntfs3.rst b/Documentation/filesystems/ntfs3.rst
-index d67ccd22c63b..fa6ca1babc60 100644
---- a/Documentation/filesystems/ntfs3.rst
-+++ b/Documentation/filesystems/ntfs3.rst
-@@ -25,6 +25,11 @@ versions up to 3.1. File system type to use on mount is *ntfs3*.
- 	  Note: Applied to empty files, this allows to switch type between
- 	  sparse(0x200), compressed(0x800) and normal.
- 
-+	- *system.ntfs_attrib_be* gets/sets ntfs file/dir attributes.
-+
-+	  Same value as system.ntfs_attrib but always represent as big-endian
-+	  (endianness of system.ntfs_attrib is the same as of the CPU).
-+
- Mount Options
- =============
+>> Daniel Pinto (4):
+>>   fs/ntfs3: fix hidedotfiles mount option by reversing behaviour
+>>   fs/ntfs3: make hidedotfiles mount option work when renaming files
+>>   fs/ntfs3: add hidedotfiles to the list of enabled mount options
+>>   fs/ntfs3: rename hidedotfiles mount option to hide_dot_files
+>>
+>>  fs/ntfs3/frecord.c | 9 +++++++++
+>>  fs/ntfs3/inode.c   | 2 +-
+>>  fs/ntfs3/super.c   | 6 ++++--
+>>  3 files changed, 14 insertions(+), 3 deletions(-)
+>>
+> 
