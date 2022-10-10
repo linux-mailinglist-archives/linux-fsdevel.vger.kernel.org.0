@@ -2,169 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 913E35F9832
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Oct 2022 08:16:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 505C75F99E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Oct 2022 09:24:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231180AbiJJGQw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Oct 2022 02:16:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47674 "EHLO
+        id S231844AbiJJHYX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Oct 2022 03:24:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52360 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230198AbiJJGQu (ORCPT
+        with ESMTP id S232626AbiJJHYC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Oct 2022 02:16:50 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0127F54CA2;
-        Sun,  9 Oct 2022 23:16:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1665382584;
-        bh=t5oCng6qrXN7iFHvVA23nQRcP3eRpq4/4Y+SJ+WKMQI=;
-        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=BxebPkM/d0tk1ML8vaIZiVAFv3HZhfphqPc0aJKN5r9MPhyBDw+u91Ym49xEhwnf7
-         C+BnpJ/tgtQMifG0g2r4qbxOdb7F5JUzp+vi+CPx9gUHlsQ4bogs61H0yhjMpt9tZI
-         yZgWB2aD/tImchBr6Riipr1B5i3rdRGmgN3jZmgI=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [192.168.20.60] ([92.116.160.63]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MPokN-1oTo0B20UV-00Mvbw; Mon, 10
- Oct 2022 08:16:24 +0200
-Message-ID: <9f0b3333-bb28-c739-9bff-6fc50343b4f9@gmx.de>
-Date:   Mon, 10 Oct 2022 08:16:22 +0200
+        Mon, 10 Oct 2022 03:24:02 -0400
+Received: from mail-il1-x146.google.com (mail-il1-x146.google.com [IPv6:2607:f8b0:4864:20::146])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91D7F5E662
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Oct 2022 00:18:59 -0700 (PDT)
+Received: by mail-il1-x146.google.com with SMTP id r12-20020a92cd8c000000b002f9f5baaeeaso8242859ilb.4
+        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Oct 2022 00:18:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vCa7TH1sl0Q1IpGb50MlQfuRrA1RLMNxxrA1yMYGY/Y=;
+        b=00tz6kDRVciKFjCC1wqbZuXIYyv/aF+Mo9H00/gberjc6NEfxgYY62zV9hnaJq7KZX
+         gmiIanth2VzVCFfJb2Z1Dcn0F93I9cTkVAsNVgXM4CcikRhDx5x3Lv8U1mEosNlb3EX/
+         d4wxcwoFk7VL9UtMAS1W+boOue1Lr/6fCNr2gHmYA0UWHf82IEUc7WzZ0cPDrWJFB477
+         R7RqJtW51W54jShT3AEOlMleKhkjcKLS28XSGTn2T8V+XG5pnP7xPDjuqdzOB5UYqyx5
+         +lEUheBxZU3aN8hOnm6zyU87uwxunEYGDxKH2naCWmz/MeN+SDJFz10s/5FcT6ya+1xz
+         mpUQ==
+X-Gm-Message-State: ACrzQf31HhfDxdvpq8oHvzxCJW9ExOWFUrm1YUsw7hhYD4c1neVy7W9C
+        IxXQJZqt/M1DvSKK1xXr5cpu55KS+TijH2dNKZNrKaWqlDWg
+X-Google-Smtp-Source: AMsMyM5wXLfZuXpoghbXB3acvvURDwnFPz6sa4OSldczs0sxnWd9sgMGJBmDxvyLIfUrXkhLXhPRgbwfd+hLYm0kdhRcJ6hOwp8q
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH v3 4/4] arc: Use generic dump_stack_print_cmdline()
- implementation
-Content-Language: en-US
-To:     Vineet Gupta <vineet.gupta@linux.dev>, linux-s390@vger.kernel.org,
-        Josh Triplett <josh@joshtriplett.org>, x86@kernel.org,
-        linux-snps-arc@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, linux-arm-kernel@lists.infradead.org
-Cc:     Alexey Brodkin <abrodkin@synopsys.com>,
-        Shahab Vahedi <Shahab.Vahedi@synopsys.com>
-References: <20220808130917.30760-1-deller@gmx.de>
- <20220808130917.30760-5-deller@gmx.de>
- <8da9812d-eb84-2a84-321e-ea2826ef8981@linux.dev>
-From:   Helge Deller <deller@gmx.de>
-In-Reply-To: <8da9812d-eb84-2a84-321e-ea2826ef8981@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NudOz7Pq8zqMzpDkWxd+lvw7MQLHFVHX4y2D3B0lFEDuIKKr66h
- qegUDgOH06dY83pJcJsE8la8/wqBLjQilAdyHfNW5OH54FBiT1VLNreHyu0NRHrlEcsSOLy
- +yFRkaihB4vP1N2x0uNckW/llOKv6XGjxN+5YnddWyS642ImXCjF9f8FJuuWfjgGBQEmN9e
- +sLRo1pOuHdypN3cwk4wQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:OCcy9hBZBVE=:fJJDrowGKWaX2xVI3tu20J
- hS+T2B7yjXar8ybNkNOfrm650gvN6sWFh1Diw3RxZ2e4fMd7Tb0al7oqcHxC22HAn60Cn0kOp
- Cmezn+WVPZ0+bm5xCV2SRV5SHKwctYtlvjYKCG8x0GuolXpdU9COln/arXMau6HyZfdpIbKkK
- oFRYln23V8eOAQDTICFAm7pxr6dYOpcl/fnZNQQWWShthwVKX/LpwLOxpyXmHNtsyG+Kr1A5M
- jk+VVjI6Spzk03if5HW5mA4p5S7QU4NSCNyyqR81STu6qQ3SCuvQeZDnREWmGgwgcXOLmp6V1
- t/qrrYNuQKWed1qEUyPX01K0J7Pssk+Y103CaSiiEza0gKI0DCT9HhaNIlvnqKBW0BTQwL4sI
- Qys3/UKX4zrjBs/vl8iwWfyPuAScmqnzvmtJR6WDcq5fSnO6Cdh9vqPvM0cjpv+WXV/fuWqOh
- QB6ksyFUi7NUGy1SCvYHh1y3MjgBqp+rkMpGaJmPor6lJ39P4Ou0EmxFMClcMXWreHo4KDvLC
- htq2K726CjBMI7a8aPyn+M4rooQC4V/379XOWMFUL9crKufBL61UQ0M8OwgQhzp2iRy9bkAFn
- 8cHdmQqEaYbIVZGD3eXybfdZR0DvWYcp6G/7TGvdIXe6a7NkCKYgq2/02rA12shd63TMkRWtv
- PauahAOqu/0XMC/Gko3pcuhbECP2Wy5vM5UPokbmRNrP+XBmiDBCLQP4uo+nKm+o2jufLTzTV
- lRn0x6LuzuywMXZ60mV9inyOcskjnc2d6zGr2J7ZST0+uINAkN/89mhlqcrh7WdY3ZialzXdK
- WSCwYEa3zeTiezGmKGb0dPMa+Y+ZZOhvVmtjjvVRsCuPiwKW3jWEXB2yiSYytRlaYa+UYczvl
- RXMp8YWHth6+Te13FpZaeNaLKYZim2CocI/gfiFuCgNhvG14t5IsATN50cJwbLerOhzGdcJCb
- 8TkMOsaerDDqEXrpEZqWYp+1+P1jdhvFN6EdNoGjCdi51XUzoJg9b93/rW4kV1GUcb6BgC/8B
- o0dIi7l+vV2Eif81NtZiAaHJw9oNDIjhxnbvGvxuaRV9Qh2clQFCRc1NnzJTkDXs43SHUld9y
- HoWkZX4SBuAPoluTb9fw3sk7LAYhbdD9uJN+Xf6trl+6Cog9YgtpuEncwR6oahQ1xUHwYQylO
- bVnewqqTL1sJF8kDTjRrITx0zZUgHndHAMom8BjHN/7h7nKaaXmrOVRGwwl/iylJqlMkVP1NW
- DDwK9rOAY659rRm1hbcdr6X2zCQ3NPnZSKorkuEn4pJE1SV6J2DyGXNr/BCLIJ5wlCWHeh45p
- z4OlI8yl0/DsqsFnZQcw00Bi69s4tKfzwcpUqxNnaeoE+7mHJQPrmyUOu4CTwXpPpL/2yB3nK
- 3ZSgwaO7wNZoUl0AEv+HB7L1O5pNH5NYBlpWlqCU/MX+qBMhew07dijVHW9Lf+9gnnNx7FzY5
- VgHl56FMusEvqFtCrxNeDWIXEmsyJ2HPJyixuKxn3c/U+A7myFi+AHjm7R2+9zd/tgAnDdsAe
- 2Yde0koapcghlSai9bOgidFxV+3HFIrMJPFdbaVWj8Vyb
-X-Spam-Status: No, score=-6.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6638:12d6:b0:35a:801c:2136 with SMTP id
+ v22-20020a05663812d600b0035a801c2136mr9252511jas.309.1665386145911; Mon, 10
+ Oct 2022 00:15:45 -0700 (PDT)
+Date:   Mon, 10 Oct 2022 00:15:45 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a418e405eaa8ed24@google.com>
+Subject: [syzbot] WARNING: locking bug in find_lock_entries
+From:   syzbot <syzbot+17eb1d8cd53dbad65d63@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/10/22 07:18, Vineet Gupta wrote:
-> On 8/8/22 06:09, Helge Deller wrote:
->> The process program name and command line is now shown in generic code
->> in dump_stack_print_info(), so drop the arc-specific implementation.
->>
->> Signed-off-by: Helge Deller <deller@gmx.de>
->
-> But that info printing was added back in 2018 by e36df28f532f882.
-> I don't think arc is using show_regs_print_info -> dump_stack_print_info=
- yet.
-> Or is there a different code path now which calls here ?
+Hello,
 
-Right.
-See patches #1 and #2 of this series which added this
-info to dump_stack_print_info().
+syzbot found the following issue on:
+
+HEAD commit:    833477fce7a1 Merge tag 'sound-6.1-rc1' of git://git.kernel..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1268e884880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=dd3623e135f4c106
+dashboard link: https://syzkaller.appspot.com/bug?extid=17eb1d8cd53dbad65d63
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=171bc9a2880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=152e2e1c880000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7c58f480421f/disk-833477fc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8a50ac7bd40b/vmlinux-833477fc.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/763012bec257/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+17eb1d8cd53dbad65d63@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+DEBUG_LOCKS_WARN_ON(chain_key != INITIAL_CHAIN_KEY)
+WARNING: CPU: 1 PID: 7921 at kernel/locking/lockdep.c:5031 __lock_acquire+0x16a2/0x1f60 kernel/locking/lockdep.c:5031
+Modules linked in:
+CPU: 1 PID: 7921 Comm: syz-executor252 Not tainted 6.0.0-syzkaller-05118-g833477fce7a1 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
+RIP: 0010:__lock_acquire+0x16a2/0x1f60 kernel/locking/lockdep.c:5031
+Code: 85 bb 08 00 00 83 3d c4 a6 a5 0c 00 0f 85 e7 fe ff ff 45 31 f6 48 c7 c7 80 7d 8d 8a 48 c7 c6 00 a6 8d 8a 31 c0 e8 4e 45 e8 ff <0f> 0b e9 c8 fe ff ff 0f 0b e9 24 fb ff ff 48 c7 c1 94 96 0c 8e 80
+RSP: 0018:ffffc9000b927448 EFLAGS: 00010046
+RAX: 89f46c2ecaded100 RBX: 0000000000000028 RCX: ffff88807e309d80
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: 0000000000000001 R08: ffffffff816af64d R09: ffffed1017364f13
+R10: ffffed1017364f13 R11: 1ffff11017364f12 R12: 1ffff1100fc614fd
+R13: d9e18f2b6560b4e9 R14: 0000000000000000 R15: ffff88807e30a818
+FS:  0000555555677300(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f4123ae45b0 CR3: 000000007a13c000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5666
+ rcu_lock_acquire+0x2a/0x30 include/linux/rcupdate.h:304
+ rcu_read_lock include/linux/rcupdate.h:738 [inline]
+ find_lock_entries+0x173/0x1040 mm/filemap.c:2099
+ truncate_inode_pages_range+0x1a2/0x1780 mm/truncate.c:364
+ ntfs_evict_inode+0x18/0xb0 fs/ntfs3/inode.c:1741
+ evict+0x2a4/0x620 fs/inode.c:665
+ ntfs_fill_super+0x3af3/0x42a0 fs/ntfs3/super.c:1190
+ get_tree_bdev+0x400/0x620 fs/super.c:1323
+ vfs_get_tree+0x88/0x270 fs/super.c:1530
+ do_new_mount+0x289/0xad0 fs/namespace.c:3040
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount+0x2d3/0x3c0 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f4123ab5b3a
+Code: 48 c7 c2 c0 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 a8 00 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe8fd49088 EFLAGS: 00000286 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f4123ab5b3a
+RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007ffe8fd490a0
+RBP: 00007ffe8fd490a0 R08: 00007ffe8fd490e0 R09: 00007ffe8fd490e0
+R10: 0000000000000000 R11: 0000000000000286 R12: 0000000000000004
+R13: 00007ffe8fd490e0 R14: 000000000000010e R15: 0000000020001b50
+ </TASK>
 
 
->> ---
->> =C2=A0 arch/arc/kernel/troubleshoot.c | 24 ------------------------
->> =C2=A0 1 file changed, 24 deletions(-)
->>
->> diff --git a/arch/arc/kernel/troubleshoot.c b/arch/arc/kernel/troublesh=
-oot.c
->> index 7654c2e42dc0..9807e590ee55 100644
->> --- a/arch/arc/kernel/troubleshoot.c
->> +++ b/arch/arc/kernel/troubleshoot.c
->> @@ -51,29 +51,6 @@ static void print_regs_callee(struct callee_regs *re=
-gs)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 regs->r24, regs-=
->r25);
->> =C2=A0 }
->>
->> -static void print_task_path_n_nm(struct task_struct *tsk)
->> -{
->> -=C2=A0=C2=A0=C2=A0 char *path_nm =3D NULL;
->> -=C2=A0=C2=A0=C2=A0 struct mm_struct *mm;
->> -=C2=A0=C2=A0=C2=A0 struct file *exe_file;
->> -=C2=A0=C2=A0=C2=A0 char buf[ARC_PATH_MAX];
->> -
->> -=C2=A0=C2=A0=C2=A0 mm =3D get_task_mm(tsk);
->> -=C2=A0=C2=A0=C2=A0 if (!mm)
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto done;
->> -
->> -=C2=A0=C2=A0=C2=A0 exe_file =3D get_mm_exe_file(mm);
->> -=C2=A0=C2=A0=C2=A0 mmput(mm);
->> -
->> -=C2=A0=C2=A0=C2=A0 if (exe_file) {
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 path_nm =3D file_path(exe_f=
-ile, buf, ARC_PATH_MAX-1);
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 fput(exe_file);
->> -=C2=A0=C2=A0=C2=A0 }
->> -
->> -done:
->> -=C2=A0=C2=A0=C2=A0 pr_info("Path: %s\n", !IS_ERR(path_nm) ? path_nm : =
-"?");
->> -}
->> -
->> =C2=A0 static void show_faulting_vma(unsigned long address)
->> =C2=A0 {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct vm_area_struct *vma;
->> @@ -176,7 +153,6 @@ void show_regs(struct pt_regs *regs)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 */
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 preempt_enable();
->
-> Maybe we remove preempt* as well now (perhaps as a follow up patch)
-> since that was added by f731a8e89f8c78 "ARC: show_regs: lockdep:
-> re-enable preemption" where show_regs -> print_task_path_n_nm ->
-> mmput was triggering lockdep splat which is supposedly removed.
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-The patch series was dropped from Andrew's queue, because the kernel
-test robot showed some issues:
-https://lore.kernel.org/lkml/Yu59QdVpPgnXUnQC@xsang-OptiPlex-9020/
-Maybe adding preempt_enable() in my patches would fix that -
-sadly I haven't had time to follow up on this yet ...
-
-Helge
-
->
->>
->> -=C2=A0=C2=A0=C2=A0 print_task_path_n_nm(tsk);
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 show_regs_print_info(KERN_INFO);
->>
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 show_ecr_verbose(regs);
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
