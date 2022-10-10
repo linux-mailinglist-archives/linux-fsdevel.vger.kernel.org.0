@@ -2,65 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 305B75F9D8B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Oct 2022 13:27:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 61F055F9D98
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 10 Oct 2022 13:30:29 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231811AbiJJL1Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Oct 2022 07:27:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58304 "EHLO
+        id S231827AbiJJLa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Oct 2022 07:30:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36676 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231726AbiJJL1W (ORCPT
+        with ESMTP id S231400AbiJJLaU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Oct 2022 07:27:22 -0400
-Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 235CB6D573;
-        Mon, 10 Oct 2022 04:27:21 -0700 (PDT)
-Received: by mail-wr1-x434.google.com with SMTP id j16so16552503wrh.5;
-        Mon, 10 Oct 2022 04:27:21 -0700 (PDT)
+        Mon, 10 Oct 2022 07:30:20 -0400
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 349B55141F;
+        Mon, 10 Oct 2022 04:30:17 -0700 (PDT)
+Received: by mail-wm1-x335.google.com with SMTP id bg9-20020a05600c3c8900b003bf249616b0so6213450wmb.3;
+        Mon, 10 Oct 2022 04:30:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4eORThfCwUva1cFHbc3EqKdmKtUPJThTOAvohfNEg30=;
-        b=ovGmz7VJJ+z7JTTJax93xxaTI4YfHUkE2wpeLYGcXX4TZvsZrlEAl/mJHQc04yIDVF
-         TTfQEXK7RMysAuu+gi4gDfxceMP4o8Xgn3xm3F3Q9HYLHs2Twp03dmNJ3QyLsEO3+Hod
-         hnGWvrs8BdpQ5XJTnptYYUykKLfzLukZ0nnLf8PAww+eYudr7+Z+29xNt39zaAO1WfGa
-         uBuAYTTHfwff4bMsp6E9jYaYOt8q7P/CEtCvdlsRrp9wWa/Jbry+Q77EcG0lhm8aYrAX
-         grBQ2LEj6gjmf1c7vSL0PPXpi50EfxY9Gr8kEcQECzn3STG92miJqbjvor/5KAj84ggz
-         mluw==
+        h=content-transfer-encoding:in-reply-to:references:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=K3gXHoOtP/G7cPHnJm5sliNg7u+93Tq1/waVlo7q5Aw=;
+        b=Dc2nT/4q8/jBUtQ7KRFrVaRYynz7726UdERw2EVrft35KrVuLTb7nmRSMT8vSSO+0r
+         WvZEzNZUg7yVN9JxcxHbahdTc3OVbtvsQM3OuvdXpC2zXIPZJW8MibYM79tnGacCUh/h
+         7Key3Bbpt8SVl9iwM3aFWGrDBcRRMOH3sOP1NkH1zLNWa1h+4YSro/BoBW+/JWDE5f/G
+         Y3dyaUck1t05h/fAKhiO8YXgwSpEbumBxWY7aQ2C6YWY+nex5rqsUrGnJdY2fo+HC6zd
+         d/E+rGpVFGHE9C+B7PHpunITjgA3qIfup5hP028D9qDgCRbAt+y7G8ewp6ZHnl20xs77
+         S7jw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4eORThfCwUva1cFHbc3EqKdmKtUPJThTOAvohfNEg30=;
-        b=yJpQ+zTwpfE1y2UtEjS5lMqh6DPESg696VlleozT4OYp436mKB9w0Be3WYeG2MioUs
-         FgTmFPXfiZgTtEdUI0N3lIMo4QEsrUc9Ey4gsoRKULRt6CVyDrKHWIduODbI0z/y9abx
-         QUdVqRlZbbBjZtt4tTRqJtCDWqy68Ded3wiopx5ksJ4NdJLjwzke/7aIUaU/Jw5HEsT4
-         k1QkBmL6cXsloYeHlueihhdesXFt3xzCrBV71OZ4uATBNu9kKtQ3IJ5gJdXhTtSlWfqj
-         tA6sz4NA+02guejj1kXg+kOQjiA3fB/83E954c7dkZ/tGwDLJ7tAqKaSBUYUhto+SPWI
-         AT5w==
-X-Gm-Message-State: ACrzQf2WQGYsKr3hm3AHenYe4q2sU56ZDNioGduOnTYMurpIU5ABfH3q
-        rTy+MhCVAyb0dCrzlmWEadmbCuJanss=
-X-Google-Smtp-Source: AMsMyM74gcdhxOtXcR0YLV610oaQuaVu4aBmNKfscThPQIuYcqLbOgq/Dfg3UacTLuQemQD75kDEjg==
-X-Received: by 2002:a5d:6da2:0:b0:22e:42ff:2f8 with SMTP id u2-20020a5d6da2000000b0022e42ff02f8mr10934771wrs.269.1665401239675;
-        Mon, 10 Oct 2022 04:27:19 -0700 (PDT)
+        h=content-transfer-encoding:in-reply-to:references:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K3gXHoOtP/G7cPHnJm5sliNg7u+93Tq1/waVlo7q5Aw=;
+        b=Iz/7UoE1PgjY8YVkc+Di8r57X6YfF5O7QQJWl8IBJTnjsxB/O3BDj1SsTJ/VAyMp4M
+         t6Ejcl9yydI7Wat36rOq0V8kKksIcISdV/9j2ACseKZAhusgI+990Xo55irbt+Klhxll
+         4bXZAKIH3lJ0zODZVKcDLAlrOSf2MA4yZsGB/J6VvTgqgam2mPvih+QlnzphiEPQqM78
+         VHe1bCkSMLyPA/NlNEestrFo0KfeDGSovzGBRfEk5KP//ViXl52M/oHygNWDPgNNcbtO
+         +Oo6nsbmOAtduCxMZ+stQi+Z2j5IqUTAe0Ml1OcfbmcnkpP1zygQiTfkGd05unZknUFi
+         yYoA==
+X-Gm-Message-State: ACrzQf2ebSK5SRSICK0BLdZ1fQfxypafha6qFT/QLzZQk7ZCxFk04DAQ
+        zCvL8TpTaVNbuBEHp1ErxXg=
+X-Google-Smtp-Source: AMsMyM7tOmkCJQGYoo8JZxnb/78cJD3WnQS0D3xmyynREYxFhKOPx4l/iKu4rWoyju7dzol8rwaPGQ==
+X-Received: by 2002:a05:600c:221a:b0:3b4:75b8:3f7f with SMTP id z26-20020a05600c221a00b003b475b83f7fmr11998187wml.175.1665401416375;
+        Mon, 10 Oct 2022 04:30:16 -0700 (PDT)
 Received: from [192.168.42.102] (sm4-84-91-228-85.netvisao.pt. [84.91.228.85])
-        by smtp.gmail.com with ESMTPSA id 3-20020a05600c22c300b003b476cabf1csm240298wmg.26.2022.10.10.04.27.19
+        by smtp.gmail.com with ESMTPSA id t128-20020a1c4686000000b003b4a699ce8esm7713297wma.6.2022.10.10.04.30.15
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Oct 2022 04:27:19 -0700 (PDT)
-Message-ID: <9c404576-856b-6935-f2e3-c4d0749f16ea@gmail.com>
-Date:   Mon, 10 Oct 2022 12:27:18 +0100
+        Mon, 10 Oct 2022 04:30:16 -0700 (PDT)
+Message-ID: <51c60bcf-82a0-efbf-438d-4925c905503e@gmail.com>
+Date:   Mon, 10 Oct 2022 12:30:15 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.2.2
+Subject: [PATCH v2 1/5] fs/ntfs3: fix hidedotfiles mount option by reversing
+ behaviour
 Content-Language: pt-PT
+From:   Daniel Pinto <danielpinto52@gmail.com>
 To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
         ntfs3@lists.linux.dev, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-From:   Daniel Pinto <danielpinto52@gmail.com>
-Subject: [PATCH v2 0/5] fs/ntfs3: Fix and rename hidedotfiles mount option
+References: <9c404576-856b-6935-f2e3-c4d0749f16ea@gmail.com>
+In-Reply-To: <9c404576-856b-6935-f2e3-c4d0749f16ea@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -73,27 +76,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Changes v1->v2:
-- Add documentation for hidedotfiles mount option.
+Currently, the hidedotfiles mount option is behaving in the reverse
+way of what would be expected: enabling it disables setting the
+hidden attribute on files or directories with names starting with a
+dot and disabling it enables the setting.
 
-The current implementation of the hidedotfiles has some problems, namely:
-- there is a bug where enabling it actually disables it and vice versa
-- it only works when creating files, not when moving or renaming them
-- it is not listed in the enabled options list by the mount command
-- its name differs from the equivalent hide_dot_files mount option
-  used by NTFS-3G, making it incompatible with it for no reason
+Reverse the behaviour of the hidedotfiles mount option so it matches
+what is expected.
 
-This series of patches tries to fix those problems.
+Signed-off-by: Daniel Pinto <danielpinto52@gmail.com>
+---
+ fs/ntfs3/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Daniel Pinto (5):
-  fs/ntfs3: fix hidedotfiles mount option by reversing behaviour
-  fs/ntfs3: make hidedotfiles mount option work when renaming files
-  fs/ntfs3: add hidedotfiles to the list of enabled mount options
-  fs/ntfs3: document the hidedotfiles mount option
-  fs/ntfs3: rename hidedotfiles mount option to hide_dot_files
-
- Documentation/filesystems/ntfs3.rst | 6 ++++++
- fs/ntfs3/frecord.c                  | 9 +++++++++
- fs/ntfs3/inode.c                    | 2 +-
- fs/ntfs3/super.c                    | 6 ++++--
- 4 files changed, 20 insertions(+), 3 deletions(-)
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index 1e2c04e48f98..c6fd2afde172 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -359,7 +359,7 @@ static int ntfs_fs_parse_param(struct fs_context *fc,
+ 		opts->nohidden = result.negated ? 1 : 0;
+ 		break;
+ 	case Opt_hide_dot_files:
+-		opts->hide_dot_files = result.negated ? 1 : 0;
++		opts->hide_dot_files = result.negated ? 0 : 1;
+ 		break;
+ 	case Opt_acl:
+ 		if (!result.negated)
