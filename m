@@ -2,156 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E44EA5FB0D6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 12:57:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 80AA25FB0F3
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 13:07:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229768AbiJKK5i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Oct 2022 06:57:38 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37088 "EHLO
+        id S229630AbiJKLHY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Oct 2022 07:07:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229671AbiJKK5h (ORCPT
+        with ESMTP id S229501AbiJKLHX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Oct 2022 06:57:37 -0400
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F36CB51416
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 03:57:35 -0700 (PDT)
-Received: by mail-io1-f72.google.com with SMTP id 5-20020a5d9c05000000b006a44709a638so9069708ioe.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 03:57:35 -0700 (PDT)
+        Tue, 11 Oct 2022 07:07:23 -0400
+Received: from mail-vk1-xa2a.google.com (mail-vk1-xa2a.google.com [IPv6:2607:f8b0:4864:20::a2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A94617DF58;
+        Tue, 11 Oct 2022 04:07:22 -0700 (PDT)
+Received: by mail-vk1-xa2a.google.com with SMTP id q83so6453633vkb.2;
+        Tue, 11 Oct 2022 04:07:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=c7fuac57pyjpCxT69ZprcuJLhTm8TX8ks8Xrw2HTqTg=;
+        b=jI4q+Bo4ANbghOH9U8SJn28IM5POyRkH0hHb/eozn1Zz10r+tBRMc/fnol3uAHnqIf
+         e2s2T9eA3dLeuI8XDagF6KVjrcuY9tU5Ve7G/kIg1EBy3Vq4kXwO3SThKtlBfrkyxxtp
+         kz9tCujos2E+dBW/7fheNxEqAc1s0Xjm4QXpGiTjzqvp9Kiw/UAWwfL0RYZ2cJ9TZyoA
+         Vn5nLddWQMSlf/fAe3CSp2H1IbuJ6A9L7NNLABzcT9G7mylnsYMVjVZ+NHgM+Mo6xp4b
+         1esERsK/XHrXlS1xilqzPoVZ7lL1N1sGusisFtkUVhgJa+zVHcPy/X65TqZJnhtF07Hr
+         E9gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M0qC+2Zxh/yll07tUtKXw60gt0zrPPh5YTAAcg0A6gA=;
-        b=zV/a5uSOGFKzY21FyQKDcuowgtklyN3R5+3qrq56YPyG0awILauQ+vOqXlyrn54upx
-         zMSU6Irtq2pF3MT+XUz4Y+/mO8irbsUSPbnC+e1aaPMoioDeUKvIwBDATrfsQa4kDagc
-         0W/F43pISgZPuoVuwo6oA2AM/D3J8ajQYn1PRq7PYVRJaW6VXnxuCmSSWsBAmqmapoMe
-         XrlNGbh2w5xebt72EpGGmi33QD1UHR2NmHRRuw+SAug+MTu4vmkpgy0OS4Xezn7NozHi
-         I+Ucf4F0+BsORSb6MyJE88MCCN//gszInOrwu9paE0GjGLs7gXX3ko++xPA2zQGc3R9v
-         5QWw==
-X-Gm-Message-State: ACrzQf2eb4yyPv5CkYexnM9DygwMxsjaoO/+I1FzW1NGv7zEBoC9ocuY
-        gFvgn/uiRZN7VGcwX/r14TveIIC6I/Zj0tumBvXU4saHQ/Zs
-X-Google-Smtp-Source: AMsMyM42XSbaOltlhhS5aYpEKY/4hYmilYM9l0wRq1Hdq9TYyjcJLDCDQhQo+n2bNip7YPZhTvTuv9As8zlR3YkeIiWMFHlpc9DN
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c7fuac57pyjpCxT69ZprcuJLhTm8TX8ks8Xrw2HTqTg=;
+        b=flzA3kEKwYTz/vds4QujzwAbPMT42nkk+7vYvFZdInuuoTAt2i0l8DRFm3tN9qpsba
+         qnFT/I/aIbsgOBwKPyZVPV3yN9ooIAOn8wdOfuguYSD9QxTl2BThSoTSq4Oah4gk3oqN
+         LXahmW3Lafgl5X0WBwBQYG5chne3baepZl+TUPLxiIoJgrq4Oa0ZB2pwigG78sYFhk4s
+         f3G6yZE33FthpnlJ41+JLutAf7IPsOBXetoJpZltFNZNKgPw6bSHUZPCaLz+AWeW+hOW
+         t8HYTl58TUn+OZdLan0jd7SWRG03s3SO+GGmq/n+wYUTRDDVFwYjcHr6HaxBI7yfnwI1
+         munA==
+X-Gm-Message-State: ACrzQf0UzafwJywAnEb+zY4HDsi54+ZO0Qp2Act1+PB26UhtkR9Gg7pl
+        3wfpiZpUDDvq0H2IFFlFhgmFXrflhh4z2GfxVM4xeTBZphg=
+X-Google-Smtp-Source: AMsMyM4uHAmUv1l/GRy5FCNfnAgputZqe85Qdaq9jdrxzHbjznt06vjNyvykFQ2DDTdt6e5bpyYxw+8ofM/GI0aUwC8=
+X-Received: by 2002:a1f:60cd:0:b0:3ae:da42:89d0 with SMTP id
+ u196-20020a1f60cd000000b003aeda4289d0mr420939vkb.15.1665486441778; Tue, 11
+ Oct 2022 04:07:21 -0700 (PDT)
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:ef0:b0:2f9:4403:8d28 with SMTP id
- j16-20020a056e020ef000b002f944038d28mr11317784ilk.193.1665485855384; Tue, 11
- Oct 2022 03:57:35 -0700 (PDT)
-Date:   Tue, 11 Oct 2022 03:57:35 -0700
-In-Reply-To: <000000000000c2ac0405eaa934f3@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c9e8a305eac02404@google.com>
-Subject: Re: [syzbot] general protection fault in __d_add
-From:   syzbot <syzbot+a8f26a403c169b7593fe@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <20221007140543.1039983-1-brauner@kernel.org> <20221007140543.1039983-4-brauner@kernel.org>
+ <CAOQ4uxggKnsyi2DvVOCUQQ8hEZJjioing_H-M4y_Hq-wvRk0nA@mail.gmail.com> <20221011085634.2qp2ragzcdzub6oq@wittgenstein>
+In-Reply-To: <20221011085634.2qp2ragzcdzub6oq@wittgenstein>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 11 Oct 2022 14:07:10 +0300
+Message-ID: <CAOQ4uxhGqCkzsugEd_TZ+s3FEKiAxQtBy1rm3KP4KS=hzTsf4w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] attr: use consistent sgid stripping checks
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Seth Forshee <sforshee@kernel.org>,
+        Yang Xu <xuyang2018.jy@fujitsu.com>,
+        Filipe Manana <fdmanana@kernel.org>,
+        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+> > > @@ -721,10 +721,10 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
+> > >                 return -EINVAL;
+> > >         if ((group != (gid_t)-1) && !setattr_vfsgid(&newattrs, gid))
+> > >                 return -EINVAL;
+> > > -       if (!S_ISDIR(inode->i_mode))
+> > > -               newattrs.ia_valid |=
+> > > -                       ATTR_KILL_SUID | ATTR_KILL_SGID | ATTR_KILL_PRIV;
+> > >         inode_lock(inode);
+> > > +       if (!S_ISDIR(inode->i_mode))
+> > > +               newattrs.ia_valid |= ATTR_KILL_SUID | ATTR_KILL_PRIV |
+> > > +                                    should_remove_sgid(mnt_userns, inode);
+> >
+> > This is making me stop and wonder:
+> > 1. This has !S_ISDIR, should_remove_suid() has S_ISREG and
+> >     setattr_drop_sgid() has neither - is this consistent?
+>
+> I thought about that. It'very likely redundant since we deal with that
+> in other parts but I need to verify all callers before we can remove
+> that.
+>
+> > 2. SUID and PRIV are removed unconditionally and SGID is
+> >     removed conditionally - this is not a change of behavior
+> >     (at least for non-overlayfs), but is it desired???
+>
+> It looks that way but it isn't. The setgid bit was only killed
+> unconditionally for S_IXGRP. We continue to do that. But it was always
+> removed conditionally for ~S_IXGRP. The difference between this patchset
+> and earlier is that it was done in settattr_prepare() or setattr_copy()
+> before this change.
+>
+> IOW, we raised ATTR_KILL_SGID unconditionally but then only
+> conditionally obeyed it in setattr_{prepare,copy}() whereas now we
+> conditionally raise ATTR_KILL_SGID. That's surely a slight change but it
+> just means that we don't cause bugs for filesystems that roll their own
+> prepare or copy helpers and is just nicer overall.
+>
 
-HEAD commit:    493ffd6605b2 Merge tag 'ucount-rlimits-cleanups-for-v5.19'..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=140066b2880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d19f5d16783f901
-dashboard link: https://syzkaller.appspot.com/bug?extid=a8f26a403c169b7593fe
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1269583a880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d7c1a4880000
+Yes, that sounds right.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f1ff6481e26f/disk-493ffd66.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/101bd3c7ae47/vmlinux-493ffd66.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/1dad1b149d9c/mount_0.gz
+The point that I was trying to make and failed to articulate myself was
+that chown_common() raises ATTR_KILL_SUID unconditionally,
+while should_remove_suid() raises ATTR_KILL_SUID conditional
+to !capable(CAP_FSETID).
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a8f26a403c169b7593fe@syzkaller.appspotmail.com
+Is this inconsistency in stripping SUID desired?
 
-loop0: detected capacity change from 0 to 4096
-ntfs3: loop0: Different NTFS' sector size (1024) and media sector size (512)
-ntfs3: loop0: Mark volume as dirty due to NTFS errors
-general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 0 PID: 3606 Comm: syz-executor276 Not tainted 6.0.0-syzkaller-09423-g493ffd6605b2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
-RIP: 0010:d_flags_for_inode fs/dcache.c:1980 [inline]
-RIP: 0010:__d_add+0x5ce/0x800 fs/dcache.c:2796
-Code: 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 ea c0 ea ff 48 8b 1b 48 83 c3 08 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 c4 c0 ea ff 48 83 3b 00 0f 85 b7 01
-RSP: 0018:ffffc90003cff870 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000008 RCX: dffffc0000000000
-RDX: ffff88801c181d80 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff8880741270f2 R08: ffffffff81ef2679 R09: ffff888075bba128
-R10: ffffed100eb77427 R11: 1ffff1100eb77425 R12: 0000000000000008
-R13: 1ffff1100e824e1e R14: ffff888075bba000 R15: 0000000000000000
-FS:  0000555557353300(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fff1887b000 CR3: 00000000730e1000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- d_splice_alias+0x122/0x3b0 fs/dcache.c:3191
- lookup_open fs/namei.c:3391 [inline]
- open_last_lookups fs/namei.c:3481 [inline]
- path_openat+0x10e6/0x2df0 fs/namei.c:3688
- do_filp_open+0x264/0x4f0 fs/namei.c:3718
- do_sys_openat2+0x124/0x4e0 fs/open.c:1310
- do_sys_open fs/open.c:1326 [inline]
- __do_sys_open fs/open.c:1334 [inline]
- __se_sys_open fs/open.c:1330 [inline]
- __x64_sys_open+0x221/0x270 fs/open.c:1330
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f651e934f79
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff1887a418 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 0030656c69662f2e RCX: 00007f651e934f79
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000080
-RBP: 00007f651e8f4740 R08: 00005555573532c0 R09: 0000000000000000
-R10: 00007fff1887a2e0 R11: 0000000000000246 R12: 00000000ffffffff
-R13: 0000000000000000 R14: 00030030454c4946 R15: 0000000000000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:d_flags_for_inode fs/dcache.c:1980 [inline]
-RIP: 0010:__d_add+0x5ce/0x800 fs/dcache.c:2796
-Code: 00 fc ff df 80 3c 08 00 74 08 48 89 df e8 ea c0 ea ff 48 8b 1b 48 83 c3 08 48 89 d8 48 c1 e8 03 48 b9 00 00 00 00 00 fc ff df <80> 3c 08 00 74 08 48 89 df e8 c4 c0 ea ff 48 83 3b 00 0f 85 b7 01
-RSP: 0018:ffffc90003cff870 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000008 RCX: dffffc0000000000
-RDX: ffff88801c181d80 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffff8880741270f2 R08: ffffffff81ef2679 R09: ffff888075bba128
-R10: ffffed100eb77427 R11: 1ffff1100eb77425 R12: 0000000000000008
-R13: 1ffff1100e824e1e R14: ffff888075bba000 R15: 0000000000000000
-FS:  0000555557353300(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fff1887b000 CR3: 00000000730e1000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess), 4 bytes skipped:
-   0:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1)
-   4:	74 08                	je     0xe
-   6:	48 89 df             	mov    %rbx,%rdi
-   9:	e8 ea c0 ea ff       	callq  0xffeac0f8
-   e:	48 8b 1b             	mov    (%rbx),%rbx
-  11:	48 83 c3 08          	add    $0x8,%rbx
-  15:	48 89 d8             	mov    %rbx,%rax
-  18:	48 c1 e8 03          	shr    $0x3,%rax
-  1c:	48 b9 00 00 00 00 00 	movabs $0xdffffc0000000000,%rcx
-  23:	fc ff df
-* 26:	80 3c 08 00          	cmpb   $0x0,(%rax,%rcx,1) <-- trapping instruction
-  2a:	74 08                	je     0x34
-  2c:	48 89 df             	mov    %rbx,%rdi
-  2f:	e8 c4 c0 ea ff       	callq  0xffeac0f8
-  34:	48 83 3b 00          	cmpq   $0x0,(%rbx)
-  38:	0f                   	.byte 0xf
-  39:	85                   	.byte 0x85
-  3a:	b7 01                	mov    $0x1,%bh
+According to man page (I think that) it is:
 
+"When the owner or group of an executable file is changed by an
+ unprivileged user, the S_ISUID and S_ISGID mode bits are cleared.
+ POSIX does not specify whether this also  should  happen  when  root
+ does the chown(); the Linux behavior depends on the kernel version,
+ and since Linux 2.2.13, root is treated like other users..."
+
+So special casing SUID stripping in chown() looks intentional,
+but maybe it is worth a comment.
+
+The paragraph above *may* be interpreted that chown() should strip
+S_SGID|S_IXGRP regardless of CAP_FSETID, which, as you say,
+has not been the case for a while.
+
+"...In case of a non-group-executable file (i.e., one for which the
+ S_IXGRP bit is not set) the S_ISGID bit indicates mandatory locking,
+ and is not cleared by a chown().
+ When the owner or group of an executable file is changed (by any user),
+ all capability sets for the file are cleared."
+
+This part sounds aligned with the code.
+
+Thanks,
+Amir.
