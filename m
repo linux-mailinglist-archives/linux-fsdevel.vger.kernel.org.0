@@ -2,137 +2,135 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 52BF75FBC5A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 22:45:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 33AE45FBC6B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 22:51:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229534AbiJKUpu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Oct 2022 16:45:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39598 "EHLO
+        id S229653AbiJKUvF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Oct 2022 16:51:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbiJKUps (ORCPT
+        with ESMTP id S229803AbiJKUvA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Oct 2022 16:45:48 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 259517E838
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 13:45:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1665521147;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=HOkcw94jKoThb1YsGFgEY6secfp0Ar+WXfJ+Ghon9q0=;
-        b=Dv9es6PYnaTycs8PNM3fsu/en7HAPbC0D2o6s9ziEmYkgOv46c2/hmVky9zKghcv0sKiUh
-        XJeCOwAav5I3z6tBLHzg/n9Jq2VMhlecMEsvYQUqWR39/aYmuqWUgIbvGuanUmYGcNJcPK
-        NsF3OA+sAOOdIUMCNZ5YLmiZrnxrtq0=
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
- [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-608-pV15iaf6NGqgZeLYKd24AQ-1; Tue, 11 Oct 2022 16:45:46 -0400
-X-MC-Unique: pV15iaf6NGqgZeLYKd24AQ-1
-Received: by mail-qk1-f200.google.com with SMTP id o13-20020a05620a2a0d00b006cf9085682dso12480582qkp.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 13:45:46 -0700 (PDT)
+        Tue, 11 Oct 2022 16:51:00 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E2ED83072
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 13:50:55 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id 70so13502559pjo.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 13:50:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hXVOT4cLQG/UjKF5bxvScKtDt4JjDuPp0lInq7z6SZk=;
+        b=sqIPnSdL5hOAbhrVhdZG2o8sGZ+fwLZzLOdlefjOihqvUGgLaSJColzIKLls+fnmKc
+         I+TNrBcbp3DxnXu9g+CwxTQBCR/0lXT18ueWRQ7SdpO5Jm+/4LysJaFEFJhAZ+nopXLE
+         1ZAsm9yxvKs6Z62XTHSFJGC/iB62BnYQcAg63vgJf9ZjDBLDmn6c7iWTQPD6bGwOhLu5
+         lObbFdm5P1qYkhBVE/wg3zrMywx6vg4lmS8fqA0fgqGn0Yipmuuqp+gC0/n5gUiJqSBM
+         fLmw31GK/0DFXVXnvvEZSGO/eBt5F3sAdVV4i+DtzdT0TcfTs7hW0sfARTyGKIssnxUE
+         Tjzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HOkcw94jKoThb1YsGFgEY6secfp0Ar+WXfJ+Ghon9q0=;
-        b=rJIvUZ0KpiZKighPdmZGZ1bCI4nP9a7uv0l35dkhYvO27/+cq0KE822vw/vZjwI7jN
-         a9yygBDeFgQPSEmwtRyQVngx7HcOtw5CUWwEhYgABIF7ys9kWPtHmPFQMJRxo9GOLSuf
-         ShERmPCmJ+jJ3Gga5QMZgUyRcWnU0/1ONqHQAmUryFrczOYRwS3M0+RVs7Y/P4RJJpeq
-         pM/iDjRuXk+syWb2k3pMdODUsgn+ATqM8bFqp/mCtmpFWAf5+0Vd2NT01FDAPFhhTtFB
-         MmhgRrgUXLRUpKUifxwifK19X3WEtvw1l5Hrfu48+VeflJbDqNB/h1QZfrjDqSeeKGOq
-         DQZQ==
-X-Gm-Message-State: ACrzQf3PaGmq92SquF6Xo/I6F/EBK/JuRip99I2A1CEsHwg6DyxbsGe/
-        fLR2dPd601ruYdxsp5jpFBO8jnQz2NZdzDT/31jbzDpsCcJpTNO4Ycrlt5u8GTV2Xop/xNCeZTe
-        dOZ6B0YRiMrTx91YZ7mPkeNoxxA==
-X-Received: by 2002:a05:620a:16aa:b0:6ce:70b2:598b with SMTP id s10-20020a05620a16aa00b006ce70b2598bmr17723036qkj.670.1665521145549;
-        Tue, 11 Oct 2022 13:45:45 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM4wVB7dGSkAPwDnirR1rGdKqjuIHBNirWI+NGnyUsln8ZEV3Q7BW4Cl3WsKBjBCcUXZj9enlw==
-X-Received: by 2002:a05:620a:16aa:b0:6ce:70b2:598b with SMTP id s10-20020a05620a16aa00b006ce70b2598bmr17723017qkj.670.1665521145227;
-        Tue, 11 Oct 2022 13:45:45 -0700 (PDT)
-Received: from [172.16.1.108] ([66.187.232.65])
-        by smtp.gmail.com with ESMTPSA id o19-20020a05620a2a1300b006cddf59a600sm14139046qkp.34.2022.10.11.13.45.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Oct 2022 13:45:44 -0700 (PDT)
-Message-ID: <5a5a92423c8bac5b275c213ed1ce3fa59cafda4f.camel@redhat.com>
-Subject: Re: [RFC] fl_owner_t and use of filp_close() in
- nfs4_free_lock_stateid()
-From:   Jeff Layton <jlayton@redhat.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>
-Date:   Tue, 11 Oct 2022 16:45:43 -0400
-In-Reply-To: <CAJfpegsgtke1X7FGpMSgTGdDsOxU7kqPqf2JbOAnqgMj0XFoSQ@mail.gmail.com>
-References: <Y0Wv6qe3r8/Djt7s@ZenIV>
-         <CAJfpegsgtke1X7FGpMSgTGdDsOxU7kqPqf2JbOAnqgMj0XFoSQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hXVOT4cLQG/UjKF5bxvScKtDt4JjDuPp0lInq7z6SZk=;
+        b=whNw67++lygSbkdmPPsmZsb+rjk57NPNRDZQO4kxfB2SP3e1dWsqyly9Bj6vtvmYGQ
+         Uz9kz2ky2PMOpumyE+qU7uS2RJxzx0oCvBc+xU0qUxYjFxFksxETSGfjnjNHPm2vwuCW
+         1amKKO0n5KxEJ8HqEV5cQLzT052gs5yhwaAn5VH5GXZAwMBY+0sbmSh6J+jEsVrl0ffF
+         cK6Gqde1Md92zP02Pg0NQqKyWRHZjuAJY93YPdQBreQMytqpzP55rJ/mZC4JoOnOeG7x
+         P6PZxnwwPHgGHDMlq3vmdLOyRaU1IOSfnAJboBvu5metsFeacCbsIVibasqfjVBQm/sM
+         3V1w==
+X-Gm-Message-State: ACrzQf3CwF/RONzl1T8m7VtqKotkorPUpG1ScLDPPip2Eo7aTFocivY5
+        coV0hGGMcY4e2ScmHz/joyR2gqCctF+46UtBcCJ4cA==
+X-Google-Smtp-Source: AMsMyM4uoOmAwILCMQCsBXafyhKXq7+SNA+WhdgnvaxFyUqFj5CAoRyNhw9YCykE9rs7Uze6SEDZvj5fOZdI4rt6f10=
+X-Received: by 2002:a17:90b:33c3:b0:20a:ebc3:6514 with SMTP id
+ lk3-20020a17090b33c300b0020aebc36514mr1105208pjb.147.1665521454797; Tue, 11
+ Oct 2022 13:50:54 -0700 (PDT)
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20190307090146.1874906-1-arnd@arndb.de> <20221006222124.aabaemy7ofop7ccz@google.com>
+ <f0dbc406-11b4-90f7-52fd-ce79f842c356@linux.intel.com>
+In-Reply-To: <f0dbc406-11b4-90f7-52fd-ce79f842c356@linux.intel.com>
+From:   Nick Desaulniers <ndesaulniers@google.com>
+Date:   Tue, 11 Oct 2022 13:50:43 -0700
+Message-ID: <CAKwvOdnpMqW_esBd615Fx8VKTfny-yR2PTUejBH0uYkHaL517A@mail.gmail.com>
+Subject: Re: [PATCH] fs/select: avoid clang stack usage warning
+To:     Andi Kleen <ak@linux.intel.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, linux-fsdevel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Eric Dumazet <edumazet@google.com>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-10-11 at 21:02 +0200, Miklos Szeredi wrote:
-> On Tue, 11 Oct 2022 at 20:04, Al Viro <viro@zeniv.linux.org.uk> wrote:
->=20
-> > Another interesting question is about FUSE ->flush() - how is the
-> > server supposed to use the value it gets from
-> >         inarg.lock_owner =3D fuse_lock_owner_id(fm->fc, id);
-> > in fuse_flush()?  Note that e.g. async write might be followed by
-> > close() before the completion.  Moreover, it's possible to start
-> > async write and do unshare(CLONE_FILES); if the descriptor table
-> > used to be shared and all other threads exit after our unshare,
-> > it's possible to get
-> >         async write begins, fuse_send_write() called with current->file=
-s as owner
-> >         flush happens, with current->files as id
-> >         what used to be current->files gets freed and memory reused
-> >         async write completes
-> >=20
-> > Miklos, could you give some braindump on that?
->=20
-> The lock_owner in flush is supposed to be used for remote posix lock
-> release [1].   I don't like posix lock semantics the least bit, and in
-> hindsight it would have been better to just not try to support remote
-> posix locks (nfs doesn't, so why would anyone care for it in fuse?)
-> Anyway, it's probably too late to get rid of this wart now.
->=20
+On Fri, Oct 7, 2022 at 6:46 PM Andi Kleen <ak@linux.intel.com> wrote:
+>
+>
+> On 10/6/2022 3:21 PM, Nick Desaulniers wrote:
+> > On Thu, Mar 07, 2019 at 10:01:36AM +0100, Arnd Bergmann wrote:
+> >> The select() implementation is carefully tuned to put a sensible amount
+> >> of data on the stack for holding a copy of the user space fd_set,
+> >> but not too large to risk overflowing the kernel stack.
+> >>
+> >> When building a 32-bit kernel with clang, we need a little more space
+> >> than with gcc, which often triggers a warning:
+> >>
+> >> fs/select.c:619:5: error: stack frame size of 1048 bytes in function 'core_sys_select' [-Werror,-Wframe-larger-than=]
+> >> int core_sys_select(int n, fd_set __user *inp, fd_set __user *outp,
+> >>
+> >> I experimentally found that for 32-bit ARM, reducing the maximum
+> >> stack usage by 64 bytes keeps us reliably under the warning limit
+> >> again.
+> >>
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >> ---
+> >>   include/linux/poll.h | 4 ++++
+> >>   1 file changed, 4 insertions(+)
+> >>
+> >> diff --git a/include/linux/poll.h b/include/linux/poll.h
+> >> index 7e0fdcf905d2..1cdc32b1f1b0 100644
+> >> --- a/include/linux/poll.h
+> >> +++ b/include/linux/poll.h
+> >> @@ -16,7 +16,11 @@
+> >>   extern struct ctl_table epoll_table[]; /* for sysctl */
+> >>   /* ~832 bytes of stack space used max in sys_select/sys_poll before allocating
+> >>      additional memory. */
+> >> +#ifdef __clang__
+> >> +#define MAX_STACK_ALLOC 768
+> > Hi Arnd,
+> > Upon a toolchain upgrade for Android, our 32b x86 image used for
+> > first-party developer VMs started tripping -Wframe-larger-than= again
+> > (thanks -Werror) which is blocking our ability to upgrade our toolchain.
+>
+>
+> I wonder if there is a way to disable the warning or increase the
+> threshold just for this function. I don't think attribute optimize would
+> work, but perhaps some pragma?
 
-The NFS client maintains lock records in the local VFS. When a file is
-closed, the VFS issues a whole file unlock. You're probably getting
-bitten by this in locks_remove_posix:
+Here's what I would have guessed, the pragma approach seems a little broken.
+https://godbolt.org/z/vY7fGYv7f
+Maybe I'm holding it wrong?
 
-        ctx =3D  smp_load_acquire(&inode->i_flctx);
-        if (!ctx || list_empty(&ctx->flc_posix))
-                return;
+>
+>
+> -Andi
+>
+>
+>
 
-Because FUSE doesn't set any locks in the local kernel, that final
-unlock never occurs.
 
-There are a couple of options here: You could have FUSE start setting
-local lock records, or you could look at pushing the above check down
-into the individual ->lock ops.
-
-> The lock_owner field in read/write/setattr was added for mandatory
-> locking [2].  Now that support for mandatory locking has been removed
-> this is dead code, I guess.  Will clean up in fuse as well.
->=20
-
-That sounds like a good plan.
-
->=20
-> [1] v2.6.18: 7142125937e1 ("[PATCH] fuse: add POSIX file locking support"=
-)
-> [2] v2.6.24: f33321141b27 ("fuse: add support for mandatory locking")
->=20
-
+-- 
+Thanks,
+~Nick Desaulniers
