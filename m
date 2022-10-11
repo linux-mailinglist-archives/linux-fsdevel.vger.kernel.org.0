@@ -2,206 +2,128 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 380C45FBE04
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Oct 2022 00:59:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 7BACA5FBE11
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Oct 2022 01:02:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229599AbiJKW7b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Oct 2022 18:59:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34100 "EHLO
+        id S229619AbiJKXCB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Oct 2022 19:02:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41736 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229577AbiJKW73 (ORCPT
+        with ESMTP id S229616AbiJKXB5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Oct 2022 18:59:29 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABB8992593;
-        Tue, 11 Oct 2022 15:59:27 -0700 (PDT)
+        Tue, 11 Oct 2022 19:01:57 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A9B95E63;
+        Tue, 11 Oct 2022 16:01:54 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 387E1B8160D;
-        Tue, 11 Oct 2022 22:59:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86F37C433D6;
-        Tue, 11 Oct 2022 22:59:24 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 5E2E8B817F6;
+        Tue, 11 Oct 2022 23:01:49 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9723CC433D6;
+        Tue, 11 Oct 2022 23:01:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665529164;
-        bh=uLhjiSU6dHOtAMnX7fEozmgHIL3cBmodbbEpRxHuGto=;
-        h=From:To:Cc:Subject:Date:From;
-        b=tRTCxhmrMRcfoNQQDoVD4+mN2LX8IwtFR7oZeWKKS8Tc25Djoy+7v1RXW3PEDIPdP
-         RZlqnqX3LN4w7+QKAEo7Ueqz3LcCsGjTs8iXdatSn66hytIcLgxnwnUsGwz83zb9QT
-         HneEkgnp/65S/TuJc1r5TyoGhaiOXvnJJwHr8y/Nw+pFKUhzRrLesMYcLM08fDyrid
-         aEgcGrIVaXXKNRuZr3Ze50CN1FT76SmqYrPOsflkz68JrxmM02SztuyMdkIG74bdsN
-         y1qVH7XZgqjSVhKw6qf73ubtLAGsz0Qh+dMpqPpEdRiaiPtdriSxJl4MoaOnZyay2F
-         x8aCqukoe/lrA==
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-man@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, linux-block@vger.kernel.org,
-        "Darrick J. Wong" <djwong@kernel.org>
-Subject: [man-pages PATCH v4] statx.2, open.2: document STATX_DIOALIGN
-Date:   Tue, 11 Oct 2022 15:59:14 -0700
-Message-Id: <20221011225914.216344-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.37.3
+        s=k20201202; t=1665529308;
+        bh=gCI+X2WOw4l6GrJak35sDaAf8gDE0fXgutS5wo82m0c=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=AJFptayVxOqteJVOLykn7hUdHTEFBSFYdPDnURZs6EbQ5lnc5EDwMPEWLIY2Zkc6k
+         ToDJ69GFb03nJ1ZHa3Bu1XZh90AT8husNifCGxqExcBTtq73zRbzdbLGz1yV1PS0BR
+         YgADbRNTz4kaxl1FPtL5h69IOLIEA3uAgLFu6LoZOj6vAhrzGGJogNzed4iTNoQ9kU
+         RplOVmj/pT0WrloWUBcPNyJldLUtdrL9BReJJkpTFUke93m8zD4dIphjguaBr6M6BU
+         xC/9Fc6Zmo9mtTlbNcRQZT+mur3mj5hpEnCkCHrxZUfVSrUfpxEhWQqxTOA+fraPtq
+         COtQHCYR1WDtw==
+Date:   Tue, 11 Oct 2022 16:01:44 -0700
+From:   Jakub Kicinski <kuba@kernel.org>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph =?UTF-8?B?QsO2aG13YWxkZXI=?= 
+        <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Helge Deller <deller@gmx.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        KP Singh <kpsingh@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Marco Elver <elver@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Graf <tgraf@suug.ch>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
+        Yury Norov <yury.norov@gmail.com>,
+        dri-devel@lists.freedesktop.org, kasan-dev@googlegroups.com,
+        kernel-janitors@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mips@vger.kernel.org, linux-mm@kvack.org,
+        linux-mmc@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-nvme@lists.infradead.org, linux-parisc@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-wireless@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        loongarch@lists.linux.dev, netdev@vger.kernel.org,
+        sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v6 0/7] treewide cleanup of random integer usage
+Message-ID: <20221011160144.1c0dc2af@kernel.org>
+In-Reply-To: <20221010230613.1076905-1-Jason@zx2c4.com>
+References: <20221010230613.1076905-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS autolearn=ham
-        autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On Mon, 10 Oct 2022 17:06:06 -0600 Jason A. Donenfeld wrote:
+> - If you want a secure or an insecure random u64, use get_random_u64().
+> - If you want a secure or an insecure random u32, use get_random_u32().
+>   * The old function prandom_u32() has been deprecated for a while now
+>     and is just a wrapper around get_random_u32(). Same for
+>     get_random_int().
+> - If you want a secure or an insecure random u16, use get_random_u16().
+> - If you want a secure or an insecure random u8, use get_random_u8().
+> - If you want secure or insecure random bytes, use get_random_bytes().
+>   * The old function prandom_bytes() has been deprecated for a while now
+>     and has long been a wrapper around get_random_bytes().
+> - If you want a non-uniform random u32, u16, or u8 bounded by a certain
+>   open interval maximum, use prandom_u32_max().
+>   * I say "non-uniform", because it doesn't do any rejection sampling or
+>     divisions. Hence, it stays within the prandom_* namespace.
 
-Document the STATX_DIOALIGN support for statx()
-(https://git.kernel.org/linus/725737e7c21d2d25).
-
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
-
-v4: formatting tweaks, as suggested by Alejandro
-
-v3: updated mentions of Linux version, fixed some punctuation, and added
-    a Reviewed-by
-
-v2: rebased onto man-pages master branch, mentioned xfs, and updated
-    link to patchset
-
- man2/open.2  | 52 +++++++++++++++++++++++++++++++++++++++++-----------
- man2/statx.2 | 31 +++++++++++++++++++++++++++++++
- 2 files changed, 72 insertions(+), 11 deletions(-)
-
-diff --git a/man2/open.2 b/man2/open.2
-index 57beb324a..8e4a063b4 100644
---- a/man2/open.2
-+++ b/man2/open.2
-@@ -1732,21 +1732,51 @@ of user-space buffers and the file offset of I/Os.
- In Linux alignment
- restrictions vary by filesystem and kernel version and might be
- absent entirely.
--However there is currently no filesystem\-independent
--interface for an application to discover these restrictions for a given
--file or filesystem.
--Some filesystems provide their own interfaces
--for doing so, for example the
-+The handling of misaligned
-+.B O_DIRECT
-+I/Os also varies;
-+they can either fail with
-+.B EINVAL
-+or fall back to buffered I/O.
-+.PP
-+Since Linux 6.1,
-+.B O_DIRECT
-+support and alignment restrictions for a file can be queried using
-+.BR statx (2),
-+using the
-+.B STATX_DIOALIGN
-+flag.
-+Support for
-+.B STATX_DIOALIGN
-+varies by filesystem;
-+see
-+.BR statx (2).
-+.PP
-+Some filesystems provide their own interfaces for querying
-+.B O_DIRECT
-+alignment restrictions,
-+for example the
- .B XFS_IOC_DIOINFO
- operation in
- .BR xfsctl (3).
-+.B STATX_DIOALIGN
-+should be used instead when it is available.
- .PP
--Under Linux 2.4, transfer sizes, the alignment of the user buffer,
--and the file offset must all be multiples of the logical block size
--of the filesystem.
--Since Linux 2.6.0, alignment to the logical block size of the
--underlying storage (typically 512 bytes) suffices.
--The logical block size can be determined using the
-+If none of the above is available,
-+then direct I/O support and alignment restrictions
-+can only be assumed from known characteristics of the filesystem,
-+the individual file,
-+the underlying storage device(s),
-+and the kernel version.
-+In Linux 2.4,
-+most block device based filesystems require that
-+the file offset and the length and memory address of all I/O segments
-+be multiples of the filesystem block size
-+(typically 4096 bytes).
-+In Linux 2.6.0,
-+this was relaxed to the logical block size of the block device
-+(typically 512 bytes).
-+A block device's logical block size can be determined using the
- .BR ioctl (2)
- .B BLKSSZGET
- operation or from the shell using the command:
-diff --git a/man2/statx.2 b/man2/statx.2
-index 2a85be7c0..84c35bdf3 100644
---- a/man2/statx.2
-+++ b/man2/statx.2
-@@ -61,7 +61,12 @@ struct statx {
-        containing the filesystem where the file resides */
-     __u32 stx_dev_major;   /* Major ID */
-     __u32 stx_dev_minor;   /* Minor ID */
-+
-     __u64 stx_mnt_id;      /* Mount ID */
-+
-+    /* Direct I/O alignment restrictions */
-+    __u32 stx_dio_mem_align;
-+    __u32 stx_dio_offset_align;
- };
- .EE
- .in
-@@ -247,6 +252,8 @@ STATX_BTIME	Want stx_btime
- STATX_ALL	The same as STATX_BASIC_STATS | STATX_BTIME.
- 	It is deprecated and should not be used.
- STATX_MNT_ID	Want stx_mnt_id (since Linux 5.8)
-+STATX_DIOALIGN	Want stx_dio_mem_align and stx_dio_offset_align
-+	(since Linux 6.1; support varies by filesystem)
- .TE
- .in
- .PP
-@@ -407,6 +414,30 @@ This is the same number reported by
- .BR name_to_handle_at (2)
- and corresponds to the number in the first field in one of the records in
- .IR /proc/self/mountinfo .
-+.TP
-+.I stx_dio_mem_align
-+The alignment (in bytes) required for user memory buffers for direct I/O
-+.RB ( O_DIRECT )
-+on this file,
-+or 0 if direct I/O is not supported on this file.
-+.IP
-+.B STATX_DIOALIGN
-+.RI ( stx_dio_mem_align
-+and
-+.IR stx_dio_offset_align )
-+is supported on block devices since Linux 6.1.
-+The support on regular files varies by filesystem;
-+it is supported by ext4, f2fs, and xfs since Linux 6.1.
-+.TP
-+.I stx_dio_offset_align
-+The alignment (in bytes) required for file offsets and I/O segment lengths
-+for direct I/O
-+.BR "" ( O_DIRECT )
-+on this file,
-+or 0 if direct I/O is not supported on this file.
-+This will only be nonzero if
-+.I stx_dio_mem_align
-+is nonzero, and vice versa.
- .PP
- For further information on the above fields, see
- .BR inode (7).
-
-base-commit: ab47278f252262dd9bd90f3386ffd7d8700fa25a
--- 
-2.37.3
-
+Acked-by: Jakub Kicinski <kuba@kernel.org>
