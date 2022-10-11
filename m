@@ -2,207 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3836D5FABC2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 06:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ACAB5FAD50
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 09:20:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229505AbiJKEwo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Oct 2022 00:52:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50668 "EHLO
+        id S229698AbiJKHUD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Oct 2022 03:20:03 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229462AbiJKEwn (ORCPT
+        with ESMTP id S229506AbiJKHUB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Oct 2022 00:52:43 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09886816A6;
-        Mon, 10 Oct 2022 21:52:43 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id l4so12159275plb.8;
-        Mon, 10 Oct 2022 21:52:43 -0700 (PDT)
+        Tue, 11 Oct 2022 03:20:01 -0400
+Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 713741B7B3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 00:20:00 -0700 (PDT)
+Received: by mail-ed1-x531.google.com with SMTP id l22so18835796edj.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 00:20:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WNv6dmEDsfqY3IJFUZvXFDkquvz0dHXYyh64YUy9V5o=;
-        b=VBbYwNlppUouuzxbxec+mNe1/UzSO/Urr6Bo76IlfIG6gwqZB+oLgdCZWhsylm7vG4
-         lAik53jrAi+6YvgSUTy+5VgL7sqpuyICbX4ya2dTXb98RZAjHWti2kLTCniNHVB9cQ1P
-         ZG67lpdp4IDgQKZ8toA5j4zzKl7UJL6ITwrgTiAoQZLouOwcQRo0TsB0b+BgqJvLKxxR
-         shxLe1Tgds4w6jgohDtqJfi37C55mJj94/VJbtdTkhrMnTXoqab3W/nWgpvyOTlFB2cK
-         biV1RLW8u/Vubr+6Xo8H+d3qZXUAl6nN9wBtJKW45ybZpWMFcIUpIJ9ofaV56a6JyrPZ
-         zA/g==
+        d=ionos.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=alaMRFyTqgWPSUYwvVsV66h29Ch4dJMbSbv8FxTJjaA=;
+        b=bkE8MOcfXqF5ZXU3ub0tTJyX9Oh+0UBLtCHv3tBLdtXqlRc2YXsxFznTqRCgdOrPkY
+         cXJ+zNb/4EbEwRih5hzPht0wW/RPwKVKig9a5kk5IPsVNHvX1kMj/b8NyvnT6xeRFdEl
+         UW9FuAXNj4FbIvHMTJ0zymQbyVZ8yFj/IojpJmHw5hGp2NSuyfg2UP1vx7jca6Gq2apH
+         UV9WiGVC8GPTY1iKRHn5Tc76rJ4bY07OImHid2+MohiyGeEjhCFC6yl0uMtBO0rPPKU1
+         V16tbXYnTDiUt1R89HIiXNflPAkpcANC5bPCnr5qjgnMdXmOnvFVeEBk5qED3zDmjcuG
+         SJSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WNv6dmEDsfqY3IJFUZvXFDkquvz0dHXYyh64YUy9V5o=;
-        b=lLg05AGgHWiGqai1cUK0BAAifVtLAkresGgDRDMAFoLwuo2Kt6Vwd5S+/Q5g6wPhqF
-         BvsErjq+eaoqWQGyrIkGhbdQddHb+DMNPTxTXPXGnb03MK8Yu9tbMLJFArjOHglkM5T0
-         Zo5wPaI4G9B8Ppom4KhqP+ErWTFyA9c0inNcPxeW9gCDi9QmgZnXhB1moC0cumhpBFw+
-         Ln5YdPK6ndX8CyfVRng2Ab0mTS8T74bYItrECi+I2skBZD1EJpg/FfYo3k+y6sZhXhNg
-         1zWFlVNt2FxUIUWMOdjFw5MzD4/Piq0FPg944vpkfZMOlrlCCz0fEzysZh5Ph0cBJMm/
-         jw4g==
-X-Gm-Message-State: ACrzQf3qOjVAdarK2r5QRXWYHQczev3vQkqBYaDCQWyCJocmvSiAcfxw
-        xrY3LGJy4wi5J2Aguc8RRUs=
-X-Google-Smtp-Source: AMsMyM6eauOT46tQiVEPvy6v2R+dmR5OnAyhGYeE2s9LNDRJMqc5WzlXMgydOstrvymxDfsq9BNmzw==
-X-Received: by 2002:a17:90b:4a84:b0:20a:f497:6f5d with SMTP id lp4-20020a17090b4a8400b0020af4976f5dmr24343049pjb.213.1665463962204;
-        Mon, 10 Oct 2022 21:52:42 -0700 (PDT)
-Received: from gmail.com ([2601:600:8500:5f14:d627:c51e:516e:a105])
-        by smtp.gmail.com with ESMTPSA id 3-20020a17090a0cc300b002008d0e5cb5sm9834215pjt.47.2022.10.10.21.52.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Oct 2022 21:52:41 -0700 (PDT)
-Date:   Mon, 10 Oct 2022 21:52:39 -0700
-From:   Andrei Vagin <avagin@gmail.com>
-To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
-        "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, kernel@collabora.com,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        David Hildenbrand <david@redhat.com>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Danylo Mocherniuk <mdanylo@google.com>
-Subject: Re: [PATCH v3 0/4] Implement IOCTL to get and clear soft dirty PTE
-Message-ID: <Y0T2l3HaH2MU8M9m@gmail.com>
-References: <20220826064535.1941190-1-usama.anjum@collabora.com>
- <YyiDg79flhWoMDZB@gmail.com>
- <2c8b7116-56e9-3202-c47e-e42078c85793@collabora.com>
- <CANaxB-xDiTRCuWxBmrSH1u3e_ADbxCoQKmEoSsYfm4yW7k=v4A@mail.gmail.com>
- <2e1c33c8-a201-0f7f-17cf-22fec555c7ff@collabora.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=alaMRFyTqgWPSUYwvVsV66h29Ch4dJMbSbv8FxTJjaA=;
+        b=ty6SoI3YX/tpjgNH0U+ZtSY7SaI+FM9M22dfCIUNySVo0flDO/r4MpOG7y895fZOZJ
+         A2rr5pqfDPWR1UDKYUABb6hgMfvrlrwzIa/xyPYNv1w+ZtKGKWxvnPbr0YGPRLie8xrV
+         qq+w4lxLBgnrwXLXMjCmb+9DxPl+CyDuQkimdIdXyLOgIcLNwTTkf5olmUA9CKg0Vq7t
+         Mn1NtKZp3V+El3II3W2LzT0qDd/o+V8yjpSpGgpJAYa7ZHVKQhNXpcC1J1kl2uT8X3ts
+         uUTjCzrTsfKuqonvbAdTcCKBWNDXT5sEkqVyJc5xpP6DGoqoVeaJk8Eexpp58aRzQ6KO
+         Zm7g==
+X-Gm-Message-State: ACrzQf2tftA8njZc7+3hwIilVh9bhF1bN2JfowX8X99sxAqvdxG6xN7q
+        Thoe/TdcAMl4H0gIF4WkmgOgCjjIZDHUFod6WuUjhw==
+X-Google-Smtp-Source: AMsMyM6ng/DQEStWl0sVu7PZ9rayjv3N7kALGp5vzQ5bTLIjhkEvP6vOacybQL5Z2v6RtytTK3Y7aTxqmzxJ8y9QQ3o=
+X-Received: by 2002:a05:6402:448:b0:45c:8de5:4fc with SMTP id
+ p8-20020a056402044800b0045c8de504fcmr203354edw.133.1665472798912; Tue, 11 Oct
+ 2022 00:19:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <2e1c33c8-a201-0f7f-17cf-22fec555c7ff@collabora.com>
+References: <20220927120857.639461-1-max.kellermann@ionos.com>
+ <88f8941f-82bf-5152-b49a-56cb2e465abb@redhat.com> <CAKPOu+88FT1SeFDhvnD_NC7aEJBxd=-T99w67mA-s4SXQXjQNw@mail.gmail.com>
+ <75e7f676-8c85-af0a-97b2-43664f60c811@redhat.com> <CAKPOu+-rKOVsZ1T=1X-T-Y5Fe1MW2Fs9ixQh8rgq3S9shi8Thw@mail.gmail.com>
+ <baf42d14-9bc8-93e1-3d75-7248f93afbd2@redhat.com>
+In-Reply-To: <baf42d14-9bc8-93e1-3d75-7248f93afbd2@redhat.com>
+From:   Max Kellermann <max.kellermann@ionos.com>
+Date:   Tue, 11 Oct 2022 09:19:48 +0200
+Message-ID: <CAKPOu+_4CLD2qJsUhhe4K0QqrC9mLmargEimibvVXdAHq6RCUw@mail.gmail.com>
+Subject: Re: [PATCH] fs/ceph/super: add mount options "snapdir{mode,uid,gid}"
+To:     Xiubo Li <xiubli@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
+        ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 03, 2022 at 04:21:22PM +0500, Muhammad Usama Anjum wrote:
-> On 9/28/22 10:24 PM, Andrei Vagin wrote:
-> > On Wed, Sep 21, 2022 at 11:26 AM Muhammad Usama Anjum
-> > <usama.anjum@collabora.com> wrote:
-> >>
-> >> Hi,
-> >>
-> >> Thank you for reviewing.
-> >>
-> >> On 9/19/22 7:58 PM, Andrei Vagin wrote:
-> >>>> This ioctl can be used by the CRIU project and other applications which
-> >>>> require soft-dirty PTE bit information. The following operations are
-> >>>> supported in this ioctl:
-> >>>> - Get the pages that are soft-dirty.
-> >>>
-> >>> I think this interface doesn't have to be limited by the soft-dirty
-> >>> bits only. For example, CRIU needs to know whether file, present and swap bits
-> >>> are set or not.
-> >> These operations can be performed by pagemap procfs file. Definitely
-> >> performing them through IOCTL will be faster. But I'm trying to add a
-> >> simple IOCTL by which some specific PTE bit can be read and cleared
-> >> atomically. This IOCTL can be extended to include other bits like file,
-> >> present and swap bits by keeping the interface simple. The following
-> >> mask advice is nice. But if we add that kind of masking, it'll start to
-> >> look like a filter on top of pagemap. My intention is to not duplicate
-> >> the functionality already provided by the pagemap. One may ask, then why
-> >> am I adding "get the soft-dirty pages" functionality? I'm adding it to
-> >> complement the get and clear operation. The "get" and "get and clear"
-> >> operations with special flag (PAGEMAP_SD_NO_REUSED_REGIONS) can give
-> >> results quicker by not splitting the VMAs.
-> > 
-> > This simple interface is good only for a limited number of use-cases.
-> > The interface
-> > that I suggest doesn't duplicate more code than this one, but it is much more
-> > universal. It will be a big mess if you add a separate API for each
-> > specific use-case.
-> >
-> >
-> >>> I mean we should be able to specify for what pages we need to get info
-> >>> for. An ioctl argument can have these four fields:
-> >>> * required bits (rmask & mask == mask) - all bits from this mask have to be set.
-> >>> * any of these bits (amask & mask != 0) - any of these bits is set.
-> >>> * exclude masks (emask & mask == 0) = none of these bits are set.
-> >>> * return mask - bits that have to be reported to user.
-> The required mask (rmask) makes sense to me. At the moment, I only know
-> about the practical use case for the required mask. Can you share how
-> can any and exclude masks help for the CRIU?
-> 
+On Mon, Oct 10, 2022 at 4:03 AM Xiubo Li <xiubli@redhat.com> wrote:
+> No, it don't have to. This could work simply as the snaprealm hierarchy
+> thing in kceph.
+>
+> Only the up top directory need to record the ACL and all the descendants
+> will point and use it if they don't have their own ACLs.
 
-I looked at should_dump_page in the CRIU code:
-https://github.com/checkpoint-restore/criu/blob/45641ab26d7bb78706a6215fdef8f9133abf8d10/criu/mem.c#L102
+Not knowing much about Ceph internals, I don't quite understand this
+idea. Until somebody implements that, I'll keep my patch in our Linux
+kernel fork.
+My patch is a very simple and robust fix for our problem (it's already
+in production use). It's okay for me if it doesn't get merged into
+mainline, but at least I wanted to share it.
 
-When CRIU dumps file private mappings, it needs to get pages that have
-PME_PRESENT or PME_SWAP but don't have PME_FILE.
+> For multiple clients case I think the cephfs capabilities [3] could
+> guarantee the consistency of this.
 
-> >>>> - Clear the pages which are soft-dirty.
-> >>>> - The optional flag to ignore the VM_SOFTDIRTY and only track per page
-> >>>> soft-dirty PTE bit
-> >>>>
-> >>>> There are two decisions which have been taken about how to get the output
-> >>>> from the syscall.
-> >>>> - Return offsets of the pages from the start in the vec
-> >>>
-> >>> We can conside to return regions that contains pages with the same set
-> >>> of bits.
-> >>>
-> >>> struct page_region {
-> >>>       void *start;
-> >>>       long size;
-> >>>       u64 bitmap;
-> >>> }
-> >>>
-> >>> And ioctl returns arrays of page_region-s. I believe it will be more
-> >>> compact form for many cases.
-> >> Thank you for mentioning this. I'd considered this while development.
-> >> But I gave up and used the simple array to return the offsets of the
-> >> pages as in the problem I'm trying to solve, the dirty pages may be
-> >> present amid non-dirty pages. The range may not be useful in that case.
-> > 
-> > This is a good example. If we expect more than two consequent pages
-> > on average, the "region" interface looks more prefered. I don't know your
-> > use-case, but in the case of CRIU, this assumption looks reasonable.
-> > 
-> >> Also we want to return only a specific number of pages of interest. The
-> >> following paragraph explains it.
-> >>
-> >>>
-> >>>> - Stop execution when vec is filled with dirty pages
-> >>>> These two arguments doesn't follow the mincore() philosophy where the
-> >>>> output array corresponds to the address range in one to one fashion, hence
-> >>>> the output buffer length isn't passed and only a flag is set if the page
-> >>>> is present. This makes mincore() easy to use with less control. We are
-> >>>> passing the size of the output array and putting return data consecutively
-> >>>> which is offset of dirty pages from the start. The user can convert these
-> >>>> offsets back into the dirty page addresses easily. Suppose, the user want
-> >>>> to get first 10 dirty pages from a total memory of 100 pages. He'll
-> >>>> allocate output buffer of size 10 and the ioctl will abort after finding the
-> >>>> 10 pages. This behaviour is needed to support Windows' getWriteWatch(). The
-> >>>> behaviour like mincore() can be achieved by passing output buffer of 100
-> >>>> size. This interface can be used for any desired behaviour.
-> > 
-> > Now, it is more clear where this interface came from. It repeats the
-> > interface of Windows' getWriteWatch. I think we have to look wider.
-> > The interface that reports regions will be more efficient for many
-> > use-cases. As for getWriteWatch, it will require a bit more code in
-> > user-space, but this code is trivial.
+I don't understand - capabilities are client-specific, not
+user-specific. My problem is a user-specific one.
 
-I added Danylo to CC. I think he has a good use-case for the new
-interface. Danylo, could you describe it here.
+> While for the single client case if
+> before the user could update its ACL just after creating it someone else
+> has changed it or messed it up, then won't the existing ACLs have the
+> same issue ?
 
-> > 
-> > Thanks,
-> > Andrei
-> 
-> -- 
-> Muhammad Usama Anjum
+You mean ACLs for "real" files/directories? Sure, some care needs to
+be taken, e.g. create directories with mode 700 and chmod after
+setting the ACL, and using O_TMPFILE for files and linking them to a
+directory only after updating the ACL.
+
+The difference to snapdir is that the snapdir doesn't actually exist
+anywhere; it is synthesized by the client only on the first acess, and
+may be discarded any time by the shrinker, and the next access creates
+a new one with default permissions. All those snapdir inodes are local
+to the client, and each client has its own private set of permissions
+for it.
+
+Even if you'd take care for updating the snapdir permissions after
+creating a directory, that would only be visible on that one client,
+and may be reverted at any arbitrary point in time, and there's
+nothing you can do about it. That's two unsolvable problems (no client
+synchronization of snapdir permissions, and no persistence).
+
+Max
