@@ -2,125 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A62185FAAC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 04:54:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B8F8C5FAAEF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 05:00:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbiJKCyh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 10 Oct 2022 22:54:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46390 "EHLO
+        id S229620AbiJKDAb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 10 Oct 2022 23:00:31 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229832AbiJKCyf (ORCPT
+        with ESMTP id S229481AbiJKDA1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 10 Oct 2022 22:54:35 -0400
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02C388681E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Oct 2022 19:54:34 -0700 (PDT)
-Received: by mail-pf1-x42a.google.com with SMTP id 3so10768649pfw.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 10 Oct 2022 19:54:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VTK7B6DCScPAPU4kCXDLhpTXXn0/7k1H7IMWkY/AN/Q=;
-        b=1Z6t8CrNsCSmpx9yA7rcdYroTGqbpG2oFuWoSs1SsFraaXunubMPGAJe5XbNeQLiyx
-         DoGnyy3JOdahLpGb0syE3dj4QWya4xtmyaf0SN7yOPWTwvvWrEdrDQt69PbL6PDnYEde
-         i3sLcORg0BV0zOClmo0NK7+Hqr4Z2v402NY3szvkWhQEFDj75yt5KicdFki8ZQEUJx5k
-         VekyAeVSoIjWf0pqSCtZtVAu+sWpN5SzHAepdYDU0CmtX+3noVwun7zTr3kFx6wATnL3
-         v2IPG4fevCVnOBx8plIaNqHww5+dE1nwv8nlY/Y3EgrSomI+rtqHJqPiZYlz3d4S3LMi
-         C3cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VTK7B6DCScPAPU4kCXDLhpTXXn0/7k1H7IMWkY/AN/Q=;
-        b=hWqw2PcZ+o2qDm3p4hfNW5nhnSPf6LE4u2Am1fnEMuZfkKHTxU+DuqXmbT9h4NNl6J
-         N84EhR547V8xl3tgdAJ8aPYAp1EvQwXocp7Kl+Uy8jvvCBtU6oPIKmjNQOelQ31blYzK
-         HnBACA14A0TQfm7HK0mhNncGmFSEyYqaKsepMc1WGhbOj11jOfm7TMmGmR9dCjdlsGuB
-         3HUbqk3BRhXUaaA/wTxoNv9Ittln5QYPkzVmZgpPWS/pXu1hnn+eHVu+F24eQKRjpipo
-         REfF40ygKIQd00uAdOYHG/8rpCQ4mnH/JRKyjlR3enJRSQl6jxmNTSataShZM7fBjybw
-         M1rg==
-X-Gm-Message-State: ACrzQf1+smUWGau+jSmGzmrJth0JeZaJpE0g4Wg9vvrS3pVyiIwUTtjv
-        Kf/cKNjl6uj4uwi9zuSQla3W6A==
-X-Google-Smtp-Source: AMsMyM42r+iyJKP47fvd4foFhr+NDCne0uTseZEAZJc/sMI89iNYEiKglULcJsZ74JVQQtGByfFJXQ==
-X-Received: by 2002:a63:df10:0:b0:43b:e82f:e01c with SMTP id u16-20020a63df10000000b0043be82fe01cmr19486369pgg.19.1665456873246;
-        Mon, 10 Oct 2022 19:54:33 -0700 (PDT)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id u11-20020a654c0b000000b0044ba7b39c2asm6790629pgq.60.2022.10.10.19.54.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 10 Oct 2022 19:54:32 -0700 (PDT)
-Message-ID: <fbec411b-afd9-8b3b-ee2d-99a36f50a01b@kernel.dk>
-Date:   Mon, 10 Oct 2022 20:54:31 -0600
+        Mon, 10 Oct 2022 23:00:27 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8939C51425;
+        Mon, 10 Oct 2022 20:00:25 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id C52046108C;
+        Tue, 11 Oct 2022 03:00:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 207E1C433D6;
+        Tue, 11 Oct 2022 03:00:18 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="HINC5krz"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+        t=1665457216;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Qirw48xc/tsq9oJ9bN2wDgpC7gkOILHLI1FFvZKjy0g=;
+        b=HINC5krzVlg2RfBkI+DN4TfkkfdILG81+nGbG6H3ymULtvrDJBAAPyivNN5Ks6xLTRDgBj
+        St0npOJIqnMiQJAEsME6hn8HSGUVr7vaSgTvTLlUyVWoppp8tjC9zJyq6/W2qkBuApVnBr
+        cXYoav/TXzo4IDNClYviVzHvX/Qex3Y=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 0a7ccddd (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Tue, 11 Oct 2022 03:00:16 +0000 (UTC)
+Date:   Mon, 10 Oct 2022 21:00:08 -0600
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     "Elliott, Robert (Servers)" <elliott@hpe.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "patches@lists.linux.dev" <patches@lists.linux.dev>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoph =?utf-8?Q?B=C3=B6hmwalder?= 
+        <christoph.boehmwalder@linbit.com>, Christoph Hellwig <hch@lst.de>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Dave Airlie <airlied@redhat.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Florian Westphal <fw@strlen.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Helge Deller <deller@gmx.de>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Hugh Dickins <hughd@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        "James E . J . Bottomley" <jejb@linux.ibm.com>,
+        Jan Kara <jack@suse.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+        Jens Axboe <axboe@kernel.dk>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jozsef Kadlecsik <kadlec@netfilter.org>,
+        KP Singh <kpsingh@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Marco Elver <elver@google.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Richard Weinberger <richard@nod.at>,
+        Russell King <linux@armlinux.org.uk>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thomas Graf <tgraf@suug.ch>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>,
+        WANG Xuerui <kernel@xen0n.name>, Will Deacon <will@kernel.org>,
+        Yury Norov <yury.norov@gmail.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
+        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        "linux-um@lists.infradead.org" <linux-um@lists.infradead.org>,
+        "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+        "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>,
+        Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>
+Subject: Re: [PATCH v6 3/7] treewide: use get_random_{u8,u16}() when
+ possible, part 1
+Message-ID: <Y0TcOH/BDfg5c1gj@zx2c4.com>
+References: <20221010230613.1076905-1-Jason@zx2c4.com>
+ <20221010230613.1076905-4-Jason@zx2c4.com>
+ <MW5PR84MB18421AC962BE140DDEB58A8BAB239@MW5PR84MB1842.NAMPRD84.PROD.OUTLOOK.COM>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [regression, v6.0-rc0, io-uring?] filesystem freeze hangs on
- sb_wait_write()
-Content-Language: en-US
-To:     Pavel Begunkov <asml.silence@gmail.com>,
-        Dave Chinner <david@fromorbit.com>, viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
-References: <20221010050319.GC2703033@dread.disaster.area>
- <20221011004025.GE2703033@dread.disaster.area>
- <8e45c8ee-fe38-75a9-04f4-cfa2d54baf88@gmail.com>
- <697611c3-04b0-e8ea-d43d-d05b7c334814@kernel.dk>
- <db66c011-4b86-1167-f1e0-9308c7e6eb71@gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <db66c011-4b86-1167-f1e0-9308c7e6eb71@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <MW5PR84MB18421AC962BE140DDEB58A8BAB239@MW5PR84MB1842.NAMPRD84.PROD.OUTLOOK.COM>
+X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/10/22 8:10 PM, Pavel Begunkov wrote:
-> On 10/11/22 03:01, Jens Axboe wrote:
->> On 10/10/22 7:10 PM, Pavel Begunkov wrote:
->>> On 10/11/22 01:40, Dave Chinner wrote:
->>> [...]
->>>> I note that there are changes to the the io_uring IO path and write
->>>> IO end accounting in the io_uring stack that was merged, and there
->>>> was no doubt about the success/failure of the reproducer at each
->>>> step. Hence I think the bisect is good, and the problem is someone
->>>> in the io-uring changes.
->>>>
->>>> Jens, over to you.
->>>>
->>>> The reproducer - generic/068 - is 100% reliable here, io_uring is
->>>> being exercised by fsstress in the background whilst the filesystem
->>>> is being frozen and thawed repeatedly. Some path in the io-uring
->>>> code has an unbalanced sb_start_write()/sb_end_write() pair by the
->>>> look of it....
->>>
->>> A quick guess, it's probably
->>>
->>> b000145e99078 ("io_uring/rw: defer fsnotify calls to task context")
->>>
->>>  From a quick look, it removes  kiocb_end_write() -> sb_end_write()
->>> from kiocb_done(), which is a kind of buffered rw completion path.
->>
->> Yeah, I'll take a look.
->> Didn't get the original email, only Pavel's reply?
+On Tue, Oct 11, 2022 at 01:18:40AM +0000, Elliott, Robert (Servers) wrote:
 > 
-> Forwarded.
+> > diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+> ...
+> > @@ -944,7 +944,7 @@ static void generate_random_bytes(u8 *buf, size_t count)
+> >  	default:
+> >  		/* Fully random bytes */
+> >  		for (i = 0; i < count; i++)
+> > -			buf[i] = (u8)prandom_u32();
+> > +			buf[i] = get_random_u8();
+> 
+> Should that whole for loop be replaced with this?
+>     get_random_bytes(buf, count);
 
-Looks like the email did get delivered, it just ended up in the
-fsdevel inbox.
+Wow, that's kind of grotesque. Yea, it certainly should. But that's
+beyond the scope of this patchset. I'll send a follow-up patch just for
+this case to Herbert after this cleanup lands, though.
 
-> Not tested, but should be sth like below. Apart of obvious cases
-> like __io_complete_rw_common() we should also keep in mind
-> when we don't complete the request but ask for reissue with
-> REQ_F_REISSUE, that's for the first hunk
-
-Can we move this into a helper?
-
--- 
-Jens Axboe
-
-
+Jason
