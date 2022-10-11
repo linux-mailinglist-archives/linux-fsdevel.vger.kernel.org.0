@@ -2,154 +2,193 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 64B4C5FB3B4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 15:49:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 13FFB5FB46B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 16:18:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229451AbiJKNsy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Oct 2022 09:48:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50136 "EHLO
+        id S229715AbiJKOS0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Oct 2022 10:18:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229851AbiJKNsv (ORCPT
+        with ESMTP id S229501AbiJKOSZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Oct 2022 09:48:51 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72BDE9FD7;
-        Tue, 11 Oct 2022 06:48:50 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 03F9960CD4;
-        Tue, 11 Oct 2022 13:48:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABCB5C433D6;
-        Tue, 11 Oct 2022 13:48:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665496129;
-        bh=Y7w3/2h6RT8lZoM3bDrj/fs1hB6BhjEkjz5UMvLvsPA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y04tTnkXB3chW9h1tMhZWOwzDgVoDkSRlCBZATta5Z7evh8ZpVDXc0xjTqSnmljCg
-         MH+H1JjSkOUSCctPE9OFz1+EfOqwjIG76x9Xi2eRkMPlr3eObsbH2S6gdAN/sD/xOe
-         EXejXG7aOlLy7MTUxnRTtnx177NtonVcT6QsQ18m31wFb6fRAITlSK2TYebY5AhP2T
-         LfFQSMCKYNsMBGHwLz9dBF1s5fUI3W+y/Be3tm8xSRTsP//I0WCLwDeDWB6Zr8bhfu
-         kAaB6LqaS5EDWu9aagk7KrxglNRtespCOhsCHTnZUkZX6vr6NTBqDOLv/v0eybp4gA
-         kPEv6EiuFzkkA==
-Date:   Tue, 11 Oct 2022 15:48:38 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Miklos Szeredi <miklos@szeredi.hu>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Seth Forshee <sforshee@kernel.org>,
-        Yang Xu <xuyang2018.jy@fujitsu.com>,
-        Filipe Manana <fdmanana@kernel.org>,
-        linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] attr: use consistent sgid stripping checks
-Message-ID: <20221011134838.3tkh3xroqnnkeydo@wittgenstein>
-References: <20221007140543.1039983-1-brauner@kernel.org>
- <20221007140543.1039983-4-brauner@kernel.org>
- <CAOQ4uxggKnsyi2DvVOCUQQ8hEZJjioing_H-M4y_Hq-wvRk0nA@mail.gmail.com>
- <20221011085634.2qp2ragzcdzub6oq@wittgenstein>
- <CAOQ4uxhGqCkzsugEd_TZ+s3FEKiAxQtBy1rm3KP4KS=hzTsf4w@mail.gmail.com>
+        Tue, 11 Oct 2022 10:18:25 -0400
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C42989412D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 07:18:23 -0700 (PDT)
+Received: by mail-pf1-x432.google.com with SMTP id h13so12204168pfr.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 07:18:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XH/WqrOOWftebuMfO8W8ORiHpePN+5NyHaR4jE1y7VU=;
+        b=yXBoCt/mc+NIDIRQje2hh07SUKdRiu1f8sddxrAOHKP0wUL3GFM/N22c3sdLC0gJiL
+         B0fYU7xtdkQCtOR3n+Te4F1BHYtOU1bRagZ18ngWEQWXjCydrmpg0Wjocfk7zCJW72Hk
+         LQDDQ7utQoQYKi0D3wVlkYucCK01VQhNM/sSNQjsD+esd0K0zKPeyIgkMYTl0YJWumF8
+         AVKdKXZ4vJyJDJpMvOx/Mwp82bIlRq3BCR573c3qrvyTxeVCMU5Hz3oVeAQdezmmMuvQ
+         4Oa38VwOiAwdmFmHZxFJqPWBmeI+1pcY1EA1NBmzAmqRCFvXlUnQfS+YlurJqbeszgl/
+         wTmw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XH/WqrOOWftebuMfO8W8ORiHpePN+5NyHaR4jE1y7VU=;
+        b=3rQDrtwYmn4DolISj+wHnrpuCQXFbq3b2jkBtBMdaOvlyujcyn9p6/VXU9pi6xWTwt
+         +ReeEiw6j8S1jrY8JxUjkTcAmffAc/XV+cYRswV3ey+FQwpK8Vgi/bq4+ZHTxiKFRVwQ
+         FP9hkylQHeWJaxwf6h+Ybdy9hSkvLPUGMVX1YQDZUFqaynuxXO9xYZRlX8S/tUIpzujW
+         00cnxGHKuWUDcbRP8NYc9nrDxFkESXRPoMHHgA0Ne5LwRXlYFkILQtrck+L2NfiCiHzh
+         lSRr13tAoQ7Yad6JxQblZ7bepe+d5Yrb3rBiAadWNHxpqD+IfDG7FOOMXnwp1zx7MddD
+         9GGg==
+X-Gm-Message-State: ACrzQf1FkKTX510UFLOgHmCgEsewoFMCEzY0JvXeAgHSIACjkLuVl0Da
+        MOcWE6m3jxNaF9JoBeeq7aYge5w7bKjMp11s
+X-Google-Smtp-Source: AMsMyM7fnaTgPUqxD6OJ4hrPoNwOCYdXpcx+R1WXOhgW7AzK1/zmbFqj4JsyQcP5sDRPDELZ65MHEw==
+X-Received: by 2002:a05:6a00:114f:b0:563:a934:718e with SMTP id b15-20020a056a00114f00b00563a934718emr4487060pfm.41.1665497903122;
+        Tue, 11 Oct 2022 07:18:23 -0700 (PDT)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id s15-20020a170902ea0f00b0016d72804664sm8713593plg.205.2022.10.11.07.18.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 11 Oct 2022 07:18:22 -0700 (PDT)
+Message-ID: <1941f3d3-5b7a-7b87-cc53-382cac1647d6@kernel.dk>
+Date:   Tue, 11 Oct 2022 08:18:21 -0600
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhGqCkzsugEd_TZ+s3FEKiAxQtBy1rm3KP4KS=hzTsf4w@mail.gmail.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [regression, v6.0-rc0, io-uring?] filesystem freeze hangs on
+ sb_wait_write()
+Content-Language: en-US
+From:   Jens Axboe <axboe@kernel.dk>
+To:     Pavel Begunkov <asml.silence@gmail.com>,
+        Dave Chinner <david@fromorbit.com>, viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org
+References: <20221010050319.GC2703033@dread.disaster.area>
+ <20221011004025.GE2703033@dread.disaster.area>
+ <8e45c8ee-fe38-75a9-04f4-cfa2d54baf88@gmail.com>
+ <697611c3-04b0-e8ea-d43d-d05b7c334814@kernel.dk>
+ <db66c011-4b86-1167-f1e0-9308c7e6eb71@gmail.com>
+ <fbec411b-afd9-8b3b-ee2d-99a36f50a01b@kernel.dk>
+In-Reply-To: <fbec411b-afd9-8b3b-ee2d-99a36f50a01b@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 11, 2022 at 02:07:10PM +0300, Amir Goldstein wrote:
-> > > > @@ -721,10 +721,10 @@ int chown_common(const struct path *path, uid_t user, gid_t group)
-> > > >                 return -EINVAL;
-> > > >         if ((group != (gid_t)-1) && !setattr_vfsgid(&newattrs, gid))
-> > > >                 return -EINVAL;
-> > > > -       if (!S_ISDIR(inode->i_mode))
-> > > > -               newattrs.ia_valid |=
-> > > > -                       ATTR_KILL_SUID | ATTR_KILL_SGID | ATTR_KILL_PRIV;
-> > > >         inode_lock(inode);
-> > > > +       if (!S_ISDIR(inode->i_mode))
-> > > > +               newattrs.ia_valid |= ATTR_KILL_SUID | ATTR_KILL_PRIV |
-> > > > +                                    should_remove_sgid(mnt_userns, inode);
-> > >
-> > > This is making me stop and wonder:
-> > > 1. This has !S_ISDIR, should_remove_suid() has S_ISREG and
-> > >     setattr_drop_sgid() has neither - is this consistent?
-> >
-> > I thought about that. It'very likely redundant since we deal with that
-> > in other parts but I need to verify all callers before we can remove
-> > that.
-> >
-> > > 2. SUID and PRIV are removed unconditionally and SGID is
-> > >     removed conditionally - this is not a change of behavior
-> > >     (at least for non-overlayfs), but is it desired???
-> >
-> > It looks that way but it isn't. The setgid bit was only killed
-> > unconditionally for S_IXGRP. We continue to do that. But it was always
-> > removed conditionally for ~S_IXGRP. The difference between this patchset
-> > and earlier is that it was done in settattr_prepare() or setattr_copy()
-> > before this change.
-> >
-> > IOW, we raised ATTR_KILL_SGID unconditionally but then only
-> > conditionally obeyed it in setattr_{prepare,copy}() whereas now we
-> > conditionally raise ATTR_KILL_SGID. That's surely a slight change but it
-> > just means that we don't cause bugs for filesystems that roll their own
-> > prepare or copy helpers and is just nicer overall.
-> >
+On 10/10/22 8:54 PM, Jens Axboe wrote:
+> On 10/10/22 8:10 PM, Pavel Begunkov wrote:
+>> On 10/11/22 03:01, Jens Axboe wrote:
+>>> On 10/10/22 7:10 PM, Pavel Begunkov wrote:
+>>>> On 10/11/22 01:40, Dave Chinner wrote:
+>>>> [...]
+>>>>> I note that there are changes to the the io_uring IO path and write
+>>>>> IO end accounting in the io_uring stack that was merged, and there
+>>>>> was no doubt about the success/failure of the reproducer at each
+>>>>> step. Hence I think the bisect is good, and the problem is someone
+>>>>> in the io-uring changes.
+>>>>>
+>>>>> Jens, over to you.
+>>>>>
+>>>>> The reproducer - generic/068 - is 100% reliable here, io_uring is
+>>>>> being exercised by fsstress in the background whilst the filesystem
+>>>>> is being frozen and thawed repeatedly. Some path in the io-uring
+>>>>> code has an unbalanced sb_start_write()/sb_end_write() pair by the
+>>>>> look of it....
+>>>>
+>>>> A quick guess, it's probably
+>>>>
+>>>> b000145e99078 ("io_uring/rw: defer fsnotify calls to task context")
+>>>>
+>>>> ?From a quick look, it removes? kiocb_end_write() -> sb_end_write()
+>>>> from kiocb_done(), which is a kind of buffered rw completion path.
+>>>
+>>> Yeah, I'll take a look.
+>>> Didn't get the original email, only Pavel's reply?
+>>
+>> Forwarded.
 > 
-> Yes, that sounds right.
+> Looks like the email did get delivered, it just ended up in the
+> fsdevel inbox.
+
+Nope, it was marked as spam by gmail...
+
+>> Not tested, but should be sth like below. Apart of obvious cases
+>> like __io_complete_rw_common() we should also keep in mind
+>> when we don't complete the request but ask for reissue with
+>> REQ_F_REISSUE, that's for the first hunk
 > 
-> The point that I was trying to make and failed to articulate myself was
-> that chown_common() raises ATTR_KILL_SUID unconditionally,
-> while should_remove_suid() raises ATTR_KILL_SUID conditional
-> to !capable(CAP_FSETID).
-> 
-> Is this inconsistency in stripping SUID desired?
+> Can we move this into a helper?
 
-I looked at this before and it likely isn't intentional. But I need to
-do pre-git archeology to determine that after I'm back from PTO. It
-likely is something we can tackle.
+Something like this? Not super happy with it, but...
 
-> 
-> According to man page (I think that) it is:
-> 
-> "When the owner or group of an executable file is changed by an
->  unprivileged user, the S_ISUID and S_ISGID mode bits are cleared.
->  POSIX does not specify whether this also  should  happen  when  root
->  does the chown(); the Linux behavior depends on the kernel version,
->  and since Linux 2.2.13, root is treated like other users..."
-> 
-> So special casing SUID stripping in chown() looks intentional,
-> but maybe it is worth a comment.
 
-It definitely is worth a comment but I think instead we should in the
-future risk changing this for the write path as well. Because right now
-losing the S_ISGID bit during chown() for regular files unconditionally
-is important to not accidently have root create a situation where they
-open a way for an unprivileged user to escalate privileges when chowning
-a non-root owned setuid binary to a root-owned setuid binary:
+diff --git a/io_uring/rw.c b/io_uring/rw.c
+index 453e0ae92160..1c8d00f9af9f 100644
+--- a/io_uring/rw.c
++++ b/io_uring/rw.c
+@@ -234,11 +234,32 @@ static void kiocb_end_write(struct io_kiocb *req)
+ 	}
+ }
+ 
++/*
++ * Trigger the notifications after having done some IO, and finish the write
++ * accounting, if any.
++ */
++static void io_req_io_end(struct io_kiocb *req)
++{
++	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
++
++	if (rw->kiocb.ki_flags & IOCB_WRITE) {
++		kiocb_end_write(req);
++		fsnotify_modify(req->file);
++	} else {
++		fsnotify_access(req->file);
++	}
++}
++
+ static bool __io_complete_rw_common(struct io_kiocb *req, long res)
+ {
+ 	if (unlikely(res != req->cqe.res)) {
+ 		if ((res == -EAGAIN || res == -EOPNOTSUPP) &&
+ 		    io_rw_should_reissue(req)) {
++			/*
++			 * Reissue will start accounting again, finish the
++			 * current cycle.
++			 */
++			io_req_io_end(req);
+ 			req->flags |= REQ_F_REISSUE | REQ_F_PARTIAL_IO;
+ 			return true;
+ 		}
+@@ -264,15 +285,7 @@ static inline int io_fixup_rw_res(struct io_kiocb *req, long res)
+ 
+ static void io_req_rw_complete(struct io_kiocb *req, bool *locked)
+ {
+-	struct io_rw *rw = io_kiocb_to_cmd(req, struct io_rw);
+-
+-	if (rw->kiocb.ki_flags & IOCB_WRITE) {
+-		kiocb_end_write(req);
+-		fsnotify_modify(req->file);
+-	} else {
+-		fsnotify_access(req->file);
+-	}
+-
++	io_req_io_end(req);
+ 	io_req_task_complete(req, locked);
+ }
+ 
+@@ -317,6 +330,7 @@ static int kiocb_done(struct io_kiocb *req, ssize_t ret,
+ 		req->file->f_pos = rw->kiocb.ki_pos;
+ 	if (ret >= 0 && (rw->kiocb.ki_complete == io_complete_rw)) {
+ 		if (!__io_complete_rw_common(req, ret)) {
++			io_req_io_end(req);
+ 			io_req_set_res(req, final_ret,
+ 				       io_put_kbuf(req, issue_flags));
+ 			return IOU_OK;
 
-touch aaa
-chown 1000:1000
-chmod u+s aaa
-sudo chown aaa
-
-and if the setuid bit would be retained then an unpriv user can now
-abuse the setuid binary - if they can execute ofc. So that's why it's
-dropped unconditionally. However, if that is a valid attack scenario
-then a write should also drop setuid unconditionally since a non-harmful
-setuid binary could be changed to a harmful one.
-
-> 
-> The paragraph above *may* be interpreted that chown() should strip
-> S_SGID|S_IXGRP regardless of CAP_FSETID, which, as you say,
-> has not been the case for a while.
-
-Yeah, for the setgid bit we've been dropping it implicitly currently.
-
-Thanks!
-Christian
+-- 
+Jens Axboe
