@@ -2,115 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0ACAB5FAD50
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 09:20:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1380C5FADCF
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 09:52:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229698AbiJKHUD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Oct 2022 03:20:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45970 "EHLO
+        id S229979AbiJKHv6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Oct 2022 03:51:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229506AbiJKHUB (ORCPT
+        with ESMTP id S230034AbiJKHvu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Oct 2022 03:20:01 -0400
-Received: from mail-ed1-x531.google.com (mail-ed1-x531.google.com [IPv6:2a00:1450:4864:20::531])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 713741B7B3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 00:20:00 -0700 (PDT)
-Received: by mail-ed1-x531.google.com with SMTP id l22so18835796edj.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 00:20:00 -0700 (PDT)
+        Tue, 11 Oct 2022 03:51:50 -0400
+Received: from mail-ua1-x92c.google.com (mail-ua1-x92c.google.com [IPv6:2607:f8b0:4864:20::92c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91D4CA450
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 00:51:48 -0700 (PDT)
+Received: by mail-ua1-x92c.google.com with SMTP id i20so4726300ual.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 00:51:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=alaMRFyTqgWPSUYwvVsV66h29Ch4dJMbSbv8FxTJjaA=;
-        b=bkE8MOcfXqF5ZXU3ub0tTJyX9Oh+0UBLtCHv3tBLdtXqlRc2YXsxFznTqRCgdOrPkY
-         cXJ+zNb/4EbEwRih5hzPht0wW/RPwKVKig9a5kk5IPsVNHvX1kMj/b8NyvnT6xeRFdEl
-         UW9FuAXNj4FbIvHMTJ0zymQbyVZ8yFj/IojpJmHw5hGp2NSuyfg2UP1vx7jca6Gq2apH
-         UV9WiGVC8GPTY1iKRHn5Tc76rJ4bY07OImHid2+MohiyGeEjhCFC6yl0uMtBO0rPPKU1
-         V16tbXYnTDiUt1R89HIiXNflPAkpcANC5bPCnr5qjgnMdXmOnvFVeEBk5qED3zDmjcuG
-         SJSg==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vc7NDTHNwCOb+RPvEeMoxB0AoOQKOxkhjrJXDMGxTp4=;
+        b=cklujjorezmx5v220APZMQp0R+Ertx4G722M5cJTgUIcwEFRufVDRLUxV8MEo3y1OS
+         zUxOjIUS13zBnziQFJ//JH7jQXRQirQN3x2EOM83tg1Wy0B7ZX+bY2czOPW1nJ2hU8oB
+         JuFxxrUDuEffNii5gS6S8cv2d71ocxZnc+KVAXBYwY19YypG0jEzFYhAlPS2XCr7kkl8
+         NQ82pThV7iL/0QfFoPDNu49p5MH0qG8SaDvGv8aEiTxQStCHODekxZHRn1vHtR1E8x43
+         RtGzfNOwyy56SCFTfp7sMRqniCNaY7mVMw5YZRu4c4JwFGPyAttPmrilgalewgNFcKAU
+         8eyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=alaMRFyTqgWPSUYwvVsV66h29Ch4dJMbSbv8FxTJjaA=;
-        b=ty6SoI3YX/tpjgNH0U+ZtSY7SaI+FM9M22dfCIUNySVo0flDO/r4MpOG7y895fZOZJ
-         A2rr5pqfDPWR1UDKYUABb6hgMfvrlrwzIa/xyPYNv1w+ZtKGKWxvnPbr0YGPRLie8xrV
-         qq+w4lxLBgnrwXLXMjCmb+9DxPl+CyDuQkimdIdXyLOgIcLNwTTkf5olmUA9CKg0Vq7t
-         Mn1NtKZp3V+El3II3W2LzT0qDd/o+V8yjpSpGgpJAYa7ZHVKQhNXpcC1J1kl2uT8X3ts
-         uUTjCzrTsfKuqonvbAdTcCKBWNDXT5sEkqVyJc5xpP6DGoqoVeaJk8Eexpp58aRzQ6KO
-         Zm7g==
-X-Gm-Message-State: ACrzQf2tftA8njZc7+3hwIilVh9bhF1bN2JfowX8X99sxAqvdxG6xN7q
-        Thoe/TdcAMl4H0gIF4WkmgOgCjjIZDHUFod6WuUjhw==
-X-Google-Smtp-Source: AMsMyM6ng/DQEStWl0sVu7PZ9rayjv3N7kALGp5vzQ5bTLIjhkEvP6vOacybQL5Z2v6RtytTK3Y7aTxqmzxJ8y9QQ3o=
-X-Received: by 2002:a05:6402:448:b0:45c:8de5:4fc with SMTP id
- p8-20020a056402044800b0045c8de504fcmr203354edw.133.1665472798912; Tue, 11 Oct
- 2022 00:19:58 -0700 (PDT)
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vc7NDTHNwCOb+RPvEeMoxB0AoOQKOxkhjrJXDMGxTp4=;
+        b=QqjPeXEhwXmLVOAWR1eWE2nYz7sRKqrCeEuE/a+nNgMffCZOgLnhLppIoNKs8bwcT5
+         I3oXUQ34/Z8QUSMGf3uHlfAp/tfm8Reo9utpfIb+ED8iWifBAzbfMUJBHu1qcXZFrK5p
+         uRLG+G9tUDFcPwzAHONXPHfWS6Qk5iX+tW1v2ByPcMl8VtUk/3M5pNdePt1FRPC5sTCh
+         PGf6suUnmB3GBqJXB8pd2VHuGL9Lw57yvrFl9Dj5YvcDDkjOM/VNWchHBbno1dDKiGtc
+         DUQJeuKYyXs4GncJzHIFQrzL+B0P0SU/qxIWuG43Hvt3z5rlZqy5mW+wyhv4t/KlcluI
+         PWhQ==
+X-Gm-Message-State: ACrzQf2RYNptsm2tTEQPfjt5pRjQ9ksfQdEvyhZUolJohfgGKLVH+fiM
+        WfLJWLA2tSynXuwZvD2KI2ph20ym3OsapMBbWQg=
+X-Google-Smtp-Source: AMsMyM7UbPSc4IOwirjUMZhrL8hl9a2gFVGhDSiy6iGc1uK/nAJdjwnYwwrmq2woFq+lQGoTW+VGy3bcN1uVX4V2O+o=
+X-Received: by 2002:ab0:6413:0:b0:3e1:b113:2dfa with SMTP id
+ x19-20020ab06413000000b003e1b1132dfamr6617638uao.102.1665474707638; Tue, 11
+ Oct 2022 00:51:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220927120857.639461-1-max.kellermann@ionos.com>
- <88f8941f-82bf-5152-b49a-56cb2e465abb@redhat.com> <CAKPOu+88FT1SeFDhvnD_NC7aEJBxd=-T99w67mA-s4SXQXjQNw@mail.gmail.com>
- <75e7f676-8c85-af0a-97b2-43664f60c811@redhat.com> <CAKPOu+-rKOVsZ1T=1X-T-Y5Fe1MW2Fs9ixQh8rgq3S9shi8Thw@mail.gmail.com>
- <baf42d14-9bc8-93e1-3d75-7248f93afbd2@redhat.com>
-In-Reply-To: <baf42d14-9bc8-93e1-3d75-7248f93afbd2@redhat.com>
-From:   Max Kellermann <max.kellermann@ionos.com>
-Date:   Tue, 11 Oct 2022 09:19:48 +0200
-Message-ID: <CAKPOu+_4CLD2qJsUhhe4K0QqrC9mLmargEimibvVXdAHq6RCUw@mail.gmail.com>
-Subject: Re: [PATCH] fs/ceph/super: add mount options "snapdir{mode,uid,gid}"
-To:     Xiubo Li <xiubli@redhat.com>
-Cc:     Jeff Layton <jlayton@kernel.org>, idryomov@gmail.com,
-        ceph-devel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+References: <bb1fef84-4c4c-d0d2-3422-c96773996a1b@nightmared.fr>
+In-Reply-To: <bb1fef84-4c4c-d0d2-3422-c96773996a1b@nightmared.fr>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 11 Oct 2022 10:51:36 +0300
+Message-ID: <CAOQ4uxiaO4RNdWjcrW=9SHaZyt-E-VXTh91qjy-8-09qixd8yw@mail.gmail.com>
+Subject: Re: Enabling unprivileged mounts on fuseblk filesystems
+To:     Simon Thoby <work.viveris@nightmared.fr>
+Cc:     ebiederm@xmission.com,
+        =?UTF-8?Q?CONZELMANN_Fran=C3=A7ois?= 
+        <Francois.CONZELMANN@viveris.fr>, simon.thoby@viveris.fr,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 10, 2022 at 4:03 AM Xiubo Li <xiubli@redhat.com> wrote:
-> No, it don't have to. This could work simply as the snaprealm hierarchy
-> thing in kceph.
+On Tue, Oct 11, 2022 at 1:33 AM Simon Thoby <work.viveris@nightmared.fr> wr=
+ote:
 >
-> Only the up top directory need to record the ACL and all the descendants
-> will point and use it if they don't have their own ACLs.
+> Hello Eric,
+>
+> in 2018 you commited to the FS subsystem a patch to enable mounting FUSE =
+filesystems inside user namespaces, for which I am grateful.
+>
+> That patch (https://lore.kernel.org/all/87tvqqo8w1.fsf_-_@xmission.com/) =
+enabled the FS_USERNS_MOUNT filesystem flag for the "fuse" filesystem type.
+> To the best of my understanding, this allows any program owning the CAP_S=
+YS_ADMIN privilege inside its user namespace to mount filesystems of that t=
+ype (unlike the default behavior for filesystems, ~FS_USERNS_MOUNT, that re=
+quires owning CAP_SYS_ADMIN inside the "initial" user namespace): https://e=
+lixir.bootlin.com/linux/latest/source/fs/super.c#L516.
+>
+> However that option was not enabled on the "fuseblk" filesystem type.
+> I discovered this today while trying to use ntfs-3g on a block device ins=
+ide an unprivileged container.
+> Looking at it a bit further with a colleague, we realized that programs l=
+ike fusefat worked because they relied on the "fuse" type, and not "fuselbl=
+k".
+> Which is finally what led me to believe that the lack of the FS_USERNS_MO=
+UNT flag was the culprit.
+> And indeed, patching ntfs-3g to always use the "fuse" filesystem type ins=
+tead of the preferred "fuseblk" works reliably, so at least we know some wa=
+y to bypass that issue.
+>
+> However, we were curious to know if I missed some rationale that would pr=
+event that flag for being usable on "fuseblk" too?
 
-Not knowing much about Ceph internals, I don't quite understand this
-idea. Until somebody implements that, I'll keep my patch in our Linux
-kernel fork.
-My patch is a very simple and robust fix for our problem (it's already
-in production use). It's okay for me if it doesn't get merged into
-mainline, but at least I wanted to share it.
+Seems like an oversight to me.
 
-> For multiple clients case I think the cephfs capabilities [3] could
-> guarantee the consistency of this.
+>
+> And if they weren't, would you be opposed to a patch similar to what foll=
+ows?
 
-I don't understand - capabilities are client-specific, not
-user-specific. My problem is a user-specific one.
+You are asking the wrong person.
 
-> While for the single client case if
-> before the user could update its ACL just after creating it someone else
-> has changed it or messed it up, then won't the existing ACLs have the
-> same issue ?
+Please address a patch with proper commit message to FUSE maintainer.
 
-You mean ACLs for "real" files/directories? Sure, some care needs to
-be taken, e.g. create directories with mode 700 and chmod after
-setting the ACL, and using O_TMPFILE for files and linking them to a
-directory only after updating the ACL.
+Thanks,
+Amir.
 
-The difference to snapdir is that the snapdir doesn't actually exist
-anywhere; it is synthesized by the client only on the first acess, and
-may be discarded any time by the shrinker, and the next access creates
-a new one with default permissions. All those snapdir inodes are local
-to the client, and each client has its own private set of permissions
-for it.
-
-Even if you'd take care for updating the snapdir permissions after
-creating a directory, that would only be visible on that one client,
-and may be reverted at any arbitrary point in time, and there's
-nothing you can do about it. That's two unsolvable problems (no client
-synchronization of snapdir permissions, and no persistence).
-
-Max
+>
+> diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+> index 6b3beda16c1b..d17f87531dc8 100644
+> --- a/fs/fuse/inode.c
+> +++ b/fs/fuse/inode.c
+> @@ -1839,7 +1839,7 @@ static struct file_system_type fuseblk_fs_type =3D =
+{
+>          .init_fs_context =3D fuse_init_fs_context,
+>          .parameters     =3D fuse_fs_parameters,
+>          .kill_sb        =3D fuse_kill_sb_blk,
+> -       .fs_flags       =3D FS_REQUIRES_DEV | FS_HAS_SUBTYPE,
+> +       .fs_flags       =3D FS_REQUIRES_DEV | FS_HAS_SUBTYPE | FS_USERNS_=
+MOUNT,
+>   };
+>   MODULE_ALIAS_FS("fuseblk");
+>
+>
+> Sorry to bother you with this 4 years after the patch ^^
+>
+> Thanks,
+> Simon
