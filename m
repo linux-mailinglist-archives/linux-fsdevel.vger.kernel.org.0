@@ -2,94 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 739785FBBC0
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 22:04:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 52BF75FBC5A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 22:45:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229480AbiJKUEP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Oct 2022 16:04:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41012 "EHLO
+        id S229534AbiJKUpu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Oct 2022 16:45:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229491AbiJKUEN (ORCPT
+        with ESMTP id S229504AbiJKUps (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Oct 2022 16:04:13 -0400
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FE899B85F
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 13:04:07 -0700 (PDT)
-Received: by mail-pj1-x1031.google.com with SMTP id x31-20020a17090a38a200b0020d2afec803so7216990pjb.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 13:04:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iiS31l/93h6KvcIGG20NGCzdtac4WK0XoSGwVDtqYiA=;
-        b=TZgbCo5pjCweHSqv6LL9cWbHwxNDv6NIvaHUOpCybGso/qwJcYNU66mtle/dJPV6u9
-         ulbiei3IdX92xNcxCWZSHow5YyyDto/a2h7YYeh5bPxt2CVXCzMvJHrysyZByilhzG+o
-         JMpk/1+4bE8s6sxfpPUCWRhAWwueKEBochaXs=
+        Tue, 11 Oct 2022 16:45:48 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 259517E838
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 13:45:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1665521147;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=HOkcw94jKoThb1YsGFgEY6secfp0Ar+WXfJ+Ghon9q0=;
+        b=Dv9es6PYnaTycs8PNM3fsu/en7HAPbC0D2o6s9ziEmYkgOv46c2/hmVky9zKghcv0sKiUh
+        XJeCOwAav5I3z6tBLHzg/n9Jq2VMhlecMEsvYQUqWR39/aYmuqWUgIbvGuanUmYGcNJcPK
+        NsF3OA+sAOOdIUMCNZ5YLmiZrnxrtq0=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-608-pV15iaf6NGqgZeLYKd24AQ-1; Tue, 11 Oct 2022 16:45:46 -0400
+X-MC-Unique: pV15iaf6NGqgZeLYKd24AQ-1
+Received: by mail-qk1-f200.google.com with SMTP id o13-20020a05620a2a0d00b006cf9085682dso12480582qkp.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 13:45:46 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iiS31l/93h6KvcIGG20NGCzdtac4WK0XoSGwVDtqYiA=;
-        b=zVRFyxrxv4Kcm4BeEGLQdHy+txsn1v2Qoao1R6rzfTs3XcTkz/BFGeQNnuydtmIBaF
-         uuYaJmFXfhGlxTH1d/uRqXCMpc/S1KpypFV7cRemfDf7yNzsC/hC0IwEOtfepMuiulas
-         1rY1WHglXeFXnTSnz1Lo5ycfWDFnOd8rx30v/nKJO8nLkBYuWh2x7Qg6jMNV2IyB+EU3
-         qH1SlZSFdIfcLXEHQctwnPk36piTn+n1SElySCnXLdLbqoEjI2Moftr2CzkgXvUOLwEn
-         kEu4Ko51hs2e0+xHIVWZSyoj41kpGcdaSdR5etcn+R537MvWt+MLn0c0S1IduhCdNCEi
-         XUJQ==
-X-Gm-Message-State: ACrzQf0tGH5OMFi6hxL1jeI1l6UurMU3rfBUhdBjNbtA/zYxzrY4ZCTR
-        2OOshF7H7wPppTsMGRCSF7c2MalmSFfHqA==
-X-Google-Smtp-Source: AMsMyM7L3RBLFv92acvZmxED1ZGwENjcs6stDtNWL0Qfq5bTTI1QPN8pWlIBQOGIPb7xaLwmrP6ODg==
-X-Received: by 2002:a17:902:8215:b0:178:6946:a282 with SMTP id x21-20020a170902821500b001786946a282mr26196205pln.162.1665518645976;
-        Tue, 11 Oct 2022 13:04:05 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id o66-20020a17090a0a4800b002033b3875eesm8288744pjo.20.2022.10.11.13.04.05
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HOkcw94jKoThb1YsGFgEY6secfp0Ar+WXfJ+Ghon9q0=;
+        b=rJIvUZ0KpiZKighPdmZGZ1bCI4nP9a7uv0l35dkhYvO27/+cq0KE822vw/vZjwI7jN
+         a9yygBDeFgQPSEmwtRyQVngx7HcOtw5CUWwEhYgABIF7ys9kWPtHmPFQMJRxo9GOLSuf
+         ShERmPCmJ+jJ3Gga5QMZgUyRcWnU0/1ONqHQAmUryFrczOYRwS3M0+RVs7Y/P4RJJpeq
+         pM/iDjRuXk+syWb2k3pMdODUsgn+ATqM8bFqp/mCtmpFWAf5+0Vd2NT01FDAPFhhTtFB
+         MmhgRrgUXLRUpKUifxwifK19X3WEtvw1l5Hrfu48+VeflJbDqNB/h1QZfrjDqSeeKGOq
+         DQZQ==
+X-Gm-Message-State: ACrzQf3PaGmq92SquF6Xo/I6F/EBK/JuRip99I2A1CEsHwg6DyxbsGe/
+        fLR2dPd601ruYdxsp5jpFBO8jnQz2NZdzDT/31jbzDpsCcJpTNO4Ycrlt5u8GTV2Xop/xNCeZTe
+        dOZ6B0YRiMrTx91YZ7mPkeNoxxA==
+X-Received: by 2002:a05:620a:16aa:b0:6ce:70b2:598b with SMTP id s10-20020a05620a16aa00b006ce70b2598bmr17723036qkj.670.1665521145549;
+        Tue, 11 Oct 2022 13:45:45 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM4wVB7dGSkAPwDnirR1rGdKqjuIHBNirWI+NGnyUsln8ZEV3Q7BW4Cl3WsKBjBCcUXZj9enlw==
+X-Received: by 2002:a05:620a:16aa:b0:6ce:70b2:598b with SMTP id s10-20020a05620a16aa00b006ce70b2598bmr17723017qkj.670.1665521145227;
+        Tue, 11 Oct 2022 13:45:45 -0700 (PDT)
+Received: from [172.16.1.108] ([66.187.232.65])
+        by smtp.gmail.com with ESMTPSA id o19-20020a05620a2a1300b006cddf59a600sm14139046qkp.34.2022.10.11.13.45.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Oct 2022 13:04:05 -0700 (PDT)
-Date:   Tue, 11 Oct 2022 13:04:04 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Paramjit Oberoi <pso@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: Re: [PATCH 1/1] pstore/ram: Ensure stable pmsg address with per-CPU
- ftrace buffers
-Message-ID: <202210111302.3179DB77@keescook>
-References: <20221011183630.3113666-1-pso@chromium.org>
- <20221011113511.1.I1cf52674cd85d07b300fe3fff3ad6ce830304bb6@changeid>
- <202210111209.7F1541F5BE@keescook>
- <CAHqLn7Hd6KaNYA=goS7=dumrG3wZedbV1+ANa+-dZzFPiP_vsQ@mail.gmail.com>
+        Tue, 11 Oct 2022 13:45:44 -0700 (PDT)
+Message-ID: <5a5a92423c8bac5b275c213ed1ce3fa59cafda4f.camel@redhat.com>
+Subject: Re: [RFC] fl_owner_t and use of filp_close() in
+ nfs4_free_lock_stateid()
+From:   Jeff Layton <jlayton@redhat.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+Date:   Tue, 11 Oct 2022 16:45:43 -0400
+In-Reply-To: <CAJfpegsgtke1X7FGpMSgTGdDsOxU7kqPqf2JbOAnqgMj0XFoSQ@mail.gmail.com>
+References: <Y0Wv6qe3r8/Djt7s@ZenIV>
+         <CAJfpegsgtke1X7FGpMSgTGdDsOxU7kqPqf2JbOAnqgMj0XFoSQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHqLn7Hd6KaNYA=goS7=dumrG3wZedbV1+ANa+-dZzFPiP_vsQ@mail.gmail.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 11, 2022 at 12:59:50PM -0700, Paramjit Oberoi wrote:
-> > Hm, interesting point. Since only ftrace is dynamically sized in this
-> > fashion, how about just moving the pmsg allocation before ftrace, and
-> > adding a comment that for now ftrace should be allocated last?
-> 
-> That is a good idea, and it would solve the problem.
-> 
-> The only downside is it would break some code that works today because it
-> ran in contexts where the pmsg address was stable (no per-cpu ftrace
-> buffers, or power-of-two CPUs).
+On Tue, 2022-10-11 at 21:02 +0200, Miklos Szeredi wrote:
+> On Tue, 11 Oct 2022 at 20:04, Al Viro <viro@zeniv.linux.org.uk> wrote:
+>=20
+> > Another interesting question is about FUSE ->flush() - how is the
+> > server supposed to use the value it gets from
+> >         inarg.lock_owner =3D fuse_lock_owner_id(fm->fc, id);
+> > in fuse_flush()?  Note that e.g. async write might be followed by
+> > close() before the completion.  Moreover, it's possible to start
+> > async write and do unshare(CLONE_FILES); if the descriptor table
+> > used to be shared and all other threads exit after our unshare,
+> > it's possible to get
+> >         async write begins, fuse_send_write() called with current->file=
+s as owner
+> >         flush happens, with current->files as id
+> >         what used to be current->files gets freed and memory reused
+> >         async write completes
+> >=20
+> > Miklos, could you give some braindump on that?
+>=20
+> The lock_owner in flush is supposed to be used for remote posix lock
+> release [1].   I don't like posix lock semantics the least bit, and in
+> hindsight it would have been better to just not try to support remote
+> posix locks (nfs doesn't, so why would anyone care for it in fuse?)
+> Anyway, it's probably too late to get rid of this wart now.
+>=20
 
-I don't follow? And actually, I wonder about the original patch now --
-nothing should care about the actual addresses. Everything should be
-coming out of the pstore filesystem.
+The NFS client maintains lock records in the local VFS. When a file is
+closed, the VFS issues a whole file unlock. You're probably getting
+bitten by this in locks_remove_posix:
 
--- 
-Kees Cook
+        ctx =3D  smp_load_acquire(&inode->i_flctx);
+        if (!ctx || list_empty(&ctx->flc_posix))
+                return;
+
+Because FUSE doesn't set any locks in the local kernel, that final
+unlock never occurs.
+
+There are a couple of options here: You could have FUSE start setting
+local lock records, or you could look at pushing the above check down
+into the individual ->lock ops.
+
+> The lock_owner field in read/write/setattr was added for mandatory
+> locking [2].  Now that support for mandatory locking has been removed
+> this is dead code, I guess.  Will clean up in fuse as well.
+>=20
+
+That sounds like a good plan.
+
+>=20
+> [1] v2.6.18: 7142125937e1 ("[PATCH] fuse: add POSIX file locking support"=
+)
+> [2] v2.6.24: f33321141b27 ("fuse: add support for mandatory locking")
+>=20
+
