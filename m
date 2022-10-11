@@ -2,110 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C0E375FBA93
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 20:40:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 20B775FBAF4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 11 Oct 2022 21:03:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229780AbiJKSkw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 11 Oct 2022 14:40:52 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44824 "EHLO
+        id S229626AbiJKTDu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 11 Oct 2022 15:03:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229758AbiJKSku (ORCPT
+        with ESMTP id S230062AbiJKTDb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 11 Oct 2022 14:40:50 -0400
-Received: from mail-pl1-x629.google.com (mail-pl1-x629.google.com [IPv6:2607:f8b0:4864:20::629])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3795A7CB76
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 11:40:48 -0700 (PDT)
-Received: by mail-pl1-x629.google.com with SMTP id n7so14068114plp.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 11:40:48 -0700 (PDT)
+        Tue, 11 Oct 2022 15:03:31 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0F46895C6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 12:03:11 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id nb11so33508049ejc.5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 11 Oct 2022 12:03:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ERLKnWgpFtVqzoSU44W3worzEWB0a03vIi6zG/hd2Qc=;
-        b=QFQN5rlHiCyzloNEdPEFYRYrZd0bqEgI0E75b7bEfoPe3yqTD/6k3wsCxOOYiGCi9R
-         ZpvjE1KUK6t/pcibjKoOk/quG5n30LkGUcE+v7gtdTrB+WeyxZulcozSlPrCcW+pY+AV
-         wqVCdjaqyyerDT2MbPxlEKIOwcdJwbKVsQXgY=
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=uB6bldokknuAaLKJsybg3s1dZctnS1g1CUW11xWU7Sg=;
+        b=DYh+N3iLHrEdO7VKsZ3VKV1ODGFRp+D18MPAmXteYjfllxhT+xcLmhKDc14QrLrJyz
+         26rsTRmzTfjus7K8A7r5KhWobF6veY8s4JHO8cqZZVuuOnmca0dFWZuE6HFVZ998jfGK
+         XpOMBdfxqmlGG6x890JB2ujOiqQqpe4yOC+EM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ERLKnWgpFtVqzoSU44W3worzEWB0a03vIi6zG/hd2Qc=;
-        b=k3WGnMpPHRfZRacJg3RKSRa9zwsbP8ZyOSv+lPnb+QwM24A+OlGKLIXKnlyYmH78ZG
-         JRQAXiJZZccwiR7mKUPfWzENQloakQaA6mwhXAZ4tZKVksKsfXwrSBfAan97OINM6nN2
-         W9XiYd5fUpBCICa+xIYw8idmnKj5vnuVGrFOPb96ArdlNsjsCe/CDC0kUm4GgyuuqO4a
-         JLfajKYxwPQiWNw5bfHUFJ4J5/9JijxWAuYOA1j6BUkEwU7kVq89N5Bw3b/1UNZntHCx
-         d0J0ytJif8z2bDmGzJ2XuTkKkc3iNRxDKS41zkJ8x+mB1xk7qxQPY5nWMvwW+YeRidwX
-         OhNQ==
-X-Gm-Message-State: ACrzQf2tRLyar5/XQ9T9jxpxZ0Afo7GdnIdo0/67x/yHZ/ZcVRZ2RV4r
-        9dIolfzDS4OUq+lkzqZxuVGgOA==
-X-Google-Smtp-Source: AMsMyM5X65We0X/Ht0ZSbcTFw63RgxlYYbI+FE7dMqtjj305K9Zf1bAk4DBv3Sh3Eenfm8k5K/NJSw==
-X-Received: by 2002:a17:90b:4c52:b0:20d:7917:4cb3 with SMTP id np18-20020a17090b4c5200b0020d79174cb3mr613006pjb.6.1665513648289;
-        Tue, 11 Oct 2022 11:40:48 -0700 (PDT)
-Received: from localhost (226.75.127.34.bc.googleusercontent.com. [34.127.75.226])
-        by smtp.gmail.com with UTF8SMTPSA id w4-20020a170902ca0400b0017eea4a3979sm8860022pld.154.2022.10.11.11.40.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Oct 2022 11:40:48 -0700 (PDT)
-From:   pso@chromium.org
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Linux-Fsdevel <linux-fsdevel@vger.kernel.org>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Paramjit Oberoi <psoberoi@google.com>,
-        Paramjit Oberoi <pso@chromium.org>,
-        Anton Vorontsov <anton@enomsg.org>,
-        Colin Cross <ccross@android.com>,
-        Tony Luck <tony.luck@intel.com>
-Subject: [PATCH 1/1] pstore/ram: Ensure stable pmsg address with per-CPU ftrace buffers
-Date:   Tue, 11 Oct 2022 11:36:31 -0700
-Message-Id: <20221011113511.1.I1cf52674cd85d07b300fe3fff3ad6ce830304bb6@changeid>
-X-Mailer: git-send-email 2.38.0.rc1.362.ged0d419d3c-goog
-In-Reply-To: <20221011183630.3113666-1-pso@chromium.org>
-References: <20221011183630.3113666-1-pso@chromium.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uB6bldokknuAaLKJsybg3s1dZctnS1g1CUW11xWU7Sg=;
+        b=bqMPHXHc10KCs2EHAQKVynkXjBZnxtD8VNpivKI9xsY8tKbsilONS5XjYDHDjlNazZ
+         ZpLcFBEmFVDtpvEXlHmXFIJ3+v1UyfjXH8ApyQT8KgphGo6vvXxQlroBys9cVToT+zX4
+         EKwM7848OALsR16o/NFRdiAT2ysqmBdmfkiXb0W3iVBdktoa25Josbvg4QwCbI2MJZlh
+         7q5X6BGgPLOKLn+8cx6MO8CVtf+owq4+gEWO3DP/qjr836GxAxUCgdTOsxtKJ0tt9E3W
+         CySAlcjZTUyR3kTnI199EVXy+wQFTMA3n0Mtej4xVPqx23548fGaq0dLfB4M/Hd12/PG
+         MZoQ==
+X-Gm-Message-State: ACrzQf1HHsEcZTPitKOY5gNkck1cMYZJvMNeP8DRA1/MR1jymmIOeAGs
+        DjQrrW1gNHTMgDINdn+X9PHk9kfETN//NOCmmmJinQ==
+X-Google-Smtp-Source: AMsMyM6wzyObwD9/cQhMyvqN03QS9Mtj4DNwEd5zsF1rv9wqSdwTM8bO8KvYvlAT5uttE7E55w5+WeCon0YnA1TOgM8=
+X-Received: by 2002:a17:906:4fd1:b0:787:434f:d755 with SMTP id
+ i17-20020a1709064fd100b00787434fd755mr19354322ejw.356.1665514990307; Tue, 11
+ Oct 2022 12:03:10 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <Y0Wv6qe3r8/Djt7s@ZenIV>
+In-Reply-To: <Y0Wv6qe3r8/Djt7s@ZenIV>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Tue, 11 Oct 2022 21:02:59 +0200
+Message-ID: <CAJfpegsgtke1X7FGpMSgTGdDsOxU7kqPqf2JbOAnqgMj0XFoSQ@mail.gmail.com>
+Subject: Re: [RFC] fl_owner_t and use of filp_close() in nfs4_free_lock_stateid()
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Jeff Layton <jlayton@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Paramjit Oberoi <psoberoi@google.com>
+On Tue, 11 Oct 2022 at 20:04, Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-When allocating ftrace pstore zones, there may be space left over at the
-end of the region. The paddr pointer needs to be advanced to account for
-this so that the next region (pmsg) ends up at the correct location.
+> Another interesting question is about FUSE ->flush() - how is the
+> server supposed to use the value it gets from
+>         inarg.lock_owner = fuse_lock_owner_id(fm->fc, id);
+> in fuse_flush()?  Note that e.g. async write might be followed by
+> close() before the completion.  Moreover, it's possible to start
+> async write and do unshare(CLONE_FILES); if the descriptor table
+> used to be shared and all other threads exit after our unshare,
+> it's possible to get
+>         async write begins, fuse_send_write() called with current->files as owner
+>         flush happens, with current->files as id
+>         what used to be current->files gets freed and memory reused
+>         async write completes
+>
+> Miklos, could you give some braindump on that?
 
-Signed-off-by: Paramjit Oberoi <pso@chromium.org>
-Reviewed-by: Dmitry Torokhov <dtor@chromium.org>
-Signed-off-by: Paramjit Oberoi <psoberoi@google.com>
----
+The lock_owner in flush is supposed to be used for remote posix lock
+release [1].   I don't like posix lock semantics the least bit, and in
+hindsight it would have been better to just not try to support remote
+posix locks (nfs doesn't, so why would anyone care for it in fuse?)
+Anyway, it's probably too late to get rid of this wart now.
 
- fs/pstore/ram.c | 2 ++
- 1 file changed, 2 insertions(+)
+The lock_owner field in read/write/setattr was added for mandatory
+locking [2].  Now that support for mandatory locking has been removed
+this is dead code, I guess.  Will clean up in fuse as well.
 
-diff --git a/fs/pstore/ram.c b/fs/pstore/ram.c
-index fefe3d391d3af..3bca6cd34c02a 100644
---- a/fs/pstore/ram.c
-+++ b/fs/pstore/ram.c
-@@ -554,10 +554,12 @@ static int ramoops_init_przs(const char *name,
- 			goto fail;
- 		}
- 		*paddr += zone_sz;
-+		mem_sz -= zone_sz;
- 		prz_ar[i]->type = pstore_name_to_type(name);
- 	}
- 
- 	*przs = prz_ar;
-+	*paddr += mem_sz;
- 	return 0;
- 
- fail:
--- 
-2.38.0.rc1.362.ged0d419d3c-goog
+Thanks,
+Miklos
 
+[1] v2.6.18: 7142125937e1 ("[PATCH] fuse: add POSIX file locking support")
+[2] v2.6.24: f33321141b27 ("fuse: add support for mandatory locking")
