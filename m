@@ -1,130 +1,100 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from out1.vger.email (unknown [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D94BC5FC45D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Oct 2022 13:38:56 +0200 (CEST)
+Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
+	by mail.lfdr.de (Postfix) with ESMTP id 50AE25FC6B3
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Oct 2022 15:46:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbiJLLiy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Oct 2022 07:38:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34816 "EHLO
+        id S229871AbiJLNqV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Oct 2022 09:46:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38610 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229469AbiJLLiw (ORCPT
+        with ESMTP id S229826AbiJLNqT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Oct 2022 07:38:52 -0400
-Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5539E2C2;
-        Wed, 12 Oct 2022 04:38:51 -0700 (PDT)
-Received: by mail-ed1-x52c.google.com with SMTP id z97so24069806ede.8;
-        Wed, 12 Oct 2022 04:38:51 -0700 (PDT)
+        Wed, 12 Oct 2022 09:46:19 -0400
+Received: from mail-ej1-x629.google.com (mail-ej1-x629.google.com [IPv6:2a00:1450:4864:20::629])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62987B9785
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Oct 2022 06:46:18 -0700 (PDT)
+Received: by mail-ej1-x629.google.com with SMTP id qw20so37494810ejc.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Oct 2022 06:46:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=k0T6nmePp2TxBInBRKTNwdtk0QBcDQcNUBzlpn0r3R4=;
-        b=FhoHUghMukLhKd44RX7L+JuGjoZQW9PCBuFzYskYTSm9MZz0TYDYF9eSYlkGXFh/38
-         sROxnN8q8RXac+P3sxNYt+ZiuIAaO0qfFbKA2U7eG+R0Ugt+8jg3i7ON67hNtyTur3GQ
-         hfkvULN2Ys0k24Umbo+yvnlyN56kfg3RAaoHklJxgmWoIqzXb6/zJpCjQp5jbbLoZ9Le
-         oCxB5/3ct6TxOd9O9SPdSbNAgzDpLyD0Xnd5hsD+2rvuYKvseK4z2gbWMcZh0ufPlZu4
-         JiJylmTCW8EzV83TgK6RL6E0/YOpv7zUuJkSoJ4WjVrJgJ4Mmed/4eQHbAg15QhAwFvo
-         2hRQ==
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6spuubBZPMae2KH0MSDLc1QYT4H++OxwkE+WifF21RI=;
+        b=p72rHA9cbLgi17z4uAJ/PM0KlXaJFxUA5op94F0cDL+w1zvPL0D+JfSRE3n3AKpdQk
+         H/aWc7cQEC+scz8S7Q+03GyOtOyhOikepVm1I2GaMBEqfr3mKbVgGRVS/06KuSPESb9M
+         AGTbpCtU63hWdB6EtKhA56WpuGmpAD6gRMpmg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=k0T6nmePp2TxBInBRKTNwdtk0QBcDQcNUBzlpn0r3R4=;
-        b=4G/KGbSw+tUCJJ64Ev/+EUf2Ohi3QSoouqWdbMwE/0qvGsukubGic9WSGLlgD4s3lg
-         tNanmT+A4xZqRBFdHwmUltNGcWCU+lvXXe9h7FAvjhUbHxsVLsatBUVy0rpQYuH1FSH2
-         GJLvQmI7i7Df8KeWc6uzEqyihAxIogh9Fl1TUAgoJvjrJZMaklc4zvVQ34SQ6tt/hK+r
-         JU5205G3FSxQM6dNfl1/jqLb/c9BMOelnDSqP+1X4DN1E2fNvMFQcuiJyjBXQ5dcy2K7
-         PuYo/kzcCB52HjVNNGhdOq8/Jm2C8WKZp/iMPTqtdK4c6RuF8dbCpZ2bJEVNxE6RfgAp
-         KkOw==
-X-Gm-Message-State: ACrzQf3i+mO/phrmKqbUlEgLX6Z/vnjkuK4HQXzRGp4NrHV2d0m1AXZI
-        SFQyoA+nBwWEHDWhLLe7NZs=
-X-Google-Smtp-Source: AMsMyM5+rPMlEdXd6W15optYwDQS72MSBluQwXiMX9x7kjUTAijliQkbs6rdxrGCuf2RM4hJ01rNEA==
-X-Received: by 2002:a05:6402:3215:b0:45c:97de:b438 with SMTP id g21-20020a056402321500b0045c97deb438mr4706026eda.7.1665574729216;
-        Wed, 12 Oct 2022 04:38:49 -0700 (PDT)
-Received: from localhost.localdomain (host-87-17-81-193.retail.telecomitalia.it. [87.17.81.193])
-        by smtp.gmail.com with ESMTPSA id q7-20020a170906360700b00781d411a63csm1098854ejb.151.2022.10.12.04.38.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Oct 2022 04:38:48 -0700 (PDT)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux-foundation.org, bpf@vger.kernel.org
-Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>
-Subject: [PATCH] fs/fuse: Replace kmap() with kmap_local_page()
-Date:   Wed, 12 Oct 2022 13:23:23 +0200
-Message-Id: <20221012112323.23283-1-fmdefrancesco@gmail.com>
-X-Mailer: git-send-email 2.37.3
+        bh=6spuubBZPMae2KH0MSDLc1QYT4H++OxwkE+WifF21RI=;
+        b=CptWkr1yhZy9j1WrjoLRdm+CXT8HpkzcaoxNaSbI/OM0a3AFEMUHt0bDT+8cHjnRtC
+         zmNwfOi+RcxtnRVsvqZgwfZjZvkYik88wwvRW3lEP5W8WdRyC6xbNqzYlZhAm7o+iplF
+         vs3mLwL5d4cUWdQn2dy3ttgjtUDptlA6SK1J1jZ6D4Eg8VParyjMxqW7AqgUvKJ2gpGC
+         l2rHg4njXwIrcGmQPwfvPT9MfIJaAca7tKE/CEem1F9cBn6+z4ODsLY+VdgssCquZ8nv
+         22Vt1PhHW2QY7WOQmsF0lS8BDAYZHquq4jzeBS/7Hwf5VX72siUbjix8TTfyM+zgtDeP
+         liFQ==
+X-Gm-Message-State: ACrzQf2hnZEtXkYm2ti5BOI17ug5R4yGibvvjYyEeErA/mrM9b+eoNVA
+        j2b+z6ZH4yCqbuwp2yOS1q+7ThHr0CvPQ530Upvbgw==
+X-Google-Smtp-Source: AMsMyM4gO1Qr7n6O37HwwouesWkCNAAHFX/9bBxS3E3xd4O3QGKsOAs7e/uWYy1U6778LF81rv28AI/+ZDfGMuh+LNc=
+X-Received: by 2002:a17:907:86a7:b0:78d:f741:7f9a with SMTP id
+ qa39-20020a17090786a700b0078df7417f9amr1838481ejc.8.1665582377009; Wed, 12
+ Oct 2022 06:46:17 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20220914142632.2016571-1-jannh@google.com>
+In-Reply-To: <20220914142632.2016571-1-jannh@google.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Wed, 12 Oct 2022 15:46:06 +0200
+Message-ID: <CAJfpegsncvnDtTHEv=qT0dGoD4B4L=cukyFwwVtaq8MKiWFQjw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Remove user_ns check for FUSE_DEV_IOC_CLONE
+To:     Jann Horn <jannh@google.com>
+Cc:     Eric Biederman <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The use of kmap() is being deprecated in favor of kmap_local_page().
+On Wed, 14 Sept 2022 at 16:27, Jann Horn <jannh@google.com> wrote:
+>
+> Commit 8ed1f0e22f49e ("fs/fuse: fix ioctl type confusion") fixed a type
+> confusion bug by adding an ->f_op comparison.
+>
+> Based on some off-list discussion back then, another check was added to
+> compare the f_cred->user_ns. This is not for security reasons, but was
+> based on the idea that a FUSE device FD should be using the UID/GID
+> mappings of its f_cred->user_ns, and those translations are done using
+> fc->user_ns, which matches the f_cred->user_ns of the initial
+> FUSE device FD thanks to the check in fuse_fill_super().
+> See also commit 8cb08329b0809 ("fuse: Support fuse filesystems outside of
+> init_user_ns").
+>
+> But FUSE_DEV_IOC_CLONE is, at a higher level, a *cloning* operation that
+> copies an existing context (with a weird API that involves first opening
+> /dev/fuse, then tying the resulting new FUSE device FD to an existing FUSE
+> instance). So if an application is already passing FUSE FDs across
+> userns boundaries and dealing with the resulting ID mapping complications
+> somehow, it doesn't make much sense to block this cloning operation.
+>
+> I've heard that this check is an obstacle for some folks, and I don't see
+> a good reason to keep it, so remove it.
+>
+> Signed-off-by: Jann Horn <jannh@google.com>
 
-There are two main problems with kmap(): (1) It comes with an overhead as
-the mapping space is restricted and protected by a global lock for
-synchronization and (2) it also requires global TLB invalidation when the
-kmap’s pool wraps and it might block when the mapping space is fully
-utilized until a slot becomes available.
+I see no issues with this.   f_cred seems to be unused by the VFS, so
+this should have zero effect on anything other than rejecting or
+allowing FUSE_DEV_IOC_CLONE.
 
-With kmap_local_page() the mappings are per thread, CPU local, can take
-page faults, and can be called from any context (including interrupts).
-It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
-the tasks can be preempted and, when they are scheduled to run again, the
-kernel virtual addresses are restored and still valid.
+Applied.
 
-Therefore, replace kmap() with kmap_local_page() in fuse_readdir_cached(), 
-it being the only call site of kmap() currently left in fs/fuse.
-
-Cc: "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>
-Suggested-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
----
-
-These changes are not tested in a 32 bits VM as I use to do with other more
-problematic conversions. Mere code inspection makes me reasonably think
-that the rules of local mappings are not violated by this conversion.
-
-Furthermore, I have no idea how to test this code. If maintainers think
-that tests are absolutely necessary, any hints about how to perform them
-would be greatly appreciated.
-
- fs/fuse/readdir.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
-index b4e565711045..9e40c19e90dc 100644
---- a/fs/fuse/readdir.c
-+++ b/fs/fuse/readdir.c
-@@ -539,9 +539,9 @@ static int fuse_readdir_cached(struct file *file, struct dir_context *ctx)
- 	 * Contents of the page are now protected against changing by holding
- 	 * the page lock.
- 	 */
--	addr = kmap(page);
-+	addr = kmap_local_page(page);
- 	res = fuse_parse_cache(ff, addr, size, ctx);
--	kunmap(page);
-+	kunmap_local(addr);
- 	unlock_page(page);
- 	put_page(page);
- 
--- 
-2.37.3
-
+Thanks,
+Miklos
