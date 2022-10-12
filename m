@@ -2,86 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BABDD5FCAF6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Oct 2022 20:50:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C64FC5FCB7E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Oct 2022 21:26:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbiJLSul (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Oct 2022 14:50:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56904 "EHLO
+        id S229872AbiJLT0e convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Oct 2022 15:26:34 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229918AbiJLSuk (ORCPT
+        with ESMTP id S229748AbiJLT0b (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Oct 2022 14:50:40 -0400
-Received: from mail-yb1-xb30.google.com (mail-yb1-xb30.google.com [IPv6:2607:f8b0:4864:20::b30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE278D77D2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Oct 2022 11:50:38 -0700 (PDT)
-Received: by mail-yb1-xb30.google.com with SMTP id e20so21027268ybh.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Oct 2022 11:50:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20210112.gappssmtp.com; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=GzsUvBQiz/p5lBS4u/Z2dC0BuxrD0bfzLNa+CLSGG1E=;
-        b=qnoUrTIxp/74AFQHKigfKrsnXOFO8n2XGP0u/3jtVgb22y+sDFvTeC+hEeRTxBGUSz
-         xjP3fA91i99ibbHJpvFnRiQTEQJesuSNNgvs9x68VYP3X16be+qhMD8QlBebGvGj3mH9
-         KUKKJRHnUhYw4aKplQUaOadEgzf6ybI1TyXBw9S6ug4hUgWroYBJRCxznJtNUvQlX28F
-         HO8aH0VXBlplJT7JMuOA5EceH4m3WM/QG4Uzfm8LH8Euo13HybiuO+n4n8eSzZsd9+Dd
-         d+b9Yg+6D8HUmcvquD0rS847lWCijqjlmgFOuDnW/fhQUJySPKBd/jHk1TMCit8YgVhk
-         RwyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GzsUvBQiz/p5lBS4u/Z2dC0BuxrD0bfzLNa+CLSGG1E=;
-        b=JJP737Q7HEcoQxkkYNxiQbigjl1cKcvMZMYprqIsRTNvooeUebXn920iYkG3V7vcLo
-         qu0zZ9GaHBuP1rPmZP5pcz0idzbQ8DoU5iAXkNU9aCl07iD9Ff7MIyfdrOgEok9I0vR4
-         zJ3Vm276mWuATinbACPX6uwn7ff803TeMOCNhFIMIrLWBWqvDJF/vDXWmpOUP/SKhnFa
-         cNmIinPut7JPoRqg/ZEim5hukRju6BPGnv6gvN7Wb3ejCWYfetxe9FvNC7bnaAabdq38
-         DP9od2+8GhOjH8bup34fEjx1t8Bk7JXjeHppgcyXLkVt5sFvHofauyasfoPFuUC8YMnr
-         J3Ng==
-X-Gm-Message-State: ACrzQf3sDcgJvh9XCTnYyjS4bSdAm5OP58K36onti9Q1fL1btsu2TVSa
-        0dSdWrzgi4SbK2YT2IJvoq+oDyfYrHjJ6o0PByETPY8tqrD0XA==
-X-Google-Smtp-Source: AMsMyM6QXOKF3otTiY1TmS0NmK+SvRkLLWOsbdFWJuZ+76kqo7wg6LMifor1pSg8eYXVzx1m7qTgAgIjlrsgWfG4Buc=
-X-Received: by 2002:a05:6902:349:b0:695:9d03:e009 with SMTP id
- e9-20020a056902034900b006959d03e009mr27258423ybs.588.1665600638063; Wed, 12
- Oct 2022 11:50:38 -0700 (PDT)
+        Wed, 12 Oct 2022 15:26:31 -0400
+Received: from relay.hostedemail.com (smtprelay0011.hostedemail.com [216.40.44.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45A9910251A;
+        Wed, 12 Oct 2022 12:26:30 -0700 (PDT)
+Received: from omf12.hostedemail.com (a10.router.float.18 [10.200.18.1])
+        by unirelay01.hostedemail.com (Postfix) with ESMTP id 2096E1C6C41;
+        Wed, 12 Oct 2022 19:17:09 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: joe@perches.com) by omf12.hostedemail.com (Postfix) with ESMTPA id AB9FC17;
+        Wed, 12 Oct 2022 19:16:43 +0000 (UTC)
+Message-ID: <f8ad3ba44d28dec1a5f7626b82c5e9c2aeefa729.camel@perches.com>
+Subject: Re: [PATCH v1 3/5] treewide: use get_random_u32() when possible
+From:   Joe Perches <joe@perches.com>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        linux-kernel@vger.kernel.org
+Cc:     brcm80211-dev-list.pdl@broadcom.com, cake@lists.bufferbloat.net,
+        ceph-devel@vger.kernel.org, coreteam@netfilter.org,
+        dccp@vger.kernel.org, dev@openvswitch.org,
+        dmaengine@vger.kernel.org, drbd-dev@lists.linbit.com,
+        dri-devel@lists.freedesktop.org, kasan-dev@googlegroups.com,
+        linux-actions@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-block@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-fbdev@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-hams@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-mm@kvack.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-nfs@vger.kernel.org,
+        linux-nvme@lists.infradead.org, linux-raid@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org,
+        linux-sctp@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-usb@vger.kernel.org, linux-wireless@vger.kernel.org,
+        linux-xfs@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        lvs-devel@vger.kernel.org, netdev@vger.kernel.org,
+        netfilter-devel@vger.kernel.org, rds-devel@oss.oracle.com,
+        SHA-cyfmac-dev-list@infineon.com, target-devel@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net
+Date:   Wed, 12 Oct 2022 12:16:53 -0700
+In-Reply-To: <20221005214844.2699-4-Jason@zx2c4.com>
+References: <20221005214844.2699-1-Jason@zx2c4.com>
+         <20221005214844.2699-4-Jason@zx2c4.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 8BIT
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Wed, 12 Oct 2022 14:50:27 -0400
-Message-ID: <CAOg9mSQAvtU3rJ-My-3MUE1Uv-nc5QYyhJBO4npk-wfdiBkMOA@mail.gmail.com>
-Subject: [GIT PULL] orangefs pull request for 6.1
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Mike Marshall <hubcap@omnibond.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,
+        SPF_NONE,UNPARSEABLE_RELAY autolearn=no autolearn_force=no
+        version=3.4.6
+X-Stat-Signature: c3d78nppyrywoyngway5d943fw3wwtdu
+X-Rspamd-Server: rspamout03
+X-Rspamd-Queue-Id: AB9FC17
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-Session-ID: U2FsdGVkX1/Qw27OeRP8/mQW0Su38d7rwhSo1NO9QCw=
+X-HE-Tag: 1665602203-428634
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit 4fe89d07dcc2804c8b562f6c7896a45643d34b2f:
+On Wed, 2022-10-05 at 23:48 +0200, Jason A. Donenfeld wrote:
+> The prandom_u32() function has been a deprecated inline wrapper around
+> get_random_u32() for several releases now, and compiles down to the
+> exact same code. Replace the deprecated wrapper with a direct call to
+> the real function.
+[]
+> diff --git a/drivers/infiniband/hw/cxgb4/cm.c b/drivers/infiniband/hw/cxgb4/cm.c
+[]
+> @@ -734,7 +734,7 @@ static int send_connect(struct c4iw_ep *ep)
+>  				   &ep->com.remote_addr;
+>  	int ret;
+>  	enum chip_type adapter_type = ep->com.dev->rdev.lldi.adapter_type;
+> -	u32 isn = (prandom_u32() & ~7UL) - 1;
+> +	u32 isn = (get_random_u32() & ~7UL) - 1;
 
-  Linux 6.0 (2022-10-02 14:09:07 -0700)
+trivia:
 
-are available in the Git repository at:
+There are somewhat odd size mismatches here.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git
-tags/for-linus-6.1-ofs1
+I had to think a tiny bit if random() returned a value from 0 to 7
+and was promoted to a 64 bit value then truncated to 32 bit.
 
-for you to fetch changes up to 2ad4b6f5e1179f3879b6d4392070039e32ce55a3:
+Perhaps these would be clearer as ~7U and not ~7UL
 
-  Orangefs: change iterate to iterate_shared (2022-10-03 13:05:38 -0400)
+>  	struct net_device *netdev;
+>  	u64 params;
+>  
+> @@ -2469,7 +2469,7 @@ static int accept_cr(struct c4iw_ep *ep, struct sk_buff *skb,
+>  	}
+>  
+>  	if (!is_t4(adapter_type)) {
+> -		u32 isn = (prandom_u32() & ~7UL) - 1;
+> +		u32 isn = (get_random_u32() & ~7UL) - 1;
 
-----------------------------------------------------------------
-Orangefs: change iterate to iterate_shared
+etc...
 
-----------------------------------------------------------------
-Mike Marshall (1):
-      Orangefs: change iterate to iterate_shared
+drivers/infiniband/hw/cxgb4/cm.c:	u32 isn = (prandom_u32() & ~7UL) - 1;
+drivers/infiniband/hw/cxgb4/cm.c:		u32 isn = (prandom_u32() & ~7UL) - 1;
+drivers/net/ethernet/chelsio/inline_crypto/chtls/chtls_cm.c:	rpl5->iss = cpu_to_be32((prandom_u32() & ~7UL) - 1);
+drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:		u32 isn = (prandom_u32() & ~7UL) - 1;
+drivers/scsi/cxgbi/cxgb4i/cxgb4i.c:		u32 isn = (prandom_u32() & ~7UL) - 1;
+drivers/target/iscsi/cxgbit/cxgbit_cm.c:	rpl5->iss = cpu_to_be32((prandom_u32() & ~7UL) - 1);
 
- fs/orangefs/dir.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
