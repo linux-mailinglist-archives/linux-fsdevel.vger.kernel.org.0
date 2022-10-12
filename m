@@ -2,66 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B0FF65FCA22
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Oct 2022 19:58:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 524145FCA26
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Oct 2022 19:59:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229702AbiJLR6t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Oct 2022 13:58:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36414 "EHLO
+        id S229607AbiJLR7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Oct 2022 13:59:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229572AbiJLR6s (ORCPT
+        with ESMTP id S229653AbiJLR7R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Oct 2022 13:58:48 -0400
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B02FC1CB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Oct 2022 10:58:46 -0700 (PDT)
-Received: by mail-pl1-x62f.google.com with SMTP id f23so16946486plr.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Oct 2022 10:58:46 -0700 (PDT)
+        Wed, 12 Oct 2022 13:59:17 -0400
+Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0070BD7E3B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Oct 2022 10:59:16 -0700 (PDT)
+Received: by mail-pg1-x52f.google.com with SMTP id 128so8423204pga.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Oct 2022 10:59:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RuAk5hsnZSvAvw2wDCUvGvOXLRInHQhqvp0BW6poLwo=;
-        b=UBiG7yHuvbThq5QxATiWf8UzkROoEQsIbKTWOgvr1cSEsFd375KUdPgARAjslccbNJ
-         ArMmZ6FUehCeXjOYoYdMt01ZOVXN6/NmH+M4YoEMgUz0dm5hkTrv/+BotiKUAI+ttxbA
-         rENVdmfne7MGbUXF96giy/btcYsvzPXQDYcy4=
+        bh=n+oUQQ+NOkc0QprdtZXS+tTGPaRIPlunaMK86rsYyWQ=;
+        b=JFh6GxxkOz8JaNcKsKjPLyHe1gNpLgVVbwBt4qZ1UYBlhvxvFgWPE4AuXA93vB1nK1
+         ZPh1Ie1NBwrg37BzebmLRhO1uMB7c0BX2CZT+JvzTvUUrnSB0PtR/iYdsXbx+7mpxt3C
+         q9pFzEvSm+ujLN9icxLCXhaGoHwb3QrGaJW/U=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=RuAk5hsnZSvAvw2wDCUvGvOXLRInHQhqvp0BW6poLwo=;
-        b=UPMl5SD5IWx43mAFdEQMbKqwmuCjcOaHKQbEBtP/nCzASHjU/EiY3iCSDDVHtiPc1v
-         ZjuNKsDV0ksqlDk+OG3iXWJR/BNiBu/7+hIsHk1oI2Du42V8vv3xGVn4pONdox4IJq1v
-         1IqlxWDWY6rcMZvf+XpPiwUrA935r+apEZldX3IAz0Fi3euBFG577VjwhLQjGOfxpIPH
-         o3m3dVDNCGeWI4kGH09ehk98aUv2Wq+Xhl6vaKJRBJtbSQQ4ILKo0XNZ8fYiH/XMqVxn
-         NOZkZ2xCSzU61QK+ZuKI9lbpZiWnYpEbzhLz4LXwyRUy5P2RmSpWXkl6phv9UfqFAcRu
-         736A==
-X-Gm-Message-State: ACrzQf2XYUY7mZK4Zr28E67dQuRzhw1ZE/nmM1MrDtnYsv4FZPS8a73p
-        x3xK3NGofhONCoD/2TTJvWKy3Q==
-X-Google-Smtp-Source: AMsMyM6VWK/GmWFoY0YIGv8lIKLXnRH2iuzrFBw7I21YH03Ejw15cOU0bNxMOhtyjvn3yMX65x8nmA==
-X-Received: by 2002:a17:902:bd45:b0:17f:6b19:bf6f with SMTP id b5-20020a170902bd4500b0017f6b19bf6fmr30613889plx.73.1665597526239;
-        Wed, 12 Oct 2022 10:58:46 -0700 (PDT)
+        bh=n+oUQQ+NOkc0QprdtZXS+tTGPaRIPlunaMK86rsYyWQ=;
+        b=hvYWton7rApkdFFBAeaH2HliXSpEDT8M1cZtMCMtSed845miGIzcRr1bQhYr12atTX
+         eo6j9e3Rlr9NqhIBW6+ts3q044zmnqxd3UcmXG/eENE7pQhbCYR9KqzLd6wPS6B7Poh9
+         tVF5it6F64FoK/tPd1Tg4+abdLeqo2U2nOBkosV26FuYSOH3PUPirCzJLA+BAn8fs6gL
+         4sif5mmf0oQxM8qIxwYisgOORpP66lSm1vPudUkdoHm+4dmN+bo7UIVxLPkOfMXktDhj
+         r8hgxXWtI/tGiN8T78QF++KZlsj5Gkz2DJJ851eWSzk+vn9IYaGtgTSA7Cq5ooMrgNek
+         powQ==
+X-Gm-Message-State: ACrzQf29Oi22fp9pRE1EfFykD4Ldlp2HQxlwK186tiMGS5jLkTcIMIJp
+        t5NG3fEPa5JBt/gLX/VATyVjvQ==
+X-Google-Smtp-Source: AMsMyM4xDuOCoIFytmUw7DqbmMWbqve3w8w3bcT5sDaU5p0iV23C0mLCGZRD2rxXASIdG+/jRrZVtw==
+X-Received: by 2002:a63:188:0:b0:43c:22e9:2d10 with SMTP id 130-20020a630188000000b0043c22e92d10mr26657335pgb.12.1665597555034;
+        Wed, 12 Oct 2022 10:59:15 -0700 (PDT)
 Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id d4-20020a170902e14400b00183ba0fd54dsm3715572pla.262.2022.10.12.10.58.45
+        by smtp.gmail.com with ESMTPSA id v125-20020a622f83000000b00562ef28aac6sm134384pfv.185.2022.10.12.10.59.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 12 Oct 2022 10:58:45 -0700 (PDT)
-Date:   Wed, 12 Oct 2022 10:58:44 -0700
+        Wed, 12 Oct 2022 10:59:14 -0700 (PDT)
+Date:   Wed, 12 Oct 2022 10:59:13 -0700
 From:   Kees Cook <keescook@chromium.org>
 To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, anton@enomsg.org,
-        ccross@android.com, tony.luck@intel.com
-Subject: Re: [PATCH 2/8] pstore: Expose kmsg_bytes as a module parameter
-Message-ID: <202210120958.37D9621E8C@keescook>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ardb@kernel.org, kernel@gpiccoli.net, anton@enomsg.org,
+        ccross@android.com, Tony Luck <tony.luck@intel.com>,
+        kernel-dev@igalia.com, linux-efi@vger.kernel.org
+Subject: Re: [PATCH 0/8] Some pstore improvements
+Message-ID: <202210121059.A173694D06@keescook>
 References: <20221006224212.569555-1-gpiccoli@igalia.com>
- <20221006224212.569555-3-gpiccoli@igalia.com>
- <202210061628.76EAEB8@keescook>
- <267ccf8f-1fea-7648-ec2b-e7f4ae822ae4@igalia.com>
+ <166509868540.1834775.12982405101524535051.b4-ty@chromium.org>
+ <839e44ed-ae89-dfd4-9c38-978ce2693910@igalia.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <267ccf8f-1fea-7648-ec2b-e7f4ae822ae4@igalia.com>
+In-Reply-To: <839e44ed-ae89-dfd4-9c38-978ce2693910@igalia.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -71,84 +71,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 12, 2022 at 12:33:36PM -0300, Guilherme G. Piccoli wrote:
-> On 06/10/2022 20:32, Kees Cook wrote:
-> > [...]
-> > Doing a mount will override the result, so I wonder if there should be
-> > two variables, etc... not a concern for the normal use case.
+On Wed, Oct 12, 2022 at 12:50:50PM -0300, Guilherme G. Piccoli wrote:
+> On 06/10/2022 20:24, Kees Cook wrote:
+> > On Thu, 6 Oct 2022 19:42:04 -0300, Guilherme G. Piccoli wrote:
+> >> overall. Most of them are minors, but the implicit conversion thing
+> >> is a bit more "relevant" in a sense it's more invasive and would fit
+> >> more as a "fix".
+> >>
+> >> The code is based on v6.0, and it was tested with multiple compression
+> >> algorithms (zstd, deflate, lz4, lzo, 842) and two backends (ramoops and
+> >> efi_pstore) - I've used a QEMU UEFI guest and Steam Deck for this goal.
+> >>
+> >> [...]
 > > 
-> > Also, I've kind of wanted to get rid of a "default" for this and instead
-> > use a value based on the compression vs record sizes, etc. But I didn't
-> > explore it.
+> > Applied to for-next/pstore, thanks!
+> > 
+> > [1/8] pstore: Improve error reporting in case of backend overlap
+> >       https://git.kernel.org/kees/c/55dbe25ee4c8
+> > [2/8] pstore: Expose kmsg_bytes as a module parameter
+> >       https://git.kernel.org/kees/c/1af13c2b6324
+> > [3/8] pstore: Inform unregistered backend names as well
+> >       https://git.kernel.org/kees/c/a4f92789f799
 > > 
 > 
-> For some reason I forgot to respond that, sorry!
+> Thanks Kees! just a heads-up on how I'll proceed.
 > 
-> I didn't understand exactly how the mount would override things; I've
-> done some tests:
+> (a) Patches 1-3 were added already.
 > 
-> (1) booted with the new kmsg_bytes module parameter set to 64k, and it
-> was preserved across multiple mount/umount cycles.
+> (b) MAINTAINERS patch was reworked by yourself in the other series, so
+> I'll discard my version.
 > 
-> (2) When I manually had "-o kmsg_bytes=16k" set during the mount
-> operation, it worked as expected, setting the thing to 16k (and
-> reflecting in the module parameter, as observed in /sys/modules).
+> (c) I'll rework patches 4 and 8 and re-submit them plus patch 7
+> (including the ACK from Ard).
+> 
+> (d) Gonna discard for now patch 5, planning to test a new version on top
+> of the crypto acomp interface V2 from Ard/you.
 
-What I was imagining was the next step:
-
-(3) umount, unload the backend, load a new backend, and mount it
-    without kmsg_bytes specified -- kmsg_bytes will be 16k, not 64k.
-
-It's a pretty extreme corner-case, I realize. :) However, see below...
-
-> In the end, if you think properly, what is the purpose of kmsg_bytes?
-> Wouldn't make sense to just fill the record_size with the maximum amount
-> of data it can handle? Of course there is the partitioning thing, but in
-> the end kmsg_bytes seems a mechanism to _restrict_ the data collection,
-> so maybe the default would be a value that means "save whatever you can
-> handle" (maybe 0), and if the parameter/mount option is set, then pstore
-> would restrict the saved size.
-
-Right, kmsg_bytes is the maximum size to save from the console on a
-crash. The design of the ram backend was to handle really small amounts
-of persistent RAM -- if a single crash would eat all of it and possibly
-wrap around, it could write over useful parts at the end (since it's
-written from the end to the front). However, I think somewhere along
-the way, stricter logic was added to the ram backend:
-
-        /*
-         * Explicitly only take the first part of any new crash.
-         * If our buffer is larger than kmsg_bytes, this can never happen,
-         * and if our buffer is smaller than kmsg_bytes, we don't want the
-         * report split across multiple records.
-         */
-        if (record->part != 1)
-                return -ENOSPC;
-
-This limits it to just a single record.
-
-However, this does _not_ exist for other backends, so they will see up
-to kmsg_bytes-size dumps split across psinfo->bufsize many records. For
-the backends, this record size is not always fixed:
-
-- efi uses 1024, even though it allocates 4096 (as was pointed out earlier)
-- zone uses kmsg_bytes
-- acpi-erst uses some ACPI value from ACPI_ERST_GET_ERROR_LENGTH
-- ppc-nvram uses the configured size of nvram partition
-
-Honestly, it seems like the 64k default is huge, but I don't think it
-should be "unlimited" given the behaviors of ppc-nvram, and acpi-erst.
-For ram and efi, it's effectively unlimited because of the small bufsizes
-(and the "only 1 record" logic in ram).
-
-Existing documentation I can find online seem to imply making it smaller
-(8000 bytes[1], 16000 bytes), but without justification. Even the "main"
-documentation[2] doesn't mention it.
-
--Kees
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/pstore
-[2] https://docs.kernel.org/admin-guide/ramoops.html
+Sounds good; thanks!
 
 -- 
 Kees Cook
