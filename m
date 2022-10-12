@@ -1,74 +1,74 @@
 Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
-Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 344985FC3B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Oct 2022 12:27:18 +0200 (CEST)
+Received: from out1.vger.email (unknown [IPv6:2620:137:e000::1:20])
+	by mail.lfdr.de (Postfix) with ESMTP id D94BC5FC45D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 12 Oct 2022 13:38:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229711AbiJLK1P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Oct 2022 06:27:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56600 "EHLO
+        id S229487AbiJLLiy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Oct 2022 07:38:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34816 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229504AbiJLK1O (ORCPT
+        with ESMTP id S229469AbiJLLiw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Oct 2022 06:27:14 -0400
-Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 308935FF5A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Oct 2022 03:27:11 -0700 (PDT)
-Received: by mail-il1-x136.google.com with SMTP id i9so8503756ilv.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 12 Oct 2022 03:27:11 -0700 (PDT)
+        Wed, 12 Oct 2022 07:38:52 -0400
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF5539E2C2;
+        Wed, 12 Oct 2022 04:38:51 -0700 (PDT)
+Received: by mail-ed1-x52c.google.com with SMTP id z97so24069806ede.8;
+        Wed, 12 Oct 2022 04:38:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=shTcUn+n1p0185zAEEXZOoSragvF0HFP50MphSo5i4k=;
-        b=ZK9hn3Qb7RasSELRDq4Yja3nVTmKVO+GukyreCnt9jTt7rP8o+BYSTE1hFW3IAdcFp
-         jyTpTHfOZhN7H59OuG6UtdVXDbFCJENT8ZC0o/NdVsRayb3GuCvhAjAuTpmVSasvrFlz
-         K4wI5mKCN8ZeBTK6vHXrB4SvXwx9pB5EWW276TBAFAZnQtCR/qYEiwumBxCxKRcUuhFX
-         aqA8BebXPbA2GBETHGnkeq8ispyshxwPpMdlyHHus8x7591ekroZ2VjBYOybq90pbDoT
-         X3AMXKPXwGrXuAOM4YyoMCwRM/H07Y/wcLb6QhU8jD5+/dnSs30Y/BGKRs2UVWN4HF8b
-         PehA==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k0T6nmePp2TxBInBRKTNwdtk0QBcDQcNUBzlpn0r3R4=;
+        b=FhoHUghMukLhKd44RX7L+JuGjoZQW9PCBuFzYskYTSm9MZz0TYDYF9eSYlkGXFh/38
+         sROxnN8q8RXac+P3sxNYt+ZiuIAaO0qfFbKA2U7eG+R0Ugt+8jg3i7ON67hNtyTur3GQ
+         hfkvULN2Ys0k24Umbo+yvnlyN56kfg3RAaoHklJxgmWoIqzXb6/zJpCjQp5jbbLoZ9Le
+         oCxB5/3ct6TxOd9O9SPdSbNAgzDpLyD0Xnd5hsD+2rvuYKvseK4z2gbWMcZh0ufPlZu4
+         JiJylmTCW8EzV83TgK6RL6E0/YOpv7zUuJkSoJ4WjVrJgJ4Mmed/4eQHbAg15QhAwFvo
+         2hRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=shTcUn+n1p0185zAEEXZOoSragvF0HFP50MphSo5i4k=;
-        b=QHx3dOq9EC64XSlEU6VrqP8/DflAjKN4Ql5E6KDBgjRtiaghh/VPGj6DVVyUP+nXsF
-         P67ZUjUqThJrJTtJmTiq77RYhV8YhYtZiqFaZlGZGJ2Ytykg5UpiW1Dft5OdoMKgKJWx
-         khMrCORZJjayIiHG3uyTgk00mNzZSt0x1jYByAPXcR12foJ5lA3vK/Crn9GUKRZtCEcc
-         F9+t09J5s9tUI6Kvvz6H9OzqodooeRSd3s5F3QhH2bV9YHNYJkKG/hIbcTGZZ29WjFMN
-         rH+LFLiSNdNTDng6jn70ktZNrUDJNucQnxibQv3VrxuyD5GcHIQhr7NucDA4hJHhB78G
-         y1Rg==
-X-Gm-Message-State: ACrzQf110qxG83ErybW3o3wPVBFT51Ie5jOhIMrvdPaUuBsgyWVsRkX/
-        XWYswbhdN3//yr9IthDBXs56dD2LsumtS9m/+gj5wg==
-X-Google-Smtp-Source: AMsMyM7BwPBD6hdK6B9XcK+ymTF35t0F2yQhLBU426HoY0Bx0P53nbsRE2YauMdphAHZ/GaEVJaoQX0qhQaCKiqnd6g=
-X-Received: by 2002:a05:6e02:1aaa:b0:2fa:542c:7538 with SMTP id
- l10-20020a056e021aaa00b002fa542c7538mr14463522ilv.260.1665570430616; Wed, 12
- Oct 2022 03:27:10 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k0T6nmePp2TxBInBRKTNwdtk0QBcDQcNUBzlpn0r3R4=;
+        b=4G/KGbSw+tUCJJ64Ev/+EUf2Ohi3QSoouqWdbMwE/0qvGsukubGic9WSGLlgD4s3lg
+         tNanmT+A4xZqRBFdHwmUltNGcWCU+lvXXe9h7FAvjhUbHxsVLsatBUVy0rpQYuH1FSH2
+         GJLvQmI7i7Df8KeWc6uzEqyihAxIogh9Fl1TUAgoJvjrJZMaklc4zvVQ34SQ6tt/hK+r
+         JU5205G3FSxQM6dNfl1/jqLb/c9BMOelnDSqP+1X4DN1E2fNvMFQcuiJyjBXQ5dcy2K7
+         PuYo/kzcCB52HjVNNGhdOq8/Jm2C8WKZp/iMPTqtdK4c6RuF8dbCpZ2bJEVNxE6RfgAp
+         KkOw==
+X-Gm-Message-State: ACrzQf3i+mO/phrmKqbUlEgLX6Z/vnjkuK4HQXzRGp4NrHV2d0m1AXZI
+        SFQyoA+nBwWEHDWhLLe7NZs=
+X-Google-Smtp-Source: AMsMyM5+rPMlEdXd6W15optYwDQS72MSBluQwXiMX9x7kjUTAijliQkbs6rdxrGCuf2RM4hJ01rNEA==
+X-Received: by 2002:a05:6402:3215:b0:45c:97de:b438 with SMTP id g21-20020a056402321500b0045c97deb438mr4706026eda.7.1665574729216;
+        Wed, 12 Oct 2022 04:38:49 -0700 (PDT)
+Received: from localhost.localdomain (host-87-17-81-193.retail.telecomitalia.it. [87.17.81.193])
+        by smtp.gmail.com with ESMTPSA id q7-20020a170906360700b00781d411a63csm1098854ejb.151.2022.10.12.04.38.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Oct 2022 04:38:48 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Miklos Szeredi <miklos@szeredi.hu>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        virtualization@lists.linux-foundation.org, bpf@vger.kernel.org
+Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Subject: [PATCH] fs/fuse: Replace kmap() with kmap_local_page()
+Date:   Wed, 12 Oct 2022 13:23:23 +0200
+Message-Id: <20221012112323.23283-1-fmdefrancesco@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-References: <20220902101217.1419-1-cuiyunhui@bytedance.com> <a16957b9-9247-55f6-eb5e-f9f1c2de7580@iogearbox.net>
-In-Reply-To: <a16957b9-9247-55f6-eb5e-f9f1c2de7580@iogearbox.net>
-From:   =?UTF-8?B?6L+Q6L6J5bSU?= <cuiyunhui@bytedance.com>
-Date:   Wed, 12 Oct 2022 18:26:59 +0800
-Message-ID: <CAEEQ3wmJuaK2jw3cCKr2qoXb2Kj9qBC3=YhqEBrk0o7nx1kJKg@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] bpf: added the account of BPF running time
-To:     Daniel Borkmann <daniel@iogearbox.net>
-Cc:     corbet@lwn.net, ast@kernel.org, andrii@kernel.org,
-        martin.lau@linux.dev, song@kernel.org, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-        haoluo@google.com, jolsa@kernel.org, akpm@linux-foundation.org,
-        hannes@cmpxchg.org, david@redhat.com,
-        mail@christoph.anton.mitterer.name, ccross@google.com,
-        vincent.whitchurch@axis.com, paul.gortmaker@windriver.com,
-        peterz@infradead.org, edumazet@google.com, joshdon@google.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,42 +76,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Daniel Borkmann <daniel@iogearbox.net> =E4=BA=8E2022=E5=B9=B49=E6=9C=882=E6=
-=97=A5=E5=91=A8=E4=BA=94 23:38=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 9/2/22 12:12 PM, Yunhui Cui wrote:
-> [...]
-> > index a5f21dc3c432..9cb072f9e32b 100644
-> > --- a/include/linux/filter.h
-> > +++ b/include/linux/filter.h
-> > @@ -565,6 +565,12 @@ struct sk_filter {
-> >       struct bpf_prog *prog;
-> >   };
-> >
+The use of kmap() is being deprecated in favor of kmap_local_page().
 
-> >               ret =3D dfunc(ctx, prog->insnsi, prog->bpf_func);
-> >               stats =3D this_cpu_ptr(prog->stats);
-> > @@ -593,6 +601,11 @@ static __always_inline u32 __bpf_prog_run(const st=
-ruct bpf_prog *prog,
-> >       } else {
-> >               ret =3D dfunc(ctx, prog->insnsi, prog->bpf_func);
-> >       }
-> > +     bact =3D this_cpu_ptr(&bpftime);
-> > +     flags =3D u64_stats_update_begin_irqsave(&bact->syncp);
-> > +     u64_stats_add(&bact->nsecs, sched_clock() - start);
-> > +     u64_stats_update_end_irqrestore(&bact->syncp, flags);
-> > +
-> >       return ret;
->
-> The overhead this adds unconditionally is no-go. Have you tried using/imp=
-roving:
+There are two main problems with kmap(): (1) It comes with an overhead as
+the mapping space is restricted and protected by a global lock for
+synchronization and (2) it also requires global TLB invalidation when the
+kmap’s pool wraps and it might block when the mapping space is fully
+utilized until a slot becomes available.
 
-The commit 47c09d6a9f6794caface4ad50930460b82d7c670 can not meet
-the requirement of being able to visually see the cumulative running
-time of progs on each cpu.
+With kmap_local_page() the mappings are per thread, CPU local, can take
+page faults, and can be called from any context (including interrupts).
+It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
+the tasks can be preempted and, when they are scheduled to run again, the
+kernel virtual addresses are restored and still valid.
 
-About the overhead, how about moving the above code to
-if(static_branch_unlikely(&bpf_stats_enabled_key)) {}
-branch, like prog->stats processing ?
+Therefore, replace kmap() with kmap_local_page() in fuse_readdir_cached(), 
+it being the only call site of kmap() currently left in fs/fuse.
 
-Yunhui
+Cc: "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>
+Suggested-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+---
+
+These changes are not tested in a 32 bits VM as I use to do with other more
+problematic conversions. Mere code inspection makes me reasonably think
+that the rules of local mappings are not violated by this conversion.
+
+Furthermore, I have no idea how to test this code. If maintainers think
+that tests are absolutely necessary, any hints about how to perform them
+would be greatly appreciated.
+
+ fs/fuse/readdir.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/fuse/readdir.c b/fs/fuse/readdir.c
+index b4e565711045..9e40c19e90dc 100644
+--- a/fs/fuse/readdir.c
++++ b/fs/fuse/readdir.c
+@@ -539,9 +539,9 @@ static int fuse_readdir_cached(struct file *file, struct dir_context *ctx)
+ 	 * Contents of the page are now protected against changing by holding
+ 	 * the page lock.
+ 	 */
+-	addr = kmap(page);
++	addr = kmap_local_page(page);
+ 	res = fuse_parse_cache(ff, addr, size, ctx);
+-	kunmap(page);
++	kunmap_local(addr);
+ 	unlock_page(page);
+ 	put_page(page);
+ 
+-- 
+2.37.3
+
