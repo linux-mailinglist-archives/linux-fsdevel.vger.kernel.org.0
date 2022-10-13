@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 001D45FD015
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Oct 2022 02:24:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 954185FD003
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Oct 2022 02:24:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230353AbiJMAY2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 12 Oct 2022 20:24:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56040 "EHLO
+        id S230377AbiJMAY3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 12 Oct 2022 20:24:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbiJMAXd (ORCPT
+        with ESMTP id S231234AbiJMAYG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 12 Oct 2022 20:23:33 -0400
+        Wed, 12 Oct 2022 20:24:06 -0400
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A1E72101E1;
-        Wed, 12 Oct 2022 17:20:41 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E6DF5FFB;
+        Wed, 12 Oct 2022 17:22:51 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id AFDBB616E1;
-        Thu, 13 Oct 2022 00:20:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF295C433C1;
-        Thu, 13 Oct 2022 00:20:07 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 7B21461662;
+        Thu, 13 Oct 2022 00:22:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBD4AC433D6;
+        Thu, 13 Oct 2022 00:22:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665620409;
-        bh=65OQIF2TZJuQiwOc2TEY9Dne2mpIqXtPwuvl01EMQCs=;
+        s=k20201202; t=1665620559;
+        bh=XTvP40iNi0+Eiwq3T0oEZhoWupUubEI8vDr3+gwG8iI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KmsDvKLM+/D9lfLtbO45t64NgWwX5LssOrRrQWR2irzSG4eBTd3kvui0j+1nTrqwg
-         RBeoQn+f31dh30VgpIJm+lLQXPb2r6B6mifw3KMg/SXbYdHZDW0LLKJDgTlV8emTJm
-         9QGI1DG2kN+kWwxz68ytlQrMDBJfMx8Mkf+5vLtWE15Jr9Tr16R45ERwBHgH8x7ncl
-         zhK7KqDg3Wd2XrwRk0if9hvc21zFAxgblpIauDxx9dcOrjDgsB1dVM6XfYnsxwMiiS
-         6Ybf7SA1UOYBKiS1Ik2DRjoPiOGWSg+IHQW5abmH4p8KtElYwqBSZiosMJZZn8/R1L
-         vYP/He1HEPp6g==
+        b=RCMYEj16aIEmWQd8itssfAGXhLJciRw/zsZrAiyiFwVaaihIb3gRfidxq0Q1Z1l/l
+         Ge7W9S4pppLrGdJIy+E603havNMOct8EkLtd3L7NwcqoexVwyAtDVbYSfuHRiU9n+v
+         rFDdzEzNk1rHr+D/gS3rcy9RWaF2OcbzHtANEg3f68I9pe9tOOUbS4Pn21iYm9Nddj
+         lFVGwTEwGupxn9XfEVIRbmFfCZvx7pzIOsn2hzlcqJhRBgDL318BDA8tvfal0e1tLG
+         5lpqmVowzz/kfd98jDIhwayV09yfzbpA3GmvAoFSWGvtcRxitfjj+fFsHd3QnbF4Gk
+         7+Vcq9ZgtEPEA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dylan Yudaken <dylany@fb.com>, Jens Axboe <axboe@kernel.dk>,
         Sasha Levin <sashal@kernel.org>, viro@zeniv.linux.org.uk,
         mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
         vincent.guittot@linaro.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.19 34/63] eventfd: guard wake_up in eventfd fs calls as well
-Date:   Wed, 12 Oct 2022 20:18:08 -0400
-Message-Id: <20221013001842.1893243-34-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 27/47] eventfd: guard wake_up in eventfd fs calls as well
+Date:   Wed, 12 Oct 2022 20:21:02 -0400
+Message-Id: <20221013002124.1894077-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221013001842.1893243-1-sashal@kernel.org>
-References: <20221013001842.1893243-1-sashal@kernel.org>
+In-Reply-To: <20221013002124.1894077-1-sashal@kernel.org>
+References: <20221013002124.1894077-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -157,18 +157,18 @@ index 305d5f19093b..30eb30d6909b 100644
  
  #else /* CONFIG_EVENTFD */
 diff --git a/include/linux/sched.h b/include/linux/sched.h
-index 6d877c7e22ff..e02dc270fa2c 100644
+index dcba347cbffa..e418935f8db6 100644
 --- a/include/linux/sched.h
 +++ b/include/linux/sched.h
-@@ -934,7 +934,7 @@ struct task_struct {
+@@ -933,7 +933,7 @@ struct task_struct {
  #endif
  #ifdef CONFIG_EVENTFD
  	/* Recursion prevention for eventfd_signal() */
 -	unsigned			in_eventfd_signal:1;
 +	unsigned			in_eventfd:1;
  #endif
- #ifdef CONFIG_IOMMU_SVA
- 	unsigned			pasid_activated:1;
+ 
+ 	unsigned long			atomic_flags; /* Flags requiring atomic access. */
 -- 
 2.35.1
 
