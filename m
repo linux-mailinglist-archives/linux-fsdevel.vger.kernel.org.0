@@ -2,199 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4562B5FDB0F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Oct 2022 15:39:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 167795FDB23
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Oct 2022 15:41:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229709AbiJMNjm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Oct 2022 09:39:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55040 "EHLO
+        id S229811AbiJMNlR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Oct 2022 09:41:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35724 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229665AbiJMNjk (ORCPT
+        with ESMTP id S229475AbiJMNlQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Oct 2022 09:39:40 -0400
-Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB4EF101F;
-        Thu, 13 Oct 2022 06:39:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665668379; x=1697204379;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=86+QJDT/SSLvPd1nKHl/DgfgqghBBXSGaVbxPPteq8A=;
-  b=nl+paNQtnQOu1uCprL/xkNrA8BjDcpByz1xonw51nA/KjzshSlEe9Di1
-   /+Y8PmWtAEh2xQv1n7uVv9fcvRqe4JmZXCMM6yBes6q7RrsWHNniyb+Ci
-   fFdl2Q7gAzfF05H5f46TTwMfdwfuGykt7OUMd9dZctF8vb7hPl60JwFmY
-   q0toRcWZOId0dJLneSrPsAcUd3to0EetFKGqyvm1qTUmqKICoRLNbcOsY
-   l4tIZ4k3pe0GiiiVrQQJsNEbhmW89WRdv2cm/dNmJoxpDpswr8b+5W4sQ
-   tg796pDXyoQXPR4ahia7lZqYOEh05wtngWRd8EC6hl/BAFGXaJ3dRP5EG
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10498"; a="302694560"
-X-IronPort-AV: E=Sophos;i="5.95,180,1661842800"; 
-   d="scan'208";a="302694560"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2022 06:39:39 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10498"; a="690114910"
-X-IronPort-AV: E=Sophos;i="5.95,180,1661842800"; 
-   d="scan'208";a="690114910"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by fmsmga008.fm.intel.com with ESMTP; 13 Oct 2022 06:39:29 -0700
-Date:   Thu, 13 Oct 2022 21:34:57 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Fuad Tabba <tabba@google.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com,
-        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
-Message-ID: <20221013133457.GA3263142@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
- <d16284f5-3493-2892-38e6-f1fa5c10bdbb@redhat.com>
- <Yyi+l3+p9lbBAC4M@google.com>
- <CA+EHjTzy4iOxLF=5UX=s5v6HSB3Nb1LkwmGqoKhp_PAnFeVPSQ@mail.gmail.com>
- <20220926142330.GC2658254@chaop.bj.intel.com>
- <CA+EHjTz5yGhsxUug+wqa9hrBO60Be0dzWeWzX00YtNxin2eYHg@mail.gmail.com>
- <YzN9gYn1uwHopthW@google.com>
- <CA+EHjTw3din891hMUeRW-cn46ktyMWSdoB31pL+zWpXo_=3UVg@mail.gmail.com>
+        Thu, 13 Oct 2022 09:41:16 -0400
+Received: from mail-wr1-x42d.google.com (mail-wr1-x42d.google.com [IPv6:2a00:1450:4864:20::42d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B644341D0C;
+        Thu, 13 Oct 2022 06:41:14 -0700 (PDT)
+Received: by mail-wr1-x42d.google.com with SMTP id a10so2857169wrm.12;
+        Thu, 13 Oct 2022 06:41:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3c07vJu9MleTx0FO2FYKdcJ7U0JEh0AX+F17VGxRSZ0=;
+        b=nFSahUpINIlv8N7joE+sCuWGp8l94HE86NAtPyhjz3HrpgqD6m/OMXC2Ri1dIczVuF
+         j0RoXq5MLGGUdox5L7ekW2VmIFIBu+poV2PCrObT24Rubln9mnznIoBkkpuJevfCvPdq
+         gsO3bHoa29N//4Kzb6XATHyli3MQ68/yhvJGsorWe8VQx3xb2Nyy+ks+Iob084fd0UZU
+         Zfyy2+Idjsl22o9DYiRA2YfX0E6mKLx5rdFpE9aJZeN8HP22C5wMEZsuPJ5XCadJyA+6
+         9Q3B1spgMESrtXC8vqWAQkK16PQAl+T7LIFQV5KlfiGuhIZc49l+tMDgCjQxfR0EsR8C
+         /nEA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3c07vJu9MleTx0FO2FYKdcJ7U0JEh0AX+F17VGxRSZ0=;
+        b=3/4kEsXIEP8uWq/TAc9p9QfwBita/JafjA8IHsTjYKtaxaIGpnS+++L6vrLgnvm5QW
+         mv0Dew9gVtVbpQ/4DWgjnqJjPbQAubbguwXezQU4ju6rlTpf2/m5OVtwn68Yc8D2ql2j
+         m4hbMhWq9JJN/Gvhj5bpV5prKonkNiBmUc9Mq1Q4n1dGb0TYa+yDfsnhyo3H0iq8VUON
+         /Q2rQCV8HAPHFfJV0ZNEFwDUQSaZwKGjNWalJax13Gjm+0nWN/Bb4iTmP3mw+sM1vYOm
+         s8E//Tt6Gl38npMV5hXqf/MDoMwsUKrPkOkD9j0eKxaNmKNfwwspHeBry4Nfygj77zbl
+         sh4A==
+X-Gm-Message-State: ACrzQf1oL97po3ZLSWDcTutjrAXYIWjYPJ8mCkVS8ZrPfbKq4LfnDbzR
+        TBNqdV+i2sf5+BPyZX86G4raqmIYnkgudyQM
+X-Google-Smtp-Source: AMsMyM5AZ7lMxC2zPbhB2ubvYxLN6ZftzCHi1rbiBbuIl6BEMwdMytZGQ/RCkdPHn6yFMy+03CmYXw==
+X-Received: by 2002:adf:e305:0:b0:22e:6b55:3ed9 with SMTP id b5-20020adfe305000000b0022e6b553ed9mr22300wrj.684.1665668473154;
+        Thu, 13 Oct 2022 06:41:13 -0700 (PDT)
+Received: from rivendell (static.167.156.21.65.clients.your-server.de. [65.21.156.167])
+        by smtp.gmail.com with ESMTPSA id r5-20020a5d6945000000b0022cc0a2cbecsm2054921wrw.15.2022.10.13.06.41.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 13 Oct 2022 06:41:12 -0700 (PDT)
+Date:   Thu, 13 Oct 2022 15:41:10 +0200 (CEST)
+From:   Enrico Mioso <mrkiko.rs@gmail.com>
+To:     Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+cc:     Matthew Wilcox <willy@infradead.org>,
+        syzbot <syzbot+cceb1394467dba9c62d9@syzkaller.appspotmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+        ntfs3@lists.linux.dev
+Subject: Re: [syzbot] BUG: scheduling while atomic in
+ exit_to_user_mode_loop
+In-Reply-To: <b1f87233-58ae-0a41-8b0e-2e61cb9b70e1@paragon-software.com>
+Message-ID: <733c69dc-835b-d6ac-e459-d063bf59a21f@gmail.com>
+References: <00000000000006aa2405ea93b166@google.com> <Y0OWBChTBr86DdNv@casper.infradead.org> <b1f87233-58ae-0a41-8b0e-2e61cb9b70e1@paragon-software.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+EHjTw3din891hMUeRW-cn46ktyMWSdoB31pL+zWpXo_=3UVg@mail.gmail.com>
-X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=US-ASCII; format=flowed
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Sep 30, 2022 at 05:19:00PM +0100, Fuad Tabba wrote:
-> Hi,
-> 
-> On Tue, Sep 27, 2022 at 11:47 PM Sean Christopherson <seanjc@google.com> wrote:
-> >
-> > On Mon, Sep 26, 2022, Fuad Tabba wrote:
-> > > Hi,
-> > >
-> > > On Mon, Sep 26, 2022 at 3:28 PM Chao Peng <chao.p.peng@linux.intel.com> wrote:
-> > > >
-> > > > On Fri, Sep 23, 2022 at 04:19:46PM +0100, Fuad Tabba wrote:
-> > > > > > Then on the KVM side, its mmap_start() + mmap_end() sequence would:
-> > > > > >
-> > > > > >   1. Not be supported for TDX or SEV-SNP because they don't allow adding non-zero
-> > > > > >      memory into the guest (after pre-boot phase).
-> > > > > >
-> > > > > >   2. Be mutually exclusive with shared<=>private conversions, and is allowed if
-> > > > > >      and only if the entire gfn range of the associated memslot is shared.
-> > > > >
-> > > > > In general I think that this would work with pKVM. However, limiting
-> > > > > private<->shared conversions to the granularity of a whole memslot
-> > > > > might be difficult to handle in pKVM, since the guest doesn't have the
-> > > > > concept of memslots. For example, in pKVM right now, when a guest
-> > > > > shares back its restricted DMA pool with the host it does so at the
-> > > > > page-level.
-> >
-> > Y'all are killing me :-)
-> 
->  :D
-> 
-> > Isn't the guest enlightened?  E.g. can't you tell the guest "thou shalt share at
-> > granularity X"?  With KVM's newfangled scalable memslots and per-vCPU MRU slot,
-> > X doesn't even have to be that high to get reasonable performance, e.g. assuming
-> > the DMA pool is at most 2GiB, that's "only" 1024 memslots, which is supposed to
-> > work just fine in KVM.
-> 
-> The guest is potentially enlightened, but the host doesn't necessarily
-> know which memslot the guest might want to share back, since it
-> doesn't know where the guest might want to place the DMA pool. If I
-> understand this correctly, for this to work, all memslots would need
-> to be the same size and sharing would always need to happen at that
-> granularity.
-> 
-> Moreover, for something like a small DMA pool this might scale, but
-> I'm not sure about potential future workloads (e.g., multimedia
-> in-place sharing).
-> 
-> >
-> > > > > pKVM would also need a way to make an fd accessible again
-> > > > > when shared back, which I think isn't possible with this patch.
-> > > >
-> > > > But does pKVM really want to mmap/munmap a new region at the page-level,
-> > > > that can cause VMA fragmentation if the conversion is frequent as I see.
-> > > > Even with a KVM ioctl for mapping as mentioned below, I think there will
-> > > > be the same issue.
-> > >
-> > > pKVM doesn't really need to unmap the memory. What is really important
-> > > is that the memory is not GUP'able.
-> >
-> > Well, not entirely unguppable, just unguppable without a magic FOLL_* flag,
-> > otherwise KVM wouldn't be able to get the PFN to map into guest memory.
-> >
-> > The problem is that gup() and "mapped" are tied together.  So yes, pKVM doesn't
-> > strictly need to unmap memory _in the untrusted host_, but since mapped==guppable,
-> > the end result is the same.
-> >
-> > Emphasis above because pKVM still needs unmap the memory _somehwere_.  IIUC, the
-> > current approach is to do that only in the stage-2 page tables, i.e. only in the
-> > context of the hypervisor.  Which is also the source of the gup() problems; the
-> > untrusted kernel is blissfully unaware that the memory is inaccessible.
-> >
-> > Any approach that moves some of that information into the untrusted kernel so that
-> > the kernel can protect itself will incur fragmentation in the VMAs.  Well, unless
-> > all of guest memory becomes unguppable, but that's likely not a viable option.
-> 
-> Actually, for pKVM, there is no need for the guest memory to be
-> GUP'able at all if we use the new inaccessible_get_pfn().
+Will these tests be resumed after the fixes are merged?
+I think they are really great in point out problems - and to this end I would like to say thank you to the syzkaller project developers.
+And all involved parties for the work, the patience and continued effort in developing the VSF and all the filesystems.
 
-If pKVM can use inaccessible_get_pfn() to get pfn and can avoid GUP (I
-think that is the major concern?), do you see any other gap from
-existing API? 
+Enrico
 
-> This of
-> course goes back to what I'd mentioned before in v7; it seems that
-> representing the memslot memory as a file descriptor should be
-> orthogonal to whether the memory is shared or private, rather than a
-> private_fd for private memory and the userspace_addr for shared
-> memory. The host can then map or unmap the shared/private memory using
-> the fd, which allows it more freedom in even choosing to unmap shared
-> memory when not needed, for example.
 
-Using both private_fd and userspace_addr is only needed in TDX and other
-confidential computing scenarios, pKVM may only use private_fd if the fd
-can also be mmaped as a whole to userspace as Sean suggested.
+On Wed, 12 Oct 2022, Konstantin Komarov wrote:
 
-Thanks,
-Chao
+> Date: Wed, 12 Oct 2022 19:24:08
+> From: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+> To: Matthew Wilcox <willy@infradead.org>,
+>     syzbot <syzbot+cceb1394467dba9c62d9@syzkaller.appspotmail.com>
+> Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+>     syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk,
+>     ntfs3@lists.linux.dev
+> Subject: Re: [syzbot] BUG: scheduling while atomic in exit_to_user_mode_loop
 > 
-> Cheers,
-> /fuad
+>
+>
+> On 10/10/22 06:48, Matthew Wilcox wrote:
+>> 
+>> Yet another ntfs bug.  It's getting really noisy.  Maybe stop testing
+>> ntfs until some more bugs get fixed?
+>> 
+>
+> Hello
+> I think, that we can stop testing ntfs3 because there are several fixes in
+> development. Until they are pulled in kernel I think it is not necessary
+> to run these tests.
+>
+>> On Sat, Oct 08, 2022 at 10:55:34PM -0700, syzbot wrote:
+>>> Hello,
+>>> 
+>>> syzbot found the following issue on:
+>>> 
+>>> HEAD commit:    0326074ff465 Merge tag 'net-next-6.1' of 
+>>> git://git.kernel...
+>>> git tree:       upstream
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=15b1382a880000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=d323d85b1f8a4ed7
+>>> dashboard link: 
+>>> https://syzkaller.appspot.com/bug?extid=cceb1394467dba9c62d9
+>>> compiler:       Debian clang version 
+>>> 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU 
+>>> Binutils for Debian) 2.35.2
+>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1755e8b2880000
+>>> 
+>>> Downloadable assets:
+>>> disk image: 
+>>> https://storage.googleapis.com/syzbot-assets/c40d70ae7512/disk-0326074f.raw.xz
+>>> vmlinux: 
+>>> https://storage.googleapis.com/syzbot-assets/3603ce065271/vmlinux-0326074f.xz
+>>> mounted in repro: 
+>>> https://storage.googleapis.com/syzbot-assets/738016e3c6ba/mount_1.gz
+>>> 
+>>> IMPORTANT: if you fix the issue, please add the following tag to the 
+>>> commit:
+>>> Reported-by: syzbot+cceb1394467dba9c62d9@syzkaller.appspotmail.com
+>>> 
+>>> ntfs3: loop2: Different NTFS' sector size (1024) and media sector size 
+>>> (512)
+>>> BUG: scheduling while atomic: syz-executor.2/9901/0x00000002
+>>> 2 locks held by syz-executor.2/9901:
+>>>   #0: ffff888075f880e0 (&type->s_umount_key#47/1){+.+.}-{3:3}, at: 
+>>> alloc_super+0x212/0x920 fs/super.c:228
+>>>   #1: ffff8880678e78f0 (&sb->s_type->i_lock_key#33){+.+.}-{2:2}, at: 
+>>> spin_lock include/linux/spinlock.h:349 [inline]
+>>>   #1: ffff8880678e78f0 (&sb->s_type->i_lock_key#33){+.+.}-{2:2}, at: 
+>>> _atomic_dec_and_lock+0x9d/0x110 lib/dec_and_lock.c:28
+>>> Modules linked in:
+>>> Preemption disabled at:
+>>> [<0000000000000000>] 0x0
+>>> Kernel panic - not syncing: scheduling while atomic
+>>> CPU: 1 PID: 9901 Comm: syz-executor.2 Not tainted 
+>>> 6.0.0-syzkaller-02734-g0326074ff465 #0
+>>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS 
+>>> Google 09/22/2022
+>>> Call Trace:
+>>>   <TASK>
+>>>   __dump_stack lib/dump_stack.c:88 [inline]
+>>>   dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
+>>>   panic+0x2d6/0x715 kernel/panic.c:274
+>>>   __schedule_bug+0x1ff/0x250 kernel/sched/core.c:5725
+>>>   schedule_debug+0x1d3/0x3c0 kernel/sched/core.c:5754
+>>>   __schedule+0xfb/0xdf0 kernel/sched/core.c:6389
+>>>   schedule+0xcb/0x190 kernel/sched/core.c:6571
+>>>   exit_to_user_mode_loop+0xe5/0x150 kernel/entry/common.c:157
+>>>   exit_to_user_mode_prepare+0xb2/0x140 kernel/entry/common.c:201
+>>>   irqentry_exit_to_user_mode+0x5/0x30 kernel/entry/common.c:307
+>>>   asm_sysvec_apic_timer_interrupt+0x16/0x20 
+>>> arch/x86/include/asm/idtentry.h:649
+>>> RIP: 000f:lock_acquire+0x1e1/0x3c0
+>>> RSP: 0018:ffffc9000563f900 EFLAGS: 00000206
+>>> RAX: 1ffff92000ac7f28 RBX: 0000000000000001 RCX: ffff8880753be2f0
+>>> RDX: dffffc0000000000 RSI: ffffffff8a8d9060 RDI: ffffffff8aecb5e0
+>>> RBP: ffffc9000563fa28 R08: dffffc0000000000 R09: fffffbfff1fc4229
+>>> R10: fffffbfff1fc4229 R11: 1ffffffff1fc4228 R12: dffffc0000000000
+>>> R13: 1ffff92000ac7f24 R14: ffffc9000563f940 R15: 0000000000000246
+>>>   </TASK>
+>>> Kernel Offset: disabled
+>>> Rebooting in 86400 seconds..
+>>> 
+>>> 
+>>> ---
+>>> This report is generated by a bot. It may contain errors.
+>>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>> 
+>>> syzbot will keep track of this issue. See:
+>>> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>>> syzbot can test patches for this issue, for details see:
+>>> https://goo.gl/tpsmEJ#testing-patches
+>
+>
