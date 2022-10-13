@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EBCAD5FE5BB
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 00:58:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A0F25FE5BE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 00:58:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229678AbiJMW6F (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Oct 2022 18:58:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35758 "EHLO
+        id S229908AbiJMW6O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Oct 2022 18:58:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229716AbiJMW6B (ORCPT
+        with ESMTP id S229788AbiJMW6E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Oct 2022 18:58:01 -0400
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3B2C1781CB;
-        Thu, 13 Oct 2022 15:57:40 -0700 (PDT)
-Received: by mail-pj1-x102c.google.com with SMTP id o17-20020a17090aac1100b0020d98b0c0f4so4869042pjq.4;
-        Thu, 13 Oct 2022 15:57:40 -0700 (PDT)
+        Thu, 13 Oct 2022 18:58:04 -0400
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2901F1781CF;
+        Thu, 13 Oct 2022 15:57:41 -0700 (PDT)
+Received: by mail-pl1-x633.google.com with SMTP id f23so3135178plr.6;
+        Thu, 13 Oct 2022 15:57:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+bEHZ50zknAWwSVuOVaZwKs7lBVx2eJBqBhuGaU+czo=;
-        b=ndxCRoPIBtnV9yEqkqucLK7MfB1wgTbMmFclk3YlLb9LdvyU8Uqv32QJ6f5wTNu8/R
-         TlJN84PpYGoMrB/GPwe1yxye1V3FeVIAEag5FiMbDYDX1Fxxru79roOszf2wPUCra0aP
-         UfcPQhCkoShcf9j4koPyS5XqxAa6yWaEpZ+NMDzT1ayTaebUPMI2/RrzXI0GlFF5SaC3
-         le1iLIbqoUihFxV7P984n+1YNPoAaFQuhLTsXhFl31MggzZJ41qQel0zrKaNSGNEt63T
-         SIqzmKClO7Ne1AK9+vdhoLPLFOI1+KlmzoixfTR8yBRhoMVAub6D7B5wZWTbMYb2Jq1B
-         mPrQ==
+        bh=N9bFubddI7+LphibKGGsyeFrDKSrtJVqH6WoZiz/0OA=;
+        b=izj+aFrM2A2YLCP8N2Z1OeEPjJ3QDtEAYp3/EAZxWX84usO2nGiTCNwPOiEljhuObH
+         GT8PZO9wo+C0EyBnKLTSwja7tYV0oUy39jQjvPjZcZrlpZdvh1AUvw47wgTod2EV1O4A
+         Q6l91qtcBv3ko1ZYGIBptB3q4weFCVJAh9/Ft/SPwRBv/CrXPsVeAgBy1AzvRGxBYRnm
+         f4lF2st1UCtoh7vPNM512wR2oK64S1kRtc7ZbkHaJWWhlkw9uo2CPiklkzNZ4waG5O9b
+         gYoLljt/LHA1LuLDXW1tyRh637U72Kb9ZTpV2yXjrNfw4t+Y/rRgYOWFSTxkBYm9vM5S
+         LI0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+bEHZ50zknAWwSVuOVaZwKs7lBVx2eJBqBhuGaU+czo=;
-        b=4lpQoNheb7IbK9eRz0IUNxfpHgAsws/OaWxPALDsyOAjyL92P0Isvbwr9v0K8196xC
-         JCTvkOFSFtb4IyM6U+vorcGpNeb4x+7D/cwujwmvyNMI4VxzqwNwU16bCFLpG2CoImt3
-         zFGtg5Wpjc3xrW3ePmGlqiuLopO4o/+h46DNMWMUHxkOGGHBOT8/oBSSFuK/Jclc/QzT
-         FEAr9jqX7jfYA5YH3+2OfXqJqSnFKX91UWMaiYVmueFPQSq2PHHOPyYxbOUQelc8RPi9
-         r4zZD2nHTOmYALo/w6SUk+tu7mKnWiaCqJUYU3TJM3cQUnk0CPXZxui2+EeAPpTneGOG
-         jkeQ==
-X-Gm-Message-State: ACrzQf08dqeC087ix57LMEtNDmJY4cucNk2rQnLEzrGMksNKW3rOAv25
-        ZZGLjpdcNCULOJ7epn0dchY=
-X-Google-Smtp-Source: AMsMyM4c1cHRSG98hG5/OvxLX0FDFpQEhZl0xEjE8zZokv+3BiL6i+jp5GFbLHdoyKu7cO8oxCo9Uw==
-X-Received: by 2002:a17:903:30d4:b0:184:fadd:ec27 with SMTP id s20-20020a17090330d400b00184faddec27mr2063368plc.44.1665701849770;
-        Thu, 13 Oct 2022 15:57:29 -0700 (PDT)
+        bh=N9bFubddI7+LphibKGGsyeFrDKSrtJVqH6WoZiz/0OA=;
+        b=kghgYM2Cm9oiwv2aPGLXZlZ2DcBLFh95BCPWW/VuiMyVikJ1RCDsVkKADJTzz5vLqJ
+         KKv+lyspvsd/pueD1FSgVp6JjUE7/FATEhBm8F663o+e3umhr2thp8hy3+hfG6PHb+qy
+         ApH1ezYPZYWoFhF6NUi7fHM2PmitqGf/GD624sbIX6dy/SfTHRh4lisSBMQVXyVPlZvP
+         4ExpbRQkmGD6/A7ZKtOcEDKj/PulidtglhlHMwGyoORIGGLgHTHOdf+zDYGUSWglulCw
+         RJOioI7zKQWF3FB3HVXaU6z0S2QBGYg30nuDm1ED9jtcT75UCC4RC3xq6r0tETGH9emE
+         Ndhw==
+X-Gm-Message-State: ACrzQf01d0RFbCgGbsjQDM2jED2zoLkUX2Hp0LiSyyy0APuja2GFurjJ
+        wpkni0bm3df12PnT9ODlaHHhS1Glsn4qOg==
+X-Google-Smtp-Source: AMsMyM4+mX8wZ+lqkAPXL//k45qm7r2YiR8F+rJTouER/FcREWcnYsnlEXuxCOR0dVytZN+0gT0GjQ==
+X-Received: by 2002:a17:90b:384:b0:20d:aa78:92da with SMTP id ga4-20020a17090b038400b0020daa7892damr5173642pjb.159.1665701851641;
+        Thu, 13 Oct 2022 15:57:31 -0700 (PDT)
 Received: from vmfolio.. (c-76-102-73-225.hsd1.ca.comcast.net. [76.102.73.225])
-        by smtp.googlemail.com with ESMTPSA id lx4-20020a17090b4b0400b001fde655225fsm7480269pjb.2.2022.10.13.15.57.28
+        by smtp.googlemail.com with ESMTPSA id lx4-20020a17090b4b0400b001fde655225fsm7480269pjb.2.2022.10.13.15.57.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Oct 2022 15:57:28 -0700 (PDT)
+        Thu, 13 Oct 2022 15:57:30 -0700 (PDT)
 From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
 To:     akpm@linux-foundation.org
 Cc:     willy@infradead.org, hughd@google.com,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org,
         "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH v2 1/2] filemap: find_lock_entries() now updates start offset
-Date:   Thu, 13 Oct 2022 15:57:07 -0700
-Message-Id: <20221013225708.1879-2-vishal.moola@gmail.com>
+Subject: [PATCH v2 2/2] filemap: find_get_entries() now updates start offset
+Date:   Thu, 13 Oct 2022 15:57:08 -0700
+Message-Id: <20221013225708.1879-3-vishal.moola@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20221013225708.1879-1-vishal.moola@gmail.com>
 References: <20221013225708.1879-1-vishal.moola@gmail.com>
@@ -74,33 +74,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Initially, find_lock_entries() was being passed in the start offset as a
+Initially, find_get_entries() was being passed in the start offset as a
 value. That left the calculation of the offset to the callers. This led
 to complexity in the callers trying to keep track of the index.
 
-Now find_lock_entires() takes in a pointer to the start offset and
+Now find_get_entires() takes in a pointer to the start offset and
 updates the value to be directly after the last entry found. If no entry is
 found, the offset is not changed. This gets rid of multiple hacky
 calculations that kept track of the start offset.
 
 Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 ---
- mm/filemap.c  | 17 +++++++++++++----
+ mm/filemap.c  | 15 ++++++++++++---
  mm/internal.h |  2 +-
- mm/shmem.c    |  8 ++------
- mm/truncate.c | 11 +++--------
- 4 files changed, 19 insertions(+), 19 deletions(-)
+ mm/shmem.c    | 11 ++++-------
+ mm/truncate.c | 19 +++++++------------
+ 4 files changed, 24 insertions(+), 23 deletions(-)
 
 diff --git a/mm/filemap.c b/mm/filemap.c
-index c943d1b90cc2..b6aaded95132 100644
+index b6aaded95132..ed66fecf06d9 100644
 --- a/mm/filemap.c
 +++ b/mm/filemap.c
-@@ -2090,16 +2090,16 @@ unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
+@@ -2053,10 +2053,10 @@ static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
   *
   * Return: The number of entries which were found.
   */
--unsigned find_lock_entries(struct address_space *mapping, pgoff_t start,
-+unsigned find_lock_entries(struct address_space *mapping, pgoff_t *start,
+-unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
++unsigned find_get_entries(struct address_space *mapping, pgoff_t *start,
  		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices)
  {
 -	XA_STATE(xas, &mapping->i_pages, start);
@@ -108,16 +108,9 @@ index c943d1b90cc2..b6aaded95132 100644
  	struct folio *folio;
  
  	rcu_read_lock();
- 	while ((folio = find_get_entry(&xas, end, XA_PRESENT))) {
- 		if (!xa_is_value(folio)) {
--			if (folio->index < start)
-+			if (folio->index < *start)
- 				goto put;
- 			if (folio->index + folio_nr_pages(folio) - 1 > end)
- 				goto put;
-@@ -2120,8 +2120,17 @@ unsigned find_lock_entries(struct address_space *mapping, pgoff_t start,
- put:
- 		folio_put(folio);
+@@ -2065,8 +2065,17 @@ unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
+ 		if (!folio_batch_add(fbatch, folio))
+ 			break;
  	}
 -	rcu_read_unlock();
  
@@ -135,75 +128,110 @@ index c943d1b90cc2..b6aaded95132 100644
  }
  
 diff --git a/mm/internal.h b/mm/internal.h
-index 785409805ed7..14625de6714b 100644
+index 14625de6714b..e87982cf1d48 100644
 --- a/mm/internal.h
 +++ b/mm/internal.h
-@@ -104,7 +104,7 @@ static inline void force_page_cache_readahead(struct address_space *mapping,
- 	force_page_cache_ra(&ractl, nr_to_read);
- }
+@@ -106,7 +106,7 @@ static inline void force_page_cache_readahead(struct address_space *mapping,
  
--unsigned find_lock_entries(struct address_space *mapping, pgoff_t start,
-+unsigned find_lock_entries(struct address_space *mapping, pgoff_t *start,
+ unsigned find_lock_entries(struct address_space *mapping, pgoff_t *start,
  		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices);
- unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
+-unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
++unsigned find_get_entries(struct address_space *mapping, pgoff_t *start,
  		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices);
+ void filemap_free_folio(struct address_space *mapping, struct folio *folio);
+ int truncate_inode_folio(struct address_space *mapping, struct folio *folio);
 diff --git a/mm/shmem.c b/mm/shmem.c
-index 42e5888bf84d..9e17a2b0dc43 100644
+index 9e17a2b0dc43..8c3c2ac15759 100644
 --- a/mm/shmem.c
 +++ b/mm/shmem.c
-@@ -932,21 +932,18 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+@@ -983,7 +983,7 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 	while (index < end) {
+ 		cond_resched();
  
- 	folio_batch_init(&fbatch);
- 	index = start;
--	while (index < end && find_lock_entries(mapping, index, end - 1,
-+	while (index < end && find_lock_entries(mapping, &index, end - 1,
- 			&fbatch, indices)) {
+-		if (!find_get_entries(mapping, index, end - 1, &fbatch,
++		if (!find_get_entries(mapping, &index, end - 1, &fbatch,
+ 				indices)) {
+ 			/* If all gone or hole-punch or unfalloc, we're done */
+ 			if (index == start || end != -1)
+@@ -995,13 +995,12 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
  		for (i = 0; i < folio_batch_count(&fbatch); i++) {
  			folio = fbatch.folios[i];
  
 -			index = indices[i];
--
  			if (xa_is_value(folio)) {
  				if (unfalloc)
  					continue;
- 				nr_swaps_freed += !shmem_free_swap(mapping,
--								index, folio);
-+							indices[i], folio);
- 				continue;
- 			}
--			index += folio_nr_pages(folio) - 1;
- 
- 			if (!unfalloc || !folio_test_uptodate(folio))
+-				if (shmem_free_swap(mapping, index, folio)) {
++				if (shmem_free_swap(mapping, indices[i], folio)) {
+ 					/* Swap was replaced by page: retry */
+-					index--;
++					index = indices[i];
+ 					break;
+ 				}
+ 				nr_swaps_freed++;
+@@ -1014,19 +1013,17 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 				if (folio_mapping(folio) != mapping) {
+ 					/* Page was replaced by swap: retry */
+ 					folio_unlock(folio);
+-					index--;
++					index = indices[i];
+ 					break;
+ 				}
+ 				VM_BUG_ON_FOLIO(folio_test_writeback(folio),
+ 						folio);
  				truncate_inode_folio(mapping, folio);
-@@ -955,7 +952,6 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
+ 			}
+-			index = folio->index + folio_nr_pages(folio) - 1;
+ 			folio_unlock(folio);
+ 		}
  		folio_batch_remove_exceptionals(&fbatch);
  		folio_batch_release(&fbatch);
- 		cond_resched();
 -		index++;
  	}
  
- 	same_folio = (lstart >> PAGE_SHIFT) == (lend >> PAGE_SHIFT);
+ 	spin_lock_irq(&info->lock);
 diff --git a/mm/truncate.c b/mm/truncate.c
-index 0b0708bf935f..9fbe282e70ba 100644
+index 9fbe282e70ba..faeeca45d4ed 100644
 --- a/mm/truncate.c
 +++ b/mm/truncate.c
-@@ -361,9 +361,8 @@ void truncate_inode_pages_range(struct address_space *mapping,
+@@ -400,7 +400,7 @@ void truncate_inode_pages_range(struct address_space *mapping,
+ 	index = start;
+ 	while (index < end) {
+ 		cond_resched();
+-		if (!find_get_entries(mapping, index, end - 1, &fbatch,
++		if (!find_get_entries(mapping, &index, end - 1, &fbatch,
+ 				indices)) {
+ 			/* If all gone from start onwards, we're done */
+ 			if (index == start)
+@@ -414,21 +414,18 @@ void truncate_inode_pages_range(struct address_space *mapping,
+ 			struct folio *folio = fbatch.folios[i];
+ 
+ 			/* We rely upon deletion not changing page->index */
+-			index = indices[i];
+ 
+ 			if (xa_is_value(folio))
+ 				continue;
+ 
+ 			folio_lock(folio);
+-			VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
++			VM_BUG_ON_FOLIO(!folio_contains(folio, indices[i]), folio);
+ 			folio_wait_writeback(folio);
+ 			truncate_inode_folio(mapping, folio);
+ 			folio_unlock(folio);
+-			index = folio_index(folio) + folio_nr_pages(folio) - 1;
+ 		}
+ 		truncate_folio_batch_exceptionals(mapping, &fbatch, indices);
+ 		folio_batch_release(&fbatch);
+-		index++;
+ 	}
+ }
+ EXPORT_SYMBOL(truncate_inode_pages_range);
+@@ -636,16 +633,15 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
  
  	folio_batch_init(&fbatch);
  	index = start;
--	while (index < end && find_lock_entries(mapping, index, end - 1,
-+	while (index < end && find_lock_entries(mapping, &index, end - 1,
- 			&fbatch, indices)) {
--		index = indices[folio_batch_count(&fbatch) - 1] + 1;
- 		truncate_folio_batch_exceptionals(mapping, &fbatch, indices);
- 		for (i = 0; i < folio_batch_count(&fbatch); i++)
- 			truncate_cleanup_folio(fbatch.folios[i]);
-@@ -510,20 +509,17 @@ unsigned long invalidate_mapping_pagevec(struct address_space *mapping,
- 	int i;
- 
- 	folio_batch_init(&fbatch);
--	while (find_lock_entries(mapping, index, end, &fbatch, indices)) {
-+	while (find_lock_entries(mapping, &index, end, &fbatch, indices)) {
+-	while (find_get_entries(mapping, index, end, &fbatch, indices)) {
++	while (find_get_entries(mapping, &index, end, &fbatch, indices)) {
  		for (i = 0; i < folio_batch_count(&fbatch); i++) {
  			struct folio *folio = fbatch.folios[i];
  
@@ -211,24 +239,37 @@ index 0b0708bf935f..9fbe282e70ba 100644
 -			index = indices[i];
  
  			if (xa_is_value(folio)) {
- 				count += invalidate_exceptional_entry(mapping,
--								      index,
--								      folio);
-+							     indices[i], folio);
+ 				if (!invalidate_exceptional_entry2(mapping,
+-						index, folio))
++						indices[i], folio))
+ 					ret = -EBUSY;
  				continue;
  			}
--			index += folio_nr_pages(folio) - 1;
+@@ -655,13 +651,13 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+ 				 * If folio is mapped, before taking its lock,
+ 				 * zap the rest of the file in one hit.
+ 				 */
+-				unmap_mapping_pages(mapping, index,
+-						(1 + end - index), false);
++				unmap_mapping_pages(mapping, indices[i],
++						(1 + end - indices[i]), false);
+ 				did_range_unmap = 1;
+ 			}
  
- 			ret = mapping_evict_folio(mapping, folio);
- 			folio_unlock(folio);
-@@ -542,7 +538,6 @@ unsigned long invalidate_mapping_pagevec(struct address_space *mapping,
+ 			folio_lock(folio);
+-			VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
++			VM_BUG_ON_FOLIO(!folio_contains(folio, indices[i]), folio);
+ 			if (folio->mapping != mapping) {
+ 				folio_unlock(folio);
+ 				continue;
+@@ -684,7 +680,6 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
  		folio_batch_remove_exceptionals(&fbatch);
  		folio_batch_release(&fbatch);
  		cond_resched();
 -		index++;
  	}
- 	return count;
- }
+ 	/*
+ 	 * For DAX we invalidate page tables after invalidating page cache.  We
 -- 
 2.36.1
 
