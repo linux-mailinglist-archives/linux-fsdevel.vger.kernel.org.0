@@ -2,156 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4588A5FD568
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Oct 2022 09:12:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B232E5FD5DB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 13 Oct 2022 10:01:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229635AbiJMHMG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Oct 2022 03:12:06 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35584 "EHLO
+        id S229714AbiJMIBv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Oct 2022 04:01:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45226 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbiJMHLh (ORCPT
+        with ESMTP id S229511AbiJMIBu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Oct 2022 03:11:37 -0400
-Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BEEDFF8D9
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Oct 2022 00:11:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1665645095; x=1697181095;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=s9hcQcdAlAzyhKMWI+wdGejeFtAk0WjChyhpIcsu+pQ=;
-  b=alhLEYjBtajCJvbOJZ+6kYgq9bO1W/+4vedZoUOAoaRByPo3kBhnbFze
-   AOlbQ/VsaznfIsch1J1kmfbCJgL7tlcCu/A6m/PjnzB2YS47xwb92T/P8
-   Fpx23VPxx2kto7QD85WxMHrWjKxAYg2EVNB3IlPsrcfxki+DOb6hax5du
-   chBO9Btkv3CsdxKWUyUEJsEbFxUJK7egIK3JP7/L4cG3+ZXAiDhiT2gX8
-   +tc4JMAI2s0xZGZ3MSylRQc5gWYOv+2l4BzpZOkT1TRxLDiB74njvKKVu
-   HiHK4aNkBFnMZH2EjCldCRqUO16rvQ1qx5T0MfPd9ICkg1xf6br5dTONL
-   Q==;
-X-IronPort-AV: E=Sophos;i="5.95,180,1661788800"; 
-   d="scan'208";a="214073742"
-Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 13 Oct 2022 15:11:34 +0800
-IronPort-SDR: NjicfIMRV94XBMdDfJCtsLW0aGLmthjI9X3u/XaikfxOSyHOhJeBZtVnHdRqMsyqc6v0SiBMuw
- KaCUiHTswp2HvDgQNm8JNlS6xLq0ZfhFIy+OT/aZqFlbyaDWeocppkvVd/ahlk90BQF7QQuG9v
- 1eX1eLSzVEDvHk6b20v7Eop4pl0U7RVvkK+kHlB90JoPxX/X1OOyCJOqj3RRoOSW89PYHBRafd
- zPG4isKdkZw06HzTFLZ5GcrQtEFHx7sKouIR2bxNabIXZT7dpvf7uU5G0t/6DVE1stVuQUJlln
- NarEmzkLfmJjV8a9jxMuqGU9
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 12 Oct 2022 23:31:12 -0700
-IronPort-SDR: qLR37W8lk+WVr/Z0vDvbbsI5dod7q9TCEg/6MdzLLtlugdBbnS2dzTGMip8FvdWS+6HmyyeXjG
- 67Dy6fkIQDeg1cn/iCr/onGeA2e+0Ttzb7fXCnoSD8waJCy/a4DqzMQyHkquEFx4uPHV7v0kXS
- 6G0RLR3TS4GfcaePgLcjB8b/D9eqg6ocUIKG9QiJkvEGVBGlUTtXiURjRjzlh9a3D5/V819WON
- +f+0SCrg1MriTVqOb/igyxE39Yfz2vp0zC44KqOSWJyeeWPxRPsgnQ988VHOR/QcYeqaOxsxY4
- vLk=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Oct 2022 00:11:34 -0700
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Mp10P6J47z1RwqL
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Oct 2022 00:11:33 -0700 (PDT)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1665645092; x=1668237093; bh=s9hcQcdAlAzyhKMWI+wdGejeFtAk0WjChyh
-        pIcsu+pQ=; b=E2qH8RgJd3gtBWYAORPFpgQaSWrC9PBc2Az25CwFOjOp7LLwl6k
-        jvPcf8DEeRTKatzK97j5Z7Nd+h8tZefe47khQ5qrcJwCV9ICM2gLmslL34WENuqK
-        d5FPrWZLObqk0R5O8Oac8mAl5oGW21cp0tICCtp+wHRRZ2aVCiGse1C7DH+KM86M
-        bD0pIuFXhNNtDKFod35yzP0p5j9GOnEPNLk7RKi+/kPBh0RkMZ5xZTsWGFmyCTJr
-        4jZ6poKF3w5HHS9HaYf4DOTMPRXGh1gXNbLPgItU2S+M3GgVUhH55cuMhTipeyqd
-        E9S/6AfN2/JPDNgqLHEMQy1MYC5RujDpOaw==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id NKT_ofWTrj7j for <linux-fsdevel@vger.kernel.org>;
-        Thu, 13 Oct 2022 00:11:32 -0700 (PDT)
-Received: from [10.89.85.169] (c02drav6md6t.dhcp.fujisawa.hgst.com [10.89.85.169])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Mp10L5vWSz1RvLy;
-        Thu, 13 Oct 2022 00:11:30 -0700 (PDT)
-Message-ID: <bf1b053d-ffa6-48ab-d2d2-d59ab21afc19@opensource.wdc.com>
-Date:   Thu, 13 Oct 2022 16:11:29 +0900
+        Thu, 13 Oct 2022 04:01:50 -0400
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C974F0357
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Oct 2022 01:01:49 -0700 (PDT)
+Received: by mail-il1-f200.google.com with SMTP id n6-20020a056e021ba600b002fc99858e34so935545ili.14
+        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Oct 2022 01:01:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5tyGVMnECA3wWyWqGy8dFnwc4HRs2yeTj/5aiMiOJ64=;
+        b=yqic/u9kbwfTBo1TBbtFwQyWzP9cEi/6MecjlhZk2RgJasQCEnUjG4RKa64ePJ3Mwy
+         dHT56gLtd+JKCR38bBIFMySyTLk0oLktH1kCn3l+ouGvjOA9Bta63gKxkR20u8AkMjPn
+         xvtB6m57cjDlbHo9Gx4kKkGwqJkNrUd0kzclRUoT+HXpVwjdbnok/VGOjmZaF1/DHBjx
+         u00Ztn+DmaKsbynHtUrzGl27mSK7JgFu7Q31HkRLUil7LDos1FZNCX2KVxRiMLA9uF1U
+         M92z6syDvd27h4HxjQdWsfrKppNTOsBXj9N3Cg01R5OKMfNpNX8UpoqRQfCGa4kkxkFx
+         ga2g==
+X-Gm-Message-State: ACrzQf3q6/FCjPCAPUpUHrnTIoRHUznCiayySodICuOLLuhayTKExa+r
+        cbm75VNnMhuxMMEK9FgxttlQf5RDwAMk3j5VdQTGWXQ58AiT
+X-Google-Smtp-Source: AMsMyM6amQad36+UbgWoUTL+SJ1LBojpAequ4ZbVdAi++eGm+30anfSxBXn40Il+BqVIO3Zi9GU6Z/137tUUMaEjqqEk23q/R8cw
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.3.2
-Subject: Re: TI: X15 the connected SSD is not detected on Linux next 20221006
- tag
-Content-Language: en-US
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, regressions@lists.linux.dev,
-        "open list:LIBATA SUBSYSTEM (Serial and Parallel ATA drivers)" 
-        <linux-ide@vger.kernel.org>, lkft-triage@lists.linaro.org,
-        Lukas Bulwahn <lukas.bulwahn@gmail.com>
-Cc:     Niklas Cassel <niklas.cassel@wdc.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>
-References: <CA+G9fYvRXkjeO+yDEQxwJ8+GjSmwhZ7XHHAaVWAsxAaSngj5gg@mail.gmail.com>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <CA+G9fYvRXkjeO+yDEQxwJ8+GjSmwhZ7XHHAaVWAsxAaSngj5gg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6602:160c:b0:68a:9ed3:e6ff with SMTP id
+ x12-20020a056602160c00b0068a9ed3e6ffmr14967679iow.207.1665648108435; Thu, 13
+ Oct 2022 01:01:48 -0700 (PDT)
+Date:   Thu, 13 Oct 2022 01:01:48 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d2fe6805eae5ebff@google.com>
+Subject: [syzbot] kernel BUG in truncate_inode_pages_range
+From:   syzbot <syzbot+67418a97d2c47464ca17@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/10/12 16:24, Naresh Kamboju wrote:
-> On TI beagle board x15 the connected SSD is not detected on linux next
-> 20221006 tag.
-> 
-> + export STORAGE_DEV=/dev/disk/by-id/ata-SanDisk_SSD_PLUS_120GB_190702A00D84
-> + STORAGE_DEV=/dev/disk/by-id/ata-SanDisk_SSD_PLUS_120GB_190702A00D84
-> + test -n /dev/disk/by-id/ata-SanDisk_SSD_PLUS_120GB_190702A00D84
-> + echo y
-> + mkfs.ext4 /dev/disk/by-id/ata-SanDisk_SSD_PLUS_120GB_190702A00D84
-> mke2fs 1.46.5 (30-Dec-2021)
-> The file /dev/disk/by-id/ata-SanDisk_SSD_PLUS_120GB_190702A00D84 does
-> not exist and no size was specified.
-> + lava-test-raise 'mkfs.ext4
-> /dev/disk/by-id/ata-SanDisk_SSD_PLUS_120GB_190702A00D84 failed; job
-> exit'
-> 
-> Test log:
->  - https://lkft.validation.linaro.org/scheduler/job/5634743#L2580
-> 
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> 
-> metadata:
->   git_ref: master
->   git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
->   git_sha: 7da9fed0474b4cd46055dd92d55c42faf32c19ac
->   git_describe: next-20221006
->   kernel_version: 6.0.0
->   kernel-config: https://builds.tuxbuild.com/2FkkkZ51ZYhBL1G8D69YX8Pkt5F/config
->   build-url: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next/-/pipelines/659754170
->   artifact-location: https://builds.tuxbuild.com/2FkkkZ51ZYhBL1G8D69YX8Pkt5F
->   toolchain: gcc-10
+Hello,
 
-The kernel messages that are shown in the links above do not show any "libata
-version 3.00 loaded." message nor any ata/ahci message that I can see. So I
-think the eSATA adapter is not even being detected and libata/ahci driver not used.
+syzbot found the following issue on:
 
-Was this working before ? If yes, can you try with the following patches reverted ?
+HEAD commit:    493ffd6605b2 Merge tag 'ucount-rlimits-cleanups-for-v5.19'..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15d3b31a880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d19f5d16783f901
+dashboard link: https://syzkaller.appspot.com/bug?extid=67418a97d2c47464ca17
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
 
-d3243965f24a ("ata: make PATA_PLATFORM selectable only for suitable architectures")
-3ebe59a54111 ("ata: clean up how architectures enable PATA_PLATFORM and
-PATA_OF_PLATFORM")
+Unfortunately, I don't have any reproducer for this issue yet.
 
-If reverting these patches restores the eSATA port on this board, then you need
-to fix the defconfig for that board.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/f1ff6481e26f/disk-493ffd66.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/101bd3c7ae47/vmlinux-493ffd66.xz
 
--- 
-Damien Le Moal
-Western Digital Research
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+67418a97d2c47464ca17@syzkaller.appspotmail.com
 
+ sb_set_blocksize block/bdev.c:161 [inline]
+ sb_min_blocksize+0xc0/0x180 block/bdev.c:177
+ isofs_fill_super+0xa28/0x28d0 fs/isofs/inode.c:658
+ mount_bdev+0x26c/0x3a0 fs/super.c:1400
+ legacy_get_tree+0xea/0x180 fs/fs_context.c:610
+ vfs_get_tree+0x88/0x270 fs/super.c:1530
+ do_new_mount+0x289/0xad0 fs/namespace.c:3040
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount+0x2d3/0x3c0 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+------------[ cut here ]------------
+kernel BUG at mm/truncate.c:424!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 1 PID: 27836 Comm: syz-executor.2 Not tainted 6.0.0-syzkaller-09423-g493ffd6605b2 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
+RIP: 0010:truncate_inode_pages_range+0x1548/0x1780 mm/truncate.c:424
+Code: e8 ad 0e ce ff 4c 89 ff 48 c7 c6 20 50 98 8a e8 de 24 0a 00 0f 0b e8 97 0e ce ff 4c 89 ff 48 c7 c6 80 4f 98 8a e8 c8 24 0a 00 <0f> 0b e8 e1 96 6d 08 e8 7c 0e ce ff 4c 89 e7 48 c7 c6 20 50 98 8a
+RSP: 0018:ffffc9000916f7c0 EFLAGS: 00010246
+RAX: 0d16a9ba1ff17c00 RBX: fffffffffffff880 RCX: 0000000000040000
+RDX: ffffc9000a999000 RSI: 000000000003ffff RDI: 0000000000040000
+RBP: ffffc9000916f9f0 R08: ffffffff81e2ae1b R09: ffffed10173667f1
+R10: ffffed10173667f1 R11: 1ffff110173667f0 R12: 00000000000007ff
+R13: 0000000000000002 R14: 0000000000000001 R15: ffffea0001e08c00
+FS:  00007f3cf4838700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c0247f4320 CR3: 00000000268a5000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ kill_bdev block/bdev.c:76 [inline]
+ set_blocksize+0x2ec/0x360 block/bdev.c:152
+ sb_set_blocksize block/bdev.c:161 [inline]
+ sb_min_blocksize+0xc0/0x180 block/bdev.c:177
+ isofs_fill_super+0xa28/0x28d0 fs/isofs/inode.c:658
+ mount_bdev+0x26c/0x3a0 fs/super.c:1400
+ legacy_get_tree+0xea/0x180 fs/fs_context.c:610
+ vfs_get_tree+0x88/0x270 fs/super.c:1530
+ do_new_mount+0x289/0xad0 fs/namespace.c:3040
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount+0x2d3/0x3c0 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f3cf368cada
+Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f3cf4837f88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007f3cf368cada
+RDX: 0000000020000100 RSI: 00000000200001c0 RDI: 00007f3cf4837fe0
+RBP: 00007f3cf4838020 R08: 00007f3cf4838020 R09: 0000000020000100
+R10: 0000000000000001 R11: 0000000000000202 R12: 0000000020000100
+R13: 00000000200001c0 R14: 00007f3cf4837fe0 R15: 0000000020000080
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:truncate_inode_pages_range+0x1548/0x1780 mm/truncate.c:424
+Code: e8 ad 0e ce ff 4c 89 ff 48 c7 c6 20 50 98 8a e8 de 24 0a 00 0f 0b e8 97 0e ce ff 4c 89 ff 48 c7 c6 80 4f 98 8a e8 c8 24 0a 00 <0f> 0b e8 e1 96 6d 08 e8 7c 0e ce ff 4c 89 e7 48 c7 c6 20 50 98 8a
+RSP: 0018:ffffc9000916f7c0 EFLAGS: 00010246
+RAX: 0d16a9ba1ff17c00 RBX: fffffffffffff880 RCX: 0000000000040000
+RDX: ffffc9000a999000 RSI: 000000000003ffff RDI: 0000000000040000
+RBP: ffffc9000916f9f0 R08: ffffffff81e2ae1b R09: ffffed10173667f1
+R10: ffffed10173667f1 R11: 1ffff110173667f0 R12: 00000000000007ff
+R13: 0000000000000002 R14: 0000000000000001 R15: ffffea0001e08c00
+FS:  00007f3cf4838700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000000c023176000 CR3: 00000000268a5000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
