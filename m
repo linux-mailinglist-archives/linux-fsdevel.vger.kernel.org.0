@@ -2,106 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67F695FE7C6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 05:54:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DDFCC5FE868
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 07:32:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229740AbiJNDyX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Oct 2022 23:54:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37820 "EHLO
+        id S229542AbiJNFcS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Oct 2022 01:32:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54282 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229742AbiJNDyT (ORCPT
+        with ESMTP id S229462AbiJNFcR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Oct 2022 23:54:19 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D32F396238
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Oct 2022 20:54:16 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id d10so3780162pfh.6
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Oct 2022 20:54:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BQMeWu4NUS5XHxpYjKe5lPkeUdCMvZeCueelrFJNv7g=;
-        b=hVsj8yBrgKuKkK7M8xkb+HyKOAR1jqjYGdTOSBbuFw1xtWaGZRldfWed4W2s4PX8vj
-         gMHC+/MyceBR4MHXpZkl8R1pYEcZzKSZwB0eAGg1tk/SYjiAH2KDJtEmiRns8TV0xEj3
-         Z26bm3qSWSWPK1j2fJ6oI+/9oCd9hoET+A3WM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BQMeWu4NUS5XHxpYjKe5lPkeUdCMvZeCueelrFJNv7g=;
-        b=iGj2hGmaDnyybgms6ZAi6WR62CMjwCTsDUvJIXBjBtwTJqEs/MZ3hQ33OEyqBfSGp1
-         fCPqMGych+YWDbBciJBiqp8qpIgr2T4CPzhjov7T8hq7ztr9vVHMm74z9sQcuW5V0Zmh
-         HJXNYU4UPiZ5Mnw11Nn941X3nVyFGlJuvu2+ZiKq7xQvz6XUlQvcPSYoMeyqI0NlOOcL
-         4+UuzfMzPL9epI0QSDahQhG6Ht2xRWINjcJIyfxVoJgXlCyjr4+fASWnbKOvjHzgjDRI
-         VvBpRCNogkG1EPRruH8f7+Z1hJYXmU7Lbbt3nd2QwECMqYz9yNIuY0AMWGfBHnC2lYfl
-         mJcQ==
-X-Gm-Message-State: ACrzQf0PZ0rirAETdVSBXGqmqnRJk2DosgqwHHFeOm5Ow4dFNiN7R0iu
-        tR4cjJNNK2GaYUWmn8AGP/Tx+A==
-X-Google-Smtp-Source: AMsMyM7vCfA8wFrsyDJjLw6KB1kvioIeLEFXGEDdVpYcSJdvjz4XjS2+1dICHf/21nwZwt5L/DrvHw==
-X-Received: by 2002:a63:591c:0:b0:464:bb3b:d1ad with SMTP id n28-20020a63591c000000b00464bb3bd1admr2830780pgb.146.1665719656162;
-        Thu, 13 Oct 2022 20:54:16 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id h4-20020a17090a710400b0020ae09e9724sm474301pjk.53.2022.10.13.20.54.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Oct 2022 20:54:15 -0700 (PDT)
-Date:   Thu, 13 Oct 2022 20:54:14 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Jann Horn <jannh@google.com>,
-        Christian Brauner <brauner@kernel.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jorge Merlino <jorge.merlino@canonical.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org,
-        John Johansen <john.johansen@canonical.com>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Stephen Smalley <stephen.smalley.work@gmail.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Richard Haines <richard_c_haines@btinternet.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Todd Kjos <tkjos@google.com>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Prashanth Prahlad <pprahlad@redhat.com>,
-        Micah Morton <mortonm@chromium.org>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
-        selinux@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
-Message-ID: <202210132052.32AE372@keescook>
-References: <20221006082735.1321612-1-keescook@chromium.org>
- <20221006082735.1321612-2-keescook@chromium.org>
- <20221006090506.paqjf537cox7lqrq@wittgenstein>
- <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
- <2032f766-1704-486b-8f24-a670c0b3cb32@app.fastmail.com>
+        Fri, 14 Oct 2022 01:32:17 -0400
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB4EF1946FF;
+        Thu, 13 Oct 2022 22:32:14 -0700 (PDT)
+Received: from SHSend.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+        by SHSQR01.spreadtrum.com with ESMTPS id 29E5V9aI065718
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NO);
+        Fri, 14 Oct 2022 13:31:09 +0800 (CST)
+        (envelope-from zhaoyang.huang@unisoc.com)
+Received: from bj03382pcu.spreadtrum.com (10.0.74.65) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 14 Oct 2022 13:31:08 +0800
+From:   "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <ke.wang@unisoc.com>,
+        <steve.kang@unisoc.com>, <baocong.liu@unisoc.com>,
+        <linux-fsdevel@vger.kernel.org>
+Subject: [RFC PATCH] mm: move xa forward when run across zombie page
+Date:   Fri, 14 Oct 2022 13:30:48 +0800
+Message-ID: <1665725448-31439-1-git-send-email-zhaoyang.huang@unisoc.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2032f766-1704-486b-8f24-a670c0b3cb32@app.fastmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Originating-IP: [10.0.74.65]
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL: SHSQR01.spreadtrum.com 29E5V9aI065718
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 13, 2022 at 08:18:04PM -0700, Andy Lutomirski wrote:
-> But seriously, this makes no sense at all.  It should not be possible to exec a program and then, without ptrace, change its cwd out from under it.  Do we really need to preserve this behavior?
+From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
-Yup, already abandoned:
-https://lore.kernel.org/lkml/202210061301.207A20C8E5@keescook/
+Bellowing RCU stall is reported where kswapd traps in a live lock when shrink
+superblock's inode list. The direct reason is zombie page keeps staying on the
+xarray's slot and make the check and retry loop permanently. The root cause is unknown yet
+and supposed could be an xa update without synchronize_rcu etc. I would like to
+suggest skip this page to break the live lock as a workaround.
 
+[167222.620296] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[167285.640296] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[167348.660296] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[167411.680296] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[167474.700296] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[167537.720299] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[167600.740296] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[167663.760298] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[167726.780298] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[167789.800297] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+[167726.780305] rcu: Tasks blocked on level-0 rcu_node (CPUs 0-7): P155
+[167726.780319] (detected by 3, t=17256977 jiffies, g=19883597, q=2397394)
+[167726.780325] task:kswapd0         state:R  running task     stack:   24 pid:  155 ppid:     2 flags:0x00000008
+[167789.800308] rcu: Tasks blocked on level-0 rcu_node (CPUs 0-7): P155
+[167789.800322] (detected by 3, t=17272732 jiffies, g=19883597, q=2397470)
+[167789.800328] task:kswapd0         state:R  running task     stack:   24 pid:  155 ppid:     2 flags:0x00000008
+[167789.800339] Call trace:
+[167789.800342]  dump_backtrace.cfi_jt+0x0/0x8
+[167789.800355]  show_stack+0x1c/0x2c
+[167789.800363]  sched_show_task+0x1ac/0x27c
+[167789.800370]  print_other_cpu_stall+0x314/0x4dc
+[167789.800377]  check_cpu_stall+0x1c4/0x36c
+[167789.800382]  rcu_sched_clock_irq+0xe8/0x388
+[167789.800389]  update_process_times+0xa0/0xe0
+[167789.800396]  tick_sched_timer+0x7c/0xd4
+[167789.800404]  __run_hrtimer+0xd8/0x30c
+[167789.800408]  hrtimer_interrupt+0x1e4/0x2d0
+[167789.800414]  arch_timer_handler_phys+0x5c/0xa0
+[167789.800423]  handle_percpu_devid_irq+0xbc/0x318
+[167789.800430]  handle_domain_irq+0x7c/0xf0
+[167789.800437]  gic_handle_irq+0x54/0x12c
+[167789.800445]  call_on_irq_stack+0x40/0x70
+[167789.800451]  do_interrupt_handler+0x44/0xa0
+[167789.800457]  el1_interrupt+0x34/0x64
+[167789.800464]  el1h_64_irq_handler+0x1c/0x2c
+[167789.800470]  el1h_64_irq+0x7c/0x80
+[167789.800474]  xas_find+0xb4/0x28c
+[167789.800481]  find_get_entry+0x3c/0x178
+[167789.800487]  find_lock_entries+0x98/0x2f8
+[167789.800492]  __invalidate_mapping_pages.llvm.3657204692649320853+0xc8/0x224
+[167789.800500]  invalidate_mapping_pages+0x18/0x28
+[167789.800506]  inode_lru_isolate+0x140/0x2a4
+[167789.800512]  __list_lru_walk_one+0xd8/0x204
+[167789.800519]  list_lru_walk_one+0x64/0x90
+[167789.800524]  prune_icache_sb+0x54/0xe0
+[167789.800529]  super_cache_scan+0x160/0x1ec
+[167789.800535]  do_shrink_slab+0x20c/0x5c0
+[167789.800541]  shrink_slab+0xf0/0x20c
+[167789.800546]  shrink_node_memcgs+0x98/0x320
+[167789.800553]  shrink_node+0xe8/0x45c
+[167789.800557]  balance_pgdat+0x464/0x814
+[167789.800563]  kswapd+0xfc/0x23c
+[167789.800567]  kthread+0x164/0x1c8
+[167789.800573]  ret_from_fork+0x10/0x20
+
+Signed-off-by: Baocong Liu <baocong.liu@unisoc.com>
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+---
+ mm/filemap.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 15800334..25b0a2e 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2019,8 +2019,10 @@ static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
+ 	if (!folio || xa_is_value(folio))
+ 		return folio;
+ 
+-	if (!folio_try_get_rcu(folio))
++	if (!folio_try_get_rcu(folio)) {
++		xas_advance(xas, folio->index + folio_nr_pages(folio) - 1);
+ 		goto reset;
++	}
+ 
+ 	if (unlikely(folio != xas_reload(xas))) {
+ 		folio_put(folio);
 -- 
-Kees Cook
+1.9.1
+
