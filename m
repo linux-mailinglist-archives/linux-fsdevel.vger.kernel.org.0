@@ -2,121 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 879BE5FF318
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 19:43:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 40C6D5FF364
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 20:05:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229862AbiJNRnL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Oct 2022 13:43:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37520 "EHLO
+        id S229978AbiJNSFW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Oct 2022 14:05:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230111AbiJNRmi (ORCPT
+        with ESMTP id S230218AbiJNSFT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Oct 2022 13:42:38 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9F6C1D29AC
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Oct 2022 10:42:36 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id i6so5366052pli.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Oct 2022 10:42:36 -0700 (PDT)
+        Fri, 14 Oct 2022 14:05:19 -0400
+Received: from mail-il1-x136.google.com (mail-il1-x136.google.com [IPv6:2607:f8b0:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B325F275F3;
+        Fri, 14 Oct 2022 11:05:13 -0700 (PDT)
+Received: by mail-il1-x136.google.com with SMTP id u10so2915950ilm.5;
+        Fri, 14 Oct 2022 11:05:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2SZjirI6vVJY9sKNEfqT5Dc0rwPH+nmIM479xThjSRE=;
-        b=lBJRxtkCK/EuZxHO3XQKMCpV1v5nQdz3iTgQtPakGL9M7lePJjXkwG8KHaYd4yyBFX
-         ztK1TvSXjGjkRFE17jiS17eYmRAaLKVuGWMpGDh24rhbXTHRzKDBHuutPaG0VGUkJSzY
-         Ui/RBTeBQApRjnUnrFQcwA6UrqPl15Du3+dBI=
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=heX+Vf4ClPZWziY9bX1NMfoFhQNF692mEmPkdTluBtI=;
+        b=BZ0YQm3TM80LUGEu/I6xjj9baWntOotGI3JZbxq9/KPD5bc8vmQyk3V3by2cnlzVp6
+         KEprpwCXOhFSo7hEfWVuCzK5oiz0jCA6J2lW6AkLmB7FZJ7tVFf+amf1HrGESND5g/x1
+         yrJxmk0G0W8KXUTIIM4hOf6YVaDOaQFnSiffMjF1FoYP/cNaXSDKXrO0rjLX2ihh5YNb
+         nbuhzOgisGmpmpE9iF9K3/ySYvH+GJfskpiZi60nXSUuq7f9C7Bm5QUEf3rG1bE71njV
+         6mKDa2jmT9kjw+QVy566pI8teS4G7grRKZxO1zd24zlxM2p073KMWqH+DpTgN6pn4Fha
+         wlTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2SZjirI6vVJY9sKNEfqT5Dc0rwPH+nmIM479xThjSRE=;
-        b=4F317gSotU9qfpREJZclx7N07AK9jWY8B5ErSNoYAxQHGdrYRBD2n8fzi4HKMvJqVD
-         yQvCMTSZS3CoAlIi0gCwsBbTZs5AUd81RrIXL+V0BIdPoU3H3hSIscKcJBRu4pwDARVM
-         AfRc+eMl/jfv6+FsrqRfFi8pewvskeyesnzqvCOTHB4Hw2C3+jRG5nExw0bDZJr81NwA
-         7otV9NVuwbdhlMYxdPur4WXAiYN2ma9uKjBBAgKw2slv3J7U7JLZn9PyAaXe119LhDoU
-         rGrRCYM3TGgxPj5enMA48t1yUIZ9N+569H5msbJglCtDcv98bBRHUxboX/l8CfScKdSa
-         tNCQ==
-X-Gm-Message-State: ACrzQf1PZIlSlS36qllZBXfGDrW6Q0geKlew65QjFUcj3SgvctDKZRzQ
-        JV725F4Fg5ncqmRLUYCAqClfqA==
-X-Google-Smtp-Source: AMsMyM6hu4kmwaALaxLHOKrZ+BvQpGrPeyRy9QzrgBkKAwnx9gDzRH3CslRjEFHCb3WjliopGPBLMw==
-X-Received: by 2002:a17:90b:4a8f:b0:20d:2f93:3bb with SMTP id lp15-20020a17090b4a8f00b0020d2f9303bbmr18537027pjb.149.1665769356136;
-        Fri, 14 Oct 2022 10:42:36 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id r24-20020aa79638000000b00562eff85594sm2055790pfg.121.2022.10.14.10.42.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Oct 2022 10:42:35 -0700 (PDT)
-Date:   Fri, 14 Oct 2022 10:42:34 -0700
-From:   Kees Cook <keescook@chromium.org>
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
-Cc:     linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
-        kernel-dev@igalia.com, kernel@gpiccoli.net, anton@enomsg.org,
-        ccross@android.com, tony.luck@intel.com, ardb@kernel.org
-Subject: Re: [PATCH V2 3/3] efi: pstore: Add module parameter for setting the
- record size
-Message-ID: <202210141042.E4689636@keescook>
-References: <20221013210648.137452-1-gpiccoli@igalia.com>
- <20221013210648.137452-4-gpiccoli@igalia.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=heX+Vf4ClPZWziY9bX1NMfoFhQNF692mEmPkdTluBtI=;
+        b=VNGKCQxp7u7fyIuv2NqWxk1RuvA4CH+fUvwLgwWuNuKW3qlSPR/1bwej0f4VGmJVUf
+         wyUULiQJ+cjQdMFdapzOO9axvBQHOMekdN71OqBwwv+Z7eXxS6s1bMyfWax9Mjj36/5V
+         fmBWN7Q2fI0iH1BzfjOgn7Ef0UooQuhTEjmXYQuKT3udPTmbyHvmT+YTafe4m5tgIYsT
+         VlZ223jW/Q3wzxJ4ImikSji1b5trsid0tHFVFdOeYqn8Z4+eJknjXk3mYcR49k46fZ18
+         cMBlUSNza9WJeY6WtLhdapuc0BgY3aD146St1EI9Ut2VLkhKV5jG38LNKtIGYinw496z
+         H6GA==
+X-Gm-Message-State: ACrzQf21T5kiVim9QdtHK43KyLru6giae0lhvGOmjpL26EtZtBJa2XXx
+        Yv+wwvdrZXh8VCJvtkbC/57i9yEZLQqlzUYgSXw=
+X-Google-Smtp-Source: AMsMyM6s5Rfx2u7/NNT10bG8hjnLthUnRVBOBP4MJcv/JcaVp/vUIfqY38iYUZHZwKjUZcMueSSsRlZ5c2s9/Rfgu1A=
+X-Received: by 2002:a05:6e02:1b0a:b0:2fa:1435:a0fa with SMTP id
+ i10-20020a056e021b0a00b002fa1435a0famr2920474ilv.321.1665770712014; Fri, 14
+ Oct 2022 11:05:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221013210648.137452-4-gpiccoli@igalia.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+References: <20220927131518.30000-1-ojeda@kernel.org> <20220927131518.30000-26-ojeda@kernel.org>
+ <Y0BfN1BdVCWssvEu@hirez.programming.kicks-ass.net> <CABCJKuenkHXtbWOLZ0_isGewxd19qkM7OcLeE2NzM6dSkXS4mQ@mail.gmail.com>
+In-Reply-To: <CABCJKuenkHXtbWOLZ0_isGewxd19qkM7OcLeE2NzM6dSkXS4mQ@mail.gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Fri, 14 Oct 2022 20:05:00 +0200
+Message-ID: <CANiq72k6s4=0E_AHv7FPsCQhkyxf7c-b+wUtzfjf+Spehe9Fmg@mail.gmail.com>
+Subject: Re: [PATCH v10 25/27] x86: enable initial Rust support
+To:     Sami Tolvanen <samitolvanen@google.com>
+Cc:     Peter Zijlstra <peterz@infradead.org>,
+        Miguel Ojeda <ojeda@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Alex Gaynor <alex.gaynor@gmail.com>,
+        Wedson Almeida Filho <wedsonaf@google.com>,
+        David Gow <davidgow@google.com>,
+        Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+        =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 13, 2022 at 06:06:48PM -0300, Guilherme G. Piccoli wrote:
-> By default, the efi-pstore backend hardcode the UEFI variable size
-> as 1024 bytes. The historical reasons for that were discussed by
-> Ard in threads [0][1]:
-> 
-> "there is some cargo cult from prehistoric EFI times going
-> on here, it seems. Or maybe just misinterpretation of the maximum
-> size for the variable *name* vs the variable itself.".
-> 
-> "OVMF has
-> OvmfPkg/OvmfPkgX64.dsc:
-> gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x2000
-> OvmfPkg/OvmfPkgX64.dsc:
-> gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x8400
-> 
-> where the first one is without secure boot and the second with secure
-> boot. Interestingly, the default is
-> 
-> gEfiMdeModulePkgTokenSpaceGuid.PcdMaxVariableSize|0x400
-> 
-> so this is probably where this 1k number comes from."
-> 
-> With that, and since there is not such a limit in the UEFI spec, we
-> have the confidence to hereby add a module parameter to enable advanced
-> users to change the UEFI record size for efi-pstore data collection,
-> this way allowing a much easier reading of the collected log, which is
-> not scattered anymore among many small files.
-> 
-> Through empirical analysis we observed that extreme low values (like 8
-> bytes) could eventually cause writing issues, so given that and the OVMF
-> default discussed, we limited the minimum value to 1024 bytes, which also
-> is still the default.
-> 
-> [0] https://lore.kernel.org/lkml/CAMj1kXF4UyRMh2Y_KakeNBHvkHhTtavASTAxXinDO1rhPe_wYg@mail.gmail.com/
-> [1] https://lore.kernel.org/lkml/CAMj1kXFy-2KddGu+dgebAdU9v2sindxVoiHLWuVhqYw+R=kqng@mail.gmail.com/
-> 
-> Cc: Ard Biesheuvel <ardb@kernel.org>
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+On Tue, Oct 11, 2022 at 1:16 AM Sami Tolvanen <samitolvanen@google.com> wrote:
+>
+> Rust supports IBT with -Z cf-protection=branch, but I don't see this
+> option being enabled in the kernel yet. Cross-language CFI is going to
+> require a lot more work though because the type systems are not quite
+> compatible:
+>
+> https://github.com/rust-lang/rfcs/pull/3296
 
-With the var length change recommended by Ard, yeah, looks good to me.
-:)
+I have pinged Ramon de C Valle as he is the author of the RFC above
+and implementation work too; since a month or so ago he also leads the
+Exploit Mitigations Project Group in Rust.
 
-Thanks!
-
--Kees
-
--- 
-Kees Cook
+Cheers,
+Miguel
