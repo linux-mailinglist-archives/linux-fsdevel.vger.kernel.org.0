@@ -2,81 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DEE4E5FEFC1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 16:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 062CC5FEFA9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 16:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230218AbiJNOHJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Oct 2022 10:07:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36940 "EHLO
+        id S230305AbiJNOER (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Oct 2022 10:04:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230202AbiJNOHG (ORCPT
+        with ESMTP id S230457AbiJNODp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Oct 2022 10:07:06 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6758DCE81
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Oct 2022 07:06:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1665756360;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=k8qQltuyjmygy+O43yanVxeFaxBvrjiQoX3IXlPZtGE=;
-        b=KRHPk9ombGiCOIV1lWNBjqW3kGQQ1/zs3kcVjcKbHCxgg/4eyDQRuDD6adSdAJQFyGAZ9J
-        uaOOElVx98dPbv6uB0IlP+IRTe3XRlJaOjx8miXikB1PSgvPo0Q7MlnkcrjCh6rBpagNql
-        D/l/5dquGyyD2NHydL6ZpI5MdGqSNQk=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-244-0ngC2H1gONipQ71LSLOWqQ-1; Fri, 14 Oct 2022 09:59:38 -0400
-X-MC-Unique: 0ngC2H1gONipQ71LSLOWqQ-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C2DFA3C10687;
-        Fri, 14 Oct 2022 13:59:37 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 456D84030DF;
-        Fri, 14 Oct 2022 13:59:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20220901220138.182896-6-vishal.moola@gmail.com>
-References: <20220901220138.182896-6-vishal.moola@gmail.com> <20220901220138.182896-1-vishal.moola@gmail.com>
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc:     dhowells@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 05/23] afs: Convert afs_writepages_region() to use filemap_get_folios_tag()
+        Fri, 14 Oct 2022 10:03:45 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A4A643306
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Oct 2022 07:02:45 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-3573ed7cc15so47239407b3.1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Oct 2022 07:02:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=H3tSqSVP/KWs4VJIPMxxXHRbAAqjUUkTUhdz1EwuOSnAON0G/CIkscOGeexrxPH4gR
+         GoyTYsgNLIwpq7I/7X4SX6p225+tDJVS78xZeKAN7jHb2k6NQ9ctvQo+p//1OkQF1mvv
+         c4vsHKM7pM/97axn82yiAXHnLhROkLHOQeVSoPSvrx5TS9be+rqPS3b/j9L3f8gifzK5
+         25DXwsR9hjzQTF5ugd6rhhwpEOdLcA/owenjyYqMqES1gVSWmH1g/eCAf6gn3vPnsEUY
+         5fvJzJ+ifT0e9btI03wxZQkYVIdzZkrzrQ4Z+p89luTjgyuzQFAJLln/h1z6E84m5Ghu
+         svog==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=;
+        b=dUK0J6bmXPmjCkI+lvWaSr3ePyeNLqZt6sZRdiYRgiYKoX5WxqFVLQqxdqBRHO/DMM
+         6M4Gv7AY/RmUF0az0JNwS3ERPz+bU3IGPG8SBNH89jWm+3PBKRWoM2rJHf7LKcFtDhkh
+         NXGHTsAz/oTUEgC8xdbgX7udIUEeDZNEgW55XX2XIGuIFc24mQlueppXV3DPMyl76irQ
+         Z2eEFrlRh9Wce9GGhL5+XQdZcba0mZd7O7S3mipr1RnbnJmEE/ZrDXCz+TfOiMG5aqMA
+         dO1Trd772x6jZWLDURtANlAfwzLMm+lJ1zKyO3MXJpvVFTy6ReiqrnvWZJglGQCuyDky
+         +YYQ==
+X-Gm-Message-State: ACrzQf1dcL8yRBiRqUUKcZUQnuj6EKm1a3IXtZ6R6aPuSl94YcxRbOr9
+        lTz0OvVwe2KlZ98EjQBRX4NgtG77NlhFjTtggBtjiLuG7b0=
+X-Google-Smtp-Source: AMsMyM7ZYSR4jYbZB6OIGQLGW7fPEIG2SNZ1I8TbLqhTWODf08GadQ+kfq/mJ73fQUj4334GxDVyzOGNtb/lqmFb1lU=
+X-Received: by 2002:a81:9202:0:b0:35e:face:a087 with SMTP id
+ j2-20020a819202000000b0035efacea087mr4707194ywg.55.1665756111299; Fri, 14 Oct
+ 2022 07:01:51 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1569539.1665755974.1@warthog.procyon.org.uk>
-Date:   Fri, 14 Oct 2022 14:59:34 +0100
-Message-ID: <1569540.1665755974@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+Received: by 2002:a05:7000:6c05:b0:3c1:5961:57b5 with HTTP; Fri, 14 Oct 2022
+ 07:01:50 -0700 (PDT)
+Reply-To: tatianaarthur72@gmail.com
+From:   "Mrs.Tatiana Arthur" <goowjarwq@gmail.com>
+Date:   Fri, 14 Oct 2022 16:01:50 +0200
+Message-ID: <CAC-x_XHBvNLc2SP-eHhjWUFbY=vQKMZv9nk6yhsEWwd3eTU-YA@mail.gmail.com>
+Subject: Did you receive the email I sent you?
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=4.9 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,FREEMAIL_REPLYTO,
+        FREEMAIL_REPLYTO_END_DIGIT,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        T_HK_NAME_FM_MR_MRS,UNDISC_FREEM autolearn=no autolearn_force=no
         version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Vishal Moola (Oracle) <vishal.moola@gmail.com> wrote:
-
-> Convert to use folios throughout. This function is in preparation to
-> remove find_get_pages_range_tag().
-> 
-> Also modified this function to write the whole batch one at a time,
-> rather than calling for a new set every single write.
-> 
-> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-
-Tested-by: David Howells <dhowells@redhat.com>
 
