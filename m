@@ -2,127 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 59D995FF08C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 16:47:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 66EC85FF0B5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 16:58:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230304AbiJNOrP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Oct 2022 10:47:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58974 "EHLO
+        id S229808AbiJNO6P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Oct 2022 10:58:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229534AbiJNOrN (ORCPT
+        with ESMTP id S229702AbiJNO6O (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Oct 2022 10:47:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CBCF910A7ED;
-        Fri, 14 Oct 2022 07:47:12 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1BF2261B8F;
-        Fri, 14 Oct 2022 14:47:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FC2CC43142;
-        Fri, 14 Oct 2022 14:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1665758831;
-        bh=VJwQySFdRGFPCBd4Ml53QivsdMbpYMCvrYEubw3X5VA=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ieGqkBYc5cXIeEZoGfymuYbOW9ebXYjeZ0UGKNdtYSfkIuoS4OTGWYKeUJ7N+jX0C
-         ouUyjRgvt+KAkoNrSIQbtbGB/2rGdc6IKgRsgBP1wQdJp0fK9H4kkAsOzK9vP63e+v
-         cMXXjZcupQ5hpjZn0uYM0K1PgsTP5Izn2rBo84LqmO2MXU8KGC10OJGCY277XTsVgS
-         S/xhWRsapx+5RUKpDOwnzaZAKDY8tf8nSWIDlZMKP3HjjPhp5xjovWq9v6/gVO6naJ
-         kCyf50qXAIion/CDn9oDz0pmj5IkfiONFIdR2VIm3v7KHBqCCBQgxYjRv0Ee7rT9y1
-         DhX0DG4M5nrsA==
-Received: by mail-lf1-f50.google.com with SMTP id f37so7542226lfv.8;
-        Fri, 14 Oct 2022 07:47:11 -0700 (PDT)
-X-Gm-Message-State: ACrzQf1f/M0ULGlTcqcXlYKIX6OGP0rSiz/FyS452fIOtc4q4PbAzePf
-        tng+sNAJgN7+xc6ZbN5Y7VsQe24Q4pfd9xbSLho=
-X-Google-Smtp-Source: AMsMyM6MzlL7rg2UudUMUW7YFwkLl+bSnkojouPRZ0ZXDfFzxUJyPYNBO5veOgEOFHbidgTJB4MwPWn/Xx7e1jOzYMc=
-X-Received: by 2002:ac2:4c47:0:b0:4a2:c07b:4b62 with SMTP id
- o7-20020ac24c47000000b004a2c07b4b62mr1747771lfk.426.1665758829498; Fri, 14
- Oct 2022 07:47:09 -0700 (PDT)
+        Fri, 14 Oct 2022 10:58:14 -0400
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F58A1946E5;
+        Fri, 14 Oct 2022 07:58:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+        s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+        References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+        List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=Kelky+eVwv2Q20yZzcQet2723DHRyec/jgZYHrjNAHk=; b=rcLAkiSpOA9rqfxJDX+rjl/LNM
+        G8Z25wZKMleC504EqFVqoqLekdATfsVqbeUUQNCZ94tUX0mI4bfA8cBy2bQWxYPxwhXZqTr7O5jcJ
+        Sl3YAh9tyi02OYWYt1qf36YPZ555Gs20Hwrqn5crhKsOy+g7Xkz9/dTykoyyCig/41b6MkxLICMb+
+        r0o3tYo1ywdwyU77F1cduT9aP5PWOxjr4PvSL4NO01d7vF5MCTdyz6/pmREbOaF0+NJ9I29pJf9GE
+        d4uNIwK+i6oR5t9nFZO3KtpDiEdgEuSjdVAzn8dCovVflK4KXgDV9ceLJ3uMvKPCAcO1R7RT1lsvS
+        P3oLnffQ==;
+Received: from [179.113.159.85] (helo=[192.168.1.60])
+        by fanzine2.igalia.com with esmtpsa 
+        (Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+        id 1ojM8S-001SEE-MU; Fri, 14 Oct 2022 16:58:05 +0200
+Message-ID: <1c6a9461-0d3d-a049-0165-0d5c95aa9405@igalia.com>
+Date:   Fri, 14 Oct 2022 11:57:49 -0300
 MIME-Version: 1.0
-References: <20221013210648.137452-1-gpiccoli@igalia.com> <20221013210648.137452-2-gpiccoli@igalia.com>
-In-Reply-To: <20221013210648.137452-2-gpiccoli@igalia.com>
-From:   Ard Biesheuvel <ardb@kernel.org>
-Date:   Fri, 14 Oct 2022 16:46:58 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXGe++psjOmmztkNY2KeGAGD3DD8F_spG0F37+4vu6dwBw@mail.gmail.com>
-Message-ID: <CAMj1kXGe++psjOmmztkNY2KeGAGD3DD8F_spG0F37+4vu6dwBw@mail.gmail.com>
-Subject: Re: [PATCH V2 1/3] pstore: Alert on backend write error
-To:     "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.2
+Subject: Re: [PATCH V2 3/3] efi: pstore: Add module parameter for setting the
+ record size
+Content-Language: en-US
+To:     Ard Biesheuvel <ardb@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
         kernel-dev@igalia.com, kernel@gpiccoli.net, keescook@chromium.org,
         anton@enomsg.org, ccross@android.com, tony.luck@intel.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20221013210648.137452-1-gpiccoli@igalia.com>
+ <20221013210648.137452-4-gpiccoli@igalia.com>
+ <CAMj1kXG7syjMsOL+AcUMfT0_nhGde6qc_6MexpdDtxFQpS2=7A@mail.gmail.com>
+From:   "Guilherme G. Piccoli" <gpiccoli@igalia.com>
+In-Reply-To: <CAMj1kXG7syjMsOL+AcUMfT0_nhGde6qc_6MexpdDtxFQpS2=7A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 13 Oct 2022 at 23:11, Guilherme G. Piccoli <gpiccoli@igalia.com> wrote:
->
-> The pstore dump function doesn't alert at all on errors - despite
-> pstore is usually a last resource and if it fails users won't be
-> able to read the kernel log, this is not the case for server users
-> with serial access, for example.
->
-> So, let's at least attempt to inform such advanced users on the first
-> backend writing error detected during the kmsg dump - this is also
-> very useful for pstore debugging purposes.
->
-> Signed-off-by: Guilherme G. Piccoli <gpiccoli@igalia.com>
+On 14/10/2022 11:46, Ard Biesheuvel wrote:
+> [...]
+>>         for (;;) {
+>> -               varname_size = EFIVARS_DATA_SIZE_MAX;
+>> +               varname_size = record_size;
+>>
+> 
+> I don't think we need this - this is the size of the variable name not
+> the variable itself.
+> 
 
-Acked-by: Ard Biesheuvel <ardb@kernel.org>
+Ugh, my bad. Do you want to stick with 1024 then?
+Thanks,
 
-> ---
->
->
-> V2:
-> - Show error message late, outside of the critical region
-> (thanks Kees for the idea!).
->
->
->  fs/pstore/platform.c | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->
-> diff --git a/fs/pstore/platform.c b/fs/pstore/platform.c
-> index 06c2c66af332..cbc0b468c1ab 100644
-> --- a/fs/pstore/platform.c
-> +++ b/fs/pstore/platform.c
-> @@ -393,6 +393,7 @@ static void pstore_dump(struct kmsg_dumper *dumper,
->         const char      *why;
->         unsigned int    part = 1;
->         unsigned long   flags = 0;
-> +       int             saved_ret = 0;
->         int             ret;
->
->         why = kmsg_dump_reason_str(reason);
-> @@ -463,12 +464,21 @@ static void pstore_dump(struct kmsg_dumper *dumper,
->                 if (ret == 0 && reason == KMSG_DUMP_OOPS) {
->                         pstore_new_entry = 1;
->                         pstore_timer_kick();
-> +               } else {
-> +                       /* Preserve only the first non-zero returned value. */
-> +                       if (!saved_ret)
-> +                               saved_ret = ret;
->                 }
->
->                 total += record.size;
->                 part++;
->         }
->         spin_unlock_irqrestore(&psinfo->buf_lock, flags);
-> +
-> +       if (saved_ret) {
-> +               pr_err_once("backend (%s) writing error (%d)\n", psinfo->name,
-> +                           saved_ret);
-> +       }
->  }
->
->  static struct kmsg_dumper pstore_dumper = {
-> --
-> 2.38.0
->
+
+Guilherme
