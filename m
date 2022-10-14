@@ -2,193 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 543655FE9F6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 10:01:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 34EB05FEA0A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 10:06:40 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229866AbiJNIBy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Oct 2022 04:01:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40430 "EHLO
+        id S230030AbiJNIGh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Oct 2022 04:06:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229754AbiJNIBx (ORCPT
+        with ESMTP id S229754AbiJNIGf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Oct 2022 04:01:53 -0400
-Received: from mail-ua1-x933.google.com (mail-ua1-x933.google.com [IPv6:2607:f8b0:4864:20::933])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E3B1BB944;
-        Fri, 14 Oct 2022 01:01:51 -0700 (PDT)
-Received: by mail-ua1-x933.google.com with SMTP id y20so1647346uao.8;
-        Fri, 14 Oct 2022 01:01:51 -0700 (PDT)
+        Fri, 14 Oct 2022 04:06:35 -0400
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 547F31B6CAA
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Oct 2022 01:06:34 -0700 (PDT)
+Received: by mail-pf1-x42e.google.com with SMTP id m6so4272507pfb.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Oct 2022 01:06:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=PUmdXVMRMDwJt1I/xvyYzH+rBmWr4XVWti9DpHOSKBo=;
-        b=kmNNVWt/AZwIijj5BQqmzv6Fu42dqFvmHqB3gdQp9DSUtbIu5FQECjshnYXD2ro2sR
-         eK8cYeeFjyWEVWmQ5bzVhVs2CyIkwoS1Nuar0r2nh611vhEM+G+R+ACwgcveY333BWDk
-         y6a8+F7FLNx0cWjSxlSnqcRHXSWq/EctsFst1gfb9OXOU0ZtCOz22BbYGdekCSZkD+3y
-         QkJeyAfP6/57lYTXSi6EL7U4d6RDoKNNi/sl5g1SwuFh5SxllXBylpecYgnMrf1GjTpX
-         VkmdbgUvCve/fm4CsN07Hdkz53Pl4/iuq5Fl0m0tmZ8Q023F0TTBgm7m6utVUu0eL4qq
-         Ik4Q==
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=90kmgNBxYuQDRjoJ++HQAlxGZIWs9oLzsbBHk0vLgUo=;
+        b=OtPMThNbb2WOOHLxa+QlctGa0JbZInKy8kSXh9SoHLMCt8nULHPQnF09yBTHpP/Udk
+         gu5KnxTVZoOUFHA/9H1eutkfBF3jVWc0fItRmP6uvZ9Ey+NoJPO6lZm3NPbZAGqnjQaY
+         IVIk40rjWuKwERXAWAEXExLmLK0tFhM77u9fEdlCWFf5RyJR4Oe0ONg8KO+OviHZXmZd
+         R0lcP+zIKbbZPU75ixyN3lOFmcrj2KPjcqTjH6da57Os3AOujFcXPbvSz/r8H5Spn7Dr
+         /nTyFdJMPJsoT3nxEvsgEd1z9N3zTHshx7VbJsOiY9MBe30I4xdRBGX4PV05vF6iLmye
+         qR9A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PUmdXVMRMDwJt1I/xvyYzH+rBmWr4XVWti9DpHOSKBo=;
-        b=KWGf8wWIxt5etVE8a4wHQQc+1nTsxp+q31k0JajPv9o5oGH01Vfhlvr6x1dfGr/Cmn
-         qxi5jsAgwWmzVrCmQBuJfKx5vWwQu28qRZaDtdhKNCUK8BptAwXKPasLdafM/TAi7anI
-         hq//3qcCRCpKdlbhON5MOwXkbRuAH1mjqjFTVXFF6gPGeeQH24jt7m3Naffgsq6Yeasu
-         a2h3CW4YaPXSAtAYQYPGKEWMdPA/UeRyQxvFOyZL48K7bDlV2sWYlAguLYWPbniPmIOX
-         sxnHxKOkXG7KGXM7hKijFFLmzPdmdQuMBaugNQwlmu3JqYZwZSt12uUn608xdhMefnyv
-         b9sQ==
-X-Gm-Message-State: ACrzQf29aHPJgCaeONHcumgyRncyXPvs2GZPKM7Tm/NhhtutNnYoP4z7
-        rbvQFMoBcVH3Y/OFh3U8qQrHSORWQJLCf2oVEVY=
-X-Google-Smtp-Source: AMsMyM4fgO+VdJA5xsY/iY8FcaL80ZYSu6vfF7B69YFR1iZiXmKCHfeK0ox9U9GNuVFkTabXNjmDaD71qR+ZYkOS5JA=
-X-Received: by 2002:ab0:7509:0:b0:3d6:9dcb:b3db with SMTP id
- m9-20020ab07509000000b003d69dcbb3dbmr1776833uap.9.1665734510633; Fri, 14 Oct
- 2022 01:01:50 -0700 (PDT)
+        bh=90kmgNBxYuQDRjoJ++HQAlxGZIWs9oLzsbBHk0vLgUo=;
+        b=ZdlRWS2kqcuzhL3qvl26ez/I4qXmUKf/fBlTP2bpYa4bSjIRXVX+unmlWcC8Z64kUB
+         1SJbmwmrCudjoBSPAI+8fkOyKqeTrPaFELA9zE8XkCWel5ozhObLUmiFaDlm/Xv0lg10
+         Y7PnM4Nt7XQ0WNi273B09mD9MpuD5jLSkvoRgbXEFE/Ilp78zpdDyOKlllrT0L3XSCvi
+         CPuNGU4hk+3lJZewsXxbZWRQSjjERGjiHuaJASyvT4XNRk2+BZwHbhvxx36TCSx0H+iv
+         YApqxFXurKEDj9yrmzJIxdfcYFYpXWJ/HTYj8iogG/T0Lv32qxmTPRNWQKocfFYZf9as
+         jPmw==
+X-Gm-Message-State: ACrzQf3DI2QS9Vd+xkh+6KTrM07ysfAz+jDokDwkiFQoSBRNaSKPgit/
+        THmJUSh3sO+h1mnF+LhSF6w01g==
+X-Google-Smtp-Source: AMsMyM5Zx7Qn9iRmKEY5gHbnSMEHHrDjyxn7uuX9kvfDoFaNsj+MDU3tUeehdFxmy9MnBKR6CLGVUA==
+X-Received: by 2002:a65:63ce:0:b0:43a:2103:b7b8 with SMTP id n14-20020a6563ce000000b0043a2103b7b8mr3666169pgv.59.1665734793849;
+        Fri, 14 Oct 2022 01:06:33 -0700 (PDT)
+Received: from C02G705SMD6V.bytedance.net ([63.216.146.188])
+        by smtp.gmail.com with ESMTPSA id ik20-20020a170902ab1400b001730a1af0fbsm1119196plb.23.2022.10.14.01.06.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Oct 2022 01:06:33 -0700 (PDT)
+From:   Jia Zhu <zhujia.zj@bytedance.com>
+To:     dhowells@redhat.com, xiang@kernel.org, jefflexu@linux.alibaba.com
+Cc:     linux-cachefs@redhat.com, linux-erofs@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        yinxin.x@bytedance.com, Jia Zhu <zhujia.zj@bytedance.com>
+Subject: [PATCH V3 0/5] Introduce daemon failover mechanism to recover from crashing
+Date:   Fri, 14 Oct 2022 16:05:54 +0800
+Message-Id: <20221014080559.42108-1-zhujia.zj@bytedance.com>
+X-Mailer: git-send-email 2.37.0 (Apple Git-136)
 MIME-Version: 1.0
-References: <20221013222719.277923-1-stephen.s.brennan@oracle.com>
-In-Reply-To: <20221013222719.277923-1-stephen.s.brennan@oracle.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 14 Oct 2022 11:01:39 +0300
-Message-ID: <CAOQ4uxiXU72-cxbpqdv_5BC4VdjGx5V79zycfD3_tPSWixtT3w@mail.gmail.com>
-Subject: Re: [RFC] fsnotify: allow sleepable child dentry flag update
-To:     Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 14, 2022 at 1:27 AM Stephen Brennan
-<stephen.s.brennan@oracle.com> wrote:
->
-> Hi Jan, Amir, Al - this is a quite ugly patch but I want to discuss the idea
-> behind it, to see whether we can find something workable. I apologize for the
-> length of text here, but I think it's necessary to give full context and ideas.
->
+Changes since v2:
+1. Remove useless header file.
+2. Remove useless assignment statement about object_id.
+3. Modify some code comments.
+4. Add Reviewed-by lines from Jingbo Xu.
 
-Hi Stephen!
+[Background]
+============
+In ondemand read mode, if user daemon closes anonymous fd(e.g. daemon
+crashes), subsequent read and inflight requests based on these fd will
+return -EIO.
+Even if above mentioned case is tolerable for some individual users, but
+when it happenens in real cloud service production environment, such IO
+errors will be passed to cloud service users and impact its working jobs.
+It's terrible for cloud service stability.
 
-> For background, on machines with lots of memory and weird workloads,
-> __fsnotify_update_child_dentry_flags() has been a real thorn in our side. It
-> grabs a couple spinlocks and iterates over the whole d_subdirs list. If that
-> list is long, this can take a while. The list can be long due to lots of
-> negative dentries (which can easily number in the hundreds of millions if you
-> have a process that's relatively frequently looking up nonexisting files). But
-> the list can also be long due to *positive* dentries. I've seen directories with
-> ~7 million positive dentry children falling victim to this function before (XFS
-> allows lots of files per dir)! Positive dentries take longer to process in this
-> function (since they're actually locked and written to), so you don't need as
-> many for them to be a problem.
->
-> Anyway, if you have a huge d_subdirs list, then you can have problems with soft
-> lockups. From my measurements with ftrace, 100 million negative dentries means
-> that the function takes about 6 seconds to complete (varies wildly by CPU and
-> kernel config/version). That's bad, but it can get *much worse*. Imagine that
-> there are many frequently accessed files in such a directory, and you have an
-> inotify watch. As soon as that watch is removed, the last fsnotify connector
-> goes away, and i_fsnotify_mask becomes 0. System calls accessing dentries still
-> see DCACHE_FSNOTIFY_PARENT_WATCHED, so they fall into __fsnotify_parent and will
-> try to update the dentry flags. In my experience, a thundering herd of CPUs race
-> to __fsnotify_update_child_dentry_flags(). The winner begins updating and the
-> rest spin waiting for the parent inode's i_lock. Many CPUs make it to that
-> point, and they *all* will proceed to iterate through d_subdirs, regardless of
-> how long the list is, even though only the first CPU needed to do it. So now
-> your 6 second spin gets multiplied by 5-10. And since the directory is
-> frequently accessed, all the dget/dputs from other CPUs will all spin for this
-> long time. This amounts to a nearly unusable system.
->
-> Previously I've tried to generally limit or manage the number of negative
-> dentries in the dcache, which as a general problem is very difficult to get
-> concensus on. I've also tried the patches to reorder dentries in d_subdirs so
-> negative dentries are at the end, which has some difficult issues interacting
-> with d_walk. Neither of those ideas would help for a directory full of positive
-> dentries either.
->
-> So I have two more narrowly scoped strategies to improve the situation. Both are
-> included in the hacky, awful patch below.
->
-> First, is to let __fsnotify_update_child_dentry_flags() sleep. This means nobody
-> is holding the spinlock for several seconds at a time. We can actually achieve
-> this via a cursor, the same way that simple_readdir() is implemented. I think
-> this might require moving the declaration of d_alloc_cursor() and maybe
-> exporting it. I had to #include fs/internal.h which is not ok.
->
-> On its own, that actually makes problems worse, because it allows several tasks
-> to update at the same time, and they're constantly locking/unlocking, which
-> makes contention worse.
->
-> So second is to add an inode flag saying that
-> __fsnotify_update_child_dentry_flags() is already in progress. This prevents
-> concurrent execution, and it allows the caller to skip updating since they know
-> it's being handled, so it eliminates the thundering herd problem.
->
-> The patch works great! It eliminates the chances of soft lockups and makes the
-> system responsive under those weird loads. But now, I know I've added a new
-> issue. Updating dentry flags is no longer atomic, and we've lost the guarantee
+[Design]
+========
+This patchset introduce three states for ondemand object:
+CLOSE: Object which just be allocated or closed by user daemon.
+OPEN: Object which related OPEN request has been processed correctly.
+REOPENING: Object which has been closed, and is drived to open by a read
+request.
 
-Just between us ;) the update of the inode event mask is not atomic anyway,
-because the test for 'parent_watched' and fsnotify_inode_watches_children()
-in __fsnotify_parent() are done without any memory access synchronization.
+[Flow Path]
+===========
+[Daemon Crash] 
+0. Daemon use UDS send/receive fd to keep and pass the fd reference of
+   "/dev/cachefiles".
+1. User daemon crashes -> restart and recover dev fd's reference.
+2. User daemon write "restore" to device.
+   2.1 Reset the object's state from CLOSE to OPENING.
+   2.2 Init a work which reinit the object and add it to wq. (daemon can
+       get rid of kernel space and handle that open request).
+3. The user of upper filesystem won't notice that the daemon ever crashed
+   since the inflight IO is restored and handled correctly.
 
-IOW, the only guarantee for users is that *sometime* after adding events
-to a mark mask, events will start being delivered and *sometime* after
-removing events from a mark mask, events will stop being delivered.
-Some events may have implicit memory barriers that make event delivery
-more deterministic, but others may not.
+[Daemon Close fd]
+1. User daemon closes an anonymous fd.
+2. User daemon reads a READ request which the associated anonymous fd was
+   closed and init a work which re-open the object.
+3. User daemon handles above open request normally.
+4. The user of upper filesystem won't notice that the daemon ever closed
+   any fd since the closed object is re-opened and related request was
+   handled correctly.
 
-This may not be considered an issue for asynchronous events, but actually,
-for permission events, I would like to fix that.
-To understand my motivations you can look at:
-https://github.com/amir73il/fsnotify-utils/wiki/Hierarchical-Storage-Management-API#Evicting_file_content
+[Test]
+======
+There is a testcase for above mentioned scenario.
+A user process read the file by fscache ondemand reading.
+At the same time, we kill the daemon constantly.
+The expected result is that the file read by user is consistent with
+original, and the user doesn't notice that daemon has ever been killed.
 
-> that after fsnotify_recalc_mask(), child dentries are all flagged when
-> necessary. It's possible that after __fsnotify_update_child_dentry_flags() will
-> skip executing since it sees it's already happening, and inotify_add_watch()
-> would return without the watch being fully ready.
->
-> I think the approach can still be salvaged, we just need a way to resolve this.
-> EG a wait queue or mutex in the connector would allow us to preserve the
-> guarantee that the child dentries are flagged when necessary. But I know that's
-> a big addition, so I wanted to get some feedback from you as the maintainers. Is
-> the strategy here stupid? Am I missing an easier option?
+https://github.com/userzj/demand-read-cachefilesd/commits/failover-test
 
-I think you may be missing an easier option.
+[GitWeb]
+========
+https://github.com/userzj/linux/tree/fscache-failover-v4
 
-The call to __fsnotify_update_child_dentry_flags() in
-__fsnotify_parent() is a very aggressive optimization
-and I think it may be an overkill, and a footgun, according
-to your analysis.
+RFC: https://lore.kernel.org/all/20220818135204.49878-1-zhujia.zj@bytedance.com/
+V1: https://lore.kernel.org/all/20221011131552.23833-1-zhujia.zj@bytedance.com/
+V2: https://lore.kernel.org/all/20221014030745.25748-1-zhujia.zj@bytedance.com/
 
-If only called from the context of fsnotify_recalc_mask()
-(i.e. update mark mask), __fsnotify_update_child_dentry_flags()
-can take the dir inode_lock() to synchronize.
+Jia Zhu (5):
+  cachefiles: introduce object ondemand state
+  cachefiles: extract ondemand info field from cachefiles_object
+  cachefiles: resend an open request if the read request's object is
+    closed
+  cachefiles: narrow the scope of triggering EPOLLIN events in ondemand
+    mode
+  cachefiles: add restore command to recover inflight ondemand read
+    requests
 
-I don't think that the dir inode spin lock needs to be held
-at all during children iteration.
+ fs/cachefiles/daemon.c    |  14 +++-
+ fs/cachefiles/interface.c |   6 ++
+ fs/cachefiles/internal.h  |  57 +++++++++++++-
+ fs/cachefiles/ondemand.c  | 158 ++++++++++++++++++++++++++++----------
+ 4 files changed, 188 insertions(+), 47 deletions(-)
 
-I think that d_find_any_alias() should be used to obtain
-the alias with elevated refcount instead of the awkward
-d_u.d_alias iteration loop.
+-- 
+2.20.1
 
-In the context of __fsnotify_parent(), I think the optimization
-should stick with updating the flags for the specific child dentry
-that had the false positive parent_watched indication,
-leaving the rest of the siblings alone.
-
-Would that address the performance issues of your workload?
-
-Jan,
-
-Can you foresee any problems with this change?
-
-Thanks,
-Amir.
