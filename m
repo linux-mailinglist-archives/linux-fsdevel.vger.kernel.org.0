@@ -2,69 +2,188 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7704D5FE8EE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 08:33:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DBAF85FE9E8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 09:57:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229829AbiJNGdZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Oct 2022 02:33:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41284 "EHLO
+        id S229975AbiJNH5V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 14 Oct 2022 03:57:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56490 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229557AbiJNGdX (ORCPT
+        with ESMTP id S229970AbiJNH5R (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Oct 2022 02:33:23 -0400
-Received: from out30-44.freemail.mail.aliyun.com (out30-44.freemail.mail.aliyun.com [115.124.30.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D031416C202;
-        Thu, 13 Oct 2022 23:33:21 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R521e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0VS6Wv3A_1665729197;
-Received: from 30.221.130.30(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VS6Wv3A_1665729197)
-          by smtp.aliyun-inc.com;
-          Fri, 14 Oct 2022 14:33:18 +0800
-Message-ID: <60a05006-0052-c5eb-8f53-e1ce9ab26142@linux.alibaba.com>
-Date:   Fri, 14 Oct 2022 14:33:17 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.3.0
-Subject: Re: [PATCH V2 5/5] cachefiles: add restore command to recover
- inflight ondemand read requests
-Content-Language: en-US
-To:     Jia Zhu <zhujia.zj@bytedance.com>, dhowells@redhat.com,
-        xiang@kernel.org
-Cc:     linux-cachefs@redhat.com, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yinxin.x@bytedance.com, Gao Xiang <hsiangkao@linux.alibaba.com>
-References: <20221014030745.25748-1-zhujia.zj@bytedance.com>
- <20221014030745.25748-6-zhujia.zj@bytedance.com>
-From:   JeffleXu <jefflexu@linux.alibaba.com>
-In-Reply-To: <20221014030745.25748-6-zhujia.zj@bytedance.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-11.1 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+        Fri, 14 Oct 2022 03:57:17 -0400
+Received: from mail.nfschina.com (mail.nfschina.com [124.16.136.209])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 597111B94F5;
+        Fri, 14 Oct 2022 00:57:16 -0700 (PDT)
+Received: from localhost (unknown [127.0.0.1])
+        by mail.nfschina.com (Postfix) with ESMTP id 2F4F71E80D90;
+        Fri, 14 Oct 2022 15:57:09 +0800 (CST)
+X-Virus-Scanned: amavisd-new at test.com
+Received: from mail.nfschina.com ([127.0.0.1])
+        by localhost (mail.nfschina.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id N3Taxyhs6Dc4; Fri, 14 Oct 2022 15:57:06 +0800 (CST)
+Received: from localhost.localdomain (unknown [219.141.250.2])
+        (Authenticated sender: zeming@nfschina.com)
+        by mail.nfschina.com (Postfix) with ESMTPA id 348131E80D6E;
+        Fri, 14 Oct 2022 15:57:06 +0800 (CST)
+From:   Li zeming <zeming@nfschina.com>
+To:     krisman@collabora.com
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Li zeming <zeming@nfschina.com>
+Subject: [PATCH] unicode: mkutf8data: Add malloc return value detection
+Date:   Fri, 14 Oct 2022 15:57:10 +0800
+Message-Id: <20221014075710.310943-1-zeming@nfschina.com>
+X-Mailer: git-send-email 2.18.2
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Add the check and judgment statement of malloc return value.
 
+Signed-off-by: Li zeming <zeming@nfschina.com>
+---
+ fs/unicode/mkutf8data.c | 42 +++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-On 10/14/22 11:07 AM, Jia Zhu wrote:
-> Previously, in ondemand read scenario, if the anonymous fd was closed by
-> user daemon, inflight and subsequent read requests would return EIO.
-> As long as the device connection is not released, user daemon can hold
-> and restore inflight requests by setting the request flag to
-> CACHEFILES_REQ_NEW.
-> 
-> Suggested-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-> Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
-> Signed-off-by: Xin Yin <yinxin.x@bytedance.com>
-
-LGTM.
-
-Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-
+diff --git a/fs/unicode/mkutf8data.c b/fs/unicode/mkutf8data.c
+index bc1a7c8b5c8d..d7f7f7c4cf56 100644
+--- a/fs/unicode/mkutf8data.c
++++ b/fs/unicode/mkutf8data.c
+@@ -495,6 +495,9 @@ static struct node *alloc_node(struct node *parent)
+ 	int bitnum;
+ 
+ 	node = malloc(sizeof(*node));
++	if (unlikely(!node))
++		return NULL;
++
+ 	node->left = node->right = NULL;
+ 	node->parent = parent;
+ 	node->leftnode = NODE;
+@@ -2160,6 +2163,9 @@ static void nfdi_init(void)
+ 		mapping[i++] = 0;
+ 
+ 		um = malloc(i * sizeof(unsigned int));
++		if (unlikely(!um))
++			return;
++
+ 		memcpy(um, mapping, i * sizeof(unsigned int));
+ 		unicode_data[unichar].utf32nfdi = um;
+ 
+@@ -2216,6 +2222,9 @@ static void nfdicf_init(void)
+ 		mapping[i++] = 0;
+ 
+ 		um = malloc(i * sizeof(unsigned int));
++		if (unlikely(!um))
++			return;
++
+ 		memcpy(um, mapping, i * sizeof(unsigned int));
+ 		unicode_data[unichar].utf32nfdicf = um;
+ 
+@@ -2257,10 +2266,16 @@ static void ignore_init(void)
+ 			for (unichar = first; unichar <= last; unichar++) {
+ 				free(unicode_data[unichar].utf32nfdi);
+ 				um = malloc(sizeof(unsigned int));
++				if (unlikely(!um))
++					return;
++
+ 				*um = 0;
+ 				unicode_data[unichar].utf32nfdi = um;
+ 				free(unicode_data[unichar].utf32nfdicf);
+ 				um = malloc(sizeof(unsigned int));
++				if (unlikely(!um))
++					return;
++
+ 				*um = 0;
+ 				unicode_data[unichar].utf32nfdicf = um;
+ 				count++;
+@@ -2278,10 +2293,16 @@ static void ignore_init(void)
+ 				line_fail(prop_name, line);
+ 			free(unicode_data[unichar].utf32nfdi);
+ 			um = malloc(sizeof(unsigned int));
++			if (unlikely(!um))
++				return;
++
+ 			*um = 0;
+ 			unicode_data[unichar].utf32nfdi = um;
+ 			free(unicode_data[unichar].utf32nfdicf);
+ 			um = malloc(sizeof(unsigned int));
++			if (unlikely(!um))
++				return;
++
+ 			*um = 0;
+ 			unicode_data[unichar].utf32nfdicf = um;
+ 			if (verbose > 1)
+@@ -2360,6 +2381,9 @@ static void corrections_init(void)
+ 		mapping[i++] = 0;
+ 
+ 		um = malloc(i * sizeof(unsigned int));
++		if (unlikely(!um))
++			return;
++
+ 		memcpy(um, mapping, i * sizeof(unsigned int));
+ 		corrections[count].utf32nfdi = um;
+ 
+@@ -2460,11 +2484,17 @@ static void hangul_decompose(void)
+ 
+ 		assert(!unicode_data[unichar].utf32nfdi);
+ 		um = malloc(i * sizeof(unsigned int));
++		if (unlikely(!um))
++			return;
++
+ 		memcpy(um, mapping, i * sizeof(unsigned int));
+ 		unicode_data[unichar].utf32nfdi = um;
+ 
+ 		assert(!unicode_data[unichar].utf32nfdicf);
+ 		um = malloc(i * sizeof(unsigned int));
++		if (unlikely(!um))
++			return;
++
+ 		memcpy(um, mapping, i * sizeof(unsigned int));
+ 		unicode_data[unichar].utf32nfdicf = um;
+ 
+@@ -2474,6 +2504,9 @@ static void hangul_decompose(void)
+ 		 * trie.
+ 		 */
+ 		unicode_data[unichar].utf8nfdi = malloc(2);
++		if (unlikely(!(unicode_data[unichar].utf8nfdi)))
++			return;
++
+ 		unicode_data[unichar].utf8nfdi[0] = HANGUL;
+ 		unicode_data[unichar].utf8nfdi[1] = '\0';
+ 
+@@ -2524,12 +2557,18 @@ static void nfdi_decompose(void)
+ 				break;
+ 			free(unicode_data[unichar].utf32nfdi);
+ 			um = malloc(i * sizeof(unsigned int));
++			if (unlikely(!um))
++				return;
++
+ 			memcpy(um, mapping, i * sizeof(unsigned int));
+ 			unicode_data[unichar].utf32nfdi = um;
+ 		}
+ 		/* Add this decomposition to nfdicf if there is no entry. */
+ 		if (!unicode_data[unichar].utf32nfdicf) {
+ 			um = malloc(i * sizeof(unsigned int));
++			if (unlikely(!um))
++				return;
++
+ 			memcpy(um, mapping, i * sizeof(unsigned int));
+ 			unicode_data[unichar].utf32nfdicf = um;
+ 		}
+@@ -2578,6 +2617,9 @@ static void nfdicf_decompose(void)
+ 				break;
+ 			free(unicode_data[unichar].utf32nfdicf);
+ 			um = malloc(i * sizeof(unsigned int));
++			if (unlikely(!um))
++				return;
++
+ 			memcpy(um, mapping, i * sizeof(unsigned int));
+ 			unicode_data[unichar].utf32nfdicf = um;
+ 		}
 -- 
-Thanks,
-Jingbo
+2.18.2
+
