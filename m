@@ -2,152 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90DB55FE74C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 05:09:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6E61B5FE787
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 14 Oct 2022 05:19:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229851AbiJNDJO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 13 Oct 2022 23:09:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43888 "EHLO
+        id S229581AbiJNDTA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 13 Oct 2022 23:19:00 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229625AbiJNDIi (ORCPT
+        with ESMTP id S229533AbiJNDSe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 13 Oct 2022 23:08:38 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6772BEF5A1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Oct 2022 20:08:33 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id n18-20020a17090ade9200b0020b0012097cso7077993pjv.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 13 Oct 2022 20:08:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RPYvhf6hYj1gmxvw7dTnMnSbUK/V1sm26ubqcw4lSFY=;
-        b=uR1wnjzoh66Ntwurmw7mKwF1tShfnXY9UWfot3dsRbBXUbtebLzF0fV/OdZO1YB5Yw
-         PcIMj+Ydd5Hn2ryM/TVGAKfZN0TZjdE6wCe+F3ctIO6FHCtRgJFCsBZIabYASTtj7hln
-         XLsFKwqQlgniZqtFO6A/gIowSCRYZAj2hcvGo8DCes9+7qUqhO1J776gtuITkdeK0N+R
-         UCWdGHLsKwtvYhGN+SfYD2BTsK0or91WpNavAyzl3NsTvh4cFtEMEUkWSbpWAPS3BfS5
-         gfLNCK1IEWcc2/kryI9FvqKKmhhxnFa5vC2Pe9soKZt87Sg2tIscUDwTaTd9N+OwA2hF
-         baMg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RPYvhf6hYj1gmxvw7dTnMnSbUK/V1sm26ubqcw4lSFY=;
-        b=DiJ3xunSvISIXcbcPLCB7XDiuShKWkPhxCXnyH6P5SgrkudSMYGHl0flMclUneW5NB
-         VekvM+Svu7lYXLL8yrKGoYNKWfj+2T1zAj21i2qyGWztrRJXBs2mwAg+sJAdsClSlO2z
-         +MftAiCk7W71baJpQItODIEFT+pa6XBFFZXtmFioVkOTXVrVUrNl1rG7dOPuwWFHmRYL
-         oZO4qj5eVZ9+kycCby1lQG4H+ENgwaXpjAuIzFUV//UCR8uGzYb57rDe8Qw1QxmhYJna
-         9OivlN2T02NholbycxGJ7qqr9q/9uQ2w2swWzIZxhLqFAMtv4m8Wtknnbk+1fzbXgDD3
-         WDvw==
-X-Gm-Message-State: ACrzQf0rqJNXEMUQrqUPd1u27tfUGUQCy4086xlbraDnWoTGJAHBW/6p
-        kDxH9R3T6VKBqkukhNGO4IpDmg==
-X-Google-Smtp-Source: AMsMyM4JUmouJomkbkEP9IQpxtTBmIPr2OqA4geZ0pPrmUDavC6IaCWTRrMaDFGGxduazCATfRujOA==
-X-Received: by 2002:a17:902:db11:b0:17d:5e67:c51c with SMTP id m17-20020a170902db1100b0017d5e67c51cmr2829795plx.64.1665716912810;
-        Thu, 13 Oct 2022 20:08:32 -0700 (PDT)
-Received: from C02G705SMD6V.bytedance.net ([63.216.146.183])
-        by smtp.gmail.com with ESMTPSA id h4-20020a17090a710400b0020ae09e9724sm425524pjk.53.2022.10.13.20.08.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 13 Oct 2022 20:08:32 -0700 (PDT)
-From:   Jia Zhu <zhujia.zj@bytedance.com>
-To:     dhowells@redhat.com, xiang@kernel.org, jefflexu@linux.alibaba.com
-Cc:     linux-cachefs@redhat.com, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yinxin.x@bytedance.com, Jia Zhu <zhujia.zj@bytedance.com>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH V2 5/5] cachefiles: add restore command to recover inflight ondemand read requests
-Date:   Fri, 14 Oct 2022 11:07:45 +0800
-Message-Id: <20221014030745.25748-6-zhujia.zj@bytedance.com>
-X-Mailer: git-send-email 2.37.0 (Apple Git-136)
-In-Reply-To: <20221014030745.25748-1-zhujia.zj@bytedance.com>
-References: <20221014030745.25748-1-zhujia.zj@bytedance.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Thu, 13 Oct 2022 23:18:34 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E89E1AF2C;
+        Thu, 13 Oct 2022 20:18:33 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id E7F38CE1C9D;
+        Fri, 14 Oct 2022 03:18:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C47C433B5;
+        Fri, 14 Oct 2022 03:18:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1665717510;
+        bh=XdPGgMOKnebM+bZev/ZKP6wiusPUf6c3wma5ZTnpm0o=;
+        h=In-Reply-To:References:Date:From:To:Cc:Subject:From;
+        b=NxEBMe6pbFjKd5o5ykIa5BBRdhg0vXYTfKC2h/D5ORGx4SQhCcGSoE7R+BgRKqfFB
+         Rylt70PtJEJ6PROIB3006reKSYCVr/UMrnreQvIlLB8Gtg9j4hrgG7Kfd1gTHVSMFD
+         i4OuVq5ePV43QQA+lzCIkX4z4ODh2uWUl9poGO5vnpf7cD6e1gutexipao9jTzA1dE
+         9SZ4HB8qoHNFI29le+vTlFj/Up3dUyUU2Oc8hcBk9m+WrPxanjr9r7+y/ehilr3Z4K
+         XX2qYX0JEFAu5pJlnwAwPheP+kme30rgei6t5F6FvG2a+ivCnxv2LyQRoKnJTvkAjs
+         FUg8zL6DGDsSA==
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 7304527C0054;
+        Thu, 13 Oct 2022 23:18:27 -0400 (EDT)
+Received: from imap48 ([10.202.2.98])
+  by compute2.internal (MEProxy); Thu, 13 Oct 2022 23:18:27 -0400
+X-ME-Sender: <xms:AdVIYzOOj40fYDS1rOvXIoESyi161w0DmwR247bhjuKHqLFeT9OiDA>
+    <xme:AdVIY99529hlGQo-8KK9C30W0jlvvwwm75Z23pVzj3dmAFAsNJ7f6r-P3PWWqRCOA
+    Phzta6qNL1zttkMjs8>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvfedrfeekuddgieelucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehn
+    ugihucfnuhhtohhmihhrshhkihdfuceolhhuthhosehkvghrnhgvlhdrohhrgheqnecugg
+    ftrfgrthhtvghrnhepgeejhfehkeejleffheetkefhtdduuedtieehheekgfekudeggfff
+    udejuddufeeknecuffhomhgrihhnpegthhhrohhmihhumhdrohhrghenucevlhhushhtvg
+    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrnhguhidomhgvshhmthhp
+    rghuthhhphgvrhhsohhnrghlihhthidqudduiedukeehieefvddqvdeifeduieeitdekqd
+    hluhhtoheppehkvghrnhgvlhdrohhrgheslhhinhhugidrlhhuthhordhush
+X-ME-Proxy: <xmx:AdVIYySW5Tdj3xc9QCIj2mq3H0rlkZatHo_4MuZZWFFBYFhYq8rSyA>
+    <xmx:AdVIY3uxuPeTfHWQd84oguwbXb3jq_lpHxPlgcluwo9B3Bp9AzVjRg>
+    <xmx:AdVIY7fXv-y_hn4d5Su6ASkwBxzA9fYhaSJ9rz-aLpvt3ull2hzjEQ>
+    <xmx:A9VIY5GVCHHHXumAGXj3B2GHtzhL21R2t0gobETwrTSxeyRxILj7NXJ9Hqc>
+Feedback-ID: ieff94742:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 878A331A03F7; Thu, 13 Oct 2022 23:18:25 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1047-g9e4af4ada4-fm-20221005.001-g9e4af4ad
+Mime-Version: 1.0
+Message-Id: <2032f766-1704-486b-8f24-a670c0b3cb32@app.fastmail.com>
+In-Reply-To: <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
+References: <20221006082735.1321612-1-keescook@chromium.org>
+ <20221006082735.1321612-2-keescook@chromium.org>
+ <20221006090506.paqjf537cox7lqrq@wittgenstein>
+ <CAG48ez0sEkmaez9tYqgMXrkREmXZgxC9fdQD3mzF9cGo_=Tfyg@mail.gmail.com>
+Date:   Thu, 13 Oct 2022 20:18:04 -0700
+From:   "Andy Lutomirski" <luto@kernel.org>
+To:     "Jann Horn" <jannh@google.com>,
+        "Christian Brauner" <brauner@kernel.org>
+Cc:     "Kees Cook" <keescook@chromium.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        "Jorge Merlino" <jorge.merlino@canonical.com>,
+        "Al Viro" <viro@zeniv.linux.org.uk>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
+        "Sebastian Andrzej Siewior" <bigeasy@linutronix.de>,
+        "Andrew Morton" <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        "John Johansen" <john.johansen@canonical.com>,
+        "Paul Moore" <paul@paul-moore.com>,
+        "James Morris" <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        "Stephen Smalley" <stephen.smalley.work@gmail.com>,
+        "Eric Paris" <eparis@parisplace.org>,
+        "Richard Haines" <richard_c_haines@btinternet.com>,
+        "Casey Schaufler" <casey@schaufler-ca.com>,
+        "Xin Long" <lucien.xin@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        "Todd Kjos" <tkjos@google.com>,
+        "Ondrej Mosnacek" <omosnace@redhat.com>,
+        "Prashanth Prahlad" <pprahlad@redhat.com>,
+        "Micah Morton" <mortonm@chromium.org>,
+        "Fenghua Yu" <fenghua.yu@intel.com>,
+        "Andrei Vagin" <avagin@gmail.com>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+        selinux@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 1/2] fs/exec: Explicitly unshare fs_struct on exec
+Content-Type: text/plain
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Previously, in ondemand read scenario, if the anonymous fd was closed by
-user daemon, inflight and subsequent read requests would return EIO.
-As long as the device connection is not released, user daemon can hold
-and restore inflight requests by setting the request flag to
-CACHEFILES_REQ_NEW.
 
-Suggested-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
-Signed-off-by: Xin Yin <yinxin.x@bytedance.com>
----
- fs/cachefiles/daemon.c   |  1 +
- fs/cachefiles/internal.h |  3 +++
- fs/cachefiles/ondemand.c | 23 +++++++++++++++++++++++
- 3 files changed, 27 insertions(+)
 
-diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
-index c74bd1f4ecf5..014369266cb2 100644
---- a/fs/cachefiles/daemon.c
-+++ b/fs/cachefiles/daemon.c
-@@ -77,6 +77,7 @@ static const struct cachefiles_daemon_cmd cachefiles_daemon_cmds[] = {
- 	{ "tag",	cachefiles_daemon_tag		},
- #ifdef CONFIG_CACHEFILES_ONDEMAND
- 	{ "copen",	cachefiles_ondemand_copen	},
-+	{ "restore",	cachefiles_ondemand_restore	},
- #endif
- 	{ "",		NULL				}
- };
-diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-index 98d6cf58db11..a3cacba57def 100644
---- a/fs/cachefiles/internal.h
-+++ b/fs/cachefiles/internal.h
-@@ -302,6 +302,9 @@ extern ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
- extern int cachefiles_ondemand_copen(struct cachefiles_cache *cache,
- 				     char *args);
- 
-+extern int cachefiles_ondemand_restore(struct cachefiles_cache *cache,
-+					char *args);
-+
- extern int cachefiles_ondemand_init_object(struct cachefiles_object *object);
- extern void cachefiles_ondemand_clean_object(struct cachefiles_object *object);
- 
-diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-index c9eea89befec..08677c9d0004 100644
---- a/fs/cachefiles/ondemand.c
-+++ b/fs/cachefiles/ondemand.c
-@@ -182,6 +182,29 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
- 	return ret;
- }
- 
-+int cachefiles_ondemand_restore(struct cachefiles_cache *cache, char *args)
-+{
-+	struct cachefiles_req *req;
-+
-+	XA_STATE(xas, &cache->reqs, 0);
-+
-+	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
-+		return -EOPNOTSUPP;
-+
-+	/*
-+	 * Reset the requests to CACHEFILES_REQ_NEW state, so that the
-+	 * requests have been processed halfway before the crash of the
-+	 * user daemon could be reprocessed after the recovery.
-+	 */
-+	xas_lock(&xas);
-+	xas_for_each(&xas, req, ULONG_MAX)
-+		xas_set_mark(&xas, CACHEFILES_REQ_NEW);
-+	xas_unlock(&xas);
-+
-+	wake_up_all(&cache->daemon_pollwq);
-+	return 0;
-+}
-+
- static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
- {
- 	struct cachefiles_object *object;
--- 
-2.20.1
+On Thu, Oct 6, 2022, at 7:13 AM, Jann Horn wrote:
+> On Thu, Oct 6, 2022 at 11:05 AM Christian Brauner <brauner@kernel.org> wrote:
+>> On Thu, Oct 06, 2022 at 01:27:34AM -0700, Kees Cook wrote:
+>> > The check_unsafe_exec() counting of n_fs would not add up under a heavily
+>> > threaded process trying to perform a suid exec, causing the suid portion
+>> > to fail. This counting error appears to be unneeded, but to catch any
+>> > possible conditions, explicitly unshare fs_struct on exec, if it ends up
+>>
+>> Isn't this a potential uapi break? Afaict, before this change a call to
+>> clone{3}(CLONE_FS) followed by an exec in the child would have the
+>> parent and child share fs information. So if the child e.g., changes the
+>> working directory post exec it would also affect the parent. But after
+>> this change here this would no longer be true. So a child changing a
+>> workding directoro would not affect the parent anymore. IOW, an exec is
+>> accompanied by an unshare(CLONE_FS). Might still be worth trying ofc but
+>> it seems like a non-trivial uapi change but there might be few users
+>> that do clone{3}(CLONE_FS) followed by an exec.
+>
+> I believe the following code in Chromium explicitly relies on this
+> behavior, but I'm not sure whether this code is in active use anymore:
+>
+> https://source.chromium.org/chromium/chromium/src/+/main:sandbox/linux/suid/sandbox.c;l=101?q=CLONE_FS&sq=&ss=chromium
 
+Wait, this is absolutely nucking futs.  On a very quick inspection, the sharable things like this are fs, files, sighand, and io.    files and sighand get unshared, which makes sense.  fs supposedly checks for extra refs and prevents gaining privilege.  io is... ignored!  At least it's not immediately obvious that io is a problem.
+
+But seriously, this makes no sense at all.  It should not be possible to exec a program and then, without ptrace, change its cwd out from under it.  Do we really need to preserve this behavior?
+
+--Andy
