@@ -2,440 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BD5E5FF76A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Oct 2022 01:59:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 23A675FFB6B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 15 Oct 2022 19:24:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229717AbiJNX7e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 14 Oct 2022 19:59:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59394 "EHLO
+        id S229736AbiJORYp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 15 Oct 2022 13:24:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52458 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229507AbiJNX7d (ORCPT
+        with ESMTP id S229519AbiJORYn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 14 Oct 2022 19:59:33 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F08EF614B
-        for <linux-fsdevel@vger.kernel.org>; Fri, 14 Oct 2022 16:59:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1665791966; x=1697327966;
-  h=subject:from:to:cc:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=L0V7SrzCA0aOpbgV+IVU+xT4l6Tx4MRHhVonv4kD3hk=;
-  b=S5dDr4EsUhh33MHJJTDQ9rSgTQeIcNzvcTSq2ate64boIVl/Od+1lZGS
-   JbVh+FamB0O5eixjFQ6tYaHyQtWUmF79ykk0XMO4IUUpUOL39FoauCAXc
-   Piqk8aTOcQaGsfZ7TJHtmjilYR7fl56JCbJpBDpX3yFM+XsvEv0NxyY/Q
-   pajkJEJtrl4Jn2dnR5RhKEhywx6V4x/I3J1JNUybDXl1iRcvPok5qFZ/s
-   i5CaVxA0nqbe2t7nRrHF/B2Cz27rYDrgThxk8UY7ehoKFcgE3d5AfjvVc
-   Os+HkxruwCbqQVQCX4RnGG/pUpu9xPZdHrXzEphOGj6/rwWqJiLSVQxTK
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10500"; a="285887976"
-X-IronPort-AV: E=Sophos;i="5.95,185,1661842800"; 
-   d="scan'208";a="285887976"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2022 16:59:24 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10500"; a="605541417"
-X-IronPort-AV: E=Sophos;i="5.95,185,1661842800"; 
-   d="scan'208";a="605541417"
-Received: from uyoon-mobl.amr.corp.intel.com (HELO dwillia2-xfh.jf.intel.com) ([10.209.90.112])
-  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2022 16:59:23 -0700
-Subject: [PATCH v3 25/25] mm/gup: Drop DAX pgmap accounting
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-mm@kvack.org
-Cc:     Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Jason Gunthorpe <jgg@nvidia.com>, david@fromorbit.com,
-        nvdimm@lists.linux.dev, akpm@linux-foundation.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Fri, 14 Oct 2022 16:59:23 -0700
-Message-ID: <166579196364.2236710.8984717005481314942.stgit@dwillia2-xfh.jf.intel.com>
-In-Reply-To: <166579181584.2236710.17813547487183983273.stgit@dwillia2-xfh.jf.intel.com>
-References: <166579181584.2236710.17813547487183983273.stgit@dwillia2-xfh.jf.intel.com>
-User-Agent: StGit/0.18-3-g996c
+        Sat, 15 Oct 2022 13:24:43 -0400
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 89D6A1CB39
+        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Oct 2022 10:24:39 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id w6-20020a6bd606000000b006bcd951c261so2722851ioa.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 15 Oct 2022 10:24:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FXDSuoFbN7ibdHQJGHhqaFHsM+PEsrRvhPrQr4NT61Q=;
+        b=I0To1dUITJKbKGlolyQSLUu5EroOvunmAnyxfEsrpEVuXVrwqRF9Q1bYXzEftr27Ps
+         JW1UGpQRS6btVy6J05ZPKePfhvbm7Q7cBp393qtnK8HQuk0FJz0RWia/e6SqFItsHCAY
+         3xe3A5VKSSklGtgnXYrSDiQQDWOYUZv3ErYl4bM2K7FdRkJ3eAux7lhHh1KO7dk5cw36
+         Hk57FpnNiOCIvGGdL/i6iD+n/e7+D77WlwVraQSPWTr9a+QDvFB8D/StFx9SpLUl9vCd
+         3Pvik2q9kyhMiJoZWRMIvQVzeLjsbPLPTHVqoDNGXH/mP6r/gd5vfxrUtFeSHRwl/xbs
+         bong==
+X-Gm-Message-State: ACrzQf3/lBquLsNo5BZxUSjbIhTLzM172JJsfboRGIdGcM1FKRH3KTDp
+        +DzprgELO3z5sINf6ZrCvSKJiX/fN3LzsXq+udtUaj26EnSk
+X-Google-Smtp-Source: AMsMyM7LsjR7kpP4xhca/8DFkSor8LrpGNZj5UjiIW5s6h0+tgtpLA8uyA22mZlK8EKO7jg9DEgb2XIEE8zWDvg9vntFqhtQxRaP
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6602:1588:b0:6bc:d49a:61cc with SMTP id
+ e8-20020a056602158800b006bcd49a61ccmr1519089iow.154.1665854678860; Sat, 15
+ Oct 2022 10:24:38 -0700 (PDT)
+Date:   Sat, 15 Oct 2022 10:24:38 -0700
+In-Reply-To: <0000000000008caae305ab9a5318@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000618a8205eb160404@google.com>
+Subject: Re: [syzbot] general protection fault in security_inode_getattr
+From:   syzbot <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com>
+To:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
+        daniel@iogearbox.net, dvyukov@google.com, hdanton@sina.com,
+        jmorris@namei.org, john.fastabend@gmail.com, kafai@fb.com,
+        kpsingh@chromium.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
+        netdev@vger.kernel.org, omosnace@redhat.com, paul@paul-moore.com,
+        serge@hallyn.com, songliubraving@fb.com,
+        syzkaller-bugs@googlegroups.com, tonymarislogistics@yandex.com,
+        yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that pgmap accounting is handled at pgmap_request_folios() time, it
-can be dropped from gup time.
+syzbot has found a reproducer for the following issue on:
 
-A hurdle still remains that filesystem-DAX huge pages are not compound
-pages which still requires infrastructure like
-__gup_device_huge_p{m,u}d() to stick around.
+HEAD commit:    55be6084c8e0 Merge tag 'timers-core-2022-10-05' of git://g..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=147637c6880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=df75278aabf0681a
+dashboard link: https://syzkaller.appspot.com/bug?extid=f07cc9be8d1d226947ed
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1585a0c2880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1480a464880000
 
-Additionally, ZONE_DEVICE pages with this change are still not suitable
-to be returned from vm_normal_page(), so this cleanup is limited to
-deleting pgmap reference manipulation. This is an incremental step on
-the path to removing pte_devmap() altogether.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/6c791937c012/disk-55be6084.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/cb21a2879b4c/vmlinux-55be6084.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/2d56267ed26f/mount_1.gz
 
-Note that follow_pmd_devmap() can be deleted entirely since a few
-additions of pmd_devmap() allows the transparent huge page path to be
-reused.
+The issue was bisected to:
 
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Jan Kara <jack@suse.cz>
-Cc: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: John Hubbard <jhubbard@nvidia.com>
-Reported-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
----
- include/linux/huge_mm.h |   12 +------
- mm/gup.c                |   83 +++++++++++------------------------------------
- mm/huge_memory.c        |   48 +--------------------------
- 3 files changed, 22 insertions(+), 121 deletions(-)
+commit 35697c12d7ffd31a56d3c9604066a166b75d0169
+Author: Yonghong Song <yhs@fb.com>
+Date:   Thu Jan 16 17:40:04 2020 +0000
 
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index aab708996fb0..5d861905df46 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -266,10 +266,8 @@ static inline bool folio_test_pmd_mappable(struct folio *folio)
- 	return folio_order(folio) >= HPAGE_PMD_ORDER;
- }
- 
--struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
--		pmd_t *pmd, int flags, struct dev_pagemap **pgmap);
- struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
--		pud_t *pud, int flags, struct dev_pagemap **pgmap);
-+		pud_t *pud, int flags);
- 
- vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf);
- 
-@@ -428,14 +426,8 @@ static inline void mm_put_huge_zero_page(struct mm_struct *mm)
- 	return;
- }
- 
--static inline struct page *follow_devmap_pmd(struct vm_area_struct *vma,
--	unsigned long addr, pmd_t *pmd, int flags, struct dev_pagemap **pgmap)
--{
--	return NULL;
--}
--
- static inline struct page *follow_devmap_pud(struct vm_area_struct *vma,
--	unsigned long addr, pud_t *pud, int flags, struct dev_pagemap **pgmap)
-+	unsigned long addr, pud_t *pud, int flags)
- {
- 	return NULL;
- }
-diff --git a/mm/gup.c b/mm/gup.c
-index e49b1f46faa5..dc5284df3f6c 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -25,7 +25,6 @@
- #include "internal.h"
- 
- struct follow_page_context {
--	struct dev_pagemap *pgmap;
- 	unsigned int page_mask;
- };
- 
-@@ -522,8 +521,7 @@ static inline bool can_follow_write_pte(pte_t pte, struct page *page,
- }
- 
- static struct page *follow_page_pte(struct vm_area_struct *vma,
--		unsigned long address, pmd_t *pmd, unsigned int flags,
--		struct dev_pagemap **pgmap)
-+		unsigned long address, pmd_t *pmd, unsigned int flags)
- {
- 	struct mm_struct *mm = vma->vm_mm;
- 	struct page *page;
-@@ -574,17 +572,13 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
- 		goto out;
- 	}
- 
--	if (!page && pte_devmap(pte) && (flags & (FOLL_GET | FOLL_PIN))) {
-+	if (!page && pte_devmap(pte)) {
- 		/*
--		 * Only return device mapping pages in the FOLL_GET or FOLL_PIN
--		 * case since they are only valid while holding the pgmap
--		 * reference.
-+		 * ZONE_DEVICE pages are not yet treated as vm_normal_page()
-+		 * instances, with respect to mapcount and compound-page
-+		 * metadata
- 		 */
--		*pgmap = get_dev_pagemap(pte_pfn(pte), *pgmap);
--		if (*pgmap)
--			page = pte_page(pte);
--		else
--			goto no_page;
-+		page = pte_page(pte);
- 	} else if (unlikely(!page)) {
- 		if (flags & FOLL_DUMP) {
- 			/* Avoid special (like zero) pages in core dumps */
-@@ -702,15 +696,8 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
- 			return no_page_table(vma, flags);
- 		goto retry;
- 	}
--	if (pmd_devmap(pmdval)) {
--		ptl = pmd_lock(mm, pmd);
--		page = follow_devmap_pmd(vma, address, pmd, flags, &ctx->pgmap);
--		spin_unlock(ptl);
--		if (page)
--			return page;
--	}
--	if (likely(!pmd_trans_huge(pmdval)))
--		return follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
-+	if (likely(!(pmd_trans_huge(pmdval) || pmd_devmap(pmdval))))
-+		return follow_page_pte(vma, address, pmd, flags);
- 
- 	if (pmd_protnone(pmdval) && !gup_can_follow_protnone(flags))
- 		return no_page_table(vma, flags);
-@@ -728,9 +715,9 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
- 		pmd_migration_entry_wait(mm, pmd);
- 		goto retry_locked;
- 	}
--	if (unlikely(!pmd_trans_huge(*pmd))) {
-+	if (unlikely(!(pmd_trans_huge(*pmd) || pmd_devmap(pmdval)))) {
- 		spin_unlock(ptl);
--		return follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
-+		return follow_page_pte(vma, address, pmd, flags);
- 	}
- 	if (flags & FOLL_SPLIT_PMD) {
- 		int ret;
-@@ -748,7 +735,7 @@ static struct page *follow_pmd_mask(struct vm_area_struct *vma,
- 		}
- 
- 		return ret ? ERR_PTR(ret) :
--			follow_page_pte(vma, address, pmd, flags, &ctx->pgmap);
-+			follow_page_pte(vma, address, pmd, flags);
- 	}
- 	page = follow_trans_huge_pmd(vma, address, pmd, flags);
- 	spin_unlock(ptl);
-@@ -785,7 +772,7 @@ static struct page *follow_pud_mask(struct vm_area_struct *vma,
- 	}
- 	if (pud_devmap(*pud)) {
- 		ptl = pud_lock(mm, pud);
--		page = follow_devmap_pud(vma, address, pud, flags, &ctx->pgmap);
-+		page = follow_devmap_pud(vma, address, pud, flags);
- 		spin_unlock(ptl);
- 		if (page)
- 			return page;
-@@ -832,9 +819,6 @@ static struct page *follow_p4d_mask(struct vm_area_struct *vma,
-  *
-  * @flags can have FOLL_ flags set, defined in <linux/mm.h>
-  *
-- * When getting pages from ZONE_DEVICE memory, the @ctx->pgmap caches
-- * the device's dev_pagemap metadata to avoid repeating expensive lookups.
-- *
-  * When getting an anonymous page and the caller has to trigger unsharing
-  * of a shared anonymous page first, -EMLINK is returned. The caller should
-  * trigger a fault with FAULT_FLAG_UNSHARE set. Note that unsharing is only
-@@ -889,7 +873,7 @@ static struct page *follow_page_mask(struct vm_area_struct *vma,
- struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
- 			 unsigned int foll_flags)
- {
--	struct follow_page_context ctx = { NULL };
-+	struct follow_page_context ctx = { 0 };
- 	struct page *page;
- 
- 	if (vma_is_secretmem(vma))
-@@ -899,8 +883,6 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
- 		return NULL;
- 
- 	page = follow_page_mask(vma, address, foll_flags, &ctx);
--	if (ctx.pgmap)
--		put_dev_pagemap(ctx.pgmap);
- 	return page;
- }
- 
-@@ -1149,7 +1131,7 @@ static long __get_user_pages(struct mm_struct *mm,
- {
- 	long ret = 0, i = 0;
- 	struct vm_area_struct *vma = NULL;
--	struct follow_page_context ctx = { NULL };
-+	struct follow_page_context ctx = { 0 };
- 
- 	if (!nr_pages)
- 		return 0;
-@@ -1264,8 +1246,6 @@ static long __get_user_pages(struct mm_struct *mm,
- 		nr_pages -= page_increm;
- 	} while (nr_pages);
- out:
--	if (ctx.pgmap)
--		put_dev_pagemap(ctx.pgmap);
- 	return i ? i : ret;
- }
- 
-@@ -2408,9 +2388,8 @@ static int gup_pte_range(pmd_t pmd, pmd_t *pmdp, unsigned long addr,
- 			 unsigned long end, unsigned int flags,
- 			 struct page **pages, int *nr)
- {
--	struct dev_pagemap *pgmap = NULL;
--	int nr_start = *nr, ret = 0;
- 	pte_t *ptep, *ptem;
-+	int ret = 0;
- 
- 	ptem = ptep = pte_offset_map(&pmd, addr);
- 	do {
-@@ -2427,12 +2406,6 @@ static int gup_pte_range(pmd_t pmd, pmd_t *pmdp, unsigned long addr,
- 		if (pte_devmap(pte)) {
- 			if (unlikely(flags & FOLL_LONGTERM))
- 				goto pte_unmap;
--
--			pgmap = get_dev_pagemap(pte_pfn(pte), pgmap);
--			if (unlikely(!pgmap)) {
--				undo_dev_pagemap(nr, nr_start, flags, pages);
--				goto pte_unmap;
--			}
- 		} else if (pte_special(pte))
- 			goto pte_unmap;
- 
-@@ -2480,8 +2453,6 @@ static int gup_pte_range(pmd_t pmd, pmd_t *pmdp, unsigned long addr,
- 	ret = 1;
- 
- pte_unmap:
--	if (pgmap)
--		put_dev_pagemap(pgmap);
- 	pte_unmap(ptem);
- 	return ret;
- }
-@@ -2509,28 +2480,17 @@ static int __gup_device_huge(unsigned long pfn, unsigned long addr,
- 			     unsigned long end, unsigned int flags,
- 			     struct page **pages, int *nr)
- {
--	int nr_start = *nr;
--	struct dev_pagemap *pgmap = NULL;
--
- 	do {
- 		struct page *page = pfn_to_page(pfn);
- 
--		pgmap = get_dev_pagemap(pfn, pgmap);
--		if (unlikely(!pgmap)) {
--			undo_dev_pagemap(nr, nr_start, flags, pages);
--			break;
--		}
- 		SetPageReferenced(page);
- 		pages[*nr] = page;
--		if (unlikely(!try_grab_page(page, flags))) {
--			undo_dev_pagemap(nr, nr_start, flags, pages);
-+		if (unlikely(!try_grab_page(page, flags)))
- 			break;
--		}
- 		(*nr)++;
- 		pfn++;
- 	} while (addr += PAGE_SIZE, addr != end);
- 
--	put_dev_pagemap(pgmap);
- 	return addr == end;
- }
- 
-@@ -2539,16 +2499,14 @@ static int __gup_device_huge_pmd(pmd_t orig, pmd_t *pmdp, unsigned long addr,
- 				 struct page **pages, int *nr)
- {
- 	unsigned long fault_pfn;
--	int nr_start = *nr;
- 
- 	fault_pfn = pmd_pfn(orig) + ((addr & ~PMD_MASK) >> PAGE_SHIFT);
- 	if (!__gup_device_huge(fault_pfn, addr, end, flags, pages, nr))
- 		return 0;
- 
--	if (unlikely(pmd_val(orig) != pmd_val(*pmdp))) {
--		undo_dev_pagemap(nr, nr_start, flags, pages);
-+	if (unlikely(pmd_val(orig) != pmd_val(*pmdp)))
- 		return 0;
--	}
-+
- 	return 1;
- }
- 
-@@ -2557,16 +2515,13 @@ static int __gup_device_huge_pud(pud_t orig, pud_t *pudp, unsigned long addr,
- 				 struct page **pages, int *nr)
- {
- 	unsigned long fault_pfn;
--	int nr_start = *nr;
- 
- 	fault_pfn = pud_pfn(orig) + ((addr & ~PUD_MASK) >> PAGE_SHIFT);
- 	if (!__gup_device_huge(fault_pfn, addr, end, flags, pages, nr))
- 		return 0;
- 
--	if (unlikely(pud_val(orig) != pud_val(*pudp))) {
--		undo_dev_pagemap(nr, nr_start, flags, pages);
-+	if (unlikely(pud_val(orig) != pud_val(*pudp)))
- 		return 0;
--	}
- 	return 1;
- }
- #else
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 1cc4a5f4791e..065c0dc03491 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1029,49 +1029,6 @@ static void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
- 		update_mmu_cache_pmd(vma, addr, pmd);
- }
- 
--struct page *follow_devmap_pmd(struct vm_area_struct *vma, unsigned long addr,
--		pmd_t *pmd, int flags, struct dev_pagemap **pgmap)
--{
--	unsigned long pfn = pmd_pfn(*pmd);
--	struct mm_struct *mm = vma->vm_mm;
--	struct page *page;
--
--	assert_spin_locked(pmd_lockptr(mm, pmd));
--
--	/* FOLL_GET and FOLL_PIN are mutually exclusive. */
--	if (WARN_ON_ONCE((flags & (FOLL_PIN | FOLL_GET)) ==
--			 (FOLL_PIN | FOLL_GET)))
--		return NULL;
--
--	if (flags & FOLL_WRITE && !pmd_write(*pmd))
--		return NULL;
--
--	if (pmd_present(*pmd) && pmd_devmap(*pmd))
--		/* pass */;
--	else
--		return NULL;
--
--	if (flags & FOLL_TOUCH)
--		touch_pmd(vma, addr, pmd, flags & FOLL_WRITE);
--
--	/*
--	 * device mapped pages can only be returned if the
--	 * caller will manage the page reference count.
--	 */
--	if (!(flags & (FOLL_GET | FOLL_PIN)))
--		return ERR_PTR(-EEXIST);
--
--	pfn += (addr & ~PMD_MASK) >> PAGE_SHIFT;
--	*pgmap = get_dev_pagemap(pfn, *pgmap);
--	if (!*pgmap)
--		return ERR_PTR(-EFAULT);
--	page = pfn_to_page(pfn);
--	if (!try_grab_page(page, flags))
--		page = ERR_PTR(-ENOMEM);
--
--	return page;
--}
--
- int copy_huge_pmd(struct mm_struct *dst_mm, struct mm_struct *src_mm,
- 		  pmd_t *dst_pmd, pmd_t *src_pmd, unsigned long addr,
- 		  struct vm_area_struct *dst_vma, struct vm_area_struct *src_vma)
-@@ -1188,7 +1145,7 @@ static void touch_pud(struct vm_area_struct *vma, unsigned long addr,
- }
- 
- struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
--		pud_t *pud, int flags, struct dev_pagemap **pgmap)
-+			       pud_t *pud, int flags)
- {
- 	unsigned long pfn = pud_pfn(*pud);
- 	struct mm_struct *mm = vma->vm_mm;
-@@ -1222,9 +1179,6 @@ struct page *follow_devmap_pud(struct vm_area_struct *vma, unsigned long addr,
- 		return ERR_PTR(-EEXIST);
- 
- 	pfn += (addr & ~PUD_MASK) >> PAGE_SHIFT;
--	*pgmap = get_dev_pagemap(pfn, *pgmap);
--	if (!*pgmap)
--		return ERR_PTR(-EFAULT);
- 	page = pfn_to_page(pfn);
- 	if (!try_grab_page(page, flags))
- 		page = ERR_PTR(-ENOMEM);
+    selftests/bpf: Fix test_progs send_signal flakiness with nmi mode
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13032139900000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=10832139900000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17032139900000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com
+Fixes: 35697c12d7ff ("selftests/bpf: Fix test_progs send_signal flakiness with nmi mode")
+
+general protection fault, probably for non-canonical address 0xdffffc000000000d: 0000 [#1] PREEMPT SMP KASAN
+KASAN: null-ptr-deref in range [0x0000000000000068-0x000000000000006f]
+CPU: 0 PID: 3761 Comm: syz-executor352 Not tainted 6.0.0-syzkaller-09589-g55be6084c8e0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
+RIP: 0010:d_backing_inode include/linux/dcache.h:542 [inline]
+RIP: 0010:security_inode_getattr+0x46/0x140 security/security.c:1345
+Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 04 01 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 5d 08 48 8d 7b 68 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 d7 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
+RSP: 0018:ffffc9000400f578 EFLAGS: 00010212
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 000000000000000d RSI: ffffffff83bd72fe RDI: 0000000000000068
+RBP: ffffc9000400f750 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 000000000008c07d R12: ffff8880763dca48
+R13: ffffc9000400f750 R14: 00000000000007ff R15: 0000000000000000
+FS:  00007f246f27e700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f246f27e718 CR3: 00000000717a9000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ vfs_getattr+0x22/0x60 fs/stat.c:158
+ ovl_copy_up_one+0x12c/0x2870 fs/overlayfs/copy_up.c:965
+ ovl_copy_up_flags+0x150/0x1d0 fs/overlayfs/copy_up.c:1047
+ ovl_maybe_copy_up+0x140/0x190 fs/overlayfs/copy_up.c:1079
+ ovl_open+0xf1/0x2d0 fs/overlayfs/file.c:152
+ do_dentry_open+0x6cc/0x13f0 fs/open.c:882
+ do_open fs/namei.c:3557 [inline]
+ path_openat+0x1c92/0x28f0 fs/namei.c:3691
+ do_filp_open+0x1b6/0x400 fs/namei.c:3718
+ do_sys_openat2+0x16d/0x4c0 fs/open.c:1310
+ do_sys_open fs/open.c:1326 [inline]
+ __do_sys_open fs/open.c:1334 [inline]
+ __se_sys_open fs/open.c:1330 [inline]
+ __x64_sys_open+0x119/0x1c0 fs/open.c:1330
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f246f2f2b49
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f246f27e2f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007f246f3774b0 RCX: 00007f246f2f2b49
+RDX: 0000000000000000 RSI: 0000000000000300 RDI: 0000000020000140
+RBP: 00007f246f3442ac R08: 00007f246f27e700 R09: 0000000000000000
+R10: 00007f246f27e700 R11: 0000000000000246 R12: 0031656c69662f2e
+R13: 79706f636174656d R14: 0079616c7265766f R15: 00007f246f3774b8
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:d_backing_inode include/linux/dcache.h:542 [inline]
+RIP: 0010:security_inode_getattr+0x46/0x140 security/security.c:1345
+Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 04 01 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 5d 08 48 8d 7b 68 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 d7 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
+RSP: 0018:ffffc9000400f578 EFLAGS: 00010212
+RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
+RDX: 000000000000000d RSI: ffffffff83bd72fe RDI: 0000000000000068
+RBP: ffffc9000400f750 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000000 R11: 000000000008c07d R12: ffff8880763dca48
+R13: ffffc9000400f750 R14: 00000000000007ff R15: 0000000000000000
+FS:  00007f246f27e700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005643c9471000 CR3: 00000000717a9000 CR4: 0000000000350ee0
+----------------
+Code disassembly (best guess):
+   0:	48 89 fa             	mov    %rdi,%rdx
+   3:	48 c1 ea 03          	shr    $0x3,%rdx
+   7:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1)
+   b:	0f 85 04 01 00 00    	jne    0x115
+  11:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  18:	fc ff df
+  1b:	49 8b 5d 08          	mov    0x8(%r13),%rbx
+  1f:	48 8d 7b 68          	lea    0x68(%rbx),%rdi
+  23:	48 89 fa             	mov    %rdi,%rdx
+  26:	48 c1 ea 03          	shr    $0x3,%rdx
+* 2a:	80 3c 02 00          	cmpb   $0x0,(%rdx,%rax,1) <-- trapping instruction
+  2e:	0f 85 d7 00 00 00    	jne    0x10b
+  34:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  3b:	fc ff df
+  3e:	48                   	rex.W
+  3f:	8b                   	.byte 0x8b
 
