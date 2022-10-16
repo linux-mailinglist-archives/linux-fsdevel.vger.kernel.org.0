@@ -2,172 +2,231 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A47EC600011
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Oct 2022 16:53:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BA06A600065
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 16 Oct 2022 17:06:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229797AbiJPOw6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 16 Oct 2022 10:52:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41974 "EHLO
+        id S229944AbiJPPGx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 16 Oct 2022 11:06:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbiJPOw5 (ORCPT
+        with ESMTP id S229919AbiJPPGw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 16 Oct 2022 10:52:57 -0400
-Received: from mail-yb1-xb2e.google.com (mail-yb1-xb2e.google.com [IPv6:2607:f8b0:4864:20::b2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF83226ADB
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Oct 2022 07:52:53 -0700 (PDT)
-Received: by mail-yb1-xb2e.google.com with SMTP id e82so3321032ybh.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 16 Oct 2022 07:52:53 -0700 (PDT)
+        Sun, 16 Oct 2022 11:06:52 -0400
+Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 197F31659F;
+        Sun, 16 Oct 2022 08:06:51 -0700 (PDT)
+Received: by mail-wr1-x42f.google.com with SMTP id a10so14687238wrm.12;
+        Sun, 16 Oct 2022 08:06:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZdHbgEIqE71zqzvD5lFD1iP09tkUsZi6uBS+RZqLGJk=;
-        b=xXVGCqLxPehqC5Kal6037wodgHSecfAsuPSBzWQ1Qeq8zBWBTXn9mdDlsJBBC86wgu
-         BEu3uRO4I8S2rBj/1d0f+w3HAueW4w1XOC9ZVr9Lf4QHaBy+3VSrFcyT3D0ETHq0tro5
-         WeQItCzXuyvYdRGjxz6MVk7LJmambgDKgjknFbutI5rOwqXi8PdxIXv9xrZ8/CsjD1M2
-         nii1cSrUGoM6RoC80IICwGYWlPbJd3esCsbrdDZo9aXJC4FNMPHL9iICqeeE3oacb2A1
-         mDtZ/ycDJq5IbDQWTm7H+hhCB9Jk1sGLLpAmZFXlW0qQbm867+JfIg1/pgPsalj8gjm5
-         a7mw==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mSANhTB5Zz4UC3KsIc8lXyn9giGudjvJ/sHgGjqk5pM=;
+        b=hpET3coX8+u76QtArP03ZgDQK3NzQELvextbpUV3lG/18lHkFjd9xpzR0OVfiWPRc7
+         lVxae9IN9hAbnqlXdi8Ypg6+u0dYOYa3uE83Qdx4X+SUUcs3glQJ9gBqqkfrvJl6PggB
+         8Zo2FRgM324wxP7GJBXbhtNLxFrlp8wuw8BZ/msJBpg9SPxRDVJNJPZh+HFBjANp6eIi
+         OdhulgCSwhBqHFq6wIWNTmPaUhyPDJ/73umzuh9rEPFbYnk9+9zhAm6N39UTLv2vZDWw
+         IEiFJqgrWcQvjFgySSH9rlqO4ogHMaRxxWsd7A0yyBBWtBigMFQ5JODpdsSSzpkJ+flV
+         7/6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ZdHbgEIqE71zqzvD5lFD1iP09tkUsZi6uBS+RZqLGJk=;
-        b=Cddi4BNfjyBltb0eAjPbhZY4hcOAyNI87aztYuwL72lXYxULfsTasqwJky9r0iLWzJ
-         Mzgmmry9Y666J0Y79yN4pwjHtxUUrp64nx0Me7xDyUjXCF3nIhQdMGpTbWCEurBCpAp7
-         apvmOtf8plWaEdVG6OVxq9o7ZCTAb83rCl9n1+9QgfM52gJMyPlMeJnji1rIqjNFWzz1
-         kBHhVH0O1c/WAghtr8FpkwlZd9s8OdFOmKhNIPK9eosGeAzR+FdcN3R7Z5DUDSIgawOX
-         kL0u8/wvdNjufkgbz/2anAoN8qnbjXBy6JbFChNNKSLdx93oBoOzZ8X1Pz1HeI3f1aUG
-         vNCw==
-X-Gm-Message-State: ACrzQf1krGiy8dvmuvRKALUsXf+tTtrp3zElof9mIaspxs0oOc+sF0J5
-        HFytKeT9dbyAYaGIxZwurUGGegT//dnDtSQ2QiSb
-X-Google-Smtp-Source: AMsMyM5gRTtPYzoabg/Y0bfdBfHZFAndDRmG+NHcskvOABLdhFlFTzIX3FhB4/EANoTxAQAz9MQgBJzs6ZnzTF97bUA=
-X-Received: by 2002:a05:6902:724:b0:6c0:1784:b6c7 with SMTP id
- l4-20020a056902072400b006c01784b6c7mr5849058ybt.15.1665931972823; Sun, 16 Oct
- 2022 07:52:52 -0700 (PDT)
+        bh=mSANhTB5Zz4UC3KsIc8lXyn9giGudjvJ/sHgGjqk5pM=;
+        b=4H1hAoSkt1as6RBrkkNHE0isMUwSOmV7g1TeDgwSNPlb2nZSZeFz+7O5XdhlkzRSev
+         G6wdB7WNBhHZpPBVyxLBpkfpJwUSGx9gKg8yKz3qsHyuKuCYubVDe+vAYUhNNSa1HVjh
+         xqZLoxjfq3us9AfxJ1VxS2ciWoRPeLxsiwd9J7Iei7MN/z6pr/G7yBcO+DV5a7XC02qh
+         Z04pL5Edn7fhHh/ZPAd+Ab0geMiJDw9rgUnnJteD93rrv7q5M6J68I/UyJp1hBpmhacJ
+         ByAxhzc8i70K/hH3hkt/F2lTo4f2408mg9ULgO/wmj7oVuiTB5iUFxU3twBupf35VIlE
+         A+xg==
+X-Gm-Message-State: ACrzQf0ikFNbWK+dMWsMw/u3ZcCtxGW5IFasVftoMb1wdBDBtNFZYQT+
+        iIsKCVik8monXT0A0bpjm3Cu47k4y7243Q==
+X-Google-Smtp-Source: AMsMyM5Da0zut1pkh/t/C4+xqZrJPsiNmaA0XEsNhbevLOL6SdtnPO5Qb3rNEZDP2c9WfuyZMNXNkQ==
+X-Received: by 2002:adf:ffc8:0:b0:231:ce45:7e02 with SMTP id x8-20020adfffc8000000b00231ce457e02mr3795030wrs.383.1665932809400;
+        Sun, 16 Oct 2022 08:06:49 -0700 (PDT)
+Received: from localhost.localdomain (host-95-250-231-122.retail.telecomitalia.it. [95.250.231.122])
+        by smtp.gmail.com with ESMTPSA id p39-20020a05600c1da700b003c6d21a19a0sm7615465wms.29.2022.10.16.08.06.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Oct 2022 08:06:48 -0700 (PDT)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>,
+        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-kernel@vger.kernel.org
+Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Subject: [RESEND PATCH] fs/aio: Replace kmap{,_atomic}() with kmap_local_page()
+Date:   Sun, 16 Oct 2022 17:06:56 +0200
+Message-Id: <20221016150656.5803-1-fmdefrancesco@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-References: <0000000000008caae305ab9a5318@google.com> <000000000000618a8205eb160404@google.com>
-In-Reply-To: <000000000000618a8205eb160404@google.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 16 Oct 2022 10:52:41 -0400
-Message-ID: <CAHC9VhRt2vpArZ=bOrkBOGiAuoTdEcp2PRP5NtbyEZkuMHvopA@mail.gmail.com>
-Subject: Re: [syzbot] general protection fault in security_inode_getattr
-To:     syzbot <syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com>
-Cc:     andriin@fb.com, ast@kernel.org, bpf@vger.kernel.org,
-        daniel@iogearbox.net, dvyukov@google.com, hdanton@sina.com,
-        jmorris@namei.org, john.fastabend@gmail.com, kafai@fb.com,
-        kpsingh@chromium.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-unionfs@vger.kernel.org, miklos@szeredi.hu,
-        netdev@vger.kernel.org, omosnace@redhat.com, serge@hallyn.com,
-        songliubraving@fb.com, syzkaller-bugs@googlegroups.com,
-        tonymarislogistics@yandex.com, yhs@fb.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 15, 2022 at 1:24 PM syzbot
-<syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com> wrote:
->
-> syzbot has found a reproducer for the following issue on:
->
-> HEAD commit:    55be6084c8e0 Merge tag 'timers-core-2022-10-05' of git://g..
-> git tree:       upstream
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=147637c6880000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=df75278aabf0681a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=f07cc9be8d1d226947ed
-> compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1585a0c2880000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1480a464880000
->
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/6c791937c012/disk-55be6084.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/cb21a2879b4c/vmlinux-55be6084.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/2d56267ed26f/mount_1.gz
->
-> The issue was bisected to:
->
-> commit 35697c12d7ffd31a56d3c9604066a166b75d0169
-> Author: Yonghong Song <yhs@fb.com>
-> Date:   Thu Jan 16 17:40:04 2020 +0000
->
->     selftests/bpf: Fix test_progs send_signal flakiness with nmi mode
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13032139900000
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=10832139900000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=17032139900000
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+f07cc9be8d1d226947ed@syzkaller.appspotmail.com
-> Fixes: 35697c12d7ff ("selftests/bpf: Fix test_progs send_signal flakiness with nmi mode")
->
-> general protection fault, probably for non-canonical address 0xdffffc000000000d: 0000 [#1] PREEMPT SMP KASAN
-> KASAN: null-ptr-deref in range [0x0000000000000068-0x000000000000006f]
-> CPU: 0 PID: 3761 Comm: syz-executor352 Not tainted 6.0.0-syzkaller-09589-g55be6084c8e0 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
-> RIP: 0010:d_backing_inode include/linux/dcache.h:542 [inline]
-> RIP: 0010:security_inode_getattr+0x46/0x140 security/security.c:1345
-> Code: 48 89 fa 48 c1 ea 03 80 3c 02 00 0f 85 04 01 00 00 48 b8 00 00 00 00 00 fc ff df 49 8b 5d 08 48 8d 7b 68 48 89 fa 48 c1 ea 03 <80> 3c 02 00 0f 85 d7 00 00 00 48 b8 00 00 00 00 00 fc ff df 48 8b
-> RSP: 0018:ffffc9000400f578 EFLAGS: 00010212
-> RAX: dffffc0000000000 RBX: 0000000000000000 RCX: 0000000000000000
-> RDX: 000000000000000d RSI: ffffffff83bd72fe RDI: 0000000000000068
-> RBP: ffffc9000400f750 R08: 0000000000000005 R09: 0000000000000000
-> R10: 0000000000000000 R11: 000000000008c07d R12: ffff8880763dca48
-> R13: ffffc9000400f750 R14: 00000000000007ff R15: 0000000000000000
-> FS:  00007f246f27e700(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 00007f246f27e718 CR3: 00000000717a9000 CR4: 0000000000350ef0
-> Call Trace:
->  <TASK>
->  vfs_getattr+0x22/0x60 fs/stat.c:158
->  ovl_copy_up_one+0x12c/0x2870 fs/overlayfs/copy_up.c:965
->  ovl_copy_up_flags+0x150/0x1d0 fs/overlayfs/copy_up.c:1047
->  ovl_maybe_copy_up+0x140/0x190 fs/overlayfs/copy_up.c:1079
->  ovl_open+0xf1/0x2d0 fs/overlayfs/file.c:152
->  do_dentry_open+0x6cc/0x13f0 fs/open.c:882
->  do_open fs/namei.c:3557 [inline]
->  path_openat+0x1c92/0x28f0 fs/namei.c:3691
->  do_filp_open+0x1b6/0x400 fs/namei.c:3718
->  do_sys_openat2+0x16d/0x4c0 fs/open.c:1310
->  do_sys_open fs/open.c:1326 [inline]
->  __do_sys_open fs/open.c:1334 [inline]
->  __se_sys_open fs/open.c:1330 [inline]
->  __x64_sys_open+0x119/0x1c0 fs/open.c:1330
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> RIP: 0033:0x7f246f2f2b49
-> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f246f27e2f8 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-> RAX: ffffffffffffffda RBX: 00007f246f3774b0 RCX: 00007f246f2f2b49
-> RDX: 0000000000000000 RSI: 0000000000000300 RDI: 0000000020000140
-> RBP: 00007f246f3442ac R08: 00007f246f27e700 R09: 0000000000000000
-> R10: 00007f246f27e700 R11: 0000000000000246 R12: 0031656c69662f2e
-> R13: 79706f636174656d R14: 0079616c7265766f R15: 00007f246f3774b8
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
+The use of kmap() and kmap_atomic() are being deprecated in favor of
+kmap_local_page().
 
-It doesn't look like this is a problem with
-security_inode_getattr()/d_backing_inode() as it appears that the
-passed path struct pointer has a bogus/NULL path->dentry pointer and
-to the best of my knowledge it would appear that vfs_getattr() (the
-caller) requires a valid path->dentry value.
+There are two main problems with kmap(): (1) It comes with an overhead as
+the mapping space is restricted and protected by a global lock for
+synchronization and (2) it also requires global TLB invalidation when the
+kmap’s pool wraps and it might block when the mapping space is fully
+utilized until a slot becomes available.
 
-Looking quickly at the code, I wonder if there is something wonky
-going on in the overlayfs code, specifically ovl_copy_up_flags() and
-ovl_copy_up_one() as they have to play a number of tricks to handle
-the transparent overlays and copy up operations.  I'm not an overlayfs
-expert, but that seems like a good place to start digging further into
-this.
+With kmap_local_page() the mappings are per thread, CPU local, can take
+page faults, and can be called from any context (including interrupts).
+It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
+the tasks can be preempted and, when they are scheduled to run again, the
+kernel virtual addresses are restored and still valid.
 
+Since its use in fs/aio.c is safe everywhere, it should be preferred.
+
+Therefore, replace kmap() and kmap_atomic() with kmap_local_page() in
+fs/aio.c.
+
+Tested with xfstests on a QEMU/KVM x86_32 VM, 6GB RAM, booting a kernel
+with HIGHMEM64GB enabled.
+
+Cc: "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>
+Suggested-by: Ira Weiny <ira.weiny@intel.com>
+Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+---
+
+I've tested with "./check -g aio". The tests in this group fail 3/26
+times, with and without my patch. Therefore, these changes don't introduce
+further errors. I'm not aware of any further tests I may run, so that
+any suggestions would be precious and much appreciated :-)
+
+I'm resending this patch because some recipients were missing in the 
+previous submissions. In the meantime I'm also adding some more information 
+in the commit message. There are no changes in the code.
+
+ fs/aio.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
+
+diff --git a/fs/aio.c b/fs/aio.c
+index 3c249b938632..343fea0c6d1a 100644
+--- a/fs/aio.c
++++ b/fs/aio.c
+@@ -567,7 +567,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+ 	ctx->user_id = ctx->mmap_base;
+ 	ctx->nr_events = nr_events; /* trusted copy */
+ 
+-	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring = kmap_local_page(ctx->ring_pages[0]);
+ 	ring->nr = nr_events;	/* user copy */
+ 	ring->id = ~0U;
+ 	ring->head = ring->tail = 0;
+@@ -575,7 +575,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+ 	ring->compat_features = AIO_RING_COMPAT_FEATURES;
+ 	ring->incompat_features = AIO_RING_INCOMPAT_FEATURES;
+ 	ring->header_length = sizeof(struct aio_ring);
+-	kunmap_atomic(ring);
++	kunmap_local(ring);
+ 	flush_dcache_page(ctx->ring_pages[0]);
+ 
+ 	return 0;
+@@ -678,9 +678,9 @@ static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
+ 					 * we are protected from page migration
+ 					 * changes ring_pages by ->ring_lock.
+ 					 */
+-					ring = kmap_atomic(ctx->ring_pages[0]);
++					ring = kmap_local_page(ctx->ring_pages[0]);
+ 					ring->id = ctx->id;
+-					kunmap_atomic(ring);
++					kunmap_local(ring);
+ 					return 0;
+ 				}
+ 
+@@ -1024,9 +1024,9 @@ static void user_refill_reqs_available(struct kioctx *ctx)
+ 		 * against ctx->completed_events below will make sure we do the
+ 		 * safe/right thing.
+ 		 */
+-		ring = kmap_atomic(ctx->ring_pages[0]);
++		ring = kmap_local_page(ctx->ring_pages[0]);
+ 		head = ring->head;
+-		kunmap_atomic(ring);
++		kunmap_local(ring);
+ 
+ 		refill_reqs_available(ctx, head, ctx->tail);
+ 	}
+@@ -1132,12 +1132,12 @@ static void aio_complete(struct aio_kiocb *iocb)
+ 	if (++tail >= ctx->nr_events)
+ 		tail = 0;
+ 
+-	ev_page = kmap_atomic(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
++	ev_page = kmap_local_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+ 	event = ev_page + pos % AIO_EVENTS_PER_PAGE;
+ 
+ 	*event = iocb->ki_res;
+ 
+-	kunmap_atomic(ev_page);
++	kunmap_local(ev_page);
+ 	flush_dcache_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+ 
+ 	pr_debug("%p[%u]: %p: %p %Lx %Lx %Lx\n", ctx, tail, iocb,
+@@ -1151,10 +1151,10 @@ static void aio_complete(struct aio_kiocb *iocb)
+ 
+ 	ctx->tail = tail;
+ 
+-	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring = kmap_local_page(ctx->ring_pages[0]);
+ 	head = ring->head;
+ 	ring->tail = tail;
+-	kunmap_atomic(ring);
++	kunmap_local(ring);
+ 	flush_dcache_page(ctx->ring_pages[0]);
+ 
+ 	ctx->completed_events++;
+@@ -1214,10 +1214,10 @@ static long aio_read_events_ring(struct kioctx *ctx,
+ 	mutex_lock(&ctx->ring_lock);
+ 
+ 	/* Access to ->ring_pages here is protected by ctx->ring_lock. */
+-	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring = kmap_local_page(ctx->ring_pages[0]);
+ 	head = ring->head;
+ 	tail = ring->tail;
+-	kunmap_atomic(ring);
++	kunmap_local(ring);
+ 
+ 	/*
+ 	 * Ensure that once we've read the current tail pointer, that
+@@ -1249,10 +1249,10 @@ static long aio_read_events_ring(struct kioctx *ctx,
+ 		avail = min(avail, nr - ret);
+ 		avail = min_t(long, avail, AIO_EVENTS_PER_PAGE - pos);
+ 
+-		ev = kmap(page);
++		ev = kmap_local_page(page);
+ 		copy_ret = copy_to_user(event + ret, ev + pos,
+ 					sizeof(*ev) * avail);
+-		kunmap(page);
++		kunmap_local(ev);
+ 
+ 		if (unlikely(copy_ret)) {
+ 			ret = -EFAULT;
+@@ -1264,9 +1264,9 @@ static long aio_read_events_ring(struct kioctx *ctx,
+ 		head %= ctx->nr_events;
+ 	}
+ 
+-	ring = kmap_atomic(ctx->ring_pages[0]);
++	ring = kmap_local_page(ctx->ring_pages[0]);
+ 	ring->head = head;
+-	kunmap_atomic(ring);
++	kunmap_local(ring);
+ 	flush_dcache_page(ctx->ring_pages[0]);
+ 
+ 	pr_debug("%li  h%u t%u\n", ret, head, tail);
 -- 
-paul-moore.com
+2.36.1
+
