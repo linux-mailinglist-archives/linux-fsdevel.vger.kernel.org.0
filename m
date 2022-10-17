@@ -2,53 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BB8D601C27
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 00:15:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 36B89601C34
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 00:17:55 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229603AbiJQWOu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Oct 2022 18:14:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46908 "EHLO
+        id S229453AbiJQWRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Oct 2022 18:17:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230179AbiJQWOp (ORCPT
+        with ESMTP id S229933AbiJQWRw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Oct 2022 18:14:45 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 6F5D11A223;
-        Mon, 17 Oct 2022 15:14:42 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id E29F0110211B;
-        Tue, 18 Oct 2022 09:14:35 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1okYNV-003Do8-W5; Tue, 18 Oct 2022 09:14:34 +1100
-Date:   Tue, 18 Oct 2022 09:14:33 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        trondmy@hammerspace.com, neilb@suse.de, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, jack@suse.cz, bfields@fieldses.org,
-        brauner@kernel.org, fweimer@redhat.com,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org, Jeff Layton <jlayton@redhat.com>
-Subject: Re: [RFC PATCH v7 9/9] vfs: expose STATX_VERSION to userland
-Message-ID: <20221017221433.GT3600936@dread.disaster.area>
-References: <20221017105709.10830-1-jlayton@kernel.org>
- <20221017105709.10830-10-jlayton@kernel.org>
+        Mon, 17 Oct 2022 18:17:52 -0400
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64353733DF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 15:17:50 -0700 (PDT)
+Received: by mail-pl1-x62b.google.com with SMTP id h2so4706889plb.2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 15:17:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TrR1U1OdGGBTNU+L/j5+q/HQQR5gcpgDZtfvTOOBt0M=;
+        b=Pa9UF6Hi2q1b744+/zFgnMjVA7j2pgI5ymLqfYIjscYUAYCF5ZXYRaOr8OH7B7Xd9F
+         /HznXiV0rMC5mH6t0PX9UTIUMnvfTMra5P8j8/Err3N0tWueZMfcGzGtxNdF72RRSt7o
+         NHpkNbOoj5ABhkcBEje6If6JGJVChr/yUqpTjUi6oHUQYtvQcn2Qq0A0mMJRwm7jwCpU
+         txbpSRtq6Deb3lMYIB2V2HXjwUD/dBV3FD8oYF4YSQczKnAO+mdCYqOZu/+92E+l+c3z
+         qnP5v2XAfcbbMH4rprLDtpkgxOqarwr2vDP6sOEKWp3p6bnA4ZtbMgRsXFz+JSka9OPZ
+         iKaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TrR1U1OdGGBTNU+L/j5+q/HQQR5gcpgDZtfvTOOBt0M=;
+        b=RXghenDSb8R+dFJ7hUPJ8Dhxijh66t1sgd+ZzBv1LuJWwDT02uA6jzl0H9i7oU40XC
+         Q0U9k9REvzKJ+PJJPTVxXY9egjJ90Eq7wUH3wA3PK4Xu/GJkLi3OX4R2yv1Wt+cHSwAQ
+         I3b97yb/SaVRSO5rjgzI9ie24eYRmrUZNxNM/aSHElSQAD6g7Dd9AdJWidkw4ZEF4zGN
+         OBwuMTfy2DoExLzRcxeW/gpSD83j0Dprz69KdK/5p3XFGrGZ8B4Bcrv+n44zKmIlK/WI
+         XbEK4hi+Ia+FLj0x8jfogjBf1KIVFhnLcZx2wrS5KmA22LjO2XM1DuG/9RXa8fbWhKKv
+         IFxg==
+X-Gm-Message-State: ACrzQf2Mc4OTT0qLSb3iM4/RtpkT3eMrLFCWPZgteGpoaQ5udlmn/2fG
+        Dpfn/D24b5pjE3DOsNecTYe96g==
+X-Google-Smtp-Source: AMsMyM5sOws5M1E82UjbITIFno8w/HG4mdjtUwGqdWDsxnzcg+d5uvozuCFcCUl9QhNTIh10tM+Etg==
+X-Received: by 2002:a17:903:1c2:b0:185:47ce:f4d2 with SMTP id e2-20020a17090301c200b0018547cef4d2mr14097565plh.101.1666045069741;
+        Mon, 17 Oct 2022 15:17:49 -0700 (PDT)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id p13-20020a17090a74cd00b0020ad46d277bsm9992889pjl.42.2022.10.17.15.17.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 17 Oct 2022 15:17:49 -0700 (PDT)
+Date:   Mon, 17 Oct 2022 22:17:45 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Fuad Tabba <tabba@google.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v8 5/8] KVM: Register/unregister the guest private memory
+ regions
+Message-ID: <Y03UiYYioV+FQIpx@google.com>
+References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
+ <20220915142913.2213336-6-chao.p.peng@linux.intel.com>
+ <CA+EHjTxukqBfaN6D+rPOiX83zkGknHEQ16J0k6GQSdL_-e9C6g@mail.gmail.com>
+ <20221012023516.GA3218049@chaop.bj.intel.com>
+ <CA+EHjTyGyGL+ox81=jdtoHERtHPV=P7wJub=3j7chdijyq-AgA@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221017105709.10830-10-jlayton@kernel.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=634dd3d0
-        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
-        a=kj9zAlcOel0A:10 a=Qawa6l4ZSaYA:10 a=20KFwNOVAAAA:8 a=VwQbUJbxAAAA:8
-        a=7-415B0cAAAA:8 a=-cKyABg0kL-CqEoa6E0A:9 a=CjuIK1q_8ugA:10
-        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
+In-Reply-To: <CA+EHjTyGyGL+ox81=jdtoHERtHPV=P7wJub=3j7chdijyq-AgA@mail.gmail.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -56,115 +105,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 17, 2022 at 06:57:09AM -0400, Jeff Layton wrote:
-> From: Jeff Layton <jlayton@redhat.com>
+On Mon, Oct 17, 2022, Fuad Tabba wrote:
+> Hi,
 > 
-> Claim one of the spare fields in struct statx to hold a 64-bit inode
-> version attribute. When userland requests STATX_VERSION, copy the
-> value from the kstat struct there, and stop masking off
-> STATX_ATTR_VERSION_MONOTONIC.
-
-Can we please make the name more sepcific than "version"? It's way
-too generic and - we already have userspace facing "version" fields
-for inodes that refer to the on-disk format version exposed in
-various UAPIs. It's common for UAPI structures used for file
-operations to have a "version" field that refers to the *UAPI
-structure version* rather than file metadata or data being retrieved
-from the file in question.
-
-The need for an explanatory comment like this:
-
-> +	__u64	stx_version; /* Inode change attribute */
-
-demonstrates it is badly named. If you want it known as an inode
-change attribute, then don't name the variable "version". In
-reality, it really needs to be an opaque cookie, not something
-applications need to decode directly to make sense of.
-
-> Update the test-statx sample program to output the change attr and
-> MountId.
+> > > > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
+> > > > +#define KVM_MEM_ATTR_SHARED    0x0001
+> > > > +static int kvm_vm_ioctl_set_mem_attr(struct kvm *kvm, gpa_t gpa, gpa_t size,
+> > > > +                                    bool is_private)
+> > > > +{
+> > >
+> > > I wonder if this ioctl should be implemented as an arch-specific
+> > > ioctl. In this patch it performs some actions that pKVM might not need
+> > > or might want to do differently.
+> >
+> > I think it's doable. We can provide the mem_attr_array kind thing in
+> > common code and let arch code decide to use it or not. Currently
+> > mem_attr_array is defined in the struct kvm, if those bytes are
+> > unnecessary for pKVM it can even be moved to arch definition, but that
+> > also loses the potential code sharing for confidential usages in other
+> > non-architectures, e.g. if ARM also supports such usage. Or it can be
+> > provided through a different CONFIG_ instead of
+> > CONFIG_HAVE_KVM_PRIVATE_MEM.
 > 
-> Reviewed-by: NeilBrown <neilb@suse.de>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/stat.c                 | 12 +++---------
->  include/linux/stat.h      |  9 ---------
->  include/uapi/linux/stat.h |  6 ++++--
->  samples/vfs/test-statx.c  |  8 ++++++--
->  4 files changed, 13 insertions(+), 22 deletions(-)
-> 
-> Posting this as an RFC as we're still trying to sort out what semantics
-> we want to present to userland. In particular, this patch leaves the
-> problem of crash resilience in to userland applications on filesystems
-> that don't report as MONOTONIC.
+> This sounds good. Thank you.
 
-Firstly, if userspace wants to use the change attribute, they are
-going to have to detect crashes themselves anyway because no fs in
-the kernel can set the MONOTONIC flag right now and it may be years
-before kernels/filesystems actually support it in production
-systems.
+I like the idea of a separate Kconfig, e.g. CONFIG_KVM_GENERIC_PRIVATE_MEM or
+something.  I highly doubt there will be any non-x86 users for multiple years,
+if ever, but it would allow testing the private memory stuff on ARM (and any other
+non-x86 arch) without needing full pKVM support and with only minor KVM
+modifications, e.g. the x86 support[*] to test UPM without TDX is shaping up to be
+trivial.
 
-But more fundamentally, I think this monotonic increase guarantee is
-completely broken by the presence of snapshots and snapshot
-rollbacks. If you change something, then a while later decide it
-broke (e.g. a production system upgrade went awry) and you roll back
-the filesystem to the pre-upgrade snapshot, then all the change
-counters and m/ctimes are guaranteed to go backwards because they
-will revert to the snapshot values. Maybe the filesystem can bump
-some internal counter for the snapshot when the revert happens, but
-until that is implemented, filesystems that support snapshots and
-rollback can't assert MONOTONIC.
-
-And that's worse for other filesystems, because if you put them on
-dm-thinp and roll them back, they are completely unaware of the fact
-that a rollback happened and there's *nothing* the filesystem can do
-about this. Indeed, snapshots are suppose to be done on clean
-filesystems so snapshot images don't require journal recovery, so
-any crash detection put in the filesystem recovery code to guarantee
-MONOTONIC behaviour will be soundly defeated by such block device
-snapshot rollbacks.
-
-Hence I think MONOTONIC is completely unworkable for most existing
-filesystems because snapshots and rollbacks completely break the
-underlying assumption MONOTONIC relies on: that filesystem
-modifications always move forwards in both the time and modification
-order dimensions....
-
-This means that monotonicity is probably not acheivable by any
-existing filesystem and so should not ever be mentioned in the UAPI.
-I think userspace semantics can be simplified down to "if the change
-cookie does not match exactly, caches are invalid" combined with
-"applications are responsible for detecting temporal discontiguities
-in filesystem presentation at start up (e.g. after a crash, unclean
-shutdown, restoration from backup, snapshot rollback, etc) for
-persistent cache invalidation purposes"....
-
-> Trond is of the opinion that monotonicity is a hard requirement, and
-> that we should not allow filesystems that can't provide that quality to
-> report STATX_VERSION at all.  His rationale is that one of the main uses
-> for this is for backup applications, and for those a counter that could
-> go backward is worse than useless.
-
-From the perspective of a backup program doing incremental backups,
-an inode with a change counter that has a different value to the
-current backup inventory means the file contains different
-information than what the current backup inventory holds. Again,
-snapshots, rollbacks, etc.
-
-Therefore, regardless of whether the change counter has gone
-forwards or backwards, the backup program needs to back up this
-current version of the file in this backup because it is different
-to the inventory copy.  Hence if the backup program fails to back it
-up, it will not be creating an exact backup of the user's data at
-the point in time the backup is run...
-
-Hence I don't see that MONOTONIC is a requirement for backup
-programs - they really do have to be able to handle filesystems that
-have modifications that move backwards in time as well as forwards...
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+[*] https://lore.kernel.org/all/Y0mu1FKugNQG5T8K@google.com
