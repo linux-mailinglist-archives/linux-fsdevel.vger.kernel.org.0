@@ -2,144 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD4776016CE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 21:00:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B52F6016E4
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 21:05:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230115AbiJQTA6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Oct 2022 15:00:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32976 "EHLO
+        id S230162AbiJQTFw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Oct 2022 15:05:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44636 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230027AbiJQTA4 (ORCPT
+        with ESMTP id S229898AbiJQTFu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Oct 2022 15:00:56 -0400
-Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7AAE73C1D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 12:00:51 -0700 (PDT)
-Received: by mail-yb1-xb36.google.com with SMTP id k3so14353907ybk.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 12:00:51 -0700 (PDT)
+        Mon, 17 Oct 2022 15:05:50 -0400
+Received: from mail-lj1-x235.google.com (mail-lj1-x235.google.com [IPv6:2a00:1450:4864:20::235])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E581158143
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 12:05:48 -0700 (PDT)
+Received: by mail-lj1-x235.google.com with SMTP id bs14so15143900ljb.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 12:05:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google;
+        d=google.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zrBdXCGWEkZBYVNoEyJxyq+fpdRwHofZyOq3MApTRzA=;
-        b=Qy4aW4IxLYuY4fhWzWgC8zbtTgnr9crlSLX3+OQ1Kq6xvzSVGoddw6q1fLdnxi9v+r
-         l5QsSant8Lk6tQeAUEOFeAWieCVxDqxVQ9h4ZUiVI7aCc1DdSYi0ZwTw48yzciNQaR8f
-         /sQzaWGLFIlu4BtBlkSIBl5dSK3G2nxivNW3s=
+        bh=tpLbF7MUjfgdwKeolFrKwUGGJvkFHEynVfhNRIRYzO0=;
+        b=cTXJI0UBOdBxXG2IHW1rqIDOvBkglMHN1TS3v9u/Mg6E19sNCf3CHq90Ltlb8bjRuV
+         uwZxsI3QP9DlzIDrz8Ff7f9zknZmBhB2m3pkIj381yHasQYOvkpoqdJncN9JKC2twFC8
+         ShVufGPOkpE2dB+4eCyihCzXtxWBY+X/y95BOpw7uAHWW2nmY6ScgSdvp0Pxz6khfbyi
+         YxhW1XKkSTezSkUawIx5/j0VpvJshXk6TJGUrtcsbKTwNFF6pKmyHcosQZh7T9atBa+E
+         fdb7oqoR8tN6oS+MAKpeLCi//GJfCoW515YxPGh6OzLSq2gny6eetjefpyJ4o3QbBEiq
+         9V6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zrBdXCGWEkZBYVNoEyJxyq+fpdRwHofZyOq3MApTRzA=;
-        b=i8vVRJnbiGIHmp+E5Oc76aDN1wsl7VYPrHuTsI6LJgz/EYCx/o0yUvmhDRlhvspPSh
-         m3VCEZhHUuDYb1/vZj+cuoniJHqEMVQrnERK82IjmKMM6U2al6l/C6Yvf0+PUTmV4KAU
-         EY7RR46/SVETj7YwjrLCxBpEMuJ+diO+GWFdukIG7gcQK1HeUHPW8CL/Q0K4nF6SHQsh
-         DZQyiBP0fS1hWPDNaDmavarnGbZE5ZNAfT9rX8gWZmgLZX0Yz2F6vDXG4vI7Lo2U4nYe
-         nyBZmXc6/D9kca5b9fzUlnkBJAW4/266zGdC7LdWqBtcxrVSZjQJ/BPfh6tg7q3t+yli
-         8BZQ==
-X-Gm-Message-State: ACrzQf2rmt6dmGfWFcViqmjioVBrL3x8nquwIFMOuRY5TIdDF4FS+81o
-        MnBATTYUJnm9nSXUYFLnluZtp7E2BCYkeYGVnDKzOg+qBcg=
-X-Google-Smtp-Source: AMsMyM79bnBB8gY4Dcf0aEdZ+FcBVkoXwioB96WQVpiWNzhKeJBhgpT/SnlEB1he/lsT6oRwki9hFHl837MAQ0P10iA=
-X-Received: by 2002:a25:9207:0:b0:6c0:b858:d601 with SMTP id
- b7-20020a259207000000b006c0b858d601mr11297743ybo.459.1666033250500; Mon, 17
- Oct 2022 12:00:50 -0700 (PDT)
+        bh=tpLbF7MUjfgdwKeolFrKwUGGJvkFHEynVfhNRIRYzO0=;
+        b=nrvPLJQnjadSdO8sjij6s8t5Ejq4q4uk68j1TOf85uRSJsy9C03Ex+et/v6ziFwto5
+         X8OTFIBdCLXQ4cW2a6rI+M1pxFLn/mQg2vre5w+JEKDfKl0xF0BdkHzhJQ0xrC5GOgtH
+         mkblze329TnlXK7flyyeicnpjg8bS6eWEn8geFE9TpbHH4obtkeaMtbA0pHV7NhGxzSx
+         dWMutXppFU7TXwWQYsZrYGV8joiyjQxqTaI6ee5oWOXqYVhbwYt7O/H2l2T1L7xl3pBB
+         UY6AAUUAhYAIFrd7a3p4/CPu6vv1lCgzj0RG4hpNOsw7F5BRqGjnCKz06D2LiXKSQtVO
+         qyRw==
+X-Gm-Message-State: ACrzQf2HJJcs0R+8XFgCATq1sSnDmAPauv1C8LyGqsnc2vGfSzb97E9Z
+        TWvFkyVLysL7AStqU4yliZdJ3L+DVrBWG+Qo1VahAA==
+X-Google-Smtp-Source: AMsMyM4AkQi9c7U3RtdWYwjcZCizC5KFrocAewLyWt0H2WuNks4/hroyUpSgGTZ2Szy1PxqSxcVc8+OpiywAfS+j4K8=
+X-Received: by 2002:a05:651c:20d:b0:26f:bc4c:f957 with SMTP id
+ y13-20020a05651c020d00b0026fbc4cf957mr4763341ljn.199.1666033547017; Mon, 17
+ Oct 2022 12:05:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20220922224027.59266-1-ivan@cloudflare.com>
-In-Reply-To: <20220922224027.59266-1-ivan@cloudflare.com>
-From:   Ivan Babrou <ivan@cloudflare.com>
-Date:   Mon, 17 Oct 2022 12:00:39 -0700
-Message-ID: <CABWYdi2so7xn860asjr=n9reoFm90X0kGLm7eH_bnYYw8MKg3w@mail.gmail.com>
-Subject: Re: [PATCH v2] proc: report open files as size in stat() for /proc/pid/fd
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        David Laight <David.Laight@aculab.com>,
+References: <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
+ <d16284f5-3493-2892-38e6-f1fa5c10bdbb@redhat.com> <Yyi+l3+p9lbBAC4M@google.com>
+ <CA+EHjTzy4iOxLF=5UX=s5v6HSB3Nb1LkwmGqoKhp_PAnFeVPSQ@mail.gmail.com>
+ <20220926142330.GC2658254@chaop.bj.intel.com> <CA+EHjTz5yGhsxUug+wqa9hrBO60Be0dzWeWzX00YtNxin2eYHg@mail.gmail.com>
+ <YzN9gYn1uwHopthW@google.com> <CA+EHjTw3din891hMUeRW-cn46ktyMWSdoB31pL+zWpXo_=3UVg@mail.gmail.com>
+ <20221013133457.GA3263142@chaop.bj.intel.com> <CA+EHjTzZ2zsm7Ru_OKCZg9FCYESgZsmB=7ScKRh6ZN4=4OZ3gw@mail.gmail.com>
+ <20221017145856.GB3417432@chaop.bj.intel.com>
+In-Reply-To: <20221017145856.GB3417432@chaop.bj.intel.com>
+From:   Fuad Tabba <tabba@google.com>
+Date:   Mon, 17 Oct 2022 20:05:10 +0100
+Message-ID: <CA+EHjTyiU230am0cuWc7xBBirGocPWGmyqCskhTytA10xpigYQ@mail.gmail.com>
+Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        David Hildenbrand <david@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
-        Mike Rapoport <rppt@kernel.org>,
-        Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Kalesh Singh <kaleshsingh@google.com>
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com,
+        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 22, 2022 at 3:40 PM Ivan Babrou <ivan@cloudflare.com> wrote:
->
-> Many monitoring tools include open file count as a metric. Currently
-> the only way to get this number is to enumerate the files in /proc/pid/fd.
->
-> The problem with the current approach is that it does many things people
-> generally don't care about when they need one number for a metric.
-> In our tests for cadvisor, which reports open file counts per cgroup,
-> we observed that reading the number of open files is slow. Out of 35.23%
-> of CPU time spent in `proc_readfd_common`, we see 29.43% spent in
-> `proc_fill_cache`, which is responsible for filling dentry info.
-> Some of this extra time is spinlock contention, but it's a contention
-> for the lock we don't want to take to begin with.
->
-> We considered putting the number of open files in /proc/pid/status.
-> Unfortunately, counting the number of fds involves iterating the open_files
-> bitmap, which has a linear complexity in proportion with the number
-> of open files (bitmap slots really, but it's close). We don't want
-> to make /proc/pid/status any slower, so instead we put this info
-> in /proc/pid/fd as a size member of the stat syscall result.
-> Previously the reported number was zero, so there's very little
-> risk of breaking anything, while still providing a somewhat logical
-> way to count the open files with a fallback if it's zero.
->
-> RFC for this patch included iterating open fds under RCU. Thanks
-> to Frank Hofmann for the suggestion to use the bitmap instead.
->
-> Previously:
->
-> ```
-> $ sudo stat /proc/1/fd | head -n2
->   File: /proc/1/fd
->   Size: 0               Blocks: 0          IO Block: 1024   directory
-> ```
->
-> With this patch:
->
-> ```
-> $ sudo stat /proc/1/fd | head -n2
->   File: /proc/1/fd
->   Size: 65              Blocks: 0          IO Block: 1024   directory
-> ```
->
-> Correctness check:
->
-> ```
-> $ sudo ls /proc/1/fd | wc -l
-> 65
-> ```
->
-> I added the docs for /proc/<pid>/fd while I'm at it.
->
-> Signed-off-by: Ivan Babrou <ivan@cloudflare.com>
->
-> ---
-> v2: Added missing rcu_read_lock() / rcu_read_unlock(),
->     task_lock() / task_unlock() and put_task_struct().
-> ---
->  Documentation/filesystems/proc.rst | 17 ++++++++++++
->  fs/proc/fd.c                       | 44 ++++++++++++++++++++++++++++++
->  2 files changed, 61 insertions(+)
+Hi,
 
-Now that Linux 6.1-rc1 is out, should this patch be looked at for
-inclusion? I see that the net-next tree has opened, not sure if the
-same rules apply here.
+> > > Using both private_fd and userspace_addr is only needed in TDX and other
+> > > confidential computing scenarios, pKVM may only use private_fd if the fd
+> > > can also be mmaped as a whole to userspace as Sean suggested.
+> >
+> > That does work in practice, for now at least, and is what I do in my
+> > current port. However, the naming and how the API is defined as
+> > implied by the name and the documentation. By calling the field
+> > private_fd, it does imply that it should not be mapped, which is also
+> > what api.rst says in PATCH v8 5/8. My worry is that in that case pKVM
+> > would be mis/ab-using this interface, and that future changes could
+> > cause unforeseen issues for pKVM.
+>
+> That is fairly enough. We can change the naming and the documents.
+>
+> >
+> > Maybe renaming this to something like "guest_fp", and specifying in
+> > the documentation that it can be restricted, e.g., instead of "the
+> > content of the private memory is invisible to userspace" something
+> > along the lines of  "the content of the guest memory may be restricted
+> > to userspace".
+>
+> Some other candidates in my mind:
+> - restricted_fd: to pair with the mm side restricted_memfd
+> - protected_fd: as Sean suggested before
+> - fd: how it's explained relies on the memslot.flag.
 
-We've been running the v2 version of this patch in production
-successfully for some time now.
+All these sound good, since they all capture the potential use cases.
+Restricted might be the most logical choice if that's going to also
+become the name for the mem_fd.
+
+Thanks,
+/fuad
+
+> Thanks,
+> Chao
+> >
+> > What do you think?
+> >
+> > Cheers,
+> > /fuad
+> >
+> > >
+> > > Thanks,
+> > > Chao
+> > > >
+> > > > Cheers,
+> > > > /fuad
