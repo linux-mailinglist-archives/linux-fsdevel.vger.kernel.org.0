@@ -2,66 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B05F600C18
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 12:16:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A672B600C74
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 12:32:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230257AbiJQKP6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Oct 2022 06:15:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55526 "EHLO
+        id S230310AbiJQKcE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Oct 2022 06:32:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231133AbiJQKPw (ORCPT
+        with ESMTP id S229663AbiJQKcD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Oct 2022 06:15:52 -0400
-Received: from mail-ej1-x631.google.com (mail-ej1-x631.google.com [IPv6:2a00:1450:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B96E24B0C3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 03:15:50 -0700 (PDT)
-Received: by mail-ej1-x631.google.com with SMTP id w18so23735262ejq.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 03:15:50 -0700 (PDT)
+        Mon, 17 Oct 2022 06:32:03 -0400
+Received: from mail-lf1-x12c.google.com (mail-lf1-x12c.google.com [IPv6:2a00:1450:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01E1B6052E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 03:31:57 -0700 (PDT)
+Received: by mail-lf1-x12c.google.com with SMTP id b2so16806173lfp.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 03:31:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FcjnuXRaDiwRJahvKb8RBCSyzSGwOC5LjhLUGe1uDng=;
-        b=hyvfh2EkmGJkje0pk/QxmrMK3wu58HezXpCWZTir75qkSbdgybYs5f9BdEJQ8VRxZo
-         y6aRpYY6PJTNs0keePmRwtJhkNJD/XdF8OsFUhWZ+UwwjrnzDoAYIKRkdVUgvJixyXjW
-         nD/o6Eqw8u2mx1XAbOWJsbL1mUmxxl7uY7YrsW4c+w0aEXLsr3iTAgFzKFCcXNq9JWeD
-         DtktHswPI1Ib69o/b5Xw5PWUIeu21lJtPIx06bfk/qBH1eUXTV/osa+5ULa0LTre2WLP
-         s1m1famLesITF3XC4ZTWNGzXqcgELAkbqC6CXhHknsOgV91Knx2CcUJjk+K6FMwFZKrp
-         i0nw==
+        bh=5nozSFDmTVpu8GTMuUa17TgcVMpawH1V5x78PIRZetg=;
+        b=SDSplUZ2VPkr2D1rPark9w6rINsj4QsGj8mIaHHj3cG7qqYj2xeg5bRcHWiAiCGNxn
+         GsUn6i3U2OjLAFYiVGFUliiR7Eg727DK3wDSXfnbZMZbfbIZ31+HdQCxkX49ygkx2h2T
+         JvvJpr3zkIRAU4V1EE328YM6hb7KitEqUGTlUdtUSKdTXZdHKruA7oQebxjBvB7yCdng
+         14amkvXgB/TlF3oG6EUoWuZ8TnSYQkSfag7jNPXgHEtx3NHXccP4GhcHXIeI1JTCLuLR
+         Ff1yL/Q300jH2Amjcw85DuxVyH90T6VnZoMTJKObTmi2YSvh5JYckhqKh2RO00z96P+I
+         iG8A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=FcjnuXRaDiwRJahvKb8RBCSyzSGwOC5LjhLUGe1uDng=;
-        b=ZN8gJSvl3Vjvnhe8IlwqIfLC30A/E6xG5BimtXrkS3OtS9rEfGk3+ys52FNmRs0C8m
-         b31hgpXW+f0xSeVoai8ZztorCdSsBY0GCULbJlV3Xc6yVph9EH9MJbKd6bcwsYIYdCDi
-         eQnfvsLv+j6qZHBO+06lZkVDqrfZZLt9Ay41LhJe9OkNVSd+H8y4g8GponXU+y9laRvJ
-         QD11xTtI5Pn52Bv3Gk4PqxjHdRotP1YR27dQFGBYFgHfI9IXEkCMV3YmrRLjtfq7UroS
-         OxrncQZstzOBDkVcMnErH7UrRu8giZj2Qt8VP96pYaA4JnBNhhoG9crXwFs1vwMKTVnD
-         TvxQ==
-X-Gm-Message-State: ACrzQf3kPlV+mrmEmaOrXNVSNaFIZwp7Tv07Vlb7OFaZwPtuU6KvrvCY
-        wl5Dt9Rn7uHGsPmJoiOKzT1aHkK9EZgeb5pwVXs4Rt2vIEBVvw==
-X-Google-Smtp-Source: AMsMyM5H+U3jrxyNNUs6l1VKxbOPrLqVbM8TSFTJ1Nj0WQRe3+Q8Gepb86AIPBI4Du2SI+pEA/5+OnPmPbAp2YR5khI=
-X-Received: by 2002:a2e:bd12:0:b0:264:7373:3668 with SMTP id
- n18-20020a2ebd12000000b0026473733668mr3490403ljq.18.1666001738408; Mon, 17
- Oct 2022 03:15:38 -0700 (PDT)
+        bh=5nozSFDmTVpu8GTMuUa17TgcVMpawH1V5x78PIRZetg=;
+        b=CA5WBoF+bMm/PI8qQNArighR0hi4cZbleHzg+3p9+JRK8SiTauangKCacub47eiU2Z
+         N6jYmR64g+gse/Go7tiFbGMgTPfrNbJwB9lR6g+vz5fqijt/4+UyOW0YRxt0yalFrQVG
+         lwohlP7v/mrhy0pgU7TtqCmh4lmF882VczJQXOXpGyyRBp6pK9rJhSKCj+oegepmPHM1
+         ZAuCDi+s99VSInHBrR9b3TWS3T4dTbsvFCF+jWzTPdBrEfNcXhhvHLmucL9SPOtav8N0
+         +pFaQg8zYjUyqgpX0e7O0N1kqR1yxoaQau2UPBYhIYz2e3PLzRhMo622fhkuNxHV6umc
+         0XUQ==
+X-Gm-Message-State: ACrzQf3VJzTY1glnIqT6fbS71h3/NFKrxZNqIS69c2NVdWE3HDc6drzH
+        kuuaLI4I+6olxixp8W3fTTWgRQZjLEsNwCgDJhEj9A==
+X-Google-Smtp-Source: AMsMyM5QQdeoCZqf4USHrTYZuLKFaoT483vufBzxBArWmR3pEEZFNUg/KtF5cabXdDzXtcRyF9bfuHIHJTBpaJKALKA=
+X-Received: by 2002:a05:6512:4cb:b0:4a2:25b6:9e73 with SMTP id
+ w11-20020a05651204cb00b004a225b69e73mr3967251lfq.30.1666002715568; Mon, 17
+ Oct 2022 03:31:55 -0700 (PDT)
 MIME-Version: 1.0
 References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-6-chao.p.peng@linux.intel.com> <CA+EHjTxukqBfaN6D+rPOiX83zkGknHEQ16J0k6GQSdL_-e9C6g@mail.gmail.com>
- <20221012023516.GA3218049@chaop.bj.intel.com>
-In-Reply-To: <20221012023516.GA3218049@chaop.bj.intel.com>
+ <20220915142913.2213336-2-chao.p.peng@linux.intel.com> <d16284f5-3493-2892-38e6-f1fa5c10bdbb@redhat.com>
+ <Yyi+l3+p9lbBAC4M@google.com> <CA+EHjTzy4iOxLF=5UX=s5v6HSB3Nb1LkwmGqoKhp_PAnFeVPSQ@mail.gmail.com>
+ <20220926142330.GC2658254@chaop.bj.intel.com> <CA+EHjTz5yGhsxUug+wqa9hrBO60Be0dzWeWzX00YtNxin2eYHg@mail.gmail.com>
+ <YzN9gYn1uwHopthW@google.com> <CA+EHjTw3din891hMUeRW-cn46ktyMWSdoB31pL+zWpXo_=3UVg@mail.gmail.com>
+ <20221013133457.GA3263142@chaop.bj.intel.com>
+In-Reply-To: <20221013133457.GA3263142@chaop.bj.intel.com>
 From:   Fuad Tabba <tabba@google.com>
-Date:   Mon, 17 Oct 2022 11:15:02 +0100
-Message-ID: <CA+EHjTyGyGL+ox81=jdtoHERtHPV=P7wJub=3j7chdijyq-AgA@mail.gmail.com>
-Subject: Re: [PATCH v8 5/8] KVM: Register/unregister the guest private memory regions
+Date:   Mon, 17 Oct 2022 11:31:19 +0100
+Message-ID: <CA+EHjTzZ2zsm7Ru_OKCZg9FCYESgZsmB=7ScKRh6ZN4=4OZ3gw@mail.gmail.com>
+Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
 To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+Cc:     Sean Christopherson <seanjc@google.com>,
+        David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
         Wanpeng Li <wanpengli@tencent.com>,
         Jim Mattson <jmattson@google.com>,
@@ -81,11 +85,11 @@ Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Yu Zhang <yu.c.zhang@linux.intel.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
+        ak@linux.intel.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com,
+        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
@@ -100,153 +104,52 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi,
 
-> > > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> > > +#define KVM_MEM_ATTR_SHARED    0x0001
-> > > +static int kvm_vm_ioctl_set_mem_attr(struct kvm *kvm, gpa_t gpa, gpa_t size,
-> > > +                                    bool is_private)
-> > > +{
 > >
-> > I wonder if this ioctl should be implemented as an arch-specific
-> > ioctl. In this patch it performs some actions that pKVM might not need
-> > or might want to do differently.
+> > Actually, for pKVM, there is no need for the guest memory to be
+> > GUP'able at all if we use the new inaccessible_get_pfn().
 >
-> I think it's doable. We can provide the mem_attr_array kind thing in
-> common code and let arch code decide to use it or not. Currently
-> mem_attr_array is defined in the struct kvm, if those bytes are
-> unnecessary for pKVM it can even be moved to arch definition, but that
-> also loses the potential code sharing for confidential usages in other
-> non-architectures, e.g. if ARM also supports such usage. Or it can be
-> provided through a different CONFIG_ instead of
-> CONFIG_HAVE_KVM_PRIVATE_MEM.
+> If pKVM can use inaccessible_get_pfn() to get pfn and can avoid GUP (I
+> think that is the major concern?), do you see any other gap from
+> existing API?
 
-This sounds good. Thank you.
+Actually for this part no, there aren't any gaps and
+inaccessible_get_pfn() is sufficient.
 
+> > This of
+> > course goes back to what I'd mentioned before in v7; it seems that
+> > representing the memslot memory as a file descriptor should be
+> > orthogonal to whether the memory is shared or private, rather than a
+> > private_fd for private memory and the userspace_addr for shared
+> > memory. The host can then map or unmap the shared/private memory using
+> > the fd, which allows it more freedom in even choosing to unmap shared
+> > memory when not needed, for example.
+>
+> Using both private_fd and userspace_addr is only needed in TDX and other
+> confidential computing scenarios, pKVM may only use private_fd if the fd
+> can also be mmaped as a whole to userspace as Sean suggested.
 
+That does work in practice, for now at least, and is what I do in my
+current port. However, the naming and how the API is defined as
+implied by the name and the documentation. By calling the field
+private_fd, it does imply that it should not be mapped, which is also
+what api.rst says in PATCH v8 5/8. My worry is that in that case pKVM
+would be mis/ab-using this interface, and that future changes could
+cause unforeseen issues for pKVM.
+
+Maybe renaming this to something like "guest_fp", and specifying in
+the documentation that it can be restricted, e.g., instead of "the
+content of the private memory is invisible to userspace" something
+along the lines of  "the content of the guest memory may be restricted
+to userspace".
+
+What do you think?
+
+Cheers,
 /fuad
 
+>
 > Thanks,
 > Chao
 > >
-> > pKVM tracks the sharing status in the stage-2 page table's software
-> > bits, so it can avoid the overhead of using mem_attr_array.
-> >
-> > Also, this ioctl calls kvm_zap_gfn_range(), as does the invalidation
-> > notifier (introduced in patch 8). For pKVM, the kind of zapping (or
-> > the information conveyed to the hypervisor) might need to be different
-> > depending on the cause; whether it's invalidation or change of sharing
-> > status.
->
-> >
-> > Thanks,
+> > Cheers,
 > > /fuad
-> >
-> >
-> > > +       gfn_t start, end;
-> > > +       unsigned long index;
-> > > +       void *entry;
-> > > +       int r;
-> > > +
-> > > +       if (size == 0 || gpa + size < gpa)
-> > > +               return -EINVAL;
-> > > +       if (gpa & (PAGE_SIZE - 1) || size & (PAGE_SIZE - 1))
-> > > +               return -EINVAL;
-> > > +
-> > > +       start = gpa >> PAGE_SHIFT;
-> > > +       end = (gpa + size - 1 + PAGE_SIZE) >> PAGE_SHIFT;
-> > > +
-> > > +       /*
-> > > +        * Guest memory defaults to private, kvm->mem_attr_array only stores
-> > > +        * shared memory.
-> > > +        */
-> > > +       entry = is_private ? NULL : xa_mk_value(KVM_MEM_ATTR_SHARED);
-> > > +
-> > > +       for (index = start; index < end; index++) {
-> > > +               r = xa_err(xa_store(&kvm->mem_attr_array, index, entry,
-> > > +                                   GFP_KERNEL_ACCOUNT));
-> > > +               if (r)
-> > > +                       goto err;
-> > > +       }
-> > > +
-> > > +       kvm_zap_gfn_range(kvm, start, end);
-> > > +
-> > > +       return r;
-> > > +err:
-> > > +       for (; index > start; index--)
-> > > +               xa_erase(&kvm->mem_attr_array, index);
-> > > +       return r;
-> > > +}
-> > > +#endif /* CONFIG_HAVE_KVM_PRIVATE_MEM */
-> > > +
-> > >  #ifdef CONFIG_HAVE_KVM_PM_NOTIFIER
-> > >  static int kvm_pm_notifier_call(struct notifier_block *bl,
-> > >                                 unsigned long state,
-> > > @@ -1165,6 +1206,9 @@ static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
-> > >         spin_lock_init(&kvm->mn_invalidate_lock);
-> > >         rcuwait_init(&kvm->mn_memslots_update_rcuwait);
-> > >         xa_init(&kvm->vcpu_array);
-> > > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> > > +       xa_init(&kvm->mem_attr_array);
-> > > +#endif
-> > >
-> > >         INIT_LIST_HEAD(&kvm->gpc_list);
-> > >         spin_lock_init(&kvm->gpc_lock);
-> > > @@ -1338,6 +1382,9 @@ static void kvm_destroy_vm(struct kvm *kvm)
-> > >                 kvm_free_memslots(kvm, &kvm->__memslots[i][0]);
-> > >                 kvm_free_memslots(kvm, &kvm->__memslots[i][1]);
-> > >         }
-> > > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> > > +       xa_destroy(&kvm->mem_attr_array);
-> > > +#endif
-> > >         cleanup_srcu_struct(&kvm->irq_srcu);
-> > >         cleanup_srcu_struct(&kvm->srcu);
-> > >         kvm_arch_free_vm(kvm);
-> > > @@ -1541,6 +1588,11 @@ static void kvm_replace_memslot(struct kvm *kvm,
-> > >         }
-> > >  }
-> > >
-> > > +bool __weak kvm_arch_has_private_mem(struct kvm *kvm)
-> > > +{
-> > > +       return false;
-> > > +}
-> > > +
-> > >  static int check_memory_region_flags(const struct kvm_user_mem_region *mem)
-> > >  {
-> > >         u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
-> > > @@ -4703,6 +4755,24 @@ static long kvm_vm_ioctl(struct file *filp,
-> > >                 r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
-> > >                 break;
-> > >         }
-> > > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> > > +       case KVM_MEMORY_ENCRYPT_REG_REGION:
-> > > +       case KVM_MEMORY_ENCRYPT_UNREG_REGION: {
-> > > +               struct kvm_enc_region region;
-> > > +               bool set = ioctl == KVM_MEMORY_ENCRYPT_REG_REGION;
-> > > +
-> > > +               if (!kvm_arch_has_private_mem(kvm))
-> > > +                       goto arch_vm_ioctl;
-> > > +
-> > > +               r = -EFAULT;
-> > > +               if (copy_from_user(&region, argp, sizeof(region)))
-> > > +                       goto out;
-> > > +
-> > > +               r = kvm_vm_ioctl_set_mem_attr(kvm, region.addr,
-> > > +                                             region.size, set);
-> > > +               break;
-> > > +       }
-> > > +#endif
-> > >         case KVM_GET_DIRTY_LOG: {
-> > >                 struct kvm_dirty_log log;
-> > >
-> > > @@ -4856,6 +4926,9 @@ static long kvm_vm_ioctl(struct file *filp,
-> > >                 r = kvm_vm_ioctl_get_stats_fd(kvm);
-> > >                 break;
-> > >         default:
-> > > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> > > +arch_vm_ioctl:
-> > > +#endif
-> > >                 r = kvm_arch_vm_ioctl(filp, ioctl, arg);
-> > >         }
-> > >  out:
-> > > --
-> > > 2.25.1
-> > >
