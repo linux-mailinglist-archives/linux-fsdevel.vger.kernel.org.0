@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D9FD3601A3F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 22:30:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 521AF6019F0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 22:29:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231532AbiJQU1u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Oct 2022 16:27:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53524 "EHLO
+        id S231463AbiJQU1g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Oct 2022 16:27:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230199AbiJQU0x (ORCPT
+        with ESMTP id S230198AbiJQU0z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Oct 2022 16:26:53 -0400
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0257D7E012;
-        Mon, 17 Oct 2022 13:25:28 -0700 (PDT)
-Received: by mail-pg1-x536.google.com with SMTP id 129so11456375pgc.5;
-        Mon, 17 Oct 2022 13:25:27 -0700 (PDT)
+        Mon, 17 Oct 2022 16:26:55 -0400
+Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E6BA47B291;
+        Mon, 17 Oct 2022 13:25:30 -0700 (PDT)
+Received: by mail-pl1-x62a.google.com with SMTP id 10so11871859pli.0;
+        Mon, 17 Oct 2022 13:25:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Djg16035gM5p4sGWRwaRPAJ04PvNuws/dBsvoNLi870=;
-        b=m2ykFButH5DCs9UiZXZhGomBEJhgTu17N1oM4zXEGXbTg9IQtUH0NbbzFAkFW2esz3
-         nnpPJi6pUNONDjhNI4Y4RiuyXTibQAQYFV5KeKrbC/Yog7oxEWPcIRzdbVro5Up8DX/e
-         ySYprp3hrV1L88vio3YXgr/bcbV1oA3JtekwIoQzcdh+E47v6inH8Z8COzdK40BsEaIi
-         HvyhzLLAKJBZzywyL4Wpy/b8JdeM/8cDKOj1owvmG8RYMWR1zMonMAQ5MWJNLnUQi8NO
-         wWXReAMRqCOUU+8mtr4dyMFEA0VkSoB2Usk5SYSWUXONQr45zm4gz/IggsL4MBJ6RHKX
-         CtVg==
+        bh=wBY1NrBIv9xetMKdetRJVFMD/fis2/cKbUx1OxFOf8Q=;
+        b=MWt3X87HmwhMmLHuEolcoErHJ8+cnb0qejVEhB4UK228aRdmlAOEshJVcQq6SimLXJ
+         JY9/QH0hMx5/25hlt9MTwbDJumVPAHhKg/cCm8WuVuUFy+I+u48SO+9tpN2iCm5KZKEF
+         xo/ONL+jgXeXf3TipVML2Zzj4cnJpuRilibE7T+1XNYePTjGRz+T9vKG3vw+o3+bvU6/
+         a+c9PKP+odj8q59fBj8tZTCKw/d/gNag3lEKGBmlFbH3mLui2bpCo2Buwa4jcmTPRkLP
+         0HnXfKu3eDv3UIMGGEuUq29e3raok2bt+fHu5v9GbA4cVQqJd98ycuMa1CZWo4Ustdcx
+         TgdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Djg16035gM5p4sGWRwaRPAJ04PvNuws/dBsvoNLi870=;
-        b=eOL93MrBcO0UFRa8hPgasyDtFsuZIFGRUd/5n0hcG89f8WF2H7F9Ryu3KCI0Ww+ExI
-         11fT7MI1p5hqvgkzjR3bpQ85KfacnWWRPKlkWVw6tnPW7sqS4JhVnsUiAB4fi4mpz1jS
-         P7FvbQ+jEol/DDQLn/uy8JxUhN13uLXLkzPi3j1ZXnCj+LVk/pQ+HLNIM0YHpGjl3iLQ
-         aNHMu0fvtNxtigtL4pjd+6o8UyZzT0WiJASgTiKesEzhm6bHUUmXx8cFpBFd40iJ1RlK
-         uBgJBeYaClyjWhal1roNJTvhSpjJFkTefFpcDSxRiIT+BpmwNmg/3Nz5DeNTo12VPf67
-         ZSnw==
-X-Gm-Message-State: ACrzQf2WkNVvyLnu0u04hEqv+cgVj+WflMauEqrXzEKGsIZY/AV6O3L3
-        v9v3Xh2AtZEW08OYLu63IHmWef76bjf28A==
-X-Google-Smtp-Source: AMsMyM4QGXxJjBRzFOeZlfDfy9O8UjGFPTeRTF/afjSZaqBuetjvpzQ+V6uJN58MVK7EN5cq4zwBhA==
-X-Received: by 2002:a05:6a00:3202:b0:565:c863:78a1 with SMTP id bm2-20020a056a00320200b00565c86378a1mr14441253pfb.7.1666038298287;
-        Mon, 17 Oct 2022 13:24:58 -0700 (PDT)
+        bh=wBY1NrBIv9xetMKdetRJVFMD/fis2/cKbUx1OxFOf8Q=;
+        b=IOwWXkZ4mpNhvNVQIQ5C7oSIV3zUDnGBYakWQ0IHmwHh2HAvQFuQxzeUo/KZTjLFcO
+         I+EFmte0jREk7b2jghjsWyn0O6JCjDrb6e54dd0Uypk10HVmrA24F/mCgw2RTX7MRERY
+         ZsoC/yOHl8noogHzHu6hb2cMgU5S/z8Rm7FDoR3WHkumvkgCoV9veAUEWvBPD0jfFTRG
+         rHOMdPCcjcK4WAzMrTFLR7DBoJIWNeW5TOzHhuiFi81obheM6XDV93pr5FU6DSQhjr6W
+         AevJc3SsWkebrqUrkaGV0BV8INaZW+NgUL2iK6vi0ZGFCD5p60LhiKK2fTrrX7UZ3R2M
+         QR2w==
+X-Gm-Message-State: ACrzQf33bHqG6XQlH0ak5MSkP6pdY8adG7RfqJbs0YpSrGNucFi7i024
+        a5eNIQDlYKiEEPfHT50Uy5WwlHI/DpRWOA==
+X-Google-Smtp-Source: AMsMyM5GIzxV9I8ip+Pr2r9RoHLPxaNW9eYwlWAmGdU4DreygpgYRX81ubULxlq5zAIFV1Q1aTcOIw==
+X-Received: by 2002:a17:902:c943:b0:182:f5af:40c5 with SMTP id i3-20020a170902c94300b00182f5af40c5mr13511810pla.72.1666038299406;
+        Mon, 17 Oct 2022 13:24:59 -0700 (PDT)
 Received: from vmfolio.. (c-76-102-73-225.hsd1.ca.comcast.net. [76.102.73.225])
-        by smtp.googlemail.com with ESMTPSA id pj12-20020a17090b4f4c00b00200b12f2bf5sm145037pjb.1.2022.10.17.13.24.57
+        by smtp.googlemail.com with ESMTPSA id pj12-20020a17090b4f4c00b00200b12f2bf5sm145037pjb.1.2022.10.17.13.24.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Oct 2022 13:24:58 -0700 (PDT)
+        Mon, 17 Oct 2022 13:24:59 -0700 (PDT)
 From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -57,10 +57,11 @@ Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
         linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
-        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH v3 04/23] page-writeback: Convert write_cache_pages() to use filemap_get_folios_tag()
-Date:   Mon, 17 Oct 2022 13:24:32 -0700
-Message-Id: <20221017202451.4951-5-vishal.moola@gmail.com>
+        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+        David Howells <dhowells@redhat.com>
+Subject: [PATCH v3 05/23] afs: Convert afs_writepages_region() to use filemap_get_folios_tag()
+Date:   Mon, 17 Oct 2022 13:24:33 -0700
+Message-Id: <20221017202451.4951-6-vishal.moola@gmail.com>
 X-Mailer: git-send-email 2.36.1
 In-Reply-To: <20221017202451.4951-1-vishal.moola@gmail.com>
 References: <20221017202451.4951-1-vishal.moola@gmail.com>
@@ -76,125 +77,163 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Converted function to use folios throughout. This is in preparation for
-the removal of find_get_pages_range_tag().
+Convert to use folios throughout. This function is in preparation to
+remove find_get_pages_range_tag().
+
+Also modified this function to write the whole batch one at a time,
+rather than calling for a new set every single write.
 
 Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+Tested-by: David Howells <dhowells@redhat.com>
 ---
- mm/page-writeback.c | 44 +++++++++++++++++++++++---------------------
- 1 file changed, 23 insertions(+), 21 deletions(-)
+ fs/afs/write.c | 114 +++++++++++++++++++++++++------------------------
+ 1 file changed, 59 insertions(+), 55 deletions(-)
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 7e9d8d857ecc..aeec8b196232 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -2286,15 +2286,15 @@ int write_cache_pages(struct address_space *mapping,
- 	int ret = 0;
- 	int done = 0;
- 	int error;
--	struct pagevec pvec;
--	int nr_pages;
+diff --git a/fs/afs/write.c b/fs/afs/write.c
+index 9ebdd36eaf2f..c17dbd82a38c 100644
+--- a/fs/afs/write.c
++++ b/fs/afs/write.c
+@@ -699,82 +699,86 @@ static int afs_writepages_region(struct address_space *mapping,
+ 				 loff_t start, loff_t end, loff_t *_next)
+ {
+ 	struct folio *folio;
+-	struct page *head_page;
 +	struct folio_batch fbatch;
-+	int nr_folios;
- 	pgoff_t index;
- 	pgoff_t end;		/* Inclusive */
- 	pgoff_t done_index;
- 	int range_whole = 0;
- 	xa_mark_t tag;
+ 	ssize_t ret;
++	unsigned int i;
+ 	int n, skips = 0;
  
--	pagevec_init(&pvec);
+ 	_enter("%llx,%llx,", start, end);
 +	folio_batch_init(&fbatch);
- 	if (wbc->range_cyclic) {
- 		index = mapping->writeback_index; /* prev offset */
- 		end = -1;
-@@ -2314,17 +2314,18 @@ int write_cache_pages(struct address_space *mapping,
- 	while (!done && (index <= end)) {
- 		int i;
  
--		nr_pages = pagevec_lookup_range_tag(&pvec, mapping, &index, end,
--				tag);
--		if (nr_pages == 0)
-+		nr_folios = filemap_get_folios_tag(mapping, &index, end,
-+				tag, &fbatch);
+ 	do {
+ 		pgoff_t index = start / PAGE_SIZE;
+ 
+-		n = find_get_pages_range_tag(mapping, &index, end / PAGE_SIZE,
+-					     PAGECACHE_TAG_DIRTY, 1, &head_page);
++		n = filemap_get_folios_tag(mapping, &index, end / PAGE_SIZE,
++					PAGECACHE_TAG_DIRTY, &fbatch);
 +
-+		if (nr_folios == 0)
+ 		if (!n)
  			break;
++		for (i = 0; i < n; i++) {
++			folio = fbatch.folios[i];
++			start = folio_pos(folio); /* May regress with THPs */
  
--		for (i = 0; i < nr_pages; i++) {
--			struct page *page = pvec.pages[i];
-+		for (i = 0; i < nr_folios; i++) {
-+			struct folio *folio = fbatch.folios[i];
+-		folio = page_folio(head_page);
+-		start = folio_pos(folio); /* May regress with THPs */
+-
+-		_debug("wback %lx", folio_index(folio));
++			_debug("wback %lx", folio_index(folio));
  
--			done_index = page->index;
-+			done_index = folio->index;
+-		/* At this point we hold neither the i_pages lock nor the
+-		 * page lock: the page may be truncated or invalidated
+-		 * (changing page->mapping to NULL), or even swizzled
+-		 * back from swapper_space to tmpfs file mapping
+-		 */
+-		if (wbc->sync_mode != WB_SYNC_NONE) {
+-			ret = folio_lock_killable(folio);
+-			if (ret < 0) {
+-				folio_put(folio);
+-				return ret;
+-			}
+-		} else {
+-			if (!folio_trylock(folio)) {
+-				folio_put(folio);
+-				return 0;
++			/* At this point we hold neither the i_pages lock nor the
++			 * page lock: the page may be truncated or invalidated
++			 * (changing page->mapping to NULL), or even swizzled
++			 * back from swapper_space to tmpfs file mapping
++			 */
++			if (wbc->sync_mode != WB_SYNC_NONE) {
++				ret = folio_lock_killable(folio);
++				if (ret < 0) {
++					folio_batch_release(&fbatch);
++					return ret;
++				}
++			} else {
++				if (!folio_trylock(folio))
++					continue;
+ 			}
+-		}
  
--			lock_page(page);
-+			folio_lock(folio);
- 
- 			/*
- 			 * Page truncated or invalidated. We can freely skip it
-@@ -2334,30 +2335,30 @@ int write_cache_pages(struct address_space *mapping,
- 			 * even if there is now a new, dirty page at the same
- 			 * pagecache address.
- 			 */
--			if (unlikely(page->mapping != mapping)) {
-+			if (unlikely(folio->mapping != mapping)) {
- continue_unlock:
--				unlock_page(page);
+-		if (folio_mapping(folio) != mapping ||
+-		    !folio_test_dirty(folio)) {
+-			start += folio_size(folio);
+-			folio_unlock(folio);
+-			folio_put(folio);
+-			continue;
+-		}
++			if (folio->mapping != mapping ||
++			    !folio_test_dirty(folio)) {
++				start += folio_size(folio);
 +				folio_unlock(folio);
- 				continue;
- 			}
++				continue;
++			}
  
--			if (!PageDirty(page)) {
-+			if (!folio_test_dirty(folio)) {
- 				/* someone wrote it for us */
- 				goto continue_unlock;
- 			}
- 
--			if (PageWriteback(page)) {
-+			if (folio_test_writeback(folio)) {
- 				if (wbc->sync_mode != WB_SYNC_NONE)
--					wait_on_page_writeback(page);
+-		if (folio_test_writeback(folio) ||
+-		    folio_test_fscache(folio)) {
+-			folio_unlock(folio);
+-			if (wbc->sync_mode != WB_SYNC_NONE) {
+-				folio_wait_writeback(folio);
++			if (folio_test_writeback(folio) ||
++			    folio_test_fscache(folio)) {
++				folio_unlock(folio);
++				if (wbc->sync_mode != WB_SYNC_NONE) {
 +					folio_wait_writeback(folio);
- 				else
- 					goto continue_unlock;
+ #ifdef CONFIG_AFS_FSCACHE
+-				folio_wait_fscache(folio);
++					folio_wait_fscache(folio);
+ #endif
+-			} else {
+-				start += folio_size(folio);
++				} else {
++					start += folio_size(folio);
++				}
++				if (wbc->sync_mode == WB_SYNC_NONE) {
++					if (skips >= 5 || need_resched()) {
++						*_next = start;
++						_leave(" = 0 [%llx]", *_next);
++						return 0;
++					}
++					skips++;
++				}
++				continue;
  			}
- 
--			BUG_ON(PageWriteback(page));
--			if (!clear_page_dirty_for_io(page))
-+			BUG_ON(folio_test_writeback(folio));
+-			folio_put(folio);
+-			if (wbc->sync_mode == WB_SYNC_NONE) {
+-				if (skips >= 5 || need_resched())
+-					break;
+-				skips++;
++
 +			if (!folio_clear_dirty_for_io(folio))
- 				goto continue_unlock;
- 
- 			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
--			error = (*writepage)(page, wbc, data);
-+			error = writepage(&folio->page, wbc, data);
- 			if (unlikely(error)) {
- 				/*
- 				 * Handle errors according to the type of
-@@ -2372,11 +2373,12 @@ int write_cache_pages(struct address_space *mapping,
- 				 * the first error.
- 				 */
- 				if (error == AOP_WRITEPAGE_ACTIVATE) {
--					unlock_page(page);
-+					folio_unlock(folio);
- 					error = 0;
- 				} else if (wbc->sync_mode != WB_SYNC_ALL) {
- 					ret = error;
--					done_index = page->index + 1;
-+					done_index = folio->index +
-+						folio_nr_pages(folio);
- 					done = 1;
- 					break;
- 				}
-@@ -2396,7 +2398,7 @@ int write_cache_pages(struct address_space *mapping,
- 				break;
++				BUG();
++			ret = afs_write_back_from_locked_folio(mapping, wbc,
++					folio, start, end);
++			if (ret < 0) {
++				_leave(" = %zd", ret);
++				folio_batch_release(&fbatch);
++				return ret;
  			}
+-			continue;
+-		}
+ 
+-		if (!folio_clear_dirty_for_io(folio))
+-			BUG();
+-		ret = afs_write_back_from_locked_folio(mapping, wbc, folio, start, end);
+-		folio_put(folio);
+-		if (ret < 0) {
+-			_leave(" = %zd", ret);
+-			return ret;
++			start += ret;
  		}
--		pagevec_release(&pvec);
+-
+-		start += ret;
+-
 +		folio_batch_release(&fbatch);
  		cond_resched();
- 	}
+ 	} while (wbc->nr_to_write > 0);
  
 -- 
 2.36.1
