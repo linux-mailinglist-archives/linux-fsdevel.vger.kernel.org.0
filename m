@@ -2,299 +2,211 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2D946008F5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 10:44:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E31336009EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 11:09:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230113AbiJQIoO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Oct 2022 04:44:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36884 "EHLO
+        id S230494AbiJQJJY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Oct 2022 05:09:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230062AbiJQIoM (ORCPT
+        with ESMTP id S230504AbiJQJJV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Oct 2022 04:44:12 -0400
-Received: from mail-lj1-x22b.google.com (mail-lj1-x22b.google.com [IPv6:2a00:1450:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BD1B2BE3F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 01:44:09 -0700 (PDT)
-Received: by mail-lj1-x22b.google.com with SMTP id x18so13110440ljm.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 01:44:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=qwIwAcqWBfBMRrm9KF2boeBuiPaxpIOUZ43XencQIbo=;
-        b=Nrfotfa7MvpY7q0BJxF8GYRMfDoStqAH0gkcWf1bZUF+k/4FN4VrpQKYK3jZBNkZbU
-         9nUYp6FlyhtT/GVq0w+Zl4xOv/B2vJTf3IO5Pe/89dj2ynrkpCw9MAiTwWTe0rDsYm5n
-         OmQYUbH2dGgKPJGXIi4hqk/f+drAbYZB/w54lgCD1bgdPLIN5KGeLnBGZqdp6wjrulW/
-         SKzruULcjVdI61kdj3R8GeeunRA5I5xWFb8h58+PEB2JkOBlKLqnW+uXpsPUBhNPT3nm
-         ekW5pqYozDIRwNqbAFHW2Ragfrv47U6CG0jcv0h+KnvFqOT+UyZh5v4TBs9BU/YeHZVC
-         rkOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qwIwAcqWBfBMRrm9KF2boeBuiPaxpIOUZ43XencQIbo=;
-        b=KWp+nm1kSmWNd8H6NnQK6izMflNQf8HaxXdbLZyPO6H/cI/AUubr+q2RJOSUO9ARBs
-         h9xLWjYeF2sf2q5smqnDXjHxzz9QyswoBl4nvFnltArwWopl/KpAaiEURkz0Hj33k0Yp
-         QKJihW5iPUlMx29iFPpFvjlBYTlcGflCsCTDK8y9AAxt5miCRrIFRQXByc+6PZU3ak/R
-         9e0SPCMKu2Hd+sPzS12zjynH1W4KruTbtO+A1ZVnRpl7d7zxOxtmidmfuKBYsjsP9ySI
-         /quohevaAM6xL2Mtxr4VNaxWTNr3IRtCRInoyX/gcYEsZRuG1+s6E6PDqD6sWsPvLAjf
-         yD2Q==
-X-Gm-Message-State: ACrzQf3OK1m5mUzILM1KyT7d2aSSXByeCqrVJi6Mn7ld9AcLJJLjjLnT
-        TmaWurYUe3KCllrnJB5Zf7P8r4yvmGPWWlqHUYCPDQ==
-X-Google-Smtp-Source: AMsMyM7sr3h7oQemK/dOL+YtBSU21PIPjg5e9KcVS4lXt6tQt+i3ydRApB3/QcxDIS2D9ndM4Qe96lBxOkubafTa0gs=
-X-Received: by 2002:a2e:b5af:0:b0:26f:d634:2f0d with SMTP id
- f15-20020a2eb5af000000b0026fd6342f0dmr3852031ljn.33.1665996247476; Mon, 17
- Oct 2022 01:44:07 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221014084837.1787196-1-hrkanabar@gmail.com> <20221014084837.1787196-4-hrkanabar@gmail.com>
- <5bc906b3-ccb5-a385-fcb6-fc51c8fea3fd@suse.com>
-In-Reply-To: <5bc906b3-ccb5-a385-fcb6-fc51c8fea3fd@suse.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 17 Oct 2022 10:43:55 +0200
-Message-ID: <CACT4Y+YeSOZPN+ek6vSLhsCugJ3iGF35-sghnZt4qQJ36DA6mA@mail.gmail.com>
-Subject: Re: [PATCH RFC 3/7] fs/btrfs: support `DISABLE_FS_CSUM_VERIFICATION`
- config option
-To:     Qu Wenruo <wqu@suse.com>
-Cc:     Hrutvik Kanabar <hrkanabar@gmail.com>,
-        Hrutvik Kanabar <hrutvik@google.com>,
-        Marco Elver <elver@google.com>,
-        Aleksandr Nogikh <nogikh@google.com>,
-        kasan-dev@googlegroups.com,
+        Mon, 17 Oct 2022 05:09:21 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B67714A13C;
+        Mon, 17 Oct 2022 02:09:17 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 578FE3395C;
+        Mon, 17 Oct 2022 09:09:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1665997755; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=88wK67BDieF4b7nVysekk7pGFuWGHIsQOMr5btm2BLM=;
+        b=pFQs5kwvcI1EdtNbOJS7NwkaeMtaNLx5QhgJrNdoOiix3xq5FIe5vQmkQTMkR7ofVR/PdF
+        VIqcyGfcHCFrss89zpT4gF0Pz1/GbDVXl4t/qWuwdGYPd7rUByLz0GmLNaHhn+qtlKlNTh
+        nvZ63sS8ACjXDuq8mVgRiNEmOYEuuH0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1665997755;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=88wK67BDieF4b7nVysekk7pGFuWGHIsQOMr5btm2BLM=;
+        b=LGjSUJhrF0aM2/Wjccdsz30nZjjb4hhZkWKC7TmqlpGCn9k859nlnszziMw2paMSuKhYd7
+        vdxPrupnM0X3SQDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4711913398;
+        Mon, 17 Oct 2022 09:09:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 9jZVEbsbTWMbOAAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 17 Oct 2022 09:09:15 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id C8CACA06EF; Mon, 17 Oct 2022 11:09:14 +0200 (CEST)
+Date:   Mon, 17 Oct 2022 11:09:14 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Stephen Brennan <stephen.s.brennan@oracle.com>,
+        Jan Kara <jack@suse.cz>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        linux-ext4@vger.kernel.org, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        "Darrick J . Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Anton Altaparmakov <anton@tuxera.com>,
-        linux-ntfs-dev@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] fsnotify: allow sleepable child dentry flag update
+Message-ID: <20221017090914.63b7p4655xrxycnz@quack3>
+References: <20221013222719.277923-1-stephen.s.brennan@oracle.com>
+ <CAOQ4uxiXU72-cxbpqdv_5BC4VdjGx5V79zycfD3_tPSWixtT3w@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxiXU72-cxbpqdv_5BC4VdjGx5V79zycfD3_tPSWixtT3w@mail.gmail.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
+        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 14 Oct 2022 at 12:24, 'Qu Wenruo' via kasan-dev
-<kasan-dev@googlegroups.com> wrote:
->
-> On 2022/10/14 16:48, Hrutvik Kanabar wrote:
-> > From: Hrutvik Kanabar <hrutvik@google.com>
-> >
-> > When `DISABLE_FS_CSUM_VERIFICATION` is enabled, bypass checksum
-> > verification.
-> >
-> > Signed-off-by: Hrutvik Kanabar <hrutvik@google.com>
->
-> I always want more fuzz for btrfs, so overall this is pretty good.
->
-> But there are some comments related to free space cache part.
->
-> Despite the details, I'm wondering would it be possible for your fuzzing
-> tool to do a better job at user space? Other than relying on loosen
-> checks from kernel?
->
-> For example, implement a (mostly) read-only tool to do the following
-> workload:
->
-> - Open the fs
->    Including understand the checksum algo, how to re-generate the csum.
->
-> - Read out the used space bitmap
->    In btrfs case, it's going to read the extent tree, process the
->    backrefs items.
->
-> - Choose the victim sectors and corrupt them
->    Obviously, vitims should be choosen from above used space bitmap.
->
-> - Re-calculate the checksum for above corrupted sectors
->    For btrfs, if it's a corrupted metadata, re-calculate the checksum.
->
-> By this, we can avoid such change to kernel, and still get a much better
-> coverage.
->
-> If you need some help on such user space tool, I'm pretty happy to
-> provide help.
->
-> > ---
-> >   fs/btrfs/check-integrity.c  | 3 ++-
-> >   fs/btrfs/disk-io.c          | 6 ++++--
-> >   fs/btrfs/free-space-cache.c | 3 ++-
-> >   fs/btrfs/inode.c            | 3 ++-
-> >   fs/btrfs/scrub.c            | 9 ++++++---
-> >   5 files changed, 16 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/fs/btrfs/check-integrity.c b/fs/btrfs/check-integrity.c
-> > index 98c6e5feab19..eab82593a325 100644
-> > --- a/fs/btrfs/check-integrity.c
-> > +++ b/fs/btrfs/check-integrity.c
-> > @@ -1671,7 +1671,8 @@ static noinline_for_stack int btrfsic_test_for_metadata(
-> >               crypto_shash_update(shash, data, sublen);
-> >       }
-> >       crypto_shash_final(shash, csum);
-> > -     if (memcmp(csum, h->csum, fs_info->csum_size))
-> > +     if (!IS_ENABLED(CONFIG_DISABLE_FS_CSUM_VERIFICATION) &&
-> > +         memcmp(csum, h->csum, fs_info->csum_size))
-> >               return 1;
-> >
-> >       return 0; /* is metadata */
-> > diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-> > index a2da9313c694..7cd909d44b24 100644
-> > --- a/fs/btrfs/disk-io.c
-> > +++ b/fs/btrfs/disk-io.c
-> > @@ -184,7 +184,8 @@ static int btrfs_check_super_csum(struct btrfs_fs_info *fs_info,
-> >       crypto_shash_digest(shash, raw_disk_sb + BTRFS_CSUM_SIZE,
-> >                           BTRFS_SUPER_INFO_SIZE - BTRFS_CSUM_SIZE, result);
-> >
-> > -     if (memcmp(disk_sb->csum, result, fs_info->csum_size))
-> > +     if (!IS_ENABLED(CONFIG_DISABLE_FS_CSUM_VERIFICATION) &&
-> > +         memcmp(disk_sb->csum, result, fs_info->csum_size))
-> >               return 1;
-> >
-> >       return 0;
-> > @@ -494,7 +495,8 @@ static int validate_extent_buffer(struct extent_buffer *eb)
-> >       header_csum = page_address(eb->pages[0]) +
-> >               get_eb_offset_in_page(eb, offsetof(struct btrfs_header, csum));
-> >
-> > -     if (memcmp(result, header_csum, csum_size) != 0) {
-> > +     if (!IS_ENABLED(CONFIG_DISABLE_FS_CSUM_VERIFICATION) &&
-> > +         memcmp(result, header_csum, csum_size) != 0) {
->
-> I believe this is the main thing fuzzing would take advantage of.
->
-> It would be much better if this is the only override...
->
-> >               btrfs_warn_rl(fs_info,
-> >   "checksum verify failed on logical %llu mirror %u wanted " CSUM_FMT " found " CSUM_FMT " level %d",
-> >                             eb->start, eb->read_mirror,
-> > diff --git a/fs/btrfs/free-space-cache.c b/fs/btrfs/free-space-cache.c
-> > index f4023651dd68..203c8a9076a6 100644
-> > --- a/fs/btrfs/free-space-cache.c
-> > +++ b/fs/btrfs/free-space-cache.c
-> > @@ -574,7 +574,8 @@ static int io_ctl_check_crc(struct btrfs_io_ctl *io_ctl, int index)
-> >       io_ctl_map_page(io_ctl, 0);
-> >       crc = btrfs_crc32c(crc, io_ctl->orig + offset, PAGE_SIZE - offset);
-> >       btrfs_crc32c_final(crc, (u8 *)&crc);
-> > -     if (val != crc) {
-> > +     if (!IS_ENABLED(CONFIG_DISABLE_FS_CSUM_VERIFICATION) &&
-> > +         val != crc) {
->
-> I'm already seeing this to cause problems, especially for btrfs.
->
-> Btrfs has a very strong dependency on free space tracing, as all of our
-> metadata (and data by default) relies on COW to keep the fs consistent.
->
-> I tried a lot of different methods in the past to make sure we won't
-> write into previously used space, but it's causing a lot of performance
-> impact.
->
-> Unlike tree-checker, we can not easily got a centerlized space to handle
-> all the free space cross-check thing (thus it's only verified by things
-> like btrfs-check).
->
-> Furthermore, even if you skip this override, with latest default
-> free-space-tree feature, free space info is stored in regular btrfs
-> metadata (tree blocks), with regular metadata checksum protection.
->
-> Thus I'm pretty sure we will have tons of reports on this, and
-> unfortunately we can only go whac-a-mole way for it.
+Hi guys!
 
-Hi Qu,
-
-I don't fully understand what you mean. Could you please elaborate?
-
-Do you mean that btrfs uses this checksum check to detect blocks that
-were written to w/o updating the checksum?
-
-
-
-
-> >               btrfs_err_rl(io_ctl->fs_info,
-> >                       "csum mismatch on free space cache");
-> >               io_ctl_unmap_page(io_ctl);
-> > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> > index b0807c59e321..1a49d897b5c1 100644
-> > --- a/fs/btrfs/inode.c
-> > +++ b/fs/btrfs/inode.c
-> > @@ -3434,7 +3434,8 @@ int btrfs_check_sector_csum(struct btrfs_fs_info *fs_info, struct page *page,
-> >       crypto_shash_digest(shash, kaddr, fs_info->sectorsize, csum);
-> >       kunmap_local(kaddr);
+On Fri 14-10-22 11:01:39, Amir Goldstein wrote:
+> On Fri, Oct 14, 2022 at 1:27 AM Stephen Brennan
+> <stephen.s.brennan@oracle.com> wrote:
 > >
-> > -     if (memcmp(csum, csum_expected, fs_info->csum_size))
-> > +     if (!IS_ENABLED(CONFIG_DISABLE_FS_CSUM_VERIFICATION) &&
-> > +         memcmp(csum, csum_expected, fs_info->csum_size))
->
-> This skips data csum check, I don't know how valueable it is, but this
-> should be harmless mostly.
->
-> If we got reports related to this, it would be a nice surprise.
->
-> >               return -EIO;
-> >       return 0;
-> >   }
-> > diff --git a/fs/btrfs/scrub.c b/fs/btrfs/scrub.c
-> > index f260c53829e5..a7607b492f47 100644
-> > --- a/fs/btrfs/scrub.c
-> > +++ b/fs/btrfs/scrub.c
-> > @@ -1997,7 +1997,8 @@ static int scrub_checksum_data(struct scrub_block *sblock)
+> > Hi Jan, Amir, Al - this is a quite ugly patch but I want to discuss the idea
+> > behind it, to see whether we can find something workable. I apologize for the
+> > length of text here, but I think it's necessary to give full context and ideas.
+> 
+> > For background, on machines with lots of memory and weird workloads,
+> > __fsnotify_update_child_dentry_flags() has been a real thorn in our side. It
+> > grabs a couple spinlocks and iterates over the whole d_subdirs list. If that
+> > list is long, this can take a while. The list can be long due to lots of
+> > negative dentries (which can easily number in the hundreds of millions if you
+> > have a process that's relatively frequently looking up nonexisting files). But
+> > the list can also be long due to *positive* dentries. I've seen directories with
+> > ~7 million positive dentry children falling victim to this function before (XFS
+> > allows lots of files per dir)! Positive dentries take longer to process in this
+> > function (since they're actually locked and written to), so you don't need as
+> > many for them to be a problem.
 > >
-> >       crypto_shash_digest(shash, kaddr, fs_info->sectorsize, csum);
+> > Anyway, if you have a huge d_subdirs list, then you can have problems with soft
+> > lockups. From my measurements with ftrace, 100 million negative dentries means
+> > that the function takes about 6 seconds to complete (varies wildly by CPU and
+> > kernel config/version). That's bad, but it can get *much worse*. Imagine that
+> > there are many frequently accessed files in such a directory, and you have an
+> > inotify watch. As soon as that watch is removed, the last fsnotify connector
+> > goes away, and i_fsnotify_mask becomes 0. System calls accessing dentries still
+> > see DCACHE_FSNOTIFY_PARENT_WATCHED, so they fall into __fsnotify_parent and will
+> > try to update the dentry flags. In my experience, a thundering herd of CPUs race
+> > to __fsnotify_update_child_dentry_flags(). The winner begins updating and the
+> > rest spin waiting for the parent inode's i_lock. Many CPUs make it to that
+> > point, and they *all* will proceed to iterate through d_subdirs, regardless of
+> > how long the list is, even though only the first CPU needed to do it. So now
+> > your 6 second spin gets multiplied by 5-10. And since the directory is
+> > frequently accessed, all the dget/dputs from other CPUs will all spin for this
+> > long time. This amounts to a nearly unusable system.
 > >
-> > -     if (memcmp(csum, sector->csum, fs_info->csum_size))
-> > +     if (!IS_ENABLED(CONFIG_DISABLE_FS_CSUM_VERIFICATION) &&
-> > +         memcmp(csum, sector->csum, fs_info->csum_size))
->
-> Same as data csum verification overide.
-> Not necessary/useful but good to have.
->
-> >               sblock->checksum_error = 1;
-> >       return sblock->checksum_error;
-> >   }
-> > @@ -2062,7 +2063,8 @@ static int scrub_checksum_tree_block(struct scrub_block *sblock)
-> >       }
+> > Previously I've tried to generally limit or manage the number of negative
+> > dentries in the dcache, which as a general problem is very difficult to get
+> > concensus on. I've also tried the patches to reorder dentries in d_subdirs so
+> > negative dentries are at the end, which has some difficult issues interacting
+> > with d_walk. Neither of those ideas would help for a directory full of positive
+> > dentries either.
 > >
-> >       crypto_shash_final(shash, calculated_csum);
-> > -     if (memcmp(calculated_csum, on_disk_csum, sctx->fs_info->csum_size))
-> > +     if (!IS_ENABLED(CONFIG_DISABLE_FS_CSUM_VERIFICATION) &&
-> > +         memcmp(calculated_csum, on_disk_csum, sctx->fs_info->csum_size))
->
-> This is much less valueable, since it's only affecting scrub, and scrub
-> itself is already very little checking the content of metadata.
+> > So I have two more narrowly scoped strategies to improve the situation. Both are
+> > included in the hacky, awful patch below.
+> >
+> > First, is to let __fsnotify_update_child_dentry_flags() sleep. This means nobody
+> > is holding the spinlock for several seconds at a time. We can actually achieve
+> > this via a cursor, the same way that simple_readdir() is implemented. I think
+> > this might require moving the declaration of d_alloc_cursor() and maybe
+> > exporting it. I had to #include fs/internal.h which is not ok.
+> >
+> > On its own, that actually makes problems worse, because it allows several tasks
+> > to update at the same time, and they're constantly locking/unlocking, which
+> > makes contention worse.
+> >
+> > So second is to add an inode flag saying that
+> > __fsnotify_update_child_dentry_flags() is already in progress. This prevents
+> > concurrent execution, and it allows the caller to skip updating since they know
+> > it's being handled, so it eliminates the thundering herd problem.
+> >
+> > The patch works great! It eliminates the chances of soft lockups and makes the
+> > system responsive under those weird loads. But now, I know I've added a new
+> > issue. Updating dentry flags is no longer atomic, and we've lost the guarantee
+> 
+> Just between us ;) the update of the inode event mask is not atomic anyway,
+> because the test for 'parent_watched' and fsnotify_inode_watches_children()
+> in __fsnotify_parent() are done without any memory access synchronization.
+> 
+> IOW, the only guarantee for users is that *sometime* after adding events
+> to a mark mask, events will start being delivered and *sometime* after
+> removing events from a mark mask, events will stop being delivered.
+> Some events may have implicit memory barriers that make event delivery
+> more deterministic, but others may not.
 
-Could you please elaborate here as well?
-This is less valuable from what perspective?
-The data loaded from disk can have any combination of
-(correct/incorrect metadata) x (correct/incorrect checksum).
-Correctness of metadata and checksum are effectively orthogonal,
-right?
+This holds even for fsnotify_inode_watches_children() call in
+__fsnotify_update_child_dentry_flags(). In principle we can have racing
+calls to __fsnotify_update_child_dentry_flags() which result in temporary
+inconsistency of child dentry flags with the mask in parent's connector.
 
+> > that after fsnotify_recalc_mask(), child dentries are all flagged when
+> > necessary. It's possible that after __fsnotify_update_child_dentry_flags() will
+> > skip executing since it sees it's already happening, and inotify_add_watch()
+> > would return without the watch being fully ready.
+> >
+> > I think the approach can still be salvaged, we just need a way to resolve this.
+> > EG a wait queue or mutex in the connector would allow us to preserve the
+> > guarantee that the child dentries are flagged when necessary. But I know that's
+> > a big addition, so I wanted to get some feedback from you as the maintainers. Is
+> > the strategy here stupid? Am I missing an easier option?
+> 
+> I think you may be missing an easier option.
+> 
+> The call to __fsnotify_update_child_dentry_flags() in
+> __fsnotify_parent() is a very aggressive optimization
+> and I think it may be an overkill, and a footgun, according
+> to your analysis.
+> 
+> If only called from the context of fsnotify_recalc_mask()
+> (i.e. update mark mask), __fsnotify_update_child_dentry_flags()
+> can take the dir inode_lock() to synchronize.
 
+This will nest inode lock into fsnotify group lock though. I'm not aware of
+any immediate lock ordering problem with that but it might be problematic.
+Otherwise this seems workable.
 
-> Thanks,
-> Qu
->
-> >               sblock->checksum_error = 1;
-> >
-> >       return sblock->header_error || sblock->checksum_error;
-> > @@ -2099,7 +2101,8 @@ static int scrub_checksum_super(struct scrub_block *sblock)
-> >       crypto_shash_digest(shash, kaddr + BTRFS_CSUM_SIZE,
-> >                       BTRFS_SUPER_INFO_SIZE - BTRFS_CSUM_SIZE, calculated_csum);
-> >
-> > -     if (memcmp(calculated_csum, s->csum, sctx->fs_info->csum_size))
-> > +     if (!IS_ENABLED(CONFIG_DISABLE_FS_CSUM_VERIFICATION) &&
-> > +         memcmp(calculated_csum, s->csum, sctx->fs_info->csum_size))
-> >               ++fail_cor;
-> >
-> >       return fail_cor + fail_gen;
+BTW if we call __fsnotify_update_child_dentry_flags() only from
+fsnotify_recalc_mask(), I don't think we even need more state in the
+connector to detect whether dentry flags update is needed or not.
+fsnotify_recalc_mask() knows the old & new mask state so it has all the
+information it needs to detect whether dentry flags update is needed or
+not. We just have to resolve the flags update races first to avoid
+maintaining the inconsistent flags state for a long time.
+
+> I don't think that the dir inode spin lock needs to be held
+> at all during children iteration.
+> 
+> I think that d_find_any_alias() should be used to obtain
+> the alias with elevated refcount instead of the awkward
+> d_u.d_alias iteration loop.
+> 
+> In the context of __fsnotify_parent(), I think the optimization
+> should stick with updating the flags for the specific child dentry
+> that had the false positive parent_watched indication,
+> leaving the rest of the siblings alone.
+
+Yep, that looks sensible to me. Essentially this should be just an uncommon
+fixup path until the full child dentry walk from fsnotify_recalc_mask()
+catches up with synchronizing all child dentry flags.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
