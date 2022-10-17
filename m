@@ -2,164 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 60A0B601597
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 19:42:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD4776016CE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 21:00:59 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230406AbiJQRmv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Oct 2022 13:42:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51644 "EHLO
+        id S230115AbiJQTA6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Oct 2022 15:00:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32976 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230409AbiJQRms (ORCPT
+        with ESMTP id S230027AbiJQTA4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Oct 2022 13:42:48 -0400
-Received: from mail-ua1-x934.google.com (mail-ua1-x934.google.com [IPv6:2607:f8b0:4864:20::934])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C162D72875;
-        Mon, 17 Oct 2022 10:42:45 -0700 (PDT)
-Received: by mail-ua1-x934.google.com with SMTP id h25so4628115uao.13;
-        Mon, 17 Oct 2022 10:42:45 -0700 (PDT)
+        Mon, 17 Oct 2022 15:00:56 -0400
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7AAE73C1D
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 12:00:51 -0700 (PDT)
+Received: by mail-yb1-xb36.google.com with SMTP id k3so14353907ybk.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 17 Oct 2022 12:00:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
+        d=cloudflare.com; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=en+vQFTkLB93s9ztGc7jfYm6FM8zEzJQ59yjzAUaTfs=;
-        b=mCv/GOdx4ar4LgN4cW7jD7qt4ucyL9UiHFB/WR6VwryWHjmnSHDyRoc3o3vNmigcoJ
-         YnM3BsJqLeNSCcis10q6g498b/Dd1pyoXZyyM7M5FtoJf1A/dBu0moy5+7Cu0gF2rera
-         88OpQYH9WbLiTbFYRRF+yJn8KNxD2jQqk8cNQi7aS7aevNRxWxTEhX84aSF99ZrUScqk
-         Nf+d5X2kK9+VxuTPhkVjFpwpdA0PpPt1GYhXOMDaIKFokZapD/cuOhrkzEn050DG6wgO
-         WXld2s57l++ymWn656+zjTBF5Jx8tLHnRT8d5XqZ94Hl2uWlG25fUobKgVVbLgat6YhR
-         +ojA==
+        bh=zrBdXCGWEkZBYVNoEyJxyq+fpdRwHofZyOq3MApTRzA=;
+        b=Qy4aW4IxLYuY4fhWzWgC8zbtTgnr9crlSLX3+OQ1Kq6xvzSVGoddw6q1fLdnxi9v+r
+         l5QsSant8Lk6tQeAUEOFeAWieCVxDqxVQ9h4ZUiVI7aCc1DdSYi0ZwTw48yzciNQaR8f
+         /sQzaWGLFIlu4BtBlkSIBl5dSK3G2nxivNW3s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=en+vQFTkLB93s9ztGc7jfYm6FM8zEzJQ59yjzAUaTfs=;
-        b=U+OGV9kgXg1GD5zLXtLEgTNmzWHlKNR5SfYzyxLeDR+ojKhB6hYfJjbD0f6gLnCUzt
-         QCzc6IGl5u45AM/LK9yGidr3vtWmPgqR/HSk8ZoSVKPRScvRQIlTw2ZtOOC9BULy4XHd
-         g2za2H26oM2MW4FUlGA1aWnR1zhb9E0FzKkkJ7RFFAM8KVIeb+rfr9JVAInkz63uvtj4
-         Yg+U07Wmm/OzSZSuxP8VfZD9hXIORuZ4m1N5i1qNIQ1YmPY247M6QJV+w01lDLYTjIzV
-         ny27bx4FxDCPmPFwJiVqNyroiPz5Z3a6IXmqojgQzswCcrv9qwUslRoWjZXBtcFGYEBy
-         wmIQ==
-X-Gm-Message-State: ACrzQf1pz2R5VBqqZP6hc0NaRBLe+rkLmH1bflu1uqZ8iotZ3fIML2YY
-        evDSIc9aSipNnhtuiXd9pBYKmq304fUApA/faFw=
-X-Google-Smtp-Source: AMsMyM5WNA4Xb3/jCLw3t7AhjLcSDbtuMiR/yKbb3qpvlBDLv+Bzyj6riCnXrP4zxRWUUlP6Hucf3jQKHkKWxxk15NY=
-X-Received: by 2002:ab0:2998:0:b0:3d6:ec8f:e296 with SMTP id
- u24-20020ab02998000000b003d6ec8fe296mr5541667uap.60.1666028564662; Mon, 17
- Oct 2022 10:42:44 -0700 (PDT)
+        bh=zrBdXCGWEkZBYVNoEyJxyq+fpdRwHofZyOq3MApTRzA=;
+        b=i8vVRJnbiGIHmp+E5Oc76aDN1wsl7VYPrHuTsI6LJgz/EYCx/o0yUvmhDRlhvspPSh
+         m3VCEZhHUuDYb1/vZj+cuoniJHqEMVQrnERK82IjmKMM6U2al6l/C6Yvf0+PUTmV4KAU
+         EY7RR46/SVETj7YwjrLCxBpEMuJ+diO+GWFdukIG7gcQK1HeUHPW8CL/Q0K4nF6SHQsh
+         DZQyiBP0fS1hWPDNaDmavarnGbZE5ZNAfT9rX8gWZmgLZX0Yz2F6vDXG4vI7Lo2U4nYe
+         nyBZmXc6/D9kca5b9fzUlnkBJAW4/266zGdC7LdWqBtcxrVSZjQJ/BPfh6tg7q3t+yli
+         8BZQ==
+X-Gm-Message-State: ACrzQf2rmt6dmGfWFcViqmjioVBrL3x8nquwIFMOuRY5TIdDF4FS+81o
+        MnBATTYUJnm9nSXUYFLnluZtp7E2BCYkeYGVnDKzOg+qBcg=
+X-Google-Smtp-Source: AMsMyM79bnBB8gY4Dcf0aEdZ+FcBVkoXwioB96WQVpiWNzhKeJBhgpT/SnlEB1he/lsT6oRwki9hFHl837MAQ0P10iA=
+X-Received: by 2002:a25:9207:0:b0:6c0:b858:d601 with SMTP id
+ b7-20020a259207000000b006c0b858d601mr11297743ybo.459.1666033250500; Mon, 17
+ Oct 2022 12:00:50 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221013222719.277923-1-stephen.s.brennan@oracle.com>
- <CAOQ4uxiXU72-cxbpqdv_5BC4VdjGx5V79zycfD3_tPSWixtT3w@mail.gmail.com>
- <87o7ua519v.fsf@oracle.com> <CAOQ4uxiamB8zfr=XTrnKA9BB4=B-DtwOim=xcYNc+vcW=WXv9Q@mail.gmail.com>
- <87lepe4c8i.fsf@oracle.com>
-In-Reply-To: <87lepe4c8i.fsf@oracle.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 17 Oct 2022 20:42:33 +0300
-Message-ID: <CAOQ4uxjJZne8LAp-ehxX9TNFendhyGPngUj6aHCh_Wr7RTp70Q@mail.gmail.com>
-Subject: Re: [RFC] fsnotify: allow sleepable child dentry flag update
-To:     Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20220922224027.59266-1-ivan@cloudflare.com>
+In-Reply-To: <20220922224027.59266-1-ivan@cloudflare.com>
+From:   Ivan Babrou <ivan@cloudflare.com>
+Date:   Mon, 17 Oct 2022 12:00:39 -0700
+Message-ID: <CABWYdi2so7xn860asjr=n9reoFm90X0kGLm7eH_bnYYw8MKg3w@mail.gmail.com>
+Subject: Re: [PATCH v2] proc: report open files as size in stat() for /proc/pid/fd
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        David Laight <David.Laight@aculab.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
+        Mike Rapoport <rppt@kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Kalesh Singh <kaleshsingh@google.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 17, 2022 at 8:00 PM Stephen Brennan
-<stephen.s.brennan@oracle.com> wrote:
+On Thu, Sep 22, 2022 at 3:40 PM Ivan Babrou <ivan@cloudflare.com> wrote:
 >
-> Amir Goldstein <amir73il@gmail.com> writes:
+> Many monitoring tools include open file count as a metric. Currently
+> the only way to get this number is to enumerate the files in /proc/pid/fd.
 >
-> > On Mon, Oct 17, 2022 at 10:59 AM Stephen Brennan
-> > <stephen.s.brennan@oracle.com> wrote:
-> >>
-> >> Amir Goldstein <amir73il@gmail.com> writes:
-> [snip]
-> >> > I think that d_find_any_alias() should be used to obtain
-> >> > the alias with elevated refcount instead of the awkward
-> >> > d_u.d_alias iteration loop.
-> >>
-> >> D'oh! Much better idea :)
-> >> Do you think the BUG_ON would still be worthwhile?
-> >>
-> >
-> > Which BUG_ON()?
-> > In general no, if there are ever more multiple aliases for
-> > a directory inode, updating dentry flags would be the last
-> > of our problems.
+> The problem with the current approach is that it does many things people
+> generally don't care about when they need one number for a metric.
+> In our tests for cadvisor, which reports open file counts per cgroup,
+> we observed that reading the number of open files is slow. Out of 35.23%
+> of CPU time spent in `proc_readfd_common`, we see 29.43% spent in
+> `proc_fill_cache`, which is responsible for filling dentry info.
+> Some of this extra time is spinlock contention, but it's a contention
+> for the lock we don't want to take to begin with.
 >
-> Sorry, I meant the one in my patch which asserts that the dentry is the
-> only alias for that inode. I suppose you're right about having bigger
-> problems in that case -- but the existing code "handles" it by iterating
-> over the alias list.
+> We considered putting the number of open files in /proc/pid/status.
+> Unfortunately, counting the number of fds involves iterating the open_files
+> bitmap, which has a linear complexity in proportion with the number
+> of open files (bitmap slots really, but it's close). We don't want
+> to make /proc/pid/status any slower, so instead we put this info
+> in /proc/pid/fd as a size member of the stat syscall result.
+> Previously the reported number was zero, so there's very little
+> risk of breaking anything, while still providing a somewhat logical
+> way to count the open files with a fallback if it's zero.
 >
+> RFC for this patch included iterating open fds under RCU. Thanks
+> to Frank Hofmann for the suggestion to use the bitmap instead.
+>
+> Previously:
+>
+> ```
+> $ sudo stat /proc/1/fd | head -n2
+>   File: /proc/1/fd
+>   Size: 0               Blocks: 0          IO Block: 1024   directory
+> ```
+>
+> With this patch:
+>
+> ```
+> $ sudo stat /proc/1/fd | head -n2
+>   File: /proc/1/fd
+>   Size: 65              Blocks: 0          IO Block: 1024   directory
+> ```
+>
+> Correctness check:
+>
+> ```
+> $ sudo ls /proc/1/fd | wc -l
+> 65
+> ```
+>
+> I added the docs for /proc/<pid>/fd while I'm at it.
+>
+> Signed-off-by: Ivan Babrou <ivan@cloudflare.com>
+>
+> ---
+> v2: Added missing rcu_read_lock() / rcu_read_unlock(),
+>     task_lock() / task_unlock() and put_task_struct().
+> ---
+>  Documentation/filesystems/proc.rst | 17 ++++++++++++
+>  fs/proc/fd.c                       | 44 ++++++++++++++++++++++++++++++
+>  2 files changed, 61 insertions(+)
 
-It is not important IMO.
+Now that Linux 6.1-rc1 is out, should this patch be looked at for
+inclusion? I see that the net-next tree has opened, not sure if the
+same rules apply here.
 
-> >
-> >> > In the context of __fsnotify_parent(), I think the optimization
-> >> > should stick with updating the flags for the specific child dentry
-> >> > that had the false positive parent_watched indication,
-> >> > leaving the rest of
-> >>
-> >> > WOULD that address the performance issues of your workload?
-> >>
-> >> I think synchronizing the __fsnotify_update_child_dentry_flags() with a
-> >> mutex and getting rid of the call from __fsnotify_parent() would go a
-> >> *huge* way (maybe 80%?) towards resolving the performance issues we've
-> >> seen. To be clear, I'm representing not one single workload, but a few
-> >> different customer workloads which center around this area.
-> >>
-> >> There are some extreme cases I've seen, where the dentry list is so
-> >> huge, that even iterating over it once with the parent dentry spinlock
-> >> held is enough to trigger softlockups - no need for several calls to
-> >> __fsnotify_update_child_dentry_flags() queueing up as described in the
-> >> original mail. So ideally, I'd love to try make *something* work with
-> >> the cursor idea as well. But I think the two ideas can be separated
-> >> easily, and I can discuss with Al further about if cursors can be
-> >> salvaged at all.
-> >>
-> >
-> > Assuming that you take the dir inode_lock() in
-> > __fsnotify_update_child_dentry_flags(), then I *think* that children
-> > dentries cannot be added to dcache and children dentries cannot
-> > turn from positive to negative and vice versa.
-> >
-> > Probably the only thing that can change d_subdirs is children dentries
-> > being evicted from dcache(?), so I *think* that once in N children
-> > if you can dget(child), drop alias->d_lock, cond_resched(),
-> > and then continue d_subdirs iteration from child->d_child.
->
-> This sounds like an excellent idea. I can't think of anything which
-> would remove a dentry from d_subdirs without the inode lock held.
-> Cursors wouldn't move without the lock held in read mode. Temporary
-> dentries from d_alloc_parallel are similar - they need the inode locked
-> shared in order to be removed from the parent list.
->
-> I'll try implementing it (along with the fsnotify changes we've
-> discussed in this thread). I'll add a BUG_ON after we wake up from
-> COND_RESCHED() to guarantee that the parent is the same dentry as
-> expected - just in case the assumption is wrong.
-
-BUG_ON() is almost never a good idea.
-If anything you should use if (WARN_ON_ONCE())
-and break out of the loop either returning an error
-to fanotify_mark() or not.
-I personally think that as an unexpected code assertion
-returning an error to the user is not a must in this case.
-
-Thanks,
-Amir.
-
->
-> Al - if you've read this far :) - does this approach sound reasonable,
-> compared to the cursor? I'll send out some concrete patches as soon as
-> I've implemented and done a few tests on them.
->
-> Thanks,
-> Stephen
+We've been running the v2 version of this patch in production
+successfully for some time now.
