@@ -2,187 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 68DC3600FA6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 15:00:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 995A4601007
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 15:16:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230469AbiJQNA2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Oct 2022 09:00:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53526 "EHLO
+        id S230261AbiJQNQN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Oct 2022 09:16:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37938 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230455AbiJQNAZ (ORCPT
+        with ESMTP id S229506AbiJQNQM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Oct 2022 09:00:25 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 50B98402F7;
-        Mon, 17 Oct 2022 06:00:23 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 6C7EA20628;
-        Mon, 17 Oct 2022 13:00:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1666011622; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9MB8IK99devSsbVKuCFsHUWmVzyz2mqfU8Y26jvqzv4=;
-        b=zhssMzsy/2w3OsoMr5WAqLlA15XAps4taHC3oW1kGemgiv5Of9mor6m5UgiloYUrq2u49x
-        uDXT5zpFbYy9NZ0ASsOtsb+1Qs6LN7GNt7HIVECX8kRRRI3VZDkM5TDsZSFVpj/QXQNNwK
-        yanlAR/KhCIc2KkUwCruBQ0yKEZ+4Kg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1666011622;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9MB8IK99devSsbVKuCFsHUWmVzyz2mqfU8Y26jvqzv4=;
-        b=kbo9YyUMH19Ty6ZeoQYYH6O8OBIIOCUsNjK8YY66kGueMJBtfGm21E2ES6nlbGbqGWxjnN
-        LDRgm2Xy/RcUW8Cw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D189713ABE;
-        Mon, 17 Oct 2022 13:00:21 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id QVZuMuVRTWOhRgAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Mon, 17 Oct 2022 13:00:21 +0000
-Message-ID: <de680280-f6b1-9337-2ae4-4b2faf2b823b@suse.cz>
-Date:   Mon, 17 Oct 2022 15:00:21 +0200
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
-Content-Language: en-US
-To:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
+        Mon, 17 Oct 2022 09:16:12 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 59A3E167DE;
+        Mon, 17 Oct 2022 06:16:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=aGtg2Qj2UsZ6c2ADL+W0CG9O1Y771EKXkyHyvj1eDO0=; b=I+MvpcvCzDPis8piDJr5WJCHXZ
+        8osuIpox/vJzj2b2p2TeK14qywkWvP07p0lrq6d+TD/3fYVV1N7hFqmwxB+99V3ABhWIWgt8GAKag
+        hsTszpBAI2lmS8pwjDahw6JDAfE8IFsIhQibctK4XJVsRTWktl9e9DwRyZvU7Nh81mWGFgUN3L0Ow
+        +Ryo7NBlnOtAbJX9iBL6tprVdn8TO16zTzurZeUuycJkL42F1zapbNRmkUZ6CEqrBSMHKWZ6HgwBd
+        NJRjs4ObvIb+5SDZEZq2UiQqckr78+0hTLCya4Mgnmu95vFB1ItKRGBZKzLGugB1Elxx5xZIqPYG/
+        BhjSgSEA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1okPyH-00C5kl-0a; Mon, 17 Oct 2022 13:15:57 +0000
+Date:   Mon, 17 Oct 2022 06:15:56 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, willy@infradead.org,
+        dchinner@redhat.com, Steve French <smfrench@gmail.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
         Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=ham autolearn_force=no
-        version=3.4.6
+        torvalds@linux-foundation.org, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: How to convert I/O iterators to iterators, sglists and RDMA lists
+Message-ID: <Y01VjOE2RrLVA2T6@infradead.org>
+References: <1762414.1665761217@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1762414.1665761217@warthog.procyon.org.uk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 9/15/22 16:29, Chao Peng wrote:
-> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+On Fri, Oct 14, 2022 at 04:26:57PM +0100, David Howells wrote:
+>  (1) Async direct I/O.
 > 
-> KVM can use memfd-provided memory for guest memory. For normal userspace
-> accessible memory, KVM userspace (e.g. QEMU) mmaps the memfd into its
-> virtual address space and then tells KVM to use the virtual address to
-> setup the mapping in the secondary page table (e.g. EPT).
+>      In the async case direct I/O, we cannot hold on to the iterator when we
+>      return, even if the operation is still in progress (ie. we return
+>      EIOCBQUEUED), as it is likely to be on the caller's stack.
 > 
-> With confidential computing technologies like Intel TDX, the
-> memfd-provided memory may be encrypted with special key for special
-> software domain (e.g. KVM guest) and is not expected to be directly
-> accessed by userspace. Precisely, userspace access to such encrypted
-> memory may lead to host crash so it should be prevented.
+>      Also, simply copying the iterator isn't sufficient as virtual userspace
+>      addresses cannot be trusted and we may have to pin the pages that
+>      comprise the buffer.
+
+This is very related to the discussion we are having related to pinning
+for O_DIRECT with Ira and Al.  What block file systems do is to take
+the pages from the iter and some flags on what is pinned.  We can
+generalize this to store all extra state in a flags word, or byte the
+bullet and allow cloning of the iter in one form or another.
+
+>  (2) Crypto.
 > 
-> This patch introduces userspace inaccessible memfd (created with
-> MFD_INACCESSIBLE). Its memory is inaccessible from userspace through
-> ordinary MMU access (e.g. read/write/mmap) but can be accessed via
-> in-kernel interface so KVM can directly interact with core-mm without
-> the need to map the memory into KVM userspace.
+>      The crypto interface takes scatterlists, not iterators, so we need to be
+>      able to convert an iterator into a scatterlist in order to do content
+>      encryption within netfslib.  Doing this in netfslib makes it easier to
+>      store content-encrypted files encrypted in fscache.
+
+Note that the scatterlist is generally a pretty bad interface.  We've
+been talking for a while to have an interface that takes a page array
+as an input and return an array of { dma_addr, len } tuples.  Thinking
+about it taking in an iter might actually be an even better idea.
+
+>  (3) RDMA.
 > 
-> It provides semantics required for KVM guest private(encrypted) memory
-> support that a file descriptor with this flag set is going to be used as
-> the source of guest memory in confidential computing environments such
-> as Intel TDX/AMD SEV.
-> 
-> KVM userspace is still in charge of the lifecycle of the memfd. It
-> should pass the opened fd to KVM. KVM uses the kernel APIs newly added
-> in this patch to obtain the physical memory address and then populate
-> the secondary page table entries.
-> 
-> The userspace inaccessible memfd can be fallocate-ed and hole-punched
-> from userspace. When hole-punching happens, KVM can get notified through
-> inaccessible_notifier it then gets chance to remove any mapped entries
-> of the range in the secondary page tables.
-> 
-> The userspace inaccessible memfd itself is implemented as a shim layer
-> on top of real memory file systems like tmpfs/hugetlbfs but this patch
-> only implemented tmpfs. The allocated memory is currently marked as
-> unmovable and unevictable, this is required for current confidential
-> usage. But in future this might be changed.
-> 
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> ---
+>      To perform RDMA, a buffer list needs to be presented as a QPE array.
+>      Currently, cifs converts the iterator it is given to lists of pages, then
+>      each list to a scatterlist and thence to a QPE array.  I have code to
+>      pass the iterator down to the bottom, using an intermediate BVEC iterator
+>      instead of a page list if I can't pass down the original directly (eg. an
+>      XARRAY iterator on the pagecache), but I still end up converting it to a
+>      scatterlist, which is then converted to a QPE.  I'm trying to go directly
+>      from an iterator to a QPE array, thus avoiding the need to allocate an
+>      sglist.
 
-...
+I'm not sure what you mean with QPE.  The fundamental low-level
+interface in RDMA is the ib_sge.  If you feed it to RDMA READ/WRITE
+requests the interface for that is the RDMA R/W API in
+drivers/infiniband/core/rw.c, which currently takes a scatterlist but
+to which all of the above remarks on DMA interface apply.  For RDMA
+SEND that ULP has to do a dma_map_single/page to fill it, which is a
+quite horrible layering violation and should move into the driver, but
+that is going to a massive change to the whole RDMA subsystem, so
+unlikely to happen anytime soon.
 
-> +static long inaccessible_fallocate(struct file *file, int mode,
-> +				   loff_t offset, loff_t len)
-> +{
-> +	struct inaccessible_data *data = file->f_mapping->private_data;
-> +	struct file *memfd = data->memfd;
-> +	int ret;
-> +
-> +	if (mode & FALLOC_FL_PUNCH_HOLE) {
-> +		if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
-> +			return -EINVAL;
-> +	}
-> +
-> +	ret = memfd->f_op->fallocate(memfd, mode, offset, len);
-> +	inaccessible_notifier_invalidate(data, offset, offset + len);
-
-Wonder if invalidate should precede the actual hole punch, otherwise we open
-a window where the page tables point to memory no longer valid?
-
-> +	return ret;
-> +}
-> +
-
-...
-
-> +
-> +static struct file_system_type inaccessible_fs = {
-> +	.owner		= THIS_MODULE,
-> +	.name		= "[inaccessible]",
-
-Dunno where exactly is this name visible, but shouldn't it better be
-"[memfd:inaccessible]"?
-
-> +	.init_fs_context = inaccessible_init_fs_context,
-> +	.kill_sb	= kill_anon_super,
-> +};
-> +
-
+Neither case has anything to do with what should be in common iov_iter
+code, all this needs to live in the RDMA subsystem as a consumer.
