@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D2078600C01
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 12:06:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A00C600BFF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 12:06:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231247AbiJQKGq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Oct 2022 06:06:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34644 "EHLO
+        id S230406AbiJQKGp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Oct 2022 06:06:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34538 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231387AbiJQKGg (ORCPT
+        with ESMTP id S231351AbiJQKGg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 17 Oct 2022 06:06:36 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E63602B197;
-        Mon, 17 Oct 2022 03:06:30 -0700 (PDT)
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 607855F7E2;
+        Mon, 17 Oct 2022 03:06:31 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 95DBBB81200;
-        Mon, 17 Oct 2022 10:06:28 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F789C4347C;
-        Mon, 17 Oct 2022 10:06:24 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2955E6100B;
+        Mon, 17 Oct 2022 10:06:31 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB704C43146;
+        Mon, 17 Oct 2022 10:06:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666001187;
-        bh=3NZqz0FD3fV11fuAj9/W1BZpYm7w8MUaoDVzm1T/qlU=;
+        s=k20201202; t=1666001190;
+        bh=8+pm1Gyok99ypGEogBIk14qQkX8CSGRb7U5My8BNvzU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FyZo8KXHJKz6D7zevr7WgPMpCpcKx6Tc0RIHLdnxiK0121lPm6rjuUuEvtIJRgk4F
-         2NmolF3Nngcm4PMZiDjfhYZLfoFPaUfytUUbV6KPUNgZKD0kLeBoRbizjsQIbg67se
-         86VT5dLU5q757/mJh9Iizmehu2MFDQ/jO8c5c7FuETFqxxF2vFIqLhuiKwnTT882dG
-         xf9y4sgMQ5fSiD25j3HDUFSQ3BO6l/melYAgwe2XVIYdN+QVB8pzi3x3/gTv7Zz2IM
-         Qk0h31VncRTZQgBSXDUVjZvd3wZtWxNSoi+MIMgNvE+ISnaprNY90xfQ362UhJIVlQ
-         8ZqaU4my4sgQg==
+        b=AzCj2+gNR1P+t28OAb3Nu/nwJ4Q0PH+ztE2XpdITQJ6mSXiSUSAY0Z1ldT39BeDfE
+         TTVI4CUptT3tJYpdY94f5muSr8n36HeB/pvi9gYGT7qG9QpwUiNCV9Etur9ccbJOyp
+         GR5yBucqiq0CBvW1tDY2SABZ4RiR4qTNVq9tzSUrG7he9bCGZuAvt2+q/1hE+d67oN
+         QCqMg84v2PVhP+hDEtZ6EVIt7VaAfSuY2bhMz9s5a4Htmp3WuLmThCRhgWfPK3aGop
+         dXEZdilf2bZCHgwUipyEZsC8C5tJIlafsK/9seKXIoqkoWeq4ZDTPiwlNEpMvK6phk
+         rK8dm1uiHk0KQ==
 From:   Christian Brauner <brauner@kernel.org>
 To:     Amir Goldstein <amir73il@gmail.com>,
         Miklos Szeredi <miklos@szeredi.hu>,
@@ -43,14 +43,14 @@ Cc:     Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
         Christian Brauner <brauner@kernel.org>,
         linux-unionfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         Miklos Szeredi <mszeredi@redhat.com>
-Subject: [PATCH v3 4/5] ovl: remove privs in ovl_copyfile()
-Date:   Mon, 17 Oct 2022 12:05:59 +0200
-Message-Id: <20221017100600.70269-5-brauner@kernel.org>
+Subject: [PATCH v3 5/5] ovl: remove privs in ovl_fallocate()
+Date:   Mon, 17 Oct 2022 12:06:00 +0200
+Message-Id: <20221017100600.70269-6-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221017100600.70269-1-brauner@kernel.org>
 References: <20221017100600.70269-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1512; i=brauner@kernel.org; h=from:subject; bh=cwT4vtYTlyq8yS5QPd3agV4tcMGPkrOBxv4nXizKaXs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST7avz+2FY99ZhVy46F83suxuT0bBHzyC2r3eW/4+28/v2m L3oVOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyeQbDXwFW6alX1ip3dzY8mGb/ct HeGZaCST2vX/91TFI8xP/PeiPDfy9TpsB9y94XF9n2OlVXvDi/pMZ/VtfkScmrBJU3v/pwmAEA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1358; i=brauner@kernel.org; h=from:subject; bh=K5sAcB0+cO0LiB6mZF1v9GKE2/+4csaj3McCkOWmEbs=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST7avxeuOjzHUX7/Jy+2pWFFjwdDNXsz9ueH7n35UVUmd7X 41e0OkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACbCcoqR4buwTLr9VsnuzRLeti8fLb l1zDFeoeFJbKHaygOzPxpr8jD8T1rT85Yp+bqRVduW3//NZVr9JfYUM+1wLxI53vuYofQ0EwA=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -64,12 +64,12 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Amir Goldstein <amir73il@gmail.com>
 
-Underlying fs doesn't remove privs because copy_range/remap_range are
-called with privileged mounter credentials.
+Underlying fs doesn't remove privs because fallocate is called with
+privileged mounter credentials.
 
-This fixes some failures in fstest generic/673.
+This fixes some failure in fstests generic/683..687.
 
-Fixes: 8ede205541ff ("ovl: add reflink/copyfile/dedup support")
+Fixes: aab8848cee5e ("ovl: add ovl_fallocate()")
 Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 Acked-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
@@ -81,45 +81,37 @@ Notes:
     /* v3 */
     unchanged
 
- fs/overlayfs/file.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ fs/overlayfs/file.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/fs/overlayfs/file.c b/fs/overlayfs/file.c
-index a1a22f58ba18..755a11c63596 100644
+index 755a11c63596..d066be3b9226 100644
 --- a/fs/overlayfs/file.c
 +++ b/fs/overlayfs/file.c
-@@ -567,14 +567,23 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
+@@ -517,9 +517,16 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
  	const struct cred *old_cred;
- 	loff_t ret;
+ 	int ret;
  
-+	inode_lock(inode_out);
-+	if (op != OVL_DEDUPE) {
-+		/* Update mode */
-+		ovl_copyattr(inode_out);
-+		ret = file_remove_privs(file_out);
-+		if (ret)
-+			goto out_unlock;
-+	}
++	inode_lock(inode);
++	/* Update mode */
++	ovl_copyattr(inode);
++	ret = file_remove_privs(file);
++	if (ret)
++		goto out_unlock;
 +
- 	ret = ovl_real_fdget(file_out, &real_out);
+ 	ret = ovl_real_fdget(file, &real);
  	if (ret)
 -		return ret;
 +		goto out_unlock;
  
- 	ret = ovl_real_fdget(file_in, &real_in);
- 	if (ret) {
- 		fdput(real_out);
--		return ret;
-+		goto out_unlock;
- 	}
+ 	old_cred = ovl_override_creds(file_inode(file)->i_sb);
+ 	ret = vfs_fallocate(real.file, mode, offset, len);
+@@ -530,6 +537,9 @@ static long ovl_fallocate(struct file *file, int mode, loff_t offset, loff_t len
  
- 	old_cred = ovl_override_creds(file_inode(file_out)->i_sb);
-@@ -603,6 +612,9 @@ static loff_t ovl_copyfile(struct file *file_in, loff_t pos_in,
- 	fdput(real_in);
- 	fdput(real_out);
+ 	fdput(real);
  
 +out_unlock:
-+	inode_unlock(inode_out);
++	inode_unlock(inode);
 +
  	return ret;
  }
