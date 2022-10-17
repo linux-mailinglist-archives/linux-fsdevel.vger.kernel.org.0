@@ -2,271 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 184FC601349
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 18:18:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A81560134F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 17 Oct 2022 18:20:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231172AbiJQQSW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 17 Oct 2022 12:18:22 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44512 "EHLO
+        id S229940AbiJQQUR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 17 Oct 2022 12:20:17 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52738 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230301AbiJQQSK (ORCPT
+        with ESMTP id S229675AbiJQQUP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 17 Oct 2022 12:18:10 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E8396D578;
-        Mon, 17 Oct 2022 09:18:09 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id e129so10866259pgc.9;
-        Mon, 17 Oct 2022 09:18:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SKguiJYDkzC95u9M4wpAvwaM2MiZsshmjZtegeg9N/Q=;
-        b=TIQdmVF/NUwB/SC10cgEjN0v81RQV4XfsM2gsj49cKH1uKhnxv8or3N2n+8di1/cy5
-         ksaoz6ZWmpfqgJw8oe4LP1eHuU5iYjvbWUdEcIU42mhLa9/DR1wk8eF7w5mkpvuDxH5k
-         Frc5J7/dz8+dcZosr/RJ3iVX5qCKTfHNnWy1HOm5YQQsR0JzKvH1BPAQGIjt5eEq7nOy
-         urZE6CmYghSeCdoTM33tuH7cESEIQoAjwunqDBnehyZ534twCYrHGJabtZvKdDoSFBGs
-         ZNAY7x48BwWy1V5HyLU6HHoSbsJWMrpr0v9p18sup05YIbPm1FGcgcg9E9QW4PD02jDF
-         Z3Jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SKguiJYDkzC95u9M4wpAvwaM2MiZsshmjZtegeg9N/Q=;
-        b=uFcw9tOtVCl1B8Eb8Z5Nagl6EvfIkBrb6vvijvNQGRg4S8qujJI8hcnWEeG0MddwtJ
-         NQVZ9HG+6BUC6d5r1x1p5hjEK1KMn27GIFSM8JgV9OCM3e2+WVLWIEr3+cZ99Xloon75
-         PDahgBaFaZ7a9SolT4owcox8cXPAjm60Fx1n6JJ32HV4Z0X+zbaEj66MhyKZ8xPYOW9z
-         E9JW0baNC7QCJEShA3nCfIYXC09pZdSmTtQdkH/TKZtZhnyrdOHfNgtpV3hyxM4MIRhi
-         A0b2gbqES9FI7KRpDqY0uI3Sh/4mFONyR8T9UGBtdhwTzxD8yTkMh1+G91JY31xsa5aM
-         b0Dw==
-X-Gm-Message-State: ACrzQf096un1ASDMupN4NpFkrmeSvf1brDv9Ir8AXryAkkxI4Y9ALRB6
-        YlWBLOTcrwoFXAhN3LBIfOw=
-X-Google-Smtp-Source: AMsMyM6s03W1kgLl5YtFLJYwAnNNLW3lEp+bMieGrzvLyShF1+2uxmb0yhnKBrwbaSQZRb0uJ64giA==
-X-Received: by 2002:aa7:888b:0:b0:563:aa1:adae with SMTP id z11-20020aa7888b000000b005630aa1adaemr13235253pfe.15.1666023488527;
-        Mon, 17 Oct 2022 09:18:08 -0700 (PDT)
-Received: from vmfolio.. (c-76-102-73-225.hsd1.ca.comcast.net. [76.102.73.225])
-        by smtp.googlemail.com with ESMTPSA id z22-20020a62d116000000b0055f209690c0sm7272326pfg.50.2022.10.17.09.18.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 17 Oct 2022 09:18:08 -0700 (PDT)
-From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To:     akpm@linux-foundation.org
-Cc:     willy@infradead.org, hughd@google.com,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH v3 2/2] filemap: find_get_entries() now updates start offset
-Date:   Mon, 17 Oct 2022 09:18:00 -0700
-Message-Id: <20221017161800.2003-3-vishal.moola@gmail.com>
-X-Mailer: git-send-email 2.36.1
-In-Reply-To: <20221017161800.2003-1-vishal.moola@gmail.com>
-References: <20221017161800.2003-1-vishal.moola@gmail.com>
+        Mon, 17 Oct 2022 12:20:15 -0400
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA74B6C119;
+        Mon, 17 Oct 2022 09:20:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1666023614; x=1697559614;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=K4vrfLL2l6+gAD4B8xJLdJX5MnNTNVmUNPLnkielra0=;
+  b=N7nxCALdyfkB4kjyQpAPG8oGeGiM2N5usrExBdOLiek/UhUGZ31J4gEC
+   VPqthDlBSqaSkqrCooUdR1mvD1mDd4MSxuyXJLeuPKAgAl4v2Mio8HTEQ
+   gMpjfg6sacyM0rcD1iO951v+8UAjHwz79SELDQ/JMvd/rSl06U5wgp88h
+   naGCHhXJmFB1TvRKw5xg6antWgNZZVJTmXgJ026VXgSJBiiDaw5rrDbMy
+   ClrYRkTahv9KmlzDG1fLz1IYVPLK83bObIdKibys1iwAlYr6S5A651JVs
+   fgnyGyE8eRzglyNyJCM/wI1tcXYIf5O6P+bSDA4Wp3/1iXEQP9m+sqlUy
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10503"; a="370042966"
+X-IronPort-AV: E=Sophos;i="5.95,192,1661842800"; 
+   d="scan'208";a="370042966"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2022 09:20:12 -0700
+X-IronPort-AV: E=McAfee;i="6500,9779,10503"; a="606182872"
+X-IronPort-AV: E=Sophos;i="5.95,192,1661842800"; 
+   d="scan'208";a="606182872"
+Received: from dludovic-mobl1.ger.corp.intel.com (HELO box.shutemov.name) ([10.252.44.179])
+  by orsmga006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Oct 2022 09:19:58 -0700
+Received: by box.shutemov.name (Postfix, from userid 1000)
+        id EC9CB1045CA; Mon, 17 Oct 2022 19:19:55 +0300 (+03)
+Date:   Mon, 17 Oct 2022 19:19:55 +0300
+From:   "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
+        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
+        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
+Message-ID: <20221017161955.t4gditaztbwijgcn@box.shutemov.name>
+References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
+ <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
+ <de680280-f6b1-9337-2ae4-4b2faf2b823b@suse.cz>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <de680280-f6b1-9337-2ae4-4b2faf2b823b@suse.cz>
+X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Initially, find_get_entries() was being passed in the start offset as a
-value. That left the calculation of the offset to the callers. This led
-to complexity in the callers trying to keep track of the index.
+On Mon, Oct 17, 2022 at 03:00:21PM +0200, Vlastimil Babka wrote:
+> On 9/15/22 16:29, Chao Peng wrote:
+> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> > 
+> > KVM can use memfd-provided memory for guest memory. For normal userspace
+> > accessible memory, KVM userspace (e.g. QEMU) mmaps the memfd into its
+> > virtual address space and then tells KVM to use the virtual address to
+> > setup the mapping in the secondary page table (e.g. EPT).
+> > 
+> > With confidential computing technologies like Intel TDX, the
+> > memfd-provided memory may be encrypted with special key for special
+> > software domain (e.g. KVM guest) and is not expected to be directly
+> > accessed by userspace. Precisely, userspace access to such encrypted
+> > memory may lead to host crash so it should be prevented.
+> > 
+> > This patch introduces userspace inaccessible memfd (created with
+> > MFD_INACCESSIBLE). Its memory is inaccessible from userspace through
+> > ordinary MMU access (e.g. read/write/mmap) but can be accessed via
+> > in-kernel interface so KVM can directly interact with core-mm without
+> > the need to map the memory into KVM userspace.
+> > 
+> > It provides semantics required for KVM guest private(encrypted) memory
+> > support that a file descriptor with this flag set is going to be used as
+> > the source of guest memory in confidential computing environments such
+> > as Intel TDX/AMD SEV.
+> > 
+> > KVM userspace is still in charge of the lifecycle of the memfd. It
+> > should pass the opened fd to KVM. KVM uses the kernel APIs newly added
+> > in this patch to obtain the physical memory address and then populate
+> > the secondary page table entries.
+> > 
+> > The userspace inaccessible memfd can be fallocate-ed and hole-punched
+> > from userspace. When hole-punching happens, KVM can get notified through
+> > inaccessible_notifier it then gets chance to remove any mapped entries
+> > of the range in the secondary page tables.
+> > 
+> > The userspace inaccessible memfd itself is implemented as a shim layer
+> > on top of real memory file systems like tmpfs/hugetlbfs but this patch
+> > only implemented tmpfs. The allocated memory is currently marked as
+> > unmovable and unevictable, this is required for current confidential
+> > usage. But in future this might be changed.
+> > 
+> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> > ---
+> 
+> ...
+> 
+> > +static long inaccessible_fallocate(struct file *file, int mode,
+> > +				   loff_t offset, loff_t len)
+> > +{
+> > +	struct inaccessible_data *data = file->f_mapping->private_data;
+> > +	struct file *memfd = data->memfd;
+> > +	int ret;
+> > +
+> > +	if (mode & FALLOC_FL_PUNCH_HOLE) {
+> > +		if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
+> > +			return -EINVAL;
+> > +	}
+> > +
+> > +	ret = memfd->f_op->fallocate(memfd, mode, offset, len);
+> > +	inaccessible_notifier_invalidate(data, offset, offset + len);
+> 
+> Wonder if invalidate should precede the actual hole punch, otherwise we open
+> a window where the page tables point to memory no longer valid?
 
-Now find_get_entries() takes in a pointer to the start offset and
-updates the value to be directly after the last entry found. If no entry is
-found, the offset is not changed. This gets rid of multiple hacky
-calculations that kept track of the start offset.
+Yes, you are right. Thanks for catching this.
 
-Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
----
- mm/filemap.c  | 13 +++++++++++--
- mm/internal.h |  2 +-
- mm/shmem.c    | 11 ++++-------
- mm/truncate.c | 19 +++++++------------
- 4 files changed, 23 insertions(+), 22 deletions(-)
+> > +	return ret;
+> > +}
+> > +
+> 
+> ...
+> 
+> > +
+> > +static struct file_system_type inaccessible_fs = {
+> > +	.owner		= THIS_MODULE,
+> > +	.name		= "[inaccessible]",
+> 
+> Dunno where exactly is this name visible, but shouldn't it better be
+> "[memfd:inaccessible]"?
 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index f1fec7bf5b15..804d335504f0 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2053,10 +2053,10 @@ static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
-  *
-  * Return: The number of entries which were found.
-  */
--unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
-+unsigned find_get_entries(struct address_space *mapping, pgoff_t *start,
- 		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices)
- {
--	XA_STATE(xas, &mapping->i_pages, start);
-+	XA_STATE(xas, &mapping->i_pages, *start);
- 	struct folio *folio;
- 
- 	rcu_read_lock();
-@@ -2067,6 +2067,15 @@ unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
- 	}
- 	rcu_read_unlock();
- 
-+	if (folio_batch_count(fbatch)) {
-+		unsigned long nr = 1;
-+		int idx = folio_batch_count(fbatch) - 1;
-+
-+		folio = fbatch->folios[idx];
-+		if (!xa_is_value(folio) && !folio_test_hugetlb(folio))
-+			nr = folio_nr_pages(folio);
-+		*start = indices[idx] + nr;
-+	}
- 	return folio_batch_count(fbatch);
- }
- 
-diff --git a/mm/internal.h b/mm/internal.h
-index 14625de6714b..e87982cf1d48 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -106,7 +106,7 @@ static inline void force_page_cache_readahead(struct address_space *mapping,
- 
- unsigned find_lock_entries(struct address_space *mapping, pgoff_t *start,
- 		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices);
--unsigned find_get_entries(struct address_space *mapping, pgoff_t start,
-+unsigned find_get_entries(struct address_space *mapping, pgoff_t *start,
- 		pgoff_t end, struct folio_batch *fbatch, pgoff_t *indices);
- void filemap_free_folio(struct address_space *mapping, struct folio *folio);
- int truncate_inode_folio(struct address_space *mapping, struct folio *folio);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 9e17a2b0dc43..8c3c2ac15759 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -983,7 +983,7 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
- 	while (index < end) {
- 		cond_resched();
- 
--		if (!find_get_entries(mapping, index, end - 1, &fbatch,
-+		if (!find_get_entries(mapping, &index, end - 1, &fbatch,
- 				indices)) {
- 			/* If all gone or hole-punch or unfalloc, we're done */
- 			if (index == start || end != -1)
-@@ -995,13 +995,12 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
- 		for (i = 0; i < folio_batch_count(&fbatch); i++) {
- 			folio = fbatch.folios[i];
- 
--			index = indices[i];
- 			if (xa_is_value(folio)) {
- 				if (unfalloc)
- 					continue;
--				if (shmem_free_swap(mapping, index, folio)) {
-+				if (shmem_free_swap(mapping, indices[i], folio)) {
- 					/* Swap was replaced by page: retry */
--					index--;
-+					index = indices[i];
- 					break;
- 				}
- 				nr_swaps_freed++;
-@@ -1014,19 +1013,17 @@ static void shmem_undo_range(struct inode *inode, loff_t lstart, loff_t lend,
- 				if (folio_mapping(folio) != mapping) {
- 					/* Page was replaced by swap: retry */
- 					folio_unlock(folio);
--					index--;
-+					index = indices[i];
- 					break;
- 				}
- 				VM_BUG_ON_FOLIO(folio_test_writeback(folio),
- 						folio);
- 				truncate_inode_folio(mapping, folio);
- 			}
--			index = folio->index + folio_nr_pages(folio) - 1;
- 			folio_unlock(folio);
- 		}
- 		folio_batch_remove_exceptionals(&fbatch);
- 		folio_batch_release(&fbatch);
--		index++;
- 	}
- 
- 	spin_lock_irq(&info->lock);
-diff --git a/mm/truncate.c b/mm/truncate.c
-index 9fbe282e70ba..faeeca45d4ed 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -400,7 +400,7 @@ void truncate_inode_pages_range(struct address_space *mapping,
- 	index = start;
- 	while (index < end) {
- 		cond_resched();
--		if (!find_get_entries(mapping, index, end - 1, &fbatch,
-+		if (!find_get_entries(mapping, &index, end - 1, &fbatch,
- 				indices)) {
- 			/* If all gone from start onwards, we're done */
- 			if (index == start)
-@@ -414,21 +414,18 @@ void truncate_inode_pages_range(struct address_space *mapping,
- 			struct folio *folio = fbatch.folios[i];
- 
- 			/* We rely upon deletion not changing page->index */
--			index = indices[i];
- 
- 			if (xa_is_value(folio))
- 				continue;
- 
- 			folio_lock(folio);
--			VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
-+			VM_BUG_ON_FOLIO(!folio_contains(folio, indices[i]), folio);
- 			folio_wait_writeback(folio);
- 			truncate_inode_folio(mapping, folio);
- 			folio_unlock(folio);
--			index = folio_index(folio) + folio_nr_pages(folio) - 1;
- 		}
- 		truncate_folio_batch_exceptionals(mapping, &fbatch, indices);
- 		folio_batch_release(&fbatch);
--		index++;
- 	}
- }
- EXPORT_SYMBOL(truncate_inode_pages_range);
-@@ -636,16 +633,15 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 
- 	folio_batch_init(&fbatch);
- 	index = start;
--	while (find_get_entries(mapping, index, end, &fbatch, indices)) {
-+	while (find_get_entries(mapping, &index, end, &fbatch, indices)) {
- 		for (i = 0; i < folio_batch_count(&fbatch); i++) {
- 			struct folio *folio = fbatch.folios[i];
- 
- 			/* We rely upon deletion not changing folio->index */
--			index = indices[i];
- 
- 			if (xa_is_value(folio)) {
- 				if (!invalidate_exceptional_entry2(mapping,
--						index, folio))
-+						indices[i], folio))
- 					ret = -EBUSY;
- 				continue;
- 			}
-@@ -655,13 +651,13 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 				 * If folio is mapped, before taking its lock,
- 				 * zap the rest of the file in one hit.
- 				 */
--				unmap_mapping_pages(mapping, index,
--						(1 + end - index), false);
-+				unmap_mapping_pages(mapping, indices[i],
-+						(1 + end - indices[i]), false);
- 				did_range_unmap = 1;
- 			}
- 
- 			folio_lock(folio);
--			VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
-+			VM_BUG_ON_FOLIO(!folio_contains(folio, indices[i]), folio);
- 			if (folio->mapping != mapping) {
- 				folio_unlock(folio);
- 				continue;
-@@ -684,7 +680,6 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- 		folio_batch_remove_exceptionals(&fbatch);
- 		folio_batch_release(&fbatch);
- 		cond_resched();
--		index++;
- 	}
- 	/*
- 	 * For DAX we invalidate page tables after invalidating page cache.  We
+Maybe. And skip brackets.
+
+> 
+> > +	.init_fs_context = inaccessible_init_fs_context,
+> > +	.kill_sb	= kill_anon_super,
+> > +};
+> > +
+> 
+
 -- 
-2.36.1
-
+  Kiryl Shutsemau / Kirill A. Shutemov
