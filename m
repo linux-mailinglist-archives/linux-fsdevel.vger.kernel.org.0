@@ -2,84 +2,143 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D864602599
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 09:22:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 696286025EC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 09:38:36 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230351AbiJRHWe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 03:22:34 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37780 "EHLO
+        id S229470AbiJRHid (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 03:38:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230339AbiJRHWX (ORCPT
+        with ESMTP id S229788AbiJRHi3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 03:22:23 -0400
-Received: from mail-pg1-x533.google.com (mail-pg1-x533.google.com [IPv6:2607:f8b0:4864:20::533])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE6B5AB823
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 00:22:22 -0700 (PDT)
-Received: by mail-pg1-x533.google.com with SMTP id r18so12552665pgr.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 00:22:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zmmQqngBHRO64jwJHlH4N8QJ8HHeFfHjYmmW2fvTNrE=;
-        b=mKyGm3XbRd8gH9cVGki2o1JHhGdcCBGN+sKVLSvL4QrvYRZrmNHYVkn3fPf6/zZbF8
-         3dSuHMcZ+u5twLyXF1CCYNKe93YlLTLAJr+tQ0ddx8gVLJAzLDG/4hzDsZ5jEJNG/4v/
-         +BCij7wsdF/uu9G2B0LiZv2OE9AF28ixq1SWE=
+        Tue, 18 Oct 2022 03:38:29 -0400
+Received: from mail-oa1-f50.google.com (mail-oa1-f50.google.com [209.85.160.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B20C013E14;
+        Tue, 18 Oct 2022 00:38:26 -0700 (PDT)
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-1322fa1cf6fso15921380fac.6;
+        Tue, 18 Oct 2022 00:38:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zmmQqngBHRO64jwJHlH4N8QJ8HHeFfHjYmmW2fvTNrE=;
-        b=wLzZdAhBocVgp/7OD6GaU1wppPRylj3s/COlp/zHyugST+qhSD2ue1nDnPjBaMLjxw
-         Wt/xDsvblN4HcdOwD/bPvV5VgA++wHZx4sAlt+WtyLbZzk1R4fEEkAuHqzIpZkJ4sEl6
-         XeJy3UJ/6EsLHr673ziAb7PE/VWJLFrjTdNDPNdpUiDiY7aLo1z/xQv0YAnD0OhufyW6
-         REJtxtJcPBUtOPnin0pm3znzLMvVTxJUQCA1ovtCHmlns0m5C21A0aNrflBbavjyVE7u
-         0BJfuLl6W+V4I+KXQCy0j1g3Hith+nQSLJbA+cBxRpBmYA7Gklp54jooPifqlOdX1S47
-         CDNg==
-X-Gm-Message-State: ACrzQf2lcRJny99yFnavB42Ijw7kOQLFsLxO/zI6uzYf9X7RO/mAM7w9
-        Q0D8ecwhdVAc0BTHo8phd4QlQA==
-X-Google-Smtp-Source: AMsMyM7sSHggHqyJ0TcgW9+BkVyaT7rEgzYrT/GyJ+YeoRMLr8q0Oj65cetn/KVqd9ihtHbeu0I/ww==
-X-Received: by 2002:a05:6a00:13a3:b0:563:6d36:ba58 with SMTP id t35-20020a056a0013a300b005636d36ba58mr1576650pfg.43.1666077742371;
-        Tue, 18 Oct 2022 00:22:22 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id z8-20020a1709027e8800b00178af82a000sm7864182pla.122.2022.10.18.00.22.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 00:22:21 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, ebiederm@xmission.com,
-        bernd.edlinger@hotmail.de
-Cc:     Kees Cook <keescook@chromium.org>
-Subject: Re: [PATCH] exec: Copy oldsighand->action under spin-lock
-Date:   Tue, 18 Oct 2022 00:22:06 -0700
-Message-Id: <166607772207.3775126.2855869252440923728.b4-ty@chromium.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <AM8PR10MB470871DEBD1DED081F9CC391E4389@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
-References: <AM8PR10MB470871DEBD1DED081F9CC391E4389@AM8PR10MB4708.EURPRD10.PROD.OUTLOOK.COM>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mwq8mRE5qiqVJEFTV8PMaTxlxiFl0HRvXCI1ESDIAgA=;
+        b=uP1CncYWtzYR0ygZYHBqCusvQI3qLcARvKVbzdEo2TAs5CmdLuBBDSnvJC3CnEFymc
+         maOukJKMOanGciB5JKE+T7waF5I+BUrDHfHLjWFH3Mb4iO2Y9l4k5b4Q8zfXsmy7r6gY
+         FZ0M4pDzN7VVTrbIBwKD/hhhW0hX2swM2tihpju5CyITx3ey6gEwzsQ04iQCsN3BYFBZ
+         Mf/+G4stxLCBiFpIMxX6+FVVEEP3yvW+/SG49U9spnuwOZ4yujCiARpmS7lHoVb9COwy
+         juvLB7ddY+Q5RCRjySpjacgpYTr6+AqlCT4BusL/EyruYzuWYcFhOm5MmUvznr2r91RY
+         uH9g==
+X-Gm-Message-State: ACrzQf1/N7RbVTPNFnCefcE7yJPZk/vQj7w4sbummdliIV+DhK/c8kWo
+        E3d1oqf3tYmu0uyiT4X0rawbBxEnkAZQy6Ln
+X-Google-Smtp-Source: AMsMyM5csXdwREba7gw4KDgdxJUyoCgiqL87E6aLqBvQuxbl5zbkJBBFIZNp0ZmIdatu48jChwFRVg==
+X-Received: by 2002:a05:6870:fb90:b0:131:db1f:7785 with SMTP id kv16-20020a056870fb9000b00131db1f7785mr855895oab.189.1666078705512;
+        Tue, 18 Oct 2022 00:38:25 -0700 (PDT)
+Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com. [209.85.161.45])
+        by smtp.gmail.com with ESMTPSA id t9-20020a9d7489000000b006618bbede10sm5569962otk.53.2022.10.18.00.38.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Oct 2022 00:38:25 -0700 (PDT)
+Received: by mail-oo1-f45.google.com with SMTP id k11-20020a4ab28b000000b0047659ccfc28so2964440ooo.8;
+        Tue, 18 Oct 2022 00:38:25 -0700 (PDT)
+X-Received: by 2002:a81:848c:0:b0:356:e173:2c7a with SMTP id
+ u134-20020a81848c000000b00356e1732c7amr1276352ywf.502.1666078253767; Tue, 18
+ Oct 2022 00:30:53 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20221018074014.185687-1-wangkefeng.wang@huawei.com>
+In-Reply-To: <20221018074014.185687-1-wangkefeng.wang@huawei.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 18 Oct 2022 09:30:42 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWwAgPkifAkah7MoBKBoyB4tb+HM5cgvenwNFaAfbg+UQ@mail.gmail.com>
+Message-ID: <CAMuHMdWwAgPkifAkah7MoBKBoyB4tb+HM5cgvenwNFaAfbg+UQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: remove kern_addr_valid() completely
+To:     Kefeng Wang <wangkefeng.wang@huawei.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        linux-fsdevel@vger.kernel.org,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        WANG Xuerui <kernel@xen0n.name>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
+        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 7 Jun 2021 15:54:27 +0200, Bernd Edlinger wrote:
-> unshare_sighand should only access oldsighand->action
-> while holding oldsighand->siglock, to make sure that
-> newsighand->action is in a consistent state.
+On Tue, Oct 18, 2022 at 9:25 AM Kefeng Wang <wangkefeng.wang@huawei.com> wrote:
+> Most architectures(except arm64/x86/sparc) simply return 1 for
+> kern_addr_valid(), which is only used in read_kcore(), and it
+> calls copy_from_kernel_nofault() which could check whether the
+> address is a valid kernel address, so no need kern_addr_valid(),
+> let's remove unneeded kern_addr_valid() completely.
+>
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
 
-Applied to for-next/execve, thanks!
+>  arch/m68k/include/asm/pgtable_mm.h        |  2 -
+>  arch/m68k/include/asm/pgtable_no.h        |  1 -
 
-[1/1] exec: Copy oldsighand->action under spin-lock
-      https://git.kernel.org/kees/c/f53283b0165f
+Acked-by: Geert Uytterhoeven <geert@linux-m68k.org> [m68k]
 
--- 
-Kees Cook
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
