@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F243360323F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 20:22:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5D836603242
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 20:22:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229965AbiJRSWf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 14:22:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42528 "EHLO
+        id S230195AbiJRSWh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 14:22:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42536 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230071AbiJRSWd (ORCPT
+        with ESMTP id S230183AbiJRSWd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Tue, 18 Oct 2022 14:22:33 -0400
-Received: from mail-ed1-x52b.google.com (mail-ed1-x52b.google.com [IPv6:2a00:1450:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 979E18262F;
-        Tue, 18 Oct 2022 11:22:31 -0700 (PDT)
-Received: by mail-ed1-x52b.google.com with SMTP id a13so21816222edj.0;
-        Tue, 18 Oct 2022 11:22:31 -0700 (PDT)
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79CE18263C;
+        Tue, 18 Oct 2022 11:22:32 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id m15so21728211edb.13;
+        Tue, 18 Oct 2022 11:22:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=lNJPAP+B+nZkQ0xLazBwFAmPNa/89U43FNa6fG8R6oo=;
-        b=cB4Cqi5178EoSpHAXn2/jwjciYonrcV/ENsgaULX1vvs64Yzgi58SLA9wlvOSA1bz4
-         dL8eoOGjiUeoG7fsIQaltSMPPncsSRsp+DqWkpOOqaqbz2uo18jV2tqwJOZmvN2mZLHV
-         nrARunTn4LO+Om9KucVhPVMekZFSxLZUQZfPPnFJ5ByzIXHBkQa/CItQnY3A0DdggHsS
-         BdWHq0naSu+LmmBBCKwY4EdBXayydlTnv4T29xNIm4GMmxlWzFVe6MzdYH0fKBs4cW46
-         r9IOtgB173qEzDAkDr0Yt5Rq+j4n1tQGaXgP3EVZQOihKJzI8AbK19oVcaRqZgsF518e
-         LNAQ==
+        bh=4FuCoIWD2t78PwWblywGhp3stRwE/o0mS9jcK6KpYrk=;
+        b=hlksfLCc+twqaCOXME55MLK9avaFTa5AlpKRBTbqc7lKpvGajPI/NgaYTHiWov7jOd
+         dseb1Wgxsx4myWjGAD2ylHdg4xfzcf0S6me0pZ5WU6jYPHetofZEUpjgVwsdjRCsuHvx
+         ioWllCXh/ejODlxSCBl0a/a8++6jQYjx46ozj6ctW1u0LZY8/Q5H7/TCoNzZHym4oYBf
+         uA1JEFuuN3NjFAggAd/10MVONTc0TLwAIv+8pxhgq+eVfgMoe7oe0zg6USOGGf6OkCJV
+         k71zPBqr3vcg7pvOJeV8s2R3rPSLeaQrBrA313m9CVxGvVdZ7K5Abes4+deNBZdGX8pu
+         phZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lNJPAP+B+nZkQ0xLazBwFAmPNa/89U43FNa6fG8R6oo=;
-        b=lqRGyCKdEjYaHP/wEUc2moExIwkC2BZWTlsWB1/rNL1vOrUaRqyBrquFpVeNlIrW87
-         GCfrpPxCoKPUH5iPF/u8tIyS88P2b7c5hR4Yp0EST7weMke9qMufiODJeHwD7dWP09m2
-         Mx9PFYM4xvZXXgCrTwLuuD+9HWP6Z7D98z4cBbkkH7Kd1VI8omZetO5xMCKvMbka5Dup
-         V3tPwRTiT1j8WFrMrDLjPz8P75qzZPaq2YvL3KuljCIIphssr0EaxZE7YUM+lPR9F3/x
-         ui8RrlqOQo/fF6p/aUjFcEGKpqHmm8E+Zb4LBqR09NJ8ADL9IfeCRF+rlxYL30lufQud
-         a1Ng==
-X-Gm-Message-State: ACrzQf2XWbw/AcdwhZSj4Qs8x3PxcTLmg7DBJxGwormo/c3VniZlu8uD
-        SAyfq6h8traPJU5cR5sTAanRlwmFAwU=
-X-Google-Smtp-Source: AMsMyM6uairr6FwBJKqyUcP2JdQ4FNIId9VIcjSxdtdXcatIp72A5HwaEGPE0qIcxpy+KgtBkJRVOw==
-X-Received: by 2002:a05:6402:42cf:b0:457:ae6f:e443 with SMTP id i15-20020a05640242cf00b00457ae6fe443mr3841568edc.299.1666117350194;
-        Tue, 18 Oct 2022 11:22:30 -0700 (PDT)
+        bh=4FuCoIWD2t78PwWblywGhp3stRwE/o0mS9jcK6KpYrk=;
+        b=KAi6rD/6LqTx3ZJ9KZ05epaCYiJ6YLvDtAsCX2cKCWkEjmedpx6m9/WN0X6ftsoiCE
+         cBYp+ySx54FVf+q9jjsUWfSl9ZCqHJba5p9hlP7yXHkb+M7RdCBQp3IEX6QX8xO12F3H
+         wWcCuRC++Iq2zSichs0XWev+JytrPu0yvUSgky4JwE8La+eKAG3NuLYJstVPoyNlXl8v
+         wExV7kLA4Hi0uZUaA5JxvSXS699GcVTInEhGmQW6Lx3up9KXIaTi6SP07ohZQtl3iloo
+         v1nmL1C9Bx/PBQZ0DsfhXCLQ37bN7oNHA45OJ9hb/iuT5WfGROANe4TTdKr6zacGO7x8
+         dUcw==
+X-Gm-Message-State: ACrzQf02kBXdAogw/wG1I5dKZdYTJ+Wz1lP1Pl6hnM3Hsdm9MpeUme5Z
+        eoHkkpy0kDw6QjzIs/B/C41Op+erQQw=
+X-Google-Smtp-Source: AMsMyM5vAxWl3RzsN/dUY7VNMa50dPcKJe+ah01iBbwABq/l/tjAKRbYSMGVqo8bBFvbIYDzlt+0eg==
+X-Received: by 2002:aa7:dc10:0:b0:440:b446:c0cc with SMTP id b16-20020aa7dc10000000b00440b446c0ccmr3818157edu.34.1666117351009;
+        Tue, 18 Oct 2022 11:22:31 -0700 (PDT)
 Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
-        by smtp.gmail.com with ESMTPSA id i18-20020a0564020f1200b00458a03203b1sm9358395eda.31.2022.10.18.11.22.29
+        by smtp.gmail.com with ESMTPSA id i18-20020a0564020f1200b00458a03203b1sm9358395eda.31.2022.10.18.11.22.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 11:22:29 -0700 (PDT)
+        Tue, 18 Oct 2022 11:22:30 -0700 (PDT)
 From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To:     linux-security-module@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -59,12 +59,10 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         linux-fsdevel@vger.kernel.org,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
         Nathan Chancellor <nathan@kernel.org>,
-        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        John Johansen <john.johansen@canonical.com>
-Subject: [PATCH v10 01/11] security: Create file_truncate hook from path_truncate hook
-Date:   Tue, 18 Oct 2022 20:22:06 +0200
-Message-Id: <20221018182216.301684-2-gnoack3000@gmail.com>
+        =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
+Subject: [PATCH v10 02/11] landlock: Refactor check_access_path_dual() into is_access_to_paths_allowed()
+Date:   Tue, 18 Oct 2022 20:22:07 +0200
+Message-Id: <20221018182216.301684-3-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <20221018182216.301684-1-gnoack3000@gmail.com>
 References: <20221018182216.301684-1-gnoack3000@gmail.com>
@@ -81,189 +79,181 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Like path_truncate, the file_truncate hook also restricts file
-truncation, but is called in the cases where truncation is attempted
-on an already-opened file.
+Rename check_access_path_dual() to is_access_to_paths_allowed().
 
-This is required in a subsequent commit to handle ftruncate()
-operations differently to truncate() operations.
+Make it return true iff the access is allowed.
 
-Acked-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: John Johansen <john.johansen@canonical.com>
-Acked-by: Paul Moore <paul@paul-moore.com>
+Calculate the EXDEV/EACCES error code in the one place where it's needed.
+
+Suggested-by: Mickaël Salaün <mic@digikod.net>
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- fs/namei.c                    |  2 +-
- fs/open.c                     |  2 +-
- include/linux/lsm_hook_defs.h |  1 +
- include/linux/lsm_hooks.h     | 10 +++++++++-
- include/linux/security.h      |  6 ++++++
- security/apparmor/lsm.c       |  6 ++++++
- security/security.c           |  5 +++++
- security/tomoyo/tomoyo.c      | 13 +++++++++++++
- 8 files changed, 42 insertions(+), 3 deletions(-)
+ security/landlock/fs.c | 89 +++++++++++++++++++++---------------------
+ 1 file changed, 44 insertions(+), 45 deletions(-)
 
-diff --git a/fs/namei.c b/fs/namei.c
-index 578c2110df02..85e9b9cc5c38 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3211,7 +3211,7 @@ static int handle_truncate(struct user_namespace *mnt_userns, struct file *filp)
- 	if (error)
- 		return error;
- 
--	error = security_path_truncate(path);
-+	error = security_file_truncate(filp);
- 	if (!error) {
- 		error = do_truncate(mnt_userns, path->dentry, 0,
- 				    ATTR_MTIME|ATTR_CTIME|ATTR_OPEN,
-diff --git a/fs/open.c b/fs/open.c
-index a81319b6177f..c92f76ab341a 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -188,7 +188,7 @@ long do_sys_ftruncate(unsigned int fd, loff_t length, int small)
- 	if (IS_APPEND(file_inode(f.file)))
- 		goto out_putf;
- 	sb_start_write(inode->i_sb);
--	error = security_path_truncate(&f.file->f_path);
-+	error = security_file_truncate(f.file);
- 	if (!error)
- 		error = do_truncate(file_mnt_user_ns(f.file), dentry, length,
- 				    ATTR_MTIME | ATTR_CTIME, f.file);
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index ec119da1d89b..f67025823d92 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -177,6 +177,7 @@ LSM_HOOK(int, 0, file_send_sigiotask, struct task_struct *tsk,
- 	 struct fown_struct *fown, int sig)
- LSM_HOOK(int, 0, file_receive, struct file *file)
- LSM_HOOK(int, 0, file_open, struct file *file)
-+LSM_HOOK(int, 0, file_truncate, struct file *file)
- LSM_HOOK(int, 0, task_alloc, struct task_struct *task,
- 	 unsigned long clone_flags)
- LSM_HOOK(void, LSM_RET_VOID, task_free, struct task_struct *task)
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 4ec80b96c22e..fad93a6d5293 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -409,7 +409,9 @@
-  *	@attr is the iattr structure containing the new file attributes.
-  *	Return 0 if permission is granted.
-  * @path_truncate:
-- *	Check permission before truncating a file.
-+ *	Check permission before truncating the file indicated by path.
-+ *	Note that truncation permissions may also be checked based on
-+ *	already opened files, using the @file_truncate hook.
-  *	@path contains the path structure for the file.
-  *	Return 0 if permission is granted.
-  * @inode_getattr:
-@@ -598,6 +600,12 @@
-  *	to receive an open file descriptor via socket IPC.
-  *	@file contains the file structure being received.
-  *	Return 0 if permission is granted.
-+ * @file_truncate:
-+ *	Check permission before truncating a file, i.e. using ftruncate.
-+ *	Note that truncation permission may also be checked based on the path,
-+ *	using the @path_truncate hook.
-+ *	@file contains the file structure for the file.
-+ *	Return 0 if permission is granted.
-  * @file_open:
-  *	Save open-time permission checking state for later use upon
-  *	file_permission, and recheck access if anything has changed
-diff --git a/include/linux/security.h b/include/linux/security.h
-index ca1b7109c0db..1b5de26bdb12 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -396,6 +396,7 @@ int security_file_send_sigiotask(struct task_struct *tsk,
- 				 struct fown_struct *fown, int sig);
- int security_file_receive(struct file *file);
- int security_file_open(struct file *file);
-+int security_file_truncate(struct file *file);
- int security_task_alloc(struct task_struct *task, unsigned long clone_flags);
- void security_task_free(struct task_struct *task);
- int security_cred_alloc_blank(struct cred *cred, gfp_t gfp);
-@@ -1014,6 +1015,11 @@ static inline int security_file_open(struct file *file)
- 	return 0;
+diff --git a/security/landlock/fs.c b/security/landlock/fs.c
+index 64ed7665455f..277868e3c6ce 100644
+--- a/security/landlock/fs.c
++++ b/security/landlock/fs.c
+@@ -430,7 +430,7 @@ is_eacces(const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS],
  }
  
-+static inline int security_file_truncate(struct file *file)
-+{
-+	return 0;
-+}
-+
- static inline int security_task_alloc(struct task_struct *task,
- 				      unsigned long clone_flags)
- {
-diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
-index f56070270c69..be31549cfb40 100644
---- a/security/apparmor/lsm.c
-+++ b/security/apparmor/lsm.c
-@@ -329,6 +329,11 @@ static int apparmor_path_truncate(const struct path *path)
- 	return common_perm_cond(OP_TRUNC, path, MAY_WRITE | AA_MAY_SETATTR);
- }
- 
-+static int apparmor_file_truncate(struct file *file)
-+{
-+	return apparmor_path_truncate(&file->f_path);
-+}
-+
- static int apparmor_path_symlink(const struct path *dir, struct dentry *dentry,
- 				 const char *old_name)
- {
-@@ -1232,6 +1237,7 @@ static struct security_hook_list apparmor_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(mmap_file, apparmor_mmap_file),
- 	LSM_HOOK_INIT(file_mprotect, apparmor_file_mprotect),
- 	LSM_HOOK_INIT(file_lock, apparmor_file_lock),
-+	LSM_HOOK_INIT(file_truncate, apparmor_file_truncate),
- 
- 	LSM_HOOK_INIT(getprocattr, apparmor_getprocattr),
- 	LSM_HOOK_INIT(setprocattr, apparmor_setprocattr),
-diff --git a/security/security.c b/security/security.c
-index 79d82cb6e469..b55596958d0c 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1652,6 +1652,11 @@ int security_file_open(struct file *file)
- 	return fsnotify_perm(file, MAY_OPEN);
- }
- 
-+int security_file_truncate(struct file *file)
-+{
-+	return call_int_hook(file_truncate, 0, file);
-+}
-+
- int security_task_alloc(struct task_struct *task, unsigned long clone_flags)
- {
- 	int rc = lsm_task_alloc(task);
-diff --git a/security/tomoyo/tomoyo.c b/security/tomoyo/tomoyo.c
-index 71e82d855ebf..af04a7b7eb28 100644
---- a/security/tomoyo/tomoyo.c
-+++ b/security/tomoyo/tomoyo.c
-@@ -134,6 +134,18 @@ static int tomoyo_path_truncate(const struct path *path)
- 	return tomoyo_path_perm(TOMOYO_TYPE_TRUNCATE, path, NULL);
- }
- 
-+/**
-+ * tomoyo_file_truncate - Target for security_file_truncate().
-+ *
-+ * @file: Pointer to "struct file".
-+ *
-+ * Returns 0 on success, negative value otherwise.
-+ */
-+static int tomoyo_file_truncate(struct file *file)
-+{
-+	return tomoyo_path_truncate(&file->f_path);
-+}
-+
  /**
-  * tomoyo_path_unlink - Target for security_path_unlink().
+- * check_access_path_dual - Check accesses for requests with a common path
++ * is_access_to_paths_allowed - Check accesses for requests with a common path
   *
-@@ -545,6 +557,7 @@ static struct security_hook_list tomoyo_hooks[] __lsm_ro_after_init = {
- 	LSM_HOOK_INIT(bprm_check_security, tomoyo_bprm_check_security),
- 	LSM_HOOK_INIT(file_fcntl, tomoyo_file_fcntl),
- 	LSM_HOOK_INIT(file_open, tomoyo_file_open),
-+	LSM_HOOK_INIT(file_truncate, tomoyo_file_truncate),
- 	LSM_HOOK_INIT(path_truncate, tomoyo_path_truncate),
- 	LSM_HOOK_INIT(path_unlink, tomoyo_path_unlink),
- 	LSM_HOOK_INIT(path_mkdir, tomoyo_path_mkdir),
+  * @domain: Domain to check against.
+  * @path: File hierarchy to walk through.
+@@ -465,14 +465,10 @@ is_eacces(const layer_mask_t (*const layer_masks)[LANDLOCK_NUM_ACCESS_FS],
+  * allow the request.
+  *
+  * Returns:
+- * - 0 if the access request is granted;
+- * - -EACCES if it is denied because of access right other than
+- *   LANDLOCK_ACCESS_FS_REFER;
+- * - -EXDEV if the renaming or linking would be a privileged escalation
+- *   (according to each layered policies), or if LANDLOCK_ACCESS_FS_REFER is
+- *   not allowed by the source or the destination.
++ * - true if the access request is granted;
++ * - false otherwise.
+  */
+-static int check_access_path_dual(
++static bool is_access_to_paths_allowed(
+ 	const struct landlock_ruleset *const domain,
+ 	const struct path *const path,
+ 	const access_mask_t access_request_parent1,
+@@ -492,17 +488,17 @@ static int check_access_path_dual(
+ 	(*layer_masks_child2)[LANDLOCK_NUM_ACCESS_FS] = NULL;
+ 
+ 	if (!access_request_parent1 && !access_request_parent2)
+-		return 0;
++		return true;
+ 	if (WARN_ON_ONCE(!domain || !path))
+-		return 0;
++		return true;
+ 	if (is_nouser_or_private(path->dentry))
+-		return 0;
++		return true;
+ 	if (WARN_ON_ONCE(domain->num_layers < 1 || !layer_masks_parent1))
+-		return -EACCES;
++		return false;
+ 
+ 	if (unlikely(layer_masks_parent2)) {
+ 		if (WARN_ON_ONCE(!dentry_child1))
+-			return -EACCES;
++			return false;
+ 		/*
+ 		 * For a double request, first check for potential privilege
+ 		 * escalation by looking at domain handled accesses (which are
+@@ -513,7 +509,7 @@ static int check_access_path_dual(
+ 		is_dom_check = true;
+ 	} else {
+ 		if (WARN_ON_ONCE(dentry_child1 || dentry_child2))
+-			return -EACCES;
++			return false;
+ 		/* For a simple request, only check for requested accesses. */
+ 		access_masked_parent1 = access_request_parent1;
+ 		access_masked_parent2 = access_request_parent2;
+@@ -622,24 +618,7 @@ static int check_access_path_dual(
+ 	}
+ 	path_put(&walker_path);
+ 
+-	if (allowed_parent1 && allowed_parent2)
+-		return 0;
+-
+-	/*
+-	 * This prioritizes EACCES over EXDEV for all actions, including
+-	 * renames with RENAME_EXCHANGE.
+-	 */
+-	if (likely(is_eacces(layer_masks_parent1, access_request_parent1) ||
+-		   is_eacces(layer_masks_parent2, access_request_parent2)))
+-		return -EACCES;
+-
+-	/*
+-	 * Gracefully forbids reparenting if the destination directory
+-	 * hierarchy is not a superset of restrictions of the source directory
+-	 * hierarchy, or if LANDLOCK_ACCESS_FS_REFER is not allowed by the
+-	 * source or the destination.
+-	 */
+-	return -EXDEV;
++	return allowed_parent1 && allowed_parent2;
+ }
+ 
+ static inline int check_access_path(const struct landlock_ruleset *const domain,
+@@ -649,8 +628,10 @@ static inline int check_access_path(const struct landlock_ruleset *const domain,
+ 	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] = {};
+ 
+ 	access_request = init_layer_masks(domain, access_request, &layer_masks);
+-	return check_access_path_dual(domain, path, access_request,
+-				      &layer_masks, NULL, 0, NULL, NULL);
++	if (is_access_to_paths_allowed(domain, path, access_request,
++				       &layer_masks, NULL, 0, NULL, NULL))
++		return 0;
++	return -EACCES;
+ }
+ 
+ static inline int current_check_access_path(const struct path *const path,
+@@ -711,8 +692,9 @@ static inline access_mask_t maybe_remove(const struct dentry *const dentry)
+  * file.  While walking from @dir to @mnt_root, we record all the domain's
+  * allowed accesses in @layer_masks_dom.
+  *
+- * This is similar to check_access_path_dual() but much simpler because it only
+- * handles walking on the same mount point and only checks one set of accesses.
++ * This is similar to is_access_to_paths_allowed() but much simpler because it
++ * only handles walking on the same mount point and only checks one set of
++ * accesses.
+  *
+  * Returns:
+  * - true if all the domain access rights are allowed for @dir;
+@@ -857,10 +839,11 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+ 		access_request_parent1 = init_layer_masks(
+ 			dom, access_request_parent1 | access_request_parent2,
+ 			&layer_masks_parent1);
+-		return check_access_path_dual(dom, new_dir,
+-					      access_request_parent1,
+-					      &layer_masks_parent1, NULL, 0,
+-					      NULL, NULL);
++		if (is_access_to_paths_allowed(
++			    dom, new_dir, access_request_parent1,
++			    &layer_masks_parent1, NULL, 0, NULL, NULL))
++			return 0;
++		return -EACCES;
+ 	}
+ 
+ 	access_request_parent1 |= LANDLOCK_ACCESS_FS_REFER;
+@@ -886,11 +869,27 @@ static int current_check_refer_path(struct dentry *const old_dentry,
+ 	 * parent access rights.  This will be useful to compare with the
+ 	 * destination parent access rights.
+ 	 */
+-	return check_access_path_dual(dom, &mnt_dir, access_request_parent1,
+-				      &layer_masks_parent1, old_dentry,
+-				      access_request_parent2,
+-				      &layer_masks_parent2,
+-				      exchange ? new_dentry : NULL);
++	if (is_access_to_paths_allowed(
++		    dom, &mnt_dir, access_request_parent1, &layer_masks_parent1,
++		    old_dentry, access_request_parent2, &layer_masks_parent2,
++		    exchange ? new_dentry : NULL))
++		return 0;
++
++	/*
++	 * This prioritizes EACCES over EXDEV for all actions, including
++	 * renames with RENAME_EXCHANGE.
++	 */
++	if (likely(is_eacces(&layer_masks_parent1, access_request_parent1) ||
++		   is_eacces(&layer_masks_parent2, access_request_parent2)))
++		return -EACCES;
++
++	/*
++	 * Gracefully forbids reparenting if the destination directory
++	 * hierarchy is not a superset of restrictions of the source directory
++	 * hierarchy, or if LANDLOCK_ACCESS_FS_REFER is not allowed by the
++	 * source or the destination.
++	 */
++	return -EXDEV;
+ }
+ 
+ /* Inode hooks */
 -- 
 2.38.0
 
