@@ -2,108 +2,179 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ABB796027ED
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 11:07:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4306E602825
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 11:20:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230090AbiJRJHL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 05:07:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47288 "EHLO
+        id S231214AbiJRJUf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 05:20:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230317AbiJRJHJ (ORCPT
+        with ESMTP id S230034AbiJRJUc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 05:07:09 -0400
-Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 620F06AE9E
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 02:07:08 -0700 (PDT)
-Received: by mail-pl1-x635.google.com with SMTP id c24so13249937plo.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 02:07:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9ik/E//QP4NdBbqi/JKK2jChzoYGdVf04VQO8QaZ2oI=;
-        b=OJ6MXnK+VlPl3Gcy1ZICT+bgZamtzoDgN7vzGSxP1iIfM23MZk+tkti34Hy31Qeri9
-         TNMsi9ce+ddpAZLgmHjUEVLD8tv4P/osTJMT8z/x6jwe6BSRX1sbbyvcPUei9564v75q
-         yWzWdeHCQUAekASByz1Jt35L/5AFk42tL9jXs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9ik/E//QP4NdBbqi/JKK2jChzoYGdVf04VQO8QaZ2oI=;
-        b=qccuOwkio4bDPNDOaQ0H65fZk+5yBagJiLfjuWay7BY7QQz6u8oPUD79wQkD2Fx6kv
-         1a2pt0yNnXoIzLHP1MTmrZacRwCb9Nl0INnHyutS6QH3TXko9JuQ5/1IUvEzEuH49LoA
-         ccram/svrqG52cY4lEaJcll/aGGVdumc/G0sjdnsKNbyLHAG1h0V/0E/23p6P5i4Qy9t
-         duR+2f8T71awH/VZyMpeQHDuErA8WZaGd+iGSFeSaKEcu3ahSSsJdIKPflmRpBZKZ5WY
-         TLWZGbEChl6/LQRi+6nNvcNI/sAPK1OQ0owikEUGEXdtnVRQe8lwVP3PqWrU5B1vimTS
-         E3GQ==
-X-Gm-Message-State: ACrzQf3UgZ5SjM1XX62xom4N43Ba/oq14z1iLc1me3vuTzxer3jW9vao
-        8DMrIQ8fiTFVN4gWJa94gifHxQ==
-X-Google-Smtp-Source: AMsMyM6CIFIQbM4Lw/W6bIJwv433YVB+M6640oaCuA20xl6UHbu1b0zu7j1SEKv1OoEBTwDfHlePPA==
-X-Received: by 2002:a17:90b:392:b0:20b:2c3b:547f with SMTP id ga18-20020a17090b039200b0020b2c3b547fmr2529481pjb.116.1666084027916;
-        Tue, 18 Oct 2022 02:07:07 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id w4-20020a17090a6b8400b0020d6fc00072sm11241693pjj.9.2022.10.18.02.07.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 02:07:07 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: [PATCH] coredump: Proactively round up to kmalloc bucket size
-Date:   Tue, 18 Oct 2022 02:07:05 -0700
-Message-Id: <20221018090701.never.996-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+        Tue, 18 Oct 2022 05:20:32 -0400
+Received: from mailbox.box.xen0n.name (mail.xen0n.name [115.28.160.31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8F608F277;
+        Tue, 18 Oct 2022 02:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xen0n.name; s=mail;
+        t=1666084821; bh=N48MFgDUmr1tfKHznoAthvRtR1Wpy0hSpJqTj7oKYC4=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=cHV6qrCjD47k3jGPjUQF3lwihop1RDaw3yjdG73m7BjSD1b/7jyWqLqeN+Uyk642T
+         VvEcixZUqLhrENpMZkopSZmIH+3rzqlov7m3aEUZuBieiNorHcibY7orD6PjU5mrAB
+         wuldpVWm+HQ77bl4gfDeA0Z+scSMeI8G3x4eFq+M=
+Received: from [100.100.57.122] (unknown [220.248.53.61])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mailbox.box.xen0n.name (Postfix) with ESMTPSA id 69A5760087;
+        Tue, 18 Oct 2022 17:20:20 +0800 (CST)
+Message-ID: <27ffa400-b947-7c83-0e79-c8eb9f96e12e@xen0n.name>
+Date:   Tue, 18 Oct 2022 17:20:19 +0800
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1213; h=from:subject:message-id; bh=p+MmonEVAKFmpb5iqSHacNcvTbIa15T8BRPfROxVUy8=; b=owEBbQKS/ZANAwAKAYly9N/cbcAmAcsmYgBjTmy5m8JCx9/BE56DDkyWbIsGqGD7nmhWHa2GZ8l+ Hy6FbFKJAjMEAAEKAB0WIQSlw/aPIp3WD3I+bhOJcvTf3G3AJgUCY05suQAKCRCJcvTf3G3AJnEsEA CScUD9FTn1d8hXufUPd/FUQzE357ebRSIeX+m2v0ED9JXLrqJmh1gZrjrKHLkKiHTSnAn/jgoD2dgW U/YOQFrV7yyoQ4kKZzShL7FQ0s1Kki5m9LIqY/0HwPR8+tkdVVoG9a1PJoy3TBtZBDSTBQyojqxd0X Du2BbO4D0kz4QxdO1Zwl5lldGIOh7poGa2tmqXjvxG55wMNBP4WyRTNS5Id5ZMVNW2qOS0yN3rF+ac HT2LfblPNvdimyrWPwhl/2C6Ae+75yrDwn4P3d5DncHEDWBLrCqAXG5tOl2M2fLXjp7aBDKCn9t84Z yI5N3lIzvVqgzmFoQg9Z1WPlj0LmmJv49Pd/3FEGHrFdAeq4q4cKUJjclOyHapGm+NvcmkVvJWk4FU +jEB83ZhUMSqNUBe+ck7MRnOTSjsK+dJ5cau90wJyEpods3antluvAuYwQLpZxjLF+M4HvNSpJGVIE HNFPx13lmOsyt2MVaIQdGy7sm1yi8zfE/1DnLogCFzRasB3JoVBh012nXOhnl4dF0o49scKZrY1cge DGhZ0pVgCpql0gGtmm2Abphd95b4ufD7Np9gAWqH2xgvsGGicJEtY15OqOv/r61tRSwp5ieebceKfX PIOt9137ZR+Rxj7a4MQ+iIpvMA+gJDGhPYdlPr3J6MHr0kpiM4ZLE3QyUOZw==
-X-Developer-Key: i=keescook@chromium.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:107.0)
+ Gecko/20100101 Thunderbird/107.0a1
+Subject: Re: [PATCH] mm: remove kern_addr_valid() completely
+Content-Language: en-US
+To:     Kefeng Wang <wangkefeng.wang@huawei.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-snps-arc@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
+        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
+        linux-fsdevel@vger.kernel.org
+Cc:     Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Vineet Gupta <vgupta@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
+        Huacai Chen <chenhuacai@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greg Ungerer <gerg@linux-m68k.org>,
+        Michal Simek <monstr@monstr.eu>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Dinh Nguyen <dinguyen@kernel.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+        Helge Deller <deller@gmx.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Palmer Dabbelt <palmer@dabbelt.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "David S . Miller" <davem@davemloft.net>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>
+References: <20221018074014.185687-1-wangkefeng.wang@huawei.com>
+From:   WANG Xuerui <kernel@xen0n.name>
+In-Reply-To: <20221018074014.185687-1-wangkefeng.wang@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Instead of discovering the kmalloc bucket size _after_ allocation, round
-up proactively so the allocation is explicitly made for the full size,
-allowing the compiler to correctly reason about the resulting size of
-the buffer through the existing __alloc_size() hint.
+On 2022/10/18 15:40, Kefeng Wang wrote:
+> Most architectures(except arm64/x86/sparc) simply return 1 for
 
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Signed-off-by: Kees Cook <keescook@chromium.org>
----
- fs/coredump.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+one space before the opening parens
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 7bad7785e8e6..97eaee325251 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -68,7 +68,10 @@ struct core_name {
- 
- static int expand_corename(struct core_name *cn, int size)
- {
--	char *corename = krealloc(cn->corename, size, GFP_KERNEL);
-+	char *corename;
-+
-+	size = kmalloc_size_roundup(size);
-+	corename = krealloc(cn->corename, size, GFP_KERNEL);
- 
- 	if (!corename)
- 		return -ENOMEM;
-@@ -76,7 +79,7 @@ static int expand_corename(struct core_name *cn, int size)
- 	if (size > core_name_size) /* racy but harmless */
- 		core_name_size = size;
- 
--	cn->size = ksize(corename);
-+	cn->size = size;
- 	cn->corename = corename;
- 	return 0;
- }
+> kern_addr_valid(), which is only used in read_kcore(), and it
+> calls copy_from_kernel_nofault() which could check whether the
+> address is a valid kernel address, so no need kern_addr_valid(),
+
+minor grammatical nit:
+
+"... which already checks whether the address is a valid kernel address. 
+So kern_addr_valid is unnecessary, let's remove it."
+
+> let's remove unneeded kern_addr_valid() completely.
+> 
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> ---
+>   arch/alpha/include/asm/pgtable.h          |  2 -
+>   arch/arc/include/asm/pgtable-bits-arcv2.h |  2 -
+>   arch/arm/include/asm/pgtable-nommu.h      |  2 -
+>   arch/arm/include/asm/pgtable.h            |  4 --
+>   arch/arm64/include/asm/pgtable.h          |  2 -
+>   arch/arm64/mm/mmu.c                       | 47 -----------------------
+>   arch/arm64/mm/pageattr.c                  |  3 +-
+>   arch/csky/include/asm/pgtable.h           |  3 --
+>   arch/hexagon/include/asm/page.h           |  7 ----
+>   arch/ia64/include/asm/pgtable.h           | 16 --------
+>   arch/loongarch/include/asm/pgtable.h      |  2 -
+>   arch/m68k/include/asm/pgtable_mm.h        |  2 -
+>   arch/m68k/include/asm/pgtable_no.h        |  1 -
+>   arch/microblaze/include/asm/pgtable.h     |  3 --
+>   arch/mips/include/asm/pgtable.h           |  2 -
+>   arch/nios2/include/asm/pgtable.h          |  2 -
+>   arch/openrisc/include/asm/pgtable.h       |  2 -
+>   arch/parisc/include/asm/pgtable.h         | 15 --------
+>   arch/powerpc/include/asm/pgtable.h        |  7 ----
+>   arch/riscv/include/asm/pgtable.h          |  2 -
+>   arch/s390/include/asm/pgtable.h           |  2 -
+>   arch/sh/include/asm/pgtable.h             |  2 -
+>   arch/sparc/include/asm/pgtable_32.h       |  6 ---
+>   arch/sparc/mm/init_32.c                   |  3 +-
+>   arch/sparc/mm/init_64.c                   |  1 -
+>   arch/um/include/asm/pgtable.h             |  2 -
+>   arch/x86/include/asm/pgtable_32.h         |  9 -----
+>   arch/x86/include/asm/pgtable_64.h         |  1 -
+>   arch/x86/mm/init_64.c                     | 41 --------------------
+>   arch/xtensa/include/asm/pgtable.h         |  2 -
+>   fs/proc/kcore.c                           | 26 +++++--------
+>   31 files changed, 11 insertions(+), 210 deletions(-)
+> 
+> diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/include/asm/pgtable.h
+> index 946704bee599..fc70b7041b76 100644
+> --- a/arch/loongarch/include/asm/pgtable.h
+> +++ b/arch/loongarch/include/asm/pgtable.h
+> @@ -421,8 +421,6 @@ static inline void update_mmu_cache_pmd(struct vm_area_struct *vma,
+>   	__update_tlb(vma, address, (pte_t *)pmdp);
+>   }
+>   
+> -#define kern_addr_valid(addr)	(1)
+> -
+>   static inline unsigned long pmd_pfn(pmd_t pmd)
+>   {
+>   	return (pmd_val(pmd) & _PFN_MASK) >> _PFN_SHIFT;
+
+Acked-by: WANG Xuerui <git@xen0n.name> # loongarch
+
+Thanks!
+
 -- 
-2.34.1
+WANG "xen0n" Xuerui
+
+Linux/LoongArch mailing list: https://lore.kernel.org/loongarch/
 
