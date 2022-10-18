@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9812D602AB5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 13:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 184EB602AB7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 13:57:57 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230102AbiJRL5v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 07:57:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56572 "EHLO
+        id S229722AbiJRL5x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 07:57:53 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230195AbiJRL5l (ORCPT
+        with ESMTP id S230199AbiJRL5m (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 07:57:41 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 41A99BCB91;
-        Tue, 18 Oct 2022 04:57:33 -0700 (PDT)
+        Tue, 18 Oct 2022 07:57:42 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95926BCB98;
+        Tue, 18 Oct 2022 04:57:36 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BB8CBB81EB9;
-        Tue, 18 Oct 2022 11:57:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58B58C433C1;
-        Tue, 18 Oct 2022 11:57:27 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1DB1CB81EB7;
+        Tue, 18 Oct 2022 11:57:35 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E88B9C433D7;
+        Tue, 18 Oct 2022 11:57:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666094250;
-        bh=nMvDos0wDSXRAJATVJ1eXAK1Wd17VvBI4D4zo6OOL20=;
+        s=k20201202; t=1666094253;
+        bh=X758gUbwUGmRzy3ekb4nd4nq5UjAzr4QL0AKiGAysxM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=quguapL8kYaefPRaCkcko3qMqQTkaB7siMzZO9fWpbtTnP2DdHArBWdWfC9ZdiGSB
-         RrdSnzXLrIGTx9UAHkT3MEPF+lMr2TNCYXB2dUbm1htkC9t07sC7BJK35p664jg22d
-         FHBUxuW6gYMtTcu0IUBX8hVChZvPDiwx4ROrASPPqrW/Qf4Oh8oRigaEmadMQ9WYfG
-         iDBJqrjwZZ10xsZZETxbEYWIFT+cIWyHQ4ludCALiLS6pYN1RqchSiDg0xndXmxLwh
-         5eO/T2WTPrhPwLicpJ0EMD33AI3lfO/hP66pOwxaiqD3jMz20FTxaXaj8rJkXC/z+m
-         nSVk+GhTFp4Cg==
+        b=itr8m7ccOoFjGM8NgJu+xeDUjOu6o5NGY7+PXwd30lxXbyUAoJ/p84xxBGyU5mAjQ
+         QfnkgWLlWAJjTvqVIKEaasLtMYXqDjcgjKOIqW3nc3CDG5vqCp267aq3F7zUp0kbh3
+         YBh8U+awn8NhqiVBJTM9BVputf8WzbgkHtDTzOfc/HrCSfoV65SLNRmL5clAyJHRDK
+         W1RQRZWVDZxzRtD3J0QrNjdas6nv5MCAggZCVxxv1GSzjn1FfYKg3mw+aOCJHTfIEf
+         ygm53wDq2mqNGPYvdwVPJ6Mnkp+rSzmY7e70U/dkgSbjSifLn1s0oLg+p+I9WyPedw
+         LGKvYJRoxvgVw==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
@@ -44,14 +44,14 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Hyunchul Lee <hyc.lee@gmail.com>,
         Sergey Senozhatsky <senozhatsky@chromium.org>,
         linux-cifs@vger.kernel.org, linux-security-module@vger.kernel.org
-Subject: [PATCH v5 05/30] cifs: implement get acl method
-Date:   Tue, 18 Oct 2022 13:56:35 +0200
-Message-Id: <20221018115700.166010-6-brauner@kernel.org>
+Subject: [PATCH v5 06/30] cifs: implement set acl method
+Date:   Tue, 18 Oct 2022 13:56:36 +0200
+Message-Id: <20221018115700.166010-7-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221018115700.166010-1-brauner@kernel.org>
 References: <20221018115700.166010-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=13060; i=brauner@kernel.org; h=from:subject; bh=nMvDos0wDSXRAJATVJ1eXAK1Wd17VvBI4D4zo6OOL20=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST7TVHdzLw+SELa0KDAMtczra5JP+sUc/mHqc9OT/i3M8JF TDmoo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCJBFowMm1JuZaQfa/eslPgr8fH/rV qZ9b6FP7VbGPRPlP5s7dNuYGTo3Rzq8DviUdDho8v2VCm9eF9es/OXmZ6r0R9pk7PpV86wAwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=12651; i=brauner@kernel.org; h=from:subject; bh=X758gUbwUGmRzy3ekb4nd4nq5UjAzr4QL0AKiGAysxM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST7TVF1ulS57Ov+Pq20U9xWIis71Q3Se1MrRH52Bv/duGLV Psm9HaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABOxjWZkaLi/8uT5d+/X7f3x8Nc++Y VGV+eZWbJuOfTkGn9isEjz8x2MDH8aV13Yr2mw+XhOnsjyPwKKNz9cN7j1fv21K9fnfT7mtIEbAA==
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -97,8 +97,7 @@ Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 
 Notes:
     /* v2 */
-    Christian Brauner (Microsoft) <brauner@kernel.org>:
-    - Surface acl error in all cases.
+    unchanged
     
     /* v3 */
     unchanged
@@ -109,44 +108,34 @@ Notes:
     /* v5 */
     unchanged
 
- fs/cifs/cifsacl.c   |  67 +++++++++++++++
+ fs/cifs/cifsacl.c   |  74 ++++++++++++++++++++
  fs/cifs/cifsfs.c    |   2 +
  fs/cifs/cifsproto.h |   6 ++
- fs/cifs/cifssmb.c   | 196 ++++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 271 insertions(+)
+ fs/cifs/cifssmb.c   | 160 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 242 insertions(+)
 
 diff --git a/fs/cifs/cifsacl.c b/fs/cifs/cifsacl.c
-index fa480d62f313..a6730e0eb57b 100644
+index a6730e0eb57b..d068cdfd9ab5 100644
 --- a/fs/cifs/cifsacl.c
 +++ b/fs/cifs/cifsacl.c
-@@ -13,6 +13,7 @@
- #include <linux/string.h>
+@@ -14,6 +14,8 @@
  #include <linux/keyctl.h>
  #include <linux/key-type.h>
-+#include <uapi/linux/posix_acl.h>
+ #include <uapi/linux/posix_acl.h>
++#include <linux/posix_acl.h>
++#include <linux/posix_acl_xattr.h>
  #include <keys/user-type.h>
  #include "cifspdu.h"
  #include "cifsglob.h"
-@@ -20,6 +21,8 @@
- #include "cifsproto.h"
- #include "cifs_debug.h"
- #include "fs_context.h"
-+#include "cifs_fs_sb.h"
-+#include "cifs_unicode.h"
- 
- /* security id for everyone/world system group */
- static const struct cifs_sid sid_everyone = {
-@@ -1668,3 +1671,67 @@ id_mode_to_cifs_acl(struct inode *inode, const char *path, __u64 *pnmode,
- 	kfree(pntsd);
- 	return rc;
+@@ -1735,3 +1737,75 @@ struct posix_acl *cifs_get_acl(struct user_namespace *mnt_userns,
+ 	return ERR_PTR(-EOPNOTSUPP);
+ #endif
  }
 +
-+struct posix_acl *cifs_get_acl(struct user_namespace *mnt_userns,
-+			       struct dentry *dentry, int type)
++int cifs_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
++		 struct posix_acl *acl, int type)
 +{
-+#if defined(CONFIG_CIFS_ALLOW_INSECURE_LEGACY) && defined(CONFIG_CIFS_POSIX)
-+	struct posix_acl *acl = NULL;
-+	ssize_t rc = -EOPNOTSUPP;
++	int rc = -EOPNOTSUPP;
 +	unsigned int xid;
 +	struct super_block *sb = dentry->d_sb;
 +	struct cifs_sb_info *cifs_sb = CIFS_SB(sb);
@@ -157,7 +146,7 @@ index fa480d62f313..a6730e0eb57b 100644
 +
 +	tlink = cifs_sb_tlink(cifs_sb);
 +	if (IS_ERR(tlink))
-+		return ERR_CAST(tlink);
++		return PTR_ERR(tlink);
 +	pTcon = tlink_tcon(tlink);
 +
 +	xid = get_xid();
@@ -165,296 +154,284 @@ index fa480d62f313..a6730e0eb57b 100644
 +
 +	full_path = build_path_from_dentry(dentry, page);
 +	if (IS_ERR(full_path)) {
-+		acl = ERR_CAST(full_path);
++		rc = PTR_ERR(full_path);
++		goto out;
++	}
++	/* return dos attributes as pseudo xattr */
++	/* return alt name if available as pseudo attr */
++
++	/* if proc/fs/cifs/streamstoxattr is set then
++		search server for EAs or streams to
++		returns as xattrs */
++	if (posix_acl_xattr_size(acl->a_count) > CIFSMaxBufSize) {
++		cifs_dbg(FYI, "size of EA value too large\n");
++		rc = -EOPNOTSUPP;
 +		goto out;
 +	}
 +
-+	/* return alt name if available as pseudo attr */
 +	switch (type) {
++#ifdef CONFIG_CIFS_ALLOW_INSECURE_LEGACY
 +	case ACL_TYPE_ACCESS:
++#ifdef CONFIG_CIFS_POSIX
++		if (!acl)
++			goto out;
 +		if (sb->s_flags & SB_POSIXACL)
-+			rc = cifs_do_get_acl(xid, pTcon, full_path, &acl,
++			rc = cifs_do_set_acl(xid, pTcon, full_path, acl,
 +					     ACL_TYPE_ACCESS,
 +					     cifs_sb->local_nls,
 +					     cifs_remap(cifs_sb));
++#endif  /* CONFIG_CIFS_POSIX */
 +		break;
 +
 +	case ACL_TYPE_DEFAULT:
++#ifdef CONFIG_CIFS_POSIX
++		if (!acl)
++			goto out;
 +		if (sb->s_flags & SB_POSIXACL)
-+			rc = cifs_do_get_acl(xid, pTcon, full_path, &acl,
++			rc = cifs_do_set_acl(xid, pTcon, full_path, acl,
 +					     ACL_TYPE_DEFAULT,
 +					     cifs_sb->local_nls,
 +					     cifs_remap(cifs_sb));
++#endif  /* CONFIG_CIFS_POSIX */
 +		break;
-+	}
-+
-+	if (rc < 0) {
-+		if (rc == -EINVAL)
-+			acl = ERR_PTR(-EOPNOTSUPP);
-+		else
-+			acl = ERR_PTR(rc);
++#endif /* CONFIG_CIFS_ALLOW_INSECURE_LEGACY */
 +	}
 +
 +out:
 +	free_dentry_path(page);
 +	free_xid(xid);
 +	cifs_put_tlink(tlink);
-+	return acl;
-+#else
-+	return ERR_PTR(-EOPNOTSUPP);
-+#endif
++	return rc;
 +}
 diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index c6ac19223ddc..05d0f84ede95 100644
+index 05d0f84ede95..9d8f077a23c4 100644
 --- a/fs/cifs/cifsfs.c
 +++ b/fs/cifs/cifsfs.c
-@@ -1133,6 +1133,7 @@ const struct inode_operations cifs_dir_inode_ops = {
- 	.symlink = cifs_symlink,
+@@ -1134,6 +1134,7 @@ const struct inode_operations cifs_dir_inode_ops = {
  	.mknod   = cifs_mknod,
  	.listxattr = cifs_listxattr,
-+	.get_acl = cifs_get_acl,
+ 	.get_acl = cifs_get_acl,
++	.set_acl = cifs_set_acl,
  };
  
  const struct inode_operations cifs_file_inode_ops = {
-@@ -1141,6 +1142,7 @@ const struct inode_operations cifs_file_inode_ops = {
- 	.permission = cifs_permission,
+@@ -1143,6 +1144,7 @@ const struct inode_operations cifs_file_inode_ops = {
  	.listxattr = cifs_listxattr,
  	.fiemap = cifs_fiemap,
-+	.get_acl = cifs_get_acl,
+ 	.get_acl = cifs_get_acl,
++	.set_acl = cifs_set_acl,
  };
  
  const struct inode_operations cifs_symlink_inode_ops = {
 diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h
-index 83e83d8beabb..28e848495594 100644
+index 28e848495594..ce7f08a387b5 100644
 --- a/fs/cifs/cifsproto.h
 +++ b/fs/cifs/cifsproto.h
-@@ -224,6 +224,8 @@ extern struct cifs_ntsd *get_cifs_acl(struct cifs_sb_info *, struct inode *,
- 				      const char *, u32 *, u32);
- extern struct cifs_ntsd *get_cifs_acl_by_fid(struct cifs_sb_info *,
+@@ -226,6 +226,8 @@ extern struct cifs_ntsd *get_cifs_acl_by_fid(struct cifs_sb_info *,
  				const struct cifs_fid *, u32 *, u32);
-+extern struct posix_acl *cifs_get_acl(struct user_namespace *mnt_userns,
-+				      struct dentry *dentry, int type);
+ extern struct posix_acl *cifs_get_acl(struct user_namespace *mnt_userns,
+ 				      struct dentry *dentry, int type);
++extern int cifs_set_acl(struct user_namespace *mnt_userns,
++			struct dentry *dentry, struct posix_acl *acl, int type);
  extern int set_cifs_acl(struct cifs_ntsd *, __u32, struct inode *,
  				const char *, int);
  extern unsigned int setup_authusers_ACE(struct cifs_ace *pace);
-@@ -541,6 +543,10 @@ extern int CIFSSMBGetPosixACL(const unsigned int xid, struct cifs_tcon *tcon,
- 		const unsigned char *searchName,
- 		char *acl_inf, const int buflen, const int acl_type,
- 		const struct nls_table *nls_codepage, int remap_special_chars);
-+extern int cifs_do_get_acl(const unsigned int xid, struct cifs_tcon *tcon,
-+			   const unsigned char *searchName,
-+			   struct posix_acl **acl, const int acl_type,
-+			   const struct nls_table *nls_codepage, int remap);
- extern int CIFSSMBSetPosixACL(const unsigned int xid, struct cifs_tcon *tcon,
+@@ -551,6 +553,10 @@ extern int CIFSSMBSetPosixACL(const unsigned int xid, struct cifs_tcon *tcon,
  		const unsigned char *fileName,
  		const char *local_acl, const int buflen, const int acl_type,
+ 		const struct nls_table *nls_codepage, int remap_special_chars);
++extern int cifs_do_set_acl(const unsigned int xid, struct cifs_tcon *tcon,
++			   const unsigned char *fileName,
++			   const struct posix_acl *acl, const int acl_type,
++			   const struct nls_table *nls_codepage, int remap);
+ extern int CIFSGetExtAttr(const unsigned int xid, struct cifs_tcon *tcon,
+ 			const int netfid, __u64 *pExtAttrBits, __u64 *pMask);
+ #endif /* CIFS_ALLOW_INSECURE_LEGACY */
 diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
-index 1724066c1536..d30535406885 100644
+index d30535406885..f119ca917947 100644
 --- a/fs/cifs/cifssmb.c
 +++ b/fs/cifs/cifssmb.c
-@@ -3212,6 +3212,202 @@ CIFSSMBSetPosixACL(const unsigned int xid, struct cifs_tcon *tcon,
- 	return rc;
+@@ -3308,6 +3308,83 @@ static int cifs_to_posix_acl(struct posix_acl **acl, char *src,
+ 	return 0;
  }
  
-+#ifdef CONFIG_FS_POSIX_ACL
 +/**
-+ * cifs_init_posix_acl - convert ACL from cifs to POSIX ACL format
-+ * @ace: POSIX ACL entry to store converted ACL into
-+ * @cifs_ace: ACL in cifs format
-+ *
-+ * Convert an Access Control Entry from wire format to local POSIX xattr
-+ * format.
-+ *
-+ * Note that the @cifs_uid member is used to store both {g,u}id_t.
++ * cifs_init_ace - convert ACL entry from POSIX ACL to cifs format
++ * @cifs_ace: the cifs ACL entry to store into
++ * @local_ace: the POSIX ACL entry to convert
 + */
-+static void cifs_init_posix_acl(struct posix_acl_entry *ace,
-+				struct cifs_posix_ace *cifs_ace)
++static void cifs_init_ace(struct cifs_posix_ace *cifs_ace,
++			  const struct posix_acl_entry *local_ace)
 +{
-+	/* u8 cifs fields do not need le conversion */
-+	ace->e_perm = cifs_ace->cifs_e_perm;
-+	ace->e_tag = cifs_ace->cifs_e_tag;
++	cifs_ace->cifs_e_perm = local_ace->e_perm;
++	cifs_ace->cifs_e_tag =  local_ace->e_tag;
 +
-+	switch (ace->e_tag) {
++	switch (local_ace->e_tag) {
 +	case ACL_USER:
-+		ace->e_uid = make_kuid(&init_user_ns,
-+				       le64_to_cpu(cifs_ace->cifs_uid));
++		cifs_ace->cifs_uid =
++			cpu_to_le64(from_kuid(&init_user_ns, local_ace->e_uid));
 +		break;
 +	case ACL_GROUP:
-+		ace->e_gid = make_kgid(&init_user_ns,
-+				       le64_to_cpu(cifs_ace->cifs_uid));
++		cifs_ace->cifs_uid =
++			cpu_to_le64(from_kgid(&init_user_ns, local_ace->e_gid));
 +		break;
++	default:
++		cifs_ace->cifs_uid = cpu_to_le64(-1);
 +	}
-+	return;
 +}
 +
 +/**
-+ * cifs_to_posix_acl - copy cifs ACL format to POSIX ACL format
-+ * @acl: ACLs returned in POSIX ACL format
-+ * @src: ACLs in cifs format
-+ * @acl_type: type of POSIX ACL requested
-+ * @size_of_data_area: size of SMB we got
++ * posix_acl_to_cifs - convert ACLs from POSIX ACL to cifs format
++ * @parm_data: ACLs in cifs format to conver to
++ * @acl: ACLs in POSIX ACL format to convert from
++ * @acl_type: the type of POSIX ACLs stored in @acl
 + *
-+ * This function converts ACLs from cifs format to POSIX ACL format.
-+ * If @acl is NULL then the size of the buffer required to store POSIX ACLs in
-+ * their uapi format is returned.
++ * Return: the number cifs ACL entries after conversion
 + */
-+static int cifs_to_posix_acl(struct posix_acl **acl, char *src,
-+			     const int acl_type, const int size_of_data_area)
++static __u16 posix_acl_to_cifs(char *parm_data, const struct posix_acl *acl,
++			       const int acl_type)
 +{
-+	int size =  0;
-+	__u16 count;
-+	struct cifs_posix_ace *pACE;
-+	struct cifs_posix_acl *cifs_acl = (struct cifs_posix_acl *)src;
-+	struct posix_acl *kacl = NULL;
-+	struct posix_acl_entry *pa, *pe;
++	__u16 rc = 0;
++	struct cifs_posix_acl *cifs_acl = (struct cifs_posix_acl *)parm_data;
++	const struct posix_acl_entry *pa, *pe;
++	int count;
++	int i = 0;
 +
-+	if (le16_to_cpu(cifs_acl->version) != CIFS_ACL_VERSION)
-+		return -EOPNOTSUPP;
++	if ((acl == NULL) || (cifs_acl == NULL))
++		return 0;
 +
++	count = acl->a_count;
++	cifs_dbg(FYI, "setting acl with %d entries\n", count);
++
++	/*
++	 * Note that the uapi POSIX ACL version is verified by the VFS and is
++	 * independent of the cifs ACL version. Changing the POSIX ACL version
++	 * is a uapi change and if it's changed we will pass down the POSIX ACL
++	 * version in struct posix_acl from the VFS. For now there's really
++	 * only one that all filesystems know how to deal with.
++	 */
++	cifs_acl->version = cpu_to_le16(1);
 +	if (acl_type == ACL_TYPE_ACCESS) {
-+		count = le16_to_cpu(cifs_acl->access_entry_count);
-+		pACE = &cifs_acl->ace_array[0];
-+		size = sizeof(struct cifs_posix_acl);
-+		size += sizeof(struct cifs_posix_ace) * count;
-+		/* check if we would go beyond end of SMB */
-+		if (size_of_data_area < size) {
-+			cifs_dbg(FYI, "bad CIFS POSIX ACL size %d vs. %d\n",
-+				 size_of_data_area, size);
-+			return -EINVAL;
-+		}
++		cifs_acl->access_entry_count = cpu_to_le16(count);
++		cifs_acl->default_entry_count = cpu_to_le16(0xFFFF);
 +	} else if (acl_type == ACL_TYPE_DEFAULT) {
-+		count = le16_to_cpu(cifs_acl->access_entry_count);
-+		size = sizeof(struct cifs_posix_acl);
-+		size += sizeof(struct cifs_posix_ace) * count;
-+		/* skip past access ACEs to get to default ACEs */
-+		pACE = &cifs_acl->ace_array[count];
-+		count = le16_to_cpu(cifs_acl->default_entry_count);
-+		size += sizeof(struct cifs_posix_ace) * count;
-+		/* check if we would go beyond end of SMB */
-+		if (size_of_data_area < size)
-+			return -EINVAL;
++		cifs_acl->default_entry_count = cpu_to_le16(count);
++		cifs_acl->access_entry_count = cpu_to_le16(0xFFFF);
 +	} else {
-+		/* illegal type */
-+		return -EINVAL;
++		cifs_dbg(FYI, "unknown ACL type %d\n", acl_type);
++		return 0;
 +	}
-+
-+	/* Allocate number of POSIX ACLs to store in VFS format. */
-+	kacl = posix_acl_alloc(count, GFP_NOFS);
-+	if (!kacl)
-+		return -ENOMEM;
-+
-+	FOREACH_ACL_ENTRY(pa, kacl, pe) {
-+		cifs_init_posix_acl(pa, pACE);
-+		pACE++;
++	FOREACH_ACL_ENTRY(pa, acl, pe) {
++		cifs_init_ace(&cifs_acl->ace_array[i++], pa);
 +	}
-+
-+	*acl = kacl;
-+	return 0;
++	if (rc == 0) {
++		rc = (__u16)(count * sizeof(struct cifs_posix_ace));
++		rc += sizeof(struct cifs_posix_acl);
++		/* BB add check to make sure ACL does not overflow SMB */
++	}
++	return rc;
 +}
 +
-+int cifs_do_get_acl(const unsigned int xid, struct cifs_tcon *tcon,
-+		    const unsigned char *searchName, struct posix_acl **acl,
+ int cifs_do_get_acl(const unsigned int xid, struct cifs_tcon *tcon,
+ 		    const unsigned char *searchName, struct posix_acl **acl,
+ 		    const int acl_type, const struct nls_table *nls_codepage,
+@@ -3398,6 +3475,81 @@ int cifs_do_get_acl(const unsigned int xid, struct cifs_tcon *tcon,
+ 		goto queryAclRetry;
+ 	return rc;
+ }
++
++int cifs_do_set_acl(const unsigned int xid, struct cifs_tcon *tcon,
++		    const unsigned char *fileName, const struct posix_acl *acl,
 +		    const int acl_type, const struct nls_table *nls_codepage,
 +		    int remap)
 +{
-+/* SMB_QUERY_POSIX_ACL */
-+	TRANSACTION2_QPI_REQ *pSMB = NULL;
-+	TRANSACTION2_QPI_RSP *pSMBr = NULL;
-+	int rc = 0;
-+	int bytes_returned;
++	struct smb_com_transaction2_spi_req *pSMB = NULL;
++	struct smb_com_transaction2_spi_rsp *pSMBr = NULL;
++	char *parm_data;
 +	int name_len;
-+	__u16 params, byte_count;
++	int rc = 0;
++	int bytes_returned = 0;
++	__u16 params, byte_count, data_count, param_offset, offset;
 +
-+	cifs_dbg(FYI, "In GetPosixACL (Unix) for path %s\n", searchName);
-+
-+queryAclRetry:
++	cifs_dbg(FYI, "In SetPosixACL (Unix) for path %s\n", fileName);
++setAclRetry:
 +	rc = smb_init(SMB_COM_TRANSACTION2, 15, tcon, (void **) &pSMB,
-+		(void **) &pSMBr);
++		      (void **) &pSMBr);
 +	if (rc)
 +		return rc;
-+
 +	if (pSMB->hdr.Flags2 & SMBFLG2_UNICODE) {
 +		name_len =
-+			cifsConvertToUTF16((__le16 *) pSMB->FileName,
-+					   searchName, PATH_MAX, nls_codepage,
-+					   remap);
++			cifsConvertToUTF16((__le16 *) pSMB->FileName, fileName,
++					   PATH_MAX, nls_codepage, remap);
 +		name_len++;     /* trailing null */
 +		name_len *= 2;
-+		pSMB->FileName[name_len] = 0;
-+		pSMB->FileName[name_len+1] = 0;
 +	} else {
-+		name_len = copy_path_name(pSMB->FileName, searchName);
++		name_len = copy_path_name(pSMB->FileName, fileName);
 +	}
-+
-+	params = 2 /* level */  + 4 /* rsrvd */  + name_len /* incl null */ ;
-+	pSMB->TotalDataCount = 0;
++	params = 6 + name_len;
 +	pSMB->MaxParameterCount = cpu_to_le16(2);
-+	/* BB find exact max data count below from sess structure BB */
-+	pSMB->MaxDataCount = cpu_to_le16(4000);
++	/* BB find max SMB size from sess */
++	pSMB->MaxDataCount = cpu_to_le16(1000);
 +	pSMB->MaxSetupCount = 0;
 +	pSMB->Reserved = 0;
 +	pSMB->Flags = 0;
 +	pSMB->Timeout = 0;
 +	pSMB->Reserved2 = 0;
-+	pSMB->ParameterOffset = cpu_to_le16(
-+		offsetof(struct smb_com_transaction2_qpi_req,
-+			 InformationLevel) - 4);
-+	pSMB->DataCount = 0;
-+	pSMB->DataOffset = 0;
++	param_offset = offsetof(struct smb_com_transaction2_spi_req,
++				InformationLevel) - 4;
++	offset = param_offset + params;
++	parm_data = ((char *) &pSMB->hdr.Protocol) + offset;
++	pSMB->ParameterOffset = cpu_to_le16(param_offset);
++
++	/* convert to on the wire format for POSIX ACL */
++	data_count = posix_acl_to_cifs(parm_data, acl, acl_type);
++
++	if (data_count == 0) {
++		rc = -EOPNOTSUPP;
++		goto setACLerrorExit;
++	}
++	pSMB->DataOffset = cpu_to_le16(offset);
 +	pSMB->SetupCount = 1;
 +	pSMB->Reserved3 = 0;
-+	pSMB->SubCommand = cpu_to_le16(TRANS2_QUERY_PATH_INFORMATION);
-+	byte_count = params + 1 /* pad */ ;
-+	pSMB->TotalParameterCount = cpu_to_le16(params);
-+	pSMB->ParameterCount = pSMB->TotalParameterCount;
-+	pSMB->InformationLevel = cpu_to_le16(SMB_QUERY_POSIX_ACL);
++	pSMB->SubCommand = cpu_to_le16(TRANS2_SET_PATH_INFORMATION);
++	pSMB->InformationLevel = cpu_to_le16(SMB_SET_POSIX_ACL);
++	byte_count = 3 /* pad */  + params + data_count;
++	pSMB->DataCount = cpu_to_le16(data_count);
++	pSMB->TotalDataCount = pSMB->DataCount;
++	pSMB->ParameterCount = cpu_to_le16(params);
++	pSMB->TotalParameterCount = pSMB->ParameterCount;
 +	pSMB->Reserved4 = 0;
 +	inc_rfc1001_len(pSMB, byte_count);
 +	pSMB->ByteCount = cpu_to_le16(byte_count);
-+
 +	rc = SendReceive(xid, tcon->ses, (struct smb_hdr *) pSMB,
-+		(struct smb_hdr *) pSMBr, &bytes_returned, 0);
-+	cifs_stats_inc(&tcon->stats.cifs_stats.num_acl_get);
-+	if (rc) {
-+		cifs_dbg(FYI, "Send error in Query POSIX ACL = %d\n", rc);
-+	} else {
-+		/* decode response */
++			 (struct smb_hdr *) pSMBr, &bytes_returned, 0);
++	if (rc)
++		cifs_dbg(FYI, "Set POSIX ACL returned %d\n", rc);
 +
-+		rc = validate_t2((struct smb_t2_rsp *)pSMBr);
-+		/* BB also check enough total bytes returned */
-+		if (rc || get_bcc(&pSMBr->hdr) < 2)
-+			rc = -EIO;      /* bad smb */
-+		else {
-+			__u16 data_offset = le16_to_cpu(pSMBr->t2.DataOffset);
-+			__u16 count = le16_to_cpu(pSMBr->t2.DataCount);
-+			rc = cifs_to_posix_acl(acl,
-+				(char *)&pSMBr->hdr.Protocol+data_offset,
-+				acl_type, count);
-+		}
-+	}
++setACLerrorExit:
 +	cifs_buf_release(pSMB);
-+	/*
-+	 * The else branch after SendReceive() doesn't return EAGAIN so if we
-+	 * allocated @acl in cifs_to_posix_acl() we are guaranteed to return
-+	 * here and don't leak POSIX ACLs.
-+	 */
 +	if (rc == -EAGAIN)
-+		goto queryAclRetry;
++		goto setAclRetry;
 +	return rc;
 +}
-+#else
-+int cifs_do_get_acl(const unsigned int xid, struct cifs_tcon *tcon,
-+		    const unsigned char *searchName, struct posix_acl **acl,
+ #else
+ int cifs_do_get_acl(const unsigned int xid, struct cifs_tcon *tcon,
+ 		    const unsigned char *searchName, struct posix_acl **acl,
+@@ -3406,6 +3558,14 @@ int cifs_do_get_acl(const unsigned int xid, struct cifs_tcon *tcon,
+ {
+ 	return -EOPNOTSUPP;
+ }
++
++int cifs_do_set_acl(const unsigned int xid, struct cifs_tcon *tcon,
++		    const unsigned char *fileName, const struct posix_acl *acl,
 +		    const int acl_type, const struct nls_table *nls_codepage,
 +		    int remap)
 +{
 +	return -EOPNOTSUPP;
 +}
-+#endif /* CONFIG_FS_POSIX_ACL */
-+
+ #endif /* CONFIG_FS_POSIX_ACL */
+ 
  int
- CIFSGetExtAttr(const unsigned int xid, struct cifs_tcon *tcon,
- 	       const int netfid, __u64 *pExtAttrBits, __u64 *pMask)
 -- 
 2.34.1
 
