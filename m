@@ -2,58 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A26786033C6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 22:08:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4705760348A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 23:02:51 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230131AbiJRUIk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 16:08:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44208 "EHLO
+        id S230212AbiJRVCj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 17:02:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230058AbiJRUIZ (ORCPT
+        with ESMTP id S230121AbiJRVCi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 16:08:25 -0400
-Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10987AC49E;
-        Tue, 18 Oct 2022 13:08:21 -0700 (PDT)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by mail.ozlabs.org (Postfix) with ESMTPSA id 4MsQ0K2psPz4xG9;
-        Wed, 19 Oct 2022 07:08:17 +1100 (AEDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-        s=201702; t=1666123698;
-        bh=+D0gWHeMBzegukkXy1SdA4pRcO2k+qIUSncTGFsmUrQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=IM3Ksofa7q0N07sdw4Y0BnnxOq+Wk9WHXYdxl+5xWiZfF0v0jENYfC4JiVjkSoplT
-         hca7aER9mrQTT0ti1vO8s0szXz2OlHuYJnfmA3HWbGY3e3YEylxmKFLSEZ8aALQrN/
-         1JbAb30DkDpMsQhLiQiFL1aHNGVdANiBMMxg2/qxN2NeV/CtZpp3SAXeM3YF61nO8+
-         HFoEn9iCVLpuc5Wt2k4sv/tOQtQlB41/5FvNEDZ817atqJzaPiqWLp5gp2C4Dbb5DA
-         Ylx2d7TfjyK/b6PYHqZ4XuB7fA8hDmFMOaMHpvPZZbLKjP16iiDfQ/NE0H13s5ecg5
-         v1qvR5ALbD7Dg==
-Date:   Wed, 19 Oct 2022 07:08:04 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-next@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
-        Keith Busch <kbusch@kernel.org>, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v5 0/8] make statx() return DIO alignment information
-Message-ID: <20221019070804.53eac15d@canb.auug.org.au>
-In-Reply-To: <Y05QzQM2ed8sOJxC@sol.localdomain>
-References: <20220827065851.135710-1-ebiggers@kernel.org>
-        <YxfE8zjqkT6Zn+Vn@quark>
-        <Yx6DNIorJ86IWk5q@quark>
-        <20220913063025.4815466c@canb.auug.org.au>
-        <20221018155524.5fc4e421@canb.auug.org.au>
-        <Y05QzQM2ed8sOJxC@sol.localdomain>
+        Tue, 18 Oct 2022 17:02:38 -0400
+Received: from mail104.syd.optusnet.com.au (mail104.syd.optusnet.com.au [211.29.132.246])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4B7F622288;
+        Tue, 18 Oct 2022 14:02:27 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
+        by mail104.syd.optusnet.com.au (Postfix) with ESMTPS id 967678AE0CC;
+        Wed, 19 Oct 2022 08:01:53 +1100 (AEDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oktii-003bE7-4J; Wed, 19 Oct 2022 08:01:52 +1100
+Date:   Wed, 19 Oct 2022 08:01:52 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 04/23] page-writeback: Convert write_cache_pages() to use
+ filemap_get_folios_tag()
+Message-ID: <20221018210152.GH2703033@dread.disaster.area>
+References: <20220901220138.182896-1-vishal.moola@gmail.com>
+ <20220901220138.182896-5-vishal.moola@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/kxgvt//y.g1b5pnGQvTpgqK";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,SPF_HELO_PASS,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20220901220138.182896-5-vishal.moola@gmail.com>
+X-Optus-CM-Score: 0
+X-Optus-CM-Analysis: v=2.4 cv=e9dl9Yl/ c=1 sm=1 tr=0 ts=634f1443
+        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
+        a=kj9zAlcOel0A:10 a=Qawa6l4ZSaYA:10 a=pGLkceISAAAA:8 a=7-415B0cAAAA:8
+        a=K-JhRxFi-CGouRt9WdAA:9 a=CjuIK1q_8ugA:10 a=biEYGPWJfzWAr4FL6Ov7:22
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -61,46 +53,113 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---Sig_/kxgvt//y.g1b5pnGQvTpgqK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Sep 01, 2022 at 03:01:19PM -0700, Vishal Moola (Oracle) wrote:
+> Converted function to use folios throughout. This is in preparation for
+> the removal of find_get_pages_range_tag().
+> 
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> ---
+>  mm/page-writeback.c | 44 +++++++++++++++++++++++---------------------
+>  1 file changed, 23 insertions(+), 21 deletions(-)
+> 
+> diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+> index 032a7bf8d259..087165357a5a 100644
+> --- a/mm/page-writeback.c
+> +++ b/mm/page-writeback.c
+> @@ -2285,15 +2285,15 @@ int write_cache_pages(struct address_space *mapping,
+>  	int ret = 0;
+>  	int done = 0;
+>  	int error;
+> -	struct pagevec pvec;
+> -	int nr_pages;
+> +	struct folio_batch fbatch;
+> +	int nr_folios;
+>  	pgoff_t index;
+>  	pgoff_t end;		/* Inclusive */
+>  	pgoff_t done_index;
+>  	int range_whole = 0;
+>  	xa_mark_t tag;
+>  
+> -	pagevec_init(&pvec);
+> +	folio_batch_init(&fbatch);
+>  	if (wbc->range_cyclic) {
+>  		index = mapping->writeback_index; /* prev offset */
+>  		end = -1;
+> @@ -2313,17 +2313,18 @@ int write_cache_pages(struct address_space *mapping,
+>  	while (!done && (index <= end)) {
+>  		int i;
+>  
+> -		nr_pages = pagevec_lookup_range_tag(&pvec, mapping, &index, end,
+> -				tag);
+> -		if (nr_pages == 0)
+> +		nr_folios = filemap_get_folios_tag(mapping, &index, end,
+> +				tag, &fbatch);
 
-Hi Eric,
+This can find and return dirty multi-page folios if the filesystem
+enables them in the mapping at instantiation time, right?
 
-On Tue, 18 Oct 2022 00:07:57 -0700 Eric Biggers <ebiggers@kernel.org> wrote:
->
-> On Tue, Oct 18, 2022 at 03:55:24PM +1100, Stephen Rothwell wrote:
-> >=20
-> > I notice that this branch has been removed.  Are you finished with it
-> > (i.e. should I remove it from linux-next)?
-> >  =20
->=20
-> Yes, I think so.  This patchset has been merged upstream.  Any more patch=
-es
-> related to STATX_DIOALIGN should go in through the VFS or filesystem-spec=
-ific
-> trees.
+> +
+> +		if (nr_folios == 0)
+>  			break;
+>  
+> -		for (i = 0; i < nr_pages; i++) {
+> -			struct page *page = pvec.pages[i];
+> +		for (i = 0; i < nr_folios; i++) {
+> +			struct folio *folio = fbatch.folios[i];
+>  
+> -			done_index = page->index;
+> +			done_index = folio->index;
+>  
+> -			lock_page(page);
+> +			folio_lock(folio);
+>  
+>  			/*
+>  			 * Page truncated or invalidated. We can freely skip it
+> @@ -2333,30 +2334,30 @@ int write_cache_pages(struct address_space *mapping,
+>  			 * even if there is now a new, dirty page at the same
+>  			 * pagecache address.
+>  			 */
+> -			if (unlikely(page->mapping != mapping)) {
+> +			if (unlikely(folio->mapping != mapping)) {
+>  continue_unlock:
+> -				unlock_page(page);
+> +				folio_unlock(folio);
+>  				continue;
+>  			}
+>  
+> -			if (!PageDirty(page)) {
+> +			if (!folio_test_dirty(folio)) {
+>  				/* someone wrote it for us */
+>  				goto continue_unlock;
+>  			}
+>  
+> -			if (PageWriteback(page)) {
+> +			if (folio_test_writeback(folio)) {
+>  				if (wbc->sync_mode != WB_SYNC_NONE)
+> -					wait_on_page_writeback(page);
+> +					folio_wait_writeback(folio);
+>  				else
+>  					goto continue_unlock;
+>  			}
+>  
+> -			BUG_ON(PageWriteback(page));
+> -			if (!clear_page_dirty_for_io(page))
+> +			BUG_ON(folio_test_writeback(folio));
+> +			if (!folio_clear_dirty_for_io(folio))
+>  				goto continue_unlock;
+>  
+>  			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
+> -			error = (*writepage)(page, wbc, data);
+> +			error = writepage(&folio->page, wbc, data);
 
-OK, I have removed it.
+Yet, IIUC, this treats all folios as if they are single page folios.
+i.e. it passes the head page of a multi-page folio to a callback
+that will treat it as a single PAGE_SIZE page, because that's all
+the writepage callbacks are currently expected to be passed...
 
---=20
-Cheers,
-Stephen Rothwell
+So won't this break writeback of dirty multipage folios?
 
---Sig_/kxgvt//y.g1b5pnGQvTpgqK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmNPB6QACgkQAVBC80lX
-0Gw+mAf/bGHv0gVJlUAUtMlO+X/kuJ8K1xyeTNlPrY/3kIPVHvURN4N84Z456Pqj
-T0tguhmoNIHnsiHD/ho7QW/9KfYkkvi0RT5M3eWWZIEky6wIUIQVmcteXUGc/ml5
-QveAoeyW+UizAfGCDpSYtIh/iTiNtzRtOFcwseOWwBnT07GLgqWH848IHFM5hPt8
-FAqlSCuWunHR7xkkfWX9XXJkDla5e/5z9C1DLrKWqNtgk7haUOrtZh3h90nVfJpo
-9mKAil+9j1DCFRmaJfWggK6qvwNYy0/erG23c8pXs94BPk6eN0WZ/2wmLfoAFES3
-M8E+Ra5EMWsQNIdiwy64N23mBSJv0A==
-=/mrd
------END PGP SIGNATURE-----
-
---Sig_/kxgvt//y.g1b5pnGQvTpgqK--
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
