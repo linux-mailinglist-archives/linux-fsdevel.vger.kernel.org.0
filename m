@@ -2,106 +2,124 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 416EC6032CB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 20:49:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6C8D46032D1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 20:51:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230317AbiJRStI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 14:49:08 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44828 "EHLO
+        id S229544AbiJRSvP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 14:51:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230291AbiJRSs5 (ORCPT
+        with ESMTP id S229452AbiJRSvO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 14:48:57 -0400
-Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4589EA0242;
-        Tue, 18 Oct 2022 11:48:50 -0700 (PDT)
-Received: by mail-ej1-x636.google.com with SMTP id d26so34480907eje.10;
-        Tue, 18 Oct 2022 11:48:50 -0700 (PDT)
+        Tue, 18 Oct 2022 14:51:14 -0400
+Received: from mail-yw1-x1136.google.com (mail-yw1-x1136.google.com [IPv6:2607:f8b0:4864:20::1136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0FFB26CB
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 11:51:13 -0700 (PDT)
+Received: by mail-yw1-x1136.google.com with SMTP id 00721157ae682-35711e5a5ceso145832507b3.13
+        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 11:51:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OEXvp1IreEp3SXV31DiUhQRIjvrLdojheHeDjSM1+mQ=;
-        b=StZ853wy/e5RtsJT54EGTUKpdC1tUlgOYlrs3sEGGMffoVhFCAcySZ+zNVfaD1MQTp
-         hMR7D7Kq7Xkwj7xChLcHAirblIX5aaAaqxy0G/6wY09rasb4Wyz7bPp1wQmhVBenkfs3
-         XaUUSrpMu+p7lybYOS2F+fq432f0WVK60coyn97CguE3CAs29HGOugjHrvxF/A8W/foA
-         evsF12c3sbuzYKU+33M7yTxBruThoComQQJs1211x2nevgPNAk6CvOnmOw1ecu6qEER1
-         33dhbDf7rIyUZWUKI6TvvvWxR8b8S8I4Ekt328WSeicvjAGCOySDvgplDFdTSIHYEOGB
-         dNUA==
+        d=cloudflare.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JU/d6aV8CwgbPTzPcET8vyAl1h66wtbam5+BBeLcbDk=;
+        b=IBr4moATCsSqkh4S4rNSqkkPZ56PhrLVTrSIcxblAQDAEUgjJqwgRm63PUQWsMQqaI
+         gp+d7XA+SsI8iSOCBhRrgclMgHONu1C0evDKP310ZDtgW9XyDEDOltQvXg/5XTkgPf1b
+         x0sm1dTrzX+GDItg71BxwGpJomq4Vvp2TdM/g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OEXvp1IreEp3SXV31DiUhQRIjvrLdojheHeDjSM1+mQ=;
-        b=rEd69rZm96JdZRjEzTiuJU0cq2IEvTSYB/FkH6WI4irV8c43pxo5+DKOLhwryrb9S5
-         0TkKESplNyIfm/U4omXALfThSThVt5EQbdhIkjHOgfHsefn9JTX7uWkjjXy/YB7q37SM
-         g47aueFhSKrnHl4zXEk00JgqZjwNJ8Saeq21q9a16xlrd5gb2RMQt6B7RFOD5DPwRcju
-         eTMlNCQ746UTuKhEwzC0ZET3YWlo96bhccNVfzK3ePNFGlTQtvV4EmdNshLPPKjT2/MA
-         jY2Eyh7/HPtKp96rgZDRXMxh/0573Sl0cf+xefMld3+XSi7eAnm/eoq3gFUktb//zZPX
-         HMVQ==
-X-Gm-Message-State: ACrzQf0WXswtPtC8zGQWolWrabbjJwLwiaTivXRENkJPoLC12lft6WaQ
-        fwJpaDaQM2e3r056f3+apB0=
-X-Google-Smtp-Source: AMsMyM5Y5ZS6TDv/2mH05016sSTBXkDL48kYZI7q6Xe+foRLWaJOLgSM1up164i2Bm1RjXBT7PL2RQ==
-X-Received: by 2002:a17:907:7632:b0:78d:b5ba:87db with SMTP id jy18-20020a170907763200b0078db5ba87dbmr3568466ejc.661.1666118928064;
-        Tue, 18 Oct 2022 11:48:48 -0700 (PDT)
-Received: from 127.0.0.1localhost (94.197.72.2.threembb.co.uk. [94.197.72.2])
-        by smtp.gmail.com with ESMTPSA id j18-20020a17090623f200b0078db18d7972sm7855355ejg.117.2022.10.18.11.48.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 11:48:47 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: [RFC for-next 4/4] io_uring/rw: enable bio caches for IRQ rw
-Date:   Tue, 18 Oct 2022 19:47:16 +0100
-Message-Id: <11cf38513c45083955d4ee2cedbb46df0a9f6081.1666114003.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.38.0
-In-Reply-To: <cover.1666114003.git.asml.silence@gmail.com>
-References: <cover.1666114003.git.asml.silence@gmail.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JU/d6aV8CwgbPTzPcET8vyAl1h66wtbam5+BBeLcbDk=;
+        b=eTnT9ftHvL/iD46zV1h2LSux6sfPW/ojdNGmf1PQkn/Qa2xWJfjoaavGM0uinXC6K0
+         FweCyO+47ODPabVFAvUvvyEpd4P7RwcCo3LsT2fs6ie0lbjemJ15t6K1+3Jnue8gBECm
+         QZFs1ksQsIaQSNPeqkyVZmgzT34f8Ln4ZhJSIhvMh6+psfnnYV1pY9echKhOz8LJKHLD
+         Xbozv2aN06mMnD5yet3A9BLGWdyDTwT0ucUzwMTT+4haA3Q1aq95/61iSzxrF5lNwIzT
+         d6srBKnMaaMgewNql+66/NdndF/SjlD7vAyekq/fiwA2V7dvuBwbQ1o2NU2pSeSW+FpV
+         K1Vw==
+X-Gm-Message-State: ACrzQf27DA3us3tvH1kS23z3gebjx11goaaT8eXrek42mqul/s0hARos
+        rRZJcAldOzn3haLwdXK/yrqF+GU2erA1k3mtDadUUXsl/2p+p88l
+X-Google-Smtp-Source: AMsMyM6uGuSh47IZQGwRNtJH2fpbTn7xw0SoWfAWrWS2KDjCJsMbYjkNqnxHiSVYyX/TkX3GixR4bQihSy/xSxMf3O8=
+X-Received: by 2002:a81:4c6:0:b0:358:a206:f1fd with SMTP id
+ 189-20020a8104c6000000b00358a206f1fdmr3762584ywe.104.1666119072935; Tue, 18
+ Oct 2022 11:51:12 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20221018045844.37697-1-ivan@cloudflare.com> <Y07taqdJ/J3EyJoB@bfoster>
+In-Reply-To: <Y07taqdJ/J3EyJoB@bfoster>
+From:   Ivan Babrou <ivan@cloudflare.com>
+Date:   Tue, 18 Oct 2022 11:51:02 -0700
+Message-ID: <CABWYdi37Ts7KDshSvwMf34EKuUrz25duL7W8hOO8t1Xm53t2rA@mail.gmail.com>
+Subject: Re: [PATCH v3] proc: report open files as size in stat() for /proc/pid/fd
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@cloudflare.com, Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        David Laight <David.Laight@aculab.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
+        Mike Rapoport <rppt@kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Kalesh Singh <kaleshsingh@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now we can use IOCB_ALLOC_CACHE not only for iopoll'ed reads/write but
-also for normal IRQ driven I/O.
+On Tue, Oct 18, 2022 at 11:16 AM Brian Foster <bfoster@redhat.com> wrote:
+> > +static int proc_readfd_count(struct inode *inode)
+> > +{
+> > +     struct task_struct *p = get_proc_task(inode);
+> > +     struct fdtable *fdt;
+> > +     unsigned int open_fds = 0;
+> > +
+> > +     if (!p)
+> > +             return -ENOENT;
+>
+> Maybe this shouldn't happen, but do you mean to assign the error code to
+> stat->size in the caller? Otherwise this seems reasonable to me.
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/rw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+You are right. As unlikely as it is to happen, we shouldn't return
+negative size.
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 100de2626e47..ff609b762742 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -667,6 +667,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
- 	ret = kiocb_set_rw_flags(kiocb, rw->flags);
- 	if (unlikely(ret))
- 		return ret;
-+	kiocb->ki_flags |= IOCB_ALLOC_CACHE;
- 
- 	/*
- 	 * If the file is marked O_NONBLOCK, still allow retry for it if it
-@@ -682,7 +683,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
- 			return -EOPNOTSUPP;
- 
- 		kiocb->private = NULL;
--		kiocb->ki_flags |= IOCB_HIPRI | IOCB_ALLOC_CACHE;
-+		kiocb->ki_flags |= IOCB_HIPRI;
- 		kiocb->ki_complete = io_complete_rw_iopoll;
- 		req->iopoll_completed = 0;
- 	} else {
--- 
-2.38.0
+What's the idiomatic way to make this work? My two options are:
 
+1. Pass &stat->size into proc_readfd_count:
+
+  if (S_ISDIR(inode->i_mode)) {
+    rv = proc_readfd_count(inode, &stat->size);
+    if (rv < 0)
+      goto out;
+  }
+
+out:
+  return rv;
+
+OR without a goto:
+
+  if (S_ISDIR(inode->i_mode)) {
+    rv = proc_readfd_count(inode, &stat->size));
+    if (rv < 0)
+      return rv;
+  }
+
+  return rv;
+
+2. Return negative count as error (as we don't expect negative amount
+of files open):
+
+  if (S_ISDIR(inode->i_mode)) {
+    size = proc_readfd_count(inode);
+    if (size < 0)
+      return size;
+    stat->size = size;
+  }
