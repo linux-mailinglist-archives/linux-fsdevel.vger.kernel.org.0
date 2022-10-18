@@ -2,70 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3C0C60338A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 21:52:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A26786033C6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 22:08:42 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229914AbiJRTwp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 15:52:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51442 "EHLO
+        id S230131AbiJRUIk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 16:08:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229864AbiJRTwk (ORCPT
+        with ESMTP id S230058AbiJRUIZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 15:52:40 -0400
-Received: from mail-ej1-x62d.google.com (mail-ej1-x62d.google.com [IPv6:2a00:1450:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 934E185ABC;
-        Tue, 18 Oct 2022 12:52:30 -0700 (PDT)
-Received: by mail-ej1-x62d.google.com with SMTP id d26so34897700ejc.8;
-        Tue, 18 Oct 2022 12:52:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OEXvp1IreEp3SXV31DiUhQRIjvrLdojheHeDjSM1+mQ=;
-        b=abLxG+/ldgxPagEwF9tCeQMuX/Sr0ari2v1LSWCKV7wRCeCTavT4vCjimyaqVnuvuE
-         s9yHzyLcX+1aZvlmgl53O8AaqbepqqC84VuZagLgvYjxj2nSwGgfcmCgga/xfcc1yRVS
-         YKAdqIf5ZDK7VgNxWJKl1MSTSRUnYNNPOs+RRplyPXyHIi02Nk2Idz+s631Lt+NhH0/5
-         qRuMoDqYbuFSuMXUNqu+dBLhMOL2er65Wl8fQXFJqRhnYzRZBcz60yqBdnkCkSyqf+MC
-         svfstqhORWDNg41Uzqb0gjxQ3lVVMn9DFS8aNyFMJn4eqDv0QHCgr8auIvWxAkzxIjFm
-         q2jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OEXvp1IreEp3SXV31DiUhQRIjvrLdojheHeDjSM1+mQ=;
-        b=bw0GoEY51WqystaQVYSMUkeTK10yIv0eL0dfTPHrTz6Uy5bOw68IF0llD5I+i3rkKs
-         Na+25ubFVmrPpk/wzrrSo1sjYm7QbC8sT4+aS9P/ShEB+777H00XQy+Naar5gSAOSDTU
-         MaC2bAD/RvXxtAV6QjuNJQHw7ETKNGaQQNJjVWHhpX8YVPErvd2GBGNBUYLshPTR74/y
-         o5tMlIwqFyxoAcZ8JW9ml5ArLM8MSkLt3cSzw5oCxAIqjwRhq0ofGeLQNbFYJdSwbGSo
-         havG1sAdnzkx5R9l+2qgkxTyMWkOLiwUoJHniP+VmIx1+a8xgMtBXhGuIsK4NAyu9JOk
-         iZbQ==
-X-Gm-Message-State: ACrzQf0HHJQSKlKomBVSmU78DICdQ6OXC+ftZeEJXQKJK9qw3fmTwevV
-        M1aB7OMPv0jaqd2lnddShqI=
-X-Google-Smtp-Source: AMsMyM6GRe01/gzUNqYl0qBi83MJXbgcRA7kWwqcS6QpySglmmTLqgbs8KPzXOENcnWaNdqiTyWLNg==
-X-Received: by 2002:a17:907:3186:b0:777:3fe7:4659 with SMTP id xe6-20020a170907318600b007773fe74659mr3747536ejb.336.1666122729204;
-        Tue, 18 Oct 2022 12:52:09 -0700 (PDT)
-Received: from 127.0.0.1localhost (94.197.72.2.threembb.co.uk. [94.197.72.2])
-        by smtp.gmail.com with ESMTPSA id r1-20020a1709061ba100b0072a881b21d8sm7945858ejg.119.2022.10.18.12.52.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 12:52:08 -0700 (PDT)
-From:   Pavel Begunkov <asml.silence@gmail.com>
-To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
-Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Pavel Begunkov <asml.silence@gmail.com>
-Subject: [RFC for-next v2 4/4] io_uring/rw: enable bio caches for IRQ rw
-Date:   Tue, 18 Oct 2022 20:50:58 +0100
-Message-Id: <f43faaa420b95066bdc7679aee411cb4edd160d4.1666122465.git.asml.silence@gmail.com>
-X-Mailer: git-send-email 2.38.0
-In-Reply-To: <cover.1666122465.git.asml.silence@gmail.com>
-References: <cover.1666122465.git.asml.silence@gmail.com>
+        Tue, 18 Oct 2022 16:08:25 -0400
+Received: from gandalf.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10987AC49E;
+        Tue, 18 Oct 2022 13:08:21 -0700 (PDT)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        by mail.ozlabs.org (Postfix) with ESMTPSA id 4MsQ0K2psPz4xG9;
+        Wed, 19 Oct 2022 07:08:17 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+        s=201702; t=1666123698;
+        bh=+D0gWHeMBzegukkXy1SdA4pRcO2k+qIUSncTGFsmUrQ=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=IM3Ksofa7q0N07sdw4Y0BnnxOq+Wk9WHXYdxl+5xWiZfF0v0jENYfC4JiVjkSoplT
+         hca7aER9mrQTT0ti1vO8s0szXz2OlHuYJnfmA3HWbGY3e3YEylxmKFLSEZ8aALQrN/
+         1JbAb30DkDpMsQhLiQiFL1aHNGVdANiBMMxg2/qxN2NeV/CtZpp3SAXeM3YF61nO8+
+         HFoEn9iCVLpuc5Wt2k4sv/tOQtQlB41/5FvNEDZ817atqJzaPiqWLp5gp2C4Dbb5DA
+         Ylx2d7TfjyK/b6PYHqZ4XuB7fA8hDmFMOaMHpvPZZbLKjP16iiDfQ/NE0H13s5ecg5
+         v1qvR5ALbD7Dg==
+Date:   Wed, 19 Oct 2022 07:08:04 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-next@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-xfs@vger.kernel.org,
+        Keith Busch <kbusch@kernel.org>, linux-fscrypt@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v5 0/8] make statx() return DIO alignment information
+Message-ID: <20221019070804.53eac15d@canb.auug.org.au>
+In-Reply-To: <Y05QzQM2ed8sOJxC@sol.localdomain>
+References: <20220827065851.135710-1-ebiggers@kernel.org>
+        <YxfE8zjqkT6Zn+Vn@quark>
+        <Yx6DNIorJ86IWk5q@quark>
+        <20220913063025.4815466c@canb.auug.org.au>
+        <20221018155524.5fc4e421@canb.auug.org.au>
+        <Y05QzQM2ed8sOJxC@sol.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: multipart/signed; boundary="Sig_/kxgvt//y.g1b5pnGQvTpgqK";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,SPF_HELO_PASS,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,35 +61,46 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now we can use IOCB_ALLOC_CACHE not only for iopoll'ed reads/write but
-also for normal IRQ driven I/O.
+--Sig_/kxgvt//y.g1b5pnGQvTpgqK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Pavel Begunkov <asml.silence@gmail.com>
----
- io_uring/rw.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Hi Eric,
 
-diff --git a/io_uring/rw.c b/io_uring/rw.c
-index 100de2626e47..ff609b762742 100644
---- a/io_uring/rw.c
-+++ b/io_uring/rw.c
-@@ -667,6 +667,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
- 	ret = kiocb_set_rw_flags(kiocb, rw->flags);
- 	if (unlikely(ret))
- 		return ret;
-+	kiocb->ki_flags |= IOCB_ALLOC_CACHE;
- 
- 	/*
- 	 * If the file is marked O_NONBLOCK, still allow retry for it if it
-@@ -682,7 +683,7 @@ static int io_rw_init_file(struct io_kiocb *req, fmode_t mode)
- 			return -EOPNOTSUPP;
- 
- 		kiocb->private = NULL;
--		kiocb->ki_flags |= IOCB_HIPRI | IOCB_ALLOC_CACHE;
-+		kiocb->ki_flags |= IOCB_HIPRI;
- 		kiocb->ki_complete = io_complete_rw_iopoll;
- 		req->iopoll_completed = 0;
- 	} else {
--- 
-2.38.0
+On Tue, 18 Oct 2022 00:07:57 -0700 Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Tue, Oct 18, 2022 at 03:55:24PM +1100, Stephen Rothwell wrote:
+> >=20
+> > I notice that this branch has been removed.  Are you finished with it
+> > (i.e. should I remove it from linux-next)?
+> >  =20
+>=20
+> Yes, I think so.  This patchset has been merged upstream.  Any more patch=
+es
+> related to STATX_DIOALIGN should go in through the VFS or filesystem-spec=
+ific
+> trees.
 
+OK, I have removed it.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/kxgvt//y.g1b5pnGQvTpgqK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmNPB6QACgkQAVBC80lX
+0Gw+mAf/bGHv0gVJlUAUtMlO+X/kuJ8K1xyeTNlPrY/3kIPVHvURN4N84Z456Pqj
+T0tguhmoNIHnsiHD/ho7QW/9KfYkkvi0RT5M3eWWZIEky6wIUIQVmcteXUGc/ml5
+QveAoeyW+UizAfGCDpSYtIh/iTiNtzRtOFcwseOWwBnT07GLgqWH848IHFM5hPt8
+FAqlSCuWunHR7xkkfWX9XXJkDla5e/5z9C1DLrKWqNtgk7haUOrtZh3h90nVfJpo
+9mKAil+9j1DCFRmaJfWggK6qvwNYy0/erG23c8pXs94BPk6eN0WZ/2wmLfoAFES3
+M8E+Ra5EMWsQNIdiwy64N23mBSJv0A==
+=/mrd
+-----END PGP SIGNATURE-----
+
+--Sig_/kxgvt//y.g1b5pnGQvTpgqK--
