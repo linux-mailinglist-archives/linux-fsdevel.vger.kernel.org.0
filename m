@@ -2,144 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D046860333C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 21:18:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 8A4A2603366
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 21:35:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229872AbiJRTSJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 15:18:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54780 "EHLO
+        id S229835AbiJRTfL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 15:35:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55690 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229691AbiJRTSI (ORCPT
+        with ESMTP id S229657AbiJRTfK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 15:18:08 -0400
-Received: from mail-yw1-x112f.google.com (mail-yw1-x112f.google.com [IPv6:2607:f8b0:4864:20::112f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 251B35A3E0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 12:18:07 -0700 (PDT)
-Received: by mail-yw1-x112f.google.com with SMTP id 00721157ae682-333a4a5d495so146701487b3.10
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 12:18:07 -0700 (PDT)
+        Tue, 18 Oct 2022 15:35:10 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ED35727912;
+        Tue, 18 Oct 2022 12:35:08 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id g27so22019667edf.11;
+        Tue, 18 Oct 2022 12:35:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fI1gzC8xPWpWaBXSivcFsCeh1hj05+5Sc3zxFpnbpSg=;
-        b=M14+eL0EvuPm/IWlMSAwbARSaMRt1HpphND1sfL5szRa/CePSaVcmJVeJYqXJxIok/
-         /P6U5+ok0/ICNCJ1KQqqIRivDUrSoXBtsxZhUTXRNTA1zU92bL6MW1gdPuejIhGPi/PV
-         4whaXp5Ue8p8SP0VHrOo2HA+mPsyrxeqj3SsmQvnbX2nXOiD/eLIawz8Ap4H7WYrU3y5
-         XdDsHt8xz+xyatX8yFoh1zuwr4daVOM3b9WD53+IQp7HI7GewLuFxD2X3IwXJN2YGuhZ
-         X9mVXdYP/ALouctzrqtuGVwaqCl1S1ZVmxOgTVqv0niSunkZGZrQ7LW2+Z8rXEvlbiO7
-         5B6Q==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MEQQitYjZbXJANs1RoNeTAqxiMmroK05libS5bTqvrM=;
+        b=TJzasUE+7XDdqHpODudt3fj6P+0tKD8DDMWv0VxudtiYJJ2BkfW3a6bW3SaS1pMmm/
+         yTiJE1PsdoxcsYWHPdmWiHt6lBejV/ngHqWbk2rDW6msyzxEorIbdCG/jW4EuYc4cSZr
+         uQuobg8AR2IdelBxzmvz813y9TsH2OCmNmDdtpc61MCdY+CPp1w3e55qsXDbHhE5Ey3w
+         Hqy0Jy4wyMUjure6VzAxBREpMIn1q2g+dbPk2d936iAk+Nu+Gkr/S74Oc9n5KmzQFfFy
+         5025/ZO/MB2nbLdwFtKPt8TXNBAtZU4A5w61PItwUnTRY7DucFccuM2OU/VtMji9cp8D
+         WO4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fI1gzC8xPWpWaBXSivcFsCeh1hj05+5Sc3zxFpnbpSg=;
-        b=yp9R1g0RPF8ZE8o/ive/cIWXOpByNvy80N00aclef1NN1VO7NsLaBbad4S6KhWdMnV
-         wXdVlHNhIgDLh3Grk0HWYkQLXwUNj3Ly8miiKKyHkrGCIhguGVdKx3AGpkYGx49kcOTo
-         F+ElBXYIKfpLvt3uOYxO30RF7E6pvFf/PbBFuxjFJNE3Sa7gNTTAF0ySezxsJG8rIDc7
-         HRW/60jhYSuLtxisq/hSenR2MWgv4awl0Mw8gh/5QIOriW6dZHvVjm/o32Rcwh8envrM
-         nEk4EPsJvWpLiS53GIA91+TBhA4lIOF3iJvvyFhfLfsxNGRnNtK9a7oKglcKpg3WBxRE
-         6kWw==
-X-Gm-Message-State: ACrzQf0NyMCoo23FMZG9De7FBhuuL+htttMUjgrUVNZpu5XNvTn+3jgw
-        xz+jnmAzxXTYK2ra/rZB+01GOLBV4+mvRDT1vfP+
-X-Google-Smtp-Source: AMsMyM7+dHNsBB3+ydXo/JLHGHk4DuSLixHESZmorA+6Riams5t44qD9LsNjutfi92NNy1hJjJzTUb6uhoSMXlQr41A=
-X-Received: by 2002:a81:a141:0:b0:35f:a727:f27 with SMTP id
- y62-20020a81a141000000b0035fa7270f27mr3917543ywg.205.1666120686281; Tue, 18
- Oct 2022 12:18:06 -0700 (PDT)
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MEQQitYjZbXJANs1RoNeTAqxiMmroK05libS5bTqvrM=;
+        b=Z6s/9ypnjIkNHCjDuJKE5u+XoCBtGrdqRKucXq13g6quGGVl2fxH6P7sePu8jWb6aC
+         qcq/axjE7+gSdr0ZjCoOoQ9Kr7olePmsRcgt3ikWjihpZ6Cnb7b+nayokDEm/4sh7edL
+         QHSWDIkmEWB+UmKMsTbhVuH3/LsfI7EhKPoB7P+HFrF8yAcBqu/iIzQyyplReD1wMIuM
+         4kmB/nb8qYu9K+o1AbjLyt7sy9yeVEx9Zos0jdoOBgBlNL0WVWjRi+bdmKYwt6LDPRZZ
+         Cb5x+PgHtTs8ViTNCn3NjaFBdwuLapD+HWQbWKNQD14aSi/aIJlGuOLwmsanw915HXl6
+         vltQ==
+X-Gm-Message-State: ACrzQf2Hv1/CvR0Cm5d4QqMnb1fgw9sGxP5VBBDpLWg9LVd/9qEYslGY
+        1f3EY5N36Gh3CH1BVy9fimAVM+eqkuI=
+X-Google-Smtp-Source: AMsMyM7h+SUBLedOYfsL7w7vWlAu8tjqt8DlKZke2cYAMbdZAWvCaOPqZVV9lSh+zp5K3iqPTBfEQQ==
+X-Received: by 2002:aa7:d7c5:0:b0:459:fad8:fd2 with SMTP id e5-20020aa7d7c5000000b00459fad80fd2mr4117207eds.336.1666121707476;
+        Tue, 18 Oct 2022 12:35:07 -0700 (PDT)
+Received: from [192.168.8.100] (94.197.72.2.threembb.co.uk. [94.197.72.2])
+        by smtp.gmail.com with ESMTPSA id fd13-20020a056402388d00b0045b3853c4b7sm9309479edb.51.2022.10.18.12.35.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 18 Oct 2022 12:35:07 -0700 (PDT)
+Message-ID: <9c92c1fa-1a67-1fb1-0cc6-c65c708db01e@gmail.com>
+Date:   Tue, 18 Oct 2022 20:33:59 +0100
 MIME-Version: 1.0
-References: <20221018115700.166010-1-brauner@kernel.org> <20221018115700.166010-13-brauner@kernel.org>
-In-Reply-To: <20221018115700.166010-13-brauner@kernel.org>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 18 Oct 2022 15:17:55 -0400
-Message-ID: <CAHC9VhSWymFrrV2Zu3isAivuZMvgBxagkoDg3vLGDOww=Y8t_Q@mail.gmail.com>
-Subject: Re: [PATCH v5 12/30] integrity: implement get and set acl hook
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.1
+Subject: Re: [RFC for-next 0/4] enable pcpu bio caching for IRQ I/O
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+References: <cover.1666114003.git.asml.silence@gmail.com>
+Content-Language: en-US
+From:   Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <cover.1666114003.git.asml.silence@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 18, 2022 at 7:59 AM Christian Brauner <brauner@kernel.org> wrote:
->
-> The current way of setting and getting posix acls through the generic
-> xattr interface is error prone and type unsafe. The vfs needs to
-> interpret and fixup posix acls before storing or reporting it to
-> userspace. Various hacks exist to make this work. The code is hard to
-> understand and difficult to maintain in it's current form. Instead of
-> making this work by hacking posix acls through xattr handlers we are
-> building a dedicated posix acl api around the get and set inode
-> operations. This removes a lot of hackiness and makes the codepaths
-> easier to maintain. A lot of background can be found in [1].
->
-> So far posix acls were passed as a void blob to the security and
-> integrity modules. Some of them like evm then proceed to interpret the
-> void pointer and convert it into the kernel internal struct posix acl
-> representation to perform their integrity checking magic. This is
-> obviously pretty problematic as that requires knowledge that only the
-> vfs is guaranteed to have and has lead to various bugs. Add a proper
-> security hook for setting posix acls and pass down the posix acls in
-> their appropriate vfs format instead of hacking it through a void
-> pointer stored in the uapi format.
->
-> I spent considerate time in the security module and integrity
-> infrastructure and audited all codepaths. EVM is the only part that
-> really has restrictions based on the actual posix acl values passed
-> through it (e.g., i_mode). Before this dedicated hook EVM used to translate
-> from the uapi posix acl format sent to it in the form of a void pointer
-> into the vfs format. This is not a good thing. Instead of hacking around in
-> the uapi struct give EVM the posix acls in the appropriate vfs format and
-> perform sane permissions checks that mirror what it used to to in the
-> generic xattr hook.
->
-> IMA doesn't have any restrictions on posix acls. When posix acls are
-> changed it just wants to update its appraisal status to trigger an EVM
-> revalidation.
->
-> The removal of posix acls is equivalent to passing NULL to the posix set
-> acl hooks. This is the same as before through the generic xattr api.
->
-> Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
-> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> ---
->
-> Notes:
->     /* v2 */
->     unchanged
->
->     /* v3 */
->     Paul Moore <paul@paul-moore.com>:
->     - Add get, and remove acl hook
->
->     /* v4 */
->     unchanged
->
->     /* v5 */
->     Paul Moore <paul@paul-moore.com>:
->     - Move ifdef out of function body.
->
->     Mimi Zohar <zohar@linux.ibm.com>:
->     - Fix details in commit message.
->     - Add more details to kernel-doc for evm_inode_set_acl().
->
->  include/linux/evm.h                   | 23 ++++++++
->  include/linux/ima.h                   | 24 ++++++++
->  security/integrity/evm/evm_main.c     | 83 ++++++++++++++++++++++++++-
->  security/integrity/ima/ima_appraise.c |  9 +++
->  security/security.c                   | 21 ++++++-
->  5 files changed, 157 insertions(+), 3 deletions(-)
+On 10/18/22 19:47, Pavel Begunkov wrote:
+> This series implements bio pcpu caching for normal / IRQ-driven I/O
+> extending REQ_ALLOC_CACHE currently limited to iopoll. The allocation side
+> still only works from non-irq context, which is the reason it's not enabled
+> by default, but turning it on for other users (e.g. filesystems) is
+> as a matter of passing a flag.
 
-Acked-by: Paul Moore <paul@paul-moore.com> (LSM)
+Ooops, wrong version, will resend
+
+
+> t/io_uring with an Optane SSD setup showed +7% for batches of 32 requests
+> and +4.3% for batches of 8.
+> 
+> IRQ, 128/32/32, cache off
+> IOPS=59.08M, BW=28.84GiB/s, IOS/call=31/31
+> IOPS=59.30M, BW=28.96GiB/s, IOS/call=32/32
+> IOPS=59.97M, BW=29.28GiB/s, IOS/call=31/31
+> IOPS=59.92M, BW=29.26GiB/s, IOS/call=32/32
+> IOPS=59.81M, BW=29.20GiB/s, IOS/call=32/31
+> 
+> IRQ, 128/32/32, cache on
+> IOPS=64.05M, BW=31.27GiB/s, IOS/call=32/31
+> IOPS=64.22M, BW=31.36GiB/s, IOS/call=32/32
+> IOPS=64.04M, BW=31.27GiB/s, IOS/call=31/31
+> IOPS=63.16M, BW=30.84GiB/s, IOS/call=32/32
+> 
+> IRQ, 32/8/8, cache off
+> IOPS=50.60M, BW=24.71GiB/s, IOS/call=7/8
+> IOPS=50.22M, BW=24.52GiB/s, IOS/call=8/7
+> IOPS=49.54M, BW=24.19GiB/s, IOS/call=8/8
+> IOPS=50.07M, BW=24.45GiB/s, IOS/call=7/7
+> IOPS=50.46M, BW=24.64GiB/s, IOS/call=8/8
+> 
+> IRQ, 32/8/8, cache on
+> IOPS=51.39M, BW=25.09GiB/s, IOS/call=8/7
+> IOPS=52.52M, BW=25.64GiB/s, IOS/call=7/8
+> IOPS=52.57M, BW=25.67GiB/s, IOS/call=8/8
+> IOPS=52.58M, BW=25.67GiB/s, IOS/call=8/7
+> IOPS=52.61M, BW=25.69GiB/s, IOS/call=8/8
+> 
+> The main part is in patch 3. Would be great to take patch 1 separately
+> for 6.1 for extra safety.
+> 
+> Pavel Begunkov (4):
+>    bio: safeguard REQ_ALLOC_CACHE bio put
+>    bio: split pcpu cache part of bio_put into a helper
+>    block/bio: add pcpu caching for non-polling bio_put
+>    io_uring/rw: enable bio caches for IRQ rw
+> 
+>   block/bio.c   | 92 +++++++++++++++++++++++++++++++++++++++------------
+>   io_uring/rw.c |  3 +-
+>   2 files changed, 73 insertions(+), 22 deletions(-)
+> 
 
 -- 
-paul-moore.com
+Pavel Begunkov
