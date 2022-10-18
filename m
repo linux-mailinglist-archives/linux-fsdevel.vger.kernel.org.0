@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 77F64602ABE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 13:58:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EAA0D602AC1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 13:58:38 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229463AbiJRL6d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 07:58:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56868 "EHLO
+        id S230177AbiJRL6g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 07:58:36 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56900 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230287AbiJRL5t (ORCPT
+        with ESMTP id S230314AbiJRL5v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 07:57:49 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8D68AEA34;
-        Tue, 18 Oct 2022 04:57:45 -0700 (PDT)
+        Tue, 18 Oct 2022 07:57:51 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3F8F7BCB82;
+        Tue, 18 Oct 2022 04:57:47 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E3FBDB81D8C;
-        Tue, 18 Oct 2022 11:57:43 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70FE8C43470;
-        Tue, 18 Oct 2022 11:57:40 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4C7286153E;
+        Tue, 18 Oct 2022 11:57:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22EC7C433C1;
+        Tue, 18 Oct 2022 11:57:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666094262;
-        bh=4OOmQnsCaeDP4fJEoDyIU04D/CDt7fJnSyahyBjuyFA=;
+        s=k20201202; t=1666094265;
+        bh=fSjrzMyq+bpcifIr5JOm4lI4KXzBA9L1pFlvXfjZSmQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dMXHU5Rhi4tlKNm6UJ6pKiTQmfIBp7WYeXhNNBe6tS+AfqnkL9vj9cE6+Yu5W38Uu
-         I0a17RzWenC5tiZa1eCynXPtDbXwWPi00skblBOipb8Yj96IqFzMK03P83JdDpXqYT
-         reREtm2zxHS3DEaoqFPp6zQNPwG6e6ygx3Isx5uumUbxRHx+gER98rOfnvPw3Z3oDV
-         90Mp5rSwSRLRmLJ7qn17PKSxYbC/XV4lx3jup3KXk4P2HlHEfBs13oCJ2ByCeCqnKr
-         JumDtpuJChnAwQ7ok/we1ZK/dTmu6PyF4iWDxSvMC1wYiaLnRnQWjhTWYNtscCsaFa
-         amHiEF0KktOcA==
+        b=UznQOqEcD8kIVpaiUl17ewp+RBLMClDNxkC1kDImHCLkRUi+WmovI4wiFSznjngmH
+         QE+sMtU5A3+5A1bYMgFCu0ghXCyi3nPEWjKiXlRBnomR9VeKkZvt/8mFZL9Fsp7kdT
+         sKYTGTQ/LCD3JeTf6yJAqT0zMoMhDz3HqqdB5z3uYU0P1vsYEFhk2yPkQhJ8YBXS03
+         3GHtngY7sH1AFl3S1ytDGNUMksfmYoQwzWzhbtfF6x3aWDhKkY9K3IM+1L8DpVHn1n
+         2NE2XPH3XDjk+2y6kGo77Itf8VNzUlqbOLbiqhho16B+Xk6TWuq0mShv1mdU/xS31T
+         mvydEJToXo3Ew==
 From:   Christian Brauner <brauner@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
         Seth Forshee <sforshee@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
+        linux-integrity@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+        Stephen Smalley <stephen.smalley.work@gmail.com>,
+        Eric Paris <eparis@parisplace.org>, selinux@vger.kernel.org,
         linux-security-module@vger.kernel.org
-Subject: [PATCH v5 09/30] security: add get, remove and set acl hook
-Date:   Tue, 18 Oct 2022 13:56:39 +0200
-Message-Id: <20221018115700.166010-10-brauner@kernel.org>
+Subject: [PATCH v5 10/30] selinux: implement get, set and remove acl hook
+Date:   Tue, 18 Oct 2022 13:56:40 +0200
+Message-Id: <20221018115700.166010-11-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221018115700.166010-1-brauner@kernel.org>
 References: <20221018115700.166010-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7160; i=brauner@kernel.org; h=from:subject; bh=4OOmQnsCaeDP4fJEoDyIU04D/CDt7fJnSyahyBjuyFA=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST7TVE7oC3f6q1pV9KaKbYmZpIX15sLMRxTEuKzZ4ryex1Z eGdpRykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEQElzIyHKvvs3s1QTHXhO1reFg+T5 juV0uvP0d1b0i+/iexal7vfUaGw8U2vzb6mv234o4/NG2nwrQpkbbMgkotTCaWr/rabKM4AQ==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3927; i=brauner@kernel.org; h=from:subject; bh=fSjrzMyq+bpcifIr5JOm4lI4KXzBA9L1pFlvXfjZSmQ=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMST7TVHjeGGv+JeDc+5BP8ufs5at+eR5q/p14MGDf/y0Yjn2 X8jW6yhlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZjIq+cM/7QYgpnOHhBpm3XFy3bf11 Lmtan3HWcfnvBo3jLRstT90bsY/tlebO5uN166/HvUqRlGMcmLE+tWbku/uPX6J1cHAe7rQlwA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -81,8 +81,11 @@ security hook for setting posix acls and pass down the posix acls in
 their appropriate vfs format instead of hacking it through a void
 pointer stored in the uapi format.
 
-In the next patches we implement the hooks for the few security modules
-that do actually have restrictions on posix acls.
+I spent considerate time in the security module infrastructure and
+audited all codepaths. SELinux has no restrictions based on the posix
+acl values passed through it. The capability hook doesn't need to be
+called either because it only has restrictions on security.* xattrs. So
+these are all fairly simply hooks for SELinux.
 
 Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
 Acked-by: Paul Moore <paul@paul-moore.com>
@@ -101,137 +104,55 @@ Notes:
     unchanged
     
     /* v5 */
-    unchanged
+    Acked-by: Paul Moore <paul@paul-moore.com>
+    
+    Paul Moore <paul@paul-moore.com>:
+    - Use current_cred() directly in dentry_has_perm() call in
+      selinux_inode_get_acl().
 
- include/linux/lsm_hook_defs.h |  6 ++++++
- include/linux/lsm_hooks.h     | 12 ++++++++++++
- include/linux/security.h      | 29 +++++++++++++++++++++++++++++
- security/security.c           | 25 +++++++++++++++++++++++++
- 4 files changed, 72 insertions(+)
+ security/selinux/hooks.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-diff --git a/include/linux/lsm_hook_defs.h b/include/linux/lsm_hook_defs.h
-index ec119da1d89b..7f4aaddce298 100644
---- a/include/linux/lsm_hook_defs.h
-+++ b/include/linux/lsm_hook_defs.h
-@@ -145,6 +145,12 @@ LSM_HOOK(int, 0, inode_getxattr, struct dentry *dentry, const char *name)
- LSM_HOOK(int, 0, inode_listxattr, struct dentry *dentry)
- LSM_HOOK(int, 0, inode_removexattr, struct user_namespace *mnt_userns,
- 	 struct dentry *dentry, const char *name)
-+LSM_HOOK(int, 0, inode_set_acl, struct user_namespace *mnt_userns,
-+	 struct dentry *dentry, const char *acl_name, struct posix_acl *kacl)
-+LSM_HOOK(int, 0, inode_get_acl, struct user_namespace *mnt_userns,
-+	 struct dentry *dentry, const char *acl_name)
-+LSM_HOOK(int, 0, inode_remove_acl, struct user_namespace *mnt_userns,
-+	 struct dentry *dentry, const char *acl_name)
- LSM_HOOK(int, 0, inode_need_killpriv, struct dentry *dentry)
- LSM_HOOK(int, 0, inode_killpriv, struct user_namespace *mnt_userns,
- 	 struct dentry *dentry)
-diff --git a/include/linux/lsm_hooks.h b/include/linux/lsm_hooks.h
-index 4ec80b96c22e..1d02d1170e21 100644
---- a/include/linux/lsm_hooks.h
-+++ b/include/linux/lsm_hooks.h
-@@ -435,6 +435,18 @@
-  *	Check permission before removing the extended attribute
-  *	identified by @name for @dentry.
-  *	Return 0 if permission is granted.
-+ * @inode_set_acl:
-+ *	Check permission before setting posix acls
-+ *	The posix acls in @kacl are identified by @acl_name.
-+ *	Return 0 if permission is granted.
-+ * @inode_get_acl:
-+ *	Check permission before getting osix acls
-+ *	The posix acls are identified by @acl_name.
-+ *	Return 0 if permission is granted.
-+ * @inode_remove_acl:
-+ *	Check permission before removing posix acls
-+ *	The posix acls are identified by @acl_name.
-+ *	Return 0 if permission is granted.
-  * @inode_getsecurity:
-  *	Retrieve a copy of the extended attribute representation of the
-  *	security label associated with @name for @inode via @buffer.  Note that
-diff --git a/include/linux/security.h b/include/linux/security.h
-index ca1b7109c0db..2bfc2e1ce51f 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -361,6 +361,13 @@ int security_inode_getattr(const struct path *path);
- int security_inode_setxattr(struct user_namespace *mnt_userns,
- 			    struct dentry *dentry, const char *name,
- 			    const void *value, size_t size, int flags);
-+int security_inode_set_acl(struct user_namespace *mnt_userns,
-+			   struct dentry *dentry, const char *acl_name,
-+			   struct posix_acl *kacl);
-+int security_inode_get_acl(struct user_namespace *mnt_userns,
-+			   struct dentry *dentry, const char *acl_name);
-+int security_inode_remove_acl(struct user_namespace *mnt_userns,
-+			      struct dentry *dentry, const char *acl_name);
- void security_inode_post_setxattr(struct dentry *dentry, const char *name,
- 				  const void *value, size_t size, int flags);
- int security_inode_getxattr(struct dentry *dentry, const char *name);
-@@ -872,6 +879,28 @@ static inline int security_inode_setxattr(struct user_namespace *mnt_userns,
- 	return cap_inode_setxattr(dentry, name, value, size, flags);
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index f553c370397e..7c5c8d17695c 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -3240,6 +3240,25 @@ static int selinux_inode_setxattr(struct user_namespace *mnt_userns,
+ 			    &ad);
  }
  
-+static inline int security_inode_set_acl(struct user_namespace *mnt_userns,
-+					 struct dentry *dentry,
-+					 const char *acl_name,
-+					 struct posix_acl *kacl)
++static int selinux_inode_set_acl(struct user_namespace *mnt_userns,
++				 struct dentry *dentry, const char *acl_name,
++				 struct posix_acl *kacl)
 +{
-+	return 0;
++	return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
 +}
 +
-+static inline int security_inode_get_acl(struct user_namespace *mnt_userns,
-+					 struct dentry *dentry,
-+					 const char *acl_name)
++static int selinux_inode_get_acl(struct user_namespace *mnt_userns,
++				 struct dentry *dentry, const char *acl_name)
 +{
-+	return 0;
++	return dentry_has_perm(current_cred(), dentry, FILE__GETATTR);
 +}
 +
-+static inline int security_inode_remove_acl(struct user_namespace *mnt_userns,
-+					    struct dentry *dentry,
-+					    const char *acl_name)
++static int selinux_inode_remove_acl(struct user_namespace *mnt_userns,
++				    struct dentry *dentry, const char *acl_name)
 +{
-+	return 0;
++	return dentry_has_perm(current_cred(), dentry, FILE__SETATTR);
 +}
 +
- static inline void security_inode_post_setxattr(struct dentry *dentry,
- 		const char *name, const void *value, size_t size, int flags)
- { }
-diff --git a/security/security.c b/security/security.c
-index 79d82cb6e469..f972ee1f10eb 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -1372,6 +1372,31 @@ int security_inode_setxattr(struct user_namespace *mnt_userns,
- 	return evm_inode_setxattr(mnt_userns, dentry, name, value, size);
- }
- 
-+int security_inode_set_acl(struct user_namespace *mnt_userns,
-+			   struct dentry *dentry, const char *acl_name,
-+			   struct posix_acl *kacl)
-+{
-+	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-+		return 0;
-+	return call_int_hook(inode_set_acl, 0, mnt_userns, dentry, acl_name, kacl);
-+}
-+
-+int security_inode_get_acl(struct user_namespace *mnt_userns,
-+			   struct dentry *dentry, const char *acl_name)
-+{
-+	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-+		return 0;
-+	return call_int_hook(inode_get_acl, 0, mnt_userns, dentry, acl_name);
-+}
-+
-+int security_inode_remove_acl(struct user_namespace *mnt_userns,
-+			      struct dentry *dentry, const char *acl_name)
-+{
-+	if (unlikely(IS_PRIVATE(d_backing_inode(dentry))))
-+		return 0;
-+	return call_int_hook(inode_remove_acl, 0, mnt_userns, dentry, acl_name);
-+}
-+
- void security_inode_post_setxattr(struct dentry *dentry, const char *name,
- 				  const void *value, size_t size, int flags)
- {
+ static void selinux_inode_post_setxattr(struct dentry *dentry, const char *name,
+ 					const void *value, size_t size,
+ 					int flags)
+@@ -7088,6 +7107,9 @@ static struct security_hook_list selinux_hooks[] __lsm_ro_after_init = {
+ 	LSM_HOOK_INIT(inode_getxattr, selinux_inode_getxattr),
+ 	LSM_HOOK_INIT(inode_listxattr, selinux_inode_listxattr),
+ 	LSM_HOOK_INIT(inode_removexattr, selinux_inode_removexattr),
++	LSM_HOOK_INIT(inode_set_acl, selinux_inode_set_acl),
++	LSM_HOOK_INIT(inode_get_acl, selinux_inode_get_acl),
++	LSM_HOOK_INIT(inode_remove_acl, selinux_inode_remove_acl),
+ 	LSM_HOOK_INIT(inode_getsecurity, selinux_inode_getsecurity),
+ 	LSM_HOOK_INIT(inode_setsecurity, selinux_inode_setsecurity),
+ 	LSM_HOOK_INIT(inode_listsecurity, selinux_inode_listsecurity),
 -- 
 2.34.1
 
