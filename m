@@ -2,176 +2,352 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 612226035E3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 00:30:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 841DB6035EA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 00:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229795AbiJRWat (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 18:30:49 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53834 "EHLO
+        id S229928AbiJRWdQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 18:33:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58386 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229544AbiJRWas (ORCPT
+        with ESMTP id S229572AbiJRWdP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 18:30:48 -0400
-Received: from mail105.syd.optusnet.com.au (mail105.syd.optusnet.com.au [211.29.132.249])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 8F941DEFF;
-        Tue, 18 Oct 2022 15:30:46 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au [49.181.106.210])
-        by mail105.syd.optusnet.com.au (Postfix) with ESMTPS id 422641102C83;
-        Wed, 19 Oct 2022 09:30:43 +1100 (AEDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1okv6g-003ckX-1i; Wed, 19 Oct 2022 09:30:42 +1100
-Date:   Wed, 19 Oct 2022 09:30:42 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
-        steve.kang@unisoc.com, baocong.liu@unisoc.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] mm: move xa forward when run across zombie page
-Message-ID: <20221018223042.GJ2703033@dread.disaster.area>
-References: <1665725448-31439-1-git-send-email-zhaoyang.huang@unisoc.com>
- <Y0lSChlclGPkwTeA@casper.infradead.org>
- <CAGWkznG=_A-3A8JCJEoWXVcx+LUNH=gvXjLpZZs0cRX4dhUJfQ@mail.gmail.com>
- <Y017BeC64GDb3Kg7@casper.infradead.org>
- <CAGWkznEdtGPPZkHrq6Y_+XLL37w12aC8XN8R_Q-vhq48rFhkSA@mail.gmail.com>
- <Y04Y3RNq6D2T9rVw@casper.infradead.org>
+        Tue, 18 Oct 2022 18:33:15 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDFE1B4493;
+        Tue, 18 Oct 2022 15:33:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 72297CE1FB0;
+        Tue, 18 Oct 2022 22:33:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFC72C433D6;
+        Tue, 18 Oct 2022 22:33:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666132385;
+        bh=zKF4wQFM1oeEQDwwONYaAZMs1HgzAhwy0Gl0XCL2uiw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Kt1dlNCKwsoa2ilzdaM3NALS78mM9mbe9XzN2FKtCtcINggjlybT6pyRR1N/ZFOXi
+         Q10tVcqsMewynV8ujBFoFgDDKi+SNov0Kx8JiNvkXFApjU/2Bw6JH6h6rj0bfPAyYF
+         YphaDDMmxAXhyAIgY6pCrTJwVXS/48cRls8cdvXdhWbcL/LpWC3C1lB0iYG+x+QjMk
+         bnoUlbHmzbEFVaVfOtUGRohe2LYxuNcr8Qq7Z5uaFB9fyXTP6jPrYxSROXnDY0aeUW
+         aY5Jg15Rr4q0j3N42vzVHBlc0nO6NzidfMKTiaHTGOUwCU+Me7khtXXWXT1drl6eJk
+         8Be/p3Bzl3miw==
+Date:   Tue, 18 Oct 2022 15:33:03 -0700
+From:   Nathan Chancellor <nathan@kernel.org>
+To:     =?iso-8859-1?Q?G=FCnther?= Noack <gnoack3000@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        =?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        James Morris <jmorris@namei.org>,
+        Paul Moore <paul@paul-moore.com>,
+        "Serge E . Hallyn" <serge@hallyn.com>,
+        linux-fsdevel@vger.kernel.org,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+Subject: Re: [PATCH v10 00/11] landlock: truncate support
+Message-ID: <Y08pn5GcTvd5sgyE@dev-arch.thelio-3990X>
+References: <20221018182216.301684-1-gnoack3000@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Y04Y3RNq6D2T9rVw@casper.infradead.org>
-X-Optus-CM-Score: 0
-X-Optus-CM-Analysis: v=2.4 cv=VuxAv86n c=1 sm=1 tr=0 ts=634f2914
-        a=j6JUzzrSC7wlfFge/rmVbg==:117 a=j6JUzzrSC7wlfFge/rmVbg==:17
-        a=kj9zAlcOel0A:10 a=Qawa6l4ZSaYA:10 a=JfrnYn6hAAAA:8 a=icsG72s9AAAA:8
-        a=VwQbUJbxAAAA:8 a=20KFwNOVAAAA:8 a=7-415B0cAAAA:8 a=FVvNlm1tYNsfbB76iTkA:9
-        a=CjuIK1q_8ugA:10 a=1CNFftbPRP8L7MoqJWF3:22 a=T89tl0cgrjxRNoSN2Dv0:22
-        a=AjGcO6oz07-iQ99wixmX:22 a=biEYGPWJfzWAr4FL6Ov7:22
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221018182216.301684-1-gnoack3000@gmail.com>
+X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 18, 2022 at 04:09:17AM +0100, Matthew Wilcox wrote:
-> On Tue, Oct 18, 2022 at 10:52:19AM +0800, Zhaoyang Huang wrote:
-> > On Mon, Oct 17, 2022 at 11:55 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > >
-> > > On Mon, Oct 17, 2022 at 01:34:13PM +0800, Zhaoyang Huang wrote:
-> > > > On Fri, Oct 14, 2022 at 8:12 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > > > >
-> > > > > On Fri, Oct 14, 2022 at 01:30:48PM +0800, zhaoyang.huang wrote:
-> > > > > > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> > > > > >
-> > > > > > Bellowing RCU stall is reported where kswapd traps in a live lock when shrink
-> > > > > > superblock's inode list. The direct reason is zombie page keeps staying on the
-> > > > > > xarray's slot and make the check and retry loop permanently. The root cause is unknown yet
-> > > > > > and supposed could be an xa update without synchronize_rcu etc. I would like to
-> > > > > > suggest skip this page to break the live lock as a workaround.
-> > > > >
-> > > > > No, the underlying bug should be fixed.
-> > >
-> > >     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > Understand. IMHO, find_get_entry actruely works as an open API dealing
-> > with different kinds of address_spaces page cache, which requires high
-> > robustness to deal with any corner cases. Take the current problem as
-> > example, the inode with fault page(refcount=0) could remain on the
-> > sb's list without live lock problem.
+Hi Günther,
+
+On Tue, Oct 18, 2022 at 08:22:05PM +0200, Günther Noack wrote:
+> The goal of these patches is to work towards a more complete coverage
+> of file system operations that are restrictable with Landlock.
 > 
-> But it's a corner case that shouldn't happen!  What else is going on
-> at the time?  Can you reproduce this problem easily?  If so, how?
+> Motivation
+> ----------
+> 
+> The known set of currently unsupported file system operations in
+> Landlock is described at [1]. Out of the operations listed there,
+> truncate is the only one that modifies file contents, so these patches
+> should make it possible to prevent the direct modification of file
+> contents with Landlock.
+> 
+> Apart from Landlock, file truncation can also be restricted using
+> seccomp-bpf, but it is more difficult to use (requires BPF, requires
+> keeping up-to-date syscall lists) and it is not configurable by file
+> hierarchy, as Landlock is. The simplicity and flexibility of the
+> Landlock approach makes it worthwhile adding.
+> 
+> Implementation overview
+> -----------------------
+> 
+> The patch introduces the truncation restriction feature as an
+> additional bit in the access_mask_t bitmap, in line with the existing
+> supported operations.
+> 
+> The truncation flag covers both the truncate(2) and ftruncate(2)
+> families of syscalls, as well as open(2) with the O_TRUNC flag.
+> This includes usages of creat() in the case where existing regular
+> files are overwritten.
+> 
+> Additionally, this patch set introduces a new Landlock security blob
+> associated with opened files, to track the available Landlock access
+> rights at the time of opening the file. This is in line with Unix's
+> general approach of checking the read and write permissions during
+> open(), and associating this previously checked authorization with the
+> opened file.
+> 
+> In order to treat truncate(2) and ftruncate(2) calls differently in an
+> LSM hook, we split apart the existing security_path_truncate hook into
+> security_path_truncate (for truncation by path) and
+> security_file_truncate (for truncation of previously opened files).
+> 
+> We also implement the file_alloc_security hook, in order to override
+> the access rights in the file security blob, in cases where the file
+> is opened by other means than open(2), but where the opened file still
+> supports ftruncate(2). This is also demonstrated in a selftest, using
+> memfd_create(2).
+> 
+> Relationship between "truncate" and "write" rights
+> --------------------------------------------------
+> 
+> While it's possible to use the "write file" and "truncate" rights
+> independent of each other, it simplifies the mental model for
+> userspace callers to always use them together.
+> 
+> Specifically, the following behaviours might be surprising for users
+> when using these independently:
+> 
+>  * The commonly creat() syscall requires the truncate right when
+>    overwriting existing files, as it is equivalent to open(2) with
+>    O_TRUNC|O_CREAT|O_WRONLY.
+>  * The "write file" right is not always required to truncate a file,
+>    even through the open(2) syscall (when using O_RDONLY|O_TRUNC).
+> 
+> Nevertheless, keeping the two flags separate is the correct approach
+> to guarantee backwards compatibility for existing Landlock users.
+> 
+> When the "truncate" right is checked for ftruncate(2)
+> -----------------------------------------------------
+> 
+> Notably, for the purpose of ftruncate(2), the Landlock truncation
+> access right is looked up when *opening* the file, not when calling
+> ftruncate(). The availability of the truncate right is associated with
+> the opened file and is later checked to authorize ftruncate(2)
+> operations.
+> 
+> This is similar to how the write mode gets remembered after a
+> open(..., O_WRONLY) to authorize later write() operations.
+> 
+> These opened file descriptors can also be passed between processes and
+> will continue to enforce their truncation properties when these
+> processes attempt an ftruncate().
+> 
+> These patches are based on v6.1-rc1.
+> 
+> Best regards,
+> Günther
+> 
+> [1] https://docs.kernel.org/userspace-api/landlock.html#filesystem-flags
+> 
+> Past discussions:
+> V1: https://lore.kernel.org/all/20220707200612.132705-1-gnoack3000@gmail.com/
+> V2: https://lore.kernel.org/all/20220712211405.14705-1-gnoack3000@gmail.com/
+> V3: https://lore.kernel.org/all/20220804193746.9161-1-gnoack3000@gmail.com/
+> V4: https://lore.kernel.org/all/20220814192603.7387-1-gnoack3000@gmail.com/
+> V5: https://lore.kernel.org/all/20220817203006.21769-1-gnoack3000@gmail.com/
+> V6: https://lore.kernel.org/all/20220908195805.128252-1-gnoack3000@gmail.com/
+> V7: https://lore.kernel.org/all/20220930160144.141504-1-gnoack3000@gmail.com/
+> V8: https://lore.kernel.org/all/20221001154908.49665-1-gnoack3000@gmail.com/
+> V9: https://lore.kernel.org/all/20221008100935.73706-1-gnoack3000@gmail.com/
+> 
+> Changelog:
+> 
+> V10:
+> * Align security blob offsets in security/security.c
+>   Bug spotted by Nathan Chancellor. (Thanks!!)
 
-I've been seeing this livelock, too. The reproducer is,
-unfortunately, something I can't share - it's a massive program that
-triggers a data corruption I'm working on solving.
-
-Now that I've
-mostly fixed the data corruption, long duration test runs end up
-livelocking in page cache lookup after several hours.
-
-The test is effectively writing a 100MB file with multiple threads
-doing reverse adjacent racing 1MB unaligned writes. Once the file is
-written, it is then mmap()d and read back from the filesystem for
-verification.
-
-THis is then run with tens of processes concurrently, and then under
-a massively confined memcg (e.g. 32 processes/files are run in a
-memcg with only 200MB of memory allowed). This causes writeback,
-readahead and memory reclaim to race with incoming mmap read faults
-and writes.  The livelock occurs on file verification and it appears
-to be an interaction with readahead thrashing.
-
-On my test rig, the physical read to write ratio is at least 20:1 -
-with 32 processes running, the 5s IO rates are:
-
-Device             tps    MB_read/s    MB_wrtn/s    MB_dscd/s    MB_read    MB_wrtn    MB_dscd
-dm-0          52187.20      3677.42      1345.92         0.00      18387       6729          0
-dm-0          62865.60      5947.29         0.08         0.00      29736          0          0
-dm-0          62972.80      5911.20         0.00         0.00      29556          0          0
-dm-0          59803.00      5516.72       133.47         0.00      27583        667          0
-dm-0          63068.20      5292.34       511.52         0.00      26461       2557          0
-dm-0          56775.60      4184.52      1248.38         0.00      20922       6241          0
-dm-0          63087.40      5901.26        43.77         0.00      29506        218          0
-dm-0          62769.00      5833.97        60.54         0.00      29169        302          0
-dm-0          64810.20      5636.13       305.63         0.00      28180       1528          0
-dm-0          65222.60      5598.99       349.48         0.00      27994       1747          0
-dm-0          62444.00      4887.05       926.67         0.00      24435       4633          0
-dm-0          63812.00      5622.68       294.66         0.00      28113       1473          0
-dm-0          63482.00      5728.43       195.74         0.00      28642        978          0
-
-This is reading and writing the same amount of file data at the
-application level, but once the data has been written and kicked out
-of the page cache it seems to require an awful lot more read IO to
-get it back to the application. i.e. this looks like mmap() is
-readahead thrashing severely, and eventually it livelocks with this
-sort of report:
-
-[175901.982484] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-[175901.985095] rcu:    Tasks blocked on level-1 rcu_node (CPUs 0-15): P25728
-[175901.987996]         (detected by 0, t=97399871 jiffies, g=15891025, q=1972622 ncpus=32)
-[175901.991698] task:test_write      state:R  running task     stack:12784 pid:25728 ppid: 25696 flags:0x00004002
-[175901.995614] Call Trace:
-[175901.996090]  <TASK>
-[175901.996594]  ? __schedule+0x301/0xa30
-[175901.997411]  ? sysvec_apic_timer_interrupt+0xb/0x90
-[175901.998513]  ? sysvec_apic_timer_interrupt+0xb/0x90
-[175901.999578]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
-[175902.000714]  ? xas_start+0x53/0xc0
-[175902.001484]  ? xas_load+0x24/0xa0
-[175902.002208]  ? xas_load+0x5/0xa0
-[175902.002878]  ? __filemap_get_folio+0x87/0x340
-[175902.003823]  ? filemap_fault+0x139/0x8d0
-[175902.004693]  ? __do_fault+0x31/0x1d0
-[175902.005372]  ? __handle_mm_fault+0xda9/0x17d0
-[175902.006213]  ? handle_mm_fault+0xd0/0x2a0
-[175902.006998]  ? exc_page_fault+0x1d9/0x810
-[175902.007789]  ? asm_exc_page_fault+0x22/0x30
-[175902.008613]  </TASK>
-
-Given that filemap_fault on XFS is probably trying to map large
-folios, I do wonder if this is a result of some kind of race with
-teardown of a large folio...
-
-There is a very simple corruption reproducer script that has been
-written, but I haven't been using it. I don't know if long term
-running of the script here:
-
-https://lore.kernel.org/linux-xfs/d00aff43-2bdc-0724-1996-4e58e061ecfd@redhat.com/
-
-will trigger the livelock as the verification step is
-significantly different, but it will give you insight into the
-setup of the environment that leads to the livelock. Maybe you could
-replace the md5sum verification with a mmap read with xfs_io to
-simulate the fault load that seems to lead to this issue...
+I can confirm v10 works for me on top of next-20221018. Thanks a lot for
+digging into it and getting it resolved quickly!
 
 Cheers,
+Nathan
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+>   As suggested by Mickaël Salaün, the bugfix is part of change 4/11.
+> * Small wording and formatting fixes in comments
+>   Merged from Mickaël Salaün's fixes on his -next branch.
+> 
+> V9:
+> * Implement file_alloc_security hook
+>   * Needs to grant all Landlock rights by default for use cases where
+>     files are opened by other means than open(2), i.e. memfd_create(2)
+>   * Discovered and fixed by Mickaël Salaün on his -next branch
+>   * Add a selftest for the memfd_create(2) example
+> * file_open_hook: Reorder the logic a bit as discussed in review
+> * selftests: Return -errno from recv_fd() and send_fd()
+> * Rebase to master branch
+> * Reorder __maybe_unused patch before its use
+> * Various small formatting and documentation fixes in code,
+>   documentation and commit messages
+> 
+> V8:
+> * landlock: Refactor check_access_path_dual() into
+>   is_access_to_paths_allowed(), as suggested by Mickaël Salaün on the
+>   v7 review. Added this as a separate commit.
+> * landlock truncate feature: inline get_path_access()
+> * Documentation: update documentation date to October 2022
+> * selftests: locally #define __maybe_unused (checkpatch started
+>   complaining about it, but the header where it's defined is not
+>   usable from selftests)
+> 
+> V7:
+> * security: Create file_truncate hook
+>   * Fix the build on kernels without CONFIG_SECURITY_PATH (fixed by
+>     Mickaël Salaün)
+>   * lsm_hooks.h: Document file_truncate hook
+>   * fs/open.c: undo accidental indentation changes
+> * landlock: Support file truncation
+>   * Use the init_layer_masks() result as input for
+>     check_access_path_dual()
+>   * Naming
+>     * Rename the landlock_file_security.allowed_access field
+>       (previously called "rights")
+>     * Rename get_path_access_rights() to get_path_access()
+>     * Rename get_file_access() to get_required_file_open_access() to
+>       avoid confusion with get_path_access()
+>     * Use "access_request" for access_mask_t variables, access_req for
+>       unsigned long
+>   * Documentation:
+>     * Fixed some comments according to review
+>     * Added comments to get_required_file_open_access() and
+>       init_layer_masks()
+> * selftests:
+>   * remove unused variables
+>   * rename fd0,...,fd3 to fd_layer0,...,fd_layer3.
+>   * test_ftruncate: define layers on top and inline the helper function
+> * New tests (both added as separate commits)
+>   * More exhaustive ftruncate test: Add open_and_ftruncate test that
+>     exercises ftruncate more thoroughly with fixture variants
+>   * FD-passing test: exercise restricted file descriptors getting
+>     passed between processes, also using the same fixture variants
+> * Documentation: integrate review comments by Mickaël Salaün
+>   * do not use contraptions (don't)
+>   * use double backquotes in all touched lines
+>   * add the read/write open() analogy to the truncation docs
+>   * in code example, check for abi<0 explicitly and fix indentation
+> 
+> V6:
+> * LSM hooks: create file_truncate hook in addition to path_truncate.
+>   Use it in the existing path_truncate call sites where appropriate.
+> * landlock: check LANDLOCK_ACCESS_FS_TRUNCATE right during open(), and
+>   associate that right with the opened struct file in a security blob.
+>   Introduce get_path_access_rights() helper function.
+> * selftests: test ftruncate in a separate test, to exercise that
+>   the rights are associated with the file descriptor.
+> * Documentation: Rework documentation to reflect new ftruncate() semantics.
+> * Applied small fixes by Mickaël Salaün which he added on top of V5, in
+>   https://git.kernel.org/pub/scm/linux/kernel/git/mic/linux.git/log/?h=next
+>   (I hope I found them all.)
+> 
+> V5:
+> * Documentation
+>   * Fix wording in userspace-api headers and in landlock.rst.
+>   * Move the truncation limitation section one to the bottom.
+>   * Move all .rst changes into the documentation commit.
+> * selftests
+>   * Remove _metadata argument from helpers where it became unnecessary.
+>   * Open writable file descriptors at the top of both tests, before Landlock
+>     is enabled, to exercise ftruncate() independently from open().
+>   * Simplify test_ftruncate and decouple it from exercising open().
+>   * test_creat(): Return errno on close() failure (it does not conflict).
+>   * Fix /* comment style */
+>   * Reorder blocks of EXPECT_EQ checks to be consistent within a test.
+>   * Add missing |O_TRUNC to a check in one test.
+>   * Put the truncate_unhandled test before the other.
+> 
+> V4:
+>  * Documentation
+>    * Clarify wording and syntax as discussed in review.
+>    * Use a less confusing error message in the example.
+>  * selftests:
+>    * Stop using ASSERT_EQ in test helpers, return EBADFD instead.
+>      (This is an intentionally uncommon error code, so that the source
+>      of the error is clear and the test can distinguish test setup
+>      failures from failures in the actual system call under test.)
+>  * samples/Documentation:
+>    * Use additional clarifying comments in the kernel backwards
+>      compatibility logic.
+> 
+> V3:
+>  * selftests:
+>    * Explicitly test ftruncate with readonly file descriptors
+>      (returns EINVAL).
+>    * Extract test_ftruncate, test_truncate, test_creat helpers,
+>      which simplified the previously mixed usage of EXPECT/ASSERT.
+>    * Test creat() behaviour as part of the big truncation test.
+>    * Stop testing the truncate64(2) and ftruncate64(2) syscalls.
+>      This simplifies the tests a bit. The kernel implementations are the
+>      same as for truncate(2) and ftruncate(2), so there is little benefit
+>      from testing them exhaustively. (We aren't testing all open(2)
+>      variants either.)
+>  * samples/landlock/sandboxer.c:
+>    * Use switch() to implement best effort mode.
+>  * Documentation:
+>    * Give more background on surprising truncation behaviour.
+>    * Use switch() in the example too, to stay in-line with the sample tool.
+>    * Small fixes in header file to address previous comments.
+> * misc:
+>   * Fix some typos and const usages.
+> 
+> V2:
+>  * Documentation: Mention the truncation flag where needed.
+>  * Documentation: Point out connection between truncation and file writing.
+>  * samples: Add file truncation to the landlock/sandboxer.c sample tool.
+>  * selftests: Exercise open(2) with O_TRUNC and creat(2) exhaustively.
+>  * selftests: Exercise truncation syscalls when the truncate right
+>    is not handled by Landlock.
+> 
+> Günther Noack (11):
+>   security: Create file_truncate hook from path_truncate hook
+>   landlock: Refactor check_access_path_dual() into
+>     is_access_to_paths_allowed()
+>   landlock: Document init_layer_masks() helper
+>   landlock: Support file truncation
+>   selftests/landlock: Test file truncation support
+>   selftests/landlock: Test open() and ftruncate() in multiple scenarios
+>   selftests/landlock: Locally define __maybe_unused
+>   selftests/landlock: Test FD passing from restricted to unrestricted
+>     processes
+>   selftests/landlock: Test ftruncate on FDs created by memfd_create(2)
+>   samples/landlock: Extend sample tool to support
+>     LANDLOCK_ACCESS_FS_TRUNCATE
+>   landlock: Document Landlock's file truncation support
+> 
+>  Documentation/userspace-api/landlock.rst     |  67 ++-
+>  fs/namei.c                                   |   2 +-
+>  fs/open.c                                    |   2 +-
+>  include/linux/lsm_hook_defs.h                |   1 +
+>  include/linux/lsm_hooks.h                    |  10 +-
+>  include/linux/security.h                     |   6 +
+>  include/uapi/linux/landlock.h                |  21 +-
+>  samples/landlock/sandboxer.c                 |  12 +-
+>  security/apparmor/lsm.c                      |   6 +
+>  security/landlock/fs.c                       | 206 ++++++--
+>  security/landlock/fs.h                       |  24 +
+>  security/landlock/limits.h                   |   2 +-
+>  security/landlock/setup.c                    |   1 +
+>  security/landlock/syscalls.c                 |   2 +-
+>  security/security.c                          |  16 +-
+>  security/tomoyo/tomoyo.c                     |  13 +
+>  tools/testing/selftests/landlock/base_test.c |  38 +-
+>  tools/testing/selftests/landlock/common.h    |  85 +++-
+>  tools/testing/selftests/landlock/fs_test.c   | 468 ++++++++++++++++++-
+>  19 files changed, 862 insertions(+), 120 deletions(-)
+> 
+> 
+> base-commit: 9abf2313adc1ca1b6180c508c25f22f9395cc780
+> -- 
+> 2.38.0
+> 
