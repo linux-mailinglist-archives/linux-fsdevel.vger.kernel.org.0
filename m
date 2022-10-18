@@ -2,79 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DBB5C602EC1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 16:48:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 08C31602EF7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 16:57:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230260AbiJROs5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 10:48:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60718 "EHLO
+        id S229872AbiJRO5E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 10:57:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54414 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230117AbiJROsx (ORCPT
+        with ESMTP id S229452AbiJRO5C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 10:48:53 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C8455D8EEE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 07:48:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=xIxk1ZJXHiq+L/K5Scay6tItIt3SSciUv3926kxIpBo=; b=ixIhGjGVgflEaaE8r7777QDZ5A
-        VrDUvR/pWbIv8fFDXyIWUT3KWF343f/h3b+nv4ujJnJw+6vNd1rsvxPae3Tzu6CDRiBUs32KMiKwB
-        bHtkvxDpKSCWH5XgUzpOUL7BGHfL4wQFwombXV9F+ha9zWyF27L6tfne035VgNB5W4DS15XZ1hQlC
-        4MvQ4NLDzYMsPQ8v2rgZobHss9UQEzo9nX/YDPo0qB/QMmjpXinlqG6ygeU6TGSjKplPX/R/6fH2S
-        5xcZVkNSTebZpgqEVam1oRPWiGySAlc0kAmZzrjgey4bFnSZmz50pFQQvT0APFh5rbVTELWQoJenA
-        lErID+YA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1okntb-007NJM-GF; Tue, 18 Oct 2022 14:48:43 +0000
-Date:   Tue, 18 Oct 2022 07:48:43 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, jlayton@redhat.com,
-        smfrench@gmail.com, hch@infradead.org, willy@infradead.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC][PATCH] iov_iter: Add extraction functions
-Message-ID: <Y068y8iHwL8Q9Qdk@infradead.org>
-References: <Yy5pzHiQ4GRCOoXV@ZenIV>
- <3750754.1662765490@warthog.procyon.org.uk>
- <281330.1666103382@warthog.procyon.org.uk>
+        Tue, 18 Oct 2022 10:57:02 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5F01D9960;
+        Tue, 18 Oct 2022 07:57:01 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 87A2BB81F93;
+        Tue, 18 Oct 2022 14:57:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3400BC433D6;
+        Tue, 18 Oct 2022 14:56:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666105019;
+        bh=qmaUREKKpKGIfPeuyHVYJiyiQ+vwR1CgcRLVNMmVems=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=tSWyO8KMO7Eo2SWIkFm8Fv/jNMSEMNYxqaBmHHVSbbPRHMjQfB2ay/FZpgWA7e39W
+         TXzVXcbSBYKTZ5fDw6ycHeG2ZTRJPHwkt14ThiP4HYcDhErgUhpJVbQfvVaIOLU4Hj
+         n6JpOEQlYl6uDQfd3C84PQ6Q2/jgU+2bRd5IR49wX/FwG1rqbD4l6srz8vsxOWGD+y
+         YkcPnRVYrf6eavusnsT1t5IkuOEkCLvZbH8GxwUUSJqI3MiE7L1adVjFQjNhBTx4L4
+         K85dWprbcFpCdFAxFmEWOcBJIZ3Fy/WiJeAJMd+gsrfjlReJDVtqMeAgHj1faQyG4C
+         +ZEqAplLOQp2A==
+Message-ID: <c303cf0701a2c09487bda33012bc0ceb79f211c0.camel@kernel.org>
+Subject: Re: [RFC PATCH v7 9/9] vfs: expose STATX_VERSION to userland
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
+        trondmy@hammerspace.com, neilb@suse.de, viro@zeniv.linux.org.uk,
+        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
+        lczerner@redhat.com, jack@suse.cz, bfields@fieldses.org,
+        brauner@kernel.org, fweimer@redhat.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Date:   Tue, 18 Oct 2022 10:56:55 -0400
+In-Reply-To: <1e01f88bcde1b7963e504e0fd9cfb27495eb03ca.camel@kernel.org>
+References: <20221017105709.10830-1-jlayton@kernel.org>
+         <20221017105709.10830-10-jlayton@kernel.org>
+         <20221017221433.GT3600936@dread.disaster.area>
+         <1e01f88bcde1b7963e504e0fd9cfb27495eb03ca.camel@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <281330.1666103382@warthog.procyon.org.uk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 18, 2022 at 03:29:42PM +0100, David Howells wrote:
-> Note that iov_iter_get_pages2() doesn't handle KVEC-class iterators, which
-> this code does - for kmalloc'd, vmalloc'd and vmap'd memory and for global and
-> stack variables.  What I've written gets the physical addresses but
-> doesn't/can't pin it (which probably means I can't just move my code into
-> iov_iter_get_pages2()).
+On Tue, 2022-10-18 at 06:35 -0400, Jeff Layton wrote:
+> On Tue, 2022-10-18 at 09:14 +1100, Dave Chinner wrote:
+> > On Mon, Oct 17, 2022 at 06:57:09AM -0400, Jeff Layton wrote:
+> > > From: Jeff Layton <jlayton@redhat.com>
+> > >=20
+> > > Claim one of the spare fields in struct statx to hold a 64-bit inode
+> > > version attribute. When userland requests STATX_VERSION, copy the
+> > > value from the kstat struct there, and stop masking off
+> > > STATX_ATTR_VERSION_MONOTONIC.
+> >=20
+> > Can we please make the name more sepcific than "version"? It's way
+> > too generic and - we already have userspace facing "version" fields
+> > for inodes that refer to the on-disk format version exposed in
+> > various UAPIs. It's common for UAPI structures used for file
+> > operations to have a "version" field that refers to the *UAPI
+> > structure version* rather than file metadata or data being retrieved
+> > from the file in question.
+> >=20
+> > The need for an explanatory comment like this:
+> >=20
+> > > +	__u64	stx_version; /* Inode change attribute */
+> >=20
+> > demonstrates it is badly named. If you want it known as an inode
+> > change attribute, then don't name the variable "version". In
+> > reality, it really needs to be an opaque cookie, not something
+> > applications need to decode directly to make sense of.
+> >=20
+>=20
+> Fair enough. I started with this being named stx_change_attr and other
+> people objected. I then changed to stx_ino_version, but the "_ino"
+> seemed redundant.
+>=20
+> I'm open to suggestions here. Naming things like this is hard.
+>=20
 
-Please look at the long discussion on Ira's patches for
-iov_iter_pin_pages where we went through this over and over again.
-We need to handle all of these in the common helper.
+How about:
 
-> Further, my code also treats multipage folios as single units which
-> iov_iter_get_pages2() also doesn't - at least from XARRAY-class iterators.
-> 
-> The UBUF-/IOVEC-extraction code doesn't handle multipage folios because
-> get_user_pages_fast() doesn't - though perhaps it will need to at some point.
+    STATX_CHANGE / statx->stx_change / STATX_ATTR_CHANGE_MONOTONIC
 
-Yes, we need to be smarter about folios.  But that is nothing magic
-about network file systems.  I have old patches that added a (barely
-working) variant of get_user_pages_fast that exported bio_vecs and I
-think willy planned to look into a folio based version of get/pin
-user pages.  But one thing at a time.  I think the work from Ira to
-switch to proper pinning and sort out the weirdnesses for non-users
-buffer types is the first priority.  After that proper folio or large
-contiguous range support is another item.  But none of that is helped
-by parallel infrastructure.
+?
+--=20
+Jeff Layton <jlayton@kernel.org>
