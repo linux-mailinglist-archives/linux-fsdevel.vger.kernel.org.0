@@ -2,75 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B5F660328A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 20:32:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CCB66032BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 20:48:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229885AbiJRScd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 14:32:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38432 "EHLO
+        id S230235AbiJRSsw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 14:48:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44642 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229710AbiJRScc (ORCPT
+        with ESMTP id S230121AbiJRSsv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 14:32:32 -0400
-Received: from mail-yb1-xb2c.google.com (mail-yb1-xb2c.google.com [IPv6:2607:f8b0:4864:20::b2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DD6F88A0B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 11:32:30 -0700 (PDT)
-Received: by mail-yb1-xb2c.google.com with SMTP id i127so7262873ybc.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 11:32:30 -0700 (PDT)
+        Tue, 18 Oct 2022 14:48:51 -0400
+Received: from mail-ed1-x52f.google.com (mail-ed1-x52f.google.com [IPv6:2a00:1450:4864:20::52f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51B18A2871;
+        Tue, 18 Oct 2022 11:48:43 -0700 (PDT)
+Received: by mail-ed1-x52f.google.com with SMTP id m15so21827015edb.13;
+        Tue, 18 Oct 2022 11:48:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L16nsXH834AKuMsM1DMh0J2GdKedU+LxwtqcL0kTxPI=;
-        b=XO8YUb/HBgZcSFvKYW3v1o26TnjeGANLpJgT83ktEA5S3Wpn8WFZv1ed3CMM3+J+2M
-         BZy26UEEhByJ/XoGJuZMOT70oocT1eWbj1tLh2Y05Y9NNDzK3f5PWHipzgAtlbBsTCd6
-         z1uWBMk+2CzW7mvcTmvhwAFbUpRAHM2d3K+NNH4uyCu+TuNeU/EyxIXMq9RxRoVeaY3R
-         YnRpBEZ+pNJUGKqB6hHn2TOYXx8KD5M398NxDBe1fooI4f1dfNY0GnWJR71p1MLgb3x9
-         FxW4UmbW9u+j2FVcEubUkGusDH8gGJAxJtHMYJNxZrved0o3fbCGFZYNZYhT4fIIRjzo
-         Iq9A==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2EgRk0P81xPzL9qww2eLXeNWcb1EWchmGlnBKdouweE=;
+        b=K/lo4kdx8fLgnv+KP45qob3AoybmziJgIjiw3Jn7PFCi1EUZg9G8YTRNSj6YTZ+lbQ
+         I9eHW7u5Xy+tn3KH/VQZv5iZNP+E3WEC0iW76wU5uie7xTyucvIM5qjHQvogLDNot8l2
+         QfskDVyp5niBpeczzIcTgg/QmVRNX34Wn233XRc2xRceaPohx+E66Wh2SiToJA3fYpGx
+         jjZG3tv69n/j4QZsq7md5U3eV9er2pDWO+Wodl9XcUkBm43//1GDiE1TS+S6ACrfFSCY
+         FneWgW284AH9RScE7ZA6/zcaFZXEsFRpC9FbP5Iew2EWXGsTHMVtd2VjOj/67g2qRmhf
+         55Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=L16nsXH834AKuMsM1DMh0J2GdKedU+LxwtqcL0kTxPI=;
-        b=flNrfIUOAbKTAsyWbUYJeB6FX9JDnb4Jk5yDKTQt16YYrD7FRkXvvyfldxKA8OjPFq
-         snFBzioRn2ov47DZoxT7hNa75K6nryn8XFKwaKSwniYozDdsdGEDAJ/2JYqNNQ32QOrg
-         QgvwQoczIQnxP9ExtmfzXJZWurkKt4IOowjuBeD40yAyg7EmWWACbmek3c838uS3d9t/
-         ADEqyBlNyRWYULkdkk9zlszpLTj2XOrO2mDFeeR7c6+JgisOOc1Ufyp4B8o0XuxnnYa8
-         7nGWDpDvvnHpSpihwt0B9ieUuPdN5RPQsjZ/jvvtHD/WvhVOyJfcVCzwGHlEo7PR5Py7
-         gDeg==
-X-Gm-Message-State: ACrzQf0IVUwsKVTrmiZEfXUF2aitCaFvq6XbObZY8JAVd4HPc82EKJH9
-        7h4CIsP93z4A/KfWeYDacn7eF/SPZwky3IR8VQVf
-X-Google-Smtp-Source: AMsMyM549fr2F8ghdaTmpS/lhPUsehNpD3P88Hit4TOUZZUVZsJ34NGZDgq0dmFRGFU5YGCDaHopXFJifv1b36RZvn0=
-X-Received: by 2002:a05:6902:724:b0:6c0:1784:b6c7 with SMTP id
- l4-20020a056902072400b006c01784b6c7mr3615835ybt.15.1666117949646; Tue, 18 Oct
- 2022 11:32:29 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221008100935.73706-1-gnoack3000@gmail.com> <b8566973-63bc-441f-96b9-f822e9944127@digikod.net>
- <Y0g+TEgGGhZDm7MX@dev-arch.thelio-3990X> <Y0xJUy3igQXWPAeq@nuc>
- <Y0xkZqKoE3rRJefh@nuc> <ea8117e5-7f5c-7598-5d6a-868184a6e4ae@digikod.net>
- <CAHC9VhR8SQo9x_cv6BZQSwt0rrjeGh-t+YV10GrA3PbC+yHrxw@mail.gmail.com> <Y07rP/YNYxvQzOei@nuc>
-In-Reply-To: <Y07rP/YNYxvQzOei@nuc>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 18 Oct 2022 14:32:18 -0400
-Message-ID: <CAHC9VhRamtwyA00A1j+8cd+UtZy7THu6VFch6qe0ESTx+bc+jA@mail.gmail.com>
-Subject: Re: [PATCH v9 00/11] landlock: truncate support
-To:     =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack3000@gmail.com>
-Cc:     =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E . Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2EgRk0P81xPzL9qww2eLXeNWcb1EWchmGlnBKdouweE=;
+        b=vf5Lg6P1rlwtN3ESBzgmXvh2FGoZROC5xrJ9Dx4l04WtwtflG36GPZfnjoyTJ02d6w
+         AX0bgJNI/9xzoPrM2vQg2HvmQZzpeC2VdJ71HRmYVsazU3IgySBNDlbUn5+v2gwiOXZJ
+         Er+4JO20CLzGbXE0Qp9kr3ijs057X1UM8zc2/5FMW2kHFIvfFyiiAFe9nevZnc6MiUO6
+         HJOK+upY8oF3O8eKNOC+0ml4dpSrRFq4arvP350KkFZG69n+h36n7Bo403Ee/67mJjqI
+         eiSpIHw6ydW4lX02OVuCN5qVem9f2a1G9jAlrcKcU1E5G6R6q0SZofCK66nOtQ4/Uroj
+         lXng==
+X-Gm-Message-State: ACrzQf3sH+MrT2sVoBozqC9cz28QKtNa+t6q8+fI+BnWQVJT5IyJynnT
+        6UmY6A3ksqeUOS4RX62yGpmKuSZQRjo=
+X-Google-Smtp-Source: AMsMyM42VftfztXwTkzBTqeAltrf8oNmfPM0JmYRnJKypdJcCiTBVibgtdK1Gc/ixK2zeEnLMKJfHg==
+X-Received: by 2002:aa7:cb49:0:b0:45c:7613:661b with SMTP id w9-20020aa7cb49000000b0045c7613661bmr3810197edt.273.1666118921952;
+        Tue, 18 Oct 2022 11:48:41 -0700 (PDT)
+Received: from 127.0.0.1localhost (94.197.72.2.threembb.co.uk. [94.197.72.2])
+        by smtp.gmail.com with ESMTPSA id j18-20020a17090623f200b0078db18d7972sm7855355ejg.117.2022.10.18.11.48.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Oct 2022 11:48:41 -0700 (PDT)
+From:   Pavel Begunkov <asml.silence@gmail.com>
+To:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org
+Cc:     io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
-        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        Pavel Begunkov <asml.silence@gmail.com>
+Subject: [RFC for-next 0/4] enable pcpu bio caching for IRQ I/O
+Date:   Tue, 18 Oct 2022 19:47:12 +0100
+Message-Id: <cover.1666114003.git.asml.silence@gmail.com>
+X-Mailer: git-send-email 2.38.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -78,110 +70,55 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 18, 2022 at 2:06 PM G=C3=BCnther Noack <gnoack3000@gmail.com> w=
-rote:
->
-> On Tue, Oct 18, 2022 at 01:12:48PM -0400, Paul Moore wrote:
-> > On Mon, Oct 17, 2022 at 5:16 AM Micka=C3=ABl Sala=C3=BCn <mic@digikod.n=
-et> wrote:
-> > > On 16/10/2022 22:07, G=C3=BCnther Noack wrote:
-> >
-> > ...
-> >
-> > > > Proposed fix
-> > > > ------------
-> > > >
-> > > > I think the LSM framework should ensure that security blobs are
-> > > > pointer-aligned.
-> > > >
-> > > > The LSM framework takes the role of a memory allocator here, and
-> > > > memory allocators should normally return aligned addresses, in my
-> > > > understanding. -- It seems reasonable for AppArmor to make that
-> > > > assumption.
-> > > >
-> > > > The proposed one-line fix is: Change lsm_set_blob_size() in
-> > > > security/security.c, where the positions of the individual security
-> > > > blobs are calculated, so that each allocated blob is aligned to a
-> > > > pointer size boundary.
-> > > >
-> > > > if (*need > 0) {
-> > > >    *lbs =3D ALIGN(*lbs, sizeof(void *));   // NEW
-> > > >
-> > > >    offset =3D *lbs;
-> > > >    *lbs +=3D *need;
-> > > >    *need =3D offset;
-> > > > }
-> > >
-> > > This looks good to me. This fix should be part of patch 4/11 since it
-> > > only affects Landlock for now.
-> >
-> > Hi G=C3=BCnther,
-> >
-> > Sorry for not seeing this email sooner; I had thought the landlock
-> > truncate work was largely resolved with just a few small things for
-> > you to sort out with Micka=C3=ABl so I wasn't following this thread ver=
-y
-> > closely anymore.
-> >
-> > Regarding the fix, yes, I think the solution is to fixup the LSM
-> > security blob allocator to properly align the entries.  As you already
-> > mentioned, that's common behavior elsewhere and I see no reason why we
-> > should deviate from that in the LSM allocator.  Honestly, looking at
-> > the rest of the allocator right now I can see a few other things to
-> > improve, but those can wait for a later time so as to not conflict
-> > with this work (/me adds a new entry to my todo list).
-> >
-> > Other than that, I might suggest the lsm_set_blob_size()
-> > implementation below as it seems cleaner to me and should be
-> > functionally equivalent ... at least on quick inspection, if I've done
-> > something dumb with the code below please feel free to ignore me ;)
-> >
-> >   static void __init lsm_set_blob_size(int *need, int *lbs)
-> >   {
-> >     if (*need <=3D 0)
-> >       return;
-> >
-> >     *need =3D ALIGN(*need, sizeof(void *));
-> >     *lbs +=3D *need;
-> >   }
->
-> Hello Paul,
->
-> thanks for the reply. Sounds good, I'll go forward with this approach
-> then and send a V10 soon.
->
-> Implementation-wise for this function, I think this is the closest to
-> your suggestion I can get:
->
-> static void __init lsm_set_blob_size(int *need, int *lbs)
-> {
->   int offset;
->
->   if (*need <=3D 0)
->     return;
->
->   offset =3D ALIGN(*lbs, sizeof(void *));
->   *lbs =3D offset + *need;
->   *need =3D offset;
-> }
->
-> This differs from your suggestion in that:
->
-> - *need gets assigned to the offset at the end. (It's a bit unusual:
->   *need is both used to specify the requested blob size when calling
->   the function, and for returning the allocated offset from the
->   function call.)
->
-> - This implementation aligns the blob's start offset, not the end
->   offset. (probably makes no real difference in practice)
->
-> As suggested by Micka=C3=ABl, I'll make this fix part of the "Landlock:
-> Support file truncation" patch, so that people backporting it won't
-> accidentally leave it out.
+This series implements bio pcpu caching for normal / IRQ-driven I/O
+extending REQ_ALLOC_CACHE currently limited to iopoll. The allocation side
+still only works from non-irq context, which is the reason it's not enabled
+by default, but turning it on for other users (e.g. filesystems) is
+as a matter of passing a flag.
 
-That's all fine with me, the important thing is to make sure the
-landlock truncate patches don't break anything.  We'll cleanup the
-allocator later.
+t/io_uring with an Optane SSD setup showed +7% for batches of 32 requests
+and +4.3% for batches of 8.
 
---=20
-paul-moore.com
+IRQ, 128/32/32, cache off
+IOPS=59.08M, BW=28.84GiB/s, IOS/call=31/31
+IOPS=59.30M, BW=28.96GiB/s, IOS/call=32/32
+IOPS=59.97M, BW=29.28GiB/s, IOS/call=31/31
+IOPS=59.92M, BW=29.26GiB/s, IOS/call=32/32
+IOPS=59.81M, BW=29.20GiB/s, IOS/call=32/31
+
+IRQ, 128/32/32, cache on
+IOPS=64.05M, BW=31.27GiB/s, IOS/call=32/31
+IOPS=64.22M, BW=31.36GiB/s, IOS/call=32/32
+IOPS=64.04M, BW=31.27GiB/s, IOS/call=31/31
+IOPS=63.16M, BW=30.84GiB/s, IOS/call=32/32
+
+IRQ, 32/8/8, cache off
+IOPS=50.60M, BW=24.71GiB/s, IOS/call=7/8
+IOPS=50.22M, BW=24.52GiB/s, IOS/call=8/7
+IOPS=49.54M, BW=24.19GiB/s, IOS/call=8/8
+IOPS=50.07M, BW=24.45GiB/s, IOS/call=7/7
+IOPS=50.46M, BW=24.64GiB/s, IOS/call=8/8
+
+IRQ, 32/8/8, cache on
+IOPS=51.39M, BW=25.09GiB/s, IOS/call=8/7
+IOPS=52.52M, BW=25.64GiB/s, IOS/call=7/8
+IOPS=52.57M, BW=25.67GiB/s, IOS/call=8/8
+IOPS=52.58M, BW=25.67GiB/s, IOS/call=8/7
+IOPS=52.61M, BW=25.69GiB/s, IOS/call=8/8
+
+The main part is in patch 3. Would be great to take patch 1 separately
+for 6.1 for extra safety.
+
+Pavel Begunkov (4):
+  bio: safeguard REQ_ALLOC_CACHE bio put
+  bio: split pcpu cache part of bio_put into a helper
+  block/bio: add pcpu caching for non-polling bio_put
+  io_uring/rw: enable bio caches for IRQ rw
+
+ block/bio.c   | 92 +++++++++++++++++++++++++++++++++++++++------------
+ io_uring/rw.c |  3 +-
+ 2 files changed, 73 insertions(+), 22 deletions(-)
+
+-- 
+2.38.0
+
