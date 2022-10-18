@@ -2,187 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AFA4B602D34
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 15:42:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44E72602D5A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 15:49:19 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230436AbiJRNmb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 09:42:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34716 "EHLO
+        id S231220AbiJRNtQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 09:49:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230453AbiJRNm1 (ORCPT
+        with ESMTP id S231204AbiJRNtN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 09:42:27 -0400
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3209ACC816
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 06:42:24 -0700 (PDT)
-Received: by mail-pf1-x431.google.com with SMTP id h13so14106526pfr.7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 18 Oct 2022 06:42:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TQSORsKSMngPJb5f/eC6Hu6kpkY5kYXJ98QHFM8UvxY=;
-        b=ZHxxlG3UTEot3sPjKtvw1X3aBdRbEmIooxBSsM63jzfeOELeKLeWEK8Ka0UBZMDOP+
-         akvRFs76C2wKq91BFhqgTb5HB703LMV7esd/A+wWslFPM0+sKw9GkKbhOLqB+y2xkhr8
-         xAw55/tP2EjBapVx7JcnOuoy3rb21J87PUbxaFqakG14s9yKfbb31M3qi5ybSq2mRACM
-         jSitk4irsc/WL0t07xPDMeWHTF1Fx+OZSUwfySvO4jPCavdKRxOz8qiV/i/KYM1y4DB8
-         jWL9urfkjvvcFCgxaCtIJ6pE7MoPjXcItlLTszbdaWP+IhZBfYH0+bbwgZYx0bdSzYu+
-         tT2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TQSORsKSMngPJb5f/eC6Hu6kpkY5kYXJ98QHFM8UvxY=;
-        b=Xkt9SGSP3hJDbEp7ok1qV3qTmqP8zVQDI4c7rEsoZ5cnn2v9Q2WpkMPUCvKIVsS84N
-         FP6+JtH3TQ7GIdruEOVZA64dXxfNKu7SP1JUDB6BYgbG1EImohWgLmrhSpQedKj0XHzX
-         GoCbMARnqHMsRLQXU1nllgQCjJGZkuFbe58Da/v5o6TMyBrfPkVhwos3mwUTPZC8DLSk
-         WZXIAUr6DADLchEfjqA+YNW/3UUu3ewtzFB1UsbTXTkLg156SirRbybQ/aeAop1Fg4vO
-         wkfRisRBxsyUF0tR81jPeAvEzlsbYLfooNwFoFKWUb0BUusf/jW0yxptbyhBz6oNtMkb
-         PbPA==
-X-Gm-Message-State: ACrzQf22p6WkPXjkIF6Pbz1QMIZZyIrv8o1ORJkXgQH9jKhOMXZtesNX
-        rZKEWS6L8wWHoix/iJRXjKKZYywHYYRGo1T/chQKTw==
-X-Google-Smtp-Source: AMsMyM457hPoLFIJ8lUjGLgHK/+h3GgdmiyyuIPyEtfxcbOdN4bX0W7oNp+dFIXy83RpDOunf04FJy/8XBLnfxpoQmE=
-X-Received: by 2002:a63:88c7:0:b0:462:79de:dc75 with SMTP id
- l190-20020a6388c7000000b0046279dedc75mr2721715pgd.458.1666100542751; Tue, 18
- Oct 2022 06:42:22 -0700 (PDT)
+        Tue, 18 Oct 2022 09:49:13 -0400
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29E5CCF1AA;
+        Tue, 18 Oct 2022 06:49:12 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 9F07E20802;
+        Tue, 18 Oct 2022 13:49:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1666100950; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sMwxr+Oz3KInXQcPe4Qmdr0nrPXTQW3wC4Yi95Kd59Q=;
+        b=1qlciLI1a831qiIJk895gHyfoZVOq8RD604OqQCDz4YPjZK5yiPNMdoUudwmq7Hy5joP1S
+        kaOAMCxtps7I9K5afdOYAbkGP7aX3YaQ7OPm1MDbXcMptkLdT3OWlLXjl06WVBfmB1Vwgj
+        282NZpFQv1LIQi4iV68cy8cL0+TMH2s=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1666100950;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sMwxr+Oz3KInXQcPe4Qmdr0nrPXTQW3wC4Yi95Kd59Q=;
+        b=I76cujcFTWIYufxjoUkCDZjfQxe5GvtQjKJg1yzBQfKRhvwzLzJNFJGgC22tszrDOebbHp
+        Gg8TOyAW9No1J5Dg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8F21113480;
+        Tue, 18 Oct 2022 13:49:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id n+fmItauTmOXKAAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 18 Oct 2022 13:49:10 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 1FE5AA06EE; Tue, 18 Oct 2022 15:49:10 +0200 (CEST)
+Date:   Tue, 18 Oct 2022 15:49:10 +0200
+From:   Jan Kara <jack@suse.cz>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Dave Chinner <david@fromorbit.com>, tytso@mit.edu,
+        adilger.kernel@dilger.ca, djwong@kernel.org,
+        trondmy@hammerspace.com, neilb@suse.de, viro@zeniv.linux.org.uk,
+        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
+        lczerner@redhat.com, jack@suse.cz, bfields@fieldses.org,
+        brauner@kernel.org, fweimer@redhat.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [RFC PATCH v7 9/9] vfs: expose STATX_VERSION to userland
+Message-ID: <20221018134910.v4jim6jyjllykcaf@quack3>
+References: <20221017105709.10830-1-jlayton@kernel.org>
+ <20221017105709.10830-10-jlayton@kernel.org>
+ <20221017221433.GT3600936@dread.disaster.area>
+ <1e01f88bcde1b7963e504e0fd9cfb27495eb03ca.camel@kernel.org>
 MIME-Version: 1.0
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-2-chao.p.peng@linux.intel.com> <de680280-f6b1-9337-2ae4-4b2faf2b823b@suse.cz>
- <20221017161955.t4gditaztbwijgcn@box.shutemov.name> <c63ad0cd-d517-0f1e-59e9-927d8ae15a1a@amd.com>
- <20221017215640.hobzcz47es7dq2bi@box.shutemov.name>
-In-Reply-To: <20221017215640.hobzcz47es7dq2bi@box.shutemov.name>
-From:   Vishal Annapurve <vannapurve@google.com>
-Date:   Tue, 18 Oct 2022 19:12:10 +0530
-Message-ID: <CAGtprH8xEdgATjQdhi2b_KqUuSOZHUM-Lh+O-ZtcFKbHf2_75g@mail.gmail.com>
-Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
-To:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-Cc:     "Gupta, Pankaj" <pankaj.gupta@amd.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1e01f88bcde1b7963e504e0fd9cfb27495eb03ca.camel@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 18, 2022 at 3:27 AM Kirill A . Shutemov
-<kirill.shutemov@linux.intel.com> wrote:
->
-> On Mon, Oct 17, 2022 at 06:39:06PM +0200, Gupta, Pankaj wrote:
-> > On 10/17/2022 6:19 PM, Kirill A . Shutemov wrote:
-> > > On Mon, Oct 17, 2022 at 03:00:21PM +0200, Vlastimil Babka wrote:
-> > > > On 9/15/22 16:29, Chao Peng wrote:
-> > > > > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> > > > >
-> > > > > KVM can use memfd-provided memory for guest memory. For normal userspace
-> > > > > accessible memory, KVM userspace (e.g. QEMU) mmaps the memfd into its
-> > > > > virtual address space and then tells KVM to use the virtual address to
-> > > > > setup the mapping in the secondary page table (e.g. EPT).
-> > > > >
-> > > > > With confidential computing technologies like Intel TDX, the
-> > > > > memfd-provided memory may be encrypted with special key for special
-> > > > > software domain (e.g. KVM guest) and is not expected to be directly
-> > > > > accessed by userspace. Precisely, userspace access to such encrypted
-> > > > > memory may lead to host crash so it should be prevented.
-> > > > >
-> > > > > This patch introduces userspace inaccessible memfd (created with
-> > > > > MFD_INACCESSIBLE). Its memory is inaccessible from userspace through
-> > > > > ordinary MMU access (e.g. read/write/mmap) but can be accessed via
-> > > > > in-kernel interface so KVM can directly interact with core-mm without
-> > > > > the need to map the memory into KVM userspace.
-> > > > >
-> > > > > It provides semantics required for KVM guest private(encrypted) memory
-> > > > > support that a file descriptor with this flag set is going to be used as
-> > > > > the source of guest memory in confidential computing environments such
-> > > > > as Intel TDX/AMD SEV.
-> > > > >
-> > > > > KVM userspace is still in charge of the lifecycle of the memfd. It
-> > > > > should pass the opened fd to KVM. KVM uses the kernel APIs newly added
-> > > > > in this patch to obtain the physical memory address and then populate
-> > > > > the secondary page table entries.
-> > > > >
-> > > > > The userspace inaccessible memfd can be fallocate-ed and hole-punched
-> > > > > from userspace. When hole-punching happens, KVM can get notified through
-> > > > > inaccessible_notifier it then gets chance to remove any mapped entries
-> > > > > of the range in the secondary page tables.
-> > > > >
-> > > > > The userspace inaccessible memfd itself is implemented as a shim layer
-> > > > > on top of real memory file systems like tmpfs/hugetlbfs but this patch
-> > > > > only implemented tmpfs. The allocated memory is currently marked as
-> > > > > unmovable and unevictable, this is required for current confidential
-> > > > > usage. But in future this might be changed.
-> > > > >
-> > > > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > > > > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> > > > > ---
-> > > >
-> > > > ...
-> > > >
-> > > > > +static long inaccessible_fallocate(struct file *file, int mode,
-> > > > > +                                  loff_t offset, loff_t len)
-> > > > > +{
-> > > > > +       struct inaccessible_data *data = file->f_mapping->private_data;
-> > > > > +       struct file *memfd = data->memfd;
-> > > > > +       int ret;
-> > > > > +
-> > > > > +       if (mode & FALLOC_FL_PUNCH_HOLE) {
-> > > > > +               if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
-> > > > > +                       return -EINVAL;
-> > > > > +       }
-> > > > > +
-> > > > > +       ret = memfd->f_op->fallocate(memfd, mode, offset, len);
-> > > > > +       inaccessible_notifier_invalidate(data, offset, offset + len);
-> > > >
-> > > > Wonder if invalidate should precede the actual hole punch, otherwise we open
-> > > > a window where the page tables point to memory no longer valid?
-> > >
-> > > Yes, you are right. Thanks for catching this.
-> >
-> > I also noticed this. But then thought the memory would be anyways zeroed
-> > (hole punched) before this call?
->
-> Hole punching can free pages, given that offset/len covers full page.
->
-> --
->   Kiryl Shutsemau / Kirill A. Shutemov
+On Tue 18-10-22 06:35:14, Jeff Layton wrote:
+> On Tue, 2022-10-18 at 09:14 +1100, Dave Chinner wrote:
+> > On Mon, Oct 17, 2022 at 06:57:09AM -0400, Jeff Layton wrote:
+> > > Trond is of the opinion that monotonicity is a hard requirement, and
+> > > that we should not allow filesystems that can't provide that quality to
+> > > report STATX_VERSION at all.  His rationale is that one of the main uses
+> > > for this is for backup applications, and for those a counter that could
+> > > go backward is worse than useless.
+> > 
+> > From the perspective of a backup program doing incremental backups,
+> > an inode with a change counter that has a different value to the
+> > current backup inventory means the file contains different
+> > information than what the current backup inventory holds. Again,
+> > snapshots, rollbacks, etc.
+> > 
+> > Therefore, regardless of whether the change counter has gone
+> > forwards or backwards, the backup program needs to back up this
+> > current version of the file in this backup because it is different
+> > to the inventory copy.  Hence if the backup program fails to back it
+> > up, it will not be creating an exact backup of the user's data at
+> > the point in time the backup is run...
+> > 
+> > Hence I don't see that MONOTONIC is a requirement for backup
+> > programs - they really do have to be able to handle filesystems that
+> > have modifications that move backwards in time as well as forwards...
+> 
+> Rolling backward is not a problem in and of itself. The big issue is
+> that after a crash, we can end up with a change attr seen before the
+> crash that is now associated with a completely different inode state.
+> 
+> The scenario is something like:
+> 
+> - Change attr for an empty file starts at 1
+> 
+> - Write "A" to file, change attr goes to 2
+> 
+> - Read and statx happens (client sees "A" with change attr 2)
+> 
+> - Crash (before last change is logged to disk)
+> 
+> - Machine reboots, inode is empty, change attr back to 1
+> 
+> - Write "B" to file, change attr goes to 2
+> 
+> - Client stat's file, sees change attr 2 and assumes its cache is
+> correct when it isn't (should be "B" not "A" now).
+> 
+> The real danger comes not from the thing going backward, but the fact
+> that it can march forward again after going backward, and then the
+> client can see two different inode states associated with the same
+> change attr value. Jumping all the change attributes forward by a
+> significant amount after a crash should avoid this issue.
 
-I think moving this notifier_invalidate before fallocate may not solve
-the problem completely. Is it possible that between invalidate and
-fallocate, KVM tries to handle the page fault for the guest VM from
-another vcpu and uses the pages to be freed to back gpa ranges? Should
-hole punching here also update mem_attr first to say that KVM should
-consider the corresponding gpa ranges to be no more backed by
-inaccessible memfd?
+As Dave pointed out, the problem with change attr having the same value for
+a different inode state (after going backwards) holds not only for the
+crashes but also for restore from backups, fs snapshots, device snapshots
+etc. So relying on change attr only looks a bit fragile. It works for the
+common case but the edge cases are awkward and there's no easy way to
+detect you are in the edge case.
+
+So I think any implementation caring about data integrity would have to
+include something like ctime into the picture anyway. Or we could just
+completely give up any idea of monotonicity and on each mount select random
+prime P < 2^64 and instead of doing inc when advancing the change
+attribute, we'd advance it by P. That makes collisions after restore /
+crash fairly unlikely.
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
