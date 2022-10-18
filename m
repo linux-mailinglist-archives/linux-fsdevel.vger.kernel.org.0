@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3AD2760324D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 20:23:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CC088603252
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 18 Oct 2022 20:23:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229788AbiJRSXM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 18 Oct 2022 14:23:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42890 "EHLO
+        id S230080AbiJRSXQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 18 Oct 2022 14:23:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42892 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbiJRSWw (ORCPT
+        with ESMTP id S229993AbiJRSWx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 18 Oct 2022 14:22:52 -0400
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52B7882D28;
-        Tue, 18 Oct 2022 11:22:36 -0700 (PDT)
-Received: by mail-ej1-x633.google.com with SMTP id bj12so34295346ejb.13;
-        Tue, 18 Oct 2022 11:22:36 -0700 (PDT)
+        Tue, 18 Oct 2022 14:22:53 -0400
+Received: from mail-ej1-x632.google.com (mail-ej1-x632.google.com [IPv6:2a00:1450:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 37FCA82D31;
+        Tue, 18 Oct 2022 11:22:37 -0700 (PDT)
+Received: by mail-ej1-x632.google.com with SMTP id d26so34345645ejc.8;
+        Tue, 18 Oct 2022 11:22:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=NAI6zB9+0AGnJiVMY5vVZsK//rjwT955A9i61fTtXGs=;
-        b=QpyJUiJgAOm6xg6LjQTb8ftXMa1W1PYjo23TdPFEyBv068T7+Acr5f0woWYvlW3VQS
-         LEe/SLug4cxutjrfe/5mXjs/23BYU20l+thdslH3YYlr0Lf7YEcGykLg1I7qL+ggud+B
-         HkCRzf7N7cCi8p9vvi4UqUaX/5upoosVRmtboIYbW+xLmPGxEczYlKSfPV7Q/EmHifQp
-         yD97HqE4XDx9PStUiZ4fNwKdhnx7GIZ2N1SJb3wn8UPTyKENERJt1UTVzFkBTrz0ce6b
-         /qYCLNPaecIvizPPIo3HR4B/ScSQgzWqGs8KRlESbzsCXpR9ziTG0QrXl1IvJFLte0/j
-         BLTA==
+        bh=MCmk/tBVjbF+7TqU0s2kMsuRpHDv0d5bCD7ppPQIYwk=;
+        b=GtZbUbYF28+5CArUm/WNPK3vK0N723pKcNBQvf104FiKmQANCy1VTwlAO4Cu+JJZk6
+         w6ftxBK4KU+8jyPT5FMBwROGnjgrZ3ScY3qRH+g0mmK/zwlW/8kxRzfFoUGTkSccP6KJ
+         mSgkXd/QSBkgVPUvR+4JMYIASz0r8G091AyCz8Ptg+m4db3sAigUBsXAL4CTIyIrKNTd
+         bruA3uajcCUEnVOpiN6Z1z8GwT3bS7DZhmAqjHzPsx8LTX5za6ITZurb95OLhVKVEoZ6
+         NyoqzGFn6br+Wvp97Qd3qNV8+70SaA8lgETiKxrCkSSLB69F9Cd7wC1yjx02Sdm/RzSF
+         daGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=NAI6zB9+0AGnJiVMY5vVZsK//rjwT955A9i61fTtXGs=;
-        b=wojKI42B7bBauva0lJt+T0I/h3ObaMf1xwpNtqvsxwivsgiqeyXCaajESc6jmP7XXB
-         bYg/gPWMqQCtBDJc1Fq8BoIBds0xFdF4ybWh6hpgaZ0Jm1QiTfDwzCjtno1qxeqVAWq9
-         JgrQnbtvaEFBszc/gCd1uOTP2GMXa2dRlJq6CmCO0+987kocG8MSi34FxS6qYlN8Z2E/
-         A1vP52y1v/HrJlwCBz6u+ZL5gE4FLOcNBdOV7iDa/S8Gk2/ihRFT+5NtB+FNa86DUgXm
-         gO1ANbXnEpxysiwvHHdZlSdFOmFoDbBFKrbTZenbxNTI9pMQVHTR6zAydsWh89eultFc
-         rhfA==
-X-Gm-Message-State: ACrzQf0BQu4PPXBTBUtxDo7xltOj3gKNIlDs0RbJ5aJMjSUGr2VQ/KJ8
-        aAGkTdjmBKNVYo62WiDUQt+auhE5Pew=
-X-Google-Smtp-Source: AMsMyM5NFg89XvH3cwG50d0PpNs0qMzQZtInxphbecoM39pTWCJu6TxFQm5LKfaFO4Gs/CbHAxjDQQ==
-X-Received: by 2002:a17:906:9b92:b0:791:9355:cb89 with SMTP id dd18-20020a1709069b9200b007919355cb89mr3476654ejc.498.1666117354785;
-        Tue, 18 Oct 2022 11:22:34 -0700 (PDT)
+        bh=MCmk/tBVjbF+7TqU0s2kMsuRpHDv0d5bCD7ppPQIYwk=;
+        b=K2eWt5SahQIhSNjflHNiojcoz8IwQfhO3C0smzWqselig56ekjxFMyd17LUl/3hTHm
+         0H7DFrk5f27fX/+CsLaN6hd09RLZgJ+oGBKz7QSEBu4xLWUJZYRWOYEVkKj8nMTrJ/cv
+         a04ID/9M4Rbioobd75Bynr2cZSVVX8fend8DaHImrDT0KxbNP+qYt8r8fOA1Rzj6aBFg
+         MQ0RYE25nvGB5gvrrCPKtomtFNdnPKjWoqR8v2ZcFwZmiK68uXdOT4M5PPXxzQAYsvL0
+         SPYt6+WlsEVIiblzQ2v4KD073eynNQdh6ByxvAtbM4BQb8N2zs+x9WOUXZZv9Wl67J4p
+         zrYA==
+X-Gm-Message-State: ACrzQf3ASHmgxijZGaRtHr4KEKvLSY1tUs1VFnLeIQhQ5JrBDnifQEi+
+        0Vt9t2v+62Q1ePH84+PnjIVpZiIrXqY=
+X-Google-Smtp-Source: AMsMyM540Q7sIwvy6TqBizL+2L5fg+bkhXI11tykwXL57S02YTyUHCuBgWP590Dm41V1/zPJRO8/gg==
+X-Received: by 2002:a17:907:980e:b0:78d:b6ea:25b3 with SMTP id ji14-20020a170907980e00b0078db6ea25b3mr3584810ejc.98.1666117355599;
+        Tue, 18 Oct 2022 11:22:35 -0700 (PDT)
 Received: from nuc.i.gnoack.org ([2a02:168:633b:1:1e69:7aff:fe05:97e6])
         by smtp.gmail.com with ESMTPSA id i18-20020a0564020f1200b00458a03203b1sm9358395eda.31.2022.10.18.11.22.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Oct 2022 11:22:34 -0700 (PDT)
+        Tue, 18 Oct 2022 11:22:35 -0700 (PDT)
 From:   =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
 To:     linux-security-module@vger.kernel.org
 Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
@@ -60,9 +60,9 @@ Cc:     =?UTF-8?q?Micka=C3=ABl=20Sala=C3=BCn?= <mic@digikod.net>,
         Konstantin Meskhidze <konstantin.meskhidze@huawei.com>,
         Nathan Chancellor <nathan@kernel.org>,
         =?UTF-8?q?G=C3=BCnther=20Noack?= <gnoack3000@gmail.com>
-Subject: [PATCH v10 07/11] selftests/landlock: Locally define __maybe_unused
-Date:   Tue, 18 Oct 2022 20:22:12 +0200
-Message-Id: <20221018182216.301684-8-gnoack3000@gmail.com>
+Subject: [PATCH v10 08/11] selftests/landlock: Test FD passing from restricted to unrestricted processes
+Date:   Tue, 18 Oct 2022 20:22:13 +0200
+Message-Id: <20221018182216.301684-9-gnoack3000@gmail.com>
 X-Mailer: git-send-email 2.38.0
 In-Reply-To: <20221018182216.301684-1-gnoack3000@gmail.com>
 References: <20221018182216.301684-1-gnoack3000@gmail.com>
@@ -79,68 +79,243 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The checkpatch tool started to flag __attribute__(__unused__), which
-we previously used. The header where this is normally defined is not
-currently compatible with selftests.
+A file descriptor created in a restricted process carries Landlock
+restrictions with it which will apply even if the same opened file is
+used from an unrestricted process.
 
-This is the same approach as used in selftests/net/psock_lib.h.
+This change extracts suitable FD-passing helpers from base_test.c and
+moves them to common.h. We use the fixture variants from the ftruncate
+fixture to exercise the same scenarios as in the open_and_ftruncate
+test, but doing the Landlock restriction and open() in a different
+process than the ftruncate() call.
 
 Signed-off-by: Günther Noack <gnoack3000@gmail.com>
 ---
- tools/testing/selftests/landlock/common.h | 18 ++++++++++--------
- 1 file changed, 10 insertions(+), 8 deletions(-)
+ tools/testing/selftests/landlock/base_test.c | 36 +----------
+ tools/testing/selftests/landlock/common.h    | 67 ++++++++++++++++++++
+ tools/testing/selftests/landlock/fs_test.c   | 62 ++++++++++++++++++
+ 3 files changed, 132 insertions(+), 33 deletions(-)
 
+diff --git a/tools/testing/selftests/landlock/base_test.c b/tools/testing/selftests/landlock/base_test.c
+index 72cdae277b02..792c3f0a59b4 100644
+--- a/tools/testing/selftests/landlock/base_test.c
++++ b/tools/testing/selftests/landlock/base_test.c
+@@ -263,23 +263,6 @@ TEST(ruleset_fd_transfer)
+ 		.allowed_access = LANDLOCK_ACCESS_FS_READ_DIR,
+ 	};
+ 	int ruleset_fd_tx, dir_fd;
+-	union {
+-		/* Aligned ancillary data buffer. */
+-		char buf[CMSG_SPACE(sizeof(ruleset_fd_tx))];
+-		struct cmsghdr _align;
+-	} cmsg_tx = {};
+-	char data_tx = '.';
+-	struct iovec io = {
+-		.iov_base = &data_tx,
+-		.iov_len = sizeof(data_tx),
+-	};
+-	struct msghdr msg = {
+-		.msg_iov = &io,
+-		.msg_iovlen = 1,
+-		.msg_control = &cmsg_tx.buf,
+-		.msg_controllen = sizeof(cmsg_tx.buf),
+-	};
+-	struct cmsghdr *cmsg;
+ 	int socket_fds[2];
+ 	pid_t child;
+ 	int status;
+@@ -298,33 +281,20 @@ TEST(ruleset_fd_transfer)
+ 				    &path_beneath_attr, 0));
+ 	ASSERT_EQ(0, close(path_beneath_attr.parent_fd));
+ 
+-	cmsg = CMSG_FIRSTHDR(&msg);
+-	ASSERT_NE(NULL, cmsg);
+-	cmsg->cmsg_len = CMSG_LEN(sizeof(ruleset_fd_tx));
+-	cmsg->cmsg_level = SOL_SOCKET;
+-	cmsg->cmsg_type = SCM_RIGHTS;
+-	memcpy(CMSG_DATA(cmsg), &ruleset_fd_tx, sizeof(ruleset_fd_tx));
+-
+ 	/* Sends the ruleset FD over a socketpair and then close it. */
+ 	ASSERT_EQ(0, socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0,
+ 				socket_fds));
+-	ASSERT_EQ(sizeof(data_tx), sendmsg(socket_fds[0], &msg, 0));
++	ASSERT_EQ(0, send_fd(socket_fds[0], ruleset_fd_tx));
+ 	ASSERT_EQ(0, close(socket_fds[0]));
+ 	ASSERT_EQ(0, close(ruleset_fd_tx));
+ 
+ 	child = fork();
+ 	ASSERT_LE(0, child);
+ 	if (child == 0) {
+-		int ruleset_fd_rx;
++		const int ruleset_fd_rx = recv_fd(socket_fds[1]);
+ 
+-		*(char *)msg.msg_iov->iov_base = '\0';
+-		ASSERT_EQ(sizeof(data_tx),
+-			  recvmsg(socket_fds[1], &msg, MSG_CMSG_CLOEXEC));
+-		ASSERT_EQ('.', *(char *)msg.msg_iov->iov_base);
++		ASSERT_LE(0, ruleset_fd_rx);
+ 		ASSERT_EQ(0, close(socket_fds[1]));
+-		cmsg = CMSG_FIRSTHDR(&msg);
+-		ASSERT_EQ(cmsg->cmsg_len, CMSG_LEN(sizeof(ruleset_fd_tx)));
+-		memcpy(&ruleset_fd_rx, CMSG_DATA(cmsg), sizeof(ruleset_fd_tx));
+ 
+ 		/* Enforces the received ruleset on the child. */
+ 		ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0));
 diff --git a/tools/testing/selftests/landlock/common.h b/tools/testing/selftests/landlock/common.h
-index 7ba18eb23783..7d34592471db 100644
+index 7d34592471db..d7987ae8d7fc 100644
 --- a/tools/testing/selftests/landlock/common.h
 +++ b/tools/testing/selftests/landlock/common.h
-@@ -17,6 +17,10 @@
- 
- #include "../kselftest_harness.h"
- 
-+#ifndef __maybe_unused
-+#define __maybe_unused __attribute__((__unused__))
-+#endif
-+
- /*
-  * TEST_F_FORK() is useful when a test drop privileges but the corresponding
-  * FIXTURE_TEARDOWN() requires them (e.g. to remove files from a directory
-@@ -140,14 +144,12 @@ static void _init_caps(struct __test_metadata *const _metadata, bool drop_all)
- }
- 
- /* We cannot put such helpers in a library because of kselftest_harness.h . */
--__attribute__((__unused__)) static void
--disable_caps(struct __test_metadata *const _metadata)
-+static void __maybe_unused disable_caps(struct __test_metadata *const _metadata)
- {
- 	_init_caps(_metadata, false);
- }
- 
--__attribute__((__unused__)) static void
--drop_caps(struct __test_metadata *const _metadata)
-+static void __maybe_unused drop_caps(struct __test_metadata *const _metadata)
- {
- 	_init_caps(_metadata, true);
- }
-@@ -176,14 +178,14 @@ static void _effective_cap(struct __test_metadata *const _metadata,
- 	}
- }
- 
--__attribute__((__unused__)) static void
--set_cap(struct __test_metadata *const _metadata, const cap_value_t caps)
-+static void __maybe_unused set_cap(struct __test_metadata *const _metadata,
-+				   const cap_value_t caps)
- {
- 	_effective_cap(_metadata, caps, CAP_SET);
- }
- 
--__attribute__((__unused__)) static void
--clear_cap(struct __test_metadata *const _metadata, const cap_value_t caps)
-+static void __maybe_unused clear_cap(struct __test_metadata *const _metadata,
-+				     const cap_value_t caps)
+@@ -10,6 +10,7 @@
+ #include <errno.h>
+ #include <linux/landlock.h>
+ #include <sys/capability.h>
++#include <sys/socket.h>
+ #include <sys/syscall.h>
+ #include <sys/types.h>
+ #include <sys/wait.h>
+@@ -189,3 +190,69 @@ static void __maybe_unused clear_cap(struct __test_metadata *const _metadata,
  {
  	_effective_cap(_metadata, caps, CAP_CLEAR);
  }
++
++/* Receives an FD from a UNIX socket. Returns the received FD, or -errno. */
++static int __maybe_unused recv_fd(int usock)
++{
++	int fd_rx;
++	union {
++		/* Aligned ancillary data buffer. */
++		char buf[CMSG_SPACE(sizeof(fd_rx))];
++		struct cmsghdr _align;
++	} cmsg_rx = {};
++	char data = '\0';
++	struct iovec io = {
++		.iov_base = &data,
++		.iov_len = sizeof(data),
++	};
++	struct msghdr msg = {
++		.msg_iov = &io,
++		.msg_iovlen = 1,
++		.msg_control = &cmsg_rx.buf,
++		.msg_controllen = sizeof(cmsg_rx.buf),
++	};
++	struct cmsghdr *cmsg;
++	int res;
++
++	res = recvmsg(usock, &msg, MSG_CMSG_CLOEXEC);
++	if (res < 0)
++		return -errno;
++
++	cmsg = CMSG_FIRSTHDR(&msg);
++	if (cmsg->cmsg_len != CMSG_LEN(sizeof(fd_rx)))
++		return -EIO;
++
++	memcpy(&fd_rx, CMSG_DATA(cmsg), sizeof(fd_rx));
++	return fd_rx;
++}
++
++/* Sends an FD on a UNIX socket. Returns 0 on success or -errno. */
++static int __maybe_unused send_fd(int usock, int fd_tx)
++{
++	union {
++		/* Aligned ancillary data buffer. */
++		char buf[CMSG_SPACE(sizeof(fd_tx))];
++		struct cmsghdr _align;
++	} cmsg_tx = {};
++	char data_tx = '.';
++	struct iovec io = {
++		.iov_base = &data_tx,
++		.iov_len = sizeof(data_tx),
++	};
++	struct msghdr msg = {
++		.msg_iov = &io,
++		.msg_iovlen = 1,
++		.msg_control = &cmsg_tx.buf,
++		.msg_controllen = sizeof(cmsg_tx.buf),
++	};
++	struct cmsghdr *cmsg = CMSG_FIRSTHDR(&msg);
++
++	cmsg->cmsg_len = CMSG_LEN(sizeof(fd_tx));
++	cmsg->cmsg_level = SOL_SOCKET;
++	cmsg->cmsg_type = SCM_RIGHTS;
++	memcpy(CMSG_DATA(cmsg), &fd_tx, sizeof(fd_tx));
++
++	if (sendmsg(usock, &msg, 0) < 0)
++		return -errno;
++	return 0;
++}
+diff --git a/tools/testing/selftests/landlock/fs_test.c b/tools/testing/selftests/landlock/fs_test.c
+index 308f6f36e8c0..f8aae01a2409 100644
+--- a/tools/testing/selftests/landlock/fs_test.c
++++ b/tools/testing/selftests/landlock/fs_test.c
+@@ -3541,6 +3541,68 @@ TEST_F_FORK(ftruncate, open_and_ftruncate)
+ 	}
+ }
+ 
++TEST_F_FORK(ftruncate, open_and_ftruncate_in_different_processes)
++{
++	int child, fd, status;
++	int socket_fds[2];
++
++	ASSERT_EQ(0, socketpair(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0,
++				socket_fds));
++
++	child = fork();
++	ASSERT_LE(0, child);
++	if (child == 0) {
++		/*
++		 * Enables Landlock in the child process, open a file descriptor
++		 * where truncation is forbidden and send it to the
++		 * non-landlocked parent process.
++		 */
++		const char *const path = file1_s1d1;
++		const struct rule rules[] = {
++			{
++				.path = path,
++				.access = variant->permitted,
++			},
++			{},
++		};
++		int fd, ruleset_fd;
++
++		ruleset_fd = create_ruleset(_metadata, variant->handled, rules);
++		ASSERT_LE(0, ruleset_fd);
++		enforce_ruleset(_metadata, ruleset_fd);
++		ASSERT_EQ(0, close(ruleset_fd));
++
++		fd = open(path, O_WRONLY);
++		ASSERT_EQ(variant->expected_open_result, (fd < 0 ? errno : 0));
++
++		if (fd >= 0) {
++			ASSERT_EQ(0, send_fd(socket_fds[0], fd));
++			ASSERT_EQ(0, close(fd));
++		}
++
++		ASSERT_EQ(0, close(socket_fds[0]));
++
++		_exit(_metadata->passed ? EXIT_SUCCESS : EXIT_FAILURE);
++		return;
++	}
++
++	if (variant->expected_open_result == 0) {
++		fd = recv_fd(socket_fds[1]);
++		ASSERT_LE(0, fd);
++
++		EXPECT_EQ(variant->expected_ftruncate_result,
++			  test_ftruncate(fd));
++		ASSERT_EQ(0, close(fd));
++	}
++
++	ASSERT_EQ(child, waitpid(child, &status, 0));
++	ASSERT_EQ(1, WIFEXITED(status));
++	ASSERT_EQ(EXIT_SUCCESS, WEXITSTATUS(status));
++
++	ASSERT_EQ(0, close(socket_fds[0]));
++	ASSERT_EQ(0, close(socket_fds[1]));
++}
++
+ /* clang-format off */
+ FIXTURE(layout1_bind) {};
+ /* clang-format on */
 -- 
 2.38.0
 
