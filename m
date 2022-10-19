@@ -2,106 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9E8C56044A3
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 14:10:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A3A62604477
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 14:06:22 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232630AbiJSMKo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Oct 2022 08:10:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53906 "EHLO
+        id S232540AbiJSMGT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Oct 2022 08:06:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233245AbiJSMJh (ORCPT
+        with ESMTP id S232470AbiJSMGE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Oct 2022 08:09:37 -0400
-Received: from relay.virtuozzo.com (relay.virtuozzo.com [130.117.225.111])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF4F93C16D;
-        Wed, 19 Oct 2022 04:45:43 -0700 (PDT)
-Received: from dev011.ch-qa.sw.ru ([172.29.1.16])
-        by relay.virtuozzo.com with esmtp (Exim 4.95)
-        (envelope-from <alexander.atanasov@virtuozzo.com>)
-        id 1ol5lb-00B8K8-Cj;
-        Wed, 19 Oct 2022 11:56:29 +0200
-From:   Alexander Atanasov <alexander.atanasov@virtuozzo.com>
-To:     Jonathan Corbet <corbet@lwn.net>
-Cc:     kernel@openvz.org,
-        Alexander Atanasov <alexander.atanasov@virtuozzo.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Subject: [RFC PATCH v5 3/8] mm: Display inflated memory to users
-Date:   Wed, 19 Oct 2022 12:56:15 +0300
-Message-Id: <20221019095620.124909-4-alexander.atanasov@virtuozzo.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20221019095620.124909-1-alexander.atanasov@virtuozzo.com>
-References: <20221019095620.124909-1-alexander.atanasov@virtuozzo.com>
+        Wed, 19 Oct 2022 08:06:04 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBE1E2A736;
+        Wed, 19 Oct 2022 04:42:45 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9FB63B8232F;
+        Wed, 19 Oct 2022 11:13:24 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83DE2C433D6;
+        Wed, 19 Oct 2022 11:13:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666178003;
+        bh=gwWQYsR0cFT+Zg0Jf4VUsE9sbimCLeyihcb3NxLQ1bc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=AkxpNMtg/ua1pzhePdDJ0iGKaywwzRgyDRItzUlReJKLluskVPzhcFMDrozMIWxnj
+         wMFF2fDxagUDmCy0O73ZsUaW6Bf9IlElbH/Oq0baglYcv29qrWk6sEKcw1zI/1AVDI
+         ioUtRU9IYCsQfTz9O7NpLJxD2EjKrTUSLNwqY4CaT+HUzGS+AMcI/UI+NhIJp+nqZO
+         Wyqa2AIfbTVj7dtopzyG1xoeLP4Js4x2B4VhzcfPIJmCnBqyuIvyVS1YsYz4Inpsok
+         5683FsxRZnmNM/v0kb1C9nbosQn6pyzrsWMFUm6tJ+QILcAUGrLK+mOCGwTpOD12Me
+         6RK5CvIgp6+nw==
+Date:   Wed, 19 Oct 2022 13:13:15 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
+        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
+        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
+        bfields@fieldses.org, fweimer@redhat.com,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v7 0/9] fs: clean up handling of i_version counter
+Message-ID: <20221019111315.hpilifogyvf3bixh@wittgenstein>
+References: <20221017105709.10830-1-jlayton@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20221017105709.10830-1-jlayton@kernel.org>
+X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add InflatedTotal and InflatedFree to /proc/meminfo
+On Mon, Oct 17, 2022 at 06:57:00AM -0400, Jeff Layton wrote:
+> This patchset is intended to clean up the handling of the i_version
+> counter by nfsd. Most of the changes are to internal interfaces.
+> 
+> This set is not intended to address crash resilience, or the fact that
+> the counter is bumped before a change and not after. I intend to tackle
+> those in follow-on patchsets.
+> 
+> My intention is to get this series included into linux-next soon, with
+> an eye toward merging most of it during the v6.2 merge window. The last
+> patch in the series is probably not suitable for merge as-is, at least
+> until we sort out the semantics we want to present to userland for it.
 
-Signed-off-by: Alexander Atanasov <alexander.atanasov@virtuozzo.com>
----
- Documentation/filesystems/proc.rst |  6 ++++++
- fs/proc/meminfo.c                  | 10 ++++++++++
- 2 files changed, 16 insertions(+)
-
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 898c99eae8e4..d88828a27383 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -992,6 +992,8 @@ Example output. You may not have all of these fields.
-     VmallocUsed:       40444 kB
-     VmallocChunk:          0 kB
-     Percpu:            29312 kB
-+    InflatedTotal:   2097152 kB
-+    InflatedFree:          0 kB
-     HardwareCorrupted:     0 kB
-     AnonHugePages:   4149248 kB
-     ShmemHugePages:        0 kB
-@@ -1142,6 +1144,10 @@ VmallocChunk
- Percpu
-               Memory allocated to the percpu allocator used to back percpu
-               allocations. This stat excludes the cost of metadata.
-+InflatedTotal and InflatedFree
-+               Amount of memory that is inflated by the balloon driver.
-+               Due to differences among the drivers inflated memory
-+               is subtracted from TotalRam or from MemFree.
- HardwareCorrupted
-               The amount of RAM/memory in KB, the kernel identifies as
-               corrupted.
-diff --git a/fs/proc/meminfo.c b/fs/proc/meminfo.c
-index 5101131e6047..d9e059b0b25d 100644
---- a/fs/proc/meminfo.c
-+++ b/fs/proc/meminfo.c
-@@ -16,6 +16,9 @@
- #ifdef CONFIG_CMA
- #include <linux/cma.h>
- #endif
-+#ifdef CONFIG_MEMORY_BALLOON
-+#include <linux/balloon.h>
-+#endif
- #include <asm/page.h>
- #include "internal.h"
- 
-@@ -155,6 +158,13 @@ static int meminfo_proc_show(struct seq_file *m, void *v)
- 		    global_zone_page_state(NR_FREE_CMA_PAGES));
- #endif
- 
-+#ifdef CONFIG_MEMORY_BALLOON
-+	seq_printf(m,  "InflatedTotal:  %8ld kB\n",
-+		atomic_long_read(&mem_balloon_inflated_total_kb));
-+	seq_printf(m,  "InflatedFree:   %8ld kB\n",
-+		atomic_long_read(&mem_balloon_inflated_free_kb));
-+#endif
-+
- 	hugetlb_report_meminfo(m);
- 
- 	arch_report_meminfo(m);
--- 
-2.31.1
-
+Over the course of the series I struggled a bit - and sorry for losing
+focus - with what i_version is supposed to represent for userspace. So I
+would support not exposing it to userspace before that. But that
+shouldn't affect your other changes iiuc.
