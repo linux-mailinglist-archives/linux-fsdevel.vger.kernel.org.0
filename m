@@ -2,47 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 226D160478E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 15:41:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0212A60483F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 15:53:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232960AbiJSNlq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Oct 2022 09:41:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32816 "EHLO
+        id S233768AbiJSNw6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Oct 2022 09:52:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43456 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231907AbiJSNlX (ORCPT
+        with ESMTP id S233595AbiJSNwI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Oct 2022 09:41:23 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABFE6155DA9;
-        Wed, 19 Oct 2022 06:29:06 -0700 (PDT)
+        Wed, 19 Oct 2022 09:52:08 -0400
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EBC2185422;
+        Wed, 19 Oct 2022 06:35:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666186147; x=1697722147;
+  t=1666186557; x=1697722557;
   h=date:from:to:cc:subject:message-id:reply-to:references:
    mime-version:in-reply-to;
-  bh=maPvHabENdJbu0SifYloWSh+XeE9JeazxOD/pHHB/rU=;
-  b=ePpJqt9a4rYoKf3f12FBETQeEqSJKEclKShJ3msgjKvjAPf7WfCLI1pf
-   v/r7NAhjqY+sXAHXt5vodSFw96vWkPNKLGRhe0pahKlQlXpL++/LXbVpr
-   kNF5fTwmx4O6rTERYAPEXWBuIeLmNoYU6Tlpzm1LBIOP0KgEb9AtLbeRg
-   lXM3vlo4Mpb1lJJLLQrQOUqcZ58JEi7L+HUI+yhK30BgKRuvvCNoUeqa6
-   5FLxBsKLf7t2mkQ0630JT7P1FhtIjFThhPj7EVrXK7QHE0WXRcnU+wSfV
-   ZPYEcaJ0VotbFFJVd34yECs4DH8tU9SCPoxaizR7DvaQXGAc9rZe7bvqv
+  bh=4xcGc4T12PBypY/VcZfHNkEly5yZ/s7CT5KUy36zg78=;
+  b=jjhzCoBCsLf8VUs0R+QfGydIe7QYMFm556unX6I3R1DhSqiZ6WdqdGVa
+   b58y8RqAbpOUVWcVU80uo6UdKSAEaP58z78cTXYknf8jnPI1EPw1Ko8CS
+   9P4GSLacFbYoEP5y0IdzcamCNPNMyiKLNICDGy3Sb384VgKaZcR10bNVB
+   RA8w2ffKnvwlH2hIji1lwf7aova5NGJGlNbXdroBiWEj3jQJb4F+KSwx+
+   P8m2wZLALph4TDFXT2aZIqb6t4vHFkYos0euU2OjLo9a0tQGtZztObxhN
+   m5uvSoc3lGKdeFUgCz0ogBy9KOvVgmRg9BL0ZqEQxRM9EEY9rXf4luzXk
    Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10505"; a="293803646"
+X-IronPort-AV: E=McAfee;i="6500,9779,10505"; a="286801355"
 X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
-   d="scan'208";a="293803646"
+   d="scan'208";a="286801355"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2022 06:27:51 -0700
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2022 06:35:26 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10505"; a="624134706"
+X-IronPort-AV: E=McAfee;i="6500,9779,10505"; a="624137726"
 X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
-   d="scan'208";a="624134706"
+   d="scan'208";a="624137726"
 Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by orsmga007.jf.intel.com with ESMTP; 19 Oct 2022 06:27:39 -0700
-Date:   Wed, 19 Oct 2022 21:23:08 +0800
+  by orsmga007.jf.intel.com with ESMTP; 19 Oct 2022 06:35:14 -0700
+Date:   Wed, 19 Oct 2022 21:30:43 +0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Fuad Tabba <tabba@google.com>, kvm@vger.kernel.org,
+To:     Fuad Tabba <tabba@google.com>
+Cc:     Sean Christopherson <seanjc@google.com>,
+        David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-mm@kvack.org,
         linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
         linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
@@ -67,70 +68,94 @@ Cc:     Fuad Tabba <tabba@google.com>, kvm@vger.kernel.org,
         Yu Zhang <yu.c.zhang@linux.intel.com>,
         "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
         luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
+        ak@linux.intel.com, aarcange@redhat.com, ddutile@redhat.com,
+        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v8 5/8] KVM: Register/unregister the guest private memory
- regions
-Message-ID: <20221019132308.GA3496045@chaop.bj.intel.com>
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com,
+        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>
+Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
+Message-ID: <20221019133043.GB3496045@chaop.bj.intel.com>
 Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-6-chao.p.peng@linux.intel.com>
- <CA+EHjTxukqBfaN6D+rPOiX83zkGknHEQ16J0k6GQSdL_-e9C6g@mail.gmail.com>
- <20221012023516.GA3218049@chaop.bj.intel.com>
- <CA+EHjTyGyGL+ox81=jdtoHERtHPV=P7wJub=3j7chdijyq-AgA@mail.gmail.com>
- <Y03UiYYioV+FQIpx@google.com>
+References: <Yyi+l3+p9lbBAC4M@google.com>
+ <CA+EHjTzy4iOxLF=5UX=s5v6HSB3Nb1LkwmGqoKhp_PAnFeVPSQ@mail.gmail.com>
+ <20220926142330.GC2658254@chaop.bj.intel.com>
+ <CA+EHjTz5yGhsxUug+wqa9hrBO60Be0dzWeWzX00YtNxin2eYHg@mail.gmail.com>
+ <YzN9gYn1uwHopthW@google.com>
+ <CA+EHjTw3din891hMUeRW-cn46ktyMWSdoB31pL+zWpXo_=3UVg@mail.gmail.com>
+ <20221013133457.GA3263142@chaop.bj.intel.com>
+ <CA+EHjTzZ2zsm7Ru_OKCZg9FCYESgZsmB=7ScKRh6ZN4=4OZ3gw@mail.gmail.com>
+ <20221017145856.GB3417432@chaop.bj.intel.com>
+ <CA+EHjTyiU230am0cuWc7xBBirGocPWGmyqCskhTytA10xpigYQ@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y03UiYYioV+FQIpx@google.com>
+In-Reply-To: <CA+EHjTyiU230am0cuWc7xBBirGocPWGmyqCskhTytA10xpigYQ@mail.gmail.com>
 X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 17, 2022 at 10:17:45PM +0000, Sean Christopherson wrote:
-> On Mon, Oct 17, 2022, Fuad Tabba wrote:
-> > Hi,
-> > 
-> > > > > +#ifdef CONFIG_HAVE_KVM_PRIVATE_MEM
-> > > > > +#define KVM_MEM_ATTR_SHARED    0x0001
-> > > > > +static int kvm_vm_ioctl_set_mem_attr(struct kvm *kvm, gpa_t gpa, gpa_t size,
-> > > > > +                                    bool is_private)
-> > > > > +{
-> > > >
-> > > > I wonder if this ioctl should be implemented as an arch-specific
-> > > > ioctl. In this patch it performs some actions that pKVM might not need
-> > > > or might want to do differently.
-> > >
-> > > I think it's doable. We can provide the mem_attr_array kind thing in
-> > > common code and let arch code decide to use it or not. Currently
-> > > mem_attr_array is defined in the struct kvm, if those bytes are
-> > > unnecessary for pKVM it can even be moved to arch definition, but that
-> > > also loses the potential code sharing for confidential usages in other
-> > > non-architectures, e.g. if ARM also supports such usage. Or it can be
-> > > provided through a different CONFIG_ instead of
-> > > CONFIG_HAVE_KVM_PRIVATE_MEM.
-> > 
-> > This sounds good. Thank you.
+On Mon, Oct 17, 2022 at 08:05:10PM +0100, Fuad Tabba wrote:
+> Hi,
 > 
-> I like the idea of a separate Kconfig, e.g. CONFIG_KVM_GENERIC_PRIVATE_MEM or
-> something.  I highly doubt there will be any non-x86 users for multiple years,
-> if ever, but it would allow testing the private memory stuff on ARM (and any other
-> non-x86 arch) without needing full pKVM support and with only minor KVM
-> modifications, e.g. the x86 support[*] to test UPM without TDX is shaping up to be
-> trivial.
+> > > > Using both private_fd and userspace_addr is only needed in TDX and other
+> > > > confidential computing scenarios, pKVM may only use private_fd if the fd
+> > > > can also be mmaped as a whole to userspace as Sean suggested.
+> > >
+> > > That does work in practice, for now at least, and is what I do in my
+> > > current port. However, the naming and how the API is defined as
+> > > implied by the name and the documentation. By calling the field
+> > > private_fd, it does imply that it should not be mapped, which is also
+> > > what api.rst says in PATCH v8 5/8. My worry is that in that case pKVM
+> > > would be mis/ab-using this interface, and that future changes could
+> > > cause unforeseen issues for pKVM.
+> >
+> > That is fairly enough. We can change the naming and the documents.
+> >
+> > >
+> > > Maybe renaming this to something like "guest_fp", and specifying in
+> > > the documentation that it can be restricted, e.g., instead of "the
+> > > content of the private memory is invisible to userspace" something
+> > > along the lines of  "the content of the guest memory may be restricted
+> > > to userspace".
+> >
+> > Some other candidates in my mind:
+> > - restricted_fd: to pair with the mm side restricted_memfd
+> > - protected_fd: as Sean suggested before
+> > - fd: how it's explained relies on the memslot.flag.
+> 
+> All these sound good, since they all capture the potential use cases.
+> Restricted might be the most logical choice if that's going to also
+> become the name for the mem_fd.
 
-CONFIG_KVM_GENERIC_PRIVATE_MEM looks good to me.
+Thanks, I will use 'restricted' for them. e.g.:
+- memfd_restricted() syscall
+- restricted_fd
+- restricted_offset
 
-Thanks,
+The memslot flags will still be KVM_MEM_PRIVATE, since I think pKVM will
+create its own one?
+
 Chao
 > 
-> [*] https://lore.kernel.org/all/Y0mu1FKugNQG5T8K@google.com
+> Thanks,
+> /fuad
+> 
+> > Thanks,
+> > Chao
+> > >
+> > > What do you think?
+> > >
+> > > Cheers,
+> > > /fuad
+> > >
+> > > >
+> > > > Thanks,
+> > > > Chao
+> > > > >
+> > > > > Cheers,
+> > > > > /fuad
