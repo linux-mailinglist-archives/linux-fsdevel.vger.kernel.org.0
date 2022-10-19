@@ -2,217 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A2CE604E8D
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 19:24:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C7A1B604FB0
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 20:33:05 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231195AbiJSRXs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Oct 2022 13:23:48 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34234 "EHLO
+        id S230151AbiJSSdE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Oct 2022 14:33:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230441AbiJSRXq (ORCPT
+        with ESMTP id S229885AbiJSSdD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Oct 2022 13:23:46 -0400
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB19F191D7E;
-        Wed, 19 Oct 2022 10:23:43 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 92A2E1F962;
-        Wed, 19 Oct 2022 17:23:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1666200220; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zBLt6q8KXfJFLr7EVMsuPkUznxswdTgkCJUV+ihP7yk=;
-        b=i5kB35BR3upviPoVK/txtf5k6fvvZqh97WJbApv7JQ9lgcsCo8iYvqX8WWFKxbhiOrD/U3
-        SwGu8H2HAX+kUGQT77uRq35XOlX23pp8Ovw+PO0T50jHiEDeOuvjNvCkTRV9Otkkda5aWc
-        mPqGfU9L/JwIcfwOjNf0G6RUD9M2nMo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1666200220;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=zBLt6q8KXfJFLr7EVMsuPkUznxswdTgkCJUV+ihP7yk=;
-        b=mVuAgZonBuN7XivtjSYju4RklCbIycM/QgQkdlxn+eTp5HQ42i8ZI/BLdy0zqD1QhUL2jm
-        XNRH/UTFz1PoKyAg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 5EC2613A36;
-        Wed, 19 Oct 2022 17:23:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 4CwUF5wyUGPUCgAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 19 Oct 2022 17:23:40 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 998CCA06F7; Wed, 19 Oct 2022 19:23:39 +0200 (CEST)
-Date:   Wed, 19 Oct 2022 19:23:39 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Jan Kara <jack@suse.cz>, Dave Chinner <david@fromorbit.com>,
-        tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        trondmy@hammerspace.com, neilb@suse.de, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, bfields@fieldses.org, brauner@kernel.org,
-        fweimer@redhat.com, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [RFC PATCH v7 9/9] vfs: expose STATX_VERSION to userland
-Message-ID: <20221019172339.f5dxek5yjposst5g@quack3>
-References: <20221017105709.10830-1-jlayton@kernel.org>
- <20221017105709.10830-10-jlayton@kernel.org>
- <20221017221433.GT3600936@dread.disaster.area>
- <1e01f88bcde1b7963e504e0fd9cfb27495eb03ca.camel@kernel.org>
- <20221018134910.v4jim6jyjllykcaf@quack3>
- <28a3d6b9978cf0280961385e28ae52f278d65d92.camel@kernel.org>
- <20221018151721.cl6dbupqjkkivxyf@quack3>
- <fcd35c14353ae859d778a23f80249047819bc4b0.camel@kernel.org>
+        Wed, 19 Oct 2022 14:33:03 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 989FA1D0649
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Oct 2022 11:33:01 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id bp15so29584467lfb.13
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Oct 2022 11:33:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=VPr6UAOpmN1/gMX0ewomaOCJg5YtZQmOBncflHxMDjk=;
+        b=LwRPgs44Xx9fZBCWVguQMsygec+a76lxS9ASG3VWi6VBR4o+JOMKkdn5tTnapNhNbx
+         FCagxAT3CfEM6YSuiTVMbPHaJojgG9FhVAFnQbxsBultlVUY0pF/BJ7Pb1rCsoLbQEMZ
+         Tsz/eakulZFZMoaUwgMl+Q1Q2Mo6Ja/eO1XGRRJI1TLh6z4IE3uaaC2a1iSmaS0U4Sg7
+         StbFJsC36uGNihltZfZ/naEuTHBMd0aKRn0MseX2AD4OY2VEwCn3xL3Np44L+mr8bSRa
+         xewHLuoL2hqyU3VemdfwUsM41M+NZMYII6+iUpJITWhnfKF5ZBr0cRMrYzrFp5Hl4kbC
+         lg5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VPr6UAOpmN1/gMX0ewomaOCJg5YtZQmOBncflHxMDjk=;
+        b=R0AvFHI60thG2SBFbpxMJYLZsn5kn/a/e/a1Z5TdZaKh+1YP7nzSTb9I+CBnbbeN+d
+         m+JJJu7oQITnvGoZMG3j7/6NqWl3SluHCXRGZVK+juzl43pXMSgmPH1aBv+iObQjcMvu
+         +F7330Vf9+KmLC6ktQyTeV+IXEihqhDxKhRW7rEJXjw6nrUcGLLs7YHjs4g2C4TC/54m
+         PzbVKCrx6vasvT7lHGm7QTh/dUMWliOVkwSX2IELU3pvfCHyw9rtRtc4bMiq3T9urCxC
+         MqSd48124IPpKJ0tr9bAgFW4ImnPN2xTdxQxwAPpcdd0wzU0zyaRsMOmM19AOfM7EW1P
+         dtSQ==
+X-Gm-Message-State: ACrzQf2kWug7B+gY/mDYdymFqMIBmS2NhQV4/REow1l2CMcsdm3K7UQz
+        NeiGqfH6jSscG76f2jq/ypsWOdcHsd05nBJvtmghQA==
+X-Google-Smtp-Source: AMsMyM4EBV5NPiqUSsGoH76d60Oj4XtTNKzmBM3XB8zcFOXHmexalPNeyd2MnHJenC/4Cf4QA3Wt+/yC+VCqwQatWHo=
+X-Received: by 2002:a05:6512:3119:b0:4a2:d749:ff82 with SMTP id
+ n25-20020a056512311900b004a2d749ff82mr3531001lfb.637.1666204378020; Wed, 19
+ Oct 2022 11:32:58 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fcd35c14353ae859d778a23f80249047819bc4b0.camel@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
+References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
+ <20220915142913.2213336-6-chao.p.peng@linux.intel.com> <CA+EHjTxukqBfaN6D+rPOiX83zkGknHEQ16J0k6GQSdL_-e9C6g@mail.gmail.com>
+ <20221012023516.GA3218049@chaop.bj.intel.com> <CA+EHjTyGyGL+ox81=jdtoHERtHPV=P7wJub=3j7chdijyq-AgA@mail.gmail.com>
+ <Y03UiYYioV+FQIpx@google.com> <20221019132308.GA3496045@chaop.bj.intel.com>
+ <CA+EHjTytCEup0m-nhnVHsuQ1xjaCxXNHO_Oxe+QbpwqaewpfKQ@mail.gmail.com> <Y1AhP0dlRSgTCObX@google.com>
+In-Reply-To: <Y1AhP0dlRSgTCObX@google.com>
+From:   Fuad Tabba <tabba@google.com>
+Date:   Wed, 19 Oct 2022 19:32:21 +0100
+Message-ID: <CA+EHjTzR6DwU950gud1opEGCNqCfiEvA4-JFtyJ0NBgTD-uHNg@mail.gmail.com>
+Subject: Re: [PATCH v8 5/8] KVM: Register/unregister the guest private memory regions
+To:     Sean Christopherson <seanjc@google.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 18-10-22 13:04:34, Jeff Layton wrote:
-> On Tue, 2022-10-18 at 17:17 +0200, Jan Kara wrote:
-> > On Tue 18-10-22 10:21:08, Jeff Layton wrote:
-> > > On Tue, 2022-10-18 at 15:49 +0200, Jan Kara wrote:
-> > > > On Tue 18-10-22 06:35:14, Jeff Layton wrote:
-> > > > > On Tue, 2022-10-18 at 09:14 +1100, Dave Chinner wrote:
-> > > > > > On Mon, Oct 17, 2022 at 06:57:09AM -0400, Jeff Layton wrote:
-> > > > > > > Trond is of the opinion that monotonicity is a hard requirement, and
-> > > > > > > that we should not allow filesystems that can't provide that quality to
-> > > > > > > report STATX_VERSION at all.  His rationale is that one of the main uses
-> > > > > > > for this is for backup applications, and for those a counter that could
-> > > > > > > go backward is worse than useless.
-> > > > > > 
-> > > > > > From the perspective of a backup program doing incremental backups,
-> > > > > > an inode with a change counter that has a different value to the
-> > > > > > current backup inventory means the file contains different
-> > > > > > information than what the current backup inventory holds. Again,
-> > > > > > snapshots, rollbacks, etc.
-> > > > > > 
-> > > > > > Therefore, regardless of whether the change counter has gone
-> > > > > > forwards or backwards, the backup program needs to back up this
-> > > > > > current version of the file in this backup because it is different
-> > > > > > to the inventory copy.  Hence if the backup program fails to back it
-> > > > > > up, it will not be creating an exact backup of the user's data at
-> > > > > > the point in time the backup is run...
-> > > > > > 
-> > > > > > Hence I don't see that MONOTONIC is a requirement for backup
-> > > > > > programs - they really do have to be able to handle filesystems that
-> > > > > > have modifications that move backwards in time as well as forwards...
-> > > > > 
-> > > > > Rolling backward is not a problem in and of itself. The big issue is
-> > > > > that after a crash, we can end up with a change attr seen before the
-> > > > > crash that is now associated with a completely different inode state.
-> > > > > 
-> > > > > The scenario is something like:
-> > > > > 
-> > > > > - Change attr for an empty file starts at 1
-> > > > > 
-> > > > > - Write "A" to file, change attr goes to 2
-> > > > > 
-> > > > > - Read and statx happens (client sees "A" with change attr 2)
-> > > > > 
-> > > > > - Crash (before last change is logged to disk)
-> > > > > 
-> > > > > - Machine reboots, inode is empty, change attr back to 1
-> > > > > 
-> > > > > - Write "B" to file, change attr goes to 2
-> > > > > 
-> > > > > - Client stat's file, sees change attr 2 and assumes its cache is
-> > > > > correct when it isn't (should be "B" not "A" now).
-> > > > > 
-> > > > > The real danger comes not from the thing going backward, but the fact
-> > > > > that it can march forward again after going backward, and then the
-> > > > > client can see two different inode states associated with the same
-> > > > > change attr value. Jumping all the change attributes forward by a
-> > > > > significant amount after a crash should avoid this issue.
-> > > > 
-> > > > As Dave pointed out, the problem with change attr having the same value for
-> > > > a different inode state (after going backwards) holds not only for the
-> > > > crashes but also for restore from backups, fs snapshots, device snapshots
-> > > > etc. So relying on change attr only looks a bit fragile. It works for the
-> > > > common case but the edge cases are awkward and there's no easy way to
-> > > > detect you are in the edge case.
-> > > > 
-> > > 
-> > > This is true. In fact in the snapshot case you can't even rely on doing
-> > > anything at reboot since you won't necessarily need to reboot to make it
-> > > roll backward.
-> > > 
-> > > Whether that obviates the use of this value altogether, I'm not sure.
-> > > 
-> > > > So I think any implementation caring about data integrity would have to
-> > > > include something like ctime into the picture anyway. Or we could just
-> > > > completely give up any idea of monotonicity and on each mount select random
-> > > > prime P < 2^64 and instead of doing inc when advancing the change
-> > > > attribute, we'd advance it by P. That makes collisions after restore /
-> > > > crash fairly unlikely.
-> > > 
-> > > Part of the goal (at least for NFS) is to avoid unnecessary cache
-> > > invalidations.
-> > > 
-> > > If we just increment it by a particular offset on every reboot, then
-> > > every time the server reboots, the clients will invalidate all of their
-> > > cached inodes, and proceed to hammer the server with READ calls just as
-> > > it's having to populate its own caches from disk.
-> > 
-> > Note that I didn't propose to increment by offset on every reboot or mount.
-> > I have proposed that inode_maybe_inc_iversion() would not increment
-> > i_version by 1 (in fact 1 << I_VERSION_QUERIED_SHIFT) but rather by P (or P
-> > << I_VERSION_QUERIED_SHIFT) where P is a suitable number randomly selected
-> > on filesystem mount.
-> > 
-> > This will not cause cache invalidation after a clean unmount + remount. It
-> > will cause cache invalidation after a crash, snapshot rollback etc., only for
-> > inodes where i_version changed. If P is suitably selected (e.g. as being a
-> > prime), then the chances of collisions (even after a snapshot rollback) are
-> > very low (on the order of 2^(-50) if my piece of envelope calculations are
-> > right).
+On Wed, Oct 19, 2022 at 5:09 PM Sean Christopherson <seanjc@google.com> wrote:
+>
+> On Wed, Oct 19, 2022, Fuad Tabba wrote:
+> > > > > This sounds good. Thank you.
+> > > >
+> > > > I like the idea of a separate Kconfig, e.g. CONFIG_KVM_GENERIC_PRIVATE_MEM or
+> > > > something.  I highly doubt there will be any non-x86 users for multiple years,
+> > > > if ever, but it would allow testing the private memory stuff on ARM (and any other
+> > > > non-x86 arch) without needing full pKVM support and with only minor KVM
+> > > > modifications, e.g. the x86 support[*] to test UPM without TDX is shaping up to be
+> > > > trivial.
+> > >
+> > > CONFIG_KVM_GENERIC_PRIVATE_MEM looks good to me.
 > >
-> > So this should nicely deal with all the problems we've spotted so far. But
-> > I may be missing something...
-> 
-> 
-> Got it! That makes a lot more sense. Thinking about this some more...
-> 
-> What sort of range for P would be suitable?
-> 
-> Every increment would need to be by (shifted) P, so we can't choose too
-> large a number. Queries are pretty rare vs. writes though, so that
-> mitigates the issue somewhat.
+> > That sounds good to me, and just keeping the xarray isn't really an
+> > issue for pKVM.
+>
+> The xarray won't exist for pKVM if the #ifdefs in this patch are changed from
+> CONFIG_HAVE_KVM_PRIVATE_MEM => CONFIG_KVM_GENERIC_PRIVATE_MEM.
+>
+> > We could end up using it instead of some of the other
+> > structures we use for tracking.
+>
+> I don't think pKVM should hijack the xarray for other purposes.  At best, it will
+> be confusing, at worst we'll end up with a mess if ARM ever supports the "generic"
+> implementation.
 
-Well, I agree that for large P the counter would wrap earlier. But is that
-a problem? Note that if P is a prime (indivisible by 2 is enough), then the
-counter would get to already used value still only after 2^63 steps. Thus if
-we give up monotonicity and just treat the counter as an opaque cookie, we
-do not have to care about wrapping.
+Definitely wasn't referring to hijacking it for other purposes, which
+is the main reason I wanted to clarify the documentation and the
+naming of private_fd. Anyway, I'm glad to see that we're in agreement.
+Once I've tightened the screws, I'll share the pKVM port as an RFC as
+well.
 
-Sure given different P is selected for each mount the wrapping argument
-does not hold 100% but here comes the advantage of primes - if you have two
-different primes P and Q, then a collision means that k*P mod 2^63 = l*Q
-mod 2^63 and that holds for exactly one pair k,l from 1..2^63 range. So the
-chances of early collision even after selecting a different prime on each
-mount are *very* low.
-
-So I think we should select from a relatively large set of primes so that
-the chance of randomly selecting the same prime (and thus reissuing the
-same change attr for different inode state sometime later) are small.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Cheers,
+/fuad
