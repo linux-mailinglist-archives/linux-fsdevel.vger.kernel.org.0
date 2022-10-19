@@ -2,160 +2,292 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0212A60483F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 15:53:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B4022604A51
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 17:03:03 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233768AbiJSNw6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Oct 2022 09:52:58 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43456 "EHLO
+        id S230368AbiJSPDB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Oct 2022 11:03:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233595AbiJSNwI (ORCPT
+        with ESMTP id S231313AbiJSPCq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Oct 2022 09:52:08 -0400
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EBC2185422;
-        Wed, 19 Oct 2022 06:35:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666186557; x=1697722557;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=4xcGc4T12PBypY/VcZfHNkEly5yZ/s7CT5KUy36zg78=;
-  b=jjhzCoBCsLf8VUs0R+QfGydIe7QYMFm556unX6I3R1DhSqiZ6WdqdGVa
-   b58y8RqAbpOUVWcVU80uo6UdKSAEaP58z78cTXYknf8jnPI1EPw1Ko8CS
-   9P4GSLacFbYoEP5y0IdzcamCNPNMyiKLNICDGy3Sb384VgKaZcR10bNVB
-   RA8w2ffKnvwlH2hIji1lwf7aova5NGJGlNbXdroBiWEj3jQJb4F+KSwx+
-   P8m2wZLALph4TDFXT2aZIqb6t4vHFkYos0euU2OjLo9a0tQGtZztObxhN
-   m5uvSoc3lGKdeFUgCz0ogBy9KOvVgmRg9BL0ZqEQxRM9EEY9rXf4luzXk
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10505"; a="286801355"
-X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
-   d="scan'208";a="286801355"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2022 06:35:26 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10505"; a="624137726"
-X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
-   d="scan'208";a="624137726"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by orsmga007.jf.intel.com with ESMTP; 19 Oct 2022 06:35:14 -0700
-Date:   Wed, 19 Oct 2022 21:30:43 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Fuad Tabba <tabba@google.com>
-Cc:     Sean Christopherson <seanjc@google.com>,
-        David Hildenbrand <david@redhat.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
+        Wed, 19 Oct 2022 11:02:46 -0400
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA8F9161FD4;
+        Wed, 19 Oct 2022 07:57:25 -0700 (PDT)
+From:   John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1666191362;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=zkI+7kE11pEfvJZCSjIsOIHfnjIhjBs6goKb/AUL2D4=;
+        b=YYO7v04TmKSkEL8SQfYf9FANh400BpV31ZQR/trpNhqYtbMsqHy7XZuAyWZcYguh+KTZKz
+        uMkqVYF2Idk8ssJy6cSwkhJih5dltGrVFm3Z7MoL7Nhtw4GkmZEKblfArE1vVoKGDs5p81
+        WHY9OAlLqzr8G07YBDVNtY0AT4QClPosfQAXC7SCLUuMtHyHR5c2LCkNDByg36nTiuRcRN
+        AVWPIk+/COT66KSdFzs7sxleUpL2onRYs8JoVdAMBeDCEkOf8Yvmkp92DVD8xjN57OewPI
+        lAF6m3iPq5588431gmChW8+srrThoCLrEllt8f0GsYtka8ApK0mxiWi8JG1KQQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1666191362;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=zkI+7kE11pEfvJZCSjIsOIHfnjIhjBs6goKb/AUL2D4=;
+        b=taXn8qnVlav1KthfUzD2BUf7770pohYL/ecGjx8VGuNp3NOcr/dyz4UXH5Ok4L9J1BRVse
+        cqmXXqp/T3jlr9Bg==
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
+        linux-kernel@vger.kernel.org,
+        Jason Wessel <jason.wessel@windriver.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-um@lists.infradead.org, Ard Biesheuvel <ardb@kernel.org>,
+        linux-efi@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        Shile Zhang <shile.zhang@linux.alibaba.com>,
+        Xianting Tian <xianting.tian@linux.alibaba.com>,
+        linuxppc-dev@lists.ozlabs.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mike Rapoport <rppt@kernel.org>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com,
-        Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>
-Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
-Message-ID: <20221019133043.GB3496045@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <Yyi+l3+p9lbBAC4M@google.com>
- <CA+EHjTzy4iOxLF=5UX=s5v6HSB3Nb1LkwmGqoKhp_PAnFeVPSQ@mail.gmail.com>
- <20220926142330.GC2658254@chaop.bj.intel.com>
- <CA+EHjTz5yGhsxUug+wqa9hrBO60Be0dzWeWzX00YtNxin2eYHg@mail.gmail.com>
- <YzN9gYn1uwHopthW@google.com>
- <CA+EHjTw3din891hMUeRW-cn46ktyMWSdoB31pL+zWpXo_=3UVg@mail.gmail.com>
- <20221013133457.GA3263142@chaop.bj.intel.com>
- <CA+EHjTzZ2zsm7Ru_OKCZg9FCYESgZsmB=7ScKRh6ZN4=4OZ3gw@mail.gmail.com>
- <20221017145856.GB3417432@chaop.bj.intel.com>
- <CA+EHjTyiU230am0cuWc7xBBirGocPWGmyqCskhTytA10xpigYQ@mail.gmail.com>
+        linux-usb@vger.kernel.org, Luis Chamberlain <mcgrof@kernel.org>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Juergen Gross <jgross@suse.com>, Tom Rix <trix@redhat.com>,
+        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+Subject: [PATCH printk v2 00/38] reduce console_lock scope
+Date:   Wed, 19 Oct 2022 17:01:22 +0206
+Message-Id: <20221019145600.1282823-1-john.ogness@linutronix.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+EHjTyiU230am0cuWc7xBBirGocPWGmyqCskhTytA10xpigYQ@mail.gmail.com>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INVALID_DATE_TZ_ABSURD,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 17, 2022 at 08:05:10PM +0100, Fuad Tabba wrote:
-> Hi,
-> 
-> > > > Using both private_fd and userspace_addr is only needed in TDX and other
-> > > > confidential computing scenarios, pKVM may only use private_fd if the fd
-> > > > can also be mmaped as a whole to userspace as Sean suggested.
-> > >
-> > > That does work in practice, for now at least, and is what I do in my
-> > > current port. However, the naming and how the API is defined as
-> > > implied by the name and the documentation. By calling the field
-> > > private_fd, it does imply that it should not be mapped, which is also
-> > > what api.rst says in PATCH v8 5/8. My worry is that in that case pKVM
-> > > would be mis/ab-using this interface, and that future changes could
-> > > cause unforeseen issues for pKVM.
-> >
-> > That is fairly enough. We can change the naming and the documents.
-> >
-> > >
-> > > Maybe renaming this to something like "guest_fp", and specifying in
-> > > the documentation that it can be restricted, e.g., instead of "the
-> > > content of the private memory is invisible to userspace" something
-> > > along the lines of  "the content of the guest memory may be restricted
-> > > to userspace".
-> >
-> > Some other candidates in my mind:
-> > - restricted_fd: to pair with the mm side restricted_memfd
-> > - protected_fd: as Sean suggested before
-> > - fd: how it's explained relies on the memslot.flag.
-> 
-> All these sound good, since they all capture the potential use cases.
-> Restricted might be the most logical choice if that's going to also
-> become the name for the mem_fd.
+This is v2 of a series to prepare for threaded/atomic
+printing. It is a rework of patches 6-12 of the v1 [0]. From
+the v1, patches 1-5 are already mainline and a rework of
+patches >12 will be posted in a later series.
 
-Thanks, I will use 'restricted' for them. e.g.:
-- memfd_restricted() syscall
-- restricted_fd
-- restricted_offset
+This series focuses on reducing the scope of the BKL
+console_lock. It achieves this by switching to SRCU and a
+dedicated mutex for console list iteration and modification,
+respectively. The console_lock will no longer offer this
+protection and is completely removed from
+(un)register_console() and console_stop/start() code.
 
-The memslot flags will still be KVM_MEM_PRIVATE, since I think pKVM will
-create its own one?
+All users of the console_lock for list iteration have been
+modified. For the call sites where the console_lock is still
+needed (because of other reasons), I added comments to explain
+exactly why the console_lock was needed.
 
-Chao
-> 
-> Thanks,
-> /fuad
-> 
-> > Thanks,
-> > Chao
-> > >
-> > > What do you think?
-> > >
-> > > Cheers,
-> > > /fuad
-> > >
-> > > >
-> > > > Thanks,
-> > > > Chao
-> > > > >
-> > > > > Cheers,
-> > > > > /fuad
+The base commit for this series is from Paul McKenney's RCU tree
+and provides an NMI-safe SRCU implementation [1]. Without the
+NMI-safe SRCU implementation, this series is not less safe than
+mainline. But we will need the NMI-safe SRCU implementation for
+atomic consoles anyway, so we might as well get it in
+now. Especially since it _does_ increase the reliability for
+mainline in the panic path.
+
+Changes since v2:
+
+general:
+
+- introduce console_is_enabled() to document safe data race on
+  console->flags
+
+- switch all "console->flags & CON_ENABLED" code sites to
+  console_is_enabled()
+
+- add "for_each_console_srcu" to .clang-format
+
+- cleanup/clarify comments relating to console_lock
+  coverage/usage
+
+um:
+
+- kmsg_dumper: use srcu instead of console_lock for list
+  iteration
+
+kgdb/kdb:
+
+- configure_kgdboc: keep console_lock for console->device()
+  synchronization, use srcu for list iteration
+
+- kgdboc_earlycon_pre_exp_handler: use srcu instead of
+  documenting unsafety for list iteration
+
+- kgdboc_earlycon_init: use console_list_lock instead of
+  console_lock to lock list
+
+- kdb_msg_write: use srcu instead of documenting unsafety for
+  list iteration
+
+tty:
+
+- show_cons_active: keep console_lock for console->device()
+  synchronization
+
+fbdev:
+
+- xen-fbfront: xenfb_probe: use srcu instead of console_lock
+  for list iteration, introduce console_force_preferred() to
+  safely implement hack
+
+proc/consoles:
+
+- show_console_dev: keep console_lock for console->device()
+  synchronization
+
+- c_next: use hlist_entry_safe() instead of
+  hlist_for_each_entry_continue()
+
+printk:
+
+- remove console_lock from console_stop/start() and
+  (un)register_console()
+
+- introduce console_srcu_read_(un)lock() to wrap scru read
+  (un)lock
+
+- rename cons_first() macro to console_first()
+
+- for_each_console: add lockdep check instead of introducing
+  new for_each_registered_console()
+
+- console_list_lock: add warning if in read-side critical
+  section
+
+- release srcu read lock on handover
+
+- console_flush_all: use srcu instead of relying on console
+  lock for list iteration
+
+- console_unblank: use srcu instead of relying on console_lock
+  for list iteration
+
+- console_flush_on_panic: use srcu for list iteration and
+  document console->seq race
+
+- device: keep console_lock for console->device()
+  synchronization, usr srcu for list iteration
+
+- register_console: split list adding logic into the 3 distinct
+  scenarios
+
+- register_console: set initial sequence number before adding
+  to list
+
+- unregister_console: fix ENODEV return value if the console is
+  not registered
+
+- console_stop: synchronize srcu
+
+- printk_late_init: use _safe variant of iteration
+
+- __pr_flush: use srcu instead of relying on console_lock for
+  list iteration
+
+John Ogness
+
+[0] https://lore.kernel.org/r/20220924000454.3319186-1-john.ogness@linutronix.de
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/log/?h=srcunmisafe.2022.10.18b
+
+John Ogness (37):
+  printk: Convert console_drivers list to hlist
+  printk: Prepare for SRCU console list protection
+  printk: introduce console_is_enabled() wrapper
+  printk: use console_is_enabled()
+  tty: nfcon: use console_is_enabled()
+  um: kmsg_dump: use console_is_enabled()
+  efi: earlycon: use console_is_enabled()
+  netconsole: use console_is_enabled()
+  tty: hvc: use console_is_enabled()
+  tty: serial: earlycon: use console_is_enabled()
+  tty: serial: kgdboc: use console_is_enabled()
+  tty: serial: pic32_uart: use console_is_enabled()
+  tty: serial: samsung_tty: use console_is_enabled()
+  tty: serial: serial_core: use console_is_enabled()
+  tty: serial: xilinx_uartps: use console_is_enabled()
+  tty: tty_io: use console_is_enabled()
+  usb: early: xhci-dbc: use console_is_enabled()
+  kdb: kdb_io: use console_is_enabled()
+  um: kmsg_dumper: use srcu console list iterator
+  serial: kgdboc: use srcu console list iterator
+  serial: kgdboc: document console_lock usage
+  tty: tty_io: document console_lock usage
+  xen: fbfront: use srcu console list iterator
+  proc: consoles: document console_lock usage
+  kdb: use srcu console list iterator
+  printk: console_flush_all: use srcu console list iterator
+  printk: console_unblank: use srcu console list iterator
+  printk: console_flush_on_panic: use srcu console list iterator
+  printk: console_device: use srcu console list iterator
+  printk: register_console: use srcu console list iterator
+  printk: __pr_flush: use srcu console list iterator
+  printk: introduce console_list_lock
+  serial: kgdboc: use console_list_lock instead of console_lock
+  tty: tty_io: use console_list_lock for list synchronization
+  proc: consoles: use console_list_lock for list iteration
+  printk: relieve console_lock of list synchronization duties
+  printk, xen: fbfront: create/use safe function for forcing preferred
+
+Thomas Gleixner (1):
+  serial: kgdboc: Lock console list in probe function
+
+ .clang-format                      |   1 +
+ arch/m68k/emu/nfcon.c              |   4 +-
+ arch/um/kernel/kmsg_dump.c         |  15 +-
+ drivers/firmware/efi/earlycon.c    |   4 +-
+ drivers/net/netconsole.c           |   4 +-
+ drivers/tty/hvc/hvc_console.c      |   2 +-
+ drivers/tty/serial/earlycon.c      |   4 +-
+ drivers/tty/serial/kgdboc.c        |  37 ++-
+ drivers/tty/serial/pic32_uart.c    |   2 +-
+ drivers/tty/serial/samsung_tty.c   |   2 +-
+ drivers/tty/serial/serial_core.c   |   2 +-
+ drivers/tty/serial/xilinx_uartps.c |   2 +-
+ drivers/tty/tty_io.c               |  18 +-
+ drivers/usb/early/xhci-dbc.c       |   2 +-
+ drivers/video/fbdev/xen-fbfront.c  |  16 +-
+ fs/proc/consoles.c                 |  20 +-
+ include/linux/console.h            |  75 +++++-
+ include/linux/serial_core.h        |   2 +-
+ kernel/debug/kdb/kdb_io.c          |   7 +-
+ kernel/printk/printk.c             | 373 +++++++++++++++++++++--------
+ 20 files changed, 438 insertions(+), 154 deletions(-)
+
+
+base-commit: c2d158a284abd63d727dad7402a2eed650dd4233
+-- 
+2.30.2
+
