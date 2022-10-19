@@ -2,75 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B6166046D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 15:21:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BBEF6604816
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 15:50:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232324AbiJSNVm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Oct 2022 09:21:42 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35222 "EHLO
+        id S232996AbiJSNtn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Oct 2022 09:49:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33986 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232019AbiJSNVO (ORCPT
+        with ESMTP id S233626AbiJSNs3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Oct 2022 09:21:14 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D96B21C2097;
-        Wed, 19 Oct 2022 06:06:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ltxh6lxhvT92TP0SNmx2VMAM1oTzzEXuHTECeCwVWiQ=; b=JE56Tqv1TqmJwtoAXQRLbpFOry
-        ZGMXaNEMq8pUUFjt/I7CnQ6keu4uQFUVe+trgltKz6Y6IvlVvWp1wfosHU6tdxUB5J0HqcY/i1BM1
-        DiFy6NVN1KYvxoQiYkWyAGFIcip958/MoWR4LX2CaFdUktd2gys9L6MoQz5U3V1jMDXWpeAotHLDR
-        xdHu0nFh/QjkEaAAckkYuyUkOTuORV85I4JEyhHGcVee3tJZWOTcTG904nlEl80FZoM+VbUu9k4cU
-        f97YyMKAa+98SD7n+uraWWoWLLZVF7HZEkq5kdeZG00r9Epyy7KDnJAXU1wrpJMK0Zt3FurOQulm2
-        67cw3CTw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ol8m7-00BZ12-Cj; Wed, 19 Oct 2022 13:06:23 +0000
-Date:   Wed, 19 Oct 2022 14:06:23 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Zhaoyang Huang <huangzhaoyang@gmail.com>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
-        steve.kang@unisoc.com, baocong.liu@unisoc.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] mm: move xa forward when run across zombie page
-Message-ID: <Y0/2T5KpFurV2MLp@casper.infradead.org>
-References: <1665725448-31439-1-git-send-email-zhaoyang.huang@unisoc.com>
- <Y0lSChlclGPkwTeA@casper.infradead.org>
- <CAGWkznG=_A-3A8JCJEoWXVcx+LUNH=gvXjLpZZs0cRX4dhUJfQ@mail.gmail.com>
- <Y017BeC64GDb3Kg7@casper.infradead.org>
- <CAGWkznEdtGPPZkHrq6Y_+XLL37w12aC8XN8R_Q-vhq48rFhkSA@mail.gmail.com>
- <Y04Y3RNq6D2T9rVw@casper.infradead.org>
- <20221018223042.GJ2703033@dread.disaster.area>
- <20221019011636.GM2703033@dread.disaster.area>
- <20221019044734.GN2703033@dread.disaster.area>
- <CAGWkznEGMg293S7jOmZ7G-UhEBg6rQZhTd6ffhjoDgoFGvhFNw@mail.gmail.com>
+        Wed, 19 Oct 2022 09:48:29 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FD5D157464;
+        Wed, 19 Oct 2022 06:32:41 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 92D97615AD;
+        Wed, 19 Oct 2022 13:22:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C28ACC433D6;
+        Wed, 19 Oct 2022 13:22:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666185726;
+        bh=ZCpdj8pPesM/jS+ooafHVb6mMa1dZ1MUcBDFH9w5Eiw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=UwXO9CHPe4QSEAHZF1XVE2PQ/k97orXWrr1R2xbwjKVcMB75V5U15xoP47YpaG4pc
+         xSri+53EnN+fv2abzB7CuElP/TVZgMthc67qAWagYhb9uBxf6ZAx34q37cnUTgm8y/
+         UtzsVyIiQpSaWRP2qVXL7VU4hEhBt1LUfJJfw8uC4s/tI/HlwXSv0ioCxPjqXwepUt
+         C/mZzvnxwfU2bL0jn74AG9U/I+CAf1pGUVMtfFvJBVz/4kBhCeGxVYdZFWCOQiK7lQ
+         hiODawqhXIN/74vGPmw4w/36YvF1BEYsuthhI1BfAurig52vCPIsNfhAIKLVzgmA9Z
+         vhG5L6isq503w==
+Date:   Wed, 19 Oct 2022 15:22:01 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Daniel Xu <dxu@dxuuu.xyz>
+Cc:     viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: Odd interaction with file capabilities and procfs files
+Message-ID: <20221019132201.kd35firo6ks6ph4j@wittgenstein>
+References: <f1e63e54-d88d-4b69-86f1-c0b4a0fd8035@app.fastmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAGWkznEGMg293S7jOmZ7G-UhEBg6rQZhTd6ffhjoDgoFGvhFNw@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <f1e63e54-d88d-4b69-86f1-c0b4a0fd8035@app.fastmail.com>
+X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 19, 2022 at 01:48:37PM +0800, Zhaoyang Huang wrote:
-> On Wed, Oct 19, 2022 at 12:47 PM Dave Chinner <david@fromorbit.com> wrote:
-> > I removed the mapping_set_large_folios() calls in the XFS inode
-> > instantiation and the test code has now run over 55,000 iterations
-> > without failing.  The most iterations I'd seen with large folios
-> > enabled was about 7,000 - typically it would fail within 2-3,000
-> > iterations.
-> hint from my side. The original problem I raised is under v5.15 where
-> there is no folio yet.
+On Tue, Oct 18, 2022 at 06:42:04PM -0600, Daniel Xu wrote:
+> Hi,
+> 
+> (Going off get_maintainers.pl for fs/namei.c here)
+> 
+> I'm seeing some weird interactions with file capabilities and S_IRUSR
+> procfs files. Best I can tell it doesn't occur with real files on my btrfs
+> home partition.
+> 
+> Test program:
+> 
+>         #include <fcntl.h>
+>         #include <stdio.h>
+>         
+>         int main()
+>         {
+>                 int fd = open("/proc/self/auxv", O_RDONLY);
+>                 if (fd < 0) {
+>                         perror("open");
+>                         return 1;
+>                 }
+>        
+>                 printf("ok\n");
+>                 return 0;
+>         }
+> 
+> Steps to reproduce:
+> 
+>         $ gcc main.c
+>         $ ./a.out
+>         ok
+>         $ sudo setcap "cap_net_admin,cap_sys_admin+p" a.out
+>         $ ./a.out
+>         open: Permission denied
+> 
+> It's not obvious why this happens, even after spending a few hours
+> going through the standard documentation and kernel code. It's
+> intuitively odd b/c you'd think adding capabilities to the permitted
+> set wouldn't affect functionality.
+> 
+> Best I could tell the -EACCES error occurs in the fallthrough codepath
+> inside generic_permission().
+> 
+> Sorry if this is something dumb or obvious.
 
-But 5.15 does use 2MB pages in shmem.  You haven't really provided
-any information, so I don't know whether the inode that you're having
-problems with is a shmem inode.
+Hey Daniel,
+
+No, this is neither dumb nor obvious. :)
+
+Basically, if you set fscaps then /proc/self/auxv will be owned by
+root:root. You can verify this:
+
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <stdio.h>
+#include <errno.h>
+#include <unistd.h>
+
+int main()
+{
+        struct stat st;
+        printf("%d | %d\n", getuid(), geteuid());
+
+        if (stat("/proc/self/auxv", &st)) {
+                fprintf(stderr, "stat: %d - %m\n", errno);
+                return 1;
+        }
+        printf("stat: %d | %d\n", st.st_uid, st.st_gid);
+
+        int fd = open("/proc/self/auxv", O_RDONLY);
+        if (fd < 0) {
+                fprintf(stderr, "open: %d - %m\n", errno);
+                return 1;
+        }
+
+        printf("ok\n");
+        return 0;
+}
+
+$ ./a.out
+1000 | 1000
+stat: 1000 | 1000
+ok
+$ sudo setcap "cap_net_admin,cap_sys_admin+p" a.out
+$ ./a.out
+1000 | 1000
+stat: 0 | 0
+open: 13 - Permission denied
+
+So acl_permission_check() fails and returns -EACCESS which will cause
+generic_permission() to rely on capable_wrt_inode_uidgid() which checks
+for CAP_DAC_READ_SEARCH which you don't have as an unprivileged user.
