@@ -2,134 +2,133 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE6E6604C26
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 17:51:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C3DEF604CCA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 19 Oct 2022 18:09:56 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232663AbiJSPvS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Oct 2022 11:51:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56542 "EHLO
+        id S229910AbiJSQJz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Oct 2022 12:09:55 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232336AbiJSPup (ORCPT
+        with ESMTP id S232764AbiJSQJr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Oct 2022 11:50:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 97980153E24;
-        Wed, 19 Oct 2022 08:46:30 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2B60561846;
-        Wed, 19 Oct 2022 15:45:29 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B874C433C1;
-        Wed, 19 Oct 2022 15:45:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666194328;
-        bh=Xth0BtK1NQ1Hk2Nxe9JXu1D9E0ErD3wODQtzBi2ym5s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X7NCLo3rLbHHL28m3K6awBgXXuVSRkVx/W/iNG72TgwHP/QGzlwE5aXWsyqVDL8a1
-         wEVxfc5KbVlEy75SJuZbRbwsJMOnhIXDkwx1son+cOITqQlDQ0QvLnM/3vpOUpWxDb
-         HbLPdNtqJWl5O8o1UbYh7zlAgnkN32FTKdxPKV6wyhB1WYcOsSnpdoj0ZTRn99gZMr
-         iPhGYAE8dvgo6TX0YdBSx5q+k+NEbWsJ6hLnHxKQFgp4pZ3B6IICxoSEwrXnHdKp2B
-         ZpdJhpUPWZk7qd6TWC3l1w3pOqDI5/xWccZqWU7R9AWYAYZ+3zLVIvBcRFWN20aSYA
-         oDW8DAuiVCriw==
-Date:   Wed, 19 Oct 2022 08:45:28 -0700
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Christian Brauner <brauner@kernel.org>, tytso@mit.edu,
-        adilger.kernel@dilger.ca, david@fromorbit.com,
-        trondmy@hammerspace.com, neilb@suse.de, viro@zeniv.linux.org.uk,
-        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
-        lczerner@redhat.com, jack@suse.cz, bfields@fieldses.org,
-        fweimer@redhat.com, linux-btrfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v7 0/9] fs: clean up handling of i_version counter
-Message-ID: <Y1AbmIYEhUwfFHDx@magnolia>
-References: <20221017105709.10830-1-jlayton@kernel.org>
- <20221019111315.hpilifogyvf3bixh@wittgenstein>
- <2b167dd9bda17f1324e9c526d868cc0d995dc660.camel@kernel.org>
+        Wed, 19 Oct 2022 12:09:47 -0400
+Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F274DFC1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Oct 2022 09:09:40 -0700 (PDT)
+Received: by mail-pl1-x62f.google.com with SMTP id n7so17723507plp.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Oct 2022 09:09:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ypkvL3yaAxMPxurJS0uFGqCkiFZ+RyzOnuF9leoHMPg=;
+        b=h+1KlUYCjsRVvRZom/eZaqVVZPwLNuYTzVtc/yfchg/FVn3f5I4RUVC9fB77Ol9VGf
+         HgCK8mY6Nv+Xq72Fx81Po6YrtpzWxQ53rseaDQp3xO+NUuzg/Q/QlKyJ26MY8whFSFB9
+         Yz/rDhSdBT3TPLIrEG1lXL4xKfi0GT6oeGR8n8SqA7rIg+ZhIQiSL6k7+pVB5ukZ64kF
+         kVFFiLi2o9zlE+Zz99wb/PPKOZvfE8v4DtNHoGGtu9prsA4BZL7zqk0frRY/JGZwwNq7
+         g2L2w4CVrM6EQ0r7EXNj734PT3xgw2/P2uRLexg59HxYszjKm2su2n+onT/oKpMmOXgw
+         qJ9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ypkvL3yaAxMPxurJS0uFGqCkiFZ+RyzOnuF9leoHMPg=;
+        b=hFMDEaFhWA2IEdJ09WUv38+smrpy9CnsNYPa7U6XNFXXwgJjqCSWCSaLkuaH/I52R3
+         VjqUsvziioWpW2oVbHOn3wHdU8D4VwoVxw72YCU1K69d2DJ1y5BWgDbodFsUsp74z4gj
+         B3p3ho/3jQeRV+6CK0KkOXwDqMEP63FElFuKn9Hfmd29ayjpwiq2R92s0jnX2GsS/YYx
+         5ViAS0g9Eb+z/E/1A7bPllfGyQz0iGsAcjlM75FkFFRKu4dGULOX5e+UY9ry99K0MTi5
+         BvgaVTtGnFT57LTB9+pMdOOzrOzvW8tQndp+EtVMz8kg7bYVi54GLZR2oXMeFmFIrcje
+         mM/w==
+X-Gm-Message-State: ACrzQf3r2uXwhEcF/N5rDkGPjvZH/Ike2nLVxdbHk3eX75OjWMAzkjre
+        6RG8JFZC/9bFeIiKT3hXDI6hHamMyKUBUQ==
+X-Google-Smtp-Source: AMsMyM5J8mv9XBDJfNSTMwrJGznqodpAH+vWLTNt9JpHQACwNEqu56e3wBHUQ6hekV2SylbV5oa2BA==
+X-Received: by 2002:a17:903:248b:b0:17d:ea45:d76a with SMTP id p11-20020a170903248b00b0017dea45d76amr9440949plw.97.1666195779474;
+        Wed, 19 Oct 2022 09:09:39 -0700 (PDT)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id d13-20020aa797ad000000b00553d573222fsm11558997pfq.199.2022.10.19.09.09.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Oct 2022 09:09:38 -0700 (PDT)
+Date:   Wed, 19 Oct 2022 16:09:35 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Fuad Tabba <tabba@google.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v8 5/8] KVM: Register/unregister the guest private memory
+ regions
+Message-ID: <Y1AhP0dlRSgTCObX@google.com>
+References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
+ <20220915142913.2213336-6-chao.p.peng@linux.intel.com>
+ <CA+EHjTxukqBfaN6D+rPOiX83zkGknHEQ16J0k6GQSdL_-e9C6g@mail.gmail.com>
+ <20221012023516.GA3218049@chaop.bj.intel.com>
+ <CA+EHjTyGyGL+ox81=jdtoHERtHPV=P7wJub=3j7chdijyq-AgA@mail.gmail.com>
+ <Y03UiYYioV+FQIpx@google.com>
+ <20221019132308.GA3496045@chaop.bj.intel.com>
+ <CA+EHjTytCEup0m-nhnVHsuQ1xjaCxXNHO_Oxe+QbpwqaewpfKQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <2b167dd9bda17f1324e9c526d868cc0d995dc660.camel@kernel.org>
-X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <CA+EHjTytCEup0m-nhnVHsuQ1xjaCxXNHO_Oxe+QbpwqaewpfKQ@mail.gmail.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 19, 2022 at 08:18:15AM -0400, Jeff Layton wrote:
-> On Wed, 2022-10-19 at 13:13 +0200, Christian Brauner wrote:
-> > On Mon, Oct 17, 2022 at 06:57:00AM -0400, Jeff Layton wrote:
-> > > This patchset is intended to clean up the handling of the i_version
-> > > counter by nfsd. Most of the changes are to internal interfaces.
-> > > 
-> > > This set is not intended to address crash resilience, or the fact that
-> > > the counter is bumped before a change and not after. I intend to tackle
-> > > those in follow-on patchsets.
-> > > 
-> > > My intention is to get this series included into linux-next soon, with
-> > > an eye toward merging most of it during the v6.2 merge window. The last
-> > > patch in the series is probably not suitable for merge as-is, at least
-> > > until we sort out the semantics we want to present to userland for it.
-> > 
-> > Over the course of the series I struggled a bit - and sorry for losing
-> > focus - with what i_version is supposed to represent for userspace. So I
-> > would support not exposing it to userspace before that. But that
-> > shouldn't affect your other changes iiuc.
+On Wed, Oct 19, 2022, Fuad Tabba wrote:
+> > > > This sounds good. Thank you.
+> > >
+> > > I like the idea of a separate Kconfig, e.g. CONFIG_KVM_GENERIC_PRIVATE_MEM or
+> > > something.  I highly doubt there will be any non-x86 users for multiple years,
+> > > if ever, but it would allow testing the private memory stuff on ARM (and any other
+> > > non-x86 arch) without needing full pKVM support and with only minor KVM
+> > > modifications, e.g. the x86 support[*] to test UPM without TDX is shaping up to be
+> > > trivial.
+> >
+> > CONFIG_KVM_GENERIC_PRIVATE_MEM looks good to me.
 > 
-> Thanks Christian,
-> 
-> It has been a real struggle to nail this down, and yeah I too am not
-> planning to expose this to userland until we have this much better
-> defined. Patch #9 is just to give you an idea of what this would
-> ultimately look like. I intend to re-post the first 8 patches with an
-> eye toward merge in v6.2, once we've settled on the naming. On that
-> note...
-> 
-> I believe you had mentioned that you didn't like STATX_CHANGE_ATTR for
-> the name, and suggested STATX_I_VERSION (or something similar), which I
-> later shortened to STATX_VERSION.
-> 
-> Dave C. objected to STATX_VERSION, as "version" fields in a struct
-> usually refer to the version of the struct itself rather than the
-> version of the thing it describes. It also sort of implies a monotonic
-> counter, and I'm not ready to require that just yet.
-> 
-> What about STATX_CHANGE for the name (with corresponding names for the
-> field and other flags)? That drops the redundant "_ATTR" postfix, while
-> being sufficiently vague to allow for alternative implementations in the
-> future.
-> 
-> Do you (or anyone else) have other suggestions for a name?
+> That sounds good to me, and just keeping the xarray isn't really an
+> issue for pKVM.
 
-Welllll it's really a u32 whose value doesn't have any intrinsic meaning
-other than "if (value_now != value_before) flush_cache();" right?
-I think it really only tracks changes to file data, right?
+The xarray won't exist for pKVM if the #ifdefs in this patch are changed from
+CONFIG_HAVE_KVM_PRIVATE_MEM => CONFIG_KVM_GENERIC_PRIVATE_MEM.
 
-STATX_CHANGE_COOKIE	(wait, does this cookie augment i_ctime?)
+> We could end up using it instead of some of the other
+> structures we use for tracking.
 
-STATX_MOD_COOKIE	(...or just file modifications/i_mtime?)
-
-STATX_MONITOR_COOKIE	(...what are we monitoring??)
-
-STATX_MON_COOKIE
-
-STATX_COOKIE_MON
-
-STATX_COOKIE_MONSTER
-
-There we go. ;)
-
-In seriousness, I'd probably go with one of the first two.  I wouldn't
-be opposed to the last one, either, but others may disagree. ;)
-
---D
-
-> -- 
-> Jeff Layton <jlayton@kernel.org>
+I don't think pKVM should hijack the xarray for other purposes.  At best, it will
+be confusing, at worst we'll end up with a mess if ARM ever supports the "generic"
+implementation.  
