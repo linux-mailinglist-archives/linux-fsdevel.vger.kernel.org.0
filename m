@@ -2,153 +2,215 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 70D336061AB
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 15:31:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BCDF606269
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 16:04:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229846AbiJTNbl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Oct 2022 09:31:41 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47634 "EHLO
+        id S230148AbiJTOEV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Oct 2022 10:04:21 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229817AbiJTNbk (ORCPT
+        with ESMTP id S230123AbiJTOET (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Oct 2022 09:31:40 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8B9C61918BA;
-        Thu, 20 Oct 2022 06:31:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Ub1/BqWnc+u3S6gZuqlIRI6PL3Nk/sdK2+QXvb0/fQU=; b=RN5JK4lTNkV7unSEKrdF+0s9/3
-        cAJwWtWZWcVCoR1k83daYisqZj0q+OX25fIvm0RQko13gvAImNqVuHFIcq4RGlj4GCNZyocIbo58m
-        DjU9444DUyGtC/X4QMzvfdl6SmXjYAvDk6EX/slC2TjYSnmYZKfYCme/5FgRN5p15pfWskTRAPCO+
-        JrDtRGG1lHvNI7eIe12Y3zewqUgvvx8wBHzS+PiPGICEbXMbEeZI997mTacqnYJ8uus7tjmJOaQHz
-        NH+LEqZtVhB11qij3EOkGj9+e5++8799XHfFLyvy0Vfts2zq9vS/KMfuzBwwtLqxjoayZBSVDnEN1
-        1okF8/vg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1olVe7-00CPQP-8e; Thu, 20 Oct 2022 13:31:39 +0000
-Date:   Thu, 20 Oct 2022 14:31:39 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     syzbot <syzbot+e33c2a7e25ff31df5297@syzkaller.appspotmail.com>
-Cc:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com,
-        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
-        ntfs3@lists.linux.dev
-Subject: Re: [syzbot] BUG: unable to handle kernel NULL pointer dereference
- in filemap_read_folio
-Message-ID: <Y1FNu60vwt7oJRSu@casper.infradead.org>
-References: <00000000000020f00f05eb774338@google.com>
+        Thu, 20 Oct 2022 10:04:19 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 202B51D6A64
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Oct 2022 07:04:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1666274652;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=9nCYnpDiF6jG8sTPBwmH96ryJf+ugRaTkdwBFuQTVY4=;
+        b=epg4c/xL4iGpUPIyjIT2WEw2VjzPhhlswHjMCgXOnSIlUros6dzGSmbw3bOOlzNrqEa47N
+        4tRWp8CleZz1CydqiJD/AoM8fK9fd1s2a4S4QYxF6eDhZLWyZyfBvNlut3Etj4dR0xT8v9
+        c40DQZvj4x+FbrHles7bCBPy9KMR87M=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-161-3ruEITnrN6ywsi0u79TsCA-1; Thu, 20 Oct 2022 10:04:04 -0400
+X-MC-Unique: 3ruEITnrN6ywsi0u79TsCA-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 603E9858282;
+        Thu, 20 Oct 2022 14:03:58 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9D84B40315C;
+        Thu, 20 Oct 2022 14:03:56 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y01VjOE2RrLVA2T6@infradead.org>
+References: <Y01VjOE2RrLVA2T6@infradead.org> <1762414.1665761217@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        willy@infradead.org, dchinner@redhat.com,
+        Steve French <smfrench@gmail.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ira Weiny <ira.weiny@intel.com>, torvalds@linux-foundation.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: How to convert I/O iterators to iterators, sglists and RDMA lists
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <00000000000020f00f05eb774338@google.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1415914.1666274636.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+Date:   Thu, 20 Oct 2022 15:03:56 +0100
+Message-ID: <1415915.1666274636@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 20, 2022 at 06:25:43AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
+Christoph Hellwig <hch@infradead.org> wrote:
 
-NTFS.  Ignored.
+> >  (1) Async direct I/O.
+> > =
 
-> HEAD commit:    55be6084c8e0 Merge tag 'timers-core-2022-10-05' of git://g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=108783e6880000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=c29b6436e994d72e
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e33c2a7e25ff31df5297
-> compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-> 
-> Unfortunately, I don't have any reproducer for this issue yet.
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/c8f5131ab57d/disk-55be6084.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/77167f226f35/vmlinux-55be6084.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+e33c2a7e25ff31df5297@syzkaller.appspotmail.com
-> 
-> ntfs: volume version 3.1.
-> BUG: kernel NULL pointer dereference, address: 0000000000000000
-> #PF: supervisor instruction fetch in kernel mode
-> #PF: error_code(0x0010) - not-present page
-> PGD a5bf9067 P4D a5bf9067 PUD 37d2e067 PMD 0 
-> Oops: 0010 [#1] PREEMPT SMP KASAN
-> CPU: 1 PID: 11041 Comm: syz-executor.1 Not tainted 6.0.0-syzkaller-09589-g55be6084c8e0 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
-> RIP: 0010:0x0
-> Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-> RSP: 0018:ffffc9001504f618 EFLAGS: 00010287
-> RAX: ffffffff81b64c0e RBX: ffffc9001504f680 RCX: 0000000000040000
-> RDX: ffffc9000ae14000 RSI: ffffea0002a61580 RDI: 0000000000000000
-> RBP: ffffc9001504f6f8 R08: dffffc0000000000 R09: fffff9400054c2b1
-> R10: fffff9400054c2b1 R11: 1ffffd400054c2b0 R12: ffffea0002a61580
-> R13: 1ffffd400054c2b1 R14: 0000000000000000 R15: ffffea0002a61588
-> FS:  00007f0f425d5700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffffffffffffffd6 CR3: 00000000a32e1000 CR4: 00000000003506e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  filemap_read_folio+0x1ba/0x7f0 mm/filemap.c:2399
->  do_read_cache_folio+0x2d3/0x790 mm/filemap.c:3526
->  do_read_cache_page mm/filemap.c:3568 [inline]
->  read_cache_page+0x57/0x250 mm/filemap.c:3577
->  read_mapping_page include/linux/pagemap.h:756 [inline]
->  ntfs_map_page fs/ntfs/aops.h:75 [inline]
->  ntfs_check_logfile+0x3f1/0x2a50 fs/ntfs/logfile.c:532
->  load_and_check_logfile+0x6f/0xd0 fs/ntfs/super.c:1215
->  load_system_files+0x3376/0x48d0 fs/ntfs/super.c:1941
->  ntfs_fill_super+0x19a9/0x2bf0 fs/ntfs/super.c:2892
->  mount_bdev+0x26c/0x3a0 fs/super.c:1400
->  legacy_get_tree+0xea/0x180 fs/fs_context.c:610
->  vfs_get_tree+0x88/0x270 fs/super.c:1530
->  do_new_mount+0x289/0xad0 fs/namespace.c:3040
->  do_mount fs/namespace.c:3383 [inline]
->  __do_sys_mount fs/namespace.c:3591 [inline]
->  __se_sys_mount+0x2e3/0x3d0 fs/namespace.c:3568
->  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
->  do_syscall_64+0x2b/0x70 arch/x86/entry/common.c:80
->  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> RIP: 0033:0x7f0f4148cada
-> Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007f0f425d4f88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007f0f4148cada
-> RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f0f425d4fe0
-> RBP: 00007f0f425d5020 R08: 00007f0f425d5020 R09: 0000000020000000
-> R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020000000
-> R13: 0000000020000100 R14: 00007f0f425d4fe0 R15: 00000000200026c0
->  </TASK>
-> Modules linked in:
-> CR2: 0000000000000000
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:0x0
-> Code: Unable to access opcode bytes at 0xffffffffffffffd6.
-> RSP: 0018:ffffc9001504f618 EFLAGS: 00010287
-> RAX: ffffffff81b64c0e RBX: ffffc9001504f680 RCX: 0000000000040000
-> RDX: ffffc9000ae14000 RSI: ffffea0002a61580 RDI: 0000000000000000
-> RBP: ffffc9001504f6f8 R08: dffffc0000000000 R09: fffff9400054c2b1
-> R10: fffff9400054c2b1 R11: 1ffffd400054c2b0 R12: ffffea0002a61580
-> R13: 1ffffd400054c2b1 R14: 0000000000000000 R15: ffffea0002a61588
-> FS:  00007f0f425d5700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: ffffffffffffffd6 CR3: 00000000a32e1000 CR4: 00000000003506e0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> 
-> 
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
-> 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >      In the async case direct I/O, we cannot hold on to the iterator w=
+hen we
+> >      return, even if the operation is still in progress (ie. we return
+> >      EIOCBQUEUED), as it is likely to be on the caller's stack.
+> > =
+
+> >      Also, simply copying the iterator isn't sufficient as virtual use=
+rspace
+> >      addresses cannot be trusted and we may have to pin the pages that
+> >      comprise the buffer.
+> =
+
+> This is very related to the discussion we are having related to pinning
+> for O_DIRECT with Ira and Al.
+
+Do you have a link to that discussion?  I don't see anything obvious on
+fsdevel including Ira.
+
+I do see a discussion involving iov_iter_pin_pages, but I don't see Ira
+involved in that.
+
+> What block file systems do is to take the pages from the iter and some f=
+lags
+> on what is pinned.  We can generalize this to store all extra state in a
+> flags word, or byte the bullet and allow cloning of the iter in one form=
+ or
+> another.
+
+Yeah, I know.  A list of pages is not an ideal solution.  It can only hand=
+le
+contiguous runs of pages, possibly with a partial page at either end.  A b=
+vec
+iterator would be of more use as it can handle a series of partial pages.
+
+Note also that I would need to turn the pages *back* into an iterator in o=
+rder
+to commune with sendmsg() in the nether reaches of some network filesystem=
+s.
+
+> >  (2) Crypto.
+> > =
+
+> >      The crypto interface takes scatterlists, not iterators, so we nee=
+d to
+> >      be able to convert an iterator into a scatterlist in order to do
+> >      content encryption within netfslib.  Doing this in netfslib makes=
+ it
+> >      easier to store content-encrypted files encrypted in fscache.
+> =
+
+> Note that the scatterlist is generally a pretty bad interface.  We've
+> been talking for a while to have an interface that takes a page array
+> as an input and return an array of { dma_addr, len } tuples.  Thinking
+> about it taking in an iter might actually be an even better idea.
+
+It would be nice to be able to pass an iterator to the crypto layer.  I'm =
+not
+sure what the crypto people think of that.
+
+> >  (3) RDMA.
+> > =
+
+> >      To perform RDMA, a buffer list needs to be presented as a QPE arr=
+ay.
+> >      Currently, cifs converts the iterator it is given to lists of pag=
+es,
+> >      then each list to a scatterlist and thence to a QPE array.  I hav=
+e
+> >      code to pass the iterator down to the bottom, using an intermedia=
+te
+> >      BVEC iterator instead of a page list if I can't pass down the
+> >      original directly (eg. an XARRAY iterator on the pagecache), but =
+I
+> >      still end up converting it to a scatterlist, which is then conver=
+ted
+> >      to a QPE.  I'm trying to go directly from an iterator to a QPE ar=
+ray,
+> >      thus avoiding the need to allocate an sglist.
+> =
+
+> I'm not sure what you mean with QPE.  The fundamental low-level
+> interface in RDMA is the ib_sge.
+
+Sorry, yes. ib_sge array.  I think it appears as QPs on the wire.
+
+> If you feed it to RDMA READ/WRITE requests the interface for that is the
+> RDMA R/W API in drivers/infiniband/core/rw.c, which currently takes a
+> scatterlist but to which all of the above remarks on DMA interface apply=
+.
+> For RDMA SEND that ULP has to do a dma_map_single/page to fill it, which=
+ is
+> a quite horrible layering violation and should move into the driver, but
+> that is going to a massive change to the whole RDMA subsystem, so unlike=
+ly
+> to happen anytime soon.
+
+In cifs, as it is upstream, in RDMA transmission, the iterator is converte=
+d
+into a clutch of pages in the top, which is converted back into iterators
+(smbd_send()) and those into scatterlists (smbd_post_send_data()), thence =
+into
+sge lists (see smbd_post_send_sgl()).
+
+I have patches that pass an iterator (which it decants to a bvec if async)=
+ all
+the way down to the bottom layer.  Snippets are then converted to scatterl=
+ists
+and those to sge lists.  I would like to skip the scatterlist intermediate=
+ and
+convert directly to sge lists.
+
+On the other hand, if you think the RDMA API should be taking scatterlists
+rather than sge lists, that would be fine.  Even better if I can just pass=
+ an
+iterator in directly - though neither scatterlist nor iterator has a place=
+ to
+put the RDMA local_dma_key - though I wonder if that's actually necessary =
+for
+each sge element, or whether it could be handed through as part of the req=
+uest
+as a hole.
+
+> Neither case has anything to do with what should be in common iov_iter
+> code, all this needs to live in the RDMA subsystem as a consumer.
+
+That's fine in principle.  However, I have some extraction code that can
+convert an iterator to another iterator, an sglist or an rdma sge list, us=
+ing
+a common core of code to do all three.
+
+I can split it up if that is preferable.
+
+Do you have code that's ready to be used?  I can make immediate use of it.
+
+David
+
