@@ -2,190 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BCCD5605515
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 03:36:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 5949260554A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 04:05:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231508AbiJTBgn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Oct 2022 21:36:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45390 "EHLO
+        id S230298AbiJTCE7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Oct 2022 22:04:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46950 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231512AbiJTBgk (ORCPT
+        with ESMTP id S230260AbiJTCE5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Oct 2022 21:36:40 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 405321CA5A8;
-        Wed, 19 Oct 2022 18:36:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666229780; x=1697765780;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=/nrOQFrhf1EX4NjuvK8kqQS4PDGIYwLLK4HPOOq8ftc=;
-  b=IHJ2OqXGa++F2ALvMLpvQGzJRVIkz51IlZuBJ5Abp2g0sBvRYgu/Vjdd
-   YxGiJEXZkoVqab6mTQWivwMCZ2Uh7KoMv2JFQJq7qSd0oWYqT8ayipb63
-   CchQyqeV1MYRpvsB7m3AQDApS/vEFYqzHOZB/WNWkI7lz+6waDfw6/okU
-   r+Fh7AlbiFcTjRmZSdsLiT1lIeMaQnW37kdjiu+akbjT479EX0Nt8j0qk
-   l+UTtWD5ZQI23AAJSxr2IW7S4vKCwZ8CgPfB0IBPRGe/AlrZFCJPTjEg8
-   aHTFWhs06xk2Ypg7sxSO1lpoY4hXyndEtPmsByISLLBL+u398VGB/WOSZ
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10505"; a="392880981"
-X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
-   d="scan'208";a="392880981"
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Oct 2022 18:35:52 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10505"; a="734513151"
-X-IronPort-AV: E=Sophos;i="5.95,196,1661842800"; 
-   d="scan'208";a="734513151"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmsmga002.fm.intel.com with ESMTP; 19 Oct 2022 18:35:51 -0700
-Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 19 Oct 2022 18:35:51 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31 via Frontend Transport; Wed, 19 Oct 2022 18:35:51 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.44) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.31; Wed, 19 Oct 2022 18:35:50 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=e2hix6NPYxet0UyxOViAxO5qBwMPN0OEpfytN+TqHPrqL2I+QAWQo6EjRk82MueUAEx/h1sPQ7S4InH9LR2cGJ0EMzE8ZnwK3H9+07YaFBei/vC/XCsBXGQldTSDhLFL6gv0NSwgvUSYMM7VJWlutZTWwVIZsxEqshKWE7SReVnjefH2HDD4H60l9iOpkuwbLigfLBeuUDt896091w7CSZV267jX0DZx6R/b4QXJsk4a7G3sPizvP5RrDrRY+hssEJdHMElkYv2eHlDcQ1vOac/rODMG95Ba11tZjgABPEEfJdiUD+DQp2OFwz2lnDCzg1qREOOKPcnC4fdKHPQaLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LuTTFMrW+a4fiyDNPJgVan8a7GZbf8NN+hG4oh+wr+s=;
- b=cOxlrNzHz6x7z0oq8QG3t6qLMVbhNwFfmsJVVL9Yf1owQv7rUoycTdsk4tb+9gbmY4U4YiI+iDuyVd+QW7lth1+W5Doi7svivGqlkZ9FqfsMMKex6AkotuyEpqRQThiK05+OrTpQSqZo/V8BwiepWE9lBG3yFUg1hPde/Eoay6RjSVWeYvBRvljxqHG0lHQIJlN/cOVir6xwDeWfG4eOfWWImwTVh6ft1pAeDJEcmjtGS3+JnrILd4homxWXyg7zPSkL14/pLJaz+gIvEzdSOnUYIv+nc7fFXYi69Hg+s7rvPqoIWgHdBbsx42hkFuUX8ExKIPtW7vEpw+x795Epyw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
- (2603:10b6:301:50::20) by SA2PR11MB5050.namprd11.prod.outlook.com
- (2603:10b6:806:fb::19) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.29; Thu, 20 Oct
- 2022 01:35:47 +0000
-Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
- ([fe80::7d5a:684d:99f7:4e83]) by MWHPR1101MB2126.namprd11.prod.outlook.com
- ([fe80::7d5a:684d:99f7:4e83%12]) with mapi id 15.20.5723.034; Thu, 20 Oct
- 2022 01:35:47 +0000
-Date:   Wed, 19 Oct 2022 18:35:44 -0700
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>
-CC:     Brian Foster <bfoster@redhat.com>, Linux-MM <linux-mm@kvack.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-xfs <linux-xfs@vger.kernel.org>,
-        Hugh Dickins <hughd@google.com>
-Subject: Re: writeback completion soft lockup BUG in folio_wake_bit()
-Message-ID: <6350a5f07bae2_6be12944c@dwillia2-xfh.jf.intel.com.notmuch>
-References: <YjDj3lvlNJK/IPiU@bfoster>
- <YjJPu/3tYnuKK888@casper.infradead.org>
- <YjM88OwoccZOKp86@bfoster>
- <YjSTq4roN/LJ7Xsy@bfoster>
- <YjSbHp6B9a1G3tuQ@casper.infradead.org>
- <CAHk-=wh6V6TZjjnqBvktbaho_wqfjZYQ9zcKJTV8EP2Kygn0uQ@mail.gmail.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wh6V6TZjjnqBvktbaho_wqfjZYQ9zcKJTV8EP2Kygn0uQ@mail.gmail.com>
-X-ClientProxiedBy: SJ0PR03CA0263.namprd03.prod.outlook.com
- (2603:10b6:a03:3a0::28) To MWHPR1101MB2126.namprd11.prod.outlook.com
- (2603:10b6:301:50::20)
+        Wed, 19 Oct 2022 22:04:57 -0400
+Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC846C749
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Oct 2022 19:04:56 -0700 (PDT)
+Received: by mail-pg1-x52c.google.com with SMTP id q1so17899951pgl.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Oct 2022 19:04:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C5913yuT7OHnydXh0goEOs2trFBFfmtyAZq5Ppe1lGY=;
+        b=pmvVYwMRiFmZeRC0NmGKeTj4N79Gml892HE066U9X73Y9FIWX6zboxQPr1eKe2w/WV
+         Y1aIfzVYl+pp5jGyFgYOnfhGjMrYXGgFVD8fdHBMeyRLK/ZIUXKh+YO0p8j983BJzO/6
+         a6zk0OEQ+YRPGv8YG5N0UJ1UIVA3v4qxnXy/GYWHRZZNosKGt6vLWJmgT6Wy7eZJRvg/
+         ik053gZgGVbtTGPBHqy7XYB1djshu+dPZGyY3xLrt+uTpX5q+nlpXJpg6r5CJtibFxHU
+         Z7IJnMx4v+Ij4vOCOYfvcz+gzv3jlzw5dC6zDGLGziXD4nXOrVK6yk3YN1Hejrpsm9ZY
+         os9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C5913yuT7OHnydXh0goEOs2trFBFfmtyAZq5Ppe1lGY=;
+        b=bbc9bUpoqCvZSJ5whOBejisITDDitozu1Ex42QsvA5cOQL3sM3s8UJKJh7iCV7wvt4
+         zPzzZ3AkCeyAbqeu71QALuVGfYGORws071Itd4hmlh4nMIAgvG8BkgVHqDE397GP4aT/
+         DwqGlj3XNOPOvsb4oFxIy/uaN6nRBnKLVOWyUPjfpvC6gSSaJ4KCG15WsfBKl11uSYwt
+         tghFTw+TlFh99tIE6C+htf6GPWEzcqnaqS/mYlC70pudyjR2HzzgDJgirhS//ops5F4o
+         W+QVjnkb+eK60PBZqHTGi4sO1Ku6z8WXmO0iOYJv7XMNZhgbMnT9evH7jYuH9UMdW3wh
+         3vaw==
+X-Gm-Message-State: ACrzQf0lDRJ62PyOXAJLflgaebrIDPUfzqkdoHnpWmdDL7GabIZWsfPS
+        H3m6qcmK3w/X4KexO+7uTHkV1g==
+X-Google-Smtp-Source: AMsMyM4cmoMfelOrD/hdUgbMXsDIlPU2dTS9HMqc1PC5PAdmhotT0iN8eOZurGnlx/oTE+Iec5OkMQ==
+X-Received: by 2002:a62:584:0:b0:55a:a7a5:b597 with SMTP id 126-20020a620584000000b0055aa7a5b597mr11672276pff.71.1666231495594;
+        Wed, 19 Oct 2022 19:04:55 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
+        by smtp.gmail.com with ESMTPSA id i4-20020a170902e48400b00176c6738d13sm11369139ple.169.2022.10.19.19.04.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 19 Oct 2022 19:04:54 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1olKvT-00457F-F5; Thu, 20 Oct 2022 13:04:51 +1100
+Date:   Thu, 20 Oct 2022 13:04:51 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Brian Foster <bfoster@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
+        steve.kang@unisoc.com, baocong.liu@unisoc.com,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] mm: move xa forward when run across zombie page
+Message-ID: <20221020020451.GS2703033@dread.disaster.area>
+References: <1665725448-31439-1-git-send-email-zhaoyang.huang@unisoc.com>
+ <Y0lSChlclGPkwTeA@casper.infradead.org>
+ <CAGWkznG=_A-3A8JCJEoWXVcx+LUNH=gvXjLpZZs0cRX4dhUJfQ@mail.gmail.com>
+ <Y017BeC64GDb3Kg7@casper.infradead.org>
+ <CAGWkznEdtGPPZkHrq6Y_+XLL37w12aC8XN8R_Q-vhq48rFhkSA@mail.gmail.com>
+ <Y04Y3RNq6D2T9rVw@casper.infradead.org>
+ <20221018223042.GJ2703033@dread.disaster.area>
+ <Y0/kZbIvMgkNhWpM@bfoster>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWHPR1101MB2126:EE_|SA2PR11MB5050:EE_
-X-MS-Office365-Filtering-Correlation-Id: 27b5ecc6-4ff8-498f-d3d0-08dab23b6979
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: O/mfpoYo2BXemAs/GURXjgrdmwYX0kBnlIy8pb14th4vMljCX8m2u7EhaCtvJa5eMOzn0jsp5uWliooPXDOjojBdqUngueKqQ6u5jf86CVdfCuzBmyGkVmZaO0IBM0866YqhlmU2fNHeK9OS6yPWJmFPTt69I3g3MThIoEOSCqmDrHLzvh70W2lwCDQAYXLZ21OfcJN6y4I/LFZjcFixrpb4xHDID/0bREa7c27TXKc2o/B9Ul/XGQNaxG/tuNs5QjMogBvbuI2IoKyF3wUKYME3t6tuHP7qztKLtYe6KWpNgoqBCnMgzi/G/fNXDpcv6Ad41CXvZJR7/dl9L7yVsDciJzZLTeJ17K+PBUC/Io2VhgEQ8Nf/CQvK8lrRL98UKfIxRAv8UoEvzy8/DNUH7pkds6vFLg1Xg1bR4ca+kgYGWuQwIVFHtgPOh6bTFrTtW6Amq5mI8GT3uPeQtfN6fXZ+vOBfGc3OG99TBMq8AhqcdnKUBs/PegDRgwKwqkGPQw8JT/eRdvyxjMKpBAPpdmCoyPADui08cuC+1kFbtoymM8J7Ax0j1bL/maV/POA4zmJbEnwr7X4Wj4sEx7OaPUjJFQ835T6NC3tw2dBGnKhczp4JfD0DBxhzsjZemzw0bnIpGIguhyiVKM+5sSAWNs2ObAFDTchod71axrzld8yiNLEgX/rciheuLMPNsuSDlbBqO3x5CT1pd3QRHhDpq7BzNwHhGO/kAxY573B5WqWQH9Vg6Z6JzQBU2hgp5hGJ
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1101MB2126.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(396003)(136003)(366004)(346002)(39860400002)(376002)(451199015)(9686003)(38100700002)(82960400001)(316002)(66946007)(966005)(66476007)(66556008)(4326008)(6486002)(54906003)(110136005)(2906002)(8676002)(8936002)(41300700001)(186003)(83380400001)(6666004)(5660300002)(478600001)(6506007)(53546011)(26005)(6512007)(86362001);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?AerXJR+Q9jOugIm9MiIianRQ7xjO8Butw1Hy2IpeeRFxyn1aRc/FOXX8P5BO?=
- =?us-ascii?Q?xXsaEIkX5E9ms1yRz4HkFJDVk12uURHfY19GKi40tl7vS66d0OunFwonO1Af?=
- =?us-ascii?Q?/wa+6Y3FESIY8U8mdWpIMhMUG2a50UCrGnwghGNCPoQbQcp14LHcWp+OVk3b?=
- =?us-ascii?Q?6X+bEvCGAbl78xlv1pvODNa6Gx9JjyJQojVvcxThTUL3eaqYSRoi1Hj0A/bW?=
- =?us-ascii?Q?yQY6ULB3MGbIYsr2BD/f0SgD8lI2kHXdH2pItZeFKiFNuFYLipkC5/HGLIRk?=
- =?us-ascii?Q?jmdTeRqLxKyKWc+ZScd8N50JBJKIxzqg7FPCQYhtaQzRugwtBGlsKzD+SgPV?=
- =?us-ascii?Q?LRYj3f8xPpBbkmf9bn4yKb16Qj9r4jxYmqmvqns72tt8d2f/4ZK7G6trlXvO?=
- =?us-ascii?Q?ms5UhylxEjlo7/X64uXnNeVk0DMZjLuu/XNZzo/dT3NvbvPkU4ifhxDhcB7K?=
- =?us-ascii?Q?5mDUIdz89aZkuCcaIiuLWpRyYYI4It/ihRcbpCzWplk8g4IWBn/3Hrxpy5yG?=
- =?us-ascii?Q?iD/K2HrzTgW3AhZstlFiQkody+5jx8R9V/NmGIDDR43QH+zGUQ9LSbtjbV5Y?=
- =?us-ascii?Q?No1Fe3v883vPDGFiR7I/rOOk8yVYkZJNKKAf2bR99/6oroJAWVUY0Kzg/2D5?=
- =?us-ascii?Q?Q3ND/d5Mx1ervwgMTXblLRGNLQcdIAiVhlh79EZVkGKJDvvSAdahwTsOYjce?=
- =?us-ascii?Q?Xcmu2ptSXVAXlJVXzyUwp59ljbcsSbdJwcGy1JLeuP6lKFLrqFgUjNvBnRs/?=
- =?us-ascii?Q?RxC5XGz39rJtLPVUnpYCSDrws/+XoclTiD3Of1mN8czfirpmRXgpNm11kiIf?=
- =?us-ascii?Q?AWBRJhLlj08ypFDylDDifE3S6NlyqtqsvgDpNfmn9psgTiDZ9oBsdmyVOU5j?=
- =?us-ascii?Q?Yu1m8Czwq25QZfNqUAbetS12CUw8hcrAm8K0BwQVF8/xWYDeBpe0J68VhvcY?=
- =?us-ascii?Q?KH6UARGDU8rXZWTo6PMTQJdMwQkrMT0T2la5xJOp8Z7TqPg72jq9U6fde/F7?=
- =?us-ascii?Q?eqXZhglvo/f73p0U9/QH1J/26ZRs74vSDscCSGCnJmlTvpYHjxPmOGC0dedV?=
- =?us-ascii?Q?t3oKxKY28A04Gtzx9wWXfL0ilW00tc+i8CvXUzk21z8D1bkf68v4LhOHXSji?=
- =?us-ascii?Q?f1DSlEDXxFAVgla3c+90k8PGmRj9nX2LEQnEPKYJTWRkRYYkEtSvhN1nWXEb?=
- =?us-ascii?Q?L/dhWDR7ORtypPxZSXQW11L+XfGEay909CI+dqmz9CoGgKqOqnDOdwU9a8sr?=
- =?us-ascii?Q?yROOe0c+sDRgay1tcDfokHfUBRUiFMv0l874a9Swyps5doPfh4nPWY2/t++M?=
- =?us-ascii?Q?m9w33VBPA+zeWq3HNs3VW5bII/aAZH6H5DlJa9T7xAR7m40Hx/J70idfb/KB?=
- =?us-ascii?Q?9gr7BuwumIIE5ku7Kwtfm6UCgHMDXLch7Y3BVOrKAIrKQwi0t4fEK/P4q83g?=
- =?us-ascii?Q?a+VMs/pdDrKX4g8DkObX0CH8Lii26LtpRpxx8vKXGtRnNtZpEDzP7DWWwPRY?=
- =?us-ascii?Q?twNuGd5IZpKMDDt5hR/8c1pBfuDmQ7GM2u1WI3jML7r6lm7Dg6+YDhG0M9QY?=
- =?us-ascii?Q?cyAqjx6b8lW1niILjVGwPkLBGL+CE8ns/MPOyvjUq8tj/fnS7zabqCiyLZz+?=
- =?us-ascii?Q?hw=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 27b5ecc6-4ff8-498f-d3d0-08dab23b6979
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1101MB2126.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Oct 2022 01:35:47.4689
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PxBRyPSKnLqe5J1DsS2BSrHRNX/VQWe70flLh//cpuGzz+KFpfqE/BjJCXQLR7Bv90hVYFC5s/BrOV4jfvnrEjvzxUe9MmiL4eX9ZRdfo90=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5050
-X-OriginatorOrg: intel.com
-X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y0/kZbIvMgkNhWpM@bfoster>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus Torvalds wrote:
-> On Fri, Mar 18, 2022 at 7:45 AM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > Excellent!  I'm going to propose these two patches for -rc1 (I don't
-> > think we want to be playing with this after -rc8)
+On Wed, Oct 19, 2022 at 07:49:57AM -0400, Brian Foster wrote:
+> On Wed, Oct 19, 2022 at 09:30:42AM +1100, Dave Chinner wrote:
+> > On Tue, Oct 18, 2022 at 04:09:17AM +0100, Matthew Wilcox wrote:
+> > > On Tue, Oct 18, 2022 at 10:52:19AM +0800, Zhaoyang Huang wrote:
+> > > > On Mon, Oct 17, 2022 at 11:55 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > > > >
+> > > > > On Mon, Oct 17, 2022 at 01:34:13PM +0800, Zhaoyang Huang wrote:
+> > > > > > On Fri, Oct 14, 2022 at 8:12 PM Matthew Wilcox <willy@infradead.org> wrote:
+> > > > > > >
+> > > > > > > On Fri, Oct 14, 2022 at 01:30:48PM +0800, zhaoyang.huang wrote:
+> > > > > > > > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> > > > > > > >
+> > > > > > > > Bellowing RCU stall is reported where kswapd traps in a live lock when shrink
+> > > > > > > > superblock's inode list. The direct reason is zombie page keeps staying on the
+> > > > > > > > xarray's slot and make the check and retry loop permanently. The root cause is unknown yet
+> > > > > > > > and supposed could be an xa update without synchronize_rcu etc. I would like to
+> > > > > > > > suggest skip this page to break the live lock as a workaround.
+> > > > > > >
+> > > > > > > No, the underlying bug should be fixed.
+> > > > >
+> > > > >     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> > > > Understand. IMHO, find_get_entry actruely works as an open API dealing
+> > > > with different kinds of address_spaces page cache, which requires high
+> > > > robustness to deal with any corner cases. Take the current problem as
+> > > > example, the inode with fault page(refcount=0) could remain on the
+> > > > sb's list without live lock problem.
+> > > 
+> > > But it's a corner case that shouldn't happen!  What else is going on
+> > > at the time?  Can you reproduce this problem easily?  If so, how?
+> > 
+> > I've been seeing this livelock, too. The reproducer is,
+> > unfortunately, something I can't share - it's a massive program that
+> > triggers a data corruption I'm working on solving.
+> > 
+> > Now that I've
+> > mostly fixed the data corruption, long duration test runs end up
+> > livelocking in page cache lookup after several hours.
+> > 
+> > The test is effectively writing a 100MB file with multiple threads
+> > doing reverse adjacent racing 1MB unaligned writes. Once the file is
+> > written, it is then mmap()d and read back from the filesystem for
+> > verification.
+> > 
+> > THis is then run with tens of processes concurrently, and then under
+> > a massively confined memcg (e.g. 32 processes/files are run in a
+> > memcg with only 200MB of memory allowed). This causes writeback,
+> > readahead and memory reclaim to race with incoming mmap read faults
+> > and writes.  The livelock occurs on file verification and it appears
+> > to be an interaction with readahead thrashing.
+> > 
+> > On my test rig, the physical read to write ratio is at least 20:1 -
+> > with 32 processes running, the 5s IO rates are:
+> > 
+> > Device             tps    MB_read/s    MB_wrtn/s    MB_dscd/s    MB_read    MB_wrtn    MB_dscd
+> > dm-0          52187.20      3677.42      1345.92         0.00      18387       6729          0
+> > dm-0          62865.60      5947.29         0.08         0.00      29736          0          0
+> > dm-0          62972.80      5911.20         0.00         0.00      29556          0          0
+> > dm-0          59803.00      5516.72       133.47         0.00      27583        667          0
+> > dm-0          63068.20      5292.34       511.52         0.00      26461       2557          0
+> > dm-0          56775.60      4184.52      1248.38         0.00      20922       6241          0
+> > dm-0          63087.40      5901.26        43.77         0.00      29506        218          0
+> > dm-0          62769.00      5833.97        60.54         0.00      29169        302          0
+> > dm-0          64810.20      5636.13       305.63         0.00      28180       1528          0
+> > dm-0          65222.60      5598.99       349.48         0.00      27994       1747          0
+> > dm-0          62444.00      4887.05       926.67         0.00      24435       4633          0
+> > dm-0          63812.00      5622.68       294.66         0.00      28113       1473          0
+> > dm-0          63482.00      5728.43       195.74         0.00      28642        978          0
+> > 
+> > This is reading and writing the same amount of file data at the
+> > application level, but once the data has been written and kicked out
+> > of the page cache it seems to require an awful lot more read IO to
+> > get it back to the application. i.e. this looks like mmap() is
+> > readahead thrashing severely, and eventually it livelocks with this
+> > sort of report:
+> > 
+> > [175901.982484] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> > [175901.985095] rcu:    Tasks blocked on level-1 rcu_node (CPUs 0-15): P25728
+> > [175901.987996]         (detected by 0, t=97399871 jiffies, g=15891025, q=1972622 ncpus=32)
+> > [175901.991698] task:test_write      state:R  running task     stack:12784 pid:25728 ppid: 25696 flags:0x00004002
+> > [175901.995614] Call Trace:
+> > [175901.996090]  <TASK>
+> > [175901.996594]  ? __schedule+0x301/0xa30
+> > [175901.997411]  ? sysvec_apic_timer_interrupt+0xb/0x90
+> > [175901.998513]  ? sysvec_apic_timer_interrupt+0xb/0x90
+> > [175901.999578]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+> > [175902.000714]  ? xas_start+0x53/0xc0
+> > [175902.001484]  ? xas_load+0x24/0xa0
+> > [175902.002208]  ? xas_load+0x5/0xa0
+> > [175902.002878]  ? __filemap_get_folio+0x87/0x340
+> > [175902.003823]  ? filemap_fault+0x139/0x8d0
+> > [175902.004693]  ? __do_fault+0x31/0x1d0
+> > [175902.005372]  ? __handle_mm_fault+0xda9/0x17d0
+> > [175902.006213]  ? handle_mm_fault+0xd0/0x2a0
+> > [175902.006998]  ? exc_page_fault+0x1d9/0x810
+> > [175902.007789]  ? asm_exc_page_fault+0x22/0x30
+> > [175902.008613]  </TASK>
+> > 
+> > Given that filemap_fault on XFS is probably trying to map large
+> > folios, I do wonder if this is a result of some kind of race with
+> > teardown of a large folio...
+> > 
 > 
-> Ack. I think your commit message may be a bit too optimistic (who
-> knows if other loads can trigger the over-long page locking wait-queue
-> latencies), but since I don't see any other ways to really check this
-> than just trying it, let's do it.
+> I somewhat recently tracked down a hugepage/swap problem that could
+> manifest as a softlockup in the folio lookup path (due to indefinite
+> folio_try_get_rcu() failure):
 > 
->                  Linus
+> https://lore.kernel.org/linux-mm/20220906190602.1626037-1-bfoster@redhat.com/
+> 
+> It could easily be something different leading to the same side effect,
+> particularly since I believe the issue I saw was introduced in v5.19,
+> but might be worth a test if you have a reliable reproducer.
 
-A report from a tester with this call trace:
+Tests run and, unfortunately, that patch doesn't prevent/fix the
+problem either.
 
- watchdog: BUG: soft lockup - CPU#127 stuck for 134s! [ksoftirqd/127:782]
- RIP: 0010:_raw_spin_unlock_irqrestore+0x19/0x40
- [..]
- Call Trace:
-  <TASK>
-  folio_wake_bit+0x8a/0x110
-  folio_end_writeback+0x37/0x80
-  ext4_finish_bio+0x19a/0x270
-  ext4_end_bio+0x47/0x140
-  blk_update_request+0x112/0x410
+Cheers,
 
-...lead me to this thread. This was after I had them force all softirqs
-to run in ksoftirqd context, and run with rq_affinity == 2 to force
-I/O completion work to throttle new submissions.
-
-Willy, are these headed upstream:
-
-https://lore.kernel.org/all/YjSbHp6B9a1G3tuQ@casper.infradead.org
-
-...or I am missing an alternate solution posted elsewhere?
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
