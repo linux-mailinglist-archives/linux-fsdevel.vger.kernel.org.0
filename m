@@ -2,61 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EEA9605F40
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 13:50:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D8B24605F77
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 13:56:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231510AbiJTLu3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Oct 2022 07:50:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50000 "EHLO
+        id S229692AbiJTL4J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Oct 2022 07:56:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43750 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231494AbiJTLuX (ORCPT
+        with ESMTP id S229615AbiJTL4G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Oct 2022 07:50:23 -0400
-Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BBE1D57F8;
-        Thu, 20 Oct 2022 04:50:16 -0700 (PDT)
-Received: by mail-pg1-x52a.google.com with SMTP id q1so18963365pgl.11;
-        Thu, 20 Oct 2022 04:50:16 -0700 (PDT)
+        Thu, 20 Oct 2022 07:56:06 -0400
+Received: from mail-pl1-x62c.google.com (mail-pl1-x62c.google.com [IPv6:2607:f8b0:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F289616E284;
+        Thu, 20 Oct 2022 04:56:04 -0700 (PDT)
+Received: by mail-pl1-x62c.google.com with SMTP id l4so20075535plb.8;
+        Thu, 20 Oct 2022 04:56:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tgep5zV9HzhLSzJsiAfm1on8PjtUjPgtsj5tiSHBYS0=;
-        b=ErcmIy8kWrhYdXLY8odI9k9JS4ZjEPdsuXaKnTO5EXrui5h5AVtWyIyoWG0lZJ6pwP
-         B7IquTDz25QQH9lSCtlQQlPJscCFEH9fnOQ4blxaP/Jo5P2Xuz74M+tg/uhe/m3WIOYZ
-         4H7S6fp/IcWi2r1GW4mrtsQMwm7nJhqyMpPTix2DLNQKN5Jmhr+4P4T3WJZrRraQp6Gs
-         9Fbe734CpS09mY7pCpvcPC8Ca5im4Atd65Nf5+7pgpmRXRPnMFLxvSTJiXU6ZytETrAj
-         0zYODuu1X70bXhITapKfdiWXW1RsmtFquYwPb/C6rQ3u/7e/EbSS4/EvhTcU+RDZahHE
-         Cd9Q==
+        bh=QfEMq48V5eFN0VrM2HYUoVegivK/iVeEKYnMwW6hA7w=;
+        b=Cyl5KTkXEp2CRgTe1763UrkbTjbp8kN8IbZfihSeKtAuINP1JR4IcJpEWZBlSPlzHm
+         6/e9CSHukaC/m5T380e7Di+F+GFOmyLyDf8OeoLzFbDUsveRwq535x5LyuDVpIMm27Qh
+         E2KWhNjZ8sWvXYOs/qM32lBg9RED1lgMHTGjaZk4P41pY0zmWUQBZB60xgcpRrt2nX62
+         SKJLtJVEv9N6wpr1RS9vGNjgirkF521NhrXlSufwRbKhvO2D2s3hzvnib0OcFcn5rEDp
+         6+hgMJZEZVQ4DX5y4gqCf/ogS33bM5B25zOLZHKeP1m7SSWNfNe+8ybAWTuDpiHWjthx
+         1WzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=tgep5zV9HzhLSzJsiAfm1on8PjtUjPgtsj5tiSHBYS0=;
-        b=ov/FuePUBdhGG61HtAGZ/zC7PwMc4xixwnrb9nFGhHneovaMrGcN6i4q/DpcwXcvDH
-         +rPdHXstPSXtfAvE8OaaO7JF2KZs/1mlsTJ0U5G8MxKzIGrUNqM1HrMkdAB0zTkTe9ri
-         u9IAAlEMX/NxHcuRmlDetAm++AxuYVxOtaQ6Enyg2wpcVsotxECHslex9xA7mGVUgnO7
-         fpD/C3O2VtBJA9cV/EbpHYYEI2Qj1e2FOV08bflhZMc25CemcbmEUDrpiFWsMyH5nY0s
-         JNmB+WgCnHa8+vQlJ17bEWaFUplR2vVAYdX4AZtwk13YaGkyJs9k06NpFMT/nlFsphaL
-         ovNA==
-X-Gm-Message-State: ACrzQf1aRpSMyrX/o6Hg0KIXBmKX03tr2x6xeMx3cJW4uQ54TNTZw2pw
-        QKI9/lPYRlW3EdW+dahSZw8mIkxJlVAkXw==
-X-Google-Smtp-Source: AMsMyM6XRbZl6uwY1KSMcZWm/dC3tQWdpmYZaBEsLlFXSfDp+VCWgX+Cc9Pk85k2Y2q3sooL381xYg==
-X-Received: by 2002:a05:6a00:174c:b0:565:c73a:9117 with SMTP id j12-20020a056a00174c00b00565c73a9117mr13410309pfc.23.1666266615678;
-        Thu, 20 Oct 2022 04:50:15 -0700 (PDT)
+        bh=QfEMq48V5eFN0VrM2HYUoVegivK/iVeEKYnMwW6hA7w=;
+        b=Z13i4thZHtXZ8EOhxCAjpps0ArhOZtIZ8NQqcchQLTVq4z+5ruaYq25z9Q9usy75+r
+         xWmWh8m6NckkQMEuWjyRhKSTru5iY4xrMOdhoqnWym/bt8hZUTlQrkxMTYkGH6YokjVb
+         JOVkng2koYNob9A9bXPw/1/1zDiBgvHiJVem4g5lcxpvjUX7yk5QFIWm139nkwMdvpb8
+         DjjrUB7KANxhl2kfhRdSYoTeXK6+1TZo3BpsegRuu9r7ORsQi0Z4egH680e7w7ubkNnB
+         DFOhatpKOLk1bW7HAFQweaVB+gRHM1oPIoF//Lt6LDQRi1ibXa8jGXaGeD6EHUJ7CoY6
+         +uIA==
+X-Gm-Message-State: ACrzQf2wTBy5ubi3+OReTnFngG5U86o9QZyOuEdSCOqLU0fpj6fKUoIe
+        0B0kbR0M3sZs6JWPRQtcFCg=
+X-Google-Smtp-Source: AMsMyM7yLdXwgSS3YZrB6gbeJtcSboqSM6NN6zlyigcL6QP9UsA3LJx3j3kTyOQ0B+qgypo7xy1aeg==
+X-Received: by 2002:a17:902:f78c:b0:17a:ef1:e902 with SMTP id q12-20020a170902f78c00b0017a0ef1e902mr13483537pln.5.1666266964456;
+        Thu, 20 Oct 2022 04:56:04 -0700 (PDT)
 Received: from localhost.localdomain ([193.203.214.57])
-        by smtp.gmail.com with ESMTPSA id i4-20020a170902e48400b00176c6738d13sm12550247ple.169.2022.10.20.04.50.13
+        by smtp.gmail.com with ESMTPSA id u13-20020a170903124d00b0017f80305239sm12784647plh.136.2022.10.20.04.56.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Oct 2022 04:50:15 -0700 (PDT)
+        Thu, 20 Oct 2022 04:56:03 -0700 (PDT)
 From:   yexingchen116@gmail.com
 X-Google-Original-From: ye.xingchen@zte.com.cn
 To:     viro@zeniv.linux.org.uk
-Cc:     bcrl@kvack.org, linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+Cc:     ebiederm@xmission.com, keescook@chromium.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, ye xingchen <ye.xingchen@zte.com.cn>
-Subject: [PATCH linux-next] aio: Replace IS_ERR() with IS_ERR_VALUE()
-Date:   Thu, 20 Oct 2022 11:50:10 +0000
-Message-Id: <20221020115010.400289-1-ye.xingchen@zte.com.cn>
+Subject: [PATCH linux-next] binfmt_elf: Replace IS_ERR() with IS_ERR_VALUE()
+Date:   Thu, 20 Oct 2022 11:55:58 +0000
+Message-Id: <20221020115558.400359-1-ye.xingchen@zte.com.cn>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -77,22 +78,40 @@ IS_ERR_VALUE() instead.
 
 Signed-off-by: ye xingchen <ye.xingchen@zte.com.cn>
 ---
- fs/aio.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/binfmt_elf.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/aio.c b/fs/aio.c
-index 5b2ff20ad322..978bbfb8dcac 100644
---- a/fs/aio.c
-+++ b/fs/aio.c
-@@ -556,7 +556,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
- 				 PROT_READ | PROT_WRITE,
- 				 MAP_SHARED, 0, &unused, NULL);
- 	mmap_write_unlock(mm);
--	if (IS_ERR((void *)ctx->mmap_base)) {
-+	if (IS_ERR_VALUE(ctx->mmap_base)) {
- 		ctx->mmap_size = 0;
- 		aio_free_ring(ctx);
- 		return -ENOMEM;
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 72f0672b4b74..afd2d6f1c21c 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -1166,7 +1166,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		error = elf_map(bprm->file, load_bias + vaddr, elf_ppnt,
+ 				elf_prot, elf_flags, total_size);
+ 		if (BAD_ADDR(error)) {
+-			retval = IS_ERR((void *)error) ?
++			retval = IS_ERR_VALUE(error) ?
+ 				PTR_ERR((void*)error) : -EINVAL;
+ 			goto out_free_dentry;
+ 		}
+@@ -1251,7 +1251,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 					    interpreter,
+ 					    load_bias, interp_elf_phdata,
+ 					    &arch_state);
+-		if (!IS_ERR((void *)elf_entry)) {
++		if (!IS_ERR_VALUE(elf_entry)) {
+ 			/*
+ 			 * load_elf_interp() returns relocation
+ 			 * adjustment
+@@ -1260,7 +1260,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 			elf_entry += interp_elf_ex->e_entry;
+ 		}
+ 		if (BAD_ADDR(elf_entry)) {
+-			retval = IS_ERR((void *)elf_entry) ?
++			retval = IS_ERR_VALUE(elf_entry) ?
+ 					(int)elf_entry : -EINVAL;
+ 			goto out_free_dentry;
+ 		}
 -- 
 2.25.1
 
