@@ -2,207 +2,430 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5949260554A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 04:05:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2BE946055B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 05:03:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230298AbiJTCE7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Oct 2022 22:04:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46950 "EHLO
+        id S229774AbiJTDC5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 19 Oct 2022 23:02:57 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58324 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbiJTCE5 (ORCPT
+        with ESMTP id S229916AbiJTDCz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Oct 2022 22:04:57 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BC846C749
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Oct 2022 19:04:56 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id q1so17899951pgl.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 19 Oct 2022 19:04:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=C5913yuT7OHnydXh0goEOs2trFBFfmtyAZq5Ppe1lGY=;
-        b=pmvVYwMRiFmZeRC0NmGKeTj4N79Gml892HE066U9X73Y9FIWX6zboxQPr1eKe2w/WV
-         Y1aIfzVYl+pp5jGyFgYOnfhGjMrYXGgFVD8fdHBMeyRLK/ZIUXKh+YO0p8j983BJzO/6
-         a6zk0OEQ+YRPGv8YG5N0UJ1UIVA3v4qxnXy/GYWHRZZNosKGt6vLWJmgT6Wy7eZJRvg/
-         ik053gZgGVbtTGPBHqy7XYB1djshu+dPZGyY3xLrt+uTpX5q+nlpXJpg6r5CJtibFxHU
-         Z7IJnMx4v+Ij4vOCOYfvcz+gzv3jlzw5dC6zDGLGziXD4nXOrVK6yk3YN1Hejrpsm9ZY
-         os9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C5913yuT7OHnydXh0goEOs2trFBFfmtyAZq5Ppe1lGY=;
-        b=bbc9bUpoqCvZSJ5whOBejisITDDitozu1Ex42QsvA5cOQL3sM3s8UJKJh7iCV7wvt4
-         zPzzZ3AkCeyAbqeu71QALuVGfYGORws071Itd4hmlh4nMIAgvG8BkgVHqDE397GP4aT/
-         DwqGlj3XNOPOvsb4oFxIy/uaN6nRBnKLVOWyUPjfpvC6gSSaJ4KCG15WsfBKl11uSYwt
-         tghFTw+TlFh99tIE6C+htf6GPWEzcqnaqS/mYlC70pudyjR2HzzgDJgirhS//ops5F4o
-         W+QVjnkb+eK60PBZqHTGi4sO1Ku6z8WXmO0iOYJv7XMNZhgbMnT9evH7jYuH9UMdW3wh
-         3vaw==
-X-Gm-Message-State: ACrzQf0lDRJ62PyOXAJLflgaebrIDPUfzqkdoHnpWmdDL7GabIZWsfPS
-        H3m6qcmK3w/X4KexO+7uTHkV1g==
-X-Google-Smtp-Source: AMsMyM4cmoMfelOrD/hdUgbMXsDIlPU2dTS9HMqc1PC5PAdmhotT0iN8eOZurGnlx/oTE+Iec5OkMQ==
-X-Received: by 2002:a62:584:0:b0:55a:a7a5:b597 with SMTP id 126-20020a620584000000b0055aa7a5b597mr11672276pff.71.1666231495594;
-        Wed, 19 Oct 2022 19:04:55 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
-        by smtp.gmail.com with ESMTPSA id i4-20020a170902e48400b00176c6738d13sm11369139ple.169.2022.10.19.19.04.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Oct 2022 19:04:54 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1olKvT-00457F-F5; Thu, 20 Oct 2022 13:04:51 +1100
-Date:   Thu, 20 Oct 2022 13:04:51 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
-        steve.kang@unisoc.com, baocong.liu@unisoc.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] mm: move xa forward when run across zombie page
-Message-ID: <20221020020451.GS2703033@dread.disaster.area>
-References: <1665725448-31439-1-git-send-email-zhaoyang.huang@unisoc.com>
- <Y0lSChlclGPkwTeA@casper.infradead.org>
- <CAGWkznG=_A-3A8JCJEoWXVcx+LUNH=gvXjLpZZs0cRX4dhUJfQ@mail.gmail.com>
- <Y017BeC64GDb3Kg7@casper.infradead.org>
- <CAGWkznEdtGPPZkHrq6Y_+XLL37w12aC8XN8R_Q-vhq48rFhkSA@mail.gmail.com>
- <Y04Y3RNq6D2T9rVw@casper.infradead.org>
- <20221018223042.GJ2703033@dread.disaster.area>
- <Y0/kZbIvMgkNhWpM@bfoster>
+        Wed, 19 Oct 2022 23:02:55 -0400
+Received: from mail1.bemta34.messagelabs.com (mail1.bemta34.messagelabs.com [195.245.231.4])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BB4A18DD40;
+        Wed, 19 Oct 2022 20:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
+        s=170520fj; t=1666234969; i=@fujitsu.com;
+        bh=YYQcaJ9qPwpDZQitQN1nF8HSeJ1sitiSCSgojk609A4=;
+        h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+         In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        b=ugNVT/UWPxgv2YmXH1HE/SxUsuD8DU43EKKkSyo/010+jjB7pgHhdJ4T9/Dx9QI5M
+         INaEdeorJunnmpe8A4fu1+1+6QDBFih0NMgGo3PnrDrw5yyvOqrl/ZHWvps/NBk1rr
+         PJzoeZfMfrl9TsINjuAJLZZoE47IhWWIsVHcJ4wYKqzccpl/Rj4rmNNwUQzfvQxjjv
+         XMEMSCzIPgIZZjauBPyslLJeD39CgS+wJdAirOwg8QeJVLBP1pyBPJ2HZFDNjVk2/2
+         Kv8bbJykzP4GIkWDF4466bExyXvO4kLZrJDbKEf1YD6L6w4PEdkKdNS6TuseZ9HO16
+         XxYumNABpFaLw==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrDKsWRWlGSWpSXmKPExsViZ8ORpBuxKyD
+  ZoGuPsMX0qRcYLbYcu8docfkJn8WevSdZLC7vmsNmcW/Nf1aLXX92sFus/PGH1YHD49QiCY/F
+  e14yeWxa1cnmsenTJHaPF5tnMnp83iQXwBbFmpmXlF+RwJpx9lFowbxOxoqDn96yNjAuLehi5
+  OIQEtjIKHH5y172LkZOIGcJk8SLIzwQie2MEie/HWABSfAK2Em0/7nHCGKzCKhKHJt6ghEiLi
+  hxcuYTsBpRgWSJr1MvMoHYwgKOEq+mtoDViAhoShz5do0JZCizwCVGiXv3m5khNpxklvi19RD
+  YajYBHYkLC/6ygticAhoSE5adB7OZBSwkFr85yA5hy0s0b50N1MzBISGgJDGzOx4kLCFQITFr
+  VhsThK0mcfXcJuYJjEKzkNw3C8mkWUgmLWBkXsVoVpxaVJZapGtooJdUlJmeUZKbmJmjl1ilm
+  6iXWqpbnlpcomukl1herJdaXKxXXJmbnJOil5dasokRGGEpxSp9OxjfLvujd4hRkoNJSZTXqy
+  QgWYgvKT+lMiOxOCO+qDQntfgQowwHh5IEb/YaoJxgUWp6akVaZg4w2mHSEhw8SiK8nNuA0rz
+  FBYm5xZnpEKlTjK4caxsO7GXmODsXRG54ACKvXrkCJKfO/refWYglLz8vVUqcV3AzULMASHNG
+  aR7caFiiusQoKyXMy8jAwCDEU5BalJtZgir/ilGcg1FJmHffRqApPJl5JXAXvAI6jgnoONMtf
+  iDHlSQipKQamFa9N9C88PzCz+JlFy6vWXlzruxFxiw/H/UDKzpfGtcGK/OoLxA14HY/466wUH
+  rrjugTxzPtmO9ZhkVV2+is2i58x+mrq5XEnH1Hr/qdiKxZz/xtnfsvroYThp25u7oSzDkEbKf
+  VrZHjYxdK3fTmZNmiaslZttNflJ35epf/er7DT/cY/gWCpuVXOH9mX/r8U0qzydfecf/l1pvv
+  dISstPvrVsb8zWS61q7a6uiw/FNWl0niYvdjbpX7+r5GVq+7e+bhhJcLvFc/FHI/UWfk2OO3Z
+  qu71PJ5uyze/Zx0SunhVQ1x2bKcxy4H561bPiUq0Yy1dfb++5M042bkyM+cv1G3MCEjMaByrb
+  8T97cPL5VYijMSDbWYi4oTAWGyFdTPAwAA
+X-Env-Sender: ruansy.fnst@fujitsu.com
+X-Msg-Ref: server-7.tower-571.messagelabs.com!1666234968!47881!1
+X-Originating-IP: [62.60.8.98]
+X-SYMC-ESS-Client-Auth: outbound-route-from=pass
+X-StarScan-Received: 
+X-StarScan-Version: 9.100.1; banners=-,-,-
+X-VirusChecked: Checked
+Received: (qmail 27359 invoked from network); 20 Oct 2022 03:02:48 -0000
+Received: from unknown (HELO n03ukasimr03.n03.fujitsu.local) (62.60.8.98)
+  by server-7.tower-571.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 20 Oct 2022 03:02:48 -0000
+Received: from n03ukasimr03.n03.fujitsu.local (localhost [127.0.0.1])
+        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTP id F35E31B0;
+        Thu, 20 Oct 2022 04:02:47 +0100 (BST)
+Received: from R01UKEXCASM126.r01.fujitsu.local (R01UKEXCASM126 [10.183.43.178])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTPS id E6D121AC;
+        Thu, 20 Oct 2022 04:02:47 +0100 (BST)
+Received: from [192.168.22.78] (10.167.225.141) by
+ R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
+ (TLS) id 15.0.1497.32; Thu, 20 Oct 2022 04:02:44 +0100
+Message-ID: <ef9948c4-f1c5-3305-e92c-b95177b08cfd@fujitsu.com>
+Date:   Thu, 20 Oct 2022 11:02:37 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y0/kZbIvMgkNhWpM@bfoster>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.3.0
+Subject: Re: [RFC PATCH] xfs: drop experimental warning for fsdax
+To:     "Darrick J. Wong" <djwong@kernel.org>
+CC:     Dave Chinner <david@fromorbit.com>, <linux-kernel@vger.kernel.org>,
+        <linux-xfs@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+        <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
+        <dan.j.williams@intel.com>
+References: <20220919211533.GK3600936@dread.disaster.area>
+ <f10de555-370b-f236-1107-e3089258ebbc@fujitsu.com>
+ <YzMeqNg56v0/t/8x@magnolia> <20220927235129.GC3600936@dread.disaster.area>
+ <2428b01d-afc7-7b33-1088-e34d68029e19@fujitsu.com>
+ <YzXsavOWMSuwTBEC@magnolia> <Y0hZYCL3+no9qSSW@magnolia>
+ <49f0cef6-d27e-2dee-dba6-4af17ca76d41@fujitsu.com>
+ <Y0mFX1pAYhyPgv37@magnolia>
+ <dce214fe-c0f8-894c-c172-0c8372974d3e@fujitsu.com>
+ <Y1CP9HOs9Mqlh28X@magnolia>
+From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
+In-Reply-To: <Y1CP9HOs9Mqlh28X@magnolia>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.167.225.141]
+X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
+ R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
+X-Virus-Scanned: ClamAV using ClamSMTP
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 19, 2022 at 07:49:57AM -0400, Brian Foster wrote:
-> On Wed, Oct 19, 2022 at 09:30:42AM +1100, Dave Chinner wrote:
-> > On Tue, Oct 18, 2022 at 04:09:17AM +0100, Matthew Wilcox wrote:
-> > > On Tue, Oct 18, 2022 at 10:52:19AM +0800, Zhaoyang Huang wrote:
-> > > > On Mon, Oct 17, 2022 at 11:55 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > > > >
-> > > > > On Mon, Oct 17, 2022 at 01:34:13PM +0800, Zhaoyang Huang wrote:
-> > > > > > On Fri, Oct 14, 2022 at 8:12 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > > > > > >
-> > > > > > > On Fri, Oct 14, 2022 at 01:30:48PM +0800, zhaoyang.huang wrote:
-> > > > > > > > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
-> > > > > > > >
-> > > > > > > > Bellowing RCU stall is reported where kswapd traps in a live lock when shrink
-> > > > > > > > superblock's inode list. The direct reason is zombie page keeps staying on the
-> > > > > > > > xarray's slot and make the check and retry loop permanently. The root cause is unknown yet
-> > > > > > > > and supposed could be an xa update without synchronize_rcu etc. I would like to
-> > > > > > > > suggest skip this page to break the live lock as a workaround.
-> > > > > > >
-> > > > > > > No, the underlying bug should be fixed.
-> > > > >
-> > > > >     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > > > Understand. IMHO, find_get_entry actruely works as an open API dealing
-> > > > with different kinds of address_spaces page cache, which requires high
-> > > > robustness to deal with any corner cases. Take the current problem as
-> > > > example, the inode with fault page(refcount=0) could remain on the
-> > > > sb's list without live lock problem.
-> > > 
-> > > But it's a corner case that shouldn't happen!  What else is going on
-> > > at the time?  Can you reproduce this problem easily?  If so, how?
-> > 
-> > I've been seeing this livelock, too. The reproducer is,
-> > unfortunately, something I can't share - it's a massive program that
-> > triggers a data corruption I'm working on solving.
-> > 
-> > Now that I've
-> > mostly fixed the data corruption, long duration test runs end up
-> > livelocking in page cache lookup after several hours.
-> > 
-> > The test is effectively writing a 100MB file with multiple threads
-> > doing reverse adjacent racing 1MB unaligned writes. Once the file is
-> > written, it is then mmap()d and read back from the filesystem for
-> > verification.
-> > 
-> > THis is then run with tens of processes concurrently, and then under
-> > a massively confined memcg (e.g. 32 processes/files are run in a
-> > memcg with only 200MB of memory allowed). This causes writeback,
-> > readahead and memory reclaim to race with incoming mmap read faults
-> > and writes.  The livelock occurs on file verification and it appears
-> > to be an interaction with readahead thrashing.
-> > 
-> > On my test rig, the physical read to write ratio is at least 20:1 -
-> > with 32 processes running, the 5s IO rates are:
-> > 
-> > Device             tps    MB_read/s    MB_wrtn/s    MB_dscd/s    MB_read    MB_wrtn    MB_dscd
-> > dm-0          52187.20      3677.42      1345.92         0.00      18387       6729          0
-> > dm-0          62865.60      5947.29         0.08         0.00      29736          0          0
-> > dm-0          62972.80      5911.20         0.00         0.00      29556          0          0
-> > dm-0          59803.00      5516.72       133.47         0.00      27583        667          0
-> > dm-0          63068.20      5292.34       511.52         0.00      26461       2557          0
-> > dm-0          56775.60      4184.52      1248.38         0.00      20922       6241          0
-> > dm-0          63087.40      5901.26        43.77         0.00      29506        218          0
-> > dm-0          62769.00      5833.97        60.54         0.00      29169        302          0
-> > dm-0          64810.20      5636.13       305.63         0.00      28180       1528          0
-> > dm-0          65222.60      5598.99       349.48         0.00      27994       1747          0
-> > dm-0          62444.00      4887.05       926.67         0.00      24435       4633          0
-> > dm-0          63812.00      5622.68       294.66         0.00      28113       1473          0
-> > dm-0          63482.00      5728.43       195.74         0.00      28642        978          0
-> > 
-> > This is reading and writing the same amount of file data at the
-> > application level, but once the data has been written and kicked out
-> > of the page cache it seems to require an awful lot more read IO to
-> > get it back to the application. i.e. this looks like mmap() is
-> > readahead thrashing severely, and eventually it livelocks with this
-> > sort of report:
-> > 
-> > [175901.982484] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-> > [175901.985095] rcu:    Tasks blocked on level-1 rcu_node (CPUs 0-15): P25728
-> > [175901.987996]         (detected by 0, t=97399871 jiffies, g=15891025, q=1972622 ncpus=32)
-> > [175901.991698] task:test_write      state:R  running task     stack:12784 pid:25728 ppid: 25696 flags:0x00004002
-> > [175901.995614] Call Trace:
-> > [175901.996090]  <TASK>
-> > [175901.996594]  ? __schedule+0x301/0xa30
-> > [175901.997411]  ? sysvec_apic_timer_interrupt+0xb/0x90
-> > [175901.998513]  ? sysvec_apic_timer_interrupt+0xb/0x90
-> > [175901.999578]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
-> > [175902.000714]  ? xas_start+0x53/0xc0
-> > [175902.001484]  ? xas_load+0x24/0xa0
-> > [175902.002208]  ? xas_load+0x5/0xa0
-> > [175902.002878]  ? __filemap_get_folio+0x87/0x340
-> > [175902.003823]  ? filemap_fault+0x139/0x8d0
-> > [175902.004693]  ? __do_fault+0x31/0x1d0
-> > [175902.005372]  ? __handle_mm_fault+0xda9/0x17d0
-> > [175902.006213]  ? handle_mm_fault+0xd0/0x2a0
-> > [175902.006998]  ? exc_page_fault+0x1d9/0x810
-> > [175902.007789]  ? asm_exc_page_fault+0x22/0x30
-> > [175902.008613]  </TASK>
-> > 
-> > Given that filemap_fault on XFS is probably trying to map large
-> > folios, I do wonder if this is a result of some kind of race with
-> > teardown of a large folio...
-> > 
-> 
-> I somewhat recently tracked down a hugepage/swap problem that could
-> manifest as a softlockup in the folio lookup path (due to indefinite
-> folio_try_get_rcu() failure):
-> 
-> https://lore.kernel.org/linux-mm/20220906190602.1626037-1-bfoster@redhat.com/
-> 
-> It could easily be something different leading to the same side effect,
-> particularly since I believe the issue I saw was introduced in v5.19,
-> but might be worth a test if you have a reliable reproducer.
 
-Tests run and, unfortunately, that patch doesn't prevent/fix the
-problem either.
 
-Cheers,
+在 2022/10/20 8:01, Darrick J. Wong 写道:
+> On Sun, Oct 16, 2022 at 10:05:17PM +0800, Shiyang Ruan wrote:
+>>
+>>
+>> 在 2022/10/14 23:50, Darrick J. Wong 写道:
+>>> On Fri, Oct 14, 2022 at 10:24:29AM +0800, Shiyang Ruan wrote:
+>>>>
+>>>>
+>>>> 在 2022/10/14 2:30, Darrick J. Wong 写道:
+>>>>> On Thu, Sep 29, 2022 at 12:05:14PM -0700, Darrick J. Wong wrote:
+>>>>>> On Wed, Sep 28, 2022 at 10:46:17PM +0800, Shiyang Ruan wrote:
+>>>>>>>
+>>>> ...
+>>>>>>>>
+>>>>>>>>> FWIW I saw dmesg failures in xfs/517 and xfs/013 starting with 6.0-rc5,
+>>>>>>>>> and I haven't even turned on reflink yet:
+>>>>>>>>>
+>>>>>>>>> run fstests xfs/517 at 2022-09-26 19:53:34
+>>>>>>>>> XFS (pmem1): EXPERIMENTAL Large extent counts feature in use. Use at your own risk!
+>>>>>>>>> XFS (pmem1): Mounting V5 Filesystem
+>>>>>>>>> XFS (pmem1): Ending clean mount
+>>>>>>>>> XFS (pmem1): Quotacheck needed: Please wait.
+>>>>>>>>> XFS (pmem1): Quotacheck: Done.
+>>>>>>>>> XFS (pmem1): Unmounting Filesystem
+>>>>>>>>> XFS (pmem0): EXPERIMENTAL online scrub feature in use. Use at your own risk!
+>>>>>>>>> XFS (pmem1): EXPERIMENTAL Large extent counts feature in use. Use at your own risk!
+>>>>>>>>> XFS (pmem1): Mounting V5 Filesystem
+>>>>>>>>> XFS (pmem1): Ending clean mount
+>>>>>>>>> XFS (pmem1): Quotacheck needed: Please wait.
+>>>>>>>>> XFS (pmem1): Quotacheck: Done.
+>>>>>>>>> ------------[ cut here ]------------
+>>>>>>>>> WARNING: CPU: 1 PID: 415317 at fs/dax.c:380 dax_insert_entry+0x22d/0x320
+>>>>>
+>>>>> Ping?
+>>>>>
+>>>>> This time around I replaced the WARN_ON with this:
+>>>>>
+>>>>> 	if (page->mapping)
+>>>>> 		printk(KERN_ERR "%s:%d ino 0x%lx index 0x%lx page 0x%llx mapping 0x%llx <- 0x%llx\n", __func__, __LINE__, mapping->host->i_ino, index + i, (unsigned long long)page, (unsigned long long)page->mapping, (unsigned long long)mapping);
+>>>>>
+>>>>> and promptly started seeing scary things like this:
+>>>>>
+>>>>> [   37.576598] dax_associate_entry:381 ino 0x1807870 index 0x370 page 0xffffea00133f1480 mapping 0x1 <- 0xffff888042fbb528
+>>>>> [   37.577570] dax_associate_entry:381 ino 0x1807870 index 0x371 page 0xffffea00133f1500 mapping 0x1 <- 0xffff888042fbb528
+>>>>> [   37.698657] dax_associate_entry:381 ino 0x180044a index 0x5f8 page 0xffffea0013244900 mapping 0xffff888042eaf128 <- 0xffff888042dda128
+>>>>> [   37.699349] dax_associate_entry:381 ino 0x800808 index 0x136 page 0xffffea0013245640 mapping 0xffff888042eaf128 <- 0xffff888042d3ce28
+>>>>> [   37.699680] dax_associate_entry:381 ino 0x180044a index 0x5f9 page 0xffffea0013245680 mapping 0xffff888042eaf128 <- 0xffff888042dda128
+>>>>> [   37.700684] dax_associate_entry:381 ino 0x800808 index 0x137 page 0xffffea00132456c0 mapping 0xffff888042eaf128 <- 0xffff888042d3ce28
+>>>>> [   37.701611] dax_associate_entry:381 ino 0x180044a index 0x5fa page 0xffffea0013245700 mapping 0xffff888042eaf128 <- 0xffff888042dda128
+>>>>> [   37.764126] dax_associate_entry:381 ino 0x103c52c index 0x28a page 0xffffea001345afc0 mapping 0x1 <- 0xffff888019c14928
+>>>>> [   37.765078] dax_associate_entry:381 ino 0x103c52c index 0x28b page 0xffffea001345b000 mapping 0x1 <- 0xffff888019c14928
+>>>>> [   39.193523] dax_associate_entry:381 ino 0x184657f index 0x124 page 0xffffea000e2a4440 mapping 0xffff8880120d7628 <- 0xffff888019ca3528
+>>>>> [   39.194692] dax_associate_entry:381 ino 0x184657f index 0x125 page 0xffffea000e2a4480 mapping 0xffff8880120d7628 <- 0xffff888019ca3528
+>>>>> [   39.195716] dax_associate_entry:381 ino 0x184657f index 0x126 page 0xffffea000e2a44c0 mapping 0xffff8880120d7628 <- 0xffff888019ca3528
+>>>>> [   39.196736] dax_associate_entry:381 ino 0x184657f index 0x127 page 0xffffea000e2a4500 mapping 0xffff8880120d7628 <- 0xffff888019ca3528
+>>>>> [   39.197906] dax_associate_entry:381 ino 0x184657f index 0x128 page 0xffffea000e2a5040 mapping 0xffff8880120d7628 <- 0xffff888019ca3528
+>>>>> [   39.198924] dax_associate_entry:381 ino 0x184657f index 0x129 page 0xffffea000e2a5080 mapping 0xffff8880120d7628 <- 0xffff888019ca3528
+>>>>> [   39.247053] dax_associate_entry:381 ino 0x5dd1e index 0x2d page 0xffffea0015a0e640 mapping 0x1 <- 0xffff88804af88828
+>>>>> [   39.248006] dax_associate_entry:381 ino 0x5dd1e index 0x2e page 0xffffea0015a0e680 mapping 0x1 <- 0xffff88804af88828
+>>>>> [   39.490880] dax_associate_entry:381 ino 0x1a9dc index 0x7d page 0xffffea000e7012c0 mapping 0xffff888042fd1728 <- 0xffff88804afaec28
+>>>>> [   39.492038] dax_associate_entry:381 ino 0x1a9dc index 0x7e page 0xffffea000e701300 mapping 0xffff888042fd1728 <- 0xffff88804afaec28
+>>>>> [   39.493099] dax_associate_entry:381 ino 0x1a9dc index 0x7f page 0xffffea000e701340 mapping 0xffff888042fd1728 <- 0xffff88804afaec28
+>>>>> [   40.926247] dax_associate_entry:381 ino 0x182e265 index 0x54c page 0xffffea0015da0840 mapping 0x1 <- 0xffff888019c0dd28
+>>>>> [   41.675459] dax_associate_entry:381 ino 0x15e5d index 0x29 page 0xffffea000e4350c0 mapping 0x1 <- 0xffff888019c05828
+>>>>> [   41.676418] dax_associate_entry:381 ino 0x15e5d index 0x2a page 0xffffea000e435100 mapping 0x1 <- 0xffff888019c05828
+>>>>> [   41.677352] dax_associate_entry:381 ino 0x15e5d index 0x2b page 0xffffea000e435180 mapping 0x1 <- 0xffff888019c05828
+>>>>> [   41.678372] dax_associate_entry:381 ino 0x15e5d index 0x2c page 0xffffea000e4351c0 mapping 0x1 <- 0xffff888019c05828
+>>>>> [   41.965026] dax_associate_entry:381 ino 0x185adb4 index 0x87 page 0xffffea000e616d00 mapping 0x1 <- 0xffff88801a83b528
+>>>>> [   41.966065] dax_associate_entry:381 ino 0x185adb4 index 0x88 page 0xffffea000e616d40 mapping 0x1 <- 0xffff88801a83b528
+>>>>> [   43.565384] dax_associate_entry:381 ino 0x804d9d index 0x229 page 0xffffea0013653fc0 mapping 0x1 <- 0xffff88804bd97128
+>>>>> [   43.566399] dax_associate_entry:381 ino 0x804d9d index 0x22a page 0xffffea0013654000 mapping 0x1 <- 0xffff88804bd97128
+>>>>> [   43.567343] dax_associate_entry:381 ino 0x804d9d index 0x22b page 0xffffea0013654040 mapping 0x1 <- 0xffff88804bd97128
+>>>>> [   45.512017] dax_associate_entry:381 ino 0x18192bb index 0x1f page 0xffffea00133f1300 mapping 0x1 <- 0xffff88804bcdb528
+>>>>> [   45.512974] dax_associate_entry:381 ino 0x18192bb index 0x20 page 0xffffea00133f1340 mapping 0x1 <- 0xffff88804bcdb528
+>>>>> [   45.513942] dax_associate_entry:381 ino 0x18192bb index 0x21 page 0xffffea00133f1380 mapping 0x1 <- 0xffff88804bcdb528
+>>>>> [   45.514857] dax_associate_entry:381 ino 0x18192bb index 0x22 page 0xffffea00133f13c0 mapping 0x1 <- 0xffff88804bcdb528
+>>>>> [   45.515760] dax_associate_entry:381 ino 0x18192bb index 0x23 page 0xffffea00133f1400 mapping 0x1 <- 0xffff88804bcdb528
+>>>>> [   45.516673] dax_associate_entry:381 ino 0x18192bb index 0x24 page 0xffffea00133f1440 mapping 0x1 <- 0xffff88804bcdb528
+>>>>>
+>>>>> I'm not sure what's going on here, but we're clearly turning COW daxpages
+>>>>> back into single-mapping daxpages.  I'm not sure what's going on for the
+>>>>> cases where we're replacing one mapping with another.  My dimwitted
+>>>>> guess is that dax_fault_is_cow() is incorrectly returning false in some
+>>>>> cases.
+>>>>>
+>>>>> Replacing the contents of that function with:
+>>>>>
+>>>>> 	if (iter->srcmap.type != IOMAP_HOLE)
+>>>>> 		return true;
+>>>>> 	if (iter->iomap.flags & IOMAP_F_SHARED)
+>>>>> 		return true;
+>>>>> 	return false;
+>>>>>
+>>>>> Doesn't make the errors go away.  Curiously, replacing the entire
+>>>>> function body with "return true;" fixes /that/ problem though...
+>>>>
+>>>> I am looking into this error by adding debug message too.  I found that
+>>>> testcases which execute fsstress will randomly occur this error.  I'm
+>>>> guessing some concurrent operations caused the cow flag (returned by
+>>>> dax_fault_is_cow()) to be incorrectly judged.  But still haven't catch the
+>>>> exactly operation yet.
+>>>
+>>> I have an offhand guess that the following sequence might reproduce it:
+>>>
+>>> <write data to a fsdax file1>
+>>>
+>>> <process 1 maps file1, which sets up the pagecache mapping to pmem, and
+>>> goes to sleep>
+>>>
+>>> cp --reflink=always file1 file2
+>>>
+>>> <process 2 maps file2, which tries to map the same pmem "page" into
+>>> file2's pagecache and trips over page->mapping already being set to
+>>> file1's pagecache>
+>>>
+>>> But I dunno, I haven't had much time for digging into this one.
+>>
+>> I tried this sequence on v6.0 but it didn't reproduce the warning.
+> 
+> I tried it on 6.1-rc1 and ... it seems to have gone away.
+> 
+> It occurs to me -- how do you turn on fsdax mode?
+> 
+> I set MKFS_OPTIONS='-d daxinherit=1 -m reflink=1'
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+I add this in my local.config:
+
+export MKFS_OPTIONS="-m reflink=0,rmapbt=1"  # turn off reflink
+export MOUNT_OPTIONS="-o dax"                # turn on dax
+
+> 
+>>>
+>>>>> ...but generic/649 still fails with things like:
+>>>>>
+>>>>> [  571.224285] run fstests generic/649 at 2022-10-13 11:26:59
+>>>>> [  571.796353] XFS (pmem0): Mounting V5 Filesystem
+>>>>> [  571.799059] XFS (pmem0): Ending clean mount
+>>>>> [  572.378624] ------------[ cut here ]------------
+>>>>> [  572.379598] WARNING: CPU: 1 PID: 48538 at fs/dax.c:930 dax_writeback_mapping_range+0x2f1/0x600
+>>>>>
+>>>>> Which comes from this warning in dax_writeback_one:
+>>>>>
+>>>>> 	/*
+>>>>> 	 * A page got tagged dirty in DAX mapping? Something is seriously
+>>>>> 	 * wrong.
+>>>>> 	 */
+>>>>> 	if (WARN_ON(!xa_is_value(entry)))
+>>>>> 		return -EIO;
+>>>>>
+>>>>> Help?
+>>>>
+>>>> Sorry, no time for this yet...
+>>>>
+>>>> BTW, are these errors still occur when reflink is turned off? (dax on,
+>>>> reflink off)
+>>>
+>>> Hmm I'll try that later today.
+>>
+>> Forgot to tell you that I have tested dax_on&reflink_off with the Kernel
+>> Config which you sent to me: no failure case caused by the dmesg warning.
+> 
+> But with reflink turned on, it fails with numerous corruption errors.
+> I've just barely managed to rebase my dev tree on 6.1, so we'll see how
+> reflink + dax mode go on 6.1 in a day or two.
+
+Yes, I'm still looking into it.
+
+
+--
+Thanks,
+Ruan.
+
+
+> 
+> --D
+> 
+>>
+>>
+>> --
+>> Thanks,
+>> Ruan.
+>>
+>>>
+>>> --D
+>>>
+>>>>
+>>>> --
+>>>> Thanks,
+>>>> Ruan.
+>>>>
+>>>>>
+>>>>> --D
+>>>>>
+>>>>>>>>> Modules linked in: xfs nft_chain_nat xt_REDIRECT nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_tcpudp ip_set_hash_ip ip_set_hash_net xt_set nft_compat ip_set_hash_mac ip_set nf_tables libcrc32c bfq nfnetlink pvpanic_mmio pvpanic nd_pmem dax_pmem nd_btt sch_fq_codel fuse configfs ip_tables x_tables overlay nfsv4 af_packet [last unloaded: scsi_d
+>>>>>>>>>
+>>>>>>>>> CPU: 1 PID: 415317 Comm: fsstress Tainted: G        W          6.0.0-rc7-xfsx #rc7 727341edbd0773a36b78b09dab448fa1896eb3a5
+>>>>>>>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.15.0-1 04/01/2014
+>>>>>>>>> RIP: 0010:dax_insert_entry+0x22d/0x320
+>>>>>>>>> Code: e0 48 83 c4 20 5b 5d 41 5c 41 5d 41 5e 41 5f c3 48 8b 58 20 48 8d 53 01 e9 62 ff ff ff 48 8b 58 20 48 8d 53 01 e9 4d ff ff ff <0f> 0b e9 6d ff ff ff 31 f6 48 89 ef e8 72 74 12 00 eb a1 83 e0 02
+>>>>>>>>> RSP: 0000:ffffc90004693b28 EFLAGS: 00010002
+>>>>>>>>> RAX: ffffea0010a20480 RBX: 0000000000000001 RCX: 0000000000000001
+>>>>>>>>> RDX: ffffea0000000000 RSI: 0000000000000033 RDI: ffffea0010a204c0
+>>>>>>>>> RBP: ffffc90004693c08 R08: 0000000000000000 R09: 0000000000000000
+>>>>>>>>> R10: ffff88800c226228 R11: 0000000000000001 R12: 0000000000000011
+>>>>>>>>> R13: ffff88800c226228 R14: ffffc90004693e08 R15: 0000000000000000
+>>>>>>>>> FS:  00007f3aad8db740(0000) GS:ffff88803ed00000(0000) knlGS:0000000000000000
+>>>>>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>>>> CR2: 00007f3aad8d1000 CR3: 0000000043104003 CR4: 00000000001706e0
+>>>>>>>>> Call Trace:
+>>>>>>>>>      <TASK>
+>>>>>>>>>      dax_fault_iter+0x26e/0x670
+>>>>>>>>>      dax_iomap_pte_fault+0x1ab/0x3e0
+>>>>>>>>>      __xfs_filemap_fault+0x32f/0x5a0 [xfs c617487f99e14abfa5deb24e923415b927df3d4b]
+>>>>>>>>>      __do_fault+0x30/0x1e0
+>>>>>>>>>      do_fault+0x316/0x6d0
+>>>>>>>>>      ? mmap_region+0x2a5/0x620
+>>>>>>>>>      __handle_mm_fault+0x649/0x1250
+>>>>>>>>>      handle_mm_fault+0xc1/0x220
+>>>>>>>>>      do_user_addr_fault+0x1ac/0x610
+>>>>>>>>>      ? _copy_to_user+0x63/0x80
+>>>>>>>>>      exc_page_fault+0x63/0x130
+>>>>>>>>>      asm_exc_page_fault+0x22/0x30
+>>>>>>>>> RIP: 0033:0x7f3aada7f1ca
+>>>>>>>>> Code: c5 fe 7f 07 c5 fe 7f 47 20 c5 fe 7f 47 40 c5 fe 7f 47 60 c5 f8 77 c3 66 0f 1f 84 00 00 00 00 00 40 0f b6 c6 48 89 d1 48 89 fa <f3> aa 48 89 d0 c5 f8 77 c3 66 66 2e 0f 1f 84 00 00 00 00 00 66 90
+>>>>>>>>> RSP: 002b:00007ffe47afa688 EFLAGS: 00010206
+>>>>>>>>> RAX: 000000000000002e RBX: 0000000000033000 RCX: 000000000000999c
+>>>>>>>>> RDX: 00007f3aad8d1000 RSI: 000000000000002e RDI: 00007f3aad8d1000
+>>>>>>>>> RBP: 0000558851e13240 R08: 0000000000000000 R09: 0000000000033000
+>>>>>>>>> R10: 0000000000000008 R11: 0000000000000246 R12: 028f5c28f5c28f5c
+>>>>>>>>> R13: 8f5c28f5c28f5c29 R14: 000000000000999c R15: 0000000000001c81
+>>>>>>>>>      </TASK>
+>>>>>>>>> ---[ end trace 0000000000000000 ]---
+>>>>>>>>> XFS (pmem0): Unmounting Filesystem
+>>>>>>>>> XFS (pmem1): EXPERIMENTAL online scrub feature in use. Use at your own risk!
+>>>>>>>>> XFS (pmem1): *** REPAIR SUCCESS ino 0x80 type probe agno 0x0 inum 0x0 gen 0x0 flags 0x80000001 error 0
+>>>>>>>>> XFS (pmem1): Unmounting Filesystem
+>>>>>>>>> XFS (pmem1): EXPERIMENTAL Large extent counts feature in use. Use at your own risk!
+>>>>>>>>> XFS (pmem1): Mounting V5 Filesystem
+>>>>>>>>> XFS (pmem1): Ending clean mount
+>>>>>>>>> XFS (pmem1): Unmounting Filesystem
+>>>>>>>>
+>>>>>>>> Yup, that's the same as what I'm seeing.
+>>>>>>>
+>>>>>>> Could you send me your kernel config (or other configs needed for the test)?
+>>>>>>> I still cannot reproduce this warning when reflink is off, even without this
+>>>>>>> drop patch.  Maybe something different in config file?
+>>>>>>>
+>>>>>>>
+>>>>>>> PS: I specifically tried the two cases Darrick mentioned (on v6.0-rc6):
+>>>>>>>
+>>>>>>> [root@f33 xfstests-dev]# mkfs.xfs -m reflink=0,rmapbt=1 /dev/pmem0.1 -f
+>>>>>>> meta-data=/dev/pmem0.1           isize=512    agcount=4, agsize=257920 blks
+>>>>>>>             =                       sectsz=4096  attr=2, projid32bit=1
+>>>>>>>             =                       crc=1        finobt=1, sparse=1, rmapbt=1
+>>>>>>>             =                       reflink=0    bigtime=1 inobtcount=1
+>>>>>>> nrext64=0
+>>>>>>> data     =                       bsize=4096   blocks=1031680, imaxpct=25
+>>>>>>>             =                       sunit=0      swidth=0 blks
+>>>>>>> naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+>>>>>>> log      =internal log           bsize=4096   blocks=16384, version=2
+>>>>>>>             =                       sectsz=4096  sunit=1 blks, lazy-count=1
+>>>>>>> realtime =none                   extsz=4096   blocks=0, rtextents=0
+>>>>>>> [root@f33 xfstests-dev]# mkfs.xfs -m reflink=0,rmapbt=1 /dev/pmem0 -f
+>>>>>>> meta-data=/dev/pmem0             isize=512    agcount=4, agsize=257920 blks
+>>>>>>>             =                       sectsz=4096  attr=2, projid32bit=1
+>>>>>>>             =                       crc=1        finobt=1, sparse=1, rmapbt=1
+>>>>>>>             =                       reflink=0    bigtime=1 inobtcount=1
+>>>>>>> nrext64=0
+>>>>>>> data     =                       bsize=4096   blocks=1031680, imaxpct=25
+>>>>>>>             =                       sunit=0      swidth=0 blks
+>>>>>>> naming   =version 2              bsize=4096   ascii-ci=0, ftype=1
+>>>>>>> log      =internal log           bsize=4096   blocks=16384, version=2
+>>>>>>>             =                       sectsz=4096  sunit=1 blks, lazy-count=1
+>>>>>>> realtime =none                   extsz=4096   blocks=0, rtextents=0
+>>>>>>> [root@f33 xfstests-dev]# ./check xfs/013 xfs/517
+>>>>>>> FSTYP         -- xfs (debug)
+>>>>>>> PLATFORM      -- Linux/x86_64 f33 6.0.0-rc6 #84 SMP PREEMPT_DYNAMIC Wed Sep
+>>>>>>> 28 18:27:33 CST 2022
+>>>>>>> MKFS_OPTIONS  -- -f -m reflink=0,rmapbt=1 /dev/pmem0.1
+>>>>>>> MOUNT_OPTIONS -- -o dax -o context=system_u:object_r:root_t:s0 /dev/pmem0.1
+>>>>>>> /mnt/scratch
+>>>>>>>
+>>>>>>> xfs/013 127s ...  166s
+>>>>>>> xfs/517 66s ...  66s
+>>>>>>> Ran: xfs/013 xfs/517
+>>>>>>> Passed all 2 tests
+>>>>>>
+>>>>>> I'm not sure what exactly is going weird here -- I tried it on my dev
+>>>>>> machine just now and it passed, but the similarly configured testcloud
+>>>>>> failed it last night.
+>>>>>>
+>>>>>> FSTYP         -- xfs (debug)
+>>>>>> PLATFORM      -- Linux/x86_64 ca-nfsdev6-mtr03 6.0.0-rc7-xfsx #rc7 SMP
+>>>>>> PREEMPT_DYNAMIC Wed Sep 28 15:35:58 PDT 2022
+>>>>>> MKFS_OPTIONS  -- -f -m reflink=0, -d daxinherit=1, /dev/pmem1
+>>>>>> MOUNT_OPTIONS -- -o usrquota,grpquota,prjquota, /dev/pmem1 /opt
+>>>>>>
+>>>>>> Note that I use libvirt to configure pmem in the VMs.  This is an
+>>>>>> excerpt of the end of domain xml file:
+>>>>>>
+>>>>>>        <memory model='nvdimm' access='shared'>
+>>>>>>          <source>
+>>>>>>            <path>/run/mtrdisk/g.mem</path>
+>>>>>>          </source>
+>>>>>>          <target>
+>>>>>>            <size unit='KiB'>21104640</size>
+>>>>>>            <node>0</node>
+>>>>>>          </target>
+>>>>>>          <address type='dimm' slot='0'/>
+>>>>>>        </memory>
+>>>>>>        <memory model='nvdimm' access='shared'>
+>>>>>>          <source>
+>>>>>>            <path>/run/mtrdisk/h.mem</path>
+>>>>>>          </source>
+>>>>>>          <target>
+>>>>>>            <size unit='KiB'>21104640</size>
+>>>>>>            <node>1</node>
+>>>>>>          </target>
+>>>>>>          <address type='dimm' slot='1'/>
+>>>>>>        </memory>
+>>>>>>      </devices>
+>>>>>> </domain>
+>>>>>>
+>>>>>> --D
+>>>>>>
