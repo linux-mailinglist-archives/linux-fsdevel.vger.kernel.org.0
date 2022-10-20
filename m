@@ -2,141 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B086360684B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 20:39:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DF0D5606857
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 20:41:37 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229944AbiJTSjL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Oct 2022 14:39:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48012 "EHLO
+        id S230085AbiJTSlf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Oct 2022 14:41:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229716AbiJTSjK (ORCPT
+        with ESMTP id S230056AbiJTSle (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Oct 2022 14:39:10 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F398F1FAE6D
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Oct 2022 11:39:08 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29KHa3r1012777
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Oct 2022 11:39:08 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=qkGstl/d6IKpFeMw92wCvHbtoDwl4Qa7TRmu7WFjqqM=;
- b=aivD8E8ftXZgSmfyP/13iSiANQbZ7/SK38/Bf0QRq9C+aXD+yTROUJu4tSxzCRdtm4i2
- wNFbCsQ6mReGbASDhtzCHvc04R+qdFDUwv1tQib5PeiDAZT7d051kb8FPxWD+yX2EM4e
- yk/fpF6CYruLurkZflw3EDIuPxHp2yEdf5I= 
-Received: from maileast.thefacebook.com ([163.114.130.16])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kamx36qpy-15
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Oct 2022 11:39:08 -0700
-Received: from twshared13927.24.frc3.facebook.com (2620:10d:c0a8:1b::d) by
- mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Thu, 20 Oct 2022 11:39:06 -0700
-Received: by devbig077.ldc1.facebook.com (Postfix, from userid 158236)
-        id 873C1F453E40; Thu, 20 Oct 2022 11:38:32 -0700 (PDT)
-From:   Dave Marchevsky <davemarchevsky@fb.com>
-To:     <linux-fsdevel@vger.kernel.org>
-CC:     Miklos Szeredi <miklos@szeredi.hu>,
+        Thu, 20 Oct 2022 14:41:34 -0400
+Received: from mail-ed1-x52e.google.com (mail-ed1-x52e.google.com [IPv6:2a00:1450:4864:20::52e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9B17207534
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Oct 2022 11:41:32 -0700 (PDT)
+Received: by mail-ed1-x52e.google.com with SMTP id s30so907170eds.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Oct 2022 11:41:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qtnB/MwvbTjXeKKfpQsFeKxiqtv7J6lbuiX2ef347f8=;
+        b=JEzVASD5hQSQCFMbjuxU4kIkd4dfE3gGlj6XapIM9gQnvQ2D/77370KfKsyAzmKZpU
+         yGsi7msFDBs9JXuMZblq6ZKGs2vcHE7SdZCsFck+fxswIdVNs1rw/9iomevy8XryvP8o
+         qKLDP2lN2K3N9SpEunEdtw346WZI0y6r0fMYv57v++ay52CYXtY1Jrcclc3K65V0BQEz
+         MVmj7wndJxH9pHA1Rao7yfOtm/gMsi55s5J+deBtMUbhDfi7VQCQ5HuBK/si+/hfxwsZ
+         gqc2Ry99ffDqZDnSm8ICz83E+20CTf80PqaL5vNlcea2HiKknE/EMTRhAQIIM9wS14V2
+         VbRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qtnB/MwvbTjXeKKfpQsFeKxiqtv7J6lbuiX2ef347f8=;
+        b=XgQc9hdWk8sXzeR2D6cfpViJwtact9caQnCC5O2r+ZfR6c0qpJ7OE1yf36EukCUvhR
+         9HFNXpF/T6Dfwc8FQR2MR2g7s6r6iVPRP9CCzVMuQJgyFSz0DFScl2WI66Ea5tWajsIW
+         sUxoFXqbUszzQoW8hJuMwxLAKkFsY1ds7j4fRCen93rxUCFf8q63l4nVTkNZjC2RHy9L
+         Z3KCplgtHP+vzPCpsBFhZWmETpC9bUJKFjEm78bwxNENNyPk76nOXcYKwSqUAvS+c5jc
+         Kx15ze+SL4iChDfDUDlbwpiMcG+9AC1dh3Ir12u9TYx/fqhTwvkDuGvKGvjPn+PvWnmy
+         oXeg==
+X-Gm-Message-State: ACrzQf0hde8NqZfENwfTkT9uOS85+WwQh/ZzhjRDjvbFAWk09BzCBnMe
+        LJb4rDlJcojXjBd5Uq6cO3xYJP4Z28CR14Le7k0=
+X-Google-Smtp-Source: AMsMyM7uJ2erWZ+H89szHmQKRP3kQr++ZMg88dSxK5e+UkCTueaFhC6wWdEpdoXhL3zsJIC/QPRpzVLhfnFS9txH8+s=
+X-Received: by 2002:aa7:cd10:0:b0:45c:2c83:1208 with SMTP id
+ b16-20020aa7cd10000000b0045c2c831208mr13169675edw.81.1666291291020; Thu, 20
+ Oct 2022 11:41:31 -0700 (PDT)
+MIME-Version: 1.0
+References: <20221020183830.1077143-1-davemarchevsky@fb.com>
+In-Reply-To: <20221020183830.1077143-1-davemarchevsky@fb.com>
+From:   Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date:   Thu, 20 Oct 2022 11:41:19 -0700
+Message-ID: <CAEf4BzZE9Sq-Ho=64F=B1C_k-wN4Wkk75j3qJrWRbjDFW3YbUw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: Rearrange fuse_allow_current_process checks
+To:     Dave Marchevsky <davemarchevsky@fb.com>
+Cc:     linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
         kernel-team <kernel-team@fb.com>,
-        Dave Marchevsky <davemarchevsky@fb.com>,
         Andrii Nakryiko <andrii@kernel.org>,
         Christian Brauner <brauner@kernel.org>
-Subject: [PATCH] fuse: Rearrange fuse_allow_current_process checks
-Date:   Thu, 20 Oct 2022 11:38:30 -0700
-Message-ID: <20221020183830.1077143-1-davemarchevsky@fb.com>
-X-Mailer: git-send-email 2.30.2
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-GUID: NY3f_t_oLhtqN8E6bgIjhsbsnWMa6ZY0
-X-Proofpoint-ORIG-GUID: NY3f_t_oLhtqN8E6bgIjhsbsnWMa6ZY0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-10-20_09,2022-10-20_01,2022-06-22_01
-X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a followup to a previous commit of mine [0], which added the
-allow_sys_admin_access && capable(CAP_SYS_ADMIN) check. This patch
-rearranges the order of checks in fuse_allow_current_process without
-changing functionality.
+On Thu, Oct 20, 2022 at 11:39 AM Dave Marchevsky <davemarchevsky@fb.com> wrote:
+>
+> This is a followup to a previous commit of mine [0], which added the
+> allow_sys_admin_access && capable(CAP_SYS_ADMIN) check. This patch
+> rearranges the order of checks in fuse_allow_current_process without
+> changing functionality.
+>
+> [0] added allow_sys_admin_access && capable(CAP_SYS_ADMIN) check to the
+> beginning of the function, with the reasoning that
+> allow_sys_admin_access should be an 'escape hatch' for users with
+> CAP_SYS_ADMIN, allowing them to skip any subsequent checks.
+>
+> However, placing this new check first results in many capable() calls when
+> allow_sys_admin_access is set, where another check would've also
+> returned 1. This can be problematic when a BPF program is tracing
+> capable() calls.
+>
+> At Meta we ran into such a scenario recently. On a host where
+> allow_sys_admin_access is set but most of the FUSE access is from
+> processes which would pass other checks - i.e. they don't need
+> CAP_SYS_ADMIN 'escape hatch' - this results in an unnecessary capable()
+> call for each fs op. We also have a daemon tracing capable() with BPF and
+> doing some data collection, so tracing these extraneous capable() calls
+> has the potential to regress performance for an application doing many
+> FUSE ops.
+>
+> So rearrange the order of these checks such that CAP_SYS_ADMIN 'escape
+> hatch' is checked last. Previously, if allow_other is set on the
+> fuse_conn, uid/gid checking doesn't happen as current_in_userns result
+> is returned. It's necessary to add a 'goto' here to skip past uid/gid
+> check to maintain those semantics here.
+>
+>   [0]: commit 9ccf47b26b73 ("fuse: Add module param for CAP_SYS_ADMIN access bypassing allow_other")
+>
+> Signed-off-by: Dave Marchevsky <davemarchevsky@fb.com>
+> Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+> Cc: Christian Brauner <brauner@kernel.org>
+> ---
+>  fs/fuse/dir.c | 11 +++++++----
+>  1 file changed, 7 insertions(+), 4 deletions(-)
+>
+> diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+> index 2c4b08a6ec81..070e1beba838 100644
+> --- a/fs/fuse/dir.c
+> +++ b/fs/fuse/dir.c
+> @@ -1254,11 +1254,10 @@ int fuse_allow_current_process(struct fuse_conn *fc)
+>  {
+>         const struct cred *cred;
+>
+> -       if (allow_sys_admin_access && capable(CAP_SYS_ADMIN))
+> -               return 1;
+> -
+>         if (fc->allow_other)
 
-[0] added allow_sys_admin_access && capable(CAP_SYS_ADMIN) check to the
-beginning of the function, with the reasoning that
-allow_sys_admin_access should be an 'escape hatch' for users with
-CAP_SYS_ADMIN, allowing them to skip any subsequent checks.
+{
 
-However, placing this new check first results in many capable() calls whe=
-n
-allow_sys_admin_access is set, where another check would've also
-returned 1. This can be problematic when a BPF program is tracing
-capable() calls.
+> -               return current_in_userns(fc->user_ns);
+> +               if (current_in_userns(fc->user_ns))
+> +                       return 1;
+> +               goto skip_cred_check;
 
-At Meta we ran into such a scenario recently. On a host where
-allow_sys_admin_access is set but most of the FUSE access is from
-processes which would pass other checks - i.e. they don't need
-CAP_SYS_ADMIN 'escape hatch' - this results in an unnecessary capable()
-call for each fs op. We also have a daemon tracing capable() with BPF and
-doing some data collection, so tracing these extraneous capable() calls
-has the potential to regress performance for an application doing many
-FUSE ops.
+} ?
 
-So rearrange the order of these checks such that CAP_SYS_ADMIN 'escape
-hatch' is checked last. Previously, if allow_other is set on the
-fuse_conn, uid/gid checking doesn't happen as current_in_userns result
-is returned. It's necessary to add a 'goto' here to skip past uid/gid
-check to maintain those semantics here.
 
-  [0]: commit 9ccf47b26b73 ("fuse: Add module param for CAP_SYS_ADMIN acc=
-ess bypassing allow_other")
+Otherwise, makes sense, thanks!
 
-Signed-off-by: Dave Marchevsky <davemarchevsky@fb.com>
-Suggested-by: Andrii Nakryiko <andrii@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>
----
- fs/fuse/dir.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 2c4b08a6ec81..070e1beba838 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1254,11 +1254,10 @@ int fuse_allow_current_process(struct fuse_conn *=
-fc)
- {
- 	const struct cred *cred;
-=20
--	if (allow_sys_admin_access && capable(CAP_SYS_ADMIN))
--		return 1;
--
- 	if (fc->allow_other)
--		return current_in_userns(fc->user_ns);
-+		if (current_in_userns(fc->user_ns))
-+			return 1;
-+		goto skip_cred_check;
-=20
- 	cred =3D current_cred();
- 	if (uid_eq(cred->euid, fc->user_id) &&
-@@ -1269,6 +1268,10 @@ int fuse_allow_current_process(struct fuse_conn *f=
-c)
- 	    gid_eq(cred->gid,  fc->group_id))
- 		return 1;
-=20
-+skip_cred_check:
-+	if (allow_sys_admin_access && capable(CAP_SYS_ADMIN))
-+		return 1;
-+
- 	return 0;
- }
-=20
---=20
-2.30.2
-
+>
+>         cred = current_cred();
+>         if (uid_eq(cred->euid, fc->user_id) &&
+> @@ -1269,6 +1268,10 @@ int fuse_allow_current_process(struct fuse_conn *fc)
+>             gid_eq(cred->gid,  fc->group_id))
+>                 return 1;
+>
+> +skip_cred_check:
+> +       if (allow_sys_admin_access && capable(CAP_SYS_ADMIN))
+> +               return 1;
+> +
+>         return 0;
+>  }
+>
+> --
+> 2.30.2
+>
