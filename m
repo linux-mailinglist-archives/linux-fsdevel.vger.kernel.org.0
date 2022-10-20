@@ -2,126 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 91BA060561C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 05:53:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 925B56057CA
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 08:59:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbiJTDxL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 19 Oct 2022 23:53:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50438 "EHLO
+        id S229868AbiJTG64 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Oct 2022 02:58:56 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39840 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229464AbiJTDxK (ORCPT
+        with ESMTP id S229923AbiJTG63 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 19 Oct 2022 23:53:10 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87A4818BE06;
-        Wed, 19 Oct 2022 20:53:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-        bh=/JvjmffQ3hXpqGN/9W/KavgcOAZl9PKoivWmEcGrYWs=; b=Q0izzeWPBJEoLmgIJ8h5+GsAA/
-        lz+Tl14gdK2oC8hvKqJshx92m73jjHfse8nC6iGms1xA2RNusjhg2LGdJfOLLkLm+TCmcXEGMS/0X
-        NO1DjE5ZxH7F2TbQ8lOn0xEdxDuYjTxXHlBJTjMpwD9e8IWeUNrp8mYqElXLpEs/Oro3YLPXKgmUJ
-        slckUs/Vx5pAl+F0fX0u58h1AWS+kYxQPp+vuY+wNFOlTnSxbHweKNkLk/V1vJl2DfrcASvs42R53
-        4fNmeRyFyaSQBxsYCBBdWfo/VZJ6YYoKlKmSDwe5CHdJSVLy9UIKf7oUo0JtNUaRz26ez83f85pNY
-        kUHj5BPQ==;
-Received: from [2601:1c2:d80:3110::a2e7]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1olMcB-00A3P0-Vi; Thu, 20 Oct 2022 03:53:04 +0000
-Message-ID: <c270337a-7be2-e53d-d4e8-81a934907205@infradead.org>
-Date:   Wed, 19 Oct 2022 20:53:03 -0700
+        Thu, 20 Oct 2022 02:58:29 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D43C51213F8;
+        Wed, 19 Oct 2022 23:58:23 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6C48DB8269E;
+        Thu, 20 Oct 2022 06:58:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0324FC433D6;
+        Thu, 20 Oct 2022 06:58:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666249101;
+        bh=gNWZd5H40IPgVGZtl+34qVIwNzNQ+boUybOYzZCAgH4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ilVIxiQjJQomaVAaYb2QTy49mE/zcyOh4m9FDwj28sXrvFedTs9NPcRvXaDnBJ4GI
+         Cxiq4jfsTaOztspnUUhrsob2ezKk2aFEvWRHyIbwWELRzQNDdNehXcSHglRFoSSvoA
+         QWaukBX4ZTDqDQYxWT0lu5W5gQcaWpS1mdZkTP5XxKuhrWGLgsFM3a9FxoOs1wKHRb
+         Ngxs0n8pnaFx960AnjSxzERziXAxNZ2dbbuWsetzbTbrTw5Lx9YGXaBkUwE3xCqkNz
+         S48IGWFFRptH4hn4lDmITsVuYGdPWvaofNFG49lm0nORJW+RMbde8MAqIjySLo392Q
+         M1/RaSEr5AmLg==
+Date:   Thu, 20 Oct 2022 08:58:13 +0200
+From:   Christian Brauner <brauner@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>, tytso@mit.edu,
+        adilger.kernel@dilger.ca, david@fromorbit.com,
+        trondmy@hammerspace.com, neilb@suse.de, viro@zeniv.linux.org.uk,
+        zohar@linux.ibm.com, xiubli@redhat.com, chuck.lever@oracle.com,
+        lczerner@redhat.com, jack@suse.cz, bfields@fieldses.org,
+        fweimer@redhat.com, linux-btrfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH v7 0/9] fs: clean up handling of i_version counter
+Message-ID: <20221020065813.sdnrerbrvi75xlkp@wittgenstein>
+References: <20221017105709.10830-1-jlayton@kernel.org>
+ <20221019111315.hpilifogyvf3bixh@wittgenstein>
+ <2b167dd9bda17f1324e9c526d868cc0d995dc660.camel@kernel.org>
+ <Y1AbmIYEhUwfFHDx@magnolia>
+ <3fa8e13be8d75e694e8360a8e9552a92a4c14803.camel@kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.1
-Subject: Re: [PATCH] vfs: fs_context: Modify mismatched function name
-Content-Language: en-US
-To:     Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-        viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Abaci Robot <abaci@linux.alibaba.com>
-References: <20221020034036.56523-1-jiapeng.chong@linux.alibaba.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20221020034036.56523-1-jiapeng.chong@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <3fa8e13be8d75e694e8360a8e9552a92a4c14803.camel@kernel.org>
+X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi--
-
-On 10/19/22 20:40, Jiapeng Chong wrote:
-> No functional modification involved.
+On Wed, Oct 19, 2022 at 04:36:47PM -0400, Jeff Layton wrote:
+> On Wed, 2022-10-19 at 08:45 -0700, Darrick J. Wong wrote:
+> > On Wed, Oct 19, 2022 at 08:18:15AM -0400, Jeff Layton wrote:
+> > > On Wed, 2022-10-19 at 13:13 +0200, Christian Brauner wrote:
+> > > > On Mon, Oct 17, 2022 at 06:57:00AM -0400, Jeff Layton wrote:
+> > > > > This patchset is intended to clean up the handling of the i_version
+> > > > > counter by nfsd. Most of the changes are to internal interfaces.
+> > > > > 
+> > > > > This set is not intended to address crash resilience, or the fact that
+> > > > > the counter is bumped before a change and not after. I intend to tackle
+> > > > > those in follow-on patchsets.
+> > > > > 
+> > > > > My intention is to get this series included into linux-next soon, with
+> > > > > an eye toward merging most of it during the v6.2 merge window. The last
+> > > > > patch in the series is probably not suitable for merge as-is, at least
+> > > > > until we sort out the semantics we want to present to userland for it.
+> > > > 
+> > > > Over the course of the series I struggled a bit - and sorry for losing
+> > > > focus - with what i_version is supposed to represent for userspace. So I
+> > > > would support not exposing it to userspace before that. But that
+> > > > shouldn't affect your other changes iiuc.
+> > > 
+> > > Thanks Christian,
+> > > 
+> > > It has been a real struggle to nail this down, and yeah I too am not
+> > > planning to expose this to userland until we have this much better
+> > > defined. Patch #9 is just to give you an idea of what this would
+> > > ultimately look like. I intend to re-post the first 8 patches with an
+> > > eye toward merge in v6.2, once we've settled on the naming. On that
+> > > note...
+> > > 
+> > > I believe you had mentioned that you didn't like STATX_CHANGE_ATTR for
+> > > the name, and suggested STATX_I_VERSION (or something similar), which I
+> > > later shortened to STATX_VERSION.
+> > > 
+> > > Dave C. objected to STATX_VERSION, as "version" fields in a struct
+> > > usually refer to the version of the struct itself rather than the
+> > > version of the thing it describes. It also sort of implies a monotonic
+> > > counter, and I'm not ready to require that just yet.
+> > > 
+> > > What about STATX_CHANGE for the name (with corresponding names for the
+> > > field and other flags)? That drops the redundant "_ATTR" postfix, while
+> > > being sufficiently vague to allow for alternative implementations in the
+> > > future.
+> > > 
+> > > Do you (or anyone else) have other suggestions for a name?
+> > 
+> > Welllll it's really a u32 whose value doesn't have any intrinsic meaning
+> > other than "if (value_now != value_before) flush_cache();" right?
+> > I think it really only tracks changes to file data, right?
+> > 
 > 
-> fs/fs_context.c:347: warning: expecting prototype for vfs_dup_fc_config(). Prototype was for vfs_dup_fs_context() instead.
+> It's a u64, but yeah, you're not supposed to assign any intrinsic
+> meaning to the value itself.
 > 
-> Link: https://bugzilla.openanolis.cn/show_bug.cgi?id=2456
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
->  fs/fs_context.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> > STATX_CHANGE_COOKIE	(wait, does this cookie augment i_ctime?)
+> > 
+> > STATX_MOD_COOKIE	(...or just file modifications/i_mtime?)
+> > 
+> > STATX_MONITOR_COOKIE	(...what are we monitoring??)
+> > 
+> > STATX_MON_COOKIE
+> > 
+> > STATX_COOKIE_MON
+> > 
+> > STATX_COOKIE_MONSTER
+> > 
+> > There we go. ;)
+> > 
+> > In seriousness, I'd probably go with one of the first two.  I wouldn't
+> > be opposed to the last one, either, but others may disagree. ;)
+> > 
+> > --D
+> > 
+> > 
 > 
-> diff --git a/fs/fs_context.c b/fs/fs_context.c
-> index df04e5fc6d66..be45701cd998 100644
-> --- a/fs/fs_context.c
-> +++ b/fs/fs_context.c
-> @@ -340,7 +340,7 @@ void fc_drop_locked(struct fs_context *fc)
->  static void legacy_fs_context_free(struct fs_context *fc);
->  
->  /**
-> - * vfs_dup_fc_config: Duplicate a filesystem context.
-> + * vfs_dup_fs_context: Duplicate a filesystem context.
+> STATX_CHANGE_COOKIE is probably the best one. I'll plan to go with that
+> unless someone has a better idea. Thanks for the suggestions!
 
-That is still not the correct kernel-doc format (or syntax).
-The ':' should be a '-' instead.
-
-Also, I see scripts/kernel-doc reporting 16 kernel-doc format
-problems in this file. How about fixing more than just one of them, please.
-
-fs_context.c:95: warning: No description found for return value of 'vfs_parse_fs
-_param_source'
-fs_context.c:128: warning: No description found for return value of 'vfs_parse_f
-s_param'
-fs_context.c:168: warning: Function parameter or member 'fc' not described in 'v
-fs_parse_fs_string'
-fs_context.c:168: warning: Function parameter or member 'key' not described in '
-vfs_parse_fs_string'
-fs_context.c:168: warning: Function parameter or member 'value' not described in
- 'vfs_parse_fs_string'
-fs_context.c:168: warning: Function parameter or member 'v_size' not described i
-n 'vfs_parse_fs_string'
-fs_context.c:168: warning: No description found for return value of 'vfs_parse_f
-s_string'
-fs_context.c:202: warning: Function parameter or member 'fc' not described in 'g
-eneric_parse_monolithic'
-fs_context.c:202: warning: Excess function parameter 'ctx' description in 'gener
-ic_parse_monolithic'
-fs_context.c:202: warning: No description found for return value of 'generic_par
-se_monolithic'
-fs_context.c:252: warning: No description found for return value of 'alloc_fs_co
-ntext'
-fs_context.c:340: warning: No description found for return value of 'vfs_dup_fs_
-context'
-fs_context.c:386: warning: Function parameter or member 'log' not described in '
-logfc'
-fs_context.c:386: warning: Function parameter or member 'prefix' not described i
-n 'logfc'
-fs_context.c:386: warning: Function parameter or member 'level' not described in
- 'logfc'
-fs_context.c:386: warning: Excess function parameter 'fc' description in 'logfc'
-16 warnings
-
-
->   * @src_fc: The context to copy.
->   */
->  struct fs_context *vfs_dup_fs_context(struct fs_context *src_fc)
-
--- 
-~Randy
+Sounds fine to me.
