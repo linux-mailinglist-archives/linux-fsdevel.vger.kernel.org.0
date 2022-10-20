@@ -2,109 +2,141 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D112160652F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 18:00:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B086360684B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 20 Oct 2022 20:39:13 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230426AbiJTQAr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 20 Oct 2022 12:00:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56766 "EHLO
+        id S229944AbiJTSjL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 20 Oct 2022 14:39:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230425AbiJTQAp (ORCPT
+        with ESMTP id S229716AbiJTSjK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 20 Oct 2022 12:00:45 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3AAC1A7A1C;
-        Thu, 20 Oct 2022 09:00:44 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 228EB61C43;
-        Thu, 20 Oct 2022 16:00:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5109AC433D6;
-        Thu, 20 Oct 2022 16:00:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666281643;
-        bh=bLuCedl4s9jdTFLoZhM2DGA0BttT058xaU3Ol8SB5r0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=krGDiwbcMT5ujYebgyqN7jxYS+vp9IhtmLLt9ofmcojNx2t8b95kPontEO9bt5yfO
-         d6Fp+pI7vRi0f54D+p4bjIJPMYDlUwrJF+yo5a6v41mRJX0oNwZDZdFe7HejyA21fH
-         BjGernPI0c0HB9IgD+XGuFEG1O1PIvwE6hzJxLcChRtYLmsPoNl9Pdhr7qaIOx7+7h
-         5xBDbUpLXpBeY9eADoD6qbWVhnw46ZIM/UNqdj9IIed9hrUNvc8j+Y7DXkf6RMpQ0K
-         9E6joa/nr7MrtgrBpxZu91XTFZMC0/qkvg4G1CPwNsAOCI4AQj785JS2mvIgtjXF5j
-         Ok+daXoDrJ47Q==
-From:   Arnd Bergmann <arnd@kernel.org>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, Thomas Schmitt <scdbackup@gmx.net>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] isofs: prevent file time rollover after year 2038
-Date:   Thu, 20 Oct 2022 18:00:29 +0200
-Message-Id: <20221020160037.4002270-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.29.2
+        Thu, 20 Oct 2022 14:39:10 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F398F1FAE6D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Oct 2022 11:39:08 -0700 (PDT)
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29KHa3r1012777
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Oct 2022 11:39:08 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=facebook; bh=qkGstl/d6IKpFeMw92wCvHbtoDwl4Qa7TRmu7WFjqqM=;
+ b=aivD8E8ftXZgSmfyP/13iSiANQbZ7/SK38/Bf0QRq9C+aXD+yTROUJu4tSxzCRdtm4i2
+ wNFbCsQ6mReGbASDhtzCHvc04R+qdFDUwv1tQib5PeiDAZT7d051kb8FPxWD+yX2EM4e
+ yk/fpF6CYruLurkZflw3EDIuPxHp2yEdf5I= 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kamx36qpy-15
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Thu, 20 Oct 2022 11:39:08 -0700
+Received: from twshared13927.24.frc3.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Thu, 20 Oct 2022 11:39:06 -0700
+Received: by devbig077.ldc1.facebook.com (Postfix, from userid 158236)
+        id 873C1F453E40; Thu, 20 Oct 2022 11:38:32 -0700 (PDT)
+From:   Dave Marchevsky <davemarchevsky@fb.com>
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     Miklos Szeredi <miklos@szeredi.hu>,
+        kernel-team <kernel-team@fb.com>,
+        Dave Marchevsky <davemarchevsky@fb.com>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Christian Brauner <brauner@kernel.org>
+Subject: [PATCH] fuse: Rearrange fuse_allow_current_process checks
+Date:   Thu, 20 Oct 2022 11:38:30 -0700
+Message-ID: <20221020183830.1077143-1-davemarchevsky@fb.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-GUID: NY3f_t_oLhtqN8E6bgIjhsbsnWMa6ZY0
+X-Proofpoint-ORIG-GUID: NY3f_t_oLhtqN8E6bgIjhsbsnWMa6ZY0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-10-20_09,2022-10-20_01,2022-06-22_01
+X-Spam-Status: No, score=-2.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
+        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Thomas Schmitt <scdbackup@gmx.net>
+This is a followup to a previous commit of mine [0], which added the
+allow_sys_admin_access && capable(CAP_SYS_ADMIN) check. This patch
+rearranges the order of checks in fuse_allow_current_process without
+changing functionality.
 
-Change the return type of function iso_date() from int to time64_t,
-to avoid truncating to the 1902..2038 date range.
+[0] added allow_sys_admin_access && capable(CAP_SYS_ADMIN) check to the
+beginning of the function, with the reasoning that
+allow_sys_admin_access should be an 'escape hatch' for users with
+CAP_SYS_ADMIN, allowing them to skip any subsequent checks.
 
-After this patch, the reported timestamps should fall into the
-range reported in the s_time_min/s_time_max fields.
+However, placing this new check first results in many capable() calls whe=
+n
+allow_sys_admin_access is set, where another check would've also
+returned 1. This can be problematic when a BPF program is tracing
+capable() calls.
 
-Signed-off-by: Thomas Schmitt <scdbackup@gmx.net>
-Cc: stable@vger.kernel.org
-Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=800627
-Fixes: 34be4dbf87fc ("isofs: fix timestamps beyond 2027")
-Fixes: 5ad32b3acded ("isofs: Initialize filesystem timestamp ranges")
-[arnd: expand changelog text slightly]
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+At Meta we ran into such a scenario recently. On a host where
+allow_sys_admin_access is set but most of the FUSE access is from
+processes which would pass other checks - i.e. they don't need
+CAP_SYS_ADMIN 'escape hatch' - this results in an unnecessary capable()
+call for each fs op. We also have a daemon tracing capable() with BPF and
+doing some data collection, so tracing these extraneous capable() calls
+has the potential to regress performance for an application doing many
+FUSE ops.
+
+So rearrange the order of these checks such that CAP_SYS_ADMIN 'escape
+hatch' is checked last. Previously, if allow_other is set on the
+fuse_conn, uid/gid checking doesn't happen as current_in_userns result
+is returned. It's necessary to add a 'goto' here to skip past uid/gid
+check to maintain those semantics here.
+
+  [0]: commit 9ccf47b26b73 ("fuse: Add module param for CAP_SYS_ADMIN acc=
+ess bypassing allow_other")
+
+Signed-off-by: Dave Marchevsky <davemarchevsky@fb.com>
+Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>
 ---
- fs/isofs/isofs.h | 2 +-
- fs/isofs/util.c  | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+ fs/fuse/dir.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/fs/isofs/isofs.h b/fs/isofs/isofs.h
-index dcdc191ed183..c3473ca3f686 100644
---- a/fs/isofs/isofs.h
-+++ b/fs/isofs/isofs.h
-@@ -106,7 +106,7 @@ static inline unsigned int isonum_733(u8 *p)
- 	/* Ignore bigendian datum due to broken mastering programs */
- 	return get_unaligned_le32(p);
- }
--extern int iso_date(u8 *, int);
-+extern time64_t iso_date(u8 *, int);
- 
- struct inode;		/* To make gcc happy */
- 
-diff --git a/fs/isofs/util.c b/fs/isofs/util.c
-index e88dba721661..348af786a8a4 100644
---- a/fs/isofs/util.c
-+++ b/fs/isofs/util.c
-@@ -16,10 +16,10 @@
-  * to GMT.  Thus  we should always be correct.
-  */
- 
--int iso_date(u8 *p, int flag)
-+time64_t iso_date(u8 *p, int flag)
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index 2c4b08a6ec81..070e1beba838 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1254,11 +1254,10 @@ int fuse_allow_current_process(struct fuse_conn *=
+fc)
  {
- 	int year, month, day, hour, minute, second, tz;
--	int crtime;
-+	time64_t crtime;
- 
- 	year = p[0];
- 	month = p[1];
--- 
-2.29.2
+ 	const struct cred *cred;
+=20
+-	if (allow_sys_admin_access && capable(CAP_SYS_ADMIN))
+-		return 1;
+-
+ 	if (fc->allow_other)
+-		return current_in_userns(fc->user_ns);
++		if (current_in_userns(fc->user_ns))
++			return 1;
++		goto skip_cred_check;
+=20
+ 	cred =3D current_cred();
+ 	if (uid_eq(cred->euid, fc->user_id) &&
+@@ -1269,6 +1268,10 @@ int fuse_allow_current_process(struct fuse_conn *f=
+c)
+ 	    gid_eq(cred->gid,  fc->group_id))
+ 		return 1;
+=20
++skip_cred_check:
++	if (allow_sys_admin_access && capable(CAP_SYS_ADMIN))
++		return 1;
++
+ 	return 0;
+ }
+=20
+--=20
+2.30.2
 
