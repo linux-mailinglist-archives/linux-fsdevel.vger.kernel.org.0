@@ -2,171 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7028B607CDA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 18:53:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60279607E6F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 20:55:00 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230322AbiJUQxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Oct 2022 12:53:54 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51466 "EHLO
+        id S229608AbiJUSy6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Oct 2022 14:54:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51430 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230344AbiJUQxa (ORCPT
+        with ESMTP id S229456AbiJUSyy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Oct 2022 12:53:30 -0400
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AFB128B1E3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Oct 2022 09:53:21 -0700 (PDT)
-Received: by mail-pj1-x102a.google.com with SMTP id x1-20020a17090ab00100b001fda21bbc90so7179261pjq.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Oct 2022 09:53:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xrysGx55UenjRLyS1DI8lWgE85TWYqrMWgtnLZZFAkc=;
-        b=RHWZQBLe9HXVngD3tJPBIAxrqGbPxOHUi+EuoMf2wh8wAVWCUykhVBw5M4bpHipxKX
-         AQrvUqN4owfPyZqdyzULb7AFBCSDE+f4NUKYHAYIddpZR67VGGUvvxapOtY3ozT/Ml4t
-         aiXuSjYrXY3eVMT1GbVbskQFgGxypZbRWqNEOhCm30Zif46drkOhIOZelqHekwQwUk43
-         bnuW3YgCEoukR20OzDrDD/o7UY7n/fRCHqej35doY178zBweJ3IoeGQQs9hPHYSo3Ohx
-         OqzLxanZHEvXOsNtWfWWxGtsKOFGJnejx5vYFgdKqN5Vb6+SO3aa9cMSKsUkIyd4p5eH
-         sJHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xrysGx55UenjRLyS1DI8lWgE85TWYqrMWgtnLZZFAkc=;
-        b=aAyBEKRJGdQWfB8Vt/F4wHKcXtAXQklzGHr+iRjolZdA1dhDTK6+INfpT3pawjHHCz
-         5lOoR1t/9CTjhH49XwrLoB2qIAs2ke66nr9R45c3IBzWhsaPqWXCUSmhfo+ZF0QFhFwa
-         snCxSKLf9KgQxcA/uKAAqCR8vfKJifqaPeaKGJPSfMrDnNXq6qI3CPsDgw/S3vchfZvm
-         lX7qPH648xm7QMmixPzAP4uIb2gRZDEvNDrsP1cUuH40TvvBQcGlE8K9YvtaaUpm7z/R
-         8P9lqHao60Zxp9b4XkApoTagko6UDFVvxILAkYfWFTKrK4i+l44earQerjt9u4By4E97
-         WftQ==
-X-Gm-Message-State: ACrzQf07bgRGhUMRbZQ4DCuKXqfgGDzBaKL6sTNib7+F8FrWEo6mdwZY
-        WXGG1QdRlefsU+eHgoUKQgU6mA==
-X-Google-Smtp-Source: AMsMyM4X0ByBcSID7/aMrdZ0mivytsG1EHhlrHnS2og4yoaJvAdKT/AGmOFlcmS9yqzFtIJMO1ZXxQ==
-X-Received: by 2002:a17:90b:2651:b0:20a:daaf:75f0 with SMTP id pa17-20020a17090b265100b0020adaaf75f0mr22464873pjb.142.1666371200475;
-        Fri, 21 Oct 2022 09:53:20 -0700 (PDT)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id b14-20020a170903228e00b00176e8f85147sm15298020plh.83.2022.10.21.09.53.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Oct 2022 09:53:19 -0700 (PDT)
-Date:   Fri, 21 Oct 2022 16:53:15 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     Vishal Annapurve <vannapurve@google.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Gupta, Pankaj" <pankaj.gupta@amd.com>,
-        Vlastimil Babka <vbabka@suse.cz>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
-Message-ID: <Y1LOe4JvnTbFNs4u@google.com>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
- <de680280-f6b1-9337-2ae4-4b2faf2b823b@suse.cz>
- <20221017161955.t4gditaztbwijgcn@box.shutemov.name>
- <c63ad0cd-d517-0f1e-59e9-927d8ae15a1a@amd.com>
- <20221017215640.hobzcz47es7dq2bi@box.shutemov.name>
- <CAGtprH8xEdgATjQdhi2b_KqUuSOZHUM-Lh+O-ZtcFKbHf2_75g@mail.gmail.com>
- <20221019153225.njvg45glehlnjgc7@box.shutemov.name>
- <CAGtprH-8y9iTyVZ+EYW2t=zGqz7fVgPu-3wVm0Wgv5134NU6WQ@mail.gmail.com>
- <20221021135434.GB3607894@chaop.bj.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221021135434.GB3607894@chaop.bj.intel.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        Fri, 21 Oct 2022 14:54:54 -0400
+X-Greylist: delayed 99 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 21 Oct 2022 11:54:48 PDT
+Received: from web-relay3.stackmail.com (web-relay3.stackmail.com [45.8.227.178])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3AB24D4E1
+        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Oct 2022 11:54:47 -0700 (PDT)
+ARC-Seal: i=1; cv=none; a=rsa-sha256; d=web-relay3.stackmail.com; s=s1;
+         b=JmKwK9EaN/H4BQt7ZeVTxwyn9oQ5g8d/UhbQMiR3V8JsLnJLSry4w/1dBmClbDLB42HYJalrss
+          9jAyLHqKTglJmP/h+740BPE+s+ehE2x4E41BSGS5us3xbm0Iw9BpizbU3LTihn46m4qTbW9Ovf
+          /68gGihhICSVqZtBtYyEceL63Uv8RNJanhjwkMQQXiMWyjgVntOv4Lf7bnEb7mhzQS4jCYxnR6
+          nXVWqK4xIsLnkeSl0hKSYNKn5YQetryReCKXP21ntb678FrJ/rhLCfmSiZ9vMKoybIwAdn+rqN
+          X7XlgMod89ucYV44lEY3eQJF1wpIaYWLQCizOlbYbWkX/A==;
+ARC-Authentication-Results: i=1; web-relay3.stackmail.com;
+        iprev=fail smtp.remote-ip=10.3.6.23
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed; d=web-relay3.stackmail.com; s=s1;
+        bh=0aHii8aN23vEF7u5f5uQm1z593eqZqExjt9XjgjkhUg=;
+        h=Sender:Date:Message-ID:Reply-To:From:Subject:To;
+        b=bbGaJr4ya9u+qn0ejCgR23cuFJfeyPPv1Mq6OzKTNwOSmPbFupEmvGjRlt3IrsSndzB6gNTUTf
+          +1kwlh+rC2ohYjizpnC/v6G/+YtSqgj4LQsNU+j+AcL4Arr2FrpisOa6ddZK4VhB+Sj48UhjQr
+          KlMn++yY0vqP/sBA+jaQQqOQ7HNYH2EVqzz/1LlOW2TRVmpgT7+7X9+gwFFgfvE3dzRPawXxQh
+          3FS4mHcIfWdjUu3d57JhJdefIoIOnGnAnz6H7Vghl9k0Wi3JK7badkLP8LxsSH+Zh00ZkDSENB
+          QotmwCzSKssQHlg7xD7vHzLQzU0DJcLazZpiJ8BBuHqFVw==;
+Authentication-Results: web-relay3.stackmail.com;
+        iprev=fail smtp.remote-ip=10.3.6.23
+Received: from [10.3.6.23] (helo=web58.lhr.stackcp.net)
+        by web-relay3.stackmail.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+        (Exim 4.96)
+        (envelope-from <noreply@aolfmarrakech2022.com>)
+        id 1olx8l-0000HK-01
+        for linux-fsdevel@vger.kernel.org;
+        Fri, 21 Oct 2022 19:53:07 +0100
+Received: from 7af05f09d0 by web58.lhr.stackcp.net with local (Exim 4.96)
+        (envelope-from <noreply@aolfmarrakech2022.com>)
+        id 1olx8k-0007gB-30
+        for linux-fsdevel@vger.kernel.org;
+        Fri, 21 Oct 2022 19:53:06 +0100
+To:     linux-fsdevel@vger.kernel.org
+Subject: smacot
+X-PHP-Originating-Script: 1262826:register.php
+From:   samih.hicham@gmail.com
+Reply-To: samih.hicham@gmail.com
+Message-Id: <E1olx8k-0007gB-30@web58.lhr.stackcp.net>
+Date:   Fri, 21 Oct 2022 19:53:06 +0100
+Sender: noreply@aolfmarrakech2022.com
+X-Authenticated-Sender: 7af05f09d0
+X-Originating-IP: 
+X-Spam-Status: Yes, score=5.3 required=5.0 tests=BAYES_50,DKIM_ADSP_CUSTOM_MED,
+        FORGED_GMAIL_RCVD,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+        HEADER_FROM_DIFFERENT_DOMAINS,NML_ADSP_CUSTOM_MED,PHP_ORIG_SCRIPT,
+        SPF_HELO_NONE,SPF_PASS,T_PDS_TINYSUBJ_URISHRT,T_SHORT_SHORTNER,
+        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: *  0.0 URIBL_BLOCKED ADMINISTRATOR NOTICE: The query to URIBL was
+        *      blocked.  See
+        *      http://wiki.apache.org/spamassassin/DnsBlocklists#dnsbl-block
+        *      for more information.
+        *      [URIs: okj.page.link]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5283]
+        *  0.0 DKIM_ADSP_CUSTOM_MED No valid author signature, adsp_override
+        *      is CUSTOM_MED
+        *  1.0 FORGED_GMAIL_RCVD 'From' gmail.com does not match 'Received'
+        *      headers
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.2 HEADER_FROM_DIFFERENT_DOMAINS From and EnvelopeFrom 2nd level
+        *      mail domains are different
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [samih.hicham[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.2 FREEMAIL_FORGED_FROMDOMAIN 2nd level domains in From and
+        *      EnvelopeFrom freemail headers are different
+        *  0.0 T_SHORT_SHORTNER Short body with little more than a link to a
+        *      shortener
+        *  2.0 PHP_ORIG_SCRIPT Sent by bot & other signs
+        *  0.0 T_PDS_TINYSUBJ_URISHRT Short subject with URL shortener
+        *  0.9 NML_ADSP_CUSTOM_MED ADSP custom_med hit, and not from a mailing
+        *       list
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 21, 2022, Chao Peng wrote:
-> On Thu, Oct 20, 2022 at 04:20:58PM +0530, Vishal Annapurve wrote:
-> > On Wed, Oct 19, 2022 at 9:02 PM Kirill A . Shutemov <kirill.shutemov@linux.intel.com> wrote:
-> > >
-> > > On Tue, Oct 18, 2022 at 07:12:10PM +0530, Vishal Annapurve wrote:
-> > > > I think moving this notifier_invalidate before fallocate may not solve
-> > > > the problem completely. Is it possible that between invalidate and
-> > > > fallocate, KVM tries to handle the page fault for the guest VM from
-> > > > another vcpu and uses the pages to be freed to back gpa ranges? Should
-> > > > hole punching here also update mem_attr first to say that KVM should
-> > > > consider the corresponding gpa ranges to be no more backed by
-> > > > inaccessible memfd?
-> > >
-> > > We rely on external synchronization to prevent this. See code around
-> > > mmu_invalidate_retry_hva().
-> > >
-> > > --
-> > >   Kiryl Shutsemau / Kirill A. Shutemov
-> > 
-> > IIUC, mmu_invalidate_retry_hva/gfn ensures that page faults on gfn
-> > ranges that are being invalidated are retried till invalidation is
-> > complete. In this case, is it possible that KVM tries to serve the
-> > page fault after inaccessible_notifier_invalidate is complete but
-> > before fallocate could punch hole into the files?
-
-It's not just the page fault edge case.  In the more straightforward scenario
-where the memory is already mapped into the guest, freeing pages back to the kernel
-before they are removed from the guest will lead to use-after-free.
-
-> > e.g.
-> > inaccessible_notifier_invalidate(...)
-> > ... (system event preempting this control flow, giving a window for
-> > the guest to retry accessing the gfn range which was invalidated)
-> > fallocate(.., PUNCH_HOLE..)
-> 
-> Looks this is something can happen.
-> And sounds to me the solution needs
-> just follow the mmu_notifier's way of using a invalidate_start/end pair.
-> 
->   invalidate_start()  --> kvm->mmu_invalidate_in_progress++;
->                           zap KVM page table entries;
->   fallocate()
->   invalidate_end()  --> kvm->mmu_invalidate_in_progress--;
-> 
-> Then during invalidate_start/end time window mmu_invalidate_retry_gfn
-> checks 'mmu_invalidate_in_progress' and prevent repopulating the same
-> page in KVM page table.
-
-Yes, if it's not safe to invalidate after making the change (fallocate()), then
-the change needs to be bookended by a start+end pair.  The mmu_notifier's unpaired
-invalidate() hook works by zapping the primary MMU's PTEs before invalidate(), but
-frees the underlying physical page _after_ invalidate().
-
-And the only reason the unpaired invalidate() exists is because there are secondary
-MMUs that reuse the primary MMU's page tables, e.g. shared virtual addressing, in
-which case bookending doesn't work because the secondary MMU can't remove PTEs, it
-can only flush its TLBs.
-
-For this case, the whole point is to not create PTEs in the primary MMU, so there
-should never be a use case that _needs_ an unpaired invalidate().
-
-TL;DR: a start+end pair is likely the simplest solution.
+Cher(e)  animation_sex
+ okj.page.link/ujii#
+shirl animation_sex
+ okj.page.link/ujii#
+shirl
+Bienvenue sur le site de la SMACOT.
+Nous sommes heureux de vous compter parmi nos membres.
+Cordialement.
