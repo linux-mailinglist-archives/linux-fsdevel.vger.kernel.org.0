@@ -2,124 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 897186077C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 15:07:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DF766078E2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 15:52:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230335AbiJUNHr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Oct 2022 09:07:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46304 "EHLO
+        id S231234AbiJUNv6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Oct 2022 09:51:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53026 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230242AbiJUNHA (ORCPT
+        with ESMTP id S230446AbiJUNvy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Oct 2022 09:07:00 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45E7826C440;
-        Fri, 21 Oct 2022 06:06:25 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 12D8E61E9D;
-        Fri, 21 Oct 2022 13:06:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B9A9C43470;
-        Fri, 21 Oct 2022 13:06:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666357583;
-        bh=A8k10DQZe5/j0onCVE9QxI6roj/l9wmzJGTvPKqqG6M=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QFs7aCqFVXAySekdGZ4p3ryfOiNkMaOpcCi7/4qlgmjk3VblAe3HSrtPXkwuMDtrl
-         7P37FbVpYNeUO9d28qUit+vYGLEv2jI60BUCYdM2yL4fjYNPTTg+DNSfw0fGli+TOx
-         kDj69s1BfwU0UQGg7fQUXOed31wbkFKSTqP5aYXeUm274epkCIIr7AsTuJ2DcvF4RK
-         PHjdGEjjp3+y2DEIQgbcG5pdAtKbSXXsmObb4RPSMc865STbUJCy0cdgR94fcpxc5F
-         4Ehsb7+6NSOIJVsADEmPsHvLXr9LBTjzX8EfxiGY+hJ4xXXp43WVyIGG04imNsNT8k
-         28IwdbMkB7k8w==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
-        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
-        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
-        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
-        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com
-Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
-        linux-xfs@vger.kernel.org
-Subject: [PATCH v8 8/8] nfsd: remove fetch_iversion export operation
-Date:   Fri, 21 Oct 2022 09:06:02 -0400
-Message-Id: <20221021130602.99099-9-jlayton@kernel.org>
-X-Mailer: git-send-email 2.37.3
-In-Reply-To: <20221021130602.99099-1-jlayton@kernel.org>
-References: <20221021130602.99099-1-jlayton@kernel.org>
+        Fri, 21 Oct 2022 09:51:54 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D35D5277099;
+        Fri, 21 Oct 2022 06:51:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1666360312; x=1697896312;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=DaWZG1/RJ5yq5HjRGu08lgshjmm5vbZXlRwrj8iUEyQ=;
+  b=UhpLSBbzCwnl8MpjzDPT1/5gwzSO7dJ0nn/hotq4zUIC4OrXvPniCmQa
+   qCuG3vE1YOSlh1S8gcgwiBp6qMsMfPioGkHhidLAm6nTtvsKhyyPmgTz+
+   R4dpbGwOHbF/nvyLyj/r6XQLCp0MuBC3pc4U+qBhdYLTc/IngCjbGIz8B
+   suEEeFHUpNPzPitQ+jV8Tq7GNS9/+jNm3/nkHSVAEojLHUK965vp47AMM
+   9OiH1DzHcdNIO99blsW9HbyIj7VVLXD5cF9SzAwpTNlzG6Ci4TBp4TdR5
+   6leqzRPqbYahWvuhthY3VnlNO36yC2jPn/jaOoAxfJc0TKup8IB6+qfvq
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10507"; a="286725182"
+X-IronPort-AV: E=Sophos;i="5.95,200,1661842800"; 
+   d="scan'208";a="286725182"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2022 06:51:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10507"; a="625348380"
+X-IronPort-AV: E=Sophos;i="5.95,200,1661842800"; 
+   d="scan'208";a="625348380"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by orsmga007.jf.intel.com with ESMTP; 21 Oct 2022 06:51:41 -0700
+Date:   Fri, 21 Oct 2022 21:47:11 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Vishal Annapurve <vannapurve@google.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
+Message-ID: <20221021134711.GA3607894@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
+ <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
+ <CAGtprH_MiCxT2xSxD2UrM4M+ghL0V=XEZzEX4Fo5wQKV4fAL4w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGtprH_MiCxT2xSxD2UrM4M+ghL0V=XEZzEX4Fo5wQKV4fAL4w@mail.gmail.com>
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that the i_version counter is reported in struct kstat, there is no
-need for this export operation.
+> 
+> In the context of userspace inaccessible memfd, what would be a
+> suggested way to enforce NUMA memory policy for physical memory
+> allocation? mbind[1] won't work here in absence of virtual address
+> range.
 
-Reviewed-by: NeilBrown <neilb@suse.de>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/nfs/export.c          | 7 -------
- fs/nfsd/nfsfh.c          | 3 ---
- include/linux/exportfs.h | 1 -
- 3 files changed, 11 deletions(-)
+How about set_mempolicy():
+https://www.man7.org/linux/man-pages/man2/set_mempolicy.2.html
 
-diff --git a/fs/nfs/export.c b/fs/nfs/export.c
-index 01596f2d0a1e..1a9d5aa51dfb 100644
---- a/fs/nfs/export.c
-+++ b/fs/nfs/export.c
-@@ -145,17 +145,10 @@ nfs_get_parent(struct dentry *dentry)
- 	return parent;
- }
- 
--static u64 nfs_fetch_iversion(struct inode *inode)
--{
--	nfs_revalidate_inode(inode, NFS_INO_INVALID_CHANGE);
--	return inode_peek_iversion_raw(inode);
--}
--
- const struct export_operations nfs_export_ops = {
- 	.encode_fh = nfs_encode_fh,
- 	.fh_to_dentry = nfs_fh_to_dentry,
- 	.get_parent = nfs_get_parent,
--	.fetch_iversion = nfs_fetch_iversion,
- 	.flags = EXPORT_OP_NOWCC|EXPORT_OP_NOSUBTREECHK|
- 		EXPORT_OP_CLOSE_BEFORE_UNLINK|EXPORT_OP_REMOTE_FS|
- 		EXPORT_OP_NOATOMIC_ATTR,
-diff --git a/fs/nfsd/nfsfh.c b/fs/nfsd/nfsfh.c
-index 3e09129db340..bd450b141ca4 100644
---- a/fs/nfsd/nfsfh.c
-+++ b/fs/nfsd/nfsfh.c
-@@ -778,11 +778,8 @@ u64 nfsd4_change_attribute(struct kstat *stat, struct inode *inode)
- {
- 	u64 chattr;
- 
--	if (inode->i_sb->s_export_op->fetch_iversion)
--		return inode->i_sb->s_export_op->fetch_iversion(inode);
- 	if (stat->result_mask & STATX_CHANGE_COOKIE) {
- 		chattr = stat->change_cookie;
--
- 		if (S_ISREG(inode->i_mode) &&
- 		    !(stat->attributes & STATX_ATTR_CHANGE_MONOTONIC)) {
- 			chattr += (u64)stat->ctime.tv_sec << 30;
-diff --git a/include/linux/exportfs.h b/include/linux/exportfs.h
-index fe848901fcc3..9f4d4bcbf251 100644
---- a/include/linux/exportfs.h
-+++ b/include/linux/exportfs.h
-@@ -213,7 +213,6 @@ struct export_operations {
- 			  bool write, u32 *device_generation);
- 	int (*commit_blocks)(struct inode *inode, struct iomap *iomaps,
- 			     int nr_iomaps, struct iattr *iattr);
--	u64 (*fetch_iversion)(struct inode *);
- #define	EXPORT_OP_NOWCC			(0x1) /* don't collect v3 wcc data */
- #define	EXPORT_OP_NOSUBTREECHK		(0x2) /* no subtree checking */
- #define	EXPORT_OP_CLOSE_BEFORE_UNLINK	(0x4) /* close files before unlink */
--- 
-2.37.3
-
+Chao
+> 
+> [1] https://github.com/chao-p/qemu/blob/privmem-v8/backends/hostmem.c#L382
