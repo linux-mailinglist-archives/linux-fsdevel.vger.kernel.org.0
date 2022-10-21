@@ -2,54 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D141960771F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 14:42:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 85AA3607791
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 15:06:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230054AbiJUMmA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Oct 2022 08:42:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54700 "EHLO
+        id S230139AbiJUNGY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Oct 2022 09:06:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229909AbiJUMlu (ORCPT
+        with ESMTP id S230091AbiJUNGO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Oct 2022 08:41:50 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 643502681F3;
-        Fri, 21 Oct 2022 05:41:36 -0700 (PDT)
+        Fri, 21 Oct 2022 09:06:14 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 809A926B4AE;
+        Fri, 21 Oct 2022 06:06:11 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 845C7B82B66;
-        Fri, 21 Oct 2022 12:41:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53564C433C1;
-        Fri, 21 Oct 2022 12:41:31 +0000 (UTC)
+        by sin.source.kernel.org (Postfix) with ESMTPS id C7024CE2AB5;
+        Fri, 21 Oct 2022 13:06:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8DCBC433C1;
+        Fri, 21 Oct 2022 13:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666356092;
-        bh=TqgVDSS9DxuiWIHPFZ6jM+uoKNWWo4i2BhM1Zw++h/w=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=I/dfjI9brR5SLfBUxBrcP2z4vwsxifAH5Zo7haWJxqKZkbByUNG2klGiIbGWNFMAl
-         RQUYq6mx93fDBvvBLzDO94T+rCvQ6Kw19gVbLjmS9ejdyBH/TPFOYZ/NC20OUHJVQN
-         PmN8r7dBHj1YWzGzl2TUT5wkh9PCu/DFuU6tnLrm3/OacliqBhCGqiiR7/XAE8IbDj
-         XWhByt8zQAUxSHTi1sggIgpARl17WIgM0LGbYWtJSHvuY4cix/3a/Gpk+9eRF+eedC
-         FJvQyXuxp+O/UJjamiOe59mtX36QxsVTWAw+kKNtknm7MCHXSdefYZ/Yihpd2cghew
-         de5gTt0KKKk3g==
-Message-ID: <b9d370b063915c09ce2b2ff6bdc643ed1796ffb4.camel@kernel.org>
-Subject: Re: [PATCH] isofs: prevent file time rollover after year 2038
+        s=k20201202; t=1666357565;
+        bh=WAuTFW3O+DY8MVhZwhFFkTH4TiFW9rYutffTWkjHS1o=;
+        h=From:To:Cc:Subject:Date:From;
+        b=iufBETIxL2UBu1twVnFCO0KsIKfIO8XexyQpAyERQJ2FVgGV6YUxADauBUZpucT1V
+         V1Pp5MGo0KE9itLR+J4QHsdEzaduvnc38rL0dE4eS2EaOVJB5MyHwLNGuMitP7ihC4
+         VZMkhKv9hRGVB5GFNdVW2fjPzEpigGMZMgyv1XGQXIhfDs+sOswdKR3nQvlwXg9zGV
+         gHxhx32GOxYuBz7UDuetQt2Agbs+dLEs7qIrQmiJKzxLP62nVZwMd32ANMFecLDCjL
+         Mp+PF0MthMctfI2Tve2DGDiX9OTdwZ50fSkj3cVUI4rX8aubR0mdDLTOfNY9JOJJNe
+         BHhmtzv/ojRUw==
 From:   Jeff Layton <jlayton@kernel.org>
-To:     Arnd Bergmann <arnd@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, Thomas Schmitt <scdbackup@gmx.net>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Jan Kara <jack@suse.cz>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-kernel@vger.kernel.org
-Date:   Fri, 21 Oct 2022 08:41:29 -0400
-In-Reply-To: <20221020160037.4002270-1-arnd@kernel.org>
-References: <20221020160037.4002270-1-arnd@kernel.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
+To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
+        david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
+        viro@zeniv.linux.org.uk, zohar@linux.ibm.com, xiubli@redhat.com,
+        chuck.lever@oracle.com, lczerner@redhat.com, jack@suse.cz,
+        bfields@fieldses.org, brauner@kernel.org, fweimer@redhat.com
+Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
+        linux-xfs@vger.kernel.org
+Subject: [PATCH v8 0/8] fs: clean up internal i_version handling
+Date:   Fri, 21 Oct 2022 09:05:54 -0400
+Message-Id: <20221021130602.99099-1-jlayton@kernel.org>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -59,56 +57,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, 2022-10-20 at 18:00 +0200, Arnd Bergmann wrote:
-> From: Thomas Schmitt <scdbackup@gmx.net>
->=20
-> Change the return type of function iso_date() from int to time64_t,
-> to avoid truncating to the 1902..2038 date range.
->=20
-> After this patch, the reported timestamps should fall into the
-> range reported in the s_time_min/s_time_max fields.
->=20
-> Signed-off-by: Thomas Schmitt <scdbackup@gmx.net>
-> Cc: stable@vger.kernel.org
-> Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=3D800627
-> Fixes: 34be4dbf87fc ("isofs: fix timestamps beyond 2027")
-> Fixes: 5ad32b3acded ("isofs: Initialize filesystem timestamp ranges")
-> [arnd: expand changelog text slightly]
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  fs/isofs/isofs.h | 2 +-
->  fs/isofs/util.c  | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
->=20
-> diff --git a/fs/isofs/isofs.h b/fs/isofs/isofs.h
-> index dcdc191ed183..c3473ca3f686 100644
-> --- a/fs/isofs/isofs.h
-> +++ b/fs/isofs/isofs.h
-> @@ -106,7 +106,7 @@ static inline unsigned int isonum_733(u8 *p)
->  	/* Ignore bigendian datum due to broken mastering programs */
->  	return get_unaligned_le32(p);
->  }
-> -extern int iso_date(u8 *, int);
-> +extern time64_t iso_date(u8 *, int);
-> =20
->  struct inode;		/* To make gcc happy */
-> =20
-> diff --git a/fs/isofs/util.c b/fs/isofs/util.c
-> index e88dba721661..348af786a8a4 100644
-> --- a/fs/isofs/util.c
-> +++ b/fs/isofs/util.c
-> @@ -16,10 +16,10 @@
->   * to GMT.  Thus  we should always be correct.
->   */
-> =20
-> -int iso_date(u8 *p, int flag)
-> +time64_t iso_date(u8 *p, int flag)
->  {
->  	int year, month, day, hour, minute, second, tz;
-> -	int crtime;
-> +	time64_t crtime;
-> =20
->  	year =3D p[0];
->  	month =3D p[1];
+The main consumer of i_version field (knfsd) has to jump through a
+number of hoops to fetch it, depending on what sort of inode it is.
+Rather than do this, we want to offload the responsibility for
+presenting this field to the filesystem's ->getattr operation, which is
+a more natural way to deal with a field that may be implemented
+differently.
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+The focus of this patchset is to clean up these internal interfaces.
+This should also make it simple to present this attribute to userland in
+the future, which should be possible once the semantics are a bit more
+consistent across different backing filesystems.
+
+The change are fairly small, but they cross several subsystems. I'd
+appreciate R-b's and A-b's from maintainers whose subsystems I'm
+touching (Chuck, Al, Trond, and Xiubo in particular).
+
+For now, I'm leaving out more siginificant behavioral changes to
+i_version handling so that we can keep the focus on this set rather
+narrow. The next stap is to get this into linux-next with an aim toward
+merge in v6.2.
+
+Thanks!
+
+Jeff Layton (8):
+  fs: uninline inode_query_iversion
+  fs: clarify when the i_version counter must be updated
+  vfs: plumb i_version handling into struct kstat
+  nfs: report the inode version in getattr if requested
+  ceph: report the inode version in getattr if requested
+  nfsd: move nfsd4_change_attribute to nfsfh.c
+  nfsd: use the getattr operation to fetch i_version
+  nfsd: remove fetch_iversion export operation
+
+ fs/ceph/inode.c          | 16 +++++++----
+ fs/libfs.c               | 36 +++++++++++++++++++++++++
+ fs/nfs/export.c          |  7 -----
+ fs/nfs/inode.c           | 16 ++++++++---
+ fs/nfsd/nfs4xdr.c        |  4 ++-
+ fs/nfsd/nfsfh.c          | 42 +++++++++++++++++++++++++++++
+ fs/nfsd/nfsfh.h          | 29 +-------------------
+ fs/nfsd/vfs.h            |  7 ++++-
+ fs/stat.c                | 17 ++++++++++--
+ include/linux/exportfs.h |  1 -
+ include/linux/iversion.h | 58 ++++++++++++++--------------------------
+ include/linux/stat.h     |  9 +++++++
+ 12 files changed, 155 insertions(+), 87 deletions(-)
+
+-- 
+2.37.3
+
