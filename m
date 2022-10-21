@@ -2,172 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 659776073CC
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 11:18:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 063146073D4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 11:19:25 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231174AbiJUJSQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Oct 2022 05:18:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43628 "EHLO
+        id S231184AbiJUJTW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Oct 2022 05:19:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231145AbiJUJSO (ORCPT
+        with ESMTP id S231218AbiJUJS4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Oct 2022 05:18:14 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2C232565C1;
-        Fri, 21 Oct 2022 02:18:00 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 16690B82A2D;
-        Fri, 21 Oct 2022 09:17:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AC3BC433D6;
-        Fri, 21 Oct 2022 09:17:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666343835;
-        bh=nJQIG7eMdgvCQHUqn+x+OTgBKkxaBGtjNSHBvblPK6U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=M8KAatuffLbqLPdmCbdRAEoQmAM4Xwt6l+h9GAluMntgCXEbJz30bl78WqyPI/tZ4
-         Vl7+tUJ3On77kf2t9u4H20KKjJv6fJA0J84qXikAJIhTOzUWaJOTISk9p+zJUXT3kV
-         CqwWY9B7CPYAUwyXh08tyuq1yEXj1pTgZNvcwL5g/4atWXet5g039IX6nEKnh/Ag2K
-         NPQzYn9oI43FRzXuTbvQvzG4MdlsgAp1frF0Ir1zBwcCDWuOoqX+++WmNV2hryN1bO
-         SOJ1gFaRzZOwy3yVwfTG3u8Ffufs60Us98ZwKjqdOcdI0X850NntPkAgZwcUn+YNIP
-         m0T2PhtSEeiWg==
-Date:   Fri, 21 Oct 2022 11:17:10 +0200
-From:   Christian Brauner <brauner@kernel.org>
-To:     Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
-        linux-kernel@vger.kernel.org
+        Fri, 21 Oct 2022 05:18:56 -0400
+Received: from mail-ua1-x92b.google.com (mail-ua1-x92b.google.com [IPv6:2607:f8b0:4864:20::92b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A87E7256419;
+        Fri, 21 Oct 2022 02:18:41 -0700 (PDT)
+Received: by mail-ua1-x92b.google.com with SMTP id t26so2059550uaj.9;
+        Fri, 21 Oct 2022 02:18:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RspFCGdeHKFVtiL7mY5i6+AzFfiQ+TnzlRAcVHGM8Uw=;
+        b=nhdOt3f6nhtRgIHy+opGJjTPLVS/SpUWCKN4ssz0jGxz5+NrvF1ak+DEF4wkDUfVqL
+         r57aFsTkhy6kyu7rYKcTlr2dC/6PFLackRJwcXnmSB33KAYC5OmyRiDGN2BhDL+hl5p+
+         lykzanUlh15HGatbmLg4sAkyt5vL6VV1u8uMNX+VeNF01q7d1Xue8M1EVpgd1OLWzspD
+         IuRGTkQBhXRBW3ZNG0koUZVmqw55VPAdW6nKnOhOgnoRU8jzpjVp+KPRVMjnwTFb4/J+
+         o+jSKCVIMpZXrGptMyfIgJcMTWqHWqlqXW6yZdnSLDlT+LrGC+gZKdCnWMPPmTarbp8W
+         TZaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RspFCGdeHKFVtiL7mY5i6+AzFfiQ+TnzlRAcVHGM8Uw=;
+        b=z43bMMkVQvkfoNRRCR8Oe82DSJ8Weu7K4R2WKAQKARQDMyBBzZRb8+RlkaTCSUg0MK
+         uYd+EmxwpzbdN6FLq6mHyO7VmnfCPLYzA+rdi3P3liBRDmxuNwIdCAjo/BQwLshZX9Gf
+         YKyBR0jVCn20KmgmvzE27LWxIADdwbzyYjBgGCSJHfb/8WKS6OGcfRJ5tCuEDOQ59+tM
+         B3sOOWbOL7OpDnkhskkIIwJI7YgvMbjIVRk/uLhgpH4+mFLd04ZbGZYpChxZ018H11ni
+         kDTROEoLwpb0nEYMEECaNaPLOgpNiyiWQxyj4CExVPCkhEEWko+BLqUFR1Qs9CwjASqn
+         fCfA==
+X-Gm-Message-State: ACrzQf3cuAZtFwEZqbxDFvuNbejWADPLTtynL7WghjDGChtMjs2EBp4P
+        neVNUJ215ebbuzixFwC5VZUoJE31UFBeErm7yu6q+cAh
+X-Google-Smtp-Source: AMsMyM42DNIMYIU/A71Cdzam48ZdKegxOuiwzMH5eaGQXMQ17jcIOfFRs7Ur4irkh7zID7MmWCCp0O0e/ZaPNwwmYTU=
+X-Received: by 2002:ab0:298d:0:b0:402:3608:3ec5 with SMTP id
+ u13-20020ab0298d000000b0040236083ec5mr1400961uap.60.1666343920021; Fri, 21
+ Oct 2022 02:18:40 -0700 (PDT)
+MIME-Version: 1.0
+References: <20221018041233.376977-1-stephen.s.brennan@oracle.com>
+ <20221021010310.29521-1-stephen.s.brennan@oracle.com> <20221021010310.29521-3-stephen.s.brennan@oracle.com>
+ <CAOQ4uxj+ctptwuJ__gn=2URvzkXUc2NZkJaY=woGFEQQZdZn9Q@mail.gmail.com>
+In-Reply-To: <CAOQ4uxj+ctptwuJ__gn=2URvzkXUc2NZkJaY=woGFEQQZdZn9Q@mail.gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 21 Oct 2022 12:18:28 +0300
+Message-ID: <CAOQ4uxh7OvmH6o1fUmMoQ_D347jVBx53TLe4R=BjtXTuvCzKCA@mail.gmail.com>
 Subject: Re: [PATCH v2 2/3] fsnotify: Protect i_fsnotify_mask and child flags
  with inode rwsem
-Message-ID: <20221021091710.jxv6zi3nfkmqdmqy@wittgenstein>
-References: <20221018041233.376977-1-stephen.s.brennan@oracle.com>
- <20221021010310.29521-1-stephen.s.brennan@oracle.com>
- <20221021010310.29521-3-stephen.s.brennan@oracle.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20221021010310.29521-3-stephen.s.brennan@oracle.com>
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+To:     Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 20, 2022 at 06:03:09PM -0700, Stephen Brennan wrote:
-> When an inode is interested in events on its children, it must set
-> DCACHE_FSNOTIFY_PARENT_WATCHED flag on all its children. Currently, when
-> the fsnotify connector is removed and i_fsnotify_mask becomes zero, we
-> lazily allow __fsnotify_parent() to do this the next time we see an
-> event on a child.
-> 
-> However, if the list of children is very long (e.g., in the millions),
-> and lots of activity is occurring on the directory, then it's possible
-> for many CPUs to end up blocked on the inode spinlock in
-> __fsnotify_update_child_flags(). Each CPU will then redundantly iterate
-> over the very long list of children. This situation can cause soft
-> lockups.
-> 
-> To avoid this, stop lazily updating child flags in __fsnotify_parent().
-> Instead, update flags when we disconnect a mark connector. Remember the
-> state of the children flags in the fsnotify_mark_connector flags.
-> Provide mutual exclusion by holding i_rwsem exclusive while we update
-> children, and use the cached state to avoid updating flags
-> unnecessarily.
-> 
-> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
-> ---
-> 
->  fs/notify/fsnotify.c             |  22 ++++++-
->  fs/notify/fsnotify.h             |  31 ++++++++-
->  fs/notify/mark.c                 | 106 ++++++++++++++++++++-----------
->  include/linux/fsnotify_backend.h |   8 +++
->  4 files changed, 127 insertions(+), 40 deletions(-)
-> 
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index 6c338322f0c3..f83eca4fb841 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -103,13 +103,15 @@ void fsnotify_sb_delete(struct super_block *sb)
->   * parent cares.  Thus when an event happens on a child it can quickly tell
->   * if there is a need to find a parent and send the event to the parent.
->   */
-> -void __fsnotify_update_child_dentry_flags(struct inode *inode)
-> +bool __fsnotify_update_children_dentry_flags(struct inode *inode)
->  {
->  	struct dentry *alias, *child;
->  	int watched;
->  
->  	if (!S_ISDIR(inode->i_mode))
-> -		return;
-> +		return false;
-> +
-> +	lockdep_assert_held_write(&inode->i_rwsem);
->  
->  	/* determine if the children should tell inode about their events */
->  	watched = fsnotify_inode_watches_children(inode);
-> @@ -133,6 +135,20 @@ void __fsnotify_update_child_dentry_flags(struct inode *inode)
->  		spin_unlock(&child->d_lock);
->  	}
->  	spin_unlock(&alias->d_lock);
-> +	return watched;
-> +}
-> +
-> +void __fsnotify_update_child_dentry_flags(struct inode *inode, struct dentry *dentry)
-> +{
-> +	/*
-> +	 * Flag would be cleared soon by
-> +	 * __fsnotify_update_child_dentry_flags(), but as an
-> +	 * optimization, clear it now.
-> +	 */
-> +	spin_lock(&dentry->d_lock);
-> +	if (!fsnotify_inode_watches_children(inode))
-> +		dentry->d_flags &= ~DCACHE_FSNOTIFY_PARENT_WATCHED;
-> +	spin_unlock(&dentry->d_lock);
->  }
->  
->  /* Are inode/sb/mount interested in parent and name info with this event? */
-> @@ -203,7 +219,7 @@ int __fsnotify_parent(struct dentry *dentry, __u32 mask, const void *data,
->  	p_inode = parent->d_inode;
->  	p_mask = fsnotify_inode_watches_children(p_inode);
->  	if (unlikely(parent_watched && !p_mask))
-> -		__fsnotify_update_child_dentry_flags(p_inode);
-> +		__fsnotify_update_child_dentry_flags(p_inode, dentry);
->  
->  	/*
->  	 * Include parent/name in notification either if some notification
-> diff --git a/fs/notify/fsnotify.h b/fs/notify/fsnotify.h
-> index fde74eb333cc..182d93014c6b 100644
-> --- a/fs/notify/fsnotify.h
-> +++ b/fs/notify/fsnotify.h
-> @@ -70,11 +70,40 @@ static inline void fsnotify_clear_marks_by_sb(struct super_block *sb)
->  	fsnotify_destroy_marks(&sb->s_fsnotify_marks);
->  }
->  
-> +static inline bool fsnotify_children_need_update(struct fsnotify_mark_connector *conn,
-> +                                                 struct inode *inode)
-> +{
-> +	bool watched, flags_set;
-> +	watched = fsnotify_inode_watches_children(inode);
+On Fri, Oct 21, 2022 at 11:22 AM Amir Goldstein <amir73il@gmail.com> wrote:
+...
+> > +/*
+> > + * Objects may need some additional actions to be taken when the last reference
+> > + * is dropped. Define flags to indicate which actions are necessary.
+> > + */
+> > +#define FSNOTIFY_OBJ_FLAG_NEED_IPUT            0x01
+> > +#define FSNOTIFY_OBJ_FLAG_UPDATE_CHILDREN      0x02
+>
+> with changed_flags argument, you do not need these, you can use
+> the existing CONN_FLAGS.
+>
+> It is a bit ugly that the direction of the change is not expressed
+> in changed_flags, but for the current code, it is not needed, because
+> update_children does care about the direction of the change and
+> the direction of change to HAS_IREF is expressed by the inode
+> object return value.
+>
 
-nit: I'd leave a blank line after the variable declarations. Same for
-fsnotify_update_children_dentry_flags() below.
+Oh that is a lie...
 
-> +	flags_set = conn->flags & FSNOTIFY_CONN_FLAG_WATCHES_CHILDREN;
-> +	return (watched && !flags_set) || (!watched && flags_set);
-> +}
-> +
->  /*
->   * update the dentry->d_flags of all of inode's children to indicate if inode cares
->   * about events that happen to its children.
->   */
-> -extern void __fsnotify_update_child_dentry_flags(struct inode *inode);
-> +extern bool __fsnotify_update_children_dentry_flags(struct inode *inode);
-> +
-> +static inline void fsnotify_update_children_dentry_flags(struct fsnotify_mark_connector *conn,
-> +                                                         struct inode *inode)
+return value can be non NULL because of an added mark
+that wants iref and also wants to watch children, but the
+only practical consequence of this is that you can only
+do the WARN_ON for the else case of update_children
+in fsnotify_recalc_mask().
 
-Should that be a static inline function in a header seems a bit big. :)
+I still think it is a win for code simplicity as I detailed
+in my comments.
+
+> Maybe try it out in v3 to see how it works.
+>
+> Unless Jan has an idea that will be easier to read and maintain...
+>
+
+Maybe fsnotify_update_inode_conn_flags() should return "update_flags"
+and not "changed_flags", because actually the WATCHING_CHILDREN
+flag is not changed by the helper itself.
+
+Then, HAS_IREF is not returned when helper did get_iref() and changed
+HAS_IREF itself and then the comment that says:
+     /* Unpin inode after detach of last mark that wanted iref */
+will be even clearer:
+
+        if (want_iref) {
+                /* Pin inode if any mark wants inode refcount held */
+                fsnotify_get_inode_ref(fsnotify_conn_inode(conn));
+                conn->flags |= FSNOTIFY_CONN_FLAG_HAS_IREF;
+        } else {
+                /* Unpin inode after detach of last mark that wanted iref */
+                ret = inode;
+                update_flags |= FSNOTIFY_CONN_FLAG_HAS_IREF;
+        }
+
+Thanks,
+Amir.
