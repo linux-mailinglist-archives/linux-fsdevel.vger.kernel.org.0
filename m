@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 85AA3607791
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 15:06:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C4F0760778F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 15:06:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230139AbiJUNGY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Oct 2022 09:06:24 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44920 "EHLO
+        id S230073AbiJUNGM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Oct 2022 09:06:12 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230091AbiJUNGO (ORCPT
+        with ESMTP id S229854AbiJUNGK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Oct 2022 09:06:14 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 809A926B4AE;
-        Fri, 21 Oct 2022 06:06:11 -0700 (PDT)
+        Fri, 21 Oct 2022 09:06:10 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0779E4E854;
+        Fri, 21 Oct 2022 06:06:09 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id C7024CE2AB5;
-        Fri, 21 Oct 2022 13:06:07 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8DCBC433C1;
-        Fri, 21 Oct 2022 13:06:03 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 99EB761D11;
+        Fri, 21 Oct 2022 13:06:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 251D1C43470;
+        Fri, 21 Oct 2022 13:06:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666357565;
-        bh=WAuTFW3O+DY8MVhZwhFFkTH4TiFW9rYutffTWkjHS1o=;
-        h=From:To:Cc:Subject:Date:From;
-        b=iufBETIxL2UBu1twVnFCO0KsIKfIO8XexyQpAyERQJ2FVgGV6YUxADauBUZpucT1V
-         V1Pp5MGo0KE9itLR+J4QHsdEzaduvnc38rL0dE4eS2EaOVJB5MyHwLNGuMitP7ihC4
-         VZMkhKv9hRGVB5GFNdVW2fjPzEpigGMZMgyv1XGQXIhfDs+sOswdKR3nQvlwXg9zGV
-         gHxhx32GOxYuBz7UDuetQt2Agbs+dLEs7qIrQmiJKzxLP62nVZwMd32ANMFecLDCjL
-         Mp+PF0MthMctfI2Tve2DGDiX9OTdwZ50fSkj3cVUI4rX8aubR0mdDLTOfNY9JOJJNe
-         BHhmtzv/ojRUw==
+        s=k20201202; t=1666357568;
+        bh=tc1RUm4guOoZTsO0VdPQH+XnxC1sMtsO6DtotD5Lcrw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=eAhmr9yWeS0wVEiVIgOWu1jlRYjG0WT5NB1ecC/uQxCrIfhjwPSsIUbf/tXfO3unE
+         e0r32nDpuAZBm2Lop8vuIwFPI1Vu4ZtCzZErW16ygMxndEcmdWUD7xcbH8+RSOuWHB
+         vbjv+2g0BW9bN052u7XJGnXbsFjzt8s1pPgNSITv5ezyP38rqsZ6oXhh9bQNyhEWvq
+         /8aPUz2dUVAIjZ+JRXPCcyyTRgRJXyH/34pvoqmRLDbFcyfY4rwRbPoXR7Di581w/6
+         9p67AFlGaMiVsx5GqUjXNpFTm/3/gRaX+eu2ibO8xgOw+GSqs6BrjwgqwBPpxd/4Bq
+         kc+5i0Af2xq7A==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     tytso@mit.edu, adilger.kernel@dilger.ca, djwong@kernel.org,
         david@fromorbit.com, trondmy@hammerspace.com, neilb@suse.de,
@@ -42,10 +42,12 @@ Cc:     linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org, ceph-devel@vger.kernel.org,
         linux-ext4@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-xfs@vger.kernel.org
-Subject: [PATCH v8 0/8] fs: clean up internal i_version handling
-Date:   Fri, 21 Oct 2022 09:05:54 -0400
-Message-Id: <20221021130602.99099-1-jlayton@kernel.org>
+Subject: [PATCH v8 1/8] fs: uninline inode_query_iversion
+Date:   Fri, 21 Oct 2022 09:05:55 -0400
+Message-Id: <20221021130602.99099-2-jlayton@kernel.org>
 X-Mailer: git-send-email 2.37.3
+In-Reply-To: <20221021130602.99099-1-jlayton@kernel.org>
+References: <20221021130602.99099-1-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -57,53 +59,113 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The main consumer of i_version field (knfsd) has to jump through a
-number of hoops to fetch it, depending on what sort of inode it is.
-Rather than do this, we want to offload the responsibility for
-presenting this field to the filesystem's ->getattr operation, which is
-a more natural way to deal with a field that may be implemented
-differently.
+Reviewed-by: NeilBrown <neilb@suse.de>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/libfs.c               | 36 ++++++++++++++++++++++++++++++++++++
+ include/linux/iversion.h | 38 ++------------------------------------
+ 2 files changed, 38 insertions(+), 36 deletions(-)
 
-The focus of this patchset is to clean up these internal interfaces.
-This should also make it simple to present this attribute to userland in
-the future, which should be possible once the semantics are a bit more
-consistent across different backing filesystems.
-
-The change are fairly small, but they cross several subsystems. I'd
-appreciate R-b's and A-b's from maintainers whose subsystems I'm
-touching (Chuck, Al, Trond, and Xiubo in particular).
-
-For now, I'm leaving out more siginificant behavioral changes to
-i_version handling so that we can keep the focus on this set rather
-narrow. The next stap is to get this into linux-next with an aim toward
-merge in v6.2.
-
-Thanks!
-
-Jeff Layton (8):
-  fs: uninline inode_query_iversion
-  fs: clarify when the i_version counter must be updated
-  vfs: plumb i_version handling into struct kstat
-  nfs: report the inode version in getattr if requested
-  ceph: report the inode version in getattr if requested
-  nfsd: move nfsd4_change_attribute to nfsfh.c
-  nfsd: use the getattr operation to fetch i_version
-  nfsd: remove fetch_iversion export operation
-
- fs/ceph/inode.c          | 16 +++++++----
- fs/libfs.c               | 36 +++++++++++++++++++++++++
- fs/nfs/export.c          |  7 -----
- fs/nfs/inode.c           | 16 ++++++++---
- fs/nfsd/nfs4xdr.c        |  4 ++-
- fs/nfsd/nfsfh.c          | 42 +++++++++++++++++++++++++++++
- fs/nfsd/nfsfh.h          | 29 +-------------------
- fs/nfsd/vfs.h            |  7 ++++-
- fs/stat.c                | 17 ++++++++++--
- include/linux/exportfs.h |  1 -
- include/linux/iversion.h | 58 ++++++++++++++--------------------------
- include/linux/stat.h     |  9 +++++++
- 12 files changed, 155 insertions(+), 87 deletions(-)
-
+diff --git a/fs/libfs.c b/fs/libfs.c
+index 682d56345a1c..5ae81466a422 100644
+--- a/fs/libfs.c
++++ b/fs/libfs.c
+@@ -1566,3 +1566,39 @@ bool inode_maybe_inc_iversion(struct inode *inode, bool force)
+ 	return true;
+ }
+ EXPORT_SYMBOL(inode_maybe_inc_iversion);
++
++/**
++ * inode_query_iversion - read i_version for later use
++ * @inode: inode from which i_version should be read
++ *
++ * Read the inode i_version counter. This should be used by callers that wish
++ * to store the returned i_version for later comparison. This will guarantee
++ * that a later query of the i_version will result in a different value if
++ * anything has changed.
++ *
++ * In this implementation, we fetch the current value, set the QUERIED flag and
++ * then try to swap it into place with a cmpxchg, if it wasn't already set. If
++ * that fails, we try again with the newly fetched value from the cmpxchg.
++ */
++u64 inode_query_iversion(struct inode *inode)
++{
++	u64 cur, new;
++
++	cur = inode_peek_iversion_raw(inode);
++	do {
++		/* If flag is already set, then no need to swap */
++		if (cur & I_VERSION_QUERIED) {
++			/*
++			 * This barrier (and the implicit barrier in the
++			 * cmpxchg below) pairs with the barrier in
++			 * inode_maybe_inc_iversion().
++			 */
++			smp_mb();
++			break;
++		}
++
++		new = cur | I_VERSION_QUERIED;
++	} while (!atomic64_try_cmpxchg(&inode->i_version, &cur, new));
++	return cur >> I_VERSION_QUERIED_SHIFT;
++}
++EXPORT_SYMBOL(inode_query_iversion);
+diff --git a/include/linux/iversion.h b/include/linux/iversion.h
+index e27bd4f55d84..6755d8b4f20b 100644
+--- a/include/linux/iversion.h
++++ b/include/linux/iversion.h
+@@ -234,42 +234,6 @@ inode_peek_iversion(const struct inode *inode)
+ 	return inode_peek_iversion_raw(inode) >> I_VERSION_QUERIED_SHIFT;
+ }
+ 
+-/**
+- * inode_query_iversion - read i_version for later use
+- * @inode: inode from which i_version should be read
+- *
+- * Read the inode i_version counter. This should be used by callers that wish
+- * to store the returned i_version for later comparison. This will guarantee
+- * that a later query of the i_version will result in a different value if
+- * anything has changed.
+- *
+- * In this implementation, we fetch the current value, set the QUERIED flag and
+- * then try to swap it into place with a cmpxchg, if it wasn't already set. If
+- * that fails, we try again with the newly fetched value from the cmpxchg.
+- */
+-static inline u64
+-inode_query_iversion(struct inode *inode)
+-{
+-	u64 cur, new;
+-
+-	cur = inode_peek_iversion_raw(inode);
+-	do {
+-		/* If flag is already set, then no need to swap */
+-		if (cur & I_VERSION_QUERIED) {
+-			/*
+-			 * This barrier (and the implicit barrier in the
+-			 * cmpxchg below) pairs with the barrier in
+-			 * inode_maybe_inc_iversion().
+-			 */
+-			smp_mb();
+-			break;
+-		}
+-
+-		new = cur | I_VERSION_QUERIED;
+-	} while (!atomic64_try_cmpxchg(&inode->i_version, &cur, new));
+-	return cur >> I_VERSION_QUERIED_SHIFT;
+-}
+-
+ /*
+  * For filesystems without any sort of change attribute, the best we can
+  * do is fake one up from the ctime:
+@@ -283,6 +247,8 @@ static inline u64 time_to_chattr(struct timespec64 *t)
+ 	return chattr;
+ }
+ 
++u64 inode_query_iversion(struct inode *inode);
++
+ /**
+  * inode_eq_iversion_raw - check whether the raw i_version counter has changed
+  * @inode: inode to check
 -- 
 2.37.3
 
