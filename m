@@ -2,226 +2,239 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E9EFA607906
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 15:59:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E81F36078EE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 15:56:12 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231293AbiJUN7T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Oct 2022 09:59:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43740 "EHLO
+        id S231218AbiJUN4L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Oct 2022 09:56:11 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231278AbiJUN7R (ORCPT
+        with ESMTP id S230497AbiJUN4G (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Oct 2022 09:59:17 -0400
-Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B29726206C;
-        Fri, 21 Oct 2022 06:59:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666360756; x=1697896756;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=nqyW/uEhggv7r8+w3xJjD0vAC8+H09GKfNJh/nelGsA=;
-  b=QZ6xIxj3+h+Rbb3L9AfWggFEJezWSGSvV3/+vQhK0/RP0Vcqy5A/L0nw
-   rPB3j6pdsbWBqL/rP1m75RvqXTjM24wJPBYmhorhcZnqSTBuYhusWCk1m
-   jJ0R3pM+Kn1qvlhT6d/dq8bh9+hgqhkdkl+M3DfgSp7S9b90n6e/qYheJ
-   BfhI63rUcq/5KH1bbvsjg9lIB0NqSUvf0ZFMr6W+KREACYHLo8ZcHfoO8
-   i1w3CscLJ+JgGo0BhqXWtYepK/UTz+1GRRQL0pP1hei5oVbIKqqSEE+M9
-   h/Zz3xPMXvT5tF6wFfBk9Mm3QW/xsTJaEfH9mKYqzbl3uPZ/B/fLDawzn
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10507"; a="308694616"
-X-IronPort-AV: E=Sophos;i="5.95,200,1661842800"; 
-   d="scan'208";a="308694616"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2022 06:59:16 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10507"; a="625350623"
-X-IronPort-AV: E=Sophos;i="5.95,200,1661842800"; 
-   d="scan'208";a="625350623"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by orsmga007.jf.intel.com with ESMTP; 21 Oct 2022 06:59:05 -0700
-Date:   Fri, 21 Oct 2022 21:54:34 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Vishal Annapurve <vannapurve@google.com>
-Cc:     "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Gupta, Pankaj" <pankaj.gupta@amd.com>,
-        Vlastimil Babka <vbabka@suse.cz>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
-Message-ID: <20221021135434.GB3607894@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
- <de680280-f6b1-9337-2ae4-4b2faf2b823b@suse.cz>
- <20221017161955.t4gditaztbwijgcn@box.shutemov.name>
- <c63ad0cd-d517-0f1e-59e9-927d8ae15a1a@amd.com>
- <20221017215640.hobzcz47es7dq2bi@box.shutemov.name>
- <CAGtprH8xEdgATjQdhi2b_KqUuSOZHUM-Lh+O-ZtcFKbHf2_75g@mail.gmail.com>
- <20221019153225.njvg45glehlnjgc7@box.shutemov.name>
- <CAGtprH-8y9iTyVZ+EYW2t=zGqz7fVgPu-3wVm0Wgv5134NU6WQ@mail.gmail.com>
+        Fri, 21 Oct 2022 09:56:06 -0400
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57EEB25E8A3;
+        Fri, 21 Oct 2022 06:55:59 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VSjhlh-_1666360554;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VSjhlh-_1666360554)
+          by smtp.aliyun-inc.com;
+          Fri, 21 Oct 2022 21:55:56 +0800
+Date:   Fri, 21 Oct 2022 21:55:54 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     Jingbo Xu <jefflexu@linux.alibaba.com>, dhowells@redhat.com,
+        xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] erofs: use netfs helpers manipulating request and
+ subrequest
+Message-ID: <Y1Kk6jMJ3KMshzsV@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Jeff Layton <jlayton@kernel.org>,
+        Jingbo Xu <jefflexu@linux.alibaba.com>, dhowells@redhat.com,
+        xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20221021084912.61468-1-jefflexu@linux.alibaba.com>
+ <20221021084912.61468-3-jefflexu@linux.alibaba.com>
+ <ce12b5050be31cc15bb84b620b4c21911d99530c.camel@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAGtprH-8y9iTyVZ+EYW2t=zGqz7fVgPu-3wVm0Wgv5134NU6WQ@mail.gmail.com>
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <ce12b5050be31cc15bb84b620b4c21911d99530c.camel@kernel.org>
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 20, 2022 at 04:20:58PM +0530, Vishal Annapurve wrote:
-> On Wed, Oct 19, 2022 at 9:02 PM Kirill A . Shutemov
-> <kirill.shutemov@linux.intel.com> wrote:
-> >
-> > On Tue, Oct 18, 2022 at 07:12:10PM +0530, Vishal Annapurve wrote:
-> > > On Tue, Oct 18, 2022 at 3:27 AM Kirill A . Shutemov
-> > > <kirill.shutemov@linux.intel.com> wrote:
-> > > >
-> > > > On Mon, Oct 17, 2022 at 06:39:06PM +0200, Gupta, Pankaj wrote:
-> > > > > On 10/17/2022 6:19 PM, Kirill A . Shutemov wrote:
-> > > > > > On Mon, Oct 17, 2022 at 03:00:21PM +0200, Vlastimil Babka wrote:
-> > > > > > > On 9/15/22 16:29, Chao Peng wrote:
-> > > > > > > > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-> > > > > > > >
-> > > > > > > > KVM can use memfd-provided memory for guest memory. For normal userspace
-> > > > > > > > accessible memory, KVM userspace (e.g. QEMU) mmaps the memfd into its
-> > > > > > > > virtual address space and then tells KVM to use the virtual address to
-> > > > > > > > setup the mapping in the secondary page table (e.g. EPT).
-> > > > > > > >
-> > > > > > > > With confidential computing technologies like Intel TDX, the
-> > > > > > > > memfd-provided memory may be encrypted with special key for special
-> > > > > > > > software domain (e.g. KVM guest) and is not expected to be directly
-> > > > > > > > accessed by userspace. Precisely, userspace access to such encrypted
-> > > > > > > > memory may lead to host crash so it should be prevented.
-> > > > > > > >
-> > > > > > > > This patch introduces userspace inaccessible memfd (created with
-> > > > > > > > MFD_INACCESSIBLE). Its memory is inaccessible from userspace through
-> > > > > > > > ordinary MMU access (e.g. read/write/mmap) but can be accessed via
-> > > > > > > > in-kernel interface so KVM can directly interact with core-mm without
-> > > > > > > > the need to map the memory into KVM userspace.
-> > > > > > > >
-> > > > > > > > It provides semantics required for KVM guest private(encrypted) memory
-> > > > > > > > support that a file descriptor with this flag set is going to be used as
-> > > > > > > > the source of guest memory in confidential computing environments such
-> > > > > > > > as Intel TDX/AMD SEV.
-> > > > > > > >
-> > > > > > > > KVM userspace is still in charge of the lifecycle of the memfd. It
-> > > > > > > > should pass the opened fd to KVM. KVM uses the kernel APIs newly added
-> > > > > > > > in this patch to obtain the physical memory address and then populate
-> > > > > > > > the secondary page table entries.
-> > > > > > > >
-> > > > > > > > The userspace inaccessible memfd can be fallocate-ed and hole-punched
-> > > > > > > > from userspace. When hole-punching happens, KVM can get notified through
-> > > > > > > > inaccessible_notifier it then gets chance to remove any mapped entries
-> > > > > > > > of the range in the secondary page tables.
-> > > > > > > >
-> > > > > > > > The userspace inaccessible memfd itself is implemented as a shim layer
-> > > > > > > > on top of real memory file systems like tmpfs/hugetlbfs but this patch
-> > > > > > > > only implemented tmpfs. The allocated memory is currently marked as
-> > > > > > > > unmovable and unevictable, this is required for current confidential
-> > > > > > > > usage. But in future this might be changed.
-> > > > > > > >
-> > > > > > > > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > > > > > > > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> > > > > > > > ---
-> > > > > > >
-> > > > > > > ...
-> > > > > > >
-> > > > > > > > +static long inaccessible_fallocate(struct file *file, int mode,
-> > > > > > > > +                                  loff_t offset, loff_t len)
-> > > > > > > > +{
-> > > > > > > > +       struct inaccessible_data *data = file->f_mapping->private_data;
-> > > > > > > > +       struct file *memfd = data->memfd;
-> > > > > > > > +       int ret;
-> > > > > > > > +
-> > > > > > > > +       if (mode & FALLOC_FL_PUNCH_HOLE) {
-> > > > > > > > +               if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
-> > > > > > > > +                       return -EINVAL;
-> > > > > > > > +       }
-> > > > > > > > +
-> > > > > > > > +       ret = memfd->f_op->fallocate(memfd, mode, offset, len);
-> > > > > > > > +       inaccessible_notifier_invalidate(data, offset, offset + len);
-> > > > > > >
-> > > > > > > Wonder if invalidate should precede the actual hole punch, otherwise we open
-> > > > > > > a window where the page tables point to memory no longer valid?
-> > > > > >
-> > > > > > Yes, you are right. Thanks for catching this.
-> > > > >
-> > > > > I also noticed this. But then thought the memory would be anyways zeroed
-> > > > > (hole punched) before this call?
-> > > >
-> > > > Hole punching can free pages, given that offset/len covers full page.
-> > > >
-> > > > --
-> > > >   Kiryl Shutsemau / Kirill A. Shutemov
-> > >
-> > > I think moving this notifier_invalidate before fallocate may not solve
-> > > the problem completely. Is it possible that between invalidate and
-> > > fallocate, KVM tries to handle the page fault for the guest VM from
-> > > another vcpu and uses the pages to be freed to back gpa ranges? Should
-> > > hole punching here also update mem_attr first to say that KVM should
-> > > consider the corresponding gpa ranges to be no more backed by
-> > > inaccessible memfd?
-> >
-> > We rely on external synchronization to prevent this. See code around
-> > mmu_invalidate_retry_hva().
-> >
-> > --
-> >   Kiryl Shutsemau / Kirill A. Shutemov
+Hi Jeff,
+
+On Fri, Oct 21, 2022 at 08:38:38AM -0400, Jeff Layton wrote:
+> On Fri, 2022-10-21 at 16:49 +0800, Jingbo Xu wrote:
+> > Use netfs_put_subrequest() and netfs_rreq_completed() completing request
+> > and subrequest.
+> > 
+> > It is worth noting that a noop netfs_request_ops is introduced for erofs
+> > since some netfs routine, e.g. netfs_free_request(), will call into
+> > this ops.
+> > 
+> > Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+> > ---
+> >  fs/erofs/fscache.c | 47 ++++++++++------------------------------------
+> >  1 file changed, 10 insertions(+), 37 deletions(-)
+> > 
+> > diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+> > index fe05bc51f9f2..fa3f4ab5e3b6 100644
+> > --- a/fs/erofs/fscache.c
+> > +++ b/fs/erofs/fscache.c
+> > @@ -4,6 +4,7 @@
+> >   * Copyright (C) 2022, Bytedance Inc. All rights reserved.
+> >   */
+> >  #include <linux/fscache.h>
+> > +#include <trace/events/netfs.h>
+> >  #include "internal.h"
+> >  
+> >  static DEFINE_MUTEX(erofs_domain_list_lock);
+> > @@ -11,6 +12,8 @@ static DEFINE_MUTEX(erofs_domain_cookies_lock);
+> >  static LIST_HEAD(erofs_domain_list);
+> >  static struct vfsmount *erofs_pseudo_mnt;
+> >  
+> > +static const struct netfs_request_ops erofs_noop_req_ops;
+> > +
+> >  static struct netfs_io_request *erofs_fscache_alloc_request(struct address_space *mapping,
+> >  					     loff_t start, size_t len)
+> >  {
+> > @@ -24,40 +27,12 @@ static struct netfs_io_request *erofs_fscache_alloc_request(struct address_space
+> >  	rreq->len	= len;
+> >  	rreq->mapping	= mapping;
+> >  	rreq->inode	= mapping->host;
+> > +	rreq->netfs_ops	= &erofs_noop_req_ops;
+> >  	INIT_LIST_HEAD(&rreq->subrequests);
+> >  	refcount_set(&rreq->ref, 1);
+> >  	return rreq;
+> >  }
+> >  
 > 
-> IIUC, mmu_invalidate_retry_hva/gfn ensures that page faults on gfn
-> ranges that are being invalidated are retried till invalidation is
-> complete. In this case, is it possible that KVM tries to serve the
-> page fault after inaccessible_notifier_invalidate is complete but
-> before fallocate could punch hole into the files?
-> e.g.
-> inaccessible_notifier_invalidate(...)
-> ... (system event preempting this control flow, giving a window for
-> the guest to retry accessing the gfn range which was invalidated)
-> fallocate(.., PUNCH_HOLE..)
+> Why is erofs allocating its own netfs structures? This seems quite
+> fragile, and a layering violation too.
 
-Looks this is something can happen. And sounds to me the solution needs
-just follow the mmu_notifier's way of using a invalidate_start/end pair.
+Thanks for the reply.
 
-  invalidate_start()  --> kvm->mmu_invalidate_in_progress++;
-                          zap KVM page table entries;
-  fallocate()
-  invalidate_end()  --> kvm->mmu_invalidate_in_progress--;
+I've talked this to David on IRC about this as well.  Actually what we
+really want to use is to do raw I/O requests directly to
+fscache/cachefiles.
 
-Then during invalidate_start/end time window mmu_invalidate_retry_gfn
-checks 'mmu_invalidate_in_progress' and prevent repopulating the same
-page in KVM page table.
+Because as I said for many times, new netfs per-inode cookie model
+doesn't suit for erofs use cases.  Since we treat each cookie as a
+data blob, and each erofs inode can refer to one or more blobs in
+the chunk-deduplicated way.
 
-  if(kvm->mmu_invalidate_in_progress)
-      return 1; /* retry */
+So we need a raw I/O data request to fscache/cachefiles.  I'm not sure
+if it will also be a future feature request (raw I/O request on cookies)
+for network fses in order to get some special file data/metadata.
+
+> 
+> > -static void erofs_fscache_put_request(struct netfs_io_request *rreq)
+> > -{
+> > -	if (!refcount_dec_and_test(&rreq->ref))
+> > -		return;
+> > -	if (rreq->cache_resources.ops)
+> > -		rreq->cache_resources.ops->end_operation(&rreq->cache_resources);
+> > -	kfree(rreq);
+> > -}
+> > -
+> > -static void erofs_fscache_put_subrequest(struct netfs_io_subrequest *subreq)
+> > -{
+> > -	if (!refcount_dec_and_test(&subreq->ref))
+> > -		return;
+> > -	erofs_fscache_put_request(subreq->rreq);
+> > -	kfree(subreq);
+> > -}
+> > -
+> > -static void erofs_fscache_clear_subrequests(struct netfs_io_request *rreq)
+> > -{
+> > -	struct netfs_io_subrequest *subreq;
+> > -
+> > -	while (!list_empty(&rreq->subrequests)) {
+> > -		subreq = list_first_entry(&rreq->subrequests,
+> > -				struct netfs_io_subrequest, rreq_link);
+> > -		list_del(&subreq->rreq_link);
+> > -		erofs_fscache_put_subrequest(subreq);
+> > -	}
+> > -}
+> > -
+> >  static void erofs_fscache_rreq_unlock_folios(struct netfs_io_request *rreq)
+> >  {
+> >  	struct netfs_io_subrequest *subreq;
+> > @@ -114,11 +89,10 @@ static void erofs_fscache_rreq_unlock_folios(struct netfs_io_request *rreq)
+> >  static void erofs_fscache_rreq_complete(struct netfs_io_request *rreq)
+> >  {
+> >  	erofs_fscache_rreq_unlock_folios(rreq);
+> > -	erofs_fscache_clear_subrequests(rreq);
+> > -	erofs_fscache_put_request(rreq);
+> > +	netfs_rreq_completed(rreq, false);
+> >  }
+> >  
+> > -static void erofc_fscache_subreq_complete(void *priv,
+> > +static void erofs_fscache_subreq_complete(void *priv,
+> >  		ssize_t transferred_or_error, bool was_async)
+> >  {
+> >  	struct netfs_io_subrequest *subreq = priv;
+> > @@ -130,7 +104,7 @@ static void erofc_fscache_subreq_complete(void *priv,
+> >  	if (atomic_dec_and_test(&rreq->nr_outstanding))
+> >  		erofs_fscache_rreq_complete(rreq);
+> >  
+> > -	erofs_fscache_put_subrequest(subreq);
+> > +	netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_terminated);
+> >  }
+> >  
+> >  /*
+> > @@ -171,9 +145,8 @@ static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
+> >  		}
+> >  
+> >  		subreq->start = pstart + done;
+> > -		subreq->len	=  len - done;
+> > +		subreq->len   =  len - done;
+> >  		subreq->flags = 1 << NETFS_SREQ_ONDEMAND;
+> > -
+> >  		list_add_tail(&subreq->rreq_link, &rreq->subrequests);
+> >  
+> >  		source = cres->ops->prepare_read(subreq, LLONG_MAX);
+> > @@ -184,7 +157,7 @@ static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
+> >  				  source);
+> >  			ret = -EIO;
+> >  			subreq->error = ret;
+> > -			erofs_fscache_put_subrequest(subreq);
+> > +			netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_failed);
+> >  			goto out;
+> >  		}
+> >  
+> > @@ -195,7 +168,7 @@ static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
+> >  
+> >  		ret = fscache_read(cres, subreq->start, &iter,
+> >  				   NETFS_READ_HOLE_FAIL,
+> > -				   erofc_fscache_subreq_complete, subreq);
+> > +				   erofs_fscache_subreq_complete, subreq);
+> >  		if (ret == -EIOCBQUEUED)
+> >  			ret = 0;
+> >  		if (ret) {
+> 
+> I'd rather see this done differently. Either change erofs to use the
+> netfs infrastructure in a more standard fashion, or maybe consider
+> teaching erofs to talk to cachefiles directly?
+
+I've requested David on IRC to shift netfs_io_request and
+netfs_io_subrequest into a more natural new prefix other than
+(netfs or fscache) but we didn't get into a proper conclusion (David
+don't want to use fscache_ since fscache can be disabled but netfs
+can still work.)
+
+Like what we said for many times before, the reason why EROFS uses
+fscache/cachefiles infrastructure is that we don't want to
+duplicate/reinvent another same caching subsystem in order to manage
+local caching in order to do lazy pulling / on-demand read, and the
+majority code can be shared other than exist the same two codebases
+to do the same thing, also:
+
+content map: https://listman.redhat.com/archives/linux-cachefs/2022-August/007050.html
+
+Also if we have the only one caching subsystem, the main codebase can
+be tested better compared with two duplicated ones.
+
+And I think overlayfs can also use it for partial copy up as anyone
+interested.
+
+> 
+> IDK, but this sort of mucking around in the low level netfs objects
+> seems wrong to me.
+
+My suggestion is to abstract natural raw data interfaces for all fses
+to use, rather than expose a per-inode cookie netfs interface only.
 
 Thanks,
-Chao
+Gao Xiang
 
+> -- 
+> Jeff Layton <jlayton@kernel.org>
