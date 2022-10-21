@@ -2,173 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 128EA6072E1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 10:50:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 524D4607336
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 21 Oct 2022 11:04:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229894AbiJUIuM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Oct 2022 04:50:12 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58224 "EHLO
+        id S230248AbiJUJEv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Oct 2022 05:04:51 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229816AbiJUIuF (ORCPT
+        with ESMTP id S230434AbiJUJEs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Oct 2022 04:50:05 -0400
-Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A7F624FEE8;
-        Fri, 21 Oct 2022 01:49:50 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=7;SR=0;TI=SMTPD_---0VSikm2i_1666342154;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VSikm2i_1666342154)
+        Fri, 21 Oct 2022 05:04:48 -0400
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CF2C4D273;
+        Fri, 21 Oct 2022 02:04:41 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R631e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045176;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VSikrQi_1666343077;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VSikrQi_1666343077)
           by smtp.aliyun-inc.com;
-          Fri, 21 Oct 2022 16:49:16 +0800
-From:   Jingbo Xu <jefflexu@linux.alibaba.com>
-To:     dhowells@redhat.com, xiang@kernel.org, chao@kernel.org,
-        linux-erofs@lists.ozlabs.org
-Cc:     jlayton@kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] erofs: use netfs helpers manipulating request and subrequest
-Date:   Fri, 21 Oct 2022 16:49:12 +0800
-Message-Id: <20221021084912.61468-3-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
-In-Reply-To: <20221021084912.61468-1-jefflexu@linux.alibaba.com>
+          Fri, 21 Oct 2022 17:04:38 +0800
+Date:   Fri, 21 Oct 2022 17:04:36 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Jingbo Xu <jefflexu@linux.alibaba.com>
+Cc:     dhowells@redhat.com, xiang@kernel.org, chao@kernel.org,
+        linux-erofs@lists.ozlabs.org, jlayton@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/2] netfs: export helpers for request and subrequest
+Message-ID: <Y1JgpEfsKH0vYbw0@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Jingbo Xu <jefflexu@linux.alibaba.com>,
+        dhowells@redhat.com, xiang@kernel.org, chao@kernel.org,
+        linux-erofs@lists.ozlabs.org, jlayton@kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 References: <20221021084912.61468-1-jefflexu@linux.alibaba.com>
+ <20221021084912.61468-2-jefflexu@linux.alibaba.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20221021084912.61468-2-jefflexu@linux.alibaba.com>
 X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
-        autolearn=ham autolearn_force=no version=3.4.6
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use netfs_put_subrequest() and netfs_rreq_completed() completing request
-and subrequest.
+On Fri, Oct 21, 2022 at 04:49:11PM +0800, Jingbo Xu wrote:
+> Export netfs_put_subrequest() and netfs_rreq_completed().
+> 
+> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 
-It is worth noting that a noop netfs_request_ops is introduced for erofs
-since some netfs routine, e.g. netfs_free_request(), will call into
-this ops.
+Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
----
- fs/erofs/fscache.c | 47 ++++++++++------------------------------------
- 1 file changed, 10 insertions(+), 37 deletions(-)
+Thanks,
+Gao Xiang
 
-diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-index fe05bc51f9f2..fa3f4ab5e3b6 100644
---- a/fs/erofs/fscache.c
-+++ b/fs/erofs/fscache.c
-@@ -4,6 +4,7 @@
-  * Copyright (C) 2022, Bytedance Inc. All rights reserved.
-  */
- #include <linux/fscache.h>
-+#include <trace/events/netfs.h>
- #include "internal.h"
- 
- static DEFINE_MUTEX(erofs_domain_list_lock);
-@@ -11,6 +12,8 @@ static DEFINE_MUTEX(erofs_domain_cookies_lock);
- static LIST_HEAD(erofs_domain_list);
- static struct vfsmount *erofs_pseudo_mnt;
- 
-+static const struct netfs_request_ops erofs_noop_req_ops;
-+
- static struct netfs_io_request *erofs_fscache_alloc_request(struct address_space *mapping,
- 					     loff_t start, size_t len)
- {
-@@ -24,40 +27,12 @@ static struct netfs_io_request *erofs_fscache_alloc_request(struct address_space
- 	rreq->len	= len;
- 	rreq->mapping	= mapping;
- 	rreq->inode	= mapping->host;
-+	rreq->netfs_ops	= &erofs_noop_req_ops;
- 	INIT_LIST_HEAD(&rreq->subrequests);
- 	refcount_set(&rreq->ref, 1);
- 	return rreq;
- }
- 
--static void erofs_fscache_put_request(struct netfs_io_request *rreq)
--{
--	if (!refcount_dec_and_test(&rreq->ref))
--		return;
--	if (rreq->cache_resources.ops)
--		rreq->cache_resources.ops->end_operation(&rreq->cache_resources);
--	kfree(rreq);
--}
--
--static void erofs_fscache_put_subrequest(struct netfs_io_subrequest *subreq)
--{
--	if (!refcount_dec_and_test(&subreq->ref))
--		return;
--	erofs_fscache_put_request(subreq->rreq);
--	kfree(subreq);
--}
--
--static void erofs_fscache_clear_subrequests(struct netfs_io_request *rreq)
--{
--	struct netfs_io_subrequest *subreq;
--
--	while (!list_empty(&rreq->subrequests)) {
--		subreq = list_first_entry(&rreq->subrequests,
--				struct netfs_io_subrequest, rreq_link);
--		list_del(&subreq->rreq_link);
--		erofs_fscache_put_subrequest(subreq);
--	}
--}
--
- static void erofs_fscache_rreq_unlock_folios(struct netfs_io_request *rreq)
- {
- 	struct netfs_io_subrequest *subreq;
-@@ -114,11 +89,10 @@ static void erofs_fscache_rreq_unlock_folios(struct netfs_io_request *rreq)
- static void erofs_fscache_rreq_complete(struct netfs_io_request *rreq)
- {
- 	erofs_fscache_rreq_unlock_folios(rreq);
--	erofs_fscache_clear_subrequests(rreq);
--	erofs_fscache_put_request(rreq);
-+	netfs_rreq_completed(rreq, false);
- }
- 
--static void erofc_fscache_subreq_complete(void *priv,
-+static void erofs_fscache_subreq_complete(void *priv,
- 		ssize_t transferred_or_error, bool was_async)
- {
- 	struct netfs_io_subrequest *subreq = priv;
-@@ -130,7 +104,7 @@ static void erofc_fscache_subreq_complete(void *priv,
- 	if (atomic_dec_and_test(&rreq->nr_outstanding))
- 		erofs_fscache_rreq_complete(rreq);
- 
--	erofs_fscache_put_subrequest(subreq);
-+	netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_terminated);
- }
- 
- /*
-@@ -171,9 +145,8 @@ static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
- 		}
- 
- 		subreq->start = pstart + done;
--		subreq->len	=  len - done;
-+		subreq->len   =  len - done;
- 		subreq->flags = 1 << NETFS_SREQ_ONDEMAND;
--
- 		list_add_tail(&subreq->rreq_link, &rreq->subrequests);
- 
- 		source = cres->ops->prepare_read(subreq, LLONG_MAX);
-@@ -184,7 +157,7 @@ static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
- 				  source);
- 			ret = -EIO;
- 			subreq->error = ret;
--			erofs_fscache_put_subrequest(subreq);
-+			netfs_put_subrequest(subreq, false, netfs_sreq_trace_put_failed);
- 			goto out;
- 		}
- 
-@@ -195,7 +168,7 @@ static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
- 
- 		ret = fscache_read(cres, subreq->start, &iter,
- 				   NETFS_READ_HOLE_FAIL,
--				   erofc_fscache_subreq_complete, subreq);
-+				   erofs_fscache_subreq_complete, subreq);
- 		if (ret == -EIOCBQUEUED)
- 			ret = 0;
- 		if (ret) {
--- 
-2.19.1.6.gb485710b
-
+> ---
+>  fs/netfs/io.c         | 3 ++-
+>  fs/netfs/objects.c    | 1 +
+>  include/linux/netfs.h | 2 ++
+>  3 files changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/netfs/io.c b/fs/netfs/io.c
+> index 428925899282..58dd56e3e780 100644
+> --- a/fs/netfs/io.c
+> +++ b/fs/netfs/io.c
+> @@ -94,12 +94,13 @@ static void netfs_read_from_server(struct netfs_io_request *rreq,
+>  /*
+>   * Release those waiting.
+>   */
+> -static void netfs_rreq_completed(struct netfs_io_request *rreq, bool was_async)
+> +void netfs_rreq_completed(struct netfs_io_request *rreq, bool was_async)
+>  {
+>  	trace_netfs_rreq(rreq, netfs_rreq_trace_done);
+>  	netfs_clear_subrequests(rreq, was_async);
+>  	netfs_put_request(rreq, was_async, netfs_rreq_trace_put_complete);
+>  }
+> +EXPORT_SYMBOL(netfs_rreq_completed);
+>  
+>  /*
+>   * Deal with the completion of writing the data to the cache.  We have to clear
+> diff --git a/fs/netfs/objects.c b/fs/netfs/objects.c
+> index e17cdf53f6a7..478cc1a1664c 100644
+> --- a/fs/netfs/objects.c
+> +++ b/fs/netfs/objects.c
+> @@ -158,3 +158,4 @@ void netfs_put_subrequest(struct netfs_io_subrequest *subreq, bool was_async,
+>  	if (dead)
+>  		netfs_free_subrequest(subreq, was_async);
+>  }
+> +EXPORT_SYMBOL(netfs_put_subrequest);
+> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+> index f2402ddeafbf..d519fb709d7f 100644
+> --- a/include/linux/netfs.h
+> +++ b/include/linux/netfs.h
+> @@ -282,6 +282,8 @@ int netfs_write_begin(struct netfs_inode *, struct file *,
+>  		struct address_space *, loff_t pos, unsigned int len,
+>  		struct folio **, void **fsdata);
+>  
+> +void netfs_rreq_completed(struct netfs_io_request *rreq, bool was_async);
+> +
+>  void netfs_subreq_terminated(struct netfs_io_subrequest *, ssize_t, bool);
+>  void netfs_get_subrequest(struct netfs_io_subrequest *subreq,
+>  			  enum netfs_sreq_ref_trace what);
+> -- 
+> 2.19.1.6.gb485710b
