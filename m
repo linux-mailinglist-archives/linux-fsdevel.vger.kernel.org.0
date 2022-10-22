@@ -2,81 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 43A606084DE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Oct 2022 08:03:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id EC0C1608547
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Oct 2022 08:51:32 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229871AbiJVGD2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 22 Oct 2022 02:03:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41058 "EHLO
+        id S230045AbiJVGva (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 22 Oct 2022 02:51:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229520AbiJVGD1 (ORCPT
+        with ESMTP id S229634AbiJVGv3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 22 Oct 2022 02:03:27 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6238E2B3AEE;
-        Fri, 21 Oct 2022 23:03:26 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E98CB601C6;
-        Sat, 22 Oct 2022 06:03:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E12E6C433C1;
-        Sat, 22 Oct 2022 06:03:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666418605;
-        bh=tCXdIEe/bRuPmuD8DZJI7sITbkxpBfee1t0FtUrlE1s=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=LGS4FPjZ0GenPE80Ht65ggEck6bgj5dMaBGUbmI1p5KIioZcU/U0B3w+tI1Dn25rx
-         llIng6acUhVuJ/HM4vaBISzwQ0bzbS9XtQmJ0Vcv4gBrkA4Yvn+Z2n4iaDXSOr93lP
-         6kE0ELPCFel8IWbq2XeR8VABeZZKCK5yTtr8p63JXPEROgpP0teOCA5RybzOekIHey
-         WO01JaNbJ4vidygloxS7RXdQaKTXIlWeMJqqphRYpzZR07P/w8/CEUZljrbdPYJwK0
-         sq4K9MbjRVh/iSW4OILqP9q7FbHb8Bp51AV9w0kHCsF0BcDX0ybnQzP/gy7AmQZBK5
-         pdal5+51PPfEA==
-Date:   Fri, 21 Oct 2022 23:03:22 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Christoph =?UTF-8?B?QsO2aG13YWxkZXI=?= 
-        <christoph.boehmwalder@linbit.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        SeongJae Park <sj@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Helge Deller <deller@gmx.de>, netdev@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mmc@vger.kernel.org, linux-parisc@vger.kernel.org
-Subject: Re: [PATCH v1 0/5] convert tree to
- get_random_u32_{below,above,between}()
-Message-ID: <20221021230322.00dd045c@kernel.org>
-In-Reply-To: <Y1OD2tdVwQsydSNV@zx2c4.com>
-References: <20221022014403.3881893-1-Jason@zx2c4.com>
-        <20221021205522.6b56fd24@kernel.org>
-        <Y1NwJJOIB4gI5G11@zx2c4.com>
-        <20221021223242.05df0a5b@kernel.org>
-        <Y1OD2tdVwQsydSNV@zx2c4.com>
+        Sat, 22 Oct 2022 02:51:29 -0400
+Received: from bg4.exmail.qq.com (bg4.exmail.qq.com [43.154.221.58])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8FE9A26FFBA;
+        Fri, 21 Oct 2022 23:51:27 -0700 (PDT)
+X-QQ-mid: bizesmtp72t1666421483tq1hppni
+Received: from localhost.localdomain ( [182.148.15.254])
+        by bizesmtp.qq.com (ESMTP) with 
+        id ; Sat, 22 Oct 2022 14:51:22 +0800 (CST)
+X-QQ-SSF: 01000000000000C0E000000A0000000
+X-QQ-FEAT: +bXiSo2NuBcejOLpbJ+aH5jZ9nBF6SF5Z8jITJHzRE2MK1FYlandI5I4xailk
+        ywBG/tLKqG/zcYWC7nEbddudnBudMEWC0f7km2JCU9S1HEwHfk3bBYQpBPyScWO43CWI6k8
+        Ui8E90LnobR/oj7DowOSedXA4PU92gKleMCJsukT1OvvdaRHrHdXCz4Grtv7Ik+3n6risrp
+        YgoQ+oOMnrHvpJLh+k1sAGYakX1oy7SR9FEFvZG7v7tQEsJsdG7J9yPfggdlNSR8ETCFjq1
+        Ky9wREZmx/KwsNahg4n0Bw/bhGIw7gEfs0LcXwStSjptSValqvFdbnT3MmiGil8djYiBiwW
+        iQhTiE5GUx5G6zoGIkeVXms53XMvr6cFJ6VHtM6pctuK245448=
+X-QQ-GoodBg: 0
+From:   wangjianli <wangjianli@cdjrlc.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        wangjianli <wangjianli@cdjrlc.com>
+Subject: [PATCH] include/linux: fix repeated words in comments
+Date:   Sat, 22 Oct 2022 14:51:16 +0800
+Message-Id: <20221022065116.41273-1-wangjianli@cdjrlc.com>
+X-Mailer: git-send-email 2.36.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:cdjrlc.com:qybglogicsvr:qybglogicsvr7
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_MSPIKE_H2,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -84,15 +47,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 22 Oct 2022 07:47:06 +0200 Jason A. Donenfeld wrote:
-> On Fri, Oct 21, 2022 at 10:32:42PM -0700, Jakub Kicinski wrote:
-> > But whatever. I mean - hopefully there aren't any conflicts in the ~50
-> > networking files you touch. I just wish that people didn't pipe up with
-> > the tree wide changes right after the merge window. Feels like the
-> > worst possible timing.  
-> 
-> Oh, if the timing is what makes this especially worrisome, I have
-> no qualms about rebasing much later, and reposting this series then.
-> I'll do that.
+Delete the redundant word 'the'.
 
-Cool, thanks! I promise to not be grumpy if you repost around rc6 :)
+Signed-off-by: wangjianli <wangjianli@cdjrlc.com>
+---
+ include/linux/fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 0ef49fed1300..87a7166730ac 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -2933,7 +2933,7 @@ extern void evict_inodes(struct super_block *sb);
+ void dump_mapping(const struct address_space *);
+ 
+ /*
+- * Userspace may rely on the the inode number being non-zero. For example, glibc
++ * Userspace may rely on the inode number being non-zero. For example, glibc
+  * simply ignores files with zero i_ino in unlink() and other places.
+  *
+  * As an additional complication, if userspace was compiled with
+-- 
+2.36.1
+
