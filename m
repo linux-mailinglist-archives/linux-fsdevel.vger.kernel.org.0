@@ -2,226 +2,301 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CCD86081C4
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Oct 2022 00:40:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3348E608332
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 22 Oct 2022 03:44:39 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229959AbiJUWkR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 21 Oct 2022 18:40:17 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34428 "EHLO
+        id S229823AbiJVBof (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 21 Oct 2022 21:44:35 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56440 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229956AbiJUWkP (ORCPT
+        with ESMTP id S229460AbiJVBod (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 21 Oct 2022 18:40:15 -0400
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A209A2202
-        for <linux-fsdevel@vger.kernel.org>; Fri, 21 Oct 2022 15:40:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666392013; x=1697928013;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=8rM/pMRpLylV70PWZbEP3OJLUeyLF1qPy5efCSTGUJs=;
-  b=TZbmWkG8fe5Nj1QVXfVoFgnCvYem2tTKBo+xuJEFjUvmFlAWxQcLTvfV
-   gW1B5BMEo8WvDdxsM+YCaBS10jJDaE0LZW+gVaznv1mRHDmSgOlGqkuqF
-   K2xzhiapBcs9uer0koSFazP3lNhAjinJMxmk/sBiTqI8Vz/G7h7+oedl/
-   PRx4WfwBoSkMaHMk9R0VjSQ7QCgf7Mqkq07Y6e7G2FA7BiWftT0eZzC/W
-   gbruTuqrFQUQCRqPxw29VfvVgXM/suGta6GrpawCXonzKUS0dP9OXA67k
-   DQg1CzDUiRHCf+ZMofKS3jibVlIS9IYjKHpSJNe5oxJkkI2wcAsP8EVYk
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10507"; a="294517500"
-X-IronPort-AV: E=Sophos;i="5.95,203,1661842800"; 
-   d="scan'208";a="294517500"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Oct 2022 15:40:09 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10507"; a="608551711"
-X-IronPort-AV: E=Sophos;i="5.95,203,1661842800"; 
-   d="scan'208";a="608551711"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orsmga006.jf.intel.com with ESMTP; 21 Oct 2022 15:40:08 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 21 Oct 2022 15:40:08 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 21 Oct 2022 15:40:07 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31 via Frontend Transport; Fri, 21 Oct 2022 15:40:07 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2375.31; Fri, 21 Oct 2022 15:40:07 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mW78YA4ml1gwU3kpFNi/gkq4py3prGKDudgYuvjwNGGuoJL/m3Fprav4I1U6i5xjs79kqUyYQ6tjkekLIlFZN2J7faTb9QTkWE9TR3cpYQPkmZ/8HRt+h92lZNVAaeM4zKC34hxvvFFX4JtIOWJMPMZPYm11evlvLQAQRDmlyzs4p/1XDsnl+nkp12iy11dbp87FTcmdvyv4W4zS5dO3DuCbWr+SvNek/DaYBmUe4mnp7+1WdRNthkp6uqnZK5IQDBj49+vH3FWWljDxVPurbxvK7ateYMJhlB+OpGUJXAlYf8ZygIeIZ+t1gn7fIQZSwa9yscjtR5Qd07OErnpRhg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+XDfob9eZunMQ/wUpnc59kBNl3gfz4F9zNjvCLJC+DM=;
- b=Z0qe41aHqmq4s+qOZVn2ZgA2F4xJtdqQvVLufb7nJvBR9JSENGpH8yJw5ZAk3dc1j3w7CWyEdI7XGXcdWQUH87mQ/NdJGh1nO9j3BZukNEIBw+yMbpBCE9BgzYJHAFxDWbHqHO8txR1UHXp0vAOXiQf6gmQVWezdHlVR7Cci6DqEt+7/WAibSHPp5IWOV7qGXGClGkIaA5Lj2Uiw1Me+Ags5oLvaG2KVBNTRddTd6+75QTpWwFL2NCBdS0RKFxfZgvilKcfdMHjFC7ILOHOhp3MUWvUCjnuoDZB5SN1YDmYbZ47Bb1OPo7n3fVl2CZagMPz0sKoCUFLbkHCMJ69pKQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from DM6PR11MB3978.namprd11.prod.outlook.com (2603:10b6:5:19a::14)
- by SJ0PR11MB5679.namprd11.prod.outlook.com (2603:10b6:a03:303::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5723.35; Fri, 21 Oct
- 2022 22:40:05 +0000
-Received: from DM6PR11MB3978.namprd11.prod.outlook.com
- ([fe80::1b68:f941:6705:2288]) by DM6PR11MB3978.namprd11.prod.outlook.com
- ([fe80::1b68:f941:6705:2288%7]) with mapi id 15.20.5723.035; Fri, 21 Oct 2022
- 22:40:05 +0000
-From:   "Pulavarty, Badari" <badari.pulavarty@intel.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     "david@fromorbit.com" <david@fromorbit.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "bfoster@redhat.com" <bfoster@redhat.com>,
-        "huangzhaoyang@gmail.com" <huangzhaoyang@gmail.com>,
-        "ke.wang@unisoc.com" <ke.wang@unisoc.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "zhaoyang.huang@unisoc.com" <zhaoyang.huang@unisoc.com>,
-        "Shutemov, Kirill" <kirill.shutemov@intel.com>,
-        "Tang, Feng" <feng.tang@intel.com>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        "Yin, Fengwei" <fengwei.yin@intel.com>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "Zanussi, Tom" <tom.zanussi@intel.com>
-Subject: RE: [RFC PATCH] mm: move xa forward when run across zombie page
-Thread-Topic: [RFC PATCH] mm: move xa forward when run across zombie page
-Thread-Index: AQHY5Zz4BT/DMcb+H0K5D/9RcgEw0q4ZbwQA
-Date:   Fri, 21 Oct 2022 22:40:05 +0000
-Message-ID: <DM6PR11MB397838A94F24C1F4CCE306929C2D9@DM6PR11MB3978.namprd11.prod.outlook.com>
-References: <DM6PR11MB3978E31FE5149BA89D371E079C2D9@DM6PR11MB3978.namprd11.prod.outlook.com>
- <Y1Md0hzhkqzik/WA@casper.infradead.org>
-In-Reply-To: <Y1Md0hzhkqzik/WA@casper.infradead.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-dlp-product: dlpe-windows
-dlp-version: 11.6.500.17
-dlp-reaction: no-action
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DM6PR11MB3978:EE_|SJ0PR11MB5679:EE_
-x-ms-office365-filtering-correlation-id: aba86655-9a14-4161-1b63-08dab3b532e9
-x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 6RY6d8PuAieMFtFOSwi/Ky+X7hfNs+zpatHmy0+0r9LCbiPFBm4leeywb3ceGezx5YN+FVV5nIOoE4NNwIhtlFFaUqXDVWpIm0e7nvnAHo20R7G5sl5AdLTJUeG7VGSBVnBtJPK6SDvTILucG0xTLniNuO3eXoSN3Yuxy64u1kYt5f3uz+Ti7mFhGcADT59slddfqqOlywCiXmv4IQl3HOMimsBUuK/TDsm69xVTwTe7EWDbKMl3QelwaIHDu73hvbMmjO/4WrUMf4lGDOIJrx0eXxinPqvB4qUPq1DFqhfIFpqkWs3RzANMK0HaZgaxqKxdPAahzIyxHVXHobcpY72Q9bcMJ1dj9OIX/wh1e/odExyPrLeK/WyXfFJRTVqZXsBaXn/ktNaETCZAECT0QntrFe/s+EOrmPsPhFOpypdXzgDioi3eAWYrvdak1SSBx+fpNCH/KCbAG/fSNozmvKdqLJY2GU6ZyJ2kHzS4N5mRJpVo5Zwps5pZesR8TCKeMcV3X/OzDJvAPWIGANqKZny9/SFhcSGGuG9Wa8C37EvAjSDubdzjZ3Ec4v0C0wJmVZMNtOZ6LXf0g/xWTSc8qzpfJEw869AxtoiE8dG4TZj3uwDI7Q5dEpmbnDsquQ8NqQbbxUnNBZsYGOJJ0thU+I8d+AAOsJHoBYaFF9r7awOBRRmxoGuMuIwfeSBPXmiWazDV56/abKTN6rmEVZqtLGoorzjk07VzSpXO51UnnvdIc/lUokWjSDy85N2+8u3rtEZLEQluFkWk7oR2u+bQfw==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR11MB3978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(396003)(136003)(39860400002)(376002)(366004)(346002)(451199015)(71200400001)(83380400001)(86362001)(478600001)(4326008)(8676002)(64756008)(66446008)(66476007)(66556008)(66946007)(76116006)(54906003)(6916009)(107886003)(6506007)(53546011)(316002)(7696005)(5660300002)(8936002)(26005)(52536014)(9686003)(41300700001)(55016003)(2906002)(38100700002)(122000001)(33656002)(186003)(38070700005)(82960400001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?1xIOnMuh5ZPyGvLe+122wUmbp/B8jvjxwlHScpaCP5gq3G6V0fTg1ZNpLSvQ?=
- =?us-ascii?Q?vA5AmYcKQX6NVwL4wZExgWr7O1AXADGxhQaHl6ua9NzBC0fbR5KJN1EXBMgV?=
- =?us-ascii?Q?17Yw/LblI7Kt76ZjovHEg4UvoU35QCGNJq9OU5el7YrUWx4no+lMR7ccCkTT?=
- =?us-ascii?Q?J+ih4zumF1Ny9NiFStgxWaVz7kYHadDBMvWoDd4VaRZVn5a5oHg5gJeW5MZV?=
- =?us-ascii?Q?oscUUD/yYPDxrAsN23ATQ6ycUP9LSLo7RY4EZCpYWInGQKc/T5iDtx7fxpZ0?=
- =?us-ascii?Q?0zrIOg1ZxKrr5z0W3cDM4E6E+lfg20ybjHRenGISC1Mp6RBGy4EPC/cOszdj?=
- =?us-ascii?Q?cn84a1K+Id83NuRXYPmaSoxKRHTV2jiGePwl2nx5S0ERqamQXpCByB2QUGyj?=
- =?us-ascii?Q?0o3eA+UcyYDYtW4wsbQxuv3pr7f4wPhLHKPnl26jRXnNtD/JAJfmTWm5B5To?=
- =?us-ascii?Q?B4wYp2ZpGCiRcqZk+kD9FR55+VOGcyu5KRlVaJaTgQh0yd3SEHqp3Ofy0Vji?=
- =?us-ascii?Q?fflOefLBzl7A8yBj65+HNSAC2PvmZvtFRNC4wqL64V/5dXafXCIbVrAvqFlD?=
- =?us-ascii?Q?6rVORor5sEaX46UJe+cvCY+ieQexQxB1NY63bFrVATwb05Trz2YACsvr7Y3v?=
- =?us-ascii?Q?Gaknjelzxvmn98SUxPjQLC0KycTN4FjWQgQKcuqIyUcOZQbPGAF5fdko3zMH?=
- =?us-ascii?Q?6Z/tHmL0u+Joj0aJOg5qQePVa4j5nSC1nyzT69qp2CM27WgPyZ2OC9dq7628?=
- =?us-ascii?Q?4+807XZEnhnihPNEHOpI0LvKA4s5zKl4QucS4ubtMEIYEj//UIa/6B58Fba7?=
- =?us-ascii?Q?UBTZ4vkn9YJWuFMjAW54wtC/7796SkaY+nsQc/sCn0vvPPnsdZEz5LzYCQNk?=
- =?us-ascii?Q?AOoszgAvJsHryREpzXrK8+0Ac9x7hdgYCqT4L12Bsy2Fy4G1r+4/0tdzto3O?=
- =?us-ascii?Q?7cbiB33Eb/2+kVNYspIX+WJhakUlkKDLE7TgwgFtsjqr/s9vaZluJ/qOkPAJ?=
- =?us-ascii?Q?mCuHdeV4g6pRhmBkyphh5sbmrURqOVTDQJR3cven8P4krCu4TyBm9fTpDaet?=
- =?us-ascii?Q?q+9vkEMhuwenBxntEHcDdnrM/WW7ImhQGQ4+DQPub1o7GrK7DpSzxiuqBqVw?=
- =?us-ascii?Q?b4RM5ammWHfucx0U3+eVC4u8UAU+khj5u1jQA/PS/BAmfC8JkV6xwwQm6rqe?=
- =?us-ascii?Q?pk7SllULzEb8PHZFIc1I7DOMHldOnDRuEML2DkTLcOI49xCp2+GrnmQ5uqj8?=
- =?us-ascii?Q?LCrizNbflak5RKqsoGvZxLimiY1VQkm7kg3pLClS1aEUqsQonycF5uPyuqYh?=
- =?us-ascii?Q?Q3L+2RDou1mN6mMSB48VWBs4bOijZqS0Q9o3B7vpOZpofWjRJiSfUdMt/p7/?=
- =?us-ascii?Q?WEX5zhLMmkT7A5KKhQKXHihn7+epivMpJAdWCyYm5AGq0KSYUumSgMTheIA5?=
- =?us-ascii?Q?rBseO+kmvH3aqYnGukpQan+wOOsjzq9wiUAai2oxH3HiKv3ArEPBBetilF+g?=
- =?us-ascii?Q?SjwyLsBPALIRPv77aQ2Sb+2ycKOdOXHZLGKCqyl3ZFVjaJQam11FuJaIk2hp?=
- =?us-ascii?Q?JmCO+tmPLA4Ma6zsJUGuxmvdO21HXDrOwjURP5ub?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 21 Oct 2022 21:44:33 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 192895F4A;
+        Fri, 21 Oct 2022 18:44:27 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4F4F7B82DBA;
+        Sat, 22 Oct 2022 01:44:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0EE0C433D6;
+        Sat, 22 Oct 2022 01:44:21 +0000 (UTC)
+Authentication-Results: smtp.kernel.org;
+        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="RKXib5Vl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
+        t=1666403058;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=MoqRTfm9IB8FgPaOUAJRCt6whwpoPY6P6DzU4oQAino=;
+        b=RKXib5Vl1apeqvXSkeHuSjzGVJcpdoYt/8OAwj7E4ekShqhA/prDPzbcZ3L8EURFJsnCT+
+        VCpgWDuEXVi4KUAlPXmdTapzdA6cjXUVNdUGqKO0UKQGAT4o94LRapJolzjCdwBIIXx41V
+        8R1b7nFrQ3AUcsbIp6ZnzrkcuAw5BG0=
+Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 42623445 (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
+        Sat, 22 Oct 2022 01:44:17 +0000 (UTC)
+From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        =?UTF-8?q?Christoph=20B=C3=B6hmwalder?= 
+        <christoph.boehmwalder@linbit.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        SeongJae Park <sj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Helge Deller <deller@gmx.de>, netdev@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mmc@vger.kernel.org, linux-parisc@vger.kernel.org
+Subject: [PATCH v1 0/5] convert tree to get_random_u32_{below,above,between}()
+Date:   Fri, 21 Oct 2022 21:43:58 -0400
+Message-Id: <20221022014403.3881893-1-Jason@zx2c4.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR11MB3978.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aba86655-9a14-4161-1b63-08dab3b532e9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Oct 2022 22:40:05.0467
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: FmWiar+1STpIDklYYF23RDBpQn1uRs8i1PdOAbOt0+oUuuILLvO06b08BULdihwmoDJe4Zjx43c2mx5+/sccGLdTCvL7iZdKP3B5/5Vbvbs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB5679
-X-OriginatorOrg: intel.com
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
-        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hey everyone,
 
+Here's the second and final tranche of tree-wide conversions to get
+random integer handling a bit tamer. It's predominantly another
+Coccinelle-based patchset.
 
------Original Message-----
-From: Matthew Wilcox <willy@infradead.org>=20
-Sent: Friday, October 21, 2022 3:32 PM
-To: Pulavarty, Badari <badari.pulavarty@intel.com>
-Cc: david@fromorbit.com; akpm@linux-foundation.org; bfoster@redhat.com; hua=
-ngzhaoyang@gmail.com; ke.wang@unisoc.com; linux-fsdevel@vger.kernel.org; in=
-ux-kernel@vger.kernel.org; linux-mm@kvack.org; zhaoyang.huang@unisoc.com; S=
-hutemov, Kirill <kirill.shutemov@intel.com>; Tang, Feng <feng.tang@intel.co=
-m>; Huang, Ying <ying.huang@intel.com>; Yin, Fengwei <fengwei.yin@intel.com=
->; Hansen, Dave <dave.hansen@intel.com>; Zanussi, Tom <tom.zanussi@intel.co=
-m>
-Subject: Re: [RFC PATCH] mm: move xa forward when run across zombie page
+First we s/prandom_u32_max/get_random_u32_below/, since the former is
+just a deprecated alias for the latter. Then in the next commit we can
+remove prandom_u32_max all together. I'm quite happy about finally being
+able to do that. It means that prandom.h is now only for deterministic and 
+repeatable randomness, not non-deterministic/cryptographic randomness.
+That line is no longer blurred.
 
-On Fri, Oct 21, 2022 at 09:37:36PM +0000, Pulavarty, Badari wrote:
-> I have been tracking similar issue(s) with soft lockup or panics on my sy=
-stem consistently with my workload.
-> Tried multiple kernel versions. Issue seem to happen consistently on=20
-> 6.1-rc1 (while it seem to happen on 5.17, 5.19, 6.0.X)
->=20
-> PANIC: "Kernel panic - not syncing: softlockup: hung tasks"
->=20
->     RIP: 0000000000000001  RSP: ff3d8e7f0d9978ea  RFLAGS: ff3d8e7f0d9978e=
-8
->     RAX: 0000000000000000  RBX: 0000000000000000  RCX: 0000000000000000
->     RDX: 000000006b9c66f1  RSI: ff506ca15ff33c20  RDI: 0000000000000000
->     RBP: ffffffff84bc64cc   R8: ff3d8e412cabdff0   R9: ffffffff84c00e8b
->     R10: ff506ca15ff33b69  R11: 0000000000000000  R12: ff506ca15ff33b58
->     R13: ffffffff84bc79a3  R14: ff506ca15ff33b38  R15: 0000000000000000
->     ORIG_RAX: ff506ca15ff33a80  CS: ff506ca15ff33c78  SS: 0000
-> #9 [ff506ca15ff33c18] xas_load at ffffffff84b49a7f
-> #10 [ff506ca15ff33c28] __filemap_get_folio at ffffffff840985da
-> #11 [ff506ca15ff33ce8] swap_cache_get_folio at ffffffff841119db
+Then, in order to clean up a bunch of inefficient patterns, we introduce
+two trivial static inline helper functions built on top of
+get_random_u32_below: get_random_u32_above and get_random_u32_between.
+These are pretty straight forward to use and understand. Then the final
+two patches convert some gnarly open-coded number juggling to use these
+helpers.
 
-Oh, this is interesting.  It's the swapper address_space.
-I bet that 0xffffffff85044560 (the value of a_ops) is the address of swap_o=
-ps in your kernel?
+I've used Coccinelle for all the treewide patches, so hopefully review
+is rather uneventful. I didn't accept all of the changes that Coccinelle
+proposed, though, as these tend to be somewhat context-specific. I erred
+on the side of just going with the most obvious cases, at least this
+time through. And then we can address more complicated cases through
+actual maintainer trees.
 
-I don't know if it will help, but it's an interesting data point.
+Since get_random_u32_below() sits in my random.git tree, these patches
+too will flow through that same tree.
 
-> Looking at the crash dump, mapping->host became NULL. Not sure what exact=
-ly is happening.
+Regards,
+Jason
 
-That's always true for the swapper_spaces, AIUI.
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Jakub Kicinski <kuba@kernel.org>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Christoph Böhmwalder <christoph.boehmwalder@linbit.com>
+Cc: Jani Nikula <jani.nikula@linux.intel.com>
+Cc: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Martin K. Petersen <martin.petersen@oracle.com>
+Cc: Theodore Ts'o <tytso@mit.edu>
+Cc: Andreas Dilger <adilger.kernel@dilger.ca>
+Cc: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Richard Weinberger <richard@nod.at>
+Cc: Darrick J. Wong <djwong@kernel.org>
+Cc: SeongJae Park <sj@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Helge Deller <deller@gmx.de>
+Cc: netdev@vger.kernel.org
+Cc: linux-crypto@vger.kernel.org
+Cc: linux-block@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-media@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: loongarch@lists.linux.dev
+Cc: linux-mips@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-mmc@vger.kernel.org
+Cc: linux-parisc@vger.kernel.org
 
->   a_ops =3D 0xffffffff85044560,
+Jason A. Donenfeld (5):
+  treewide: use get_random_u32_below() instead of deprecated function
+  prandom: remove prandom_u32_max()
+  random: add helpers for random numbers with given floor or range
+  treewide: use get_random_u32_{above,below}() instead of manual loop
+  treewide: use get_random_u32_between() when possible
 
-Correct. Its swap_ops. (I am using zswap).
+ arch/arm/kernel/process.c                     |  2 +-
+ arch/arm64/kernel/process.c                   |  2 +-
+ arch/loongarch/kernel/process.c               |  2 +-
+ arch/loongarch/kernel/vdso.c                  |  2 +-
+ arch/mips/kernel/process.c                    |  2 +-
+ arch/mips/kernel/vdso.c                       |  2 +-
+ arch/parisc/kernel/vdso.c                     |  2 +-
+ arch/powerpc/crypto/crc-vpmsum_test.c         |  4 +-
+ arch/powerpc/kernel/process.c                 |  2 +-
+ arch/s390/kernel/process.c                    |  2 +-
+ arch/s390/kernel/vdso.c                       |  2 +-
+ arch/sparc/vdso/vma.c                         |  2 +-
+ arch/um/kernel/process.c                      |  2 +-
+ arch/x86/entry/vdso/vma.c                     |  2 +-
+ arch/x86/kernel/module.c                      |  2 +-
+ arch/x86/kernel/process.c                     |  2 +-
+ arch/x86/mm/pat/cpa-test.c                    |  4 +-
+ crypto/rsa-pkcs1pad.c                         |  2 +-
+ crypto/testmgr.c                              | 86 +++++++++----------
+ drivers/block/drbd/drbd_receiver.c            |  4 +-
+ drivers/bus/mhi/host/internal.h               |  2 +-
+ drivers/dma-buf/st-dma-fence-chain.c          |  6 +-
+ .../gpu/drm/i915/gem/i915_gem_execbuffer.c    |  2 +-
+ .../drm/i915/gt/intel_execlists_submission.c  |  2 +-
+ drivers/gpu/drm/i915/intel_memory_region.c    |  4 +-
+ drivers/infiniband/core/cma.c                 |  2 +-
+ drivers/infiniband/hw/cxgb4/id_table.c        |  4 +-
+ drivers/infiniband/hw/hns/hns_roce_ah.c       |  5 +-
+ drivers/infiniband/ulp/rtrs/rtrs-clt.c        |  2 +-
+ drivers/md/bcache/request.c                   |  2 +-
+ drivers/media/common/v4l2-tpg/v4l2-tpg-core.c |  8 +-
+ .../media/test-drivers/vidtv/vidtv_demod.c    |  8 +-
+ .../test-drivers/vivid/vivid-kthread-cap.c    |  2 +-
+ .../test-drivers/vivid/vivid-kthread-out.c    |  2 +-
+ .../media/test-drivers/vivid/vivid-radio-rx.c |  4 +-
+ .../media/test-drivers/vivid/vivid-sdr-cap.c  |  2 +-
+ .../test-drivers/vivid/vivid-touch-cap.c      |  2 +-
+ drivers/mmc/core/core.c                       |  4 +-
+ drivers/mmc/host/dw_mmc.c                     |  2 +-
+ drivers/mtd/nand/raw/nandsim.c                |  4 +-
+ drivers/mtd/tests/mtd_nandecctest.c           | 10 +--
+ drivers/mtd/tests/stresstest.c                |  8 +-
+ drivers/mtd/ubi/debug.c                       |  2 +-
+ drivers/mtd/ubi/debug.h                       |  6 +-
+ drivers/net/ethernet/broadcom/cnic.c          |  2 +-
+ .../chelsio/inline_crypto/chtls/chtls_io.c    |  4 +-
+ drivers/net/phy/at803x.c                      |  2 +-
+ drivers/net/team/team_mode_random.c           |  2 +-
+ drivers/net/wireguard/selftest/allowedips.c   | 20 ++---
+ drivers/net/wireguard/timers.c                |  4 +-
+ .../broadcom/brcm80211/brcmfmac/p2p.c         |  2 +-
+ .../net/wireless/intel/iwlwifi/mvm/mac-ctxt.c |  2 +-
+ drivers/pci/p2pdma.c                          |  2 +-
+ drivers/s390/scsi/zfcp_fc.c                   |  2 +-
+ drivers/scsi/fcoe/fcoe_ctlr.c                 |  4 +-
+ drivers/scsi/qedi/qedi_main.c                 |  2 +-
+ drivers/scsi/scsi_debug.c                     |  6 +-
+ fs/ceph/inode.c                               |  2 +-
+ fs/ceph/mdsmap.c                              |  2 +-
+ fs/ext2/ialloc.c                              |  2 +-
+ fs/ext4/ialloc.c                              |  2 +-
+ fs/ext4/mmp.c                                 |  8 +-
+ fs/ext4/super.c                               |  5 +-
+ fs/f2fs/gc.c                                  |  2 +-
+ fs/f2fs/segment.c                             |  8 +-
+ fs/ubifs/debug.c                              |  8 +-
+ fs/ubifs/lpt_commit.c                         | 14 +--
+ fs/ubifs/tnc_commit.c                         |  2 +-
+ fs/xfs/libxfs/xfs_alloc.c                     |  2 +-
+ fs/xfs/libxfs/xfs_ialloc.c                    |  2 +-
+ fs/xfs/xfs_error.c                            |  2 +-
+ include/linux/damon.h                         |  2 +-
+ include/linux/nodemask.h                      |  2 +-
+ include/linux/prandom.h                       |  6 --
+ include/linux/random.h                        | 24 ++++++
+ kernel/bpf/core.c                             |  4 +-
+ kernel/kcsan/selftest.c                       |  4 +-
+ kernel/locking/test-ww_mutex.c                |  4 +-
+ kernel/time/clocksource.c                     |  2 +-
+ lib/fault-inject.c                            |  2 +-
+ lib/find_bit_benchmark.c                      |  4 +-
+ lib/kobject.c                                 |  2 +-
+ lib/reed_solomon/test_rslib.c                 |  6 +-
+ lib/sbitmap.c                                 |  4 +-
+ lib/test-string_helpers.c                     |  2 +-
+ lib/test_fprobe.c                             |  5 +-
+ lib/test_hexdump.c                            | 10 +--
+ lib/test_kprobes.c                            |  5 +-
+ lib/test_list_sort.c                          |  2 +-
+ lib/test_printf.c                             |  2 +-
+ lib/test_rhashtable.c                         |  4 +-
+ lib/test_vmalloc.c                            |  8 +-
+ mm/kasan/kasan_test.c                         |  6 +-
+ mm/kfence/core.c                              |  4 +-
+ mm/kfence/kfence_test.c                       |  4 +-
+ mm/slub.c                                     |  2 +-
+ mm/swapfile.c                                 |  5 +-
+ net/802/garp.c                                |  2 +-
+ net/802/mrp.c                                 |  2 +-
+ net/batman-adv/bat_iv_ogm.c                   |  4 +-
+ net/batman-adv/bat_v_elp.c                    |  2 +-
+ net/batman-adv/bat_v_ogm.c                    |  4 +-
+ net/batman-adv/network-coding.c               |  2 +-
+ net/bluetooth/mgmt.c                          |  5 +-
+ net/can/j1939/socket.c                        |  2 +-
+ net/can/j1939/transport.c                     |  2 +-
+ net/ceph/mon_client.c                         |  2 +-
+ net/ceph/osd_client.c                         |  2 +-
+ net/core/neighbour.c                          |  4 +-
+ net/core/pktgen.c                             | 37 ++++----
+ net/core/stream.c                             |  2 +-
+ net/ipv4/icmp.c                               |  2 +-
+ net/ipv4/igmp.c                               |  6 +-
+ net/ipv4/inet_connection_sock.c               |  2 +-
+ net/ipv4/inet_hashtables.c                    |  2 +-
+ net/ipv4/route.c                              |  4 +-
+ net/ipv4/tcp_bbr.c                            |  2 +-
+ net/ipv4/tcp_input.c                          |  3 +-
+ net/ipv6/addrconf.c                           |  8 +-
+ net/ipv6/mcast.c                              | 10 +--
+ net/ipv6/output_core.c                        |  8 +-
+ net/ipv6/route.c                              |  2 +-
+ net/netfilter/ipvs/ip_vs_twos.c               |  4 +-
+ net/netfilter/nf_conntrack_core.c             |  4 +-
+ net/netfilter/nf_nat_helper.c                 |  2 +-
+ net/netlink/af_netlink.c                      |  2 +-
+ net/packet/af_packet.c                        |  4 +-
+ net/sched/act_gact.c                          |  2 +-
+ net/sched/act_sample.c                        |  2 +-
+ net/sched/sch_choke.c                         |  2 +-
+ net/sched/sch_netem.c                         |  4 +-
+ net/sctp/socket.c                             |  2 +-
+ net/sctp/transport.c                          |  2 +-
+ net/sunrpc/cache.c                            |  2 +-
+ net/sunrpc/xprtsock.c                         |  2 +-
+ net/tipc/socket.c                             |  2 +-
+ net/vmw_vsock/af_vsock.c                      |  3 +-
+ net/xfrm/xfrm_state.c                         |  2 +-
+ 138 files changed, 309 insertions(+), 318 deletions(-)
 
-In my scenario - I run the workload in a container and use DAMON or PSI to =
-squeeze the cold pages out to zswap.
-
-Thanks,
-Badari
-
-
+-- 
+2.38.1
