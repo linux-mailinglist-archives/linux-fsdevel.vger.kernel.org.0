@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6BC3F6094CB
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Oct 2022 18:41:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2CB2B6094CD
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Oct 2022 18:42:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230401AbiJWQln (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Oct 2022 12:41:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45106 "EHLO
+        id S230392AbiJWQmS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Oct 2022 12:42:18 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230355AbiJWQlm (ORCPT
+        with ESMTP id S229772AbiJWQmR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Oct 2022 12:41:42 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3CB665667;
-        Sun, 23 Oct 2022 09:41:41 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id q71so6804037pgq.8;
-        Sun, 23 Oct 2022 09:41:41 -0700 (PDT)
+        Sun, 23 Oct 2022 12:42:17 -0400
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 095A130F7A;
+        Sun, 23 Oct 2022 09:42:17 -0700 (PDT)
+Received: by mail-pj1-x102b.google.com with SMTP id m6-20020a17090a5a4600b00212f8dffec9so1650133pji.0;
+        Sun, 23 Oct 2022 09:42:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Y2bDAIefZxbRVSM/SaH1NL1oBBLTDGxU2sWjuEVySo0=;
-        b=Al/bcK0raH1SRXE3/4nftiI+qFU0z7u3k5IRgL6icE1yDmPYX2WINBttZZWg6W9gdw
-         qHV+4EGaMiArBjM6MvF2wwY6mN2LVba5NOMZj/QrP/5+Bryf2WTfQlW+08VUjSMr5MG/
-         13kG3W3i7TdUKHtJrSytliHcOPp9cuLRBFRAuhlht3va1ku6Xf1g7XQFZMHBzKnqsAMH
-         Ae21n34Q7N6EUO2YWsClQUHKZZwnQnTl2NdNcEAbjYYplZ6LBpjtKQj1EwcNKC750YTE
-         uI7vtK/s1V8cusDsD9AUW+bkBmYF9/UMTyhRCRsXOxv79AISblKjdYeq2okdLegW+Jpw
-         MZ8A==
+        bh=y/JN3nDWwlvz0zr+zWQj4q64audZwnviw+yHCDgZXPo=;
+        b=gZsn90LXl5nV61F9U0RAcTQqSQZdYebM2knsbimY3UTaxWa5vVVyv5Nk2qgPQ22FBc
+         R3+gW5rWNzdCx3xJ8nDUsQJCwpWKlLcPAk7rlAoMMIo92R4T+Z0iTtqBop0YDAWHs9uK
+         2tan3wUNJhE0AA84wdSBWgHglSZuhsKsdV24N1z/dVDwodFJUJJohTdTb10aZ3q7kyzO
+         HN8qm+ZCa2pmsgf1LrSkVov9bijdkrdeRB0k9Uia8aPI/O6KNyjbly4gzuWnPv9ZB2bF
+         7ATVOQvh2cDtNLGkksEIYvsD7ENevD2AoUF08EZmvjHvK7eTsNXc9avLnmyMo0JJomzs
+         onjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Y2bDAIefZxbRVSM/SaH1NL1oBBLTDGxU2sWjuEVySo0=;
-        b=rxm/W7eI9a0komlZLMZWCKPXIs/fD8BKPFgqGSUU0vcG/NAta5SUHft2TQlSoq/os8
-         AtD0T+C5m+JxcaIXFDGnFgdf4xm2Y+RZSxyqGyOhgUxVH6B9vnB9p+BZm9HOnTF7Am+C
-         aDijTa3+TxsHf6urxkHIt4AB/HTv1OVR3993BfJcP6CvRkmASiIkgqQQB1imri+/3zCj
-         n7gPTwfI8l0AOGZu/iWjz9P/vetGn6tNc9Viqr5jj3RgH6rz0EL7lza5gzi3ddPW09ba
-         GK35aLFVoKjzObqrleU6QKU/s3Ibe7R2ZiDzzOoI8GrHMiiHgkCAZiTbCpLTVoZXx9dl
-         cHjQ==
-X-Gm-Message-State: ACrzQf0I3brjG7BhCcw15Y7QxNdUXqE5/1urXm8Uy5E3KiyoK2J3d2pX
-        jYzMYtgMaLA9li44uSueZMA=
-X-Google-Smtp-Source: AMsMyM7irLWDlav1VeIiY5mui3ckyNhI3n2zU5dxXGRJ0JYZXVfYymRXmX9OmNkmEthf8F8HB6u5Zw==
-X-Received: by 2002:a05:6a00:27a1:b0:566:8937:27c2 with SMTP id bd33-20020a056a0027a100b00566893727c2mr29010630pfb.24.1666543301375;
-        Sun, 23 Oct 2022 09:41:41 -0700 (PDT)
+        bh=y/JN3nDWwlvz0zr+zWQj4q64audZwnviw+yHCDgZXPo=;
+        b=kTfl7I6DZkaUDpwh1ZHpudf8xmU4sVgiaaqKz2D108AxcV0O0tKm+jIngfO8IGpH7P
+         /Ji8LZMgT1v5IC5LJ/EcMtr2AfQxejZur7VDmRGyT9XYLUwIkqh73WY+rS/ZuSwTy/Vq
+         VqJkZRbffMI29aoi8Lt/35z4RTBYHFVfaZDbaDGRIPW7ZDU/10hNHUjvUrqVDX2Hhxcr
+         DTQRqBHwXUkPnkbvH/ZnCTYvWpszDxmEF5Ys1XeGyCur/0IE46AqW0ZrSEIrAkK6pH4Q
+         cw/7cwb78XmVHk1W/ZTo4XX0HXT6zjD7aZRHKsLj2UQR84j43qkeoU4m4ILuDayQl/XG
+         EmYQ==
+X-Gm-Message-State: ACrzQf3aTw9uhw+F9DoOn5itSi565IL5CbP8reuIlcOo+SMdGzT+NJuh
+        9FtgPNV4ePV5911pbu6ItQo=
+X-Google-Smtp-Source: AMsMyM5zNx6aq+Gv68lpF7ZJA9MebNHteDpkuxTUQkSuQuvYV7T9nBmrooZ0dTjV6fKFMK4f9zkD9Q==
+X-Received: by 2002:a17:90b:38d1:b0:20d:8f2a:c4c4 with SMTP id nn17-20020a17090b38d100b0020d8f2ac4c4mr67611720pjb.192.1666543336554;
+        Sun, 23 Oct 2022 09:42:16 -0700 (PDT)
 Received: from localhost ([223.104.41.250])
-        by smtp.gmail.com with ESMTPSA id f7-20020a170902684700b0017a04542a45sm5618366pln.159.2022.10.23.09.41.39
+        by smtp.gmail.com with ESMTPSA id y199-20020a6264d0000000b0056b9a740ec2sm2259225pfb.156.2022.10.23.09.42.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Oct 2022 09:41:41 -0700 (PDT)
+        Sun, 23 Oct 2022 09:42:16 -0700 (PDT)
 From:   Hawkins Jiawei <yin31149@gmail.com>
-To:     yin31149@gmail.com,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>
+To:     yin31149@gmail.com, Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>
 Cc:     18801353760@163.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-nfs@vger.kernel.org
-Subject: [PATCH -next 2/5] nfs: fix possible null-ptr-deref when parsing param
-Date:   Mon, 24 Oct 2022 00:39:45 +0800
-Message-Id: <20221023163945.39920-3-yin31149@gmail.com>
+        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
+Subject: [PATCH -next 3/5] ceph: fix possible null-ptr-deref when parsing param
+Date:   Mon, 24 Oct 2022 00:39:47 +0800
+Message-Id: <20221023163945.39920-4-yin31149@gmail.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20221023163945.39920-1-yin31149@gmail.com>
 References: <20221023163945.39920-1-yin31149@gmail.com>
@@ -78,49 +78,32 @@ According to commit "vfs: parse: deal with zero length string value",
 kernel will set the param->string to null pointer in vfs_parse_fs_string()
 if fs string has zero length.
 
-Yet the problem is that, nfs_fs_context_parse_param() will dereferences the
+Yet the problem is that, ceph_parse_mount_param() will dereferences the
 param->string, without checking whether it is a null pointer, which may
 trigger a null-ptr-deref bug.
 
 This patch solves it by adding sanity check on param->string
-in nfs_fs_context_parse_param().
+in ceph_parse_mount_param().
 
 Signed-off-by: Hawkins Jiawei <yin31149@gmail.com>
 ---
- fs/nfs/fs_context.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ fs/ceph/super.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
-index 4da701fd1424..0c330bc13ef2 100644
---- a/fs/nfs/fs_context.c
-+++ b/fs/nfs/fs_context.c
-@@ -684,6 +684,8 @@ static int nfs_fs_context_parse_param(struct fs_context *fc,
- 			return ret;
+diff --git a/fs/ceph/super.c b/fs/ceph/super.c
+index 3fc48b43cab0..341e23fe29eb 100644
+--- a/fs/ceph/super.c
++++ b/fs/ceph/super.c
+@@ -417,6 +417,9 @@ static int ceph_parse_mount_param(struct fs_context *fc,
+ 		param->string = NULL;
  		break;
- 	case Opt_vers:
+ 	case Opt_mds_namespace:
 +		if (!param->string)
-+			goto out_invalid_value;
- 		trace_nfs_mount_assign(param->key, param->string);
- 		ret = nfs_parse_version_string(fc, param->string);
- 		if (ret < 0)
-@@ -696,6 +698,8 @@ static int nfs_fs_context_parse_param(struct fs_context *fc,
- 		break;
- 
- 	case Opt_proto:
-+		if (!param->string)
-+			goto out_invalid_value;
- 		trace_nfs_mount_assign(param->key, param->string);
- 		protofamily = AF_INET;
- 		switch (lookup_constant(nfs_xprt_protocol_tokens, param->string, -1)) {
-@@ -732,6 +736,8 @@ static int nfs_fs_context_parse_param(struct fs_context *fc,
- 		break;
- 
- 	case Opt_mountproto:
-+		if (!param->string)
-+			goto out_invalid_value;
- 		trace_nfs_mount_assign(param->key, param->string);
- 		mountfamily = AF_INET;
- 		switch (lookup_constant(nfs_xprt_protocol_tokens, param->string, -1)) {
++			return invalfc(fc, "Bad value '%s' for mount option '%s'\n",
++				       param->string, param->key);
+ 		if (!namespace_equals(fsopt, param->string, strlen(param->string)))
+ 			return invalfc(fc, "Mismatching mds_namespace");
+ 		kfree(fsopt->mds_namespace);
 -- 
 2.25.1
 
