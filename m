@@ -2,82 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8CA3609664
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Oct 2022 23:09:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 01C23609697
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 23 Oct 2022 23:46:47 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229719AbiJWVJF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Oct 2022 17:09:05 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56644 "EHLO
+        id S229608AbiJWVqq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Oct 2022 17:46:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51012 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229497AbiJWVJE (ORCPT
+        with ESMTP id S229497AbiJWVqp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Oct 2022 17:09:04 -0400
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 83D396686E;
-        Sun, 23 Oct 2022 14:09:03 -0700 (PDT)
-Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 29NL7D2p025712
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 23 Oct 2022 17:07:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1666559243; bh=zbENVyGNAon7zNh9ohkJFECSMTzXRXbcNrepMHxrEAM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=FXNrxCWraFmMAOW+vqR38ZOexAnGjiiR9A8LdOwTHYuoNMBlL77R2zP0ktOpr83lt
-         VqRJZ2eM6bTmotP3IJ0ZjbLCm4EYxGWCpxZWFf6OGNB4ci103uHdfxC4WF6VQ2zTX/
-         sdIQ8AMmuFf2tnrWyiobYzmlMOkVIMT/l7Xfqoj9INuJk54r2BALT8VjDgqDT3Zhdd
-         VJdERnwc5/7VlgvkT7OeoHx0mHgokAaWpeUY/UYmdBjcPk3IReiiQVTczMP0A0m8lc
-         roc5e18VhoTm14PI9JdmJ03W1yO7BPKEnbbIuJ9deFvxdyuN3p81VawGcIo+Cv1H4t
-         KETGAaOyQuEfg==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-        id BE8CB15C33A3; Sun, 23 Oct 2022 17:07:13 -0400 (EDT)
-Date:   Sun, 23 Oct 2022 17:07:13 -0400
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Jakub Kicinski <kuba@kernel.org>
-Cc:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Christoph =?iso-8859-1?Q?B=F6hmwalder?= 
-        <christoph.boehmwalder@linbit.com>,
-        Jani Nikula <jani.nikula@linux.intel.com>,
-        Jason Gunthorpe <jgg@nvidia.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        SeongJae Park <sj@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Helge Deller <deller@gmx.de>, netdev@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mmc@vger.kernel.org, linux-parisc@vger.kernel.org
-Subject: Re: [PATCH v1 0/5] convert tree to
- get_random_u32_{below,above,between}()
-Message-ID: <Y1WtAZfciG1z2CC7@mit.edu>
-References: <20221022014403.3881893-1-Jason@zx2c4.com>
- <20221021205522.6b56fd24@kernel.org>
- <Y1NwJJOIB4gI5G11@zx2c4.com>
- <20221021223242.05df0a5b@kernel.org>
- <Y1OD2tdVwQsydSNV@zx2c4.com>
- <20221021230322.00dd045c@kernel.org>
+        Sun, 23 Oct 2022 17:46:45 -0400
+Received: from mail-ed1-x535.google.com (mail-ed1-x535.google.com [IPv6:2a00:1450:4864:20::535])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6D7D63877;
+        Sun, 23 Oct 2022 14:46:43 -0700 (PDT)
+Received: by mail-ed1-x535.google.com with SMTP id e18so24889235edj.3;
+        Sun, 23 Oct 2022 14:46:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Se5sq1EWvaobTMZtui44x/tF75brtlSQy3TINeor1Uc=;
+        b=F+mnlfCBJOk1C3VHVHiVUyhy05lA5cd3iEx2MuQW06JKKIeXEH9bay4qzgVRDBKa5w
+         6mcyTlZxA82FzBWXDPAuGM1S1MweGWDH6nQJZ4FM6Is35UG0dp8kc+AIcpwX7NUnd0+n
+         X79ER9swKhIe31UyJKO3b/kyKgglHF0ECJblPMDbbfKvmwdwEIBnu0aa5xg2V0k8eL/a
+         9o6i0KMMyUtbKwC4x7A2MhEltJtN0LNMQ1DnXZY2SCp1fexi8xHd9l3rWswBBEz/sbpG
+         BAVkWyeNxyLys66ysuIHgoMq3qbgqEGzDkbzsmED3/zBwDt2Xja0b2Ew33DUh0CTpnnc
+         J/NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Se5sq1EWvaobTMZtui44x/tF75brtlSQy3TINeor1Uc=;
+        b=c3KbvywkH2y/LqdFGmFJuOuFFxXq+cyivC2XnmF+eSb8SUV2edqb9ABO0VI3D6bE9M
+         uCNwegtpRdbJlTQAXn4R055UuKkaFn6EwyvJQ/DdjefgtOAShMeW1XgNKSc943gGlmwQ
+         fVtYN5WE89IcyKu6CWbEdRGgaucRO/L1SVoVdVo9nz3bTu40F3ZE6P9p/o8q39NFs+sH
+         GY+5noJ+aTotsmwCYU6wCDyywQUGcTUYJNX1prjUoWwKfWX89tjGXzB++Sz2VryOv0NE
+         p4wLfWx1//rhrJsNmA1Vl2NJTLTEuk81/idnLH56Y9Vene5v2fttEqw4Px6Yjt7ezKv5
+         sQCQ==
+X-Gm-Message-State: ACrzQf07Ct8NZ5gDzOuimtqIY7n/D/VTR1+/n6GX0YKps+xuSwlGl7lo
+        ymIyV+zCu+KrKD2Z3ggXWTH7xdLnSJw=
+X-Google-Smtp-Source: AMsMyM4OIc2lpOybZrRYmDMRJ1dY78X60wTLMm+rLyYGD363q6PdC2Au+61wGGv2HpSeC894xJ2NSQ==
+X-Received: by 2002:a17:907:3da2:b0:78d:51c4:5b80 with SMTP id he34-20020a1709073da200b0078d51c45b80mr24518652ejc.716.1666561602214;
+        Sun, 23 Oct 2022 14:46:42 -0700 (PDT)
+Received: from localhost.localdomain (ip-217-105-46-178.ip.prioritytelecom.net. [217.105.46.178])
+        by smtp.gmail.com with ESMTPSA id j16-20020aa7c0d0000000b0045bccd8ab83sm1371407edp.1.2022.10.23.14.46.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Oct 2022 14:46:41 -0700 (PDT)
+From:   Nam Cao <namcaov@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     namcaov@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] coredump: wrap dump_emit_page() in #ifdef CONFIG_ELF_CORE
+Date:   Sun, 23 Oct 2022 23:46:19 +0200
+Message-Id: <20221023214619.128702-1-namcaov@gmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221021230322.00dd045c@kernel.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -85,37 +70,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 21, 2022 at 11:03:22PM -0700, Jakub Kicinski wrote:
-> On Sat, 22 Oct 2022 07:47:06 +0200 Jason A. Donenfeld wrote:
-> > On Fri, Oct 21, 2022 at 10:32:42PM -0700, Jakub Kicinski wrote:
-> > > But whatever. I mean - hopefully there aren't any conflicts in the ~50
-> > > networking files you touch. I just wish that people didn't pipe up with
-> > > the tree wide changes right after the merge window. Feels like the
-> > > worst possible timing.  
-> > 
-> > Oh, if the timing is what makes this especially worrisome, I have
-> > no qualms about rebasing much later, and reposting this series then.
-> > I'll do that.
-> 
-> Cool, thanks! I promise to not be grumpy if you repost around rc6 :)
+The function dump_emit_page() is only called in dump_user_range(), which
+is wrapped in #ifdef CONFIG_ELF_CORE. This causes a build error when
+CONFIG_ELF_CORE is disabled:
 
-One way of making things less painful for the stable branch and for
-the upstream branch is to *add* new helpers instead of playing
-replacement games like s/prandom_u32_max/get_random_u32_below/.  This
-is what causes the patch conflict problems.
+  CC      fs/coredump.o
+fs/coredump.c:834:12: error: ‘dump_emit_page’ defined but not used [-Werror=unused-function]
+  834 | static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+      |            ^~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
 
-One advantage of at least adding the new functions to the stable
-branches, even if we don't do the wholesale replacement, is that it
-makes it much less likely that a backported patch, which uses the new
-API, won't fail to compile --- and of course, the major headache case
-is one where it's not noticed at first because it didn't get picked up
-in people's test compiles until after the Linux x.y.z release has been
-pushed out.
+Wrap dump_emit_page() in #ifdef CONFIG_ELF_CORE to avoid build problem.
 
-Whether it's worth doing the wholesale replacement is a different
-question, but separating "add the new functions with one or two use
-cases so the functions are actulaly _used_" from the "convert the
-world to use the new functions" from the "remove the old functions",
-might life easier.
+Signed-off-by: Nam Cao <namcaov@gmail.com>
+---
+ fs/coredump.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-					- Ted
+diff --git a/fs/coredump.c b/fs/coredump.c
+index 7bad7785e8e6..8663042ebe9c 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -831,6 +831,7 @@ static int __dump_skip(struct coredump_params *cprm, size_t nr)
+ 	}
+ }
+ 
++#ifdef CONFIG_ELF_CORE
+ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ {
+ 	struct bio_vec bvec = {
+@@ -863,6 +864,7 @@ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ 
+ 	return 1;
+ }
++#endif
+ 
+ int dump_emit(struct coredump_params *cprm, const void *addr, int nr)
+ {
+-- 
+2.25.1
+
