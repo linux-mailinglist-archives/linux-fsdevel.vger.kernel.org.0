@@ -2,105 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB7FD60BC4F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 23:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 2956960BC54
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 23:38:49 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231658AbiJXVgz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Oct 2022 17:36:55 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53630 "EHLO
+        id S229982AbiJXViq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Oct 2022 17:38:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbiJXVgh (ORCPT
+        with ESMTP id S231145AbiJXVi3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Oct 2022 17:36:37 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D4572DF0B0;
-        Mon, 24 Oct 2022 12:43:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=59TRiYUXIr5hwsRyZRrFskT3Jp1v+y3YCFk34nmAHUA=; b=RWaoMVk6BPHICeFJGa64P+TtYS
-        lq+sEC3X3P6L3UTF8roXaBRlKW/dn6ZZSPv8sql0Bq94mmfKcGyd20heEGzrmKOPxJk3I3q5ocDIn
-        rZQPq90/4mybKupKG3u4huHqxJCrrWGNEOuPBYM2rIb6H9WuW6yrLD6np+IyZE9bNS7zRunkvbrVS
-        kGzoHEUY7j5v5JqpULdFDMYN3lKANNwQv8Kwkz7gBZ7ecSVjXla5q64p4LZsQu4fbmarbbcif9lXY
-        o1WMbUkytqszHQgfmeS7hcb6y9ciIzemtb9F2l0G/ZP1Xp4kGUxgavPMMqfxbqbGFy/C6jzVp77bS
-        Tdoa8djA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1on3LB-00FglR-TA; Mon, 24 Oct 2022 19:42:30 +0000
-Date:   Mon, 24 Oct 2022 20:42:29 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH v3 02/23] filemap: Added filemap_get_folios_tag()
-Message-ID: <Y1bqpYNvnxmZL+KW@casper.infradead.org>
-References: <20221017202451.4951-1-vishal.moola@gmail.com>
- <20221017202451.4951-3-vishal.moola@gmail.com>
+        Mon, 24 Oct 2022 17:38:29 -0400
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70EB91C8419
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 12:46:18 -0700 (PDT)
+Received: by mail-qt1-x82b.google.com with SMTP id g11so6272678qts.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 12:46:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JBAZHyd5XgygP1+md+qYdTHi+gwkM0InAuquo+/p7pw=;
+        b=WBTb2zVyYxNOefcbYu3yHqG/UB1C+xJGDwXHwakVh38aS5ZuDINwt8jsxNEAQqvkEi
+         XrcSmdHK+SpPVQiz7c1X4aBcmHBv21rx1vohljqxcxvdc1TQj/sdvazdSXaHo0IYXHLv
+         2TH61pa0fSCvroXIW67FQ2PDONkPgzt3hTCwY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JBAZHyd5XgygP1+md+qYdTHi+gwkM0InAuquo+/p7pw=;
+        b=rczQugpqHqQ0zWT/hIYBfw9foAZgKwNaoyrgoXXjb/gi98MKGVGgssLdLStXDsuv1M
+         BzZj/qK2mry9E6EFpHX0PXXlLLkSFwBlfKdxeu0WTvxquBaeX4BeEnp+NWd038I+f+71
+         VmbhAb28/n9fEskUn1sBmduVl2q+JF4RVpcP6cUu7UkdLsKjBev2pEU2TqcoAdCMOubf
+         4rcE1jAAAWGZPINOHGoAYB4zZ4p904uZWMcBpl/h7T9mW1SUSt0JYedp8tbzrm+PNeQM
+         BbOLWCSGW7crnN1I6yne/ajhHDTN+u9eYnjt3sbnrplvSd/GelIrWsmBNFA+uKphZQnQ
+         NUWg==
+X-Gm-Message-State: ACrzQf04jbJ7qEacP62uiz2K62UW7xdb38mJH1dCmwenI0XBUgwZuVD9
+        7Mqlrb9WMX5KUxiVbkY2QvMZ+5A0JB7tjA==
+X-Google-Smtp-Source: AMsMyM6rvKUZl0qcnQuZtcgPH3gH88mYwJpIReSv7G1+nRelVNMsVUfLddh5Lad2Zbx1mqpR0/GmlQ==
+X-Received: by 2002:a05:622a:18a:b0:39a:ffaf:6c9d with SMTP id s10-20020a05622a018a00b0039affaf6c9dmr27916564qtw.253.1666640618061;
+        Mon, 24 Oct 2022 12:43:38 -0700 (PDT)
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com. [209.85.128.179])
+        by smtp.gmail.com with ESMTPSA id y14-20020a05620a44ce00b006ce76811a07sm558375qkp.75.2022.10.24.12.43.36
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Oct 2022 12:43:36 -0700 (PDT)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-35befab86a4so94726317b3.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 12:43:36 -0700 (PDT)
+X-Received: by 2002:a81:2544:0:b0:360:c270:15a1 with SMTP id
+ l65-20020a812544000000b00360c27015a1mr29252227ywl.67.1666640616299; Mon, 24
+ Oct 2022 12:43:36 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221017202451.4951-3-vishal.moola@gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <YjDj3lvlNJK/IPiU@bfoster> <YjJPu/3tYnuKK888@casper.infradead.org>
+ <YjM88OwoccZOKp86@bfoster> <YjSTq4roN/LJ7Xsy@bfoster> <YjSbHp6B9a1G3tuQ@casper.infradead.org>
+ <CAHk-=wh6V6TZjjnqBvktbaho_wqfjZYQ9zcKJTV8EP2Kygn0uQ@mail.gmail.com>
+ <6350a5f07bae2_6be12944c@dwillia2-xfh.jf.intel.com.notmuch>
+ <CAHk-=wizsHtGa=7dESxXd6VNU2mdHqhvCv88FB3xcWb3o3iJMw@mail.gmail.com> <feb89e52675ed630e52dc8aacfa66feb6f19fd3a.camel@linux.intel.com>
+In-Reply-To: <feb89e52675ed630e52dc8aacfa66feb6f19fd3a.camel@linux.intel.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Mon, 24 Oct 2022 12:43:20 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wj7y5AJKGWExD3TmNj=kOhaJN2Or1p5VXC=P0-YPv97NQ@mail.gmail.com>
+Message-ID: <CAHk-=wj7y5AJKGWExD3TmNj=kOhaJN2Or1p5VXC=P0-YPv97NQ@mail.gmail.com>
+Subject: Re: writeback completion soft lockup BUG in folio_wake_bit()
+To:     Tim Chen <tim.c.chen@linux.intel.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Linux-MM <linux-mm@kvack.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-xfs <linux-xfs@vger.kernel.org>,
+        Hugh Dickins <hughd@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 17, 2022 at 01:24:30PM -0700, Vishal Moola (Oracle) wrote:
-> This is the equivalent of find_get_pages_range_tag(), except for folios
-> instead of pages.
-> 
-> One noteable difference is filemap_get_folios_tag() does not take in a
-> maximum pages argument. It instead tries to fill a folio batch and stops
-> either once full (15 folios) or reaching the end of the search range.
-> 
-> The new function supports large folios, the initial function did not
-> since all callers don't use large folios.
+On Mon, Oct 24, 2022 at 12:39 PM Tim Chen <tim.c.chen@linux.intel.com> wrote:
+>
+> I do think that the original locked page on migration problem was fixed
+> by commit 9a1ea439b16b. Unfortunately the customer did not respond to
+> us when we asked them to test their workload when that patch went
+> into the mainline.
 
-Reviewed-by: Matthew Wilcow (Oracle) <willy@infradead.org>
+Oh well.
 
-> +/**
-> + * filemap_get_folios_tag - Get a batch of folios matching @tag.
-> + * @mapping:    The address_space to search
-> + * @start:      The starting page index
-> + * @end:        The final page index (inclusive)
-> + * @tag:        The tag index
-> + * @fbatch:     The batch to fill
-> + *
-> + * Same as filemap_get_folios, but only returning folios tagged with @tag
+> I don't have objection to Matthew's fix to remove the bookmark code,
+> now that it is causing problems with this scenario that I didn't
+> anticipate in my original code.
 
-If you add () after filemap_get_folios, it turns into a nice link in
-the html documentation.
+I'd really like to avoid *another* "we can't actually verify that this
+helps" change in this area, so I'm hoping that the reporter that Dan
+was talking to could test that patch.
 
-> + *
-> + * Return: The number of folios found
+Otherwise we're kind of going back-and-forth based on "this might fix
+things", which just feels really fragile and reminds me of the bad old
+days when we had the "one step forward, two steps back" dance with
+some of the suspend/resume issues.
 
-Missing full stop at the end of this line.
+I realize that this code needs some extreme loads (and likely pretty
+special hardware too) to actually become problematic, so testing is
+_always_ going to be a bit of a problem, but still...
 
-> + * Also update @start to index the next folio for traversal
-
-Ditto.
-
-> + */
-> +unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
-> +			pgoff_t end, xa_mark_t tag, struct folio_batch *fbatch)
-> +{
-> +	XA_STATE(xas, &mapping->i_pages, *start);
-> +	struct folio *folio;
-> +
-> +	rcu_read_lock();
-> +	while ((folio = find_get_entry(&xas, end, tag)) != NULL) {
-> +		/* Shadow entries should never be tagged, but this iteration
-> +		 * is lockless so there is a window for page reclaim to evict
-> +		 * a page we saw tagged. Skip over it.
-> +		 */
-
-For multiline comments, the "/*" should be on a line by itself.
-
+               Linus
