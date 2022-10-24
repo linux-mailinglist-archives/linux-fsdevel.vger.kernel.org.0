@@ -2,49 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D9D1609FF1
+	by mail.lfdr.de (Postfix) with ESMTP id 22BF7609FF0
 	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 13:13:20 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230113AbiJXLNO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Oct 2022 07:13:14 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35902 "EHLO
+        id S230146AbiJXLNQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Oct 2022 07:13:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229679AbiJXLNM (ORCPT
+        with ESMTP id S230134AbiJXLNN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Oct 2022 07:13:12 -0400
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA1E63C15F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 04:13:05 -0700 (PDT)
+        Mon, 24 Oct 2022 07:13:13 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE847474C3;
+        Mon, 24 Oct 2022 04:13:05 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 52015B810FA
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 11:13:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BBDCC433D7;
-        Mon, 24 Oct 2022 11:13:00 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 94B6361229;
+        Mon, 24 Oct 2022 11:13:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9F5C43470;
+        Mon, 24 Oct 2022 11:13:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666609982;
-        bh=h4fqric+rvQ4K/hF+aFxuDdUtIc/rw0XwM7MvofQLbY=;
+        s=k20201202; t=1666609984;
+        bh=tugYmxTjSAmzWp2HuL0/jzrCLECCOvxL5Y8QWdWcmyI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wm2u2cxrQ5LYrJTfayhmimiLqFzSi162c5qAWG/VPMU45N+j5oVxp+Lzoyn7KskEw
-         Il4L3niijNktC7Fsxrbp8HBoPiLcSIZO/E3+zFIa0vi38MvidQMk9Fnlx1Br9plUC1
-         BvU5SwQqDXn9PeXkZoKxMp3iWIoJxFbeskAc5TFnJQKfYnge+rcIFBO9ZqFcQUMaKW
-         FToN+zmr5jwpKj0ysiltwSDFEsb6Ab37Ya7WsfnVBtUAl7aaRFfbqsaBDrt0zCF8kn
-         42ySlW18+wSZKiFV/BjhcLemgZXg0S57GkfoCcgqztBtq5bjSrjRnWvpj4APWwS5K7
-         JhyktB/vs7mug==
+        b=LoQigfp5QwNhzlzOw0CuMvP1+g+rxQ/Bn7ADsH8zy2xk21/H+C3V06qefpbl4SEYM
+         fpC4DhTMUed5woeQqMsYhVVxM9LKd30sTZNKgUcbosobZqR6t6T2/dhlkDk5CN5Cvz
+         MujWhw2NSWeP3Lx7ZcPYOXAOMFjxAZYkJmWAnjmylxyhrGevNto+S+BTbzHH2SdXRt
+         XrNHCrikVa9FDGCf6LMOQsVAgRgp4k8uRdA+xDyHWAAruIVIJGbQg8ovwp9+gl9Y6l
+         hGdMvsfgiKPUV+XyiKc4HYmo8ovbAjs4LPXM3v0GvIu17qGkXsllL7q1NqpqGbuRI6
+         dDwJ+skbQQPiQ==
 From:   Christian Brauner <brauner@kernel.org>
 To:     Seth Forshee <sforshee@kernel.org>, Christoph Hellwig <hch@lst.de>,
         linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 2/8] fs: use type safe idmapping helpers
-Date:   Mon, 24 Oct 2022 13:12:43 +0200
-Message-Id: <20221024111249.477648-3-brauner@kernel.org>
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH 3/8] caps: use type safe idmapping helpers
+Date:   Mon, 24 Oct 2022 13:12:44 +0200
+Message-Id: <20221024111249.477648-4-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221024111249.477648-1-brauner@kernel.org>
 References: <20221024111249.477648-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9608; i=brauner@kernel.org; h=from:subject; bh=h4fqric+rvQ4K/hF+aFxuDdUtIc/rw0XwM7MvofQLbY=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSHFeu+M/RTkDRWWnapSWV5JX+/1GwVt46rlUyVO08tq+6X PPSmo5SFQYyLQVZMkcWh3SRcbjlPxWajTA2YOaxMIEMYuDgFYCIq7gz/k6w3Luh/u7Wh1i9Vy/bBhC V37+gYX+W8ynVKsfnjK7GTQYwMO1arrEgTfH310Vw98aXyvXV1FtumLPq0v0xo3sYPEp7z2AA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6289; i=brauner@kernel.org; h=from:subject; bh=tugYmxTjSAmzWp2HuL0/jzrCLECCOvxL5Y8QWdWcmyI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSHFesKFqgLrligm/vvmfyuDd9ZTeOl2y9Xx39QPnF7w+Ww iQVbO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyoYGRYfPB9p3Xs/95h5QvMDtk4r 3t54Uth1M9ZCac+bPtqpF8LivDf48JaQoKTcWTGmT3eUkdef/Hpjr/Et//yKnmu2qWPP40lwsA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -66,260 +67,169 @@ Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 
 Notes:
 
- fs/coredump.c    |  4 ++--
- fs/exec.c        | 16 ++++++++--------
- fs/inode.c       |  8 ++++----
- fs/namei.c       | 40 ++++++++++++++++++++--------------------
- fs/remap_range.c |  2 +-
- fs/stat.c        |  7 +++++--
- 6 files changed, 40 insertions(+), 37 deletions(-)
+ kernel/capability.c  |  4 ++--
+ security/commoncap.c | 51 ++++++++++++++++++++++----------------------
+ 2 files changed, 28 insertions(+), 27 deletions(-)
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index 7bad7785e8e6..a133103eb721 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -716,8 +716,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
- 		 * filesystem.
- 		 */
- 		mnt_userns = file_mnt_user_ns(cprm.file);
--		if (!uid_eq(i_uid_into_mnt(mnt_userns, inode),
--			    current_fsuid())) {
-+		if (!vfsuid_eq_kuid(i_uid_into_vfsuid(mnt_userns, inode),
-+				    current_fsuid())) {
- 			pr_info_ratelimited("Core dump to %s aborted: cannot preserve file owner\n",
- 					    cn.corename);
- 			goto close_fail;
-diff --git a/fs/exec.c b/fs/exec.c
-index 349a5da91efe..dd91adec7a11 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -1591,8 +1591,8 @@ static void bprm_fill_uid(struct linux_binprm *bprm, struct file *file)
- 	struct user_namespace *mnt_userns;
- 	struct inode *inode = file_inode(file);
- 	unsigned int mode;
--	kuid_t uid;
--	kgid_t gid;
-+	vfsuid_t vfsuid;
-+	vfsgid_t vfsgid;
- 
- 	if (!mnt_may_suid(file->f_path.mnt))
- 		return;
-@@ -1611,23 +1611,23 @@ static void bprm_fill_uid(struct linux_binprm *bprm, struct file *file)
- 
- 	/* reload atomically mode/uid/gid now that lock held */
- 	mode = inode->i_mode;
--	uid = i_uid_into_mnt(mnt_userns, inode);
--	gid = i_gid_into_mnt(mnt_userns, inode);
-+	vfsuid = i_uid_into_vfsuid(mnt_userns, inode);
-+	vfsgid = i_gid_into_vfsgid(mnt_userns, inode);
- 	inode_unlock(inode);
- 
- 	/* We ignore suid/sgid if there are no mappings for them in the ns */
--	if (!kuid_has_mapping(bprm->cred->user_ns, uid) ||
--		 !kgid_has_mapping(bprm->cred->user_ns, gid))
-+	if (!vfsuid_has_mapping(bprm->cred->user_ns, vfsuid) ||
-+	    !vfsgid_has_mapping(bprm->cred->user_ns, vfsgid))
- 		return;
- 
- 	if (mode & S_ISUID) {
- 		bprm->per_clear |= PER_CLEAR_ON_SETID;
--		bprm->cred->euid = uid;
-+		bprm->cred->euid = vfsuid_into_kuid(vfsuid);
- 	}
- 
- 	if ((mode & (S_ISGID | S_IXGRP)) == (S_ISGID | S_IXGRP)) {
- 		bprm->per_clear |= PER_CLEAR_ON_SETID;
--		bprm->cred->egid = gid;
-+		bprm->cred->egid = vfsgid_into_kgid(vfsgid);
- 	}
+diff --git a/kernel/capability.c b/kernel/capability.c
+index 765194f5d678..860fd22117c1 100644
+--- a/kernel/capability.c
++++ b/kernel/capability.c
+@@ -489,8 +489,8 @@ bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
+ 				 struct user_namespace *mnt_userns,
+ 				 const struct inode *inode)
+ {
+-	return kuid_has_mapping(ns, i_uid_into_mnt(mnt_userns, inode)) &&
+-	       kgid_has_mapping(ns, i_gid_into_mnt(mnt_userns, inode));
++	return vfsuid_has_mapping(ns, i_uid_into_vfsuid(mnt_userns, inode)) &&
++	       vfsgid_has_mapping(ns, i_gid_into_vfsgid(mnt_userns, inode));
  }
  
-diff --git a/fs/inode.c b/fs/inode.c
-index 8c4078889754..757cac29bd5a 100644
---- a/fs/inode.c
-+++ b/fs/inode.c
-@@ -2326,15 +2326,15 @@ EXPORT_SYMBOL(inode_init_owner);
- bool inode_owner_or_capable(struct user_namespace *mnt_userns,
- 			    const struct inode *inode)
+ /**
+diff --git a/security/commoncap.c b/security/commoncap.c
+index 5fc8986c3c77..b4ce33e20715 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -328,14 +328,16 @@ int cap_inode_killpriv(struct user_namespace *mnt_userns, struct dentry *dentry)
+ 	return error;
+ }
+ 
+-static bool rootid_owns_currentns(kuid_t kroot)
++static bool rootid_owns_currentns(vfsuid_t rootvfsuid)
  {
--	kuid_t i_uid;
-+	vfsuid_t vfsuid;
  	struct user_namespace *ns;
++	kuid_t kroot;
  
--	i_uid = i_uid_into_mnt(mnt_userns, inode);
--	if (uid_eq(current_fsuid(), i_uid))
-+	vfsuid = i_uid_into_vfsuid(mnt_userns, inode);
-+	if (vfsuid_eq_kuid(vfsuid, current_fsuid()))
- 		return true;
+-	if (!uid_valid(kroot))
++	if (!vfsuid_valid(rootvfsuid))
+ 		return false;
  
- 	ns = current_user_ns();
--	if (kuid_has_mapping(ns, i_uid) && ns_capable(ns, CAP_FOWNER))
-+	if (vfsuid_has_mapping(ns, vfsuid) && ns_capable(ns, CAP_FOWNER))
- 		return true;
- 	return false;
- }
-diff --git a/fs/namei.c b/fs/namei.c
-index 578c2110df02..d5c5cb7dd023 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -336,11 +336,11 @@ static int acl_permission_check(struct user_namespace *mnt_userns,
- 				struct inode *inode, int mask)
+-	for (ns = current_user_ns(); ; ns = ns->parent) {
++	kroot = vfsuid_into_kuid(rootvfsuid);
++	for (ns = current_user_ns();; ns = ns->parent) {
+ 		if (from_kuid(ns, kroot) == 0)
+ 			return true;
+ 		if (ns == &init_user_ns)
+@@ -381,6 +383,7 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
  {
- 	unsigned int mode = inode->i_mode;
--	kuid_t i_uid;
-+	vfsuid_t vfsuid;
+ 	int size, ret;
+ 	kuid_t kroot;
++	vfsuid_t vfsroot;
+ 	u32 nsmagic, magic;
+ 	uid_t root, mappedroot;
+ 	char *tmpbuf = NULL;
+@@ -419,11 +422,11 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
+ 	kroot = make_kuid(fs_ns, root);
  
- 	/* Are we the owner? If so, ACL's don't matter */
--	i_uid = i_uid_into_mnt(mnt_userns, inode);
--	if (likely(uid_eq(current_fsuid(), i_uid))) {
-+	vfsuid = i_uid_into_vfsuid(mnt_userns, inode);
-+	if (likely(vfsuid_eq_kuid(vfsuid, current_fsuid()))) {
- 		mask &= 7;
- 		mode >>= 6;
- 		return (mask & ~mode) ? -EACCES : 0;
-@@ -362,8 +362,8 @@ static int acl_permission_check(struct user_namespace *mnt_userns,
- 	 * about? Need to check group ownership if so.
- 	 */
- 	if (mask & (mode ^ (mode >> 3))) {
--		kgid_t kgid = i_gid_into_mnt(mnt_userns, inode);
--		if (in_group_p(kgid))
-+		vfsgid_t vfsgid = i_gid_into_vfsgid(mnt_userns, inode);
-+		if (vfsgid_in_group_p(vfsgid))
- 			mode >>= 3;
+ 	/* If this is an idmapped mount shift the kuid. */
+-	kroot = mapped_kuid_fs(mnt_userns, fs_ns, kroot);
++	vfsroot = make_vfsuid(mnt_userns, fs_ns, kroot);
+ 
+ 	/* If the root kuid maps to a valid uid in current ns, then return
+ 	 * this as a nscap. */
+-	mappedroot = from_kuid(current_user_ns(), kroot);
++	mappedroot = from_kuid(current_user_ns(), vfsuid_into_kuid(vfsroot));
+ 	if (mappedroot != (uid_t)-1 && mappedroot != (uid_t)0) {
+ 		size = sizeof(struct vfs_ns_cap_data);
+ 		if (alloc) {
+@@ -450,7 +453,7 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
+ 		goto out_free;
  	}
  
-@@ -581,7 +581,7 @@ struct nameidata {
- 	struct nameidata *saved;
- 	unsigned	root_seq;
- 	int		dfd;
--	kuid_t		dir_uid;
-+	vfsuid_t	dir_vfsuid;
- 	umode_t		dir_mode;
- } __randomize_layout;
- 
-@@ -1095,15 +1095,15 @@ fs_initcall(init_fs_namei_sysctls);
- static inline int may_follow_link(struct nameidata *nd, const struct inode *inode)
+-	if (!rootid_owns_currentns(kroot)) {
++	if (!rootid_owns_currentns(vfsroot)) {
+ 		size = -EOVERFLOW;
+ 		goto out_free;
+ 	}
+@@ -488,29 +491,17 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
+  * @value:	vfs caps value which may be modified by this function
+  * @size:	size of @ivalue
+  * @task_ns:	user namespace of the caller
+- * @mnt_userns:	user namespace of the mount the inode was found from
+- * @fs_userns:	user namespace of the filesystem
+- *
+- * If the inode has been found through an idmapped mount the user namespace of
+- * the vfsmount must be passed through @mnt_userns. This function will then
+- * take care to map the inode according to @mnt_userns before checking
+- * permissions. On non-idmapped mounts or if permission checking is to be
+- * performed on the raw inode simply passs init_user_ns.
+  */
+-static kuid_t rootid_from_xattr(const void *value, size_t size,
+-				struct user_namespace *task_ns,
+-				struct user_namespace *mnt_userns,
+-				struct user_namespace *fs_userns)
++static vfsuid_t rootid_from_xattr(const void *value, size_t size,
++				  struct user_namespace *task_ns)
  {
- 	struct user_namespace *mnt_userns;
--	kuid_t i_uid;
-+	vfsuid_t vfsuid;
+ 	const struct vfs_ns_cap_data *nscap = value;
+-	kuid_t rootkid;
+ 	uid_t rootid = 0;
  
- 	if (!sysctl_protected_symlinks)
- 		return 0;
+ 	if (size == XATTR_CAPS_SZ_3)
+ 		rootid = le32_to_cpu(nscap->rootid);
  
- 	mnt_userns = mnt_user_ns(nd->path.mnt);
--	i_uid = i_uid_into_mnt(mnt_userns, inode);
-+	vfsuid = i_uid_into_vfsuid(mnt_userns, inode);
- 	/* Allowed if owner and follower match. */
--	if (uid_eq(current_cred()->fsuid, i_uid))
-+	if (vfsuid_eq_kuid(vfsuid, current_fsuid()))
- 		return 0;
- 
- 	/* Allowed if parent directory not sticky and world-writable. */
-@@ -1111,7 +1111,7 @@ static inline int may_follow_link(struct nameidata *nd, const struct inode *inod
- 		return 0;
- 
- 	/* Allowed if parent directory and link owner match. */
--	if (uid_valid(nd->dir_uid) && uid_eq(nd->dir_uid, i_uid))
-+	if (vfsuid_valid(nd->dir_vfsuid) && vfsuid_eq(nd->dir_vfsuid, vfsuid))
- 		return 0;
- 
- 	if (nd->flags & LOOKUP_RCU)
-@@ -1183,8 +1183,8 @@ int may_linkat(struct user_namespace *mnt_userns, const struct path *link)
- 	struct inode *inode = link->dentry->d_inode;
- 
- 	/* Inode writeback is not safe when the uid or gid are invalid. */
--	if (!uid_valid(i_uid_into_mnt(mnt_userns, inode)) ||
--	    !gid_valid(i_gid_into_mnt(mnt_userns, inode)))
-+	if (!vfsuid_valid(i_uid_into_vfsuid(mnt_userns, inode)) ||
-+	    !vfsgid_valid(i_gid_into_vfsgid(mnt_userns, inode)))
- 		return -EOVERFLOW;
- 
- 	if (!sysctl_protected_hardlinks)
-@@ -1232,13 +1232,13 @@ static int may_create_in_sticky(struct user_namespace *mnt_userns,
- 				struct nameidata *nd, struct inode *const inode)
- {
- 	umode_t dir_mode = nd->dir_mode;
--	kuid_t dir_uid = nd->dir_uid;
-+	vfsuid_t dir_vfsuid = nd->dir_vfsuid;
- 
- 	if ((!sysctl_protected_fifos && S_ISFIFO(inode->i_mode)) ||
- 	    (!sysctl_protected_regular && S_ISREG(inode->i_mode)) ||
- 	    likely(!(dir_mode & S_ISVTX)) ||
--	    uid_eq(i_uid_into_mnt(mnt_userns, inode), dir_uid) ||
--	    uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)))
-+	    vfsuid_eq(i_uid_into_vfsuid(mnt_userns, inode), dir_vfsuid) ||
-+	    vfsuid_eq_kuid(i_uid_into_vfsuid(mnt_userns, inode), current_fsuid()))
- 		return 0;
- 
- 	if (likely(dir_mode & 0002) ||
-@@ -2307,7 +2307,7 @@ static int link_path_walk(const char *name, struct nameidata *nd)
- OK:
- 			/* pathname or trailing symlink, done */
- 			if (!depth) {
--				nd->dir_uid = i_uid_into_mnt(mnt_userns, nd->inode);
-+				nd->dir_vfsuid = i_uid_into_vfsuid(mnt_userns, nd->inode);
- 				nd->dir_mode = nd->inode->i_mode;
- 				nd->flags &= ~LOOKUP_PARENT;
- 				return 0;
-@@ -2885,9 +2885,9 @@ int __check_sticky(struct user_namespace *mnt_userns, struct inode *dir,
- {
- 	kuid_t fsuid = current_fsuid();
- 
--	if (uid_eq(i_uid_into_mnt(mnt_userns, inode), fsuid))
-+	if (vfsuid_eq_kuid(i_uid_into_vfsuid(mnt_userns, inode), fsuid))
- 		return 0;
--	if (uid_eq(i_uid_into_mnt(mnt_userns, dir), fsuid))
-+	if (vfsuid_eq_kuid(i_uid_into_vfsuid(mnt_userns, dir), fsuid))
- 		return 0;
- 	return !capable_wrt_inode_uidgid(mnt_userns, inode, CAP_FOWNER);
+-	rootkid = make_kuid(task_ns, rootid);
+-	return mapped_kuid_user(mnt_userns, fs_userns, rootkid);
++	return VFSUIDT_INIT(make_kuid(task_ns, rootid));
  }
-@@ -2926,8 +2926,8 @@ static int may_delete(struct user_namespace *mnt_userns, struct inode *dir,
- 	BUG_ON(victim->d_parent->d_inode != dir);
  
- 	/* Inode writeback is not safe when the uid or gid are invalid. */
--	if (!uid_valid(i_uid_into_mnt(mnt_userns, inode)) ||
--	    !gid_valid(i_gid_into_mnt(mnt_userns, inode)))
-+	if (!vfsuid_valid(i_uid_into_vfsuid(mnt_userns, inode)) ||
-+	    !vfsgid_valid(i_gid_into_vfsgid(mnt_userns, inode)))
- 		return -EOVERFLOW;
+ static bool validheader(size_t size, const struct vfs_cap_data *cap)
+@@ -548,6 +539,7 @@ int cap_convert_nscap(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 	struct user_namespace *task_ns = current_user_ns(),
+ 		*fs_ns = inode->i_sb->s_user_ns;
+ 	kuid_t rootid;
++	vfsuid_t vfsrootid;
+ 	size_t newsize;
  
- 	audit_inode_child(dir, victim, AUDIT_TYPE_CHILD_DELETE);
-diff --git a/fs/remap_range.c b/fs/remap_range.c
-index 654912d06862..290743c8d226 100644
---- a/fs/remap_range.c
-+++ b/fs/remap_range.c
-@@ -429,7 +429,7 @@ static bool allow_file_dedupe(struct file *file)
- 		return true;
- 	if (file->f_mode & FMODE_WRITE)
- 		return true;
--	if (uid_eq(current_fsuid(), i_uid_into_mnt(mnt_userns, inode)))
-+	if (vfsuid_eq_kuid(i_uid_into_vfsuid(mnt_userns, inode), current_fsuid()))
- 		return true;
- 	if (!inode_permission(mnt_userns, inode, MAY_WRITE))
- 		return true;
-diff --git a/fs/stat.c b/fs/stat.c
-index ef50573c72a2..d6cc74ca8486 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -44,12 +44,15 @@
- void generic_fillattr(struct user_namespace *mnt_userns, struct inode *inode,
- 		      struct kstat *stat)
- {
-+	vfsuid_t vfsuid = i_uid_into_vfsuid(mnt_userns, inode);
-+	vfsgid_t vfsgid = i_gid_into_vfsgid(mnt_userns, inode);
+ 	if (!*ivalue)
+@@ -561,7 +553,11 @@ int cap_convert_nscap(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 			/* user is privileged, just write the v2 */
+ 			return size;
+ 
+-	rootid = rootid_from_xattr(*ivalue, size, task_ns, mnt_userns, fs_ns);
++	vfsrootid = rootid_from_xattr(*ivalue, size, task_ns);
++	if (!vfsuid_valid(vfsrootid))
++		return -EINVAL;
 +
- 	stat->dev = inode->i_sb->s_dev;
- 	stat->ino = inode->i_ino;
- 	stat->mode = inode->i_mode;
- 	stat->nlink = inode->i_nlink;
--	stat->uid = i_uid_into_mnt(mnt_userns, inode);
--	stat->gid = i_gid_into_mnt(mnt_userns, inode);
-+	stat->uid = vfsuid_into_kuid(vfsuid);
-+	stat->gid = vfsgid_into_kgid(vfsgid);
- 	stat->rdev = inode->i_rdev;
- 	stat->size = i_size_read(inode);
- 	stat->atime = inode->i_atime;
++	rootid = from_vfsuid(mnt_userns, fs_ns, vfsrootid);
+ 	if (!uid_valid(rootid))
+ 		return -EINVAL;
+ 
+@@ -655,6 +651,7 @@ int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
+ 	struct vfs_ns_cap_data data, *nscaps = &data;
+ 	struct vfs_cap_data *caps = (struct vfs_cap_data *) &data;
+ 	kuid_t rootkuid;
++	vfsuid_t rootvfsuid;
+ 	struct user_namespace *fs_ns;
+ 
+ 	memset(cpu_caps, 0, sizeof(struct cpu_vfs_cap_data));
+@@ -699,11 +696,15 @@ int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
+ 	default:
+ 		return -EINVAL;
+ 	}
++
++	rootvfsuid = make_vfsuid(mnt_userns, fs_ns, rootkuid);
++	if (!vfsuid_valid(rootvfsuid))
++		return -ENODATA;
++
+ 	/* Limit the caps to the mounter of the filesystem
+ 	 * or the more limited uid specified in the xattr.
+ 	 */
+-	rootkuid = mapped_kuid_fs(mnt_userns, fs_ns, rootkuid);
+-	if (!rootid_owns_currentns(rootkuid))
++	if (!rootid_owns_currentns(rootvfsuid))
+ 		return -ENODATA;
+ 
+ 	CAP_FOR_EACH_U32(i) {
+@@ -716,7 +717,7 @@ int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
+ 	cpu_caps->permitted.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
+ 	cpu_caps->inheritable.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
+ 
+-	cpu_caps->rootid = rootkuid;
++	cpu_caps->rootid = vfsuid_into_kuid(rootvfsuid);
+ 
+ 	return 0;
+ }
 -- 
 2.34.1
 
