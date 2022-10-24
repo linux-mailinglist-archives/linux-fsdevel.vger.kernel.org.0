@@ -2,64 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E30D60BC08
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 23:23:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E3FF960BC1E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 23:26:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234613AbiJXVXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Oct 2022 17:23:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37046 "EHLO
+        id S234631AbiJXV0n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Oct 2022 17:26:43 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42102 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232677AbiJXVXL (ORCPT
+        with ESMTP id S233332AbiJXV00 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Oct 2022 17:23:11 -0400
-Received: from mail-yb1-xb2f.google.com (mail-yb1-xb2f.google.com [IPv6:2607:f8b0:4864:20::b2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CFEEF6800;
-        Mon, 24 Oct 2022 12:29:37 -0700 (PDT)
-Received: by mail-yb1-xb2f.google.com with SMTP id f205so12169709yba.2;
-        Mon, 24 Oct 2022 12:29:37 -0700 (PDT)
+        Mon, 24 Oct 2022 17:26:26 -0400
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 954228F24E;
+        Mon, 24 Oct 2022 12:32:56 -0700 (PDT)
+Received: by mail-yb1-xb32.google.com with SMTP id i127so12110617ybc.11;
+        Mon, 24 Oct 2022 12:32:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=msuUebF694+hZC0rqt6N8CJWQi+fRr7tKzxI1kK1XSA=;
-        b=Nbh/LUYRRXN+W8H+09HFirleOER72S3l+cyZmuDy+8Pib1Gn+U4wfzzFfRtAjMjFcF
-         fvo3jJ3RCWGObovpQORWc3/9IkNJGMgPUfku6KvUFl6cu6AMUPfoT9oK95yTGj66jhjH
-         7WGhQNpuF6d0iem0QTBy19EivSDPd2VqHFxQ3x16D8kkerWE0rDHVR2hrPPsFrR5kbrm
-         D3RRZ03JmkZtNZSKaozG5JauPmqkajAnvSOqe8wpHj28aX62NhSnkQiYABEysxpon0kM
-         LH9dhzEwQZXR7plJ46sFDvDg1wrk4joIrl4DRR8/CJkQwJDkuqnpXoWVFb+tCDqZEjny
-         JZbg==
+        bh=ewURVtEZDzlu0i+gVIVlIwdo2AKdKjYywGZcJK82PeY=;
+        b=pvb2n989P4g452NhPl3a7ovLcs0nrAlug6GLmwQOWVXp8sZf4hJMVc75J+1AdeaR5B
+         jTPfEsL3DxRnXGA7sUdDXsbNz9yiIRbkdJnpbTPKyuqZjCtxmSrHQ8G13WCC1Iuw5z+o
+         sb4RzMo24wxwjit5EZW/pEDJsdJvyK01K/zuT64THd3AukYqfUeJn+21U43e4WOGV7AE
+         TRjlBL3V1r6EQNYSf744jlDgboUSn44k7FA4sUf3fJvYekNs22FOZgtNlymJimDJwZ6+
+         t25uP2Y+j8/iUSZasJ8p1q+kJXQcLGIToESALHyDssHFEsfrxGDSk2to5cSEMGM1zWKn
+         AmIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=msuUebF694+hZC0rqt6N8CJWQi+fRr7tKzxI1kK1XSA=;
-        b=giOSsn6YjPnMCp9DGaqik+7hm0Hba0FhNqI+yBgk7ttJ2Y2oyMh9WKqz4AG9Uw8LSg
-         6hNaGRdu5+9/IIa6+i8c+1rSOvLnSMRdEE3DRgsp71d7h4cgsY+m2b6LiZ/3zd1/aNua
-         gOgw6nEdFUrCgWEz6FjxVGrTyPXRdN+4PcOz9LzUUcFB3BmGf+GEbkaOsKNUXchlJgLk
-         QuENJ4lpgjqfPugivwcwdMTtZUn28X5y1Tq9zewUZaQ/1hkKLkOma2X+b8uznKBmoc5e
-         EorCvo3waOEKVy+kMu9V1wjUgUkc8uNMcyn6iHW4Z1NbnSq1LlIA37bqV+sw14IuJyTg
-         0xdA==
-X-Gm-Message-State: ACrzQf23ED63pDEfljhwnmiDs+YlYdulK0uJET7cN9VtjGDy3PXyXI72
-        cpNBdEGEt3Ko6u/3MWp/9hHf9mSS5wEsc5l9z9uBAXWcPm4=
-X-Google-Smtp-Source: AMsMyM5vg8N9dDW35cXYnRV0vMdNWWQOk5I20+pSLu1UdubJKDDQpcDyA6OCK60nRt7T9Q9hMWGXE3CrFggT3+iul/0=
-X-Received: by 2002:a5b:9c5:0:b0:6ca:d6da:30c1 with SMTP id
- y5-20020a5b09c5000000b006cad6da30c1mr8707218ybq.372.1666639612737; Mon, 24
- Oct 2022 12:26:52 -0700 (PDT)
+        bh=ewURVtEZDzlu0i+gVIVlIwdo2AKdKjYywGZcJK82PeY=;
+        b=eCMf2kHbPew0J4JQHk0FNS0l3Xf9pT7J317HUfEnhJMz1et8O7Z0QTMDkeI+vLCyqz
+         Yjm7SzyQ2y3/vfCPz9tb8TwNQKj7aH1zNalPlWnfOScbuSbYVRDoJA8kXISGV1A97SOe
+         C71EHI4zOgBaJm32IjlUu6PX2pkVqSZMUr/tmcbWGqY/s7NtNclGtMpB3BEJhgcQj0HB
+         0lKEE5PlT3e7vBaGFQJDUsV4UCD1k33QYXGjUqud2bSjVq8mckojopkngwt0aV/gbBrB
+         UNe/DAgSazjkuX2YCz1TNmfIln+kenG9hg/moAkFklHYQDJcASMtve7E2hl2FgSEO5zb
+         tQtw==
+X-Gm-Message-State: ACrzQf1KmBzM+U2k3zn2O6OrcDMHDjAi5jXIlIG4zA8ZawHc8/oztVu8
+        aW8acizlaQ/N/94wkvaXNaWMs2ZuvbB3L0Gr7aK7FdfqHVeI6Q==
+X-Google-Smtp-Source: AMsMyM6B6fNnp2prURoNrQAhN6Lbp6rH2u1B/iqqAEW6OHySGJ/tzUiCXpuF8+v7sMB52Tmf+g8Xaw+7Yytz7WdTgT4=
+X-Received: by 2002:a25:3bd0:0:b0:6ca:6428:ac94 with SMTP id
+ i199-20020a253bd0000000b006ca6428ac94mr16397507yba.462.1666639881517; Mon, 24
+ Oct 2022 12:31:21 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221017202451.4951-1-vishal.moola@gmail.com> <20221017202451.4951-11-vishal.moola@gmail.com>
-In-Reply-To: <20221017202451.4951-11-vishal.moola@gmail.com>
+References: <20221017202451.4951-1-vishal.moola@gmail.com> <20221017202451.4951-12-vishal.moola@gmail.com>
+In-Reply-To: <20221017202451.4951-12-vishal.moola@gmail.com>
 From:   Vishal Moola <vishal.moola@gmail.com>
-Date:   Mon, 24 Oct 2022 12:26:41 -0700
-Message-ID: <CAOzc2pz53R5ZT0=U8uav9=FL7_rn+6pUrkfeTZ-bx5_3Pac-xg@mail.gmail.com>
-Subject: Re: [PATCH v3 10/23] ext4: Convert mpage_prepare_extent_to_map() to
- use filemap_get_folios_tag()
+Date:   Mon, 24 Oct 2022 12:31:10 -0700
+Message-ID: <CAOzc2pwKoyy4i4zBKhvoKmN8cezUxjDhjYZnK9GLcJniQVPoGA@mail.gmail.com>
+Subject: Re: [PATCH v3 11/23] f2fs: Convert f2fs_fsync_node_pages() to use filemap_get_folios_tag()
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
         linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org, tytso@mit.edu
+        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
+        jaegeuk@kernel.org, chao@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
@@ -74,139 +74,73 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 On Mon, Oct 17, 2022 at 1:25 PM Vishal Moola (Oracle)
 <vishal.moola@gmail.com> wrote:
 >
-> Converted the function to use folios throughout. This is in preparation
-> for the removal of find_get_pages_range_tag(). Now supports large
-> folios.
+> Convert function to use a folio_batch instead of pagevec. This is in
+> preparation for the removal of find_get_pages_range_tag().
 >
 > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 > ---
->  fs/ext4/inode.c | 55 ++++++++++++++++++++++++-------------------------
->  1 file changed, 27 insertions(+), 28 deletions(-)
+>  fs/f2fs/node.c | 19 ++++++++++---------
+>  1 file changed, 10 insertions(+), 9 deletions(-)
 >
-> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-> index 2b5ef1b64249..69a0708c8e87 100644
-> --- a/fs/ext4/inode.c
-> +++ b/fs/ext4/inode.c
-> @@ -2572,8 +2572,8 @@ static int ext4_da_writepages_trans_blocks(struct inode *inode)
->  static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 983572f23896..e8b72336c096 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1728,12 +1728,12 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>                         unsigned int *seq_id)
 >  {
->         struct address_space *mapping = mpd->inode->i_mapping;
+>         pgoff_t index;
 > -       struct pagevec pvec;
-> -       unsigned int nr_pages;
 > +       struct folio_batch fbatch;
-> +       unsigned int nr_folios;
->         long left = mpd->wbc->nr_to_write;
->         pgoff_t index = mpd->first_page;
->         pgoff_t end = mpd->last_page;
-> @@ -2587,18 +2587,17 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
->                 tag = PAGECACHE_TAG_TOWRITE;
->         else
->                 tag = PAGECACHE_TAG_DIRTY;
-> -
+>         int ret = 0;
+>         struct page *last_page = NULL;
+>         bool marked = false;
+>         nid_t ino = inode->i_ino;
+> -       int nr_pages;
+> +       int nr_folios;
+>         int nwritten = 0;
+>
+>         if (atomic) {
+> @@ -1742,20 +1742,21 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>                         return PTR_ERR_OR_ZERO(last_page);
+>         }
+>  retry:
 > -       pagevec_init(&pvec);
 > +       folio_batch_init(&fbatch);
->         mpd->map.m_len = 0;
->         mpd->next_page = index;
->         while (index <= end) {
-> -               nr_pages = pagevec_lookup_range_tag(&pvec, mapping, &index, end,
-> -                               tag);
-> -               if (nr_pages == 0)
-> +               nr_folios = filemap_get_folios_tag(mapping, &index, end,
-> +                               tag, &fbatch);
-> +               if (nr_folios == 0)
->                         break;
+>         index = 0;
+>
+> -       while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
+> -                               PAGECACHE_TAG_DIRTY))) {
+> +       while ((nr_folios = filemap_get_folios_tag(NODE_MAPPING(sbi), &index,
+> +                                       (pgoff_t)-1, PAGECACHE_TAG_DIRTY,
+> +                                       &fbatch))) {
+>                 int i;
 >
 > -               for (i = 0; i < nr_pages; i++) {
 > -                       struct page *page = pvec.pages[i];
 > +               for (i = 0; i < nr_folios; i++) {
-> +                       struct folio *folio = fbatch.folios[i];
+> +                       struct page *page = &fbatch.folios[i]->page;
+>                         bool submitted = false;
 >
->                         /*
->                          * Accumulated enough dirty pages? This doesn't apply
-> @@ -2612,10 +2611,10 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
+>                         if (unlikely(f2fs_cp_error(sbi))) {
+>                                 f2fs_put_page(last_page, 0);
+> -                               pagevec_release(&pvec);
+> +                               folio_batch_release(&fbatch);
+>                                 ret = -EIO;
 >                                 goto out;
->
->                         /* If we can't merge this page, we are done. */
-> -                       if (mpd->map.m_len > 0 && mpd->next_page != page->index)
-> +                       if (mpd->map.m_len > 0 && mpd->next_page != folio->index)
->                                 goto out;
->
-> -                       lock_page(page);
-> +                       folio_lock(folio);
->                         /*
->                          * If the page is no longer dirty, or its mapping no
->                          * longer corresponds to inode we are writing (which
-> @@ -2623,16 +2622,16 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
->                          * page is already under writeback and we are not doing
->                          * a data integrity writeback, skip the page
->                          */
-> -                       if (!PageDirty(page) ||
-> -                           (PageWriteback(page) &&
-> +                       if (!folio_test_dirty(folio) ||
-> +                           (folio_test_writeback(folio) &&
->                              (mpd->wbc->sync_mode == WB_SYNC_NONE)) ||
-> -                           unlikely(page->mapping != mapping)) {
-> -                               unlock_page(page);
-> +                           unlikely(folio->mapping != mapping)) {
-> +                               folio_unlock(folio);
->                                 continue;
 >                         }
->
-> -                       wait_on_page_writeback(page);
-> -                       BUG_ON(PageWriteback(page));
-> +                       folio_wait_writeback(folio);
-> +                       BUG_ON(folio_test_writeback(folio));
->
->                         /*
->                          * Should never happen but for buggy code in
-> @@ -2643,33 +2642,33 @@ static int mpage_prepare_extent_to_map(struct mpage_da_data *mpd)
->                          *
->                          * [1] https://lore.kernel.org/linux-mm/20180103100430.GE4911@quack2.suse.cz
->                          */
-> -                       if (!page_has_buffers(page)) {
-> -                               ext4_warning_inode(mpd->inode, "page %lu does not have buffers attached", page->index);
-> -                               ClearPageDirty(page);
-> -                               unlock_page(page);
-> +                       if (!folio_buffers(folio)) {
-> +                               ext4_warning_inode(mpd->inode, "page %lu does not have buffers attached", folio->index);
-> +                               folio_clear_dirty(folio);
-> +                               folio_unlock(folio);
->                                 continue;
+> @@ -1821,7 +1822,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>                                 break;
 >                         }
->
->                         if (mpd->map.m_len == 0)
-> -                               mpd->first_page = page->index;
-> -                       mpd->next_page = page->index + 1;
-> +                               mpd->first_page = folio->index;
-> +                       mpd->next_page = folio->index + folio_nr_pages(folio);
->                         /* Add all dirty buffers to mpd */
-> -                       lblk = ((ext4_lblk_t)page->index) <<
-> +                       lblk = ((ext4_lblk_t)folio->index) <<
->                                 (PAGE_SHIFT - blkbits);
-> -                       head = page_buffers(page);
-> +                       head = folio_buffers(folio);
->                         err = mpage_process_page_bufs(mpd, head, head, lblk);
->                         if (err <= 0)
->                                 goto out;
->                         err = 0;
-> -                       left--;
-> +                       left -= folio_nr_pages(folio);
 >                 }
 > -               pagevec_release(&pvec);
 > +               folio_batch_release(&fbatch);
 >                 cond_resched();
->         }
->         mpd->scanned_until_end = 1;
->         return 0;
->  out:
-> -       pagevec_release(&pvec);
-> +       folio_batch_release(&fbatch);
->         return err;
->  }
 >
+>                 if (ret || marked)
 > --
 > 2.36.1
 >
 
-Does anyone have some time to look over this ext4 patch this week?
-Feedback is appreciated.
+Following up on these f2fs patches (11/23, 12/23, 13/23, 14/23, 15/23,
+16/23). Does anyone have time to review them this week?
