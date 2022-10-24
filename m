@@ -2,127 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 54D25609787
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 02:38:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 3385F60978C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 02:43:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229914AbiJXAi0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 23 Oct 2022 20:38:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52140 "EHLO
+        id S229629AbiJXAnJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 23 Oct 2022 20:43:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34260 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229494AbiJXAiY (ORCPT
+        with ESMTP id S229520AbiJXAnI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 23 Oct 2022 20:38:24 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A26CB61710
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Oct 2022 17:38:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1666571901;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/UdhZqMRJmQvgYCScCECdvRWph3XGwvAToTHziUz2vk=;
-        b=g/l1H6wiSXQZ6nln7zhFBp8GwsYOu7llemSXyYxQlv9q1XDYHODD1+84kjCqvyWYcUz9nP
-        VNjDvPtpB85NEomov+vtrzttOjFwMZ+HxGaZ2pCXXVPqR0GdKLK+bOU8kqtslWcFwTDwLv
-        AHEBcfumdIDK9sgzNF2RRYqDXCQSc9c=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-490-DZAMP7HEMmWGwSYK88C-Ig-1; Sun, 23 Oct 2022 20:38:20 -0400
-X-MC-Unique: DZAMP7HEMmWGwSYK88C-Ig-1
-Received: by mail-pj1-f71.google.com with SMTP id p1-20020a17090a2c4100b00212733d7aaaso3107360pjm.4
-        for <linux-fsdevel@vger.kernel.org>; Sun, 23 Oct 2022 17:38:20 -0700 (PDT)
+        Sun, 23 Oct 2022 20:43:08 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B1E165810;
+        Sun, 23 Oct 2022 17:43:08 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id m14-20020a17090a3f8e00b00212dab39bcdso5141582pjc.0;
+        Sun, 23 Oct 2022 17:43:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uAHmIx43CcUy6jio/UUUYILeSOOvlH6FmdJfzEj8eks=;
+        b=IUHfAGQNBRt7IEHfR4uYvCBVurbevFI9XyPgouFCf1F7yoebQPmYct+slj/zhVto1A
+         F9OHaVIB/QV6UriyXxjsJfSDeURzbhHv6QcBUH24MmidSaN4C/6DPK+Ox1MHCj/fsG8o
+         5iJQsP8X3GYttiu10UxjYgGa/WH1guQW6PFx5oec2mUXg5vBJFe1kxec850NTuGaF/fu
+         Lqn47DjtFPK3MmYM91ylo6JZaueJ1v/rJRQTFnWlC1+XjaDaGqEo4ArJcHFrn3aFNsSc
+         12KbNpyRW55HMY26Ivy/J/Y5ejkrXedYaQsV40P0u898IUBCh4BA3dySKevP58Wg1dCP
+         xBAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/UdhZqMRJmQvgYCScCECdvRWph3XGwvAToTHziUz2vk=;
-        b=imawHger21TXE2I5cKk7uTPGhbZWKnfy8EmjJ3SkulEmej5nYmD5Mqtvz+ishTiARj
-         c/JlgFFPEMdj48nRb03ADHX9BJqYCE5bhWN+y5sNNlV/kuEYyDjSy6+Hn3vWEVZqztpg
-         8zxUZNBXOVTBHG9Swqd9EXMXWgQI40qeZXjc8RWstGT42GFZJl44559415N7TyQveJzq
-         qJo4OlXsr3N1dxaRJUiXaB/pcwrUfpQ02OEo1SBAVlGDkUiwY7ruWXrp3462X29kDpNM
-         VnWsyVBksPGQ5wGoJt/WzKx623PfayDAlfKJra5BoRAD+Texhrd4qk06qfv2ePJ2HDKR
-         jStg==
-X-Gm-Message-State: ACrzQf1PueUVil32zbiAG6bwiKiLSYYTuKAl5huYTxqDZR1BJkQkSrx2
-        DJmRB3qKOKi7aB3gKFFKO0+yfirTJzA2l6kqfLmSFfltL+csN6BCr+ssI+OVH97k6QdYFt2et15
-        F9gF2ZMg64DhZAkWvLQASOukCbg==
-X-Received: by 2002:a17:90a:6909:b0:212:f535:a34b with SMTP id r9-20020a17090a690900b00212f535a34bmr7713921pjj.6.1666571899185;
-        Sun, 23 Oct 2022 17:38:19 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM6wHbLCC9ZTvDwwS9U1pcyvx0QqS9dwipUoB06/Zkbk5O1zlmqw7Xz8kmlbrjSJwqQcU6lJ+g==
-X-Received: by 2002:a17:90a:6909:b0:212:f535:a34b with SMTP id r9-20020a17090a690900b00212f535a34bmr7713905pjj.6.1666571898964;
-        Sun, 23 Oct 2022 17:38:18 -0700 (PDT)
-Received: from [10.72.12.79] ([209.132.188.80])
-        by smtp.gmail.com with ESMTPSA id f17-20020a170902ce9100b00172f4835f60sm18700537plg.189.2022.10.23.17.38.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 23 Oct 2022 17:38:18 -0700 (PDT)
-Subject: Re: [PATCH -next 3/5] ceph: fix possible null-ptr-deref when parsing
- param
-To:     Hawkins Jiawei <yin31149@gmail.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>
-Cc:     18801353760@163.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-References: <20221023163945.39920-1-yin31149@gmail.com>
- <20221023163945.39920-4-yin31149@gmail.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <a587d14f-8bdd-ba61-d750-594359f9e5f2@redhat.com>
-Date:   Mon, 24 Oct 2022 08:38:10 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uAHmIx43CcUy6jio/UUUYILeSOOvlH6FmdJfzEj8eks=;
+        b=G5rP+IvsaRSZMfLTH1MoyRHmlDZRx6g+c5rzG//pQJ3cx0pKZ3lbEl6SCJtonci57q
+         8NQG5FlQgtDJojBgF9XPvSWiAPytq5C7rZLbYu8q/Uj9CDzbYqlp9lrYXWeuIOkW9PB0
+         WzZddKxdoKlvzPOj+pGYoPIwn0aZmhI00/G9cILlSS7MIQVtG+MoX9A6boPpxxBPCMxU
+         XFXdffmr1pxKNnrUi9bc65fg9KTU1lnpOJfVHJJAiZPHvbQjwqG6rkp4Ic9jSOqafTqA
+         WmbqBoDqjKQ4oST95K/MeYgvLFEOEjQf+qw0p9MtHWORoQAxxRZnSK5ER08uHet2eAYy
+         VQ/w==
+X-Gm-Message-State: ACrzQf3SOtoXDdDCyM5saFKN1ETSnnKI5dmYUgxAi5xbxQ91b/0MW5/O
+        Bf6ZHcEt/OU6NCFNaj4O8GVPnjZT3wMs1Mpe
+X-Google-Smtp-Source: AMsMyM7sVRO1O8XmRqiNkT1GTOpweUX3vquiDvo1l3jp5G24c3k5YT3HrLyxL0qDUsPY16wHACcUAQ==
+X-Received: by 2002:a17:902:ccc2:b0:178:29f9:5c5e with SMTP id z2-20020a170902ccc200b0017829f95c5emr29430475ple.21.1666572187529;
+        Sun, 23 Oct 2022 17:43:07 -0700 (PDT)
+Received: from localhost ([223.104.41.198])
+        by smtp.gmail.com with ESMTPSA id u18-20020a170902e5d200b0017f9db0236asm18880815plf.82.2022.10.23.17.43.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Oct 2022 17:43:07 -0700 (PDT)
+From:   Hawkins Jiawei <yin31149@gmail.com>
+To:     viro@zeniv.linux.org.uk, raven@themaw.net
+Cc:     18801353760@163.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, yin31149@gmail.com,
+        akpm@linux-foundation.org, cmaiolino@redhat.com,
+        dhowells@redhat.com, hughd@google.com, miklos@szeredi.hu,
+        oliver.sang@intel.com, penguin-kernel@i-love.sakura.ne.jp,
+        siddhesh@gotplt.org,
+        syzbot+db1d2ea936378be0e4ea@syzkaller.appspotmail.com,
+        syzkaller-bugs@googlegroups.com, tytso@mit.edu, smfrench@gmail.com,
+        pc@cjr.nz, lsahlber@redhat.com, sprasad@microsoft.com,
+        tom@talpey.com
+Subject: Re: [PATCH -next 0/5] fs: fix possible null-ptr-deref when parsing param
+Date:   Mon, 24 Oct 2022 08:42:57 +0800
+Message-Id: <20221024004257.18689-1-yin31149@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <Y1VwdUYGvDE4yUoI@ZenIV>
+References: <Y1VwdUYGvDE4yUoI@ZenIV>
 MIME-Version: 1.0
-In-Reply-To: <20221023163945.39920-4-yin31149@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-On 24/10/2022 00:39, Hawkins Jiawei wrote:
-> According to commit "vfs: parse: deal with zero length string value",
-> kernel will set the param->string to null pointer in vfs_parse_fs_string()
-> if fs string has zero length.
+On Mon, 24 Oct 2022 at 00:48, Al Viro <viro@zeniv.linux.org.uk> wrote:
 >
-> Yet the problem is that, ceph_parse_mount_param() will dereferences the
-> param->string, without checking whether it is a null pointer, which may
-> trigger a null-ptr-deref bug.
+> On Mon, Oct 24, 2022 at 12:39:41AM +0800, Hawkins Jiawei wrote:
+> > According to commit "vfs: parse: deal with zero length string value",
+> > kernel will set the param->string to null pointer in vfs_parse_fs_string()
+> > if fs string has zero length.
+> >
+> > Yet the problem is that, when fs parses its mount parameters, it will
+> > dereferences the param->string, without checking whether it is a
+> > null pointer, which may trigger a null-ptr-deref bug.
+> >
+> > So this patchset reviews all functions for fs to parse parameters,
+> > by using `git grep -n "\.parse_param" fs/*`, and adds sanity check
+> > on param->string if its function will dereference param->string
+> > without check.
 >
-> This patch solves it by adding sanity check on param->string
-> in ceph_parse_mount_param().
->
-> Signed-off-by: Hawkins Jiawei <yin31149@gmail.com>
-> ---
->   fs/ceph/super.c | 3 +++
->   1 file changed, 3 insertions(+)
->
-> diff --git a/fs/ceph/super.c b/fs/ceph/super.c
-> index 3fc48b43cab0..341e23fe29eb 100644
-> --- a/fs/ceph/super.c
-> +++ b/fs/ceph/super.c
-> @@ -417,6 +417,9 @@ static int ceph_parse_mount_param(struct fs_context *fc,
->   		param->string = NULL;
->   		break;
->   	case Opt_mds_namespace:
-> +		if (!param->string)
-> +			return invalfc(fc, "Bad value '%s' for mount option '%s'\n",
-> +				       param->string, param->key);
->   		if (!namespace_equals(fsopt, param->string, strlen(param->string)))
->   			return invalfc(fc, "Mismatching mds_namespace");
->   		kfree(fsopt->mds_namespace);
+> How about reverting the commit in question instead?  Or dropping it
+> from patch series, depending upon the way akpm handles the pile
+> these days...
 
-Good catch!
+I think both are OK.
 
-Will merge it to testing branch.
+On one hand, commit "vfs: parse: deal with zero length string value"
+seems just want to make output more informattive, which probably is not
+the one which must be applied immediately to fix the
+panic.
 
-Thanks!
-
-- Xiubo
-
+On the other hand, commit "vfs: parse: deal with zero length string value"
+affects so many file systems, so there are probably some deeper
+null-ptr-deref bugs I ignore, which may take time to review.
