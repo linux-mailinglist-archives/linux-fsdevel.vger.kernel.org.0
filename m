@@ -2,135 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D38EC60B52B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 20:13:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id CD6B160B682
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 21:02:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232083AbiJXSNE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Oct 2022 14:13:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58756 "EHLO
+        id S229460AbiJXTCW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Oct 2022 15:02:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231936AbiJXSMW (ORCPT
+        with ESMTP id S231295AbiJXTCA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Oct 2022 14:12:22 -0400
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 461B757E17;
-        Mon, 24 Oct 2022 09:54:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666630459; x=1698166459;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=f12+hDSs2xhh9+cgFUHAQwPz5EdOX4nrGTxSpB9xto8=;
-  b=Lx4O7B4HXPSw6eCOX6fxKVKroy/kLcxL2hy81b68CBxeeJRyLCmgMCfL
-   +GmcUQtQfNoaO0aKDUWtL30YejrZoBatDCS3PeFJE4DrVZy75n4meLb3V
-   lTd9rYHhJuaupDbeWYGNYIRyNXZj3pq47viEZfMgcU99FnPK0/qZgfmIi
-   gspbcVr59orDB9o72YPvLlrDzWGOkCq17RmNQJRAMNg2/pBM0j0LNOMfA
-   bj+i/Q+CUyf8nP7jn5Mf5krunxQliQkthbAZqVw/QMtNgTnCY5KYq20Fa
-   rnUMOQajJskrGGHNEtBU+aDreoW/sfo7JqEpyO72zuy8iUIvlJ76mj0/t
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="290739879"
-X-IronPort-AV: E=Sophos;i="5.95,209,1661842800"; 
-   d="scan'208";a="290739879"
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2022 07:59:41 -0700
-X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="631284461"
-X-IronPort-AV: E=Sophos;i="5.95,209,1661842800"; 
-   d="scan'208";a="631284461"
-Received: from unisar-mobl.ger.corp.intel.com (HELO box.shutemov.name) ([10.249.38.228])
-  by orsmga002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2022 07:59:30 -0700
-Received: by box.shutemov.name (Postfix, from userid 1000)
-        id 381A7104D5C; Mon, 24 Oct 2022 17:59:28 +0300 (+03)
-Date:   Mon, 24 Oct 2022 17:59:28 +0300
-From:   "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>,
-        Vishal Annapurve <vannapurve@google.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>, luto@kernel.org,
-        jun.nakajima@intel.com, dave.hansen@intel.com, ak@linux.intel.com,
-        david@redhat.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v8 1/8] mm/memfd: Introduce userspace inaccessible memfd
-Message-ID: <20221024145928.66uehsokp7bpa2st@box.shutemov.name>
-References: <20220915142913.2213336-1-chao.p.peng@linux.intel.com>
- <20220915142913.2213336-2-chao.p.peng@linux.intel.com>
- <CAGtprH_MiCxT2xSxD2UrM4M+ghL0V=XEZzEX4Fo5wQKV4fAL4w@mail.gmail.com>
- <20221021134711.GA3607894@chaop.bj.intel.com>
- <Y1LGRvVaWwHS+Zna@google.com>
+        Mon, 24 Oct 2022 15:02:00 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D71552413E8;
+        Mon, 24 Oct 2022 10:41:22 -0700 (PDT)
+Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.57])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Mwyjc5gFkzJn76;
+        Mon, 24 Oct 2022 22:52:52 +0800 (CST)
+Received: from huawei.com (10.67.175.21) by kwepemi500012.china.huawei.com
+ (7.221.188.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Mon, 24 Oct
+ 2022 22:55:37 +0800
+From:   Li Zetao <lizetao1@huawei.com>
+To:     <viro@zeniv.linux.org.uk>, <ebiederm@xmission.com>,
+        <keescook@chromium.org>, <akpm@linux-foundation.org>,
+        <adobriyan@gmail.com>
+CC:     <lizetao1@huawei.com>, <yi.zhang@huawei.com>,
+        <chengzhihao1@huawei.com>, <linux-fsdevel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] fs/binfmt_elf: Fix memory leak in load_elf_binary()
+Date:   Mon, 24 Oct 2022 23:44:21 +0800
+Message-ID: <20221024154421.982230-1-lizetao1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y1LGRvVaWwHS+Zna@google.com>
-X-Spam-Status: No, score=-2.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.67.175.21]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemi500012.china.huawei.com (7.221.188.12)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 21, 2022 at 04:18:14PM +0000, Sean Christopherson wrote:
-> On Fri, Oct 21, 2022, Chao Peng wrote:
-> > > 
-> > > In the context of userspace inaccessible memfd, what would be a
-> > > suggested way to enforce NUMA memory policy for physical memory
-> > > allocation? mbind[1] won't work here in absence of virtual address
-> > > range.
-> > 
-> > How about set_mempolicy():
-> > https://www.man7.org/linux/man-pages/man2/set_mempolicy.2.html
-> 
-> Andy Lutomirski brought this up in an off-list discussion way back when the whole
-> private-fd thing was first being proposed.
-> 
->   : The current Linux NUMA APIs (mbind, move_pages) work on virtual addresses.  If
->   : we want to support them for TDX private memory, we either need TDX private
->   : memory to have an HVA or we need file-based equivalents. Arguably we should add
->   : fmove_pages and fbind syscalls anyway, since the current API is quite awkward
->   : even for tools like numactl.
+There is a memory leak reported by kmemleak:
 
-Yeah, we definitely have gaps in API wrt NUMA, but I don't think it be
-addressed in the initial submission.
+  unreferenced object 0xffff88817104ef80 (size 224):
+    comm "xfs_admin", pid 47165, jiffies 4298708825 (age 1333.476s)
+    hex dump (first 32 bytes):
+      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+      60 a8 b3 00 81 88 ff ff a8 10 5a 00 81 88 ff ff  `.........Z.....
+    backtrace:
+      [<ffffffff819171e1>] __alloc_file+0x21/0x250
+      [<ffffffff81918061>] alloc_empty_file+0x41/0xf0
+      [<ffffffff81948cda>] path_openat+0xea/0x3d30
+      [<ffffffff8194ec89>] do_filp_open+0x1b9/0x290
+      [<ffffffff8192660e>] do_open_execat+0xce/0x5b0
+      [<ffffffff81926b17>] open_exec+0x27/0x50
+      [<ffffffff81a69250>] load_elf_binary+0x510/0x3ed0
+      [<ffffffff81927759>] bprm_execve+0x599/0x1240
+      [<ffffffff8192a997>] do_execveat_common.isra.0+0x4c7/0x680
+      [<ffffffff8192b078>] __x64_sys_execve+0x88/0xb0
+      [<ffffffff83bbf0a5>] do_syscall_64+0x35/0x80
 
-BTW, it is not regression comparing to old KVM slots, if the memory is
-backed by memfd or other file:
+If "interp_elf_ex" fails to allocate memory in load_elf_binary(),
+the program will take the "out_free_ph" error handing path,
+resulting in "interpreter" file resource is not released.
 
-MBIND(2)
-       The  specified policy will be ignored for any MAP_SHARED mappings in the
-       specified memory range.  Rather the pages will be allocated according to
-       the  memory  policy  of the thread that caused the page to be allocated.
-       Again, this may not be the thread that called mbind().
+Fix it by adding an error handing path "out_free_file", which will
+release the file resource when "interp_elf_ex" failed to allocate
+memory.
 
-It is not clear how to define fbind(2) semantics, considering that multiple
-processes may compete for the same region of page cache.
+Fixes: 0693ffebcfe5 ("fs/binfmt_elf.c: allocate less for static executable")
+Signed-off-by: Li Zetao <lizetao1@huawei.com>
+---
+ fs/binfmt_elf.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Should it be per-inode or per-fd? Or maybe per-range in inode/fd?
-
-fmove_pages(2) should be relatively straight forward, since it is
-best-effort and does not guarantee that the page will note be moved
-somewhare else just after return from the syscall.
-
+diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+index 63c7ebb0da89..6a11025e5850 100644
+--- a/fs/binfmt_elf.c
++++ b/fs/binfmt_elf.c
+@@ -911,7 +911,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ 		interp_elf_ex = kmalloc(sizeof(*interp_elf_ex), GFP_KERNEL);
+ 		if (!interp_elf_ex) {
+ 			retval = -ENOMEM;
+-			goto out_free_ph;
++			goto out_free_file;
+ 		}
+ 
+ 		/* Get the exec headers */
+@@ -1354,6 +1354,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
+ out_free_dentry:
+ 	kfree(interp_elf_ex);
+ 	kfree(interp_elf_phdata);
++out_free_file:
+ 	allow_write_access(interpreter);
+ 	if (interpreter)
+ 		fput(interpreter);
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.25.1
+
