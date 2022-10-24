@@ -2,50 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 22BF7609FF0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 13:13:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A2EFC609FF8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 13:13:28 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230146AbiJXLNQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Oct 2022 07:13:16 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35932 "EHLO
+        id S229832AbiJXLN0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Oct 2022 07:13:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230134AbiJXLNN (ORCPT
+        with ESMTP id S229929AbiJXLNW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Oct 2022 07:13:13 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE847474C3;
-        Mon, 24 Oct 2022 04:13:05 -0700 (PDT)
+        Mon, 24 Oct 2022 07:13:22 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DEE9558F6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 04:13:08 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 94B6361229;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BA6E061224
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 11:13:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D77EC433D6;
         Mon, 24 Oct 2022 11:13:04 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D9F5C43470;
-        Mon, 24 Oct 2022 11:13:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666609984;
-        bh=tugYmxTjSAmzWp2HuL0/jzrCLECCOvxL5Y8QWdWcmyI=;
+        s=k20201202; t=1666609986;
+        bh=U/MR4S3d1G/fMQx2qZaaQBWPeLpOTt983a8nCbJ9f04=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LoQigfp5QwNhzlzOw0CuMvP1+g+rxQ/Bn7ADsH8zy2xk21/H+C3V06qefpbl4SEYM
-         fpC4DhTMUed5woeQqMsYhVVxM9LKd30sTZNKgUcbosobZqR6t6T2/dhlkDk5CN5Cvz
-         MujWhw2NSWeP3Lx7ZcPYOXAOMFjxAZYkJmWAnjmylxyhrGevNto+S+BTbzHH2SdXRt
-         XrNHCrikVa9FDGCf6LMOQsVAgRgp4k8uRdA+xDyHWAAruIVIJGbQg8ovwp9+gl9Y6l
-         hGdMvsfgiKPUV+XyiKc4HYmo8ovbAjs4LPXM3v0GvIu17qGkXsllL7q1NqpqGbuRI6
-         dDwJ+skbQQPiQ==
+        b=rNPDSwmbihqEzZHeD56l0skzhpxDidlx+8XoWwo5W0gddUvEhL4suAoFNYihzzNh1
+         AtjK6/HbYgPfLvpIA6GoB+sqKFS0Qnx4UvKa5X7Z4R4AgLbNcYJrCnOycHi3Y0LTb8
+         Svj/6bvVgFs62+QChOMGUxh2M4XaQV3MDRgJW/yfAdoWv55qaCqdk/tR11OWkOobiv
+         Jak0jFgjQiwAA0g3oZkRghwaP0htvvBLOzFcwCMXnT8cNU79eNkSqIKBExRmrSsrAt
+         6rJx8pBcyxSU4hUOT854ILSBIzzBOry7TrNKArbK6j83R3/ujJtMm1jytdrtTaXejv
+         dJD3PRHyh/oWQ==
 From:   Christian Brauner <brauner@kernel.org>
 To:     Seth Forshee <sforshee@kernel.org>, Christoph Hellwig <hch@lst.de>,
         linux-fsdevel@vger.kernel.org
 Cc:     Christian Brauner <brauner@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH 3/8] caps: use type safe idmapping helpers
-Date:   Mon, 24 Oct 2022 13:12:44 +0200
-Message-Id: <20221024111249.477648-4-brauner@kernel.org>
+        Al Viro <viro@zeniv.linux.org.uk>, apparmor@lists.ubuntu.com
+Subject: [PATCH 4/8] apparmor: use type safe idmapping helpers
+Date:   Mon, 24 Oct 2022 13:12:45 +0200
+Message-Id: <20221024111249.477648-5-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20221024111249.477648-1-brauner@kernel.org>
 References: <20221024111249.477648-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6289; i=brauner@kernel.org; h=from:subject; bh=tugYmxTjSAmzWp2HuL0/jzrCLECCOvxL5Y8QWdWcmyI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSHFesKFqgLrligm/vvmfyuDd9ZTeOl2y9Xx39QPnF7w+Ww iQVbO0pZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyoYGRYfPB9p3Xs/95h5QvMDtk4r 3t54Uth1M9ZCac+bPtqpF8LivDf48JaQoKTcWTGmT3eUkdef/Hpjr/Et//yKnmu2qWPP40lwsA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=5125; i=brauner@kernel.org; h=from:subject; bh=U/MR4S3d1G/fMQx2qZaaQBWPeLpOTt983a8nCbJ9f04=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSHFeuud9dWMwltkXSW9E73WfLJX+npC5H/egYzc0rD7I3v yL7vKGVhEONikBVTZHFoNwmXW85TsdkoUwNmDisTyBAGLk4BmIhbC8N/93/f5y/PlkuI2t9wao7yxy Xrtuf0Fdi8055uZHWrd8ZaNUaGSUwmPhf49xxIZ6x6Pt36yK2uPSkrt3974/Dpnt/yg55bOAE=
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -67,169 +66,127 @@ Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 
 Notes:
 
- kernel/capability.c  |  4 ++--
- security/commoncap.c | 51 ++++++++++++++++++++++----------------------
- 2 files changed, 28 insertions(+), 27 deletions(-)
+ security/apparmor/domain.c |  8 ++++----
+ security/apparmor/file.c   |  4 +++-
+ security/apparmor/lsm.c    | 24 ++++++++++++++++--------
+ 3 files changed, 23 insertions(+), 13 deletions(-)
 
-diff --git a/kernel/capability.c b/kernel/capability.c
-index 765194f5d678..860fd22117c1 100644
---- a/kernel/capability.c
-+++ b/kernel/capability.c
-@@ -489,8 +489,8 @@ bool privileged_wrt_inode_uidgid(struct user_namespace *ns,
- 				 struct user_namespace *mnt_userns,
- 				 const struct inode *inode)
- {
--	return kuid_has_mapping(ns, i_uid_into_mnt(mnt_userns, inode)) &&
--	       kgid_has_mapping(ns, i_gid_into_mnt(mnt_userns, inode));
-+	return vfsuid_has_mapping(ns, i_uid_into_vfsuid(mnt_userns, inode)) &&
-+	       vfsgid_has_mapping(ns, i_gid_into_vfsgid(mnt_userns, inode));
+diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+index 91689d34d281..7bafb4c4767c 100644
+--- a/security/apparmor/domain.c
++++ b/security/apparmor/domain.c
+@@ -859,10 +859,10 @@ int apparmor_bprm_creds_for_exec(struct linux_binprm *bprm)
+ 	const char *info = NULL;
+ 	int error = 0;
+ 	bool unsafe = false;
+-	kuid_t i_uid = i_uid_into_mnt(file_mnt_user_ns(bprm->file),
+-				      file_inode(bprm->file));
++	vfsuid_t vfsuid = i_uid_into_vfsuid(file_mnt_user_ns(bprm->file),
++					    file_inode(bprm->file));
+ 	struct path_cond cond = {
+-		i_uid,
++		vfsuid_into_kuid(vfsuid),
+ 		file_inode(bprm->file)->i_mode
+ 	};
+ 
+@@ -970,7 +970,7 @@ int apparmor_bprm_creds_for_exec(struct linux_binprm *bprm)
+ 	error = fn_for_each(label, profile,
+ 			aa_audit_file(profile, &nullperms, OP_EXEC, MAY_EXEC,
+ 				      bprm->filename, NULL, new,
+-				      i_uid, info, error));
++				      vfsuid_into_kuid(vfsuid), info, error));
+ 	aa_put_label(new);
+ 	goto done;
  }
- 
- /**
-diff --git a/security/commoncap.c b/security/commoncap.c
-index 5fc8986c3c77..b4ce33e20715 100644
---- a/security/commoncap.c
-+++ b/security/commoncap.c
-@@ -328,14 +328,16 @@ int cap_inode_killpriv(struct user_namespace *mnt_userns, struct dentry *dentry)
- 	return error;
- }
- 
--static bool rootid_owns_currentns(kuid_t kroot)
-+static bool rootid_owns_currentns(vfsuid_t rootvfsuid)
+diff --git a/security/apparmor/file.c b/security/apparmor/file.c
+index e1b7e93602e4..d43679894d23 100644
+--- a/security/apparmor/file.c
++++ b/security/apparmor/file.c
+@@ -510,8 +510,10 @@ static int __file_path_perm(const char *op, struct aa_label *label,
  {
- 	struct user_namespace *ns;
-+	kuid_t kroot;
- 
--	if (!uid_valid(kroot))
-+	if (!vfsuid_valid(rootvfsuid))
- 		return false;
- 
--	for (ns = current_user_ns(); ; ns = ns->parent) {
-+	kroot = vfsuid_into_kuid(rootvfsuid);
-+	for (ns = current_user_ns();; ns = ns->parent) {
- 		if (from_kuid(ns, kroot) == 0)
- 			return true;
- 		if (ns == &init_user_ns)
-@@ -381,6 +383,7 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
+ 	struct aa_profile *profile;
+ 	struct aa_perms perms = {};
++	vfsuid_t vfsuid = i_uid_into_vfsuid(file_mnt_user_ns(file),
++					    file_inode(file));
+ 	struct path_cond cond = {
+-		.uid = i_uid_into_mnt(file_mnt_user_ns(file), file_inode(file)),
++		.uid = vfsuid_into_kuid(vfsuid),
+ 		.mode = file_inode(file)->i_mode
+ 	};
+ 	char *buffer;
+diff --git a/security/apparmor/lsm.c b/security/apparmor/lsm.c
+index f56070270c69..cab55e25b4e3 100644
+--- a/security/apparmor/lsm.c
++++ b/security/apparmor/lsm.c
+@@ -225,8 +225,10 @@ static int common_perm(const char *op, const struct path *path, u32 mask,
+ static int common_perm_cond(const char *op, const struct path *path, u32 mask)
  {
- 	int size, ret;
- 	kuid_t kroot;
-+	vfsuid_t vfsroot;
- 	u32 nsmagic, magic;
- 	uid_t root, mappedroot;
- 	char *tmpbuf = NULL;
-@@ -419,11 +422,11 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
- 	kroot = make_kuid(fs_ns, root);
+ 	struct user_namespace *mnt_userns = mnt_user_ns(path->mnt);
++	vfsuid_t vfsuid = i_uid_into_vfsuid(mnt_userns,
++					    d_backing_inode(path->dentry));
+ 	struct path_cond cond = {
+-		i_uid_into_mnt(mnt_userns, d_backing_inode(path->dentry)),
++		vfsuid_into_kuid(vfsuid),
+ 		d_backing_inode(path->dentry)->i_mode
+ 	};
  
- 	/* If this is an idmapped mount shift the kuid. */
--	kroot = mapped_kuid_fs(mnt_userns, fs_ns, kroot);
-+	vfsroot = make_vfsuid(mnt_userns, fs_ns, kroot);
+@@ -270,11 +272,12 @@ static int common_perm_rm(const char *op, const struct path *dir,
+ 	struct inode *inode = d_backing_inode(dentry);
+ 	struct user_namespace *mnt_userns = mnt_user_ns(dir->mnt);
+ 	struct path_cond cond = { };
++	vfsuid_t vfsuid = i_uid_into_vfsuid(mnt_userns, inode);
  
- 	/* If the root kuid maps to a valid uid in current ns, then return
- 	 * this as a nscap. */
--	mappedroot = from_kuid(current_user_ns(), kroot);
-+	mappedroot = from_kuid(current_user_ns(), vfsuid_into_kuid(vfsroot));
- 	if (mappedroot != (uid_t)-1 && mappedroot != (uid_t)0) {
- 		size = sizeof(struct vfs_ns_cap_data);
- 		if (alloc) {
-@@ -450,7 +453,7 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
- 		goto out_free;
- 	}
+ 	if (!inode || !path_mediated_fs(dentry))
+ 		return 0;
  
--	if (!rootid_owns_currentns(kroot)) {
-+	if (!rootid_owns_currentns(vfsroot)) {
- 		size = -EOVERFLOW;
- 		goto out_free;
- 	}
-@@ -488,29 +491,17 @@ int cap_inode_getsecurity(struct user_namespace *mnt_userns,
-  * @value:	vfs caps value which may be modified by this function
-  * @size:	size of @ivalue
-  * @task_ns:	user namespace of the caller
-- * @mnt_userns:	user namespace of the mount the inode was found from
-- * @fs_userns:	user namespace of the filesystem
-- *
-- * If the inode has been found through an idmapped mount the user namespace of
-- * the vfsmount must be passed through @mnt_userns. This function will then
-- * take care to map the inode according to @mnt_userns before checking
-- * permissions. On non-idmapped mounts or if permission checking is to be
-- * performed on the raw inode simply passs init_user_ns.
-  */
--static kuid_t rootid_from_xattr(const void *value, size_t size,
--				struct user_namespace *task_ns,
--				struct user_namespace *mnt_userns,
--				struct user_namespace *fs_userns)
-+static vfsuid_t rootid_from_xattr(const void *value, size_t size,
-+				  struct user_namespace *task_ns)
- {
- 	const struct vfs_ns_cap_data *nscap = value;
--	kuid_t rootkid;
- 	uid_t rootid = 0;
+-	cond.uid = i_uid_into_mnt(mnt_userns, inode);
++	cond.uid = vfsuid_into_kuid(vfsuid);
+ 	cond.mode = inode->i_mode;
  
- 	if (size == XATTR_CAPS_SZ_3)
- 		rootid = le32_to_cpu(nscap->rootid);
+ 	return common_perm_dir_dentry(op, dir, dentry, mask, &cond);
+@@ -368,20 +371,23 @@ static int apparmor_path_rename(const struct path *old_dir, struct dentry *old_d
+ 	label = begin_current_label_crit_section();
+ 	if (!unconfined(label)) {
+ 		struct user_namespace *mnt_userns = mnt_user_ns(old_dir->mnt);
++		vfsuid_t vfsuid;
+ 		struct path old_path = { .mnt = old_dir->mnt,
+ 					 .dentry = old_dentry };
+ 		struct path new_path = { .mnt = new_dir->mnt,
+ 					 .dentry = new_dentry };
+ 		struct path_cond cond = {
+-			i_uid_into_mnt(mnt_userns, d_backing_inode(old_dentry)),
+-			d_backing_inode(old_dentry)->i_mode
++			.mode = d_backing_inode(old_dentry)->i_mode
+ 		};
++		vfsuid = i_uid_into_vfsuid(mnt_userns, d_backing_inode(old_dentry));
++		cond.uid = vfsuid_into_kuid(vfsuid);
  
--	rootkid = make_kuid(task_ns, rootid);
--	return mapped_kuid_user(mnt_userns, fs_userns, rootkid);
-+	return VFSUIDT_INIT(make_kuid(task_ns, rootid));
- }
+ 		if (flags & RENAME_EXCHANGE) {
+ 			struct path_cond cond_exchange = {
+-				i_uid_into_mnt(mnt_userns, d_backing_inode(new_dentry)),
+-				d_backing_inode(new_dentry)->i_mode
++				.mode = d_backing_inode(new_dentry)->i_mode,
+ 			};
++			vfsuid = i_uid_into_vfsuid(mnt_userns, d_backing_inode(old_dentry));
++			cond_exchange.uid = vfsuid_into_kuid(vfsuid);
  
- static bool validheader(size_t size, const struct vfs_cap_data *cap)
-@@ -548,6 +539,7 @@ int cap_convert_nscap(struct user_namespace *mnt_userns, struct dentry *dentry,
- 	struct user_namespace *task_ns = current_user_ns(),
- 		*fs_ns = inode->i_sb->s_user_ns;
- 	kuid_t rootid;
-+	vfsuid_t vfsrootid;
- 	size_t newsize;
+ 			error = aa_path_perm(OP_RENAME_SRC, label, &new_path, 0,
+ 					     MAY_READ | AA_MAY_GETATTR | MAY_WRITE |
+@@ -447,10 +453,12 @@ static int apparmor_file_open(struct file *file)
+ 	if (!unconfined(label)) {
+ 		struct user_namespace *mnt_userns = file_mnt_user_ns(file);
+ 		struct inode *inode = file_inode(file);
++		vfsuid_t vfsuid;
+ 		struct path_cond cond = {
+-			i_uid_into_mnt(mnt_userns, inode),
+-			inode->i_mode
++			.mode = inode->i_mode,
+ 		};
++		vfsuid = i_uid_into_vfsuid(mnt_userns, inode);
++		cond.uid = vfsuid_into_kuid(vfsuid);
  
- 	if (!*ivalue)
-@@ -561,7 +553,11 @@ int cap_convert_nscap(struct user_namespace *mnt_userns, struct dentry *dentry,
- 			/* user is privileged, just write the v2 */
- 			return size;
- 
--	rootid = rootid_from_xattr(*ivalue, size, task_ns, mnt_userns, fs_ns);
-+	vfsrootid = rootid_from_xattr(*ivalue, size, task_ns);
-+	if (!vfsuid_valid(vfsrootid))
-+		return -EINVAL;
-+
-+	rootid = from_vfsuid(mnt_userns, fs_ns, vfsrootid);
- 	if (!uid_valid(rootid))
- 		return -EINVAL;
- 
-@@ -655,6 +651,7 @@ int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
- 	struct vfs_ns_cap_data data, *nscaps = &data;
- 	struct vfs_cap_data *caps = (struct vfs_cap_data *) &data;
- 	kuid_t rootkuid;
-+	vfsuid_t rootvfsuid;
- 	struct user_namespace *fs_ns;
- 
- 	memset(cpu_caps, 0, sizeof(struct cpu_vfs_cap_data));
-@@ -699,11 +696,15 @@ int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
- 	default:
- 		return -EINVAL;
- 	}
-+
-+	rootvfsuid = make_vfsuid(mnt_userns, fs_ns, rootkuid);
-+	if (!vfsuid_valid(rootvfsuid))
-+		return -ENODATA;
-+
- 	/* Limit the caps to the mounter of the filesystem
- 	 * or the more limited uid specified in the xattr.
- 	 */
--	rootkuid = mapped_kuid_fs(mnt_userns, fs_ns, rootkuid);
--	if (!rootid_owns_currentns(rootkuid))
-+	if (!rootid_owns_currentns(rootvfsuid))
- 		return -ENODATA;
- 
- 	CAP_FOR_EACH_U32(i) {
-@@ -716,7 +717,7 @@ int get_vfs_caps_from_disk(struct user_namespace *mnt_userns,
- 	cpu_caps->permitted.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
- 	cpu_caps->inheritable.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
- 
--	cpu_caps->rootid = rootkuid;
-+	cpu_caps->rootid = vfsuid_into_kuid(rootvfsuid);
- 
- 	return 0;
- }
+ 		error = aa_path_perm(OP_OPEN, label, &file->f_path, 0,
+ 				     aa_map_file_to_perms(file), &cond);
 -- 
 2.34.1
 
