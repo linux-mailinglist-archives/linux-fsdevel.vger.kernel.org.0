@@ -2,176 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A6C3B60B1F8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 18:41:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA1EF60B4B0
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 20:01:02 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234558AbiJXQlT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Oct 2022 12:41:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59624 "EHLO
+        id S230057AbiJXSAa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Oct 2022 14:00:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234241AbiJXQks (ORCPT
+        with ESMTP id S232118AbiJXR7k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Oct 2022 12:40:48 -0400
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19E4018D475;
-        Mon, 24 Oct 2022 08:27:59 -0700 (PDT)
-Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
-        by m0089730.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 29OFQ0WS000774;
-        Mon, 24 Oct 2022 08:26:03 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=s2048-2021-q4;
- bh=jzA6pzCZ9q1NsPAlxHCY2lQRNO2B9vX5NRZQxUzCZys=;
- b=lpBAEtgeN97oRaHc6ufCFc6N6HnHm1kD2TLxi6zZ+zHZ91omBi03RrphnPHFDhaXGU/j
- dq+9W15Q402FeNLnqHaFdsDd4X5VbWxG4SaEHm9GTU1RszzeqDw0eoBO3oTVom9xdkXW
- fKfIvWfdDQkVi8KPC1NfCefoXoBVuc4TXEWaUqQ1gYpXSQTS1Uc9nAjhIxiSHMZyCY5d
- jbqWqgeyqEup5S8emSi8BHQqWMnvh2M6G0L8jgo66CEZIyESjLEED8AEoBm2NFeWlgGt
- IG7pK1Wu44SuUpMqXxwWexRijWyK7R9jtnZksyiwp8jvQwcHLVlHWVX3NaoFQdXnTwL2 aQ== 
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2043.outbound.protection.outlook.com [104.47.66.43])
-        by m0089730.ppops.net (PPS) with ESMTPS id 3kcc1bjqey-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 24 Oct 2022 08:26:02 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Z/8tQIZVKeFkilmPyT6AX82X1DE3HpwODvKMRfLpcV76TPASi9bRq3qFLyZ6JEjGehnE2mb356GnszTouGgen9aAjmx9OzknyVJr82yJuLaHXLuik4YVRudATRTE3b09m6xeagK+SviWBpZXDBfWZgIe8YosJ5VIJHYLUCEV7eTYSIcJa+nTYpARRcdBd7lGRH8WlYs6e3jwKsh0gXMWp4gyixd9IK1B+Dj9mc5FJpmxP0cVRCi+/pag/JzS+nSOifoPMLKxZ7r+jf656Q6s74Ot1xeJDs/0HMtMa1Ouua+xqMv6M5NRZJrcGpBwJ/6R2IflkjTu3qT3yFnFNmuoYg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jzA6pzCZ9q1NsPAlxHCY2lQRNO2B9vX5NRZQxUzCZys=;
- b=DarwTX2rK5JTf8N8fH0fZyhL5JUZaVH3bHfExY8hRPL+q0sE3geAQ+NJyUubyBfT/MY5NELwE1/HQVy8HPRNSvaxaNtK4HXpOcUrUCQcHifgrZp0btzgdrgcjiLyiNL+a4DXoiGJk5e3I9/++QYZt6zyZDmilzZK+6x+eGW0PEvYSppAFzuQF7BVvZC58FY1e9ufNWrFQyMOFVjb6Yp6bYv9bdtWbCcgoXUeJCnIE5KaiIVAQAAGWbBIH0N4EbYC7KV3XAcXwy5haFw2vs2KpOk4Q2CCjujWA5ZCG9P4J9rVY1oHFmYtA7od6gnHbarFKmWufTx5sGc4KGSq1Hvj5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=meta.com; dmarc=pass action=none header.from=meta.com;
- dkim=pass header.d=meta.com; arc=none
-Received: from MN2PR15MB4287.namprd15.prod.outlook.com (2603:10b6:208:1b6::13)
- by SJ0PR15MB5180.namprd15.prod.outlook.com (2603:10b6:a03:428::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5746.21; Mon, 24 Oct
- 2022 15:25:10 +0000
-Received: from MN2PR15MB4287.namprd15.prod.outlook.com
- ([fe80::6328:6d95:ed96:b553]) by MN2PR15MB4287.namprd15.prod.outlook.com
- ([fe80::6328:6d95:ed96:b553%6]) with mapi id 15.20.5746.023; Mon, 24 Oct 2022
- 15:25:10 +0000
-Message-ID: <773539e2-b5f1-8386-aa2a-96086f198bf8@meta.com>
-Date:   Mon, 24 Oct 2022 11:25:04 -0400
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.4.0
-Subject: Re: consolidate btrfs checksumming, repair and bio splitting
-To:     Christoph Hellwig <hch@lst.de>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-Cc:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>, Qu Wenruo <wqu@suse.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <20220901074216.1849941-1-hch@lst.de>
- <347dc0b3-0388-54ee-6dcb-0c1d0ca08d05@wdc.com>
- <20221024144411.GA25172@lst.de>
-Content-Language: en-US
-From:   Chris Mason <clm@meta.com>
-In-Reply-To: <20221024144411.GA25172@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-ClientProxiedBy: SA9PR10CA0022.namprd10.prod.outlook.com
- (2603:10b6:806:a7::27) To MN2PR15MB4287.namprd15.prod.outlook.com
- (2603:10b6:208:1b6::13)
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR15MB4287:EE_|SJ0PR15MB5180:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5555eadf-a9bb-40a9-9f47-08dab5d3f021
-X-FB-Source: Internal
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: YsM6Ni600SFUn/+aIcK4bsHm5ODvzBhYnt2PKDZEOSZGdiilpJE2G/tz6vDF7SoLAa+cOcbbvRqnt2gwJSUwlXLptQns9dijzgCibcUxYNoaiaggJHN1btZHKAmoIfMRQnOPD+PQYkVPmqBCRlwSyLplNTqoq3sFVeky/LmqiYkpy1GKWSvt/Dxrp42d+4x6ZdMabJXOqHFtkUZRb/VAeGjkyxdOzcGov3gJyPBt88VWgHGrwbMYltXa2KkZe7L6yC7GvzCpTTewPO24+iNxrWrzoeQoRgJyOzIFA61/E2hCQObf43gjLJnhYi/mbja8SR4cnLPWHlrxVnF85985/anzYZkmdQTyH1RrmLYT1zIFtSfsxw65yarkrcMI8svUWW6vSsBOr/iekBXjR1ho+MHxQeDKhX5JYoa4SyWA+Ttn6WdQMZXyGHmZ1B7vJrxZcHhYVURdnkZ95eJChZi3t6aK2ZCYj87YCIENeUuEim08Z8JVk2muvTsyV3MckdOJUyJxAujWvo9IT4PItxDwi73PyeLS08JnskI3EdvhSwlAIbEXAerod1UCXPAmxl1DP0p1Qwmj4r/fhQGeID/gZLVvgUEmqmXlDjCIjMPj9LeWJDBwnLydREjRNqUgvAWyj6+G0lI/kEjzuKjJe4WXJZAtl0sLr/0BMTMOFzPB/yoK4IQJwlRkrp2T370Tn13rZU+8eiTz7FOMPkfFmyETYckgARrQPknahpASOxhfRZvgEnhdhheUuOjv7WSZ6Dy0K3szTn5lGxnMTWK5078ukcZQ9sRSG/ppwe34D69C6ytgwFVeZ6gj4g70n0/WnH3+nmXDsTNFJ6vGDD9xNWqT2w==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR15MB4287.namprd15.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(376002)(39860400002)(136003)(346002)(366004)(451199015)(478600001)(86362001)(31696002)(31686004)(966005)(6486002)(83380400001)(66556008)(66476007)(54906003)(53546011)(8676002)(110136005)(6666004)(4326008)(36756003)(6506007)(66946007)(8936002)(7416002)(41300700001)(6512007)(5660300002)(38100700002)(4744005)(2616005)(186003)(2906002)(316002)(45980500001)(43740500002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Qkh5MldaYkVZMzNmUHhhdU5sSmdYa0ZUYVJkNkZVMHJqeFZKKzV0NUZ5Wjk3?=
- =?utf-8?B?ay9zK1FxcEhSTnNIVktmSWFncUJjRmpwVXR4SGEzZFNOM1RmVzZuWVRTLzYr?=
- =?utf-8?B?b2VDcEh3TnNZc2FjYlFKOTA4ZlYwR0dXbEYvSFRHWDFzLzZNRFFacFpUMGZi?=
- =?utf-8?B?Yk5lZzlQeHEwTEpzNlNZSkI2M1JEcnhLcGZibnpvY0h2ODJnd0ttenRPQUFK?=
- =?utf-8?B?Q2hXbVZ3K0Y1WWZpZEI4UTk0VlZ0cDNtcFArUTIyNlNUaXc3Y2JLdy83bHdT?=
- =?utf-8?B?QlhaY3djcVNTNEhkZ0hSclNGSHE0cjkvN1M0VXY2NnRGbHFGOFdicDNFdlZN?=
- =?utf-8?B?ekE2bkplL3ZSVEMwUGlpQ0hwVW5CRVBLcENweElaT2NXMHlBRmNtWjQzN2sx?=
- =?utf-8?B?M2kveEs2MTlZUFZRNE9DOGpRSVByVE54NHlCREc3WXA1SjlXMnNZSHJSWkgr?=
- =?utf-8?B?Q3hQMEduRDFERllITjhxeUtMNjZESVZPNGJpZVJIMWFjN0ludk8ySmhHYmw5?=
- =?utf-8?B?L0hnNjF3dk9yRFZlU081Nk4wQnVmTEloaGJFRGY0UFh4eXl4OXEzRTVPRDNJ?=
- =?utf-8?B?S1FzNFhBcGZVb2tkOWM3TWVLQzBkc1Z6SnBqMEpqM05KUDU2RHlIZnpqN0RX?=
- =?utf-8?B?ZUdjVk9iNkwzc3FZTndRL0tkQnJRWnRUK1NkQzlnc3p4MjFDVEtrOEQ1MUJy?=
- =?utf-8?B?dVVtODFQYW4ySm14Y1ZuR2F6RHd2OGdab3lERVlKbEF1SVB2cTB0WU51RnFW?=
- =?utf-8?B?aE1XOXZNRmsvSEZuMnNCdm5KdW1CMk9YTTE2REhORUo1RGg2cDRQYjR4VU1w?=
- =?utf-8?B?WlBsUXYyTmtWTk5kMUVFTXFiWVF3V2tMc2FiQS9jcm4wSUVYM25MU1dncXZq?=
- =?utf-8?B?V0ZZdkZwWFo5QUUyZ2ZLc1pCa2hNazJNdXlFMDBJbnYvYnNYdmR2bDF3OXJF?=
- =?utf-8?B?SVVjT0J1QnE3ZWF6a2pMQnNkMFFmZ01PNFdBZlhCSmpwOW91TFRLNHo4YzRr?=
- =?utf-8?B?Q0ZrdDBuZm5GajloMjYxL2NkZUx3TFMvTUNUSXJTeFRvYTQvUnIyYm1vNDRK?=
- =?utf-8?B?U1FKaE0vWmorOHg4R2ZTNzlKLzRnM2RXYmVxVUd4TTlCN3hSSUxUUkF4RzhY?=
- =?utf-8?B?c0RCR21XTE5LV0NKMjRJMVhZZk1Rb2VPQmN1UWdFSXV5RGJsR0NXeEtWTzdk?=
- =?utf-8?B?dkwzdjZjcVVRN2phWThnYTJuQzBIRUl3UG9qWXRRaEw2MThQVzQzU1VEVzBY?=
- =?utf-8?B?T09zdHNIZ25OaXk1VFRHaWVIblBuRlUzeWhpSzJ3b2dOdXRTU3VFa3FMVjRv?=
- =?utf-8?B?WXZ0Q0k1UjFBNHBxaGZ3S2VDTzhSKzFtTzNzSk1lbEQwa3FDaUd3MXhJZGxh?=
- =?utf-8?B?dXNGUHhweU5ROXl2bU03WURoQWdaeVV5bWZBSWc1NlMyS25JZzhJV0RBNktR?=
- =?utf-8?B?SVkvaWtKZWk3TGpzVVZQWWVOMlR3R2NTRnhMRmQ2NnBlV3ZpVFNITjh4aFow?=
- =?utf-8?B?bWZtMXdHd1RjQW8xZnZlRHAwTEtia2d6UUJZaTN3WjRzQ0RWT1Y3eXhPa2xo?=
- =?utf-8?B?cVJrWnZXdnEwcVV5MmpwZ090WFE2SWRHMGl4UEtmcGRwbFlBYnREM3BrVmp6?=
- =?utf-8?B?RlljOEh5WWxnS2pLQkJzaStaK3kweFNVNXF6aWxCZURSQjR0OEk4UktFNXlp?=
- =?utf-8?B?V3o5YXdvQ3ZRMldkVzMzMDhrRkNmR1pabUgxNlZ5Tm5HS0FNeE93clM5b0R1?=
- =?utf-8?B?aERvSCs5UngydzBtQXBQUG1lRkNVS2VKdkpqUHlkV3FMTVVXZEJjaW9jZlMw?=
- =?utf-8?B?aHJEQ3ZINUNRbmFlWUsyMXQ4UE1ES1luZWVXdUtQdFJONTRNQTRXVjRYSHhS?=
- =?utf-8?B?WkdkdjdNUk9TRE1RRXBXUXFVNG0yUlluWkxrTUNCdWN4bklZRVNkWnltelNx?=
- =?utf-8?B?NGVLeWJETTBIVjZITjZORTFZS2FPbG1CejR1UzB1eTh4UmtUMXU0QWg3WTZR?=
- =?utf-8?B?ZENBWGR4MFpEeHRKeS9BRmticjNOZzkvNlJ6dFNPTTUxRWNQc0oyN0VBY2x2?=
- =?utf-8?B?TDhPK2FMVFVyY1JUOFlJdmpRZTJKdXRYaXVmaXZMTnN4RDRNRXZOTGZKQmhX?=
- =?utf-8?B?Zllvc2JQeEpyLzBDUWg5azMraUJOTWQ3S0tlaU5ZeCtQUGoxOTkwVnBTb3dx?=
- =?utf-8?B?RlE9PQ==?=
-X-OriginatorOrg: meta.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5555eadf-a9bb-40a9-9f47-08dab5d3f021
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR15MB4287.namprd15.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2022 15:25:10.0777
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: O/TADz6u0mbPy9OZiNNWpsYKW6GECrf8Xh0nwG78l9PGQS+WgyrL0WBoxYs3R9XV
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR15MB5180
-X-Proofpoint-GUID: ci56iWB2m8TfHLvEAruAXB7YCRHSzTAR
-X-Proofpoint-ORIG-GUID: ci56iWB2m8TfHLvEAruAXB7YCRHSzTAR
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Mon, 24 Oct 2022 13:59:40 -0400
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E6A857E0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 09:40:17 -0700 (PDT)
+Received: by mail-il1-f198.google.com with SMTP id x6-20020a056e021bc600b002fc96f780e7so9122165ilv.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 09:40:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zTpt42zlFi3UfDN6VLOXH7hS4FWPzl+DdSyOQH5VzIg=;
+        b=sddiEuOpNG9We/jt205htrKgXGffmbzo4F0bHgNCD9nXnWtykBG8R1XCgfydjaD7h6
+         zFU1K9UZ4iBZw/68Qc5qkxSIjyno/OtnB/tCmnWgoWGjVTngSZfiUhel4JMbIzpDhAH6
+         tgDcULWn1zLHOi9ZQ0jHl0RTV96CBKPk4yBGgCrDx6e5cSbM1019q1v2cqmzVk22gB2I
+         l2yiXWe4jN4G3qbK3woYWPl/jf1ybd7s29LGzYwqsgji/XyBIQc7Gbocecp7z2IfHe0S
+         ZTDbEomR+Z/pKipTbAPcY+6DNWAScYCLZM4m7wZMYOjdEab5J4qcIoJNZydHTMo95Ytp
+         phEA==
+X-Gm-Message-State: ACrzQf1hEC89hyPHbes35PHOjzHLkpQssvnqE4O582Vh18z4eaHiAr3/
+        oQupQpbZ+GJdlpC9HsxGIlReEUC7ootWuqD2N4kId14DHAxA
+X-Google-Smtp-Source: AMsMyM53XaSnBVhNd1Qcz5Tm+F2TLcYsibmARMi7jrN9rmxnYXub1/fH9aI1qNwdC4ERrgARDlkhw3C4+z7XimkFdNisADbyQPHT
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-10-24_04,2022-10-21_01,2022-06-22_01
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6602:2b92:b0:6a8:bdb5:a5d5 with SMTP id
+ r18-20020a0566022b9200b006a8bdb5a5d5mr20403985iov.85.1666629520753; Mon, 24
+ Oct 2022 09:38:40 -0700 (PDT)
+Date:   Mon, 24 Oct 2022 09:38:40 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008e8b8505ebca6cc7@google.com>
+Subject: [syzbot] BUG: unable to handle kernel NULL pointer dereference in filemap_free_folio
+From:   syzbot <syzbot+f1eb7f33bbf683a5e1e1@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/24/22 10:44 AM, Christoph Hellwig wrote:
-> On Mon, Oct 24, 2022 at 08:12:29AM +0000, Johannes Thumshirn wrote:
->> David, what's your plan to progress with this series?
-> 
-> FYI, I object to merging any of my code into btrfs without a proper
-> copyright notice, and I also need to find some time to remove my
-> previous significant changes given that the btrfs maintainer
-> refuses to take the proper and legally required copyright notice.
-> 
-> So don't waste any of your time on this.
+Hello,
 
-Christoph's request is well within the norms for the kernel, given that 
-he's making substantial changes to these files.  I talked this over with 
-GregKH, who pointed me at:
+syzbot found the following issue on:
 
-https://www.linuxfoundation.org/blog/blog/copyright-notices-in-open-source-software-projects
+HEAD commit:    bbed346d5a96 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=15788ec2880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3a4a45d2d827c1e
+dashboard link: https://syzkaller.appspot.com/bug?extid=f1eb7f33bbf683a5e1e1
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
 
-Even if we'd taken up some of the other policies suggested by this doc, 
-I'd still defer to preferences of developers who have made significant 
-changes.
+Unfortunately, I don't have any reproducer for this issue yet.
 
--chris
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/e8e91bc79312/disk-bbed346d.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c1cb3fb3b77e/vmlinux-bbed346d.xz
 
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+f1eb7f33bbf683a5e1e1@syzkaller.appspotmail.com
+
+Unable to handle kernel NULL pointer dereference at virtual address 0000000000000050
+Mem abort info:
+  ESR = 0x0000000096000005
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x05: level 1 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000005
+  CM = 0, WnR = 0
+user pgtable: 4k pages, 48-bit VAs, pgdp=000000014a8d0000
+[0000000000000050] pgd=08000001532c9003, p4d=08000001532c9003, pud=0000000000000000
+Internal error: Oops: 0000000096000005 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 3066 Comm: syz-executor.3 Not tainted 6.0.0-rc7-syzkaller-18095-gbbed346d5a96 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : filemap_free_folio+0x20/0x288 mm/filemap.c:231
+lr : filemap_free_folio+0x1c/0x288 mm/filemap.c:227
+sp : ffff80001280b990
+x29: ffff80001280b990 x28: ffff000117b4ea00 x27: 0000000000000000
+x26: 0000000000000001 x25: ffff80000cb6fd9e x24: fffffffffffffffe
+x23: 0000000000000000 x22: fffffc0004cfa8c0 x21: 0000000000000001
+x20: ffff0001127af450 x19: fffffc0004cfa8c0 x18: 00000000000003b8
+x17: ffff80000bffd6bc x16: 0000000000000002 x15: 0000000000000000
+x14: 0000000000000000 x13: 0000000000000003 x12: ffff80000d5f02b0
+x11: ff808000083c31e8 x10: 0000000000000000 x9 : ffff8000083c31e8
+x8 : 0000000000000000 x7 : ffff80000856806c x6 : 0000000000000000
+x5 : 0000000000000080 x4 : 0000000000000000 x3 : 0000000000000000
+x2 : 0000000000000006 x1 : fffffc0004cfa8c0 x0 : ffff0001127af450
+Call trace:
+ filemap_free_folio+0x20/0x288 mm/filemap.c:231
+ delete_from_page_cache_batch+0x148/0x184 mm/filemap.c:341
+ truncate_inode_pages_range+0x174/0xb94 mm/truncate.c:370
+ truncate_inode_pages mm/truncate.c:452 [inline]
+ truncate_inode_pages_final+0x8c/0x9c mm/truncate.c:487
+ nilfs_evict_inode+0x58/0x1cc fs/nilfs2/inode.c:906
+ evict+0xec/0x334 fs/inode.c:665
+ dispose_list fs/inode.c:698 [inline]
+ evict_inodes+0x2e0/0x354 fs/inode.c:748
+ generic_shutdown_super+0x50/0x190 fs/super.c:480
+ kill_block_super+0x30/0x78 fs/super.c:1427
+ deactivate_locked_super+0x70/0xe8 fs/super.c:332
+ deactivate_super+0xd0/0xd4 fs/super.c:363
+ cleanup_mnt+0x1f8/0x234 fs/namespace.c:1186
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1193
+ task_work_run+0xc4/0x14c kernel/task_work.c:177
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ do_notify_resume+0x174/0x1f0 arch/arm64/kernel/signal.c:1127
+ prepare_exit_to_user_mode arch/arm64/kernel/entry-common.c:137 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:142 [inline]
+ el0_svc+0x9c/0x150 arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:654
+ el0t_64_sync+0x18c/0x190 arch/arm64/kernel/entry.S:581
+Code: aa0103f3 aa0003f4 97fb728c f940de88 (f9402914) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	aa0103f3 	mov	x19, x1
+   4:	aa0003f4 	mov	x20, x0
+   8:	97fb728c 	bl	0xffffffffffedca38
+   c:	f940de88 	ldr	x8, [x20, #440]
+* 10:	f9402914 	ldr	x20, [x8, #80] <-- trapping instruction
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
