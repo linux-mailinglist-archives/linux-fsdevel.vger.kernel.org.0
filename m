@@ -2,107 +2,243 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0CA6960B965
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 22:10:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B0BE160BBF9
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 23:20:04 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232031AbiJXUJ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Oct 2022 16:09:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56456 "EHLO
+        id S233200AbiJXVTs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Oct 2022 17:19:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234077AbiJXUJI (ORCPT
+        with ESMTP id S231559AbiJXVSh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Oct 2022 16:09:08 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCD0196200;
-        Mon, 24 Oct 2022 11:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=fcx3UsJT/EiGxEWc981H0B6QDQpyfmAuT8tUP7W5Bog=; b=KW9TUI6gkHypoxaCi6CgHc414r
-        EcrGhdTngXbD6oLuuLfYGwiK/T7jSvFBwexevni+2ywKAypeipXCrpUUe1qeLGgwfQ2mhUN4U8m78
-        hvz1IrtTPG4GexHAM3pCHxpyimTGhpYaNG6PoJoF9jw+mL5HfraXrih3zeOlBxMOrOUftje5TaEjv
-        TyUdpNW2FFN1zr9X3iVFCxokhRMQqvy8EOeFgUIFb6e3TzqAGCErefPeHw45D/cts6wMqgNlmvDMX
-        GmzzkXdqMCT5MY6oFaSxAzHJVvglksH9/uJRnOHPbKbyXyfSTEvYa0swHHmH0+xRR8zb5WfidFDkC
-        srU6F4jw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1omytI-0020ka-J7; Mon, 24 Oct 2022 14:57:24 +0000
-Date:   Mon, 24 Oct 2022 07:57:24 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, willy@infradead.org,
-        dchinner@redhat.com, Steve French <smfrench@gmail.com>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ira Weiny <ira.weiny@intel.com>, torvalds@linux-foundation.org,
-        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: How to convert I/O iterators to iterators, sglists and RDMA lists
-Message-ID: <Y1an1NFcowiSS9ms@infradead.org>
-References: <Y01VjOE2RrLVA2T6@infradead.org>
- <1762414.1665761217@warthog.procyon.org.uk>
- <1415915.1666274636@warthog.procyon.org.uk>
+        Mon, 24 Oct 2022 17:18:37 -0400
+Received: from mail-yw1-x112a.google.com (mail-yw1-x112a.google.com [IPv6:2607:f8b0:4864:20::112a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE19D57566;
+        Mon, 24 Oct 2022 12:24:48 -0700 (PDT)
+Received: by mail-yw1-x112a.google.com with SMTP id 00721157ae682-369c2f83697so86961827b3.3;
+        Mon, 24 Oct 2022 12:24:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YNQKfFH/J4u1O0RDYXKWFImeY+htr9CT0XG4blIptF8=;
+        b=BZ07ttqeleBSPnDK6U+YYl4PqDUBbDSEX+WjIwTCayimKOvCWQ7QJMsRTbYZsiVgqd
+         EPz3Kssuzqwb+DuV01u77FroRmxl2Oh6cZq5to1O1dgnkU1zmgohLPGe1Vnqvzt4EEfq
+         UidgeyS0Y9tA7MFOSRR/Hl408Q6977DSlBV5an5pjChLODwH4qrSLz+huTxqO2oeeugs
+         Y5lojn/s8STiv9jUlWIiLpxr1Ml7lBHDrgQGF6DCe76VDPmKxmi79ylCmm7nM5tyKHUQ
+         XKsULy6TfrVTx89x+MSxKDo6XFVnqqivPcXKUNiJ2AXL3gDfjx2EKDTvO6VMcUmcvqOP
+         zWwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YNQKfFH/J4u1O0RDYXKWFImeY+htr9CT0XG4blIptF8=;
+        b=uSaBudvZBCOVfJGC4D+t2LbZyvlAEhlwN3ldg41gLMXnoNZqGJLa7Q5+ZAN1li3wKl
+         i/BLpJg4HQLW0D71PvBb6PQaDxZfugRY0DneODCI//rcLYIr73LD2Tl/Bdy7o1mCtYcn
+         +pgIa709NnfnQvhtUAWQ2zjjpD53kwsTKi9bWSsSOX1FM5o2yncnkY2JphZJQofNjeGc
+         iZiZ8ThNnCVYInMr/hmbp2a4j490k87v7JrA2gq2sStwMy1MOEDYTkXIY3azcqJE3rhT
+         dF/WTX9oWSsX/NSGa7omRyXVW83YkSyxSOx0PmiVrwuYI7ggpP/j6Ri0SHUKcKOSkfjo
+         P2Nw==
+X-Gm-Message-State: ACrzQf1sow6xW7qEDrMWDW2ZdheyH8dL+c0ICSoWXkFXpmz06kjwfnGo
+        MtFkgkksokjWuLbPZGhq9dDaAPpNYES2uISH+eY8NC1uiRs=
+X-Google-Smtp-Source: AMsMyM4zQHncqMnc13JolI9a0bQPoGwvoozFFIXgkb0S+8TY5Wbz7IROxLSB7QZhSNOK0oJhcsH0Lm1a9opE48XevoI=
+X-Received: by 2002:a81:71c6:0:b0:36a:5682:2c44 with SMTP id
+ m189-20020a8171c6000000b0036a56822c44mr14280778ywc.308.1666639398914; Mon, 24
+ Oct 2022 12:23:18 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1415915.1666274636@warthog.procyon.org.uk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DATE_IN_PAST_03_06,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20221017202451.4951-1-vishal.moola@gmail.com> <20221017202451.4951-18-vishal.moola@gmail.com>
+In-Reply-To: <20221017202451.4951-18-vishal.moola@gmail.com>
+From:   Vishal Moola <vishal.moola@gmail.com>
+Date:   Mon, 24 Oct 2022 12:23:07 -0700
+Message-ID: <CAOzc2pya9kuNYT3Uff3wVmrZ3JVSnFs2kwH5CK8ite6Qn67mRg@mail.gmail.com>
+Subject: Re: [PATCH v3 17/23] gfs2: Convert gfs2_write_cache_jdata() to use filemap_get_folios_tag()
+To:     linux-fsdevel@vger.kernel.org
+Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
+        rpeterso@redhat.com, agruenba@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 20, 2022 at 03:03:56PM +0100, David Howells wrote:
-> > What block file systems do is to take the pages from the iter and some flags
-> > on what is pinned.  We can generalize this to store all extra state in a
-> > flags word, or byte the bullet and allow cloning of the iter in one form or
-> > another.
-> 
-> Yeah, I know.  A list of pages is not an ideal solution.  It can only handle
-> contiguous runs of pages, possibly with a partial page at either end.  A bvec
-> iterator would be of more use as it can handle a series of partial pages.
-> 
-> Note also that I would need to turn the pages *back* into an iterator in order
-> to commune with sendmsg() in the nether reaches of some network filesystems.
+On Mon, Oct 17, 2022 at 1:25 PM Vishal Moola (Oracle)
+<vishal.moola@gmail.com> wrote:
+>
+> Converted function to use folios throughout. This is in preparation for
+> the removal of find_get_pgaes_range_tag().
+>
+> Also had to modify and rename gfs2_write_jdata_pagevec() to take in
+> and utilize folio_batch rather than pagevec and use folios rather
+> than pages. gfs2_write_jdata_batch() now supports large folios.
+>
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> ---
+>  fs/gfs2/aops.c | 64 +++++++++++++++++++++++++++-----------------------
+>  1 file changed, 35 insertions(+), 29 deletions(-)
+>
+> diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+> index 05bee80ac7de..8f87c2551a3d 100644
+> --- a/fs/gfs2/aops.c
+> +++ b/fs/gfs2/aops.c
+> @@ -195,67 +195,71 @@ static int gfs2_writepages(struct address_space *mapping,
+>  }
+>
+>  /**
+> - * gfs2_write_jdata_pagevec - Write back a pagevec's worth of pages
+> + * gfs2_write_jdata_batch - Write back a folio batch's worth of folios
+>   * @mapping: The mapping
+>   * @wbc: The writeback control
+> - * @pvec: The vector of pages
+> - * @nr_pages: The number of pages to write
+> + * @fbatch: The batch of folios
+>   * @done_index: Page index
+>   *
+>   * Returns: non-zero if loop should terminate, zero otherwise
+>   */
+>
+> -static int gfs2_write_jdata_pagevec(struct address_space *mapping,
+> +static int gfs2_write_jdata_batch(struct address_space *mapping,
+>                                     struct writeback_control *wbc,
+> -                                   struct pagevec *pvec,
+> -                                   int nr_pages,
+> +                                   struct folio_batch *fbatch,
+>                                     pgoff_t *done_index)
+>  {
+>         struct inode *inode = mapping->host;
+>         struct gfs2_sbd *sdp = GFS2_SB(inode);
+> -       unsigned nrblocks = nr_pages * (PAGE_SIZE >> inode->i_blkbits);
+> +       unsigned nrblocks;
+>         int i;
+>         int ret;
+> +       int nr_pages = 0;
+> +       int nr_folios = folio_batch_count(fbatch);
+> +
+> +       for (i = 0; i < nr_folios; i++)
+> +               nr_pages += folio_nr_pages(fbatch->folios[i]);
+> +       nrblocks = nr_pages * (PAGE_SIZE >> inode->i_blkbits);
+>
+>         ret = gfs2_trans_begin(sdp, nrblocks, nrblocks);
+>         if (ret < 0)
+>                 return ret;
+>
+> -       for(i = 0; i < nr_pages; i++) {
+> -               struct page *page = pvec->pages[i];
+> +       for (i = 0; i < nr_folios; i++) {
+> +               struct folio *folio = fbatch->folios[i];
+>
+> -               *done_index = page->index;
+> +               *done_index = folio->index;
+>
+> -               lock_page(page);
+> +               folio_lock(folio);
+>
+> -               if (unlikely(page->mapping != mapping)) {
+> +               if (unlikely(folio->mapping != mapping)) {
+>  continue_unlock:
+> -                       unlock_page(page);
+> +                       folio_unlock(folio);
+>                         continue;
+>                 }
+>
+> -               if (!PageDirty(page)) {
+> +               if (!folio_test_dirty(folio)) {
+>                         /* someone wrote it for us */
+>                         goto continue_unlock;
+>                 }
+>
+> -               if (PageWriteback(page)) {
+> +               if (folio_test_writeback(folio)) {
+>                         if (wbc->sync_mode != WB_SYNC_NONE)
+> -                               wait_on_page_writeback(page);
+> +                               folio_wait_writeback(folio);
+>                         else
+>                                 goto continue_unlock;
+>                 }
+>
+> -               BUG_ON(PageWriteback(page));
+> -               if (!clear_page_dirty_for_io(page))
+> +               BUG_ON(folio_test_writeback(folio));
+> +               if (!folio_clear_dirty_for_io(folio))
+>                         goto continue_unlock;
+>
+>                 trace_wbc_writepage(wbc, inode_to_bdi(inode));
+>
+> -               ret = __gfs2_jdata_writepage(page, wbc);
+> +               ret = __gfs2_jdata_writepage(&folio->page, wbc);
+>                 if (unlikely(ret)) {
+>                         if (ret == AOP_WRITEPAGE_ACTIVATE) {
+> -                               unlock_page(page);
+> +                               folio_unlock(folio);
+>                                 ret = 0;
+>                         } else {
+>
+> @@ -268,7 +272,8 @@ static int gfs2_write_jdata_pagevec(struct address_space *mapping,
+>                                  * not be suitable for data integrity
+>                                  * writeout).
+>                                  */
+> -                               *done_index = page->index + 1;
+> +                               *done_index = folio->index +
+> +                                       folio_nr_pages(folio);
+>                                 ret = 1;
+>                                 break;
+>                         }
+> @@ -305,8 +310,8 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
+>  {
+>         int ret = 0;
+>         int done = 0;
+> -       struct pagevec pvec;
+> -       int nr_pages;
+> +       struct folio_batch fbatch;
+> +       int nr_folios;
+>         pgoff_t writeback_index;
+>         pgoff_t index;
+>         pgoff_t end;
+> @@ -315,7 +320,7 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
+>         int range_whole = 0;
+>         xa_mark_t tag;
+>
+> -       pagevec_init(&pvec);
+> +       folio_batch_init(&fbatch);
+>         if (wbc->range_cyclic) {
+>                 writeback_index = mapping->writeback_index; /* prev offset */
+>                 index = writeback_index;
+> @@ -341,17 +346,18 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
+>                 tag_pages_for_writeback(mapping, index, end);
+>         done_index = index;
+>         while (!done && (index <= end)) {
+> -               nr_pages = pagevec_lookup_range_tag(&pvec, mapping, &index, end,
+> -                               tag);
+> -               if (nr_pages == 0)
+> +               nr_folios = filemap_get_folios_tag(mapping, &index, end,
+> +                               tag, &fbatch);
+> +               if (nr_folios == 0)
+>                         break;
+>
+> -               ret = gfs2_write_jdata_pagevec(mapping, wbc, &pvec, nr_pages, &done_index);
+> +               ret = gfs2_write_jdata_batch(mapping, wbc, &fbatch,
+> +                               &done_index);
+>                 if (ret)
+>                         done = 1;
+>                 if (ret > 0)
+>                         ret = 0;
+> -               pagevec_release(&pvec);
+> +               folio_batch_release(&fbatch);
+>                 cond_resched();
+>         }
+>
+> --
+> 2.36.1
+>
 
-Yes.  So I think the right thing here is to make sure we can send
-the iter through the whole stack without a convesion.
-
-> It would be nice to be able to pass an iterator to the crypto layer.  I'm not
-> sure what the crypto people think of that.
-
-Let's ask them..
-
-> On the other hand, if you think the RDMA API should be taking scatterlists
-> rather than sge lists, that would be fine.  Even better if I can just pass an
-> iterator in directly - though neither scatterlist nor iterator has a place to
-> put the RDMA local_dma_key - though I wonder if that's actually necessary for
-> each sge element, or whether it could be handed through as part of the request
-> as a hole.
-
-Well, in the long run it should not take scatterlists either, as they
-are a bad data structure.  But what should happen in the long run is
-that the DMA mapping is only done in the hardware drivers, not the ULPs,
-which is a really nasty layering violation.  This requires the strange
-ib_dma_* stubs to disable DMA mapping for the software drivers, and it
-also does complete unneeded DMA mappings for sends that are inline in
-the SQE as supported by some Mellanox / Nvidia hardware.
-
-> That's fine in principle.  However, I have some extraction code that can
-> convert an iterator to another iterator, an sglist or an rdma sge list, using
-> a common core of code to do all three.
-
-So I think the iterator to iterator is a really bad idea and we should
-not have it at all.  It just works around the issue about not being
-able to easily keeping state after an iter based get_user_pages, but
-that is beeing addressed at the moment.  The iter to ib_sge/scatterlist
-are very much RDMA specific at the moment, so I guess that might be a
-good place to keep them.  In fact I suspect the scatterlist conversion
-should not be a public API at all, but hidden in rw.c and only be used
-internally for the DMA mapping.
+Would anyone familiar with gfs2 have time to look over this patch (17/23)?
+I've cc-ed the gfs2 supporters, feedback would be appreciated.
