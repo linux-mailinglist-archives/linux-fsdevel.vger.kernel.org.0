@@ -2,138 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5BFFA60ACE6
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 16:16:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id DC26660AEA3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 17:11:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234034AbiJXOQk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Oct 2022 10:16:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59460 "EHLO
+        id S230301AbiJXPLO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Oct 2022 11:11:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38548 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237199AbiJXOQK (ORCPT
+        with ESMTP id S230176AbiJXPKx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Oct 2022 10:16:10 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0808CBFFB;
-        Mon, 24 Oct 2022 05:55:54 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Mon, 24 Oct 2022 11:10:53 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6159AF187
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 06:46:56 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id B495921CA5;
-        Mon, 24 Oct 2022 12:26:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1666614374; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OYm3JNBPLIG7FhjiMAka/JpluIH9z/kEqZ0pIlPgYlI=;
-        b=jxzWprjDUUKAk9keVNNy2jFGSdSqeqyuNd009xVi1/jr/acc7r3yJ1+ria0uQPXkT1wWKp
-        DzV+x45SzXYfgROo0MNa2HOnSFXvL5YY+QwuGPEBWCAFbBa4ClUGv39w4VqaMJfTv1bn/A
-        w767PWrY7DekL1WATPlLQ46R23tUwVw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1666614374;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=OYm3JNBPLIG7FhjiMAka/JpluIH9z/kEqZ0pIlPgYlI=;
-        b=mdlCD5hNg+7mFUa/h3lrk0BIQg4QI19HWgyAHvf6/HtOjja+90kDd/rP5rBOYAl9jxY3Yd
-        tIN53t5XsqJP/xDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id A20BA13A79;
-        Mon, 24 Oct 2022 12:26:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 7ByJJ2aEVmODWQAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 24 Oct 2022 12:26:14 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 10164A06F6; Mon, 24 Oct 2022 14:26:14 +0200 (CEST)
-Date:   Mon, 24 Oct 2022 14:26:14 +0200
-From:   Jan Kara <jack@suse.cz>
-To:     Arnd Bergmann <arnd@kernel.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, Thomas Schmitt <scdbackup@gmx.net>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Jan Kara <jack@suse.cz>, Jeff Layton <jlayton@kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] isofs: prevent file time rollover after year 2038
-Message-ID: <20221024122614.bkcehqr7gi3f23ca@quack3>
-References: <20221020160037.4002270-1-arnd@kernel.org>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E598C61280
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 13:44:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B623C433C1;
+        Mon, 24 Oct 2022 13:44:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666619069;
+        bh=4Is8mqkb8UAx9edc/nC79pta6DLdQ0LGYNhlIjWDs3c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=prH5vMvMaURl6toLQVR+n0bmkEYkASsMWD8rJPz83HG+AuVWIt53iR2SmZJBZMxr9
+         SXFYvjWkterPkEV8GeUsoxL9asTDOHbKtvFfjhgHX+T9MiPS/09897HmdtuFElX6WT
+         9jIjqt6yIxYFcJybQHM5y6pAr6llppvsKMAsO2QfisLb/dfohKxbwmya64Ad9Vyv2V
+         I58lCmVhSnyTXSDKJH4sRPYK1Qzwj6ru6OyrCmqBpmnHgQGiE/2RPoOJn/AyvhPaga
+         u7zISsDfCNOLxIZvvj58bpK5OM0UtIp0eZvKhHcxXcITKYOlvR2cOq5pgHAaHPqmXQ
+         H3jpMY3a6sjlA==
+Date:   Mon, 24 Oct 2022 08:44:28 -0500
+From:   Seth Forshee <sforshee@kernel.org>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Dave Marchevsky <davemarchevsky@fb.com>,
+        linux-fsdevel@vger.kernel.org, Miklos Szeredi <miklos@szeredi.hu>,
+        kernel-team <kernel-team@fb.com>,
+        Andrii Nakryiko <andrii@kernel.org>
+Subject: Re: [PATCH v2] fuse: Rearrange fuse_allow_current_process checks
+Message-ID: <Y1aWvBYi+DFl3HOi@do-x1extreme>
+References: <20221020201409.1815316-1-davemarchevsky@fb.com>
+ <CAEf4BzZi4jnyXi1OAVrQ+k0qTJdRViU6-T+oeUUeTZXTF8V5bA@mail.gmail.com>
+ <20221022132213.p7nr2b7whgivl3f5@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221020160037.4002270-1-arnd@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_NONE,
-        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20221022132213.p7nr2b7whgivl3f5@wittgenstein>
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 20-10-22 18:00:29, Arnd Bergmann wrote:
-> From: Thomas Schmitt <scdbackup@gmx.net>
+On Sat, Oct 22, 2022 at 03:22:13PM +0200, Christian Brauner wrote:
+> On Fri, Oct 21, 2022 at 09:05:26AM -0700, Andrii Nakryiko wrote:
+> > On Thu, Oct 20, 2022 at 1:14 PM Dave Marchevsky <davemarchevsky@fb.com> wrote:
+> > >
+> > > This is a followup to a previous commit of mine [0], which added the
+> > > allow_sys_admin_access && capable(CAP_SYS_ADMIN) check. This patch
+> > > rearranges the order of checks in fuse_allow_current_process without
+> > > changing functionality.
+> > >
+> > > [0] added allow_sys_admin_access && capable(CAP_SYS_ADMIN) check to the
+> > > beginning of the function, with the reasoning that
+> > > allow_sys_admin_access should be an 'escape hatch' for users with
+> > > CAP_SYS_ADMIN, allowing them to skip any subsequent checks.
+> > >
+> > > However, placing this new check first results in many capable() calls when
+> > > allow_sys_admin_access is set, where another check would've also
+> > > returned 1. This can be problematic when a BPF program is tracing
+> > > capable() calls.
+> > >
+> > > At Meta we ran into such a scenario recently. On a host where
+> > > allow_sys_admin_access is set but most of the FUSE access is from
+> > > processes which would pass other checks - i.e. they don't need
+> > > CAP_SYS_ADMIN 'escape hatch' - this results in an unnecessary capable()
+> > > call for each fs op. We also have a daemon tracing capable() with BPF and
+> > > doing some data collection, so tracing these extraneous capable() calls
+> > > has the potential to regress performance for an application doing many
+> > > FUSE ops.
+> > >
+> > > So rearrange the order of these checks such that CAP_SYS_ADMIN 'escape
+> > > hatch' is checked last. Previously, if allow_other is set on the
+> > > fuse_conn, uid/gid checking doesn't happen as current_in_userns result
+> > > is returned. It's necessary to add a 'goto' here to skip past uid/gid
+> > > check to maintain those semantics here.
+> > >
+> > >   [0]: commit 9ccf47b26b73 ("fuse: Add module param for CAP_SYS_ADMIN access bypassing allow_other")
+> > >
+> > > Signed-off-by: Dave Marchevsky <davemarchevsky@fb.com>
+> > > Suggested-by: Andrii Nakryiko <andrii@kernel.org>
+> > > Cc: Christian Brauner <brauner@kernel.org>
+> > > ---
+> > 
+> > LGTM!
+> > 
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> > 
+> > 
+> > But I would also be curious to hear from Miklos or others whether
+> > skipping uid/gid check if fc->allow_other is true wa an intentional
+> > logic, oversight, or just doesn't matter. Because doing:
 > 
-> Change the return type of function iso_date() from int to time64_t,
-> to avoid truncating to the 1902..2038 date range.
+> Originally, setting fc->allow_other granted access to everyone skipping
+> all further permission checks.
 > 
-> After this patch, the reported timestamps should fall into the
-> range reported in the s_time_min/s_time_max fields.
+> When Seth (Cced) made it possible to mount fuse in userns
+> fc->allow_other needed to be restricted to callers who are in the
+> superblock's userns or a descendant of it. The reason is that an
+> unprivileged user can mount a fuse filesystem with fc->allow_other
+> turned on. But then the user could mess with processes outside its
+> userns when they access the filesystem.
 > 
-> Signed-off-by: Thomas Schmitt <scdbackup@gmx.net>
-> Cc: stable@vger.kernel.org
-> Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=800627
-> Fixes: 34be4dbf87fc ("isofs: fix timestamps beyond 2027")
-> Fixes: 5ad32b3acded ("isofs: Initialize filesystem timestamp ranges")
-> [arnd: expand changelog text slightly]
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Without fc->allow_other it doesn't matter what userns the filesystem is
+> accessed from as long as the uidgid is permissible. This could e.g.,
+> happen if you unshare a userns but dont set{g,u}id.
+> 
+> In general, I see two obvious permission models. In the first model we
+> restrict access to the owner of the mount by uidgid but also require
+> callers to be within the userns hierarchy. If allow_other is specified
+> the requirement would be relaxed to only require the caller to be within
+> the userns hierarchy. That would make the permission checking
+> consistent.
+> 
+> The second permission model would only require permissible uidgid by
+> default and for allow other either permissible uidgid or for the caller
+> to be within the userns hierarchy (Which is what you're asking about
+> afaiu.).
+> 
+> I don't see any obvious reasons why this wouldn't work from a security
+> perspective; maybe Seth has additional insights. The problem however is
+> that it would be a non-trivial change for containers to lift the
+> restriction now. It is quite useful to be able to mount a fuse
+> filesystem with allow_other and not have it accessible by anything
+> outside your userns hierarchy. So I wouldn't like to see that changed.
 
-Thanks! I've added the patch to my tree and will push it to Linus.
+I think both of these are defensible models from a security perspective.
+But I don't have a good idea of what container runtimes have come to
+expect. Either of these would represent a change which could potentially
+break assumptions of something in userspace.
 
-								Honza
+Seth
 
-> ---
->  fs/isofs/isofs.h | 2 +-
->  fs/isofs/util.c  | 4 ++--
->  2 files changed, 3 insertions(+), 3 deletions(-)
+> If so we should probably make it yet another fuse module option or sm.
+> But in any case that should be a separate patch with a proper
+> justification why this semantic change is needed other than that it
+> simplifies the logic.
 > 
-> diff --git a/fs/isofs/isofs.h b/fs/isofs/isofs.h
-> index dcdc191ed183..c3473ca3f686 100644
-> --- a/fs/isofs/isofs.h
-> +++ b/fs/isofs/isofs.h
-> @@ -106,7 +106,7 @@ static inline unsigned int isonum_733(u8 *p)
->  	/* Ignore bigendian datum due to broken mastering programs */
->  	return get_unaligned_le32(p);
->  }
-> -extern int iso_date(u8 *, int);
-> +extern time64_t iso_date(u8 *, int);
->  
->  struct inode;		/* To make gcc happy */
->  
-> diff --git a/fs/isofs/util.c b/fs/isofs/util.c
-> index e88dba721661..348af786a8a4 100644
-> --- a/fs/isofs/util.c
-> +++ b/fs/isofs/util.c
-> @@ -16,10 +16,10 @@
->   * to GMT.  Thus  we should always be correct.
->   */
->  
-> -int iso_date(u8 *p, int flag)
-> +time64_t iso_date(u8 *p, int flag)
->  {
->  	int year, month, day, hour, minute, second, tz;
-> -	int crtime;
-> +	time64_t crtime;
->  
->  	year = p[0];
->  	month = p[1];
-> -- 
-> 2.29.2
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
