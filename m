@@ -2,47 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F349C609FEF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 13:13:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18D3A609FF3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 13:13:21 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229947AbiJXLNJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Oct 2022 07:13:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35660 "EHLO
+        id S230144AbiJXLNN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Oct 2022 07:13:13 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230024AbiJXLNH (ORCPT
+        with ESMTP id S230057AbiJXLNJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Oct 2022 07:13:07 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C253955C7D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 04:12:59 -0700 (PDT)
+        Mon, 24 Oct 2022 07:13:09 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86806DF8A
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 04:13:03 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B7647611D8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 11:12:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC9E0C433C1;
-        Mon, 24 Oct 2022 11:12:56 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 550F8B810FD
+        for <linux-fsdevel@vger.kernel.org>; Mon, 24 Oct 2022 11:13:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C660C4347C;
+        Mon, 24 Oct 2022 11:12:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666609978;
-        bh=45nJxBP1aBW0o8WVgviV8ZRPnCPvBeyH95BDtFHYYoQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=jqiFNAD//LqPK4HQ6ljRYJFh4Pq6BvVlVoHRQ/UOJNd4gx3v/zg6gGlTMFwsyd7kh
-         azGKs5bRWFC2t9dZf9+lI+3dKjsttFmluHPlx5n8KBdOU5CbWLCZALhbqxt8ZGkf6r
-         x1UAulY2WFcEbKhIOqAM4NYIxuIiQjePnux8foHDsqTSeArJZyNmdLdABUcEzvJyvl
-         EQEaqLMae/JztO6dXIABxk0Ng/rYFjOiNnZ/Vh6WWBOhyAvNbtp8d5X/4oo7eBibvm
-         UzXFP7ZXC0TE3xYTPmZC0BV2bM3qVfWpvbEekWEI9kLvczu/76/uNeX9HvSragKkrE
-         Xb67bAaZxd+HA==
+        s=k20201202; t=1666609980;
+        bh=17luflAOmuP+Am0hdneY0vuAuxyaDWhcFiF0f4OsJlg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WRJDehv5rAzk3+cSVMDYPXL4IP6YRkqssPjvCX7UzExjShEbwcqMx8tcqaKveI/at
+         AHoOL47Ml6OECkjfmwetkjfbyF5GFhh/3ne+jutAlojM8fzbl7BAPtf/7pVn5ENGeA
+         5P0AHWqkAgbE7AdyoyqZFAlXMmdFuVAcOGiCYvWUB8YfsL7EokB8FLV1H+0IRh31Dy
+         hvoSOw8iA8Gewfx6PwGN61h8fnjA+RyCWGu3EEMMLya43URSDs7oELlxQEoukLJfY/
+         Yza3avltYunZ8YqRZTlt8k2G5g92TSe9gHnA/y3xbP0pCvQ9aafzJshJbROZ1VNw2M
+         ZEuHumuHN+IDQ==
 From:   Christian Brauner <brauner@kernel.org>
 To:     Seth Forshee <sforshee@kernel.org>, Christoph Hellwig <hch@lst.de>,
         linux-fsdevel@vger.kernel.org
-Cc:     "Christian Brauner (Microsoft)" <brauner@kernel.org>,
+Cc:     Christian Brauner <brauner@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH 0/8] finish port to new vfs*id helpers
-Date:   Mon, 24 Oct 2022 13:12:41 +0200
-Message-Id: <20221024111249.477648-1-brauner@kernel.org>
+Subject: [PATCH 1/8] mnt_idmapping: add missing helpers
+Date:   Mon, 24 Oct 2022 13:12:42 +0200
+Message-Id: <20221024111249.477648-2-brauner@kernel.org>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20221024111249.477648-1-brauner@kernel.org>
+References: <20221024111249.477648-1-brauner@kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2017; i=brauner@kernel.org; h=from:subject; bh=6uWtZRyN7o19V1EnsDHk1k6yrHWcS5MqXgWL1GS3mVo=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSHFevw/VJUTWjUZZ/ge83cfNU8T/WpHFGf7jDMYp5gep09 3vl4RykLgxgXg6yYIotDu0m43HKeis1GmRowc1iZQIYwcHEKwEROhDD8j/7X/9j4A/fB/H/Xlxe2rG KIK6hak7f2zkS+uasvdESVnGRkOO6i7N25wfnRtP8NngZ+jCFSgaWZXL9D/Tdlb1dL3/iZGwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2209; i=brauner@kernel.org; h=from:subject; bh=17luflAOmuP+Am0hdneY0vuAuxyaDWhcFiF0f4OsJlg=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSHFeu0nZzbIRe6lSf94a+VE37FF11oUalTfXWlJzDx1417 s+xPd5SyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEyE+SIjw/Kq9NT3zDZHt4dt79FNTd 6SvXCOxpTXK6xNq2b8/v1g5mOG/66qjD90p76RXcX3y3J3yIyWbc3HL863/vre9ZQ13/ZlS9kA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -54,55 +56,75 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: "Christian Brauner (Microsoft)" <brauner@kernel.org>
+Add missing helpers needed to convert all remaining places to the type
+safe idmapped mount helpers. After the conversion we will remove all the
+old helpers.
 
-Hey,
+Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+---
 
-A while ago we converted all filesystems and a good chunk of the vfs to
-rely on the new vfs{g,u}id_t type and the associated type safe helpers.
-After this change all places where idmapped mounts matter deal with the
-dedicated new type and can't be easily confused with filesystem wide
-k{g,u}id_t types. This small series converts the remaining places and
-removes the old helpers. The series does not contain functional changes.
-xfstests, LTP, and the libcap testsuite pass without any regressions.
+Notes:
 
-(The series is based on the setgid changes sitting in my tree. It
- removes a bunch of open-coding and thus makes the change here simpler
- as well.)
+ include/linux/mnt_idmapping.h | 32 ++++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-Thanks!
-Christian
-
-Christian Brauner (8):
-  mnt_idmapping: add missing helpers
-  fs: use type safe idmapping helpers
-  caps: use type safe idmapping helpers
-  apparmor: use type safe idmapping helpers
-  ima: use type safe idmapping helpers
-  fuse: port to vfs{g,u}id_t and associated helpers
-  ovl: port to vfs{g,u}id_t and associated helpers
-  fs: remove unused idmapping helpers
-
- fs/coredump.c                       |   4 +-
- fs/exec.c                           |  16 ++---
- fs/fuse/acl.c                       |   2 +-
- fs/inode.c                          |   8 +--
- fs/namei.c                          |  40 +++++------
- fs/overlayfs/util.c                 |   9 ++-
- fs/remap_range.c                    |   2 +-
- fs/stat.c                           |   7 +-
- include/linux/fs.h                  |  34 ----------
- include/linux/mnt_idmapping.h       | 100 +++++++++-------------------
- kernel/capability.c                 |   4 +-
- security/apparmor/domain.c          |   8 +--
- security/apparmor/file.c            |   4 +-
- security/apparmor/lsm.c             |  24 ++++---
- security/commoncap.c                |  51 +++++++-------
- security/integrity/ima/ima_policy.c |  34 +++++-----
- 16 files changed, 149 insertions(+), 198 deletions(-)
-
-
-base-commit: 23a8ce16419a3066829ad4a8b7032a75817af65b
+diff --git a/include/linux/mnt_idmapping.h b/include/linux/mnt_idmapping.h
+index f6e5369d2928..cd1950ddc6a9 100644
+--- a/include/linux/mnt_idmapping.h
++++ b/include/linux/mnt_idmapping.h
+@@ -98,6 +98,26 @@ static inline bool vfsgid_eq_kgid(vfsgid_t vfsgid, kgid_t kgid)
+ 	return vfsgid_valid(vfsgid) && __vfsgid_val(vfsgid) == __kgid_val(kgid);
+ }
+ 
++static inline bool vfsuid_gt_kuid(vfsuid_t vfsuid, kuid_t kuid)
++{
++	return __vfsuid_val(vfsuid) > __kuid_val(kuid);
++}
++
++static inline bool vfsgid_gt_kgid(vfsgid_t vfsgid, kgid_t kgid)
++{
++	return __vfsgid_val(vfsgid) > __kgid_val(kgid);
++}
++
++static inline bool vfsuid_lt_kuid(vfsuid_t vfsuid, kuid_t kuid)
++{
++	return __vfsuid_val(vfsuid) < __kuid_val(kuid);
++}
++
++static inline bool vfsgid_lt_kgid(vfsgid_t vfsgid, kgid_t kgid)
++{
++	return __vfsgid_val(vfsgid) < __kgid_val(kgid);
++}
++
+ /*
+  * vfs{g,u}ids are created from k{g,u}ids.
+  * We don't allow them to be created from regular {u,g}id.
+@@ -333,6 +353,12 @@ static inline bool vfsuid_has_fsmapping(struct user_namespace *mnt_userns,
+ 	return uid_valid(from_vfsuid(mnt_userns, fs_userns, vfsuid));
+ }
+ 
++static inline bool vfsuid_has_mapping(struct user_namespace *userns,
++				      vfsuid_t vfsuid)
++{
++	return from_kuid(userns, AS_KUIDT(vfsuid)) != (uid_t)-1;
++}
++
+ /**
+  * vfsuid_into_kuid - convert vfsuid into kuid
+  * @vfsuid: the vfsuid to convert
+@@ -419,6 +445,12 @@ static inline bool vfsgid_has_fsmapping(struct user_namespace *mnt_userns,
+ 	return gid_valid(from_vfsgid(mnt_userns, fs_userns, vfsgid));
+ }
+ 
++static inline bool vfsgid_has_mapping(struct user_namespace *userns,
++				      vfsgid_t vfsgid)
++{
++	return from_kgid(userns, AS_KGIDT(vfsgid)) != (gid_t)-1;
++}
++
+ /**
+  * vfsgid_into_kgid - convert vfsgid into kgid
+  * @vfsgid: the vfsgid to convert
 -- 
 2.34.1
 
