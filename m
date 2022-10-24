@@ -2,88 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F389609DD5
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 11:19:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A5F01609E2F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 24 Oct 2022 11:43:08 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230003AbiJXJTS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 24 Oct 2022 05:19:18 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53518 "EHLO
+        id S230243AbiJXJnH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 24 Oct 2022 05:43:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48882 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230187AbiJXJSs (ORCPT
+        with ESMTP id S229729AbiJXJnF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 24 Oct 2022 05:18:48 -0400
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8B9646238;
-        Mon, 24 Oct 2022 02:18:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1666603092;
-        bh=yNUX2bsks83FyVFR2JEe9rsSO5eyOcOjP7RNl97IWTQ=;
-        h=X-UI-Sender-Class:Date:Subject:To:Cc:References:From:In-Reply-To;
-        b=ATMuU4gYMAIefm+FPIuMHVD5Y0OpPBO73fFYmPdCcVG/3D3xs1FY/JunV1fc/7Lt/
-         Y4OWKo44dJWJ3MUeECYHkBmJ7bFRowqm06brB/tWa+1Z3/mHyzsfmmGo0ONFDXEOVD
-         V8EFOXfofZ5qYdziD2a7DDSXzmeZQ88Dzt7GpJ+s=
-X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
-Received: from [0.0.0.0] ([149.28.201.231]) by mail.gmx.net (mrgmx105
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1MeCpb-1pKrdU0GgR-00bJZS; Mon, 24
- Oct 2022 11:18:11 +0200
-Message-ID: <c957a7cd-3642-c520-fee5-ddc5f5720ffd@gmx.com>
-Date:   Mon, 24 Oct 2022 17:18:04 +0800
+        Mon, 24 Oct 2022 05:43:05 -0400
+Received: from mail-ed1-x533.google.com (mail-ed1-x533.google.com [IPv6:2a00:1450:4864:20::533])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EDD8E63F11;
+        Mon, 24 Oct 2022 02:43:04 -0700 (PDT)
+Received: by mail-ed1-x533.google.com with SMTP id v27so6740854eda.1;
+        Mon, 24 Oct 2022 02:43:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lvTCug/WGu2tB0i/Ce81Igi5v0dyO+fR3fhU50OBOLc=;
+        b=HGY9o0eP+6q5QlQ/V5gHWdcwzG3/+7IiLYRbIZDG8ivyto0icbJB/L4llkm6/u6dB5
+         pEzNIXI1F6ZmyEsuxDbZeaUQfQ3wEst6h/JTGhWspJIIEHX/b4M39E6GhwiNmJNi9RPS
+         DNO1X32e92qFIYV4fJEQZWASm02uJ2ZVq06R/hiIJVtAR8t0ousahUtFgZ4V+9rkV/d4
+         SdS8V/YzuBKge9lJbeRIaGl9r9WljxHNNWmvmsMfMny2sX8dwfrsD6kJSjn22kK9oh/r
+         hIbNpvUPkVDrO5WrKLirQUnYUrteNuOxyNe77ul5jiMNM5w3jPQMZnqGJHArevh85g2e
+         pBHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lvTCug/WGu2tB0i/Ce81Igi5v0dyO+fR3fhU50OBOLc=;
+        b=Kx3SD/MDcIIWc9r61bKYDOBq+pn/GLtCbZ94WZYFvos8c2We7yPoe1w3sZwDtU2Cqc
+         iGBXmpN2hHSpeXQ2GDvLaMAADcAxOnjSIiiqtdsyY1JskWn6JOkcmp3ewwhqHySlW6Xp
+         se0iwyKQA9EiBsO12gauO9kT+W489sdZ+5xYDfD4cOWDTuzbWJLmmbtnUAuK8HvktTB7
+         Qd3J5y1a8cXrmiYBgWPE7EpHBgPRrDK+O+PT8B77t4jj0+029yYr9q+/y6pCYVZxpqER
+         PrTNyypV/rAzi+l6UbXAUDZOP3kUjRzdJUYpOpUc4LUn/3jFV1G1Q5esXblNETGsUlsD
+         gdFQ==
+X-Gm-Message-State: ACrzQf3YQpuWetIdh2I2zt2XB2bm5USJf6BBEfTiPtAdLJytXO6v6RZq
+        LpO643REjJtNPZm3nWQIzfJUPOUDU9tPx9l/0z0=
+X-Google-Smtp-Source: AMsMyM6YCPqmGHU4Yv+WgY3/mBRU+k1PehOBWkGLUn/NSsQx0nMbwe7NvuaZO7bNuImAmiKOzxyNnT5+8WgQudOE70k=
+X-Received: by 2002:a05:6402:2949:b0:451:fabf:d88a with SMTP id
+ ed9-20020a056402294900b00451fabfd88amr29383306edb.324.1666604583226; Mon, 24
+ Oct 2022 02:43:03 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: consolidate btrfs checksumming, repair and bio splitting
-Content-Language: en-US
-To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-Cc:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>, Qu Wenruo <wqu@suse.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-References: <20220901074216.1849941-1-hch@lst.de>
- <347dc0b3-0388-54ee-6dcb-0c1d0ca08d05@wdc.com>
- <de4337f4-3157-c4a3-0ec3-dba845d4f145@gmx.com>
- <00e0cbbf-8090-7da1-22a7-a10bf4c090f2@wdc.com>
-From:   Qu Wenruo <quwenruo.btrfs@gmx.com>
-In-Reply-To: <00e0cbbf-8090-7da1-22a7-a10bf4c090f2@wdc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kDryvdCS4y0rcSTJgT9FLuA+kRk7w6/gg6Ite6xIFUoaAzX30rV
- lY42DJ3llKG1E25Lj6d/XUFi7zeqaBDNCV8/Sly0Tkp8Yui5PgPKVXs3BO63+T8p2KKw2F0
- XQ6KTvmJu0Ulsr0DUgfU1kSHCD7Qhnwr0LkHLydh1w19XyV7iWKqnTDdaos9HZR1TuRAwFb
- z5qns0ll7S98ad4WAiTwQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:klgEpFFZ244=:Qj4ou/M7zBYZOgGRh2SxBW
- E5BINZnWAD2iA91n8TfMupDAUWBJgqhCzbqAsIMpgTW1bVtVmPfVDtESP0uilngZlbZ8UQbc3
- X2Gi9RpSWkWNqKNiIm+RYKmp+d61u9NHCv1zPeoix85IL+oh1kkSfa/uz8w1xVs6myjst0BLh
- idHiPyIsJRKYPq+s+WgpdMGj4LzXdeBEqLU/FRnWh7V03KdS+QahxEGhBQcHgqoOk1grj1ATB
- kpU1MiV8YHHrF5BF1vh7jp0L4B3Va44BkWYmpuxqULd/9sv8aT/WnqU+G4tHqk8CQ/wEHxyMv
- o/dhEcRvTDnFhsGK89dboBfIUCPDcuKVT0fNj4EMG78DnEaR/SwZnjvFndart7k4YQ9AhfyM7
- KO0aPJbVkLt25pSpi6KDA9hm99NDTsQ/Jo710eYJlfql2jtb47szzNk6biZnPYr4FBdOQuUmT
- LrFDzrlGtFq0jQmDIQYhdZIf67bifK4F/MdWU5lMmIdMutUAa7khE0AacflL5HSEQK1ff3/uK
- 7e+LAdYDKbb2Y0k1wBRjVVuREIlQNbGvGQTaXCYhUT6a3VWpuQg4nE3L5I0I/2w/T7rLDvCiM
- BK2plXj1uMK30WCKXlSjptfq8OpuYTQzb8WzSo6djDSRcnerqbn9nexRBUTGe8ffBw5L8Ldv6
- pUB9mPvmLJ/oi8AHuhcKYZJHMrOn/gM+0LIvAV+pXYcL31EGUfrVIGfdO1LnlxLQLfMEmean8
- E04VFPo7cKA2zH2+OCtkkMB3dbt7FQ2ipi12Tr+ZrSgo7S0LzJhcbCJiq3o3ANK7S+QRbcOXT
- zHDdsavRJ++eUbGBIOPjnT0UHLerV8GUc5mJdU7Zg48iGiVS+L2UeZCAfDTXMT0d8I9nEr35D
- i+lLw5sz+/MKznbKu/kcaZqvcI9pRhAWEPi3zC5uRPDhSvljzqwZfEUbYJxGB4RpgensAJz1m
- putcBCpR/1395YEe+Kt0vKnx9wrWhK94m/rjrjECcGPAZMw0cMrPrNjuxM+XAjcU9s1UZUQG4
- q/S5vGOKYigoAYQEZs0nILAwxjgX5URE8ylV/qtd/oj/4Dg7Prak7TPCVfJKYZhePSaWvsD21
- nYRCcniCo6ocNF1+myxpTaH5yE5VE4ABaw/Q8bA3IbyyHu0/GcRfQppdEPtocwqbmVfH05TT5
- EDVcA9vG+hZ0H/UTqarJdNFzoxN6nRnuI9xxvDU5S2otj/pMNGTh6bkOFkmZt8ytWc42Z04Lg
- A7HCkGrcr+PK6F4fbn+Ly7m4Km3zTNUfUaG/x6eXNIpDjQb2VGRmWMJAPubWTFoPdi6bnRW7y
- um1XVz92bHH5QTmfZ/qPdd4n/RMgi63shFVdvg6gPAio4hsmHUKGx+BKDy3+4yVU8Hk/8iHuB
- yq+VXib3WXADh5mopbXuLTpF/k9dofZp+CjdIDXE+PUrQxPHXfGy6AmBjnYn23N2/14QUmBxz
- gT149287CVazeCpY5PUYxQmUIT1x1TfMSz6uMdXIl6ITYc45q8l1Aq+t6d1bFbbthWMmyHh3m
- Fsfxd4FlBEsptW1wDpl0gXpDXEGxTB7yPMQdAdt6LcH5oe1ZJ0BdjabulM7Ko4thgH+97RH8+
- tUkSeX/KrnKnelIifRmhBHgytMIPOiL3Z0O73kHTClzxnqqo80PDm2iAR1fl4duJgOxRwnu5L
- 7l4xm226+jiAZDeqhdvW9cLAX92VJBmvgbqeks7Q28xJM3QFw==
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,FREEMAIL_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=ham
+References: <20221023163945.39920-1-yin31149@gmail.com> <20221023163945.39920-5-yin31149@gmail.com>
+In-Reply-To: <20221023163945.39920-5-yin31149@gmail.com>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Mon, 24 Oct 2022 11:42:49 +0200
+Message-ID: <CAHpGcMK0C6uxuNwhOouHLz7fyCcu=JH63COX_0J72koZk_CS7w@mail.gmail.com>
+Subject: Re: [PATCH -next 4/5] gfs2: fix possible null-ptr-deref when parsing param
+To:     Hawkins Jiawei <yin31149@gmail.com>
+Cc:     Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>, 18801353760@163.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        syzbot+da97a57c5b742d05db51@syzkaller.appspotmail.com,
+        cluster-devel@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -91,47 +70,70 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 2022/10/24 17:07, Johannes Thumshirn wrote:
-> On 24.10.22 10:20, Qu Wenruo wrote:
->>
->>
->> On 2022/10/24 16:12, Johannes Thumshirn wrote:
->>> David, what's your plan to progress with this series?
->>>
->>
->> Initially David wants me to do some fixup in my spare time, but I know
->> your RST feature is depending on this.
->>
->> If you're urgent on this series, I guess I can put it with more priorit=
-y.
+Am So., 23. Okt. 2022 um 18:46 Uhr schrieb Hawkins Jiawei <yin31149@gmail.com>:
+> According to commit "vfs: parse: deal with zero length string value",
+> kernel will set the param->string to null pointer in vfs_parse_fs_string()
+> if fs string has zero length.
 >
-> What's the fixups needed there? I haven't seen a mail from David about i=
-t.
-
-Mostly to fixup some comments/commit messages.
-
-Sorry, that's an off list talk, thus not in the mailing list.
-
+> Yet the problem is that, gfs2_parse_param() will dereferences the
+> param->string, without checking whether it is a null pointer, which may
+> trigger a null-ptr-deref bug.
 >
-> I've quickly skimmed over the comments and it seems like Josef is mostly=
- fine
-> with it.
->
-> I can continue working on it as well, but as this series contains code f=
-rom both
-> you and Christoph I don't think I should be the 3rd person working on it=
-.
->
-> But if it's needed, I can of cause do.
+> This patch solves it by adding sanity check on param->string
+> in gfs2_parse_param().
 
-That would be very kind, as I'm still fighting with raid56 code, and
-won't be able to work on this series immediately.
+Yes, but then it dereferences param->string in the error message. That
+won't help.
+
+> Reported-by: syzbot+da97a57c5b742d05db51@syzkaller.appspotmail.com
+> Tested-by: syzbot+da97a57c5b742d05db51@syzkaller.appspotmail.com
+> Cc: agruenba@redhat.com
+> Cc: cluster-devel@redhat.com
+> Cc: linux-kernel@vger.kernel.org
+> Cc: rpeterso@redhat.com
+> Cc: syzkaller-bugs@googlegroups.com
+> Signed-off-by: Hawkins Jiawei <yin31149@gmail.com>
+> ---
+>  fs/gfs2/ops_fstype.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+> index c0cf1d2d0ef5..934746f18c25 100644
+> --- a/fs/gfs2/ops_fstype.c
+> +++ b/fs/gfs2/ops_fstype.c
+> @@ -1446,12 +1446,18 @@ static int gfs2_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>
+>         switch (o) {
+>         case Opt_lockproto:
+> +               if (!param->string)
+> +                       goto bad_val;
+>                 strscpy(args->ar_lockproto, param->string, GFS2_LOCKNAME_LEN);
+>                 break;
+>         case Opt_locktable:
+> +               if (!param->string)
+> +                       goto bad_val;
+>                 strscpy(args->ar_locktable, param->string, GFS2_LOCKNAME_LEN);
+>                 break;
+>         case Opt_hostdata:
+> +               if (!param->string)
+> +                       goto bad_val;
+>                 strscpy(args->ar_hostdata, param->string, GFS2_LOCKNAME_LEN);
+>                 break;
+>         case Opt_spectator:
+> @@ -1535,6 +1541,10 @@ static int gfs2_parse_param(struct fs_context *fc, struct fs_parameter *param)
+>                 return invalfc(fc, "invalid mount option: %s", param->key);
+>         }
+>         return 0;
+> +
+> +bad_val:
+> +       return invalfc(fc, "Bad value '%s' for mount option '%s'\n",
+> +                      param->string, param->key);
+>  }
+>
+>  static int gfs2_reconfigure(struct fs_context *fc)
+> --
+> 2.25.1
+>
 
 Thanks,
-Qu
-
->
-> Byte,
-> 	Johannes
+Andreas
