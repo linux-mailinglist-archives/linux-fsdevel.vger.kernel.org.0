@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E818560D02A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Oct 2022 17:18:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 469D160D036
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Oct 2022 17:19:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233065AbiJYPS3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Oct 2022 11:18:29 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41010 "EHLO
+        id S233114AbiJYPTO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Oct 2022 11:19:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41084 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231769AbiJYPS0 (ORCPT
+        with ESMTP id S231429AbiJYPSt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Oct 2022 11:18:26 -0400
-Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 639EA188A94;
-        Tue, 25 Oct 2022 08:18:25 -0700 (PDT)
+        Tue, 25 Oct 2022 11:18:49 -0400
+Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61F4D18D45F;
+        Tue, 25 Oct 2022 08:18:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1666711105; x=1698247105;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=P0zL/XB8EN7WGMoEOO2wW14TpKmf0We0vI+i9XPBaLc=;
-  b=aec9CAcXMR/eZRBGa0IFh/ohi3Z0oAmt92tIIwTBfkJkS/nS5UGaaRdU
-   uISTH4CEsXXQ5AikSbB7pvJgPSGh3xJQ6E9HHf/V3QQmJW8yFdIdFjkMN
-   Spe7q9306oHI9OQzbWsPamrO4nQ5rOcsfV07ybk/pDdfJX2W+qb/U1ca/
-   sngDhQVLw+O5j4CRN1tKjblmCgqkLKSVAczfZFw5Puz77wE4+sihPX97J
-   vhUpa+iiqMvHuNBG6y2F7alDtAAK0lcS5UOjM+cqWX2u+wmlltAI50W4c
-   lKn39Y4mlFE8zQ1DQXIZ6kn0sA7VQGWq4H80Naqcb1fEfr1EysFAmJPD0
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="394018792"
+  t=1666711116; x=1698247116;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=PWzabYw82KjsHY+Wdd8kK1yaEP2EV57gElCnFtm53oE=;
+  b=VO0HXsijG5sU4kOUhQiCBpSWuNVWatpMAA5pvvaNxLQjpwckQjZtaOWP
+   ThD0UTbNNc9RE26n8w5cYKPUDUd7E5yXrsvVpmFjavFZMalth6G7Dm1Yj
+   5rElXbVa7MtT9fQJZHY3oPsw0hGUmTBetbiV/1BuLcFk1T2FETWmHgzvk
+   pCyJu5tdT8vk1rYU1kAubaSElPanjsp01k4VdqVsgCW5KcmQXLBt1A9hR
+   nGqnDY938eo1qfBigz4XPdJ3FvFqDp+wyQtT9bsyyqQlDD5I0oNuHqWrB
+   1BhfYDY1wdHNNM1oeXkam+lEMK6IyqbjnMVFA04PEV9c3dI0yR76xuGqx
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="334307198"
 X-IronPort-AV: E=Sophos;i="5.95,212,1661842800"; 
-   d="scan'208";a="394018792"
+   d="scan'208";a="334307198"
 Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2022 08:18:25 -0700
+  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2022 08:18:36 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="736865431"
+X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="736865490"
 X-IronPort-AV: E=Sophos;i="5.95,212,1661842800"; 
-   d="scan'208";a="736865431"
+   d="scan'208";a="736865490"
 Received: from chaop.bj.intel.com ([10.240.193.75])
-  by fmsmga002.fm.intel.com with ESMTP; 25 Oct 2022 08:18:14 -0700
+  by fmsmga002.fm.intel.com with ESMTP; 25 Oct 2022 08:18:25 -0700
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -72,276 +72,515 @@ Cc:     Paolo Bonzini <pbonzini@redhat.com>,
         Quentin Perret <qperret@google.com>, tabba@google.com,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
         Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: [PATCH v9 0/8] KVM: mm: fd-based approach for supporting KVM
-Date:   Tue, 25 Oct 2022 23:13:36 +0800
-Message-Id: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+Subject: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to create restricted user memory
+Date:   Tue, 25 Oct 2022 23:13:37 +0800
+Message-Id: <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
 X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch series implements KVM guest private memory for confidential
-computing scenarios like Intel TDX[1]. If a TDX host accesses
-TDX-protected guest memory, machine check can happen which can further
-crash the running host system, this is terrible for multi-tenant
-configurations. The host accesses include those from KVM userspace like
-QEMU. This series addresses KVM userspace induced crash by introducing
-new mm and KVM interfaces so KVM userspace can still manage guest memory
-via a fd-based approach, but it can never access the guest memory
-content.
+From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
 
-The patch series touches both core mm and KVM code. I appreciate
-Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
-reviews are always welcome.
-  - 01: mm change, target for mm tree
-  - 02-08: KVM change, target for KVM tree
+Introduce 'memfd_restricted' system call with the ability to create
+memory areas that are restricted from userspace access through ordinary
+MMU operations (e.g. read/write/mmap). The memory content is expected to
+be used through a new in-kernel interface by a third kernel module.
 
-Given KVM is the only current user for the mm part, I have chatted with
-Paolo and he is OK to merge the mm change through KVM tree, but
-reviewed-by/acked-by is still expected from the mm people.
+memfd_restricted() is useful for scenarios where a file descriptor(fd)
+can be used as an interface into mm but want to restrict userspace's
+ability on the fd. Initially it is designed to provide protections for
+KVM encrypted guest memory.
 
-The patches have been verified in Intel TDX environment, but Vishal has
-done an excellent work on the selftests[4] which are dedicated for this
-series, making it possible to test this series without innovative
-hardware and fancy steps of building a VM environment. See Test section
-below for more info.
+Normally KVM uses memfd memory via mmapping the memfd into KVM userspace
+(e.g. QEMU) and then using the mmaped virtual address to setup the
+mapping in the KVM secondary page table (e.g. EPT). With confidential
+computing technologies like Intel TDX, the memfd memory may be encrypted
+with special key for special software domain (e.g. KVM guest) and is not
+expected to be directly accessed by userspace. Precisely, userspace
+access to such encrypted memory may lead to host crash so should be
+prevented.
 
+memfd_restricted() provides semantics required for KVM guest encrypted
+memory support that a fd created with memfd_restricted() is going to be
+used as the source of guest memory in confidential computing environment
+and KVM can directly interact with core-mm without the need to expose
+the memoy content into KVM userspace.
 
-Introduction
-============
-KVM userspace being able to crash the host is horrible. Under current
-KVM architecture, all guest memory is inherently accessible from KVM
-userspace and is exposed to the mentioned crash issue. The goal of this
-series is to provide a solution to align mm and KVM, on a userspace
-inaccessible approach of exposing guest memory. 
+KVM userspace is still in charge of the lifecycle of the fd. It should
+pass the created fd to KVM. KVM uses the new restrictedmem_get_page() to
+obtain the physical memory page and then uses it to populate the KVM
+secondary page table entries.
 
-Normally, KVM populates secondary page table (e.g. EPT) by using a host
-virtual address (hva) from core mm page table (e.g. x86 userspace page
-table). This requires guest memory being mmaped into KVM userspace, but
-this is also the source where the mentioned crash issue can happen. In
-theory, apart from those 'shared' memory for device emulation etc, guest
-memory doesn't have to be mmaped into KVM userspace.
+The userspace restricted memfd can be fallocate-ed or hole-punched
+from userspace. When these operations happen, KVM can get notified
+through restrictedmem_notifier, it then gets chance to remove any
+mapped entries of the range in the secondary page tables.
 
-This series introduces fd-based guest memory which will not be mmaped
-into KVM userspace. KVM populates secondary page table by using a
-fd/offset pair backed by a memory file system. The fd can be created
-from a supported memory filesystem like tmpfs/hugetlbfs and KVM can
-directly interact with them with newly introduced in-kernel interface,
-therefore remove the KVM userspace from the path of accessing/mmaping
-the guest memory. 
+memfd_restricted() itself is implemented as a shim layer on top of real
+memory file systems (currently tmpfs). Pages in restrictedmem are marked
+as unmovable and unevictable, this is required for current confidential
+usage. But in future this might be changed.
 
-Kirill had a patch [2] to address the same issue in a different way. It
-tracks guest encrypted memory at the 'struct page' level and relies on
-HWPOISON to reject the userspace access. The patch has been discussed in
-several online and offline threads and resulted in a design document [3]
-which is also the original proposal for this series. Later this patch
-series evolved as more comments received in community but the major
-concepts in [3] still hold true so recommend reading.
+By default memfd_restricted() prevents userspace read, write and mmap.
+By defining new bit in the 'flags', it can be extended to support other
+restricted semantics in the future.
 
-The patch series may also be useful for other usages, for example, pure
-software approach may use it to harden itself against unintentional
-access to guest memory. This series is designed with these usages in
-mind but doesn't have code directly support them and extension might be
-needed.
+The system call is currently wired up for x86 arch.
 
-
-mm change
-=========
-Introduces a new memfd_restricted system call which can create memory
-file that is restricted from userspace access via normal MMU operations
-like read(), write() or mmap() etc and the only way to use it is
-passing it to a third kernel module like KVM and relying on it to
-access the fd through the newly added restrictedmem kernel interface.
-The restrictedmem interface bridges the memory file subsystems
-(tmpfs/hugetlbfs etc) and their users (KVM in this case) and provides
-bi-directional communication between them. 
-
-
-KVM change
-==========
-Extends the KVM memslot to provide guest private (encrypted) memory from
-a fd. With this extension, a single memslot can maintain both private
-memory through private fd (restricted_fd/restricted_offset) and shared
-(unencrypted) memory through userspace mmaped host virtual address
-(userspace_addr). For a particular guest page, the corresponding page in
-KVM memslot can be only either private or shared and only one of the
-shared/private parts of the memslot is visible to guest. For how this
-new extension is used in QEMU, please refer to kvm_set_phys_mem() in
-below TDX-enabled QEMU repo.
-
-Introduces new KVM_EXIT_MEMORY_FAULT exit to allow userspace to get the
-chance on decision-making for shared <-> private memory conversion. The
-exit can be an implicit conversion in KVM page fault handler or an
-explicit conversion from guest OS.
-
-Extends existing SEV ioctls KVM_MEMORY_ENCRYPT_{UN,}REG_REGION to
-convert a guest page between private <-> shared. The data maintained in
-these ioctls tells the truth whether a guest page is private or shared
-and this information will be used in KVM page fault handler to decide
-whether the private or the shared part of the memslot is visible to
-guest.
-
-
-Test
-====
-Ran two kinds of tests:
-  - Selftests [4] from Vishal and VM boot tests in non-TDX environment
-    Code also in below repo: https://github.com/chao-p/linux/tree/privmem-v9
-
-  - Functional tests in TDX capable environment
-    Tested the new functionalities in TDX environment. Code repos:
-    Linux: https://github.com/chao-p/linux/tree/privmem-v9-tdx
-    QEMU: https://github.com/chao-p/qemu/tree/privmem-v9
-
-    An example QEMU command line for TDX test:
-    -object tdx-guest,id=tdx,debug=off,sept-ve-disable=off \
-    -machine confidential-guest-support=tdx \
-    -object memory-backend-memfd-private,id=ram1,size=${mem} \
-    -machine memory-backend=ram1
-
-
-TODO
-====
-  - Page accounting and limiting for encrypted memory
-  - hugetlbfs support
-
-
-Changelog
-=========
-v9:
-  - mm: move inaccessible memfd into separated syscall.
-  - mm: return page instead of pfn_t for inaccessible_get_pfn and remove
-    inaccessible_put_pfn.
-  - KVM: rename inaccessible/private to restricted and CONFIG change to
-    make the code friendly to pKVM.
-  - KVM: add invalidate_begin/end pair to fix race contention and revise
-    the lock protection for invalidation path.
-  - KVM: optimize setting lpage_info for > 2M level by direct accessing
-    lower level's result.
-  - KVM: avoid load xarray in kvm_mmu_max_mapping_level() and instead let
-    the caller to pass in is_private.
-  - KVM: API doc improvement.
-v8:
-  - mm: redesign mm part by introducing a shim layer(inaccessible_memfd)
-    in memfd to avoid touch the memory file systems directly.
-  - mm: exclude F_SEAL_AUTO_ALLOCATE as it is for shared memory and
-    cause confusion in this series, will send out separately.
-  - doc: exclude the man page change, it's not kernel patch and will
-    send out separately.
-  - KVM: adapt to use the new mm inaccessible_memfd interface.
-  - KVM: update lpage_info when setting mem_attr_array to support
-    large page.
-  - KVM: change from xa_store_range to xa_store for mem_attr_array due
-    to xa_store_range overrides all entries which is not intended
-    behavior for us.
-  - KVM: refine the mmu_invalidate_retry_gfn mechanism for private page.
-  - KVM: reorganize KVM_MEMORY_ENCRYPT_{UN,}REG_REGION and private page
-    handling code suggested by Sean.
-v7:
-  - mm: introduce F_SEAL_AUTO_ALLOCATE to avoid double allocation.
-  - KVM: use KVM_MEMORY_ENCRYPT_{UN,}REG_REGION to record
-    private/shared info.
-  - KVM: use similar sync mechanism between zap/page fault paths as
-    mmu_notifier for memfile_notifier based invalidation.
-v6:
-  - mm: introduce MEMFILE_F_* flags into memfile_node to allow checking
-    feature consistence among all memfile_notifier users and get rid of
-    internal flags like SHM_F_INACCESSIBLE.
-  - mm: make pfn_ops callbacks being members of memfile_backing_store
-    and then refer to it directly in memfile_notifier.
-  - mm: remove backing store unregister.
-  - mm: remove RLIMIT_MEMLOCK based memory accounting and limiting.
-  - KVM: reorganize patch sequence for page fault handling and private
-    memory enabling.
-v5:
-  - Add man page for MFD_INACCESSIBLE flag and improve KVM API do for
-    the new memslot extensions.
-  - mm: introduce memfile_{un}register_backing_store to allow memory
-    backing store to register/unregister it from memfile_notifier.
-  - mm: remove F_SEAL_INACCESSIBLE, use in-kernel flag
-    (SHM_F_INACCESSIBLE for shmem) instead. 
-  - mm: add memory accounting and limiting (RLIMIT_MEMLOCK based) for
-    MFD_INACCESSIBLE memory.
-  - KVM: remove the overlap check for mapping the same file+offset into
-    multiple gfns due to perf consideration, warned in document.
-v4:
-  - mm: rename memfd_ops to memfile_notifier and separate it from
-    memfd.c to standalone memfile-notifier.c.
-  - KVM: move pfn_ops to per-memslot scope from per-vm scope and allow
-    registering multiple memslots to the same memory backing store.
-  - KVM: add a 'kvm' reference in memslot so that we can recover kvm in
-    memfile_notifier handlers.
-  - KVM: add 'private_' prefix for the new fields in memslot.
-  - KVM: reshape the 'type' to 'flag' for kvm_memory_exit
-v3:
-  - Remove 'RFC' prefix.
-  - Fix race condition between memfile_notifier handlers and kvm destroy.
-  - mm: introduce MFD_INACCESSIBLE flag for memfd_create() to force
-    setting F_SEAL_INACCESSIBLE when the fd is created.
-  - KVM: add the shared part of the memslot back to make private/shared
-    pages live in one memslot.
-
-Reference
-=========
-[1] Intel TDX:
-https://www.intel.com/content/www/us/en/developer/articles/technical/intel-trust-domain-extensions.html
-[2] Kirill's implementation:
-https://lore.kernel.org/all/20210416154106.23721-1-kirill.shutemov@linux.intel.com/T/ 
-[3] Original design proposal:
-https://lore.kernel.org/all/20210824005248.200037-1-seanjc@google.com/  
-[4] Selftest:
-https://lore.kernel.org/all/20220819174659.2427983-1-vannapurve@google.com/ 
-
-
-Chao Peng (7):
-  KVM: Extend the memslot to support fd-based private memory
-  KVM: Add KVM_EXIT_MEMORY_FAULT exit
-  KVM: Use gfn instead of hva for mmu_notifier_retry
-  KVM: Register/unregister the guest private memory regions
-  KVM: Update lpage info when private/shared memory are mixed
-  KVM: Handle page fault for private memory
-  KVM: Enable and expose KVM_MEM_PRIVATE
-
-Kirill A. Shutemov (1):
-  mm: Introduce memfd_restricted system call to create restricted user
-    memory
-
- Documentation/virt/kvm/api.rst         |  88 ++++-
+Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+---
  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
- arch/x86/include/asm/kvm_host.h        |   8 +
- arch/x86/kvm/Kconfig                   |   3 +
- arch/x86/kvm/mmu/mmu.c                 | 170 +++++++++-
- arch/x86/kvm/mmu/mmu_internal.h        |  14 +-
- arch/x86/kvm/mmu/mmutrace.h            |   1 +
- arch/x86/kvm/mmu/spte.h                |   6 +
- arch/x86/kvm/mmu/tdp_mmu.c             |   3 +-
- arch/x86/kvm/x86.c                     |   4 +-
- include/linux/kvm_host.h               |  89 ++++-
- include/linux/restrictedmem.h          |  62 ++++
+ include/linux/restrictedmem.h          |  62 ++++++
  include/linux/syscalls.h               |   1 +
  include/uapi/asm-generic/unistd.h      |   5 +-
- include/uapi/linux/kvm.h               |  38 +++
  include/uapi/linux/magic.h             |   1 +
  kernel/sys_ni.c                        |   3 +
  mm/Kconfig                             |   4 +
  mm/Makefile                            |   1 +
- mm/restrictedmem.c                     | 250 ++++++++++++++
- virt/kvm/Kconfig                       |   7 +
- virt/kvm/kvm_main.c                    | 453 +++++++++++++++++++++----
- 23 files changed, 1121 insertions(+), 92 deletions(-)
+ mm/restrictedmem.c                     | 250 +++++++++++++++++++++++++
+ 10 files changed, 328 insertions(+), 1 deletion(-)
  create mode 100644 include/linux/restrictedmem.h
  create mode 100644 mm/restrictedmem.c
 
-
-base-commit: e18d6152ff0f41b7f01f9817372022df04e0d354
+diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+index 320480a8db4f..dc70ba90247e 100644
+--- a/arch/x86/entry/syscalls/syscall_32.tbl
++++ b/arch/x86/entry/syscalls/syscall_32.tbl
+@@ -455,3 +455,4 @@
+ 448	i386	process_mrelease	sys_process_mrelease
+ 449	i386	futex_waitv		sys_futex_waitv
+ 450	i386	set_mempolicy_home_node		sys_set_mempolicy_home_node
++451	i386	memfd_restricted	sys_memfd_restricted
+diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+index c84d12608cd2..06516abc8318 100644
+--- a/arch/x86/entry/syscalls/syscall_64.tbl
++++ b/arch/x86/entry/syscalls/syscall_64.tbl
+@@ -372,6 +372,7 @@
+ 448	common	process_mrelease	sys_process_mrelease
+ 449	common	futex_waitv		sys_futex_waitv
+ 450	common	set_mempolicy_home_node	sys_set_mempolicy_home_node
++451	common	memfd_restricted	sys_memfd_restricted
+ 
+ #
+ # Due to a historical design error, certain syscalls are numbered differently
+diff --git a/include/linux/restrictedmem.h b/include/linux/restrictedmem.h
+new file mode 100644
+index 000000000000..9c37c3ea3180
+--- /dev/null
++++ b/include/linux/restrictedmem.h
+@@ -0,0 +1,62 @@
++/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
++#ifndef _LINUX_RESTRICTEDMEM_H
++
++#include <linux/file.h>
++#include <linux/magic.h>
++#include <linux/pfn_t.h>
++
++struct restrictedmem_notifier;
++
++struct restrictedmem_notifier_ops {
++	void (*invalidate_start)(struct restrictedmem_notifier *notifier,
++				 pgoff_t start, pgoff_t end);
++	void (*invalidate_end)(struct restrictedmem_notifier *notifier,
++			       pgoff_t start, pgoff_t end);
++};
++
++struct restrictedmem_notifier {
++	struct list_head list;
++	const struct restrictedmem_notifier_ops *ops;
++};
++
++#ifdef CONFIG_RESTRICTEDMEM
++
++void restrictedmem_register_notifier(struct file *file,
++				     struct restrictedmem_notifier *notifier);
++void restrictedmem_unregister_notifier(struct file *file,
++				       struct restrictedmem_notifier *notifier);
++
++int restrictedmem_get_page(struct file *file, pgoff_t offset,
++			   struct page **pagep, int *order);
++
++static inline bool file_is_restrictedmem(struct file *file)
++{
++	return file->f_inode->i_sb->s_magic == RESTRICTEDMEM_MAGIC;
++}
++
++#else
++
++static inline void restrictedmem_register_notifier(struct file *file,
++				     struct restrictedmem_notifier *notifier)
++{
++}
++
++static inline void restrictedmem_unregister_notifier(struct file *file,
++				       struct restrictedmem_notifier *notifier)
++{
++}
++
++static inline int restrictedmem_get_page(struct file *file, pgoff_t offset,
++					 struct page **pagep, int *order)
++{
++	return -1;
++}
++
++static inline bool file_is_restrictedmem(struct file *file)
++{
++	return false;
++}
++
++#endif /* CONFIG_RESTRICTEDMEM */
++
++#endif /* _LINUX_RESTRICTEDMEM_H */
+diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+index a34b0f9a9972..f9e9e0c820c5 100644
+--- a/include/linux/syscalls.h
++++ b/include/linux/syscalls.h
+@@ -1056,6 +1056,7 @@ asmlinkage long sys_memfd_secret(unsigned int flags);
+ asmlinkage long sys_set_mempolicy_home_node(unsigned long start, unsigned long len,
+ 					    unsigned long home_node,
+ 					    unsigned long flags);
++asmlinkage long sys_memfd_restricted(unsigned int flags);
+ 
+ /*
+  * Architecture-specific system calls
+diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+index 45fa180cc56a..e93cd35e46d0 100644
+--- a/include/uapi/asm-generic/unistd.h
++++ b/include/uapi/asm-generic/unistd.h
+@@ -886,8 +886,11 @@ __SYSCALL(__NR_futex_waitv, sys_futex_waitv)
+ #define __NR_set_mempolicy_home_node 450
+ __SYSCALL(__NR_set_mempolicy_home_node, sys_set_mempolicy_home_node)
+ 
++#define __NR_memfd_restricted 451
++__SYSCALL(__NR_memfd_restricted, sys_memfd_restricted)
++
+ #undef __NR_syscalls
+-#define __NR_syscalls 451
++#define __NR_syscalls 452
+ 
+ /*
+  * 32 bit systems traditionally used different
+diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+index 6325d1d0e90f..8aa38324b90a 100644
+--- a/include/uapi/linux/magic.h
++++ b/include/uapi/linux/magic.h
+@@ -101,5 +101,6 @@
+ #define DMA_BUF_MAGIC		0x444d4142	/* "DMAB" */
+ #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
+ #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
++#define RESTRICTEDMEM_MAGIC	0x5245534d	/* "RESM" */
+ 
+ #endif /* __LINUX_MAGIC_H__ */
+diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+index 860b2dcf3ac4..7c4a32cbd2e7 100644
+--- a/kernel/sys_ni.c
++++ b/kernel/sys_ni.c
+@@ -360,6 +360,9 @@ COND_SYSCALL(pkey_free);
+ /* memfd_secret */
+ COND_SYSCALL(memfd_secret);
+ 
++/* memfd_restricted */
++COND_SYSCALL(memfd_restricted);
++
+ /*
+  * Architecture specific weak syscall entries.
+  */
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 0331f1461f81..0177d53676c7 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1076,6 +1076,10 @@ config IO_MAPPING
+ config SECRETMEM
+ 	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
+ 
++config RESTRICTEDMEM
++	bool
++	depends on TMPFS
++
+ config ANON_VMA_NAME
+ 	bool "Anonymous VMA name support"
+ 	depends on PROC_FS && ADVISE_SYSCALLS && MMU
+diff --git a/mm/Makefile b/mm/Makefile
+index 9a564f836403..6cb6403ffd40 100644
+--- a/mm/Makefile
++++ b/mm/Makefile
+@@ -117,6 +117,7 @@ obj-$(CONFIG_PAGE_EXTENSION) += page_ext.o
+ obj-$(CONFIG_PAGE_TABLE_CHECK) += page_table_check.o
+ obj-$(CONFIG_CMA_DEBUGFS) += cma_debug.o
+ obj-$(CONFIG_SECRETMEM) += secretmem.o
++obj-$(CONFIG_RESTRICTEDMEM) += restrictedmem.o
+ obj-$(CONFIG_CMA_SYSFS) += cma_sysfs.o
+ obj-$(CONFIG_USERFAULTFD) += userfaultfd.o
+ obj-$(CONFIG_IDLE_PAGE_TRACKING) += page_idle.o
+diff --git a/mm/restrictedmem.c b/mm/restrictedmem.c
+new file mode 100644
+index 000000000000..e5bf8907e0f8
+--- /dev/null
++++ b/mm/restrictedmem.c
+@@ -0,0 +1,250 @@
++// SPDX-License-Identifier: GPL-2.0
++#include "linux/sbitmap.h"
++#include <linux/pagemap.h>
++#include <linux/pseudo_fs.h>
++#include <linux/shmem_fs.h>
++#include <linux/syscalls.h>
++#include <uapi/linux/falloc.h>
++#include <uapi/linux/magic.h>
++#include <linux/restrictedmem.h>
++
++struct restrictedmem_data {
++	struct mutex lock;
++	struct file *memfd;
++	struct list_head notifiers;
++};
++
++static void restrictedmem_notifier_invalidate(struct restrictedmem_data *data,
++				 pgoff_t start, pgoff_t end, bool notify_start)
++{
++	struct restrictedmem_notifier *notifier;
++
++	mutex_lock(&data->lock);
++	list_for_each_entry(notifier, &data->notifiers, list) {
++		if (notify_start)
++			notifier->ops->invalidate_start(notifier, start, end);
++		else
++			notifier->ops->invalidate_end(notifier, start, end);
++	}
++	mutex_unlock(&data->lock);
++}
++
++static int restrictedmem_release(struct inode *inode, struct file *file)
++{
++	struct restrictedmem_data *data = inode->i_mapping->private_data;
++
++	fput(data->memfd);
++	kfree(data);
++	return 0;
++}
++
++static long restrictedmem_fallocate(struct file *file, int mode,
++				    loff_t offset, loff_t len)
++{
++	struct restrictedmem_data *data = file->f_mapping->private_data;
++	struct file *memfd = data->memfd;
++	int ret;
++
++	if (mode & FALLOC_FL_PUNCH_HOLE) {
++		if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
++			return -EINVAL;
++	}
++
++	restrictedmem_notifier_invalidate(data, offset, offset + len, true);
++	ret = memfd->f_op->fallocate(memfd, mode, offset, len);
++	restrictedmem_notifier_invalidate(data, offset, offset + len, false);
++	return ret;
++}
++
++static const struct file_operations restrictedmem_fops = {
++	.release = restrictedmem_release,
++	.fallocate = restrictedmem_fallocate,
++};
++
++static int restrictedmem_getattr(struct user_namespace *mnt_userns,
++				 const struct path *path, struct kstat *stat,
++				 u32 request_mask, unsigned int query_flags)
++{
++	struct inode *inode = d_inode(path->dentry);
++	struct restrictedmem_data *data = inode->i_mapping->private_data;
++	struct file *memfd = data->memfd;
++
++	return memfd->f_inode->i_op->getattr(mnt_userns, path, stat,
++					     request_mask, query_flags);
++}
++
++static int restrictedmem_setattr(struct user_namespace *mnt_userns,
++				 struct dentry *dentry, struct iattr *attr)
++{
++	struct inode *inode = d_inode(dentry);
++	struct restrictedmem_data *data = inode->i_mapping->private_data;
++	struct file *memfd = data->memfd;
++	int ret;
++
++	if (attr->ia_valid & ATTR_SIZE) {
++		if (memfd->f_inode->i_size)
++			return -EPERM;
++
++		if (!PAGE_ALIGNED(attr->ia_size))
++			return -EINVAL;
++	}
++
++	ret = memfd->f_inode->i_op->setattr(mnt_userns,
++					    file_dentry(memfd), attr);
++	return ret;
++}
++
++static const struct inode_operations restrictedmem_iops = {
++	.getattr = restrictedmem_getattr,
++	.setattr = restrictedmem_setattr,
++};
++
++static int restrictedmem_init_fs_context(struct fs_context *fc)
++{
++	if (!init_pseudo(fc, RESTRICTEDMEM_MAGIC))
++		return -ENOMEM;
++
++	fc->s_iflags |= SB_I_NOEXEC;
++	return 0;
++}
++
++static struct file_system_type restrictedmem_fs = {
++	.owner		= THIS_MODULE,
++	.name		= "memfd:restrictedmem",
++	.init_fs_context = restrictedmem_init_fs_context,
++	.kill_sb	= kill_anon_super,
++};
++
++static struct vfsmount *restrictedmem_mnt;
++
++static __init int restrictedmem_init(void)
++{
++	restrictedmem_mnt = kern_mount(&restrictedmem_fs);
++	if (IS_ERR(restrictedmem_mnt))
++		return PTR_ERR(restrictedmem_mnt);
++	return 0;
++}
++fs_initcall(restrictedmem_init);
++
++static struct file *restrictedmem_file_create(struct file *memfd)
++{
++	struct restrictedmem_data *data;
++	struct address_space *mapping;
++	struct inode *inode;
++	struct file *file;
++
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return ERR_PTR(-ENOMEM);
++
++	data->memfd = memfd;
++	mutex_init(&data->lock);
++	INIT_LIST_HEAD(&data->notifiers);
++
++	inode = alloc_anon_inode(restrictedmem_mnt->mnt_sb);
++	if (IS_ERR(inode)) {
++		kfree(data);
++		return ERR_CAST(inode);
++	}
++
++	inode->i_mode |= S_IFREG;
++	inode->i_op = &restrictedmem_iops;
++	inode->i_mapping->private_data = data;
++
++	file = alloc_file_pseudo(inode, restrictedmem_mnt,
++				 "restrictedmem", O_RDWR,
++				 &restrictedmem_fops);
++	if (IS_ERR(file)) {
++		iput(inode);
++		kfree(data);
++		return ERR_CAST(file);
++	}
++
++	file->f_flags |= O_LARGEFILE;
++
++	mapping = memfd->f_mapping;
++	mapping_set_unevictable(mapping);
++	mapping_set_gfp_mask(mapping,
++			     mapping_gfp_mask(mapping) & ~__GFP_MOVABLE);
++
++	return file;
++}
++
++SYSCALL_DEFINE1(memfd_restricted, unsigned int, flags)
++{
++	struct file *file, *restricted_file;
++	int fd, err;
++
++	if (flags)
++		return -EINVAL;
++
++	fd = get_unused_fd_flags(0);
++	if (fd < 0)
++		return fd;
++
++	file = shmem_file_setup("memfd:restrictedmem", 0, VM_NORESERVE);
++	if (IS_ERR(file)) {
++		err = PTR_ERR(file);
++		goto err_fd;
++	}
++	file->f_mode |= FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
++	file->f_flags |= O_LARGEFILE;
++
++	restricted_file = restrictedmem_file_create(file);
++	if (IS_ERR(restricted_file)) {
++		err = PTR_ERR(restricted_file);
++		fput(file);
++		goto err_fd;
++	}
++
++	fd_install(fd, restricted_file);
++	return fd;
++err_fd:
++	put_unused_fd(fd);
++	return err;
++}
++
++void restrictedmem_register_notifier(struct file *file,
++				     struct restrictedmem_notifier *notifier)
++{
++	struct restrictedmem_data *data = file->f_mapping->private_data;
++
++	mutex_lock(&data->lock);
++	list_add(&notifier->list, &data->notifiers);
++	mutex_unlock(&data->lock);
++}
++EXPORT_SYMBOL_GPL(restrictedmem_register_notifier);
++
++void restrictedmem_unregister_notifier(struct file *file,
++				       struct restrictedmem_notifier *notifier)
++{
++	struct restrictedmem_data *data = file->f_mapping->private_data;
++
++	mutex_lock(&data->lock);
++	list_del(&notifier->list);
++	mutex_unlock(&data->lock);
++}
++EXPORT_SYMBOL_GPL(restrictedmem_unregister_notifier);
++
++int restrictedmem_get_page(struct file *file, pgoff_t offset,
++			   struct page **pagep, int *order)
++{
++	struct restrictedmem_data *data = file->f_mapping->private_data;
++	struct file *memfd = data->memfd;
++	struct page *page;
++	int ret;
++
++	ret = shmem_getpage(file_inode(memfd), offset, &page, SGP_WRITE);
++	if (ret)
++		return ret;
++
++	*pagep = page;
++	if (order)
++		*order = thp_order(compound_head(page));
++
++	SetPageUptodate(page);
++	unlock_page(page);
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(restrictedmem_get_page);
 -- 
 2.25.1
 
