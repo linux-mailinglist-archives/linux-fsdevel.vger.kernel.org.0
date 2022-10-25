@@ -2,179 +2,161 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB8AE60D155
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Oct 2022 18:10:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9D2F460D178
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Oct 2022 18:17:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232322AbiJYQKd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Oct 2022 12:10:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49610 "EHLO
+        id S232209AbiJYQRr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Oct 2022 12:17:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231986AbiJYQKc (ORCPT
+        with ESMTP id S233287AbiJYQRh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Oct 2022 12:10:32 -0400
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78DBC4CA3A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Oct 2022 09:10:28 -0700 (PDT)
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29PAeRZ5024110
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Oct 2022 09:10:27 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
- : date : message-id : mime-version : content-transfer-encoding :
- content-type; s=facebook; bh=cnJAlRNjjZ1/Vws6zXuXdLgYHM8iDjJgG8N5E8KWuLo=;
- b=lmPFyqx2Yz+S9BgDBpGPNuUhqf7jPLkRgNSIBChjNek79BtPc1LQcELhxVIRANX9rR7F
- kEjW7qKDSeRsbTlD/wxg+mpXmnYg7PaVktKK2phvXoEuhMDu8qQkYuy+0DqKWnhbu2Or
- W4VehZonYNoEpsPNEJuX7GW838HB/my4ebA= 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kee8ckghn-3
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Oct 2022 09:10:27 -0700
-Received: from twshared19720.14.frc2.facebook.com (2620:10d:c085:208::f) by
- mail.thefacebook.com (2620:10d:c085:11d::6) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 25 Oct 2022 09:10:25 -0700
-Received: by devbig077.ldc1.facebook.com (Postfix, from userid 158236)
-        id 02550F87696A; Tue, 25 Oct 2022 09:10:18 -0700 (PDT)
-From:   Dave Marchevsky <davemarchevsky@fb.com>
-To:     <linux-fsdevel@vger.kernel.org>
-CC:     Miklos Szeredi <miklos@szeredi.hu>,
-        kernel-team <kernel-team@fb.com>,
-        Seth Forshee <sforshee@kernel.org>,
-        Dave Marchevsky <davemarchevsky@fb.com>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Christian Brauner <brauner@kernel.org>
-Subject: [PATCH v3] fuse: Rearrange fuse_allow_current_process checks
-Date:   Tue, 25 Oct 2022 09:10:17 -0700
-Message-ID: <20221025161017.3548254-1-davemarchevsky@fb.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 25 Oct 2022 12:17:37 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04FFC1011AB
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Oct 2022 09:17:35 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id d59-20020a17090a6f4100b00213202d77e1so5287385pjk.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Oct 2022 09:17:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0XpehjN5/x0DVN6iNfQRcpwLRiHoknqSMi2DnBppXC4=;
+        b=VTegWoMotPt2w65LyX5l1RfBFsrVct34KfNYTQclV1Ej8EpD0Aka6DhRqFqKKPkKYF
+         dx/pMAu3a28hbLyvQafo+3Wa+3mCeMIJhF5AVwXriBoAuAKBIFTkfyEZGt3R9F9Nhi41
+         fj+nZajeXUNM6G2OtS9Tq69y8zmBsHay0qJIu6C8XDsQnxvChs2zKzG+iHzQM3CemyK7
+         rQ1rbv2xpfwgbK/hJO81F9yW0YMzSmbw6UXv81EZOUicFWm2Vd2NYV/mOhEHD+opJjML
+         IMkSJQctzTXXbBbp4cSFHMIFqYkomesQTa0hCcAW0LxBYbC7hn0bynG64p0PfcuPbXmb
+         uofw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0XpehjN5/x0DVN6iNfQRcpwLRiHoknqSMi2DnBppXC4=;
+        b=nYbIFh/s9bWAzUXCY1nwlG/STSxLGD9/FVIftSfHZMGJMOc0QSD1ZzM5rhpSkDUh4d
+         KRIT7DpK+sEffff0nAmwrQpQZpu22WegvVY3vJdzy9pkJ1s18CdGNAGmjDADiwnA8HHW
+         VUuOdECnTIQyIzyUiubZ5l3nAFrUj6Q2KlsjYK9lgAeMlrK6I/CSCAYwLSeJpAWsi8Sr
+         c2xxRJdW9wcluwBllqxEKWJDJTNd2pPfCUatw9Qnw8jZ6yFrbrvtjkPc1nm+iasNGXg0
+         KGq22hdwK2C3eA+6MLo+Tb2dQ2+rdIr/LPIUgFKCqQnMCw4lB1GI88fkaZEFoCzYygLy
+         EcsA==
+X-Gm-Message-State: ACrzQf0G7ygJQFkHibdzNuILMYKqykvVszuSjtfmL7cdQ1wZUrxiEwaQ
+        p4Jd+vincgAHxW40wTSJb8UROw==
+X-Google-Smtp-Source: AMsMyM738RdpBPHm9pvc30fi3c2/lYdgFkQc2nwAzBbq52uGbxkdpRe8GUTzQNa3Uoldv8m3HWsH3Q==
+X-Received: by 2002:a17:903:41c7:b0:182:a32f:4db5 with SMTP id u7-20020a17090341c700b00182a32f4db5mr39384792ple.22.1666714654279;
+        Tue, 25 Oct 2022 09:17:34 -0700 (PDT)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id b3-20020a1709027e0300b00186881e1feasm1399643plm.112.2022.10.25.09.17.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Oct 2022 09:17:33 -0700 (PDT)
+Date:   Tue, 25 Oct 2022 16:17:30 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Peter Maydell <peter.maydell@linaro.org>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v9 3/8] KVM: Add KVM_EXIT_MEMORY_FAULT exit
+Message-ID: <Y1gMGpWpzzA/AC//@google.com>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-4-chao.p.peng@linux.intel.com>
+ <CAFEAcA-=Sc9Sc4oLq13HAFW49ZBw8u6DtN7bf_vjVYX_AAaKSg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-FB-Internal: Safe
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: 9otbSETEWONMgyxVl_E9HLy7oPJngGoU
-X-Proofpoint-GUID: 9otbSETEWONMgyxVl_E9HLy7oPJngGoU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-10-25_09,2022-10-25_01,2022-06-22_01
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_LOW,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAFEAcA-=Sc9Sc4oLq13HAFW49ZBw8u6DtN7bf_vjVYX_AAaKSg@mail.gmail.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is a followup to a previous commit of mine [0], which added the
-allow_sys_admin_access && capable(CAP_SYS_ADMIN) check. This patch
-rearranges the order of checks in fuse_allow_current_process without
-changing functionality.
+On Tue, Oct 25, 2022, Peter Maydell wrote:
+> On Tue, 25 Oct 2022 at 16:21, Chao Peng <chao.p.peng@linux.intel.com> wrote:
+> > diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> > index f3fa75649a78..975688912b8c 100644
+> > --- a/Documentation/virt/kvm/api.rst
+> > +++ b/Documentation/virt/kvm/api.rst
+> > @@ -6537,6 +6537,29 @@ array field represents return values. The userspace should update the return
+> >  values of SBI call before resuming the VCPU. For more details on RISC-V SBI
+> >  spec refer, https://github.com/riscv/riscv-sbi-doc.
+> >
+> > +::
+> > +
+> > +               /* KVM_EXIT_MEMORY_FAULT */
+> > +               struct {
+> > +  #define KVM_MEMORY_EXIT_FLAG_PRIVATE (1 << 0)
+> > +                       __u32 flags;
+> > +                       __u32 padding;
+> > +                       __u64 gpa;
+> > +                       __u64 size;
+> > +               } memory;
+> > +
+> > +If exit reason is KVM_EXIT_MEMORY_FAULT then it indicates that the VCPU has
+> > +encountered a memory error which is not handled by KVM kernel module and
+> > +userspace may choose to handle it. The 'flags' field indicates the memory
+> > +properties of the exit.
+> > +
+> > + - KVM_MEMORY_EXIT_FLAG_PRIVATE - indicates the memory error is caused by
+> > +   private memory access when the bit is set. Otherwise the memory error is
+> > +   caused by shared memory access when the bit is clear.
+> > +
+> > +'gpa' and 'size' indicate the memory range the error occurs at. The userspace
+> > +may handle the error and return to KVM to retry the previous memory access.
+> > +
+> 
+> What's the difference between this and a plain old MMIO exit ?
+> Just that we can specify a wider size and some flags ?
 
-[0] added allow_sys_admin_access && capable(CAP_SYS_ADMIN) check to the
-beginning of the function, with the reasoning that
-allow_sys_admin_access should be an 'escape hatch' for users with
-CAP_SYS_ADMIN, allowing them to skip any subsequent checks.
+KVM_EXIT_MMIO is purely for cases where there is no memslot.  KVM_EXIT_MEMORY_FAULT
+will be used for scenarios where there is a valid memslot for a GPA, but for
+whatever reason KVM cannot map the memslot into the guest.
 
-However, placing this new check first results in many capable() calls whe=
-n
-allow_sys_admin_access is set, where another check would've also
-returned 1. This can be problematic when a BPF program is tracing
-capable() calls.
+In this series, the new exit type is use to handle guest-initiated conversions
+between shared and private memory.  By design, conversion requires explicit action
+from userspace, and so even though KVM has a valid memslot, KVM needs to exit to
+userspace to effectively forward the conversion request to userspace.
 
-At Meta we ran into such a scenario recently. On a host where
-allow_sys_admin_access is set but most of the FUSE access is from
-processes which would pass other checks - i.e. they don't need
-CAP_SYS_ADMIN 'escape hatch' - this results in an unnecessary capable()
-call for each fs op. We also have a daemon tracing capable() with BPF and
-doing some data collection, so tracing these extraneous capable() calls
-has the potential to regress performance for an application doing many
-FUSE ops.
+Long term, I also hope to convert all guest-triggered -EFAULT paths to instead
+return KVM_EXIT_MEMORY_FAULT.  At minimum, returning KVM_EXIT_MEMORY_FAULT instead
+of -EFAULT will allow KVM to provide userspace with the "bad" GPA when something
+goes sideways, e.g. if faulting in the page failed because there's no valid
+userspace mapping.
 
-So rearrange the order of these checks such that CAP_SYS_ADMIN 'escape
-hatch' is checked last. Add a small helper, fuse_permissible_uidgid, to
-make the logic easier to understand. Previously, if allow_other is set
-on the fuse_conn, uid/git checking doesn't happen as current_in_userns
-result is returned. These semantics are maintained here:
-fuse_permissible_uidgid check only happens if allow_other is not set.
+There have also been two potential use cases[1][2], though they both appear to have
+been abandoned, where userspace would do something more than just kill the guest
+in response to KVM_EXIT_MEMORY_FAULT.
 
-  [0]: commit 9ccf47b26b73 ("fuse: Add module param for CAP_SYS_ADMIN acc=
-ess bypassing allow_other")
-
-Signed-off-by: Dave Marchevsky <davemarchevsky@fb.com>
-Suggested-by: Andrii Nakryiko <andrii@kernel.org>
-Cc: Christian Brauner <brauner@kernel.org>
----
-v2 -> v3: lore.kernel.org/linux-fsdevel/20221020201409.1815316-1-davemarc=
-hevsky@fb.com
-
-  * Add fuse_permissible_uidgid, rearrange fuse_allow_current_process to
-    not use 'goto' (Christian)
-
-v1 -> v2: lore.kernel.org/linux-fsdevel/20221020183830.1077143-1-davemarc=
-hevsky@fb.com
-
-  * Add missing brackets to allow_other if statement (Andrii)
-
- fs/fuse/dir.c | 33 +++++++++++++++++++--------------
- 1 file changed, 19 insertions(+), 14 deletions(-)
-
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 2c4b08a6ec81..cfd857754c75 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -1237,6 +1237,18 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc,=
- u64 parent_nodeid,
- 	return err;
- }
-=20
-+static inline bool fuse_permissible_uidgid(struct fuse_conn *fc)
-+{
-+	const struct cred *cred =3D current_cred();
-+
-+	return (uid_eq(cred->euid, fc->user_id) &&
-+		uid_eq(cred->suid, fc->user_id) &&
-+		uid_eq(cred->uid,  fc->user_id) &&
-+		gid_eq(cred->egid, fc->group_id) &&
-+		gid_eq(cred->sgid, fc->group_id) &&
-+		gid_eq(cred->gid,  fc->group_id));
-+}
-+
- /*
-  * Calling into a user-controlled filesystem gives the filesystem
-  * daemon ptrace-like capabilities over the current process.  This
-@@ -1252,24 +1264,17 @@ int fuse_reverse_inval_entry(struct fuse_conn *fc=
-, u64 parent_nodeid,
-  */
- int fuse_allow_current_process(struct fuse_conn *fc)
- {
--	const struct cred *cred;
--
--	if (allow_sys_admin_access && capable(CAP_SYS_ADMIN))
--		return 1;
-+	int ret;
-=20
- 	if (fc->allow_other)
--		return current_in_userns(fc->user_ns);
-+		ret =3D current_in_userns(fc->user_ns);
-+	else
-+		ret =3D fuse_permissible_uidgid(fc);
-=20
--	cred =3D current_cred();
--	if (uid_eq(cred->euid, fc->user_id) &&
--	    uid_eq(cred->suid, fc->user_id) &&
--	    uid_eq(cred->uid,  fc->user_id) &&
--	    gid_eq(cred->egid, fc->group_id) &&
--	    gid_eq(cred->sgid, fc->group_id) &&
--	    gid_eq(cred->gid,  fc->group_id))
--		return 1;
-+	if (!ret && allow_sys_admin_access && capable(CAP_SYS_ADMIN))
-+		ret =3D 1;
-=20
--	return 0;
-+	return ret;
- }
-=20
- static int fuse_access(struct inode *inode, int mask)
---=20
-2.30.2
-
+[1] https://lkml.kernel.org/r/20200617230052.GB27751@linux.intel.com
+[2] https://lore.kernel.org/all/YKxJLcg%2FWomPE422@google.com
