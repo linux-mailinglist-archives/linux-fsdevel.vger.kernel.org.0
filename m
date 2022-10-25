@@ -2,48 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FB3860CFB2
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Oct 2022 16:57:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id E818560D02A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 25 Oct 2022 17:18:34 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232905AbiJYO5D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Oct 2022 10:57:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35832 "EHLO
+        id S233065AbiJYPS3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 25 Oct 2022 11:18:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41010 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232896AbiJYO4y (ORCPT
+        with ESMTP id S231769AbiJYPS0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Oct 2022 10:56:54 -0400
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CF9131AC1DB;
-        Tue, 25 Oct 2022 07:56:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=1CzXyO7CuyV1gfLMYeF/4X2psNc4MKQOgtdQ6REO1y4=; b=lKoDj+GeEsAug+rqoIuL9PqhJY
-        b5q2rJlxS5PuA/caZ5KttMzESQUvGjLzm2VvbPy0fukAhe4+lHrJCmAtl8g88nzxoymx+F0E7In6z
-        h6aD7R1rtjW9xYX46HntGnT8r4pVkRn/I0Zc5PY4qb6+xDZ1HtBIlavsXORYNmgWQNJR6Rr48TZzI
-        OG3JrFRhj1X04DOxCCH8gy3pyp6vGieeS5F6ocdyW/dFRHgefV5VtHplbOU5cvo6YVXi+e3y5B+hd
-        gxQusoLF83GFG6PP1KUyvb7BpMzDsDmV1uBx9h1RZH9NVFAKkP+b3lLnDvqkisO/AjyQRY6lPfCxA
-        RpqGJB3g==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1onLMB-005w4x-Ja; Tue, 25 Oct 2022 14:56:43 +0000
-Date:   Tue, 25 Oct 2022 07:56:43 -0700
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Dawei Li <set_pte_at@outlook.com>, viro@zeniv.linux.org.uk,
-        neilb@suse.de, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] vfs: Make vfs_get_super() internal
-Message-ID: <Y1f5K6LKgD3hpkU/@infradead.org>
-References: <TYCP286MB2323D37F4F6400FD07D7C7F7CA319@TYCP286MB2323.JPNP286.PROD.OUTLOOK.COM>
- <20221025143607.frmf3qg7j4kwezll@wittgenstein>
+        Tue, 25 Oct 2022 11:18:26 -0400
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 639EA188A94;
+        Tue, 25 Oct 2022 08:18:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1666711105; x=1698247105;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=P0zL/XB8EN7WGMoEOO2wW14TpKmf0We0vI+i9XPBaLc=;
+  b=aec9CAcXMR/eZRBGa0IFh/ohi3Z0oAmt92tIIwTBfkJkS/nS5UGaaRdU
+   uISTH4CEsXXQ5AikSbB7pvJgPSGh3xJQ6E9HHf/V3QQmJW8yFdIdFjkMN
+   Spe7q9306oHI9OQzbWsPamrO4nQ5rOcsfV07ybk/pDdfJX2W+qb/U1ca/
+   sngDhQVLw+O5j4CRN1tKjblmCgqkLKSVAczfZFw5Puz77wE4+sihPX97J
+   vhUpa+iiqMvHuNBG6y2F7alDtAAK0lcS5UOjM+cqWX2u+wmlltAI50W4c
+   lKn39Y4mlFE8zQ1DQXIZ6kn0sA7VQGWq4H80Naqcb1fEfr1EysFAmJPD0
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="394018792"
+X-IronPort-AV: E=Sophos;i="5.95,212,1661842800"; 
+   d="scan'208";a="394018792"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Oct 2022 08:18:25 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10510"; a="736865431"
+X-IronPort-AV: E=Sophos;i="5.95,212,1661842800"; 
+   d="scan'208";a="736865431"
+Received: from chaop.bj.intel.com ([10.240.193.75])
+  by fmsmga002.fm.intel.com with ESMTP; 25 Oct 2022 08:18:14 -0700
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: [PATCH v9 0/8] KVM: mm: fd-based approach for supporting KVM
+Date:   Tue, 25 Oct 2022 23:13:36 +0800
+Message-Id: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221025143607.frmf3qg7j4kwezll@wittgenstein>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -51,192 +87,261 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 25, 2022 at 04:36:07PM +0200, Christian Brauner wrote:
-> If you want to make it static that you should probably also make enum
-> vfs_get_super_keying static by moving it into super.c. It's not used
-> anywhere but for vfs_get_super() afaict.
+This patch series implements KVM guest private memory for confidential
+computing scenarios like Intel TDX[1]. If a TDX host accesses
+TDX-protected guest memory, machine check can happen which can further
+crash the running host system, this is terrible for multi-tenant
+configurations. The host accesses include those from KVM userspace like
+QEMU. This series addresses KVM userspace induced crash by introducing
+new mm and KVM interfaces so KVM userspace can still manage guest memory
+via a fd-based approach, but it can never access the guest memory
+content.
 
-I'd just remove the enum entirely, as it really obsfucates the code:
+The patch series touches both core mm and KVM code. I appreciate
+Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
+reviews are always welcome.
+  - 01: mm change, target for mm tree
+  - 02-08: KVM change, target for KVM tree
 
-diff --git a/Documentation/filesystems/mount_api.rst b/Documentation/filesystems/mount_api.rst
-index eb358a00be279..b0f7fd4f64bc8 100644
---- a/Documentation/filesystems/mount_api.rst
-+++ b/Documentation/filesystems/mount_api.rst
-@@ -560,37 +560,6 @@ or looking up of superblocks.
-      to sb->s_fs_info - and fc->s_fs_info will be cleared if set returns
-      success (ie. 0).
- 
--The following helpers all wrap sget_fc():
--
--   * ::
--
--       int vfs_get_super(struct fs_context *fc,
--		         enum vfs_get_super_keying keying,
--		         int (*fill_super)(struct super_block *sb,
--					   struct fs_context *fc))
--
--     This creates/looks up a deviceless superblock.  The keying indicates how
--     many superblocks of this type may exist and in what manner they may be
--     shared:
--
--	(1) vfs_get_single_super
--
--	    Only one such superblock may exist in the system.  Any further
--	    attempt to get a new superblock gets this one (and any parameter
--	    differences are ignored).
--
--	(2) vfs_get_keyed_super
--
--	    Multiple superblocks of this type may exist and they're keyed on
--	    their s_fs_info pointer (for example this may refer to a
--	    namespace).
--
--	(3) vfs_get_independent_super
--
--	    Multiple independent superblocks of this type may exist.  This
--	    function never matches an existing one and always creates a new
--	    one.
--
- 
- Parameter Description
- =====================
-diff --git a/fs/super.c b/fs/super.c
-index 6a82660e1adba..76f477c24c3d5 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1111,55 +1111,14 @@ static int test_single_super(struct super_block *s, struct fs_context *fc)
- 	return 1;
- }
- 
--/**
-- * vfs_get_super - Get a superblock with a search key set in s_fs_info.
-- * @fc: The filesystem context holding the parameters
-- * @keying: How to distinguish superblocks
-- * @fill_super: Helper to initialise a new superblock
-- *
-- * Search for a superblock and create a new one if not found.  The search
-- * criterion is controlled by @keying.  If the search fails, a new superblock
-- * is created and @fill_super() is called to initialise it.
-- *
-- * @keying can take one of a number of values:
-- *
-- * (1) vfs_get_single_super - Only one superblock of this type may exist on the
-- *     system.  This is typically used for special system filesystems.
-- *
-- * (2) vfs_get_keyed_super - Multiple superblocks may exist, but they must have
-- *     distinct keys (where the key is in s_fs_info).  Searching for the same
-- *     key again will turn up the superblock for that key.
-- *
-- * (3) vfs_get_independent_super - Multiple superblocks may exist and are
-- *     unkeyed.  Each call will get a new superblock.
-- *
-- * A permissions check is made by sget_fc() unless we're getting a superblock
-- * for a kernel-internal mount or a submount.
-- */
--int vfs_get_super(struct fs_context *fc,
--		  enum vfs_get_super_keying keying,
--		  int (*fill_super)(struct super_block *sb,
--				    struct fs_context *fc))
-+static int vfs_get_super(struct fs_context *fc, bool reconf,
-+		int (*test)(struct super_block *, struct fs_context *),
-+		int (*fill_super)(struct super_block *sb,
-+				  struct fs_context *fc))
- {
--	int (*test)(struct super_block *, struct fs_context *);
- 	struct super_block *sb;
- 	int err;
- 
--	switch (keying) {
--	case vfs_get_single_super:
--	case vfs_get_single_reconf_super:
--		test = test_single_super;
--		break;
--	case vfs_get_keyed_super:
--		test = test_keyed_super;
--		break;
--	case vfs_get_independent_super:
--		test = NULL;
--		break;
--	default:
--		BUG();
--	}
--
- 	sb = sget_fc(fc, test, set_anon_super_fc);
- 	if (IS_ERR(sb))
- 		return PTR_ERR(sb);
-@@ -1173,7 +1132,7 @@ int vfs_get_super(struct fs_context *fc,
- 		fc->root = dget(sb->s_root);
- 	} else {
- 		fc->root = dget(sb->s_root);
--		if (keying == vfs_get_single_reconf_super) {
-+		if (reconf) {
- 			err = reconfigure_super(fc);
- 			if (err < 0) {
- 				dput(fc->root);
-@@ -1189,13 +1148,12 @@ int vfs_get_super(struct fs_context *fc,
- 	deactivate_locked_super(sb);
- 	return err;
- }
--EXPORT_SYMBOL(vfs_get_super);
- 
- int get_tree_nodev(struct fs_context *fc,
- 		  int (*fill_super)(struct super_block *sb,
- 				    struct fs_context *fc))
- {
--	return vfs_get_super(fc, vfs_get_independent_super, fill_super);
-+	return vfs_get_super(fc, false, NULL, fill_super);
- }
- EXPORT_SYMBOL(get_tree_nodev);
- 
-@@ -1203,7 +1161,7 @@ int get_tree_single(struct fs_context *fc,
- 		  int (*fill_super)(struct super_block *sb,
- 				    struct fs_context *fc))
- {
--	return vfs_get_super(fc, vfs_get_single_super, fill_super);
-+	return vfs_get_super(fc, false, test_single_super, fill_super);
- }
- EXPORT_SYMBOL(get_tree_single);
- 
-@@ -1211,7 +1169,7 @@ int get_tree_single_reconf(struct fs_context *fc,
- 		  int (*fill_super)(struct super_block *sb,
- 				    struct fs_context *fc))
- {
--	return vfs_get_super(fc, vfs_get_single_reconf_super, fill_super);
-+	return vfs_get_super(fc, true, test_single_super, fill_super);
- }
- EXPORT_SYMBOL(get_tree_single_reconf);
- 
-@@ -1221,7 +1179,7 @@ int get_tree_keyed(struct fs_context *fc,
- 		void *key)
- {
- 	fc->s_fs_info = key;
--	return vfs_get_super(fc, vfs_get_keyed_super, fill_super);
-+	return vfs_get_super(fc, false, test_keyed_super, fill_super);
- }
- EXPORT_SYMBOL(get_tree_keyed);
- 
-diff --git a/include/linux/fs_context.h b/include/linux/fs_context.h
-index 13fa6f3df8e46..87a34f2fa68de 100644
---- a/include/linux/fs_context.h
-+++ b/include/linux/fs_context.h
-@@ -145,20 +145,6 @@ extern void fc_drop_locked(struct fs_context *fc);
- int reconfigure_single(struct super_block *s,
- 		       int flags, void *data);
- 
--/*
-- * sget() wrappers to be called from the ->get_tree() op.
-- */
--enum vfs_get_super_keying {
--	vfs_get_single_super,	/* Only one such superblock may exist */
--	vfs_get_single_reconf_super, /* As above, but reconfigure if it exists */
--	vfs_get_keyed_super,	/* Superblocks with different s_fs_info keys may exist */
--	vfs_get_independent_super, /* Multiple independent superblocks may exist */
--};
--extern int vfs_get_super(struct fs_context *fc,
--			 enum vfs_get_super_keying keying,
--			 int (*fill_super)(struct super_block *sb,
--					   struct fs_context *fc));
--
- extern int get_tree_nodev(struct fs_context *fc,
- 			 int (*fill_super)(struct super_block *sb,
- 					   struct fs_context *fc));
+Given KVM is the only current user for the mm part, I have chatted with
+Paolo and he is OK to merge the mm change through KVM tree, but
+reviewed-by/acked-by is still expected from the mm people.
+
+The patches have been verified in Intel TDX environment, but Vishal has
+done an excellent work on the selftests[4] which are dedicated for this
+series, making it possible to test this series without innovative
+hardware and fancy steps of building a VM environment. See Test section
+below for more info.
+
+
+Introduction
+============
+KVM userspace being able to crash the host is horrible. Under current
+KVM architecture, all guest memory is inherently accessible from KVM
+userspace and is exposed to the mentioned crash issue. The goal of this
+series is to provide a solution to align mm and KVM, on a userspace
+inaccessible approach of exposing guest memory. 
+
+Normally, KVM populates secondary page table (e.g. EPT) by using a host
+virtual address (hva) from core mm page table (e.g. x86 userspace page
+table). This requires guest memory being mmaped into KVM userspace, but
+this is also the source where the mentioned crash issue can happen. In
+theory, apart from those 'shared' memory for device emulation etc, guest
+memory doesn't have to be mmaped into KVM userspace.
+
+This series introduces fd-based guest memory which will not be mmaped
+into KVM userspace. KVM populates secondary page table by using a
+fd/offset pair backed by a memory file system. The fd can be created
+from a supported memory filesystem like tmpfs/hugetlbfs and KVM can
+directly interact with them with newly introduced in-kernel interface,
+therefore remove the KVM userspace from the path of accessing/mmaping
+the guest memory. 
+
+Kirill had a patch [2] to address the same issue in a different way. It
+tracks guest encrypted memory at the 'struct page' level and relies on
+HWPOISON to reject the userspace access. The patch has been discussed in
+several online and offline threads and resulted in a design document [3]
+which is also the original proposal for this series. Later this patch
+series evolved as more comments received in community but the major
+concepts in [3] still hold true so recommend reading.
+
+The patch series may also be useful for other usages, for example, pure
+software approach may use it to harden itself against unintentional
+access to guest memory. This series is designed with these usages in
+mind but doesn't have code directly support them and extension might be
+needed.
+
+
+mm change
+=========
+Introduces a new memfd_restricted system call which can create memory
+file that is restricted from userspace access via normal MMU operations
+like read(), write() or mmap() etc and the only way to use it is
+passing it to a third kernel module like KVM and relying on it to
+access the fd through the newly added restrictedmem kernel interface.
+The restrictedmem interface bridges the memory file subsystems
+(tmpfs/hugetlbfs etc) and their users (KVM in this case) and provides
+bi-directional communication between them. 
+
+
+KVM change
+==========
+Extends the KVM memslot to provide guest private (encrypted) memory from
+a fd. With this extension, a single memslot can maintain both private
+memory through private fd (restricted_fd/restricted_offset) and shared
+(unencrypted) memory through userspace mmaped host virtual address
+(userspace_addr). For a particular guest page, the corresponding page in
+KVM memslot can be only either private or shared and only one of the
+shared/private parts of the memslot is visible to guest. For how this
+new extension is used in QEMU, please refer to kvm_set_phys_mem() in
+below TDX-enabled QEMU repo.
+
+Introduces new KVM_EXIT_MEMORY_FAULT exit to allow userspace to get the
+chance on decision-making for shared <-> private memory conversion. The
+exit can be an implicit conversion in KVM page fault handler or an
+explicit conversion from guest OS.
+
+Extends existing SEV ioctls KVM_MEMORY_ENCRYPT_{UN,}REG_REGION to
+convert a guest page between private <-> shared. The data maintained in
+these ioctls tells the truth whether a guest page is private or shared
+and this information will be used in KVM page fault handler to decide
+whether the private or the shared part of the memslot is visible to
+guest.
+
+
+Test
+====
+Ran two kinds of tests:
+  - Selftests [4] from Vishal and VM boot tests in non-TDX environment
+    Code also in below repo: https://github.com/chao-p/linux/tree/privmem-v9
+
+  - Functional tests in TDX capable environment
+    Tested the new functionalities in TDX environment. Code repos:
+    Linux: https://github.com/chao-p/linux/tree/privmem-v9-tdx
+    QEMU: https://github.com/chao-p/qemu/tree/privmem-v9
+
+    An example QEMU command line for TDX test:
+    -object tdx-guest,id=tdx,debug=off,sept-ve-disable=off \
+    -machine confidential-guest-support=tdx \
+    -object memory-backend-memfd-private,id=ram1,size=${mem} \
+    -machine memory-backend=ram1
+
+
+TODO
+====
+  - Page accounting and limiting for encrypted memory
+  - hugetlbfs support
+
+
+Changelog
+=========
+v9:
+  - mm: move inaccessible memfd into separated syscall.
+  - mm: return page instead of pfn_t for inaccessible_get_pfn and remove
+    inaccessible_put_pfn.
+  - KVM: rename inaccessible/private to restricted and CONFIG change to
+    make the code friendly to pKVM.
+  - KVM: add invalidate_begin/end pair to fix race contention and revise
+    the lock protection for invalidation path.
+  - KVM: optimize setting lpage_info for > 2M level by direct accessing
+    lower level's result.
+  - KVM: avoid load xarray in kvm_mmu_max_mapping_level() and instead let
+    the caller to pass in is_private.
+  - KVM: API doc improvement.
+v8:
+  - mm: redesign mm part by introducing a shim layer(inaccessible_memfd)
+    in memfd to avoid touch the memory file systems directly.
+  - mm: exclude F_SEAL_AUTO_ALLOCATE as it is for shared memory and
+    cause confusion in this series, will send out separately.
+  - doc: exclude the man page change, it's not kernel patch and will
+    send out separately.
+  - KVM: adapt to use the new mm inaccessible_memfd interface.
+  - KVM: update lpage_info when setting mem_attr_array to support
+    large page.
+  - KVM: change from xa_store_range to xa_store for mem_attr_array due
+    to xa_store_range overrides all entries which is not intended
+    behavior for us.
+  - KVM: refine the mmu_invalidate_retry_gfn mechanism for private page.
+  - KVM: reorganize KVM_MEMORY_ENCRYPT_{UN,}REG_REGION and private page
+    handling code suggested by Sean.
+v7:
+  - mm: introduce F_SEAL_AUTO_ALLOCATE to avoid double allocation.
+  - KVM: use KVM_MEMORY_ENCRYPT_{UN,}REG_REGION to record
+    private/shared info.
+  - KVM: use similar sync mechanism between zap/page fault paths as
+    mmu_notifier for memfile_notifier based invalidation.
+v6:
+  - mm: introduce MEMFILE_F_* flags into memfile_node to allow checking
+    feature consistence among all memfile_notifier users and get rid of
+    internal flags like SHM_F_INACCESSIBLE.
+  - mm: make pfn_ops callbacks being members of memfile_backing_store
+    and then refer to it directly in memfile_notifier.
+  - mm: remove backing store unregister.
+  - mm: remove RLIMIT_MEMLOCK based memory accounting and limiting.
+  - KVM: reorganize patch sequence for page fault handling and private
+    memory enabling.
+v5:
+  - Add man page for MFD_INACCESSIBLE flag and improve KVM API do for
+    the new memslot extensions.
+  - mm: introduce memfile_{un}register_backing_store to allow memory
+    backing store to register/unregister it from memfile_notifier.
+  - mm: remove F_SEAL_INACCESSIBLE, use in-kernel flag
+    (SHM_F_INACCESSIBLE for shmem) instead. 
+  - mm: add memory accounting and limiting (RLIMIT_MEMLOCK based) for
+    MFD_INACCESSIBLE memory.
+  - KVM: remove the overlap check for mapping the same file+offset into
+    multiple gfns due to perf consideration, warned in document.
+v4:
+  - mm: rename memfd_ops to memfile_notifier and separate it from
+    memfd.c to standalone memfile-notifier.c.
+  - KVM: move pfn_ops to per-memslot scope from per-vm scope and allow
+    registering multiple memslots to the same memory backing store.
+  - KVM: add a 'kvm' reference in memslot so that we can recover kvm in
+    memfile_notifier handlers.
+  - KVM: add 'private_' prefix for the new fields in memslot.
+  - KVM: reshape the 'type' to 'flag' for kvm_memory_exit
+v3:
+  - Remove 'RFC' prefix.
+  - Fix race condition between memfile_notifier handlers and kvm destroy.
+  - mm: introduce MFD_INACCESSIBLE flag for memfd_create() to force
+    setting F_SEAL_INACCESSIBLE when the fd is created.
+  - KVM: add the shared part of the memslot back to make private/shared
+    pages live in one memslot.
+
+Reference
+=========
+[1] Intel TDX:
+https://www.intel.com/content/www/us/en/developer/articles/technical/intel-trust-domain-extensions.html
+[2] Kirill's implementation:
+https://lore.kernel.org/all/20210416154106.23721-1-kirill.shutemov@linux.intel.com/T/ 
+[3] Original design proposal:
+https://lore.kernel.org/all/20210824005248.200037-1-seanjc@google.com/  
+[4] Selftest:
+https://lore.kernel.org/all/20220819174659.2427983-1-vannapurve@google.com/ 
+
+
+Chao Peng (7):
+  KVM: Extend the memslot to support fd-based private memory
+  KVM: Add KVM_EXIT_MEMORY_FAULT exit
+  KVM: Use gfn instead of hva for mmu_notifier_retry
+  KVM: Register/unregister the guest private memory regions
+  KVM: Update lpage info when private/shared memory are mixed
+  KVM: Handle page fault for private memory
+  KVM: Enable and expose KVM_MEM_PRIVATE
+
+Kirill A. Shutemov (1):
+  mm: Introduce memfd_restricted system call to create restricted user
+    memory
+
+ Documentation/virt/kvm/api.rst         |  88 ++++-
+ arch/x86/entry/syscalls/syscall_32.tbl |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+ arch/x86/include/asm/kvm_host.h        |   8 +
+ arch/x86/kvm/Kconfig                   |   3 +
+ arch/x86/kvm/mmu/mmu.c                 | 170 +++++++++-
+ arch/x86/kvm/mmu/mmu_internal.h        |  14 +-
+ arch/x86/kvm/mmu/mmutrace.h            |   1 +
+ arch/x86/kvm/mmu/spte.h                |   6 +
+ arch/x86/kvm/mmu/tdp_mmu.c             |   3 +-
+ arch/x86/kvm/x86.c                     |   4 +-
+ include/linux/kvm_host.h               |  89 ++++-
+ include/linux/restrictedmem.h          |  62 ++++
+ include/linux/syscalls.h               |   1 +
+ include/uapi/asm-generic/unistd.h      |   5 +-
+ include/uapi/linux/kvm.h               |  38 +++
+ include/uapi/linux/magic.h             |   1 +
+ kernel/sys_ni.c                        |   3 +
+ mm/Kconfig                             |   4 +
+ mm/Makefile                            |   1 +
+ mm/restrictedmem.c                     | 250 ++++++++++++++
+ virt/kvm/Kconfig                       |   7 +
+ virt/kvm/kvm_main.c                    | 453 +++++++++++++++++++++----
+ 23 files changed, 1121 insertions(+), 92 deletions(-)
+ create mode 100644 include/linux/restrictedmem.h
+ create mode 100644 mm/restrictedmem.c
+
+
+base-commit: e18d6152ff0f41b7f01f9817372022df04e0d354
+-- 
+2.25.1
+
