@@ -2,129 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 604B760E52E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Oct 2022 18:02:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9668760E5D1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Oct 2022 18:52:11 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234540AbiJZQCp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Oct 2022 12:02:45 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59650 "EHLO
+        id S233909AbiJZQwJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Oct 2022 12:52:09 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234595AbiJZQCY (ORCPT
+        with ESMTP id S233881AbiJZQwH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Oct 2022 12:02:24 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0C7B14314D;
-        Wed, 26 Oct 2022 09:02:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=9y9m9otalywWzoGvSHtu1e01bQrx9OTbpDapeszo2KA=; b=O51igS0MsMbF+jUOJyTYhhLyyd
-        b/n2CUMLRbNwrkTK6ozOw9vQ6b2Vvart7diDjRHm9uveLB58B7WRvNFVD9x6UsS2FXbtLsSTwis0O
-        IHMhl141MwIRHqy9v/zZLa2UgnRFUGnQNkM4KcvfMSO9YVRGfEuCbjNyaolgUqcRIeO2KpMso9grJ
-        P0bblg/8SBQJVDvloxiAZ3SKFVdvwO5/z71f7SlV9zT0e2SFm52+nhrFn9wRkn/MVZp5R5mvGvfRT
-        C6sT/Tij1yyoBwcMQD3ev7E0r36cjjtnpM053pJB+Yay7YNhjAbomBXqXk8kulfdW+V/gl9fEAPAK
-        y4e1cQCA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oniqr-00H7Uj-Hv; Wed, 26 Oct 2022 16:01:57 +0000
-Date:   Wed, 26 Oct 2022 17:01:57 +0100
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
-        steve.kang@unisoc.com, baocong.liu@unisoc.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] mm: move xa forward when run across zombie page
-Message-ID: <Y1lZ9Rm87GpFRM/Q@casper.infradead.org>
-References: <1665725448-31439-1-git-send-email-zhaoyang.huang@unisoc.com>
- <Y0lSChlclGPkwTeA@casper.infradead.org>
- <CAGWkznG=_A-3A8JCJEoWXVcx+LUNH=gvXjLpZZs0cRX4dhUJfQ@mail.gmail.com>
- <Y017BeC64GDb3Kg7@casper.infradead.org>
- <CAGWkznEdtGPPZkHrq6Y_+XLL37w12aC8XN8R_Q-vhq48rFhkSA@mail.gmail.com>
- <Y04Y3RNq6D2T9rVw@casper.infradead.org>
- <20221018223042.GJ2703033@dread.disaster.area>
- <Y1AWXiJdyjdLmO1E@casper.infradead.org>
- <20221019220424.GO2703033@dread.disaster.area>
- <Y1HDDu3UV0L3cDwE@casper.infradead.org>
+        Wed, 26 Oct 2022 12:52:07 -0400
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B68D7D7B8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Oct 2022 09:52:07 -0700 (PDT)
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 29QFxuGl014138
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Oct 2022 09:52:06 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding :
+ content-type; s=s2048-2021-q4;
+ bh=yweTIcEEup4K70R2eq07Kp6EbZy543M8HDS4MaHQouE=;
+ b=KeqUX9C6evJ19CNbkIyX//kFQ00xpDB38KH+ya2Mr46EC9xid+R9Iyq/WJq/bRXP7Wmv
+ nDNsjRYgZoBPj+EuhQjTWXQsKGUTf5DZ41wlCK9YNhyemfbzFNFRexRHod11QnxjHrIB
+ KP6itgP7A9mfGsff/hc8vbbNkuiRVMDeJjQp88b2iSRKSoadkEgrh3JfbKz/HV68M3Kg
+ UQMQe9Qy3FPqXgxRVxYGBliC8Sn85ZBfjaVvGln3mr1oHM/JfjPBnUXyK1wQ/H9SsD7a
+ cI1f30DSA2q95nwQN+rHl2R/QHhbvtM+HPXTBHhYiUKogJA2fFJ1UmGFLbDYChuMDgxN Ww== 
+Received: from mail.thefacebook.com ([163.114.132.120])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3kf4y2tm6e-2
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+        for <linux-fsdevel@vger.kernel.org>; Wed, 26 Oct 2022 09:52:06 -0700
+Received: from snc-exhub201.TheFacebook.com (2620:10d:c085:21d::7) by
+ snc-exhub103.TheFacebook.com (2620:10d:c085:11d::7) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Wed, 26 Oct 2022 09:52:03 -0700
+Received: from twshared13927.24.frc3.facebook.com (2620:10d:c085:108::4) by
+ mail.thefacebook.com (2620:10d:c085:21d::7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Wed, 26 Oct 2022 09:52:02 -0700
+Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
+        id 5F861A4B1E3F; Wed, 26 Oct 2022 09:51:53 -0700 (PDT)
+From:   Keith Busch <kbusch@meta.com>
+To:     <linux-fsdevel@vger.kernel.org>
+CC:     <linux-kernel@vger.kernel.org>, <hch@lst.de>, <djwong@kernel.org>,
+        <bvanassche@acm.org>, Keith Busch <kbusch@kernel.org>
+Subject: [PATCH] iomap: directly use logical block size
+Date:   Wed, 26 Oct 2022 09:51:33 -0700
+Message-ID: <20221026165133.2563946-1-kbusch@meta.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y1HDDu3UV0L3cDwE@casper.infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-FB-Internal: Safe
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: vG6frEBybfhVsdjheLPSfRDxEVHbvRJQ
+X-Proofpoint-GUID: vG6frEBybfhVsdjheLPSfRDxEVHbvRJQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-10-26_07,2022-10-26_01,2022-06-22_01
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE,
+        URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 20, 2022 at 10:52:14PM +0100, Matthew Wilcox wrote:
-> But I think the tests you've done refute that theory.  I'm all out of
-> ideas at the moment.
+From: Keith Busch <kbusch@kernel.org>
 
-I have a new idea.  In page_cache_delete_batch(), we don't set the
-order of the entry before calling xas_store().  That means we can end
-up in a situation where we have an order-2 folio in the page cache,
-delete it and end up with a NULL pointer at (say) index 20 and sibling
-entries at indices 21-23.  We can come along (potentially much later)
-and put an order-0 folio back at index 20.  Now all of indices 20-23
-point to the index-20, order-0 folio.  Worse, the xarray node can be
-freed with the sibling entries still intact and then be reallocated by
-an entirely different xarray.
+Don't transform the logical block size to a bit shift only to shift it
+back to the original block size. Just use the size.
 
-I don't know if this is going to fix the problem you're seeing.  I can't
-quite draw a line from this situation to your symptoms.  I came across
-it while auditing all the places which set folio->mapping to NULL.
-I did notice a mis-ordering; all the other places first remove the folio
-from the xarray before setting folio to NULL, but I have a hard time
-connecting that to your symptoms either.
+Signed-off-by: Keith Busch <kbusch@kernel.org>
+---
+ fs/iomap/direct-io.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 44dd6d6e01bc..cc1fd1f849a7 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -1617,6 +1617,12 @@ static inline void xas_advance(struct xa_state *xas, unsigned long index)
- 	xas->xa_offset = (index >> shift) & XA_CHUNK_MASK;
- }
- 
-+static inline void xas_adjust_order(struct xa_state *xas, unsigned int order)
-+{
-+	xas->xa_shift = order - (order % XA_CHUNK_SHIFT);
-+	xas->xa_sibs = (1 << (order % XA_CHUNK_SHIFT)) - 1;
-+}
-+
- /**
-  * xas_set_order() - Set up XArray operation state for a multislot entry.
-  * @xas: XArray operation state.
-@@ -1628,8 +1634,7 @@ static inline void xas_set_order(struct xa_state *xas, unsigned long index,
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index 4eb559a16c9e..503b97e5a115 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -240,7 +240,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_i=
+ter *iter,
  {
- #ifdef CONFIG_XARRAY_MULTI
- 	xas->xa_index = order < BITS_PER_LONG ? (index >> order) << order : 0;
--	xas->xa_shift = order - (order % XA_CHUNK_SHIFT);
--	xas->xa_sibs = (1 << (order % XA_CHUNK_SHIFT)) - 1;
-+	xas_adjust_order(xas, order);
- 	xas->xa_node = XAS_RESTART;
- #else
- 	BUG_ON(order > 0);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 08341616ae7a..6e3f486131e4 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -305,11 +305,13 @@ static void page_cache_delete_batch(struct address_space *mapping,
- 
- 		WARN_ON_ONCE(!folio_test_locked(folio));
- 
-+		if (!folio_test_hugetlb(folio))
-+			xas_adjust_order(&xas, folio_order(folio));
-+		xas_store(&xas, NULL);
- 		folio->mapping = NULL;
- 		/* Leave folio->index set: truncation lookup relies on it */
- 
- 		i++;
--		xas_store(&xas, NULL);
- 		total_pages += folio_nr_pages(folio);
- 	}
- 	mapping->nrpages -= total_pages;
+ 	const struct iomap *iomap =3D &iter->iomap;
+ 	struct inode *inode =3D iter->inode;
+-	unsigned int blkbits =3D blksize_bits(bdev_logical_block_size(iomap->bd=
+ev));
++	unsigned int blksz =3D bdev_logical_block_size(iomap->bdev);
+ 	unsigned int fs_block_size =3D i_blocksize(inode), pad;
+ 	loff_t length =3D iomap_length(iter);
+ 	loff_t pos =3D iter->pos;
+@@ -252,7 +252,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_i=
+ter *iter,
+ 	size_t copied =3D 0;
+ 	size_t orig_count;
+=20
+-	if ((pos | length) & ((1 << blkbits) - 1) ||
++	if ((pos | length) & (blksz - 1) ||
+ 	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
+ 		return -EINVAL;
+=20
+--=20
+2.30.2
+
