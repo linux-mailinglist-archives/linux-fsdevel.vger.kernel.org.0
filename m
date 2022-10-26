@@ -2,148 +2,163 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 59B9E60DA1C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Oct 2022 06:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id AA96A60DAB1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Oct 2022 07:41:52 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbiJZEB2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Oct 2022 00:01:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51444 "EHLO
+        id S231544AbiJZFlu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Oct 2022 01:41:50 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232447AbiJZEBY (ORCPT
+        with ESMTP id S230090AbiJZFlt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Oct 2022 00:01:24 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0F478682E;
-        Tue, 25 Oct 2022 21:01:20 -0700 (PDT)
-Received: from dggpeml500021.china.huawei.com (unknown [172.30.72.56])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Mxw5h2sk0zJn9L;
-        Wed, 26 Oct 2022 11:58:32 +0800 (CST)
-Received: from huawei.com (10.175.127.227) by dggpeml500021.china.huawei.com
- (7.185.36.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Wed, 26 Oct
- 2022 12:01:18 +0800
-From:   Baokun Li <libaokun1@huawei.com>
-To:     <linux-ext4@vger.kernel.org>
-CC:     <tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
-        <ritesh.list@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <yi.zhang@huawei.com>, <yukuai3@huawei.com>,
-        <libaokun1@huawei.com>, <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH v3 1/4] ext4: fix bug_on in __es_tree_search caused by bad quota inode
-Date:   Wed, 26 Oct 2022 12:23:07 +0800
-Message-ID: <20221026042310.3839669-2-libaokun1@huawei.com>
-X-Mailer: git-send-email 2.31.1
-In-Reply-To: <20221026042310.3839669-1-libaokun1@huawei.com>
-References: <20221026042310.3839669-1-libaokun1@huawei.com>
+        Wed, 26 Oct 2022 01:41:49 -0400
+Received: from mail-vk1-xa36.google.com (mail-vk1-xa36.google.com [IPv6:2607:f8b0:4864:20::a36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 245F67B782;
+        Tue, 25 Oct 2022 22:41:48 -0700 (PDT)
+Received: by mail-vk1-xa36.google.com with SMTP id p9so6510059vkf.2;
+        Tue, 25 Oct 2022 22:41:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x6Xw8MapSJHRjdk07ZDU6EsttnSndzaQLevIUlG6ZmQ=;
+        b=JLyapH1rh1wrJX2OoYc5fNdm4hx3nbEFrdNfZhgpk5C/5G7SZOAnK714E6x2YumwiF
+         iwNwR2FeZe4i2fqKnXVhPWwAgDIilGKQsnr9KLJZfcYlIveae+uwpgNJSOp8kNm8908r
+         h8D1roAqOXzHRlPaY9tapWOp1AtdyYTtHIQEHwv337KLIXjpcL8tSdusrrnhrjZGLZRZ
+         RhCe9oQ2vbHQbGxzmwQ3m53Z8xP0xq0xbg1gvXEgVBA/zsXxPgARSJCoQUoT1UfKN59P
+         vG8zIlrBPDt1w+LgBgC0k5lrXxeC3IZ8OxV9WfnSyYksr5qGyBooE9qaQ3b+v117Q07j
+         JH/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x6Xw8MapSJHRjdk07ZDU6EsttnSndzaQLevIUlG6ZmQ=;
+        b=SnE0C+EAnu8EPEyM4Lxqg2ISbxxgk/ncuKFCldKwT6m6uHrZMXxbti/aUjhZwWxrDA
+         ptfivBighTe+lmPnCc/UKOs2HSI0FkLiuBOFAgXEvFIgcs1/QG7gedhUtJehN0TiBdgW
+         Wl0JH1CenirfT1sxLZstudP0YzgJTilomwS1ZmmOwoC08z6wCB78X7Arq6+dqDmhKFue
+         7dOl0pO43jDUycrkHT+iNW/W964RbtXxS+LDypLS3+lrs2hnObt+lOe8gKHEYcxgIN0d
+         B1d0denohugqCllqoq6kW/1uR4q5X6Bt3Oo9rELv9o++k3Sj6M4DDktM92dUO5AtYpTf
+         CvSA==
+X-Gm-Message-State: ACrzQf0cPUTVNfX4mefbRHB94Qxh+zjkuc1USFJZTyfr0gOEEas1AV3a
+        11mmOBJQpziAqahQGI2r1Bd38l8WGJJZWr7xZxdy/y3vZ9I=
+X-Google-Smtp-Source: AMsMyM4lL1Yg/jdRbzKAyO6KvGWimMjsVkd1FZub3eGSuqv4stgB9GPvSUCo4+GosarJKq+J2GMtBtlPhvMJFVGJMEg=
+X-Received: by 2002:a1f:da86:0:b0:3b7:6af6:1e24 with SMTP id
+ r128-20020a1fda86000000b003b76af61e24mr6343236vkg.25.1666762907125; Tue, 25
+ Oct 2022 22:41:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.127.227]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpeml500021.china.huawei.com (7.185.36.21)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20221018041233.376977-1-stephen.s.brennan@oracle.com>
+ <20221021010310.29521-1-stephen.s.brennan@oracle.com> <20221021010310.29521-3-stephen.s.brennan@oracle.com>
+ <CAOQ4uxj+ctptwuJ__gn=2URvzkXUc2NZkJaY=woGFEQQZdZn9Q@mail.gmail.com>
+ <CAOQ4uxh7OvmH6o1fUmMoQ_D347jVBx53TLe4R=BjtXTuvCzKCA@mail.gmail.com> <87lep3hjcz.fsf@oracle.com>
+In-Reply-To: <87lep3hjcz.fsf@oracle.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 26 Oct 2022 08:41:35 +0300
+Message-ID: <CAOQ4uxjPMhLRU6Xck_5VJ3Hn561sq88DOb6shzz3ty=1gBGBkw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] fsnotify: Protect i_fsnotify_mask and child flags
+ with inode rwsem
+To:     Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We got a issue as fllows:
-==================================================================
- kernel BUG at fs/ext4/extents_status.c:202!
- invalid opcode: 0000 [#1] PREEMPT SMP
- CPU: 1 PID: 810 Comm: mount Not tainted 6.1.0-rc1-next-g9631525255e3 #352
- RIP: 0010:__es_tree_search.isra.0+0xb8/0xe0
- RSP: 0018:ffffc90001227900 EFLAGS: 00010202
- RAX: 0000000000000000 RBX: 0000000077512a0f RCX: 0000000000000000
- RDX: 0000000000000002 RSI: 0000000000002a10 RDI: ffff8881004cd0c8
- RBP: ffff888177512ac8 R08: 47ffffffffffffff R09: 0000000000000001
- R10: 0000000000000001 R11: 00000000000679af R12: 0000000000002a10
- R13: ffff888177512d88 R14: 0000000077512a10 R15: 0000000000000000
- FS: 00007f4bd76dbc40(0000)GS:ffff88842fd00000(0000)knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00005653bf993cf8 CR3: 000000017bfdf000 CR4: 00000000000006e0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- Call Trace:
-  <TASK>
-  ext4_es_cache_extent+0xe2/0x210
-  ext4_cache_extents+0xd2/0x110
-  ext4_find_extent+0x5d5/0x8c0
-  ext4_ext_map_blocks+0x9c/0x1d30
-  ext4_map_blocks+0x431/0xa50
-  ext4_getblk+0x82/0x340
-  ext4_bread+0x14/0x110
-  ext4_quota_read+0xf0/0x180
-  v2_read_header+0x24/0x90
-  v2_check_quota_file+0x2f/0xa0
-  dquot_load_quota_sb+0x26c/0x760
-  dquot_load_quota_inode+0xa5/0x190
-  ext4_enable_quotas+0x14c/0x300
-  __ext4_fill_super+0x31cc/0x32c0
-  ext4_fill_super+0x115/0x2d0
-  get_tree_bdev+0x1d2/0x360
-  ext4_get_tree+0x19/0x30
-  vfs_get_tree+0x26/0xe0
-  path_mount+0x81d/0xfc0
-  do_mount+0x8d/0xc0
-  __x64_sys_mount+0xc0/0x160
-  do_syscall_64+0x35/0x80
-  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-  </TASK>
-==================================================================
+On Tue, Oct 25, 2022 at 9:02 PM Stephen Brennan
+<stephen.s.brennan@oracle.com> wrote:
+>
+> Amir Goldstein <amir73il@gmail.com> writes:
+>
+> > On Fri, Oct 21, 2022 at 11:22 AM Amir Goldstein <amir73il@gmail.com> wrote:
+> > ...
+> >> > +/*
+> >> > + * Objects may need some additional actions to be taken when the last reference
+> >> > + * is dropped. Define flags to indicate which actions are necessary.
+> >> > + */
+> >> > +#define FSNOTIFY_OBJ_FLAG_NEED_IPUT            0x01
+> >> > +#define FSNOTIFY_OBJ_FLAG_UPDATE_CHILDREN      0x02
+> >>
+> >> with changed_flags argument, you do not need these, you can use
+> >> the existing CONN_FLAGS.
+> >>
+> >> It is a bit ugly that the direction of the change is not expressed
+> >> in changed_flags, but for the current code, it is not needed, because
+> >> update_children does care about the direction of the change and
+> >> the direction of change to HAS_IREF is expressed by the inode
+> >> object return value.
+> >>
+> >
+> > Oh that is a lie...
+> >
+> > return value can be non NULL because of an added mark
+> > that wants iref and also wants to watch children, but the
+> > only practical consequence of this is that you can only
+> > do the WARN_ON for the else case of update_children
+> > in fsnotify_recalc_mask().
+> >
+> > I still think it is a win for code simplicity as I detailed
+> > in my comments.
+> >
+> >> Maybe try it out in v3 to see how it works.
+> >>
+> >> Unless Jan has an idea that will be easier to read and maintain...
+> >>
+> >
+> > Maybe fsnotify_update_inode_conn_flags() should return "update_flags"
+> > and not "changed_flags", because actually the WATCHING_CHILDREN
+> > flag is not changed by the helper itself.
+>
+> Yeah, this is the way I'd like to go. The approach of "orig_flags ^
+> new_flags" doesn't work since we're not changing the WATCHING_CHILDREN
+> flag.
+>
+> At the end of the day, I do believe that it's equivalent to what I had
+> originally, except that we'd use FSNOTIFY_CONN_FLAG_* rather than my new
+> FSNOTIFY_OBJ_FLAG_*, which works for me, the new constants are a bit of
+> clutter.
+>
 
-Above issue may happen as follows:
--------------------------------------
-ext4_fill_super
- ext4_orphan_cleanup
-  ext4_enable_quotas
-   ext4_quota_enable
-    ext4_iget --> get error inode <5>
-     ext4_ext_check_inode --> Wrong imode makes it escape inspection
-     make_bad_inode(inode) --> EXT4_BOOT_LOADER_INO set imode
-    dquot_load_quota_inode
-     vfs_setup_quota_inode --> check pass
-     dquot_load_quota_sb
-      v2_check_quota_file
-       v2_read_header
-        ext4_quota_read
-         ext4_bread
-          ext4_getblk
-           ext4_map_blocks
-            ext4_ext_map_blocks
-             ext4_find_extent
-              ext4_cache_extents
-               ext4_es_cache_extent
-                __es_tree_search.isra.0
-                 ext4_es_end --> Wrong extents trigger BUG_ON
+Yeh, that is what I was aiming for :)
 
-In the above issue, s_usr_quota_inum is set to 5, but inode<5> contains
-incorrect imode and disordered extents. Because 5 is EXT4_BOOT_LOADER_INO,
-the ext4_ext_check_inode check in the ext4_iget function can be bypassed,
-finally, the extents that are not checked trigger the BUG_ON in the
-__es_tree_search function. To solve this issue, check whether the inode is
-bad_inode in vfs_setup_quota_inode().
+> > Then, HAS_IREF is not returned when helper did get_iref() and changed
+> > HAS_IREF itself and then the comment that says:
+> >      /* Unpin inode after detach of last mark that wanted iref */
+> > will be even clearer:
+> >
+> >         if (want_iref) {
+> >                 /* Pin inode if any mark wants inode refcount held */
+> >                 fsnotify_get_inode_ref(fsnotify_conn_inode(conn));
+> >                 conn->flags |= FSNOTIFY_CONN_FLAG_HAS_IREF;
+> >         } else {
+> >                 /* Unpin inode after detach of last mark that wanted iref */
+> >                 ret = inode;
+> >                 update_flags |= FSNOTIFY_CONN_FLAG_HAS_IREF;
+>
+> Is it possible that once the spinlock is dropped, another
+> fsnotify_recalc_mask() finds that FSNOTIFY_CONN_FLAG_HAS_IREF is still
+> set, and so it also sets FSNOTIFY_CONN_FLAG_HAS_IREF, causing two
+> threads to both do an iput?
+>
 
-Signed-off-by: Baokun Li <libaokun1@huawei.com>
----
- fs/quota/dquot.c | 2 ++
- 1 file changed, 2 insertions(+)
+Yeh, that's a braino of mine.
+What I wanted to emphasise is that update_flags does not
+have HAS_IREF for the iget case, so there is no ambiguity
+about what HAS_IREF means in update_flags.
 
-diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 0427b44bfee5..f27faf5db554 100644
---- a/fs/quota/dquot.c
-+++ b/fs/quota/dquot.c
-@@ -2324,6 +2324,8 @@ static int vfs_setup_quota_inode(struct inode *inode, int type)
- 	struct super_block *sb = inode->i_sb;
- 	struct quota_info *dqopt = sb_dqopt(sb);
- 
-+	if (is_bad_inode(inode))
-+		return -EUCLEAN;
- 	if (!S_ISREG(inode->i_mode))
- 		return -EACCES;
- 	if (IS_RDONLY(inode))
--- 
-2.31.1
+> It may not be possible due to the current use of the functions, but I
+> guess it would be safer to clear the connector flag here under the
+> spinlock, and set the *update_flags accordingly so that only one thread
+> performs the iput().
+>
 
+Absolutely.
+
+Thanks,
+Amir.
