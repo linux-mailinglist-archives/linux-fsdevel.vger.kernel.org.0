@@ -2,141 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0820D60E2BC
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Oct 2022 15:57:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 60D8360E384
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Oct 2022 16:38:50 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234157AbiJZN5X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Oct 2022 09:57:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42838 "EHLO
+        id S234360AbiJZOis (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Oct 2022 10:38:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55942 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234130AbiJZN4w (ORCPT
+        with ESMTP id S234361AbiJZOip (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Oct 2022 09:56:52 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AA3FAE7E;
-        Wed, 26 Oct 2022 06:56:08 -0700 (PDT)
-Received: from canpemm500004.china.huawei.com (unknown [172.30.72.56])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4My9FX0YKtzmVKW;
-        Wed, 26 Oct 2022 21:51:12 +0800 (CST)
-Received: from [10.174.179.14] (10.174.179.14) by
- canpemm500004.china.huawei.com (7.192.104.92) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Wed, 26 Oct 2022 21:56:05 +0800
-Subject: Re: [PATCH v3 1/4] ext4: fix bug_on in __es_tree_search caused by bad
- quota inode
-To:     Baokun Li <libaokun1@huawei.com>, <linux-ext4@vger.kernel.org>
-CC:     <tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
-        <ritesh.list@gmail.com>, <linux-kernel@vger.kernel.org>,
-        <yi.zhang@huawei.com>, <yukuai3@huawei.com>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20221026042310.3839669-1-libaokun1@huawei.com>
- <20221026042310.3839669-2-libaokun1@huawei.com>
-From:   Jason Yan <yanaijie@huawei.com>
-Message-ID: <29ef2ea7-7c90-a0ed-fdee-7bdc74f9f2d3@huawei.com>
-Date:   Wed, 26 Oct 2022 21:56:04 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.12.0
+        Wed, 26 Oct 2022 10:38:45 -0400
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9886B6036;
+        Wed, 26 Oct 2022 07:38:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=sao0x7V/qDrXMa/qw6MWn+NgehXNA635uHbmEpFBHFE=; b=O2jZXSsjcwwtqvYLE4RxwV26VZ
+        joOyghvoGb6ulrI9Ih4OpDJ9jhgmlP1NJtEqb6EWEIAMnTRLljyg+VrDm78xY9cw+tg7dmVg1hl1h
+        NcbLiAkbyI8oPt79pVO801N+xKNRZundPsrq3KizUjTcAIUGzLgf3rV/q6BKdfnd6jJV1cxiMn3uy
+        eEad+VA/FMsAPNZJV/zFv+Btufq1TPvi0Jb6B9nx3NyeGsoh23tddShR8XCLz6Gl0vqHXgdsKRKdm
+        EPAD44iXzGqmBJkq+mukf1LflPvqWyLD42NpG3uQJy/tydlevqmCto/L/QL4klA/98oAbJBvEfUgU
+        oKzGc99g==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1onhY4-00H4TC-Kt; Wed, 26 Oct 2022 14:38:28 +0000
+Date:   Wed, 26 Oct 2022 15:38:28 +0100
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Zhaoyang Huang <huangzhaoyang@gmail.com>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
+        steve.kang@unisoc.com, baocong.liu@unisoc.com,
+        linux-fsdevel@vger.kernel.org, lvqiang.huang@unisoc.com
+Subject: Re: [RFC PATCH] mm: move xa forward when run across zombie page
+Message-ID: <Y1lGZD/enVuUxVIW@casper.infradead.org>
+References: <Y0lSChlclGPkwTeA@casper.infradead.org>
+ <CAGWkznG=_A-3A8JCJEoWXVcx+LUNH=gvXjLpZZs0cRX4dhUJfQ@mail.gmail.com>
+ <Y017BeC64GDb3Kg7@casper.infradead.org>
+ <CAGWkznEdtGPPZkHrq6Y_+XLL37w12aC8XN8R_Q-vhq48rFhkSA@mail.gmail.com>
+ <Y04Y3RNq6D2T9rVw@casper.infradead.org>
+ <20221018223042.GJ2703033@dread.disaster.area>
+ <Y1AWXiJdyjdLmO1E@casper.infradead.org>
+ <20221019220424.GO2703033@dread.disaster.area>
+ <Y1HDDu3UV0L3cDwE@casper.infradead.org>
+ <CAGWkznELCKmz8jtNcWvzb7ThCDAESv019EdWbDYzAtZUCBVQqQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20221026042310.3839669-2-libaokun1@huawei.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.179.14]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- canpemm500004.china.huawei.com (7.192.104.92)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGWkznELCKmz8jtNcWvzb7ThCDAESv019EdWbDYzAtZUCBVQqQ@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Oct 26, 2022 at 04:38:31PM +0800, Zhaoyang Huang wrote:
+> On Fri, Oct 21, 2022 at 5:52 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Thu, Oct 20, 2022 at 09:04:24AM +1100, Dave Chinner wrote:
+> > > On Wed, Oct 19, 2022 at 04:23:10PM +0100, Matthew Wilcox wrote:
+> > > > On Wed, Oct 19, 2022 at 09:30:42AM +1100, Dave Chinner wrote:
+> > > > > This is reading and writing the same amount of file data at the
+> > > > > application level, but once the data has been written and kicked out
+> > > > > of the page cache it seems to require an awful lot more read IO to
+> > > > > get it back to the application. i.e. this looks like mmap() is
+> > > > > readahead thrashing severely, and eventually it livelocks with this
+> > > > > sort of report:
+> > > > >
+> > > > > [175901.982484] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> > > > > [175901.985095] rcu:    Tasks blocked on level-1 rcu_node (CPUs 0-15): P25728
+> > > > > [175901.987996]         (detected by 0, t=97399871 jiffies, g=15891025, q=1972622 ncpus=32)
+> > > > > [175901.991698] task:test_write      state:R  running task     stack:12784 pid:25728 ppid: 25696 flags:0x00004002
+> > > > > [175901.995614] Call Trace:
+> > > > > [175901.996090]  <TASK>
+> > > > > [175901.996594]  ? __schedule+0x301/0xa30
+> > > > > [175901.997411]  ? sysvec_apic_timer_interrupt+0xb/0x90
+> > > > > [175901.998513]  ? sysvec_apic_timer_interrupt+0xb/0x90
+> > > > > [175901.999578]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+> > > > > [175902.000714]  ? xas_start+0x53/0xc0
+> > > > > [175902.001484]  ? xas_load+0x24/0xa0
+> > > > > [175902.002208]  ? xas_load+0x5/0xa0
+> > > > > [175902.002878]  ? __filemap_get_folio+0x87/0x340
+> > > > > [175902.003823]  ? filemap_fault+0x139/0x8d0
+> > > > > [175902.004693]  ? __do_fault+0x31/0x1d0
+> > > > > [175902.005372]  ? __handle_mm_fault+0xda9/0x17d0
+> > > > > [175902.006213]  ? handle_mm_fault+0xd0/0x2a0
+> > > > > [175902.006998]  ? exc_page_fault+0x1d9/0x810
+> > > > > [175902.007789]  ? asm_exc_page_fault+0x22/0x30
+> > > > > [175902.008613]  </TASK>
+> > > > >
+> > > > > Given that filemap_fault on XFS is probably trying to map large
+> > > > > folios, I do wonder if this is a result of some kind of race with
+> > > > > teardown of a large folio...
+> > > >
+> > > > It doesn't matter whether we're trying to map a large folio; it
+> > > > matters whether a large folio was previously created in the cache.
+> > > > Through the magic of readahead, it may well have been.  I suspect
+> > > > it's not teardown of a large folio, but splitting.  Removing a
+> > > > page from the page cache stores to the pointer in the XArray
+> > > > first (either NULL or a shadow entry), then decrements the refcount.
+> > > >
+> > > > We must be observing a frozen folio.  There are a number of places
+> > > > in the MM which freeze a folio, but the obvious one is splitting.
+> > > > That looks like this:
+> > > >
+> > > >         local_irq_disable();
+> > > >         if (mapping) {
+> > > >                 xas_lock(&xas);
+> > > > (...)
+> > > >         if (folio_ref_freeze(folio, 1 + extra_pins)) {
+> > >
+> > > But the lookup is not doing anything to prevent the split on the
+> > > frozen page from making progress, right? It's not holding any folio
+> > > references, and it's not holding the mapping tree lock, either. So
+> > > how does the lookup in progress prevent the page split from making
+> > > progress?
+> >
+> > My thinking was that it keeps hammering the ->refcount field in
+> > struct folio.  That might prevent a thread on a different socket
+> > from making forward progress.  In contrast, spinlocks are designed
+> > to be fair under contention, so by spinning on an actual lock, we'd
+> > remove contention on the folio.
+> >
+> > But I think the tests you've done refute that theory.  I'm all out of
+> > ideas at the moment.  Either we have a frozen folio from somebody who
+> > doesn't hold the lock, or we have someone who's left a frozen folio in
+> > the page cache.  I'm leaning towards that explanation at the moment,
+> > but I don't have a good suggestion for debugging.
+> >
+> > Perhaps a bad suggestion for debugging would be to call dump_page()
+> > with a __ratelimit() wrapper to not be overwhelmed with information?
+> >
+> > > I would have thought:
+> > >
+> > >       if (!folio_try_get_rcu(folio)) {
+> > >               rcu_read_unlock();
+> > >               cond_resched();
+> > >               rcu_read_lock();
+> > >               goto repeat;
+> > >       }
+> > >
+> > > Would be the right way to yeild the CPU to avoid priority
+> > > inversion related livelocks here...
+> >
+> > I'm not sure we're allowed to schedule here.  We might be under another
+> > spinlock?
+> Any further ideas on this issue? Could we just deal with it as simply
+> as surpass the zero refed page to break the livelock as a workaround?
 
-On 2022/10/26 12:23, Baokun Li wrote:
-> We got a issue as fllows:
-> ==================================================================
->   kernel BUG at fs/ext4/extents_status.c:202!
->   invalid opcode: 0000 [#1] PREEMPT SMP
->   CPU: 1 PID: 810 Comm: mount Not tainted 6.1.0-rc1-next-g9631525255e3 #352
->   RIP: 0010:__es_tree_search.isra.0+0xb8/0xe0
->   RSP: 0018:ffffc90001227900 EFLAGS: 00010202
->   RAX: 0000000000000000 RBX: 0000000077512a0f RCX: 0000000000000000
->   RDX: 0000000000000002 RSI: 0000000000002a10 RDI: ffff8881004cd0c8
->   RBP: ffff888177512ac8 R08: 47ffffffffffffff R09: 0000000000000001
->   R10: 0000000000000001 R11: 00000000000679af R12: 0000000000002a10
->   R13: ffff888177512d88 R14: 0000000077512a10 R15: 0000000000000000
->   FS: 00007f4bd76dbc40(0000)GS:ffff88842fd00000(0000)knlGS:0000000000000000
->   CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->   CR2: 00005653bf993cf8 CR3: 000000017bfdf000 CR4: 00000000000006e0
->   DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->   DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->   Call Trace:
->    <TASK>
->    ext4_es_cache_extent+0xe2/0x210
->    ext4_cache_extents+0xd2/0x110
->    ext4_find_extent+0x5d5/0x8c0
->    ext4_ext_map_blocks+0x9c/0x1d30
->    ext4_map_blocks+0x431/0xa50
->    ext4_getblk+0x82/0x340
->    ext4_bread+0x14/0x110
->    ext4_quota_read+0xf0/0x180
->    v2_read_header+0x24/0x90
->    v2_check_quota_file+0x2f/0xa0
->    dquot_load_quota_sb+0x26c/0x760
->    dquot_load_quota_inode+0xa5/0x190
->    ext4_enable_quotas+0x14c/0x300
->    __ext4_fill_super+0x31cc/0x32c0
->    ext4_fill_super+0x115/0x2d0
->    get_tree_bdev+0x1d2/0x360
->    ext4_get_tree+0x19/0x30
->    vfs_get_tree+0x26/0xe0
->    path_mount+0x81d/0xfc0
->    do_mount+0x8d/0xc0
->    __x64_sys_mount+0xc0/0x160
->    do_syscall_64+0x35/0x80
->    entry_SYSCALL_64_after_hwframe+0x63/0xcd
->    </TASK>
-> ==================================================================
-> 
-> Above issue may happen as follows:
-> -------------------------------------
-> ext4_fill_super
->   ext4_orphan_cleanup
->    ext4_enable_quotas
->     ext4_quota_enable
->      ext4_iget --> get error inode <5>
->       ext4_ext_check_inode --> Wrong imode makes it escape inspection
->       make_bad_inode(inode) --> EXT4_BOOT_LOADER_INO set imode
->      dquot_load_quota_inode
->       vfs_setup_quota_inode --> check pass
->       dquot_load_quota_sb
->        v2_check_quota_file
->         v2_read_header
->          ext4_quota_read
->           ext4_bread
->            ext4_getblk
->             ext4_map_blocks
->              ext4_ext_map_blocks
->               ext4_find_extent
->                ext4_cache_extents
->                 ext4_es_cache_extent
->                  __es_tree_search.isra.0
->                   ext4_es_end --> Wrong extents trigger BUG_ON
-> 
-> In the above issue, s_usr_quota_inum is set to 5, but inode<5> contains
-> incorrect imode and disordered extents. Because 5 is EXT4_BOOT_LOADER_INO,
-> the ext4_ext_check_inode check in the ext4_iget function can be bypassed,
-> finally, the extents that are not checked trigger the BUG_ON in the
-> __es_tree_search function. To solve this issue, check whether the inode is
-> bad_inode in vfs_setup_quota_inode().
-> 
-> Signed-off-by: Baokun Li<libaokun1@huawei.com>
-> ---
->   fs/quota/dquot.c | 2 ++
->   1 file changed, 2 insertions(+)
-
-Looks good,
-Reviewed-by: Jason Yan <yanaijie@huawei.com>
+No.  This bug needs to be found & fixed.  How easily can you reproduce
+it?
