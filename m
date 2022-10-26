@@ -2,105 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C001760D707
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Oct 2022 00:26:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 59B9E60DA1C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 26 Oct 2022 06:01:31 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232163AbiJYW0Z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 25 Oct 2022 18:26:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37154 "EHLO
+        id S229668AbiJZEB2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Oct 2022 00:01:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51444 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232842AbiJYWZ7 (ORCPT
+        with ESMTP id S232447AbiJZEBY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 25 Oct 2022 18:25:59 -0400
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EE9DCE9B4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Oct 2022 15:25:31 -0700 (PDT)
-Received: by mail-pg1-x52f.google.com with SMTP id 78so12918210pgb.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 25 Oct 2022 15:25:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bfUwPkkWvWRH7D0jic4UzLRvzXiFnNnqQdHiOc474w4=;
-        b=X81xPrHAJB8kKGIX9N34GO+pUJhjd0vTSsPqLbXZPbnwjhw78RSFkKX/ieyem911R5
-         vn0YP9brTjXp2CKcqAxTTuhsFkGMkkbJSeJal6bAZHaMdMnU4oL5F7ZaV6+sbUjQOBsF
-         e8mfAG7nfu7SJUEleArdeEKViZFX4gjE+8yY0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bfUwPkkWvWRH7D0jic4UzLRvzXiFnNnqQdHiOc474w4=;
-        b=SY/D11e/VCXcUpm7U52pNJrVfQySbrdkuTrxZdZZE4ri3YWoeND3NJwJcse3sMtuGw
-         MPewvFSvfgY6Gy/JX2PHOVoh6tbprQx1c0drxnUXIuvV1IYjJhRIj5YF7qmX2ELD3iq8
-         Ra8QdjYVPw5/7tGBTKXEipn0yvZGq2pxf39iGsuIRhahL2GvIQgbPM+bJoN3kv6FMvQG
-         b+S5CBhHAOyDk+CUwiY31I/blKb4T+I7FmfGEjSqrZyJ6FSjdAQCpAimBVdUBIP4+UMy
-         nl/nqdum3TgtF4pHoa18vE3zRYy3VBCHMi+U71R2qGzmauZ0ZtrRjHNuNu/guqRhfE6v
-         RULg==
-X-Gm-Message-State: ACrzQf2u1zJ5vPqkyMQ/8IFAmbMODFk0Hc9F5ZoCsTujWZbx1RTpCctA
-        +pHfwIz0j2eSnVivPNEtknPIOg==
-X-Google-Smtp-Source: AMsMyM6BfIf8gI4+orMuLMLulOzofOtWVpprVt+MKJeR7Vf9gJoXQ8G6kX4U/nRDcdT0HEkPtm8YpQ==
-X-Received: by 2002:a63:2c4c:0:b0:434:e001:89fd with SMTP id s73-20020a632c4c000000b00434e00189fdmr34519522pgs.444.1666736730605;
-        Tue, 25 Oct 2022 15:25:30 -0700 (PDT)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id q15-20020a170902dacf00b0018685257c0dsm1671942plx.58.2022.10.25.15.25.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Oct 2022 15:25:29 -0700 (PDT)
-From:   Kees Cook <keescook@chromium.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, adobriyan@gmail.com,
-        ebiederm@xmission.com, lizetao1@huawei.com
-Cc:     Kees Cook <keescook@chromium.org>, linux-fsdevel@vger.kernel.org,
-        chengzhihao1@huawei.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, yi.zhang@huawei.com
-Subject: Re: [PATCH] fs/binfmt_elf: Fix memory leak in load_elf_binary()
-Date:   Tue, 25 Oct 2022 15:24:41 -0700
-Message-Id: <166673667327.2128117.4844279671091670952.b4-ty@chromium.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20221024154421.982230-1-lizetao1@huawei.com>
-References: <20221024154421.982230-1-lizetao1@huawei.com>
+        Wed, 26 Oct 2022 00:01:24 -0400
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0F478682E;
+        Tue, 25 Oct 2022 21:01:20 -0700 (PDT)
+Received: from dggpeml500021.china.huawei.com (unknown [172.30.72.56])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Mxw5h2sk0zJn9L;
+        Wed, 26 Oct 2022 11:58:32 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by dggpeml500021.china.huawei.com
+ (7.185.36.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Wed, 26 Oct
+ 2022 12:01:18 +0800
+From:   Baokun Li <libaokun1@huawei.com>
+To:     <linux-ext4@vger.kernel.org>
+CC:     <tytso@mit.edu>, <adilger.kernel@dilger.ca>, <jack@suse.cz>,
+        <ritesh.list@gmail.com>, <linux-kernel@vger.kernel.org>,
+        <yi.zhang@huawei.com>, <yukuai3@huawei.com>,
+        <libaokun1@huawei.com>, <linux-fsdevel@vger.kernel.org>
+Subject: [PATCH v3 1/4] ext4: fix bug_on in __es_tree_search caused by bad quota inode
+Date:   Wed, 26 Oct 2022 12:23:07 +0800
+Message-ID: <20221026042310.3839669-2-libaokun1@huawei.com>
+X-Mailer: git-send-email 2.31.1
+In-Reply-To: <20221026042310.3839669-1-libaokun1@huawei.com>
+References: <20221026042310.3839669-1-libaokun1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.127.227]
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500021.china.huawei.com (7.185.36.21)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 24 Oct 2022 23:44:21 +0800, Li Zetao wrote:
-> There is a memory leak reported by kmemleak:
-> 
->   unreferenced object 0xffff88817104ef80 (size 224):
->     comm "xfs_admin", pid 47165, jiffies 4298708825 (age 1333.476s)
->     hex dump (first 32 bytes):
->       00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
->       60 a8 b3 00 81 88 ff ff a8 10 5a 00 81 88 ff ff  `.........Z.....
->     backtrace:
->       [<ffffffff819171e1>] __alloc_file+0x21/0x250
->       [<ffffffff81918061>] alloc_empty_file+0x41/0xf0
->       [<ffffffff81948cda>] path_openat+0xea/0x3d30
->       [<ffffffff8194ec89>] do_filp_open+0x1b9/0x290
->       [<ffffffff8192660e>] do_open_execat+0xce/0x5b0
->       [<ffffffff81926b17>] open_exec+0x27/0x50
->       [<ffffffff81a69250>] load_elf_binary+0x510/0x3ed0
->       [<ffffffff81927759>] bprm_execve+0x599/0x1240
->       [<ffffffff8192a997>] do_execveat_common.isra.0+0x4c7/0x680
->       [<ffffffff8192b078>] __x64_sys_execve+0x88/0xb0
->       [<ffffffff83bbf0a5>] do_syscall_64+0x35/0x80
-> 
-> [...]
+We got a issue as fllows:
+==================================================================
+ kernel BUG at fs/ext4/extents_status.c:202!
+ invalid opcode: 0000 [#1] PREEMPT SMP
+ CPU: 1 PID: 810 Comm: mount Not tainted 6.1.0-rc1-next-g9631525255e3 #352
+ RIP: 0010:__es_tree_search.isra.0+0xb8/0xe0
+ RSP: 0018:ffffc90001227900 EFLAGS: 00010202
+ RAX: 0000000000000000 RBX: 0000000077512a0f RCX: 0000000000000000
+ RDX: 0000000000000002 RSI: 0000000000002a10 RDI: ffff8881004cd0c8
+ RBP: ffff888177512ac8 R08: 47ffffffffffffff R09: 0000000000000001
+ R10: 0000000000000001 R11: 00000000000679af R12: 0000000000002a10
+ R13: ffff888177512d88 R14: 0000000077512a10 R15: 0000000000000000
+ FS: 00007f4bd76dbc40(0000)GS:ffff88842fd00000(0000)knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 00005653bf993cf8 CR3: 000000017bfdf000 CR4: 00000000000006e0
+ DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+ DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+ Call Trace:
+  <TASK>
+  ext4_es_cache_extent+0xe2/0x210
+  ext4_cache_extents+0xd2/0x110
+  ext4_find_extent+0x5d5/0x8c0
+  ext4_ext_map_blocks+0x9c/0x1d30
+  ext4_map_blocks+0x431/0xa50
+  ext4_getblk+0x82/0x340
+  ext4_bread+0x14/0x110
+  ext4_quota_read+0xf0/0x180
+  v2_read_header+0x24/0x90
+  v2_check_quota_file+0x2f/0xa0
+  dquot_load_quota_sb+0x26c/0x760
+  dquot_load_quota_inode+0xa5/0x190
+  ext4_enable_quotas+0x14c/0x300
+  __ext4_fill_super+0x31cc/0x32c0
+  ext4_fill_super+0x115/0x2d0
+  get_tree_bdev+0x1d2/0x360
+  ext4_get_tree+0x19/0x30
+  vfs_get_tree+0x26/0xe0
+  path_mount+0x81d/0xfc0
+  do_mount+0x8d/0xc0
+  __x64_sys_mount+0xc0/0x160
+  do_syscall_64+0x35/0x80
+  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+  </TASK>
+==================================================================
 
-Applied to for-next/execve, thanks!
+Above issue may happen as follows:
+-------------------------------------
+ext4_fill_super
+ ext4_orphan_cleanup
+  ext4_enable_quotas
+   ext4_quota_enable
+    ext4_iget --> get error inode <5>
+     ext4_ext_check_inode --> Wrong imode makes it escape inspection
+     make_bad_inode(inode) --> EXT4_BOOT_LOADER_INO set imode
+    dquot_load_quota_inode
+     vfs_setup_quota_inode --> check pass
+     dquot_load_quota_sb
+      v2_check_quota_file
+       v2_read_header
+        ext4_quota_read
+         ext4_bread
+          ext4_getblk
+           ext4_map_blocks
+            ext4_ext_map_blocks
+             ext4_find_extent
+              ext4_cache_extents
+               ext4_es_cache_extent
+                __es_tree_search.isra.0
+                 ext4_es_end --> Wrong extents trigger BUG_ON
 
-[1/1] fs/binfmt_elf: Fix memory leak in load_elf_binary()
-      https://git.kernel.org/kees/c/594d2a14f216
+In the above issue, s_usr_quota_inum is set to 5, but inode<5> contains
+incorrect imode and disordered extents. Because 5 is EXT4_BOOT_LOADER_INO,
+the ext4_ext_check_inode check in the ext4_iget function can be bypassed,
+finally, the extents that are not checked trigger the BUG_ON in the
+__es_tree_search function. To solve this issue, check whether the inode is
+bad_inode in vfs_setup_quota_inode().
 
+Signed-off-by: Baokun Li <libaokun1@huawei.com>
+---
+ fs/quota/dquot.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+index 0427b44bfee5..f27faf5db554 100644
+--- a/fs/quota/dquot.c
++++ b/fs/quota/dquot.c
+@@ -2324,6 +2324,8 @@ static int vfs_setup_quota_inode(struct inode *inode, int type)
+ 	struct super_block *sb = inode->i_sb;
+ 	struct quota_info *dqopt = sb_dqopt(sb);
+ 
++	if (is_bad_inode(inode))
++		return -EUCLEAN;
+ 	if (!S_ISREG(inode->i_mode))
+ 		return -EACCES;
+ 	if (IS_RDONLY(inode))
 -- 
-Kees Cook
+2.31.1
 
