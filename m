@@ -2,58 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8922160F4D2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Oct 2022 12:21:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 0539A60F4EE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Oct 2022 12:26:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235397AbiJ0KVq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Oct 2022 06:21:46 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43950 "EHLO
+        id S234984AbiJ0K0o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Oct 2022 06:26:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234717AbiJ0KVk (ORCPT
+        with ESMTP id S234428AbiJ0K0l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Oct 2022 06:21:40 -0400
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D887501A0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Oct 2022 03:21:36 -0700 (PDT)
-Received: by mail-lf1-x129.google.com with SMTP id d6so1781027lfs.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Oct 2022 03:21:36 -0700 (PDT)
+        Thu, 27 Oct 2022 06:26:41 -0400
+Received: from mail-lf1-x134.google.com (mail-lf1-x134.google.com [IPv6:2a00:1450:4864:20::134])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D22FC3FF0D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Oct 2022 03:26:38 -0700 (PDT)
+Received: by mail-lf1-x134.google.com with SMTP id b2so1829831lfp.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Oct 2022 03:26:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xZ3dt0X5oEa9EitEEQpoTk/uun4esw3O+yAdY14ujzY=;
-        b=UJe3W3C7PYf+7aofEnbgK9L1qF/5znWnv5kKpBPzv+GKCTzcpPqVHyNc/PLAMaqQgt
-         9q/ylrlPYrog9Oi55ScgA6DJd3bGihyqQtnVdaxcT34P/TuDFa0LxptXPuN72g5xPbaG
-         Hn+EEF10aYfiVyTmFM1jJTkMiMNO4QwTw/9rIvbEg/1aDPHA6HrSMnu2tnwrxjCORUXy
-         2Et52nUNOcRHlZiyMHqSTKaOMoqlkmiLqrE4e4zDJkLYPp+FoMx7C3LNKhrY5LHDouNN
-         d/NMim4+Awu3Gi0UMj7WcI0vUTs5qv/qB+M9nDkJLIMb0he9k4beLsrGOt3aa81oyPOV
-         LLZg==
+        bh=hl0VW0HF5uq36yR1Z33LvRmcZE6ZukxstRoXryh0nzI=;
+        b=noiDT2BbPfuE83vgg6OwX6DRgLZ11moP1RxPNatEsHVm4zp7hp1cLvqKD/0lfvCfh3
+         gZiRVx3m4lzaGs53MMOOJoMR8Hh8BiQGI89f7Dh4IFwL5JF9xS/sZyYZvl0xPklfz/Jg
+         3fdzpJtPsdw32k+XYOm4MXLZR5BvMp+9selNqZdb07bEXEa8f0CeTgRFfzZqkn/Rp/ja
+         1yFnBvFVknYu0gxnJg6uHpoTRHzj1szZz2oqerKF6eM+TlGx8ry6Ne2wlrFKWzkV4Itj
+         Dpa7Y1AZyHugWWk/Yv6LPuzA9PmSSWdTafrUm4/09d/4G9pUYsVvytuwY8ahA5yoDZuv
+         yZhA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=xZ3dt0X5oEa9EitEEQpoTk/uun4esw3O+yAdY14ujzY=;
-        b=T3vURU6QqBXOJ3q54Uj31hbOJ6N3i6U7PvpdP0AN+21QvjZoShp6pKCZ3XR43bqQgD
-         Ot5kyeX4nyNYbQVgb/PcMsMF+rXNdcJ+v4UTQNmP8wikkIxSqDbeJEqnqMtHwRzszPfu
-         3j/RqPaob8fN/oX8rGln+0rHYX00lXqxUILggeeJsod4NzRsoFIp7bgbsCW1mEx1pz1w
-         SCuC2wrFyY5Qjy1Wln/VNLErRa4W8jMsOKIZPxe8ZQHk4F8W/tjmFppM+hfLHyp8v5rw
-         v6hUpGQHf7S9sKIVUjC1qPbXrwre+198I3sO1VlQeQgSTfzzsPZG3F7o1ogRibW4uWnI
-         qxdw==
-X-Gm-Message-State: ACrzQf3za6BswZlcOKC6oiA3n1BmMHFLCC10eOmVWqtrcMC8JiEQuC4O
-        6BoMh48YgssoB8ANpimgXKmd03dHEFm68l5AkzCUpg==
-X-Google-Smtp-Source: AMsMyM5Fe2p29tDglku84UTHrEJvMRQgfKovUuWsBkEAzfOu+0McYs3xjNPk1oitcyOLEQbvJVm7whYBF/OM9LUBds8=
-X-Received: by 2002:a05:6512:2392:b0:4a2:550a:e21d with SMTP id
- c18-20020a056512239200b004a2550ae21dmr18987300lfv.550.1666866094379; Thu, 27
- Oct 2022 03:21:34 -0700 (PDT)
+        bh=hl0VW0HF5uq36yR1Z33LvRmcZE6ZukxstRoXryh0nzI=;
+        b=nqwEYfKGMZHjCxbLwBz5qrsEjgqa+o7ijzwFzrnXR3FqUYITxqvV718Wr1CCnR07Fd
+         3hbnALEbxhZ3GiCTVwTg5VFaoN/QTyM5LRnJCVWLWpmrGawj8dBAxgQ3Vh0Y4a+DuBS5
+         ZrwAtT8xwsyreUh94OuKaoo4eq5WoJ4yu3HzwSulAUpaw8/0dUVihElbw/fhAyRRpnAC
+         VLyrwnM1MDnY8GXMcZGR9OrZycIV8HfgGmhodRp+pcFGcW2dBUIXziSodNU0not0N5iL
+         Zv//PEM/d0WT6znujdchwebVuE6CJMcZMKCjZAo8TgAJrL+onuGyP8TXErnN515lyf+K
+         x8Iw==
+X-Gm-Message-State: ACrzQf3jAnx6/3c3S354ahc5LmlXcVxhK8j/yxbHFaanG/4OQsKkPKL2
+        6kJ1KAZT8kNXEkk8WP4TWUiYy0k4J4N18Lt7D+UyGA==
+X-Google-Smtp-Source: AMsMyM4AbTHu9BZRvcGHLhHkVC0chuKFfauWTFyawoP3cZjAqDM71cVOmuslAVmoEzpApF9RM+a5ZDBIrPF3TBq9SXg=
+X-Received: by 2002:a05:6512:3119:b0:4a2:d749:ff82 with SMTP id
+ n25-20020a056512311900b004a2d749ff82mr18760892lfb.637.1666866396883; Thu, 27
+ Oct 2022 03:26:36 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com> <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
-In-Reply-To: <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com> <20221025151344.3784230-3-chao.p.peng@linux.intel.com>
+In-Reply-To: <20221025151344.3784230-3-chao.p.peng@linux.intel.com>
 From:   Fuad Tabba <tabba@google.com>
-Date:   Thu, 27 Oct 2022 11:20:57 +0100
-Message-ID: <CA+EHjTx5ZqsPqb7GCRdShNjtFZXYWc7+cq4UvU_KEn8mM1VyQw@mail.gmail.com>
-Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
- create restricted user memory
+Date:   Thu, 27 Oct 2022 11:25:59 +0100
+Message-ID: <CA+EHjTwK_2+y0jrX03XsfRD9M+_yHm3=tTbV6NgeoDm5Mda=JA@mail.gmail.com>
+Subject: Re: [PATCH v9 2/8] KVM: Extend the memslot to support fd-based
+ private memory
 To:     Chao Peng <chao.p.peng@linux.intel.com>
 Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -98,511 +98,379 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-
 On Tue, Oct 25, 2022 at 4:18 PM Chao Peng <chao.p.peng@linux.intel.com> wrote:
 >
-> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> In memory encryption usage, guest memory may be encrypted with special
+> key and can be accessed only by the guest itself. We call such memory
+> private memory. It's valueless and sometimes can cause problem to allow
+> userspace to access guest private memory. This new KVM memslot extension
+> allows guest private memory being provided though a restrictedmem
+> backed file descriptor(fd) and userspace is restricted to access the
+> bookmarked memory in the fd.
 >
-> Introduce 'memfd_restricted' system call with the ability to create
-> memory areas that are restricted from userspace access through ordinary
-> MMU operations (e.g. read/write/mmap). The memory content is expected to
-> be used through a new in-kernel interface by a third kernel module.
+> This new extension, indicated by the new flag KVM_MEM_PRIVATE, adds two
+> additional KVM memslot fields restricted_fd/restricted_offset to allow
+> userspace to instruct KVM to provide guest memory through restricted_fd.
+> 'guest_phys_addr' is mapped at the restricted_offset of restricted_fd
+> and the size is 'memory_size'.
 >
-> memfd_restricted() is useful for scenarios where a file descriptor(fd)
-> can be used as an interface into mm but want to restrict userspace's
-> ability on the fd. Initially it is designed to provide protections for
-> KVM encrypted guest memory.
+> The extended memslot can still have the userspace_addr(hva). When use, a
+> single memslot can maintain both private memory through restricted_fd
+> and shared memory through userspace_addr. Whether the private or shared
+> part is visible to guest is maintained by other KVM code.
 >
-> Normally KVM uses memfd memory via mmapping the memfd into KVM userspace
-> (e.g. QEMU) and then using the mmaped virtual address to setup the
-> mapping in the KVM secondary page table (e.g. EPT). With confidential
-> computing technologies like Intel TDX, the memfd memory may be encrypted
-> with special key for special software domain (e.g. KVM guest) and is not
-> expected to be directly accessed by userspace. Precisely, userspace
-> access to such encrypted memory may lead to host crash so should be
-> prevented.
+> A restrictedmem_notifier field is also added to the memslot structure to
+> allow the restricted_fd's backing store to notify KVM the memory change,
+> KVM then can invalidate its page table entries.
 >
-> memfd_restricted() provides semantics required for KVM guest encrypted
-> memory support that a fd created with memfd_restricted() is going to be
-> used as the source of guest memory in confidential computing environment
-> and KVM can directly interact with core-mm without the need to expose
-> the memoy content into KVM userspace.
+> Together with the change, a new config HAVE_KVM_RESTRICTED_MEM is added
+> and right now it is selected on X86_64 only. A KVM_CAP_PRIVATE_MEM is
+> also introduced to indicate KVM support for KVM_MEM_PRIVATE.
 >
-> KVM userspace is still in charge of the lifecycle of the fd. It should
-> pass the created fd to KVM. KVM uses the new restrictedmem_get_page() to
-> obtain the physical memory page and then uses it to populate the KVM
-> secondary page table entries.
+> To make code maintenance easy, internally we use a binary compatible
+> alias struct kvm_user_mem_region to handle both the normal and the
+> '_ext' variants.
 >
-> The userspace restricted memfd can be fallocate-ed or hole-punched
-> from userspace. When these operations happen, KVM can get notified
-> through restrictedmem_notifier, it then gets chance to remove any
-> mapped entries of the range in the secondary page tables.
->
-> memfd_restricted() itself is implemented as a shim layer on top of real
-> memory file systems (currently tmpfs). Pages in restrictedmem are marked
-> as unmovable and unevictable, this is required for current confidential
-> usage. But in future this might be changed.
->
-> By default memfd_restricted() prevents userspace read, write and mmap.
-> By defining new bit in the 'flags', it can be extended to support other
-> restricted semantics in the future.
->
-> The system call is currently wired up for x86 arch.
->
-> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
 > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> ---
 
 Reviewed-by: Fuad Tabba <tabba@google.com>
 
-And I'm working on porting to arm64 and testing V9.
+I have tested the V8 version of this patch on arm64/qemu (which has
+the fix to copy_from_user included in this patch), and considering
+this hasn't changed much:
+Tested-by: Fuad Tabba <tabba@google.com>
 
 Cheers,
 /fuad
 
 
->  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
->  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
->  include/linux/restrictedmem.h          |  62 ++++++
->  include/linux/syscalls.h               |   1 +
->  include/uapi/asm-generic/unistd.h      |   5 +-
->  include/uapi/linux/magic.h             |   1 +
->  kernel/sys_ni.c                        |   3 +
->  mm/Kconfig                             |   4 +
->  mm/Makefile                            |   1 +
->  mm/restrictedmem.c                     | 250 +++++++++++++++++++++++++
->  10 files changed, 328 insertions(+), 1 deletion(-)
->  create mode 100644 include/linux/restrictedmem.h
->  create mode 100644 mm/restrictedmem.c
+
+> ---
+>  Documentation/virt/kvm/api.rst | 48 ++++++++++++++++++++++++++++-----
+>  arch/x86/kvm/Kconfig           |  2 ++
+>  arch/x86/kvm/x86.c             |  2 +-
+>  include/linux/kvm_host.h       | 13 +++++++--
+>  include/uapi/linux/kvm.h       | 29 ++++++++++++++++++++
+>  virt/kvm/Kconfig               |  3 +++
+>  virt/kvm/kvm_main.c            | 49 ++++++++++++++++++++++++++++------
+>  7 files changed, 128 insertions(+), 18 deletions(-)
 >
-> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-> index 320480a8db4f..dc70ba90247e 100644
-> --- a/arch/x86/entry/syscalls/syscall_32.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-> @@ -455,3 +455,4 @@
->  448    i386    process_mrelease        sys_process_mrelease
->  449    i386    futex_waitv             sys_futex_waitv
->  450    i386    set_mempolicy_home_node         sys_set_mempolicy_home_node
-> +451    i386    memfd_restricted        sys_memfd_restricted
-> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-> index c84d12608cd2..06516abc8318 100644
-> --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> @@ -372,6 +372,7 @@
->  448    common  process_mrelease        sys_process_mrelease
->  449    common  futex_waitv             sys_futex_waitv
->  450    common  set_mempolicy_home_node sys_set_mempolicy_home_node
-> +451    common  memfd_restricted        sys_memfd_restricted
+> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> index eee9f857a986..f3fa75649a78 100644
+> --- a/Documentation/virt/kvm/api.rst
+> +++ b/Documentation/virt/kvm/api.rst
+> @@ -1319,7 +1319,7 @@ yet and must be cleared on entry.
+>  :Capability: KVM_CAP_USER_MEMORY
+>  :Architectures: all
+>  :Type: vm ioctl
+> -:Parameters: struct kvm_userspace_memory_region (in)
+> +:Parameters: struct kvm_userspace_memory_region(_ext) (in)
+>  :Returns: 0 on success, -1 on error
 >
->  #
->  # Due to a historical design error, certain syscalls are numbered differently
-> diff --git a/include/linux/restrictedmem.h b/include/linux/restrictedmem.h
-> new file mode 100644
-> index 000000000000..9c37c3ea3180
-> --- /dev/null
-> +++ b/include/linux/restrictedmem.h
-> @@ -0,0 +1,62 @@
-> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> +#ifndef _LINUX_RESTRICTEDMEM_H
-> +
-> +#include <linux/file.h>
-> +#include <linux/magic.h>
-> +#include <linux/pfn_t.h>
-> +
-> +struct restrictedmem_notifier;
-> +
-> +struct restrictedmem_notifier_ops {
-> +       void (*invalidate_start)(struct restrictedmem_notifier *notifier,
-> +                                pgoff_t start, pgoff_t end);
-> +       void (*invalidate_end)(struct restrictedmem_notifier *notifier,
-> +                              pgoff_t start, pgoff_t end);
-> +};
-> +
-> +struct restrictedmem_notifier {
-> +       struct list_head list;
-> +       const struct restrictedmem_notifier_ops *ops;
-> +};
-> +
-> +#ifdef CONFIG_RESTRICTEDMEM
-> +
-> +void restrictedmem_register_notifier(struct file *file,
-> +                                    struct restrictedmem_notifier *notifier);
-> +void restrictedmem_unregister_notifier(struct file *file,
-> +                                      struct restrictedmem_notifier *notifier);
-> +
-> +int restrictedmem_get_page(struct file *file, pgoff_t offset,
-> +                          struct page **pagep, int *order);
-> +
-> +static inline bool file_is_restrictedmem(struct file *file)
-> +{
-> +       return file->f_inode->i_sb->s_magic == RESTRICTEDMEM_MAGIC;
-> +}
-> +
-> +#else
-> +
-> +static inline void restrictedmem_register_notifier(struct file *file,
-> +                                    struct restrictedmem_notifier *notifier)
-> +{
-> +}
-> +
-> +static inline void restrictedmem_unregister_notifier(struct file *file,
-> +                                      struct restrictedmem_notifier *notifier)
-> +{
-> +}
-> +
-> +static inline int restrictedmem_get_page(struct file *file, pgoff_t offset,
-> +                                        struct page **pagep, int *order)
-> +{
-> +       return -1;
-> +}
-> +
-> +static inline bool file_is_restrictedmem(struct file *file)
-> +{
-> +       return false;
-> +}
-> +
-> +#endif /* CONFIG_RESTRICTEDMEM */
-> +
-> +#endif /* _LINUX_RESTRICTEDMEM_H */
-> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> index a34b0f9a9972..f9e9e0c820c5 100644
-> --- a/include/linux/syscalls.h
-> +++ b/include/linux/syscalls.h
-> @@ -1056,6 +1056,7 @@ asmlinkage long sys_memfd_secret(unsigned int flags);
->  asmlinkage long sys_set_mempolicy_home_node(unsigned long start, unsigned long len,
->                                             unsigned long home_node,
->                                             unsigned long flags);
-> +asmlinkage long sys_memfd_restricted(unsigned int flags);
+>  ::
+> @@ -1332,9 +1332,18 @@ yet and must be cleared on entry.
+>         __u64 userspace_addr; /* start of the userspace allocated memory */
+>    };
 >
->  /*
->   * Architecture-specific system calls
-> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> index 45fa180cc56a..e93cd35e46d0 100644
-> --- a/include/uapi/asm-generic/unistd.h
-> +++ b/include/uapi/asm-generic/unistd.h
-> @@ -886,8 +886,11 @@ __SYSCALL(__NR_futex_waitv, sys_futex_waitv)
->  #define __NR_set_mempolicy_home_node 450
->  __SYSCALL(__NR_set_mempolicy_home_node, sys_set_mempolicy_home_node)
->
-> +#define __NR_memfd_restricted 451
-> +__SYSCALL(__NR_memfd_restricted, sys_memfd_restricted)
+> +  struct kvm_userspace_memory_region_ext {
+> +       struct kvm_userspace_memory_region region;
+> +       __u64 restricted_offset;
+> +       __u32 restricted_fd;
+> +       __u32 pad1;
+> +       __u64 pad2[14];
+> +  };
 > +
->  #undef __NR_syscalls
-> -#define __NR_syscalls 451
-> +#define __NR_syscalls 452
+>    /* for kvm_memory_region::flags */
+>    #define KVM_MEM_LOG_DIRTY_PAGES      (1UL << 0)
+>    #define KVM_MEM_READONLY     (1UL << 1)
+> +  #define KVM_MEM_PRIVATE              (1UL << 2)
 >
->  /*
->   * 32 bit systems traditionally used different
-> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-> index 6325d1d0e90f..8aa38324b90a 100644
-> --- a/include/uapi/linux/magic.h
-> +++ b/include/uapi/linux/magic.h
-> @@ -101,5 +101,6 @@
->  #define DMA_BUF_MAGIC          0x444d4142      /* "DMAB" */
->  #define DEVMEM_MAGIC           0x454d444d      /* "DMEM" */
->  #define SECRETMEM_MAGIC                0x5345434d      /* "SECM" */
-> +#define RESTRICTEDMEM_MAGIC    0x5245534d      /* "RESM" */
+>  This ioctl allows the user to create, modify or delete a guest physical
+>  memory slot.  Bits 0-15 of "slot" specify the slot id and this value
+> @@ -1365,12 +1374,27 @@ It is recommended that the lower 21 bits of guest_phys_addr and userspace_addr
+>  be identical.  This allows large pages in the guest to be backed by large
+>  pages in the host.
 >
->  #endif /* __LINUX_MAGIC_H__ */
-> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-> index 860b2dcf3ac4..7c4a32cbd2e7 100644
-> --- a/kernel/sys_ni.c
-> +++ b/kernel/sys_ni.c
-> @@ -360,6 +360,9 @@ COND_SYSCALL(pkey_free);
->  /* memfd_secret */
->  COND_SYSCALL(memfd_secret);
->
-> +/* memfd_restricted */
-> +COND_SYSCALL(memfd_restricted);
+> -The flags field supports two flags: KVM_MEM_LOG_DIRTY_PAGES and
+> -KVM_MEM_READONLY.  The former can be set to instruct KVM to keep track of
+> -writes to memory within the slot.  See KVM_GET_DIRTY_LOG ioctl to know how to
+> -use it.  The latter can be set, if KVM_CAP_READONLY_MEM capability allows it,
+> -to make a new slot read-only.  In this case, writes to this memory will be
+> -posted to userspace as KVM_EXIT_MMIO exits.
+> +kvm_userspace_memory_region_ext struct includes all fields of
+> +kvm_userspace_memory_region struct, while also adds additional fields for some
+> +other features. See below description of flags field for more information.
+> +It's recommended to use kvm_userspace_memory_region_ext in new userspace code.
 > +
->  /*
->   * Architecture specific weak syscall entries.
->   */
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 0331f1461f81..0177d53676c7 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -1076,6 +1076,10 @@ config IO_MAPPING
->  config SECRETMEM
->         def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
->
-> +config RESTRICTEDMEM
-> +       bool
-> +       depends on TMPFS
+> +The flags field supports following flags:
 > +
->  config ANON_VMA_NAME
->         bool "Anonymous VMA name support"
->         depends on PROC_FS && ADVISE_SYSCALLS && MMU
-> diff --git a/mm/Makefile b/mm/Makefile
-> index 9a564f836403..6cb6403ffd40 100644
-> --- a/mm/Makefile
-> +++ b/mm/Makefile
-> @@ -117,6 +117,7 @@ obj-$(CONFIG_PAGE_EXTENSION) += page_ext.o
->  obj-$(CONFIG_PAGE_TABLE_CHECK) += page_table_check.o
->  obj-$(CONFIG_CMA_DEBUGFS) += cma_debug.o
->  obj-$(CONFIG_SECRETMEM) += secretmem.o
-> +obj-$(CONFIG_RESTRICTEDMEM) += restrictedmem.o
->  obj-$(CONFIG_CMA_SYSFS) += cma_sysfs.o
->  obj-$(CONFIG_USERFAULTFD) += userfaultfd.o
->  obj-$(CONFIG_IDLE_PAGE_TRACKING) += page_idle.o
-> diff --git a/mm/restrictedmem.c b/mm/restrictedmem.c
-> new file mode 100644
-> index 000000000000..e5bf8907e0f8
-> --- /dev/null
-> +++ b/mm/restrictedmem.c
-> @@ -0,0 +1,250 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +#include "linux/sbitmap.h"
-> +#include <linux/pagemap.h>
-> +#include <linux/pseudo_fs.h>
-> +#include <linux/shmem_fs.h>
-> +#include <linux/syscalls.h>
-> +#include <uapi/linux/falloc.h>
-> +#include <uapi/linux/magic.h>
+> +- KVM_MEM_LOG_DIRTY_PAGES to instruct KVM to keep track of writes to memory
+> +  within the slot.  For more details, see KVM_GET_DIRTY_LOG ioctl.
+> +
+> +- KVM_MEM_READONLY, if KVM_CAP_READONLY_MEM allows, to make a new slot
+> +  read-only.  In this case, writes to this memory will be posted to userspace as
+> +  KVM_EXIT_MMIO exits.
+> +
+> +- KVM_MEM_PRIVATE, if KVM_CAP_PRIVATE_MEM allows, to indicate a new slot has
+> +  private memory backed by a file descriptor(fd) and userspace access to the
+> +  fd may be restricted. Userspace should use restricted_fd/restricted_offset in
+> +  kvm_userspace_memory_region_ext to instruct KVM to provide private memory
+> +  to guest. Userspace should guarantee not to map the same pfn indicated by
+> +  restricted_fd/restricted_offset to different gfns with multiple memslots.
+> +  Failed to do this may result undefined behavior.
+>
+>  When the KVM_CAP_SYNC_MMU capability is available, changes in the backing of
+>  the memory region are automatically reflected into the guest.  For example, an
+> @@ -8215,6 +8239,16 @@ structure.
+>  When getting the Modified Change Topology Report value, the attr->addr
+>  must point to a byte where the value will be stored or retrieved from.
+>
+> +8.36 KVM_CAP_PRIVATE_MEM
+> +------------------------
+> +
+> +:Architectures: x86
+> +
+> +This capability indicates that private memory is supported and userspace can
+> +set KVM_MEM_PRIVATE flag for KVM_SET_USER_MEMORY_REGION ioctl.  See
+> +KVM_SET_USER_MEMORY_REGION for details on the usage of KVM_MEM_PRIVATE and
+> +kvm_userspace_memory_region_ext fields.
+> +
+>  9. Known KVM API problems
+>  =========================
+>
+> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> index 67be7f217e37..8d2bd455c0cd 100644
+> --- a/arch/x86/kvm/Kconfig
+> +++ b/arch/x86/kvm/Kconfig
+> @@ -49,6 +49,8 @@ config KVM
+>         select SRCU
+>         select INTERVAL_TREE
+>         select HAVE_KVM_PM_NOTIFIER if PM
+> +       select HAVE_KVM_RESTRICTED_MEM if X86_64
+> +       select RESTRICTEDMEM if HAVE_KVM_RESTRICTED_MEM
+>         help
+>           Support hosting fully virtualized guest machines using hardware
+>           virtualization extensions.  You will need a fairly recent
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 4bd5f8a751de..02ad31f46dd7 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -12425,7 +12425,7 @@ void __user * __x86_set_memory_region(struct kvm *kvm, int id, gpa_t gpa,
+>         }
+>
+>         for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
+> -               struct kvm_userspace_memory_region m;
+> +               struct kvm_user_mem_region m;
+>
+>                 m.slot = id | (i << 16);
+>                 m.flags = 0;
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 32f259fa5801..739a7562a1f3 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -44,6 +44,7 @@
+>
+>  #include <asm/kvm_host.h>
+>  #include <linux/kvm_dirty_ring.h>
 > +#include <linux/restrictedmem.h>
+>
+>  #ifndef KVM_MAX_VCPU_IDS
+>  #define KVM_MAX_VCPU_IDS KVM_MAX_VCPUS
+> @@ -575,8 +576,16 @@ struct kvm_memory_slot {
+>         u32 flags;
+>         short id;
+>         u16 as_id;
+> +       struct file *restricted_file;
+> +       loff_t restricted_offset;
+> +       struct restrictedmem_notifier notifier;
+>  };
+>
+> +static inline bool kvm_slot_can_be_private(const struct kvm_memory_slot *slot)
+> +{
+> +       return slot && (slot->flags & KVM_MEM_PRIVATE);
+> +}
 > +
-> +struct restrictedmem_data {
-> +       struct mutex lock;
-> +       struct file *memfd;
-> +       struct list_head notifiers;
+>  static inline bool kvm_slot_dirty_track_enabled(const struct kvm_memory_slot *slot)
+>  {
+>         return slot->flags & KVM_MEM_LOG_DIRTY_PAGES;
+> @@ -1103,9 +1112,9 @@ enum kvm_mr_change {
+>  };
+>
+>  int kvm_set_memory_region(struct kvm *kvm,
+> -                         const struct kvm_userspace_memory_region *mem);
+> +                         const struct kvm_user_mem_region *mem);
+>  int __kvm_set_memory_region(struct kvm *kvm,
+> -                           const struct kvm_userspace_memory_region *mem);
+> +                           const struct kvm_user_mem_region *mem);
+>  void kvm_arch_free_memslot(struct kvm *kvm, struct kvm_memory_slot *slot);
+>  void kvm_arch_memslots_updated(struct kvm *kvm, u64 gen);
+>  int kvm_arch_prepare_memory_region(struct kvm *kvm,
+> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> index 0d5d4419139a..f1ae45c10c94 100644
+> --- a/include/uapi/linux/kvm.h
+> +++ b/include/uapi/linux/kvm.h
+> @@ -103,6 +103,33 @@ struct kvm_userspace_memory_region {
+>         __u64 userspace_addr; /* start of the userspace allocated memory */
+>  };
+>
+> +struct kvm_userspace_memory_region_ext {
+> +       struct kvm_userspace_memory_region region;
+> +       __u64 restricted_offset;
+> +       __u32 restricted_fd;
+> +       __u32 pad1;
+> +       __u64 pad2[14];
 > +};
 > +
-> +static void restrictedmem_notifier_invalidate(struct restrictedmem_data *data,
-> +                                pgoff_t start, pgoff_t end, bool notify_start)
-> +{
-> +       struct restrictedmem_notifier *notifier;
-> +
-> +       mutex_lock(&data->lock);
-> +       list_for_each_entry(notifier, &data->notifiers, list) {
-> +               if (notify_start)
-> +                       notifier->ops->invalidate_start(notifier, start, end);
-> +               else
-> +                       notifier->ops->invalidate_end(notifier, start, end);
-> +       }
-> +       mutex_unlock(&data->lock);
-> +}
-> +
-> +static int restrictedmem_release(struct inode *inode, struct file *file)
-> +{
-> +       struct restrictedmem_data *data = inode->i_mapping->private_data;
-> +
-> +       fput(data->memfd);
-> +       kfree(data);
-> +       return 0;
-> +}
-> +
-> +static long restrictedmem_fallocate(struct file *file, int mode,
-> +                                   loff_t offset, loff_t len)
-> +{
-> +       struct restrictedmem_data *data = file->f_mapping->private_data;
-> +       struct file *memfd = data->memfd;
-> +       int ret;
-> +
-> +       if (mode & FALLOC_FL_PUNCH_HOLE) {
-> +               if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
-> +                       return -EINVAL;
-> +       }
-> +
-> +       restrictedmem_notifier_invalidate(data, offset, offset + len, true);
-> +       ret = memfd->f_op->fallocate(memfd, mode, offset, len);
-> +       restrictedmem_notifier_invalidate(data, offset, offset + len, false);
-> +       return ret;
-> +}
-> +
-> +static const struct file_operations restrictedmem_fops = {
-> +       .release = restrictedmem_release,
-> +       .fallocate = restrictedmem_fallocate,
+> +#ifdef __KERNEL__
+> +/*
+> + * kvm_user_mem_region is a kernel-only alias of kvm_userspace_memory_region_ext
+> + * that "unpacks" kvm_userspace_memory_region so that KVM can directly access
+> + * all fields from the top-level "extended" region.
+> + */
+> +struct kvm_user_mem_region {
+> +       __u32 slot;
+> +       __u32 flags;
+> +       __u64 guest_phys_addr;
+> +       __u64 memory_size;
+> +       __u64 userspace_addr;
+> +       __u64 restricted_offset;
+> +       __u32 restricted_fd;
+> +       __u32 pad1;
+> +       __u64 pad2[14];
 > +};
+> +#endif
 > +
-> +static int restrictedmem_getattr(struct user_namespace *mnt_userns,
-> +                                const struct path *path, struct kstat *stat,
-> +                                u32 request_mask, unsigned int query_flags)
+>  /*
+>   * The bit 0 ~ bit 15 of kvm_memory_region::flags are visible for userspace,
+>   * other bits are reserved for kvm internal use which are defined in
+> @@ -110,6 +137,7 @@ struct kvm_userspace_memory_region {
+>   */
+>  #define KVM_MEM_LOG_DIRTY_PAGES        (1UL << 0)
+>  #define KVM_MEM_READONLY       (1UL << 1)
+> +#define KVM_MEM_PRIVATE                (1UL << 2)
+>
+>  /* for KVM_IRQ_LINE */
+>  struct kvm_irq_level {
+> @@ -1178,6 +1206,7 @@ struct kvm_ppc_resize_hpt {
+>  #define KVM_CAP_S390_ZPCI_OP 221
+>  #define KVM_CAP_S390_CPU_TOPOLOGY 222
+>  #define KVM_CAP_DIRTY_LOG_RING_ACQ_REL 223
+> +#define KVM_CAP_PRIVATE_MEM 224
+>
+>  #ifdef KVM_CAP_IRQ_ROUTING
+>
+> diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
+> index 800f9470e36b..9ff164c7e0cc 100644
+> --- a/virt/kvm/Kconfig
+> +++ b/virt/kvm/Kconfig
+> @@ -86,3 +86,6 @@ config KVM_XFER_TO_GUEST_WORK
+>
+>  config HAVE_KVM_PM_NOTIFIER
+>         bool
+> +
+> +config HAVE_KVM_RESTRICTED_MEM
+> +       bool
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index e30f1b4ecfa5..8dace78a0278 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -1526,7 +1526,7 @@ static void kvm_replace_memslot(struct kvm *kvm,
+>         }
+>  }
+>
+> -static int check_memory_region_flags(const struct kvm_userspace_memory_region *mem)
+> +static int check_memory_region_flags(const struct kvm_user_mem_region *mem)
+>  {
+>         u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
+>
+> @@ -1920,7 +1920,7 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
+>   * Must be called holding kvm->slots_lock for write.
+>   */
+>  int __kvm_set_memory_region(struct kvm *kvm,
+> -                           const struct kvm_userspace_memory_region *mem)
+> +                           const struct kvm_user_mem_region *mem)
+>  {
+>         struct kvm_memory_slot *old, *new;
+>         struct kvm_memslots *slots;
+> @@ -2024,7 +2024,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+>  EXPORT_SYMBOL_GPL(__kvm_set_memory_region);
+>
+>  int kvm_set_memory_region(struct kvm *kvm,
+> -                         const struct kvm_userspace_memory_region *mem)
+> +                         const struct kvm_user_mem_region *mem)
+>  {
+>         int r;
+>
+> @@ -2036,7 +2036,7 @@ int kvm_set_memory_region(struct kvm *kvm,
+>  EXPORT_SYMBOL_GPL(kvm_set_memory_region);
+>
+>  static int kvm_vm_ioctl_set_memory_region(struct kvm *kvm,
+> -                                         struct kvm_userspace_memory_region *mem)
+> +                                         struct kvm_user_mem_region *mem)
+>  {
+>         if ((u16)mem->slot >= KVM_USER_MEM_SLOTS)
+>                 return -EINVAL;
+> @@ -4627,6 +4627,33 @@ static int kvm_vm_ioctl_get_stats_fd(struct kvm *kvm)
+>         return fd;
+>  }
+>
+> +#define SANITY_CHECK_MEM_REGION_FIELD(field)                                   \
+> +do {                                                                           \
+> +       BUILD_BUG_ON(offsetof(struct kvm_user_mem_region, field) !=             \
+> +                    offsetof(struct kvm_userspace_memory_region, field));      \
+> +       BUILD_BUG_ON(sizeof_field(struct kvm_user_mem_region, field) !=         \
+> +                    sizeof_field(struct kvm_userspace_memory_region, field));  \
+> +} while (0)
+> +
+> +#define SANITY_CHECK_MEM_REGION_EXT_FIELD(field)                                       \
+> +do {                                                                                   \
+> +       BUILD_BUG_ON(offsetof(struct kvm_user_mem_region, field) !=                     \
+> +                    offsetof(struct kvm_userspace_memory_region_ext, field));          \
+> +       BUILD_BUG_ON(sizeof_field(struct kvm_user_mem_region, field) !=                 \
+> +                    sizeof_field(struct kvm_userspace_memory_region_ext, field));      \
+> +} while (0)
+> +
+> +static void kvm_sanity_check_user_mem_region_alias(void)
 > +{
-> +       struct inode *inode = d_inode(path->dentry);
-> +       struct restrictedmem_data *data = inode->i_mapping->private_data;
-> +       struct file *memfd = data->memfd;
-> +
-> +       return memfd->f_inode->i_op->getattr(mnt_userns, path, stat,
-> +                                            request_mask, query_flags);
+> +       SANITY_CHECK_MEM_REGION_FIELD(slot);
+> +       SANITY_CHECK_MEM_REGION_FIELD(flags);
+> +       SANITY_CHECK_MEM_REGION_FIELD(guest_phys_addr);
+> +       SANITY_CHECK_MEM_REGION_FIELD(memory_size);
+> +       SANITY_CHECK_MEM_REGION_FIELD(userspace_addr);
+> +       SANITY_CHECK_MEM_REGION_EXT_FIELD(restricted_offset);
+> +       SANITY_CHECK_MEM_REGION_EXT_FIELD(restricted_fd);
 > +}
 > +
-> +static int restrictedmem_setattr(struct user_namespace *mnt_userns,
-> +                                struct dentry *dentry, struct iattr *attr)
-> +{
-> +       struct inode *inode = d_inode(dentry);
-> +       struct restrictedmem_data *data = inode->i_mapping->private_data;
-> +       struct file *memfd = data->memfd;
-> +       int ret;
+>  static long kvm_vm_ioctl(struct file *filp,
+>                            unsigned int ioctl, unsigned long arg)
+>  {
+> @@ -4650,14 +4677,20 @@ static long kvm_vm_ioctl(struct file *filp,
+>                 break;
+>         }
+>         case KVM_SET_USER_MEMORY_REGION: {
+> -               struct kvm_userspace_memory_region kvm_userspace_mem;
+> +               struct kvm_user_mem_region mem;
+> +               unsigned long size = sizeof(struct kvm_userspace_memory_region);
 > +
-> +       if (attr->ia_valid & ATTR_SIZE) {
-> +               if (memfd->f_inode->i_size)
-> +                       return -EPERM;
+> +               kvm_sanity_check_user_mem_region_alias();
+>
+>                 r = -EFAULT;
+> -               if (copy_from_user(&kvm_userspace_mem, argp,
+> -                                               sizeof(kvm_userspace_mem)))
+> +               if (copy_from_user(&mem, argp, size))
+> +                       goto out;
 > +
-> +               if (!PAGE_ALIGNED(attr->ia_size))
-> +                       return -EINVAL;
-> +       }
-> +
-> +       ret = memfd->f_inode->i_op->setattr(mnt_userns,
-> +                                           file_dentry(memfd), attr);
-> +       return ret;
-> +}
-> +
-> +static const struct inode_operations restrictedmem_iops = {
-> +       .getattr = restrictedmem_getattr,
-> +       .setattr = restrictedmem_setattr,
-> +};
-> +
-> +static int restrictedmem_init_fs_context(struct fs_context *fc)
-> +{
-> +       if (!init_pseudo(fc, RESTRICTEDMEM_MAGIC))
-> +               return -ENOMEM;
-> +
-> +       fc->s_iflags |= SB_I_NOEXEC;
-> +       return 0;
-> +}
-> +
-> +static struct file_system_type restrictedmem_fs = {
-> +       .owner          = THIS_MODULE,
-> +       .name           = "memfd:restrictedmem",
-> +       .init_fs_context = restrictedmem_init_fs_context,
-> +       .kill_sb        = kill_anon_super,
-> +};
-> +
-> +static struct vfsmount *restrictedmem_mnt;
-> +
-> +static __init int restrictedmem_init(void)
-> +{
-> +       restrictedmem_mnt = kern_mount(&restrictedmem_fs);
-> +       if (IS_ERR(restrictedmem_mnt))
-> +               return PTR_ERR(restrictedmem_mnt);
-> +       return 0;
-> +}
-> +fs_initcall(restrictedmem_init);
-> +
-> +static struct file *restrictedmem_file_create(struct file *memfd)
-> +{
-> +       struct restrictedmem_data *data;
-> +       struct address_space *mapping;
-> +       struct inode *inode;
-> +       struct file *file;
-> +
-> +       data = kzalloc(sizeof(*data), GFP_KERNEL);
-> +       if (!data)
-> +               return ERR_PTR(-ENOMEM);
-> +
-> +       data->memfd = memfd;
-> +       mutex_init(&data->lock);
-> +       INIT_LIST_HEAD(&data->notifiers);
-> +
-> +       inode = alloc_anon_inode(restrictedmem_mnt->mnt_sb);
-> +       if (IS_ERR(inode)) {
-> +               kfree(data);
-> +               return ERR_CAST(inode);
-> +       }
-> +
-> +       inode->i_mode |= S_IFREG;
-> +       inode->i_op = &restrictedmem_iops;
-> +       inode->i_mapping->private_data = data;
-> +
-> +       file = alloc_file_pseudo(inode, restrictedmem_mnt,
-> +                                "restrictedmem", O_RDWR,
-> +                                &restrictedmem_fops);
-> +       if (IS_ERR(file)) {
-> +               iput(inode);
-> +               kfree(data);
-> +               return ERR_CAST(file);
-> +       }
-> +
-> +       file->f_flags |= O_LARGEFILE;
-> +
-> +       mapping = memfd->f_mapping;
-> +       mapping_set_unevictable(mapping);
-> +       mapping_set_gfp_mask(mapping,
-> +                            mapping_gfp_mask(mapping) & ~__GFP_MOVABLE);
-> +
-> +       return file;
-> +}
-> +
-> +SYSCALL_DEFINE1(memfd_restricted, unsigned int, flags)
-> +{
-> +       struct file *file, *restricted_file;
-> +       int fd, err;
-> +
-> +       if (flags)
-> +               return -EINVAL;
-> +
-> +       fd = get_unused_fd_flags(0);
-> +       if (fd < 0)
-> +               return fd;
-> +
-> +       file = shmem_file_setup("memfd:restrictedmem", 0, VM_NORESERVE);
-> +       if (IS_ERR(file)) {
-> +               err = PTR_ERR(file);
-> +               goto err_fd;
-> +       }
-> +       file->f_mode |= FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
-> +       file->f_flags |= O_LARGEFILE;
-> +
-> +       restricted_file = restrictedmem_file_create(file);
-> +       if (IS_ERR(restricted_file)) {
-> +               err = PTR_ERR(restricted_file);
-> +               fput(file);
-> +               goto err_fd;
-> +       }
-> +
-> +       fd_install(fd, restricted_file);
-> +       return fd;
-> +err_fd:
-> +       put_unused_fd(fd);
-> +       return err;
-> +}
-> +
-> +void restrictedmem_register_notifier(struct file *file,
-> +                                    struct restrictedmem_notifier *notifier)
-> +{
-> +       struct restrictedmem_data *data = file->f_mapping->private_data;
-> +
-> +       mutex_lock(&data->lock);
-> +       list_add(&notifier->list, &data->notifiers);
-> +       mutex_unlock(&data->lock);
-> +}
-> +EXPORT_SYMBOL_GPL(restrictedmem_register_notifier);
-> +
-> +void restrictedmem_unregister_notifier(struct file *file,
-> +                                      struct restrictedmem_notifier *notifier)
-> +{
-> +       struct restrictedmem_data *data = file->f_mapping->private_data;
-> +
-> +       mutex_lock(&data->lock);
-> +       list_del(&notifier->list);
-> +       mutex_unlock(&data->lock);
-> +}
-> +EXPORT_SYMBOL_GPL(restrictedmem_unregister_notifier);
-> +
-> +int restrictedmem_get_page(struct file *file, pgoff_t offset,
-> +                          struct page **pagep, int *order)
-> +{
-> +       struct restrictedmem_data *data = file->f_mapping->private_data;
-> +       struct file *memfd = data->memfd;
-> +       struct page *page;
-> +       int ret;
-> +
-> +       ret = shmem_getpage(file_inode(memfd), offset, &page, SGP_WRITE);
-> +       if (ret)
-> +               return ret;
-> +
-> +       *pagep = page;
-> +       if (order)
-> +               *order = thp_order(compound_head(page));
-> +
-> +       SetPageUptodate(page);
-> +       unlock_page(page);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(restrictedmem_get_page);
+> +               r = -EINVAL;
+> +               if (mem.flags & KVM_MEM_PRIVATE)
+>                         goto out;
+>
+> -               r = kvm_vm_ioctl_set_memory_region(kvm, &kvm_userspace_mem);
+> +               r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
+>                 break;
+>         }
+>         case KVM_GET_DIRTY_LOG: {
 > --
 > 2.25.1
 >
