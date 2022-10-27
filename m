@@ -2,268 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6843D60EBC5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Oct 2022 00:44:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9ACA460EDAB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Oct 2022 03:58:26 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233816AbiJZWoa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 26 Oct 2022 18:44:30 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53968 "EHLO
+        id S233077AbiJ0B6Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 26 Oct 2022 21:58:24 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233924AbiJZWny (ORCPT
+        with ESMTP id S232906AbiJ0B6X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 26 Oct 2022 18:43:54 -0400
-Received: from tarta.nabijaczleweli.xyz (unknown [139.28.40.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 88003F53E2;
-        Wed, 26 Oct 2022 15:43:38 -0700 (PDT)
-Received: from tarta.nabijaczleweli.xyz (unknown [192.168.1.250])
-        by tarta.nabijaczleweli.xyz (Postfix) with ESMTPSA id D4AD54B1C;
-        Thu, 27 Oct 2022 00:43:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=nabijaczleweli.xyz;
-        s=202205; t=1666824217;
-        bh=e8NfwyZk0kVFMKWCFjNMasZpKgncxX76xLaXCy/oYY0=;
-        h=Date:From:Cc:Subject:References:In-Reply-To:From;
-        b=XTAoIpUxPq5YEl9T/pU3mjCQ6HPWUXpwp5jl5pro9rDRJWH1P+ceKNvhpSjxhCKOo
-         10SzcEgbzTHbjCdtJv5LxLjihtg0fqgVgrTF3M9wP4qtvakcGnotbC7VV1GSBMZH/4
-         sIOFQG/qRjB8W9xHBwz+IqlzSqgmIWhBocFi+/7xzxgM7rpm2CUOP1PvXlXbgjbgTe
-         l+xpaqlEnC1Es8qOfpGz4uExohagoay9E+qnYnTfjgssB8f/LZ8JjBVeNSv7qdHpnd
-         akaZeucxguwGb+sfDqS64ZhZa8sML2YoJbDxgLgPqnkRUbvOGkIPRAgO2fN0J1iGmz
-         cGzowGZiBw5zrFo09Ia9AXeps2gWYpg+X+WyQiaN5kwKLIyGdc0QuB9TkkHoVd2aD/
-         ofNDn9U+WtLCdHNTzbySiK1/fht88lQq9sQtvar945utt+JDVx2+0Z40qWl2qB+J6y
-         bATQGq3b8bHzBdnTabSxmtOEJsTdxxhOwHhfxP/QkcsccWd7XF19VOEUMeppOFNT8q
-         Hg2Q0zDjpiTLYDA1YiAt/svm4RNC49C9SHpSzUE375FJ4jX7Y2G7HAMGp2S/DmNNFM
-         DKURUpaTVa/GW6hIPGD19bClWxcvJBFocRVrM6FQfnWBW1xzR5of+5E8ZkPlv7OUJp
-         IhJjDjXweTWi5frvTdSqs/K0=
-Date:   Thu, 27 Oct 2022 00:43:36 +0200
-From:   =?utf-8?B?0L3QsNCx?= <nabijaczleweli@nabijaczleweli.xyz>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Alex Shi <alexs@kernel.org>,
-        Yanteng Si <siyanteng@loongson.cn>,
-        Hu Haowen <src.res@email.cn>, Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH 13/15] fcntl: remove FASYNC_MAGIC
-Message-ID: <4729b484174431a57b6bca139fe659f0e27b7e1a.1666822928.git.nabijaczleweli@nabijaczleweli.xyz>
-References: <9a453437b5c3b4b1887c1bd84455b0cc3d1c40b2.1666822928.git.nabijaczleweli@nabijaczleweli.xyz>
+        Wed, 26 Oct 2022 21:58:23 -0400
+Received: from mail-lf1-x12d.google.com (mail-lf1-x12d.google.com [IPv6:2a00:1450:4864:20::12d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB49FC696C;
+        Wed, 26 Oct 2022 18:58:22 -0700 (PDT)
+Received: by mail-lf1-x12d.google.com with SMTP id d6so32633878lfs.10;
+        Wed, 26 Oct 2022 18:58:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=YUBvSu1EPKGGj8YAJE8gLQSl9rqE7fM4DdBH8Q7Bw7Q=;
+        b=pvME4I84cn1XJQ5p6l7SJJEf0uPYiW83t0IVH3kbWOaz+gAexqa0X2WCk1mZ5oNHTU
+         cyO5/zGi7j5s1E6md6jKVkpQRjibwxztTjUwJsgmjyPSeLAa/IphID+dr18V+KbR7ykT
+         JvWKxHSktlxo438oZAGWcvskgMpHH6LsTZJq7sHBzI1xMQ1SZSkrLKamHTdE0oj842yW
+         nRZW+ZZwquawCZ6fVJf/UJSuFaJJ36q65HXr3DZ9YumGFM43dHvmbB7V7SWmNiwD/dtj
+         E4kwKXHH51zCqQcX+7di78JU2eB+P7ijAP/uXdvd/MoA27jukTaQaCU563bvyVajF04R
+         jwEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YUBvSu1EPKGGj8YAJE8gLQSl9rqE7fM4DdBH8Q7Bw7Q=;
+        b=V3PJEtRbcyoYioGbT0YiABA9S0/WRzfRy2OkUGKE8hl9vyG5TdivQGSAOcojvJcjv1
+         k9o+8pW8LrWj8pQNGwgvbjoTRvDrQyJdT7BXHUEUBj90mkqfmFekHzCRtk25x8BEYpwr
+         YkHCh493nT/G7Mjj+kNV+UKulkvxnvV6vz943u0iSYgm9bpbypNsYT2VKylN4mj5eXqn
+         l4REExaJa7gQnGd2u4Jw8EWqnvamk/NAHIBH+CWdwRqR6ytaORAdWfxY1WBI7NL1ez4l
+         1l68LBvOClXZFsNXFxPwmP5azoe109haKtDlcGhbulpRAosW3Swc7Dx7g11maM+V7uMl
+         G87Q==
+X-Gm-Message-State: ACrzQf3eThwn+NbSV7/DoUYiXKLZvJL6cxk7bBSxjJabnuX6iyEFazru
+        Qzof7fYUGcrZsEj7RGquAq9iV+cXFuve6dcovXYeqgpX
+X-Google-Smtp-Source: AMsMyM6MFLtSG/ts72VF60PMQt/hu/SbxM21N/wzV+hea1yL8LYpVM7gYMOxEJ6T8V4MaKVqB0HaLr0jHkVmWbfr85Y=
+X-Received: by 2002:a19:660a:0:b0:4aa:9a70:bcca with SMTP id
+ a10-20020a19660a000000b004aa9a70bccamr7654347lfc.520.1666835901152; Wed, 26
+ Oct 2022 18:58:21 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="euupvlg5qetc3akr"
-Content-Disposition: inline
-In-Reply-To: <9a453437b5c3b4b1887c1bd84455b0cc3d1c40b2.1666822928.git.nabijaczleweli@nabijaczleweli.xyz>
-User-Agent: NeoMutt/20220429
-X-Spam-Status: No, score=1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FROM_SUSPICIOUS_NTLD,
-        MISSING_HEADERS,PDS_OTHER_BAD_TLD,PDS_RDNS_DYNAMIC_FP,RDNS_DYNAMIC,
-        SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-        version=3.4.6
-X-Spam-Level: *
+References: <1665725448-31439-1-git-send-email-zhaoyang.huang@unisoc.com>
+ <Y0lSChlclGPkwTeA@casper.infradead.org> <CAGWkznG=_A-3A8JCJEoWXVcx+LUNH=gvXjLpZZs0cRX4dhUJfQ@mail.gmail.com>
+ <Y017BeC64GDb3Kg7@casper.infradead.org> <CAGWkznEdtGPPZkHrq6Y_+XLL37w12aC8XN8R_Q-vhq48rFhkSA@mail.gmail.com>
+ <Y04Y3RNq6D2T9rVw@casper.infradead.org> <20221018223042.GJ2703033@dread.disaster.area>
+ <20221019011636.GM2703033@dread.disaster.area> <20221019044734.GN2703033@dread.disaster.area>
+ <CAGWkznEGMg293S7jOmZ7G-UhEBg6rQZhTd6ffhjoDgoFGvhFNw@mail.gmail.com> <Y1mPPq6mc/C7pNhM@casper.infradead.org>
+In-Reply-To: <Y1mPPq6mc/C7pNhM@casper.infradead.org>
+From:   Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date:   Thu, 27 Oct 2022 09:57:52 +0800
+Message-ID: <CAGWkznFknrZZok96EvR72UUZq3Tjb-tKvezU4GwK4D2uc0K+kA@mail.gmail.com>
+Subject: Re: [RFC PATCH] mm: move xa forward when run across zombie page
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Dave Chinner <david@fromorbit.com>,
+        "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
+        steve.kang@unisoc.com, baocong.liu@unisoc.com,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-To:     unlisted-recipients:; (no To-header on input)
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
---euupvlg5qetc3akr
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-We have largely moved away from this approach,
-and we have better debugging instrumentation nowadays: kill it
-
-Ref: https://lore.kernel.org/linux-doc/YyMlovoskUcHLEb7@kroah.com/
-Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xyz>
----
- Documentation/process/magic-number.rst                    | 1 -
- Documentation/translations/it_IT/process/magic-number.rst | 1 -
- Documentation/translations/zh_CN/process/magic-number.rst | 1 -
- Documentation/translations/zh_TW/process/magic-number.rst | 1 -
- fs/fcntl.c                                                | 6 ------
- include/linux/fs.h                                        | 3 ---
- 6 files changed, 13 deletions(-)
-
-diff --git a/Documentation/process/magic-number.rst b/Documentation/process=
-/magic-number.rst
-index e59c707ec785..6e432917a5a8 100644
---- a/Documentation/process/magic-number.rst
-+++ b/Documentation/process/magic-number.rst
-@@ -68,6 +68,5 @@ Changelog::
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
- Magic Name            Number           Structure                File
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
--FASYNC_MAGIC          0x4601           fasync_struct            ``include/=
-linux/fs.h``
- CCB_MAGIC             0xf2691ad2       ccb                      ``drivers/=
-scsi/ncr53c8xx.c``
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-diff --git a/Documentation/translations/it_IT/process/magic-number.rst b/Do=
-cumentation/translations/it_IT/process/magic-number.rst
-index 37a539867b6f..7d4c117ac626 100644
---- a/Documentation/translations/it_IT/process/magic-number.rst
-+++ b/Documentation/translations/it_IT/process/magic-number.rst
-@@ -74,6 +74,5 @@ Registro dei cambiamenti::
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
- Nome magico           Numero           Struttura                File
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
--FASYNC_MAGIC          0x4601           fasync_struct            ``include/=
-linux/fs.h``
- CCB_MAGIC             0xf2691ad2       ccb                      ``drivers/=
-scsi/ncr53c8xx.c``
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-diff --git a/Documentation/translations/zh_CN/process/magic-number.rst b/Do=
-cumentation/translations/zh_CN/process/magic-number.rst
-index 8a3a3e872c52..c17e3f20440a 100644
---- a/Documentation/translations/zh_CN/process/magic-number.rst
-+++ b/Documentation/translations/zh_CN/process/magic-number.rst
-@@ -57,6 +57,5 @@ Linux =E9=AD=94=E6=9C=AF=E6=95=B0
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
- =E9=AD=94=E6=9C=AF=E6=95=B0=E5=90=8D              =E6=95=B0=E5=AD=97      =
-       =E7=BB=93=E6=9E=84                     =E6=96=87=E4=BB=B6
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
--FASYNC_MAGIC          0x4601           fasync_struct            ``include/=
-linux/fs.h``
- CCB_MAGIC             0xf2691ad2       ccb                      ``drivers/=
-scsi/ncr53c8xx.c``
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-diff --git a/Documentation/translations/zh_TW/process/magic-number.rst b/Do=
-cumentation/translations/zh_TW/process/magic-number.rst
-index 7ace7834f7f9..e2eeb74e7192 100644
---- a/Documentation/translations/zh_TW/process/magic-number.rst
-+++ b/Documentation/translations/zh_TW/process/magic-number.rst
-@@ -60,6 +60,5 @@ Linux =E9=AD=94=E8=A1=93=E6=95=B8
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
- =E9=AD=94=E8=A1=93=E6=95=B8=E5=90=8D              =E6=95=B8=E5=AD=97      =
-       =E7=B5=90=E6=A7=8B                     =E6=96=87=E4=BB=B6
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
--FASYNC_MAGIC          0x4601           fasync_struct            ``include/=
-linux/fs.h``
- CCB_MAGIC             0xf2691ad2       ccb                      ``drivers/=
-scsi/ncr53c8xx.c``
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 146c9ab0cd4b..e366a3804108 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -924,7 +924,6 @@ struct fasync_struct *fasync_insert_entry(int fd, struc=
-t file *filp, struct fasy
- 	}
-=20
- 	rwlock_init(&new->fa_lock);
--	new->magic =3D FASYNC_MAGIC;
- 	new->fa_file =3D filp;
- 	new->fa_fd =3D fd;
- 	new->fa_next =3D *fapp;
-@@ -988,11 +987,6 @@ static void kill_fasync_rcu(struct fasync_struct *fa, =
-int sig, int band)
- 		struct fown_struct *fown;
- 		unsigned long flags;
-=20
--		if (fa->magic !=3D FASYNC_MAGIC) {
--			printk(KERN_ERR "kill_fasync: bad magic number in "
--			       "fasync_struct!\n");
--			return;
--		}
- 		read_lock_irqsave(&fa->fa_lock, flags);
- 		if (fa->fa_file) {
- 			fown =3D &fa->fa_file->f_owner;
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e654435f1651..acfd5db5341a 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1345,15 +1345,12 @@ static inline int locks_lock_file_wait(struct file =
-*filp, struct file_lock *fl)
-=20
- struct fasync_struct {
- 	rwlock_t		fa_lock;
--	int			magic;
- 	int			fa_fd;
- 	struct fasync_struct	*fa_next; /* singly linked list */
- 	struct file		*fa_file;
- 	struct rcu_head		fa_rcu;
- };
-=20
--#define FASYNC_MAGIC 0x4601
--
- /* SMP safe fasync helpers: */
- extern int fasync_helper(int, struct file *, int, struct fasync_struct **);
- extern struct fasync_struct *fasync_insert_entry(int, struct file *, struc=
-t fasync_struct **, struct fasync_struct *);
---=20
-2.30.2
-
---euupvlg5qetc3akr
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEfWlHToQCjFzAxEFjvP0LAY0mWPEFAmNZuBgACgkQvP0LAY0m
-WPEZhxAAheuHsS47mKWQHUupD8Y5npLNFWPTt0ezuTpyO4/S/BRI5y0AXwMKrRBf
-JyjKdbVZK9BHgO3+TAG8e+Agj7d0as6uq6VSAzbz13FKbIXkhjurT3GH/xb0eZqs
-pthQBjOYfYc5nFkj1mvBl8CfpVCuSGpv4eBUcAfTRfiYe887jrKhSSlPb7FPo2J8
-b5gyzkkzH1WDG/r6u4pHWttxGKA884bZntOgMNaDo4WexutwSR5HvJznEOnmWxFH
-JjwXWwv/XiC/Oi6KfRtsZHocbS2aFLdszru5gtZbQ7QIzV0K0TYzFHUF87o5NE7b
-JI53c0YCUobUJqZU4HGHa7TB4FoTjKqrd048sp8HB/uM2hSn7rtzvoWa51iLe/ow
-kkDBRm0wzSxVPaiKvD+1euVHhMXvn7vR1iebmG4NAdyD0sD6ejUUGXRXM7sdUJ7U
-hDP9shh6GLLasFj8H8olVI5bkptmvcq/H825Zx4b1oWO0iipJGIW/++xjMLB2Vvz
-vvvK88MGp4mz2vficebx3Uhd3YCvjygIUcUCTAB6+eI0uCRLfGA4d8gljy5BCA71
-u1WCanwx2QdOXkFzq/U1+z8grG0HCqcKSkDucwPgxiFiOR27Zyzth5mpqxXy2Omx
-du5lElN7gAw/pKIHpPm2XdGiOH+4CFidf9VitxjtqSHPxUKYo7A=
-=JpMB
------END PGP SIGNATURE-----
-
---euupvlg5qetc3akr--
+On Thu, Oct 27, 2022 at 3:49 AM Matthew Wilcox <willy@infradead.org> wrote:
+>
+> On Wed, Oct 19, 2022 at 01:48:37PM +0800, Zhaoyang Huang wrote:
+> > hint from my side. The original problem I raised is under v5.15 where
+> > there is no folio yet.
+>
+> I really wish you'd stop dropping hints and give all of the information
+> you have so I can try to figure this out withouot sending individual
+> emails for every little piece.
+>
+> Do you have CONFIG_READ_ONLY_THP_FOR_FS=y in your .config?
+No, it is not configured. f2fs only use 4KB pages and blocks
+>
