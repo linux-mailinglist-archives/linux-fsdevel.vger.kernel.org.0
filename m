@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 60FED60F291
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Oct 2022 10:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 44BD260F294
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 27 Oct 2022 10:37:01 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235084AbiJ0Ig5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Oct 2022 04:36:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51948 "EHLO
+        id S235111AbiJ0Ig6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Oct 2022 04:36:58 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235000AbiJ0IgM (ORCPT
+        with ESMTP id S235047AbiJ0IgZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Oct 2022 04:36:12 -0400
-Received: from out199-9.us.a.mail.aliyun.com (out199-9.us.a.mail.aliyun.com [47.90.199.9])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 883EB9411F;
-        Thu, 27 Oct 2022 01:36:03 -0700 (PDT)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0VTAkmCy_1666859758;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VTAkmCy_1666859758)
+        Thu, 27 Oct 2022 04:36:25 -0400
+Received: from out199-3.us.a.mail.aliyun.com (out199-3.us.a.mail.aliyun.com [47.90.199.3])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54CE097D4C;
+        Thu, 27 Oct 2022 01:36:06 -0700 (PDT)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R121e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=9;SR=0;TI=SMTPD_---0VTAlX3P_1666859759;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VTAlX3P_1666859759)
           by smtp.aliyun-inc.com;
-          Thu, 27 Oct 2022 16:35:59 +0800
+          Thu, 27 Oct 2022 16:36:00 +0800
 From:   Jingbo Xu <jefflexu@linux.alibaba.com>
 To:     dhowells@redhat.com, jlayton@kernel.org, linux-cachefs@redhat.com,
         linux-erofs@lists.ozlabs.org
 Cc:     linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
         linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 8/9] fscache,netfs: move PageFsCache() family helpers to fscache.h
-Date:   Thu, 27 Oct 2022 16:35:46 +0800
-Message-Id: <20221027083547.46933-9-jefflexu@linux.alibaba.com>
+Subject: [PATCH 9/9] fscache,netfs: move "fscache_" prefixed structures to fscache.h
+Date:   Thu, 27 Oct 2022 16:35:47 +0800
+Message-Id: <20221027083547.46933-10-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.19.1.6.gb485710b
 In-Reply-To: <20221027083547.46933-1-jefflexu@linux.alibaba.com>
 References: <20221027083547.46933-1-jefflexu@linux.alibaba.com>
@@ -42,232 +42,268 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Later all structures transformed with "fscache_" prefix will be moved to
-fscache.h from netfs.h, and then netfs.h will include fscache.h rather
-than the other way around.  If that's the case, the PageFsCache() family
-helpers also needs to be moved to fscache.h, since end_page_fscache() is
-referenced inside fscache.
+Since all related structures has been transformed with "fscache_"
+prefix, move all these structures to fscache.h as a final cleanup.
 
-Besides, it's also quite reasonable to move these helpers to fscache.h
-given their names.
+Besides, make netfs.h include fscache.h rather than the other way
+around.  This is an intuitive change since libnetfs lives one layer
+above fscache, accessing backing files with facache.
 
 This is a cleanup without logic change.
 
 Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 ---
- include/linux/fscache.h | 90 +++++++++++++++++++++++++++++++++++++++++
- include/linux/netfs.h   | 89 ----------------------------------------
- 2 files changed, 90 insertions(+), 89 deletions(-)
+ fs/afs/internal.h       |  2 +-
+ fs/erofs/fscache.c      |  1 +
+ fs/nfs/fscache.h        |  2 +-
+ include/linux/fscache.h | 80 ++++++++++++++++++++++++++++++++++++++++-
+ include/linux/netfs.h   | 80 +----------------------------------------
+ 5 files changed, 83 insertions(+), 82 deletions(-)
 
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 723d162078a3..5d1314265e3d 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -14,7 +14,7 @@
+ #include <linux/key.h>
+ #include <linux/workqueue.h>
+ #include <linux/sched.h>
+-#include <linux/fscache.h>
++#include <linux/netfs.h>
+ #include <linux/backing-dev.h>
+ #include <linux/uuid.h>
+ #include <linux/mm_types.h>
+diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+index e30a42a35ae7..69531be66b28 100644
+--- a/fs/erofs/fscache.c
++++ b/fs/erofs/fscache.c
+@@ -4,6 +4,7 @@
+  * Copyright (C) 2022, Bytedance Inc. All rights reserved.
+  */
+ #include <linux/fscache.h>
++#include <linux/netfs.h>
+ #include "internal.h"
+ 
+ static DEFINE_MUTEX(erofs_domain_list_lock);
+diff --git a/fs/nfs/fscache.h b/fs/nfs/fscache.h
+index 2a37af880978..a0715f83a529 100644
+--- a/fs/nfs/fscache.h
++++ b/fs/nfs/fscache.h
+@@ -12,7 +12,7 @@
+ #include <linux/nfs_fs.h>
+ #include <linux/nfs_mount.h>
+ #include <linux/nfs4_mount.h>
+-#include <linux/fscache.h>
++#include <linux/netfs.h>
+ #include <linux/iversion.h>
+ 
+ #ifdef CONFIG_NFS_FSCACHE
 diff --git a/include/linux/fscache.h b/include/linux/fscache.h
-index 9df2988be804..034d009c0de7 100644
+index 034d009c0de7..457226a396d2 100644
 --- a/include/linux/fscache.h
 +++ b/include/linux/fscache.h
-@@ -17,6 +17,7 @@
+@@ -15,7 +15,6 @@
+ #define _LINUX_FSCACHE_H
+ 
  #include <linux/fs.h>
- #include <linux/netfs.h>
+-#include <linux/netfs.h>
  #include <linux/writeback.h>
-+#include <linux/pagemap.h>
+ #include <linux/pagemap.h>
  
- #if defined(CONFIG_FSCACHE) || defined(CONFIG_FSCACHE_MODULE)
- #define __fscache_available (1)
-@@ -695,4 +696,93 @@ void fscache_note_page_release(struct fscache_cookie *cookie)
- 		clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
- }
+@@ -151,6 +150,85 @@ struct fscache_cookie {
+ #define FSCACHE_REQ_COPY_TO_CACHE	0	/* Set if should copy the data to the cache */
+ #define FSCACHE_REQ_ONDEMAND		1	/* Set if it's from on-demand read mode */
  
++enum fscache_io_source {
++	FSCACHE_FILL_WITH_ZEROES,
++	FSCACHE_DOWNLOAD_FROM_SERVER,
++	FSCACHE_READ_FROM_CACHE,
++	FSCACHE_INVALID_READ,
++} __mode(byte);
++
++typedef void (*fscache_io_terminated_t)(void *priv, ssize_t transferred_or_error,
++				      bool was_async);
++
 +/*
-+ * Overload PG_private_2 to give us PG_fscache - this is used to indicate that
-+ * a page is currently backed by a local disk cache
++ * Resources required to do operations on a cache.
 + */
-+#define folio_test_fscache(folio)	folio_test_private_2(folio)
-+#define PageFsCache(page)		PagePrivate2((page))
-+#define SetPageFsCache(page)		SetPagePrivate2((page))
-+#define ClearPageFsCache(page)		ClearPagePrivate2((page))
-+#define TestSetPageFsCache(page)	TestSetPagePrivate2((page))
-+#define TestClearPageFsCache(page)	TestClearPagePrivate2((page))
++struct fscache_resources {
++	const struct fscache_ops	*ops;
++	void				*cache_priv;
++	void				*cache_priv2;
++	unsigned int			debug_id;	/* Cookie debug ID */
++	unsigned int			inval_counter;	/* object->inval_counter at begin_op */
++};
 +
-+/**
-+ * folio_start_fscache - Start an fscache write on a folio.
-+ * @folio: The folio.
-+ *
-+ * Call this function before writing a folio to a local cache.  Starting a
-+ * second write before the first one finishes is not allowed.
++/*
++ * How to handle reading from a hole.
 + */
-+static inline void folio_start_fscache(struct folio *folio)
-+{
-+	VM_BUG_ON_FOLIO(folio_test_private_2(folio), folio);
-+	folio_get(folio);
-+	folio_set_private_2(folio);
-+}
++enum fscache_read_from_hole {
++	FSCACHE_READ_HOLE_IGNORE,
++	FSCACHE_READ_HOLE_CLEAR,
++	FSCACHE_READ_HOLE_FAIL,
++};
 +
-+/**
-+ * folio_end_fscache - End an fscache write on a folio.
-+ * @folio: The folio.
-+ *
-+ * Call this function after the folio has been written to the local cache.
-+ * This will wake any sleepers waiting on this folio.
++/*
++ * Table of operations for access to a cache.  This is obtained by
++ * rreq->ops->begin_cache_operation().
 + */
-+static inline void folio_end_fscache(struct folio *folio)
-+{
-+	folio_end_private_2(folio);
-+}
++struct fscache_ops {
++	/* End an operation */
++	void (*end_operation)(struct fscache_resources *cres);
 +
-+/**
-+ * folio_wait_fscache - Wait for an fscache write on this folio to end.
-+ * @folio: The folio.
-+ *
-+ * If this folio is currently being written to a local cache, wait for
-+ * the write to finish.  Another write may start after this one finishes,
-+ * unless the caller holds the folio lock.
-+ */
-+static inline void folio_wait_fscache(struct folio *folio)
-+{
-+	folio_wait_private_2(folio);
-+}
++	/* Read data from the cache */
++	int (*read)(struct fscache_resources *cres,
++		    loff_t start_pos,
++		    struct iov_iter *iter,
++		    enum fscache_read_from_hole read_hole,
++		    fscache_io_terminated_t term_func,
++		    void *term_func_priv);
 +
-+/**
-+ * folio_wait_fscache_killable - Wait for an fscache write on this folio to end.
-+ * @folio: The folio.
-+ *
-+ * If this folio is currently being written to a local cache, wait
-+ * for the write to finish or for a fatal signal to be received.
-+ * Another write may start after this one finishes, unless the caller
-+ * holds the folio lock.
-+ *
-+ * Return:
-+ * - 0 if successful.
-+ * - -EINTR if a fatal signal was encountered.
-+ */
-+static inline int folio_wait_fscache_killable(struct folio *folio)
-+{
-+	return folio_wait_private_2_killable(folio);
-+}
++	/* Write data to the cache */
++	int (*write)(struct fscache_resources *cres,
++		     loff_t start_pos,
++		     struct iov_iter *iter,
++		     fscache_io_terminated_t term_func,
++		     void *term_func_priv);
 +
-+static inline void set_page_fscache(struct page *page)
-+{
-+	folio_start_fscache(page_folio(page));
-+}
++	/* Expand readahead request */
++	void (*expand_readahead)(struct fscache_resources *cres,
++				 loff_t *_start, size_t *_len, loff_t i_size);
 +
-+static inline void end_page_fscache(struct page *page)
-+{
-+	folio_end_private_2(page_folio(page));
-+}
++	/* Prepare a read operation, shortening it to a cached/uncached
++	 * boundary as appropriate.
++	 */
++	enum fscache_io_source (*prepare_read)(struct fscache_resources *cres,
++					     loff_t *_start, size_t *_len,
++					     unsigned long *_flags, loff_t i_size);
 +
-+static inline void wait_on_page_fscache(struct page *page)
-+{
-+	folio_wait_private_2(page_folio(page));
-+}
++	/* Prepare a write operation, working out what part of the write we can
++	 * actually do.
++	 */
++	int (*prepare_write)(struct fscache_resources *cres,
++			     loff_t *_start, size_t *_len, loff_t i_size,
++			     bool no_space_allocated_yet);
 +
-+static inline int wait_on_page_fscache_killable(struct page *page)
-+{
-+	return folio_wait_private_2_killable(page_folio(page));
-+}
++	/* Query the occupancy of the cache in a region, returning where the
++	 * next chunk of data starts and how long it is.
++	 */
++	int (*query_occupancy)(struct fscache_resources *cres,
++			       loff_t start, size_t len, size_t granularity,
++			       loff_t *_data_start, size_t *_data_len);
++};
 +
-+
- #endif /* _LINUX_FSCACHE_H */
+ /*
+  * slow-path functions for when there is actually caching available, and the
+  * netfs does actually have a valid token
 diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 146a13e6a9d2..2ad4e1e88106 100644
+index 2ad4e1e88106..1977f953633a 100644
 --- a/include/linux/netfs.h
 +++ b/include/linux/netfs.h
-@@ -16,98 +16,9 @@
+@@ -16,19 +16,10 @@
  
  #include <linux/workqueue.h>
  #include <linux/fs.h>
--#include <linux/pagemap.h>
++#include <linux/fscache.h>
  
  enum netfs_sreq_ref_trace;
  
+-enum fscache_io_source {
+-	FSCACHE_FILL_WITH_ZEROES,
+-	FSCACHE_DOWNLOAD_FROM_SERVER,
+-	FSCACHE_READ_FROM_CACHE,
+-	FSCACHE_INVALID_READ,
+-} __mode(byte);
+-
+-typedef void (*fscache_io_terminated_t)(void *priv, ssize_t transferred_or_error,
+-				      bool was_async);
+-
+ /*
+  * Per-inode context.  This wraps the VFS inode.
+  */
+@@ -41,17 +32,6 @@ struct netfs_inode {
+ 	loff_t			remote_i_size;	/* Size of the remote file */
+ };
+ 
 -/*
-- * Overload PG_private_2 to give us PG_fscache - this is used to indicate that
-- * a page is currently backed by a local disk cache
+- * Resources required to do operations on a cache.
 - */
--#define folio_test_fscache(folio)	folio_test_private_2(folio)
--#define PageFsCache(page)		PagePrivate2((page))
--#define SetPageFsCache(page)		SetPagePrivate2((page))
--#define ClearPageFsCache(page)		ClearPagePrivate2((page))
--#define TestSetPageFsCache(page)	TestSetPagePrivate2((page))
--#define TestClearPageFsCache(page)	TestClearPagePrivate2((page))
+-struct fscache_resources {
+-	const struct fscache_ops	*ops;
+-	void				*cache_priv;
+-	void				*cache_priv2;
+-	unsigned int			debug_id;	/* Cookie debug ID */
+-	unsigned int			inval_counter;	/* object->inval_counter at begin_op */
+-};
 -
--/**
-- * folio_start_fscache - Start an fscache write on a folio.
-- * @folio: The folio.
-- *
-- * Call this function before writing a folio to a local cache.  Starting a
-- * second write before the first one finishes is not allowed.
+ /*
+  * Descriptor for a single component subrequest.
+  */
+@@ -128,64 +108,6 @@ struct netfs_request_ops {
+ 	void (*done)(struct netfs_io_request *rreq);
+ };
+ 
+-/*
+- * How to handle reading from a hole.
 - */
--static inline void folio_start_fscache(struct folio *folio)
--{
--	VM_BUG_ON_FOLIO(folio_test_private_2(folio), folio);
--	folio_get(folio);
--	folio_set_private_2(folio);
--}
+-enum fscache_read_from_hole {
+-	FSCACHE_READ_HOLE_IGNORE,
+-	FSCACHE_READ_HOLE_CLEAR,
+-	FSCACHE_READ_HOLE_FAIL,
+-};
 -
--/**
-- * folio_end_fscache - End an fscache write on a folio.
-- * @folio: The folio.
-- *
-- * Call this function after the folio has been written to the local cache.
-- * This will wake any sleepers waiting on this folio.
+-/*
+- * Table of operations for access to a cache.  This is obtained by
+- * rreq->ops->begin_cache_operation().
 - */
--static inline void folio_end_fscache(struct folio *folio)
--{
--	folio_end_private_2(folio);
--}
+-struct fscache_ops {
+-	/* End an operation */
+-	void (*end_operation)(struct fscache_resources *cres);
 -
--/**
-- * folio_wait_fscache - Wait for an fscache write on this folio to end.
-- * @folio: The folio.
-- *
-- * If this folio is currently being written to a local cache, wait for
-- * the write to finish.  Another write may start after this one finishes,
-- * unless the caller holds the folio lock.
-- */
--static inline void folio_wait_fscache(struct folio *folio)
--{
--	folio_wait_private_2(folio);
--}
+-	/* Read data from the cache */
+-	int (*read)(struct fscache_resources *cres,
+-		    loff_t start_pos,
+-		    struct iov_iter *iter,
+-		    enum fscache_read_from_hole read_hole,
+-		    fscache_io_terminated_t term_func,
+-		    void *term_func_priv);
 -
--/**
-- * folio_wait_fscache_killable - Wait for an fscache write on this folio to end.
-- * @folio: The folio.
-- *
-- * If this folio is currently being written to a local cache, wait
-- * for the write to finish or for a fatal signal to be received.
-- * Another write may start after this one finishes, unless the caller
-- * holds the folio lock.
-- *
-- * Return:
-- * - 0 if successful.
-- * - -EINTR if a fatal signal was encountered.
-- */
--static inline int folio_wait_fscache_killable(struct folio *folio)
--{
--	return folio_wait_private_2_killable(folio);
--}
+-	/* Write data to the cache */
+-	int (*write)(struct fscache_resources *cres,
+-		     loff_t start_pos,
+-		     struct iov_iter *iter,
+-		     fscache_io_terminated_t term_func,
+-		     void *term_func_priv);
 -
--static inline void set_page_fscache(struct page *page)
--{
--	folio_start_fscache(page_folio(page));
--}
+-	/* Expand readahead request */
+-	void (*expand_readahead)(struct fscache_resources *cres,
+-				 loff_t *_start, size_t *_len, loff_t i_size);
 -
--static inline void end_page_fscache(struct page *page)
--{
--	folio_end_private_2(page_folio(page));
--}
+-	/* Prepare a read operation, shortening it to a cached/uncached
+-	 * boundary as appropriate.
+-	 */
+-	enum fscache_io_source (*prepare_read)(struct fscache_resources *cres,
+-					     loff_t *_start, size_t *_len,
+-					     unsigned long *_flags, loff_t i_size);
 -
--static inline void wait_on_page_fscache(struct page *page)
--{
--	folio_wait_private_2(page_folio(page));
--}
+-	/* Prepare a write operation, working out what part of the write we can
+-	 * actually do.
+-	 */
+-	int (*prepare_write)(struct fscache_resources *cres,
+-			     loff_t *_start, size_t *_len, loff_t i_size,
+-			     bool no_space_allocated_yet);
 -
--static inline int wait_on_page_fscache_killable(struct page *page)
--{
--	return folio_wait_private_2_killable(page_folio(page));
--}
+-	/* Query the occupancy of the cache in a region, returning where the
+-	 * next chunk of data starts and how long it is.
+-	 */
+-	int (*query_occupancy)(struct fscache_resources *cres,
+-			       loff_t start, size_t len, size_t granularity,
+-			       loff_t *_data_start, size_t *_data_len);
+-};
 -
- enum fscache_io_source {
- 	FSCACHE_FILL_WITH_ZEROES,
- 	FSCACHE_DOWNLOAD_FROM_SERVER,
+ struct readahead_control;
+ void netfs_readahead(struct readahead_control *);
+ int netfs_read_folio(struct file *, struct folio *);
 -- 
 2.19.1.6.gb485710b
 
