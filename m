@@ -2,83 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3F3AF610928
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 06:06:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id BDF6E610949
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 06:30:46 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229618AbiJ1EGD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Oct 2022 00:06:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47644 "EHLO
+        id S229739AbiJ1Eap (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Oct 2022 00:30:45 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229552AbiJ1EGB (ORCPT
+        with ESMTP id S229648AbiJ1Ean (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Oct 2022 00:06:01 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6CE6868AF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Oct 2022 21:05:58 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id d13-20020a17090a3b0d00b00213519dfe4aso3451410pjc.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 27 Oct 2022 21:05:58 -0700 (PDT)
+        Fri, 28 Oct 2022 00:30:43 -0400
+Received: from mail-pj1-x1035.google.com (mail-pj1-x1035.google.com [IPv6:2607:f8b0:4864:20::1035])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 78340642E1;
+        Thu, 27 Oct 2022 21:30:41 -0700 (PDT)
+Received: by mail-pj1-x1035.google.com with SMTP id l6so3723482pjj.0;
+        Thu, 27 Oct 2022 21:30:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DjNDCmtaDyTi+sX4Pf3JIZExNUHwda3QT7q2egtTo8o=;
-        b=ehFygeg6pvPoUkRY2wnMRQX/o1fRtwAX2R3z3ASXeuUd78DEW1Z0nOfhPXJ7NogC0e
-         E0UbLdWdbkarxIyEEd8gNYTSs6idNgMz4PDO7QZ1IccG63wEFOnKex96rkTUx9Z278JD
-         qr46xCNErRJJXJ6MKtLu6n+gLu067+MrzJph+FoBOz23+WMqdL6X/7TBvxUgaerW23Pa
-         RytfAcL/b5LdIpIUSZnF+HKARwDQSeUcTXpg5ae2oSMKp98nOmyjZiAq0jFTs+njWFaQ
-         TlF9KYDEIny2rsoEnvGq23Kp798C1TIb7AVzzuhXOvDe1n4VrWKSRsafY0gvLDg4YjeN
-         NkPQ==
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k7vxRfNDB5EN1hgmTtbRLJQeEyhUNSYeroKj2HcQQ0M=;
+        b=byLwWjYEbJtFUlpMSNlpvFJGOcSs+peGuwltGOi15ixS7J9B/d/yDJU8qlsuv1C6p5
+         0DFuar3VK4MYl5KgXdhq6MvdsY9I43AbD2X3MoHfExpXKtcSFtTZNGEwJ1srCpdtMvg8
+         OLXxU5nXt0GaKA01WPR4nNz74tQF8DXBVJuR89+E5ERfQOOvlTM/MkQHTDemRJcANZh3
+         6so/OCMDiEby3FUDk3Zdei7JCZu4N6z3q7ty6YE2fLGqfn5ZOBMJqfNRCP1pM6RgVtWN
+         uF52tQqeW2fEe8QWOwJzuwKtWy3xJNcVEve0tALh1AsOmrdylcPIwrntC2/r7Kk7E354
+         D1bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DjNDCmtaDyTi+sX4Pf3JIZExNUHwda3QT7q2egtTo8o=;
-        b=YbAz+VdioSbPa2HXiV3zxxgi7L+2qxWXUj4N3J8Y7osuylOvI//BYHAJkNnkbBtE8p
-         LIY5soBjt7IVqt7Up4GzSjL7Vf7szm6gkdrmWATTqsxeyFyZEamSL/XmWyi+6jYzUvB+
-         NoDEAeRPkwiJT9h9zLNTlBxDY66IevLINB6BgZmyG/AhAmtUQ6JAgCYgE3wo/G1+tnXh
-         VLqJMI9aMBRCI2P6+GeoLjQaPqyxvP4SNZzFtgF1XoOBHJJz4KgYdQjCaJRJfTslhs0Q
-         R+ufugqZTx8nyzqwnL7G0gTtRWrw7BEDgbYYPbUuvczWVOP/VllyerNJVXa1fEoMQydV
-         Z+eg==
-X-Gm-Message-State: ACrzQf2uHgW3DovGjd8gXutWNTkw9T8Xv0KxvTb5ARS40M/vRtU/dOZv
-        D2+AFHl5vulJDgqSyyZuQiB39g==
-X-Google-Smtp-Source: AMsMyM5FMep431PxudoLZ+qRT7bNktV8krQz5EsyQfpx+NFq0RdtPmkCAgZVxbZob/qWSUVYMWQcfA==
-X-Received: by 2002:a17:902:74c3:b0:182:57fa:b9c4 with SMTP id f3-20020a17090274c300b0018257fab9c4mr566074plt.104.1666929958311;
-        Thu, 27 Oct 2022 21:05:58 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
-        by smtp.gmail.com with ESMTPSA id a4-20020a1709027e4400b001801aec1f6bsm1945602pln.141.2022.10.27.21.05.57
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k7vxRfNDB5EN1hgmTtbRLJQeEyhUNSYeroKj2HcQQ0M=;
+        b=2qfHyUVNPeU8BphnpqYtzGl9351yxetlb/eVRIAeIiH8+OxOO0oid/vASiVxuYMHeG
+         98NDcOfo0AqfSTAn8Ef6mZCZLHss+SaYWCIMH+/IRxfA1Fo/cHqR7K/SCnRk0ux4eMen
+         meEGNJUeXi0YiQSf2D583HO961p2MdjKd/8yW+v0ZfPC+MI2DYsUR+fE344Y6V1tQvk/
+         9Ba8xZFpwDHZEJBA+P+7owtDUENJPA7X6K2Yl71XKVZXAXRe1ZIhe8KpbooVdD4zNSJ9
+         5QrxUMDdJpCLdqypQEaapgrVct6sbKPOoDHjIJFn+QAE8u3rQHRKBWVCw+l8sDMp8sxq
+         tL5w==
+X-Gm-Message-State: ACrzQf3D1S1mNki/kT79O9ut7W4LNGYUwPbW+UT3ylyT3EFQqO8GycIw
+        Zuw0MJNPTRHTC88z4zm5zMdy5y9YiKU=
+X-Google-Smtp-Source: AMsMyM4X9dEOyJoHvtteDH140dv+UHfPAepfhPYP7Je1KWDao+PFukonhRBD+GgAHCXG9KJhXU2nOg==
+X-Received: by 2002:a17:90b:17c9:b0:213:32a9:465b with SMTP id me9-20020a17090b17c900b0021332a9465bmr13797192pjb.54.1666931440740;
+        Thu, 27 Oct 2022 21:30:40 -0700 (PDT)
+Received: from localhost ([58.84.24.234])
+        by smtp.gmail.com with ESMTPSA id b18-20020a170902d51200b00186748fe6ccsm1972828plg.214.2022.10.27.21.30.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 27 Oct 2022 21:05:57 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ooGd0-007Gjv-PK; Fri, 28 Oct 2022 15:05:54 +1100
-Date:   Fri, 28 Oct 2022 15:05:54 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Zhaoyang Huang <huangzhaoyang@gmail.com>,
-        "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
-        steve.kang@unisoc.com, baocong.liu@unisoc.com,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH] mm: move xa forward when run across zombie page
-Message-ID: <20221028040554.GU2703033@dread.disaster.area>
-References: <Y0lSChlclGPkwTeA@casper.infradead.org>
- <CAGWkznG=_A-3A8JCJEoWXVcx+LUNH=gvXjLpZZs0cRX4dhUJfQ@mail.gmail.com>
- <Y017BeC64GDb3Kg7@casper.infradead.org>
- <CAGWkznEdtGPPZkHrq6Y_+XLL37w12aC8XN8R_Q-vhq48rFhkSA@mail.gmail.com>
- <Y04Y3RNq6D2T9rVw@casper.infradead.org>
- <20221018223042.GJ2703033@dread.disaster.area>
- <Y1AWXiJdyjdLmO1E@casper.infradead.org>
- <20221019220424.GO2703033@dread.disaster.area>
- <Y1HDDu3UV0L3cDwE@casper.infradead.org>
- <Y1lZ9Rm87GpFRM/Q@casper.infradead.org>
+        Thu, 27 Oct 2022 21:30:40 -0700 (PDT)
+From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+Subject: [RFC 0/2] iomap: Add support for subpage dirty state tracking to improve write performance
+Date:   Fri, 28 Oct 2022 10:00:31 +0530
+Message-Id: <cover.1666928993.git.ritesh.list@gmail.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y1lZ9Rm87GpFRM/Q@casper.infradead.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -86,81 +72,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 26, 2022 at 05:01:57PM +0100, Matthew Wilcox wrote:
-> On Thu, Oct 20, 2022 at 10:52:14PM +0100, Matthew Wilcox wrote:
-> > But I think the tests you've done refute that theory.  I'm all out of
-> > ideas at the moment.
-> 
-> I have a new idea.  In page_cache_delete_batch(), we don't set the
-> order of the entry before calling xas_store().  That means we can end
-> up in a situation where we have an order-2 folio in the page cache,
-> delete it and end up with a NULL pointer at (say) index 20 and sibling
-> entries at indices 21-23.  We can come along (potentially much later)
-> and put an order-0 folio back at index 20.  Now all of indices 20-23
-> point to the index-20, order-0 folio.  Worse, the xarray node can be
-> freed with the sibling entries still intact and then be reallocated by
-> an entirely different xarray.
-> 
-> I don't know if this is going to fix the problem you're seeing.  I can't
-> quite draw a line from this situation to your symptoms.  I came across
-> it while auditing all the places which set folio->mapping to NULL.
-> I did notice a mis-ordering; all the other places first remove the folio
-> from the xarray before setting folio to NULL, but I have a hard time
-> connecting that to your symptoms either.
-> 
-> diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-> index 44dd6d6e01bc..cc1fd1f849a7 100644
-> --- a/include/linux/xarray.h
-> +++ b/include/linux/xarray.h
-> @@ -1617,6 +1617,12 @@ static inline void xas_advance(struct xa_state *xas, unsigned long index)
->  	xas->xa_offset = (index >> shift) & XA_CHUNK_MASK;
->  }
->  
-> +static inline void xas_adjust_order(struct xa_state *xas, unsigned int order)
-> +{
-> +	xas->xa_shift = order - (order % XA_CHUNK_SHIFT);
-> +	xas->xa_sibs = (1 << (order % XA_CHUNK_SHIFT)) - 1;
-> +}
-> +
->  /**
->   * xas_set_order() - Set up XArray operation state for a multislot entry.
->   * @xas: XArray operation state.
-> @@ -1628,8 +1634,7 @@ static inline void xas_set_order(struct xa_state *xas, unsigned long index,
->  {
->  #ifdef CONFIG_XARRAY_MULTI
->  	xas->xa_index = order < BITS_PER_LONG ? (index >> order) << order : 0;
-> -	xas->xa_shift = order - (order % XA_CHUNK_SHIFT);
-> -	xas->xa_sibs = (1 << (order % XA_CHUNK_SHIFT)) - 1;
-> +	xas_adjust_order(xas, order);
->  	xas->xa_node = XAS_RESTART;
->  #else
->  	BUG_ON(order > 0);
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 08341616ae7a..6e3f486131e4 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -305,11 +305,13 @@ static void page_cache_delete_batch(struct address_space *mapping,
->  
->  		WARN_ON_ONCE(!folio_test_locked(folio));
->  
-> +		if (!folio_test_hugetlb(folio))
-> +			xas_adjust_order(&xas, folio_order(folio));
-> +		xas_store(&xas, NULL);
->  		folio->mapping = NULL;
->  		/* Leave folio->index set: truncation lookup relies on it */
->  
->  		i++;
-> -		xas_store(&xas, NULL);
->  		total_pages += folio_nr_pages(folio);
->  	}
->  	mapping->nrpages -= total_pages;
+Hello,
 
-Nope, that ain't it. I think I've got the data corruption fix sorted
-now (at least, g/270 isn't assert failing on stray delalloc extents
-anymore), so if that's the case, I can spend some time actively
-trying to track this down....
+Please find the RFC patchset which adds support for iomap subpage dirty state 
+tracking which improves write performance and should reduce the write amplification 
+on platforms with smaller filesystem blocksize compared to pagesize.
+E.g. On Power with 64k default pagesize and with 4k XFS filesystem blocksize.
 
--Dave.
+I have done some minimal fsstress and fstests testing using this patchset 
+and haven't noticed any issues as such. Posting this RFC to get some 
+initial comments/thoughts on the patch. 
+I will run full fstests with XFS if this RFC looks good. 
+
+From review perspective, it will be helpful if one can also review the error 
+handling path. I wasn't sure on whether we need to clear the dirty state bitmap 
+of blocks within a folio or not in iomap_writepage_map(). I don't clear that,
+since AFAIU, the error in that function is due to failed ->map_blocks() function
+which has nothing to do with tracking subpage dirty state of a block within
+folio. But please let me know your thoughts on this or other error handling path.
+
+
+Performance results
+======================
+1. Performance testing of below fio workload reveals ~16x performance
+improvement on nvme with XFS (4k blocksize) on Power (64K pagesize)
+FIO reported write bw scores, improved from ~28 MBps to ~452 MBps.
+
+<test_randwrite.fio>
+[global]
+	ioengine=psync
+	rw=randwrite
+	overwrite=1
+	pre_read=1
+	direct=0
+	bs=4k
+	size=1G
+	dir=./
+	numjobs=8
+	fdatasync=1
+	runtime=60
+	iodepth=64
+	group_reporting=1
+
+[fio-run]
+
+2. Also our internal performance team reported that this patch improves there
+   database workload performance by around ~83% (with XFS on Power)
+
+
+Note: I did come across an older RFC around the same logic to track subpage
+dirty tracking here [1]. But it seems no one pursued it after iomap received
+folio changes update. 
+
+[1]: https://lore.kernel.org/linux-xfs/20200821123306.1658495-1-yukuai3@huawei.com/#t
+
+Ritesh Harjani (IBM) (2):
+  iomap: Change uptodate variable name to state
+  iomap: Support subpage size dirty tracking to improve write performance
+
+ fs/iomap/buffered-io.c | 79 ++++++++++++++++++++++++++++++++++--------
+ 1 file changed, 64 insertions(+), 15 deletions(-)
+
 -- 
-Dave Chinner
-david@fromorbit.com
+2.37.3
+
