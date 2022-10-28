@@ -2,105 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A192E611DA7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Oct 2022 00:48:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id A0BFC611E3E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Oct 2022 01:45:41 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230124AbiJ1Wrx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Oct 2022 18:47:53 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54818 "EHLO
+        id S229907AbiJ1Xpi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Oct 2022 19:45:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48008 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229993AbiJ1Wrt (ORCPT
+        with ESMTP id S229898AbiJ1Xpf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Oct 2022 18:47:49 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CD231E1975;
-        Fri, 28 Oct 2022 15:47:48 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id CD66A62ACA;
-        Fri, 28 Oct 2022 22:47:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 172DFC43140;
-        Fri, 28 Oct 2022 22:47:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1666997267;
-        bh=TLSDtgBK8VwfTvMigEag46MpMj/1E/6Gz70hTRHuF58=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nL7PsiwDTtGmgJRb1Ml4ZRkAUzl+Hn3bfm/T0QY0nf+V+2s6Lx9cwZRmeec8RdnnT
-         zwd9cZifwQnY0jQBYPGOoJHmnWUnRfYM/nr+n56j5/lB3wpWBX+o/1Taw+KkU9c+Ae
-         MFdnQQBtHyumLYjJl/7OltHD/Cmg5KDUk4pvinxrIgG1dTwRVti2uT5mS1wsOH8/co
-         f4is+iamKC+Lg6cGTQYgM52bmWLhNBlJza7rslc/b6yY45Yh8KV8fXTMk4j/+aiYCA
-         uUKGlXNMteCmwTJijTox6n6z8DHJQymzTS6D/zt2pucmwZZ8GgV1NtTy+RamhQoJ2X
-         91SGzr7N3zDHQ==
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-fscrypt@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-btrfs@vger.kernel.org
-Subject: [PATCH 6/6] ext4: allow verity with fs block size < PAGE_SIZE
-Date:   Fri, 28 Oct 2022 15:45:39 -0700
-Message-Id: <20221028224539.171818-7-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.38.0
-In-Reply-To: <20221028224539.171818-1-ebiggers@kernel.org>
-References: <20221028224539.171818-1-ebiggers@kernel.org>
+        Fri, 28 Oct 2022 19:45:35 -0400
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAAA274E0D
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 16:45:33 -0700 (PDT)
+Received: by mail-il1-f200.google.com with SMTP id n12-20020a056e02140c00b003005d5015a3so6153963ilo.21
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 16:45:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=H60CO/7ESD8qYAR25JqKtv1QA/7SsWIOSgVv3mhXfqY=;
+        b=QSrCKKmF4kIIqaPeiYqzQhMeqUIbktppQRm5K+h3Q4BlB4zuGotNw3QX99lguzUR8Z
+         HpMaotZm9X23c7lYEDljnTEl0XuQ0Vtj1nSsEDT4s6Dp229bfB3SYmURb7J0oG+Lib/S
+         fByuvEd/nzKltITuq16SSwQgumvXWC7DdlbnsTKK3GKSuPZzejmnIF5HqIA1xyUzvcxu
+         HuCzXLU2BwxrLbdfrbW2lVes1fUrplrOvAQT/BMUxI1HrPBu88jkTwDx2dKhbGcAjb1V
+         eukQxnXpbujbtxaKSJw6KLGz8D57NysNBhZy+bWhKujqEaFV3ccc3jF6NdJmS0ro1O8R
+         74Rw==
+X-Gm-Message-State: ACrzQf1zDU+Po1D+S2TogOywBYAAZGoIU5oT/b5Wx9NiBZBt7+iH0KE0
+        1GPwAs1aRhTBplvvyZgGH7xzlJA+nJJJFi8y9a56Zzauy6M8
+X-Google-Smtp-Source: AMsMyM4JWcj4ZzNZUcc9Ft4kLvCmNODOGL0M5AXbM8q37wEto5tD876N2CZkKPqPI+DRndw565l6Pg9wlWRJ2vQdCoWA3e9RLLhr
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6638:380f:b0:363:cb7f:4fb8 with SMTP id
+ i15-20020a056638380f00b00363cb7f4fb8mr981737jav.227.1667000733222; Fri, 28
+ Oct 2022 16:45:33 -0700 (PDT)
+Date:   Fri, 28 Oct 2022 16:45:33 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000008b529305ec20dacc@google.com>
+Subject: [syzbot] kernel BUG in dnotify_free_mark
+From:   syzbot <syzbot+06cc05ddc896f12b7ec5@syzkaller.appspotmail.com>
+To:     amir73il@gmail.com, jack@suse.cz, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+Hello,
 
-Now that the needed changes have been made to fs/buffer.c, ext4 is ready
-to support the verity feature when the filesystem block size is less
-than the page size.  So remove the mount-time check that prevented this.
+syzbot found the following issue on:
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+HEAD commit:    247f34f7b803 Linux 6.1-rc2
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=157f594a880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1d3548a4365ba17d
+dashboard link: https://syzkaller.appspot.com/bug?extid=06cc05ddc896f12b7ec5
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15585936880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14ec85ba880000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a5f39164dea4/disk-247f34f7.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8d1b92f5a01f/vmlinux-247f34f7.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/1a4d2943796c/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+06cc05ddc896f12b7ec5@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+kernel BUG at fs/notify/dnotify/dnotify.c:136!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 56 Comm: kworker/u4:4 Not tainted 6.1.0-rc2-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/11/2022
+Workqueue: events_unbound fsnotify_mark_destroy_workfn
+RIP: 0010:dnotify_free_mark+0x53/0x60 fs/notify/dnotify/dnotify.c:136
+Code: 48 89 df e8 ff b3 dd ff 48 83 3b 00 75 17 e8 e4 bc 89 ff 48 8b 3d 4d ce 0f 0c 4c 89 f6 5b 41 5e e9 a2 de dc ff e8 cd bc 89 ff <0f> 0b cc cc cc cc cc cc cc cc cc cc cc 55 41 57 41 56 41 55 41 54
+RSP: 0018:ffffc90001577b68 EFLAGS: 00010293
+RAX: ffffffff81fe1253 RBX: ffff888075d2b080 RCX: ffff888018d40000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888075d2b000
+RBP: ffffc90001577c30 R08: dffffc0000000000 R09: fffffbfff2325fe4
+R10: fffffbfff2325fe4 R11: 1ffffffff2325fe3 R12: ffff888145e77800
+R13: ffffc90001577bc0 R14: ffff888075d2b000 R15: ffff888075d2b000
+FS:  0000000000000000(0000) GS:ffff8880b9a00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f127cdcaa38 CR3: 000000001dd46000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ fsnotify_final_mark_destroy fs/notify/mark.c:278 [inline]
+ fsnotify_mark_destroy_workfn+0x2cc/0x340 fs/notify/mark.c:902
+ process_one_work+0x877/0xdb0 kernel/workqueue.c:2289
+ worker_thread+0xb14/0x1330 kernel/workqueue.c:2436
+ kthread+0x266/0x300 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:dnotify_free_mark+0x53/0x60 fs/notify/dnotify/dnotify.c:136
+Code: 48 89 df e8 ff b3 dd ff 48 83 3b 00 75 17 e8 e4 bc 89 ff 48 8b 3d 4d ce 0f 0c 4c 89 f6 5b 41 5e e9 a2 de dc ff e8 cd bc 89 ff <0f> 0b cc cc cc cc cc cc cc cc cc cc cc 55 41 57 41 56 41 55 41 54
+RSP: 0018:ffffc90001577b68 EFLAGS: 00010293
+RAX: ffffffff81fe1253 RBX: ffff888075d2b080 RCX: ffff888018d40000
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffff888075d2b000
+RBP: ffffc90001577c30 R08: dffffc0000000000 R09
+
+
 ---
- Documentation/filesystems/fsverity.rst | 8 +++++---
- fs/ext4/super.c                        | 5 -----
- 2 files changed, 5 insertions(+), 8 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/filesystems/fsverity.rst b/Documentation/filesystems/fsverity.rst
-index 4c202e0dee102..46c344eb41635 100644
---- a/Documentation/filesystems/fsverity.rst
-+++ b/Documentation/filesystems/fsverity.rst
-@@ -497,9 +497,11 @@ To create verity files on an ext4 filesystem, the filesystem must have
- been formatted with ``-O verity`` or had ``tune2fs -O verity`` run on
- it.  "verity" is an RO_COMPAT filesystem feature, so once set, old
- kernels will only be able to mount the filesystem readonly, and old
--versions of e2fsck will be unable to check the filesystem.  Moreover,
--currently ext4 only supports mounting a filesystem with the "verity"
--feature when its block size is equal to PAGE_SIZE (often 4096 bytes).
-+versions of e2fsck will be unable to check the filesystem.
-+
-+Originally, an ext4 filesystem with the "verity" feature could only be
-+mounted when its block size was equal to the system page size
-+(typically 4096 bytes).  In Linux v6.2, this limitation was removed.
- 
- ext4 sets the EXT4_VERITY_FL on-disk inode flag on verity files.  It
- can only be set by `FS_IOC_ENABLE_VERITY`_, and it cannot be cleared.
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 989365b878a67..3e6037a744585 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -5339,11 +5339,6 @@ static int __ext4_fill_super(struct fs_context *fc, struct super_block *sb)
- 		}
- 	}
- 
--	if (ext4_has_feature_verity(sb) && sb->s_blocksize != PAGE_SIZE) {
--		ext4_msg(sb, KERN_ERR, "Unsupported blocksize for fs-verity");
--		goto failed_mount_wq;
--	}
--
- 	/*
- 	 * Get the # of file system overhead blocks from the
- 	 * superblock if present.
--- 
-2.38.0
-
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
