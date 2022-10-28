@@ -2,95 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5E481611835
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 18:53:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 9FB846118A4
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 19:02:53 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230111AbiJ1Qx0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Oct 2022 12:53:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54332 "EHLO
+        id S231126AbiJ1RCt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Oct 2022 13:02:49 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42344 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229696AbiJ1QxX (ORCPT
+        with ESMTP id S230487AbiJ1RCT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Oct 2022 12:53:23 -0400
-Received: from mail-qk1-x735.google.com (mail-qk1-x735.google.com [IPv6:2607:f8b0:4864:20::735])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A05E1989BE
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 09:53:22 -0700 (PDT)
-Received: by mail-qk1-x735.google.com with SMTP id i9so1021807qki.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 09:53:22 -0700 (PDT)
+        Fri, 28 Oct 2022 13:02:19 -0400
+Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5A83E107CDD;
+        Fri, 28 Oct 2022 10:00:43 -0700 (PDT)
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 8FA89218D;
+        Fri, 28 Oct 2022 16:58:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pS2bJeXXT06AFFeuqTEmblG396E9ENt2zIPLMqMrcVc=;
-        b=WTUQKY9BYXSR5sxjZPQsTMF4y1c0ZYOJzqUdsGaqYe+p/B6Nt7IoyzxULeM/759P1o
-         UZXutu2q/e0zcjNH1gOm8AXgE6AATzgXfntHGezYDEn8UhP90n7Qb0p7ll+ZutI+8KTz
-         +Z3deCUTm+jK5myD3ZMteKw2KDAVusImHYaJY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pS2bJeXXT06AFFeuqTEmblG396E9ENt2zIPLMqMrcVc=;
-        b=o9n7IQoReTWYLnPPqfUkv1TeVtj3aLfTgbVpNkZuTMQtDLIEn7JatkSO0XuJCvJA0C
-         +UcCOwITcRuQhrZoenKgOPs6czkm+SNXzkCWlqVdg0VfizBbwfNb4f+Hp+v4iwT0ui2O
-         DfcBcnz15R08vtkT3OpsuNGGlwkR5Ev7bZCfV2ubtHpkrE7+wxW6PvMRUFSZ7A94A2+c
-         wKRucnbJkP/UjvrCMjFj5IdoyV0F/p8q5sQThF3TaxDXAogzFazGY5dKecAbqwlRUdr1
-         QDSbSoA69ogXrxklWUYQP555VEbTZfU0mxPZyD1/k5Er8rTFxDW69xCAX9e2TPV4qpyd
-         8ySg==
-X-Gm-Message-State: ACrzQf1E/IMhUO39Pxm6MANRwtZsg85EQcmGtPgdVAibWsJysnWLtw3o
-        ta9ClwqeIPfmo3Ie/t1OjWgoAe9pKvjo7Q==
-X-Google-Smtp-Source: AMsMyM7G3MN+lHTwI3EDeNUf+vS3qATT321iyz70hkaVBkYL1wsxcTeVIKNwJCdqCS/M9z6Nc08GcQ==
-X-Received: by 2002:a37:3d5:0:b0:6fa:da4:bb32 with SMTP id 204-20020a3703d5000000b006fa0da4bb32mr131181qkd.636.1666976001050;
-        Fri, 28 Oct 2022 09:53:21 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id r12-20020ae9d60c000000b006f9f3c0c63csm3057784qkk.32.2022.10.28.09.53.19
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Oct 2022 09:53:19 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id o70so6769585yba.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 09:53:19 -0700 (PDT)
-X-Received: by 2002:a05:6902:1352:b0:6bb:3f4b:9666 with SMTP id
- g18-20020a056902135200b006bb3f4b9666mr143622ybu.101.1666975999213; Fri, 28
- Oct 2022 09:53:19 -0700 (PDT)
+        d=paragon-software.com; s=mail; t=1666976282;
+        bh=dcXBJqP5J7y8af2ml7/6zVJ1mbSL2vR83MREQmr2Fo4=;
+        h=Date:To:CC:From:Subject;
+        b=Nkry+1za2eS5K3TDmAS6oj14shR/MZNT0XF8u9zF9m+DtGjARsYFN5hdgZmN6RNzL
+         IkuAxuMtQoN0bUc1lFBNYjnjFMazCyIRFn+JJCsgQMvHoNms7HaqAi9eHIgch4nLZh
+         cfXNtkzFrIuOlD6sYJH1guqwuZvzuQNemLXYcph0=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 83EC8DD;
+        Fri, 28 Oct 2022 17:00:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1666976441;
+        bh=dcXBJqP5J7y8af2ml7/6zVJ1mbSL2vR83MREQmr2Fo4=;
+        h=Date:To:CC:From:Subject;
+        b=a61ub4n7+duuS061L8SfOxG51d4ioIvVEfzk+81yhrb/CoCPxL5jTTrfRC+OU83DG
+         ZnY8l7awLkOapAt8/HBFZBSSxQZQFc6VIvIamZ2dNDU66sVzOl0iCYKqv1WFle38Eb
+         0iY4HTCnQZ8DGe0u6YBGzskl2dfR1R869CQOMzqU=
+Received: from [172.30.8.65] (172.30.8.65) by
+ vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.7; Fri, 28 Oct 2022 20:00:41 +0300
+Message-ID: <fc5957cc-a71b-cfa3-f291-cb63b23800d1@paragon-software.com>
+Date:   Fri, 28 Oct 2022 20:00:40 +0300
 MIME-Version: 1.0
-References: <Y1oPDy2mpOd91+Ii@sol.localdomain> <CAHk-=wjDQiJn6YUJ18Nb=L82qsgx3LBLtQu0xANeVoc6OAzFtQ@mail.gmail.com>
- <Y1tI1ek80kCrsi2R@sol.localdomain>
-In-Reply-To: <Y1tI1ek80kCrsi2R@sol.localdomain>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 28 Oct 2022 09:53:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgud4Bc_um+htgfagYpZAnOoCb3NUoW67hc9LhOKsMtJg@mail.gmail.com>
-Message-ID: <CAHk-=wgud4Bc_um+htgfagYpZAnOoCb3NUoW67hc9LhOKsMtJg@mail.gmail.com>
-Subject: Re: [GIT PULL] fscrypt fix for 6.1-rc3
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.11.0
+Content-Language: en-US
+To:     <ntfs3@lists.linux.dev>
+CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
+From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
+Subject: [PATCH 00/14] fs/ntfs3: Additional bugfix and refactoring
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [172.30.8.65]
+X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
+ vdlg-exch-02.paragon-software.com (172.30.1.105)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Oct 27, 2022 at 8:13 PM Eric Biggers <ebiggers@kernel.org> wrote:
->
-> Thanks Linus.  That makes sense in general, but in this case ->s_master_keys
-> gets used in the middle of the function, in fscrypt_put_master_key_activeref().
+Second part of various fixes and refactoring for ntfs3.
 
-Ouch. I tried to look for things like that, but it's clearly indirect
-through 'mk' so I missed it.
+Konstantin Komarov (14):
+   fs/ntfs3: Fixing work with sparse clusters
+   fs/ntfs3: Change new sparse cluster processing
+   fs/ntfs3: Fix wrong indentations
+   fs/ntfs3: atomic_open implementation
+   fs/ntfs3: Fixing wrong logic in attr_set_size and ntfs_fallocate
+   fs/ntfs3: Changing locking in ntfs_rename
+   fs/ntfs3: Restore correct state after ENOSPC in attr_data_get_block
+   fs/ntfs3: Correct ntfs_check_for_free_space
+   fs/ntfs3: Check fields while reading
+   fs/ntfs3: Fix incorrect if in ntfs_set_acl_ex
+   fs/ntfs3: Use ALIGN kernel macro
+   fs/ntfs3: Fix wrong if in hdr_first_de
+   fs/ntfs3: Improve checking of bad clusters
+   fs/ntfs3: Make if more readable
 
-All the callers except for put_crypt_info() do seem to have the 'sb'
-pointer, and I _think_ sb is inode->i_sb in that case. And this seems
-to *literally* be the only use of 'mk->mk_sb' in the whole data
-structure, so I think it's all wrong, and that field just shouldn't
-exist at all, but be passed into the (only) user as an argument.
+  fs/ntfs3/attrib.c  | 338 +++++++++++++++++++++++++++++----------------
+  fs/ntfs3/bitmap.c  |  38 +++++
+  fs/ntfs3/file.c    | 203 ++++++++-------------------
+  fs/ntfs3/frecord.c |   2 +-
+  fs/ntfs3/fslog.c   |   3 +-
+  fs/ntfs3/fsntfs.c  |  35 ++++-
+  fs/ntfs3/index.c   | 105 ++++++++++++--
+  fs/ntfs3/inode.c   |  86 +++++++-----
+  fs/ntfs3/namei.c   | 104 ++++++++++++++
+  fs/ntfs3/ntfs.h    |   6 +-
+  fs/ntfs3/ntfs_fs.h |  22 ++-
+  fs/ntfs3/record.c  |   5 +-
+  fs/ntfs3/run.c     |  28 +---
+  fs/ntfs3/super.c   |  64 +++++----
+  fs/ntfs3/xattr.c   | 116 ++++++++++------
+  15 files changed, 737 insertions(+), 418 deletions(-)
 
-Oh well. Whatever. I think the code is ugly, but it is what it is. It
-may not be worth the churn of fixing.
+-- 
+2.37.0
 
-              Linus
