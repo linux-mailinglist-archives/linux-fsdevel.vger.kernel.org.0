@@ -2,39 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A7466118BA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 19:04:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C06C26118CD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 19:05:17 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231192AbiJ1REh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Oct 2022 13:04:37 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43340 "EHLO
+        id S231269AbiJ1RFO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Oct 2022 13:05:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231267AbiJ1REK (ORCPT
+        with ESMTP id S230370AbiJ1REU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Oct 2022 13:04:10 -0400
+        Fri, 28 Oct 2022 13:04:20 -0400
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7857D7CE0B;
-        Fri, 28 Oct 2022 10:03:26 -0700 (PDT)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 97669218D;
-        Fri, 28 Oct 2022 17:00:45 +0000 (UTC)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D32D22D5F0;
+        Fri, 28 Oct 2022 10:03:56 -0700 (PDT)
+Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 9BA2D218D;
+        Fri, 28 Oct 2022 17:01:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1666976445;
-        bh=Ls7WiocB2yL0aysOFrJdtUMz+tZ1iGtxcZz+VnGx4UU=;
+        d=paragon-software.com; s=mail; t=1666976475;
+        bh=7CPKDDVsSnfhQv2FIDQRZDeSJd/QzjNRDoHBpF6DsHc=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=B13mD9jDlaE4YIXPyBWy6kl77Zf4g00kUZ4cnlFynxV+alTW8AbZ/JCvCtJPMneXF
-         ZkGqYMfMl5qb5IH0SmpULWJt0qAMmPCOVcb9vQBU97xgPBVoOeFCZG0ZnLsKwLEKrV
-         Ti014Xqg8xc34npJBlD3g078+1h9vqR37ErU7bA4=
+        b=NHENqJ9QiBWV1u1KbsanQe8xs5FBr8mTnQhxFnENOfFJMFR3mLFu9crLcdCHSBHuH
+         0dywRoB4lG8wZlfLFs4ad8ZiC/6j/Iki0Wc2aLbofhBI9fAqPCGPJ0bImQcqUwWEXh
+         5UMefF0H9LrLoAieK/OQjaYQcF89i8H5rXFc1zXk=
+Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
+        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 97A68DD;
+        Fri, 28 Oct 2022 17:03:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paragon-software.com; s=mail; t=1666976634;
+        bh=7CPKDDVsSnfhQv2FIDQRZDeSJd/QzjNRDoHBpF6DsHc=;
+        h=Date:Subject:From:To:CC:References:In-Reply-To;
+        b=ZtwaZy3jXCrm0t26DkS0rm4OCn2jQRYOZ/50MvH6FSnC1I05902RZAwzuTt22iS0n
+         y2927ENmvKF44rdhcUtPpMdoEm0l7B00MjKSwopN/CT9Un/uAScaNI+MdkIrYDB+sS
+         0NIVY9BTIykVJvLMpF8PQuPP8AJZHYCZKsxnOifE=
 Received: from [172.30.8.65] (172.30.8.65) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 28 Oct 2022 20:03:24 +0300
-Message-ID: <bf00061d-0b78-ddd7-9bf4-8c8e7c3a45f3@paragon-software.com>
-Date:   Fri, 28 Oct 2022 20:03:24 +0300
+ 15.1.2375.7; Fri, 28 Oct 2022 20:03:54 +0300
+Message-ID: <5f006fed-743e-336a-ea14-699c376215e7@paragon-software.com>
+Date:   Fri, 28 Oct 2022 20:03:53 +0300
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
  Thunderbird/91.11.0
-Subject: [PATCH 04/14] fs/ntfs3: atomic_open implementation
+Subject: [PATCH 05/14] fs/ntfs3: Fixing wrong logic in attr_set_size and
+ ntfs_fallocate
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -55,203 +66,265 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Added ntfs_atomic_open function.
-Relaxed locking in ntfs_create_inode.
+There were 2 problems:
+- in some cases we lost dirty flag;
+- cluster allocation can be called even when it wasn't needed.
+Fixes xfstest generic/465
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
-  fs/ntfs3/inode.c |  24 ++++++++++--
-  fs/ntfs3/namei.c | 100 +++++++++++++++++++++++++++++++++++++++++++++++
-  2 files changed, 120 insertions(+), 4 deletions(-)
+  fs/ntfs3/attrib.c | 25 +++++++++++--------------
+  fs/ntfs3/file.c   | 30 ++++++++++++++++++------------
+  fs/ntfs3/index.c  |  9 +++++++++
+  fs/ntfs3/inode.c  | 17 +++++------------
+  4 files changed, 43 insertions(+), 38 deletions(-)
 
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index df0d30a3218a..405afb54cc19 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -1183,6 +1183,18 @@ ntfs_create_reparse_buffer(struct ntfs_sb_info *sbi, const char *symname,
-  	return ERR_PTR(err);
-  }
+diff --git a/fs/ntfs3/attrib.c b/fs/ntfs3/attrib.c
+index eda83a37a0c3..91ea73e6f4fe 100644
+--- a/fs/ntfs3/attrib.c
++++ b/fs/ntfs3/attrib.c
+@@ -414,6 +414,7 @@ int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
+  	CLST alen, vcn, lcn, new_alen, old_alen, svcn, evcn;
+  	CLST next_svcn, pre_alloc = -1, done = 0;
+  	bool is_ext, is_bad = false;
++	bool dirty = false;
+  	u32 align;
+  	struct MFT_REC *rec;
   
-+/*
-+ * ntfs_create_inode
-+ *
-+ * Helper function for:
-+ * - ntfs_create
-+ * - ntfs_mknod
-+ * - ntfs_symlink
-+ * - ntfs_mkdir
-+ * - ntfs_atomic_open
-+ *
-+ * NOTE: if fnd != NULL (ntfs_atomic_open) then @dir is locked
-+ */
-  struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
-  				struct inode *dir, struct dentry *dentry,
-  				const struct cpu_str *uni, umode_t mode,
-@@ -1212,7 +1224,8 @@ struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
-  	struct REPARSE_DATA_BUFFER *rp = NULL;
-  	bool rp_inserted = false;
+@@ -434,8 +435,10 @@ int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
+  			return err;
   
--	ni_lock_dir(dir_ni);
-+	if (!fnd)
-+		ni_lock_dir(dir_ni);
+  		/* Return if file is still resident. */
+-		if (!attr_b->non_res)
++		if (!attr_b->non_res) {
++			dirty = true;
+  			goto ok1;
++		}
   
-  	dir_root = indx_get_root(&dir_ni->dir, dir_ni, NULL, NULL);
-  	if (!dir_root) {
-@@ -1575,7 +1588,8 @@ struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
-  		goto out6;
+  		/* Layout of records may be changed, so do a full search. */
+  		goto again;
+@@ -458,7 +461,7 @@ int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
   
-  	/* Unlock parent directory before ntfs_init_acl. */
--	ni_unlock(dir_ni);
-+	if (!fnd)
-+		ni_unlock(dir_ni);
-  
-  	inode->i_generation = le16_to_cpu(rec->seq);
-  
-@@ -1635,7 +1649,8 @@ struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
-  out7:
-  
-  	/* Undo 'indx_insert_entry'. */
--	ni_lock_dir(dir_ni);
-+	if (!fnd)
-+		ni_lock_dir(dir_ni);
-  	indx_delete_entry(&dir_ni->dir, dir_ni, new_de + 1,
-  			  le16_to_cpu(new_de->key_size), sbi);
-  	/* ni_unlock(dir_ni); will be called later. */
-@@ -1663,7 +1678,8 @@ struct inode *ntfs_create_inode(struct user_namespace *mnt_userns,
-  
-  out1:
-  	if (err) {
--		ni_unlock(dir_ni);
-+		if (!fnd)
-+			ni_unlock(dir_ni);
-  		return ERR_PTR(err);
+  	if (keep_prealloc && new_size < old_size) {
+  		attr_b->nres.data_size = cpu_to_le64(new_size);
+-		mi_b->dirty = true;
++		mi_b->dirty = dirty = true;
+  		goto ok;
   	}
   
-diff --git a/fs/ntfs3/namei.c b/fs/ntfs3/namei.c
-index ff76389475ad..1af02d4f6b4d 100644
---- a/fs/ntfs3/namei.c
-+++ b/fs/ntfs3/namei.c
-@@ -8,6 +8,7 @@
-  #include <linux/fs.h>
-  #include <linux/nls.h>
-  #include <linux/ctype.h>
-+#include <linux/posix_acl.h>
+@@ -504,7 +507,7 @@ int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
   
-  #include "debug.h"
-  #include "ntfs.h"
-@@ -334,6 +335,104 @@ static int ntfs_rename(struct user_namespace *mnt_userns, struct inode *dir,
-  	return err;
-  }
+  		if (new_alloc <= old_alloc) {
+  			attr_b->nres.data_size = cpu_to_le64(new_size);
+-			mi_b->dirty = true;
++			mi_b->dirty = dirty = true;
+  			goto ok;
+  		}
   
-+/*
-+ * ntfs_atomic_open
-+ *
-+ * inode_operations::atomic_open
-+ */
-+static int ntfs_atomic_open(struct inode *dir, struct dentry *dentry,
-+			    struct file *file, u32 flags, umode_t mode)
-+{
-+	int err;
-+	struct inode *inode;
-+	struct ntfs_fnd *fnd = NULL;
-+	struct ntfs_inode *ni = ntfs_i(dir);
-+	struct dentry *d = NULL;
-+	struct cpu_str *uni = __getname();
-+	bool locked = false;
-+
-+	if (!uni)
-+		return -ENOMEM;
-+
-+	err = ntfs_nls_to_utf16(ni->mi.sbi, dentry->d_name.name,
-+				dentry->d_name.len, uni, NTFS_NAME_LEN,
-+				UTF16_HOST_ENDIAN);
-+	if (err < 0)
-+		goto out;
-+
-+#ifdef CONFIG_NTFS3_FS_POSIX_ACL
-+	if (IS_POSIXACL(dir)) {
-+		/*
-+		 * Load in cache current acl to avoid ni_lock(dir):
-+		 * ntfs_create_inode -> ntfs_init_acl -> posix_acl_create ->
-+		 * ntfs_get_acl -> ntfs_get_acl_ex -> ni_lock
-+		 */
-+		struct posix_acl *p = get_acl(dir, ACL_TYPE_DEFAULT);
-+
-+		if (IS_ERR(p)) {
-+			err = PTR_ERR(p);
-+			goto out;
-+		}
-+		posix_acl_release(p);
-+	}
-+#endif
-+
-+	if (d_in_lookup(dentry)) {
-+		ni_lock_dir(ni);
-+		locked = true;
-+		fnd = fnd_get();
-+		if (!fnd) {
-+			err = -ENOMEM;
-+			goto out1;
-+		}
-+
-+		d = d_splice_alias(dir_search_u(dir, uni, fnd), dentry);
-+		if (IS_ERR(d)) {
-+			err = PTR_ERR(d);
-+			d = NULL;
-+			goto out2;
-+		}
-+
-+		if (d)
-+			dentry = d;
-+	}
-+
-+	if (!(flags & O_CREAT) || d_really_is_positive(dentry)) {
-+		err = finish_no_open(file, d);
-+		goto out2;
-+	}
-+
-+	file->f_mode |= FMODE_CREATED;
-+
-+	/*
-+	 * fnd contains tree's path to insert to.
-+	 * If fnd is not NULL then dir is locked.
-+	 */
-+
-+	/*
-+	 * Unfortunately I don't know how to get here correct 'struct nameidata *nd'
-+	 * or 'struct user_namespace *mnt_userns'.
-+	 * See atomic_open in fs/namei.c.
-+	 * This is why xfstest/633 failed.
-+	 * Looks like ntfs_atomic_open must accept 'struct user_namespace *mnt_userns' as argument.
-+	 */
-+
-+	inode = ntfs_create_inode(&init_user_ns, dir, dentry, uni, mode, 0,
-+				  NULL, 0, fnd);
-+	err = IS_ERR(inode) ? PTR_ERR(inode)
-+			    : finish_open(file, dentry, ntfs_file_open);
-+	dput(d);
-+
-+out2:
-+	fnd_put(fnd);
-+out1:
-+	if (locked)
-+		ni_unlock(ni);
-+out:
-+	__putname(uni);
-+	return err;
-+}
-+
-  struct dentry *ntfs3_get_parent(struct dentry *child)
-  {
-  	struct inode *inode = d_inode(child);
-@@ -504,6 +603,7 @@ const struct inode_operations ntfs_dir_inode_operations = {
-  	.setattr	= ntfs3_setattr,
-  	.getattr	= ntfs_getattr,
-  	.listxattr	= ntfs_listxattr,
-+	.atomic_open	= ntfs_atomic_open,
-  	.fiemap		= ntfs_fiemap,
-  };
+@@ -595,7 +598,7 @@ int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
+  		next_svcn = le64_to_cpu(attr->nres.evcn) + 1;
+  		new_alloc_tmp = (u64)next_svcn << cluster_bits;
+  		attr_b->nres.alloc_size = cpu_to_le64(new_alloc_tmp);
+-		mi_b->dirty = true;
++		mi_b->dirty = dirty = true;
   
+  		if (next_svcn >= vcn && !to_allocate) {
+  			/* Normal way. Update attribute and exit. */
+@@ -681,7 +684,7 @@ int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
+  		old_valid = old_size = old_alloc = (u64)vcn << cluster_bits;
+  		attr_b->nres.valid_size = attr_b->nres.data_size =
+  			attr_b->nres.alloc_size = cpu_to_le64(old_size);
+-		mi_b->dirty = true;
++		mi_b->dirty = dirty = true;
+  		goto again_1;
+  	}
+  
+@@ -743,7 +746,7 @@ int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
+  				attr_b->nres.valid_size =
+  					attr_b->nres.alloc_size;
+  		}
+-		mi_b->dirty = true;
++		mi_b->dirty = dirty = true;
+  
+  		err = run_deallocate_ex(sbi, run, vcn, evcn - vcn + 1, &dlen,
+  					true);
+@@ -804,16 +807,9 @@ int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
+  	if (ret)
+  		*ret = attr_b;
+  
+-	/* Update inode_set_bytes. */
+  	if (((type == ATTR_DATA && !name_len) ||
+  	     (type == ATTR_ALLOC && name == I30_NAME))) {
+-		bool dirty = false;
+-
+-		if (ni->vfs_inode.i_size != new_size) {
+-			ni->vfs_inode.i_size = new_size;
+-			dirty = true;
+-		}
+-
++		/* Update inode_set_bytes. */
+  		if (attr_b->non_res) {
+  			new_alloc = le64_to_cpu(attr_b->nres.alloc_size);
+  			if (inode_get_bytes(&ni->vfs_inode) != new_alloc) {
+@@ -822,6 +818,7 @@ int attr_set_size(struct ntfs_inode *ni, enum ATTR_TYPE type,
+  			}
+  		}
+  
++		/* Don't forget to update duplicate information in parent. */
+  		if (dirty) {
+  			ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
+  			mark_inode_dirty(&ni->vfs_inode);
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 63aef132e529..511e58f2b0f8 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -337,7 +337,6 @@ static int ntfs_extend(struct inode *inode, loff_t pos, size_t count,
+  		err = ntfs_set_size(inode, end);
+  		if (err)
+  			goto out;
+-		inode->i_size = end;
+  	}
+  
+  	if (extend_init && !is_compressed(ni)) {
+@@ -588,12 +587,14 @@ static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
+  		if (err)
+  			goto out;
+  
+-		/*
+-		 * Allocate clusters, do not change 'valid' size.
+-		 */
+-		err = ntfs_set_size(inode, new_size);
+-		if (err)
+-			goto out;
++		if (new_size > i_size) {
++			/*
++			 * Allocate clusters, do not change 'valid' size.
++			 */
++			err = ntfs_set_size(inode, new_size);
++			if (err)
++				goto out;
++		}
+  
+  		if (is_supported_holes) {
+  			CLST vcn = vbo >> sbi->cluster_bits;
+@@ -635,6 +636,8 @@ static long ntfs_fallocate(struct file *file, int mode, loff_t vbo, loff_t len)
+  					    &ni->file.run, i_size, &ni->i_valid,
+  					    true, NULL);
+  			ni_unlock(ni);
++		} else if (new_size > i_size) {
++			inode->i_size = new_size;
+  		}
+  	}
+  
+@@ -678,7 +681,7 @@ int ntfs3_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+  		goto out;
+  
+  	if (ia_valid & ATTR_SIZE) {
+-		loff_t oldsize = inode->i_size;
++		loff_t newsize, oldsize;
+  
+  		if (WARN_ON(ni->ni_flags & NI_FLAG_COMPRESSED_MASK)) {
+  			/* Should never be here, see ntfs_file_open(). */
+@@ -686,16 +689,19 @@ int ntfs3_setattr(struct user_namespace *mnt_userns, struct dentry *dentry,
+  			goto out;
+  		}
+  		inode_dio_wait(inode);
++		oldsize = inode->i_size;
++		newsize = attr->ia_size;
+  
+-		if (attr->ia_size <= oldsize)
+-			err = ntfs_truncate(inode, attr->ia_size);
+-		else if (attr->ia_size > oldsize)
+-			err = ntfs_extend(inode, attr->ia_size, 0, NULL);
++		if (newsize <= oldsize)
++			err = ntfs_truncate(inode, newsize);
++		else
++			err = ntfs_extend(inode, newsize, 0, NULL);
+  
+  		if (err)
+  			goto out;
+  
+  		ni->ni_flags |= NI_FLAG_UPDATE_PARENT;
++		inode->i_size = newsize;
+  	}
+  
+  	setattr_copy(mnt_userns, inode, attr);
+diff --git a/fs/ntfs3/index.c b/fs/ntfs3/index.c
+index a2e1e07b5bb8..35369ae5c438 100644
+--- a/fs/ntfs3/index.c
++++ b/fs/ntfs3/index.c
+@@ -1445,6 +1445,9 @@ static int indx_add_allocate(struct ntfs_index *indx, struct ntfs_inode *ni,
+  		goto out1;
+  	}
+  
++	if (in->name == I30_NAME)
++		ni->vfs_inode.i_size = data_size;
++
+  	*vbn = bit << indx->idx2vbn_bits;
+  
+  	return 0;
+@@ -1978,6 +1981,9 @@ static int indx_shrink(struct ntfs_index *indx, struct ntfs_inode *ni,
+  	if (err)
+  		return err;
+  
++	if (in->name == I30_NAME)
++		ni->vfs_inode.i_size = new_data;
++
+  	bpb = bitmap_size(bit);
+  	if (bpb * 8 == nbits)
+  		return 0;
+@@ -2461,6 +2467,9 @@ int indx_delete_entry(struct ntfs_index *indx, struct ntfs_inode *ni,
+  
+  		err = attr_set_size(ni, ATTR_ALLOC, in->name, in->name_len,
+  				    &indx->alloc_run, 0, NULL, false, NULL);
++		if (in->name == I30_NAME)
++			ni->vfs_inode.i_size = 0;
++
+  		err = ni_remove_attr(ni, ATTR_ALLOC, in->name, in->name_len,
+  				     false, NULL);
+  		run_close(&indx->alloc_run);
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 405afb54cc19..78ec3e6bbf67 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -550,17 +550,6 @@ static noinline int ntfs_get_block_vbo(struct inode *inode, u64 vbo,
+  	clear_buffer_new(bh);
+  	clear_buffer_uptodate(bh);
+  
+-	/* Direct write uses 'create=0'. */
+-	if (!create && vbo >= ni->i_valid) {
+-		/* Out of valid. */
+-		return 0;
+-	}
+-
+-	if (vbo >= inode->i_size) {
+-		/* Out of size. */
+-		return 0;
+-	}
+-
+  	if (is_resident(ni)) {
+  		ni_lock(ni);
+  		err = attr_data_read_resident(ni, page);
+@@ -624,7 +613,6 @@ static noinline int ntfs_get_block_vbo(struct inode *inode, u64 vbo,
+  		}
+  	} else if (vbo >= valid) {
+  		/* Read out of valid data. */
+-		/* Should never be here 'cause already checked. */
+  		clear_buffer_mapped(bh);
+  	} else if (vbo + bytes <= valid) {
+  		/* Normal read. */
+@@ -974,6 +962,11 @@ int ntfs_write_end(struct file *file, struct address_space *mapping,
+  			dirty = true;
+  		}
+  
++		if (pos + err > inode->i_size) {
++			inode->i_size = pos + err;
++			dirty = true;
++		}
++
+  		if (dirty)
+  			mark_inode_dirty(inode);
+  	}
 -- 
 2.37.0
 
