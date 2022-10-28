@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8CE8A610809
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 04:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D63A9610818
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 04:34:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236222AbiJ1CeP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Oct 2022 22:34:15 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46386 "EHLO
+        id S236321AbiJ1CeW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Oct 2022 22:34:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235011AbiJ1CeO (ORCPT
+        with ESMTP id S236191AbiJ1CeP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 27 Oct 2022 22:34:14 -0400
+        Thu, 27 Oct 2022 22:34:15 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 824A4BD066;
-        Thu, 27 Oct 2022 19:34:13 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3E31BD066;
+        Thu, 27 Oct 2022 19:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=XqHWRNjUt4tG/e2ha8c09UQVeYjgv4/bV2k/DIadbAM=; b=OqT2ghPE8GI5jOcVDF74x4+jHy
-        GSl0Qqs3Tn5Zoe+5jPI5E+E/OrVXEiRk5hf3SID0TnX0DWD8fhlYV1wh71ZX63cLYr77uL8H8vPa1
-        NsxhCYaihzbl2X9iUTgnv9+WHFXQljWbN/hxbmHvXe3583HstUARSgXMw4MOmxkFaeCOdd+j4qHcl
-        SD3yfp7wHA1iK3OVOvoOncl+mE0etpCUTQjxnn/1k/aqtXzvWnKVQP9XxzFsuyGLxWYf+nlEBLhKA
-        Y7KEfV7T3PTfEaSeCUi6fl9QH/oO8GSNlg11NbPpTdRV9Pzjfy/c86udixG5GCtkljODRYv8QMcU+
-        f5zfSDRA==;
+        bh=N6G1IQbSL3QFHBqs64iGhqHUAjBWLKtVAexavconcSw=; b=CtU1YRnEKtVxQzp9T0NecJp8Lq
+        ktl2hWUsNU7iTHYudZAUs1x0vgpcyXrrVT2TpBNQ04AhuyYeK0BIBw8Q/P9thND2PJbR0f+4vuuxs
+        dJOGMMeu4z+Yw8mXi8VAM3zFBNUpOdUVn0NcQhKt8j+9Bp/z2CoE8oYwkSMQzzwGBEHn1DOY/fZdQ
+        ALcvx9ECVbSy6sMcKCUi7Mqlf6V/HuiR0o28bKz9zGjpZAI/JmnTEcZVfh0MdzbSowX2RI24G3Scd
+        TvEhlAVxbLs+HSG4GBrCD1W9BhV7+Mo0hELW4K0lSQFlJqsxAZKLf1gON1Sak0yddJcoHJTl9WZmu
+        o9H1cKXA==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1ooFBw-00EorF-2W;
-        Fri, 28 Oct 2022 02:33:52 +0000
+        id 1ooFBw-00EorH-3A;
+        Fri, 28 Oct 2022 02:33:53 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Christoph Hellwig <hch@infradead.org>
 Cc:     David Howells <dhowells@redhat.com>, willy@infradead.org,
@@ -38,9 +38,9 @@ Cc:     David Howells <dhowells@redhat.com>, willy@infradead.org,
         Ira Weiny <ira.weiny@intel.com>, torvalds@linux-foundation.org,
         linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 04/12] [fsi] WRITE is "data source", not destination...
-Date:   Fri, 28 Oct 2022 03:33:44 +0100
-Message-Id: <20221028023352.3532080-4-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 05/12] [infiniband] READ is "data destination", not source...
+Date:   Fri, 28 Oct 2022 03:33:45 +0100
+Message-Id: <20221028023352.3532080-5-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20221028023352.3532080-1-viro@zeniv.linux.org.uk>
 References: <Y1btOP0tyPtcYajo@ZenIV>
@@ -59,40 +59,22 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- drivers/fsi/fsi-sbefifo.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/infiniband/ulp/rtrs/rtrs-clt.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/fsi/fsi-sbefifo.c b/drivers/fsi/fsi-sbefifo.c
-index 5f93a53846aa..efd4942aa043 100644
---- a/drivers/fsi/fsi-sbefifo.c
-+++ b/drivers/fsi/fsi-sbefifo.c
-@@ -659,7 +659,7 @@ static void sbefifo_collect_async_ffdc(struct sbefifo *sbefifo)
- 	}
-         ffdc_iov.iov_base = ffdc;
- 	ffdc_iov.iov_len = SBEFIFO_MAX_FFDC_SIZE;
--        iov_iter_kvec(&ffdc_iter, WRITE, &ffdc_iov, 1, SBEFIFO_MAX_FFDC_SIZE);
-+        iov_iter_kvec(&ffdc_iter, READ, &ffdc_iov, 1, SBEFIFO_MAX_FFDC_SIZE);
- 	cmd[0] = cpu_to_be32(2);
- 	cmd[1] = cpu_to_be32(SBEFIFO_CMD_GET_SBE_FFDC);
- 	rc = sbefifo_do_command(sbefifo, cmd, 2, &ffdc_iter);
-@@ -756,7 +756,7 @@ int sbefifo_submit(struct device *dev, const __be32 *command, size_t cmd_len,
- 	rbytes = (*resp_len) * sizeof(__be32);
- 	resp_iov.iov_base = response;
- 	resp_iov.iov_len = rbytes;
--        iov_iter_kvec(&resp_iter, WRITE, &resp_iov, 1, rbytes);
-+        iov_iter_kvec(&resp_iter, READ, &resp_iov, 1, rbytes);
+diff --git a/drivers/infiniband/ulp/rtrs/rtrs-clt.c b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
+index 8546b8816524..88282b288abd 100644
+--- a/drivers/infiniband/ulp/rtrs/rtrs-clt.c
++++ b/drivers/infiniband/ulp/rtrs/rtrs-clt.c
+@@ -966,7 +966,7 @@ static void rtrs_clt_init_req(struct rtrs_clt_io_req *req,
+ 	refcount_set(&req->ref, 1);
+ 	req->mp_policy = clt_path->clt->mp_policy;
  
- 	/* Perform the command */
- 	rc = mutex_lock_interruptible(&sbefifo->lock);
-@@ -839,7 +839,7 @@ static ssize_t sbefifo_user_read(struct file *file, char __user *buf,
- 	/* Prepare iov iterator */
- 	resp_iov.iov_base = buf;
- 	resp_iov.iov_len = len;
--	iov_iter_init(&resp_iter, WRITE, &resp_iov, 1, len);
-+	iov_iter_init(&resp_iter, READ, &resp_iov, 1, len);
+-	iov_iter_kvec(&iter, READ, vec, 1, usr_len);
++	iov_iter_kvec(&iter, WRITE, vec, 1, usr_len);
+ 	len = _copy_from_iter(req->iu->buf, usr_len, &iter);
+ 	WARN_ON(len != usr_len);
  
- 	/* Perform the command */
- 	rc = mutex_lock_interruptible(&sbefifo->lock);
 -- 
 2.30.2
 
