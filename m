@@ -2,219 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C23336115A2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 17:16:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 647C4611676
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 17:57:15 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229817AbiJ1PQU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Oct 2022 11:16:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40002 "EHLO
+        id S230074AbiJ1P5C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Oct 2022 11:57:02 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230256AbiJ1PQO (ORCPT
+        with ESMTP id S229961AbiJ1P44 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Oct 2022 11:16:14 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7949E1C19F7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 08:15:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
-        References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
-        Content-Type:Content-ID:Content-Description;
-        bh=iHo0dXYsbgANrVfcUqE3Pj13Q6JiA9ERSsXw+Ir/P94=; b=ZIPz155/TgaAnxkWjnlin75+ms
-        s6pJfHadSYXZsRaq7yCZ0nYG0ggNKifdPTHJ2NlZ6wZsi5VrMhxgPGnKpzPNt1/ysrIzlzExK4WqX
-        wr9Al8lR99lPNfj9M+ZRalOzc9xo4nsQWx5xN4JO0yRTsUp93l8LDFyw/furcAUW1MjpLmRr6iFnL
-        Oh4v9O9CZ6owIvp6DmMjHUsMjiCR5StDVSiQTPRCaMikCJoaPuKazc7cGECOPouxOH3/iJe3i6SIX
-        P64c38VIgCEUUwm/AlHdM4CerYb4dF1LpELIjyEhEPO4kx2UOjRlSbIj6vs65jp2DLH/Vg1Q7DIuX
-        Gnjp6n8Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ooR4x-001LAK-PP; Fri, 28 Oct 2022 15:15:27 +0000
-From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
-To:     linux-mm@kvack.org
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        Uladzislau Rezki <urezki@gmail.com>,
-        David Howells <dhowells@redhat.com>,
-        Dave Chinner <david@fromorbit.com>,
-        linux-fsdevel@vger.kernel.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ira Weiny <ira.weiny@intel.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: [PATCH 1/1] mm: Add folio_map_local()
-Date:   Fri, 28 Oct 2022 16:15:26 +0100
-Message-Id: <20221028151526.319681-2-willy@infradead.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20221028151526.319681-1-willy@infradead.org>
-References: <20221028151526.319681-1-willy@infradead.org>
+        Fri, 28 Oct 2022 11:56:56 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7A9E1C813E
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 08:55:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1666972553;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=hQM2P8ykq/hiieMREgaD1+G+mSyHhsgs0GYOAB71Ku0=;
+        b=QBj9aP+JbBedvgZWbJ3lNOS9Zw3GO7OfeY8axloSQWS7OXk8m3pUA3nF7z0OZJeM64diOV
+        obK0ahCmYhdSQDZc/4IVwsT/vYmmQFMF4vgU8fe+jMJ6FAXEazHwowtGYlaRy7vSwvFA3e
+        zwKxdzJxjVbK/T1LyUkZIXVwm03Rabg=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-250-krPUD6jBPLSCY8bxTUkkhg-1; Fri, 28 Oct 2022 11:55:48 -0400
+X-MC-Unique: krPUD6jBPLSCY8bxTUkkhg-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 79074185A794;
+        Fri, 28 Oct 2022 15:55:47 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.73])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C7F9A1415102;
+        Fri, 28 Oct 2022 15:55:45 +0000 (UTC)
+Subject: [RFC PATCH 0/9] smb3: Add iter helpers and use iov_iters down to the
+ network transport
+From:   David Howells <dhowells@redhat.com>
+To:     Steve French <smfrench@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Rohith Surabattula <rohiths.msft@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        linux-cifs@vger.kernel.org, dhowells@redhat.com,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Tom Talpey <tom@talpey.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Fri, 28 Oct 2022 16:55:44 +0100
+Message-ID: <166697254399.61150.1256557652599252121.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/1.5
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Some filesystems benefit from being able to map the entire folio.
-On 32-bit platforms with HIGHMEM, we fall back to using vmap, which
-will be slow.  If it proves to be a performance problem, we can look at
-optimising it in a number of ways.
 
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+Hi Steve, Al, Christoph,
+
+Here's an updated version of a subset of my branch to make the cifs/smb3
+driver pass iov_iters down to the lowest layers where they can be passed to
+the network transport.
+
+Al, Christoph: Could you look at the first four patches and see if you're okay
+with them - at least on a temporary basis so that I can get this moving?
+
+Note that patch (4) uses kmap_local_folio() to map an entire folio - this is
+wrong.  I'm going to try using Willy's vmap_folio() code - but I haven't done
+that yet.
+
+The first two patches are placed in netfslib as I have patches for netfslib
+that will want to use them:
+
+ (1) Add a function to extract part of an IOVEC-/UBUF-type iterator into a
+     BVEC-type iterator.  Refs are taken on the pages to prevent them from
+     evaporating.
+
+ (2) Add a function to extract part of an iterator into a scatterlist.  If
+     extracting from an IOVEC-/UBUF-type iterator, the pages have refs taken on
+     them; any other type and they don't.
+
+     It might be worth splitting this into two separate functions, one for
+     IOVEC/UBUF that refs and one for the others that doesn't.
+
+The other patches are placed in cifs as they're only used by cifs for now.
+
+ (3) Add a function to build an RDMA SGE list from a BVEC-, KVEC- or
+     XARRAY-type iterator.  It's left to the caller to make sure they don't
+     evaporate.
+
+ (4) Add a function to hash part of the contents of a BVEC-, KVEC- or
+     XARRAY-type iterator.
+
+I will need to make use of thew proposed page pinning when it becomes
+available, but that's not yet.
+
+Changes made in a later patch in the series make the upper layers convert an
+IOVEC-/UBUF-iterator to a BVEC-type iterator in direct/unbuffered I/O so that
+the signing, crypt and RDMA code see the BVEC instead of user buffers.
+
+Note also that I haven't managed to test all the combinations of transport.
+Samba doesn't support RDMA and ksmbd doesn't support encryption.  I can test
+them separately, but not together.  That said, rdma, sign, seal and sign+seal
+seem to work.
+
+I've pushed the patches here also:
+
+	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=cifs-for-viro
+
+David
 ---
- include/linux/highmem.h | 40 ++++++++++++++++++++++++++++++++-
- include/linux/vmalloc.h |  6 +++--
- mm/vmalloc.c            | 50 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 93 insertions(+), 3 deletions(-)
+David Howells (9):
+      netfs: Add a function to extract a UBUF or IOVEC into a BVEC iterator
+      netfs: Add a function to extract an iterator into a scatterlist
+      cifs: Add a function to build an RDMA SGE list from an iterator
+      cifs: Add a function to Hash the contents of an iterator
+      cifs: Add some helper functions
+      cifs: Add a function to read into an iter from a socket
+      cifs: Change the I/O paths to use an iterator rather than a page list
+      cifs: Build the RDMA SGE list directly from an iterator
+      cifs: Remove unused code
 
-diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-index e9912da5441b..e8159243d88d 100644
---- a/include/linux/highmem.h
-+++ b/include/linux/highmem.h
-@@ -10,6 +10,7 @@
- #include <linux/mm.h>
- #include <linux/uaccess.h>
- #include <linux/hardirq.h>
-+#include <linux/vmalloc.h>
- 
- #include "highmem-internal.h"
- 
-@@ -132,6 +133,44 @@ static inline void *kmap_local_page(struct page *page);
-  */
- static inline void *kmap_local_folio(struct folio *folio, size_t offset);
- 
-+/**
-+ * folio_map_local - Map an entire folio.
-+ * @folio: The folio to map.
-+ *
-+ * Unlike kmap_local_folio(), map an entire folio.  This should be undone
-+ * with folio_unmap_local().  The address returned should be treated as
-+ * stack-based, and local to this CPU, like kmap_local_folio().
-+ *
-+ * Context: May allocate memory using GFP_KERNEL if it takes the vmap path.
-+ * Return: A kernel virtual address which can be used to access the folio,
-+ * or NULL if the mapping fails.
-+ */
-+static inline __must_check void *folio_map_local(struct folio *folio)
-+{
-+	might_alloc(GFP_KERNEL);
-+
-+	if (!IS_ENABLED(CONFIG_HIGHMEM))
-+		return folio_address(folio);
-+	if (folio_test_large(folio))
-+		return vm_map_folio(folio);
-+	return kmap_local_page(&folio->page);
-+}
-+
-+/**
-+ * folio_unmap_local - Unmap an entire folio.
-+ * @addr: Address returned from folio_map_local()
-+ *
-+ * Undo the result of a previous call to folio_map_local().
-+ */
-+static inline void folio_unmap_local(const void *addr)
-+{
-+	if (!IS_ENABLED(CONFIG_HIGHMEM))
-+		return;
-+	if (is_vmalloc_addr(addr))
-+		vunmap(addr);
-+	kunmap_local(addr);
-+}
-+
- /**
-  * kmap_atomic - Atomically map a page for temporary usage - Deprecated!
-  * @page:	Pointer to the page to be mapped
-@@ -426,5 +465,4 @@ static inline void folio_zero_range(struct folio *folio,
- {
- 	zero_user_segments(&folio->page, start, start + length, 0, 0);
- }
--
- #endif /* _LINUX_HIGHMEM_H */
-diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
-index 096d48aa3437..4bb34c939c01 100644
---- a/include/linux/vmalloc.h
-+++ b/include/linux/vmalloc.h
-@@ -13,6 +13,7 @@
- #include <asm/vmalloc.h>
- 
- struct vm_area_struct;		/* vma defining user mapping in mm_types.h */
-+struct folio;			/* also mm_types.h */
- struct notifier_block;		/* in notifier.h */
- 
- /* bits in flags of vmalloc's vm_struct below */
-@@ -163,8 +164,9 @@ extern void *vcalloc(size_t n, size_t size) __alloc_size(1, 2);
- extern void vfree(const void *addr);
- extern void vfree_atomic(const void *addr);
- 
--extern void *vmap(struct page **pages, unsigned int count,
--			unsigned long flags, pgprot_t prot);
-+void *vmap(struct page **pages, unsigned int count, unsigned long flags,
-+		pgprot_t prot);
-+void *vm_map_folio(struct folio *folio);
- void *vmap_pfn(unsigned long *pfns, unsigned int count, pgprot_t prot);
- extern void vunmap(const void *addr);
- 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index ccaa461998f3..265b860c9550 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -2283,6 +2283,56 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node)
- }
- EXPORT_SYMBOL(vm_map_ram);
- 
-+#ifdef CONFIG_HIGHMEM
-+/**
-+ * vm_map_folio() - Map an entire folio into virtually contiguous space.
-+ * @folio: The folio to map.
-+ *
-+ * Maps all pages in @folio into contiguous kernel virtual space.  This
-+ * function is only available in HIGHMEM builds; for !HIGHMEM, use
-+ * folio_address().  The pages are mapped with PAGE_KERNEL permissions.
-+ *
-+ * Return: The address of the area or %NULL on failure
-+ */
-+void *vm_map_folio(struct folio *folio)
-+{
-+	size_t size = folio_size(folio);
-+	unsigned long addr;
-+	void *mem;
-+
-+	might_sleep();
-+
-+	if (likely(folio_nr_pages(folio) <= VMAP_MAX_ALLOC)) {
-+		mem = vb_alloc(size, GFP_KERNEL);
-+		if (IS_ERR(mem))
-+			return NULL;
-+		addr = (unsigned long)mem;
-+	} else {
-+		struct vmap_area *va;
-+		va = alloc_vmap_area(size, PAGE_SIZE, VMALLOC_START,
-+				VMALLOC_END, NUMA_NO_NODE, GFP_KERNEL);
-+		if (IS_ERR(va))
-+			return NULL;
-+
-+		addr = va->va_start;
-+		mem = (void *)addr;
-+	}
-+
-+	if (vmap_range_noflush(addr, addr + size,
-+				folio_pfn(folio) << PAGE_SHIFT,
-+				PAGE_KERNEL, folio_shift(folio))) {
-+		vm_unmap_ram(mem, folio_nr_pages(folio));
-+		return NULL;
-+	}
-+	flush_cache_vmap(addr, addr + size);
-+
-+	mem = kasan_unpoison_vmalloc(mem, size, KASAN_VMALLOC_PROT_NORMAL);
-+
-+	return mem;
-+}
-+EXPORT_SYMBOL(vm_map_folio);
-+#endif
-+
- static struct vm_struct *vmlist __initdata;
- 
- static inline unsigned int vm_area_page_order(struct vm_struct *vm)
--- 
-2.35.1
+
+ fs/cifs/cifsencrypt.c |  167 +++-
+ fs/cifs/cifsfs.h      |    3 +
+ fs/cifs/cifsglob.h    |   30 +-
+ fs/cifs/cifsproto.h   |   11 +-
+ fs/cifs/cifssmb.c     |   13 +-
+ fs/cifs/connect.c     |   16 +
+ fs/cifs/file.c        | 1700 ++++++++++++++++++-----------------------
+ fs/cifs/fscache.c     |   22 +-
+ fs/cifs/fscache.h     |   10 +-
+ fs/cifs/misc.c        |  110 +--
+ fs/cifs/smb2ops.c     |  378 +++++----
+ fs/cifs/smb2pdu.c     |   44 +-
+ fs/cifs/smbdirect.c   |  503 +++++++-----
+ fs/cifs/smbdirect.h   |    4 +-
+ fs/cifs/transport.c   |   57 +-
+ fs/netfs/Makefile     |    1 +
+ fs/netfs/iterator.c   |  347 +++++++++
+ include/linux/netfs.h |    5 +
+ 18 files changed, 1835 insertions(+), 1586 deletions(-)
+ create mode 100644 fs/netfs/iterator.c
+
 
