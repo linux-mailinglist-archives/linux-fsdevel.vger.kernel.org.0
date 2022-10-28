@@ -2,166 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0BB6B610D51
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 11:32:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B048F610EEF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 12:46:24 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229870AbiJ1Jcn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Oct 2022 05:32:43 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56552 "EHLO
+        id S230525AbiJ1KqX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Oct 2022 06:46:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38028 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230047AbiJ1Jca (ORCPT
+        with ESMTP id S231138AbiJ1KqK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Oct 2022 05:32:30 -0400
-Received: from mail-vk1-xa2d.google.com (mail-vk1-xa2d.google.com [IPv6:2607:f8b0:4864:20::a2d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1320E1C2E98;
-        Fri, 28 Oct 2022 02:32:29 -0700 (PDT)
-Received: by mail-vk1-xa2d.google.com with SMTP id z186so2184661vkg.6;
-        Fri, 28 Oct 2022 02:32:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sulxL1P58qxSoZcqS/gQS4urVebZ0pVbfHu9VfgT72g=;
-        b=dHGLdqKKKD1/71nEDkoet/hs2T55Sbq7/kl07M5mMvkR55GGCQH/m/1NUWOyKbczv2
-         1htfxR9GsY3UUzFi8nq/TTpO1fJJOLPAL1kMIE2Qbh2lWwtkzU9AHx06T22WoftOk5xt
-         JaT5kTeOANJm7C3HnLvgp3ZYFe8Wo92SXzPzVWQGsPUmVjSE2vCCg2FNuHk+qITpDPsv
-         0C+IBiV2zSX/ZfK960se1uZ5LEBFeCXSqGQtGrYUL0JVsiolab0G0EjcX70cub+qg04E
-         jD2qOyEtjRFaq7q2u0BTpYQLiEoLdbAXMIqq1Ov66hZI2+8JZEAc/yidB5Rvlf6ZxPJy
-         0KdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sulxL1P58qxSoZcqS/gQS4urVebZ0pVbfHu9VfgT72g=;
-        b=GlwqmPPI5R14k9Fn8rCGhOuKaCf3AXJKr8M9v8vdkyD3Pqg8hR0jfTDEhUSrqA8RiZ
-         GzFMZ5VyO8YH3o53A2QTt8K5P7I5jinWEwj5NPH2nPjGxSl/cP0mkuzxmj8TZwhQYQkG
-         feKBJmjTsgyYgU8/JHj2mlvjEDoUGGnbfEMqQW4bC4YUdN1IbWhiWtgiDzLLxu7WP/58
-         7ApKQsxhAbk5XUl1fttp0BOXHbOuJXF7MpOwVSA4J4w3h+XRj64bdDMChseTPJpmkhjB
-         6P96tJgWxOSEnE+aktS7iW75xR3/9FDN7t3kAK+4da/weTj8ipJ+VG8HiaAb2SyHOllg
-         VnMg==
-X-Gm-Message-State: ACrzQf2m0OZegwSZeCptjy50nsXVA0G6IkfGzeHoN6HoM11AEgBa+WPp
-        87qZBluQB9F/q2Y4UoGc07nSHAgIz2TYstp7pQ4=
-X-Google-Smtp-Source: AMsMyM4foX79ncH7xMmHslGm3BoTecafFHA2IR9M7rnK1C6rioHfMZXld4Uf4vXKsmEe0/fffFaI2raxasWIu7p5iPE=
-X-Received: by 2002:a1f:da86:0:b0:3b7:6af6:1e24 with SMTP id
- r128-20020a1fda86000000b003b76af61e24mr12061323vkg.25.1666949548109; Fri, 28
- Oct 2022 02:32:28 -0700 (PDT)
+        Fri, 28 Oct 2022 06:46:10 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2EB401A7A14;
+        Fri, 28 Oct 2022 03:46:09 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D97A7B80502;
+        Fri, 28 Oct 2022 10:46:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 986B1C43141;
+        Fri, 28 Oct 2022 10:46:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666953966;
+        bh=0GOxupD0PCRPvzw+G0OTdqPzj8Eevayoc9MyN2qZUBM=;
+        h=From:Date:Subject:To:Cc:From;
+        b=Wz2Fq2zO2hz9lldRywykHiGC0IxrccfLDzu3bRyDBqbEVqTHwRGpI1p28My8FbFST
+         rK48J+U92dqRBwPrOOn6ZUG9P5pXh3CyIm12y7w49vuwyd/4dD2yjoCxzdRHg+ZXIT
+         aAUvwtXCsGNymDdJOpFoX2Dw8mzUkwAE/Ku26/zCKDSskB7m90UD23x1NgeriVDWyy
+         1XxoW9iUxQuUO86oPvIWOL6rRmLaropeXRIDVn0UzE6KRDV9zqyEyYGGX7j6YBlKHZ
+         L0JasKh/hTxce/tg2VGLUKkKdw5BWSad3dpwgtczd725Nq6fh1uMLaJAADCKhkum3j
+         BuulASjXilNHg==
+Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-13c2cfd1126so5821509fac.10;
+        Fri, 28 Oct 2022 03:46:06 -0700 (PDT)
+X-Gm-Message-State: ACrzQf22K5K6SsZvVWc7pKpxWb84zUoGtRrssGTcOU1/yNvpzBf+yH+5
+        7vt8UiuT7txkgbEdi1V5Zkr7uzVkl1xPgjQJBfE=
+X-Google-Smtp-Source: AMsMyM4qwHAoqaml+e8xqB734gZIPUTgCIbJ/oKHw8fhpT5q+q8EDp+xtpcDHY7UzGtj0gSBQV4sqA/y4YTE5T0uP+Y=
+X-Received: by 2002:a05:6870:63aa:b0:13a:fe6c:5ed0 with SMTP id
+ t42-20020a05687063aa00b0013afe6c5ed0mr9088447oap.257.1666953965748; Fri, 28
+ Oct 2022 03:46:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <20221021010310.29521-1-stephen.s.brennan@oracle.com>
- <20221028001016.332663-1-stephen.s.brennan@oracle.com> <20221028001016.332663-4-stephen.s.brennan@oracle.com>
-In-Reply-To: <20221028001016.332663-4-stephen.s.brennan@oracle.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Fri, 28 Oct 2022 12:32:16 +0300
-Message-ID: <CAOQ4uxh8c2vbv50p8+rNnoV0H=L=+XRGuFP1dmGrrCrt6EjFYQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] fsnotify: allow sleepable child flag update
-To:     Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>
+Received: by 2002:a05:6838:4424:0:0:0:0 with HTTP; Fri, 28 Oct 2022 03:46:05
+ -0700 (PDT)
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Fri, 28 Oct 2022 19:46:05 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd8G1kkpiZbjU2nAWMSffsTXXJeDKorcVrvHptMU3p1jhw@mail.gmail.com>
+Message-ID: <CAKYAXd8G1kkpiZbjU2nAWMSffsTXXJeDKorcVrvHptMU3p1jhw@mail.gmail.com>
+Subject: [ANNOUNCE] exfatprogs-1.2.0 version released
+To:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org
+Cc:     Eric Sandeen <sandeen@sandeen.net>,
+        Goldwyn Rodrigues <rgoldwyn@suse.com>,
+        Nicolas Boos <nicolas.boos@wanadoo.fr>, sedat.dilek@gmail.com,
+        Hyunchul Lee <hyc.lee@gmail.com>,
+        Luca Stefani <luca.stefani.ge1@gmail.com>,
+        Matthieu CASTET <castet.matthieu@free.fr>,
+        Sven Hoexter <sven@stormbind.net>,
+        Ethan Sommer <e5ten.arch@gmail.com>,
+        "Yuezhang.Mo" <Yuezhang.Mo@sony.com>
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 28, 2022 at 3:10 AM Stephen Brennan
-<stephen.s.brennan@oracle.com> wrote:
->
-> With very large d_subdirs lists, iteration can take a long time. Since
-> iteration needs to hold parent->d_lock, this can trigger soft lockups.
-> It would be best to make this iteration sleepable. Since we have the
-> inode locked exclusive, we can drop the parent->d_lock and sleep,
-> holding a reference to a child dentry, and continue iteration once we
-> wake.
->
-> Signed-off-by: Stephen Brennan <stephen.s.brennan@oracle.com>
-> ---
->
+Hi folk,
 
-Reviewed-by: Amir Goldstein <amir73il@gmail.com>
+We have released exfatprogs 1.2.0 version. In this release, fsck.exfat
+is able to fix(repair) corruptions in exFAT(The previous versions only
+check consistency).  Also, exfat2img has been added to clone exFAT
+storage(only metadata) to the image file.
 
-some comment nits and one fortify suggestion
+Any feedback is welcome!:)
 
-> Notes:
->     v3:
->     - removed if statements around dput()
->     v2:
->     - added a check for child->d_parent != alias and retry logic
->
->  fs/notify/fsnotify.c | 36 ++++++++++++++++++++++++++++++++----
->  1 file changed, 32 insertions(+), 4 deletions(-)
->
-> diff --git a/fs/notify/fsnotify.c b/fs/notify/fsnotify.c
-> index ccb8a3a6c522..34e5d18235a7 100644
-> --- a/fs/notify/fsnotify.c
-> +++ b/fs/notify/fsnotify.c
-> @@ -102,10 +102,12 @@ void fsnotify_sb_delete(struct super_block *sb)
->   * on a child we run all of our children and set a dentry flag saying that the
->   * parent cares.  Thus when an event happens on a child it can quickly tell
->   * if there is a need to find a parent and send the event to the parent.
-> + *
-> + * Context: inode locked exclusive
->   */
->  static bool __fsnotify_update_children_dentry_flags(struct inode *inode)
->  {
-> -       struct dentry *alias, *child;
-> +       struct dentry *child, *alias, *last_ref = NULL;
->         int watched;
->
->         if (!S_ISDIR(inode->i_mode))
-> @@ -120,12 +122,37 @@ static bool __fsnotify_update_children_dentry_flags(struct inode *inode)
->         alias = d_find_any_alias(inode);
->
->         /*
-> -        * run all of the children of the original inode and fix their
-> -        * d_flags to indicate parental interest (their parent is the
-> -        * original inode)
-> +        * These lists can get very long, so we may need to sleep during
-> +        * iteration. Normally this would be impossible without a cursor,
-> +        * but since we have the inode locked exclusive, we're guaranteed
-> +        * that the directory won't be modified, so whichever dentry we
-> +        * pick to sleep on won't get moved. So, start a manual iteration
-> +        * over d_subdirs which will allow us to sleep.
->          */
->         spin_lock(&alias->d_lock);
-> +retry:
->         list_for_each_entry(child, &alias->d_subdirs, d_child) {
-> +               if (need_resched()) {
-> +                       /*
-> +                        * We need to hold a reference while we sleep. But when
-> +                        * we wake, dput() could free the dentry, invalidating
-> +                        * the list pointers. We can't look at the list pointers
-> +                        * until we re-lock the parent, and we can't dput() once
-> +                        * we have the parent locked. So the solution is to hold
-> +                        * onto our reference and free it the *next* time we drop
-> +                        * alias->d_lock: either at the end of the function, or
-> +                        * at the time of the next sleep.
-> +                        */
+CHANGES :
+ * fsck.exfat: Keep traveling files even if there is a corrupted
+directory entry set.
+ * fsck.exfat: Introduce the option "b" to recover a boot sector even
+if an exFAT filesystem is not found.
+ * fsck.exfat: Introduce the option "s" to create files in
+"/LOST+FOUND", which have clusters allocated but was not belonged to
+any files.
+ * fsck.exfat: Rename '.' and '..' entry name to the one user want.
 
-My personal preference would be to move this above if (needed_reschd())
-it is not any less clear when this comment is above the condition
-and less indented will read nicer.
+NEW FEATURES :
+ * fsck.exfat: Repair corruptions of an exFAT filesystem. Please refer
+to fsck.exfat manpage to see what kind of corruptions can be repaired.
+ * exfat2img: Dump metadata of an exFAT filesystem. Please refer to
+exfat2img manpage to see how to use it.
 
-> +                       dget(child);
-> +                       spin_unlock(&alias->d_lock);
-> +                       dput(last_ref);
-> +                       last_ref = child;
-> +                       cond_resched();
-> +                       spin_lock(&alias->d_lock);
-> +                       if (child->d_parent != alias)
-> +                               goto retry;
+BUG FIXES:
+ * fsck.exfat: Fix an infinite loop while traveling files.
+ * tune.exfat: Fix bitmap entry corruption when adding new volume lablel.
 
-Is this expected? If not, then we need a WARN_ON_ONCE().
-Also, I wonder if it would be better to break out and leave
-dentry flags as they are instead of risking some endless
-or very long retry loop?
+The git tree is at:
+      https://github.com/exfatprogs/exfatprogs
 
-And how about asserting on unexpected !list_empty(&child->d_child)
-to avoid an endless loop in list_for_each_entry()?
-
-Thanks,
-Amir.
+The tarballs can be found at:
+      https://github.com/exfatprogs/exfatprogs/releases/download/1.2.0/exfatprogs-1.2.0.tar.gz
