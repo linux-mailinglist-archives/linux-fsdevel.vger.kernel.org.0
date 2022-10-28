@@ -2,98 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 20BD8611C83
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 23:41:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C8D9B611D9D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Oct 2022 00:48:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229665AbiJ1Vlg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Oct 2022 17:41:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38416 "EHLO
+        id S230131AbiJ1Wry (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Oct 2022 18:47:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229552AbiJ1Vlf (ORCPT
+        with ESMTP id S230007AbiJ1Wrt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Oct 2022 17:41:35 -0400
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 866CF21CD41;
-        Fri, 28 Oct 2022 14:41:34 -0700 (PDT)
-Received: by mail-pf1-f177.google.com with SMTP id f140so5874470pfa.1;
-        Fri, 28 Oct 2022 14:41:34 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/yLhokJ+UmxEJSZnnxkcKNalWhkKir6IRhNGBiNycOM=;
-        b=mi2YALTULPLHB8iYZnXrokGQWwMQ0ol9pgH8EVaKWeBH82I+9fh6j0LVGYseK1kEGr
-         K3I46ZEPGQnGXkNu2cCFBsrmdN4DEqTeBz6gu2RqT671pjw3wlF/Yi4XHsSSzaSjzqqa
-         /7fLx0nzoU8XvOqqqKb4NpOsxFZsqtdxcR8VhoSWOXKKEYjYyqUTjpl4yrrrsuf73K3Y
-         7TqNDLry+rrZ5VsngIKxVhtR6bOnD0MC8UlT6SWr4yyEZsVe3ujpLy/0MCXBX0rUAO2H
-         k+6h6Ma3nU6AWFC1vPFDK9PxueSq0KzGjlcOMc8B9cKS5s7dKpOYrh0cs8lzp5sEFwVF
-         yTig==
-X-Gm-Message-State: ACrzQf22BZvqF4necfh0KxW/v7a0Y0oUgmwPyMYF8+jHZ2JilNT5ZTWu
-        dneSZLCqfdlzneBzbVNWkhSIhtnXyu0=
-X-Google-Smtp-Source: AMsMyM56cv/TcV/tu9kmdxb/UqlsxmUR9FTduV7e4wtPCj7AZzYHAujzM3H4DTcW77IwkDpjgzj9kw==
-X-Received: by 2002:a63:5d12:0:b0:46e:cd38:3f76 with SMTP id r18-20020a635d12000000b0046ecd383f76mr1351032pgb.64.1666993293952;
-        Fri, 28 Oct 2022 14:41:33 -0700 (PDT)
-Received: from [192.168.3.219] ([98.51.102.78])
-        by smtp.gmail.com with ESMTPSA id v19-20020a17090ac91300b002036006d65bsm2953369pjt.39.2022.10.28.14.41.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Oct 2022 14:41:33 -0700 (PDT)
-Message-ID: <b69e7350-b4ec-a575-ee46-15198b9fea73@acm.org>
-Date:   Fri, 28 Oct 2022 14:41:31 -0700
+        Fri, 28 Oct 2022 18:47:49 -0400
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31142199F45;
+        Fri, 28 Oct 2022 15:47:48 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by sin.source.kernel.org (Postfix) with ESMTPS id 37582CE2E9F;
+        Fri, 28 Oct 2022 22:47:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A8C6C433D6;
+        Fri, 28 Oct 2022 22:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666997265;
+        bh=4Gis4J6FInfcpasgqe1VktNVUDifHwCLxkhJxJDfYg8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=Tw4NUWnK6m8OaUTrRHH905TS9LfG6I9nYNG0Jz3Uwr35Q4LdLMKMs0hb76xKH7hUw
+         iArYiH+CVoeUAmZthSWPhlWnJUbHrZchEbvc9FmGtPQPMGTgMKvqmGvnLVSLhShpBx
+         cD08RgkjZqPlkfrUwHJ+XK5wBpnsqJnjS/97vyQQwn8z/ucBccm12lX2mOWcQRfBXu
+         WpIB/tX9t5N9/KpVA3U8usMiE7H60bhctbfQ2tsHguU9frpYL8hZlu/P7jo0qnvOH/
+         w0yqFmOfrREE0MYc95OfB4zZfV10TbZbgNcGKqIjAe9XMbgmcIj2dWNipIvi0tBMbP
+         u51kmtmDq6UUg==
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-btrfs@vger.kernel.org
+Subject: [PATCH 0/6] fsverity: support for non-4K pages
+Date:   Fri, 28 Oct 2022 15:45:33 -0700
+Message-Id: <20221028224539.171818-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.38.0
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.3
-Subject: Re: [PATCH] iomap: directly use logical block size
-Content-Language: en-US
-To:     Keith Busch <kbusch@meta.com>, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, hch@lst.de, djwong@kernel.org,
-        Keith Busch <kbusch@kernel.org>
-References: <20221026165133.2563946-1-kbusch@meta.com>
-From:   Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20221026165133.2563946-1-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/26/22 09:51, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
-> 
-> Don't transform the logical block size to a bit shift only to shift it
-> back to the original block size. Just use the size.
-> 
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-> ---
->   fs/iomap/direct-io.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-> index 4eb559a16c9e..503b97e5a115 100644
-> --- a/fs/iomap/direct-io.c
-> +++ b/fs/iomap/direct-io.c
-> @@ -240,7 +240,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->   {
->   	const struct iomap *iomap = &iter->iomap;
->   	struct inode *inode = iter->inode;
-> -	unsigned int blkbits = blksize_bits(bdev_logical_block_size(iomap->bdev));
-> +	unsigned int blksz = bdev_logical_block_size(iomap->bdev);
->   	unsigned int fs_block_size = i_blocksize(inode), pad;
->   	loff_t length = iomap_length(iter);
->   	loff_t pos = iter->pos;
-> @@ -252,7 +252,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
->   	size_t copied = 0;
->   	size_t orig_count;
->   
-> -	if ((pos | length) & ((1 << blkbits) - 1) ||
-> +	if ((pos | length) & (blksz - 1) ||
->   	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
->   		return -EINVAL;
+[This patchset applies to v6.1-rc2 + my other patch
+ https://lore.kernel.org/r/20221028175807.55495-1-ebiggers@kernel.org.
+ You can get everything from tag "fsverity-non4k-v1" of
+ https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git]
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Currently, filesystems (ext4, f2fs, and btrfs) only support fsverity
+when the Merkle tree block size, filesystem block size, and page size
+are all the same.  In practice that means 4K, since increasing the page
+size, e.g. to 16K, forces the Merkle tree block size and filesystem
+block size to be increased accordingly.  That can be impractical; for
+one, users want the same file signatures to work on all systems.
+
+Therefore, this patchset reduces the coupling between these sizes.
+
+First, patches 1-4 allow the Merkle tree block size to be less than the
+page size or filesystem block size, provided that it's not larger than
+either one.  This involves, among other things, changing the way that
+fs/verity/verify.c tracks which hash blocks have been verified.
+
+Second, patches 5-6 makes ext4 support fsverity when the filesystem
+block size is less than the page size.  Note, f2fs doesn't need similar
+changes because f2fs always assumes that the filesystem block size and
+page size are the same anyway.  I haven't looked into btrfs yet.
+
+I've tested this patchset with changes to the verity tests in xfstests.
+I'll be sending out these xfstests changes separately.
+
+Eric Biggers (6):
+  fsverity: support verification with tree block size < PAGE_SIZE
+  fsverity: support enabling with tree block size < PAGE_SIZE
+  ext4: simplify ext4_readpage_limit()
+  f2fs: simplify f2fs_readpage_limit()
+  fs/buffer.c: support fsverity in block_read_full_folio()
+  ext4: allow verity with fs block size < PAGE_SIZE
+
+ Documentation/filesystems/fsverity.rst |  76 +++---
+ fs/buffer.c                            |  66 ++++-
+ fs/ext4/readpage.c                     |   3 +-
+ fs/ext4/super.c                        |   5 -
+ fs/f2fs/data.c                         |   3 +-
+ fs/verity/enable.c                     | 268 ++++++++++----------
+ fs/verity/fsverity_private.h           |  17 +-
+ fs/verity/hash_algs.c                  |  48 ++--
+ fs/verity/open.c                       | 101 ++++++--
+ fs/verity/verify.c                     | 325 +++++++++++++++++--------
+ include/linux/fsverity.h               |  14 +-
+ 11 files changed, 575 insertions(+), 351 deletions(-)
+
+-- 
+2.38.0
+
