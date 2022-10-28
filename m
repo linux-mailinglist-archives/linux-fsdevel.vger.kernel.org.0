@@ -2,157 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E429611910
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 19:16:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id F301A61191F
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 19:21:07 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230302AbiJ1RQJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Oct 2022 13:16:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32976 "EHLO
+        id S230188AbiJ1RVF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Oct 2022 13:21:05 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230193AbiJ1RQI (ORCPT
+        with ESMTP id S229473AbiJ1RVE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Oct 2022 13:16:08 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A0D71C1155;
-        Fri, 28 Oct 2022 10:16:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=VF9k33pcdLTeIysuh3TIPFQyMmapNyL28cb+mCFej7M=; b=nmp1KrD+1RWDQWEGdIqlR51rBX
-        Co4HTXHi5hdL7Or9H1D7lpRvNrl/dAuuwvAE6q9kU48BXcpLgXluKjNvJ+P1tA1YmgokVrwE9OnH/
-        AcziZ+6gbDvJSaNlD0+weqyHcrHbSu7zl/Kbr3RvXdrDw165/xZy9f8iKmn6DoOJHudD6qT+vDs34
-        LKpMZK318phJiptxpreVIn2neWvwUjImyjShts7sCtdpAUKBGWGhe9/smOz/8QzCbHxWBl9aEJ6Jd
-        IK+VDpPS62qG95W0D/FpB00S75DV2grnMKSBpKWBdapKD3okncI1K/E0D1OJ65iyd/8BRJDjmYZPH
-        ezIgcMqw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1ooSxU-00F00G-04;
-        Fri, 28 Oct 2022 17:15:52 +0000
-Date:   Fri, 28 Oct 2022 18:15:51 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>, willy@infradead.org,
-        dchinner@redhat.com, Steve French <smfrench@gmail.com>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ira Weiny <ira.weiny@intel.com>, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 12/12] use less confusing names for iov_iter direction
- initializers
-Message-ID: <Y1wOR7YmqK8iBYa8@ZenIV>
-References: <Y1btOP0tyPtcYajo@ZenIV>
- <20221028023352.3532080-1-viro@zeniv.linux.org.uk>
- <20221028023352.3532080-12-viro@zeniv.linux.org.uk>
- <CAHk-=wibPKfv7mpReMj5PjKBQi4OsAQ8uwW_7=6VCVnaM-p_Dw@mail.gmail.com>
+        Fri, 28 Oct 2022 13:21:04 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 404161BE402;
+        Fri, 28 Oct 2022 10:21:02 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EE879629D1;
+        Fri, 28 Oct 2022 17:21:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C8D6C433D7;
+        Fri, 28 Oct 2022 17:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1666977661;
+        bh=uyJa1FWOnVe5QL+ophLah4CnDuHIHyRvZavEqx4wGzs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=VAkIZkvbXAh6N0rVrNS2/2gKTqiw6CWJfN/vnT/v0od4lCqyF0FdxSMtViQBVo+YN
+         KcRG899/aEVyj6k7GZ+lmntXgyE9D/SphU9cNVSr0SKp/crjPSV7c2nwszvC2fQQ78
+         ReMCimKePZr4BYBR7fARCrs/A/A6/6hIdQcWumULtGFlLdVDfr9GtafAqGGRaagahA
+         9xNWFRX/z8kjgJStzDo2keSKc/oqfvWRb0OQ53/4eJm4dtdVCBmspSpKDHd6MZ2Fl4
+         pQhJN91cWwJ0N1BpR98RnSDMBEzGhh8KuUi5TSgNwsfjwyhkll6mRBGpekINVKt3uY
+         hIDfCjcCHzMsA==
+Message-ID: <95e1afd00e550ee227dd5d76a5947a2176730e1d.camel@kernel.org>
+Subject: Re: [PATCH v3 08/23] ceph: Convert ceph_writepages_start() to use
+ filemap_get_folios_tag()
+From:   Jeff Layton <jlayton@kernel.org>
+To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+        linux-fsdevel@vger.kernel.org, David Howells <dhowells@redhat.com>
+Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-nilfs@vger.kernel.org, linux-mm@kvack.org
+Date:   Fri, 28 Oct 2022 13:20:58 -0400
+In-Reply-To: <20221017202451.4951-9-vishal.moola@gmail.com>
+References: <20221017202451.4951-1-vishal.moola@gmail.com>
+         <20221017202451.4951-9-vishal.moola@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wibPKfv7mpReMj5PjKBQi4OsAQ8uwW_7=6VCVnaM-p_Dw@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 28, 2022 at 09:41:35AM -0700, Linus Torvalds wrote:
+On Mon, 2022-10-17 at 13:24 -0700, Vishal Moola (Oracle) wrote:
+> Convert function to use a folio_batch instead of pagevec. This is in
+> preparation for the removal of find_get_pages_range_tag().
+>=20
+> Also some minor renaming for consistency.
+>=20
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> ---
+>  fs/ceph/addr.c | 58 ++++++++++++++++++++++++++------------------------
+>  1 file changed, 30 insertions(+), 28 deletions(-)
+>=20
+> diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+> index dcf701b05cc1..d2361d51db39 100644
+> --- a/fs/ceph/addr.c
+> +++ b/fs/ceph/addr.c
+> @@ -792,7 +792,7 @@ static int ceph_writepages_start(struct address_space=
+ *mapping,
+>  	struct ceph_vino vino =3D ceph_vino(inode);
+>  	pgoff_t index, start_index, end =3D -1;
+>  	struct ceph_snap_context *snapc =3D NULL, *last_snapc =3D NULL, *pgsnap=
+c;
+> -	struct pagevec pvec;
+> +	struct folio_batch fbatch;
+>  	int rc =3D 0;
+>  	unsigned int wsize =3D i_blocksize(inode);
+>  	struct ceph_osd_request *req =3D NULL;
+> @@ -821,7 +821,7 @@ static int ceph_writepages_start(struct address_space=
+ *mapping,
+>  	if (fsc->mount_options->wsize < wsize)
+>  		wsize =3D fsc->mount_options->wsize;
+> =20
+> -	pagevec_init(&pvec);
+> +	folio_batch_init(&fbatch);
+> =20
+>  	start_index =3D wbc->range_cyclic ? mapping->writeback_index : 0;
+>  	index =3D start_index;
+> @@ -869,7 +869,7 @@ static int ceph_writepages_start(struct address_space=
+ *mapping,
+> =20
+>  	while (!done && index <=3D end) {
+>  		int num_ops =3D 0, op_idx;
+> -		unsigned i, pvec_pages, max_pages, locked_pages =3D 0;
+> +		unsigned i, nr_folios, max_pages, locked_pages =3D 0;
+>  		struct page **pages =3D NULL, **data_pages;
+>  		struct page *page;
+>  		pgoff_t strip_unit_end =3D 0;
+> @@ -879,13 +879,13 @@ static int ceph_writepages_start(struct address_spa=
+ce *mapping,
+>  		max_pages =3D wsize >> PAGE_SHIFT;
+> =20
+>  get_more_pages:
+> -		pvec_pages =3D pagevec_lookup_range_tag(&pvec, mapping, &index,
+> -						end, PAGECACHE_TAG_DIRTY);
+> -		dout("pagevec_lookup_range_tag got %d\n", pvec_pages);
+> -		if (!pvec_pages && !locked_pages)
+> +		nr_folios =3D filemap_get_folios_tag(mapping, &index,
+> +				end, PAGECACHE_TAG_DIRTY, &fbatch);
+> +		dout("pagevec_lookup_range_tag got %d\n", nr_folios);
+> +		if (!nr_folios && !locked_pages)
+>  			break;
+> -		for (i =3D 0; i < pvec_pages && locked_pages < max_pages; i++) {
+> -			page =3D pvec.pages[i];
+> +		for (i =3D 0; i < nr_folios && locked_pages < max_pages; i++) {
+> +			page =3D &fbatch.folios[i]->page;
+>  			dout("? %p idx %lu\n", page, page->index);
+>  			if (locked_pages =3D=3D 0)
+>  				lock_page(page);  /* first page */
+> @@ -995,7 +995,7 @@ static int ceph_writepages_start(struct address_space=
+ *mapping,
+>  				len =3D 0;
+>  			}
+> =20
+> -			/* note position of first page in pvec */
+> +			/* note position of first page in fbatch */
+>  			dout("%p will write page %p idx %lu\n",
+>  			     inode, page, page->index);
+> =20
+> @@ -1005,30 +1005,30 @@ static int ceph_writepages_start(struct address_s=
+pace *mapping,
+>  				fsc->write_congested =3D true;
+> =20
+>  			pages[locked_pages++] =3D page;
+> -			pvec.pages[i] =3D NULL;
+> +			fbatch.folios[i] =3D NULL;
+> =20
+>  			len +=3D thp_size(page);
+>  		}
+> =20
+>  		/* did we get anything? */
+>  		if (!locked_pages)
+> -			goto release_pvec_pages;
+> +			goto release_folios;
+>  		if (i) {
+>  			unsigned j, n =3D 0;
+> -			/* shift unused page to beginning of pvec */
+> -			for (j =3D 0; j < pvec_pages; j++) {
+> -				if (!pvec.pages[j])
+> +			/* shift unused page to beginning of fbatch */
+> +			for (j =3D 0; j < nr_folios; j++) {
+> +				if (!fbatch.folios[j])
+>  					continue;
+>  				if (n < j)
+> -					pvec.pages[n] =3D pvec.pages[j];
+> +					fbatch.folios[n] =3D fbatch.folios[j];
+>  				n++;
+>  			}
+> -			pvec.nr =3D n;
+> +			fbatch.nr =3D n;
+> =20
+> -			if (pvec_pages && i =3D=3D pvec_pages &&
+> +			if (nr_folios && i =3D=3D nr_folios &&
+>  			    locked_pages < max_pages) {
+> -				dout("reached end pvec, trying for more\n");
+> -				pagevec_release(&pvec);
+> +				dout("reached end fbatch, trying for more\n");
+> +				folio_batch_release(&fbatch);
+>  				goto get_more_pages;
+>  			}
+>  		}
+> @@ -1164,10 +1164,10 @@ static int ceph_writepages_start(struct address_s=
+pace *mapping,
+>  		if (wbc->nr_to_write <=3D 0 && wbc->sync_mode =3D=3D WB_SYNC_NONE)
+>  			done =3D true;
+> =20
+> -release_pvec_pages:
+> -		dout("pagevec_release on %d pages (%p)\n", (int)pvec.nr,
+> -		     pvec.nr ? pvec.pages[0] : NULL);
+> -		pagevec_release(&pvec);
+> +release_folios:
+> +		dout("folio_batch release on %d folios (%p)\n", (int)fbatch.nr,
+> +		     fbatch.nr ? fbatch.folios[0] : NULL);
+> +		folio_batch_release(&fbatch);
+>  	}
+> =20
+>  	if (should_loop && !done) {
+> @@ -1184,15 +1184,17 @@ static int ceph_writepages_start(struct address_s=
+pace *mapping,
+>  			unsigned i, nr;
+>  			index =3D 0;
+>  			while ((index <=3D end) &&
+> -			       (nr =3D pagevec_lookup_tag(&pvec, mapping, &index,
+> -						PAGECACHE_TAG_WRITEBACK))) {
+> +			       (nr =3D filemap_get_folios_tag(mapping, &index,
+> +						(pgoff_t)-1,
+> +						PAGECACHE_TAG_WRITEBACK,
+> +						&fbatch))) {
+>  				for (i =3D 0; i < nr; i++) {
+> -					page =3D pvec.pages[i];
+> +					page =3D &fbatch.folios[i]->page;
+>  					if (page_snap_context(page) !=3D snapc)
+>  						continue;
+>  					wait_on_page_writeback(page);
+>  				}
+> -				pagevec_release(&pvec);
+> +				folio_batch_release(&fbatch);
+>  				cond_resched();
+>  			}
+>  		}
 
-> >         rq_for_each_segment(bvec, rq, iter) {
-> > -               iov_iter_bvec(&i, READ, &bvec, 1, bvec.bv_len);
-> >                 len = vfs_iter_read(lo->lo_backing_file, &i, &pos, 0);
-> >                 if (len < 0)
-> >                         return len;
-> 
-> where WRITE is used in the 'write()' function, and READ is used in the
-> read() function.
-> 
-> So that naming is not great, but it has a fairly obvious pattern in a
-> lot of code.
-> 
-> Not all code, no, as clearly shown by the other eleven patches in this
-> series, but still..
-> 
-> The new naming doesn't strike me as being obviously less confusing.
-> It's not horrible, but I'm also not seeing it as being any less likely
-> in the long run to then cause the same issues we had with READ/WRITE.
-> It's not like
-> 
->                 iov_iter_bvec(&i, ITER_DEST, &bvec, 1, bvec.bv_len);
-> 
-> is somehow obviously really clear.
-> 
-> I can see the logic: "the destination is the iter, so the source is
-> the bvec".
+I took a brief look and this looks like a fairly straightforward
+conversion. It definitely needs testing however.
 
-???
+The hope was to get ceph converted over to using the netfs write
+helpers, but that's taking a lot longer than expected. It's really up to
+Xiubo at this point, but I don't have an issue in principle with taking
+this patch in before the netfs conversion, particularly if it's blocking
+other work.
 
-Wait a sec; bvec is destination - we are going to store data into the page
-hanging off that bvec.
-
-We have a request to read from /dev/loop into given page; page is where
-the data goes into; the source of that data is the backing file of /dev/loop.
-
-Or am I completely misparsing your sentence above?
-
-> I think the real fix for this is your 11/12, which at least makes the
-> iter movement helpers warn about mis-use. That said, I hate 11/12 too,
-> but for a minor technicality: please make the WARN_ON() be a
-> WARN_ON_ONCE(), and please don't make it abort.
-
-Umm...  How are you going to e.g. copy from ITER_DISCARD?  I've no problem
-with WARN_ON_ONCE(), but when the operation really can't be done, what
-can we do except returning an error?
-
-> Because otherwise somebody who has a random - but important enough -
-> driver that does this wrong will just have an unbootable machine.
-> 
-> So your 11/12 is conceptually the right thing, but practically
-> horribly wrong. While this 12/12 mainly makes me go "If we have a
-> patch this big, I think we should be able to do better than change
-> from one ambiguous name to another possibly slightly less ambiguous".
-> 
-> Honestly, I think the *real* fix would be a type-based one. Don't do
-> 
->         iov_iter_kvec(&iter, ITER_DEST, ...
-> 
-> at all, but instead have two different kinds of 'struct iov_iter': one
-> as a destination (iov_iter_dst), and one as a source (iov_iter_src),
-> and then just force all the use-cases to use the right version. The
-> actual *underlying" struct could still be the same
-> (iov_iter_implementation), but you'd force people to always use the
-> right version - kind of the same way a 'const void *' is always a
-> source, and a 'void *' is always a destination for things like memcpy.
-> 
-> That would catch mis-uses much earlier.
-> 
-> That would also make the patch much bigger, but I do think 99.9% of
-> all users are very distinct. When you pass a iter source around, that
-> 'iov_iter_src' is basically *always* a source of the data through the
-> whole call-chain. No?
-
-No.  If nothing else, you'll get to split struct msghdr (msg->msg_iter
-different for sendmsg and recvmsg that way) *and* you get to split
-every helper in net/* that doesn't give a damn about the distinction
-(as in "doesn't even look at ->msg_iter", for example).
-
-> Maybe I'm 100% wrong and that type-based one has some fundamental
-> problem in it, but it really feels to me like your dynamic WARN_ON()
-> calls in 11/12 could have been type-based. Because they are entirely
-> static based on 'data_source'.
-
-See above; ->direct_IO() is just one example, there are much more
-painful ones.   Sure, we can make those use a union of pointers or
-pointer to union or play with casts, but that'll end up with
-much more places that can go wrong.
-
-I thought of that approach, but I hadn't been able to find any way to
-do it without a very ugly and painful mess as the result.
-
-We can do separate iov_iter_bvec_dest()/iov_iter_bvec_source(), etc.,
-but it won't buy you any kind of type safety - not without splitting
-the type and that ends up being too painful ;-/
+Acked-by: Jeff Layton <jlayton@kernel.org>
