@@ -2,59 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ABDD611AE6
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 21:31:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 367BB611AE9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 21:33:18 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229773AbiJ1TbK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Oct 2022 15:31:10 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41554 "EHLO
+        id S229880AbiJ1TdO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Oct 2022 15:33:14 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229379AbiJ1TbI (ORCPT
+        with ESMTP id S229717AbiJ1TdM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Oct 2022 15:31:08 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2669E229E44;
-        Fri, 28 Oct 2022 12:31:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=rXRqCxzSwwJwUn6NUaDL+hX0MQGv2CPlx00T8de0cos=; b=k+le+6ssU0pzX5iaW/kTWOgm4b
-        nhkSL3zT5nVqJVhVuRJK4TvRwmnHDnLaqUuWa+33dQ66uqwPEKjR4j4j9L4t1RboUwOc1Nk8nOWmt
-        mz/UZSzC7pCS3TcjH1bbsoa537jLJ9WDiRH/HpVfMZj9CdcugRvy1mxB6bk4TGkhcCT5Ttoj96BuL
-        bCfc5MewRDixyOuq+62XGtHBEts3nkQVf6Ij0WOUTS4g69Xtow1xtw/IxlhClbHYkhOkLGi5S4NAc
-        2Sd8qZ5nSnH+oEKtDPOYRfzj09tLz4dzrw4xJctoRVfgt6ij1Sy7ZerlgDLXj0BG/z3WRgj8TfwLG
-        AThxBdyQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1ooV4A-00F1pm-0v;
-        Fri, 28 Oct 2022 19:30:54 +0000
-Date:   Fri, 28 Oct 2022 20:30:54 +0100
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>, willy@infradead.org,
-        dchinner@redhat.com, Steve French <smfrench@gmail.com>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ira Weiny <ira.weiny@intel.com>, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 12/12] use less confusing names for iov_iter direction
- initializers
-Message-ID: <Y1wt7uzL7vkBQ6Vm@ZenIV>
-References: <Y1btOP0tyPtcYajo@ZenIV>
- <20221028023352.3532080-1-viro@zeniv.linux.org.uk>
- <20221028023352.3532080-12-viro@zeniv.linux.org.uk>
- <CAHk-=wibPKfv7mpReMj5PjKBQi4OsAQ8uwW_7=6VCVnaM-p_Dw@mail.gmail.com>
- <Y1wOR7YmqK8iBYa8@ZenIV>
- <CAHk-=wi_iDAugqFZxTiscsRCNbtARMFiugWtBKO=NqgM-vCVAQ@mail.gmail.com>
+        Fri, 28 Oct 2022 15:33:12 -0400
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E00E23B697;
+        Fri, 28 Oct 2022 12:33:10 -0700 (PDT)
+Received: by mail-pg1-x534.google.com with SMTP id f193so5708645pgc.0;
+        Fri, 28 Oct 2022 12:33:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vdrVSt4RZJ3wSeFHE+CjtlpVwqOByBQJYEcfbYTn/5I=;
+        b=ggs47vXUkGHFQLomn7C70DyQXIEFvwGH9xKcYgIMKHlAKhAy64oNy5kKNaWBHnyIEr
+         y80tz6HBa72CsqWXXm8Zf0yAJ7V2jTjuruF0grcL50Qc1iP0u8DjwumD63ik+KaZa5rB
+         MXK9lLI5Pbusqx++TYNX8yNP/C7CKeEjhAqfOqLtjwKX9PIYauNQ5YI3CrocMo+AM6U5
+         aupa1Ai+4aG9jX/HPeOq5kru/qUTgws24MWU+F0tW/f1qiaOZVQiUC41vV1nCMzLUoK+
+         Y0y2CkZp+jXcfaFFmKKOWc4IW21WrVv5DwE5eURB3SBcT+BFoYcjn491uulp35ZvbCyW
+         p5QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vdrVSt4RZJ3wSeFHE+CjtlpVwqOByBQJYEcfbYTn/5I=;
+        b=i9fiDAxtBEuHWjcwX439jIZiAmkWQaPhtZG2GCZpyW7KaKiMyz3AGzN1PSieaR4i0b
+         bGE69F8fNn39HrvNluLybwZvFOY11VFDg2hN5kxxni6CQULgQw88Pw2lPOvzcB82c9yh
+         QCt3eojF8BdDwjBgYPmmwq8pnbL6/xV8Ht79v7iDzGZF6Mu9pVV1I0TDIF+NV/Oysln1
+         vecT1hPArSoevEL/iOxYBKtQMuUg1cPYqBmsnMU+RlOY3vkYG0mRwi8/ImgiA2EyE8Zk
+         kZ3mQPevaG2IgM67RD33s4Uec8QVUSPEPjJLAKm3z9u6+JPFVuYMwqc1wsMd5I3ncHeu
+         60bQ==
+X-Gm-Message-State: ACrzQf1LC/fwVRb66l0Yfnrsk+9J2KCkUPIwq4VoVxNx9my5lBsq6fWA
+        qf488l70JiThfk7lvifQ4Rhi0sPOv7SWGP9hxILI/J2j
+X-Google-Smtp-Source: AMsMyM4Qw+lrCF+1vQw8UPSvH+5kALby1aCBhATUgK1FnqnC+vUxcg5vZD9r5SRnjxXDcQMcDzalQU29YlHpprTEKEE=
+X-Received: by 2002:a05:6a00:16c4:b0:535:890:d52 with SMTP id
+ l4-20020a056a0016c400b0053508900d52mr718104pfc.9.1666985589367; Fri, 28 Oct
+ 2022 12:33:09 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wi_iDAugqFZxTiscsRCNbtARMFiugWtBKO=NqgM-vCVAQ@mail.gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+From:   Jeff Norden <norden.jeff@gmail.com>
+Date:   Fri, 28 Oct 2022 14:32:43 -0500
+Message-ID: <CAPbFCnkLy21LRKCEo-HH4VOYe2TUpGezYP4CmYmCE5jbKZ5cOg@mail.gmail.com>
+Subject: Subject: magic symbolic links and CAP_DAC_READ_SEARCH
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -62,35 +63,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 28, 2022 at 11:35:06AM -0700, Linus Torvalds wrote:
+I'm certainly no expert, so there could easily be some security issues that
+I'm not seeing right now, but...
 
-> > Umm...  How are you going to e.g. copy from ITER_DISCARD?  I've no problem
-> > with WARN_ON_ONCE(), but when the operation really can't be done, what
-> > can we do except returning an error?
-> 
-> Fair enough. But it's the "people got the direction wrong, but the
-> code worked" case that I would want tyo make sure still works - just
-> with a warning.
-> 
-> Clearly the ITER_DISCARD didn't work before either, but all the cases
-> in patches 1-10 were things that _worked_, just with entirely the
-> wrong ->data_source (aka iov_iter_rw()) value.
-> 
-> So things like copy_to_iter() should warn if it's not a READ (or
-> ITER_DEST), but it should still copy into the destination described by
-> the iter, in order to keep broken code working.
-> 
-> That's simply because I worry that your patches 1-10 didn't actually
-> catch every single case. I'm not actually sure how you found them all
-> - did you have some automation, or was it with "boot and find warnings
-> from the first version of patch 11/12"?
+It seems to me that the CAP_DAC_READ_SEARCH capability ought to allow
+readlink() to succeed on a "magic symlink" even when the uid/gid would
+otherwise disallow it.
 
-Went through the callers, replaced each with the right ITER_... (there's
-not that many of them and they are fairly easy to review), then went
-through mismatches and split their fixups into the beginning of the
-series (READ -> ITER_SOURCE becoming READ -> WRITE -> ITER_SOURCE, that
-is).
+The capabilities(7) man page says:
+ CAP_DAC_READ_SEARCH
+  * Bypass file read permission checks and directory read and execute
+    permission checks;
+etc.
 
-FWIW, there used to be one case where we really tried to copy the wrong
-way - fixed a couple of cycles ago (f615625a44c4 "9p: handling Rerror
-without copy_from_iter_full()").  No such catches this time...
+This could be handy to see what files a process has open without using
+full-blown root priv.  E.g., "ls -l /proc/nnnn/fd/"  run via setpriv or
+capsh.
+
+Thanks for listening,
+-Jeff
+
+---------
+The following illustrates the current situation.  'rsudo' is a personal script
+I use to run a command with dac_read_search; sort of a 'read only' version of
+sudo. (I really should clean it up a bit and post it somewhere.)
+
+jeff@ups:~$ ls -l /proc/1/fd/0
+ls: cannot access '/proc/1/fd/0': Permission denied
+
+jeff@ups:~$ sudo ls -l /proc/1/fd/0
+lrwx------ 1 root root 64 Oct 23 13:48 /proc/1/fd/0 -> /dev/null
+
+jeff@ups:~$ sudo readlink /proc/1/fd/0
+/dev/null
+
+
+jeff@ups:~$ rsudo ls -l /proc/1/fd/0
+ls: cannot read symbolic link '/proc/1/fd/0': Permission denied
+lrwx------ 1 root root 64 Oct 23 13:48 /proc/1/fd/0
+
+jeff@ups:~$ rsudo readlink /proc/1/fd/0
+
+The first 'rsudo' above ran the cmd:
+ sudo setpriv --inh-caps +dac_read_search --ambient-caps +dac_read_search
+ --reuid=1000 --regid=1000 --init-groups -- ls -l /proc/1/fd/0
+The second did the same for 'readlink /proc/1/fd/0'
