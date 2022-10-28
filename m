@@ -2,127 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31846611A33
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 20:35:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 18F4A611AD3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 21:23:54 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230226AbiJ1Sfb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Oct 2022 14:35:31 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50168 "EHLO
+        id S229959AbiJ1TXw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Oct 2022 15:23:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230049AbiJ1Sf3 (ORCPT
+        with ESMTP id S229473AbiJ1TXv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Oct 2022 14:35:29 -0400
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4C9569ECA
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 11:35:25 -0700 (PDT)
-Received: by mail-qt1-x82d.google.com with SMTP id bb5so3995583qtb.11
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 11:35:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=554KCjWn8qBcAcBVpoouhKeUYG/Iw1xaVWw3M5KddOs=;
-        b=DCzroOtVcESn8/j0p2284O1c8+f71f2wa1HhtWbyeBVb5KrtXtesUm1DKY6tLO/CqX
-         oBob/TSHMKmFbqkcAbw8pVZOUno4hI+NzeRw7haRuA1X/fp9UYA0EEKK34zd9GG+8Fmn
-         h0agPHPClfZ8rFS2LoP6wiZ0asEbvErvPOO6Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=554KCjWn8qBcAcBVpoouhKeUYG/Iw1xaVWw3M5KddOs=;
-        b=axD6tlf9jV+axoP2xIbnktTa6zC+L3hAg+7YuEGnHl9C+91GipQboUr6DVl3LvMMFH
-         TsR2liFNIqY19KfElb7+cI3QTp82R2sZO0yM5azXVGYPQ8su/rgq4sm1DMvLNjZsjZ+6
-         n9yOArt92u9uhR69zizn1Jqk1LYHL53qumUrJ9CeL/NnCvzvH3H1qsCwIIUZJfxtnDSV
-         bP+30W15ZAtmLzWgOINJSUmYXN7CWOX+fa9IC5/Y+r96TLqBN90i6p5pbvawBOkt/o3s
-         QewunhLilwrMmCQ4bxELIIYfjKYtj5WWJFc4EgfZabotIlTXmHuIBSmnIrQRz8gdQLkc
-         f6Wg==
-X-Gm-Message-State: ACrzQf3Wx+uyoXUmWOtbsqff+2AGmSyKIFy/hzVjniBvdkTTmLMazid3
-        0+YmPwiaUAUQyPoE5X2VP67w0fa/dOBtew==
-X-Google-Smtp-Source: AMsMyM7imGF8roNZdWk12jbYVpAOlrtD2a6SR4s4KE9OM/vN5R6tOBVvEProcJu9DDb1/HGVMVXJfQ==
-X-Received: by 2002:ac8:7d42:0:b0:39c:dd3f:b74d with SMTP id h2-20020ac87d42000000b0039cdd3fb74dmr740975qtb.279.1666982124692;
-        Fri, 28 Oct 2022 11:35:24 -0700 (PDT)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id x1-20020a05620a448100b006ec771d8f89sm3550729qkp.112.2022.10.28.11.35.22
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Oct 2022 11:35:23 -0700 (PDT)
-Received: by mail-yb1-f178.google.com with SMTP id j7so7059968ybb.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 11:35:22 -0700 (PDT)
-X-Received: by 2002:a25:5389:0:b0:6bc:f12c:5d36 with SMTP id
- h131-20020a255389000000b006bcf12c5d36mr619498ybb.184.1666982122579; Fri, 28
- Oct 2022 11:35:22 -0700 (PDT)
+        Fri, 28 Oct 2022 15:23:51 -0400
+Received: from out2.migadu.com (out2.migadu.com [188.165.223.204])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 605C522EC9E;
+        Fri, 28 Oct 2022 12:23:50 -0700 (PDT)
+Date:   Fri, 28 Oct 2022 15:23:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+        t=1666985028;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:mime-version:mime-version:content-type:content-type;
+        bh=NxZNy+IcQhm7mEv+x16u9ApiFgxKE6daq9Dhu2pJXuA=;
+        b=QPlLtjoTqfpwdxfTXfCjX7fyoLxFyY8nTFurb3Nt8k9IN3M47Vp30x8G4pnlz+T82D8M2T
+        Mewo/SlzTLrE8XjgYEiLHpRjgBp4hbOJQxwBbZmzJGJ8tLFxBJV0M5T2pQuRM6dMshFvh8
+        ZsdPZyQ2pI04N/xzW0OMR1CuuOKnoOg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From:   Kent Overstreet <kent.overstreet@linux.dev>
+To:     linux-fsdevel@vger.kernel.org, linux-bcachefs@vger.kernel.org
+Subject: bcachefs status update
+Message-ID: <Y1wsQVSQ6ipWyFlX@moria.home.lan>
 MIME-Version: 1.0
-References: <Y1btOP0tyPtcYajo@ZenIV> <20221028023352.3532080-1-viro@zeniv.linux.org.uk>
- <20221028023352.3532080-12-viro@zeniv.linux.org.uk> <CAHk-=wibPKfv7mpReMj5PjKBQi4OsAQ8uwW_7=6VCVnaM-p_Dw@mail.gmail.com>
- <Y1wOR7YmqK8iBYa8@ZenIV>
-In-Reply-To: <Y1wOR7YmqK8iBYa8@ZenIV>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 28 Oct 2022 11:35:06 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi_iDAugqFZxTiscsRCNbtARMFiugWtBKO=NqgM-vCVAQ@mail.gmail.com>
-Message-ID: <CAHk-=wi_iDAugqFZxTiscsRCNbtARMFiugWtBKO=NqgM-vCVAQ@mail.gmail.com>
-Subject: Re: [PATCH v2 12/12] use less confusing names for iov_iter direction initializers
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>, willy@infradead.org,
-        dchinner@redhat.com, Steve French <smfrench@gmail.com>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ira Weiny <ira.weiny@intel.com>, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Migadu-Flow: FLOW_OUT
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 28, 2022 at 10:15 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> >
-> > I can see the logic: "the destination is the iter, so the source is
-> > the bvec".
->
-> ???
->
-> Wait a sec; bvec is destination - we are going to store data into the page
-> hanging off that bvec.
 
-Yeah, no, I'm confused and used confusing language. The bvec is the
-only "source" in the sense that it's the original destination.  They
-are both the destination for the data itself.
+New allocator
+-------------
 
-> Umm...  How are you going to e.g. copy from ITER_DISCARD?  I've no problem
-> with WARN_ON_ONCE(), but when the operation really can't be done, what
-> can we do except returning an error?
+The old allocator, fundamentally unchanged from bcache had been thoroughly
+outgrown and was in need of a rewrite. It kept allocation information pinned in
+memory and it did periodic full scans of that aloc info to find free buckets,
+which had become a real scalability issue. It was also problematic to debug,
+being based around purely in-memory state with tricky locking and tricky state
+transitions.
 
-Fair enough. But it's the "people got the direction wrong, but the
-code worked" case that I would want tyo make sure still works - just
-with a warning.
+That's all been completely rewritten and replaced with new algorithms based on
+new persistent data structures. The new code is simpler, vastly more scalable
+(and we had users with 50 TB filesystems before), and since all state
+transitions show up in the journal it's been much easier to debug.
 
-Clearly the ITER_DISCARD didn't work before either, but all the cases
-in patches 1-10 were things that _worked_, just with entirely the
-wrong ->data_source (aka iov_iter_rw()) value.
+Backpointers
+------------
 
-So things like copy_to_iter() should warn if it's not a READ (or
-ITER_DEST), but it should still copy into the destination described by
-the iter, in order to keep broken code working.
+Backpointers are enable doing a lookup from physical device:lba to the extent
+that owns that lba. There's a number of reasons filesystems might want them, but
+in our context we specifically needed them to improve copygc scalability.
+Before, copygc had to periodically walk the entire extents + reflink btrees; now
+it just picks the next-most-empty bucket and moves all the extents it contains.
 
-That's simply because I worry that your patches 1-10 didn't actually
-catch every single case. I'm not actually sure how you found them all
-- did you have some automation, or was it with "boot and find warnings
-from the first version of patch 11/12"?
+With backpointers done we're now largely done with scalability work - excepting
+online fsck. We also still need to add a rebalance_work btree to fix rebalance
+scanning, but that's not as serious since we never depend on rebalance for
+allocations to make forward progress, but this'll be a relatively small chunk of
+work.
 
+Snapshots largely stabilized
+----------------------------
 
-> No.  If nothing else, you'll get to split struct msghdr (msg->msg_iter
-> different for sendmsg and recvmsg that way) *and* you get to split
-> every helper in net/* that doesn't give a damn about the distinction
-> (as in "doesn't even look at ->msg_iter", for example).
+Quotas don't yet work with snapshots, but aside from this all tests are passing.
+There's still a few minor bugs we're trying to get reproduced, but nothing that
+should affect system availability (exception: snapshot delete path still sucks,
+the code to tear down the pagecache should be improved).
 
-Gah. Ok. So it's more than just direct_io. Annoying.
+Erasure coding (RAID 5/6) getting close to usable
+-------------------------------------------------
 
-              Linus
+The codepath for deciding when to create new stripes or update an existing,
+partially-empty stripe still needs to be improved.
+
+Background: bcachefs avoids the write hole problem in other raid
+implementations (by being COW), and it doesn't fragment writes like ZFS does;
+stripes are big (which we want for avoiding fragmentation), and they're created
+on demand out of physical buckets on different devices.
+
+Foreground writes are initially replicated, then when we accumulate a full
+stripe we write out p+q blocks and update extents in the stripe with the stripe
+information and drop the now unnneeded replicas. The buckets containing the
+extra replicas will get reused right away, so if we don't have to send a cache
+flush before they're overwritten with something else they only cost bus
+bandwidth.
+
+As data gets overwritten, or moved by copygc, we'll end up with some of the
+buckets in a stripe becoming empty. The stripe creation path has the ability to
+create a new stripe using the buckets that still contain live data in an
+existing stripe - but it's more efficient in terms of IO to create new stripes
+if the data in an existing stripe is going to die at some point in the future -
+OTOH it requires more disk space.
+
+Once this logic is figured out, erasure coding should be pretty close to ready.
+
+Lock cycle detector
+-------------------
+
+We'd outgrown the old deadlock avoidance strategy: before blocking on a lock
+we'd check for lock ordering violation, and if necessary issue a transaction
+restart which would re-traverse iterators in the correct order. The lock
+ordering rules had become too complicated and this was getting us too many
+transaction restarts, so I stole the standard technique from databases, which is
+now working beautifully - transaction restarts due to deadlock are a tiny
+fraction of what they were before.
+
+Performance work
+----------------
+
+We now have _lots_ of persistent counters, including for transaction restarts
+(of every type), and every slowpath - and, the automated tests now check these
+counters at the end of every test, and fail the test if any of them were too
+high.
+
+And, thanks to a lot of miscellaneous performance work, our 4k O_DIRECT random
+write performance is now > 50% better than it was a few months ago.
+
+Automated test infrastructure!
+------------------------------
+
+I finally built the CI I always wanted: you point it at a git branch and it runs
+tests and gives you the results in a git log view. See it in action here:
+
+https://evilpiepirate.org/~testdashboard/ci?log=bcachefs/master
+
+Since then I've been putting a ton of time into grinding through bugs, and the
+the new test dashboard has been amazing for tracking down regressions.
+
+There's not much more work planned prior to upstreaming: on disk format changes
+have slowed down considerably. I just revved the on disk format version to
+introduce a new inode format (which doesn't varint encode i_sectors or i_size,
+which makes the data write path faster), and I'm going to _attempt_ to expand
+the u64s field of struct bkey from one byte to two, but other than that -
+nothing big expected for awhile.
+
+I also just gave a talk to RH staff - lots of good stuff in there:
+https://bcachefs.org/bcachefs_talk_2022_10.mpv
+
+Cheers, and thanks for reading
+Kent
