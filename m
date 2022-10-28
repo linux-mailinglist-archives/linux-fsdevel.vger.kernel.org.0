@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6B3A3610814
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 04:34:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id D810861081C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 04:34:27 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235011AbiJ1CeV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 27 Oct 2022 22:34:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46422 "EHLO
+        id S236330AbiJ1CeX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 27 Oct 2022 22:34:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46426 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235884AbiJ1CeP (ORCPT
+        with ESMTP id S235948AbiJ1CeP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 27 Oct 2022 22:34:15 -0400
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9CEE2BCBAE;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0757BD04A;
         Thu, 27 Oct 2022 19:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=2hrSO3obB1hPkB2I0g2avezDzM2fxuFWF0A6F6V6oiI=; b=Njb6lBV8/KytFxKCtx4nRVXc9F
-        kg32OMF1Dar/iY6MkQvzhWxWZtBBEFetkJQxWiAiI/owJl+iRKMz5cOL5TqFy2mRFA1DzuzA2r/S6
-        LP5e5IEPI+ERoRpojDceUxwo8DfhigLXuHI4eio7JFbAM5SUuG23YpV/Ss0TTIM5MpAvJM7n6ARpg
-        6JtR8E6iGH4bZNs1mZpch6H3+d4gSj7PMw8UH3NDV/1vbHj6CN2uwV9yB21pC4o8JtEPVCqQLg5Vf
-        Qg0u3NufIClP+vM5uoUQsaK8LEJYGdcCnv0j04wGYT/QOpm1vEAMIbO8DE1HH+FEsJvhjaV3nNwJb
-        1244xkZQ==;
+        bh=1IHlPPQo0kXh4mjlnvowrgPVIjethTQk0jPQAQ9V3GM=; b=fwIaqGTkVp+jLmBUSYuWTSI5Hj
+        QOtE1qVMnASVtZaw5swmoIhwYQs1OGGvHFNUV6ajxJuqUe626RMstHeFQG6NIkRNLg9PuEWbV8MXQ
+        bygLUh21VU6lWXmUUWRYFyiDVNonk7WbjlQKhUdzK/v9jJWA3MkkbBLIK/0LC68fJ2KDGSINuWkFp
+        OLloGII/U9YECi2+r0Gm5H0ERfHO0zOLomba1z2ymAooobNoyuWkS2aNTGGgjfLwmW1nEcf+K/eQp
+        2JeF0xXiY1YdMmXetBDYjur+eL13ORh8OO+acW5mC5gSr6EV83qgfeedmaMFnw9fyfCG0AcfYsOQb
+        aorZTwJw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1ooFBw-00EorB-1H;
+        id 1ooFBw-00EorD-24;
         Fri, 28 Oct 2022 02:33:52 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Christoph Hellwig <hch@infradead.org>
@@ -38,9 +38,9 @@ Cc:     David Howells <dhowells@redhat.com>, willy@infradead.org,
         Ira Weiny <ira.weiny@intel.com>, torvalds@linux-foundation.org,
         linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v2 02/12] csum_and_copy_to_iter(): handle ITER_DISCARD
-Date:   Fri, 28 Oct 2022 03:33:42 +0100
-Message-Id: <20221028023352.3532080-2-viro@zeniv.linux.org.uk>
+Subject: [PATCH v2 03/12] [s390] copy_oldmem_kernel() - WRITE is "data source", not destination
+Date:   Fri, 28 Oct 2022 03:33:43 +0100
+Message-Id: <20221028023352.3532080-3-viro@zeniv.linux.org.uk>
 X-Mailer: git-send-email 2.37.3
 In-Reply-To: <20221028023352.3532080-1-viro@zeniv.linux.org.uk>
 References: <Y1btOP0tyPtcYajo@ZenIV>
@@ -57,34 +57,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Not hard to implement - we are not copying anything here, so
-csum_and_memcpy() is not usable, but calculating a checksum
-of source directly is trivial...
-
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 ---
- lib/iov_iter.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/s390/kernel/crash_dump.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index e9a8fc9ee8ee..020e009d71c5 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1549,8 +1549,12 @@ size_t csum_and_copy_to_iter(const void *addr, size_t bytes, void *_csstate,
- 	__wsum sum, next;
+diff --git a/arch/s390/kernel/crash_dump.c b/arch/s390/kernel/crash_dump.c
+index dd74fe664ed1..7ad7f20320b9 100644
+--- a/arch/s390/kernel/crash_dump.c
++++ b/arch/s390/kernel/crash_dump.c
+@@ -153,7 +153,7 @@ int copy_oldmem_kernel(void *dst, unsigned long src, size_t count)
  
- 	if (unlikely(iov_iter_is_discard(i))) {
--		WARN_ON(1);	/* for now */
--		return 0;
-+		// can't use csum_memcpy() for that one - data is not copied
-+		csstate->csum = csum_block_add(csstate->csum,
-+					       csum_partial(addr, bytes, 0),
-+					       csstate->off);
-+		csstate->off += bytes;
-+		return bytes;
- 	}
- 
- 	sum = csum_shift(csstate->csum, csstate->off);
+ 	kvec.iov_base = dst;
+ 	kvec.iov_len = count;
+-	iov_iter_kvec(&iter, WRITE, &kvec, 1, count);
++	iov_iter_kvec(&iter, READ, &kvec, 1, count);
+ 	if (copy_oldmem_iter(&iter, src, count) < count)
+ 		return -EFAULT;
+ 	return 0;
 -- 
 2.30.2
 
