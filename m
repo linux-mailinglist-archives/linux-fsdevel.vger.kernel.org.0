@@ -2,94 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B68D6118F8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 19:11:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id B913B611902
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 28 Oct 2022 19:12:06 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230436AbiJ1RLA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Oct 2022 13:11:00 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43898 "EHLO
+        id S231204AbiJ1RME (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 28 Oct 2022 13:12:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230370AbiJ1RKV (ORCPT
+        with ESMTP id S231299AbiJ1RLn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Oct 2022 13:10:21 -0400
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C55BF77547;
-        Fri, 28 Oct 2022 10:08:12 -0700 (PDT)
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id D9FE9218D;
-        Fri, 28 Oct 2022 17:05:31 +0000 (UTC)
+        Fri, 28 Oct 2022 13:11:43 -0400
+Received: from mail-qk1-x72e.google.com (mail-qk1-x72e.google.com [IPv6:2607:f8b0:4864:20::72e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEE716706B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 10:10:10 -0700 (PDT)
+Received: by mail-qk1-x72e.google.com with SMTP id d13so3845361qko.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 10:10:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1666976731;
-        bh=TVrq+vQGb+av6ii3jqQDdjetxf7DCNwUg01zC3qewKs=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=gAXYhGKxNxS9jnSw23PcRE5QSOyUUHsJS9hpwu6oX845dwVSgtxDTaYmuMZIQo+V9
-         6GcmRS4YmY7zplFzNuA4W1Vv6sY0QpIHvQvJNpuO91Or4DaZUNcpoAkRiW6iGxiPDW
-         4YOLMtZiCt+7tdxeyPSwh0Zp4SDG3KDHz2FDJmic=
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id D903FDD;
-        Fri, 28 Oct 2022 17:08:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1666976890;
-        bh=TVrq+vQGb+av6ii3jqQDdjetxf7DCNwUg01zC3qewKs=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=SP66XS7JeULWj/kAbmS0oBErTfmLbpWHzNenHpvvq2OrXoCm3M8C9xMZEWMk6qhZc
-         JBR1wBN9NqKS5jjlM0i0P5j/gKDLH4fqIkoa37jFcIioV6374q76PrLPFu3uV5N5ao
-         XEkH+gxx84TbiHvTDubs+tUbLMtrwJ0Qes6WjEvo=
-Received: from [172.30.8.65] (172.30.8.65) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 28 Oct 2022 20:08:10 +0300
-Message-ID: <2f497702-ace1-9b3e-65d1-a7dc57623372@paragon-software.com>
-Date:   Fri, 28 Oct 2022 20:08:10 +0300
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SGoG4+kkpjFKIiC1aB206pNaNNu8WHtjUzbD9QY9Ydk=;
+        b=AHLpWHbvaJj6iAHcMzE5M/XFIEJbvJiM188nPc4sZcuDlddbnWJj2scjftscU4cF4x
+         7ek2zIay9rBYB96uXxrfVQTv5OfVuThw3qxUxjLeEdzSlmmCOyQ3PY8Gh2POJX82KNSM
+         0yIW2D4UUkVkaewo1+mavlSqKbWHmteTLXE9Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SGoG4+kkpjFKIiC1aB206pNaNNu8WHtjUzbD9QY9Ydk=;
+        b=5PlkNhkyhDjYH41mCChvGxgGAb3hA8BPotin4/ye4ilCYDS1kO2EYa6dC0QqSCfliw
+         vRX06Ml6fkPVRb+hV6ggSBTzYKV3ONcO6ClVAyXu7FntWcY4njsoc0nBzwCcI/OPebzH
+         VzgZLachn5+p3f/rNPSH/FMEjRi7MDFPYCuVzNA7jRmCYezk5gERjjS99xLUPDUP84tH
+         TzFz6DRA2g3f85UUgQBO2/q4wKOtXLyrvMv15CTC/e2KImulkw4z5KuZ5qHDRb1NdSHO
+         JLLfsuf2TklSMlOqMOVGw3+UPrNBgk5uUoi/jAfNO3r8hUa//K0f8vyD4oGyL1Kphhla
+         P2tA==
+X-Gm-Message-State: ACrzQf16I8A1QsT9e6CInv1RniASaq6WOIWRxzrUE19Uaac1JLBhr7kg
+        L7g5fryPpkAGNH/rscu02MPkqOW1KTogMw==
+X-Google-Smtp-Source: AMsMyM6BdtrvygAYwswkp47n796s0eVIz7if47Ijz2mxHrUReefgN6C251yp39a5bzo1vvUNf98Eew==
+X-Received: by 2002:a05:620a:4091:b0:6fa:dcc:9814 with SMTP id f17-20020a05620a409100b006fa0dcc9814mr198566qko.592.1666977009745;
+        Fri, 28 Oct 2022 10:10:09 -0700 (PDT)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
+        by smtp.gmail.com with ESMTPSA id y14-20020a05620a25ce00b006ec62032d3dsm3342255qko.30.2022.10.28.10.10.08
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Oct 2022 10:10:08 -0700 (PDT)
+Received: by mail-yb1-f182.google.com with SMTP id o70so6825312yba.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 28 Oct 2022 10:10:08 -0700 (PDT)
+X-Received: by 2002:a25:bb44:0:b0:6bb:a336:7762 with SMTP id
+ b4-20020a25bb44000000b006bba3367762mr192268ybk.501.1666977007965; Fri, 28 Oct
+ 2022 10:10:07 -0700 (PDT)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.11.0
-Subject: [PATCH 14/14] fs/ntfs3: Make if more readable
-Content-Language: en-US
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-To:     <ntfs3@lists.linux.dev>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>
-References: <fc5957cc-a71b-cfa3-f291-cb63b23800d1@paragon-software.com>
-In-Reply-To: <fc5957cc-a71b-cfa3-f291-cb63b23800d1@paragon-software.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [172.30.8.65]
-X-ClientProxiedBy: vdlg-exch-02.paragon-software.com (172.30.1.105) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <Y1btOP0tyPtcYajo@ZenIV> <20221028023352.3532080-1-viro@zeniv.linux.org.uk>
+ <20221028023352.3532080-12-viro@zeniv.linux.org.uk> <CAHk-=wibPKfv7mpReMj5PjKBQi4OsAQ8uwW_7=6VCVnaM-p_Dw@mail.gmail.com>
+ <65441.1666976522@warthog.procyon.org.uk>
+In-Reply-To: <65441.1666976522@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 28 Oct 2022 10:09:51 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wgMAxxw3n5gvURUV68zHr6vXbcvhXSzXdi2obKo2bK=Dw@mail.gmail.com>
+Message-ID: <CAHk-=wgMAxxw3n5gvURUV68zHr6vXbcvhXSzXdi2obKo2bK=Dw@mail.gmail.com>
+Subject: Re: [PATCH v2 12/12] use less confusing names for iov_iter direction initializers
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>, willy@infradead.org,
+        dchinner@redhat.com, Steve French <smfrench@gmail.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ira Weiny <ira.weiny@intel.com>, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This way it looks better.
+On Fri, Oct 28, 2022 at 10:02 AM David Howells <dhowells@redhat.com> wrote:
+>
+> Linus Torvalds <torvalds@linux-foundation.org> wrote:
+>
+> > Honestly, I think the *real* fix would be a type-based one. Don't do
+> >
+> >         iov_iter_kvec(&iter, ITER_DEST, ...
+> >
+> > at all, but instead have two different kinds of 'struct iov_iter': one
+> > as a destination (iov_iter_dst), and one as a source (iov_iter_src),
+>
+> Or maybe something along the lines of iov_iter_into_kvec() and
+> iov_iter_from_kvec()?
 
-Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
----
-  fs/ntfs3/record.c | 5 ++---
-  1 file changed, 2 insertions(+), 3 deletions(-)
+For the type-based ones, you would need that to initialize the two cases.
 
-diff --git a/fs/ntfs3/record.c b/fs/ntfs3/record.c
-index a952cd7aa7a4..defce6a5c8e1 100644
---- a/fs/ntfs3/record.c
-+++ b/fs/ntfs3/record.c
-@@ -265,10 +265,9 @@ struct ATTRIB *mi_enum_attr(struct mft_inode *mi, struct ATTRIB *attr)
-  		if (t16 + t32 > asize)
-  			return NULL;
-  
--		if (attr->name_len &&
--		    le16_to_cpu(attr->name_off) + sizeof(short) * attr->name_len > t16) {
-+		t32 = sizeof(short) * attr->name_len;
-+		if (t32 && le16_to_cpu(attr->name_off) + t32 > t16)
-  			return NULL;
--		}
-  
-  		return attr;
-  	}
--- 
-2.37.0
+But without the type-based approach, it ends up being yet another case
+of "you just have to use the right name, and if you don't, you won't
+know until the dynamic WARN_ON() tells you".
 
+And the dynamic WARN_ON() (or, WARN_ON_ONCE(), as it should be) is
+great, but only for the drivers that get active testing by developers
+and robots.
 
+Which leaves potentially a _lot_ of random code that ends up being
+wrong for years.
+
+I really like static checking that actually gets noticed by the
+compiler when you get it wrong.
+
+It may not be entirely realistic in this situation, but it would be
+really nice to try...
+
+                  Linus
