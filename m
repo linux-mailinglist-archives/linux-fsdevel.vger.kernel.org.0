@@ -2,73 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EB03611FBB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Oct 2022 05:25:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id C1C0C612024
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Oct 2022 06:46:30 +0200 (CEST)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229460AbiJ2DZk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 28 Oct 2022 23:25:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38098 "EHLO
+        id S229728AbiJ2Eq1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Oct 2022 00:46:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229456AbiJ2DZg (ORCPT
+        with ESMTP id S229580AbiJ2Eq0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 28 Oct 2022 23:25:36 -0400
-Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8EFD5D122;
-        Fri, 28 Oct 2022 20:25:29 -0700 (PDT)
-Received: by mail-pf1-x435.google.com with SMTP id e4so6334868pfl.2;
-        Fri, 28 Oct 2022 20:25:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ym7+3wgnpkb5rI+Z0N+jDokscndpKC7Wmfv3ziFEPwk=;
-        b=p7+qu4KZjazhGhiUE88p+HmaLJz5fOq8D5pD/W1qQMlgrhY1lUb6VZbiCtAWkSLZoR
-         a7nR60wW6SBLqyDDVtP9OM49/a4gljlwzNUShjs0rgpaI6FMikxBnrolnZTVWBhSr694
-         YhgrgzXsKavE6zolD+qfmg++tskGwbGxEi57/YjLz1ml9+Vr29s+ZaYRM65kDKh+5XqL
-         vbmUATyB+iStxe/ZEdVYhJUgIfRsSZHscCNvDh/vsoHafyqSiEMHvf5yoi7eU5u6Tzmc
-         05c1HwM4BzlsKMdhNOsE1FnkQQn2xTE03BXYlVL583FtEqrvzEYBHXO54p/8U4bIKsxr
-         eMQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ym7+3wgnpkb5rI+Z0N+jDokscndpKC7Wmfv3ziFEPwk=;
-        b=xcvVC4kFYEyUUOw2qAtENgtPe6X1ZwUM9yWgejN+uiq+JU8OXdIUTPL1pE0XTb2P8Z
-         DKOtjq5KWo0zEJsnfjj4kKmwSkYaUDzO4xZ6umaTdAAIckx8YCWlEMjCVY9caBKWvNOS
-         /vX4kfZ2OWbtBiUyqGCPYHC4xZv8+DEk/HhR6cgCfBUA8uzUjTp3oD0I+al/Ob9LQpT5
-         RyaHTchKbyMdYy6xH+6aIe+CUZWIvkfy00dVcnYilmxmeJ+jdkuZHpweKC8QLKuENrr1
-         bz7OnSRUXENGARqDyj+VC9ngTwSE/6D4zr4WySFYUdhCFzeZ2wYAUSNWiY5rCEisHhL2
-         d40A==
-X-Gm-Message-State: ACrzQf0mG/dJovyA/lnlmFO1YXsSXKb5o4DW8Wjt4W+A4Z5QloOO065e
-        R9cY0S4POcGV+dBgcSb6zew=
-X-Google-Smtp-Source: AMsMyM6xCcZOaySccFbFsxoMKXAQenNlbtbw8/sFiZp36feDmO6NqN1UPWQBOgxWFSIDTGPZPQ/QQA==
-X-Received: by 2002:a62:fb14:0:b0:56b:de9f:10ba with SMTP id x20-20020a62fb14000000b0056bde9f10bamr2520142pfm.30.1667013929244;
-        Fri, 28 Oct 2022 20:25:29 -0700 (PDT)
-Received: from localhost ([58.84.24.234])
-        by smtp.gmail.com with ESMTPSA id a198-20020a621acf000000b0056b9ec7e2desm189028pfa.125.2022.10.28.20.25.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Oct 2022 20:25:28 -0700 (PDT)
-Date:   Sat, 29 Oct 2022 08:55:24 +0530
-From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Aravinda Herle <araherle@in.ibm.com>
-Subject: Re: [RFC 2/2] iomap: Support subpage size dirty tracking to improve
- write performance
-Message-ID: <20221029032524.gfkuqtylr5uhg2oe@riteshh-domain>
-References: <cover.1666928993.git.ritesh.list@gmail.com>
- <886076cfa6f547d22765c522177d33cf621013d2.1666928993.git.ritesh.list@gmail.com>
- <Y1wK3x7IketHl+DQ@magnolia>
+        Sat, 29 Oct 2022 00:46:26 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90920129742;
+        Fri, 28 Oct 2022 21:46:24 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 45E72B82AA2;
+        Sat, 29 Oct 2022 04:46:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 968C2C433D6;
+        Sat, 29 Oct 2022 04:46:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667018781;
+        bh=80lU3QpeiitIVawK91PHV+p4z43WIDD4Rouks6i2Gj8=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=uStOgrQ+MB0RzqQUR2IfSfKEroJt+tBJ1eUXiuGJdVpHPU65B4Wndy12I7NwulNEH
+         QLUNGsb9gPkhyPjLpOHxZest61y+4N8W4qWlHOMrKXoINg0FcDDDOjXxHaefByx+f/
+         8kBWsq7LLWaUOqILmEqMSRc+s3mc9FckVC7dRltlA3gueYJyLaWQeeWS7ZpJzaVFRR
+         3jqmb9wVl/FmxMezeNEb5Mt6NqqRQIo9nqBur1wO2lEpw78o6TPaG3b+pYYYWCgZiM
+         1KYPHhw1mZSVn8629ziSH0yjYWEjxqX/XkcIejJBjvO5Ogm4Ov/+SG8x91NwiUvL6B
+         J+nrTC2V/HxDA==
+Message-ID: <cee7fa24-5699-9777-d157-f03a8dd18a00@kernel.org>
+Date:   Sat, 29 Oct 2022 12:46:19 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y1wK3x7IketHl+DQ@magnolia>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [f2fs-dev] [PATCH v3 11/23] f2fs: Convert f2fs_fsync_node_pages()
+ to use filemap_get_folios_tag()
+Content-Language: en-US
+To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     linux-cifs@vger.kernel.org, linux-nilfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org
+References: <20221017202451.4951-1-vishal.moola@gmail.com>
+ <20221017202451.4951-12-vishal.moola@gmail.com>
+From:   Chao Yu <chao@kernel.org>
+In-Reply-To: <20221017202451.4951-12-vishal.moola@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,189 +64,73 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 22/10/28 10:01AM, Darrick J. Wong wrote:
-> On Fri, Oct 28, 2022 at 10:00:33AM +0530, Ritesh Harjani (IBM) wrote:
-> > On a 64k pagesize platforms (specially Power and/or aarch64) with 4k
-> > filesystem blocksize, this patch should improve the performance by doing
-> > only the subpage dirty data write.
-> > 
-> > This should also reduce the write amplification since we can now track
-> > subpage dirty status within state bitmaps. Earlier we had to
-> > write the entire 64k page even if only a part of it (e.g. 4k) was
-> > updated.
-> > 
-> > Performance testing of below fio workload reveals ~16x performance
-> > improvement on nvme with XFS (4k blocksize) on Power (64K pagesize)
-> > FIO reported write bw scores improved from around ~28 MBps to ~452 MBps.
-> > 
-> > <test_randwrite.fio>
-> > [global]
-> > 	ioengine=psync
-> > 	rw=randwrite
-> > 	overwrite=1
-> > 	pre_read=1
-> > 	direct=0
-> > 	bs=4k
-> > 	size=1G
-> > 	dir=./
-> > 	numjobs=8
-> > 	fdatasync=1
-> > 	runtime=60
-> > 	iodepth=64
-> > 	group_reporting=1
-> > 
-> > [fio-run]
-> > 
-> > Reported-by: Aravinda Herle <araherle@in.ibm.com>
-> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> > ---
-> >  fs/iomap/buffered-io.c | 53 ++++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 51 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index 255f9f92668c..31ee80a996b2 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -58,7 +58,7 @@ iomap_page_create(struct inode *inode, struct folio *folio, unsigned int flags)
-> >  	else
-> >  		gfp = GFP_NOFS | __GFP_NOFAIL;
-> >  
-> > -	iop = kzalloc(struct_size(iop, state, BITS_TO_LONGS(nr_blocks)),
-> > +	iop = kzalloc(struct_size(iop, state, BITS_TO_LONGS(2 * nr_blocks)),
-> >  		      gfp);
-> >  	if (iop) {
-> >  		spin_lock_init(&iop->state_lock);
-> > @@ -168,6 +168,48 @@ static void iomap_set_range_uptodate(struct folio *folio,
-> >  		folio_mark_uptodate(folio);
-> >  }
-> >  
-> > +static void iomap_iop_set_range_dirty(struct folio *folio,
-> > +		struct iomap_page *iop, size_t off, size_t len)
-> > +{
-> > +	struct inode *inode = folio->mapping->host;
-> > +	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
-> > +	unsigned first = (off >> inode->i_blkbits) + nr_blocks;
-> > +	unsigned last = ((off + len - 1) >> inode->i_blkbits) + nr_blocks;
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&iop->state_lock, flags);
-> > +	bitmap_set(iop->state, first, last - first + 1);
-> > +	spin_unlock_irqrestore(&iop->state_lock, flags);
-> > +}
-> > +
-> > +static void iomap_set_range_dirty(struct folio *folio,
-> > +		struct iomap_page *iop, size_t off, size_t len)
-> > +{
-> > +	if (iop)
-> > +		iomap_iop_set_range_dirty(folio, iop, off, len);
-> > +}
-> > +
-> > +static void iomap_iop_clear_range_dirty(struct folio *folio,
-> > +		struct iomap_page *iop, size_t off, size_t len)
-> > +{
-> > +	struct inode *inode = folio->mapping->host;
-> > +	unsigned int nr_blocks = i_blocks_per_folio(inode, folio);
-> > +	unsigned first = (off >> inode->i_blkbits) + nr_blocks;
-> > +	unsigned last = ((off + len - 1) >> inode->i_blkbits) + nr_blocks;
-> > +	unsigned long flags;
-> > +
-> > +	spin_lock_irqsave(&iop->state_lock, flags);
-> > +	bitmap_clear(iop->state, first, last - first + 1);
-> > +	spin_unlock_irqrestore(&iop->state_lock, flags);
-> > +}
-> > +
-> > +static void iomap_clear_range_dirty(struct folio *folio,
-> > +		struct iomap_page *iop, size_t off, size_t len)
-> > +{
-> > +	if (iop)
-> > +		iomap_iop_clear_range_dirty(folio, iop, off, len);
-> > +}
-> > +
-> >  static void iomap_finish_folio_read(struct folio *folio, size_t offset,
-> >  		size_t len, int error)
-> >  {
-> > @@ -665,6 +707,7 @@ static size_t __iomap_write_end(struct inode *inode, loff_t pos, size_t len,
-> >  	if (unlikely(copied < len && !folio_test_uptodate(folio)))
-> >  		return 0;
-> >  	iomap_set_range_uptodate(folio, iop, offset_in_folio(folio, pos), len);
-> > +	iomap_set_range_dirty(folio, iop, offset_in_folio(folio, pos), len);
-> >  	filemap_dirty_folio(inode->i_mapping, folio);
-> >  	return copied;
-> >  }
-> > @@ -979,6 +1022,8 @@ static loff_t iomap_folio_mkwrite_iter(struct iomap_iter *iter,
-> >  		block_commit_write(&folio->page, 0, length);
-> >  	} else {
-> >  		WARN_ON_ONCE(!folio_test_uptodate(folio));
-> > +		iomap_set_range_dirty(folio, to_iomap_page(folio),
-> > +				offset_in_folio(folio, iter->pos), length);
-> >  		folio_mark_dirty(folio);
-> >  	}
-> >  
-> > @@ -1354,7 +1399,8 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
-> >  	 * invalid, grab a new one.
-> >  	 */
-> >  	for (i = 0; i < nblocks && pos < end_pos; i++, pos += len) {
-> > -		if (iop && !test_bit(i, iop->state))
-> > +		if (iop && (!test_bit(i, iop->state) ||
-> > +			    !test_bit(i + nblocks, iop->state)))
+On 2022/10/18 4:24, Vishal Moola (Oracle) wrote:
+> Convert function to use a folio_batch instead of pagevec. This is in
+> preparation for the removal of find_get_pages_range_tag().
 > 
-> Hmm.  So I /think/ these two test_bit()s mean that we skip any folio
-> sub-block if it's either notuptodate or not dirty?
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+
+Acked-by: Chao Yu <chao@kernel.org>
+
+Thanks,
+
+> ---
+>   fs/f2fs/node.c | 19 ++++++++++---------
+>   1 file changed, 10 insertions(+), 9 deletions(-)
 > 
-> I /think/ we only need to check the dirty status, right?  Like willy
-> said? :)
-
-Yes. Agreed.
-
-> 
-> That said... somewhere we probably ought to check the consistency of the
-> two bits to ensure that they're not (dirty && !uptodate), given our
-> horrible history of getting things wrong with page and bufferhead state
-> bits.
-> 
-> Admittedly I'm not thrilled at the reintroduction of page and iop dirty
-> state that are updated in separate places, but OTOH the write
-> amplification here is demonstrably horrifying as you point out so it's
-> clearly necessary.
-
-On a 64K pagesize platform the performance of such workloads that I meantion is
-also quiet bad. 
-
-
-> 
-> Maybe we need a debugging function that will check the page and iop
-> state, and call it every time we go in and out of critical iomap
-> functions (write, writeback, dropping pages, etc)
-
-I will try and review each of the paths once again to ensure the consistency. 
-What I see is, we only mark the iop->state dirty bits before dirtying the page
-in iomap buffered-io paths. This happens at two places,
-1. __iomap_write_end() where we call filemap_dirty_folio(). We mark iop state
-   dirty bits before calling filemap_dirty_folio()
-2. iomap_folio_mkwrite_iter(). Here again before calling folio_mark_dirty(), we
-   set the dirty state bits. This is the iomap_page_mkwrite path.
-
-But, I would still like to review each of these and other paths as well.
-
--ritesh
-
-
-> 
-> --D
-> 
-> >  			continue;
-> >  
-> >  		error = wpc->ops->map_blocks(wpc, inode, pos);
-> > @@ -1397,6 +1443,9 @@ iomap_writepage_map(struct iomap_writepage_ctx *wpc,
-> >  		}
-> >  	}
-> >  
-> > +	iomap_clear_range_dirty(folio, iop,
-> > +				offset_in_folio(folio, folio_pos(folio)),
-> > +				end_pos - folio_pos(folio));
-> >  	folio_start_writeback(folio);
-> >  	folio_unlock(folio);
-> >  
-> > -- 
-> > 2.37.3
-> > 
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 983572f23896..e8b72336c096 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -1728,12 +1728,12 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>   			unsigned int *seq_id)
+>   {
+>   	pgoff_t index;
+> -	struct pagevec pvec;
+> +	struct folio_batch fbatch;
+>   	int ret = 0;
+>   	struct page *last_page = NULL;
+>   	bool marked = false;
+>   	nid_t ino = inode->i_ino;
+> -	int nr_pages;
+> +	int nr_folios;
+>   	int nwritten = 0;
+>   
+>   	if (atomic) {
+> @@ -1742,20 +1742,21 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>   			return PTR_ERR_OR_ZERO(last_page);
+>   	}
+>   retry:
+> -	pagevec_init(&pvec);
+> +	folio_batch_init(&fbatch);
+>   	index = 0;
+>   
+> -	while ((nr_pages = pagevec_lookup_tag(&pvec, NODE_MAPPING(sbi), &index,
+> -				PAGECACHE_TAG_DIRTY))) {
+> +	while ((nr_folios = filemap_get_folios_tag(NODE_MAPPING(sbi), &index,
+> +					(pgoff_t)-1, PAGECACHE_TAG_DIRTY,
+> +					&fbatch))) {
+>   		int i;
+>   
+> -		for (i = 0; i < nr_pages; i++) {
+> -			struct page *page = pvec.pages[i];
+> +		for (i = 0; i < nr_folios; i++) {
+> +			struct page *page = &fbatch.folios[i]->page;
+>   			bool submitted = false;
+>   
+>   			if (unlikely(f2fs_cp_error(sbi))) {
+>   				f2fs_put_page(last_page, 0);
+> -				pagevec_release(&pvec);
+> +				folio_batch_release(&fbatch);
+>   				ret = -EIO;
+>   				goto out;
+>   			}
+> @@ -1821,7 +1822,7 @@ int f2fs_fsync_node_pages(struct f2fs_sb_info *sbi, struct inode *inode,
+>   				break;
+>   			}
+>   		}
+> -		pagevec_release(&pvec);
+> +		folio_batch_release(&fbatch);
+>   		cond_resched();
+>   
+>   		if (ret || marked)
