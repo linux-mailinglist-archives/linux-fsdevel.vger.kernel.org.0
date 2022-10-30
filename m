@@ -2,81 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5032C6124E0
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 29 Oct 2022 20:23:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTP id 724CF61271D
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 30 Oct 2022 04:28:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229616AbiJ2SXf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 29 Oct 2022 14:23:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46616 "EHLO
+        id S229552AbiJ3D2K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 29 Oct 2022 23:28:10 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52662 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229441AbiJ2SXe (ORCPT
+        with ESMTP id S229489AbiJ3D2J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 29 Oct 2022 14:23:34 -0400
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E42D52A954;
-        Sat, 29 Oct 2022 11:23:33 -0700 (PDT)
-Received: by mail-oi1-x22c.google.com with SMTP id r187so9289438oia.8;
-        Sat, 29 Oct 2022 11:23:33 -0700 (PDT)
+        Sat, 29 Oct 2022 23:28:09 -0400
+Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BD734623F;
+        Sat, 29 Oct 2022 20:28:03 -0700 (PDT)
+Received: by mail-pg1-x529.google.com with SMTP id b5so8054013pgb.6;
+        Sat, 29 Oct 2022 20:28:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gxoLAPS+9Ecu1s/8uDx34AXuA9lpWU9Z2smUFzhiANI=;
-        b=FK30Xs8FfjGtUVZ701Q/u/E0K1xxm8c9h+UkHm2O3zOMPKAqIQn1h9Fmk1DzlhrNJY
-         D7nWbR/fOZYEbLnPP7FF9oqz45BfN6sv37CKqyeFH55U2nsdbY0CjDWVTPjRpMyEmKIh
-         Us53b1zCHyMg2DKt150e1V7XHIkZ3EumCqwi4vLSOlTGCXsIc1BPCim2stkACt/yxYPm
-         YUHk86gUYe83QNj8MsHauRHwUBuMyApRY3sDucRtN5TxSY+LkX+yHn9IEe9wWkGe+7FG
-         f5iO2owRwcStzOsTjw22iwgAfHfngVPKZdB/wf2LS16SruDIaHSC76qIoD3Y3cXkIMiE
-         DmBQ==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+Im/oTH6fjjG6MBr1L90PWf26vc/9KZEkOHPqg9MDh4=;
+        b=Ote8JrKAWQEuzIo/Vrx+45Fxp0p4kKb2iutmhjZQSMJfroofnXCHtDm3s0jcj8XFp9
+         8+wBnhFb/SrD2fhx/ERFDYBf52UKr21UTl2vIxjKBexg80WQVrr86JMS+ATKjz39sFG1
+         RugnS4sPIc/du9hsLLOn3Cs51cEuBusJyIZ7/06iOQr63CP1a5kAANcV4DpM0IwvXHDN
+         vvd7g5S5P7LtqbBd1JE7zJPFK8rQwdNr+m4mhMGXCdKsxbg6+Pm4xyWT2YM+SJJltf2H
+         YxLePFeI/WoQj8mzOVTTDTyYLU1XrPd69lUM1zGny0dB1lEIDzMRO5UB6xoPd6+UpzBC
+         MtwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gxoLAPS+9Ecu1s/8uDx34AXuA9lpWU9Z2smUFzhiANI=;
-        b=7KppWvzAf2WKhTjR5btObqvg51X3vqxhPf61kWKJAH4hEstorrp0SJOsqFAsaBqsUz
-         z8wRZgm30TWs6xNB8j7ibrJoa7K2GAH0zG2ryyjxXgIOJI3N0X9tKRVmsnrYcrQGBcQ9
-         eIXgRdJ0BnbSlpe6kkILRVc5NGNeTH38ofAMEoYXaYUVZzGcm7SsiD7J+Zkph+8VOwIN
-         BkMDMSGkcy4Iu11i4GUIBQEjJbUs8ZGNQWniICDBz4ilRX3Wbekqu3eACYwLJA+Wi0ar
-         ODkXfNGt0YpTsNcM/JCVu9prjrn3R8TwZwciNb4mbgF6otOcg+HCorZt3LT4ijY4bqG4
-         oxpw==
-X-Gm-Message-State: ACrzQf1Z69UtycEJ6vnuys+3Di4/NvocWaIrAOEzk2g4eZaQuFXU/VBk
-        GT+YfgyECXnQSo86ij5QW9k=
-X-Google-Smtp-Source: AMsMyM64g3+ESxXBhNt55ABceWhd+VO4/vMH3BZ88BwJouOpyU7NkhgGB2mYjf8nfDYsgaKxWigPdA==
-X-Received: by 2002:aca:3d55:0:b0:355:1ced:909f with SMTP id k82-20020aca3d55000000b003551ced909fmr10680391oia.60.1667067813195;
-        Sat, 29 Oct 2022 11:23:33 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id o4-20020acabe04000000b0035494c1202csm712709oif.42.2022.10.29.11.23.31
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Im/oTH6fjjG6MBr1L90PWf26vc/9KZEkOHPqg9MDh4=;
+        b=040Y79LIyFsuqyn0ff7Dtm9IoafLWtya/Jek60qahNaSH+ux7Ihi4cgwW57BdX98gh
+         tbH+x2n67Y/hvtQDicM+UmGYNH4rRTXKvTU9x6zZN+tAjEfhrZMCUVY6W4yWIrYr7ee0
+         nI+mVb5g18CEQbECwElfF/dj/Y4eEz7mElpiCaUaRpTX/roD4ptME+GxnZpLo1b7YPvx
+         NYfaC3fxOngUhy08a2SUMGKMt7hI6zBq1pDjmqe+Jhk6/BRdOQCDWFbMI15hKF2OCNWJ
+         gUk3+DeEU5HLlQJp5UJ/op8qkga9AnQCdqbkYeHI6I26i80R/xsMGwpXRxHBi6quUENT
+         GS9g==
+X-Gm-Message-State: ACrzQf3RXv1QInms5WwjyEdRsbqx3wPdEaMdtxo/KeozflmuAFLluRP8
+        zQpi5wL5d0WkFO5uQUJtbQc=
+X-Google-Smtp-Source: AMsMyM6YCUS5BdM1iIUI5btktI59Wxxj7R0mmbHtWspUUtZWS5kelEMQISlshqO0ZfN5NvcEqmMBYQ==
+X-Received: by 2002:a05:6a00:10cf:b0:528:48c3:79e0 with SMTP id d15-20020a056a0010cf00b0052848c379e0mr7303620pfu.18.1667100482550;
+        Sat, 29 Oct 2022 20:28:02 -0700 (PDT)
+Received: from localhost ([58.84.24.234])
+        by smtp.gmail.com with ESMTPSA id y93-20020a17090a53e600b002139459e121sm1680180pjh.27.2022.10.29.20.28.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 29 Oct 2022 11:23:32 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date:   Sat, 29 Oct 2022 11:23:31 -0700
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Miguel Ojeda <ojeda@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, patches@lists.linux.dev,
-        Jarkko Sakkinen <jarkko@kernel.org>,
-        Kees Cook <keescook@chromium.org>,
-        Alex Gaynor <alex.gaynor@gmail.com>,
-        Wedson Almeida Filho <wedsonaf@google.com>,
-        Gary Guo <gary@garyguo.net>, Boqun Feng <boqun.feng@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH v10 04/27] kallsyms: support "big" kernel symbols
-Message-ID: <20221029182331.GA3324354@roeck-us.net>
-References: <20220927131518.30000-1-ojeda@kernel.org>
- <20220927131518.30000-5-ojeda@kernel.org>
- <20221029174147.GA3322058@roeck-us.net>
+        Sat, 29 Oct 2022 20:28:02 -0700 (PDT)
+Date:   Sun, 30 Oct 2022 08:57:58 +0530
+From:   "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Aravinda Herle <araherle@in.ibm.com>
+Subject: Re: [RFC 2/2] iomap: Support subpage size dirty tracking to improve
+ write performance
+Message-ID: <20221030032758.wpryf2rer7uppq7x@riteshh-domain>
+References: <cover.1666928993.git.ritesh.list@gmail.com>
+ <886076cfa6f547d22765c522177d33cf621013d2.1666928993.git.ritesh.list@gmail.com>
+ <20221028210422.GC3600936@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221029174147.GA3322058@roeck-us.net>
-X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+In-Reply-To: <20221028210422.GC3600936@dread.disaster.area>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -84,70 +77,135 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 29, 2022 at 10:41:49AM -0700, Guenter Roeck wrote:
-> On Tue, Sep 27, 2022 at 03:14:35PM +0200, Miguel Ojeda wrote:
-> > Rust symbols can become quite long due to namespacing introduced
-> > by modules, types, traits, generics, etc.
+On 22/10/29 08:04AM, Dave Chinner wrote:
+> On Fri, Oct 28, 2022 at 10:00:33AM +0530, Ritesh Harjani (IBM) wrote:
+> > On a 64k pagesize platforms (specially Power and/or aarch64) with 4k
+> > filesystem blocksize, this patch should improve the performance by doing
+> > only the subpage dirty data write.
 > > 
-> > Increasing to 255 is not enough in some cases, therefore
-> > introduce longer lengths to the symbol table.
+> > This should also reduce the write amplification since we can now track
+> > subpage dirty status within state bitmaps. Earlier we had to
+> > write the entire 64k page even if only a part of it (e.g. 4k) was
+> > updated.
 > > 
-> > In order to avoid increasing all lengths to 2 bytes (since most
-> > of them are small, including many Rust ones), use ULEB128 to
-> > keep smaller symbols in 1 byte, with the rest in 2 bytes.
+> > Performance testing of below fio workload reveals ~16x performance
+> > improvement on nvme with XFS (4k blocksize) on Power (64K pagesize)
+> > FIO reported write bw scores improved from around ~28 MBps to ~452 MBps.
 > > 
-> > Reviewed-by: Kees Cook <keescook@chromium.org>
-> > Co-developed-by: Alex Gaynor <alex.gaynor@gmail.com>
-> > Signed-off-by: Alex Gaynor <alex.gaynor@gmail.com>
-> > Co-developed-by: Wedson Almeida Filho <wedsonaf@google.com>
-> > Signed-off-by: Wedson Almeida Filho <wedsonaf@google.com>
-> > Co-developed-by: Gary Guo <gary@garyguo.net>
-> > Signed-off-by: Gary Guo <gary@garyguo.net>
-> > Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > Co-developed-by: Matthew Wilcox <willy@infradead.org>
-> > Signed-off-by: Matthew Wilcox <willy@infradead.org>
-> > Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> > Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > ---
-> >  kernel/kallsyms.c  | 26 ++++++++++++++++++++++----
-> >  scripts/kallsyms.c | 29 ++++++++++++++++++++++++++---
-> >  2 files changed, 48 insertions(+), 7 deletions(-)
+> > <test_randwrite.fio>
+> > [global]
+> > 	ioengine=psync
+> > 	rw=randwrite
+> > 	overwrite=1
+> > 	pre_read=1
+> > 	direct=0
+> > 	bs=4k
+> > 	size=1G
+> > 	dir=./
+> > 	numjobs=8
+> > 	fdatasync=1
+> > 	runtime=60
+> > 	iodepth=64
+> > 	group_reporting=1
 > > 
+> > [fio-run]
+> > 
+> > Reported-by: Aravinda Herle <araherle@in.ibm.com>
+> > Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 > 
-> This patch results in the following spurious build error.
+> To me, this is a fundamental architecture change in the way iomap
+> interfaces with the page cache and filesystems. Folio based dirty
+> tracking is top down, whilst filesystem block based dirty tracking
+> *needs* to be bottom up.
 > 
-> Building powerpc:allnoconfig ... failed
-> --------------
-> Error log:
-> Inconsistent kallsyms data
-> Try make KALLSYMS_EXTRA_PASS=1 as a workaround
+> The bottom up approach is what bufferheads do, and it requires a
+> much bigger change that just adding dirty region tracking to the
+> iomap write and writeback paths.
+> 
+> That is, moving to tracking dirty regions on a filesystem block
+> boundary brings back all the coherency problems we had with
+> trying to keep bufferhead dirty state coherent with page dirty
+> state. This was one of the major simplifications that the iomap
+> infrastructure brought to the table - all the dirty tracking is done
 
-I should have added: KALLSYMS_EXTRA_PASS=1 does not help.
+Sure, but then with simplified iomap design these optimization in the 
+workload that I mentioned are also lost :(
 
-Guenter
+> by the page cache, and the filesystem has nothing to do with it at
+> all....
+> 
+> IF we are going to change this, then there needs to be clear rules
+> on how iomap dirty state is kept coherent with the folio dirty
+> state, and there need to be checks placed everywhere to ensure that
+> the rules are followed and enforced.
+
+Sure.
 
 > 
-> Symbol file differences:
-> 10c10
-> < 00009720 g       .rodata	00000000 kallsyms_relative_base
-> ---
-> > 0000971c g       .rodata	00000000 kallsyms_relative_base
-> 12,16c12,16
-> < 00009724 g       .rodata	00000000 kallsyms_num_syms
-> < 00009728 g       .rodata	00000000 kallsyms_names
-> < 00022628 g       .rodata	00000000 kallsyms_markers
-> < 000226c0 g       .rodata	00000000 kallsyms_token_table
-> < 00022a2c g       .rodata	00000000 kallsyms_token_index
-> ---
-> > 00009720 g       .rodata	00000000 kallsyms_num_syms
-> > 00009724 g       .rodata	00000000 kallsyms_names
-> > 00022618 g       .rodata	00000000 kallsyms_markers
-> > 000226b0 g       .rodata	00000000 kallsyms_token_table
-> > 00022a1c g       .rodata	00000000 kallsyms_token_index
+> So what are the rules? If the folio is dirty, it must have at least one
+> dirty region? If the folio is clean, can it have dirty regions?
 > 
-> This is the only difference. There are no additional symbols.
+> What happens to the dirty regions when truncate zeros part of a page
+> beyond EOF? If the iomap regions are clean, do they need to be
+> dirtied? If the regions are dirtied, do they need to be cleaned?
+> Does this hold for all trailing filesystem blocks in the (multipage)
+> folio, of just the one that spans the new EOF?
 > 
-> Reverting this patch fixes the problem.
+> What happens with direct extent manipulation like fallocate()
+> operations? These invalidate the parts of the page cache over the
+> range we are punching, shifting, etc, without interacting directly
+> with iomap, so do we now have to ensure that the sub-folio dirty
+> regions are also invalidated correctly? i.e. do functions like
+> xfs_flush_unmap_range() need to become iomap infrastructure so that
+> they can update sub-folio dirty ranges correctly?
 > 
-> Guenter
+> What about the
+> folio_mark_dirty()/filemap_dirty_folio()/.folio_dirty()
+> infrastructure? iomap currently treats this as top down, so it
+> doesn't actually call back into iomap to mark filesystem blocks
+> dirty. This would need to be rearchitected to match
+> block_dirty_folio() where the bufferheads on the page are marked
+> dirty before the folio is marked dirty by external operations....
+
+Sure thanks for clearly listing out all of the paths. 
+Let me carefully review these paths to check on, how does adding a state 
+bitmap to iomap_page for dirty tracking is handled in every case which you 
+mentioned above. I would like to ensure, that we have reviewed all the 
+paths and functionally + theoritically this approach at least works fine.
+(Mainly I wanted to go over the truncate & fallocate paths that you listed above).
+
+
+> 
+> The easy part of this problem is tracking dirty state on a
+> filesystem block boundaries. The *hard part* maintaining coherency
+> with the page cache, and none of that has been done yet. I'd prefer
+> that we deal with this problem once and for all at the page cache
+> level because multi-page folios mean even when the filesystem block
+> is the same as PAGE_SIZE, we have this sub-folio block granularity
+> tracking issue.
+> 
+> As it is, we already have the capability for the mapping tree to
+> have multiple indexes pointing to the same folio - perhaps it's time
+> to start thinking about using filesystem blocks as the mapping tree
+> index rather than PAGE_SIZE chunks, so that the page cache can then
+> track dirty state on filesystem block boundaries natively and
+> this whole problem goes away. We have to solve this sub-folio dirty
+> tracking problem for multi-page folios anyway, so it seems to me
+> that we should solve the sub-page block size dirty tracking problem
+> the same way....
+> 
+> Cheers,
+> 
+> Dave.
+
+Thanks a lot Dave for your review comments. You have listed out few other
+points which I am not commenting on yet, since I would like to review those 
+carefully. I am currently on travel and will be back in a few days. 
+Once I am back, let me study this area more based on your comments and will 
+get back to you on those points as well.
+
+-ritesh
+
+> -- 
+> Dave Chinner
+> david@fromorbit.com
