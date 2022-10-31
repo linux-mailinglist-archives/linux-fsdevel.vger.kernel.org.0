@@ -2,48 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EAA82613921
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 15:36:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF35A613952
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 15:50:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231649AbiJaOg0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Oct 2022 10:36:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52824 "EHLO
+        id S231598AbiJaOuq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Oct 2022 10:50:46 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231601AbiJaOgX (ORCPT
+        with ESMTP id S231544AbiJaOun (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Oct 2022 10:36:23 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86F2CB30
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 07:36:22 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.54])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N1G0z3nYZzHvTs;
-        Mon, 31 Oct 2022 22:36:03 +0800 (CST)
-Received: from [10.67.110.176] (10.67.110.176) by
- kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 31 Oct 2022 22:36:20 +0800
-Subject: Re: [PATCH v2] fs: fix undefined behavior in bit shift for SB_NOUSER
-To:     Matthew Wilcox <willy@infradead.org>,
-        Christoph Hellwig <hch@infradead.org>
-CC:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
-        <dhowells@redhat.com>
-References: <20221031134811.178127-1-cuigaosheng1@huawei.com>
- <Y1/TWdY//yUgXGck@casper.infradead.org>
-From:   cuigaosheng <cuigaosheng1@huawei.com>
-Message-ID: <3dcc91f9-48ef-5874-955a-dd5e1492a648@huawei.com>
-Date:   Mon, 31 Oct 2022 22:36:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Mon, 31 Oct 2022 10:50:43 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 48A6510FEE
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 07:49:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667227779;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=23/Ctdek4ocKr3zevsCvoojIOyWc1W2ha5J7gbSO9ns=;
+        b=ISGizJ8L052OXqGR8XoUy2zrRUxkPxs5tb7H4wmk+5ekaiyFge0eJzR4+OQwfvnj87A4Xc
+        f1x+0/0SzinjGh+DbU6Q7FbDP4Ubrk/ImVJVTg64Ar4S1elboIlUu6wDbjW0UV5mpIHakQ
+        VYJZbfXf705MNSzQymRsU9kFGwdoum4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-563-Dv51oDBhOISZEQG849O3jw-1; Mon, 31 Oct 2022 10:49:35 -0400
+X-MC-Unique: Dv51oDBhOISZEQG849O3jw-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 87BA1811E7A;
+        Mon, 31 Oct 2022 14:49:34 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.73])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1D4D0140EBF5;
+        Mon, 31 Oct 2022 14:49:33 +0000 (UTC)
+Subject: [RFC PATCH 0/2] iov_iter: Provide a function to extract/pin/get pages
+ from an iteraor
+From:   David Howells <dhowells@redhat.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-mm@vger.kernel.org, John Hubbard <jhubbard@nvidia.com>,
+        linux-fsdevel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>, dhowells@redhat.com,
+        smfrench@gmail.com, torvalds@linux-foundation.org,
+        linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Mon, 31 Oct 2022 14:49:32 +0000
+Message-ID: <166722777223.2555743.162508599131141451.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/1.5
 MIME-Version: 1.0
-In-Reply-To: <Y1/TWdY//yUgXGck@casper.infradead.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.176]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemi500012.china.huawei.com (7.221.188.12)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -51,53 +63,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Shouldn't those ^^^ also be marked as unsigned?  And it's confusing to
-> have the style change halfway through the sequence; can you convert them
-> to (1U << n) as well?
 
-Thanks, I have made a patch v3 and submit it, but I'm not sure should I
-add "Reviewed-by: Christoph Hellwig<hch@lst.de>"  because the code has been
-changed,Thank you all again!
+Hi Al,
 
-On 2022/10/31 21:53, Matthew Wilcox wrote:
-> On Mon, Oct 31, 2022 at 09:48:11PM +0800, Gaosheng Cui wrote:
->> +++ b/include/linux/fs.h
->> @@ -1384,19 +1384,19 @@ extern int send_sigurg(struct fown_struct *fown);
->>   #define SB_NOATIME	1024	/* Do not update access times. */
->>   #define SB_NODIRATIME	2048	/* Do not update directory access times */
->>   #define SB_SILENT	32768
-> Shouldn't those ^^^ also be marked as unsigned?  And it's confusing to
-> have the style change halfway through the sequence; can you convert them
-> to (1U << n) as well?
->
->> -#define SB_POSIXACL	(1<<16)	/* VFS does not apply the umask */
->> -#define SB_INLINECRYPT	(1<<17)	/* Use blk-crypto for encrypted files */
->> -#define SB_KERNMOUNT	(1<<22) /* this is a kern_mount call */
->> -#define SB_I_VERSION	(1<<23) /* Update inode I_version field */
->> -#define SB_LAZYTIME	(1<<25) /* Update the on-disk [acm]times lazily */
->> +#define SB_POSIXACL	(1U << 16) /* VFS does not apply the umask */
->> +#define SB_INLINECRYPT	(1U << 17) /* Use blk-crypto for encrypted files */
->> +#define SB_KERNMOUNT	(1U << 22) /* this is a kern_mount call */
->> +#define SB_I_VERSION	(1U << 23) /* Update inode I_version field */
->> +#define SB_LAZYTIME	(1U << 25) /* Update the on-disk [acm]times lazily */
->>   
->>   /* These sb flags are internal to the kernel */
->> -#define SB_SUBMOUNT     (1<<26)
->> -#define SB_FORCE    	(1<<27)
->> -#define SB_NOSEC	(1<<28)
->> -#define SB_BORN		(1<<29)
->> -#define SB_ACTIVE	(1<<30)
->> -#define SB_NOUSER	(1<<31)
->> +#define SB_SUBMOUNT	(1U << 26)
->> +#define SB_FORCE	(1U << 27)
->> +#define SB_NOSEC	(1U << 28)
->> +#define SB_BORN		(1U << 29)
->> +#define SB_ACTIVE	(1U << 30)
->> +#define SB_NOUSER	(1U << 31)
->>   
->>   /* These flags relate to encoding and casefolding */
->>   #define SB_ENC_STRICT_MODE_FL	(1 << 0)
->> -- 
->> 2.25.1
->>
-> .
+Here's a patch to provide a function to extract a list of pages from an
+iterator, getting pins of refs on them as appropriate.
+
+I added a macro by which you can query an iterator to find out how the
+extraction function will treat the pages (it returns 0, FOLL_GET or FOLL_PIN
+as appropriate).  Note that it's a macro to avoid #inclusion of linux/mm.h in
+linux/uio.h.
+
+I've added another crude, incomplete patch to make cifs use it a bit as an
+example.  Note that cifs won't work properly with this under all
+circumstances, particularly if it decides to split the rdata or wdata record -
+but it seems to work for small I/Os.
+
+David
+---
+David Howells (2):
+      iov_iter: Add a function to extract a page list from an iterator
+      cifs: Test use of iov_iter_extract_pages() and iov_iter_extract_mode()
+
+
+ fs/cifs/cifsglob.h  |   2 +
+ fs/cifs/file.c      |  93 +++++++++----
+ include/linux/uio.h |  26 ++++
+ lib/iov_iter.c      | 333 ++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 427 insertions(+), 27 deletions(-)
+
+
