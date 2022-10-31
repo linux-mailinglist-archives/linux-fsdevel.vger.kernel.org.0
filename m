@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7151661388E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 14:59:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DCD72613898
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 15:01:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231379AbiJaN71 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Oct 2022 09:59:27 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51864 "EHLO
+        id S231452AbiJaOBh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Oct 2022 10:01:37 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231149AbiJaN70 (ORCPT
+        with ESMTP id S231423AbiJaOBf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Oct 2022 09:59:26 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3078E10560;
-        Mon, 31 Oct 2022 06:59:26 -0700 (PDT)
+        Mon, 31 Oct 2022 10:01:35 -0400
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B70421006C;
+        Mon, 31 Oct 2022 07:01:34 -0700 (PDT)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B529D6124A;
-        Mon, 31 Oct 2022 13:59:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F30C433D7;
-        Mon, 31 Oct 2022 13:59:24 +0000 (UTC)
-Subject: [PATCH] MAINTAINERS: NFSD should be responsible for fs/exportfs
+        by ams.source.kernel.org (Postfix) with ESMTPS id 616B0B816D6;
+        Mon, 31 Oct 2022 14:01:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFE12C43470;
+        Mon, 31 Oct 2022 14:01:31 +0000 (UTC)
+Subject: [PATCH 2] MAINTAINERS: NFSD should be responsible for fs/exportfs
 From:   Chuck Lever <chuck.lever@oracle.com>
 To:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Date:   Mon, 31 Oct 2022 09:59:24 -0400
-Message-ID: <166722476405.129820.11353600147542058869.stgit@klimt.1015granger.net>
+Date:   Mon, 31 Oct 2022 10:01:30 -0400
+Message-ID: <166722486403.129894.8530131246045193767.stgit@klimt.1015granger.net>
 User-Agent: StGit/1.5.dev3+g9561319
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -39,6 +39,9 @@ X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
+
+We recently received a patch for fs/exportfs/expfs.c, but there
+isn't a subsystem maintainer listed for fs/exportfs:
 
 Christian Brauner <brauner@kernel.org> (commit_signer:2/2=100%,authored:1/2=50%,added_lines:3/6=50%,removed_lines:2/6=33%)
 Al Viro <viro@zeniv.linux.org.uk> (commit_signer:1/2=50%,authored:1/2=50%,added_lines:3/6=50%,removed_lines:4/6=67%)
@@ -61,6 +64,8 @@ Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
 ---
  MAINTAINERS |    1 +
  1 file changed, 1 insertion(+)
+
+The patch description in v1 was truncated. Here's a refresh.
 
 diff --git a/MAINTAINERS b/MAINTAINERS
 index 379945f82a64..61fb45cfc825 100644
