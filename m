@@ -2,130 +2,172 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E1A33613F32
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 21:46:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CF92613F70
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 22:04:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230090AbiJaUqZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Oct 2022 16:46:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37212 "EHLO
+        id S230000AbiJaVEH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Oct 2022 17:04:07 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45216 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229894AbiJaUqX (ORCPT
+        with ESMTP id S229476AbiJaVEF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Oct 2022 16:46:23 -0400
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2050.outbound.protection.outlook.com [40.107.244.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B23A12AC9;
-        Mon, 31 Oct 2022 13:46:22 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IieUE7mQ1okaOYeTQHP9EiF6iVKm2SHGedupPlttH3SpqwMy58WUIkDRES7F8Jst9Iy4jAqN+5zqEDLRVAGt0IXz6AC/H1AlEkeHH5TrETxxYUc+Fra2ZwVnw8lIbCFF2ZsfUcZWNQaiN6wcKRDPTWl46FpS2a4mNSVZFExi/ILPHK389TKpMfSfRSUgollIC+2RDxpjSg+6W1U/TP5LodguxcdnXzD2lAKMaMjPh9DIwM3NjM5w/9dYDKq6zNcJSLHMxc2iWM+KJsUCdDJssPgtCzZjHn41IP6lbM/4sLN57bO3+kWNAVqCIg1jDHNttJlFux2MQxGi9I6TY7KAQg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=GMQ/maLueqLebjkcaSryhozMqUAdICMFcpHGf9wDFIg=;
- b=EiVZ6OhbbvTjXabyN7o70nAQ5ViO9lvAGDfqrquaGaB7CwR2dQvtZudWLJVsokkxP93AsNoVb4UJSmjgeFh1Dl8Eo9GrA7Qy+SXKTwz1jUuZugTjIDWgZcxMx9T0OFczg5WqAw7Gm6nNE2Ygfgt3IYE7n2jTrhxnjhqeFocZQfG2duUDZhV4Yt42eFr5LEU8Ll1QwWGF4j+q5xvD/SoGntgCd0ykgsIUw9Y8bj28r2qONKSYFQ2bVPXXGFON0P+ogXhtTQKqd/ZzxXqcIu1p0gVnLIbWTqis9pohgONRCUfi2XotERmbcR3EbRuT3AwSAIbvc60iMTEiIKmmHJ/V1w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=infradead.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=GMQ/maLueqLebjkcaSryhozMqUAdICMFcpHGf9wDFIg=;
- b=Wnes3hrUfMlCrCYBZv7zuLbHn7SDGVQHVM+b/hFf0coXxa6clUWPZn+Pjs7zLr5IRf9v0LbPRgNTYW5bSXsbFDgsw1V0baV1LlInvsfgm24h5RoZKYcWaqGDuls8TfefDvFBjI6cgN5WoOl3zEVICcN0A2LbMKHQL4mr7Bre+RQVa+O9/lTDJ91wtQU9oyZlZVYuxkt+R03YTEg3W+Zz28NqSVtbdamUWtbnZ5C0SiTz/onRgXF1Cb0rDTmNJSeoTmXSiOYAf9F5a6GyNlzFcbZSaGr9X7XwvTl6YpBoi6sKU42HsdRx98k4nHfC23WtDsyBoa4pn50MG2GEisc9vQ==
-Received: from DS7PR03CA0226.namprd03.prod.outlook.com (2603:10b6:5:3ba::21)
- by SJ0PR12MB6902.namprd12.prod.outlook.com (2603:10b6:a03:484::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.19; Mon, 31 Oct
- 2022 20:46:21 +0000
-Received: from DM6NAM11FT074.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:3ba:cafe::e2) by DS7PR03CA0226.outlook.office365.com
- (2603:10b6:5:3ba::21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.19 via Frontend
- Transport; Mon, 31 Oct 2022 20:46:20 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- DM6NAM11FT074.mail.protection.outlook.com (10.13.173.203) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5769.14 via Frontend Transport; Mon, 31 Oct 2022 20:46:20 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.26; Mon, 31 Oct
- 2022 13:46:08 -0700
-Received: from [10.110.48.28] (10.126.230.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.29; Mon, 31 Oct
- 2022 13:46:08 -0700
-Message-ID: <61e7810f-97e2-1185-312a-d096b5b2bced@nvidia.com>
-Date:   Mon, 31 Oct 2022 13:46:07 -0700
+        Mon, 31 Oct 2022 17:04:05 -0400
+Received: from mail-io1-xd29.google.com (mail-io1-xd29.google.com [IPv6:2607:f8b0:4864:20::d29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEF6B13CC8;
+        Mon, 31 Oct 2022 14:04:04 -0700 (PDT)
+Received: by mail-io1-xd29.google.com with SMTP id p141so10822577iod.6;
+        Mon, 31 Oct 2022 14:04:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s2u3HH9X6jArAne4XCHoahMbgnFI791yesXDV0bQF3Q=;
+        b=aS0Y2giETo0mdCcBmDNriGV57NyXCrcYK8sOrX0V/qt5vPlt+CsT7bgPSBc958dVEt
+         /jaYM+zEptpvh45flN2dBavhmHqMiAraomTIOqoqP3qRkCfUzuf+BoSxDtb0PWBBsZWH
+         h1jLJgFj6WUqVbLtp/k0w/8jlkx8OakraqckXyiu987olPlSO/sK7wHv6y4lJPqE94hl
+         c59AYY/yTUOjicOxVfWSuVDxROaQFz+X1rQgZ0Jghc8XKzw/mCvRprKhovoTPRdVk1+Y
+         U5YYhkP3Rj0inAWo44W/TK5YwKoIhve663C1WD2TzC8lrroYQYMpz0pXbzb/9w3noLLU
+         mAvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s2u3HH9X6jArAne4XCHoahMbgnFI791yesXDV0bQF3Q=;
+        b=UtWQV1A2xIKE0+sOu0nN0UyH0CIRZmyozXMguCIAH2ddCtDIdHi1V0ly8M+tagE44N
+         RImtI+K76iXSTw84aY+24KaNqO9cSC30WykjVbn/4L/b9hecrgKZb/9MTmPDfbkOqTvn
+         29J96mhBahqhPxaDHGspzPLpc4q8lo1AFlRrPEzr6lbgNXqFdMCn/kEfcCnoJZzs6w1Y
+         tDYCr1T3Wq3rBXckaSpDPdwEt1qHya0hhyfshKNC0j4CZ79e0nAPUsNByLa1Q5egM77k
+         5xTvPHaH5b8gUqE/KnmqXIlBv2BiovI3eF6ZHxYw1KjwQLUpBLtw4FDT2RWRfkPtDZTH
+         lBcw==
+X-Gm-Message-State: ACrzQf1zDcDl4wjUqtdXmomKVX6RVZJYQ0U4jg6avC+71ljMhel8tjlO
+        RIKz6QlR8kIB4p4X4o7AbFdyWljOyQ==
+X-Google-Smtp-Source: AMsMyM6iZKsIEdImZsWQqTuUUT4HsfDVdEVZmOUS/W5hp1duyu3cPETgJBnT5Go9Txm/PBlXfnNjVQ==
+X-Received: by 2002:a02:662a:0:b0:36e:6349:17c0 with SMTP id k42-20020a02662a000000b0036e634917c0mr8786980jac.183.1667250244006;
+        Mon, 31 Oct 2022 14:04:04 -0700 (PDT)
+Received: from bytedance.bytedance.net ([74.199.177.246])
+        by smtp.gmail.com with ESMTPSA id u11-20020a02c94b000000b0037556012c63sm1843627jao.132.2022.10.31.14.04.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 31 Oct 2022 14:04:03 -0700 (PDT)
+From:   Peilin Ye <yepeilin.cs@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Peilin Ye <peilin.ye@bytedance.com>,
+        Cong Wang <cong.wang@bytedance.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peilin Ye <yepeilin.cs@gmail.com>
+Subject: [PATCH v2] coredump: Use vmsplice_to_pipe() for pipes in dump_emit_page()
+Date:   Mon, 31 Oct 2022 14:03:49 -0700
+Message-Id: <20221031210349.3346-1-yepeilin.cs@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221029005147.2553-1-yepeilin.cs@gmail.com>
+References: <20221029005147.2553-1-yepeilin.cs@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [RFC PATCH 0/2] iov_iter: Provide a function to extract/pin/get
- pages from an iteraor
-Content-Language: en-US
-To:     Matthew Wilcox <willy@infradead.org>,
-        David Howells <dhowells@redhat.com>
-CC:     <viro@zeniv.linux.org.uk>, <linux-mm@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, Christoph Hellwig <hch@lst.de>,
-        <smfrench@gmail.com>, <torvalds@linux-foundation.org>,
-        <linux-cifs@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <166722777223.2555743.162508599131141451.stgit@warthog.procyon.org.uk>
- <Y1/hSO+7kAJhGShG@casper.infradead.org>
-From:   John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <Y1/hSO+7kAJhGShG@casper.infradead.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.230.35]
-X-ClientProxiedBy: rnnvmail201.nvidia.com (10.129.68.8) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT074:EE_|SJ0PR12MB6902:EE_
-X-MS-Office365-Filtering-Correlation-Id: b3f57956-bd88-4a5d-b789-08dabb80f757
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: L3FCBZWxu1rdySWGq1ozj1kG66DgGElXhTXH+dqLFM2z4FDud0l3n/aDuNhZzWbVblIfahJTjXGmI38UeZqJYRQQlJd+S3pYDrcQ9YpbbUevcAE0LpF3nd9oXU2s5HNcWpFHgTvDvOOhUG7sKbE1HxVF2kt+t4dRREBO2x2bZ4r+4dps9Z7znXAER8wNYGyPWfD5WQ6fBVrjWz6x7Mn0YCvIgGIbUCW59RfroyFRT+M30hKvlyMBJZjs2HBBsbBA4BNTcJqmc4CxlXfF99yQiEYx+PybG/EiJ0r7ZhX9JNJOY4yvBGUI0IAPCM/m5NZzFFvuith7zroXKea/04ykvNi8+mgo0YthQpIThZFlR9JHCN28RXv7JHz6xRX1UXdG3DBrNbG6oxP5ybI1eCAJ3nt5QJPBtrut3JIAx92o6W9XaNAPhHecRMgzhygaa9mnn6/bSWZvz8uV4Er5B3Eux8SXTm1KehlTjZJ3eCViBteQSMtmhUifPBVr1QET7C3zgqlyxXw1d+4C/VEoWjTfjkxNUdcLI70eiro0ra5YOSlrrjR7MMSb+MZ6WshdBEWbP7ZKx9e2HZBilEhx5UVQDYE01OCWZw8sH2XgonqhljKWBmwbbM5zjmfbr5SDJqdLoHre87GamenwspwgRRTdOi6kfqDSaj4BMnkeqat4c9sxsKaE0VovGdT/VgXlYNZBa+NUHIEKG50ubPKLjFLa8o0cjgPORtvpMFh+pjRwYqvNGZF9DdGM3YOBYKTj6oD0ElfzegaSl5qCGmZ0Mvmpqj76gsxF5m3f5owF7NRPvFg=
-X-Forefront-Antispam-Report: CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(396003)(136003)(376002)(39860400002)(346002)(451199015)(36840700001)(46966006)(40470700004)(82310400005)(31686004)(36756003)(47076005)(2906002)(31696002)(86362001)(336012)(40480700001)(316002)(426003)(4744005)(8936002)(7636003)(7416002)(356005)(41300700001)(5660300002)(186003)(36860700001)(70206006)(8676002)(70586007)(82740400003)(54906003)(110136005)(4326008)(16576012)(26005)(53546011)(40460700003)(2616005)(478600001)(16526019)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Oct 2022 20:46:20.4713
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b3f57956-bd88-4a5d-b789-08dabb80f757
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT074.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6902
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 10/31/22 07:52, Matthew Wilcox wrote:
-> On Mon, Oct 31, 2022 at 02:49:32PM +0000, David Howells wrote:
->> I added a macro by which you can query an iterator to find out how the
->> extraction function will treat the pages (it returns 0, FOLL_GET or FOLL_PIN
->> as appropriate).  Note that it's a macro to avoid #inclusion of linux/mm.h in
->> linux/uio.h.
-> 
-> I'd support moving FOLL_* definitions to mm_types.h along with
-> FAULT_FLAG_* and VM_FAULT_*.
+From: Peilin Ye <peilin.ye@bytedance.com>
 
-+1, great idea. The use of FOLL_* without including it's .h directly was
-the first thing that jumped out at me when I just started looking at
-this. And these really are mm types, so yes.
+Currently, there is a copy for each page when dumping VMAs to pipe
+handlers using dump_emit_page().  For example:
 
-thanks,
+  fs/binfmt_elf.c:elf_core_dump()
+      fs/coredump.c:dump_user_range()
+                     :dump_emit_page()
+        fs/read_write.c:__kernel_write_iter()
+                fs/pipe.c:pipe_write()
+             lib/iov_iter.c:copy_page_from_iter()
+
+Use vmsplice_to_pipe() instead of __kernel_write_iter() to avoid this
+copy for pipe handlers.
+
+Tested by dumping a 40-GByte core into a simple handler that splice()s
+from stdin to disk in a loop, PIPE_DEF_BUFFERS (16) pages at a time.
+
+                              Before           After   Improved by
+  Time to Completion   52.04 seconds   46.30 seconds        11.03%
+  CPU Usage                   89.43%          84.90%         5.07%
+
+Suggested-by: Cong Wang <cong.wang@bytedance.com>
+Signed-off-by: Peilin Ye <peilin.ye@bytedance.com>
+---
+change in v2:
+  - fix warning in net/tls/tls_sw.c (kernel test robot)
+
+ fs/coredump.c          | 7 ++++++-
+ fs/splice.c            | 4 ++--
+ include/linux/splice.h | 3 +++
+ 3 files changed, 11 insertions(+), 3 deletions(-)
+
+diff --git a/fs/coredump.c b/fs/coredump.c
+index da0e9525c4e8..c0a8713d9971 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -42,6 +42,7 @@
+ #include <linux/timekeeping.h>
+ #include <linux/sysctl.h>
+ #include <linux/elf.h>
++#include <linux/splice.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -862,7 +863,11 @@ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ 		return 0;
+ 	pos = file->f_pos;
+ 	iov_iter_bvec(&iter, WRITE, &bvec, 1, PAGE_SIZE);
+-	n = __kernel_write_iter(cprm->file, &iter, &pos);
++
++	n = vmsplice_to_pipe(file, &iter, 0);
++	if (n == -EBADF)
++		n = __kernel_write_iter(cprm->file, &iter, &pos);
++
+ 	if (n != PAGE_SIZE)
+ 		return 0;
+ 	file->f_pos = pos;
+diff --git a/fs/splice.c b/fs/splice.c
+index 0878b852b355..2051700cda79 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1234,8 +1234,8 @@ static long vmsplice_to_user(struct file *file, struct iov_iter *iter,
+  * as splice-from-memory, where the regular splice is splice-from-file (or
+  * to file). In both cases the output is a pipe, naturally.
+  */
+-static long vmsplice_to_pipe(struct file *file, struct iov_iter *iter,
+-			     unsigned int flags)
++long vmsplice_to_pipe(struct file *file, struct iov_iter *iter,
++		      unsigned int flags)
+ {
+ 	struct pipe_inode_info *pipe;
+ 	long ret = 0;
+diff --git a/include/linux/splice.h b/include/linux/splice.h
+index a55179fd60fc..38b3560a318b 100644
+--- a/include/linux/splice.h
++++ b/include/linux/splice.h
+@@ -10,6 +10,7 @@
+ #define SPLICE_H
+ 
+ #include <linux/pipe_fs_i.h>
++#include <linux/uio.h>
+ 
+ /*
+  * Flags passed in from splice/tee/vmsplice
+@@ -81,6 +82,8 @@ extern ssize_t splice_direct_to_actor(struct file *, struct splice_desc *,
+ extern long do_splice(struct file *in, loff_t *off_in,
+ 		      struct file *out, loff_t *off_out,
+ 		      size_t len, unsigned int flags);
++extern long vmsplice_to_pipe(struct file *file, struct iov_iter *iter,
++			     unsigned int flags);
+ 
+ extern long do_tee(struct file *in, struct file *out, size_t len,
+ 		   unsigned int flags);
 -- 
-John Hubbard
-NVIDIA
+2.20.1
+
