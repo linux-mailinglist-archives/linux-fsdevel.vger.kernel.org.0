@@ -2,49 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA4DA613D19
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 19:08:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 887EA613D2A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 19:14:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229729AbiJaSIU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Oct 2022 14:08:20 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46200 "EHLO
+        id S229781AbiJaSOI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Oct 2022 14:14:08 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229891AbiJaSIP (ORCPT
+        with ESMTP id S229663AbiJaSOH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Oct 2022 14:08:15 -0400
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F093411833;
-        Mon, 31 Oct 2022 11:08:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XHJb5hgteMMf8oWdHH3UbrzQUbWcwhng1DESNpIa9ME=; b=sCHkX071CI2vNwJvjvz/IoWkcN
-        ADZhjlKi3s+qAi+OeDPueaYMKvPl9xxiKGHvwhehsVrvIiopIbVvImNKmnQzelxKhVbzUUAS4WF4s
-        0ZNdABnkGR9TSZAu+OY+XBG+5mVEjOHZhJbUSEtlRPmgGNBRcWBxKVEaGEBICVc9wy5ih557UbOia
-        /2kr63WLCzZWhoWohGxigHkxpFMNV46/HvYkp9L/6A0oK+n5feu9dqWmKrJ2q2jqujOzOB7vSFpaC
-        XYa5o/pkPFoCEWl9Vli0mAqemnP9ZpzmFHQw47lSfx9qBo3cAf8vkdWWE0aMzOoG+hScqiDlbLOil
-        RByfCFwA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1opZCk-00GlEc-2D;
-        Mon, 31 Oct 2022 18:08:10 +0000
-Date:   Mon, 31 Oct 2022 18:08:10 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jann Horn <jannh@google.com>
+        Mon, 31 Oct 2022 14:14:07 -0400
+Received: from mail-io1-xd31.google.com (mail-io1-xd31.google.com [IPv6:2607:f8b0:4864:20::d31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE188101E7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 11:14:06 -0700 (PDT)
+Received: by mail-io1-xd31.google.com with SMTP id h206so6948076iof.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 11:14:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qc3fvOO1j3LuLndlzn7EzUH5oIpjwhYDcAf526c0zuA=;
+        b=pkFgC5Aqnn4YL/lLR9gW6CqpG0nH3Wy/ZMbRQHJRtdEJiH6k0kIQfKFAlRWdmPvTXY
+         UEm+abVtjpfpNkm/QbcOyXXq+j56c5yYB2uV7qH5QXxPl3BwIEpLtr/TxeDVWdSo2JXU
+         b7YPn0s04lCx+70i58GrXRSJ9/hcuCLDLB1uJ+zfL6JNbYrob1nW0NEDdfxsnN1Bt467
+         qnZVU3+MP3ErVEVNW9PVhO0odNFfl37lJNOqhghbJMZIaFVE5jVuicTYDrdAaQCo2/bq
+         NHpZCmgKB5sjVAL4JcV4CWwv+n7gKdR1bW0MP0cU+2zYwdKTxUWZSe8vazflnZ/8cYel
+         YTSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Qc3fvOO1j3LuLndlzn7EzUH5oIpjwhYDcAf526c0zuA=;
+        b=LOQKhQT3MnHgty+Hvm5668IzPr9CQl9pE0s94iJKFqAhOhZMXqIn5Bq5Xuygazhgma
+         jEQ3REHzyJZlX5ZFjzqwkJ56sv+4BiNt1QFxddg9iIlkqagUJRPL6p2njlfxOqat4UEa
+         yIFT5BDkgmnGwkT46LsIos3Ghb8aFwNccktwjbSuH/l12LOeOsOAHaHEdkveJE3F24Mp
+         VJsGz/f2XENPKqp7Ee8TvRUAeG3WtcC465uoWPO190vYjZ/vcb5R6OP8XHfXzGpTqJwT
+         8+9oNCq9WWKjWxOzTeBmPlTzfyjGZqs9Xdl5hNgQEFhr53/VlyBOrZNy4J5RAKo0WO4s
+         87BQ==
+X-Gm-Message-State: ACrzQf0SqI1UmDs/XIHNtQrxmQvSPjXNbMAIVL+rvPoujj1kNP4XKLMB
+        yI9DMCH6CEIgi2M28orMU8CCtpIho6yzo5XweTrNKB6IJPyi8Q==
+X-Google-Smtp-Source: AMsMyM610Et1eO+1BVlt7JTO1ZtcmxzwCIHh3Cfaojc7Driy4cbnpalTHJ2Zo6+F/p+GQe2Q7T9noeEHdy+AGrVCk/A=
+X-Received: by 2002:a02:a30c:0:b0:375:3a7a:de7e with SMTP id
+ q12-20020a02a30c000000b003753a7ade7emr7925345jai.246.1667240046066; Mon, 31
+ Oct 2022 11:14:06 -0700 (PDT)
+MIME-Version: 1.0
+References: <20221031175256.2813280-1-jannh@google.com> <Y2APCmYNjYOYLf8G@ZenIV>
+In-Reply-To: <Y2APCmYNjYOYLf8G@ZenIV>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 31 Oct 2022 19:13:30 +0100
+Message-ID: <CAG48ez094n05c3QJMy7vZ5U=z87MzqYeKU97Na_R9O36_LJSXw@mail.gmail.com>
+Subject: Re: [PATCH v2] fs: use acquire ordering in __fget_light()
+To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Miklos Szeredi <mszeredi@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v2] fs: use acquire ordering in __fget_light()
-Message-ID: <Y2APCmYNjYOYLf8G@ZenIV>
-References: <20221031175256.2813280-1-jannh@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221031175256.2813280-1-jannh@google.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,66 +70,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 31, 2022 at 06:52:56PM +0100, Jann Horn wrote:
-> We must prevent the CPU from reordering the files->count read with the
-> FD table access like this, on architectures where read-read reordering is
-> possible:
-> 
->     files_lookup_fd_raw()
->                                   close_fd()
->                                   put_files_struct()
->     atomic_read(&files->count)
-> 
-> I would like to mark this for stable, but the stable rules explicitly say
-> "no theoretical races", and given that the FD table pointer and
-> files->count are explicitly stored in the same cacheline, this sort of
-> reordering seems quite unlikely in practice...
+On Mon, Oct 31, 2022 at 7:08 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+[...]
+> No arch-specific instances, so...
+> static __always_inline int
+> arch_atomic_read_acquire(const atomic_t *v)
+> {
+>         int ret;
+>
+>         if (__native_word(atomic_t)) {
+>                 ret = smp_load_acquire(&(v)->counter);
+>         } else {
+>                 ret = arch_atomic_read(v);
+>                 __atomic_acquire_fence();
+>         }
+>
+>         return ret;
+> }
+[...]
+> Do we really have any architectures where a structure with one
+> int field does *not* have a size that would satisfy that check?
+>
+> Is it future-proofing for masturbation sake, or am I missing something
+> real here?
 
-Looks sane, but looking at the definition of atomic_read_acquire...  ouch.
+include/linux/atomic/atomic-arch-fallback.h has a comment at the top that says:
 
-static __always_inline int
-atomic_read_acquire(const atomic_t *v)
-{
-        instrument_atomic_read(v, sizeof(*v));
-	return arch_atomic_read_acquire(v);
-}
-
-OK...
-
-; git grep -n -w arch_atomic_read_acquire
-include/linux/atomic/atomic-arch-fallback.h:220:#ifndef arch_atomic_read_acquire
-include/linux/atomic/atomic-arch-fallback.h:222:arch_atomic_read_acquire(const atomic_t *v)
-include/linux/atomic/atomic-arch-fallback.h:235:#define arch_atomic_read_acquire arch_atomic_read_acquire
-include/linux/atomic/atomic-instrumented.h:35:  return arch_atomic_read_acquire(v);
-include/linux/atomic/atomic-long.h:529: return arch_atomic_read_acquire(v);
-
-No arch-specific instances, so...
-static __always_inline int
-arch_atomic_read_acquire(const atomic_t *v)
-{
-	int ret;
-
-	if (__native_word(atomic_t)) {
-		ret = smp_load_acquire(&(v)->counter);
-	} else {
-		ret = arch_atomic_read(v);
-		__atomic_acquire_fence();
-	}
-
-	return ret;
-}
-
-OK, but when would that test not be true?  We have unconditional
-typedef struct {
-        int counter;
-} atomic_t;
-and
-#define __native_word(t) \
-        (sizeof(t) == sizeof(char) || sizeof(t) == sizeof(short) || \
-         sizeof(t) == sizeof(int) || sizeof(t) == sizeof(long))
-
-Do we really have any architectures where a structure with one
-int field does *not* have a size that would satisfy that check?
-
-Is it future-proofing for masturbation sake, or am I missing something
-real here?
+// Generated by scripts/atomic/gen-atomic-fallback.sh
+// DO NOT MODIFY THIS FILE DIRECTLY
