@@ -2,72 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 87326613D9C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 19:46:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 517E8613DAC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 19:48:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229798AbiJaSqN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Oct 2022 14:46:13 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40720 "EHLO
+        id S229628AbiJaSsd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Oct 2022 14:48:33 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbiJaSqM (ORCPT
+        with ESMTP id S229487AbiJaSsb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Oct 2022 14:46:12 -0400
-Received: from mail-qk1-x731.google.com (mail-qk1-x731.google.com [IPv6:2607:f8b0:4864:20::731])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 70D9313D75
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 11:46:11 -0700 (PDT)
-Received: by mail-qk1-x731.google.com with SMTP id s20so1762351qkg.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 11:46:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wbqXepqBr/d+nZhEtmIQjbOd1ibdPmbwm+prkMG2b7c=;
-        b=Jz8Ca0enSFe+lKvvMsvmPfLX3BuPDuiZYUhK6rGyjOoNtKx4TsFn5pBucUpsWlRlPv
-         Tl77uj0agyiPA6Si89dXmpdFFbXsvj2QHwMSMvIsDWLRDizVEsZwjuiGQpGuyU5XPhmA
-         Xu5z5a4RW69o6+/cYgBo5949XF+YCTw1ZCUR4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wbqXepqBr/d+nZhEtmIQjbOd1ibdPmbwm+prkMG2b7c=;
-        b=7amjrXetwUf7V+8DYD2phBQw4jDmiXdsh068TSPbrlN8A2FTUkGEvRplGY6GY7up9B
-         i7is25tS07Wej+RoFAOY1ze16ZYhZ7GdVXJzQVVXP6vWwuINCTz9l1f+8aKujhkN45a7
-         1u8RlS6f19Xyq95L7kUPm9vhHUFJgHwnkgEfwt/bsBKz46BSGmNvWRluPjGQvZsVIe1Y
-         M8hRISQoLosB/ld6sRaARxoQNH/B70XQjeYsJcsTVtk1oqa/xTtucS9qlXcm4ruuxXrT
-         YNdlcKelwuWg1ZRdM78Ebif0VQtHF+JE5dFBzvnPauTdpsKzM1qhOoiwImYHRfN4f5lQ
-         sEpA==
-X-Gm-Message-State: ACrzQf36kLsEe3tU3BrsXFKgwHIlcHx+fjjJngKi6SJQOaxkCXfAAyhT
-        STBQVLenaV04ZHmvXNIm+ZLxhtZE4/sozg==
-X-Google-Smtp-Source: AMsMyM54QvLSrYgC7iVjTYNhm1KZy8h4KaowUyT64XOdClACcTQg3GiPW1IvFsfHeeOQZzsC4a4FLA==
-X-Received: by 2002:a05:620a:489c:b0:6ef:14a1:4b90 with SMTP id ea28-20020a05620a489c00b006ef14a14b90mr10284817qkb.192.1667241970391;
-        Mon, 31 Oct 2022 11:46:10 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id s16-20020a05620a255000b006ee7923c187sm5214394qko.42.2022.10.31.11.46.09
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 31 Oct 2022 11:46:09 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-3701a0681daso81554907b3.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 11:46:09 -0700 (PDT)
-X-Received: by 2002:a81:555:0:b0:36b:2d71:5861 with SMTP id
- 82-20020a810555000000b0036b2d715861mr14455647ywf.340.1667241969081; Mon, 31
- Oct 2022 11:46:09 -0700 (PDT)
-MIME-Version: 1.0
-References: <20221031175256.2813280-1-jannh@google.com> <Y2APCmYNjYOYLf8G@ZenIV>
-In-Reply-To: <Y2APCmYNjYOYLf8G@ZenIV>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 31 Oct 2022 11:45:53 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wi=eaYiBf5JMQRS53=y17N7gvZNhn+kYGZj=2R=8Pc_4Q@mail.gmail.com>
-Message-ID: <CAHk-=wi=eaYiBf5JMQRS53=y17N7gvZNhn+kYGZj=2R=8Pc_4Q@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: use acquire ordering in __fget_light()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jann Horn <jannh@google.com>, Miklos Szeredi <mszeredi@redhat.com>,
+        Mon, 31 Oct 2022 14:48:31 -0400
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1C07D2E5;
+        Mon, 31 Oct 2022 11:48:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=fuaMWNhnb5TiNUPZoY/TJFAbK2HLLTiwMddJQpgwTU8=; b=EA4XJo4GscWqo+/Kx110vWRkmZ
+        P+x7F27NAR4Mtrri5TigDt2S4/XhFyxGyrvubbM9VAaKUo4BYpIBuLWvx57MQAm1eaUSwZBzVqWe7
+        xJFChseG2hkbb6FKSQj7xWkwaqVHUQe0th+CWVEiJM7oGGtmIzd+chkdbsJDHzrmkM9PmGFgFfGme
+        o/55RUV44jPtbRBzge4dQQy8DNca1kN2b3mRuEKXanclFjdkQcBuAzFv+rCulH3dt3fjIGjQfXjY1
+        hzZo4ljhgh/tQ/zjlDrHWe9GkC3EnGq8PGwTN7PYa0jwbl2+bXhunAmo4pnFSQMKc557C1BmWEYG0
+        DxL0IuaA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1opZph-00Gle1-2n;
+        Mon, 31 Oct 2022 18:48:25 +0000
+Date:   Mon, 31 Oct 2022 18:48:25 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jann Horn <jannh@google.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Miklos Szeredi <mszeredi@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Will Deacon <will@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+Subject: Re: [PATCH v2] fs: use acquire ordering in __fget_light()
+Message-ID: <Y2AYecOnLTkhmZB1@ZenIV>
+References: <20221031175256.2813280-1-jannh@google.com>
+ <Y2APCmYNjYOYLf8G@ZenIV>
+ <CAG48ez094n05c3QJMy7vZ5U=z87MzqYeKU97Na_R9O36_LJSXw@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez094n05c3QJMy7vZ5U=z87MzqYeKU97Na_R9O36_LJSXw@mail.gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,16 +54,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 31, 2022 at 11:08 AM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> Looks sane, but looking at the definition of atomic_read_acquire...  ouch.
+On Mon, Oct 31, 2022 at 07:13:30PM +0100, Jann Horn wrote:
+> On Mon, Oct 31, 2022 at 7:08 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> [...]
+> > No arch-specific instances, so...
+> > static __always_inline int
+> > arch_atomic_read_acquire(const atomic_t *v)
+> > {
+> >         int ret;
+> >
+> >         if (__native_word(atomic_t)) {
+> >                 ret = smp_load_acquire(&(v)->counter);
+> >         } else {
+> >                 ret = arch_atomic_read(v);
+> >                 __atomic_acquire_fence();
+> >         }
+> >
+> >         return ret;
+> > }
+> [...]
+> > Do we really have any architectures where a structure with one
+> > int field does *not* have a size that would satisfy that check?
+> >
+> > Is it future-proofing for masturbation sake, or am I missing something
+> > real here?
+> 
+> include/linux/atomic/atomic-arch-fallback.h has a comment at the top that says:
+> 
+> // Generated by scripts/atomic/gen-atomic-fallback.sh
+> // DO NOT MODIFY THIS FILE DIRECTLY
 
-The compiler should sort all that out and the mess shouldn't affect
-any code generation.
+Hmm...  Apparently, the source is shared for atomic and atomic64, and the
+check is intended for atomic64 counterpart of that thing on 32bit boxen.
+Might make sense to put a comment in there...
 
-But I also wouldn't mind somebody fixing things up, because I do agree
-that checking whether 'atomic_t' is a native word size is kind of
-pointless and probably just makes our build times unnecessarily
-longer.
+The question about architectures with non-default implementations still
+stands, though.
 
-                Linus
+Anyway, it's unrelated to the patch itself.  I'm fine with it in the current
+form.  Will apply for the next merge window, unless Linus wants it in right
+now.
