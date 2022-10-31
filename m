@@ -2,67 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D432D61387F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 14:57:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7151661388E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 14:59:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231387AbiJaN5E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Oct 2022 09:57:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50502 "EHLO
+        id S231379AbiJaN71 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Oct 2022 09:59:27 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231366AbiJaN5D (ORCPT
+        with ESMTP id S231149AbiJaN70 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Oct 2022 09:57:03 -0400
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 025D110561;
-        Mon, 31 Oct 2022 06:57:02 -0700 (PDT)
-Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.57])
-        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4N1F4c2S2fzJnPk;
-        Mon, 31 Oct 2022 21:54:08 +0800 (CST)
-Received: from [10.67.110.176] (10.67.110.176) by
- kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 31 Oct 2022 21:57:00 +0800
-Subject: Re: [PATCH] fs: fix undefined behavior in bit shift for SB_NOUSER
-To:     Christoph Hellwig <hch@infradead.org>
-CC:     <viro@zeniv.linux.org.uk>, <dhowells@redhat.com>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20221029071745.2836665-1-cuigaosheng1@huawei.com>
- <Y1/KdOyExwCdfCqb@infradead.org>
-From:   cuigaosheng <cuigaosheng1@huawei.com>
-Message-ID: <80107081-1c24-19d3-9a34-0ee61ac7c99d@huawei.com>
-Date:   Mon, 31 Oct 2022 21:56:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.1
+        Mon, 31 Oct 2022 09:59:26 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3078E10560;
+        Mon, 31 Oct 2022 06:59:26 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B529D6124A;
+        Mon, 31 Oct 2022 13:59:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08F30C433D7;
+        Mon, 31 Oct 2022 13:59:24 +0000 (UTC)
+Subject: [PATCH] MAINTAINERS: NFSD should be responsible for fs/exportfs
+From:   Chuck Lever <chuck.lever@oracle.com>
+To:     linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Date:   Mon, 31 Oct 2022 09:59:24 -0400
+Message-ID: <166722476405.129820.11353600147542058869.stgit@klimt.1015granger.net>
+User-Agent: StGit/1.5.dev3+g9561319
 MIME-Version: 1.0
-In-Reply-To: <Y1/KdOyExwCdfCqb@infradead.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.176]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemi500012.china.huawei.com (7.221.188.12)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Let's mark all of the flags as unsigned instead of just one so that
-> we don't mix types.  s_flags is already unsigned (although for some
-> reason long) already.
->
-> And while you touch this please add the proper whitespaces around the
-> shift operator everywhere.
+Christian Brauner <brauner@kernel.org> (commit_signer:2/2=100%,authored:1/2=50%,added_lines:3/6=50%,removed_lines:2/6=33%)
+Al Viro <viro@zeniv.linux.org.uk> (commit_signer:1/2=50%,authored:1/2=50%,added_lines:3/6=50%,removed_lines:4/6=67%)
+Miklos Szeredi <mszeredi@redhat.com> (commit_signer:1/2=50%)
+Amir Goldstein <amir73il@gmail.com> (commit_signer:1/2=50%)
+linux-kernel@vger.kernel.org (open list)
 
-Thanks for taking time to review this patch, I have made patch v2 and submit it.
+Neil says:
+> Looking at recent commits, patches come in through multiple
+> different trees.
+> nfsd certainly has an interest in expfs.c.  The only other user is
+> name_to_handle/open_by_handle API.
+> I see it as primarily nfsd functionality which is useful enough to
+> be exported directly to user-space.
+> (It was created by me when I was nfsd maintainer - does that
+> count?)
 
-On 2022/10/31 21:15, Christoph Hellwig wrote:
-> Let's mark all of the flags as unsigned instead of just one so that
-> we don't mix types.  s_flags is already unsigned (although for some
-> reason long) already.
->
-> And while you touch this please add the proper whitespaces around the
-> shift operator everywhere.
+Suggested-by: Neil Brown <neilb@suse.de>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+---
+ MAINTAINERS |    1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 379945f82a64..61fb45cfc825 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11129,6 +11129,7 @@ L:	linux-nfs@vger.kernel.org
+ S:	Supported
+ W:	http://nfs.sourceforge.net/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git
++F:	fs/exportfs/
+ F:	fs/lockd/
+ F:	fs/nfs_common/
+ F:	fs/nfsd/
+
+
