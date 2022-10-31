@@ -2,171 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A7A6612F5C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 04:43:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10A8E612FA3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 06:17:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229674AbiJaDnc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 30 Oct 2022 23:43:32 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38094 "EHLO
+        id S229686AbiJaFRU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Oct 2022 01:17:20 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229542AbiJaDn2 (ORCPT
+        with ESMTP id S229502AbiJaFRT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 30 Oct 2022 23:43:28 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F3F36132;
-        Sun, 30 Oct 2022 20:43:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=g0+529g7/BZGwQhfV0sZXm4SOXToszjU7oM5nb63tCQ=; b=N3z995FrLFnpQSTxf1ya8/EM/r
-        +FPn5giW6t/23Y/fX75XcvDdwJSRyBYqN6LCsOKa0z1yOXzir7/YG9XeIMzf/+oDVJ0uu2op1bL7x
-        tzLiAvhiy5PQAxGI4YHJAxm/xGIFfs1Rv12OgeYanWe4enU4XKZd3foBnSACZB1uXDi33bPOk8L2O
-        0rlHhi2RlEVvaKdRQD/XvG/bXsN+OUYLxdC2eXYPDAiDPGEpAADT1y/gfjf+Vh0TBnci/J2vUYox6
-        fkGP7hjDl4hMDELwt5P9NAlXXvaV6kmWrCcyGeAAH+jF1TqrkZJ5R3AN7g7VXDClYhWPG4giSdL2J
-        fEYVvZNw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1opLhs-003NSB-H6; Mon, 31 Oct 2022 03:43:24 +0000
-Date:   Mon, 31 Oct 2022 03:43:24 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Aravinda Herle <araherle@in.ibm.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [RFC 2/2] iomap: Support subpage size dirty tracking to improve
- write performance
-Message-ID: <Y19EXLfn8APg3adO@casper.infradead.org>
-References: <cover.1666928993.git.ritesh.list@gmail.com>
- <886076cfa6f547d22765c522177d33cf621013d2.1666928993.git.ritesh.list@gmail.com>
- <20221028210422.GC3600936@dread.disaster.area>
+        Mon, 31 Oct 2022 01:17:19 -0400
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D7709FFC
+        for <linux-fsdevel@vger.kernel.org>; Sun, 30 Oct 2022 22:17:15 -0700 (PDT)
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20221031051710epoutp02120025e36e4c7993296e26e930d549ee~jD5eRO4o-1574615746epoutp02b
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 05:17:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20221031051710epoutp02120025e36e4c7993296e26e930d549ee~jD5eRO4o-1574615746epoutp02b
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1667193430;
+        bh=EWc3TU+UKzuHAAeYLmIUhlxAOX/P9kcA5YVwj5nzh48=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=WMlwzsb1es/NtpU52WN21lXaz+vJtI0uPitNi7jdUYY2UXFxtL8v1RIzFRANRyqAy
+         oo8/Z19Ew1D9reW2rRtsLgnsJ9iAPWvS2OEjhtyOQHz2xzk3qHaCUTuZiZwihXRWTJ
+         evf6h/xAwgPgHFiqqbZ4+46ZApIYZZYe3Wd8teZ0=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20221031051710epcas1p169a9a5978298b4e75f82c9d5af20fce8~jD5d_Zlk-3256732567epcas1p1f;
+        Mon, 31 Oct 2022 05:17:10 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.38.242]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 4N11c602Bsz4x9Q7; Mon, 31 Oct
+        2022 05:17:10 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        78.8E.51827.E4A5F536; Mon, 31 Oct 2022 14:17:02 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20221031051702epcas1p4c1c056724b49bee216f5c71d2392137a~jD5Ws94k61687916879epcas1p4x;
+        Mon, 31 Oct 2022 05:17:02 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20221031051702epsmtrp1ea8749e016ff7ad0235a4d62747e8891~jD5WsU7ES1131911319epsmtrp1F;
+        Mon, 31 Oct 2022 05:17:02 +0000 (GMT)
+X-AuditID: b6c32a36-17bfa7000000ca73-15-635f5a4e9d66
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8A.35.14392.E4A5F536; Mon, 31 Oct 2022 14:17:02 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20221031051702epsmtip2b0e474e5ea48fa67055a9cd04e52af2f~jD5WYJfpY1823718237epsmtip2L;
+        Mon, 31 Oct 2022 05:17:02 +0000 (GMT)
+From:   "Sungjong Seo" <sj1557.seo@samsung.com>
+To:     "'Namjae Jeon'" <linkinjeon@kernel.org>
+Cc:     "'linux-fsdevel'" <linux-fsdevel@vger.kernel.org>,
+        "'linux-kernel'" <linux-kernel@vger.kernel.org>,
+        <sj1557.seo@samsung.com>
+In-Reply-To: <PUZPR04MB6316EBE97C82DFBEFE3CCDAF812B9@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Subject: RE: [PATCH v1 1/2] exfat: simplify empty entry hint
+Date:   Mon, 31 Oct 2022 14:16:47 +0900
+Message-ID: <000001d8ece8$0241bca0$06c535e0$@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221028210422.GC3600936@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQJj/zaSoZMPYtmG2fVrgFRBP80hpwJaGMqRrP7ew+A=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMJsWRmVeSWpSXmKPExsWy7bCmnq5/VHyyweQWTouJ05YyW+zZe5LF
+        4vKuOWwWW/4dYXVg8di0qpPNo2/LKkaPz5vkApijGhhtEouSMzLLUhVS85LzUzLz0m2VQkPc
+        dC2UFDLyi0tslaINDY30DA3M9YyMjPSMLWOtjEyVFPISc1NtlSp0oXqVFIqSC4BqcyuLgQbk
+        pOpBxfWKU/NSHLLyS0FO1CtOzC0uzUvXS87PVVIoS8wpBRqhpJ/wjTHjwrLsgisiFWfmXGFp
+        YLwm0MXIySEhYCKx4/cHti5GLg4hgR2MEv8ebWCEcD4xSiw62cIK4XxjlNj9ZDlQGQdYy40T
+        GhDxvYwSL968ZoFwXjJKPFnznxFkLpuArsSTGz+ZQRpEBLQl7r9IB6lhFmhilJjQ+JIFpIZT
+        IFbi7J2TYLawgI3Ei85zzCA2i4CqxL5jn8Dm8ApYSux4uYQNwhaUODnzCVg9M9DMZQtfM0P8
+        oCCx+9NRVhBbRMBK4l/zb3aIGhGJ2Z1tzCCLJQQ+skt0z77CDtHgIvHo/XpGCFtY4tXxLVBx
+        KYmX/W1QdjejxJ9zvBDNExglWu6cZYVIGEt8+vyZEeQzZgFNifW79CHCihI7f8+Fmikocfpa
+        NzPEEXwS7772sEJCjleio00IokRF4vuHnSwTGJVnIXltFpLXZiF5YRbCsgWMLKsYxVILinPT
+        U4sNC4yQ43sTIzh9apntYJz09oPeIUYmDsZDjBIczEoivPVno5OFeFMSK6tSi/Lji0pzUosP
+        MSYDA3sis5Rocj4wgeeVxBuaGBsYGAGTobmluTERwpYGJmZGJhbGlsZmSuK8DTO0koUE0hNL
+        UrNTUwtSi2C2MHFwSjUwzej0OmUq1GatYzvnv1RJQfVM94WO5d8T5ITOfXzKKNP9wbPEo3Xz
+        qZz90oq8hh3/J7Z13bxwVvsRlz9LlaNivZJw2a2EX2u9xH1bsv9Ny937OyG+/dWt6fHHD7mz
+        vVT2/Lj1256kH0L81/yfm083XX56omRKLJ8C14Nv2ycVC0ixv1F8MPlNTlmd/YrDvz/x/lBN
+        N5kicOpyuJwiU9sCNXUB9gVqs5Vu73g22bvm5saSiWyKbDMLnkZ5r2+cw3hvTYTSqb0r/Jdr
+        3/x31df71/sqjQebuiW93vgbnDE3ufWz7O2+whU5p2u0mk63KW/XED7WvYrZIYKzJvuP3p0m
+        FntJQ05e1XSDskX+k+2VWIozEg21mIuKEwHC2Y+8VgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOLMWRmVeSWpSXmKPExsWy7bCSvK5fVHyywaF98hYTpy1lttiz9ySL
+        xeVdc9gstvw7wurA4rFpVSebR9+WVYwenzfJBTBHcdmkpOZklqUW6dslcGXs/dDNVDBDpOLQ
+        1HbmBsZpAl2MHBwSAiYSN05odDFycggJ7GaU6FstBhGWkji4TxPCFJY4fLi4i5ELqOI5o8Tc
+        M3PYQcrZBHQlntz4yQxSIyKgLXH/RTpIDbNAC6NEw66TTBAN6xglLnzazALSwCkQK3H2zkkw
+        W1jARuJF5zlmEJtFQFVi37FPjCA2r4ClxI6XS9ggbEGJkzOfgNUzAy14evMpnL1s4WuwXgkB
+        BYndn46ygtgiAlYS/5p/s0PUiEjM7mxjnsAoPAvJqFlIRs1CMmoWkpYFjCyrGCVTC4pz03OL
+        DQsM81LL9YoTc4tL89L1kvNzNzGC40JLcwfj9lUf9A4xMnEwHmKU4GBWEuGtPxudLMSbklhZ
+        lVqUH19UmpNafIhRmoNFSZz3QtfJeCGB9MSS1OzU1ILUIpgsEwenVANTwyTmmJXtExRqHnk5
+        ZH4zn7p29TJb2WqTpeftbsVZ2UVbmc/r1eeMiGrW+BUhcnjOUc4e48Nnin/yr3vQKRuzcd1V
+        zXKucx+WLZnw6Z+xZ2ijlsAeHsFFm/OveGUEFPksPO3o9j6J4/tDm2+r1JOvPHecfPj0hhfl
+        PJ46KyL6p8SGezFv9j7wMNNnT9AGzXyz197qT+r557/YsqdASEzHfOO8SevlL23VjZr+WoJZ
+        r6fulX7/NE/eF4sjSvcpSLP9E2aUCzvSe89D6cP5pStDL2msYZ61UO72t1j5RcWfHmxZtlhK
+        fcHU1rvT9Hmk+b4s3zn9ZWHl01PC0gtNjK3XnunV0iwI3Pj+sHpNAm+UEktxRqKhFnNRcSIA
+        qgD1DvoCAAA=
+X-CMS-MailID: 20221031051702epcas1p4c1c056724b49bee216f5c71d2392137a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+X-ArchiveUser: EV
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20221019072850epcas1p459b27e0d44eb0cc36ec09e9a734dcf60
+References: <CGME20221019072850epcas1p459b27e0d44eb0cc36ec09e9a734dcf60@epcas1p4.samsung.com>
+        <PUZPR04MB6316EBE97C82DFBEFE3CCDAF812B9@PUZPR04MB6316.apcprd04.prod.outlook.com>
+X-Spam-Status: No, score=-5.5 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Oct 29, 2022 at 08:04:22AM +1100, Dave Chinner wrote:
-> To me, this is a fundamental architecture change in the way iomap
-> interfaces with the page cache and filesystems. Folio based dirty
-> tracking is top down, whilst filesystem block based dirty tracking
-> *needs* to be bottom up.
-> 
-> The bottom up approach is what bufferheads do, and it requires a
-> much bigger change that just adding dirty region tracking to the
-> iomap write and writeback paths.
+Hello, Yuezhang Mo,
 
-I agree that bufferheads do bottom-up dirty tracking, but I don't think
-that what Ritesh is doing here is bottom-up dirty tracking.  Buffer
-heads expose an API to dirty a block, which necessarily goes bottom-up.
-There's no API here to dirty a block.  Instead there's an API to dirty
-a range of a folio, so we're still top-down; we're just keeping track
-of it in a more precise way.
+> This commit adds exfat_hint_empty_entry() to reduce code complexity and
+> make code more readable.
+>=20
+> Signed-off-by: Yuezhang Mo <Yuezhang.Mo=40sony.com>
+> Reviewed-by: Andy Wu <Andy.Wu=40sony.com>
+> Reviewed-by: Aoyama Wataru <wataru.aoyama=40sony.com>
+> ---
+>  fs/exfat/dir.c =7C 56 ++++++++++++++++++++++++++++----------------------
+>  1 file changed, 32 insertions(+), 24 deletions(-)
+>=20
+> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c index
+> 7b648b6662f0..a569f285f4fd 100644
+> --- a/fs/exfat/dir.c
+> +++ b/fs/exfat/dir.c
+> =40=40 -934,6 +934,24 =40=40 struct exfat_entry_set_cache
+> *exfat_get_dentry_set(struct super_block *sb,
+>  	return NULL;
+>  =7D
+>=20
+> +static inline void exfat_hint_empty_entry(struct exfat_inode_info *ei,
+> +		struct exfat_hint_femp *candi_empty, struct exfat_chain *clu,
+> +		int dentry, int num_entries)
+> +=7B
+> +	if (ei->hint_femp.eidx =3D=3D EXFAT_HINT_NONE =7C=7C
+> +	    ei->hint_femp.count < num_entries =7C=7C
 
-It's a legitimate complaint that there's now state that needs to be
-kept in sync with the page cache.  More below ...
+It seems like a good approach.
+BTW, ei->hint_femp.count was already reset at the beginning of
+exfat_find_dir_entry(). So condition-check above could be removed.
+Is there any scenario I'm missing?
 
-> That is, moving to tracking dirty regions on a filesystem block
-> boundary brings back all the coherency problems we had with
-> trying to keep bufferhead dirty state coherent with page dirty
-> state. This was one of the major simplifications that the iomap
-> infrastructure brought to the table - all the dirty tracking is done
-> by the page cache, and the filesystem has nothing to do with it at
-> all....
-> 
-> IF we are going to change this, then there needs to be clear rules
-> on how iomap dirty state is kept coherent with the folio dirty
-> state, and there need to be checks placed everywhere to ensure that
-> the rules are followed and enforced.
-> 
-> So what are the rules? If the folio is dirty, it must have at least one
-> dirty region? If the folio is clean, can it have dirty regions?
+> +	    ei->hint_femp.eidx > dentry) =7B
+> +		if (candi_empty->count =3D=3D 0) =7B
+> +			candi_empty->cur =3D *clu;
+> +			candi_empty->eidx =3D dentry;
+> +		=7D
+> +
+> +		candi_empty->count++;
+> +		if (candi_empty->count =3D=3D num_entries)
+> +			ei->hint_femp =3D *candi_empty;
+> +	=7D
+> +=7D
+> +
+>  enum =7B
+>  	DIRENT_STEP_FILE,
+>  	DIRENT_STEP_STRM,
+> =40=40 -958,7 +976,7 =40=40 int exfat_find_dir_entry(struct super_block *=
+sb,
+> struct exfat_inode_info *ei,  =7B
+>  	int i, rewind =3D 0, dentry =3D 0, end_eidx =3D 0, num_ext =3D 0, len;
+>  	int order, step, name_len =3D 0;
+> -	int dentries_per_clu, num_empty =3D 0;
+> +	int dentries_per_clu;
+>  	unsigned int entry_type;
+>  	unsigned short *uniname =3D NULL;
+>  	struct exfat_chain clu;
+> =40=40 -976,7 +994,15 =40=40 int exfat_find_dir_entry(struct super_block =
+*sb,
+> struct exfat_inode_info *ei,
+>  		end_eidx =3D dentry;
+>  	=7D
+>=20
+> -	candi_empty.eidx =3D EXFAT_HINT_NONE;
+> +	if (ei->hint_femp.eidx =21=3D EXFAT_HINT_NONE &&
+> +	    ei->hint_femp.count < num_entries)
+> +		ei->hint_femp.eidx =3D EXFAT_HINT_NONE;
+> +
+> +	if (ei->hint_femp.eidx =3D=3D EXFAT_HINT_NONE)
+> +		ei->hint_femp.count =3D 0;
+> +
+> +	candi_empty =3D ei->hint_femp;
+> +
 
-If there is any dirty region, the folio must be marked dirty (otherwise
-we'll never know that it needs to be written back).  The interesting
-question (as your paragraph below hints) is whether removing the dirty
-part of a folio from a file marks the folio clean.  I believe that's
-optional, but it's probably worth doing.
+It would be nice to make the code block above a static inline function as w=
+ell.
 
-> What happens to the dirty regions when truncate zeros part of a page
-> beyond EOF? If the iomap regions are clean, do they need to be
-> dirtied? If the regions are dirtied, do they need to be cleaned?
-> Does this hold for all trailing filesystem blocks in the (multipage)
-> folio, of just the one that spans the new EOF?
-> 
-> What happens with direct extent manipulation like fallocate()
-> operations? These invalidate the parts of the page cache over the
-> range we are punching, shifting, etc, without interacting directly
-> with iomap, so do we now have to ensure that the sub-folio dirty
-> regions are also invalidated correctly? i.e. do functions like
-> xfs_flush_unmap_range() need to become iomap infrastructure so that
-> they can update sub-folio dirty ranges correctly?
+>  rewind:
+>  	order =3D 0;
+>  	step =3D DIRENT_STEP_FILE;
+=5Bsnip=5D
+> --
+> 2.25.1
 
-I'm slightly confused by this question.  As I understand the various
-fallocate operations, they start by kicking out all the folios affected
-by the operation (generally from the start of the operation to EOF),
-so we'd writeback the (dirty part of) folios which are dirty, then
-invalidate the folios in cache.  I'm not sure there's going to be
-much difference.
-
-> What about the
-> folio_mark_dirty()/filemap_dirty_folio()/.folio_dirty()
-> infrastructure? iomap currently treats this as top down, so it
-> doesn't actually call back into iomap to mark filesystem blocks
-> dirty. This would need to be rearchitected to match
-> block_dirty_folio() where the bufferheads on the page are marked
-> dirty before the folio is marked dirty by external operations....
-
-Yes.  This is also going to be a performance problem.  Marking a folio as
-dirty is no longer just setting the bit in struct folio and the xarray
-but also setting all the bits in iop->state.  Depending on the size
-of the folio, and the fs blocksize, this could be quite a lot of bits.
-eg a 2MB folio with a 1k block size is 2048 bits (256 bytes, 6 cachelines
-(it dirties the spinlock in cacheline 0, then the bitmap occupies 3 full
-cachelines and 2 partial ones)).
-
-I don't see the necessary churn from filemap_dirty_folio() to
-iomap_dirty_folio() as being a huge deal, but it's definitely a missing
-piece from this RFC.
-
-> The easy part of this problem is tracking dirty state on a
-> filesystem block boundaries. The *hard part* maintaining coherency
-> with the page cache, and none of that has been done yet. I'd prefer
-> that we deal with this problem once and for all at the page cache
-> level because multi-page folios mean even when the filesystem block
-> is the same as PAGE_SIZE, we have this sub-folio block granularity
-> tracking issue.
-> 
-> As it is, we already have the capability for the mapping tree to
-> have multiple indexes pointing to the same folio - perhaps it's time
-> to start thinking about using filesystem blocks as the mapping tree
-> index rather than PAGE_SIZE chunks, so that the page cache can then
-> track dirty state on filesystem block boundaries natively and
-> this whole problem goes away. We have to solve this sub-folio dirty
-> tracking problem for multi-page folios anyway, so it seems to me
-> that we should solve the sub-page block size dirty tracking problem
-> the same way....
-
-That's an interesting proposal.  From the page cache's point of
-view right now, there is only one dirty bit per folio, not per page.
-Anything you see contrary to that is old code that needs to be converted.
-So even indexing the page cache by block offset rather than page offset
-wouldn't help.
-
-We have a number of people looking at the analogous problem for network
-filesystems right now.  Dave Howells' netfs infrastructure is trying
-to solve the problem for everyone (and he's been looking at iomap as
-inspiration for what he's doing).  I'm kind of hoping we end up with one
-unified solution that can be used for all filesystems that want sub-folio
-dirty tracking.  His solution is a bit more complex than I really want
-to see, at least partially because he's trying to track dirtiness at
-byte granularity, no matter how much pain that causes to the server.
