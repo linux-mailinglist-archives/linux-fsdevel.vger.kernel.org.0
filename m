@@ -2,62 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 17486613907
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 15:33:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EAA82613921
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 31 Oct 2022 15:36:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231602AbiJaOdr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Oct 2022 10:33:47 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51228 "EHLO
+        id S231649AbiJaOg0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Oct 2022 10:36:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231652AbiJaOdd (ORCPT
+        with ESMTP id S231601AbiJaOgX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Oct 2022 10:33:33 -0400
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B72FA392
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 07:33:20 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 326A7CE1154
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 14:33:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78C89C433D7;
-        Mon, 31 Oct 2022 14:33:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667226797;
-        bh=e3wBUJyg5L4HVxMkpDivV90Rh+CblnYDDAkuYLKKh/Q=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WsBF94lFU95wqP15OnUPNGL11PW19Q9Zre49jX4cTp8odXBB3a5okdqJmgIzO9TPq
-         ASsAxn9w+KHOcER/spx/rV981koS7LRNgkKRzRDAHrV6yM7J/HjD7EdqxIURwf1JVO
-         BtPUDbHsI9LzQDtmaVSqf97agGSQ3ceCDYJGhwWBnrlVcYaLOUWMKTVZI3MEqRHHlb
-         XWxjeobJlf61y4cdKcgEHuXJBaybjOorNn/RXc8zrPy8INqXZU7mqY+rJWQWXl2DJy
-         VSfTSZtxqeKv1/LgDb6duSD4/JdP92vOAXu7UtaUW4VB5ORSz81jv7mxVVCjCzQJbD
-         qAzEUFZs10jmQ==
-Date:   Mon, 31 Oct 2022 09:33:16 -0500
-From:   Seth Forshee <sforshee@kernel.org>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 2/2] acl: conver higher-level helpers to rely on mnt_idmap
-Message-ID: <Y1/crENfwS/E/nYN@do-x1extreme>
-References: <20221028111041.448001-1-brauner@kernel.org>
- <20221028111041.448001-2-brauner@kernel.org>
+        Mon, 31 Oct 2022 10:36:23 -0400
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86F2CB30
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 07:36:22 -0700 (PDT)
+Received: from kwepemi500012.china.huawei.com (unknown [172.30.72.54])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N1G0z3nYZzHvTs;
+        Mon, 31 Oct 2022 22:36:03 +0800 (CST)
+Received: from [10.67.110.176] (10.67.110.176) by
+ kwepemi500012.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Mon, 31 Oct 2022 22:36:20 +0800
+Subject: Re: [PATCH v2] fs: fix undefined behavior in bit shift for SB_NOUSER
+To:     Matthew Wilcox <willy@infradead.org>,
+        Christoph Hellwig <hch@infradead.org>
+CC:     <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
+        <dhowells@redhat.com>
+References: <20221031134811.178127-1-cuigaosheng1@huawei.com>
+ <Y1/TWdY//yUgXGck@casper.infradead.org>
+From:   cuigaosheng <cuigaosheng1@huawei.com>
+Message-ID: <3dcc91f9-48ef-5874-955a-dd5e1492a648@huawei.com>
+Date:   Mon, 31 Oct 2022 22:36:19 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.6.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221028111041.448001-2-brauner@kernel.org>
-X-Spam-Status: No, score=-8.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y1/TWdY//yUgXGck@casper.infradead.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.67.110.176]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemi500012.china.huawei.com (7.221.188.12)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Oct 28, 2022 at 01:10:42PM +0200, Christian Brauner wrote:
-> Convert an initial portion to rely on struct mnt_idmap by converting the
-> high level xattr helpers.
-> 
-> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> Shouldn't those ^^^ also be marked as unsigned?  And it's confusing to
+> have the style change halfway through the sequence; can you convert them
+> to (1U << n) as well?
 
-Reviewed-by: Seth Forshee (DigitalOcean) <sforshee@kernel.org>
+Thanks, I have made a patch v3 and submit it, but I'm not sure should I
+add "Reviewed-by: Christoph Hellwig<hch@lst.de>"  because the code has been
+changed,Thank you all again!
+
+On 2022/10/31 21:53, Matthew Wilcox wrote:
+> On Mon, Oct 31, 2022 at 09:48:11PM +0800, Gaosheng Cui wrote:
+>> +++ b/include/linux/fs.h
+>> @@ -1384,19 +1384,19 @@ extern int send_sigurg(struct fown_struct *fown);
+>>   #define SB_NOATIME	1024	/* Do not update access times. */
+>>   #define SB_NODIRATIME	2048	/* Do not update directory access times */
+>>   #define SB_SILENT	32768
+> Shouldn't those ^^^ also be marked as unsigned?  And it's confusing to
+> have the style change halfway through the sequence; can you convert them
+> to (1U << n) as well?
+>
+>> -#define SB_POSIXACL	(1<<16)	/* VFS does not apply the umask */
+>> -#define SB_INLINECRYPT	(1<<17)	/* Use blk-crypto for encrypted files */
+>> -#define SB_KERNMOUNT	(1<<22) /* this is a kern_mount call */
+>> -#define SB_I_VERSION	(1<<23) /* Update inode I_version field */
+>> -#define SB_LAZYTIME	(1<<25) /* Update the on-disk [acm]times lazily */
+>> +#define SB_POSIXACL	(1U << 16) /* VFS does not apply the umask */
+>> +#define SB_INLINECRYPT	(1U << 17) /* Use blk-crypto for encrypted files */
+>> +#define SB_KERNMOUNT	(1U << 22) /* this is a kern_mount call */
+>> +#define SB_I_VERSION	(1U << 23) /* Update inode I_version field */
+>> +#define SB_LAZYTIME	(1U << 25) /* Update the on-disk [acm]times lazily */
+>>   
+>>   /* These sb flags are internal to the kernel */
+>> -#define SB_SUBMOUNT     (1<<26)
+>> -#define SB_FORCE    	(1<<27)
+>> -#define SB_NOSEC	(1<<28)
+>> -#define SB_BORN		(1<<29)
+>> -#define SB_ACTIVE	(1<<30)
+>> -#define SB_NOUSER	(1<<31)
+>> +#define SB_SUBMOUNT	(1U << 26)
+>> +#define SB_FORCE	(1U << 27)
+>> +#define SB_NOSEC	(1U << 28)
+>> +#define SB_BORN		(1U << 29)
+>> +#define SB_ACTIVE	(1U << 30)
+>> +#define SB_NOUSER	(1U << 31)
+>>   
+>>   /* These flags relate to encoding and casefolding */
+>>   #define SB_ENC_STRICT_MODE_FL	(1 << 0)
+>> -- 
+>> 2.25.1
+>>
+> .
