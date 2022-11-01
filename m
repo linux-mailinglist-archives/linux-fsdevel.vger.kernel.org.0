@@ -2,67 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AAB2B6146C1
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 10:34:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40C2A614785
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 11:12:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230207AbiKAJej (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Nov 2022 05:34:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40092 "EHLO
+        id S230271AbiKAKMa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Nov 2022 06:12:30 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230172AbiKAJe3 (ORCPT
+        with ESMTP id S229795AbiKAKM3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Nov 2022 05:34:29 -0400
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0A5B19005
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Nov 2022 02:34:27 -0700 (PDT)
-Received: by mail-pj1-x102f.google.com with SMTP id l22-20020a17090a3f1600b00212fbbcfb78so18279280pjc.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Nov 2022 02:34:27 -0700 (PDT)
+        Tue, 1 Nov 2022 06:12:29 -0400
+Received: from mail-pg1-x52a.google.com (mail-pg1-x52a.google.com [IPv6:2607:f8b0:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A550E11C3D
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Nov 2022 03:12:28 -0700 (PDT)
+Received: by mail-pg1-x52a.google.com with SMTP id g129so13015631pgc.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Nov 2022 03:12:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C0XLH6YyEbVm2Z6h5s13YZtEQu0aHxoi9jUbOAeZzMA=;
-        b=MTIZBkpQ1AJ926SViIChs8XqH4br4rHBewQYn0WqUlDIV9ULmYWNtD30sSdpApONyR
-         Gs0DlVVG7XryC9wI0hdtSDlEH7zVQl6hwFmg9lEhgkN5WFMULzfJ6yY3A2ytjcFs6fDn
-         LpPrGX84of+QOz9DKYI5WfxA576gfbuuCXbmn7+/m5fYC9ZXjROiEfjiFaw65BRp9khS
-         me1r+X5kEE5zQckfEMplZj7klnLnoFV7VW/xfytEeSzA3wyuVLRJ5ynhppQXQ2yrjVOC
-         82UpbTgzJo5kIYj3cAyqEjFP7I6CC5PwNW+pHBVZdFoZYCpgP/c8Gl/5kEyRL5fAw1Au
-         /5MQ==
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=GwyjzJFQ6+6LSJfo59sGDVVoBjg7Wj7qITx6FoTZypg=;
+        b=Z84stiEXx8XUpbvMxM3oV1DgPQBjBmZnQrkNya206IcbvZXdLQbf+zgoT2PX2nrrto
+         E4Ph/gQYSd06xs7AC5c5T/h7q2no980hT0OjnY7FZljQAj0BhbVhoOFnX+oRug0z2NEN
+         FO5WMyE8Ap8mQX0bGJRil+doYUvMYvgm7wu8zkiOPSi2B3Owy6e1pW7Y8aDVQF6+OMH4
+         Is2pAhnxydvyuh4Znl1/wl0024hseHsKHcsEQUsQgqgdQDfglZuTxCziflwl2BqJUejk
+         IV7q+kf/YHlCuMzb8TAoF7X9Mtni6XEoDe6YhEedE632R5z8YoMyFG/oTH7aX4e0WCKP
+         ZH5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C0XLH6YyEbVm2Z6h5s13YZtEQu0aHxoi9jUbOAeZzMA=;
-        b=TIHKUlCBXf2s3mvWLh1yanqhESohO8frtWQtKztTrG6aKtrxgkK548GgGHuXwk0qp8
-         nb107pB1gTNhArqUTEZ01XkldwFiiJ41iYfk5X6xpnaFbxl2JX7qJNXQacV+tNMjcGs5
-         CnBlkowytlzpGrUHkblw2lxl34rKWenQo/YgFIcC/v0CNkda3E+pVT/VnlI92IkxSDmc
-         qJ6GGj+9jcg2hDItDSl7dMhLm5QSFnMM3qHKVby6XNUwpnve5vhegJxCFUioCmjHziHE
-         8V8pGsdAjRmrIz1QJqsNMvZI9tEONg4YdQJlDPFiqNtotnu1nvInc8vGvBdEMkLCExLS
-         DhqA==
-X-Gm-Message-State: ACrzQf1YlcE+3KfEPHGkN6cr3tTZIKkFAwMnDJLYXBTjempKbDs1RRkh
-        Mc5nzk0MQHmkv1u8PniyIiAiBA==
-X-Google-Smtp-Source: AMsMyM4O4afEojXTF5wq0P2O3SrchQKBUxntq3oJARVNe7hoAHJO9RhjpJZi0VSMdVQGLNxwrhrH2Q==
-X-Received: by 2002:a17:903:11c4:b0:178:634b:1485 with SMTP id q4-20020a17090311c400b00178634b1485mr18001827plh.142.1667295267042;
-        Tue, 01 Nov 2022 02:34:27 -0700 (PDT)
-Received: from HTW5T2C6VL.bytedance.net ([139.177.225.226])
-        by smtp.gmail.com with ESMTPSA id b189-20020a621bc6000000b0056b818142a2sm6080300pfb.109.2022.11.01.02.34.22
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 01 Nov 2022 02:34:26 -0700 (PDT)
-From:   changfengnan <changfengnan@bytedance.com>
-To:     willy@infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, viro@zeniv.linux.org.uk, djwong@kernel.org,
-        dchinner@redhat.com, chandan.babu@oracle.com,
-        linux-xfs@vger.kernel.org
-Cc:     changfengnan <changfengnan@bytedance.com>
-Subject: [PATCH] mm: remove filemap_fdatawait_keep_errors
-Date:   Tue,  1 Nov 2022 17:34:13 +0800
-Message-Id: <20221101093413.5871-1-changfengnan@bytedance.com>
-X-Mailer: git-send-email 2.37.0 (Apple Git-136)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GwyjzJFQ6+6LSJfo59sGDVVoBjg7Wj7qITx6FoTZypg=;
+        b=putQgT0fsQhwLo1QrUKFAZIcgOohwFBV7Cr1wCgHQs8/tsDjkjxW8nuuqTm+ArFBNd
+         3TVsJzC17oR+GSl/Ky4TacWsm8dauO2SgCivSZtOGDdmjkp0IAFQ1hz0KB1vgSswgFWm
+         BFdtCA08gtveTeF9x/+PrjB2ALiN0jnpsyzZSyDJ9gvuE7UQ7ogJyb5lEYk3ymL4ff/0
+         w3St86CkjwrB9OQOdEw6JqJ1RcR6iwz/OPUwzXDOqeSQsED919HuFtWyNL9IZliptl2v
+         5ylPuXw1z+lsQP8yZbAh9AAO8NMvj2fhx21hu/8zypZjmHK7OQLB2qpfoRKjcADdOjH8
+         cB4w==
+X-Gm-Message-State: ACrzQf0PVH+7fyM4US4YRjUS3quxP6B/I48aWJ20p4lhWYzh1vfAOhyV
+        u/aNWxBJPvi3zLnqzdDxnPc=
+X-Google-Smtp-Source: AMsMyM7lp0gh/pF8gLVEHXdoyjyr2Bi7qSyxK9zAlXVS+xbru3YAGv0aoFbXNi8VFJtgXJ9drw7BVQ==
+X-Received: by 2002:aa7:859a:0:b0:56b:d76d:8c76 with SMTP id w26-20020aa7859a000000b0056bd76d8c76mr18612936pfn.77.1667297548120;
+        Tue, 01 Nov 2022 03:12:28 -0700 (PDT)
+Received: from hyeyoo ([114.29.91.56])
+        by smtp.gmail.com with ESMTPSA id ft10-20020a17090b0f8a00b00210c84b8ae5sm5661397pjb.35.2022.11.01.03.12.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Nov 2022 03:12:27 -0700 (PDT)
+Date:   Tue, 1 Nov 2022 19:12:21 +0900
+From:   Hyeonggon Yoo <42.hyeyoo@gmail.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-mm@kvack.org, Uladzislau Rezki <urezki@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ira Weiny <ira.weiny@intel.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [PATCH 1/1] mm: Add folio_map_local()
+Message-ID: <Y2DxBf9Y35vylVon@hyeyoo>
+References: <20221028151526.319681-1-willy@infradead.org>
+ <20221028151526.319681-2-willy@infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221028151526.319681-2-willy@infradead.org>
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,HK_RANDOM_ENVFROM,
+        HK_RANDOM_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,111 +78,180 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-use filemap_fdatawait_range_keep_errors to instead of
-filemap_fdatawait_keep_errors, no functional change.
+On Fri, Oct 28, 2022 at 04:15:26PM +0100, Matthew Wilcox (Oracle) wrote:
+> Some filesystems benefit from being able to map the entire folio.
+> On 32-bit platforms with HIGHMEM, we fall back to using vmap, which
+> will be slow.  If it proves to be a performance problem, we can look at
+> optimising it in a number of ways.
+> 
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  include/linux/highmem.h | 40 ++++++++++++++++++++++++++++++++-
+>  include/linux/vmalloc.h |  6 +++--
+>  mm/vmalloc.c            | 50 +++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 93 insertions(+), 3 deletions(-)
+> 
+> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+> index e9912da5441b..e8159243d88d 100644
+> --- a/include/linux/highmem.h
+> +++ b/include/linux/highmem.h
+> @@ -10,6 +10,7 @@
+>  #include <linux/mm.h>
+>  #include <linux/uaccess.h>
+>  #include <linux/hardirq.h>
+> +#include <linux/vmalloc.h>
+>  
+>  #include "highmem-internal.h"
+>  
+> @@ -132,6 +133,44 @@ static inline void *kmap_local_page(struct page *page);
+>   */
+>  static inline void *kmap_local_folio(struct folio *folio, size_t offset);
+>  
+> +/**
+> + * folio_map_local - Map an entire folio.
+> + * @folio: The folio to map.
+> + *
+> + * Unlike kmap_local_folio(), map an entire folio.  This should be undone
+> + * with folio_unmap_local().  The address returned should be treated as
+> + * stack-based, and local to this CPU, like kmap_local_folio().
+> + *
+> + * Context: May allocate memory using GFP_KERNEL if it takes the vmap path.
+> + * Return: A kernel virtual address which can be used to access the folio,
+> + * or NULL if the mapping fails.
+> + */
+> +static inline __must_check void *folio_map_local(struct folio *folio)
+> +{
+> +	might_alloc(GFP_KERNEL);
+> +
+> +	if (!IS_ENABLED(CONFIG_HIGHMEM))
+> +		return folio_address(folio);
+> +	if (folio_test_large(folio))
+> +		return vm_map_folio(folio);
+> +	return kmap_local_page(&folio->page);
+> +}
+> +
+> +/**
+> + * folio_unmap_local - Unmap an entire folio.
+> + * @addr: Address returned from folio_map_local()
+> + *
+> + * Undo the result of a previous call to folio_map_local().
+> + */
+> +static inline void folio_unmap_local(const void *addr)
+> +{
+> +	if (!IS_ENABLED(CONFIG_HIGHMEM))
+> +		return;
+> +	if (is_vmalloc_addr(addr))
+> +		vunmap(addr);
 
-Signed-off-by: changfengnan <changfengnan@bytedance.com>
----
- block/bdev.c            |  5 +++--
- fs/fs-writeback.c       |  5 +++--
- fs/xfs/scrub/bmap.c     |  3 ++-
- include/linux/pagemap.h |  1 -
- mm/filemap.c            | 21 ---------------------
- 5 files changed, 8 insertions(+), 27 deletions(-)
+I think it should be vm_unmap_ram(); (and pass number of pages to
+folio_unmap_local()) as the vmap area might be allocated using
+vb_alloc().
 
-diff --git a/block/bdev.c b/block/bdev.c
-index ce05175e71ce..f600b10017cd 100644
---- a/block/bdev.c
-+++ b/block/bdev.c
-@@ -1055,10 +1055,11 @@ void sync_bdevs(bool wait)
- 			/*
- 			 * We keep the error status of individual mapping so
- 			 * that applications can catch the writeback error using
--			 * fsync(2). See filemap_fdatawait_keep_errors() for
-+			 * fsync(2). See filemap_fdatawait_range_keep_errors for
- 			 * details.
- 			 */
--			filemap_fdatawait_keep_errors(inode->i_mapping);
-+			filemap_fdatawait_range_keep_errors(inode->i_mapping,
-+								0, LLONG_MAX);
- 		} else {
- 			filemap_fdatawrite(inode->i_mapping);
- 		}
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 443f83382b9b..d417cdb4505a 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -2582,9 +2582,10 @@ static void wait_sb_inodes(struct super_block *sb)
- 		/*
- 		 * We keep the error status of individual mapping so that
- 		 * applications can catch the writeback error using fsync(2).
--		 * See filemap_fdatawait_keep_errors() for details.
-+		 * See filemap_fdatawait_range_keep_errors for details.
- 		 */
--		filemap_fdatawait_keep_errors(mapping);
-+		filemap_fdatawait_range_keep_errors(inode->i_mapping,
-+							0, LLONG_MAX);
- 
- 		cond_resched();
- 
-diff --git a/fs/xfs/scrub/bmap.c b/fs/xfs/scrub/bmap.c
-index f0b9cb6506fd..6be0433eaa51 100644
---- a/fs/xfs/scrub/bmap.c
-+++ b/fs/xfs/scrub/bmap.c
-@@ -64,7 +64,8 @@ xchk_setup_inode_bmap(
- 		 */
- 		error = filemap_fdatawrite(mapping);
- 		if (!error)
--			error = filemap_fdatawait_keep_errors(mapping);
-+			error = filemap_fdatawait_range_keep_errors(mapping,
-+								0, LLONG_MAX);
- 		if (error && (error != -ENOSPC && error != -EIO))
- 			goto out;
- 	}
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 0178b2040ea3..75536967f57b 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -33,7 +33,6 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
- int write_inode_now(struct inode *, int sync);
- int filemap_fdatawrite(struct address_space *);
- int filemap_flush(struct address_space *);
--int filemap_fdatawait_keep_errors(struct address_space *mapping);
- int filemap_fdatawait_range(struct address_space *, loff_t lstart, loff_t lend);
- int filemap_fdatawait_range_keep_errors(struct address_space *mapping,
- 		loff_t start_byte, loff_t end_byte);
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 15800334147b..b4932493175b 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -600,27 +600,6 @@ int file_fdatawait_range(struct file *file, loff_t start_byte, loff_t end_byte)
- }
- EXPORT_SYMBOL(file_fdatawait_range);
- 
--/**
-- * filemap_fdatawait_keep_errors - wait for writeback without clearing errors
-- * @mapping: address space structure to wait for
-- *
-- * Walk the list of under-writeback pages of the given address space
-- * and wait for all of them.  Unlike filemap_fdatawait(), this function
-- * does not clear error status of the address space.
-- *
-- * Use this function if callers don't handle errors themselves.  Expected
-- * call sites are system-wide / filesystem-wide data flushers: e.g. sync(2),
-- * fsfreeze(8)
-- *
-- * Return: error status of the address space.
-- */
--int filemap_fdatawait_keep_errors(struct address_space *mapping)
--{
--	__filemap_fdatawait_range(mapping, 0, LLONG_MAX);
--	return filemap_check_and_keep_errors(mapping);
--}
--EXPORT_SYMBOL(filemap_fdatawait_keep_errors);
--
- /* Returns true if writeback might be needed or already in progress. */
- static bool mapping_needs_writeback(struct address_space *mapping)
- {
+> +	kunmap_local(addr);
+> +}
+
+missing else statement?
+
+> +
+>  /**
+>   * kmap_atomic - Atomically map a page for temporary usage - Deprecated!
+>   * @page:	Pointer to the page to be mapped
+> @@ -426,5 +465,4 @@ static inline void folio_zero_range(struct folio *folio,
+>  {
+>  	zero_user_segments(&folio->page, start, start + length, 0, 0);
+>  }
+> -
+>  #endif /* _LINUX_HIGHMEM_H */
+> diff --git a/include/linux/vmalloc.h b/include/linux/vmalloc.h
+> index 096d48aa3437..4bb34c939c01 100644
+> --- a/include/linux/vmalloc.h
+> +++ b/include/linux/vmalloc.h
+> @@ -13,6 +13,7 @@
+>  #include <asm/vmalloc.h>
+>  
+>  struct vm_area_struct;		/* vma defining user mapping in mm_types.h */
+> +struct folio;			/* also mm_types.h */
+>  struct notifier_block;		/* in notifier.h */
+>  
+>  /* bits in flags of vmalloc's vm_struct below */
+> @@ -163,8 +164,9 @@ extern void *vcalloc(size_t n, size_t size) __alloc_size(1, 2);
+>  extern void vfree(const void *addr);
+>  extern void vfree_atomic(const void *addr);
+>  
+> -extern void *vmap(struct page **pages, unsigned int count,
+> -			unsigned long flags, pgprot_t prot);
+> +void *vmap(struct page **pages, unsigned int count, unsigned long flags,
+> +		pgprot_t prot);
+> +void *vm_map_folio(struct folio *folio);
+>  void *vmap_pfn(unsigned long *pfns, unsigned int count, pgprot_t prot);
+>  extern void vunmap(const void *addr);
+>  
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index ccaa461998f3..265b860c9550 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2283,6 +2283,56 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node)
+>  }
+>  EXPORT_SYMBOL(vm_map_ram);
+>  
+> +#ifdef CONFIG_HIGHMEM
+> +/**
+> + * vm_map_folio() - Map an entire folio into virtually contiguous space.
+> + * @folio: The folio to map.
+> + *
+> + * Maps all pages in @folio into contiguous kernel virtual space.  This
+> + * function is only available in HIGHMEM builds; for !HIGHMEM, use
+> + * folio_address().  The pages are mapped with PAGE_KERNEL permissions.
+> + *
+> + * Return: The address of the area or %NULL on failure
+> + */
+> +void *vm_map_folio(struct folio *folio)
+> +{
+> +	size_t size = folio_size(folio);
+> +	unsigned long addr;
+> +	void *mem;
+> +
+> +	might_sleep();
+> +
+> +	if (likely(folio_nr_pages(folio) <= VMAP_MAX_ALLOC)) {
+> +		mem = vb_alloc(size, GFP_KERNEL);
+> +		if (IS_ERR(mem))
+> +			return NULL;
+> +		addr = (unsigned long)mem;
+> +	} else {
+> +		struct vmap_area *va;
+> +		va = alloc_vmap_area(size, PAGE_SIZE, VMALLOC_START,
+> +				VMALLOC_END, NUMA_NO_NODE, GFP_KERNEL);
+> +		if (IS_ERR(va))
+> +			return NULL;
+> +
+> +		addr = va->va_start;
+> +		mem = (void *)addr;
+> +	}
+> +
+> +	if (vmap_range_noflush(addr, addr + size,
+> +				folio_pfn(folio) << PAGE_SHIFT,
+> +				PAGE_KERNEL, folio_shift(folio))) {
+> +		vm_unmap_ram(mem, folio_nr_pages(folio));
+> +		return NULL;
+> +	}
+> +	flush_cache_vmap(addr, addr + size);
+> +
+> +	mem = kasan_unpoison_vmalloc(mem, size, KASAN_VMALLOC_PROT_NORMAL);
+> +
+> +	return mem;
+> +}
+> +EXPORT_SYMBOL(vm_map_folio);
+> +#endif
+
+it's a bit of copy & paste but yeah, it seems unavoidable at this point.
+
+>  static struct vm_struct *vmlist __initdata;
+>  
+>  static inline unsigned int vm_area_page_order(struct vm_struct *vm)
+> -- 
+> 2.35.1
+
 -- 
-2.37.0 (Apple Git-136)
-
+Thanks,
+Hyeonggon
