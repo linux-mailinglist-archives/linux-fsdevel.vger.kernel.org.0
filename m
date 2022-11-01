@@ -2,47 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE68461468E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 10:25:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB2B6146C1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 10:34:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230018AbiKAJY7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Nov 2022 05:24:59 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34964 "EHLO
+        id S230207AbiKAJej (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Nov 2022 05:34:39 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbiKAJY5 (ORCPT
+        with ESMTP id S230172AbiKAJe3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Nov 2022 05:24:57 -0400
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B0DB1209B;
-        Tue,  1 Nov 2022 02:24:55 -0700 (PDT)
-Received: from canpemm500006.china.huawei.com (unknown [172.30.72.53])
-        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4N1l370vNRzHvWF;
-        Tue,  1 Nov 2022 17:24:35 +0800 (CST)
-Received: from [10.67.110.83] (10.67.110.83) by canpemm500006.china.huawei.com
- (7.192.105.130) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Tue, 1 Nov
- 2022 17:24:52 +0800
-Subject: Re: [PATCH] squashfs: fix null-ptr-deref in squashfs_fill_super
-To:     Baokun Li <libaokun1@huawei.com>, <linux-kernel@vger.kernel.org>
-CC:     <phillip@squashfs.org.uk>, <akpm@linux-foundation.org>,
-        <linux-fsdevel@vger.kernel.org>, <yi.zhang@huawei.com>,
-        <yukuai3@huawei.com>
-References: <20221101073343.3961562-1-libaokun1@huawei.com>
-From:   Xiaoming Ni <nixiaoming@huawei.com>
-Message-ID: <97e67924-3394-5135-64a1-b205824d0dc3@huawei.com>
-Date:   Tue, 1 Nov 2022 17:24:52 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.0.1
+        Tue, 1 Nov 2022 05:34:29 -0400
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0A5B19005
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Nov 2022 02:34:27 -0700 (PDT)
+Received: by mail-pj1-x102f.google.com with SMTP id l22-20020a17090a3f1600b00212fbbcfb78so18279280pjc.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Nov 2022 02:34:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C0XLH6YyEbVm2Z6h5s13YZtEQu0aHxoi9jUbOAeZzMA=;
+        b=MTIZBkpQ1AJ926SViIChs8XqH4br4rHBewQYn0WqUlDIV9ULmYWNtD30sSdpApONyR
+         Gs0DlVVG7XryC9wI0hdtSDlEH7zVQl6hwFmg9lEhgkN5WFMULzfJ6yY3A2ytjcFs6fDn
+         LpPrGX84of+QOz9DKYI5WfxA576gfbuuCXbmn7+/m5fYC9ZXjROiEfjiFaw65BRp9khS
+         me1r+X5kEE5zQckfEMplZj7klnLnoFV7VW/xfytEeSzA3wyuVLRJ5ynhppQXQ2yrjVOC
+         82UpbTgzJo5kIYj3cAyqEjFP7I6CC5PwNW+pHBVZdFoZYCpgP/c8Gl/5kEyRL5fAw1Au
+         /5MQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C0XLH6YyEbVm2Z6h5s13YZtEQu0aHxoi9jUbOAeZzMA=;
+        b=TIHKUlCBXf2s3mvWLh1yanqhESohO8frtWQtKztTrG6aKtrxgkK548GgGHuXwk0qp8
+         nb107pB1gTNhArqUTEZ01XkldwFiiJ41iYfk5X6xpnaFbxl2JX7qJNXQacV+tNMjcGs5
+         CnBlkowytlzpGrUHkblw2lxl34rKWenQo/YgFIcC/v0CNkda3E+pVT/VnlI92IkxSDmc
+         qJ6GGj+9jcg2hDItDSl7dMhLm5QSFnMM3qHKVby6XNUwpnve5vhegJxCFUioCmjHziHE
+         8V8pGsdAjRmrIz1QJqsNMvZI9tEONg4YdQJlDPFiqNtotnu1nvInc8vGvBdEMkLCExLS
+         DhqA==
+X-Gm-Message-State: ACrzQf1YlcE+3KfEPHGkN6cr3tTZIKkFAwMnDJLYXBTjempKbDs1RRkh
+        Mc5nzk0MQHmkv1u8PniyIiAiBA==
+X-Google-Smtp-Source: AMsMyM4O4afEojXTF5wq0P2O3SrchQKBUxntq3oJARVNe7hoAHJO9RhjpJZi0VSMdVQGLNxwrhrH2Q==
+X-Received: by 2002:a17:903:11c4:b0:178:634b:1485 with SMTP id q4-20020a17090311c400b00178634b1485mr18001827plh.142.1667295267042;
+        Tue, 01 Nov 2022 02:34:27 -0700 (PDT)
+Received: from HTW5T2C6VL.bytedance.net ([139.177.225.226])
+        by smtp.gmail.com with ESMTPSA id b189-20020a621bc6000000b0056b818142a2sm6080300pfb.109.2022.11.01.02.34.22
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Tue, 01 Nov 2022 02:34:26 -0700 (PDT)
+From:   changfengnan <changfengnan@bytedance.com>
+To:     willy@infradead.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, viro@zeniv.linux.org.uk, djwong@kernel.org,
+        dchinner@redhat.com, chandan.babu@oracle.com,
+        linux-xfs@vger.kernel.org
+Cc:     changfengnan <changfengnan@bytedance.com>
+Subject: [PATCH] mm: remove filemap_fdatawait_keep_errors
+Date:   Tue,  1 Nov 2022 17:34:13 +0800
+Message-Id: <20221101093413.5871-1-changfengnan@bytedance.com>
+X-Mailer: git-send-email 2.37.0 (Apple Git-136)
 MIME-Version: 1.0
-In-Reply-To: <20221101073343.3961562-1-libaokun1@huawei.com>
-Content-Type: text/plain; charset="gbk"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.67.110.83]
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- canpemm500006.china.huawei.com (7.192.105.130)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -50,75 +70,111 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/11/1 15:33, Baokun Li wrote:
-> When squashfs_read_table() returns an error or `sb->s_magic
-> != SQUASHFS_MAGIC`, enters the error branch and calls
-> msblk->thread_ops->destroy(msblk) to destroy msblk.
-> However, msblk->thread_ops has not been initialized.
-> Therefore, the following problem is triggered:
-> 
-> ==================================================================
-> BUG: KASAN: null-ptr-deref in squashfs_fill_super+0xe7a/0x13b0
-> Read of size 8 at addr 0000000000000008 by task swapper/0/1
-> 
-> CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.1.0-rc3-next-20221031 #367
-> Call Trace:
->   <TASK>
->   dump_stack_lvl+0x73/0x9f
->   print_report+0x743/0x759
->   kasan_report+0xc0/0x120
->   __asan_load8+0xd3/0x140
->   squashfs_fill_super+0xe7a/0x13b0
->   get_tree_bdev+0x27b/0x450
->   squashfs_get_tree+0x19/0x30
->   vfs_get_tree+0x49/0x150
->   path_mount+0xaae/0x1350
->   init_mount+0xad/0x100
->   do_mount_root+0xbc/0x1d0
->   mount_block_root+0x173/0x316
->   mount_root+0x223/0x236
->   prepare_namespace+0x1eb/0x237
->   kernel_init_freeable+0x528/0x576
->   kernel_init+0x29/0x250
->   ret_from_fork+0x1f/0x30
->   </TASK>
-> ==================================================================
-> 
-> To solve this issue, msblk->thread_ops is initialized immediately after
-> msblk is assigned a value.
-> 
-> Fixes: b0645770d3c7 ("squashfs: add the mount parameter theads=<single|multi|percpu>")
-> Signed-off-by: Baokun Li <libaokun1@huawei.com>
-> ---
-Thank you for helping to identify and fix this bug.
+use filemap_fdatawait_range_keep_errors to instead of
+filemap_fdatawait_keep_errors, no functional change.
 
-Reviewed-by: Xiaoming Ni <nixiaoming@huawei.com>
+Signed-off-by: changfengnan <changfengnan@bytedance.com>
+---
+ block/bdev.c            |  5 +++--
+ fs/fs-writeback.c       |  5 +++--
+ fs/xfs/scrub/bmap.c     |  3 ++-
+ include/linux/pagemap.h |  1 -
+ mm/filemap.c            | 21 ---------------------
+ 5 files changed, 8 insertions(+), 27 deletions(-)
 
-
-
->   fs/squashfs/super.c | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/squashfs/super.c b/fs/squashfs/super.c
-> index 1e428ca9414e..7d5265a39d20 100644
-> --- a/fs/squashfs/super.c
-> +++ b/fs/squashfs/super.c
-> @@ -197,6 +197,7 @@ static int squashfs_fill_super(struct super_block *sb, struct fs_context *fc)
->   		return -ENOMEM;
->   	}
->   	msblk = sb->s_fs_info;
-> +	msblk->thread_ops = opts->thread_ops;
->   
->   	msblk->panic_on_errors = (opts->errors == Opt_errors_panic);
->   
-> @@ -231,7 +232,7 @@ static int squashfs_fill_super(struct super_block *sb, struct fs_context *fc)
->   			       sb->s_bdev);
->   		goto failed_mount;
->   	}
-> -	msblk->thread_ops = opts->thread_ops;
-> +
->   	if (opts->thread_num == 0) {
->   		msblk->max_thread_num = msblk->thread_ops->max_decompressors();
->   	} else {
-> 
+diff --git a/block/bdev.c b/block/bdev.c
+index ce05175e71ce..f600b10017cd 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -1055,10 +1055,11 @@ void sync_bdevs(bool wait)
+ 			/*
+ 			 * We keep the error status of individual mapping so
+ 			 * that applications can catch the writeback error using
+-			 * fsync(2). See filemap_fdatawait_keep_errors() for
++			 * fsync(2). See filemap_fdatawait_range_keep_errors for
+ 			 * details.
+ 			 */
+-			filemap_fdatawait_keep_errors(inode->i_mapping);
++			filemap_fdatawait_range_keep_errors(inode->i_mapping,
++								0, LLONG_MAX);
+ 		} else {
+ 			filemap_fdatawrite(inode->i_mapping);
+ 		}
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 443f83382b9b..d417cdb4505a 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -2582,9 +2582,10 @@ static void wait_sb_inodes(struct super_block *sb)
+ 		/*
+ 		 * We keep the error status of individual mapping so that
+ 		 * applications can catch the writeback error using fsync(2).
+-		 * See filemap_fdatawait_keep_errors() for details.
++		 * See filemap_fdatawait_range_keep_errors for details.
+ 		 */
+-		filemap_fdatawait_keep_errors(mapping);
++		filemap_fdatawait_range_keep_errors(inode->i_mapping,
++							0, LLONG_MAX);
+ 
+ 		cond_resched();
+ 
+diff --git a/fs/xfs/scrub/bmap.c b/fs/xfs/scrub/bmap.c
+index f0b9cb6506fd..6be0433eaa51 100644
+--- a/fs/xfs/scrub/bmap.c
++++ b/fs/xfs/scrub/bmap.c
+@@ -64,7 +64,8 @@ xchk_setup_inode_bmap(
+ 		 */
+ 		error = filemap_fdatawrite(mapping);
+ 		if (!error)
+-			error = filemap_fdatawait_keep_errors(mapping);
++			error = filemap_fdatawait_range_keep_errors(mapping,
++								0, LLONG_MAX);
+ 		if (error && (error != -ENOSPC && error != -EIO))
+ 			goto out;
+ 	}
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index 0178b2040ea3..75536967f57b 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -33,7 +33,6 @@ int invalidate_inode_pages2_range(struct address_space *mapping,
+ int write_inode_now(struct inode *, int sync);
+ int filemap_fdatawrite(struct address_space *);
+ int filemap_flush(struct address_space *);
+-int filemap_fdatawait_keep_errors(struct address_space *mapping);
+ int filemap_fdatawait_range(struct address_space *, loff_t lstart, loff_t lend);
+ int filemap_fdatawait_range_keep_errors(struct address_space *mapping,
+ 		loff_t start_byte, loff_t end_byte);
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 15800334147b..b4932493175b 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -600,27 +600,6 @@ int file_fdatawait_range(struct file *file, loff_t start_byte, loff_t end_byte)
+ }
+ EXPORT_SYMBOL(file_fdatawait_range);
+ 
+-/**
+- * filemap_fdatawait_keep_errors - wait for writeback without clearing errors
+- * @mapping: address space structure to wait for
+- *
+- * Walk the list of under-writeback pages of the given address space
+- * and wait for all of them.  Unlike filemap_fdatawait(), this function
+- * does not clear error status of the address space.
+- *
+- * Use this function if callers don't handle errors themselves.  Expected
+- * call sites are system-wide / filesystem-wide data flushers: e.g. sync(2),
+- * fsfreeze(8)
+- *
+- * Return: error status of the address space.
+- */
+-int filemap_fdatawait_keep_errors(struct address_space *mapping)
+-{
+-	__filemap_fdatawait_range(mapping, 0, LLONG_MAX);
+-	return filemap_check_and_keep_errors(mapping);
+-}
+-EXPORT_SYMBOL(filemap_fdatawait_keep_errors);
+-
+ /* Returns true if writeback might be needed or already in progress. */
+ static bool mapping_needs_writeback(struct address_space *mapping)
+ {
+-- 
+2.37.0 (Apple Git-136)
 
