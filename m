@@ -2,76 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0971F614252
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 01:34:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33F41614249
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 01:34:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229874AbiKAAeZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Oct 2022 20:34:25 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57068 "EHLO
+        id S229902AbiKAAeW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Oct 2022 20:34:22 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57024 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229870AbiKAAeV (ORCPT
+        with ESMTP id S229556AbiKAAeT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Oct 2022 20:34:21 -0400
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6726F15A28
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 17:34:19 -0700 (PDT)
-Received: by mail-pj1-x1033.google.com with SMTP id h14so11783477pjv.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 17:34:19 -0700 (PDT)
+        Mon, 31 Oct 2022 20:34:19 -0400
+Received: from mail-pf1-x42f.google.com (mail-pf1-x42f.google.com [IPv6:2607:f8b0:4864:20::42f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D8EAF1583D
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 17:34:18 -0700 (PDT)
+Received: by mail-pf1-x42f.google.com with SMTP id i3so12084075pfc.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 17:34:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9S0K1fKtACWFnh+ClmzETByR2HPKxtW+87wsNKi70dQ=;
-        b=ihroBuarMNM3cP1Oqrrd2eK/moeEqThQ3GG8SDacsUR4g4+OHkaWYdfOrd++ZH4six
-         uRYs1Bc4hrjI46VNyO+7qxqJ1sdNGpnNTggs6kKag4zTm9gKl8YU6R2WdMTv9f0ad9QV
-         ryj1XjTLFMOx+eYvUhsgHWeabrVSjzLZgIszPNRgez5zJTlaTVvwd3dq6ZfIlpzZNYxD
-         fhrcL3iGnbDSnl59hBiq3vWf0rci4/j34Yj264FIVGLPEftV20EOif+R4usp4RSvu1wV
-         j52iCGnLav0X+Bp/dyR5HWddz3dKBNJM32pSHzTv5oCWPVhaw68VZqBmFUebTBsOoXDL
-         GfWA==
+        bh=UpYORrtHPEFkdqKAbT3ik18Ay5BZZZbilDStDtNjXS8=;
+        b=61c904ATR7ihnICXDiY7DEoT0knpUcuEM9TKOou3O4466QVWdIbsTUVngQkvubsPDO
+         M3Iv8gwMu6bHf81ZdtPGxzFbq1mFZB2G8tCEZ6iiNMYr6EygMRVKVz2p1lRbJxnbRUsr
+         FsfJhYepQjsQowj5NUJQFn+/tllCIcGYE1koACso5b+lKk9Vs1m89ogeG9Psx1Wp21sq
+         3KmKSoC9hhKCbbBuL5DpCqLGErmY03TJaSEjkhHnAWjzxsAbLPfKhWwAQYU2wrIT5L89
+         tSu8aaVwLcYS+jnHMIP5I7cXZUnM13M43pzceerhkcYunsDzlt6RqZepotmBXMJryMvR
+         wz5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9S0K1fKtACWFnh+ClmzETByR2HPKxtW+87wsNKi70dQ=;
-        b=gGX3oT5zXnzc1WyOeAq/dreTC10YvvQ6aSVbSGWaMd8eKz/Xeo2uxf+jkJeW+EB8ei
-         5bml5WSvAQbvffFaxLXbfLJn4u1Wf7qnsMyc/N7w1mdY7st3cvXfMOu0rNIgYPSX+vfS
-         ue8kAsrcSYiJJL8sBjaB/NfmB33Cohh6hUcPT53R2S6EyxMG10QsO2aEVPHI2y6WfzEJ
-         cbh7P01NXFV8+C5vUM5qSHsadWDgXhXQrqebCiKOmJI66jVcuZCUy1JML4fE4WMIKr1a
-         4Du0x/EG4BfpT26PNZbNDZLfb/IG2t8LjNQxyGxKZYjX1Gwa4BUbEKw8mF1+sQXIqezO
-         QnCg==
-X-Gm-Message-State: ACrzQf2SS8RzaZAmQRP/6+S9iPdRhTiz8G/EINU2TXmzjrypUsH/Am1n
-        FEIaDYiXVt503lW9dxIQOTs7Yg==
-X-Google-Smtp-Source: AMsMyM5zyCOmZ6SGcrJYRytuMOJWg4Ox6ne51m3KZgNxTcmLuXrbywsFN6cFRFBz5oQH884zrY2/iw==
-X-Received: by 2002:a17:903:185:b0:187:2430:d39e with SMTP id z5-20020a170903018500b001872430d39emr6817165plg.65.1667262858843;
+        bh=UpYORrtHPEFkdqKAbT3ik18Ay5BZZZbilDStDtNjXS8=;
+        b=13uXbQ+JusoKvZDidbaLmWPzrfKx3IJhkJB3mUyKdzsuU4ErmCKYKzCjw2JbAjXGe1
+         D6LGD6GnhfdcgUBDzx+uT/1S7yHmEpl9zp53myzyDbBl3XZC0ig38gR3FzajGG/bwTnE
+         3sef/KDbTaM61ydqrXx/x8MU/cR69w/dD/fOEiD/Djk1FDq8lx5F2CSTlzNhnjvPfkNT
+         Rj5efkTidjB7xmW12Fn35RWKZ4KlB77owO4kVKhx6NtfiE80jBglHsHGsZ55LGOFmgcH
+         /b537CqxknsyNWJ8hHyFk0bcqW3XCZYvpo/Xee3qKavHW3SU18SQz5zhBaVa9JlnFL9A
+         O87A==
+X-Gm-Message-State: ACrzQf3MxAVl/aXx+EQHk8+P2Nwf4lz+DxnyvXRs95PcgF12SlPyL83d
+        PHO1ssFXmycAPquf0myf2gEB3BjCV9KinQ==
+X-Google-Smtp-Source: AMsMyM4aCmFhq+ySHVIkk6+EXgD7HL2pSuSBBmcslufMmYLwVPJdsei/QPpBdPSkaOv1iDMck1TyNw==
+X-Received: by 2002:a05:6a02:186:b0:439:49a3:479b with SMTP id bj6-20020a056a02018600b0043949a3479bmr15024664pgb.171.1667262858203;
         Mon, 31 Oct 2022 17:34:18 -0700 (PDT)
 Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
-        by smtp.gmail.com with ESMTPSA id h11-20020aa796cb000000b00562677968aesm5219006pfq.72.2022.10.31.17.34.17
+        by smtp.gmail.com with ESMTPSA id j1-20020a170902c3c100b0017dd8c8009esm5003862plj.4.2022.10.31.17.34.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Mon, 31 Oct 2022 17:34:17 -0700 (PDT)
 Received: from discord.disaster.area ([192.168.253.110])
         by dread.disaster.area with esmtp (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1opfEN-008muI-3q; Tue, 01 Nov 2022 11:34:15 +1100
+        id 1opfEN-008muJ-4m; Tue, 01 Nov 2022 11:34:15 +1100
 Received: from dave by discord.disaster.area with local (Exim 4.96)
         (envelope-from <david@fromorbit.com>)
-        id 1opfEN-00G7dW-0I;
+        id 1opfEN-00G7da-0N;
         Tue, 01 Nov 2022 11:34:15 +1100
 From:   Dave Chinner <david@fromorbit.com>
 To:     linux-xfs@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH 1/7] xfs: write page faults in iomap are not buffered writes
-Date:   Tue,  1 Nov 2022 11:34:06 +1100
-Message-Id: <20221101003412.3842572-2-david@fromorbit.com>
+Subject: [PATCH 2/7] xfs: punching delalloc extents on write failure is racy
+Date:   Tue,  1 Nov 2022 11:34:07 +1100
+Message-Id: <20221101003412.3842572-3-david@fromorbit.com>
 X-Mailer: git-send-email 2.37.2
 In-Reply-To: <20221101003412.3842572-1-david@fromorbit.com>
 References: <20221101003412.3842572-1-david@fromorbit.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -80,129 +80,108 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Dave Chinner <dchinner@redhat.com>
 
-When we reserve a delalloc region in xfs_buffered_write_iomap_begin,
-we mark the iomap as IOMAP_F_NEW so that the the write context
-understands that it allocated the delalloc region.
+xfs_buffered_write_iomap_end() has a comment about the safety of
+punching delalloc extents based holding the IOLOCK_EXCL. This
+comment is wrong, and punching delalloc extents is not race free.
 
-If we then fail that buffered write, xfs_buffered_write_iomap_end()
-checks for the IOMAP_F_NEW flag and if it is set, it punches out
-the unused delalloc region that was allocated for the write.
+When we punch out a delalloc extent after a write failure in
+xfs_buffered_write_iomap_end(), we punch out the page cache with
+truncate_pagecache_range() before we punch out the delalloc extents.
+At this point, we only hold the IOLOCK_EXCL, so there is nothing
+stopping mmap() write faults racing with this cleanup operation,
+reinstantiating a folio over the range we are about to punch and
+hence requiring the delalloc extent to be kept.
 
-The assumption this code makes is that all buffered write operations
-that can allocate space are run under an exclusive lock (i_rwsem).
-This is an invalid assumption: page faults in mmap()d regions call
-through this same function pair to map the file range being faulted
-and this runs only holding the inode->i_mapping->invalidate_lock in
-shared mode.
+If this race condition is hit, we can end up with a dirty page in
+the page cache that has no delalloc extent or space reservation
+backing it. This leads to bad things happening at writeback time.
 
-IOWs, we can have races between page faults and write() calls that
-fail the nested page cache write operation that result in data loss.
-That is, the failing iomap_end call will punch out the data that
-the other racing iomap iteration brought into the page cache. This
-can be reproduced with generic/34[46] if we arbitrarily fail page
-cache copy-in operations from write() syscalls.
+To avoid this race condition, we need the page cache truncation to
+be atomic w.r.t. the extent manipulation. We can do this by holding
+the mapping->invalidate_lock exclusively across this operation -
+this will prevent new pages from being inserted into the page cache
+whilst we are removing the pages and the backing extent and space
+reservation.
 
-Code analysis tells us that the iomap_page_mkwrite() function holds
-the already instantiated and uptodate folio locked across the iomap
-mapping iterations. Hence the folio cannot be removed from memory
-whilst we are mapping the range it covers, and as such we do not
-care if the mapping changes state underneath the iomap iteration
-loop:
+Taking the mapping->invalidate_lock exclusively in the buffered
+write IO path is safe - it naturally nests inside the IOLOCK (see
+truncate and fallocate paths). iomap_zero_range() can be called from
+under the mapping->invalidate_lock (from the truncate path via
+either xfs_zero_eof() or xfs_truncate_page(), but iomap_zero_iter()
+will not instantiate new delalloc pages (because it skips holes) and
+hence will not ever need to punch out delalloc extents on failure.
 
-1. if the folio is not already dirty, there is no writeback races
-   possible.
-2. if we allocated the mapping (delalloc or unwritten), the folio
-   cannot already be dirty. See #1.
-3. If the folio is already dirty, it must be up to date. As we hold
-   it locked, it cannot be reclaimed from memory. Hence we always
-   have valid data in the page cache while iterating the mapping.
-4. Valid data in the page cache can exist when the underlying
-   mapping is DELALLOC, UNWRITTEN or WRITTEN. Having the mapping
-   change from DELALLOC->UNWRITTEN or UNWRITTEN->WRITTEN does not
-   change the data in the page - it only affects actions if we are
-   initialising a new page. Hence #3 applies  and we don't care
-   about these extent map transitions racing with
-   iomap_page_mkwrite().
-5. iomap_page_mkwrite() checks for page invalidation races
-   (truncate, hole punch, etc) after it locks the folio. We also
-   hold the mapping->invalidation_lock here, and hence the mapping
-   cannot change due to extent removal operations while we are
-   iterating the folio.
-
-As such, filesystems that don't use bufferheads will never fail
-the iomap_folio_mkwrite_iter() operation on the current mapping,
-regardless of whether the iomap should be considered stale.
-
-Further, the range we are asked to iterate is limited to the range
-inside EOF that the folio spans. Hence, for XFS, we will only map
-the exact range we are asked for, and we will only do speculative
-preallocation with delalloc if we are mapping a hole at the EOF
-page. The iterator will consume the entire range of the folio that
-is within EOF, and anything beyond the EOF block cannot be accessed.
-We never need to truncate this post-EOF speculative prealloc away in
-the context of the iomap_page_mkwrite() iterator because if it
-remains unused we'll remove it when the last reference to the inode
-goes away.
-
-Hence we don't actually need an .iomap_end() cleanup/error handling
-path at all for iomap_page_mkwrite() for XFS. This means we can
-separate the page fault processing from the complexity of the
-.iomap_end() processing in the buffered write path. This also means
-that the buffered write path will also be able to take the
-mapping->invalidate_lock as necessary.
+Fix the locking issue, and clean up the code logic a little to avoid
+unnecessary work if we didn't allocate the delalloc extent or wrote
+the entire region we allocated.
 
 Signed-off-by: Dave Chinner <dchinner@redhat.com>
 ---
- fs/xfs/xfs_file.c  | 2 +-
- fs/xfs/xfs_iomap.c | 9 +++++++++
- fs/xfs/xfs_iomap.h | 1 +
- 3 files changed, 11 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_iomap.c | 41 +++++++++++++++++++++++------------------
+ 1 file changed, 23 insertions(+), 18 deletions(-)
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index c6c80265c0b2..fee471ca9737 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -1324,7 +1324,7 @@ __xfs_filemap_fault(
- 		if (write_fault) {
- 			xfs_ilock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
- 			ret = iomap_page_mkwrite(vmf,
--					&xfs_buffered_write_iomap_ops);
-+					&xfs_page_mkwrite_iomap_ops);
- 			xfs_iunlock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
- 		} else {
- 			ret = filemap_fault(vmf);
 diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 07da03976ec1..5cea069a38b4 100644
+index 5cea069a38b4..a2e45ea1b0cb 100644
 --- a/fs/xfs/xfs_iomap.c
 +++ b/fs/xfs/xfs_iomap.c
-@@ -1187,6 +1187,15 @@ const struct iomap_ops xfs_buffered_write_iomap_ops = {
- 	.iomap_end		= xfs_buffered_write_iomap_end,
- };
+@@ -1147,6 +1147,10 @@ xfs_buffered_write_iomap_end(
+ 		written = 0;
+ 	}
  
-+/*
-+ * iomap_page_mkwrite() will never fail in a way that requires delalloc extents
-+ * that it allocated to be revoked. Hence we do not need an .iomap_end method
-+ * for this operation.
-+ */
-+const struct iomap_ops xfs_page_mkwrite_iomap_ops = {
-+	.iomap_begin		= xfs_buffered_write_iomap_begin,
-+};
++	/* If we didn't reserve the blocks, we're not allowed to punch them. */
++	if (!(iomap->flags & IOMAP_F_NEW))
++		return 0;
 +
- static int
- xfs_read_iomap_begin(
- 	struct inode		*inode,
-diff --git a/fs/xfs/xfs_iomap.h b/fs/xfs/xfs_iomap.h
-index c782e8c0479c..0f62ab633040 100644
---- a/fs/xfs/xfs_iomap.h
-+++ b/fs/xfs/xfs_iomap.h
-@@ -47,6 +47,7 @@ xfs_aligned_fsb_count(
+ 	/*
+ 	 * start_fsb refers to the first unused block after a short write. If
+ 	 * nothing was written, round offset down to point at the first block in
+@@ -1158,27 +1162,28 @@ xfs_buffered_write_iomap_end(
+ 		start_fsb = XFS_B_TO_FSB(mp, offset + written);
+ 	end_fsb = XFS_B_TO_FSB(mp, offset + length);
+ 
++	/* Nothing to do if we've written the entire delalloc extent */
++	if (start_fsb >= end_fsb)
++		return 0;
++
+ 	/*
+-	 * Trim delalloc blocks if they were allocated by this write and we
+-	 * didn't manage to write the whole range.
+-	 *
+-	 * We don't need to care about racing delalloc as we hold i_mutex
+-	 * across the reserve/allocate/unreserve calls. If there are delalloc
+-	 * blocks in the range, they are ours.
++	 * Lock the mapping to avoid races with page faults re-instantiating
++	 * folios and dirtying them via ->page_mkwrite between the page cache
++	 * truncation and the delalloc extent removal. Failing to do this can
++	 * leave dirty pages with no space reservation in the cache.
+ 	 */
+-	if ((iomap->flags & IOMAP_F_NEW) && start_fsb < end_fsb) {
+-		truncate_pagecache_range(VFS_I(ip), XFS_FSB_TO_B(mp, start_fsb),
+-					 XFS_FSB_TO_B(mp, end_fsb) - 1);
+-
+-		error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
+-					       end_fsb - start_fsb);
+-		if (error && !xfs_is_shutdown(mp)) {
+-			xfs_alert(mp, "%s: unable to clean up ino %lld",
+-				__func__, ip->i_ino);
+-			return error;
+-		}
++	filemap_invalidate_lock(inode->i_mapping);
++	truncate_pagecache_range(VFS_I(ip), XFS_FSB_TO_B(mp, start_fsb),
++				 XFS_FSB_TO_B(mp, end_fsb) - 1);
++
++	error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
++				       end_fsb - start_fsb);
++	filemap_invalidate_unlock(inode->i_mapping);
++	if (error && !xfs_is_shutdown(mp)) {
++		xfs_alert(mp, "%s: unable to clean up ino %lld",
++			__func__, ip->i_ino);
++		return error;
+ 	}
+-
+ 	return 0;
  }
  
- extern const struct iomap_ops xfs_buffered_write_iomap_ops;
-+extern const struct iomap_ops xfs_page_mkwrite_iomap_ops;
- extern const struct iomap_ops xfs_direct_write_iomap_ops;
- extern const struct iomap_ops xfs_read_iomap_ops;
- extern const struct iomap_ops xfs_seek_iomap_ops;
 -- 
 2.37.2
 
