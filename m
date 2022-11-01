@@ -2,251 +2,232 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 74AEE6144A5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 07:26:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBE166144F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 08:17:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229964AbiKAG0g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Nov 2022 02:26:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48350 "EHLO
+        id S229674AbiKAHR2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Nov 2022 03:17:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229641AbiKAG0e (ORCPT
+        with ESMTP id S229516AbiKAHR1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Nov 2022 02:26:34 -0400
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F1A612ADC
-        for <linux-fsdevel@vger.kernel.org>; Mon, 31 Oct 2022 23:26:32 -0700 (PDT)
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20221101062626epoutp04f7f1f094a12e6816db4f60d8ff73711d~jYfPGfbcJ1570515705epoutp04T
-        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Nov 2022 06:26:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20221101062626epoutp04f7f1f094a12e6816db4f60d8ff73711d~jYfPGfbcJ1570515705epoutp04T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1667283986;
-        bh=HGoN9c97e9QlZmh/CU9/eZVdiIV/mHkPom4dBvjUqwg=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=pStQ7rTep70a2sr/pm453fS3MSgUomyQKK3H4L8wo5/jKNUlTIZgGJpncUSjCccbl
-         XslrLuBuM9ktlSLCzXLnp6CdVu7fuFlWDjZmANx14VJO7olKTOm1aHAswFlqYL0SL4
-         C9C2M6Sq8EOzh0XUJBRti6GurSGAaw11ea6omoAg=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20221101062626epcas1p420f65ba6b078adbe468c6cdf89afd72d~jYfOyB14E2435524355epcas1p4B;
-        Tue,  1 Nov 2022 06:26:26 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.38.243]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4N1g5Y6vwvz4x9Q1; Tue,  1 Nov
-        2022 06:26:25 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        3C.01.57013.01CB0636; Tue,  1 Nov 2022 15:26:24 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20221101062624epcas1p3c5fb524dc8bab19b24e9d42b35777392~jYfNMgp4J0133401334epcas1p3W;
-        Tue,  1 Nov 2022 06:26:24 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20221101062624epsmtrp1ed6da4f62e99674c33807e1544eaffe5~jYfNLuCwq0225602256epsmtrp1u;
-        Tue,  1 Nov 2022 06:26:24 +0000 (GMT)
-X-AuditID: b6c32a37-5b141a800001deb5-09-6360bc10b3a4
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        CB.60.18644.01CB0636; Tue,  1 Nov 2022 15:26:24 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20221101062624epsmtip21c8271111d4ef7f482fdefcc53d37c15~jYfNBwcAP1909719097epsmtip2x;
-        Tue,  1 Nov 2022 06:26:24 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     "'Namjae Jeon'" <linkinjeon@kernel.org>
-Cc:     "'linux-fsdevel'" <linux-fsdevel@vger.kernel.org>,
-        "'linux-kernel'" <linux-kernel@vger.kernel.org>,
-        <sj1557.seo@samsung.com>
-In-Reply-To: <PUZPR04MB631665D55F4F0B290D0D543581379@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Subject: RE: [PATCH v1 1/2] exfat: simplify empty entry hint
-Date:   Tue, 1 Nov 2022 15:26:24 +0900
-Message-ID: <322d01d8edba$dd8e7370$98ab5a50$@samsung.com>
+        Tue, 1 Nov 2022 03:17:27 -0400
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3CF9813E9B
+        for <linux-fsdevel@vger.kernel.org>; Tue,  1 Nov 2022 00:17:26 -0700 (PDT)
+Received: by mail-pl1-x636.google.com with SMTP id y4so12815027plb.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 01 Nov 2022 00:17:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=X151aWAx0oBEk1QziksxFzs+DkRswE3AVquu+T8L8pY=;
+        b=fpArzlG+lKoWhF2A+ZLFuBMFEmn0pPGQvVPPakbZleRlftKjDcjW0XO7wI+GymTmGD
+         WiM475Io3rRtMK+wu99V/J0vYYH8k4IWKElkMB2KkItKkpjFpD46sHNlqa/F9mxDEYSf
+         SdxPRvDQI4v0h8+ea+G6nW5QBxbRwinKBN/ltVIP+uUgPhgEKSkIBNaNf8e3oLUT2s/n
+         mWeF6fa1LsqZGBgEJZNA++monDhWxn0jwQWpJSkuAB/7wxTTithMt+Se46IlRCkuEyKf
+         kmvD9wY1CMbWKeVW8Q9gTJ+5iQ+JPvEtkdrn+LlhXfdMn3KvYBQ5rDc+Wo8EsZDjMTBH
+         Hw3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X151aWAx0oBEk1QziksxFzs+DkRswE3AVquu+T8L8pY=;
+        b=Yq6VEGmRX6uVYvDTzoTqhAQELoSkahGtJHGZvSSR9Iiwn5gF1zLWx9PJxBxs1HvKdH
+         hLNCj76GGqU2uUL5DPN/1Q5T57/8ZgY7L1GzKsds3Bkxd3Xy1PFSdct5E6eVEv8D8r4M
+         anTgsJbcQ9tEURhjRc4vKgpmUr6q6rpwOyQ7mYaUTLbPBy3rAH5g9eVH1bzm4/KK2dCu
+         fpSx9zBgCltKLwjGy5WFgc2SRut1P3885mnEZVkMzzFHBn7ifaukQ8jSlhpuiDUFHDOm
+         HVa/YLodkzoahI8wKowFoqMcCo/lBK0gMAXDABIQaeFZGSs3BK5mZXozZES2corzkFyN
+         8QPg==
+X-Gm-Message-State: ACrzQf2v7MLqx1rg42wlU9FRYp4OFl1hl1z/8f+Eqkw7gLIFNd1K2g+v
+        UOLR6zIyzRF/ICU3FPkIx2aYhw==
+X-Google-Smtp-Source: AMsMyM7Ri3LgG4my6uX6230wfGoU3ezFfydJgC3ChlvBgeQhtoU71SL2HoBb6Vh2CwWhMIJXy4TNIQ==
+X-Received: by 2002:a17:902:7485:b0:17d:5176:fe6e with SMTP id h5-20020a170902748500b0017d5176fe6emr18287907pll.147.1667287045594;
+        Tue, 01 Nov 2022 00:17:25 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
+        by smtp.gmail.com with ESMTPSA id k1-20020a170902c40100b0016c9e5f291bsm5609807plk.111.2022.11.01.00.17.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 01 Nov 2022 00:17:25 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oplWT-008tcn-Sm; Tue, 01 Nov 2022 18:17:21 +1100
+Date:   Tue, 1 Nov 2022 18:17:21 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Zhaoyang Huang <huangzhaoyang@gmail.com>,
+        "zhaoyang.huang" <zhaoyang.huang@unisoc.com>,
+        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, ke.wang@unisoc.com,
+        steve.kang@unisoc.com, baocong.liu@unisoc.com,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH] mm: move xa forward when run across zombie page
+Message-ID: <20221101071721.GV2703033@dread.disaster.area>
+References: <1665725448-31439-1-git-send-email-zhaoyang.huang@unisoc.com>
+ <Y0lSChlclGPkwTeA@casper.infradead.org>
+ <CAGWkznG=_A-3A8JCJEoWXVcx+LUNH=gvXjLpZZs0cRX4dhUJfQ@mail.gmail.com>
+ <Y017BeC64GDb3Kg7@casper.infradead.org>
+ <CAGWkznEdtGPPZkHrq6Y_+XLL37w12aC8XN8R_Q-vhq48rFhkSA@mail.gmail.com>
+ <Y04Y3RNq6D2T9rVw@casper.infradead.org>
+ <20221018223042.GJ2703033@dread.disaster.area>
+ <Y1AWXiJdyjdLmO1E@casper.infradead.org>
+ <20221019220424.GO2703033@dread.disaster.area>
+ <Y1HDDu3UV0L3cDwE@casper.infradead.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQJj/zaSoZMPYtmG2fVrgFRBP80hpwJaGMqRAj8XxoYBK3U6ygIPfv+NrNRwc8A=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMJsWRmVeSWpSXmKPExsWy7bCmrq7gnoRkg+evmC0mTlvKbLFn70kW
-        i8u75rBZbPl3hNWBxWPTqk42j74tqxg9Pm+SC2COamC0SSxKzsgsS1VIzUvOT8nMS7dVCg1x
-        07VQUsjILy6xVYo2NDTSMzQw1zMyMtIztoy1MjJVUshLzE21VarQhepVUihKLgCqza0sBhqQ
-        k6oHFdcrTs1LccjKLwU5Ua84Mbe4NC9dLzk/V0mhLDGnFGiEkn7CN8aMw2euMxf8taqYff4A
-        YwPjZ7MuRk4OCQETiQO/PrJ2MXJxCAnsYJSYdm4OG4TziVFiwdN/TBDOZ0aJHQ9vMcO0rDq/
-        lgnEFhLYxShx4a4CRNFLRolvd3+zgyTYBHQlntz4CdTAwSEioC1x/0U6SA2zQBOjxITGlywg
-        NZwCsRIr9j4CqxcWsJF40XkObAGLgIrEs/2PWEFsXgFLib3HN7JD2IISJ2c+AetlBpq5bOFr
-        qIMUJHZ/OsoKsctPYmJ7JUSJiMTszjZmkL0SAm/ZJZ6s3swOUe8icejzZiYIW1ji1fEtUHEp
-        iZf9bVB2N6PEn3O8EM0TGCVa7pxlhUgYS3z6/JkRZBmzgKbE+l36EGFFiZ2/5zJC2IISp691
-        M0McwSfx7msP2G0SArwSHW1CECUqEt8/7GSZwKg8C8lns5B8NgvJC7MQli1gZFnFKJZaUJyb
-        nlpsWGCMHN+bGMHpU8t8B+O0tx/0DjEycTAeYpTgYFYS4a0/G50sxJuSWFmVWpQfX1Sak1p8
-        iDEZGNYTmaVEk/OBCTyvJN7QxNjAwAiYDM0tzY2JELY0MDEzMrEwtjQ2UxLnbZihlSwkkJ5Y
-        kpqdmlqQWgSzhYmDU6qB6dgPlQnqDkKyp2LUWpkU5E73+iiKHyo8UTvPQf9UkW93fO67WZtd
-        30nZb9r2WGCjZ8vle1Xfl9ZKvPi86n11kEe50vZXzzx+pd6YZ1QqmTA79PKsLSerDVv37LCS
-        PCX5JPpcaiXz9CVqId+UVhZ8qNi7sHaN8HKmQnmf6/m2270eyS8NFFGe9GVL3cuI19PD79T6
-        8UgYeBry/ImV9q5pePEm4clX0xny+7Y+qtzS+PzkmqzXvhX781Iv2C9eMUVcZGVpsnV07fRr
-        q0NWGZv2bBGwVjir/fnMIXaV92/lNz+rv7I6q0XpUdO/C8r1E/benF7P4neab5fA/cJDccuj
-        mYSXlrydphzyYuoj9S9daUosxRmJhlrMRcWJALMdBC9WBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrKLMWRmVeSWpSXmKPExsWy7bCSvK7AnoRkg+NtyhYTpy1lttiz9ySL
-        xeVdc9gstvw7wurA4rFpVSebR9+WVYwenzfJBTBHcdmkpOZklqUW6dslcGW0fhcqeK5dceF3
-        G1sD41qlLkZODgkBE4lV59cygdhCAjsYJe5Nju5i5ACKS0kc3KcJYQpLHD5c3MXIBVTxnFFi
-        2esnbCDlbAK6Ek9u/GQGqRER0Ja4/yIdpIZZoIVRomHXSaiRn5gkpq7TBbE5BWIlVux9xA5i
-        CwvYSLzoPMcMYrMIqEg82/+IFcTmFbCU2Ht8IzuELShxcuYTFhCbGWj+05tP4exlC18zQ5yv
-        ILH701FWiBv8JCa2V0KUiEjM7mxjnsAoPAvJpFlIJs1CMmkWkpYFjCyrGCVTC4pz03OLDQuM
-        8lLL9YoTc4tL89L1kvNzNzGCY0JLawfjnlUf9A4xMnEwHmKU4GBWEuGtPxudLMSbklhZlVqU
-        H19UmpNafIhRmoNFSZz3QtfJeCGB9MSS1OzU1ILUIpgsEwenVAOTa0nEi3D1gPPJG3u21De+
-        SdNaEXyqv6ldujv5gjarXGHBlP+WidX5nx86r9JRycg+zrTz+bdkhy3WktGvN/929FrpvqX6
-        xMeSNSfEZh6cxXUzuCss7HT7BdaqBYcenr93iKmq+nLd7uv1l7VX3v/brBNnmCn8eLsfW7De
-        Y5njC0PfTw09tvKceuhZcbuMx9dZ8ipTTh3h39G2mEfZfYMqn9nlVibhRewt60PFHNtCgl9s
-        Obe1ZmWmlvLt/duP5IqHM5/OC+ux4CtfdOd29iWupOP1a/6nC+7YslRsmelpgc+/j+Q+1fm5
-        5KpRGkdC86NE4/PMfdusZ2y/xmIvL7h5DsPJmible1Z3F98zEJdWYinOSDTUYi4qTgQAE7i0
-        FfgCAAA=
-X-CMS-MailID: 20221101062624epcas1p3c5fb524dc8bab19b24e9d42b35777392
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-X-ArchiveUser: EV
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221019072850epcas1p459b27e0d44eb0cc36ec09e9a734dcf60
-References: <CGME20221019072850epcas1p459b27e0d44eb0cc36ec09e9a734dcf60@epcas1p4.samsung.com>
-        <PUZPR04MB6316EBE97C82DFBEFE3CCDAF812B9@PUZPR04MB6316.apcprd04.prod.outlook.com>
-        <000001d8ece8$0241bca0$06c535e0$@samsung.com>
-        <CAKYAXd__ypbjLpnNVDxf3UE4M+au2QwYYe2PeY8QsKZCBaO54w@mail.gmail.com>
-        <PUZPR04MB631665D55F4F0B290D0D543581379@PUZPR04MB6316.apcprd04.prod.outlook.com>
-X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y1HDDu3UV0L3cDwE@casper.infradead.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Yuezhang,
-I am sorry that I cannot reply directly to you due to environmental restric=
-tions.
+On Thu, Oct 20, 2022 at 10:52:14PM +0100, Matthew Wilcox wrote:
+> On Thu, Oct 20, 2022 at 09:04:24AM +1100, Dave Chinner wrote:
+> > On Wed, Oct 19, 2022 at 04:23:10PM +0100, Matthew Wilcox wrote:
+> > > On Wed, Oct 19, 2022 at 09:30:42AM +1100, Dave Chinner wrote:
+> > > > This is reading and writing the same amount of file data at the
+> > > > application level, but once the data has been written and kicked out
+> > > > of the page cache it seems to require an awful lot more read IO to
+> > > > get it back to the application. i.e. this looks like mmap() is
+> > > > readahead thrashing severely, and eventually it livelocks with this
+> > > > sort of report:
+> > > > 
+> > > > [175901.982484] rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+> > > > [175901.985095] rcu:    Tasks blocked on level-1 rcu_node (CPUs 0-15): P25728
+> > > > [175901.987996]         (detected by 0, t=97399871 jiffies, g=15891025, q=1972622 ncpus=32)
+> > > > [175901.991698] task:test_write      state:R  running task     stack:12784 pid:25728 ppid: 25696 flags:0x00004002
+> > > > [175901.995614] Call Trace:
+> > > > [175901.996090]  <TASK>
+> > > > [175901.996594]  ? __schedule+0x301/0xa30
+> > > > [175901.997411]  ? sysvec_apic_timer_interrupt+0xb/0x90
+> > > > [175901.998513]  ? sysvec_apic_timer_interrupt+0xb/0x90
+> > > > [175901.999578]  ? asm_sysvec_apic_timer_interrupt+0x16/0x20
+> > > > [175902.000714]  ? xas_start+0x53/0xc0
+> > > > [175902.001484]  ? xas_load+0x24/0xa0
+> > > > [175902.002208]  ? xas_load+0x5/0xa0
+> > > > [175902.002878]  ? __filemap_get_folio+0x87/0x340
+> > > > [175902.003823]  ? filemap_fault+0x139/0x8d0
+> > > > [175902.004693]  ? __do_fault+0x31/0x1d0
+> > > > [175902.005372]  ? __handle_mm_fault+0xda9/0x17d0
+> > > > [175902.006213]  ? handle_mm_fault+0xd0/0x2a0
+> > > > [175902.006998]  ? exc_page_fault+0x1d9/0x810
+> > > > [175902.007789]  ? asm_exc_page_fault+0x22/0x30
+> > > > [175902.008613]  </TASK>
+> > > > 
+> > > > Given that filemap_fault on XFS is probably trying to map large
+> > > > folios, I do wonder if this is a result of some kind of race with
+> > > > teardown of a large folio...
+> > > 
+> > > It doesn't matter whether we're trying to map a large folio; it
+> > > matters whether a large folio was previously created in the cache.
+> > > Through the magic of readahead, it may well have been.  I suspect
+> > > it's not teardown of a large folio, but splitting.  Removing a
+> > > page from the page cache stores to the pointer in the XArray
+> > > first (either NULL or a shadow entry), then decrements the refcount.
+> > > 
+> > > We must be observing a frozen folio.  There are a number of places
+> > > in the MM which freeze a folio, but the obvious one is splitting.
+> > > That looks like this:
+> > > 
+> > >         local_irq_disable();
+> > >         if (mapping) {
+> > >                 xas_lock(&xas);
+> > > (...)
+> > >         if (folio_ref_freeze(folio, 1 + extra_pins)) {
+> > 
+> > But the lookup is not doing anything to prevent the split on the
+> > frozen page from making progress, right? It's not holding any folio
+> > references, and it's not holding the mapping tree lock, either. So
+> > how does the lookup in progress prevent the page split from making
+> > progress?
+> 
+> My thinking was that it keeps hammering the ->refcount field in
+> struct folio.  That might prevent a thread on a different socket
+> from making forward progress.  In contrast, spinlocks are designed
+> to be fair under contention, so by spinning on an actual lock, we'd
+> remove contention on the folio.
+> 
+> But I think the tests you've done refute that theory.  I'm all out of
+> ideas at the moment.  Either we have a frozen folio from somebody who
+> doesn't hold the lock, or we have someone who's left a frozen folio in
+> the page cache.  I'm leaning towards that explanation at the moment,
+> but I don't have a good suggestion for debugging.
 
-> > > BTW, ei->hint_femp.count was already reset at the beginning of
-> > > exfat_find_dir_entry(). So condition-check above could be removed.
-> > > Is there any scenario I'm missing?
->=20
-> If the search does not start from the first entry and there are not enoug=
-h
-> empty entries.
-> This condition will be true when rewinding.
+It's something else. I got gdb attached to qemu and single stepped
+the looping lookup. The context I caught this time is truncate after
+unlink:
 
-I didn't get what you said. do you mean =22ei->hint_femp.eidx > dentry=22?
-Even so, it could be true, if the search does not start from the first entr=
-y
-and there are =22enough=22 empty entries.
+(gdb) bt
+#0  find_get_entry (mark=<optimized out>, max=<optimized out>, xas=<optimized out>) at mm/filemap.c:2014
+#1  find_lock_entries (mapping=mapping@entry=0xffff8882445e2118, start=start@entry=25089, end=end@entry=18446744073709551614, 
+    fbatch=fbatch@entry=0xffffc900082a7dd8, indices=indices@entry=0xffffc900082a7d60) at mm/filemap.c:2095
+#2  0xffffffff8128f024 in truncate_inode_pages_range (mapping=mapping@entry=0xffff8882445e2118, lstart=lstart@entry=0, lend=lend@entry=-1)
+    at mm/truncate.c:364
+#3  0xffffffff8128f452 in truncate_inode_pages (lstart=0, mapping=0xffff8882445e2118) at mm/truncate.c:452
+#4  0xffffffff8136335d in evict (inode=inode@entry=0xffff8882445e1f78) at fs/inode.c:666
+#5  0xffffffff813636cc in iput_final (inode=0xffff8882445e1f78) at fs/inode.c:1747
+#6  0xffffffff81355b8b in do_unlinkat (dfd=dfd@entry=10, name=0xffff88834170e000) at fs/namei.c:4326
+#7  0xffffffff81355cc3 in __do_sys_unlinkat (flag=<optimized out>, pathname=<optimized out>, dfd=<optimized out>) at fs/namei.c:4362
+#8  __se_sys_unlinkat (flag=<optimized out>, pathname=<optimized out>, dfd=<optimized out>) at fs/namei.c:4355
+#9  __x64_sys_unlinkat (regs=<optimized out>) at fs/namei.c:4355
+#10 0xffffffff81e92e35 in do_syscall_x64 (nr=<optimized out>, regs=0xffffc900082a7f58) at arch/x86/entry/common.c:50
+#11 do_syscall_64 (regs=0xffffc900082a7f58, nr=<optimized out>) at arch/x86/entry/common.c:80
+#12 0xffffffff82000087 in entry_SYSCALL_64 () at arch/x86/entry/entry_64.S:120
+#13 0x0000000000000000 in ?? ()
 
-Anyway, what I'm saying is =22ei->hint_femp.count < num_entries=22, and hin=
-t_femp
-Seems to be reset as EXFAT_HINT_NONE with 0 by below code.
+The find_lock_entries() call is being asked to start at index
+25089, and we are spinning on a folio we find because
+folio_try_get_rcu(folio) is failing - the folio ref count is zero.
 
-+	if (ei->hint_femp.eidx =21=3D EXFAT_HINT_NONE &&
-+	    ei->hint_femp.count < num_entries)
-+		ei->hint_femp.eidx =3D EXFAT_HINT_NONE;
-+
-+	if (ei->hint_femp.eidx =3D=3D EXFAT_HINT_NONE)
-+		ei->hint_femp.count =3D 0;
+The xas state on lookup is:
 
-After then, ei->hint_femp can be updated only if there are enough free entr=
-ies.
+(gdb) p *xas
+$6 = {xa = 0xffff8882445e2120, xa_index = 25092, xa_shift = 0 '\000', xa_sibs = 0 '\000', xa_offset = 4 '\004', xa_pad = 0 '\000', 
+  xa_node = 0xffff888144c15918, xa_alloc = 0x0 <fixed_percpu_data>, xa_update = 0x0 <fixed_percpu_data>, xa_lru = 0x0 <fixed_percpu_data>
 
->=20
-> > >> -	candi_empty.eidx =3D EXFAT_HINT_NONE;
-> > >> +	if (ei->hint_femp.eidx =21=3D EXFAT_HINT_NONE &&
-> > >> +	    ei->hint_femp.count < num_entries)
-> > >> +		ei->hint_femp.eidx =3D EXFAT_HINT_NONE;
-> > >> +
-> > >> +	if (ei->hint_femp.eidx =3D=3D EXFAT_HINT_NONE)
-> > >> +		ei->hint_femp.count =3D 0;
-> > >> +
-> > >> +	candi_empty =3D ei->hint_femp;
-> > >> +
-> > >
-> > > It would be nice to make the code block above a static inline functio=
-n
-> > > as well.
->=20
-> Since the code is called once only in exfat_find_dir_entry(), I didn't
-> make a function for the code.
->=20
-> How about make function exfat_reset_empty_hint_if_not_enough() for this
-> code?
-> The function name is a bit long=E2=98=B9,=20do=20you=20have=20a=20better=
-=20idea?=0D=0A>=20=0D=0A>=20Or=20maybe,=20we=20can=20add=20exfat_reset_empt=
-y_hint()=20and=20unconditionally=20reset=0D=0A>=20ei->hint_femp=20in=20it.=
-=0D=0A=0D=0AIt's=20always=20difficult=20for=20me=20as=20well=20:).=0D=0AWha=
-t=20do=20you=20think=20of=20exfat_test_reset_empty_hint()=20or=0D=0Aexfat_c=
-ond_reset_empty_hint()?=0D=0A=0D=0A>=20>=20-----Original=20Message-----=0D=
-=0A>=20>=20From:=20Namjae=20Jeon=20<linkinjeon=40kernel.org>=0D=0A>=20>=20S=
-ent:=20Monday,=20October=2031,=202022=202:31=20PM=0D=0A>=20>=20To:=20Sungjo=
-ng=20Seo=20<sj1557.seo=40samsung.com>;=20Mo,=20Yuezhang=0D=0A>=20>=20<Yuezh=
-ang.Mo=40sony.com>=0D=0A>=20>=20Cc:=20linux-fsdevel=20<linux-fsdevel=40vger=
-.kernel.org>;=20linux-kernel=0D=0A>=20>=20<linux-kernel=40vger.kernel.org>=
-=0D=0A>=20>=20Subject:=20Re:=20=5BPATCH=20v1=201/2=5D=20exfat:=20simplify=
-=20empty=20entry=20hint=0D=0A>=20>=0D=0A>=20>=20Add=20missing=20Cc:=20Yuezh=
-ang=20Mo.=0D=0A>=20>=0D=0A>=20>=202022-10-31=2014:16=20GMT+09:00,=20Sungjon=
-g=20Seo=20<sj1557.seo=40samsung.com>:=0D=0A>=20>=20>=20Hello,=20Yuezhang=20=
-Mo,=0D=0A>=20>=20>=0D=0A>=20>=20>>=20This=20commit=20adds=20exfat_hint_empt=
-y_entry()=20to=20reduce=20code=20complexity=0D=0A>=20>=20>>=20and=20make=20=
-code=20more=20readable.=0D=0A>=20>=20>>=0D=0A>=20>=20>>=20Signed-off-by:=20=
-Yuezhang=20Mo=20<Yuezhang.Mo=40sony.com>=0D=0A>=20>=20>>=20Reviewed-by:=20A=
-ndy=20Wu=20<Andy.Wu=40sony.com>=0D=0A>=20>=20>>=20Reviewed-by:=20Aoyama=20W=
-ataru=20<wataru.aoyama=40sony.com>=0D=0A>=20>=20>>=20---=0D=0A>=20>=20>>=20=
-=20fs/exfat/dir.c=20=7C=2056=0D=0A>=20>=20>>=20++++++++++++++++++++++++++++=
-----------------------=0D=0A>=20>=20>>=20=201=20file=20changed,=2032=20inse=
-rtions(+),=2024=20deletions(-)=0D=0A>=20>=20>>=0D=0A>=20>=20>>=20diff=20--g=
-it=20a/fs/exfat/dir.c=20b/fs/exfat/dir.c=20index=0D=0A>=20>=20>>=207b648b66=
-62f0..a569f285f4fd=20100644=0D=0A>=20>=20>>=20---=20a/fs/exfat/dir.c=0D=0A>=
-=20>=20>>=20+++=20b/fs/exfat/dir.c=0D=0A>=20>=20>>=20=40=40=20-934,6=20+934=
-,24=20=40=40=20struct=20exfat_entry_set_cache=0D=0A>=20>=20>>=20*exfat_get_=
-dentry_set(struct=20super_block=20*sb,=0D=0A>=20>=20>>=20=20=09return=20NUL=
-L;=0D=0A>=20>=20>>=20=20=7D=0D=0A>=20>=20>>=0D=0A>=20>=20>>=20+static=20inl=
-ine=20void=20exfat_hint_empty_entry(struct=20exfat_inode_info=0D=0A>=20*ei,=
-=0D=0A>=20>=20>>=20+=09=09struct=20exfat_hint_femp=20*candi_empty,=20struct=
-=20exfat_chain=20*clu,=0D=0A>=20>=20>>=20+=09=09int=20dentry,=20int=20num_e=
-ntries)=0D=0A>=20>=20>>=20+=7B=0D=0A>=20>=20>>=20+=09if=20(ei->hint_femp.ei=
-dx=20=3D=3D=20EXFAT_HINT_NONE=20=7C=7C=0D=0A>=20>=20>>=20+=09=20=20=20=20ei=
-->hint_femp.count=20<=20num_entries=20=7C=7C=0D=0A>=20>=20>=0D=0A>=20>=20>=
-=20It=20seems=20like=20a=20good=20approach.=0D=0A>=20>=20>=20BTW,=20ei->hin=
-t_femp.count=20was=20already=20reset=20at=20the=20beginning=20of=0D=0A>=20>=
-=20>=20exfat_find_dir_entry().=20So=20condition-check=20above=20could=20be=
-=20removed.=0D=0A>=20>=20>=20Is=20there=20any=20scenario=20I'm=20missing?=
-=0D=0A>=20>=20>=0D=0A>=20>=20>>=20+=09=20=20=20=20ei->hint_femp.eidx=20>=20=
-dentry)=20=7B=0D=0A>=20>=20>>=20+=09=09if=20(candi_empty->count=20=3D=3D=20=
-0)=20=7B=0D=0A>=20>=20>>=20+=09=09=09candi_empty->cur=20=3D=20*clu;=0D=0A>=
-=20>=20>>=20+=09=09=09candi_empty->eidx=20=3D=20dentry;=0D=0A>=20>=20>>=20+=
-=09=09=7D=0D=0A>=20>=20>>=20+=0D=0A>=20>=20>>=20+=09=09candi_empty->count++=
-;=0D=0A>=20>=20>>=20+=09=09if=20(candi_empty->count=20=3D=3D=20num_entries)=
-=0D=0A>=20>=20>>=20+=09=09=09ei->hint_femp=20=3D=20*candi_empty;=0D=0A>=20>=
-=20>>=20+=09=7D=0D=0A>=20>=20>>=20+=7D=0D=0A>=20>=20>>=20+=0D=0A>=20>=20>>=
-=20=20enum=20=7B=0D=0A>=20>=20>>=20=20=09DIRENT_STEP_FILE,=0D=0A>=20>=20>>=
-=20=20=09DIRENT_STEP_STRM,=0D=0A>=20>=20>>=20=40=40=20-958,7=20+976,7=20=40=
-=40=20int=20exfat_find_dir_entry(struct=20super_block=20*sb,=0D=0A>=20>=20>=
->=20struct=20exfat_inode_info=20*ei,=20=20=7B=0D=0A>=20>=20>>=20=20=09int=
-=20i,=20rewind=20=3D=200,=20dentry=20=3D=200,=20end_eidx=20=3D=200,=20num_e=
-xt=20=3D=200,=20len;=0D=0A>=20>=20>>=20=20=09int=20order,=20step,=20name_le=
-n=20=3D=200;=0D=0A>=20>=20>>=20-=09int=20dentries_per_clu,=20num_empty=20=
-=3D=200;=0D=0A>=20>=20>>=20+=09int=20dentries_per_clu;=0D=0A>=20>=20>>=20=
-=20=09unsigned=20int=20entry_type;=0D=0A>=20>=20>>=20=20=09unsigned=20short=
-=20*uniname=20=3D=20NULL;=0D=0A>=20>=20>>=20=20=09struct=20exfat_chain=20cl=
-u;=0D=0A>=20>=20>>=20=40=40=20-976,7=20+994,15=20=40=40=20int=20exfat_find_=
-dir_entry(struct=20super_block=20*sb,=0D=0A>=20>=20>>=20struct=20exfat_inod=
-e_info=20*ei,=0D=0A>=20>=20>>=20=20=09=09end_eidx=20=3D=20dentry;=0D=0A>=20=
->=20>>=20=20=09=7D=0D=0A>=20>=20>>=0D=0A>=20>=20>>=20-=09candi_empty.eidx=
-=20=3D=20EXFAT_HINT_NONE;=0D=0A>=20>=20>>=20+=09if=20(ei->hint_femp.eidx=20=
-=21=3D=20EXFAT_HINT_NONE=20&&=0D=0A>=20>=20>>=20+=09=20=20=20=20ei->hint_fe=
-mp.count=20<=20num_entries)=0D=0A>=20>=20>>=20+=09=09ei->hint_femp.eidx=20=
-=3D=20EXFAT_HINT_NONE;=0D=0A>=20>=20>>=20+=0D=0A>=20>=20>>=20+=09if=20(ei->=
-hint_femp.eidx=20=3D=3D=20EXFAT_HINT_NONE)=0D=0A>=20>=20>>=20+=09=09ei->hin=
-t_femp.count=20=3D=200;=0D=0A>=20>=20>>=20+=0D=0A>=20>=20>>=20+=09candi_emp=
-ty=20=3D=20ei->hint_femp;=0D=0A>=20>=20>>=20+=0D=0A>=20>=20>=0D=0A>=20>=20>=
-=20It=20would=20be=20nice=20to=20make=20the=20code=20block=20above=20a=20st=
-atic=20inline=20function=0D=0A>=20>=20>=20as=20well.=0D=0A>=20>=20>=0D=0A>=
-=20>=20>>=20=20rewind:=0D=0A>=20>=20>>=20=20=09order=20=3D=200;=0D=0A>=20>=
-=20>>=20=20=09step=20=3D=20DIRENT_STEP_FILE;=0D=0A>=20>=20>=20=5Bsnip=5D=0D=
-=0A>=20>=20>>=20--=0D=0A>=20>=20>>=202.25.1=0D=0A>=20>=20>=0D=0A>=20>=20>=
-=0D=0A=0D=0A
+indicating that we are trying to look up index 25092 (3 pages
+further in than the start of the batch), and the folio that this
+keeps returning is this:
+
+(gdb) p *folio
+$7 = {{{flags = 24769796876795904, {lru = {next = 0xffffea0005690008, prev = 0xffff88823ffd5f50}, {__filler = 0xffffea0005690008, 
+          mlock_count = 1073569616}}, mapping = 0x0 <fixed_percpu_data>, index = 18688, private = 0x8 <fixed_percpu_data+8>, _mapcount = {
+        counter = -129}, _refcount = {counter = 0}, memcg_data = 0}, page = {flags = 24769796876795904, {{{lru = {next = 0xffffea0005690008, 
+              prev = 0xffff88823ffd5f50}, {__filler = 0xffffea0005690008, mlock_count = 1073569616}, buddy_list = {
+              next = 0xffffea0005690008, prev = 0xffff88823ffd5f50}, pcp_list = {next = 0xffffea0005690008, prev = 0xffff88823ffd5f50}}, 
+          mapping = 0x0 <fixed_percpu_data>, index = 18688, private = 8}, {pp_magic = 18446719884544507912, pp = 0xffff88823ffd5f50, 
+          _pp_mapping_pad = 0, dma_addr = 18688, {dma_addr_upper = 8, pp_frag_count = {counter = 8}}}, {
+          compound_head = 18446719884544507912, compound_dtor = 80 'P', compound_order = 95 '_', compound_mapcount = {counter = -30590}, 
+          compound_pincount = {counter = 0}, compound_nr = 0}, {_compound_pad_1 = 18446719884544507912, 
+          _compound_pad_2 = 18446612691733536592, deferred_list = {next = 0x0 <fixed_percpu_data>, 
+            prev = 0x4900 <irq_stack_backing_store+10496>}}, {_pt_pad_1 = 18446719884544507912, pmd_huge_pte = 0xffff88823ffd5f50, 
+          _pt_pad_2 = 0, {pt_mm = 0x4900 <irq_stack_backing_store+10496>, pt_frag_refcount = {counter = 18688}}, 
+          ptl = 0x8 <fixed_percpu_data+8>}, {pgmap = 0xffffea0005690008, zone_device_data = 0xffff88823ffd5f50}, callback_head = {
+          next = 0xffffea0005690008, func = 0xffff88823ffd5f50}}, {_mapcount = {counter = -129}, page_type = 4294967167}, _refcount = {
+        counter = 0}, memcg_data = 0}}, _flags_1 = 24769796876795904, __head = 0, _folio_dtor = 3 '\003', _folio_order = 8 '\b', 
+  _total_mapcount = {counter = -1}, _pincount = {counter = 0}, _folio_nr_pages = 0}
+(gdb)
+
+The folio has a NULL mapping, and an index of 18688, which means
+even if it was not a folio that has been invalidated or freed, the
+index is way outside the range we are looking for.
+
+If I step it round the lookup loop, xas does not change, and the
+same folio is returned every time through the loop. Perhaps
+the mapping tree itself might be corrupt???
+
+It's simple enough to stop the machine once it has become stuck to
+observe the iteration and dump structures, just tell me what you
+need to know from here...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
