@@ -2,109 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2156615106
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 18:47:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C09E1615110
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 18:51:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230199AbiKARrT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Nov 2022 13:47:19 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44274 "EHLO
+        id S230015AbiKARvs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Nov 2022 13:51:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46080 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229562AbiKARrS (ORCPT
+        with ESMTP id S229562AbiKARvr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Nov 2022 13:47:18 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 514231D0D3;
-        Tue,  1 Nov 2022 10:47:17 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 1 Nov 2022 13:51:47 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1F1D1C43D;
+        Tue,  1 Nov 2022 10:51:46 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E0AF6616D8;
-        Tue,  1 Nov 2022 17:47:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CD53C433D6;
-        Tue,  1 Nov 2022 17:47:05 +0000 (UTC)
-Date:   Tue, 1 Nov 2022 17:47:01 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-alpha@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-snps-arc@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
-        linux-hexagon@vger.kernel.org, linux-ia64@vger.kernel.org,
-        loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org,
-        linux-mips@vger.kernel.org, openrisc@lists.librecores.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org,
-        linux-sh@vger.kernel.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, linux-xtensa@linux-xtensa.org,
-        linux-fsdevel@vger.kernel.org,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Vineet Gupta <vgupta@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-        Huacai Chen <chenhuacai@kernel.org>,
-        WANG Xuerui <kernel@xen0n.name>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Greg Ungerer <gerg@linux-m68k.org>,
-        Michal Simek <monstr@monstr.eu>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Dinh Nguyen <dinguyen@kernel.org>,
-        Jonas Bonn <jonas@southpole.se>,
-        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
-        Stafford Horne <shorne@gmail.com>,
-        "James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>,
-        Helge Deller <deller@gmx.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Paul Walmsley <paul.walmsley@sifive.com>,
-        Palmer Dabbelt <palmer@dabbelt.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Chris Zankel <chris@zankel.net>,
-        Max Filippov <jcmvbkbc@gmail.com>
-Subject: Re: [PATCH] mm: remove kern_addr_valid() completely
-Message-ID: <Y2FblZlz2LIGh5qH@arm.com>
-References: <20221018074014.185687-1-wangkefeng.wang@huawei.com>
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 77152336C4;
+        Tue,  1 Nov 2022 17:51:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1667325105; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8Hu2igDpV58FWOpyGjErjvDHZCw49fVJ+gWTy+xKV5E=;
+        b=y9wYpip6Of0LxO5D0ICCZcxW5C4TSGGzJYTFjb+bKg3sU2k05k4D+/01EPPXlczTaEBRmB
+        fbmiQ/N6jqun7+cAPgU8IAkRAhiPgew7XKrAjURzfU3Lu1w2crWuvxtj9JjG7w5lOm5dNy
+        t+qapKKxG0oDUt/1dtxQO3ahJmGqKG4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1667325105;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=8Hu2igDpV58FWOpyGjErjvDHZCw49fVJ+gWTy+xKV5E=;
+        b=XhaNawLrRjMwML6jyojoDCga85WxaVolsa3sEPqf0UcePwfe2kmdA2uIEP5avYx0+Eb2P0
+        Dmgclk6xu5T1aGCw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 531561346F;
+        Tue,  1 Nov 2022 17:51:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id vH08FLFcYWMHIwAAMHmgww
+        (envelope-from <jack@suse.cz>); Tue, 01 Nov 2022 17:51:45 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 3EC20A0700; Tue,  1 Nov 2022 18:51:44 +0100 (CET)
+Date:   Tue, 1 Nov 2022 18:51:44 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Amir Goldstein <amir73il@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [PATCH v3 0/3] fsnotify: fix softlockups iterating over d_subdirs
+Message-ID: <20221101175144.yu3l5qo5gfwfpatt@quack3>
+References: <20221021010310.29521-1-stephen.s.brennan@oracle.com>
+ <20221028001016.332663-1-stephen.s.brennan@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221018074014.185687-1-wangkefeng.wang@huawei.com>
-X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20221028001016.332663-1-stephen.s.brennan@oracle.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 18, 2022 at 03:40:14PM +0800, Kefeng Wang wrote:
-> Most architectures(except arm64/x86/sparc) simply return 1 for
-> kern_addr_valid(), which is only used in read_kcore(), and it
-> calls copy_from_kernel_nofault() which could check whether the
-> address is a valid kernel address, so no need kern_addr_valid(),
-> let's remove unneeded kern_addr_valid() completely.
+Hi Stephen!
+
+On Thu 27-10-22 17:10:13, Stephen Brennan wrote:
+> Here is v3 of the patch series. I've taken all of the feedback,
+> thanks Amir, Christian, Hilf, et al. Differences are noted in each
+> patch.
 > 
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> I caught an obvious and silly dentry reference leak: d_find_any_alias()
+> returns a reference, which I never called dput() on. With that change, I
+> no longer see the rpc_pipefs issue, but I do think I need more testing
+> and thinking through the third patch. Al, I'd love your feedback on that
+> one especially.
+> 
+> Thanks,
+> Stephen
+> 
+> Stephen Brennan (3):
+>   fsnotify: Use d_find_any_alias to get dentry associated with inode
+>   fsnotify: Protect i_fsnotify_mask and child flags with inode rwsem
+>   fsnotify: allow sleepable child flag update
 
-For arm64:
+Thanks for the patches Stephen and I'm sorry for replying somewhat late.
+The first patch is a nobrainer. The other two patches ... complicate things
+somewhat more complicated than I'd like. I guess I can live with them if we
+don't find a better solution but I'd like to discuss a bit more about
+alternatives.
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+So what would happen if we just clear DCACHE_FSNOTIFY_PARENT_WATCHED in
+__fsnotify_parent() for the dentry which triggered the event and does not
+have watched parent anymore and never bother with full children walk? I
+suppose your contention problems will be gone, we'll just pay the price of
+dget_parent() + fsnotify_inode_watches_children() for each child that
+falsely triggers instead of for only one. Maybe that's not too bad? After
+all any event upto this moment triggered this overhead as well...
+
+Am I missing something? AFAIU this would allow us to avoid the games with
+the new connector flag etc... We would probably still need to avoid
+softlockups when setting the flag DCACHE_FSNOTIFY_PARENT_WATCHED but that
+should be much simpler (we could use i_rwsem trick like you do).
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
