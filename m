@@ -2,151 +2,146 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EFB6614BB9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 14:28:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA29F614C18
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 14:52:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229739AbiKAN20 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Nov 2022 09:28:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56588 "EHLO
+        id S230078AbiKANwQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Nov 2022 09:52:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbiKAN2Z (ORCPT
+        with ESMTP id S230003AbiKANwP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Nov 2022 09:28:25 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13C60DF3F;
-        Tue,  1 Nov 2022 06:28:23 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5AACD612D1;
-        Tue,  1 Nov 2022 13:28:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1FACC433C1;
-        Tue,  1 Nov 2022 13:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1667309302;
-        bh=qn/BBkYwXhsC9S6z3zDROC8oNtgG+BFKYdU879D3sT4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Farymb1qpUoPea5c83twStB/Qb4TFgn4n5e0b+pSQqKjwQ0S0rTR9nroLgBLUaI5F
-         5TP73Sw04QBAtKlpfH8h/y1I7GEhNjpC4de6ADh6DOFF+62nifB4OJUDiMrtwRUuEU
-         W0b/qAJ2UC5DAcLG7m/TDlWLmXP4a7upy5EtjRiw=
-Date:   Tue, 1 Nov 2022 14:29:15 +0100
-From:   Greg KH <gregkh@linuxfoundation.org>
-To:     Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Karel Zak <kzak@redhat.com>,
-        Masatake YAMATO <yamato@redhat.com>, linux-api@vger.kernel.org
-Subject: Re: [PATCH v2] proc: add byteorder file
-Message-ID: <Y2EfK2CnHLq5HF9B@kroah.com>
-References: <20221101130401.1841-1-linux@weissschuh.net>
+        Tue, 1 Nov 2022 09:52:15 -0400
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 768815F6D;
+        Tue,  1 Nov 2022 06:52:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=G33VyQ6sOfQGS04g9QhDbkRC3o9MZ8PM6yea6yNSRRA=; b=2lokBh1C81D9XohJYqekPo1vRQ
+        o6rFXfME/tQ3E2gTFRR+qhJtT/u6v/mm3nkxODcbwloUwJ+WUaPWtp980HGvaLU89tZwINoDl9qU6
+        XnEGfKDrjpNg0Pb5Jv1FJ5WR3cRq4Yd/SVwqSflh/wf42c5E1n1ernTx8JYuv389a0tDXBBjMSzqC
+        Bzfb4ksbvC+9Tm5Uex2YOOX7f4p/w2DCSe/YMdVHTq9Os38VCv949ELI+Az07K4OsPd8aVlUbas6w
+        HyLylsmnk4TgNZCpDY3wMm0E68T959p3fSLPhLXKrFXKPaCHaMrHLegMqrUCNONSsMzHEHLDG+7Ye
+        3uyoPv5A==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oprgH-005Lk8-Mt; Tue, 01 Nov 2022 13:51:53 +0000
+Date:   Tue, 1 Nov 2022 06:51:53 -0700
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        David Howells <dhowells@redhat.com>, willy@infradead.org,
+        dchinner@redhat.com, Steve French <smfrench@gmail.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Ira Weiny <ira.weiny@intel.com>, torvalds@linux-foundation.org,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jlayton@redhat.com
+Subject: Re: How to convert I/O iterators to iterators, sglists and RDMA lists
+Message-ID: <Y2EkeULBA3zsiarf@infradead.org>
+References: <Y01VjOE2RrLVA2T6@infradead.org>
+ <1762414.1665761217@warthog.procyon.org.uk>
+ <1415915.1666274636@warthog.procyon.org.uk>
+ <Y1an1NFcowiSS9ms@infradead.org>
+ <Y1btOP0tyPtcYajo@ZenIV>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221101130401.1841-1-linux@weissschuh.net>
-X-Spam-Status: No, score=-8.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y1btOP0tyPtcYajo@ZenIV>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 01, 2022 at 02:04:01PM +0100, Thomas Weiﬂschuh wrote:
-> Certain files in procfs are formatted in byteorder dependent ways. For
-> example the IP addresses in /proc/net/udp.
+On Mon, Oct 24, 2022 at 08:53:28PM +0100, Al Viro wrote:
+> 1) iter-to-scatterlist use is much wider than RDMA.  Other places like that
+> include e.g. vhost_scsi_map_to_sgl(), p9_get_mapped_pages(),
+> rds_message_zcopy_from_user(), tls_setup_from_iter()...
+
+RDS is RDMA.  vhost_scsi_map_to_sgl and p9_get_mapped_pages do some
+odd virtio thing.  But point taken, it is spread further than it should
+be at the moment.  It is however a rather bad data structure that really
+should not spead much further.
+
+> 2) there's a limit to how far we can propagate an arbitrary iov_iter -
+> ITER_IOVEC/ITER_UBUF ones are absolutely tied to mm_struct of the
+> originating process.  We can't use them for anything async - not
+> without the horrors a-la use_mm().
+
+But why would you pass them on?  It is much better to just convert
+them to a bio_vec and pass that on.  We could still feed that to n
+iter later, and in fact there are a bunch of good reasons to do so.
+But in pretty much all those cases you really do not want to keep
+the whole iov_iter state.
+
+> 	We can do separate sendmsg() for kvec and bvec parts,
+> but that doesn't come for free either.  *AND* bvec part is very
+> likely not the original iterator we got those pages from.
+
+sendmsg model seems to be very much built around that model with
+MSG_MORE.  But even with a 'converter' how do you plan to build
+such a mixed iter anyay?
+
+> My problem with all that stuff is that we ought to sort out the
+> lifetime and pin_user issues around the iov_iter.  What I really
+> want to avoid is "no worries, we'd extracted stuff into ITER_BVEC, it's
+> stable and can be passed around in arbitrary way" kind of primitive.
+> Because *that* has no chance to work.
+
+Yes.  I think the first thing we need in this whole area is to sort
+the pinning out.  After that we can talk about all kinds of convenience
+helpers.
+
+> As far as I can see, we have the following constraints:
 > 
-> Assuming the byteorder of the userspace program is not guaranteed to be
-> correct in the face of emulation as for example with qemu-user.
-> 
-> Also this makes it easier for non-compiled applications like
-> shellscripts to discover the byteorder.
+> 	* page references put into ITER_BVEC (and ITER_XARRAY) must not
+> go away while the iov_iter is being used.  That's on the creator of
+> iov_iter.
 
-Your subject says "proc" :(
+*nod*
 
-Also you do not list the new file name here in the changelog text, why
-not?
+> 	* pages found in iterator might be used past the lifetime of
+> iterator.  We need the underlying pages to survive until the last
+> use.  "Grab a page reference" is *NOT* a solution in general case.
+> 	* pages found in data-destination iterator may have their
+> contents modified, both during the iterator lifetime and asynchronously.
 
-> 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
-> 
-> ---
-> 
-> Development of userspace part: https://github.com/util-linux/util-linux/pull/1872
-> 
-> v1: https://lore.kernel.org/lkml/20221101005043.1791-1-linux@weissschuh.net/
-> v1->v2:
->   * Move file to /sys/kernel/byteorder
-> ---
->  .../ABI/testing/sysfs-kernel-byteorder         | 12 ++++++++++++
->  kernel/ksysfs.c                                | 18 ++++++++++++++++++
->  2 files changed, 30 insertions(+)
->  create mode 100644 Documentation/ABI/testing/sysfs-kernel-byteorder
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-kernel-byteorder b/Documentation/ABI/testing/sysfs-kernel-byteorder
-> new file mode 100644
-> index 000000000000..4c45016d78ae
-> --- /dev/null
-> +++ b/Documentation/ABI/testing/sysfs-kernel-byteorder
-> @@ -0,0 +1,12 @@
-> +What:		/sys/kernel/byteorder
-> +Date:		February 2023
-> +KernelVersion:	6.2
-> +Contact:	linux-fsdevel@vger.kernel.org
+This is where the trouble start.  If you want to be able to feed
+kmalloced data into throgh ITER_KVEC (or ITER_BVEC for the matter),
+you can't just grab any kind of hold to it.  The only way to do that
+is by telling the caller you're done with it.  I.e. how aio/io_ring/etc
+use ki_complete - the callee owns the data until it declares it is done
+by calling ->ki_complete.  But no 'borrowing' of refeferences as the
+only sane way to do that would be page refcounts, but those do not
+work for everything.
 
-Why is this a filesystem thing?  I don't see how that is true.
+> If it has a chance to be a user-mapped page, we must either
+> 	a) have it locked by caller and have no modifications after
+> it gets unlocked or
+> 	b) have it pinned (sensu pin_user_pages()) by the caller and
+> have no modifications until the unpin_user_page().
 
-> +Description:
-> +		The current endianness of the running kernel.
-> +
-> +		Access: Read
-> +
-> +		Valid values:
-> +			"little", "big"
-> +Users:		util-linux
-> diff --git a/kernel/ksysfs.c b/kernel/ksysfs.c
-> index 65dba9076f31..7c7cb2c96ac0 100644
-> --- a/kernel/ksysfs.c
-> +++ b/kernel/ksysfs.c
-> @@ -6,6 +6,7 @@
->   * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
->   */
->  
-> +#include <asm/byteorder.h>
->  #include <linux/kobject.h>
->  #include <linux/string.h>
->  #include <linux/sysfs.h>
-> @@ -20,6 +21,14 @@
->  
->  #include <linux/rcupdate.h>	/* rcu_expedited and rcu_normal */
->  
-> +#if defined(__LITTLE_ENDIAN)
-> +#define BYTEORDER_STRING	"little"
-> +#elif defined(__BIG_ENDIAN)
-> +#define BYTEORDER_STRING	"big"
-> +#else
-> +#error Unknown byteorder
-> +#endif
-> +
->  #define KERNEL_ATTR_RO(_name) \
->  static struct kobj_attribute _name##_attr = __ATTR_RO(_name)
->  
-> @@ -34,6 +43,14 @@ static ssize_t uevent_seqnum_show(struct kobject *kobj,
->  }
->  KERNEL_ATTR_RO(uevent_seqnum);
->  
-> +/* kernel byteorder */
-> +static ssize_t byteorder_show(struct kobject *kobj,
-> +			      struct kobj_attribute *attr, char *buf)
-> +{
-> +	return sprintf(buf, "%s\n", BYTEORDER_STRING);
+Yes.  And I think we need a good counter part to iov_iter_pin_pages
+that undoes any required pinning, so that users of iov_iter_pin_pages
+and iov_iter_unpin_pages can use these helpers without even thinking
+about the rules.  That requires passing some amount of state to the
+unpin side.  It could just be an unsigned long with flags probably,
+or we keep the iov_iter alive and look at that.
 
-sysfs_emit() please.
+> Another issue with iov_iter_get_pages...() is that compound page turns
+> into a bunch of references to individual subpages; io-uring folks have
+> noticed the problem, but their solution is... inelegant.  I wonder if
+> we would be better off with a variant of the primitive that would give
+> out compound pages; it would need different calling conventions,
+> obviously (current ones assume that all pages except the first and
+> the last one have PAGE_SIZE worth of data in them).
 
-And this really is CPU byteorder, right?  We have processors that have
-devices running in different byteorder than the CPU.  userspace usually
-doesn't need to know about that, but it might be good to be specific.
-
-thanks,
-
-greg k-h
+The new name for compound pages is folios, and yes the whole get/pin
+user pages machinery needs to switch to that.
