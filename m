@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 696E76149C8
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 12:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60BE86149D3
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 12:49:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229920AbiKALtD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 1 Nov 2022 07:49:03 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38316 "EHLO
+        id S231499AbiKALtk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 1 Nov 2022 07:49:40 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40180 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230421AbiKALsf (ORCPT
+        with ESMTP id S231331AbiKALtD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 1 Nov 2022 07:48:35 -0400
-Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E15361AD9E;
-        Tue,  1 Nov 2022 04:42:08 -0700 (PDT)
+        Tue, 1 Nov 2022 07:49:03 -0400
+Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B044FD2D;
+        Tue,  1 Nov 2022 04:43:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1667302929; x=1698838929;
+  t=1667303014; x=1698839014;
   h=date:from:to:cc:subject:message-id:reply-to:references:
    mime-version:in-reply-to;
-  bh=fVnmfE4aAQhJRses/HkLxskjBJG6DmPsjixSgyOEAeU=;
-  b=iaEpHSu2YlKrBePJq2R96njxAhZwSqfv+Utube6tNxS7V3g0mfPRnEyo
-   II8haeBgnH6asY85war8AEUZEgEXuX4iKwdX+gUHH0CfFP1BFZU8qlqEY
-   NPZxIo1yvdJ2tnr1sla+K+UeEq5Og5VGGT38OCsDnGuGZp+JRU3RXH6C7
-   9W4glB9p8bf6bpN0nOo9LXjoC+auMfdQH9gHi3bhDSF/9lEXnj/q8235T
-   CCvHcEYtp5BT0kson7QeGAtS4ttYSQQPH1vX6iuvkCLBy+NQaJzYnj98w
-   sfo49A6w/aUA21aUCPvU+9CaerDZN1vaZsF32+6VMhFPrWXqL1hYYkfSB
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10517"; a="373331312"
+  bh=4KiQzvQ3ZQDSZnSelbcIg3zXaQ/2lSH85X61Qpll+XE=;
+  b=Aih8tX7JdiYjwEiUaetb2HQR+Rm0mcBo3wOyx/99JDLWYVgUquazwvw9
+   DVuMUHdaoBbyH2T4En++HybvjtIvNwxLeAdM+foEvXFs4oDR4t2vDpCTm
+   zY8qhalpFcMxTr6KKrp8y+5kcVP19sFkPaUJwdok+khYoSc1bhd9UouvK
+   MV5pW8cABsglCdfbYFKe7UJF8XdonMmZrzm9MXzcURUS9M4jWSQ6Zj9SA
+   Zz1DRz+bv9ROLyt2WyfpoioKzTXdWbWxQYiQuXk6Io2wIQxaomqy0SNYF
+   xsqCwglG8YH1cDbDJvtkZM6VsVit2JTnxQu49MEGaDuuhVq6Ww+SEnLiV
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10517"; a="288829033"
 X-IronPort-AV: E=Sophos;i="5.95,230,1661842800"; 
-   d="scan'208";a="373331312"
+   d="scan'208";a="288829033"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2022 04:42:08 -0700
+  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Nov 2022 04:43:34 -0700
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10517"; a="628549426"
+X-IronPort-AV: E=McAfee;i="6500,9779,10517"; a="628549716"
 X-IronPort-AV: E=Sophos;i="5.95,230,1661842800"; 
-   d="scan'208";a="628549426"
+   d="scan'208";a="628549716"
 Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by orsmga007.jf.intel.com with ESMTP; 01 Nov 2022 04:41:57 -0700
-Date:   Tue, 1 Nov 2022 19:37:29 +0800
+  by orsmga007.jf.intel.com with ESMTP; 01 Nov 2022 04:43:22 -0700
+Date:   Tue, 1 Nov 2022 19:38:54 +0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Michael Roth <michael.roth@amd.com>
+To:     Isaku Yamahata <isaku.yamahata@gmail.com>
 Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
@@ -71,21 +71,22 @@ Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
         ddutile@redhat.com, dhildenb@redhat.com,
         Quentin Perret <qperret@google.com>, tabba@google.com,
-        mhocko@suse.com, Muchun Song <songmuchun@bytedance.com>,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
- create restricted user memory
-Message-ID: <20221101113729.GA4015495@chaop.bj.intel.com>
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v9 7/8] KVM: Handle page fault for private memory
+Message-ID: <20221101113854.GB4015495@chaop.bj.intel.com>
 Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
 References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
- <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
- <20221031174738.fklhlia5fmaiinpe@amd.com>
+ <20221025151344.3784230-8-chao.p.peng@linux.intel.com>
+ <20221026215425.GC3819453@ls.amr.corp.intel.com>
+ <20221028065545.GD3885130@chaop.bj.intel.com>
+ <20221101000250.GA674570@ls.amr.corp.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221031174738.fklhlia5fmaiinpe@amd.com>
-X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+In-Reply-To: <20221101000250.GA674570@ls.amr.corp.intel.com>
+X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
         SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -93,394 +94,277 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 31, 2022 at 12:47:38PM -0500, Michael Roth wrote:
-> On Tue, Oct 25, 2022 at 11:13:37PM +0800, Chao Peng wrote:
-> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+On Mon, Oct 31, 2022 at 05:02:50PM -0700, Isaku Yamahata wrote:
+> On Fri, Oct 28, 2022 at 02:55:45PM +0800,
+> Chao Peng <chao.p.peng@linux.intel.com> wrote:
+> 
+> > On Wed, Oct 26, 2022 at 02:54:25PM -0700, Isaku Yamahata wrote:
+> > > On Tue, Oct 25, 2022 at 11:13:43PM +0800,
+> > > Chao Peng <chao.p.peng@linux.intel.com> wrote:
+> > > 
+> > > > A memslot with KVM_MEM_PRIVATE being set can include both fd-based
+> > > > private memory and hva-based shared memory. Architecture code (like TDX
+> > > > code) can tell whether the on-going fault is private or not. This patch
+> > > > adds a 'is_private' field to kvm_page_fault to indicate this and
+> > > > architecture code is expected to set it.
+> > > > 
+> > > > To handle page fault for such memslot, the handling logic is different
+> > > > depending on whether the fault is private or shared. KVM checks if
+> > > > 'is_private' matches the host's view of the page (maintained in
+> > > > mem_attr_array).
+> > > >   - For a successful match, private pfn is obtained with
+> > > >     restrictedmem_get_page () from private fd and shared pfn is obtained
+> > > >     with existing get_user_pages().
+> > > >   - For a failed match, KVM causes a KVM_EXIT_MEMORY_FAULT exit to
+> > > >     userspace. Userspace then can convert memory between private/shared
+> > > >     in host's view and retry the fault.
+> > > > 
+> > > > Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> > > > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> > > > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> > > > ---
+> > > >  arch/x86/kvm/mmu/mmu.c          | 56 +++++++++++++++++++++++++++++++--
+> > > >  arch/x86/kvm/mmu/mmu_internal.h | 14 ++++++++-
+> > > >  arch/x86/kvm/mmu/mmutrace.h     |  1 +
+> > > >  arch/x86/kvm/mmu/spte.h         |  6 ++++
+> > > >  arch/x86/kvm/mmu/tdp_mmu.c      |  3 +-
+> > > >  include/linux/kvm_host.h        | 28 +++++++++++++++++
+> > > >  6 files changed, 103 insertions(+), 5 deletions(-)
+> > > > 
+> > > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > > > index 67a9823a8c35..10017a9f26ee 100644
+> > > > --- a/arch/x86/kvm/mmu/mmu.c
+> > > > +++ b/arch/x86/kvm/mmu/mmu.c
+> > > > @@ -3030,7 +3030,7 @@ static int host_pfn_mapping_level(struct kvm *kvm, gfn_t gfn,
+> > > >  
+> > > >  int kvm_mmu_max_mapping_level(struct kvm *kvm,
+> > > >  			      const struct kvm_memory_slot *slot, gfn_t gfn,
+> > > > -			      int max_level)
+> > > > +			      int max_level, bool is_private)
+> > > >  {
+> > > >  	struct kvm_lpage_info *linfo;
+> > > >  	int host_level;
+> > > > @@ -3042,6 +3042,9 @@ int kvm_mmu_max_mapping_level(struct kvm *kvm,
+> > > >  			break;
+> > > >  	}
+> > > >  
+> > > > +	if (is_private)
+> > > > +		return max_level;
+> > > 
+> > > Below PG_LEVEL_NUM is passed by zap_collapsible_spte_range().  It doesn't make
+> > > sense.
+> > > 
+> > > > +
+> > > >  	if (max_level == PG_LEVEL_4K)
+> > > >  		return PG_LEVEL_4K;
+> > > >  
+> > > > @@ -3070,7 +3073,8 @@ void kvm_mmu_hugepage_adjust(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
+> > > >  	 * level, which will be used to do precise, accurate accounting.
+> > > >  	 */
+> > > >  	fault->req_level = kvm_mmu_max_mapping_level(vcpu->kvm, slot,
+> > > > -						     fault->gfn, fault->max_level);
+> > > > +						     fault->gfn, fault->max_level,
+> > > > +						     fault->is_private);
+> > > >  	if (fault->req_level == PG_LEVEL_4K || fault->huge_page_disallowed)
+> > > >  		return;
+> > > >  
+> > > > @@ -4141,6 +4145,32 @@ void kvm_arch_async_page_ready(struct kvm_vcpu *vcpu, struct kvm_async_pf *work)
+> > > >  	kvm_mmu_do_page_fault(vcpu, work->cr2_or_gpa, 0, true);
+> > > >  }
+> > > >  
+> > > > +static inline u8 order_to_level(int order)
+> > > > +{
+> > > > +	BUILD_BUG_ON(KVM_MAX_HUGEPAGE_LEVEL > PG_LEVEL_1G);
+> > > > +
+> > > > +	if (order >= KVM_HPAGE_GFN_SHIFT(PG_LEVEL_1G))
+> > > > +		return PG_LEVEL_1G;
+> > > > +
+> > > > +	if (order >= KVM_HPAGE_GFN_SHIFT(PG_LEVEL_2M))
+> > > > +		return PG_LEVEL_2M;
+> > > > +
+> > > > +	return PG_LEVEL_4K;
+> > > > +}
+> > > > +
+> > > > +static int kvm_faultin_pfn_private(struct kvm_page_fault *fault)
+> > > > +{
+> > > > +	int order;
+> > > > +	struct kvm_memory_slot *slot = fault->slot;
+> > > > +
+> > > > +	if (kvm_restricted_mem_get_pfn(slot, fault->gfn, &fault->pfn, &order))
+> > > > +		return RET_PF_RETRY;
+> > > > +
+> > > > +	fault->max_level = min(order_to_level(order), fault->max_level);
+> > > > +	fault->map_writable = !(slot->flags & KVM_MEM_READONLY);
+> > > > +	return RET_PF_CONTINUE;
+> > > > +}
+> > > > +
+> > > >  static int kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+> > > >  {
+> > > >  	struct kvm_memory_slot *slot = fault->slot;
+> > > > @@ -4173,6 +4203,22 @@ static int kvm_faultin_pfn(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+> > > >  			return RET_PF_EMULATE;
+> > > >  	}
+> > > >  
+> > > > +	if (kvm_slot_can_be_private(slot) &&
+> > > > +	    fault->is_private != kvm_mem_is_private(vcpu->kvm, fault->gfn)) {
+> > > > +		vcpu->run->exit_reason = KVM_EXIT_MEMORY_FAULT;
+> > > > +		if (fault->is_private)
+> > > > +			vcpu->run->memory.flags = KVM_MEMORY_EXIT_FLAG_PRIVATE;
+> > > > +		else
+> > > > +			vcpu->run->memory.flags = 0;
+> > > > +		vcpu->run->memory.padding = 0;
+> > > > +		vcpu->run->memory.gpa = fault->gfn << PAGE_SHIFT;
+> > > > +		vcpu->run->memory.size = PAGE_SIZE;
+> > > > +		return RET_PF_USER;
+> > > > +	}
+> > > > +
+> > > > +	if (fault->is_private)
+> > > > +		return kvm_faultin_pfn_private(fault);
+> > > > +
+> > > >  	async = false;
+> > > >  	fault->pfn = __gfn_to_pfn_memslot(slot, fault->gfn, false, &async,
+> > > >  					  fault->write, &fault->map_writable,
+> > > > @@ -5557,6 +5603,9 @@ int noinline kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 err
+> > > >  			return -EIO;
+> > > >  	}
+> > > >  
+> > > > +	if (r == RET_PF_USER)
+> > > > +		return 0;
+> > > > +
+> > > >  	if (r < 0)
+> > > >  		return r;
+> > > >  	if (r != RET_PF_EMULATE)
+> > > > @@ -6408,7 +6457,8 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
+> > > >  		 */
+> > > >  		if (sp->role.direct &&
+> > > >  		    sp->role.level < kvm_mmu_max_mapping_level(kvm, slot, sp->gfn,
+> > > > -							       PG_LEVEL_NUM)) {
+> > > > +							       PG_LEVEL_NUM,
+> > > > +							       false)) {
+> > > >  			kvm_zap_one_rmap_spte(kvm, rmap_head, sptep);
+> > > >  
+> > > >  			if (kvm_available_flush_tlb_with_range())
+> > > > diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
+> > > > index 582def531d4d..5cdff5ca546c 100644
+> > > > --- a/arch/x86/kvm/mmu/mmu_internal.h
+> > > > +++ b/arch/x86/kvm/mmu/mmu_internal.h
+> > > > @@ -188,6 +188,7 @@ struct kvm_page_fault {
+> > > >  
+> > > >  	/* Derived from mmu and global state.  */
+> > > >  	const bool is_tdp;
+> > > > +	const bool is_private;
+> > > >  	const bool nx_huge_page_workaround_enabled;
+> > > >  
+> > > >  	/*
+> > > > @@ -236,6 +237,7 @@ int kvm_tdp_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault);
+> > > >   * RET_PF_RETRY: let CPU fault again on the address.
+> > > >   * RET_PF_EMULATE: mmio page fault, emulate the instruction directly.
+> > > >   * RET_PF_INVALID: the spte is invalid, let the real page fault path update it.
+> > > > + * RET_PF_USER: need to exit to userspace to handle this fault.
+> > > >   * RET_PF_FIXED: The faulting entry has been fixed.
+> > > >   * RET_PF_SPURIOUS: The faulting entry was already fixed, e.g. by another vCPU.
+> > > >   *
+> > > > @@ -252,6 +254,7 @@ enum {
+> > > >  	RET_PF_RETRY,
+> > > >  	RET_PF_EMULATE,
+> > > >  	RET_PF_INVALID,
+> > > > +	RET_PF_USER,
+> > > >  	RET_PF_FIXED,
+> > > >  	RET_PF_SPURIOUS,
+> > > >  };
+> > > > @@ -309,7 +312,7 @@ static inline int kvm_mmu_do_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+> > > >  
+> > > >  int kvm_mmu_max_mapping_level(struct kvm *kvm,
+> > > >  			      const struct kvm_memory_slot *slot, gfn_t gfn,
+> > > > -			      int max_level);
+> > > > +			      int max_level, bool is_private);
+> > > >  void kvm_mmu_hugepage_adjust(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault);
+> > > >  void disallowed_hugepage_adjust(struct kvm_page_fault *fault, u64 spte, int cur_level);
+> > > >  
+> > > > @@ -318,4 +321,13 @@ void *mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc);
+> > > >  void account_huge_nx_page(struct kvm *kvm, struct kvm_mmu_page *sp);
+> > > >  void unaccount_huge_nx_page(struct kvm *kvm, struct kvm_mmu_page *sp);
+> > > >  
+> > > > +#ifndef CONFIG_HAVE_KVM_RESTRICTED_MEM
+> > > > +static inline int kvm_restricted_mem_get_pfn(struct kvm_memory_slot *slot,
+> > > > +					gfn_t gfn, kvm_pfn_t *pfn, int *order)
+> > > > +{
+> > > > +	WARN_ON_ONCE(1);
+> > > > +	return -EOPNOTSUPP;
+> > > > +}
+> > > > +#endif /* CONFIG_HAVE_KVM_RESTRICTED_MEM */
+> > > > +
+> > > >  #endif /* __KVM_X86_MMU_INTERNAL_H */
+> > > > diff --git a/arch/x86/kvm/mmu/mmutrace.h b/arch/x86/kvm/mmu/mmutrace.h
+> > > > index ae86820cef69..2d7555381955 100644
+> > > > --- a/arch/x86/kvm/mmu/mmutrace.h
+> > > > +++ b/arch/x86/kvm/mmu/mmutrace.h
+> > > > @@ -58,6 +58,7 @@ TRACE_DEFINE_ENUM(RET_PF_CONTINUE);
+> > > >  TRACE_DEFINE_ENUM(RET_PF_RETRY);
+> > > >  TRACE_DEFINE_ENUM(RET_PF_EMULATE);
+> > > >  TRACE_DEFINE_ENUM(RET_PF_INVALID);
+> > > > +TRACE_DEFINE_ENUM(RET_PF_USER);
+> > > >  TRACE_DEFINE_ENUM(RET_PF_FIXED);
+> > > >  TRACE_DEFINE_ENUM(RET_PF_SPURIOUS);
+> > > >  
+> > > > diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
+> > > > index 7670c13ce251..9acdf72537ce 100644
+> > > > --- a/arch/x86/kvm/mmu/spte.h
+> > > > +++ b/arch/x86/kvm/mmu/spte.h
+> > > > @@ -315,6 +315,12 @@ static inline bool is_dirty_spte(u64 spte)
+> > > >  	return dirty_mask ? spte & dirty_mask : spte & PT_WRITABLE_MASK;
+> > > >  }
+> > > >  
+> > > > +static inline bool is_private_spte(u64 spte)
+> > > > +{
+> > > > +	/* FIXME: Query C-bit/S-bit for SEV/TDX. */
+> > > > +	return false;
+> > > > +}
+> > > > +
+> > > 
+> > > PFN encoded in spte doesn't make sense.  In VMM for TDX, private-vs-shared is
+> > > determined by S-bit of GFN.
 > > 
-> > Introduce 'memfd_restricted' system call with the ability to create
-> > memory areas that are restricted from userspace access through ordinary
-> > MMU operations (e.g. read/write/mmap). The memory content is expected to
-> > be used through a new in-kernel interface by a third kernel module.
+> > My understanding is we will have software bit in the spte, will we? In
+> > current TDX code I see we have SPTE_SHARED_MASK bit defined.
+> 
+> I'm afraid that you're referring old version.  It's not.  For TDX, gfn needs
+> to be checked.  Which isn't encoded in spte.
+
+Okay.
+
+> 
+> 
+> > > >  static inline u64 get_rsvd_bits(struct rsvd_bits_validate *rsvd_check, u64 pte,
+> > > >  				int level)
+> > > >  {
+> > > > diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+> > > > index 672f0432d777..9f97aac90606 100644
+> > > > --- a/arch/x86/kvm/mmu/tdp_mmu.c
+> > > > +++ b/arch/x86/kvm/mmu/tdp_mmu.c
+> > > > @@ -1768,7 +1768,8 @@ static void zap_collapsible_spte_range(struct kvm *kvm,
+> > > >  			continue;
+> > > >  
+> > > >  		max_mapping_level = kvm_mmu_max_mapping_level(kvm, slot,
+> > > > -							      iter.gfn, PG_LEVEL_NUM);
+> > > > +						iter.gfn, PG_LEVEL_NUM,
+> > > > +						is_private_spte(iter.old_spte));
+> > > >  		if (max_mapping_level < iter.level)
+> > > >  			continue;
+> > > 
+> > > This is to merge pages into a large page on the next kvm page fault.  large page
+> > > support is not yet supported.  Let's skip the private slot until large page
+> > > support is done.
 > > 
-> > memfd_restricted() is useful for scenarios where a file descriptor(fd)
-> > can be used as an interface into mm but want to restrict userspace's
-> > ability on the fd. Initially it is designed to provide protections for
-> > KVM encrypted guest memory.
-> > 
-> > Normally KVM uses memfd memory via mmapping the memfd into KVM userspace
-> > (e.g. QEMU) and then using the mmaped virtual address to setup the
-> > mapping in the KVM secondary page table (e.g. EPT). With confidential
-> > computing technologies like Intel TDX, the memfd memory may be encrypted
-> > with special key for special software domain (e.g. KVM guest) and is not
-> > expected to be directly accessed by userspace. Precisely, userspace
-> > access to such encrypted memory may lead to host crash so should be
-> > prevented.
-> > 
-> > memfd_restricted() provides semantics required for KVM guest encrypted
-> > memory support that a fd created with memfd_restricted() is going to be
-> > used as the source of guest memory in confidential computing environment
-> > and KVM can directly interact with core-mm without the need to expose
-> > the memoy content into KVM userspace.
-> > 
-> > KVM userspace is still in charge of the lifecycle of the fd. It should
-> > pass the created fd to KVM. KVM uses the new restrictedmem_get_page() to
-> > obtain the physical memory page and then uses it to populate the KVM
-> > secondary page table entries.
-> > 
-> > The userspace restricted memfd can be fallocate-ed or hole-punched
-> > from userspace. When these operations happen, KVM can get notified
-> > through restrictedmem_notifier, it then gets chance to remove any
-> > mapped entries of the range in the secondary page tables.
-> > 
-> > memfd_restricted() itself is implemented as a shim layer on top of real
-> > memory file systems (currently tmpfs). Pages in restrictedmem are marked
-> > as unmovable and unevictable, this is required for current confidential
-> > usage. But in future this might be changed.
-> > 
-> > By default memfd_restricted() prevents userspace read, write and mmap.
-> > By defining new bit in the 'flags', it can be extended to support other
-> > restricted semantics in the future.
-> > 
-> > The system call is currently wired up for x86 arch.
-> > 
-> > Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> > ---
-> >  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
-> >  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
-> >  include/linux/restrictedmem.h          |  62 ++++++
-> >  include/linux/syscalls.h               |   1 +
-> >  include/uapi/asm-generic/unistd.h      |   5 +-
-> >  include/uapi/linux/magic.h             |   1 +
-> >  kernel/sys_ni.c                        |   3 +
-> >  mm/Kconfig                             |   4 +
-> >  mm/Makefile                            |   1 +
-> >  mm/restrictedmem.c                     | 250 +++++++++++++++++++++++++
-> >  10 files changed, 328 insertions(+), 1 deletion(-)
-> >  create mode 100644 include/linux/restrictedmem.h
-> >  create mode 100644 mm/restrictedmem.c
-> > 
-> > diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
-> > index 320480a8db4f..dc70ba90247e 100644
-> > --- a/arch/x86/entry/syscalls/syscall_32.tbl
-> > +++ b/arch/x86/entry/syscalls/syscall_32.tbl
-> > @@ -455,3 +455,4 @@
-> >  448	i386	process_mrelease	sys_process_mrelease
-> >  449	i386	futex_waitv		sys_futex_waitv
-> >  450	i386	set_mempolicy_home_node		sys_set_mempolicy_home_node
-> > +451	i386	memfd_restricted	sys_memfd_restricted
-> > diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
-> > index c84d12608cd2..06516abc8318 100644
-> > --- a/arch/x86/entry/syscalls/syscall_64.tbl
-> > +++ b/arch/x86/entry/syscalls/syscall_64.tbl
-> > @@ -372,6 +372,7 @@
-> >  448	common	process_mrelease	sys_process_mrelease
-> >  449	common	futex_waitv		sys_futex_waitv
-> >  450	common	set_mempolicy_home_node	sys_set_mempolicy_home_node
-> > +451	common	memfd_restricted	sys_memfd_restricted
-> >  
-> >  #
-> >  # Due to a historical design error, certain syscalls are numbered differently
-> > diff --git a/include/linux/restrictedmem.h b/include/linux/restrictedmem.h
-> > new file mode 100644
-> > index 000000000000..9c37c3ea3180
-> > --- /dev/null
-> > +++ b/include/linux/restrictedmem.h
-> > @@ -0,0 +1,62 @@
-> > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
-> > +#ifndef _LINUX_RESTRICTEDMEM_H
-> > +
-> > +#include <linux/file.h>
-> > +#include <linux/magic.h>
-> > +#include <linux/pfn_t.h>
-> > +
-> > +struct restrictedmem_notifier;
-> > +
-> > +struct restrictedmem_notifier_ops {
-> > +	void (*invalidate_start)(struct restrictedmem_notifier *notifier,
-> > +				 pgoff_t start, pgoff_t end);
-> > +	void (*invalidate_end)(struct restrictedmem_notifier *notifier,
-> > +			       pgoff_t start, pgoff_t end);
-> > +};
-> > +
-> > +struct restrictedmem_notifier {
-> > +	struct list_head list;
-> > +	const struct restrictedmem_notifier_ops *ops;
-> > +};
-> > +
-> > +#ifdef CONFIG_RESTRICTEDMEM
-> > +
-> > +void restrictedmem_register_notifier(struct file *file,
-> > +				     struct restrictedmem_notifier *notifier);
-> > +void restrictedmem_unregister_notifier(struct file *file,
-> > +				       struct restrictedmem_notifier *notifier);
-> > +
-> > +int restrictedmem_get_page(struct file *file, pgoff_t offset,
-> > +			   struct page **pagep, int *order);
-> > +
-> > +static inline bool file_is_restrictedmem(struct file *file)
-> > +{
-> > +	return file->f_inode->i_sb->s_magic == RESTRICTEDMEM_MAGIC;
-> > +}
-> > +
-> > +#else
-> > +
-> > +static inline void restrictedmem_register_notifier(struct file *file,
-> > +				     struct restrictedmem_notifier *notifier)
-> > +{
-> > +}
-> > +
-> > +static inline void restrictedmem_unregister_notifier(struct file *file,
-> > +				       struct restrictedmem_notifier *notifier)
-> > +{
-> > +}
-> > +
-> > +static inline int restrictedmem_get_page(struct file *file, pgoff_t offset,
-> > +					 struct page **pagep, int *order)
-> > +{
-> > +	return -1;
-> > +}
-> > +
-> > +static inline bool file_is_restrictedmem(struct file *file)
-> > +{
-> > +	return false;
-> > +}
-> > +
-> > +#endif /* CONFIG_RESTRICTEDMEM */
-> > +
-> > +#endif /* _LINUX_RESTRICTEDMEM_H */
-> > diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
-> > index a34b0f9a9972..f9e9e0c820c5 100644
-> > --- a/include/linux/syscalls.h
-> > +++ b/include/linux/syscalls.h
-> > @@ -1056,6 +1056,7 @@ asmlinkage long sys_memfd_secret(unsigned int flags);
-> >  asmlinkage long sys_set_mempolicy_home_node(unsigned long start, unsigned long len,
-> >  					    unsigned long home_node,
-> >  					    unsigned long flags);
-> > +asmlinkage long sys_memfd_restricted(unsigned int flags);
-> >  
-> >  /*
-> >   * Architecture-specific system calls
-> > diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
-> > index 45fa180cc56a..e93cd35e46d0 100644
-> > --- a/include/uapi/asm-generic/unistd.h
-> > +++ b/include/uapi/asm-generic/unistd.h
-> > @@ -886,8 +886,11 @@ __SYSCALL(__NR_futex_waitv, sys_futex_waitv)
-> >  #define __NR_set_mempolicy_home_node 450
-> >  __SYSCALL(__NR_set_mempolicy_home_node, sys_set_mempolicy_home_node)
-> >  
-> > +#define __NR_memfd_restricted 451
-> > +__SYSCALL(__NR_memfd_restricted, sys_memfd_restricted)
-> > +
-> >  #undef __NR_syscalls
-> > -#define __NR_syscalls 451
-> > +#define __NR_syscalls 452
-> >  
-> >  /*
-> >   * 32 bit systems traditionally used different
-> > diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-> > index 6325d1d0e90f..8aa38324b90a 100644
-> > --- a/include/uapi/linux/magic.h
-> > +++ b/include/uapi/linux/magic.h
-> > @@ -101,5 +101,6 @@
-> >  #define DMA_BUF_MAGIC		0x444d4142	/* "DMAB" */
-> >  #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
-> >  #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
-> > +#define RESTRICTEDMEM_MAGIC	0x5245534d	/* "RESM" */
-> >  
-> >  #endif /* __LINUX_MAGIC_H__ */
-> > diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-> > index 860b2dcf3ac4..7c4a32cbd2e7 100644
-> > --- a/kernel/sys_ni.c
-> > +++ b/kernel/sys_ni.c
-> > @@ -360,6 +360,9 @@ COND_SYSCALL(pkey_free);
-> >  /* memfd_secret */
-> >  COND_SYSCALL(memfd_secret);
-> >  
-> > +/* memfd_restricted */
-> > +COND_SYSCALL(memfd_restricted);
-> > +
-> >  /*
-> >   * Architecture specific weak syscall entries.
-> >   */
-> > diff --git a/mm/Kconfig b/mm/Kconfig
-> > index 0331f1461f81..0177d53676c7 100644
-> > --- a/mm/Kconfig
-> > +++ b/mm/Kconfig
-> > @@ -1076,6 +1076,10 @@ config IO_MAPPING
-> >  config SECRETMEM
-> >  	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
-> >  
-> > +config RESTRICTEDMEM
-> > +	bool
-> > +	depends on TMPFS
-> > +
-> >  config ANON_VMA_NAME
-> >  	bool "Anonymous VMA name support"
-> >  	depends on PROC_FS && ADVISE_SYSCALLS && MMU
-> > diff --git a/mm/Makefile b/mm/Makefile
-> > index 9a564f836403..6cb6403ffd40 100644
-> > --- a/mm/Makefile
-> > +++ b/mm/Makefile
-> > @@ -117,6 +117,7 @@ obj-$(CONFIG_PAGE_EXTENSION) += page_ext.o
-> >  obj-$(CONFIG_PAGE_TABLE_CHECK) += page_table_check.o
-> >  obj-$(CONFIG_CMA_DEBUGFS) += cma_debug.o
-> >  obj-$(CONFIG_SECRETMEM) += secretmem.o
-> > +obj-$(CONFIG_RESTRICTEDMEM) += restrictedmem.o
-> >  obj-$(CONFIG_CMA_SYSFS) += cma_sysfs.o
-> >  obj-$(CONFIG_USERFAULTFD) += userfaultfd.o
-> >  obj-$(CONFIG_IDLE_PAGE_TRACKING) += page_idle.o
-> > diff --git a/mm/restrictedmem.c b/mm/restrictedmem.c
-> > new file mode 100644
-> > index 000000000000..e5bf8907e0f8
-> > --- /dev/null
-> > +++ b/mm/restrictedmem.c
-> > @@ -0,0 +1,250 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +#include "linux/sbitmap.h"
-> > +#include <linux/pagemap.h>
-> > +#include <linux/pseudo_fs.h>
-> > +#include <linux/shmem_fs.h>
-> > +#include <linux/syscalls.h>
-> > +#include <uapi/linux/falloc.h>
-> > +#include <uapi/linux/magic.h>
-> > +#include <linux/restrictedmem.h>
-> > +
-> > +struct restrictedmem_data {
-> > +	struct mutex lock;
-> > +	struct file *memfd;
-> > +	struct list_head notifiers;
-> > +};
-> > +
-> > +static void restrictedmem_notifier_invalidate(struct restrictedmem_data *data,
-> > +				 pgoff_t start, pgoff_t end, bool notify_start)
-> > +{
-> > +	struct restrictedmem_notifier *notifier;
-> > +
-> > +	mutex_lock(&data->lock);
-> > +	list_for_each_entry(notifier, &data->notifiers, list) {
-> > +		if (notify_start)
-> > +			notifier->ops->invalidate_start(notifier, start, end);
-> > +		else
-> > +			notifier->ops->invalidate_end(notifier, start, end);
-> > +	}
-> > +	mutex_unlock(&data->lock);
-> > +}
-> > +
-> > +static int restrictedmem_release(struct inode *inode, struct file *file)
-> > +{
-> > +	struct restrictedmem_data *data = inode->i_mapping->private_data;
-> > +
-> > +	fput(data->memfd);
-> > +	kfree(data);
-> > +	return 0;
-> > +}
-> > +
-> > +static long restrictedmem_fallocate(struct file *file, int mode,
-> > +				    loff_t offset, loff_t len)
-> > +{
-> > +	struct restrictedmem_data *data = file->f_mapping->private_data;
-> > +	struct file *memfd = data->memfd;
-> > +	int ret;
-> > +
-> > +	if (mode & FALLOC_FL_PUNCH_HOLE) {
-> > +		if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
-> > +			return -EINVAL;
-> > +	}
-> > +
-> > +	restrictedmem_notifier_invalidate(data, offset, offset + len, true);
-> > +	ret = memfd->f_op->fallocate(memfd, mode, offset, len);
-> > +	restrictedmem_notifier_invalidate(data, offset, offset + len, false);
-> > +	return ret;
-> > +}
+> > So what your suggestion is passing in a 'false' at this time for
+> > 'is_private'? Unless we will decide not use the above is_private_spte,
+> > this code does not hurt, right? is_private_spte() return false before
+> > we finally get chance to add the large page support.
 > 
-> In v8 there was some discussion about potentially passing the page/folio
-> and order as part of the invalidation callback, I ended up needing
-> something similar for SEV-SNP, and think it might make sense for other
-> platforms. This main reasoning is:
+> Let's pass false always for now.
 
-In that context what we talked on is the inaccessible_get_pfn(), I was
-not aware there is need for invalidation callback as well.
-
-> 
->   1) restoring kernel directmap:
-> 
->      Currently SNP (and I believe TDX) need to either split or remove kernel
->      direct mappings for restricted PFNs, since there is no guarantee that
->      other PFNs within a 2MB range won't be used for non-restricted
->      (which will cause an RMP #PF in the case of SNP since the 2MB
->      mapping overlaps with guest-owned pages)
-
-Has the splitting and restoring been a well-discussed direction? I'm
-just curious whether there is other options to solve this issue.
-
-> 
->      Previously we were able to restore 2MB mappings to some degree
->      since both shared/restricted pages were all pinned, so anything
->      backed by a THP (or hugetlb page once that is implemented) at guest
->      teardown could be restored as 2MB direct mapping.
-> 
->      Invalidation seems like the most logical time to have this happen,
-
-Currently invalidation only happens at user-initiated fallocate(). It
-does not cover the VM teardown case where the restoring might also be
-expected to be handled.
-
->      but whether or not to restore as 2MB requires the order to be 2MB
->      or larger, and for GPA range being invalidated to cover the entire
->      2MB (otherwise it means the page was potentially split and some
->      subpages free back to host already, in which case it can't be
->      restored as 2MB).
-> 
->   2) Potentially less invalidations:
->       
->      If we pass the entire folio or compound_page as part of
->      invalidation, we only needed to issue 1 invalidation per folio.
-
-I'm not sure I agree, the current invalidation covers the whole range
-that passed from userspace and the invalidation is invoked only once for
-each usrspace fallocate().
-
-> 
->   3) Potentially useful for hugetlbfs support:
-> 
->      One issue with hugetlbfs is that we don't support splitting the
->      hugepage in such cases, which was a big obstacle prior to UPM. Now
->      however, we may have the option of doing "lazy" invalidations where
->      fallocate(PUNCH_HOLE, ...) won't free a shmem-allocate page unless
->      all the subpages within the 2M range are either hole-punched, or the
->      guest is shut down, so in that way we never have to split it. Sean
->      was pondering something similar in another thread:
-> 
->        https://lore.kernel.org/linux-mm/YyGLXXkFCmxBfu5U@google.com/
-> 
->      Issuing invalidations with folio-granularity ties in fairly well
->      with this sort of approach if we end up going that route.
-
-There is semantics difference between the current one and the proposed
-one: The invalidation range is exactly what userspace passed down to the
-kernel (being fallocated) while the proposed one will be subset of that
-(if userspace-provided addr/size is not aligned to power of two), I'm
-not quite confident this difference has no side effect.
-
-> 
-> I need to rework things for v9, and we'll probably want to use struct
-> folio instead of struct page now, but as a proof-of-concept of sorts this
-> is what I'd added on top of v8 of your patchset to implement 1) and 2):
-> 
->   https://github.com/mdroth/linux/commit/127e5ea477c7bd5e4107fd44a04b9dc9e9b1af8b
-> 
-> Does an approach like this seem reasonable? Should be work this into the
-> base restricted memslot support?
-
-If the above mentioned semantics difference is not a problem, I don't
-have strong objection on this.
-
-Sean, since you have much better understanding on this, what is your
-take on this?
+Good to me. Thanks.
 
 Chao
-> 
-> Thanks,
-> 
-> Mike
+> -- 
+> Isaku Yamahata <isaku.yamahata@gmail.com>
