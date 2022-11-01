@@ -2,282 +2,224 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA34B614383
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 04:15:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AFD8B6143B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  1 Nov 2022 04:39:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229766AbiKADPf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 31 Oct 2022 23:15:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58362 "EHLO
+        id S229730AbiKADjP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 31 Oct 2022 23:39:15 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229597AbiKADPa (ORCPT
+        with ESMTP id S229487AbiKADjO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 31 Oct 2022 23:15:30 -0400
-Received: from mx08-001d1705.pphosted.com (mx08-001d1705.pphosted.com [185.183.30.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 513946365;
-        Mon, 31 Oct 2022 20:15:28 -0700 (PDT)
-Received: from pps.filterd (m0209321.ppops.net [127.0.0.1])
-        by mx08-001d1705.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A10wfus020062;
-        Tue, 1 Nov 2022 03:15:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=S1;
- bh=L6+L7ljaOfO9dtScRL8jkZTuC6H4sTpD33E8YoV7MwE=;
- b=RCKrL41nKtm69kl9uOSWkM+/sKBuyPDFmHa0MkKy2+3ba+2S5OndWFi5xtwYtEbrHAjJ
- eC1Amyzj7HKIuKhmY6VAfC7mMjQGV7Fon/ejUczVod9wLJzeInOLvuqbEsB8uFvoUOOL
- D2WEl7quCC7YPBKu36bG6H8X/P+E/Hpq3C6q9MsIPnRNoriggJjKmhrodkErz152fgmm
- VMXybIL7OBp9SF98Nb7nq1wh5VF0/y8PfpHMnUFtFXZ5N1VzmOMstPeOCpf8G4M/+miO
- BOJutsauhF8y9sgBiyBx/tkvDm3qXEy9q7RlNOmkv230PfPg6XZrA+pF86xuwL/qYOUZ ow== 
-Received: from apc01-tyz-obe.outbound.protection.outlook.com (mail-tyzapc01lp2048.outbound.protection.outlook.com [104.47.110.48])
-        by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3kgsk5tj14-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 01 Nov 2022 03:15:16 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kVeRCA4cYSPLDPFKTTBsB5O5mMkhCA/ux29iZ27qovC4YpOuec0CUY2a00RDaeJxQGuUQDk36mEKaHLllphNIoRL/LzYiGKjl+Trmj9xAkpVHEtmD9ysYtZEQvFNqNt9qkFTmy9HlQUUE4rcA2pkrrMEJ4xXblcPRp4WnEG5xJXTEfkmmJBCloORNuBvv7INBSIxDK4AkHb2VCM0yZKlLWYsIEmReivrwSthwKJRXSvc+NsvLLCT9Wf/917I5UjkQ/s92Yc7kDtb9XuWL0+iOVTh9vmrvZ79AT18gzCvBJZSrBdQ1rlyDsV2mftB0KjW2dsBhAq4ZcZdZ7GNeUxXAg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=L6+L7ljaOfO9dtScRL8jkZTuC6H4sTpD33E8YoV7MwE=;
- b=ZBR+dWrQxajEjBuw+O5HqzH2J+6HVnlS9MKIigRMED5+rOO95U+lGliOQpQekVbqhDN2FlPB4z6ddcSJdRWSh5PA7Wj6Z1bM6qh+cWEV5gSdzbssEuuXQF/KC4lMLUE4I+gtPjx3i+eqcS6m7EUJB1HELdr5HCRlC0ldlfIlxXSWiAPiTvUqCIFlE8I3F5ElAW9kWYZuuZa1Mhf6O0cyjGbc1nDuXT2A0awyI9qQAFIdJmri1vaXoZl21GslpVTtleKmcd9Dgz+I77A9Fom4kwK0qXg3ruBIl7JXJxc9l6lmoanBMQQffcHzqXHpA9Ms8NdQYidw57Rb/aanuFrttg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
- by SEZPR04MB6904.apcprd04.prod.outlook.com (2603:1096:101:f3::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.15; Tue, 1 Nov
- 2022 03:15:10 +0000
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::708b:1447:3c12:c222]) by PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::708b:1447:3c12:c222%9]) with mapi id 15.20.5769.015; Tue, 1 Nov 2022
- 03:15:10 +0000
-From:   "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-To:     Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>
-CC:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v1 2/2] exfat: hint the empty entry which at the end of
- cluster chain
-Thread-Topic: [PATCH v1 2/2] exfat: hint the empty entry which at the end of
- cluster chain
-Thread-Index: AdjjiwOaYD2AtaT5Ts+/ofBfIWokxAJZ3ofhAAa6O9AAJHKhkA==
-Date:   Tue, 1 Nov 2022 03:15:10 +0000
-Message-ID: <PUZPR04MB63168196EA8FB4352871DD4881369@PUZPR04MB6316.apcprd04.prod.outlook.com>
-References: <CGME20221019072854epcas1p2a2b272458803045b4dfa95b17fb4f547@epcas1p2.samsung.com>
- <PUZPR04MB631604A0BBD29713D3F8DAB0812B9@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <014c01d8ecf0$6e74bc80$4b5e3580$@samsung.com>
- <CAKYAXd9omiOTAaAWSnzE5jCQFDL8Nkok_wm_OAYwxVpgcCxykg@mail.gmail.com>
- <PUZPR04MB6316E0E22B1CAAAB25E02C3581379@PUZPR04MB6316.apcprd04.prod.outlook.com>
-In-Reply-To: <PUZPR04MB6316E0E22B1CAAAB25E02C3581379@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|SEZPR04MB6904:EE_
-x-ms-office365-filtering-correlation-id: 2d6cf999-decf-4176-b3a6-08dabbb74902
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: ybW4WxX9EAWtv/nF3em4t8Bjs+vDBF8ulcAxO4ggfLk1UbpWlNeTZ7B8cPXt9oX5YrcJCp7QVlUqB/E05IqbbTzPsGC00jJol+XhhSvVMfLcmxy6Kv6864bRK52zf1BpDl/7SrMOsT+9XTAhj8MU3ACT8rRiZyb9PwzQ3p0HROVE1eL8RzK3JTfIPHskngeNf9r1+TziiIcFSoy4dZA0t6Cb+74KeiTN6VeDy/bjxO1zRgilnARuGdL1tcOuYPFRu1LKRs6YxC4DNsizb++qBjYdA9r8vTVF4/oSCfRS0eEz0eoCJmem8er5ZdPzLzUBgzBVKRDb7069RR7vEBe+8rr40+2K0XnGlMKTS/ytTVdNZYHIaH6Ko83/8wtSJREySKPP32diaWb7Uqq5PLVt3Pqcj7ALdUlNPxSuqakXGuOMYk0bDLKHRljdk8+A6f7PMuhTneBXjdps+vL9eux9nWABWpWxd1peY8EYU4iKmYA1oiPqD9jv6tejYsdovByP1FHmbszJgE15wvEu10na2m8m3uahCltcT5zIvU8u2VzXyrPDrk0QVAl9rCqNbdJRx9Rhp7bDNg/z2QQJfq7njPwIFjmg74EvTpv4U2fnh1w2PNW/Wuty1EXG6WfzQasmXu/azt0dAV6cf1l2hT5bhO6hooCWyFujWX8PSRWf8yUiKJiUdG6au0CmDumdmVDP/gKive4LK+hkVLAqvG/tE6MO6zEVFsSH5LPS2Z9EPW93KVmmF0vM8K6nff/vYiiROgwXeo7CRYaeLDaj/5dwOg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(396003)(136003)(39860400002)(346002)(376002)(366004)(451199015)(26005)(9686003)(4001150100001)(41300700001)(2906002)(186003)(83380400001)(8936002)(38070700005)(82960400001)(52536014)(122000001)(5660300002)(38100700002)(33656002)(478600001)(55016003)(7696005)(71200400001)(64756008)(66556008)(86362001)(66446008)(66476007)(53546011)(76116006)(66946007)(4326008)(8676002)(54906003)(316002)(110136005)(6506007);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?NEpnbkZ6bm9ycGkwOW5zMklJYk53NzJZekdqRDFxOTUwL2NyQW9NeXM3amFU?=
- =?utf-8?B?ZS9RQUh2ZmRnZ1hhR1dLN25UcUgxUGs3M3NRWkQ1WDU4RG8wa1JZRWoyd2di?=
- =?utf-8?B?NFVSeXorb1RyWEZYRSswYUxJUEh4dTdvaTRyckk2MG0wVWcrUkVJMENtZzcr?=
- =?utf-8?B?NXpnbXk0RWpqREQ2UzU1MzNIcnFjc3JENW40RlNrekpXaGFCNnJhV2RISGJN?=
- =?utf-8?B?Z2o0K1F3cUxqY0RCL0lNNXBZZWxEbHlBekwyUEJiVFZRc1RJd2tPVkwxSGx4?=
- =?utf-8?B?aUNVUHM5UUQxelBoKzFDbFJXTHVkWm1BTGFvUmlhTS9WK0xOcjlxamRQSHBv?=
- =?utf-8?B?YVJaNTVYdi85NXF1NCtlQmFwUENJL2NBSm94NU5ZVmJkRXR0MTE3dXlMbjBS?=
- =?utf-8?B?U0Q2U2dEOWhPQnBOU21DOC9YYncrOEUvYXp5WjEvVzd2Uzl3alBMdGVLN3Vt?=
- =?utf-8?B?alpGWmM2QUM5am9WYS82OXRrVGNWRWFJQWRtQjg4YUk1b1JzYlhKdTUxb2Nt?=
- =?utf-8?B?UEgrQ0RjWGNxa0Z2Mlc2bHJTY2ZGVDNFU3A1MGlONDkyMjI4dW1aUVFVcFdN?=
- =?utf-8?B?V0pKNDRiNGVqbmkwZWFhQ3NQZ2U3UEpwMFJYZ3lFbHl2UUJXSGIyem9zajdV?=
- =?utf-8?B?SXp3SzhoeTJiUmNNS1VPUG5oRkhWYmdOcSsxWjljZ2RtWHRJYWJBM3BaUGZj?=
- =?utf-8?B?Qjk4RjlGc3BpNjJSTFZvRExBVGljeW9NaU9Mb1hTM0RQbnhrM2NXaUE4V2VL?=
- =?utf-8?B?UzBoWk0rdGViMXpHcDVvbzhXMVNaVzlkazB2VVI3VFVRR01OUTRhY1d0U09r?=
- =?utf-8?B?TEFBWll1U0NsZHN3VUF6aml0Ri9wRWg4Nlh2RmwxbkNhYzl1ZGo2Vk55ZHJY?=
- =?utf-8?B?MndmZ2lsUWVMT2FBekplUUNDR0o4QnVacGM2a3ZMVitRZlpmWmVDQUVzWERN?=
- =?utf-8?B?M0ovVkhkaU9BTzE0eFk3clNtK2JYdXd0N2xxTVFSSkg3RVZWTUQrSWo3WS9q?=
- =?utf-8?B?TVRhRGVZOEp2R0lwaUxkSThLZ3l6Z2JIdjBTZTUrSUJ6eDNwTjgvL0Z6QUJO?=
- =?utf-8?B?VUZCc3ZyQ3IrZEtqR0N0ZE5sQmY4UkE5WnY0N05XNXJ2MDV2UzdkQ1MzQ3VI?=
- =?utf-8?B?K1drR3ErMFNwVXM0VndaL1Y2dlhyWlMrRXZCalJKNGtpbU4zRjhvMk1NWGRo?=
- =?utf-8?B?VFZKa21MYkNuR1lWdjdVWXpXNGxBL2piVmdDd3NlODJzLzdGaDF1a2ZORDMx?=
- =?utf-8?B?QkhKQUFCSldmSVFPSWtGUUpybDA4SWZJZVpYNjBISHlkWi91N1QyVGtnT3pW?=
- =?utf-8?B?MWxqTGRIWUtFLzI3cDU4dCtVdUtlN3diNzRvR1pXODE5MzZ3SkVuamJhdnhT?=
- =?utf-8?B?bW9vK0dkVDFxV2EvL0Rnc0pjQjBOYWhaN0hMQ1hVbUZ4b1R3ZkFSSU1TOEN2?=
- =?utf-8?B?dlVKc0djZHNYMlJrY0x2KzNMVjd0VlNoeHNQOXFxcHJBY0RDaTVGREpXSVp2?=
- =?utf-8?B?dlovV1hTTWt3Q2lmUmt3ekpmcmdjWUZjcVhFWEFKdVZDNG5XTDVXcmZOekls?=
- =?utf-8?B?TU1rUU56SndNMzBobVlqK1gzVnBCRXhISVJTQVp3R21xbEF5eHdrTExMVGQ5?=
- =?utf-8?B?dG5xdHRwZmZRL1FMUmNxYUx6QTBLbzZCSitKWXR6M3ZEaDcxY29qd2xPM3NR?=
- =?utf-8?B?ZUtONXgzL0I5dzBNU3dhS2Nta2xVUFFsR29CRnIydVE1OFV3OWRmQzVYeHRG?=
- =?utf-8?B?RUJKTVFSUkdqQWNLUG0reEhtV1VOSmk1WVdCNzN1eUxDYnVqTURqdU9Ibm5P?=
- =?utf-8?B?V2lBSkxGZjJLSGZSdXZQK0lCdFFZMHFBSnRJSTNOSjArUVUwMytUWHpjM2FW?=
- =?utf-8?B?UTNRc3FTclNkcjhNK1VZUzNhb0pUak1Nd25IMlZxclMwaUpZaUFvekE0bGE4?=
- =?utf-8?B?bnpTN0doRDNHZHV4ajJKWm5ESVRVU1N3V04rQmEwYXNVbGg0S3h5NnBncXlF?=
- =?utf-8?B?eGxJaldjN291Mng0UUdNQ3Z0MmlvSk9SaWhJNk5VM2R1dVByVG1UNTVrMElx?=
- =?utf-8?B?RER5TTdPNWZKQzN0Qit4MGJHNFBTd0dMdTdEOHlhY3JvS28xKyt1Z2VCc0V0?=
- =?utf-8?Q?djQ1mXzo3LTBXmva6Vr4K+80b?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Mon, 31 Oct 2022 23:39:14 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 376F7EE05;
+        Mon, 31 Oct 2022 20:39:13 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CA95F614C3;
+        Tue,  1 Nov 2022 03:39:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36759C433B5;
+        Tue,  1 Nov 2022 03:39:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667273952;
+        bh=/LfRLrhx456LTdLay34Ew8rVFiuA5qJyFGA2PdjwWks=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cEcKDSQ+cFYAyB2B0B9GvWeSjQ8OsQxchh9lo9/2E5MYiGj9ee2k1QjbjMH2ZW4E6
+         zkMUrz0f/Ck9mPstVDuwfogkrEl/Aw4FieRA2GjvxNNAqTokDGEgHjEIIvOGVVaD/M
+         fLDEL75dUOa081x+zzDYBhK8vMKwbOvYmiMI62wsMXMB3yQhP1J728BHLPgTWj8leU
+         U8+KDms226xZ8QQVDmZoBURMZe9NH4MK7/19WO9faipBh2rZtJIkU/R0gyMpr3c+th
+         hsg/0u1JP0XmUCb/Vs6aaCSs66Jh85W05Eqc8l6IDtaEjvm3wR/hiVgDoBkSkrmFzm
+         bbDn3U8Qk2jQQ==
+Date:   Mon, 31 Oct 2022 20:39:11 -0700
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: xfs, iomap: fix data corrupton due to stale cached iomaps
+Message-ID: <Y2CU3zm/qxajHRp+@magnolia>
+References: <20221101003412.3842572-1-david@fromorbit.com>
 MIME-Version: 1.0
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2d6cf999-decf-4176-b3a6-08dabbb74902
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2022 03:15:10.4357
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wwu4BHDS0uvWKZDCBBpeyWja2WFMNGi4Xg1J9CgYOpWsH4QeWRKUI+m8me0xNAYnDmTNezP2VXb3dxFbmnZzag==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR04MB6904
-X-Proofpoint-GUID: eRzJaFg5SPxWwxfIdI9z8SqbQHvhKtU2
-X-Proofpoint-ORIG-GUID: eRzJaFg5SPxWwxfIdI9z8SqbQHvhKtU2
-X-Sony-Outbound-GUID: eRzJaFg5SPxWwxfIdI9z8SqbQHvhKtU2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.205,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-10-31_22,2022-10-31_01,2022-06-22_01
-X-Spam-Status: No, score=-3.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221101003412.3842572-1-david@fromorbit.com>
+X-Spam-Status: No, score=-8.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-QXQgdGhpcyBzdGFnZSwgd2UgY2FuIGNoZWNrIHRoaXMgY2FzZSBpbiBleGZhdF9zZWFyY2hfZW1w
-dHlfc2xvdCgpIGJ5IHJlbW92aW5nIHRoZSBmb2xsb3dpbmcgaWYgc3RhdGVtZW50Lg0KDQotICAg
-ICAgICAgICAgICAgaWYgKG51bV9lbnRyaWVzIDw9IGhpbnRfZmVtcC0+Y291bnQpIHsNCi0gICAg
-ICAgICAgICAgICAgICAgICAgIGhpbnRfZmVtcC0+ZWlkeCA9IEVYRkFUX0hJTlRfTk9ORTsNCi0g
-ICAgICAgICAgICAgICAgICAgICAgIHJldHVybiBkZW50cnk7DQotICAgICAgICAgICAgICAgfQ0K
-DQpXaGF0IGRvIHlvdSB0aGluaz8NCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBG
-cm9tOiBNbywgWXVlemhhbmcNCj4gU2VudDogTW9uZGF5LCBPY3RvYmVyIDMxLCAyMDIyIDc6MDUg
-UE0NCj4gVG86IE5hbWphZSBKZW9uIDxsaW5raW5qZW9uQGtlcm5lbC5vcmc+OyBTdW5nam9uZyBT
-ZW8NCj4gPHNqMTU1Ny5zZW9Ac2Ftc3VuZy5jb20+DQo+IENjOiBsaW51eC1mc2RldmVsIDxsaW51
-eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LWtlcm5lbA0KPiA8bGludXgta2VybmVs
-QHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVjdDogUkU6IFtQQVRDSCB2MSAyLzJdIGV4ZmF0OiBo
-aW50IHRoZSBlbXB0eSBlbnRyeSB3aGljaCBhdCB0aGUgZW5kIG9mDQo+IGNsdXN0ZXIgY2hhaW4N
-Cj4gDQo+ID4gPiBUaGlzIHNlZW1zIGxpa2UgYSB2ZXJ5IGdvb2QgYXBwcm9hY2guIFBlcmhhcHMg
-dGhlIGtleSBmaXggdGhhdA0KPiA+ID4gaW1wcm92ZWQgcGVyZm9ybWFuY2Ugc2VlbXMgdG8gYmUg
-dGhlIGhhbmRsaW5nIG9mIGNhc2VzIHdoZXJlIGVtcHR5DQo+ID4gPiBzcGFjZSB3YXMgbm90IGZv
-dW5kIGFuZCBlbmRlZCB3aXRoIFRZUEVfVU5VU0VELg0KPiA+ID4NCj4gPiA+IEhvd2V2ZXIsIHRo
-ZXJlIGFyZSBjb25jZXJucyBhYm91dCB0cnVzdGluZyBhbmQgdXNpbmcgdGhlIG51bWJlciBvZg0K
-PiA+ID4gZnJlZSBlbnRyaWVzIGFmdGVyIFRZUEVfVU5VU0VEIGNhbGN1bGF0ZWQgYmFzZWQgb24g
-ZGlyZWN0b3J5IHNpemUuDQo+ID4gPiBUaGlzIGlzIGJlY2F1c2UsIHVubGlrZSBleEZBVCBTcGVj
-LiwgaW4gdGhlIHJlYWwgd29ybGQsIHVuZXhwZWN0ZWQNCj4gPiA+IFRZUEVfVU5VU0VEIGVudHJp
-ZXMgbWF5IGV4aXN0LiA6KCBUaGF0J3Mgd2h5DQo+ID4gPiBleGZhdF9zZWFyY2hfZW1wdHlfc2xv
-dCgpIGNoZWNrcyBpZiB0aGVyZSBpcyBhbnkgdmFsaWQgZW50cnkgYWZ0ZXINCj4gPiA+IFRZUEVf
-VU5VU0VELiBJbiBteSBleHBlcmllbmNlLCB0aGV5IGNhbiBiZSBjYXVzZWQgYnkgYSB3cm9uZyBG
-Uw0KPiA+ID4gZHJpdmVyIGFuZCBIL1cgZGVmZWN0cywgYW5kIHRoZSBwcm9iYWJpbGl0eSBvZiBv
-Y2N1cnJlbmNlIGlzIG5vdCBsb3cuDQo+ID4gPg0KPiA+ID4gVGhlcmVmb3JlLCB3aGVuIHRoZSBs
-b29rdXAgZW5kcyB3aXRoIFRZUEVfVU5VU0VELCBpZiB0aGVyZSBhcmUgbm8NCj4gPiA+IGVtcHR5
-IGVudHJpZXMgZm91bmQgeWV0LCBpdCB3b3VsZCBiZSBiZXR0ZXIgdG8gc2V0IHRoZSBsYXN0IGVt
-cHR5DQo+ID4gPiBlbnRyeSB0byBoaW50X2ZlbXAuZWlkeCBhbmQgc2V0IGhpbnRfZmVtcC5jb3Vu
-dCB0byAwLg0KPiA+ID4gSWYgc28sIGV2ZW4gaWYgdGhlIGxvb2t1cCBlbmRzIHdpdGggVFlQRV9V
-TlVTRUQsDQo+ID4gPiBleGZhdF9zZWFyY2hfZW1wdHlfc2xvdCgpIGNhbiBzdGFydCBzZWFyY2hp
-bmcgZnJvbSB0aGUgcG9zaXRpb24gb2YNCj4gPiA+IHRoZSBsYXN0IGVtcHR5IGVudHJ5IGFuZCBj
-aGVjayB3aGV0aGVyIHRoZXJlIGFyZSBhY3R1YWxseSBlbXB0eQ0KPiA+ID4gZW50cmllcyBhcyBt
-YW55IGFzIHRoZSByZXF1aXJlZCBudW1fZW50cmllcyBhcyBub3cuDQo+ID4gPg0KPiA+ID4gd2hh
-dCBkbyB5b3UgdGhpbms/DQo+IA0KPiBXZSBwbGFuIHRvIGFkZCBhIG5ldyBoZWxwZXIgZXhmYXRf
-Z2V0X2VtcHR5X2RlbnRyeV9zZXQoKSwgdGhpcyBoZWxwZXIgaXMNCj4gY2FsbGVkIGJlZm9yZSBz
-ZXR0aW5nIHRoZSBlbnRyeSB0eXBlLCBpdCBjYWNoZXMgYW5kIHRoZW4gY2hlY2tzIGZvciBlbXB0
-eQ0KPiBlbnRyaWVzKENoZWNrLW9uLXdyaXRlIGlzIHNhZmVyIHRoYW4gY2hlY2tpbmcgd2hlbiBs
-b29raW5nIGZvciBlbXB0eSBkaXJlY3RvcnkNCj4gZW50cmllcykuDQo+IA0KPiAgICAgICAgZm9y
-IChpID0gMDsgaSA8IGVzLT5udW1fZW50cmllczsgaSsrKSB7DQo+ICAgICAgICAgICAgICAgIGVw
-ID0gZXhmYXRfZ2V0X2RlbnRyeV9jYWNoZWQoZXMsIGkpOw0KPiAgICAgICAgICAgICAgICB0eXBl
-ID0gZXhmYXRfZ2V0X2VudHJ5X3R5cGUoZXApOw0KPiAgICAgICAgICAgICAgICBpZiAodHlwZSA9
-PSBUWVBFX1VOVVNFRCkNCj4gICAgICAgICAgICAgICAgICAgICAgICB1bnVzZWRfaGl0ID0gdHJ1
-ZTsNCj4gICAgICAgICAgICAgICAgZWxzZSBpZiAodHlwZSA9PSBUWVBFX0RFTEVURUQpIHsNCj4g
-ICAgICAgICAgICAgICAgICAgICAgICBpZiAodW51c2VkX2hpdCkNCj4gICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgIGdvdG8gZXJyb3I7DQo+ICAgICAgICAgICAgICAgIH0gZWxzZQ0KPiAg
-ICAgICAgICAgICAgICAgICAgICAgIGdvdG8gZXJyb3I7DQo+ICAgICAgICB9DQo+IA0KPiBUaGlz
-IGNvZGUgaXMgbm90IHJlYWR5LCB3ZSBhcmUgdGVzdGluZyBhbmQgaW50ZXJuYWwgcmV2aWV3aW5n
-Lg0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiA+IEZyb206IE5hbWphZSBK
-ZW9uIDxsaW5raW5qZW9uQGtlcm5lbC5vcmc+DQo+ID4gU2VudDogTW9uZGF5LCBPY3RvYmVyIDMx
-LCAyMDIyIDI6MzIgUE0NCj4gPiBUbzogU3VuZ2pvbmcgU2VvIDxzajE1NTcuc2VvQHNhbXN1bmcu
-Y29tPjsgTW8sIFl1ZXpoYW5nDQo+ID4gPFl1ZXpoYW5nLk1vQHNvbnkuY29tPg0KPiA+IENjOiBs
-aW51eC1mc2RldmVsIDxsaW51eC1mc2RldmVsQHZnZXIua2VybmVsLm9yZz47IGxpbnV4LWtlcm5l
-bA0KPiA+IDxsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnPg0KPiA+IFN1YmplY3Q6IFJlOiBb
-UEFUQ0ggdjEgMi8yXSBleGZhdDogaGludCB0aGUgZW1wdHkgZW50cnkgd2hpY2ggYXQgdGhlDQo+
-ID4gZW5kIG9mIGNsdXN0ZXIgY2hhaW4NCj4gPg0KPiA+IEFkZCBtaXNzaW5nIENjOiBZdWV6aGFu
-ZyBNby4NCj4gPg0KPiA+IDIwMjItMTAtMzEgMTU6MTcgR01UKzA5OjAwLCBTdW5nam9uZyBTZW8g
-PHNqMTU1Ny5zZW9Ac2Ftc3VuZy5jb20+Og0KPiA+ID4gSGksIFl1ZXpoYW5nIE1vLA0KPiA+ID4N
-Cj4gPiA+PiBBZnRlciB0cmF2ZXJzaW5nIGFsbCBkaXJlY3RvcnkgZW50cmllcywgaGludCB0aGUg
-ZW1wdHkgZGlyZWN0b3J5DQo+ID4gPj4gZW50cnkgbm8gbWF0dGVyIHdoZXRoZXIgb3Igbm90IHRo
-ZXJlIGFyZSBlbm91Z2ggZW1wdHkgZGlyZWN0b3J5DQo+ID4gPj4gZW50cmllcy4NCj4gPiA+Pg0K
-PiA+ID4+IEFmdGVyIHRoaXMgY29tbWl0LCBoaW50IHRoZSBlbXB0eSBkaXJlY3RvcnkgZW50cmll
-cyBsaWtlIHRoaXM6DQo+ID4gPj4NCj4gPiA+PiAxLiBIaW50IHRoZSBkZWxldGVkIGRpcmVjdG9y
-eSBlbnRyaWVzIGlmIGVub3VnaDsgMi4gSGludCB0aGUNCj4gPiA+PiBkZWxldGVkIGFuZCB1bnVz
-ZWQgZGlyZWN0b3J5IGVudHJpZXMgd2hpY2ggYXQgdGhlDQo+ID4gPj4gICAgZW5kIG9mIHRoZSBj
-bHVzdGVyIGNoYWluIG5vIG1hdHRlciB3aGV0aGVyIGVub3VnaCBvciBub3QoQWRkDQo+ID4gPj4g
-ICAgYnkgdGhpcyBjb21taXQpOw0KPiA+ID4+IDMuIElmIG5vIGFueSBlbXB0eSBkaXJlY3Rvcnkg
-ZW50cmllcywgaGludCB0aGUgZW1wdHkgZGlyZWN0b3J5DQo+ID4gPj4gICAgZW50cmllcyBpbiB0
-aGUgbmV3IGNsdXN0ZXIoQWRkIGJ5IHRoaXMgY29tbWl0KS4NCj4gPiA+Pg0KPiA+ID4+IFRoaXMg
-YXZvaWRzIHJlcGVhdGVkIHRyYXZlcnNhbCBvZiBkaXJlY3RvcnkgZW50cmllcywgcmVkdWNlcyBD
-UFUNCj4gPiA+PiB1c2FnZSwgYW5kIGltcHJvdmVzIHRoZSBwZXJmb3JtYW5jZSBvZiBjcmVhdGlu
-ZyBmaWxlcyBhbmQNCj4gPiA+PiBkaXJlY3Rvcmllcyhlc3BlY2lhbGx5IG9uIGxvdy1wZXJmb3Jt
-YW5jZSBDUFVzKS4NCj4gPiA+Pg0KPiA+ID4+IFRlc3QgY3JlYXRlIDUwMDAgZmlsZXMgaW4gYSBj
-bGFzcyA0IFNEIGNhcmQgb24gaW14NnEtc2FicmVsaXRlDQo+ID4gPj4gd2l0aDoNCj4gPiA+Pg0K
-PiA+ID4+IGZvciAoKGk9MDtpPDU7aSsrKSk7IGRvDQo+ID4gPj4gICAgc3luYw0KPiA+ID4+ICAg
-IHRpbWUgKGZvciAoKGo9MTtqPD0xMDAwO2orKykpOyBkbyB0b3VjaCBmaWxlJCgoaSoxMDAwK2op
-KTsgZG9uZSkNCj4gPiA+PiBkb25lDQo+ID4gPj4NCj4gPiA+PiBUaGUgbW9yZSBmaWxlcywgdGhl
-IG1vcmUgcGVyZm9ybWFuY2UgaW1wcm92ZW1lbnRzLg0KPiA+ID4+DQo+ID4gPj4gICAgICAgICAg
-ICAgQmVmb3JlICAgQWZ0ZXIgICAgSW1wcm92ZW1lbnQNCj4gPiA+PiAgICAxfjEwMDAgICAyNS4z
-NjBzICAyMi4xNjhzICAxNC40MCUNCj4gPiA+PiAxMDAxfjIwMDAgICAzOC4yNDJzICAyOC43MnNz
-ICAzMy4xNSUNCj4gPiA+PiAyMDAxfjMwMDAgICA0OS4xMzRzICAzNS4wMzdzICA0MC4yMyUNCj4g
-PiA+PiAzMDAxfjQwMDAgICA2Mi4wNDJzICA0MS42MjRzICA0OS4wNSUNCj4gPiA+PiA0MDAxfjUw
-MDAgICA3My42MjlzICA0Ni43NzJzICA1Ny40MiUNCj4gPiA+Pg0KPiA+ID4+IFNpZ25lZC1vZmYt
-Ynk6IFl1ZXpoYW5nIE1vIDxZdWV6aGFuZy5Nb0Bzb255LmNvbT4NCj4gPiA+PiBSZXZpZXdlZC1i
-eTogQW5keSBXdSA8QW5keS5XdUBzb255LmNvbT4NCj4gPiA+PiBSZXZpZXdlZC1ieTogQW95YW1h
-IFdhdGFydSA8d2F0YXJ1LmFveWFtYUBzb255LmNvbT4NCj4gPiA+PiAtLS0NCj4gPiA+PiAgZnMv
-ZXhmYXQvZGlyLmMgICB8IDI2ICsrKysrKysrKysrKysrKysrKysrKystLS0tDQo+ID4gPj4gIGZz
-L2V4ZmF0L25hbWVpLmMgfCAyMiArKysrKysrKysrKysrKy0tLS0tLS0tDQo+ID4gPj4gIDIgZmls
-ZXMgY2hhbmdlZCwgMzYgaW5zZXJ0aW9ucygrKSwgMTIgZGVsZXRpb25zKC0pDQo+ID4gPj4NCj4g
-PiA+PiBkaWZmIC0tZ2l0IGEvZnMvZXhmYXQvZGlyLmMgYi9mcy9leGZhdC9kaXIuYyBpbmRleA0K
-PiA+ID4+IGE1NjlmMjg1ZjRmZC4uNzYwMGYzNTIxMjQ2IDEwMDY0NA0KPiA+ID4+IC0tLSBhL2Zz
-L2V4ZmF0L2Rpci5jDQo+ID4gPj4gKysrIGIvZnMvZXhmYXQvZGlyLmMNCj4gPiA+PiBAQCAtOTM2
-LDE4ICs5MzYsMjUgQEAgc3RydWN0IGV4ZmF0X2VudHJ5X3NldF9jYWNoZQ0KPiA+ID4+ICpleGZh
-dF9nZXRfZGVudHJ5X3NldChzdHJ1Y3Qgc3VwZXJfYmxvY2sgKnNiLA0KPiA+ID4+DQo+ID4gPj4g
-IHN0YXRpYyBpbmxpbmUgdm9pZCBleGZhdF9oaW50X2VtcHR5X2VudHJ5KHN0cnVjdCBleGZhdF9p
-bm9kZV9pbmZvICplaSwNCj4gPiA+PiAgCQlzdHJ1Y3QgZXhmYXRfaGludF9mZW1wICpjYW5kaV9l
-bXB0eSwgc3RydWN0IGV4ZmF0X2NoYWluICpjbHUsDQo+ID4gPj4gLQkJaW50IGRlbnRyeSwgaW50
-IG51bV9lbnRyaWVzKQ0KPiA+ID4+ICsJCWludCBkZW50cnksIGludCBudW1fZW50cmllcywgaW50
-IGVudHJ5X3R5cGUpDQo+ID4gPj4gIHsNCj4gPiA+PiAgCWlmIChlaS0+aGludF9mZW1wLmVpZHgg
-PT0gRVhGQVRfSElOVF9OT05FIHx8DQo+ID4gPj4gIAkgICAgZWktPmhpbnRfZmVtcC5jb3VudCA8
-IG51bV9lbnRyaWVzIHx8DQo+ID4gPj4gIAkgICAgZWktPmhpbnRfZmVtcC5laWR4ID4gZGVudHJ5
-KSB7DQo+ID4gPj4gKwkJaW50IHRvdGFsX2VudHJpZXMgPSBFWEZBVF9CX1RPX0RFTihpX3NpemVf
-cmVhZCgmZWktDQo+ID4gPj4gPnZmc19pbm9kZSkpOw0KPiA+ID4+ICsNCj4gPiA+PiAgCQlpZiAo
-Y2FuZGlfZW1wdHktPmNvdW50ID09IDApIHsNCj4gPiA+PiAgCQkJY2FuZGlfZW1wdHktPmN1ciA9
-ICpjbHU7DQo+ID4gPj4gIAkJCWNhbmRpX2VtcHR5LT5laWR4ID0gZGVudHJ5Ow0KPiA+ID4+ICAJ
-CX0NCj4gPiA+Pg0KPiA+ID4+IC0JCWNhbmRpX2VtcHR5LT5jb3VudCsrOw0KPiA+ID4+IC0JCWlm
-IChjYW5kaV9lbXB0eS0+Y291bnQgPT0gbnVtX2VudHJpZXMpDQo+ID4gPj4gKwkJaWYgKGVudHJ5
-X3R5cGUgPT0gVFlQRV9VTlVTRUQpDQo+ID4gPj4gKwkJCWNhbmRpX2VtcHR5LT5jb3VudCArPSB0
-b3RhbF9lbnRyaWVzIC0gZGVudHJ5Ow0KPiA+ID4NCj4gPiA+IFRoaXMgc2VlbXMgbGlrZSBhIHZl
-cnkgZ29vZCBhcHByb2FjaC4gUGVyaGFwcyB0aGUga2V5IGZpeCB0aGF0DQo+ID4gPiBpbXByb3Zl
-ZCBwZXJmb3JtYW5jZSBzZWVtcyB0byBiZSB0aGUgaGFuZGxpbmcgb2YgY2FzZXMgd2hlcmUgZW1w
-dHkNCj4gPiA+IHNwYWNlIHdhcyBub3QgZm91bmQgYW5kIGVuZGVkIHdpdGggVFlQRV9VTlVTRUQu
-DQo+ID4gPg0KPiA+ID4gSG93ZXZlciwgdGhlcmUgYXJlIGNvbmNlcm5zIGFib3V0IHRydXN0aW5n
-IGFuZCB1c2luZyB0aGUgbnVtYmVyIG9mDQo+ID4gPiBmcmVlIGVudHJpZXMgYWZ0ZXIgVFlQRV9V
-TlVTRUQgY2FsY3VsYXRlZCBiYXNlZCBvbiBkaXJlY3Rvcnkgc2l6ZS4NCj4gPiA+IFRoaXMgaXMg
-YmVjYXVzZSwgdW5saWtlIGV4RkFUIFNwZWMuLCBpbiB0aGUgcmVhbCB3b3JsZCwgdW5leHBlY3Rl
-ZA0KPiA+ID4gVFlQRV9VTlVTRUQgZW50cmllcyBtYXkgZXhpc3QuIDooIFRoYXQncyB3aHkNCj4g
-PiA+IGV4ZmF0X3NlYXJjaF9lbXB0eV9zbG90KCkgY2hlY2tzIGlmIHRoZXJlIGlzIGFueSB2YWxp
-ZCBlbnRyeSBhZnRlcg0KPiA+ID4gVFlQRV9VTlVTRUQuIEluIG15IGV4cGVyaWVuY2UsIHRoZXkg
-Y2FuIGJlIGNhdXNlZCBieSBhIHdyb25nIEZTDQo+ID4gPiBkcml2ZXIgYW5kIEgvVyBkZWZlY3Rz
-LCBhbmQgdGhlIHByb2JhYmlsaXR5IG9mIG9jY3VycmVuY2UgaXMgbm90IGxvdy4NCj4gPiA+DQo+
-ID4gPiBUaGVyZWZvcmUsIHdoZW4gdGhlIGxvb2t1cCBlbmRzIHdpdGggVFlQRV9VTlVTRUQsIGlm
-IHRoZXJlIGFyZSBubw0KPiA+ID4gZW1wdHkgZW50cmllcyBmb3VuZCB5ZXQsIGl0IHdvdWxkIGJl
-IGJldHRlciB0byBzZXQgdGhlIGxhc3QgZW1wdHkNCj4gPiA+IGVudHJ5IHRvIGhpbnRfZmVtcC5l
-aWR4IGFuZCBzZXQgaGludF9mZW1wLmNvdW50IHRvIDAuDQo+ID4gPiBJZiBzbywgZXZlbiBpZiB0
-aGUgbG9va3VwIGVuZHMgd2l0aCBUWVBFX1VOVVNFRCwNCj4gPiA+IGV4ZmF0X3NlYXJjaF9lbXB0
-eV9zbG90KCkgY2FuIHN0YXJ0IHNlYXJjaGluZyBmcm9tIHRoZSBwb3NpdGlvbiBvZg0KPiA+ID4g
-dGhlIGxhc3QgZW1wdHkgZW50cnkgYW5kIGNoZWNrIHdoZXRoZXIgdGhlcmUgYXJlIGFjdHVhbGx5
-IGVtcHR5DQo+ID4gPiBlbnRyaWVzIGFzIG1hbnkgYXMgdGhlIHJlcXVpcmVkIG51bV9lbnRyaWVz
-IGFzIG5vdy4NCj4gPiA+DQo+ID4gPiB3aGF0IGRvIHlvdSB0aGluaz8NCj4gPiA+DQo+ID4gPj4g
-KwkJZWxzZQ0KPiA+ID4+ICsJCQljYW5kaV9lbXB0eS0+Y291bnQrKzsNCj4gPiA+PiArDQo+ID4g
-Pj4gKwkJaWYgKGNhbmRpX2VtcHR5LT5jb3VudCA9PSBudW1fZW50cmllcyB8fA0KPiA+ID4+ICsJ
-CSAgICBjYW5kaV9lbXB0eS0+Y291bnQgKyBjYW5kaV9lbXB0eS0+ZWlkeCA9PSB0b3RhbF9lbnRy
-aWVzKQ0KPiA+ID4+ICAJCQllaS0+aGludF9mZW1wID0gKmNhbmRpX2VtcHR5Ow0KPiA+ID4+ICAJ
-fQ0KPiA+ID4+ICB9DQo+ID4gPiBbc25pcF0NCj4gPiA+PiAtLQ0KPiA+ID4+IDIuMjUuMQ0KPiA+
-ID4NCj4gPiA+DQo=
+On Tue, Nov 01, 2022 at 11:34:05AM +1100, Dave Chinner wrote:
+> Recently a customer workload encountered a data corruption in a
+> specific multi-threaded write operation. The workload combined
+> racing unaligned adjacent buffered writes with low memory conditions
+> that caused both writeback and memory reclaim to race with the
+> writes.
+> 
+> The result of this was random partial blocks containing zeroes
+> instead of the correct data.  The underlying problem is that iomap
+> caches the write iomap for the duration of the write() operation,
+> but it fails to take into account that the extent underlying the
+> iomap can change whilst the write is in progress.
+
+Wheeeee....
+
+> The short story is that an iomap can span mutliple folios, and so
+> under low memory writeback can be cleaning folios the write()
+> overlaps. Whilst the overlapping data is cached in memory, this
+> isn't a problem, but because the folios are now clean they can be
+> reclaimed. Once reclaimed, the write() does the wrong thing when
+> re-instantiating partial folios because the iomap no longer reflects
+> the underlying state of the extent. e.g. it thinks the extent is
+> unwritten, so it zeroes the partial range, when in fact the
+> underlying extent is now written and so it should have read the data
+
+DOH!!
+
+> from disk.  This is how we get random zero ranges in the file
+> instead of the correct data.
+> 
+> The gory details of the race condition can be found here:
+> 
+> https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
+> 
+> Fixing the problem has two aspects. The first aspect of the problem
+> is ensuring that iomap can detect a stale cached iomap during a
+> write in a race-free manner. We already do this stale iomap
+> detection in the writeback path, so we have a mechanism for
+> detecting that the iomap backing the data range may have changed
+> and needs to be remapped.
+> 
+> In the case of the write() path, we have to ensure that the iomap is
+> validated at a point in time when the page cache is stable and
+> cannot be reclaimed from under us. We also need to validate the
+> extent before we start performing any modifications to the folio
+> state or contents. Combine these two requirements together, and the
+> only "safe" place to validate the iomap is after we have looked up
+> and locked the folio we are going to copy the data into, but before
+> we've performed any initialisation operations on that folio.
+> 
+> If the iomap fails validation, we then mark it stale, unlock the
+> folio and end the write. This effectively means a stale iomap
+> results in a short write.
+
+Does this short write echo all the way out to userspace?  Or do we
+merely go 'round iomap_iter() again?
+
+> Filesystems should already be able to
+> handle this, as write operations can end short for many reasons and
+> need to iterate through another mapping cycle to be completed. Hence
+> the iomap changes needed to detect and handle stale iomaps during
+> write() operations is relatively simple....
+> 
+> However, the assumption is that filesystems should already be able
+> to handle write failures safely, and that's where the second
+> (first?) part of the problem exists. That is, handling a partial
+> write is harder than just "punching out the unused delayed
+> allocation extent". This is because mmap() based faults can race
+> with writes, and if they land in the delalloc region that the write
+> allocated, then punching out the delalloc region can cause data
+> corruption.
+> 
+> This data corruption problem is exposed by generic/346 when iomap is
+> converted to detect stale iomaps during write() operations. Hence
+> write failure in the filesytems needs to handle the fact that the
+
+s/sytems/systems/
+
+> write() in progress doesn't necessarily own the data in the page
+> cache over the range of the delalloc extent it just allocated.
+> 
+> As a result, we can't just truncate the page cache over the range
+> the write() didn't reach and punch all the delalloc extent. We have
+> to walk the page cache over the untouched range and skip over any
+> dirty data region in the cache in that range. Which is ....
+> non-trivial.
+> 
+> That is, iterating the page cache has to handle partially populated
+> folios (i.e. block size < page size) that contain data. The data
+> might be discontiguous within a folio. Indeed, there might be
+> *multiple* discontiguous data regions within a single folio. And to
+> make matters more complex, multi-page folios mean we just don't know
+> how many sub-folio regions we might have to iterate to find all
+> these regions. All the corner cases between the conversions and
+> rounding between filesystem block size, folio size and multi-page
+> folio size combined with unaligned write offsets kept breaking my
+> brain.
+> 
+> Eventually, I realised that if the XFS code tracked the processed
+> write regions by byte ranges instead of fileysetm block or page
+> cache index, we could simply use mapping_seek_hole_data() to find
+> the start and end of each discrete data region within the range we
+> needed to scan. SEEK_DATA finds the start of the cached data region,
+> SEEK_HOLE finds the end of the region. THese are byte based
+> interfaces that understand partially uptodate folio regions, and so
+> can iterate discrete sub-folio data regions directly. This largely
+> solved the problem of discovering the dirty regions we need to keep
+> the delalloc extent over.
+
+Heh.  Clever!
+
+> Of course, now xfs/196 fails. This is a error injection test that is
+> supposed to exercise the delalloc extent recover code that the above
+> fixes just completely reworked. the error injection assumes that it
+> can just truncate the page cache over the write and then punch out
+> the delalloc extent completely. This is fundamentally broken, and
+> only has been working by chance - the chance is that writes are page
+> aligned and page aligned writes don't install large folios in the
+> page cache.
+
+Side question -- should we introduce a couple of debug knobs to slow
+down page cache write and writeback so that we can make it easier to
+(cough) experiment with races?
+
+Now that we've been bitten hard by the writeback race, I wrote a
+testcase to exercise it.  The problem was solved long ago so the only
+way you can tell its working is to inject debugging printks and look for
+them, but I feel like we ought to have test points for these two serious
+corruption problems.
+
+> IOWs, with sub-folio block size, and not know what size folios are
+> in the cache, we can't actually guarantee that we can remove the
+
+Is that supposed to read "...and not knowing what size folios..."?
+
+> cached dirty folios from the cache via truncation, and hence the new
+> code will not remove the delalloc extents under those dirty folios.
+> As a result the error injection results is writing zeroes to disk
+> rather that removing the delalloc extents from memory. I can't make
+
+rather *than*?
+
+> this error injection to work the way it was intended, so I removed
+> it. The code that it is supposed to exercise is now exercised every time we
+> detect a stale iomap, so we have much better coverage of the failed
+> write error handling than the error injection provides us with,
+> anyway....
+> 
+> So, this passes fstests on 1kb and 4kb block sizes and the data
+> corruption reproducer does not detect data corruption, so this set
+> of fixes is /finally/ something I'd consider ready for merge.
+> Comments and testing welcome!
+
+Urrrk.  Thank you for your work on this. :)
+
+/me functionally braindead on halloween candy, will read the code
+tomorrow.  Well ok we'll see how long it takes curiosity to get the
+better of me...
+
+--D
+
+> -Dave.
+> 
+> Version 1:
+> - complete rework of iomap stale detection
+> - complete rework of XFS partial delalloc write error handling.
+> 
+> Original RFC:
+> - https://lore.kernel.org/linux-xfs/20220921082959.1411675-1-david@fromorbit.com/
+> 
+> 
