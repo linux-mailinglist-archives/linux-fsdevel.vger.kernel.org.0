@@ -2,52 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44FCA615ED1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Nov 2022 10:05:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2546C615F19
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Nov 2022 10:12:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231196AbiKBJE5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Nov 2022 05:04:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34438 "EHLO
+        id S230420AbiKBJM3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Nov 2022 05:12:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231134AbiKBJES (ORCPT
+        with ESMTP id S230400AbiKBJLs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Nov 2022 05:04:18 -0400
+        Wed, 2 Nov 2022 05:11:48 -0400
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F5BC29343;
-        Wed,  2 Nov 2022 02:03:15 -0700 (PDT)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D184286F6
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Nov 2022 02:10:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=RC1G2wyQRnwjxQ7LmWyOKL4toH6YzFwXRb5xKhPM3q0=; b=iBV6EUoRGIFcxtAJY+CRI/wveu
-        Ke8HJK3bFYjjGHrLoEMGU0XAX1qpzT6JAxOoIDr0df8cSbl+j6KCHuIKxsGWkBvilNOzZY9yIDHqv
-        +PbM7eIFMWCJkgj5z/tV38MVxkanYTMIfQBxw/99Ng+QWHjqFfGR9Ytf6oCj9KgC2OiJlnWF/78YY
-        U3ijoEkzaTTwcG/eXNaVWo3U8UgANqqkxIuGVjSRssK52NVNWm/E312mGLL7n8sXHmzheWwAzvYYZ
-        1i7tgHCEhGXpsLzfCnGWQUZzm7aFLKXrqLu70WmymP/BL2xTMxssOPE99oxXxm3ERzoXbNJB9D09K
-        K3XnaC6Q==;
+        bh=/89QMp6WjlwuYcBf8tvrD9DBEoepLSCyiJfq47hf0fU=; b=lRKhOcDHq1EWvuQCrx/g/CfZuM
+        OwDe5lOPfYjNI6eSlcOq3zg8vGqkvn4ZIM/Dwi9yKWWqp/6frGkfiy1MGh1P3gF138eLifyKq11M9
+        fXPi0ejr+ZlHUeKaS9SNfYKP2A0y9olm6uhZvbIdNDUj4Fbp3robjU0D0HwJ8MsOQznO4Gpcvp20I
+        Ut7DgigE2VAfJva9fWQa0HShwmbVr/heVOx7/ode0yEWGgSTyEZn98p9uag0ISldeNeeIin7BXizP
+        j4mQgfOQ9mQFJg76j3C3GVfl1xe/VjxFhO4S9V0HJLp5gAYq7IvTxiWr87AyEuzHmrzXFowu+VAVd
+        x9qzHunA==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oq9eR-009MOI-EI; Wed, 02 Nov 2022 09:03:11 +0000
-Date:   Wed, 2 Nov 2022 02:03:11 -0700
+        id 1oq9lj-009vF7-U3; Wed, 02 Nov 2022 09:10:43 +0000
+Date:   Wed, 2 Nov 2022 02:10:43 -0700
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Dave Chinner <david@fromorbit.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Aravinda Herle <araherle@in.ibm.com>,
-        David Howells <dhowells@redhat.com>
-Subject: Re: [RFC 2/2] iomap: Support subpage size dirty tracking to improve
- write performance
-Message-ID: <Y2IyTx0VwXMxzs0G@infradead.org>
-References: <cover.1666928993.git.ritesh.list@gmail.com>
- <886076cfa6f547d22765c522177d33cf621013d2.1666928993.git.ritesh.list@gmail.com>
- <20221028210422.GC3600936@dread.disaster.area>
- <Y19EXLfn8APg3adO@casper.infradead.org>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-mm@kvack.org, Uladzislau Rezki <urezki@gmail.com>,
+        David Howells <dhowells@redhat.com>,
+        Dave Chinner <david@fromorbit.com>,
+        linux-fsdevel@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ira Weiny <ira.weiny@intel.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Luis Chamberlain <mcgrof@kernel.org>
+Subject: Re: [PATCH v2 1/2] vmalloc: Factor vmap_alloc() out of vm_map_ram()
+Message-ID: <Y2I0E/cpHQK9iuCS@infradead.org>
+References: <20221101201828.1170455-1-willy@infradead.org>
+ <20221101201828.1170455-2-willy@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y19EXLfn8APg3adO@casper.infradead.org>
+In-Reply-To: <20221101201828.1170455-2-willy@infradead.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -58,60 +56,67 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Oct 31, 2022 at 03:43:24AM +0000, Matthew Wilcox wrote:
-> I agree that bufferheads do bottom-up dirty tracking, but I don't think
-> that what Ritesh is doing here is bottom-up dirty tracking.  Buffer
-> heads expose an API to dirty a block, which necessarily goes bottom-up.
-> There's no API here to dirty a block.  Instead there's an API to dirty
-> a range of a folio, so we're still top-down; we're just keeping track
-> of it in a more precise way.
-
-Agreed.
-
-> If there is any dirty region, the folio must be marked dirty (otherwise
-> we'll never know that it needs to be written back).  The interesting
-> question (as your paragraph below hints) is whether removing the dirty
-> part of a folio from a file marks the folio clean.  I believe that's
-> optional, but it's probably worth doing.
-
-Also agreed.
-
-> > What happens with direct extent manipulation like fallocate()
-> > operations? These invalidate the parts of the page cache over the
-> > range we are punching, shifting, etc, without interacting directly
-> > with iomap, so do we now have to ensure that the sub-folio dirty
-> > regions are also invalidated correctly? i.e. do functions like
-> > xfs_flush_unmap_range() need to become iomap infrastructure so that
-> > they can update sub-folio dirty ranges correctly?
+On Tue, Nov 01, 2022 at 08:18:27PM +0000, Matthew Wilcox (Oracle) wrote:
+> Introduce vmap_alloc() to simply get the address space.  This allows
+> for code sharing in the next patch.
 > 
-> I'm slightly confused by this question.  As I understand the various
-> fallocate operations, they start by kicking out all the folios affected
-> by the operation (generally from the start of the operation to EOF),
-> so we'd writeback the (dirty part of) folios which are dirty, then
-> invalidate the folios in cache.  I'm not sure there's going to be
-> much difference.
+> Suggested-by: Uladzislau Rezki <urezki@gmail.com>
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  mm/vmalloc.c | 41 +++++++++++++++++++++++------------------
+>  1 file changed, 23 insertions(+), 18 deletions(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index ccaa461998f3..dcab1d3cf185 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2230,6 +2230,27 @@ void vm_unmap_ram(const void *mem, unsigned int count)
+>  }
+>  EXPORT_SYMBOL(vm_unmap_ram);
+>  
+> +static void *vmap_alloc(size_t size, int node)
+> +{
+> +	void *mem;
+> +
+> +	if (likely(size <= (VMAP_MAX_ALLOC * PAGE_SIZE))) {
+> +		mem = vb_alloc(size, GFP_KERNEL);
+> +		if (IS_ERR(mem))
+> +			mem = NULL;
+> +	} else {
+> +		struct vmap_area *va;
+> +		va = alloc_vmap_area(size, PAGE_SIZE,
+> +				VMALLOC_START, VMALLOC_END, node, GFP_KERNEL);
+> +		if (IS_ERR(va))
+> +			mem = NULL;
+> +		else
+> +			mem = (void *)va->va_start;
+> +	}
+> +
+> +	return mem;
 
-Yes.  As far as I can tell all pagecache manipulation for the
-fallocate operations is driven by the file system and it is
-only done by those the punch/zero/move ranges.  The file system
-then goes though the normal pagecache truncate helpers rounded to
-the block size, which through the ops should do the right thing.
+This reads really strange, why not return the ERR_PTR and do:
 
+static void *vmap_alloc(size_t size, int node)
+{
+	if (unlikely(size > VMAP_MAX_ALLOC * PAGE_SIZE)) {
+		struct vmap_area *va;
 
-> Yes.  This is also going to be a performance problem.  Marking a folio as
-> dirty is no longer just setting the bit in struct folio and the xarray
-> but also setting all the bits in iop->state.  Depending on the size
-> of the folio, and the fs blocksize, this could be quite a lot of bits.
-> eg a 2MB folio with a 1k block size is 2048 bits (256 bytes, 6 cachelines
-> (it dirties the spinlock in cacheline 0, then the bitmap occupies 3 full
-> cachelines and 2 partial ones)).
+		va = alloc_vmap_area(size, PAGE_SIZE, VMALLOC_START,
+				     VMALLOC_END, node, GFP_KERNEL);
+		if (IS_ERR(va))
+			return ERR_CAST(va);
+		return (void *)va->va_start;
+	}
 
-We can always optimize by having a bit for the fairly common all dirty
-case and only track and look at the array if that is no the case.
+	return vb_alloc(size, GFP_KERNEL);
+}
 
-> filesystems right now.  Dave Howells' netfs infrastructure is trying
-> to solve the problem for everyone (and he's been looking at iomap as
-> inspiration for what he's doing).
+> @@ -2247,24 +2268,8 @@ EXPORT_SYMBOL(vm_unmap_ram);
+>  void *vm_map_ram(struct page **pages, unsigned int count, int node)
+>  {
+>  	unsigned long size = (unsigned long)count << PAGE_SHIFT;
+> +	void *mem = vmap_alloc(size, node);
+> +	unsigned long addr = (unsigned long)mem;
 
-Btw, I never understod why the network file systems don't just use
-iomap.  There is nothing block specific in the core iomap code.
+And here we still need the error check anyway, no matter if it is for
+NULL or an ERR_PTR.
