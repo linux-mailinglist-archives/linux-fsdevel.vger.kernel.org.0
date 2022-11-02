@@ -2,177 +2,140 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB63D616F71
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Nov 2022 22:11:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 207C9616F7E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Nov 2022 22:14:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231464AbiKBVLu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Nov 2022 17:11:50 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52852 "EHLO
+        id S231536AbiKBVO3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Nov 2022 17:14:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229531AbiKBVLr (ORCPT
+        with ESMTP id S231476AbiKBVOY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Nov 2022 17:11:47 -0400
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1C61E001
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Nov 2022 14:11:46 -0700 (PDT)
-Received: by mail-pj1-x1032.google.com with SMTP id p15-20020a17090a348f00b002141615576dso3294149pjb.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Nov 2022 14:11:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SPWKli0K9g7XkFx6xypne4c3+CX6qdwNxS/7IkeGbtU=;
-        b=iIB0p5QgiO8PsfJZ9pQQWVfx3VH3l9pvgluQSfwJJLO9r0FIEUVpRFYz09Rq6k62Pb
-         52ZQSAu2nDbq0WUJP4cU4PfwqT0OQAPel3ORu/MUy26Kx4Cj7jbS7+J2lSMN3EpWxB8J
-         BaKfU3yAtQ5KZe2GZqSljCbzeqPxCncp1T+cvwwcWhXvvuZUgHEy48rpLCuYRwtjm4bX
-         w+giuGil1HKmcdJ5B+0wOeoOVQg15HcN4tDGOeIbvtI3cBq8Sh5FT7HfmAyUZA4v2UzU
-         l8ViJKFPgSUjD+1NIcv/nWra7s6vVlkZG2sl/SKaHpt4vvUwdLyrA805WQFbD1gRradC
-         5XlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SPWKli0K9g7XkFx6xypne4c3+CX6qdwNxS/7IkeGbtU=;
-        b=bYtE9Dg/rBFwOGHxCpszrNhasAHW8UQBRW8wNcatT5FrP+VyQ8/L0yoblZ6Gdv/vtd
-         SwkvYijLEYJXnG6XIUzwBbTOH3AGs7XuHRps85E368qjjXG2NuHdGehLoxxbhyme4b3I
-         LGGaxpyJnXVnShiFCWfhI5V3QnvQSaJztNE9yKiZzE5lSpMSohkCO7f1Clvn3DXgW8wr
-         WpczuCzr7V8duJrUxJBezeWyN+VsFBoyqVWJNBmSpnQhCPgeS0sQIbYVvR10DEh4LGHc
-         UUfWgUZIZAZ/PlOZkfFo+l8Cmle5myfWOFiOK49/wYqfgGTLiN2PYZ5jXv+9ni8aYN80
-         upqg==
-X-Gm-Message-State: ACrzQf1QDyD2PXhVgw5jV2Wl/YmiCaICIporn49HrJc5xVOs1g2empec
-        WCobRIdpp+7YDI33fqSNsP7/mQ==
-X-Google-Smtp-Source: AMsMyM5WNBP4EYlCbYTPSywJck0p5G9cCvONx7D9oyz1DdVI9vEGIkhoNqNjYd0I2ofxht7ZAfGuuA==
-X-Received: by 2002:a17:902:d592:b0:17a:582:4eb with SMTP id k18-20020a170902d59200b0017a058204ebmr26803155plh.40.1667423506277;
-        Wed, 02 Nov 2022 14:11:46 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
-        by smtp.gmail.com with ESMTPSA id f26-20020aa7969a000000b0056bfd4a2702sm8860859pfk.45.2022.11.02.14.11.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Nov 2022 14:11:45 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oqL1S-009WQj-2E; Thu, 03 Nov 2022 08:11:42 +1100
-Date:   Thu, 3 Nov 2022 08:11:42 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/7] xfs: write page faults in iomap are not buffered
- writes
-Message-ID: <20221102211142.GA3600936@dread.disaster.area>
-References: <20221101003412.3842572-1-david@fromorbit.com>
- <20221101003412.3842572-2-david@fromorbit.com>
- <Y2KW1Y0kKvXtZDVr@magnolia>
+        Wed, 2 Nov 2022 17:14:24 -0400
+Received: from wnew2-smtp.messagingengine.com (wnew2-smtp.messagingengine.com [64.147.123.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06AABBC8C;
+        Wed,  2 Nov 2022 14:14:14 -0700 (PDT)
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailnew.west.internal (Postfix) with ESMTP id A8C8E2B06827;
+        Wed,  2 Nov 2022 17:14:09 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute4.internal (MEProxy); Wed, 02 Nov 2022 17:14:13 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+         h=cc:cc:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1667423649; x=1667430849; bh=ya
+        z7HB+tA0RP33F5tMpk/jLLItyrZaFvVEGA2nFMTHI=; b=Ky05TEuWIr83oUh3MP
+        VKNL8ENuHV9gUlhetBL9nyBnWkmhW3b7eJIJQvsEX4i8mrWKj7fAD2YoYyBb89E9
+        ISKn14UJ31abDLZFWzZCCaQnTLi78oerrmjr+5hmV9sA3hFI3L8ZV1Kiu7AX9QXR
+        PDBaluynehd9n3eiw+gtrXx+RWa959jyR7nphlxGnum8rHgJTzq02ZExi1nIGFid
+        EJO+kCiPv0YbKVpF7c2OrK1fuI/2gu/r+1T0aqwqS9P/ypb1+DPbh35ga9d9WHYp
+        FylKYS+Rg2UR7pBcU7lZ5OPVMq4ERDjJJCu0ll46FiB93Ht82Uh6f5WuN9oIyHug
+        tC5Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm3; t=1667423649; x=1667430849; bh=yaz7HB+tA0RP33F5tMpk/jLLItyr
+        ZaFvVEGA2nFMTHI=; b=kXuKgSJSeQyH8zkQnQLj2ogT1FjQ404UQUbzOXrHjtoL
+        O5jybhnZTvUTvWSm0JarvjTauAp3ZsZ+r+wmdYPHpVddWzaXL8v+kKFMg4LptKuU
+        za4Nn6AFZHdJ8Ew6kOJjOVtyV+RbvW0VGJP+2xRX3dEy0QIR7itrmJOonvxViJoT
+        AoF3E4PNZiUZ9aaP1YucG7Uv9v8Eqwth9//su3HfO8kpjAFt2r6d9BaJJidv+bKw
+        mNZEQxt0P2yMJj0u53Zl8vkHso9nSQJzXMgYh5xL1AvTD3D0XGhltZ2SmyCHlpRE
+        TQHb95HDxl2N1T/q559g2R0z+nX6Aaenk06fEmM9mA==
+X-ME-Sender: <xms:n91iY-Xiau9PyhDECPWzFgSUDYb5YvoQDfa-aFayS-W-TkmT-EE9PQ>
+    <xme:n91iY6l1bgFgvYiO7TIQuOyH8InOlHtvWmclxCUM0Brvq0SEJSum6PG8m5a0XQRlh
+    XyrODlUak8pt2VGdKM>
+X-ME-Received: <xmr:n91iYyZH6tYal8m3G_iR8obDtjV5uHdUdfR2NM2ruYYM4CfTnC6uoZBViw5Wcm_5RZe2Bw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrudejgddugeeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdttddttddtvdenucfhrhhomhepfdfmihhr
+    ihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlsehshhhuthgvmhhovhdrnh
+    grmhgvqeenucggtffrrghtthgvrhhnpefhieeghfdtfeehtdeftdehgfehuddtvdeuheet
+    tddtheejueekjeegueeivdektdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhvrdhnrghmvg
+X-ME-Proxy: <xmx:n91iY1Xbl82GIObQKlhVWjYLikh-vdemfP8sXrF8OKJdnJGBq_55bQ>
+    <xmx:n91iY4mFVh0Wa1sREv4w7MfcVUVMVuR6uCI7ESrbU6QB3ckNyn8ixg>
+    <xmx:n91iY6eNAqPKPeE5l9TMMHmoRplO_cTttQ8P4OovIUVmAbCtz4rcFQ>
+    <xmx:od1iY_xvsCuIie0PpHuS7NS8eqps2ru8p5ovcRyadUjFuTveg1l2617acAo>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 2 Nov 2022 17:14:06 -0400 (EDT)
+Received: by box.shutemov.name (Postfix, from userid 1000)
+        id 5751D104449; Thu,  3 Nov 2022 00:14:04 +0300 (+03)
+Date:   Thu, 3 Nov 2022 00:14:04 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Michael Roth <michael.roth@amd.com>
+Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        mhocko@suse.com, Muchun Song <songmuchun@bytedance.com>,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
+ create restricted user memory
+Message-ID: <20221102211404.l5whyif3j3k67fv2@box.shutemov.name>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
+ <20221031174738.fklhlia5fmaiinpe@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y2KW1Y0kKvXtZDVr@magnolia>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <20221031174738.fklhlia5fmaiinpe@amd.com>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 02, 2022 at 09:12:05AM -0700, Darrick J. Wong wrote:
-> On Tue, Nov 01, 2022 at 11:34:06AM +1100, Dave Chinner wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > When we reserve a delalloc region in xfs_buffered_write_iomap_begin,
-> > we mark the iomap as IOMAP_F_NEW so that the the write context
-> > understands that it allocated the delalloc region.
-> > 
-> > If we then fail that buffered write, xfs_buffered_write_iomap_end()
-> > checks for the IOMAP_F_NEW flag and if it is set, it punches out
-> > the unused delalloc region that was allocated for the write.
-> > 
-> > The assumption this code makes is that all buffered write operations
-> > that can allocate space are run under an exclusive lock (i_rwsem).
-> > This is an invalid assumption: page faults in mmap()d regions call
-> > through this same function pair to map the file range being faulted
-> > and this runs only holding the inode->i_mapping->invalidate_lock in
-> > shared mode.
-> > 
-> > IOWs, we can have races between page faults and write() calls that
-> > fail the nested page cache write operation that result in data loss.
-> > That is, the failing iomap_end call will punch out the data that
-> > the other racing iomap iteration brought into the page cache. This
-> > can be reproduced with generic/34[46] if we arbitrarily fail page
-> > cache copy-in operations from write() syscalls.
-> > 
-> > Code analysis tells us that the iomap_page_mkwrite() function holds
-> > the already instantiated and uptodate folio locked across the iomap
-> > mapping iterations. Hence the folio cannot be removed from memory
-> > whilst we are mapping the range it covers, and as such we do not
-> > care if the mapping changes state underneath the iomap iteration
-> > loop:
-> > 
-> > 1. if the folio is not already dirty, there is no writeback races
-> >    possible.
-> > 2. if we allocated the mapping (delalloc or unwritten), the folio
-> >    cannot already be dirty. See #1.
-> > 3. If the folio is already dirty, it must be up to date. As we hold
-> >    it locked, it cannot be reclaimed from memory. Hence we always
-> >    have valid data in the page cache while iterating the mapping.
-> > 4. Valid data in the page cache can exist when the underlying
-> >    mapping is DELALLOC, UNWRITTEN or WRITTEN. Having the mapping
-> >    change from DELALLOC->UNWRITTEN or UNWRITTEN->WRITTEN does not
-> >    change the data in the page - it only affects actions if we are
-> >    initialising a new page. Hence #3 applies  and we don't care
-> >    about these extent map transitions racing with
-> >    iomap_page_mkwrite().
-> > 5. iomap_page_mkwrite() checks for page invalidation races
-> >    (truncate, hole punch, etc) after it locks the folio. We also
-> >    hold the mapping->invalidation_lock here, and hence the mapping
-> >    cannot change due to extent removal operations while we are
-> >    iterating the folio.
-> > 
-> > As such, filesystems that don't use bufferheads will never fail
-> > the iomap_folio_mkwrite_iter() operation on the current mapping,
-> > regardless of whether the iomap should be considered stale.
-> > 
-> > Further, the range we are asked to iterate is limited to the range
-> > inside EOF that the folio spans. Hence, for XFS, we will only map
-> > the exact range we are asked for, and we will only do speculative
-> > preallocation with delalloc if we are mapping a hole at the EOF
-> > page. The iterator will consume the entire range of the folio that
-> > is within EOF, and anything beyond the EOF block cannot be accessed.
-> > We never need to truncate this post-EOF speculative prealloc away in
-> > the context of the iomap_page_mkwrite() iterator because if it
-> > remains unused we'll remove it when the last reference to the inode
-> > goes away.
+On Mon, Oct 31, 2022 at 12:47:38PM -0500, Michael Roth wrote:
 > 
-> Why /do/ we need to trim the delalloc reservations after a failed
-> write(), anyway?  I gather it's because we don't want to end up with a
-> clean page backed by a delalloc reservation because writeback will never
-> get run to convert that reservation into real space, which means we've
-> leaked the reservation until someone dirties the page?
+> In v8 there was some discussion about potentially passing the page/folio
+> and order as part of the invalidation callback, I ended up needing
+> something similar for SEV-SNP, and think it might make sense for other
+> platforms. This main reasoning is:
+> 
+>   1) restoring kernel directmap:
+> 
+>      Currently SNP (and I believe TDX) need to either split or remove kernel
+>      direct mappings for restricted PFNs, since there is no guarantee that
+>      other PFNs within a 2MB range won't be used for non-restricted
+>      (which will cause an RMP #PF in the case of SNP since the 2MB
+>      mapping overlaps with guest-owned pages)
 
-Yup, we leak the delalloc reservation and extent until the inode is
-evicted from cache. What happens when reads/page faults happen over
-that page from that point is now an interesting question - it might
-all work correctly, but then again it might not...
+That's news to me. Where the restriction for SNP comes from? There's no
+such limitation on TDX side AFAIK?
 
-> Ah.  Inode eviction also complains about inodes with delalloc
-> reservations.  The blockgc code only touches cow fork mappings and
-> post-eof blocks, which means it doesn't look for these dead/orphaned
-> delalloc reservations either.
-
-Yup, the inode eviction code that detects leaked delalloc blocks is
-a useful canary - if it fires, it tends to indicate a bug in the
-allocation/free code somewhere. If we allowed leaking delalloc
-extents, we lose that canary.
-
-And, yes, we'd need to make xfs_free_eofblocks() now search for
-leaked delalloc blocks within EOF and punch them out, but then it
-would have to either do the "search page cache for dirty pages" walk
-or force writeback first.
-
-None of these things feel like an improvement to me.
-
--Dave.
+Could you point me to relevant documentation if there's any?
 
 -- 
-Dave Chinner
-david@fromorbit.com
+  Kiryl Shutsemau / Kirill A. Shutemov
