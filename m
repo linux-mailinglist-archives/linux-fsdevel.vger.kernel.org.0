@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66CB5616781
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Nov 2022 17:11:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B2ABF61678E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Nov 2022 17:11:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231466AbiKBQLk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Nov 2022 12:11:40 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50490 "EHLO
+        id S231503AbiKBQLr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Nov 2022 12:11:47 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231357AbiKBQLS (ORCPT
+        with ESMTP id S231383AbiKBQL1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Nov 2022 12:11:18 -0400
-Received: from mail-pf1-x42c.google.com (mail-pf1-x42c.google.com [IPv6:2607:f8b0:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B059E2CCA8;
-        Wed,  2 Nov 2022 09:11:16 -0700 (PDT)
-Received: by mail-pf1-x42c.google.com with SMTP id d10so16819592pfh.6;
-        Wed, 02 Nov 2022 09:11:16 -0700 (PDT)
+        Wed, 2 Nov 2022 12:11:27 -0400
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47BAA2C660;
+        Wed,  2 Nov 2022 09:11:18 -0700 (PDT)
+Received: by mail-pg1-x532.google.com with SMTP id e129so16627748pgc.9;
+        Wed, 02 Nov 2022 09:11:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CScuk7r85wyu6F501iefg0DKwl3fyaI1fu4SBsbfBNk=;
-        b=G1xj7WAmIltNBsbLKuO9CkKEQ79pa0K47wkha3puJeaezV2/imAkDdcfm/KV23FIHU
-         +KArDubzSRmx7FiH0l8qSZQuiZfGIGZFESde9F7GDr7BI0vnEKAz4OoG+/TLSnEP6lVV
-         hEk3uS7L0RHCBIur0yh9N3EX0D7wiz8f/Tz1DOmo9UyRB6et4qwOzt9Nng+ZOsOpt5/H
-         9uNCUJ20VcSVqHMicFHHEq7ELqXYQFE7Mrb+NRFmYH88zfkz/DMkzuyMw0IDbt4InR+d
-         u77NqmroP0vZczS44dmUtLli+wdv7QD3/rglQpmtqCu4rEb336yGk934JQ6ASFGIEHNx
-         5dKg==
+        bh=ihiS02r9sD2/Zs2Vx3FiURN5naIQGKMktV+WLRuKSks=;
+        b=SeLQ4Qu5//oXLNdBKVpytDwCWDO3I4G0YA52j5Knaxs6ot8nHTPxSvbYLibh2we7yp
+         QOIy/yHsS5HNor/MIiz1/wjrknFzailQqLyUUDbncxkYbsgZJU/KhMzRQwgIl+QybVYC
+         Rqmh80nwtQvOLrWqsNMA1En6NleAdRBSdgoag/eIey7KzBlGjcP3tZEj27YIEQECQyBF
+         FiPgSN2IEHbjhKQ2oUVo+PWzz8cWJh20VFpEboEHH28rkzkyFMeuKzSfjD9ZDJNc3sQY
+         DZllsnJTeZr1MOe9IOgxs+YIxX7s6esYPo/OjncN4dhR0FUlfGbp9Fqklf0gZ4+OOwoZ
+         8BhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CScuk7r85wyu6F501iefg0DKwl3fyaI1fu4SBsbfBNk=;
-        b=rJJAI7mRb59zfjuTKxzctapCgjFwyOWjmC0VrNLX6wG0MKs6qvFXhCrUZd1bkl+1IW
-         8S7cGAMvkb1KWaqR4qlL+sAoGvq8/RLiXFxzT0GhqeYQlMyCbpy0BiY3tZLAluoPuabP
-         sYZGbjrcDQScpDeLt71xZ1/OtG3Z76f1q2UfRZgnHTNA9XQyhnRWBVoCJAIr9OlcDj6t
-         FJid/vnbgGA7hKPyEGFzTRr1eK4SDiXVzNczmyEIfG4WPuKih5jZh4l/i076S4UK/uMR
-         Wz7yVRmT6ZSB2mIaJzoXTD3wtktUyWhLN41RxEyTj3HiOzbe27xxHZ0sMZn10goUcbj2
-         0q2Q==
-X-Gm-Message-State: ACrzQf0jLvmIa2KdaqFN8rldY9HrvRNLCpMQ66iAIxbkxVPi8nS4L+Yx
-        0zox3bECB3AclgbaDwdTanM6KB/22XRNPw==
-X-Google-Smtp-Source: AMsMyM6GJxhB3WK1RR+mjEzfRIolTwRsa2T5GOunC8tyj4bGy4RuSHbsovs3MGUIO1XlX8Eq6nDAFQ==
-X-Received: by 2002:a63:4753:0:b0:462:b3f0:a984 with SMTP id w19-20020a634753000000b00462b3f0a984mr21859153pgk.501.1667405476022;
-        Wed, 02 Nov 2022 09:11:16 -0700 (PDT)
+        bh=ihiS02r9sD2/Zs2Vx3FiURN5naIQGKMktV+WLRuKSks=;
+        b=GvL5GNBMw9NCEtzfUbGxfIuMzYqgsULeOjItTmoVxbYJiev25G3z9P5Pse7IwexFMw
+         ZdtWK7IGz0hAQf8bkG1k2+NwejO2ikh99wMvI7ZrlEgZm0XGHJsaX09faIqCzKcrLlzu
+         GovpBKN5tJ1wk3q7y1QGGNEzu/DMHiSt474YxkelWwimQtzuRb/SEju+GuXt2t5Pn4xO
+         PK2B+xG02WY3+9eQ0YumNhemLComitvZVHAlIqpWBeuqY0JPJsXHqsOWEQ3+q9ao0S7u
+         9N/q+Si5TEX/FzgC11odnjz9IY/2IYCybKp9VS9W8gvDAX9jxH/35xMgt8sZtzdL4nm2
+         L2Aw==
+X-Gm-Message-State: ACrzQf1diDpmBGE0bMGpzDnBgGtnfNy2Fgl3CBpvkaaM7Ex9Yv9Xk4ym
+        zDhRJMOTXyNf9h/DqwBtWszt/JHrHoOGvA==
+X-Google-Smtp-Source: AMsMyM633/rTqiXcBf1XgON7eedWlU4pI5wcG5xiQZ6whfd6GaRXCeCpBFfVcxVkD9k3/TH52+6eXg==
+X-Received: by 2002:a05:6a00:a22:b0:54e:6a90:fbef with SMTP id p34-20020a056a000a2200b0054e6a90fbefmr25892086pfh.53.1667405477494;
+        Wed, 02 Nov 2022 09:11:17 -0700 (PDT)
 Received: from fedora.hsd1.ca.comcast.net ([2601:644:8002:1c20::8080])
-        by smtp.googlemail.com with ESMTPSA id ms4-20020a17090b234400b00210c84b8ae5sm1632101pjb.35.2022.11.02.09.11.14
+        by smtp.googlemail.com with ESMTPSA id ms4-20020a17090b234400b00210c84b8ae5sm1632101pjb.35.2022.11.02.09.11.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Nov 2022 09:11:15 -0700 (PDT)
+        Wed, 02 Nov 2022 09:11:17 -0700 (PDT)
 From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
@@ -59,9 +59,9 @@ Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
         "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
         David Sterba <dsterba@suse.com>
-Subject: [PATCH v4 06/23] btrfs: Convert btree_write_cache_pages() to use filemap_get_folio_tag()
-Date:   Wed,  2 Nov 2022 09:10:14 -0700
-Message-Id: <20221102161031.5820-7-vishal.moola@gmail.com>
+Subject: [PATCH v4 07/23] btrfs: Convert extent_write_cache_pages() to use filemap_get_folios_tag()
+Date:   Wed,  2 Nov 2022 09:10:15 -0700
+Message-Id: <20221102161031.5820-8-vishal.moola@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221102161031.5820-1-vishal.moola@gmail.com>
 References: <20221102161031.5820-1-vishal.moola@gmail.com>
@@ -78,19 +78,20 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Converted function to use folios throughout. This is in preparation for
-the removal of find_get_pages_range_tag().
+the removal of find_get_pages_range_tag(). Now also supports large
+folios.
 
 Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 Acked-by: David Sterba <dsterba@suse.com>
 ---
- fs/btrfs/extent_io.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+ fs/btrfs/extent_io.c | 38 +++++++++++++++++++-------------------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
 diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 4dcf22e051ff..9ae75db4d55e 100644
+index 9ae75db4d55e..983dde83ba93 100644
 --- a/fs/btrfs/extent_io.c
 +++ b/fs/btrfs/extent_io.c
-@@ -2960,14 +2960,14 @@ int btree_write_cache_pages(struct address_space *mapping,
+@@ -3088,8 +3088,8 @@ static int extent_write_cache_pages(struct address_space *mapping,
  	int ret = 0;
  	int done = 0;
  	int nr_to_write_done = 0;
@@ -100,22 +101,24 @@ index 4dcf22e051ff..9ae75db4d55e 100644
 +	unsigned int nr_folios;
  	pgoff_t index;
  	pgoff_t end;		/* Inclusive */
- 	int scanned = 0;
- 	xa_mark_t tag;
+ 	pgoff_t done_index;
+@@ -3109,7 +3109,7 @@ static int extent_write_cache_pages(struct address_space *mapping,
+ 	if (!igrab(inode))
+ 		return 0;
  
 -	pagevec_init(&pvec);
 +	folio_batch_init(&fbatch);
  	if (wbc->range_cyclic) {
  		index = mapping->writeback_index; /* Start from prev offset */
  		end = -1;
-@@ -2990,14 +2990,15 @@ int btree_write_cache_pages(struct address_space *mapping,
- 	if (wbc->sync_mode == WB_SYNC_ALL)
+@@ -3147,14 +3147,14 @@ static int extent_write_cache_pages(struct address_space *mapping,
  		tag_pages_for_writeback(mapping, index, end);
+ 	done_index = index;
  	while (!done && !nr_to_write_done && (index <= end) &&
--	       (nr_pages = pagevec_lookup_range_tag(&pvec, mapping, &index, end,
--			tag))) {
-+	       (nr_folios = filemap_get_folios_tag(mapping, &index, end,
-+					    tag, &fbatch))) {
+-			(nr_pages = pagevec_lookup_range_tag(&pvec, mapping,
+-						&index, end, tag))) {
++			(nr_folios = filemap_get_folios_tag(mapping, &index,
++							end, tag, &fbatch))) {
  		unsigned i;
  
 -		for (i = 0; i < nr_pages; i++) {
@@ -123,13 +126,52 @@ index 4dcf22e051ff..9ae75db4d55e 100644
 +		for (i = 0; i < nr_folios; i++) {
 +			struct folio *folio = fbatch.folios[i];
  
--			ret = submit_eb_page(page, wbc, &epd, &eb_context);
-+			ret = submit_eb_page(&folio->page, wbc, &epd,
-+					&eb_context);
- 			if (ret == 0)
+-			done_index = page->index + 1;
++			done_index = folio->index + folio_nr_pages(folio);
+ 			/*
+ 			 * At this point we hold neither the i_pages lock nor
+ 			 * the page lock: the page may be truncated or
+@@ -3162,29 +3162,29 @@ static int extent_write_cache_pages(struct address_space *mapping,
+ 			 * or even swizzled back from swapper_space to
+ 			 * tmpfs file mapping
+ 			 */
+-			if (!trylock_page(page)) {
++			if (!folio_trylock(folio)) {
+ 				submit_write_bio(epd, 0);
+-				lock_page(page);
++				folio_lock(folio);
+ 			}
+ 
+-			if (unlikely(page->mapping != mapping)) {
+-				unlock_page(page);
++			if (unlikely(folio->mapping != mapping)) {
++				folio_unlock(folio);
  				continue;
+ 			}
+ 
+ 			if (wbc->sync_mode != WB_SYNC_NONE) {
+-				if (PageWriteback(page))
++				if (folio_test_writeback(folio))
+ 					submit_write_bio(epd, 0);
+-				wait_on_page_writeback(page);
++				folio_wait_writeback(folio);
+ 			}
+ 
+-			if (PageWriteback(page) ||
+-			    !clear_page_dirty_for_io(page)) {
+-				unlock_page(page);
++			if (folio_test_writeback(folio) ||
++			    !folio_clear_dirty_for_io(folio)) {
++				folio_unlock(folio);
+ 				continue;
+ 			}
+ 
+-			ret = __extent_writepage(page, wbc, epd);
++			ret = __extent_writepage(&folio->page, wbc, epd);
  			if (ret < 0) {
-@@ -3012,7 +3013,7 @@ int btree_write_cache_pages(struct address_space *mapping,
+ 				done = 1;
+ 				break;
+@@ -3197,7 +3197,7 @@ static int extent_write_cache_pages(struct address_space *mapping,
  			 */
  			nr_to_write_done = wbc->nr_to_write <= 0;
  		}
