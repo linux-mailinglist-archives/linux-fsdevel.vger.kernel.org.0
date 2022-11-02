@@ -2,125 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5692D616F03
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Nov 2022 21:45:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6BF0616F14
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Nov 2022 21:47:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231334AbiKBUpV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Nov 2022 16:45:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35882 "EHLO
+        id S231330AbiKBUrT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Nov 2022 16:47:19 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231320AbiKBUpU (ORCPT
+        with ESMTP id S231301AbiKBUrR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Nov 2022 16:45:20 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B38F6559
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Nov 2022 13:44:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667421861;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=W/vNqEe9kdMiUGr3xRIJxtzc4rwHsL9U2+4y8NsyPqk=;
-        b=Ivj2/+OQ25XcTAxn+n42nCQLBjS0h13IVSPYbvbPjASNJstCNnry29ReLvgT1v2OmXvbj3
-        xa4H37uZfZsWXjjppZxTj78AA+bA2v9eQgVBZXP0hcxNsxOzwDv03cU3ki0qkv5OVEXCmo
-        poVCxa1pi6sMZ7MA3seZ8XwvODyUZz8=
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
- [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-121-0NtScs11PxSkcW35SI-u4w-1; Wed, 02 Nov 2022 16:44:20 -0400
-X-MC-Unique: 0NtScs11PxSkcW35SI-u4w-1
-Received: by mail-qt1-f198.google.com with SMTP id cp8-20020a05622a420800b003a4f4f7b621so123760qtb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Nov 2022 13:44:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W/vNqEe9kdMiUGr3xRIJxtzc4rwHsL9U2+4y8NsyPqk=;
-        b=WQBJSF33msxQA0sKbP8lKKj5OMwjqH2ykuArKVYFdZ3FCJWxgxmTQTm/4Uc37pTWCU
-         FouO2va1qVGaBZhhoKRePXarEr5S6dJ5gmLldoGxo3QLIr8dBwePRO8h1qr0TiuIfawv
-         0v2U2Yv3Db6ON9mhC/aonb+0zlW6q5IF1dHGzApC1fQRYeqSg3JgU5Chs/n+s95KhfYd
-         DBwL5o6KhxUB61BHY0Ko8q37BiJLA2lyurgQ+TB8UBD74FZed2JHJId0H94hykCCFTGx
-         wMLlCFMLdi34ZvGhR4U3CJOnc/I9M21GAfQAL9X2I+a4xQ8JezzlJysqZrxp0xBC1J+C
-         hm8g==
-X-Gm-Message-State: ACrzQf3AVw0vgZDn5BNxvC1I/Mf4iWVGHR59uufUCz+6MlT/CKtyCU9/
-        I9c0ykt0HDfhKHVmp0lyhmCaIZ4ApJEUbcN9WpRienXzo2xYB8ZiKvZbqc3w79Y3xIm+82CQqp9
-        kjMgz7uGMModCkvXEy1x7EWzCgw==
-X-Received: by 2002:a37:c4d:0:b0:6fa:b44:1610 with SMTP id 74-20020a370c4d000000b006fa0b441610mr18938085qkm.153.1667421860290;
-        Wed, 02 Nov 2022 13:44:20 -0700 (PDT)
-X-Google-Smtp-Source: AMsMyM45PiqOchTm473K6yukASrI7J3XtwxvJ2ubdKVdWdx5zZccQ1R7pEO4ceI62cTHD1N+1bBGJA==
-X-Received: by 2002:a37:c4d:0:b0:6fa:b44:1610 with SMTP id 74-20020a370c4d000000b006fa0b441610mr18938066qkm.153.1667421860080;
-        Wed, 02 Nov 2022 13:44:20 -0700 (PDT)
-Received: from x1n (bras-base-aurron9127w-grc-46-70-31-27-79.dsl.bell.ca. [70.31.27.79])
-        by smtp.gmail.com with ESMTPSA id w20-20020a05620a445400b006cbe3be300esm1873284qkp.12.2022.11.02.13.44.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Nov 2022 13:44:19 -0700 (PDT)
-Date:   Wed, 2 Nov 2022 16:44:18 -0400
-From:   Peter Xu <peterx@redhat.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+        Wed, 2 Nov 2022 16:47:17 -0400
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7546C65D9;
+        Wed,  2 Nov 2022 13:47:16 -0700 (PDT)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 1071861C12;
+        Wed,  2 Nov 2022 20:47:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 313B6C433C1;
+        Wed,  2 Nov 2022 20:47:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1667422035;
+        bh=d734KrkzRNIacBzb1OxFoYKzAgC7fEMj8hqfCbnvm9I=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=a0q4o12/JDOBGm2H3Mr5hdID6PSu7nJbDbyNqRR3UC6NdO0H0C77bKf9PirJUZmE8
+         NDv9gR7zrJmOS6xFY5g6WrKhND3T3wKJu9rfgU9FfvFCPYyNPavKz9xmx+ZctKsNV8
+         hOvf0mQX01v5paVELSSwg3HLEhsq3Fgg9W/cPjsQ=
+Date:   Wed, 2 Nov 2022 13:47:14 -0700
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
         linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
-        Hugh Dickins <hughd@google.com>,
+        linux-fsdevel@vger.kernel.org, Hugh Dickins <hughd@google.com>,
         Axel Rasmussen <axelrasmussen@google.com>
 Subject: Re: [PATCH 3/5] userfualtfd: Replace lru_cache functions with
  folio_add functions
-Message-ID: <Y2LWonzCdWkDwyyr@x1n>
+Message-Id: <20221102134714.c72bea3c997ba3ef90d72c53@linux-foundation.org>
+In-Reply-To: <Y2K+y7wnhC4vbnP2@x1n>
 References: <20221101175326.13265-1-vishal.moola@gmail.com>
- <20221101175326.13265-4-vishal.moola@gmail.com>
- <Y2Fl/pZyLSw/ddZY@casper.infradead.org>
- <Y2K+y7wnhC4vbnP2@x1n>
- <Y2LDL8zjgxDPCzH9@casper.infradead.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <Y2LDL8zjgxDPCzH9@casper.infradead.org>
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        <20221101175326.13265-4-vishal.moola@gmail.com>
+        <Y2Fl/pZyLSw/ddZY@casper.infradead.org>
+        <Y2K+y7wnhC4vbnP2@x1n>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 02, 2022 at 07:21:19PM +0000, Matthew Wilcox wrote:
-> On Wed, Nov 02, 2022 at 03:02:35PM -0400, Peter Xu wrote:
-> > Does the patch attached look reasonable to you?
+On Wed, 2 Nov 2022 15:02:35 -0400 Peter Xu <peterx@redhat.com> wrote:
+
+> mfill_atomic_install_pte() checks page->mapping to detect whether one page
+> is used in the page cache.  However as pointed out by Matthew, the page can
+> logically be a tail page rather than always the head in the case of uffd
+> minor mode with UFFDIO_CONTINUE.  It means we could wrongly install one pte
+> with shmem thp tail page assuming it's an anonymous page.
 > 
-> Mmm, no.  If the page is in the swap cache, this will be "true".
-
-It will not happen in practise, right?
-
-I mean, shmem_get_folio() should have done the swap-in, and we should have
-the page lock held at the meantime.
-
-For anon, mcopy_atomic_pte() is the only user and it's passing in a newly
-allocated page here.
-
+> It's not that clear even for anonymous page, since normally anonymous pages
+> also have page->mapping being setup with the anon vma. It's safe here only
+> because the only such caller to mfill_atomic_install_pte() is always
+> passing in a newly allocated page (mcopy_atomic_pte()), whose page->mapping
+> is not yet setup.  However that's not extremely obvious either.
 > 
-> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > index 3d0fef3980b3..650ab6cfd5f4 100644
-> > --- a/mm/userfaultfd.c
-> > +++ b/mm/userfaultfd.c
-> > @@ -64,7 +64,7 @@ int mfill_atomic_install_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
-> >  	pte_t _dst_pte, *dst_pte;
-> >  	bool writable = dst_vma->vm_flags & VM_WRITE;
-> >  	bool vm_shared = dst_vma->vm_flags & VM_SHARED;
-> > -	bool page_in_cache = page->mapping;
-> > +	bool page_in_cache = page_mapping(page);
+> For either of above, use page_mapping() instead.
 > 
-> We could do:
-> 
-> 	struct page *head = compound_head(page);
-> 	bool page_in_cache = head->mapping && !PageMappingFlags(head);
+> And this should be stable material.
 
-Sounds good to me, but it just gets a bit complicated.
+I added
 
-If page_mapping() doesn't sound good, how about we just pass that over from
-callers?  We only have three, so quite doable too.
-
--- 
-Peter Xu
+Fixes: 153132571f02 ("userfaultfd/shmem: support UFFDIO_CONTINUE for shmem")
 
