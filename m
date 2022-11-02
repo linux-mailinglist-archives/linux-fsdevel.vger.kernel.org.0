@@ -2,128 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 47046616FB7
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Nov 2022 22:27:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C47D6616FF7
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Nov 2022 22:40:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230179AbiKBV1V (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Nov 2022 17:27:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33830 "EHLO
+        id S229553AbiKBVk2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Nov 2022 17:40:28 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42618 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230300AbiKBV1S (ORCPT
+        with ESMTP id S229590AbiKBVkW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Nov 2022 17:27:18 -0400
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2069.outbound.protection.outlook.com [40.107.237.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3CAADFBC;
-        Wed,  2 Nov 2022 14:27:16 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dnEyxpEgCLBUr11R4tfOG52fK4v1GHFzYhQ+/c5HFLP35fGnIAUMhL3wEzSbrp1vSIYxBouHzlV1HeRLRw4MulpM75UFecOotXjw/rVO38aziYGaR5q89jMIhaeFtFNzP7I6iFoVqqNXXdMdP4nQglPxfNBe+HKCisK6q5HjDHw8S2xgyBxKPdOGtXP+O3mbeGlghI3U5bvGc9xa1aK98hLulW+gAC8bdTzM0H1VMjAz9U7LdjoVKThdEcmMLxAhn/pbSasoxqLi2LT6gB62BWtPU0WfqVuDyCj1o563T0ENWmbd8rZDOxSjMWkwmTFlc8OUFUpXjMCPoOz406VdZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6HOpdvixxTPUhGk84Cr9YvdY4Oa5RaCqh51pwnSr8Pw=;
- b=jPZ3BIXAxxSpMw5ONlBpCFrx+X02du4dFaskw4TW6qX6fqiAowREeHkvANMc4ejAKmFpw4Fs8w3oohGTt3Fbyvqynfzjzh0DasYTvcivJ2lZggusmJkSqRGmpYrqrBk2y5vSbZuqPPgDdoKIWfl9A9iB1UBparrP1eeXsc4FDTPhKGst0/fmC5P9Tb3mS1jskLZ6ISu2YYyH7R+W4AVaHFpm+ifKDKndUqz2sZcgCELcOskxBiTg999PcYfmpZoMXlV96plzBrnlJGjrGlC6PxTx5kehtL37JofRpDpnjNGRICk4KJCCTvoS/XXUvOGc8Ygw/PBaVWsEO9gbBqNx6g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=shutemov.name smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6HOpdvixxTPUhGk84Cr9YvdY4Oa5RaCqh51pwnSr8Pw=;
- b=YDKe2vZMKlBVF9x5uyjg0aE35gk6c80qghVEX2QkjQgWJKBmCutUmlfCiZESc5dKdDUZvrx0E9UsX0p2bTDETwt/o2l5E/TlOUQ5S8JoTXOXszdNiy7UEQqAIhF0uhgA9NSsm07rFlnO2303o8BZJVL9LP99zZ4eiEsY/bh80bY=
-Received: from DM6PR17CA0020.namprd17.prod.outlook.com (2603:10b6:5:1b3::33)
- by SJ0PR12MB6783.namprd12.prod.outlook.com (2603:10b6:a03:44e::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.19; Wed, 2 Nov
- 2022 21:27:13 +0000
-Received: from DM6NAM11FT081.eop-nam11.prod.protection.outlook.com
- (2603:10b6:5:1b3:cafe::f1) by DM6PR17CA0020.outlook.office365.com
- (2603:10b6:5:1b3::33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5769.15 via Frontend
- Transport; Wed, 2 Nov 2022 21:27:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DM6NAM11FT081.mail.protection.outlook.com (10.13.172.136) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5791.20 via Frontend Transport; Wed, 2 Nov 2022 21:27:13 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.31; Wed, 2 Nov
- 2022 16:27:12 -0500
-Date:   Wed, 2 Nov 2022 16:26:56 -0500
-From:   Michael Roth <michael.roth@amd.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-CC:     Chao Peng <chao.p.peng@linux.intel.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <qemu-devel@nongnu.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        <luto@kernel.org>, <jun.nakajima@intel.com>,
-        <dave.hansen@intel.com>, <ak@linux.intel.com>, <david@redhat.com>,
-        <aarcange@redhat.com>, <ddutile@redhat.com>, <dhildenb@redhat.com>,
-        Quentin Perret <qperret@google.com>, <tabba@google.com>,
-        <mhocko@suse.com>, Muchun Song <songmuchun@bytedance.com>,
-        <wei.w.wang@intel.com>
-Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
- create restricted user memory
-Message-ID: <20221102212656.6giugw542jdxsvhh@amd.com>
-References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
- <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
- <20221031174738.fklhlia5fmaiinpe@amd.com>
- <20221102211404.l5whyif3j3k67fv2@box.shutemov.name>
+        Wed, 2 Nov 2022 17:40:22 -0400
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADFFAFAD7
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Nov 2022 14:40:20 -0700 (PDT)
+Received: by mail-pj1-x1029.google.com with SMTP id m14-20020a17090a3f8e00b00212dab39bcdso3423023pjc.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Nov 2022 14:40:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r6cpUmcjc3yS6LKlZ5L7qtiM4efqe5+GngyDtniaIWE=;
+        b=8TM4dIsqn8lSq64rPGQ8GSZEO8HSK+Y6ZzDiSnVl6i00Q/4aBHonM1FAreSBVewnaW
+         FyTITfIeO7md+kq5sS9IK4DLyDeAoebhttXptV/ulaZVWNZAqhP2u4Kx1I+RPYDvGVoZ
+         EWPC93zwf+hV9K0lFPC++X8+d8ss4r60UNvShw76YY8aBXfhCXdu3hgyePT8ZJw44/CX
+         d8VWom44IQYBMwDHNhnPsYr1aSGIUUypFFEj4FsGbmvfjU3DPn2Vdpj/IhS4tzVbslgv
+         ZaBbAhbZgAEkP131XR1JvYqru16C5m6dyaiXL4oBzYaMS+nLmHH+IMaUHHx8yndSKtuk
+         bLkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r6cpUmcjc3yS6LKlZ5L7qtiM4efqe5+GngyDtniaIWE=;
+        b=lMjnSWI+Iv2by/Owd8AtzBfag3cGzhn4BCgWke32T+MBv9dLDL87LZ7/eo6swb/t5d
+         qr9l0hJ4koVvX4zHRw2YXS3pu1jdrV/WDaKv+TDlNObg7jbRKUZxSAIcK6S/caKEujdi
+         i3obit3CknZsO4KDArPYeO1WoMzKlvxlpzrNf4RvZ4VWCMeXDXf7M1clZSc5JPDuuy3k
+         1+u6ZbR5jUMlvP5xFl21EXdHZ+mWB4bUo3e4sgRkJDV0iadSpoYdQY9tytiEHJ0bQcFa
+         gUsnEpveKuMRRgLrD9q7lZKtyX24Ci82KImg67rwE3/3RURuLZJ08kel8kfSzoVIEwxM
+         lyWQ==
+X-Gm-Message-State: ACrzQf3NAaz9gBo42nzKBZcm63pFholM6hOb0ryr2kP1I2LYTr5qmaMB
+        182U1ZXbDeUqE+BQx5tIGCllTA==
+X-Google-Smtp-Source: AMsMyM7yN2XUDLbWjS2JZ2naaR2dYngtJzjTZqM7aa5eze3Z/O6R73iOnVwO7Yy0lFhuepjucoWivQ==
+X-Received: by 2002:a17:902:e5c8:b0:187:3593:a841 with SMTP id u8-20020a170902e5c800b001873593a841mr11869459plf.150.1667425171901;
+        Wed, 02 Nov 2022 14:39:31 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
+        by smtp.gmail.com with ESMTPSA id k28-20020aa7999c000000b0056bfebfa6e4sm8827303pfh.190.2022.11.02.14.39.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Nov 2022 14:39:31 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oqLSJ-009Wvp-FI; Thu, 03 Nov 2022 08:39:27 +1100
+Date:   Thu, 3 Nov 2022 08:39:27 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 6/7] xfs: use iomap_valid method to detect stale cached
+ iomaps
+Message-ID: <20221102213927.GB3600936@dread.disaster.area>
+References: <20221101003412.3842572-1-david@fromorbit.com>
+ <20221101003412.3842572-7-david@fromorbit.com>
+ <Y2ItNSakpecwC9Va@infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221102211404.l5whyif3j3k67fv2@box.shutemov.name>
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT081:EE_|SJ0PR12MB6783:EE_
-X-MS-Office365-Filtering-Correlation-Id: de5815e3-d15f-4939-3067-08dabd1901fc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: j2EItDXdgy1qVdqJxR4GEQrDaZ3DofdFzS+LNVJ6NsAJTMVFdBSp6zUpoaPvMWb6267FNjpOK3GF0L3xXcyq5uWRNLuq/Ufi4fc+ayxaUgAqwRo9rfluD4KybXiyZZkiAzOPeFB5kHGevljPKuxckYaN9ZREL/xrn9reHrF51j9Jtbtl4uHTHmj3fIYMmQVw1UvXacSTWAfgLOgY1ajIt+FHI7moRMF0bhhC1P6hC2h74Bu9XyAx4wShywFQZIoUbktcSgP2tS1Cs5jrQC/Oj3pWbOa9BZBYGZymrthBCap+Ro5nt2PPpjksvWECVuAPoXl12GfJIae/dQHmYbzGp4w01iMWCHWC9TnK9Ldx+q5jVs/o49bliHpyBYZDd8oIO8lsBU+FUjwFpFR2iu1qPlYZv51mMJoyUyMB9+hyUoVBR7coUvKyOPy0NguANTaArge8yyEuu7CphmRAvPo7bzFbIXHJU/b5j7a0E0zijVMfhWRVBz/nlXsZSKNYjjawjN4W7W4kjsz8ijEeKvj4kbLv5fGAsriKqEezuLPaSt08x+tqe4UI+TcxnHD4N1Sr1ZMjIyZlZFVONyxcmneXuOHmQiRerPQNmOSV7ylXag19ZczMTaJ6hI0iLDMwCBulYMjpw4eTEl243osrt4sPO67dBldmi9cTvkV+FBaRQxyxxKidT98W7E8jJE4xc8b2Ad4OdFhWzxOKa7QiuVKAsE/V9uxvLDLS6oCnFjdxCNz6+fidm5sAPmXEhy+X9qeMGvpjx5hupHqTkmx8jms/nYBjncmOrcR5JMWkY+VjwL8vWL+/Wq1dft740rMPewc/E4aOUi6BbVaeic5mLrHqbw==
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(376002)(396003)(136003)(39860400002)(346002)(451199015)(46966006)(40470700004)(36840700001)(47076005)(186003)(6666004)(26005)(36860700001)(54906003)(1076003)(478600001)(336012)(426003)(2616005)(40480700001)(83380400001)(2906002)(16526019)(40460700003)(44832011)(7406005)(82310400005)(70586007)(5660300002)(8676002)(70206006)(7416002)(8936002)(316002)(966005)(4326008)(41300700001)(86362001)(36756003)(82740400003)(81166007)(356005)(6916009)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Nov 2022 21:27:13.0077
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: de5815e3-d15f-4939-3067-08dabd1901fc
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT081.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6783
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
+In-Reply-To: <Y2ItNSakpecwC9Va@infradead.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -131,39 +75,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 03, 2022 at 12:14:04AM +0300, Kirill A. Shutemov wrote:
-> On Mon, Oct 31, 2022 at 12:47:38PM -0500, Michael Roth wrote:
-> > 
-> > In v8 there was some discussion about potentially passing the page/folio
-> > and order as part of the invalidation callback, I ended up needing
-> > something similar for SEV-SNP, and think it might make sense for other
-> > platforms. This main reasoning is:
-> > 
-> >   1) restoring kernel directmap:
-> > 
-> >      Currently SNP (and I believe TDX) need to either split or remove kernel
-> >      direct mappings for restricted PFNs, since there is no guarantee that
-> >      other PFNs within a 2MB range won't be used for non-restricted
-> >      (which will cause an RMP #PF in the case of SNP since the 2MB
-> >      mapping overlaps with guest-owned pages)
+On Wed, Nov 02, 2022 at 01:41:25AM -0700, Christoph Hellwig wrote:
+> > +	*((int *)&iomap->private) = sequence;
 > 
-> That's news to me. Where the restriction for SNP comes from? There's no
-> such limitation on TDX side AFAIK?
+> > +static bool
+> > +xfs_buffered_write_iomap_valid(
+> > +	struct inode		*inode,
+> > +	const struct iomap	*iomap)
+> > +{
+> > +	int			seq = *((int *)&iomap->private);
 > 
-> Could you point me to relevant documentation if there's any?
+> I really hate this stuffing of the sequence into the private pointer.
 
-I could be mistaken, I haven't looked into the specific documentation and was
-going off of this discussion from a ways back:
+Oh, I'm no fan of it either. It was this or work out how to support
+sequence numbers/cookies directly in iomaps...
 
-  https://lore.kernel.org/all/YWb8WG6Ravbs1nbx@google.com/
+> The iomap structure isn't so size constrained that we have to do that,
+> so we can just add a sequence number field directly to it.  I don't
+> think that is a layering violation, as the concept of a sequence
+> numebr is pretty generic and we'll probably need it for all file systems
+> eventually.
 
-Sean, is my read of that correct? Do you happen to know where there's
-some documentation on that for the TDX side?
+*nod*
 
-Thanks,
+This was the least of my worries trying to get this code to work. I
+didn't have to think about it this way, so it was one less thing to
+worry about.
 
-Mike
+My concerns with putting it into the iomap is that different
+filesystems will have different mechanisms for detecting stale
+iomaps. THe way we do it with a generation counter is pretty coarse
+as any change to the extent map will invalidate the iomap regardless
+of whether they overlap or not.
 
+If, in future, we want something more complex and finer grained
+(e.g. an iext tree cursor) to allow us to determine if the
+change to the extent tree actually modified the extent backing the
+iomap, then we are going to need an opaque cookie of some kind, not
+a u32 or a u32*.
+
+> > +
+> > +	if (seq != READ_ONCE(XFS_I(inode)->i_df.if_seq))
+> > +		return false;
 > 
-> -- 
->   Kiryl Shutsemau / Kirill A. Shutemov
+> Which makes me wonder if we could do away with the callback entirely
+> by adding an option sequence number pointer to the iomap_iter.  If set
+> the core code compares it against iomap->seq and we get rid of the
+> per-folio indirect call, and boilerplate code that would need to be
+> implemented in every file system.
+
+I'm not convinced that this is the right way to proceed.
+
+The writeback code also has cached iomap validity checks via a
+callback.  The checks in xfs_imap_valid() require more than just a
+single sequence number check - there are two sequence numbers, one
+of which is conditionally checked when the inode may have COW
+operations occurring.
+
+Hence I don't think that encoding a single u32 into the iomap is
+generic enough even for the current "check the cached iomap is not
+stale" use cases we have. I'd really like to move towards a common
+mechanism for both the write and writeback paths.
+
+I didn't have the brain capacity to think all this through at the
+time, so I just stuffed the sequence number in the private field and
+moved on to the next part of the problem.
+
+Indeed, I haven't even checked if the read path might be susceptible
+to stale cached iomaps yet....
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
