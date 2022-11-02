@@ -2,152 +2,228 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ACB06616C0D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Nov 2022 19:25:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF9EC616D57
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  2 Nov 2022 20:03:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229850AbiKBSZJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Nov 2022 14:25:09 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50498 "EHLO
+        id S231757AbiKBTDs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Nov 2022 15:03:48 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230211AbiKBSY6 (ORCPT
+        with ESMTP id S231683AbiKBTDr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Nov 2022 14:24:58 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 262311DF08;
-        Wed,  2 Nov 2022 11:24:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BF7B061B30;
-        Wed,  2 Nov 2022 18:24:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D30AC433C1;
-        Wed,  2 Nov 2022 18:24:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667413497;
-        bh=myBPtAIiSQSUGiuuR2F0h7L+RXDYHKHIJrQKXmYcaRQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jkl4rc3yo1CPwcsS6SvoG11q+4v01SHno+xSC2e7ZQ1SmppTQiHP0G9vTMUt8G+iZ
-         JEOzNzhOdjjaF+UI7W0jBTcIojsoluQiCs+uu9JBaz8625dvqOKJFjI/a26JQcXRRH
-         O8KsifOUoAs8pp3iOmSoKgnfnzNBJSnuCTAl81n6gosGPlcSY5uk+R4aA0R/iGIg6+
-         fVwPs0TXjNOPpHJK24az6/3m9bSpccoxUhUQoWtMBLzmxw1QdSi1okexkc8g4jfxHe
-         kiBNByEmvGRrF/iFH0KRjoYTGT47ZXG22zsLLp+qjHHTY+qpQozw8hbn0C7YyO9Ew8
-         u1v53+NNOTASg==
-Date:   Wed, 2 Nov 2022 19:24:51 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Vasily Averin <vvs@openvz.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        SElinux list <selinux@vger.kernel.org>, rcu@vger.kernel.org,
-        Martin Pitt <mpitt@redhat.com>
-Subject: Re: [PATCH 0/2] fs: fix capable() call in simple_xattr_list()
-Message-ID: <20221102182451.aoos5udhf6rbb6us@wittgenstein>
-References: <20220901152632.970018-1-omosnace@redhat.com>
- <20220905090811.ocnnc53y2bow7m3i@wittgenstein>
- <CAFqZXNu_jf0D8LQLc15+ZrFne5F5F5PFNbkT-EkfqXvNdSKKsQ@mail.gmail.com>
- <20220905153036.zzcovknz7ntgcn5f@wittgenstein>
+        Wed, 2 Nov 2022 15:03:47 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43B7522C
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Nov 2022 12:02:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667415774;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=UqcZSn2dIGg+txRUz0yg2pNp7hn+WnfiER5ZgqstaLw=;
+        b=GaQrBokjqhx4GW7VWoymWqz6oeA9c+jzXa4ynZKTS/TsrfaVjqEm2mFiZIuJMvhYN1cZAi
+        sZx5Nc4rhs5/QYQ//LHs/hiZ42ShC7gWm/3vpb2ZqpzFqbT0VBXeUUwCsukBW0BYLdJdmL
+        BSJesUUI/qOrLoss5yvhS93pD/qOocE=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-507-DKZZW40nPbq7lx6RGeLHIg-1; Wed, 02 Nov 2022 15:02:53 -0400
+X-MC-Unique: DKZZW40nPbq7lx6RGeLHIg-1
+Received: by mail-qt1-f198.google.com with SMTP id cm12-20020a05622a250c00b003a521f66e8eso7196219qtb.17
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Nov 2022 12:02:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UqcZSn2dIGg+txRUz0yg2pNp7hn+WnfiER5ZgqstaLw=;
+        b=ahhKGPolnFnPbmp5LcfRHP8+SKB57ayDGv8HBZ8EhSRwq7kVORXUoiS6DVo4/gnPSR
+         qjqOvadW4tm6MUOHzpZ617d0mbl51DxFDwmIG7p9Qo3GdDVKXay0019SgFwhouiczcUR
+         hdQEKMCcnX2DQYxnNUywlBvIP6bsB4ECZQvKKJDFG0NF5ukD/RugfBaarD6atUqCeVMn
+         po1WzegYye6wIYz/ckTpFMqjH2qpgWg08QnJBMkPOtFj1+umb3DSK6MAXowYoFANtDzN
+         /oq62R+RrpeaDCO55yYkGfesh0a6DLfUPAqSibSuMOuGIIn1c3/MwEY5qpB0ZS7GsKC/
+         fhsQ==
+X-Gm-Message-State: ACrzQf3t+qz/q7ae5x2vPmoDviWJgiGMR8DEhThH+5jqMirr/qANBdhk
+        YKtNVEoY2sKJai5nONF7fRm/f0DMdR17jFjoPH/BqeItCE8g7peswzJnaItwDI7/yuQdDNDAxWr
+        ZEJ7UXZ4s3kXE6F/3oHsmUMXotA==
+X-Received: by 2002:a0c:e28a:0:b0:4b9:e578:1581 with SMTP id r10-20020a0ce28a000000b004b9e5781581mr22708701qvl.102.1667415767040;
+        Wed, 02 Nov 2022 12:02:47 -0700 (PDT)
+X-Google-Smtp-Source: AMsMyM6MCTCf/l3AxomdMLN6xadr+DHXOXgwS23JyXphBskH+IPvIsI6jm68HNZtMx+QppTeytMxpA==
+X-Received: by 2002:a0c:e28a:0:b0:4b9:e578:1581 with SMTP id r10-20020a0ce28a000000b004b9e5781581mr22708077qvl.102.1667415757850;
+        Wed, 02 Nov 2022 12:02:37 -0700 (PDT)
+Received: from x1n (bras-base-aurron9127w-grc-46-70-31-27-79.dsl.bell.ca. [70.31.27.79])
+        by smtp.gmail.com with ESMTPSA id fx7-20020a05622a4ac700b003a4f6a566e9sm6990905qtb.83.2022.11.02.12.02.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Nov 2022 12:02:36 -0700 (PDT)
+Date:   Wed, 2 Nov 2022 15:02:35 -0400
+From:   Peter Xu <peterx@redhat.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
+        Hugh Dickins <hughd@google.com>,
+        Axel Rasmussen <axelrasmussen@google.com>
+Subject: Re: [PATCH 3/5] userfualtfd: Replace lru_cache functions with
+ folio_add functions
+Message-ID: <Y2K+y7wnhC4vbnP2@x1n>
+References: <20221101175326.13265-1-vishal.moola@gmail.com>
+ <20221101175326.13265-4-vishal.moola@gmail.com>
+ <Y2Fl/pZyLSw/ddZY@casper.infradead.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/mixed; boundary="XtXX9UT9oQ4Z3Adt"
 Content-Disposition: inline
-In-Reply-To: <20220905153036.zzcovknz7ntgcn5f@wittgenstein>
-X-Spam-Status: No, score=-8.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y2Fl/pZyLSw/ddZY@casper.infradead.org>
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Sep 05, 2022 at 05:30:36PM +0200, Christian Brauner wrote:
-> On Mon, Sep 05, 2022 at 12:15:01PM +0200, Ondrej Mosnacek wrote:
-> > On Mon, Sep 5, 2022 at 11:08 AM Christian Brauner <brauner@kernel.org> wrote:
-> > > On Thu, Sep 01, 2022 at 05:26:30PM +0200, Ondrej Mosnacek wrote:
-> > > > The goal of these patches is to avoid calling capable() unconditionally
-> > > > in simple_xattr_list(), which causes issues under SELinux (see
-> > > > explanation in the second patch).
-> > > >
-> > > > The first patch tries to make this change safer by converting
-> > > > simple_xattrs to use the RCU mechanism, so that capable() is not called
-> > > > while the xattrs->lock is held. I didn't find evidence that this is an
-> > > > issue in the current code, but it can't hurt to make that change
-> > > > either way (and it was quite straightforward).
-> > >
-> > > Hey Ondrey,
-> > >
-> > > There's another patchset I'd like to see first which switches from a
-> > > linked list to an rbtree to get rid of performance issues in this code
-> > > that can be used to dos tmpfs in containers:
-> > >
-> > > https://lore.kernel.org/lkml/d73bd478-e373-f759-2acb-2777f6bba06f@openvz.org
-> > >
-> > > I don't think Vasily has time to continue with this so I'll just pick it
-> > > up hopefully this or the week after LPC.
+
+--XtXX9UT9oQ4Z3Adt
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+
+On Tue, Nov 01, 2022 at 06:31:26PM +0000, Matthew Wilcox wrote:
+> On Tue, Nov 01, 2022 at 10:53:24AM -0700, Vishal Moola (Oracle) wrote:
+> > Replaces lru_cache_add() and lru_cache_add_inactive_or_unevictable()
+> > with folio_add_lru() and folio_add_lru_vma(). This is in preparation for
+> > the removal of lru_cache_add().
+> 
+> Ummmmm.  Reviewing this patch reveals a bug (not introduced by your
+> patch).  Look:
+> 
+> mfill_atomic_install_pte:
+>         bool page_in_cache = page->mapping;
+> 
+> mcontinue_atomic_pte:
+>         ret = shmem_get_folio(inode, pgoff, &folio, SGP_NOALLOC);
+> ...
+>         page = folio_file_page(folio, pgoff);
+>         ret = mfill_atomic_install_pte(dst_mm, dst_pmd, dst_vma, dst_addr,
+>                                        page, false, wp_copy);
+> 
+> That says pretty plainly that mfill_atomic_install_pte() can be passed
+> a tail page from shmem, and if it is ...
+> 
+>         if (page_in_cache) {
+> ...
+>         } else {
+>                 page_add_new_anon_rmap(page, dst_vma, dst_addr);
+>                 lru_cache_add_inactive_or_unevictable(page, dst_vma);
+>         }
+> 
+> it'll get put on the rmap as an anon page!
+
+Hmm yeah.. thanks Matthew!
+
+Does the patch attached look reasonable to you?
+
+Copying Axel too.
+
+> 
+> > Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> > ---
+> >  mm/userfaultfd.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
 > > 
-> > Hm... does rbtree support lockless traversal? Because if not, that
+> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > index e24e8a47ce8a..2560973b00d8 100644
+> > --- a/mm/userfaultfd.c
+> > +++ b/mm/userfaultfd.c
+> > @@ -66,6 +66,7 @@ int mfill_atomic_install_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+> >  	bool vm_shared = dst_vma->vm_flags & VM_SHARED;
+> >  	bool page_in_cache = page->mapping;
+> >  	spinlock_t *ptl;
+> > +	struct folio *folio;
+> >  	struct inode *inode;
+> >  	pgoff_t offset, max_off;
+> >  
+> > @@ -113,14 +114,15 @@ int mfill_atomic_install_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+> >  	if (!pte_none_mostly(*dst_pte))
+> >  		goto out_unlock;
+> >  
+> > +	folio = page_folio(page);
+> >  	if (page_in_cache) {
+> >  		/* Usually, cache pages are already added to LRU */
+> >  		if (newly_allocated)
+> > -			lru_cache_add(page);
+> > +			folio_add_lru(folio);
+> >  		page_add_file_rmap(page, dst_vma, false);
+> >  	} else {
+> >  		page_add_new_anon_rmap(page, dst_vma, dst_addr);
+> > -		lru_cache_add_inactive_or_unevictable(page, dst_vma);
+> > +		folio_add_lru_vma(folio, dst_vma);
+> >  	}
+> >  
+> >  	/*
+> > -- 
+> > 2.38.1
+> > 
+> > 
 > 
-> The rfc that Vasily sent didn't allow for that at least.
-> 
-> > would make it impossible to fix the issue without calling capable()
-> > inside the critical section (or doing something complicated), AFAICT.
-> > Would rhashtable be a workable alternative to rbtree for this use
-> > case? Skimming <linux/rhashtable.h> it seems to support both lockless
-> > lookup and traversal using RCU. And according to its manpage,
-> > *listxattr(2) doesn't guarantee that the returned names are sorted.
-> 
-> I've never used the rhashtable infrastructure in any meaningful way. All
-> I can say from looking at current users that it looks like it could work
-> well for us here:
-> 
-> struct simple_xattr {
-> 	struct rhlist_head rhlist_head;
-> 	char *name;
-> 	size_t size;
-> 	char value[];
-> };
-> 
-> static const struct rhashtable_params simple_xattr_rhashtable = {
-> 	.head_offset = offsetof(struct simple_xattr, rhlist_head),
-> 	.key_offset = offsetof(struct simple_xattr, name),
-> 
-> or sm like this.
 
-I have a patch in rough shape that converts struct simple_xattr to use
-an rhashtable:
+-- 
+Peter Xu
 
-https://gitlab.com/brauner/linux/-/commits/fs.xattr.simple.rework/
+--XtXX9UT9oQ4Z3Adt
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: attachment;
+	filename="0001-mm-shmem-Use-page_mapping-to-detect-page-cache-for-u.patch"
 
-Light testing, not a lot useful comments and no meaningful commit
-message as of yet but I'll get to that.
+From 4eea0908b4890745bedd931283c1af91f509d039 Mon Sep 17 00:00:00 2001
+From: Peter Xu <peterx@redhat.com>
+Date: Wed, 2 Nov 2022 14:41:52 -0400
+Subject: [PATCH] mm/shmem: Use page_mapping() to detect page cache for uffd
+ continue
+Content-type: text/plain
 
-Even though your issue is orthogonal to the performance issues I'm
-trying to fix I went back to your patch, Ondrej to apply it on top.
-But I think it has one problem.
+mfill_atomic_install_pte() checks page->mapping to detect whether one page
+is used in the page cache.  However as pointed out by Matthew, the page can
+logically be a tail page rather than always the head in the case of uffd
+minor mode with UFFDIO_CONTINUE.  It means we could wrongly install one pte
+with shmem thp tail page assuming it's an anonymous page.
 
-Afaict, by moving the capable() call from the top of the function into
-the actual traversal portion an unprivileged user can potentially learn
-whether a file has trusted.* xattrs set. At least if dmesg isn't
-restricted on the kernel. That may very well be the reason why the
-capable() call is on top.
-(Because the straightforward fix for this would be to just call
-capable() a single time if at least one trusted xattr is encountered and
-store the result. That's pretty easy to do by making turning the trusted
-variable into an int, setting it to -1, and only if it's -1 and a
-trusted xattr has been found call capable() and store the result.)
+It's not that clear even for anonymous page, since normally anonymous pages
+also have page->mapping being setup with the anon vma. It's safe here only
+because the only such caller to mfill_atomic_install_pte() is always
+passing in a newly allocated page (mcopy_atomic_pte()), whose page->mapping
+is not yet setup.  However that's not extremely obvious either.
 
-One option to fix all of that is to switch simple_xattr_list() to use
+For either of above, use page_mapping() instead.
 
-        ns_capable_noaudit(&init_user_ns, CAP_SYS_ADMIN)
+And this should be stable material.
 
-which doesn't generate an audit event.
+Cc: Andrea Arcangeli <aarcange@redhat.com>
+Cc: Hugh Dickins <hughd@google.com>
+Cc: Axel Rasmussen <axelrasmussen@google.com>
+Cc: stable@vger.kernel.org
+Reported-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ mm/userfaultfd.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think this is even the correct thing to do as listing xattrs isn't a
-targeted operation. IOW, if the the user had used getxattr() to request
-a trusted.* xattr then logging a denial makes sense as the user
-explicitly wanted to retrieve a trusted.* xattr. But if the user just
-requested to list all xattrs then silently skipping trusted without
-logging an explicit denial xattrs makes sense.
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 3d0fef3980b3..650ab6cfd5f4 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -64,7 +64,7 @@ int mfill_atomic_install_pte(struct mm_struct *dst_mm, pmd_t *dst_pmd,
+ 	pte_t _dst_pte, *dst_pte;
+ 	bool writable = dst_vma->vm_flags & VM_WRITE;
+ 	bool vm_shared = dst_vma->vm_flags & VM_SHARED;
+-	bool page_in_cache = page->mapping;
++	bool page_in_cache = page_mapping(page);
+ 	spinlock_t *ptl;
+ 	struct inode *inode;
+ 	pgoff_t offset, max_off;
+-- 
+2.37.3
 
-Does that sound acceptable?
+
+--XtXX9UT9oQ4Z3Adt--
+
