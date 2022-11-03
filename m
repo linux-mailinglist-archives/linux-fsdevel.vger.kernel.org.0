@@ -2,252 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3D301618B35
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Nov 2022 23:14:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68E81618B4E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Nov 2022 23:21:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231295AbiKCWOo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Nov 2022 18:14:44 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40386 "EHLO
+        id S231703AbiKCWVG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Nov 2022 18:21:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230291AbiKCWOn (ORCPT
+        with ESMTP id S231470AbiKCWVA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Nov 2022 18:14:43 -0400
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6DFFF21273
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 15:14:40 -0700 (PDT)
-Received: by mail-io1-f72.google.com with SMTP id l9-20020a5d8f89000000b006bd33712128so1893932iol.17
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Nov 2022 15:14:40 -0700 (PDT)
+        Thu, 3 Nov 2022 18:21:00 -0400
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 43D2221E03
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 15:20:58 -0700 (PDT)
+Received: by mail-qk1-x72a.google.com with SMTP id i9so2088177qki.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Nov 2022 15:20:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pMN0/mJYGvzCnOyvxtCJFIOn1RUzuH2afiVlhl8BJN8=;
+        b=R6DRBzl5D7PmTiScz2q1QNrg5S/EVTQpn+C3LtM9SKPmz5cwA30hjj2kpsgOy9eZIa
+         Myw7XsEbkbNfN0tnrvY0/O563gK9D+y0wMqMrdjnsBy6lIZVn7MiXBaIMIsfDB704urv
+         fKP6U3VmiAXsIfqSTLdzXkih52xtbr96MBMR/pC7TTRGId/3MknjV3tU1EVNPCIn4xKI
+         5YLvUn4crDDl0m7eR8kbF5vfBiHAe6I525XruQUlEH0EePJhA5MXVI/wGhUDlxBRV30O
+         ADJH+Df8LJaWzNuMWaZamm1CxC0v1ci3yBoZFfYZv15out2MFkOVyQqJ5huIDjV9OnHg
+         vosg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VNx/xrXlOj1gag8JQNSKzoYOtQS92/lKcLuxTIRHnPs=;
-        b=qOSAnGdkEoRmIpBbwIkBLRkqo4mKy7nVa4vHpcxxDje/6x381oC5mtkSO08jTPS2HS
-         13yqOc8aTNgAMd4BFWDMqKzecottdNxcVzaWndJqvbvMHADXMjgD+s1vI63xXJ0/d4MR
-         NQe1owws3gYLdR2xkNp5WOaR+fgBrZlzGSyUm0JmhHhQRQQ0I/fgF0D3vL+YfLXbC2T1
-         KVtHJp7D8rMZZz1t/cWQvfiF8eWkLmWorI6SalHtWbimoYOOmk76ry7+ugm4gepXeq77
-         XyvPU1g0eHRw8zqTjX5+ImT5eZMPBCuJWkQ1Lq3XIkNY7Jbkp7ldPUO9EH7Jv9V5CTgo
-         Lhug==
-X-Gm-Message-State: ACrzQf0sgbaU4dxtInVTlrmIfavV6J0nrvGAnmzNuj01RHTgRUlDsBog
-        SbolJ5rAmp+zP0/Bg+TFJu+BvD4N5RST5WIg0/XPNxwPMqcm
-X-Google-Smtp-Source: AMsMyM5pRm8Z30ukAR3/aIHJzPAp6OxBVyI+b/l5ojhB9dokMKZhkvaqNnHbI5pm0tFphFqIbYGoNWc7ZyawpnAkvXmCRqVNqvD/
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pMN0/mJYGvzCnOyvxtCJFIOn1RUzuH2afiVlhl8BJN8=;
+        b=7Pqfx5Wz7bK74bILxIdZPFS88IMiAtg6HGwtbKRO4hb1toeHRTxc+SCJ3IlP/PZcMp
+         Q3wbPfDi3jlWGjU6KHbUZ6DtFX7rmo6GZ4+wetWDACPgwHiPKXhcrg5kBMJP7qmLJVoV
+         Fpj0uHL5yn4aquDQJ4YQYRH18diXdAPNMuzdqxRIkbm3mNDo0I/IrX/Pz6Za/zU0lxrY
+         xtLmOkYlq/5yK3SIxIYht0+aSewLjhXbGhtkKw5mtwEDBLg/lFSDoYFK0RaeL/0F+Xc8
+         8QvRjnUUDDJCRprkr/6GdaX946ZTF4xbZRqgyuoEnxb7jOgOXbamEB2JQqOrLT5iGDQR
+         Uaww==
+X-Gm-Message-State: ACrzQf2l+Ouw5Huhvrw/YvwPfck/fm11ZRf3ePsD27cAxMEZZ0mPLRqN
+        kJi6Un9e6+4A9MsfM6byzO5OAw==
+X-Google-Smtp-Source: AMsMyM6xZDCV9zQJtAhUoSH5ufgDptRZU0dKTD699bnK6iH5NnhZ73hquRFyFxv1/SpheHjZZuwKeg==
+X-Received: by 2002:a05:620a:152e:b0:6fa:3cb8:dd9c with SMTP id n14-20020a05620a152e00b006fa3cb8dd9cmr15550460qkk.82.1667514057172;
+        Thu, 03 Nov 2022 15:20:57 -0700 (PDT)
+Received: from localhost ([2620:10d:c091:480::25f1])
+        by smtp.gmail.com with ESMTPSA id x18-20020a05620a259200b006bc192d277csm1559048qko.10.2022.11.03.15.20.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Nov 2022 15:20:56 -0700 (PDT)
+Date:   Thu, 3 Nov 2022 18:20:59 -0400
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Thorsten Leemhuis <linux@leemhuis.info>
+Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Matthew Wilcox <willy@infradead.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, Gao Xiang <xiang@kernel.org>,
+        Chao Yu <chao@kernel.org>, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-mm@kvack.org,
+        "regressions@lists.linux.dev" <regressions@lists.linux.dev>
+Subject: Re: [REGESSION] systemd-oomd overreacting due to PSI changes for
+ Btrfs (was: Re: [PATCH 3/5] btrfs: add manual PSI accounting for compressed
+ reads)
+Message-ID: <Y2Q+y8t9PV5nrjud@cmpxchg.org>
+References: <20220915094200.139713-1-hch@lst.de>
+ <20220915094200.139713-4-hch@lst.de>
+ <d20a0a85-e415-cf78-27f9-77dd7a94bc8d@leemhuis.info>
 MIME-Version: 1.0
-X-Received: by 2002:a92:b07:0:b0:300:e141:40cc with SMTP id
- b7-20020a920b07000000b00300e14140ccmr2241867ilf.309.1667513679779; Thu, 03
- Nov 2022 15:14:39 -0700 (PDT)
-Date:   Thu, 03 Nov 2022 15:14:39 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000008aa01105ec98487b@google.com>
-Subject: [syzbot] possible deadlock in filemap_fault
-From:   syzbot <syzbot+7736960b837908f3a81d@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d20a0a85-e415-cf78-27f9-77dd7a94bc8d@leemhuis.info>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Thu, Nov 03, 2022 at 11:46:52AM +0100, Thorsten Leemhuis wrote:
+> Hi Christoph!
+> 
+> On 15.09.22 11:41, Christoph Hellwig wrote:
+> > btrfs compressed reads try to always read the entire compressed chunk,
+> > even if only a subset is requested.  Currently this is covered by the
+> > magic PSI accounting underneath submit_bio, but that is about to go
+> > away. Instead add manual psi_memstall_{enter,leave} annotations.
+> > 
+> > Note that for readahead this really should be using readahead_expand,
+> > but the additionals reads are also done for plain ->read_folio where
+> > readahead_expand can't work, so this overall logic is left as-is for
+> > now.
+> 
+> It seems this patch makes systemd-oomd overreact on my day-to-day
+> machine and aggressively kill applications. I'm not the only one that
+> noticed such a behavior with 6.1 pre-releases:
+> https://bugzilla.redhat.com/show_bug.cgi?id=2133829
+> https://bugzilla.redhat.com/show_bug.cgi?id=2134971
+> 
+> I think I have a pretty reliable way to trigger the issue that involves
+> starting the apps that I normally use and a VM that I occasionally use,
+> which up to now never resulted in such a behaviour.
+> 
+> On master as of today (8e5423e991e8) I can trigger the problem within a
+> minute or two. But I fail to trigger it with v6.0.6 or when I revert
+> 4088a47e78f9 ("btrfs: add manual PSI accounting for compressed reads").
+> And yes, I use btrfs with compression for / and /home/.
+> 
+> See [1] for a log msg from systemd-oomd.
+> 
+> Note, I had some trouble with bisecting[2]. This series looked
+> suspicious, so I removed it completely ontop of master and the problem
+> went away. Then I tried reverting only 4088a47e78f9 which helped, too.
+> Let me know if you want me to try another combination or need more data.
 
-syzbot found the following issue on:
+Oh, I think I see the bug. We can leak pressure state from the bio
+submission, which causes the task to permanently drive up pressure.
 
-HEAD commit:    bbed346d5a96 Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=138e3dce880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3a4a45d2d827c1e
-dashboard link: https://syzkaller.appspot.com/bug?extid=7736960b837908f3a81d
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
+Can you try this patch?
 
-Unfortunately, I don't have any reproducer for this issue yet.
+From 499e5cab7b39fc4c90a0f96e33cdc03274b316fd Mon Sep 17 00:00:00 2001
+From: Johannes Weiner <hannes@cmpxchg.org>
+Date: Thu, 3 Nov 2022 17:34:31 -0400
+Subject: [PATCH] fs: btrfs: fix leaked psi pressure state
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e8e91bc79312/disk-bbed346d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c1cb3fb3b77e/vmlinux-bbed346d.xz
+When psi annotations were added to to btrfs compression reads, the psi
+state tracking over add_ra_bio_pages and btrfs_submit_compressed_read
+was faulty. The task can remain in a stall state after the read. This
+results in incorrectly elevated pressure, which triggers OOM kills.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+7736960b837908f3a81d@syzkaller.appspotmail.com
+pflags record the *previous* memstall state when we enter a new
+one. The code tried to initialize pflags to 1, and then optimize the
+leave call when we either didn't enter a memstall, or were already
+inside a nested stall. However, there can be multiple PageWorkingset
+pages in the bio, at which point it's that path itself that re-enters
+the state and overwrites pflags. This causes us to miss the exit.
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.0.0-rc7-syzkaller-18095-gbbed346d5a96 #0 Not tainted
-------------------------------------------------------
-syz-executor.1/6659 is trying to acquire lock:
-ffff000117379c70 (mapping.invalidate_lock#4){.+.+}-{3:3}, at: filemap_invalidate_lock_shared include/linux/fs.h:811 [inline]
-ffff000117379c70 (mapping.invalidate_lock#4){.+.+}-{3:3}, at: filemap_fault+0x104/0x804 mm/filemap.c:3112
+Enter the stall only once if needed, then unwind correctly.
 
-but task is already holding lock:
-ffff0000c0e10658 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_trylock include/linux/mmap_lock.h:136 [inline]
-ffff0000c0e10658 (&mm->mmap_lock){++++}-{3:3}, at: do_page_fault+0x1ec/0x79c arch/arm64/mm/fault.c:583
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&mm->mmap_lock){++++}-{3:3}:
-       __might_fault+0x7c/0xb4 mm/memory.c:5577
-       filldir64+0x1e4/0x56c fs/readdir.c:335
-       dir_emit_dot include/linux/fs.h:3547 [inline]
-       dir_emit_dots include/linux/fs.h:3558 [inline]
-       exfat_iterate+0xd8/0xcd8 fs/exfat/dir.c:231
-       iterate_dir+0x114/0x28c
-       __do_sys_getdents64 fs/readdir.c:369 [inline]
-       __se_sys_getdents64 fs/readdir.c:354 [inline]
-       __arm64_sys_getdents64+0x80/0x204 fs/readdir.c:354
-       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-       invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
-       el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
-       do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
-       el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:636
-       el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:654
-       el0t_64_sync+0x18c/0x190 arch/arm64/kernel/entry.S:581
-
--> #1 (&sbi->s_lock#3){+.+.}-{3:3}:
-       __mutex_lock_common+0xd4/0xca8 kernel/locking/mutex.c:603
-       __mutex_lock kernel/locking/mutex.c:747 [inline]
-       mutex_lock_nested+0x38/0x44 kernel/locking/mutex.c:799
-       exfat_get_block+0x6c/0x9ec fs/exfat/inode.c:282
-       do_mpage_readpage+0x474/0xd38 fs/mpage.c:208
-       mpage_readahead+0xf0/0x1b8 fs/mpage.c:361
-       exfat_readahead+0x28/0x38 fs/exfat/inode.c:345
-       read_pages+0x74/0x4a0 mm/readahead.c:158
-       page_cache_ra_unbounded+0x2cc/0x338 mm/readahead.c:263
-       do_page_cache_ra mm/readahead.c:293 [inline]
-       page_cache_ra_order+0x348/0x380 mm/readahead.c:550
-       ondemand_readahead+0x3cc/0x724 mm/readahead.c:672
-       page_cache_sync_ra+0xc4/0xdc mm/readahead.c:699
-       page_cache_sync_readahead include/linux/pagemap.h:1215 [inline]
-       filemap_get_pages+0x108/0x574 mm/filemap.c:2566
-       filemap_read+0x14c/0x6fc mm/filemap.c:2660
-       generic_file_read_iter+0x6c/0x25c mm/filemap.c:2806
-       call_read_iter include/linux/fs.h:2181 [inline]
-       new_sync_read fs/read_write.c:389 [inline]
-       vfs_read+0x2d4/0x448 fs/read_write.c:470
-       ksys_read+0xb4/0x160 fs/read_write.c:607
-       __do_sys_read fs/read_write.c:617 [inline]
-       __se_sys_read fs/read_write.c:615 [inline]
-       __arm64_sys_read+0x24/0x34 fs/read_write.c:615
-       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-       invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
-       el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
-       do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
-       el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:636
-       el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:654
-       el0t_64_sync+0x18c/0x190 arch/arm64/kernel/entry.S:581
-
--> #0 (mapping.invalidate_lock#4){.+.+}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3095 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3214 [inline]
-       validate_chain kernel/locking/lockdep.c:3829 [inline]
-       __lock_acquire+0x1530/0x30a4 kernel/locking/lockdep.c:5053
-       lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5666
-       down_read+0x5c/0x78 kernel/locking/rwsem.c:1499
-       filemap_invalidate_lock_shared include/linux/fs.h:811 [inline]
-       filemap_fault+0x104/0x804 mm/filemap.c:3112
-       __do_fault+0x60/0x358 mm/memory.c:4173
-       do_read_fault mm/memory.c:4518 [inline]
-       do_fault+0x338/0x550 mm/memory.c:4647
-       handle_pte_fault mm/memory.c:4911 [inline]
-       __handle_mm_fault mm/memory.c:5053 [inline]
-       handle_mm_fault+0x784/0xa40 mm/memory.c:5151
-       __do_page_fault arch/arm64/mm/fault.c:502 [inline]
-       do_page_fault+0x428/0x79c arch/arm64/mm/fault.c:602
-       do_translation_fault+0x78/0x194 arch/arm64/mm/fault.c:685
-       do_mem_abort+0x54/0x130 arch/arm64/mm/fault.c:821
-       el1_abort+0x3c/0x5c arch/arm64/kernel/entry-common.c:366
-       el1h_64_sync_handler+0x60/0xac arch/arm64/kernel/entry-common.c:426
-       el1h_64_sync+0x64/0x68 arch/arm64/kernel/entry.S:576
-       __arch_copy_from_user+0x94/0x230 arch/arm64/lib/copy_template.S:91
-       __sys_bpf+0x1d8/0x5f4 kernel/bpf/syscall.c:4926
-       __do_sys_bpf kernel/bpf/syscall.c:5057 [inline]
-       __se_sys_bpf kernel/bpf/syscall.c:5055 [inline]
-       __arm64_sys_bpf+0x2c/0x40 kernel/bpf/syscall.c:5055
-       __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
-       invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
-       el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
-       do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
-       el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:636
-       el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:654
-       el0t_64_sync+0x18c/0x190 arch/arm64/kernel/entry.S:581
-
-other info that might help us debug this:
-
-Chain exists of:
-  mapping.invalidate_lock#4 --> &sbi->s_lock#3 --> &mm->mmap_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&mm->mmap_lock);
-                               lock(&sbi->s_lock#3);
-                               lock(&mm->mmap_lock);
-  lock(mapping.invalidate_lock#4);
-
- *** DEADLOCK ***
-
-1 lock held by syz-executor.1/6659:
- #0: ffff0000c0e10658 (&mm->mmap_lock){++++}-{3:3}, at: mmap_read_trylock include/linux/mmap_lock.h:136 [inline]
- #0: ffff0000c0e10658 (&mm->mmap_lock){++++}-{3:3}, at: do_page_fault+0x1ec/0x79c arch/arm64/mm/fault.c:583
-
-stack backtrace:
-CPU: 0 PID: 6659 Comm: syz-executor.1 Not tainted 6.0.0-rc7-syzkaller-18095-gbbed346d5a96 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
-Call trace:
- dump_backtrace+0x1c4/0x1f0 arch/arm64/kernel/stacktrace.c:156
- show_stack+0x2c/0x54 arch/arm64/kernel/stacktrace.c:163
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x104/0x16c lib/dump_stack.c:106
- dump_stack+0x1c/0x58 lib/dump_stack.c:113
- print_circular_bug+0x2c4/0x2c8 kernel/locking/lockdep.c:2053
- check_noncircular+0x14c/0x154 kernel/locking/lockdep.c:2175
- check_prev_add kernel/locking/lockdep.c:3095 [inline]
- check_prevs_add kernel/locking/lockdep.c:3214 [inline]
- validate_chain kernel/locking/lockdep.c:3829 [inline]
- __lock_acquire+0x1530/0x30a4 kernel/locking/lockdep.c:5053
- lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5666
- down_read+0x5c/0x78 kernel/locking/rwsem.c:1499
- filemap_invalidate_lock_shared include/linux/fs.h:811 [inline]
- filemap_fault+0x104/0x804 mm/filemap.c:3112
- __do_fault+0x60/0x358 mm/memory.c:4173
- do_read_fault mm/memory.c:4518 [inline]
- do_fault+0x338/0x550 mm/memory.c:4647
- handle_pte_fault mm/memory.c:4911 [inline]
- __handle_mm_fault mm/memory.c:5053 [inline]
- handle_mm_fault+0x784/0xa40 mm/memory.c:5151
- __do_page_fault arch/arm64/mm/fault.c:502 [inline]
- do_page_fault+0x428/0x79c arch/arm64/mm/fault.c:602
- do_translation_fault+0x78/0x194 arch/arm64/mm/fault.c:685
- do_mem_abort+0x54/0x130 arch/arm64/mm/fault.c:821
- el1_abort+0x3c/0x5c arch/arm64/kernel/entry-common.c:366
- el1h_64_sync_handler+0x60/0xac arch/arm64/kernel/entry-common.c:426
- el1h_64_sync+0x64/0x68 arch/arm64/kernel/entry.S:576
- __arch_copy_from_user+0x94/0x230 arch/arm64/lib/copy_template.S:91
- __sys_bpf+0x1d8/0x5f4 kernel/bpf/syscall.c:4926
- __do_sys_bpf kernel/bpf/syscall.c:5057 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5055 [inline]
- __arm64_sys_bpf+0x2c/0x40 kernel/bpf/syscall.c:5055
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
- el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
- el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:636
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:654
- el0t_64_sync+0x18c/0x190 arch/arm64/kernel/entry.S:581
-
-
+Reported-by: Thorsten Leemhuis <linux@leemhuis.info>
+Fixes: 4088a47e78f9 btrfs: add manual PSI accounting for compressed reads
+Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ fs/btrfs/compression.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index f1f051ad3147..e6635fe70067 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -512,7 +512,7 @@ static u64 bio_end_offset(struct bio *bio)
+ static noinline int add_ra_bio_pages(struct inode *inode,
+ 				     u64 compressed_end,
+ 				     struct compressed_bio *cb,
+-				     unsigned long *pflags)
++				     int *memstall, unsigned long *pflags)
+ {
+ 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
+ 	unsigned long end_index;
+@@ -581,8 +581,10 @@ static noinline int add_ra_bio_pages(struct inode *inode,
+ 			continue;
+ 		}
+ 
+-		if (PageWorkingset(page))
++		if (!*memstall && PageWorkingset(page)) {
+ 			psi_memstall_enter(pflags);
++			*memstall = 1;
++		}
+ 
+ 		ret = set_page_extent_mapped(page);
+ 		if (ret < 0) {
+@@ -670,8 +672,8 @@ void btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+ 	u64 em_len;
+ 	u64 em_start;
+ 	struct extent_map *em;
+-	/* Initialize to 1 to make skip psi_memstall_leave unless needed */
+-	unsigned long pflags = 1;
++	unsigned long pflags;
++	int memstall = 0;
+ 	blk_status_t ret;
+ 	int ret2;
+ 	int i;
+@@ -727,7 +729,7 @@ void btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+ 		goto fail;
+ 	}
+ 
+-	add_ra_bio_pages(inode, em_start + em_len, cb, &pflags);
++	add_ra_bio_pages(inode, em_start + em_len, cb, &memstall, &pflags);
+ 
+ 	/* include any pages we added in add_ra-bio_pages */
+ 	cb->len = bio->bi_iter.bi_size;
+@@ -807,7 +809,7 @@ void btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+ 		}
+ 	}
+ 
+-	if (!pflags)
++	if (memstall)
+ 		psi_memstall_leave(&pflags);
+ 
+ 	if (refcount_dec_and_test(&cb->pending_ios))
+-- 
+2.38.1
