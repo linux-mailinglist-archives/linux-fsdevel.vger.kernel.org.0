@@ -2,299 +2,241 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FEA4617D14
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Nov 2022 13:51:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 523F8617D26
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Nov 2022 13:57:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231428AbiKCMvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Nov 2022 08:51:11 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37584 "EHLO
+        id S231255AbiKCM5w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Nov 2022 08:57:52 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40238 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231328AbiKCMvJ (ORCPT
+        with ESMTP id S229637AbiKCM5v (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Nov 2022 08:51:09 -0400
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6BDE011C38
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 05:51:08 -0700 (PDT)
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20221103125106epoutp02501345f31870a69309df0651f0eaaed6~kFBqnhlSw2591525915epoutp02X
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 12:51:06 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20221103125106epoutp02501345f31870a69309df0651f0eaaed6~kFBqnhlSw2591525915epoutp02X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1667479866;
-        bh=dgtRx1SgXG71NCP0VLB8ykwpSVh812d4TvZZZJsXTeU=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=ZDNtqsnO0HxmgkQrGkFGr2tY6yI04/h90myN/Jp2e1zlcrwYWex73K/nuu4TxRMVM
-         HNWH4GKjjZIfVMu7BzIC35dzyFS03VcsG8RZRAsh/5EESOopZFIrxduNcT9w+1jlSa
-         3C0eLsH3vAPF/cNFOZ/CfUv8QW2MrVy10+kbn+q8=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20221103125105epcas1p4c48fbcce3f5f9f04ba79b2c9e2e16650~kFBpxW0Cb1415814158epcas1p4X;
-        Thu,  3 Nov 2022 12:51:05 +0000 (GMT)
-Received: from epsmges1p5.samsung.com (unknown [182.195.36.224]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 4N33XT3MWgz4x9Py; Thu,  3 Nov
-        2022 12:51:05 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p5.samsung.com (Symantec Messaging Gateway) with SMTP id
-        90.A7.20046.939B3636; Thu,  3 Nov 2022 21:51:05 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20221103125104epcas1p26523c136cab92e8d9903ec64aaacd765~kFBoj4yTZ1547715477epcas1p2q;
-        Thu,  3 Nov 2022 12:51:04 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20221103125104epsmtrp187b2787f1f0923e892a5a133d85f371e~kFBojNFAZ1787017870epsmtrp1B;
-        Thu,  3 Nov 2022 12:51:04 +0000 (GMT)
-X-AuditID: b6c32a39-35fff70000004e4e-38-6363b939200b
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        53.CC.14392.839B3636; Thu,  3 Nov 2022 21:51:04 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20221103125104epsmtip1fdae7b1cb28364146a5fed9e20ac06f7~kFBoZc9dl2497524975epsmtip1m;
-        Thu,  3 Nov 2022 12:51:04 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     "'Namjae Jeon'" <linkinjeon@kernel.org>
-Cc:     "'linux-kernel'" <linux-kernel@vger.kernel.org>,
-        "'linux-fsdevel'" <linux-fsdevel@vger.kernel.org>,
-        <sj1557.seo@samsung.com>
-In-Reply-To: <PUZPR04MB6316A41FC40A84059E60BAB481399@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Subject: RE: [PATCH v2 2/2] exfat: hint the empty entry which at the end of
- cluster chain
-Date:   Thu, 3 Nov 2022 21:51:04 +0900
-Message-ID: <4eaa01d8ef82$ef0f1680$cd2d4380$@samsung.com>
+        Thu, 3 Nov 2022 08:57:51 -0400
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 531A6110B
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 05:57:50 -0700 (PDT)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 0BFE421F75;
+        Thu,  3 Nov 2022 12:57:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1667480269; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=XpMncsQuvTNh0qVP7yCDVYP3Jk7EYp9sdNoeghL/3Mw=;
+        b=Npa4bRhlcSEDUmPmfn3HeaHd1jhewurYhJHvzyaKqTzRbWJeI/XxBQU4NcXvy6YDY0cbeU
+        EAbpifl3Zpt1/RCUOBzIJgxzMnlmImb3bqF+sd86fWctALfbYAhmUoH+29eRbhu06Dp36j
+        n9msLf2lZkEDmXN9oHdCrucwlasQO3M=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1667480269;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=XpMncsQuvTNh0qVP7yCDVYP3Jk7EYp9sdNoeghL/3Mw=;
+        b=3lR2NW/67PL6Ob1hFyx3Q156K/ncupBcLTG15ej+j033LAQEE3u8IWN+GznFambUM8iT/w
+        uJZXLKyZDZsvxJDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D928813AAF;
+        Thu,  3 Nov 2022 12:57:48 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id q92DNMy6Y2M/TQAAMHmgww
+        (envelope-from <jack@suse.cz>); Thu, 03 Nov 2022 12:57:48 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 39EA5A0700; Thu,  3 Nov 2022 13:57:48 +0100 (CET)
+Date:   Thu, 3 Nov 2022 13:57:48 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+Subject: Re: thoughts about fanotify and HSM
+Message-ID: <20221103125748.474y4l3vf2h62mot@quack3>
+References: <CAOQ4uxjHu4k2-sdM1qtnFPvKRHv-OFWo0cYDZbvjv0sd9bXGZQ@mail.gmail.com>
+ <20220922104823.z6465rfro7ataw2i@quack3>
+ <CAOQ4uxj_xr4WvHNneeswZO2GEtEGgabc6r-91YR-1P+gPHPhdA@mail.gmail.com>
+ <20220926152735.fgvx37rppdfhuokz@quack3>
+ <CAOQ4uxgU4q1Pj2-9q7DZGZiw1EPZKXbc_Cp=H_Tu5_sxD6-twA@mail.gmail.com>
+ <20220929100145.wruxmbwapjn6dapy@quack3>
+ <CAOQ4uxjAn50Z03SysRT0v8AVmtvDHpFUMG6_TYCCX_L9zBD+fg@mail.gmail.com>
+ <20221012154402.h5al3junehejsv24@quack3>
+ <CAOQ4uxjY3eDtqXObbso1KtZTMB7+zYHBRiUANg12hO=T=vqJrw@mail.gmail.com>
+ <CAOQ4uxi7Y_W+-+TiveYWixk4vYauSQuNAfFFZyEAVPUehT_Gaw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQGcCjGLLgLtQ0s1lVkCZdVnEZTYcAGvYgVvrpl2KGA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKJsWRmVeSWpSXmKPExsWy7bCmvq7lzuRkg6P7xC0mTlvKbLFn70kW
-        i8u75rBZbPl3hNWBxWPTqk42j74tqxg9Pm+SC2COamC0SSxKzsgsS1VIzUvOT8nMS7dVCg1x
-        07VQUsjILy6xVYo2NDTSMzQw1zMyMtIztoy1MjJVUshLzE21VarQhepVUihKLgCqza0sBhqQ
-        k6oHFdcrTs1LccjKLwU5Ua84Mbe4NC9dLzk/V0mhLDGnFGiEkn7CN8aMZ90fmAr+6FTsW3mX
-        sYGxW7mLkZNDQsBEYsb+BexdjFwcQgI7GCUeL1gN5XxilHh0oYURwvnGKPHk3nMmmJZnXauh
-        EnsZJe7OOAflvGSUWP3lHhtIFZuArsSTGz+Zuxg5OEQEtCXuv0gHqWEWaGKUuPr7BNgkToFY
-        iR87L7CD2MIC0RIPNm8Ai7MIqEjMedgHNodXwFLi1LRjLBC2oMTJmU/AbGYBeYntb+cwQ1yk
-        ILH701FWEFtEwEri68apjBA1IhKzO9uYQRZLCHxklzix5AtUg4vE5K9PoWxhiVfHt7BD2FIS
-        L/vboOxuRok/53ghmicwSrTcOcsKkTCW+PT5MyPIZ8wCmhLrd+lDhBUldv6eywhhC0qcvtbN
-        DHEEn8S7rz2sIOUSArwSHW1CECUqEt8/7GSZwKg8C8lrs5C8NgvJC7MQli1gZFnFKJZaUJyb
-        nlpsWGCKHOObGMEpVMtyB+P0tx/0DjEycTAeYpTgYFYS4f20LTlZiDclsbIqtSg/vqg0J7X4
-        EGMyMLAnMkuJJucDk3heSbyhibGBgREwIZpbmhsTIWxpYGJmZGJhbGlspiTO2zBDK1lIID2x
-        JDU7NbUgtQhmCxMHp1QDU5JtdgHnZcE7yjFbtt/VfdwTxz6v/8ahU/vDFe40/PNXfyus9Uh3
-        b5LMTqe/adfvxdzd+yRrisYe5UcKm+dn9s2TM2u1Z55yazZHp+fjK3PTfMXnv+UK5HizJvtx
-        6oO49CWb7v95djCAJ2SRPOcT5tM/xFccen9iYiqveAXf2ndl9vNvrX4T/rXFY++FryflhZ+o
-        J+1eeP/bv/fZFgrSAjl9zN/ctzzJndhauOFa+gGu2PtdUi1LzZ/q+G+d///A0tuqVodf5by8
-        lnqrMzrd+HjxtBnn7yfIrP0YU+zo/E5fRt/x3rXp0R4r7z/Ys2X6Qc7SwqyA7KsmT/+blbdt
-        yJ682l9ZOHtdzKWGuRHSimFKLMUZiYZazEXFiQBSQYB3WAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSnK7FzuRkgxVrpS0mTlvKbLFn70kW
-        i8u75rBZbPl3hNWBxWPTqk42j74tqxg9Pm+SC2CO4rJJSc3JLEst0rdL4Mp41v2BqeCPTsW+
-        lXcZGxi7lbsYOTkkBEwknnWtZuxi5OIQEtjNKHFtz1EghwMoISVxcJ8mhCkscfhwMUTJc0aJ
-        exeOsoP0sgnoSjy58ZMZpEZEQFvi/ot0kBpmgRZGiVmNz9ggGtYxSvw/8JAZpIFTIFbix84L
-        YM3CApES7959ZAGxWQRUJOY87GMDsXkFLCVOTTvGAmELSpyc+QTMZgZa0PuwlRHClpfY/nYO
-        M8QDChK7Px1lBbFFBKwkvm6cClUjIjG7s415AqPwLCSjZiEZNQvJqFlIWhYwsqxilEwtKM5N
-        zy02LDDMSy3XK07MLS7NS9dLzs/dxAiODS3NHYzbV33QO8TIxMF4iFGCg1lJhPfTtuRkId6U
-        xMqq1KL8+KLSnNTiQ4zSHCxK4rwXuk7GCwmkJ5akZqemFqQWwWSZODilGphyGe5rfBaSEDF9
-        x1fSO5XPySDziN2f2HM8BqeFrVvMdPTYG1cxXm4uFWxNzHmjt+jWjoC2mUuuRveHvI7bZdk8
-        +XxzZXfinoKZTty1Ya+VWBYb2yYxhM1Yuffq2rRF/dq5d/qv6av/enpG2tX6/Qr3KQav7GoP
-        +99R9XAptC8++uNSspmv2cUXH92KGW2YWFsrTT8sZN+x31HF6NvE2YqH5LhEGvM7+/lWXpJ9
-        pP7i960wfuePdya0aRpKTKo7zTH9Z/qvprM5vAviOSLzFr7JrJSc7mZu3r4uQlOg+a6xf9/b
-        k5dfzrCZ9mbuhnPp7kt1G2PrvbdzmSxSzRZiYGxjtvGVW6V3TcR13kwbJZbijERDLeai4kQA
-        bisUzfwCAAA=
-X-CMS-MailID: 20221103125104epcas1p26523c136cab92e8d9903ec64aaacd765
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-X-ArchiveUser: EV
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221102071138epcas1p198e20ca74ae4df32b6f754a382b9c2ba
-References: <CGME20221102071138epcas1p198e20ca74ae4df32b6f754a382b9c2ba@epcas1p1.samsung.com>
-        <PUZPR04MB6316A41FC40A84059E60BAB481399@PUZPR04MB6316.apcprd04.prod.outlook.com>
-X-Spam-Status: No, score=-5.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxi7Y_W+-+TiveYWixk4vYauSQuNAfFFZyEAVPUehT_Gaw@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> After traversing all directory entries, hint the empty directory
-> entry no matter whether or not there are enough empty directory
-> entries.
-> 
-> After this commit, hint the empty directory entries like this:
-> 
-> 1. Hint the deleted directory entries if enough;
-> 2. Hint the deleted and unused directory entries which at the
->    end of the cluster chain no matter whether enough or not(Add
->    by this commit);
-> 3. If no any empty directory entries, hint the empty directory
->    entries in the new cluster(Add by this commit).
-> 
-> This avoids repeated traversal of directory entries, reduces CPU
-> usage, and improves the performance of creating files and
-> directories(especially on low-performance CPUs).
-> 
-> Test create 5000 files in a class 4 SD card on imx6q-sabrelite
-> with:
-> 
-> for ((i=0;i<5;i++)); do
->    sync
->    time (for ((j=1;j<=1000;j++)); do touch file$((i*1000+j)); done)
-> done
-> 
-> The more files, the more performance improvements.
-> 
->             Before   After    Improvement
->    1~1000   25.360s  22.168s  14.40%
-> 1001~2000   38.242s  28.72ss  33.15%
-> 2001~3000   49.134s  35.037s  40.23%
-> 3001~4000   62.042s  41.624s  49.05%
-> 4001~5000   73.629s  46.772s  57.42%
-> 
-> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-> Reviewed-by: Andy Wu <Andy.Wu@sony.com>
-> Reviewed-by: Aoyama Wataru <wataru.aoyama@sony.com>
+I'm sorry for the really delayed response. We had an internal conference
+and some stuff around that which made me busy.
 
-Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+On Thu 13-10-22 15:16:25, Amir Goldstein wrote:
+> On Wed, Oct 12, 2022 at 7:28 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> >
+> > On Wed, Oct 12, 2022 at 6:44 PM Jan Kara <jack@suse.cz> wrote:
+> > >
+> > > Hi Amir!
+> > >
+> > > On Fri 07-10-22 16:58:21, Amir Goldstein wrote:
+> > > > > > The other use case of automatic inode marks I was thinking about,
+> > > > > > which are even more relevant for $SUBJECT is this:
+> > > > > > When instantiating a dentry with an inode that has xattr
+> > > > > > "security.fanotify.mask" (a.k.a. persistent inode mark), an inode
+> > > > > > mark could be auto created and attached to a group with a special sb
+> > > > > > mark (we can limit a single special mark per sb).
+> > > > > > This could be implemented similar to get_acl(), where i_fsnotify_mask
+> > > > > > is always initialized with a special value (i.e. FS_UNINITIALIZED)
+> > > > > > which is set to either 0 or non-zero if "security.fanotify.mask" exists.
+> > > > > >
+> > > > > > The details of how such an API would look like are very unclear to me,
+> > > > > > so I will try to focus on the recursive auto inode mark idea.
+> > > > >
+> > > > > Yeah, although initializing fanotify marks based on xattrs does not look
+> > > > > completely crazy I can see a lot of open questions there so I think
+> > > > > automatic inode mark idea has more chances for success at this point :).
+> > > >
+> > > > I realized that there is one sort of "persistent mark" who raises
+> > > > less questions - one that only has an ignore mask.
+> > > >
+> > > > ignore masks can have a "static" namespace that is not bound to any
+> > > > specific group, but rather a set of groups that join this namespace.
+> > > >
+> > > > I played with this idea and wrote some patches:
+> > > > https://github.com/amir73il/linux/commits/fan_xattr_ignore_mask
+> > >
+> > > I have glanced over the patches. In general the idea looks OK to me but I
+> > > have some concerns:
+> > >
+> > > 1) Technically, it may be challenging to call into filesystem xattr
+> > > handling code on first event generated by the inode - that may generate
+> > > some unexpected lock recursion for some filesystems and some events which
+> > > trigger the initialization...
+> >
+> > That may be a correct statement in general, but please note that
+> > - Only permission events trigger auto-init of xattr ignore mask
+> > - Permission events are called from security hooks
+> > - Security hooks may also call getxattr to get the security context
+> >
+> > Perhaps LSMs always initialize the security context in OPEN and
+> > never in ACCESS?
+> >
+> > One of the earlier versions of the patch initialized xattr ignore mask
+> > on LOOKUP permission event, if ANY object was interested in ANY
+> > permission event even if no object was interested in LOOKUP
+> > to mimic the LSM context initialization,
+> > but it was complicated and I wasn't sure if this was necessary.
+> >
+> 
+> Also, permission events can sleep by definition
+> so why would getxattr not be safe in the
+> context of permission events handling?
 
-Looks good. Thanks!
+Well, I'm not afraid of sleeping. I was more worried about lock ordering
+issues. But are right that this probably isn't going to be an issue.
 
-> ---
->  fs/exfat/dir.c   | 26 ++++++++++++++++++++++----
->  fs/exfat/namei.c | 33 +++++++++++++++++++++------------
->  2 files changed, 43 insertions(+), 16 deletions(-)
-> 
-> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-> index 9f9b8435baca..5497a610808d 100644
-> --- a/fs/exfat/dir.c
-> +++ b/fs/exfat/dir.c
-> @@ -905,17 +905,24 @@ static inline void exfat_reset_empty_hint(struct
-> exfat_hint_femp *hint_femp)
-> 
->  static inline void exfat_set_empty_hint(struct exfat_inode_info *ei,
->  		struct exfat_hint_femp *candi_empty, struct exfat_chain *clu,
-> -		int dentry, int num_entries)
-> +		int dentry, int num_entries, int entry_type)
->  {
->  	if (ei->hint_femp.eidx == EXFAT_HINT_NONE ||
->  	    ei->hint_femp.eidx > dentry) {
-> +		int total_entries = EXFAT_B_TO_DEN(i_size_read(&ei-
-> >vfs_inode));
-> +
->  		if (candi_empty->count == 0) {
->  			candi_empty->cur = *clu;
->  			candi_empty->eidx = dentry;
->  		}
-> 
-> -		candi_empty->count++;
-> -		if (candi_empty->count == num_entries)
-> +		if (entry_type == TYPE_UNUSED)
-> +			candi_empty->count += total_entries - dentry;
-> +		else
-> +			candi_empty->count++;
-> +
-> +		if (candi_empty->count == num_entries ||
-> +		    candi_empty->count + candi_empty->eidx == total_entries)
->  			ei->hint_femp = *candi_empty;
->  	}
->  }
-> @@ -989,7 +996,8 @@ int exfat_find_dir_entry(struct super_block *sb,
-> struct exfat_inode_info *ei,
->  				step = DIRENT_STEP_FILE;
-> 
->  				exfat_set_empty_hint(ei, &candi_empty, &clu,
-> -						dentry, num_entries);
-> +						dentry, num_entries,
-> +						entry_type);
-> 
->  				brelse(bh);
->  				if (entry_type == TYPE_UNUSED)
-> @@ -1100,6 +1108,16 @@ int exfat_find_dir_entry(struct super_block *sb,
-> struct exfat_inode_info *ei,
->  		goto rewind;
->  	}
-> 
-> +	/*
-> +	 * set the EXFAT_EOF_CLUSTER flag to avoid search
-> +	 * from the beginning again when allocated a new cluster
-> +	 */
-> +	if (ei->hint_femp.eidx == EXFAT_HINT_NONE) {
-> +		ei->hint_femp.cur.dir = EXFAT_EOF_CLUSTER;
-> +		ei->hint_femp.eidx = p_dir->size * dentries_per_clu;
-> +		ei->hint_femp.count = 0;
-> +	}
-> +
->  	/* initialized hint_stat */
->  	hint_stat->clu = p_dir->dir;
->  	hint_stat->eidx = 0;
-> diff --git a/fs/exfat/namei.c b/fs/exfat/namei.c
-> index b617bebc3d0f..add4893711d3 100644
-> --- a/fs/exfat/namei.c
-> +++ b/fs/exfat/namei.c
-> @@ -224,11 +224,18 @@ static int exfat_search_empty_slot(struct
-> super_block *sb,
-> 
->  	if (hint_femp->eidx != EXFAT_HINT_NONE) {
->  		dentry = hint_femp->eidx;
-> -		if (num_entries <= hint_femp->count) {
-> -			hint_femp->eidx = EXFAT_HINT_NONE;
-> -			return dentry;
-> -		}
-> 
-> +		/*
-> +		 * If hint_femp->count is enough, it is needed to check if
-> +		 * there are actual empty entries.
-> +		 * Otherwise, and if "dentry + hint_famp->count" is also
-> equal
-> +		 * to "p_dir->size * dentries_per_clu", it means ENOSPC.
-> +		 */
-> +		if (dentry + hint_femp->count == p_dir->size *
-> dentries_per_clu
-> +		    && num_entries > hint_femp->count)
-> +			return -ENOSPC;
-> +
-> +		hint_femp->eidx = EXFAT_HINT_NONE;
->  		exfat_chain_dup(&clu, &hint_femp->cur);
->  	} else {
->  		exfat_chain_dup(&clu, p_dir);
-> @@ -293,6 +300,12 @@ static int exfat_search_empty_slot(struct super_block
-> *sb,
->  		}
->  	}
-> 
-> +	hint_femp->eidx = p_dir->size * dentries_per_clu - num_empty;
-> +	hint_femp->count = num_empty;
-> +	if (num_empty == 0)
-> +		exfat_chain_set(&hint_femp->cur, EXFAT_EOF_CLUSTER, 0,
-> +				clu.flags);
-> +
->  	return -ENOSPC;
->  }
-> 
-> @@ -369,15 +382,11 @@ static int exfat_find_empty_entry(struct inode
-> *inode,
->  			if (exfat_ent_set(sb, last_clu, clu.dir))
->  				return -EIO;
-> 
-> -		if (hint_femp.eidx == EXFAT_HINT_NONE) {
-> -			/* the special case that new dentry
-> -			 * should be allocated from the start of new cluster
-> -			 */
-> -			hint_femp.eidx = EXFAT_B_TO_DEN_IDX(p_dir->size, sbi);
-> -			hint_femp.count = sbi->dentries_per_clu;
-> -
-> +		if (hint_femp.cur.dir == EXFAT_EOF_CLUSTER)
->  			exfat_chain_set(&hint_femp.cur, clu.dir, 0, clu.flags);
-> -		}
-> +
-> +		hint_femp.count += sbi->dentries_per_clu;
-> +
->  		hint_femp.cur.size++;
->  		p_dir->size++;
->  		size = EXFAT_CLU_TO_B(p_dir->size, sbi);
-> --
-> 2.25.1
+> > > 2) What if you set the xattr while the group is already listening to
+> > > events? Currently the change will get ignored, won't it? But I guess this
+> > > could be handled by clearing the "cached" flag when the xattr is set.
+> > >
+> >
+> > I have created an API to update the xattr via
+> >   fanotify_mark(FAN_MARK_XATTR, ...
+> > which updates the cached ignore mask in the connector.
+> >
+> > I see no reason to support "direct" modifications of this xattr.
+> > If such changes are made directly it is fine to ignore them.
+> >
+> > > 3) What if multiple applications want to use the persistent mark
+> > > functionality? I think we need some way to associate a particular
+> > > fanotify group with a particular subset of fanotify xattrs so that
+> > > coexistence of multiple applications is possible...
+> > >
+> >
+> > Yeh, I thought about this as well.
+> > The API in the patches is quite naive because it implements a single
+> > global namespace for xattr ignore masks, but mostly I wanted to
+> > see if I can get the fast path and auto-init implementation done.
+> >
+> > I was generally thinking of ioctl() as the API to join an xattr marks
+> > namespace and negotiate the on-disk format of persistent marks
+> > supported by the application.
+> >
+> > I would not want to allow multiple fanotify xattrs per inode -
+> > that could have the consequence of the inode becoming a junkyard.
+> >
+> > I'd prefer to have a single xattr (say security.fanotify.mark)
+> > and that mark will have
+> > - on-disk format version
+> > - namespace id
+> > - ignore mask
+> > - etc
+> >
+> > If multiple applications want to use persistent marks they need to figure
+> > out how to work together without stepping on each other's toes.
+> > I don't think it is up to fanotify to coordinate that.
 
+I'm not sure if this really scales. Imagine you have your say backup
+application that wants to use persistent marks and then you have your HSM
+application wanting to do the same. Or you have some daemon caching
+preparsed contents of config/ directory and watching whether it needs to
+rescan the dir and rebuild the cache using persistent marks (I'm hearing
+requests like these for persistent marks from desktop people for many
+years). How exactly are these going to coordinate?
+
+I fully understand your concern about the clutter in inode xattrs but if
+we're going to limit the kernel to support only one persistent marks user,
+then IMO we also need to provide a userspace counterpart (in the form of
+some service or library like persistent change notification journal) that
+will handle the coordination. Because otherwise it will become a mess
+rather quickly.
+
+> > fanotify_mark() can fail with EEXIST when a group that joined namespace A
+> > is trying to update a persistent mark when a persistent mark of namespace B
+> > already exists and probably some FAN_MARK_REPLACE flag could be used
+> > to force overwrite the existing persistent mark.
+> 
+> One thing that I feel a bit silly about is something that I only fully
+> noticed after writing this WIP wiki entry:
+> https://github.com/amir73il/fsnotify-utils/wiki/Hierarchical-Storage-Management-API#persistent-inode-marks
+> 
+> Persistent marks (in xattr) with ignore mask are useful, but only a
+> little bit more useful than Evictable marks with ignore mask.
+> 
+> Persistent marks (in xattr) with a "positive" event mask are the real deal.
+> Because with "positive" persistent marks, we will be able to optimize away
+> srcu_read_lock() and marks iteration for the majority of fsnotify hooks
+> by looking at objects interest masks (including the FS_XATTR_CACHED bit).
+> 
+> The good thing about the POC patches [1] is that there is no technical
+> limitation in this code for using persistent marks with positive event
+> masks.  It is a bit more challenging to document the fact that a "normal"
+> fs/mount mark is needed in order to "activate" the persistent marks in
+> the inodes of this fs/mount, but the changes to the code to support that
+> would be minimal.
+
+I agree persistent positive marks are very interesting (in fact I've heard
+requests for functionality like this about 15 years ago :)). But if you'd
+like to use them e.g. for backup or HSM then you need to somehow make sure
+you didn't miss any events before you created the activation mark? That
+looks like a bit unpleasant race with possible data (backup) corruption
+consequences?
+
+> [1] https://github.com/amir73il/linux/commits/fan_xattr_ignore_mask
+
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
