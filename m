@@ -2,187 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 638B861847B
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Nov 2022 17:31:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 96FED618507
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Nov 2022 17:42:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232077AbiKCQbV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Nov 2022 12:31:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55508 "EHLO
+        id S232086AbiKCQmi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Nov 2022 12:42:38 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40228 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231873AbiKCQa7 (ORCPT
+        with ESMTP id S232520AbiKCQl7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Nov 2022 12:30:59 -0400
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7FBAB1CB1F
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 09:30:47 -0700 (PDT)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 1F53E219D0;
-        Thu,  3 Nov 2022 16:30:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1667493046; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Sduwskvy+AGlg8DVBW/Jqpan3GAuTFvJDKrUpmL5xHA=;
-        b=nphhkdi+XOkSmGMScDAgpSUGfQOmfLnyz8VooWP+bMBHO3kDCjezTQAmanlhIFcSb7SrvP
-        dqL7d2k2S/rYzllOUycjVqYxZAR1Z/7FHM3xNHPgb4G48IrBlaNcQU+J3ZzbJaqEG3Qnx9
-        Q8uzqi0IcWtwKR0ntBWV3oMnpzjzQa4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1667493046;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=Sduwskvy+AGlg8DVBW/Jqpan3GAuTFvJDKrUpmL5xHA=;
-        b=pG3SPGRZaUpuomGXS9FgIiOc+qcR8QzCCd+WEUFUCjQRnyYDneLTbvf0xt2u+3q2q/FR3N
-        Jp/W4Kdyqmmag/BQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 12B2213480;
-        Thu,  3 Nov 2022 16:30:46 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id jV2DBLbsY2NLRQAAMHmgww
-        (envelope-from <jack@suse.cz>); Thu, 03 Nov 2022 16:30:46 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 99B62A0700; Thu,  3 Nov 2022 17:30:45 +0100 (CET)
-Date:   Thu, 3 Nov 2022 17:30:45 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Subject: Re: thoughts about fanotify and HSM
-Message-ID: <20221103163045.fzl6netcffk23sxw@quack3>
-References: <CAOQ4uxhrQ7hySTyHM0Atq=uzbNdHyGV5wfadJarhAu1jDFOUTg@mail.gmail.com>
- <20220912125734.wpcw3udsqri4juuh@quack3>
- <CAOQ4uxgE5Wicsq_O+Vc6aOaLeYMhCEWrRVvAW9C1kEMMqBwJ9Q@mail.gmail.com>
- <CAOQ4uxgyWEvsTATzimYxuKNkdVA5OcfzQOc1he5=r-t=GX-z6g@mail.gmail.com>
- <20220914103006.daa6nkqzehxppdf5@quack3>
- <CAOQ4uxh6C=jMftsFQD3s1u7D_niRDmBaxKTymboJQGTmPD6bXQ@mail.gmail.com>
- <CAOQ4uxjHu4k2-sdM1qtnFPvKRHv-OFWo0cYDZbvjv0sd9bXGZQ@mail.gmail.com>
- <20220922104823.z6465rfro7ataw2i@quack3>
- <CAOQ4uxiNhnV0OWU-2SY_N0aY19UdMboR3Uivcr7EvS7zdd9jxw@mail.gmail.com>
+        Thu, 3 Nov 2022 12:41:59 -0400
+Received: from mail-yw1-x1131.google.com (mail-yw1-x1131.google.com [IPv6:2607:f8b0:4864:20::1131])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 192D71DDFE;
+        Thu,  3 Nov 2022 09:39:00 -0700 (PDT)
+Received: by mail-yw1-x1131.google.com with SMTP id 00721157ae682-3321c2a8d4cso20739197b3.5;
+        Thu, 03 Nov 2022 09:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kh3PemVjLOMzD+zXkDJxoTeXa2tk+grc1up9htYz3yQ=;
+        b=TBUw7q9qlHT6DGo5HjKtvBxbUDq+n/istEJfhP3bgdU7CnHlK014WON/49qdO7GgS+
+         RgxuEN4xbsVF7yK92hmPq+KFzPCfizitf30Jyy5THmkvmvJcf0/AenZJFlTbQOqSaq9t
+         mt1fJeTL3SuDAdWBYqrwg+1xS+WwZ0rGkiDIYgN5vnd5oSRNmVoGDw8IxRuWD8Fzi2/s
+         WKOAZr7nTjLUCxj01UWCWqYIS/ToOImwMXp0M0aSr7A6X9lD8R+BB9I11dD3UTwY7BMb
+         dzvLL11zwCIl9tqMPcVFQSAnwW5T4pu4XVePASsS/ZkKBRZ/zUD8v1hoebUdaSPZeMuh
+         xGKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kh3PemVjLOMzD+zXkDJxoTeXa2tk+grc1up9htYz3yQ=;
+        b=Jcjk9w9OsXZgw+4hY16C/3ZfMy9nLOh2B7H7VF7zZnH1X35S94MvASZiv/iCpHMaWb
+         u52DQDdS2qs5lVFM5Lem52JFdTwWPWRYX5AJUJz+sgwGiC38US1zeU1ev4beV9yQYfqv
+         6iHErY5LHox+LLFUKHMsCTdCn6H+p+TlXQMNO8GEMIU+yRk94oreCyPUEhyaa3KOhS/+
+         D4U9clz53RkZhRuxILZNwfEcHQmJ8T7D3VAGfIjoJ6NgQe1QojrP2zB7w8ANXHDdALaV
+         cAr78sOLVe9G8UCOljzJN7HKxaojlrHIh7ug8ZpSFmyX1EyuPnO8MP3qOcPc22SModfY
+         ezRw==
+X-Gm-Message-State: ACrzQf3N0u/m2fYGmWpOB3c6JEDxwgxSHxi34GzdOAQyyVs2v0qGH5Cl
+        SFET0KkT4RqHvr8p9POrARfb7Ah7z7jFsm1Huzg=
+X-Google-Smtp-Source: AMsMyM6eD3AkR/tTwVJuSGW1VpJEcDm8gRAUUIITH99yEF6ks7q7BqgOP+0YDkckG+H0+22nmeoDoFNiML2RzB4TzPI=
+X-Received: by 2002:a81:1648:0:b0:36b:1891:7dda with SMTP id
+ 69-20020a811648000000b0036b18917ddamr29441580yww.447.1667493539150; Thu, 03
+ Nov 2022 09:38:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxiNhnV0OWU-2SY_N0aY19UdMboR3Uivcr7EvS7zdd9jxw@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20221102161031.5820-1-vishal.moola@gmail.com> <20221103070807.GX2703033@dread.disaster.area>
+In-Reply-To: <20221103070807.GX2703033@dread.disaster.area>
+From:   Vishal Moola <vishal.moola@gmail.com>
+Date:   Thu, 3 Nov 2022 09:38:48 -0700
+Message-ID: <CAOzc2pzFMU-XiGZ9bsp40JkpYVSzQuxs2VXgfw_p9abkj4GrFw@mail.gmail.com>
+Subject: Re: [PATCH v4 00/23] Convert to filemap_get_folios_tag()
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
+        linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 28-10-22 15:50:04, Amir Goldstein wrote:
-> On Thu, Sep 22, 2022 at 1:48 PM Jan Kara <jack@suse.cz> wrote:
+On Thu, Nov 3, 2022 at 12:08 AM Dave Chinner <david@fromorbit.com> wrote:
+>
+> On Wed, Nov 02, 2022 at 09:10:08AM -0700, Vishal Moola (Oracle) wrote:
+> > This patch series replaces find_get_pages_range_tag() with
+> > filemap_get_folios_tag(). This also allows the removal of multiple
+> > calls to compound_head() throughout.
+> > It also makes a good chunk of the straightforward conversions to folios,
+> > and takes the opportunity to introduce a function that grabs a folio
+> > from the pagecache.
 > >
-> > > Questions:
-> > > - What do you think about the direction this POC has taken so far?
-> > > - Is there anything specific that you would like to see in the POC
-> > >   to be convinced that this API will be useful?
+> > F2fs and Ceph have quite a lot of work to be done regarding folios, so
+> > for now those patches only have the changes necessary for the removal of
+> > find_get_pages_range_tag(), and only support folios of size 1 (which is
+> > all they use right now anyways).
 > >
-> > I think your POC is taking a good direction and your discussion with Dave
-> > had made me more confident that this is all workable :). I liked your idea
-> > of the wiki (or whatever form of documentation) that summarizes what we've
-> > discussed in this thread. That would be actually pretty nice for future
-> > reference.
-> >
-> 
-> The current state of POC is that "populate of access" of both files
-> and directories is working and "race free evict of file content" is also
-> implemented (safely AFAIK).
-> 
-> The technique involving exclusive write lease is discussed at [1].
-> In a nutshell, populate and evict synchronize on atomic i_writecount
-> and this technique can be implemented with upstream UAPIs.
+> > I've run xfstests on btrfs, ext4, f2fs, and nilfs2, but more testing may be
+> > beneficial. The page-writeback and filemap changes implicitly work. Testing
+> > and review of the other changes (afs, ceph, cifs, gfs2) would be appreciated.
+>
+> Same question as last time: have you tested this with multipage
+> folios enabled? If you haven't tested XFS, then I'm guessing the
+> answer is no, and you haven't fixed the bug I pointed out in
+> the write_cache_pages() implementation....
+>
 
-Not so much i_writecount AFAIU but the generic lease mechanism overall. But
-yes, the currently existing APIs should be enough for your purposes.
+I haven't tested the series with multipage folios or XFS.
 
-> I did use persistent xattr marks for the POC, but this is not a must.
-> Evictable inode marks would have worked just as well.
-
-OK.
-
-> Now I have started to work on persistent change tracking.
-> For this, I have only kernel code, only lightly tested, but I did not
-> prove yet that the technique is working.
-> 
-> The idea that I started to sketch at [2] is to alternate between two groups.
-> 
-> When a change is recorded, an evictable ignore mark will be added on the
-> object.  To start recording changes from a new point in time
-> (checkpoint), a new group will be created (with no ignore marks) and the
-> old group will be closed.
-
-So what I dislike about the scheme with handover between two groups is that
-it is somewhat complex and furthermore requiring fs freezing for checkpoint
-is going to be rather expensive (and may be problematic if persistent
-change tracking is used by potentially many unpriviledged applications).
-
-As a side note I think it will be quite useful to be able to request
-checkpoint only for a subtree (e.g. some app may be interested only in a
-particular subtree) and the scheme with two groups will make any
-optimizations to benefit from such fact more difficult - either we create
-new group without ignore marks and then have to re-record changes nobody
-actually needs or we have to duplicate ignore marks which is potentially
-expensive as well.
-
-Let's think about the race:
-
-> To clarify, the race that I am trying to avoid is:
-> 1. group B got a pre modify event and recorded the change before time T
-> 2. The actual modification is performed after time T
-> 3. group A does not get a pre modify event, so does not record the change
->     in the checkpoint since T
-
-AFAIU you are worried about:
-
-Task T				Change journal		App
-
-write(file)
-  generate pre_modify event
-				record 'file' as modified
-							Request changes
-							Records 'file' contents
-  modify 'file' data
-
-...
-							Request changes
-							Nothing changed but
-App's view of 'file' is obsolete.
-
-Can't we solve this by creating POST_WRITE async event and then use it like:
-
-1) Set state to CHECKPOINT_PENDING
-2) In state CHECKPOINT_PENDING we record all received modify events into a
-   separate 'transition' stream.
-3) Remove ignore marks we need to remove.
-4) Switch to new period & clear CHECKPOINT_PENDING, all events are now
-   recorded to the new period.
-5) Merge all events from 'transition' stream to both old and new period
-   event streams.
-6) Events get removed from the 'transition' stream only once we receive
-   POST_WRITE event corresponding to the PRE_WRITE event recorded there (or
-   on crash recovery). This way some events from 'transition' stream may
-   get merged to multiple period event streams if the checkpoints are
-   frequent and writes take long.
-
-This should avoid the above race, should be relatively lightweight, and
-does not require major API extensions.
-
-BTW, while thinking about this I was wondering: How are the applications
-using persistent change journal going to deal with buffered vs direct IO? I
-currently don't see a scheme that would not loose modifications for some
-combinations...
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+I don't seem to have gotten your earlier comments, and I
+can't seem to find them on the mailing lists. Could you
+please send them again so I can take a look?
