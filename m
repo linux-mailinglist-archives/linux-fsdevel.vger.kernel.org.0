@@ -2,72 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EE48F617368
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Nov 2022 01:35:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A520161736E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Nov 2022 01:39:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230222AbiKCAfV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 2 Nov 2022 20:35:21 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52094 "EHLO
+        id S230261AbiKCAi7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 2 Nov 2022 20:38:59 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230073AbiKCAfU (ORCPT
+        with ESMTP id S230012AbiKCAi6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 2 Nov 2022 20:35:20 -0400
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5080AE5C
-        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Nov 2022 17:35:19 -0700 (PDT)
-Received: by mail-pg1-x52c.google.com with SMTP id e129so277349pgc.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Nov 2022 17:35:19 -0700 (PDT)
+        Wed, 2 Nov 2022 20:38:58 -0400
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC8EDAE4E
+        for <linux-fsdevel@vger.kernel.org>; Wed,  2 Nov 2022 17:38:57 -0700 (PDT)
+Received: by mail-pj1-x1032.google.com with SMTP id l6so190337pjj.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 02 Nov 2022 17:38:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ibEoqc8NPaItnKyZatTvKMcMItOe7BxWGhuQzD4jP+k=;
-        b=x+v2STpJWZxp1gjmWzyT+yOBV5/urx1+a/YUfOhQWsF/dgZzR+93sBIScBkjU/bA5e
-         R8m2FSam40wAc9Gtuu8qYVIZfF3R8OM+Gt8Hip1TXrx+zJeXJ4cFtC6rqlSq1x1hdsyU
-         +GfPm0rV6BRDHGjiXM+WbC4c20hY+wwMnKiWq04JdtcfZQ12ATCAXUdJacmutey5bVwk
-         7ia2IIIrIKVHCSVUO9brlkcCqoxmFz2e8VdmGGEHKLtLC5w5HWYJP+QH5Q9bO6sHtYDa
-         i1dRYETdTGeWzWknrSd3XC3I04YbmHGRE+6499ZWueoMn50LcUgN9IzpubY6c1TNBkhM
-         uEkg==
+        bh=/NMrgPnhiyfhVCy/KK4H6Qz92NzbYOKlxNXPYlc1uO0=;
+        b=Yl2xp+lNAIAvgU8qrpbcc/jRnWyN4AS+5z9n5w+hwJlJ3PkNUne3ya2Mn7eaPK+7II
+         VkN/sBda0fqTOM53b9hNxFa5zMTuBzjOi7RG1hKRZrhkVcyLuAKt340bYG4lJWilEmP1
+         CxMfIJJKGrqY7+SFddZkFFgf4kjutvUZsPP48EuI4L5kQiD2UtgozNXSZ1+MxtRLREif
+         A6xqjx0v1+GKzskKdqXNOo/WomRnrLLJC+o8XirIvdHWhsAD6tzp4hf3clG+7CLiGFpc
+         y0oBtPR43bGDne5nzJGMBs2ehkpx0PhNEoY7brD6qYqqFndQCqPeQ2gD6rNUOzlwVcYO
+         qhQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ibEoqc8NPaItnKyZatTvKMcMItOe7BxWGhuQzD4jP+k=;
-        b=NnIQDALfqUoBh5a3bvdn1xpN0fHYRO93ylIJEbiITnxvlaQYkeoriTi4/k54dZWp4/
-         mjyfVhHY7drePkvvlGMUmk9ibyqPF1b3/MU3rvSVpeqR/D8+5R8CyZC5MwO7qv6usbtm
-         mQCo2OpB0vOglg6fN2IpHXMRkJSSDFpo4T/MEsioeI6M2u76OlYlVOxd/3EWvg0Ljpv4
-         UDf03WrQQxgk6Re7owNEYyGa7zfgvOeTHct1py1h8UqptcxAFSLjWM3uAPXlTOdUmCpx
-         eha0r5BlpLwWhRNXS6PzELFgcKyJFxOt3BEPbcqXhsnEIeQKbL1zFqvLmQ+HPeySxnX9
-         SHug==
-X-Gm-Message-State: ACrzQf01lCvBl2DYn/TetQtU0Hv2uc/6EjbuiGr5ptJU8LeiA5Ik9HYQ
-        rVoyh1RzTHTE5+jrxVUgiLKXhCagPVtzcg==
-X-Google-Smtp-Source: AMsMyM7WmsCqjPJZWmtruvaJ0AZibUOLWr3kaovjVRUyf0c6W8Ys9e2WW9QxK7jyk1VXEFGT9HsaVg==
-X-Received: by 2002:a05:6a00:8cb:b0:52c:6962:2782 with SMTP id s11-20020a056a0008cb00b0052c69622782mr27440443pfu.81.1667435719391;
-        Wed, 02 Nov 2022 17:35:19 -0700 (PDT)
+        bh=/NMrgPnhiyfhVCy/KK4H6Qz92NzbYOKlxNXPYlc1uO0=;
+        b=fhHUbyACn73+R3//lGJwDBcGtw7csF2gPzaMtUcJJ51wBG3+SKbqiIXDsgNbPN5O4C
+         n7fZE16giJeiUQ2vjHk/TsI4WwNGS6Le/937DOBGI89c/rKg2q4D2M/r/Jd4X3N7R2+6
+         e1Ri2fD9f7LZAMSOsQ/uTF4vSKBTipy5o62FcylU9XNZPDUT9UhwTKDW5hC6Za2QSKhZ
+         L9RdR7Rp4R8r9OhSBobpbE3ikZXQM/pvj9aCw5LdUyuYiwthgbOVdyhXHgix2h3IgG/Q
+         vx7FEdTnZW0EuB7QW7CTiEFL5AsEJQJA9xlqchUOaHL31PlIB2qWlRnJX5FXbCy64U47
+         ItCQ==
+X-Gm-Message-State: ACrzQf30eFgvZX2zOqWECZP9G564PkItA8ST8pVGTkEHLuLQ1h5WgS/o
+        GSNVvTZiXtBLy57hK8+5MML9+w==
+X-Google-Smtp-Source: AMsMyM6bm5rrJQWJ5TrDTGa4Xhlw0EYV8NdmuAixqIjFP1KgKz06/1f1lDchJk5yF8WWiY44CCkLvg==
+X-Received: by 2002:a17:90b:33c3:b0:213:f5be:c3ad with SMTP id lk3-20020a17090b33c300b00213f5bec3admr15560506pjb.123.1667435937275;
+        Wed, 02 Nov 2022 17:38:57 -0700 (PDT)
 Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
-        by smtp.gmail.com with ESMTPSA id q8-20020a170902dac800b0017854cee6ebsm8979914plx.72.2022.11.02.17.35.18
+        by smtp.gmail.com with ESMTPSA id ev16-20020a17090aead000b0020b2082e0acsm2065256pjb.0.2022.11.02.17.38.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Nov 2022 17:35:18 -0700 (PDT)
+        Wed, 02 Nov 2022 17:38:56 -0700 (PDT)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1oqOCR-009ZxH-9m; Thu, 03 Nov 2022 11:35:15 +1100
-Date:   Thu, 3 Nov 2022 11:35:15 +1100
+        id 1oqOFx-009ZzD-TT; Thu, 03 Nov 2022 11:38:53 +1100
+Date:   Thu, 3 Nov 2022 11:38:53 +1100
 From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 5/7] iomap: write iomap validity checks
-Message-ID: <20221103003515.GD3600936@dread.disaster.area>
-References: <20221101003412.3842572-1-david@fromorbit.com>
- <20221101003412.3842572-6-david@fromorbit.com>
- <Y2IsGbU6bbbAvksP@infradead.org>
- <Y2KeSU6w1kMi6Aer@magnolia>
- <Y2KhurifaYbxkyNX@magnolia>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Aravinda Herle <araherle@in.ibm.com>,
+        David Howells <dhowells@redhat.com>
+Subject: Re: [RFC 2/2] iomap: Support subpage size dirty tracking to improve
+ write performance
+Message-ID: <20221103003853.GE3600936@dread.disaster.area>
+References: <cover.1666928993.git.ritesh.list@gmail.com>
+ <886076cfa6f547d22765c522177d33cf621013d2.1666928993.git.ritesh.list@gmail.com>
+ <20221028210422.GC3600936@dread.disaster.area>
+ <Y19EXLfn8APg3adO@casper.infradead.org>
+ <20221031070853.GL3600936@dread.disaster.area>
+ <Y1+jBDLHovtsXbyF@casper.infradead.org>
+ <Y2IxFlfLwPtloYc+@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y2KhurifaYbxkyNX@magnolia>
+In-Reply-To: <Y2IxFlfLwPtloYc+@infradead.org>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
@@ -77,52 +84,37 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 02, 2022 at 09:58:34AM -0700, Darrick J. Wong wrote:
-> On Wed, Nov 02, 2022 at 09:43:53AM -0700, Darrick J. Wong wrote:
-> > On Wed, Nov 02, 2022 at 01:36:41AM -0700, Christoph Hellwig wrote:
-> > > On Tue, Nov 01, 2022 at 11:34:10AM +1100, Dave Chinner wrote:
-> > > > +	/*
-> > > > +	 * Now we have a locked folio, before we do anything with it we need to
-> > > > +	 * check that the iomap we have cached is not stale. The inode extent
-> > > > +	 * mapping can change due to concurrent IO in flight (e.g.
-> > > > +	 * IOMAP_UNWRITTEN state can change and memory reclaim could have
-> > > > +	 * reclaimed a previously partially written page at this index after IO
-> > > > +	 * completion before this write reaches this file offset) and hence we
-> > > > +	 * could do the wrong thing here (zero a page range incorrectly or fail
-> > > > +	 * to zero) and corrupt data.
-> > > > +	 */
-> > > > +	if (ops->iomap_valid) {
-> > > > +		bool iomap_valid = ops->iomap_valid(iter->inode, &iter->iomap);
-> > > > +
-> > > > +		if (!iomap_valid) {
-> > > > +			iter->iomap.flags |= IOMAP_F_STALE;
-> > > > +			status = 0;
-> > > > +			goto out_unlock;
-> > > > +		}
-> > > > +	}
-> > > 
-> > > So the design so far has been that everything that applies at a page (or
-> > > now folio) level goes into iomap_page_ops, not iomap_ops which is just
-> > > the generic iteration, and I think we should probably do it that way.
+On Wed, Nov 02, 2022 at 01:57:58AM -0700, Christoph Hellwig wrote:
+> On Mon, Oct 31, 2022 at 10:27:16AM +0000, Matthew Wilcox wrote:
+> > > Byte range granularity is probably overkill for block based
+> > > filesystems - all we need is a couple of extra bits per block to be
+> > > stored in the mapping tree alongside the folio....
 > > 
-> > I disagree here -- IMHO the sequence number is an attribute of the
-> > iomapping, not the folio.
+> > I think it's overkill for network filesystems too.  By sending a
+> > sector-misaligned write to the server, you force the server to do a R-M-W
+> > before it commits the write to storage.  Assuming that the file has fallen
+> > out of the server's cache, and a sufficiently busy server probably doesn't
+> > have the memory capacity for the working set of all of its clients.
 > 
-> OFC now that I've reread iomap.h I realize that iomap_page_ops are
-> passed back via struct iomap, so I withdraw this comment.
+> That really depends on your server.  For NFS there's definitively
+> servers that can deal with unaligned writes fairly well because they
+> just log the data in non volatile memory.  That being said I'm not sure
+> it really is worth to optimize the Linux pagecache for that particular
+> use case.
+> 
+> > Anyway, Dave's plan for dirty tracking (as I understand the current
+> > iteration) is to not store it linked from folio->private at all, but to
+> > store it in a per-file tree of writes.  Then we wouldn't walk the page
+> > cache looking for dirty folios, but walk the tree of writes choosing
+> > which ones to write back and delete from the tree.  I don't know how
+> > this will perform in practice, but it'll be generic enough to work for
+> > any filesystem.
+> 
+> Yes, this would be generic.  But having multiple tracking trees might
+> not be super optimal - it always reminds me of the btrfs I/O code that
+> is lost in a maze of trees and performs rather suboptimal.
 
-My first thought was to make this a page op, but I ended up deciding
-against that because it isn't operating on the folio at all.
-Perhaps I misunderstood what "page_ops" was actually intended for,
-because it seems that the existing hooks are to allow the filesystem
-to wrap per-folio operations with an external context, not to
-perform iomap-specific per-folio operations.
-
-I guess if I read "pageops" as "operations to perform on each folio
-in an operation", then validating the iomap is not stale once the
-folio is locked could be considered a page op. I think we could
-probably make that work for writeback, too, because we have the
-folio locked when we call ->map_blocks....
+Yep, that's kinda what I'm trying to see if we can avoid....
 
 -Dave.
 -- 
