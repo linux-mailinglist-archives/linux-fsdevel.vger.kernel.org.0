@@ -2,97 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40F2D61770C
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Nov 2022 08:00:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8537F617723
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Nov 2022 08:08:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229591AbiKCHAv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Nov 2022 03:00:51 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39320 "EHLO
+        id S230182AbiKCHIQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Nov 2022 03:08:16 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbiKCHAt (ORCPT
+        with ESMTP id S229708AbiKCHIN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Nov 2022 03:00:49 -0400
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 401EFD6C;
-        Thu,  3 Nov 2022 00:00:48 -0700 (PDT)
-Received: by mail-wr1-f53.google.com with SMTP id z14so1246118wrn.7;
-        Thu, 03 Nov 2022 00:00:48 -0700 (PDT)
+        Thu, 3 Nov 2022 03:08:13 -0400
+Received: from mail-pl1-x635.google.com (mail-pl1-x635.google.com [IPv6:2607:f8b0:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5546A454
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 00:08:12 -0700 (PDT)
+Received: by mail-pl1-x635.google.com with SMTP id c2so1063515plz.11
+        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Nov 2022 00:08:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UCGx+I//h802HOEchXeQ4l9Uif7TwqahE8c/QVCmorA=;
+        b=Qo0pCYgx3Qq1H7gtsjTo9ahtaWGAPbAqpUUP7w83R+hioFcvnb/Vum4t6njrIqmCbQ
+         9oglIFHFznb8HWDOhJ8VqGBZno5DvMa/i9rWqzvIS3F1Qe6lSOVMpDruWh58G2ZJDVRR
+         +irGuRxsC3szEMLHnbBdSVWy+8gAtIi3/dsdlKShS4dWGsFcwevGYm9bbQNs76cqEy+l
+         a7aTzEEQgFxLLhP1XqsxI1o93xRoLeyOkLszg3jyihUg4tqsI4qRKCp463KDJruVxcER
+         uahSco4O56I/ia+N+pdnGxKbS5y4Jn6JIOipSvnU+FLMXl5F+IFO/pgiKOzrTt8rdoYE
+         jcgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZzC5Szvl9Z156jo9Kk2FZH3TgN7ESH0pPMiGv9zWSJ4=;
-        b=2aHEO2wNnJf/AElXEPg/H7Mt3/nGMraYofWctx95iaMUvgwA5h6KA/wQEwX+wBZRv1
-         XzFdglS+IZv9IL5JOZp2+A4WIU0nWmN//kzlF8AFEE7sH+9DxWyNMI/UNvp8dLKeeK7i
-         watcvsKQgmSuMu4UC/GD+X1LTQ1VX1/j1JRAk7mj3W/WMNIe+LnEJkmB4CmGlP/nQrwA
-         t74tIODVaFjQZIVc2UuQJeVi+rslq8WTRovOPCV+pYi0wgkIMLWa2L6OB2I3EMHGvDsJ
-         y0ZraCRnWyZni4okVvKqqYK57WMYVNrZ2/2XP7OrOgp683L0/GSNDVZWR4UPHJs02cxG
-         HJGQ==
-X-Gm-Message-State: ACrzQf3v5bzrc0ZMI5EIVvOeRjWFwO/qQzDqg+LukbLqFkmjh+RFGryx
-        sTURYcFUFCItBp1ohJhbULU=
-X-Google-Smtp-Source: AMsMyM6xw0QHAkUXApjyJZC+j6LAWfgFrD/lIVeC5Ca1XFZn7Bgxel16XfmUpugktKve2N5lflM+qQ==
-X-Received: by 2002:adf:e446:0:b0:236:773b:c6f0 with SMTP id t6-20020adfe446000000b00236773bc6f0mr17826832wrm.55.1667458846552;
-        Thu, 03 Nov 2022 00:00:46 -0700 (PDT)
-Received: from ?IPV6:2a0b:e7c0:0:107::70f? ([2a0b:e7c0:0:107::70f])
-        by smtp.gmail.com with ESMTPSA id q7-20020a05600c46c700b003b492753826sm279286wmo.43.2022.11.03.00.00.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Nov 2022 00:00:46 -0700 (PDT)
-Message-ID: <79db9616-a2ee-9a1a-9a35-b82f65b6d15e@kernel.org>
-Date:   Thu, 3 Nov 2022 08:00:44 +0100
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UCGx+I//h802HOEchXeQ4l9Uif7TwqahE8c/QVCmorA=;
+        b=rrppRQgOXnvmzu0WcLML8s96xbSkOJgILVxCCzkMX1pVxltSuei2iO8u4KqU14C7kG
+         q3jvTupltu1cwzvZD7pKdgj2YZWXGiWCCUnQ/ASDZex//JDrgLB1lIixX6kosqvyyIXK
+         IV6S7bNnQBDFkZUVw41uO1Z+vZ9fF5MjaBsKGbHiZ+cupjhmSqhe2z6bxsT91Bwrnmjh
+         k1p0cqUfjAugxwdrUDT/nrwbkIw3vsQCLywsM9DPyWk2WwNbynrdQ5VLHbuW1bgqzfix
+         aphj7V6S/n5s5BeSokHqps54EifD32YPXSl5BpTNPuuPQTw+4B03jpEaHBM9QsUFzpaQ
+         j7BA==
+X-Gm-Message-State: ACrzQf1vQajW5dB/hTGEOalknczfT8hbaNo4GVlhfabWVYf/TtF7Uf9i
+        NhgvFTEdlWmPat9wfEOXohUx9w==
+X-Google-Smtp-Source: AMsMyM7EbTGuTativfwuYw+G5QrvaMpsSoYHAtMTN9boWfI/C7HSKjfDJIybcNCOqaRH/jY3hHhBSg==
+X-Received: by 2002:a17:902:ed8e:b0:187:1c78:80c2 with SMTP id e14-20020a170902ed8e00b001871c7880c2mr21606400plj.38.1667459292279;
+        Thu, 03 Nov 2022 00:08:12 -0700 (PDT)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
+        by smtp.gmail.com with ESMTPSA id s7-20020a170902988700b00179e1f08634sm9438901plp.222.2022.11.03.00.08.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 03 Nov 2022 00:08:11 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oqUKd-009gYz-VX; Thu, 03 Nov 2022 18:08:08 +1100
+Date:   Thu, 3 Nov 2022 18:08:07 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: Re: [PATCH v4 00/23] Convert to filemap_get_folios_tag()
+Message-ID: <20221103070807.GX2703033@dread.disaster.area>
+References: <20221102161031.5820-1-vishal.moola@gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH] unicode: don't write -1 after NULL terminator
-Content-Language: en-US
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        krisman@collabora.com
-Cc:     stable@vger.kernel.org
-References: <20221103012411.86537-1-Jason@zx2c4.com>
-From:   Jiri Slaby <jirislaby@kernel.org>
-In-Reply-To: <20221103012411.86537-1-Jason@zx2c4.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221102161031.5820-1-vishal.moola@gmail.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 03. 11. 22, 2:24, Jason A. Donenfeld wrote:
-> If the intention is to overwrite the first NULL with a -1, s[strlen(s)]
-> is the first NULL, not s[strlen(s)+1].
-
-This caught my attention. You mix NULL (void *) with NUL (\0) in the 
-changelog & subject. That occurs rather confusing to me.
-
-> Cc: Gabriel Krisman Bertazi <krisman@collabora.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jason A. Donenfeld <Jason@zx2c4.com>
-> ---
->   fs/unicode/mkutf8data.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, Nov 02, 2022 at 09:10:08AM -0700, Vishal Moola (Oracle) wrote:
+> This patch series replaces find_get_pages_range_tag() with
+> filemap_get_folios_tag(). This also allows the removal of multiple
+> calls to compound_head() throughout.
+> It also makes a good chunk of the straightforward conversions to folios,
+> and takes the opportunity to introduce a function that grabs a folio
+> from the pagecache.
 > 
-> diff --git a/fs/unicode/mkutf8data.c b/fs/unicode/mkutf8data.c
-> index bc1a7c8b5c8d..61800e0d3226 100644
-> --- a/fs/unicode/mkutf8data.c
-> +++ b/fs/unicode/mkutf8data.c
-> @@ -3194,7 +3194,7 @@ static int normalize_line(struct tree *tree)
->   	/* Second test: length-limited string. */
->   	s = buf2;
->   	/* Replace NUL with a value that will cause an error if seen. */
-> -	s[strlen(s) + 1] = -1;
-> +	s[strlen(s)] = -1;
->   	t = buf3;
->   	if (utf8cursor(&u8c, tree, s))
->   		return -1;
+> F2fs and Ceph have quite a lot of work to be done regarding folios, so
+> for now those patches only have the changes necessary for the removal of
+> find_get_pages_range_tag(), and only support folios of size 1 (which is
+> all they use right now anyways).
+> 
+> I've run xfstests on btrfs, ext4, f2fs, and nilfs2, but more testing may be
+> beneficial. The page-writeback and filemap changes implicitly work. Testing
+> and review of the other changes (afs, ceph, cifs, gfs2) would be appreciated.
 
+Same question as last time: have you tested this with multipage
+folios enabled? If you haven't tested XFS, then I'm guessing the
+answer is no, and you haven't fixed the bug I pointed out in
+the write_cache_pages() implementation....
+
+-Dave.
 -- 
-js
-suse labs
-
+Dave Chinner
+david@fromorbit.com
