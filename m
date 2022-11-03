@@ -2,134 +2,166 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8EB7B618016
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Nov 2022 15:52:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBE6C618030
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  3 Nov 2022 15:54:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231901AbiKCOwf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Nov 2022 10:52:35 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35792 "EHLO
+        id S231553AbiKCOy0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Nov 2022 10:54:26 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38424 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231843AbiKCOwL (ORCPT
+        with ESMTP id S231627AbiKCOyN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Nov 2022 10:52:11 -0400
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E8B8193DB
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 07:51:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667487076;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=sDvbxldJL9NfWM/rF7vRKE9v471dsOifP77yfjP0j/4=;
-        b=Q2rMxuJvb9W8qDaK1IGiEidoIdeWpej9LFlqCN235qihXRY6cD0/5L3e2fzY5sVeCLNAVO
-        UQ0VoxWymeY1DNmuRQYxLLRqaRjvc94h2Naxr0nHWwNs5QyKoeSdnUZgmteElr6FsE6aA1
-        tnW/IYixjFk+Dw0ADL67qRVUCpAK/rc=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-186-aMoNoN09N2-yJG8Z6evDcA-1; Thu, 03 Nov 2022 10:51:12 -0400
-X-MC-Unique: aMoNoN09N2-yJG8Z6evDcA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 3 Nov 2022 10:54:13 -0400
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33412193CD;
+        Thu,  3 Nov 2022 07:54:11 -0700 (PDT)
+Received: from localhost.localdomain (unknown [39.45.244.84])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 13D063C3C963;
-        Thu,  3 Nov 2022 14:51:12 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.37.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E93121121331;
-        Thu,  3 Nov 2022 14:51:10 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <Y2IyTx0VwXMxzs0G@infradead.org>
-References: <Y2IyTx0VwXMxzs0G@infradead.org> <cover.1666928993.git.ritesh.list@gmail.com> <886076cfa6f547d22765c522177d33cf621013d2.1666928993.git.ritesh.list@gmail.com> <20221028210422.GC3600936@dread.disaster.area> <Y19EXLfn8APg3adO@casper.infradead.org>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Aravinda Herle <araherle@in.ibm.com>
-Subject: Re: [RFC 2/2] iomap: Support subpage size dirty tracking to improve write performance
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 57D6766015E4;
+        Thu,  3 Nov 2022 14:54:04 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1667487249;
+        bh=lJ44FPBDiVE+5awstiwDdbPBCIN+y4iiRAq1wTTECX0=;
+        h=From:To:Subject:Date:From;
+        b=beu+W10gbL+HwHHHE0pgIFG3puBPn4SZl4jr9xAry1teS8uk5ZA8TweZPNSphfNF0
+         LawP5Nwy1TCM3E9nWByuV2qrHHt7SNGHSb1L5F/rZOFjJsjk7yFCs+UcXlqAEuT1S7
+         g29rd9Tj9d1tWe69v823bnJxW4l02Hbb3oiLnNTX+SoxeZ0cyBuxAXVE03bJ5gFPSP
+         wX2Yw2gT6ymNEY9u2VLQmmBcIkyw8mwMC4cnsqjMi0DFVYVr4JGjs8eHFysqPSlkWB
+         RhlX7SVqOs/c/XGaIuZo0x9hpwtS0Fi4TK0Csne41s0vEnd8w12I2MtodXaZ83KXqv
+         Bmyn5qEs63+gQ==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <emmir@google.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Peter Xu <peterx@redhat.com>, Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Zach O'Keefe" <zokeefe@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        "open list : KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list : PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
+        "open list : MEMORY MANAGEMENT" <linux-mm@kvack.org>
+Subject: [PATCH v5 0/3] Implement IOCTL to get and/or the clear info about PTEs
+Date:   Thu,  3 Nov 2022 19:53:50 +0500
+Message-Id: <20221103145353.3049303-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <7698.1667487070.1@warthog.procyon.org.uk>
-Date:   Thu, 03 Nov 2022 14:51:10 +0000
-Message-ID: <7699.1667487070@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
-X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> wrote:
+Hello,
 
-> > filesystems right now.  Dave Howells' netfs infrastructure is trying
-> > to solve the problem for everyone (and he's been looking at iomap as
-> > inspiration for what he's doing).
-> 
-> Btw, I never understod why the network file systems don't just use
-> iomap.  There is nothing block specific in the core iomap code.
+This patch series implements IOCTL on the pagemap procfs file to get the
+information about the page table entries (PTEs). The following operations
+are supported in this ioctl:
+- Get the information if the pages are soft-dirty, file mapped, present
+  or swapped.
+- Clear the soft-dirty PTE bit of the pages.
+- Get and clear the soft-dirty PTE bit of the pages atomically.
 
-It calls creates and submits bio structs all over the place.  This seems to
-require a blockdev.
+Soft-dirty PTE bit of the memory pages can be read by using the pagemap
+procfs file. The soft-dirty PTE bit for the whole memory range of the
+process can be cleared by writing to the clear_refs file. There are other
+methods to mimic this information entirely in userspace with poor
+performance:
+- The mprotect syscall and SIGSEGV handler for bookkeeping
+- The userfaultfd syscall with the handler for bookkeeping
+Some benchmarks can be seen here[1]. This series adds features that weren't
+present earlier:
+- There is no atomic get soft-dirty PTE bit status and clear operation
+  possible.
+- The soft-dirty PTE bit of only a part of memory cannot be cleared.
 
-Anyway, netfs lib supports, or hopefully will support in the future, the
-following:
+Historically, soft-dirty PTE bit tracking has been used in the CRIU
+project. The procfs interface is enough for finding the soft-dirty bit
+status and clearing the soft-dirty bit of all the pages of a process.
+We have the use case where we need to track the soft-dirty PTE bit for
+only specific pages on demand. We need this tracking and clear mechanism
+of a region of memory while the process is running to emulate the
+getWriteWatch() syscall of Windows. This syscall is used by games to
+keep track of dirty pages to process only the dirty pages.
 
- (1) Fscache.  netfslib will construct a read you're asking for from cached
-     data and data from the server and stitch them together (where a folio may
-     comprise pieces from more than once source), and then write the bits it
-     read from the server out to the cache...  And handle content encryption
-     for you such that the data stored in the cache is content-encrypted.
+The information related to pages if the page is file mapped, present and
+swapped is required for the CRIU project[2][3]. The addition of the
+required mask, any mask, excluded mask and return masks are also required
+for the CRIU project[2].
 
-     On writeback, the dirty data must be written to both the cache (if you
-     have one) and the server (if you're not in disconnected operation).
+The IOCTL returns the addresses of the pages which match the specific masks.
+The page addresses are returned in struct page_region in a compact form.
+The max_pages is needed to support a use case where user only wants to get
+a specific number of pages. So there is no need to find all the pages of
+interest in the range when max_pages is specified. The IOCTL returns when
+the maximum number of the pages are found. The max_pages is optional. If
+max_pages is specified, it must be equal or greater than the vec_size.
+This restriction is needed to handle worse case when one page_region only
+contains info of one page and it cannot be compacted. This is needed to
+emulate the Windows getWriteWatch() syscall.
 
- (2) Disconnected operation.  netfslib will, in the future, handle storing
-     data and changes in the cache and then sync'ing on reconnection of an
-     object.
+Some non-dirty pages get marked as dirty because of the kernel's
+internal activity (such as VMA merging as soft-dirty bit difference isn't
+considered while deciding to merge VMAs). The dirty bit of the pages is
+stored in the VMA flags and in the per page flags. If any of these two bits
+are set, the page is considered to be soft dirty. Suppose you have cleared
+the soft dirty bit of half of VMA which will be done by splitting the VMA
+and clearing soft dirty bit flag in the half VMA and the pages in it. Now
+kernel may decide to merge the VMAs again. So the half VMA becomes dirty
+again. This splitting/merging costs performance. The application receives
+a lot of pages which aren't dirty in reality but marked as dirty.
+Performance is lost again here. Also sometimes user doesn't want the newly
+allocated memory to be marked as dirty. PAGEMAP_NO_REUSED_REGIONS flag
+solves both the problems. It is used to not depend on the soft dirty flag
+in the VMA flags. So VMA splitting and merging doesn't happen. It only
+depends on the soft dirty bit of the individual pages. Thus by using this
+flag, there may be a scenerio such that the new memory regions which are
+just created, doesn't look dirty when seen with the IOCTL, but look dirty
+when seen from procfs. This seems okay as the user of this flag know the
+implication of using it.
 
- (3) I want to hand persistent (for the life of an op) iov_iters to the
-     filesystem so that the filesystem can, if it wants to, pass these to the
-     kernel_sendmsg() and kernel_recvmsg() in the bottom.
+[1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
+[2] https://lore.kernel.org/all/YyiDg79flhWoMDZB@gmail.com/
+[3] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com/
 
-     The aim is to get knowledge of pages out of the network filesystem
-     entirely.  A network filesystem would then provide two basic hooks to the
-     server: async direct read and as async direct write.  netfslib will use
-     these to access the pagecache on behalf of the filesystem.
+Regards,
+Muhammad Usama Anjum
 
- (4) Reads and writes might want to/need to be non-block-size aligned.  If we
-     have a byte-range file lock, for example, or if we have a max block size
-     (eg. rsize/wsize) set that's not a multiple of 512, say.
+Muhammad Usama Anjum (3):
+  fs/proc/task_mmu: update functions to clear the soft-dirty PTE bit
+  fs/proc/task_mmu: Implement IOCTL to get and/or the clear info about
+    PTEs
+  selftests: vm: add pagemap ioctl tests
 
- (5) Compressed I/O.  You get back more data than you asked for and you want
-     to paste the rest into the pagecache (if buffered) or discard it (if
-     DIO).  Further, to make this work on write, we may need to hold on to
-     pages on the sides of the one we modified to make sure we keep the right
-     size blob of data to recompress and send back.
+ fs/proc/task_mmu.c                         | 396 +++++++++++-
+ include/uapi/linux/fs.h                    |  53 ++
+ tools/include/uapi/linux/fs.h              |  53 ++
+ tools/testing/selftests/vm/.gitignore      |   1 +
+ tools/testing/selftests/vm/Makefile        |   5 +-
+ tools/testing/selftests/vm/pagemap_ioctl.c | 681 +++++++++++++++++++++
+ 6 files changed, 1156 insertions(+), 33 deletions(-)
+ create mode 100644 tools/testing/selftests/vm/pagemap_ioctl.c
 
- (6) Larger cache block granularity.  One thing I want to explore is the
-     ability to have blocks in the cache that are larger than PAGE_SIZE.  If I
-     can't use the backing filesystem's knowledge of holes in a file, then I
-     have to store my own metadata (ie. effectively build a filesystem on top
-     of a filesystem).  To reduce that amount of metadata that I need, I can
-     make the cache granule size larger.
-
-     In both 5 and 6, netfslib gets to tell the VM layer to increase the size
-     of the blob in readahead() - and then may have to forcibly keep the pages
-     surrounding the page of interest if it gets modified in order to be able
-     to write to the cache correctly, depending on how much integrity I want
-     to try and keep in the cache.
-
- (7) Not-quite-direct-I/O.  cifs, for example, has a number of variations on
-     read and write modes that are kind of but not quite direct I/O.
-
-David
+-- 
+2.30.2
 
