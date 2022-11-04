@@ -2,74 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A31F261A01B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 19:36:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AE9661A025
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 19:39:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232208AbiKDSgE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Nov 2022 14:36:04 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55062 "EHLO
+        id S230089AbiKDSjE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Nov 2022 14:39:04 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230045AbiKDSgD (ORCPT
+        with ESMTP id S232163AbiKDSjB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Nov 2022 14:36:03 -0400
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5FA540931;
-        Fri,  4 Nov 2022 11:35:58 -0700 (PDT)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6DE33622FB;
-        Fri,  4 Nov 2022 18:35:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5118CC433D6;
-        Fri,  4 Nov 2022 18:35:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1667586957;
-        bh=VPj9cmh6AQFP0VK/8I1kT7FJ9030U5M07JRujBjXtss=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=sQbWWomwLEvYnjJKkidFiGQ28C8Q1HidFmegtNdDhJZSVz2riozKuI+h6yavtGznE
-         Z2KDFcZtgfh5LAyksLsQXJvjXfD8rE8hnJ83uOQ8o3XoopYB2PXbFOr30342+1nYmB
-         GBOH4VgLtWNPoRne/PUemG5sV4elSyLF3EhnqJNWSeB3EhmE2AOrmOeRusYAIUG3O2
-         +bqWH0D4HAzPtxEt6oILW6LnlMACedeW2ygnXb+61wxxuP/+2FCQIgE6dDBSNJRF8y
-         nFMJJCymy1JNsHvgMVHBipZ0sJDx2SzwLpGTBv+5FE+CKwG0iQDPlHOI/gsNmnaTJ2
-         PYBzFjFj+wedA==
-Date:   Fri, 4 Nov 2022 11:35:56 -0700
-From:   Jakub Kicinski <kuba@kernel.org>
-To:     Ahelenia =?UTF-8?B?WmllbWlhxYRza2E=?= 
-        <nabijaczleweli@nabijaczleweli.xyz>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>, coda@cs.cmu.edu,
-        codalist@coda.cs.cmu.edu, linux-arm-kernel@lists.infradead.org,
-        linux-doc-tw-discuss@lists.sourceforge.net,
-        linux-doc@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mips@vger.kernel.org, linux-scsi@vger.kernel.org,
-        netdev@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v2 00/15] magic-number.rst funeral rites
-Message-ID: <20221104113556.488c4e17@kernel.org>
-In-Reply-To: <cover.1667330271.git.nabijaczleweli@nabijaczleweli.xyz>
-References: <cover.1667330271.git.nabijaczleweli@nabijaczleweli.xyz>
+        Fri, 4 Nov 2022 14:39:01 -0400
+Received: from mail-oi1-x229.google.com (mail-oi1-x229.google.com [IPv6:2607:f8b0:4864:20::229])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34A30101EF
+        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Nov 2022 11:39:00 -0700 (PDT)
+Received: by mail-oi1-x229.google.com with SMTP id g10so6039691oif.10
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Nov 2022 11:39:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/eaHXmf2PauUwbh2A2MPaTE0oM/kMlZ6+C9nCeVhgAw=;
+        b=FyjO4GDxglnTZnbVJEnTCkM+ad0b9tWkBlCHI7YLLDoBs/T8qFEQJKEEU06ltOCbr6
+         NblIeD8IQYWUjWFcpKC7EWaF48cB0iyIpio+/1g1lIXMDJYh0wN6taWvLZkLeOeHdSeJ
+         VQ1qQ3Nlb2uZAvc966/fN/XQAFDLSTqZbDrv2TxWY8Y9MuUsRo3HsnbP6F0nC0J9DsDk
+         ZGfIiJg9tIOvhGlUnT/vblhTlS1l8DCLi/XzhBGuPVbEDvbhM3NoeWEQQniOeV2kQ6HX
+         EnfiPtcoNp/rIuJtyqtY4RJhmHmMdElTe0i0INQquZR1n17KZPjUvI/HZLy6eCbdHsyd
+         0nbg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/eaHXmf2PauUwbh2A2MPaTE0oM/kMlZ6+C9nCeVhgAw=;
+        b=SjCsS6lzdpSV/loEKChuxJSCTwCoqGBjYmFeaZOCVT+Hbtb8ac1KLoYjf21vfw5FDu
+         fnv/eNonk9BMZqtZzf0nTaTGaNBa27Zn5smDt1xQcI1jrKZDhcvrR2OBBGMGpJs3zx9J
+         HeHEn8gA48IdZnn6krgPYcM1iy7q7h6eHQkuV9tyzNTH7kLlFaf3XkuQzKkRbTrFiPfW
+         +2ETY/cZriZ2ZFLCcCU6rK/nRbtGcGvq3xOKpERSyj8H2/na6hHCf/MEiL+Zw8nuYS70
+         NpEuiFcOkFfv7oZT9kyo0X91xowb65s8+Rm/9ZzhmJQtNhAMOZUT/Wfl3bUrKGJ2qAal
+         rX8Q==
+X-Gm-Message-State: ACrzQf3cdvpzOua2r0XbWRap5RaXL9dnxMQWJs9YwkJG2PoTLsrkT8gR
+        2//QAyOtNwhy1ND+Xz7Li65+BHtu3PV0DkhVTzeO/g==
+X-Google-Smtp-Source: AMsMyM4dp0XXTZUH2UpiSDVwfSTLQVkRqIkPeHMzsLPQhJ35ipysopTbp06N1YUyt5vY4qn4Vt0xZdJG2edZHfmRc4Y=
+X-Received: by 2002:a05:6808:1184:b0:350:f681:8c9a with SMTP id
+ j4-20020a056808118400b00350f6818c9amr20243199oil.282.1667587139286; Fri, 04
+ Nov 2022 11:38:59 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-8.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <Y2QR0EDvq7p9i1xw@nvidia.com> <Y2Qd2dBqpOXuJm22@casper.infradead.org>
+ <Y2QfkszbNaI297nl@nvidia.com> <CACT4Y+YViHZh0xzy_=RU=vUrM145e9hsD09CyKShUbUmH=1Cdg@mail.gmail.com>
+ <Y2RbCUdEY2syxRLW@nvidia.com> <CACT4Y+aENA5FouC3fkUHiYqo0hv9xdRoRS043ukJf+qPZU1gbQ@mail.gmail.com>
+ <Y2VT6b/AgwddWxYj@nvidia.com> <CACT4Y+aog92JBEGqga1QxZ7w6iPsEvEKE=6v7m78pROGAQ7KEA@mail.gmail.com>
+ <Y2VaSZcX7uqRvRf3@nvidia.com>
+In-Reply-To: <Y2VaSZcX7uqRvRf3@nvidia.com>
+From:   Dmitry Vyukov <dvyukov@google.com>
+Date:   Fri, 4 Nov 2022 11:38:48 -0700
+Message-ID: <CACT4Y+awm4SLe4jBOFNTNYT1KAi+zvDWfXik79=eASc4bPC98w@mail.gmail.com>
+Subject: Re: xarray, fault injection and syzkaller
+To:     Jason Gunthorpe <jgg@nvidia.com>
+Cc:     zhengqi.arch@bytedance.com, Matthew Wilcox <willy@infradead.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        linux-fsdevel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        syzkaller <syzkaller@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2 Nov 2022 00:04:54 +0100 Ahelenia Ziemia=C5=84ska wrote:
-> This is a follow-up for the 18+1-patch series (
-> https://lore.kernel.org/linux-kernel/8389a7b85b5c660c6891b1740b5dacc53491=
-a41b.1663280877.git.nabijaczleweli@nabijaczleweli.xyz/
-> https://lore.kernel.org/linux-kernel/20220927003727.slf4ofb7dgum6apt@tart=
-a.nabijaczleweli.xyz/
-> ) I sent in September, and the same reasoning applies:
+On Fri, 4 Nov 2022 at 11:30, Jason Gunthorpe <jgg@nvidia.com> wrote:
+> On Fri, Nov 04, 2022 at 11:21:21AM -0700, Dmitry Vyukov wrote:
+>
+> > But I am not sure if we really don't want to issue the fault injection
+> > stack in this case. It's not a WARNING, it's merely an information
+> > message. It looks useful in all cases, even with GFP_NOWARN. Why
+> > should it be suppressed?
+>
+> I think it is fine to suppress it for *this call* but the bug turns it
+> off forever more
 
-No idea how you want this to get merged, but FWIW you can add my
+Is it just "fine", or "good"? I agree it's probably "fine", but
+wouldn't it be better to not suppress it?
 
-Acked-by: Jakub Kicinski <kuba@kernel.org>
-
-to patches 1, 2, 11 and 12.
+The message fault injection prints is not a warning, and the
+allocation failed due to fault injection. That may trigger subsequent
+bugs just as any other case of fault injection. Why don't we want to
+see the info message in this particular case? NOWARN looks orthogonal
+to this, it's about normal slab allocation failures.
