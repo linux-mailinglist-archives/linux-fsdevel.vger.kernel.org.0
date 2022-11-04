@@ -2,232 +2,265 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 93681619009
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 06:40:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4567F61910B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 07:27:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229728AbiKDFkX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Nov 2022 01:40:23 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51694 "EHLO
+        id S229882AbiKDG1G (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Nov 2022 02:27:06 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229964AbiKDFkV (ORCPT
+        with ESMTP id S229994AbiKDG1F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Nov 2022 01:40:21 -0400
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D06FB275CD
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 22:40:20 -0700 (PDT)
-Received: by mail-pl1-x62b.google.com with SMTP id p21so3950508plr.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 03 Nov 2022 22:40:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yDTqexugXbU5kJXsOAAPQQpjmY8bDQkWRH+Y4a69nu4=;
-        b=TQmlUuFnbTvVYovML524XqO7siz67eHOMV3uwdL7cdCZBTi/n8jt/jjwjWR3rOet4D
-         j4Oe1yfKaVwd4hsIloCyfyRhPRPdlmSFAF6ppGXeFXz1i20Iqoxqbg20asJAWVyQspm2
-         DqBt+YhoySKN6BDDEaNXozIMdVCrHf5axShG0EYh5RMBYKh0BoGrsnS/siha1kU7O9cA
-         yIF7GC61c3A6hljY9KFN0TnqG931OmCyuorM+CFJlmsrdt9wU/em0tlTTAvi1asyh07/
-         Hwnkn5n2IszBOtfe1KZekY45hkFwZ10qpNuGWaB1HKjOhtLKEUfQjb/dBYmvYgQJJMa6
-         7laQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yDTqexugXbU5kJXsOAAPQQpjmY8bDQkWRH+Y4a69nu4=;
-        b=ZuIO7N5icyhXQlZIJHvM2HEzbV6p0eQ/yKUz/pGvs6LiZQ0bBuvc4gMawG6oMwvDFg
-         BP4GiU6+24Nm18ZpMTTx1dh6lPooO6GSoJylwqprGDrHjCOUgaLFGcm7mRLLTjSAuaXn
-         mM58gJ3ojbfbpaz1KpDKcz9P+nLwqhsSDElOxCYxNKgQ1N6YD3coG/MebwSWpBILqsMz
-         1BTcziG2m1EtpXnUymNuxfyZaCyTaSPkz2crxKQJ9jvW0805l8XE5W2oEdLcFttDUbQo
-         /lcWwnU96PUF957RcwS0rcIr6VTRGE4moMOxIkebXOauLRab0W5zZWsBD29r7iLQimOO
-         bmKQ==
-X-Gm-Message-State: ACrzQf2lqs9I7V1bSMiVo0cUZ6l88bPBiNaOUeEKBAoyWn+xExyCUmO3
-        NRcTCQC9J4llvu95SQLKzz+A8IUYG9FxQA==
-X-Google-Smtp-Source: AMsMyM7RBYKI1F8noaszSFisFTJP1lvGQNrviR990dq5W1M38RDhyNLga4WSl3E8H3DtUOW5WyzU0g==
-X-Received: by 2002:a17:902:f551:b0:186:be04:6670 with SMTP id h17-20020a170902f55100b00186be046670mr33328109plf.159.1667540420270;
-        Thu, 03 Nov 2022 22:40:20 -0700 (PDT)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
-        by smtp.gmail.com with ESMTPSA id f2-20020a170902ce8200b00176acd80f69sm1677922plg.102.2022.11.03.22.40.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 03 Nov 2022 22:40:19 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oqpR9-00A3by-Mp; Fri, 04 Nov 2022 16:40:15 +1100
-Date:   Fri, 4 Nov 2022 16:40:15 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/7] xfs: use byte ranges for write cleanup ranges
-Message-ID: <20221104054015.GL3600936@dread.disaster.area>
-References: <20221101003412.3842572-1-david@fromorbit.com>
- <20221101003412.3842572-4-david@fromorbit.com>
- <Y2KbtTf224DNsyEA@magnolia>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y2KbtTf224DNsyEA@magnolia>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Fri, 4 Nov 2022 02:27:05 -0400
+X-Greylist: delayed 1801 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 03 Nov 2022 23:27:03 PDT
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 170911A06F
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 23:27:02 -0700 (PDT)
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+        by 156.147.23.52 with ESMTP; 4 Nov 2022 14:57:00 +0900
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
+        by 156.147.1.151 with ESMTP; 4 Nov 2022 14:57:00 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, damien.lemoal@opensource.wdc.com,
+        linux-ide@vger.kernel.org, adilger.kernel@dilger.ca,
+        linux-ext4@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+        will@kernel.org, tglx@linutronix.de, rostedt@goodmis.org,
+        joel@joelfernandes.org, sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jlayton@kernel.org, dan.j.williams@intel.com,
+        hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com,
+        42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
+        gwan-gyeong.mun@intel.com
+Subject: [QUESTION] {start,stop}_this_handle() and lockdep annotations
+Date:   Fri,  4 Nov 2022 14:56:32 +0900
+Message-Id: <1667541392-16270-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 02, 2022 at 09:32:53AM -0700, Darrick J. Wong wrote:
-> On Tue, Nov 01, 2022 at 11:34:08AM +1100, Dave Chinner wrote:
-> > From: Dave Chinner <dchinner@redhat.com>
-> > 
-> > xfs_buffered_write_iomap_end() currently converts the byte ranges
-> > passed to it to filesystem blocks to pass them to the bmap code to
-> > punch out delalloc blocks, but then has to convert filesytem
-> > blocks back to byte ranges for page cache truncate.
-> > 
-> > We're about to make the page cache truncate go away and replace it
-> > with a page cache walk, so having to convert everything to/from/to
-> > filesystem blocks is messy and error-prone. It is much easier to
-> > pass around byte ranges and convert to page indexes and/or
-> > filesystem blocks only where those units are needed.
-> > 
-> > In preparation for the page cache walk being added, add a helper
-> > that converts byte ranges to filesystem blocks and calls
-> > xfs_bmap_punch_delalloc_range() and convert
-> > xfs_buffered_write_iomap_end() to calculate limits in byte ranges.
-> > 
-> > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> > ---
-> >  fs/xfs/xfs_iomap.c | 40 +++++++++++++++++++++++++---------------
-> >  1 file changed, 25 insertions(+), 15 deletions(-)
-> > 
-> > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> > index a2e45ea1b0cb..7bb55dbc19d3 100644
-> > --- a/fs/xfs/xfs_iomap.c
-> > +++ b/fs/xfs/xfs_iomap.c
-> > @@ -1120,6 +1120,20 @@ xfs_buffered_write_iomap_begin(
-> >  	return error;
-> >  }
-> >  
-> > +static int
-> > +xfs_buffered_write_delalloc_punch(
-> > +	struct inode		*inode,
-> > +	loff_t			start_byte,
-> > +	loff_t			end_byte)
-> > +{
-> > +	struct xfs_mount	*mp = XFS_M(inode->i_sb);
-> > +	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, start_byte);
-> > +	xfs_fileoff_t		end_fsb = XFS_B_TO_FSB(mp, end_byte);
-> > +
-> > +	return xfs_bmap_punch_delalloc_range(XFS_I(inode), start_fsb,
-> > +				end_fsb - start_fsb);
-> > +}
-> 
-> /me echoes hch's comment that the other callers of
-> xfs_bmap_punch_delalloc_range do this byte->block conversion too.
-> 
-> > +
-> >  static int
-> >  xfs_buffered_write_iomap_end(
-> >  	struct inode		*inode,
-> > @@ -1129,10 +1143,9 @@ xfs_buffered_write_iomap_end(
-> >  	unsigned		flags,
-> >  	struct iomap		*iomap)
-> >  {
-> > -	struct xfs_inode	*ip = XFS_I(inode);
-> > -	struct xfs_mount	*mp = ip->i_mount;
-> > -	xfs_fileoff_t		start_fsb;
-> > -	xfs_fileoff_t		end_fsb;
-> > +	struct xfs_mount	*mp = XFS_M(inode->i_sb);
-> > +	loff_t			start_byte;
-> > +	loff_t			end_byte;
-> >  	int			error = 0;
-> >  
-> >  	if (iomap->type != IOMAP_DELALLOC)
-> > @@ -1157,13 +1170,13 @@ xfs_buffered_write_iomap_end(
-> >  	 * the range.
-> >  	 */
-> >  	if (unlikely(!written))
-> > -		start_fsb = XFS_B_TO_FSBT(mp, offset);
-> > +		start_byte = round_down(offset, mp->m_sb.sb_blocksize);
-> >  	else
->  -		start_fsb = XFS_B_TO_FSB(mp, offset + written);
-> > -	end_fsb = XFS_B_TO_FSB(mp, offset + length);
-> > +		start_byte = round_up(offset + written, mp->m_sb.sb_blocksize);
-> > +	end_byte = round_up(offset + length, mp->m_sb.sb_blocksize);
-> 
-> Technically this is the byte where we should *stop* processing, right?
-> 
-> If we are told to write 1000 bytes at pos 0 and the whole thing fails,
-> the end pos of the range is 1023 and we must stop at pos 1024.  Right?
+Hello,
 
-Yes, the interval definition being used here is open-ended i.e.
-[start_byte, end_byte) because it makes iterative interval
-operations really easy as the value for the start of the next
-interval is the same as the value for the end of the current
-interval.
+With v6.1-rc3, a deadlock in the journal code was reported by DEPT. I'd
+need to understand the journal code first before deep dive into it.
 
-That's the way we've traditionally encoded ranges in XFS
-because there's a much lower risk of off-by-one errors in
-calculations as we iterate through extents. i.e. finding the
-start and end of ranges is as simple as round_down/round_up, there's
-no magic "+ 1" or "- 1" arithmetic needed anywhere to move from one
-interval to the next, etc.
+I found a few lockdep annotations was added into the journal code by
+Peterz (commit 34a3d1e8370870 lockdep: annotate journal_start()) and
+the commit message quoted what Andrew Morton said. It was like:
 
-> (The only reason I ask is that Linus ranted about XFS naming these
-> variables incorrectly in the iomap code and the (at the time only) user
-> of it.)
+> Except lockdep doesn't know about journal_start(), which has ranking
+> requirements similar to a semaphore.
 
-I don't find that a convincing argument.  What some random dude that
-has never touched the XFS or iomap code thinks about how we define
-intervals or the notations we use that makes the code _easier for
-us to understand_ is just not relevant.
+Could anyone tell what the ranking requirements in the journal code
+exactly means and what makes {start,stop}_this_handle() work for the
+requirements?
 
-> >  	/* Nothing to do if we've written the entire delalloc extent */
-> > -	if (start_fsb >= end_fsb)
-> > +	if (start_byte >= end_byte)
-> >  		return 0;
-> >  
-> >  	/*
-> > @@ -1173,15 +1186,12 @@ xfs_buffered_write_iomap_end(
-> >  	 * leave dirty pages with no space reservation in the cache.
-> >  	 */
-> >  	filemap_invalidate_lock(inode->i_mapping);
-> > -	truncate_pagecache_range(VFS_I(ip), XFS_FSB_TO_B(mp, start_fsb),
-> > -				 XFS_FSB_TO_B(mp, end_fsb) - 1);
-> > -
-> > -	error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
-> > -				       end_fsb - start_fsb);
-> > +	truncate_pagecache_range(inode, start_byte, end_byte - 1);
-> 
-> ...because the expression "end_byte - 1" looks a little funny when it's
-> used to compute the "lend" argument to truncate_pagecache_range.
+Any comments would be appreciated. If needed, I'll explan the following
+report and scenario in detail.
 
-Yup, truncate_pagecache_range() uses a [] (closed) interval to
-define the range, so we need a "- 1" when passing that open-ended
-interval into a closed interval API.
+Just for your information, let me paste the DEPT report below.
 
-But that truncate_pagecache_range() call is going away in the next
-patch, so this whole issue is moot, yes?
+	Byungchul
 
-> > +	error = xfs_buffered_write_delalloc_punch(inode, start_byte, end_byte);
-> >  	filemap_invalidate_unlock(inode->i_mapping);
-> >  	if (error && !xfs_is_shutdown(mp)) {
-> > -		xfs_alert(mp, "%s: unable to clean up ino %lld",
-> > -			__func__, ip->i_ino);
-> > +		xfs_alert(mp, "%s: unable to clean up ino 0x%llx",
-> > +			__func__, XFS_I(inode)->i_ino);
-> 
-> Oh, you did fix the ino 0x%llx format thing.  Previous comment
-> withdrawn.
-> 
-> With s/end_byte/next_byte/ and the delalloc punch thing sorted out,
+---
+<4>[   43.124364 ] ===================================================
+<4>[   43.124366 ] DEPT: Circular dependency has been detected.
+<4>[   43.124367 ] 6.1.0-rc3-Trybot_110402v1-g601b2ef606e4+ #1 Not tainted
+<4>[   43.124369 ] ---------------------------------------------------
+<4>[   43.124369 ] summary
+<4>[   43.124370 ] ---------------------------------------------------
+<4>[   43.124370 ] *** DEADLOCK ***
 
-I don't know what you want me to do here, because I don't think this
-code is wrong and changing it to closed intervals and next/stop as
-variable names makes little sense in the context of the code....
+<4>[   43.124371 ] context A
+<4>[   43.124372 ]     [S] start_this_handle(jbd2_handle:0)
+<4>[   43.124373 ]     [W] folio_wait_bit_common(pglocked:0)
+<4>[   43.124374 ]     [E] up_read(jbd2_handle:0)
 
-Cheers,
+<4>[   43.124376 ] context B
+<4>[   43.124377 ]     [S] (unknown)(pgwriteback:0)
+<4>[   43.124378 ]     [W] start_this_handle(jbd2_handle:0)
+<4>[   43.124379 ]     [E] folio_wake_bit(pgwriteback:0)
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+<4>[   43.124380 ] context C
+<4>[   43.124381 ]     [S] (unknown)(pglocked:0)
+<4>[   43.124382 ]     [W] folio_wait_bit_common(pgwriteback:0)
+<4>[   43.124383 ]     [E] folio_wake_bit(pglocked:0)
+
+<4>[   43.124384 ] [S]: start of the event context
+<4>[   43.124384 ] [W]: the wait blocked
+<4>[   43.124385 ] [E]: the event not reachable
+<4>[   43.124385 ] ---------------------------------------------------
+<4>[   43.124386 ] context A's detail
+<4>[   43.124387 ] ---------------------------------------------------
+<4>[   43.124387 ] context A
+<4>[   43.124388 ]     [S] start_this_handle(jbd2_handle:0)
+<4>[   43.124389 ]     [W] folio_wait_bit_common(pglocked:0)
+<4>[   43.124389 ]     [E] up_read(jbd2_handle:0)
+
+<4>[   43.124391 ] [S] start_this_handle(jbd2_handle:0):
+<4>[   43.124392 ] [<ffffffff813e2fbc>] start_this_handle+0x4bc/0x620
+<4>[   43.124398 ] stacktrace:
+<4>[   43.124399 ]       start_this_handle+0x57c/0x620
+<4>[   43.124401 ]       jbd2__journal_start+0xe8/0x270
+<4>[   43.124404 ]       __ext4_journal_start_sb+0x147/0x190
+<4>[   43.124407 ]       ext4_writepages+0x76f/0x1120
+<4>[   43.124409 ]       do_writepages+0xc1/0x180
+<4>[   43.124412 ]       file_write_and_wait_range+0xab/0xf0
+<4>[   43.124414 ]       ext4_sync_file+0x122/0x480
+<4>[   43.124416 ]       do_fsync+0x33/0x70
+<4>[   43.124419 ]       __x64_sys_fdatasync+0xe/0x20
+<4>[   43.124421 ]       do_syscall_64+0x44/0x90
+<4>[   43.124424 ]       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+<4>[   43.124427 ] [W] folio_wait_bit_common(pglocked:0):
+<4>[   43.124428 ] [<ffffffff81390bb6>] mpage_prepare_extent_to_map+0x446/0x7a0
+
+<4>[   43.124431 ] [E] up_read(jbd2_handle:0):
+<4>[   43.124431 ] (N/A)
+<4>[   43.124432 ] ---------------------------------------------------
+<4>[   43.124433 ] context B's detail
+<4>[   43.124433 ] ---------------------------------------------------
+<4>[   43.124434 ] context B
+<4>[   43.124434 ]     [S] (unknown)(pgwriteback:0)
+<4>[   43.124435 ]     [W] start_this_handle(jbd2_handle:0)
+<4>[   43.124436 ]     [E] folio_wake_bit(pgwriteback:0)
+
+<4>[   43.124437 ] [S] (unknown)(pgwriteback:0):
+<4>[   43.124438 ] (N/A)
+
+<4>[   43.124439 ] [W] start_this_handle(jbd2_handle:0):
+<4>[   43.124440 ] [<ffffffff813e2fbc>] start_this_handle+0x4bc/0x620
+<4>[   43.124442 ] stacktrace:
+<4>[   43.124443 ]       start_this_handle+0x557/0x620
+<4>[   43.124445 ]       jbd2_journal_start_reserved+0x4d/0x1b0
+<4>[   43.124448 ]       __ext4_journal_start_reserved+0x6d/0x190
+<4>[   43.124450 ]       ext4_convert_unwritten_io_end_vec+0x22/0xd0
+<4>[   43.124453 ]       ext4_end_io_rsv_work+0xe4/0x190
+<4>[   43.124455 ]       process_one_work+0x301/0x660
+<4>[   43.124458 ]       worker_thread+0x3a/0x3c0
+<4>[   43.124459 ]       kthread+0xef/0x120
+<4>[   43.124462 ]       ret_from_fork+0x22/0x30
+
+<4>[   43.124464 ] [E] folio_wake_bit(pgwriteback:0):
+<4>[   43.124465 ] [<ffffffff811fb9c8>] folio_end_writeback+0x78/0xf0
+<4>[   43.124467 ] stacktrace:
+<4>[   43.124468 ]       folio_wake_bit+0x194/0x1a0
+<4>[   43.124470 ]       folio_end_writeback+0x78/0xf0
+<4>[   43.124471 ]       ext4_finish_bio+0x23f/0x340
+<4>[   43.124473 ]       ext4_release_io_end+0x43/0xf0
+<4>[   43.124474 ]       ext4_end_io_rsv_work+0x90/0x190
+<4>[   43.124476 ]       process_one_work+0x301/0x660
+<4>[   43.124478 ]       worker_thread+0x3a/0x3c0
+<4>[   43.124480 ]       kthread+0xef/0x120
+<4>[   43.124481 ]       ret_from_fork+0x22/0x30
+<4>[   43.124482 ] ---------------------------------------------------
+<4>[   43.124483 ] context C's detail
+<4>[   43.124484 ] ---------------------------------------------------
+<4>[   43.124484 ] context C
+<4>[   43.124485 ]     [S] (unknown)(pglocked:0)
+<4>[   43.124485 ]     [W] folio_wait_bit_common(pgwriteback:0)
+<4>[   43.124486 ]     [E] folio_wake_bit(pglocked:0)
+
+<4>[   43.124487 ] [S] (unknown)(pglocked:0):
+<4>[   43.124488 ] (N/A)
+
+<4>[   43.124489 ] [W] folio_wait_bit_common(pgwriteback:0):
+<4>[   43.124490 ] [<ffffffff8120909d>] folio_wait_writeback+0x1d/0x110
+<4>[   43.124492 ] stacktrace:
+<4>[   43.124492 ]       folio_wait_bit_common+0x3e6/0x520
+<4>[   43.124494 ]       folio_wait_writeback+0x1d/0x110
+<4>[   43.124495 ]       mpage_prepare_extent_to_map+0x205/0x7a0
+<4>[   43.124497 ]       ext4_writepages+0x4de/0x1120
+<4>[   43.124499 ]       do_writepages+0xc1/0x180
+<4>[   43.124501 ]       __writeback_single_inode+0x53/0x600
+<4>[   43.124503 ]       writeback_sb_inodes+0x1ea/0x510
+<4>[   43.124505 ]       wb_writeback+0xe7/0x450
+<4>[   43.124506 ]       wb_workfn+0xe0/0x5e0
+<4>[   43.124508 ]       process_one_work+0x301/0x660
+<4>[   43.124510 ]       worker_thread+0x3a/0x3c0
+<4>[   43.124512 ]       kthread+0xef/0x120
+<4>[   43.124513 ]       ret_from_fork+0x22/0x30
+
+<4>[   43.124515 ] [E] folio_wake_bit(pglocked:0):
+<4>[   43.124516 ] [<ffffffff813b6f14>] ext4_bio_write_page+0x4d4/0x880
+<4>[   43.124518 ] stacktrace:
+<4>[   43.124518 ]       folio_wake_bit+0x152/0x1a0
+<4>[   43.124520 ]       ext4_bio_write_page+0x4d4/0x880
+<4>[   43.124521 ]       mpage_submit_page+0x49/0x70
+<4>[   43.124523 ]       mpage_process_page_bufs+0xfb/0x110
+<4>[   43.124525 ]       mpage_prepare_extent_to_map+0x2ab/0x7a0
+<4>[   43.124527 ]       ext4_writepages+0x4de/0x1120
+<4>[   43.124529 ]       do_writepages+0xc1/0x180
+<4>[   43.124530 ]       __writeback_single_inode+0x53/0x600
+<4>[   43.124532 ]       writeback_sb_inodes+0x1ea/0x510
+<4>[   43.124534 ]       wb_writeback+0xe7/0x450
+<4>[   43.124535 ]       wb_workfn+0xe0/0x5e0
+<4>[   43.124537 ]       process_one_work+0x301/0x660
+<4>[   43.124539 ]       worker_thread+0x3a/0x3c0
+<4>[   43.124541 ]       kthread+0xef/0x120
+<4>[   43.124542 ]       ret_from_fork+0x22/0x30
+<4>[   43.124544 ] ---------------------------------------------------
+<4>[   43.124544 ] information that might be helpful
+<4>[   43.124545 ] ---------------------------------------------------
+<4>[   43.124546 ] CPU: 0 PID: 1225 Comm: igt_runner Not tainted 6.1.0-rc3-Trybot_110402v1-g601b2ef606e4+ #1
+<4>[   43.124548 ] Hardware name: Hewlett-Packard HP Pro 3500 Series/2ABF, BIOS 8.11 10/24/2012
+<4>[   43.124549 ] Call Trace:
+<4>[   43.124550 ]  <TASK>
+<4>[   43.124551 ]  dump_stack_lvl+0x60/0x8e
+<4>[   43.124554 ]  print_circle.cold.39+0x44f/0x47e
+<4>[   43.124558 ]  ? print_circle+0xc0/0xc0
+<4>[   43.124561 ]  cb_check_dl+0x58/0x60
+<4>[   43.124564 ]  bfs+0xd3/0x1b0
+<4>[   43.124567 ]  add_dep+0xb6/0x1a0
+<4>[   43.124570 ]  add_wait+0xf0/0x440
+<4>[   43.124572 ]  ? mpage_prepare_extent_to_map+0x446/0x7a0
+<4>[   43.124575 ]  dept_wait_split_map+0x142/0x1e0
+<4>[   43.124578 ]  ? mpage_prepare_extent_to_map+0x446/0x7a0
+<4>[   43.124580 ]  __folio_lock+0x86/0x300
+<4>[   43.124582 ]  ? lock_is_held_type+0x112/0x150
+<4>[   43.124586 ]  mpage_prepare_extent_to_map+0x446/0x7a0
+<4>[   43.124588 ]  ? rcu_read_lock_sched_held+0x51/0x80
+<4>[   43.124592 ]  ? jbd2__journal_start+0x151/0x270
+<4>[   43.124595 ]  ? lock_is_held_type+0x112/0x150
+<4>[   43.124597 ]  ? do_writepages+0xc1/0x180
+<4>[   43.124599 ]  ext4_writepages+0x7b3/0x1120
+<4>[   43.124602 ]  ? pop_ecxt+0xee/0x100
+<4>[   43.124606 ]  do_writepages+0xc1/0x180
+<4>[   43.124608 ]  ? lock_is_held_type+0x112/0x150
+<4>[   43.124611 ]  file_write_and_wait_range+0xab/0xf0
+<4>[   43.124622 ]  ext4_sync_file+0x122/0x480
+<4>[   43.124624 ]  do_fsync+0x33/0x70
+<4>[   43.124627 ]  __x64_sys_fdatasync+0xe/0x20
+<4>[   43.124629 ]  do_syscall_64+0x44/0x90
+<4>[   43.124631 ]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+<4>[   43.124633 ] RIP: 0033:0x7f6f2146d3c7
+<4>[   43.124635 ] Code: 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 4b 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 41 c3 48 83 ec 18 89 7c 24 0c e8 83 f3 f7 ff
+<4>[   43.124637 ] RSP: 002b:00007ffc4e4b8918 EFLAGS: 00000246 ORIG_RAX: 000000000000004b
+<4>[   43.124639 ] RAX: ffffffffffffffda RBX: 0000000080045705 RCX: 00007f6f2146d3c7
+<4>[   43.124640 ] RDX: 000000000000005f RSI: 00007ffc4e4b9020 RDI: 000000000000000a
+<4>[   43.124641 ] RBP: 00007ffc4e4b8a40 R08: 0000000000000000 R09: 0000000000000000
+<4>[   43.124642 ] R10: 00007ffc4e5251b0 R11: 0000000000000246 R12: 0000000000000012
+<4>[   43.124643 ] R13: 00007ffc4e4b98a0 R14: 00007ffc4e4b9020 R15: 0000000000000000
+<4>[   43.124656 ]  </TASK>
