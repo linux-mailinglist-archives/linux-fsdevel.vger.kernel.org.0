@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CAF2618D2E
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 01:26:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 479AB618D31
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 01:30:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230099AbiKDA0j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Nov 2022 20:26:39 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44424 "EHLO
+        id S230267AbiKDAaX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Nov 2022 20:30:23 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230262AbiKDA0h (ORCPT
+        with ESMTP id S230231AbiKDAaV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Nov 2022 20:26:37 -0400
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB02111A10
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 17:26:36 -0700 (PDT)
+        Thu, 3 Nov 2022 20:30:21 -0400
+Received: from esa3.hgst.iphmx.com (esa3.hgst.iphmx.com [216.71.153.141])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7651A1EC7F
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 17:30:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1667521596; x=1699057596;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=OY/l0gOXnAD+HMGxqT3s5iBrAc5CDJHwlamXq/buh2w=;
-  b=COB5XjrOHaHtqhpr16VlkKihpZq5Z2iNgjuffc79t9ek3g96nMNprqxB
-   Dbh7TZDMUV8oMihM2KWV4aZm/L2VHDfD7xTYTb9MzbdaYm8stqu0IBfVM
-   YNis39ntzUUyBNLxhsk/cAz1lnZByruapykQLBuScY/OMOzfBsQm8+xLi
-   +22xazf7B5MEKzGZKLImRdGxcwyE+7IrfSJ96ctaccvsYEGdxMqFkCG4g
-   n09GvGy+zhCqHd+t6AUGhpWX/pw5QT5kNoDtcThpYT+sOzsXE8gPAOJ86
-   QC7gfH7ESdB9NcWnIEu17WCLMWdyfcN7Ocv+69nXEBtqx2KLFj/4hvqJR
-   A==;
+  t=1667521820; x=1699057820;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=pFflb22EIdbYzRmqHDykregHxj0CTIDKEWDMpPiEmWI=;
+  b=kccLNsycEIw4VaKtUcWxAaOF6y1XKLR1ia+rwHmjtOnnk07H9T3fu+h9
+   5SL74m0hcNh0odNmsFLYG6UVMzOVDNb2tvQohBX2eynphg5QFDh0+++Z6
+   6OuvYOcGIwfqriyc/Us8k15WLx02xOZde/aG1FKdq0i+6LQIr2VxX5N++
+   oryzry6SC3g6Wwfy3hkebM9+asAx697tkIrDYr6nLSt+wnuwv38/izp5m
+   AAEoP0JpIuTc9467f4LPL7F5skBHjVFTH8H7MdgpP6YR/BlKqqF4DyTDy
+   nMgaORRbPvP5ko7pI4Nagy8rkbO33Eu59I84Nf8mbd8E7feC6XHAHFS7h
+   g==;
 X-IronPort-AV: E=Sophos;i="5.96,135,1665417600"; 
-   d="scan'208";a="213738122"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 04 Nov 2022 08:26:35 +0800
-IronPort-SDR: zNchagwYrwHYhced+DOsGS19q9GcMGvGpgwg53yxcLaN6p9KNB0Y2OC2DWboU0n1z/g7d3XZNY
- CIAXLjzkMCqdQUeP/WQ9V+0aS8dXFWf6wyJi+Z7E3ywU4kNSDGTFy2JI4wnz59RwzLGNJx2Mx3
- uYVZzsoSaUIfozo58OvqPEu0yEHg4SiI+vUG8pNPIjwZqJdSwnZFGpTFvrSX8o957z5TfHyY6w
- OGuWMN6VfN4hrTf5pHlDwUQGwEFJL7lwH/8q5/MuHslbpFRlxdwvzbvTO1PLK9WAp7ttFOkbXR
- ZUo=
+   d="scan'208";a="220604844"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 04 Nov 2022 08:30:19 +0800
+IronPort-SDR: Eufr28owg1p3MCaF8/r7ek2xyBKw+8BA/ne8ouiwmtouAI7egIC1msGXKggoPIfDOSzdfmOU28
+ mg+ZQOht6vqhsYdzDThVnoGkeWYGKGQFLLXiqxVDjvN4Moz7EgR0buRafgB6+AjpIz9vo8gZTJ
+ K4vs4ZZ3of7b467x+ajKCh7YgKk5eJuS9ak+rg2l4lEEhAH2RZZMSFjm7lS0hRroj/MfPC+2rZ
+ ZE2tm6AJldw9RbBQqhb36L/pOJpb/bb5Whs92FhlcN8uu9WzTZCIoTwHB1zrHP613K9ctb5Jyz
+ A60=
 Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Nov 2022 16:45:46 -0700
-IronPort-SDR: jNwyWFVYaqyexp06zBJY03cEay3GfQT+r9AcapF89O5ooCeRrKF+Jctd2kLu7xDuNHm6jiTIAl
- eBo0uCCzwr/pyjtezTZLdlCU3LdYTHQUw3jlzzCXeTg8XRkBj63UYGRWncS77iwwKLgVO22TOq
- LFulqGlKGZriF9TwtF6fsQ70kXIJJdFmnGI5JLwvNM8OXZCM+9kXgjoCWTgC4ASFj3Sgku5WCB
- PIBQxkTCIKlT4EYN1/ZZcxjYezYmIZ7OQ8cJ9oPPcasgfL/UCKgFWVj+sXawaZNrR4q7DeK7Wu
- DHg=
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Nov 2022 16:49:30 -0700
+IronPort-SDR: DD1mZojJu3iehmSKYvxglQhK7kCLvWsUxwh0md354GtuXWl3d1lNiVHXZ+GhpMoYQBGF4HlJqA
+ Gp1mwgj5Cwtqn6CfElIXPO0jBvPa7WJT+MMh+rAt2iRThlHH+fWVNdG1id3HZL/8lJRu9yS1T4
+ bQiK0BKLBm7AiAo2gmvvX53CCl90AMxNmX2yLlJ1A5lACZQR59Vpz8kT9tsAFZC0mh3uQGw0oC
+ JCvz6ihzcRVv5hkYp1901zeeNZvKawd6VCv2UcySyrcwQDXRYOzPKb0nchcx1+y75G3kHqQEc6
+ oZw=
 WDCIronportException: Internal
 Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Nov 2022 17:26:36 -0700
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Nov 2022 17:30:20 -0700
 Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4N3Lyz3YSdz1RvTp
-        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 17:26:35 -0700 (PDT)
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4N3M3H34Myz1RvTr
+        for <linux-fsdevel@vger.kernel.org>; Thu,  3 Nov 2022 17:30:19 -0700 (PDT)
 Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
         reason="pass (just generated, assumed good)"
         header.d=opensource.wdc.com
@@ -57,35 +57,36 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
         opensource.wdc.com; h=content-transfer-encoding:content-type
         :in-reply-to:organization:from:references:to:content-language
         :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1667521594; x=1670113595; bh=OY/l0gOXnAD+HMGxqT3s5iBrAc5CDJHwlam
-        Xq/buh2w=; b=WH/v5EZUyIr+v+iNaGeFa9D2kULbXnlci/v9THgbg3tXe0jq3Cw
-        DP1MCMCV1/OR9ern/fztQte0rUZMng9v2Ny+mRiiNwzmzIJjtSl8WPrsYHXp2GLC
-        SaB1eb9rNW92LbQdvDsns6oQBCzUdSEnfuZbyx6wom8LHzGu758OvokxqnwK0MDl
-        h/VSZVUvB+pc2Ps9cJRJuywjA/DViNLL2Kynn7c0FMMa7ppHXPPuTpAQRXTyixz0
-        Kb+BnQW49EB4FwXgVc7Tfp1VKfhEjcQjXs/ywHa197c14oPFu2MvYu6oWTUPivsb
-        An/l6E573kUTtwWlIOsEthoHL7kPJmkQLQA==
+        1667521819; x=1670113820; bh=pFflb22EIdbYzRmqHDykregHxj0CTIDKEWD
+        MpPiEmWI=; b=N7C8ZZSPCto4Z+DJhnthCxl9L3PaC08nDc2BbGlOIJVItlOzls5
+        09vEEccevL1jXI8/tLlrTgiGmvhiUGi+yzOhz7I/XEf2MJ0GAk4OqocgqTFMGmuk
+        KlQ7I6ZcyMGCHUGyKL5bM4Dh6NrXXkpXWA9Ss2SyYdCXwW0OZTuXOjujgZmQMRAh
+        VlaWqixEoOFAjp1I/KvLHSZWu9tloDSdCFQ2B5yLbs9AOsUki3lDmW0bCqaOctVr
+        92LW5ZybVAP2F2WI73h36VzkiBkuxhaPg2LwouUKg+bH2R6aBenTTOG6KEoKYVlF
+        F2auEiAd6xmZoSNnpY22YOHWL7omSrotVlQ==
 X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
 Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
         by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ju8AtuRY88kq for <linux-fsdevel@vger.kernel.org>;
-        Thu,  3 Nov 2022 17:26:34 -0700 (PDT)
+        with ESMTP id 3kMF9-dB8pnp for <linux-fsdevel@vger.kernel.org>;
+        Thu,  3 Nov 2022 17:30:19 -0700 (PDT)
 Received: from [10.225.163.24] (unknown [10.225.163.24])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4N3Lyy2djtz1RvLy;
-        Thu,  3 Nov 2022 17:26:34 -0700 (PDT)
-Message-ID: <085f1e1f-0810-1850-44d0-2704250799a3@opensource.wdc.com>
-Date:   Fri, 4 Nov 2022 09:26:32 +0900
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4N3M3G5Bz4z1RvLy;
+        Thu,  3 Nov 2022 17:30:18 -0700 (PDT)
+Message-ID: <7e327427-c47a-29d4-e1af-9b127407d076@opensource.wdc.com>
+Date:   Fri, 4 Nov 2022 09:30:17 +0900
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.0
-Subject: Re: [PATCH] zonefs: add sanity check for aggregated conventional
- zones
+Subject: Re: [PATCH 1/2] zonefs: fix zone report size in __zonefs_io_error()
 Content-Language: en-US
-To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Cc:     linux-fsdevel@vger.kernel.org
-References: <f7e4afaca0eb337bf18231358b7e764d4cdf5c5a.1667471410.git.johannes.thumshirn@wdc.com>
+To:     Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+References: <20221031030007.468313-1-damien.lemoal@opensource.wdc.com>
+ <20221031030007.468313-2-damien.lemoal@opensource.wdc.com>
+ <959eb68a-3c74-3b57-dd81-8b46dfa341d9@wdc.com>
 From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
 Organization: Western Digital Research
-In-Reply-To: <f7e4afaca0eb337bf18231358b7e764d4cdf5c5a.1667471410.git.johannes.thumshirn@wdc.com>
+In-Reply-To: <959eb68a-3c74-3b57-dd81-8b46dfa341d9@wdc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -97,94 +98,25 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/3/22 19:32, Johannes Thumshirn wrote:
-> When initializing a file inode, check if the zone's size if bigger than
-> the number of device zone sectors. This can only be the case if we mount
-> the filesystem with the -oaggr_cnv mount option.
+On 11/2/22 18:28, Johannes Thumshirn wrote:
+> On 31.10.22 04:00, Damien Le Moal wrote:
+>> +	/*
+>> +	 * The only files that have more than one zone are conventional zone
+>> +	 * files with aggregated conventional zones, for which the inode zone
+>> +	 * size is always larger than the device zone size.
+>> +	 */
+>> +	if (zi->i_zone_size > bdev_zone_sectors(sb->s_bdev))
+>> +		nr_zones = zi->i_zone_size >>
+>> +			(sbi->s_zone_sectors_shift + SECTOR_SHIFT);
+>> +
 > 
-> Emit an error in case this case happens and fail the mount.
-> 
-> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
-> ---
->  fs/zonefs/super.c | 27 +++++++++++++++++++++------
->  1 file changed, 21 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-> index 860f0b1032c6..605364638720 100644
-> --- a/fs/zonefs/super.c
-> +++ b/fs/zonefs/super.c
-> @@ -1407,6 +1407,14 @@ static int zonefs_init_file_inode(struct inode *inode, struct blk_zone *zone,
->  	zi->i_ztype = type;
->  	zi->i_zsector = zone->start;
->  	zi->i_zone_size = zone->len << SECTOR_SHIFT;
-> +	if (zi->i_zone_size > bdev_zone_sectors(sb->s_bdev) << SECTOR_SHIFT &&
-> +	    !sbi->s_features & ZONEFS_F_AGGRCNV) {
-> +		zonefs_err(sb,
-> +			   "zone size %llu doesn't match device's zone sectors %llu\n",
-> +			   zi->i_zone_size,
-> +			   bdev_zone_sectors(sb->s_bdev) << SECTOR_SHIFT);
-> +		return -EINVAL;
-> +	}
->  
->  	zi->i_max_size = min_t(loff_t, MAX_LFS_FILESIZE,
->  			       zone->capacity << SECTOR_SHIFT);
-> @@ -1485,7 +1493,7 @@ static struct dentry *zonefs_create_inode(struct dentry *parent,
->  dput:
->  	dput(dentry);
->  
-> -	return NULL;
-> +	return ERR_PTR(ret);
->  }
->  
->  struct zonefs_zone_data {
-> @@ -1505,7 +1513,7 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
->  	struct blk_zone *zone, *next, *end;
->  	const char *zgroup_name;
->  	char *file_name;
-> -	struct dentry *dir;
-> +	struct dentry *dir, *ret2;
->  	unsigned int n = 0;
->  	int ret;
->  
-> @@ -1523,8 +1531,11 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
->  		zgroup_name = "seq";
->  
->  	dir = zonefs_create_inode(sb->s_root, zgroup_name, NULL, type);
-> -	if (!dir) {
-> -		ret = -ENOMEM;
-> +	if (IS_ERR_OR_NULL(dir)) {
-> +		if (!dir)
-> +			ret = -ENOMEM;
+> I wonder if we should also have a check/assertion like this somewhere: 
+> WARN_ON_ONCE(zi->i_zone_size > bdev_zone_sectors(sb->sbdev) && 
+> 	!sbi->s_features & ZONEFS_F_AGGRCNV)
+> 	
 
-It would be cleaner to return ERR_PTR(-ENOMEM) instead of NULL in
-zonefs_create_inode(). This way, this can simply be:
-		if (IS_ERR(dir)) {
-			ret = PTR_ERR(dir);
-			goto free;
-		}
-
-And the hunk below would be similar too.
-
-> +		else
-> +			ret = PTR_ERR(dir);
->  		goto free;
->  	}
->  
-> @@ -1570,8 +1581,12 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
->  		 * Use the file number within its group as file name.
->  		 */
->  		snprintf(file_name, ZONEFS_NAME_MAX - 1, "%u", n);
-> -		if (!zonefs_create_inode(dir, file_name, zone, type)) {
-> -			ret = -ENOMEM;
-> +		ret2 = zonefs_create_inode(dir, file_name, zone, type);
-> +		if (IS_ERR_OR_NULL(ret2)) {
-> +			if (!ret2)
-> +				ret = -ENOMEM;
-> +			else
-> +				ret = PTR_ERR(ret2);
->  			goto free;
->  		}
->  
+I think It would be good to squash your patch checking zi->i_zone_size on
+mount with this one. Can you send that or do you want me to do it ?
 
 -- 
 Damien Le Moal
