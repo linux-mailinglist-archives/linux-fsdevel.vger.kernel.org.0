@@ -2,458 +2,299 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B404A618DE1
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 03:05:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FD7D618E4D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 03:35:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230460AbiKDCF5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 3 Nov 2022 22:05:57 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49086 "EHLO
+        id S231305AbiKDCfB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 3 Nov 2022 22:35:01 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230504AbiKDCF4 (ORCPT
+        with ESMTP id S229591AbiKDCe7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 3 Nov 2022 22:05:56 -0400
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABF93240AA;
-        Thu,  3 Nov 2022 19:05:53 -0700 (PDT)
-Received: from dggpemm500021.china.huawei.com (unknown [172.30.72.54])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4N3P9P3Z70zmVfd;
-        Fri,  4 Nov 2022 10:05:45 +0800 (CST)
-Received: from dggpemm500014.china.huawei.com (7.185.36.153) by
- dggpemm500021.china.huawei.com (7.185.36.109) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 4 Nov 2022 10:05:51 +0800
-Received: from [10.174.178.93] (10.174.178.93) by
- dggpemm500014.china.huawei.com (7.185.36.153) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 4 Nov 2022 10:05:50 +0800
-Message-ID: <049fa470-41e8-1516-c7bf-a2bc67824abd@huawei.com>
-Date:   Fri, 4 Nov 2022 10:05:50 +0800
+        Thu, 3 Nov 2022 22:34:59 -0400
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5844DE15;
+        Thu,  3 Nov 2022 19:34:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1667529297; x=1699065297;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=k6zHr8AHLwaL1LJlPryMMAsPTZ/apPmng/dSTG4NLmw=;
+  b=Yw0ynUGLI4M8buKJW3HRCKVPK6248jpdq90dNboNg7ARgz+gJPEXjVVQ
+   Ctv2v6UcOVYbb4pwwc19m5IPI8T+F06k/nIlM/jy63Awur6i7LZXEllFQ
+   xFcqm1NkJRQx+zyHiaXC/cEcwEI+6QXj5wTFjpsMMSZ3Azz7NAU+f6huS
+   dOpy0E1/yeNwtc3IaRl4YHgU9YhBhobhJb8QFbJGjgkODzNi1TXaffetd
+   WyJtOfiw+TT20pqv0ruDjkHWb2eOATaIZYRjO3lMuZDFZ3YeQSOU2/Pat
+   LvFbFgwjEMwlIksHTO2PkIOKhaWbAxLyXaLPLsa+tVfRqQRJP8K0l2kxx
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10520"; a="293185164"
+X-IronPort-AV: E=Sophos;i="5.96,135,1665471600"; 
+   d="scan'208";a="293185164"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Nov 2022 19:32:52 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10520"; a="666205484"
+X-IronPort-AV: E=Sophos;i="5.96,135,1665471600"; 
+   d="scan'208";a="666205484"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by orsmga008.jf.intel.com with ESMTP; 03 Nov 2022 19:32:41 -0700
+Date:   Fri, 4 Nov 2022 10:28:13 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Fuad Tabba <tabba@google.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v9 4/8] KVM: Use gfn instead of hva for mmu_notifier_retry
+Message-ID: <20221104022813.GA4129873@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-5-chao.p.peng@linux.intel.com>
+ <CA+EHjTySnJTuLB+XoRya6kS_zw2iMahW9-Ze70oKTf+6k0GrGQ@mail.gmail.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.7.0
-Subject: Re: [PATCH] sched/fair: Introduce priority load balance for CFS
-Content-Language: en-US
-To:     Vincent Guittot <vincent.guittot@linaro.org>
-CC:     <mingo@redhat.com>, <peterz@infradead.org>,
-        <juri.lelli@redhat.com>, <mcgrof@kernel.org>,
-        <keescook@chromium.org>, <yzaikin@google.com>,
-        <dietmar.eggemann@arm.com>, <rostedt@goodmis.org>,
-        <bsegall@google.com>, <mgorman@suse.de>, <bristot@redhat.com>,
-        <vschneid@redhat.com>, <linux-kernel@vger.kernel.org>,
-        <linux-fsdevel@vger.kernel.org>
-References: <20221102035301.512892-1-zhangsong34@huawei.com>
- <CAKfTPtCcYySw2ZC_pr8=3KFPmAAVN=1h8=5jWkW5YXyy11sehg@mail.gmail.com>
- <b45f96b6-e0b2-22bb-eda1-2468d6fbe104@huawei.com>
- <CAKfTPtDrWCenxtVcunjS3pGD81TdLf2EkhO_YcdfxnUHXpVF3w@mail.gmail.com>
- <4bad43c0-40a4-dc39-7214-f2c3321a47ee@huawei.com>
- <CAKfTPtCwUvkqnzs9n0G+cyE5h5QdgwoKF-gNu+4A5g4NHNRe9w@mail.gmail.com>
-From:   Song Zhang <zhangsong34@huawei.com>
-In-Reply-To: <CAKfTPtCwUvkqnzs9n0G+cyE5h5QdgwoKF-gNu+4A5g4NHNRe9w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.178.93]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- dggpemm500014.china.huawei.com (7.185.36.153)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+EHjTySnJTuLB+XoRya6kS_zw2iMahW9-Ze70oKTf+6k0GrGQ@mail.gmail.com>
+X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-On 2022/11/3 17:22, Vincent Guittot wrote:
-> On Thu, 3 Nov 2022 at 10:20, Song Zhang <zhangsong34@huawei.com> wrote:
->>
->>
->>
->> On 2022/11/3 16:33, Vincent Guittot wrote:
->>> On Thu, 3 Nov 2022 at 04:01, Song Zhang <zhangsong34@huawei.com> wrote:
->>>>
->>>> Thanks for your reply!
->>>>
->>>> On 2022/11/3 2:01, Vincent Guittot wrote:
->>>>> On Wed, 2 Nov 2022 at 04:54, Song Zhang <zhangsong34@huawei.com> wrote:
->>>>>>
->>>>>
->>>>> This really looks like a v3 of
->>>>> https://lore.kernel.org/all/20220810015636.3865248-1-zhangsong34@huawei.com/
->>>>>
->>>>> Please keep versioning.
->>>>>
->>>>>> Add a new sysctl interface:
->>>>>> /proc/sys/kernel/sched_prio_load_balance_enabled
->>>>>
->>>>> We don't want to add more sysctl knobs for the scheduler, we even
->>>>> removed some. Knob usually means that you want to fix your use case
->>>>> but the solution doesn't make sense for all cases.
->>>>>
->>>>
->>>> OK, I will remove this knobs later.
->>>>
->>>>>>
->>>>>> 0: default behavior
->>>>>> 1: enable priority load balance for CFS
->>>>>>
->>>>>> For co-location with idle and non-idle tasks, when CFS do load balance,
->>>>>> it is reasonable to prefer migrating non-idle tasks and migrating idle
->>>>>> tasks lastly. This will reduce the interference by SCHED_IDLE tasks
->>>>>> as much as possible.
->>>>>
->>>>> I don't agree that it's always the best choice to migrate a non-idle task 1st.
->>>>>
->>>>> CPU0 has 1 non idle task and CPU1 has 1 non idle task and hundreds of
->>>>> idle task and there is an imbalance between the 2 CPUS: migrating the
->>>>> non idle task from CPU1 to CPU0 is not the best choice
->>>>>
->>>>
->>>> If the non idle task on CPU1 is running or cache hot, it cannot be
->>>> migrated and idle tasks can also be migrated from CPU1 to CPU0. So I
->>>> think it does not matter.
->>>
->>> What I mean is that migrating non idle tasks first is not a universal
->>> win and not always what we want.
->>>
->>
->> But migrating online tasks first is mostly a trade-off that
->> non-idle(Latency Sensitive) tasks can obtain more CPU time and minimize
->> the interference caused by IDLE tasks. I think this makes sense in most
->> cases, or you can point out what else I need to think about it ?
->>
->> Best regards.
->>
->>>>
->>>>>>
->>>>>> Testcase:
->>>>>> - Spawn large number of idle(SCHED_IDLE) tasks occupy CPUs
->>>>>
->>>>> What do you mean by a large number ?
->>>>>
->>>>>> - Let non-idle tasks compete with idle tasks for CPU time.
->>>>>>
->>>>>> Using schbench to test non-idle tasks latency:
->>>>>> $ ./schbench -m 1 -t 10 -r 30 -R 200
->>>>>
->>>>> How many CPUs do you have ?
->>>>>
->>>>
->>>> OK, some details may not be mentioned.
->>>> My virtual machine has 8 CPUs running with a schbench process and 5000
->>>> idle tasks. The idle task is a while dead loop process below:
->>>
->>> How can you care about latency when you start 10 workers on 8 vCPUs
->>> with 5000 non idle threads ?
->>>
->>
->> No no no... spawn 5000 idle(SCHED_IDLE) processes not 5000 non-idle
->> threads, and with 10 non-idle schbench workers on 8 vCPUs.
+On Thu, Oct 27, 2022 at 11:29:14AM +0100, Fuad Tabba wrote:
+> Hi,
 > 
-> yes spawn 5000 idle tasks but my point remains the same
+> On Tue, Oct 25, 2022 at 4:19 PM Chao Peng <chao.p.peng@linux.intel.com> wrote:
+> >
+> > Currently in mmu_notifier validate path, hva range is recorded and then
+> > checked against in the mmu_notifier_retry_hva() of the page fault path.
+> > However, for the to be introduced private memory, a page fault may not
+> > have a hva associated, checking gfn(gpa) makes more sense.
+> >
+> > For existing non private memory case, gfn is expected to continue to
+> > work. The only downside is when aliasing multiple gfns to a single hva,
+> > the current algorithm of checking multiple ranges could result in a much
+> > larger range being rejected. Such aliasing should be uncommon, so the
+> > impact is expected small.
+> >
+> > It also fixes a bug in kvm_zap_gfn_range() which has already been using
 > 
+> nit: Now it's kvm_unmap_gfn_range().
 
-But I really don't understand what you are most focused on, and what 
-else should I do.
+Forgot to mention: the bug is still with kvm_zap_gfn_range(). It calls
+kvm_mmu_invalidate_begin/end with a gfn range but before this series
+kvm_mmu_invalidate_begin/end actually accept a hva range. Note it's
+unrelated to whether we use kvm_zap_gfn_range() or kvm_unmap_gfn_range()
+in the following patch (patch 05).
 
->>
->>>>
->>>> $ cat idle_process.c
->>>> int main()
->>>> {
->>>>            int i = 0;
->>>>            while(1) {
->>>>                    usleep(500);
->>>>                    for(i = 0; i < 1000000; i++);
->>>>            }
->>>> }
->>>>
->>>> You can compile and spawn 5000 idle(SCHED_IDLE) tasks occupying 8 CPUs
->>>> and execute schbench command to test it.
->>>>
->>>>>>
->>>>>> Test result:
->>>>>> 1.Default behavior
->>>>>> Latency percentiles (usec) runtime 30 (s) (4562 total samples)
->>>>>>            50.0th: 62528 (2281 samples)
->>>>>>            75.0th: 623616 (1141 samples)
->>>>>>            90.0th: 764928 (687 samples)
->>>>>>            95.0th: 824320 (225 samples)
->>>>>>            *99.0th: 920576 (183 samples)
->>>>>>            99.5th: 953344 (23 samples)
->>>>>>            99.9th: 1008640 (18 samples)
->>>>>>            min=9, max=1074466
->>>>>>
->>>>>> 2.Enable priority load balance
->>>>>> Latency percentiles (usec) runtime 30 (s) (4391 total samples)
->>>>>>            50.0th: 22624 (2204 samples)
->>>>>>            75.0th: 48832 (1092 samples)
->>>>>>            90.0th: 85376 (657 samples)
->>>>>>            95.0th: 113280 (220 samples)
->>>>>>            *99.0th: 182528 (175 samples)
->>>>>>            99.5th: 206592 (22 samples)
->>>>>>            99.9th: 290304 (17 samples)
->>>>>>            min=6, max=351815
->>>>>>
->>>>>>    From percentile details, we see the benefit of priority load balance
->>>>>> that 95% of non-idle tasks latencies stays no more than 113ms, while
->>>>>
->>>>> But even 113ms seems quite a large number if there is anything else
->>>>> but 10 schbench workers and a bunch of idle threads that are running.
->>>>>
->>>>>> non-idle tasks latencies has got almost 50% over 600ms if priority
->>>>>> load balance not enabled.
->>>>>
->>>>> Als have you considered enabling sched_feature LB_MIN ?
->>>>>
->>>>
->>>> I have tried to echo LB_MIN > /sys/kernel/debug/sched/features, but this
->>>> feature seems make no sense.
->>>>
->>>>>>
->>>>>> Signed-off-by: Song Zhang <zhangsong34@huawei.com>
->>>>>> ---
->>>>>>     include/linux/sched/sysctl.h |  4 +++
->>>>>>     init/Kconfig                 | 10 ++++++
->>>>>>     kernel/sched/core.c          |  3 ++
->>>>>>     kernel/sched/fair.c          | 61 +++++++++++++++++++++++++++++++++++-
->>>>>>     kernel/sched/sched.h         |  3 ++
->>>>>>     kernel/sysctl.c              | 11 +++++++
->>>>>>     6 files changed, 91 insertions(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
->>>>>> index 303ee7dd0c7e..9b3673269ecc 100644
->>>>>> --- a/include/linux/sched/sysctl.h
->>>>>> +++ b/include/linux/sched/sysctl.h
->>>>>> @@ -32,6 +32,10 @@ extern unsigned int sysctl_numa_balancing_promote_rate_limit;
->>>>>>     #define sysctl_numa_balancing_mode     0
->>>>>>     #endif
->>>>>>
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +extern unsigned int sysctl_sched_prio_load_balance_enabled;
->>>>>> +#endif
->>>>>> +
->>>>>>     int sysctl_numa_balancing(struct ctl_table *table, int write, void *buffer,
->>>>>>                    size_t *lenp, loff_t *ppos);
->>>>>>
->>>>>> diff --git a/init/Kconfig b/init/Kconfig
->>>>>> index 694f7c160c9c..b0dfe6701218 100644
->>>>>> --- a/init/Kconfig
->>>>>> +++ b/init/Kconfig
->>>>>> @@ -1026,6 +1026,16 @@ config CFS_BANDWIDTH
->>>>>>              restriction.
->>>>>>              See Documentation/scheduler/sched-bwc.rst for more information.
->>>>>>
->>>>>> +config SCHED_PRIO_LB
->>>>>> +       bool "Priority load balance for CFS"
->>>>>> +       depends on SMP
->>>>>> +       default n
->>>>>> +       help
->>>>>> +         This feature enable CFS priority load balance to reduce
->>>>>> +         non-idle tasks latency interferenced by SCHED_IDLE tasks.
->>>>>> +         It prefer migrating non-idle tasks firstly and
->>>>>> +         migrating SCHED_IDLE tasks lastly.
->>>>>> +
->>>>>>     config RT_GROUP_SCHED
->>>>>>            bool "Group scheduling for SCHED_RR/FIFO"
->>>>>>            depends on CGROUP_SCHED
->>>>>> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->>>>>> index 5800b0623ff3..9be35431fdd5 100644
->>>>>> --- a/kernel/sched/core.c
->>>>>> +++ b/kernel/sched/core.c
->>>>>> @@ -9731,6 +9731,9 @@ void __init sched_init(void)
->>>>>>                    rq->max_idle_balance_cost = sysctl_sched_migration_cost;
->>>>>>
->>>>>>                    INIT_LIST_HEAD(&rq->cfs_tasks);
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +               INIT_LIST_HEAD(&rq->cfs_idle_tasks);
->>>>>> +#endif
->>>>>>
->>>>>>                    rq_attach_root(rq, &def_root_domain);
->>>>>>     #ifdef CONFIG_NO_HZ_COMMON
->>>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>>>>> index e4a0b8bd941c..bdeb04324f0c 100644
->>>>>> --- a/kernel/sched/fair.c
->>>>>> +++ b/kernel/sched/fair.c
->>>>>> @@ -139,6 +139,10 @@ static int __init setup_sched_thermal_decay_shift(char *str)
->>>>>>     }
->>>>>>     __setup("sched_thermal_decay_shift=", setup_sched_thermal_decay_shift);
->>>>>>
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +unsigned int sysctl_sched_prio_load_balance_enabled;
->>>>>> +#endif
->>>>>> +
->>>>>>     #ifdef CONFIG_SMP
->>>>>>     /*
->>>>>>      * For asym packing, by default the lower numbered CPU has higher priority.
->>>>>> @@ -3199,6 +3203,21 @@ static inline void update_scan_period(struct task_struct *p, int new_cpu)
->>>>>>
->>>>>>     #endif /* CONFIG_NUMA_BALANCING */
->>>>>>
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +static void
->>>>>> +adjust_rq_cfs_tasks(
->>>>>> +       void (*list_op)(struct list_head *, struct list_head *),
->>>>>> +       struct rq *rq,
->>>>>> +       struct sched_entity *se)
->>>>>> +{
->>>>>> +       if (sysctl_sched_prio_load_balance_enabled &&
->>>>>> +               task_has_idle_policy(task_of(se)))
->>>>>> +               (*list_op)(&se->group_node, &rq->cfs_idle_tasks);
->>>>>> +       else
->>>>>> +               (*list_op)(&se->group_node, &rq->cfs_tasks);
->>>>>> +}
->>>>>> +#endif
->>>>>> +
->>>>>>     static void
->>>>>>     account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
->>>>>>     {
->>>>>> @@ -3208,7 +3227,11 @@ account_entity_enqueue(struct cfs_rq *cfs_rq, struct sched_entity *se)
->>>>>>                    struct rq *rq = rq_of(cfs_rq);
->>>>>>
->>>>>>                    account_numa_enqueue(rq, task_of(se));
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +               adjust_rq_cfs_tasks(list_add, rq, se);
->>>>>> +#else
->>>>>>                    list_add(&se->group_node, &rq->cfs_tasks);
->>>>>> +#endif
->>>>>>            }
->>>>>>     #endif
->>>>>>            cfs_rq->nr_running++;
->>>>>> @@ -7631,7 +7654,11 @@ done: __maybe_unused;
->>>>>>             * the list, so our cfs_tasks list becomes MRU
->>>>>>             * one.
->>>>>>             */
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +       adjust_rq_cfs_tasks(list_move, rq, &p->se);
->>>>>> +#else
->>>>>>            list_move(&p->se.group_node, &rq->cfs_tasks);
->>>>>> +#endif
->>>>>>     #endif
->>>>>>
->>>>>>            if (hrtick_enabled_fair(rq))
->>>>>> @@ -8156,11 +8183,18 @@ static void detach_task(struct task_struct *p, struct lb_env *env)
->>>>>>     static struct task_struct *detach_one_task(struct lb_env *env)
->>>>>>     {
->>>>>>            struct task_struct *p;
->>>>>> +       struct list_head *tasks = &env->src_rq->cfs_tasks;
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +       bool has_detach_idle_tasks = false;
->>>>>> +#endif
->>>>>>
->>>>>>            lockdep_assert_rq_held(env->src_rq);
->>>>>>
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +again:
->>>>>> +#endif
->>>>>>            list_for_each_entry_reverse(p,
->>>>>> -                       &env->src_rq->cfs_tasks, se.group_node) {
->>>>>> +                       tasks, se.group_node) {
->>>>>>                    if (!can_migrate_task(p, env))
->>>>>>                            continue;
->>>>>>
->>>>>> @@ -8175,6 +8209,13 @@ static struct task_struct *detach_one_task(struct lb_env *env)
->>>>>>                    schedstat_inc(env->sd->lb_gained[env->idle]);
->>>>>>                    return p;
->>>>>>            }
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +       if (sysctl_sched_prio_load_balance_enabled && !has_detach_idle_tasks) {
->>>>>> +               has_detach_idle_tasks = true;
->>>>>> +               tasks = &env->src_rq->cfs_idle_tasks;
->>>>>> +               goto again;
->>>>>> +       }
->>>>>> +#endif
->>>>>>            return NULL;
->>>>>>     }
->>>>>>
->>>>>> @@ -8190,6 +8231,9 @@ static int detach_tasks(struct lb_env *env)
->>>>>>            unsigned long util, load;
->>>>>>            struct task_struct *p;
->>>>>>            int detached = 0;
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +       bool has_detach_idle_tasks = false;
->>>>>> +#endif
->>>>>>
->>>>>>            lockdep_assert_rq_held(env->src_rq);
->>>>>>
->>>>>> @@ -8205,6 +8249,9 @@ static int detach_tasks(struct lb_env *env)
->>>>>>            if (env->imbalance <= 0)
->>>>>>                    return 0;
->>>>>>
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +again:
->>>>>> +#endif
->>>>>>            while (!list_empty(tasks)) {
->>>>>>                    /*
->>>>>>                     * We don't want to steal all, otherwise we may be treated likewise,
->>>>>> @@ -8310,6 +8357,14 @@ static int detach_tasks(struct lb_env *env)
->>>>>>                    list_move(&p->se.group_node, tasks);
->>>>>>            }
->>>>>>
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +       if (sysctl_sched_prio_load_balance_enabled &&
->>>>>> +               !has_detach_idle_tasks && env->imbalance > 0) {
->>>>>> +               has_detach_idle_tasks = true;
->>>>>> +               tasks = &env->src_rq->cfs_idle_tasks;
->>>>>> +               goto again;
->>>>>> +       }
->>>>>> +#endif
->>>>>>            /*
->>>>>>             * Right now, this is one of only two places we collect this stat
->>>>>>             * so we can safely collect detach_one_task() stats here rather
->>>>>> @@ -11814,7 +11869,11 @@ static void set_next_task_fair(struct rq *rq, struct task_struct *p, bool first)
->>>>>>                     * Move the next running task to the front of the list, so our
->>>>>>                     * cfs_tasks list becomes MRU one.
->>>>>>                     */
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +               adjust_rq_cfs_tasks(list_move, rq, se);
->>>>>> +#else
->>>>>>                    list_move(&se->group_node, &rq->cfs_tasks);
->>>>>> +#endif
->>>>>>            }
->>>>>>     #endif
->>>>>>
->>>>>> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
->>>>>> index 1644242ecd11..1b831c05ba30 100644
->>>>>> --- a/kernel/sched/sched.h
->>>>>> +++ b/kernel/sched/sched.h
->>>>>> @@ -1053,6 +1053,9 @@ struct rq {
->>>>>>            int                     online;
->>>>>>
->>>>>>            struct list_head cfs_tasks;
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +       struct list_head cfs_idle_tasks;
->>>>>> +#endif
->>>>>>
->>>>>>            struct sched_avg        avg_rt;
->>>>>>            struct sched_avg        avg_dl;
->>>>>> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
->>>>>> index 188c305aeb8b..5fc0f9ffb675 100644
->>>>>> --- a/kernel/sysctl.c
->>>>>> +++ b/kernel/sysctl.c
->>>>>> @@ -2090,6 +2090,17 @@ static struct ctl_table kern_table[] = {
->>>>>>                    .extra1         = SYSCTL_ONE,
->>>>>>                    .extra2         = SYSCTL_INT_MAX,
->>>>>>            },
->>>>>> +#endif
->>>>>> +#ifdef CONFIG_SCHED_PRIO_LB
->>>>>> +       {
->>>>>> +               .procname       = "sched_prio_load_balance_enabled",
->>>>>> +               .data           = &sysctl_sched_prio_load_balance_enabled,
->>>>>> +               .maxlen         = sizeof(unsigned int),
->>>>>> +               .mode           = 0644,
->>>>>> +               .proc_handler   = proc_dointvec_minmax,
->>>>>> +               .extra1         = SYSCTL_ZERO,
->>>>>> +               .extra2         = SYSCTL_ONE,
->>>>>> +       },
->>>>>>     #endif
->>>>>>            { }
->>>>>>     };
->>>>>> --
->>>>>> 2.27.0
->>>>>>
->>>>> .
->>> .
-> .
+Thanks,
+Chao
+> 
+> > gfn when calling kvm_mmu_invalidate_begin/end() while these functions
+> > accept hva in current code.
+> >
+> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> > ---
+> 
+> Based on reading this code and my limited knowledge of the x86 MMU code:
+> Reviewed-by: Fuad Tabba <tabba@google.com>
+> 
+> Cheers,
+> /fuad
+> 
+> 
+> >  arch/x86/kvm/mmu/mmu.c   |  2 +-
+> >  include/linux/kvm_host.h | 18 +++++++---------
+> >  virt/kvm/kvm_main.c      | 45 ++++++++++++++++++++++++++--------------
+> >  3 files changed, 39 insertions(+), 26 deletions(-)
+> >
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index 6f81539061d6..33b1aec44fb8 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -4217,7 +4217,7 @@ static bool is_page_fault_stale(struct kvm_vcpu *vcpu,
+> >                 return true;
+> >
+> >         return fault->slot &&
+> > -              mmu_invalidate_retry_hva(vcpu->kvm, mmu_seq, fault->hva);
+> > +              mmu_invalidate_retry_gfn(vcpu->kvm, mmu_seq, fault->gfn);
+> >  }
+> >
+> >  static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > index 739a7562a1f3..79e5cbc35fcf 100644
+> > --- a/include/linux/kvm_host.h
+> > +++ b/include/linux/kvm_host.h
+> > @@ -775,8 +775,8 @@ struct kvm {
+> >         struct mmu_notifier mmu_notifier;
+> >         unsigned long mmu_invalidate_seq;
+> >         long mmu_invalidate_in_progress;
+> > -       unsigned long mmu_invalidate_range_start;
+> > -       unsigned long mmu_invalidate_range_end;
+> > +       gfn_t mmu_invalidate_range_start;
+> > +       gfn_t mmu_invalidate_range_end;
+> >  #endif
+> >         struct list_head devices;
+> >         u64 manual_dirty_log_protect;
+> > @@ -1365,10 +1365,8 @@ void kvm_mmu_free_memory_cache(struct kvm_mmu_memory_cache *mc);
+> >  void *kvm_mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc);
+> >  #endif
+> >
+> > -void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
+> > -                             unsigned long end);
+> > -void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
+> > -                           unsigned long end);
+> > +void kvm_mmu_invalidate_begin(struct kvm *kvm, gfn_t start, gfn_t end);
+> > +void kvm_mmu_invalidate_end(struct kvm *kvm, gfn_t start, gfn_t end);
+> >
+> >  long kvm_arch_dev_ioctl(struct file *filp,
+> >                         unsigned int ioctl, unsigned long arg);
+> > @@ -1937,9 +1935,9 @@ static inline int mmu_invalidate_retry(struct kvm *kvm, unsigned long mmu_seq)
+> >         return 0;
+> >  }
+> >
+> > -static inline int mmu_invalidate_retry_hva(struct kvm *kvm,
+> > +static inline int mmu_invalidate_retry_gfn(struct kvm *kvm,
+> >                                            unsigned long mmu_seq,
+> > -                                          unsigned long hva)
+> > +                                          gfn_t gfn)
+> >  {
+> >         lockdep_assert_held(&kvm->mmu_lock);
+> >         /*
+> > @@ -1949,8 +1947,8 @@ static inline int mmu_invalidate_retry_hva(struct kvm *kvm,
+> >          * positives, due to shortcuts when handing concurrent invalidations.
+> >          */
+> >         if (unlikely(kvm->mmu_invalidate_in_progress) &&
+> > -           hva >= kvm->mmu_invalidate_range_start &&
+> > -           hva < kvm->mmu_invalidate_range_end)
+> > +           gfn >= kvm->mmu_invalidate_range_start &&
+> > +           gfn < kvm->mmu_invalidate_range_end)
+> >                 return 1;
+> >         if (kvm->mmu_invalidate_seq != mmu_seq)
+> >                 return 1;
+> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > index 8dace78a0278..09c9cdeb773c 100644
+> > --- a/virt/kvm/kvm_main.c
+> > +++ b/virt/kvm/kvm_main.c
+> > @@ -540,8 +540,7 @@ static void kvm_mmu_notifier_invalidate_range(struct mmu_notifier *mn,
+> >
+> >  typedef bool (*hva_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
+> >
+> > -typedef void (*on_lock_fn_t)(struct kvm *kvm, unsigned long start,
+> > -                            unsigned long end);
+> > +typedef void (*on_lock_fn_t)(struct kvm *kvm, gfn_t start, gfn_t end);
+> >
+> >  typedef void (*on_unlock_fn_t)(struct kvm *kvm);
+> >
+> > @@ -628,7 +627,8 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
+> >                                 locked = true;
+> >                                 KVM_MMU_LOCK(kvm);
+> >                                 if (!IS_KVM_NULL_FN(range->on_lock))
+> > -                                       range->on_lock(kvm, range->start, range->end);
+> > +                                       range->on_lock(kvm, gfn_range.start,
+> > +                                                           gfn_range.end);
+> >                                 if (IS_KVM_NULL_FN(range->handler))
+> >                                         break;
+> >                         }
+> > @@ -715,15 +715,9 @@ static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
+> >         kvm_handle_hva_range(mn, address, address + 1, pte, kvm_set_spte_gfn);
+> >  }
+> >
+> > -void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
+> > -                             unsigned long end)
+> > +static inline void update_invalidate_range(struct kvm *kvm, gfn_t start,
+> > +                                                           gfn_t end)
+> >  {
+> > -       /*
+> > -        * The count increase must become visible at unlock time as no
+> > -        * spte can be established without taking the mmu_lock and
+> > -        * count is also read inside the mmu_lock critical section.
+> > -        */
+> > -       kvm->mmu_invalidate_in_progress++;
+> >         if (likely(kvm->mmu_invalidate_in_progress == 1)) {
+> >                 kvm->mmu_invalidate_range_start = start;
+> >                 kvm->mmu_invalidate_range_end = end;
+> > @@ -744,6 +738,28 @@ void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
+> >         }
+> >  }
+> >
+> > +static void mark_invalidate_in_progress(struct kvm *kvm, gfn_t start, gfn_t end)
+> > +{
+> > +       /*
+> > +        * The count increase must become visible at unlock time as no
+> > +        * spte can be established without taking the mmu_lock and
+> > +        * count is also read inside the mmu_lock critical section.
+> > +        */
+> > +       kvm->mmu_invalidate_in_progress++;
+> > +}
+> > +
+> > +static bool kvm_mmu_handle_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
+> > +{
+> > +       update_invalidate_range(kvm, range->start, range->end);
+> > +       return kvm_unmap_gfn_range(kvm, range);
+> > +}
+> > +
+> > +void kvm_mmu_invalidate_begin(struct kvm *kvm, gfn_t start, gfn_t end)
+> > +{
+> > +       mark_invalidate_in_progress(kvm, start, end);
+> > +       update_invalidate_range(kvm, start, end);
+> > +}
+> > +
+> >  static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+> >                                         const struct mmu_notifier_range *range)
+> >  {
+> > @@ -752,8 +768,8 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+> >                 .start          = range->start,
+> >                 .end            = range->end,
+> >                 .pte            = __pte(0),
+> > -               .handler        = kvm_unmap_gfn_range,
+> > -               .on_lock        = kvm_mmu_invalidate_begin,
+> > +               .handler        = kvm_mmu_handle_gfn_range,
+> > +               .on_lock        = mark_invalidate_in_progress,
+> >                 .on_unlock      = kvm_arch_guest_memory_reclaimed,
+> >                 .flush_on_ret   = true,
+> >                 .may_block      = mmu_notifier_range_blockable(range),
+> > @@ -791,8 +807,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+> >         return 0;
+> >  }
+> >
+> > -void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
+> > -                           unsigned long end)
+> > +void kvm_mmu_invalidate_end(struct kvm *kvm, gfn_t start, gfn_t end)
+> >  {
+> >         /*
+> >          * This sequence increase will notify the kvm page fault that
+> > --
+> > 2.25.1
+> >
