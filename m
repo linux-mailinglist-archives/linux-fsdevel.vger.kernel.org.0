@@ -2,94 +2,84 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7B6F619B8C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 16:27:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C32EA619BCF
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 16:35:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232304AbiKDP12 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Nov 2022 11:27:28 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38750 "EHLO
+        id S232694AbiKDPfl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Nov 2022 11:35:41 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232408AbiKDP1P (ORCPT
+        with ESMTP id S232664AbiKDPff (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Nov 2022 11:27:15 -0400
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65E532716E;
-        Fri,  4 Nov 2022 08:27:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=NRigLoVbg9iNMuo2V8dujDupHLGv4656kHqtcy7GZD8=; b=cC/8pOU9guMXpHbLROmQ2jJkPP
-        fLIJJBoVaFImQSaJFL0EWP8TTGFmm1Fq/sTBJJzHOEsig/P1SI1UBIbnctYsc4kfBpEtbkTVb2mcZ
-        Ox1PTbpiMUHAhUcDFiGqO5ffa8RLcaU4htW4J7D1+QIRrp5YcZ701l+dtCKa0/v+wq867Rzs2qjn5
-        m+hDXZshw76/eeJ25GEvs/oa2Dpn7Gb7+4FfiG7RrZMv4cn4ae/Eyjl07Dbl+O73y7VDkBQtEk8h0
-        f9z379l8811dl922VVtAq9pc8KIqwTp7lj2fnWcgj+lzkCFo5nZGbwWtuSpe8hnrjhN+krL6P+YDR
-        WpFHYXzg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oqybA-007SeM-OG; Fri, 04 Nov 2022 15:27:12 +0000
-Date:   Fri, 4 Nov 2022 15:27:12 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        cluster-devel@redhat.com, linux-nilfs@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 04/23] page-writeback: Convert write_cache_pages() to use
- filemap_get_folios_tag()
-Message-ID: <Y2UvUOn6hmnqbrA7@casper.infradead.org>
-References: <20220901220138.182896-1-vishal.moola@gmail.com>
- <20220901220138.182896-5-vishal.moola@gmail.com>
- <20221018210152.GH2703033@dread.disaster.area>
+        Fri, 4 Nov 2022 11:35:35 -0400
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B04A52BB3B
+        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Nov 2022 08:34:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667576077;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LT0M84RHennN0dW2EE8vvps3ib1aZORs0vuNv4tzMCA=;
+        b=fEem2w2LPswJoghFneAlHyA2pLr7ZH8BzQo6Z9QDbK4RFF3U0S9ouz8y/Au5tjNqXZv8Iy
+        o7TAx83fEvatC/zO1iJTgVr20WFp/MzxlOfVF9W9juXIfb8B4Zd6lKtKtEbgk4F5MAz3/5
+        y9S8vsXLFPGD8hBQU1spvL5qzFBNgmY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-259-K-iw9RHjM9KFnyQt1xVSMA-1; Fri, 04 Nov 2022 11:34:27 -0400
+X-MC-Unique: K-iw9RHjM9KFnyQt1xVSMA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5EAA4833A0D;
+        Fri,  4 Nov 2022 15:34:27 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.37.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7C84B2166B26;
+        Fri,  4 Nov 2022 15:34:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y2SJw7w1IsIik3nb@casper.infradead.org>
+References: <Y2SJw7w1IsIik3nb@casper.infradead.org> <166751120808.117671.15797010154703575921.stgit@warthog.procyon.org.uk>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     dhowells@redhat.com, George Law <glaw@redhat.com>,
+        Jeff Layton <jlayton@kernel.org>, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfs: Fix missing xas_retry() calls in xarray iteration
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221018210152.GH2703033@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <931864.1667576065.1@warthog.procyon.org.uk>
+Date:   Fri, 04 Nov 2022 15:34:25 +0000
+Message-ID: <931865.1667576065@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-3.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Oct 19, 2022 at 08:01:52AM +1100, Dave Chinner wrote:
-> On Thu, Sep 01, 2022 at 03:01:19PM -0700, Vishal Moola (Oracle) wrote:
-> > @@ -2313,17 +2313,18 @@ int write_cache_pages(struct address_space *mapping,
-> >  	while (!done && (index <= end)) {
-> >  		int i;
-> >  
-> > -		nr_pages = pagevec_lookup_range_tag(&pvec, mapping, &index, end,
-> > -				tag);
-> > -		if (nr_pages == 0)
-> > +		nr_folios = filemap_get_folios_tag(mapping, &index, end,
-> > +				tag, &fbatch);
-> 
-> This can find and return dirty multi-page folios if the filesystem
-> enables them in the mapping at instantiation time, right?
+Matthew Wilcox <willy@infradead.org> wrote:
 
-Correct.  Just like before the patch.  pagevec_lookup_range_tag() has
-only ever returned head pages, never tail pages.  This is probably
-because shmem (which was our only fs that supported compound pages)
-never supported writeback, so never looked up pages by tag.
+> "unsigned int" assumes that the number of bytes isn't going to exceed 32
+> bits.  I tend to err on the side of safety here and use size_t.
 
-> >  			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
-> > -			error = (*writepage)(page, wbc, data);
-> > +			error = writepage(&folio->page, wbc, data);
-> 
-> Yet, IIUC, this treats all folios as if they are single page folios.
-> i.e. it passes the head page of a multi-page folio to a callback
-> that will treat it as a single PAGE_SIZE page, because that's all
-> the writepage callbacks are currently expected to be passed...
-> 
-> So won't this break writeback of dirty multipage folios?
+Not unreasonable.
 
-No.  A filesystem only sets the flag to create multipage folios once its
-writeback callback handles multipage folios correctly (amongst many other
-things that have to be fixed and tested).  I haven't written down all
-the things that a filesystem maintainer needs to check at least partly
-because I don't know how representative XFS/iomap are of all filesystems.
+> > +		pgpos = (folio_index(folio) - start_page) * PAGE_SIZE;
+> > +		pgend = pgpos + folio_size(folio);
+> 
+> What happens if start_page is somewhere inside folio?  Seems to me
+> that pgend ends up overhanging into the next folio?
+
+Yeah, I think my maths is dodgy.  I should probably use folio_pos() and/or
+offset_in_folio().
+
+David
 
