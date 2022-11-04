@@ -2,77 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EBCF861A05C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 19:55:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACC3261A0AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 20:15:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229601AbiKDSz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Nov 2022 14:55:26 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40930 "EHLO
+        id S229686AbiKDTPo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Nov 2022 15:15:44 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51684 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbiKDSzX (ORCPT
+        with ESMTP id S229549AbiKDTPm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Nov 2022 14:55:23 -0400
-Received: from mail-qv1-xf2e.google.com (mail-qv1-xf2e.google.com [IPv6:2607:f8b0:4864:20::f2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13DEC51C3F
-        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Nov 2022 11:55:23 -0700 (PDT)
-Received: by mail-qv1-xf2e.google.com with SMTP id e15so3802797qvo.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Nov 2022 11:55:23 -0700 (PDT)
+        Fri, 4 Nov 2022 15:15:42 -0400
+Received: from mail-pj1-x1044.google.com (mail-pj1-x1044.google.com [IPv6:2607:f8b0:4864:20::1044])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 904AB48740
+        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Nov 2022 12:15:41 -0700 (PDT)
+Received: by mail-pj1-x1044.google.com with SMTP id l6so5360658pjj.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Nov 2022 12:15:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=l9rtjuYQHEdZGFnPi4RO+GW6VHNzPLGvueZ1wnAoh2k=;
-        b=OWDsUW0TRqhugSuTXEHAIWTiEORqtx5V3rm6QXXdvdb/+4LTjk8HA1gynX6RS2YvPr
-         YwGT0Vmshp0VTPKxfY0x2OPAMJFWxvc63VjG76cOTNECBxWVbm3bFDDUyd4lObbZV3C/
-         15holUc1uUmi0znm1aMGfpgmqvl14sVRYOGAg=
+        d=magic-biz-com.20210112.gappssmtp.com; s=20210112;
+        h=importance:content-language:thread-index:content-transfer-encoding
+         :mime-version:message-id:date:subject:in-reply-to:references:to:from
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5ofRwdNGKsSXQWAL575IjYG4/Ro8SKQwXP5co4yIqPM=;
+        b=NNghSC7oUZqFD2I8hGsfTTw4ZJnoIWJ+6KmO2xPexKxHvHf1OWFaLvueqjqesXI3ph
+         okivktAjr0eGgclM0MjjoWIp/ovE/mLh9Bu+XKSQdwb/jE8xpaiDXQXt6wJaltelp90/
+         4YHkBLVphHhqDUtXQDoqzvMbRNbiO7+kk4jwlKy3GoufQ6xhOLypUK2dr6GuhgBYH1Kw
+         HCC9tVD+p8Yx+JMXjzgbbB73tuX0NNSLfgwvBW0Kb1AuIuuCxuhAG6249reEOsf1iBlz
+         5J9OqpJ1C0DJo4CutXJQNCkORxVXX3DEg18xGipMbnHbddBPfursPMK6W0glNLIUxnuK
+         DY8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=l9rtjuYQHEdZGFnPi4RO+GW6VHNzPLGvueZ1wnAoh2k=;
-        b=74mXe+I6oU5b8BXngMulHUzWPu3cRDBmuw+KWLxUvxe4ugHx1XTbX9sPkiKt4K+2vX
-         NaOPTA0VP2n/Kx7lsKJRqLB7z3DFqw048GG/dHhA/PAvK64emzfjulnJIKR9vFX9Pjjm
-         5rox9L5X2lwR8A3PAyKqoPhcyeIAmpLffGlHuU/mR1eoZOfobW3wyjn/uTGufPBjlhUN
-         It9sUuVLv2WwQ66qeuADulwiAOoSLjLupGAUHgLxlzx7S8GaMb01kvToS2ufDy1v7SBx
-         iGpGqUlq0VATt0AfXnkT/7NCe6F2Msnh7se8zY0ZFVnLUYnUawWHONq9GpATz3Jct7kb
-         otcw==
-X-Gm-Message-State: ACrzQf0XQNxi0qzfJUbHyaCDFG0axdd+1wM2HTAPxbaa4pIbmngBzx6z
-        3I/hrs3RiJjnRvLbuRm+IZBlXxTsIgBpIA==
-X-Google-Smtp-Source: AMsMyM5snaRxutsVcaHfBtLR2u9KJdQmSJMu47Fg866Ar50xSYLy/oK48pc2D2XBRVFELXPnynb/wQ==
-X-Received: by 2002:ad4:5ba1:0:b0:4af:8920:f9c5 with SMTP id 1-20020ad45ba1000000b004af8920f9c5mr33506158qvq.59.1667588121989;
-        Fri, 04 Nov 2022 11:55:21 -0700 (PDT)
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com. [209.85.219.171])
-        by smtp.gmail.com with ESMTPSA id s10-20020a05620a254a00b006bb8b5b79efsm3362788qko.129.2022.11.04.11.55.21
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 04 Nov 2022 11:55:21 -0700 (PDT)
-Received: by mail-yb1-f171.google.com with SMTP id r3so6842425yba.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Nov 2022 11:55:21 -0700 (PDT)
-X-Received: by 2002:a81:8241:0:b0:370:5fad:47f0 with SMTP id
- s62-20020a818241000000b003705fad47f0mr27860255ywf.441.1667587785316; Fri, 04
- Nov 2022 11:49:45 -0700 (PDT)
+        h=importance:content-language:thread-index:content-transfer-encoding
+         :mime-version:message-id:date:subject:in-reply-to:references:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ofRwdNGKsSXQWAL575IjYG4/Ro8SKQwXP5co4yIqPM=;
+        b=xjqSxPyR7oPPDvBrt7wUB07AxRcxDuFGnVBU8IvbhmhkjCaBraQqNs91weDB0rIO2+
+         j2aIkCXq6cZNdwyAcdMfN0ulwZicKLMMRCuk4VD3lYBy9aRgzzMNX2eMaVvqlIST30QI
+         OJdCTinO6FueSBUgOwYly3uUBQOW+I7/Q52IaN4gPfDZmgI34ptuUleGLoTa51t4Ig1S
+         yMkd8AD0z76FQV6loaRFO06GYkbWa0ujbm2qFYugmD0oKSkfoICKADehSuuAm/hbTWWy
+         bwe3LMs42y7NXCVQp0hJaVA8L8gtgHX942zzFqOgRrDgJ/36Bn3QARCLWN37nt+awVEo
+         Hp8A==
+X-Gm-Message-State: ACrzQf0Spymnm4ZayMC6wezXjxlsOEq/zh68U3ccQ7vcPrJZ8WGTe7K9
+        QwKmtw4PDbCcqcBoRos5kG9bFg==
+X-Google-Smtp-Source: AMsMyM5fc4rhl3vlgeaeFbZB65763I4g+VmaJSvdQsL4sjhMQKhl7E974lKN0OSrPsZK4bDPEZsq8w==
+X-Received: by 2002:a17:902:ebc7:b0:17e:7378:1da8 with SMTP id p7-20020a170902ebc700b0017e73781da8mr37129729plg.152.1667589341116;
+        Fri, 04 Nov 2022 12:15:41 -0700 (PDT)
+Received: from DESKTOP6C94MB6 ([2406:7400:63:f7e5:255b:7208:7bcc:6c8f])
+        by smtp.gmail.com with ESMTPSA id l8-20020a17090a4d4800b0021301a63e86sm1987843pjh.18.2022.11.04.12.15.23
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 04 Nov 2022 12:15:39 -0700 (PDT)
+From:   "Maria Jones" <maria@magic-biz.com>
+To:     <maria@magic-biz.com>
+References: 
+In-Reply-To: 
+Subject: RE: RSNA Annual Meeting Attendees Email List-2022
+Date:   Fri, 4 Nov 2022 14:16:11 -0500
+Message-ID: <307401d8f082$7c96ec30$75c4c490$@magic-biz.com>
 MIME-Version: 1.0
-References: <1010626.1667584040@warthog.procyon.org.uk>
-In-Reply-To: <1010626.1667584040@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 4 Nov 2022 11:49:28 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjKwjX-hNV81sDy8J3vi9_x5m7iCEOFTR1ijiPGfQdz9w@mail.gmail.com>
-Message-ID: <CAHk-=wjKwjX-hNV81sDy8J3vi9_x5m7iCEOFTR1ijiPGfQdz9w@mail.gmail.com>
-Subject: Re: [PATCH] iov_iter: Declare new iterator direction symbols
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>, willy@infradead.org,
-        dchinner@redhat.com, Steve French <smfrench@gmail.com>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Ira Weiny <ira.weiny@intel.com>, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Priority: 1 (Highest)
+X-MSMail-Priority: High
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AdjwgRm21LfzgTN5RMyxxUOryxtsRQAABSRQAAABODAAAAAmcAAAACXQAAAAKFAAAAAmsAAAAC7gAAAAK9AAAAApUAAAAChQAAAAJ3AAAAAqMAAAADdgAAAAKIAAAAAoQAAAACswAAAAKcA=
+Content-Language: en-us
+Importance: High
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,17 +76,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 4, 2022 at 10:47 AM David Howells <dhowells@redhat.com> wrote:
->
-> If we're going to go with Al's changes to switch to using ITER_SOURCE and
-> ITER_DEST instead of READ/WRITE, can we put just the new symbols into mainline
-> now, even if we leave the rest for the next merge window?
+Hi,
 
-No, I really don't want to have mixed-used stuff in the kernel.
+I hope you're doing great and staying healthy!
 
-Continue to use the old names until/if the conversion happens, at
-which point it's the conversion code that does it.
+Would you be interested in acquiring Radiological Society of North America
+Attendees Data List 2022?
 
-No "one branch uses new names, another uses old names" mess.
+List contains: Company Name, Contact Name, First Name, Middle Name, Last
+Name, Title, Address, Street, City, Zip code, State, Country, Telephone,
+Email address and more,
 
-               Linus
+No of Contacts: - 40,385
+Cost: $1,928
+
+Looking forward for your response,
+
+Kind Regards,
+Maria Jones
+Marketing Coordinator
+
+
+
+
+
+
