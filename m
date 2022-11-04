@@ -2,55 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8358A61920B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 08:32:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BD87619264
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 09:04:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231527AbiKDHcg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Nov 2022 03:32:36 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59064 "EHLO
+        id S231547AbiKDIE3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Nov 2022 04:04:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231379AbiKDHcb (ORCPT
+        with ESMTP id S231426AbiKDIEY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Nov 2022 03:32:31 -0400
-X-Greylist: delayed 74729 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 04 Nov 2022 00:32:29 PDT
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C954D60FF;
-        Fri,  4 Nov 2022 00:32:29 -0700 (PDT)
-Received: from [2a02:8108:963f:de38:eca4:7d19:f9a2:22c5]; authenticated
-        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        id 1oqrBf-0006vW-Ob; Fri, 04 Nov 2022 08:32:23 +0100
-Message-ID: <5f7bac77-c088-6fb7-ccb5-bef9267f7186@leemhuis.info>
-Date:   Fri, 4 Nov 2022 08:32:22 +0100
+        Fri, 4 Nov 2022 04:04:24 -0400
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CC7B2657A;
+        Fri,  4 Nov 2022 01:04:21 -0700 (PDT)
+Received: from letrec.thunk.org (guestnat-104-133-8-97.corp.google.com [104.133.8.97] (may be forged))
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 2A484ICK021299
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Fri, 4 Nov 2022 04:04:19 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1667549060; bh=moS+CuyFo/iNk12/7L0jlf5OeXKrD4AexiQVcA1f9j8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=F5gcCLGTqiRzwEO8tX435sMMUO98xjBKvM80PtzwWZs3D/7CuiM3KJrcIhJroylM+
+         hETcagEc7uki9CRXr6ne5RPJ7g7j89zCPnu+GSH34zHhRnU0us/3AU846Oh5KUs4yU
+         e7BWTRcDyDUcl6Orss+5CiucFdctGXdCJ3LIGT9czozzvYW3+3zL/i/9gXWfRVdeAm
+         l6TUAzRkLkCFNJC5ofnSvt9OtAVXuFdFpG7ye75vFxa1QUeAcWAztVOavq38gEUdck
+         YXYOqgQ4APZz25TmDvqRK2PQGUEu4ZAZIKrcRlJ6FuUZDsL9md82/5eL53TMb2/kGd
+         muvJp/zA1/JrA==
+Received: by letrec.thunk.org (Postfix, from userid 15806)
+        id AFB0F8C0031; Fri,  4 Nov 2022 04:04:17 -0400 (EDT)
+Date:   Fri, 4 Nov 2022 04:04:17 -0400
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Byungchul Park <byungchul.park@lge.com>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org, will@kernel.org,
+        tglx@linutronix.de, rostedt@goodmis.org, joel@joelfernandes.org,
+        sashal@kernel.org, daniel.vetter@ffwll.ch,
+        chris@chris-wilson.co.uk, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, willy@infradead.org,
+        david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jlayton@kernel.org, dan.j.williams@intel.com,
+        hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com,
+        42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
+        gwan-gyeong.mun@intel.com
+Subject: Re: [QUESTION] {start,stop}_this_handle() and lockdep annotations
+Message-ID: <Y2THgc9xgnUJg0Io@mit.edu>
+References: <1667541392-16270-1-git-send-email-byungchul.park@lge.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-        Matthew Wilcox <willy@infradead.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, Gao Xiang <xiang@kernel.org>,
-        Chao Yu <chao@kernel.org>, linux-block@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-mm@kvack.org,
-        "regressions@lists.linux.dev" <regressions@lists.linux.dev>
-References: <20220915094200.139713-1-hch@lst.de>
- <20220915094200.139713-4-hch@lst.de>
- <d20a0a85-e415-cf78-27f9-77dd7a94bc8d@leemhuis.info>
- <Y2Q+y8t9PV5nrjud@cmpxchg.org>
-Content-Language: en-US, de-DE
-From:   Thorsten Leemhuis <linux@leemhuis.info>
-Subject: Re: [REGESSION] systemd-oomd overreacting due to PSI changes for
- Btrfs (was: Re: [PATCH 3/5] btrfs: add manual PSI accounting for compressed
- reads)
-In-Reply-To: <Y2Q+y8t9PV5nrjud@cmpxchg.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;linux@leemhuis.info;1667547149;090cbd81;
-X-HE-SMSGID: 1oqrBf-0006vW-Ob
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1667541392-16270-1-git-send-email-byungchul.park@lge.com>
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -58,135 +74,116 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 03.11.22 23:20, Johannes Weiner wrote:
-> On Thu, Nov 03, 2022 at 11:46:52AM +0100, Thorsten Leemhuis wrote:
->> On 15.09.22 11:41, Christoph Hellwig wrote:
->>> btrfs compressed reads try to always read the entire compressed chunk,
->>> even if only a subset is requested.  Currently this is covered by the
->>> magic PSI accounting underneath submit_bio, but that is about to go
->>> away. Instead add manual psi_memstall_{enter,leave} annotations.
->>>
->>> Note that for readahead this really should be using readahead_expand,
->>> but the additionals reads are also done for plain ->read_folio where
->>> readahead_expand can't work, so this overall logic is left as-is for
->>> now.
->>
->> It seems this patch makes systemd-oomd overreact on my day-to-day
->> machine and aggressively kill applications. I'm not the only one that
->> noticed such a behavior with 6.1 pre-releases:
->> https://bugzilla.redhat.com/show_bug.cgi?id=2133829
->> https://bugzilla.redhat.com/show_bug.cgi?id=2134971
-> [...]
->> On master as of today (8e5423e991e8) I can trigger the problem within a
->> minute or two. But I fail to trigger it with v6.0.6 or when I revert
->> 4088a47e78f9 ("btrfs: add manual PSI accounting for compressed reads").
->> And yes, I use btrfs with compression for / and /home/.
-> [...]
+Note: in the future, I'd recommend looking at the MAINTAINERS to
+figure out a smaller list of people to ask this question, instead of
+spamming everyone who has ever expressed interest in DEPT.
+
+
+On Fri, Nov 04, 2022 at 02:56:32PM +0900, Byungchul Park wrote:
+> Peterz (commit 34a3d1e8370870 lockdep: annotate journal_start()) and
+> the commit message quoted what Andrew Morton said. It was like:
 > 
-> Oh, I think I see the bug. We can leak pressure state from the bio
-> submission, which causes the task to permanently drive up pressure.
-
-Thx for looking into this.
-
-> Can you try this patch?
-
-It apparently does the trick -- at least my test setup that usually
-triggers the bug within a minute or two survived for nearly an hour now, so:
-
-Tested-by: Thorsten Leemhuis <linux@leemhuis.info>
-
-Can you please also add this tag to help future archeologists, as
-explained by the kernel docs (for details see
-Documentation/process/submitting-patches.rst and
-Documentation/process/5.Posting.rst):
-
-Link:
-https://lore.kernel.org/r/d20a0a85-e415-cf78-27f9-77dd7a94bc8d@leemhuis.info/
-
-It also will make my regression tracking bot see further postings of
-this patch and mark the issue as resolved once the patch lands in mainline.
-
-tia and thx again for the patch!
-
-Ciao, Thorsten
-
->>From 499e5cab7b39fc4c90a0f96e33cdc03274b316fd Mon Sep 17 00:00:00 2001
-> From: Johannes Weiner <hannes@cmpxchg.org>
-> Date: Thu, 3 Nov 2022 17:34:31 -0400
-> Subject: [PATCH] fs: btrfs: fix leaked psi pressure state
+> > Except lockdep doesn't know about journal_start(), which has ranking
+> > requirements similar to a semaphore.
 > 
-> When psi annotations were added to to btrfs compression reads, the psi
-> state tracking over add_ra_bio_pages and btrfs_submit_compressed_read
-> was faulty. The task can remain in a stall state after the read. This
-> results in incorrectly elevated pressure, which triggers OOM kills.
-> 
-> pflags record the *previous* memstall state when we enter a new
-> one. The code tried to initialize pflags to 1, and then optimize the
-> leave call when we either didn't enter a memstall, or were already
-> inside a nested stall. However, there can be multiple PageWorkingset
-> pages in the bio, at which point it's that path itself that re-enters
-> the state and overwrites pflags. This causes us to miss the exit.
-> 
-> Enter the stall only once if needed, then unwind correctly.
-> 
-> Reported-by: Thorsten Leemhuis <linux@leemhuis.info>
-> Fixes: 4088a47e78f9 btrfs: add manual PSI accounting for compressed reads
-> Signed-off-by: Johannes Weiner <hannes@cmpxchg.org>
-> ---
->  fs/btrfs/compression.c | 14 ++++++++------
->  1 file changed, 8 insertions(+), 6 deletions(-)
-> 
-> diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-> index f1f051ad3147..e6635fe70067 100644
-> --- a/fs/btrfs/compression.c
-> +++ b/fs/btrfs/compression.c
-> @@ -512,7 +512,7 @@ static u64 bio_end_offset(struct bio *bio)
->  static noinline int add_ra_bio_pages(struct inode *inode,
->  				     u64 compressed_end,
->  				     struct compressed_bio *cb,
-> -				     unsigned long *pflags)
-> +				     int *memstall, unsigned long *pflags)
->  {
->  	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
->  	unsigned long end_index;
-> @@ -581,8 +581,10 @@ static noinline int add_ra_bio_pages(struct inode *inode,
->  			continue;
->  		}
->  
-> -		if (PageWorkingset(page))
-> +		if (!*memstall && PageWorkingset(page)) {
->  			psi_memstall_enter(pflags);
-> +			*memstall = 1;
-> +		}
->  
->  		ret = set_page_extent_mapped(page);
->  		if (ret < 0) {
-> @@ -670,8 +672,8 @@ void btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
->  	u64 em_len;
->  	u64 em_start;
->  	struct extent_map *em;
-> -	/* Initialize to 1 to make skip psi_memstall_leave unless needed */
-> -	unsigned long pflags = 1;
-> +	unsigned long pflags;
-> +	int memstall = 0;
->  	blk_status_t ret;
->  	int ret2;
->  	int i;
-> @@ -727,7 +729,7 @@ void btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
->  		goto fail;
->  	}
->  
-> -	add_ra_bio_pages(inode, em_start + em_len, cb, &pflags);
-> +	add_ra_bio_pages(inode, em_start + em_len, cb, &memstall, &pflags);
->  
->  	/* include any pages we added in add_ra-bio_pages */
->  	cb->len = bio->bi_iter.bi_size;
-> @@ -807,7 +809,7 @@ void btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
->  		}
->  	}
->  
-> -	if (!pflags)
-> +	if (memstall)
->  		psi_memstall_leave(&pflags);
->  
->  	if (refcount_dec_and_test(&cb->pending_ios))
+> Could anyone tell what the ranking requirements in the journal code
+> exactly means and what makes {start,stop}_this_handle() work for the
+> requirements?
+
+The comment from include/linux/jbd2.h may be helpful:
+
+#ifdef CONFIG_DEBUG_LOCK_ALLOC
+	/**
+	 * @j_trans_commit_map:
+	 *
+	 * Lockdep entity to track transaction commit dependencies. Handles
+	 * hold this "lock" for read, when we wait for commit, we acquire the
+	 * "lock" for writing. This matches the properties of jbd2 journalling
+	 * where the running transaction has to wait for all handles to be
+	 * dropped to commit that transaction and also acquiring a handle may
+	 * require transaction commit to finish.
+	 */
+	struct lockdep_map	j_trans_commit_map;
+#endif
+
+And the reason why this isn't a problem is because start_this_handle()
+can be passed a special handle which is guaranteed to not block
+(because we've reserved journal credits for it).  Hence, there is no
+risk that in _this_ call path start_this_handle() will block for a
+commit:
+
+> <4>[   43.124442 ] stacktrace:
+> <4>[   43.124443 ]       start_this_handle+0x557/0x620
+> <4>[   43.124445 ]       jbd2_journal_start_reserved+0x4d/0x1b0
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> <4>[   43.124448 ]       __ext4_journal_start_reserved+0x6d/0x190
+> <4>[   43.124450 ]       ext4_convert_unwritten_io_end_vec+0x22/0xd0
+> <4>[   43.124453 ]       ext4_end_io_rsv_work+0xe4/0x190
+> <4>[   43.124455 ]       process_one_work+0x301/0x660
+> <4>[   43.124458 ]       worker_thread+0x3a/0x3c0
+> <4>[   43.124459 ]       kthread+0xef/0x120
+> <4>[   43.124462 ]       ret_from_fork+0x22/0x30
+
+
+The comment for this function from fs/jbd2/transaction.c:
+
+/**
+ * jbd2_journal_start_reserved() - start reserved handle
+ * @handle: handle to start
+ * @type: for handle statistics
+ * @line_no: for handle statistics
+ *
+ * Start handle that has been previously reserved with jbd2_journal_reserve().
+ * This attaches @handle to the running transaction (or creates one if there's
+ * not transaction running). Unlike jbd2_journal_start() this function cannot
+ * block on journal commit, checkpointing, or similar stuff. It can block on
+ * memory allocation or frozen journal though.
+ *
+ * Return 0 on success, non-zero on error - handle is freed in that case.
+ */
+
+And this is why this will never be a problem in real life, or flagged
+by Lockdep, since Lockdep is a dynamic checker.  The deadlock which
+the static DEPT checker has imagined can never, ever, ever happen.
+
+For more context, also from fs/jbd2/transaction.c:
+
+/**
+ * jbd2_journal_start() - Obtain a new handle.
+ * @journal: Journal to start transaction on.
+ * @nblocks: number of block buffer we might modify
+ *
+ * We make sure that the transaction can guarantee at least nblocks of
+ * modified buffers in the log.  We block until the log can guarantee
+ * that much space. Additionally, if rsv_blocks > 0, we also create another
+ * handle with rsv_blocks reserved blocks in the journal. This handle is
+ * stored in h_rsv_handle. It is not attached to any particular transaction
+ * and thus doesn't block transaction commit. If the caller uses this reserved
+ * handle, it has to set h_rsv_handle to NULL as otherwise jbd2_journal_stop()
+ * on the parent handle will dispose the reserved one. Reserved handle has to
+ * be converted to a normal handle using jbd2_journal_start_reserved() before
+ * it can be used.
+ *
+ * Return a pointer to a newly allocated handle, or an ERR_PTR() value
+ * on failure.
+ */
+
+To be clear, I don't blame DEPT for not being able to figure this out;
+it would require human-level intelligence to understand why in *this*
+call path, we never end up waiting.  But this is why I am very
+skeptical of static analyzers which are *sure* that anything they flag
+is definitely a bug.  We definitely will need a quick and easy way to
+tell DEPT, "go home, you're drunk".
+
+Hope this helps,
+
+					- Ted
+
+
+P.S.  Note: the actual function names are a bit misleading.  It looks
+like the functions got refactored, and the documentation wasn't
+updated to match.  Sigh... fortuantely the concepts are accurate; it's
+just that function names needs to be fixed up.  For example, creating
+a reserved handle is no longer done via jbd2_journal_start(), but
+rather jbd2__journal_start().  
+
