@@ -2,190 +2,207 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC4F461A40F
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 23:29:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA88961A4D0
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  4 Nov 2022 23:49:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229707AbiKDW34 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Nov 2022 18:29:56 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42914 "EHLO
+        id S230394AbiKDWt3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Nov 2022 18:49:29 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58162 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229501AbiKDW3y (ORCPT
+        with ESMTP id S230391AbiKDWtQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Nov 2022 18:29:54 -0400
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6E245F9A
-        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Nov 2022 15:29:53 -0700 (PDT)
-Received: by mail-pl1-x633.google.com with SMTP id io19so6129594plb.8
-        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Nov 2022 15:29:53 -0700 (PDT)
+        Fri, 4 Nov 2022 18:49:16 -0400
+Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFB086E47A
+        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Nov 2022 15:43:44 -0700 (PDT)
+Received: by mail-pj1-x1034.google.com with SMTP id gw22so5736069pjb.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Nov 2022 15:43:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5Aq/mVWfLwMWGNt8fSCRAZ8qaQX+Rp9/roFUUSHdFcg=;
-        b=dKOKOca6Gt2YyKKroo64YoypifXCi0Cnu7uvNh/c1CQKTYDigZb1a5Lc6nfrrUEMI/
-         4AE2r5sOnFMf/n4N6rkqJkEinjHy10LPkOYq61AodJoYbUhGCTtIzVhqSoARiYYRtFo/
-         EclovTivzigbK81kGBQRDG0qF26K9JY+bLhX0J0qVedsSALXRnsV1mIYQbLUA7RdI4Bl
-         F8BWIJWldzMyvETppjo+2Y4ZQDwmlrfV9ZT/zySDdpk9yZyTmfAxbwSHbaM4LwBFWmC7
-         KyZY28moUsv5znWRMH9QPRY8B1+WPpJCb1AVkbrC9wmyWUSfTKUMmauuTdOpubCs51OC
-         6Y/A==
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=veoUvRC5EJSNAcK1/G1eN61eiFVZm/onnmWfrthyC5U=;
+        b=LROsPj4aOiifHCFVRKHA3csUVmBaotq8qVFO++OZ/VUYyprBdpcWM2W5Du9zj9Nus/
+         vhePJ+mxUy7MZXuOfGMLNPTMvUyT3YyeCKldC4MPfX1qVam2DilQXaiqHY7yA1XQPNGW
+         xi8JAYkayBeTIOrjCA6mxGr2MyA+1LYqFIWB2v42attITOg7JZY8kXWJf5aXCc+/ndAo
+         9XdCrI8SknZ64ufOASLp/CycRQyO6z0jv9uhqtLMH3F4vimRHvSe1O8FcfeZWAfcUVt3
+         XgtVZ9ax8JE74xugUmDZ1IVmiUVJ53ZBO0SB03quNg4rHTLZuLcxhL6kFAe3XLsY0LIm
+         sDGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Aq/mVWfLwMWGNt8fSCRAZ8qaQX+Rp9/roFUUSHdFcg=;
-        b=aksbTmzDVF16kX3DUZkSALKhUT8Rd0WXb8zNHu46fGeVgP8pKz7qDoaghtigD/shIE
-         GTufTaoPyx1IZP9sR13JdvdX5z8dFdijOQM6WiOdNxLYiKKhtF41VN6NutoeAry4Lb0/
-         9OTT8qDvwyLT/+NGrR0suYKB8pDUS0MrmbmpLGdNLXp0L5j95j6FS99Z+eH+EHRnO/J5
-         uZVIAU1jZHkvBVS1lbnehU42pMpaseXO4CwylMZ3zaEOz5VFzyb2dAeFxHzGq9iQXmH0
-         lM/D4ww7EzmmBYtx9dCgFfcblxom9ZtuXgfTHkuh7EZL//U3nFGR8nfjn/CqC6XyxBNS
-         z4SA==
-X-Gm-Message-State: ACrzQf0ukR5kIGFVxrm+auK6AWhwkAnTC/HGJ2zqMNZsDPLcsEbX4p9t
-        JpJd1/wzmVKp9449jReQriDYxw==
-X-Google-Smtp-Source: AMsMyM6o08bPyM7u13HIMLyxzK/w69wLSfIdjhMYyTpFlvV74UC9l3d3wEgtuR0o04KYkQ2hwL/GmQ==
-X-Received: by 2002:a17:903:2645:b0:185:480a:85d2 with SMTP id je5-20020a170903264500b00185480a85d2mr37750861plb.144.1667600993126;
-        Fri, 04 Nov 2022 15:29:53 -0700 (PDT)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id s11-20020a170902ea0b00b0018700ba9090sm237049plg.185.2022.11.04.15.29.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Nov 2022 15:29:52 -0700 (PDT)
-Date:   Fri, 4 Nov 2022 22:29:48 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     Fuad Tabba <tabba@google.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v9 4/8] KVM: Use gfn instead of hva for mmu_notifier_retry
-Message-ID: <Y2WSXLtcJOpWPtuv@google.com>
-References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
- <20221025151344.3784230-5-chao.p.peng@linux.intel.com>
- <CA+EHjTySnJTuLB+XoRya6kS_zw2iMahW9-Ze70oKTf+6k0GrGQ@mail.gmail.com>
- <20221104022813.GA4129873@chaop.bj.intel.com>
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=veoUvRC5EJSNAcK1/G1eN61eiFVZm/onnmWfrthyC5U=;
+        b=SWA6V+/AS5/gHibJLJzhzwIW/hypRh9s9BA1Ple1ViJemnusvA9ZQ1NzKf++wdQilH
+         igGi8sJl2+CBb/2jtw8KqE5m1k9isUxaf77R6zUZEnNqAOv7aahEhiWVYBrbXZaUKHhF
+         GKbpXuKQbGO2IQMawkmoXD0yHKZFAvQnQRPgfWo+a3LHKcoonleO3j/+uoxhq8zG5R+J
+         2ELrQYEA7inlCmJFVDLcdwBee1D08cTCz0CaG2Vcr2KvkgCt4qneCRqs3ZNqHpsGqO77
+         KHihVbHmEZk/SjE/2HQg1nwP+HZOkpEJOmMFcwN80ppIVmwk4fs0kxZz6rhgIM3E9TyN
+         vOfg==
+X-Gm-Message-State: ACrzQf0nxdtl9e/2E1EGYniPeWmwOMG+7feu2KOSz6SIr+eRI7/Cxzey
+        tvsdJmMWfHTTsJt/Vdp/NyfqFQ==
+X-Google-Smtp-Source: AMsMyM45U4n3q8TYV7dp0cmPFY23u5impcXIKNkBJvT7zNfLJrxJufCngW3S1+r/AxmiM9Dd5ntq5w==
+X-Received: by 2002:a17:902:bf45:b0:187:337c:b967 with SMTP id u5-20020a170902bf4500b00187337cb967mr22723317pls.4.1667601824218;
+        Fri, 04 Nov 2022 15:43:44 -0700 (PDT)
+Received: from [10.255.93.192] ([139.177.225.251])
+        by smtp.gmail.com with ESMTPSA id j7-20020a170902758700b0017f7e0f4a4esm264995pll.35.2022.11.04.15.43.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 04 Nov 2022 15:43:43 -0700 (PDT)
+Message-ID: <6e33dd02-99b0-0899-aed5-07f770340a74@bytedance.com>
+Date:   Sat, 5 Nov 2022 06:43:37 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221104022813.GA4129873@chaop.bj.intel.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,FSL_HELO_FAKE,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
-        SPF_PASS,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.3.3
+Subject: Re: xarray, fault injection and syzkaller
+To:     Dmitry Vyukov <dvyukov@google.com>,
+        Jason Gunthorpe <jgg@nvidia.com>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Akinobu Mita <akinobu.mita@gmail.com>,
+        linux-fsdevel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        syzkaller <syzkaller@googlegroups.com>
+References: <Y2QR0EDvq7p9i1xw@nvidia.com>
+ <Y2Qd2dBqpOXuJm22@casper.infradead.org> <Y2QfkszbNaI297nl@nvidia.com>
+ <CACT4Y+YViHZh0xzy_=RU=vUrM145e9hsD09CyKShUbUmH=1Cdg@mail.gmail.com>
+ <Y2RbCUdEY2syxRLW@nvidia.com>
+ <CACT4Y+aENA5FouC3fkUHiYqo0hv9xdRoRS043ukJf+qPZU1gbQ@mail.gmail.com>
+ <Y2VT6b/AgwddWxYj@nvidia.com>
+ <CACT4Y+aog92JBEGqga1QxZ7w6iPsEvEKE=6v7m78pROGAQ7KEA@mail.gmail.com>
+Content-Language: en-US
+From:   Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <CACT4Y+aog92JBEGqga1QxZ7w6iPsEvEKE=6v7m78pROGAQ7KEA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 04, 2022, Chao Peng wrote:
-> On Thu, Oct 27, 2022 at 11:29:14AM +0100, Fuad Tabba wrote:
-> > Hi,
-> > 
-> > On Tue, Oct 25, 2022 at 4:19 PM Chao Peng <chao.p.peng@linux.intel.com> wrote:
-> > >
-> > > Currently in mmu_notifier validate path, hva range is recorded and then
-> > > checked against in the mmu_notifier_retry_hva() of the page fault path.
-> > > However, for the to be introduced private memory, a page fault may not
-> > > have a hva associated, checking gfn(gpa) makes more sense.
-> > >
-> > > For existing non private memory case, gfn is expected to continue to
-> > > work. The only downside is when aliasing multiple gfns to a single hva,
-> > > the current algorithm of checking multiple ranges could result in a much
-> > > larger range being rejected. Such aliasing should be uncommon, so the
-> > > impact is expected small.
-> > >
-> > > It also fixes a bug in kvm_zap_gfn_range() which has already been using
-> > 
-> > nit: Now it's kvm_unmap_gfn_range().
+
+
+On 2022/11/5 02:21, Dmitry Vyukov wrote:
+> On Fri, 4 Nov 2022 at 11:03, Jason Gunthorpe <jgg@nvidia.com> wrote:
+>>
+>> On Fri, Nov 04, 2022 at 10:47:17AM -0700, Dmitry Vyukov wrote:
+>>>>> Do we know how common/useful such an allocation pattern is?
+>>>>
+>>>> I have coded something like this a few times, in my cases it is
+>>>> usually something like: try to allocate a big chunk of memory hoping
+>>>> for a huge page, then fall back to a smaller allocation
+>>>>
+>>>> Most likely the key consideration is that the callsites are using
+>>>> GFP_NOWARN, so perhaps we can just avoid decrementing the nth on a
+>>>> NOWARN case assuming that another allocation attempt will closely
+>>>> follow?
+>>>
+>>> GFP_NOWARN is also extensively used for allocations with
+>>> user-controlled size, e.g.:
+>>> https://elixir.bootlin.com/linux/v6.1-rc3/source/net/unix/af_unix.c#L3451
+>>>
+>>> That's different and these allocations are usually not repeated.
+>>> So looking at GFP_NOWARN does not look like the right thing to do.
+>>
+>> This may be the best option then, arguably perhaps even more
+>> "realistic" than normal fail_nth as in a real system if this stuff
+>> starts failing there is a good chance things from then on will fail
+>> too during the error cleanup.
+>>
+>>>> However, this would also have to fix the obnoxious behavior of fail
+>>>> nth where it fails its own copy_from_user on its write system call -
+>>>> meaning there would be no way to turn it off.
+>>>
+>>> Oh, interesting. We added failing of copy_from/to_user later and did
+>>> not consider such interaction.
+>>> Filed https://bugzilla.kernel.org/show_bug.cgi?id=216660 for this.
+>>
+>> Oh, I will tell you the other two bugish things I noticed
+>>
+>> __should_failslab() has this:
+>>
+>>          if (gfpflags & __GFP_NOWARN)
+>>                  failslab.attr.no_warn = true;
+>>
+>>          return should_fail(&failslab.attr, s->object_size);
+>>
+>> Which always permanently turns off no_warn for slab during early
+>> boot. This is why syzkaller reports are so confusing. They trigger a
+>> slab fault injection, which in all other cases gives a notification
+>> backtrace, but in slab cases there is no hint about the fault
+>> injection in the log.
 > 
-> Forgot to mention: the bug is still with kvm_zap_gfn_range(). It calls
-> kvm_mmu_invalidate_begin/end with a gfn range but before this series
-> kvm_mmu_invalidate_begin/end actually accept a hva range. Note it's
-> unrelated to whether we use kvm_zap_gfn_range() or kvm_unmap_gfn_range()
-> in the following patch (patch 05).
+> Ouch, this looks like a bug in:
+> 
+> commit 3f913fc5f9745613088d3c569778c9813ab9c129
+> Author: Qi Zheng <zhengqi.arch@bytedance.com>
+> Date:   Thu May 19 14:08:55 2022 -0700
+>       mm: fix missing handler for __GFP_NOWARN
+> 
+> +Qi could you please fix it?
+> 
+> At the very least the local gfpflags should not alter the global
+> failslab.attr that is persistent and shared by all tasks.
 
-Grr, in the future, if you find an existing bug, please send a patch.  At the
-very least, report the bug.  The APICv case that this was added for could very
-well be broken because of this, and the resulting failures would be an absolute
-nightmare to debug.
+Oh, It indeed shouldn't alter the global failslab.attr, I'll fix it.
 
-Compile tested only...
+But a warning should not be printed for callers that currently specify
+__GFP_NOWARN, because that could lead to deadlocks, such as the deadlock
+case mentioned in commit 6b9dbedbe349 ("tty: fix deadlock caused by 
+calling printk() under tty_port->lock").
 
---
-From: Sean Christopherson <seanjc@google.com>
-Date: Fri, 4 Nov 2022 22:20:33 +0000
-Subject: [PATCH] KVM: x86/mmu: Block all page faults during
- kvm_zap_gfn_range()
+Thanks,
+Qi
 
-When zapping a GFN range, pass 0 => ALL_ONES for the to-be-invalidated
-range to effectively block all page faults while the zap is in-progress.
-The invalidation helpers take a host virtual address, whereas zapping a
-GFN obviously provides a guest physical address and with the wrong unit
-of measurement (frame vs. byte).
+> 
+> But I am not sure if we really don't want to issue the fault injection
+> stack in this case. It's not a WARNING, it's merely an information
+> message. It looks useful in all cases, even with GFP_NOWARN. Why
+> should it be suppressed?
+> 
+> 
+>> Once that is fixed we can quickly explain why the socketpair() example
+>> in the docs shows success ret codes in the middle of the sweep when
+>> run on syzkaller kernels
+>>
+>> fail_nth interacts badly with other kernel features typically enabled
+>> in syzkaller kernels. Eg it fails in hidden kmemleak instrumentation:
+>>
+>> [   18.499559] FAULT_INJECTION: forcing a failure.
+>> [   18.499559] name failslab, interval 1, probability 0, space 0, times 0
+>> [   18.499720] CPU: 10 PID: 386 Comm: iommufd_fail_nt Not tainted 6.1.0-rc3+ #34
+>> [   18.499826] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
+>> [   18.499971] Call Trace:
+>> [   18.500010]  <TASK>
+>> [   18.500048]  show_stack+0x3d/0x3f
+>> [   18.500114]  dump_stack_lvl+0x92/0xbd
+>> [   18.500171]  dump_stack+0x15/0x17
+>> [   18.500232]  should_fail.cold+0x5/0xa
+>> [   18.500291]  __should_failslab+0xb6/0x100
+>> [   18.500349]  should_failslab+0x9/0x20
+>> [   18.500416]  kmem_cache_alloc+0x64/0x4e0
+>> [   18.500477]  ? __create_object+0x40/0xc50
+>> [   18.500539]  __create_object+0x40/0xc50
+>> [   18.500620]  ? kasan_poison+0x3a/0x50
+>> [   18.500690]  ? kasan_unpoison+0x28/0x50
+>> [***18.500753]  kmemleak_alloc+0x24/0x30
+>> [   18.500816]  __kmem_cache_alloc_node+0x1de/0x400
+>> [   18.500900]  ? iopt_alloc_area_pages+0x95/0x560 [iommufd]
+>> [   18.500993]  kmalloc_trace+0x26/0x110
+>> [   18.501059]  iopt_alloc_area_pages+0x95/0x560 [iommufd]
+>>
+>> Which has the consequence of syzkaller wasting half its fail_nth
+>> effort because it is triggering failures in hidden instrumentation
+>> that has no impact on the main code path.
+>>
+>> Maybe a kmem_cache_alloc_no_fault_inject() would be helpful for a few
+>> cases.
+>>
+>> Jason
 
-Alternatively, KVM could walk all memslots to get the associated HVAs,
-but thanks to SMM, that would require multiple lookups.  And practically
-speaking, kvm_zap_gfn_range() usage is quite rare and not a hot path,
-e.g. MTRR and CR0.CD are almost guaranteed to be done only on vCPU0
-during boot, and APICv inhibits are similarly infrequent operations.
-
-Fixes: edb298c663fc ("KVM: x86/mmu: bump mmu notifier count in kvm_zap_gfn_range")
-Cc: stable@vger.kernel.org
-Cc: Maxim Levitsky <mlevitsk@redhat.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/mmu/mmu.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-index 6f81539061d6..1ccb769f62af 100644
---- a/arch/x86/kvm/mmu/mmu.c
-+++ b/arch/x86/kvm/mmu/mmu.c
-@@ -6056,7 +6056,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
- 
- 	write_lock(&kvm->mmu_lock);
- 
--	kvm_mmu_invalidate_begin(kvm, gfn_start, gfn_end);
-+	kvm_mmu_invalidate_begin(kvm, 0, -1ul);
- 
- 	flush = kvm_rmap_zap_gfn_range(kvm, gfn_start, gfn_end);
- 
-@@ -6070,7 +6070,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
- 		kvm_flush_remote_tlbs_with_address(kvm, gfn_start,
- 						   gfn_end - gfn_start);
- 
--	kvm_mmu_invalidate_end(kvm, gfn_start, gfn_end);
-+	kvm_mmu_invalidate_end(kvm, 0, -1ul);
- 
- 	write_unlock(&kvm->mmu_lock);
- }
-
-base-commit: c12879206e47730ff5ab255bbf625b28ade4028f
 -- 
-
+Thanks,
+Qi
