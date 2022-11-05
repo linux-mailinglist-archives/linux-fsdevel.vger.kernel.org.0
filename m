@@ -2,200 +2,332 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D185961A5E6
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Nov 2022 00:37:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C38761A714
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  5 Nov 2022 03:53:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229523AbiKDXhd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 4 Nov 2022 19:37:33 -0400
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57954 "EHLO
+        id S229610AbiKECxy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 4 Nov 2022 22:53:54 -0400
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52484 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229517AbiKDXhb (ORCPT
+        with ESMTP id S229579AbiKECxv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 4 Nov 2022 19:37:31 -0400
-Received: from wout3-smtp.messagingengine.com (wout3-smtp.messagingengine.com [64.147.123.19])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DFF2E26117;
-        Fri,  4 Nov 2022 16:37:27 -0700 (PDT)
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.west.internal (Postfix) with ESMTP id 0E06832008FB;
-        Fri,  4 Nov 2022 19:37:24 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Fri, 04 Nov 2022 19:37:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fastmail.fm; h=
-        cc:cc:content-transfer-encoding:content-type:date:date:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to; s=fm1; t=1667605044; x=
-        1667691444; bh=KPSj58myQkOWoEMJnn+Mf3F8dNGI3qP/0VDwKyDorz0=; b=h
-        hfOv2yw3rF4PWlowL6L1d88Kh1z02uXbUQ1RaWnFSmMgauOUFqO/HzAl40VJc+Iq
-        qA9DIVVcL3RPScaZS7cUNCr9ihPV7IvdUsPtH9vPBoXSIfB0vOOD7YjjrKTOG11o
-        rStzQeNwRuXNLHNlczO3tlBkGw8wlPO4lnvscup7SOl9ef188JeNK5ru+D5j9DtS
-        XvjXfUyEEEEaxSYOtz4AX1yBsd9/bGQoW3705kEicfRaWKg2HfwIyVbT9J+koonV
-        JT1Pai6SXaomRAFlmlIjcrTXpEpPCT8SfCwDH/XksrzPFNvoi/L8ES6nCs7qpox4
-        xAYZ9uB/YAJaAq+46ye3w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-transfer-encoding
-        :content-type:date:date:feedback-id:feedback-id:from:from
-        :in-reply-to:in-reply-to:message-id:mime-version:references
-        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1667605044; x=
-        1667691444; bh=KPSj58myQkOWoEMJnn+Mf3F8dNGI3qP/0VDwKyDorz0=; b=S
-        XQN2VEuWylrzlq+TNLLhv5pcrXqlcvxLsE9vac+kngk5ISsp3X5ZKqPuO/JVNA5x
-        oavsCVbtyf4j0Onvsy6ror852I/v5LMGMNOE8+XWL0wIpsCjvijHZa61bMq5WKCL
-        BEpX9eLePIsaZQtJ7JyrggTqRfra0dDb0AEQZgrZuPMqMrPMGg7fFkYGnsdgMS0D
-        BltXpx46eS99apnjdUV4/X+yHEJrytz97X/CJUj8sLd/cq5vRMCm55Ab/AsqKOwR
-        BYn6zD6Fs568uQ8ZzJRrnkjXo4lKHlCwv8Qf09FqRgOEB4racW+0LLVqpsiVfdOS
-        DaDpSjBov4MJ/HNDUWVkg==
-X-ME-Sender: <xms:NKJlY7_-2A2kteFlgTn4e_7EEo6QwBtytHdzvl4gNQYv0dxPWeVZcA>
-    <xme:NKJlY3stTpxcKG32pLzh8AGi79o5Oex0tmPlvJVIVMK5igxWKbP0NdNxl8lc65c3f
-    3Wo2Guk2xBLOfNj>
-X-ME-Received: <xmr:NKJlY5A36liqmk8HqHmVO57GmwFmzJhewcKGLR2rG739l1n00mA8jLOvlKKHbBqwGNX7mcizu-FbutkwOKSa589ORoHrrONAXbEEqvmjsDSoRbkAlktX>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrvddvgdduudcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefkffggfgfuvfevfhfhjggtgfesthejredttdefjeenucfhrhhomhepuegvrhhn
-    ugcuufgthhhusggvrhhtuceosggvrhhnugdrshgthhhusggvrhhtsehfrghsthhmrghilh
-    drfhhmqeenucggtffrrghtthgvrhhnpeeuudekheelkeejhedvvdeifedtueelieeiuddt
-    lefhveeuledugfeljeeviedtgfenucffohhmrghinhepghhithhhuhgsrdgtohhmnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsggvrhhnugdr
-    shgthhhusggvrhhtsehfrghsthhmrghilhdrfhhm
-X-ME-Proxy: <xmx:NKJlY3d0SKcw6tQPE2KxiYKVibwWOL-iSqZ0Ena_I4AfZUEhv01ASA>
-    <xmx:NKJlYwNFdB78ZaixwJM58CtWzkNMM0L78CWTCgN3nMF3pJWRh-zsJw>
-    <xmx:NKJlY5mwLCeSRntx4BsZ-u1B2TTZG1FZk8VQpj9CTqkcvTBNmZjYnA>
-    <xmx:NKJlY3cMWvqBee2k0yG4N3xDMLGJwApMsdpcouJOIDuB7oDIsEaO7A>
-Feedback-ID: id8a24192:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
- 4 Nov 2022 19:37:22 -0400 (EDT)
-Message-ID: <ead8a6cc-13eb-6dc0-2c17-a87e78d8a422@fastmail.fm>
-Date:   Sat, 5 Nov 2022 00:37:21 +0100
+        Fri, 4 Nov 2022 22:53:51 -0400
+Received: from mail-qv1-xf2f.google.com (mail-qv1-xf2f.google.com [IPv6:2607:f8b0:4864:20::f2f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C2E32B6
+        for <linux-fsdevel@vger.kernel.org>; Fri,  4 Nov 2022 19:53:48 -0700 (PDT)
+Received: by mail-qv1-xf2f.google.com with SMTP id i12so4655675qvs.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 04 Nov 2022 19:53:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JI7cKRM4RTeKDI0t+IERL0YBj1fl9UNNUZ2PEs6yEiQ=;
+        b=ALcOaOI5wQpNzPdzX6C0J9yppvP0ccW968P93F3xPK/ILN9f/tNC/6Aa3TIUD4K0jb
+         xKV1I/oxjRwjvyKCqQFFjdXqHJSjjx3pT0g6zaDXSB6wJZzhqXBx3S/1jc8dixzJ079T
+         FmY5qGOcBzieXybXTxvsdbxXokCqfXdoL4dG38cUSErnMt8LB+3X8Q+u70GgyPQ1w6nD
+         3k4htwqXL+atV1bum/28BbgEEOBS9aRmWIB1AIkVUTROjq2VtKxw6NF372krxH5i8MvX
+         ABPyU61i90apijPchAj8F9HzmfBSkwJmJ/uFv8kHdjtAGj/uI3AsJCrC8lclmluKB4Sk
+         yZHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JI7cKRM4RTeKDI0t+IERL0YBj1fl9UNNUZ2PEs6yEiQ=;
+        b=RO530nbfbDj83J/zBbG5+KkqULtzfK9D1Tk/q9IvV1jba20484fHyYyfDRvx542JZl
+         nbkqpIYhg37P+bM49YftSRU/pF8kFvYzkBE0IiyJuIlbaS+b+ea2Lt8ukn8IxTouGgIq
+         q9HyI53RlZr/LREWW1jngm/mcDB7fm+anDfVbGX1/7JI3UQtulHBjUVT4wi2DMMZ/UjS
+         4iz4b8Hfz+en1HTVRYh1QdrTcI10mnl/SaIgny/3xRNDhychJ133RcuLoAHD29VrADWo
+         p8PP/RbOlPbNT8nqgOeK/oAMWTYjlt3cuPzbPbRqzsWL276YQfXp9V0CvytN4U84C/Tb
+         xhHQ==
+X-Gm-Message-State: ACrzQf1WbFk1ve+iKpckUyz5w727osCWjAmRdAk8H2x2ffX0CxC0OD7Y
+        zEy2jxJ9xdwXdskWLONV3QZPlQ==
+X-Google-Smtp-Source: AMsMyM6sgg5HHp6alxMy0i4ndmBRmwHO85L4PUB1mVFu83X+//FOx5lNTiXxK/gwh4tSxcIKdH7WTQ==
+X-Received: by 2002:ad4:5c4e:0:b0:4bb:9fea:f52e with SMTP id a14-20020ad45c4e000000b004bb9feaf52emr35407214qva.51.1667616827460;
+        Fri, 04 Nov 2022 19:53:47 -0700 (PDT)
+Received: from soleen.c.googlers.com.com (193.132.150.34.bc.googleusercontent.com. [34.150.132.193])
+        by smtp.gmail.com with ESMTPSA id g10-20020a05620a40ca00b006fa12a74c53sm773373qko.61.2022.11.04.19.53.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 04 Nov 2022 19:53:46 -0700 (PDT)
+From:   Pasha Tatashin <pasha.tatashin@soleen.com>
+To:     corbet@lwn.net, akpm@linux-foundation.org, hughd@google.com,
+        hannes@cmpxchg.org, david@redhat.com, vincent.whitchurch@axis.com,
+        seanjc@google.com, rppt@kernel.org, shy828301@gmail.com,
+        pasha.tatashin@soleen.com, paul.gortmaker@windriver.com,
+        peterx@redhat.com, vbabka@suse.cz, Liam.Howlett@Oracle.com,
+        ccross@google.com, willy@infradead.org, arnd@arndb.de,
+        cgel.zte@gmail.com, yuzhao@google.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH] mm: anonymous shared memory naming
+Date:   Sat,  5 Nov 2022 02:53:42 +0000
+Message-Id: <20221105025342.3130038-1-pasha.tatashin@soleen.com>
+X-Mailer: git-send-email 2.38.1.431.g37b22c650d-goog
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.3.3
-Subject: Re: [RFC PATCH 4/4] ublk_drv: support splice based read/write zero
- copy
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Miklos Szeredi <mszeredi@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        ZiyangZhang <ZiyangZhang@linux.alibaba.com>
-References: <20221103085004.1029763-1-ming.lei@redhat.com>
- <20221103085004.1029763-5-ming.lei@redhat.com>
- <712cd802-f3bb-9840-e334-385cd42325f2@fastmail.fm> <Y2Rgem8+oYafTLVO@T590>
-Content-Language: en-US
-From:   Bernd Schubert <bernd.schubert@fastmail.fm>
-In-Reply-To: <Y2Rgem8+oYafTLVO@T590>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
-        RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Since:
+commit 9a10064f5625 ("mm: add a field to store names for private anonymous
+memory")
 
+We can set names for private anonymous memory but not for shared
+anonymous memory. However, naming shared anonymous memory just as
+useful for tracking purposes.
 
-On 11/4/22 01:44, Ming Lei wrote:
-> On Thu, Nov 03, 2022 at 11:28:29PM +0100, Bernd Schubert wrote:
->>
->>
->> On 11/3/22 09:50, Ming Lei wrote:
->>> Pass ublk block IO request pages to kernel backend IO handling code via
->>> pipe, and request page copy can be avoided. So far, the existed
->>> pipe/splice mechanism works for handling write request only.
->>>
->>> The initial idea of using splice for zero copy is from Miklos and Stefan.
->>>
->>> Read request's zero copy requires pipe's change to allow one read end to
->>> produce buffers for another read end to consume. The added SPLICE_F_READ_TO_READ
->>> flag is for supporting this feature.
->>>
->>> READ is handled by sending IORING_OP_SPLICE with SPLICE_F_DIRECT |
->>> SPLICE_F_READ_TO_READ. WRITE is handled by sending IORING_OP_SPLICE with
->>> SPLICE_F_DIRECT. Kernel internal pipe is used for simplifying userspace,
->>> meantime potential info leak could be avoided.
->>
->>
->> Sorry to ask, do you have an ublk branch that gives an example how to use
->> this?
-> 
-> Follows the ublk splice-zc branch:
-> 
-> https://github.com/ming1/ubdsrv/commits/splice-zc
-> 
-> which is mentioned in cover letter, but I guess it should be added to
-> here too, sorry for that, so far only ublk-loop supports it by:
-> 
->     ublk add -t loop -f $BACKING -z
-> 
-> without '-z', ublk-loop is created with zero copy disabled.
+Extend the functionality to be able to set names for shared anon.
 
-Ah, thanks a lot! And sorry, I had missed this part in the cover letter.
+/ [anon_shmem:<name>]      an anonymous shared memory mapping that has
+                           been named by userspace
 
-I will take a look on your new zero copy code on Monday.
+Sample output:
+        share = mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
+                     MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+        rv = prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME,
+                   share, SIZE, "shared anon");
 
+/proc/<pid>/maps (and smaps):
+7fc8e2b4c000-7fc8f2b4c000 rw-s 00000000 00:01 1024
+/dev/zero (deleted) [anon_shmem:shared anon]
 
-> 
->>
->> I still have several things to fix in my branches, but I got basic fuse
->> uring with copies working. Adding back splice would be next after posting
->> rfc patches. My initial assumption was that I needed to duplicate everything
->> splice does into the fuse .uring_cmd handler - obviously there is a better
->> way with your patches.
->>
->> This week I have a few days off, by end of next week or the week after I
->> might have patches in an rfc state (one thing I'm going to ask about is how
->> do I know what is the next CQE in the kernel handler - ublk does this with
->> tags through mq, but I don't understand yet where the tag is increased and
->> what the relation between tag and right CQE order is).
-> 
-> tag is one attribute of io request, which is originated from ublk
-> driver, and it is unique for each request among one queue. So ublksrv
-> won't change it at all, just use it, and ublk driver guarantees that
-> it is unique.
-> 
-> In ublkserv implementation, the tag info is set in cqe->user_data, so
-> we can retrieve the io request via tag part of cqe->user_data.
+pmap $(pgrep a.out)
+254:   pub/a.out
+000056093fab2000      4K r---- a.out
+000056093fab3000      4K r-x-- a.out
+000056093fab4000      4K r---- a.out
+000056093fab5000      4K r---- a.out
+000056093fab6000      4K rw--- a.out
+000056093fdeb000    132K rw---   [ anon ]
+00007fc8e2b4c000 262144K rw-s- zero (deleted) [anon_shmem:shared anon]
 
-Yeah, this is the easy part I understood. At least I hope so :)
+Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+---
+ Documentation/filesystems/proc.rst |  4 +++-
+ fs/proc/task_mmu.c                 |  7 ++++---
+ include/linux/mm.h                 |  2 ++
+ include/linux/mm_types.h           | 27 +++++++++++++--------------
+ mm/madvise.c                       |  7 ++-----
+ mm/shmem.c                         | 13 +++++++++++--
+ 6 files changed, 35 insertions(+), 25 deletions(-)
 
-> 
-> Also I may not understand your question of 'the relation between tag and right
-> CQE order', io_uring provides IOSQE_IO_DRAIN/IOSQE_IO_LINK for ordering
-> SQE, and ublksrv only applies IOSQE_IO_LINK in ublk-qcow2, so care to
-> explain it in a bit details about the "the relation between tag and right
-> CQE order"?
-
-
-For fuse (kernel) a vfs request comes in and I need to choose a command 
-in the ring queue. Right now this is just an atomic counter % queue_size
-
-fuse_request_alloc_ring()
-	req_cnt = atomic_inc_return(&queue->req_cnt);
-	tag = req_cnt & (fc->ring.queue_depth - 1); /* cnt % queue_depth */
-
-	ring_req = &queue->ring_req[tag];
-
-
-
-I might be wrong, but I think that can be compared a bit to 
-ublk_queue_rq(). Looks like ublk_queue_rq gets called in blk-mq context 
-and blk-mq seems to provide rq->tag, which then determines the command 
-in the ring queue - completion of commands is done in tag-order provided 
-by blk-mq? The part I didn't figure out yet is where the tag value gets set.
-Also interesting is that there is no handler if the ring is already full 
-- like the ublk_io command is currently busy in ublksrv (user space). 
-Handled auto-magically with blk-mq?
-This is one of the parts not handled in my fuse code yet and my current 
-plan is to have a request queue on top of the (per core) ring queues. 
-Similar to the existing fuse request queue, just not one, but per ring 
-queue and processed by the ring queue. Unless there is a better way - 
-which is another reason to understand how ublk handles this.
-
-
-Thanks,
-Bernd
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 898c99eae8e4..8f1e68460da5 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -431,8 +431,10 @@ is not associated with a file:
+  [stack]                    the stack of the main process
+  [vdso]                     the "virtual dynamic shared object",
+                             the kernel system call handler
+- [anon:<name>]              an anonymous mapping that has been
++ [anon:<name>]              a private anonymous mapping that has been
+                             named by userspace
++ path [anon_shmem:<name>]   an anonymous shared memory mapping that has
++                            been named by userspace
+  =============              ====================================
+ 
+  or if empty, the mapping is anonymous.
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 8a74cdcc9af0..d6ae75ed81ca 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -277,6 +277,7 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
+ 	struct mm_struct *mm = vma->vm_mm;
+ 	struct file *file = vma->vm_file;
+ 	vm_flags_t flags = vma->vm_flags;
++	struct anon_vma_name *anon_name;
+ 	unsigned long ino = 0;
+ 	unsigned long long pgoff = 0;
+ 	unsigned long start, end;
+@@ -293,6 +294,7 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
+ 	start = vma->vm_start;
+ 	end = vma->vm_end;
+ 	show_vma_header_prefix(m, start, end, flags, pgoff, dev, ino);
++	anon_name = anon_vma_name(vma);
+ 
+ 	/*
+ 	 * Print the dentry name for named mappings, and a
+@@ -301,6 +303,8 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
+ 	if (file) {
+ 		seq_pad(m, ' ');
+ 		seq_file_path(m, file, "\n");
++		if (anon_name)
++			seq_printf(m, " [anon_shmem:%s]", anon_name->name);
+ 		goto done;
+ 	}
+ 
+@@ -312,8 +316,6 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
+ 
+ 	name = arch_vma_name(vma);
+ 	if (!name) {
+-		struct anon_vma_name *anon_name;
+-
+ 		if (!mm) {
+ 			name = "[vdso]";
+ 			goto done;
+@@ -330,7 +332,6 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma)
+ 			goto done;
+ 		}
+ 
+-		anon_name = anon_vma_name(vma);
+ 		if (anon_name) {
+ 			seq_pad(m, ' ');
+ 			seq_printf(m, "[anon:%s]", anon_name->name);
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 8bbcccbc5565..06b6fb3277ab 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -699,8 +699,10 @@ static inline unsigned long vma_iter_addr(struct vma_iterator *vmi)
+  * paths in userfault.
+  */
+ bool vma_is_shmem(struct vm_area_struct *vma);
++bool vma_is_anon_shmem(struct vm_area_struct *vma);
+ #else
+ static inline bool vma_is_shmem(struct vm_area_struct *vma) { return false; }
++static inline bool vma_is_anon_shmem(struct vm_area_struct *vma) { return false; }
+ #endif
+ 
+ int vma_is_stack_for_current(struct vm_area_struct *vma);
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 500e536796ca..08d8b973fb60 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -461,21 +461,11 @@ struct vm_area_struct {
+ 	 * For areas with an address space and backing store,
+ 	 * linkage into the address_space->i_mmap interval tree.
+ 	 *
+-	 * For private anonymous mappings, a pointer to a null terminated string
+-	 * containing the name given to the vma, or NULL if unnamed.
+ 	 */
+-
+-	union {
+-		struct {
+-			struct rb_node rb;
+-			unsigned long rb_subtree_last;
+-		} shared;
+-		/*
+-		 * Serialized by mmap_sem. Never use directly because it is
+-		 * valid only when vm_file is NULL. Use anon_vma_name instead.
+-		 */
+-		struct anon_vma_name *anon_name;
+-	};
++	struct {
++		struct rb_node rb;
++		unsigned long rb_subtree_last;
++	} shared;
+ 
+ 	/*
+ 	 * A file's MAP_PRIVATE vma can be in both i_mmap tree and anon_vma
+@@ -485,6 +475,7 @@ struct vm_area_struct {
+ 	 */
+ 	struct list_head anon_vma_chain; /* Serialized by mmap_lock &
+ 					  * page_table_lock */
++
+ 	struct anon_vma *anon_vma;	/* Serialized by page_table_lock */
+ 
+ 	/* Function pointers to deal with this struct. */
+@@ -496,6 +487,14 @@ struct vm_area_struct {
+ 	struct file * vm_file;		/* File we map to (can be NULL). */
+ 	void * vm_private_data;		/* was vm_pte (shared mem) */
+ 
++#ifdef CONFIG_ANON_VMA_NAME
++	/*
++	 * For private and shared anonymous mappings, a pointer to a null
++	 * terminated string containing the name given to the vma, or NULL if
++	 * unnamed. Serialized by mmap_sem. Use anon_vma_name to access.
++	 */
++	struct anon_vma_name *anon_name;
++#endif
+ #ifdef CONFIG_SWAP
+ 	atomic_long_t swap_readahead_info;
+ #endif
+diff --git a/mm/madvise.c b/mm/madvise.c
+index c7105ec6d08c..255d5b485432 100644
+--- a/mm/madvise.c
++++ b/mm/madvise.c
+@@ -95,9 +95,6 @@ struct anon_vma_name *anon_vma_name(struct vm_area_struct *vma)
+ {
+ 	mmap_assert_locked(vma->vm_mm);
+ 
+-	if (vma->vm_file)
+-		return NULL;
+-
+ 	return vma->anon_name;
+ }
+ 
+@@ -183,7 +180,7 @@ static int madvise_update_vma(struct vm_area_struct *vma,
+ 	 * vm_flags is protected by the mmap_lock held in write mode.
+ 	 */
+ 	vma->vm_flags = new_flags;
+-	if (!vma->vm_file) {
++	if (!vma->vm_file || vma_is_anon_shmem(vma)) {
+ 		error = replace_anon_vma_name(vma, anon_name);
+ 		if (error)
+ 			return error;
+@@ -1273,7 +1270,7 @@ static int madvise_vma_anon_name(struct vm_area_struct *vma,
+ 	int error;
+ 
+ 	/* Only anonymous mappings can be named */
+-	if (vma->vm_file)
++	if (vma->vm_file && !vma_is_anon_shmem(vma))
+ 		return -EBADF;
+ 
+ 	error = madvise_update_vma(vma, prev, start, end, vma->vm_flags,
+diff --git a/mm/shmem.c b/mm/shmem.c
+index c1d8b8a1aa3b..638bcb3d26bd 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -237,11 +237,17 @@ static const struct inode_operations shmem_inode_operations;
+ static const struct inode_operations shmem_dir_inode_operations;
+ static const struct inode_operations shmem_special_inode_operations;
+ static const struct vm_operations_struct shmem_vm_ops;
++static const struct vm_operations_struct shmem_anon_vm_ops;
+ static struct file_system_type shmem_fs_type;
+ 
++bool vma_is_anon_shmem(struct vm_area_struct *vma)
++{
++	return vma->vm_ops == &shmem_anon_vm_ops;
++}
++
+ bool vma_is_shmem(struct vm_area_struct *vma)
+ {
+-	return vma->vm_ops == &shmem_vm_ops;
++	return vma_is_anon_shmem(vma) || vma->vm_ops == &shmem_vm_ops;
+ }
+ 
+ static LIST_HEAD(shmem_swaplist);
+@@ -3995,6 +4001,8 @@ static const struct vm_operations_struct shmem_vm_ops = {
+ #endif
+ };
+ 
++static const struct vm_operations_struct shmem_anon_vm_ops = shmem_vm_ops;
++
+ int shmem_init_fs_context(struct fs_context *fc)
+ {
+ 	struct shmem_options *ctx;
+@@ -4170,6 +4178,7 @@ void shmem_truncate_range(struct inode *inode, loff_t lstart, loff_t lend)
+ EXPORT_SYMBOL_GPL(shmem_truncate_range);
+ 
+ #define shmem_vm_ops				generic_file_vm_ops
++#define shmem_anon_vm_ops			generic_file_vm_ops
+ #define shmem_file_operations			ramfs_file_operations
+ #define shmem_get_inode(sb, dir, mode, dev, flags)	ramfs_get_inode(sb, dir, mode, dev)
+ #define shmem_acct_size(flags, size)		0
+@@ -4275,7 +4284,7 @@ int shmem_zero_setup(struct vm_area_struct *vma)
+ 	if (vma->vm_file)
+ 		fput(vma->vm_file);
+ 	vma->vm_file = file;
+-	vma->vm_ops = &shmem_vm_ops;
++	vma->vm_ops = &shmem_anon_vm_ops;
+ 
+ 	return 0;
+ }
+-- 
+2.38.1.431.g37b22c650d-goog
 
