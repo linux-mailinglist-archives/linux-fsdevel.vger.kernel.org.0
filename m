@@ -2,62 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD2A461E63B
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Nov 2022 22:08:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17C2F61E643
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Nov 2022 22:09:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230187AbiKFVIx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Nov 2022 16:08:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34664 "EHLO
+        id S230290AbiKFVI6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Nov 2022 16:08:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34674 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230171AbiKFVIp (ORCPT
+        with ESMTP id S230182AbiKFVIq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Nov 2022 16:08:45 -0500
+        Sun, 6 Nov 2022 16:08:46 -0500
 Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28335E94;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5AC1114B;
         Sun,  6 Nov 2022 13:08:44 -0800 (PST)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A6IUAFO011922;
-        Sun, 6 Nov 2022 21:08:18 GMT
+Received: from pps.filterd (m0098410.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A6GpqkP007325;
+        Sun, 6 Nov 2022 21:08:22 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
  : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding; s=pp1;
- bh=Dqgb6V30u6xH6F66DO7gRqyHAW/t9HZRw8bgLYM5ckw=;
- b=kbNAHBCErfLINFOuOiMPnoow6F32B88f+tjTazQiuPItwxFaLqOFg4jGjJBGnleBifxS
- fGxv0C7G85ivViME9xVq+b0qRDoa4RMlSaTj71Gug7Z0ct/3GK3AxX57IzWt6CiDEl20
- HmXcAkK8oqYvdfcNf7NaoqokjRghSo1ts3ITGhUfKnSGcIpjy/hu4vzlTW70gLjTlnzl
- Gp0unEnMzEQ7XXVSTfK35kuWILVLLwtzGXCppQsYYx3+NGxfW22T5CakTN4t+nGP0nf1
- mPcPyV25jyZLY8iiuJJMh7ssdwpOf0oL9vLjfuoZ59RdGJjvtivgkzsKMWGUMbv04O/P oQ== 
+ bh=IQsnQ0ZKluqSboJqzc22REjjigAMqIndSiKKso4ysoA=;
+ b=tetFKxEj5HqociJEbpCgIGtEMd+Z+TTf2XQECVsX3ccbYmJsDGfb64DF2TJIPab159OD
+ vJlbOIHWf4CmnF9gimbBR5hWYOPya0dofLeKygrOBOOBIx/ZeLZvlDTPhlVnqlsY1i3R
+ vgXk57SvFRnlf6gGJlprrN1Ykc61GzXc9dcw+ZeG5Q1YJtRHVdkZvqkuMXjhNp/eTdYK
+ e41Gc0rYHSCm1uXkOl6DiwYLMtPrhQ+jmdTty3YbL9F3FQviCjNXl8OaK2vy3oobIuM+
+ Gjd6sGJhJ0JStYyStkT0lGCPD7t6JFmSNQjzKiXh2O7WEgVSeE4dCb7Y6PLqL8t56jM5 sA== 
 Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kp1tecujy-1
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kp1mrvxt2-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 06 Nov 2022 21:08:17 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A6KtCZS004297;
-        Sun, 6 Nov 2022 21:08:17 GMT
-Received: from ppma02fra.de.ibm.com (47.49.7a9f.ip4.static.sl-reverse.com [159.122.73.71])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kp1tecuje-1
+        Sun, 06 Nov 2022 21:08:22 +0000
+Received: from m0098410.ppops.net (m0098410.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A6L8Lx4025479;
+        Sun, 6 Nov 2022 21:08:21 GMT
+Received: from ppma06ams.nl.ibm.com (66.31.33a9.ip4.static.sl-reverse.com [169.51.49.102])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kp1mrvxsh-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 06 Nov 2022 21:08:16 +0000
-Received: from pps.filterd (ppma02fra.de.ibm.com [127.0.0.1])
-        by ppma02fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A6L5621016614;
-        Sun, 6 Nov 2022 21:08:14 GMT
-Received: from b06cxnps4076.portsmouth.uk.ibm.com (d06relay13.portsmouth.uk.ibm.com [9.149.109.198])
-        by ppma02fra.de.ibm.com with ESMTP id 3kngpgh73j-1
+        Sun, 06 Nov 2022 21:08:21 +0000
+Received: from pps.filterd (ppma06ams.nl.ibm.com [127.0.0.1])
+        by ppma06ams.nl.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A6L5oEW017575;
+        Sun, 6 Nov 2022 21:08:19 GMT
+Received: from b06cxnps3075.portsmouth.uk.ibm.com (d06relay10.portsmouth.uk.ibm.com [9.149.109.195])
+        by ppma06ams.nl.ibm.com with ESMTP id 3kngnc9q4t-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Sun, 06 Nov 2022 21:08:14 +0000
+        Sun, 06 Nov 2022 21:08:18 +0000
 Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A6L8BB837683662
+        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A6L8FkS3342990
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Sun, 6 Nov 2022 21:08:11 GMT
+        Sun, 6 Nov 2022 21:08:15 GMT
 Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1824A11C050;
+        by IMSVA (Postfix) with ESMTP id 4212111C04A;
+        Sun,  6 Nov 2022 21:08:15 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6217511C04C;
         Sun,  6 Nov 2022 21:08:11 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3FDAB11C04C;
-        Sun,  6 Nov 2022 21:08:07 +0000 (GMT)
 Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.78.124])
         by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Sun,  6 Nov 2022 21:08:07 +0000 (GMT)
+        Sun,  6 Nov 2022 21:08:11 +0000 (GMT)
 From:   Nayna Jain <nayna@linux.ibm.com>
 To:     linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org
 Cc:     linux-efi@vger.kernel.org,
@@ -75,25 +75,25 @@ Cc:     linux-efi@vger.kernel.org,
         Andrew Donnellan <ajd@linux.ibm.com>,
         Stefan Berger <stefanb@linux.ibm.com>,
         Nayna Jain <nayna@linux.ibm.com>
-Subject: [PATCH 2/4] fs: define a firmware security filesystem named fwsecurityfs
-Date:   Sun,  6 Nov 2022 16:07:42 -0500
-Message-Id: <20221106210744.603240-3-nayna@linux.ibm.com>
+Subject: [PATCH 3/4] powerpc/pseries: initialize fwsecurityfs with plpks arch-specific structure
+Date:   Sun,  6 Nov 2022 16:07:43 -0500
+Message-Id: <20221106210744.603240-4-nayna@linux.ibm.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20221106210744.603240-1-nayna@linux.ibm.com>
 References: <20221106210744.603240-1-nayna@linux.ibm.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: K3_cqkK3xbQIHy73A5pjMwCCpwqxa3JZ
-X-Proofpoint-ORIG-GUID: k5ARmYELm2Mnq7-NXOeNpwZ_BKzPCB6-
+X-Proofpoint-GUID: gnoaMLvNd0-ijIFGJkLq3FgJgaDSk6qV
+X-Proofpoint-ORIG-GUID: rdvdkE7aGcukAqtXArd8UuCui4ydUdbV
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-06_14,2022-11-03_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 mlxscore=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 mlxlogscore=999
- suspectscore=0 phishscore=0 priorityscore=1501 adultscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211060188
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
+ bulkscore=0 phishscore=0 spamscore=0 clxscore=1015 priorityscore=1501
+ mlxscore=0 adultscore=0 impostorscore=0 mlxlogscore=999 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
+ definitions=main-2211060188
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
@@ -103,420 +103,204 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-securityfs is meant for Linux security subsystems to expose policies/logs
-or any other information. However, there are various firmware security
-features which expose their variables for user management via the kernel.
-There is currently no single place to expose these variables. Different
-platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
-interface as they find it appropriate. Thus, there is a gap in kernel
-interfaces to expose variables for security features.
+PowerVM PLPKS variables are exposed via fwsecurityfs.
 
-Define a firmware security filesystem (fwsecurityfs) to be used by
-security features enabled by the firmware. These variables are platform
-specific. This filesystem provides platforms a way to implement their
- own underlying semantics by defining own inode and file operations.
+Initialize fwsecurityfs arch-specific structure with plpks configuration.
 
-Similar to securityfs, the firmware security filesystem is recommended
-to be exposed on a well known mount point /sys/firmware/security.
-Platforms can define their own directory or file structure under this path.
+Eg:
 
-Example:
-
-# mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
-
-# cd /sys/firmware/security/
+[root@ltcfleet35-lp1 config]# pwd
+/sys/firmware/security/plpks/config
+[root@ltcfleet35-lp1 config]# ls -ltrh
+total 0
+-r--r--r-- 1 root root 1 Sep 28 15:01 version
+-r--r--r-- 1 root root 4 Sep 28 15:01 used_space
+-r--r--r-- 1 root root 4 Sep 28 15:01 total_size
+-r--r--r-- 1 root root 2 Sep 28 15:01 max_object_size
+-r--r--r-- 1 root root 2 Sep 28 15:01 max_object_label_size
 
 Signed-off-by: Nayna Jain <nayna@linux.ibm.com>
 ---
- fs/Kconfig                   |   1 +
- fs/Makefile                  |   1 +
- fs/fwsecurityfs/Kconfig      |  14 ++
- fs/fwsecurityfs/Makefile     |  10 ++
- fs/fwsecurityfs/super.c      | 263 +++++++++++++++++++++++++++++++++++
- include/linux/fwsecurityfs.h |  29 ++++
- include/uapi/linux/magic.h   |   1 +
- 7 files changed, 319 insertions(+)
- create mode 100644 fs/fwsecurityfs/Kconfig
- create mode 100644 fs/fwsecurityfs/Makefile
- create mode 100644 fs/fwsecurityfs/super.c
- create mode 100644 include/linux/fwsecurityfs.h
+ arch/powerpc/platforms/pseries/Kconfig        |  10 ++
+ arch/powerpc/platforms/pseries/Makefile       |   1 +
+ .../platforms/pseries/fwsecurityfs_arch.c     | 116 ++++++++++++++++++
+ include/linux/fwsecurityfs.h                  |   4 +
+ 4 files changed, 131 insertions(+)
+ create mode 100644 arch/powerpc/platforms/pseries/fwsecurityfs_arch.c
 
-diff --git a/fs/Kconfig b/fs/Kconfig
-index 2685a4d0d353..2a24f1c779dd 100644
---- a/fs/Kconfig
-+++ b/fs/Kconfig
-@@ -275,6 +275,7 @@ config ARCH_HAS_GIGANTIC_PAGE
+diff --git a/arch/powerpc/platforms/pseries/Kconfig b/arch/powerpc/platforms/pseries/Kconfig
+index a3b4d99567cb..5fb45e601982 100644
+--- a/arch/powerpc/platforms/pseries/Kconfig
++++ b/arch/powerpc/platforms/pseries/Kconfig
+@@ -162,6 +162,16 @@ config PSERIES_PLPKS
  
- source "fs/configfs/Kconfig"
- source "fs/efivarfs/Kconfig"
-+source "fs/fwsecurityfs/Kconfig"
+ 	  If unsure, select N.
  
- endmenu
- 
-diff --git a/fs/Makefile b/fs/Makefile
-index 4dea17840761..b945019a9bbe 100644
---- a/fs/Makefile
-+++ b/fs/Makefile
-@@ -134,6 +134,7 @@ obj-$(CONFIG_F2FS_FS)		+= f2fs/
- obj-$(CONFIG_CEPH_FS)		+= ceph/
- obj-$(CONFIG_PSTORE)		+= pstore/
- obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
-+obj-$(CONFIG_FWSECURITYFS)		+= fwsecurityfs/
- obj-$(CONFIG_EROFS_FS)		+= erofs/
- obj-$(CONFIG_VBOXSF_FS)		+= vboxsf/
- obj-$(CONFIG_ZONEFS_FS)		+= zonefs/
-diff --git a/fs/fwsecurityfs/Kconfig b/fs/fwsecurityfs/Kconfig
-new file mode 100644
-index 000000000000..1dc2ee831eda
---- /dev/null
-+++ b/fs/fwsecurityfs/Kconfig
-@@ -0,0 +1,14 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Copyright (C) 2022 IBM Corporation
-+# Author: Nayna Jain <nayna@linux.ibm.com>
-+#
-+
-+config FWSECURITYFS
-+	bool "Enable the fwsecurityfs filesystem"
++config PSERIES_FWSECURITYFS_ARCH
++	select FWSECURITYFS
++	bool "Support fwsecurityfs for pseries"
 +	help
-+	  This will build fwsecurityfs filesystem which should be mounted
-+	  on /sys/firmware/security. This filesystem can be used by
-+	  platform to expose firmware-managed variables.
++	  Enable fwsecurityfs arch specific code. This would initialize
++	  the firmware security filesystem with initial platform specific
++	  structure.
 +
-+	  If you are unsure how to answer this question, answer N.
-diff --git a/fs/fwsecurityfs/Makefile b/fs/fwsecurityfs/Makefile
++	  If you are unsure how to use it, say N.
++
+ config PAPR_SCM
+ 	depends on PPC_PSERIES && MEMORY_HOTPLUG && LIBNVDIMM
+ 	tristate "Support for the PAPR Storage Class Memory interface"
+diff --git a/arch/powerpc/platforms/pseries/Makefile b/arch/powerpc/platforms/pseries/Makefile
+index 92310202bdd7..2903cff26258 100644
+--- a/arch/powerpc/platforms/pseries/Makefile
++++ b/arch/powerpc/platforms/pseries/Makefile
+@@ -28,6 +28,7 @@ obj-$(CONFIG_PPC_SPLPAR)	+= vphn.o
+ obj-$(CONFIG_PPC_SVM)		+= svm.o
+ obj-$(CONFIG_FA_DUMP)		+= rtas-fadump.o
+ obj-$(CONFIG_PSERIES_PLPKS) += plpks.o
++obj-$(CONFIG_PSERIES_FWSECURITYFS_ARCH) += fwsecurityfs_arch.o
+ 
+ obj-$(CONFIG_SUSPEND)		+= suspend.o
+ obj-$(CONFIG_PPC_VAS)		+= vas.o vas-sysfs.o
+diff --git a/arch/powerpc/platforms/pseries/fwsecurityfs_arch.c b/arch/powerpc/platforms/pseries/fwsecurityfs_arch.c
 new file mode 100644
-index 000000000000..5c7b76228ebb
+index 000000000000..b43bd3cf7889
 --- /dev/null
-+++ b/fs/fwsecurityfs/Makefile
-@@ -0,0 +1,10 @@
-+# SPDX-License-Identifier: GPL-2.0-only
-+#
-+# Copyright (C) 2022 IBM Corporation
-+# Author: Nayna Jain <nayna@linux.ibm.com>
-+#
-+# Makefile for the firmware security filesystem
-+
-+obj-$(CONFIG_FWSECURITYFS)		+= fwsecurityfs.o
-+
-+fwsecurityfs-objs			:= super.o
-diff --git a/fs/fwsecurityfs/super.c b/fs/fwsecurityfs/super.c
-new file mode 100644
-index 000000000000..99ca4da4ab63
---- /dev/null
-+++ b/fs/fwsecurityfs/super.c
-@@ -0,0 +1,263 @@
++++ b/arch/powerpc/platforms/pseries/fwsecurityfs_arch.c
+@@ -0,0 +1,116 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/*
++ * Initialize fwsecurityfs with POWER LPAR Platform KeyStore (PLPKS)
 + * Copyright (C) 2022 IBM Corporation
 + * Author: Nayna Jain <nayna@linux.ibm.com>
++ *
 + */
 +
-+#include <linux/fs.h>
-+#include <linux/fs_context.h>
-+#include <linux/pagemap.h>
-+#include <linux/init.h>
-+#include <linux/namei.h>
-+#include <linux/magic.h>
 +#include <linux/fwsecurityfs.h>
++#include "plpks.h"
 +
-+static struct super_block *fwsecsb;
-+static struct vfsmount *mount;
-+static int mount_count;
-+static bool fwsecurityfs_initialized;
++static struct dentry *plpks_dir;
 +
-+static void fwsecurityfs_free_inode(struct inode *inode)
++static ssize_t plpks_config_file_read(struct file *file, char __user *userbuf,
++				      size_t count, loff_t *ppos)
 +{
-+	free_inode_nonrcu(inode);
-+}
++	u8 out[4];
++	u32 outlen;
++	size_t size;
++	char *name;
++	u32 data;
 +
-+static const struct super_operations fwsecurityfs_super_operations = {
-+	.statfs = simple_statfs,
-+	.free_inode = fwsecurityfs_free_inode,
-+};
++	name = file_dentry(file)->d_iname;
 +
-+static int fwsecurityfs_fill_super(struct super_block *sb,
-+				   struct fs_context *fc)
-+{
-+	static const struct tree_descr files[] = {{""}};
-+	int rc;
-+
-+	rc = simple_fill_super(sb, FWSECURITYFS_MAGIC, files);
-+	if (rc)
-+		return rc;
-+
-+	sb->s_op = &fwsecurityfs_super_operations;
-+
-+	fwsecsb = sb;
-+
-+	rc = arch_fwsecurityfs_init();
-+
-+	if (!rc)
-+		fwsecurityfs_initialized = true;
-+
-+	return rc;
-+}
-+
-+static int fwsecurityfs_get_tree(struct fs_context *fc)
-+{
-+	return get_tree_single(fc, fwsecurityfs_fill_super);
-+}
-+
-+static const struct fs_context_operations fwsecurityfs_context_ops = {
-+	.get_tree	= fwsecurityfs_get_tree,
-+};
-+
-+static int fwsecurityfs_init_fs_context(struct fs_context *fc)
-+{
-+	fc->ops = &fwsecurityfs_context_ops;
-+
-+	return 0;
-+}
-+
-+static void fwsecurityfs_kill_sb(struct super_block *sb)
-+{
-+	kill_litter_super(sb);
-+
-+	fwsecurityfs_initialized = false;
-+}
-+
-+static struct file_system_type fs_type = {
-+	.owner =	THIS_MODULE,
-+	.name =		"fwsecurityfs",
-+	.init_fs_context = fwsecurityfs_init_fs_context,
-+	.kill_sb =	fwsecurityfs_kill_sb,
-+};
-+
-+static struct dentry *fwsecurityfs_create_dentry(const char *name, umode_t mode,
-+						 u16 filesize,
-+						 struct dentry *parent,
-+						 struct dentry *dentry, void *data,
-+						 const struct file_operations *fops,
-+						 const struct inode_operations *iops)
-+{
-+	struct inode *inode;
-+	int rc;
-+	struct inode *dir;
-+	struct dentry *ldentry = dentry;
-+
-+	/* Calling simple_pin_fs() while initial mount in progress results in recursive
-+	 * call to mount.
-+	 */
-+	if (fwsecurityfs_initialized) {
-+		rc = simple_pin_fs(&fs_type, &mount, &mount_count);
-+		if (rc)
-+			return ERR_PTR(rc);
-+	}
-+
-+	dir = d_inode(parent);
-+
-+	/* For userspace created files, lock is already taken. */
-+	if (!dentry)
-+		inode_lock(dir);
-+
-+	if (!dentry) {
-+		ldentry = lookup_one_len(name, parent, strlen(name));
-+		if (IS_ERR(ldentry))
-+			goto out;
-+
-+		if (d_really_is_positive(ldentry)) {
-+			rc = -EEXIST;
-+			goto out1;
-+		}
-+	}
-+
-+	inode = new_inode(dir->i_sb);
-+	if (!inode) {
-+		rc = -ENOMEM;
-+		goto out1;
-+	}
-+
-+	inode->i_ino = get_next_ino();
-+	inode->i_mode = mode;
-+	inode->i_atime = current_time(inode);
-+	inode->i_mtime = current_time(inode);
-+	inode->i_ctime = current_time(inode);
-+	inode->i_private = data;
-+
-+	if (S_ISDIR(mode)) {
-+		inode->i_op = iops ? iops : &simple_dir_inode_operations;
-+		inode->i_fop = &simple_dir_operations;
-+		inc_nlink(inode);
-+		inc_nlink(dir);
++	if (strcmp(name, "max_object_size") == 0) {
++		outlen = sizeof(u16);
++		data = plpks_get_maxobjectsize();
++	} else if (strcmp(name, "max_object_label_size") == 0) {
++		outlen = sizeof(u16);
++		data = plpks_get_maxobjectlabelsize();
++	} else if (strcmp(name, "total_size") == 0) {
++		outlen = sizeof(u32);
++		data = plpks_get_totalsize();
++	} else if (strcmp(name, "used_space") == 0) {
++		outlen = sizeof(u32);
++		data = plpks_get_usedspace();
++	} else if (strcmp(name, "version") == 0) {
++		outlen = sizeof(u8);
++		data = plpks_get_version();
 +	} else {
-+		inode->i_fop = fops ? fops : &simple_dir_operations;
-+	}
-+
-+	if (S_ISREG(mode)) {
-+		inode_lock(inode);
-+		i_size_write(inode, filesize);
-+		inode_unlock(inode);
-+	}
-+	d_instantiate(ldentry, inode);
-+
-+	/* dget() here is required for userspace created files. */
-+	if (dentry)
-+		dget(ldentry);
-+
-+	if (!dentry)
-+		inode_unlock(dir);
-+
-+	return ldentry;
-+
-+out1:
-+	ldentry = ERR_PTR(rc);
-+
-+out:
-+	if (fwsecurityfs_initialized)
-+		simple_release_fs(&mount, &mount_count);
-+
-+	if (!dentry)
-+		inode_unlock(dir);
-+
-+	return ldentry;
-+}
-+
-+struct dentry *fwsecurityfs_create_file(const char *name, umode_t mode,
-+					u16 filesize, struct dentry *parent,
-+					struct dentry *dentry, void *data,
-+					const struct file_operations *fops)
-+{
-+	if (!parent)
-+		return ERR_PTR(-EINVAL);
-+
-+	return fwsecurityfs_create_dentry(name, mode, filesize, parent,
-+					  dentry, data, fops, NULL);
-+}
-+EXPORT_SYMBOL_GPL(fwsecurityfs_create_file);
-+
-+struct dentry *fwsecurityfs_create_dir(const char *name, umode_t mode,
-+				       struct dentry *parent,
-+				       const struct inode_operations *iops)
-+{
-+	if (!parent) {
-+		if (!fwsecsb)
-+			return ERR_PTR(-EIO);
-+		parent = fwsecsb->s_root;
-+	}
-+
-+	return fwsecurityfs_create_dentry(name, mode, 0, parent, NULL, NULL,
-+					  NULL, iops);
-+}
-+EXPORT_SYMBOL_GPL(fwsecurityfs_create_dir);
-+
-+static int fwsecurityfs_remove_dentry(struct dentry *dentry)
-+{
-+	struct inode *dir;
-+
-+	if (!dentry || IS_ERR(dentry))
 +		return -EINVAL;
-+
-+	dir = d_inode(dentry->d_parent);
-+	inode_lock(dir);
-+	if (simple_positive(dentry)) {
-+		dget(dentry);
-+		if (d_is_dir(dentry))
-+			simple_rmdir(dir, dentry);
-+		else
-+			simple_unlink(dir, dentry);
-+		d_delete(dentry);
-+		dput(dentry);
 +	}
-+	inode_unlock(dir);
 +
-+	/* Once fwsecurityfs_initialized is set to true, calling this for
-+	 * removing files created during initial mount might result in
-+	 * imbalance of simple_pin_fs() and simple_release_fs() calls.
-+	 */
-+	if (fwsecurityfs_initialized)
-+		simple_release_fs(&mount, &mount_count);
++	memcpy(out, &data, outlen);
 +
-+	return 0;
++	size = simple_read_from_buffer(userbuf, count, ppos, out, outlen);
++
++	return size;
 +}
 +
-+int fwsecurityfs_remove_dir(struct dentry *dentry)
-+{
-+	if (!d_is_dir(dentry))
-+		return -EPERM;
-+
-+	return fwsecurityfs_remove_dentry(dentry);
-+}
-+EXPORT_SYMBOL_GPL(fwsecurityfs_remove_dir);
-+
-+int fwsecurityfs_remove_file(struct dentry *dentry)
-+{
-+	return fwsecurityfs_remove_dentry(dentry);
++static const struct file_operations plpks_config_file_operations = {
++	.open   = simple_open,
++	.read   = plpks_config_file_read,
++	.llseek = no_llseek,
 +};
-+EXPORT_SYMBOL_GPL(fwsecurityfs_remove_file);
 +
-+static int __init fwsecurityfs_init(void)
++static int create_plpks_dir(void)
 +{
-+	int rc;
++	struct dentry *config_dir;
++	struct dentry *fdentry;
 +
-+	rc = sysfs_create_mount_point(firmware_kobj, "security");
-+	if (rc)
-+		return rc;
-+
-+	rc = register_filesystem(&fs_type);
-+	if (rc) {
-+		sysfs_remove_mount_point(firmware_kobj, "security");
-+		return rc;
++	if (!IS_ENABLED(CONFIG_PSERIES_PLPKS) || !plpks_is_available()) {
++		pr_warn("Platform KeyStore is not available on this LPAR\n");
++		return 0;
 +	}
 +
++	plpks_dir = fwsecurityfs_create_dir("plpks", S_IFDIR | 0755, NULL,
++					    NULL);
++	if (IS_ERR(plpks_dir)) {
++		pr_err("Unable to create PLPKS dir: %ld\n", PTR_ERR(plpks_dir));
++		return PTR_ERR(plpks_dir);
++	}
++
++	config_dir = fwsecurityfs_create_dir("config", S_IFDIR | 0755, plpks_dir, NULL);
++	if (IS_ERR(config_dir)) {
++		pr_err("Unable to create config dir: %ld\n", PTR_ERR(config_dir));
++		return PTR_ERR(config_dir);
++	}
++
++	fdentry = fwsecurityfs_create_file("max_object_size", S_IFREG | 0444,
++					   sizeof(u16), config_dir, NULL, NULL,
++					   &plpks_config_file_operations);
++	if (IS_ERR(fdentry))
++		pr_err("Could not create max object size %ld\n", PTR_ERR(fdentry));
++
++	fdentry = fwsecurityfs_create_file("max_object_label_size", S_IFREG | 0444,
++					   sizeof(u16), config_dir, NULL, NULL,
++					   &plpks_config_file_operations);
++	if (IS_ERR(fdentry))
++		pr_err("Could not create max object label size %ld\n", PTR_ERR(fdentry));
++
++	fdentry = fwsecurityfs_create_file("total_size", S_IFREG | 0444,
++					   sizeof(u32), config_dir, NULL, NULL,
++					   &plpks_config_file_operations);
++	if (IS_ERR(fdentry))
++		pr_err("Could not create total size %ld\n", PTR_ERR(fdentry));
++
++	fdentry = fwsecurityfs_create_file("used_space", S_IFREG | 0444,
++					   sizeof(u32), config_dir, NULL, NULL,
++					   &plpks_config_file_operations);
++	if (IS_ERR(fdentry))
++		pr_err("Could not create used space %ld\n", PTR_ERR(fdentry));
++
++	fdentry = fwsecurityfs_create_file("version", S_IFREG | 0444,
++					   sizeof(u8), config_dir, NULL, NULL,
++					   &plpks_config_file_operations);
++	if (IS_ERR(fdentry))
++		pr_err("Could not create version %ld\n", PTR_ERR(fdentry));
++
 +	return 0;
 +}
-+core_initcall(fwsecurityfs_init);
-+MODULE_DESCRIPTION("Firmware Security Filesystem");
-+MODULE_AUTHOR("Nayna Jain");
-+MODULE_LICENSE("GPL");
-diff --git a/include/linux/fwsecurityfs.h b/include/linux/fwsecurityfs.h
-new file mode 100644
-index 000000000000..ed8f328f3133
---- /dev/null
-+++ b/include/linux/fwsecurityfs.h
-@@ -0,0 +1,29 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (C) 2022 IBM Corporation
-+ * Author: Nayna Jain <nayna@linux.ibm.com>
-+ */
 +
-+#ifndef _FWSECURITYFS_H_
-+#define _FWSECURITYFS_H_
-+
-+#include <linux/ctype.h>
-+#include <linux/fs.h>
-+
-+struct dentry *fwsecurityfs_create_file(const char *name, umode_t mode,
-+					u16 filesize, struct dentry *parent,
-+					struct dentry *dentry, void *data,
-+					const struct file_operations *fops);
-+
-+int fwsecurityfs_remove_file(struct dentry *dentry);
-+struct dentry *fwsecurityfs_create_dir(const char *name, umode_t mode,
-+				       struct dentry *parent,
-+				       const struct inode_operations *iops);
-+int fwsecurityfs_remove_dir(struct dentry *dentry);
-+
-+static int arch_fwsecurityfs_init(void)
++int arch_fwsecurityfs_init(void)
 +{
-+	return 0;
++	return create_plpks_dir();
 +}
-+
-+#endif /* _FWSECURITYFS_H_ */
-diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
-index 6325d1d0e90f..553a5fdfabce 100644
---- a/include/uapi/linux/magic.h
-+++ b/include/uapi/linux/magic.h
-@@ -53,6 +53,7 @@
- #define QNX4_SUPER_MAGIC	0x002f		/* qnx4 fs detection */
- #define QNX6_SUPER_MAGIC	0x68191122	/* qnx6 fs detection */
- #define AFS_FS_MAGIC		0x6B414653
-+#define FWSECURITYFS_MAGIC         0x5345434e      /* "SECM" */
+diff --git a/include/linux/fwsecurityfs.h b/include/linux/fwsecurityfs.h
+index ed8f328f3133..38fcb3cb374e 100644
+--- a/include/linux/fwsecurityfs.h
++++ b/include/linux/fwsecurityfs.h
+@@ -21,9 +21,13 @@ struct dentry *fwsecurityfs_create_dir(const char *name, umode_t mode,
+ 				       const struct inode_operations *iops);
+ int fwsecurityfs_remove_dir(struct dentry *dentry);
  
++#ifdef CONFIG_PSERIES_FWSECURITYFS_ARCH
++int arch_fwsecurityfs_init(void);
++#else
+ static int arch_fwsecurityfs_init(void)
+ {
+ 	return 0;
+ }
++#endif
  
- #define REISERFS_SUPER_MAGIC	0x52654973	/* used by gcc */
+ #endif /* _FWSECURITYFS_H_ */
 -- 
 2.31.1
 
