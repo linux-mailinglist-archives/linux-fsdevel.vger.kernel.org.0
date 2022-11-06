@@ -2,382 +2,225 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B2BC361E4F0
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Nov 2022 18:37:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9CA7C61E64D
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Nov 2022 22:09:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230384AbiKFRhE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Nov 2022 12:37:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42056 "EHLO
+        id S230426AbiKFVJ4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Nov 2022 16:09:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230208AbiKFRhC (ORCPT
+        with ESMTP id S230365AbiKFVJs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Nov 2022 12:37:02 -0500
-Received: from mail-oi1-x22b.google.com (mail-oi1-x22b.google.com [IPv6:2607:f8b0:4864:20::22b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1AD096149
-        for <linux-fsdevel@vger.kernel.org>; Sun,  6 Nov 2022 09:37:01 -0800 (PST)
-Received: by mail-oi1-x22b.google.com with SMTP id t62so10039477oib.12
-        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Nov 2022 09:37:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/EZRGS2ONqkmKzH8Y6uzMPowd4ytPbzW+YBZn6pM7uo=;
-        b=Uy1XsR4g07JmOEiqjhfX5OuWPFBTyo91Jb8+KZozddficDV3gqwlk/lZi+X6ETtWhx
-         inSoLU046qEQgdGR80QwNp3huAbqb51Mc139QXCf/OpzgdviYuJt+fs79qdsMtNwMa3B
-         2izMbc6seW8sIJjbP4kJp1+HdVJqrGyjAwJkIeTRkEaDHkTlY3zh+Ah2w5lgVUbC7S/A
-         EHgD5AZN+OZOf2aHs2Z6B4+2S51j5Hz6SvjTjylfIma7uojbHjxPrAxYhBq7t0MmagmG
-         oCtP4BG34XwfFvMblU6ptDYwDDc6FfpkztiJlUOL+Ct3McxY8trlJ6l/NOxTwYwLfh/Z
-         l/QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/EZRGS2ONqkmKzH8Y6uzMPowd4ytPbzW+YBZn6pM7uo=;
-        b=rZ0O1ptdtyywIR6QmH3EcvUy3on5oVUi/Vd/5jg+G71rnNdlrrDIEGLS8AD4jguFpP
-         QoS2Tq4+Ps5CJi4dwydmTQWaaU6XtjY7gGFOUvvGlMTIxB0yfP2R86oInXcFm5rwNHKi
-         fTQAVN9yvqDm8U+XDEektg+U1rEqmX8UUi2hOGkexJ1WX6ksyucZ+oOCOaoJC8Jkc0zq
-         ygWwGTxazelXElNv1opJdewkFBevOIHz2ewyhyAVtti8GwZYhZs0n2SIecxWh77N5Hg0
-         JxWSA1p43inQX+HLGGCPZMKoPo31JifsiHT28pryoB0u5Z//OFoVaQBhIxqJycS16FXo
-         E0Rg==
-X-Gm-Message-State: ACrzQf2apq0mjzBxBPLW89LsknT+/OEbmgEl5Xo1ac+a11biDfMbHJwC
-        yBRaSJlavCD0SrveH/1BVErSuZDUSXrYDUAJGTMtwQ==
-X-Google-Smtp-Source: AMsMyM5rCxfd7DGU4hnvTQ/clwiPXymXpYnHdwwQxX3A6zcNqKLnXzSzDAQzFopNM83Oj4rloZIDZV/ljpcnsNeaP08=
-X-Received: by 2002:a05:6808:1184:b0:350:f681:8c9a with SMTP id
- j4-20020a056808118400b00350f6818c9amr25188541oil.282.1667756220128; Sun, 06
- Nov 2022 09:37:00 -0800 (PST)
+        Sun, 6 Nov 2022 16:09:48 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC9411C02;
+        Sun,  6 Nov 2022 13:09:13 -0800 (PST)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A6KY9bE029827;
+        Sun, 6 Nov 2022 21:08:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-transfer-encoding : mime-version; s=pp1;
+ bh=FCFmmf5SMlz4D4zKWJbVwaLDA71ZZuVqOiFaCs4nqXY=;
+ b=QTlLeOTYDd7A2oozuLhuTb0TjcuCsgNgzdNuWOdTUSbpd0rH83ostwjx5QjdfTy7TLRa
+ 3+wPGuGmI8o1mBSXjLAUEXodyKnSMxYBYEyzU0zO/kOFN4osqqtiaTSUEJPoVh/UfQAs
+ vXm/1LglvyPApCfg5Qp/nmtIUL27UFY13NOX7p1cFuoDDjGXu9WHQihEe/40w1KxoSiw
+ C05hj2BV+JgI5EtTG5Z2t88PP17A6rNKH7sj5xCYDnBwkHrT/f2WQ/ofRWvRp6cP8Htf
+ Fr3xErmq0TEh8e0mmDE6zj6P+t69Ac6+E3Ti29FM/6zgLAXGZ4FYJY/IKSrzOzr0WvRE gA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3kp1f652ak-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 06 Nov 2022 21:08:08 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2A6L87SQ001447;
+        Sun, 6 Nov 2022 21:08:07 GMT
+Received: from ppma04fra.de.ibm.com (6a.4a.5195.ip4.static.sl-reverse.com [149.81.74.106])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3kp1f652a8-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 06 Nov 2022 21:08:07 +0000
+Received: from pps.filterd (ppma04fra.de.ibm.com [127.0.0.1])
+        by ppma04fra.de.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2A6L6Eh8012622;
+        Sun, 6 Nov 2022 21:08:05 GMT
+Received: from b06avi18626390.portsmouth.uk.ibm.com (b06avi18626390.portsmouth.uk.ibm.com [9.149.26.192])
+        by ppma04fra.de.ibm.com with ESMTP id 3kngmqh79j-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Sun, 06 Nov 2022 21:08:05 +0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06avi18626390.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2A6L2N8P44630406
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 6 Nov 2022 21:02:23 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 47D3A11C050;
+        Sun,  6 Nov 2022 21:08:02 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 171B311C04A;
+        Sun,  6 Nov 2022 21:07:58 +0000 (GMT)
+Received: from li-4b5937cc-25c4-11b2-a85c-cea3a66903e4.ibm.com.com (unknown [9.211.78.124])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Sun,  6 Nov 2022 21:07:57 +0000 (GMT)
+From:   Nayna Jain <nayna@linux.ibm.com>
+To:     linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org
+Cc:     linux-efi@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell Currey <ruscur@russell.cc>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>
+Subject: [PATCH 0/4] powerpc/pseries: expose firmware security variables via filesystem
+Date:   Sun,  6 Nov 2022 16:07:40 -0500
+Message-Id: <20221106210744.603240-1-nayna@linux.ibm.com>
+X-Mailer: git-send-email 2.31.1
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 4ST7mGbUOu9sIIIKura1pB350hQLJg8K
+X-Proofpoint-GUID: OqnmsFptL42RZI1SpLC9JCSG9pasCybZ
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-References: <Y2QR0EDvq7p9i1xw@nvidia.com> <Y2Qd2dBqpOXuJm22@casper.infradead.org>
- <Y2QfkszbNaI297nl@nvidia.com> <CACT4Y+YViHZh0xzy_=RU=vUrM145e9hsD09CyKShUbUmH=1Cdg@mail.gmail.com>
- <Y2RbCUdEY2syxRLW@nvidia.com> <CACT4Y+aENA5FouC3fkUHiYqo0hv9xdRoRS043ukJf+qPZU1gbQ@mail.gmail.com>
- <Y2VT6b/AgwddWxYj@nvidia.com> <CACT4Y+aog92JBEGqga1QxZ7w6iPsEvEKE=6v7m78pROGAQ7KEA@mail.gmail.com>
- <6e33dd02-99b0-0899-aed5-07f770340a74@bytedance.com> <be6a67b0-479f-db0a-fa69-764713135d70@bytedance.com>
-In-Reply-To: <be6a67b0-479f-db0a-fa69-764713135d70@bytedance.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Sun, 6 Nov 2022 09:36:48 -0800
-Message-ID: <CACT4Y+Zc21Aj+5KjeTEsvOysJGHRYDSKgu_+_xN1LUYfG_H0sg@mail.gmail.com>
-Subject: Re: xarray, fault injection and syzkaller
-To:     Qi Zheng <zhengqi.arch@bytedance.com>
-Cc:     Jason Gunthorpe <jgg@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Akinobu Mita <akinobu.mita@gmail.com>,
-        linux-fsdevel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        syzkaller <syzkaller@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-06_14,2022-11-03_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 phishscore=0 adultscore=0 bulkscore=0 mlxlogscore=999
+ impostorscore=0 suspectscore=0 priorityscore=1501 mlxscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211060188
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 5 Nov 2022 at 05:16, Qi Zheng <zhengqi.arch@bytedance.com> wrote:
-> > On 2022/11/5 02:21, Dmitry Vyukov wrote:
-> >> On Fri, 4 Nov 2022 at 11:03, Jason Gunthorpe <jgg@nvidia.com> wrote:
-> >>>
-> >>> On Fri, Nov 04, 2022 at 10:47:17AM -0700, Dmitry Vyukov wrote:
-> >>>>>> Do we know how common/useful such an allocation pattern is?
-> >>>>>
-> >>>>> I have coded something like this a few times, in my cases it is
-> >>>>> usually something like: try to allocate a big chunk of memory hoping
-> >>>>> for a huge page, then fall back to a smaller allocation
-> >>>>>
-> >>>>> Most likely the key consideration is that the callsites are using
-> >>>>> GFP_NOWARN, so perhaps we can just avoid decrementing the nth on a
-> >>>>> NOWARN case assuming that another allocation attempt will closely
-> >>>>> follow?
-> >>>>
-> >>>> GFP_NOWARN is also extensively used for allocations with
-> >>>> user-controlled size, e.g.:
-> >>>> https://elixir.bootlin.com/linux/v6.1-rc3/source/net/unix/af_unix.c#L3451
-> >>>>
-> >>>> That's different and these allocations are usually not repeated.
-> >>>> So looking at GFP_NOWARN does not look like the right thing to do.
-> >>>
-> >>> This may be the best option then, arguably perhaps even more
-> >>> "realistic" than normal fail_nth as in a real system if this stuff
-> >>> starts failing there is a good chance things from then on will fail
-> >>> too during the error cleanup.
-> >>>
-> >>>>> However, this would also have to fix the obnoxious behavior of fail
-> >>>>> nth where it fails its own copy_from_user on its write system call -
-> >>>>> meaning there would be no way to turn it off.
-> >>>>
-> >>>> Oh, interesting. We added failing of copy_from/to_user later and did
-> >>>> not consider such interaction.
-> >>>> Filed https://bugzilla.kernel.org/show_bug.cgi?id=216660 for this.
-> >>>
-> >>> Oh, I will tell you the other two bugish things I noticed
-> >>>
-> >>> __should_failslab() has this:
-> >>>
-> >>>          if (gfpflags & __GFP_NOWARN)
-> >>>                  failslab.attr.no_warn = true;
-> >>>
-> >>>          return should_fail(&failslab.attr, s->object_size);
-> >>>
-> >>> Which always permanently turns off no_warn for slab during early
-> >>> boot. This is why syzkaller reports are so confusing. They trigger a
-> >>> slab fault injection, which in all other cases gives a notification
-> >>> backtrace, but in slab cases there is no hint about the fault
-> >>> injection in the log.
-> >>
-> >> Ouch, this looks like a bug in:
-> >>
-> >> commit 3f913fc5f9745613088d3c569778c9813ab9c129
-> >> Author: Qi Zheng <zhengqi.arch@bytedance.com>
-> >> Date:   Thu May 19 14:08:55 2022 -0700
-> >>       mm: fix missing handler for __GFP_NOWARN
-> >>
-> >> +Qi could you please fix it?
-> >>
-> >> At the very least the local gfpflags should not alter the global
-> >> failslab.attr that is persistent and shared by all tasks.
-> >
-> > Oh, It indeed shouldn't alter the global failslab.attr, I'll fix it.
->
-> How about the following changes? If it's ok, I will send this fix patch.
-> Thanks. :)
+PowerVM provides an isolated Platform KeyStore (PKS)[1] storage allocation
+for each logical partition (LPAR) with individually managed access controls
+to store sensitive information securely. The Linux kernel can access this
+storage by interfacing with the hypervisor using a new set of hypervisor
+calls.
+ 
+The PowerVM guest secure boot feature intends to use PKS for the purpose of
+storing public keys. Secure boot requires public keys in order to verify
+GRUB and the boot kernel. To allow authenticated manipulation of keys, PKS
+supports variables to store key authorities namely, PK and KEK. Other
+variables are used to store code signing keys, db and grubdb. It also
+supports deny lists to disallow booting GRUB or kernels even if they are
+signed with valid keys. This is done via deny list databases stored in dbx
+and sbat variables. These variables are stored in PKS and are managed and
+controlled by firmware.
 
-I think the interface design question is mostly to Akinobu as fault
-injection maintainer.
+The purpose of this patchset is to add the userspace interface to manage
+these variables.
 
-> diff --git a/include/linux/fault-inject.h b/include/linux/fault-inject.h
-> index 9f6e25467844..b61a3fb7a2a3 100644
-> --- a/include/linux/fault-inject.h
-> +++ b/include/linux/fault-inject.h
-> @@ -20,7 +20,6 @@ struct fault_attr {
->          atomic_t space;
->          unsigned long verbose;
->          bool task_filter;
-> -       bool no_warn;
->          unsigned long stacktrace_depth;
->          unsigned long require_start;
->          unsigned long require_end;
-> @@ -40,12 +39,12 @@ struct fault_attr {
->                  .ratelimit_state = RATELIMIT_STATE_INIT_DISABLED,       \
->                  .verbose = 2,                                           \
->                  .dname = NULL,                                          \
-> -               .no_warn = false,                                       \
->          }
->
->   #define DECLARE_FAULT_ATTR(name) struct fault_attr name =
-> FAULT_ATTR_INITIALIZER
->   int setup_fault_attr(struct fault_attr *attr, char *str);
->   bool should_fail(struct fault_attr *attr, ssize_t size);
-> +bool should_fail_gfp(struct fault_attr *attr, ssize_t size, gfp_t
-> gfpflags);
->
->   #ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
->
-> diff --git a/lib/fault-inject.c b/lib/fault-inject.c
-> index 4b8fafce415c..95af50832770 100644
-> --- a/lib/fault-inject.c
-> +++ b/lib/fault-inject.c
-> @@ -41,9 +41,6 @@ EXPORT_SYMBOL_GPL(setup_fault_attr);
->
->   static void fail_dump(struct fault_attr *attr)
->   {
-> -       if (attr->no_warn)
-> -               return;
-> -
->          if (attr->verbose > 0 && __ratelimit(&attr->ratelimit_state)) {
->                  printk(KERN_NOTICE "FAULT_INJECTION: forcing a failure.\n"
->                         "name %pd, interval %lu, probability %lu, "
-> @@ -98,12 +95,7 @@ static inline bool fail_stacktrace(struct fault_attr
-> *attr)
->
->   #endif /* CONFIG_FAULT_INJECTION_STACKTRACE_FILTER */
->
-> -/*
-> - * This code is stolen from failmalloc-1.0
-> - * http://www.nongnu.org/failmalloc/
-> - */
-> -
-> -bool should_fail(struct fault_attr *attr, ssize_t size)
-> +bool should_fail_check(struct fault_attr *attr, ssize_t size)
->   {
->          bool stack_checked = false;
->
-> @@ -118,7 +110,7 @@ bool should_fail(struct fault_attr *attr, ssize_t size)
->                          fail_nth--;
->                          WRITE_ONCE(current->fail_nth, fail_nth);
->                          if (!fail_nth)
-> -                               goto fail;
-> +                               return true;
->
->                          return false;
->                  }
-> @@ -151,7 +143,19 @@ bool should_fail(struct fault_attr *attr, ssize_t size)
->          if (attr->probability <= get_random_u32_below(100))
->                  return false;
->
-> -fail:
-> +       return true;
-> +}
-> +
-> +/*
-> + * This code is stolen from failmalloc-1.0
-> + * http://www.nongnu.org/failmalloc/
-> + */
-> +
-> +bool should_fail(struct fault_attr *attr, ssize_t size)
-> +{
-> +       if (!should_fail_check(attr, size))
-> +               return false;
-> +
->          fail_dump(attr);
->
->          if (atomic_read(&attr->times) != -1)
-> @@ -161,6 +165,21 @@ bool should_fail(struct fault_attr *attr, ssize_t size)
->   }
->   EXPORT_SYMBOL_GPL(should_fail);
->
-> +bool should_fail_gfp(struct fault_attr *attr, ssize_t size, gfp_t gfpflags)
-> +{
-> +       if (!should_fail_check(attr, size))
-> +               return false;
-> +
-> +       if (!(gfpflags & __GFP_NOWARN))
-> +               fail_dump(attr);
-> +
-> +       if (atomic_read(&attr->times) != -1)
-> +               atomic_dec_not_zero(&attr->times);
-> +
-> +       return true;
-> +}
-> +EXPORT_SYMBOL_GPL(should_fail_gfp);
+Currently, OpenPOWER exposes variables via sysfs, while EFI platforms have
+used sysfs and then moved to their own efivarfs filesystem. The recent
+coco feature uses securityfs to expose secrets to TEEs. All of these
+environments are different both syntactically and semantically.
 
-should_fail/should_fail_gfp duplicate some code + gfp is slab-specific
-(while clumsy to use for other fault injection types + we won't be
-able to pass any runtime flags that are not present in gfp). So I
-would go either with:
+securityfs is meant for Linux security subsystems to expose policies, logs,
+and other information and it does not interact with firmware for managing
+these variables. However, there are various firmware security features that
+expose their variables for user management via pseudo filesystems as
+discussed above. There is currently no single place to expose these
+variables. Different platforms use sysfs, platform-specific filesystems
+such as efivars, or securityfs as they have found appropriate. This has
+resulted in interfaces scattered around the tree. The multiple interfac
+ problem can be addressed by providing a single pseudo filesystem for all
+platforms to expose their variables for firmware security features. Doing
+so simplifies the interface for users of these platforms.
 
-bool should_fail(struct fault_attr *attr, ssize_t size, bool nowarn);
+This patchset introduces a new firmware security pseudo filesystem,
+fwsecurityfs. Any platform can expose the variables that are required by
+firmware security features via this interface. It provides a common place
+for exposing variables managed by firmware while still allowing platforms
+to implement their own underlying semantics.
 
-or even more extensible interface would be:
+This design consists of two parts:
 
-enum fault_flags {
-  fault_nowarn = 1 << 0,
-};
+1. Firmware security filesystem (fwsecurityfs) that provides platforms
+   with APIs to create their own underlying directory and file structure.
+   It should be mounted on a new well-known mountpoint,
+   /sys/firmware/security.
+2. Platform-specific layer for these variables that implements underlying
+   semantics. Platforms can expose their variables as files allowing
+   read/write/add/delete operations by defining their own inode and file
+   functions.
 
-bool should_fail(struct fault_attr *attr, ssize_t size, fault_flags flags);
+This patchset adds:
+1. An update to the PLPKS driver to support the signed update H_CALL for
+   authenticated variables used in guest secure boot.
+2. A firmware security filesystem named fwsecurityfs.
+3. An interface to expose secure variables stored in the LPAR's PKS via
+   fwsecurityfs.
+ 
+Note: This patchset is not intended to modify existing interfaces already
+used by OpenPOWER or EFI but rather to ensure that new similar interfaces
+have a common base going forward.
 
-And if we don't want to change all callers to avoid code duplication:
+The first patch related to PLPKS driver is dependent on bugfixes posted
+as part of patchset[4].
 
-bool should_fail_ex(struct fault_attr *attr, ssize_t size, fault_flags flags);
-bool should_fail(struct fault_attr *attr, ssize_t size) {
-  return should_fail_ex(attr, size, 0);
-}
+Changelog:
 
+First non-RFC version after RFC versions[2,3].
+Feedback from non-RFC version are included to update fwsecurityfs.
+ * PLPKS driver patch had been upstreamed separately. In this set, Patch 1
+ updates existing driver to include signed update support.
+ * Fix fwsecurityfs to also pin the file system, refactor and cleanup. The
+ consideration of namespacing has been done and is concluded that currently
+ no firmware object or entity is handled by namespacing. The purpose of
+ fwsecurityfs is to expose firmware space which is similar to exposing
+ space in TPM. And TPM is also not currently namespaced. If containers have
+ to make use of some such space in the future, it would have to be some
+ software space. With that, this currently only considers the host using the
+ firmware space.
+ * Fix secvars support for powerpc. It supports policy handling within the
+ kernel, supports UCS2 naming and cleanups.
+ * Read-only PLPKS configuration is exposed.
+ * secvars directory is now moved within a new parent directory plpks.
+ * Patch is now no more an RFC version.
 
+[1] https://community.ibm.com/community/user/power/blogs/chris-engel1/2020/11/20/powervm-introduces-the-platform-keystore
+[2] RFC v2: https://lore.kernel.org/linuxppc-dev/20220622215648.96723-1-nayna@linux.ibm.com/ 
+[3] RFC v1: https://lore.kernel.org/linuxppc-dev/20220122005637.28199-1-nayna@linux.ibm.com/
+[4] https://lore.kernel.org/linuxppc-dev/20221106205839.600442-1-nayna@linux.ibm.com/T/#t
 
->   #ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
->
->   static int debugfs_ul_set(void *data, u64 val)
-> diff --git a/mm/failslab.c b/mm/failslab.c
-> index 58df9789f1d2..21338b256791 100644
-> --- a/mm/failslab.c
-> +++ b/mm/failslab.c
-> @@ -30,10 +30,7 @@ bool __should_failslab(struct kmem_cache *s, gfp_t
-> gfpflags)
->          if (failslab.cache_filter && !(s->flags & SLAB_FAILSLAB))
->                  return false;
->
-> -       if (gfpflags & __GFP_NOWARN)
-> -               failslab.attr.no_warn = true;
-> -
-> -       return should_fail(&failslab.attr, s->object_size);
-> +       return should_fail_gfp(&failslab.attr, s->object_size, gfpflags);
->   }
->
->   static int __init setup_failslab(char *str)
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index 7192ded44ad0..4e70b5599ada 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -3912,10 +3912,7 @@ static bool __should_fail_alloc_page(gfp_t
-> gfp_mask, unsigned int order)
->                          (gfp_mask & __GFP_DIRECT_RECLAIM))
->                  return false;
->
-> -       if (gfp_mask & __GFP_NOWARN)
-> -               fail_page_alloc.attr.no_warn = true;
-> -
-> -       return should_fail(&fail_page_alloc.attr, 1 << order);
-> +       return should_fail_gfp(&fail_page_alloc.attr, 1 << order, gfp_mask);
->   }
->
->   #ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
->
-> >
-> > But a warning should not be printed for callers that currently specify
-> > __GFP_NOWARN, because that could lead to deadlocks, such as the deadlock
-> > case mentioned in commit 6b9dbedbe349 ("tty: fix deadlock caused by
-> > calling printk() under tty_port->lock").
-> >
-> > Thanks,
-> > Qi
-> >
-> >>
-> >> But I am not sure if we really don't want to issue the fault injection
-> >> stack in this case. It's not a WARNING, it's merely an information
-> >> message. It looks useful in all cases, even with GFP_NOWARN. Why
-> >> should it be suppressed?
-> >>
-> >>
-> >>> Once that is fixed we can quickly explain why the socketpair() example
-> >>> in the docs shows success ret codes in the middle of the sweep when
-> >>> run on syzkaller kernels
-> >>>
-> >>> fail_nth interacts badly with other kernel features typically enabled
-> >>> in syzkaller kernels. Eg it fails in hidden kmemleak instrumentation:
-> >>>
-> >>> [   18.499559] FAULT_INJECTION: forcing a failure.
-> >>> [   18.499559] name failslab, interval 1, probability 0, space 0,
-> >>> times 0
-> >>> [   18.499720] CPU: 10 PID: 386 Comm: iommufd_fail_nt Not tainted
-> >>> 6.1.0-rc3+ #34
-> >>> [   18.499826] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009),
-> >>> BIOS rel-1.13.0-0-gf21b5a4aeb02-prebuilt.qemu.org 04/01/2014
-> >>> [   18.499971] Call Trace:
-> >>> [   18.500010]  <TASK>
-> >>> [   18.500048]  show_stack+0x3d/0x3f
-> >>> [   18.500114]  dump_stack_lvl+0x92/0xbd
-> >>> [   18.500171]  dump_stack+0x15/0x17
-> >>> [   18.500232]  should_fail.cold+0x5/0xa
-> >>> [   18.500291]  __should_failslab+0xb6/0x100
-> >>> [   18.500349]  should_failslab+0x9/0x20
-> >>> [   18.500416]  kmem_cache_alloc+0x64/0x4e0
-> >>> [   18.500477]  ? __create_object+0x40/0xc50
-> >>> [   18.500539]  __create_object+0x40/0xc50
-> >>> [   18.500620]  ? kasan_poison+0x3a/0x50
-> >>> [   18.500690]  ? kasan_unpoison+0x28/0x50
-> >>> [***18.500753]  kmemleak_alloc+0x24/0x30
-> >>> [   18.500816]  __kmem_cache_alloc_node+0x1de/0x400
-> >>> [   18.500900]  ? iopt_alloc_area_pages+0x95/0x560 [iommufd]
-> >>> [   18.500993]  kmalloc_trace+0x26/0x110
-> >>> [   18.501059]  iopt_alloc_area_pages+0x95/0x560 [iommufd]
-> >>>
-> >>> Which has the consequence of syzkaller wasting half its fail_nth
-> >>> effort because it is triggering failures in hidden instrumentation
-> >>> that has no impact on the main code path.
-> >>>
-> >>> Maybe a kmem_cache_alloc_no_fault_inject() would be helpful for a few
-> >>> cases.
-> >>>
-> >>> Jason
-> >
->
-> --
-> Thanks,
-> Qi
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/be6a67b0-479f-db0a-fa69-764713135d70%40bytedance.com.
+Nayna Jain (4):
+  powerpc/pseries: Add new functions to PLPKS driver
+  fs: define a firmware security filesystem named fwsecurityfs
+  powerpc/pseries: initialize fwsecurityfs with plpks arch-specific
+    structure
+  powerpc/pseries: expose authenticated variables stored in LPAR PKS
+
+ arch/powerpc/include/asm/hvcall.h             |   3 +-
+ arch/powerpc/platforms/pseries/Kconfig        |  20 +
+ arch/powerpc/platforms/pseries/Makefile       |   2 +
+ .../platforms/pseries/fwsecurityfs_arch.c     | 124 ++++++
+ arch/powerpc/platforms/pseries/plpks.c        | 112 +++++-
+ arch/powerpc/platforms/pseries/plpks.h        |  38 ++
+ arch/powerpc/platforms/pseries/secvars.c      | 365 ++++++++++++++++++
+ fs/Kconfig                                    |   1 +
+ fs/Makefile                                   |   1 +
+ fs/fwsecurityfs/Kconfig                       |  14 +
+ fs/fwsecurityfs/Makefile                      |  10 +
+ fs/fwsecurityfs/super.c                       | 263 +++++++++++++
+ include/linux/fwsecurityfs.h                  |  33 ++
+ include/uapi/linux/magic.h                    |   1 +
+ 14 files changed, 981 insertions(+), 6 deletions(-)
+ create mode 100644 arch/powerpc/platforms/pseries/fwsecurityfs_arch.c
+ create mode 100644 arch/powerpc/platforms/pseries/secvars.c
+ create mode 100644 fs/fwsecurityfs/Kconfig
+ create mode 100644 fs/fwsecurityfs/Makefile
+ create mode 100644 fs/fwsecurityfs/super.c
+ create mode 100644 include/linux/fwsecurityfs.h
+
+-- 
+2.31.1
