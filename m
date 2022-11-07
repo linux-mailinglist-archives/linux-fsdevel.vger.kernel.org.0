@@ -2,48 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7303661FC6F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Nov 2022 19:00:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 187B661FC72
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Nov 2022 19:00:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232788AbiKGSAN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Nov 2022 13:00:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40118 "EHLO
+        id S232625AbiKGSAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Nov 2022 13:00:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40166 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232802AbiKGR7r (ORCPT
+        with ESMTP id S232553AbiKGR7u (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Nov 2022 12:59:47 -0500
-Received: from mx0a-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF35D24F15
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Nov 2022 09:56:23 -0800 (PST)
-Received: from pps.filterd (m0001303.ppops.net [127.0.0.1])
-        by m0001303.ppops.net (8.17.1.5/8.17.1.5) with ESMTP id 2A7GlmMm030717
-        for <linux-fsdevel@vger.kernel.org>; Mon, 7 Nov 2022 09:56:22 -0800
+        Mon, 7 Nov 2022 12:59:50 -0500
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A37342A95D
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Nov 2022 09:56:24 -0800 (PST)
+Received: from pps.filterd (m0148460.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.17.1.5/8.17.1.5) with ESMTP id 2A7Glivq023222
+        for <linux-fsdevel@vger.kernel.org>; Mon, 7 Nov 2022 09:56:23 -0800
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=meta.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references : mime-version :
  content-transfer-encoding : content-type; s=s2048-2021-q4;
- bh=fviXk0LNnrl5sy4e4CtOb1CjSHn6NFyFT8uwVNkAmF0=;
- b=ah09K/zJJOQVmAgrVycHLsq3Z79Wib27q9M2d7FBm702V9fbhplzmkV9VLrZXIbbre6V
- LjVLGeyEYwEqE9xIME9w8TJGHfW2+Ror0Uh1aBQp2Ahy+iLKtnodUBMRQnoeRDo+iwbE
- yzG47IdjpZe5iWudeCQmBphNrt3dWHKgN3MQynQ7e0w/kTaytFEoAc7dRkub/5ULiMoa
- FKBlmw0RS2n/6E1pyaxJLCuEsu+jzQMY4BmgUyn7XZTl3WtOqpf0XBydN/2+nFwvoKZD
- 0bqSTcIo8R1iDEZUlLfsEUYENOZwzoQ48Vrahht74CFLKv70qdI+v4GxvglUiJr0AV0f pQ== 
-Received: from mail.thefacebook.com ([163.114.132.120])
-        by m0001303.ppops.net (PPS) with ESMTPS id 3knkgvh5t5-1
+ bh=L3jw1UOj6ixjglp00dy1V087hjPkrNjvSa5Six2yGI0=;
+ b=M9ZqP5hok/+fvIkhOQjZnDGyICKctDvZD2af06hYRhVQrIT0I5R1DwRvlKCf/iwVMeot
+ rOMpxVG2phTo7Fd6Uo1xnrNJ8keushyttYBf70d3Q/K7ZzrxZ+FuN2rUNLTXzEO8tGwp
+ IB/7roO7MZ1RswdW3hQ/SonoJEaCrltoU3uGWjTuf+yWw0CxokdpWL8JjGCTvmPQSMXO
+ J7EtxuaOOQ5Da/56zqXZYAXggZWHAcmgb7EyTlRCi4lT+LzM9wlDKx1wd50+mL/Cg70W
+ v5nHCwXQFaqCO4tLF4LCKyKOraPGt+gT9sK8epBYU/ctZM23trjAHzCrISX6LXHuBwaa aQ== 
+Received: from maileast.thefacebook.com ([163.114.130.16])
+        by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 3knnbyrfye-6
         (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Nov 2022 09:56:22 -0800
-Received: from twshared2001.03.ash8.facebook.com (2620:10d:c085:108::8) by
- mail.thefacebook.com (2620:10d:c085:21d::4) with Microsoft SMTP Server
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Nov 2022 09:56:23 -0800
+Received: from twshared5287.03.ash8.facebook.com (2620:10d:c0a8:1b::d) by
+ mail.thefacebook.com (2620:10d:c0a8:83::6) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Mon, 7 Nov 2022 09:56:21 -0800
+ 15.1.2375.31; Mon, 7 Nov 2022 09:56:20 -0800
 Received: by devbig007.nao1.facebook.com (Postfix, from userid 544533)
-        id 6682DADF1C99; Mon,  7 Nov 2022 09:56:11 -0800 (PST)
+        id 7EDBDADF1C9B; Mon,  7 Nov 2022 09:56:11 -0800 (PST)
 From:   Keith Busch <kbusch@meta.com>
 To:     <viro@zeniv.linux.org.uk>, <axboe@kernel.dk>,
         <io-uring@vger.kernel.org>
-CC:     <asml.silence@gmail.com>, <linux-fsdevel@vger.kernel.org>
-Subject: [PATCH 1/4] iov: add import_ubuf()
-Date:   Mon, 7 Nov 2022 09:56:07 -0800
-Message-ID: <20221107175610.349807-2-kbusch@meta.com>
+CC:     <asml.silence@gmail.com>, <linux-fsdevel@vger.kernel.org>,
+        Keith Busch <kbusch@kernel.org>
+Subject: [PATCH 2/4] io_uring: switch network send/recv to ITER_UBUF
+Date:   Mon, 7 Nov 2022 09:56:08 -0800
+Message-ID: <20221107175610.349807-3-kbusch@meta.com>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221107175610.349807-1-kbusch@meta.com>
 References: <20221107175610.349807-1-kbusch@meta.com>
@@ -51,15 +52,15 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 X-FB-Internal: Safe
 Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: a2WCuMNwfJ5NogcV8YAqrfilcVpcU4GE
-X-Proofpoint-GUID: a2WCuMNwfJ5NogcV8YAqrfilcVpcU4GE
+X-Proofpoint-ORIG-GUID: BZxtv45oq6EX0K2pLoVlM7qFjU1J49jc
+X-Proofpoint-GUID: BZxtv45oq6EX0K2pLoVlM7qFjU1J49jc
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
  definitions=2022-11-07_08,2022-11-07_02,2022-06-22_01
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
         RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -68,54 +69,80 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Jens Axboe <axboe@kernel.dk>
 
-Like import_single_range(), but for ITER_UBUF.
+This is more efficient than ITER_IOVEC.
 
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
+[merged to 6.1]
+Signed-off-by: Keith Busch <kbusch@kernel.org>
 ---
- include/linux/uio.h |  1 +
- lib/iov_iter.c      | 11 +++++++++++
- 2 files changed, 12 insertions(+)
+ io_uring/net.c | 13 ++++---------
+ 1 file changed, 4 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 2e3134b14ffd..27575495c006 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -337,6 +337,7 @@ ssize_t __import_iovec(int type, const struct iovec _=
-_user *uvec,
- 		 struct iov_iter *i, bool compat);
- int import_single_range(int type, void __user *buf, size_t len,
- 		 struct iovec *iov, struct iov_iter *i);
-+int import_ubuf(int type, void __user *buf, size_t len, struct iov_iter =
-*i);
+diff --git a/io_uring/net.c b/io_uring/net.c
+index 9a07e79cc0e6..12c68b5ec62d 100644
+--- a/io_uring/net.c
++++ b/io_uring/net.c
+@@ -170,7 +170,7 @@ static int io_setup_async_msg(struct io_kiocb *req,
+ 	if (async_msg->msg.msg_name)
+ 		async_msg->msg.msg_name =3D &async_msg->addr;
+ 	/* if were using fast_iov, set it to the new one */
+-	if (!kmsg->free_iov) {
++	if (iter_is_iovec(&kmsg->msg.msg_iter) && !kmsg->free_iov) {
+ 		size_t fast_idx =3D kmsg->msg.msg_iter.iov - kmsg->fast_iov;
+ 		async_msg->msg.msg_iter.iov =3D &async_msg->fast_iov[fast_idx];
+ 	}
+@@ -333,7 +333,6 @@ int io_send(struct io_kiocb *req, unsigned int issue_=
+flags)
+ 	struct sockaddr_storage __address;
+ 	struct io_sr_msg *sr =3D io_kiocb_to_cmd(req, struct io_sr_msg);
+ 	struct msghdr msg;
+-	struct iovec iov;
+ 	struct socket *sock;
+ 	unsigned flags;
+ 	int min_ret =3D 0;
+@@ -367,7 +366,7 @@ int io_send(struct io_kiocb *req, unsigned int issue_=
+flags)
+ 	if (unlikely(!sock))
+ 		return -ENOTSOCK;
 =20
- static inline void iov_iter_ubuf(struct iov_iter *i, unsigned int direct=
-ion,
- 			void __user *buf, size_t count)
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index c3ca28ca68a6..07adf18e5e40 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1855,6 +1855,17 @@ int import_single_range(int rw, void __user *buf, =
-size_t len,
- }
- EXPORT_SYMBOL(import_single_range);
+-	ret =3D import_single_range(WRITE, sr->buf, sr->len, &iov, &msg.msg_ite=
+r);
++	ret =3D import_ubuf(WRITE, sr->buf, sr->len, &msg.msg_iter);
+ 	if (unlikely(ret))
+ 		return ret;
 =20
-+int import_ubuf(int rw, void __user *buf, size_t len, struct iov_iter *i=
-)
-+{
-+	if (len > MAX_RW_COUNT)
-+		len =3D MAX_RW_COUNT;
-+	if (unlikely(!access_ok(buf, len)))
-+		return -EFAULT;
-+
-+	iov_iter_ubuf(i, rw, buf, len);
-+	return 0;
-+}
-+
- /**
-  * iov_iter_restore() - Restore a &struct iov_iter to the same state as =
-when
-  *     iov_iter_save_state() was called.
+@@ -752,10 +751,7 @@ int io_recvmsg(struct io_kiocb *req, unsigned int is=
+sue_flags)
+ 			}
+ 		}
+=20
+-		kmsg->fast_iov[0].iov_base =3D buf;
+-		kmsg->fast_iov[0].iov_len =3D len;
+-		iov_iter_init(&kmsg->msg.msg_iter, READ, kmsg->fast_iov, 1,
+-				len);
++		iov_iter_ubuf(&kmsg->msg.msg_iter, READ, buf, len);
+ 	}
+=20
+ 	flags =3D sr->msg_flags;
+@@ -824,7 +820,6 @@ int io_recv(struct io_kiocb *req, unsigned int issue_=
+flags)
+ 	struct io_sr_msg *sr =3D io_kiocb_to_cmd(req, struct io_sr_msg);
+ 	struct msghdr msg;
+ 	struct socket *sock;
+-	struct iovec iov;
+ 	unsigned int cflags;
+ 	unsigned flags;
+ 	int ret, min_ret =3D 0;
+@@ -849,7 +844,7 @@ int io_recv(struct io_kiocb *req, unsigned int issue_=
+flags)
+ 		sr->buf =3D buf;
+ 	}
+=20
+-	ret =3D import_single_range(READ, sr->buf, len, &iov, &msg.msg_iter);
++	ret =3D import_ubuf(READ, sr->buf, len, &msg.msg_iter);
+ 	if (unlikely(ret))
+ 		goto out_free;
+=20
 --=20
 2.30.2
 
