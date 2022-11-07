@@ -2,92 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 73AE261F51F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Nov 2022 15:16:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9884961F519
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Nov 2022 15:16:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231367AbiKGOQt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Nov 2022 09:16:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55628 "EHLO
+        id S232126AbiKGOQr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Nov 2022 09:16:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55634 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232065AbiKGOQo (ORCPT
+        with ESMTP id S232066AbiKGOQo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 7 Nov 2022 09:16:44 -0500
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 178CA1BE94;
-        Mon,  7 Nov 2022 06:16:42 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 51D0C1D0C6;
+        Mon,  7 Nov 2022 06:16:43 -0800 (PST)
 From:   John Ogness <john.ogness@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1667830600;
+        s=2020; t=1667830602;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=zf2Nnq9aaBhq9OyJBdbPoPZazbYrZ5ZYcguoDhN8w38=;
-        b=2DMdV6P5I8sPplJufSLuueHeVl4bvVMKaOCMLHG/8T/fwK7DAOABqqdX7aJ+59oIKbSeI/
-        jxIUQ7vmqJIWBg5uBPUnLwho/ozyVcK4cifb7E8MZWqNAgvSZcTQkooqi2XOBJKmdFoPe0
-        S/wZC7FHNIjNqHF8aKh2I4aJghp93sxvUy5SQTr2sLIW2gINDw/7UBtkXqGJH9YxH5hhOO
-        0O67dTObUBp0/Va8bcvOAkYNduQYwv+rsV/BkAAXQ2emD/fAX8uWsiRgCCzSlHK71l+mxd
-        DWhAO2yHDDwVwuy7tiy10mhyFAMcwaRZxpwSCRbmOIfW9QXr83hR7vV88Ebaiw==
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=T3r0mxEJG1pEsgHAPMDMvdvodlCRUQmzeL9f0GYsAbQ=;
+        b=j1VHUhY8eCYnCYEX+76EfAc1mp+xjsbKxH5Dw/rJT4iPgu7Tm7o/pDjQjiv5B4d8NWcT34
+        wPho9GcNbpyOOXaWVaA3uRikQPC+t/BloatelnThmMPRToc7Pu28dyzHf96yGsm+h4Q7Tv
+        +qs9HP28Tmo1Vp1LL4taVNOJjD05Hy4FCKza5aKWPhwsGfANl/AnfwwhvHbGXeHm82GzhL
+        FMjYX1EiPkhO2EHvhVFdYg71CmEUAro6zPBSOIUB76SWt5/EdPK/SB7FkqegwhSgkzKUyt
+        MbyL3jUhBH9SiRzwmCDVV0yWS9MHtRiTmGLTKbD0pXGeAyz7m4C4BfSDwc6/8A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1667830600;
+        s=2020e; t=1667830602;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=zf2Nnq9aaBhq9OyJBdbPoPZazbYrZ5ZYcguoDhN8w38=;
-        b=jYEgYMmbvDXYj7DRG/zDjOcuyxgqHf6CJ4sMHlEhQTQPnAhOStcpCmHEsG9VmODdbETAmt
-        FuRjrih+zd0krvCw==
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=T3r0mxEJG1pEsgHAPMDMvdvodlCRUQmzeL9f0GYsAbQ=;
+        b=da3YoFgRS7AjRVL+TFlvyJSDJKZDRJoCFJov+D1UgwX3TrvV5NiMCQ4U54sldvdMsxGoCg
+        4St+6etVTwEXxCBg==
 To:     Petr Mladek <pmladek@suse.com>
 Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
         Steven Rostedt <rostedt@goodmis.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-kernel@vger.kernel.org,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        Neeraj Upadhyay <quic_neeraju@quicinc.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-um@lists.infradead.org, Luis Chamberlain <mcgrof@kernel.org>,
-        Aaron Tomlin <atomlin@redhat.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Tony Lindgren <tony@atomide.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org, Ard Biesheuvel <ardb@kernel.org>,
-        linux-efi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        linux-usb@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        Helge Deller <deller@gmx.de>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Tom Rix <trix@redhat.com>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH printk v3 00/40] reduce console_lock scope
-Date:   Mon,  7 Nov 2022 15:21:58 +0106
-Message-Id: <20221107141638.3790965-1-john.ogness@linutronix.de>
+        linux-fsdevel@vger.kernel.org, John Ogness <jogness@linutronix.de>
+Subject: [PATCH printk v3 03/40] printk: Convert console_drivers list to hlist
+Date:   Mon,  7 Nov 2022 15:22:01 +0106
+Message-Id: <20221107141638.3790965-4-john.ogness@linutronix.de>
+In-Reply-To: <20221107141638.3790965-1-john.ogness@linutronix.de>
+References: <20221107141638.3790965-1-john.ogness@linutronix.de>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -100,206 +61,296 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This is v3 of a series to prepare for threaded/atomic
-printing. v2 is here [0]. This series focuses on reducing the
-scope of the BKL console_lock. It achieves this by switching to
-SRCU and a dedicated mutex for console list iteration and
-modification, respectively. The console_lock will no longer
-offer this protection and is completely removed from
-(un)register_console() and console_stop/start() code.
+From: Thomas Gleixner <tglx@linutronix.de>
 
-Also, during the review of v2 it came to our attention that
-many console drivers are checking CON_ENABLED to see if they
-are registered. Because this flag can change without
-unregistering and because this flag does not represent an
-atomic point when an (un)registration process is complete,
-a new console_is_registered() function is introduced. This
-function uses the console_list_lock to synchronize with the
-(un)registration process to provide a reliable status.
+Replace the open coded single linked list with a hlist so a conversion
+to SRCU protected list walks can reuse the existing primitives.
 
-All users of the console_lock for list iteration have been
-modified. For the call sites where the console_lock is still
-needed (because of other reasons), comments are added to
-explain exactly why the console_lock was needed.
+Co-developed-by: John Ogness <jogness@linutronix.de>
+Signed-off-by: John Ogness <john.ogness@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+---
+ fs/proc/consoles.c      |   3 +-
+ include/linux/console.h |   8 ++--
+ kernel/printk/printk.c  | 101 ++++++++++++++++++++++------------------
+ 3 files changed, 62 insertions(+), 50 deletions(-)
 
-All users of CON_ENABLED for registration status have been
-modified to use console_is_registered(). Note that there are
-still users of CON_ENABLED, but this is for legitimate purposes
-about a registered console being able to print.
-
-The base commit for this series is from Paul McKenney's RCU tree
-and provides an NMI-safe SRCU implementation [1]. Without the
-NMI-safe SRCU implementation, this series is not less safe than
-mainline. But we will need the NMI-safe SRCU implementation for
-atomic consoles anyway, so we might as well get it in
-now. Especially since it _does_ increase the reliability for
-mainline in the panic path.
-
-Changes since v3:
-
-general:
-
-- introduce a synchronized console_is_registered() to query if
-  a console is registered, meant to replace CON_ENABLED
-  (mis)use for this purpose
-
-- directly read console->flags for registered consoles if it is
-  race-free (and document that it is so)
-
-- replace uart_console_enabled() with a new
-  uart_console_registered() based on console_is_registered()
-
-- change comments about why console_lock is used to synchronize
-  console->device() by providing an example
-
-registration check fixups:
-
-- the following drivers were modified to use the new
-  console_is_registered() instead of CON_ENABLED checks
-
-   - arch/m68k/emu/nfcon.c
-   - drivers/firmware/efi/earlycon.c
-   - drivers/net/netconsole.c
-   - drivers/tty/hvc/hvc_console.c
-   - drivers/tty/serial/8250/8250_core.c
-   - drivers/tty/serial/earlycon.c
-   - drivers/tty/serial/pic32_uart.c
-   - drivers/tty/serial/samsung_tty.c
-   - drivers/tty/serial/serial_core.c
-   - drivers/tty/serial/xilinx_uartps.c
-   - drivers/usb/early/xhci-dbc.c
-
-um: kmsg_dumper:
-
-- change stdout dump criteria to match original intention
-
-kgdb/kdb:
-
-- in configure_kgdboc(), take console_list_lock to synchronize
-  tty_find_polling_driver() against register_console()
-
-- add comments explaining why calling console->write() without
-  locking might work
-
-tty: sh-sci:
-
-- use a setup() callback to setup the early console
-
-fbdev: xen:
-
-- implement a cleaner approach for
-  console_force_preferred_locked()
-
-rcu:
-
-- implement debug_lockdep_rcu_enabled() for
-  !CONFIG_DEBUG_LOCK_ALLOC
-
-printk:
-
-- check CONFIG_DEBUG_LOCK_ALLOC for srcu_read_lock_held()
-  availability
-
-- for console_lock/_trylock/_unlock, replace "lock the console
-  system" language with "block the console subsystem from
-  printing"
-
-- use WRITE_ONCE() for updating console->flags of registered
-  consoles
-
-- expand comments of synchronize_srcu() calls to explain why
-  they are needed, and also expand comments to explain when it
-  is not needed
-
-- change CON_BOOT consoles to always begin at earliest message
-
-- for non-BOOT/non-PRINTBUFFER consoles, initialize @seq to the
-  minimal @seq of any of the enabled boot consoles
-
-- add comments and lockdep assertion to
-  unregister_console_locked() because it is not clear from the
-  name which lock is implied
-
-- dropped patches that caused unnecessary churn in the series
-
-John Ogness
-
-[0] https://lore.kernel.org/lkml/20221019145600.1282823-1-john.ogness@linutronix.de
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/log/?h=srcunmisafe.2022.10.21a
-
-John Ogness (38):
-  rcu: implement lockdep_rcu_enabled for !CONFIG_DEBUG_LOCK_ALLOC
-  printk: Prepare for SRCU console list protection
-  printk: fix setting first seq for consoles
-  um: kmsg_dump: only dump when no output console available
-  console: introduce console_is_enabled() wrapper
-  printk: use console_is_enabled()
-  um: kmsg_dump: use console_is_enabled()
-  kdb: kdb_io: use console_is_enabled()
-  um: kmsg_dumper: use srcu console list iterator
-  tty: serial: kgdboc: document console_lock usage
-  tty: tty_io: document console_lock usage
-  proc: consoles: document console_lock usage
-  kdb: use srcu console list iterator
-  printk: console_flush_all: use srcu console list iterator
-  printk: console_unblank: use srcu console list iterator
-  printk: console_flush_on_panic: use srcu console list iterator
-  printk: console_device: use srcu console list iterator
-  printk: __pr_flush: use srcu console list iterator
-  printk: introduce console_list_lock
-  console: introduce console_is_registered()
-  serial_core: replace uart_console_enabled() with
-    uart_console_registered()
-  tty: nfcon: use console_is_registered()
-  efi: earlycon: use console_is_registered()
-  tty: hvc: use console_is_registered()
-  tty: serial: earlycon: use console_is_registered()
-  tty: serial: pic32_uart: use console_is_registered()
-  tty: serial: samsung_tty: use console_is_registered()
-  tty: serial: xilinx_uartps: use console_is_registered()
-  usb: early: xhci-dbc: use console_is_registered()
-  netconsole: avoid CON_ENABLED misuse to track registration
-  printk, xen: fbfront: create/use safe function for forcing preferred
-  tty: tty_io: use console_list_lock for list synchronization
-  proc: consoles: use console_list_lock for list iteration
-  tty: serial: kgdboc: use console_list_lock for list traversal
-  tty: serial: kgdboc: synchronize tty_find_polling_driver() and
-    register_console()
-  tty: serial: kgdboc: use console_list_lock to trap exit
-  printk: relieve console_lock of list synchronization duties
-  tty: serial: sh-sci: use setup() callback for early console
-
-Thomas Gleixner (2):
-  serial: kgdboc: Lock console list in probe function
-  printk: Convert console_drivers list to hlist
-
- .clang-format                       |   1 +
- arch/m68k/emu/nfcon.c               |  10 +-
- arch/um/kernel/kmsg_dump.c          |  24 +-
- drivers/firmware/efi/earlycon.c     |   8 +-
- drivers/net/netconsole.c            |  21 +-
- drivers/tty/hvc/hvc_console.c       |   4 +-
- drivers/tty/serial/8250/8250_core.c |   2 +-
- drivers/tty/serial/earlycon.c       |   4 +-
- drivers/tty/serial/kgdboc.c         |  46 ++-
- drivers/tty/serial/pic32_uart.c     |   4 +-
- drivers/tty/serial/samsung_tty.c    |   2 +-
- drivers/tty/serial/serial_core.c    |  14 +-
- drivers/tty/serial/sh-sci.c         |  17 +-
- drivers/tty/serial/xilinx_uartps.c  |   2 +-
- drivers/tty/tty_io.c                |  18 +-
- drivers/usb/early/xhci-dbc.c        |   2 +-
- drivers/video/fbdev/xen-fbfront.c   |  12 +-
- fs/proc/consoles.c                  |  21 +-
- include/linux/console.h             | 111 +++++++-
- include/linux/rcupdate.h            |   5 +
- include/linux/serial_core.h         |  15 +-
- kernel/debug/kdb/kdb_io.c           |  14 +-
- kernel/printk/printk.c              | 424 +++++++++++++++++++++-------
- 23 files changed, 605 insertions(+), 176 deletions(-)
-
-
-base-commit: e29a4915db1480f96e0bc2e928699d086a71f43c
+diff --git a/fs/proc/consoles.c b/fs/proc/consoles.c
+index dfe6ce3505ce..cf2e0788f9c7 100644
+--- a/fs/proc/consoles.c
++++ b/fs/proc/consoles.c
+@@ -74,8 +74,9 @@ static void *c_start(struct seq_file *m, loff_t *pos)
+ static void *c_next(struct seq_file *m, void *v, loff_t *pos)
+ {
+ 	struct console *con = v;
++
+ 	++*pos;
+-	return con->next;
++	return hlist_entry_safe(con->node.next, struct console, node);
+ }
+ 
+ static void c_stop(struct seq_file *m, void *v)
+diff --git a/include/linux/console.h b/include/linux/console.h
+index 8c1686e2c233..7b5f21f9e469 100644
+--- a/include/linux/console.h
++++ b/include/linux/console.h
+@@ -15,6 +15,7 @@
+ #define _LINUX_CONSOLE_H_ 1
+ 
+ #include <linux/atomic.h>
++#include <linux/list.h>
+ #include <linux/types.h>
+ 
+ struct vc_data;
+@@ -154,14 +155,16 @@ struct console {
+ 	u64	seq;
+ 	unsigned long dropped;
+ 	void	*data;
+-	struct	 console *next;
++	struct hlist_node node;
+ };
+ 
++extern struct hlist_head console_list;
++
+ /*
+  * for_each_console() allows you to iterate on each console
+  */
+ #define for_each_console(con) \
+-	for (con = console_drivers; con != NULL; con = con->next)
++	hlist_for_each_entry(con, &console_list, node)
+ 
+ extern int console_set_on_cmdline;
+ extern struct console *early_console;
+@@ -174,7 +177,6 @@ enum con_flush_mode {
+ extern int add_preferred_console(char *name, int idx, char *options);
+ extern void register_console(struct console *);
+ extern int unregister_console(struct console *);
+-extern struct console *console_drivers;
+ extern void console_lock(void);
+ extern int console_trylock(void);
+ extern void console_unlock(void);
+diff --git a/kernel/printk/printk.c b/kernel/printk/printk.c
+index e4f1e7478b52..e6f0832e71f0 100644
+--- a/kernel/printk/printk.c
++++ b/kernel/printk/printk.c
+@@ -79,13 +79,12 @@ int oops_in_progress;
+ EXPORT_SYMBOL(oops_in_progress);
+ 
+ /*
+- * console_sem protects the console_drivers list, and also
+- * provides serialisation for access to the entire console
+- * driver system.
++ * console_sem protects console_list and console->flags updates, and also
++ * provides serialization for access to the entire console driver system.
+  */
+ static DEFINE_SEMAPHORE(console_sem);
+-struct console *console_drivers;
+-EXPORT_SYMBOL_GPL(console_drivers);
++HLIST_HEAD(console_list);
++EXPORT_SYMBOL_GPL(console_list);
+ 
+ /*
+  * System may need to suppress printk message under certain
+@@ -2556,7 +2555,7 @@ static int console_cpu_notify(unsigned int cpu)
+  * console_lock - lock the console system for exclusive use.
+  *
+  * Acquires a lock which guarantees that the caller has
+- * exclusive access to the console system and the console_drivers list.
++ * exclusive access to the console system and console_list.
+  *
+  * Can sleep, returns nothing.
+  */
+@@ -2576,7 +2575,7 @@ EXPORT_SYMBOL(console_lock);
+  * console_trylock - try to lock the console system for exclusive use.
+  *
+  * Try to acquire a lock which guarantees that the caller has exclusive
+- * access to the console system and the console_drivers list.
++ * access to the console system and console_list.
+  *
+  * returns 1 on success, and 0 on failure to acquire the lock.
+  */
+@@ -2940,11 +2939,20 @@ void console_flush_on_panic(enum con_flush_mode mode)
+ 	console_may_schedule = 0;
+ 
+ 	if (mode == CONSOLE_REPLAY_ALL) {
++		struct hlist_node *tmp;
+ 		struct console *c;
+ 		u64 seq;
+ 
+ 		seq = prb_first_valid_seq(prb);
+-		for_each_console(c)
++		/*
++		 * This cannot use for_each_console() because it's not established
++		 * that the current context has console locked and neither there is
++		 * a guarantee that there is no concurrency in that case.
++		 *
++		 * Open code it for documentation purposes and pretend that
++		 * it works.
++		 */
++		hlist_for_each_entry_safe(c, tmp, &console_list, node)
+ 			c->seq = seq;
+ 	}
+ 	console_unlock();
+@@ -3081,6 +3089,9 @@ static void try_enable_default_console(struct console *newcon)
+ 	       (con->flags & CON_BOOT) ? "boot" : "",	\
+ 	       con->name, con->index, ##__VA_ARGS__)
+ 
++#define console_first()				\
++	hlist_entry(console_list.first, struct console, node)
++
+ /*
+  * The console driver calls this routine during kernel initialization
+  * to register the console printing procedure with printk() and to
+@@ -3140,8 +3151,8 @@ void register_console(struct console *newcon)
+ 	 * flag set and will be first in the list.
+ 	 */
+ 	if (preferred_console < 0) {
+-		if (!console_drivers || !console_drivers->device ||
+-		    console_drivers->flags & CON_BOOT) {
++		if (hlist_empty(&console_list) || !console_first()->device ||
++		    console_first()->flags & CON_BOOT) {
+ 			try_enable_default_console(newcon);
+ 		}
+ 	}
+@@ -3169,20 +3180,22 @@ void register_console(struct console *newcon)
+ 	}
+ 
+ 	/*
+-	 *	Put this console in the list - keep the
+-	 *	preferred driver at the head of the list.
++	 * Put this console in the list - keep the
++	 * preferred driver at the head of the list.
+ 	 */
+ 	console_lock();
+-	if ((newcon->flags & CON_CONSDEV) || console_drivers == NULL) {
+-		newcon->next = console_drivers;
+-		console_drivers = newcon;
+-		if (newcon->next)
+-			newcon->next->flags &= ~CON_CONSDEV;
+-		/* Ensure this flag is always set for the head of the list */
++	if (hlist_empty(&console_list)) {
++		/* Ensure CON_CONSDEV is always set for the head. */
+ 		newcon->flags |= CON_CONSDEV;
++		hlist_add_head(&newcon->node, &console_list);
++
++	} else if (newcon->flags & CON_CONSDEV) {
++		/* Only the new head can have CON_CONSDEV set. */
++		console_first()->flags &= ~CON_CONSDEV;
++		hlist_add_head(&newcon->node, &console_list);
++
+ 	} else {
+-		newcon->next = console_drivers->next;
+-		console_drivers->next = newcon;
++		hlist_add_behind(&newcon->node, console_list.first);
+ 	}
+ 
+ 	newcon->dropped = 0;
+@@ -3209,16 +3222,18 @@ void register_console(struct console *newcon)
+ 	if (bootcon_enabled &&
+ 	    ((newcon->flags & (CON_CONSDEV | CON_BOOT)) == CON_CONSDEV) &&
+ 	    !keep_bootcon) {
+-		for_each_console(con)
++		struct hlist_node *tmp;
++
++		hlist_for_each_entry_safe(con, tmp, &console_list, node) {
+ 			if (con->flags & CON_BOOT)
+ 				unregister_console(con);
++		}
+ 	}
+ }
+ EXPORT_SYMBOL(register_console);
+ 
+ int unregister_console(struct console *console)
+ {
+-	struct console *con;
+ 	int res;
+ 
+ 	con_printk(KERN_INFO, console, "disabled\n");
+@@ -3229,32 +3244,30 @@ int unregister_console(struct console *console)
+ 	if (res > 0)
+ 		return 0;
+ 
+-	res = -ENODEV;
+ 	console_lock();
+-	if (console_drivers == console) {
+-		console_drivers=console->next;
+-		res = 0;
+-	} else {
+-		for_each_console(con) {
+-			if (con->next == console) {
+-				con->next = console->next;
+-				res = 0;
+-				break;
+-			}
+-		}
++
++	/* Disable it unconditionally */
++	console->flags &= ~CON_ENABLED;
++
++	if (hlist_unhashed(&console->node)) {
++		console_unlock();
++		return -ENODEV;
+ 	}
+ 
+-	if (res)
+-		goto out_disable_unlock;
++	hlist_del_init(&console->node);
+ 
+ 	/*
++	 * <HISTORICAL>
+ 	 * If this isn't the last console and it has CON_CONSDEV set, we
+ 	 * need to set it on the next preferred console.
++	 * </HISTORICAL>
++	 *
++	 * The above makes no sense as there is no guarantee that the next
++	 * console has any device attached. Oh well....
+ 	 */
+-	if (console_drivers != NULL && console->flags & CON_CONSDEV)
+-		console_drivers->flags |= CON_CONSDEV;
++	if (!hlist_empty(&console_list) && console->flags & CON_CONSDEV)
++		console_first()->flags |= CON_CONSDEV;
+ 
+-	console->flags &= ~CON_ENABLED;
+ 	console_unlock();
+ 	console_sysfs_notify();
+ 
+@@ -3262,12 +3275,6 @@ int unregister_console(struct console *console)
+ 		res = console->exit(console);
+ 
+ 	return res;
+-
+-out_disable_unlock:
+-	console->flags &= ~CON_ENABLED;
+-	console_unlock();
+-
+-	return res;
+ }
+ EXPORT_SYMBOL(unregister_console);
+ 
+@@ -3317,10 +3324,11 @@ void __init console_init(void)
+  */
+ static int __init printk_late_init(void)
+ {
++	struct hlist_node *tmp;
+ 	struct console *con;
+ 	int ret;
+ 
+-	for_each_console(con) {
++	hlist_for_each_entry_safe(con, tmp, &console_list, node) {
+ 		if (!(con->flags & CON_BOOT))
+ 			continue;
+ 
+@@ -3340,6 +3348,7 @@ static int __init printk_late_init(void)
+ 			unregister_console(con);
+ 		}
+ 	}
++
+ 	ret = cpuhp_setup_state_nocalls(CPUHP_PRINTK_DEAD, "printk:dead", NULL,
+ 					console_cpu_notify);
+ 	WARN_ON(ret < 0);
 -- 
 2.30.2
 
