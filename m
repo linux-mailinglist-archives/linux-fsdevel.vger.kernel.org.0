@@ -2,121 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A254761E701
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  6 Nov 2022 23:50:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B4A361E81A
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Nov 2022 02:06:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230223AbiKFWuZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 6 Nov 2022 17:50:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60138 "EHLO
+        id S230134AbiKGBGN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 6 Nov 2022 20:06:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230162AbiKFWuX (ORCPT
+        with ESMTP id S229782AbiKGBGL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 6 Nov 2022 17:50:23 -0500
-Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D02F510FD6
-        for <linux-fsdevel@vger.kernel.org>; Sun,  6 Nov 2022 14:50:22 -0800 (PST)
-Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-13b103a3e5dso11003665fac.2
-        for <linux-fsdevel@vger.kernel.org>; Sun, 06 Nov 2022 14:50:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zUhglOvYU/SNtiXDw+NtTZWz+SiK9lfZ+m77nsBTgoc=;
-        b=PXmGEjTPrRTwCpI2Jw6IqCV3I/YRj1OiDLIDv7nTugNrn6Ayuy66tjtEGRvKd7/L6S
-         IO7tshGkyUQKnM1XZCPb7XIvzA6CGLtoG9XLb4nAJ3QlS8UsIXFF/uaGzlZM2E1pz09p
-         oGNP1s9k/puFZm7qkT/2p0F17lqXDEHQF+HBKWwMjO92wZKkyXTkiS/xDq2lPxh3lhgV
-         UX4ll4JaAk9/Lmg2HkI28w8x2gbWIdsbkpOjYBa5Wc9ZGhRaoEw1IP3l9MX07gt6seU3
-         IPE75+yGooormwok1pAxek1Z5PdbBDo0lm4YRWshUDqVCV+ZNxaOjncIYgveLMuG5daB
-         2WXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zUhglOvYU/SNtiXDw+NtTZWz+SiK9lfZ+m77nsBTgoc=;
-        b=52Kdcwx/jYZyNKZ2O8c0pj8tTz35rb57tptgT0DhsyDEYlYysJ53NTEOdUzmm+orlT
-         Lsd3UpOuR1NUfGaswoNE8G5PUPNgvvqO6mo4Se0MzTBsHzENJ03LrW4K0dPSbs7R/8g3
-         OWhapPDn5I/nEYhYt207pKpk62e6qDfbDg+OE1mK5M/MdymSvGptHSjp58hKEew4hEv5
-         HrVm8pMvQs0B+fJT3X3/Yy4OL0dJucWgYZjPscxUWR2Z/KI4T2MHMoak8ychfwJvOE9E
-         POjuVjQdiZpJrKjKuXRSenP2yzNCB0otMuaNEQPCPlUUhlCvikS+F+lXDtKXdwF5mzM1
-         cErA==
-X-Gm-Message-State: ACrzQf2ISk9EMF0ypWvWYbYbaO7/wMlrNfw+c8MWX+SFqzClgYM1sp4o
-        wqayGiurbB5ofBmJEyM9mEQmPXU/MQdlDHLIwdSj
-X-Google-Smtp-Source: AMsMyM43rjyP2ouC0E8/qjx8Tf4YiwEYnCb61K7ZbTb7nizNClpT2rU3I7YKhuAKeSmacQXQu0e+gf8IICBLj66dDUo=
-X-Received: by 2002:a05:6870:f299:b0:13b:ad21:934d with SMTP id
- u25-20020a056870f29900b0013bad21934dmr28113734oap.172.1667775021857; Sun, 06
- Nov 2022 14:50:21 -0800 (PST)
-MIME-Version: 1.0
-References: <20221103151205.702826-1-omosnace@redhat.com> <CAHC9VhS460B4Jpk8kqmhTBZv_dMuysNb9yH=6hB4-+Oc35UkAQ@mail.gmail.com>
- <20221105113413.lzgwdlcobmliq32b@wittgenstein>
-In-Reply-To: <20221105113413.lzgwdlcobmliq32b@wittgenstein>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Sun, 6 Nov 2022 17:50:11 -0500
-Message-ID: <CAHC9VhSf1M9vV-SHEo8L4ja33nrCG2ndJM6HYjLqQ==L-AquhQ@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: don't audit the capability check in simple_xattr_list()
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     Ondrej Mosnacek <omosnace@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Sun, 6 Nov 2022 20:06:11 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0721FB87E
+        for <linux-fsdevel@vger.kernel.org>; Sun,  6 Nov 2022 17:05:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667783116;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=SNimcy03lVO1HY+U4NDPJI3Wpm45K80Mxm9Usc2lI5A=;
+        b=i5Dn7ddQBAd9hXtvSFB1qcT51LLiRQssRaM+YwX1kbRe7sH8R6SNU+L29abqHaYT1Rc2CM
+        qRS9zJoNqt3PFzrxj0S8HPl7ZP8pIDstz/DtsckgiFrnawcbFLseUyqKcVIg7Jh5V6n0V6
+        jb2DEmhaFB40CXK23J/p111cB7MeuiU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-670-_RKCmUxEOBKh-hXpjIX--g-1; Sun, 06 Nov 2022 20:05:14 -0500
+X-MC-Unique: _RKCmUxEOBKh-hXpjIX--g-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 73AF78027ED;
+        Mon,  7 Nov 2022 01:05:14 +0000 (UTC)
+Received: from T590 (ovpn-8-22.pek2.redhat.com [10.72.8.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 652E740C6EC4;
+        Mon,  7 Nov 2022 01:05:07 +0000 (UTC)
+Date:   Mon, 7 Nov 2022 09:05:05 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Bernd Schubert <bernd.schubert@fastmail.fm>
+Cc:     Jens Axboe <axboe@kernel.dk>, io-uring@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org,
-        linux-security-module@vger.kernel.org, selinux@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Martin Pitt <mpitt@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        Miklos Szeredi <mszeredi@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        ZiyangZhang <ZiyangZhang@linux.alibaba.com>
+Subject: Re: [RFC PATCH 4/4] ublk_drv: support splice based read/write zero
+ copy
+Message-ID: <Y2hZwWdY28bCn+iT@T590>
+References: <20221103085004.1029763-1-ming.lei@redhat.com>
+ <20221103085004.1029763-5-ming.lei@redhat.com>
+ <712cd802-f3bb-9840-e334-385cd42325f2@fastmail.fm>
+ <Y2Rgem8+oYafTLVO@T590>
+ <ead8a6cc-13eb-6dc0-2c17-a87e78d8a422@fastmail.fm>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ead8a6cc-13eb-6dc0-2c17-a87e78d8a422@fastmail.fm>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 5, 2022 at 7:34 AM Christian Brauner <brauner@kernel.org> wrote:
->
-> On Sat, Nov 05, 2022 at 12:38:57AM -0400, Paul Moore wrote:
-> > On Thu, Nov 3, 2022 at 11:13 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
-> > >
-> > > The check being unconditional may lead to unwanted denials reported by
-> > > LSMs when a process has the capability granted by DAC, but denied by an
-> > > LSM. In the case of SELinux such denials are a problem, since they can't
-> > > be effectively filtered out via the policy and when not silenced, they
-> > > produce noise that may hide a true problem or an attack.
-> > >
-> > > Checking for the capability only if any trusted xattr is actually
-> > > present wouldn't really address the issue, since calling listxattr(2) on
-> > > such node on its own doesn't indicate an explicit attempt to see the
-> > > trusted xattrs. Additionally, it could potentially leak the presence of
-> > > trusted xattrs to an unprivileged user if they can check for the denials
-> > > (e.g. through dmesg).
-> > >
-> > > Therefore, it's best (and simplest) to keep the check unconditional and
-> > > instead use ns_capable_noaudit() that will silence any associated LSM
-> > > denials.
-> > >
-> > > Fixes: 38f38657444d ("xattr: extract simple_xattr code from tmpfs")
-> > > Reported-by: Martin Pitt <mpitt@redhat.com>
-> > > Suggested-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> > > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> > > ---
-> > >
-> > > v1 -> v2: switch to simpler and better solution as suggested by Christian
-> > >
-> > > v1: https://lore.kernel.org/selinux/CAFqZXNuC7c0Ukx_okYZ7rsKycQY5P1zpMPmmq_T5Qyzbg-x7yQ@mail.gmail.com/T/
-> > >
-> > >  fs/xattr.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > VFS folks, this should really go through a vfs tree, but if nobody
-> > wants to pick it up *and* there are no objections to the change, I can
-> > take this via the LSM tree.
->
-> I can pick this up as I'm currently massaging the simple xattr
-> infrastructure.
+On Sat, Nov 05, 2022 at 12:37:21AM +0100, Bernd Schubert wrote:
+> 
+> 
+> On 11/4/22 01:44, Ming Lei wrote:
+> > On Thu, Nov 03, 2022 at 11:28:29PM +0100, Bernd Schubert wrote:
+> > > 
+> > > 
+> > > On 11/3/22 09:50, Ming Lei wrote:
+> > > > Pass ublk block IO request pages to kernel backend IO handling code via
+> > > > pipe, and request page copy can be avoided. So far, the existed
+> > > > pipe/splice mechanism works for handling write request only.
+> > > > 
+> > > > The initial idea of using splice for zero copy is from Miklos and Stefan.
+> > > > 
+> > > > Read request's zero copy requires pipe's change to allow one read end to
+> > > > produce buffers for another read end to consume. The added SPLICE_F_READ_TO_READ
+> > > > flag is for supporting this feature.
+> > > > 
+> > > > READ is handled by sending IORING_OP_SPLICE with SPLICE_F_DIRECT |
+> > > > SPLICE_F_READ_TO_READ. WRITE is handled by sending IORING_OP_SPLICE with
+> > > > SPLICE_F_DIRECT. Kernel internal pipe is used for simplifying userspace,
+> > > > meantime potential info leak could be avoided.
+> > > 
+> > > 
+> > > Sorry to ask, do you have an ublk branch that gives an example how to use
+> > > this?
+> > 
+> > Follows the ublk splice-zc branch:
+> > 
+> > https://github.com/ming1/ubdsrv/commits/splice-zc
+> > 
+> > which is mentioned in cover letter, but I guess it should be added to
+> > here too, sorry for that, so far only ublk-loop supports it by:
+> > 
+> >     ublk add -t loop -f $BACKING -z
+> > 
+> > without '-z', ublk-loop is created with zero copy disabled.
+> 
+> Ah, thanks a lot! And sorry, I had missed this part in the cover letter.
+> 
+> I will take a look on your new zero copy code on Monday.
+> 
+> 
+> > 
+> > > 
+> > > I still have several things to fix in my branches, but I got basic fuse
+> > > uring with copies working. Adding back splice would be next after posting
+> > > rfc patches. My initial assumption was that I needed to duplicate everything
+> > > splice does into the fuse .uring_cmd handler - obviously there is a better
+> > > way with your patches.
+> > > 
+> > > This week I have a few days off, by end of next week or the week after I
+> > > might have patches in an rfc state (one thing I'm going to ask about is how
+> > > do I know what is the next CQE in the kernel handler - ublk does this with
+> > > tags through mq, but I don't understand yet where the tag is increased and
+> > > what the relation between tag and right CQE order is).
+> > 
+> > tag is one attribute of io request, which is originated from ublk
+> > driver, and it is unique for each request among one queue. So ublksrv
+> > won't change it at all, just use it, and ublk driver guarantees that
+> > it is unique.
+> > 
+> > In ublkserv implementation, the tag info is set in cqe->user_data, so
+> > we can retrieve the io request via tag part of cqe->user_data.
+> 
+> Yeah, this is the easy part I understood. At least I hope so :)
+> 
+> > 
+> > Also I may not understand your question of 'the relation between tag and right
+> > CQE order', io_uring provides IOSQE_IO_DRAIN/IOSQE_IO_LINK for ordering
+> > SQE, and ublksrv only applies IOSQE_IO_LINK in ublk-qcow2, so care to
+> > explain it in a bit details about the "the relation between tag and right
+> > CQE order"?
+> 
+> 
+> For fuse (kernel) a vfs request comes in and I need to choose a command in
+> the ring queue. Right now this is just an atomic counter % queue_size
+> 
+> fuse_request_alloc_ring()
+> 	req_cnt = atomic_inc_return(&queue->req_cnt);
+> 	tag = req_cnt & (fc->ring.queue_depth - 1); /* cnt % queue_depth */
+> 
+> 	ring_req = &queue->ring_req[tag];
+> 
+> 
+> 
+> I might be wrong, but I think that can be compared a bit to ublk_queue_rq().
+> Looks like ublk_queue_rq gets called in blk-mq context and blk-mq seems to
+> provide rq->tag, which then determines the command in the ring queue -
+> completion of commands is done in tag-order provided by blk-mq? The part I
 
-Thanks Christian.
+The two are not related, blk-mq tag number means nothing wrt. io
+handling order:
 
-> I think the fix is pretty straightforward otherwise.
+- tag is allocated via sbitmap, which may return tag number in any
+  order, you may think the returned number is just random
+- blk-mq may re-order requests and dispatch them with any order
+- once requests are issued to io_uring, userspace may handles these IOs
+  with any order
+- after backend io is queued via io_uring or libaio or whatever to kernel, it
+could be completed at any order
 
-Agreed.
+> didn't figure out yet is where the tag value gets set.
+> Also interesting is that there is no handler if the ring is already full -
+> like the ublk_io command is currently busy in ublksrv (user space). Handled
+> auto-magically with blk-mq?
 
--- 
-paul-moore.com
+For ublk, the queue has fixed depth, so the pre-allocated io_uring size is
+enough, and blk-mq can throttle IOs from the beginning if the max queue depth is
+reached, so ublk needn't to worry about io_uring size/depth.
+
+But fuse may have to consider request throttle.
+
+
+Thanks, 
+Ming
+
