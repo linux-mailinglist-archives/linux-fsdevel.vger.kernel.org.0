@@ -2,211 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BB0F61F399
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Nov 2022 13:45:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7F5361F3EE
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Nov 2022 14:04:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232401AbiKGMpr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Nov 2022 07:45:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36098 "EHLO
+        id S231949AbiKGNEY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Nov 2022 08:04:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232331AbiKGMpd (ORCPT
+        with ESMTP id S231623AbiKGNEW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Nov 2022 07:45:33 -0500
+        Mon, 7 Nov 2022 08:04:22 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28C6518E18
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Nov 2022 04:44:35 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E4A5BAA
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Nov 2022 05:03:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667825074;
+        s=mimecast20190719; t=1667826202;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=2hqgA/TRgZw1DzPVWmvs/bi2bDcerUKILSHp4k/Qv2I=;
-        b=L2R7cTGvdJTMdEw4HziMLkFAxviTg0Os6F5twbcu/H/hBqCUqNG9/GhrqlEtQ0D6U5lEQy
-        qdGCI66JXihtiRbnFzzDLekclBaS7vTUWLglpVFNmYeSdxMDgXqMGbTNZPR/SNyijUCF9H
-        r9POiCSxaoFL9PWYY2oo5QFMD5pXICk=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-374-nA3JguLVO2GV2xG8Rc3KOw-1; Mon, 07 Nov 2022 07:44:33 -0500
-X-MC-Unique: nA3JguLVO2GV2xG8Rc3KOw-1
-Received: by mail-pg1-f199.google.com with SMTP id v18-20020a637a12000000b0046ed84b94efso6149992pgc.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Nov 2022 04:44:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2hqgA/TRgZw1DzPVWmvs/bi2bDcerUKILSHp4k/Qv2I=;
-        b=eT1AFsjixE25sJtb5mreh/7JXs/qhVCrw4vQ05m5fiyq/ha2X+trnnm1svIBGdtgie
-         Cw+8XSAeoGOS8/UEsRS+r5HvcLtQnonSFSjrJZ4vrFTV7/pfcCgf4MHsZyNy3xaLPfQy
-         P/0XE+ahBO+mr04UeDKHSesAcx+i2hFtTzdRM2HezPbGR1cBgvhr6ycZnvVmG5BNW35P
-         +wcEaPydXvzAjmETgukUZZupCprlk4/EENpIAi22eWsd0o2sacScVycctWRDqDVsSkd8
-         zdoIXZKyTj8Dy7w4FnXnr4oQSblmWBm/W5ueMHcXAvOf7DSODefNEa0pOa3pGJSnY4YN
-         KNfQ==
-X-Gm-Message-State: ACrzQf1Wp73Um3iuR5Ly0urxfsA9xWeodLr/HpmNPFWlOfO1dSbXpYcx
-        pXMQqZUaMVwsAgp+UW94XkU9H/sCm5ZBr1YnsEouC36p36tVsInP9Qfb6MnF/R8EOaZVytzkEuU
-        21GrbRUfWErK+fOw3ja5FLzJ7FQ==
-X-Received: by 2002:a05:6a00:21cc:b0:56c:ba99:795d with SMTP id t12-20020a056a0021cc00b0056cba99795dmr50314883pfj.84.1667825072146;
-        Mon, 07 Nov 2022 04:44:32 -0800 (PST)
-X-Google-Smtp-Source: AMsMyM6Z8VizXTILvpkDYYRHc1gOLDg0bA5X+HhAJoGWKY3jU2FfCdpEd9AI46CqQAZaCoZ5DX+GxA==
-X-Received: by 2002:a05:6a00:21cc:b0:56c:ba99:795d with SMTP id t12-20020a056a0021cc00b0056cba99795dmr50314862pfj.84.1667825071873;
-        Mon, 07 Nov 2022 04:44:31 -0800 (PST)
-Received: from [10.72.12.88] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id pv7-20020a17090b3c8700b00213c7cf21c0sm4240009pjb.5.2022.11.07.04.44.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Nov 2022 04:44:31 -0800 (PST)
-Subject: Re: [RFC PATCH] fs/lock: increase the filp's reference for
- Posix-style locks
-To:     Jeff Layton <jlayton@kernel.org>, viro@zeniv.linux.org.uk,
-        chuck.lever@oracle.com
-Cc:     axboe@kernel.dk, asml.silence@gmail.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        io-uring@vger.kernel.org, ceph-devel@vger.kernel.org,
-        mchangir@redhat.com, idryomov@gmail.com, lhenriques@suse.de,
-        gfarnum@redhat.com
-References: <20221107095232.36828-1-xiubli@redhat.com>
- <2f1fe2fe57f39ab420c7855584ae7b6bb85a7692.camel@kernel.org>
- <c5a2cf05-8e30-1fac-3c48-d4b508ea9009@redhat.com>
- <88511dabbfb0cfad748100f59f2ce4025db29dc0.camel@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <b1333f15-fb3d-5698-1852-47a55546bdb8@redhat.com>
-Date:   Mon, 7 Nov 2022 20:44:24 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        bh=+cEiL9IFBvjHgRX8A9E1dFy3V6d+XvdXPIdvJQshRw0=;
+        b=b7aoMnGv/mGee9VvR6AkUD8WhNrsF+fCwXf8Prrhje11kv3fNwEty+KWPdImKyjLU+AbBK
+        4FLSl62v9bl/6r3YbQwHHVjRtsICK9zter0ErG+agWDrvUChhW9LktbWJ9yeR4SYAiaeI2
+        Adv1Vzny/lo3V387WDngsZdEMSfp9Bk=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-612-wgZRUeZBOxe-M3M_KuO2gA-1; Mon, 07 Nov 2022 08:03:17 -0500
+X-MC-Unique: wgZRUeZBOxe-M3M_KuO2gA-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 68A9529ABA35;
+        Mon,  7 Nov 2022 13:03:17 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.37.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 5F1A140C6EC2;
+        Mon,  7 Nov 2022 13:03:16 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y2S/q11ijXEqr8ue@infradead.org>
+References: <Y2S/q11ijXEqr8ue@infradead.org> <Y2IyTx0VwXMxzs0G@infradead.org> <cover.1666928993.git.ritesh.list@gmail.com> <886076cfa6f547d22765c522177d33cf621013d2.1666928993.git.ritesh.list@gmail.com> <20221028210422.GC3600936@dread.disaster.area> <Y19EXLfn8APg3adO@casper.infradead.org> <7699.1667487070@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Aravinda Herle <araherle@in.ibm.com>
+Subject: Re: [RFC 2/2] iomap: Support subpage size dirty tracking to improve write performance
 MIME-Version: 1.0
-In-Reply-To: <88511dabbfb0cfad748100f59f2ce4025db29dc0.camel@kernel.org>
-Content-Type: text/plain; charset=iso-8859-15; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1530986.1667826195.1@warthog.procyon.org.uk>
+Date:   Mon, 07 Nov 2022 13:03:15 +0000
+Message-ID: <1530987.1667826195@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Christoph Hellwig <hch@infradead.org> wrote:
 
-On 07/11/2022 20:29, Jeff Layton wrote:
-> On Mon, 2022-11-07 at 20:03 +0800, Xiubo Li wrote:
->> On 07/11/2022 18:33, Jeff Layton wrote:
->>> On Mon, 2022-11-07 at 17:52 +0800, xiubli@redhat.com wrote:
-[...]
->>>> diff --git a/io_uring/openclose.c b/io_uring/openclose.c
->>>> index 67178e4bb282..5a12cdf7f8d0 100644
->>>> --- a/io_uring/openclose.c
->>>> +++ b/io_uring/openclose.c
->>>> @@ -212,6 +212,7 @@ int io_close_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->>>>    int io_close(struct io_kiocb *req, unsigned int issue_flags)
->>>>    {
->>>>    	struct files_struct *files = current->files;
->>>> +	fl_owner_t owner = file_lock_make_thread_owner(files);
->>>>    	struct io_close *close = io_kiocb_to_cmd(req, struct io_close);
->>>>    	struct fdtable *fdt;
->>>>    	struct file *file;
->>>> @@ -247,7 +248,7 @@ int io_close(struct io_kiocb *req, unsigned int issue_flags)
->>>>    		goto err;
->>>>    
->>>>    	/* No ->flush() or already async, safely close from here */
->>>> -	ret = filp_close(file, current->files);
->>>> +	ret = filp_close(file, owner);
->>>>    err:
->>>>    	if (ret < 0)
->>>>    		req_set_fail(req);
->>> I think this is the wrong approach to fixing this. It also looks like
->>> you could hit a similar problem with OFD locks and this patch wouldn't
->>> address that issue.
->> For the OFD locks they will set the 'file' struct as the owner just as
->> the flock does, it should be okay and I don't think it has this issue if
->> my understanding is correct here.
->>
-> They set the the owner to "file", but they don't hold a reference to it.
-> With OFD locks, the file is what holds references to the lock, not the
-> reverse.
+> The core iomap code (fs/iomap/iter.c) does not.  Most users of it
+> are block device centric right now, but for example the dax.c uses
+> iomap for byte level DAX accesses without ever looking at a bdev,
+> and seek.c and fiemap.c do not make any assumptions on the backend
+> implementation.
 
-Yeah, right. But for both OFD and flock they shouldn't hit this issue, 
-because it when removing all the locks having the same owner, which is 
-the 'file', passed by filp_close(filp), the 'file' reference counter 
-must be larger than 0. Because the filp_close() is still using it.
+Whilst that is true, what's in iter.c is extremely minimal and most definitely
+not sufficient.  There's no retry logic, for example: what happens when we try
+poking the cache and the cache says "no data"?  We have to go back and
+redivide the missing bits of the request as the netfs granularity may not
+match that of the cache.  Also, how to deal with writes that have to be
+duplicated to multiple servers that don't all have the same wsize?
 
-This is why using the thread id as the owner is a special case for 
-Posix-style lock.
+Then functions like iomap_read_folio(), iomap_readahead(), etc. *do* use
+submit_bio().  These would seem like they're meant to be the main entry points
+into iomap.
 
->
->>> The real bug seems to be that ceph_fl_release_lock dereferences fl_file,
->>> at a point when it shouldn't rely on that being valid. Most filesystems
->>> stash some info in fl->fl_u if they need to do bookkeeping after
->>> releasing a lock. Perhaps ceph should be doing something similar?
->> This is the 'filp' memory in filp_close(filp, ...):
->>
->> crash> file.f_path.dentry,f_inode 0xffff952d7ab46200
->>     f_path.dentry = 0xffff9521b121cb40
->>     f_inode = 0xffff951f3ea33550,
->>
->> We can see the 'f_inode' is pointing to the correct inode memory.
->>
->>
->>
->> While later in 'ceph_fl_release_lock()':
->>
->> 41 static void ceph_fl_release_lock(struct file_lock *fl)
->> 42 {
->> 43     struct ceph_file_info *fi = fl->fl_file->private_data;
->> 44     struct inode *inode = file_inode(fl->fl_file);
->> 45     struct ceph_inode_info *ci = ceph_inode(inode);
->> 46     atomic_dec(&fi->num_locks);
->> 47     if (atomic_dec_and_test(&ci->i_filelock_ref)) {
->> 48         /* clear error when all locks are released */
->> 49         spin_lock(&ci->i_ceph_lock);
->> 50         ci->i_ceph_flags &= ~CEPH_I_ERROR_FILELOCK;
->> 51         spin_unlock(&ci->i_ceph_lock);
->> 52     }
->> 53 }
->>
-> You only need the inode for most of this. The exception is
-> fi->num_locks, so you may need to test for that in a different way.
->
->> It crashed in Line#47 and the 'fl->fl_file' memory is:
->>
->> crash> file.f_path.dentry,f_inode 0xffff952d4ebd8a00
->>     f_path.dentry = 0x0
->>     f_inode = 0x0,
->>
->> Please NOTE: the 'filp' and 'fl->fl_file' are two different 'file struct'.
->>
-> Yep, I understand the bug. I just don't like the proposed fix. :)
+Add to that struct iomap_iter has two bdev pointers and two dax pointers and
+the iomap_ioend struct assumes bio structs are going to be involved.
 
-Yeah, I also think this approach is ugly :-)
+Also, there's struct iomap_page - I'm hoping to avoid the need for a dangly
+struct on each page.  I *think* I only need an extra couple of bits per page
+to discriminate between pages that need writing to the cache, pages that need
+writing to the server, and pages that need to go to both - but I think it
+might be possible to keep track of that in a separate list.  The vast majority
+of write patterns are {open,write,write,...,write,close} and for such I just
+need a single tracking struct.
 
->> Can we fix this by using 'fl->fl_u' here ?
->>
-> Probably. You could take and hold an inode reference in there, and maybe
-> add a function that looks at whether there are any locks held against a
-> particular file, rather than trying to count locks in ceph_file_info.
-
-Okay, this sounds good.
-
-Let me try this tomorrow.
-
->> I was also thinking I could just call the 'get_file(file)' in
->> ceph_lock() and then in ceph_fl_release_lock() release the reference
->> counter. How about this ?
->>
-> That may work too, though again, I'd be worried about cyclical
-> dependencies, particularly with OFD locks. If the lock holds a reference
-> to the file, then can the file's refcount ever go to zero if the lock is
-> never explicitly released? I think not.
->
-> You may also need to consider flock locks too, since they have similar
-> ownership semantics to OFD locks.
-
-I will send a V2 later.
-
-Thanks Jeff!
-
-- Xiubo
-
+David
 
