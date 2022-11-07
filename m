@@ -2,101 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7F5361F3EE
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Nov 2022 14:04:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBF6861F45D
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Nov 2022 14:30:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231949AbiKGNEY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Nov 2022 08:04:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45752 "EHLO
+        id S231786AbiKGNaL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Nov 2022 08:30:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60568 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231623AbiKGNEW (ORCPT
+        with ESMTP id S232167AbiKGN3x (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Nov 2022 08:04:22 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E4A5BAA
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Nov 2022 05:03:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667826202;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=+cEiL9IFBvjHgRX8A9E1dFy3V6d+XvdXPIdvJQshRw0=;
-        b=b7aoMnGv/mGee9VvR6AkUD8WhNrsF+fCwXf8Prrhje11kv3fNwEty+KWPdImKyjLU+AbBK
-        4FLSl62v9bl/6r3YbQwHHVjRtsICK9zter0ErG+agWDrvUChhW9LktbWJ9yeR4SYAiaeI2
-        Adv1Vzny/lo3V387WDngsZdEMSfp9Bk=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-612-wgZRUeZBOxe-M3M_KuO2gA-1; Mon, 07 Nov 2022 08:03:17 -0500
-X-MC-Unique: wgZRUeZBOxe-M3M_KuO2gA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 68A9529ABA35;
-        Mon,  7 Nov 2022 13:03:17 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.37.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5F1A140C6EC2;
-        Mon,  7 Nov 2022 13:03:16 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <Y2S/q11ijXEqr8ue@infradead.org>
-References: <Y2S/q11ijXEqr8ue@infradead.org> <Y2IyTx0VwXMxzs0G@infradead.org> <cover.1666928993.git.ritesh.list@gmail.com> <886076cfa6f547d22765c522177d33cf621013d2.1666928993.git.ritesh.list@gmail.com> <20221028210422.GC3600936@dread.disaster.area> <Y19EXLfn8APg3adO@casper.infradead.org> <7699.1667487070@warthog.procyon.org.uk>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     dhowells@redhat.com, Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Aravinda Herle <araherle@in.ibm.com>
-Subject: Re: [RFC 2/2] iomap: Support subpage size dirty tracking to improve write performance
+        Mon, 7 Nov 2022 08:29:53 -0500
+Received: from mail-ej1-x636.google.com (mail-ej1-x636.google.com [IPv6:2a00:1450:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69AEE1D304
+        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Nov 2022 05:29:42 -0800 (PST)
+Received: by mail-ej1-x636.google.com with SMTP id d26so30041567eje.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Nov 2022 05:29:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=PM+GvzUOrpzLT7Pau7GHi0eg8fby8y8JxEhzd+k4CsQ=;
+        b=VTrxRNePenGfST2wcxSrNrVGneCGqAxict2RxEPTu4I4YlZxOZQdbWtyBocBb/05PP
+         dzu01Yv75KglfeLY5TfGFVCM/E1b/ZjSI7UAA5mmeGJ3KDyxXn1/rn5N2WVoPfQ1WDo1
+         m1OENUtHehsnS59tJWyVD52Kv066ZBa0iCPCE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PM+GvzUOrpzLT7Pau7GHi0eg8fby8y8JxEhzd+k4CsQ=;
+        b=lqpOWOA4uTqY2zvNoLuZ0Y5R2XLT9WngA1W2YFtYZbFyqdAsNR+nhLYrYOUgcb+Crb
+         X2SWuGjDE6shUULU7V50Ff2s5r/EkKUwhTrZBt4kFek0tXolrP7NOnIYTe37gaAu8M1h
+         WIUuvgIwwThzDAne1gPO6rwAe1zhcdr4Euefjou1F3w+34HXSWaa4upzxIf7KM0C8Xrv
+         Y3kqkZRwKsbHPUbq2ycnu4jWxanU5MV6tQVae8G2cCSeTfz1yYvuqHMLW1kEGm18lQXB
+         mxryst/x3ab7Rw6Reuz6dudpNtyjABDB76L+dKVdmfd2Ukrq6G67c6LmqIsdtxMFIDm3
+         cxUg==
+X-Gm-Message-State: ACrzQf2xTvwOEJGF3ZcUV4Y2CMS71TzAFJwcqJMKgOKVb7FMp8Zn2JUY
+        OD7Pch4Rt/3W605BTGdsZtApuxwSw+yFI03DKyf85A==
+X-Google-Smtp-Source: AMsMyM68sr6fthD5zp+UAeoptxjNTP5Wb1s5z2aihH+2ec/bLWdIELqUV8UOT76xZfmV62a3oENwjLwe0QW00TpO9Bs=
+X-Received: by 2002:a17:906:371a:b0:7ad:c01c:6fa0 with SMTP id
+ d26-20020a170906371a00b007adc01c6fa0mr43776661ejc.267.1667827781033; Mon, 07
+ Nov 2022 05:29:41 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1530986.1667826195.1@warthog.procyon.org.uk>
-Date:   Mon, 07 Nov 2022 13:03:15 +0000
-Message-ID: <1530987.1667826195@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <20221016170046.171936-1-work.viveris@nightmared.fr>
+In-Reply-To: <20221016170046.171936-1-work.viveris@nightmared.fr>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 7 Nov 2022 14:29:29 +0100
+Message-ID: <CAJfpegspZ5UJJQZNi6Rdn6wPDfoZE6REFJ-XXX3sebhrHnQ=uw@mail.gmail.com>
+Subject: Re: [PATCH] fuse: enable unprivileged mounts for fuseblk
+To:     Simon Thoby <work.viveris@nightmared.fr>
+Cc:     CONZELMANN Francois <Francois.CONZELMANN@viveris.fr>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> wrote:
+On Sun, 16 Oct 2022 at 19:00, Simon Thoby <work.viveris@nightmared.fr> wrote:
+>
+> Commit 4ad769f3c346ec3d458e255548dec26ca5284cf6 ("fuse: Allow fully
+> unprivileged mounts") enabled mounting filesystems with the 'fuse' type for
+> any user with CAP_SYS_ADMIN inside their respective user namespace, but did
+> not do so for the 'fuseblk' filesystem type.
+>
+> Some FUSE filesystems implementations - like ntfs-3g - prefer using
+> 'fuseblk' over 'fuse', which imply unprivileged users could not use these
+> tools - in their "out-of-the-box" configuration, as these tools can always
+> be patched to use the 'fuse' filesystem type to circumvent the problem.
+>
+> Enable unprivileged mounts for the 'fuseblk' type, thus uniformizing the
+> behavior of the two FUSE filesystem types.
+>
+> Signed-off-by: Simon Thoby <work.viveris@nightmared.fr>
 
-> The core iomap code (fs/iomap/iter.c) does not.  Most users of it
-> are block device centric right now, but for example the dax.c uses
-> iomap for byte level DAX accesses without ever looking at a bdev,
-> and seek.c and fiemap.c do not make any assumptions on the backend
-> implementation.
+NAK in this form.
 
-Whilst that is true, what's in iter.c is extremely minimal and most definitely
-not sufficient.  There's no retry logic, for example: what happens when we try
-poking the cache and the cache says "no data"?  We have to go back and
-redivide the missing bits of the request as the netfs granularity may not
-match that of the cache.  Also, how to deal with writes that have to be
-duplicated to multiple servers that don't all have the same wsize?
+Please look at all the places where there's a difference between the
+fuse and the fuseblk behavior and give proof that they won't result in
+a security issue in case fuseblk is mounted unprivileged.
 
-Then functions like iomap_read_folio(), iomap_readahead(), etc. *do* use
-submit_bio().  These would seem like they're meant to be the main entry points
-into iomap.
+As a possibly much better alternative, try modifying the ntfs-3g code
+to be able to work using the "fuse" fs type as well.
 
-Add to that struct iomap_iter has two bdev pointers and two dax pointers and
-the iomap_ioend struct assumes bio structs are going to be involved.
+Thanks,
+Miklos
 
-Also, there's struct iomap_page - I'm hoping to avoid the need for a dangly
-struct on each page.  I *think* I only need an extra couple of bits per page
-to discriminate between pages that need writing to the cache, pages that need
-writing to the server, and pages that need to go to both - but I think it
-might be possible to keep track of that in a separate list.  The vast majority
-of write patterns are {open,write,write,...,write,close} and for such I just
-need a single tracking struct.
+fuseblk enables synchronouse RELEASE and DESTROY requests that are
+unsuitable for unprivileged operation.
 
-David
 
+Thanks,
+Miklos
