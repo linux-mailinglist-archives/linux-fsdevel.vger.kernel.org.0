@@ -2,70 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8E0261F50A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Nov 2022 15:13:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73AE261F51F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  7 Nov 2022 15:16:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232010AbiKGONx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Nov 2022 09:13:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54822 "EHLO
+        id S231367AbiKGOQt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Nov 2022 09:16:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229638AbiKGONv (ORCPT
+        with ESMTP id S232065AbiKGOQo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Nov 2022 09:13:51 -0500
-Received: from mail-vk1-xa2e.google.com (mail-vk1-xa2e.google.com [IPv6:2607:f8b0:4864:20::a2e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C34C1789C
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Nov 2022 06:13:50 -0800 (PST)
-Received: by mail-vk1-xa2e.google.com with SMTP id g16so6709764vkl.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Nov 2022 06:13:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=/eo1TOWjveDL/+sJSCUmD9PurD1iwlOLtlcU77UAj74=;
-        b=bCC5r1yXk80w867EVtXCj/fDUVD3idaXY8wNmvVsrSHXTaXoRpE/+TgY0obIYizQKu
-         AqN1UutNdY0KCihIGx6DzYe42VE03sL5fkOwKVGyrN4nBP5BzTpfEMNwmSCC77T2ln50
-         a6OCdL/yt7SbCqjd2xWv8AgDd8wGMJQa9NeNJAIOmkp3nKL71z2aTLO5ogH5jCeSHywH
-         0YlGoJEGTLNJaffICUe4fhVYw3p9HdVBrX+l149G+OsA7YrSl99feEdNOJ4K7043z8QB
-         Tx+L7AVmEsjX2208eKvljnAEg9iXP8z9RNGT+dho9N7SXCLDF56Mym1/zbcc/MCXL13c
-         XL7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/eo1TOWjveDL/+sJSCUmD9PurD1iwlOLtlcU77UAj74=;
-        b=PHC8LaFvpQTIexuw9vP7zHrZdtWgQhNdCepL9gpGKyaBnbRjH7lJFXBpzbj6rFml1P
-         TciAfWaW7r82Wscu0rmuQbUZveQSj7v14t5sT90xJUbenqJllMgEz9OFscxtqpsX+Kbg
-         6GquGAQyHO3TxybJ2WVPsqQtspr5Y6E+BF66jqzcrOumnKNfXM2ITKRuL+Xx6Gzxelol
-         4TyVSby0F/9pM09u+BUSZV1tIFHdj4MgEr8IdjElVf16RGnorKpci3slh7hmlCXNOdgO
-         HMgbdzObDWn0sI1ksWpSFJz2J81FLGp/2ZuJ33L26BCYTrFxR6hJistSBMk/XPtHwRTP
-         GjnQ==
-X-Gm-Message-State: ACrzQf07+jmlVN0WD+uJx1BStoDtIOWef9XreiSmOfGk25OQCwOEjQ9L
-        GRR+FUqMrpR3l0FaxhW2AQ8JKSSxjye1xWOY3w9oDDBR1lg=
-X-Google-Smtp-Source: AMsMyM4zCyPbjd/6R37aWcNFOD1/wDtgIAuHEocxhUG6AzbqdiuJ7iysX7J4Ehr9XHETB/iixMMogxdljI2Vg9gywK8=
-X-Received: by 2002:a05:6122:988:b0:3a9:a908:72dc with SMTP id
- g8-20020a056122098800b003a9a90872dcmr8224340vkd.15.1667830429486; Mon, 07 Nov
- 2022 06:13:49 -0800 (PST)
+        Mon, 7 Nov 2022 09:16:44 -0500
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 178CA1BE94;
+        Mon,  7 Nov 2022 06:16:42 -0800 (PST)
+From:   John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020; t=1667830600;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=zf2Nnq9aaBhq9OyJBdbPoPZazbYrZ5ZYcguoDhN8w38=;
+        b=2DMdV6P5I8sPplJufSLuueHeVl4bvVMKaOCMLHG/8T/fwK7DAOABqqdX7aJ+59oIKbSeI/
+        jxIUQ7vmqJIWBg5uBPUnLwho/ozyVcK4cifb7E8MZWqNAgvSZcTQkooqi2XOBJKmdFoPe0
+        S/wZC7FHNIjNqHF8aKh2I4aJghp93sxvUy5SQTr2sLIW2gINDw/7UBtkXqGJH9YxH5hhOO
+        0O67dTObUBp0/Va8bcvOAkYNduQYwv+rsV/BkAAXQ2emD/fAX8uWsiRgCCzSlHK71l+mxd
+        DWhAO2yHDDwVwuy7tiy10mhyFAMcwaRZxpwSCRbmOIfW9QXr83hR7vV88Ebaiw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+        s=2020e; t=1667830600;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=zf2Nnq9aaBhq9OyJBdbPoPZazbYrZ5ZYcguoDhN8w38=;
+        b=jYEgYMmbvDXYj7DRG/zDjOcuyxgqHf6CJ4sMHlEhQTQPnAhOStcpCmHEsG9VmODdbETAmt
+        FuRjrih+zd0krvCw==
+To:     Petr Mladek <pmladek@suse.com>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-um@lists.infradead.org, Luis Chamberlain <mcgrof@kernel.org>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tony Lindgren <tony@atomide.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, Ard Biesheuvel <ardb@kernel.org>,
+        linux-efi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        linux-usb@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        Helge Deller <deller@gmx.de>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Tom Rix <trix@redhat.com>, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH printk v3 00/40] reduce console_lock scope
+Date:   Mon,  7 Nov 2022 15:21:58 +0106
+Message-Id: <20221107141638.3790965-1-john.ogness@linutronix.de>
 MIME-Version: 1.0
-References: <20220912125734.wpcw3udsqri4juuh@quack3> <CAOQ4uxgE5Wicsq_O+Vc6aOaLeYMhCEWrRVvAW9C1kEMMqBwJ9Q@mail.gmail.com>
- <CAOQ4uxgyWEvsTATzimYxuKNkdVA5OcfzQOc1he5=r-t=GX-z6g@mail.gmail.com>
- <20220914103006.daa6nkqzehxppdf5@quack3> <CAOQ4uxh6C=jMftsFQD3s1u7D_niRDmBaxKTymboJQGTmPD6bXQ@mail.gmail.com>
- <CAOQ4uxjHu4k2-sdM1qtnFPvKRHv-OFWo0cYDZbvjv0sd9bXGZQ@mail.gmail.com>
- <20220922104823.z6465rfro7ataw2i@quack3> <CAOQ4uxiNhnV0OWU-2SY_N0aY19UdMboR3Uivcr7EvS7zdd9jxw@mail.gmail.com>
- <20221103163045.fzl6netcffk23sxw@quack3> <CAOQ4uxhRYZgDSWr8ycB3hqxZgg6MWL65eP0eEkcZkGfcEpHpCg@mail.gmail.com>
- <20221107111008.wt4s4hjumxzl5kqj@quack3>
-In-Reply-To: <20221107111008.wt4s4hjumxzl5kqj@quack3>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 7 Nov 2022 16:13:37 +0200
-Message-ID: <CAOQ4uxhjCb=2f_sFfx+hn8B44+vgZgSbVe=es4CwiC7dFzMizA@mail.gmail.com>
-Subject: Re: thoughts about fanotify and HSM
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,INVALID_DATE_TZ_ABSURD,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,219 +100,206 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 7, 2022 at 1:10 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Fri 04-11-22 10:17:54, Amir Goldstein wrote:
-> > On Thu, Nov 3, 2022 at 6:30 PM Jan Kara <jack@suse.cz> wrote:
-> > >
-> > > On Fri 28-10-22 15:50:04, Amir Goldstein wrote:
-> > > > On Thu, Sep 22, 2022 at 1:48 PM Jan Kara <jack@suse.cz> wrote:
-> > > > >
-> > > > > > Questions:
-> > > > > > - What do you think about the direction this POC has taken so far?
-> > > > > > - Is there anything specific that you would like to see in the POC
-> > > > > >   to be convinced that this API will be useful?
-> > > > >
-> > > > > I think your POC is taking a good direction and your discussion with Dave
-> > > > > had made me more confident that this is all workable :). I liked your idea
-> > > > > of the wiki (or whatever form of documentation) that summarizes what we've
-> > > > > discussed in this thread. That would be actually pretty nice for future
-> > > > > reference.
-> > > > >
-> > > >
-> > > > The current state of POC is that "populate of access" of both files
-> > > > and directories is working and "race free evict of file content" is also
-> > > > implemented (safely AFAIK).
-> > > >
-> > > > The technique involving exclusive write lease is discussed at [1].
-> > > > In a nutshell, populate and evict synchronize on atomic i_writecount
-> > > > and this technique can be implemented with upstream UAPIs.
-> > >
-> > > Not so much i_writecount AFAIU but the generic lease mechanism overall. But
-> > > yes, the currently existing APIs should be enough for your purposes.
-> > >
-> >
-> > Right. Do note that the write lease is not reliable enough by itself
-> > to provide exclusive access to the content, because:
-> > 1. The lease break signal is delivered asynchronously to content evict
-> >     program
-> > 2. After the lease break timeout expires, reader will get access
-> >     to the content even if content eviction is in progress
-> >
-> > The actual strong exclusive access is provided by the sequence:
-> > 1. Open file for write
-> > 2. Deny future FAN_OPEN_PERM
-> > 3. Take write lease, but just to verify that i_writecount == 1
-> >
-> > Notice one thing odd is that in do_dentry_open() the sequence is:
-> > 1. increment i_writecount
-> > 2. security_file_open() => FAN_OPEN_PERM
-> > 3. break_lease()
-> >
-> > However, FAN_OPEN_PERM is blocking and when listener
-> > reads the event, you get to:
-> > created_fd() => ... do_dentry_open(f_mode=FMODE_NONOTIFY):
-> > 4. may increment i_writecount
-> > 5. security_file_open() => FAN_OPEN_PERM skipped
-> > 6. break_lease() => send lease break signal
-> >
-> > The result is a bit non intuitive:
-> >
-> > If a new open is attempted during content evict, the new open will be
-> > blocked for the lease timeout, before the listener even gets a chance
-> > to respond.
-> >
-> > But if lease timeout has expired and the event listener denied the open,
-> > the lease break signal will still be delivered to the content evict program,
-> > despite the fact that the open is not going to proceed.
->
-> I see. I'd just note that allowing FID mode for permission events would
-> solve both these problems, won't it?
->
+This is v3 of a series to prepare for threaded/atomic
+printing. v2 is here [0]. This series focuses on reducing the
+scope of the BKL console_lock. It achieves this by switching to
+SRCU and a dedicated mutex for console list iteration and
+modification, respectively. The console_lock will no longer
+offer this protection and is completely removed from
+(un)register_console() and console_stop/start() code.
 
-Yes, it would.
-event_f_flags = O_PATH also does not have this wrinkle.
+Also, during the review of v2 it came to our attention that
+many console drivers are checking CON_ENABLED to see if they
+are registered. Because this flag can change without
+unregistering and because this flag does not represent an
+atomic point when an (un)registration process is complete,
+a new console_is_registered() function is introduced. This
+function uses the console_list_lock to synchronize with the
+(un)registration process to provide a reliable status.
 
-Originally, I had considered using FIDs in the permission events,
-but I realized the event->fd is used as a key to the permission response,
-so I would have had to replace event->fd with some response cookie.
+All users of the console_lock for list iteration have been
+modified. For the call sites where the console_lock is still
+needed (because of other reasons), comments are added to
+explain exactly why the console_lock was needed.
 
-Anyway, this oddity is not a problem for me now.
+All users of CON_ENABLED for registration status have been
+modified to use console_is_registered(). Note that there are
+still users of CON_ENABLED, but this is for legitimate purposes
+about a registered console being able to print.
 
-[...]
+The base commit for this series is from Paul McKenney's RCU tree
+and provides an NMI-safe SRCU implementation [1]. Without the
+NMI-safe SRCU implementation, this series is not less safe than
+mainline. But we will need the NMI-safe SRCU implementation for
+atomic consoles anyway, so we might as well get it in
+now. Especially since it _does_ increase the reliability for
+mainline in the panic path.
 
-> > > Let's think about the race:
-> > >
-> > > > To clarify, the race that I am trying to avoid is:
-> > > > 1. group B got a pre modify event and recorded the change before time T
-> > > > 2. The actual modification is performed after time T
-> > > > 3. group A does not get a pre modify event, so does not record the change
-> > > >     in the checkpoint since T
-> > >
-> > > AFAIU you are worried about:
-> > >
-> > > Task T                          Change journal          App
-> > >
-> > > write(file)
-> > >   generate pre_modify event
-> > >                                 record 'file' as modified
-> > >                                                         Request changes
-> > >                                                         Records 'file' contents
-> > >   modify 'file' data
-> > >
-> > > ...
-> > >                                                         Request changes
-> > >                                                         Nothing changed but
-> > > App's view of 'file' is obsolete.
-> > >
-> > > Can't we solve this by creating POST_WRITE async event and then use it like:
-> > >
-> >
-> > I like the idea of using POST_WRITE instead of holding sb_writers.
-> >
-> > > 1) Set state to CHECKPOINT_PENDING
-> > > 2) In state CHECKPOINT_PENDING we record all received modify events into a
-> > >    separate 'transition' stream.
-> > > 3) Remove ignore marks we need to remove.
-> >
-> > Our customer use cases may have many millions of dirs.
-> > I don't think this solution will be scalable, which is why I use the
-> > alternating groups to invalidate all the existing ignore marks at once.
->
-> I see. Well, we could also extend FAN_MARK_FLUSH so that you can just
-> remove all ignore marks from a group so that you don't have to remove them
-> one-by-one and don't have to switch to a new group. In principle group
-> teardown does the same. It would allow large scale as well as small scale
-> users use very similar scheme with single group for switching periods.
->
+Changes since v3:
 
-Maybe so, I need to try it to see if it can scale.
+general:
 
-But note that in the alternating group scheme we do NOT need to wait for
-the old group teardown to complete before returning the results of the query:
-1. group T+1 subscribes to some events with FAN_MARK_SYNC
-2. group T unsubscribes from those events
+- introduce a synchronized console_is_registered() to query if
+  a console is registered, meant to replace CON_ENABLED
+  (mis)use for this purpose
 
-Step 2 can be done in the background.
-The query which returns all the files modified between checkpoints T..T+1
-can already return the changes recorded by group T while group T is
-shutting down and cleaning up all the evictable marks.
+- directly read console->flags for registered consoles if it is
+  race-free (and document that it is so)
 
-> > But I agree that alternating groups should not be a requirement for HSM
-> > and that for watching smaller subtrees, your suggestion makes more sense.
-> >
-> > > 4) Switch to new period & clear CHECKPOINT_PENDING, all events are now
-> > >    recorded to the new period.
-> > > 5) Merge all events from 'transition' stream to both old and new period
-> > >    event streams.
-> > > 6) Events get removed from the 'transition' stream only once we receive
-> > >    POST_WRITE event corresponding to the PRE_WRITE event recorded there (or
-> > >    on crash recovery). This way some events from 'transition' stream may
-> > >    get merged to multiple period event streams if the checkpoints are
-> > >    frequent and writes take long.
-> > >
-> > > This should avoid the above race, should be relatively lightweight, and
-> > > does not require major API extensions.
-> > >
-> >
-> > If I am not mistaken, CHECKPOINT_PENDING vs. alternating groups
-> > is an implementation detail for the HSM.
-> >
-> > PRE_WRITE/POST_WRITE and FAN_MARK_SYNC APIs are needed
-> > for both the implementations (single group scheme needs to flush all
-> > ignore marks with FAN_MARK_SYNC).
->
-> So why would be FAN_MARK_SYNC needed for the single group scheme? From the
-> kernel POV the scheme I have proposed does not require any new API changes
-> besides the POST_WRITE event AFAICT. And possibly FAN_MARK_FLUSH tweak for
-> more efficient removal of ignore marks. We don't even need the filesystem
-> freezing (modulo the buffered vs direct IO discussion below).
->
+- replace uart_console_enabled() with a new
+  uart_console_registered() based on console_is_registered()
 
-Maybe I'm wrong, but my understanding is that after:
-3) Remove ignore marks we need to remove.
-a PRE_WRITE event may still be in send_to_group()
-with one of the "removed" ignore marks and be ignored.
+- change comments about why console_lock is used to synchronize
+  console->device() by providing an example
 
-So it is not safe to:
-4) Switch to new period & clear CHECKPOINT_PENDING
+registration check fixups:
 
-My understanding is that
-synchronize_srcu(&fsnotify_mark_srcu);
-is needed as barrier between 3) and 4)
+- the following drivers were modified to use the new
+  console_is_registered() instead of CON_ENABLED checks
 
-In any case, even if CHECKPOINT_PENDING can work,
-with or without FAN_MARK_SYNC, to me personally, understanding
-the proof of correctness of alternating groups model is very easy,
-while proving correctness for CHECKPOINT_PENDING model is
-something that I was not yet able to accomplish.
+   - arch/m68k/emu/nfcon.c
+   - drivers/firmware/efi/earlycon.c
+   - drivers/net/netconsole.c
+   - drivers/tty/hvc/hvc_console.c
+   - drivers/tty/serial/8250/8250_core.c
+   - drivers/tty/serial/earlycon.c
+   - drivers/tty/serial/pic32_uart.c
+   - drivers/tty/serial/samsung_tty.c
+   - drivers/tty/serial/serial_core.c
+   - drivers/tty/serial/xilinx_uartps.c
+   - drivers/usb/early/xhci-dbc.c
 
-> > I am going to try to implement the PRE/POST_WRITE events and for
-> > POC I may start with a single group because it may be easier or I may
-> > implement both schemes, we'll see.
->
-> That would be great. Thank you. Perhaps I'm missing something in my mental
-> model which would make things impractical :)
->
+um: kmsg_dumper:
 
-Me too. I won't know before I try.
+- change stdout dump criteria to match original intention
 
-FYI, at the moment I am considering not allowing independent
-subscription for PRE/POST_XXX events, but only subscribe to
-XXX events and a group with class FAN_CLASS_VFS_FILTER
-will get both PRE/POST_XXX and won't be able to subscribe
-to XXX events that do not have PRE_XXX events.
+kgdb/kdb:
 
-The rationale is that if a group subscribes to either PRE/POST_XXX
-XXX() operation is not going to be on the fast path anyway.
+- in configure_kgdboc(), take console_list_lock to synchronize
+  tty_find_polling_driver() against register_console()
 
-This will make it easier to support more PRE/POST_XXX events
-without using up all the remaining 32bits namespace.
+- add comments explaining why calling console->write() without
+  locking might work
 
-Using the high 32bits of mask for PRE events and folding them
-in the object interest mask with the low 32bit is another thing
-that I was considering in case you would prefer to allow
-independent subscription for PRE/POST_XXX events.
+tty: sh-sci:
 
-Thanks,
-Amir.
+- use a setup() callback to setup the early console
+
+fbdev: xen:
+
+- implement a cleaner approach for
+  console_force_preferred_locked()
+
+rcu:
+
+- implement debug_lockdep_rcu_enabled() for
+  !CONFIG_DEBUG_LOCK_ALLOC
+
+printk:
+
+- check CONFIG_DEBUG_LOCK_ALLOC for srcu_read_lock_held()
+  availability
+
+- for console_lock/_trylock/_unlock, replace "lock the console
+  system" language with "block the console subsystem from
+  printing"
+
+- use WRITE_ONCE() for updating console->flags of registered
+  consoles
+
+- expand comments of synchronize_srcu() calls to explain why
+  they are needed, and also expand comments to explain when it
+  is not needed
+
+- change CON_BOOT consoles to always begin at earliest message
+
+- for non-BOOT/non-PRINTBUFFER consoles, initialize @seq to the
+  minimal @seq of any of the enabled boot consoles
+
+- add comments and lockdep assertion to
+  unregister_console_locked() because it is not clear from the
+  name which lock is implied
+
+- dropped patches that caused unnecessary churn in the series
+
+John Ogness
+
+[0] https://lore.kernel.org/lkml/20221019145600.1282823-1-john.ogness@linutronix.de
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/log/?h=srcunmisafe.2022.10.21a
+
+John Ogness (38):
+  rcu: implement lockdep_rcu_enabled for !CONFIG_DEBUG_LOCK_ALLOC
+  printk: Prepare for SRCU console list protection
+  printk: fix setting first seq for consoles
+  um: kmsg_dump: only dump when no output console available
+  console: introduce console_is_enabled() wrapper
+  printk: use console_is_enabled()
+  um: kmsg_dump: use console_is_enabled()
+  kdb: kdb_io: use console_is_enabled()
+  um: kmsg_dumper: use srcu console list iterator
+  tty: serial: kgdboc: document console_lock usage
+  tty: tty_io: document console_lock usage
+  proc: consoles: document console_lock usage
+  kdb: use srcu console list iterator
+  printk: console_flush_all: use srcu console list iterator
+  printk: console_unblank: use srcu console list iterator
+  printk: console_flush_on_panic: use srcu console list iterator
+  printk: console_device: use srcu console list iterator
+  printk: __pr_flush: use srcu console list iterator
+  printk: introduce console_list_lock
+  console: introduce console_is_registered()
+  serial_core: replace uart_console_enabled() with
+    uart_console_registered()
+  tty: nfcon: use console_is_registered()
+  efi: earlycon: use console_is_registered()
+  tty: hvc: use console_is_registered()
+  tty: serial: earlycon: use console_is_registered()
+  tty: serial: pic32_uart: use console_is_registered()
+  tty: serial: samsung_tty: use console_is_registered()
+  tty: serial: xilinx_uartps: use console_is_registered()
+  usb: early: xhci-dbc: use console_is_registered()
+  netconsole: avoid CON_ENABLED misuse to track registration
+  printk, xen: fbfront: create/use safe function for forcing preferred
+  tty: tty_io: use console_list_lock for list synchronization
+  proc: consoles: use console_list_lock for list iteration
+  tty: serial: kgdboc: use console_list_lock for list traversal
+  tty: serial: kgdboc: synchronize tty_find_polling_driver() and
+    register_console()
+  tty: serial: kgdboc: use console_list_lock to trap exit
+  printk: relieve console_lock of list synchronization duties
+  tty: serial: sh-sci: use setup() callback for early console
+
+Thomas Gleixner (2):
+  serial: kgdboc: Lock console list in probe function
+  printk: Convert console_drivers list to hlist
+
+ .clang-format                       |   1 +
+ arch/m68k/emu/nfcon.c               |  10 +-
+ arch/um/kernel/kmsg_dump.c          |  24 +-
+ drivers/firmware/efi/earlycon.c     |   8 +-
+ drivers/net/netconsole.c            |  21 +-
+ drivers/tty/hvc/hvc_console.c       |   4 +-
+ drivers/tty/serial/8250/8250_core.c |   2 +-
+ drivers/tty/serial/earlycon.c       |   4 +-
+ drivers/tty/serial/kgdboc.c         |  46 ++-
+ drivers/tty/serial/pic32_uart.c     |   4 +-
+ drivers/tty/serial/samsung_tty.c    |   2 +-
+ drivers/tty/serial/serial_core.c    |  14 +-
+ drivers/tty/serial/sh-sci.c         |  17 +-
+ drivers/tty/serial/xilinx_uartps.c  |   2 +-
+ drivers/tty/tty_io.c                |  18 +-
+ drivers/usb/early/xhci-dbc.c        |   2 +-
+ drivers/video/fbdev/xen-fbfront.c   |  12 +-
+ fs/proc/consoles.c                  |  21 +-
+ include/linux/console.h             | 111 +++++++-
+ include/linux/rcupdate.h            |   5 +
+ include/linux/serial_core.h         |  15 +-
+ kernel/debug/kdb/kdb_io.c           |  14 +-
+ kernel/printk/printk.c              | 424 +++++++++++++++++++++-------
+ 23 files changed, 605 insertions(+), 176 deletions(-)
+
+
+base-commit: e29a4915db1480f96e0bc2e928699d086a71f43c
+-- 
+2.30.2
+
