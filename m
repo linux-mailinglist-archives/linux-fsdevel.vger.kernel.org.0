@@ -2,137 +2,392 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8A015620FC7
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Nov 2022 13:05:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1214D620FE4
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Nov 2022 13:08:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233961AbiKHMFD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Nov 2022 07:05:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57368 "EHLO
+        id S233884AbiKHMIc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Nov 2022 07:08:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233882AbiKHME6 (ORCPT
+        with ESMTP id S233963AbiKHMIS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Nov 2022 07:04:58 -0500
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2045.outbound.protection.outlook.com [40.107.220.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E06552F390;
-        Tue,  8 Nov 2022 04:04:57 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WdO5BAj0va9QkUb7l2Lo+2w/iucZVv9ckHc6l8QvPiddnImjehtftnPLFa8+AZUVP14MhVcfDVAf4igyDCVe2BJUZO7MgvsujoE+Oi3RKWDEoBC/wjOXvYkCVVm0Y857sL8SeWcfSKA1m/4cJy8Qg2DpufLEgtcenCFRU/Fgw1WiJxn85JYqGUdrdGs+cICtXORZFX8/JKcTZw3sJzvooLMgeSJKIwj/ddzfI8f9jTly91bDGC0ptr8F5nMcWZyWQ6XzwAmVOSurMfxwTfg2qZDlNBY5r09YRXXTqjr1qq47l6pTcsRkj/KIrwy0+q2FC0OLqENdw0DRiK9VHouOiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=2PMGZK/njyRDQKGypAy8V+KF6bpuuqtyj/im05XQ0yk=;
- b=Jbil0Jw7drFWdok9rz8B67g7JvKe5FaXbZBqQ6/wVYRWM9J8D/yw9rgnFLNMqkG93CkXXscZ2y8YnwmtpzdCogWRPgubcGiLH/pTAVRQ5FFMMnZwE7PaRtUsIivgTL6VP1m3lzlK7iXe7OUQUh/4RELiL7xrQOjUil/eofHHEXNdUeRRUgnfDGX2iW6s29Gwos3yce+jWG1oBSS+oaISCuz8y2GHUedwxtgGFlTvtiMsD8/1mGcQcCV3whZJvdiFj43urorp9dRcJSPOaU3uqpIZB6S6XVNY3mcU4+BxCAX6QwTEHJnglOeNhw2PRvBW6IfWpnwH9lh67DgmEOg5lQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=2PMGZK/njyRDQKGypAy8V+KF6bpuuqtyj/im05XQ0yk=;
- b=kh8G5juZLAeQ3D+kws3+++w9sdMAUIqwxiNpMiejWPKJ9IlSj0juh8ddzlyqq4gAUmEwxlo8Skyweio4iBQXv3I2sOg3jDCRCvcggN1Y3k8vtcqONH7/tSZ3wE7jSpSbMeH49PJbcclf4B00KVm5p/lIz89m6la2CGHv/hccYh4FIBA9WNCUI05Y78cLjEw//eSbCpwgR8ozM4dNkU6MC5laG7AQH1W/IDZ8Nvbb4Cv2NpzZdf1QpHmH2B/Td/eLQXoaaMbMQejLZfFP3fIY2Zw0j3VPcCzoCgPi0k8xf6DIuWKSd0cWtLCh/K4ZsuQGQ+2cylT/Q2NfDFeBUXIX1g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com (2603:10b6:408:176::16)
- by SJ0PR12MB6942.namprd12.prod.outlook.com (2603:10b6:a03:449::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5791.27; Tue, 8 Nov
- 2022 12:04:53 +0000
-Received: from LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::7a81:a4e4:bb9c:d1de]) by LV2PR12MB5869.namprd12.prod.outlook.com
- ([fe80::7a81:a4e4:bb9c:d1de%6]) with mapi id 15.20.5791.026; Tue, 8 Nov 2022
- 12:04:53 +0000
-Date:   Tue, 8 Nov 2022 08:04:51 -0400
-From:   Jason Gunthorpe <jgg@nvidia.com>
-To:     Wei Yongjun <weiyongjun1@huawei.com>
-Cc:     Qi Zheng <zhengqi.arch@bytedance.com>, dvyukov@google.com,
-        willy@infradead.org, akinobu.mita@gmail.com,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        Tue, 8 Nov 2022 07:08:18 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C0223EBD;
+        Tue,  8 Nov 2022 04:08:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1667909297; x=1699445297;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=caRUr7sQcj7Z1erPIwFwOEGdgx5trQeO2xkwYKL7cBE=;
+  b=JOrJ6Vb3qj+WF9pSsgQeXhN3E1tgAGk0kBmiI5JE6k0OaAwhNt2GRcXr
+   ro6BPGBkiLQJY97mWmXAqsrq5kEImF0P3xwYw8mminmR4cgM44KtZyalw
+   CEzBVszSDcz717sSgr8jBMuR/65mvK4slg6uS1nK/+E8KM7Vio92CqUw1
+   L3jW/jY3GJgMeTmxaODAIGMbGn6mIPH1Jnp7ofD31zMupFr07NqznxYUN
+   Qbddz1QBESpofaryH22/f4zuUQiGJ1nbAfm9mDgaDm5legnEVcjua2D54
+   8PbUXt08W+M3KfIXJs4G7CM8rETU8xMIHpXYbGKQLlUrOQDlntl56+gfG
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="309386690"
+X-IronPort-AV: E=Sophos;i="5.96,147,1665471600"; 
+   d="scan'208";a="309386690"
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Nov 2022 04:08:17 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10524"; a="667566067"
+X-IronPort-AV: E=Sophos;i="5.96,147,1665471600"; 
+   d="scan'208";a="667566067"
+Received: from yy-desk-7060.sh.intel.com (HELO localhost) ([10.239.159.76])
+  by orsmga008.jf.intel.com with ESMTP; 08 Nov 2022 04:08:06 -0800
+Date:   Tue, 8 Nov 2022 20:08:05 +0800
+From:   Yuan Yao <yuan.yao@linux.intel.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v2] mm: fix unexpected changes to
- {failslab|fail_page_alloc}.attr
-Message-ID: <Y2pF4x4gsKjaHJaE@nvidia.com>
-References: <Y2kxrerISWIxQsFO@nvidia.com>
- <20221108035232.87180-1-zhengqi.arch@bytedance.com>
- <65863340-b32f-a2fe-67ae-f1079b19eee4@huawei.com>
- <70dfbac1-4c84-9567-30be-1e2594157e62@bytedance.com>
- <e644e4bf-f1e0-3e22-7773-62f38f9b8963@huawei.com>
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v9 6/8] KVM: Update lpage info when private/shared memory
+ are mixed
+Message-ID: <20221108120805.kize74qgzsmarze5@yy-desk-7060>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-7-chao.p.peng@linux.intel.com>
+MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e644e4bf-f1e0-3e22-7773-62f38f9b8963@huawei.com>
-X-ClientProxiedBy: MN2PR15CA0052.namprd15.prod.outlook.com
- (2603:10b6:208:237::21) To LV2PR12MB5869.namprd12.prod.outlook.com
- (2603:10b6:408:176::16)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LV2PR12MB5869:EE_|SJ0PR12MB6942:EE_
-X-MS-Office365-Filtering-Correlation-Id: 44dde958-c91e-4137-aafd-08dac18171c2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wvdj4wBghDDivHIviKwerWH+GGJpeiqyLqDVEDRptK/dk8uRAMbyuVyejLMP2opcG5dfvjtQ5vA5Qh4O2qa32BC63JLO+/777QpGpCcIjHXUYjVu3RbwvPgTT32GCZiqEeZTRvFEKq7NWZzCcXXNO68mbux6heFQlAKb1bvoj3f4XTxVn/Do3zigCkQe3Qg6y1sLUWFSSk2Uf52H7Q5W6uaFrxt2rqO1ePB265iBDkvRj8MQkIdLGlfwuEBoTEyU5qRlEvgVTv7mFLgaxjMqWF8rqixdLPyy8Pw7l7oh5hXPkFVByYNHxSH/VU00m5H5aNxVMKsLsQgsiBDOJInBjE9UjIVBuZfv0HKVZ/NKd85/vWUPu8+IBsQXuh+okcIMA0akfj9RDidmColwSJTcZ2ofhW2HleLjyTsH4M8nmUNNdOEc80yU0q2mC8A07uAgBYI6tunCIMzZpUF4NmfgeRlDSYRU2PYCnxNeZXgVPf15gjmORAdeH5UmQN/5w2Hhw/Ew9TOpQh2Gr2MJ5pDlaC2n4T9M1z5sK2NcB4cpz3gICs8gqBxIV9E2oyW23Rji2oZwvYVpeyMGQCd/cezheVPdqRcgGvSEdo8NhRhyKae2cTnVqOxDIFEhVBZX9ku9uj/mlXHO5oirfwO04BliqRedDK5CE19GpQdj9yGHUj2OJo4SMR7Ra/i562inL5TnSeOZHIFzwp/mowUcF3o80w==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV2PR12MB5869.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(376002)(396003)(346002)(366004)(39860400002)(136003)(451199015)(6916009)(4326008)(66476007)(66556008)(66946007)(8676002)(316002)(4744005)(8936002)(7416002)(41300700001)(5660300002)(478600001)(6486002)(2906002)(186003)(6512007)(26005)(36756003)(2616005)(6506007)(83380400001)(86362001)(38100700002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?keFrh7IbCkuetA82Z5JcnAuo41zAsEReVd8L8PbcqSbMWcmC6Gn511opEEQ8?=
- =?us-ascii?Q?YjY0wjbj4pALz+4alP4Ao4wf9aalRh5Rae6OAQVFvgOntr0o1gDz9qz7KYF1?=
- =?us-ascii?Q?iMavhzeHESAnOtuSN5TqSuFGN2CqpqRSpc+58vXgX/KGaRmRvgJo3uOykLf2?=
- =?us-ascii?Q?Gcl6WOcgGcfbfmyqL+0vwbmRmwf0oTrYTVtIDmEwmqu5j1+77zHLuKBNyUZ6?=
- =?us-ascii?Q?FXPLAIVFTb2yEDFsPPYMXTfvSs+0UJGaIJftV0GMLQWdm0pnmtDjhQTcLJY2?=
- =?us-ascii?Q?Q5fTDVUv1EeWuO7oquCZ/LXPUHPOOZeWf1QXHP86aZxkVHoBJ8mRO10iXptz?=
- =?us-ascii?Q?wMUyxCSJHgk7wCg8ZDOxKkxx0iwaeVNCHdo3e8gz6fZ0oLXpShKEVIVHALBJ?=
- =?us-ascii?Q?GULZ9xl9ME4gBsB7glNR3wsuJaK2frHh6UsGHPYZLI2qMUQivCEagsjcaO3w?=
- =?us-ascii?Q?i8njGF+0jbLqh38YxPizRj4R5j5WBlpU1CLPcpJgWQsjPQ19J6X8uRyYIWh5?=
- =?us-ascii?Q?t8LD4IfZCRa9VLkGeDG8EAkqK8J9F8HmUMksVDjGJyJiusdLywbBXZ/dJq0T?=
- =?us-ascii?Q?Rl5/OzTWMrpotb4OiTI925jS9NwP3LM9lRZh2fnshyO0xDtEP4Vx+mzxlQkr?=
- =?us-ascii?Q?t/kvwK07OB4iNLFtjwWiNXRHdelOHRJuxQLkrzTdjb5PPs/UZR3Hvhvk6dwH?=
- =?us-ascii?Q?z1mjWue12VuPgQ/BF8FOiYxQjwkJNLBpRZ471wecLKnNPvwAvgNQ9bfntyao?=
- =?us-ascii?Q?pPj5h0pByz9/RU+wXpmQV9TVnG7g//hSBargwOqVzEw2foFP6H79GLcohdZd?=
- =?us-ascii?Q?Hbf2XfjDr6OFEdQ2nRP2rEs0hIenWPxhUNV7mjzfzvKBWoqrDhKVnOEOgpx/?=
- =?us-ascii?Q?0PRe5ih90Gc3U8W2A7hnfha6gW+gOFnr47t7WYWzSj3Lb6i6xWSRUpETf0K7?=
- =?us-ascii?Q?y3dx6sE7BBRhtyQLr9jowShyahKthQRz/YNeexV/6JyTPuWzDuP9J8c8Hkdt?=
- =?us-ascii?Q?TwI24jVNn/bVBXSp7DaoYghNDgRJANFzWeJqT/3Ol2CaOs8T5G1eTO/JGjYM?=
- =?us-ascii?Q?bRZQR3TXwNTRT9wcBiBW5gTrV4C8tpSXnbM7DJW/c3PJGyHp7E6EXLeGJf1y?=
- =?us-ascii?Q?yB1SkR8Epfu/nKArkw4BQnw+0KNyISQWgk1socIdzTXr1m8OGFxIHoHVyJBV?=
- =?us-ascii?Q?SyQXxonwQOC/hkACfbl4LRC6BDPxEa7z9yKukKaMXYsx1Ud+Wj39p57TIV84?=
- =?us-ascii?Q?Fi5P3nsp09oCKogWt47k32iNmJFwaipofMl/2KiiF4reD7bsOc/qwzUtVxwz?=
- =?us-ascii?Q?fpGxx04u0ntYsl469YbbL937wqZw4lxYJLCvmm2Ad9bLMsNerYARSfvLYGa0?=
- =?us-ascii?Q?4fe1IA8mQBqknaOHOcH+QBk1VAOB3BHfSH/qLtXaGAnfgxnlBXqtdtWp426J?=
- =?us-ascii?Q?xgXO0HajK/ULvTJJ3wBjwB+k+omDxZOt0AR0oykbiC9HFU+R57GfKITO9htQ?=
- =?us-ascii?Q?Y1UEIRPTqahbRhJzfqDcHg+aUS6Xy8vOVPk5eheMzKCOAzeYkK1mKGtMF8N3?=
- =?us-ascii?Q?WEo1V+UQevjCBqukSyA=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44dde958-c91e-4137-aafd-08dac18171c2
-X-MS-Exchange-CrossTenant-AuthSource: LV2PR12MB5869.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Nov 2022 12:04:53.1433
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gOtOhtuRWEoFWGB/Ui8BToz2ZOoZjdQvacKMxjzwC3gha8dt1cFL1K5FqRvpNV5v
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6942
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
-        autolearn=no autolearn_force=no version=3.4.6
+In-Reply-To: <20221025151344.3784230-7-chao.p.peng@linux.intel.com>
+User-Agent: NeoMutt/20171215
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 08, 2022 at 05:32:52PM +0800, Wei Yongjun wrote:
-> > So you want to set/clear this no_warn attr through the procfs or sysfs
-> > interface, so that you can easily disable/enable the slab/page fault
-> > warning message from the user mode. Right?
-> 
-> Yes, just like:
-> 
-> echo 1 > /sys/kernel/debug/failslab/no_warn  #disable message
-> echo 0 > /sys/kernel/debug/failslab/no_warn  #enable message
+On Tue, Oct 25, 2022 at 11:13:42PM +0800, Chao Peng wrote:
+> When private/shared memory are mixed in a large page, the lpage_info may
+> not be accurate and should be updated with this mixed info. A large page
+> has mixed pages can't be really mapped as large page since its
+> private/shared pages are from different physical memory.
+>
+> Update lpage_info when private/shared memory attribute is changed. If
+> both private and shared pages are within a large page region, it can't
+> be mapped as large page. It's a bit challenge to track the mixed
+> info in a 'count' like variable, this patch instead reserves a bit in
+> 'disallow_lpage' to indicate a large page has mixed private/share pages.
+>
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h |   8 +++
+>  arch/x86/kvm/mmu/mmu.c          | 112 +++++++++++++++++++++++++++++++-
+>  arch/x86/kvm/x86.c              |   2 +
+>  include/linux/kvm_host.h        |  19 ++++++
+>  virt/kvm/kvm_main.c             |  16 +++--
+>  5 files changed, 152 insertions(+), 5 deletions(-)
+>
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index 7551b6f9c31c..db811a54e3fd 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -37,6 +37,7 @@
+>  #include <asm/hyperv-tlfs.h>
+>
+>  #define __KVM_HAVE_ARCH_VCPU_DEBUGFS
+> +#define __KVM_HAVE_ARCH_UPDATE_MEM_ATTR
+>
+>  #define KVM_MAX_VCPUS 1024
+>
+> @@ -952,6 +953,13 @@ struct kvm_vcpu_arch {
+>  #endif
+>  };
+>
+> +/*
+> + * Use a bit in disallow_lpage to indicate private/shared pages mixed at the
+> + * level. The remaining bits are used as a reference count.
+> + */
+> +#define KVM_LPAGE_PRIVATE_SHARED_MIXED		(1U << 31)
+> +#define KVM_LPAGE_COUNT_MAX			((1U << 31) - 1)
+> +
+>  struct kvm_lpage_info {
+>  	int disallow_lpage;
+>  };
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 33b1aec44fb8..67a9823a8c35 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -762,11 +762,16 @@ static void update_gfn_disallow_lpage_count(const struct kvm_memory_slot *slot,
+>  {
+>  	struct kvm_lpage_info *linfo;
+>  	int i;
+> +	int disallow_count;
+>
+>  	for (i = PG_LEVEL_2M; i <= KVM_MAX_HUGEPAGE_LEVEL; ++i) {
+>  		linfo = lpage_info_slot(gfn, slot, i);
+> +
+> +		disallow_count = linfo->disallow_lpage & KVM_LPAGE_COUNT_MAX;
+> +		WARN_ON(disallow_count + count < 0 ||
+> +			disallow_count > KVM_LPAGE_COUNT_MAX - count);
+> +
+>  		linfo->disallow_lpage += count;
+> -		WARN_ON(linfo->disallow_lpage < 0);
+>  	}
+>  }
+>
+> @@ -6910,3 +6915,108 @@ void kvm_mmu_pre_destroy_vm(struct kvm *kvm)
+>  	if (kvm->arch.nx_lpage_recovery_thread)
+>  		kthread_stop(kvm->arch.nx_lpage_recovery_thread);
+>  }
+> +
+> +static inline bool linfo_is_mixed(struct kvm_lpage_info *linfo)
+> +{
+> +	return linfo->disallow_lpage & KVM_LPAGE_PRIVATE_SHARED_MIXED;
+> +}
+> +
+> +static inline void linfo_update_mixed(struct kvm_lpage_info *linfo, bool mixed)
+> +{
+> +	if (mixed)
+> +		linfo->disallow_lpage |= KVM_LPAGE_PRIVATE_SHARED_MIXED;
+> +	else
+> +		linfo->disallow_lpage &= ~KVM_LPAGE_PRIVATE_SHARED_MIXED;
+> +}
+> +
+> +static bool mem_attr_is_mixed_2m(struct kvm *kvm, unsigned int attr,
+> +				 gfn_t start, gfn_t end)
+> +{
+> +	XA_STATE(xas, &kvm->mem_attr_array, start);
+> +	gfn_t gfn = start;
+> +	void *entry;
+> +	bool shared = attr == KVM_MEM_ATTR_SHARED;
+> +	bool mixed = false;
+> +
+> +	rcu_read_lock();
+> +	entry = xas_load(&xas);
+> +	while (gfn < end) {
+> +		if (xas_retry(&xas, entry))
+> +			continue;
+> +
+> +		KVM_BUG_ON(gfn != xas.xa_index, kvm);
+> +
+> +		if ((entry && !shared) || (!entry && shared)) {
+> +			mixed = true;
+> +			goto out;
+> +		}
+> +
+> +		entry = xas_next(&xas);
+> +		gfn++;
+> +	}
+> +out:
+> +	rcu_read_unlock();
+> +	return mixed;
+> +}
+> +
+> +static bool mem_attr_is_mixed(struct kvm *kvm, struct kvm_memory_slot *slot,
+> +			      int level, unsigned int attr,
+> +			      gfn_t start, gfn_t end)
+> +{
+> +	unsigned long gfn;
+> +	void *entry;
+> +
+> +	if (level == PG_LEVEL_2M)
+> +		return mem_attr_is_mixed_2m(kvm, attr, start, end);
+> +
+> +	entry = xa_load(&kvm->mem_attr_array, start);
+> +	for (gfn = start; gfn < end; gfn += KVM_PAGES_PER_HPAGE(level - 1)) {
+> +		if (linfo_is_mixed(lpage_info_slot(gfn, slot, level - 1)))
+> +			return true;
+> +		if (xa_load(&kvm->mem_attr_array, gfn) != entry)
+> +			return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +void kvm_arch_update_mem_attr(struct kvm *kvm, struct kvm_memory_slot *slot,
+> +			      unsigned int attr, gfn_t start, gfn_t end)
+> +{
+> +
+> +	unsigned long lpage_start, lpage_end;
+> +	unsigned long gfn, pages, mask;
+> +	int level;
+> +
+> +	WARN_ONCE(!(attr & (KVM_MEM_ATTR_PRIVATE | KVM_MEM_ATTR_SHARED)),
+> +			"Unsupported mem attribute.\n");
+> +
+> +	/*
+> +	 * The sequence matters here: we update the higher level basing on the
+> +	 * lower level's scanning result.
+> +	 */
+> +	for (level = PG_LEVEL_2M; level <= KVM_MAX_HUGEPAGE_LEVEL; level++) {
+> +		pages = KVM_PAGES_PER_HPAGE(level);
+> +		mask = ~(pages - 1);
+> +		lpage_start = max(start & mask, slot->base_gfn);
+> +		lpage_end = (end - 1) & mask;
+> +
+> +		/*
+> +		 * We only need to scan the head and tail page, for middle pages
+> +		 * we know they are not mixed.
+> +		 */
+> +		linfo_update_mixed(lpage_info_slot(lpage_start, slot, level),
+> +				   mem_attr_is_mixed(kvm, slot, level, attr,
+> +						     lpage_start, start));
 
-You can already do that:
+Looks only query the lpage_start, start is not enough:
 
- echo 0 > /sys/kernel/debug/failslab/verbose  #disable message
+A and B are private gfns from same lpage_start as below, A > B :
+lpage_start
+       |---------A
+       |----B
 
-Jason
+Convert A to shared, this makes the upper 2M page to MIX.
+Convert B to shared, this also makes the upper 2M page to MIX.
+Convert B to private, this makes the upper 2M page to Non-MIX, but
+it's incorrect, due to A is shared.
+
+Same to tail case.
+
+> +
+> +		if (lpage_start == lpage_end)
+> +			return;
+> +
+> +		for (gfn = lpage_start + pages; gfn < lpage_end; gfn += pages)
+> +			linfo_update_mixed(lpage_info_slot(gfn, slot, level),
+> +					   false);
+> +
+> +		linfo_update_mixed(lpage_info_slot(lpage_end, slot, level),
+> +				   mem_attr_is_mixed(kvm, slot, level, attr,
+> +						     end, lpage_end + pages));
+> +	}
+> +}
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index 02ad31f46dd7..4276ca73bd7b 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -12563,6 +12563,8 @@ static int kvm_alloc_memslot_metadata(struct kvm *kvm,
+>  		if ((slot->base_gfn + npages) & (KVM_PAGES_PER_HPAGE(level) - 1))
+>  			linfo[lpages - 1].disallow_lpage = 1;
+>  		ugfn = slot->userspace_addr >> PAGE_SHIFT;
+> +		if (kvm_slot_can_be_private(slot))
+> +			ugfn |= slot->restricted_offset >> PAGE_SHIFT;
+>  		/*
+>  		 * If the gfn and userspace address are not aligned wrt each
+>  		 * other, disable large page support for this slot.
+> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> index 4ce98fa0153c..6ce36065532c 100644
+> --- a/include/linux/kvm_host.h
+> +++ b/include/linux/kvm_host.h
+> @@ -2284,4 +2284,23 @@ static inline void kvm_account_pgtable_pages(void *virt, int nr)
+>  /* Max number of entries allowed for each kvm dirty ring */
+>  #define  KVM_DIRTY_RING_MAX_ENTRIES  65536
+>
+> +#ifdef CONFIG_KVM_GENERIC_PRIVATE_MEM
+> +
+> +#define KVM_MEM_ATTR_SHARED	0x0001
+> +#define KVM_MEM_ATTR_PRIVATE	0x0002
+> +
+> +#ifdef __KVM_HAVE_ARCH_UPDATE_MEM_ATTR
+> +void kvm_arch_update_mem_attr(struct kvm *kvm, struct kvm_memory_slot *slot,
+> +			      unsigned int attr, gfn_t start, gfn_t end);
+> +#else
+> +static inline void kvm_arch_update_mem_attr(struct kvm *kvm,
+> +					    struct kvm_memory_slot *slot,
+> +					    unsigned int attr,
+> +					    gfn_t start, gfn_t end)
+> +{
+> +}
+> +#endif
+> +
+> +#endif /* CONFIG_KVM_GENERIC_PRIVATE_MEM */
+> +
+>  #endif
+> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> index fc3835826ace..13a37b4d9e97 100644
+> --- a/virt/kvm/kvm_main.c
+> +++ b/virt/kvm/kvm_main.c
+> @@ -939,7 +939,8 @@ static int kvm_init_mmu_notifier(struct kvm *kvm)
+>
+>  #ifdef CONFIG_KVM_GENERIC_PRIVATE_MEM
+>
+> -static void kvm_unmap_mem_range(struct kvm *kvm, gfn_t start, gfn_t end)
+> +static void kvm_unmap_mem_range(struct kvm *kvm, gfn_t start, gfn_t end,
+> +				unsigned int attr)
+>  {
+>  	struct kvm_gfn_range gfn_range;
+>  	struct kvm_memory_slot *slot;
+> @@ -963,6 +964,7 @@ static void kvm_unmap_mem_range(struct kvm *kvm, gfn_t start, gfn_t end)
+>  			gfn_range.slot = slot;
+>
+>  			r |= kvm_unmap_gfn_range(kvm, &gfn_range);
+> +			kvm_arch_update_mem_attr(kvm, slot, attr, start, end);
+>  		}
+>  	}
+>
+> @@ -970,7 +972,6 @@ static void kvm_unmap_mem_range(struct kvm *kvm, gfn_t start, gfn_t end)
+>  		kvm_flush_remote_tlbs(kvm);
+>  }
+>
+> -#define KVM_MEM_ATTR_SHARED	0x0001
+>  static int kvm_vm_ioctl_set_mem_attr(struct kvm *kvm, gpa_t gpa, gpa_t size,
+>  				     bool is_private)
+>  {
+> @@ -979,6 +980,7 @@ static int kvm_vm_ioctl_set_mem_attr(struct kvm *kvm, gpa_t gpa, gpa_t size,
+>  	void *entry;
+>  	int idx;
+>  	int r = 0;
+> +	unsigned int attr;
+>
+>  	if (size == 0 || gpa + size < gpa)
+>  		return -EINVAL;
+> @@ -992,7 +994,13 @@ static int kvm_vm_ioctl_set_mem_attr(struct kvm *kvm, gpa_t gpa, gpa_t size,
+>  	 * Guest memory defaults to private, kvm->mem_attr_array only stores
+>  	 * shared memory.
+>  	 */
+> -	entry = is_private ? NULL : xa_mk_value(KVM_MEM_ATTR_SHARED);
+> +	if (is_private) {
+> +		attr = KVM_MEM_ATTR_PRIVATE;
+> +		entry = NULL;
+> +	} else {
+> +		attr = KVM_MEM_ATTR_SHARED;
+> +		entry = xa_mk_value(KVM_MEM_ATTR_SHARED);
+> +	}
+>
+>  	idx = srcu_read_lock(&kvm->srcu);
+>  	KVM_MMU_LOCK(kvm);
+> @@ -1005,7 +1013,7 @@ static int kvm_vm_ioctl_set_mem_attr(struct kvm *kvm, gpa_t gpa, gpa_t size,
+>  			goto err;
+>  	}
+>
+> -	kvm_unmap_mem_range(kvm, start, end);
+> +	kvm_unmap_mem_range(kvm, start, end, attr);
+>
+>  	goto ret;
+>  err:
+> --
+> 2.25.1
+>
