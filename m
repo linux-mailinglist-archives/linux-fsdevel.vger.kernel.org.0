@@ -2,78 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2869A6206F9
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Nov 2022 03:48:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6525A620704
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Nov 2022 03:57:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233112AbiKHCsX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 7 Nov 2022 21:48:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32834 "EHLO
+        id S233128AbiKHC5L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 7 Nov 2022 21:57:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233061AbiKHCsG (ORCPT
+        with ESMTP id S233055AbiKHC5K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 7 Nov 2022 21:48:06 -0500
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 119F42EF2E
-        for <linux-fsdevel@vger.kernel.org>; Mon,  7 Nov 2022 18:48:05 -0800 (PST)
-Received: by mail-pl1-x62b.google.com with SMTP id c2so12935708plz.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 07 Nov 2022 18:48:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cb+qNTf4zZw7M49/6HjMGiu6w5l1+cn6hrjaUdr0DHU=;
-        b=3hhW4zT1sCYAOPA96ae3wbs82Byb/dVx1bVdVIfMX6vZCuBfxtEJQu9+4MfFDDLc6O
-         4/xG4ynRn8sMpO5Kho4YSJ7IhrrPYEDAF2Ccm/mY3H3wU+nD04ZPFKRa9VKJr5xU+hke
-         qn0d/TwtZQ8GcT8eGv/ob/7xcGTQC+u/8OrqGaY6ZixXcqj13v1GMJ6leMG3qH1Us+I+
-         +eTJMMetsZv5/S0aHE1PJyzU+4bo3LsHV1KxPxbN+CSEidENJCNA5beDEJkP1jXxKLRo
-         wPpkHa6m9oGoQcBCxkEW2K7asp5ctT+jKl0+rlyjVKj/WVOYgOmKKlCYcL4EWjxJ8R9y
-         Fe+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cb+qNTf4zZw7M49/6HjMGiu6w5l1+cn6hrjaUdr0DHU=;
-        b=42GmMHWrzW+IQoS+HAQ5B1duTFDjjnzPZAyonzvN9svtqt6LXqFy16aRSqlTnf0Nrg
-         q/86YElogBMmAMq24puu77NdvnTVfXgKFX7gPgnAwb4w7/s00DJB3khtG/VXvtdn5lvu
-         0Y257GC4QbV6P23Ss23qbv6wahiKk3zOgdy+WANXuyLKJQi4EqpleFYGwFBB/SH/SwWw
-         N4nz3BO0D7xtScbsdOtY0QF8eUjpPqdBlX6+TbAp7fFFjyWuAFJZklE8Q59y434ZJlD2
-         NEaujjSXwWUQlLo8NBWRCpZLHq2bV/KuDJ32vojHOhqdogytN3GMdKGhQnA2jfKvdamT
-         d7Gg==
-X-Gm-Message-State: ACrzQf2yYmELdRxmxL/P9e26GRiRkCIrh9SJQeF1i93E2kw8Rp1bfY2Z
-        jO2879Bp1nK3YgUTggndb9J1xg==
-X-Google-Smtp-Source: AMsMyM7BbG3pWsplO2ijPGakSOF6da3rpSXH6xgjk9w0ZQAiCfSjkEhQDkKZzWadc75CnndQoDi2Dw==
-X-Received: by 2002:a17:903:284:b0:186:bb2c:b041 with SMTP id j4-20020a170903028400b00186bb2cb041mr53044475plr.36.1667875684569;
-        Mon, 07 Nov 2022 18:48:04 -0800 (PST)
-Received: from [10.255.93.192] ([139.177.225.251])
-        by smtp.gmail.com with ESMTPSA id v6-20020aa799c6000000b0056ee49d6e95sm3837717pfi.86.2022.11.07.18.48.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 07 Nov 2022 18:48:04 -0800 (PST)
-Message-ID: <0fd0c72d-badc-ad75-f0fe-91bc148820f2@bytedance.com>
-Date:   Tue, 8 Nov 2022 10:47:58 +0800
+        Mon, 7 Nov 2022 21:57:10 -0500
+Received: from out30-43.freemail.mail.aliyun.com (out30-43.freemail.mail.aliyun.com [115.124.30.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 09DA51B9C6;
+        Mon,  7 Nov 2022 18:57:08 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R791e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046060;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VUHLUO9_1667876225;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VUHLUO9_1667876225)
+          by smtp.aliyun-inc.com;
+          Tue, 08 Nov 2022 10:57:06 +0800
+From:   Jingbo Xu <jefflexu@linux.alibaba.com>
+To:     dhowells@redhat.com, jlayton@kernel.org, xiang@kernel.org,
+        chao@kernel.org, linux-cachefs@redhat.com,
+        linux-erofs@lists.ozlabs.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v2 0/2] fscache,cachefiles: add prepare_ondemand_read() interface
+Date:   Tue,  8 Nov 2022 10:57:03 +0800
+Message-Id: <20221108025705.14816-1-jefflexu@linux.alibaba.com>
+X-Mailer: git-send-email 2.19.1.6.gb485710b
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.3.3
-Subject: Re: [PATCH] mm: fix unexpected changes to
- {failslab|fail_page_alloc}.attr
-Content-Language: en-US
-To:     Jason Gunthorpe <jgg@nvidia.com>
-Cc:     dvyukov@google.com, willy@infradead.org, akinobu.mita@gmail.com,
-        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <CACT4Y+Zc21Aj+5KjeTEsvOysJGHRYDSKgu_+_xN1LUYfG_H0sg@mail.gmail.com>
- <20221107033109.59709-1-zhengqi.arch@bytedance.com>
- <Y2j9Q/yMmqgPPUoO@nvidia.com>
- <4736d199-7e70-6bc3-30e6-0f644c81a10c@bytedance.com>
- <Y2kxrerISWIxQsFO@nvidia.com>
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <Y2kxrerISWIxQsFO@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,41 +40,72 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+v2:
+- patch 1: the generic routine, i.e. cachefiles_do_prepare_read() now
+  accepts a parameter list instead of netfs_io_subrequest, and thus some
+  debug info retrieved from netfs_io_subrequest is removed from
+  trace_cachefiles_prep_read().
+- patch 2: add xas_retry() checking in erofs_fscache_req_complete()
 
 
-On 2022/11/8 00:26, Jason Gunthorpe wrote:
-> On Mon, Nov 07, 2022 at 11:05:42PM +0800, Qi Zheng wrote:
->>
->>
->> On 2022/11/7 20:42, Jason Gunthorpe wrote:
->>> On Mon, Nov 07, 2022 at 11:31:09AM +0800, Qi Zheng wrote:
->>>
->>>> @@ -31,9 +33,9 @@ bool __should_failslab(struct kmem_cache *s, gfp_t gfpflags)
->>>>    		return false;
->>>>    	if (gfpflags & __GFP_NOWARN)
->>>> -		failslab.attr.no_warn = true;
->>>> +		flags |= FAULT_NOWARN;
->>>
->>> You should add a comment here about why this is required, to avoid
->>> deadlocking printk
->>
->> I think this comment should be placed where __GFP_NOWARN is specified
->> instead of here. What do you think? :)
-> 
-> NOWARN is clear what it does, it is this specifically that is very
-> subtle about avoiding deadlock aginst allocations triggered by
-> printk/etc code.
+[Rationale]
+===========
+Fscache has been landed as a generic caching management framework in
+the Linux kernel for decades.  It aims to manage cache data availability
+or fetch data if needed.  Currently it's mainly used for network fses,
+but in principle the main caching subsystem can be used more widely.
 
-Oh, maybe I understand your concern. Some people may think that this
-is just a print of fault injection information, not a warning. I'll
-add a comment explaining why in some cases there must be no printing.
+We do really like fscache framework and we believe it'd be better to
+reuse such framework if possible instead of duplicating other
+alternatives for better maintenance and testing.  Therefore for our
+container image use cases, we applied the existing fscache to implement
+on-demand read for erofs in the past months.  For more details, also see
+[1].
 
-Thanks,
-Qi
+In short, here each erofs filesystem is composed of multiple blobs (or
+devices).  Each blob corresponds to one fscache cookie to strictly
+follow on-disk format and implement the image downloading in a
+deterministic manner, which means it has a unique checksum and is signed
+by vendors.
 
-> 
-> Jason
+Data of each erofs inode can be scattered among multiple blobs (cookie)
+since erofs supports chunk-level deduplication.  In this case, each
+erofs inode can correspond to multiple cookies, and there's a logical to
+physical offset mapping between the logical offset in erofs inode and
+the physical offset in the backing file.
+
+As described above, per-cookie netfs model can not be used here
+directly.  Instead, we'd like to propose/decouple a simple set of raw
+fscache APIs, to access cache for all fses to use.  We believe it's
+useful since it's like the relationship between raw bio and iomap, both
+of which are useful for local fses.  fscache_read() seems a reasonable
+candidate and is enough for such use case.
+
+In addition, the on-demand read feature relies on .prepare_read() to
+reuse the hole detecting logic as much as possible. However, after
+fscache/netfs rework, libnetfs is preferred to access fscache, making
+.prepare_read() closely coupled with libnetfs, or more precisely,
+netfs_io_subrequest.
+
+
+[What We Do]
+============
+As we discussed previously, we propose a new interface, i,e,
+.prepare_ondemand_read() dedicated for the on-demand read scenarios,
+which is independent on netfs_io_subrequest. The netfs will still use
+the original .prepare_read() as usual.
+
+
+Jingbo Xu (2):
+  fscache,cachefiles: add prepare_ondemand_read() callback
+  erofs: switch to prepare_ondemand_read() in fscache mode
+
+ fs/cachefiles/io.c                |  75 +++++----
+ fs/erofs/fscache.c                | 259 +++++++++++-------------------
+ include/linux/netfs.h             |   7 +
+ include/trace/events/cachefiles.h |  27 ++--
+ 4 files changed, 162 insertions(+), 206 deletions(-)
 
 -- 
-Thanks,
-Qi
+2.19.1.6.gb485710b
+
