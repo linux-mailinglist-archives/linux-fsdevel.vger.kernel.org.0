@@ -2,76 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 97E25621D61
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Nov 2022 21:03:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB563621D9C
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Nov 2022 21:25:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229821AbiKHUDx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Nov 2022 15:03:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57202 "EHLO
+        id S229528AbiKHUZX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Nov 2022 15:25:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229779AbiKHUDt (ORCPT
+        with ESMTP id S229550AbiKHUZV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Nov 2022 15:03:49 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 549BA2CC9C
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Nov 2022 12:03:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=ECx4ac/43Sve770ApDnoLkpre//8zzwIrtSe8weF9T0=; b=Vscp9mnUyEA3c2afpa4mUNmJCa
-        9droWRl9WrSRZgdH8YXmFBi64pCRsWzlsNObTnHQFthJVWhfIX1A1/k70XxjhIsYJ9Pg2zZFjBAHY
-        o2mOYnqmRSqh16HSDqko2Jwcdda5y/r4urubWONKi69tG0bS1DoA1AgcRkumtE78XfYGBGypTG0w6
-        +ePdF98yAW0oCLw1T8WloWVm35SWPVUzSpJw8dxJzr7ExXstz6QpaNKFfFRjSsLFCUFSJ/9XYs2Un
-        e0bCdpi7PciBQMffDs2PjBOl9jBXSjmdgf0wDdaCaBcw9WUXgYVVxdnNshptXnI6r7S3csnqdkOfG
-        Ry14GU/w==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1osUor-00AZ68-Eo; Tue, 08 Nov 2022 20:03:37 +0000
-Date:   Tue, 8 Nov 2022 20:03:37 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Lukas Czerner <lczerner@redhat.com>
-Cc:     Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.com>,
-        Eric Sandeen <sandeen@redhat.com>, linux-mm@kvack.org,
+        Tue, 8 Nov 2022 15:25:21 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AEFF8220CA;
+        Tue,  8 Nov 2022 12:25:20 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 6A78FB81C5A;
+        Tue,  8 Nov 2022 20:25:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AED4C433C1;
+        Tue,  8 Nov 2022 20:25:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1667939118;
+        bh=wXEswFWuG2tQo7Tnb0pvYwCXkAjnonOEVkUfYNxqkwc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=YkQcvDrAQotZwQhiSWSK43CjScOjHmtP5vUwBKd5HD9xe45RI2BCfhQSv7PICTxLs
+         V/zzdc2lhKIsei2walEd+LRF1WgMGE9cUICbgj7xV9xRXOvYDm2mfcrZHF70DXM3wD
+         LMDagCWbekXd/LHtas+I7/1obzGB18aklKqCg862pqRNRUrhi5ThahtM3prfzMnlZr
+         6LtnasQqbJo4rY9jsMJcoczfImtbrBlXiaj9k234JF1thtuPolVlnlJDWE/2IJuliM
+         Lt0LeuPyj3Spy1CmX1WDum7SExVVkJ9NPoC6wWyQJsPZr69+MxQdEfOWlnhVIAg82T
+         pnrnDotZRdwYg==
+Date:   Tue, 8 Nov 2022 13:25:14 -0700
+From:   Keith Busch <kbusch@kernel.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     Keith Busch <kbusch@meta.com>, viro@zeniv.linux.org.uk,
+        axboe@kernel.dk, io-uring@vger.kernel.org, asml.silence@gmail.com,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/2] shmem: implement user/group quota support for tmpfs
-Message-ID: <Y2q2GRFDBi+XTvgi@casper.infradead.org>
-References: <20221108133010.75226-1-lczerner@redhat.com>
- <20221108133010.75226-2-lczerner@redhat.com>
+Subject: Re: [PATCH 0/4] io_uring: use ITER_UBUF
+Message-ID: <Y2q7Kn4tDlaKCVMS@kbusch-mbp>
+References: <20221107175610.349807-1-kbusch@meta.com>
+ <Y2n9DteukhGuvdGe@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221108133010.75226-2-lczerner@redhat.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y2n9DteukhGuvdGe@infradead.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 08, 2022 at 02:30:09PM +0100, Lukas Czerner wrote:
-> +	err = shmem_get_folio(inode, index, &folio, SGP_WRITE);
-> +	if (err)
-> +		return err;
-> +
-> +	page = folio_file_page(folio, index);
-> +	if (PageHWPoison(page)) {
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +		return -EIO;
-> +	}
-> +
-> +	/* Write data, or zeroout the portion of the page */
-> +	if (data)
-> +		memcpy(page_address(page) + offset, data, len);
-> +	else
-> +		memset(page_address(page) + offset, 0, len);
-> +
-> +	SetPageUptodate(page);
+On Mon, Nov 07, 2022 at 10:54:06PM -0800, Christoph Hellwig wrote:
+> On Mon, Nov 07, 2022 at 09:56:06AM -0800, Keith Busch wrote:
+> >   1. io_uring will always prefer using the _iter versions of read/write
+> >      callbacks if file_operations implement both, where as the generic
+> >      syscalls will use .read/.write (if implemented) for non-vectored IO.
+> 
+> There are very few file operations that have both, and for those
+> the difference matters, e.g. the strange vectors semantics for the
+> sound code. 
+ 
+Yes, thankfully there are not many. Other than the two mentioned
+file_operations, the only other fops I find implementing both are
+'null_ops' and 'zero_ops'; those are fine. And one other implements
+just .write/.write_iter: trace_events_user.c, which is also fine.
 
-This is suspicious.  There is no per-page Uptodate bit, there is only a
-per-folio Uptodate bit.  So this should be folio_mark_uptodate().
-Except that you've only done one of the pages in the folio, so you
-have no business setting the uptodate bit at all.
+> I would strongly suggest to mirror what the normal
+> read/write path does here.
 
+I don't think we can change that now. io_uring has always used the
+.{read,write}_iter callbacks if available ever since it introduced
+non-vectored read/write (3a6820f2bb8a0). Altering the io_uring op's ABI
+to align with the read/write syscalls seems risky.
+
+But I don't think there are any real use cases affected by this series
+anyway.
+
+> >   2. io_uring will use the ITER_UBUF representation for single vector
+> >      readv/writev, but the generic syscalls currently uses ITER_IOVEC for
+> >      these.
+> 
+> Same here.  It might be woth to use ITER_UBUF for single vector
+> readv/writev, but this should be the same for all interfaces.  I'd
+> suggest to drop this for now and do a separate series with careful
+> review from Al for this.
+
+I feel like that's a worthy longer term goal, but I'll start looking
+into it now.
