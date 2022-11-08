@@ -2,98 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A2F126216CC
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Nov 2022 15:32:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98F5B6218EE
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Nov 2022 17:00:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234271AbiKHOcU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Nov 2022 09:32:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37452 "EHLO
+        id S234607AbiKHQAM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Nov 2022 11:00:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43550 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233903AbiKHOb1 (ORCPT
+        with ESMTP id S234346AbiKHQAI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Nov 2022 09:31:27 -0500
-Received: from mail-pl1-x62d.google.com (mail-pl1-x62d.google.com [IPv6:2607:f8b0:4864:20::62d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC00F13F2F
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Nov 2022 06:31:15 -0800 (PST)
-Received: by mail-pl1-x62d.google.com with SMTP id b21so14328159plc.9
-        for <linux-fsdevel@vger.kernel.org>; Tue, 08 Nov 2022 06:31:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SzBlYeGeT15Xra75w9IZDBjQ7Da3XKSmRdlnDJDYrko=;
-        b=plCZMl07mNxOy4FwEnJyPWecERqsJQyrHYHIsHPByWrtU1k24II845ABLvzsZ/utuV
-         xrfZ6D/e/ZRoyRjpbZ5oMDY9h9ndbu6gtWFiQs/CjHcVVSqci/vjYPMMyy1pnVJ69u5N
-         OM2Kwkcs/9db1KNzWi4t4Kki8xmdjDy37F969+9phg4q7Iutyq/zyteGqROU9T6wdO4n
-         lS/c2RFkn8H1h3UlswE5jNY6oMt5wQG8oq965L41J8fDh6fe1zek7KZifUk151Do70De
-         k9oKwcRkEhDvguAg4zcTYagV5rrGsvTLwyNtdWlzI5EY/CPrjAga8S7nNTzf3DHImH9S
-         a/jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:reply-to:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SzBlYeGeT15Xra75w9IZDBjQ7Da3XKSmRdlnDJDYrko=;
-        b=THtyA+WD7ZGijYD444+dTLjOuMBYqaVw1eLEu7OW0Z050bM5mlWabt2ihwIATsWP3I
-         vTJ6FY9HHTRfAsezx+HjVBhK1ZLx4keuUFFaPbaSB9VF7uu1z/BsQbdJwY4lkiY4XDkE
-         ReZ7nc7ZJSPUD8Xhz9UiR7UP4LXb01+zq4iZOss5CbdlKsnnlESyRtIAH2epDbWIba9w
-         SflpbQ1wdSJH36tch/i9DBBuZ0ikjzZk3SMFea2luVFIs5IzUtoqwYPWVeX84Njqwdvt
-         Wh3SaVeHVXULBGq6H+llsV8VrRoC3o1oloX9ML9oTMcijEBbOs4eYzx5wef5DjcsrO0p
-         2pLw==
-X-Gm-Message-State: ACrzQf3494tf4cMYdHu9ISUL+aNzoY9exXBL0KY9YtzzyYdL/ucBmFSp
-        p69O5TTqXc29hVtYdy7kqOcwMe3dVY9IOdqFGPoLLCmbJRmzkA==
-X-Google-Smtp-Source: AMsMyM5cpw1VKvG8gEasOMmG4UhkblJY7gBReqfbYX80x9OXEWSZokzXOm90JDY4L5h3JbfU+3ckCU+QNWhG8SGrNVo=
-X-Received: by 2002:a05:6a00:1da6:b0:56c:318a:f8ab with SMTP id
- z38-20020a056a001da600b0056c318af8abmr56843835pfw.82.1667917864342; Tue, 08
- Nov 2022 06:31:04 -0800 (PST)
+        Tue, 8 Nov 2022 11:00:08 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B766A1A380
+        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Nov 2022 07:59:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1667923152;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=+7O/cdVA9cRWQClu+6yWqTBX+v+ngyo9UGXM4aHQHz0=;
+        b=IBmCEE0RrECwZgD7/VV4bVCH2Rbpvaw1X9ZPTf3Q62tGEkkNvgeCj4VyFo55lmloTs3l5b
+        gLn80F64a+Dley7Mbeiy6avOtOJXHQU4EUJUFn9fz0soTI4iqSe2Ne3+VNOrX7mP3XdK4a
+        8RcK9jGHcRgRlN+CS27JYEl86pYMuW4=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-641-ilJCerraMtCxfVDjkarK6A-1; Tue, 08 Nov 2022 10:59:11 -0500
+X-MC-Unique: ilJCerraMtCxfVDjkarK6A-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 09905811E81;
+        Tue,  8 Nov 2022 15:59:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.37.22])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 492082166B29;
+        Tue,  8 Nov 2022 15:59:09 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <084d78a4-6052-f2ec-72f2-af9c4979f5dc@linux.alibaba.com>
+References: <084d78a4-6052-f2ec-72f2-af9c4979f5dc@linux.alibaba.com> <166757987929.950645.12595273010425381286.stgit@warthog.procyon.org.uk> <166757988611.950645.7626959069846893164.stgit@warthog.procyon.org.uk>
+To:     JeffleXu <jefflexu@linux.alibaba.com>
+Cc:     dhowells@redhat.com, willy@infradead.org,
+        Jeff Layton <jlayton@kernel.org>, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] netfs: Fix dodgy maths
 MIME-Version: 1.0
-Received: by 2002:ac4:c8c2:0:b0:56a:d900:eb11 with HTTP; Tue, 8 Nov 2022
- 06:31:03 -0800 (PST)
-Reply-To: mr.abraham022@gmail.com
-From:   "Mr.Abraham" <davidbraddy01@gmail.com>
-Date:   Tue, 8 Nov 2022 14:31:03 +0000
-Message-ID: <CAHGOU4PvdrNhE2KifzdPkFxZTCG5gy+23qf130PwnSmJcLRSew@mail.gmail.com>
-Subject: Greeting
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.0 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_FM_MR_MRS,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:62d listed in]
-        [list.dnswl.org]
-        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.4954]
-        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
-        *      digit
-        *      [mr.abraham022[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [davidbraddy01[at]gmail.com]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [davidbraddy01[at]gmail.com]
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.0 T_HK_NAME_FM_MR_MRS No description available.
-        *  2.9 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-X-Spam-Level: *****
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2363339.1667923148.1@warthog.procyon.org.uk>
+Date:   Tue, 08 Nov 2022 15:59:08 +0000
+Message-ID: <2363340.1667923148@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-My Greeting, Did you receive the letter i sent to you. Please answer me.
-Regard, Mr.Abraham
+JeffleXu <jefflexu@linux.alibaba.com> wrote:
+
+> > Fix the dodgy maths in netfs_rreq_unlock_folios().  start_page could be
+> > inside the folio, in which case the calculation of pgpos will be come up
+> > with a negative number (though for the moment rreq->start is rounded down
+> > earlier and folios would have to get merged whilst locked)
+> 
+> Hi, the patch itself seems fine. Just some questions about the scenario.
+> 
+> 1. "start_page could be inside the folio" Is that because
+> .expand_readahead() called from netfs_readahead()? Since otherwise,
+> req-start is always aligned to the folio boundary.
+
+At the moment, rreq->start is always coincident with the start of the first
+folio in the collection because we always read whole folios - however, it
+might be best to assume that this might not always hold true if it's simple to
+fix the maths to get rid of the assumption.
+
+> 2. If start_page is indeed inside the folio, then only the trailing part
+> of the first folio can be covered by the request, and this folio will be
+> marked with uptodate, though the beginning part of the folio may have
+> not been read from the cache. Is that expected? Or correct me if I'm wrong.
+
+For the moment there's no scenario where this arises; I think we need to wait
+until we have a scenario and then see how we'll need to juggle the flags.
+
+David
+
