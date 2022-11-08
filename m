@@ -2,433 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C86FB621275
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Nov 2022 14:31:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48721621652
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  8 Nov 2022 15:27:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233944AbiKHNb2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 8 Nov 2022 08:31:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35224 "EHLO
+        id S233807AbiKHO1D (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 8 Nov 2022 09:27:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233817AbiKHNb1 (ORCPT
+        with ESMTP id S234049AbiKHO0U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 8 Nov 2022 08:31:27 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33E8545A0E
-        for <linux-fsdevel@vger.kernel.org>; Tue,  8 Nov 2022 05:30:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667914226;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=4m+hP4y9BVGhWyB9uT/k4w1loff2IzwiW2q+vZIYNcc=;
-        b=Ny0LiKhHCvSC8dAZ8B01H9GX/YLEsoVIXca/FQ3TSdT+0aBBFv4ckQdjBWNkG4MNzhTL65
-        To45GacBewxmTgHonUHB8nTrUb8VRMgxe58YKJCjvWtu25Nkd3wySWxe82yIDM35ajtuSi
-        FxQ/YvfWLAsOc9wbfkChOgmh4SPRu/U=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-53-CNgStrUONDmLs1Tbb2QULA-1; Tue, 08 Nov 2022 08:30:23 -0500
-X-MC-Unique: CNgStrUONDmLs1Tbb2QULA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 8 Nov 2022 09:26:20 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ACA8510B8;
+        Tue,  8 Nov 2022 06:25:01 -0800 (PST)
+Received: from [192.168.10.9] (unknown [39.45.244.84])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E1CD0101E9BA;
-        Tue,  8 Nov 2022 13:30:22 +0000 (UTC)
-Received: from ovpn-194-7.brq.redhat.com (ovpn-194-7.brq.redhat.com [10.40.194.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E8DB440C94AD;
-        Tue,  8 Nov 2022 13:30:21 +0000 (UTC)
-From:   Lukas Czerner <lczerner@redhat.com>
-To:     Hugh Dickins <hughd@google.com>
-Cc:     Jan Kara <jack@suse.com>, Eric Sandeen <sandeen@redhat.com>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 2/2] shmem: implement mount options for global quota limits
-Date:   Tue,  8 Nov 2022 14:30:10 +0100
-Message-Id: <20221108133010.75226-3-lczerner@redhat.com>
-In-Reply-To: <20221108133010.75226-1-lczerner@redhat.com>
-References: <20221108133010.75226-1-lczerner@redhat.com>
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 3FA126602910;
+        Tue,  8 Nov 2022 14:24:53 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1667917499;
+        bh=BIWq8zC5JvLFkFz9mhkUOrHNXVqTTwKjQTgsh/1wDl8=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=akrlEx3psm3oj2NQ96EFMlQoK0A+GaJcfkzwNj2sLqG0JwNdMaNoxjZJfY49RpLZ5
+         nH922oXGIobtk+JUfNKyIdNw0GF8aFsLRwY3LtOYhtYqNzj6D2TphgFXBixYheGoTI
+         z5JQCJY5DWMQrSt7y0DVaBe9L/J8RllXXmtctrmGXN1iypHINhB4mA9CxEH3uC/CXe
+         VccYJpCh98jg0UI8HRCILt8AlvJyg6eEER73eqGkoygMzNQFaMyP8zvn5O2FQGPzEF
+         yTKoW75RjXLlAo6heCfboYMRMpduQrAku3u62tq0Al2hehmX2k6f3SWNe7YLb+rkGD
+         KdRzv2LnyRj+A==
+Message-ID: <f394de31-b9c1-5a6c-eab2-74b84f2b3ba3@collabora.com>
+Date:   Tue, 8 Nov 2022 19:24:43 +0500
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Peter Xu <peterx@redhat.com>, Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Zach O'Keefe <zokeefe@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>, kernel@collabora.com,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        "open list : KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list : PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
+        "open list : MEMORY MANAGEMENT" <linux-mm@kvack.org>
+Subject: Re: [PATCH v5 2/3] fs/proc/task_mmu: Implement IOCTL to get and/or
+ the clear info about PTEs
+To:     =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>
+References: <20221103145353.3049303-1-usama.anjum@collabora.com>
+ <20221103145353.3049303-3-usama.anjum@collabora.com>
+ <CABb0KFFaYZG62TS+iM3Y92+hDyB35XR8dTX-5hDgWrXCcDQx7Q@mail.gmail.com>
+Content-Language: en-US
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <CABb0KFFaYZG62TS+iM3Y92+hDyB35XR8dTX-5hDgWrXCcDQx7Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Implement a set of mount options for setting glopbal quota limits on
-tmpfs.
+Hi Michał,
 
-quota_ubh_limit - global user quota block hard limit
-quota_uih_limit - global user quota inode hard limit
-quota_gbh_limit - global group quota block hard limit
-quota_gih_limit - global group quota inode hard limit
+Thank you so much for reviewing.
 
-All of the above mount options will take an effect for any and all
-users/groups except for root and can be changed using standard ways of
-setting quota limits. Along with setting the limits, quota enforcement
-will be enabled as well.
+On 11/7/22 5:26 PM, Michał Mirosław wrote:
+>> +
+>> +/*
+>> + * struct page_region - Page region with bitmap flags
+>> + * @start:     Start of the region
+>> + * @len:       Length of the region
+>> + * bitmap:     Bits sets for the region
+>> + */
+>> +struct page_region {
+>> +       __u64 start;
+>> +       __u64 len;
+>> +       __u32 bitmap;
+>> +       __u32 __reserved;
+> 
+> "u64 flags"? If an extension is needed it would already require a new
+> ioctl or something in the `arg` struct.
+I feel like the masks must have the same type as this bitmap variable as 
+the return_mask specifies the flags to be returned in bitmap. All the 
+masks are of type __u32. This is why I'd kept the bitmap of type _u32 as 
+well. I've kept them of 32 bit size as currently we are adding support 
+for 4 flags and there is still room to add 28 more bits in the future. 
+Do you still think that I should update the masks and bitmap to _u64?
 
-None of the mount options can be set or changed on remount.
+>> + * @start:             Starting address of the region
+>> + * @len:               Length of the region (All the pages in this length are included)
+>> + * @vec:               Address of page_region struct array for output
+>> + * @vec_len:           Length of the page_region struct array
+>> + * @max_pages:         Optional max return pages (It must be less than vec_len if specified)
+> 
+> I think we discussed that this is not counting the same things as
+> vec_len, so there should not be a reference between the two. The limit
+> is whatever fits under both conditions (IOW: n_vecs <= vec_len &&
+> (!max_pages || n_pages <= max_pages).
+In worse case when pages cannot be folded into the page_region, the one 
+page_region may have information of only one page. This is why I've 
+compared them. I want to communicate to the user that if max_pages is 
+used, the vec_len should be of equal or greater size (to cater worse 
+case which can happen at any time). Otherwise in worse case, the api can 
+return without finding the max_pages number of pages. I don't know how 
+should I put this in the comment.
 
-Signed-off-by: Lukas Czerner <lczerner@redhat.com>
----
- Documentation/filesystems/tmpfs.rst |  23 ++--
- include/linux/shmem_fs.h            |   4 +
- mm/shmem.c                          | 166 +++++++++++++++++++++++++---
- 3 files changed, 171 insertions(+), 22 deletions(-)
-
-diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
-index 9c4f228ef4f3..be4aa964863d 100644
---- a/Documentation/filesystems/tmpfs.rst
-+++ b/Documentation/filesystems/tmpfs.rst
-@@ -88,14 +88,21 @@ that instance in a system with many CPUs making intensive use of it.
- 
- tmpfs also supports quota with the following mount options
- 
--========  =============================================================
--quota     Quota accounting is enabled on the mount. Tmpfs is using
--          hidden system quota files that are initialized on mount.
--          Quota limits can quota enforcement can be enabled using
--          standard quota tools.
--usrquota  Same as quota option. Exists for compatibility reasons.
--grpquota  Same as quota option. Exists for compatibility reasons.
--========  =============================================================
-+===============  ======================================================
-+quota            Quota accounting is enabled on the mount. Tmpfs is
-+                 using hidden system quota files that are initialized
-+                 on mount. Quota limits can quota enforcement can be
-+                 enabled using standard quota tools.
-+usrquota         Same as quota option. Exists for compatibility.
-+grpquota         Same as quota option. Exists for compatibility.
-+quota_ubh_limit  Set global user quota block hard limit.
-+quota_uih_limit  Set global user quota inode hard limit.
-+quota_gbh_limit  Set global group quota block hard limit.
-+quota_gih_limit  Set global group quota inode hard limit.
-+===============  ======================================================
-+
-+Quota limit parameters accept a suffix k, m or g for kilo, mega and
-+giga and can't be changed on remount.
- 
- 
- tmpfs has a mount option to set the NUMA memory allocation policy for
-diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
-index 02a328c98d3a..eb5e2dc2dc4c 100644
---- a/include/linux/shmem_fs.h
-+++ b/include/linux/shmem_fs.h
-@@ -39,6 +39,10 @@ struct shmem_inode_info {
- 
- struct shmem_sb_info {
- 	unsigned long max_blocks;   /* How many blocks are allowed */
-+	unsigned long quota_ubh_limit; /* Default user quota block hard limit */
-+	unsigned long quota_uih_limit; /* Default user quota inode hard limit */
-+	unsigned long quota_gbh_limit; /* Default group quota block hard limit */
-+	unsigned long quota_gih_limit; /* Default group quota inode hard limit */
- 	struct percpu_counter used_blocks;  /* How many are allocated */
- 	unsigned long max_inodes;   /* How many inodes are allowed */
- 	unsigned long free_inodes;  /* How many are left for allocation */
-diff --git a/mm/shmem.c b/mm/shmem.c
-index ec16659c2255..f1d6a3931b0a 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -99,6 +99,10 @@ static struct vfsmount *shm_mnt;
- /* Symlink up to this size is kmalloc'ed instead of using a swappable page */
- #define SHORT_SYMLINK_LEN 128
- 
-+#if defined(CONFIG_TMPFS) && defined(CONFIG_QUOTA)
-+#define SHMEM_QUOTA_TMPFS
-+#endif
-+
- /*
-  * shmem_fallocate communicates with shmem_fault or shmem_writepage via
-  * inode->i_private (with i_rwsem making sure that it has only one user at
-@@ -115,6 +119,12 @@ struct shmem_falloc {
- struct shmem_options {
- 	unsigned long long blocks;
- 	unsigned long long inodes;
-+#ifdef SHMEM_QUOTA_TMPFS
-+	unsigned long long quota_ubh_limit;
-+	unsigned long long quota_uih_limit;
-+	unsigned long long quota_gbh_limit;
-+	unsigned long long quota_gih_limit;
-+#endif
- 	struct mempolicy *mpol;
- 	kuid_t uid;
- 	kgid_t gid;
-@@ -147,10 +157,6 @@ static unsigned long shmem_default_max_inodes(void)
- }
- #endif
- 
--#if defined(CONFIG_TMPFS) && defined(CONFIG_QUOTA)
--#define SHMEM_QUOTA_TMPFS
--#endif
--
- static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
- 			     struct folio **foliop, enum sgp_type sgp,
- 			     gfp_t gfp, struct vm_area_struct *vma,
-@@ -285,6 +291,54 @@ static DEFINE_MUTEX(shmem_swaplist_mutex);
- #define QUOTABLOCK_BITS 10
- #define QUOTABLOCK_SIZE (1 << QUOTABLOCK_BITS)
- 
-+struct kmem_cache *shmem_dquot_cachep;
-+
-+struct dquot *shmem_dquot_alloc(struct super_block *sb, int type)
-+{
-+	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
-+	struct dquot *dquot = NULL;
-+
-+	dquot = kmem_cache_zalloc(shmem_dquot_cachep, GFP_NOFS);
-+	if (!dquot)
-+		return NULL;
-+
-+	if (type == USRQUOTA) {
-+		dquot->dq_dqb.dqb_bhardlimit =
-+			(sbinfo->quota_ubh_limit << PAGE_SHIFT);
-+		dquot->dq_dqb.dqb_ihardlimit = sbinfo->quota_uih_limit;
-+	} else if (type == GRPQUOTA) {
-+		dquot->dq_dqb.dqb_bhardlimit =
-+			(sbinfo->quota_gbh_limit << PAGE_SHIFT);
-+		dquot->dq_dqb.dqb_ihardlimit = sbinfo->quota_gih_limit;
-+	}
-+	/*
-+	 * This is a bit a of a hack to allow setting global default
-+	 * limits on new files, by setting the limits here and preventing
-+	 * quota from initializing everything to zero. It won't ever be
-+	 * read from quota file because existing inodes in tmpfs are always
-+	 * kept in memory (or swap) so we know we're getting dquot for a
-+	 * new inode with no pre-existing dquot.
-+	 */
-+	set_bit(DQ_READ_B, &dquot->dq_flags);
-+	return dquot;
-+}
-+
-+static void shmem_dquot_destroy(struct dquot *dquot)
-+{
-+	kmem_cache_free(shmem_dquot_cachep, dquot);
-+}
-+
-+const struct dquot_operations shmem_dquot_operations = {
-+	.write_dquot	= dquot_commit,
-+	.acquire_dquot	= dquot_acquire,
-+	.release_dquot	= dquot_release,
-+	.mark_dirty	= dquot_mark_dquot_dirty,
-+	.write_info	= dquot_commit_info,
-+	.alloc_dquot	= shmem_dquot_alloc,
-+	.destroy_dquot	= shmem_dquot_destroy,
-+	.get_next_id	= dquot_get_next_id,
-+};
-+
- static ssize_t shmem_quota_write_inode(struct inode *inode, int type,
- 				       const char *data, size_t len, loff_t off)
- {
-@@ -343,7 +397,7 @@ static ssize_t shmem_quota_write(struct super_block *sb, int type,
- 	return shmem_quota_write_inode(inode, type, data, len, off);
- }
- 
--static int shmem_enable_quotas(struct super_block *sb)
-+static int shmem_enable_quotas(struct super_block *sb, unsigned int dquot_flags)
- {
- 	int type, err = 0;
- 	struct inode *inode;
-@@ -389,7 +443,7 @@ static int shmem_enable_quotas(struct super_block *sb)
- 		shmem_set_inode_flags(inode, FS_NOATIME_FL | FS_IMMUTABLE_FL);
- 
- 		err = dquot_load_quota_inode(inode, type, QFMT_VFS_V1,
--					     DQUOT_USAGE_ENABLED);
-+					     dquot_flags);
- 		iput(inode);
- 		if (err)
- 			goto out_err;
-@@ -3720,6 +3774,10 @@ enum shmem_param {
- 	Opt_inode32,
- 	Opt_inode64,
- 	Opt_quota,
-+	Opt_quota_ubh_limit,
-+	Opt_quota_uih_limit,
-+	Opt_quota_gbh_limit,
-+	Opt_quota_gih_limit,
- };
- 
- static const struct constant_table shmem_param_enums_huge[] = {
-@@ -3744,6 +3802,10 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
- 	fsparam_flag  ("quota",		Opt_quota),
- 	fsparam_flag  ("usrquota",	Opt_quota),
- 	fsparam_flag  ("grpquota",	Opt_quota),
-+	fsparam_string("quota_ubh_limit",	Opt_quota_ubh_limit),
-+	fsparam_string("quota_uih_limit",	Opt_quota_uih_limit),
-+	fsparam_string("quota_gbh_limit",	Opt_quota_gbh_limit),
-+	fsparam_string("quota_gih_limit",	Opt_quota_gih_limit),
- 	{}
- };
- 
-@@ -3827,13 +3889,44 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
- 		ctx->full_inums = true;
- 		ctx->seen |= SHMEM_SEEN_INUMS;
- 		break;
--	case Opt_quota:
- #ifdef CONFIG_QUOTA
-+	case Opt_quota:
-+		ctx->seen |= SHMEM_SEEN_QUOTA;
-+		break;
-+	case Opt_quota_ubh_limit:
-+		size = memparse(param->string, &rest);
-+		if (*rest || !size)
-+			goto bad_value;
-+		ctx->quota_ubh_limit = DIV_ROUND_UP(size, PAGE_SIZE);
-+		ctx->seen |=  SHMEM_SEEN_QUOTA;
-+		break;
-+	case Opt_quota_gbh_limit:
-+		size = memparse(param->string, &rest);
-+		if (*rest || !size)
-+			goto bad_value;
-+		ctx->quota_gbh_limit = DIV_ROUND_UP(size, PAGE_SIZE);
-+		ctx->seen |= SHMEM_SEEN_QUOTA;
-+		break;
-+	case Opt_quota_uih_limit:
-+		ctx->quota_uih_limit = memparse(param->string, &rest);
-+		if (*rest || !ctx->quota_uih_limit)
-+			goto bad_value;
-+		ctx->seen |= SHMEM_SEEN_QUOTA;
-+		break;
-+	case Opt_quota_gih_limit:
-+		ctx->quota_gih_limit = memparse(param->string, &rest);
-+		if (*rest || !ctx->quota_gih_limit)
-+			goto bad_value;
- 		ctx->seen |= SHMEM_SEEN_QUOTA;
-+		break;
- #else
-+	case Opt_quota:
-+	case Opt_quota_ubh_limit:
-+	case Opt_quota_gbh_limit:
-+	case Opt_quota_uih_limit:
-+	case Opt_quota_gih_limit:
- 		goto unsupported_parameter;
- #endif
--		break;
- 	}
- 	return 0;
- 
-@@ -3933,12 +4026,24 @@ static int shmem_reconfigure(struct fs_context *fc)
- 		goto out;
- 	}
- 
-+#ifdef CONFIG_QUOTA
- 	if (ctx->seen & SHMEM_SEEN_QUOTA &&
- 	    !sb_any_quota_loaded(fc->root->d_sb)) {
- 		err = "Cannot enable quota on remount";
- 		goto out;
- 	}
- 
-+#define CHANGED_LIMIT(name)						\
-+	(ctx->quota_##name##_limit &&					\
-+	(ctx->quota_##name##_limit != sbinfo->quota_ ##name##_limit))
-+
-+	if (CHANGED_LIMIT(ubh) || CHANGED_LIMIT(uih) ||
-+	    CHANGED_LIMIT(gbh) || CHANGED_LIMIT(gih)) {
-+		err = "Cannot change global quota limit on remount";
-+		goto out;
-+	}
-+#endif /* CONFIG_QUOTA */
-+
- 	if (ctx->seen & SHMEM_SEEN_HUGE)
- 		sbinfo->huge = ctx->huge;
- 	if (ctx->seen & SHMEM_SEEN_INUMS)
-@@ -4103,11 +4208,22 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- 
- #ifdef SHMEM_QUOTA_TMPFS
- 	if (ctx->seen & SHMEM_SEEN_QUOTA) {
--		sb->dq_op = &dquot_operations;
-+		unsigned int dquot_flags;
-+
-+		sb->dq_op = &shmem_dquot_operations;
- 		sb->s_qcop = &dquot_quotactl_sysfile_ops;
- 		sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
- 
--		if (shmem_enable_quotas(sb))
-+		dquot_flags = DQUOT_USAGE_ENABLED;
-+		/*
-+		 * If any of the global quota limits are set, enable
-+		 * quota enforcement
-+		 */
-+		if (ctx->quota_ubh_limit || ctx->quota_uih_limit ||
-+		    ctx->quota_gbh_limit || ctx->quota_gih_limit)
-+			dquot_flags |= DQUOT_LIMITS_ENABLED;
-+
-+		if (shmem_enable_quotas(sb, dquot_flags))
- 			goto failed;
- 	}
- #endif  /* SHMEM_QUOTA_TMPFS */
-@@ -4121,6 +4237,17 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- 	if (!sb->s_root)
- 		goto failed;
- 
-+#ifdef SHMEM_QUOTA_TMPFS
-+	/*
-+	 * Set quota hard limits after shmem_get_inode() to avoid setting
-+	 * it for root
-+	 */
-+	sbinfo->quota_ubh_limit = ctx->quota_ubh_limit;
-+	sbinfo->quota_uih_limit = ctx->quota_uih_limit;
-+	sbinfo->quota_gbh_limit = ctx->quota_gbh_limit;
-+	sbinfo->quota_gih_limit = ctx->quota_gih_limit;
-+#endif  /* SHMEM_QUOTA_TMPFS */
-+
- 	return 0;
- 
- failed:
-@@ -4183,16 +4310,27 @@ static void shmem_init_inode(void *foo)
- 	inode_init_once(&info->vfs_inode);
- }
- 
--static void shmem_init_inodecache(void)
-+static void shmem_init_mem_caches(void)
- {
- 	shmem_inode_cachep = kmem_cache_create("shmem_inode_cache",
- 				sizeof(struct shmem_inode_info),
- 				0, SLAB_PANIC|SLAB_ACCOUNT, shmem_init_inode);
-+
-+#ifdef SHMEM_QUOTA_TMPFS
-+	shmem_dquot_cachep = kmem_cache_create("shmem_dquot",
-+				sizeof(struct dquot), sizeof(unsigned long) * 4,
-+				(SLAB_HWCACHE_ALIGN|SLAB_RECLAIM_ACCOUNT|
-+					SLAB_MEM_SPREAD|SLAB_PANIC),
-+				NULL);
-+#endif
- }
- 
--static void shmem_destroy_inodecache(void)
-+static void shmem_destroy_mem_caches(void)
- {
- 	kmem_cache_destroy(shmem_inode_cachep);
-+#ifdef SHMEM_QUOTA_TMPFS
-+	kmem_cache_destroy(shmem_dquot_cachep);
-+#endif
- }
- 
- /* Keep the page in page cache instead of truncating it */
-@@ -4340,7 +4478,7 @@ void __init shmem_init(void)
- {
- 	int error;
- 
--	shmem_init_inodecache();
-+	shmem_init_mem_caches();
- 
- 	error = register_filesystem(&shmem_fs_type);
- 	if (error) {
-@@ -4366,7 +4504,7 @@ void __init shmem_init(void)
- out1:
- 	unregister_filesystem(&shmem_fs_type);
- out2:
--	shmem_destroy_inodecache();
-+	shmem_destroy_mem_caches();
- 	shm_mnt = ERR_PTR(error);
- }
- 
--- 
-2.38.1
-
+> (I only reviewed the API now. The implementation I think could be
+> simpler, but let's leave that to after the API is agreed on.)
+> 
+> Best Regards
+> Michał Mirosław
