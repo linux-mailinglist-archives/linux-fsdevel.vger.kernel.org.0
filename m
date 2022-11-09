@@ -2,43 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4190C623232
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Nov 2022 19:16:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BED6623234
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Nov 2022 19:16:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230154AbiKISQp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Nov 2022 13:16:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45164 "EHLO
+        id S230228AbiKISQq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Nov 2022 13:16:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45200 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229578AbiKISQk (ORCPT
+        with ESMTP id S229889AbiKISQn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Nov 2022 13:16:40 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CE1F275FC;
-        Wed,  9 Nov 2022 10:16:38 -0800 (PST)
+        Wed, 9 Nov 2022 13:16:43 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 56B37275DB;
+        Wed,  9 Nov 2022 10:16:42 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0F891B81F69;
-        Wed,  9 Nov 2022 18:16:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD045C433D6;
-        Wed,  9 Nov 2022 18:16:35 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id E557E61C30;
+        Wed,  9 Nov 2022 18:16:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49F92C433D7;
+        Wed,  9 Nov 2022 18:16:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668017795;
-        bh=SSPp1uWE1pQRfUVUJqFuEI67QwMnoQhhVwUZ4jgsZZ8=;
+        s=k20201202; t=1668017801;
+        bh=S356Z2JiSmCen6MadICxE8GLft0eSgB0DSN6jTfpxJ0=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=m+TfqQPElzshm1/1JuuqL4OonP7TwjEEG0cl7ejIBvZiNu4YUmuez1x9f3wMn+S7z
-         75+9iQ8pQ6f+djbBz/Ga/kjy6HuvAlYwceHbryhfB5VtNxpg9vumy+nG06tt+zZkpA
-         nSs8BP1c58GBD9/gunBujaCRWwQnU5cYVLK2Fh9pd1m3KgyOSbADMnO1wPsq6aHEcU
-         yJBwdEJBmL06apOuj6MPBvZICYJPgSPIdDQEWbZtP2nXuNYHzmeww500sbVFjdyPVf
-         xvDPtOSBTsgn/Au2BjHJzPohWFbQtytq3um5iOLjv3FlNBXhypERUeQcLPBt7p//T5
-         AuWJiRmshnImw==
-Subject: [PATCH 09/14] iomap: pass iter to ->iomap_end implementations
+        b=jcZpJJKnlwqvesQfbctG4c/FtbfiddyKBtzYt5+zuGP7rmI3CnyaTcdAB2ePZEM9p
+         VieB7+q9oGB7W2p8hSo1xMrGv44SyxRt/r7xiLPny7KQRq0MUhnMWZa2VM4NRQFDXz
+         U33N0bhNdcAsa8rELbbEvIp/6/814RcUe2am0cpcDpDPJjriYOoXKTuyHBpGbQfRYY
+         uWo+fNsmbaHgkNSSQmz4gV8dA3hnUn1+LDxHaymS5Lep1oj0trDnb0HQfFWsROTmsC
+         mdbADGN3cAUno0uMrlxJd6Q6SjlW51SHmMgtHbF/dsXPtDGyQHz+Z1600J55NDk26V
+         2Mcz4cv3bt/ew==
+Subject: [PATCH 10/14] iomap: pass a private pointer to
+ iomap_file_buffered_write
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         david@fromorbit.com, hch@infradead.org
-Date:   Wed, 09 Nov 2022 10:16:35 -0800
-Message-ID: <166801779522.3992140.4135946031734299717.stgit@magnolia>
+Date:   Wed, 09 Nov 2022 10:16:40 -0800
+Message-ID: <166801780087.3992140.16981045908489138660.stgit@magnolia>
 In-Reply-To: <166801774453.3992140.241667783932550826.stgit@magnolia>
 References: <166801774453.3992140.241667783932550826.stgit@magnolia>
 User-Agent: StGit/0.19
@@ -56,238 +57,207 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Clean up the ->iomap_end call sites by passing a pointer to the iter
-structure into the iomap_end functions.  This isn't strictly needed,
-but it cleans up the callsites neatly.
+Allow filesystems to pass a filesystem-private pointer into iomap for
+writes into the pagecache.  This will now be accessible from
+->iomap_begin implementations, which is key to being able to revalidate
+mappings after taking folio locks.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/btrfs/inode.c      |    8 +++++---
- fs/erofs/data.c       |    4 ++--
- fs/ext2/inode.c       |    8 ++++++--
- fs/ext4/inode.c       |    6 +++---
- fs/fuse/dax.c         |    5 ++---
- fs/gfs2/bmap.c        |    7 +++++--
- fs/iomap/iter.c       |    5 ++---
- fs/xfs/xfs_iomap.c    |   28 ++++++++++++++--------------
- include/linux/iomap.h |    4 ++--
- 9 files changed, 41 insertions(+), 34 deletions(-)
+ fs/gfs2/bmap.c         |    3 ++-
+ fs/gfs2/file.c         |    2 +-
+ fs/iomap/buffered-io.c |   14 +++++++++-----
+ fs/xfs/xfs_file.c      |    2 +-
+ fs/xfs/xfs_iomap.c     |    4 ++--
+ fs/xfs/xfs_reflink.c   |    2 +-
+ fs/zonefs/super.c      |    3 ++-
+ include/linux/iomap.h  |    8 ++++----
+ 8 files changed, 22 insertions(+), 16 deletions(-)
 
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index d1030128769b..50afc8a3a5da 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -7770,10 +7770,12 @@ static int btrfs_dio_iomap_begin(const struct iomap_iter *iter,
- 	return ret;
- }
- 
--static int btrfs_dio_iomap_end(struct inode *inode, loff_t pos, loff_t length,
--		ssize_t written, unsigned int flags, struct iomap *iomap)
-+static int btrfs_dio_iomap_end(const struct iomap_iter *iter, u64 length,
-+		ssize_t written, struct iomap *iomap)
- {
--	struct iomap_iter *iter = container_of(iomap, struct iomap_iter, iomap);
-+	struct inode *inode = iter->inode;
-+	loff_t pos = iter->pos;
-+	unsigned int flags = iter->flags;
- 	struct btrfs_dio_data *dio_data = iter->private;
- 	size_t submitted = dio_data->submitted;
- 	const bool write = !!(flags & IOMAP_WRITE);
-diff --git a/fs/erofs/data.c b/fs/erofs/data.c
-index 093ffbefc027..f3f42ec39c8d 100644
---- a/fs/erofs/data.c
-+++ b/fs/erofs/data.c
-@@ -312,8 +312,8 @@ static int erofs_iomap_begin(const struct iomap_iter *iter,
- 	return 0;
- }
- 
--static int erofs_iomap_end(struct inode *inode, loff_t pos, loff_t length,
--		ssize_t written, unsigned int flags, struct iomap *iomap)
-+static int erofs_iomap_end(const struct iomap_iter *iter, u64 length,
-+		ssize_t written, struct iomap *iomap)
- {
- 	void *ptr = iomap->private;
- 
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 808a6c5a2db1..f28c47e519db 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -845,9 +845,13 @@ static int ext2_iomap_begin(const struct iomap_iter *iter,
- }
- 
- static int
--ext2_iomap_end(struct inode *inode, loff_t offset, loff_t length,
--		ssize_t written, unsigned flags, struct iomap *iomap)
-+ext2_iomap_end(const struct iomap_iter *iter, u64 length, ssize_t written,
-+		struct iomap *iomap)
- {
-+	struct inode *inode = iter->inode;
-+	loff_t offset = iter->pos;
-+	unsigned int flags = iter->flags;
-+
- 	if (iomap->type == IOMAP_MAPPED &&
- 	    written < length &&
- 	    (flags & IOMAP_WRITE))
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 8d15b83caaca..7d1f512e5187 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -3504,8 +3504,8 @@ static int ext4_iomap_overwrite_begin(const struct iomap_iter *iter,
- 	return ret;
- }
- 
--static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
--			  ssize_t written, unsigned flags, struct iomap *iomap)
-+static int ext4_iomap_end(const struct iomap_iter *iter, u64 length,
-+			  ssize_t written, struct iomap *iomap)
- {
- 	/*
- 	 * Check to see whether an error occurred while writing out the data to
-@@ -3514,7 +3514,7 @@ static int ext4_iomap_end(struct inode *inode, loff_t offset, loff_t length,
- 	 * the I/O. Any blocks that may have been allocated in preparation for
- 	 * the direct I/O will be reused during buffered I/O.
- 	 */
--	if (flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
-+	if (iter->flags & (IOMAP_WRITE | IOMAP_DIRECT) && written == 0)
- 		return -ENOTBLK;
- 
- 	return 0;
-diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-index 65bf4e35bac3..7fea437246aa 100644
---- a/fs/fuse/dax.c
-+++ b/fs/fuse/dax.c
-@@ -635,9 +635,8 @@ static int fuse_iomap_begin(const struct iomap_iter *iter,
- 	return 0;
- }
- 
--static int fuse_iomap_end(struct inode *inode, loff_t pos, loff_t length,
--			  ssize_t written, unsigned int flags,
--			  struct iomap *iomap)
-+static int fuse_iomap_end(const struct iomap_iter *iter, u64 length,
-+			  ssize_t written, struct iomap *iomap)
- {
- 	struct fuse_dax_mapping *dmap = iomap->private;
- 
 diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index 1e438e0734d4..f215c0735fa6 100644
+index f215c0735fa6..da5ccd25080b 100644
 --- a/fs/gfs2/bmap.c
 +++ b/fs/gfs2/bmap.c
-@@ -1126,9 +1126,12 @@ static int gfs2_iomap_begin(const struct iomap_iter *iter, struct iomap *iomap,
- 	return ret;
+@@ -1295,7 +1295,8 @@ static int gfs2_block_zero_range(struct inode *inode, loff_t from,
+ 				 unsigned int length)
+ {
+ 	BUG_ON(current->journal_info);
+-	return iomap_zero_range(inode, from, length, NULL, &gfs2_iomap_ops);
++	return iomap_zero_range(inode, from, length, NULL, &gfs2_iomap_ops,
++			NULL);
  }
  
--static int gfs2_iomap_end(struct inode *inode, loff_t pos, loff_t length,
--			  ssize_t written, unsigned flags, struct iomap *iomap)
-+static int gfs2_iomap_end(const struct iomap_iter *iter, u64 length,
-+			  ssize_t written, struct iomap *iomap)
- {
-+	struct inode *inode = iter->inode;
-+	loff_t pos = iter->pos;
-+	unsigned int flags = iter->flags;
- 	struct gfs2_inode *ip = GFS2_I(inode);
- 	struct gfs2_sbd *sdp = GFS2_SB(inode);
+ #define GFS2_JTRUNC_REVOKES 8192
+diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
+index 60c6fb91fb58..1e7dc0abe119 100644
+--- a/fs/gfs2/file.c
++++ b/fs/gfs2/file.c
+@@ -1042,7 +1042,7 @@ static ssize_t gfs2_file_buffered_write(struct kiocb *iocb,
  
-diff --git a/fs/iomap/iter.c b/fs/iomap/iter.c
-index 2e84f8be6d8d..494e905844cf 100644
---- a/fs/iomap/iter.c
-+++ b/fs/iomap/iter.c
-@@ -76,9 +76,8 @@ int iomap_iter(struct iomap_iter *iter, const struct iomap_ops *ops)
+ 	current->backing_dev_info = inode_to_bdi(inode);
+ 	pagefault_disable();
+-	ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops);
++	ret = iomap_file_buffered_write(iocb, from, &gfs2_iomap_ops, NULL);
+ 	pagefault_enable();
+ 	current->backing_dev_info = NULL;
+ 	if (ret > 0) {
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index d3c565aa29f8..779244960153 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -836,13 +836,14 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i,
+ 
+ ssize_t
+ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
+-		const struct iomap_ops *ops)
++		const struct iomap_ops *ops, void *private)
+ {
+ 	struct iomap_iter iter = {
+ 		.inode		= iocb->ki_filp->f_mapping->host,
+ 		.pos		= iocb->ki_pos,
+ 		.len		= iov_iter_count(i),
+ 		.flags		= IOMAP_WRITE,
++		.private	= private,
+ 	};
  	int ret;
  
- 	if (iter->iomap.length && ops->iomap_end) {
--		ret = ops->iomap_end(iter->inode, iter->pos, iomap_length(iter),
--				iter->processed > 0 ? iter->processed : 0,
--				iter->flags, &iter->iomap);
-+		ret = ops->iomap_end(iter, iomap_length(iter),
-+				max_t(s64, iter->processed, 0), &iter->iomap);
- 		if (ret < 0 && !iter->processed)
- 			return ret;
- 	}
+@@ -903,13 +904,14 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter,
+ 
+ int
+ iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
+-		const struct iomap_ops *ops)
++		const struct iomap_ops *ops, void *private)
+ {
+ 	struct iomap_iter iter = {
+ 		.inode		= inode,
+ 		.pos		= pos,
+ 		.len		= len,
+ 		.flags		= IOMAP_WRITE | IOMAP_UNSHARE,
++		.private	= private,
+ 	};
+ 	int ret;
+ 
+@@ -966,13 +968,14 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter,
+ 
+ int
+ iomap_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
+-		const struct iomap_ops *ops)
++		const struct iomap_ops *ops, void *private)
+ {
+ 	struct iomap_iter iter = {
+ 		.inode		= inode,
+ 		.pos		= pos,
+ 		.len		= len,
+ 		.flags		= IOMAP_ZERO,
++		.private	= private,
+ 	};
+ 	int ret;
+ 
+@@ -984,7 +987,7 @@ EXPORT_SYMBOL_GPL(iomap_zero_range);
+ 
+ int
+ iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
+-		const struct iomap_ops *ops)
++		const struct iomap_ops *ops, void *private)
+ {
+ 	unsigned int blocksize = i_blocksize(inode);
+ 	unsigned int off = pos & (blocksize - 1);
+@@ -992,7 +995,8 @@ iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
+ 	/* Block boundary? Nothing to do */
+ 	if (!off)
+ 		return 0;
+-	return iomap_zero_range(inode, pos, blocksize - off, did_zero, ops);
++	return iomap_zero_range(inode, pos, blocksize - off, did_zero, ops,
++			private);
+ }
+ EXPORT_SYMBOL_GPL(iomap_truncate_page);
+ 
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index 595a5bcf46b9..f3671e22ba16 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -722,7 +722,7 @@ xfs_file_buffered_write(
+ 
+ 	trace_xfs_file_buffered_write(iocb, from);
+ 	ret = iomap_file_buffered_write(iocb, from,
+-			&xfs_buffered_write_iomap_ops);
++			&xfs_buffered_write_iomap_ops, NULL);
+ 	if (likely(ret >= 0))
+ 		iocb->ki_pos += ret;
+ 
 diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index ca88facfd61e..668f66ca84e4 100644
+index 668f66ca84e4..00a4b60c97e9 100644
 --- a/fs/xfs/xfs_iomap.c
 +++ b/fs/xfs/xfs_iomap.c
-@@ -881,20 +881,19 @@ const struct iomap_ops xfs_direct_write_iomap_ops = {
+@@ -1559,7 +1559,7 @@ xfs_zero_range(
+ 		return dax_zero_range(inode, pos, len, did_zero,
+ 				      &xfs_direct_write_iomap_ops);
+ 	return iomap_zero_range(inode, pos, len, did_zero,
+-				&xfs_buffered_write_iomap_ops);
++				&xfs_buffered_write_iomap_ops, NULL);
+ }
  
- static int
- xfs_dax_write_iomap_end(
--	struct inode		*inode,
--	loff_t			pos,
--	loff_t			length,
-+	const struct iomap_iter	*iter,
-+	u64			mapped_length,
- 	ssize_t			written,
--	unsigned		flags,
- 	struct iomap		*iomap)
- {
--	struct xfs_inode	*ip = XFS_I(inode);
-+	struct xfs_inode	*ip = XFS_I(iter->inode);
-+	loff_t			pos = iter->pos;
+ int
+@@ -1574,5 +1574,5 @@ xfs_truncate_page(
+ 		return dax_truncate_page(inode, pos, did_zero,
+ 					&xfs_direct_write_iomap_ops);
+ 	return iomap_truncate_page(inode, pos, did_zero,
+-				   &xfs_buffered_write_iomap_ops);
++				   &xfs_buffered_write_iomap_ops, NULL);
+ }
+diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
+index 93bdd25680bc..31b7b6e5db45 100644
+--- a/fs/xfs/xfs_reflink.c
++++ b/fs/xfs/xfs_reflink.c
+@@ -1694,7 +1694,7 @@ xfs_reflink_unshare(
+ 	inode_dio_wait(inode);
  
- 	if (!xfs_is_cow_inode(ip))
- 		return 0;
+ 	error = iomap_file_unshare(inode, offset, len,
+-			&xfs_buffered_write_iomap_ops);
++			&xfs_buffered_write_iomap_ops, NULL);
+ 	if (error)
+ 		goto out;
  
- 	if (!written) {
--		xfs_reflink_cancel_cow_range(ip, pos, length, true);
-+		xfs_reflink_cancel_cow_range(ip, pos, mapped_length, true);
- 		return 0;
- 	}
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index 9a8e261ece8b..f4a9f21545bd 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -983,7 +983,8 @@ static ssize_t zonefs_file_buffered_write(struct kiocb *iocb,
+ 	if (ret <= 0)
+ 		goto inode_unlock;
  
-@@ -1291,14 +1290,14 @@ xfs_buffered_write_delalloc_release(
- 
- static int
- xfs_buffered_write_iomap_end(
--	struct inode		*inode,
--	loff_t			offset,
--	loff_t			length,
-+	const struct iomap_iter	*iter,
-+	u64			mapped_length,
- 	ssize_t			written,
--	unsigned		flags,
- 	struct iomap		*iomap)
- {
--	struct xfs_mount	*mp = XFS_M(inode->i_sb);
-+	struct xfs_inode	*ip = XFS_I(iter->inode);
-+	struct xfs_mount	*mp = ip->i_mount;
-+	loff_t			offset = iter->pos;
- 	loff_t			start_byte;
- 	loff_t			end_byte;
- 	int			error = 0;
-@@ -1319,16 +1318,17 @@ xfs_buffered_write_iomap_end(
- 		start_byte = round_down(offset, mp->m_sb.sb_blocksize);
- 	else
- 		start_byte = round_up(offset + written, mp->m_sb.sb_blocksize);
--	end_byte = round_up(offset + length, mp->m_sb.sb_blocksize);
-+	end_byte = round_up(offset + mapped_length, mp->m_sb.sb_blocksize);
- 
- 	/* Nothing to do if we've written the entire delalloc extent */
- 	if (start_byte >= end_byte)
- 		return 0;
- 
--	error = xfs_buffered_write_delalloc_release(inode, start_byte, end_byte);
-+	error = xfs_buffered_write_delalloc_release(VFS_I(ip), start_byte,
-+			end_byte);
- 	if (error && !xfs_is_shutdown(mp)) {
- 		xfs_alert(mp, "%s: unable to clean up ino 0x%llx",
--			__func__, XFS_I(inode)->i_ino);
-+			__func__, ip->i_ino);
- 		return error;
- 	}
- 	return 0;
+-	ret = iomap_file_buffered_write(iocb, from, &zonefs_write_iomap_ops);
++	ret = iomap_file_buffered_write(iocb, from, &zonefs_write_iomap_ops,
++			NULL);
+ 	if (ret > 0)
+ 		iocb->ki_pos += ret;
+ 	else if (ret == -EIO)
 diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 811ea61ba577..7485a5a3af17 100644
+index 7485a5a3af17..152353164a5a 100644
 --- a/include/linux/iomap.h
 +++ b/include/linux/iomap.h
-@@ -169,8 +169,8 @@ struct iomap_ops {
- 	 * needs to be commited, while the rest needs to be unreserved.
- 	 * Written might be zero if no data was written.
- 	 */
--	int (*iomap_end)(struct inode *inode, loff_t pos, loff_t length,
--			ssize_t written, unsigned flags, struct iomap *iomap);
-+	int (*iomap_end)(const struct iomap_iter *iter, u64 mapped_length,
-+			ssize_t written, struct iomap *iomap);
+@@ -243,18 +243,18 @@ static inline const struct iomap *iomap_iter_srcmap(const struct iomap_iter *i)
+ }
  
- 	/*
- 	 * Check that the cached iomap still maps correctly to the filesystem's
+ ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+-		const struct iomap_ops *ops);
++		const struct iomap_ops *ops, void *private);
+ int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
+ void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
+ bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
+ bool iomap_release_folio(struct folio *folio, gfp_t gfp_flags);
+ void iomap_invalidate_folio(struct folio *folio, size_t offset, size_t len);
+ int iomap_file_unshare(struct inode *inode, loff_t pos, loff_t len,
+-		const struct iomap_ops *ops);
++		const struct iomap_ops *ops, void *private);
+ int iomap_zero_range(struct inode *inode, loff_t pos, loff_t len,
+-		bool *did_zero, const struct iomap_ops *ops);
++		bool *did_zero, const struct iomap_ops *ops, void *private);
+ int iomap_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
+-		const struct iomap_ops *ops);
++		const struct iomap_ops *ops, void *private);
+ vm_fault_t iomap_page_mkwrite(struct vm_fault *vmf,
+ 			const struct iomap_ops *ops);
+ int iomap_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
 
