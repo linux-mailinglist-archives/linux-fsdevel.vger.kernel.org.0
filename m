@@ -2,136 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 06BFE622CF5
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Nov 2022 14:57:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 24BB9622D22
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Nov 2022 15:05:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230343AbiKIN5Z convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Wed, 9 Nov 2022 08:57:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44588 "EHLO
+        id S229922AbiKIOFG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Nov 2022 09:05:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51460 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230323AbiKIN5X (ORCPT
+        with ESMTP id S229669AbiKIOFF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Nov 2022 08:57:23 -0500
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62729A1AC;
-        Wed,  9 Nov 2022 05:57:22 -0800 (PST)
-Received: by mail-qk1-f169.google.com with SMTP id f8so10935799qkg.3;
-        Wed, 09 Nov 2022 05:57:22 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZlCICaMl7bVoWfbHUbXFE6WjK/mpRfkQ1BpJ4tD81wg=;
-        b=hYAyJrJrprd7b0VJs4fu9izwePkRd6u3kCLEH0ucaDYLowYUqvMI9cVgsX1ZV2lfTI
-         lJiwXL8+J6BXYbfREn1al8CFChSx0JZ+N6X6XVVuY3W4DUnCTnQupDxZ6s+p6hNUeRZG
-         puyzAzR3DA5D1rUXe/2PaWXPolRmDMt/+x8RZGEwpUcjLKvN+RSwSDTxUkUP203O62A+
-         YtKC6aQ9YbvkfHQz3Pj4hwrki2+H4H5+Q3xNlxMZl2T2kcazNt3mX7WyZ762ZJlzXhrl
-         8GW9oGSiTfLcysE8fbNiSXQUtGU2g/8BI3lQDCqR1RohVq/52XR260bYdrRm8Xc2cb/f
-         vpbQ==
-X-Gm-Message-State: ACrzQf3OxnDSwOlIgBiKAX9wAeSRbMjmdh2SgdBVaqSNz6+bTT1yF6V9
-        6SEaA7HCdI0qXOjCWYoObQt1ysyPQ0FUgg==
-X-Google-Smtp-Source: AMsMyM750pznucp7md3lSwY7NlWmE4AfNBaGyscG+QYT36cSHCpD2cxupqOG3MBq9nwNLkvVZl0zkw==
-X-Received: by 2002:a05:620a:4447:b0:6c6:c438:1ced with SMTP id w7-20020a05620a444700b006c6c4381cedmr45021187qkp.658.1668002241345;
-        Wed, 09 Nov 2022 05:57:21 -0800 (PST)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id a185-20020ae9e8c2000000b006fa0d98a037sm10987120qkg.87.2022.11.09.05.57.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Nov 2022 05:57:20 -0800 (PST)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-368edbc2c18so162343457b3.13;
-        Wed, 09 Nov 2022 05:57:19 -0800 (PST)
-X-Received: by 2002:a81:12c8:0:b0:36a:bd6b:92fb with SMTP id
- 191-20020a8112c8000000b0036abd6b92fbmr55685175yws.316.1668002239320; Wed, 09
- Nov 2022 05:57:19 -0800 (PST)
+        Wed, 9 Nov 2022 09:05:05 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DE3B1658A
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Nov 2022 06:05:05 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BC96461A35
+        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Nov 2022 14:05:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5197CC433C1;
+        Wed,  9 Nov 2022 14:05:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668002704;
+        bh=vBn2fEDaoudFrydSipyR3+m1csUoY+FwJ8d+5n10xrk=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=gt3MezR3O/dgVapaEtq3XhBVIYbTqbcQzGASlN8KHyDpfEcPuyiVoZ31qShh1q0PU
+         rLtY7LARe67GqeO7wv7RtqxCS17GiFOIBL65mRw2t4Swzn49MgrcLv6m5e3HaSmEma
+         5WyDZR1ZFbVnHea3eMFe5VzA4KDUFWoJt1V1tdOhyFT74+nR3GTphCVccEwMAGX6XY
+         PqYb6R8J67afJL1gKAtFtXN/OkKgLQYtuADVDLPSBsKIQWImD44i4UuOhFpNZcAARR
+         9KbzA+wiS1c78IlXgAzjf0A+CaZ7WesM6kIvZX7WgkApuNBqcV455x24VtbhgGa9EV
+         lram04sAqy7aw==
+Message-ID: <85ec05a7-b8bc-3f1a-ee61-01f505a0c0ad@kernel.org>
+Date:   Wed, 9 Nov 2022 22:04:59 +0800
 MIME-Version: 1.0
-References: <YzN+ZYLjK6HI1P1C@ZenIV> <YzSSl1ItVlARDvG3@ZenIV>
- <YzpcXU2WO8e22Cmi@iweiny-desk3> <7714.1664794108@jrobl> <Yzs4mL3zrrC0/vN+@iweiny-mobl>
- <YztfvaAFOe2kGvDz@ZenIV> <4011.1664837894@jrobl> <YztyLFZJKKTWcMdO@ZenIV>
- <CAHk-=whsOyuRhjmUQ5c1dBQYt1E4ANhObAbEspWtUyt+Pq=Kmw@mail.gmail.com> <CA+icZUVXvMM-sK41oz_Ne4HyRGxXHNz=fPqy+1AYXmXPiE_=Rw@mail.gmail.com>
-In-Reply-To: <CA+icZUVXvMM-sK41oz_Ne4HyRGxXHNz=fPqy+1AYXmXPiE_=Rw@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 9 Nov 2022 14:57:08 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUTHi35MwFt=x+soc1XdYH09DYfHxzjexKG8swR1K40Zw@mail.gmail.com>
-Message-ID: <CAMuHMdUTHi35MwFt=x+soc1XdYH09DYfHxzjexKG8swR1K40Zw@mail.gmail.com>
-Subject: Re: [PATCH][CFT] [coredump] don't use __kernel_write() on kmap_local_page()
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     sedat.dilek@gmail.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "J. R. Okajima" <hooanon05g@gmail.com>,
-        Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH] erofs: fix use-after-free of fsid and domain_id string
+Content-Language: en-US
+To:     Jingbo Xu <jefflexu@linux.alibaba.com>, xiang@kernel.org,
+        linux-erofs@lists.ozlabs.org, zhujia.zj@bytedance.com
+Cc:     huyue2@coolpad.com, linux-fsdevel@vger.kernel.org
+References: <20221021023153.1330-1-jefflexu@linux.alibaba.com>
+From:   Chao Yu <chao@kernel.org>
+In-Reply-To: <20221021023153.1330-1-jefflexu@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al,
+On 2022/10/21 10:31, Jingbo Xu wrote:
+> When erofs instance is remounted with fsid or domain_id mount option
+> specified, the original fsid and domain_id string pointer in sbi->opt
+> is directly overridden with the fsid and domain_id string in the new
+> fs_context, without freeing the original fsid and domain_id string.
+> What's worse, when the new fsid and domain_id string is transferred to
+> sbi, they are not reset to NULL in fs_context, and thus they are freed
+> when remount finishes, while sbi is still referring to these strings.
+> 
+> Reconfiguration for fsid and domain_id seems unusual. Thus clarify this
+> restriction explicitly and dump a warning when users are attempting to
+> do this.
+> 
+> Besides, to fix the use-after-free issue, move fsid and domain_id from
+> erofs_mount_opts to outside.
+> 
+> Fixes: c6be2bd0a5dd ("erofs: register fscache volume")
+> Fixes: 8b7adf1dff3d ("erofs: introduce fscache-based domain")
+> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 
-On Tue, Oct 4, 2022 at 8:19 AM Sedat Dilek <sedat.dilek@gmail.com> wrote:
-> On Tue, Oct 4, 2022 at 2:51 AM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> > On Mon, Oct 3, 2022 at 4:37 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
-> > >
-> > > One variant would be to revert the original patch, put its
-> > > (hopefully) fixed variant into -next and let it sit there for
-> > > a while.  Another is to put this incremental into -next and
-> > > merge it into mainline once it gets a sane amount of testing.
-> >
-> > Just do the incremental fix. It looks obvious enough ("oops, we need
-> > to get the pos _after_ we've done any skip-lseeks on the core file")
-> > that I think it would be just harder to follow a "revert and follow up
-> > with a fix".
-> >
-> > I don't think it needs a ton of extra testing, with Okajima having
-> > already confirmed it fixes his problem case..
-> >
-> >                 Linus
->
-> [ CC Geert ]
->
-> There was another patch from Geert concerning the same coredump changes:
->
-> [PATCH] coredump: Move dump_emit_page() to kill unused warning
->
-> If CONFIG_ELF_CORE is not set:
->
->     fs/coredump.c:835:12: error: ‘dump_emit_page’ defined but not used
-> [-Werror=unused-function]
->       835 | static int dump_emit_page(struct coredump_params *cprm,
-> struct page *page)
->           |            ^~~~~~~~~~~~~~
->
-> Fix this by moving dump_emit_page() inside the existing section
-> protected by #ifdef CONFIG_ELF_CORE.
->
-> Fixes: 06bbaa6dc53cb720 ("[coredump] don't use __kernel_write() on
-> kmap_local_page()")
-> Signed-off-by: Geert Uytterhoeven <geert@linux-m68k.org>
->
-> Please, check yourself!
+Reviewed-by: Chao Yu <chao@kernel.org>
 
-The build issue is still present in today's linux-next.
-Al, can you please apply my fix, so Greg can backport all of this to stable?
-https://lore.kernel.org/all/YzxxtFSCEsycgXSK@kroah.com
-
-Thanks!
-
-> [1] https://lore.kernel.org/all/20221003090657.2053236-1-geert@linux-m68k.org/
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Thanks,
