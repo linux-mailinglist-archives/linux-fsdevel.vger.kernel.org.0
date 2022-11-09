@@ -2,89 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B409F622827
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Nov 2022 11:12:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DF0DF622851
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Nov 2022 11:23:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230294AbiKIKMU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Nov 2022 05:12:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38570 "EHLO
+        id S230028AbiKIKXp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Nov 2022 05:23:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44218 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230262AbiKIKMT (ORCPT
+        with ESMTP id S229877AbiKIKXk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Nov 2022 05:12:19 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34810BC9E
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Nov 2022 02:11:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1667988678;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cF8810Vc4/2iRmUuV9FlLA0OnvEHQxfK2aT8k754UNw=;
-        b=W5We8htO8wbhIRHirD8+naDCod2L8gDliuCWakJgV11yz4E4cf4Q/cVycVj4fx0hHfPd7o
-        SJnBz+GQ1XmQkJWg1n1OZ7RYRNWq6eEO9YdyRd0HUXCNgLMZj2gFamrXb9vOTAR/Mh5uM6
-        EC4P07tLGv23Yk4RzvEgGQPWHmgzCEY=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-583--7Zg8rdzNMiLfSOW1Q541A-1; Wed, 09 Nov 2022 05:11:17 -0500
-X-MC-Unique: -7Zg8rdzNMiLfSOW1Q541A-1
-Received: by mail-wr1-f71.google.com with SMTP id u13-20020adfa18d000000b00236566b5b40so4831942wru.9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Nov 2022 02:11:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cF8810Vc4/2iRmUuV9FlLA0OnvEHQxfK2aT8k754UNw=;
-        b=ax5U6XFsPpQ5Fscp5BVs5tBS/BlFuW6nJqVhK0x/Z7c7DL1/YPqqQqvtkihXLJCVU/
-         KpbQnFfA/TOjgH10ObAjZ44vGbf+d9mK6G8MxS3ojcTV4XY4oxNRy+s2ck/fA1OYH+9Z
-         Aq9Axjot8wsAHBBAYvV5oqm1ydTOsCGOPIDmg3mafZRnc9Wal8SdBGoV0Zjji0d+XR+X
-         7ke9l13GBeQhgA3VOCG2S2SVevqzwL3QT8gnzQvg55c6qpS4WhiGmp9zyw4MGS/wYkdQ
-         1op1usWv//OfbIbj89n+JhWQ92HAz3AbhPSjaFZvLfSLim4cAKSjBgxpQtc2Lvj6Mc7p
-         8UVw==
-X-Gm-Message-State: ACrzQf2QEx1hXASSJ+NrlrI2xtEvZyTU4Y/7SU1Ht+fZX2ahMuP1yi3v
-        rCQrRFqLuG3B5JO6F2ZaUuEsuXdkPBLXcgr6OVXiclYKcNwQ96irWPQzAkaxyAWTtZeOzopEDOa
-        fZFWrVf0aAogMPJZjYOe9Om+kSQ==
-X-Received: by 2002:a05:600c:a09:b0:3b5:2f6b:c7c5 with SMTP id z9-20020a05600c0a0900b003b52f6bc7c5mr39748723wmp.141.1667988676031;
-        Wed, 09 Nov 2022 02:11:16 -0800 (PST)
-X-Google-Smtp-Source: AMsMyM7qD7WZc9naImm94kof1HKTWG20TbVD1pI7ymJwhlZEm3Nqy5sYMy0gvoqZ9fXaQO2l3KEMZA==
-X-Received: by 2002:a05:600c:a09:b0:3b5:2f6b:c7c5 with SMTP id z9-20020a05600c0a0900b003b52f6bc7c5mr39748686wmp.141.1667988675664;
-        Wed, 09 Nov 2022 02:11:15 -0800 (PST)
-Received: from ?IPV6:2003:cb:c704:b000:3b0e:74a3:bc8:9937? (p200300cbc704b0003b0e74a30bc89937.dip0.t-ipconnect.de. [2003:cb:c704:b000:3b0e:74a3:bc8:9937])
-        by smtp.gmail.com with ESMTPSA id f17-20020a056000129100b002368a6deaf8sm12745744wrx.57.2022.11.09.02.11.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 09 Nov 2022 02:11:15 -0800 (PST)
-Message-ID: <70a8541b-6066-45ca-e2bc-3b7ecc0e7bb2@redhat.com>
-Date:   Wed, 9 Nov 2022 11:11:13 +0100
+        Wed, 9 Nov 2022 05:23:40 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A276A2DF6;
+        Wed,  9 Nov 2022 02:23:37 -0800 (PST)
+Received: from localhost.localdomain (unknown [39.45.244.84])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 4AE6B66015E4;
+        Wed,  9 Nov 2022 10:23:30 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1667989416;
+        bh=pQmsJjQQgLkkaK9xqWauJVSaq0M6SYc84CZ8r9QpVKU=;
+        h=From:To:Subject:Date:From;
+        b=jOutevlyQXeD7DYQ8ajv1Oa0PieF3cAfvt83gYNfjbqZq0l9PhIEw5hEVWjsJzCrS
+         s8GCMfDfeLClvSkLj+EfAMTu/RRS2kEngqCjw7j0LoYa6YezZrIPOwlfTTzsxv6f05
+         ia9bJc7dVCyS2J/P27o7FZnhDfbq3brsIpbFego7Jl19ptXvjKPVy3ShRe1B5K7ZXD
+         CYkDrw+hbI9stWeA4PMY1ceC4JlBe7B0LBr29CDAkN+DfCHbZFQ6udyz44ab6S2vdl
+         tt5X9MamoJtHowoGhyOOYgEjHF1x4NgOwycd3RhKL1YzamSHr/BjN2pC0xrCA39xuz
+         KVJR/HHdSzomA==
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+To:     =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Peter Xu <peterx@redhat.com>, Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Zach O'Keefe" <zokeefe@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        kernel@collabora.com,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        "open list : KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list : PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
+        "open list : MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Paul Gofman <pgofman@codeweavers.com>
+Subject: [PATCH v6 0/3] Implement IOCTL to get and/or the clear info about PTEs
+Date:   Wed,  9 Nov 2022 15:23:00 +0500
+Message-Id: <20221109102303.851281-1-usama.anjum@collabora.com>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-Subject: Re: [PATCH v2] mm: anonymous shared memory naming
-To:     Pasha Tatashin <pasha.tatashin@soleen.com>
-Cc:     corbet@lwn.net, akpm@linux-foundation.org, hughd@google.com,
-        hannes@cmpxchg.org, vincent.whitchurch@axis.com, seanjc@google.com,
-        rppt@kernel.org, shy828301@gmail.com, paul.gortmaker@windriver.com,
-        peterx@redhat.com, vbabka@suse.cz, Liam.Howlett@oracle.com,
-        ccross@google.com, willy@infradead.org, arnd@arndb.de,
-        cgel.zte@gmail.com, yuzhao@google.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        bagasdotme@gmail.com, kirill@shutemov.name
-References: <20221107184715.3950621-1-pasha.tatashin@soleen.com>
- <e94ac231-7137-010c-2f2b-6a309c941759@redhat.com>
- <CA+CK2bAbKMj8-crNCtmQ=DB5uRvQBJtFTLf5TH9=RWRGjfOGew@mail.gmail.com>
-Content-Language: en-US
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <CA+CK2bAbKMj8-crNCtmQ=DB5uRvQBJtFTLf5TH9=RWRGjfOGew@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -92,121 +73,99 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
->>
->>>     anon_shmem = mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
->>>                       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
->>>     /* Name the segment: "MY-NAME" */
->>>     rv = prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME,
->>>                anon_shmem, SIZE, "MY-NAME");
->>>
->>> cat /proc/<pid>/maps (and smaps):
->>> 7fc8e2b4c000-7fc8f2b4c000 rw-s 00000000 00:01 1024 [anon_shmem:MY-NAME]
->>
->> What would it have looked like before? Just no additional information?
-> 
-> Before:
-> 
-> 7fc8e2b4c000-7fc8f2b4c000 rw-s 00000000 00:01 1024 /dev/zero (deleted)
+Changes in v6:
+- Updated the interface and made cosmetic changes
 
-Can we add that to the patch description?
+Original Cover Letter in v5:
+Hello,
 
->>
->>>
->>> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
->>> ---
->>
->>
->> [...]
->>
->>> diff --git a/include/linux/mm.h b/include/linux/mm.h
->>> index 8bbcccbc5565..06b6fb3277ab 100644
->>> --- a/include/linux/mm.h
->>> +++ b/include/linux/mm.h
->>> @@ -699,8 +699,10 @@ static inline unsigned long vma_iter_addr(struct vma_iterator *vmi)
->>>     * paths in userfault.
->>>     */
->>>    bool vma_is_shmem(struct vm_area_struct *vma);
->>> +bool vma_is_anon_shmem(struct vm_area_struct *vma);
->>>    #else
->>>    static inline bool vma_is_shmem(struct vm_area_struct *vma) { return false; }
->>> +static inline bool vma_is_anon_shmem(struct vm_area_struct *vma) { return false; }
->>>    #endif
->>>
->>>    int vma_is_stack_for_current(struct vm_area_struct *vma);
->>> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
->>> index 500e536796ca..08d8b973fb60 100644
->>> --- a/include/linux/mm_types.h
->>> +++ b/include/linux/mm_types.h
->>> @@ -461,21 +461,11 @@ struct vm_area_struct {
->>>         * For areas with an address space and backing store,
->>>         * linkage into the address_space->i_mmap interval tree.
->>>         *
->>> -      * For private anonymous mappings, a pointer to a null terminated string
->>> -      * containing the name given to the vma, or NULL if unnamed.
->>>         */
->>> -
->>> -     union {
->>> -             struct {
->>> -                     struct rb_node rb;
->>> -                     unsigned long rb_subtree_last;
->>> -             } shared;
->>> -             /*
->>> -              * Serialized by mmap_sem. Never use directly because it is
->>> -              * valid only when vm_file is NULL. Use anon_vma_name instead.
->>> -              */
->>> -             struct anon_vma_name *anon_name;
->>> -     };
->>> +     struct {
->>> +             struct rb_node rb;
->>> +             unsigned long rb_subtree_last;
->>> +     } shared;
->>>
->>
->> So that effectively grows the size of vm_area_struct. Hm. I'd really
->> prefer to keep this specific to actual anonymous memory, not extending
->> it to anonymous files.
-> 
-> It grows only when CONFIG_ANON_VMA_NAME=y, otherwise it stays the same
-> as before. Are you suggesting adding another config specifically for
-> shared memory? I wonder if we could add a union for some other part of
-> vm_area_struct where anon and file cannot be used together.
+This patch series implements IOCTL on the pagemap procfs file to get the
+information about the page table entries (PTEs). The following operations
+are supported in this ioctl:
+- Get the information if the pages are soft-dirty, file mapped, present
+  or swapped.
+- Clear the soft-dirty PTE bit of the pages.
+- Get and clear the soft-dirty PTE bit of the pages atomically.
 
-In practice, all distributions will enable CONFIG_ANON_VMA_NAME in the 
-long term I guess. So if we could avoid increasing the VMA size, that 
-would be great.
+Soft-dirty PTE bit of the memory pages can be read by using the pagemap
+procfs file. The soft-dirty PTE bit for the whole memory range of the
+process can be cleared by writing to the clear_refs file. There are other
+methods to mimic this information entirely in userspace with poor
+performance:
+- The mprotect syscall and SIGSEGV handler for bookkeeping
+- The userfaultfd syscall with the handler for bookkeeping
+Some benchmarks can be seen here[1]. This series adds features that weren't
+present earlier:
+- There is no atomic get soft-dirty PTE bit status and clear operation
+  possible.
+- The soft-dirty PTE bit of only a part of memory cannot be cleared.
 
-> 
->> Do we have any *actual* users where we don't have an alternative? I
->> doubt that this is really required.
->>
->> The simplest approach seems to be to use memfd instead of MAP_SHARED |
->> MAP_ANONYMOUS. __NR_memfd_create can be passed a name and you get what
->> you propose here effectively already. Or does anything speak against it?
-> 
-> For our use case the above does not work. We are working on highly
-> paravirtualized virtual machines. The VMM maps VM memory as anonymous
-> shared memory (not private because VMM is sandboxed and drivers are
-> running in their own processes). However, the VM tells back to the VMM
-> how parts of the memory are actually used by the guest, how each of
-> the segments should be backed (i.e. 4K pages, 2M pages), and some
-> other information about the segments. The naming allows us to monitor
-> the effective memory footprint for each of these segments from the
-> host without looking inside the guest.
+Historically, soft-dirty PTE bit tracking has been used in the CRIU
+project. The procfs interface is enough for finding the soft-dirty bit
+status and clearing the soft-dirty bit of all the pages of a process.
+We have the use case where we need to track the soft-dirty PTE bit for
+only specific pages on demand. We need this tracking and clear mechanism
+of a region of memory while the process is running to emulate the
+getWriteWatch() syscall of Windows. This syscall is used by games to
+keep track of dirty pages to process only the dirty pages.
 
-That's a reasonable use case, although naive me would worry about #VMA 
-limits etc.
+The information related to pages if the page is file mapped, present and
+swapped is required for the CRIU project[2][3]. The addition of the
+required mask, any mask, excluded mask and return masks are also required
+for the CRIU project[2].
 
-Can you add some condensed use-case explanation to the patch 
-description? (IOW, memfd cannot be used because parts of the memfd are 
-required to receive distinct names)
+The IOCTL returns the addresses of the pages which match the specific masks.
+The page addresses are returned in struct page_region in a compact form.
+The max_pages is needed to support a use case where user only wants to get
+a specific number of pages. So there is no need to find all the pages of
+interest in the range when max_pages is specified. The IOCTL returns when
+the maximum number of the pages are found. The max_pages is optional. If
+max_pages is specified, it must be equal or greater than the vec_size.
+This restriction is needed to handle worse case when one page_region only
+contains info of one page and it cannot be compacted. This is needed to
+emulate the Windows getWriteWatch() syscall.
 
-I'd appreciate if we could avoid increasing the VMA size; but in any case
+Some non-dirty pages get marked as dirty because of the kernel's
+internal activity (such as VMA merging as soft-dirty bit difference isn't
+considered while deciding to merge VMAs). The dirty bit of the pages is
+stored in the VMA flags and in the per page flags. If any of these two bits
+are set, the page is considered to be soft dirty. Suppose you have cleared
+the soft dirty bit of half of VMA which will be done by splitting the VMA
+and clearing soft dirty bit flag in the half VMA and the pages in it. Now
+kernel may decide to merge the VMAs again. So the half VMA becomes dirty
+again. This splitting/merging costs performance. The application receives
+a lot of pages which aren't dirty in reality but marked as dirty.
+Performance is lost again here. Also sometimes user doesn't want the newly
+allocated memory to be marked as dirty. PAGEMAP_NO_REUSED_REGIONS flag
+solves both the problems. It is used to not depend on the soft dirty flag
+in the VMA flags. So VMA splitting and merging doesn't happen. It only
+depends on the soft dirty bit of the individual pages. Thus by using this
+flag, there may be a scenerio such that the new memory regions which are
+just created, doesn't look dirty when seen with the IOCTL, but look dirty
+when seen from procfs. This seems okay as the user of this flag know the
+implication of using it.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+[1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
+[2] https://lore.kernel.org/all/YyiDg79flhWoMDZB@gmail.com/
+[3] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com/
 
+Regards,
+Muhammad Usama Anjum
+
+Muhammad Usama Anjum (3):
+  fs/proc/task_mmu: update functions to clear the soft-dirty PTE bit
+  fs/proc/task_mmu: Implement IOCTL to get and/or the clear info about PTEs
+  selftests: vm: add pagemap ioctl tests
+
+ fs/proc/task_mmu.c                         | 410 +++++++++++-
+ include/uapi/linux/fs.h                    |  56 ++
+ tools/include/uapi/linux/fs.h              |  56 ++
+ tools/testing/selftests/vm/.gitignore      |   1 +
+ tools/testing/selftests/vm/Makefile        |   5 +-
+ tools/testing/selftests/vm/pagemap_ioctl.c | 698 +++++++++++++++++++++
+ 6 files changed, 1193 insertions(+), 33 deletions(-)
+ create mode 100644 tools/testing/selftests/vm/pagemap_ioctl.c
 
 -- 
-Thanks,
-
-David / dhildenb
+2.30.2
 
