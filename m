@@ -2,45 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD3FF623220
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Nov 2022 19:15:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B1D0623222
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Nov 2022 19:16:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229499AbiKISPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Nov 2022 13:15:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44844 "EHLO
+        id S230007AbiKISQD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Nov 2022 13:16:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230144AbiKISPt (ORCPT
+        with ESMTP id S230128AbiKISPy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Nov 2022 13:15:49 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44F3A264A7;
-        Wed,  9 Nov 2022 10:15:48 -0800 (PST)
+        Wed, 9 Nov 2022 13:15:54 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AF5313E96;
+        Wed,  9 Nov 2022 10:15:53 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id D349FB81F69;
-        Wed,  9 Nov 2022 18:15:46 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E15C433C1;
-        Wed,  9 Nov 2022 18:15:45 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4DCE2B81F6A;
+        Wed,  9 Nov 2022 18:15:52 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBD2BC433D7;
+        Wed,  9 Nov 2022 18:15:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668017745;
-        bh=DNmgBwbEXJOUhB20I3YI6I2cJUdkbhcyYLUOvEpVN2c=;
-        h=Subject:From:To:Cc:Date:From;
-        b=Neh7jlxVSoCwYp365KNGEKzuZ7/MhpLhcXiJbt0l48XzLAWyVLXi+RhbpHGX+hKZk
-         EYAMSorAM+nLieHVDYtGxwbVLe0d+BI4dKCg8cG23SazaJ6x6pQusOFbs9506SJ+DM
-         3+hAja5g+3KgTpVpfo6Pat5nI1e6DoJr7qvN296532dZXK11MgSORPYalOeyc4tDZQ
-         0XVzfC8x2wLsB0STcXiEYt94rRNhlqPvE+ocd7/FC+tD039IFr3YEKeSEvzBDhG6aL
-         Hm6guj76TN6thCKw68CfJXBfFYbvCGGIPC/t3YUXyFW69ouCqxlVSnlGnIIoUPY22R
-         rPbbBmxRuIWPg==
-Subject: [PATCHSET RFCRAP v2 00/14] xfs,
- iomap: fix data corruption due to stale cached iomaps
+        s=k20201202; t=1668017751;
+        bh=wV6FrFgAv7lbu7/m3oTVhMSTYUXey1hP/1VQ4tBUfaw=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=SUjkU3OmPyJAFeCBLimeM+CGjnkiq41IeS4fsf7ZgEkz4dUXCORNHx9lA7bASb5+N
+         EToZABNI/GkQYZG78YwFfCfcbt/lNt28CBHV1Gq+1zim5jqer4CwuNuWWRhk6PsxiN
+         7k/FR1OBJEXlnwBZakSe6jGM4t1rzSh1LNMFLA8n+1ei/7ruZmk00svdId9MdVlmdJ
+         Z9AtOhI8GHpjVfZEKxhhC7HCTnybqF53qMD5LskvYYI3EmQ4T8jWCPI1tQhzD/hKLg
+         Xuli5NwoLMBoYkHoem87pNLN9ol6D8fB1NRO7VREQoiFxVr56FoUgCPR4THI7eLOIt
+         4B64bVvXWszyg==
+Subject: [PATCH 01/14] xfs: write page faults in iomap are not buffered writes
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
-Cc:     Christoph Hellwig <hch@lst.de>, Dave Chinner <dchinner@redhat.com>,
+Cc:     Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@lst.de>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         david@fromorbit.com, hch@infradead.org
-Date:   Wed, 09 Nov 2022 10:15:44 -0800
-Message-ID: <166801774453.3992140.241667783932550826.stgit@magnolia>
+Date:   Wed, 09 Nov 2022 10:15:50 -0800
+Message-ID: <166801775049.3992140.14376099491514761985.stgit@magnolia>
+In-Reply-To: <166801774453.3992140.241667783932550826.stgit@magnolia>
+References: <166801774453.3992140.241667783932550826.stgit@magnolia>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -54,212 +55,133 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi all,
+From: Dave Chinner <dchinner@redhat.com>
 
-This is my adaptation of Dave's last RFC.  Dave's patches are unchanged
-except for exporting mapping_seek_hole_data to fix a compilation error.
+When we reserve a delalloc region in xfs_buffered_write_iomap_begin,
+we mark the iomap as IOMAP_F_NEW so that the the write context
+understands that it allocated the delalloc region.
 
-The last seven patches of the series are where I change things up.  The
-first two patches refactor ->iomap_begin and ->iomap_end to receive a
-const pointer to the iterator, which reduces the argument count and
-makes it possible for ->iomap_begin to access the iter->private pointer.
-The third new patch changes the iomap pagecache write functions to
-enable the filesystem to set iter->private, similar to iomap_dio_rw.
+If we then fail that buffered write, xfs_buffered_write_iomap_end()
+checks for the IOMAP_F_NEW flag and if it is set, it punches out
+the unused delalloc region that was allocated for the write.
 
-Having done that, I converted the xfs code to stuff the data/cow
-sequence counters in an iter->private object instead of bit stuffing
-them into the iomap->private pointer.  Maybe it would've been smarter to
-make filesystems tell iomap about their notions of how large struct
-iomap objects should be (thereby enabling each fs to cram extra data
-along in the iomap) but that seemed like more work.
+The assumption this code makes is that all buffered write operations
+that can allocate space are run under an exclusive lock (i_rwsem).
+This is an invalid assumption: page faults in mmap()d regions call
+through this same function pair to map the file range being faulted
+and this runs only holding the inode->i_mapping->invalidate_lock in
+shared mode.
 
-So having replaced the iomap sequence counters with an explicit object,
-I then made the validator check the cow fork.  Not sure if it's really
-necessary, but paranoia on my part.  I /think/ it's the case that
-updates to the cow fork don't affect writing to the page cache, but I've
-wondered if the same validation rules might apply to other things (like
-directio writes).
+IOWs, we can have races between page faults and write() calls that
+fail the nested page cache write operation that result in data loss.
+That is, the failing iomap_end call will punch out the data that
+the other racing iomap iteration brought into the page cache. This
+can be reproduced with generic/34[46] if we arbitrarily fail page
+cache copy-in operations from write() syscalls.
 
-Lastly, I added a couple of write/writeback delay knobs so that I could
-write some tests that simulate race conditions and check that slow
-threads encounter iomap invalidation midway through an operation.
+Code analysis tells us that the iomap_page_mkwrite() function holds
+the already instantiated and uptodate folio locked across the iomap
+mapping iterations. Hence the folio cannot be removed from memory
+whilst we are mapping the range it covers, and as such we do not
+care if the mapping changes state underneath the iomap iteration
+loop:
 
-I haven't gotten to analyzing Brian's eofblock truncate fixes yet, but I
-wanted to push this out for comments since it's now survived an
-overnight fstests run.
+1. if the folio is not already dirty, there is no writeback races
+   possible.
+2. if we allocated the mapping (delalloc or unwritten), the folio
+   cannot already be dirty. See #1.
+3. If the folio is already dirty, it must be up to date. As we hold
+   it locked, it cannot be reclaimed from memory. Hence we always
+   have valid data in the page cache while iterating the mapping.
+4. Valid data in the page cache can exist when the underlying
+   mapping is DELALLOC, UNWRITTEN or WRITTEN. Having the mapping
+   change from DELALLOC->UNWRITTEN or UNWRITTEN->WRITTEN does not
+   change the data in the page - it only affects actions if we are
+   initialising a new page. Hence #3 applies  and we don't care
+   about these extent map transitions racing with
+   iomap_page_mkwrite().
+5. iomap_page_mkwrite() checks for page invalidation races
+   (truncate, hole punch, etc) after it locks the folio. We also
+   hold the mapping->invalidation_lock here, and hence the mapping
+   cannot change due to extent removal operations while we are
+   iterating the folio.
 
-NOTE: I don't have RH's original reproducer, so I have no idea if this
-series really fixes that corruption problem.
-----
-Recently a customer workload encountered a data corruption in a
-specific multi-threaded write operation. The workload combined
-racing unaligned adjacent buffered writes with low memory conditions
-that caused both writeback and memory reclaim to race with the
-writes.
+As such, filesystems that don't use bufferheads will never fail
+the iomap_folio_mkwrite_iter() operation on the current mapping,
+regardless of whether the iomap should be considered stale.
 
-The result of this was random partial blocks containing zeroes
-instead of the correct data.  The underlying problem is that iomap
-caches the write iomap for the duration of the write() operation,
-but it fails to take into account that the extent underlying the
-iomap can change whilst the write is in progress.
+Further, the range we are asked to iterate is limited to the range
+inside EOF that the folio spans. Hence, for XFS, we will only map
+the exact range we are asked for, and we will only do speculative
+preallocation with delalloc if we are mapping a hole at the EOF
+page. The iterator will consume the entire range of the folio that
+is within EOF, and anything beyond the EOF block cannot be accessed.
+We never need to truncate this post-EOF speculative prealloc away in
+the context of the iomap_page_mkwrite() iterator because if it
+remains unused we'll remove it when the last reference to the inode
+goes away.
 
-The short story is that an iomap can span mutliple folios, and so
-under low memory writeback can be cleaning folios the write()
-overlaps. Whilst the overlapping data is cached in memory, this
-isn't a problem, but because the folios are now clean they can be
-reclaimed. Once reclaimed, the write() does the wrong thing when
-re-instantiating partial folios because the iomap no longer reflects
-the underlying state of the extent. e.g. it thinks the extent is
-unwritten, so it zeroes the partial range, when in fact the
-underlying extent is now written and so it should have read the data
-from disk.  This is how we get random zero ranges in the file
-instead of the correct data.
+Hence we don't actually need an .iomap_end() cleanup/error handling
+path at all for iomap_page_mkwrite() for XFS. This means we can
+separate the page fault processing from the complexity of the
+.iomap_end() processing in the buffered write path. This also means
+that the buffered write path will also be able to take the
+mapping->invalidate_lock as necessary.
 
-The gory details of the race condition can be found here:
-
-https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
-
-Fixing the problem has two aspects. The first aspect of the problem
-is ensuring that iomap can detect a stale cached iomap during a
-write in a race-free manner. We already do this stale iomap
-detection in the writeback path, so we have a mechanism for
-detecting that the iomap backing the data range may have changed
-and needs to be remapped.
-
-In the case of the write() path, we have to ensure that the iomap is
-validated at a point in time when the page cache is stable and
-cannot be reclaimed from under us. We also need to validate the
-extent before we start performing any modifications to the folio
-state or contents. Combine these two requirements together, and the
-only "safe" place to validate the iomap is after we have looked up
-and locked the folio we are going to copy the data into, but before
-we've performed any initialisation operations on that folio.
-
-If the iomap fails validation, we then mark it stale, unlock the
-folio and end the write. This effectively means a stale iomap
-results in a short write. Filesystems should already be able to
-handle this, as write operations can end short for many reasons and
-need to iterate through another mapping cycle to be completed. Hence
-the iomap changes needed to detect and handle stale iomaps during
-write() operations is relatively simple....
-
-However, the assumption is that filesystems should already be able
-to handle write failures safely, and that's where the second
-(first?) part of the problem exists. That is, handling a partial
-write is harder than just "punching out the unused delayed
-allocation extent". This is because mmap() based faults can race
-with writes, and if they land in the delalloc region that the write
-allocated, then punching out the delalloc region can cause data
-corruption.
-
-This data corruption problem is exposed by generic/346 when iomap is
-converted to detect stale iomaps during write() operations. Hence
-write failure in the filesytems needs to handle the fact that the
-write() in progress doesn't necessarily own the data in the page
-cache over the range of the delalloc extent it just allocated.
-
-As a result, we can't just truncate the page cache over the range
-the write() didn't reach and punch all the delalloc extent. We have
-to walk the page cache over the untouched range and skip over any
-dirty data region in the cache in that range. Which is ....
-non-trivial.
-
-That is, iterating the page cache has to handle partially populated
-folios (i.e. block size < page size) that contain data. The data
-might be discontiguous within a folio. Indeed, there might be
-*multiple* discontiguous data regions within a single folio. And to
-make matters more complex, multi-page folios mean we just don't know
-how many sub-folio regions we might have to iterate to find all
-these regions. All the corner cases between the conversions and
-rounding between filesystem block size, folio size and multi-page
-folio size combined with unaligned write offsets kept breaking my
-brain.
-
-Eventually, I realised that if the XFS code tracked the processed
-write regions by byte ranges instead of fileysetm block or page
-cache index, we could simply use mapping_seek_hole_data() to find
-the start and end of each discrete data region within the range we
-needed to scan. SEEK_DATA finds the start of the cached data region,
-SEEK_HOLE finds the end of the region. THese are byte based
-interfaces that understand partially uptodate folio regions, and so
-can iterate discrete sub-folio data regions directly. This largely
-solved the problem of discovering the dirty regions we need to keep
-the delalloc extent over.
-
-Of course, now xfs/196 fails. This is a error injection test that is
-supposed to exercise the delalloc extent recover code that the above
-fixes just completely reworked. the error injection assumes that it
-can just truncate the page cache over the write and then punch out
-the delalloc extent completely. This is fundamentally broken, and
-only has been working by chance - the chance is that writes are page
-aligned and page aligned writes don't install large folios in the
-page cache.
-
-IOWs, with sub-folio block size, and not know what size folios are
-in the cache, we can't actually guarantee that we can remove the
-cached dirty folios from the cache via truncation, and hence the new
-code will not remove the delalloc extents under those dirty folios.
-As a result the error injection results is writing zeroes to disk
-rather that removing the delalloc extents from memory. I can't make
-this error injection to work the way it was intended, so I removed
-it. The code that it is supposed to exercise is now exercised every time we
-detect a stale iomap, so we have much better coverage of the failed
-write error handling than the error injection provides us with,
-anyway....
-
-So, this passes fstests on 1kb and 4kb block sizes and the data
-corruption reproducer does not detect data corruption, so this set
-of fixes is /finally/ something I'd consider ready for merge.
-Comments and testing welcome!
-
--Dave.
-
-Version 2:
-- refactor iomap code a lot, track data/cow sequence counters separately,
-  add debugging knobs so we can test the revalidation [djwong]
-
-Version 1:
-- complete rework of iomap stale detection
-- complete rework of XFS partial delalloc write error handling.
-
-Original RFC:
-- https://lore.kernel.org/linux-xfs/20220921082959.1411675-1-david@fromorbit.com/
-
-If you're going to start using this mess, you probably ought to just
-pull from my git trees, which are linked below.
-
-This is an extraordinary way to destroy everything.  Enjoy!
-Comments and questions are, as always, welcome.
-
---D
-
-kernel git tree:
-https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=iomap-write-races-6.2
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/inode.c             |   18 +-
- fs/erofs/data.c              |   12 +
- fs/erofs/zmap.c              |    6 -
- fs/ext2/inode.c              |   16 +-
- fs/ext4/extents.c            |    5 -
- fs/ext4/inode.c              |   38 +++-
- fs/f2fs/data.c               |    9 +
- fs/fuse/dax.c                |   14 +-
- fs/gfs2/bmap.c               |   28 ++-
- fs/gfs2/file.c               |    2 
- fs/hpfs/file.c               |    8 +
- fs/iomap/buffered-io.c       |   67 ++++++--
- fs/iomap/iter.c              |   27 ++-
- fs/xfs/libxfs/xfs_bmap.c     |    4 
- fs/xfs/libxfs/xfs_errortag.h |   18 +-
- fs/xfs/xfs_aops.c            |   12 +
- fs/xfs/xfs_error.c           |   43 ++++-
- fs/xfs/xfs_error.h           |   22 ++
- fs/xfs/xfs_file.c            |    5 -
- fs/xfs/xfs_iomap.c           |  371 ++++++++++++++++++++++++++++++++++--------
- fs/xfs/xfs_iomap.h           |    7 +
- fs/xfs/xfs_reflink.c         |    3 
- fs/zonefs/super.c            |   27 ++-
- include/linux/iomap.h        |   34 +++-
- mm/filemap.c                 |    1 
- 25 files changed, 610 insertions(+), 187 deletions(-)
+ fs/xfs/xfs_file.c  |    2 +-
+ fs/xfs/xfs_iomap.c |    9 +++++++++
+ fs/xfs/xfs_iomap.h |    1 +
+ 3 files changed, 11 insertions(+), 1 deletion(-)
+
+
+diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
+index e462d39c840e..595a5bcf46b9 100644
+--- a/fs/xfs/xfs_file.c
++++ b/fs/xfs/xfs_file.c
+@@ -1325,7 +1325,7 @@ __xfs_filemap_fault(
+ 		if (write_fault) {
+ 			xfs_ilock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
+ 			ret = iomap_page_mkwrite(vmf,
+-					&xfs_buffered_write_iomap_ops);
++					&xfs_page_mkwrite_iomap_ops);
+ 			xfs_iunlock(XFS_I(inode), XFS_MMAPLOCK_SHARED);
+ 		} else {
+ 			ret = filemap_fault(vmf);
+diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+index 07da03976ec1..5cea069a38b4 100644
+--- a/fs/xfs/xfs_iomap.c
++++ b/fs/xfs/xfs_iomap.c
+@@ -1187,6 +1187,15 @@ const struct iomap_ops xfs_buffered_write_iomap_ops = {
+ 	.iomap_end		= xfs_buffered_write_iomap_end,
+ };
+ 
++/*
++ * iomap_page_mkwrite() will never fail in a way that requires delalloc extents
++ * that it allocated to be revoked. Hence we do not need an .iomap_end method
++ * for this operation.
++ */
++const struct iomap_ops xfs_page_mkwrite_iomap_ops = {
++	.iomap_begin		= xfs_buffered_write_iomap_begin,
++};
++
+ static int
+ xfs_read_iomap_begin(
+ 	struct inode		*inode,
+diff --git a/fs/xfs/xfs_iomap.h b/fs/xfs/xfs_iomap.h
+index c782e8c0479c..0f62ab633040 100644
+--- a/fs/xfs/xfs_iomap.h
++++ b/fs/xfs/xfs_iomap.h
+@@ -47,6 +47,7 @@ xfs_aligned_fsb_count(
+ }
+ 
+ extern const struct iomap_ops xfs_buffered_write_iomap_ops;
++extern const struct iomap_ops xfs_page_mkwrite_iomap_ops;
+ extern const struct iomap_ops xfs_direct_write_iomap_ops;
+ extern const struct iomap_ops xfs_read_iomap_ops;
+ extern const struct iomap_ops xfs_seek_iomap_ops;
 
