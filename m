@@ -2,107 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B5A6962316D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Nov 2022 18:26:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD3FF623220
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Nov 2022 19:15:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230109AbiKIR0I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Nov 2022 12:26:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48534 "EHLO
+        id S229499AbiKISPw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Nov 2022 13:15:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229556AbiKIR0H (ORCPT
+        with ESMTP id S230144AbiKISPt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Nov 2022 12:26:07 -0500
-Received: from mail-wm1-x331.google.com (mail-wm1-x331.google.com [IPv6:2a00:1450:4864:20::331])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08B8B222B5
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Nov 2022 09:26:02 -0800 (PST)
-Received: by mail-wm1-x331.google.com with SMTP id p13-20020a05600c468d00b003cf8859ed1bso1776999wmo.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Nov 2022 09:26:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=mime-version:user-agent:message-id:in-reply-to:date:references
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZCXeEArAtZpsAV3+eRTf/uuyrZvxHawTJioxLNt9+dY=;
-        b=r7GxC3viikU1BMakG5VODgDk9Ij9V8KtgDgvhaAN4UHpivyY3e4nV49LEEY1sqxbmO
-         LqfOPKqYXKHHfn7bIaMP1n+YbjvZyEGpi2gRLeDhLnhu6zXhMMNnaUVq+wqhCeIPC/Gy
-         fJlFTR2cil1rBrbYX3MJu6fsyyFBl6IC0nfrApkOkx5tl23d2Q3URRaaEILdCISe+NAP
-         g6qlYZIrrCm7ReiwB3g5Y7/TPguUmRf3j0jhn4wcUda1kbxgOAwJ+j1hmr/qQGbvrasW
-         n9PIqCPu3Tqs6PyOK6uKyxZouglTgkp60ax4a7+WT07hntm100KUa677jm4dYvReXyEh
-         Iv/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=mime-version:user-agent:message-id:in-reply-to:date:references
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZCXeEArAtZpsAV3+eRTf/uuyrZvxHawTJioxLNt9+dY=;
-        b=mIQM6U4Fw1iUET4I5FxVzUVVv8pHJ/LFPkEJTtI4ha6ux6eLuACFauMwLWS0rCjpuB
-         UvmzMPpHdCsP8Uw9GAessZBvny8aGrxbyrx7h7c8c2tLO5WQqiQuBwvnDD/DFvWjz3V4
-         UqhTZHoSXXXTCN/VoDZirjMVkZ3OCCjNnVuXSq47TQxAHaTnbkrJhxT3QqaH8jk/N0i9
-         V8oOaBB/TiyHlrjSW0hJAkYFYkOQ8ldqw6YuLW6VgUsGqRYSiZTejy9QYE4ep/a64puM
-         07VR3cmMMDFRIMIocqdeAyzRxKRVtjvh4Tl8oL3sKJi2MDOXr+EPQwHoRDD0CAvTcx0R
-         Z0pg==
-X-Gm-Message-State: ACrzQf13JKlLAjgqvV5j2KsFpULppLXVAhjKX2RrbRTW7R+JODYimCzQ
-        sHMnJNNAHReCHlj4bsRHWqpsjL2elWyPoKGd
-X-Google-Smtp-Source: AMsMyM5/nJv3lbVZCjlhCxvQw9vBCMdyhzzwwyfsJrMd9x8XBUHC9V7Ftyi3Z0ER7AqpImwLPc2RWg==
-X-Received: by 2002:a05:600c:3781:b0:3a6:804a:afc with SMTP id o1-20020a05600c378100b003a6804a0afcmr50635675wmr.27.1668014760612;
-        Wed, 09 Nov 2022 09:26:00 -0800 (PST)
-Received: from localhost ([95.148.15.66])
-        by smtp.gmail.com with ESMTPSA id j20-20020a05600c489400b003cfa80443a0sm2064380wmp.35.2022.11.09.09.25.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Nov 2022 09:25:58 -0800 (PST)
-From:   Punit Agrawal <punit.agrawal@bytedance.com>
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     Punit Agrawal <punit.agrawal@bytedance.com>,
-        akpm@linux-foundation.org, shuah@kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: Re: Re: [PATCH] selftests: proc: Fix proc-empty-vm build error on
- non x86_64
-References: <20221109110621.1791999-1-punit.agrawal@bytedance.com>
-        <Y2vcc00tszEg7Ljz@p183>
-Date:   Wed, 09 Nov 2022 17:25:56 +0000
-In-Reply-To: <Y2vcc00tszEg7Ljz@p183> (Alexey Dobriyan's message of "Wed, 9 Nov
-        2022 19:59:31 +0300")
-Message-ID: <87leok11ln.fsf_-_@stealth>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/27.1 (gnu/linux)
+        Wed, 9 Nov 2022 13:15:49 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44F3A264A7;
+        Wed,  9 Nov 2022 10:15:48 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D349FB81F69;
+        Wed,  9 Nov 2022 18:15:46 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56E15C433C1;
+        Wed,  9 Nov 2022 18:15:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668017745;
+        bh=DNmgBwbEXJOUhB20I3YI6I2cJUdkbhcyYLUOvEpVN2c=;
+        h=Subject:From:To:Cc:Date:From;
+        b=Neh7jlxVSoCwYp365KNGEKzuZ7/MhpLhcXiJbt0l48XzLAWyVLXi+RhbpHGX+hKZk
+         EYAMSorAM+nLieHVDYtGxwbVLe0d+BI4dKCg8cG23SazaJ6x6pQusOFbs9506SJ+DM
+         3+hAja5g+3KgTpVpfo6Pat5nI1e6DoJr7qvN296532dZXK11MgSORPYalOeyc4tDZQ
+         0XVzfC8x2wLsB0STcXiEYt94rRNhlqPvE+ocd7/FC+tD039IFr3YEKeSEvzBDhG6aL
+         Hm6guj76TN6thCKw68CfJXBfFYbvCGGIPC/t3YUXyFW69ouCqxlVSnlGnIIoUPY22R
+         rPbbBmxRuIWPg==
+Subject: [PATCHSET RFCRAP v2 00/14] xfs,
+ iomap: fix data corruption due to stale cached iomaps
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     djwong@kernel.org
+Cc:     Christoph Hellwig <hch@lst.de>, Dave Chinner <dchinner@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, hch@infradead.org
+Date:   Wed, 09 Nov 2022 10:15:44 -0800
+Message-ID: <166801774453.3992140.241667783932550826.stgit@magnolia>
+User-Agent: StGit/0.19
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Alexey Dobriyan <adobriyan@gmail.com> writes:
+Hi all,
 
-> On Wed, Nov 09, 2022 at 11:06:21AM +0000, Punit Agrawal wrote:
->> The proc-empty-vm test is implemented for x86_64 and fails to build
->> for other architectures. Rather then emitting a compiler error it
->> would be preferable to only build the test on supported architectures.
->
-> Ehh, can you just port it to whatever arch you're using?
-> What's the address space on arm/arm64?
+This is my adaptation of Dave's last RFC.  Dave's patches are unchanged
+except for exporting mapping_seek_hole_data to fix a compilation error.
 
-On arm64, it is 0x0000ffffffffffff ((1 << 48) - 1) when using 48bit VA,
-but goes up when using 52-bit VA[0].
+The last seven patches of the series are where I change things up.  The
+first two patches refactor ->iomap_begin and ->iomap_end to receive a
+const pointer to the iterator, which reduces the argument count and
+makes it possible for ->iomap_begin to access the iter->private pointer.
+The third new patch changes the iomap pagecache write functions to
+enable the filesystem to set iter->private, similar to iomap_dio_rw.
 
-> 	#ifdef __amd64__
->                 munmap(NULL, ((size_t)1 << 47) - 4096);
-> 	#else
-> 	#error "implement 'unmap everything'"
-> 	#endif
->
-> This program is almost arch-independent.
+Having done that, I converted the xfs code to stuff the data/cow
+sequence counters in an iter->private object instead of bit stuffing
+them into the iomap->private pointer.  Maybe it would've been smarter to
+make filesystems tell iomap about their notions of how large struct
+iomap objects should be (thereby enabling each fs to cram extra data
+along in the iomap) but that seemed like more work.
 
-I did try updating the #ifdef but then hit the asm block in
-vsyscall(). Also, the test would be still fail to build on other
-architectures.
+So having replaced the iomap sequence counters with an explicit object,
+I then made the validator check the cow fork.  Not sure if it's really
+necessary, but paranoia on my part.  I /think/ it's the case that
+updates to the cow fork don't affect writing to the page cache, but I've
+wondered if the same validation rules might apply to other things (like
+directio writes).
 
-While support for architectures is added, it would be good to not have
-the compiler throw an error on unsuspecting kselftest users.
+Lastly, I added a couple of write/writeback delay knobs so that I could
+write some tests that simulate race conditions and check that slow
+threads encounter iomap invalidation midway through an operation.
 
->> +TEST_GEN_PROGS_x86_64 += proc-empty-vm
+I haven't gotten to analyzing Brian's eofblock truncate fixes yet, but I
+wanted to push this out for comments since it's now survived an
+overnight fstests run.
 
-[0] https://docs.kernel.org/arm64/memory.html
+NOTE: I don't have RH's original reproducer, so I have no idea if this
+series really fixes that corruption problem.
+----
+Recently a customer workload encountered a data corruption in a
+specific multi-threaded write operation. The workload combined
+racing unaligned adjacent buffered writes with low memory conditions
+that caused both writeback and memory reclaim to race with the
+writes.
+
+The result of this was random partial blocks containing zeroes
+instead of the correct data.  The underlying problem is that iomap
+caches the write iomap for the duration of the write() operation,
+but it fails to take into account that the extent underlying the
+iomap can change whilst the write is in progress.
+
+The short story is that an iomap can span mutliple folios, and so
+under low memory writeback can be cleaning folios the write()
+overlaps. Whilst the overlapping data is cached in memory, this
+isn't a problem, but because the folios are now clean they can be
+reclaimed. Once reclaimed, the write() does the wrong thing when
+re-instantiating partial folios because the iomap no longer reflects
+the underlying state of the extent. e.g. it thinks the extent is
+unwritten, so it zeroes the partial range, when in fact the
+underlying extent is now written and so it should have read the data
+from disk.  This is how we get random zero ranges in the file
+instead of the correct data.
+
+The gory details of the race condition can be found here:
+
+https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
+
+Fixing the problem has two aspects. The first aspect of the problem
+is ensuring that iomap can detect a stale cached iomap during a
+write in a race-free manner. We already do this stale iomap
+detection in the writeback path, so we have a mechanism for
+detecting that the iomap backing the data range may have changed
+and needs to be remapped.
+
+In the case of the write() path, we have to ensure that the iomap is
+validated at a point in time when the page cache is stable and
+cannot be reclaimed from under us. We also need to validate the
+extent before we start performing any modifications to the folio
+state or contents. Combine these two requirements together, and the
+only "safe" place to validate the iomap is after we have looked up
+and locked the folio we are going to copy the data into, but before
+we've performed any initialisation operations on that folio.
+
+If the iomap fails validation, we then mark it stale, unlock the
+folio and end the write. This effectively means a stale iomap
+results in a short write. Filesystems should already be able to
+handle this, as write operations can end short for many reasons and
+need to iterate through another mapping cycle to be completed. Hence
+the iomap changes needed to detect and handle stale iomaps during
+write() operations is relatively simple....
+
+However, the assumption is that filesystems should already be able
+to handle write failures safely, and that's where the second
+(first?) part of the problem exists. That is, handling a partial
+write is harder than just "punching out the unused delayed
+allocation extent". This is because mmap() based faults can race
+with writes, and if they land in the delalloc region that the write
+allocated, then punching out the delalloc region can cause data
+corruption.
+
+This data corruption problem is exposed by generic/346 when iomap is
+converted to detect stale iomaps during write() operations. Hence
+write failure in the filesytems needs to handle the fact that the
+write() in progress doesn't necessarily own the data in the page
+cache over the range of the delalloc extent it just allocated.
+
+As a result, we can't just truncate the page cache over the range
+the write() didn't reach and punch all the delalloc extent. We have
+to walk the page cache over the untouched range and skip over any
+dirty data region in the cache in that range. Which is ....
+non-trivial.
+
+That is, iterating the page cache has to handle partially populated
+folios (i.e. block size < page size) that contain data. The data
+might be discontiguous within a folio. Indeed, there might be
+*multiple* discontiguous data regions within a single folio. And to
+make matters more complex, multi-page folios mean we just don't know
+how many sub-folio regions we might have to iterate to find all
+these regions. All the corner cases between the conversions and
+rounding between filesystem block size, folio size and multi-page
+folio size combined with unaligned write offsets kept breaking my
+brain.
+
+Eventually, I realised that if the XFS code tracked the processed
+write regions by byte ranges instead of fileysetm block or page
+cache index, we could simply use mapping_seek_hole_data() to find
+the start and end of each discrete data region within the range we
+needed to scan. SEEK_DATA finds the start of the cached data region,
+SEEK_HOLE finds the end of the region. THese are byte based
+interfaces that understand partially uptodate folio regions, and so
+can iterate discrete sub-folio data regions directly. This largely
+solved the problem of discovering the dirty regions we need to keep
+the delalloc extent over.
+
+Of course, now xfs/196 fails. This is a error injection test that is
+supposed to exercise the delalloc extent recover code that the above
+fixes just completely reworked. the error injection assumes that it
+can just truncate the page cache over the write and then punch out
+the delalloc extent completely. This is fundamentally broken, and
+only has been working by chance - the chance is that writes are page
+aligned and page aligned writes don't install large folios in the
+page cache.
+
+IOWs, with sub-folio block size, and not know what size folios are
+in the cache, we can't actually guarantee that we can remove the
+cached dirty folios from the cache via truncation, and hence the new
+code will not remove the delalloc extents under those dirty folios.
+As a result the error injection results is writing zeroes to disk
+rather that removing the delalloc extents from memory. I can't make
+this error injection to work the way it was intended, so I removed
+it. The code that it is supposed to exercise is now exercised every time we
+detect a stale iomap, so we have much better coverage of the failed
+write error handling than the error injection provides us with,
+anyway....
+
+So, this passes fstests on 1kb and 4kb block sizes and the data
+corruption reproducer does not detect data corruption, so this set
+of fixes is /finally/ something I'd consider ready for merge.
+Comments and testing welcome!
+
+-Dave.
+
+Version 2:
+- refactor iomap code a lot, track data/cow sequence counters separately,
+  add debugging knobs so we can test the revalidation [djwong]
+
+Version 1:
+- complete rework of iomap stale detection
+- complete rework of XFS partial delalloc write error handling.
+
+Original RFC:
+- https://lore.kernel.org/linux-xfs/20220921082959.1411675-1-david@fromorbit.com/
+
+If you're going to start using this mess, you probably ought to just
+pull from my git trees, which are linked below.
+
+This is an extraordinary way to destroy everything.  Enjoy!
+Comments and questions are, as always, welcome.
+
+--D
+
+kernel git tree:
+https://git.kernel.org/cgit/linux/kernel/git/djwong/xfs-linux.git/log/?h=iomap-write-races-6.2
+---
+ fs/btrfs/inode.c             |   18 +-
+ fs/erofs/data.c              |   12 +
+ fs/erofs/zmap.c              |    6 -
+ fs/ext2/inode.c              |   16 +-
+ fs/ext4/extents.c            |    5 -
+ fs/ext4/inode.c              |   38 +++-
+ fs/f2fs/data.c               |    9 +
+ fs/fuse/dax.c                |   14 +-
+ fs/gfs2/bmap.c               |   28 ++-
+ fs/gfs2/file.c               |    2 
+ fs/hpfs/file.c               |    8 +
+ fs/iomap/buffered-io.c       |   67 ++++++--
+ fs/iomap/iter.c              |   27 ++-
+ fs/xfs/libxfs/xfs_bmap.c     |    4 
+ fs/xfs/libxfs/xfs_errortag.h |   18 +-
+ fs/xfs/xfs_aops.c            |   12 +
+ fs/xfs/xfs_error.c           |   43 ++++-
+ fs/xfs/xfs_error.h           |   22 ++
+ fs/xfs/xfs_file.c            |    5 -
+ fs/xfs/xfs_iomap.c           |  371 ++++++++++++++++++++++++++++++++++--------
+ fs/xfs/xfs_iomap.h           |    7 +
+ fs/xfs/xfs_reflink.c         |    3 
+ fs/zonefs/super.c            |   27 ++-
+ include/linux/iomap.h        |   34 +++-
+ mm/filemap.c                 |    1 
+ 25 files changed, 610 insertions(+), 187 deletions(-)
+
