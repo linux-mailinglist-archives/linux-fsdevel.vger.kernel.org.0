@@ -2,36 +2,36 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF0DF622851
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Nov 2022 11:23:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8A75622854
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  9 Nov 2022 11:23:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230028AbiKIKXp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Nov 2022 05:23:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44218 "EHLO
+        id S230268AbiKIKXu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 9 Nov 2022 05:23:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229877AbiKIKXk (ORCPT
+        with ESMTP id S230108AbiKIKXr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Nov 2022 05:23:40 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A276A2DF6;
-        Wed,  9 Nov 2022 02:23:37 -0800 (PST)
+        Wed, 9 Nov 2022 05:23:47 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 702F065E0;
+        Wed,  9 Nov 2022 02:23:43 -0800 (PST)
 Received: from localhost.localdomain (unknown [39.45.244.84])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
         (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 4AE6B66015E4;
-        Wed,  9 Nov 2022 10:23:30 +0000 (GMT)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id AB10566029B1;
+        Wed,  9 Nov 2022 10:23:36 +0000 (GMT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1667989416;
-        bh=pQmsJjQQgLkkaK9xqWauJVSaq0M6SYc84CZ8r9QpVKU=;
-        h=From:To:Subject:Date:From;
-        b=jOutevlyQXeD7DYQ8ajv1Oa0PieF3cAfvt83gYNfjbqZq0l9PhIEw5hEVWjsJzCrS
-         s8GCMfDfeLClvSkLj+EfAMTu/RRS2kEngqCjw7j0LoYa6YezZrIPOwlfTTzsxv6f05
-         ia9bJc7dVCyS2J/P27o7FZnhDfbq3brsIpbFego7Jl19ptXvjKPVy3ShRe1B5K7ZXD
-         CYkDrw+hbI9stWeA4PMY1ceC4JlBe7B0LBr29CDAkN+DfCHbZFQ6udyz44ab6S2vdl
-         tt5X9MamoJtHowoGhyOOYgEjHF1x4NgOwycd3RhKL1YzamSHr/BjN2pC0xrCA39xuz
-         KVJR/HHdSzomA==
+        s=mail; t=1667989422;
+        bh=MLOajoALxs2BA+DAlpPUi9P0UdFtJcqV/tFJX2ymRCg=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=CBf/OiycRNQbQV/CqYlpZLBGB+7thrxA+KHna8fbml4zuObzUAXhWmwXbWHV3XzZp
+         HAsMS5chjgbv/A/ExTxW7TaGn7ha9TdPspqqF16zzg/7ILOXKcoctCcbly+Sf7KJ7u
+         Z+xaZ7yB1or3LDSbNWcbEKE5StQA5KKQHaAieRnhXYtxSheColM7V0G8fLe/CFveWi
+         oA8E569RXwkvZlP2lq15iPKxd5EVVtpywrdJW0mvvPYoCU3oNrFtumctbtR7cXWjQn
+         L4ZDPlcOSaqX2inCRIejgQfS0kREiBCgxTLlvFxHsBS+URTNyqE4ImJWW3Wi8VbN5W
+         9kKomdLEmGjOA==
 From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
 To:     =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <emmir@google.com>,
         Andrei Vagin <avagin@gmail.com>,
@@ -58,10 +58,12 @@ To:     =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <emmir@google.com>,
         "open list : PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
         "open list : MEMORY MANAGEMENT" <linux-mm@kvack.org>,
         Paul Gofman <pgofman@codeweavers.com>
-Subject: [PATCH v6 0/3] Implement IOCTL to get and/or the clear info about PTEs
-Date:   Wed,  9 Nov 2022 15:23:00 +0500
-Message-Id: <20221109102303.851281-1-usama.anjum@collabora.com>
+Subject: [PATCH v6 1/3] fs/proc/task_mmu: update functions to clear the soft-dirty PTE bit
+Date:   Wed,  9 Nov 2022 15:23:01 +0500
+Message-Id: <20221109102303.851281-2-usama.anjum@collabora.com>
 X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20221109102303.851281-1-usama.anjum@collabora.com>
+References: <20221109102303.851281-1-usama.anjum@collabora.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -73,99 +75,153 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Changes in v6:
-- Updated the interface and made cosmetic changes
+Update the clear_soft_dirty() and clear_soft_dirty_pmd() to optionally
+clear and return the status if page is dirty.
 
-Original Cover Letter in v5:
-Hello,
+Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
+---
+Changes in v2:
+- Move back the functions back to their original file
+---
+ fs/proc/task_mmu.c | 82 ++++++++++++++++++++++++++++------------------
+ 1 file changed, 51 insertions(+), 31 deletions(-)
 
-This patch series implements IOCTL on the pagemap procfs file to get the
-information about the page table entries (PTEs). The following operations
-are supported in this ioctl:
-- Get the information if the pages are soft-dirty, file mapped, present
-  or swapped.
-- Clear the soft-dirty PTE bit of the pages.
-- Get and clear the soft-dirty PTE bit of the pages atomically.
-
-Soft-dirty PTE bit of the memory pages can be read by using the pagemap
-procfs file. The soft-dirty PTE bit for the whole memory range of the
-process can be cleared by writing to the clear_refs file. There are other
-methods to mimic this information entirely in userspace with poor
-performance:
-- The mprotect syscall and SIGSEGV handler for bookkeeping
-- The userfaultfd syscall with the handler for bookkeeping
-Some benchmarks can be seen here[1]. This series adds features that weren't
-present earlier:
-- There is no atomic get soft-dirty PTE bit status and clear operation
-  possible.
-- The soft-dirty PTE bit of only a part of memory cannot be cleared.
-
-Historically, soft-dirty PTE bit tracking has been used in the CRIU
-project. The procfs interface is enough for finding the soft-dirty bit
-status and clearing the soft-dirty bit of all the pages of a process.
-We have the use case where we need to track the soft-dirty PTE bit for
-only specific pages on demand. We need this tracking and clear mechanism
-of a region of memory while the process is running to emulate the
-getWriteWatch() syscall of Windows. This syscall is used by games to
-keep track of dirty pages to process only the dirty pages.
-
-The information related to pages if the page is file mapped, present and
-swapped is required for the CRIU project[2][3]. The addition of the
-required mask, any mask, excluded mask and return masks are also required
-for the CRIU project[2].
-
-The IOCTL returns the addresses of the pages which match the specific masks.
-The page addresses are returned in struct page_region in a compact form.
-The max_pages is needed to support a use case where user only wants to get
-a specific number of pages. So there is no need to find all the pages of
-interest in the range when max_pages is specified. The IOCTL returns when
-the maximum number of the pages are found. The max_pages is optional. If
-max_pages is specified, it must be equal or greater than the vec_size.
-This restriction is needed to handle worse case when one page_region only
-contains info of one page and it cannot be compacted. This is needed to
-emulate the Windows getWriteWatch() syscall.
-
-Some non-dirty pages get marked as dirty because of the kernel's
-internal activity (such as VMA merging as soft-dirty bit difference isn't
-considered while deciding to merge VMAs). The dirty bit of the pages is
-stored in the VMA flags and in the per page flags. If any of these two bits
-are set, the page is considered to be soft dirty. Suppose you have cleared
-the soft dirty bit of half of VMA which will be done by splitting the VMA
-and clearing soft dirty bit flag in the half VMA and the pages in it. Now
-kernel may decide to merge the VMAs again. So the half VMA becomes dirty
-again. This splitting/merging costs performance. The application receives
-a lot of pages which aren't dirty in reality but marked as dirty.
-Performance is lost again here. Also sometimes user doesn't want the newly
-allocated memory to be marked as dirty. PAGEMAP_NO_REUSED_REGIONS flag
-solves both the problems. It is used to not depend on the soft dirty flag
-in the VMA flags. So VMA splitting and merging doesn't happen. It only
-depends on the soft dirty bit of the individual pages. Thus by using this
-flag, there may be a scenerio such that the new memory regions which are
-just created, doesn't look dirty when seen with the IOCTL, but look dirty
-when seen from procfs. This seems okay as the user of this flag know the
-implication of using it.
-
-[1] https://lore.kernel.org/lkml/54d4c322-cd6e-eefd-b161-2af2b56aae24@collabora.com/
-[2] https://lore.kernel.org/all/YyiDg79flhWoMDZB@gmail.com/
-[3] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com/
-
-Regards,
-Muhammad Usama Anjum
-
-Muhammad Usama Anjum (3):
-  fs/proc/task_mmu: update functions to clear the soft-dirty PTE bit
-  fs/proc/task_mmu: Implement IOCTL to get and/or the clear info about PTEs
-  selftests: vm: add pagemap ioctl tests
-
- fs/proc/task_mmu.c                         | 410 +++++++++++-
- include/uapi/linux/fs.h                    |  56 ++
- tools/include/uapi/linux/fs.h              |  56 ++
- tools/testing/selftests/vm/.gitignore      |   1 +
- tools/testing/selftests/vm/Makefile        |   5 +-
- tools/testing/selftests/vm/pagemap_ioctl.c | 698 +++++++++++++++++++++
- 6 files changed, 1193 insertions(+), 33 deletions(-)
- create mode 100644 tools/testing/selftests/vm/pagemap_ioctl.c
-
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 8a74cdcc9af0..8235c536ac70 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -1095,8 +1095,8 @@ static inline bool pte_is_pinned(struct vm_area_struct *vma, unsigned long addr,
+ 	return page_maybe_dma_pinned(page);
+ }
+ 
+-static inline void clear_soft_dirty(struct vm_area_struct *vma,
+-		unsigned long addr, pte_t *pte)
++static inline bool check_soft_dirty(struct vm_area_struct *vma,
++				    unsigned long addr, pte_t *pte, bool clear)
+ {
+ 	/*
+ 	 * The soft-dirty tracker uses #PF-s to catch writes
+@@ -1105,55 +1105,75 @@ static inline void clear_soft_dirty(struct vm_area_struct *vma,
+ 	 * of how soft-dirty works.
+ 	 */
+ 	pte_t ptent = *pte;
++	int dirty = 0;
+ 
+ 	if (pte_present(ptent)) {
+ 		pte_t old_pte;
+ 
+-		if (pte_is_pinned(vma, addr, ptent))
+-			return;
+-		old_pte = ptep_modify_prot_start(vma, addr, pte);
+-		ptent = pte_wrprotect(old_pte);
+-		ptent = pte_clear_soft_dirty(ptent);
+-		ptep_modify_prot_commit(vma, addr, pte, old_pte, ptent);
++		dirty = pte_soft_dirty(ptent);
++
++		if (dirty && clear && !pte_is_pinned(vma, addr, ptent)) {
++			old_pte = ptep_modify_prot_start(vma, addr, pte);
++			ptent = pte_wrprotect(old_pte);
++			ptent = pte_clear_soft_dirty(ptent);
++			ptep_modify_prot_commit(vma, addr, pte, old_pte, ptent);
++		}
+ 	} else if (is_swap_pte(ptent)) {
+-		ptent = pte_swp_clear_soft_dirty(ptent);
+-		set_pte_at(vma->vm_mm, addr, pte, ptent);
++		dirty = pte_swp_soft_dirty(ptent);
++
++		if (dirty && clear) {
++			ptent = pte_swp_clear_soft_dirty(ptent);
++			set_pte_at(vma->vm_mm, addr, pte, ptent);
++		}
+ 	}
++
++	return !!dirty;
+ }
+ #else
+-static inline void clear_soft_dirty(struct vm_area_struct *vma,
+-		unsigned long addr, pte_t *pte)
++static inline bool check_soft_dirty(struct vm_area_struct *vma,
++				    unsigned long addr, pte_t *pte, bool clear)
+ {
++	return false;
+ }
+ #endif
+ 
+ #if defined(CONFIG_MEM_SOFT_DIRTY) && defined(CONFIG_TRANSPARENT_HUGEPAGE)
+-static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
+-		unsigned long addr, pmd_t *pmdp)
++static inline bool check_soft_dirty_pmd(struct vm_area_struct *vma,
++					unsigned long addr, pmd_t *pmdp, bool clear)
+ {
+ 	pmd_t old, pmd = *pmdp;
++	int dirty = 0;
+ 
+ 	if (pmd_present(pmd)) {
+-		/* See comment in change_huge_pmd() */
+-		old = pmdp_invalidate(vma, addr, pmdp);
+-		if (pmd_dirty(old))
+-			pmd = pmd_mkdirty(pmd);
+-		if (pmd_young(old))
+-			pmd = pmd_mkyoung(pmd);
+-
+-		pmd = pmd_wrprotect(pmd);
+-		pmd = pmd_clear_soft_dirty(pmd);
+-
+-		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
++		dirty = pmd_soft_dirty(pmd);
++		if (dirty && clear) {
++			/* See comment in change_huge_pmd() */
++			old = pmdp_invalidate(vma, addr, pmdp);
++			if (pmd_dirty(old))
++				pmd = pmd_mkdirty(pmd);
++			if (pmd_young(old))
++				pmd = pmd_mkyoung(pmd);
++
++			pmd = pmd_wrprotect(pmd);
++			pmd = pmd_clear_soft_dirty(pmd);
++
++			set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
++		}
+ 	} else if (is_migration_entry(pmd_to_swp_entry(pmd))) {
+-		pmd = pmd_swp_clear_soft_dirty(pmd);
+-		set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
++		dirty = pmd_swp_soft_dirty(pmd);
++
++		if (dirty && clear) {
++			pmd = pmd_swp_clear_soft_dirty(pmd);
++			set_pmd_at(vma->vm_mm, addr, pmdp, pmd);
++		}
+ 	}
++	return !!dirty;
+ }
+ #else
+-static inline void clear_soft_dirty_pmd(struct vm_area_struct *vma,
+-		unsigned long addr, pmd_t *pmdp)
++static inline bool check_soft_dirty_pmd(struct vm_area_struct *vma,
++					unsigned long addr, pmd_t *pmdp, bool clear)
+ {
++	return false;
+ }
+ #endif
+ 
+@@ -1169,7 +1189,7 @@ static int clear_refs_pte_range(pmd_t *pmd, unsigned long addr,
+ 	ptl = pmd_trans_huge_lock(pmd, vma);
+ 	if (ptl) {
+ 		if (cp->type == CLEAR_REFS_SOFT_DIRTY) {
+-			clear_soft_dirty_pmd(vma, addr, pmd);
++			check_soft_dirty_pmd(vma, addr, pmd, true);
+ 			goto out;
+ 		}
+ 
+@@ -1195,7 +1215,7 @@ static int clear_refs_pte_range(pmd_t *pmd, unsigned long addr,
+ 		ptent = *pte;
+ 
+ 		if (cp->type == CLEAR_REFS_SOFT_DIRTY) {
+-			clear_soft_dirty(vma, addr, pte);
++			check_soft_dirty(vma, addr, pte, true);
+ 			continue;
+ 		}
+ 
 -- 
 2.30.2
 
