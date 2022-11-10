@@ -2,100 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E3922623B0D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Nov 2022 05:51:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A68B3623D56
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Nov 2022 09:21:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231822AbiKJEvS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 9 Nov 2022 23:51:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42488 "EHLO
+        id S232943AbiKJIV2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Nov 2022 03:21:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230504AbiKJEvQ (ORCPT
+        with ESMTP id S233043AbiKJIVN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 9 Nov 2022 23:51:16 -0500
-Received: from mail-ot1-x336.google.com (mail-ot1-x336.google.com [IPv6:2607:f8b0:4864:20::336])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 726662AE1D
-        for <linux-fsdevel@vger.kernel.org>; Wed,  9 Nov 2022 20:51:15 -0800 (PST)
-Received: by mail-ot1-x336.google.com with SMTP id br15-20020a056830390f00b0061c9d73b8bdso548144otb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 09 Nov 2022 20:51:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XcT5wYQupLzg19Y6E3tP1wvyvte8y3AvHnzNS4m/36k=;
-        b=EHBPgvKuqA3VaRdnYpGt106ghiBtTas2lcZUJ/pEPRYh8Sa73Z7c2+aa43sgNJzDdG
-         aZ6YStv67RdwKG20JZlWd+bLKdrA9r8aS0xpabt+nwGKWiiEwp8U31O8K5ezuL5u9fyB
-         En2WGN0oZxJLiQr10nIFItho5sbPNNjVNhHdFV1HN7BSX6Um+RJLXxRH1QsEeOm51Exn
-         8O3B6vr0WvecAvtNj79DhTeoORcyaMnG4QoJwNAfgKAF+PgOBy3ou4PqdhpGeVzIIwb1
-         8fy2DtTAdovczvGXrDGoy4krAdGtqkJeQ2AkFsAUpBiV6f5ghendOmfPbUnwyrktUWR3
-         dU2Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XcT5wYQupLzg19Y6E3tP1wvyvte8y3AvHnzNS4m/36k=;
-        b=axg6BjeyQyCBGP++MZQGfYU9VSFlKqZMhAXBylQCIwnltx5K4QFFVfBsCYvHjjLICc
-         UvhQa3euKczVD4oEUpOEbR/1SegQUtCNjcC3L+0YO9l4KnRe/xprSA90yIuDaH+KaCAE
-         jpchsaFpLcR3u0LRK7QG9YmfgZ3ndnZogMsMjWnAp9Cx4R8LzLmLvADDwBQCB24KqQM3
-         H028TrJTb+zcO1xzBrLgvbY35qrRClZztad5L7Oj45+MM3acpN+dGbxumUeO/e1WNstC
-         VqdON3QoxLISQArKgAdswpN4ug71jcvCBc0qEU8q4z8y5lQnVHsEB/yGDvSXyXLkn+HM
-         F/Nw==
-X-Gm-Message-State: ACrzQf2I1ogAA8/3cnYqeIqKZEcnPJ8h9oSx70mhvwPd6baB+ueI54lu
-        K5c0ltJYtj9GThrh2RSK1PHVkNeMi+aakbNcmQBxJXDU9B+6
-X-Google-Smtp-Source: AMsMyM7fystvIOT5xQlaYpTx0YsqbQK9PnqebQYjDZNsxZUJmgLu8IislPk174wIXybPlJtY6hf+UPrtvpA2p6LdqYQ=
-X-Received: by 2002:a9d:1aa:0:b0:66c:6922:8640 with SMTP id
- e39-20020a9d01aa000000b0066c69228640mr1065616ote.34.1668055874749; Wed, 09
- Nov 2022 20:51:14 -0800 (PST)
+        Thu, 10 Nov 2022 03:21:13 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4093E303EF;
+        Thu, 10 Nov 2022 00:21:09 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D48D261D9C;
+        Thu, 10 Nov 2022 08:21:08 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19C99C433D6;
+        Thu, 10 Nov 2022 08:21:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668068468;
+        bh=V4PksRxciyWcpEl1FdsFkRS1q41vAQbL5WxWCTxZ4R4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ATUHt+2OYi+BTLL9Rfxm4zhC247eXcHkpbBDYWoqk2gEP9R45S/C5ZMMpgvvfeNHU
+         cCw5wY6Kd+ABxfmMZ6j1Z15h4eUDR3qTwej29NIYfbSkbHIrBY8m+lAIlr/QSev1Ju
+         I2awfYbJ+HG+OO7LUcG7KW0oZZHmtahpxI8cOOg89EN/nTS1g97axe09YJ74/jmyT2
+         Xxl/lesbwfM4GDXzdAlu9r+EWOVWakcbb/cwUdGOqT4Wh/PvRvKbJbGmv1JNwiqHHp
+         8xcwbvEEZvbQGFRHk3FA4BnAn7lwgtQd2t8UTYS63n796Of1ee7CL7MO2kMmC5+xAu
+         SRmskugnBGtmg==
+Date:   Thu, 10 Nov 2022 00:21:06 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     linux-fscrypt@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v3] fsverity: stop using PG_error to track error status
+Message-ID: <Y2y0cspSZG5dt6c+@sol.localdomain>
+References: <20221028175807.55495-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-References: <20221110043614.802364-1-paul@paul-moore.com>
-In-Reply-To: <20221110043614.802364-1-paul@paul-moore.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Wed, 9 Nov 2022 23:51:04 -0500
-Message-ID: <CAHC9VhRtCbOO7ppCpOPAa_oZxK5rBG0gXhrcJQdp8VwhCdksEA@mail.gmail.com>
-Subject: Re: [RFC PATCH] lsm,fs: fix vfs_getxattr_alloc() return type and
- caller error paths
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221028175807.55495-1-ebiggers@kernel.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 9, 2022 at 11:36 PM Paul Moore <paul@paul-moore.com> wrote:
->
-> The vfs_getxattr_alloc() function currently returns a ssize_t value
-> despite the fact that it only uses int values internally for return
-> values.  Fix this by converting vfs_getxattr_alloc() to return an
-> int type and adjust the callers as necessary.  As part of these
-> caller modifications, some of the callers are fixed to properly free
-> the xattr value buffer on both success and failure to ensure that
-> memory is not leaked in the failure case.
->
-> Signed-off-by: Paul Moore <paul@paul-moore.com>
+On Fri, Oct 28, 2022 at 10:58:07AM -0700, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> As a step towards freeing the PG_error flag for other uses, change ext4
+> and f2fs to stop using PG_error to track verity errors.  Instead, if a
+> verity error occurs, just mark the whole bio as failed.  The coarser
+> granularity isn't really a problem since it isn't any worse than what
+> the block layer provides, and errors from a multi-page readahead aren't
+> reported to applications unless a single-page read fails too.
+> 
+> f2fs supports compression, which makes the f2fs changes a bit more
+> complicated than desired, but the basic premise still works.
+> 
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 > ---
->  fs/xattr.c                                |  5 +++--
->  include/linux/xattr.h                     |  6 +++---
->  security/apparmor/domain.c                |  3 +--
->  security/commoncap.c                      | 22 ++++++++++------------
->  security/integrity/evm/evm_crypto.c       |  5 +++--
->  security/integrity/evm/evm_main.c         |  7 +++++--
->  security/integrity/ima/ima.h              |  5 +++--
->  security/integrity/ima/ima_appraise.c     |  6 +++---
->  security/integrity/ima/ima_main.c         |  6 ++++--
->  security/integrity/ima/ima_template_lib.c | 11 +++++------
->  10 files changed, 40 insertions(+), 36 deletions(-)
+> 
+> In v3, I made a small simplification to the f2fs changes.  I'm also only
+> sending the fsverity patch now, since the fscrypt one is now upstream.  
+> 
+>  fs/ext4/readpage.c |  8 ++----
+>  fs/f2fs/compress.c | 64 ++++++++++++++++++++++------------------------
+>  fs/f2fs/data.c     | 48 +++++++++++++++++++---------------
+>  fs/verity/verify.c | 12 ++++-----
+>  4 files changed, 67 insertions(+), 65 deletions(-)
 
-Mimi, I'm particularly interested in your thoughts on this patch as
-there are a number of places in the IMA/EVM code that needed some
-additional tweaks to prevent a memory leak like we fixed in the
-capabilities code via 8cf0a1bc1287 ("capabilities: fix potential
-memleak on error path from vfs_getxattr_alloc()").
+I've applied this to the fsverity tree for 6.2.
 
--- 
-paul-moore.com
+Reviews would be greatly appreciated, of course.
+
+- Eric
