@@ -2,68 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8BB1C624421
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Nov 2022 15:21:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31006624422
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 10 Nov 2022 15:21:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229809AbiKJOV2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 10 Nov 2022 09:21:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52038 "EHLO
+        id S231175AbiKJOVe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 10 Nov 2022 09:21:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229537AbiKJOV1 (ORCPT
+        with ESMTP id S229537AbiKJOVd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 10 Nov 2022 09:21:27 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55C78165AF
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Nov 2022 06:20:28 -0800 (PST)
+        Thu, 10 Nov 2022 09:21:33 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CFA9424F3C
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Nov 2022 06:20:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668090027;
+        s=mimecast20190719; t=1668090029;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=aIhimHh+D2tOb+mPy5ru9+z8fekBFGOxfA+OyP0/Xto=;
-        b=f876sSCdXO4sW9wdls4d/clz1JHXqB3dVih2ZQl/u6/5uMjypvBJyY4df3nhFnfStYrlV/
-        /ZYniSUfM+TJDckG0OP6udkr5KaxoCzsb6Lh3eTCNgtTwxUzOOSp4NDzLTCpol+3GJmyD6
-        ExPzWw2fP9B/qkFaMfywb/O5HH1+ufE=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=7kiGzsh4g//v4awrudqMJr6V9AF9HH5RI2l8P6L7ik0=;
+        b=jSKEj76P4Ox8qFYuO+L1NabeoaVmYlgVOXokPMS1nG0lJtQvgjemqE/9WdrhnkkMvseq5X
+        KHVz2kLt6khh530gEZxHopdtfyMI3vOS3qS1BKKRk7btgPMF0qZkVejgg2g3U2emwhjGht
+        VNlrAqJ3zyLKG4fphUmNsSyfrUw9PGQ=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-400-bJK4ejspOWiahfoF2AXNWw-1; Thu, 10 Nov 2022 09:20:26 -0500
-X-MC-Unique: bJK4ejspOWiahfoF2AXNWw-1
-Received: by mail-ej1-f70.google.com with SMTP id hs34-20020a1709073ea200b007ad86f91d39so1302906ejc.10
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Nov 2022 06:20:25 -0800 (PST)
+ us-mta-619-MvZZMVR8MvyyvOrmV91Upw-1; Thu, 10 Nov 2022 09:20:28 -0500
+X-MC-Unique: MvZZMVR8MvyyvOrmV91Upw-1
+Received: by mail-ed1-f71.google.com with SMTP id e15-20020a056402190f00b00461b0576620so1619315edz.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Nov 2022 06:20:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aIhimHh+D2tOb+mPy5ru9+z8fekBFGOxfA+OyP0/Xto=;
-        b=oLIGh9839BLrVa4JPvS7MPNkXaoSKxIy+QRYZkBG+vS9/JBKgxLiOyee8wbWGVmk5R
-         j7AsfSkwKFqW9TlR6kvE2N7jMVdh6e0n71okJr2GhbLNGiTS3OfrpuXVudWidaI59M8N
-         aiYdO6NaKpF8OCK2ZZN0jzvnzcHrW9WEfSD5GKcbaMsDKWqh7x7UYOi+7nMprAIEp/hF
-         wT1kZ1f4HYkk5Js9gR6HfwV2tYgzMWhejkjG7SShuS5EPm8ngPKqp4cwN/fDatvAYCEH
-         P7sYt4S57KOwlONyky8SQ5Q62b0XwK0eSdFI+QRFGaMeY6it5MYYikXwqd6KlktXeNIX
-         1z2Q==
-X-Gm-Message-State: ACrzQf32wNr8Oejy+fox5UB18LEmd9L+HNrBxLxJeiiLIasDZc2UqI8b
-        84qGrrw6iv+/nHe39WaPd+cKkEHz63O+WEOWctAOfzduKxjnl7RmA/zYTdtlRWHz6FPME5MhPfe
-        oQxcHTKIV/PeGgTI7edq3Z0HvMG+MD4Gs5iMwGcW65P7uQ8UoEoVXHFx9i2mwMcjqEg2ajLbArt
-        TFFg==
-X-Received: by 2002:a05:6402:2156:b0:458:c11e:46de with SMTP id bq22-20020a056402215600b00458c11e46demr2342986edb.237.1668090024372;
-        Thu, 10 Nov 2022 06:20:24 -0800 (PST)
-X-Google-Smtp-Source: AMsMyM5B3f+lNdVZGxM4ZRj2RIm3z+r8PL27Pp8nz0RyQDcX/tG1W1DL8M++78WkWlYFkzb4L04rGw==
-X-Received: by 2002:a05:6402:2156:b0:458:c11e:46de with SMTP id bq22-20020a056402215600b00458c11e46demr2342968edb.237.1668090023956;
-        Thu, 10 Nov 2022 06:20:23 -0800 (PST)
+        bh=7kiGzsh4g//v4awrudqMJr6V9AF9HH5RI2l8P6L7ik0=;
+        b=Aw/mhUCtJuytnXtAj25SFb4SHCUxi9mZKilWK3SyMYHkCRlqmY58N0nfDpGq4owGJW
+         Ya03PK1iX/NoJKXstcbmV+N1yRPForvWRKC1pQb7PNsA7UKMp52+FO5O0I9FpTipO3FK
+         CCC3AlA2zd/z9t+BxQce/m5n+hfCSGXTT1iPWMtUyxr6HfF2LCHvgSE6xoOAlNR8HzQg
+         yQ7dFkckzCgUj6C/TQKj2Risq70qIPZBNd/RMPC/u3VKoNfFV2w+fkohTclCYeD2U/vt
+         +n0mVLjYsyJZZNJLP5BfIltojNZpuuo9qMhjTY0seZgi0PExGfap5vxtGJHyRBh9H42G
+         W/Tg==
+X-Gm-Message-State: ACrzQf3Rkbui7FATAUM3nzeUp6a3huHiuEIbnbEDnAHhgpEV8cqlpApm
+        IhDV7MuMAWjqquhlY+xcbc1L+W2vguVfx3GQHa1TW8slf9onDt09KGUiSbS83lcT9lMVP4Cm4cc
+        xBrZI2vfmsR0dN3RhUc+qn07k95co7CT5UtAc2eZPQfcG0PRX9MBhh56oSpW4Cg0DzuJBEobu15
+        vbnQ==
+X-Received: by 2002:a17:906:6808:b0:7ac:2e16:a8d3 with SMTP id k8-20020a170906680800b007ac2e16a8d3mr3006135ejr.667.1668090026158;
+        Thu, 10 Nov 2022 06:20:26 -0800 (PST)
+X-Google-Smtp-Source: AMsMyM4+AUHUR5WxkyqoCmd8Wq2tLJ2LuCHslmA3IekjhTF5s0/3dcnf5aHVPEB7k4ZJSKkeUPDGbg==
+X-Received: by 2002:a17:906:6808:b0:7ac:2e16:a8d3 with SMTP id k8-20020a170906680800b007ac2e16a8d3mr3006121ejr.667.1668090025855;
+        Thu, 10 Nov 2022 06:20:25 -0800 (PST)
 Received: from miu.piliscsaba.redhat.com (91-83-33-160.pool.digikabel.hu. [91.83.33.160])
-        by smtp.gmail.com with ESMTPSA id f27-20020a17090631db00b0073ae9ba9ba8sm7227006ejf.3.2022.11.10.06.20.22
+        by smtp.gmail.com with ESMTPSA id f27-20020a17090631db00b0073ae9ba9ba8sm7227006ejf.3.2022.11.10.06.20.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Nov 2022 06:20:23 -0800 (PST)
+        Thu, 10 Nov 2022 06:20:24 -0800 (PST)
 From:   Miklos Szeredi <mszeredi@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     Vivek Goyal <vgoyal@redhat.com>,
         German Maglione <gmaglione@redhat.com>
-Subject: [PATCH 1/2] fuse: add request extension
-Date:   Thu, 10 Nov 2022 15:20:19 +0100
-Message-Id: <20221110142020.191487-2-mszeredi@redhat.com>
+Subject: [PATCH 2/2] fuse: optional supplementary group in create requests
+Date:   Thu, 10 Nov 2022 15:20:20 +0100
+Message-Id: <20221110142020.191487-3-mszeredi@redhat.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221110142020.191487-1-mszeredi@redhat.com>
 References: <20221110142020.191487-1-mszeredi@redhat.com>
@@ -80,244 +80,213 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
-Will need to add supplementary groups to create messages, so add the
-general concept of a request extension.  A request extension is appended to
-the end of the main request.  It has a header indicating the size and type
-of the extension.
+Permission to create an object (create, mkdir, symlink, mknod) needs to
+take supplementary groups into account.
 
-The create security context (fuse_secctx_*) is simplar to the generic
-request extension, so incude that as well in a backward compatible manner.
+Add a supplementary group request extension.  This can contain an arbitrary
+number of group IDs and can be added to any request.  This extension is not
+added to any request by default.
 
-Add the total extension length to the request header.  The offset of the
-extension block within the request can be calculated by:
-
-  inh->len - inh->total_extlen * 8
+Add FUSE_CREATE_SUPP_GROUP init flag to enable supplementary group info in
+creation requests.  This adds just a single supplementary group that
+matches the parent group in the case described above.  In other cases the
+extension is not added.
 
 Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
 ---
- fs/fuse/dev.c             |  2 ++
- fs/fuse/dir.c             | 66 ++++++++++++++++++++++-----------------
- fs/fuse/fuse_i.h          |  6 ++--
- include/uapi/linux/fuse.h | 28 ++++++++++++++++-
- 4 files changed, 71 insertions(+), 31 deletions(-)
+ fs/fuse/dir.c             | 64 +++++++++++++++++++++++++++++++++++++--
+ fs/fuse/fuse_i.h          |  3 ++
+ fs/fuse/inode.c           |  4 ++-
+ include/uapi/linux/fuse.h | 17 +++++++++++
+ 4 files changed, 84 insertions(+), 4 deletions(-)
 
-diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
-index c73d9c4132f6..c77eea4f636b 100644
---- a/fs/fuse/dev.c
-+++ b/fs/fuse/dev.c
-@@ -476,6 +476,8 @@ static void fuse_args_to_req(struct fuse_req *req, struct fuse_args *args)
- 	req->in.h.opcode = args->opcode;
- 	req->in.h.nodeid = args->nodeid;
- 	req->args = args;
-+	if (args->is_ext)
-+		req->in.h.total_extlen = args->in_args[args->ext_idx].size / 8;
- 	if (args->end)
- 		__set_bit(FR_ASYNC, &req->flags);
- }
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index aa67869e3444..c227ce87b100 100644
+index c227ce87b100..a99ca225c578 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -466,7 +466,7 @@ static struct dentry *fuse_lookup(struct inode *dir, struct dentry *entry,
- }
- 
- static int get_security_context(struct dentry *entry, umode_t mode,
--				void **security_ctx, u32 *security_ctxlen)
-+				struct fuse_in_arg *ext)
- {
- 	struct fuse_secctx *fctx;
- 	struct fuse_secctx_header *header;
-@@ -513,14 +513,42 @@ static int get_security_context(struct dentry *entry, umode_t mode,
- 
- 		memcpy(ptr, ctx, ctxlen);
- 	}
--	*security_ctxlen = total_len;
--	*security_ctx = header;
-+	ext->size = total_len;
-+	ext->value = header;
- 	err = 0;
- out_err:
- 	kfree(ctx);
+@@ -521,7 +521,63 @@ static int get_security_context(struct dentry *entry, umode_t mode,
  	return err;
  }
  
-+static int get_create_ext(struct fuse_args *args, struct dentry *dentry,
-+			  umode_t mode)
+-static int get_create_ext(struct fuse_args *args, struct dentry *dentry,
++static void *extend_arg(struct fuse_in_arg *buf, u32 bytes)
 +{
-+	struct fuse_conn *fc = get_fuse_conn_super(dentry->d_sb);
-+	struct fuse_in_arg ext = { .size = 0, .value = NULL };
-+	int err = 0;
++	void *p;
++	u32 newlen = buf->size + bytes;
 +
-+	if (fc->init_security)
-+		err = get_security_context(dentry, mode, &ext);
-+
-+	if (!err && ext.size) {
-+		WARN_ON(args->in_numargs >= ARRAY_SIZE(args->in_args));
-+		args->is_ext = true;
-+		args->ext_idx = args->in_numargs++;
-+		args->in_args[args->ext_idx] = ext;
-+	} else {
-+		kfree(ext.value);
++	p = krealloc(buf->value, newlen, GFP_KERNEL);
++	if (!p) {
++		kfree(buf->value);
++		buf->size = 0;
++		buf->value = NULL;
++		return NULL;
 +	}
 +
-+	return err;
++	memset(p + buf->size, 0, bytes);
++	buf->value = p;
++	buf->size = newlen;
++
++	return p + newlen - bytes;
 +}
 +
-+static void free_ext_value(struct fuse_args *args)
++static u32 fuse_ext_size(size_t size)
 +{
-+	if (args->is_ext)
-+		kfree(args->in_args[args->ext_idx].value);
++	return FUSE_REC_ALIGN(sizeof(struct fuse_ext_header) + size);
 +}
 +
- /*
-  * Atomic create+open operation
-  *
-@@ -541,8 +569,6 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
- 	struct fuse_entry_out outentry;
- 	struct fuse_inode *fi;
- 	struct fuse_file *ff;
--	void *security_ctx = NULL;
--	u32 security_ctxlen;
- 	bool trunc = flags & O_TRUNC;
++/*
++ * This adds just a single supplementary group that matches the parent's group.
++ */
++static int get_create_supp_group(struct inode *dir, struct fuse_in_arg *ext)
++{
++	struct fuse_conn *fc = get_fuse_conn(dir);
++	struct fuse_ext_header *xh;
++	struct fuse_supp_groups *sg;
++	kgid_t kgid = dir->i_gid;
++	gid_t parent_gid = from_kgid(fc->user_ns, kgid);
++	u32 sg_len = fuse_ext_size(sizeof(*sg) + sizeof(sg->groups[0]));
++
++	if (parent_gid == (gid_t) -1 || gid_eq(kgid, current_fsgid()) ||
++	    !in_group_p(kgid))
++		return 0;
++
++	xh = extend_arg(ext, sg_len);
++	if (!xh)
++		return -ENOMEM;
++
++	xh->size = sg_len;
++	xh->type = FUSE_EXT_GROUPS;
++
++	sg = (struct fuse_supp_groups *) (xh + 1);
++	sg->nr_groups = 1;
++	sg->groups[0] = parent_gid;
++
++	return 0;
++}
++
++static int get_create_ext(struct fuse_args *args,
++			  struct inode *dir, struct dentry *dentry,
+ 			  umode_t mode)
+ {
+ 	struct fuse_conn *fc = get_fuse_conn_super(dentry->d_sb);
+@@ -530,6 +586,8 @@ static int get_create_ext(struct fuse_args *args, struct dentry *dentry,
  
- 	/* Userspace expects S_IFREG in create mode */
-@@ -586,19 +612,12 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
+ 	if (fc->init_security)
+ 		err = get_security_context(dentry, mode, &ext);
++	if (!err && fc->create_supp_group)
++		err = get_create_supp_group(dir, &ext);
+ 
+ 	if (!err && ext.size) {
+ 		WARN_ON(args->in_numargs >= ARRAY_SIZE(args->in_args));
+@@ -612,7 +670,7 @@ static int fuse_create_open(struct inode *dir, struct dentry *entry,
  	args.out_args[1].size = sizeof(outopen);
  	args.out_args[1].value = &outopen;
  
--	if (fm->fc->init_security) {
--		err = get_security_context(entry, mode, &security_ctx,
--					   &security_ctxlen);
--		if (err)
--			goto out_put_forget_req;
--
--		args.in_numargs = 3;
--		args.in_args[2].size = security_ctxlen;
--		args.in_args[2].value = security_ctx;
--	}
-+	err = get_create_ext(&args, entry, mode);
-+	if (err)
-+		goto out_put_forget_req;
- 
- 	err = fuse_simple_request(fm, &args);
--	kfree(security_ctx);
-+	free_ext_value(&args);
- 	if (err)
- 		goto out_free_ff;
- 
-@@ -705,8 +724,6 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
- 	struct dentry *d;
- 	int err;
- 	struct fuse_forget_link *forget;
--	void *security_ctx = NULL;
--	u32 security_ctxlen;
- 
- 	if (fuse_is_bad(dir))
- 		return -EIO;
-@@ -721,21 +738,14 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
- 	args->out_args[0].size = sizeof(outarg);
- 	args->out_args[0].value = &outarg;
- 
--	if (fm->fc->init_security && args->opcode != FUSE_LINK) {
--		err = get_security_context(entry, mode, &security_ctx,
--					   &security_ctxlen);
-+	if (args->opcode != FUSE_LINK) {
-+		err = get_create_ext(args, entry, mode);
- 		if (err)
- 			goto out_put_forget_req;
--
--		BUG_ON(args->in_numargs != 2);
--
--		args->in_numargs = 3;
--		args->in_args[2].size = security_ctxlen;
--		args->in_args[2].value = security_ctx;
- 	}
- 
- 	err = fuse_simple_request(fm, args);
--	kfree(security_ctx);
-+	free_ext_value(args);
+-	err = get_create_ext(&args, entry, mode);
++	err = get_create_ext(&args, dir, entry, mode);
  	if (err)
  		goto out_put_forget_req;
  
+@@ -739,7 +797,7 @@ static int create_new_entry(struct fuse_mount *fm, struct fuse_args *args,
+ 	args->out_args[0].value = &outarg;
+ 
+ 	if (args->opcode != FUSE_LINK) {
+-		err = get_create_ext(args, entry, mode);
++		err = get_create_ext(args, dir, entry, mode);
+ 		if (err)
+ 			goto out_put_forget_req;
+ 	}
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index d339b1ace887..31e2ca0d2788 100644
+index 31e2ca0d2788..52ec21891180 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -249,8 +249,9 @@ struct fuse_page_desc {
- struct fuse_args {
- 	uint64_t nodeid;
- 	uint32_t opcode;
--	unsigned short in_numargs;
--	unsigned short out_numargs;
-+	uint8_t in_numargs;
-+	uint8_t out_numargs;
-+	uint8_t ext_idx;
- 	bool force:1;
- 	bool noreply:1;
- 	bool nocreds:1;
-@@ -261,6 +262,7 @@ struct fuse_args {
- 	bool page_zeroing:1;
- 	bool page_replace:1;
- 	bool may_block:1;
-+	bool is_ext:1;
- 	struct fuse_in_arg in_args[3];
- 	struct fuse_arg out_args[2];
- 	void (*end)(struct fuse_mount *fm, struct fuse_args *args, int error);
+@@ -783,6 +783,9 @@ struct fuse_conn {
+ 	/* Initialize security xattrs when creating a new inode */
+ 	unsigned int init_security:1;
+ 
++	/* Add supplementary group info when creating a new inode */
++	unsigned int create_supp_group:1;
++
+ 	/* Does the filesystem support per inode DAX? */
+ 	unsigned int inode_dax:1;
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 6b3beda16c1b..114bdb3f7ccb 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -1201,6 +1201,8 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 				fc->setxattr_ext = 1;
+ 			if (flags & FUSE_SECURITY_CTX)
+ 				fc->init_security = 1;
++			if (flags & FUSE_CREATE_SUPP_GROUP)
++				fc->create_supp_group = 1;
+ 		} else {
+ 			ra_pages = fc->max_read / PAGE_SIZE;
+ 			fc->no_lock = 1;
+@@ -1246,7 +1248,7 @@ void fuse_send_init(struct fuse_mount *fm)
+ 		FUSE_ABORT_ERROR | FUSE_MAX_PAGES | FUSE_CACHE_SYMLINKS |
+ 		FUSE_NO_OPENDIR_SUPPORT | FUSE_EXPLICIT_INVAL_DATA |
+ 		FUSE_HANDLE_KILLPRIV_V2 | FUSE_SETXATTR_EXT | FUSE_INIT_EXT |
+-		FUSE_SECURITY_CTX;
++		FUSE_SECURITY_CTX | FUSE_CREATE_SUPP_GROUP;
+ #ifdef CONFIG_FUSE_DAX
+ 	if (fm->fc->dax)
+ 		flags |= FUSE_MAP_ALIGNMENT;
 diff --git a/include/uapi/linux/fuse.h b/include/uapi/linux/fuse.h
-index e3c54109bae9..c71f12429e3d 100644
+index c71f12429e3d..1b9d0dfae72d 100644
 --- a/include/uapi/linux/fuse.h
 +++ b/include/uapi/linux/fuse.h
-@@ -201,6 +201,9 @@
-  *  7.38
-  *  - add FUSE_EXPIRE_ONLY flag to fuse_notify_inval_entry
-  *  - add FOPEN_PARALLEL_DIRECT_WRITES
-+ *  - add total_extlen to fuse_in_header
-+ *  - add FUSE_MAX_NR_SECCTX
-+ *  - add extension header
+@@ -204,6 +204,8 @@
+  *  - add total_extlen to fuse_in_header
+  *  - add FUSE_MAX_NR_SECCTX
+  *  - add extension header
++ *  - add FUSE_EXT_GROUPS
++ *  - add FUSE_CREATE_SUPP_GROUP
   */
  
  #ifndef _LINUX_FUSE_H
-@@ -503,6 +506,15 @@ struct fuse_file_lock {
+@@ -365,6 +367,8 @@ struct fuse_file_lock {
+  * FUSE_SECURITY_CTX:	add security context to create, mkdir, symlink, and
+  *			mknod
+  * FUSE_HAS_INODE_DAX:  use per inode DAX
++ * FUSE_CREATE_SUPP_GROUP: add supplementary group info to create, mkdir,
++ *			symlink and mknod (single group that matches parent)
   */
- #define FUSE_EXPIRE_ONLY		(1 << 0)
+ #define FUSE_ASYNC_READ		(1 << 0)
+ #define FUSE_POSIX_LOCKS	(1 << 1)
+@@ -401,6 +405,7 @@ struct fuse_file_lock {
+ /* bits 32..63 get shifted down 32 bits into the flags2 field */
+ #define FUSE_SECURITY_CTX	(1ULL << 32)
+ #define FUSE_HAS_INODE_DAX	(1ULL << 33)
++#define FUSE_CREATE_SUPP_GROUP	(1ULL << 34)
  
-+/**
-+ * extension type
-+ * FUSE_MAX_NR_SECCTX: maximum value of &fuse_secctx_header.nr_secctx
-+ */
-+enum fuse_ext_type {
-+	/* Types 0..31 are reserved for fuse_secctx_header */
-+	FUSE_MAX_NR_SECCTX	= 31,
-+};
-+
+ /**
+  * CUSE INIT request/reply flags
+@@ -509,10 +514,12 @@ struct fuse_file_lock {
+ /**
+  * extension type
+  * FUSE_MAX_NR_SECCTX: maximum value of &fuse_secctx_header.nr_secctx
++ * FUSE_EXT_GROUPS: &fuse_supp_groups extension
+  */
+ enum fuse_ext_type {
+ 	/* Types 0..31 are reserved for fuse_secctx_header */
+ 	FUSE_MAX_NR_SECCTX	= 31,
++	FUSE_EXT_GROUPS		= 32,
+ };
+ 
  enum fuse_opcode {
- 	FUSE_LOOKUP		= 1,
- 	FUSE_FORGET		= 2,  /* no reply */
-@@ -886,7 +898,8 @@ struct fuse_in_header {
- 	uint32_t	uid;
- 	uint32_t	gid;
- 	uint32_t	pid;
--	uint32_t	padding;
-+	uint16_t	total_extlen; /* length of extensions in 8byte units */
-+	uint16_t	padding;
- };
- 
- struct fuse_out_header {
-@@ -1047,4 +1060,17 @@ struct fuse_secctx_header {
- 	uint32_t	nr_secctx;
+@@ -1073,4 +1080,14 @@ struct fuse_ext_header {
+ 	uint32_t	type;
  };
  
 +/**
-+ * struct fuse_ext_header - extension header
-+ * @size: total size of this extension including this header
-+ * @type: type of extension
-+ *
-+ * This is made compatible with fuse_secctx_header by using type values >
-+ * FUSE_MAX_NR_SECCTX
++ * struct fuse_supp_groups - Supplementary group extension
++ * @nr_groups: number of supplementary groups
++ * @groups: flexible array of group IDs
 + */
-+struct fuse_ext_header {
-+	uint32_t	size;
-+	uint32_t	type;
++struct fuse_supp_groups {
++	uint32_t	nr_groups;
++	uint32_t	groups[];
 +};
 +
  #endif /* _LINUX_FUSE_H */
