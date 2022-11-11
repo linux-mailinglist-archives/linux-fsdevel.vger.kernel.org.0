@@ -2,176 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40820625446
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 08:08:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73B31625488
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 08:42:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233213AbiKKHIn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Nov 2022 02:08:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47030 "EHLO
+        id S233111AbiKKHmn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Nov 2022 02:42:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233148AbiKKHIk (ORCPT
+        with ESMTP id S233065AbiKKHmm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Nov 2022 02:08:40 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C763BB7E;
-        Thu, 10 Nov 2022 23:08:31 -0800 (PST)
-Received: from [192.168.10.9] (unknown [39.45.244.84])
-        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id C770D6602A3B;
-        Fri, 11 Nov 2022 07:08:23 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1668150509;
-        bh=pvIdnfnFRLkb9a2WsNljwiMXvnygDQauyNsDYqh/4sw=;
-        h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-        b=a5IeFXQ/Otx+hHDjdjJ57JXvMLxKAVXVj3N3JerNDwTqsU8T5dTLmrXNotJ2xfYZO
-         wKftbfi4MhZip2xZRQyPyB/IjFeCCUK8JKkD7GwA+MLxPbGmkuTKGfgR7mzaa0XXyQ
-         RsmrcnRebwcCYC9PGWzJss5rvF//jf/aGUkCN7z+4wBD+yv3JDCf32pdK9G6FyhtxU
-         fihhvb29PlidnvksyvOwaI30yPipxkiu3WQ4mOZzkKSnD4XDRAdjZ4UTE4qhlDLkd4
-         0Zpny0U+8ymMvxAjOys5whOlry/roGm+PK5fyIX4Fm/cf4QDz/xCf1Q4coA45s9P2C
-         uDKeDZvuhNI/A==
-Message-ID: <6fdce544-8d4f-8b3c-9208-735769a9e624@collabora.com>
-Date:   Fri, 11 Nov 2022 12:08:18 +0500
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.0
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-Subject: Re: [PATCH v6 0/3] Implement IOCTL to get and/or the clear info about
- PTEs
-To:     David Hildenbrand <david@redhat.com>,
-        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
-        Andrei Vagin <avagin@gmail.com>,
-        Danylo Mocherniuk <mdanylo@google.com>,
+        Fri, 11 Nov 2022 02:42:42 -0500
+Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AEB6748C5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Nov 2022 23:42:40 -0800 (PST)
+Received: by mail-pj1-x102b.google.com with SMTP id d13-20020a17090a3b0d00b00213519dfe4aso4060701pjc.2
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Nov 2022 23:42:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DPlfHwSzNGfVHYFsMHE3q3XKtrEblxpPMeiSWifb33g=;
+        b=M/tZlkQud5ba+2P9ogVpn++cTNC01PLRW0GjC9txFQf7MuZhwIJCk/ePeLQDSH1jqB
+         ZN1h9AYoJriAQ8AZXELGghXus+BQgjW1r1wI5XaSaaSqgV9Av10rBZ6rbqL/RmYT/RlB
+         HiN7umoR3s7s4zWOnO8f3vI9SKPm6HA56FVSLVY7RLb5udjWmAZ2hTbpZsGqgJQR7l9w
+         ShqHDZca4tc1Hx8SLQPJnemY+17GR2xmWW0EZFAmtWXAHxTQzdnME9rwzZg2rxoDS+Oq
+         62X4GrGE08o8N+1x9ud7dP4+jAT1WQkrcKqk21higRwdUfbv4m4ikDW8iO0TPw/BipH3
+         HZ5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DPlfHwSzNGfVHYFsMHE3q3XKtrEblxpPMeiSWifb33g=;
+        b=781pjm4Xlikj3oFDE0cvzJnV/9jfGc/nuP2oVIDqq3fluXao8qhIRQwXJJBNDTnL/q
+         VxMbRURnoNcgrj7EccmLboJP/Magh+BiyYFVUO+sQELfzQZLyqa4ZMs7QobEsSwj0wVQ
+         QEBueMh3vLsgtQJNi/U60pxpkd9Of248xhqQJ/JVGopQJGXltQ8pnXdgv+94V5sokkp9
+         Dl2TIFgrr1RogqlI0uMnk8tc9Rw6mfsxajKP3S5bKZfc3z8pqxdAu2BFrREulomxj6l+
+         VRimipwGMimVUIWKtJWvd2rvfMxK+qI3EsrZK0hX9Za28AK1U2g5F4mhpZnunHYxoogI
+         E/GA==
+X-Gm-Message-State: ANoB5pmJqGQlXIGKUHz1oqVzmwJ7Q6k6V26+hYetKTtzkCFGP790320m
+        2E/KTKtAh0gA76YUzS/DopTRng==
+X-Google-Smtp-Source: AA0mqf75V+bKI3ndKFyRxVswKPnmqWnx1L92m9PZ4Nivy5nTo/hpytzrCxBKysGgwJDsN+cPBetHfw==
+X-Received: by 2002:a17:902:e013:b0:186:9b23:a112 with SMTP id o19-20020a170902e01300b001869b23a112mr1531311plo.15.1668152559788;
+        Thu, 10 Nov 2022 23:42:39 -0800 (PST)
+Received: from google.com ([2620:15c:2ce:200:8b77:5448:ea74:27a])
+        by smtp.gmail.com with ESMTPSA id z35-20020a631923000000b0043a1c0a0ab1sm799275pgl.83.2022.11.10.23.42.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Nov 2022 23:42:38 -0800 (PST)
+Date:   Thu, 10 Nov 2022 23:42:34 -0800
+From:   Fangrui Song <maskray@google.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Pedro Falcato <pedro.falcato@gmail.com>,
+        Rich Felker <dalias@libc.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Paul Gofman <pgofman@codeweavers.com>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Christian Brauner <brauner@kernel.org>,
-        Peter Xu <peterx@redhat.com>, Yang Shi <shy828301@gmail.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Zach O'Keefe <zokeefe@google.com>,
-        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>, kernel@collabora.com,
-        Gabriel Krisman Bertazi <krisman@collabora.com>,
-        Peter Enderborg <peter.enderborg@sony.com>,
-        "open list : KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list : PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
-        "open list : MEMORY MANAGEMENT" <linux-mm@kvack.org>
-References: <20221109102303.851281-1-usama.anjum@collabora.com>
- <9c167d01-ef09-ec4e-b4a1-2fff62bf01fe@redhat.com>
-Content-Language: en-US
-In-Reply-To: <9c167d01-ef09-ec4e-b4a1-2fff62bf01fe@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Eric Biederman <ebiederm@xmission.com>, sam@gentoo.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] binfmt_elf: Allow .bss in any interp PT_LOAD
+Message-ID: <20221111074234.xm5a6ota7ppdsto5@google.com>
+References: <20221111061315.gonna.703-kees@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20221111061315.gonna.703-kees@kernel.org>
+X-Spam-Status: No, score=-15.9 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        URIBL_BLACK,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/9/22 3:34 PM, David Hildenbrand wrote:
-> On 09.11.22 11:23, Muhammad Usama Anjum wrote:
-[...]
->> Some non-dirty pages get marked as dirty because of the kernel's
->> internal activity (such as VMA merging as soft-dirty bit difference isn't
->> considered while deciding to merge VMAs). The dirty bit of the pages is
->> stored in the VMA flags and in the per page flags. If any of these two bits
->> are set, the page is considered to be soft dirty. Suppose you have cleared
->> the soft dirty bit of half of VMA which will be done by splitting the VMA
->> and clearing soft dirty bit flag in the half VMA and the pages in it. Now
->> kernel may decide to merge the VMAs again. So the half VMA becomes dirty
->> again. This splitting/merging costs performance. The application receives
->> a lot of pages which aren't dirty in reality but marked as dirty.
->> Performance is lost again here. Also sometimes user doesn't want the newly
->> allocated memory to be marked as dirty. PAGEMAP_NO_REUSED_REGIONS flag
->> solves both the problems. It is used to not depend on the soft dirty flag
->> in the VMA flags. So VMA splitting and merging doesn't happen. It only
->> depends on the soft dirty bit of the individual pages. Thus by using this
->> flag, there may be a scenerio such that the new memory regions which are
->> just created, doesn't look dirty when seen with the IOCTL, but look dirty
->> when seen from procfs. This seems okay as the user of this flag know the
->> implication of using it.
-The soft-dirtiness is stored in the PTE. VMA is marked dirty to store the
-dirtiness for reused regions. Clearing the soft-dirty status of whole
-process is straight forward. When we want to clear/monitor the
-soft-dirtiness of a part of the virtual memory, there is a lot of internal
-noise. We don't want the non-dirty pages to become dirty because of how the
-soft-dirty feature has been working. Soft-dirty feature wasn't being used
-the way we want to use now. While monitoring a part of memory, it is not
-acceptable to get non-dirty pages as dirty. Non-dirty pages become dirty
-when the two VMAs are merged without considering if they both are dirty or
-not (34228d473efe). To monitor changes over the memory, sometimes VMAs are
-split to clear the soft-dirty bit in the VMA flags. But sometimes kernel
-decide to merge them backup. It is so waste of resources.
+(+ sam@gentoo.org from Pedro Falcato's patch)
 
-To keep things consistent, the default behavior of the IOCTL is to output
-even the extra non-dirty pages as dirty from the kernel noise. A optional
-PAGEMAP_NO_REUSED_REGIONS flag is added for those use cases which aren't
-tolerant of extra non-dirty pages. This flag can be considered as something
-which is by-passing the already present buggy implementation in the kernel.
-It is not buggy per say as the issue can be solved if we don't allow the
-two VMA which have different soft-dirty bits to get merged. But we are
-allowing that so that the total number of VMAs doesn't increase. This was
-acceptable at the time, but now with the use case of monitoring a part of
-memory for soft-dirty doesn't want this merging. So either we need to
-revert 34228d473efe and PAGEMAP_NO_REUSED_REGIONS flag will not be needed
-or we should allow PAGEMAP_NO_REUSED_REGIONS or similar mechanism to ignore
-the extra dirty pages which aren't dirty in reality.
+On 2022-11-10, Kees Cook wrote:
+>Traditionally, only the final PT_LOAD for load_elf_interp() supported
+>having p_memsz > p_filesz. Recently, lld's construction of musl's
+>libc.so on PowerPC64 started having two PT_LOAD program headers with
+>p_memsz > p_filesz.
+>
+>As the least invasive change possible, check for p_memsz > p_filesz for
+>each PT_LOAD in load_elf_interp.
+>
+>Reported-by: Rich Felker <dalias@libc.org>
+>Link: https://maskray.me/blog/2022-11-05-lld-musl-powerpc64
+>Cc: Pedro Falcato <pedro.falcato@gmail.com>
+>Cc: Fangrui Song <maskray@google.com>
+>Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+>Cc: Eric Biederman <ebiederm@xmission.com>
+>Cc: linux-fsdevel@vger.kernel.org
+>Cc: linux-mm@kvack.org
+>Signed-off-by: Kees Cook <keescook@chromium.org>
+>---
+>v2: I realized we need to retain the final padding call.
+>v1: https://lore.kernel.org/linux-hardening/20221111055747.never.202-kees@kernel.org/
+>---
+> fs/binfmt_elf.c | 18 ++++++++++++++----
+> 1 file changed, 14 insertions(+), 4 deletions(-)
+>
+>diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+>index 528e2ac8931f..0a24bbbef1d6 100644
+>--- a/fs/binfmt_elf.c
+>+++ b/fs/binfmt_elf.c
+>@@ -673,15 +673,25 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
+> 				last_bss = k;
+> 				bss_prot = elf_prot;
+> 			}
+>+
+>+			/*
+>+			 * Clear any p_memsz > p_filesz area up to the end
+>+			 * of the page to wipe anything left over from the
+>+			 * loaded file contents.
+>+			 */
+>+			if (last_bss > elf_bss && padzero(elf_bss))
 
-When PAGEMAP_NO_REUSED_REGIONS flag is used, only the PTEs are checked to
-find if the pages are dirty. So re-used regions cannot be detected. This
-has the only side-effect of not checking the VMAs. So this is limitation of
-using this flag which should be acceptable in the current state of code.
-This limitation is okay for the users as they can clear the soft-dirty bit
-of the VMA before starting to monitor a range of memory for soft-dirtiness.
+Missing {
 
+But after fixing this, I get a musl ld.so error.
 
-> Please separate that part out from the other changes; I am still not
-> convinced that we want this and what the semantical implications are.
-> 
-> Let's take a look at an example: can_change_pte_writable()
-> 
->     /* Do we need write faults for softdirty tracking? */
->     if (vma_soft_dirty_enabled(vma) && !pte_soft_dirty(pte))
->         return false;
-> 
-> We care about PTE softdirty tracking, if it is enabled for the VMA.
-> Tracking is enabled if: vma_soft_dirty_enabled()
-> 
->     /*
->      * Soft-dirty is kind of special: its tracking is enabled when
->      * the vma flags not set.
->      */
->     return !(vma->vm_flags & VM_SOFTDIRTY);
-> 
-> Consequently, if VM_SOFTDIRTY is set, we are not considering the soft_dirty
-> PTE bits accordingly.
-Sorry, I'm unable to completely grasp the meaning of the example. We have
-followed clear_refs_write() to write the soft-dirty bit clearing code in
-the current patch. Dirtiness of the VMA and the PTE may be set
-independently. Newer allocated memory has dirty bit set in the VMA. When
-something is written the memory, the soft dirty bit is set in the PTEs as
-well regardless if the soft dirty bit is set in the VMA or not.
+>+				error = -EFAULT;
+>+				goto out;
+>+			}
+> 		}
+> 	}
+>
+> 	/*
+>-	 * Now fill out the bss section: first pad the last page from
+>-	 * the file up to the page boundary, and zero it from elf_bss
+>-	 * up to the end of the page.
+>+	 * Finally, pad the last page from the file up to the page boundary,
+>+	 * and zero it from elf_bss up to the end of the page, if this did
+>+	 * not already happen with the last PT_LOAD.
+> 	 */
+>-	if (padzero(elf_bss)) {
+>+	if (last_bss == elf_bss && padzero(elf_bss)) {
+> 		error = -EFAULT;
+> 		goto out;
+> 	}
+>-- 
+>2.34.1
+>
 
-> 
-> 
-> I'd suggest moving forward without this controversial
-> PAGEMAP_NO_REUSED_REGIONS functionality for now, and preparing it as a
-> clear add-on we can discuss separately.Like I've described above, I've only added this flag to not get the
-non-dirty pages as dirty. Can there be some alternative to adding this
-flag? Please suggest.
+I added a new section to https://maskray.me/blog/2022-11-05-lld-musl-powerpc64
+Copying here:
 
+To test that the kernel ELF loader can handle more RW `PT_LOAD` program headers, we can create an executable with more RW `PT_LOAD` program headers with `p_filesz < p_memsz`.
+We can place a read-only section after `.bss` followed by a `SHT_NOBITS` `SHF_ALLOC|SHF_WRITE` section. The read-only section will form a read-only `PT_LOAD` while the RW section will form a RW `PT_LOAD`.
 
---
-BR,
-Muhammad Usama Anjum
+```text
+#--- a.c
+#include <assert.h>
+#include <stdio.h>
+
+extern const char toc[];
+char nobits0[0] __attribute__((section(".nobits0")));
+char nobits1[0] __attribute__((section(".nobits1")));
+
+int main(void) {
+   assert(toc[4096-1] == 0);
+   for (int i = 0; i < 1024; i++)
+     assert(nobits0[i] == 0);
+   nobits0[0] = nobits0[1024-1] = 1;
+   for (int i = 0; i < 4096; i++)
+     assert(nobits1[i] == 0);
+   nobits1[0] = nobits1[4096-1] = 1;
+
+   puts("hello");
+}
+
+#--- toc.s
+.section .toc,"aw",@nobits
+.globl toc
+toc:
+.space 4096
+
+.section .ro0,"a"; .byte 255
+.section .nobits0,"aw",@nobits; .space 1024
+.section .ro1,"a"; .byte 255
+.section .nobits1,"aw",@nobits; .space 4096
+
+#--- a.lds
+SECTIONS { .ro0 : {} .nobits0 : {} .ro1 : {} .nobits1 : {} } INSERT AFTER .bss;
+```
+
+```sh
+split-file a.txt a
+path/to/musl-gcc -Wl,--dynamic-linker=/lib/libc.so a/a.c a/a.lds -o toy
+```
+
+split-file is a utility in llvm-project.
