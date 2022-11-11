@@ -2,217 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A09696260A1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 18:43:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4A1826260B3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 18:53:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233562AbiKKRno (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Nov 2022 12:43:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42322 "EHLO
+        id S233900AbiKKRxn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Nov 2022 12:53:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46116 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232968AbiKKRnj (ORCPT
+        with ESMTP id S233842AbiKKRxj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Nov 2022 12:43:39 -0500
-Received: from mail-oa1-x32.google.com (mail-oa1-x32.google.com [IPv6:2001:4860:4864:20::32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F07CA389D
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Nov 2022 09:43:36 -0800 (PST)
-Received: by mail-oa1-x32.google.com with SMTP id 586e51a60fabf-13c2cfd1126so6106633fac.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Nov 2022 09:43:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=maqLOf7YpMFEzynaRDsHxbX3MuJ4bRYzP6aDRTy1ABg=;
-        b=IYIhJKsZSVoD/GLDOrZMeaMiBIfAvMJw/A7ugWdKzVyQDZ41dYRVizXFELCwN1kcsR
-         6euyqu/nZDWhNYYZNXDhwQjeWTWxU0BZNayZ5hgzz0MGAqsWWZ8P9HO7c93CTBVEYn+K
-         Dl4JgJcQswYbgb5RtgAqlsFns9c5zs/My3/LqBnVn0uV1k1ln/MPIWwsI4Z5VofbMtDv
-         +DSfngg3rAnowI+ttvaHGe+oPgPkpOWx+r++j+IkWmFl6UHjvFiI8aYBX5v06nCSIshA
-         VKHSo8AFoBHSFKEZiJmky//E1SdfcoGp6dVzIn9Odmk3XgnE/nusEu7n4eFAEMLWQZdO
-         5b/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=maqLOf7YpMFEzynaRDsHxbX3MuJ4bRYzP6aDRTy1ABg=;
-        b=tjv61t5mJmopkaSgOCpJl6rdWfGks8JSFbCJ1+uS88Fsrtxwtn5/eH+GuIKMgmu/Qw
-         FEgLa+VX1T2RqXOYpBxDIt0UUfbtIOr7mglISb+WMDGWaKaB/7+i/HmLsEGnalWmU9Tf
-         F5VWMfuReUnTiCG0hp7YA/hps8p8CztanWt5pAGTD/d4sjhP2WEcwdSCrGsAUCi057eV
-         77rPVDjj4HOJ8WqEItj8CNLUrN2I9T6I7orXHVqEKi9X1i9Y6afzN8EradoM+t9SS/7A
-         6WoPRVqNXa8/ESGF2vwvK+TOmmxQrkVdiedi1JJ3R/o7rquuklj4Wm94E4Z0wIGJCtb/
-         IZAw==
-X-Gm-Message-State: ANoB5pnV1QQSfYybKGy85jktspvcFxJ4+ZSClRVW44lG2lTs5jwVTqiM
-        bZgxpj2FpIZ0YU+vSCXRRsa+3fep1ZajXRHI3F7I
-X-Google-Smtp-Source: AA0mqf5EWcLBYgk2h8vefAXExBzKCxOMg+hmScmmQZLxWBThNR1qc98TWGhzZP+A1fM5ucA3GYKXfLrQgdx1L+p0bxE=
-X-Received: by 2002:a05:6870:4304:b0:13b:d015:f1b5 with SMTP id
- w4-20020a056870430400b0013bd015f1b5mr1596997oah.51.1668188615875; Fri, 11 Nov
- 2022 09:43:35 -0800 (PST)
+        Fri, 11 Nov 2022 12:53:39 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8193EE0C9;
+        Fri, 11 Nov 2022 09:53:36 -0800 (PST)
+Received: from [192.168.10.9] (unknown [39.45.244.84])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 328A36602A42;
+        Fri, 11 Nov 2022 17:53:25 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1668189214;
+        bh=BJ+AWNRBs37O/vroIuOnKRKFU1FAcznNxa7O4t+Ettc=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=Z03RLoa3WDhoNF5Y4ua4HmTWVwMby4WPymL6xf7siE/EuA304MBUiSvsfJvqyVPOx
+         sqfx44mJq43DdpUoeaZLKSp3427dPKhyx88oVTBWYLXwwnmwa/p9quY3m0peV50OVu
+         c5O6fLvD3beQjQU0eDYLdDpBTcIDizHeyNWU6vbg7ZwP5VpMqjfFWu7nZ7vlq4dZ8a
+         e0QthQi6T7PGOZr4+oYFH9ljB2QJ6M0vgH5u22ttm/1tCsuEgxv6yioiGUGWz58IPZ
+         YyKYBCZF+ANfPG4DrElkxbGHy3LHFtYgYM4IB+Ru1OhxAqMXQR2sThA6Mynq+tVxJ7
+         teMuH7aFm/4eg==
+Message-ID: <d69b349e-fe8d-5ffc-01cb-8ec05fc32be9@collabora.com>
+Date:   Fri, 11 Nov 2022 22:53:21 +0500
 MIME-Version: 1.0
-References: <166807856758.2972602.14175912201162072721.stgit@warthog.procyon.org.uk>
- <CAHC9VhTJh2tFbvOMzpGw7VSnHHb=boNhL5c7a1Ed+iHNFwWwqg@mail.gmail.com>
-In-Reply-To: <CAHC9VhTJh2tFbvOMzpGw7VSnHHb=boNhL5c7a1Ed+iHNFwWwqg@mail.gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 11 Nov 2022 12:43:25 -0500
-Message-ID: <CAHC9VhQE08HOKKbfU6sh2u0i5Ab=Ah9_0H+EU72wuMSLELi+ww@mail.gmail.com>
-Subject: Re: [PATCH v5] vfs, security: Fix automount superblock LSM init
- problem, preventing NFS sb sharing
-To:     David Howells <dhowells@redhat.com>
-Cc:     viro@zeniv.linux.org.uk, Jeff Layton <jlayton@kernel.org>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Scott Mayhew <smayhew@redhat.com>, linux-nfs@vger.kernel.org,
-        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: Re: [PATCH v6 2/3] fs/proc/task_mmu: Implement IOCTL to get and/or
+ the clear info about PTEs
+Content-Language: en-US
+To:     kernel test robot <lkp@intel.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Greg KH <greg@kroah.com>,
+        Christian Brauner <brauner@kernel.org>,
+        Peter Xu <peterx@redhat.com>, Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Zach O'Keefe <zokeefe@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>, kernel@collabora.com,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        "open list : KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Shuah Khan <skhan@linuxfoundation.org>,
+        "open list : PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
+        Paul Gofman <pgofman@codeweavers.com>
+References: <20221109102303.851281-3-usama.anjum@collabora.com>
+ <202211120107.cYLiq2cH-lkp@intel.com>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <202211120107.cYLiq2cH-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 11, 2022 at 12:40 PM Paul Moore <paul@paul-moore.com> wrote:
-> On Thu, Nov 10, 2022 at 6:09 AM David Howells <dhowells@redhat.com> wrote:
-> >
-> > When NFS superblocks are created by automounting, their LSM parameters
-> > aren't set in the fs_context struct prior to sget_fc() being called,
-> > leading to failure to match existing superblocks.
-> >
-> > Fix this by adding a new LSM hook to load fc->security for submount
-> > creation when alloc_fs_context() is creating the fs_context for it.
-> >
-> > However, this uncovers a further bug: nfs_get_root() initialises the
-> > superblock security manually by calling security_sb_set_mnt_opts() or
-> > security_sb_clone_mnt_opts() - but then vfs_get_tree() calls
-> > security_sb_set_mnt_opts(), which can lead to SELinux, at least,
-> > complaining.
-> >
-> > Fix that by adding a flag to the fs_context that suppresses the
-> > security_sb_set_mnt_opts() call in vfs_get_tree().  This can be set by NFS
-> > when it sets the LSM context on the new superblock.
-> >
-> > The first bug leads to messages like the following appearing in dmesg:
-> >
-> >         NFS: Cache volume key already in use (nfs,4.2,2,108,106a8c0,1,,,,100000,100000,2ee,3a98,1d4c,3a98,1)
-> >
-> > Changes
-> > =======
-> > ver #5)
-> >  - Removed unused variable.
-> >  - Only allocate smack_mnt_opts if we're dealing with a submount.
-> >
-> > ver #4)
-> >  - When doing a FOR_SUBMOUNT mount, don't set the root label in SELinux or
-> >    Smack.
-> >
-> > ver #3)
-> >  - Made LSM parameter extraction dependent on fc->purpose ==
-> >    FS_CONTEXT_FOR_SUBMOUNT.  Shouldn't happen on FOR_RECONFIGURE.
-> >
-> > ver #2)
-> >  - Added Smack support
-> >  - Made LSM parameter extraction dependent on reference != NULL.
-> >
-> > Signed-off-by: David Howells <dhowells@redhat.com>
-> > Fixes: 9bc61ab18b1d ("vfs: Introduce fs_context, switch vfs_kern_mount() to it.")
-> > Fixes: 779df6a5480f ("NFS: Ensure security label is set for root inode)
-> > Tested-by: Jeff Layton <jlayton@kernel.org>
-> > Reviewed-by: Jeff Layton <jlayton@kernel.org>
-> > Acked-by: Casey Schaufler <casey@schaufler-ca.com>
-> > Acked-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> > cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-> > cc: Anna Schumaker <anna@kernel.org>
-> > cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > cc: Scott Mayhew <smayhew@redhat.com>
-> > cc: Jeff Layton <jlayton@kernel.org>
-> > cc: Paul Moore <paul@paul-moore.com>
-> > cc: linux-nfs@vger.kernel.org
-> > cc: selinux@vger.kernel.org
-> > cc: linux-security-module@vger.kernel.org
-> > cc: linux-fsdevel@vger.kernel.org
-> > Link: https://lore.kernel.org/r/165962680944.3334508.6610023900349142034.stgit@warthog.procyon.org.uk/ # v1
-> > Link: https://lore.kernel.org/r/165962729225.3357250.14350728846471527137.stgit@warthog.procyon.org.uk/ # v2
-> > Link: https://lore.kernel.org/r/165970659095.2812394.6868894171102318796.stgit@warthog.procyon.org.uk/ # v3
-> > Link: https://lore.kernel.org/r/166133579016.3678898.6283195019480567275.stgit@warthog.procyon.org.uk/ # v4
-> > Link: https://lore.kernel.org/r/217595.1662033775@warthog.procyon.org.uk/ # v5
-> > ---
-> >
-> >  fs/fs_context.c               |    4 +++
-> >  fs/nfs/getroot.c              |    1 +
-> >  fs/super.c                    |   10 +++++---
-> >  include/linux/fs_context.h    |    1 +
-> >  include/linux/lsm_hook_defs.h |    1 +
-> >  include/linux/lsm_hooks.h     |    6 ++++-
-> >  include/linux/security.h      |    6 +++++
-> >  security/security.c           |    5 ++++
-> >  security/selinux/hooks.c      |   25 +++++++++++++++++++
-> >  security/smack/smack_lsm.c    |   54 +++++++++++++++++++++++++++++++++++++++++
-> >  10 files changed, 108 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/fs/fs_context.c b/fs/fs_context.c
-> > index 24ce12f0db32..22248b8a88a8 100644
-> > --- a/fs/fs_context.c
-> > +++ b/fs/fs_context.c
-> > @@ -282,6 +282,10 @@ static struct fs_context *alloc_fs_context(struct file_system_type *fs_type,
-> >                 break;
-> >         }
-> >
-> > +       ret = security_fs_context_init(fc, reference);
-> > +       if (ret < 0)
-> > +               goto err_fc;
-> > +
-> >         /* TODO: Make all filesystems support this unconditionally */
-> >         init_fs_context = fc->fs_type->init_fs_context;
-> >         if (!init_fs_context)
-> > diff --git a/fs/nfs/getroot.c b/fs/nfs/getroot.c
-> > index 11ff2b2e060f..651bffb0067e 100644
-> > --- a/fs/nfs/getroot.c
-> > +++ b/fs/nfs/getroot.c
-> > @@ -144,6 +144,7 @@ int nfs_get_root(struct super_block *s, struct fs_context *fc)
-> >         }
-> >         if (error)
-> >                 goto error_splat_root;
-> > +       fc->lsm_set = true;
-> >         if (server->caps & NFS_CAP_SECURITY_LABEL &&
-> >                 !(kflags_out & SECURITY_LSM_NATIVE_LABELS))
-> >                 server->caps &= ~NFS_CAP_SECURITY_LABEL;
-> > diff --git a/fs/super.c b/fs/super.c
-> > index 8d39e4f11cfa..f200ae0549ca 100644
-> > --- a/fs/super.c
-> > +++ b/fs/super.c
-> > @@ -1553,10 +1553,12 @@ int vfs_get_tree(struct fs_context *fc)
-> >         smp_wmb();
-> >         sb->s_flags |= SB_BORN;
-> >
-> > -       error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-> > -       if (unlikely(error)) {
-> > -               fc_drop_locked(fc);
-> > -               return error;
-> > +       if (!(fc->lsm_set)) {
-> > +               error = security_sb_set_mnt_opts(sb, fc->security, 0, NULL);
-> > +               if (unlikely(error)) {
-> > +                       fc_drop_locked(fc);
-> > +                       return error;
-> > +               }
-> >         }
->
-> Thinking about all the different things that an LSM could do, would it
-> ever be possible that a LSM would want the security_sb_set_mnt_opts()
-> call to happen here?  I'm wondering if we are better off leaving it up
-> to the LSM by passing the fs_context in the security_sb_set_mnt_opts()
-> hook; those that want to effectively skip this call due to a submount
-> setup already done in security_fs_context_init() can check the
-> fs_context::purpose value in the security_sb_set_mnt_opts() hook.
+I've fixed these build failure for the next patch iteration. Please comment
+and review on the patch. I'll wait for a few days before sending next version.
 
-Actually, we could probably also create a LSM specific flag in
-fs_context::security to indicate that the setup has already been done.
-That's probably a little safer than relying on fs_context::purpose in
-the security_sb_set_mnt_opts() hook.
-
-> Thoughts?
+On 11/11/22 10:13 PM, kernel test robot wrote:
+> Hi Muhammad,
+> 
+> Thank you for the patch! Yet something to improve:
+> 
+> [auto build test ERROR on next-20221109]
+> [also build test ERROR on v6.1-rc4]
+> [cannot apply to shuah-kselftest/next shuah-kselftest/fixes linus/master v6.1-rc4 v6.1-rc3 v6.1-rc2]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Muhammad-Usama-Anjum/Implement-IOCTL-to-get-and-or-the-clear-info-about-PTEs/20221109-182618
+> patch link:    https://lore.kernel.org/r/20221109102303.851281-3-usama.anjum%40collabora.com
+> patch subject: [PATCH v6 2/3] fs/proc/task_mmu: Implement IOCTL to get and/or the clear info about PTEs
+> config: arm-buildonly-randconfig-r006-20221111
+> compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 463da45892e2d2a262277b91b96f5f8c05dc25d0)
+> reproduce (this is a W=1 build):
+>         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         # install arm cross compiling tool for clang build
+>         # apt-get install binutils-arm-linux-gnueabi
+>         # https://github.com/intel-lab-lkp/linux/commit/b329378abd03a741ff7250ec1b60292c893476da
+>         git remote add linux-review https://github.com/intel-lab-lkp/linux
+>         git fetch --no-tags linux-review Muhammad-Usama-Anjum/Implement-IOCTL-to-get-and-or-the-clear-info-about-PTEs/20221109-182618
+>         git checkout b329378abd03a741ff7250ec1b60292c893476da
+>         # save the config file
+>         mkdir build_dir && cp config build_dir/.config
+>         COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=arm SHELL=/bin/bash fs/
+> 
+> If you fix the issue, kindly add following tag where applicable
+> | Reported-by: kernel test robot <lkp@intel.com>
+> 
+> All errors (new ones prefixed by >>):
+> 
+>>> fs/proc/task_mmu.c:1882:41: error: use of undeclared identifier 'HPAGE_SIZE'
+>                            if ((IS_CLEAR_OP(p) && (end - addr < HPAGE_SIZE))) {
+>                                                                 ^
+>    1 error generated.
+> 
+> 
+> vim +/HPAGE_SIZE +1882 fs/proc/task_mmu.c
+> 
+>   1856	
+>   1857	static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long addr,
+>   1858					  unsigned long end, struct mm_walk *walk)
+>   1859	{
+>   1860		struct pagemap_scan_private *p = walk->private;
+>   1861		struct vm_area_struct *vma = walk->vma;
+>   1862		unsigned int len;
+>   1863		spinlock_t *ptl;
+>   1864		int ret = 0;
+>   1865		pte_t *pte;
+>   1866		bool dirty_vma = (p->flags & PAGEMAP_NO_REUSED_REGIONS) ?
+>   1867				 (false) : (vma->vm_flags & VM_SOFTDIRTY);
+>   1868	
+>   1869		if ((walk->vma->vm_end < addr) || (p->max_pages && p->found_pages == p->max_pages))
+>   1870			return 0;
+>   1871	
+>   1872		end = min(end, walk->vma->vm_end);
+>   1873	
+>   1874		ptl = pmd_trans_huge_lock(pmd, vma);
+>   1875		if (ptl) {
+>   1876			if (dirty_vma || check_soft_dirty_pmd(vma, addr, pmd, false)) {
+>   1877				/*
+>   1878				 * Break huge page into small pages if operation needs to be performed is
+>   1879				 * on a portion of the huge page or the return buffer cannot store complete
+>   1880				 * data.
+>   1881				 */
+>> 1882				if ((IS_CLEAR_OP(p) && (end - addr < HPAGE_SIZE))) {
+>   1883					spin_unlock(ptl);
+>   1884					split_huge_pmd(vma, pmd, addr);
+>   1885					goto process_smaller_pages;
+>   1886				}
+>   1887	
+>   1888				if (IS_GET_OP(p)) {
+>   1889					len = (end - addr)/PAGE_SIZE;
+>   1890					if (p->max_pages && p->found_pages + len > p->max_pages)
+>   1891						len = p->max_pages - p->found_pages;
+>   1892	
+>   1893					ret = add_to_out(dirty_vma ||
+>   1894							 check_soft_dirty_pmd(vma, addr, pmd, false),
+>   1895							 vma->vm_file, pmd_present(*pmd), is_swap_pmd(*pmd),
+>   1896							 p, addr, len);
+>   1897				}
+>   1898				if (!ret && IS_CLEAR_OP(p))
+>   1899					check_soft_dirty_pmd(vma, addr, pmd, true);
+>   1900			}
+>   1901			spin_unlock(ptl);
+>   1902			return 0;
+>   1903		}
+>   1904	
+>   1905	process_smaller_pages:
+>   1906		if (pmd_trans_unstable(pmd))
+>   1907			return 0;
+>   1908	
+>   1909		pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
+>   1910		for (; addr < end && !ret && (!p->max_pages || (p->found_pages < p->max_pages))
+>   1911		     ; pte++, addr += PAGE_SIZE) {
+>   1912			if (IS_GET_OP(p))
+>   1913				ret = add_to_out(dirty_vma || check_soft_dirty(vma, addr, pte, false),
+>   1914						 vma->vm_file, pte_present(*pte),
+>   1915						 is_swap_pte(*pte), p, addr, 1);
+>   1916			if (!ret && IS_CLEAR_OP(p))
+>   1917				check_soft_dirty(vma, addr, pte, true);
+>   1918		}
+>   1919		pte_unmap_unlock(pte - 1, ptl);
+>   1920		cond_resched();
+>   1921	
+>   1922		return 0;
+>   1923	}
+>   1924	
+> 
 
 -- 
-paul-moore.com
+BR,
+Muhammad Usama Anjum
