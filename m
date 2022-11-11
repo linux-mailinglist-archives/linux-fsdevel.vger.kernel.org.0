@@ -2,151 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3BE606261F1
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 20:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 98F0F6262A2
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 21:14:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234015AbiKKTcC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Nov 2022 14:32:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34426 "EHLO
+        id S234454AbiKKUOT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Nov 2022 15:14:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233980AbiKKTb7 (ORCPT
+        with ESMTP id S234430AbiKKUOS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Nov 2022 14:31:59 -0500
-Received: from out2.migadu.com (out2.migadu.com [IPv6:2001:41d0:2:aacc::])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7695476FB2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Nov 2022 11:31:58 -0800 (PST)
-Date:   Fri, 11 Nov 2022 11:31:51 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1668195116;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DJT6xX+1WAMEebk+AO1GFzsspXzUi1NZznB+TV04Jfc=;
-        b=n5APBWeY97SIC5E1V/XVGJBtz0wq+HUOXv0Nv3uBUT9YAeJ8T9zCbqlkkv+rSd6Fhosmoi
-        maP4dr0nclSxsSkFlOeEtf7pruXaOGh+jm8u7Qex2XW8h2xhEMmXF1wepFhdd4M/zSECCV
-        PcM47Reib3bhnvl40IVaFJ1wJ4Z3Gt8=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Roman Gushchin <roman.gushchin@linux.dev>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, Vasily Averin <vvs@openvz.org>,
-        Hugh Dickins <hughd@google.com>,
-        Seth Forshee <sforshee@kernel.org>,
-        =?iso-8859-1?Q?St=E9phane?= Graber <stgraber@ubuntu.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v3] xattr: use rbtree for simple_xattrs
-Message-ID: <Y26jJ6oMwDGCGmC9@P9FQF9L96D.corp.robot.car>
-References: <20221111115336.1845383-1-brauner@kernel.org>
+        Fri, 11 Nov 2022 15:14:18 -0500
+Received: from mail-pg1-x534.google.com (mail-pg1-x534.google.com [IPv6:2607:f8b0:4864:20::534])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0360D11147
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Nov 2022 12:14:18 -0800 (PST)
+Received: by mail-pg1-x534.google.com with SMTP id v3so5207957pgh.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Nov 2022 12:14:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CzfuirqUexa4OrUP6aM1ldAHfjduol2fhAGQPIMhaNg=;
+        b=eiMN91hnPXZQzawWYNQtt2JbgJX4zONo3XXA2vHKrwUDAZM35OEnfRYlvN5dnWnHK3
+         pjLnnizKKu4ocjX9ODiE3DPWno1mHG1fttmdmWfyUh8rGHcRgmCdXnDpnak17egxCSpg
+         lGr2Lz2VD1IMD9rcdGZMZuwgOUP314MaWeyXo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CzfuirqUexa4OrUP6aM1ldAHfjduol2fhAGQPIMhaNg=;
+        b=aGC99yU4805FSouxEuvbIVzVrReLB+YoCHpGSKjh63xG0FI6zIDZN6LxOr49j/+7se
+         A4AkYx3wzMwpLaqf5QLBzv0Q/v9jTgtsMykpsWvoxhh2cDN/00cJImVPc96EKEMiuGXu
+         bhlnZhjc4HqWa3hWFsXg3jyvcNaEiyjP2U226sd4f5jqQeRH+02tgIVhDDPla51wGdO9
+         ursCUIPkag1/KXXBEp1Lg0y7Aj+NSS1KJcoMXh5pbe8PcOKy4ZMhqIUahGraNhwL96KQ
+         767fEQYvr0DzMNulhRkmeMzfequF9GGW+q3tvMaVATF/LMg87bfN6VfF7notxXR7ketX
+         wlwQ==
+X-Gm-Message-State: ANoB5plwoS3wFVf94lAOQfOErQR5W6i1a8L8/Fp55dw/r7lhedWhA4nO
+        ZqILzi75IXUsF8JoJBekaSgSKg==
+X-Google-Smtp-Source: AA0mqf7dRnhsd5f6m0AWWkQi2sWwEKci8En1oXPzGRb7yjL8j7GgD9if6YefVSBseGMxJjBYOXq8yQ==
+X-Received: by 2002:aa7:99c5:0:b0:562:3add:37e1 with SMTP id v5-20020aa799c5000000b005623add37e1mr4169347pfi.80.1668197600735;
+        Fri, 11 Nov 2022 12:13:20 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id c188-20020a624ec5000000b0056be7ac5261sm1951559pfb.163.2022.11.11.12.13.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Nov 2022 12:13:20 -0800 (PST)
+Date:   Fri, 11 Nov 2022 12:13:19 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Fangrui Song <maskray@google.com>
+Cc:     Pedro Falcato <pedro.falcato@gmail.com>,
+        Rich Felker <dalias@libc.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>, sam@gentoo.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH v2] binfmt_elf: Allow .bss in any interp PT_LOAD
+Message-ID: <202211111211.93ED8B4B@keescook>
+References: <20221111061315.gonna.703-kees@kernel.org>
+ <20221111074234.xm5a6ota7ppdsto5@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221111115336.1845383-1-brauner@kernel.org>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20221111074234.xm5a6ota7ppdsto5@google.com>
+X-Spam-Status: No, score=-0.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,URIBL_BLACK autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 11, 2022 at 12:53:36PM +0100, Christian Brauner wrote:
-> A while ago Vasily reported that it is possible to set a large number of
-> xattrs on inodes of filesystems that make use of the simple xattr
-> infrastructure. This includes all kernfs-based filesystems that support
-> xattrs (e.g., cgroupfs) and tmpfs. Both cgroupfs and tmpfs can be
-> mounted by unprivileged users in unprivileged containers and root in an
-> unprivileged container can set an unrestricted number of security.*
-> xattrs and privileged users can also set unlimited trusted.* xattrs. As
-> there are apparently users that have a fairly large number of xattrs we
-> should scale a bit better. Other xattrs such as user.* are restricted
-> for kernfs-based instances to a fairly limited number.
+On Thu, Nov 10, 2022 at 11:42:34PM -0800, Fangrui Song wrote:
+> (+ sam@gentoo.org from Pedro Falcato's patch)
 > 
-> Using a simple linked list protected by a spinlock used for set, get,
-> and list operations doesn't scale well if users use a lot of xattrs even
-> if it's not a crazy number. There's no need to bring in the big guns
-> like rhashtables or rw semaphores for this. An rbtree with a rwlock, or
-> limited rcu semanics and seqlock is enough.
+> On 2022-11-10, Kees Cook wrote:
+> > Traditionally, only the final PT_LOAD for load_elf_interp() supported
+> > having p_memsz > p_filesz. Recently, lld's construction of musl's
+> > libc.so on PowerPC64 started having two PT_LOAD program headers with
+> > p_memsz > p_filesz.
+> > 
+> > As the least invasive change possible, check for p_memsz > p_filesz for
+> > each PT_LOAD in load_elf_interp.
+> > 
+> > Reported-by: Rich Felker <dalias@libc.org>
+> > Link: https://maskray.me/blog/2022-11-05-lld-musl-powerpc64
+> > Cc: Pedro Falcato <pedro.falcato@gmail.com>
+> > Cc: Fangrui Song <maskray@google.com>
+> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> > Cc: Eric Biederman <ebiederm@xmission.com>
+> > Cc: linux-fsdevel@vger.kernel.org
+> > Cc: linux-mm@kvack.org
+> > Signed-off-by: Kees Cook <keescook@chromium.org>
+> > ---
+> > v2: I realized we need to retain the final padding call.
+> > v1: https://lore.kernel.org/linux-hardening/20221111055747.never.202-kees@kernel.org/
+> > ---
+> > fs/binfmt_elf.c | 18 ++++++++++++++----
+> > 1 file changed, 14 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
+> > index 528e2ac8931f..0a24bbbef1d6 100644
+> > --- a/fs/binfmt_elf.c
+> > +++ b/fs/binfmt_elf.c
+> > @@ -673,15 +673,25 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
+> > 				last_bss = k;
+> > 				bss_prot = elf_prot;
+> > 			}
+> > +
+> > +			/*
+> > +			 * Clear any p_memsz > p_filesz area up to the end
+> > +			 * of the page to wipe anything left over from the
+> > +			 * loaded file contents.
+> > +			 */
+> > +			if (last_bss > elf_bss && padzero(elf_bss))
 > 
-> It scales within the constraints we are working in. By far the most
-> common operation is getting an xattr. Setting xattrs should be a
-> moderately rare operation. And listxattr() often only happens when
-> copying xattrs between files or with the filey. Holding a lock across
-> listxattr() is unproblematic because it doesn't list the values of
-> xattrs. It can only be used to list the names of all xattrs set on a
-> file. And the number of xattr names that can be listed with listxattr()
-> is limited to XATTR_LIST_MAX aka 65536 bytes. If a larger buffer is
-> passed then vfs_listxattr() caps it to XATTR_LIST_MAX and if more xattr
-> names are found it will return -EFBIG. In short, the maximum amount of
-> memory that can be retrieved via listxattr() is limited.
+> Missing {
 > 
-> Of course, the API is broken as documented on xattr(7) already. In the
-> future we might want to address this but for now this is the world we
-> live in and have lived for a long time. But it does indeed mean that
-> once an application goes over XATTR_LIST_MAX limit of xattrs set on an
-> inode it isn't possible to copy the file and include its xattrs in the
-> copy unless the caller knows all xattrs or limits the copy of the xattrs
-> to important ones it knows by name (At least for tmpfs, and kernfs-based
-> filesystems. Other filesystems might provide ways of achieving this.).
+> But after fixing this, I get a musl ld.so error.
 > 
-> Bonus of this port to rbtree+rwlock is that we shrink the memory
-> consumption for users of the simple xattr infrastructure.
+> > +				error = -EFAULT;
+> > +				goto out;
+> > +			}
+> > 		}
+> > 	}
+> > 
+> > 	/*
+> > -	 * Now fill out the bss section: first pad the last page from
+> > -	 * the file up to the page boundary, and zero it from elf_bss
+> > -	 * up to the end of the page.
+> > +	 * Finally, pad the last page from the file up to the page boundary,
+> > +	 * and zero it from elf_bss up to the end of the page, if this did
+> > +	 * not already happen with the last PT_LOAD.
+> > 	 */
+> > -	if (padzero(elf_bss)) {
+> > +	if (last_bss == elf_bss && padzero(elf_bss)) {
+> > 		error = -EFAULT;
+> > 		goto out;
+> > 	}
+> > -- 
+> > 2.34.1
+> > 
 > 
-> Also add proper kernel documentation to all the functions.
-> A big thanks to Paul for his comments.
+> I added a new section to https://maskray.me/blog/2022-11-05-lld-musl-powerpc64
+> Copying here:
 > 
-> Cc: Vasily Averin <vvs@openvz.org>
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> ---
+> To test that the kernel ELF loader can handle more RW `PT_LOAD` program headers, we can create an executable with more RW `PT_LOAD` program headers with `p_filesz < p_memsz`.
+> We can place a read-only section after `.bss` followed by a `SHT_NOBITS` `SHF_ALLOC|SHF_WRITE` section. The read-only section will form a read-only `PT_LOAD` while the RW section will form a RW `PT_LOAD`.
 > 
-> Notes:
->     In the v1 and v2 of this patch we used an rbtree which was protected by an
->     rcu+seqlock combination. During the discussion it became clear that there's
->     some valid concern how safe it is to combine rcu with rbtrees. While most of
->     the issues are highly unlikely to matter in practice the code here can be
->     reached by unprivileged users rather directly so we should not be adventurous.
->     Instead of the rcu+seqlock combination simply use an rwlock. This will scale
->     sufficiently as well and had been one of the implementations I considered and
->     wrote a little while ago. Thanks to Paul for some deeper insights into issues
->     associated with rcu and rbtrees!
->     
->     In addition to this patch I would like to propose that we restrict the number
->     of xattrs for the simple xattr infrastructure via XATTR_MAX_LIST bytes. In
->     other words, we restrict the number of xattrs for simple xattr filesystems to
->     the number of xattrs names that can be retrieved via listxattr(). That should
->     be about 2000 to 3000 xattrs per inode which is more than enough. We should
->     risk this and see if we get any regression reports from userswith this
->     approach.
->     
->     This should be as simple as adding a max_list member to struct simple_xattrs
->     and initialize it with XATTR_MAX_LIST. Set operations would then check against
->     this field whether the new xattr they are trying to set will fit and return
->     -EFBIG otherwise. I think that might be a good approach to get rid of the in
->     principle unbounded number of xattrs that can be set via the simple xattr
->     infrastructure. I think this is a regression risk worth taking.
->     
->     /* v2 */
->     Christian Brauner <brauner@kernel.org>:
->     - Fix kernel doc.
->     - Remove accidental leftover union from previous iteration.
->     
->     /* v3 */
->     Port the whole thing to use a simple rwlock instead of rcu+seqlock.
->     
->     "Paul E. McKenney" <paulmck@kernel.org>:
->     - Fix simple_xattr_add() by searching the correct slot in the rbtree first.
->     
->     Roman Gushchin <roman.gushchin@linux.dev>:
->     - Avoid calling strcmp() multiple times.
+> ```text
+> #--- a.c
+> #include <assert.h>
+> #include <stdio.h>
 > 
->  fs/xattr.c            | 317 +++++++++++++++++++++++++++++++++---------
->  include/linux/xattr.h |  38 ++---
->  mm/shmem.c            |   2 +-
->  3 files changed, 260 insertions(+), 97 deletions(-)
+> extern const char toc[];
+> char nobits0[0] __attribute__((section(".nobits0")));
+> char nobits1[0] __attribute__((section(".nobits1")));
+> 
+> int main(void) {
+>   assert(toc[4096-1] == 0);
+>   for (int i = 0; i < 1024; i++)
+>     assert(nobits0[i] == 0);
+>   nobits0[0] = nobits0[1024-1] = 1;
+>   for (int i = 0; i < 4096; i++)
+>     assert(nobits1[i] == 0);
+>   nobits1[0] = nobits1[4096-1] = 1;
+> 
+>   puts("hello");
+> }
+> 
+> #--- toc.s
+> .section .toc,"aw",@nobits
+> .globl toc
+> toc:
+> .space 4096
+> 
+> .section .ro0,"a"; .byte 255
+> .section .nobits0,"aw",@nobits; .space 1024
+> .section .ro1,"a"; .byte 255
+> .section .nobits1,"aw",@nobits; .space 4096
+> 
+> #--- a.lds
+> SECTIONS { .ro0 : {} .nobits0 : {} .ro1 : {} .nobits1 : {} } INSERT AFTER .bss;
+> ```
+> 
+> ```sh
+> split-file a.txt a
+> path/to/musl-gcc -Wl,--dynamic-linker=/lib/libc.so a/a.c a/a.lds -o toy
+> ```
+> 
+> split-file is a utility in llvm-project.
 
-Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+Where is a.txt? Also, it'd be nice to have this without needing the
+musl-gcc.
 
-Thanks!
+-- 
+Kees Cook
