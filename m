@@ -2,44 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BD0A6263ED
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 22:55:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60EF06263F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 22:55:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233223AbiKKVzn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Nov 2022 16:55:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59752 "EHLO
+        id S233552AbiKKVzu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Nov 2022 16:55:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231911AbiKKVzl (ORCPT
+        with ESMTP id S232979AbiKKVzp (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Nov 2022 16:55:41 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5AFB64877F;
-        Fri, 11 Nov 2022 13:55:41 -0800 (PST)
+        Fri, 11 Nov 2022 16:55:45 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A9EC76F93;
+        Fri, 11 Nov 2022 13:55:44 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id E4C62620E4;
+        by sin.source.kernel.org (Postfix) with ESMTPS id B89DECE2A6D;
+        Fri, 11 Nov 2022 21:55:42 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 857F2C433D7;
         Fri, 11 Nov 2022 21:55:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C48F3C433C1;
-        Fri, 11 Nov 2022 21:55:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668203740;
-        bh=ppNuqHgfgh6VS8z+UdUsS9MYS2XQh0sPVUBYG7uz4TE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fiOzLjpyLkR8q4H4aAPW+JUpi1X5Q8ugD8zZsPZdwmqDOqg6IE9KXFmud7ZgU8+nj
-         wi8h8HiWNLeEhKFQfbcq8U3txfkwcxen0LdO6XqKd57vj1+9cTujXIXDDmjOjGFD7r
-         zn1RrHFkMhH+iylcsvYkMSj3hkx0Ni/OOg0+95PlyX4n54XJTLz7b+7/E+TcCvrayn
-         98HpwN1sst238js2jtM+kytvQjn2AGkztVWGqxDe0aPWsKWqDIWOQ5MT4PXf/P+l6G
-         x9VGbcTpaVKL5BNBmCb18Bx4ORZzGVJUPfOYju4l1SP3OMm5pDtwSK4hhSnnto1pPy
-         CiTk6BSixoKJA==
+        s=k20201202; t=1668203741;
+        bh=iPU2ya7vrzgXAOb87/v2umBwtkGSZt9BZbUd7t73RfQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qOe2lnjcZrYovPeK5+0kQN6snOjL8nlJVF0U9m4qYudVgrdkMQ4NwGJDkRGL0e7/a
+         +C50hxdcWfzB2GI5xxKICPGpIq2uxy1kbc/YrlpZZCeZU/xoDg0AiN9V31AMAvTNeA
+         4eGPAgdnJmaFilYIYe37gHH/vOEWD3m6zlUiMleEy9rBXqcEZv0pWLUtWWd1Jgpobl
+         eDTMmg1bKlAG9uTM2TfoAWeNxN6dM6kYseVnSqOxeX9OCXgFa7X9JtIQ+ZvrFGa0R0
+         t2/WFr09wnHsTGbJRPTdETjRoxsJGMaS1iyUjnYYjmvSBoGNph2tMC60RI15UoGjnn
+         tlpXi5BUxEHQw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     chuck.lever@oracle.com
 Cc:     linux-nfs@vger.kernel.org, trond.myklebust@hammerspace.com,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH 0/4] filelock: WARN when @filp and fl_file don't match
-Date:   Fri, 11 Nov 2022 16:55:34 -0500
-Message-Id: <20221111215538.356543-1-jlayton@kernel.org>
+Subject: [PATCH 1/4] lockd: set missing fl_flags field when retrieving args
+Date:   Fri, 11 Nov 2022 16:55:35 -0500
+Message-Id: <20221111215538.356543-2-jlayton@kernel.org>
 X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20221111215538.356543-1-jlayton@kernel.org>
+References: <20221111215538.356543-1-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -51,30 +53,36 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Eventually, I'd like to reduce the redundant arguments to the locking
-APIs, but to get there we need to ensure the callers all set their file
-locks sanely.
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/lockd/svc4proc.c | 1 +
+ fs/lockd/svcproc.c  | 1 +
+ 2 files changed, 2 insertions(+)
 
-Adding the WARN_ON_ONCEs helped to find a couple of warts in lockd's
-file handling. The first 3 patches fix those.
-
-I'd like to see these included in v6.2, with an eye toward a locking API
-cleanup in v6.3.
-
-Thanks,
-
-Jeff Layton (4):
-  lockd: set missing fl_flags field when retrieving args
-  lockd: ensure we use the correct file description when unlocking
-  lockd: fix file selection in nlmsvc_cancel_blocked
-  filelock: WARN_ON_ONCE when ->fl_file and filp don't match
-
- fs/lockd/svc4proc.c |  1 +
- fs/lockd/svclock.c  | 17 ++++++++++-------
- fs/lockd/svcproc.c  |  1 +
- fs/locks.c          |  3 +++
- 4 files changed, 15 insertions(+), 7 deletions(-)
-
+diff --git a/fs/lockd/svc4proc.c b/fs/lockd/svc4proc.c
+index 284b019cb652..b72023a6b4c1 100644
+--- a/fs/lockd/svc4proc.c
++++ b/fs/lockd/svc4proc.c
+@@ -52,6 +52,7 @@ nlm4svc_retrieve_args(struct svc_rqst *rqstp, struct nlm_args *argp,
+ 		*filp = file;
+ 
+ 		/* Set up the missing parts of the file_lock structure */
++		lock->fl.fl_flags = FL_POSIX;
+ 		lock->fl.fl_file  = file->f_file[mode];
+ 		lock->fl.fl_pid = current->tgid;
+ 		lock->fl.fl_start = (loff_t)lock->lock_start;
+diff --git a/fs/lockd/svcproc.c b/fs/lockd/svcproc.c
+index e35c05e27806..32784f508c81 100644
+--- a/fs/lockd/svcproc.c
++++ b/fs/lockd/svcproc.c
+@@ -77,6 +77,7 @@ nlmsvc_retrieve_args(struct svc_rqst *rqstp, struct nlm_args *argp,
+ 
+ 		/* Set up the missing parts of the file_lock structure */
+ 		mode = lock_to_openmode(&lock->fl);
++		lock->fl.fl_flags = FL_POSIX;
+ 		lock->fl.fl_file  = file->f_file[mode];
+ 		lock->fl.fl_pid = current->tgid;
+ 		lock->fl.fl_lmops = &nlmsvc_lock_operations;
 -- 
 2.38.1
 
