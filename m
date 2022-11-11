@@ -2,241 +2,242 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 33EAF625788
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 11:01:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97A926257AD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 11:10:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232177AbiKKKBH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Nov 2022 05:01:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44304 "EHLO
+        id S233489AbiKKKKY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Nov 2022 05:10:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiKKKBG (ORCPT
+        with ESMTP id S233057AbiKKKKX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Nov 2022 05:01:06 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9FE712A9D;
-        Fri, 11 Nov 2022 02:01:03 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 11 Nov 2022 05:10:23 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [IPv6:2a00:1098:0:82:1000:25:2eeb:e5ab])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F1227EE20;
+        Fri, 11 Nov 2022 02:10:21 -0800 (PST)
+Received: from [192.168.10.9] (unknown [39.45.244.84])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 63C4FB824B3;
-        Fri, 11 Nov 2022 10:01:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFD66C433C1;
-        Fri, 11 Nov 2022 10:00:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668160861;
-        bh=J/SNzBV26xb9ZimfbKHbIygGDSH+VKjLiTdatAabHUg=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=CWAMCDwd0DNVCl2n+7x7qRgOt8XV8Dum5DDdsSz+t1u5huY/MLARrguHiUdUkHO53
-         +8ZOASRWR+VcG2m3itoXLWX7f4ESIiKjnlXkrqR4Us/XzwMZ7oGB5sPhAwfr3+JvH/
-         5sgkZVhebQlU7SeOoUmHSJXHf+145tg4HjnrD4Yx6tEi1i6m39+in4gusS61XdjiDD
-         vIqI3X0q0mi6pj9MVKX8X7Dn4R8AULo0/paUx3NC5YVGCN5JC07HmeJaUYTdbao34g
-         ZnWvPXTgMqfNCngRNgLD5SJ97W3IwLHPJMLamNWBjnz3GjUDlswBJ8isO/knD78mu4
-         BBCC1c1HKu5bw==
-Message-ID: <a2409d054aab173dbff062b41b3add1dcd3c9b45.camel@kernel.org>
-Subject: Re: [PATCH v3 13/15] fcntl: remove FASYNC_MAGIC
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Ahelenia =?UTF-8?Q?Ziemia=C5=84ska?= 
-        <nabijaczleweli@nabijaczleweli.xyz>
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Federico Vaga <federico.vaga@vaga.pv.it>,
-        Alex Shi <alexs@kernel.org>,
-        Yanteng Si <siyanteng@loongson.cn>,
-        Hu Haowen <src.res@email.cn>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Jiri Slaby <jirislaby@kernel.org>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-doc-tw-discuss@lists.sourceforge.net,
-        linux-fsdevel@vger.kernel.org
-Date:   Fri, 11 Nov 2022 05:00:58 -0500
-In-Reply-To: <756e6016fab23e95d891b6284fbf52184135ee46.1668128257.git.nabijaczleweli@nabijaczleweli.xyz>
-References: <cover.1668128257.git.nabijaczleweli@nabijaczleweli.xyz>
-         <756e6016fab23e95d891b6284fbf52184135ee46.1668128257.git.nabijaczleweli@nabijaczleweli.xyz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id B18396602A53;
+        Fri, 11 Nov 2022 10:10:07 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1668161420;
+        bh=DB1GesM2rck4OsDAS8g+B+IHbx5lDoa3Do4KleeFlws=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=IDEPl4xDPWN1Mmh4XfPO+WNoKkG1xF8LGiBIMFbdST0NW+6Tb7ppH24M1kWslKPh0
+         W6uRkBomgqS9FBcRvNy+BWecuwnzTrlmM+iAFwghYXhUOB3JCPlBzX6DdY9Yk/Kweh
+         BmQ6znY1PeIE2+/MNQHEbAEaluhBkUItUwpx9VUFKPKvj0FgHNVMJPV5emU4Myc//6
+         sOYwBER1RCM2k/4OvboWkxid9qFSuZMQ4cJSbwy0ABzOyE0alr2Vc3UtXznfQPoNad
+         dkXkaDXtMgVXDj5JpHGqAJHbliUcNylbD4ncGcPwPiNvdV5rIeAC/zBiaRuHIKqCDM
+         AFkNsqNFSuyKg==
+Message-ID: <b5a67c87-e901-4d0c-8367-d1bf1293d5c4@collabora.com>
+Date:   Fri, 11 Nov 2022 15:10:01 +0500
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Peter Xu <peterx@redhat.com>, Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Zach O'Keefe <zokeefe@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>, kernel@collabora.com,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        "open list : KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list : PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
+        "open list : MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Paul Gofman <pgofman@codeweavers.com>
+Subject: Re: [PATCH v6 2/3] fs/proc/task_mmu: Implement IOCTL to get and/or
+ the clear info about PTEs
+Content-Language: en-US
+To:     Andrei Vagin <avagin@gmail.com>
+References: <20221109102303.851281-1-usama.anjum@collabora.com>
+ <20221109102303.851281-3-usama.anjum@collabora.com>
+ <Y2w9sWZf5mlNV7Z3@gmail.com>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <Y2w9sWZf5mlNV7Z3@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2022-11-11 at 02:14 +0100, Ahelenia Ziemia=C5=84ska wrote:
-> We have largely moved away from this approach, and we have better
-> debugging instrumentation nowadays: kill it.
->=20
-> Link: https://lore.kernel.org/linux-doc/YyMlovoskUcHLEb7@kroah.com/
-> Signed-off-by: Ahelenia Ziemia=C5=84ska <nabijaczleweli@nabijaczleweli.xy=
-z>
-> ---
->  Documentation/process/magic-number.rst                    | 1 -
->  Documentation/translations/it_IT/process/magic-number.rst | 1 -
->  Documentation/translations/zh_CN/process/magic-number.rst | 1 -
->  Documentation/translations/zh_TW/process/magic-number.rst | 1 -
->  fs/fcntl.c                                                | 6 ------
->  include/linux/fs.h                                        | 3 ---
->  6 files changed, 13 deletions(-)
->=20
-> diff --git a/Documentation/process/magic-number.rst b/Documentation/proce=
-ss/magic-number.rst
-> index e59c707ec785..6e432917a5a8 100644
-> --- a/Documentation/process/magic-number.rst
-> +++ b/Documentation/process/magic-number.rst
-> @@ -68,6 +68,5 @@ Changelog::
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
->  Magic Name            Number           Structure                File
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> -FASYNC_MAGIC          0x4601           fasync_struct            ``includ=
-e/linux/fs.h``
->  CCB_MAGIC             0xf2691ad2       ccb                      ``driver=
-s/scsi/ncr53c8xx.c``
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> diff --git a/Documentation/translations/it_IT/process/magic-number.rst b/=
-Documentation/translations/it_IT/process/magic-number.rst
-> index 37a539867b6f..7d4c117ac626 100644
-> --- a/Documentation/translations/it_IT/process/magic-number.rst
-> +++ b/Documentation/translations/it_IT/process/magic-number.rst
-> @@ -74,6 +74,5 @@ Registro dei cambiamenti::
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
->  Nome magico           Numero           Struttura                File
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> -FASYNC_MAGIC          0x4601           fasync_struct            ``includ=
-e/linux/fs.h``
->  CCB_MAGIC             0xf2691ad2       ccb                      ``driver=
-s/scsi/ncr53c8xx.c``
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> diff --git a/Documentation/translations/zh_CN/process/magic-number.rst b/=
-Documentation/translations/zh_CN/process/magic-number.rst
-> index 8a3a3e872c52..c17e3f20440a 100644
-> --- a/Documentation/translations/zh_CN/process/magic-number.rst
-> +++ b/Documentation/translations/zh_CN/process/magic-number.rst
-> @@ -57,6 +57,5 @@ Linux =E9=AD=94=E6=9C=AF=E6=95=B0
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
->  =E9=AD=94=E6=9C=AF=E6=95=B0=E5=90=8D              =E6=95=B0=E5=AD=97    =
-         =E7=BB=93=E6=9E=84                     =E6=96=87=E4=BB=B6
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> -FASYNC_MAGIC          0x4601           fasync_struct            ``includ=
-e/linux/fs.h``
->  CCB_MAGIC             0xf2691ad2       ccb                      ``driver=
-s/scsi/ncr53c8xx.c``
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> diff --git a/Documentation/translations/zh_TW/process/magic-number.rst b/=
-Documentation/translations/zh_TW/process/magic-number.rst
-> index 7ace7834f7f9..e2eeb74e7192 100644
-> --- a/Documentation/translations/zh_TW/process/magic-number.rst
-> +++ b/Documentation/translations/zh_TW/process/magic-number.rst
-> @@ -60,6 +60,5 @@ Linux =E9=AD=94=E8=A1=93=E6=95=B8
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
->  =E9=AD=94=E8=A1=93=E6=95=B8=E5=90=8D              =E6=95=B8=E5=AD=97    =
-         =E7=B5=90=E6=A7=8B                     =E6=96=87=E4=BB=B6
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> -FASYNC_MAGIC          0x4601           fasync_struct            ``includ=
-e/linux/fs.h``
->  CCB_MAGIC             0xf2691ad2       ccb                      ``driver=
-s/scsi/ncr53c8xx.c``
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 146c9ab0cd4b..e366a3804108 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -924,7 +924,6 @@ struct fasync_struct *fasync_insert_entry(int fd, str=
-uct file *filp, struct fasy
->  	}
-> =20
->  	rwlock_init(&new->fa_lock);
-> -	new->magic =3D FASYNC_MAGIC;
->  	new->fa_file =3D filp;
->  	new->fa_fd =3D fd;
->  	new->fa_next =3D *fapp;
-> @@ -988,11 +987,6 @@ static void kill_fasync_rcu(struct fasync_struct *fa=
-, int sig, int band)
->  		struct fown_struct *fown;
->  		unsigned long flags;
-> =20
-> -		if (fa->magic !=3D FASYNC_MAGIC) {
-> -			printk(KERN_ERR "kill_fasync: bad magic number in "
-> -			       "fasync_struct!\n");
-> -			return;
-> -		}
->  		read_lock_irqsave(&fa->fa_lock, flags);
->  		if (fa->fa_file) {
->  			fown =3D &fa->fa_file->f_owner;
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e654435f1651..acfd5db5341a 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1345,15 +1345,12 @@ static inline int locks_lock_file_wait(struct fil=
-e *filp, struct file_lock *fl)
-> =20
->  struct fasync_struct {
->  	rwlock_t		fa_lock;
-> -	int			magic;
->  	int			fa_fd;
->  	struct fasync_struct	*fa_next; /* singly linked list */
->  	struct file		*fa_file;
->  	struct rcu_head		fa_rcu;
->  };
-> =20
-> -#define FASYNC_MAGIC 0x4601
-> -
->  /* SMP safe fasync helpers: */
->  extern int fasync_helper(int, struct file *, int, struct fasync_struct *=
-*);
->  extern struct fasync_struct *fasync_insert_entry(int, struct file *, str=
-uct fasync_struct **, struct fasync_struct *);
+Hello Andrei,
 
-Reviewed-by: Jeff Layton <jlayton@kernel.org>
+Thank you for reviewing.
+
+On 11/10/22 4:54 AM, Andrei Vagin wrote:
+[...]
+>> +static int add_to_out(bool sd, bool file, bool pres, bool swap, struct pagemap_scan_private *p,
+>> +		      unsigned long addr, unsigned int len)
+>> +{
+>> +	unsigned long bitmap, cur = sd | file << 1 | pres << 2 | swap << 3;
+> 
+> Should we define contants for each of these bits?
+I think I can define a macro to hide this dirty bit shifting in the function.
+
+> 
+>> +	bool cpy = true;
+>> +
+>> +	if (p->required_mask)
+>> +		cpy = ((p->required_mask & cur) == p->required_mask);
+>> +	if (cpy && p->anyof_mask)
+>> +		cpy = (p->anyof_mask & cur);
+>> +	if (cpy && p->excluded_mask)
+>> +		cpy = !(p->excluded_mask & cur);
+>> +
+>> +	bitmap = cur & p->return_mask;
+>> +
+>> +	if (cpy && bitmap) {
+>> +		if ((p->vec_index) && (p->vec[p->vec_index - 1].bitmap == bitmap) &&
+>> +		    (p->vec[p->vec_index - 1].start + p->vec[p->vec_index - 1].len * PAGE_SIZE ==
+>> +		     addr)) {
+> 
+> I think it is better to define a variable for p->vec_index - 1.
+Will do in the next revision.
+
+> nit: len can be in bytes rather than pages.
+We are considering memory in the page units. The memory given to this IOCTL
+must have PAGE_SIZE alignment. Oterwise we error out (picked this from
+mincore()).
+
+>> +static int pagemap_scan_pmd_entry(pmd_t *pmd, unsigned long addr,
+>> +				  unsigned long end, struct mm_walk *walk)
+>> +{
+>> +	struct pagemap_scan_private *p = walk->private;
+>> +	struct vm_area_struct *vma = walk->vma;
+>> +	unsigned int len;
+>> +	spinlock_t *ptl;
+>> +	int ret = 0;
+>> +	pte_t *pte;
+>> +	bool dirty_vma = (p->flags & PAGEMAP_NO_REUSED_REGIONS) ?
+>> +			 (false) : (vma->vm_flags & VM_SOFTDIRTY);
+>> +
+>> +	if ((walk->vma->vm_end < addr) || (p->max_pages && p->found_pages == p->max_pages))
+>> +		return 0;
+>> +
+>> +	end = min(end, walk->vma->vm_end);
+>> +
+>> +	ptl = pmd_trans_huge_lock(pmd, vma);
+>> +	if (ptl) {
+>> +		if (dirty_vma || check_soft_dirty_pmd(vma, addr, pmd, false)) {
+>> +			/*
+>> +			 * Break huge page into small pages if operation needs to be performed is
+>> +			 * on a portion of the huge page or the return buffer cannot store complete
+>> +			 * data.
+>> +			 */
+>> +			if ((IS_CLEAR_OP(p) && (end - addr < HPAGE_SIZE))) {
+>> +				spin_unlock(ptl);
+>> +				split_huge_pmd(vma, pmd, addr);
+>> +				goto process_smaller_pages;
+>> +			}
+>> +
+>> +			if (IS_GET_OP(p)) {
+>> +				len = (end - addr)/PAGE_SIZE;
+>> +				if (p->max_pages && p->found_pages + len > p->max_pages)
+>> +					len = p->max_pages - p->found_pages;
+>> +
+>> +				ret = add_to_out(dirty_vma ||
+>> +						 check_soft_dirty_pmd(vma, addr, pmd, false),
+> 
+> can we reuse a return code of the previous call of check_soft_dirty_pmd?
+Yes, will do.
+
+> 
+>> +						 vma->vm_file, pmd_present(*pmd), is_swap_pmd(*pmd),
+>> +						 p, addr, len);
+>> +			}
+>> +			if (!ret && IS_CLEAR_OP(p))
+>> +				check_soft_dirty_pmd(vma, addr, pmd, true);
+> 
+> should we return a error in this case? We need to be sure that:
+> * we stop waking page tables after this point.
+I'll update the implementation to return error. It immediately terminates
+the walk as well.
+> * return this error to the user-space if we are not able to add anything
+>   in the vector.
+I'm not returning error to userspace if we found no page matching the
+masks. The total number of filled page_region are returned from the IOCTL.
+If IOCTL returns 0, it means no page found has found, but the IOCTL
+executed successfully.
+
+[...]
+>> +static long do_pagemap_sd_cmd(struct mm_struct *mm, struct pagemap_scan_arg *arg)
+>> +{
+>> +	struct mmu_notifier_range range;
+>> +	unsigned long __user start, end;
+>> +	struct pagemap_scan_private p;
+>> +	int ret;
+>> +
+>> +	start = (unsigned long)untagged_addr(arg->start);
+>> +	if ((!IS_ALIGNED(start, PAGE_SIZE)) || (!access_ok((void __user *)start, arg->len)))
+>> +		return -EINVAL;
+>> +
+>> +	if (IS_GET_OP(arg) &&
+>> +	    ((arg->vec_len == 0) || (!access_ok((struct page_region *)arg->vec, arg->vec_len))))
+>> +		return -ENOMEM;
+>> +
+>> +#ifndef CONFIG_MEM_SOFT_DIRTY
+>> +	if (IS_SD_OP(arg) || (arg->required_mask & PAGE_IS_SOFTDIRTY) ||
+>> +	    (arg->anyof_mask & PAGE_IS_SOFTDIRTY))
+>> +		return -EINVAL;
+>> +#endif
+>> +
+>> +	if ((arg->flags & ~PAGEMAP_SD_FLAGS) || (arg->required_mask & ~PAGEMAP_OP_MASK) ||
+>> +	    (arg->anyof_mask & ~PAGEMAP_OP_MASK) || (arg->excluded_mask & ~PAGEMAP_OP_MASK) ||
+>> +	    (arg->return_mask & ~PAGEMAP_OP_MASK))
+>> +		return -EINVAL;
+>> +
+>> +	if ((!arg->required_mask && !arg->anyof_mask && !arg->excluded_mask) || !arg->return_mask)
+>> +		return -EINVAL;
+>> +
+>> +	if (IS_SD_OP(arg) && ((arg->required_mask & PAGEMAP_NONSD_OP_MASK) ||
+>> +	     (arg->anyof_mask & PAGEMAP_NONSD_OP_MASK)))
+>> +		return -EINVAL;
+>> +
+>> +	end = start + arg->len;
+>> +	p.max_pages = arg->max_pages;
+>> +	p.found_pages = 0;
+>> +	p.flags = arg->flags;
+>> +	p.required_mask = arg->required_mask;
+>> +	p.anyof_mask = arg->anyof_mask;
+>> +	p.excluded_mask = arg->excluded_mask;
+>> +	p.return_mask = arg->return_mask;
+>> +	p.vec_index = 0;
+>> +	p.vec_len = arg->vec_len;
+>> +
+>> +	if (IS_GET_OP(arg)) {
+>> +		p.vec = vzalloc(arg->vec_len * sizeof(struct page_region));
+> 
+> I think we need to set a reasonable limit for vec_len to avoid large
+> allocations on the kernel. We can consider to use kmalloc or kvmalloc
+> here.
+I'll update to kvzalloc which uses vmalloc if kmalloc fails. It'll use
+kmalloc for smaller allocations. Thanks for suggesting it. But it'll not
+limit the memory allocation.
+
+> 
+> Thanks,
+> Andrei
+
+-- 
+BR,
+Muhammad Usama Anjum
