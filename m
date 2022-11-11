@@ -2,56 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AD426258B9
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 11:51:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6A64E6259DE
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 12:53:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233284AbiKKKvj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Nov 2022 05:51:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50876 "EHLO
+        id S233491AbiKKLxx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Nov 2022 06:53:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55928 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232177AbiKKKve (ORCPT
+        with ESMTP id S233320AbiKKLxv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Nov 2022 05:51:34 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 151426585
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Nov 2022 02:51:32 -0800 (PST)
+        Fri, 11 Nov 2022 06:53:51 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAA243FB97
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Nov 2022 03:53:48 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9CCC9B8258E
-        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Nov 2022 10:51:30 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE0B6C433D7;
-        Fri, 11 Nov 2022 10:51:26 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 45A34B825D2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 11 Nov 2022 11:53:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FDACC433C1;
+        Fri, 11 Nov 2022 11:53:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668163889;
-        bh=VQyQ2oidyqJPFhFmBPIrKySPySjaFZarusCTUvVPhy8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Nhl4msfHftUzOf7OWZ2dYHGZMqe8kqhtCZh0BDjhjl7Tq13ejwFqVCms3D3JacWC+
-         ZoVA7EHg/vqu8oBUkxwPXdi5ld+lbwuM21hbPYvwLO29K2sw9HpNl7+YhzX9LJbcU/
-         qxKRQT42mUW0hJOWCSBp49DyNyEwujKp8F8WvZTF1WtzI7ss9vLS+DMEwUSW7/Swj7
-         X8MU4nsJdmzmAEC5FgTjTwIxlaiVUxatyqbdES+QFObbhUazltiLXuZAVY7gnWm8rE
-         5IaOU7ea2Hn+OrwxXuyYCRRqAYsSjsIzpe2g1f94kf7qt9A8iK+ceRig0K36Ek0hxh
-         eOL9X1fdIGLrA==
-Date:   Fri, 11 Nov 2022 11:51:23 +0100
+        s=k20201202; t=1668167625;
+        bh=kFOsbL7ErSPGdDYAOqqECXGPhpwTu//UaxBJ6YUDUxk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=qYRtRaifM5+HzAmj6hwJWo0hfp3/XznSGyugL1Me3r+Dln5SlcMrMBek1qmX5doiy
+         G58akFu+dmJQxEDIejfR0R4c4/p5FniITTvh6NiN/5r5s1NvzGQ4L5AC3ZkdDIurab
+         LjqHpacrwHf5KTxvBKOC+ncz4ezmcvSWkEJ3reyFUjBjx7ZEy7pxoAHvBgXiwjyMdY
+         NgHhKODrFcxGd+5LRsntOU9tkIuYWnsM1xTrOlM+ldHc+a/7runpmLvw0UBlG6jIBY
+         LAPrtu9ZyP+OEWsC2vy11XPXJYN8oLWGvNW/9eRNBMLmzv1J+Xw0ivCzf8SQLlDz+T
+         nTOMlJX8qIPBg==
 From:   Christian Brauner <brauner@kernel.org>
-To:     "Paul E. McKenney" <paulmck@kernel.org>
-Cc:     Tejun Heo <tj@kernel.org>, linux-fsdevel@vger.kernel.org,
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Christian Brauner <brauner@kernel.org>,
         Vasily Averin <vvs@openvz.org>,
         Hugh Dickins <hughd@google.com>,
         Seth Forshee <sforshee@kernel.org>,
-        =?utf-8?B?U3TDqXBoYW5l?= Graber <stgraber@ubuntu.com>,
+        =?UTF-8?q?St=C3=A9phane=20Graber?= <stgraber@ubuntu.com>,
         Roman Gushchin <roman.gushchin@linux.dev>,
+        Tejun Heo <tj@kernel.org>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
         Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH v2] xattr: use rbtree for simple_xattrs
-Message-ID: <20221111105123.7oy6ruedd26dt4g3@wittgenstein>
-References: <20221108114112.1579299-1-brauner@kernel.org>
- <20221108185904.GE3907045@paulmck-ThinkPad-P17-Gen-1>
- <20221109095152.r7eqtq3t6oxkjp2n@wittgenstein>
- <20221111081335.GV725751@paulmck-ThinkPad-P17-Gen-1>
+Subject: [PATCH v3] xattr: use rbtree for simple_xattrs
+Date:   Fri, 11 Nov 2022 12:53:36 +0100
+Message-Id: <20221111115336.1845383-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20221111081335.GV725751@paulmck-ThinkPad-P17-Gen-1>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=20526; i=brauner@kernel.org; h=from:subject; bh=kFOsbL7ErSPGdDYAOqqECXGPhpwTu//UaxBJ6YUDUxk=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSTnmW8319dwcmeNjknwU304yTCL5ZiKqQJL5nmvG61Se0W9 NAU7SlkYxLgYZMUUWRzaTcLllvNUbDbK1ICZw8oEMoSBi1MAJqK4iJGh2zhg3oH9Xjwr12fZdt05/F wl/8nBFZYBU064T821S5b8wvBXVHVljm93t5vc7FTvu9Uz7nu+VtwTu/xq2IYDi+6YT5nNAgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -61,489 +60,582 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 11, 2022 at 12:13:35AM -0800, Paul E. McKenney wrote:
-> On Wed, Nov 09, 2022 at 10:51:52AM +0100, Christian Brauner wrote:
-> > On Tue, Nov 08, 2022 at 10:59:04AM -0800, Paul E. McKenney wrote:
-> > > On Tue, Nov 08, 2022 at 12:41:12PM +0100, Christian Brauner wrote:
-> > > > A while ago Vasily reported that it is possible to set a large number of
-> > > > xattrs on inodes of filesystems that make use of the simple xattr
-> > > > infrastructure. This includes all kernfs-based filesystems that support
-> > > > xattrs (e.g., cgroupfs) and tmpfs. Both cgroupfs and tmpfs can be
-> > > > mounted by unprivileged users in unprivileged containers and root in an
-> > > > unprivileged container can set an unrestricted number of security.*
-> > > > xattrs and privileged users can also set unlimited trusted.* xattrs. As
-> > > > there are apparently users that have a fairly large number of xattrs we
-> > > > should scale a bit better. Other xattrs such as user.* are restricted
-> > > > for kernfs-based instances to a fairly limited number.
-> > > > 
-> > > > Using a simple linked list protected by a spinlock used for set, get,
-> > > > and list operations doesn't scale well if users use a lot of xattrs even
-> > > > if it's not a crazy number. And There's no need to bring in the big guns
-> > > > like rhashtables or rw semaphors for this. An rbtree with a seqlock and
-> > > > limited rcu semantics is enough.
-> > > > 
-> > > > It scales within the constraints we are working in. By far the most
-> > > > common operations is getting an xattr. The get operation is optimized to
-> > > > be lock free as long as there are no writers. The list operation takes
-> > > > the read lock and protects against concurrent writers while allowing
-> > > > lockless get operations. Locking out other listxattr callers isn't a
-> > > > huge deal since listing xattrs is mostly relevant when copying a file or
-> > > > copying all xattrs between files.
-> > > > 
-> > > > Additionally, listxattr() doesn't list the values of xattrs it can only
-> > > > be used to list the names of all xattrs set on a file. And the number of
-> > > > xattr names that can be listed with listxattr() is limited to
-> > > > XATTR_LIST_MAX aka 65536 bytes. If a larger buffer is passed then
-> > > > vfs_listxattr() caps it to XATTR_LIST_MAX and if more xattr names are
-> > > > found it will return -EFBIG. In short, the maximum amount of memory that
-> > > > can be retrieved via listxattr() is limited.
-> > > > 
-> > > > Of course, the API is broken as documented on xattr(7) already. In the
-> > > > future we might want to address this but for now this is the world we
-> > > > live in and have lived for a long time. But it does indeed mean that
-> > > > once an application goes over XATTR_LIST_MAX limit of xattrs set on an
-> > > > inode it isn't possible to copy the file and include its xattrs in the
-> > > > copy unless the caller knows all xattrs or limits the copy of the xattrs
-> > > > to important ones it knows by name (At least for tmpfs, and kernfs-based
-> > > > filesystems. Other filesystems might provide ways of achieving this.).
-> > > > 
-> > > > Also add proper kernel documentation to all the functions.
-> > > > A big thanks to Paul for his comments.
-> > > > 
-> > > > Cc: Vasily Averin <vvs@openvz.org>
-> > > > Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> > > > Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
-> > > 
-> > > Looks mostly plausible from an RCU viewpoint, but there are a few
-> > > questions/comments inline below.
-> > > 
-> > > 							Thanx, Paul
-> > > 
-> > > > ---
-> > > > 
-> > > > Notes:
-> > > >     In addition to this patch I would like to propose that we restrict the number
-> > > >     of xattrs for the simple xattr infrastructure via XATTR_MAX_LIST bytes. In
-> > > >     other words, we restrict the number of xattrs for simple xattr filesystems to
-> > > >     the number of xattrs names that can be retrieved via listxattr(). That should
-> > > >     be about 2000 to 3000 xattrs per inode which is more than enough. We should
-> > > >     risk this and see if we get any regression reports from userswith this
-> > > >     approach.
-> > > >     
-> > > >     This should be as simple as adding a max_list member to struct simple_xattrs
-> > > >     and initialize it with XATTR_MAX_LIST. Set operations would then check against
-> > > >     this field whether the new xattr they are trying to set will fit and return
-> > > >     -EFBIG otherwise. I think that might be a good approach to get rid of the in
-> > > >     principle unbounded number of xattrs that can be set via the simple xattr
-> > > >     infrastructure. I think this is a regression risk worth taking.
-> > > >     
-> > > >     /* v2 */
-> > > >     Christian Brauner <brauner@kernel.org>:
-> > > >     - Fix kernel doc.
-> > > >     - Remove accidental leftover union from previous iteration.
-> > > > 
-> > > >  fs/xattr.c            | 330 +++++++++++++++++++++++++++++++++---------
-> > > >  include/linux/xattr.h |  40 ++---
-> > > >  mm/shmem.c            |   2 +-
-> > > >  3 files changed, 270 insertions(+), 102 deletions(-)
-> > > > 
-> > > > diff --git a/fs/xattr.c b/fs/xattr.c
-> > > > index 61107b6bbed2..f18454161d54 100644
-> > > > --- a/fs/xattr.c
-> > > > +++ b/fs/xattr.c
-> > > > @@ -992,8 +992,63 @@ const char *xattr_full_name(const struct xattr_handler *handler,
-> > > >  }
-> > > >  EXPORT_SYMBOL(xattr_full_name);
-> > > >  
-> > > > -/*
-> > > > - * Allocate new xattr and copy in the value; but leave the name to callers.
-> > > > +/**
-> > > > + * free_simple_xattr - free an xattr object
-> > > > + * @xattr: the xattr object
-> > > > + *
-> > > > + * Free the xattr object. Can handle @xattr being NULL.
-> > > > + */
-> > > > +static inline void free_simple_xattr(struct simple_xattr *xattr)
-> > > > +{
-> > > > +	if (xattr)
-> > > > +		kfree(xattr->name);
-> > > > +	kvfree(xattr);
-> > > > +}
-> > > > +
-> > > > +/**
-> > > > + * free_simple_xattr_rcu_cb - callback for freeing xattr object through rcu
-> > > > + * @cb: the rcu callback head
-> > > > + */
-> > > > +static void free_simple_xattr_rcu_cb(struct callback_head *cb)
-> > > > +{
-> > > > +	free_simple_xattr(container_of(cb, struct simple_xattr, rcu));
-> > > > +}
-> > > > +
-> > > > +/**
-> > > > + * free_simple_xattr_rcu - free an xattr object with rcu semantics
-> > > > + * @xattr: the xattr object
-> > > > + */
-> > > > +static void free_simple_xattr_rcu(struct simple_xattr *xattr)
-> > > > +{
-> > > > +	call_rcu(&xattr->rcu, free_simple_xattr_rcu_cb);
-> > > > +}
-> > > > +
-> > > > +/**
-> > > > + * put_simple_xattr_rcu - decrement refcount for xattr object
-> > > > + * @xattr: the xattr object
-> > > > + *
-> > > > + * Decrement the reference count of an xattr object and free it using rcu
-> > > > + * semantics if we're the holder of the last reference. Can handle @xattr being
-> > > > + * NULL.
-> > > > + */
-> > > > +static inline void put_simple_xattr_rcu(struct simple_xattr *xattr)
-> > > > +{
-> > > > +	if (xattr && refcount_dec_and_test(&xattr->ref))
-> > > > +		free_simple_xattr_rcu(xattr);
-> > > > +}
-> > > 
-> > > Looks like the standard combined reference counter and RCU combination,
-> > > goog!
-> > > 
-> > > > +
-> > > > +/**
-> > > > + * simple_xattr_alloc - allocate new xattr object
-> > > > + * @value: value of the xattr object
-> > > > + * @size: size of @value
-> > > > + *
-> > > > + * Allocate a new xattr object and initialize respective members. The caller is
-> > > > + * responsible for handling the name of the xattr.
-> > > > + *
-> > > > + * The initial reference count belongs to the rbtree.
-> > > > + *
-> > > > + * Return: On success a new xattr object is returned. On failure NULL is
-> > > > + * returned.
-> > > >   */
-> > > >  struct simple_xattr *simple_xattr_alloc(const void *value, size_t size)
-> > > >  {
-> > > > @@ -1011,57 +1066,99 @@ struct simple_xattr *simple_xattr_alloc(const void *value, size_t size)
-> > > >  
-> > > >  	new_xattr->size = size;
-> > > >  	memcpy(new_xattr->value, value, size);
-> > > > +	refcount_set(&new_xattr->ref, 1);
-> > > 
-> > > Yes, one is usually needed for the link in the tree.
-> > > 
-> > > >  	return new_xattr;
-> > > >  }
-> > > >  
-> > > > -/*
-> > > > - * xattr GET operation for in-memory/pseudo filesystems
-> > > > +/**
-> > > > + * simple_xattr_get - get an xattr object
-> > > > + * @xattrs: the header of the xattr object
-> > > > + * @name: the name of the xattr to retrieve
-> > > > + * @buffer: the buffer to store the value into
-> > > > + * @size: the size of @buffer
-> > > > + *
-> > > > + * Try to find and retrieve the xattr object associated with @name. If the
-> > > > + * object is found and still in the rbtree bump the reference count.
-> > > > + *
-> > > > + * If @buffer is provided store the value of @xattr in @buffer.
-> > > > + *
-> > > > + * Return: On success zero and on error a negative error code is returned.
-> > > >   */
-> > > >  int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
-> > > >  		     void *buffer, size_t size)
-> > > >  {
-> > > > -	struct simple_xattr *xattr;
-> > > > -	int ret = -ENODATA;
-> > > > -
-> > > > -	spin_lock(&xattrs->lock);
-> > > > -	list_for_each_entry(xattr, &xattrs->head, list) {
-> > > > -		if (strcmp(name, xattr->name))
-> > > > -			continue;
-> > > > -
-> > > > -		ret = xattr->size;
-> > > > -		if (buffer) {
-> > > > -			if (size < xattr->size)
-> > > > -				ret = -ERANGE;
-> > > > -			else
-> > > > -				memcpy(buffer, xattr->value, xattr->size);
-> > > > +	struct simple_xattr *xattr = NULL;
-> > > > +	struct rb_node *rbp;
-> > > > +	int ret, seq = 0;
-> > > > +
-> > > > +	rcu_read_lock();
-> > > > +	do {
-> > > > +		read_seqbegin_or_lock(&xattrs->lock, &seq);
-> > > 
-> > > It might be necessary to try a few times before grabbing the lock, but
-> > > perhaps we should actually hit the problem before increasing complexity.
-> > > 
-> > > > +		rbp = rcu_dereference(xattrs->rb_root.rb_node);
-> > > > +		while (rbp) {
-> > > > +			xattr = rb_entry(rbp, struct simple_xattr, rb_node);
-> > > > +			if (strcmp(xattr->name, name) < 0) {
-> > > > +				rbp = rcu_dereference(rbp->rb_left);
-> > > > +			} else if (strcmp(xattr->name, name) > 0) {
-> > > > +				rbp = rcu_dereference(rbp->rb_right);
-> > > > +			} else {
-> > > > +				if (!likely(refcount_inc_not_zero(&xattr->ref)))
-> > > > +					xattr = NULL;
-> > > > +				break;
-> > > > +			}
-> > > > +			xattr = NULL;
-> > > >  		}
-> > > 
-> > > Maybe this is too specialized, but should this be in the rbtree code,
-> > > perhaps rb_find_first_rcu(), but with an appropriate cmp() function?
-> > > The refcount_inc_not_zero() clearly needs to be in the caller.
-> > > 
-> > > If this is the only instance of this sort of code, it is likely not
-> > > really worthwhile.  But if we have several of these open coded, it would
-> > > be good to consolidate that code.
-> > 
-> > There's more than one instance of this pattern for sure.
-> 
-> OK, might be time to consolidate, then.  ;-)
-> 
-> > > > -		break;
-> > > > +	} while (need_seqretry(&xattrs->lock, seq));
-> > > > +	done_seqretry(&xattrs->lock, seq);
-> > > > +	rcu_read_unlock();
-> > > > +
-> > > > +	if (!xattr)
-> > > > +		return -ENODATA;
-> > > > +
-> > > > +	ret = xattr->size;
-> > > > +	if (buffer) {
-> > > > +		if (size < xattr->size)
-> > > > +			ret = -ERANGE;
-> > > > +		else
-> > > > +			memcpy(buffer, xattr->value, xattr->size);
-> > > 
-> > > If all we are doing is copying to an in-kernel buffer, why not dispense
-> > > with xattr->ref and do the memcpy() under rcu_read_lock() protection?
-> > > This would avoid some overhead from reference-count cache misses.
-> > > 
-> > > Of course, if that memcpy() can page fault or some such, then what
-> > > you have is necessary.  But this is all in-kernel, right?  And if not,
-> > > shouldn't the pointers be decorated with __user or some such?
-> > 
-> > This is just a regular in-kernel memcpy(). Good idea dispensing with the
-> > refcount completely.
-> 
-> Sounds good!
-> 
-> > > >  	}
-> > > > -	spin_unlock(&xattrs->lock);
-> > > > +
-> > > > +	put_simple_xattr_rcu(xattr);
-> > > >  	return ret;
-> > > >  }
-> > > >  
-> > > >  /**
-> > > > - * simple_xattr_set - xattr SET operation for in-memory/pseudo filesystems
-> > > > - * @xattrs: target simple_xattr list
-> > > > - * @name: name of the extended attribute
-> > > > - * @value: value of the xattr. If %NULL, will remove the attribute.
-> > > > - * @size: size of the new xattr
-> > > > - * @flags: %XATTR_{CREATE|REPLACE}
-> > > > - * @removed_size: returns size of the removed xattr, -1 if none removed
-> > > > + * simple_xattr_set - set an xattr object
-> > > > + * @xattrs: the header of the xattr object
-> > > > + * @name: the name of the xattr to retrieve
-> > > > + * @value: the value to store along the xattr
-> > > > + * @size: the size of @value
-> > > > + * @flags: the flags determining how to set the xattr
-> > > > + * @removed_size: the size of the removed xattr
-> > > > + *
-> > > > + * Set a new xattr object.
-> > > > + * If @value is passed a new xattr object will be allocated. If XATTR_REPLACE
-> > > > + * is specified in @flags a matching xattr object for @name must already exist.
-> > > > + * If it does it will be replace with the new xattr object. If it doesn't we
-> > > > + * fail. If XATTR_CREATE is specified and a matching xattr does already exist
-> > > > + * we fail. If it doesn't we create a new xattr. If @flags is zero we simply
-> > > > + * insert the new xattr replacing any existing one.
-> > > >   *
-> > > > - * %XATTR_CREATE is set, the xattr shouldn't exist already; otherwise fails
-> > > > - * with -EEXIST.  If %XATTR_REPLACE is set, the xattr should exist;
-> > > > - * otherwise, fails with -ENODATA.
-> > > > + * If @value is empty and a matching xattr object is found we delete it if
-> > > > + * XATTR_REPLACE is specified in @flags or @flags is zero.
-> > > >   *
-> > > > - * Returns 0 on success, -errno on failure.
-> > > > + * If @value is empty and no matching xattr object for @name is found we do
-> > > > + * nothing if XATTR_CREATE is specified in @flags or @flags is zero. For
-> > > > + * XATTR_REPLACE we fail as mentioned above.
-> > > > + *
-> > > > + * Return: On success zero and on error a negative error code is returned.
-> > > >   */
-> > > >  int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
-> > > >  		     const void *value, size_t size, int flags,
-> > > >  		     ssize_t *removed_size)
-> > > >  {
-> > > > -	struct simple_xattr *xattr;
-> > > > -	struct simple_xattr *new_xattr = NULL;
-> > > > +	struct simple_xattr *xattr = NULL, *new_xattr = NULL;
-> > > > +	struct rb_node *parent = NULL, **rbp;
-> > > >  	int err = 0;
-> > > >  
-> > > >  	if (removed_size)
-> > > > @@ -1080,37 +1177,64 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
-> > > >  		}
-> > > >  	}
-> > > >  
-> > > > -	spin_lock(&xattrs->lock);
-> > > > -	list_for_each_entry(xattr, &xattrs->head, list) {
-> > > > -		if (!strcmp(name, xattr->name)) {
-> > > > -			if (flags & XATTR_CREATE) {
-> > > > -				xattr = new_xattr;
-> > > > -				err = -EEXIST;
-> > > > -			} else if (new_xattr) {
-> > > > -				list_replace(&xattr->list, &new_xattr->list);
-> > > > -				if (removed_size)
-> > > > -					*removed_size = xattr->size;
-> > > > -			} else {
-> > > > -				list_del(&xattr->list);
-> > > > -				if (removed_size)
-> > > > -					*removed_size = xattr->size;
-> > > > -			}
-> > > > -			goto out;
-> > > > -		}
-> > > > -	}
-> > > > -	if (flags & XATTR_REPLACE) {
-> > > > -		xattr = new_xattr;
-> > > > -		err = -ENODATA;
-> > > > -	} else {
-> > > > -		list_add(&new_xattr->list, &xattrs->head);
-> > > > +	write_seqlock(&xattrs->lock);
-> > > > +	rbp = &xattrs->rb_root.rb_node;
-> > > > +	while (*rbp) {
-> > > > +		parent = *rbp;
-> > > > +		xattr = rb_entry(*rbp, struct simple_xattr, rb_node);
-> > > > +		if (strcmp(xattr->name, name) < 0)
-> > > > +			rbp = &(*rbp)->rb_left;
-> > > > +		else if (strcmp(xattr->name, name) > 0)
-> > > > +			rbp = &(*rbp)->rb_right;
-> > > > +		else
-> > > > +			break;
-> > > >  		xattr = NULL;
-> > > >  	}
-> > > > -out:
-> > > > -	spin_unlock(&xattrs->lock);
-> > > > +
-> > > >  	if (xattr) {
-> > > > -		kfree(xattr->name);
-> > > > -		kvfree(xattr);
-> > > > +		/* Fail if XATTR_CREATE is requested and the xattr exists. */
-> > > > +		if (flags & XATTR_CREATE) {
-> > > > +			err = -EEXIST;
-> > > > +			goto out_unlock;
-> > > > +		}
-> > > > +
-> > > > +		if (new_xattr)
-> > > > +			rb_replace_node_rcu(&xattr->rb_node,
-> > > > +					    &new_xattr->rb_node,
-> > > > +					    &xattrs->rb_root);
-> > > > +		else
-> > > > +			rb_erase(&xattr->rb_node, &xattrs->rb_root);
-> > > 
-> > > Is rb_erase() RCU-reader-safe?  It is not immediately obvious to me that it
-> > > is.  I would expect an rcu_assign_pointer() or three in there somewhere.
-> > 
-> > This question send me down an interesting rabbit hole which is
-> > (unironically) excellent. Afaiu, yes rb_erase() isn't rcu safe. And our
-> > rbtree implementation in general isn't rcu safe in the face of
-> > rebalances (I think you linked to a paper that illustrates how one would
-> > need to go about doing this though.). So all users deal with that using
-> > the seq+rcu-rbtree pattern. I trust you'll correct me if I'm wrong: The
-> > assumption of current users seems to be that searching the rbtree under
-> > the rcu lock - i.e., without having taken the read seqlock - is safe
-> > against oops or iow against corrupt pointers if a writer changes the
-> > rbtree during the walk. The seqlock is supposed to prevent garbage/stale
-> > results. At least all users of this pattern seem to rely on the fact
-> > that a rcu only walk cannot oops. Is that assumption safe?
-> 
-> Kind of, maybe?
-> 
-> To be fully safe, you need to check the seqlock during the actual tree
-> traversal.  Otherwise, an unfortunate series of rebalances or rotations
-> or whatever could potentially run a given reader forever in circles.
-> Though the odds of this actually continuing for any length of time are
-> of course extremely low.
-> 
-> And unmarked accesses to shared variables having conflicting concurrent
-> accesses is playing with fire, though one hopes that stores of pointers
-> would end up wsing single machine instructions.  In theory, there are
-> a number of ways that compiler optimizations could cause trouble.
+A while ago Vasily reported that it is possible to set a large number of
+xattrs on inodes of filesystems that make use of the simple xattr
+infrastructure. This includes all kernfs-based filesystems that support
+xattrs (e.g., cgroupfs) and tmpfs. Both cgroupfs and tmpfs can be
+mounted by unprivileged users in unprivileged containers and root in an
+unprivileged container can set an unrestricted number of security.*
+xattrs and privileged users can also set unlimited trusted.* xattrs. As
+there are apparently users that have a fairly large number of xattrs we
+should scale a bit better. Other xattrs such as user.* are restricted
+for kernfs-based instances to a fairly limited number.
 
-Since this is code reachable from unprivileged userspace I'd rather not
-play with fire here at all. Even if all of this might turn out to be
-just a theoretical possibility.
+Using a simple linked list protected by a spinlock used for set, get,
+and list operations doesn't scale well if users use a lot of xattrs even
+if it's not a crazy number. There's no need to bring in the big guns
+like rhashtables or rw semaphores for this. An rbtree with a rwlock, or
+limited rcu semanics and seqlock is enough.
 
-I think rcu+seq+rbtree would've made for an interesting, sufficiently
-scalable solution with still limited complexity. It's not really too
-hard to understand and isn't bloated. But given that we have some valid
-concerns we should de-fancy-fy and use an rwlock_t. Roman alrady
-mentioned this and I had this is an implementation before this one
-(together with rhashtable as I've mentioned). I'll send out the patches
-shortly. I'm just finishing tests.
+It scales within the constraints we are working in. By far the most
+common operation is getting an xattr. Setting xattrs should be a
+moderately rare operation. And listxattr() often only happens when
+copying xattrs between files or with the filey. Holding a lock across
+listxattr() is unproblematic because it doesn't list the values of
+xattrs. It can only be used to list the names of all xattrs set on a
+file. And the number of xattr names that can be listed with listxattr()
+is limited to XATTR_LIST_MAX aka 65536 bytes. If a larger buffer is
+passed then vfs_listxattr() caps it to XATTR_LIST_MAX and if more xattr
+names are found it will return -EFBIG. In short, the maximum amount of
+memory that can be retrieved via listxattr() is limited.
 
-> 
-> > Another point that popped up discussing this was that there's an
-> > unlikely attack scenario that David (Howells) made me aware of. While
-> > walking the rbtree under rcu only without the read seqlock it is
-> > theoretically possible for the rbtree to keep being expanded and cause
-> > the rcu walk to "never finish". Though I'm unsure whether that's really
-> > a practically possible attack.
-> 
-> Perhaps David's scenario is similar to my eternal rebalance?
+Of course, the API is broken as documented on xattr(7) already. In the
+future we might want to address this but for now this is the world we
+live in and have lived for a long time. But it does indeed mean that
+once an application goes over XATTR_LIST_MAX limit of xattrs set on an
+inode it isn't possible to copy the file and include its xattrs in the
+copy unless the caller knows all xattrs or limits the copy of the xattrs
+to important ones it knows by name (At least for tmpfs, and kernfs-based
+filesystems. Other filesystems might provide ways of achieving this.).
 
-Yeah, it certainly was.
+Bonus of this port to rbtree+rwlock is that we shrink the memory
+consumption for users of the simple xattr infrastructure.
 
-> 
-> > Very interested to hear your thoughts here!
-> 
-> I would of course feel better if there were fewer vulnerabilities.
+Also add proper kernel documentation to all the functions.
+A big thanks to Paul for his comments.
 
-I agree so we should change the implementation as mentioned above.
+Cc: Vasily Averin <vvs@openvz.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>
+Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+---
 
-> 
-> > > > +		if (!err && removed_size)
-> > > > +			*removed_size = xattr->size;
-> > > > +	} else {
-> > > > +		/* Fail if XATTR_REPLACE is requested but no xattr is found. */
-> > > > +		if (flags & XATTR_REPLACE) {
-> > > > +			err = -ENODATA;
-> > > > +			goto out_unlock;
-> > > > +		}
-> > > > +
-> > > > +		/*
-> > > > +		 * If XATTR_CREATE or no flags are specified together with a
-> > > > +		 * new value simply insert it.
-> > > > +		 */
-> > > > +		if (new_xattr) {
-> > > > +			rb_link_node_rcu(&new_xattr->rb_node, parent, rbp);
-> > > > +			rb_insert_color(&new_xattr->rb_node, &xattrs->rb_root);
-> > > > +		}
-> > > > +
-> > > > +		/*
-> > > > +		 * If XATTR_CREATE or no flags are specified and neither an old
-> > > > +		 * or new xattr were found/exist then we don't need to do
-> > > > +		 * anything.
-> > > > +		 */
-> > > 
-> > > As before, some of this looks like it should be in the rbtree implementation.
-> > > On the other hand, and add-or-replace function like this might be rare.  And
-> > > there are only two other occurrences, both of which look quite specialize.
-> > 
-> > If you think the current rcu search pattern is sufficiently safe even
-> > against rb_erase() then we might want to give the two callers/users at
-> > least rb_find_first_rcu() directly in rbtree.h which you suggested
-> > further above.
-> 
-> If we are going to have RCU-protected rbtrees, it might be good for the
-> rbtree code to know that it is supposed to handle RCU traversals.  ;-)
+Notes:
+    In the v1 and v2 of this patch we used an rbtree which was protected by an
+    rcu+seqlock combination. During the discussion it became clear that there's
+    some valid concern how safe it is to combine rcu with rbtrees. While most of
+    the issues are highly unlikely to matter in practice the code here can be
+    reached by unprivileged users rather directly so we should not be adventurous.
+    Instead of the rcu+seqlock combination simply use an rwlock. This will scale
+    sufficiently as well and had been one of the implementations I considered and
+    wrote a little while ago. Thanks to Paul for some deeper insights into issues
+    associated with rcu and rbtrees!
+    
+    In addition to this patch I would like to propose that we restrict the number
+    of xattrs for the simple xattr infrastructure via XATTR_MAX_LIST bytes. In
+    other words, we restrict the number of xattrs for simple xattr filesystems to
+    the number of xattrs names that can be retrieved via listxattr(). That should
+    be about 2000 to 3000 xattrs per inode which is more than enough. We should
+    risk this and see if we get any regression reports from userswith this
+    approach.
+    
+    This should be as simple as adding a max_list member to struct simple_xattrs
+    and initialize it with XATTR_MAX_LIST. Set operations would then check against
+    this field whether the new xattr they are trying to set will fit and return
+    -EFBIG otherwise. I think that might be a good approach to get rid of the in
+    principle unbounded number of xattrs that can be set via the simple xattr
+    infrastructure. I think this is a regression risk worth taking.
+    
+    /* v2 */
+    Christian Brauner <brauner@kernel.org>:
+    - Fix kernel doc.
+    - Remove accidental leftover union from previous iteration.
+    
+    /* v3 */
+    Port the whole thing to use a simple rwlock instead of rcu+seqlock.
+    
+    "Paul E. McKenney" <paulmck@kernel.org>:
+    - Fix simple_xattr_add() by searching the correct slot in the rbtree first.
+    
+    Roman Gushchin <roman.gushchin@linux.dev>:
+    - Avoid calling strcmp() multiple times.
 
-I honestly think this would make for a pretty nifty bachelor thesis
-project. :)
+ fs/xattr.c            | 317 +++++++++++++++++++++++++++++++++---------
+ include/linux/xattr.h |  38 ++---
+ mm/shmem.c            |   2 +-
+ 3 files changed, 260 insertions(+), 97 deletions(-)
 
-Thanks!
-Christian
+diff --git a/fs/xattr.c b/fs/xattr.c
+index 61107b6bbed2..402d9d43fde0 100644
+--- a/fs/xattr.c
++++ b/fs/xattr.c
+@@ -992,8 +992,29 @@ const char *xattr_full_name(const struct xattr_handler *handler,
+ }
+ EXPORT_SYMBOL(xattr_full_name);
+ 
+-/*
+- * Allocate new xattr and copy in the value; but leave the name to callers.
++/**
++ * free_simple_xattr - free an xattr object
++ * @xattr: the xattr object
++ *
++ * Free the xattr object. Can handle @xattr being NULL.
++ */
++static inline void free_simple_xattr(struct simple_xattr *xattr)
++{
++	if (xattr)
++		kfree(xattr->name);
++	kvfree(xattr);
++}
++
++/**
++ * simple_xattr_alloc - allocate new xattr object
++ * @value: value of the xattr object
++ * @size: size of @value
++ *
++ * Allocate a new xattr object and initialize respective members. The caller is
++ * responsible for handling the name of the xattr.
++ *
++ * Return: On success a new xattr object is returned. On failure NULL is
++ * returned.
+  */
+ struct simple_xattr *simple_xattr_alloc(const void *value, size_t size)
+ {
+@@ -1014,20 +1035,69 @@ struct simple_xattr *simple_xattr_alloc(const void *value, size_t size)
+ 	return new_xattr;
+ }
+ 
+-/*
+- * xattr GET operation for in-memory/pseudo filesystems
++/**
++ * rbtree_simple_xattr_cmp - compare xattr name with current rbtree xattr entry
++ * @key: xattr name
++ * @node: current node
++ *
++ * Compare the xattr name with the xattr name attached to @node in the rbtree.
++ *
++ * Return: Negative value if continuing left, positive if continuing right, 0
++ * if the xattr attached to @node matches @key.
++ */
++static int rbtree_simple_xattr_cmp(const void *key, const struct rb_node *node)
++{
++	const char *xattr_name = key;
++	const struct simple_xattr *xattr;
++
++	xattr = rb_entry(node, struct simple_xattr, rb_node);
++	return strcmp(xattr->name, xattr_name);
++}
++
++/**
++ * rbtree_simple_xattr_node_cmp - compare two xattr rbtree nodes
++ * @new_node: new node
++ * @node: current node
++ *
++ * Compare the xattr attached to @new_node with the xattr attached to @node.
++ *
++ * Return: Negative value if continuing left, positive if continuing right, 0
++ * if the xattr attached to @new_node matches the xattr attached to @node.
++ */
++static int rbtree_simple_xattr_node_cmp(struct rb_node *new_node,
++					const struct rb_node *node)
++{
++	struct simple_xattr *xattr;
++	xattr = rb_entry(new_node, struct simple_xattr, rb_node);
++	return rbtree_simple_xattr_cmp(xattr->name, node);
++}
++
++/**
++ * simple_xattr_get - get an xattr object
++ * @xattrs: the header of the xattr object
++ * @name: the name of the xattr to retrieve
++ * @buffer: the buffer to store the value into
++ * @size: the size of @buffer
++ *
++ * Try to find and retrieve the xattr object associated with @name.
++ * If @buffer is provided store the value of @xattr in @buffer
++ * otherwise just return the length. The size of @buffer is limited
++ * to XATTR_SIZE_MAX which currently is 65536.
++ *
++ * Return: On success the length of the xattr value is returned. On error a
++ * negative error code is returned.
+  */
+ int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
+ 		     void *buffer, size_t size)
+ {
+-	struct simple_xattr *xattr;
++	struct simple_xattr *xattr = NULL;
++	struct rb_node *rbp;
+ 	int ret = -ENODATA;
+ 
+-	spin_lock(&xattrs->lock);
+-	list_for_each_entry(xattr, &xattrs->head, list) {
+-		if (strcmp(name, xattr->name))
+-			continue;
+-
++	read_lock(&xattrs->lock);
++	rbp = rb_find(name, &xattrs->rb_root, rbtree_simple_xattr_cmp);
++	if (rbp) {
++		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
+ 		ret = xattr->size;
+ 		if (buffer) {
+ 			if (size < xattr->size)
+@@ -1035,34 +1105,44 @@ int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
+ 			else
+ 				memcpy(buffer, xattr->value, xattr->size);
+ 		}
+-		break;
+ 	}
+-	spin_unlock(&xattrs->lock);
++	read_unlock(&xattrs->lock);
+ 	return ret;
+ }
+ 
+ /**
+- * simple_xattr_set - xattr SET operation for in-memory/pseudo filesystems
+- * @xattrs: target simple_xattr list
+- * @name: name of the extended attribute
+- * @value: value of the xattr. If %NULL, will remove the attribute.
+- * @size: size of the new xattr
+- * @flags: %XATTR_{CREATE|REPLACE}
+- * @removed_size: returns size of the removed xattr, -1 if none removed
++ * simple_xattr_set - set an xattr object
++ * @xattrs: the header of the xattr object
++ * @name: the name of the xattr to retrieve
++ * @value: the value to store along the xattr
++ * @size: the size of @value
++ * @flags: the flags determining how to set the xattr
++ * @removed_size: the size of the removed xattr
++ *
++ * Set a new xattr object.
++ * If @value is passed a new xattr object will be allocated. If XATTR_REPLACE
++ * is specified in @flags a matching xattr object for @name must already exist.
++ * If it does it will be replaced with the new xattr object. If it doesn't we
++ * fail. If XATTR_CREATE is specified and a matching xattr does already exist
++ * we fail. If it doesn't we create a new xattr. If @flags is zero we simply
++ * insert the new xattr replacing any existing one.
++ *
++ * If @value is empty and a matching xattr object is found we delete it if
++ * XATTR_REPLACE is specified in @flags or @flags is zero.
+  *
+- * %XATTR_CREATE is set, the xattr shouldn't exist already; otherwise fails
+- * with -EEXIST.  If %XATTR_REPLACE is set, the xattr should exist;
+- * otherwise, fails with -ENODATA.
++ * If @value is empty and no matching xattr object for @name is found we do
++ * nothing if XATTR_CREATE is specified in @flags or @flags is zero. For
++ * XATTR_REPLACE we fail as mentioned above.
+  *
+- * Returns 0 on success, -errno on failure.
++ * Return: On success zero and on error a negative error code is returned.
+  */
+ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+ 		     const void *value, size_t size, int flags,
+ 		     ssize_t *removed_size)
+ {
+-	struct simple_xattr *xattr;
+-	struct simple_xattr *new_xattr = NULL;
+-	int err = 0;
++	struct simple_xattr *xattr = NULL, *new_xattr = NULL;
++	struct rb_node *parent = NULL, **rbp;
++	int err = 0, ret;
+ 
+ 	if (removed_size)
+ 		*removed_size = -1;
+@@ -1075,42 +1155,68 @@ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+ 
+ 		new_xattr->name = kstrdup(name, GFP_KERNEL);
+ 		if (!new_xattr->name) {
+-			kvfree(new_xattr);
++			free_simple_xattr(new_xattr);
+ 			return -ENOMEM;
+ 		}
+ 	}
+ 
+-	spin_lock(&xattrs->lock);
+-	list_for_each_entry(xattr, &xattrs->head, list) {
+-		if (!strcmp(name, xattr->name)) {
+-			if (flags & XATTR_CREATE) {
+-				xattr = new_xattr;
+-				err = -EEXIST;
+-			} else if (new_xattr) {
+-				list_replace(&xattr->list, &new_xattr->list);
+-				if (removed_size)
+-					*removed_size = xattr->size;
+-			} else {
+-				list_del(&xattr->list);
+-				if (removed_size)
+-					*removed_size = xattr->size;
+-			}
+-			goto out;
+-		}
+-	}
+-	if (flags & XATTR_REPLACE) {
+-		xattr = new_xattr;
+-		err = -ENODATA;
+-	} else {
+-		list_add(&new_xattr->list, &xattrs->head);
+-		xattr = NULL;
++	write_lock(&xattrs->lock);
++	rbp = &xattrs->rb_root.rb_node;
++	while (*rbp) {
++		parent = *rbp;
++		ret = rbtree_simple_xattr_cmp(name, *rbp);
++		if (ret < 0)
++			rbp = &(*rbp)->rb_left;
++		else if (ret > 0)
++			rbp = &(*rbp)->rb_right;
++		else
++			xattr = rb_entry(*rbp, struct simple_xattr, rb_node);
++		if (xattr)
++			break;
+ 	}
+-out:
+-	spin_unlock(&xattrs->lock);
++
+ 	if (xattr) {
+-		kfree(xattr->name);
+-		kvfree(xattr);
++		/* Fail if XATTR_CREATE is requested and the xattr exists. */
++		if (flags & XATTR_CREATE) {
++			err = -EEXIST;
++			goto out_unlock;
++		}
++
++		if (new_xattr)
++			rb_replace_node(&xattr->rb_node, &new_xattr->rb_node,
++					&xattrs->rb_root);
++		else
++			rb_erase(&xattr->rb_node, &xattrs->rb_root);
++		if (!err && removed_size)
++			*removed_size = xattr->size;
++	} else {
++		/* Fail if XATTR_REPLACE is requested but no xattr is found. */
++		if (flags & XATTR_REPLACE) {
++			err = -ENODATA;
++			goto out_unlock;
++		}
++
++		/*
++		 * If XATTR_CREATE or no flags are specified together with a
++		 * new value simply insert it.
++		 */
++		if (new_xattr) {
++			rb_link_node(&new_xattr->rb_node, parent, rbp);
++			rb_insert_color(&new_xattr->rb_node, &xattrs->rb_root);
++		}
++
++		/*
++		 * If XATTR_CREATE or no flags are specified and neither an
++		 * old or new xattr exist then we don't need to do anything.
++		 */
+ 	}
++
++out_unlock:
++	write_unlock(&xattrs->lock);
++	if (err)
++		free_simple_xattr(new_xattr);
++	else
++		free_simple_xattr(xattr);
+ 	return err;
+ 
+ }
+@@ -1134,14 +1240,31 @@ static int xattr_list_one(char **buffer, ssize_t *remaining_size,
+ 	return 0;
+ }
+ 
+-/*
+- * xattr LIST operation for in-memory/pseudo filesystems
++/**
++ * simple_xattr_list - list all xattr objects
++ * @inode: inode from which to get the xattrs
++ * @xattrs: the header of the xattr object
++ * @buffer: the buffer to store all xattrs into
++ * @size: the size of @buffer
++ *
++ * List all xattrs associated with @inode. If @buffer is NULL we returned
++ * the required size of the buffer. If @buffer is provided we store the
++ * xattrs value into it provided it is big enough.
++ *
++ * Note, the number of xattr names that can be listed with listxattr(2) is
++ * limited to XATTR_LIST_MAX aka 65536 bytes. If a larger buffer is passed
++ * then vfs_listxattr() caps it to XATTR_LIST_MAX and if more xattr names
++ * are found it will return -E2BIG.
++ *
++ * Return: On success the required size or the size of the copied xattrs is
++ * returned. On error a negative error code is returned.
+  */
+ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+ 			  char *buffer, size_t size)
+ {
+ 	bool trusted = capable(CAP_SYS_ADMIN);
+ 	struct simple_xattr *xattr;
++	struct rb_node *rbp;
+ 	ssize_t remaining_size = size;
+ 	int err = 0;
+ 
+@@ -1162,8 +1285,10 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+ 	}
+ #endif
+ 
+-	spin_lock(&xattrs->lock);
+-	list_for_each_entry(xattr, &xattrs->head, list) {
++	read_lock(&xattrs->lock);
++	for (rbp = rb_first(&xattrs->rb_root); rbp; rbp = rb_next(rbp)) {
++		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
++
+ 		/* skip "trusted." attributes for unprivileged callers */
+ 		if (!trusted && xattr_is_trusted(xattr->name))
+ 			continue;
+@@ -1172,18 +1297,76 @@ ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
+ 		if (err)
+ 			break;
+ 	}
+-	spin_unlock(&xattrs->lock);
++	read_unlock(&xattrs->lock);
+ 
+ 	return err ? err : size - remaining_size;
+ }
+ 
+-/*
+- * Adds an extended attribute to the list
++/**
++ * rbtree_simple_xattr_less - compare two xattr rbtree nodes
++ * @new_node: new node
++ * @node: current node
++ *
++ * Compare the xattr attached to @new_node with the xattr attached to @node.
++ * Note that this function technically tolerates duplicate entries.
++ *
++ * Return: True if insertion point in the rbtree is found.
+  */
+-void simple_xattr_list_add(struct simple_xattrs *xattrs,
+-			   struct simple_xattr *new_xattr)
++static bool rbtree_simple_xattr_less(struct rb_node *new_node,
++				     const struct rb_node *node)
+ {
+-	spin_lock(&xattrs->lock);
+-	list_add(&new_xattr->list, &xattrs->head);
+-	spin_unlock(&xattrs->lock);
++	return rbtree_simple_xattr_node_cmp(new_node, node) < 0;
++}
++
++/**
++ * simple_xattr_add - add xattr objects
++ * @xattrs: the header of the xattr object
++ * @new_xattr: the xattr object to add
++ *
++ * Add an xattr object to @xattrs. This assumes no replacement or removal
++ * of matching xattrs is wanted. Should only be called during inode
++ * initialization when a few distinct initial xattrs are supposed to be set.
++ */
++void simple_xattr_add(struct simple_xattrs *xattrs,
++		      struct simple_xattr *new_xattr)
++{
++	write_lock(&xattrs->lock);
++	rb_add(&new_xattr->rb_node, &xattrs->rb_root, rbtree_simple_xattr_less);
++	write_unlock(&xattrs->lock);
++}
++
++/**
++ * simple_xattrs_init - initialize new xattr header
++ * @xattrs: header to initialize
++ *
++ * Initialize relevant fields of a an xattr header.
++ */
++void simple_xattrs_init(struct simple_xattrs *xattrs)
++{
++	xattrs->rb_root = RB_ROOT;
++	rwlock_init(&xattrs->lock);
++}
++
++/**
++ * simple_xattrs_free - free xattrs
++ * @xattrs: xattr header whose xattrs to destroy
++ *
++ * Destroy all xattrs in @xattr. When this is called no one can hold a
++ * reference to any of the xattrs anymore.
++ */
++void simple_xattrs_free(struct simple_xattrs *xattrs)
++{
++	struct rb_node *rbp;
++
++	rbp = rb_first(&xattrs->rb_root);
++	while (rbp) {
++		struct simple_xattr *xattr;
++		struct rb_node *rbp_next;
++
++		rbp_next = rb_next(rbp);
++		xattr = rb_entry(rbp, struct simple_xattr, rb_node);
++		rb_erase(&xattr->rb_node, &xattrs->rb_root);
++		free_simple_xattr(xattr);
++		rbp = rbp_next;
++	}
+ }
+diff --git a/include/linux/xattr.h b/include/linux/xattr.h
+index 4c379d23ec6e..b559c6bbcad0 100644
+--- a/include/linux/xattr.h
++++ b/include/linux/xattr.h
+@@ -80,48 +80,28 @@ static inline const char *xattr_prefix(const struct xattr_handler *handler)
+ }
+ 
+ struct simple_xattrs {
+-	struct list_head head;
+-	spinlock_t lock;
++	struct rb_root rb_root;
++	rwlock_t lock;
+ };
+ 
+ struct simple_xattr {
+-	struct list_head list;
++	struct rb_node rb_node;
+ 	char *name;
+ 	size_t size;
+ 	char value[];
+ };
+ 
+-/*
+- * initialize the simple_xattrs structure
+- */
+-static inline void simple_xattrs_init(struct simple_xattrs *xattrs)
+-{
+-	INIT_LIST_HEAD(&xattrs->head);
+-	spin_lock_init(&xattrs->lock);
+-}
+-
+-/*
+- * free all the xattrs
+- */
+-static inline void simple_xattrs_free(struct simple_xattrs *xattrs)
+-{
+-	struct simple_xattr *xattr, *node;
+-
+-	list_for_each_entry_safe(xattr, node, &xattrs->head, list) {
+-		kfree(xattr->name);
+-		kvfree(xattr);
+-	}
+-}
+-
++void simple_xattrs_init(struct simple_xattrs *xattrs);
++void simple_xattrs_free(struct simple_xattrs *xattrs);
+ struct simple_xattr *simple_xattr_alloc(const void *value, size_t size);
+ int simple_xattr_get(struct simple_xattrs *xattrs, const char *name,
+ 		     void *buffer, size_t size);
+ int simple_xattr_set(struct simple_xattrs *xattrs, const char *name,
+ 		     const void *value, size_t size, int flags,
+ 		     ssize_t *removed_size);
+-ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs, char *buffer,
+-			  size_t size);
+-void simple_xattr_list_add(struct simple_xattrs *xattrs,
+-			   struct simple_xattr *new_xattr);
++ssize_t simple_xattr_list(struct inode *inode, struct simple_xattrs *xattrs,
++			  char *buffer, size_t size);
++void simple_xattr_add(struct simple_xattrs *xattrs,
++		      struct simple_xattr *new_xattr);
+ 
+ #endif	/* _LINUX_XATTR_H */
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 8280a5cb48df..2872e6607b2c 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -3255,7 +3255,7 @@ static int shmem_initxattrs(struct inode *inode,
+ 		memcpy(new_xattr->name + XATTR_SECURITY_PREFIX_LEN,
+ 		       xattr->name, len);
+ 
+-		simple_xattr_list_add(&info->xattrs, new_xattr);
++		simple_xattr_add(&info->xattrs, new_xattr);
+ 	}
+ 
+ 	return 0;
+
+base-commit: 9abf2313adc1ca1b6180c508c25f22f9395cc780
+-- 
+2.34.1
+
