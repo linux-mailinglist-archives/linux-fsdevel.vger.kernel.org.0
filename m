@@ -2,111 +2,183 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C3ED625D86
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 15:53:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D2E625EE5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 16:59:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234618AbiKKOxR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Nov 2022 09:53:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56906 "EHLO
+        id S234303AbiKKP7U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Nov 2022 10:59:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233967AbiKKOxO (ORCPT
+        with ESMTP id S233842AbiKKP7S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Nov 2022 09:53:14 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E71B35E9E5;
-        Fri, 11 Nov 2022 06:53:12 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 2F6BEB8262D;
-        Fri, 11 Nov 2022 14:53:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC919C433D6;
-        Fri, 11 Nov 2022 14:53:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668178389;
-        bh=WGPrvryZfOFC3wzVBHxzozHV97DRR/WI/YY1vZ/2/qE=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=EoNlpBMNR1ejsTCtegykgDZlopZro00NIke6A2KclFEqsmSdnfH+ul/G/mMGQgvaD
-         Cbd4ng3JRSeDL7S7/wrTgoTTf3nXutv2+6gUlR8CZbWnfm26pdLK5YaJ/BLwVPE//0
-         6i1xJD4nA46ZkJ72rfMGU6QkgSbUAsDQruNsTbSLZnGfVKhCrZifT6cp4cTNJvjW4s
-         9nH/QMKqatRhijj7R2P8oQt6EbuJU9vcaKVvCZKEgHEkfZS+3CQHSOvBQkUWIBuWRs
-         M5CSt894nfvGqdFLVMYrtX4cvqgjOspX3EMTmkNRbncYFpE6otDOvPIrFd1186KKKL
-         8i8ABK+aeOxtg==
-Received: by mail-oa1-f47.google.com with SMTP id 586e51a60fabf-12c8312131fso5651905fac.4;
-        Fri, 11 Nov 2022 06:53:09 -0800 (PST)
-X-Gm-Message-State: ANoB5pmSkGN1ZlbttgRIUpBoPoVx9aOfj+XihP+U7Pj0u/qYpNvac1pU
-        TEuU9X0FH4FPtQp0MM01f7k7Wb7OnRnTeTK7xBs=
-X-Google-Smtp-Source: AA0mqf6vJpHLx34mdSsrAzt/LKXi2o4W6WHbkOsKLVu8I5IX1EvXNngZJHlIpEv2ym4TxyVwGPbZMTx23gLOrARs2e0=
-X-Received: by 2002:a05:6870:5882:b0:13d:5167:43e3 with SMTP id
- be2-20020a056870588200b0013d516743e3mr1081624oab.257.1668178388804; Fri, 11
- Nov 2022 06:53:08 -0800 (PST)
+        Fri, 11 Nov 2022 10:59:18 -0500
+X-Greylist: delayed 2394 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 11 Nov 2022 07:59:17 PST
+Received: from smtpout.efficios.com (smtpout.efficios.com [IPv6:2607:5300:203:5aae::31e5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB2623C6CE;
+        Fri, 11 Nov 2022 07:59:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+        s=smtpout1; t=1668177821;
+        bh=EYvFyeYoIXdpRZUrDIt9Kwnd3gAkvdIgxw1lIXG8SKY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=l66N3oiBVl0WpLOT0hkLWrSBLQJsJSW4+ouPxFZH5QD5KKmXDB6CMjzwtM8VVLLpX
+         a4mvKpJXJiuV9Qw3ANDqSRII+7K5waLtTRLYZ90oeO3HFXyKJpVusI8jz1TOHWpOiX
+         dJRcqsFN0mN40E/3U0KhejsRReLLA8QsqIZLb9mPKd4oL95EyLfXlhHXXYFtuTieM/
+         mQitMOSC/OQ89QyOELCnHdOHRibH9OXvgNxVpUIxiREjJL0PTMu3jrCYcnxgmXCUU+
+         h1vYvH07RGr00OmtJNBP+zQXctnrrr738WJXcAPDjU36sTOHtCkNno5wnO/vjAKkO+
+         R+/kME1qSOXkw==
+Received: from [172.16.0.153] (192-222-180-24.qc.cable.ebox.net [192.222.180.24])
+        by smtpout.efficios.com (Postfix) with ESMTPSA id 4N81fh5HFrzgt1;
+        Fri, 11 Nov 2022 09:43:40 -0500 (EST)
+Message-ID: <02cdf436-6942-89a7-98b2-bfa75ba5f301@efficios.com>
+Date:   Fri, 11 Nov 2022 09:43:49 -0500
 MIME-Version: 1.0
-Received: by 2002:a05:6839:1a4e:0:0:0:0 with HTTP; Fri, 11 Nov 2022 06:53:08
- -0800 (PST)
-In-Reply-To: <20221110155522.556225-1-amir73il@gmail.com>
-References: <20221110155522.556225-1-amir73il@gmail.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Fri, 11 Nov 2022 23:53:08 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd--CCur4Pd9RhSTzV3ra7CV8zqsDgj-iOerun0sub1Xdw@mail.gmail.com>
-Message-ID: <CAKYAXd--CCur4Pd9RhSTzV3ra7CV8zqsDgj-iOerun0sub1Xdw@mail.gmail.com>
-Subject: Re: [PATCH] vfs: fix copy_file_range() averts filesystem freeze protection
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
-        Luis Henriques <lhenriques@suse.com>,
-        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        linux-nfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+Subject: Re: [PATCH printk v3 00/40] reduce console_lock scope
+Content-Language: en-US
+To:     John Ogness <john.ogness@linutronix.de>,
+        Petr Mladek <pmladek@suse.com>,
+        "Paul E. McKenney" <paulmck@kernel.org>,
+        Frederic Weisbecker <frederic@kernel.org>
+Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org,
+        Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+        Josh Triplett <josh@joshtriplett.org>,
+        Lai Jiangshan <jiangshanlai@gmail.com>,
+        Joel Fernandes <joel@joelfernandes.org>, rcu@vger.kernel.org,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>,
+        kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        linux-um@lists.infradead.org, Luis Chamberlain <mcgrof@kernel.org>,
+        Aaron Tomlin <atomlin@redhat.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        =?UTF-8?Q?Ilpo_J=c3=a4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Tony Lindgren <tony@atomide.com>,
+        Lukas Wunner <lukas@wunner.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org, Ard Biesheuvel <ardb@kernel.org>,
+        linux-efi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Alim Akhtar <alim.akhtar@samsung.com>,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org,
+        Michal Simek <michal.simek@xilinx.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mathias Nyman <mathias.nyman@linux.intel.com>,
+        linux-usb@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+        Helge Deller <deller@gmx.de>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        Juergen Gross <jgross@suse.com>,
+        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+        Tom Rix <trix@redhat.com>, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org
+References: <20221107141638.3790965-1-john.ogness@linutronix.de>
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+In-Reply-To: <20221107141638.3790965-1-john.ogness@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-11-11 0:55 GMT+09:00, Amir Goldstein <amir73il@gmail.com>:
-> Commit 868f9f2f8e00 ("vfs: fix copy_file_range() regression in cross-fs
-> copies") removed fallback to generic_copy_file_range() for cross-fs
-> cases inside vfs_copy_file_range().
->
-> To preserve behavior of nfsd and ksmbd server-side-copy, the fallback to
-> generic_copy_file_range() was added in nfsd and ksmbd code, but that
-> call is missing sb_start_write(), fsnotify hooks and more.
->
-> Ideally, nfsd and ksmbd would pass a flag to vfs_copy_file_range() that
-> will take care of the fallback, but that code would be subtle and we got
-> vfs_copy_file_range() logic wrong too many times already.
->
-> Instead, add a flag to explicitly request vfs_copy_file_range() to
-> perform only generic_copy_file_range() and let nfsd and ksmbd use this
-> flag only in the fallback path.
->
-> This choise keeps the logic changes to minimum in the non-nfsd/ksmbd code
-> paths to reduce the risk of further regressions.
->
-> Fixes: 868f9f2f8e00 ("vfs: fix copy_file_range() regression in cross-fs
-> copies")
-> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
-> ---
->
-> Hi Al,
->
-> Another fix for the long tradition of copy_file_range() regressions.
-> This one only affected cross-fs server-side-copy from nfsd/ksmbd.
->
-> I ran the copy_range fstests group on ext4/xfs/overlay to verify no
-> regressions in local fs and nfsv3/nfsv4 to test server-side-copy.
->
-> I also patched copy_file_range() to test the nfsd fallback code on
-> local fs.
->
-> Namje, could you please test ksmbd.
-Works fine. You can add tested-by tag for ksmbd.
-Tested-by: Namjae Jeon <linkinjeon@kernel.org>
+On 2022-11-07 09:15, John Ogness wrote:
+[...]
+> 
+> The base commit for this series is from Paul McKenney's RCU tree
+> and provides an NMI-safe SRCU implementation [1]. Without the
+> NMI-safe SRCU implementation, this series is not less safe than
+> mainline. But we will need the NMI-safe SRCU implementation for
+> atomic consoles anyway, so we might as well get it in
+> now. Especially since it _does_ increase the reliability for
+> mainline in the panic path.
 
->
-> Thanks,
-> Amir.
+So, your email got me to review the SRCU nmi-safe series:
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/log/?h=srcunmisafe.2022.10.21a
+
+Especially this commit:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git/commit/?h=srcunmisafe.2022.10.21a&id=5d0f5953b60f5f7a278085b55ddc73e2932f4c33
+
+I disagree with the overall approach taken there, which is to create
+yet another SRCU flavor, this time with explicit "nmi-safe" read-locks.
+This adds complexity to the kernel APIs and I think we can be clever
+about this and make SRCU nmi-safe without requiring a whole new incompatible
+API.
+
+You can find the basic idea needed to achieve this in the libside RCU
+user-space implementation. I needed to introduce a split-counter concept
+to support rseq vs atomics to keep track of per-cpu grace period counters.
+The "rseq" counter is the fast-path, but if rseq fails, the abort handler
+uses the atomic counter instead.
+
+https://github.com/compudj/side/blob/main/src/rcu.h#L23
+
+struct side_rcu_percpu_count {
+	uintptr_t begin;
+	uintptr_t rseq_begin;
+	uintptr_t end;
+	uintptr_t rseq_end;
+}  __attribute__((__aligned__(SIDE_CACHE_LINE_SIZE)));
+
+The idea is to "split" each percpu counter into two counters, one for rseq,
+and the other for atomics. When a grace period wants to observe the value of
+a percpu counter, it simply sums the two counters:
+
+https://github.com/compudj/side/blob/main/src/rcu.c#L112
+
+The same idea can be applied to SRCU in the kernel: one counter for percpu ops,
+and the other counter for nmi context, so basically:
+
+srcu_read_lock()
+
+if (likely(!in_nmi()))
+   increment the percpu-ops lock counter
+else
+   increment the atomic lock counter
+
+srcu_read_unlock()
+
+if (likely(!in_nmi()))
+   increment the percpu-ops unlock counter
+else
+   increment the atomic unlock counter
+
+Then in the grace period sum the percpu-ops and the atomic values whenever
+each counter value is read.
+
+This would allow SRCU to be NMI-safe without requiring the callers to
+explicitly state whether they need to be nmi-safe or not, and would only
+take the overhead of the atomics in the NMI handlers rather than for all
+users which happen to use SRCU read locks shared with nmi handlers.
+
+Thoughts ?
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
+
