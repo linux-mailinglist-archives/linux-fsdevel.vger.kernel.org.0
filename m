@@ -2,73 +2,69 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 73B31625488
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 08:42:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5A16F6254BB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 11 Nov 2022 08:56:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233111AbiKKHmn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 11 Nov 2022 02:42:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59220 "EHLO
+        id S229675AbiKKH44 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 11 Nov 2022 02:56:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233065AbiKKHmm (ORCPT
+        with ESMTP id S232904AbiKKH4z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 11 Nov 2022 02:42:42 -0500
-Received: from mail-pj1-x102b.google.com (mail-pj1-x102b.google.com [IPv6:2607:f8b0:4864:20::102b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7AEB6748C5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Nov 2022 23:42:40 -0800 (PST)
-Received: by mail-pj1-x102b.google.com with SMTP id d13-20020a17090a3b0d00b00213519dfe4aso4060701pjc.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Nov 2022 23:42:40 -0800 (PST)
+        Fri, 11 Nov 2022 02:56:55 -0500
+Received: from mail-ua1-x92d.google.com (mail-ua1-x92d.google.com [IPv6:2607:f8b0:4864:20::92d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C9EC765E5A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Nov 2022 23:56:54 -0800 (PST)
+Received: by mail-ua1-x92d.google.com with SMTP id t26so1120676uaj.9
+        for <linux-fsdevel@vger.kernel.org>; Thu, 10 Nov 2022 23:56:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DPlfHwSzNGfVHYFsMHE3q3XKtrEblxpPMeiSWifb33g=;
-        b=M/tZlkQud5ba+2P9ogVpn++cTNC01PLRW0GjC9txFQf7MuZhwIJCk/ePeLQDSH1jqB
-         ZN1h9AYoJriAQ8AZXELGghXus+BQgjW1r1wI5XaSaaSqgV9Av10rBZ6rbqL/RmYT/RlB
-         HiN7umoR3s7s4zWOnO8f3vI9SKPm6HA56FVSLVY7RLb5udjWmAZ2hTbpZsGqgJQR7l9w
-         ShqHDZca4tc1Hx8SLQPJnemY+17GR2xmWW0EZFAmtWXAHxTQzdnME9rwzZg2rxoDS+Oq
-         62X4GrGE08o8N+1x9ud7dP4+jAT1WQkrcKqk21higRwdUfbv4m4ikDW8iO0TPw/BipH3
-         HZ5g==
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bVtUTUxIORxg0j1Dh3mbwvAsJp79U/6uh+ncmLZ0vjU=;
+        b=R9RqvxDuaYz5cqDnSkbda2xm9jImx05hDo/qNYmATlp9udmTtNCr6NN05mzh3dkmFH
+         sme196P0ncE/t/O2+8Wp8os5Fir0kLB5agn8g+ipWXUWLZRMxiQIYG9FwOxCGqKNnxpV
+         upgBPHP7ebUrlGm2n8lOp4e1dFFtQDM3TNBRUVeOkiqbba4XD8DQwNxlAgcH2m2h05Yx
+         xXd1otmXIlH3E5OHEY02EGSHqpyrPpc3imcGRUBbGuD1a1nvNp83TcVh/f1uHr9gR0gK
+         fJTN0MNb5OVMHnx9t6wTVo8A0lGLXnbICYhDk+Wg3zpW6zW0ACrDEW5ZdBEykCSqUzZ9
+         deFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DPlfHwSzNGfVHYFsMHE3q3XKtrEblxpPMeiSWifb33g=;
-        b=781pjm4Xlikj3oFDE0cvzJnV/9jfGc/nuP2oVIDqq3fluXao8qhIRQwXJJBNDTnL/q
-         VxMbRURnoNcgrj7EccmLboJP/Magh+BiyYFVUO+sQELfzQZLyqa4ZMs7QobEsSwj0wVQ
-         QEBueMh3vLsgtQJNi/U60pxpkd9Of248xhqQJ/JVGopQJGXltQ8pnXdgv+94V5sokkp9
-         Dl2TIFgrr1RogqlI0uMnk8tc9Rw6mfsxajKP3S5bKZfc3z8pqxdAu2BFrREulomxj6l+
-         VRimipwGMimVUIWKtJWvd2rvfMxK+qI3EsrZK0hX9Za28AK1U2g5F4mhpZnunHYxoogI
-         E/GA==
-X-Gm-Message-State: ANoB5pmJqGQlXIGKUHz1oqVzmwJ7Q6k6V26+hYetKTtzkCFGP790320m
-        2E/KTKtAh0gA76YUzS/DopTRng==
-X-Google-Smtp-Source: AA0mqf75V+bKI3ndKFyRxVswKPnmqWnx1L92m9PZ4Nivy5nTo/hpytzrCxBKysGgwJDsN+cPBetHfw==
-X-Received: by 2002:a17:902:e013:b0:186:9b23:a112 with SMTP id o19-20020a170902e01300b001869b23a112mr1531311plo.15.1668152559788;
-        Thu, 10 Nov 2022 23:42:39 -0800 (PST)
-Received: from google.com ([2620:15c:2ce:200:8b77:5448:ea74:27a])
-        by smtp.gmail.com with ESMTPSA id z35-20020a631923000000b0043a1c0a0ab1sm799275pgl.83.2022.11.10.23.42.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Nov 2022 23:42:38 -0800 (PST)
-Date:   Thu, 10 Nov 2022 23:42:34 -0800
-From:   Fangrui Song <maskray@google.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Pedro Falcato <pedro.falcato@gmail.com>,
-        Rich Felker <dalias@libc.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>, sam@gentoo.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH v2] binfmt_elf: Allow .bss in any interp PT_LOAD
-Message-ID: <20221111074234.xm5a6ota7ppdsto5@google.com>
-References: <20221111061315.gonna.703-kees@kernel.org>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bVtUTUxIORxg0j1Dh3mbwvAsJp79U/6uh+ncmLZ0vjU=;
+        b=s5BMgVX8cZSGSI4jjDoFTtlKglZLyA5zcmDYWf0JtLjxjltr9nGTaw8KAWtgcwnDw9
+         4GgyekmV7jv9P8eQQhB46tCvdOkxPJ3nqEY1f13O5zoqQwM2dLaKvlQczDNAbBcvVAUP
+         ATMVaoft3c3kRzNjhfDwOWM6GiPYd6mCdgCR2lykhYf6ElK7Ah6YPotUL7YDhtI5+/sb
+         5HGqfa4MlibJhFOM18iPtKl7/vj8UB10aTe6TMxmGqnPlgC52UldxkAXM8fORxuWIUkc
+         dcojqHAkpqNXQZST8M/LjcSozGVYy/tNncTSn8zENRCXCSfLgHlJC+zK2a+jRy3KGA9k
+         AT8g==
+X-Gm-Message-State: ANoB5pnlWGZq8b1g0plApW2HRIeZGgEfryoVOP/Cb9G2x+6srH8MDaEO
+        /9fUD8i5XBl1/2OtDj1GUtv+sHCysbqGTTQ8jQXta1Qz
+X-Google-Smtp-Source: AA0mqf7yREi5PV7IUlKUEJ1niGtXSLQddtHlX+4buCSz+nLNhHXyM8cqfRP+ueKr7IEkXeq1FDkNNIxP+2X0WRw2myo=
+X-Received: by 2002:ab0:5f9a:0:b0:411:dae:ee7d with SMTP id
+ b26-20020ab05f9a000000b004110daeee7dmr207933uaj.9.1668153413850; Thu, 10 Nov
+ 2022 23:56:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20221111061315.gonna.703-kees@kernel.org>
-X-Spam-Status: No, score=-15.9 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        URIBL_BLACK,USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=no
+References: <20221021010310.29521-1-stephen.s.brennan@oracle.com>
+ <20221028001016.332663-1-stephen.s.brennan@oracle.com> <20221101175144.yu3l5qo5gfwfpatt@quack3>
+ <877d0eh03t.fsf@oracle.com> <CAOQ4uxgG=E+3CwpQAE__YGt7vdW77n0nTe6cExPTERBNUN0a0g@mail.gmail.com>
+ <87h6z6fuey.fsf@oracle.com> <CAOQ4uxjRVRjTNJ-2CSX9QwLVC9oQN9r4GHqCn=XZrisZo6DN2w@mail.gmail.com>
+ <87eduafg6d.fsf@oracle.com>
+In-Reply-To: <87eduafg6d.fsf@oracle.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Fri, 11 Nov 2022 09:56:42 +0200
+Message-ID: <CAOQ4uxj--1nVsHxOCkZjQPRKetk6se99_6QGgBuC5NxP+rEzTA@mail.gmail.com>
+Subject: Re: [PATCH v3 0/3] fsnotify: fix softlockups iterating over d_subdirs
+To:     Stephen Brennan <stephen.s.brennan@oracle.com>
+Cc:     Jan Kara <jack@suse.cz>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,121 +72,104 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-(+ sam@gentoo.org from Pedro Falcato's patch)
-
-On 2022-11-10, Kees Cook wrote:
->Traditionally, only the final PT_LOAD for load_elf_interp() supported
->having p_memsz > p_filesz. Recently, lld's construction of musl's
->libc.so on PowerPC64 started having two PT_LOAD program headers with
->p_memsz > p_filesz.
+On Fri, Nov 11, 2022 at 3:12 AM Stephen Brennan
+<stephen.s.brennan@oracle.com> wrote:
 >
->As the least invasive change possible, check for p_memsz > p_filesz for
->each PT_LOAD in load_elf_interp.
+> Amir Goldstein <amir73il@gmail.com> writes:
 >
->Reported-by: Rich Felker <dalias@libc.org>
->Link: https://maskray.me/blog/2022-11-05-lld-musl-powerpc64
->Cc: Pedro Falcato <pedro.falcato@gmail.com>
->Cc: Fangrui Song <maskray@google.com>
->Cc: Alexander Viro <viro@zeniv.linux.org.uk>
->Cc: Eric Biederman <ebiederm@xmission.com>
->Cc: linux-fsdevel@vger.kernel.org
->Cc: linux-mm@kvack.org
->Signed-off-by: Kees Cook <keescook@chromium.org>
->---
->v2: I realized we need to retain the final padding call.
->v1: https://lore.kernel.org/linux-hardening/20221111055747.never.202-kees@kernel.org/
->---
-> fs/binfmt_elf.c | 18 ++++++++++++++----
-> 1 file changed, 14 insertions(+), 4 deletions(-)
+> > On Thu, Nov 10, 2022, 10:25 PM Stephen Brennan <stephen.s.brennan@oracle.com>
+> > wrote:
+> >
+> >> Amir Goldstein <amir73il@gmail.com> writes:
+> >> [...]
+> >> > IIUC, patches #1+#3 fix a reproducible softlock, so if Al approves them,
+> >> > I see no reason to withhold.
+> >> >
+> >> > With patches #1+#3 applied, the penalty is restricted to adding or
+> >> > removing/destroying multiple marks on very large dirs or dirs with
+> >> > many negative dentries.
+> >> >
+> >> > I think that fixing the synthetic test case of multiple added marks
+> >> > is rather easy even without DCACHE_FSNOTIFY_PARENT_WATCHED.
+> >> > Something like the attached patch is what Jan had suggested in the
+> >> > first place.
+> >> >
+> >> > The synthetic test case of concurrent add/remove watch on the same
+> >> > dir may still result in multiple children iterations, but that will
+> >> usually
+> >> > not be avoided even with DCACHE_FSNOTIFY_PARENT_WATCHED
+> >> > and probably not worth optimizing for.
+> >> >
+> >> > Thoughts?
+> >>
+> >> If I understand your train of thought, your below patch would take the
+> >> place of my patch #2, since #3 requires we not hold a spinlock during
+> >> fsnotify_update_children_dentry_flags().
+> >>
+> >> And since you fully rely on dentry accessors to lazily clear flags, you
+> >> don't need to have the mutual exclusion provided by the inode lock.
+> >>
+> >
+> > You don't need it to synchronize set and clear of all children, but inode
+> > lock is still useful for the update of children.
+> >
+> >
+> >> I like that a lot.
+> >>
+> >> However, the one thing I see here is that if we no longer hold the inode
+> >> lock, patch #3 needs to be re-examined: it assumes that dentries can't
+> >> be removed or moved around, and that assumption is only true with the
+> >> inode lock held.
+> >>
+> >
+> > I wasn't planning on dropping that assumption
+> > I was assuming that another patch would replace the spinlock with inode
+> > lock.
+> > As you had planned to do to avoid softlocks
+> > When adding marks.
 >
->diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
->index 528e2ac8931f..0a24bbbef1d6 100644
->--- a/fs/binfmt_elf.c
->+++ b/fs/binfmt_elf.c
->@@ -673,15 +673,25 @@ static unsigned long load_elf_interp(struct elfhdr *interp_elf_ex,
-> 				last_bss = k;
-> 				bss_prot = elf_prot;
-> 			}
->+
->+			/*
->+			 * Clear any p_memsz > p_filesz area up to the end
->+			 * of the page to wipe anything left over from the
->+			 * loaded file contents.
->+			 */
->+			if (last_bss > elf_bss && padzero(elf_bss))
-
-Missing {
-
-But after fixing this, I get a musl ld.so error.
-
->+				error = -EFAULT;
->+				goto out;
->+			}
-> 		}
-> 	}
+> Ah, thanks for the clarity! I believe I was working to that conclusion
+> myself too.
 >
-> 	/*
->-	 * Now fill out the bss section: first pad the last page from
->-	 * the file up to the page boundary, and zero it from elf_bss
->-	 * up to the end of the page.
->+	 * Finally, pad the last page from the file up to the page boundary,
->+	 * and zero it from elf_bss up to the end of the page, if this did
->+	 * not already happen with the last PT_LOAD.
-> 	 */
->-	if (padzero(elf_bss)) {
->+	if (last_bss == elf_bss && padzero(elf_bss)) {
-> 		error = -EFAULT;
-> 		goto out;
-> 	}
->-- 
->2.34.1
+> I actually believe I can make patch #3 work even when inode lock is not
+> held, using the d_parent+retry check, and ensuring we skip cursors
+
+I believe that would be a textbook premature optimization.
+With all the patches planned, what would be the problem solved by
+not holding inode lock?
+
+> before cond_resched(). I was hoping to have a tested series ready by the
+> end of my workday, but alas, it wasn't in the cards. I've got some
+> builds running, which I'll test on my LTP machine in the morning. The
+> overall idea is:
 >
+> fsnotify: clear PARENT_WATCHED flags lazily
+>   -> As you sent it, no changes
+> fsnotify: Use d_find_any_alias to get dentry associated with inode
+>   -> My patch #1, rebased
+> dnotify: move fsnotify_recalc_mask() outside spinlock
+>   -> New patch to ensure we don't sleep while holding dnotify spnilock
+> fsnotify: allow sleepable child flag update
+>   -> My patch #3, but working even without inode lock held
+> fsnotify: require inode lock held during child flag update
+>   -> An optional additional patch to require the inode lock to be held,
+>      just like you described.
+>      The main benefit of having this (assuming my changes to my patch #3
+>      hold out under scrutiny/testing) would be that it prevents the
+>      situation where another task can do an fsnotify_recalc_mask(), see
+>      that the flags don't need an update, and return before a different
+>      task actually finishes the child flag update.
 
-I added a new section to https://maskray.me/blog/2022-11-05-lld-musl-powerpc64
-Copying here:
+Assuming that you figured out the lock ordering and fixed the
+dnotify locking, I just don't see pros in letting go of inode lock
+only cons.
 
-To test that the kernel ELF loader can handle more RW `PT_LOAD` program headers, we can create an executable with more RW `PT_LOAD` program headers with `p_filesz < p_memsz`.
-We can place a read-only section after `.bss` followed by a `SHT_NOBITS` `SHF_ALLOC|SHF_WRITE` section. The read-only section will form a read-only `PT_LOAD` while the RW section will form a RW `PT_LOAD`.
+At the most, you can defer getting rid of inode lock to a later time
+after the dust has settled on the other changes, but again, not
+sure for what purpose.
 
-```text
-#--- a.c
-#include <assert.h>
-#include <stdio.h>
+I cannot see how holding inode lock could in any way regress the
+situation from the current state of holding the spinlock.
 
-extern const char toc[];
-char nobits0[0] __attribute__((section(".nobits0")));
-char nobits1[0] __attribute__((section(".nobits1")));
-
-int main(void) {
-   assert(toc[4096-1] == 0);
-   for (int i = 0; i < 1024; i++)
-     assert(nobits0[i] == 0);
-   nobits0[0] = nobits0[1024-1] = 1;
-   for (int i = 0; i < 4096; i++)
-     assert(nobits1[i] == 0);
-   nobits1[0] = nobits1[4096-1] = 1;
-
-   puts("hello");
-}
-
-#--- toc.s
-.section .toc,"aw",@nobits
-.globl toc
-toc:
-.space 4096
-
-.section .ro0,"a"; .byte 255
-.section .nobits0,"aw",@nobits; .space 1024
-.section .ro1,"a"; .byte 255
-.section .nobits1,"aw",@nobits; .space 4096
-
-#--- a.lds
-SECTIONS { .ro0 : {} .nobits0 : {} .ro1 : {} .nobits1 : {} } INSERT AFTER .bss;
-```
-
-```sh
-split-file a.txt a
-path/to/musl-gcc -Wl,--dynamic-linker=/lib/libc.so a/a.c a/a.lds -o toy
-```
-
-split-file is a utility in llvm-project.
+Thanks,
+Amir.
