@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 12EB3627089
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Nov 2022 17:29:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1631162708C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Nov 2022 17:29:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235354AbiKMQ3X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Nov 2022 11:29:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57416 "EHLO
+        id S235358AbiKMQ3g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Nov 2022 11:29:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232884AbiKMQ3U (ORCPT
+        with ESMTP id S232884AbiKMQ3Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Nov 2022 11:29:20 -0500
+        Sun, 13 Nov 2022 11:29:25 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B663AE4C;
-        Sun, 13 Nov 2022 08:29:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA4B49FE9;
+        Sun, 13 Nov 2022 08:29:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=scMCwkPRF8Nb8DbgWIgHz66Xl/jY6KIfqEEGjQf+P/U=; b=dZaZtRFdFNTJOY1FQNyijDu7jO
-        H93jBvSdtSrsZP6OEyZrMhY1VbI0CUpwlTsPpjDi+4lMAIL+Y4nj9p0RfOwK76YPLCYCt/1KwRRC3
-        mZ48JB/P7VnrTuDpgyoQX0CkNGnijcfT9NIM+zn4TAFb9MK+otp7w8IWEAt5belywKsJadLtrTwKC
-        5ogGIWtuIUx0hXNZbzkIc8f1O4z0MBzf1hvb0ROX8Xe+CQDlO7RbLOBqjH5j1gQ19+z+Zpat9BGDr
-        FQac6xjD5NdZXpmfjfrNsG6sAx+Sj2tz3i+V05uvUNmWDZI7+6l9AoSFZwsUufAKr3RT/N5rfcils
-        92Ydrxtw==;
+        bh=/xbu9xiQdaag/9GdE14AqAfcPfZ9nZ+wREMF3PN8ikU=; b=Zdpc2dMybytlRvYwON8XlABzCT
+        ZMfpsLeusVZ3QKHsCMwKWFO9Kwn7VhCbwu2g9CJFiOBfB/nzdGc+nfgQ9xpO36CHzKpU6jM0cchyh
+        pbaQsfIve7JTynTdwYGSBhgPZO0FafO0tSHF9tAYmPF3i8SqE6hX8HrPpqztnI3RRCUpK9DkD4VUr
+        1aj4zcLV/It6mFMhS5W+SfkPikRRlQ7xGOLE+wKOfXMk7dFIEhgNFSrOuVtOxWsgD767oZT9xMQXC
+        cABDK5122PBv5+NWwmfZb9tVH4upC9nkFTq3ex30hA8xLr6rkvyv1S+XCEj+yyKm/6mT8eS+5ijTx
+        pdomIdRQ==;
 Received: from 213-225-8-167.nat.highway.a1.net ([213.225.8.167] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ouFr8-00CJnt-Dv; Sun, 13 Nov 2022 16:29:15 +0000
+        id 1ouFrD-00CJp5-7o; Sun, 13 Nov 2022 16:29:20 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Namjae Jeon <linkinjeon@kernel.org>,
         Sungjong Seo <sj1557.seo@samsung.com>,
@@ -39,9 +39,9 @@ To:     Namjae Jeon <linkinjeon@kernel.org>,
 Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         jfs-discussion@lists.sourceforge.net,
         linux-karma-devel@lists.sourceforge.net, linux-mm@kvack.org
-Subject: [PATCH 2/9] ext2: remove ->writepage
-Date:   Sun, 13 Nov 2022 17:28:55 +0100
-Message-Id: <20221113162902.883850-3-hch@lst.de>
+Subject: [PATCH 3/9] fat: remove ->writepage
+Date:   Sun, 13 Nov 2022 17:28:56 +0100
+Message-Id: <20221113162902.883850-4-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221113162902.883850-1-hch@lst.de>
 References: <20221113162902.883850-1-hch@lst.de>
@@ -62,35 +62,45 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 used through write_cache_pages or a a fallback when no ->migrate_folio
 method is present.
 
+Set ->migrate_folio to the generic buffer_head based helper, and remove
+the ->writepage implementation.
+
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/ext2/inode.c | 6 ------
- 1 file changed, 6 deletions(-)
+ fs/fat/inode.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 918ab2f9e4c05..3b2e3e1e0fa25 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -869,11 +869,6 @@ int ext2_fiemap(struct inode *inode, struct fiemap_extent_info *fieinfo,
- 	return ret;
+diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+index 1cbcc4608dc78..d99b8549ec8f9 100644
+--- a/fs/fat/inode.c
++++ b/fs/fat/inode.c
+@@ -194,11 +194,6 @@ static int fat_get_block(struct inode *inode, sector_t iblock,
+ 	return 0;
  }
  
--static int ext2_writepage(struct page *page, struct writeback_control *wbc)
+-static int fat_writepage(struct page *page, struct writeback_control *wbc)
 -{
--	return block_write_full_page(page, ext2_get_block, wbc);
+-	return block_write_full_page(page, fat_get_block, wbc);
 -}
 -
- static int ext2_read_folio(struct file *file, struct folio *folio)
+ static int fat_writepages(struct address_space *mapping,
+ 			  struct writeback_control *wbc)
  {
- 	return mpage_read_folio(folio, ext2_get_block);
-@@ -948,7 +943,6 @@ const struct address_space_operations ext2_aops = {
- 	.invalidate_folio	= block_invalidate_folio,
- 	.read_folio		= ext2_read_folio,
- 	.readahead		= ext2_readahead,
--	.writepage		= ext2_writepage,
- 	.write_begin		= ext2_write_begin,
- 	.write_end		= ext2_write_end,
- 	.bmap			= ext2_bmap,
+@@ -346,12 +341,12 @@ static const struct address_space_operations fat_aops = {
+ 	.invalidate_folio = block_invalidate_folio,
+ 	.read_folio	= fat_read_folio,
+ 	.readahead	= fat_readahead,
+-	.writepage	= fat_writepage,
+ 	.writepages	= fat_writepages,
+ 	.write_begin	= fat_write_begin,
+ 	.write_end	= fat_write_end,
+ 	.direct_IO	= fat_direct_IO,
+-	.bmap		= _fat_bmap
++	.bmap		= _fat_bmap,
++	.migrate_folio	= buffer_migrate_folio,
+ };
+ 
+ /*
 -- 
 2.30.2
 
