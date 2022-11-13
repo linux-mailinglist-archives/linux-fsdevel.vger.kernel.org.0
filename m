@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 00EF462708F
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Nov 2022 17:29:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F1D3F627092
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 13 Nov 2022 17:29:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235366AbiKMQ3j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 13 Nov 2022 11:29:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57494 "EHLO
+        id S235375AbiKMQ3k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 13 Nov 2022 11:29:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57502 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235368AbiKMQ3g (ORCPT
+        with ESMTP id S235363AbiKMQ3i (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 13 Nov 2022 11:29:36 -0500
+        Sun, 13 Nov 2022 11:29:38 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 90B677674;
-        Sun, 13 Nov 2022 08:29:32 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98E1B7643;
+        Sun, 13 Nov 2022 08:29:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=MwWj9ekijv12iDbEn7vuZCjsvgidcmcKtSd/iPVo/3U=; b=sX+/TxS5zNNROlDDctzjyY/ZjS
-        g7P6amhXAy3A8MTH2YivI6QAOzqoM4YVgs8bon154bEvl614EDxGvS2f3HDxjB7I6hMMGdMG6InpY
-        xkKJw4QUdBwSO2h/Dq4l/Lrl9bljG5TKB1foSi9C6QjUZoA6e0u05s8pq5lAFvQU4f9MpKJqPc50q
-        LRE4B0JVluK6OhlGeHkzpXprpb9lQag0JUEGY8odsXvbNBJuDM/Klzo6uXma3atSgB7lCPdC7eIgB
-        j2kgdck8zIN/g0yA6fivbHDh17B+VYnKLv8frjkxP1MOvsOc+mjuES3PhtbINubHCyw4daLcEeNVz
-        ffyH3KCg==;
+        bh=MEfXNy0oYvg+oByXyXaf2fLih3PRNTBnoHWoUbGvyo0=; b=1CYlSCKTrhaufOIQITLboWc3nv
+        5XP8UaQ6updySgkzvHd+U0qG7p63m8ky3bOXtD/C5Lv62v2DvM+6ycEE2NyriXXCT8GlQRzLkqwHl
+        PjPioAVEb5Yi1VFqlE9lmvf0ARj8+YcM96t2AnpdL5Xial7ovi4MPfSFEzQBZMV/phYO54KwQiuAa
+        jrzM3eetiPkSNibuVO6DW7XDWDELhJbeCrOOgoSz5vfvh2lTcMcq9ewYxCv8wljb/FihZUdKoZqRd
+        /jeBjIMEvgKWGdgnNgGodWrmTB6NEAkqivpO9lhBFpdyHBPdRoYsNw6dKFJScAZk7eCy9QCvG7ZiI
+        tKo1bOOw==;
 Received: from 213-225-8-167.nat.highway.a1.net ([213.225.8.167] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ouFrK-00CJs5-Tj; Sun, 13 Nov 2022 16:29:27 +0000
+        id 1ouFrP-00CJu6-H9; Sun, 13 Nov 2022 16:29:32 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Namjae Jeon <linkinjeon@kernel.org>,
         Sungjong Seo <sj1557.seo@samsung.com>,
@@ -39,9 +39,9 @@ To:     Namjae Jeon <linkinjeon@kernel.org>,
 Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         jfs-discussion@lists.sourceforge.net,
         linux-karma-devel@lists.sourceforge.net, linux-mm@kvack.org
-Subject: [PATCH 5/9] hfsplus: remove ->writepage
-Date:   Sun, 13 Nov 2022 17:28:58 +0100
-Message-Id: <20221113162902.883850-6-hch@lst.de>
+Subject: [PATCH 6/9] hpfs: remove ->writepage
+Date:   Sun, 13 Nov 2022 17:28:59 +0100
+Message-Id: <20221113162902.883850-7-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221113162902.883850-1-hch@lst.de>
 References: <20221113162902.883850-1-hch@lst.de>
@@ -62,32 +62,45 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 used through write_cache_pages or a a fallback when no ->migrate_folio
 method is present.
 
-Set ->migrate_folio to the generic buffer_head based helper, and stop
-wiring up ->writepage for hfsplus_aops.
+Set ->migrate_folio to the generic buffer_head based helper, and remove
+the ->writepage implementation.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/hfsplus/inode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/hpfs/file.c | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index aeab83ed1c9c6..d6572ad2407a7 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -170,12 +170,12 @@ const struct address_space_operations hfsplus_aops = {
+diff --git a/fs/hpfs/file.c b/fs/hpfs/file.c
+index f7547a62c81f6..88952d4a631e6 100644
+--- a/fs/hpfs/file.c
++++ b/fs/hpfs/file.c
+@@ -163,11 +163,6 @@ static int hpfs_read_folio(struct file *file, struct folio *folio)
+ 	return mpage_read_folio(folio, hpfs_get_block);
+ }
+ 
+-static int hpfs_writepage(struct page *page, struct writeback_control *wbc)
+-{
+-	return block_write_full_page(page, hpfs_get_block, wbc);
+-}
+-
+ static void hpfs_readahead(struct readahead_control *rac)
+ {
+ 	mpage_readahead(rac, hpfs_get_block);
+@@ -248,12 +243,12 @@ const struct address_space_operations hpfs_aops = {
  	.dirty_folio	= block_dirty_folio,
  	.invalidate_folio = block_invalidate_folio,
- 	.read_folio	= hfsplus_read_folio,
--	.writepage	= hfsplus_writepage,
- 	.write_begin	= hfsplus_write_begin,
- 	.write_end	= generic_write_end,
- 	.bmap		= hfsplus_bmap,
- 	.direct_IO	= hfsplus_direct_IO,
- 	.writepages	= hfsplus_writepages,
-+	.migrate_folio	= buffer_migrate_folio,
+ 	.read_folio = hpfs_read_folio,
+-	.writepage = hpfs_writepage,
+ 	.readahead = hpfs_readahead,
+ 	.writepages = hpfs_writepages,
+ 	.write_begin = hpfs_write_begin,
+ 	.write_end = hpfs_write_end,
+-	.bmap = _hpfs_bmap
++	.bmap = _hpfs_bmap,
++	.migrate_folio = buffer_migrate_folio,
  };
  
- const struct dentry_operations hfsplus_dentry_operations = {
+ const struct file_operations hpfs_file_ops =
 -- 
 2.30.2
 
