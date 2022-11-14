@@ -2,94 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A8BE5627B67
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 12:03:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 029C5627B81
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 12:07:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236513AbiKNLDF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Nov 2022 06:03:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57970 "EHLO
+        id S236644AbiKNLH1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Nov 2022 06:07:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236507AbiKNLDE (ORCPT
+        with ESMTP id S236619AbiKNLHL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Nov 2022 06:03:04 -0500
-Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5997205EA
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 03:03:03 -0800 (PST)
-Received: by mail-pj1-x1030.google.com with SMTP id k5so9995044pjo.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 03:03:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JkStbBXpav6WiwxGhKG/pG+D5F6PN27MWUZBS9IqbMM=;
-        b=MvUaVHWCR0WHqix7Xtbq4mCnWVvQOHBgf0mKMshpKfCXy09L1StSI1p8tQBohFiGrw
-         9u+oxJBk+xC8Hg5fVtsAZosjYS8aHKl3MWmiYVWvyE0y09sZPyud9uwZanttvl4k+2jc
-         mJV64+oabvpzRKdllSoIha002RswqgpxM38mKl4v9CVB4zFQxLd/GQ/rqwu4k6bAtDQb
-         JafuJwWJSfZjMS22KV6Hdgxk86AwZYlYRZ8ZjfZMPBmVNVuz34eJKw1nxC2bdkXVbCP1
-         Szrrmsos8L0fKMdSdFL1ZtyL7gFlBKIgrfJQKr/FpSwZCwWYU46i717ysWNQTGNLSx6k
-         3yiA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JkStbBXpav6WiwxGhKG/pG+D5F6PN27MWUZBS9IqbMM=;
-        b=F36Gp4tU7T/QdZG6AebkQUvjuFDZKMRQdH0Xb4w9WPE0VwpFPmKgXEYXtOjy7hNcj6
-         ASQKPzoJynOGjNneokiGqnHrlGpCaojQNN6JvthfL5od2TD8viTRgosAI9MVtF5B+GRN
-         fzBwJvlQJZgGsMUSMtdZqG1vlfQXsdH3//FMLBTNupFzvKwi0wzA1+/e3u8gHagP1AVE
-         Xqh+fMmB7XN6NwUmLM7xiuJgV4iJb9tKcYtMdQurkoBY+laTTGPBPx1SF4Q6Diynj7Ms
-         dlJ0IE0e3RUHSHQprWjpDxNL9DA7TuGK2GmzOUdP3SgYcNJKdMKquRbwjPBP8W1Rf6rw
-         i+Yw==
-X-Gm-Message-State: ANoB5pmM2jwW26DgAyhL+Lq7qS8gMhLRo1PoKe03b9LIY69ldXZs4Pt6
-        5kgAS3/g8miovGYhT1pGfZF/kZ/EkFI=
-X-Google-Smtp-Source: AA0mqf71n8fOTi5E0oX27NHtIwgyaR7yxY455jU3hCKMSBsn+wSYQZJX4ZNP1voTmXefXUVc1hvjwg==
-X-Received: by 2002:a17:90b:4d89:b0:213:2173:f46a with SMTP id oj9-20020a17090b4d8900b002132173f46amr13214832pjb.103.1668423782837;
-        Mon, 14 Nov 2022 03:03:02 -0800 (PST)
-Received: from localhost ([223.104.213.82])
-        by smtp.gmail.com with ESMTPSA id c17-20020a170902d49100b0017a032d7ae4sm7196930plg.104.2022.11.14.03.03.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 14 Nov 2022 03:03:02 -0800 (PST)
-From:   JunChao Sun <sunjunchao2870@gmail.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     viro@zeniv.linux.org.uk, axboe@kernel.dk,
-        JunChao Sun <sunjunchao2870@gmail.com>
-Subject: [PATCH] writeback: Remove meaningless comment
-Date:   Mon, 14 Nov 2022 03:02:53 -0800
-Message-Id: <20221114110253.8827-1-sunjunchao2870@gmail.com>
-X-Mailer: git-send-email 2.17.1
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Mon, 14 Nov 2022 06:07:11 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2600C1F9F9;
+        Mon, 14 Nov 2022 03:07:11 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B755260FC6;
+        Mon, 14 Nov 2022 11:07:10 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B6FAC433C1;
+        Mon, 14 Nov 2022 11:07:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668424030;
+        bh=BBQzIyZZF5rlbBw98y1P4gBlWGiyde5VKcuft9ToRAY=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=A/TWlCEXkE5eooKrE2sEkXhKTjGb3+uPZCt/nWSjrS0c0XadKDRzxeuS7AKBK/yPt
+         T1mF7ErfYbnVFTcUAffc67ZaVM1VXjUavuw9Jh8RXHmQC5lLEJP2rm8+f9O8GxbMlS
+         glXGyBrF6446yghIoXpRloUtXLUSmptRJNSdEtSPc2DnqXKONFWlsmDPs5YwmYYtKa
+         xquA2tJgsHbSwtj78bz+6VAJKxQ9YGL2dXhsWmZXZLAOq14M76EVTsaJnGJlR8Vdux
+         5jT8m1WsqQkVlcD3jEadQzW3SVWoMOasaECwL1e1swUImgx7WnD0qQWyLAujTGgMk5
+         bGdUN6zX46vGQ==
+Received: by mail-oo1-f50.google.com with SMTP id e11-20020a4ab14b000000b0049be568062bso1527106ooo.4;
+        Mon, 14 Nov 2022 03:07:10 -0800 (PST)
+X-Gm-Message-State: ANoB5pk0zpydysJme4Orkqfsh5n+dGtHICl7DHcvYt4XyfCkb3NX/pKM
+        YhFUhFnTdblRamrrEpQ+3aLtMbtjpJgnEAIrmpo=
+X-Google-Smtp-Source: AA0mqf7wDQwPA3pTOSPVjMBQXValCRkcy0eZQuDEsbG8KDjXL393R4wvF7iCYv59B/mzoOk4MhJydooBoEVZepSGpZ0=
+X-Received: by 2002:a4a:b582:0:b0:49d:d7ad:4195 with SMTP id
+ t2-20020a4ab582000000b0049dd7ad4195mr5275628ooo.44.1668424029332; Mon, 14 Nov
+ 2022 03:07:09 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a05:6839:1a4e:0:0:0:0 with HTTP; Mon, 14 Nov 2022 03:07:08
+ -0800 (PST)
+In-Reply-To: <20221113162902.883850-2-hch@lst.de>
+References: <20221113162902.883850-1-hch@lst.de> <20221113162902.883850-2-hch@lst.de>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Mon, 14 Nov 2022 20:07:08 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd97CmO5AvKPzziaKiqtUManSgXzFQatynGojTNzaBk9gw@mail.gmail.com>
+Message-ID: <CAKYAXd97CmO5AvKPzziaKiqtUManSgXzFQatynGojTNzaBk9gw@mail.gmail.com>
+Subject: Re: [PATCH 1/9] extfat: remove ->writepage
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Sungjong Seo <sj1557.seo@samsung.com>, Jan Kara <jack@suse.com>,
+        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
+        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
+        Dave Kleikamp <shaggy@kernel.org>,
+        Bob Copeland <me@bobcopeland.com>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        jfs-discussion@lists.sourceforge.net,
+        linux-karma-devel@lists.sourceforge.net, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-nr_pages was removed in 9ba4b2dfafaa
-("fs: kill 'nr_pages' argument from wakeup_flusher_threads()"),
-but the comment for 'nr_pages' was missed. Remove that.
+2022-11-14 1:28 GMT+09:00, Christoph Hellwig <hch@lst.de>:
+> ->writepage is a very inefficient method to write back data, and only
+> used through write_cache_pages or a a fallback when no ->migrate_folio
+> method is present.
+>
+> Set ->migrate_folio to the generic buffer_head based helper, and remove
+> the ->writepage implementation.
+>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+Acked-by: Namjae Jeon <linkinjeon@kernel.org>
 
-Signed-off-by: JunChao Sun <sunjunchao2870@gmail.com>
----
- fs/fs-writeback.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-index 443f83382b9b..78be6762522a 100644
---- a/fs/fs-writeback.c
-+++ b/fs/fs-writeback.c
-@@ -2244,10 +2244,6 @@ void wb_workfn(struct work_struct *work)
- 		wb_wakeup_delayed(wb);
- }
- 
--/*
-- * Start writeback of `nr_pages' pages on this bdi. If `nr_pages' is zero,
-- * write back the whole world.
-- */
- static void __wakeup_flusher_threads_bdi(struct backing_dev_info *bdi,
- 					 enum wb_reason reason)
- {
--- 
-2.17.1
-
+Thanks!
