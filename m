@@ -2,188 +2,276 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 315D8627C3B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 12:27:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 19239627C63
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 12:32:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236089AbiKNL0v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Nov 2022 06:26:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51528 "EHLO
+        id S236233AbiKNLcl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Nov 2022 06:32:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235975AbiKNL0W (ORCPT
+        with ESMTP id S229484AbiKNLcW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Nov 2022 06:26:22 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2C8B1E3E1;
-        Mon, 14 Nov 2022 03:24:10 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 14 Nov 2022 06:32:22 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2DDF264A;
+        Mon, 14 Nov 2022 03:32:20 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 593D6B80DF0;
-        Mon, 14 Nov 2022 11:24:09 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17188C433D6;
-        Mon, 14 Nov 2022 11:24:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668425048;
-        bh=imtASeSIL+qML9y+rHVuvEdDIZi3PFoP8mhyneQinXQ=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=r78oTwZiRJELGqVpcM+yfzOHg4AmLvE4OhdAqZQAUF+4D9H8WfO+aEhp7Tkwg5VvV
-         izEB+qPe6Vuu9Orplj8MR2MlQf2sh3nuO0kwTvKI5jpnnd3Fd8Z1ZiUUDTp8O+FSIS
-         8EIhqpMfYkIW4nu9zai8p0SbG8AsuiBGFe3kzXHhfQyD2TnnXTJQjXO05ZKBaTcR6j
-         mGXkzvcAmTxkM3HWoY0LQiGHO1edbHcmhJBbXh7YroUqzePzeNobV8KgF4Xda3icz/
-         3YliZrUMLmR7G/Blb7oLhs7Rcu8Diba0mXFxNdXd25PVgkggfrF3q7FeD1XldOgVfq
-         rekdxE8LuQwvg==
-Message-ID: <f2d6f7a3fa75710a1170a8969d948e85d056c272.camel@kernel.org>
-Subject: Re: [PATCH 1/2 v2] ceph: add ceph_lock_info support for file_lock
-From:   Jeff Layton <jlayton@kernel.org>
-To:     xiubli@redhat.com, ceph-devel@vger.kernel.org, idryomov@gmail.com,
-        viro@zeniv.linux.org.uk
-Cc:     lhenriques@suse.de, mchangir@redhat.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org
-Date:   Mon, 14 Nov 2022 06:24:05 -0500
-In-Reply-To: <20221114051901.15371-2-xiubli@redhat.com>
-References: <20221114051901.15371-1-xiubli@redhat.com>
-         <20221114051901.15371-2-xiubli@redhat.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 793BD22154;
+        Mon, 14 Nov 2022 11:32:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1668425539; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xCp2FLnHV48qc8WbEJswrBVN0V4a5iE3kG9lCUWVaQM=;
+        b=iLMOepeRsQUPz74YqIGAatxyIeS0i7bdGE1cTM7o5LXEXJvEYarrdnyXzkBl69CrXN+r9b
+        2ojRa3xVVIYDR1A8sYhPXxMgZtDn3LNqTmqqUKCOPQIBvaKeEgJn1CQgN/SGBDVmbYSJUR
+        MRnelYOdv9yHKoRY57sB0sHBoZXGBqE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1668425539;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=xCp2FLnHV48qc8WbEJswrBVN0V4a5iE3kG9lCUWVaQM=;
+        b=g5u6Gu+DWAC81gcL3HvriHavxgMirXPFvai9XRgZp0iHwmGmWtIh3moIMZV33V5t2gjpN5
+        jpBt99diVES3k5Dg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E55F513A92;
+        Mon, 14 Nov 2022 11:32:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id ZHcjNUIncmMkfAAAMHmgww
+        (envelope-from <lhenriques@suse.de>); Mon, 14 Nov 2022 11:32:18 +0000
+Received: from localhost (brahms.olymp [local])
+        by brahms.olymp (OpenSMTPD) with ESMTPA id 73d269cf;
+        Mon, 14 Nov 2022 11:33:18 +0000 (UTC)
+From:   =?utf-8?Q?Lu=C3=ADs_Henriques?= <lhenriques@suse.de>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Luis Henriques <lhenriques@suse.com>,
+        linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-nfs@vger.kernel.org
+Subject: Re: [PATCH] vfs: fix copy_file_range() averts filesystem freeze
+ protection
+References: <20221110155522.556225-1-amir73il@gmail.com>
+Date:   Mon, 14 Nov 2022 11:33:18 +0000
+In-Reply-To: <20221110155522.556225-1-amir73il@gmail.com> (Amir Goldstein's
+        message of "Thu, 10 Nov 2022 17:55:22 +0200")
+Message-ID: <877czx22kh.fsf@suse.de>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2022-11-14 at 13:19 +0800, xiubli@redhat.com wrote:
-> From: Xiubo Li <xiubli@redhat.com>
->=20
-> When ceph releasing the file_lock it will try to get the inode pointer
-> from the fl->fl_file, which the memory could already be released by
-> another thread in filp_close(). Because in VFS layer the fl->fl_file
-> doesn't increase the file's reference counter.
->=20
-> Will switch to use ceph dedicate lock info to track the inode.
->=20
-> And in ceph_fl_release_lock() we should skip all the operations if
-> the fl->fl_u.ceph_fl.fl_inode is not set, which should come from
-> the request file_lock. And we will set fl->fl_u.ceph_fl.fl_inode when
-> inserting it to the inode lock list, which is when copying the lock.
->=20
-> Cc: stable@vger.kernel.org
-> URL: https://tracker.ceph.com/issues/57986
-> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+Amir Goldstein <amir73il@gmail.com> writes:
+
+> Commit 868f9f2f8e00 ("vfs: fix copy_file_range() regression in cross-fs
+> copies") removed fallback to generic_copy_file_range() for cross-fs
+> cases inside vfs_copy_file_range().
+>
+> To preserve behavior of nfsd and ksmbd server-side-copy, the fallback to
+> generic_copy_file_range() was added in nfsd and ksmbd code, but that
+> call is missing sb_start_write(), fsnotify hooks and more.
+>
+> Ideally, nfsd and ksmbd would pass a flag to vfs_copy_file_range() that
+> will take care of the fallback, but that code would be subtle and we got
+> vfs_copy_file_range() logic wrong too many times already.
+>
+> Instead, add a flag to explicitly request vfs_copy_file_range() to
+> perform only generic_copy_file_range() and let nfsd and ksmbd use this
+> flag only in the fallback path.
+>
+> This choise keeps the logic changes to minimum in the non-nfsd/ksmbd code
+> paths to reduce the risk of further regressions.
+>
+> Fixes: 868f9f2f8e00 ("vfs: fix copy_file_range() regression in cross-fs c=
+opies")
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > ---
->  fs/ceph/locks.c                 | 18 +++++++++++++++---
->  include/linux/ceph/ceph_fs_fl.h | 26 ++++++++++++++++++++++++++
->  include/linux/fs.h              |  2 ++
->  3 files changed, 43 insertions(+), 3 deletions(-)
->  create mode 100644 include/linux/ceph/ceph_fs_fl.h
->=20
-> diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
-> index 3e2843e86e27..d8385dd0076e 100644
-> --- a/fs/ceph/locks.c
-> +++ b/fs/ceph/locks.c
-> @@ -34,22 +34,34 @@ static void ceph_fl_copy_lock(struct file_lock *dst, =
-struct file_lock *src)
->  {
->  	struct ceph_file_info *fi =3D dst->fl_file->private_data;
->  	struct inode *inode =3D file_inode(dst->fl_file);
-> +
->  	atomic_inc(&ceph_inode(inode)->i_filelock_ref);
->  	atomic_inc(&fi->num_locks);
-> +	dst->fl_u.ceph_fl.fl_inode =3D igrab(inode);
+>
+> Hi Al,
+>
+> Another fix for the long tradition of copy_file_range() regressions.
+> This one only affected cross-fs server-side-copy from nfsd/ksmbd.
+>
+> I ran the copy_range fstests group on ext4/xfs/overlay to verify no
+> regressions in local fs and nfsv3/nfsv4 to test server-side-copy.
+>
+> I also patched copy_file_range() to test the nfsd fallback code on
+> local fs.
+>
+> Namje, could you please test ksmbd.
+
+For what is worth, I've also done some testing with ceph and I didn't saw
+any regression either.  So, feel free to add my
+
+Tested-by: Lu=C3=ADs Henriques <lhenriques@suse.de>
+
+Cheers,
+--=20
+Lu=C3=ADs
+
+>
+> Thanks,
+> Amir.
+>
+>  fs/ksmbd/vfs.c     |  6 +++---
+>  fs/nfsd/vfs.c      |  4 ++--
+>  fs/read_write.c    | 19 +++++++++++++++----
+>  include/linux/fs.h |  8 ++++++++
+>  4 files changed, 28 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/ksmbd/vfs.c b/fs/ksmbd/vfs.c
+> index 8de970d6146f..94b8ed4ef870 100644
+> --- a/fs/ksmbd/vfs.c
+> +++ b/fs/ksmbd/vfs.c
+> @@ -1794,9 +1794,9 @@ int ksmbd_vfs_copy_file_ranges(struct ksmbd_work *w=
+ork,
+>  		ret =3D vfs_copy_file_range(src_fp->filp, src_off,
+>  					  dst_fp->filp, dst_off, len, 0);
+>  		if (ret =3D=3D -EOPNOTSUPP || ret =3D=3D -EXDEV)
+> -			ret =3D generic_copy_file_range(src_fp->filp, src_off,
+> -						      dst_fp->filp, dst_off,
+> -						      len, 0);
+> +			ret =3D vfs_copy_file_range(src_fp->filp, src_off,
+> +						  dst_fp->filp, dst_off, len,
+> +						  COPY_FILE_SPLICE);
+>  		if (ret < 0)
+>  			return ret;
+>=20=20
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index f650afedd67f..5cf11cde51f8 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -596,8 +596,8 @@ ssize_t nfsd_copy_file_range(struct file *src, u64 sr=
+c_pos, struct file *dst,
+>  	ret =3D vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
+>=20=20
+>  	if (ret =3D=3D -EOPNOTSUPP || ret =3D=3D -EXDEV)
+> -		ret =3D generic_copy_file_range(src, src_pos, dst, dst_pos,
+> -					      count, 0);
+> +		ret =3D vfs_copy_file_range(src, src_pos, dst, dst_pos, count,
+> +					  COPY_FILE_SPLICE);
+>  	return ret;
 >  }
-> =20
->  static void ceph_fl_release_lock(struct file_lock *fl)
+>=20=20
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index 328ce8cf9a85..24b9668d6377 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1388,6 +1388,8 @@ ssize_t generic_copy_file_range(struct file *file_i=
+n, loff_t pos_in,
+>  				struct file *file_out, loff_t pos_out,
+>  				size_t len, unsigned int flags)
 >  {
->  	struct ceph_file_info *fi =3D fl->fl_file->private_data;
-> -	struct inode *inode =3D file_inode(fl->fl_file);
-> -	struct ceph_inode_info *ci =3D ceph_inode(inode);
-> -	atomic_dec(&fi->num_locks);
-> +	struct inode *inode =3D fl->fl_u.ceph_fl.fl_inode;
-> +	struct ceph_inode_info *ci;
+> +	lockdep_assert(sb_write_started(file_inode(file_out)->i_sb));
 > +
-> +	/*
-> +	 * If inode is NULL it should be a request file_lock,
-> +	 * nothing we can do.
-> +	 */
-> +	if (!inode)
-> +		return;
-> +
-> +	ci =3D ceph_inode(inode);
->  	if (atomic_dec_and_test(&ci->i_filelock_ref)) {
->  		/* clear error when all locks are released */
->  		spin_lock(&ci->i_ceph_lock);
->  		ci->i_ceph_flags &=3D ~CEPH_I_ERROR_FILELOCK;
->  		spin_unlock(&ci->i_ceph_lock);
+>  	return do_splice_direct(file_in, &pos_in, file_out, &pos_out,
+>  				len > MAX_RW_COUNT ? MAX_RW_COUNT : len, 0);
+>  }
+> @@ -1424,7 +1426,9 @@ static int generic_copy_file_checks(struct file *fi=
+le_in, loff_t pos_in,
+>  	 * and several different sets of file_operations, but they all end up
+>  	 * using the same ->copy_file_range() function pointer.
+>  	 */
+> -	if (file_out->f_op->copy_file_range) {
+> +	if (flags & COPY_FILE_SPLICE) {
+> +		/* cross sb splice is allowed */
+> +	} else if (file_out->f_op->copy_file_range) {
+>  		if (file_in->f_op->copy_file_range !=3D
+>  		    file_out->f_op->copy_file_range)
+>  			return -EXDEV;
+> @@ -1474,8 +1478,9 @@ ssize_t vfs_copy_file_range(struct file *file_in, l=
+off_t pos_in,
+>  			    size_t len, unsigned int flags)
+>  {
+>  	ssize_t ret;
+> +	bool splice =3D flags & COPY_FILE_SPLICE;
+>=20=20
+> -	if (flags !=3D 0)
+> +	if (flags & ~COPY_FILE_SPLICE)
+>  		return -EINVAL;
+>=20=20
+>  	ret =3D generic_copy_file_checks(file_in, pos_in, file_out, pos_out, &l=
+en,
+> @@ -1501,14 +1506,14 @@ ssize_t vfs_copy_file_range(struct file *file_in,=
+ loff_t pos_in,
+>  	 * same sb using clone, but for filesystems where both clone and copy
+>  	 * are supported (e.g. nfs,cifs), we only call the copy method.
+>  	 */
+> -	if (file_out->f_op->copy_file_range) {
+> +	if (!splice && file_out->f_op->copy_file_range) {
+>  		ret =3D file_out->f_op->copy_file_range(file_in, pos_in,
+>  						      file_out, pos_out,
+>  						      len, flags);
+>  		goto done;
 >  	}
-> +	iput(inode);
-> +	atomic_dec(&fi->num_locks);
-
-It doesn't look like this fixes the original issue. "fi" may be pointing
-to freed memory at this point, right? I think you may need to get rid of
-the "num_locks" field in ceph_file_info, and do that in a different way?
-
->  }
-> =20
->  static const struct file_lock_operations ceph_fl_lock_ops =3D {
-> diff --git a/include/linux/ceph/ceph_fs_fl.h b/include/linux/ceph/ceph_fs=
-_fl.h
-> new file mode 100644
-> index 000000000000..02a412b26095
-> --- /dev/null
-> +++ b/include/linux/ceph/ceph_fs_fl.h
-> @@ -0,0 +1,26 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * ceph_fs.h - Ceph constants and data types to share between kernel and
-> + * user space.
-> + *
-> + * Most types in this file are defined as little-endian, and are
-> + * primarily intended to describe data structures that pass over the
-> + * wire or that are stored on disk.
-> + *
-> + * LGPL2
-> + */
+>=20=20
+> -	if (file_in->f_op->remap_file_range &&
+> +	if (!splice && file_in->f_op->remap_file_range &&
+>  	    file_inode(file_in)->i_sb =3D=3D file_inode(file_out)->i_sb) {
+>  		ret =3D file_in->f_op->remap_file_range(file_in, pos_in,
+>  				file_out, pos_out,
+> @@ -1528,6 +1533,8 @@ ssize_t vfs_copy_file_range(struct file *file_in, l=
+off_t pos_in,
+>  	 * consistent story about which filesystems support copy_file_range()
+>  	 * and which filesystems do not, that will allow userspace tools to
+>  	 * make consistent desicions w.r.t using copy_file_range().
+> +	 *
+> +	 * We also get here if caller (e.g. nfsd) requested COPY_FILE_SPLICE.
+>  	 */
+>  	ret =3D generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+>  				      flags);
+> @@ -1582,6 +1589,10 @@ SYSCALL_DEFINE6(copy_file_range, int, fd_in, loff_=
+t __user *, off_in,
+>  		pos_out =3D f_out.file->f_pos;
+>  	}
+>=20=20
+> +	ret =3D -EINVAL;
+> +	if (flags !=3D 0)
+> +		goto out;
 > +
-> +#ifndef CEPH_FS_FL_H
-> +#define CEPH_FS_FL_H
-> +
-> +#include <linux/fs.h>
-> +
-> +/*
-> + * Ceph lock info
-> + */
-> +
-> +struct ceph_lock_info {
-> +	struct inode *fl_inode;
-> +};
-> +
-> +#endif
+>  	ret =3D vfs_copy_file_range(f_in.file, pos_in, f_out.file, pos_out, len,
+>  				  flags);
+>  	if (ret > 0) {
 > diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index e654435f1651..db4810d19e26 100644
+> index e654435f1651..59ae95ddb679 100644
 > --- a/include/linux/fs.h
 > +++ b/include/linux/fs.h
-> @@ -1066,6 +1066,7 @@ bool opens_in_grace(struct net *);
-> =20
->  /* that will die - we need it for nfs_lock_info */
->  #include <linux/nfs_fs_i.h>
-> +#include <linux/ceph/ceph_fs_fl.h>
-> =20
->  /*
->   * struct file_lock represents a generic "file lock". It's used to repre=
-sent
-> @@ -1119,6 +1120,7 @@ struct file_lock {
->  			int state;		/* state of grant or error if -ve */
->  			unsigned int	debug_id;
->  		} afs;
-> +		struct ceph_lock_info	ceph_fl;
->  	} fl_u;
->  } __randomize_layout;
-> =20
+> @@ -2089,6 +2089,14 @@ struct dir_context {
+>   */
+>  #define REMAP_FILE_ADVISORY		(REMAP_FILE_CAN_SHORTEN)
+>=20=20
+> +/*
+> + * These flags control the behavior of vfs_copy_file_range().
+> + * They are not available to the user via syscall.
+> + *
+> + * COPY_FILE_SPLICE: call splice direct instead of fs clone/copy ops
+> + */
+> +#define COPY_FILE_SPLICE		(1 << 0)
+> +
+>  struct iov_iter;
+>  struct io_uring_cmd;
+>=20=20
+> --=20
+>
+> 2.25.1
+>
 
---=20
-Jeff Layton <jlayton@kernel.org>
