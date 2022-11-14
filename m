@@ -2,151 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9CD91627757
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 09:20:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3AA696277AA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 09:29:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236300AbiKNIUE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Nov 2022 03:20:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39402 "EHLO
+        id S236461AbiKNI3p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Nov 2022 03:29:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48506 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235846AbiKNIUD (ORCPT
+        with ESMTP id S236466AbiKNI3l (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Nov 2022 03:20:03 -0500
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA6DFB860
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 00:20:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1668414002; x=1699950002;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=4XYjJf9R79mlhpgXE7IyxAaK2xbiWAJxR7CsGg+iqoc=;
-  b=IxcDywGF6UX4p+1apI+2X7kNgVhHqBcXlMCEbh5Mh50CTnp9WOOQ+NKY
-   ukMaZcf34g5fhn5jfx4aZqkGpu8G1+KPo/sIU9Iqi/jkgJsnPg6psgZ/G
-   +lAB4GOigHS+A+gwEMcYPwaDIgBxn6qxBA0ethhzBWywhl5hl+GdvRGLA
-   aF3lGsA2GPdlq+XHGWSrEcKddbZbHk9eP8SQRinI1LnyQrcFjHKFKKKso
-   +e2FejQSCi4IFAskjbHlzG9A6nRagmcTRuEu08lPG1SG7zPWgLSkOqwVU
-   QPQsi4B+E1mFWSyWLGAVT+ri8adtayIq9rdcTKO0QxYMEvzq8kc1UAN//
-   g==;
-X-IronPort-AV: E=Sophos;i="5.96,161,1665417600"; 
-   d="scan'208";a="328302851"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 14 Nov 2022 16:20:02 +0800
-IronPort-SDR: Wr2o8aEVdJjxuaqK8YeohDiHJu9HBHtIUPzz0OZPaV45P4Lf4igSYrgcItKFUeHLATm1e9BTfi
- 4+vTgVFTGBeumGZ1DTq0LuqwnTT7xpwpS1pfXepXtvSdmPSIqvlKJSOyhZGHlH892rrafEXZIC
- IG8rTVEsSC8hKNuLnmkzWFKu8g6vTIiwTKUCLsFGPBAat+P7WblLeh44m9f/Cw2c698/RXe+Xb
- F/G7HTg80FLNf0XxxP0NCmHHtMGeeCA/FJ38gpL+psuXSUgKp8P8e6+KiSvx+9krKibFTu6JvI
- BcA=
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 13 Nov 2022 23:33:17 -0800
-IronPort-SDR: MTIorvSYg93JLLWxHcLu35lG4KRP5kZakr+3Fc52zHeGlCIDjBC4hEgg0GqJCxk9aI7F5RbLkS
- mhSPYBTVcMaME9lok8yo/ANDlKLoXlrRDgTBxhJb40lwMQzxHjmyoxnkML8c2mABrwx5ItUc4E
- GZnB5BQXwdvvRbiTGhnEdicCCaV1jBUQYyCyMVxdW0vKp30w3zV1fVOfskIs8LY6RG+rj66BZi
- qSO0JB/OoMMu8w7BgFh6Rn5KS8BWhiyGTuxTy3FmySQkIwlOErijoFavAJfPTjrkdoymmxTRAp
- hRM=
-WDCIronportException: Internal
-Received: from unknown (HELO redsun91.ssa.fujisawa.hgst.com) ([10.149.66.72])
-  by uls-op-cesaip01.wdc.com with ESMTP; 14 Nov 2022 00:20:03 -0800
-From:   Johannes Thumshirn <johannes.thumshirn@wdc.com>
-To:     Damien Le Moal <Damien.LeMoal@opensource.wdc.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>
-Subject: [PATCH v2] zonefs: add sanity check for aggregated conventional zones
-Date:   Mon, 14 Nov 2022 00:19:56 -0800
-Message-Id: <fe0e42b533442766d941740697cd8e33fcad99ad.1668413972.git.johannes.thumshirn@wdc.com>
-X-Mailer: git-send-email 2.37.3
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 14 Nov 2022 03:29:41 -0500
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D82881B795
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 00:29:39 -0800 (PST)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-3691846091fso98573727b3.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 00:29:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=tUgTTBqKFuYwrBAzZpO1jGOAUEqlfA9E0Rem6opsB3E=;
+        b=BSUGObCx4CoBl4EPyv/sqdhaIx0lyPbCKwJGuN9W7g/1v2YFv9G3VeL8ZFtRN30qVI
+         it7y8tFgQ5xe97AjVd7P6AdEMjrFOxTFtTqXdJDejlWuivHSS1Van0dRG83qcQsEBMIQ
+         wDOrS1xRqt6t4fC6IUgF/YAiSLRza4BXSkTVHVf3Q9mp+TMdnYUVmajKeWGNJDCrY630
+         G3xQ9DNy0yeZ2IW4yHhx/c+U0uyJ9ezELP1uY9T0vUL0hd0EdQdIgXplU7u9zzcEfiTj
+         UcnCKgMCRUo/KNtTWV133jD+mGzd+CwzVV0ZHUgwY67ZHbo2fPsm+mimnMOZloDW5i+Z
+         QLFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tUgTTBqKFuYwrBAzZpO1jGOAUEqlfA9E0Rem6opsB3E=;
+        b=1ZT1wSo5T6oWVV6eHrW2tltf5y0mRIqUi1HTfphMGl4ceOew4zXlds1PAzt16jUaOr
+         O+/nyIJ4tbUaTpljOXj/4D8qJoh7ANOuLDoJAog/R3iQZCZbBK5pq4hYTsRKNBT4MS+8
+         jJoZRJdL0+OXtbnkTS3Wq7TmX7nOOSYU6M+dr7dWMUEFl2rttKT/twCcKWmhUmOfm0Z0
+         NbgCB7Bnkp0Rbr0IxIF78AhR7uWvBXb9hK/dEQKscB2pGuIZtrb6T1PIXYPWlkS5fLRD
+         bm2XPaVnI8iC80t5AvGZZnbZtpW0lwqVH6hJQn1iWSzyVHMeEYhyZHBbkFfWFmjtyQ7U
+         JJ6A==
+X-Gm-Message-State: ANoB5plO9jzc/HC8VFG3lv2LsDFtMXfQhIeKa3PwvU/zBg7vsjuV+b0W
+        M+F9Koa3YQqBYUcO6Nj8zC+Ewtzgjxc=
+X-Google-Smtp-Source: AA0mqf6Sled3ymaggMqirPv77RcfKjEQpPjpv0lK3onlVFtDH6YH/gOMt608briDetxvDX9JZVSqqx8k3Ls=
+X-Received: from glider.muc.corp.google.com ([2a00:79e0:9c:201:947a:2eda:94df:cc80])
+ (user=glider job=sendgmr) by 2002:a0d:ca08:0:b0:378:f758:8a5c with SMTP id
+ m8-20020a0dca08000000b00378f7588a5cmr12670700ywd.134.1668414579205; Mon, 14
+ Nov 2022 00:29:39 -0800 (PST)
+Date:   Mon, 14 Nov 2022 09:29:35 +0100
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.38.1.431.g37b22c650d-goog
+Message-ID: <20221114082935.3007497-1-glider@google.com>
+Subject: [PATCH] fs: ext4: initialize fsdata in pagecache_write()
+From:   Alexander Potapenko <glider@google.com>
+To:     glider@google.com
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        chao@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, Eric Biggers <ebiggers@kernel.org>,
+        syzbot+9767be679ef5016b6082@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When initializing a file inode, check if the zone's size if bigger than
-the number of device zone sectors. This can only be the case if we mount
-the filesystem with the -oaggr_cnv mount option.
+When aops->write_begin() does not initialize fsdata, KMSAN reports
+an error passing the latter to aops->write_end().
 
-Emit an error in case this case happens and fail the mount.
+Fix this by unconditionally initializing fsdata.
 
-Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Also speculatively fix similar issues in affs, f2fs, hfs, hfsplus,
+as suggested by Eric Biggers.
 
+Cc: Eric Biggers <ebiggers@kernel.org>
+Fixes: c93d8f885809 ("ext4: add basic fs-verity support")
+Reported-by: syzbot+9767be679ef5016b6082@syzkaller.appspotmail.com
+Signed-off-by: Alexander Potapenko <glider@google.com>
 ---
-Changes to v1:
-- Change IS_ERR_OR_NULL() to IS_ERR() (Damien)
-- Add parentheses around 'sbi->s_features & ZONEFS_F_AGGRCNV' (Dan)
----
- fs/zonefs/super.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+ fs/affs/file.c       | 2 +-
+ fs/ext4/verity.c     | 2 +-
+ fs/f2fs/verity.c     | 2 +-
+ fs/hfs/extent.c      | 2 +-
+ fs/hfsplus/extents.c | 2 +-
+ 5 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index 860f0b1032c6..143bd018acd2 100644
---- a/fs/zonefs/super.c
-+++ b/fs/zonefs/super.c
-@@ -1407,6 +1407,14 @@ static int zonefs_init_file_inode(struct inode *inode, struct blk_zone *zone,
- 	zi->i_ztype = type;
- 	zi->i_zsector = zone->start;
- 	zi->i_zone_size = zone->len << SECTOR_SHIFT;
-+	if (zi->i_zone_size > bdev_zone_sectors(sb->s_bdev) << SECTOR_SHIFT &&
-+	    !(sbi->s_features & ZONEFS_F_AGGRCNV)) {
-+		zonefs_err(sb,
-+			   "zone size %llu doesn't match device's zone sectors %llu\n",
-+			   zi->i_zone_size,
-+			   bdev_zone_sectors(sb->s_bdev) << SECTOR_SHIFT);
-+		return -EINVAL;
-+	}
+diff --git a/fs/affs/file.c b/fs/affs/file.c
+index cefa222f7881c..8daeed31e1af9 100644
+--- a/fs/affs/file.c
++++ b/fs/affs/file.c
+@@ -880,7 +880,7 @@ affs_truncate(struct inode *inode)
+ 	if (inode->i_size > AFFS_I(inode)->mmu_private) {
+ 		struct address_space *mapping = inode->i_mapping;
+ 		struct page *page;
+-		void *fsdata;
++		void *fsdata = NULL;
+ 		loff_t isize = inode->i_size;
+ 		int res;
  
- 	zi->i_max_size = min_t(loff_t, MAX_LFS_FILESIZE,
- 			       zone->capacity << SECTOR_SHIFT);
-@@ -1456,11 +1464,11 @@ static struct dentry *zonefs_create_inode(struct dentry *parent,
- 	struct inode *dir = d_inode(parent);
- 	struct dentry *dentry;
- 	struct inode *inode;
--	int ret;
-+	int ret = -ENOMEM;
+diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+index 3c640bd7ecaeb..30e3b65798b50 100644
+--- a/fs/ext4/verity.c
++++ b/fs/ext4/verity.c
+@@ -79,7 +79,7 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
+ 		size_t n = min_t(size_t, count,
+ 				 PAGE_SIZE - offset_in_page(pos));
+ 		struct page *page;
+-		void *fsdata;
++		void *fsdata = NULL;
+ 		int res;
  
- 	dentry = d_alloc_name(parent, name);
- 	if (!dentry)
--		return NULL;
-+		return ERR_PTR(ret);
+ 		res = aops->write_begin(NULL, mapping, pos, n, &page, &fsdata);
+diff --git a/fs/f2fs/verity.c b/fs/f2fs/verity.c
+index c352fff88a5e6..3f4f3295f1c66 100644
+--- a/fs/f2fs/verity.c
++++ b/fs/f2fs/verity.c
+@@ -81,7 +81,7 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
+ 		size_t n = min_t(size_t, count,
+ 				 PAGE_SIZE - offset_in_page(pos));
+ 		struct page *page;
+-		void *fsdata;
++		void *fsdata = NULL;
+ 		int res;
  
- 	inode = new_inode(parent->d_sb);
- 	if (!inode)
-@@ -1485,7 +1493,7 @@ static struct dentry *zonefs_create_inode(struct dentry *parent,
- dput:
- 	dput(dentry);
+ 		res = aops->write_begin(NULL, mapping, pos, n, &page, &fsdata);
+diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
+index 3f7e9bef98743..6d1878b99b305 100644
+--- a/fs/hfs/extent.c
++++ b/fs/hfs/extent.c
+@@ -486,7 +486,7 @@ void hfs_file_truncate(struct inode *inode)
+ 		inode->i_size);
+ 	if (inode->i_size > HFS_I(inode)->phys_size) {
+ 		struct address_space *mapping = inode->i_mapping;
+-		void *fsdata;
++		void *fsdata = NULL;
+ 		struct page *page;
  
--	return NULL;
-+	return ERR_PTR(ret);
- }
+ 		/* XXX: Can use generic_cont_expand? */
+diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
+index 721f779b4ec3e..7a542f3dbe502 100644
+--- a/fs/hfsplus/extents.c
++++ b/fs/hfsplus/extents.c
+@@ -554,7 +554,7 @@ void hfsplus_file_truncate(struct inode *inode)
+ 	if (inode->i_size > hip->phys_size) {
+ 		struct address_space *mapping = inode->i_mapping;
+ 		struct page *page;
+-		void *fsdata;
++		void *fsdata = NULL;
+ 		loff_t size = inode->i_size;
  
- struct zonefs_zone_data {
-@@ -1523,8 +1531,8 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
- 		zgroup_name = "seq";
- 
- 	dir = zonefs_create_inode(sb->s_root, zgroup_name, NULL, type);
--	if (!dir) {
--		ret = -ENOMEM;
-+	if (IS_ERR(dir)) {
-+		ret = PTR_ERR(dir);
- 		goto free;
- 	}
- 
-@@ -1570,8 +1578,9 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
- 		 * Use the file number within its group as file name.
- 		 */
- 		snprintf(file_name, ZONEFS_NAME_MAX - 1, "%u", n);
--		if (!zonefs_create_inode(dir, file_name, zone, type)) {
--			ret = -ENOMEM;
-+		dir = zonefs_create_inode(dir, file_name, zone, type);
-+		if (IS_ERR(dir)) {
-+			ret = PTR_ERR(dir);
- 			goto free;
- 		}
- 
+ 		res = hfsplus_write_begin(NULL, mapping, size, 0,
 -- 
-2.37.3
+2.38.1.431.g37b22c650d-goog
 
