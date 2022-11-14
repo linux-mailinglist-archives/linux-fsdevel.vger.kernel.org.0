@@ -2,204 +2,185 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CD97628388
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 16:08:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E7156283DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 16:29:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237146AbiKNPI2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Nov 2022 10:08:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38912 "EHLO
+        id S236702AbiKNP3O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Nov 2022 10:29:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51562 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237144AbiKNPIX (ORCPT
+        with ESMTP id S236934AbiKNP2z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Nov 2022 10:08:23 -0500
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5910A2CDDD;
-        Mon, 14 Nov 2022 07:08:15 -0800 (PST)
-Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
-        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AEEk5C9004939;
-        Mon, 14 Nov 2022 15:08:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=corp-2022-7-12;
- bh=PS4hf9h/P5x5MVXpOJ7qXJ++x/FyQ73ADFmWLqkaXag=;
- b=dGqN8/u8CcajxouiSt0LcQykmmTkAW2nhwSD3pzwXJQXW8+T6Fpy/azPQciKLtRt/786
- 51ltSde3mx6J6FxY3O/11e+ONq7WmWHvv+vkYikrlUuxQrtMqh+2N2kEWSBP6AORdSm8
- ZaXQ8M1B8mmHEEv2sRZ4T6NL3d9I4vWiFF89bDpn0mxIgkLnW376mivaPnyIyQCiPIgu
- TIKNpwK/WJBKtLVOWCj2D9Nju1C30Y34lnmOegYtCHL2+eSbstdb8PCm/mRcQ7Os793f
- R8WSYFvEherqB6MFUcyWxAH7ixtKiZxaBJFKdPy664+ifczwH4/cctKdXfdJwenlpS+K sw== 
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3ku1gwja6h-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Nov 2022 15:08:05 +0000
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 2AEExfGj034900;
-        Mon, 14 Nov 2022 15:08:05 GMT
-Received: from nam02-dm3-obe.outbound.protection.outlook.com (mail-dm3nam02lp2048.outbound.protection.outlook.com [104.47.56.48])
-        by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 3kt1x48ay1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Nov 2022 15:08:05 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=SH3DgUR9EJTdolEISKhfCbdfmRASdg0Z/Dk5HatejXRhCzjqfll0h3z2SqTgcnfEz3DHtcUxRjbdwdENvvtKJP4JILYMaJVQverl6VjUGZycv6p/ne9sD1FdruflCZBgy+hUAiYgFW43GLh9rlOcsMSUei4IAcNClBGaUnY5WksWZvmLg7F39hU1do02rBbmO1tuvl8X6A01qIEdPydXW4RfHAncI5lAZvpWIrT03lkxOslyFiaKGQamzMb0OF2K9EwbsbSV/57ZJ1jYr4p9gHTBD4JC5pqAatzRWbWYZ1GOxtiAySHlip2ou8qRm3DaC/6SOwcOSGK5jmlG0MF4sA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PS4hf9h/P5x5MVXpOJ7qXJ++x/FyQ73ADFmWLqkaXag=;
- b=O8OHtmhvVZ2KewB7b+RTtDKNpkNb5zcYRuFxWyfwtNMsO/pctcy6D9rI9ONTYUX9W4UnnKWl+ZRGg4IXsKk9Uq8yvhETjKp1qkDMVBRSz4Y1hOvBlnmPv4pmcvOWRiCXcVe8XDJlgMynWCrBuqd9WI3rDlFq1eqbpCP8UVV21RqMD+hWfIJSyVhTG27VoEajPcO8FGxm2fG8uO8sJfnc7zNFm08JvjlwVBhzyUhYJiFObigSThmj1xarf2Y6dlue58yZIzd7PFzv1HzF2nvruvPtqpFB/nYeq/y7uUtVm+VVNpGypRSybEvpoWsnHHEOi/NR2uO1wlkEBLsLaQ/+Og==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PS4hf9h/P5x5MVXpOJ7qXJ++x/FyQ73ADFmWLqkaXag=;
- b=a++dVt0s61AgUgi/e3n7H0Xnd5iVck9XAVXFjQQQtTY8LVCnTfQe67zIwwFKGFP0RDdlFP6/8ZSPvhEvPm2MWGupKhK3Z6z9E+TDu3RJXgc5vDVTWKIK2hEdlWRXRu+2waaE9+iJW3j8t/MP0bdYy05YwE3tDye5hsWvBux8aXE=
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com (2603:10b6:408:117::24)
- by IA0PR10MB6819.namprd10.prod.outlook.com (2603:10b6:208:438::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.17; Mon, 14 Nov
- 2022 15:08:03 +0000
-Received: from BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::b500:ee42:3ca6:8a9e]) by BN0PR10MB5128.namprd10.prod.outlook.com
- ([fe80::b500:ee42:3ca6:8a9e%6]) with mapi id 15.20.5813.017; Mon, 14 Nov 2022
- 15:08:03 +0000
-From:   Chuck Lever III <chuck.lever@oracle.com>
-To:     Jeff Layton <jlayton@kernel.org>
-CC:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>
-Subject: Re: [PATCH 0/3] filelock: remove redundant filp arguments from API
-Thread-Topic: [PATCH 0/3] filelock: remove redundant filp arguments from API
-Thread-Index: AQHY+Do5vmCcmi57O0qMMT1RNEW8Uq4+hVMA
-Date:   Mon, 14 Nov 2022 15:08:03 +0000
-Message-ID: <3C490193-AFF8-479E-ACEF-ADD02E3E15D5@oracle.com>
-References: <20221114150240.198648-1-jlayton@kernel.org>
-In-Reply-To: <20221114150240.198648-1-jlayton@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: Apple Mail (2.3696.120.41.1.1)
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN0PR10MB5128:EE_|IA0PR10MB6819:EE_
-x-ms-office365-filtering-correlation-id: 6546ded0-3139-4ece-6fe1-08dac65206f0
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: jD7K2CM7nyfl8fMb2Z6HcipeJbn7J2LVvvng70rZQIlbWKysuHW2/Xo12k+fpbK2xUxnztmA+wTbqww7aEXrhLiFAmFvpnCKgF5v3Q6JsefnUnT+ZclgpUIoU09th5NUVxFh58eHcsWTLkAeETGTBhEiOU24BfipvSikaGgke6qakuK9lt+W5Z96c0R5SrARfIII0eXrfij2pMmjFiNcZQ26YvYBXQxldQC54SbbY/C6Kl/+GRASNOHeXgIQpqTtlEjTKrnzcX805HyvGB2GPSgQcdzRd7WWYEQxXEKu3buI8tDvOW3Krn+u+htYAV9NI3SeK4qar4PHiek+qwY3lVOdu/jyS1ZvipCxlf7Kyyl11weUF/3Dpco9r9WZwmBhk7OUpKVrgoGNGYf7QqP763I91HDVx3zQkEmdZM9hayMeN3bNco/uScesE+4H514N02Vfa4kW2ak1ffUu65vYFEB4XAGLPsPFHCo/4u3ZU02a4ULrDFg9g+l6eUtJuF3Fu9hq78dLRrdiqj+5KNFt/9EQ6TjkoT8QhHYi5sn0xAFMTs6edcQ/UR+Az99YzLCFP0wwRjAwrYMrWmkN9ttvbhlqTu8rAOVLL2VQI5i3Sy3EuoWXNH9yoZxuiAifTDH98anO0lS2i2TXkwK97Qob9/sUeZd/uZOTNckZLkOOMUdFS6crYZvOzmncU/2O3Hcofe7sNuEzdy8vjBG+mkly5A7F6feNvRORB9SBDeaS1uZ/ZV1CXssJxpEROiO4MP602lJUVmOmwiXdcrR6q9pzWytwY34qnsDsf5zWzlQgr1F0BZuZzIMReUeopd4ULe5F/UO/RrFgPe7W+3QmDjc0rG331jmZatMKTmNh+Q+fXneXv6B5vVIr4X7T3fdRo1dl
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN0PR10MB5128.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(366004)(396003)(376002)(39860400002)(346002)(136003)(451199015)(6512007)(26005)(6506007)(478600001)(53546011)(966005)(316002)(6916009)(54906003)(38070700005)(6486002)(71200400001)(36756003)(122000001)(38100700002)(86362001)(186003)(2616005)(83380400001)(33656002)(2906002)(91956017)(8936002)(41300700001)(66476007)(8676002)(66446008)(66556008)(64756008)(66946007)(76116006)(4326008)(5660300002)(45980500001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?eYYrbUQ8ODIxCCJZ6d9HZk1kc7DSvZiAYfL6+LiZAbffeJFpm+/On+hJMN0q?=
- =?us-ascii?Q?XpQxfi8fDiJ2oaKLOKGR9aT4NCuyPp5WKYYIptK2E2/0WjhkE0q4zPDJJfV+?=
- =?us-ascii?Q?FQKN6UFXA1MybflaDUDYIwKmNAWxBFTtNW5kK4jenjS/iWY23ECG1zzD1RAC?=
- =?us-ascii?Q?v+rErGsIHZfB4psak1PN9M0nK/4X316SwZIJHG2PX5SVI5lJX+buz0EWCOcf?=
- =?us-ascii?Q?dl3AipPZKigeuQyDQFu/Y0ArNtEe+0SeCf+9GhvX7hfzv88px4iH982DWp6M?=
- =?us-ascii?Q?5blKrGkkh1rrpwGlzlhetbeCesj0TDyxS3GpQ70HZT2RA2Z3FoOwvO1tU6ha?=
- =?us-ascii?Q?dg1mzAPGS/3R5TEGApqVK1wCGiDVY2uEVkmHlSYsMu8SyPQt3mEnjGwfBm5s?=
- =?us-ascii?Q?uUP2GEymzmRwExNqg/o9otAz47BbAT47cv1hHAH+/kX8q1U9S3udurSboeDe?=
- =?us-ascii?Q?oRh9AfnwJlPXlGTrRRDakAjn9g9ihKDlWcoR97vobh0uIVSGzaJQo4PB32/z?=
- =?us-ascii?Q?EYm+8AafH8QNuHPXd3vMABcl1yjJkqnS9F/8ssdXN8NQoTX6T82Y/+zsAyEN?=
- =?us-ascii?Q?woEXosEXO1ojnoK+IBDBipq/db6mR8TkQR5fNhxRe59MK8ozZo3Ox390utor?=
- =?us-ascii?Q?0rBVmvhmqMKT7FgkRqlOrsSCN/8llKhACdkvichTtAX7+N1Xl4H1IdAI9syy?=
- =?us-ascii?Q?BaRw5nW41qaAbtp+Ll+sQ5lf88W4n5uPaPgjYITl+xOhaltQirMB0HfPtYQN?=
- =?us-ascii?Q?UnxlOMLk+LPJrk6o1x5eSb6D6qMf49BJ6z2jcu0lpgo1pc0AftAQ24eitpJn?=
- =?us-ascii?Q?MukPXHXhUuK92R5ZYt/fgiRDndFTJEySAe/V2r4qacTw6p+Mc0CwDlBo1lZL?=
- =?us-ascii?Q?8QiinV7nDP89k0pTdkZoeCoIdBZ8w/ngHpJ//qRmWvsLJAKKqf+LSDAODASF?=
- =?us-ascii?Q?tg6GpoKM1ly0fG0Jb/FaHPXIJS92r3NJxqnsPQQEPE0EnGIbTJ3XjSAUhRXM?=
- =?us-ascii?Q?lq2WzxvIBF5vCA52vOZSpk8Yd86HGcoFHLl1daGUofWqx8Kzhmq7w8xmt38M?=
- =?us-ascii?Q?91LKgCuhX1rrfhVIXNCbDwY3wclYRUAC0/Piz1kBuEGPfZNObWaV7wC23RWc?=
- =?us-ascii?Q?jwC35xlhS05vIXkxyrE0zj/k+0qv/F4Uu9sdDgPq30dS6QWZ2tHxrtE/cYVS?=
- =?us-ascii?Q?IZp9xPPp8d2Ljpht3yMBEJ82flfijtucSa3oweGoBlW8MmLTjRSzFFQCpX26?=
- =?us-ascii?Q?u992ywhLQIolSOUS629UYghxn9MkS+at4XGdq3ZN2YIn3AhgUF2GWFdGj7Zf?=
- =?us-ascii?Q?4IFl1B9QRp9DOU6M/DopSNM/VvTZINZv9O7hw9QclX4vfUi8vuGsdNbisyl2?=
- =?us-ascii?Q?v90Znh3HJ1BLZuyFN8HBiwm8iotBZX0AM7G7MRC+qXzHxGzyQaZLfOdnRZw1?=
- =?us-ascii?Q?W0BjhPXodRuR5GD4xlgMXcNbCQaQ5bDyVHKhxiVH7UuKt8W3pg+FOK4+Ver1?=
- =?us-ascii?Q?zBZxvQwYiufOuKXKAm0EbLH0X7CW9rclScK3ZOVLLoiH2SF0yBVcZiq46bAC?=
- =?us-ascii?Q?Om2J5a93ax52krVNgG9tPAbtu67CPDM1bwthFwPC3lHzDHe2lnBYAbTF975R?=
- =?us-ascii?Q?Pw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <49AD734A75E4CC4498DB364FC8B3A4A6@namprd10.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Mon, 14 Nov 2022 10:28:55 -0500
+Received: from wnew3-smtp.messagingengine.com (wnew3-smtp.messagingengine.com [64.147.123.17])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19A79E09C;
+        Mon, 14 Nov 2022 07:28:52 -0800 (PST)
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+        by mailnew.west.internal (Postfix) with ESMTP id BD4962B067C3;
+        Mon, 14 Nov 2022 10:28:48 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Mon, 14 Nov 2022 10:28:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+         h=cc:cc:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1668439728; x=1668446928; bh=Nk
+        bbGytzJ7I7fdZjJ8Fl0BV2oDQacMuRT8wrkqNypwg=; b=L+fg9psCjGWR+Q4jar
+        Mh8WPN0CCVKtE8QULFZl/REBBGfEYLOoG5tTfwzN2fLvRfihDZ0CUPaHxOTUYHgN
+        +f0XudZX5n2uU9Zk262NyzcpFGRRDtJoWAoc8JwvaQmfWt8ENHQA6z/bl7D7zv1j
+        stjmAjSQgumSVaN7IVmX7VjTeL7anz0EPhVYEJbMwNJF0wgd5r6RGPz80nDeGRIS
+        5U9ySXNkmdE/w/yBigY3Rx3yFbACIc4cb0hBrdw/YOLobVtkqXvHu1Wc+/Tc+Mo0
+        TsAi0HYkU2U+JWkiZhU99J/Rd1WejZwmC3+i8aR3e2dYkVY3CF08l1y9hbmQUXj5
+        XQoA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1668439728; x=1668446928; bh=NkbbGytzJ7I7fdZjJ8Fl0BV2oDQa
+        cMuRT8wrkqNypwg=; b=OSToxW/AKRZaXNJ4BEd/AfCajCfbDqN1unwhNaXMlb9t
+        gBO67tNkQ7mqXA1AQ+PhqQadLiKZ6cu5xEbfTKv1UtTrVeWL9sP4ytoewiuSj1Ks
+        BBC694bRwD2HHIJeQSaeEBV2jt9gSr7nEGve1a7AVzb3q2yf7pOa1kMcencyzD/z
+        3DFaSyJ7bmfdtINjvmK8PGAsAt9Yq9t5XdVVz6oLDmHHq+3tD+atDSuLlkEUfNWG
+        r0CU0ehV3Oq8cdxwsBSBfEkWuWaYR8G1HRnSlk1MucqsgCqrtCknz01vR9JGWymU
+        ec23kvRXthssYr0nlcCFXMk42bb8tf09b03GWaO3aQ==
+X-ME-Sender: <xms:r15yY_0QRYhyAkn-aGlVslxWDhm_9bvHMBd6L_bA6_qmkRguiYaqfg>
+    <xme:r15yY-Gl3WluqhzR5HczYZyXS396xm8TKAb-aw0uzyy_Lwjlq_FFDx78c9GcSLxVg
+    omFr3Xg_KAP38qJKcY>
+X-ME-Received: <xmr:r15yY_4eNDfu6njZp1k19j2OAE3egUL8KFpHjFGbrTkXA6fmmfh5gR4fdxZPNA5MVmYq0A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrgedvgdehtdcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttddttddttddvnecuhfhrohhmpedfmfhirhhi
+    lhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrg
+    hmvgeqnecuggftrfgrthhtvghrnhephfeigefhtdefhedtfedthefghedutddvueehtedt
+    tdehjeeukeejgeeuiedvkedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgv
+X-ME-Proxy: <xmx:r15yY03SFHC1V2ev4RxYj9TRgPZ9wbV1HZ2kMPfVye6Ouoozly-5pA>
+    <xmx:r15yYyF9Dk-M3xacDgcx9XiIc2UyNRI_n1wX8zQbg2MGr7E4GWvUYA>
+    <xmx:r15yY1-J6Sa29ay92N9akyCSYEV3nNXagqOnIPGeHpRBz_8zvlV44w>
+    <xmx:sF5yY3QIa2TGTJD3XJpjfYjCXVPw48yakbN9YPL0_2IRk6C7cvZVbImWW3U>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 14 Nov 2022 10:28:46 -0500 (EST)
+Received: by box.shutemov.name (Postfix, from userid 1000)
+        id 18B2A109875; Mon, 14 Nov 2022 18:28:43 +0300 (+03)
+Date:   Mon, 14 Nov 2022 18:28:43 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Vlastimil Babka <vbabka@suse.cz>
+Cc:     Michael Roth <michael.roth@amd.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        mhocko@suse.com, Muchun Song <songmuchun@bytedance.com>,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
+ create restricted user memory
+Message-ID: <20221114152843.ylxe4dis254vrj5u@box.shutemov.name>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
+ <20221031174738.fklhlia5fmaiinpe@amd.com>
+ <20221101113729.GA4015495@chaop.bj.intel.com>
+ <20221101151944.rhpav47pdulsew7l@amd.com>
+ <20a11042-2cfb-8f42-9d80-6672e155ca2c@suse.cz>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: Jx/52xO53UB6RKmkxaNahDfV24fQDhQHWQN+QvXUogGb53V2hFDbmgXJqsbz0MUOX7OObqrqDVI93PI1RRA+fM4vUFXNCI1HglfhJnANPbzv62nC0qaKqust098X7grqc4r/ExENu656nZftJ2650FJ541f2/KjMlndU8BGYPCV2RS52FKaAka+IaUsfImDvUPXAbpRkGjBIH3x5kxBtliCnBHQbaQ9b1fF1fspnWaPVP/NlrbLalHL0UZ+CpXMWxUwT4nlHLLwL8v7lyMJUpShpxSoJeek3oepBcznTXyRbHQ8jNjGeyi35/P/RX/0jjSmSgAq7NGdRW4IjWweezbdDlbA+W10IrchW5+nB7/SGutC8Qg+JViDEHA3EvYAn31VE1Tv+3GVhtSqrZtXsT5SUXj6bcadUYHJwh/1ZE9tVzuBtxVB7bONTbcHawqs9C0Kf1CLsXXuxReKSExfASyDwQzNg/8nJGfbw/QP+OrYESVBEntQVYjxnKPvdsOCLDr2pk4nRGQfHkl2p/eNmwJ8bWMxmq1M+Fv5McZVr5D+mc75pIEqfCZ/uaNk6IbXGfBRuSW0cQcHE/V+alicqSnYAAFNPTIJe4eThm0Ur2wj/pSSwEO3t7rfqyq2b499D9w55L2QAOqNk9cCLaLNeW2G07VdKvL89dvhkAr1TINhMg49FHNiTAcD78Yj8jRDsF3c5kjFr3wQtkGdvtmcIhMs/8KobLuEVYzfcfXVFIA98MrR4fatKTtd4NhFpaBjesSdvTjSvxX442yLRhIH7ObbNS44AcXgu4CdN2zxljnYPn+ozphY8H3ePAxrWxm1cplzGOB6lTXM0u8145oqIR3mH2zvTROKwn9FKchr/EGjkljqR4pF5/BikdW/Ief0h
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN0PR10MB5128.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6546ded0-3139-4ece-6fe1-08dac65206f0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2022 15:08:03.1760
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: znxLHjlIJ6/7ggZKyvazeKKt5zXsx5dxsXOtQv0VqkpPCN6DGj7b67H9UJYDKI2FHnSfX+jaL5GIKw2Q2yxiiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR10MB6819
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-14_12,2022-11-11_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 bulkscore=0 phishscore=0
- spamscore=0 mlxlogscore=999 suspectscore=0 malwarescore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2210170000
- definitions=main-2211140108
-X-Proofpoint-ORIG-GUID: Umt5e3LpSmmclj1t1vz6yslrdtMRQlAR
-X-Proofpoint-GUID: Umt5e3LpSmmclj1t1vz6yslrdtMRQlAR
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20a11042-2cfb-8f42-9d80-6672e155ca2c@suse.cz>
 X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Nov 14, 2022 at 03:02:37PM +0100, Vlastimil Babka wrote:
+> On 11/1/22 16:19, Michael Roth wrote:
+> > On Tue, Nov 01, 2022 at 07:37:29PM +0800, Chao Peng wrote:
+> >> > 
+> >> >   1) restoring kernel directmap:
+> >> > 
+> >> >      Currently SNP (and I believe TDX) need to either split or remove kernel
+> >> >      direct mappings for restricted PFNs, since there is no guarantee that
+> >> >      other PFNs within a 2MB range won't be used for non-restricted
+> >> >      (which will cause an RMP #PF in the case of SNP since the 2MB
+> >> >      mapping overlaps with guest-owned pages)
+> >> 
+> >> Has the splitting and restoring been a well-discussed direction? I'm
+> >> just curious whether there is other options to solve this issue.
+> > 
+> > For SNP it's been discussed for quite some time, and either splitting or
+> > removing private entries from directmap are the well-discussed way I'm
+> > aware of to avoid RMP violations due to some other kernel process using
+> > a 2MB mapping to access shared memory if there are private pages that
+> > happen to be within that range.
+> > 
+> > In both cases the issue of how to restore directmap as 2M becomes a
+> > problem.
+> > 
+> > I was also under the impression TDX had similar requirements. If so,
+> > do you know what the plan is for handling this for TDX?
+> > 
+> > There are also 2 potential alternatives I'm aware of, but these haven't
+> > been discussed in much detail AFAIK:
+> > 
+> > a) Ensure confidential guests are backed by 2MB pages. shmem has a way to
+> >    request 2MB THP pages, but I'm not sure how reliably we can guarantee
+> >    that enough THPs are available, so if we went that route we'd probably
+> >    be better off requiring the use of hugetlbfs as the backing store. But
+> >    obviously that's a bit limiting and it would be nice to have the option
+> >    of using normal pages as well. One nice thing with invalidation
+> >    scheme proposed here is that this would "Just Work" if implement
+> >    hugetlbfs support, so an admin that doesn't want any directmap
+> >    splitting has this option available, otherwise it's done as a
+> >    best-effort.
+> > 
+> > b) Implement general support for restoring directmap as 2M even when
+> >    subpages might be in use by other kernel threads. This would be the
+> >    most flexible approach since it requires no special handling during
+> >    invalidations, but I think it's only possible if all the CPA
+> >    attributes for the 2M range are the same at the time the mapping is
+> >    restored/unsplit, so some potential locking issues there and still
+> >    chance for splitting directmap over time.
+> 
+> I've been hoping that
+> 
+> c) using a mechanism such as [1] [2] where the goal is to group together
+> these small allocations that need to increase directmap granularity so
+> maximum number of large mappings are preserved.
 
+As I mentioned in the other thread the restricted memfd can be backed by
+secretmem instead of plain memfd. It already handles directmap with care.
 
-> On Nov 14, 2022, at 10:02 AM, Jeff Layton <jlayton@kernel.org> wrote:
->=20
-> Some of the exported functions in fs/locks.c take both a struct file
-> argument and a struct file_lock. struct file_lock has a dedicated field
-> to record which file it was set on (fl_file). This is redundant, and
-> there have been some cases where the two didn't match [1], leading to
-> bugs.
+But I don't think it has to be part of initial restricted memfd
+implementation. It is SEV-specific requirement and AMD folks can extend
+implementation as needed later.
 
-Hi Jeff, doesn't the same argument apply to f_ops->lock ? Do you
-have a plan for updating that API as well?
-
-
-> This patchset is intended to remove this ambiguity by eliminating the
-> separate struct file argument from vfs_lock_file, vfs_test_lock and
-> vfs_cancel_lock.
->=20
-> Most callers are easy to vet to ensure that they set this correctly, but
-> lockd had a few places where it wasn't doing the right thing. This
-> series depends on the lockd patches I sent late last week [2].
->=20
-> I'm targeting this series for v6.3. I'll plan to get it into linux-next
-> soon unless there are objections.
->=20
-> [1]: https://bugzilla.kernel.org/show_bug.cgi?id=3D216582
-> [2]: https://lore.kernel.org/linux-nfs/20221111215538.356543-1-jlayton@ke=
-rnel.org/T/#t
->=20
-> Jeff Layton (3):
->  filelock: remove redundant filp argument from vfs_lock_file
->  filelock: remove redundant filp argument from vfs_test_lock
->  filelock: remove redundant filp arg from vfs_cancel_lock
->=20
-> fs/ksmbd/smb2pdu.c  |  4 ++--
-> fs/lockd/svclock.c  | 21 +++++++--------------
-> fs/lockd/svcsubs.c  |  4 ++--
-> fs/locks.c          | 29 ++++++++++++++---------------
-> fs/nfsd/nfs4state.c |  6 +++---
-> include/linux/fs.h  | 14 +++++++-------
-> 6 files changed, 35 insertions(+), 43 deletions(-)
->=20
-> --=20
-> 2.38.1
->=20
-
---
-Chuck Lever
-
-
-
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
