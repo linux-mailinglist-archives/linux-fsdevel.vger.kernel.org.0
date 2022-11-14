@@ -2,51 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 84F2E628837
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 19:20:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 331E862889E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 19:55:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236514AbiKNSUo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Nov 2022 13:20:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50734 "EHLO
+        id S235836AbiKNSzg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Nov 2022 13:55:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236471AbiKNSUn (ORCPT
+        with ESMTP id S229484AbiKNSzg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Nov 2022 13:20:43 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3EE33A461;
-        Mon, 14 Nov 2022 10:20:42 -0800 (PST)
+        Mon, 14 Nov 2022 13:55:36 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1238E1C405;
+        Mon, 14 Nov 2022 10:55:35 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DB321B80E9A;
-        Mon, 14 Nov 2022 18:20:40 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF45C433D7;
-        Mon, 14 Nov 2022 18:20:39 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9C07B61355;
+        Mon, 14 Nov 2022 18:55:34 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0F0FC433C1;
+        Mon, 14 Nov 2022 18:55:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668450039;
-        bh=6rrV9le5kLOXSW9wg4wECadYOt8F4Fow9dl9fDjmFpM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fwWVc+qDMP/qhateNdVfHhROUCFKrHjgWeIylTD8/2rsblM+v65ZGj/0SMeusqsT1
-         ojNEBSeo6PWtqM9Rghx2QxNfBOQZGY6WtHTFuF9e7ZZECebOOeB+qqfnUr0CerSETZ
-         HvdaHtKB7BCHd9SRTG2qw0OSwv76NP36ohGfLIEpUGlABTZxH0tSuXSN3NEYGNoE39
-         0OY3/GBQjuIObhEsgiD5WcrZ62jM0+ezTIXlQSIiwWkb0JTsX/ZIKk+1BUnkc+Ppz6
-         Wsl6f9hoI0DLzouQqcSqtykxbEb3RyWH7JRR1GPCrzoOciWfNP9ZbjgF2YBkctrwcu
-         XJ6uKckB+2Vww==
-Date:   Mon, 14 Nov 2022 18:20:37 +0000
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Alexander Potapenko <glider@google.com>
-Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
-        chao@kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org,
-        syzbot+9767be679ef5016b6082@syzkaller.appspotmail.com
-Subject: Re: [PATCH] fs: ext4: initialize fsdata in pagecache_write()
-Message-ID: <Y3KG9bAo11t84SIg@gmail.com>
-References: <20221114082935.3007497-1-glider@google.com>
+        s=k20201202; t=1668452134;
+        bh=7LQB6+XiZse5Dnc4o5pGCnRPnyXUW/aVM8VfGewrOAc=;
+        h=Date:From:To:Subject:From;
+        b=OJbUUOO1iVoh9LPnjehkISosH3qTJ4UoFuDybNlsNrl71lcMP5r0+9DtTr+dEqSP4
+         p9VEORB8RvK4xSeGzK0qB5rYdbvnlETnsjwOevg5AFsQG3J9x0MWZKUTMANpQlMgGu
+         PZoiouyN092bFt6oZbYsSKjVfVvL/mrrG89uNkM2m68WiIwU3PKQEgydTQIw+iD3f2
+         gVxa8glgl0DCxM+WcmWY6C7xsFSYsyZnZJDoWQOhC43sO2JblaozAxJlmoyhHJ/26c
+         Eywk0fD28y++23nJgybYDhXpOdPPqn8E9PkonhtUO6CIqGDAe+clIcNtRoj79G88yZ
+         j9+Hkvns3+hsw==
+Date:   Mon, 14 Nov 2022 10:55:33 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     xfs <linux-xfs@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Subject: [ANNOUNCE] xfs-linux: iomap-6.2-merge updated to f1bd37a47352
+Message-ID: <Y3KPJVXL7v+WokHF@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221114082935.3007497-1-glider@google.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -56,21 +50,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 14, 2022 at 09:29:35AM +0100, Alexander Potapenko wrote:
-> [PATCH] fs: ext4: initialize fsdata in pagecache_write()
->
-> When aops->write_begin() does not initialize fsdata, KMSAN reports
-> an error passing the latter to aops->write_end().
-> 
-> Fix this by unconditionally initializing fsdata.
-> 
-> Also speculatively fix similar issues in affs, f2fs, hfs, hfsplus,
-> as suggested by Eric Biggers.
+Hi folks,
 
-You might have better luck with separate patches for each filesystem, as it
-might be hard to get someone to apply this patch otherwise.
+The iomap-6.2-merge branch of the xfs-linux repository at:
 
-If you do go with a single patch, then the subject prefix should be "fs:", not
-"fs: ext4:".
+	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-- Eric
+has just been updated.
+
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.
+
+The new head of the iomap-6.2-merge branch is commit:
+
+f1bd37a47352 iomap: directly use logical block size
+
+1 new commit:
+
+Keith Busch (1):
+      [f1bd37a47352] iomap: directly use logical block size
+
+Code Diffstat:
+
+ fs/iomap/direct-io.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
