@@ -2,228 +2,264 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BF761628BE8
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 23:17:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 65F8B628D28
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 00:07:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237795AbiKNWRZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Nov 2022 17:17:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52462 "EHLO
+        id S237866AbiKNXHI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Nov 2022 18:07:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51858 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237899AbiKNWRK (ORCPT
+        with ESMTP id S238180AbiKNXGr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Nov 2022 17:17:10 -0500
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2062.outbound.protection.outlook.com [40.107.243.62])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03CE415821;
-        Mon, 14 Nov 2022 14:17:05 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=NEQFH4XNEXfuTsYWdTscAUSjPJJi1NVOnOzyar8RyTnvMonJVbowMKNEtiEt+xgk197/aqp+dyWlMfwVcAqsLC8HCes43rpM92FzXUld87AFvlvvtpQ1fsPFxtx48S1slF7dEOEwee7vpsXmCaqdKA88FBxJwuuxjxVVDy+FinZU3S5naeBarp8ca1ZwoHK6Xtawuk3sShNTF8sKm3Jxu7a/6WZdmmHVvqV5KMyfvJSP+cD5wPMTG5DGjEQrDkKQ2qkym9DFMHCjDTU7L8TEtAVP5l6hlQc6dW/6VGcF2+Uq2NHkbuOCWhYmooUzK/kdIG0Si6JrhIAJXJFgWT2nzA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=V263XsirVYEAXt3LlFbznJtLX/k6bQ/ZmYJY3BrLdh4=;
- b=Jg8tdWopLvubATC82KN8z3XrTPAJM8ggSDqaYl7GocZoAWRN8x+LPJlECABBuRLE7FuSogtUacj+50UWbLLu9YC9KSSv+tbFJNImWro0qJX2F4fyp1zpgkkBkh4su3BwM8RDCNe8/3EkZS8q+NlyBDqFwJvJEStf+LV3Of/jgtfACRgqU6FMppWGDKbvxO4Mk40pH6sOXkOA6BHUEaEGDWjEhZvL3SugW9+avuJ5c3vZy/iwUgLkauhGRNl302RUGgdpV2CWSPpc7J7Yv0+F+IGae+2JxFOSYYZU0GzU3OzQUG+QsrEgmTjd3tHn4D7Ub8bv25SyibMHnfv6W77J8Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=shutemov.name smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=V263XsirVYEAXt3LlFbznJtLX/k6bQ/ZmYJY3BrLdh4=;
- b=bjxbgtsvfgNu+8WCr1l+i06Ye+u9kpAx5onyymdtsuTgxhM9BxsUOI6cNFEPJWULrtdDLzCPpGEFlECno28i2EivB07sXzL2hkSDSbJxIfiP/3t+gwDjiXcXaJt3dj5+G6Z/hoQo01OcEUKNj4itbnYnrfd8iWwGD2Nm4HkEe3g=
-Received: from DS7PR05CA0079.namprd05.prod.outlook.com (2603:10b6:8:57::9) by
- BN9PR12MB5244.namprd12.prod.outlook.com (2603:10b6:408:101::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.17; Mon, 14 Nov
- 2022 22:17:02 +0000
-Received: from DM6NAM11FT013.eop-nam11.prod.protection.outlook.com
- (2603:10b6:8:57:cafe::a6) by DS7PR05CA0079.outlook.office365.com
- (2603:10b6:8:57::9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.8 via Frontend
- Transport; Mon, 14 Nov 2022 22:17:02 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DM6NAM11FT013.mail.protection.outlook.com (10.13.173.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5813.12 via Frontend Transport; Mon, 14 Nov 2022 22:17:02 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 14 Nov
- 2022 16:17:01 -0600
-Date:   Mon, 14 Nov 2022 16:16:32 -0600
-From:   Michael Roth <michael.roth@amd.com>
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>
-CC:     Vlastimil Babka <vbabka@suse.cz>,
-        Chao Peng <chao.p.peng@linux.intel.com>, <kvm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>, <linux-arch@vger.kernel.org>,
-        <linux-api@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <qemu-devel@nongnu.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        <luto@kernel.org>, <jun.nakajima@intel.com>,
-        <dave.hansen@intel.com>, <ak@linux.intel.com>, <david@redhat.com>,
-        <aarcange@redhat.com>, <ddutile@redhat.com>, <dhildenb@redhat.com>,
-        Quentin Perret <qperret@google.com>, <tabba@google.com>,
-        <mhocko@suse.com>, Muchun Song <songmuchun@bytedance.com>,
-        <wei.w.wang@intel.com>
-Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
- create restricted user memory
-Message-ID: <20221114221632.5xaz24adkghfjr2q@amd.com>
-References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
- <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
- <20221031174738.fklhlia5fmaiinpe@amd.com>
- <20221101113729.GA4015495@chaop.bj.intel.com>
- <20221101151944.rhpav47pdulsew7l@amd.com>
- <20a11042-2cfb-8f42-9d80-6672e155ca2c@suse.cz>
- <20221114152843.ylxe4dis254vrj5u@box.shutemov.name>
+        Mon, 14 Nov 2022 18:06:47 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3E2520F66;
+        Mon, 14 Nov 2022 15:04:35 -0800 (PST)
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AEMhhSi027321;
+        Mon, 14 Nov 2022 23:03:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
+ subject : to : cc : references : from : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=pp1;
+ bh=r2fzDqWsStLA1xUQ8hFm6TfQBbcyzJkCztYXsu/2swA=;
+ b=Sm/Lp2TX1gppX2Z5a9Mns5MPvNGLBnKFMG0y1Olw/g8Em+og+eRJLS9LWumlXbmUovqU
+ dkrtXwZGaaMchdsWqRkNnVvxkIAXUhbfhAMwzrxPN/0oBwNpRw06WPn+IcofHjWhUF5P
+ /2AgtoudXJDAEu0XaHjQz295RoCJPAy6t46Hn5ze6mFsb2gIkqA9t+6KSx7lbCqQEg0h
+ 7KArhQC/f9HjMxnoCnGtjPM58zSMDutYS530qmb+KPD3kfuC9ATqjoEHWB6m5VRD0gXJ
+ gTyUpWZXwbF0MgWKkEqxzVKadK6hTK+VTyJQ2L8uV2s9Iw9jsm+jzxQlxzP8zV0f9jL/ VQ== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kuxqnrbk2-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 14 Nov 2022 23:03:48 +0000
+Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AEN07xD012744;
+        Mon, 14 Nov 2022 23:03:48 GMT
+Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kuxqnrbjd-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 14 Nov 2022 23:03:48 +0000
+Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
+        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AEMpLxM017257;
+        Mon, 14 Nov 2022 23:03:47 GMT
+Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
+        by ppma04dal.us.ibm.com with ESMTP id 3kt349ms1c-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 14 Nov 2022 23:03:47 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
+        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AEN3jIF1835724
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 14 Nov 2022 23:03:45 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3582D5807D;
+        Mon, 14 Nov 2022 23:03:45 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 753D35808C;
+        Mon, 14 Nov 2022 23:03:43 +0000 (GMT)
+Received: from [9.163.46.135] (unknown [9.163.46.135])
+        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+        Mon, 14 Nov 2022 23:03:43 +0000 (GMT)
+Message-ID: <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
+Date:   Mon, 14 Nov 2022 18:03:43 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.12.0
+Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
+ fwsecurityfs
+Content-Language: en-US
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
+        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
+        George Wilson <gcwilson@linux.ibm.com>,
+        Matthew Garrett <mjg59@srcf.ucam.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell Currey <ruscur@russell.cc>,
+        Andrew Donnellan <ajd@linux.ibm.com>,
+        Stefan Berger <stefanb@linux.ibm.com>
+References: <20221106210744.603240-1-nayna@linux.ibm.com>
+ <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
+ <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
+ <Y2zLRw/TzV/sWgqO@kroah.com>
+From:   Nayna <nayna@linux.vnet.ibm.com>
+In-Reply-To: <Y2zLRw/TzV/sWgqO@kroah.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: cMTICiR-Ic39zShUHbdlZAJATSRcqSOJ
+X-Proofpoint-ORIG-GUID: Ruez-Aie2yvxjHXtRL2XCcyi2xuMRRAi
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20221114152843.ylxe4dis254vrj5u@box.shutemov.name>
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6NAM11FT013:EE_|BN9PR12MB5244:EE_
-X-MS-Office365-Filtering-Correlation-Id: b6cee322-9008-4610-fa69-08dac68df47e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 9BY3zSEoSRZKSh2wRev1auNh/P6OFerGFjzhoOrcPX1T5R9uqvGV/3ga/CWspUlvYlSwVSM7pdl07edr+1YCWV7IkOlcyKIm/ytcxs6bBjgIO5wokGGK2WonExKAf6E2n6rQ5WlIdcU0IJDeJ7zd9NseIyZWHhVFqrHkhWP6jV1zEX2bteHtggeOk46jmcWFBIgoRD3NRKj4Gcu0lUsUQtucjJNiTQ0MUOq96tG4XeQ3T91HhTR7kzH9G29Jv4jCqNNQufnluCWk1ulOluD3OpB/11cx5+fs8ylm9TNrJHYrKmm0JrwrW9sUqMEYJ/J+Fr/sn4S4zp6dALBootMdnM1wRYUsYEV/yt36eaIvYdsL1gJsYTJjuMmJN/P5Wm/bYsxvCWc/9M9TZ7BxqKfyZSe3zEhNjG4S1URS7a+8vCTnPrdMT7QQ49RnmvhCPaMbEaYeMPWJ1usW/kUZTCseb/jeIYrbHpj06eBWiTC9uObY4wqWhj7ns7/mjOOhtSK5+TpHMadt2wBddpgF+KkFmP8Y5rMkc/kae2EGxYDg6vNDycTLDeyviJQn8fVBX9gT9hYN9Zu3rB9mW382Lbffqyq65iklgEm0ZY6tZQjIyHFSoRMiojnWpVc4bUec4LPlmS2xI2RpsQnYdBpPoASMzg88QxAA1bQ4v4FiV8KNUUIsjI8eTGi9t6/4uSakNT6DTRghYUNKUt7NUHWlJZZvBlOtYosfO95lA7cPogHDJsiaNL/4xna0qJFo4RWDZH+kAT13ncYvqgvLicN9qIQDe7pMLttDrHTnptBv2nsV/n+0C4VH6ssK66jmnYqlwhUs
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(136003)(376002)(346002)(396003)(39860400002)(451199015)(36840700001)(46966006)(40470700004)(47076005)(186003)(5660300002)(6916009)(54906003)(36860700001)(83380400001)(316002)(2906002)(53546011)(40460700003)(41300700001)(1076003)(44832011)(8936002)(36756003)(16526019)(2616005)(7416002)(336012)(426003)(7406005)(40480700001)(8676002)(70586007)(4326008)(26005)(70206006)(66899015)(82310400005)(478600001)(6666004)(86362001)(82740400003)(81166007)(356005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2022 22:17:02.0059
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: b6cee322-9008-4610-fa69-08dac68df47e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: DM6NAM11FT013.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5244
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-11-14_15,2022-11-11_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 phishscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 mlxscore=0 spamscore=0 clxscore=1015
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2210170000 definitions=main-2211140162
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 14, 2022 at 06:28:43PM +0300, Kirill A. Shutemov wrote:
-> On Mon, Nov 14, 2022 at 03:02:37PM +0100, Vlastimil Babka wrote:
-> > On 11/1/22 16:19, Michael Roth wrote:
-> > > On Tue, Nov 01, 2022 at 07:37:29PM +0800, Chao Peng wrote:
-> > >> > 
-> > >> >   1) restoring kernel directmap:
-> > >> > 
-> > >> >      Currently SNP (and I believe TDX) need to either split or remove kernel
-> > >> >      direct mappings for restricted PFNs, since there is no guarantee that
-> > >> >      other PFNs within a 2MB range won't be used for non-restricted
-> > >> >      (which will cause an RMP #PF in the case of SNP since the 2MB
-> > >> >      mapping overlaps with guest-owned pages)
-> > >> 
-> > >> Has the splitting and restoring been a well-discussed direction? I'm
-> > >> just curious whether there is other options to solve this issue.
-> > > 
-> > > For SNP it's been discussed for quite some time, and either splitting or
-> > > removing private entries from directmap are the well-discussed way I'm
-> > > aware of to avoid RMP violations due to some other kernel process using
-> > > a 2MB mapping to access shared memory if there are private pages that
-> > > happen to be within that range.
-> > > 
-> > > In both cases the issue of how to restore directmap as 2M becomes a
-> > > problem.
-> > > 
-> > > I was also under the impression TDX had similar requirements. If so,
-> > > do you know what the plan is for handling this for TDX?
-> > > 
-> > > There are also 2 potential alternatives I'm aware of, but these haven't
-> > > been discussed in much detail AFAIK:
-> > > 
-> > > a) Ensure confidential guests are backed by 2MB pages. shmem has a way to
-> > >    request 2MB THP pages, but I'm not sure how reliably we can guarantee
-> > >    that enough THPs are available, so if we went that route we'd probably
-> > >    be better off requiring the use of hugetlbfs as the backing store. But
-> > >    obviously that's a bit limiting and it would be nice to have the option
-> > >    of using normal pages as well. One nice thing with invalidation
-> > >    scheme proposed here is that this would "Just Work" if implement
-> > >    hugetlbfs support, so an admin that doesn't want any directmap
-> > >    splitting has this option available, otherwise it's done as a
-> > >    best-effort.
-> > > 
-> > > b) Implement general support for restoring directmap as 2M even when
-> > >    subpages might be in use by other kernel threads. This would be the
-> > >    most flexible approach since it requires no special handling during
-> > >    invalidations, but I think it's only possible if all the CPA
-> > >    attributes for the 2M range are the same at the time the mapping is
-> > >    restored/unsplit, so some potential locking issues there and still
-> > >    chance for splitting directmap over time.
-> > 
-> > I've been hoping that
-> > 
-> > c) using a mechanism such as [1] [2] where the goal is to group together
-> > these small allocations that need to increase directmap granularity so
-> > maximum number of large mappings are preserved.
-> 
-> As I mentioned in the other thread the restricted memfd can be backed by
-> secretmem instead of plain memfd. It already handles directmap with care.
 
-It looks like it would handle direct unmapping/cleanup nicely, but it
-seems to lack fallocate(PUNCH_HOLE) support which we'd probably want to
-avoid additional memory requirements. I think once we added that we'd
-still end up needing some sort of handling for the invalidations.
+On 11/10/22 04:58, Greg Kroah-Hartman wrote:
+> On Wed, Nov 09, 2022 at 03:10:37PM -0500, Nayna wrote:
+>> On 11/9/22 08:46, Greg Kroah-Hartman wrote:
+>>> On Sun, Nov 06, 2022 at 04:07:42PM -0500, Nayna Jain wrote:
+>>>> securityfs is meant for Linux security subsystems to expose policies/logs
+>>>> or any other information. However, there are various firmware security
+>>>> features which expose their variables for user management via the kernel.
+>>>> There is currently no single place to expose these variables. Different
+>>>> platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
+>>>> interface as they find it appropriate. Thus, there is a gap in kernel
+>>>> interfaces to expose variables for security features.
+>>>>
+>>>> Define a firmware security filesystem (fwsecurityfs) to be used by
+>>>> security features enabled by the firmware. These variables are platform
+>>>> specific. This filesystem provides platforms a way to implement their
+>>>>    own underlying semantics by defining own inode and file operations.
+>>>>
+>>>> Similar to securityfs, the firmware security filesystem is recommended
+>>>> to be exposed on a well known mount point /sys/firmware/security.
+>>>> Platforms can define their own directory or file structure under this path.
+>>>>
+>>>> Example:
+>>>>
+>>>> # mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
+>>> Why not juset use securityfs in /sys/security/firmware/ instead?  Then
+>>> you don't have to create a new filesystem and convince userspace to
+>>> mount it in a specific location?
+>>  From man 5 sysfs page:
+>>
+>> /sys/firmware: This subdirectory contains interfaces for viewing and
+>> manipulating firmware-specific objects and attributes.
+>>
+>> /sys/kernel: This subdirectory contains various files and subdirectories
+>> that provide information about the running kernel.
+>>
+>> The security variables which are being exposed via fwsecurityfs are managed
+>> by firmware, stored in firmware managed space and also often consumed by
+>> firmware for enabling various security features.
+> Ok, then just use the normal sysfs interface for /sys/firmware, why do
+> you need a whole new filesystem type?
+>
+>>  From git commit b67dbf9d4c1987c370fd18fdc4cf9d8aaea604c2, the purpose of
+>> securityfs(/sys/kernel/security) is to provide a common place for all kernel
+>> LSMs. The idea of
+>> fwsecurityfs(/sys/firmware/security) is to similarly provide a common place
+>> for all firmware security objects.
+>>
+>> /sys/firmware already exists. The patch now defines a new /security
+>> directory in it for firmware security features. Using /sys/kernel/security
+>> would mean scattering firmware objects in multiple places and confusing the
+>> purpose of /sys/kernel and /sys/firmware.
+> sysfs is confusing already, no problem with making it more confusing :)
+>
+> Just document where you add things and all should be fine.
+>
+>> Even though fwsecurityfs code is based on securityfs, since the two
+>> filesystems expose different types of objects and have different
+>> requirements, there are distinctions:
+>>
+>> 1. fwsecurityfs lets users create files in userspace, securityfs only allows
+>> kernel subsystems to create files.
+> Wait, why would a user ever create a file in this filesystem?  If you
+> need that, why not use configfs?  That's what that is for, right?
 
-Also, I know Chao has been considering hugetlbfs support, I assume by
-leveraging the support that already exists in shmem. Ideally SNP would
-be able to make use of that support as well, but relying on a separate
-backend seems likely to result in more complications getting there
-later.
+The purpose of fwsecurityfs is not to expose configuration items but 
+rather security objects used for firmware security features. I think 
+these are more comparable to EFI variables, which are exposed via an 
+EFI-specific filesystem, efivarfs, rather than configfs.
 
-> 
-> But I don't think it has to be part of initial restricted memfd
-> implementation. It is SEV-specific requirement and AMD folks can extend
-> implementation as needed later.
+>
+>> 2. firmware and kernel objects may have different requirements. For example,
+>> consideration of namespacing. As per my understanding, namespacing is
+>> applied to kernel resources and not firmware resources. That's why it makes
+>> sense to add support for namespacing in securityfs, but we concluded that
+>> fwsecurityfs currently doesn't need it. Another but similar example of it
+>> is: TPM space, which is exposed from hardware. For containers, the TPM would
+>> be made as virtual/software TPM. Similarly for firmware space for
+>> containers, it would have to be something virtualized/software version of
+>> it.
+> I do not understand, sorry.  What does namespaces have to do with this?
+> sysfs can already handle namespaces just fine, why not use that?
 
-Admittedly the suggested changes to the invalidation mechanism made a
-lot more sense to me when I was under the impression that TDX would have
-similar requirements and we might end up with a common hook. Since that
-doesn't actually seem to be the case, it makes sense to try to do it as
-a platform-specific hook for SNP.
+Firmware objects are not namespaced. I mentioned it here as an example 
+of the difference between firmware and kernel objects. It is also in 
+response to the feedback from James Bottomley in RFC v2 
+[https://lore.kernel.org/linuxppc-dev/41ca51e8db9907d9060cc38adb59a66dcae4c59b.camel@HansenPartnership.com/].
 
-I think, given a memslot, a GFN range, and kvm_restricted_mem_get_pfn(),
-we should be able to get the same information needed to figure out whether
-the range is backed by huge pages or not. I'll see how that works out
-instead.
+>
+>> 3. firmware objects are persistent and read at boot time by interaction with
+>> firmware, unlike kernel objects which are not persistent.
+> That doesn't matter, sysfs exports what the hardware provides, and that
+> might persist over boot.
+>
+> So I don't see why a new filesystem is needed.
+>
+> You didn't explain why sysfs, or securitfs (except for the location in
+> the tree) does not work at all for your needs.  The location really
+> doesn't matter all that much as you are creating a brand new location
+> anyway so we can just declare "this is where this stuff goes" and be ok.
 
-Thanks,
+For rest of the questions, here is the summarized response.
 
-Mike
+Based on mailing list previous discussions [1][2][3] and considering 
+various firmware security use cases, our fwsecurityfs proposal seemed to 
+be a reasonable and acceptable approach based on the feedback [4].
 
-> 
-> -- 
->   Kiryl Shutsemau / Kirill A. Shutemov
+[1] https://lore.kernel.org/linuxppc-dev/YeuyUVVdFADCuDr4@kroah.com/#t
+[2] https://lore.kernel.org/linuxppc-dev/Yfk6gucNmJuR%2Fegi@kroah.com/
+[3] 
+https://lore.kernel.org/all/Yfo%2F5gYgb9Sv24YB@kroah.com/t/#m40250fdb3fddaafe502ab06e329e63381b00582d
+[4] https://lore.kernel.org/linuxppc-dev/YrQqPhi4+jHZ1WJc@kroah.com/
+
+RFC v1 was using sysfs. After considering feedback[1][2][3], the 
+following are design considerations for unification via fwsecurityfs:
+
+1. Unify the location: Defining a security directory under /sys/firmware 
+facilitates exposing objects related to firmware security features in a 
+single place. Different platforms can create their respective directory 
+structures within /sys/firmware/security.
+
+2. Unify the code:  To support unification, having the fwsecurityfs 
+filesystem API allows different platforms to define the inode and file 
+operations they need. fwsecurityfs provides a common API that can be 
+used by each platform-specific implementation to support its particular 
+requirements and interaction with firmware. Initializing 
+platform-specific functions is the purpose of the 
+fwsecurityfs_arch_init() function that is called on mount. Patch 3/4 
+implements fwsecurityfs_arch_init() for powerpc.
+
+Similar to the common place securityfs provides for LSMs to interact 
+with kernel security objects, fwsecurityfs would provide a common place 
+for all firmware security objects, which interact with the firmware 
+rather than the kernel. Although at the API level, the two filesystem 
+look similar, the requirements for firmware and kernel objects are 
+different. Therefore, reusing securityfs wasn't a good fit for the 
+firmware use case and we are proposing a similar but different 
+filesystem -  fwsecurityfs - focused for firmware security.
+
+>
+> And again, how are you going to get all Linux distros to now mount your
+> new filesystem?
+
+It would be analogous to the way securityfs is mounted.
+
+Thanks & Regards,
+
+     - Nayna
+
+>
+> thanks,
+>
+> greg k-h
