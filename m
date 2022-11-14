@@ -2,251 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D0D36280D0
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 14:09:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25C7F628139
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 14:26:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237905AbiKNNJd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Nov 2022 08:09:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36116 "EHLO
+        id S236176AbiKNN0J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Nov 2022 08:26:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51602 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237903AbiKNNJc (ORCPT
+        with ESMTP id S235835AbiKNN0I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Nov 2022 08:09:32 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 279B49584
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 05:08:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668431306;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=+RATmLDqy4Cb3/OcvezxdmIEs6SpBnhwsQ/KyFcaC8s=;
-        b=HlDIQtv50WJ9414i6XrUhkVRuTmOYu5yXxQLbdPkt+AGCEG258Vxem31k3ZqDcRXLPadOP
-        xX623oEK9yNytA6DywpviG30IOQpfxdEl3h7FBSCdhzGKIf6J/o79ShURQlGlbk5kB6C0b
-        rRK6NnhgfUgAFZA+mLEm15tAQUuDGPI=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-554-GNSVqW02N3Wg-4Mdbq0C6A-1; Mon, 14 Nov 2022 08:08:25 -0500
-X-MC-Unique: GNSVqW02N3Wg-4Mdbq0C6A-1
-Received: by mail-pj1-f71.google.com with SMTP id g6-20020a17090a300600b00212f609f6aeso5757541pjb.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 05:08:25 -0800 (PST)
+        Mon, 14 Nov 2022 08:26:08 -0500
+Received: from mail-ed1-x52c.google.com (mail-ed1-x52c.google.com [IPv6:2a00:1450:4864:20::52c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 18CCD186DB
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 05:26:03 -0800 (PST)
+Received: by mail-ed1-x52c.google.com with SMTP id f7so17286526edc.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 05:26:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7bOKX5TmubEFskw4ICGVY0HuA0Ifnh0YrvDjw0FPwIw=;
+        b=plr7sz64IIJ+YKeOBQwdEF60I8YYhToAoTtQSWJnUoDLY3YmH8HfsKQMiRS9gK73Ap
+         r4o35wxvxQ6WKXnvBasNO/C727QB0hG+oUbtEvc40Q2oGMS47LDr9i3Y0bj4F4FfJgfs
+         5JPmJw9gEHSraq/4D6scIf/o/11djiYIPp+bc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+RATmLDqy4Cb3/OcvezxdmIEs6SpBnhwsQ/KyFcaC8s=;
-        b=MRK0DM6OT068YAAyVQueDRmH4SHYQi53HQLSesZBuMQMgPdfetr6B/kIfN5vmB6bT0
-         kzVZabRpS4TB900L7TthheirEVH3mquyC+422jwcRb+oSNg6RE19gEEU1AJp3G+vJi1q
-         cqP7yOVjXI5MnWur0psgaAnGtKxFi2/Z1EgAzeohMl7t3LtCUVVYhIf31bh+QT4xb0fc
-         cQQer7hqAH4YA9D2RGHoXpSejDaHnMAnxTGUBrDICs29NdrKIDq8+/4J5tPhRT8pW9vE
-         rRq+vOh5oeqcb7ojnYw0/4BNUgSb4QmCbuSiSXrC3l179mYEaigF3gfCLZrYN0SHV2V3
-         +HjQ==
-X-Gm-Message-State: ANoB5pnLQgZGPVNsYGLdAQZwnoothQcgy3XBd1utaVXxtigoLdKNLO3+
-        eTIJPZzBK+vq4/pbFoXMYKFgIpKqP03pWUsI9tItyutycddFH6X0Qqe0GOi/M/kC5be/orrB4u/
-        q1o+EX1i+dS0vZDDny0k+ocHtGg==
-X-Received: by 2002:a17:903:26c6:b0:178:b4b7:d74d with SMTP id jg6-20020a17090326c600b00178b4b7d74dmr13500427plb.83.1668431303961;
-        Mon, 14 Nov 2022 05:08:23 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf7ob3Ev+cayEQvYpWckntbw+lZQjPtkPLBPRk6Vc4NEjns+KhCv3GjW+SN4cqEFsbDBtq/xsg==
-X-Received: by 2002:a17:903:26c6:b0:178:b4b7:d74d with SMTP id jg6-20020a17090326c600b00178b4b7d74dmr13500391plb.83.1668431303643;
-        Mon, 14 Nov 2022 05:08:23 -0800 (PST)
-Received: from [10.72.12.148] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id m1-20020a17090ade0100b0020dc318a43esm6479211pjv.25.2022.11.14.05.08.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Nov 2022 05:08:23 -0800 (PST)
-Subject: Re: [PATCH 2/2 v2] ceph: use a xarray to record all the opened files
- for each inode
-To:     kernel test robot <lkp@intel.com>, ceph-devel@vger.kernel.org,
-        jlayton@kernel.org, idryomov@gmail.com, viro@zeniv.linux.org.uk
-Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-        lhenriques@suse.de, mchangir@redhat.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20221114051901.15371-3-xiubli@redhat.com>
- <202211141614.dhSgZRvB-lkp@intel.com>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <a7243d03-da3a-8df5-1c5c-b4540fb1a91a@redhat.com>
-Date:   Mon, 14 Nov 2022 21:08:15 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7bOKX5TmubEFskw4ICGVY0HuA0Ifnh0YrvDjw0FPwIw=;
+        b=cUeIVQAEz8zg3LNRRxBbL3uX+MxSeoF/5EY54qbWtTE//DDJNIi9hTM1pccwUfd9MH
+         lofl5WLaFAgqOj/IcbL8sprwtd+AuEuHro1Z+e88XfISgP6+EbpD8SdJ2/gAKjp5Empj
+         hXqzxwS7IBwuPaZ8DI8TqshnrZTfxETtlayYxrC07wpVDVQ1u5aZNqKTPuM43Z+zjGiA
+         ZGafp2ZZua+T7r/eW3kHdAyaFlO+G2KE6wetd0wbeYzXiBbfzLDSxx++ScWoII298Ihg
+         apDDnT21L8VwskEkkLc+1RBpr5M+G69ywIdrXd0pY8PlfjU+FTzUOSfdl+O5dU5HWAAF
+         7yvg==
+X-Gm-Message-State: ANoB5pmUArH/rbukNq6N1X5zG5GP95EmVuljvVRFXPZOFL7clsuklppj
+        oYS8LCX9FlEwo8z+lzaOkRzVMAWbY7ohHx6TZBAUJw==
+X-Google-Smtp-Source: AA0mqf4GhiAmKUpwyR2O1bQEFuhJCU40aqld6qS+QNo0yXE8Q41MRiyRCsE8OEKSd35zVlY76dQfoEvIt9lj16tvF6E=
+X-Received: by 2002:a50:fa9a:0:b0:467:6c56:df3e with SMTP id
+ w26-20020a50fa9a000000b004676c56df3emr9602096edr.270.1668432361653; Mon, 14
+ Nov 2022 05:26:01 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <202211141614.dhSgZRvB-lkp@intel.com>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+References: <20221101175326.13265-1-vishal.moola@gmail.com>
+ <20221101175326.13265-3-vishal.moola@gmail.com> <Y2FkV0wogVhMHkkO@casper.infradead.org>
+ <CAOzc2px2POjBU-6X=YB+rd-87vhDx0cUu0m8EFWA=Q_Peu1gUg@mail.gmail.com>
+In-Reply-To: <CAOzc2px2POjBU-6X=YB+rd-87vhDx0cUu0m8EFWA=Q_Peu1gUg@mail.gmail.com>
+From:   Miklos Szeredi <miklos@szeredi.hu>
+Date:   Mon, 14 Nov 2022 14:25:50 +0100
+Message-ID: <CAJfpegtRCngZtKpTuL47bvjrzisV2wPY5pwZkPJPqD=HGnW+vA@mail.gmail.com>
+Subject: Re: [PATCH 2/5] fuse: Convert fuse_try_move_page() to use folios
+To:     Vishal Moola <vishal.moola@gmail.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, akpm@linux-foundation.org,
+        Matthew Wilcox <willy@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi
+On Thu, 10 Nov 2022 at 19:36, Vishal Moola <vishal.moola@gmail.com> wrote:
+>
+> On Tue, Nov 1, 2022 at 11:24 AM Matthew Wilcox <willy@infradead.org> wrote:
+> >
+> > On Tue, Nov 01, 2022 at 10:53:23AM -0700, Vishal Moola (Oracle) wrote:
+> > > Converts the function to try to move folios instead of pages. Also
+> > > converts fuse_check_page() to fuse_get_folio() since this is its only
+> > > caller. This change removes 15 calls to compound_head().
+> >
+> > This all looks good.  I wonder if we should't add an assertion that the
+> > page we're trying to steal is !large?  It seems to me that there are
+> > assumptions in this part of fuse that it's only dealing with order-0
+> > pages, and if someone gives it a page that's part of a large folio,
+> > it's going to be messy.  Miklos, any thoughts?
+>
+> Miklos, could you please look over this patch?
 
-Thanks for reporting this.
+I think this should take care of the large folio case in fuse_try_move_page():
 
-I will fix it in the next version.
+    if (cs->len != PAGE_SIZE)
+        goto out_fallback;
 
-- Xiubo
+The patch looks okay.
 
-On 14/11/2022 16:54, kernel test robot wrote:
-> Hi,
->
-> I love your patch! Perhaps something to improve:
->
-> [auto build test WARNING on ceph-client/testing]
-> [also build test WARNING on ceph-client/for-linus linus/master v6.1-rc5 next-20221111]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
->
-> url:    https://github.com/intel-lab-lkp/linux/commits/xiubli-redhat-com/ceph-fix-the-use-after-free-bug-for-file_lock/20221114-132233
-> base:   https://github.com/ceph/ceph-client.git testing
-> patch link:    https://lore.kernel.org/r/20221114051901.15371-3-xiubli%40redhat.com
-> patch subject: [PATCH 2/2 v2] ceph: use a xarray to record all the opened files for each inode
-> config: hexagon-randconfig-r041-20221114
-> compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 463da45892e2d2a262277b91b96f5f8c05dc25d0)
-> reproduce (this is a W=1 build):
->          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->          chmod +x ~/bin/make.cross
->          # https://github.com/intel-lab-lkp/linux/commit/232cc8f1dbeddb308946202a7c67ee4d20451ae7
->          git remote add linux-review https://github.com/intel-lab-lkp/linux
->          git fetch --no-tags linux-review xiubli-redhat-com/ceph-fix-the-use-after-free-bug-for-file_lock/20221114-132233
->          git checkout 232cc8f1dbeddb308946202a7c67ee4d20451ae7
->          # save the config file
->          mkdir build_dir && cp config build_dir/.config
->          COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=hexagon SHELL=/bin/bash fs/ceph/
->
-> If you fix the issue, kindly add following tag where applicable
-> | Reported-by: kernel test robot <lkp@intel.com>
->
-> All warnings (new ones prefixed by >>):
->
->     In file included from fs/ceph/locks.c:8:
->     In file included from fs/ceph/super.h:8:
->     In file included from include/linux/backing-dev.h:16:
->     In file included from include/linux/writeback.h:13:
->     In file included from include/linux/blk_types.h:10:
->     In file included from include/linux/bvec.h:10:
->     In file included from include/linux/highmem.h:12:
->     In file included from include/linux/hardirq.h:11:
->     In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
->     In file included from include/asm-generic/hardirq.h:17:
->     In file included from include/linux/irq.h:20:
->     In file included from include/linux/io.h:13:
->     In file included from arch/hexagon/include/asm/io.h:334:
->     include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->             val = __raw_readb(PCI_IOBASE + addr);
->                               ~~~~~~~~~~ ^
->     include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->             val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
->                                                             ~~~~~~~~~~ ^
->     include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
->     #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
->                                                       ^
->     In file included from fs/ceph/locks.c:8:
->     In file included from fs/ceph/super.h:8:
->     In file included from include/linux/backing-dev.h:16:
->     In file included from include/linux/writeback.h:13:
->     In file included from include/linux/blk_types.h:10:
->     In file included from include/linux/bvec.h:10:
->     In file included from include/linux/highmem.h:12:
->     In file included from include/linux/hardirq.h:11:
->     In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
->     In file included from include/asm-generic/hardirq.h:17:
->     In file included from include/linux/irq.h:20:
->     In file included from include/linux/io.h:13:
->     In file included from arch/hexagon/include/asm/io.h:334:
->     include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->             val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
->                                                             ~~~~~~~~~~ ^
->     include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
->     #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
->                                                       ^
->     In file included from fs/ceph/locks.c:8:
->     In file included from fs/ceph/super.h:8:
->     In file included from include/linux/backing-dev.h:16:
->     In file included from include/linux/writeback.h:13:
->     In file included from include/linux/blk_types.h:10:
->     In file included from include/linux/bvec.h:10:
->     In file included from include/linux/highmem.h:12:
->     In file included from include/linux/hardirq.h:11:
->     In file included from ./arch/hexagon/include/generated/asm/hardirq.h:1:
->     In file included from include/asm-generic/hardirq.h:17:
->     In file included from include/linux/irq.h:20:
->     In file included from include/linux/io.h:13:
->     In file included from arch/hexagon/include/asm/io.h:334:
->     include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->             __raw_writeb(value, PCI_IOBASE + addr);
->                                 ~~~~~~~~~~ ^
->     include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->             __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
->                                                           ~~~~~~~~~~ ^
->     include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
->             __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
->                                                           ~~~~~~~~~~ ^
->>> fs/ceph/locks.c:66:6: warning: variable 'fi' is used uninitialized whenever 'if' condition is false [-Wsometimes-uninitialized]
->             if (val == CEPH_FILP_AVAILABLE) {
->                 ^~~~~~~~~~~~~~~~~~~~~~~~~~
->     fs/ceph/locks.c:79:14: note: uninitialized use occurs here
->             atomic_dec(&fi->num_locks);
->                         ^~
->     fs/ceph/locks.c:66:2: note: remove the 'if' if its condition is always true
->             if (val == CEPH_FILP_AVAILABLE) {
->             ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->     fs/ceph/locks.c:47:27: note: initialize the variable 'fi' to silence this warning
->             struct ceph_file_info *fi;
->                                      ^
->                                       = NULL
->     7 warnings generated.
->
->
-> vim +66 fs/ceph/locks.c
->
->      42	
->      43	static void ceph_fl_release_lock(struct file_lock *fl)
->      44	{
->      45		struct inode *inode = fl->fl_u.ceph_fl.fl_inode;
->      46		struct ceph_inode_info *ci;
->      47		struct ceph_file_info *fi;
->      48		void *val;
->      49	
->      50		/*
->      51		 * If inode is NULL it should be a request file_lock,
->      52		 * nothing we can do.
->      53		 */
->      54		if (!inode)
->      55			return;
->      56	
->      57		ci = ceph_inode(inode);
->      58	
->      59		/*
->      60		 * For Posix-style locks, it may race between filp_close()s,
->      61		 * and it's possible that the 'file' memory pointed by
->      62		 * 'fl->fl_file' has been released. If so just skip it.
->      63		 */
->      64		rcu_read_lock();
->      65		val = xa_load(&ci->i_opened_files, (unsigned long)fl->fl_file);
->    > 66		if (val == CEPH_FILP_AVAILABLE) {
->      67			fi = fl->fl_file->private_data;
->      68			atomic_dec(&fi->num_locks);
->      69		}
->      70		rcu_read_unlock();
->      71	
->      72		if (atomic_dec_and_test(&ci->i_filelock_ref)) {
->      73			/* clear error when all locks are released */
->      74			spin_lock(&ci->i_ceph_lock);
->      75			ci->i_ceph_flags &= ~CEPH_I_ERROR_FILELOCK;
->      76			spin_unlock(&ci->i_ceph_lock);
->      77		}
->      78		iput(inode);
->      79		atomic_dec(&fi->num_locks);
->      80	}
->      81	
->
+Acked-by: Miklos Szeredi <mszeredi@redhat.com>
 
+Thanks,
+Miklos
