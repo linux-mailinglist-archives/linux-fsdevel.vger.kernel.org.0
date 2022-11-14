@@ -2,217 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2C570627D27
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 12:57:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0223627CAF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 12:45:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236619AbiKNL5a (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Nov 2022 06:57:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58936 "EHLO
+        id S236317AbiKNLpr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Nov 2022 06:45:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237156AbiKNL5L (ORCPT
+        with ESMTP id S235733AbiKNLpR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Nov 2022 06:57:11 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6B76720BDE
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 03:54:13 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id t1so7304902wmi.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 03:54:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UFrv/gZh3M5M+GHa7rgQfMzZBcJfOT6Htd7GIwYXDjY=;
-        b=EUoeLavTVlHYdJZCNph9EHvSI+oEmosznJ6f/upKgsdxBCVKAD+wKTTxF2HefZF4aJ
-         +voBzLkimQpEK0QSkfAiC1ct7gmCt04TDRoYbiQk2+ZrURn8qyzn7B8NaLHEY4CnDGm6
-         2jfadRSEAwkAURqUwVqJzHS0olixUeaFGq8/b2tw1FpYy5tfyimf03hvtmiBkAGD8Dwl
-         b0COvNcSFazcgu2nDWFiq0ZFNQbDFye/UqRwXqYAyjzv+ihl5HvLX0qY0nWmYQKPF5Em
-         ZwJAftOJ9dK9vLfL3ce4f68mG7VbwAJZ0JD+C1zsDfb08VanEK8T+D9r6Jo/S49b7wiV
-         j91A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
-         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UFrv/gZh3M5M+GHa7rgQfMzZBcJfOT6Htd7GIwYXDjY=;
-        b=UF1HIkUPX+pnL9oIDVUpgoKan1Gfahc9za0g/FRdiVC9QI7NUJ9C51JfM3Hhl1YyML
-         vzV2F3EGMaRpaVAF1f0pEzlscg45XzANbrLXS6aWJqXPfOiUijxVT5BS7kwJEzknzq2v
-         PnINoW9+ivcYzSVEAbvnQNJ6ofAFXWlmZDTXhSBHU2ZZ3Ue6cMtrH4XSLErSwYYpii+d
-         W971vO0z1XO3nO/GkVmV/+CDruOs2RejBLtTYXeXjKMDW1mTWPDfKmwSQUGbt/ZVfOdn
-         xzHOPnZPaSx7cLuyEgAAXOx317n2THz4Uipg4LAhWKi7p4tYSk069rBkEFNO9SBTtD+0
-         aqTw==
-X-Gm-Message-State: ANoB5pkxRcIJsEmvqeUUExO/aYUuBuV98Bo9AvIWqJEgxIMT78vcCBAH
-        Oc49SxRlVawovO+TxR+qYHOryQ==
-X-Google-Smtp-Source: AA0mqf403V0vwqaE+mnyncg76u8ir3wUv9Nm7KTIlaElnQNtqjHebbBnqedRs9sCRLI9w2BMk0/32Q==
-X-Received: by 2002:a05:600c:2315:b0:3cf:ae53:918f with SMTP id 21-20020a05600c231500b003cfae53918fmr7727329wmo.131.1668426851811;
-        Mon, 14 Nov 2022 03:54:11 -0800 (PST)
-Received: from zen.linaroharston ([185.81.254.11])
-        by smtp.gmail.com with ESMTPSA id c17-20020adffb11000000b002417f35767asm6097766wrr.40.2022.11.14.03.54.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Nov 2022 03:54:11 -0800 (PST)
-Received: from zen (localhost [127.0.0.1])
-        by zen.linaroharston (Postfix) with ESMTP id 5E6971FFB7;
-        Mon, 14 Nov 2022 11:54:10 +0000 (GMT)
-References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
-User-agent: mu4e 1.9.2; emacs 28.2.50
-From:   Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH v9 0/8] KVM: mm: fd-based approach for supporting KVM
-Date:   Mon, 14 Nov 2022 11:43:37 +0000
-In-reply-to: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
-Message-ID: <87k03xbvkt.fsf@linaro.org>
+        Mon, 14 Nov 2022 06:45:17 -0500
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82BAE22288
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 03:44:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1668426282; x=1699962282;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=IT/2L3OdUzIphKmGsTXkoNLVFahG8vHvm2cYiMC5dM8=;
+  b=XNiJKmk0Cls1OsMpnOlsJ0NVn7GBJJK5KiICacvSATfAArSGSjGYZKid
+   IORnT/8FYtevRDui/0f77BZMn/1aiVy/axkvBvVqn6KtTbCmawOGTBwVt
+   3pgOMwxvOV4D+vEJ/cT0ANTEljdvgm5+RlxWwZEy4lkiHYXTjujnHU9Us
+   AtQrlOF1LqP1NzTshu2FUry8b22Fkx0OPUiOsJzxVFzAFXhKsgpwfiVeO
+   k/gtBAB+6g73chwkxYZk1GMam04YXJgPDiM8/j4pxUQOdqdHfnSTY3aHl
+   iJzCc4CdoTTzlsAhFTvCKHCClnnV/tOJOoMrWrvulfmAWx4zNEI/9WqzX
+   g==;
+X-IronPort-AV: E=Sophos;i="5.96,161,1665417600"; 
+   d="scan'208";a="328316649"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 14 Nov 2022 19:44:41 +0800
+IronPort-SDR: ogp9knxP6M6aQY10TYGgbKYXtiJS5SKZt75U8145Gyi29Zu6epkRWP+navQdwPRK4OoYXTdpDD
+ UMP8yuC6o34XgY7tYyB9Y6MWFeV4PAi8zJCXYvYtHPe6+b8QSN85BIV+efXGpqB5f85ZQnCExv
+ HyS54KA0BESeOgX5Uwi3gIRdeECyn5A8rejiE6T8Pkq6iOSRhfRyTnsGrTdwZuYUhrmgoxL6NF
+ HMR7VPyblSDk6mZzNEcO9k6mVaLzH0E7jQm+he0LD+7MLKo3GZHzG3U0H5LAQPhkwmQF9Y+aJM
+ UQc=
+Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Nov 2022 03:03:40 -0800
+IronPort-SDR: 1E0fsB+wFw9iary3pBhVlIdA2du6guBd3E6oW1MdPfjAfXMLYj0vqeS+tW/I5Bhc8YVz12Q0b2
+ BzZsLA3dtWRRZqABbowl/d0RPFWKr+v8x/yUNpC3wHyuNMsEjXRtxvwXe4sgFxxiayKH6YfWJ/
+ egmuxoqB5bAluaqd0s0EoJhx58ug2iKHw+vA7SN8RvKZVhQ2a0pEqUJ7tCajHsgkCT0MMxf2JO
+ 08LqiaBiEJkcSaQD2O0QjQKMzSHHuXA22eiHtpx2CZEHrBh7NMZESYmZsY7VouZJXx+f6RXo5y
+ DCs=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Nov 2022 03:44:42 -0800
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4N9nXn5G0Sz1RvTr
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 03:44:41 -0800 (PST)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1668426281; x=1671018282; bh=IT/2L3OdUzIphKmGsTXkoNLVFahG8vHvm2c
+        YiMC5dM8=; b=XlIBTCLlW2aedkUSFEy7IfDxLhWcKxKb3WWk6bsJxZZa+hydhwI
+        MQsdxNuxJmRWBv9r3ya1WXwuXBfrAjUnftkR2x3dsBbGboYfpl/35eqQotwcZNZd
+        FsXt4zQW8ijSyuJ8O4PUXzQvhVXrHDklPdT8yt8bKtb+La6EU0ai99y+rQeqZE/b
+        q2optIAjcskI6aggI88GriL20FasRBOj0ng8mST6HeEvA9YtWFodZVV/hIXxAbPB
+        I3HOIQpFAYMIDKfgs4Na4U9wvyMWSBuf1E6AvTLrr1UPPSHKh0j5DX7islEqyfaL
+        6RuolVwG7HX+oQFPW8p/n/2RRokKZYOE2Kg==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id LSzidTK2IXPd for <linux-fsdevel@vger.kernel.org>;
+        Mon, 14 Nov 2022 03:44:41 -0800 (PST)
+Received: from [10.225.163.46] (unknown [10.225.163.46])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4N9nXn0188z1RvLy;
+        Mon, 14 Nov 2022 03:44:40 -0800 (PST)
+Message-ID: <d9376665-7295-8d75-d35f-7e4f63c22cdd@opensource.wdc.com>
+Date:   Mon, 14 Nov 2022 20:44:39 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH v2] zonefs: add sanity check for aggregated conventional
+ zones
+Content-Language: en-US
+To:     Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Cc:     linux-fsdevel@vger.kernel.org
+References: <fe0e42b533442766d941740697cd8e33fcad99ad.1668413972.git.johannes.thumshirn@wdc.com>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <fe0e42b533442766d941740697cd8e33fcad99ad.1668413972.git.johannes.thumshirn@wdc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 11/14/22 17:19, Johannes Thumshirn wrote:
+> When initializing a file inode, check if the zone's size if bigger than
+> the number of device zone sectors. This can only be the case if we mount
+> the filesystem with the -oaggr_cnv mount option.
+> 
+> Emit an error in case this case happens and fail the mount.
+> 
+> Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+> 
+> ---
+> Changes to v1:
+> - Change IS_ERR_OR_NULL() to IS_ERR() (Damien)
+> - Add parentheses around 'sbi->s_features & ZONEFS_F_AGGRCNV' (Dan)
+> ---
+>  fs/zonefs/super.c | 23 ++++++++++++++++-------
+>  1 file changed, 16 insertions(+), 7 deletions(-)
+> 
+> diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+> index 860f0b1032c6..143bd018acd2 100644
+> --- a/fs/zonefs/super.c
+> +++ b/fs/zonefs/super.c
+> @@ -1407,6 +1407,14 @@ static int zonefs_init_file_inode(struct inode *inode, struct blk_zone *zone,
+>  	zi->i_ztype = type;
+>  	zi->i_zsector = zone->start;
+>  	zi->i_zone_size = zone->len << SECTOR_SHIFT;
+> +	if (zi->i_zone_size > bdev_zone_sectors(sb->s_bdev) << SECTOR_SHIFT &&
+> +	    !(sbi->s_features & ZONEFS_F_AGGRCNV)) {
+> +		zonefs_err(sb,
+> +			   "zone size %llu doesn't match device's zone sectors %llu\n",
+> +			   zi->i_zone_size,
+> +			   bdev_zone_sectors(sb->s_bdev) << SECTOR_SHIFT);
+> +		return -EINVAL;
+> +	}
+>  
+>  	zi->i_max_size = min_t(loff_t, MAX_LFS_FILESIZE,
+>  			       zone->capacity << SECTOR_SHIFT);
+> @@ -1456,11 +1464,11 @@ static struct dentry *zonefs_create_inode(struct dentry *parent,
+>  	struct inode *dir = d_inode(parent);
+>  	struct dentry *dentry;
+>  	struct inode *inode;
+> -	int ret;
+> +	int ret = -ENOMEM;
+>  
+>  	dentry = d_alloc_name(parent, name);
+>  	if (!dentry)
+> -		return NULL;
+> +		return ERR_PTR(ret);
+>  
+>  	inode = new_inode(parent->d_sb);
+>  	if (!inode)
+> @@ -1485,7 +1493,7 @@ static struct dentry *zonefs_create_inode(struct dentry *parent,
+>  dput:
+>  	dput(dentry);
+>  
+> -	return NULL;
+> +	return ERR_PTR(ret);
+>  }
+>  
+>  struct zonefs_zone_data {
+> @@ -1523,8 +1531,8 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
+>  		zgroup_name = "seq";
+>  
+>  	dir = zonefs_create_inode(sb->s_root, zgroup_name, NULL, type);
+> -	if (!dir) {
+> -		ret = -ENOMEM;
+> +	if (IS_ERR(dir)) {
+> +		ret = PTR_ERR(dir);
+>  		goto free;
+>  	}
+>  
+> @@ -1570,8 +1578,9 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
+>  		 * Use the file number within its group as file name.
+>  		 */
+>  		snprintf(file_name, ZONEFS_NAME_MAX - 1, "%u", n);
+> -		if (!zonefs_create_inode(dir, file_name, zone, type)) {
+> -			ret = -ENOMEM;
+> +		dir = zonefs_create_inode(dir, file_name, zone, type);
 
-Chao Peng <chao.p.peng@linux.intel.com> writes:
+This one is for file inodes but you are overwriting dir, which will
+totally mess things up for the next file inode to create.
 
-<snip>
-> Introduction
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> KVM userspace being able to crash the host is horrible. Under current
-> KVM architecture, all guest memory is inherently accessible from KVM
-> userspace and is exposed to the mentioned crash issue. The goal of this
-> series is to provide a solution to align mm and KVM, on a userspace
-> inaccessible approach of exposing guest memory.=20
->
-> Normally, KVM populates secondary page table (e.g. EPT) by using a host
-> virtual address (hva) from core mm page table (e.g. x86 userspace page
-> table). This requires guest memory being mmaped into KVM userspace, but
-> this is also the source where the mentioned crash issue can happen. In
-> theory, apart from those 'shared' memory for device emulation etc, guest
-> memory doesn't have to be mmaped into KVM userspace.
->
-> This series introduces fd-based guest memory which will not be mmaped
-> into KVM userspace. KVM populates secondary page table by using a
-> fd/offset pair backed by a memory file system. The fd can be created
-> from a supported memory filesystem like tmpfs/hugetlbfs and KVM can
-> directly interact with them with newly introduced in-kernel interface,
-> therefore remove the KVM userspace from the path of accessing/mmaping
-> the guest memory.=20
->
-> Kirill had a patch [2] to address the same issue in a different way. It
-> tracks guest encrypted memory at the 'struct page' level and relies on
-> HWPOISON to reject the userspace access. The patch has been discussed in
-> several online and offline threads and resulted in a design document [3]
-> which is also the original proposal for this series. Later this patch
-> series evolved as more comments received in community but the major
-> concepts in [3] still hold true so recommend reading.
->
-> The patch series may also be useful for other usages, for example, pure
-> software approach may use it to harden itself against unintentional
-> access to guest memory. This series is designed with these usages in
-> mind but doesn't have code directly support them and extension might be
-> needed.
+> +		if (IS_ERR(dir)) {
+> +			ret = PTR_ERR(dir);
+>  			goto free;
+>  		}
+>  
 
-There are a couple of additional use cases where having a consistent
-memory interface with the kernel would be useful.
+-- 
+Damien Le Moal
+Western Digital Research
 
-  - Xen DomU guests providing other domains with VirtIO backends
-
-  Xen by default doesn't give other domains special access to a domains
-  memory. The guest can grant access to regions of its memory to other
-  domains for this purpose.=20
-
-  - pKVM on ARM
-
-  Similar to Xen, pKVM moves the management of the page tables into the
-  hypervisor and again doesn't allow those domains to share memory by
-  default.
-
-  - VirtIO loopback
-
-  This allows for VirtIO devices for the host kernel to be serviced by
-  backends running in userspace. Obviously the memory userspace is
-  allowed to access is strictly limited to the buffers and queues
-  because giving userspace unrestricted access to the host kernel would
-  have consequences.
-
-All of these VirtIO backends work with vhost-user which uses memfds to
-pass references to guest memory from the VMM to the backend
-implementation.
-
-> mm change
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Introduces a new memfd_restricted system call which can create memory
-> file that is restricted from userspace access via normal MMU operations
-> like read(), write() or mmap() etc and the only way to use it is
-> passing it to a third kernel module like KVM and relying on it to
-> access the fd through the newly added restrictedmem kernel interface.
-> The restrictedmem interface bridges the memory file subsystems
-> (tmpfs/hugetlbfs etc) and their users (KVM in this case) and provides
-> bi-directional communication between them.=20
->
->
-> KVM change
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Extends the KVM memslot to provide guest private (encrypted) memory from
-> a fd. With this extension, a single memslot can maintain both private
-> memory through private fd (restricted_fd/restricted_offset) and shared
-> (unencrypted) memory through userspace mmaped host virtual address
-> (userspace_addr). For a particular guest page, the corresponding page in
-> KVM memslot can be only either private or shared and only one of the
-> shared/private parts of the memslot is visible to guest. For how this
-> new extension is used in QEMU, please refer to kvm_set_phys_mem() in
-> below TDX-enabled QEMU repo.
->
-> Introduces new KVM_EXIT_MEMORY_FAULT exit to allow userspace to get the
-> chance on decision-making for shared <-> private memory conversion. The
-> exit can be an implicit conversion in KVM page fault handler or an
-> explicit conversion from guest OS.
->
-> Extends existing SEV ioctls KVM_MEMORY_ENCRYPT_{UN,}REG_REGION to
-> convert a guest page between private <-> shared. The data maintained in
-> these ioctls tells the truth whether a guest page is private or shared
-> and this information will be used in KVM page fault handler to decide
-> whether the private or the shared part of the memslot is visible to
-> guest.
->
-<snip>
-
---=20
-Alex Benn=C3=A9e
