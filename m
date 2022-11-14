@@ -2,151 +2,165 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6F017628934
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 20:21:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 66A736289A2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 14 Nov 2022 20:46:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237110AbiKNTVd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Nov 2022 14:21:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32882 "EHLO
+        id S236360AbiKNTqo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Nov 2022 14:46:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48294 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237013AbiKNTVc (ORCPT
+        with ESMTP id S231757AbiKNTql (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Nov 2022 14:21:32 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CA29121260;
-        Mon, 14 Nov 2022 11:21:31 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Mon, 14 Nov 2022 14:46:41 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44F2418B21;
+        Mon, 14 Nov 2022 11:46:40 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 326572035B;
-        Mon, 14 Nov 2022 19:21:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1668453690; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=C3HKNfIulCdNS1yQDFyfWz7VJTvWWLP9//PNa+endtE=;
-        b=RbiaIxhg1yFpl8RL+Gw8VX/OPzc611xquNEAigt4T2+XihdOyMj/wTWECiWmCa2c8nfX67
-        ggL2he6j8+mGt0BDWbtRXxa2Tg4QKDNIXS1fbWQUiROKSAVUDCwGOp1NEsVQsJmEGa8q9D
-        BXTPmBj5Sth7Za+gSKGfNTslApbZGys=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1668453690;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=C3HKNfIulCdNS1yQDFyfWz7VJTvWWLP9//PNa+endtE=;
-        b=/7+SXQH37A3xGS+F+/m2/T2qHxVAJKRRVUYXvJiFGnIKXac0Z/pAjP9L9lzOPGKksGdzvn
-        aDzix1l1y8WX6JAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2431B13A92;
-        Mon, 14 Nov 2022 19:21:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 6sbMCDqVcmNLFAAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 14 Nov 2022 19:21:30 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 9B345A0709; Mon, 14 Nov 2022 20:21:29 +0100 (CET)
-Date:   Mon, 14 Nov 2022 20:21:29 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Svyatoslav Feldsherov <feldsherov@google.com>
-Cc:     Jan Kara <jack@suse.cz>, Alexander Viro <viro@zeniv.linux.org.uk>,
-        Lukas Czerner <lczerner@redhat.com>,
-        Theodore Ts'o <tytso@mit.edu>,
-        syzbot+6ba92bd00d5093f7e371@syzkaller.appspotmail.com,
-        oferz@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs: do not push freeing inode to b_dirty_time list
-Message-ID: <20221114192129.zkmubc6pmruuzkc7@quack3>
-References: <20221113152439.2821942-1-feldsherov@google.com>
- <20221114104653.sosohdhkxry6xkuc@quack3>
- <CACgs1VBy6Mww_iOgtY7Brryi_ofbrAO1yud8zyBer59hhSAUGg@mail.gmail.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id EB0CCB81212;
+        Mon, 14 Nov 2022 19:46:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2333FC433C1;
+        Mon, 14 Nov 2022 19:46:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668455197;
+        bh=PDwQX/Z2EUfB/RVRwN2u27UcRNLUBKMGkiODEqFLrnI=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=S3vDKpqp3uvyeHOdYB5vClJflLN+ve+/c4TRByJ1UeyJIKTGSeX11IImNSGh2BlLH
+         eZYiYI38AQuue/ASh/yJoKAsowzpG2plqFgYpR8UrnQBh6VDeKzoAgj6IgGUE3GBJ4
+         ZQRpwJZeK4y7Mcij+kaRMyfSQ6BEuGY9g/D7fUUTkdhZOAs/e7QB9Pd3A1A98thmIV
+         RMPvD4xpp/ItP2CJ2tYCngNVhiv/9jzuxos5HvQiHnPzJ9LnOdNWo9QBGBJfyBraWh
+         kMs39/5UJY9z1bh2gIpTpoPVJ3GFG0OvAhpaZYsZTIWOl1DjVHvWHiKyHAT1TPTyL3
+         MJfS5RZ8M5gWA==
+Message-ID: <30355bc8aa4998cb48b34df958837a8f818ceeb0.camel@kernel.org>
+Subject: Re: [RFC PATCH] filelock: new helper: vfs_file_has_locks
+From:   Jeff Layton <jlayton@kernel.org>
+To:     chuck.lever@oracle.com, xiubli@redhat.com
+Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
+Date:   Mon, 14 Nov 2022 14:46:35 -0500
+In-Reply-To: <20221114140747.134928-1-jlayton@kernel.org>
+References: <20221114140747.134928-1-jlayton@kernel.org>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACgs1VBy6Mww_iOgtY7Brryi_ofbrAO1yud8zyBer59hhSAUGg@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon 14-11-22 19:43:54, Svyatoslav Feldsherov wrote:
-> Thank you for looking into this!
-> 
-> On Mon, Nov 14, 2022 at 12:46 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Sun 13-11-22 17:24:39, Svyatoslav Feldsherov wrote:
-> > > After commit cbfecb927f42 ("fs: record I_DIRTY_TIME even if inode
-> > > already has I_DIRTY_INODE") writeiback_single_inode can push inode with
-> > > I_DIRTY_TIME set to b_dirty_time list. In case of freeing inode with
-> > > I_DIRTY_TIME set this can happened after deletion of inode io_list at
-> > > evict. Stack trace is following.
-> > >
-> > > evict
-> > > fat_evict_inode
-> > > fat_truncate_blocks
-> > > fat_flush_inodes
-> > > writeback_inode
-> > > sync_inode_metadata
-> > > writeback_single_inode
-> > >
-> > > This will lead to use after free in flusher thread.
-> > >
-> > > Fixes: cbfecb927f42 ("fs: record I_DIRTY_TIME even if inode already has I_DIRTY_INODE")
-> > > Reported-by: syzbot+6ba92bd00d5093f7e371@syzkaller.appspotmail.com
-> > > Signed-off-by: Svyatoslav Feldsherov <feldsherov@google.com>
-> >
-> > Thanks for the analysis! I was scratching my head over this syzbot report
-> > for a while and it didn't occur to me somebody could be calling
-> > writeback_single_inode() from the .evict callback.
-> >
-> > Also what contributes to the problem is that FAT calls
-> > sync_inode_metadata(inode, 0) so it is not marking this final flush as data
-> > integrity sync and so we happily leave the I_DIRTY_TIME bit set.
-> >
-> > > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > > index 443f83382b9b..31c93cbdb3fe 100644
-> > > --- a/fs/fs-writeback.c
-> > > +++ b/fs/fs-writeback.c
-> > > @@ -1718,7 +1718,7 @@ static int writeback_single_inode(struct inode *inode,
-> > >        */
-> > >       if (!(inode->i_state & I_DIRTY_ALL))
-> > >               inode_cgwb_move_to_attached(inode, wb);
-> > > -     else if (!(inode->i_state & I_SYNC_QUEUED)) {
-> > > +     else if (!(inode->i_state & (I_SYNC_QUEUED | I_FREEING))) {
-> > >               if ((inode->i_state & I_DIRTY))
-> > >                       redirty_tail_locked(inode, wb);
-> > >               else if (inode->i_state & I_DIRTY_TIME) {
-> >
-> > So even calling inode_cgwb_move_to_attached() is not safe when I_FREEING is
-> > already set. So I belive the I_FREEING bit check needs to be before this
-> > whole if block.
-> 
-> Agree, let me move the I_FREEING check before this if block.
-> The commit I am fixing didn't change this codepath, so I suspect there is an
-> implicit invariant which keeps inode_cgwb_move_to_attached call safe.
-> But I am 100% in favor of making I_FREEING check explicitly.
+On Mon, 2022-11-14 at 09:07 -0500, Jeff Layton wrote:
+> Ceph has a need to know whether a particular file has any locks set on
+> it. It's currently tracking that by a num_locks field in its
+> filp->private_data, but that's problematic as it tries to decrement this
+> field when releasing locks and that can race with the file being torn
+> down.
+>=20
+> Add a new vfs_file_has_locks helper that will scan the flock and posix
+> lists, and return true if any of the locks have a fl_file that matches
+> the given one. Ceph can then call this instead of doing its own
+> tracking.
+>=20
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/locks.c         | 36 ++++++++++++++++++++++++++++++++++++
+>  include/linux/fs.h |  1 +
+>  2 files changed, 37 insertions(+)
+>=20
+> Xiubo,
+>=20
+> Here's what I was thinking instead of trying to track this within ceph.
+> Most inodes never have locks set, so in most cases this will be a NULL
+> pointer check.
+>=20
+>=20
+>=20
 
-Actually, as I've looked into fat_evict_inode() I don't see anything making
-that safe except for the fact that it may be more difficult for syzbot to
-excercise the per-memcg writeback path...
+I went ahead and added a slightly updated version of this this to my
+locks-next branch for now, but...
 
-> > I also think we should add some assertions into i_io_list handling
-> > functions to complain if I_FREEING bit is set to catch these problems
-> > earlier which means to be also more careful in __mark_inode_dirty(). But
-> > this is for a separate cleanup.
-> 
-> Sounds reasonable. Will look into that afterwards.
+Thinking about this more...I'm not sure this whole concept of what the
+ceph code is trying to do makes sense. Locks only conflict if they have
+different owners, and POSIX locks are owned by the process. Consider
+this scenario (obviously, this is not a problem with OFD locks).
 
-Thanks!
+A process has the same file open via two different fds. It sets lock A
+from offset 0..9 via fd 1. Now, same process sets lock B from 10..19 via
+fd 2. The two locks will be merged, because they don't conflict (because
+it's the same process).
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Against which fd should the merged lock record be counted?
+
+Would it be better to always check for CEPH_I_ERROR_FILELOCK, even when
+the fd hasn't had any locks explicitly set on it?
+
+> diff --git a/fs/locks.c b/fs/locks.c
+> index 5876c8ff0edc..c7f903b63a53 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -2672,6 +2672,42 @@ int vfs_cancel_lock(struct file *filp, struct file=
+_lock *fl)
+>  }
+>  EXPORT_SYMBOL_GPL(vfs_cancel_lock);
+> =20
+> +/**
+> + * vfs_file_has_locks - are any locks held that were set on @filp?
+> + * @filp: open file to check for locks
+> + *
+> + * Return true if are any FL_POSIX or FL_FLOCK locks currently held
+> + * on @filp.
+> + */
+> +bool vfs_file_has_locks(struct file *filp)
+> +{
+> +	struct file_lock_context *ctx;
+> +	struct file_lock *fl;
+> +	bool ret =3D false;
+> +
+> +	ctx =3D smp_load_acquire(&locks_inode(filp)->i_flctx);
+> +	if (!ctx)
+> +		return false;
+> +
+> +	spin_lock(&ctx->flc_lock);
+> +	list_for_each_entry(fl, &ctx->flc_posix, fl_list) {
+> +		if (fl->fl_file =3D=3D filp) {
+> +			ret =3D true;
+> +			goto out;
+> +		}
+> +	}
+> +	list_for_each_entry(fl, &ctx->flc_flock, fl_list) {
+> +		if (fl->fl_file =3D=3D filp) {
+> +			ret =3D true;
+> +			break;
+> +		}
+> +	}
+> +out:
+> +	spin_unlock(&ctx->flc_lock);
+> +	return ret;
+> +}
+> +EXPORT_SYMBOL(vfs_file_has_locks);
+> +
+>  #ifdef CONFIG_PROC_FS
+>  #include <linux/proc_fs.h>
+>  #include <linux/seq_file.h>
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index e654435f1651..e4d0f1fa7f9f 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1170,6 +1170,7 @@ extern int locks_delete_block(struct file_lock *);
+>  extern int vfs_test_lock(struct file *, struct file_lock *);
+>  extern int vfs_lock_file(struct file *, unsigned int, struct file_lock *=
+, struct file_lock *);
+>  extern int vfs_cancel_lock(struct file *filp, struct file_lock *fl);
+> +bool vfs_file_has_locks(struct file *file);
+>  extern int locks_lock_inode_wait(struct inode *inode, struct file_lock *=
+fl);
+>  extern int __break_lease(struct inode *inode, unsigned int flags, unsign=
+ed int type);
+>  extern void lease_get_mtime(struct inode *, struct timespec64 *time);
+
+--=20
+Jeff Layton <jlayton@kernel.org>
