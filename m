@@ -2,163 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11CEB629491
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 10:42:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 26BAF6294DA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 10:53:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232405AbiKOJmA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Nov 2022 04:42:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34426 "EHLO
+        id S238119AbiKOJx0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Nov 2022 04:53:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44754 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232197AbiKOJlz (ORCPT
+        with ESMTP id S229716AbiKOJxZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Nov 2022 04:41:55 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A168F13D66
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Nov 2022 01:40:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668505257;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=/jXxnn30oH1htkAEq4c8BajVXG6A/m7p7p9RvVlC1SI=;
-        b=AByuGXOXb2cWWpfFecvzazVzz/MgsN8JnSZWDF8PiCD19xmGkHFQyfDlmAD8SxgD1E2QyF
-        aKRWnhHdISX0qXEWp0FFejHOjGhPpQEbmfAIF7VLrzXZTRsFZCCFMe6LcYJvJeqv4l5LrI
-        JoE3KT4xHx1FEpf1wTDC+vgPIGyHm/M=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-373-MkvcghZ8OraPCsSquUNZLw-1; Tue, 15 Nov 2022 04:40:54 -0500
-X-MC-Unique: MkvcghZ8OraPCsSquUNZLw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F0E008027EB;
-        Tue, 15 Nov 2022 09:40:53 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E9A352024CC0;
-        Tue, 15 Nov 2022 09:40:51 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <Y3MQ4l1AJOgniprT@casper.infradead.org>
-References: <Y3MQ4l1AJOgniprT@casper.infradead.org> <166844174069.1124521.10890506360974169994.stgit@warthog.procyon.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     dhowells@redhat.com, dwysocha@redhat.com,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
-        linux-cifs@vger.kernel.org, linux-afs@lists.infradead.org,
-        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v2] mm, netfs, fscache: Stop read optimisation when folio removed from pagecache
+        Tue, 15 Nov 2022 04:53:25 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D08AB201AB;
+        Tue, 15 Nov 2022 01:53:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1668506002; x=1700042002;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=4aNJ2YOK3rk2Xxfz14Mm6Z9Et6IN8H9Ru4xzr7aFyfQ=;
+  b=iEHP5yrylc3dN9Ft4O9vX6CY9FcWopVW6KOkWSPVuv0oX1dd7oyzUBDq
+   OWSp+OfxYERu57A0erLFuuAIS5Ga69Wx6/JYzpKfzXfxGs3dprdJB99lY
+   4M4KMjVkXI9VJNPg/gA+gtIK5CrYxGHClFkAywLl0J1SrzonF9U07a1jW
+   vMOPMWnDdWLk93DeS8377PwC6/v+Nmu9e2VaP1/VDkyzPCCqTifnQAsoA
+   UFLsbaLVdJYtw9NRS/skND0r4+aAzXXSRqIftHPZfjZjTf3ebffnpI0FN
+   3taijOhfsTw80pkPoEQ+tS45J3MGxl4bW2O0s5QmKYEXhuAuXPNpnMOYi
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10531"; a="314021391"
+X-IronPort-AV: E=Sophos;i="5.96,165,1665471600"; 
+   d="scan'208";a="314021391"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2022 01:53:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10531"; a="702376949"
+X-IronPort-AV: E=Sophos;i="5.96,165,1665471600"; 
+   d="scan'208";a="702376949"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by fmsmga008.fm.intel.com with ESMTP; 15 Nov 2022 01:53:11 -0800
+Date:   Tue, 15 Nov 2022 17:48:46 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Michael Roth <michael.roth@amd.com>
+Cc:     "Kirill A. Shutemov" <kirill@shutemov.name>,
+        Vlastimil Babka <vbabka@suse.cz>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        mhocko@suse.com, Muchun Song <songmuchun@bytedance.com>,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
+ create restricted user memory
+Message-ID: <20221115094846.GB338422@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
+ <20221031174738.fklhlia5fmaiinpe@amd.com>
+ <20221101113729.GA4015495@chaop.bj.intel.com>
+ <20221101151944.rhpav47pdulsew7l@amd.com>
+ <20a11042-2cfb-8f42-9d80-6672e155ca2c@suse.cz>
+ <20221114152843.ylxe4dis254vrj5u@box.shutemov.name>
+ <20221114221632.5xaz24adkghfjr2q@amd.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1493971.1668505249.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Tue, 15 Nov 2022 09:40:49 +0000
-Message-ID: <1493972.1668505249@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221114221632.5xaz24adkghfjr2q@amd.com>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Matthew Wilcox <willy@infradead.org> wrote:
+On Mon, Nov 14, 2022 at 04:16:32PM -0600, Michael Roth wrote:
+> On Mon, Nov 14, 2022 at 06:28:43PM +0300, Kirill A. Shutemov wrote:
+> > On Mon, Nov 14, 2022 at 03:02:37PM +0100, Vlastimil Babka wrote:
+> > > On 11/1/22 16:19, Michael Roth wrote:
+> > > > On Tue, Nov 01, 2022 at 07:37:29PM +0800, Chao Peng wrote:
+> > > >> > 
+> > > >> >   1) restoring kernel directmap:
+> > > >> > 
+> > > >> >      Currently SNP (and I believe TDX) need to either split or remove kernel
+> > > >> >      direct mappings for restricted PFNs, since there is no guarantee that
+> > > >> >      other PFNs within a 2MB range won't be used for non-restricted
+> > > >> >      (which will cause an RMP #PF in the case of SNP since the 2MB
+> > > >> >      mapping overlaps with guest-owned pages)
+> > > >> 
+> > > >> Has the splitting and restoring been a well-discussed direction? I'm
+> > > >> just curious whether there is other options to solve this issue.
+> > > > 
+> > > > For SNP it's been discussed for quite some time, and either splitting or
+> > > > removing private entries from directmap are the well-discussed way I'm
+> > > > aware of to avoid RMP violations due to some other kernel process using
+> > > > a 2MB mapping to access shared memory if there are private pages that
+> > > > happen to be within that range.
+> > > > 
+> > > > In both cases the issue of how to restore directmap as 2M becomes a
+> > > > problem.
+> > > > 
+> > > > I was also under the impression TDX had similar requirements. If so,
+> > > > do you know what the plan is for handling this for TDX?
+> > > > 
+> > > > There are also 2 potential alternatives I'm aware of, but these haven't
+> > > > been discussed in much detail AFAIK:
+> > > > 
+> > > > a) Ensure confidential guests are backed by 2MB pages. shmem has a way to
+> > > >    request 2MB THP pages, but I'm not sure how reliably we can guarantee
+> > > >    that enough THPs are available, so if we went that route we'd probably
+> > > >    be better off requiring the use of hugetlbfs as the backing store. But
+> > > >    obviously that's a bit limiting and it would be nice to have the option
+> > > >    of using normal pages as well. One nice thing with invalidation
+> > > >    scheme proposed here is that this would "Just Work" if implement
+> > > >    hugetlbfs support, so an admin that doesn't want any directmap
+> > > >    splitting has this option available, otherwise it's done as a
+> > > >    best-effort.
+> > > > 
+> > > > b) Implement general support for restoring directmap as 2M even when
+> > > >    subpages might be in use by other kernel threads. This would be the
+> > > >    most flexible approach since it requires no special handling during
+> > > >    invalidations, but I think it's only possible if all the CPA
+> > > >    attributes for the 2M range are the same at the time the mapping is
+> > > >    restored/unsplit, so some potential locking issues there and still
+> > > >    chance for splitting directmap over time.
+> > > 
+> > > I've been hoping that
+> > > 
+> > > c) using a mechanism such as [1] [2] where the goal is to group together
+> > > these small allocations that need to increase directmap granularity so
+> > > maximum number of large mappings are preserved.
+> > 
+> > As I mentioned in the other thread the restricted memfd can be backed by
+> > secretmem instead of plain memfd. It already handles directmap with care.
+> 
+> It looks like it would handle direct unmapping/cleanup nicely, but it
+> seems to lack fallocate(PUNCH_HOLE) support which we'd probably want to
+> avoid additional memory requirements. I think once we added that we'd
+> still end up needing some sort of handling for the invalidations.
+> 
+> Also, I know Chao has been considering hugetlbfs support, I assume by
+> leveraging the support that already exists in shmem. Ideally SNP would
+> be able to make use of that support as well, but relying on a separate
+> backend seems likely to result in more complications getting there
+> later.
+> 
+> > 
+> > But I don't think it has to be part of initial restricted memfd
+> > implementation. It is SEV-specific requirement and AMD folks can extend
+> > implementation as needed later.
+> 
+> Admittedly the suggested changes to the invalidation mechanism made a
+> lot more sense to me when I was under the impression that TDX would have
+> similar requirements and we might end up with a common hook. Since that
+> doesn't actually seem to be the case, it makes sense to try to do it as
+> a platform-specific hook for SNP.
+> 
+> I think, given a memslot, a GFN range, and kvm_restricted_mem_get_pfn(),
+> we should be able to get the same information needed to figure out whether
+> the range is backed by huge pages or not. I'll see how that works out
+> instead.
 
-> On Mon, Nov 14, 2022 at 04:02:20PM +0000, David Howells wrote:
-> > +++ b/mm/filemap.c
-> > @@ -3941,6 +3941,10 @@ bool filemap_release_folio(struct folio *folio,=
- gfp_t gfp)
-> >  	struct address_space * const mapping =3D folio->mapping;
-> >  =
+Sounds a viable solution, just that kvm_restricted_mem_get_pfn() will
+only give you the ability to check a page, not a range. But you can
+still call it many times I think.
 
-> >  	BUG_ON(!folio_test_locked(folio));
-> > +	if ((!mapping || !mapping_release_always(mapping))
-> > +	    && !folio_test_private(folio) &&
-> > +	    !folio_test_private_2(folio))
-> > +		return true;
-> =
+The invalidation callback will be still needed, it gives you the chance
+to do the restoring.
 
-> Why do you need to test 'mapping' here?
-
-Why does the function do:
-
-	if (mapping && mapping->a_ops->release_folio)
-
-later then?  There are callers of the function, such as shrink_folio_list(=
-),
-that seem to think that folio->mapping might be NULL.
-
-> Also this is the most inconsistent style ...
-
-Yeah, I accidentally pushed the '&&' onto the next line.
-
-> > @@ -276,7 +275,7 @@ static long mapping_evict_folio(struct address_spa=
-ce *mapping,
-> >  	if (folio_ref_count(folio) >
-> >  			folio_nr_pages(folio) + folio_has_private(folio) + 1)
-> =
-
-> I think this line is incorrect, right?  You don't increment the folio
-> refcount just because the folio has private2 set, do you?
-
-Errr, yes:
-
-	static inline void folio_start_fscache(struct folio *folio)
-	{
-		VM_BUG_ON_FOLIO(folio_test_private_2(folio), folio);
-		folio_get(folio);
-		folio_set_private_2(folio);
-	}
-
-Someone insisted - might even have been you;-)
-
-I'm working on getting rid of the use of PG_private_2 from the network
-filesystems, but it's still in progress.  Kind of blocked on the iov_iter
-stuff.
-
-> >  		return 0;
-> > -	if (folio_has_private(folio) && !filemap_release_folio(folio, 0))
-> > +	if (!filemap_release_folio(folio, 0))
-> >  		return 0;
-> >  =
-
-> >  	return remove_mapping(mapping, folio);
-> =
-
-> Can we get rid of folio_has_private()
-
-That would be nice, but there are still places that check it, and until we=
- get
-rid of the use of PG_private_2, we can't reduce it to just a check on
-PG_private.  Truncate, for example, checks it to see if it should can
-->invalidate_folio().
-
-It's only used in mm/, so it could be moved into mm/internal.h.
-
-> / page_has_private() now?
-
-That's used in some a number of places outside of mm/.  The arch/s390/ usa=
-ge
-is just to calculate the expected refcount.  I wonder if calculation of th=
-e
-expected refcount could be potted into a function as it's performed in a
-number of places - though the expectation isn't always the same.
-
-Ext3 and fuse both use it - but those probably need to check PG_private_2 =
-and
-could use a "folio_test_private()" function when fully foliated.
-
-David
-
+Chao
+> 
+> Thanks,
+> 
+> Mike
+> 
+> > 
+> > -- 
+> >   Kiryl Shutsemau / Kirill A. Shutemov
