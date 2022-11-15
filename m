@@ -2,286 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EA69628F40
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 02:31:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F25FA628F64
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 02:37:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232149AbiKOBbS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Nov 2022 20:31:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36968 "EHLO
+        id S236173AbiKOBgp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Nov 2022 20:36:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232151AbiKOBav (ORCPT
+        with ESMTP id S232137AbiKOBgm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Nov 2022 20:30:51 -0500
-Received: from mail-pg1-x52c.google.com (mail-pg1-x52c.google.com [IPv6:2607:f8b0:4864:20::52c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B807E62DC
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 17:30:50 -0800 (PST)
-Received: by mail-pg1-x52c.google.com with SMTP id b62so11918814pgc.0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 17:30:50 -0800 (PST)
+        Mon, 14 Nov 2022 20:36:42 -0500
+Received: from mail-ej1-x62c.google.com (mail-ej1-x62c.google.com [IPv6:2a00:1450:4864:20::62c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69DF814003
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 17:36:41 -0800 (PST)
+Received: by mail-ej1-x62c.google.com with SMTP id 13so32734423ejn.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 14 Nov 2022 17:36:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jgZL4Q6/hiN7SK0U+fxjQpeeWJPO0+rsmSJULzaGQ0k=;
-        b=UUqPu/qLFSsKkqibdIyWpzTl7kJ0392Arsqxv5eqI2K6kcKDlIPK26OhDQtPxdgLk6
-         NmBy3VVOPc9exNJwbPMYA/O1J5+2B3/QWN36xbCtHZFo1XS7tAziLiwIwM1I4ZSIMSfz
-         ya5v3sLA5e4ngF5cW55rzN6yyHLIdJP385ok87P7w4GraXHJfZkCQd0rd9WUT3aIz21m
-         kZBez5immZ36uVk6aLtli7nW9CxMyY3g627gqnkAHVEJgAzsGAheJkioxNrm6Xx9p+yi
-         0q0KykfQMpzuWtFoq8of5+MbNVzqwkjdjnt0CdGcSJOfNkZKtS97NnGEg+ruJCBe2siW
-         uJGQ==
+        d=soleen.com; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=JGEQys0q+vn6kmmzyVuQOW7GVEeqdKy9lN8OIJWvOQs=;
+        b=PSrB/jmAglnUp28dEPhbOBEDVHtOyET03hzbsVCqEwMkZ54OJlNDXfWBCGnL86RVTW
+         gfwfg54OIdAw8qy5SXee3IO1bQ2tBYPOE4X13S4R8eKXqwvTeMzddt8p3/rSyBVx6Fks
+         a+4Q9XuWs3mL/JuLZKGdyZMYN38qX34Rk8UYLpFh/ox1Kxns5WRODVykYo6Iye4QVKYy
+         XorRzqemDyQsEh+6YJ9/InCSyoknBRZ3egXW4380pxN5HZnUVzggu3nNxPtlV5FD5zed
+         maf0oNgfFm4NREuJsoWujUue1x98cStxRmhb4jPVJrzgy+qpWewB3siMSOCHmom7MuwF
+         a6SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jgZL4Q6/hiN7SK0U+fxjQpeeWJPO0+rsmSJULzaGQ0k=;
-        b=oXZ3O8rPitE1iMBW/uWPKnAuVDf5xPtksFZp9+cQbTBIOz5b4n/Q9iZkGUb4LxGNsO
-         6PbBPEyvjC3Gn/BI33HnVRqXfwNTE0lbCgOAL7JHpSct1VQtPd7uzEoKymC/8O4D0cg0
-         ARLcGWyS0Fw5MPGfbnyo17jtb5TJtpvsH81aLgSxJsT4ZVxaEJ7O/s6Rik/GO3WuQ6Rp
-         AcMtkr0xQu04JnSPr3pGJXYuyn6MM/FH2KSMrz3NEm4hOYxsTMqMm7lU0aTilz7nd4aW
-         FizFtIT2WRnIdYmAsuBEvd44aR5KCJGwN6jo7IaHKDmkXJAVKEFWGt60JczkjfwSvZRZ
-         BlaA==
-X-Gm-Message-State: ANoB5pmPqTYPvsbRbkSMRPdkXfUu4RKg5W5m7lB2tJH0BAm28OSvNQ7C
-        OFaQ7iCcEMlRtiyXcKZ34uSnQQ==
-X-Google-Smtp-Source: AA0mqf53q+Ed2oyN1jbck8d7rOoRUBqjIi3l7i6bP6FZ3exURtjovulj7jav8V30tqIY2/ycTy12og==
-X-Received: by 2002:aa7:814e:0:b0:572:6e9b:9fa2 with SMTP id d14-20020aa7814e000000b005726e9b9fa2mr1008065pfn.8.1668475850202;
-        Mon, 14 Nov 2022 17:30:50 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
-        by smtp.gmail.com with ESMTPSA id d17-20020a170902ced100b001868ed86a95sm8290720plg.174.2022.11.14.17.30.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Nov 2022 17:30:48 -0800 (PST)
-Received: from discord.disaster.area ([192.168.253.110])
-        by dread.disaster.area with esmtp (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oukmj-00EKGJ-Hn; Tue, 15 Nov 2022 12:30:45 +1100
-Received: from dave by discord.disaster.area with local (Exim 4.96)
-        (envelope-from <david@fromorbit.com>)
-        id 1oukmj-001Vpr-1d;
-        Tue, 15 Nov 2022 12:30:45 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     linux-xfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH 9/9] xfs: drop write error injection is unfixable, remove it
-Date:   Tue, 15 Nov 2022 12:30:43 +1100
-Message-Id: <20221115013043.360610-10-david@fromorbit.com>
-X-Mailer: git-send-email 2.37.2
-In-Reply-To: <20221115013043.360610-1-david@fromorbit.com>
-References: <20221115013043.360610-1-david@fromorbit.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JGEQys0q+vn6kmmzyVuQOW7GVEeqdKy9lN8OIJWvOQs=;
+        b=eiMcc7HYaKmnKiYU2ORxaLfTscKBHNqjMb0idhTjtdlhLaAwk+7gw9UrgVH7yOdAjw
+         NDFVlX+discUGbDb7JcPE7zsaC+saYSe+DcZon6iUCUEI+6bRkDBi7V6nbBB2gYeHxXl
+         0oZoM2igHqggSeZI59lpYj/jeIzhGT7AedijZlhYmJ8PfMnETRC0HjAlb/Oy5+XqqfSa
+         lrdOlxVlFHVonxOD11ab5RxAMMkMyE5nvQiz9vdzx2G1VJDkkSrq9dpQzI9XzGuFQQSt
+         mrliAox1qalY2Q37s6zSGe1NQ6PU5jnKTos70oLH0mpciKQ1/3usPvDs1H6qXfHlS7t6
+         fn3g==
+X-Gm-Message-State: ANoB5pmNinuSm3MQw0B5iz6w76EH3AfEomOnGPhLi6H2iv1BvvlvXZaB
+        B6QYPI+z1mh0A0dgufT96L1X4TpPuhz4ReWkD1acNQ==
+X-Google-Smtp-Source: AA0mqf75DC8RdNO+mbVA7o32g73VCYLO9LhY3gD4QBJZqJA7NWCmXX2/B0rhkrxfFyJjRS5YAVI8c3ozjKH3IAVSkWg=
+X-Received: by 2002:a17:906:b10d:b0:7a3:fbfa:32e5 with SMTP id
+ u13-20020a170906b10d00b007a3fbfa32e5mr12420307ejy.7.1668476199923; Mon, 14
+ Nov 2022 17:36:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20221107184715.3950621-1-pasha.tatashin@soleen.com>
+ <e94ac231-7137-010c-2f2b-6a309c941759@redhat.com> <CA+CK2bAbKMj8-crNCtmQ=DB5uRvQBJtFTLf5TH9=RWRGjfOGew@mail.gmail.com>
+ <70a8541b-6066-45ca-e2bc-3b7ecc0e7bb2@redhat.com>
+In-Reply-To: <70a8541b-6066-45ca-e2bc-3b7ecc0e7bb2@redhat.com>
+From:   Pasha Tatashin <pasha.tatashin@soleen.com>
+Date:   Mon, 14 Nov 2022 20:36:03 -0500
+Message-ID: <CA+CK2bAcoimT74mpQE=sa8fw+eZ5VVrAEkvPsB6=4Z6PKhG5vQ@mail.gmail.com>
+Subject: Re: [PATCH v2] mm: anonymous shared memory naming
+To:     David Hildenbrand <david@redhat.com>
+Cc:     corbet@lwn.net, akpm@linux-foundation.org, hughd@google.com,
+        hannes@cmpxchg.org, vincent.whitchurch@axis.com, seanjc@google.com,
+        rppt@kernel.org, shy828301@gmail.com, paul.gortmaker@windriver.com,
+        peterx@redhat.com, vbabka@suse.cz, Liam.Howlett@oracle.com,
+        ccross@google.com, willy@infradead.org, arnd@arndb.de,
+        cgel.zte@gmail.com, yuzhao@google.com,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-mm@kvack.org,
+        bagasdotme@gmail.com, kirill@shutemov.name
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dave Chinner <dchinner@redhat.com>
+On Wed, Nov 9, 2022 at 5:11 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> >>
+> >>>     anon_shmem = mmap(NULL, SIZE, PROT_READ | PROT_WRITE,
+> >>>                       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+> >>>     /* Name the segment: "MY-NAME" */
+> >>>     rv = prctl(PR_SET_VMA, PR_SET_VMA_ANON_NAME,
+> >>>                anon_shmem, SIZE, "MY-NAME");
+> >>>
+> >>> cat /proc/<pid>/maps (and smaps):
+> >>> 7fc8e2b4c000-7fc8f2b4c000 rw-s 00000000 00:01 1024 [anon_shmem:MY-NAME]
+> >>
+> >> What would it have looked like before? Just no additional information?
+> >
+> > Before:
+> >
+> > 7fc8e2b4c000-7fc8f2b4c000 rw-s 00000000 00:01 1024 /dev/zero (deleted)
+>
+> Can we add that to the patch description?
+>
+> >>
+> >>>
+> >>> Signed-off-by: Pasha Tatashin <pasha.tatashin@soleen.com>
+> >>> ---
+> >>
+> >>
+> >> [...]
+> >>
+> >>> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> >>> index 8bbcccbc5565..06b6fb3277ab 100644
+> >>> --- a/include/linux/mm.h
+> >>> +++ b/include/linux/mm.h
+> >>> @@ -699,8 +699,10 @@ static inline unsigned long vma_iter_addr(struct vma_iterator *vmi)
+> >>>     * paths in userfault.
+> >>>     */
+> >>>    bool vma_is_shmem(struct vm_area_struct *vma);
+> >>> +bool vma_is_anon_shmem(struct vm_area_struct *vma);
+> >>>    #else
+> >>>    static inline bool vma_is_shmem(struct vm_area_struct *vma) { return false; }
+> >>> +static inline bool vma_is_anon_shmem(struct vm_area_struct *vma) { return false; }
+> >>>    #endif
+> >>>
+> >>>    int vma_is_stack_for_current(struct vm_area_struct *vma);
+> >>> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> >>> index 500e536796ca..08d8b973fb60 100644
+> >>> --- a/include/linux/mm_types.h
+> >>> +++ b/include/linux/mm_types.h
+> >>> @@ -461,21 +461,11 @@ struct vm_area_struct {
+> >>>         * For areas with an address space and backing store,
+> >>>         * linkage into the address_space->i_mmap interval tree.
+> >>>         *
+> >>> -      * For private anonymous mappings, a pointer to a null terminated string
+> >>> -      * containing the name given to the vma, or NULL if unnamed.
+> >>>         */
+> >>> -
+> >>> -     union {
+> >>> -             struct {
+> >>> -                     struct rb_node rb;
+> >>> -                     unsigned long rb_subtree_last;
+> >>> -             } shared;
+> >>> -             /*
+> >>> -              * Serialized by mmap_sem. Never use directly because it is
+> >>> -              * valid only when vm_file is NULL. Use anon_vma_name instead.
+> >>> -              */
+> >>> -             struct anon_vma_name *anon_name;
+> >>> -     };
+> >>> +     struct {
+> >>> +             struct rb_node rb;
+> >>> +             unsigned long rb_subtree_last;
+> >>> +     } shared;
+> >>>
+> >>
+> >> So that effectively grows the size of vm_area_struct. Hm. I'd really
+> >> prefer to keep this specific to actual anonymous memory, not extending
+> >> it to anonymous files.
+> >
+> > It grows only when CONFIG_ANON_VMA_NAME=y, otherwise it stays the same
+> > as before. Are you suggesting adding another config specifically for
+> > shared memory? I wonder if we could add a union for some other part of
+> > vm_area_struct where anon and file cannot be used together.
+>
+> In practice, all distributions will enable CONFIG_ANON_VMA_NAME in the
+> long term I guess. So if we could avoid increasing the VMA size, that
+> would be great.
+>
+> >
+> >> Do we have any *actual* users where we don't have an alternative? I
+> >> doubt that this is really required.
+> >>
+> >> The simplest approach seems to be to use memfd instead of MAP_SHARED |
+> >> MAP_ANONYMOUS. __NR_memfd_create can be passed a name and you get what
+> >> you propose here effectively already. Or does anything speak against it?
+> >
+> > For our use case the above does not work. We are working on highly
+> > paravirtualized virtual machines. The VMM maps VM memory as anonymous
+> > shared memory (not private because VMM is sandboxed and drivers are
+> > running in their own processes). However, the VM tells back to the VMM
+> > how parts of the memory are actually used by the guest, how each of
+> > the segments should be backed (i.e. 4K pages, 2M pages), and some
+> > other information about the segments. The naming allows us to monitor
+> > the effective memory footprint for each of these segments from the
+> > host without looking inside the guest.
+>
+> That's a reasonable use case, although naive me would worry about #VMA
+> limits etc.
+>
+> Can you add some condensed use-case explanation to the patch
+> description? (IOW, memfd cannot be used because parts of the memfd are
+> required to receive distinct names)
+>
+> I'd appreciate if we could avoid increasing the VMA size; but in any case
 
-With the changes to scan the page cache for dirty data to avoid data
-corruptions from partial write cleanup racing with other page cache
-operations, the drop writes error injection no longer works the same
-way it used to and causes xfs/196 to fail. This is because xfs/196
-writes to the file and populates the page cache before it turns on
-the error injection and starts failing -overwrites-.
+I've explored ways not to increase VMA size, but there are no obvious
+solutions here. Let's keep it as is for now, and in the future if
+there we are going to be adding some fields that are only used by
+anonymous memory, we can explore of adding a union for this field.
 
-The result is that the original drop-writes code failed writes only
--after- overwriting the data in the cache, followed by invalidates
-the cached data, then punching out the delalloc extent from under
-that data.
+>
+> Acked-by: David Hildenbrand <david@redhat.com>
 
-On the surface, this looks fine. The problem is that page cache
-invalidation *doesn't guarantee that it removes anything from the
-page cache* and it doesn't change the dirty state of the folio. When
-block size == page size and we do page aligned IO (as xfs/196 does)
-everything happens to align perfectly and page cache invalidation
-removes the single page folios that span the written data. Hence the
-followup delalloc punch pass does not find cached data over that
-range and it can punch the extent out.
+Thank you. I will soon send a new version with support for memfd anon
+memory as well.
 
-IOWs, xfs/196 "works" for block size == page size with the new
-code. I say "works", because it actually only works for the case
-where IO is page aligned, and no data was read from disk before
-writes occur. Because the moment we actually read data first, the
-readahead code allocates multipage folios and suddenly the
-invalidate code goes back to zeroing subfolio ranges without
-changing dirty state.
-
-Hence, with multipage folios in play, block size == page size is
-functionally identical to block size < page size behaviour, and
-drop-writes is manifestly broken w.r.t to this case. Invalidation of
-a subfolio range doesn't result in the folio being removed from the
-cache, just the range gets zeroed. Hence after we've sequentially
-walked over a folio that we've dirtied (via write data) and then
-invalidated, we end up with a dirty folio full of zeroed data.
-
-And because the new code skips punching ranges that have dirty
-folios covering them, we end up leaving the delalloc range intact
-after failing all the writes. Hence failed writes now end up
-writing zeroes to disk in the cases where invalidation zeroes folios
-rather than removing them from cache.
-
-This is a fundamental change of behaviour that is needed to avoid
-the data corruption vectors that exist in the old write fail path,
-and it renders the drop-writes injection non-functional and
-unworkable as it stands.
-
-As it is, I think the error injection is also now unnecessary, as
-partial writes that need delalloc extent are going to be a lot more
-common with stale iomap detection in place. Hence this patch removes
-the drop-writes error injection completely. xfs/196 can remain for
-testing kernels that don't have this data corruption fix, but those
-that do will report:
-
-xfs/196 3s ... [not run] XFS error injection drop_writes unknown on this kernel.
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
----
- fs/xfs/libxfs/xfs_errortag.h | 12 +++++-------
- fs/xfs/xfs_error.c           | 27 ++++++++++++++++++++-------
- fs/xfs/xfs_iomap.c           |  9 ---------
- 3 files changed, 25 insertions(+), 23 deletions(-)
-
-diff --git a/fs/xfs/libxfs/xfs_errortag.h b/fs/xfs/libxfs/xfs_errortag.h
-index 5362908164b0..580ccbd5aadc 100644
---- a/fs/xfs/libxfs/xfs_errortag.h
-+++ b/fs/xfs/libxfs/xfs_errortag.h
-@@ -40,13 +40,12 @@
- #define XFS_ERRTAG_REFCOUNT_FINISH_ONE			25
- #define XFS_ERRTAG_BMAP_FINISH_ONE			26
- #define XFS_ERRTAG_AG_RESV_CRITICAL			27
-+
- /*
-- * DEBUG mode instrumentation to test and/or trigger delayed allocation
-- * block killing in the event of failed writes. When enabled, all
-- * buffered writes are silenty dropped and handled as if they failed.
-- * All delalloc blocks in the range of the write (including pre-existing
-- * delalloc blocks!) are tossed as part of the write failure error
-- * handling sequence.
-+ * Drop-writes support removed because write error handling cannot trash
-+ * pre-existing delalloc extents in any useful way anymore. We retain the
-+ * definition so that we can reject it as an invalid value in
-+ * xfs_errortag_valid().
-  */
- #define XFS_ERRTAG_DROP_WRITES				28
- #define XFS_ERRTAG_LOG_BAD_CRC				29
-@@ -95,7 +94,6 @@
- #define XFS_RANDOM_REFCOUNT_FINISH_ONE			1
- #define XFS_RANDOM_BMAP_FINISH_ONE			1
- #define XFS_RANDOM_AG_RESV_CRITICAL			4
--#define XFS_RANDOM_DROP_WRITES				1
- #define XFS_RANDOM_LOG_BAD_CRC				1
- #define XFS_RANDOM_LOG_ITEM_PIN				1
- #define XFS_RANDOM_BUF_LRU_REF				2
-diff --git a/fs/xfs/xfs_error.c b/fs/xfs/xfs_error.c
-index c6b2aabd6f18..dea3c0649d2f 100644
---- a/fs/xfs/xfs_error.c
-+++ b/fs/xfs/xfs_error.c
-@@ -46,7 +46,7 @@ static unsigned int xfs_errortag_random_default[] = {
- 	XFS_RANDOM_REFCOUNT_FINISH_ONE,
- 	XFS_RANDOM_BMAP_FINISH_ONE,
- 	XFS_RANDOM_AG_RESV_CRITICAL,
--	XFS_RANDOM_DROP_WRITES,
-+	0, /* XFS_RANDOM_DROP_WRITES has been removed */
- 	XFS_RANDOM_LOG_BAD_CRC,
- 	XFS_RANDOM_LOG_ITEM_PIN,
- 	XFS_RANDOM_BUF_LRU_REF,
-@@ -162,7 +162,6 @@ XFS_ERRORTAG_ATTR_RW(refcount_continue_update,	XFS_ERRTAG_REFCOUNT_CONTINUE_UPDA
- XFS_ERRORTAG_ATTR_RW(refcount_finish_one,	XFS_ERRTAG_REFCOUNT_FINISH_ONE);
- XFS_ERRORTAG_ATTR_RW(bmap_finish_one,	XFS_ERRTAG_BMAP_FINISH_ONE);
- XFS_ERRORTAG_ATTR_RW(ag_resv_critical,	XFS_ERRTAG_AG_RESV_CRITICAL);
--XFS_ERRORTAG_ATTR_RW(drop_writes,	XFS_ERRTAG_DROP_WRITES);
- XFS_ERRORTAG_ATTR_RW(log_bad_crc,	XFS_ERRTAG_LOG_BAD_CRC);
- XFS_ERRORTAG_ATTR_RW(log_item_pin,	XFS_ERRTAG_LOG_ITEM_PIN);
- XFS_ERRORTAG_ATTR_RW(buf_lru_ref,	XFS_ERRTAG_BUF_LRU_REF);
-@@ -206,7 +205,6 @@ static struct attribute *xfs_errortag_attrs[] = {
- 	XFS_ERRORTAG_ATTR_LIST(refcount_finish_one),
- 	XFS_ERRORTAG_ATTR_LIST(bmap_finish_one),
- 	XFS_ERRORTAG_ATTR_LIST(ag_resv_critical),
--	XFS_ERRORTAG_ATTR_LIST(drop_writes),
- 	XFS_ERRORTAG_ATTR_LIST(log_bad_crc),
- 	XFS_ERRORTAG_ATTR_LIST(log_item_pin),
- 	XFS_ERRORTAG_ATTR_LIST(buf_lru_ref),
-@@ -256,6 +254,19 @@ xfs_errortag_del(
- 	kmem_free(mp->m_errortag);
- }
- 
-+static bool
-+xfs_errortag_valid(
-+	unsigned int		error_tag)
-+{
-+	if (error_tag >= XFS_ERRTAG_MAX)
-+		return false;
-+
-+	/* Error out removed injection types */
-+	if (error_tag == XFS_ERRTAG_DROP_WRITES)
-+		return false;
-+	return true;
-+}
-+
- bool
- xfs_errortag_test(
- 	struct xfs_mount	*mp,
-@@ -277,7 +288,9 @@ xfs_errortag_test(
- 	if (!mp->m_errortag)
- 		return false;
- 
--	ASSERT(error_tag < XFS_ERRTAG_MAX);
-+	if (!xfs_errortag_valid(error_tag))
-+		return false;
-+
- 	randfactor = mp->m_errortag[error_tag];
- 	if (!randfactor || prandom_u32_max(randfactor))
- 		return false;
-@@ -293,7 +306,7 @@ xfs_errortag_get(
- 	struct xfs_mount	*mp,
- 	unsigned int		error_tag)
- {
--	if (error_tag >= XFS_ERRTAG_MAX)
-+	if (!xfs_errortag_valid(error_tag))
- 		return -EINVAL;
- 
- 	return mp->m_errortag[error_tag];
-@@ -305,7 +318,7 @@ xfs_errortag_set(
- 	unsigned int		error_tag,
- 	unsigned int		tag_value)
- {
--	if (error_tag >= XFS_ERRTAG_MAX)
-+	if (!xfs_errortag_valid(error_tag))
- 		return -EINVAL;
- 
- 	mp->m_errortag[error_tag] = tag_value;
-@@ -319,7 +332,7 @@ xfs_errortag_add(
- {
- 	BUILD_BUG_ON(ARRAY_SIZE(xfs_errortag_random_default) != XFS_ERRTAG_MAX);
- 
--	if (error_tag >= XFS_ERRTAG_MAX)
-+	if (!xfs_errortag_valid(error_tag))
- 		return -EINVAL;
- 
- 	return xfs_errortag_set(mp, error_tag,
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index fa578c913323..bf1661410272 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -1335,15 +1335,6 @@ xfs_buffered_write_iomap_end(
- 	if (iomap->type != IOMAP_DELALLOC)
- 		return 0;
- 
--	/*
--	 * Behave as if the write failed if drop writes is enabled. Set the NEW
--	 * flag to force delalloc cleanup.
--	 */
--	if (XFS_TEST_ERROR(false, mp, XFS_ERRTAG_DROP_WRITES)) {
--		iomap->flags |= IOMAP_F_NEW;
--		written = 0;
--	}
--
- 	/* If we didn't reserve the blocks, we're not allowed to punch them. */
- 	if (!(iomap->flags & IOMAP_F_NEW))
- 		return 0;
--- 
-2.37.2
-
+Pasha
