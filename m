@@ -2,230 +2,329 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0827A6299AD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 14:09:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F13E1629C32
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 15:37:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230222AbiKONI6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Nov 2022 08:08:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42430 "EHLO
+        id S231210AbiKOOhJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Nov 2022 09:37:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233025AbiKONIo (ORCPT
+        with ESMTP id S229587AbiKOOhH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Nov 2022 08:08:44 -0500
-Received: from mail-vk1-xa33.google.com (mail-vk1-xa33.google.com [IPv6:2607:f8b0:4864:20::a33])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2786B0B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Nov 2022 05:08:30 -0800 (PST)
-Received: by mail-vk1-xa33.google.com with SMTP id g4so6536189vkk.6
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Nov 2022 05:08:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=rSOF8oftx/biH+k+NwMEYd53wHekwBX+kuvaZbBTa5k=;
-        b=UPyCCiYYDXTjPNGBz8Uw0bm9+FdEIv4S1QIUGkp3Xio63xHzDdi2PNyKVrBengv3Hx
-         EY4Ula8WzBkMwSsceFXJxDqtACdKX6zsvSfm2qhd4nb12+kfSfWY6tCRPPIKrcrz//Hu
-         B2EJytU9FHqNA9z+Je95fMjNcW9qeDV3PPLrgGPngfZpBR7MTlyj/aSTva89nCQ/Epcx
-         /lRJxlqRuyAlKhQVgUAIXdOIJVm0kTMBqXeTZn8rfgpiI7gFxZvTS3UwT67VrxZXj7Sd
-         MYbKB0DcAuAFeEHsw1Yv008+O9iXGxWcD8Ed1T/HUH+HMiBxurlB4R1pFmLSREKkCu99
-         bF5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rSOF8oftx/biH+k+NwMEYd53wHekwBX+kuvaZbBTa5k=;
-        b=xaevqSHpWLaQeZDTTKHq6pSLnXLuq4vPgNM1ZF1s6zHJRA+U5fbKUeelaJzTVK1iRL
-         hYs4Q7RaJr9xbm40eLhc4B9aLfcH/aHFbwtTSBkk7G81EmsV3kykgUE396pTthKM4alE
-         may8/w3eYVm1C7JIu6QHtSbH2QQz7D5QVu2Ulxwsb5e4L3D6Q8I/ZOe9XzX8aqqZw5M4
-         G/olBgv0H5gCOgrxTPfGPE8UlS0f5PIfjeckf4E65HKhM3FHLQFLwxano+jTn58T4ii1
-         ZZU+qHZM+Qylw+TQl8vGMvhHPgH9zZxV2hCccT0e82XxrT7YRYHymh8ynqXriQUHDSfU
-         Nnbw==
-X-Gm-Message-State: ANoB5pmQEo5v5mVtjBq18U9BPGWYg/1e+6PG9+ah/Ev51TWWmFGu+OUG
-        5yeaLYPKTuSX/2bkdPLJfAH6CW/1VDWIz7WAj1K7o1m6vYQ=
-X-Google-Smtp-Source: AA0mqf5adNulyRRGX0Uhz4wCcXVkrZB+HdJMIy6y/uRDuOXmJtHlnTUy30DNLTzQEDKr14Q1/xMoQI381c5iOSeq4Gk=
-X-Received: by 2002:a1f:fe4e:0:b0:3ab:a69f:3b7c with SMTP id
- l75-20020a1ffe4e000000b003aba69f3b7cmr8991656vki.36.1668517709578; Tue, 15
- Nov 2022 05:08:29 -0800 (PST)
+        Tue, 15 Nov 2022 09:37:07 -0500
+Received: from wnew1-smtp.messagingengine.com (wnew1-smtp.messagingengine.com [64.147.123.26])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 864511401B;
+        Tue, 15 Nov 2022 06:37:06 -0800 (PST)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.west.internal (Postfix) with ESMTP id CBBF72B066D4;
+        Tue, 15 Nov 2022 09:37:00 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Tue, 15 Nov 2022 09:37:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+         h=cc:cc:content-type:date:date:from:from:in-reply-to
+        :in-reply-to:message-id:mime-version:references:reply-to:sender
+        :subject:subject:to:to; s=fm2; t=1668523020; x=1668530220; bh=Ad
+        wHQwvOiKtA9P6Y0u9jZFsfpkfO0GgABx1clW0axSM=; b=b1yM/7FEcClWE/shk7
+        Ikib6jlxMdJrJr/Np4NeX2vDsT0AQEo7W07O2V0AaFy5qOOmVENeqdMC1eOTss/x
+        gRTEG1I0SEPeGT2VXeUG6zIbnD6dHdscBUIuGCJQevQzFC+UUbeDEQzmVWYglSbN
+        V6l8IX93vkcm6THTPmR2V23AmrGLkx3Uw0BSgusDSjHt07Pe6LYtFORGK17dDOyJ
+        mUAC7eH0TebAPnCXT78QyJejukQ4RmIG9X+xYUcryppXfcRiROQsTbMI4sAO7EDC
+        CudXWZVJtpcFPN0el9OFhJUGGjVAjTjCWR1BAxqgAUQSMDvc16NjQvgP8x4GEFW+
+        vcqg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; t=1668523020; x=1668530220; bh=AdwHQwvOiKtA9P6Y0u9jZFsfpkfO
+        0GgABx1clW0axSM=; b=TDFbZVnuyahpqh8vT886YvKR1Ol2nKo8U+/J2ZElxrSQ
+        n2E5oSia7W6dD5yqxCZIxtzirSEFghTFlB7mAZp87wZnlFZbGO46OQUsMT2osyl9
+        yPocZOwpYwDL035DaZVzu2fC+ZQ9iYm406ihwqwdqNIfGftbDX8htxDt5TxRGBCF
+        +t23+33E4F1FO6nCpO9HhFlan0REtgnmZubj2wzg+HGVJNuF0NRuofZSdV1AscI9
+        wZM2jrp9pfXmJMsJLubXwhmDN9eZtg4PyMSFlT3Df9EGLoL+1pB420R3iPOlGcpK
+        lO65lG2pvjcQkovGbuVTllzqbhbtgdDPLNEsVzpDog==
+X-ME-Sender: <xms:CqRzY68BT2_MOQCpJaG-rHi3ZvX2DPUi1AORdEmnduWa6W-16sqpUQ>
+    <xme:CqRzY6sNcfcHf50KqgQ8kjcZzIU9uf7mU-dKtVHD2JzEBS25E00gx7lMBqWe_yZZn
+    CIXpJ3thavR8r76dE4>
+X-ME-Received: <xmr:CqRzYwDMbsjb5gxiP2OVgmcfVzPPyfJPLm1H0JkcrIAuZCoD9aYl6xTxWo_PDgIpjBv9KQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrgeeggdeiiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttddttddttddvnecuhfhrohhmpedfmfhirhhi
+    lhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrg
+    hmvgeqnecuggftrfgrthhtvghrnhephfeigefhtdefhedtfedthefghedutddvueehtedt
+    tdehjeeukeejgeeuiedvkedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgv
+X-ME-Proxy: <xmx:CqRzYydIWDcubtT3THtqv8FWKHCS--BtaBzbgq3OhwTX20vuyo-laQ>
+    <xmx:CqRzY_OGoXMgKcwLte8bRp93aLlKDKHNuTTJfy3wCFsePEWbCpapGw>
+    <xmx:CqRzY8lj7_1L0OWPwtgl65FvZmhL0RNn1SNgP5_j7hMUObZk6dJuAg>
+    <xmx:DKRzYycI2DAmg3G1dRRamPnUVJyM4m05tNWQKBXs1AUq7Ug2T3ZwfJ76r9Y>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 15 Nov 2022 09:36:57 -0500 (EST)
+Received: by box.shutemov.name (Postfix, from userid 1000)
+        id CAA2F10997B; Tue, 15 Nov 2022 17:36:54 +0300 (+03)
+Date:   Tue, 15 Nov 2022 17:36:54 +0300
+From:   "Kirill A. Shutemov" <kirill@shutemov.name>
+To:     Isaku Yamahata <isaku.yamahata@gmail.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        Hugh Dickins <hughd@google.com>
+Cc:     Vishal Annapurve <vannapurve@google.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v9 0/8] KVM: mm: fd-based approach for supporting KVM
+Message-ID: <20221115143654.rqpf72hzdtrd3xyw@box.shutemov.name>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <CAGtprH-av3K6YxUbz1cAsQp4w2ce35UrfBF-u7Q_qCuTNMdvzQ@mail.gmail.com>
+ <20221108004141.GF1063309@ls.amr.corp.intel.com>
+ <20221109155404.istawiyvwr3yffag@box.shutemov.name>
 MIME-Version: 1.0
-References: <CAOQ4uxh6C=jMftsFQD3s1u7D_niRDmBaxKTymboJQGTmPD6bXQ@mail.gmail.com>
- <CAOQ4uxjHu4k2-sdM1qtnFPvKRHv-OFWo0cYDZbvjv0sd9bXGZQ@mail.gmail.com>
- <20220922104823.z6465rfro7ataw2i@quack3> <CAOQ4uxiNhnV0OWU-2SY_N0aY19UdMboR3Uivcr7EvS7zdd9jxw@mail.gmail.com>
- <20221103163045.fzl6netcffk23sxw@quack3> <CAOQ4uxhRYZgDSWr8ycB3hqxZgg6MWL65eP0eEkcZkGfcEpHpCg@mail.gmail.com>
- <20221107111008.wt4s4hjumxzl5kqj@quack3> <CAOQ4uxhjCb=2f_sFfx+hn8B44+vgZgSbVe=es4CwiC7dFzMizA@mail.gmail.com>
- <20221114191721.yp3phd5w5cx6nmk2@quack3> <CAOQ4uxiGD8iDhc+D_Qse_Ahq++V4nY=kxYJSVtr_2dM3w6bNVw@mail.gmail.com>
- <20221115101614.wuk2f4dhnjycndt6@quack3>
-In-Reply-To: <20221115101614.wuk2f4dhnjycndt6@quack3>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Tue, 15 Nov 2022 15:08:17 +0200
-Message-ID: <CAOQ4uxhcXKmdq+=fexuyu-nUKc5XHG6crtcs-+tP6-M4z357pQ@mail.gmail.com>
-Subject: Re: thoughts about fanotify and HSM
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221109155404.istawiyvwr3yffag@box.shutemov.name>
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 15, 2022 at 12:16 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 14-11-22 22:08:16, Amir Goldstein wrote:
-> > On Mon, Nov 14, 2022 at 9:17 PM Jan Kara <jack@suse.cz> wrote:
-> > > > My understanding is that
-> > > > synchronize_srcu(&fsnotify_mark_srcu);
-> > > > is needed as barrier between 3) and 4)
+On Wed, Nov 09, 2022 at 06:54:04PM +0300, Kirill A. Shutemov wrote:
+> On Mon, Nov 07, 2022 at 04:41:41PM -0800, Isaku Yamahata wrote:
+> > On Thu, Nov 03, 2022 at 05:43:52PM +0530,
+> > Vishal Annapurve <vannapurve@google.com> wrote:
+> > 
+> > > On Tue, Oct 25, 2022 at 8:48 PM Chao Peng <chao.p.peng@linux.intel.com> wrote:
 > > > >
-> > > > In any case, even if CHECKPOINT_PENDING can work,
-> > > > with or without FAN_MARK_SYNC, to me personally, understanding
-> > > > the proof of correctness of alternating groups model is very easy,
-> > > > while proving correctness for CHECKPOINT_PENDING model is
-> > > > something that I was not yet able to accomplish.
-> > >
-> > > I agree the scheme with CHECKPOINT_PENDING isn't easy to reason about but I
-> > > don't find your scheme with two groups simpler ;) Let me try to write down
-> > > rationale for my scheme, I think I can even somewhat simplify it:
-> > >
-> > > Write operation consists of:
-> > > generate PRE_WRITE on F
-> > > modify data of F
-> > > generate POST_WRITE on F
-> > >
-> > > Checkpoint consists of:
-> > > clear ignore marks
-> > > report files for which we received PRE_WRITE or POST_WRITE until this
-> > > moment
-> > >
-> > > And the invariant we try to provide is: If file F was modified during
-> > > checkpoint T, then we report F as modified during T or some later
-> > > checkpoint. Where it is matter of quality of implementation that "some
-> > > later checkpoint" isn't too much later than T but it depends on the
-> > > frequency of checkpoints, the length of notification queue, etc. so it is
-> > > difficult to give hard guarantees.
-> > >
-> > > And the argument why the scheme maintains the invariant is that if
-> > > POST_WRITE is generated after "clear ignore marks" finishes, it will get
-> > > delivered and thus F will get reported as modified in some checkpoint once
-> > > the event is processed. If POST_WRITE gets generated before "clear ignore
-> > > marks" finishes and F is among ignored inodes, it means F is already in
-> > > modified set so it will get reported as part of checkpoint T. Also
-> > > application will already see modified data when processing list of modified
-> > > files in checkpoint T.
-> > >
-> > > Simple and we don't even need PRE_WRITE here. But maybe you wanted to
-> > > provide stronger invariant? Like "you are not able to see modified data
-> > > without seeing F as modified?" But what exactly would be a guarantee here?
-> > > I feel I'm missing something here but I cannot quite grasp it at this
-> > > moment...
-> > >
-> >
-> > This is the very basic guarantee that the persistent change tracking snapshots
-> > need to provide. If a crash happens after modification is done and before
-> > modification is recorded, we won't detect the modification after reboot.
->
-> Right, crash safety was the point I was missing ;) Thanks for reminding me.
-> And now I also see why you use filesystem freezing - it is a way to make
-> things crash safe as otherwise it is difficult to guard against a race
->
-> generate PRE_WRITE for F
->                                 PRE_WRITE ignored because file is already
->                                         modified
->                                 checkpoint happens -> F reported as modified
->                                   contents of F fetched
->
-> modify data
-> transaction commit
-> <crash>
->                                 POST_WRITE never seen so change to F is
->                                   never reported
->
-> I just think filesystem freezing is too big hammer for widespread use of
-> persistent change tracking.
+> > > > This patch series implements KVM guest private memory for confidential
+> > > > computing scenarios like Intel TDX[1]. If a TDX host accesses
+> > > > TDX-protected guest memory, machine check can happen which can further
+> > > > crash the running host system, this is terrible for multi-tenant
+> > > > configurations. The host accesses include those from KVM userspace like
+> > > > QEMU. This series addresses KVM userspace induced crash by introducing
+> > > > new mm and KVM interfaces so KVM userspace can still manage guest memory
+> > > > via a fd-based approach, but it can never access the guest memory
+> > > > content.
+> > > >
+> > > > The patch series touches both core mm and KVM code. I appreciate
+> > > > Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
+> > > > reviews are always welcome.
+> > > >   - 01: mm change, target for mm tree
+> > > >   - 02-08: KVM change, target for KVM tree
+> > > >
+> > > > Given KVM is the only current user for the mm part, I have chatted with
+> > > > Paolo and he is OK to merge the mm change through KVM tree, but
+> > > > reviewed-by/acked-by is still expected from the mm people.
+> > > >
+> > > > The patches have been verified in Intel TDX environment, but Vishal has
+> > > > done an excellent work on the selftests[4] which are dedicated for this
+> > > > series, making it possible to test this series without innovative
+> > > > hardware and fancy steps of building a VM environment. See Test section
+> > > > below for more info.
+> > > >
+> > > >
+> > > > Introduction
+> > > > ============
+> > > > KVM userspace being able to crash the host is horrible. Under current
+> > > > KVM architecture, all guest memory is inherently accessible from KVM
+> > > > userspace and is exposed to the mentioned crash issue. The goal of this
+> > > > series is to provide a solution to align mm and KVM, on a userspace
+> > > > inaccessible approach of exposing guest memory.
+> > > >
+> > > > Normally, KVM populates secondary page table (e.g. EPT) by using a host
+> > > > virtual address (hva) from core mm page table (e.g. x86 userspace page
+> > > > table). This requires guest memory being mmaped into KVM userspace, but
+> > > > this is also the source where the mentioned crash issue can happen. In
+> > > > theory, apart from those 'shared' memory for device emulation etc, guest
+> > > > memory doesn't have to be mmaped into KVM userspace.
+> > > >
+> > > > This series introduces fd-based guest memory which will not be mmaped
+> > > > into KVM userspace. KVM populates secondary page table by using a
+> > > 
+> > > With no mappings in place for userspace VMM, IIUC, looks like the host
+> > > kernel will not be able to find the culprit userspace process in case
+> > > of Machine check error on guest private memory. As implemented in
+> > > hwpoison_user_mappings, host kernel tries to look at the processes
+> > > which have mapped the pfns with hardware error.
+> > > 
+> > > Is there a modification needed in mce handling logic of the host
+> > > kernel to immediately send a signal to the vcpu thread accessing
+> > > faulting pfn backing guest private memory?
+> > 
+> > mce_register_decode_chain() can be used.  MCE physical address(p->mce_addr)
+> > includes host key id in addition to real physical address.  By searching used
+> > hkid by KVM, we can determine if the page is assigned to guest TD or not. If
+> > yes, send SIGBUS.
+> > 
+> > kvm_machine_check() can be enhanced for KVM specific use.  This is before
+> > memory_failure() is called, though.
+> > 
+> > any other ideas?
+> 
+> That's too KVM-centric. It will not work for other possible user of
+> restricted memfd.
+> 
+> I tried to find a way to get it right: we need to get restricted memfd
+> code info about corrupted page so it can invalidate its users. On the next
+> request of the page the user will see an error. In case of KVM, the error
+> will likely escalate to SIGBUS.
+> 
+> The problem is that core-mm code that handles memory failure knows nothing
+> about restricted memfd. It only sees that the page belongs to a normal
+> memfd.
+> 
+> AFAICS, there's no way to get it intercepted from the shim level. shmem
+> code has to be patches. shmem_error_remove_page() has to call into
+> restricted memfd code.
+> 
+> Hugh, are you okay with this? Or maybe you have a better idea?
 
-Note that fsfreeze is also needed to flush dirty data after modify data,
-not only to wait for modify data transaction commit.
+Okay, here is what I've come up with. It doesn't touch shmem code, but
+hooks up directly into memory-failure.c. It is still ugly, but should be
+tolerable.
 
-Otherwise the fetched contents of F will differ from contents of F
-after reboot even if we did wait for POST_WRITE.
+restrictedmem_error_page() loops over all restrictedmem inodes. It is
+slow, but memory failure is not hot path (I hope).
 
-However, in this case, file contents can be considered corrupted
-and rsync, for example, will not detect the change either, because
-mtime does match the previously fetched value.
+Only build-tested. Chao, could you hook up ->error for KVM and get it
+tested?
 
-As long as applications write files safely (with rename) fsfreeze is not
-needed, but for strict change tracking, fsfreeze is needed, so fsfreeze
-is a policy decision of HSM.
-
-> Can't we introduce some SRCU lock / unlock into
-> file_start_write() / file_end_write() and then invoke synchronize_srcu()
-> during checkpoint after removing ignore marks? It will be much cheaper as
-> we don't have to flush all dirty data to disk and also writes can keep
-> flowing while we wait for outstanding writes straddling checkpoint to
-> complete. What do you think?
-
-Maybe, but this is not enough.
-Note that my patches [1] are overlapping fsnotify_mark_srcu with
-file_start_write(), so we would need to overlay fsnotify_mark_srcu
-with this new "modify SRCU".
-
-[1] https://github.com/amir73il/linux/commits/fanotify_pre_content
-
->
-> The checkpoint would then do:
-> start gathering changes for both T and T+1
-> clear ignore marks
-> synchronize_srcu()
-> stop gathering changes for T and report them
->
-> And in this case we would not need POST_WRITE as an event.
->
-
-Why then give up on the POST_WRITE events idea?
-Don't you think it could work?
-Or is it just because you think the generic API would be useful to others?
-
-> The technical problem I see is how to deal with AIO / io_uring because
-> SRCU needs to be released in the same context as it is acquired - that
-> would need to be consulted with Paul McKenney if we can make it work. And
-> another problem I see is that it might not be great to have this
-> system-wide as e.g. on networking filesystems or pipes writes can block for
-> really long.
->
-> Final question is how to expose this to userspace because this
-> functionality would seem useful outside of filesystem notification space so
-> probably do not need to tie it to that.
->
-> Or we could simplify our life somewhat and acquire SRCU when generating
-> PRE_WRITE and drop it when generating POST_WRITE. This would keep SRCU
-> within fsnotify and would mitigate the problems coming from system-wide
-> SRCU. OTOH it will create problems when PRE_WRITE gets generated and
-> POST_WRITE would not for some reason. Just branstorming here, I've not
-> really decided what's better...
->
-
-What if checkpoint only acquired (and released) exclusive sb_writers without
-flushing dirty data.
-Wouldn't that be equivalent to the synchronize_srcu() you suggested?
-
-> > Maybe "checkpoint" was a bad name to use for this handover between
-> > two subsequent change tracking snapshots.
->
-> I'm getting used to the terminology :) But to me it still seems more
-> natural to look at the situation as a single stream of events where we fetch
-> bulks of changes at certain moments, rather than looking at it as certain
-> entities collecting events for different time intervals.
->
-
-I always used "snapshot take" as terminology.
-I just now started to use "checkpoint" for this userspace HSM implementation.
-
-I have no objection to single stream, nor to "flush all evictable" command.
-I will try to start with this implementation for POC.
-
-Thanks,
-Amir.
+diff --git a/include/linux/restrictedmem.h b/include/linux/restrictedmem.h
+index 9c37c3ea3180..c2700c5daa43 100644
+--- a/include/linux/restrictedmem.h
++++ b/include/linux/restrictedmem.h
+@@ -12,6 +12,8 @@ struct restrictedmem_notifier_ops {
+ 				 pgoff_t start, pgoff_t end);
+ 	void (*invalidate_end)(struct restrictedmem_notifier *notifier,
+ 			       pgoff_t start, pgoff_t end);
++	void (*error)(struct restrictedmem_notifier *notifier,
++			       pgoff_t start, pgoff_t end);
+ };
+ 
+ struct restrictedmem_notifier {
+@@ -34,6 +36,8 @@ static inline bool file_is_restrictedmem(struct file *file)
+ 	return file->f_inode->i_sb->s_magic == RESTRICTEDMEM_MAGIC;
+ }
+ 
++void restrictedmem_error_page(struct page *page, struct address_space *mapping);
++
+ #else
+ 
+ static inline void restrictedmem_register_notifier(struct file *file,
+@@ -57,6 +61,11 @@ static inline bool file_is_restrictedmem(struct file *file)
+ 	return false;
+ }
+ 
++static inline void restrictedmem_error_page(struct page *page,
++					    struct address_space *mapping)
++{
++}
++
+ #endif /* CONFIG_RESTRICTEDMEM */
+ 
+ #endif /* _LINUX_RESTRICTEDMEM_H */
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index e7ac570dda75..ee85e46c6992 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -62,6 +62,7 @@
+ #include <linux/page-isolation.h>
+ #include <linux/pagewalk.h>
+ #include <linux/shmem_fs.h>
++#include <linux/restrictedmem.h>
+ #include "swap.h"
+ #include "internal.h"
+ #include "ras/ras_event.h"
+@@ -939,6 +940,8 @@ static int me_pagecache_clean(struct page_state *ps, struct page *p)
+ 		goto out;
+ 	}
+ 
++	restrictedmem_error_page(p, mapping);
++
+ 	/*
+ 	 * The shmem page is kept in page cache instead of truncating
+ 	 * so is expected to have an extra refcount after error-handling.
+diff --git a/mm/restrictedmem.c b/mm/restrictedmem.c
+index e5bf8907e0f8..0dcdff0d8055 100644
+--- a/mm/restrictedmem.c
++++ b/mm/restrictedmem.c
+@@ -29,6 +29,18 @@ static void restrictedmem_notifier_invalidate(struct restrictedmem_data *data,
+ 	mutex_unlock(&data->lock);
+ }
+ 
++static void restrictedmem_notifier_error(struct restrictedmem_data *data,
++				 pgoff_t start, pgoff_t end)
++{
++	struct restrictedmem_notifier *notifier;
++
++	mutex_lock(&data->lock);
++	list_for_each_entry(notifier, &data->notifiers, list) {
++			notifier->ops->error(notifier, start, end);
++	}
++	mutex_unlock(&data->lock);
++}
++
+ static int restrictedmem_release(struct inode *inode, struct file *file)
+ {
+ 	struct restrictedmem_data *data = inode->i_mapping->private_data;
+@@ -248,3 +260,30 @@ int restrictedmem_get_page(struct file *file, pgoff_t offset,
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(restrictedmem_get_page);
++
++void restrictedmem_error_page(struct page *page, struct address_space *mapping)
++{
++	struct super_block *sb = restrictedmem_mnt->mnt_sb;
++	struct inode *inode, *next;
++
++	if (!shmem_mapping(mapping))
++		return;
++
++	spin_lock(&sb->s_inode_list_lock);
++	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
++		struct restrictedmem_data *data = inode->i_mapping->private_data;
++		struct file *memfd = data->memfd;
++
++		if (memfd->f_mapping == mapping) {
++			pgoff_t start, end;
++
++			spin_unlock(&sb->s_inode_list_lock);
++
++			start = page->index;
++			end = start + thp_nr_pages(page);
++			restrictedmem_notifier_error(data, start, end);
++			return;
++		}
++	}
++	spin_unlock(&sb->s_inode_list_lock);
++}
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
