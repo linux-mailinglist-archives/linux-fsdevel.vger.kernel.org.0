@@ -2,329 +2,257 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F13E1629C32
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 15:37:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 974B8629C79
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 15:44:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231210AbiKOOhJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Nov 2022 09:37:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53694 "EHLO
+        id S230197AbiKOOo5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Nov 2022 09:44:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55168 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229587AbiKOOhH (ORCPT
+        with ESMTP id S230286AbiKOOkI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Nov 2022 09:37:07 -0500
-Received: from wnew1-smtp.messagingengine.com (wnew1-smtp.messagingengine.com [64.147.123.26])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 864511401B;
-        Tue, 15 Nov 2022 06:37:06 -0800 (PST)
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.west.internal (Postfix) with ESMTP id CBBF72B066D4;
-        Tue, 15 Nov 2022 09:37:00 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Tue, 15 Nov 2022 09:37:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-         h=cc:cc:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm2; t=1668523020; x=1668530220; bh=Ad
-        wHQwvOiKtA9P6Y0u9jZFsfpkfO0GgABx1clW0axSM=; b=b1yM/7FEcClWE/shk7
-        Ikib6jlxMdJrJr/Np4NeX2vDsT0AQEo7W07O2V0AaFy5qOOmVENeqdMC1eOTss/x
-        gRTEG1I0SEPeGT2VXeUG6zIbnD6dHdscBUIuGCJQevQzFC+UUbeDEQzmVWYglSbN
-        V6l8IX93vkcm6THTPmR2V23AmrGLkx3Uw0BSgusDSjHt07Pe6LYtFORGK17dDOyJ
-        mUAC7eH0TebAPnCXT78QyJejukQ4RmIG9X+xYUcryppXfcRiROQsTbMI4sAO7EDC
-        CudXWZVJtpcFPN0el9OFhJUGGjVAjTjCWR1BAxqgAUQSMDvc16NjQvgP8x4GEFW+
-        vcqg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1668523020; x=1668530220; bh=AdwHQwvOiKtA9P6Y0u9jZFsfpkfO
-        0GgABx1clW0axSM=; b=TDFbZVnuyahpqh8vT886YvKR1Ol2nKo8U+/J2ZElxrSQ
-        n2E5oSia7W6dD5yqxCZIxtzirSEFghTFlB7mAZp87wZnlFZbGO46OQUsMT2osyl9
-        yPocZOwpYwDL035DaZVzu2fC+ZQ9iYm406ihwqwdqNIfGftbDX8htxDt5TxRGBCF
-        +t23+33E4F1FO6nCpO9HhFlan0REtgnmZubj2wzg+HGVJNuF0NRuofZSdV1AscI9
-        wZM2jrp9pfXmJMsJLubXwhmDN9eZtg4PyMSFlT3Df9EGLoL+1pB420R3iPOlGcpK
-        lO65lG2pvjcQkovGbuVTllzqbhbtgdDPLNEsVzpDog==
-X-ME-Sender: <xms:CqRzY68BT2_MOQCpJaG-rHi3ZvX2DPUi1AORdEmnduWa6W-16sqpUQ>
-    <xme:CqRzY6sNcfcHf50KqgQ8kjcZzIU9uf7mU-dKtVHD2JzEBS25E00gx7lMBqWe_yZZn
-    CIXpJ3thavR8r76dE4>
-X-ME-Received: <xmr:CqRzYwDMbsjb5gxiP2OVgmcfVzPPyfJPLm1H0JkcrIAuZCoD9aYl6xTxWo_PDgIpjBv9KQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrgeeggdeiiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttddttddttddvnecuhfhrohhmpedfmfhirhhi
-    lhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrg
-    hmvgeqnecuggftrfgrthhtvghrnhephfeigefhtdefhedtfedthefghedutddvueehtedt
-    tdehjeeukeejgeeuiedvkedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgv
-X-ME-Proxy: <xmx:CqRzYydIWDcubtT3THtqv8FWKHCS--BtaBzbgq3OhwTX20vuyo-laQ>
-    <xmx:CqRzY_OGoXMgKcwLte8bRp93aLlKDKHNuTTJfy3wCFsePEWbCpapGw>
-    <xmx:CqRzY8lj7_1L0OWPwtgl65FvZmhL0RNn1SNgP5_j7hMUObZk6dJuAg>
-    <xmx:DKRzYycI2DAmg3G1dRRamPnUVJyM4m05tNWQKBXs1AUq7Ug2T3ZwfJ76r9Y>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 15 Nov 2022 09:36:57 -0500 (EST)
-Received: by box.shutemov.name (Postfix, from userid 1000)
-        id CAA2F10997B; Tue, 15 Nov 2022 17:36:54 +0300 (+03)
-Date:   Tue, 15 Nov 2022 17:36:54 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Isaku Yamahata <isaku.yamahata@gmail.com>,
-        Chao Peng <chao.p.peng@linux.intel.com>,
-        Hugh Dickins <hughd@google.com>
-Cc:     Vishal Annapurve <vannapurve@google.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v9 0/8] KVM: mm: fd-based approach for supporting KVM
-Message-ID: <20221115143654.rqpf72hzdtrd3xyw@box.shutemov.name>
-References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
- <CAGtprH-av3K6YxUbz1cAsQp4w2ce35UrfBF-u7Q_qCuTNMdvzQ@mail.gmail.com>
- <20221108004141.GF1063309@ls.amr.corp.intel.com>
- <20221109155404.istawiyvwr3yffag@box.shutemov.name>
+        Tue, 15 Nov 2022 09:40:08 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1EADB1D66B;
+        Tue, 15 Nov 2022 06:40:07 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id A8030617C8;
+        Tue, 15 Nov 2022 14:40:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 77B11C433D6;
+        Tue, 15 Nov 2022 14:40:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668523206;
+        bh=I4fdaFWoUkugfBUs8EEyr1Wbioplf6496vGbovHBbXU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=JzuAY1JZVFn2y7awFqzvOZalJ3GN+wNCCsz0bQUUOPhKuLS7JFsPaLE8R+e/tGVRs
+         2Hqc8gVlQZ/okIw3WHd8Sbyq6cev/4Uc4LoXKymEIH1XvMkYCPl0ufepxiZMYowyjp
+         eanNZU9vKmQRCD0nsiRkfFLBMXr5rGkKpqbDkTYhDF5hlzIQvHpqeCtRWuvJPWgYkF
+         54q5fcDCikrPhKH2NCJHrGK8NHJeqBzkvXZJV8/ZSnWmrh89GaFJ9n9h6ynu6tJlvi
+         p1X3hz5f4z63oZvPnv6xHC+B74csj/ycKv6CcxSLj1GZ2Z82yekGp6kQiQbfZ4G391
+         uWBISaJLWFReA==
+Message-ID: <4a8720c8a24a9b06adc40fdada9c621fd5d849df.camel@kernel.org>
+Subject: Re: [RFC PATCH] filelock: new helper: vfs_file_has_locks
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Xiubo Li <xiubli@redhat.com>, chuck.lever@oracle.com
+Cc:     linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>
+Date:   Tue, 15 Nov 2022 09:40:04 -0500
+In-Reply-To: <54b90281-c575-5aee-e886-e4d7b50236f0@redhat.com>
+References: <20221114140747.134928-1-jlayton@kernel.org>
+         <30355bc8aa4998cb48b34df958837a8f818ceeb0.camel@kernel.org>
+         <54b90281-c575-5aee-e886-e4d7b50236f0@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221109155404.istawiyvwr3yffag@box.shutemov.name>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 09, 2022 at 06:54:04PM +0300, Kirill A. Shutemov wrote:
-> On Mon, Nov 07, 2022 at 04:41:41PM -0800, Isaku Yamahata wrote:
-> > On Thu, Nov 03, 2022 at 05:43:52PM +0530,
-> > Vishal Annapurve <vannapurve@google.com> wrote:
-> > 
-> > > On Tue, Oct 25, 2022 at 8:48 PM Chao Peng <chao.p.peng@linux.intel.com> wrote:
-> > > >
-> > > > This patch series implements KVM guest private memory for confidential
-> > > > computing scenarios like Intel TDX[1]. If a TDX host accesses
-> > > > TDX-protected guest memory, machine check can happen which can further
-> > > > crash the running host system, this is terrible for multi-tenant
-> > > > configurations. The host accesses include those from KVM userspace like
-> > > > QEMU. This series addresses KVM userspace induced crash by introducing
-> > > > new mm and KVM interfaces so KVM userspace can still manage guest memory
-> > > > via a fd-based approach, but it can never access the guest memory
-> > > > content.
-> > > >
-> > > > The patch series touches both core mm and KVM code. I appreciate
-> > > > Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
-> > > > reviews are always welcome.
-> > > >   - 01: mm change, target for mm tree
-> > > >   - 02-08: KVM change, target for KVM tree
-> > > >
-> > > > Given KVM is the only current user for the mm part, I have chatted with
-> > > > Paolo and he is OK to merge the mm change through KVM tree, but
-> > > > reviewed-by/acked-by is still expected from the mm people.
-> > > >
-> > > > The patches have been verified in Intel TDX environment, but Vishal has
-> > > > done an excellent work on the selftests[4] which are dedicated for this
-> > > > series, making it possible to test this series without innovative
-> > > > hardware and fancy steps of building a VM environment. See Test section
-> > > > below for more info.
-> > > >
-> > > >
-> > > > Introduction
-> > > > ============
-> > > > KVM userspace being able to crash the host is horrible. Under current
-> > > > KVM architecture, all guest memory is inherently accessible from KVM
-> > > > userspace and is exposed to the mentioned crash issue. The goal of this
-> > > > series is to provide a solution to align mm and KVM, on a userspace
-> > > > inaccessible approach of exposing guest memory.
-> > > >
-> > > > Normally, KVM populates secondary page table (e.g. EPT) by using a host
-> > > > virtual address (hva) from core mm page table (e.g. x86 userspace page
-> > > > table). This requires guest memory being mmaped into KVM userspace, but
-> > > > this is also the source where the mentioned crash issue can happen. In
-> > > > theory, apart from those 'shared' memory for device emulation etc, guest
-> > > > memory doesn't have to be mmaped into KVM userspace.
-> > > >
-> > > > This series introduces fd-based guest memory which will not be mmaped
-> > > > into KVM userspace. KVM populates secondary page table by using a
-> > > 
-> > > With no mappings in place for userspace VMM, IIUC, looks like the host
-> > > kernel will not be able to find the culprit userspace process in case
-> > > of Machine check error on guest private memory. As implemented in
-> > > hwpoison_user_mappings, host kernel tries to look at the processes
-> > > which have mapped the pfns with hardware error.
-> > > 
-> > > Is there a modification needed in mce handling logic of the host
-> > > kernel to immediately send a signal to the vcpu thread accessing
-> > > faulting pfn backing guest private memory?
-> > 
-> > mce_register_decode_chain() can be used.  MCE physical address(p->mce_addr)
-> > includes host key id in addition to real physical address.  By searching used
-> > hkid by KVM, we can determine if the page is assigned to guest TD or not. If
-> > yes, send SIGBUS.
-> > 
-> > kvm_machine_check() can be enhanced for KVM specific use.  This is before
-> > memory_failure() is called, though.
-> > 
-> > any other ideas?
-> 
-> That's too KVM-centric. It will not work for other possible user of
-> restricted memfd.
-> 
-> I tried to find a way to get it right: we need to get restricted memfd
-> code info about corrupted page so it can invalidate its users. On the next
-> request of the page the user will see an error. In case of KVM, the error
-> will likely escalate to SIGBUS.
-> 
-> The problem is that core-mm code that handles memory failure knows nothing
-> about restricted memfd. It only sees that the page belongs to a normal
-> memfd.
-> 
-> AFAICS, there's no way to get it intercepted from the shim level. shmem
-> code has to be patches. shmem_error_remove_page() has to call into
-> restricted memfd code.
-> 
-> Hugh, are you okay with this? Or maybe you have a better idea?
+On Tue, 2022-11-15 at 13:43 +0800, Xiubo Li wrote:
+> On 15/11/2022 03:46, Jeff Layton wrote:
+> > On Mon, 2022-11-14 at 09:07 -0500, Jeff Layton wrote:
+> > > Ceph has a need to know whether a particular file has any locks set o=
+n
+> > > it. It's currently tracking that by a num_locks field in its
+> > > filp->private_data, but that's problematic as it tries to decrement t=
+his
+> > > field when releasing locks and that can race with the file being torn
+> > > down.
+> > >=20
+> > > Add a new vfs_file_has_locks helper that will scan the flock and posi=
+x
+> > > lists, and return true if any of the locks have a fl_file that matche=
+s
+> > > the given one. Ceph can then call this instead of doing its own
+> > > tracking.
+> > >=20
+> > > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > > ---
+> > >   fs/locks.c         | 36 ++++++++++++++++++++++++++++++++++++
+> > >   include/linux/fs.h |  1 +
+> > >   2 files changed, 37 insertions(+)
+> > >=20
+> > > Xiubo,
+> > >=20
+> > > Here's what I was thinking instead of trying to track this within cep=
+h.
+> > > Most inodes never have locks set, so in most cases this will be a NUL=
+L
+> > > pointer check.
+> > >=20
+> > >=20
+> > >=20
+> > I went ahead and added a slightly updated version of this this to my
+> > locks-next branch for now, but...
+> >=20
+> > Thinking about this more...I'm not sure this whole concept of what the
+> > ceph code is trying to do makes sense. Locks only conflict if they have
+> > different owners, and POSIX locks are owned by the process. Consider
+> > this scenario (obviously, this is not a problem with OFD locks).
+> >=20
+> > A process has the same file open via two different fds. It sets lock A
+> > from offset 0..9 via fd 1. Now, same process sets lock B from 10..19 vi=
+a
+> > fd 2. The two locks will be merged, because they don't conflict (becaus=
+e
+> > it's the same process).
+> >=20
+> > Against which fd should the merged lock record be counted?
+>=20
+> Thanks Jeff.
+>=20
+> For the above example as you mentioned, from my reading of the lock code=
+=20
+> after being merged it will always keep the old file_lock's fl_file.
+>=20
+> There is another case that if the Inode already has LockA and LockB:
+>=20
+> Lock A --> [0, 9] --> fileA
+>=20
+> Lock B --> [15, 20] --> fileB
+>=20
+> And then LockC comes:
+>=20
+> Lock C --> [8, 16] --> fileC
+>=20
+> Then the inode will only have the LockB:
+>=20
+> Lock B --> [0, 20] --> fileB.
+>=20
+> So the exiting ceph code seems buggy!
+>=20
 
-Okay, here is what I've come up with. It doesn't touch shmem code, but
-hooks up directly into memory-failure.c. It is still ugly, but should be
-tolerable.
+Yeah, there are a number of ways to end up with a different fl_file than
+you started with.
+=20
+> >=20
+> > Would it be better to always check for CEPH_I_ERROR_FILELOCK, even when
+> > the fd hasn't had any locks explicitly set on it?
+>=20
+> Maybe we should check whether any POSIX lock exist, if so we should=20
+> check CEPH_I_ERROR_FILELOCK always. Or we need to check it depending on=
+=20
+> each fd ?
+>=20
+>=20
 
-restrictedmem_error_page() loops over all restrictedmem inodes. It is
-slow, but memory failure is not hot path (I hope).
+It was originally added here:
 
-Only build-tested. Chao, could you hook up ->error for KVM and get it
-tested?
+commit ff5d913dfc7142974eb1694d5fd6284658e46bc6
+Author: Yan, Zheng <zyan@redhat.com>
+Date:   Thu Jul 25 20:16:45 2019 +0800
 
-diff --git a/include/linux/restrictedmem.h b/include/linux/restrictedmem.h
-index 9c37c3ea3180..c2700c5daa43 100644
---- a/include/linux/restrictedmem.h
-+++ b/include/linux/restrictedmem.h
-@@ -12,6 +12,8 @@ struct restrictedmem_notifier_ops {
- 				 pgoff_t start, pgoff_t end);
- 	void (*invalidate_end)(struct restrictedmem_notifier *notifier,
- 			       pgoff_t start, pgoff_t end);
-+	void (*error)(struct restrictedmem_notifier *notifier,
-+			       pgoff_t start, pgoff_t end);
- };
- 
- struct restrictedmem_notifier {
-@@ -34,6 +36,8 @@ static inline bool file_is_restrictedmem(struct file *file)
- 	return file->f_inode->i_sb->s_magic == RESTRICTEDMEM_MAGIC;
+    ceph: return -EIO if read/write against filp that lost file locks
+   =20
+    After mds evicts session, file locks get lost sliently. It's not safe t=
+o
+    let programs continue to do read/write.
+   =20
+    Signed-off-by: "Yan, Zheng" <zyan@redhat.com>
+    Reviewed-by: Jeff Layton <jlayton@kernel.org>
+    Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+
+So I guess with the current code if you have the file open and set a
+lock on it, you'll get back EIO when you try to get caps for it, but if
+you never set a lock on the fd, then you wouldn't get an error. We don't
+reliably keep track of what fd was used to set a lock (as noted above),
+so we can't really do what Zheng was trying to do here.
+
+Having a file where some openers use locking and others don't is a
+really odd usage pattern though. Locks are like stoplights -- they only
+work if everyone pays attention to them.
+
+I think we should probably switch ceph_get_caps to just check whether
+any locks are set on the file. If there are POSIX/OFD/FLOCK locks on the
+file at the time, we should set CHECK_FILELOCK, regardless of what fd
+was used to set the lock.
+
+In practical terms, we probably want a vfs_inode_has_locks function,
+that just tests whether the flc_posix and flc_flock lists are empty.
+
+Maybe something like this instead? Then ceph could call this from
+ceph_get_caps and set CHECK_FILELOCK if it returns true.
+
+-------------8<---------------
+
+[PATCH] filelock: new helper: vfs_inode_has_locks
+
+Ceph has a need to know whether a particular inode has any locks set on
+it. It's currently tracking that by a num_locks field in its
+filp->private_data, but that's problematic as it tries to decrement this
+field when releasing locks and that can race with the file being torn
+down.
+
+Add a new vfs_inode_has_locks helper that just returns whether any locks
+are currently held on the inode.
+
+Cc: Xiubo Li <xiubli@redhat.com>
+Cc: Christoph Hellwig <hch@infradead.org>
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+ fs/locks.c         | 23 +++++++++++++++++++++++
+ include/linux/fs.h |  1 +
+ 2 files changed, 24 insertions(+)
+
+diff --git a/fs/locks.c b/fs/locks.c
+index 5876c8ff0edc..9ccf89b6c95d 100644
+--- a/fs/locks.c
++++ b/fs/locks.c
+@@ -2672,6 +2672,29 @@ int vfs_cancel_lock(struct file *filp, struct file_l=
+ock *fl)
  }
- 
-+void restrictedmem_error_page(struct page *page, struct address_space *mapping);
-+
- #else
- 
- static inline void restrictedmem_register_notifier(struct file *file,
-@@ -57,6 +61,11 @@ static inline bool file_is_restrictedmem(struct file *file)
- 	return false;
- }
- 
-+static inline void restrictedmem_error_page(struct page *page,
-+					    struct address_space *mapping)
+ EXPORT_SYMBOL_GPL(vfs_cancel_lock);
+=20
++/**
++ * vfs_inode_has_locks - are any file locks held on @inode?
++ * @inode: inode to check for locks
++ *
++ * Return true if there are any FL_POSIX or FL_FLOCK locks currently
++ * set on @inode.
++ */
++bool vfs_inode_has_locks(struct inode *inode)
 +{
++	struct file_lock_context *ctx;
++	bool ret;
++
++	ctx =3D smp_load_acquire(&inode->i_flctx);
++	if (!ctx)
++		return false;
++
++	spin_lock(&ctx->flc_lock);
++	ret =3D !list_empty(&ctx->flc_posix) || !list_empty(&ctx->flc_flock);
++	spin_unlock(&ctx->flc_lock);
++	return ret;
 +}
++EXPORT_SYMBOL_GPL(vfs_inode_has_locks);
 +
- #endif /* CONFIG_RESTRICTEDMEM */
- 
- #endif /* _LINUX_RESTRICTEDMEM_H */
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index e7ac570dda75..ee85e46c6992 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -62,6 +62,7 @@
- #include <linux/page-isolation.h>
- #include <linux/pagewalk.h>
- #include <linux/shmem_fs.h>
-+#include <linux/restrictedmem.h>
- #include "swap.h"
- #include "internal.h"
- #include "ras/ras_event.h"
-@@ -939,6 +940,8 @@ static int me_pagecache_clean(struct page_state *ps, struct page *p)
- 		goto out;
- 	}
- 
-+	restrictedmem_error_page(p, mapping);
-+
- 	/*
- 	 * The shmem page is kept in page cache instead of truncating
- 	 * so is expected to have an extra refcount after error-handling.
-diff --git a/mm/restrictedmem.c b/mm/restrictedmem.c
-index e5bf8907e0f8..0dcdff0d8055 100644
---- a/mm/restrictedmem.c
-+++ b/mm/restrictedmem.c
-@@ -29,6 +29,18 @@ static void restrictedmem_notifier_invalidate(struct restrictedmem_data *data,
- 	mutex_unlock(&data->lock);
- }
- 
-+static void restrictedmem_notifier_error(struct restrictedmem_data *data,
-+				 pgoff_t start, pgoff_t end)
-+{
-+	struct restrictedmem_notifier *notifier;
-+
-+	mutex_lock(&data->lock);
-+	list_for_each_entry(notifier, &data->notifiers, list) {
-+			notifier->ops->error(notifier, start, end);
-+	}
-+	mutex_unlock(&data->lock);
-+}
-+
- static int restrictedmem_release(struct inode *inode, struct file *file)
- {
- 	struct restrictedmem_data *data = inode->i_mapping->private_data;
-@@ -248,3 +260,30 @@ int restrictedmem_get_page(struct file *file, pgoff_t offset,
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(restrictedmem_get_page);
-+
-+void restrictedmem_error_page(struct page *page, struct address_space *mapping)
-+{
-+	struct super_block *sb = restrictedmem_mnt->mnt_sb;
-+	struct inode *inode, *next;
-+
-+	if (!shmem_mapping(mapping))
-+		return;
-+
-+	spin_lock(&sb->s_inode_list_lock);
-+	list_for_each_entry_safe(inode, next, &sb->s_inodes, i_sb_list) {
-+		struct restrictedmem_data *data = inode->i_mapping->private_data;
-+		struct file *memfd = data->memfd;
-+
-+		if (memfd->f_mapping == mapping) {
-+			pgoff_t start, end;
-+
-+			spin_unlock(&sb->s_inode_list_lock);
-+
-+			start = page->index;
-+			end = start + thp_nr_pages(page);
-+			restrictedmem_notifier_error(data, start, end);
-+			return;
-+		}
-+	}
-+	spin_unlock(&sb->s_inode_list_lock);
-+}
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+ #ifdef CONFIG_PROC_FS
+ #include <linux/proc_fs.h>
+ #include <linux/seq_file.h>
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index e654435f1651..d6cb42b7e91c 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -1170,6 +1170,7 @@ extern int locks_delete_block(struct file_lock *);
+ extern int vfs_test_lock(struct file *, struct file_lock *);
+ extern int vfs_lock_file(struct file *, unsigned int, struct file_lock *, =
+struct file_lock *);
+ extern int vfs_cancel_lock(struct file *filp, struct file_lock *fl);
++bool vfs_inode_has_locks(struct inode *inode);
+ extern int locks_lock_inode_wait(struct inode *inode, struct file_lock *fl=
+);
+ extern int __break_lease(struct inode *inode, unsigned int flags, unsigned=
+ int type);
+ extern void lease_get_mtime(struct inode *, struct timespec64 *time);
+--=20
+2.38.1
+
+
