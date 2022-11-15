@@ -2,264 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 65F8B628D28
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 00:07:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD855628E3B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 01:22:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237866AbiKNXHI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Nov 2022 18:07:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51858 "EHLO
+        id S237684AbiKOAWs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Nov 2022 19:22:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238180AbiKNXGr (ORCPT
+        with ESMTP id S232149AbiKOAWq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Nov 2022 18:06:47 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3E2520F66;
-        Mon, 14 Nov 2022 15:04:35 -0800 (PST)
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AEMhhSi027321;
-        Mon, 14 Nov 2022 23:03:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=r2fzDqWsStLA1xUQ8hFm6TfQBbcyzJkCztYXsu/2swA=;
- b=Sm/Lp2TX1gppX2Z5a9Mns5MPvNGLBnKFMG0y1Olw/g8Em+og+eRJLS9LWumlXbmUovqU
- dkrtXwZGaaMchdsWqRkNnVvxkIAXUhbfhAMwzrxPN/0oBwNpRw06WPn+IcofHjWhUF5P
- /2AgtoudXJDAEu0XaHjQz295RoCJPAy6t46Hn5ze6mFsb2gIkqA9t+6KSx7lbCqQEg0h
- 7KArhQC/f9HjMxnoCnGtjPM58zSMDutYS530qmb+KPD3kfuC9ATqjoEHWB6m5VRD0gXJ
- gTyUpWZXwbF0MgWKkEqxzVKadK6hTK+VTyJQ2L8uV2s9Iw9jsm+jzxQlxzP8zV0f9jL/ VQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kuxqnrbk2-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Nov 2022 23:03:48 +0000
-Received: from m0098396.ppops.net (m0098396.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AEN07xD012744;
-        Mon, 14 Nov 2022 23:03:48 GMT
-Received: from ppma04dal.us.ibm.com (7a.29.35a9.ip4.static.sl-reverse.com [169.53.41.122])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3kuxqnrbjd-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Nov 2022 23:03:48 +0000
-Received: from pps.filterd (ppma04dal.us.ibm.com [127.0.0.1])
-        by ppma04dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AEMpLxM017257;
-        Mon, 14 Nov 2022 23:03:47 GMT
-Received: from b01cxnp22034.gho.pok.ibm.com (b01cxnp22034.gho.pok.ibm.com [9.57.198.24])
-        by ppma04dal.us.ibm.com with ESMTP id 3kt349ms1c-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 14 Nov 2022 23:03:47 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AEN3jIF1835724
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 14 Nov 2022 23:03:45 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3582D5807D;
-        Mon, 14 Nov 2022 23:03:45 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 753D35808C;
-        Mon, 14 Nov 2022 23:03:43 +0000 (GMT)
-Received: from [9.163.46.135] (unknown [9.163.46.135])
-        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Mon, 14 Nov 2022 23:03:43 +0000 (GMT)
-Message-ID: <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
-Date:   Mon, 14 Nov 2022 18:03:43 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-Content-Language: en-US
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-References: <20221106210744.603240-1-nayna@linux.ibm.com>
- <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
- <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
- <Y2zLRw/TzV/sWgqO@kroah.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-In-Reply-To: <Y2zLRw/TzV/sWgqO@kroah.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: cMTICiR-Ic39zShUHbdlZAJATSRcqSOJ
-X-Proofpoint-ORIG-GUID: Ruez-Aie2yvxjHXtRL2XCcyi2xuMRRAi
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-14_15,2022-11-11_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 phishscore=0 mlxlogscore=999 malwarescore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 mlxscore=0 spamscore=0 clxscore=1015
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211140162
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 14 Nov 2022 19:22:46 -0500
+Received: from nautica.notk.org (nautica.notk.org [91.121.71.147])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D60C1CFF7;
+        Mon, 14 Nov 2022 16:22:44 -0800 (PST)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 00387C01F; Tue, 15 Nov 2022 01:22:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1668471768; bh=LIstCPb4xQT8VC3InWGVD6DG7uFdDJigM2d8zkWyzlg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=CmFHY8C6Z9RrnQSYNhcMMnQHIHu+kheEP2L0G4XpsjdXsPsVuneAYMDhYQl2/v1H8
+         i8bseV8XSAmaLwe9R8hXDVQnpAXEg3avqHYSHTHoeKDzhmTmZYx1ywqvuGzUKoQIRl
+         bvVPEQV4Af+uxYgLbUBaUY5nTeTe9W7Ki5kz+wAO+vdg+AraWtCZjs+JyMXdAthn3l
+         kal7xACCnzdq+f/tHPcTwTw733nXRHdzav9kpyP7dz0z6Qf2v9cA3tOxPpO7Xkf08y
+         mGTM4vYOosKAf3I+aCefhS9jDQIWkzvOIKMxY7UFlyPwubz/47x4WNtwhuO7iIsu1T
+         iFoCA0ybafUIw==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id E9DB3C009;
+        Tue, 15 Nov 2022 01:22:41 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1668471766; bh=LIstCPb4xQT8VC3InWGVD6DG7uFdDJigM2d8zkWyzlg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vCzYdsKheoEw3SbPdq8dVompXvyIFPrTv8JxCFNOG8Sv6HDGCCc8EJ9TZ1mJpAJBP
+         dfuVrLiLq6tLoPjg4vx7OnksEJRCe7+wk8srl2FEfVJUHcjtGwcL/HsmLnl7hxdJJO
+         aAoNMpEDlxjtDi5MM90FWnau+y1nrDpmXPlLGgo+4TqQmnSnJRW9oMhrUC4NSrf2YI
+         kwkv/XQ7cOL1UiwjAM4vHnFOYQEuzfy0wyv+LAwoyoMRSBGmD7j/7m8dWCIq6wXmGd
+         HBU3jACL9WMITVf23xsnCvYbaZt3Cc3GmPhLK9M9qGkjB66Hluj/ez6JPYz8fB704q
+         zmA+Da+v6VOiA==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 675ffca7;
+        Tue, 15 Nov 2022 00:22:33 +0000 (UTC)
+Date:   Tue, 15 Nov 2022 09:22:18 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     willy@infradead.org, dwysocha@redhat.com,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
+        linux-cifs@vger.kernel.org, linux-afs@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v2] mm, netfs, fscache: Stop read optimisation when
+ folio removed from pagecache
+Message-ID: <Y3Lbul7FZncNVwVZ@codewreck.org>
+References: <166844174069.1124521.10890506360974169994.stgit@warthog.procyon.org.uk>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <166844174069.1124521.10890506360974169994.stgit@warthog.procyon.org.uk>
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+David Howells wrote on Mon, Nov 14, 2022 at 04:02:20PM +0000:
+> Fscache has an optimisation by which reads from the cache are skipped until
+> we know that (a) there's data there to be read and (b) that data isn't
+> entirely covered by pages resident in the netfs pagecache.  This is done
+> with two flags manipulated by fscache_note_page_release():
+> 
+> 	if (...
+> 	    test_bit(FSCACHE_COOKIE_HAVE_DATA, &cookie->flags) &&
+> 	    test_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags))
+> 		clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
+> 
+> where the NO_DATA_TO_READ flag causes cachefiles_prepare_read() to indicate
+> that netfslib should download from the server or clear the page instead.
+> 
+> The fscache_note_page_release() function is intended to be called from
+> ->releasepage() - but that only gets called if PG_private or PG_private_2
+> is set - and currently the former is at the discretion of the network
+> filesystem and the latter is only set whilst a page is being written to the
+> cache, so sometimes we miss clearing the optimisation.
+> 
+> Fix this by following Willy's suggestion[1] and adding an address_space
+> flag, AS_RELEASE_ALWAYS, that causes filemap_release_folio() to always call
+> ->release_folio() if it's set, even if PG_private or PG_private_2 aren't
+> set.
 
-On 11/10/22 04:58, Greg Kroah-Hartman wrote:
-> On Wed, Nov 09, 2022 at 03:10:37PM -0500, Nayna wrote:
->> On 11/9/22 08:46, Greg Kroah-Hartman wrote:
->>> On Sun, Nov 06, 2022 at 04:07:42PM -0500, Nayna Jain wrote:
->>>> securityfs is meant for Linux security subsystems to expose policies/logs
->>>> or any other information. However, there are various firmware security
->>>> features which expose their variables for user management via the kernel.
->>>> There is currently no single place to expose these variables. Different
->>>> platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
->>>> interface as they find it appropriate. Thus, there is a gap in kernel
->>>> interfaces to expose variables for security features.
->>>>
->>>> Define a firmware security filesystem (fwsecurityfs) to be used by
->>>> security features enabled by the firmware. These variables are platform
->>>> specific. This filesystem provides platforms a way to implement their
->>>>    own underlying semantics by defining own inode and file operations.
->>>>
->>>> Similar to securityfs, the firmware security filesystem is recommended
->>>> to be exposed on a well known mount point /sys/firmware/security.
->>>> Platforms can define their own directory or file structure under this path.
->>>>
->>>> Example:
->>>>
->>>> # mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
->>> Why not juset use securityfs in /sys/security/firmware/ instead?  Then
->>> you don't have to create a new filesystem and convince userspace to
->>> mount it in a specific location?
->>  From man 5 sysfs page:
->>
->> /sys/firmware: This subdirectory contains interfaces for viewing and
->> manipulating firmware-specific objects and attributes.
->>
->> /sys/kernel: This subdirectory contains various files and subdirectories
->> that provide information about the running kernel.
->>
->> The security variables which are being exposed via fwsecurityfs are managed
->> by firmware, stored in firmware managed space and also often consumed by
->> firmware for enabling various security features.
-> Ok, then just use the normal sysfs interface for /sys/firmware, why do
-> you need a whole new filesystem type?
->
->>  From git commit b67dbf9d4c1987c370fd18fdc4cf9d8aaea604c2, the purpose of
->> securityfs(/sys/kernel/security) is to provide a common place for all kernel
->> LSMs. The idea of
->> fwsecurityfs(/sys/firmware/security) is to similarly provide a common place
->> for all firmware security objects.
->>
->> /sys/firmware already exists. The patch now defines a new /security
->> directory in it for firmware security features. Using /sys/kernel/security
->> would mean scattering firmware objects in multiple places and confusing the
->> purpose of /sys/kernel and /sys/firmware.
-> sysfs is confusing already, no problem with making it more confusing :)
->
-> Just document where you add things and all should be fine.
->
->> Even though fwsecurityfs code is based on securityfs, since the two
->> filesystems expose different types of objects and have different
->> requirements, there are distinctions:
->>
->> 1. fwsecurityfs lets users create files in userspace, securityfs only allows
->> kernel subsystems to create files.
-> Wait, why would a user ever create a file in this filesystem?  If you
-> need that, why not use configfs?  That's what that is for, right?
+Not familiar with the common code so just glanced at it and asked stupid
+questions.
 
-The purpose of fwsecurityfs is not to expose configuration items but 
-rather security objects used for firmware security features. I think 
-these are more comparable to EFI variables, which are exposed via an 
-EFI-specific filesystem, efivarfs, rather than configfs.
+> diff --git a/fs/9p/cache.c b/fs/9p/cache.c
+> index cebba4eaa0b5..12c0ae29f185 100644
+> --- a/fs/9p/cache.c
+> +++ b/fs/9p/cache.c
+> @@ -68,6 +68,8 @@ void v9fs_cache_inode_get_cookie(struct inode *inode)
+>  				       &path, sizeof(path),
+>  				       &version, sizeof(version),
+>  				       i_size_read(&v9inode->netfs.inode));
+> +	if (v9inode->netfs.cache)
+> +		mapping_set_release_always(inode->i_mapping);
+>  
+>  	p9_debug(P9_DEBUG_FSC, "inode %p get cookie %p\n",
+>  		 inode, v9fs_inode_cookie(v9inode));
+> diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+> index 4d1a4a8d9277..b553fe3484c1 100644
+> --- a/fs/9p/vfs_inode.c
+> +++ b/fs/9p/vfs_inode.c
+> @@ -394,6 +394,7 @@ void v9fs_evict_inode(struct inode *inode)
+>  	version = cpu_to_le32(v9inode->qid.version);
+>  	fscache_clear_inode_writeback(v9fs_inode_cookie(v9inode), inode,
+>  				      &version);
+> +	mapping_clear_release_always(inode->i_mapping);
 
->
->> 2. firmware and kernel objects may have different requirements. For example,
->> consideration of namespacing. As per my understanding, namespacing is
->> applied to kernel resources and not firmware resources. That's why it makes
->> sense to add support for namespacing in securityfs, but we concluded that
->> fwsecurityfs currently doesn't need it. Another but similar example of it
->> is: TPM space, which is exposed from hardware. For containers, the TPM would
->> be made as virtual/software TPM. Similarly for firmware space for
->> containers, it would have to be something virtualized/software version of
->> it.
-> I do not understand, sorry.  What does namespaces have to do with this?
-> sysfs can already handle namespaces just fine, why not use that?
+any harm in setting this if netfs isn't enabled?
+(just asking because you checked in fs/9p/cache.c above)
 
-Firmware objects are not namespaced. I mentioned it here as an example 
-of the difference between firmware and kernel objects. It is also in 
-response to the feedback from James Bottomley in RFC v2 
-[https://lore.kernel.org/linuxppc-dev/41ca51e8db9907d9060cc38adb59a66dcae4c59b.camel@HansenPartnership.com/].
+>  	clear_inode(inode);
+>  	filemap_fdatawrite(&inode->i_data);
+>  
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index bbccb4044222..3db9a6225bc0 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -199,6 +199,7 @@ enum mapping_flags {
+>  	/* writeback related tags are not used */
+>  	AS_NO_WRITEBACK_TAGS = 5,
+>  	AS_LARGE_FOLIO_SUPPORT = 6,
+> +	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
+>  };
+>  
+>  /**
+> @@ -269,6 +270,21 @@ static inline int mapping_use_writeback_tags(struct address_space *mapping)
+>  	return !test_bit(AS_NO_WRITEBACK_TAGS, &mapping->flags);
+>  }
+>  
+> +static inline bool mapping_release_always(const struct address_space *mapping)
+> +{
+> +	return test_bit(AS_RELEASE_ALWAYS, &mapping->flags);
+> +}
+> +
+> +static inline void mapping_set_release_always(struct address_space *mapping)
+> +{
+> +	set_bit(AS_RELEASE_ALWAYS, &mapping->flags);
+> +}
+> +
+> +static inline void mapping_clear_release_always(struct address_space *mapping)
+> +{
+> +	set_bit(AS_RELEASE_ALWAYS, &mapping->flags);
 
->
->> 3. firmware objects are persistent and read at boot time by interaction with
->> firmware, unlike kernel objects which are not persistent.
-> That doesn't matter, sysfs exports what the hardware provides, and that
-> might persist over boot.
->
-> So I don't see why a new filesystem is needed.
->
-> You didn't explain why sysfs, or securitfs (except for the location in
-> the tree) does not work at all for your needs.  The location really
-> doesn't matter all that much as you are creating a brand new location
-> anyway so we can just declare "this is where this stuff goes" and be ok.
+clear_bit certainly?
 
-For rest of the questions, here is the summarized response.
+> +}
+> +
+>  static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
+>  {
+>  	return mapping->gfp_mask;
+> diff --git a/mm/truncate.c b/mm/truncate.c
+> index c0be77e5c008..0d4dd233f518 100644
+> --- a/mm/truncate.c
+> +++ b/mm/truncate.c
+> @@ -19,7 +19,6 @@
+>  #include <linux/highmem.h>
+>  #include <linux/pagevec.h>
+>  #include <linux/task_io_accounting_ops.h>
+> -#include <linux/buffer_head.h>	/* grr. try_to_release_page */
+>  #include <linux/shmem_fs.h>
+>  #include <linux/rmap.h>
+>  #include "internal.h"
+> @@ -276,7 +275,7 @@ static long mapping_evict_folio(struct address_space *mapping,
+>  	if (folio_ref_count(folio) >
+>  			folio_nr_pages(folio) + folio_has_private(folio) + 1)
+>  		return 0;
+> -	if (folio_has_private(folio) && !filemap_release_folio(folio, 0))
+> +	if (!filemap_release_folio(folio, 0))
 
-Based on mailing list previous discussions [1][2][3] and considering 
-various firmware security use cases, our fwsecurityfs proposal seemed to 
-be a reasonable and acceptable approach based on the feedback [4].
+should this (and all others) check for folio_needs_release instead of has_private?
+filemap_release_folio doesn't check as far as I can see, but perhaps
+it's already fast and noop for another reason I didn't see.
 
-[1] https://lore.kernel.org/linuxppc-dev/YeuyUVVdFADCuDr4@kroah.com/#t
-[2] https://lore.kernel.org/linuxppc-dev/Yfk6gucNmJuR%2Fegi@kroah.com/
-[3] 
-https://lore.kernel.org/all/Yfo%2F5gYgb9Sv24YB@kroah.com/t/#m40250fdb3fddaafe502ab06e329e63381b00582d
-[4] https://lore.kernel.org/linuxppc-dev/YrQqPhi4+jHZ1WJc@kroah.com/
+>  		return 0;
+>  
+>  	return remove_mapping(mapping, folio);
 
-RFC v1 was using sysfs. After considering feedback[1][2][3], the 
-following are design considerations for unification via fwsecurityfs:
-
-1. Unify the location: Defining a security directory under /sys/firmware 
-facilitates exposing objects related to firmware security features in a 
-single place. Different platforms can create their respective directory 
-structures within /sys/firmware/security.
-
-2. Unify the code:  To support unification, having the fwsecurityfs 
-filesystem API allows different platforms to define the inode and file 
-operations they need. fwsecurityfs provides a common API that can be 
-used by each platform-specific implementation to support its particular 
-requirements and interaction with firmware. Initializing 
-platform-specific functions is the purpose of the 
-fwsecurityfs_arch_init() function that is called on mount. Patch 3/4 
-implements fwsecurityfs_arch_init() for powerpc.
-
-Similar to the common place securityfs provides for LSMs to interact 
-with kernel security objects, fwsecurityfs would provide a common place 
-for all firmware security objects, which interact with the firmware 
-rather than the kernel. Although at the API level, the two filesystem 
-look similar, the requirements for firmware and kernel objects are 
-different. Therefore, reusing securityfs wasn't a good fit for the 
-firmware use case and we are proposing a similar but different 
-filesystem -  fwsecurityfs - focused for firmware security.
-
->
-> And again, how are you going to get all Linux distros to now mount your
-> new filesystem?
-
-It would be analogous to the way securityfs is mounted.
-
-Thanks & Regards,
-
-     - Nayna
-
->
-> thanks,
->
-> greg k-h
+--
+Dominique
