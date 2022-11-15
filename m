@@ -2,89 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 43E5E6290BE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 04:18:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0BFEB6290C5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 04:25:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237079AbiKODSG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 14 Nov 2022 22:18:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57980 "EHLO
+        id S232248AbiKODZB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 14 Nov 2022 22:25:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236825AbiKODSF (ORCPT
+        with ESMTP id S232160AbiKODZA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 14 Nov 2022 22:18:05 -0500
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0320D15A3E;
-        Mon, 14 Nov 2022 19:18:03 -0800 (PST)
-Received: from ([60.208.111.195])
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id JEG00156;
-        Tue, 15 Nov 2022 11:17:56 +0800
-Received: from localhost.localdomain (10.200.104.97) by
- jtjnmail201602.home.langchao.com (10.100.2.2) with Microsoft SMTP Server id
- 15.1.2507.12; Tue, 15 Nov 2022 11:17:59 +0800
-From:   Bo Liu <liubo03@inspur.com>
-To:     <viro@zeniv.linux.org.uk>, <ebiederm@xmission.com>,
-        <keescook@chromium.org>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <linux-kernel@vger.kernel.org>, Bo Liu <liubo03@inspur.com>
-Subject: [PATCH] binfmt_elf: replace IS_ERR() with IS_ERR_VALUE()
-Date:   Mon, 14 Nov 2022 22:17:57 -0500
-Message-ID: <20221115031757.2426-1-liubo03@inspur.com>
-X-Mailer: git-send-email 2.18.2
+        Mon, 14 Nov 2022 22:25:00 -0500
+Received: from out199-7.us.a.mail.aliyun.com (out199-7.us.a.mail.aliyun.com [47.90.199.7])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A39CDAE5F;
+        Mon, 14 Nov 2022 19:24:54 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R131e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VUrQ.jq_1668482688;
+Received: from B-P7TQMD6M-0146.local(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VUrQ.jq_1668482688)
+          by smtp.aliyun-inc.com;
+          Tue, 15 Nov 2022 11:24:49 +0800
+Date:   Tue, 15 Nov 2022 11:24:47 +0800
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+To:     Siddh Raman Pant <code@siddh.me>
+Cc:     Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+        Yue Hu <huyue2@coolpad.com>,
+        Jeffle Xu <jefflexu@linux.alibaba.com>,
+        linux-erofs <linux-erofs@lists.ozlabs.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] erofs/zmap.c: Bail out when no further region remains
+Message-ID: <Y3MGf3TzgKpAz4IP@B-P7TQMD6M-0146.local>
+Mail-Followup-To: Siddh Raman Pant <code@siddh.me>,
+        Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
+        Yue Hu <huyue2@coolpad.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
+        linux-erofs <linux-erofs@lists.ozlabs.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20221114120349.472418-1-code@siddh.me>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.200.104.97]
-tUid:   20221115111756b87c5982aa519fccab65dc704674a7a4
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
-X-Spam-Status: No, score=-2.6 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20221114120349.472418-1-code@siddh.me>
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Avoid typecasts that are needed for IS_ERR() and use IS_ERR_VALUE()
-instead.
+On Mon, Nov 14, 2022 at 05:33:49PM +0530, Siddh Raman Pant wrote:
+> The following calculation of iomap->length on line 798 in
+> z_erofs_iomap_begin_report() can yield 0:
+> 	if (iomap->offset >= inode->i_size)
+> 		iomap->length = length + map.m_la - offset;
+> 
+> This triggers a WARN_ON in iomap_iter_done() (see line 34 of
+> fs/iomap/iter.c).
+> 
+> Hence, return error when this scenario is encountered.
+> 
+> ============================================================
+> 
+> This was reported as a crash by syzbot under an issue about
+> warning encountered in iomap_iter_done(), but unrelated to
+> erofs. Hence, not adding issue hash in Reported-by line.
+> 
+> C reproducer: https://syzkaller.appspot.com/text?tag=ReproC&x=1037a6b2880000
+> Kernel config: https://syzkaller.appspot.com/text?tag=KernelConfig&x=e2021a61197ebe02
+> Dashboard link: https://syzkaller.appspot.com/bug?extid=a8e049cd3abd342936b6
+> 
+> Reported-by: syzbot@syzkaller.appspotmail.com
+> Signed-off-by: Siddh Raman Pant <code@siddh.me>
+> ---
+>  fs/erofs/zmap.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
+> index 0bb66927e3d0..bad852983eb9 100644
+> --- a/fs/erofs/zmap.c
+> +++ b/fs/erofs/zmap.c
+> @@ -796,6 +796,9 @@ static int z_erofs_iomap_begin_report(struct inode *inode, loff_t offset,
+>  		 */
+>  		if (iomap->offset >= inode->i_size)
+>  			iomap->length = length + map.m_la - offset;
+> +
+> +		if (iomap->length == 0)
 
-Signed-off-by: Bo Liu <liubo03@inspur.com>
----
- fs/binfmt_elf.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I just wonder if we should return -EINVAL for post-EOF cases or
+IOMAP_HOLE with arbitrary length?
 
-diff --git a/fs/binfmt_elf.c b/fs/binfmt_elf.c
-index 528e2ac8931f..d9af34f816a9 100644
---- a/fs/binfmt_elf.c
-+++ b/fs/binfmt_elf.c
-@@ -1160,7 +1160,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 		error = elf_map(bprm->file, load_bias + vaddr, elf_ppnt,
- 				elf_prot, elf_flags, total_size);
- 		if (BAD_ADDR(error)) {
--			retval = IS_ERR((void *)error) ?
-+			retval = IS_ERR_VALUE(error) ?
- 				PTR_ERR((void*)error) : -EINVAL;
- 			goto out_free_dentry;
- 		}
-@@ -1245,7 +1245,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 					    interpreter,
- 					    load_bias, interp_elf_phdata,
- 					    &arch_state);
--		if (!IS_ERR((void *)elf_entry)) {
-+		if (!IS_ERR_VALUE(elf_entry)) {
- 			/*
- 			 * load_elf_interp() returns relocation
- 			 * adjustment
-@@ -1254,7 +1254,7 @@ static int load_elf_binary(struct linux_binprm *bprm)
- 			elf_entry += interp_elf_ex->e_entry;
- 		}
- 		if (BAD_ADDR(elf_entry)) {
--			retval = IS_ERR((void *)elf_entry) ?
-+			retval = IS_ERR_VALUE(elf_entry) ?
- 					(int)elf_entry : -EINVAL;
- 			goto out_free_dentry;
- 		}
--- 
-2.27.0
+Thanks,
+Gao Xiang
 
+> +			return -EINVAL;
+>  	}
+>  	iomap->flags = 0;
+>  	return 0;
+> -- 
+> 2.35.1
+> 
