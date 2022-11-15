@@ -2,165 +2,331 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BFD262942B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 10:20:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C417629462
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 10:34:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229685AbiKOJUQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Nov 2022 04:20:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44492 "EHLO
+        id S236982AbiKOJeP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Nov 2022 04:34:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232672AbiKOJUF (ORCPT
+        with ESMTP id S232359AbiKOJeB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Nov 2022 04:20:05 -0500
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 704502B7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Nov 2022 01:20:04 -0800 (PST)
-Received: by mail-pl1-x62b.google.com with SMTP id 4so12658971pli.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Nov 2022 01:20:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Qe8wvLyeeBJubRjZd1BX3pqPmbT2kfkyQ9PG/WDicao=;
-        b=VXPbYOchzFjmWKkn5Ye3sE6usQmGTAegeKA8qRS6DWMMO77XFOfwcWq0A0SpxbP7Mm
-         FI8xB5XX38/h3lfi3H2LIjjzc30/pahCtVLOcTVvlb7hTgxnY0ZlvsHUBZuMCBzLOLTY
-         UOcTAUGGSO+jCDC8JlVAIhlFelSn+8C6wTW2pM4DSqJ3h/lf/OaMP4ukhwd3TSV2bGIv
-         L7MrzrnBjOX/35HOoAN2kRSLmcDRKDHucjvFhItWnlapxAcZrzCw27O9y7pxOtyw6iKu
-         L/nXudusW1EQchlp/8ZE40sNl3kRKBMctkIJ0SfQBiaqNDAWyCS7/e35LYpkTIajTFlt
-         RTJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Qe8wvLyeeBJubRjZd1BX3pqPmbT2kfkyQ9PG/WDicao=;
-        b=HBAYOE3LqigRE3BLAD+fAcaUCjqPipPmQVdxCqgxo072Qhk0RzbCrx3TyDR5/NNQvE
-         aeIm65aBtpUZMlpGakiPJdoJ5LRiNloqf7DPL//BWE2sp6ATjICS6X0r6qnbeh5/jAJP
-         NfVaQgLYty0qm/M3B+exjDszxdSKXCHVpTONkAvpE7fDe6RsnBvFmk+Ku3TVGmIztUsm
-         nMm2xHgHQ1xsQ6hoLF//E82l+fZ4oxFO7UFMBJ3LBZqjV0FuvdCPePDs2rnhMz62HEYK
-         x4pzWT6yiExHCunpF8Y9A4QJagLg4jJBXYbhd0tp785jJNK6gA7GEXAYhZXodzUmro/9
-         sTxA==
-X-Gm-Message-State: ANoB5pmBoRxW6uVI5ig5aE8CQ/opeFhYnaESdON0EMrBpny/gy/4WLlg
-        E+p+wBp9YArmHgfxpzMPhftv9n/fJQT3C8AtffddtA==
-X-Google-Smtp-Source: AA0mqf734iwPRZTLrxH05682vZV+02EMb5JwQlRQVSnKpRpoPgD4I2wPj6N0/iHtqq1snkK4Zst80kSIESDWlg4IU6g=
-X-Received: by 2002:a17:90a:73cd:b0:213:d7cc:39cb with SMTP id
- n13-20020a17090a73cd00b00213d7cc39cbmr1258696pjk.144.1668504003790; Tue, 15
- Nov 2022 01:20:03 -0800 (PST)
+        Tue, 15 Nov 2022 04:34:01 -0500
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E4F12A83;
+        Tue, 15 Nov 2022 01:33:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1668504840; x=1700040840;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=dNsM3rb5V+KYXYHSWNPt0esoX7Bknd1ZB3DIEqhegvE=;
+  b=laSyQh9BYUDcQhpk6onkC9y1IzD78AgQ/VF08NtB1LAiCm3ZcVJyjf+D
+   ZhQN3y6h2XpasQdGf0d1DomcbrAk/v33UmJMnKfp5otsD1Ff/X6B8vpgB
+   h0MYr9jGqjtQ77xXr18+Xf7oqWq05I3UpT/1C8KKMl7+PsBj+Eag6ZHo+
+   tdXoUYob1eAgebzDA54+or1o8mbfpGNcGo+TGvJ7yn3qJZh8vwBP/4vWE
+   bZAKt6XeVwdT10i7JG7yVPLpzyqlIEJormRM6k325mq7zm0ufWkwr5XzL
+   zWiQWJjXQUa0wD6dZJuTIEns2F4pa0UXemG/+RdchABkpBZVAIghUcrCs
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10531"; a="299733891"
+X-IronPort-AV: E=Sophos;i="5.96,165,1665471600"; 
+   d="scan'208";a="299733891"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2022 01:33:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10531"; a="702370731"
+X-IronPort-AV: E=Sophos;i="5.96,165,1665471600"; 
+   d="scan'208";a="702370731"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by fmsmga008.fm.intel.com with ESMTP; 15 Nov 2022 01:33:31 -0800
+Date:   Tue, 15 Nov 2022 17:29:06 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v9 2/8] KVM: Extend the memslot to support fd-based
+ private memory
+Message-ID: <20221115092906.GA338422@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-3-chao.p.peng@linux.intel.com>
+ <877czxbjf6.fsf@linaro.org>
 MIME-Version: 1.0
-References: <20221114192129.zkmubc6pmruuzkc7@quack3> <20221114212155.221829-1-feldsherov@google.com>
- <fd7ebc60-811e-588a-5c55-ee540796f058@infradead.org>
-In-Reply-To: <fd7ebc60-811e-588a-5c55-ee540796f058@infradead.org>
-From:   Svyatoslav Feldsherov <feldsherov@google.com>
-Date:   Tue, 15 Nov 2022 11:19:52 +0200
-Message-ID: <CACgs1VAsvFQ+V5V8AsFN2i-azBQnD1ZdpQ+rA-NUtvLVAaNhdw@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: do not update freeing inode io_list
-To:     Randy Dunlap <rdunlap@infradead.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Lukas Czerner <lczerner@redhat.com>,
-        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
-        syzbot+6ba92bd00d5093f7e371@syzkaller.appspotmail.com,
-        oferz@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <877czxbjf6.fsf@linaro.org>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thank you for noticing that!
-I will send a fixed patch in 8-10 hours if no other comment will arrive.
+On Mon, Nov 14, 2022 at 04:04:59PM +0000, Alex Bennée wrote:
+> 
+> Chao Peng <chao.p.peng@linux.intel.com> writes:
+> 
+> > In memory encryption usage, guest memory may be encrypted with special
+> > key and can be accessed only by the guest itself. We call such memory
+> > private memory. It's valueless and sometimes can cause problem to allow
+> > userspace to access guest private memory. This new KVM memslot extension
+> > allows guest private memory being provided though a restrictedmem
+> > backed file descriptor(fd) and userspace is restricted to access the
+> > bookmarked memory in the fd.
+> >
+> <snip>
+> > To make code maintenance easy, internally we use a binary compatible
+> > alias struct kvm_user_mem_region to handle both the normal and the
+> > '_ext' variants.
+> 
+> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> > index 0d5d4419139a..f1ae45c10c94 100644
+> > --- a/include/uapi/linux/kvm.h
+> > +++ b/include/uapi/linux/kvm.h
+> > @@ -103,6 +103,33 @@ struct kvm_userspace_memory_region {
+> >  	__u64 userspace_addr; /* start of the userspace allocated memory */
+> >  };
+> >  
+> > +struct kvm_userspace_memory_region_ext {
+> > +	struct kvm_userspace_memory_region region;
+> > +	__u64 restricted_offset;
+> > +	__u32 restricted_fd;
+> > +	__u32 pad1;
+> > +	__u64 pad2[14];
+> > +};
+> > +
+> > +#ifdef __KERNEL__
+> > +/*
+> > + * kvm_user_mem_region is a kernel-only alias of kvm_userspace_memory_region_ext
+> > + * that "unpacks" kvm_userspace_memory_region so that KVM can directly access
+> > + * all fields from the top-level "extended" region.
+> > + */
+> > +struct kvm_user_mem_region {
+> > +	__u32 slot;
+> > +	__u32 flags;
+> > +	__u64 guest_phys_addr;
+> > +	__u64 memory_size;
+> > +	__u64 userspace_addr;
+> > +	__u64 restricted_offset;
+> > +	__u32 restricted_fd;
+> > +	__u32 pad1;
+> > +	__u64 pad2[14];
+> > +};
+> > +#endif
+> 
+> I'm not sure I buy the argument this makes the code maintenance easier
+> because you now have multiple places to update if you extend the field.
+> Was this simply to avoid changing:
+> 
+>   foo->slot to foo->region.slot
+> 
+> in the underlying code?
 
-On Mon, Nov 14, 2022 at 11:25 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->
-> Hi--
->
-> Please see a small nit below.
->
-> On 11/14/22 13:21, Svyatoslav Feldsherov wrote:
-> > After commit cbfecb927f42 ("fs: record I_DIRTY_TIME even if inode
-> > already has I_DIRTY_INODE") writeiback_single_inode can push inode with
-> > I_DIRTY_TIME set to b_dirty_time list. In case of freeing inode with
-> > I_DIRTY_TIME set this can happened after deletion of inode io_list at
-> > evict. Stack trace is following.
-> >
-> > evict
-> > fat_evict_inode
-> > fat_truncate_blocks
-> > fat_flush_inodes
-> > writeback_inode
-> > sync_inode_metadata(inode, sync=0)
-> > writeback_single_inode(inode, wbc) <- wbc->sync_mode == WB_SYNC_NONE
-> >
-> > This will lead to use after free in flusher thread.
-> >
-> > Similar issue can be triggered if writeback_single_inode in the
-> > stack trace update inode->io_list. Add explicit check to avoid it.
-> >
-> > Fixes: cbfecb927f42 ("fs: record I_DIRTY_TIME even if inode already has I_DIRTY_INODE")
-> > Reported-by: syzbot+6ba92bd00d5093f7e371@syzkaller.appspotmail.com
-> > Signed-off-by: Svyatoslav Feldsherov <feldsherov@google.com>
-> > ---
-> >  V1 -> V2:
-> >  - address review comments
-> >  - skip inode_cgwb_move_to_attached for freeing inode
-> >
-> >  fs/fs-writeback.c | 30 +++++++++++++++++++-----------
-> >  1 file changed, 19 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > index 443f83382b9b..c4aea096689c 100644
-> > --- a/fs/fs-writeback.c
-> > +++ b/fs/fs-writeback.c
-> > @@ -1712,18 +1712,26 @@ static int writeback_single_inode(struct inode *inode,
-> >       wb = inode_to_wb_and_lock_list(inode);
-> >       spin_lock(&inode->i_lock);
-> >       /*
-> > -      * If the inode is now fully clean, then it can be safely removed from
-> > -      * its writeback list (if any).  Otherwise the flusher threads are
-> > -      * responsible for the writeback lists.
-> > +      * If the inode is freeing, it's io_list shoudn't be updated
->
->                                     its
->
-> > +      * as it can be finally deleted at this moment.
-> >        */
-> > -     if (!(inode->i_state & I_DIRTY_ALL))
-> > -             inode_cgwb_move_to_attached(inode, wb);
-> > -     else if (!(inode->i_state & I_SYNC_QUEUED)) {
-> > -             if ((inode->i_state & I_DIRTY))
-> > -                     redirty_tail_locked(inode, wb);
-> > -             else if (inode->i_state & I_DIRTY_TIME) {
-> > -                     inode->dirtied_when = jiffies;
-> > -                     inode_io_list_move_locked(inode, wb, &wb->b_dirty_time);
-> > +     if (!(inode->i_state & I_FREEING)) {
-> > +             /*
-> > +              * If the inode is now fully clean, then it can be safely
-> > +              * removed from its writeback list (if any). Otherwise the
-> > +              * flusher threads are responsible for the writeback lists.
-> > +              */
-> > +             if (!(inode->i_state & I_DIRTY_ALL))
-> > +                     inode_cgwb_move_to_attached(inode, wb);
-> > +             else if (!(inode->i_state & I_SYNC_QUEUED)) {
-> > +                     if ((inode->i_state & I_DIRTY))
-> > +                             redirty_tail_locked(inode, wb);
-> > +                     else if (inode->i_state & I_DIRTY_TIME) {
-> > +                             inode->dirtied_when = jiffies;
-> > +                             inode_io_list_move_locked(inode,
-> > +                                                       wb,
-> > +                                                       &wb->b_dirty_time);
-> > +                     }
-> >               }
-> >       }
-> >
->
-> --
-> ~Randy
+That is one of the reasons, by doing this we can also avoid confusion to
+deal with '_ext' and the 'base' struct for different functions spread
+across KVM code. No doubt now I need update every places where the
+'base' struct is being used, but that makes future maintenance easier,
+e.g. adding another new field or even extend the memslot structure again
+would just require changes to the flat struct here and the places where
+the new field is actually used.
 
---
-Slava
+> 
+> > +
+> >  /*
+> >   * The bit 0 ~ bit 15 of kvm_memory_region::flags are visible for userspace,
+> >   * other bits are reserved for kvm internal use which are defined in
+> > @@ -110,6 +137,7 @@ struct kvm_userspace_memory_region {
+> >   */
+> >  #define KVM_MEM_LOG_DIRTY_PAGES	(1UL << 0)
+> >  #define KVM_MEM_READONLY	(1UL << 1)
+> > +#define KVM_MEM_PRIVATE		(1UL << 2)
+> >  
+> >  /* for KVM_IRQ_LINE */
+> >  struct kvm_irq_level {
+> > @@ -1178,6 +1206,7 @@ struct kvm_ppc_resize_hpt {
+> >  #define KVM_CAP_S390_ZPCI_OP 221
+> >  #define KVM_CAP_S390_CPU_TOPOLOGY 222
+> >  #define KVM_CAP_DIRTY_LOG_RING_ACQ_REL 223
+> > +#define KVM_CAP_PRIVATE_MEM 224
+> >  
+> >  #ifdef KVM_CAP_IRQ_ROUTING
+> >  
+> > diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
+> > index 800f9470e36b..9ff164c7e0cc 100644
+> > --- a/virt/kvm/Kconfig
+> > +++ b/virt/kvm/Kconfig
+> > @@ -86,3 +86,6 @@ config KVM_XFER_TO_GUEST_WORK
+> >  
+> >  config HAVE_KVM_PM_NOTIFIER
+> >         bool
+> > +
+> > +config HAVE_KVM_RESTRICTED_MEM
+> > +       bool
+> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > index e30f1b4ecfa5..8dace78a0278 100644
+> > --- a/virt/kvm/kvm_main.c
+> > +++ b/virt/kvm/kvm_main.c
+> > @@ -1526,7 +1526,7 @@ static void kvm_replace_memslot(struct kvm *kvm,
+> >  	}
+> >  }
+> >  
+> > -static int check_memory_region_flags(const struct kvm_userspace_memory_region *mem)
+> > +static int check_memory_region_flags(const struct kvm_user_mem_region *mem)
+> >  {
+> >  	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
+> >  
+> > @@ -1920,7 +1920,7 @@ static bool kvm_check_memslot_overlap(struct kvm_memslots *slots, int id,
+> >   * Must be called holding kvm->slots_lock for write.
+> >   */
+> >  int __kvm_set_memory_region(struct kvm *kvm,
+> > -			    const struct kvm_userspace_memory_region *mem)
+> > +			    const struct kvm_user_mem_region *mem)
+> >  {
+> >  	struct kvm_memory_slot *old, *new;
+> >  	struct kvm_memslots *slots;
+> > @@ -2024,7 +2024,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
+> >  EXPORT_SYMBOL_GPL(__kvm_set_memory_region);
+> >  
+> >  int kvm_set_memory_region(struct kvm *kvm,
+> > -			  const struct kvm_userspace_memory_region *mem)
+> > +			  const struct kvm_user_mem_region *mem)
+> >  {
+> >  	int r;
+> >  
+> > @@ -2036,7 +2036,7 @@ int kvm_set_memory_region(struct kvm *kvm,
+> >  EXPORT_SYMBOL_GPL(kvm_set_memory_region);
+> >  
+> >  static int kvm_vm_ioctl_set_memory_region(struct kvm *kvm,
+> > -					  struct kvm_userspace_memory_region *mem)
+> > +					  struct kvm_user_mem_region *mem)
+> >  {
+> >  	if ((u16)mem->slot >= KVM_USER_MEM_SLOTS)
+> >  		return -EINVAL;
+> > @@ -4627,6 +4627,33 @@ static int kvm_vm_ioctl_get_stats_fd(struct kvm *kvm)
+> >  	return fd;
+> >  }
+> >  
+> > +#define SANITY_CHECK_MEM_REGION_FIELD(field)					\
+> > +do {										\
+> > +	BUILD_BUG_ON(offsetof(struct kvm_user_mem_region, field) !=		\
+> > +		     offsetof(struct kvm_userspace_memory_region, field));	\
+> > +	BUILD_BUG_ON(sizeof_field(struct kvm_user_mem_region, field) !=		\
+> > +		     sizeof_field(struct kvm_userspace_memory_region, field));	\
+> > +} while (0)
+> > +
+> > +#define SANITY_CHECK_MEM_REGION_EXT_FIELD(field)					\
+> > +do {											\
+> > +	BUILD_BUG_ON(offsetof(struct kvm_user_mem_region, field) !=			\
+> > +		     offsetof(struct kvm_userspace_memory_region_ext, field));		\
+> > +	BUILD_BUG_ON(sizeof_field(struct kvm_user_mem_region, field) !=			\
+> > +		     sizeof_field(struct kvm_userspace_memory_region_ext, field));	\
+> > +} while (0)
+> > +
+> > +static void kvm_sanity_check_user_mem_region_alias(void)
+> > +{
+> > +	SANITY_CHECK_MEM_REGION_FIELD(slot);
+> > +	SANITY_CHECK_MEM_REGION_FIELD(flags);
+> > +	SANITY_CHECK_MEM_REGION_FIELD(guest_phys_addr);
+> > +	SANITY_CHECK_MEM_REGION_FIELD(memory_size);
+> > +	SANITY_CHECK_MEM_REGION_FIELD(userspace_addr);
+> > +	SANITY_CHECK_MEM_REGION_EXT_FIELD(restricted_offset);
+> > +	SANITY_CHECK_MEM_REGION_EXT_FIELD(restricted_fd);
+> > +}
+> 
+> Do we have other examples in the kernel that jump these hoops?
+
+grep -rn 'BUILD_BUG_ON(offsetof' can give you some hint on other usages
+in the kernel. But for a quick check you can look:
+  siginfo_buildtime_checks()
+
+> 
+> >  static long kvm_vm_ioctl(struct file *filp,
+> >  			   unsigned int ioctl, unsigned long arg)
+> >  {
+> > @@ -4650,14 +4677,20 @@ static long kvm_vm_ioctl(struct file *filp,
+> >  		break;
+> >  	}
+> >  	case KVM_SET_USER_MEMORY_REGION: {
+> > -		struct kvm_userspace_memory_region kvm_userspace_mem;
+> > +		struct kvm_user_mem_region mem;
+> > +		unsigned long size = sizeof(struct kvm_userspace_memory_region);
+> > +
+> > +		kvm_sanity_check_user_mem_region_alias();
+> >  
+> >  		r = -EFAULT;
+> > -		if (copy_from_user(&kvm_userspace_mem, argp,
+> > -						sizeof(kvm_userspace_mem)))
+> > +		if (copy_from_user(&mem, argp, size))
+> > +			goto out;
+> > +
+> > +		r = -EINVAL;
+> > +		if (mem.flags & KVM_MEM_PRIVATE)
+> >  			goto out;
+> 
+> Hmm I can see in the later code you explicitly check for the
+> KVM_MEM_PRIVATE flag with:
+> 
+> 		if (get_user(flags, (u32 __user *)(argp + flags_offset)))
+> 			goto out;
+> 
+> 		if (flags & KVM_MEM_PRIVATE)
+> 			size = sizeof(struct kvm_userspace_memory_region_ext);
+> 		else
+> 			size = sizeof(struct kvm_userspace_memory_region);
+> 
+> I think it would make sense to bring that sanity checking forward into
+> this patch to avoid the validation logic working in two different ways
+> over the series.
+
+That is my original code actually, then Sean suggested to change to
+current code[*], the reason is these two pathes are for different
+purpose, this patch introduces the data structures but the later patch
+actually makes use of the '_ext' variant.
+
+[*] https://lkml.kernel.org/kvm/YuQ6QWcdZLdStkWl@google.com/
+
+Chao
+> 
+> >  
+> > -		r = kvm_vm_ioctl_set_memory_region(kvm, &kvm_userspace_mem);
+> > +		r = kvm_vm_ioctl_set_memory_region(kvm, &mem);
+> >  		break;
+> >  	}
+> >  	case KVM_GET_DIRTY_LOG: {
+> 
+> 
+> -- 
+> Alex Bennée
