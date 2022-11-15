@@ -2,43 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 19CB16293A6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 09:55:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4E07C6293B5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 09:59:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232642AbiKOIzS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Nov 2022 03:55:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59138 "EHLO
+        id S232604AbiKOI7M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Nov 2022 03:59:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33196 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232993AbiKOIyw (ORCPT
+        with ESMTP id S232332AbiKOI7L (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Nov 2022 03:54:52 -0500
+        Tue, 15 Nov 2022 03:59:11 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBD0B20F72;
-        Tue, 15 Nov 2022 00:54:34 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66CB9765E;
+        Tue, 15 Nov 2022 00:59:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=XnEj26lKZcJ/I4VuOEUSvvYB44Q9hvJF20imshWtvMA=; b=kNSPfSHEg2HxqQCdQLWh+G4Esm
-        2qwuSXBJtSwRoDUdcuxQTX0483lMMKT6LxtmOaL13kbTQeKCgWFaHkVXMoWEAG+YFY3/PpsMkhuxX
-        Z5r00F7BzautJ8h5usb/hnqhT12GoyfnpWiIUj4SOf48FL+rxcqTXj4Vpl3ps459ZwROQ0YzQROfh
-        BRsffR0Ua0x4d8osnPMu82FUwXiL5TrTHWgFLoP/XZcXgD2NE5SLJTKhbZ1eHrxU1s2vSfiA98TDN
-        V1BZls0UhxcVS60l4qcUhohpUpalSC708FlHlLQykqbkt4EAm5yakbMKDi9c739Czg5cKIZOiVNGB
-        qQdIutSg==;
+        bh=zRTnc192G555hOHtI3ujNPRHECrdactujURMebxrasQ=; b=I5xygQ/bmGDcN/Q478BUErg/aK
+        mAYLTrD0B9ZyRJjEO4sd5wizRMtfRx8sJBOuZaO8quU7/lIEP+fsni+CzlDUce9U9FHxRnhvevJFV
+        4lmPDB0OGWfY7X9NK+oMZ4h3Gj5uDqUduii7yY1jaG8NVqlpgP5yC8KJMIFJtlZlCnKhyL6xX93I5
+        WLAi+ieVp5otPHF8b1LDC8ihvKbG1tfkW3aTcSnx+qoqUsh0c9S4Dy433UYcKK5KIld0HHXRBC443
+        gULYkMjPAf7dPbuIB0TPcXSDd1v3YsV6ApfjlvRRlOt79h2GR9PUMHElut3Jl/aMtL6VEIQZ2M5B1
+        4tugcdCg==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ouriB-0094M7-LE; Tue, 15 Nov 2022 08:54:31 +0000
-Date:   Tue, 15 Nov 2022 00:54:31 -0800
+        id 1ourme-00968E-Gi; Tue, 15 Nov 2022 08:59:08 +0000
+Date:   Tue, 15 Nov 2022 00:59:08 -0800
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Jeff Layton <jlayton@kernel.org>
-Cc:     chuck.lever@oracle.com, xiubli@redhat.com,
-        linux-fsdevel@vger.kernel.org, ceph-devel@vger.kernel.org
-Subject: Re: [RFC PATCH] filelock: new helper: vfs_file_has_locks
-Message-ID: <Y3NTx/x2m/kAZyGE@infradead.org>
-References: <20221114140747.134928-1-jlayton@kernel.org>
+Cc:     chuck.lever@oracle.com, linux-fsdevel@vger.kernel.org,
+        trond.myklebust@hammerspace.com, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 1/3] filelock: remove redundant filp argument from
+ vfs_lock_file
+Message-ID: <Y3NU3AP+SFbSEVeo@infradead.org>
+References: <20221114150240.198648-1-jlayton@kernel.org>
+ <20221114150240.198648-2-jlayton@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221114140747.134928-1-jlayton@kernel.org>
+In-Reply-To: <20221114150240.198648-2-jlayton@kernel.org>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -49,47 +51,19 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 14, 2022 at 09:07:47AM -0500, Jeff Layton wrote:
-> +bool vfs_file_has_locks(struct file *filp)
-> +{
-> +	struct file_lock_context *ctx;
-> +	struct file_lock *fl;
-> +	bool ret = false;
-> +
-> +	ctx = smp_load_acquire(&locks_inode(filp)->i_flctx);
-> +	if (!ctx)
-> +		return false;
-> +
-> +	spin_lock(&ctx->flc_lock);
-> +	list_for_each_entry(fl, &ctx->flc_posix, fl_list) {
-> +		if (fl->fl_file == filp) {
-> +			ret = true;
-> +			goto out;
-> +		}
-> +	}
-> +	list_for_each_entry(fl, &ctx->flc_flock, fl_list) {
-> +		if (fl->fl_file == filp) {
-> +			ret = true;
-> +			break;
-> +		}
-> +	}
+On Mon, Nov 14, 2022 at 10:02:38AM -0500, Jeff Layton wrote:
+> -int vfs_lock_file(struct file *filp, unsigned int cmd, struct file_lock *fl, struct file_lock *conf)
+> +int vfs_lock_file(unsigned int cmd, struct file_lock *fl, struct file_lock *conf)
 
-Maybe a little helper for the list lookup would be nice here:
-static inline bool __vfs_file_has_locks(struct file *file)
-{
-	struct file_lock *fl;
+I'd pass fl as the first argument for a saner argument order here.
+Also can you please break the line at 80 characters?  The previous
+version is insanely unreadable, and the new one just slightly less
+so.
 
-	list_for_each_entry(fl, &ctx->flc_flock, fl_list)
-		if (fl->fl_file == filp)
-			return true;
-	return false;
-}
+> +extern int vfs_lock_file(unsigned int, struct file_lock *, struct file_lock *);
 
-simplifying the check in the caller to:
+And please drop the pointless extern here.
 
-	ret = __vfs_file_has_locks(&ctx->flc_posix) ||
-	      __vfs_file_has_locks(&ctx->flc_flock);
+Otherwise looks good:
 
-> +EXPORT_SYMBOL(vfs_file_has_locks);
-
-EXPORT_SYMBOL_GPL for any new network-fsy functionality would be nice.
+Reviewed-by: Christoph Hellwig <hch@lst.de>
