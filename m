@@ -2,70 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ECE162A300
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 21:32:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3DE062A3EB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 15 Nov 2022 22:21:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230236AbiKOUcE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Nov 2022 15:32:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37908 "EHLO
+        id S238728AbiKOVVE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Nov 2022 16:21:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45172 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237288AbiKOUbc (ORCPT
+        with ESMTP id S230404AbiKOVUk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Nov 2022 15:31:32 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6365A317C0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Nov 2022 12:29:14 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id d59-20020a17090a6f4100b00213202d77e1so17985178pjk.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Nov 2022 12:29:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=3/UOuXLNqaGhZ6h8rL6G+T7mz9ElbPyTxd9oL2Zpwc4=;
-        b=Wl8GJcZB5yJKKs1GkMIHqH8ck1Q4o2AbAMVSjHcfU/R84x3wy+vg+t+xKs2kj7vnL+
-         +A/SKgdbduIQ535wzU+LIkz9qYiTB838YTfE4qPp5POwWoyT3CHswYcsnc/yx0eIITRH
-         6V7B4PA8iohNRI3H9hCrxyg5ZNCFn2CpKZv52uykRyh8HxD9ufKAAkU/jr0/8RoZXSmg
-         OEW7oGtiz1V5uWFCH4E0EQALB7Mu1MkpEiwFV9Cuig86vDZLutIUVXpTyjvXii4CUdZv
-         mOfbrY9dzzAdCcYlXqIVpS36DLCyuYfbvdVGwpX6X7tVW8vzzAt2nAxZo3EqWvKQWG/0
-         lOdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3/UOuXLNqaGhZ6h8rL6G+T7mz9ElbPyTxd9oL2Zpwc4=;
-        b=Jj/LoOcRcEP3IYEr3Ki8UUHZBarCXRKkM4zcCr40WBiX7z3Y3hn+mCnabTtLpX8wIn
-         FLmJs7u6TU+G8IwsqRUEsDEpFzMR+f64wR4uW7Lj48c4jvpYVPIauFjzI3zz5n+uwR8K
-         Esj8yKrbIA6OL5qcFigmcv1ZkhCp+s8NBSEGPajNYOOLJ2yNAJzLuYApakyFEIkU3Fi7
-         dYlZeKvKPyU4iUnJQmxJaNOnr3gtwQToVs++Zo5sTjkzfuTx5MqfiHOLprUgi4yStGn4
-         O96jatQq4vWex5CO0qS9SOM4qvVfgdJFsY8bdidLtVd09RRAyjUfVEvAnNihiRPNjr0+
-         Bnzw==
-X-Gm-Message-State: ANoB5plClzTA9tH1odFPEz2uBZwZQCOEFKqT0rxaPwE5xCS86EbpZ0AY
-        bPp4hB+91/gXhP00Cu1mIs6UmInGXWIn8tYfWdRbOA==
-X-Google-Smtp-Source: AA0mqf5g+PjMHVaMyW3VHm15GEuEAWIvpJFuKkcYzd8+862mvjgAqp1n5brxFUK5ru3yru2AtAzJT5RpIxyWbx+ln8I=
-X-Received: by 2002:a17:90b:4fcf:b0:218:725:c820 with SMTP id
- qa15-20020a17090b4fcf00b002180725c820mr73901pjb.170.1668544147673; Tue, 15
- Nov 2022 12:29:07 -0800 (PST)
+        Tue, 15 Nov 2022 16:20:40 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E93241F61D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Nov 2022 13:19:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668547175;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=bTy3gKLCbAl+CtOq7+S/RLFhr2vBABevhnGQ4CWnwdE=;
+        b=eYeiaEYz5W08/ARghTZRo3p61QUCbVMYsJ/OpACezymn4wX5xFWkPOrruNwz1mRXzWKbA6
+        RchBWeZZ821LSivAib/tOEAfaqly0T1hb99zkl2dXC/9LDNrtBPIMK/tp1YxJchZZyAZda
+        9qplA/ZKcCmj9kvvdmj1v/TQh8rQfTo=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-79-iWGMazmjNtWTVqeLxnM2zw-1; Tue, 15 Nov 2022 16:19:32 -0500
+X-MC-Unique: iWGMazmjNtWTVqeLxnM2zw-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9BD0A1C0BC62;
+        Tue, 15 Nov 2022 21:19:31 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A3A0A112131E;
+        Tue, 15 Nov 2022 21:19:30 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, willy@infradead.org,
+        Jeff Layton <jlayton@kernel.org>,
+        JeffleXu <jefflexu@linux.alibaba.com>, linux-cachefs@redhat.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] netfs: Fix folio unmarking/unlocking loops
 MIME-Version: 1.0
-References: <20221114192129.zkmubc6pmruuzkc7@quack3> <20221114212155.221829-1-feldsherov@google.com>
- <20221115105513.6qqyxj4klci6hozl@quack3>
-In-Reply-To: <20221115105513.6qqyxj4klci6hozl@quack3>
-From:   Svyatoslav Feldsherov <feldsherov@google.com>
-Date:   Tue, 15 Nov 2022 22:28:55 +0200
-Message-ID: <CACgs1VAo5AD-6sw2QCNKhRtoOy99XNP24dAWUrdryJKhCxwsMA@mail.gmail.com>
-Subject: Re: [PATCH v2] fs: do not update freeing inode io_list
-To:     Jan Kara <jack@suse.cz>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Lukas Czerner <lczerner@redhat.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        syzbot+6ba92bd00d5093f7e371@syzkaller.appspotmail.com,
-        oferz@google.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <1846965.1668547152.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+From:   David Howells <dhowells@redhat.com>
+Date:   Tue, 15 Nov 2022 21:19:29 +0000
+Message-ID: <1846994.1668547169@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,108 +65,56 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Thank you for the review.
+Hi Linus,
 
-I've sent v3 with proposed fixes.
-Also tried to be more consistent and use i_io_list in comments and
-commit message instead of io_list//io list.
+Could you pull these changes please?  There are two, affecting the
+functions that iterates over the pagecache unmarking or unlocking pages
+after an op is complete:
 
-On Tue, Nov 15, 2022 at 12:55 PM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 14-11-22 21:21:55, Svyatoslav Feldsherov wrote:
-> > After commit cbfecb927f42 ("fs: record I_DIRTY_TIME even if inode
-> > already has I_DIRTY_INODE") writeiback_single_inode can push inode with
->                                 ^^^ writeback
->
-> > I_DIRTY_TIME set to b_dirty_time list. In case of freeing inode with
-> > I_DIRTY_TIME set this can happened after deletion of inode io_list at
->                                 ^^ happen               ^^^ deletion of
-> inode *from i_io_list*
->
-> > evict. Stack trace is following.
-> >
-> > evict
-> > fat_evict_inode
-> > fat_truncate_blocks
-> > fat_flush_inodes
-> > writeback_inode
-> > sync_inode_metadata(inode, sync=0)
-> > writeback_single_inode(inode, wbc) <- wbc->sync_mode == WB_SYNC_NONE
-> >
-> > This will lead to use after free in flusher thread.
-> >
-> > Similar issue can be triggered if writeback_single_inode in the
-> > stack trace update inode->io_list. Add explicit check to avoid it.
->                         ^^ inode->i_io_list
->
-> > Fixes: cbfecb927f42 ("fs: record I_DIRTY_TIME even if inode already has I_DIRTY_INODE")
-> > Reported-by: syzbot+6ba92bd00d5093f7e371@syzkaller.appspotmail.com
-> > Signed-off-by: Svyatoslav Feldsherov <feldsherov@google.com>
->
-> Besides these gramatical nits the patch looks good to me. Feel free to add:
->
-> Reviewed-by: Jan Kara <jack@suse.cz>
->
-> Thanks!
->
->                                                                 Honza
->
-> > ---
-> >  V1 -> V2:
-> >  - address review comments
-> >  - skip inode_cgwb_move_to_attached for freeing inode
-> >
-> >  fs/fs-writeback.c | 30 +++++++++++++++++++-----------
-> >  1 file changed, 19 insertions(+), 11 deletions(-)
-> >
-> > diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> > index 443f83382b9b..c4aea096689c 100644
-> > --- a/fs/fs-writeback.c
-> > +++ b/fs/fs-writeback.c
-> > @@ -1712,18 +1712,26 @@ static int writeback_single_inode(struct inode *inode,
-> >       wb = inode_to_wb_and_lock_list(inode);
-> >       spin_lock(&inode->i_lock);
-> >       /*
-> > -      * If the inode is now fully clean, then it can be safely removed from
-> > -      * its writeback list (if any).  Otherwise the flusher threads are
-> > -      * responsible for the writeback lists.
-> > +      * If the inode is freeing, it's io_list shoudn't be updated
-> > +      * as it can be finally deleted at this moment.
-> >        */
-> > -     if (!(inode->i_state & I_DIRTY_ALL))
-> > -             inode_cgwb_move_to_attached(inode, wb);
-> > -     else if (!(inode->i_state & I_SYNC_QUEUED)) {
-> > -             if ((inode->i_state & I_DIRTY))
-> > -                     redirty_tail_locked(inode, wb);
-> > -             else if (inode->i_state & I_DIRTY_TIME) {
-> > -                     inode->dirtied_when = jiffies;
-> > -                     inode_io_list_move_locked(inode, wb, &wb->b_dirty_time);
-> > +     if (!(inode->i_state & I_FREEING)) {
-> > +             /*
-> > +              * If the inode is now fully clean, then it can be safely
-> > +              * removed from its writeback list (if any). Otherwise the
-> > +              * flusher threads are responsible for the writeback lists.
-> > +              */
-> > +             if (!(inode->i_state & I_DIRTY_ALL))
-> > +                     inode_cgwb_move_to_attached(inode, wb);
-> > +             else if (!(inode->i_state & I_SYNC_QUEUED)) {
-> > +                     if ((inode->i_state & I_DIRTY))
-> > +                             redirty_tail_locked(inode, wb);
-> > +                     else if (inode->i_state & I_DIRTY_TIME) {
-> > +                             inode->dirtied_when = jiffies;
-> > +                             inode_io_list_move_locked(inode,
-> > +                                                       wb,
-> > +                                                       &wb->b_dirty_time);
-> > +                     }
-> >               }
-> >       }
-> >
-> > --
-> > 2.38.1.431.g37b22c650d-goog
-> >
-> --
-> Jan Kara <jack@suse.com>
-> SUSE Labs, CR
+ (1) xas_for_each() loops must call xas_retry() first thing and immediatel=
+y
+     do a "continue" in the case that the extracted value is a special
+     value that indicates that the walk raced with a modification.  Fix th=
+e
+     unlock and unmark loops to do this.
 
---
-Slava
+ (2) The maths in the unlock loop is dodgy as it could, theoretically, at
+     some point in the future end up with a starting file pointer that is
+     in the middle of a folio.  This will cause a subtraction to go
+     negative - but the number is unsigned.  Fix the maths to use absolute
+     file positions instead of relative page indices.
+
+Thanks,
+David
+
+Link: https://lore.kernel.org/r/166749229733.107206.17482609105741691452.s=
+tgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/166757987929.950645.12595273010425381286.s=
+tgit@warthog.procyon.org.uk/ # v2
+---
+The following changes since commit f0c4d9fc9cc9462659728d168387191387e903c=
+c:
+
+  Linux 6.1-rc4 (2022-11-06 15:07:11 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
+/netfs-fixes-20221115
+
+for you to fetch changes up to 5e51c627c5acbcf82bb552e17533a79d2a6a2600:
+
+  netfs: Fix dodgy maths (2022-11-15 16:56:07 +0000)
+
+----------------------------------------------------------------
+netfslib fixes
+
+----------------------------------------------------------------
+David Howells (2):
+      netfs: Fix missing xas_retry() calls in xarray iteration
+      netfs: Fix dodgy maths
+
+ fs/netfs/buffered_read.c | 20 +++++++++++++-------
+ fs/netfs/io.c            |  3 +++
+ 2 files changed, 16 insertions(+), 7 deletions(-)
+
