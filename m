@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D140E62B93B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 11:39:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 41DE662B94B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 11:40:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233290AbiKPKjo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Nov 2022 05:39:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44920 "EHLO
+        id S233895AbiKPKj7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Nov 2022 05:39:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45390 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233479AbiKPKiQ (ORCPT
+        with ESMTP id S230006AbiKPKid (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Nov 2022 05:38:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB7BE2B257
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 02:29:13 -0800 (PST)
+        Wed, 16 Nov 2022 05:38:33 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 17CFC2ED73
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 02:29:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668594553;
+        s=mimecast20190719; t=1668594563;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=ddMjxbE+d57ySmRYhTvAErVzb9ykjmc/iLClBCHgJ7c=;
-        b=cJFu/k3TEJNuOIfLSCXPiMEcjMAGobt96iYwtyQZ0VwjqvusEzh3e1e75ErZRPftd0Nm9i
-        gv9+RlopaXHWgjh1SP3/sA1nIX8k9o3FTva6Pt8S55nfps3Ym1gH5cU6wQlU/jadfMPNwV
-        JjPHesIAoPUh6qdnaOGpdZf/Sb1kvqA=
+        bh=1lgRYK0+yPuNJDFPZ9ndbDbQCvjtc3Xp7NDAue46xBY=;
+        b=L1TyFbfCXbqBdbw/Ata8BNnNCKvCKDgcYVKD+f2j98zyN+SYhX6WNRxAlAeTjWx455vjAf
+        o4fElTgPkQyi7MuY/YKbK63jZmD6/TWaVjnczrtrpQ/4I8S/tzSxneDFuv/FNO7AILmXm0
+        2o477lpLT1xLKztjRUftIjDL6JXNwUI=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-281-3wHpF2z_Ol-w_Oz0Io_Gqg-1; Wed, 16 Nov 2022 05:29:09 -0500
-X-MC-Unique: 3wHpF2z_Ol-w_Oz0Io_Gqg-1
+ us-mta-14-svSpfQNhOguMSNDl-MdQSA-1; Wed, 16 Nov 2022 05:29:18 -0500
+X-MC-Unique: svSpfQNhOguMSNDl-MdQSA-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id ED87586F130;
-        Wed, 16 Nov 2022 10:29:07 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 724BE86F147;
+        Wed, 16 Nov 2022 10:29:15 +0000 (UTC)
 Received: from t480s.fritz.box (unknown [10.39.193.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0046B2027064;
-        Wed, 16 Nov 2022 10:29:00 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3626A2028E8F;
+        Wed, 16 Nov 2022 10:29:08 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
@@ -70,12 +70,11 @@ Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Alex Williamson <alex.williamson@redhat.com>,
         David Hildenbrand <david@redhat.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>
-Subject: [PATCH mm-unstable v1 14/20] drm/etnaviv: remove FOLL_FORCE usage
-Date:   Wed, 16 Nov 2022 11:26:53 +0100
-Message-Id: <20221116102659.70287-15-david@redhat.com>
+        Andy Walls <awalls@md.metrocast.net>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Subject: [PATCH mm-unstable v1 15/20] media: pci/ivtv: remove FOLL_FORCE usage
+Date:   Wed, 16 Nov 2022 11:26:54 +0100
+Message-Id: <20221116102659.70287-16-david@redhat.com>
 In-Reply-To: <20221116102659.70287-1-david@redhat.com>
 References: <20221116102659.70287-1-david@redhat.com>
 MIME-Version: 1.0
@@ -83,7 +82,7 @@ Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -91,61 +90,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-GUP now supports reliable R/O long-term pinning in COW mappings, such
-that we break COW early. MAP_SHARED VMAs only use the shared zeropage so
-far in one corner case (DAXFS file with holes), which can be ignored
-because GUP does not support long-term pinning in fsdax (see
-check_vma_flags()).
+FOLL_FORCE is really only for ptrace access. R/O pinning a page is
+supposed to fail if the VMA misses proper access permissions (no VM_READ).
 
-commit cd5297b0855f ("drm/etnaviv: Use FOLL_FORCE for userptr")
-documents that FOLL_FORCE | FOLL_WRITE was really only used for reliable
-R/O pinning.
+Let's just remove FOLL_FORCE usage here; there would have to be a pretty
+good reason to allow arbitrary drivers to R/O pin pages in a PROT_NONE
+VMA. Most probably, FOLL_FORCE usage is just some legacy leftover.
 
-Consequently, FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM is no longer required
-for reliable R/O long-term pinning: FOLL_LONGTERM is sufficient. So stop
-using FOLL_FORCE, which is really only for ptrace access.
-
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Lucas Stach <l.stach@pengutronix.de>
-Cc: Russell King <linux+etnaviv@armlinux.org.uk>
-Cc: Christian Gmeiner <christian.gmeiner@gmail.com>
-Cc: David Airlie <airlied@gmail.com>
+Cc: Andy Walls <awalls@md.metrocast.net>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- drivers/gpu/drm/etnaviv/etnaviv_gem.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/media/pci/ivtv/ivtv-udma.c | 2 +-
+ drivers/media/pci/ivtv/ivtv-yuv.c  | 5 ++---
+ 2 files changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gem.c b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-index cc386f8a7116..efe2240945d0 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gem.c
-@@ -638,6 +638,7 @@ static int etnaviv_gem_userptr_get_pages(struct etnaviv_gem_object *etnaviv_obj)
- 	struct page **pvec = NULL;
- 	struct etnaviv_gem_userptr *userptr = &etnaviv_obj->userptr;
- 	int ret, pinned = 0, npages = etnaviv_obj->base.size >> PAGE_SHIFT;
-+	unsigned int gup_flags = FOLL_LONGTERM;
+diff --git a/drivers/media/pci/ivtv/ivtv-udma.c b/drivers/media/pci/ivtv/ivtv-udma.c
+index 210be8290f24..99b9f55ca829 100644
+--- a/drivers/media/pci/ivtv/ivtv-udma.c
++++ b/drivers/media/pci/ivtv/ivtv-udma.c
+@@ -115,7 +115,7 @@ int ivtv_udma_setup(struct ivtv *itv, unsigned long ivtv_dest_addr,
  
- 	might_lock_read(&current->mm->mmap_lock);
+ 	/* Pin user pages for DMA Xfer */
+ 	err = pin_user_pages_unlocked(user_dma.uaddr, user_dma.page_count,
+-			dma->map, FOLL_FORCE);
++			dma->map, 0);
  
-@@ -648,14 +649,15 @@ static int etnaviv_gem_userptr_get_pages(struct etnaviv_gem_object *etnaviv_obj)
- 	if (!pvec)
- 		return -ENOMEM;
+ 	if (user_dma.page_count != err) {
+ 		IVTV_DEBUG_WARN("failed to map user pages, returned %d instead of %d\n",
+diff --git a/drivers/media/pci/ivtv/ivtv-yuv.c b/drivers/media/pci/ivtv/ivtv-yuv.c
+index 4ba10c34a16a..582146f8d70d 100644
+--- a/drivers/media/pci/ivtv/ivtv-yuv.c
++++ b/drivers/media/pci/ivtv/ivtv-yuv.c
+@@ -63,12 +63,11 @@ static int ivtv_yuv_prep_user_dma(struct ivtv *itv, struct ivtv_user_dma *dma,
  
-+	if (!userptr->ro)
-+		gup_flags |= FOLL_WRITE;
-+
- 	do {
- 		unsigned num_pages = npages - pinned;
- 		uint64_t ptr = userptr->ptr + pinned * PAGE_SIZE;
- 		struct page **pages = pvec + pinned;
+ 	/* Pin user pages for DMA Xfer */
+ 	y_pages = pin_user_pages_unlocked(y_dma.uaddr,
+-			y_dma.page_count, &dma->map[0], FOLL_FORCE);
++			y_dma.page_count, &dma->map[0], 0);
+ 	uv_pages = 0; /* silence gcc. value is set and consumed only if: */
+ 	if (y_pages == y_dma.page_count) {
+ 		uv_pages = pin_user_pages_unlocked(uv_dma.uaddr,
+-				uv_dma.page_count, &dma->map[y_pages],
+-				FOLL_FORCE);
++				uv_dma.page_count, &dma->map[y_pages], 0);
+ 	}
  
--		ret = pin_user_pages_fast(ptr, num_pages,
--					  FOLL_WRITE | FOLL_FORCE | FOLL_LONGTERM,
--					  pages);
-+		ret = pin_user_pages_fast(ptr, num_pages, gup_flags, pages);
- 		if (ret < 0) {
- 			unpin_user_pages(pvec, pinned);
- 			kvfree(pvec);
+ 	if (y_pages != y_dma.page_count || uv_pages != uv_dma.page_count) {
 -- 
 2.38.1
 
