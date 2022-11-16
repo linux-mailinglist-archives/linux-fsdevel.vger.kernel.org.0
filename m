@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E44C362B113
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 03:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0F5D62B111
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 03:10:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231759AbiKPCKV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Nov 2022 21:10:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39036 "EHLO
+        id S231810AbiKPCKX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Nov 2022 21:10:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229560AbiKPCKS (ORCPT
+        with ESMTP id S231341AbiKPCKT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Nov 2022 21:10:18 -0500
-Received: from mail-pg1-x52f.google.com (mail-pg1-x52f.google.com [IPv6:2607:f8b0:4864:20::52f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B613317DF;
-        Tue, 15 Nov 2022 18:10:17 -0800 (PST)
-Received: by mail-pg1-x52f.google.com with SMTP id h193so15312803pgc.10;
-        Tue, 15 Nov 2022 18:10:17 -0800 (PST)
+        Tue, 15 Nov 2022 21:10:19 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6F6631DC2;
+        Tue, 15 Nov 2022 18:10:18 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id r61-20020a17090a43c300b00212f4e9cccdso894065pjg.5;
+        Tue, 15 Nov 2022 18:10:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=edTd/8en+S7nFCs7bvchEE9GA5NqYTbaAgFkDH59CPw=;
-        b=cD9MV49WEAUYWQxdD69ZABkZwcvH/Sy01d2BEoajQL/UB3FK0pJWmFL16ABBRlMdah
-         YI96fzjPXUi96FFTetnaBW5znWFlL0hqj6nYo65uDMWqTjqxd+FU0tJvx/WKZHKNBVPz
-         yBGhVi1oAiGAZIwI6v1p6pWA3yzks5gxKvXJVHsQKni6IVm7qViZ6TuRA5kXqnwEHiAF
-         lNGyejgS/WqIY2zJiA+MqV2vFEkR5GqyoMQALz1appaBZrLtRHUJm6XxkEALy7fkGieB
-         +UhLTAtIOBGsBOdnXKz2nZC5qEj2bo4iNFeHe9GcwwmJuhZB65Aq2rUTjRGcDMw70j+5
-         zvWQ==
+        bh=3YDT/XAgh5QSXlyod86SZaadrvntYw6ff/cmVDaxdzo=;
+        b=KUWjlw9wAvu8gqDJAwg6cHtHVqa2W7DdXEB14CWlGXOWQBL05awe9s9dxYdOmOMil7
+         RyOWv3MuMr+ShlBwAHzlInZpf9WXU4IuK1fknZkWVuLUhQ8t3qI15l9MkRSO5n+vHcVT
+         0G/GLoFUHkDLpMMPVn8nqBWlDH6Pk7924RR3Nv4EkBqE4naN+P+eE3gMl2w3L5JfiBO9
+         uLiInO8eB3pLYu1bfB9Et5ttZNn5/mdao/zMfopzKv6CaouWP5zWjCj25OIgmti1dk+O
+         nFEpT78cOIq9/Ga/a+rQlgFiHnQYnpeeq5IQMaBWKdhVLtzfU4MlOuZxq9iWJZ0LgthU
+         2gzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=edTd/8en+S7nFCs7bvchEE9GA5NqYTbaAgFkDH59CPw=;
-        b=3IBz9GTPbDg9+BfJ0M9L9gUl4DvNe0JUYNvDTVx84gisKy2NLEjiugAAkz8CmQ99+y
-         yR+aubVqv5thjyhH5slP8YmHA2hClqSos0a/ORfu+vqzwhzKyvRsSrRCrl1m5zsae1YJ
-         NGv+v2WtiZYjemkrt1EHvJ9lgaQq0lFh9jnWpLqkS9jncyaVE1y4uy/Uve43/QalW4SD
-         7hhBn3JRJfHF4LNChMVq/FhrHRKfiDGUUxFEO+NeNvmHaXCkTcm62N1h6eduhhl9HG7B
-         I7bgt+J4OmfXjd4wzG3+wVkumdcCRrb0RLvTEOliA10ZftBLPEaGw4Urt/mGCkgYoe6i
-         ARFw==
-X-Gm-Message-State: ANoB5plsAT/58m+BlVeDAd68668RXc7ak0s8rghCPWM1Lxm7vcZJ9/py
-        uhiPgE0xJV8uQgLxZncmbyI=
-X-Google-Smtp-Source: AA0mqf6VE+cIqZ132CIPFdm51AI+vVTW9iFk3WFUMCM2PAXHIKpEfwf11GrBWCmVT+8N77rIQ+bRhw==
-X-Received: by 2002:a63:f53:0:b0:456:d859:2143 with SMTP id 19-20020a630f53000000b00456d8592143mr18731335pgp.396.1668564616706;
-        Tue, 15 Nov 2022 18:10:16 -0800 (PST)
+        bh=3YDT/XAgh5QSXlyod86SZaadrvntYw6ff/cmVDaxdzo=;
+        b=0HjtuypNrqWhH+TLyWbucaZWeevOkgJvxMr1JFBVOJlsIj8B8RVqsHh1Q7s1xfsu1P
+         zos2soldcB9HUaV+tKllCsETu5G+DkOIQNB6VSVg6tzh3brU+m7MJJIhDlEsG/4gXcuP
+         nT/Y8Db+q6yowUUuxZymd4BQyKoyAUMHxToSruROREEZ24ViW8jfhF3J1YS04CiDeUzP
+         Rlgcwh9ys1c++0GiOdsxWPc+JtYzOhUIt1GOJKcl1C2qGxeZN3RcQ9U79ifWH2P/yMb9
+         bcWF6fYgnvUpMXCjTs1945rGVoRIJnik8iR4k22vA1fFEQK0wRtMjkoK0H/M8fVc5x4L
+         oXfw==
+X-Gm-Message-State: ANoB5pmuqnuCBH6b/7jEfQu+M68gyWxIvwoDTJr8/UA0+adbmEUmiILQ
+        0Xp+8zf01vvhFuTJAF2LLuY=
+X-Google-Smtp-Source: AA0mqf6ilXQxf7UfCBN93r79wPL21N0NY2osSPVfxzyouO00iRPUQVv81FYoeZnvWALfNK4uiq506A==
+X-Received: by 2002:a17:90a:c7c1:b0:213:1f29:2d0a with SMTP id gf1-20020a17090ac7c100b002131f292d0amr1334082pjb.154.1668564618296;
+        Tue, 15 Nov 2022 18:10:18 -0800 (PST)
 Received: from fedora.hsd1.ca.comcast.net ([2601:644:8002:1c20::2c6b])
-        by smtp.googlemail.com with ESMTPSA id e18-20020a17090301d200b0018691ce1696sm10782926plh.131.2022.11.15.18.10.15
+        by smtp.googlemail.com with ESMTPSA id e18-20020a17090301d200b0018691ce1696sm10782926plh.131.2022.11.15.18.10.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 18:10:16 -0800 (PST)
+        Tue, 15 Nov 2022 18:10:17 -0800 (PST)
 From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
 To:     linux-mm@kvack.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-ext4@vger.kernel.org, akpm@linux-foundation.org,
         willy@infradead.org, naoya.horiguchi@nec.com, tytso@mit.edu,
         "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH 1/4] ext4: Convert move_extent_per_page() to use folios
-Date:   Tue, 15 Nov 2022 18:10:08 -0800
-Message-Id: <20221116021011.54164-2-vishal.moola@gmail.com>
+Subject: [PATCH 2/4] khugepage: Replace try_to_release_page() with filemap_release_folio()
+Date:   Tue, 15 Nov 2022 18:10:09 -0800
+Message-Id: <20221116021011.54164-3-vishal.moola@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221116021011.54164-1-vishal.moola@gmail.com>
 References: <20221116021011.54164-1-vishal.moola@gmail.com>
@@ -74,132 +74,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Converts move_extent_per_page() to use folios. This change removes
-5 calls to compound_head() and is in preparation for the removal of
-the try_to_release_page() wrapper.
+Replaces some calls with their folio equivalents. This change removes
+4 calls to compound_head() and is in preparation for the removal of the
+try_to_release_page() wrapper.
 
 Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 ---
- fs/ext4/move_extent.c | 47 ++++++++++++++++++++++++-------------------
- 1 file changed, 26 insertions(+), 21 deletions(-)
+ mm/khugepaged.c | 23 ++++++++++++-----------
+ 1 file changed, 12 insertions(+), 11 deletions(-)
 
-diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
-index 044e34cd835c..0c680d4a2929 100644
---- a/fs/ext4/move_extent.c
-+++ b/fs/ext4/move_extent.c
-@@ -253,6 +253,7 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
- {
- 	struct inode *orig_inode = file_inode(o_filp);
- 	struct page *pagep[2] = {NULL, NULL};
-+	struct folio *folio[2] = {NULL, NULL};
- 	handle_t *handle;
- 	ext4_lblk_t orig_blk_offset, donor_blk_offset;
- 	unsigned long blocksize = orig_inode->i_sb->s_blocksize;
-@@ -313,6 +314,8 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
- 	 * hold page's lock, if it is still the case data copy is not
- 	 * necessary, just swap data blocks between orig and donor.
- 	 */
-+	folio[0] = page_folio(pagep[0]);
-+	folio[1] = page_folio(pagep[1]);
- 	if (unwritten) {
- 		ext4_double_down_write_data_sem(orig_inode, donor_inode);
- 		/* If any of extents in range became initialized we have to
-@@ -331,10 +334,10 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
- 			ext4_double_up_write_data_sem(orig_inode, donor_inode);
- 			goto data_copy;
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 4734315f7940..3f21c010d2bd 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1747,6 +1747,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 	xas_set(&xas, start);
+ 	for (index = start; index < end; index++) {
+ 		struct page *page = xas_next(&xas);
++		struct folio *folio;
+ 
+ 		VM_BUG_ON(index != xas.xa_index);
+ 		if (is_shmem) {
+@@ -1773,8 +1774,6 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 			}
+ 
+ 			if (xa_is_value(page) || !PageUptodate(page)) {
+-				struct folio *folio;
+-
+ 				xas_unlock_irq(&xas);
+ 				/* swap in or instantiate fallocated page */
+ 				if (shmem_get_folio(mapping->host, index,
+@@ -1862,13 +1861,15 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 			goto out_unlock;
  		}
--		if ((page_has_private(pagep[0]) &&
--		     !try_to_release_page(pagep[0], 0)) ||
--		    (page_has_private(pagep[1]) &&
--		     !try_to_release_page(pagep[1], 0))) {
-+		if ((folio_has_private(folio[0]) &&
-+		     !filemap_release_folio(folio[0], 0)) ||
-+		    (folio_has_private(folio[1]) &&
-+		     !filemap_release_folio(folio[1], 0))) {
- 			*err = -EBUSY;
- 			goto drop_data_sem;
+ 
+-		if (page_mapping(page) != mapping) {
++		folio = page_folio(page);
++
++		if (folio_mapping(folio) != mapping) {
+ 			result = SCAN_TRUNCATED;
+ 			goto out_unlock;
  		}
-@@ -344,19 +347,21 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
- 						   block_len_in_page, 1, err);
- 	drop_data_sem:
- 		ext4_double_up_write_data_sem(orig_inode, donor_inode);
--		goto unlock_pages;
-+		goto unlock_folios;
- 	}
- data_copy:
--	*err = mext_page_mkuptodate(pagep[0], from, from + replaced_size);
-+	*err = mext_page_mkuptodate(&folio[0]->page, from, from + replaced_size);
- 	if (*err)
--		goto unlock_pages;
-+		goto unlock_folios;
  
- 	/* At this point all buffers in range are uptodate, old mapping layout
- 	 * is no longer required, try to drop it now. */
--	if ((page_has_private(pagep[0]) && !try_to_release_page(pagep[0], 0)) ||
--	    (page_has_private(pagep[1]) && !try_to_release_page(pagep[1], 0))) {
-+	if ((folio_has_private(folio[0]) &&
-+		!filemap_release_folio(folio[0], 0)) ||
-+	    (folio_has_private(folio[1]) &&
-+		!filemap_release_folio(folio[1], 0))) {
- 		*err = -EBUSY;
--		goto unlock_pages;
-+		goto unlock_folios;
- 	}
- 	ext4_double_down_write_data_sem(orig_inode, donor_inode);
- 	replaced_count = ext4_swap_extents(handle, orig_inode, donor_inode,
-@@ -369,13 +374,13 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
- 			replaced_size =
- 				block_len_in_page << orig_inode->i_blkbits;
- 		} else
--			goto unlock_pages;
-+			goto unlock_folios;
- 	}
- 	/* Perform all necessary steps similar write_begin()/write_end()
- 	 * but keeping in mind that i_size will not change */
--	if (!page_has_buffers(pagep[0]))
--		create_empty_buffers(pagep[0], 1 << orig_inode->i_blkbits, 0);
--	bh = page_buffers(pagep[0]);
-+	if (!folio_buffers(folio[0]))
-+		create_empty_buffers(&folio[0]->page, 1 << orig_inode->i_blkbits, 0);
-+	bh = folio_buffers(folio[0]);
- 	for (i = 0; i < data_offset_in_page; i++)
- 		bh = bh->b_this_page;
- 	for (i = 0; i < block_len_in_page; i++) {
-@@ -385,7 +390,7 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
- 		bh = bh->b_this_page;
- 	}
- 	if (!*err)
--		*err = block_commit_write(pagep[0], from, from + replaced_size);
-+		*err = block_commit_write(&folio[0]->page, from, from + replaced_size);
+-		if (!is_shmem && (PageDirty(page) ||
+-				  PageWriteback(page))) {
++		if (!is_shmem && (folio_test_dirty(folio) ||
++				  folio_test_writeback(folio))) {
+ 			/*
+ 			 * khugepaged only works on read-only fd, so this
+ 			 * page is dirty because it hasn't been flushed
+@@ -1878,20 +1879,20 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 			goto out_unlock;
+ 		}
  
- 	if (unlikely(*err < 0))
- 		goto repair_branches;
-@@ -395,11 +400,11 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
- 	*err = ext4_jbd2_inode_add_write(handle, orig_inode,
- 			(loff_t)orig_page_offset << PAGE_SHIFT, replaced_size);
+-		if (isolate_lru_page(page)) {
++		if (folio_isolate_lru(folio)) {
+ 			result = SCAN_DEL_PAGE_LRU;
+ 			goto out_unlock;
+ 		}
  
--unlock_pages:
--	unlock_page(pagep[0]);
--	put_page(pagep[0]);
--	unlock_page(pagep[1]);
--	put_page(pagep[1]);
-+unlock_folios:
-+	folio_unlock(folio[0]);
-+	folio_put(folio[0]);
-+	folio_unlock(folio[1]);
-+	folio_put(folio[1]);
- stop_journal:
- 	ext4_journal_stop(handle);
- 	if (*err == -ENOSPC &&
-@@ -430,7 +435,7 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
- 		*err = -EIO;
- 	}
- 	replaced_count = 0;
--	goto unlock_pages;
-+	goto unlock_folios;
- }
+-		if (page_has_private(page) &&
+-		    !try_to_release_page(page, GFP_KERNEL)) {
++		if (folio_has_private(folio) &&
++		    !filemap_release_folio(folio, GFP_KERNEL)) {
+ 			result = SCAN_PAGE_HAS_PRIVATE;
+-			putback_lru_page(page);
++			folio_putback_lru(folio);
+ 			goto out_unlock;
+ 		}
  
- /**
+-		if (page_mapped(page))
+-			try_to_unmap(page_folio(page),
++		if (folio_mapped(folio))
++			try_to_unmap(folio,
+ 					TTU_IGNORE_MLOCK | TTU_BATCH_FLUSH);
+ 
+ 		xas_lock_irq(&xas);
 -- 
 2.38.1
 
