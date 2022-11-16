@@ -2,165 +2,127 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BFAF062AFD2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 00:57:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F79462AFE4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 01:11:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231230AbiKOX5b (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Nov 2022 18:57:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48908 "EHLO
+        id S231230AbiKPAK7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Nov 2022 19:10:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51734 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229766AbiKOX50 (ORCPT
+        with ESMTP id S229561AbiKPAK7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Nov 2022 18:57:26 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C046C286C7;
-        Tue, 15 Nov 2022 15:57:25 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 7F447B81B7B;
-        Tue, 15 Nov 2022 23:57:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23DBFC433D6;
-        Tue, 15 Nov 2022 23:57:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668556643;
-        bh=jzvuAVSjXyDys9MAIYamkBlIXXr/PQ6K+kdLHC9dlK0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=BvWQIYZdFVPoDr7eXeLXUPj/FdJFTVtsyhsQtMocMr26W9vc3ZjzacySFHU+p92/7
-         wcEIpnm/l7tEhGIBGPZCDXPZzukKFX210yAV6Zz4iXP75HIVlBstvck98lkhne1Scz
-         q45/RNcy0cPlq+dMYErDC7vqKs8ZSkK0FjKJC++JMlIiDd5sazODwsoXlcQwkJJjkz
-         a3uFretsr0TlYt4Sb65g2mcXDTgIqXvl+VczlbQBrWWj5T3pnOEWq/JDsKfc4I8RSb
-         i0uE1y4fNCEHfofKHOl1p6QfN14pK+23dUCCwzZzJRYSrsGKP+lYx5RBFzzNvng+PN
-         JHoA0qBpDlcbA==
-Date:   Tue, 15 Nov 2022 15:57:22 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
+        Tue, 15 Nov 2022 19:10:59 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 694ED2A716
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Nov 2022 16:10:58 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id c2so14895054plz.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 15 Nov 2022 16:10:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rD/RoHfyEVT+SdG0X/B7iu3/BEAtoC054FO09SaHPUM=;
+        b=J9/xSM0XEioLbGpgDvTlTfAO+wvEzOuT9B+ffrzh4yOeJmd6IO5uNeubjHHgcpzMQn
+         L7GHJe1a7x4fVqfUaShD3u0+cNXAiCaVBkQElLwO14bM0F6tC4SBdbdvnWDU/3+HfuSS
+         srt7KHvhAMwkamFH4Q1YqkX8UgR3iaOLp/hwO7brMr/B1bV0YxCpoOircPWHc7HhhIKB
+         WXYC0Hz/iWNYJfYtxxMk6TI6F/7LXAv4O/3p+c+einOmPAUrAdUufroV52acch40cczv
+         DQAaH6AAeEFalflQQC53fC3CYbVX0FoAeCIAUO/kRXm436L1Z4hjby/RN8Wuig9fy/G5
+         VtWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rD/RoHfyEVT+SdG0X/B7iu3/BEAtoC054FO09SaHPUM=;
+        b=TAd6btbQMWMYb40ZW4zL46uvm6JPdqfgqWvL/XwFzhrJYx3AJ5SLbGJS7cg6yE29JM
+         DmNksDbkkaRZ8487aJldxOQl1j4Mp4vrX7gKgasNwo58WzI8D77pwqFoalGCRAMkYHEq
+         EWldg/vGpwG8LdF+AfZe68T1/tnJxY+d8TLqwdUuBWfCL70muyVumQuBGgxhADfxq20D
+         I6pNvf6Jwi0eE0dprzo08KS20Ch1BIetp0R/pdO63UMaNuQH94iQxL42lWq/6GJcEw+H
+         eyXTOL+qu9TF9N71JqY91PF0hgGzMt4h/RZ9O8x6BonP45hTv+UnQV1m5kd8k2NkgplN
+         Rkxg==
+X-Gm-Message-State: ANoB5pnJCVTplYJ3orqfnjiRp7p3M3uW9A8MtlrWPIzEaIlyOuJTMHsh
+        6UIBTrcCjvqBZNMJu8M8Rp5IhQ==
+X-Google-Smtp-Source: AA0mqf73DdXQXS2w87TsSXf0A7sXLMiMFeStSpJUGScVZwiTAEWFsHzhK74pTokSwLZAOOFCNSZp3g==
+X-Received: by 2002:a17:902:c3ca:b0:17f:b05:bbc4 with SMTP id j10-20020a170902c3ca00b0017f0b05bbc4mr6318913plj.41.1668557457951;
+        Tue, 15 Nov 2022 16:10:57 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
+        by smtp.gmail.com with ESMTPSA id g75-20020a62524e000000b0056164b52bd8sm9417299pfb.32.2022.11.15.16.10.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 15 Nov 2022 16:10:57 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ov60z-00EhIc-W4; Wed, 16 Nov 2022 11:10:54 +1100
+Date:   Wed, 16 Nov 2022 11:10:53 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Christoph Hellwig <hch@infradead.org>
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: Re: [PATCH 4/9] xfs: use byte ranges for write cleanup ranges
-Message-ID: <Y3QnYl+gUs0MwCFw@magnolia>
+Subject: Re: [PATCH 8/9] xfs: use iomap_valid method to detect stale cached
+ iomaps
+Message-ID: <20221116001053.GZ3600936@dread.disaster.area>
 References: <20221115013043.360610-1-david@fromorbit.com>
- <20221115013043.360610-5-david@fromorbit.com>
+ <20221115013043.360610-9-david@fromorbit.com>
+ <Y3NSrSxq/nC4u8ws@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221115013043.360610-5-david@fromorbit.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y3NSrSxq/nC4u8ws@infradead.org>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 15, 2022 at 12:30:38PM +1100, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
+On Tue, Nov 15, 2022 at 12:49:49AM -0800, Christoph Hellwig wrote:
+> On Tue, Nov 15, 2022 at 12:30:42PM +1100, Dave Chinner wrote:
+> > +/*
+> > + * Check that the iomap passed to us is still valid for the given offset and
+> > + * length.
+> > + */
+> > +static bool
+> > +xfs_iomap_valid(
+> > +	struct inode		*inode,
+> > +	const struct iomap	*iomap)
+> > +{
+> > +	struct xfs_inode	*ip = XFS_I(inode);
+> > +	u64			cookie = 0;
+> > +
+> > +	if (iomap->flags & IOMAP_F_XATTR) {
+> > +		cookie = READ_ONCE(ip->i_af.if_seq);
+> > +	} else {
+> > +		if ((iomap->flags & IOMAP_F_SHARED) && ip->i_cowfp)
+> > +			cookie = (u64)READ_ONCE(ip->i_cowfp->if_seq) << 32;
+> > +		cookie |= READ_ONCE(ip->i_df.if_seq);
+> > +	}
+> > +	return cookie == iomap->validity_cookie;
 > 
-> xfs_buffered_write_iomap_end() currently converts the byte ranges
-> passed to it to filesystem blocks to pass them to the bmap code to
-> punch out delalloc blocks, but then has to convert filesytem
-> blocks back to byte ranges for page cache truncate.
-> 
-> We're about to make the page cache truncate go away and replace it
-> with a page cache walk, so having to convert everything to/from/to
-> filesystem blocks is messy and error-prone. It is much easier to
-> pass around byte ranges and convert to page indexes and/or
-> filesystem blocks only where those units are needed.
-> 
-> In preparation for the page cache walk being added, add a helper
-> that converts byte ranges to filesystem blocks and calls
-> xfs_bmap_punch_delalloc_range() and convert
-> xfs_buffered_write_iomap_end() to calculate limits in byte ranges.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> How can this be called with IOMAP_F_XATTR set?
 
-Looks ok,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+It can't be. *Yet*.
 
---D
+However: ->iomap_begin can be called to map an attribute fork, and
+->iomap_valid *could* be called on the attr iomap that is returned.
+At which point, the iomap needs to be self-describing and the
+validation cookie needs to hold the attr fork sequence number for
+everything to work.
 
-> ---
->  fs/xfs/xfs_iomap.c | 40 +++++++++++++++++++++++++---------------
->  1 file changed, 25 insertions(+), 15 deletions(-)
+Failing to handle/validate attr iomaps correctly would clearly be an
+XFS implementation bug and making it work correctly is trivial and
+costs nothing. Hence making it work is a no-brainer - leaving it as
+a landmine for someone else to trip over in future is a poor outcome
+for everyone.
+
+> Also the code seems to duplicate xfs_iomap_inode_sequence, so
+> we just call that:
 > 
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index a2e45ea1b0cb..7bb55dbc19d3 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -1120,6 +1120,20 @@ xfs_buffered_write_iomap_begin(
->  	return error;
->  }
->  
-> +static int
-> +xfs_buffered_write_delalloc_punch(
-> +	struct inode		*inode,
-> +	loff_t			start_byte,
-> +	loff_t			end_byte)
-> +{
-> +	struct xfs_mount	*mp = XFS_M(inode->i_sb);
-> +	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, start_byte);
-> +	xfs_fileoff_t		end_fsb = XFS_B_TO_FSB(mp, end_byte);
-> +
-> +	return xfs_bmap_punch_delalloc_range(XFS_I(inode), start_fsb,
-> +				end_fsb - start_fsb);
-> +}
-> +
->  static int
->  xfs_buffered_write_iomap_end(
->  	struct inode		*inode,
-> @@ -1129,10 +1143,9 @@ xfs_buffered_write_iomap_end(
->  	unsigned		flags,
->  	struct iomap		*iomap)
->  {
-> -	struct xfs_inode	*ip = XFS_I(inode);
-> -	struct xfs_mount	*mp = ip->i_mount;
-> -	xfs_fileoff_t		start_fsb;
-> -	xfs_fileoff_t		end_fsb;
-> +	struct xfs_mount	*mp = XFS_M(inode->i_sb);
-> +	loff_t			start_byte;
-> +	loff_t			end_byte;
->  	int			error = 0;
->  
->  	if (iomap->type != IOMAP_DELALLOC)
-> @@ -1157,13 +1170,13 @@ xfs_buffered_write_iomap_end(
->  	 * the range.
->  	 */
->  	if (unlikely(!written))
-> -		start_fsb = XFS_B_TO_FSBT(mp, offset);
-> +		start_byte = round_down(offset, mp->m_sb.sb_blocksize);
->  	else
-> -		start_fsb = XFS_B_TO_FSB(mp, offset + written);
-> -	end_fsb = XFS_B_TO_FSB(mp, offset + length);
-> +		start_byte = round_up(offset + written, mp->m_sb.sb_blocksize);
-> +	end_byte = round_up(offset + length, mp->m_sb.sb_blocksize);
->  
->  	/* Nothing to do if we've written the entire delalloc extent */
-> -	if (start_fsb >= end_fsb)
-> +	if (start_byte >= end_byte)
->  		return 0;
->  
->  	/*
-> @@ -1173,15 +1186,12 @@ xfs_buffered_write_iomap_end(
->  	 * leave dirty pages with no space reservation in the cache.
->  	 */
->  	filemap_invalidate_lock(inode->i_mapping);
-> -	truncate_pagecache_range(VFS_I(ip), XFS_FSB_TO_B(mp, start_fsb),
-> -				 XFS_FSB_TO_B(mp, end_fsb) - 1);
-> -
-> -	error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
-> -				       end_fsb - start_fsb);
-> +	truncate_pagecache_range(inode, start_byte, end_byte - 1);
-> +	error = xfs_buffered_write_delalloc_punch(inode, start_byte, end_byte);
->  	filemap_invalidate_unlock(inode->i_mapping);
->  	if (error && !xfs_is_shutdown(mp)) {
-> -		xfs_alert(mp, "%s: unable to clean up ino %lld",
-> -			__func__, ip->i_ino);
-> +		xfs_alert(mp, "%s: unable to clean up ino 0x%llx",
-> +			__func__, XFS_I(inode)->i_ino);
->  		return error;
->  	}
->  	return 0;
-> -- 
-> 2.37.2
-> 
+> 	return cookie == xfs_iomap_inode_sequence(XFS_I(inode), iomap->flags);
+
+Yup, will fix.
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
