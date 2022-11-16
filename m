@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0D20162B894
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 11:32:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1470262B8A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 11:34:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232951AbiKPKct (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Nov 2022 05:32:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38062 "EHLO
+        id S232409AbiKPKd7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Nov 2022 05:33:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235900AbiKPKcY (ORCPT
+        with ESMTP id S237493AbiKPKc1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Nov 2022 05:32:24 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2AE543C6E0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 02:27:52 -0800 (PST)
+        Wed, 16 Nov 2022 05:32:27 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A60A03C6E6
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 02:27:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668594471;
+        s=mimecast20190719; t=1668594477;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=1Pfa0qX/ZhOI50QqJ9JdOGuy2kwPxeAxaBCfxYoSW9g=;
-        b=YxhFIMcF8TvwAmFNShltramy6vJV9PPa8VZibcl/xUldmdcnEyfW1iUJxmBI+4Vpg2FGCp
-        SgD5qEJU0xwzt2co/UdM4uZCMOm4ajphQhr/UM8Lyivxd5lH2nwSipl0M3czM5Il0Ht0Jv
-        TpqYWK7p86J3hBzK5V1HUDxymVJxBtU=
+        bh=fetjyNVdxegk0QG4w8mo8gn6x0g2HdvFN8vnJqqr3gA=;
+        b=dalFN4tzJRMblko10CEnaRHPtOFdLle6BWJPvtKrSlrl6e6t73FVgf4s0GW2FXOVks7IGe
+        DUxjc5OlQ+w6hlVKNBOn6fthPKa6sxuqsjUKR8tdqFawQ9XoADZQPzdtvncAVIugNkW+kb
+        jH127oB8Cr9LGuRA61S3xW4EuF2qRxY=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-387-mUeJQgfvOUWRJd96rWHDcg-1; Wed, 16 Nov 2022 05:27:47 -0500
-X-MC-Unique: mUeJQgfvOUWRJd96rWHDcg-1
+ us-mta-456-E78fxk5vOCySDX-MBsnqRQ-1; Wed, 16 Nov 2022 05:27:54 -0500
+X-MC-Unique: E78fxk5vOCySDX-MBsnqRQ-1
 Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 547AE86F13B;
-        Wed, 16 Nov 2022 10:27:45 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3B6478027F5;
+        Wed, 16 Nov 2022 10:27:53 +0000 (UTC)
 Received: from t480s.fritz.box (unknown [10.39.193.216])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C5D9B20290A6;
-        Wed, 16 Nov 2022 10:27:38 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9344E2027064;
+        Wed, 16 Nov 2022 10:27:45 +0000 (UTC)
 From:   David Hildenbrand <david@redhat.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
@@ -70,9 +70,9 @@ Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Alex Williamson <alex.williamson@redhat.com>,
         David Hildenbrand <david@redhat.com>
-Subject: [PATCH mm-unstable v1 03/20] selftests/vm: cow: R/O long-term pinning reliability tests for non-anon pages
-Date:   Wed, 16 Nov 2022 11:26:42 +0100
-Message-Id: <20221116102659.70287-4-david@redhat.com>
+Subject: [PATCH mm-unstable v1 04/20] mm: add early FAULT_FLAG_UNSHARE consistency checks
+Date:   Wed, 16 Nov 2022 11:26:43 +0100
+Message-Id: <20221116102659.70287-5-david@redhat.com>
 In-Reply-To: <20221116102659.70287-1-david@redhat.com>
 References: <20221116102659.70287-1-david@redhat.com>
 MIME-Version: 1.0
@@ -88,113 +88,108 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Let's test whether R/O long-term pinning is reliable for non-anonymous
-memory: when R/O long-term pinning a page, the expectation is that we
-break COW early before pinning, such that actual write access via the
-page tables won't break COW later and end up replacing the R/O-pinned
-page in the page table.
+For now, FAULT_FLAG_UNSHARE only applies to anonymous pages, which
+implies a COW mapping. Let's hide FAULT_FLAG_UNSHARE early if we're not
+dealing with a COW mapping, such that we treat it like a read fault as
+documented and don't have to worry about the flag throughout all fault
+handlers.
 
-Consequently, R/O long-term pinning in private mappings would only target
-exclusive anonymous pages.
-
-For now, all tests fail:
-	# [RUN] R/O longterm GUP pin ... with shared zeropage
-	not ok 151 Longterm R/O pin is reliable
-	# [RUN] R/O longterm GUP pin ... with memfd
-	not ok 152 Longterm R/O pin is reliable
-	# [RUN] R/O longterm GUP pin ... with tmpfile
-	not ok 153 Longterm R/O pin is reliable
-	# [RUN] R/O longterm GUP pin ... with huge zeropage
-	not ok 154 Longterm R/O pin is reliable
-	# [RUN] R/O longterm GUP pin ... with memfd hugetlb (2048 kB)
-	not ok 155 Longterm R/O pin is reliable
-	# [RUN] R/O longterm GUP pin ... with memfd hugetlb (1048576 kB)
-	not ok 156 Longterm R/O pin is reliable
-	# [RUN] R/O longterm GUP-fast pin ... with shared zeropage
-	not ok 157 Longterm R/O pin is reliable
-	# [RUN] R/O longterm GUP-fast pin ... with memfd
-	not ok 158 Longterm R/O pin is reliable
-	# [RUN] R/O longterm GUP-fast pin ... with tmpfile
-	not ok 159 Longterm R/O pin is reliable
-	# [RUN] R/O longterm GUP-fast pin ... with huge zeropage
-	not ok 160 Longterm R/O pin is reliable
-	# [RUN] R/O longterm GUP-fast pin ... with memfd hugetlb (2048 kB)
-	not ok 161 Longterm R/O pin is reliable
-	# [RUN] R/O longterm GUP-fast pin ... with memfd hugetlb (1048576 kB)
-	not ok 162 Longterm R/O pin is reliable
+While at it, centralize the check for mutual exclusion of
+FAULT_FLAG_UNSHARE and FAULT_FLAG_WRITE and just drop the check that
+either flag is set in the WP handler.
 
 Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- tools/testing/selftests/vm/cow.c | 28 +++++++++++++++++++++++++++-
- 1 file changed, 27 insertions(+), 1 deletion(-)
+ mm/huge_memory.c |  3 ---
+ mm/hugetlb.c     |  5 -----
+ mm/memory.c      | 23 ++++++++++++++++++++---
+ 3 files changed, 20 insertions(+), 11 deletions(-)
 
-diff --git a/tools/testing/selftests/vm/cow.c b/tools/testing/selftests/vm/cow.c
-index fb07bd44529c..73e05b52c49e 100644
---- a/tools/testing/selftests/vm/cow.c
-+++ b/tools/testing/selftests/vm/cow.c
-@@ -561,6 +561,7 @@ static void test_iouring_fork(char *mem, size_t size)
- #endif /* LOCAL_CONFIG_HAVE_LIBURING */
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index ed12cd3acbfd..68d00196b519 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1267,9 +1267,6 @@ vm_fault_t do_huge_pmd_wp_page(struct vm_fault *vmf)
+ 	vmf->ptl = pmd_lockptr(vma->vm_mm, vmf->pmd);
+ 	VM_BUG_ON_VMA(!vma->anon_vma, vma);
  
- enum ro_pin_test {
-+	RO_PIN_TEST,
- 	RO_PIN_TEST_SHARED,
- 	RO_PIN_TEST_PREVIOUSLY_SHARED,
- 	RO_PIN_TEST_RO_EXCLUSIVE,
-@@ -593,6 +594,8 @@ static void do_test_ro_pin(char *mem, size_t size, enum ro_pin_test test,
+-	VM_BUG_ON(unshare && (vmf->flags & FAULT_FLAG_WRITE));
+-	VM_BUG_ON(!unshare && !(vmf->flags & FAULT_FLAG_WRITE));
+-
+ 	if (is_huge_zero_pmd(orig_pmd))
+ 		goto fallback;
+ 
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 1de986c62976..383b26069b33 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -5314,9 +5314,6 @@ static vm_fault_t hugetlb_wp(struct mm_struct *mm, struct vm_area_struct *vma,
+ 	unsigned long haddr = address & huge_page_mask(h);
+ 	struct mmu_notifier_range range;
+ 
+-	VM_BUG_ON(unshare && (flags & FOLL_WRITE));
+-	VM_BUG_ON(!unshare && !(flags & FOLL_WRITE));
+-
+ 	/*
+ 	 * hugetlb does not support FOLL_FORCE-style write faults that keep the
+ 	 * PTE mapped R/O such as maybe_mkwrite() would do.
+@@ -5326,8 +5323,6 @@ static vm_fault_t hugetlb_wp(struct mm_struct *mm, struct vm_area_struct *vma,
+ 
+ 	/* Let's take out MAP_SHARED mappings first. */
+ 	if (vma->vm_flags & VM_MAYSHARE) {
+-		if (unlikely(unshare))
+-			return 0;
+ 		set_huge_ptep_writable(vma, haddr, ptep);
+ 		return 0;
  	}
+diff --git a/mm/memory.c b/mm/memory.c
+index 2d453736f87c..e014435a87db 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3344,9 +3344,6 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct folio *folio;
  
- 	switch (test) {
-+	case RO_PIN_TEST:
-+		break;
- 	case RO_PIN_TEST_SHARED:
- 	case RO_PIN_TEST_PREVIOUSLY_SHARED:
- 		/*
-@@ -1193,6 +1196,16 @@ static void test_cow(char *mem, const char *smem, size_t size)
- 	free(old);
+-	VM_BUG_ON(unshare && (vmf->flags & FAULT_FLAG_WRITE));
+-	VM_BUG_ON(!unshare && !(vmf->flags & FAULT_FLAG_WRITE));
+-
+ 	if (likely(!unshare)) {
+ 		if (userfaultfd_pte_wp(vma, *vmf->pte)) {
+ 			pte_unmap_unlock(vmf->pte, vmf->ptl);
+@@ -5161,6 +5158,22 @@ static void lru_gen_exit_fault(void)
  }
+ #endif /* CONFIG_LRU_GEN */
  
-+static void test_ro_pin(char *mem, const char *smem, size_t size)
++static vm_fault_t sanitize_fault_flags(struct vm_area_struct *vma,
++				       unsigned int *flags)
 +{
-+	do_test_ro_pin(mem, size, RO_PIN_TEST, false);
++	if (unlikely(*flags & FAULT_FLAG_UNSHARE)) {
++		if (WARN_ON_ONCE(*flags & FAULT_FLAG_WRITE))
++			return VM_FAULT_SIGSEGV;
++		/*
++		 * FAULT_FLAG_UNSHARE only applies to COW mappings. Let's
++		 * just treat it like an ordinary read-fault otherwise.
++		 */
++		if (!is_cow_mapping(vma->vm_flags))
++			*flags &= ~FAULT_FLAG_UNSHARE;
++	}
++	return 0;
 +}
 +
-+static void test_ro_fast_pin(char *mem, const char *smem, size_t size)
-+{
-+	do_test_ro_pin(mem, size, RO_PIN_TEST, true);
-+}
-+
- static void run_with_zeropage(non_anon_test_fn fn, const char *desc)
- {
- 	char *mem, *smem, tmp;
-@@ -1433,7 +1446,7 @@ struct non_anon_test_case {
- };
- 
  /*
-- * Test cases that target any pages in private mappings that are non anonymous:
-+ * Test cases that target any pages in private mappings that are not anonymous:
-  * pages that may get shared via COW ndependent of fork(). This includes
-  * the shared zeropage(s), pagecache pages, ...
-  */
-@@ -1446,6 +1459,19 @@ static const struct non_anon_test_case non_anon_test_cases[] = {
- 		"Basic COW",
- 		test_cow,
- 	},
-+	/*
-+	 * Take a R/O longterm pin. When modifying the page via the page table,
-+	 * the page content change must be visible via the pin.
-+	 */
-+	{
-+		"R/O longterm GUP pin",
-+		test_ro_pin,
-+	},
-+	/* Same as above, but using GUP-fast. */
-+	{
-+		"R/O longterm GUP-fast pin",
-+		test_ro_fast_pin,
-+	},
- };
+  * By the time we get here, we already hold the mm semaphore
+  *
+@@ -5177,6 +5190,10 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
+ 	count_vm_event(PGFAULT);
+ 	count_memcg_event_mm(vma->vm_mm, PGFAULT);
  
- static void run_non_anon_test_case(struct non_anon_test_case const *test_case)
++	ret = sanitize_fault_flags(vma, &flags);
++	if (ret)
++		return ret;
++
+ 	if (!arch_vma_access_permitted(vma, flags & FAULT_FLAG_WRITE,
+ 					    flags & FAULT_FLAG_INSTRUCTION,
+ 					    flags & FAULT_FLAG_REMOTE))
 -- 
 2.38.1
 
