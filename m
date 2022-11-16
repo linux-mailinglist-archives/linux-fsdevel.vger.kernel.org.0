@@ -2,46 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D6EE462C237
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 16:17:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 75DFD62C23A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 16:17:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234414AbiKPPRx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Nov 2022 10:17:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36612 "EHLO
+        id S233773AbiKPPRz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Nov 2022 10:17:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36640 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233835AbiKPPRk (ORCPT
+        with ESMTP id S233836AbiKPPRk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 16 Nov 2022 10:17:40 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2D1A4E422;
-        Wed, 16 Nov 2022 07:17:38 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B81EF51C03;
+        Wed, 16 Nov 2022 07:17:39 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5C2E5B81DC3;
-        Wed, 16 Nov 2022 15:17:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA57C4347C;
-        Wed, 16 Nov 2022 15:17:35 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 66532B81DC7;
+        Wed, 16 Nov 2022 15:17:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53EA6C433C1;
+        Wed, 16 Nov 2022 15:17:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668611856;
-        bh=ZcWVwR1/kYODme5i6GoYMexE29jNpM2YaaFPdn+Cywc=;
+        s=k20201202; t=1668611857;
+        bh=IWBPFyJfGw10+bVeE4FZLU5ReB6gH3wpytKDa6wKi9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fJ3Vuq+Ctl+m/ZJRd5aS7hKmoK7xQqGGtY14xMamxm3SPj3RtNDQdHKxGvy56Nll6
-         G14gzQbWkIcTKEkicikhWg8W6Kxx0SQnF0UbPUqjcfSRA4tmCm2X2muDOpn45IJUcN
-         CJGrXfa/U/MrTx1VfgLC7b9GqAniav3inXSFQci+lU8gCF2T/UZ1aMivL+tZrFSCbw
-         AMGuPeNFmIPmaa2LrynUxImhJEVpzN654HSZN38tohHF+Fydbj9q/KY4+ey/iw+V/3
-         P7sVGmdNDk5yBRVr/pimN4NIZ+X+cno3C4ckSRsXuT+aEx6gHov252016Ue18fpLys
-         +frDQJsXlgK/w==
+        b=qp2IB2VerS3UiYrnZbhW0RTGCbAxqV4oGtE77lfA2SwEE3xzClX1PiAhYQEm6lmnk
+         0HPhsu1tpuVFcuYFlzkvUlnuXgT/a2RNV6vmEWbwUr2ujamMpSawjKmcnxAzr5A140
+         Yq8/lvQl5X1OOn0CQqgrBUL00v+mvXQKZPjobW/fCSyGSD5+baxlIMTMlZIVG6BfLc
+         teErOgyVerjMWyx8dORZR7VCsyKFs7w7WfdSxOaGiuNCkZSsqWxlroBoqw3xv3qR9X
+         TgzVSxlFhJcB2b3plRS0qGHnotckm1wKvPTWPIDLL13HO5LTSj4CMfqA4vmmCuRfCt
+         dL++2egxxDhsw==
 From:   Jeff Layton <jlayton@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
         linux-cifs@vger.kernel.org, chuck.lever@oracle.com,
-        viro@zeniv.linux.org.uk, hch@lst.de,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>
-Subject: [PATCH 6/7] nfs: use locks_inode_context helper
-Date:   Wed, 16 Nov 2022 10:17:25 -0500
-Message-Id: <20221116151726.129217-7-jlayton@kernel.org>
+        viro@zeniv.linux.org.uk, hch@lst.de
+Subject: [PATCH 7/7] nfsd: use locks_inode_context helper
+Date:   Wed, 16 Nov 2022 10:17:26 -0500
+Message-Id: <20221116151726.129217-8-jlayton@kernel.org>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221116151726.129217-1-jlayton@kernel.org>
 References: <20221116151726.129217-1-jlayton@kernel.org>
@@ -56,81 +54,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-nfs currently doesn't access i_flctx safely. This requires a
+nfsd currently doesn't access i_flctx safely everywhere. This requires a
 smp_load_acquire, as the pointer is set via cmpxchg (a release
 operation).
 
-Cc: Trond Myklebust <trond.myklebust@hammerspace.com>
-Cc: Anna Schumaker <anna@kernel.org>
+Cc: Chuck Lever <chuck.lever@oracle.com>
 Signed-off-by: Jeff Layton <jlayton@kernel.org>
 ---
- fs/nfs/delegation.c | 2 +-
- fs/nfs/nfs4state.c  | 2 +-
- fs/nfs/pagelist.c   | 2 +-
- fs/nfs/write.c      | 4 ++--
- 4 files changed, 5 insertions(+), 5 deletions(-)
+ fs/nfsd/nfs4state.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
-index ead8a0e06abf..cf7365581031 100644
---- a/fs/nfs/delegation.c
-+++ b/fs/nfs/delegation.c
-@@ -146,7 +146,7 @@ static int nfs_delegation_claim_locks(struct nfs4_state *state, const nfs4_state
- {
- 	struct inode *inode = state->inode;
- 	struct file_lock *fl;
--	struct file_lock_context *flctx = inode->i_flctx;
-+	struct file_lock_context *flctx = locks_inode_context(inode);
- 	struct list_head *list;
- 	int status = 0;
+diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+index 836bd825ca4a..da8d0ea66229 100644
+--- a/fs/nfsd/nfs4state.c
++++ b/fs/nfsd/nfs4state.c
+@@ -4758,7 +4758,7 @@ nfs4_share_conflict(struct svc_fh *current_fh, unsigned int deny_type)
  
-diff --git a/fs/nfs/nfs4state.c b/fs/nfs/nfs4state.c
-index a2d2d5d1b088..dd18344648f3 100644
---- a/fs/nfs/nfs4state.c
-+++ b/fs/nfs/nfs4state.c
-@@ -1501,7 +1501,7 @@ static int nfs4_reclaim_locks(struct nfs4_state *state, const struct nfs4_state_
- 	struct file_lock *fl;
- 	struct nfs4_lock_state *lsp;
- 	int status = 0;
--	struct file_lock_context *flctx = inode->i_flctx;
-+	struct file_lock_context *flctx = locks_inode_context(inode);
- 	struct list_head *list;
- 
- 	if (flctx == NULL)
-diff --git a/fs/nfs/pagelist.c b/fs/nfs/pagelist.c
-index 317cedfa52bf..16be6dae524f 100644
---- a/fs/nfs/pagelist.c
-+++ b/fs/nfs/pagelist.c
-@@ -1055,7 +1055,7 @@ static unsigned int nfs_coalesce_size(struct nfs_page *prev,
- 	if (prev) {
- 		if (!nfs_match_open_context(nfs_req_openctx(req), nfs_req_openctx(prev)))
- 			return 0;
--		flctx = d_inode(nfs_req_openctx(req)->dentry)->i_flctx;
-+		flctx = locks_inode_context(d_inode(nfs_req_openctx(req)->dentry));
- 		if (flctx != NULL &&
- 		    !(list_empty_careful(&flctx->flc_posix) &&
- 		      list_empty_careful(&flctx->flc_flock)) &&
-diff --git a/fs/nfs/write.c b/fs/nfs/write.c
-index f41d24b54fd1..80c240e50952 100644
---- a/fs/nfs/write.c
-+++ b/fs/nfs/write.c
-@@ -1185,7 +1185,7 @@ int nfs_flush_incompatible(struct file *file, struct page *page)
+ static bool nfsd4_deleg_present(const struct inode *inode)
  {
- 	struct nfs_open_context *ctx = nfs_file_open_context(file);
- 	struct nfs_lock_context *l_ctx;
--	struct file_lock_context *flctx = file_inode(file)->i_flctx;
-+	struct file_lock_context *flctx = locks_inode_context(file_inode(file));
- 	struct nfs_page	*req;
- 	int do_flush, status;
- 	/*
-@@ -1321,7 +1321,7 @@ static int nfs_can_extend_write(struct file *file, struct page *page,
- 				struct inode *inode, unsigned int pagelen)
- {
- 	int ret;
--	struct file_lock_context *flctx = inode->i_flctx;
-+	struct file_lock_context *flctx = locks_inode_context(inode);
- 	struct file_lock *fl;
+-	struct file_lock_context *ctx = smp_load_acquire(&inode->i_flctx);
++	struct file_lock_context *ctx = locks_inode_context(inode);
  
- 	if (file->f_flags & O_DSYNC)
+ 	return ctx && !list_empty_careful(&ctx->flc_lease);
+ }
+@@ -5897,7 +5897,7 @@ nfs4_lockowner_has_blockers(struct nfs4_lockowner *lo)
+ 
+ 	list_for_each_entry(stp, &lo->lo_owner.so_stateids, st_perstateowner) {
+ 		nf = stp->st_stid.sc_file;
+-		ctx = nf->fi_inode->i_flctx;
++		ctx = locks_inode_context(nf->fi_inode);
+ 		if (!ctx)
+ 			continue;
+ 		if (locks_owner_has_blockers(ctx, lo))
+@@ -7713,7 +7713,7 @@ check_for_locks(struct nfs4_file *fp, struct nfs4_lockowner *lowner)
+ 	}
+ 
+ 	inode = locks_inode(nf->nf_file);
+-	flctx = inode->i_flctx;
++	flctx = locks_inode_context(inode);
+ 
+ 	if (flctx && !list_empty_careful(&flctx->flc_posix)) {
+ 		spin_lock(&flctx->flc_lock);
 -- 
 2.38.1
 
