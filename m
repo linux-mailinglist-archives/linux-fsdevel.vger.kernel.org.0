@@ -2,52 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 061C862B03F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 01:49:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 80E7162B049
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 01:57:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231416AbiKPAtI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Nov 2022 19:49:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37846 "EHLO
+        id S231470AbiKPA5O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Nov 2022 19:57:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40350 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbiKPAtH (ORCPT
+        with ESMTP id S229790AbiKPA5N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Nov 2022 19:49:07 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7093E2F670;
-        Tue, 15 Nov 2022 16:49:02 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 9FAB2CE193B;
-        Wed, 16 Nov 2022 00:49:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4D49C433D6;
-        Wed, 16 Nov 2022 00:48:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668559738;
-        bh=Q+9nGbb/2f9OkofQhs4XcXzKFyx9z8Ubk5ZY2gu4Qyc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XNXioxPtw3jcUY9V2U01HJ2q9+L1D2cDlGirf9NYLwkql1WugiHBHRSpsPyyAyNrm
-         /CDSGQggipD9OhSkFGXAX72yxHRLT+K5fnztPJ5dvJ3M5Bhx3vOrfMtz1RbCFxlHE1
-         ouo7zI7GBIcFbv7yHDoSzhz+oxnHz6uT6x9L4UP3NWEeLGxbycQ90xIIL0TGrdIDaG
-         vebmXYwVF7FWaW7C1tT6j2naPtEsk2jh+6+UEzk4kqZDsM12HPXx6Sk41Si/n1KBb7
-         /wmBBf5MNgXkT/CXleGLo44P9MBn8lg9kClXkeUGthvNFvVzdKoP6QgWoDDHiJxOOI
-         bgmlmuwDyu6Nw==
-Date:   Tue, 15 Nov 2022 16:48:58 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 5/9] xfs: buffered write failure should not truncate the
- page cache
-Message-ID: <Y3QzepGAH+kvgDFE@magnolia>
-References: <20221115013043.360610-1-david@fromorbit.com>
- <20221115013043.360610-6-david@fromorbit.com>
+        Tue, 15 Nov 2022 19:57:13 -0500
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74C992FFED;
+        Tue, 15 Nov 2022 16:57:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=From:Cc:To:Date:Message-ID;
+        bh=h6LDOkE4F3jh6WWfsdhzELVK6aXoBJDVXJXXM0KDKpM=; b=UPHhsJznUb0Eh/YazapU8tbety
+        ncVk9mYqt1t4xtQkgxCb8iKYtGFc8PTq/F6dCpZ9TjiF8LqV4fdgmcTkwm2Fo9GruzH8gYgVvACuG
+        Z9a/8rPTsNM4bRw3wi3QmkuYvrXUVy0Bp7upjl/CHD4ftyoN3h8tcln1wAMHITdjtPkM2oUEQombN
+        BVpsaA+k/qXG9i1JRGMQutXq+LvKogqoV8KdMlmnA8bke+Y/Dg4vxRHHwzjhk32ezRwCgVE1qK5I9
+        anaA/e/1yKVghoIubHWWvuxhec++wFp6eUenpI5qozguZsrN15uW/XzXAFo+Vc3UG3wlCoO/M0J40
+        cAnnkzULUsrW10bBxuHBGxjC7BsemmT71hW8M6qP4mtCe2KR2C/QmdYLvMdun3Dtf1+Bnt8IS589Y
+        4NLNB5zQAIFlTTTPGHsNy7i792kaXewveMcTiCBxxJ6NK3tB2mlVpTflJmItHwC1RN/Z8doIL4p8v
+        UElYd8/7gQAHxuQxkQHJlJLP;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1ov6jl-008mxT-Hh; Wed, 16 Nov 2022 00:57:09 +0000
+Message-ID: <3609b064-175c-fc18-cd1a-e177d0349c58@samba.org>
+Date:   Wed, 16 Nov 2022 01:57:09 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221115013043.360610-6-david@fromorbit.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH] cifs: Fix problem with encrypted RDMA data read
+Content-Language: en-US, de-DE
+To:     David Howells <dhowells@redhat.com>, smfrench@gmail.com,
+        tom@talpey.com
+Cc:     Long Li <longli@microsoft.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        linux-cifs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <166855224228.1998592.2212551359609792175.stgit@warthog.procyon.org.uk>
+From:   Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <166855224228.1998592.2212551359609792175.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,262 +56,95 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 15, 2022 at 12:30:39PM +1100, Dave Chinner wrote:
-> From: Dave Chinner <dchinner@redhat.com>
+Hi David,
+
+see below...
+
+> When the cifs client is talking to the ksmbd server by RDMA and the ksmbd
+> server has "smb3 encryption = yes" in its config file, the normal PDU
+> stream is encrypted, but the directly-delivered data isn't in the stream
+> (and isn't encrypted), but is rather delivered by DDP/RDMA packets (at
+> least with IWarp).
 > 
-> xfs_buffered_write_iomap_end() currently invalidates the page cache
-> over the unused range of the delalloc extent it allocated. While the
-> write allocated the delalloc extent, it does not own it exclusively
-> as the write does not hold any locks that prevent either writeback
-> or mmap page faults from changing the state of either the page cache
-> or the extent state backing this range.
+> Currently, the direct delivery fails with:
 > 
-> Whilst xfs_bmap_punch_delalloc_range() already handles races in
-> extent conversion - it will only punch out delalloc extents and it
-> ignores any other type of extent - the page cache truncate does not
-> discriminate between data written by this write or some other task.
-> As a result, truncating the page cache can result in data corruption
-> if the write races with mmap modifications to the file over the same
-> range.
+>     buf can not contain only a part of read data
+>     WARNING: CPU: 0 PID: 4619 at fs/cifs/smb2ops.c:4731 handle_read_data+0x393/0x405
+>     ...
+>     RIP: 0010:handle_read_data+0x393/0x405
+>     ...
+>      smb3_handle_read_data+0x30/0x37
+>      receive_encrypted_standard+0x141/0x224
+>      cifs_demultiplex_thread+0x21a/0x63b
+>      kthread+0xe7/0xef
+>      ret_from_fork+0x22/0x30
 > 
-> generic/346 exercises this workload, and if we randomly fail writes
-> (as will happen when iomap gets stale iomap detection later in the
-> patchset), it will randomly corrupt the file data because it removes
-> data written by mmap() in the same page as the write() that failed.
+> The problem apparently stemming from the fact that it's trying to manage
+> the decryption, but the data isn't in the smallbuf, the bigbuf or the page
+> array).
 > 
-> Hence we do not want to punch out the page cache over the range of
-> the extent we failed to write to - what we actually need to do is
-> detect the ranges that have dirty data in cache over them and *not
-> punch them out*.
+> This can be fixed simply by inserting an extra case into handle_read_data()
+> that checks to see if use_rdma_mr is true, and if it is, just setting
+> rdata->got_bytes to the length of data delivered and allowing normal
+> continuation.
 > 
-> TO do this, we have to walk the page cache over the range of the
-> delalloc extent we want to remove. This is made complex by the fact
-> we have to handle partially up-to-date folios correctly and this can
-> happen even when the FSB size == PAGE_SIZE because we now support
-> multi-page folios in the page cache.
+> This can be seen in an IWarp packet trace.  With the upstream code, it does
+> a DDP/RDMA packet, which produces the warning above and then retries,
+> retrieving the data inline, spread across several SMBDirect messages that
+> get glued together into a single PDU.  With the patch applied, only the
+> DDP/RDMA packet is seen.
 > 
-> Because we are only interested in discovering the edges of data
-> ranges in the page cache (i.e. hole-data boundaries) we can make use
-> of mapping_seek_hole_data() to find those transitions in the page
-> cache. As we hold the invalidate_lock, we know that the boundaries
-> are not going to change while we walk the range. This interface is
-> also byte-based and is sub-page block aware, so we can find the data
-> ranges in the cache based on byte offsets rather than page, folio or
-> fs block sized chunks. This greatly simplifies the logic of finding
-> dirty cached ranges in the page cache.
+> Note that this doesn't happen if the server isn't told to encrypt stuff and
+> it does also happen with softRoCE.
 > 
-> Once we've identified a range that contains cached data, we can then
-> iterate the range folio by folio. This allows us to determine if the
-> data is dirty and hence perform the correct delalloc extent punching
-> operations. The seek interface we use to iterate data ranges will
-> give us sub-folio start/end granularity, so we may end up looking up
-> the same folio multiple times as the seek interface iterates across
-> each discontiguous data region in the folio.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Steve French <smfrench@gmail.com>
+> cc: Tom Talpey <tom@talpey.com>
+> cc: Long Li <longli@microsoft.com>
+> cc: Namjae Jeon <linkinjeon@kernel.org>
+> cc: Stefan Metzmacher <metze@samba.org>
+> cc: linux-cifs@vger.kernel.org
 > ---
->  fs/xfs/xfs_iomap.c | 151 ++++++++++++++++++++++++++++++++++++++++++---
->  1 file changed, 141 insertions(+), 10 deletions(-)
 > 
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 7bb55dbc19d3..2d48fcc7bd6f 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -1134,6 +1134,146 @@ xfs_buffered_write_delalloc_punch(
->  				end_fsb - start_fsb);
->  }
->  
-> +/*
-> + * Scan the data range passed to us for dirty page cache folios. If we find a
-> + * dirty folio, punch out the preceeding range and update the offset from which
-> + * the next punch will start from.
-> + *
-> + * We can punch out clean pages because they either contain data that has been
-> + * written back - in which case the delalloc punch over that range is a no-op -
-> + * or they have been read faults in which case they contain zeroes and we can
-> + * remove the delalloc backing range and any new writes to those pages will do
-> + * the normal hole filling operation...
-> + *
-> + * This makes the logic simple: we only need to keep the delalloc extents only
-> + * over the dirty ranges of the page cache.
-> + */
-> +static int
-> +xfs_buffered_write_delalloc_scan(
-> +	struct inode		*inode,
-> +	loff_t			*punch_start_byte,
-> +	loff_t			start_byte,
-> +	loff_t			end_byte)
-> +{
-> +	loff_t			offset = start_byte;
-> +
-> +	while (offset < end_byte) {
-> +		struct folio	*folio;
-> +
-> +		/* grab locked page */
-> +		folio = filemap_lock_folio(inode->i_mapping, offset >> PAGE_SHIFT);
-> +		if (!folio) {
-> +			offset = ALIGN_DOWN(offset, PAGE_SIZE) + PAGE_SIZE;
-> +			continue;
-> +		}
-> +
-> +		/* if dirty, punch up to offset */
-> +		if (folio_test_dirty(folio)) {
-> +			if (offset > *punch_start_byte) {
-> +				int	error;
-> +
-> +				error = xfs_buffered_write_delalloc_punch(inode,
-> +						*punch_start_byte, offset);
-
-This sounds an awful lot like what iomap_writeback_ops.discard_folio()
-does, albeit without the xfs_alert screaming everywhere.
-
-Moving along... so we punch out delalloc reservations for any part of
-the page cache that is clean.  "punch_start_byte" is the start pos of
-the last range of clean cache, and we want to punch up to the start of
-this dirty folio...
-
-> +				if (error) {
-> +					folio_unlock(folio);
-> +					folio_put(folio);
-> +					return error;
-> +				}
-> +			}
-> +
-> +			/*
-> +			 * Make sure the next punch start is correctly bound to
-> +			 * the end of this data range, not the end of the folio.
-> +			 */
-> +			*punch_start_byte = min_t(loff_t, end_byte,
-> +					folio_next_index(folio) << PAGE_SHIFT);
-
-...and then start a new clean range after this folio (or at the end_byte
-to signal that we're done)...
-
-> +		}
-> +
-> +		/* move offset to start of next folio in range */
-> +		offset = folio_next_index(folio) << PAGE_SHIFT;
-> +		folio_unlock(folio);
-> +		folio_put(folio);
-> +	}
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Punch out all the delalloc blocks in the range given except for those that
-> + * have dirty data still pending in the page cache - those are going to be
-> + * written and so must still retain the delalloc backing for writeback.
-> + *
-> + * As we are scanning the page cache for data, we don't need to reimplement the
-> + * wheel - mapping_seek_hole_data() does exactly what we need to identify the
-> + * start and end of data ranges correctly even for sub-folio block sizes. This
-> + * byte range based iteration is especially convenient because it means we don't
-> + * have to care about variable size folios, nor where the start or end of the
-> + * data range lies within a folio, if they lie within the same folio or even if
-> + * there are multiple discontiguous data ranges within the folio.
-> + */
-> +static int
-> +xfs_buffered_write_delalloc_release(
-> +	struct inode		*inode,
-> +	loff_t			start_byte,
-> +	loff_t			end_byte)
-> +{
-> +	loff_t			punch_start_byte = start_byte;
-> +	int			error = 0;
-> +
-> +	/*
-> +	 * Lock the mapping to avoid races with page faults re-instantiating
-> +	 * folios and dirtying them via ->page_mkwrite whilst we walk the
-> +	 * cache and perform delalloc extent removal. Failing to do this can
-> +	 * leave dirty pages with no space reservation in the cache.
-> +	 */
-> +	filemap_invalidate_lock(inode->i_mapping);
-> +	while (start_byte < end_byte) {
-> +		loff_t		data_end;
-> +
-> +		start_byte = mapping_seek_hole_data(inode->i_mapping,
-> +				start_byte, end_byte, SEEK_DATA);
-> +		/*
-> +		 * If there is no more data to scan, all that is left is to
-> +		 * punch out the remaining range.
-> +		 */
-> +		if (start_byte == -ENXIO || start_byte == end_byte)
-> +			break;
-> +		if (start_byte < 0) {
-> +			error = start_byte;
-> +			goto out_unlock;
-> +		}
-> +		ASSERT(start_byte >= punch_start_byte);
-> +		ASSERT(start_byte < end_byte);
-> +
-> +		/*
-> +		 * We find the end of this contiguous cached data range by
-> +		 * seeking from start_byte to the beginning of the next hole.
-> +		 */
-> +		data_end = mapping_seek_hole_data(inode->i_mapping, start_byte,
-> +				end_byte, SEEK_HOLE);
-> +		if (data_end < 0) {
-> +			error = data_end;
-> +			goto out_unlock;
-> +		}
-> +		ASSERT(data_end > start_byte);
-> +		ASSERT(data_end <= end_byte);
-> +
-> +		error = xfs_buffered_write_delalloc_scan(inode,
-> +				&punch_start_byte, start_byte, data_end);
-
-...and we use SEEK_HOLE/SEEK_DATA to find the ranges of pagecache where
-there's even going to be folios mapped.  But in structuring the code
-like this, xfs now has to know details about folio state again, and the
-point of iomap/buffered-io.c is to delegate handling of the pagecache
-away from XFS, at least for filesystems that want to manage buffered IO
-the same way XFS does.
-
-IOWs, I agree with Christoph that these two functions that compute the
-ranges that need delalloc-punching really ought to be in the iomap code.
-TBH I wonder if this isn't better suited for being called by
-iomap_write_iter after a short write on an IOMAP_F_NEW iomap, with an
-function pointer in iomap page_ops for iomap to tell xfs to drop the
-delalloc reservations.
-
---D
-
-> +		if (error)
-> +			goto out_unlock;
-> +
-> +		/* The next data search starts at the end of this one. */
-> +		start_byte = data_end;
-> +	}
-> +
-> +	if (punch_start_byte <1 end_byte)
-> +		error = xfs_buffered_write_delalloc_punch(inode,
-> +				punch_start_byte, end_byte);
-> +out_unlock:
-> +	filemap_invalidate_unlock(inode->i_mapping);
-> +	return error;
-> +}
-> +
->  static int
->  xfs_buffered_write_iomap_end(
->  	struct inode		*inode,
-> @@ -1179,16 +1319,7 @@ xfs_buffered_write_iomap_end(
->  	if (start_byte >= end_byte)
->  		return 0;
->  
-> -	/*
-> -	 * Lock the mapping to avoid races with page faults re-instantiating
-> -	 * folios and dirtying them via ->page_mkwrite between the page cache
-> -	 * truncation and the delalloc extent removal. Failing to do this can
-> -	 * leave dirty pages with no space reservation in the cache.
-> -	 */
-> -	filemap_invalidate_lock(inode->i_mapping);
-> -	truncate_pagecache_range(inode, start_byte, end_byte - 1);
-> -	error = xfs_buffered_write_delalloc_punch(inode, start_byte, end_byte);
-> -	filemap_invalidate_unlock(inode->i_mapping);
-> +	error = xfs_buffered_write_delalloc_release(inode, start_byte, end_byte);
->  	if (error && !xfs_is_shutdown(mp)) {
->  		xfs_alert(mp, "%s: unable to clean up ino 0x%llx",
->  			__func__, XFS_I(inode)->i_ino);
-> -- 
-> 2.37.2
+>   fs/cifs/smb2ops.c |    3 +++
+>   1 file changed, 3 insertions(+)
 > 
+> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
+> index 880cd494afea..8d459f60f27b 100644
+> --- a/fs/cifs/smb2ops.c
+> +++ b/fs/cifs/smb2ops.c
+> @@ -4726,6 +4726,9 @@ handle_read_data(struct TCP_Server_Info *server, struct mid_q_entry *mid,
+>   		iov.iov_base = buf + data_offset;
+>   		iov.iov_len = data_len;
+>   		iov_iter_kvec(&iter, WRITE, &iov, 1, data_len);
+> +	} else if (use_rdma_mr) {
+> +		/* The data was delivered directly by RDMA. */
+> +		rdata->got_bytes = data_len;
+>   	} else {
+>   		/* read response payload cannot be in both buf and pages */
+>   		WARN_ONCE(1, "buf can not contain only a part of read data");
+
+I'm not sure I understand why this would fix anything when encryption is enabled.
+
+Is the payload still be offloaded as plaintext? Otherwise we wouldn't have use_rdma_mr...
+So this rather looks like a fix for the non encrypted case.
+
+Before smbd_register_mr() is called we typically have a check like this:
+
+       if (server->rdma && !server->sign && wdata->bytes >=
+               server->smbd_conn->rdma_readwrite_threshold) {
+
+I'm wondering if server->sign is true for the encryption case, otherwise
+we would have to add a !encrypt check in addition as we should never use
+RDMA offload for encrypted connections.
+
+Latest Windows servers allow encrypted/signed offload, but that needs to be
+negotiated via MS-SMB2 2.2.3.1.6 SMB2_RDMA_TRANSFORM_CAPABILITIES, see
+https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/52b74a74-9838-4f51-b2b0-efeb23bd79d6
+And SMB2_READFLAG_RESPONSE_RDMA_TRANSFORM in MS-SMB2 2.2.20 SMB2 READ Response
+https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/3e3d2f2c-0e2f-41ea-ad07-fbca6ffdfd90
+As well as SMB2_CHANNEL_RDMA_TRANSFORM in 2.2.21 SMB2 WRITE Request
+https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-smb2/e7046961-3318-4350-be2a-a8d69bb59ce8
+But none of this is implemented in Linux yet.
+
+metze
