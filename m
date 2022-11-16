@@ -2,221 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7145562C94B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 20:54:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E11BF62CB55
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 21:46:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234286AbiKPTyB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Nov 2022 14:54:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57438 "EHLO
+        id S233861AbiKPUqD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Nov 2022 15:46:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234171AbiKPTx7 (ORCPT
+        with ESMTP id S231221AbiKPUqC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Nov 2022 14:53:59 -0500
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D3554D5D0;
-        Wed, 16 Nov 2022 11:53:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=From:Cc:To:Date:Message-ID;
-        bh=TjCEQduvV3qlgfdvGJChJMqfGyuHBAcSN2ga7Qqs8sI=; b=Hh1RE6bmB14PIhSO2YSajYYh8n
-        d42QED86QFeRSLVLNhx+RFcRv/ANDM5ZnB5yZ7IjuO8Mga0DJISWnToGCVN8lMt1BbQTyPd7qN5fq
-        9O2D7wF3QbORexxGwyts7dfOrpVHRpCx6uAyUZP3Ckty4HYElY+5v6ZG+PVMyfI9vSqyzC5oKmiqL
-        knSB3xGQlmDZSGPglErT9vUoV7P0Ez/WvcpKyolgFx0560h5yBm8EAxzh2BikPNoxJkoaVUDG6/0c
-        bb38GbRXuXE2TyNHxiGJovrwLRLiEV7ILorlDHxg65s9NNcgFIJdJo1Hpgs0es4hN4QX8z0gSi6Ti
-        wYIzKVuhH7TnMPlfg62RxUeQz30RVkxLT+XywxqvTxI8JF+BklGvVizEBQ9PyDbFjAjlBzqAF1sV1
-        Q7DxKHmoPEzPn1i9ITF2VvbEFlhBRL3xBuBB5EqVCEZmkNQioBsliosZZBBEVghT+zuUN+NEi6JSn
-        zejElgI+rh/3p1Py7ksYgH5a;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1ovOTr-008wem-75; Wed, 16 Nov 2022 19:53:55 +0000
-Message-ID: <3fd0217b-dfcf-05b7-dd24-4ad69f25a813@samba.org>
-Date:   Wed, 16 Nov 2022 20:53:54 +0100
+        Wed, 16 Nov 2022 15:46:02 -0500
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2077.outbound.protection.outlook.com [40.107.94.77])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC6CA1CFE6;
+        Wed, 16 Nov 2022 12:45:58 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Ohrbm9vmK640FhYnF/RPQufgQboEgBjILIgbk0iMhEWxvoLANF4Qsuuu4LpEMZsQN6angQ7d8QWpRwfInXP6NgbhiwFRQZXFptHsuRqKFM/9/RNsAn0lhQY5DCMBxsUfbleuWZ3ln54cuHcS0yfsjJlhAxL/t5wQskT7Pwoqs/9/f/4U9pGLBS/qQqRF8HynDN4MlQKVV9YbzEaZlaA1z5qypmLGb2jM9E+jaVVSWUbD5hn/PhM4YZBLUDtuG1/7kb1VA4bq0qBWuqZWLsb2qOZKrLo4Su2+6bJhJ/1mWgX7JcNCVg6j5O9LJaV3GS+8F8Jokkhc04xnXkBkwHJ3aw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CrjtNxLTW3jPW5PQgpeE33v+g8UUrFILnLj40R33c0c=;
+ b=DS5EdhW7BsuY87cH73Z55Gd5htmhh45lqPIJZVt0hNJESyL1TA8nAn8Pii6IpkvpmOTd0Zeti1sd7/TLyzIXjsbJUiPfK3jRnBkrroB362P1Na4yEebmngW5CCVlFj6uIlT/vy5AjiETBlKG/nysoO6YTWTKywDbw8PlEaDpSa4ZX+qcEnt7e+/xynJ/EPEXagH7lABwERLPJRPTmUEwNrbJCh6olJa90JpPFQXJpwyMuVP1ZE+J2lSDwEx60DHzdkAFD/nAC3E6w7npOTsnskidUMdZDik6Ao+gEtfd5flhtwQOObx/MsaNE3Ozl0ywK5Tm4yi28chLK3ASDLQ3Xg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=bytedance.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CrjtNxLTW3jPW5PQgpeE33v+g8UUrFILnLj40R33c0c=;
+ b=sorwRJA+fnoF1h2hKUyvzeqB9FamP+caDp9en3yh8hqxDr089/p9DajWCGOLqmUu8FkGyaMV1v7bwqNfqOexVn0d8+Lx0x26raOunTj9G0djqsGf5mX/zVHHDFPIdUWx4ZqhFnSNWbEslO5K+MRThihWXzSB+aG+LFGoTej9tq/MxDzqcfxtY5UpcHBfWdCBUxxYZc6az78Md/AMrq/ad/LH6mQXwAosSFFxNmZ3lW62rS64MsqNxgHEtIaUmELDZFg9KS4ET0CVTwk/mXQSLG5qPME9zSKjN5aHbvFxwBhD9Y5S7qtAgn5zheJuGpU6s/dmHxohT5UCO113PfAkHg==
+Received: from MW4PR04CA0174.namprd04.prod.outlook.com (2603:10b6:303:85::29)
+ by MN0PR12MB6198.namprd12.prod.outlook.com (2603:10b6:208:3c5::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.18; Wed, 16 Nov
+ 2022 20:45:57 +0000
+Received: from CO1NAM11FT064.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:85:cafe::e0) by MW4PR04CA0174.outlook.office365.com
+ (2603:10b6:303:85::29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.18 via Frontend
+ Transport; Wed, 16 Nov 2022 20:45:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ CO1NAM11FT064.mail.protection.outlook.com (10.13.175.77) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5834.8 via Frontend Transport; Wed, 16 Nov 2022 20:45:56 +0000
+Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 16 Nov
+ 2022 12:45:44 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
+ (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Wed, 16 Nov
+ 2022 12:45:43 -0800
+Received: from blueforge.nvidia.com (10.127.8.13) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server id 15.2.986.36 via Frontend
+ Transport; Wed, 16 Nov 2022 12:45:43 -0800
+From:   John Hubbard <jhubbard@nvidia.com>
+To:     <ligang.bdlg@bytedance.com>
+CC:     <linux-api@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+        Daniel Bristot de Oliveira <bristot@redhat.com>,
+        "Valentin Schneider" <vschneid@redhat.com>,
+        <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v5 0/2] sched/numa: add per-process numa_balancing
+Date:   Wed, 16 Nov 2022 12:45:40 -0800
+Message-ID: <20221116204540.163222-1-jhubbard@nvidia.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20221027025302.45766-1-ligang.bdlg@bytedance.com>
+References: <20221027025302.45766-1-ligang.bdlg@bytedance.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH] cifs: Fix problem with encrypted RDMA data read
-Content-Language: en-US, de-DE
-To:     Tom Talpey <tom@talpey.com>, Namjae Jeon <linkinjeon@kernel.org>
-Cc:     David Howells <dhowells@redhat.com>, smfrench@gmail.com,
-        Long Li <longli@microsoft.com>, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <166855224228.1998592.2212551359609792175.stgit@warthog.procyon.org.uk>
- <3609b064-175c-fc18-cd1a-e177d0349c58@samba.org>
- <CAKYAXd-Eym2D+92Vh=W=-LLVZ+WLVuvLZxqjJiUGZSykBpQdkg@mail.gmail.com>
- <c4f8959b-15c5-b32f-18fc-8befb4f75da2@samba.org>
- <4b94b915-e3cb-01a7-92be-70d291f67f4a@talpey.com>
- <47cd5c51-4b6c-c462-179e-7276c851253b@samba.org>
- <423b4372-2149-6576-ed9e-795ccdece05e@talpey.com>
-From:   Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <423b4372-2149-6576-ed9e-795ccdece05e@talpey.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+X-NVConfidentiality: public
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT064:EE_|MN0PR12MB6198:EE_
+X-MS-Office365-Filtering-Correlation-Id: ea886a98-c424-4683-9720-08dac8138fa8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: 7j4CmThscefgrqEUCiwuylGOwQijgZS4guH8U3tudT4MW2t/pJuhbhxj/AhJpTAUL83upyFY8BpJ9ANoRodaPkjEE9zzcL3Gnj74gZpK4VTD98tR8mrFTz5VSiIvKxWiOHzdXkzsZHgqybj4wMnlDY5q4k+fb1SvocYfUohTwgPNaZXLJx/hgujRXX4Z5Zjv+xkfDXAGFSP7XBcQpWdBU0c5d6EgzfOdwRs/retwPPxSkpbsjHz8qt4Tbixs8wtN66T7V4Cle+2N4XnvMVA/KXX/DvXNdMdy1TPWMfIgraZocsoQQrLtSuEEStvso+mPAYoGvmSkwXWsDTJKgiMcB8pvzSaNEm/B2Mk+9FYf9RnKMnxtk0adecfbUa333P1EnZsJG5rIsYuKF3QBbfh6w1BjfmJCKuRKt7cEpHRSp2E2reC9W5Y2Scr50CCsFT7NlsLVcxxRDg5yxje+nHvLW6e6T3tnaugZbb29hlvmGdG6ypjPQGOB4pEKZ6Z95/f7/X1X9s3s1QBj6kGlEfSNQTafKlFI7Qz48pIpi/wyGDPWxpgSOZlrHUb6zRj9qFC+bBxwzGPuVOTSOP3+z9a+axAYlsQwbu4271Xmp3Wvvg9sRxwz3hs3PAnEzAhPvabeR6R9hh/a4ZN1RqU3MAgMUA0LvoDVLGksUsyq5MC8dyI6+bwFAcBtkfAQM6ZMMe5Q7Vo0WAjRxjL8US+SH7ohDouXHwnPHE9+seBCoykrL+dpcdZ+F8McyhofYWd9mhqSjB5xNSO3slOL6SW7f/JFwSJv744CXTvEhWdWVkpVK7JYRySi93FlRXIXzFg55/082+6+t/Fm3x4WTthhFxOquUgXFct8hqvMtn9RzWnNvG9ZlrxLoqqbPWUq6D7WTAif2MQ4YuhR96WTSN8JQKbmuA==
+X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(346002)(39860400002)(396003)(136003)(376002)(451199015)(46966006)(40470700004)(36840700001)(356005)(40460700003)(54906003)(426003)(36756003)(6916009)(7416002)(40480700001)(26005)(83380400001)(2906002)(41300700001)(4744005)(47076005)(336012)(82740400003)(7636003)(86362001)(478600001)(8936002)(2616005)(1076003)(316002)(36860700001)(70586007)(70206006)(82310400005)(5660300002)(4326008)(7696005)(8676002)(186003)(966005);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2022 20:45:56.5533
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ea886a98-c424-4683-9720-08dac8138fa8
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT064.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6198
+X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am 16.11.22 um 17:14 schrieb Tom Talpey:
-> On 11/16/2022 10:44 AM, Stefan Metzmacher wrote:
->> Am 16.11.22 um 16:41 schrieb Tom Talpey:
->>> On 11/16/2022 3:36 AM, Stefan Metzmacher wrote:
->>>> Am 16.11.22 um 06:19 schrieb Namjae Jeon:
->>>>> 2022-11-16 9:57 GMT+09:00, Stefan Metzmacher <metze@samba.org>:
->>>>>> Hi David,
->>>>>>
->>>>>> see below...
->>>>>>
->>>>>>> When the cifs client is talking to the ksmbd server by RDMA and the ksmbd
->>>>>>> server has "smb3 encryption = yes" in its config file, the normal PDU
->>>>>>> stream is encrypted, but the directly-delivered data isn't in the stream
->>>>>>> (and isn't encrypted), but is rather delivered by DDP/RDMA packets (at
->>>>>>> least with IWarp).
->>>>>>>
->>>>>>> Currently, the direct delivery fails with:
->>>>>>>
->>>>>>>      buf can not contain only a part of read data
->>>>>>>      WARNING: CPU: 0 PID: 4619 at fs/cifs/smb2ops.c:4731
->>>>>>> handle_read_data+0x393/0x405
->>>>>>>      ...
->>>>>>>      RIP: 0010:handle_read_data+0x393/0x405
->>>>>>>      ...
->>>>>>>       smb3_handle_read_data+0x30/0x37
->>>>>>>       receive_encrypted_standard+0x141/0x224
->>>>>>>       cifs_demultiplex_thread+0x21a/0x63b
->>>>>>>       kthread+0xe7/0xef
->>>>>>>       ret_from_fork+0x22/0x30
->>>>>>>
->>>>>>> The problem apparently stemming from the fact that it's trying to manage
->>>>>>> the decryption, but the data isn't in the smallbuf, the bigbuf or the
->>>>>>> page
->>>>>>> array).
->>>>>>>
->>>>>>> This can be fixed simply by inserting an extra case into
->>>>>>> handle_read_data()
->>>>>>> that checks to see if use_rdma_mr is true, and if it is, just setting
->>>>>>> rdata->got_bytes to the length of data delivered and allowing normal
->>>>>>> continuation.
->>>>>>>
->>>>>>> This can be seen in an IWarp packet trace.  With the upstream code, it
->>>>>>> does
->>>>>>> a DDP/RDMA packet, which produces the warning above and then retries,
->>>>>>> retrieving the data inline, spread across several SMBDirect messages that
->>>>>>> get glued together into a single PDU.  With the patch applied, only the
->>>>>>> DDP/RDMA packet is seen.
->>>>>>>
->>>>>>> Note that this doesn't happen if the server isn't told to encrypt stuff
->>>>>>> and
->>>>>>> it does also happen with softRoCE.
->>>>>>>
->>>>>>> Signed-off-by: David Howells <dhowells@redhat.com>
->>>>>>> cc: Steve French <smfrench@gmail.com>
->>>>>>> cc: Tom Talpey <tom@talpey.com>
->>>>>>> cc: Long Li <longli@microsoft.com>
->>>>>>> cc: Namjae Jeon <linkinjeon@kernel.org>
->>>>>>> cc: Stefan Metzmacher <metze@samba.org>
->>>>>>> cc: linux-cifs@vger.kernel.org
->>>>>>> ---
->>>>>>>
->>>>>>>    fs/cifs/smb2ops.c |    3 +++
->>>>>>>    1 file changed, 3 insertions(+)
->>>>>>>
->>>>>>> diff --git a/fs/cifs/smb2ops.c b/fs/cifs/smb2ops.c
->>>>>>> index 880cd494afea..8d459f60f27b 100644
->>>>>>> --- a/fs/cifs/smb2ops.c
->>>>>>> +++ b/fs/cifs/smb2ops.c
->>>>>>> @@ -4726,6 +4726,9 @@ handle_read_data(struct TCP_Server_Info *server,
->>>>>>> struct mid_q_entry *mid,
->>>>>>>            iov.iov_base = buf + data_offset;
->>>>>>>            iov.iov_len = data_len;
->>>>>>>            iov_iter_kvec(&iter, WRITE, &iov, 1, data_len);
->>>>>>> +    } else if (use_rdma_mr) {
->>>>>>> +        /* The data was delivered directly by RDMA. */
->>>>>>> +        rdata->got_bytes = data_len;
->>>>>>>        } else {
->>>>>>>            /* read response payload cannot be in both buf and pages */
->>>>>>>            WARN_ONCE(1, "buf can not contain only a part of read data");
->>>>>>
->>>>>> I'm not sure I understand why this would fix anything when encryption is
->>>>>> enabled.
->>>>>>
->>>>>> Is the payload still be offloaded as plaintext? Otherwise we wouldn't have
->>>>>> use_rdma_mr...
->>>>>> So this rather looks like a fix for the non encrypted case.
->>>>> ksmbd doesn't encrypt RDMA payload on read/write operation, Currently
->>>>> only smb2 response is encrypted for this. And as you pointed out, We
->>>>> need to implement SMB2 RDMA Transform to encrypt it.
->>>>
->>>> I haven't tested against a windows server yet, but my hope would be that
->>>> and encrypted request with SMB2_CHANNEL_RDMA_V1* receive NT_STATUS_ACCESS_DENIED or something similar...
->>>>
->>>> Is someone able to check that against Windows?
->>>
->>> It's not going to fail, because it's perfectly legal per the protocol.
->>> And the new SMB3 extension to perform pre-encryption of RDMA payload
->>> is not a solution, because it's only supported by one server (Windows
->>> 22H2) and in any case it does not alter the transfer model. The client
->>> will see the same two-part response (headers in the inline portion,
->>> data via RDMA), so this same code will be entered when processing it.
->>>
->>> I think David's change is on the right track because it actually
->>> processes the response. I'm a little bit skeptical of the got_bytes
->>> override however, still digging into that.
->>>
->>>> But the core of it is a client security problem, shown in David's capture in frame 100.
->>>
->>> Sorry, what's the security problem? Both the client and server appear
->>> to be implementing the protocol itself correctly.
->>
->> Data goes in plaintext over the wire and a share that requires encryption!
-> 
-> That's a server issue, not the client. The server is the one that
-> returned the plaintext data via RDMA. Changing the client to avoid
-> such a request doesn't close that hole. It's an important policy
-> question, of course.
+Hi Gang Li,
 
-No, it's the client how decides to use SMB2_CHANNEL_RDMA_V1* or
-SMB2_CHANNEL_NONE. And for any read or write over an signed or encrypted connection
-it must use SMB2_CHANNEL_NONE! Otherwise the clients memory can be written or read
-by any untrusted machine in the middle.
+If you want this to move forward, you'll likely need to include the
+original To: and Cc: people. And also, any new ones who responded with
+review comments. I've added here, those that I found in your v4 series
+[1].
 
-MS-SMB2 says this:
+The message that I'm replying to appears to only be sent to a couple of
+generic lists, and so it's going to be invisible to most of those
+people.
 
-3.2.4.6 Application Requests Reading from a File or Named Pipe
-...
-If the Connection is established in RDMA mode and the size of any single operation exceeds an
-implementation-specific threshold <138>, and if Open.TreeConnect.Session.SigningRequired and
-Open.TreeConnect.Session.EncryptData are both FALSE, then the interface in [MS-SMBD] section
-3.1.4.3 Register Buffer MUST be used to register the buffer provided by the calling application on the
-Connection with write permissions, which will receive the data to be read. The returned list of
-SMB_DIRECT_BUFFER_DESCRIPTOR_V1 structures MUST be stored in
-Request.BufferDescriptorList. The following fields of the request MUST be initialized as follows:
-...
+Also, I already acked this series separately [2], before I saw the
+missing Cc's.
 
-3.2.4.7 Application Requests Writing to a File or Named Pipe
-...
-If the connection is not established in RDMA mode or if the size of the operation is less than or equal
-to an implementation-specific threshold <141>or if either
-Open.TreeConnect.Session.SigningRequired or Open.TreeConnect.Session.EncryptData is
-TRUE, the following fields of the request MUST be initialized as follows:
-- If Connection.Dialect belongs to the SMB 3.x dialect family,
-   - The Channel field MUST be set to SMB2_CHANNEL_NONE.
-   - The WriteChannelInfoOffset field MUST be set to 0.
-   - The WriteChannelInfoLength field MUST be set to 0.
+[1] https://lore.kernel.org/all/20220929064359.46932-1-ligang.bdlg@bytedance.com/
 
-For sure it would be great if servers would also reject SMB2_CHANNEL_RDMA_V1*
-on signed/encrypted connections with INVALID_PARAMETER or ACCESS_DENIED,
-buth the problem we currently see is a client security problem.
+[2] https://lore.kernel.org/all/49ed07b1-e167-7f94-9986-8e86fb60bb09@nvidia.com/
 
-> I still think the client needs to handle the is_rdma_mr case, along
-> the lines of David's fix. The code looks like a vestige of TCP-only
-> response processing.
-
-I'm not saying David's change is wrong, but I think it has nothing todo
-with encrypted or signed traffic...
-
-metze
-
+thanks,
+-- 
+John Hubbard
+NVIDIA
