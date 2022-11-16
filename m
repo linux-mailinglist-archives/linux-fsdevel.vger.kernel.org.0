@@ -2,116 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11B4362B116
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 03:10:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3912F62B11E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 03:11:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231878AbiKPCKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Nov 2022 21:10:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39104 "EHLO
+        id S230288AbiKPCLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Nov 2022 21:11:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40442 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231794AbiKPCKW (ORCPT
+        with ESMTP id S232148AbiKPCLd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Nov 2022 21:10:22 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 780BA31DC8;
-        Tue, 15 Nov 2022 18:10:21 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id d13-20020a17090a3b0d00b00213519dfe4aso993037pjc.2;
-        Tue, 15 Nov 2022 18:10:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CejbmJMt8knLZkp2jnt3nSDaW2/iqvwuj8SHKIZ6DVU=;
-        b=G/lcM5PwZ0+Ib/Xb9y7OrQjWRddNdmXLywgQSv385sHaURx8IljbeuN/Sbp+vTAI7e
-         J+GBm0Oio9YIM/KXtdA9WGU19Y/4E+/6K1dfkB7Q3+K3PrsXhvC3Z6tROjHkkEaa7Y7v
-         cZgHG2WtjhEhsZnB6nySPb+qXRk4Yo8a+pM/vwOZlgkcecKcsrnbJXxVv0J7htNHaMoK
-         x52qgRJ/chHlnbyPgH/sb7ZdIZLoT/4WnOh6fHNX17pWc93N/x9YWGB0IbnlYTfH/VMa
-         oN/sDsoKLLnSaAfbWJ9CAluV8Ep3aJdG0byCQ7rm3WvDxsWsS/GnsDEmjhs66e7EF9dH
-         Ur7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CejbmJMt8knLZkp2jnt3nSDaW2/iqvwuj8SHKIZ6DVU=;
-        b=D2GGuQJiRh/I/Ef/yEuokcMEA6ycNlQfY1sWbNtNJXHl3sidBvt1S4/8DYSXlF6l/3
-         b0jSfiGMUdyK861+xakg5RdtMxg3r9ycGSShr1eALudyUMJnyuswUNBrkFFT12qssWg7
-         s2o1s3vsXfFECBRrynpbfli9W51Zv7gpE/47zjPYMnE8duZifUCft+pcvhGMk8sHUk4p
-         etoh/a+WvQOEiqYux6xRM+6oHloDIp9BwdEfeVUtkKlRX0vmjBIyoau1qYLTe61LhDlz
-         Qw/NAZMPP160K7tE4xL66dkzlR8QAYdhAJM+k0NW97st3mqUXfAGEjYhiA5stNNr8FXJ
-         1cxQ==
-X-Gm-Message-State: ANoB5pkl2YYh+zFytzxjXypdgWy8WmTCiTf0+TuChZbhYB4+nRDFphCE
-        aFVs36FkEA3HPWxpusk6VwE=
-X-Google-Smtp-Source: AA0mqf7uKcISWh7p7npTkea6Y8R0mC2+ZIlMKnRY0p+5XL9R9S9v5F0yJTMB8XVfcjk+yqVakExTKg==
-X-Received: by 2002:a17:90a:1a12:b0:20a:6ffc:f0c6 with SMTP id 18-20020a17090a1a1200b0020a6ffcf0c6mr1371340pjk.49.1668564620886;
-        Tue, 15 Nov 2022 18:10:20 -0800 (PST)
-Received: from fedora.hsd1.ca.comcast.net ([2601:644:8002:1c20::2c6b])
-        by smtp.googlemail.com with ESMTPSA id e18-20020a17090301d200b0018691ce1696sm10782926plh.131.2022.11.15.18.10.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 18:10:20 -0800 (PST)
-From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To:     linux-mm@kvack.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, akpm@linux-foundation.org,
-        willy@infradead.org, naoya.horiguchi@nec.com, tytso@mit.edu,
-        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH 4/4] folio-compat: Remove try_to_release_page()
-Date:   Tue, 15 Nov 2022 18:10:11 -0800
-Message-Id: <20221116021011.54164-5-vishal.moola@gmail.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20221116021011.54164-1-vishal.moola@gmail.com>
-References: <20221116021011.54164-1-vishal.moola@gmail.com>
+        Tue, 15 Nov 2022 21:11:33 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD54831ED6;
+        Tue, 15 Nov 2022 18:11:04 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 9218AB81A63;
+        Wed, 16 Nov 2022 02:11:02 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2816EC433D6;
+        Wed, 16 Nov 2022 02:11:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668564661;
+        bh=ld0qkrtDSwM3SdstWq1JaEvveGrG0LuAO4gxXXjnm20=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gLklhprduo7lgmoE3m8NzyKWECnC29pcc5D17mIqzJREHgMdBm6f1sIggqImRK19y
+         rKjAGz5E8e5i8WIPVIZjkQ28cdoPpyGVITi5oKQH+31IasTAaGfeGC8z7/RyNb+NJh
+         zvdZXaSRihPIgL3+ea96NP3jRisKf4DOIq3P8DVA4eZJhIont1Fb3nZchz5ZqOCCdJ
+         FfDSU43uFWIdBmsqEObBjg8dF0H3ErBVVujGvNNXCWtnt92sZNanUaUszUJ68LbDOM
+         9aqhC4g9LLQPvF7Onvv/hEDIguxhKFGd0/WZiiwPSwW+1kbyitR/t9xn8J2C5bzHXe
+         S377OtWYfKoIA==
+Date:   Tue, 15 Nov 2022 18:10:59 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Niels de Vos <ndevos@redhat.com>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
+        Marcel Lauhoff <marcel.lauhoff@suse.com>
+Subject: Re: [RFC 0/4] fs: provide per-filesystem options to disable fscrypt
+Message-ID: <Y3RGs5dONBt+GAxN@sol.localdomain>
+References: <20221110141225.2308856-1-ndevos@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221110141225.2308856-1-ndevos@redhat.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There are no more callers of try_to_release_page(), so remove it. This
-saves 149 bytes of kernel text.
+On Thu, Nov 10, 2022 at 03:12:21PM +0100, Niels de Vos wrote:
+> While more filesystems are getting support for fscrypt, it is useful to
+> be able to disable fscrypt for a selection of filesystems, while
+> enabling it for others.
+> 
+> The new USE_FS_ENCRYPTION define gets picked up in
+> include/linux/fscrypt.h. This allows filesystems to choose to use the
+> empty function definitions, or the functional ones when fscrypt is to be
+> used with the filesystem.
+> 
+> Using USE_FS_ENCRYPTION is a relatively clean approach, and requires
+> minimal changes to the filesystems supporting fscrypt. This RFC is
+> mostly for checking the acceptance of this solution, or if an other
+> direction is preferred.
+> 
+> ---
+> 
+> Niels de Vos (4):
+>   fscrypt: introduce USE_FS_ENCRYPTION
+>   fs: make fscrypt support an ext4 config option
+>   fs: make fscrypt support a f2fs config option
+>   fs: make fscrypt support a UBIFS config option
 
-Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
----
- include/linux/pagemap.h | 1 -
- mm/folio-compat.c       | 6 ------
- 2 files changed, 7 deletions(-)
+So as others have pointed out, it doesn't seem worth the complexity to do this.
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index bbccb4044222..daf5e1a1d313 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -1107,7 +1107,6 @@ void __filemap_remove_folio(struct folio *folio, void *shadow);
- void replace_page_cache_page(struct page *old, struct page *new);
- void delete_from_page_cache_batch(struct address_space *mapping,
- 				  struct folio_batch *fbatch);
--int try_to_release_page(struct page *page, gfp_t gfp);
- bool filemap_release_folio(struct folio *folio, gfp_t gfp);
- loff_t mapping_seek_hole_data(struct address_space *, loff_t start, loff_t end,
- 		int whence);
-diff --git a/mm/folio-compat.c b/mm/folio-compat.c
-index e1e23b4947d7..9318a0bd9155 100644
---- a/mm/folio-compat.c
-+++ b/mm/folio-compat.c
-@@ -129,12 +129,6 @@ void delete_from_page_cache(struct page *page)
- 	return filemap_remove_folio(page_folio(page));
- }
- 
--int try_to_release_page(struct page *page, gfp_t gfp)
--{
--	return filemap_release_folio(page_folio(page), gfp);
--}
--EXPORT_SYMBOL(try_to_release_page);
--
- int isolate_lru_page(struct page *page)
- {
- 	if (WARN_RATELIMIT(PageTail(page), "trying to isolate tail page"))
--- 
-2.38.1
+For a bit of historical context, before Linux v5.1, we did have per-filesystem
+options for this: CONFIG_EXT4_ENCRYPTION, CONFIG_F2FS_FS_ENCRYPTION, and
+CONFIG_UBIFS_FS_ENCRYPTION.  If you enabled one of these, it selected
+CONFIG_FS_ENCRYPTION to get the code in fs/crypto/.  CONFIG_FS_ENCRYPTION was a
+tristate, so the code in fs/crypto/ could be built as a loadable module if it
+was only needed by filesystems that were loadable modules themselves.
 
+Having fs/crypto/ possibly be a loadable module was problematic, though, because
+it made it impossible to call into fs/crypto/ from built-in code such as
+fs/buffer.c, fs/ioctl.c, fs/libfs.c, fs/super.c, fs/iomap/direct-io.c, etc.  So
+that's why we made CONFIG_FS_ENCRYPTION into a bool.  At the same time, we
+decided to simplify the kconfig options by removing the per-filesystem options
+so that it worked like CONFIG_QUOTA, CONFIG_FS_DAX, CONFIG_FS_POSIX_ACL, etc.
+
+I suppose we *could* have *just* changed CONFIG_FS_ENCRYPTION to a bool to solve
+the first problem, and kept the per-filesystem options.  I think that wouldn't
+have made a lot of sense, though, for the reasons that Ted has already covered.
+
+A further point, beyond what Ted has already covered, is that
+non-filesystem-specific code can't honor filesystem-specific options.  So e.g.
+if you had a filesystem with encryption disabled by kconfig, that then called
+into fs/iomap/direct-io.c to process an I/O request, it could potentially still
+call into fs/crypto/ to enable encryption on that I/O request, since
+fs/iomap/direct-io.c would think that encryption support is enabled.
+
+Granted, that *should* never actually happen, because this would only make a
+difference on encrypted files, and the filesystem shouldn't have allowed an
+encrypted file to be opened if it doesn't have encryption support enabled.  But
+it does seem a bit odd, given that it would go against the goal of compiling out
+all encryption code for a filesystem.
+
+- Eric
