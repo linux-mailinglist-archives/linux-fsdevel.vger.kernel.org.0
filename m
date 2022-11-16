@@ -2,156 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 32C0B62C837
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 19:52:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 02FA762C87B
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 19:56:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232197AbiKPSwj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Nov 2022 13:52:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48642 "EHLO
+        id S233512AbiKPS4m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Nov 2022 13:56:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54384 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234549AbiKPSvI (ORCPT
+        with ESMTP id S239303AbiKPS4T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Nov 2022 13:51:08 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C136049B69
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 10:48:47 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id r61-20020a17090a43c300b00212f4e9cccdso3146123pjg.5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 10:48:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=A0w6P3/5rWNmrPimfeWShNgQxfD7eWOB8psbtgB4eNM=;
-        b=iuHU2XySbRBXDBvmb7KGdjsTrJ11MtKm8XUWbJgiH+mJZH0mrNKnmVkYWIqEN8KH+D
-         TMTSgskSxS+dz6pqJQ/6lU5YOrdG2ZlIZWDOaRJRiQwsbQA3PrerGAmObwm4ynhLdSAK
-         ipQyS23YgpxwcwZ6vh4k2Bq/MDUW0MakaENRTi4n4z7trqezhQAU1VBvvRliz6hMutEA
-         9nByJ3f7EiBHZeDsD30/pNhrYplPoCDi15C49ph/4Z5Ug6emFwiauN/3keUjTSc8xjjS
-         9rhI8o2gCdwKZQMaSLBrQFcQ5PC0p5wqf3PICwkpXgJE4dUBiCSgdG/Zg1bcsS/uJXqa
-         0yLg==
+        Wed, 16 Nov 2022 13:56:19 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1741463BA3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 10:54:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668624844;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=XrMOrTfFoolcBWY273BC4KVOqyrI8gbytsgZlItRSSY=;
+        b=e0HLJWQOrV59rnSGTS6YIVqETW+MetNgrpEQbikp3pa0MOp9YQkUcSBKEy34EwX53rBRFD
+        0/8z3cE73sZ2kOYmBtxg+J08kdSPfrx1ndau6dZ1tPvBzgkqWSa2ycA4qZIE6IIlwIjnzj
+        IYmDlr5WO9CbNLhnJleRx34142BoDRo=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-645-_125UzpCOi62aaRc4-_EGA-1; Wed, 16 Nov 2022 13:54:02 -0500
+X-MC-Unique: _125UzpCOi62aaRc4-_EGA-1
+Received: by mail-wr1-f71.google.com with SMTP id n13-20020adf8b0d000000b0023658a75751so4065069wra.23
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 10:54:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A0w6P3/5rWNmrPimfeWShNgQxfD7eWOB8psbtgB4eNM=;
-        b=dDYoAT/vyqOMKRLuu+w+gC0zPV49E+pLWcvbdP2zepEsUJYuFDrKni4OtJ4b/n4g7s
-         ukMFRdEekeVzIKvrzZtyG/ewp2yJWtMktSMyt9nlk8lgqGHkG0AIvoUpLWdTpR09R+YQ
-         3z2a/SfdC+yF3uTka/LHGT6jEGlUaJehjHsRqbTCUIMnXiSHR7G5XpzXB89c9ML7ibF6
-         CVATAk3TbwiJzKvpXCcXXbPc9K9/AByQnTV06LNGb+mAsQVz9LHbIYZ8iavl+VXTmEL+
-         UiPz2erEP2qCcFFxpF6F2N0DNlW657mYHFz4Th1rI9o1YCOIGaDgqOWC+BoTpE5DkHi1
-         H1ww==
-X-Gm-Message-State: ANoB5pnQvPAh+/EOIY5T6u6aYNy5wFAy/FpWk9HT7o4xD99OBzjnStFH
-        45Iwa27COET3UJ3zw2+Xgt99DA==
-X-Google-Smtp-Source: AA0mqf7gsXMWPLCwPxYnb+HvqYNLX3WPvDWV8mKDKQpAZsMJhL2t5iqRN/vftj6zV72w0hUj24psag==
-X-Received: by 2002:a17:90b:3c0d:b0:20d:478a:9d75 with SMTP id pb13-20020a17090b3c0d00b0020d478a9d75mr5030085pjb.149.1668624527166;
-        Wed, 16 Nov 2022 10:48:47 -0800 (PST)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id 7-20020a621507000000b0056c0b98617esm11265827pfv.0.2022.11.16.10.48.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Nov 2022 10:48:46 -0800 (PST)
-Date:   Wed, 16 Nov 2022 18:48:43 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Andy Lutomirski <luto@kernel.org>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>,
-        kvm list <kvm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, Linux API <linux-api@vger.kernel.org>,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
+        h=content-transfer-encoding:in-reply-to:subject:organization:from
+         :references:cc:to:content-language:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XrMOrTfFoolcBWY273BC4KVOqyrI8gbytsgZlItRSSY=;
+        b=F/rbSGBIehP4ZzBUYpQn5Y3h5P92ThkB8eIpMOairmtiNWs8mauYloSSZkfSINBIAy
+         tujMSm6WpuF5tFGdItlk14tr54AKTT8CXASnucjk+nhVH8gNyZCWAUMQIJysMum05MF1
+         sMhi1RNJFurj5dSFHPXRvpx6c2nfBVpZO1aVVKPs68vyN+lJCySNzNlJWkQ+6F6w+sz8
+         n9uSXPArJ0Ldmk7LwKD4f9FG5K6/2+HmIRhxgBmfuIbmfXsTH1AN4UvqlxMQVHtj3xJ1
+         g7yDoKzfdXvbLA3aIWxlsPPpYQar96WJlo2itM2tfrsaRzFLRGtSXTuMvoo99a/qTNN8
+         OS3g==
+X-Gm-Message-State: ANoB5pljcCjOjrghacjd3Ec0rFvRgVGa5DzzNql8cEDXNeYqrwd5IDJt
+        LQqdPoPx5G6Tvg9l0G0cMgS+A+7OHEtqN+yWqW+9VcsDR61QgpyX+d4NIP3p80pfWxzLCIgYLit
+        jqA5UhrGdgZoItsbAuU0qREchpQ==
+X-Received: by 2002:a05:600c:188a:b0:3cf:8e62:f769 with SMTP id x10-20020a05600c188a00b003cf8e62f769mr3135318wmp.52.1668624841275;
+        Wed, 16 Nov 2022 10:54:01 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf5DCp6F6fiXltcSvKkMYb+ZcNvwNu+I48re+Q7o+sjDMiBTT1rVi2cU7FL82kIKKDnPvsKEPw==
+X-Received: by 2002:a05:600c:188a:b0:3cf:8e62:f769 with SMTP id x10-20020a05600c188a00b003cf8e62f769mr3135302wmp.52.1668624841029;
+        Wed, 16 Nov 2022 10:54:01 -0800 (PST)
+Received: from ?IPV6:2003:cb:c704:9f00:a98d:4026:7c44:40fd? (p200300cbc7049f00a98d40267c4440fd.dip0.t-ipconnect.de. [2003:cb:c704:9f00:a98d:4026:7c44:40fd])
+        by smtp.gmail.com with ESMTPSA id h16-20020a05600c315000b003cff309807esm3012333wmo.23.2022.11.16.10.53.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Nov 2022 10:54:00 -0800 (PST)
+Message-ID: <caf52607-49cd-3073-ca4a-ddce9509e7c9@redhat.com>
+Date:   Wed, 16 Nov 2022 19:53:57 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Content-Language: en-US
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "David S. Miller" <davem@davemloft.net>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        the arch/x86 maintainers <x86@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        David Hildenbrand <david@redhat.com>, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Fuad Tabba <tabba@google.com>,
-        Michael Roth <michael.roth@amd.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Wei W Wang <wei.w.wang@intel.com>
-Subject: Re: [PATCH v9 3/8] KVM: Add KVM_EXIT_MEMORY_FAULT exit
-Message-ID: <Y3Uwi2lc4NDrdzML@google.com>
-References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
- <20221025151344.3784230-4-chao.p.peng@linux.intel.com>
- <2e252f4f-7d45-42ac-a88f-fa8045fe3748@app.fastmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2e252f4f-7d45-42ac-a88f-fa8045fe3748@app.fastmail.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-21-david@redhat.com>
+ <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH mm-unstable v1 20/20] mm: rename FOLL_FORCE to FOLL_PTRACE
+In-Reply-To: <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 16, 2022, Andy Lutomirski wrote:
+On 16.11.22 19:16, Linus Torvalds wrote:
+> On Wed, Nov 16, 2022 at 2:30 AM David Hildenbrand <david@redhat.com> wrote:
+>>
+>> Let's make it clearer that functionality provided by FOLL_FORCE is
+>> really only for ptrace access.
 > 
+> I'm not super-happy about this one.
 > 
-> On Tue, Oct 25, 2022, at 8:13 AM, Chao Peng wrote:
-> > diff --git a/Documentation/virt/kvm/api.rst 
-> > b/Documentation/virt/kvm/api.rst
-> > index f3fa75649a78..975688912b8c 100644
-> > --- a/Documentation/virt/kvm/api.rst
-> > +++ b/Documentation/virt/kvm/api.rst
-> > @@ -6537,6 +6537,29 @@ array field represents return values. The 
-> > userspace should update the return
-> >  values of SBI call before resuming the VCPU. For more details on 
-> > RISC-V SBI
-> >  spec refer, https://github.com/riscv/riscv-sbi-doc.
-> > 
-> > +::
-> > +
-> > +		/* KVM_EXIT_MEMORY_FAULT */
-> > +		struct {
-> > +  #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1 << 0)
-> > +			__u32 flags;
-> > +			__u32 padding;
-> > +			__u64 gpa;
-> > +			__u64 size;
-> > +		} memory;
-> > +
+> I do understand the "let's rename the bit so that no new user shows up".
 > 
-> Would it make sense to also have a field for the access type (read, write,
-> execute, etc)?  I realize that shared <-> private conversion doesn't strictly
-> need this, but it seems like it could be useful for logging failures and also
-> for avoiding a second immediate fault if the type gets converted but doesn't
-> have the right protection yet.
+> And it's true that the main traditional use is ptrace.
+> 
+> But from the patch itself it becomes obvious that no, it's not *just*
+> ptrace. At least not yet.
+> 
+> It's used for get_arg_page(), which uses it to basically look up (and
+> install) pages in the newly created VM.
+> 
+> Now, I'm not entirely sure why it even uses FOLL_FORCE, - I think it
+> might be historical, because the target should always be the new stack
+> vma.
+> 
+> Following the history of it is a big of a mess, because there's a
+> number of renamings and re-organizations, but it seems to go back to
+> 2007 and commit b6a2fea39318 ("mm: variable length argument support").
+> 
 
-I don't think a separate field is necessary, that info can be conveyed via flags.
-Though maybe we should go straight to a u64 for flags.  Hmm, and maybe avoid bits
-0-3 so that if/when RWX info is conveyed the flags can align with
-PROT_{READ,WRITE,EXEC} and the EPT flags, e.g.
+Right.
 
-	KVM_MEMORY_EXIT_FLAG_READ	(1 << 0)
-	KVM_MEMORY_EXIT_FLAG_WRITE	(1 << 1)
-	KVM_MEMORY_EXIT_FLAG_EXECUTE	(1 << 2)
-
-> (Obviously, if this were changed, KVM would need the ability to report that
-> it doesn't actually know the mode.)
+> Before that commit, we kept our own array of "this is the set of pages
+> that I will install in the new VM". That commit basically just inserts
+> the pages directly into the VM instead, getting rid of the array size
+> limitation.
 > 
-> --Andy
+> So at a minimum, I think that FOLL_FORCE would need to be removed
+> before any renaming to FOLL_PTRACE, because that's not some kind of
+> small random case.
+> 
+> It *might* be as simple as just removing it, but maybe there's some
+> reason for having it that I don't immediately see.
+
+Right, I have the same feeling. It might just be a copy-and-paste legacy 
+leftover.
+
+> 
+> There _are_ also small random cases too, like get_cmdline(). Maybe
+> that counts as ptrace, but the execve() case most definitely does not.
+
+I agree. I'd suggest moving forward without this (last) patch for now 
+and figuring out how to further cleanup FOLL_FORCE usage on top.
+
+@Andrew, if you intend to put this into mm-unstable, please drop the 
+last patch for now.
+
+-- 
+Thanks,
+
+David / dhildenb
+
