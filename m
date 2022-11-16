@@ -2,63 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39EC462B11B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 03:10:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11B4362B116
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 03:10:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231638AbiKPCK3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Nov 2022 21:10:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39078 "EHLO
+        id S231878AbiKPCKc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Nov 2022 21:10:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39104 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231398AbiKPCKU (ORCPT
+        with ESMTP id S231794AbiKPCKW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Nov 2022 21:10:20 -0500
-Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2042331DCB;
-        Tue, 15 Nov 2022 18:10:20 -0800 (PST)
-Received: by mail-pj1-x1032.google.com with SMTP id k5so15222053pjo.5;
-        Tue, 15 Nov 2022 18:10:20 -0800 (PST)
+        Tue, 15 Nov 2022 21:10:22 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 780BA31DC8;
+        Tue, 15 Nov 2022 18:10:21 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id d13-20020a17090a3b0d00b00213519dfe4aso993037pjc.2;
+        Tue, 15 Nov 2022 18:10:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4nup6up+46eyh1lCBQu3VG6VwxyWmfFVyQ2yC43shVo=;
-        b=kzTno0E757BuQUewd/lzW9JzWZhTRKoWJpj5TsOZemkW3irgjFx+JTcamrVEFZ+ZuK
-         rd94aHMDRRsnMe5IjRTrRR0X2yA4oKZyt8VeJm0zlT3nKQE3H4iVnQ9nwf6cjVbIeRnN
-         9aAx+D1+N0y89hD+TmOP1QgFYR1ib5eKb91rk3P4CI2m5AyK49XRDYlA5AZv6+WkkBJ0
-         gu7a7WBBV/sVvJ43ubRL7RoJ8O18IT4nq/OSq62+8P+2AfbMzGGbzIWRDOwUmxcM/7kJ
-         lr0+qQniPM4W/zw/ITl7D7XfrPmKiYARVg0tRSbciDRzhm5g/69Fs85CE+WQq0kwhja4
-         NOMg==
+        bh=CejbmJMt8knLZkp2jnt3nSDaW2/iqvwuj8SHKIZ6DVU=;
+        b=G/lcM5PwZ0+Ib/Xb9y7OrQjWRddNdmXLywgQSv385sHaURx8IljbeuN/Sbp+vTAI7e
+         J+GBm0Oio9YIM/KXtdA9WGU19Y/4E+/6K1dfkB7Q3+K3PrsXhvC3Z6tROjHkkEaa7Y7v
+         cZgHG2WtjhEhsZnB6nySPb+qXRk4Yo8a+pM/vwOZlgkcecKcsrnbJXxVv0J7htNHaMoK
+         x52qgRJ/chHlnbyPgH/sb7ZdIZLoT/4WnOh6fHNX17pWc93N/x9YWGB0IbnlYTfH/VMa
+         oN/sDsoKLLnSaAfbWJ9CAluV8Ep3aJdG0byCQ7rm3WvDxsWsS/GnsDEmjhs66e7EF9dH
+         Ur7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4nup6up+46eyh1lCBQu3VG6VwxyWmfFVyQ2yC43shVo=;
-        b=Ed44bPwZMGmBYPiQ5i2Zzmy+DCs0XUDqdQYTCML+WT3GN2Q5abso3kxWOC/mWCYkg0
-         o7ayfE478rJSfVYraQeyc74YagY3NmmOit/kOZ4Rruuhoys23NVtpsi2qmQPiilJz7eJ
-         r0qE5NAu1X182cFD1AI6fgEoOzwDk4lgrYddS0XYM/I7+BQ2z9ZOXa4RETBH99aBasIR
-         Zs4dZTPXKRh7rtkI3lPyqSopPjqR48eBgTXkqtDp0y36LG2O4b0NN/T5gAPfSmexEK94
-         kGSZ6/UKXbM/nagIurqLjhSoiGSnOll7Bl2o3btcLlhVy8tuL0h3uDEeD/rrQwS3pKaH
-         9bMg==
-X-Gm-Message-State: ANoB5plBfJ2peSDoHNsm5x1qBKx6DbTkhw0AY7QaZLUNRdgK+OeE1HCn
-        BKyVDYxmyyvQCIZqy6mtCtY=
-X-Google-Smtp-Source: AA0mqf6hvZars6XBjSem/60Am0lJSYcFCbloSRvfORBFk7lHG1Lk1xaJFIBqtkgbxbOvHTg/8ntrTg==
-X-Received: by 2002:a17:90a:b392:b0:212:de1a:355b with SMTP id e18-20020a17090ab39200b00212de1a355bmr1406088pjr.1.1668564619604;
-        Tue, 15 Nov 2022 18:10:19 -0800 (PST)
+        bh=CejbmJMt8knLZkp2jnt3nSDaW2/iqvwuj8SHKIZ6DVU=;
+        b=D2GGuQJiRh/I/Ef/yEuokcMEA6ycNlQfY1sWbNtNJXHl3sidBvt1S4/8DYSXlF6l/3
+         b0jSfiGMUdyK861+xakg5RdtMxg3r9ycGSShr1eALudyUMJnyuswUNBrkFFT12qssWg7
+         s2o1s3vsXfFECBRrynpbfli9W51Zv7gpE/47zjPYMnE8duZifUCft+pcvhGMk8sHUk4p
+         etoh/a+WvQOEiqYux6xRM+6oHloDIp9BwdEfeVUtkKlRX0vmjBIyoau1qYLTe61LhDlz
+         Qw/NAZMPP160K7tE4xL66dkzlR8QAYdhAJM+k0NW97st3mqUXfAGEjYhiA5stNNr8FXJ
+         1cxQ==
+X-Gm-Message-State: ANoB5pkl2YYh+zFytzxjXypdgWy8WmTCiTf0+TuChZbhYB4+nRDFphCE
+        aFVs36FkEA3HPWxpusk6VwE=
+X-Google-Smtp-Source: AA0mqf7uKcISWh7p7npTkea6Y8R0mC2+ZIlMKnRY0p+5XL9R9S9v5F0yJTMB8XVfcjk+yqVakExTKg==
+X-Received: by 2002:a17:90a:1a12:b0:20a:6ffc:f0c6 with SMTP id 18-20020a17090a1a1200b0020a6ffcf0c6mr1371340pjk.49.1668564620886;
+        Tue, 15 Nov 2022 18:10:20 -0800 (PST)
 Received: from fedora.hsd1.ca.comcast.net ([2601:644:8002:1c20::2c6b])
-        by smtp.googlemail.com with ESMTPSA id e18-20020a17090301d200b0018691ce1696sm10782926plh.131.2022.11.15.18.10.18
+        by smtp.googlemail.com with ESMTPSA id e18-20020a17090301d200b0018691ce1696sm10782926plh.131.2022.11.15.18.10.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 15 Nov 2022 18:10:19 -0800 (PST)
+        Tue, 15 Nov 2022 18:10:20 -0800 (PST)
 From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
 To:     linux-mm@kvack.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-ext4@vger.kernel.org, akpm@linux-foundation.org,
         willy@infradead.org, naoya.horiguchi@nec.com, tytso@mit.edu,
         "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH 3/4] memory-failure: Convert truncate_error_page() to use folio
-Date:   Tue, 15 Nov 2022 18:10:10 -0800
-Message-Id: <20221116021011.54164-4-vishal.moola@gmail.com>
+Subject: [PATCH 4/4] folio-compat: Remove try_to_release_page()
+Date:   Tue, 15 Nov 2022 18:10:11 -0800
+Message-Id: <20221116021011.54164-5-vishal.moola@gmail.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221116021011.54164-1-vishal.moola@gmail.com>
 References: <20221116021011.54164-1-vishal.moola@gmail.com>
@@ -74,34 +74,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Replaces try_to_release_page() with filemap_release_folio(). This change
-is in preparation for the removal of the try_to_release_page() wrapper.
+There are no more callers of try_to_release_page(), so remove it. This
+saves 149 bytes of kernel text.
 
 Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
 ---
- mm/memory-failure.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ include/linux/pagemap.h | 1 -
+ mm/folio-compat.c       | 6 ------
+ 2 files changed, 7 deletions(-)
 
-diff --git a/mm/memory-failure.c b/mm/memory-failure.c
-index 145bb561ddb3..92ec9b0e58a3 100644
---- a/mm/memory-failure.c
-+++ b/mm/memory-failure.c
-@@ -827,12 +827,13 @@ static int truncate_error_page(struct page *p, unsigned long pfn,
- 	int ret = MF_FAILED;
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index bbccb4044222..daf5e1a1d313 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -1107,7 +1107,6 @@ void __filemap_remove_folio(struct folio *folio, void *shadow);
+ void replace_page_cache_page(struct page *old, struct page *new);
+ void delete_from_page_cache_batch(struct address_space *mapping,
+ 				  struct folio_batch *fbatch);
+-int try_to_release_page(struct page *page, gfp_t gfp);
+ bool filemap_release_folio(struct folio *folio, gfp_t gfp);
+ loff_t mapping_seek_hole_data(struct address_space *, loff_t start, loff_t end,
+ 		int whence);
+diff --git a/mm/folio-compat.c b/mm/folio-compat.c
+index e1e23b4947d7..9318a0bd9155 100644
+--- a/mm/folio-compat.c
++++ b/mm/folio-compat.c
+@@ -129,12 +129,6 @@ void delete_from_page_cache(struct page *page)
+ 	return filemap_remove_folio(page_folio(page));
+ }
  
- 	if (mapping->a_ops->error_remove_page) {
-+		struct folio *folio = page_folio(p);
- 		int err = mapping->a_ops->error_remove_page(mapping, p);
- 
- 		if (err != 0) {
- 			pr_info("%#lx: Failed to punch page: %d\n", pfn, err);
--		} else if (page_has_private(p) &&
--			   !try_to_release_page(p, GFP_NOIO)) {
-+		} else if (folio_has_private(folio) &&
-+			   !filemap_release_folio(folio, GFP_NOIO)) {
- 			pr_info("%#lx: failed to release buffers\n", pfn);
- 		} else {
- 			ret = MF_RECOVERED;
+-int try_to_release_page(struct page *page, gfp_t gfp)
+-{
+-	return filemap_release_folio(page_folio(page), gfp);
+-}
+-EXPORT_SYMBOL(try_to_release_page);
+-
+ int isolate_lru_page(struct page *page)
+ {
+ 	if (WARN_RATELIMIT(PageTail(page), "trying to isolate tail page"))
 -- 
 2.38.1
 
