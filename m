@@ -2,112 +2,219 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3912F62B11E
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 03:11:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C3EA362B1C7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 04:19:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230288AbiKPCLx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 15 Nov 2022 21:11:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40442 "EHLO
+        id S231876AbiKPDTV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 15 Nov 2022 22:19:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232148AbiKPCLd (ORCPT
+        with ESMTP id S229766AbiKPDTS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 15 Nov 2022 21:11:33 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CD54831ED6;
-        Tue, 15 Nov 2022 18:11:04 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9218AB81A63;
-        Wed, 16 Nov 2022 02:11:02 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2816EC433D6;
-        Wed, 16 Nov 2022 02:11:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668564661;
-        bh=ld0qkrtDSwM3SdstWq1JaEvveGrG0LuAO4gxXXjnm20=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gLklhprduo7lgmoE3m8NzyKWECnC29pcc5D17mIqzJREHgMdBm6f1sIggqImRK19y
-         rKjAGz5E8e5i8WIPVIZjkQ28cdoPpyGVITi5oKQH+31IasTAaGfeGC8z7/RyNb+NJh
-         zvdZXaSRihPIgL3+ea96NP3jRisKf4DOIq3P8DVA4eZJhIont1Fb3nZchz5ZqOCCdJ
-         FfDSU43uFWIdBmsqEObBjg8dF0H3ErBVVujGvNNXCWtnt92sZNanUaUszUJ68LbDOM
-         9aqhC4g9LLQPvF7Onvv/hEDIguxhKFGd0/WZiiwPSwW+1kbyitR/t9xn8J2C5bzHXe
-         S377OtWYfKoIA==
-Date:   Tue, 15 Nov 2022 18:10:59 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Niels de Vos <ndevos@redhat.com>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Xiubo Li <xiubli@redhat.com>,
-        Marcel Lauhoff <marcel.lauhoff@suse.com>
-Subject: Re: [RFC 0/4] fs: provide per-filesystem options to disable fscrypt
-Message-ID: <Y3RGs5dONBt+GAxN@sol.localdomain>
-References: <20221110141225.2308856-1-ndevos@redhat.com>
+        Tue, 15 Nov 2022 22:19:18 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FA88C11;
+        Tue, 15 Nov 2022 19:19:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1668568757; x=1700104757;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=I/nWquwbUx6Foszq8Q3bav+jUHNq3BtFcT49kSsIgfs=;
+  b=ktRpWaJvXRBckL+Yjs4AQ6OjY/Hb1OzkSwA2aShI3Sl0Dcb2X1Ca+n1p
+   04iQQM4RNbLIQD+12UXGOJXmuvkGJZbrCdVGGcmOYPfTRnXejP2HKhNki
+   hEjEk84ThqB0ysjG8XJfa6mON7kcR9LnrGL0LDf9BW4ANeONzc2ROoFFh
+   8Yn7rP1ps7ZeIsumXwuXoKuxEJ7foAScGgys0l2us62qW3My7LIpBNO40
+   GwW3ubTIKtjqHw5A14vYJDT0DcyZpzwJml9RiDKjMbOogib02XXM6ga7s
+   L0813erSeaLTFlOliku1qail/mfVDt5fIKa687X2ADQgPBQqMeGyHr0ES
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10532"; a="295799639"
+X-IronPort-AV: E=Sophos;i="5.96,167,1665471600"; 
+   d="scan'208";a="295799639"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Nov 2022 19:19:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10532"; a="633472721"
+X-IronPort-AV: E=Sophos;i="5.96,167,1665471600"; 
+   d="scan'208";a="633472721"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by orsmga007.jf.intel.com with ESMTP; 15 Nov 2022 19:19:05 -0800
+Date:   Wed, 16 Nov 2022 11:14:41 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v9 3/8] KVM: Add KVM_EXIT_MEMORY_FAULT exit
+Message-ID: <20221116031441.GA364614@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-4-chao.p.peng@linux.intel.com>
+ <87cz9o9mr8.fsf@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20221110141225.2308856-1-ndevos@redhat.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87cz9o9mr8.fsf@linaro.org>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 10, 2022 at 03:12:21PM +0100, Niels de Vos wrote:
-> While more filesystems are getting support for fscrypt, it is useful to
-> be able to disable fscrypt for a selection of filesystems, while
-> enabling it for others.
+On Tue, Nov 15, 2022 at 04:56:12PM +0000, Alex Bennée wrote:
 > 
-> The new USE_FS_ENCRYPTION define gets picked up in
-> include/linux/fscrypt.h. This allows filesystems to choose to use the
-> empty function definitions, or the functional ones when fscrypt is to be
-> used with the filesystem.
+> Chao Peng <chao.p.peng@linux.intel.com> writes:
 > 
-> Using USE_FS_ENCRYPTION is a relatively clean approach, and requires
-> minimal changes to the filesystems supporting fscrypt. This RFC is
-> mostly for checking the acceptance of this solution, or if an other
-> direction is preferred.
+> > This new KVM exit allows userspace to handle memory-related errors. It
+> > indicates an error happens in KVM at guest memory range [gpa, gpa+size).
+> > The flags includes additional information for userspace to handle the
+> > error. Currently bit 0 is defined as 'private memory' where '1'
+> > indicates error happens due to private memory access and '0' indicates
+> > error happens due to shared memory access.
+> >
+> > When private memory is enabled, this new exit will be used for KVM to
+> > exit to userspace for shared <-> private memory conversion in memory
+> > encryption usage. In such usage, typically there are two kind of memory
+> > conversions:
+> >   - explicit conversion: happens when guest explicitly calls into KVM
+> >     to map a range (as private or shared), KVM then exits to userspace
+> >     to perform the map/unmap operations.
+> >   - implicit conversion: happens in KVM page fault handler where KVM
+> >     exits to userspace for an implicit conversion when the page is in a
+> >     different state than requested (private or shared).
+> >
+> > Suggested-by: Sean Christopherson <seanjc@google.com>
+> > Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> > ---
+> >  Documentation/virt/kvm/api.rst | 23 +++++++++++++++++++++++
+> >  include/uapi/linux/kvm.h       |  9 +++++++++
+> >  2 files changed, 32 insertions(+)
+> >
+> > diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+> > index f3fa75649a78..975688912b8c 100644
+> > --- a/Documentation/virt/kvm/api.rst
+> > +++ b/Documentation/virt/kvm/api.rst
+> > @@ -6537,6 +6537,29 @@ array field represents return values. The userspace should update the return
+> >  values of SBI call before resuming the VCPU. For more details on RISC-V SBI
+> >  spec refer, https://github.com/riscv/riscv-sbi-doc.
+> >  
+> > +::
+> > +
+> > +		/* KVM_EXIT_MEMORY_FAULT */
+> > +		struct {
+> > +  #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1 << 0)
+> > +			__u32 flags;
+> > +			__u32 padding;
+> > +			__u64 gpa;
+> > +			__u64 size;
+> > +		} memory;
+> > +
+> > +If exit reason is KVM_EXIT_MEMORY_FAULT then it indicates that the VCPU has
+> > +encountered a memory error which is not handled by KVM kernel module and
+> > +userspace may choose to handle it. The 'flags' field indicates the memory
+> > +properties of the exit.
+> > +
+> > + - KVM_MEMORY_EXIT_FLAG_PRIVATE - indicates the memory error is caused by
+> > +   private memory access when the bit is set. Otherwise the memory error is
+> > +   caused by shared memory access when the bit is clear.
 > 
-> ---
+> What does a shared memory access failure entail?
+
+In the context of confidential computing usages, guest can issue a
+shared memory access while the memory is actually private from the host
+point of view. This exit with bit 0 cleared gives userspace a chance to
+convert the private memory to shared memory on host.
+
 > 
-> Niels de Vos (4):
->   fscrypt: introduce USE_FS_ENCRYPTION
->   fs: make fscrypt support an ext4 config option
->   fs: make fscrypt support a f2fs config option
->   fs: make fscrypt support a UBIFS config option
+> If you envision any other failure modes it might be worth making it
+> explicit with additional flags.
 
-So as others have pointed out, it doesn't seem worth the complexity to do this.
+Sean mentioned some more usages[1][]2] other than the memory conversion
+for confidential usage. But I would leave those flags being added in the
+future after those usages being well discussed.
 
-For a bit of historical context, before Linux v5.1, we did have per-filesystem
-options for this: CONFIG_EXT4_ENCRYPTION, CONFIG_F2FS_FS_ENCRYPTION, and
-CONFIG_UBIFS_FS_ENCRYPTION.  If you enabled one of these, it selected
-CONFIG_FS_ENCRYPTION to get the code in fs/crypto/.  CONFIG_FS_ENCRYPTION was a
-tristate, so the code in fs/crypto/ could be built as a loadable module if it
-was only needed by filesystems that were loadable modules themselves.
+[1] https://lkml.kernel.org/r/20200617230052.GB27751@linux.intel.com
+[2] https://lore.kernel.org/all/YKxJLcg%2FWomPE422@google.com
 
-Having fs/crypto/ possibly be a loadable module was problematic, though, because
-it made it impossible to call into fs/crypto/ from built-in code such as
-fs/buffer.c, fs/ioctl.c, fs/libfs.c, fs/super.c, fs/iomap/direct-io.c, etc.  So
-that's why we made CONFIG_FS_ENCRYPTION into a bool.  At the same time, we
-decided to simplify the kconfig options by removing the per-filesystem options
-so that it worked like CONFIG_QUOTA, CONFIG_FS_DAX, CONFIG_FS_POSIX_ACL, etc.
+> I also wonder if a bitmask makes sense if
+> there can only be one reason for a failure? Maybe all that is needed is
+> a reason enum?
 
-I suppose we *could* have *just* changed CONFIG_FS_ENCRYPTION to a bool to solve
-the first problem, and kept the per-filesystem options.  I think that wouldn't
-have made a lot of sense, though, for the reasons that Ted has already covered.
+Tough we only have one reason right now but we still want to leave room
+for future extension. Enum can express a single value at once well but
+bitmask makes it possible to express multiple orthogonal flags.
 
-A further point, beyond what Ted has already covered, is that
-non-filesystem-specific code can't honor filesystem-specific options.  So e.g.
-if you had a filesystem with encryption disabled by kconfig, that then called
-into fs/iomap/direct-io.c to process an I/O request, it could potentially still
-call into fs/crypto/ to enable encryption on that I/O request, since
-fs/iomap/direct-io.c would think that encryption support is enabled.
-
-Granted, that *should* never actually happen, because this would only make a
-difference on encrypted files, and the filesystem shouldn't have allowed an
-encrypted file to be opened if it doesn't have encryption support enabled.  But
-it does seem a bit odd, given that it would go against the goal of compiling out
-all encryption code for a filesystem.
-
-- Eric
+Chao
+> 
+> > +
+> > +'gpa' and 'size' indicate the memory range the error occurs at. The userspace
+> > +may handle the error and return to KVM to retry the previous memory access.
+> > +
+> >  ::
+> >  
+> >      /* KVM_EXIT_NOTIFY */
+> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+> > index f1ae45c10c94..fa60b032a405 100644
+> > --- a/include/uapi/linux/kvm.h
+> > +++ b/include/uapi/linux/kvm.h
+> > @@ -300,6 +300,7 @@ struct kvm_xen_exit {
+> >  #define KVM_EXIT_RISCV_SBI        35
+> >  #define KVM_EXIT_RISCV_CSR        36
+> >  #define KVM_EXIT_NOTIFY           37
+> > +#define KVM_EXIT_MEMORY_FAULT     38
+> >  
+> >  /* For KVM_EXIT_INTERNAL_ERROR */
+> >  /* Emulate instruction failed. */
+> > @@ -538,6 +539,14 @@ struct kvm_run {
+> >  #define KVM_NOTIFY_CONTEXT_INVALID	(1 << 0)
+> >  			__u32 flags;
+> >  		} notify;
+> > +		/* KVM_EXIT_MEMORY_FAULT */
+> > +		struct {
+> > +#define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1 << 0)
+> > +			__u32 flags;
+> > +			__u32 padding;
+> > +			__u64 gpa;
+> > +			__u64 size;
+> > +		} memory;
+> >  		/* Fix the size of the union. */
+> >  		char padding[256];
+> >  	};
+> 
+> 
+> -- 
+> Alex Bennée
