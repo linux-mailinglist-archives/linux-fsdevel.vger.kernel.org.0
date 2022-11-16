@@ -2,136 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A26F162C2B9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 16:36:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2465C62C2BE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 16:36:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233194AbiKPPg1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Nov 2022 10:36:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51160 "EHLO
+        id S233324AbiKPPgt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Nov 2022 10:36:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232974AbiKPPg0 (ORCPT
+        with ESMTP id S232974AbiKPPgs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Nov 2022 10:36:26 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06DF61C92D;
-        Wed, 16 Nov 2022 07:36:25 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 16 Nov 2022 10:36:48 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98E5914D0C;
+        Wed, 16 Nov 2022 07:36:47 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9C85861E6E;
-        Wed, 16 Nov 2022 15:36:25 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4184BC433C1;
-        Wed, 16 Nov 2022 15:36:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668612985;
-        bh=+51QNyQ0zG4XqLPgJLjbPfdfi5O6LZRsi2skJKFE0sw=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=Y0cDK3rtRFCzVSm0ArTMRSHKxsEhMTiwyQFDdUbwsYiPQW7RNddLAusDgPynRRFca
-         FBJc+U026lPMxrKmv4xRXvj30mLo9jgAIzRvTqZomctS/G+26QOCEUn3RxVSXROwzO
-         Y/pgrsxqMP7VCLhbJXYJxBxiOa0wQdshoQRaKwvzLgecOwH9GheImjGbY9w09uGjrH
-         FVTnc3+JcN8IfmzNkcd4OHSGzWLzglX4tMMz0Z89r7QbW1hnUZl89jZIaLELDfD6As
-         B+6lBVbBG/wyJif0FlJE8TZC/H7TPX8QsoFQgDYxiJQ1A1PjIOecjx8HbHHRwjMFN4
-         xxlWZNnbcuTEw==
-Message-ID: <388754c59ed73360ccd41c5b85ceadea37a75b9e.camel@kernel.org>
-Subject: Re: [PATCH 7/7] nfsd: use locks_inode_context helper
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Chuck Lever III <chuck.lever@oracle.com>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
-        "ceph-devel@vger.kernel.org" <ceph-devel@vger.kernel.org>,
-        CIFS <linux-cifs@vger.kernel.org>,
-        Al Viro <viro@zeniv.linux.org.uk>, "hch@lst.de" <hch@lst.de>
-Date:   Wed, 16 Nov 2022 10:36:22 -0500
-In-Reply-To: <406B1FC6-23B1-429D-B9BD-33EF0DD7C908@oracle.com>
-References: <20221116151726.129217-1-jlayton@kernel.org>
-         <20221116151726.129217-8-jlayton@kernel.org>
-         <406B1FC6-23B1-429D-B9BD-33EF0DD7C908@oracle.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 50A47336F9;
+        Wed, 16 Nov 2022 15:36:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1668613006; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sLkFAGmODAxxEkX02jVvJl4offD9YV13b3F5VPNgrjo=;
+        b=kpjpxKkatXq3EwXIEV+LmXYPlqGug+rL5rx5o/rJsc933/eJpQbsD/p+rNma92cYKNiNi1
+        YdbC8GzWo43ZCdPFeaihAJ6HjcQHTDA9QISSKxypcBCuyZTXIUE2VVhStpcpCr29l9V9gK
+        NTPHHOb0fLFUwA3NGMDRPUOi0JO3U8I=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1668613006;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=sLkFAGmODAxxEkX02jVvJl4offD9YV13b3F5VPNgrjo=;
+        b=y2zMGOWs/dn5QvLOUYvocvGltUMPBoQY2jZjWa1CBM1nVurW1yi34qHOJja8krFBYkjmXb
+        4nRfZRBmBobFkTDA==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2E2A513480;
+        Wed, 16 Nov 2022 15:36:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 7Ro3C44DdWNscgAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 16 Nov 2022 15:36:46 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 46F12A0709; Wed, 16 Nov 2022 16:36:44 +0100 (CET)
+Date:   Wed, 16 Nov 2022 16:36:44 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.vnet.ibm.com>,
+        Mingming Cao <cmm@us.ibm.com>, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        linux-mm@kvack.org
+Subject: Re: generic_writepages & jbd2 and ext4
+Message-ID: <20221116153644.7rqgb6a4nyei3ltz@quack3>
+References: <20221116135016.GA9713@lst.de>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221116135016.GA9713@lst.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 2022-11-16 at 15:21 +0000, Chuck Lever III wrote:
->=20
-> > On Nov 16, 2022, at 10:17 AM, Jeff Layton <jlayton@kernel.org> wrote:
-> >=20
-> > nfsd currently doesn't access i_flctx safely everywhere. This requires =
-a
-> > smp_load_acquire, as the pointer is set via cmpxchg (a release
-> > operation).
-> >=20
-> > Cc: Chuck Lever <chuck.lever@oracle.com>
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
->=20
-> Acked-by: Chuck Lever <chuck.lever@oracle.com>
->=20
->=20
-> > ---
-> > fs/nfsd/nfs4state.c | 6 +++---
-> > 1 file changed, 3 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-> > index 836bd825ca4a..da8d0ea66229 100644
-> > --- a/fs/nfsd/nfs4state.c
-> > +++ b/fs/nfsd/nfs4state.c
-> > @@ -4758,7 +4758,7 @@ nfs4_share_conflict(struct svc_fh *current_fh, un=
-signed int deny_type)
-> >=20
-> > static bool nfsd4_deleg_present(const struct inode *inode)
-> > {
-> > -	struct file_lock_context *ctx =3D smp_load_acquire(&inode->i_flctx);
-> > +	struct file_lock_context *ctx =3D locks_inode_context(inode);
-> >=20
-> > 	return ctx && !list_empty_careful(&ctx->flc_lease);
-> > }
-> > @@ -5897,7 +5897,7 @@ nfs4_lockowner_has_blockers(struct nfs4_lockowner=
- *lo)
-> >=20
-> > 	list_for_each_entry(stp, &lo->lo_owner.so_stateids, st_perstateowner) =
-{
-> > 		nf =3D stp->st_stid.sc_file;
-> > -		ctx =3D nf->fi_inode->i_flctx;
-> > +		ctx =3D locks_inode_context(nf->fi_inode);
+On Wed 16-11-22 14:50:16, Christoph Hellwig wrote:
+> Hi all,
+> 
+> I've recently started looking into killing off the ->writepage method,
+> and as an initial subproject kill of external uses of generic_writepages.
+> One of the two remaining callers s in jbd2 and I'm a bit confused about
+> it.
+> 
+> jbd2_journal_submit_inode_data_buffers has two comments that explicitly
+> ask for ->writepages as that doesn't allocate data:
+> 
+> /*
+>  * write the filemap data using writepage() address_space_operations.
+>  * We don't do block allocation here even for delalloc. We don't
+>  * use writepages() because with delayed allocation we may be doing
+>  * block allocation in writepages().
+>  */
+> 
+> 	/*
+>          * submit the inode data buffers. We use writepage
+> 	 * instead of writepages. Because writepages can do
+> 	 * block allocation with delalloc. We need to write
+> 	 * only allocated blocks here.
+> 	 */
+> 
+> and these look really stange to me.  ->writepage and ->writepages per
+> their document VM/VFS semantics don't different on what they allocate,
+> so this seems to reverse engineer ext4 internal behavior in some
+> way.  Either way looping over ->writepage just for that is rather
+> inefficient.  If jbd2 really wants a way to skip delalloc conversion
+> can we come up with a flag in struct writeback_control for that?
+> 
+> Is there anyone familiar enough with this code who would be willing
+> to give it a try?
 
-Thanks Chuck.
+Yes, I've written that code quite a few years ago :) And I agree JBD2 is
+abusing internal knowledge about ext4 here. So yes, writeback_control flag
+so that we can propagate the information to ->writepages method should do
+the trick. I'll have a look into that.
 
-To be clear: I think the above access is probably OK. We wouldn't have a
-lock stateid unless we had a valid lock context in the inode. That said,
-doing it this way keeps everything consistent, so I'm inclined to leave
-the patch as-is.
+								Honza
 
-check_for_locks definitely needs this though.
-
-> > 		if (!ctx)
-> > 			continue;
-> > 		if (locks_owner_has_blockers(ctx, lo))
-> > @@ -7713,7 +7713,7 @@ check_for_locks(struct nfs4_file *fp, struct nfs4=
-_lockowner *lowner)
-> > 	}
-> >=20
-> > 	inode =3D locks_inode(nf->nf_file);
-> > -	flctx =3D inode->i_flctx;
-> > +	flctx =3D locks_inode_context(inode);
-> >=20
-> > 	if (flctx && !list_empty_careful(&flctx->flc_posix)) {
-> > 		spin_lock(&flctx->flc_lock);
-> > --=20
-> > 2.38.1
-> >=20
->=20
-> --
-> Chuck Lever
->=20
->=20
->=20
-
---=20
-Jeff Layton <jlayton@kernel.org>
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
