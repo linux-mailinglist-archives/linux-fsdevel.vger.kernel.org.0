@@ -2,41 +2,41 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CEC262C414
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 17:22:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48C4662C436
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 17:24:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234721AbiKPQWe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Nov 2022 11:22:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58670 "EHLO
+        id S238830AbiKPQYM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Nov 2022 11:24:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60796 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233587AbiKPQWE (ORCPT
+        with ESMTP id S238019AbiKPQXD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Nov 2022 11:22:04 -0500
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE17D49B68;
-        Wed, 16 Nov 2022 08:22:03 -0800 (PST)
+        Wed, 16 Nov 2022 11:23:03 -0500
+Received: from galois.linutronix.de (Galois.linutronix.de [IPv6:2a0a:51c0:0:12e:550::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6617658BE1;
+        Wed, 16 Nov 2022 08:22:15 -0800 (PST)
 From:   John Ogness <john.ogness@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020; t=1668615722;
+        s=2020; t=1668615733;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WyGtVM99u5kVDH70iZExE1J1KzxzFf6H5/dTCHJGWmg=;
-        b=OkggJBlHCa9L4cp9ZDwwAsfL5ubRsoOncME3GDT90isJ+qp7J73h9NygngEEZiEoWr+es/
-        3Upl4H1KrQnB9vC4v5gJ8xNfgM03fTyq0Hvw3HyW+NTRBO9RDXHTzuY5yyRaWNip4KoUlo
-        jv8o3KtDRDJ5vnJjCybJF2iNMAlOfQr0Z0EssP9z6UoZbQUp+vf741jMgzncq8Q944gZyU
-        q/EDZaCvZe+84tYeDpcZt+1MrsFtlBB5PuIi0o6f70Fv1eF0z3tUS8sMp3rL7kwVtceE+v
-        QzzsEhnN/iuaaeQLCD0aYQE0OgwigXV3QCHRchsu1ujqaQU2+c+KX3u9rJFQzQ==
+        bh=gLhbxNRRzLzgVuMAENy9jlZuW5IHKymo+X5t98vmt7E=;
+        b=qybUVOHQ3lcpPJORwUZxfRKNSDT/E1lW8xR9jQFAUnk+CmGFCk6egkthMCR3TQeua2DtWM
+        VyojWSc5t+MeGT9e4X2IlZEDixaROC4FQDK+95FFmvVk3mBvNNZZurhDgYXAjTiINlLEpF
+        qg4PxKKgKoK5ZTSTBHifiUwP480lYx3KbdCcXDHRTbRcqsdmOZnVSY0fGJZ8UV9PZv5U3V
+        o2INZ38YMktP/5lqXKutOY83w6LM0Iv/JvaPFKxh05++GiySPm5y//mPl3U1g2AGNuTkCg
+        CJFulvLQk226W5njRJXauh3efYaiUiH+LlheE8AI7XiIf0Zi9/Vf7eqCzK8qTg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-        s=2020e; t=1668615722;
+        s=2020e; t=1668615733;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WyGtVM99u5kVDH70iZExE1J1KzxzFf6H5/dTCHJGWmg=;
-        b=05p9Fgr9oIC1rseJZa7drAisqg0/FWrb79iEbbJ3VXznN77H03kThzDxWjsXNFc/82FzCY
-        mJAwymv7Gr0kdEBw==
+        bh=gLhbxNRRzLzgVuMAENy9jlZuW5IHKymo+X5t98vmt7E=;
+        b=HsEGN6tMo3uc7PUkebWaEn1oYTUp5bx/ZwX+WR68pMluY1e7aak5EW/DR9K2+PrfNPUAQ1
+        iiHhLYBATOPUnIDg==
 To:     Petr Mladek <pmladek@suse.com>
 Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
         Steven Rostedt <rostedt@goodmis.org>,
@@ -44,9 +44,9 @@ Cc:     Sergey Senozhatsky <senozhatsky@chromium.org>,
         linux-kernel@vger.kernel.org,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH printk v5 10/40] proc: consoles: document console_lock usage
-Date:   Wed, 16 Nov 2022 17:27:22 +0106
-Message-Id: <20221116162152.193147-11-john.ogness@linutronix.de>
+Subject: [PATCH printk v5 34/40] proc: consoles: use console_list_lock for list iteration
+Date:   Wed, 16 Nov 2022 17:27:46 +0106
+Message-Id: <20221116162152.193147-35-john.ogness@linutronix.de>
 In-Reply-To: <20221116162152.193147-1-john.ogness@linutronix.de>
 References: <20221116162152.193147-1-john.ogness@linutronix.de>
 MIME-Version: 1.0
@@ -61,38 +61,68 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The console_lock is held throughout the start/show/stop procedure
-to print out device/driver information about all registered
-consoles. Since the console_lock is being used for multiple reasons,
-explicitly document these reasons. This will be useful when the
-console_lock is split into fine-grained locking.
+The console_lock is used in part to guarantee safe list iteration.
+The console_list_lock should be used because list synchronization
+responsibility will be removed from the console_lock in a later
+change.
+
+Note, the console_lock is still needed to serialize the device()
+callback with other console operations.
 
 Signed-off-by: John Ogness <john.ogness@linutronix.de>
 Reviewed-by: Petr Mladek <pmladek@suse.com>
 ---
- fs/proc/consoles.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ fs/proc/consoles.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
 diff --git a/fs/proc/consoles.c b/fs/proc/consoles.c
-index cf2e0788f9c7..46b305fa04ed 100644
+index 46b305fa04ed..e0758fe7936d 100644
 --- a/fs/proc/consoles.c
 +++ b/fs/proc/consoles.c
-@@ -63,6 +63,15 @@ static void *c_start(struct seq_file *m, loff_t *pos)
- 	struct console *con;
+@@ -33,7 +33,16 @@ static int show_console_dev(struct seq_file *m, void *v)
+ 	if (con->device) {
+ 		const struct tty_driver *driver;
+ 		int index;
++
++		/*
++		 * Take console_lock to serialize device() callback with
++		 * other console operations. For example, fg_console is
++		 * modified under console_lock when switching vt.
++		 */
++		console_lock();
+ 		driver = con->device(con, &index);
++		console_unlock();
++
+ 		if (driver) {
+ 			dev = MKDEV(driver->major, driver->minor_start);
+ 			dev += index;
+@@ -64,15 +73,11 @@ static void *c_start(struct seq_file *m, loff_t *pos)
  	loff_t off = 0;
  
-+	/*
-+	 * Take console_lock to serialize device() callback with
-+	 * other console operations. For example, fg_console is
-+	 * modified under console_lock when switching vt.
-+	 *
-+	 * Hold the console_lock to guarantee safe traversal of the
-+	 * console list. SRCU cannot be used because there is no
-+	 * place to store the SRCU cookie.
-+	 */
- 	console_lock();
+ 	/*
+-	 * Take console_lock to serialize device() callback with
+-	 * other console operations. For example, fg_console is
+-	 * modified under console_lock when switching vt.
+-	 *
+-	 * Hold the console_lock to guarantee safe traversal of the
++	 * Hold the console_list_lock to guarantee safe traversal of the
+ 	 * console list. SRCU cannot be used because there is no
+ 	 * place to store the SRCU cookie.
+ 	 */
+-	console_lock();
++	console_list_lock();
  	for_each_console(con)
  		if (off++ == *pos)
+ 			break;
+@@ -90,7 +95,7 @@ static void *c_next(struct seq_file *m, void *v, loff_t *pos)
+ 
+ static void c_stop(struct seq_file *m, void *v)
+ {
+-	console_unlock();
++	console_list_unlock();
+ }
+ 
+ static const struct seq_operations consoles_op = {
 -- 
 2.30.2
 
