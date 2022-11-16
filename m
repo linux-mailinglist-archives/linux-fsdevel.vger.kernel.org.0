@@ -2,204 +2,268 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 02FA762C87B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 19:56:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB70A62C8BD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 16 Nov 2022 20:07:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233512AbiKPS4m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Nov 2022 13:56:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54384 "EHLO
+        id S233199AbiKPTHK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Nov 2022 14:07:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239303AbiKPS4T (ORCPT
+        with ESMTP id S233530AbiKPTHJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Nov 2022 13:56:19 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1741463BA3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 10:54:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668624844;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=XrMOrTfFoolcBWY273BC4KVOqyrI8gbytsgZlItRSSY=;
-        b=e0HLJWQOrV59rnSGTS6YIVqETW+MetNgrpEQbikp3pa0MOp9YQkUcSBKEy34EwX53rBRFD
-        0/8z3cE73sZ2kOYmBtxg+J08kdSPfrx1ndau6dZ1tPvBzgkqWSa2ycA4qZIE6IIlwIjnzj
-        IYmDlr5WO9CbNLhnJleRx34142BoDRo=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-645-_125UzpCOi62aaRc4-_EGA-1; Wed, 16 Nov 2022 13:54:02 -0500
-X-MC-Unique: _125UzpCOi62aaRc4-_EGA-1
-Received: by mail-wr1-f71.google.com with SMTP id n13-20020adf8b0d000000b0023658a75751so4065069wra.23
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 10:54:02 -0800 (PST)
+        Wed, 16 Nov 2022 14:07:09 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 69B656069C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 11:07:02 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id i186-20020a1c3bc3000000b003cfe29a5733so2383328wma.3
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 11:07:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=RrIEWhRQRlR3NVC7xZs7jfrYAvxywp8v6T2LfNTij+Q=;
+        b=Jx3yqn06j6rS5Fs5NvtNZW3afRbtKDAjyYZ/cbyT5J0fw+x5DSiBa34zecJ2zXBEP6
+         dXVq49aZkpeYNlw8FZCjejz+X8sYE98oXGoc760qT01ItS+LpGXs0KR6luYi6XidGGnJ
+         izQy2tFtJsUmRdujni2tPVUtXn9CPZshGLwHnmOZlDGECGPB/n+QnPoJLt8dAH9evwNe
+         fhOCmkSkLWIbZ04JJ1cM5aaZNcxxY3L6QunV484wNTFteoVmyskDXedR8UqBBpqCdgYP
+         ARhbe6kOrZMHvVRuGOwhLHdlqHzOAwDs9awbU2PksEIQB6p43e6EtlScRKP2mnLQYKXa
+         PFRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XrMOrTfFoolcBWY273BC4KVOqyrI8gbytsgZlItRSSY=;
-        b=F/rbSGBIehP4ZzBUYpQn5Y3h5P92ThkB8eIpMOairmtiNWs8mauYloSSZkfSINBIAy
-         tujMSm6WpuF5tFGdItlk14tr54AKTT8CXASnucjk+nhVH8gNyZCWAUMQIJysMum05MF1
-         sMhi1RNJFurj5dSFHPXRvpx6c2nfBVpZO1aVVKPs68vyN+lJCySNzNlJWkQ+6F6w+sz8
-         n9uSXPArJ0Ldmk7LwKD4f9FG5K6/2+HmIRhxgBmfuIbmfXsTH1AN4UvqlxMQVHtj3xJ1
-         g7yDoKzfdXvbLA3aIWxlsPPpYQar96WJlo2itM2tfrsaRzFLRGtSXTuMvoo99a/qTNN8
-         OS3g==
-X-Gm-Message-State: ANoB5pljcCjOjrghacjd3Ec0rFvRgVGa5DzzNql8cEDXNeYqrwd5IDJt
-        LQqdPoPx5G6Tvg9l0G0cMgS+A+7OHEtqN+yWqW+9VcsDR61QgpyX+d4NIP3p80pfWxzLCIgYLit
-        jqA5UhrGdgZoItsbAuU0qREchpQ==
-X-Received: by 2002:a05:600c:188a:b0:3cf:8e62:f769 with SMTP id x10-20020a05600c188a00b003cf8e62f769mr3135318wmp.52.1668624841275;
-        Wed, 16 Nov 2022 10:54:01 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf5DCp6F6fiXltcSvKkMYb+ZcNvwNu+I48re+Q7o+sjDMiBTT1rVi2cU7FL82kIKKDnPvsKEPw==
-X-Received: by 2002:a05:600c:188a:b0:3cf:8e62:f769 with SMTP id x10-20020a05600c188a00b003cf8e62f769mr3135302wmp.52.1668624841029;
-        Wed, 16 Nov 2022 10:54:01 -0800 (PST)
-Received: from ?IPV6:2003:cb:c704:9f00:a98d:4026:7c44:40fd? (p200300cbc7049f00a98d40267c4440fd.dip0.t-ipconnect.de. [2003:cb:c704:9f00:a98d:4026:7c44:40fd])
-        by smtp.gmail.com with ESMTPSA id h16-20020a05600c315000b003cff309807esm3012333wmo.23.2022.11.16.10.53.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Nov 2022 10:54:00 -0800 (PST)
-Message-ID: <caf52607-49cd-3073-ca4a-ddce9509e7c9@redhat.com>
-Date:   Wed, 16 Nov 2022 19:53:57 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Richard Henderson <richard.henderson@linaro.org>,
-        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
-        Matt Turner <mattst88@gmail.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        "David S. Miller" <davem@davemloft.net>,
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=RrIEWhRQRlR3NVC7xZs7jfrYAvxywp8v6T2LfNTij+Q=;
+        b=o1hbLHd8dByM0LNpBBkfzz3jWkcSeXSeseWtWjL9ZhOoAeuquKJi1T1TvKMnNNTtyA
+         DhX5s7XFFBKKaJJ5JAMRWNo2Zo/6t+mlJdjpKEmxoQSWzrccExE48s50JQuudgyWPxWM
+         UbQ/99eKSQngxb+Vswai3zCmbs6Q99xSE1ai40gBfqZN+2YE1e6wZzjc2bzjf9zvSUl+
+         Cdq+ExdpCFBFUbIpvp60yjwuqAD+Xjcd+wT6cvcDuAS1JQa3G6u2glL/MMSTjOj12iWi
+         hvh83rthRRKuZ8PjS2biYW400+XeKKkw3v5z2ApdOUy/PXHiAjiK3GKafUYKOd5sOSsV
+         hGbA==
+X-Gm-Message-State: ANoB5plSBSUCQJFeo2CMcChi/6Y6nOzceKuM9v/q2G9yq0MoOHJL7UBd
+        Yu6q/9yNGdJQTXC/pd7Xyg/OtQ==
+X-Google-Smtp-Source: AA0mqf5UxIGeoP/5D5Yx/z21S7fh+uGiPqn06sMVoycK8I50cpSvwpmmKvt4/Ece9ChnPUGalp4tAQ==
+X-Received: by 2002:a05:600c:3d0c:b0:3cf:f66c:9246 with SMTP id bh12-20020a05600c3d0c00b003cff66c9246mr2115368wmb.27.1668625620910;
+        Wed, 16 Nov 2022 11:07:00 -0800 (PST)
+Received: from zen.linaroharston ([185.81.254.11])
+        by smtp.gmail.com with ESMTPSA id p13-20020adfe60d000000b00236e9755c02sm15976702wrm.111.2022.11.16.11.07.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Nov 2022 11:07:00 -0800 (PST)
+Received: from zen (localhost [127.0.0.1])
+        by zen.linaroharston (Postfix) with ESMTP id BDA921FFB7;
+        Wed, 16 Nov 2022 19:06:59 +0000 (GMT)
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-4-chao.p.peng@linux.intel.com>
+ <87cz9o9mr8.fsf@linaro.org> <20221116031441.GA364614@chaop.bj.intel.com>
+User-agent: mu4e 1.9.2; emacs 28.2.50
+From:   Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Kentaro Takeda <takedakn@nttdata.co.jp>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Paul Moore <paul@paul-moore.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <20221116102659.70287-1-david@redhat.com>
- <20221116102659.70287-21-david@redhat.com>
- <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH mm-unstable v1 20/20] mm: rename FOLL_FORCE to FOLL_PTRACE
-In-Reply-To: <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v9 3/8] KVM: Add KVM_EXIT_MEMORY_FAULT exit
+Date:   Wed, 16 Nov 2022 19:03:49 +0000
+In-reply-to: <20221116031441.GA364614@chaop.bj.intel.com>
+Message-ID: <87mt8q90rw.fsf@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 16.11.22 19:16, Linus Torvalds wrote:
-> On Wed, Nov 16, 2022 at 2:30 AM David Hildenbrand <david@redhat.com> wrote:
->>
->> Let's make it clearer that functionality provided by FOLL_FORCE is
->> really only for ptrace access.
-> 
-> I'm not super-happy about this one.
-> 
-> I do understand the "let's rename the bit so that no new user shows up".
-> 
-> And it's true that the main traditional use is ptrace.
-> 
-> But from the patch itself it becomes obvious that no, it's not *just*
-> ptrace. At least not yet.
-> 
-> It's used for get_arg_page(), which uses it to basically look up (and
-> install) pages in the newly created VM.
-> 
-> Now, I'm not entirely sure why it even uses FOLL_FORCE, - I think it
-> might be historical, because the target should always be the new stack
-> vma.
-> 
-> Following the history of it is a big of a mess, because there's a
-> number of renamings and re-organizations, but it seems to go back to
-> 2007 and commit b6a2fea39318 ("mm: variable length argument support").
-> 
 
-Right.
+Chao Peng <chao.p.peng@linux.intel.com> writes:
 
-> Before that commit, we kept our own array of "this is the set of pages
-> that I will install in the new VM". That commit basically just inserts
-> the pages directly into the VM instead, getting rid of the array size
-> limitation.
-> 
-> So at a minimum, I think that FOLL_FORCE would need to be removed
-> before any renaming to FOLL_PTRACE, because that's not some kind of
-> small random case.
-> 
-> It *might* be as simple as just removing it, but maybe there's some
-> reason for having it that I don't immediately see.
+> On Tue, Nov 15, 2022 at 04:56:12PM +0000, Alex Benn=C3=A9e wrote:
+>>=20
+>> Chao Peng <chao.p.peng@linux.intel.com> writes:
+>>=20
+>> > This new KVM exit allows userspace to handle memory-related errors. It
+>> > indicates an error happens in KVM at guest memory range [gpa, gpa+size=
+).
+>> > The flags includes additional information for userspace to handle the
+>> > error. Currently bit 0 is defined as 'private memory' where '1'
+>> > indicates error happens due to private memory access and '0' indicates
+>> > error happens due to shared memory access.
+>> >
+>> > When private memory is enabled, this new exit will be used for KVM to
+>> > exit to userspace for shared <-> private memory conversion in memory
+>> > encryption usage. In such usage, typically there are two kind of memory
+>> > conversions:
+>> >   - explicit conversion: happens when guest explicitly calls into KVM
+>> >     to map a range (as private or shared), KVM then exits to userspace
+>> >     to perform the map/unmap operations.
+>> >   - implicit conversion: happens in KVM page fault handler where KVM
+>> >     exits to userspace for an implicit conversion when the page is in a
+>> >     different state than requested (private or shared).
+>> >
+>> > Suggested-by: Sean Christopherson <seanjc@google.com>
+>> > Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+>> > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+>> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+>> > ---
+>> >  Documentation/virt/kvm/api.rst | 23 +++++++++++++++++++++++
+>> >  include/uapi/linux/kvm.h       |  9 +++++++++
+>> >  2 files changed, 32 insertions(+)
+>> >
+>> > diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/a=
+pi.rst
+>> > index f3fa75649a78..975688912b8c 100644
+>> > --- a/Documentation/virt/kvm/api.rst
+>> > +++ b/Documentation/virt/kvm/api.rst
+>> > @@ -6537,6 +6537,29 @@ array field represents return values. The users=
+pace should update the return
+>> >  values of SBI call before resuming the VCPU. For more details on RISC=
+-V SBI
+>> >  spec refer, https://github.com/riscv/riscv-sbi-doc.
+>> >=20=20
+>> > +::
+>> > +
+>> > +		/* KVM_EXIT_MEMORY_FAULT */
+>> > +		struct {
+>> > +  #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1 << 0)
+>> > +			__u32 flags;
+>> > +			__u32 padding;
+>> > +			__u64 gpa;
+>> > +			__u64 size;
+>> > +		} memory;
+>> > +
+>> > +If exit reason is KVM_EXIT_MEMORY_FAULT then it indicates that the VC=
+PU has
+>> > +encountered a memory error which is not handled by KVM kernel module =
+and
+>> > +userspace may choose to handle it. The 'flags' field indicates the me=
+mory
+>> > +properties of the exit.
+>> > +
+>> > + - KVM_MEMORY_EXIT_FLAG_PRIVATE - indicates the memory error is cause=
+d by
+>> > +   private memory access when the bit is set. Otherwise the memory er=
+ror is
+>> > +   caused by shared memory access when the bit is clear.
+>>=20
+>> What does a shared memory access failure entail?
+>
+> In the context of confidential computing usages, guest can issue a
+> shared memory access while the memory is actually private from the host
+> point of view. This exit with bit 0 cleared gives userspace a chance to
+> convert the private memory to shared memory on host.
 
-Right, I have the same feeling. It might just be a copy-and-paste legacy 
-leftover.
+I think this should be explicit rather than implied by the absence of
+another flag. Sean suggested you might want flags for RWX failures so
+maybe something like:
 
-> 
-> There _are_ also small random cases too, like get_cmdline(). Maybe
-> that counts as ptrace, but the execve() case most definitely does not.
+	KVM_MEMORY_EXIT_SHARED_FLAG_READ	(1 << 0)
+	KVM_MEMORY_EXIT_SHARED_FLAG_WRITE	(1 << 1)
+	KVM_MEMORY_EXIT_SHARED_FLAG_EXECUTE	(1 << 2)
+        KVM_MEMORY_EXIT_FLAG_PRIVATE            (1 << 3)
 
-I agree. I'd suggest moving forward without this (last) patch for now 
-and figuring out how to further cleanup FOLL_FORCE usage on top.
+which would allow you to signal the various failure modes of the shared
+region, or that you had accessed private memory.
 
-@Andrew, if you intend to put this into mm-unstable, please drop the 
-last patch for now.
+>
+>>=20
+>> If you envision any other failure modes it might be worth making it
+>> explicit with additional flags.
+>
+> Sean mentioned some more usages[1][]2] other than the memory conversion
+> for confidential usage. But I would leave those flags being added in the
+> future after those usages being well discussed.
+>
+> [1] https://lkml.kernel.org/r/20200617230052.GB27751@linux.intel.com
+> [2] https://lore.kernel.org/all/YKxJLcg%2FWomPE422@google.com
+>
+>> I also wonder if a bitmask makes sense if
+>> there can only be one reason for a failure? Maybe all that is needed is
+>> a reason enum?
+>
+> Tough we only have one reason right now but we still want to leave room
+> for future extension. Enum can express a single value at once well but
+> bitmask makes it possible to express multiple orthogonal flags.
 
--- 
-Thanks,
+I agree if multiple orthogonal failures can occur at once a bitmask is
+the right choice.
 
-David / dhildenb
+>
+> Chao
+>>=20
+>> > +
+>> > +'gpa' and 'size' indicate the memory range the error occurs at. The u=
+serspace
+>> > +may handle the error and return to KVM to retry the previous memory a=
+ccess.
+>> > +
+>> >  ::
+>> >=20=20
+>> >      /* KVM_EXIT_NOTIFY */
+>> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+>> > index f1ae45c10c94..fa60b032a405 100644
+>> > --- a/include/uapi/linux/kvm.h
+>> > +++ b/include/uapi/linux/kvm.h
+>> > @@ -300,6 +300,7 @@ struct kvm_xen_exit {
+>> >  #define KVM_EXIT_RISCV_SBI        35
+>> >  #define KVM_EXIT_RISCV_CSR        36
+>> >  #define KVM_EXIT_NOTIFY           37
+>> > +#define KVM_EXIT_MEMORY_FAULT     38
+>> >=20=20
+>> >  /* For KVM_EXIT_INTERNAL_ERROR */
+>> >  /* Emulate instruction failed. */
+>> > @@ -538,6 +539,14 @@ struct kvm_run {
+>> >  #define KVM_NOTIFY_CONTEXT_INVALID	(1 << 0)
+>> >  			__u32 flags;
+>> >  		} notify;
+>> > +		/* KVM_EXIT_MEMORY_FAULT */
+>> > +		struct {
+>> > +#define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1 << 0)
+>> > +			__u32 flags;
+>> > +			__u32 padding;
+>> > +			__u64 gpa;
+>> > +			__u64 size;
+>> > +		} memory;
+>> >  		/* Fix the size of the union. */
+>> >  		char padding[256];
+>> >  	};
+>>=20
+>>=20
+>> --=20
+>> Alex Benn=C3=A9e
 
+
+--=20
+Alex Benn=C3=A9e
