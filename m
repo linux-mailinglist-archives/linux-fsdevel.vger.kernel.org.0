@@ -2,396 +2,301 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA4F962DEBE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 15:56:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8D8E462DF61
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 16:13:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239612AbiKQO4g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Nov 2022 09:56:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45980 "EHLO
+        id S240166AbiKQPNP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Nov 2022 10:13:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55044 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239654AbiKQO4L (ORCPT
+        with ESMTP id S234562AbiKQPMv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Nov 2022 09:56:11 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2F5B5DB95
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Nov 2022 06:55:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668696919;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=YJcni/qoz2Jn4Q6qmO5bzrBJYh/kxcflZir3I1y2Bzk=;
-        b=CTkbIKNt+4WPb+y49rP5MTdV7t6EchDKCnByJd0WmG5jRdPVjy6VAlZCZiiERJAzO+kDQn
-        ri4UqO+rsHanH8zoMqLiCbbmr71T0AyBzpzl2k+gfvcZRJIfor2D8Dq6fnpmwwYrlDVmG1
-        XxsUhfOOVb4dIBoLMMdBdjsibD6/C5w=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-624-Tm7bUv0QOTycOu1RYONZZg-1; Thu, 17 Nov 2022 09:55:17 -0500
-X-MC-Unique: Tm7bUv0QOTycOu1RYONZZg-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 327CA94AB04;
-        Thu, 17 Nov 2022 14:55:17 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BA6961415119;
-        Thu, 17 Nov 2022 14:55:15 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH 4/4] netfs: Add a function to extract an iterator into a
- scatterlist
-From:   David Howells <dhowells@redhat.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jeff Layton <jlayton@kernel.org>, Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
+        Thu, 17 Nov 2022 10:12:51 -0500
+Received: from mail-wr1-x434.google.com (mail-wr1-x434.google.com [IPv6:2a00:1450:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D1AFF7CB91
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Nov 2022 07:09:22 -0800 (PST)
+Received: by mail-wr1-x434.google.com with SMTP id k8so4402115wrh.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Nov 2022 07:09:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OBusLlaaNz/2IZSIaqYfgs6/xdT0ROMSHKfiBIhkdsE=;
+        b=NfpbBsBQgrbY75WiJ016e0JTmdGmoYyca7I/NCnJZhfmCCTZjayS9RdRKm4JfS2fcJ
+         fVeXHWNZWpWqOxuAKjFqL87nRYvfdIeS/OGZksL27R8rb8hVNRwXGKXYPRUYovuyOhTQ
+         2KdieC+Lyx97mRgkXg4lB53Eby8Njkv0vJYLjpXxSam8mrjRDYlb2SWZOAdruhuNiKch
+         oimt+1rPmL9CFVQctuwqINnIzoMMDOOHZx1qNiF5cxB4yWYef69Ku4OJl58DzQ7tLFDO
+         9GvANFdmzddlRJJK66Ax9Y8b7HOjXFK6WEOP7Gtp/3GhVHUbB2438tgaxi1Vg2RVLoXk
+         l1kQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OBusLlaaNz/2IZSIaqYfgs6/xdT0ROMSHKfiBIhkdsE=;
+        b=t8Og5g3iLnnRxRWktncIhYSytvLvNMWOU2auwkdm18njSEZkTiJsyaSfhgWNVx/T5I
+         mUP5g1wgFCR+a89iwupkJCYI6zW+/eyBb+al2A3EtBcH3wZnN/ATU+KmJhq7XOMm/hGU
+         zMa+Fbvx5zdcEp2WOZ27Ypm6JyPQ3ry9HAR7nTa8x486qJSEBwkBQakgT1mRlPkPVrPd
+         S94S/mhCKlSKr79f68f2YP0BJnFh5nUCipwwCstBticWMGMaRFtqCAKiVL9RejCDmRny
+         7cs/U5Lwcmv0wTEeTWDTDwsV9h+OivuIs6eene8fCtBh/0WF9XUMNLkiw2VLcJgHuXzg
+         h3DA==
+X-Gm-Message-State: ANoB5pn8T9PYAWxf/7UN/c0a78G/cV1HJlcd1ovoV4B45qvt3xtBVaah
+        jD3yNUgfyZfiH3yRVazBUm76lw==
+X-Google-Smtp-Source: AA0mqf7vvxL/xmrC6/yE9sA9AOuHHRmrasa80rT6NKUjVl0i95jt04rAjvEUusssVu8F+bFzV97rWw==
+X-Received: by 2002:adf:efd2:0:b0:236:e5a2:4f66 with SMTP id i18-20020adfefd2000000b00236e5a24f66mr1861434wrp.357.1668697761285;
+        Thu, 17 Nov 2022 07:09:21 -0800 (PST)
+Received: from zen.linaroharston ([185.81.254.11])
+        by smtp.gmail.com with ESMTPSA id r10-20020adfce8a000000b00241b371d73esm1255319wrn.77.2022.11.17.07.09.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 17 Nov 2022 07:09:20 -0800 (PST)
+Received: from zen (localhost [127.0.0.1])
+        by zen.linaroharston (Postfix) with ESMTP id 5177C1FFB7;
+        Thu, 17 Nov 2022 15:09:20 +0000 (GMT)
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-4-chao.p.peng@linux.intel.com>
+ <87cz9o9mr8.fsf@linaro.org> <20221116031441.GA364614@chaop.bj.intel.com>
+ <87mt8q90rw.fsf@linaro.org> <20221117134520.GD422408@chaop.bj.intel.com>
+User-agent: mu4e 1.9.2; emacs 28.2.50
+From:   Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
         Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 17 Nov 2022 14:55:13 +0000
-Message-ID: <166869691313.3723671.10714823767342163891.stgit@warthog.procyon.org.uk>
-In-Reply-To: <166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk>
-References: <166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.5
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v9 3/8] KVM: Add KVM_EXIT_MEMORY_FAULT exit
+Date:   Thu, 17 Nov 2022 15:08:17 +0000
+In-reply-to: <20221117134520.GD422408@chaop.bj.intel.com>
+Message-ID: <87a64p8vof.fsf@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Provide a function for filling in a scatterlist from the list of pages
-contained in an iterator.
 
-If the iterator is UBUF- or IOBUF-type, the pages have a ref taken on them.
+Chao Peng <chao.p.peng@linux.intel.com> writes:
 
-If the iterator is BVEC-, KVEC- or XARRAY-type, no ref is taken on the
-pages and it is left to the caller to manage their lifetime.  It cannot be
-assumed that a ref can be validly taken, particularly in the case of a KVEC
-iterator.
+> On Wed, Nov 16, 2022 at 07:03:49PM +0000, Alex Benn=C3=A9e wrote:
+>>=20
+>> Chao Peng <chao.p.peng@linux.intel.com> writes:
+>>=20
+>> > On Tue, Nov 15, 2022 at 04:56:12PM +0000, Alex Benn=C3=A9e wrote:
+>> >>=20
+>> >> Chao Peng <chao.p.peng@linux.intel.com> writes:
+>> >>=20
+>> >> > This new KVM exit allows userspace to handle memory-related errors.=
+ It
+>> >> > indicates an error happens in KVM at guest memory range [gpa, gpa+s=
+ize).
+>> >> > The flags includes additional information for userspace to handle t=
+he
+>> >> > error. Currently bit 0 is defined as 'private memory' where '1'
+>> >> > indicates error happens due to private memory access and '0' indica=
+tes
+>> >> > error happens due to shared memory access.
+>> >> >
+>> >> > When private memory is enabled, this new exit will be used for KVM =
+to
+>> >> > exit to userspace for shared <-> private memory conversion in memory
+>> >> > encryption usage. In such usage, typically there are two kind of me=
+mory
+>> >> > conversions:
+>> >> >   - explicit conversion: happens when guest explicitly calls into K=
+VM
+>> >> >     to map a range (as private or shared), KVM then exits to usersp=
+ace
+>> >> >     to perform the map/unmap operations.
+>> >> >   - implicit conversion: happens in KVM page fault handler where KVM
+>> >> >     exits to userspace for an implicit conversion when the page is =
+in a
+>> >> >     different state than requested (private or shared).
+>> >> >
+>> >> > Suggested-by: Sean Christopherson <seanjc@google.com>
+>> >> > Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+>> >> > Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
+>> >> > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+>> >> > ---
+>> >> >  Documentation/virt/kvm/api.rst | 23 +++++++++++++++++++++++
+>> >> >  include/uapi/linux/kvm.h       |  9 +++++++++
+>> >> >  2 files changed, 32 insertions(+)
+>> >> >
+>> >> > diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kv=
+m/api.rst
+>> >> > index f3fa75649a78..975688912b8c 100644
+>> >> > --- a/Documentation/virt/kvm/api.rst
+>> >> > +++ b/Documentation/virt/kvm/api.rst
+>> >> > @@ -6537,6 +6537,29 @@ array field represents return values. The us=
+erspace should update the return
+>> >> >  values of SBI call before resuming the VCPU. For more details on R=
+ISC-V SBI
+>> >> >  spec refer, https://github.com/riscv/riscv-sbi-doc.
+>> >> >=20=20
+>> >> > +::
+>> >> > +
+>> >> > +		/* KVM_EXIT_MEMORY_FAULT */
+>> >> > +		struct {
+>> >> > +  #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1 << 0)
+>> >> > +			__u32 flags;
+>> >> > +			__u32 padding;
+>> >> > +			__u64 gpa;
+>> >> > +			__u64 size;
+>> >> > +		} memory;
+>> >> > +
+>> >> > +If exit reason is KVM_EXIT_MEMORY_FAULT then it indicates that the=
+ VCPU has
+>> >> > +encountered a memory error which is not handled by KVM kernel modu=
+le and
+>> >> > +userspace may choose to handle it. The 'flags' field indicates the=
+ memory
+>> >> > +properties of the exit.
+>> >> > +
+>> >> > + - KVM_MEMORY_EXIT_FLAG_PRIVATE - indicates the memory error is ca=
+used by
+>> >> > +   private memory access when the bit is set. Otherwise the memory=
+ error is
+>> >> > +   caused by shared memory access when the bit is clear.
+>> >>=20
+>> >> What does a shared memory access failure entail?
+>> >
+>> > In the context of confidential computing usages, guest can issue a
+>> > shared memory access while the memory is actually private from the host
+>> > point of view. This exit with bit 0 cleared gives userspace a chance to
+>> > convert the private memory to shared memory on host.
+>>=20
+>> I think this should be explicit rather than implied by the absence of
+>> another flag. Sean suggested you might want flags for RWX failures so
+>> maybe something like:
+>>=20
+>> 	KVM_MEMORY_EXIT_SHARED_FLAG_READ	(1 << 0)
+>> 	KVM_MEMORY_EXIT_SHARED_FLAG_WRITE	(1 << 1)
+>> 	KVM_MEMORY_EXIT_SHARED_FLAG_EXECUTE	(1 << 2)
+>>         KVM_MEMORY_EXIT_FLAG_PRIVATE            (1 << 3)
+>
+> Yes, but I would not add 'SHARED' to RWX, they are not share memory
+> specific, private memory can also set them once introduced.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Jeff Layton <jlayton@kernel.org>
-cc: Steve French <sfrench@samba.org>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: linux-cachefs@redhat.com
-cc: linux-cifs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
----
+OK so how about:
 
- fs/netfs/iterator.c   |  252 +++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/netfs.h |    3 +
- mm/vmalloc.c          |    1 
- 3 files changed, 256 insertions(+)
+ 	KVM_MEMORY_EXIT_FLAG_READ	(1 << 0)
+ 	KVM_MEMORY_EXIT_FLAG_WRITE	(1 << 1)
+ 	KVM_MEMORY_EXIT_FLAG_EXECUTE	(1 << 2)
+        KVM_MEMORY_EXIT_FLAG_SHARED     (1 << 3)
+        KVM_MEMORY_EXIT_FLAG_PRIVATE    (1 << 4)
 
-diff --git a/fs/netfs/iterator.c b/fs/netfs/iterator.c
-index c11d05a66a4a..62485416cc3d 100644
---- a/fs/netfs/iterator.c
-+++ b/fs/netfs/iterator.c
-@@ -7,7 +7,9 @@
- 
- #include <linux/export.h>
- #include <linux/slab.h>
-+#include <linux/mm.h>
- #include <linux/uio.h>
-+#include <linux/scatterlist.h>
- #include <linux/netfs.h>
- #include "internal.h"
- 
-@@ -92,3 +94,253 @@ ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
- 	return npages;
- }
- EXPORT_SYMBOL(netfs_extract_user_iter);
-+
-+/*
-+ * Extract and pin up to sg_max pages from UBUF- or IOVEC-class iterators and
-+ * add them to the scatterlist.
-+ */
-+static ssize_t netfs_extract_user_to_sg(struct iov_iter *iter,
-+					ssize_t maxsize,
-+					struct sg_table *sgtable,
-+					unsigned int sg_max)
-+{
-+	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
-+	struct page **pages;
-+	unsigned int npages;
-+	ssize_t ret = 0, res;
-+	size_t len, off;
-+
-+	/* We decant the page list into the tail of the scatterlist */
-+	pages = (void *)sgtable->sgl + array_size(sg_max, sizeof(struct scatterlist));
-+	pages -= sg_max;
-+
-+	do {
-+		res = iov_iter_get_pages2(iter, pages, maxsize, sg_max, &off);
-+		if (res < 0)
-+			goto failed;
-+
-+		len = res;
-+		maxsize -= len;
-+		ret += len;
-+		npages = DIV_ROUND_UP(off + len, PAGE_SIZE);
-+		sg_max -= npages;
-+
-+		for (; npages < 0; npages--) {
-+			struct page *page = *pages;
-+			size_t seg = min_t(size_t, PAGE_SIZE - off, len);
-+
-+			*pages++ = NULL;
-+			sg_set_page(sg, page, len, off);
-+			sgtable->nents++;
-+			sg++;
-+			len -= seg;
-+			off = 0;
-+		}
-+	} while (maxsize > 0 && sg_max > 0);
-+
-+	return ret;
-+
-+failed:
-+	while (sgtable->nents > sgtable->orig_nents)
-+		put_page(sg_page(&sgtable->sgl[--sgtable->nents]));
-+	return res;
-+}
-+
-+/*
-+ * Extract up to sg_max pages from a BVEC-type iterator and add them to the
-+ * scatterlist.  The pages are not pinned.
-+ */
-+static ssize_t netfs_extract_bvec_to_sg(struct iov_iter *iter,
-+					ssize_t maxsize,
-+					struct sg_table *sgtable,
-+					unsigned int sg_max)
-+{
-+	const struct bio_vec *bv = iter->bvec;
-+	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
-+	unsigned long start = iter->iov_offset;
-+	unsigned int i;
-+	ssize_t ret = 0;
-+
-+	for (i = 0; i < iter->nr_segs; i++) {
-+		size_t off, len;
-+
-+		len = bv[i].bv_len;
-+		if (start >= len) {
-+			start -= len;
-+			continue;
-+		}
-+
-+		len = min_t(size_t, maxsize, len - start);
-+		off = bv[i].bv_offset + start;
-+
-+		sg_set_page(sg, bv[i].bv_page, len, off);
-+		sgtable->nents++;
-+		sg++;
-+		sg_max--;
-+
-+		ret += len;
-+		maxsize -= len;
-+		if (maxsize <= 0 || sg_max == 0)
-+			break;
-+		start = 0;
-+	}
-+
-+	if (ret > 0)
-+		iov_iter_advance(iter, ret);
-+	return ret;
-+}
-+
-+/*
-+ * Extract up to sg_max pages from a KVEC-type iterator and add them to the
-+ * scatterlist.  This can deal with vmalloc'd buffers as well as kmalloc'd or
-+ * static buffers.  The pages are not pinned.
-+ */
-+static ssize_t netfs_extract_kvec_to_sg(struct iov_iter *iter,
-+					ssize_t maxsize,
-+					struct sg_table *sgtable,
-+					unsigned int sg_max)
-+{
-+	const struct kvec *kv = iter->kvec;
-+	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
-+	unsigned long start = iter->iov_offset;
-+	unsigned int i;
-+	ssize_t ret = 0;
-+
-+	for (i = 0; i < iter->nr_segs; i++) {
-+		struct page *page;
-+		unsigned long kaddr;
-+		size_t off, len, seg;
-+
-+		len = kv[i].iov_len;
-+		if (start >= len) {
-+			start -= len;
-+			continue;
-+		}
-+
-+		kaddr = (unsigned long)kv[i].iov_base + start;
-+		off = kaddr & ~PAGE_MASK;
-+		len = min_t(size_t, maxsize, len - start);
-+		kaddr &= PAGE_MASK;
-+
-+		maxsize -= len;
-+		ret += len;
-+		do {
-+			seg = min_t(size_t, len, PAGE_SIZE - off);
-+			if (is_vmalloc_or_module_addr((void *)kaddr))
-+				page = vmalloc_to_page((void *)kaddr);
-+			else
-+				page = virt_to_page(kaddr);
-+
-+			sg_set_page(sg, page, len, off);
-+			sgtable->nents++;
-+			sg++;
-+			sg_max--;
-+
-+			len -= seg;
-+			kaddr += PAGE_SIZE;
-+			off = 0;
-+		} while (len > 0 && sg_max > 0);
-+
-+		if (maxsize <= 0 || sg_max == 0)
-+			break;
-+		start = 0;
-+	}
-+
-+	if (ret > 0)
-+		iov_iter_advance(iter, ret);
-+	return ret;
-+}
-+
-+/*
-+ * Extract up to sg_max folios from an XARRAY-type iterator and add them to
-+ * the scatterlist.  The pages are not pinned.
-+ */
-+static ssize_t netfs_extract_xarray_to_sg(struct iov_iter *iter,
-+					  ssize_t maxsize,
-+					  struct sg_table *sgtable,
-+					  unsigned int sg_max)
-+{
-+	struct scatterlist *sg = sgtable->sgl + sgtable->nents;
-+	struct xarray *xa = iter->xarray;
-+	struct folio *folio;
-+	loff_t start = iter->xarray_start + iter->iov_offset;
-+	pgoff_t index = start / PAGE_SIZE;
-+	ssize_t ret = 0;
-+	size_t offset, len;
-+	XA_STATE(xas, xa, index);
-+
-+	rcu_read_lock();
-+
-+	xas_for_each(&xas, folio, ULONG_MAX) {
-+		if (xas_retry(&xas, folio))
-+			continue;
-+		if (WARN_ON(xa_is_value(folio)))
-+			break;
-+		if (WARN_ON(folio_test_hugetlb(folio)))
-+			break;
-+
-+		offset = offset_in_folio(folio, start);
-+		len = min_t(size_t, maxsize, folio_size(folio) - offset);
-+
-+		sg_set_page(sg, folio_page(folio, 0), len, offset);
-+		sgtable->nents++;
-+		sg++;
-+		sg_max--;
-+
-+		maxsize -= len;
-+		ret += len;
-+		if (maxsize <= 0 || sg_max == 0)
-+			break;
-+	}
-+
-+	rcu_read_unlock();
-+	if (ret > 0)
-+		iov_iter_advance(iter, ret);
-+	return ret;
-+}
-+
-+/**
-+ * netfs_extract_iter_to_sg - Extract pages from an iterator and add ot an sglist
-+ * @iter: The iterator to extract from
-+ * @maxsize: The amount of iterator to copy
-+ * @sgtable: The scatterlist table to fill in
-+ * @sg_max: Maximum number of elements in @sgtable that may be filled
-+ *
-+ * Extract the page fragments from the given amount of the source iterator and
-+ * add them to a scatterlist that refers to all of those bits, to a maximum
-+ * addition of @sg_max elements.
-+ *
-+ * The pages referred to by UBUF- and IOVEC-type iterators are extracted and
-+ * pinned; BVEC-, KVEC- and XARRAY-type are extracted but aren't pinned; PIPE-
-+ * and DISCARD-type are not supported.
-+ *
-+ * No end mark is placed on the scatterlist; that's left to the caller.
-+ *
-+ * If successul, @sgtable->nents is updated to include the number of elements
-+ * added and the number of bytes added is returned.  @sgtable->orig_nents is
-+ * left unaltered.
-+ */
-+ssize_t netfs_extract_iter_to_sg(struct iov_iter *iter, size_t maxsize,
-+				 struct sg_table *sgtable, unsigned int sg_max)
-+{
-+	if (maxsize == 0)
-+		return 0;
-+
-+	switch (iov_iter_type(iter)) {
-+	case ITER_UBUF:
-+	case ITER_IOVEC:
-+		return netfs_extract_user_to_sg(iter, maxsize, sgtable, sg_max);
-+	case ITER_BVEC:
-+		return netfs_extract_bvec_to_sg(iter, maxsize, sgtable, sg_max);
-+	case ITER_KVEC:
-+		return netfs_extract_kvec_to_sg(iter, maxsize, sgtable, sg_max);
-+	case ITER_XARRAY:
-+		return netfs_extract_xarray_to_sg(iter, maxsize, sgtable, sg_max);
-+	default:
-+		pr_err("netfs_extract_iter_to_sg(%u) unsupported\n",
-+		       iov_iter_type(iter));
-+		WARN_ON_ONCE(1);
-+		return -EIO;
-+	}
-+}
-+EXPORT_SYMBOL(netfs_extract_iter_to_sg);
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 5f6ad0246946..21771dd594a1 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -290,6 +290,9 @@ void netfs_put_subrequest(struct netfs_io_subrequest *subreq,
- void netfs_stats_show(struct seq_file *);
- ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
- 				struct iov_iter *new);
-+struct sg_table;
-+ssize_t netfs_extract_iter_to_sg(struct iov_iter *iter, size_t len,
-+				 struct sg_table *sgtable, unsigned int sg_max);
- 
- /**
-  * netfs_inode - Get the netfs inode context from the inode
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index ccaa461998f3..b13ac142685b 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -653,6 +653,7 @@ int is_vmalloc_or_module_addr(const void *x)
- #endif
- 	return is_vmalloc_addr(x);
- }
-+EXPORT_SYMBOL_GPL(is_vmalloc_or_module_addr);
- 
- /*
-  * Walk a vmap address to the struct page it maps. Huge vmap mappings will
+>
+> Thanks,
+> Chao
+>>=20
+>> which would allow you to signal the various failure modes of the shared
+>> region, or that you had accessed private memory.
+>>=20
+>> >
+>> >>=20
+>> >> If you envision any other failure modes it might be worth making it
+>> >> explicit with additional flags.
+>> >
+>> > Sean mentioned some more usages[1][]2] other than the memory conversion
+>> > for confidential usage. But I would leave those flags being added in t=
+he
+>> > future after those usages being well discussed.
+>> >
+>> > [1] https://lkml.kernel.org/r/20200617230052.GB27751@linux.intel.com
+>> > [2] https://lore.kernel.org/all/YKxJLcg%2FWomPE422@google.com
+>> >
+>> >> I also wonder if a bitmask makes sense if
+>> >> there can only be one reason for a failure? Maybe all that is needed =
+is
+>> >> a reason enum?
+>> >
+>> > Tough we only have one reason right now but we still want to leave room
+>> > for future extension. Enum can express a single value at once well but
+>> > bitmask makes it possible to express multiple orthogonal flags.
+>>=20
+>> I agree if multiple orthogonal failures can occur at once a bitmask is
+>> the right choice.
+>>=20
+>> >
+>> > Chao
+>> >>=20
+>> >> > +
+>> >> > +'gpa' and 'size' indicate the memory range the error occurs at. Th=
+e userspace
+>> >> > +may handle the error and return to KVM to retry the previous memor=
+y access.
+>> >> > +
+>> >> >  ::
+>> >> >=20=20
+>> >> >      /* KVM_EXIT_NOTIFY */
+>> >> > diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
+>> >> > index f1ae45c10c94..fa60b032a405 100644
+>> >> > --- a/include/uapi/linux/kvm.h
+>> >> > +++ b/include/uapi/linux/kvm.h
+>> >> > @@ -300,6 +300,7 @@ struct kvm_xen_exit {
+>> >> >  #define KVM_EXIT_RISCV_SBI        35
+>> >> >  #define KVM_EXIT_RISCV_CSR        36
+>> >> >  #define KVM_EXIT_NOTIFY           37
+>> >> > +#define KVM_EXIT_MEMORY_FAULT     38
+>> >> >=20=20
+>> >> >  /* For KVM_EXIT_INTERNAL_ERROR */
+>> >> >  /* Emulate instruction failed. */
+>> >> > @@ -538,6 +539,14 @@ struct kvm_run {
+>> >> >  #define KVM_NOTIFY_CONTEXT_INVALID	(1 << 0)
+>> >> >  			__u32 flags;
+>> >> >  		} notify;
+>> >> > +		/* KVM_EXIT_MEMORY_FAULT */
+>> >> > +		struct {
+>> >> > +#define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1 << 0)
+>> >> > +			__u32 flags;
+>> >> > +			__u32 padding;
+>> >> > +			__u64 gpa;
+>> >> > +			__u64 size;
+>> >> > +		} memory;
+>> >> >  		/* Fix the size of the union. */
+>> >> >  		char padding[256];
+>> >> >  	};
+>> >>=20
+>> >>=20
+>> >> --=20
+>> >> Alex Benn=C3=A9e
+>>=20
+>>=20
+>> --=20
+>> Alex Benn=C3=A9e
 
 
+--=20
+Alex Benn=C3=A9e
