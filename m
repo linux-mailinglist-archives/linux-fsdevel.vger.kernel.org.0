@@ -2,323 +2,155 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E37C62E964
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 00:16:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5BC862E993
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 00:28:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234758AbiKQXQA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Nov 2022 18:16:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33578 "EHLO
+        id S234931AbiKQX2T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Nov 2022 18:28:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232715AbiKQXP7 (ORCPT
+        with ESMTP id S234992AbiKQX2Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Nov 2022 18:15:59 -0500
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2060.outbound.protection.outlook.com [40.107.96.60])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85A7F716D2;
-        Thu, 17 Nov 2022 15:15:57 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=A/dyDUg8CQYgiJIU/ctyljmUdxl7lv1W0DqeVF6BzRM+4H3mv3lBb8ntk/0tbd/pIKBflH6HJl+h7T9gZg6zfxWloOi+r+Jigxz47nhEzFpzJlKawC8/eHnbeLHZs9XsZU0mCZON2pQWH9kgaQ/XJcxF0q22iLlrjDkfDLh9j9WsdklQCLbUd5hakp3AHsKRx6zGX6hENQsuXkxHFkRI5QbLVcRAcN42VMN47c2ryHRZCiU9jXG6RzcuwLeKd2bKktpUcgEAOju901BHMPY5bfaTGJVybywaxuwyfmbanRClSE9or4iJp3zA+qFOy+RGnVGp8cRnMVL80vQn8q/vzg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0TV2/fnFlsfvkgGFu5urUDTiLpRsFiRQiV56Xr0bxAA=;
- b=OfxfLJoC9DAlkr0wdj63TKCGvPL9IHFJgZOsDf7gKzIjGfj6j4nJxRKCAAW8USCJpXLrhPFFieBfFcN4fVyeK/BVfzTMZ0DchqyYA/cNb8PruNrHPrpVA4PWfC6WeNArXoddPiJSlXQFlhmeCmVWLKci1si06qSk92bdKZUp8KgxgRxaatkG6y5qmn9Kwn/LJIoE0okGmhIDw5OXTcmTyejH42ulnnqcNVBdNVlpfDqVszkvBfzlzYTvzwo2HxKo5UQ78C62sCMk2E3D4FgseEFpV/i+OjyaaJoOiGELGynS8/VHQcZxykU4jN8zfdbkUkC/5APuvj7iFW1YRW6X7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0TV2/fnFlsfvkgGFu5urUDTiLpRsFiRQiV56Xr0bxAA=;
- b=UWVm3YUP8d1xEjNJ2OxxJ3hiAyAFFM9uQGQhTlXQeyWKI8fVWwTDCq6X2FA+p/VY9whKx3mGYDZC+EONg4dOip70rhW5754Gt+0R5T0tHmHJTKscFtPIZgYGnSXcG5kXj8Zupb+SIcdTmwtA5Bl/DaxD/7Jpo9xkyMs3H6LgHBXa0vxbA1AiDvHNxgXfju9zMnQF/RlBDq2L95iy7clhBjOekZNe3GxfyfSHbC+reOBZNrxwsF3QkhkSQ9fvTfAQHofhBBCOiuR3+kxd/Fx1JwS+DcajRXWWhfumetjVcpuG126sHbDk7H0AunUcc/6K8gugB5dyrGZyLyRah+tCZQ==
-Received: from BN9PR03CA0138.namprd03.prod.outlook.com (2603:10b6:408:fe::23)
- by DM4PR12MB7695.namprd12.prod.outlook.com (2603:10b6:8:101::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.13; Thu, 17 Nov
- 2022 23:15:55 +0000
-Received: from BN8NAM11FT046.eop-nam11.prod.protection.outlook.com
- (2603:10b6:408:fe:cafe::bb) by BN9PR03CA0138.outlook.office365.com
- (2603:10b6:408:fe::23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.20 via Frontend
- Transport; Thu, 17 Nov 2022 23:15:55 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- BN8NAM11FT046.mail.protection.outlook.com (10.13.177.127) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5834.8 via Frontend Transport; Thu, 17 Nov 2022 23:15:55 +0000
-Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 17 Nov
- 2022 15:15:41 -0800
-Received: from [10.110.48.28] (10.126.231.35) by rnnvmail201.nvidia.com
- (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.36; Thu, 17 Nov
- 2022 15:15:41 -0800
-Message-ID: <e1c01800-a5ba-ea69-c9d8-19b2cbe05d4f@nvidia.com>
-Date:   Thu, 17 Nov 2022 15:15:40 -0800
+        Thu, 17 Nov 2022 18:28:16 -0500
+Received: from mail-qt1-x82b.google.com (mail-qt1-x82b.google.com [IPv6:2607:f8b0:4864:20::82b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 94C241C100
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Nov 2022 15:28:13 -0800 (PST)
+Received: by mail-qt1-x82b.google.com with SMTP id w9so2150086qtv.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Nov 2022 15:28:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y0Zl62KafxDJ8AwrDahi1bqb4Xk/32bDlmDdXpQC/2I=;
+        b=McHst7l/f7KmgETncU4ax8Cz1+X0pDSSDz+NpOo85KKRbSTGF3eq2IAlrIRy/FELSJ
+         Y7C0SIlyu5mGQyhzPLIjsCXMOXUrzD5TZH+dJcbaF2LHrVuVcof8hyWOL3D9pZZx4wAD
+         8LINQRolzJh6QXumNwKV51jsDIdF9sMEo4+5s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y0Zl62KafxDJ8AwrDahi1bqb4Xk/32bDlmDdXpQC/2I=;
+        b=GX7z5H+F8cO04f+k9cuYxygNg3ItR9sTl4oc8N1zbulo296Ioi0QAQ+vw5pJ0ca1yD
+         OwmyWtwq4PMXClJPXppffy8BtF4eLCB0LJAXPOO/37YGKeXwKJNs7bs+6DLI24o6vUZB
+         OkrM9iJ7gYaeMLgYqnsXoOl9ycWTSELV2hm6GLsYG2qfJzkJ3CPzW7nojJBD59YWOLVm
+         yE8ROkqSDpOF+xPgHtfXwNsQxHnljkvqf+bFycb5In2pD+5lcfu/3SFnmTgy5N924vRV
+         GHHWIDPj59go0aUxDjxmiisSGw7MV3nAzqwurzJ+yPGZOhZZ6vg3/6e6VJpdj3D5vZx8
+         2bWA==
+X-Gm-Message-State: ANoB5pnwugY5rsES6qdNGGrPRyf72ARwBgmYqTXRb+lnMFFL10LHjslW
+        YRXtoYzWDLUAsGWPO862uVQgsZbzEyyf3Q==
+X-Google-Smtp-Source: AA0mqf6bi2Mcve75V1aYIZ/qDENLfGh66HVKuk/FAzgUY86DzmbGEJCbpuMayOTSPZ0CHZu+RrDyCg==
+X-Received: by 2002:ac8:7599:0:b0:3a5:460f:79c8 with SMTP id s25-20020ac87599000000b003a5460f79c8mr4424592qtq.501.1668727692472;
+        Thu, 17 Nov 2022 15:28:12 -0800 (PST)
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com. [209.85.219.50])
+        by smtp.gmail.com with ESMTPSA id f14-20020a05622a114e00b003434d3b5938sm1128102qty.2.2022.11.17.15.28.12
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 17 Nov 2022 15:28:12 -0800 (PST)
+Received: by mail-qv1-f50.google.com with SMTP id x13so2296869qvn.6
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Nov 2022 15:28:12 -0800 (PST)
+X-Received: by 2002:ad4:4101:0:b0:4b1:856b:4277 with SMTP id
+ i1-20020ad44101000000b004b1856b4277mr4665856qvp.129.1668727216978; Thu, 17
+ Nov 2022 15:20:16 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [RFC PATCH 1/4] mm: Move FOLL_* defs to mm_types.h
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-CC:     Matthew Wilcox <willy@infradead.org>, <linux-mm@kvack.org>,
-        <linux-fsdevel@vger.kernel.org>,
+References: <20221116102659.70287-1-david@redhat.com> <20221116102659.70287-21-david@redhat.com>
+ <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com> <202211171439.CDE720EAD@keescook>
+In-Reply-To: <202211171439.CDE720EAD@keescook>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Thu, 17 Nov 2022 15:20:01 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjykbz-4xVTWF7vkvGJnFoTSXNVeMzfsXaLnGm3CRd8rQ@mail.gmail.com>
+Message-ID: <CAHk-=wjykbz-4xVTWF7vkvGJnFoTSXNVeMzfsXaLnGm3CRd8rQ@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v1 20/20] mm: rename FOLL_FORCE to FOLL_PTRACE
+To:     Kees Cook <keescook@chromium.org>
+Cc:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
+        x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
         Christoph Hellwig <hch@infradead.org>,
-        "Jeff Layton" <jlayton@kernel.org>, <linux-kernel@vger.kernel.org>
-References: <166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk>
- <166869688542.3723671.10243929000823258622.stgit@warthog.procyon.org.uk>
-From:   John Hubbard <jhubbard@nvidia.com>
-In-Reply-To: <166869688542.3723671.10243929000823258622.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.126.231.35]
-X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
- rnnvmail201.nvidia.com (10.129.68.8)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN8NAM11FT046:EE_|DM4PR12MB7695:EE_
-X-MS-Office365-Filtering-Correlation-Id: 83f8df6f-0fd8-4497-74e2-08dac8f1add6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: X4SLtMvlbVqKzk/aJn4IIVlZwznOxqCRC6ziq9mTSIDZn+FpLRFeGtfK6u2VahL0hGAh0DK4lUM4ExSDVsePd8+sLDvjCMV4hGGDnIgVP7UgFmCe7+fXTMAGXUKwNMN/3r3OLQsCUDP4SRMxWR50Il8Sj+rg93K16w0Xb/jbAAs2yhaxnFDZVfGm5Qpi8YqATfXX8beda5xtg6pUOTxxIDvsJhfbRu+YKqvRQTpozmm/2Uvmz7Md/VrEBA9DFUO0pk98ngfNJQBnxWZRpecTH66fj2uVO2fVdCfoAL7g3rr7/u7PaEeszFF3CqjlOeP4zh6gx1Pl+fWK6TVRUQ5tjXRmQ8Z5C95yAGu5btqLz+f8Z5yLZn2tlBCtt+P+HM1QFLU4v0PFUmJnvYrldAmVPcqp2IJhdDrtRalw0HnyS0lTnytrRZL6IprTFVX6fGMWhCldvsmg25MKKK2LvJtiNAUG5XZycF4G3dWUFcksvHso09LnShDEK9HpbY3hYkgHK/59c8/Lr111uzd2y9JyUhgHj5seb9gnG/EggS844kyQ4u48SFxQhT+sSv4wxQM39xeJJ7fOqchPzgYj2UY2/qzekofk7WzBaPJpSHSz86d0TnpbfjKUPUcFsBQA3w/taRcucTCKL7vIki8ATx3fDRn+3LUwfE6mc7ZxeMGyUGgGjk8DScWIBM4HjYlmQmTFVToMBEo3l3qnO6FSMlbEsQZtQ2PCtfDKOWa9d88EavzAL+pAsoaUzY29NW9GTGU6ZQqFJ3BoHwx1W1m27UURzgtlERAQKbUf/iFqIJEKYq4AuWz4tRLJrsLCIfTuK00B
-X-Forefront-Antispam-Report: CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(136003)(346002)(376002)(396003)(451199015)(40470700004)(36840700001)(46966006)(31686004)(36756003)(86362001)(30864003)(2906002)(356005)(5660300002)(82740400003)(83380400001)(31696002)(8676002)(7636003)(70206006)(2616005)(16576012)(26005)(110136005)(478600001)(186003)(40460700003)(47076005)(54906003)(8936002)(16526019)(41300700001)(82310400005)(36860700001)(966005)(336012)(316002)(426003)(4326008)(53546011)(70586007)(40480700001)(43740500002);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Nov 2022 23:15:55.3501
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 83f8df6f-0fd8-4497-74e2-08dac8f1add6
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource: BN8NAM11FT046.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB7695
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,
-        SPF_NONE autolearn=no autolearn_force=no version=3.4.6
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/17/22 06:54, David Howells wrote:
-> Move FOLL_* definitions to linux/mm_types.h to make them more accessible
-> without having to drag in all of linux/mm.h and everything that drags in
-> too[1].
-> 
-> Suggested-by: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: John Hubbard <jhubbard@nvidia.com>
-> cc: Al Viro <viro@zeniv.linux.org.uk>
-> cc: linux-mm@kvack.org
-> cc: linux-fsdevel@vger.kernel.org
-> Link: https://lore.kernel.org/linux-fsdevel/Y1%2FhSO+7kAJhGShG@casper.infradead.org/ [1]
-> ---
-> 
->   include/linux/mm.h       |   74 ----------------------------------------------
->   include/linux/mm_types.h |   73 +++++++++++++++++++++++++++++++++++++++++++++
->   2 files changed, 73 insertions(+), 74 deletions(-)
+On Thu, Nov 17, 2022 at 2:58 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> Oh, er, why does get_arg_page() even need FOLL_FORCE? This is writing the
+> new stack contents to the nascent brpm->vma, which was newly allocated
+> with VM_STACK_FLAGS, which an arch can override, but they all appear to include
+> VM_WRITE | VM_MAYWRITE.
 
+Yeah, it does seem entirely superfluous.
 
-OK, I've verified that this is a "mostly identical" movement: the only
-thing that changes is that the comments now come before the defines.
+It's been there since the very beginning (although in that original
+commit b6a2fea39318 it was there as a '1' to the 'force' argument to
+get_user_pages()).
 
-And because mm.h includes mm_types.h, it is unlikely that moving a
-define from mm.h to mm_types.h would cause build failures. It's not
-completely impossible: ordering issues are sometimes involved in this
-sort of change. But unlikely.
+I *think* it can be just removed. But as long as it exists, it should
+most definitely not be renamed to FOLL_PTRACE.
 
-Anyway, this is a good move. The users of various mm APIs should not
-have to pull in quite so much of the internals of mm, and this is a step
-in that direction. FOLL_* items are used by filesystems and other
-subsystems that definitely do not need all of mm.h.
+There's a slight worry that it currently hides some other setup issue
+that makes it matter, since it's been that way so long, but I can't
+see what it is.
 
-
-Reviewed-by: John Hubbard <jhubbard@nvidia.com>
-
-
-thanks,
--- 
-John Hubbard
-NVIDIA
-
-> 
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 8bbcccbc5565..7a7a287818ad 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -2941,80 +2941,6 @@ static inline vm_fault_t vmf_error(int err)
->   struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
->   			 unsigned int foll_flags);
->   
-> -#define FOLL_WRITE	0x01	/* check pte is writable */
-> -#define FOLL_TOUCH	0x02	/* mark page accessed */
-> -#define FOLL_GET	0x04	/* do get_page on page */
-> -#define FOLL_DUMP	0x08	/* give error on hole if it would be zero */
-> -#define FOLL_FORCE	0x10	/* get_user_pages read/write w/o permission */
-> -#define FOLL_NOWAIT	0x20	/* if a disk transfer is needed, start the IO
-> -				 * and return without waiting upon it */
-> -#define FOLL_NOFAULT	0x80	/* do not fault in pages */
-> -#define FOLL_HWPOISON	0x100	/* check page is hwpoisoned */
-> -#define FOLL_MIGRATION	0x400	/* wait for page to replace migration entry */
-> -#define FOLL_TRIED	0x800	/* a retry, previous pass started an IO */
-> -#define FOLL_REMOTE	0x2000	/* we are working on non-current tsk/mm */
-> -#define FOLL_ANON	0x8000	/* don't do file mappings */
-> -#define FOLL_LONGTERM	0x10000	/* mapping lifetime is indefinite: see below */
-> -#define FOLL_SPLIT_PMD	0x20000	/* split huge pmd before returning */
-> -#define FOLL_PIN	0x40000	/* pages must be released via unpin_user_page */
-> -#define FOLL_FAST_ONLY	0x80000	/* gup_fast: prevent fall-back to slow gup */
-> -
-> -/*
-> - * FOLL_PIN and FOLL_LONGTERM may be used in various combinations with each
-> - * other. Here is what they mean, and how to use them:
-> - *
-> - * FOLL_LONGTERM indicates that the page will be held for an indefinite time
-> - * period _often_ under userspace control.  This is in contrast to
-> - * iov_iter_get_pages(), whose usages are transient.
-> - *
-> - * FIXME: For pages which are part of a filesystem, mappings are subject to the
-> - * lifetime enforced by the filesystem and we need guarantees that longterm
-> - * users like RDMA and V4L2 only establish mappings which coordinate usage with
-> - * the filesystem.  Ideas for this coordination include revoking the longterm
-> - * pin, delaying writeback, bounce buffer page writeback, etc.  As FS DAX was
-> - * added after the problem with filesystems was found FS DAX VMAs are
-> - * specifically failed.  Filesystem pages are still subject to bugs and use of
-> - * FOLL_LONGTERM should be avoided on those pages.
-> - *
-> - * FIXME: Also NOTE that FOLL_LONGTERM is not supported in every GUP call.
-> - * Currently only get_user_pages() and get_user_pages_fast() support this flag
-> - * and calls to get_user_pages_[un]locked are specifically not allowed.  This
-> - * is due to an incompatibility with the FS DAX check and
-> - * FAULT_FLAG_ALLOW_RETRY.
-> - *
-> - * In the CMA case: long term pins in a CMA region would unnecessarily fragment
-> - * that region.  And so, CMA attempts to migrate the page before pinning, when
-> - * FOLL_LONGTERM is specified.
-> - *
-> - * FOLL_PIN indicates that a special kind of tracking (not just page->_refcount,
-> - * but an additional pin counting system) will be invoked. This is intended for
-> - * anything that gets a page reference and then touches page data (for example,
-> - * Direct IO). This lets the filesystem know that some non-file-system entity is
-> - * potentially changing the pages' data. In contrast to FOLL_GET (whose pages
-> - * are released via put_page()), FOLL_PIN pages must be released, ultimately, by
-> - * a call to unpin_user_page().
-> - *
-> - * FOLL_PIN is similar to FOLL_GET: both of these pin pages. They use different
-> - * and separate refcounting mechanisms, however, and that means that each has
-> - * its own acquire and release mechanisms:
-> - *
-> - *     FOLL_GET: get_user_pages*() to acquire, and put_page() to release.
-> - *
-> - *     FOLL_PIN: pin_user_pages*() to acquire, and unpin_user_pages to release.
-> - *
-> - * FOLL_PIN and FOLL_GET are mutually exclusive for a given function call.
-> - * (The underlying pages may experience both FOLL_GET-based and FOLL_PIN-based
-> - * calls applied to them, and that's perfectly OK. This is a constraint on the
-> - * callers, not on the pages.)
-> - *
-> - * FOLL_PIN should be set internally by the pin_user_pages*() APIs, never
-> - * directly by the caller. That's in order to help avoid mismatches when
-> - * releasing pages: get_user_pages*() pages must be released via put_page(),
-> - * while pin_user_pages*() pages must be released via unpin_user_page().
-> - *
-> - * Please see Documentation/core-api/pin_user_pages.rst for more information.
-> - */
-> -
->   static inline int vm_fault_to_errno(vm_fault_t vm_fault, int foll_flags)
->   {
->   	if (vm_fault & VM_FAULT_OOM)
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 500e536796ca..0c80a5ad6e6a 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -1003,4 +1003,77 @@ enum fault_flag {
->   
->   typedef unsigned int __bitwise zap_flags_t;
->   
-> +/*
-> + * FOLL_PIN and FOLL_LONGTERM may be used in various combinations with each
-> + * other. Here is what they mean, and how to use them:
-> + *
-> + * FOLL_LONGTERM indicates that the page will be held for an indefinite time
-> + * period _often_ under userspace control.  This is in contrast to
-> + * iov_iter_get_pages(), whose usages are transient.
-> + *
-> + * FIXME: For pages which are part of a filesystem, mappings are subject to the
-> + * lifetime enforced by the filesystem and we need guarantees that longterm
-> + * users like RDMA and V4L2 only establish mappings which coordinate usage with
-> + * the filesystem.  Ideas for this coordination include revoking the longterm
-> + * pin, delaying writeback, bounce buffer page writeback, etc.  As FS DAX was
-> + * added after the problem with filesystems was found FS DAX VMAs are
-> + * specifically failed.  Filesystem pages are still subject to bugs and use of
-> + * FOLL_LONGTERM should be avoided on those pages.
-> + *
-> + * FIXME: Also NOTE that FOLL_LONGTERM is not supported in every GUP call.
-> + * Currently only get_user_pages() and get_user_pages_fast() support this flag
-> + * and calls to get_user_pages_[un]locked are specifically not allowed.  This
-> + * is due to an incompatibility with the FS DAX check and
-> + * FAULT_FLAG_ALLOW_RETRY.
-> + *
-> + * In the CMA case: long term pins in a CMA region would unnecessarily fragment
-> + * that region.  And so, CMA attempts to migrate the page before pinning, when
-> + * FOLL_LONGTERM is specified.
-> + *
-> + * FOLL_PIN indicates that a special kind of tracking (not just page->_refcount,
-> + * but an additional pin counting system) will be invoked. This is intended for
-> + * anything that gets a page reference and then touches page data (for example,
-> + * Direct IO). This lets the filesystem know that some non-file-system entity is
-> + * potentially changing the pages' data. In contrast to FOLL_GET (whose pages
-> + * are released via put_page()), FOLL_PIN pages must be released, ultimately, by
-> + * a call to unpin_user_page().
-> + *
-> + * FOLL_PIN is similar to FOLL_GET: both of these pin pages. They use different
-> + * and separate refcounting mechanisms, however, and that means that each has
-> + * its own acquire and release mechanisms:
-> + *
-> + *     FOLL_GET: get_user_pages*() to acquire, and put_page() to release.
-> + *
-> + *     FOLL_PIN: pin_user_pages*() to acquire, and unpin_user_pages to release.
-> + *
-> + * FOLL_PIN and FOLL_GET are mutually exclusive for a given function call.
-> + * (The underlying pages may experience both FOLL_GET-based and FOLL_PIN-based
-> + * calls applied to them, and that's perfectly OK. This is a constraint on the
-> + * callers, not on the pages.)
-> + *
-> + * FOLL_PIN should be set internally by the pin_user_pages*() APIs, never
-> + * directly by the caller. That's in order to help avoid mismatches when
-> + * releasing pages: get_user_pages*() pages must be released via put_page(),
-> + * while pin_user_pages*() pages must be released via unpin_user_page().
-> + *
-> + * Please see Documentation/core-api/pin_user_pages.rst for more information.
-> + */
-> +#define FOLL_WRITE	0x01	/* check pte is writable */
-> +#define FOLL_TOUCH	0x02	/* mark page accessed */
-> +#define FOLL_GET	0x04	/* do get_page on page */
-> +#define FOLL_DUMP	0x08	/* give error on hole if it would be zero */
-> +#define FOLL_FORCE	0x10	/* get_user_pages read/write w/o permission */
-> +#define FOLL_NOWAIT	0x20	/* if a disk transfer is needed, start the IO
-> +				 * and return without waiting upon it */
-> +#define FOLL_NOFAULT	0x80	/* do not fault in pages */
-> +#define FOLL_HWPOISON	0x100	/* check page is hwpoisoned */
-> +#define FOLL_MIGRATION	0x400	/* wait for page to replace migration entry */
-> +#define FOLL_TRIED	0x800	/* a retry, previous pass started an IO */
-> +#define FOLL_REMOTE	0x2000	/* we are working on non-current tsk/mm */
-> +#define FOLL_ANON	0x8000	/* don't do file mappings */
-> +#define FOLL_LONGTERM	0x10000	/* mapping lifetime is indefinite: see below */
-> +#define FOLL_SPLIT_PMD	0x20000	/* split huge pmd before returning */
-> +#define FOLL_PIN	0x40000	/* pages must be released via unpin_user_page */
-> +#define FOLL_FAST_ONLY	0x80000	/* gup_fast: prevent fall-back to slow gup */
-> +
->   #endif /* _LINUX_MM_TYPES_H */
-> 
-> 
-
+             Linus
