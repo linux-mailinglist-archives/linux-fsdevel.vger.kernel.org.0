@@ -2,79 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 374A462E728
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 22:42:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 940A962E72F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 22:42:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234614AbiKQVmT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Nov 2022 16:42:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55568 "EHLO
+        id S240678AbiKQVmg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Nov 2022 16:42:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55826 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233270AbiKQVmR (ORCPT
+        with ESMTP id S239985AbiKQVme (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Nov 2022 16:42:17 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8007A68693
-        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Nov 2022 13:41:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668721286;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=UuffnjWXo7tMwo00tJbjEU1LHxhg1We6830zDfm1nv8=;
-        b=g0965j8OmoOJSoccncw1cKaXR6JiEH4/x16fVMqaawBdIEpRSDzGkXjA81uyjnEcEXOb0s
-        3TaCWbHHuxSfpwr+j/OSW4911yDOmo98d67ZP3ZEh0VwI25pi84GukaVa5L9+1/IteuW2o
-        cIUihAov8yJVRes3v/quuOoHTFaSPZw=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-628-2Ct9ZNWvOY2mRvcbD5Qzyg-1; Thu, 17 Nov 2022 16:41:25 -0500
-X-MC-Unique: 2Ct9ZNWvOY2mRvcbD5Qzyg-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 17 Nov 2022 16:42:34 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3BD5697C3;
+        Thu, 17 Nov 2022 13:42:33 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A8B0329ABA33;
-        Thu, 17 Nov 2022 21:41:24 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 123EF40C6EC3;
-        Thu, 17 Nov 2022 21:41:22 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20221116183900.yzpcymelnnwppoh7@riteshh-domain>
-References: <20221116183900.yzpcymelnnwppoh7@riteshh-domain> <20221113162902.883850-1-hch@lst.de>
-To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc:     dhowells@redhat.com, Christoph Hellwig <hch@lst.de>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sungjong Seo <sj1557.seo@samsung.com>,
-        Jan Kara <jack@suse.com>,
-        OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
-        Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
-        Dave Kleikamp <shaggy@kernel.org>,
-        Bob Copeland <me@bobcopeland.com>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        jfs-discussion@lists.sourceforge.net,
-        linux-karma-devel@lists.sourceforge.net, linux-mm@kvack.org
-Subject: Re: start removing writepage instances
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 503B8620D7;
+        Thu, 17 Nov 2022 21:42:33 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85243C433D6;
+        Thu, 17 Nov 2022 21:42:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1668721352;
+        bh=ygZwGFjUkC7Rz5wjaDVu71+tbo9xeU4lasrhJDoAnzo=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=lIm1xgoOQpYszISSV+cFUtxMlZumPlo0m9QTzFwK9R5RDpuMzwfzNWfo/X7E/Hxom
+         LmS/nCXR7mcGQIqiIQKONfcfEaqrQxTbpyDqXuBKYc2hrw/kLCcsuz8L1DndxZuxzC
+         /LL7GAPB2mlPt5JwgeHNFd8236oX10PMNTlu3mjZcW5KSk3tEQX0w2NEIihtk8GFKU
+         w+F7SGvKs5DFJP25IDum+fTHPLHbxby/bF+C0mEEVGFSorwL1W2P0v2uWbU04FUXRn
+         cv+2Hi448fFwL0MnSVdQsAMD+I2pGjscseuGa0BnDUkktfUFKrsp+xyldreummHQfS
+         ISHsboua8JywA==
+Message-ID: <29d007755c6066552ac2a1b5bc498ce1ce28ab3b.camel@kernel.org>
+Subject: Re: [PATCH 2/3] fs: namei: Allow follow_down() to uncover auto
+ mounts
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Richard Weinberger <richard@nod.at>
+Cc:     linux-nfs <linux-nfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        chuck lever <chuck.lever@oracle.com>, anna@kernel.org,
+        trond myklebust <trond.myklebust@hammerspace.com>,
+        Al Viro <viro@zeniv.linux.org.uk>, raven@themaw.net,
+        chris chilvers <chris.chilvers@appsbroker.com>,
+        david young <david.young@appsbroker.com>,
+        luis turcitu <luis.turcitu@appsbroker.com>,
+        david <david@sigma-star.at>
+Date:   Thu, 17 Nov 2022 16:42:30 -0500
+In-Reply-To: <1805608101.252119.1668719538854.JavaMail.zimbra@nod.at>
+References: <20221117191151.14262-1-richard@nod.at>
+         <20221117191151.14262-3-richard@nod.at>
+         <f31d4114f363ed9de0eba66ad6a730fe013896a6.camel@kernel.org>
+         <1805608101.252119.1668719538854.JavaMail.zimbra@nod.at>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 (3.44.4-2.fc36) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4031744.1668721280.1@warthog.procyon.org.uk>
-Date:   Thu, 17 Nov 2022 21:41:20 +0000
-Message-ID: <4031745.1668721280@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Also ->writepage() is called with the page already locked, which is a problem
-if you need to write out a number of surrounding pages with it.
+On Thu, 2022-11-17 at 22:12 +0100, Richard Weinberger wrote:
+> ----- Urspr=FCngliche Mail -----
+> > Von: "Jeff Layton" <jlayton@kernel.org>
+> > What happens when CROSSMOUNT isn't enabled and someone tries to stroll
+> > into an automount point? I'm guessing the automount happens but the
+> > export is denied?=20
+>=20
+> Exactly.
+>=20
+> On the other hand, why should knfsd not trigger automounts?
+> Almost any userspace interaction would also do so.
+>=20
 
-David
+I have no issue with knfsd activity triggering an automount, but I think
+it'd be best if we don't do that when knfsd can't do anything with the
+resulting filesystem. Automounts can be expensive.
 
+> > It seems like LOOKUP_AUTOMOUNT ought to be conditional
+> > on the parent export having CROSSMOUNT set.
+> >=20
+> > There's also another caller of follow_down too, the UNIX98 pty code.
+> > This may be harmless for it, but it'd be best not to perturb that if we
+> > can help it.
+> >=20
+> > Maybe follow_down can grow a lookupflags argument?
+>=20
+> So, in nfsd_cross_mnt() the follow_down() helper should use LOOKUP_AUTOMO=
+UNT only
+> if exp->ex_flags & NFSEXP_CROSSMOUNT is true?
+> Sounds sane, thanks for the pointer.
+>=20
+
+Yeah, I think so. I do wonder if we ought to make any provision for
+"nohide" exports, but since you have to enumerate those explicitly, it
+shouldn't be a huge problem for someone to just ensure that they're
+mounted beforehand.
+
+--=20
+Jeff Layton <jlayton@kernel.org>
