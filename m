@@ -2,45 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB5ED62E32B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 18:36:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06F6162E36C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 18:50:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234874AbiKQRgi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Nov 2022 12:36:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56580 "EHLO
+        id S234811AbiKQRue (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Nov 2022 12:50:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36478 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233681AbiKQRgc (ORCPT
+        with ESMTP id S234053AbiKQRud (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Nov 2022 12:36:32 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2D447CBA9;
-        Thu, 17 Nov 2022 09:36:31 -0800 (PST)
+        Thu, 17 Nov 2022 12:50:33 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A60B67C448;
+        Thu, 17 Nov 2022 09:50:32 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3007B621D3;
-        Thu, 17 Nov 2022 17:36:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89CABC433C1;
-        Thu, 17 Nov 2022 17:36:30 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 42B756219E;
+        Thu, 17 Nov 2022 17:50:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1D12C433D6;
+        Thu, 17 Nov 2022 17:50:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668706590;
-        bh=sWrAAQF4Ov9dQjPoFoEwGsvqG4sXdVa8ksxFsTvo6jg=;
-        h=Date:From:To:Subject:From;
-        b=tvo9blJyO30sVNohj0pOmHAJ2kL2YUFv8ohg71b+Jn1tmfmDnBLXZgdPn8B7tGtOs
-         RIPKnh9Rx/+wp/uB/UWgULT8BA2ttudbhg2PKJB1+u9LDD+J3B2HxaY49iuBppJESY
-         m+6Tn/F8bn9VCzUYC3G8JoCR1jpydEiH+Hbd870HAWYYGO2Ng1aDHQ27SdlW3l5WZj
-         Dd5KwhFN+hE+zL5dC6R/7hLLxQciCLL4+5+4yHovEkmRBrYv/8gTmx4kIq68I3/803
-         EEVFxzrwNhJ3ZCzcg7oM7oUEDkJCn155SA5RzA0CV/ZAoh6Fduch+OEurPwLcT8eET
-         B6LLAPic5dg0A==
-Date:   Thu, 17 Nov 2022 09:36:30 -0800
+        s=k20201202; t=1668707431;
+        bh=WaBWNhltCGr7/yek0oiDX7nVy5A1EwO3QF7rHJif5kI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=fXggEUrjhfoq96JhbHJvU/M8r3BHPHggV0gPq/RAjSPEsoPNJvLVbSP+T+qlbvkOw
+         rzUpyGFCe/yIQpld4kQGdz5FW2npbw8/a0ai534YjjY3WdC6P+DJqSJDpesoJUs/kN
+         iuSO+MEwhK76bugx1H5pzcOMLwagB20F5osYa+pZLMttPE+JxKM63Vlaa13FY81WZ9
+         QHiZyZ+ZN6zkqd4dxKF1eqbm15DNnBmnLHPAwriDL5Bkn9U8f9kg8cRfs17mwPBYDH
+         n/B0BP5FOkvENpYnJscyLcojOOySVDYsDG+QYrQLtC2ii6pPUhXDFmY8d9eLiQOGNb
+         gFpxF+ZTyqm9A==
+Date:   Thu, 17 Nov 2022 09:50:31 -0800
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     xfs <linux-xfs@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: [ANNOUNCE] xfs-linux: for-next **REBASED** to 64c80dfd04d1
-Message-ID: <Y3ZxHgNodQ1UDxch@magnolia>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/9] xfs: punching delalloc extents on write failure is
+ racy
+Message-ID: <Y3Z0ZzdsGKFrhPZ2@magnolia>
+References: <20221117055810.498014-1-david@fromorbit.com>
+ <20221117055810.498014-3-david@fromorbit.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20221117055810.498014-3-david@fromorbit.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -50,112 +54,118 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On Thu, Nov 17, 2022 at 04:58:03PM +1100, Dave Chinner wrote:
+> From: Dave Chinner <dchinner@redhat.com>
+> 
+> xfs_buffered_write_iomap_end() has a comment about the safety of
+> punching delalloc extents based holding the IOLOCK_EXCL. This
+> comment is wrong, and punching delalloc extents is not race free.
+> 
+> When we punch out a delalloc extent after a write failure in
+> xfs_buffered_write_iomap_end(), we punch out the page cache with
+> truncate_pagecache_range() before we punch out the delalloc extents.
+> At this point, we only hold the IOLOCK_EXCL, so there is nothing
+> stopping mmap() write faults racing with this cleanup operation,
+> reinstantiating a folio over the range we are about to punch and
+> hence requiring the delalloc extent to be kept.
+> 
+> If this race condition is hit, we can end up with a dirty page in
+> the page cache that has no delalloc extent or space reservation
+> backing it. This leads to bad things happening at writeback time.
+> 
+> To avoid this race condition, we need the page cache truncation to
+> be atomic w.r.t. the extent manipulation. We can do this by holding
+> the mapping->invalidate_lock exclusively across this operation -
+> this will prevent new pages from being inserted into the page cache
+> whilst we are removing the pages and the backing extent and space
+> reservation.
+> 
+> Taking the mapping->invalidate_lock exclusively in the buffered
+> write IO path is safe - it naturally nests inside the IOLOCK (see
+> truncate and fallocate paths). iomap_zero_range() can be called from
+> under the mapping->invalidate_lock (from the truncate path via
+> either xfs_zero_eof() or xfs_truncate_page(), but iomap_zero_iter()
+> will not instantiate new delalloc pages (because it skips holes) and
+> hence will not ever need to punch out delalloc extents on failure.
+> 
+> Fix the locking issue, and clean up the code logic a little to avoid
+> unnecessary work if we didn't allocate the delalloc extent or wrote
+> the entire region we allocated.
+> 
+> Signed-off-by: Dave Chinner <dchinner@redhat.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
 
-The for-next branch of the xfs-linux repository at:
+It's really odd how this RVB tag keeps falling off...
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-	git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
+--D
 
-has just been **REBASED**.
-
-Monday morning I was too overwhelmed with decisions to make such that I
-completely forgot that I could push my branches (with cover letters) to
-kernel.org and pull them into a new branch.  Since the goal is to enable
-pull requests like a modern organization and preserve cover letters when
-possible, I felt it was important to go back and do it right.  The code
-should be the same, its just the commit history that's a bit rewritten
-now.
-
-Patches often get missed, so please check if your outstanding patches
-were in this update. If they have not been in this update, please
-resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
-the next update.  There's a number of fix patches still out for review:
-
-The new corruption problem that only seems to manifest on arm64 is still
-happening, though it's turned into a heisenbug that disappears when I
-turn on the debugging.  Every now and then the incore extent tree
-records become out of order, which causes xfs_repair failures
-afterwards.  I've not figured out what's going on there, and I can only
-seem to reproduce it on the VM that runs the online scrub stress tests.
-
-There's also Dave's v3 write()/writeback race bugfixes, which I will
-review and try to figure out how Brian's truncate speedup fits into
-that.
-
-There's also the problem that dax+reflink throw weird corruption errors
-everywhere.  I don't know what the status of those are, and I still
-don't have time to get to them. :/
-
-The new head of the for-next branch is commit:
-
-64c80dfd04d1 xfs: Print XFS UUID on mount and umount events.
-
-33 new commits:
-
-Darrick J. Wong (31):
-      [9a48b4a6fd51] xfs: fully initialize xfs_da_args in xchk_directory_blocks
-      [be1317fdb8d4] xfs: don't track the AGFL buffer in the scrub AG context
-      [3e59c0103e66] xfs: log the AGI/AGF buffers when rolling transactions during an AG repair
-      [48ff40458f87] xfs: standardize GFP flags usage in online scrub
-      [b255fab0f80c] xfs: make AGFL repair function avoid crosslinked blocks
-      [a7a0f9a5503f] xfs: return EINTR when a fatal signal terminates scrub
-      [0a713bd41ea2] xfs: fix return code when fatal signal encountered during dquot scrub
-      [fcd2a43488d5] xfs: initialize the check_owner object fully
-      [6bf2f8791597] xfs: don't retry repairs harder when EAGAIN is returned
-      [306195f355bb] xfs: pivot online scrub away from kmem.[ch]
-      [9e13975bb062] xfs: load rtbitmap and rtsummary extent mapping btrees at mount time
-      [11f97e684583] xfs: skip fscounters comparisons when the scan is incomplete
-      [93b0c58ed04b] xfs: don't return -EFSCORRUPTED from repair when resources cannot be grabbed
-      [5f369dc5b4eb] xfs: make rtbitmap ILOCKing consistent when scanning the rt bitmap file
-      [e74331d6fa2c] xfs: online checking of the free rt extent count
-      [033985b6fe87] xfs: fix perag loop in xchk_bmap_check_rmaps
-      [6a5777865eeb] xfs: teach scrub to check for adjacent bmaps when rmap larger than bmap
-      [830ffa09fb13] xfs: block map scrub should handle incore delalloc reservations
-      [f23c40443d1c] xfs: check quota files for unwritten extents
-      [31785537010a] xfs: check that CoW fork extents are not shared
-      [5eef46358fae] xfs: teach scrub to flag non-extents format cow forks
-      [bd5ab5f98741] xfs: don't warn about files that are exactly s_maxbytes long
-      [f36b954a1f1b] xfs: check inode core when scrubbing metadata files
-      [823ca26a8f07] Merge tag 'scrub-fix-ag-header-handling-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
-      [af1077fa87c3] Merge tag 'scrub-cleanup-malloc-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
-      [3d8426b13bac] Merge tag 'scrub-fix-return-value-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
-      [b76f593b33aa] Merge tag 'scrub-fix-rtmeta-ilocking-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
-      [7aab8a05e7c7] Merge tag 'scrub-fscounters-enhancements-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
-      [cc5f38fa12fc] Merge tag 'scrub-bmap-enhancements-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
-      [7b082b5e8afa] Merge tag 'scrub-check-metadata-inode-records-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
-      [2653d53345bd] xfs: fix incorrect error-out in xfs_remove
-
-Long Li (1):
-      [59f6ab40fd87] xfs: fix sb write verify for lazysbcount
-
-Lukas Herbolt (1):
-      [64c80dfd04d1] xfs: Print XFS UUID on mount and umount events.
-
-Code Diffstat:
-
- fs/xfs/libxfs/xfs_sb.c         |   4 +-
- fs/xfs/scrub/agheader.c        |  47 ++++++++-----
- fs/xfs/scrub/agheader_repair.c |  81 +++++++++++++++++++----
- fs/xfs/scrub/attr.c            |  11 ++-
- fs/xfs/scrub/bitmap.c          |  11 +--
- fs/xfs/scrub/bmap.c            | 147 +++++++++++++++++++++++++++++++++--------
- fs/xfs/scrub/btree.c           |  14 ++--
- fs/xfs/scrub/common.c          |  48 ++++++++++----
- fs/xfs/scrub/common.h          |   2 +-
- fs/xfs/scrub/dabtree.c         |   4 +-
- fs/xfs/scrub/dir.c             |  10 +--
- fs/xfs/scrub/fscounters.c      | 109 ++++++++++++++++++++++++++++--
- fs/xfs/scrub/inode.c           |   2 +-
- fs/xfs/scrub/quota.c           |   8 ++-
- fs/xfs/scrub/refcount.c        |  12 ++--
- fs/xfs/scrub/repair.c          |  51 +++++++++-----
- fs/xfs/scrub/scrub.c           |   6 +-
- fs/xfs/scrub/scrub.h           |  18 ++---
- fs/xfs/scrub/symlink.c         |   2 +-
- fs/xfs/xfs_fsmap.c             |   4 +-
- fs/xfs/xfs_inode.c             |   2 +-
- fs/xfs/xfs_log.c               |  10 +--
- fs/xfs/xfs_mount.c             |  15 +++++
- fs/xfs/xfs_rtalloc.c           |  60 +++++++++++++++--
- fs/xfs/xfs_super.c             |   2 +-
- 25 files changed, 523 insertions(+), 157 deletions(-)
+> ---
+>  fs/xfs/xfs_iomap.c | 41 +++++++++++++++++++++++------------------
+>  1 file changed, 23 insertions(+), 18 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index 5cea069a38b4..a2e45ea1b0cb 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -1147,6 +1147,10 @@ xfs_buffered_write_iomap_end(
+>  		written = 0;
+>  	}
+>  
+> +	/* If we didn't reserve the blocks, we're not allowed to punch them. */
+> +	if (!(iomap->flags & IOMAP_F_NEW))
+> +		return 0;
+> +
+>  	/*
+>  	 * start_fsb refers to the first unused block after a short write. If
+>  	 * nothing was written, round offset down to point at the first block in
+> @@ -1158,27 +1162,28 @@ xfs_buffered_write_iomap_end(
+>  		start_fsb = XFS_B_TO_FSB(mp, offset + written);
+>  	end_fsb = XFS_B_TO_FSB(mp, offset + length);
+>  
+> +	/* Nothing to do if we've written the entire delalloc extent */
+> +	if (start_fsb >= end_fsb)
+> +		return 0;
+> +
+>  	/*
+> -	 * Trim delalloc blocks if they were allocated by this write and we
+> -	 * didn't manage to write the whole range.
+> -	 *
+> -	 * We don't need to care about racing delalloc as we hold i_mutex
+> -	 * across the reserve/allocate/unreserve calls. If there are delalloc
+> -	 * blocks in the range, they are ours.
+> +	 * Lock the mapping to avoid races with page faults re-instantiating
+> +	 * folios and dirtying them via ->page_mkwrite between the page cache
+> +	 * truncation and the delalloc extent removal. Failing to do this can
+> +	 * leave dirty pages with no space reservation in the cache.
+>  	 */
+> -	if ((iomap->flags & IOMAP_F_NEW) && start_fsb < end_fsb) {
+> -		truncate_pagecache_range(VFS_I(ip), XFS_FSB_TO_B(mp, start_fsb),
+> -					 XFS_FSB_TO_B(mp, end_fsb) - 1);
+> -
+> -		error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
+> -					       end_fsb - start_fsb);
+> -		if (error && !xfs_is_shutdown(mp)) {
+> -			xfs_alert(mp, "%s: unable to clean up ino %lld",
+> -				__func__, ip->i_ino);
+> -			return error;
+> -		}
+> +	filemap_invalidate_lock(inode->i_mapping);
+> +	truncate_pagecache_range(VFS_I(ip), XFS_FSB_TO_B(mp, start_fsb),
+> +				 XFS_FSB_TO_B(mp, end_fsb) - 1);
+> +
+> +	error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
+> +				       end_fsb - start_fsb);
+> +	filemap_invalidate_unlock(inode->i_mapping);
+> +	if (error && !xfs_is_shutdown(mp)) {
+> +		xfs_alert(mp, "%s: unable to clean up ino %lld",
+> +			__func__, ip->i_ino);
+> +		return error;
+>  	}
+> -
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.37.2
+> 
