@@ -2,124 +2,132 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D9D1D62D26D
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 05:58:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 14E4462D2AB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 06:30:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233151AbiKQE6K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Nov 2022 23:58:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56672 "EHLO
+        id S233972AbiKQFaX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Nov 2022 00:30:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233750AbiKQE6I (ORCPT
+        with ESMTP id S229451AbiKQFaW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Nov 2022 23:58:08 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 456EA2B24A
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 20:57:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668661026;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=cRNgsje5v+iSsOtKxKODca+zMELkto4gAPpZd/JZ4Wo=;
-        b=UWDu68h1PVK3ShlNTALbY4GMc4uIKbPm4lEOI5019Vxd6JSranyUHHyg45d2+jHR/cGw2K
-        a78q3+A43mO2u/xjEoSNA0HHDcHfYepa1BYhF/J4iQezb5U1UHKzR7SxCfGdtvznH4jslg
-        Oy+E2yeZFCUKBv/5BAZSJSZgoGh0rEg=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-159-CG9B3rPUPD-5Be1RxPOoSQ-1; Wed, 16 Nov 2022 23:57:05 -0500
-X-MC-Unique: CG9B3rPUPD-5Be1RxPOoSQ-1
-Received: by mail-pl1-f200.google.com with SMTP id n12-20020a170902e54c00b00188515e81a6so535267plf.23
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 20:57:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-language:content-transfer-encoding:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cRNgsje5v+iSsOtKxKODca+zMELkto4gAPpZd/JZ4Wo=;
-        b=dnYf1ifN2SEA8wvtTjyj1aZY6N+2mS2rFy6Sko4By6eUPAoPaM5IRz1J+SXg+3NCrL
-         QxVC3xOXsg9Ga2JWKYcT4QjS7UViEhWsy322jPdvlOL4tFP1/FC2ha7iOoADPjWGxDYU
-         US4HRQmMqdB9ebG0MIDA9KSnQkEMBb58vkqKfykE44P9QXdp33aAPJAp9AroLmHqpL9p
-         5g+FN0wKCFTfbyigmN4PQBkAv+Ki9T5N1OSQBZzUNJQPWn3rfH9Efv4N7BcOhdi8QEZQ
-         I+QPdiBeIO9aINrF9YNoglm8ZD/xn9iK0cjH8XrhwiUp/WTsGHqbQ5HWzGncNeUU3kcI
-         zYeA==
-X-Gm-Message-State: ANoB5pl77WctQPRmUEc/hSwM54wjLG9vci8rdR34Ymc7p0reti/Mn9uu
-        xeFSVgDBULaoUB0SXVw1iJTKSYItXfaauZw3o+2JLSZDCC1Ej50O/CBDDdiS4SqbIPN+cxb7TmA
-        RYbnarEl13cula7D8b99wp+AIuA==
-X-Received: by 2002:a63:5f14:0:b0:43c:969f:18a7 with SMTP id t20-20020a635f14000000b0043c969f18a7mr635976pgb.12.1668661023833;
-        Wed, 16 Nov 2022 20:57:03 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf63NoWprGlJIf07cPSVNjoTzWwiwPuTUjMvYVGNkdFlaO5oAfTME7Qg7XG1sR+f67MLmbpQ7Q==
-X-Received: by 2002:a63:5f14:0:b0:43c:969f:18a7 with SMTP id t20-20020a635f14000000b0043c969f18a7mr635959pgb.12.1668661023555;
-        Wed, 16 Nov 2022 20:57:03 -0800 (PST)
-Received: from [10.72.12.148] ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id o6-20020a17090a55c600b0021870b3e4casm438628pjm.47.2022.11.16.20.57.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Nov 2022 20:57:03 -0800 (PST)
-Subject: Re: [PATCH 2/7] ceph: use locks_inode_context helper
-To:     Jeff Layton <jlayton@kernel.org>, linux-fsdevel@vger.kernel.org
-Cc:     linux-nfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, chuck.lever@oracle.com,
-        viro@zeniv.linux.org.uk, hch@lst.de
-References: <20221116151726.129217-1-jlayton@kernel.org>
- <20221116151726.129217-3-jlayton@kernel.org>
-From:   Xiubo Li <xiubli@redhat.com>
-Message-ID: <589a0fcc-569f-e5b2-0877-c1639736ae5e@redhat.com>
-Date:   Thu, 17 Nov 2022 12:56:58 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
- Thunderbird/78.10.1
+        Thu, 17 Nov 2022 00:30:22 -0500
+Received: from out30-56.freemail.mail.aliyun.com (out30-56.freemail.mail.aliyun.com [115.124.30.56])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F249532C6;
+        Wed, 16 Nov 2022 21:30:20 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VV-W7uG_1668663017;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VV-W7uG_1668663017)
+          by smtp.aliyun-inc.com;
+          Thu, 17 Nov 2022 13:30:18 +0800
+From:   Jingbo Xu <jefflexu@linux.alibaba.com>
+To:     xiang@kernel.org, chao@kernel.org, jlayton@kernel.org,
+        linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
+        dhowells@redhat.com
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 0/2] fscache,cachefiles: add prepare_ondemand_read() interface
+Date:   Thu, 17 Nov 2022 13:30:15 +0800
+Message-Id: <20221117053017.21074-1-jefflexu@linux.alibaba.com>
+X-Mailer: git-send-email 2.19.1.6.gb485710b
 MIME-Version: 1.0
-In-Reply-To: <20221116151726.129217-3-jlayton@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+v4:
+- patch 1
+  - make cachefiles_do_prepare_read() pass start by value (Jeff Layton)
+  - adjust the indentation of the parameter/argument list, so that
+    they are all lined up (David)
+  - pass flags in for cachefiles_prepare_ondemand_read(), so that it can
+    tail call cachefiles_do_prepare_read() directly without shuffling
+    arguments around (David)
+  - declare cachefiles_do_prepare_read() as inline, to eliminate one
+    extra function calling and arguments copying when calling
+    cachefiles_do_prepare_read() (David)
 
-On 16/11/2022 23:17, Jeff Layton wrote:
-> ceph currently doesn't access i_flctx safely. This requires a
-> smp_load_acquire, as the pointer is set via cmpxchg (a release
-> operation).
->
-> Cc: Xiubo Li <xiubli@redhat.com>
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->   fs/ceph/locks.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
-> index 3e2843e86e27..f3b461c708a8 100644
-> --- a/fs/ceph/locks.c
-> +++ b/fs/ceph/locks.c
-> @@ -364,7 +364,7 @@ void ceph_count_locks(struct inode *inode, int *fcntl_count, int *flock_count)
->   	*fcntl_count = 0;
->   	*flock_count = 0;
->   
-> -	ctx = inode->i_flctx;
-> +	ctx = locks_inode_context(inode);
->   	if (ctx) {
->   		spin_lock(&ctx->flc_lock);
->   		list_for_each_entry(lock, &ctx->flc_posix, fl_list)
-> @@ -418,7 +418,7 @@ int ceph_encode_locks_to_buffer(struct inode *inode,
->   				int num_fcntl_locks, int num_flock_locks)
->   {
->   	struct file_lock *lock;
-> -	struct file_lock_context *ctx = inode->i_flctx;
-> +	struct file_lock_context *ctx = locks_inode_context(inode);
->   	int err = 0;
->   	int seen_fcntl = 0;
->   	int seen_flock = 0;
 
-Thanks Jeff!
+v3:
+- rebase to v6.1-rc5, while the xas_retry() checking in patch 2 has
+  been extracted out as a separate fix [1]
 
-Reviewed-by: Xiubo Li <xiubli@redhat.com>
+[1] commit 37020bbb71d9 ("erofs: fix missing xas_retry() in fscache mode")
+(https://github.com/torvalds/linux/commit/37020bbb71d9)
 
+
+v2:
+- patch 1: the generic routine, i.e. cachefiles_do_prepare_read() now
+  accepts a parameter list instead of netfs_io_subrequest, and thus some
+  debug info retrieved from netfs_io_subrequest is removed from
+  trace_cachefiles_prep_read().
+- patch 2: add xas_retry() checking in erofs_fscache_req_complete()
+
+
+[Rationale]
+===========
+Fscache has been landed as a generic caching management framework in
+the Linux kernel for decades.  It aims to manage cache data availability
+or fetch data if needed.  Currently it's mainly used for network fses,
+but in principle the main caching subsystem can be used more widely.
+
+We do really like fscache framework and we believe it'd be better to
+reuse such framework if possible instead of duplicating other
+alternatives for better maintenance and testing.  Therefore for our
+container image use cases, we applied the existing fscache to implement
+on-demand read for erofs in the past months.  For more details, also see
+[1].
+
+In short, here each erofs filesystem is composed of multiple blobs (or
+devices).  Each blob corresponds to one fscache cookie to strictly
+follow on-disk format and implement the image downloading in a
+deterministic manner, which means it has a unique checksum and is signed
+by vendors.
+
+Data of each erofs inode can be scattered among multiple blobs (cookie)
+since erofs supports chunk-level deduplication.  In this case, each
+erofs inode can correspond to multiple cookies, and there's a logical to
+physical offset mapping between the logical offset in erofs inode and
+the physical offset in the backing file.
+
+As described above, per-cookie netfs model can not be used here
+directly.  Instead, we'd like to propose/decouple a simple set of raw
+fscache APIs, to access cache for all fses to use.  We believe it's
+useful since it's like the relationship between raw bio and iomap, both
+of which are useful for local fses.  fscache_read() seems a reasonable
+candidate and is enough for such use case.
+
+In addition, the on-demand read feature relies on .prepare_read() to
+reuse the hole detecting logic as much as possible. However, after
+fscache/netfs rework, libnetfs is preferred to access fscache, making
+.prepare_read() closely coupled with libnetfs, or more precisely,
+netfs_io_subrequest.
+
+
+[What We Do]
+============
+As we discussed previously, we propose a new interface, i,e,
+.prepare_ondemand_read() dedicated for the on-demand read scenarios,
+which is independent on netfs_io_subrequest. The netfs will still use
+the original .prepare_read() as usual.
+
+
+
+Jingbo Xu (2):
+  fscache,cachefiles: add prepare_ondemand_read() callback
+  erofs: switch to prepare_ondemand_read() in fscache mode
+
+ fs/cachefiles/io.c                |  77 +++++----
+ fs/erofs/fscache.c                | 260 +++++++++++-------------------
+ include/linux/netfs.h             |   8 +
+ include/trace/events/cachefiles.h |  27 ++--
+ 4 files changed, 164 insertions(+), 208 deletions(-)
+
+-- 
+2.19.1.6.gb485710b
 
