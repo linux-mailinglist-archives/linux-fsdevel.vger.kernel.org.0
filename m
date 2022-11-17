@@ -2,49 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 06F6162E36C
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 18:50:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B62CF62E39D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 18:57:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234811AbiKQRue (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Nov 2022 12:50:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36478 "EHLO
+        id S239449AbiKQR5R (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Nov 2022 12:57:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234053AbiKQRud (ORCPT
+        with ESMTP id S232841AbiKQR5Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Nov 2022 12:50:33 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A60B67C448;
-        Thu, 17 Nov 2022 09:50:32 -0800 (PST)
+        Thu, 17 Nov 2022 12:57:16 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33A6E30549;
+        Thu, 17 Nov 2022 09:57:15 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 42B756219E;
-        Thu, 17 Nov 2022 17:50:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1D12C433D6;
-        Thu, 17 Nov 2022 17:50:31 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id AD44F621E5;
+        Thu, 17 Nov 2022 17:57:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 093ECC433C1;
+        Thu, 17 Nov 2022 17:57:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1668707431;
-        bh=WaBWNhltCGr7/yek0oiDX7nVy5A1EwO3QF7rHJif5kI=;
+        s=k20201202; t=1668707834;
+        bh=f49iYpv1ZrS4T1zQ1J1GUCBCHEyO8t+xn09daOT+Fu4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=fXggEUrjhfoq96JhbHJvU/M8r3BHPHggV0gPq/RAjSPEsoPNJvLVbSP+T+qlbvkOw
-         rzUpyGFCe/yIQpld4kQGdz5FW2npbw8/a0ai534YjjY3WdC6P+DJqSJDpesoJUs/kN
-         iuSO+MEwhK76bugx1H5pzcOMLwagB20F5osYa+pZLMttPE+JxKM63Vlaa13FY81WZ9
-         QHiZyZ+ZN6zkqd4dxKF1eqbm15DNnBmnLHPAwriDL5Bkn9U8f9kg8cRfs17mwPBYDH
-         n/B0BP5FOkvENpYnJscyLcojOOySVDYsDG+QYrQLtC2ii6pPUhXDFmY8d9eLiQOGNb
-         gFpxF+ZTyqm9A==
-Date:   Thu, 17 Nov 2022 09:50:31 -0800
+        b=r9279QwAviSsaj+2XDBV/dWJFjJgH1yZsa5BgscxWatN9A/GnNB/HS3gLCku7RG7E
+         yaed9p6DyFEsAC4rP7JKf1lpaEwQdTGfK4ybG4p1bgW5v7U90DHDoRzi6zwIlpX6Q/
+         pYlVDNW41Ql4IZLSh9nx8neSFnGmknv/ONz7mpAOw3IQnEotZB3OlQlFkdE1ARfy1y
+         zAKefmePF6SXig8EaUCWddheFkLg5Hjf11o+D19fujkQwBvEq4b3qrefgRkE8McdGx
+         UARhhZ6HndXEMhgy5NUwq6FCk4CbM5juz6PFfDWafJeFuzhBHwfHlaVrcAHYqcXIP/
+         DebW+eMcrFDxg==
+Date:   Thu, 17 Nov 2022 09:57:13 -0800
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Dave Chinner <david@fromorbit.com>
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/9] xfs: punching delalloc extents on write failure is
- racy
-Message-ID: <Y3Z0ZzdsGKFrhPZ2@magnolia>
+Subject: Re: [PATCH 4/9] xfs,iomap: move delalloc punching to iomap
+Message-ID: <Y3Z1+aDVRZFwDUvL@magnolia>
 References: <20221117055810.498014-1-david@fromorbit.com>
- <20221117055810.498014-3-david@fromorbit.com>
+ <20221117055810.498014-5-david@fromorbit.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221117055810.498014-3-david@fromorbit.com>
+In-Reply-To: <20221117055810.498014-5-david@fromorbit.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -54,118 +53,199 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 17, 2022 at 04:58:03PM +1100, Dave Chinner wrote:
+On Thu, Nov 17, 2022 at 04:58:05PM +1100, Dave Chinner wrote:
 > From: Dave Chinner <dchinner@redhat.com>
 > 
-> xfs_buffered_write_iomap_end() has a comment about the safety of
-> punching delalloc extents based holding the IOLOCK_EXCL. This
-> comment is wrong, and punching delalloc extents is not race free.
+> Because that's what Christoph wants for this error handling path
+> only XFS uses.
 > 
-> When we punch out a delalloc extent after a write failure in
-> xfs_buffered_write_iomap_end(), we punch out the page cache with
-> truncate_pagecache_range() before we punch out the delalloc extents.
-> At this point, we only hold the IOLOCK_EXCL, so there is nothing
-> stopping mmap() write faults racing with this cleanup operation,
-> reinstantiating a folio over the range we are about to punch and
-> hence requiring the delalloc extent to be kept.
-> 
-> If this race condition is hit, we can end up with a dirty page in
-> the page cache that has no delalloc extent or space reservation
-> backing it. This leads to bad things happening at writeback time.
-> 
-> To avoid this race condition, we need the page cache truncation to
-> be atomic w.r.t. the extent manipulation. We can do this by holding
-> the mapping->invalidate_lock exclusively across this operation -
-> this will prevent new pages from being inserted into the page cache
-> whilst we are removing the pages and the backing extent and space
-> reservation.
-> 
-> Taking the mapping->invalidate_lock exclusively in the buffered
-> write IO path is safe - it naturally nests inside the IOLOCK (see
-> truncate and fallocate paths). iomap_zero_range() can be called from
-> under the mapping->invalidate_lock (from the truncate path via
-> either xfs_zero_eof() or xfs_truncate_page(), but iomap_zero_iter()
-> will not instantiate new delalloc pages (because it skips holes) and
-> hence will not ever need to punch out delalloc extents on failure.
-> 
-> Fix the locking issue, and clean up the code logic a little to avoid
-> unnecessary work if we didn't allocate the delalloc extent or wrote
-> the entire region we allocated.
+> It requires a new iomap export for handling errors over delalloc
+> ranges. This is basically the XFS code as is stands, but even though
+> Christoph wants this as iomap funcitonality, we still have
+> to call it from the filesystem specific ->iomap_end callback, and
+> call into the iomap code with yet another filesystem specific
+> callback to punch the delalloc extent within the defined ranges.
 > 
 > Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  fs/iomap/buffered-io.c | 60 ++++++++++++++++++++++++++++++++++++++++++
+>  fs/xfs/xfs_iomap.c     | 47 ++++++---------------------------
+>  include/linux/iomap.h  |  6 +++++
+>  3 files changed, 74 insertions(+), 39 deletions(-)
+> 
+> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> index 91ee0b308e13..77f391fd90ca 100644
+> --- a/fs/iomap/buffered-io.c
+> +++ b/fs/iomap/buffered-io.c
+> @@ -832,6 +832,66 @@ iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *i,
+>  }
+>  EXPORT_SYMBOL_GPL(iomap_file_buffered_write);
+>  
+> +/*
+> + * When a short write occurs, the filesystem may need to remove reserved space
+> + * that was allocated in ->iomap_begin from it's ->iomap_end method. For
+> + * filesystems that use delayed allocation, we need to punch out delalloc
+> + * extents from the range that are not dirty in the page cache. As the write can
+> + * race with page faults, there can be dirty pages over the delalloc extent
+> + * outside the range of a short write but still within the delalloc extent
+> + * allocated for this iomap.
+> + *
+> + * This function uses [start_byte, end_byte) intervals (i.e. open ended) to
+> + * simplify range iterations, but converts them back to {offset,len} tuples for
+> + * the punch callback.
+> + */
+> +int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
+> +		struct iomap *iomap, loff_t offset, loff_t length,
 
-It's really odd how this RVB tag keeps falling off...
+Nit: loff_t pos, not 'offset', to (try to) be consistent with the rest
+of the codebase.
+
+I'll fix this on commit if you don't beat me to the punch, so
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
-> ---
->  fs/xfs/xfs_iomap.c | 41 +++++++++++++++++++++++------------------
->  1 file changed, 23 insertions(+), 18 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 5cea069a38b4..a2e45ea1b0cb 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -1147,6 +1147,10 @@ xfs_buffered_write_iomap_end(
->  		written = 0;
->  	}
->  
+
+> +		ssize_t written,
+> +		int (*punch)(struct inode *inode, loff_t offset, loff_t length))
+> +{
+> +	loff_t			start_byte;
+> +	loff_t			end_byte;
+> +	int			blocksize = 1 << inode->i_blkbits;
+> +	int			error = 0;
+> +
+> +	if (iomap->type != IOMAP_DELALLOC)
+> +		return 0;
+> +
 > +	/* If we didn't reserve the blocks, we're not allowed to punch them. */
 > +	if (!(iomap->flags & IOMAP_F_NEW))
 > +		return 0;
 > +
->  	/*
->  	 * start_fsb refers to the first unused block after a short write. If
->  	 * nothing was written, round offset down to point at the first block in
-> @@ -1158,27 +1162,28 @@ xfs_buffered_write_iomap_end(
->  		start_fsb = XFS_B_TO_FSB(mp, offset + written);
->  	end_fsb = XFS_B_TO_FSB(mp, offset + length);
->  
+> +	/*
+> +	 * start_byte refers to the first unused block after a short write. If
+> +	 * nothing was written, round offset down to point at the first block in
+> +	 * the range.
+> +	 */
+> +	if (unlikely(!written))
+> +		start_byte = round_down(offset, blocksize);
+> +	else
+> +		start_byte = round_up(offset + written, blocksize);
+> +	end_byte = round_up(offset + length, blocksize);
+> +
 > +	/* Nothing to do if we've written the entire delalloc extent */
-> +	if (start_fsb >= end_fsb)
+> +	if (start_byte >= end_byte)
 > +		return 0;
 > +
->  	/*
-> -	 * Trim delalloc blocks if they were allocated by this write and we
-> -	 * didn't manage to write the whole range.
-> -	 *
-> -	 * We don't need to care about racing delalloc as we hold i_mutex
-> -	 * across the reserve/allocate/unreserve calls. If there are delalloc
-> -	 * blocks in the range, they are ours.
+> +	/*
 > +	 * Lock the mapping to avoid races with page faults re-instantiating
 > +	 * folios and dirtying them via ->page_mkwrite between the page cache
 > +	 * truncation and the delalloc extent removal. Failing to do this can
 > +	 * leave dirty pages with no space reservation in the cache.
->  	 */
-> -	if ((iomap->flags & IOMAP_F_NEW) && start_fsb < end_fsb) {
-> -		truncate_pagecache_range(VFS_I(ip), XFS_FSB_TO_B(mp, start_fsb),
-> -					 XFS_FSB_TO_B(mp, end_fsb) - 1);
-> -
-> -		error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
-> -					       end_fsb - start_fsb);
-> -		if (error && !xfs_is_shutdown(mp)) {
-> -			xfs_alert(mp, "%s: unable to clean up ino %lld",
-> -				__func__, ip->i_ino);
-> -			return error;
-> -		}
+> +	 */
 > +	filemap_invalidate_lock(inode->i_mapping);
-> +	truncate_pagecache_range(VFS_I(ip), XFS_FSB_TO_B(mp, start_fsb),
-> +				 XFS_FSB_TO_B(mp, end_fsb) - 1);
-> +
-> +	error = xfs_bmap_punch_delalloc_range(ip, start_fsb,
-> +				       end_fsb - start_fsb);
+> +	truncate_pagecache_range(inode, start_byte, end_byte - 1);
+> +	error = punch(inode, start_byte, end_byte - start_byte);
 > +	filemap_invalidate_unlock(inode->i_mapping);
-> +	if (error && !xfs_is_shutdown(mp)) {
-> +		xfs_alert(mp, "%s: unable to clean up ino %lld",
-> +			__func__, ip->i_ino);
-> +		return error;
->  	}
-> -
->  	return 0;
->  }
+> +
+> +	return error;
+> +}
+> +EXPORT_SYMBOL_GPL(iomap_file_buffered_write_punch_delalloc);
+> +
+>  static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+>  {
+>  	struct iomap *iomap = &iter->iomap;
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index 7bb55dbc19d3..ea96e8a34868 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -1123,12 +1123,12 @@ xfs_buffered_write_iomap_begin(
+>  static int
+>  xfs_buffered_write_delalloc_punch(
+>  	struct inode		*inode,
+> -	loff_t			start_byte,
+> -	loff_t			end_byte)
+> +	loff_t			offset,
+> +	loff_t			length)
+>  {
+>  	struct xfs_mount	*mp = XFS_M(inode->i_sb);
+> -	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, start_byte);
+> -	xfs_fileoff_t		end_fsb = XFS_B_TO_FSB(mp, end_byte);
+> +	xfs_fileoff_t		start_fsb = XFS_B_TO_FSBT(mp, offset);
+> +	xfs_fileoff_t		end_fsb = XFS_B_TO_FSB(mp, offset + length);
 >  
+>  	return xfs_bmap_punch_delalloc_range(XFS_I(inode), start_fsb,
+>  				end_fsb - start_fsb);
+> @@ -1143,13 +1143,9 @@ xfs_buffered_write_iomap_end(
+>  	unsigned		flags,
+>  	struct iomap		*iomap)
+>  {
+> -	struct xfs_mount	*mp = XFS_M(inode->i_sb);
+> -	loff_t			start_byte;
+> -	loff_t			end_byte;
+> -	int			error = 0;
+>  
+> -	if (iomap->type != IOMAP_DELALLOC)
+> -		return 0;
+> +	struct xfs_mount	*mp = XFS_M(inode->i_sb);
+> +	int			error;
+>  
+>  	/*
+>  	 * Behave as if the write failed if drop writes is enabled. Set the NEW
+> @@ -1160,35 +1156,8 @@ xfs_buffered_write_iomap_end(
+>  		written = 0;
+>  	}
+>  
+> -	/* If we didn't reserve the blocks, we're not allowed to punch them. */
+> -	if (!(iomap->flags & IOMAP_F_NEW))
+> -		return 0;
+> -
+> -	/*
+> -	 * start_fsb refers to the first unused block after a short write. If
+> -	 * nothing was written, round offset down to point at the first block in
+> -	 * the range.
+> -	 */
+> -	if (unlikely(!written))
+> -		start_byte = round_down(offset, mp->m_sb.sb_blocksize);
+> -	else
+> -		start_byte = round_up(offset + written, mp->m_sb.sb_blocksize);
+> -	end_byte = round_up(offset + length, mp->m_sb.sb_blocksize);
+> -
+> -	/* Nothing to do if we've written the entire delalloc extent */
+> -	if (start_byte >= end_byte)
+> -		return 0;
+> -
+> -	/*
+> -	 * Lock the mapping to avoid races with page faults re-instantiating
+> -	 * folios and dirtying them via ->page_mkwrite between the page cache
+> -	 * truncation and the delalloc extent removal. Failing to do this can
+> -	 * leave dirty pages with no space reservation in the cache.
+> -	 */
+> -	filemap_invalidate_lock(inode->i_mapping);
+> -	truncate_pagecache_range(inode, start_byte, end_byte - 1);
+> -	error = xfs_buffered_write_delalloc_punch(inode, start_byte, end_byte);
+> -	filemap_invalidate_unlock(inode->i_mapping);
+> +	error = iomap_file_buffered_write_punch_delalloc(inode, iomap, offset,
+> +			length, written, &xfs_buffered_write_delalloc_punch);
+>  	if (error && !xfs_is_shutdown(mp)) {
+>  		xfs_alert(mp, "%s: unable to clean up ino 0x%llx",
+>  			__func__, XFS_I(inode)->i_ino);
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index 238a03087e17..6bbed915c83a 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -226,6 +226,12 @@ static inline const struct iomap *iomap_iter_srcmap(const struct iomap_iter *i)
+>  
+>  ssize_t iomap_file_buffered_write(struct kiocb *iocb, struct iov_iter *from,
+>  		const struct iomap_ops *ops);
+> +int iomap_file_buffered_write_punch_delalloc(struct inode *inode,
+> +		struct iomap *iomap, loff_t offset, loff_t length,
+> +		ssize_t written,
+> +		int (*punch)(struct inode *inode,
+> +				loff_t offset, loff_t length));
+> +
+>  int iomap_read_folio(struct folio *folio, const struct iomap_ops *ops);
+>  void iomap_readahead(struct readahead_control *, const struct iomap_ops *ops);
+>  bool iomap_is_partially_uptodate(struct folio *, size_t from, size_t count);
 > -- 
 > 2.37.2
 > 
