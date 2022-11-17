@@ -2,100 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3DAA462CF87
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 01:26:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4223C62CFA5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 01:31:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232664AbiKQA0O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 16 Nov 2022 19:26:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58516 "EHLO
+        id S234013AbiKQAbX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 16 Nov 2022 19:31:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59876 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232521AbiKQA0M (ORCPT
+        with ESMTP id S234429AbiKQAbV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 16 Nov 2022 19:26:12 -0500
-Received: from mail-oa1-x44.google.com (mail-oa1-x44.google.com [IPv6:2001:4860:4864:20::44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08CE061BBB
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 16:26:12 -0800 (PST)
-Received: by mail-oa1-x44.google.com with SMTP id 586e51a60fabf-13bd2aea61bso481971fac.0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 16:26:12 -0800 (PST)
+        Wed, 16 Nov 2022 19:31:21 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B65A52893
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 16:31:19 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id j12so107329plj.5
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 16:31:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:sender:mime-version:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d1mFOWLvu7xivc1Hajn5plCHpYGUJWrREigRyDv4+GU=;
-        b=CWlX3yxxuvE2VCNLNAyDYfn2oenXH1MUH98Xh9Re/ZGcABfiv9yfDDHLXbBD5OnWDb
-         Tz4CpBgAF3GntpYDKYDGLzAtyy8tScN1Vw3i889yXoBT3gZZusnV2TV0Z8aDD7TBfeHW
-         2euuhLb1GU3+3he05TrAmev+9T91Ud2xDExCMOAIhHhmxsJ64/pDw18WTrpM0Dz9P3g8
-         E9YsdwMpK2Be9l1sofYANgXKEo/PSYzDxjOROwAZpKKAmxo6grdp9qwjTLRwTD921kgM
-         +WvONrUgXVMpozY2y5NVZe5979Svf8QpxjPVVEQZOobn6Ie73YOsP9Zf5YAAGOzNI7sJ
-         5HDA==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bfYTHCNCtdWeHJf9pplhisQ2FfqYgZ1s/D8ukZJ0aF0=;
+        b=noLKefdE/A5/nbmTvR6mJw3cGxk/a7fIL83IBp5Ph1Sax30+McHCvDQ9202nLf5uce
+         hPc2gZOe0LsvudzlGDyBmEAgwDGtCwPT27+S6nCdQzTHR81ueFyHGEG25Bj0t5HJUYw6
+         csu11i/pEoPga4S6lvqc8FbzvURZMsHN35+PY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:sender:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d1mFOWLvu7xivc1Hajn5plCHpYGUJWrREigRyDv4+GU=;
-        b=r0DFGksGa/IlopWDHnNXqwx8+rtRLC3Kdjv1DVFosdQnt9SJJHW8KKFvMm6NYTXKkl
-         06WgvJlp6U0UNmpPy9dxami1nAEvkD3F4MuL8ZFrpZbLm1vwLhwpRsvrs3X8xUXhGt4a
-         YjBEOF7+8RiwNRTGCLP03i16O04wLo2Vx8GFTIlHrg6ixPC3ojfm4qeuoc0leJKmwlpA
-         kLz8hozb5OR3+qBjbBWxAmxGgwt4dG3RokhajWak4mhvAr5GTnBcNU6hRLzYtcVpfnD5
-         mYiP7z7iCzJGx67Nr6mlgKQM0HBRbdqxS2ElalYv4R8Lrh9CeDtsMxCCJYMCrkzcf/mt
-         RxmQ==
-X-Gm-Message-State: ANoB5pmSXcUPL6wRD4gXz7L007Xedkdzrnn5gHUqP9tjUg4Cf7nvchDc
-        c36uP7fF5X8anbXE5kcZp8DywHo7URKpwbWEJDE=
-X-Google-Smtp-Source: AA0mqf495/673iOZ/TByNMFOHkh+VoJiRT7f1pb+xDGhTBh1R6I0xlqWI94QXblurxqwtwYPJga/iHCbY2p/WlXtgJU=
-X-Received: by 2002:a05:6871:4211:b0:132:354d:71ac with SMTP id
- li17-20020a056871421100b00132354d71acmr3194834oab.107.1668644771184; Wed, 16
- Nov 2022 16:26:11 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bfYTHCNCtdWeHJf9pplhisQ2FfqYgZ1s/D8ukZJ0aF0=;
+        b=z0aEIouVet+u3Jondb83bsFZEJGWZVKjjAqQTAwQKZw2Y4mCz2jOM7Qx6LNuoGsEvt
+         ANwb1U3no39wNgmrpeJh0bQY8FeVbKp48NbZ+Em10sT9jzAUIS5vhGRCLyUIIN2y2EFB
+         pHb7jk+BgZ3FgaGUl3Q5J0gXr/uXh5TSOlmK82+/ZTMcHhDCnTVt9FyfVC5/esSGo2j2
+         Nu5eI/5ctNVODrWbO6qmQhJlZBL+y0C7vJiXHdCA5/LG6ikHusvpiMJIZHnyzqZeNLFF
+         xzDQtLkIO8VmKEtPbN5LXmEnK0c6MYysK4zY/R9IKjMwowzXljJDdTgQcNKRSdn62v0N
+         WmZA==
+X-Gm-Message-State: ANoB5pmvFaW0icupuhn28vet43ILmPwjpOGGFFarnOaPQHMcR0Zixprh
+        VfMefjUQVVcQXhQxjCKIoJeDyQ==
+X-Google-Smtp-Source: AA0mqf5LCeBMlQYf9iRokqtAPq5JSpm9R+EnXlxq59oA8dqbtgC+he2PCZJy9QgLdGN/YL6SFM4OFA==
+X-Received: by 2002:a17:90a:6949:b0:213:188c:158d with SMTP id j9-20020a17090a694900b00213188c158dmr343097pjm.11.1668645079035;
+        Wed, 16 Nov 2022 16:31:19 -0800 (PST)
+Received: from www.outflux.net (198-0-35-241-static.hfc.comcastbusiness.net. [198.0.35.241])
+        by smtp.gmail.com with ESMTPSA id s1-20020a170902ea0100b00174f61a7d09sm12946657plg.247.2022.11.16.16.31.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Nov 2022 16:31:18 -0800 (PST)
+Date:   Wed, 16 Nov 2022 16:31:18 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jakub Kicinski <kuba@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Heiko Carstens <hca@linux.ibm.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Christoph =?iso-8859-1?Q?B=F6hmwalder?= 
+        <christoph.boehmwalder@linbit.com>,
+        Jani Nikula <jani.nikula@linux.intel.com>,
+        Jason Gunthorpe <jgg@nvidia.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Richard Weinberger <richard@nod.at>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        SeongJae Park <sj@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Helge Deller <deller@gmx.de>, netdev@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-mmc@vger.kernel.org, linux-parisc@vger.kernel.org,
+        ydroneaud@opteya.com
+Subject: Re: [PATCH v2 3/3] treewide: use get_random_u32_between() when
+ possible
+Message-ID: <202211161628.164F47F@keescook>
+References: <20221114164558.1180362-1-Jason@zx2c4.com>
+ <20221114164558.1180362-4-Jason@zx2c4.com>
+ <202211161436.A45AD719A@keescook>
+ <Y3V4g8eorwiU++Y3@zx2c4.com>
+ <Y3V6QtYMayODVDOk@zx2c4.com>
 MIME-Version: 1.0
-Sender: mrs.anna.brunn41@gmail.com
-Received: by 2002:a05:6358:44ca:b0:cd:e868:f2ce with HTTP; Wed, 16 Nov 2022
- 16:26:10 -0800 (PST)
-From:   Aisha Al-Qaddafi <aisha.gdaff21@gmail.com>
-Date:   Wed, 16 Nov 2022 12:26:10 -1200
-X-Google-Sender-Auth: jH8UYr403zqQ4iG8fsFqAkKjBlw
-Message-ID: <CAPxZUqFaNsTggrGmWYo=-LKk0t_h-UpapgyXXqNVKjoqDb6phQ@mail.gmail.com>
-Subject: My beloved friend
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=5.5 required=5.0 tests=BAYES_80,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,LOTS_OF_MONEY,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        UNDISC_MONEY autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2001:4860:4864:20:0:0:0:44 listed in]
-        [list.dnswl.org]
-        *  2.0 BAYES_80 BODY: Bayes spam probability is 80 to 95%
-        *      [score: 0.9013]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [mrs.anna.brunn41[at]gmail.com]
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [mrs.anna.brunn41[at]gmail.com]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        *  0.0 LOTS_OF_MONEY Huge... sums of money
-        *  3.4 UNDISC_MONEY Undisclosed recipients + money/fraud signs
-X-Spam-Level: *****
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y3V6QtYMayODVDOk@zx2c4.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Assalamu alaikum,I came across your e-mail contact prior to a private
-search while in need of a trusted person. My name is Mrs. Aisha
-Gaddafi, a single Mother and a Widow with three Children. I am the
-only biological Daughter of the late Libyan President (Late Colonel
-Muammar Gaddafi)I have a business Proposal for you worth $27.5 Million
-dollars and I need mutual respect, trust, honesty and transparency,
-adequate support and assistance, Hope to hear from you for further
-details.
-Mrs Aisha Gaddafi
+On Thu, Nov 17, 2022 at 01:03:14AM +0100, Jason A. Donenfeld wrote:
+> On Thu, Nov 17, 2022 at 12:55:47AM +0100, Jason A. Donenfeld wrote:
+> > 2) What to call it:
+> >    - between I still like, because it mirrors "I'm thinking of a number
+> >      between 1 and 10 and..." that everybody knows,
+> >    - inclusive I guess works, but it's not a preposition,
+> >    - bikeshed color #3?
+> 
+> - between
+> - ranged
+> - spanning
+> 
+> https://www.thefreedictionary.com/List-of-prepositions.htm
+> - amid
+> 
+> Sigh, names.
+
+I think "inclusive" is best. The other words still don't provide
+unambiguous language. It's the language used in formal math, e.g.
+sigma-notation, etc. It's an adjective for "get random" (verb, noun).
+
+-- 
+Kees Cook
