@@ -2,244 +2,473 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2120762DDD9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 15:21:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 801CD62DDE3
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 15:23:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240381AbiKQOVg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Nov 2022 09:21:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51196 "EHLO
+        id S239133AbiKQOXj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Nov 2022 09:23:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51930 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240373AbiKQOVd (ORCPT
+        with ESMTP id S231469AbiKQOXh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Nov 2022 09:21:33 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F6EC77225;
-        Thu, 17 Nov 2022 06:21:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1668694890; x=1700230890;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=QAS2h8V2dfght1SJU/Na0JcJSN/AEZSVl08JRBsGjdI=;
-  b=NNK2xzoKjwI6qrmzmGmeKxLrNmv1MfC5ADjD6m8RHOc5qInpX8GUo6Kc
-   DGxFqUcjxrFSxNgjlG6pAFy+WDmFjandV5TQM4N6SsjF0ito1788+EDl+
-   H5+XYRvEc5yS8+cPIzx8zzTd3zL73kJ1dSrkXXa/Zs6DUma1Ls4bUAUH8
-   7OPnFgL4uM5NiL++90N5G2kik3Z8LhOB4Ee65e3421zTIjyEi7ViQHN+V
-   qUmBIlieRBS0vf/6d1u/PWIq6fQo/FdDSlVTcNrbhFh8rjJeNTtnJJ1ZW
-   0vusI+e60KUZESmSxqDOLI5XdLgX6B/nwtsIM49grAuhoJJhuZ8f1gd25
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10534"; a="312874347"
-X-IronPort-AV: E=Sophos;i="5.96,171,1665471600"; 
-   d="scan'208";a="312874347"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Nov 2022 06:21:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10534"; a="634066426"
-X-IronPort-AV: E=Sophos;i="5.96,171,1665471600"; 
-   d="scan'208";a="634066426"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by orsmga007.jf.intel.com with ESMTP; 17 Nov 2022 06:21:17 -0800
-Date:   Thu, 17 Nov 2022 22:16:53 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Alex =?iso-8859-1?Q?Benn=E9e?= <alex.bennee@linaro.org>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: Re: [PATCH v9 0/8] KVM: mm: fd-based approach for supporting KVM
-Message-ID: <20221117141653.GE422408@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
- <87k03xbvkt.fsf@linaro.org>
- <20221116050022.GC364614@chaop.bj.intel.com>
- <87v8nf8bte.fsf@linaro.org>
+        Thu, 17 Nov 2022 09:23:37 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D9EA47720A
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Nov 2022 06:22:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668694964;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=kZFA2RSq90lQl66u67NA/ASE3OeHnkmqY8eR/I6QCTU=;
+        b=K7UlvWCffAerrXsf0sWMhFEFEec1cBsoCXDBOoZGbso5TXYEEzsLJigjuEpa8BHWAJh1xd
+        ta2U1yVrGFeZu1Xsuc0IqGbLkk5YNf+EqEye5NOKM+aAxdK83pV9LQB5zhSNsvuy6flWSo
+        eIlf45qaDbWGdAfpw/CkWgmGGQIdiW0=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-447-aRIgp0ssPQu0Ktvrb_xGYg-1; Thu, 17 Nov 2022 09:22:38 -0500
+X-MC-Unique: aRIgp0ssPQu0Ktvrb_xGYg-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AF2BC29DD981;
+        Thu, 17 Nov 2022 14:22:37 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 3308A4B3FCD;
+        Thu, 17 Nov 2022 14:22:35 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [RFC PATCH v3] mm, netfs,
+ fscache: Stop read optimisation when folio removed from pagecache
+From:   David Howells <dhowells@redhat.com>
+To:     willy@infradead.org, dwysocha@redhat.com
+Cc:     Rohith Surabattula <rohiths.msft@gmail.com>,
+        Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
+        linux-cifs@vger.kernel.org, linux-afs@lists.infradead.org,
+        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, dhowells@redhat.com,
+        linux-kernel@vger.kernel.org
+Date:   Thu, 17 Nov 2022 14:22:32 +0000
+Message-ID: <166869495238.3720468.4878151409085146764.stgit@warthog.procyon.org.uk>
+User-Agent: StGit/1.5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87v8nf8bte.fsf@linaro.org>
-X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 16, 2022 at 09:40:23AM +0000, Alex Bennée wrote:
-> 
-> Chao Peng <chao.p.peng@linux.intel.com> writes:
-> 
-> > On Mon, Nov 14, 2022 at 11:43:37AM +0000, Alex Bennée wrote:
-> >> 
-> >> Chao Peng <chao.p.peng@linux.intel.com> writes:
-> >> 
-> >> <snip>
-> >> > Introduction
-> >> > ============
-> >> > KVM userspace being able to crash the host is horrible. Under current
-> >> > KVM architecture, all guest memory is inherently accessible from KVM
-> >> > userspace and is exposed to the mentioned crash issue. The goal of this
-> >> > series is to provide a solution to align mm and KVM, on a userspace
-> >> > inaccessible approach of exposing guest memory. 
-> >> >
-> >> > Normally, KVM populates secondary page table (e.g. EPT) by using a host
-> >> > virtual address (hva) from core mm page table (e.g. x86 userspace page
-> >> > table). This requires guest memory being mmaped into KVM userspace, but
-> >> > this is also the source where the mentioned crash issue can happen. In
-> >> > theory, apart from those 'shared' memory for device emulation etc, guest
-> >> > memory doesn't have to be mmaped into KVM userspace.
-> >> >
-> >> > This series introduces fd-based guest memory which will not be mmaped
-> >> > into KVM userspace. KVM populates secondary page table by using a
-> >> > fd/offset pair backed by a memory file system. The fd can be created
-> >> > from a supported memory filesystem like tmpfs/hugetlbfs and KVM can
-> >> > directly interact with them with newly introduced in-kernel interface,
-> >> > therefore remove the KVM userspace from the path of accessing/mmaping
-> >> > the guest memory. 
-> >> >
-> >> > Kirill had a patch [2] to address the same issue in a different way. It
-> >> > tracks guest encrypted memory at the 'struct page' level and relies on
-> >> > HWPOISON to reject the userspace access. The patch has been discussed in
-> >> > several online and offline threads and resulted in a design document [3]
-> >> > which is also the original proposal for this series. Later this patch
-> >> > series evolved as more comments received in community but the major
-> >> > concepts in [3] still hold true so recommend reading.
-> >> >
-> >> > The patch series may also be useful for other usages, for example, pure
-> >> > software approach may use it to harden itself against unintentional
-> >> > access to guest memory. This series is designed with these usages in
-> >> > mind but doesn't have code directly support them and extension might be
-> >> > needed.
-> >> 
-> >> There are a couple of additional use cases where having a consistent
-> >> memory interface with the kernel would be useful.
-> >
-> > Thanks very much for the info. But I'm not so confident that the current
-> > memfd_restricted() implementation can be useful for all these usages. 
-> >
-> >> 
-> >>   - Xen DomU guests providing other domains with VirtIO backends
-> >> 
-> >>   Xen by default doesn't give other domains special access to a domains
-> >>   memory. The guest can grant access to regions of its memory to other
-> >>   domains for this purpose. 
-> >
-> > I'm trying to form my understanding on how this could work and what's
-> > the benefit for a DomU guest to provide memory through memfd_restricted().
-> > AFAICS, memfd_restricted() can help to hide the memory from DomU userspace,
-> > but I assume VirtIO backends are still in DomU uerspace and need access
-> > that memory, right?
-> 
-> They need access to parts of the memory. At the moment you run your
-> VirtIO domains in the Dom0 and give them access to the whole of a DomU's
-> address space - however the Xen model is by default the guests memory is
-> inaccessible to other domains on the system. The DomU guest uses the Xen
-> grant model to expose portions of its address space to other domains -
-> namely for the VirtIO queues themselves and any pages containing buffers
-> involved in the VirtIO transaction. My thought was that looks like a
-> guest memory interface which is mostly inaccessible (private) with some
-> holes in it where memory is being explicitly shared with other domains.
+Fscache has an optimisation by which reads from the cache are skipped until
+we know that (a) there's data there to be read and (b) that data isn't
+entirely covered by pages resident in the netfs pagecache.  This is done
+with two flags manipulated by fscache_note_page_release():
 
-Yes, similar in conception. For KVM, memfd_restricted() is used by host
-OS, guest will issue conversion between private and shared for its
-memory range. This is similar to Xen DomU guest grants its memory to
-other domains. Similarly, I guess to make memfd_restricted() being really
-useful for Xen, it should be run on the VirtIO backend domain (e.g.
-equivalent to the host position for KVM).
+	if (...
+	    test_bit(FSCACHE_COOKIE_HAVE_DATA, &cookie->flags) &&
+	    test_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags))
+		clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags);
 
-> 
-> What I want to achieve is a common userspace API with defined semantics
-> for what happens when private and shared regions are accessed. Because
-> having each hypervisor/confidential computing architecture define its
-> own special API for accessing this memory is just a recipe for
-> fragmentation and makes sharing common VirtIO backends impossible.
+where the NO_DATA_TO_READ flag causes cachefiles_prepare_read() to indicate
+that netfslib should download from the server or clear the page instead.
 
-Yes, I agree. That's interesting to explore.
+The fscache_note_page_release() function is intended to be called from
+->releasepage() - but that only gets called if PG_private or PG_private_2
+is set - and currently the former is at the discretion of the network
+filesystem and the latter is only set whilst a page is being written to the
+cache, so sometimes we miss clearing the optimisation.
 
-> 
-> >
-> >> 
-> >>   - pKVM on ARM
-> >> 
-> >>   Similar to Xen, pKVM moves the management of the page tables into the
-> >>   hypervisor and again doesn't allow those domains to share memory by
-> >>   default.
-> >
-> > Right, we already had some discussions on this in the past versions.
-> >
-> >> 
-> >>   - VirtIO loopback
-> >> 
-> >>   This allows for VirtIO devices for the host kernel to be serviced by
-> >>   backends running in userspace. Obviously the memory userspace is
-> >>   allowed to access is strictly limited to the buffers and queues
-> >>   because giving userspace unrestricted access to the host kernel would
-> >>   have consequences.
-> >
-> > Okay, but normal memfd_create() should work for it, right? And
-> > memfd_restricted() instead may not work as it unmaps the memory from
-> > userspace.
-> >
-> >> 
-> >> All of these VirtIO backends work with vhost-user which uses memfds to
-> >> pass references to guest memory from the VMM to the backend
-> >> implementation.
-> >
-> > Sounds to me these are the places where normal memfd_create() can act on.
-> > VirtIO backends work on the mmap-ed memory which currently is not the
-> > case for memfd_restricted(). memfd_restricted() has different design
-> > purpose that unmaps the memory from userspace and employs some kernel
-> > callbacks so other kernel modules can make use of the memory with these
-> > callbacks instead of userspace virtual address.
-> 
-> Maybe my understanding is backwards then. Are you saying a guest starts
-> with all its memory exposed and then selectively unmaps the private
-> regions? Is this driven by the VMM or the guest itself?
+Fix this by following Willy's suggestion[1] and adding an address_space
+flag, AS_RELEASE_ALWAYS, that causes filemap_release_folio() to always call
+->release_folio() if it's set, even if PG_private or PG_private_2 aren't
+set.
 
-For confidential computing usages, normally guest starts with all guest
-memory being private, e.g,  cannot be accessed by host. The memory will
-be lived in memfd_restricted() memory and not exposed to host userspace
-VMM like QEMU. Guest then can selectively map its private sub regions
-(e.g. VirtIO queue in the guest VirtIO frontend driver) as shared so
-host backend driver in QEMU can see it. When this happens, new shared
-mapping will be established in KVM and the new memory will be provided
-from normal mmap-able memory, then QEMU can do whatever it can do for
-the device emulation.
+Note that this would require folio_test_private() and page_has_private() to
+become more complicated.  To avoid that, in the places[*] where these are
+used to conditionalise calls to filemap_release_folio() and
+try_to_release_page(), the tests are removed the those functions just
+jumped to unconditionally and the test is performed there.
 
-Thanks,
-Chao
-> 
-> -- 
-> Alex Bennée
+[*] There are some exceptions in vmscan.c where the check guards more than
+just a call to the releaser.  I've added a function, folio_needs_release()
+to wrap all the checks for that.
+
+AS_RELEASE_ALWAYS should be set if a non-NULL cookie is obtained from
+fscache and cleared in ->evict_inode() before truncate_inode_pages_final()
+is called.
+
+Additionally, the FSCACHE_COOKIE_NO_DATA_TO_READ flag needs to be cleared
+and the optimisation cancelled if a cachefiles object already contains data
+when we open it.
+
+Changes:
+========
+ver #3)
+ - Fixed mapping_clear_release_always() to use clear_bit() not set_bit().
+ - Moved a '&&' to the correct line.
+
+ver #2)
+ - Rewrote entirely according to Willy's suggestion[1].
+
+Reported-by: Rohith Surabattula <rohiths.msft@gmail.com>
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Steve French <sfrench@samba.org>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: Dave Wysochanski <dwysocha@redhat.com>
+cc: Dominique Martinet <asmadeus@codewreck.org>
+cc: Ilya Dryomov <idryomov@gmail.com>
+cc: linux-cachefs@redhat.com
+cc: linux-cifs@vger.kernel.org
+cc: linux-afs@lists.infradead.org
+cc: v9fs-developer@lists.sourceforge.net
+cc: ceph-devel@vger.kernel.org
+cc: linux-nfs@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+Link: https://lore.kernel.org/r/Yk9V/03wgdYi65Lb@casper.infradead.org/ [1]
+Link: https://lore.kernel.org/r/164928630577.457102.8519251179327601178.stgit@warthog.procyon.org.uk/ # v1
+Link: https://lore.kernel.org/r/166844174069.1124521.10890506360974169994.stgit@warthog.procyon.org.uk/ # v2
+---
+
+ fs/9p/cache.c           |    2 ++
+ fs/9p/vfs_inode.c       |    1 +
+ fs/afs/inode.c          |    1 +
+ fs/afs/internal.h       |    2 ++
+ fs/cachefiles/namei.c   |    2 ++
+ fs/ceph/cache.c         |    2 ++
+ fs/ceph/inode.c         |    1 +
+ fs/cifs/cifsfs.c        |    1 +
+ fs/cifs/fscache.c       |    2 ++
+ fs/splice.c             |    3 +--
+ include/linux/pagemap.h |   16 ++++++++++++++++
+ mm/filemap.c            |    4 ++++
+ mm/huge_memory.c        |    3 +--
+ mm/khugepaged.c         |    3 +--
+ mm/memory-failure.c     |    3 +--
+ mm/migrate.c            |    3 +--
+ mm/truncate.c           |    6 ++----
+ mm/vmscan.c             |   15 +++++++++++----
+ 18 files changed, 52 insertions(+), 18 deletions(-)
+
+diff --git a/fs/9p/cache.c b/fs/9p/cache.c
+index cebba4eaa0b5..12c0ae29f185 100644
+--- a/fs/9p/cache.c
++++ b/fs/9p/cache.c
+@@ -68,6 +68,8 @@ void v9fs_cache_inode_get_cookie(struct inode *inode)
+ 				       &path, sizeof(path),
+ 				       &version, sizeof(version),
+ 				       i_size_read(&v9inode->netfs.inode));
++	if (v9inode->netfs.cache)
++		mapping_set_release_always(inode->i_mapping);
+ 
+ 	p9_debug(P9_DEBUG_FSC, "inode %p get cookie %p\n",
+ 		 inode, v9fs_inode_cookie(v9inode));
+diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
+index 4d1a4a8d9277..b553fe3484c1 100644
+--- a/fs/9p/vfs_inode.c
++++ b/fs/9p/vfs_inode.c
+@@ -394,6 +394,7 @@ void v9fs_evict_inode(struct inode *inode)
+ 	version = cpu_to_le32(v9inode->qid.version);
+ 	fscache_clear_inode_writeback(v9fs_inode_cookie(v9inode), inode,
+ 				      &version);
++	mapping_clear_release_always(inode->i_mapping);
+ 	clear_inode(inode);
+ 	filemap_fdatawrite(&inode->i_data);
+ 
+diff --git a/fs/afs/inode.c b/fs/afs/inode.c
+index 6d3a3dbe4928..7790977780ca 100644
+--- a/fs/afs/inode.c
++++ b/fs/afs/inode.c
+@@ -805,6 +805,7 @@ void afs_evict_inode(struct inode *inode)
+ 
+ 	afs_set_cache_aux(vnode, &aux);
+ 	fscache_clear_inode_writeback(afs_vnode_cache(vnode), inode, &aux);
++	mapping_clear_release_always(inode->i_mapping);
+ 	clear_inode(inode);
+ 
+ 	while (!list_empty(&vnode->wb_keys)) {
+diff --git a/fs/afs/internal.h b/fs/afs/internal.h
+index 723d162078a3..310f4111c648 100644
+--- a/fs/afs/internal.h
++++ b/fs/afs/internal.h
+@@ -680,6 +680,8 @@ static inline void afs_vnode_set_cache(struct afs_vnode *vnode,
+ {
+ #ifdef CONFIG_AFS_FSCACHE
+ 	vnode->netfs.cache = cookie;
++	if (cookie)
++		mapping_set_release_always(vnode->netfs.inode.i_mapping);
+ #endif
+ }
+ 
+diff --git a/fs/cachefiles/namei.c b/fs/cachefiles/namei.c
+index 03ca8f2f657a..50b2ee163af6 100644
+--- a/fs/cachefiles/namei.c
++++ b/fs/cachefiles/namei.c
+@@ -584,6 +584,8 @@ static bool cachefiles_open_file(struct cachefiles_object *object,
+ 	if (ret < 0)
+ 		goto check_failed;
+ 
++	clear_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &object->cookie->flags);
++
+ 	object->file = file;
+ 
+ 	/* Always update the atime on an object we've just looked up (this is
+diff --git a/fs/ceph/cache.c b/fs/ceph/cache.c
+index 177d8e8d73fe..de1dee46d3df 100644
+--- a/fs/ceph/cache.c
++++ b/fs/ceph/cache.c
+@@ -36,6 +36,8 @@ void ceph_fscache_register_inode_cookie(struct inode *inode)
+ 				       &ci->i_vino, sizeof(ci->i_vino),
+ 				       &ci->i_version, sizeof(ci->i_version),
+ 				       i_size_read(inode));
++	if (ci->netfs.cache)
++		mapping_set_release_always(inode->i_mapping);
+ }
+ 
+ void ceph_fscache_unregister_inode_cookie(struct ceph_inode_info *ci)
+diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
+index 4af5e55abc15..2e8481da6583 100644
+--- a/fs/ceph/inode.c
++++ b/fs/ceph/inode.c
+@@ -572,6 +572,7 @@ void ceph_evict_inode(struct inode *inode)
+ 	truncate_inode_pages_final(&inode->i_data);
+ 	if (inode->i_state & I_PINNING_FSCACHE_WB)
+ 		ceph_fscache_unuse_cookie(inode, true);
++	mapping_clear_release_always(inode->i_mapping);
+ 	clear_inode(inode);
+ 
+ 	ceph_fscache_unregister_inode_cookie(ci);
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index fe220686bba4..ceb92b536475 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -423,6 +423,7 @@ cifs_free_inode(struct inode *inode)
+ static void
+ cifs_evict_inode(struct inode *inode)
+ {
++	mapping_clear_release_always(inode->i_mapping);
+ 	truncate_inode_pages_final(&inode->i_data);
+ 	if (inode->i_state & I_PINNING_FSCACHE_WB)
+ 		cifs_fscache_unuse_inode_cookie(inode, true);
+diff --git a/fs/cifs/fscache.c b/fs/cifs/fscache.c
+index a1751b956318..d3f484ab1213 100644
+--- a/fs/cifs/fscache.c
++++ b/fs/cifs/fscache.c
+@@ -108,6 +108,8 @@ void cifs_fscache_get_inode_cookie(struct inode *inode)
+ 				       &cifsi->uniqueid, sizeof(cifsi->uniqueid),
+ 				       &cd, sizeof(cd),
+ 				       i_size_read(&cifsi->netfs.inode));
++	if (cifsi->netfs.cache)
++		mapping_set_release_always(inode->i_mapping);
+ }
+ 
+ void cifs_fscache_unuse_inode_cookie(struct inode *inode, bool update)
+diff --git a/fs/splice.c b/fs/splice.c
+index 0878b852b355..563105304ccc 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -65,8 +65,7 @@ static bool page_cache_pipe_buf_try_steal(struct pipe_inode_info *pipe,
+ 		 */
+ 		folio_wait_writeback(folio);
+ 
+-		if (folio_has_private(folio) &&
+-		    !filemap_release_folio(folio, GFP_KERNEL))
++		if (!filemap_release_folio(folio, GFP_KERNEL))
+ 			goto out_unlock;
+ 
+ 		/*
+diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+index bbccb4044222..9a824b43c6af 100644
+--- a/include/linux/pagemap.h
++++ b/include/linux/pagemap.h
+@@ -199,6 +199,7 @@ enum mapping_flags {
+ 	/* writeback related tags are not used */
+ 	AS_NO_WRITEBACK_TAGS = 5,
+ 	AS_LARGE_FOLIO_SUPPORT = 6,
++	AS_RELEASE_ALWAYS,	/* Call ->release_folio(), even if no private data */
+ };
+ 
+ /**
+@@ -269,6 +270,21 @@ static inline int mapping_use_writeback_tags(struct address_space *mapping)
+ 	return !test_bit(AS_NO_WRITEBACK_TAGS, &mapping->flags);
+ }
+ 
++static inline bool mapping_release_always(const struct address_space *mapping)
++{
++	return test_bit(AS_RELEASE_ALWAYS, &mapping->flags);
++}
++
++static inline void mapping_set_release_always(struct address_space *mapping)
++{
++	set_bit(AS_RELEASE_ALWAYS, &mapping->flags);
++}
++
++static inline void mapping_clear_release_always(struct address_space *mapping)
++{
++	clear_bit(AS_RELEASE_ALWAYS, &mapping->flags);
++}
++
+ static inline gfp_t mapping_gfp_mask(struct address_space * mapping)
+ {
+ 	return mapping->gfp_mask;
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 08341616ae7a..c2369f29879f 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3941,6 +3941,10 @@ bool filemap_release_folio(struct folio *folio, gfp_t gfp)
+ 	struct address_space * const mapping = folio->mapping;
+ 
+ 	BUG_ON(!folio_test_locked(folio));
++	if ((!mapping || !mapping_release_always(mapping)) &&
++	    !folio_test_private(folio) &&
++	    !folio_test_private_2(folio))
++		return true;
+ 	if (folio_test_writeback(folio))
+ 		return false;
+ 
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 811d19b5c4f6..308d36aa3197 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -2683,8 +2683,7 @@ int split_huge_page_to_list(struct page *page, struct list_head *list)
+ 		gfp = current_gfp_context(mapping_gfp_mask(mapping) &
+ 							GFP_RECLAIM_MASK);
+ 
+-		if (folio_test_private(folio) &&
+-				!filemap_release_folio(folio, gfp)) {
++		if (!filemap_release_folio(folio, gfp)) {
+ 			ret = -EBUSY;
+ 			goto out;
+ 		}
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 4734315f7940..7e9e0e3e678e 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1883,8 +1883,7 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 			goto out_unlock;
+ 		}
+ 
+-		if (page_has_private(page) &&
+-		    !try_to_release_page(page, GFP_KERNEL)) {
++		if (!try_to_release_page(page, GFP_KERNEL)) {
+ 			result = SCAN_PAGE_HAS_PRIVATE;
+ 			putback_lru_page(page);
+ 			goto out_unlock;
+diff --git a/mm/memory-failure.c b/mm/memory-failure.c
+index bead6bccc7f2..82673fc01eed 100644
+--- a/mm/memory-failure.c
++++ b/mm/memory-failure.c
+@@ -831,8 +831,7 @@ static int truncate_error_page(struct page *p, unsigned long pfn,
+ 
+ 		if (err != 0) {
+ 			pr_info("%#lx: Failed to punch page: %d\n", pfn, err);
+-		} else if (page_has_private(p) &&
+-			   !try_to_release_page(p, GFP_NOIO)) {
++		} else if (!try_to_release_page(p, GFP_NOIO)) {
+ 			pr_info("%#lx: failed to release buffers\n", pfn);
+ 		} else {
+ 			ret = MF_RECOVERED;
+diff --git a/mm/migrate.c b/mm/migrate.c
+index dff333593a8a..d721ef340943 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -905,8 +905,7 @@ static int fallback_migrate_folio(struct address_space *mapping,
+ 	 * Buffers may be managed in a filesystem specific way.
+ 	 * We must have no buffers or drop them.
+ 	 */
+-	if (folio_test_private(src) &&
+-	    !filemap_release_folio(src, GFP_KERNEL))
++	if (!filemap_release_folio(src, GFP_KERNEL))
+ 		return mode == MIGRATE_SYNC ? -EAGAIN : -EBUSY;
+ 
+ 	return migrate_folio(mapping, dst, src, mode);
+diff --git a/mm/truncate.c b/mm/truncate.c
+index c0be77e5c008..0d4dd233f518 100644
+--- a/mm/truncate.c
++++ b/mm/truncate.c
+@@ -19,7 +19,6 @@
+ #include <linux/highmem.h>
+ #include <linux/pagevec.h>
+ #include <linux/task_io_accounting_ops.h>
+-#include <linux/buffer_head.h>	/* grr. try_to_release_page */
+ #include <linux/shmem_fs.h>
+ #include <linux/rmap.h>
+ #include "internal.h"
+@@ -276,7 +275,7 @@ static long mapping_evict_folio(struct address_space *mapping,
+ 	if (folio_ref_count(folio) >
+ 			folio_nr_pages(folio) + folio_has_private(folio) + 1)
+ 		return 0;
+-	if (folio_has_private(folio) && !filemap_release_folio(folio, 0))
++	if (!filemap_release_folio(folio, 0))
+ 		return 0;
+ 
+ 	return remove_mapping(mapping, folio);
+@@ -581,8 +580,7 @@ static int invalidate_complete_folio2(struct address_space *mapping,
+ 	if (folio->mapping != mapping)
+ 		return 0;
+ 
+-	if (folio_has_private(folio) &&
+-	    !filemap_release_folio(folio, GFP_KERNEL))
++	if (!filemap_release_folio(folio, GFP_KERNEL))
+ 		return 0;
+ 
+ 	spin_lock(&mapping->host->i_lock);
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 04d8b88e5216..a2d5ffee5f8f 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -186,6 +186,14 @@ struct scan_control {
+ #define prefetchw_prev_lru_folio(_folio, _base, _field) do { } while (0)
+ #endif
+ 
++static bool folio_needs_release(struct folio *folio)
++{
++	struct address_space *mapping = folio->mapping;
++
++	return folio_has_private(folio) ||
++		(mapping && mapping_release_always(mapping));
++}
++
+ /*
+  * From 0 .. 200.  Higher means more swappy.
+  */
+@@ -1978,7 +1986,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 		 * (refcount == 1) it can be freed.  Otherwise, leave
+ 		 * the folio on the LRU so it is swappable.
+ 		 */
+-		if (folio_has_private(folio)) {
++		if (folio_needs_release(folio)) {
+ 			if (!filemap_release_folio(folio, sc->gfp_mask))
+ 				goto activate_locked;
+ 			if (!mapping && folio_ref_count(folio) == 1) {
+@@ -2592,9 +2600,8 @@ static void shrink_active_list(unsigned long nr_to_scan,
+ 		}
+ 
+ 		if (unlikely(buffer_heads_over_limit)) {
+-			if (folio_test_private(folio) && folio_trylock(folio)) {
+-				if (folio_test_private(folio))
+-					filemap_release_folio(folio, 0);
++			if (folio_needs_release(folio) && folio_trylock(folio)) {
++				filemap_release_folio(folio, 0);
+ 				folio_unlock(folio);
+ 			}
+ 		}
+
+
