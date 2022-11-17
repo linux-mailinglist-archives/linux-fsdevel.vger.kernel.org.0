@@ -2,132 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3A5D962D2FC
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 06:50:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3CB5462D31F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 06:58:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234754AbiKQFub (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Nov 2022 00:50:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44336 "EHLO
+        id S239260AbiKQF6f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Nov 2022 00:58:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239112AbiKQFuH (ORCPT
+        with ESMTP id S239261AbiKQF6T (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Nov 2022 00:50:07 -0500
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2053.outbound.protection.outlook.com [40.107.113.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96027E2A;
-        Wed, 16 Nov 2022 21:49:29 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QcvGLahwxdFsTznsg4d6a/nhNGRVaA2yS7m3lEs8vce1GR/jpLfKcoLPNVkfvE3Jeywo/DVukYxKfkR/onkvT/S0oQI8QitHXIZvULJriLsvo5QWoXpO/U81GGLjRIQM4g6xFRceCmBz9TIaNEfTde4nwwv1oZ1Y4Tk9MNHxOA1/hROdNAmV3K93DXOhKVvGRupSQ4lDoeDrjn1cRTfczgfPrOvdWViofTsp8FHytIST5Y1vBl5NuCDh2HciOr+XhPGyq7a7xm2YZBMq5h6Pd8WEYUWbOUpSKmsZHbRpunT0KAQGw0SaF+WozXsEh4vlbuDA1eMqnCQx9qmcT/SNWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6WakgoREuAOiWvD7OuBOmdeUf9uzHSA60aPzxDpHSNE=;
- b=d9g/dUq7DXd+8UnONG74NXhvabdRCuWlkwOTQ5lw9NuyiT3Y2FP7K3htSSTbZKWKin1mtv7lL8vZe3x9e5Goc24yUhZGdzniZ/QA9tHRSyEq72qwZ/wbb6ZSCw14VRYDubf0Cz6jtATwe5L/7y8wBQp+aZMNBxa9CYgPbFw3KbTqKc8D6rMfOPozRZv/U5N6OhSZEaA/iZ6XP08HL1D0BTWZYeKHSQl9om0Rs2T1VdFwZCnGjcG9oL1HmK1qBOgUtzYto3tQXtYQPManf8l/YSsWkLQE5eTkKgVrrNCHrgs8E6qNEoAPZ10yZ2zT9yTXolwB4AjCf/mHJwf1B5ixWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nec.com; dmarc=pass action=none header.from=nec.com; dkim=pass
- header.d=nec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nec.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=6WakgoREuAOiWvD7OuBOmdeUf9uzHSA60aPzxDpHSNE=;
- b=d/dKBDp0ZATU9fB2OyAv12tddKhyuhRktxxmXjDDUtjS2Hr4HBRvCAY7HxCrlq8FHziIQhSxTfngNHRlKk85olvs8RkVOwvbYyEM7X4pC5P98VKrQqFE1ROjS0/Dwhm4kSqUlOfv6vJXkVVM97l4GBL7Z22F+PUBJluSxlzLPgY=
-Received: from TYWPR01MB8591.jpnprd01.prod.outlook.com (2603:1096:400:13c::10)
- by TYAPR01MB5673.jpnprd01.prod.outlook.com (2603:1096:404:8052::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5813.19; Thu, 17 Nov
- 2022 05:49:27 +0000
-Received: from TYWPR01MB8591.jpnprd01.prod.outlook.com
- ([fe80::9f34:8082:cd2f:589c]) by TYWPR01MB8591.jpnprd01.prod.outlook.com
- ([fe80::9f34:8082:cd2f:589c%7]) with mapi id 15.20.5813.019; Thu, 17 Nov 2022
- 05:49:27 +0000
-From:   =?utf-8?B?SE9SSUdVQ0hJIE5BT1lBKOWggOWPo+OAgOebtOS5nyk=?= 
-        <naoya.horiguchi@nec.com>
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-CC:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-ext4@vger.kernel.org" <linux-ext4@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "tytso@mit.edu" <tytso@mit.edu>
-Subject: Re: [PATCH 3/4] memory-failure: Convert truncate_error_page() to use
- folio
-Thread-Topic: [PATCH 3/4] memory-failure: Convert truncate_error_page() to use
- folio
-Thread-Index: AQHY+WCXTUnInI8R702OWCGz2BHGca5CnekA
-Date:   Thu, 17 Nov 2022 05:49:27 +0000
-Message-ID: <20221117054918.GA881314@hori.linux.bs1.fc.nec.co.jp>
-References: <20221116021011.54164-1-vishal.moola@gmail.com>
- <20221116021011.54164-4-vishal.moola@gmail.com>
-In-Reply-To: <20221116021011.54164-4-vishal.moola@gmail.com>
-Accept-Language: ja-JP, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nec.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TYWPR01MB8591:EE_|TYAPR01MB5673:EE_
-x-ms-office365-filtering-correlation-id: 7aaa8d7f-f163-4bed-5ee2-08dac85f7d54
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2Rdks1PfIJ8qv//XIOf0vUQ2UdNzDVqtX9geR5cK+3/V/aWeMkxQ2tdwH6vyaI1bqCwrGjHh7NmdpwU+LH3U9+gpoYTUBAViuk120JiJsW04Xldl0u3GrwXJXaCvOMRWkC5AFUwOKvjJNaUX802e9jXrI/ca7QSnTWyrGKHv86dxNHSr/hiMnFv820qIqtlwoL5mdvoZneam9uYRjdlA/HBEvQekSwYIy1ClrKl21i8tiAQtaL7jlzO5qZ3EXFHoSscAWby6Rep1Axfvxf/W8fF46u5jCAYFAWNr+AED3a6/VUqlEh/K5lHC4IAgvmWS2V2EihA5NiReiA631sOgK1RZ+tNQfyGxqYPUkkGQ93pJ3k88TYAosCz7JbaoIR1BTIj0FNQck1oShCnYWd2r/Dhnx2rbepmbQ4Vco9Df9azLaVyavVSZHsmyCbvqa8ezRDSxxoirqfEs78438JG+XcXTlcpsqIRkVlnHYlzQgMw35sC76di8mD0vz7NP6S4b9702YqNMY1zvlg5FRq7H/+4jJx6qkqoGzxrBqIKzS0ZzeL+FKLy9U6BaDpymmvFGwM5aiu73v+2xoX6z0dxaVPK4BGTMPBIp2882KPepTTVqZOe+o1wyYfCJxBShnLsaZUkcrB8dkSh8mY1C8zz/bBf6Iw5bzwCGSUHkB3UreWdPRiJgZmpiw40Wm1qvHTpbZyZq7LPH0jeBg0dlquzXUg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYWPR01MB8591.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(346002)(396003)(366004)(136003)(39860400002)(376002)(451199015)(86362001)(38100700002)(6506007)(55236004)(9686003)(26005)(6512007)(82960400001)(186003)(1076003)(54906003)(6916009)(5660300002)(8936002)(6486002)(66446008)(66556008)(66476007)(64756008)(8676002)(4326008)(71200400001)(33656002)(38070700005)(41300700001)(85182001)(66946007)(478600001)(316002)(76116006)(2906002)(83380400001)(122000001);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dWt5ZmUvdjgzUXFIM1ZoTzcxRXUyblVGYWVRc1lEcVdjUzVzcUhnZEs5c0h0?=
- =?utf-8?B?bloyeExvQTBiUlV5QXhEZlppWCsyZDNTaVVFNFBiaW5sNmRJUzRHYnN6VlZE?=
- =?utf-8?B?ajkvSDB0cGFRdGFrdUV5SVdOOTJScHBlSURtUzg1T0pnWDNtWVR6V2FhN1hn?=
- =?utf-8?B?eXIwYVQ4c1VwcWt4NnFtSHNiRkRHQ0hMMTk2aUtnWXc3SzRhdndrY3I5T0xs?=
- =?utf-8?B?REZXWndBQkdwZEV0WWkreW1Qem02UmN3dHI2SnhNWW5sSUNxYmQ1empoU2lo?=
- =?utf-8?B?bmV0ekRnbGZJcitCQVRPa3VZZmRCaVNuRUE3VWNrS0NTRHJoOGUrSlpZWG5i?=
- =?utf-8?B?WVI0V1dYekJ6NVRVK2J0aUZzUUR3YmZUdDd3ajhtb3NrcXFOU3d5ekx1dGdp?=
- =?utf-8?B?UlpXV1lkN090UlJzaVpjaEUzL0RybUVIcmRmejFNNnZXVDU0NExteWFEeWxz?=
- =?utf-8?B?Z2phUHZxWHFYUk9laVZnWWFyK29ZNmtoUFdxMjhucER1WGxqeWljY0FOQnM2?=
- =?utf-8?B?Z1ExK0dnL1BDRXZsWUs5bFZTeUdyM0wyOFdKeVkzcGdLNWd3RnhXdFZPTnBZ?=
- =?utf-8?B?bE9pb2NKN085cm5vUDlEU2JrcXVKZmZCZUx2VGJpNUlwbTU1M1dSQ0gwVSsz?=
- =?utf-8?B?elR5Qkp4VlJUbmJjWCtvS3BvMGRWYnRIeWJaTlVuTU1mZ0xJVkRLcEVPRFMy?=
- =?utf-8?B?cnRKTm5Sb3FQZnNiclRSOHVRZXNJc1F2V0h4RWtVVWZ2UWNTNlJMUzYxbElW?=
- =?utf-8?B?UG4vV3Voa2NleFVLMjZUQ05yUWc5YnY5TVlRYW91VmVVcXp3WVEyOXNnNFUx?=
- =?utf-8?B?WWJRQ0FYd3c5YWFuNW5lZ21OZ2RQNE5hK2NjUktDNmc3Y1NCdkkrWWVMWndu?=
- =?utf-8?B?di9aUlBQc0dBT1NDdC8rZXZtbWorSVhvM2hCYkFXTU9Kb0lNQUs0S2lsaVhC?=
- =?utf-8?B?Y2QyUjB0a25oa1U1VW1SeU9UTHAvQ0dRRXpqamhHRkUxcHNLTlZZdGlKd3Uw?=
- =?utf-8?B?NVM1RGY4QXluNjdpc1I1OUpuWDBFcmlOckdLeWdWeExOb2VaeVV4S0hPWnc2?=
- =?utf-8?B?MTFEN043cjZMWlovQ28wKzJtcm1aam55MHFjWnBReGc3VzROREVMZWV6THV3?=
- =?utf-8?B?VW1nMHZwT2p0SVMrSGVzWk1ObFdtelN0SkFic0FITkdxT09reUdlUm8xQWE2?=
- =?utf-8?B?aGQ4RHcwRm5RVmhKUVFNWk9rL2tjNGUxR2RiWWpmNURaQWdoUS94SHJ2STBZ?=
- =?utf-8?B?THZHeFY1MHZ1SGRXZjBNTWkvdld0b3FmenlTQmlvUisxcTQralQyUkMwVUZz?=
- =?utf-8?B?SUg2SWZtQlR1elRhWEFDZFVXTS9RYkdnNTBXWDlsNCtnRnRwdi9ObHFzbFJx?=
- =?utf-8?B?RFdGazF2NHg2ck9jQzJySWg2RjJmaDJzc1NoZURKUFdrQ3RIK1hhNFNSYms5?=
- =?utf-8?B?bkgvUGR1WTQrekY0K25tRGJ1dFlIYnVMclQ4TkdRN1oraUlSZ09SK1c0eXZC?=
- =?utf-8?B?QWRDUU5NZEtxWHlsYU12aDFTLzlWZW5UT3ExMTVvMVY1ZE92YTdLTWorbW5j?=
- =?utf-8?B?RXkreFZoNFB6aXBMMXZ3UFFDNzdlTTVjQ2N1dUxzeElMN20xWThMYysyZnpK?=
- =?utf-8?B?dnllNWo2TUtNc0xNcHdFVWJ3S0RoY04xcmRlWUhQWHZiZWdaOW5GNzJIUVJE?=
- =?utf-8?B?TzFFVzJkdFhYNWtYaVBXcDlkL0hrL2ZKdUUyOGhYRmhXSWM2OVNtTCswZWxZ?=
- =?utf-8?B?YUdYUFVhc2xhRUZqcDAzdENWZHFmaytSUFlXUkVDRGU5c2wyVHhpMThEU3pB?=
- =?utf-8?B?ZktwTDgxYnpMWWdNZzAxZVJxYWxPWHhzQVhqSkFPZ2hYTkR2OEpaNnBlcnZL?=
- =?utf-8?B?a3BQVkdFSStJRUxzUDRjVURtelliQmkwRWZwYUVNMzZrZWhpWDB2L29CbjM2?=
- =?utf-8?B?enpKS1FwbzdPSU9jNHJab1pVajByUW1qR0tKNVhJeklwR1hsZzRtYmtucDJF?=
- =?utf-8?B?c3l1Qy9sa3Fsb040TkgvTU9DUTRCcmFYTlFxRUUzZDlOYW1iRks5bTA1dU1r?=
- =?utf-8?B?OFFETXh5NlJDL2wzUGJqTDVLVVlYbFpZekVBeHk3aGs3UnRqWXFERWtPTTQ0?=
- =?utf-8?B?RjVGMmdkakxzZy8yK2JTRWRITjZYeWh6cnlmWHB5dUJ5QVUzSWd4RW8rbVhX?=
- =?utf-8?B?a0E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <0E051B4B41AFB9499E7B73F77D8B9624@jpnprd01.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 17 Nov 2022 00:58:19 -0500
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 058B66828F
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 21:58:18 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id w23so644604ply.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 16 Nov 2022 21:58:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3lQ/ocQYFCBXSdbz2/8nLNQ7hCVLAIEXFIWuAX3wwaM=;
+        b=MW8SAzZUrM/qQlvfC/OANuwfWpSTmkduMU9UL3FOXHw4fbVTCXKXLAtLMKifVldw63
+         I29GNMsAwYdUgxl6S0jasOKUa+cJFyUbm2x3SXBexIzet3SINL7geHC+Yw/hw9yPyIN3
+         EiuJxfkNiKGUUYgBC1/kyrxNEYId9kWWT3rElg2m5Egwjl4FLwE3d0kRxjKujNjkEpyZ
+         KYmzjp+Eq3ZRGJZLY7dZ5v64QT24VvKas51TL+7JjXQVQiR/7Bbl3yhMbeFcDWZvPzP5
+         VxGm+ymAsESSnUIFjoziYf95jnAVCI0YmhhkhgAN4X2Clqfr8utN/UTd81tE+8YIv1kN
+         A4yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3lQ/ocQYFCBXSdbz2/8nLNQ7hCVLAIEXFIWuAX3wwaM=;
+        b=yXh01l19lrvuKedpX21Go0dpBInn/SpsVyXEMf1q9De/zWdR+IhwSRlvyOjVVYwTfN
+         5WucI90WAGpXDVFtoKyhQdJOhfOohSM7ckYcEFX74Tk0kV07lrqDoMddjRODhLaDhypL
+         lEO6Z4UqMcdQbWaaKHuG3jV0dDtPE6wy0HSfwrycONDs+tO8YrES/z3/HoDSebGefQ3/
+         b99I8ND9yjynsGwqce/ttEA4HZKgOsVGzAinGOrS2A0eA/KMIUOK6gJq5BBoT0+IE/5N
+         zYLUOSqVQL2Bw+Xujnram85C8kHS5/43K9+VjWp6IBGLyjNuMi9paZEAU947y/GSquUJ
+         Eiog==
+X-Gm-Message-State: ANoB5pmompJj2gu1URgXvyzdCTEqSY8+v1Iixz/3Qx764Y6saUbU2XET
+        u/4zQNLTDdybCq9iFKYnMULCKIGgg3g2Bw==
+X-Google-Smtp-Source: AA0mqf4b2qy54uDFUKvuw85g9tQ0mtQKzD+XXEfxvD+/rKQOcZkmYGmp/+NMOUJboIhmm5f6rF+4xg==
+X-Received: by 2002:a17:90a:c90a:b0:218:6ba0:cd8c with SMTP id v10-20020a17090ac90a00b002186ba0cd8cmr2187292pjt.133.1668664697442;
+        Wed, 16 Nov 2022 21:58:17 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-106-210.pa.nsw.optusnet.com.au. [49.181.106.210])
+        by smtp.gmail.com with ESMTPSA id b8-20020a170903228800b0016c9e5f291bsm234482plh.111.2022.11.16.21.58.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Nov 2022 21:58:15 -0800 (PST)
+Received: from discord.disaster.area ([192.168.253.110])
+        by dread.disaster.area with esmtp (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ovXue-00FBpB-3k; Thu, 17 Nov 2022 16:58:12 +1100
+Received: from dave by discord.disaster.area with local (Exim 4.96)
+        (envelope-from <david@fromorbit.com>)
+        id 1ovXue-0025ap-0F;
+        Thu, 17 Nov 2022 16:58:12 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH 0/8 v3] xfs, iomap: fix data corrupton due to stale cached iomaps
+Date:   Thu, 17 Nov 2022 16:58:01 +1100
+Message-Id: <20221117055810.498014-1-david@fromorbit.com>
+X-Mailer: git-send-email 2.37.2
 MIME-Version: 1.0
-X-OriginatorOrg: nec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TYWPR01MB8591.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7aaa8d7f-f163-4bed-5ee2-08dac85f7d54
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Nov 2022 05:49:27.6163
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: e67df547-9d0d-4f4d-9161-51c6ed1f7d11
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: L4yrLrJIc1JWp0KEkUNjSFiaXUPLTRUt/0EAwGrDGLFH0LBUU9WoS7qI8kVgauoACHQiT+vdR+V5tRYt2l2SbQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB5673
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -135,26 +75,169 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gVHVlLCBOb3YgMTUsIDIwMjIgYXQgMDY6MTA6MTBQTSAtMDgwMCwgVmlzaGFsIE1vb2xhIChP
-cmFjbGUpIHdyb3RlOg0KPiBSZXBsYWNlcyB0cnlfdG9fcmVsZWFzZV9wYWdlKCkgd2l0aCBmaWxl
-bWFwX3JlbGVhc2VfZm9saW8oKS4gVGhpcyBjaGFuZ2UNCj4gaXMgaW4gcHJlcGFyYXRpb24gZm9y
-IHRoZSByZW1vdmFsIG9mIHRoZSB0cnlfdG9fcmVsZWFzZV9wYWdlKCkgd3JhcHBlci4NCj4gDQo+
-IFNpZ25lZC1vZmYtYnk6IFZpc2hhbCBNb29sYSAoT3JhY2xlKSA8dmlzaGFsLm1vb2xhQGdtYWls
-LmNvbT4NCg0KTG9va3MgZ29vZCB0byBtZSwgdGhhbmsgeW91Lg0KDQpBY2tlZC1ieTogTmFveWEg
-SG9yaWd1Y2hpIDxuYW95YS5ob3JpZ3VjaGlAbmVjLmNvbT4NCg0KPiAtLS0NCj4gIG1tL21lbW9y
-eS1mYWlsdXJlLmMgfCA1ICsrKy0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCsp
-LCAyIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL21tL21lbW9yeS1mYWlsdXJlLmMg
-Yi9tbS9tZW1vcnktZmFpbHVyZS5jDQo+IGluZGV4IDE0NWJiNTYxZGRiMy4uOTJlYzliMGU1OGEz
-IDEwMDY0NA0KPiAtLS0gYS9tbS9tZW1vcnktZmFpbHVyZS5jDQo+ICsrKyBiL21tL21lbW9yeS1m
-YWlsdXJlLmMNCj4gQEAgLTgyNywxMiArODI3LDEzIEBAIHN0YXRpYyBpbnQgdHJ1bmNhdGVfZXJy
-b3JfcGFnZShzdHJ1Y3QgcGFnZSAqcCwgdW5zaWduZWQgbG9uZyBwZm4sDQo+ICAJaW50IHJldCA9
-IE1GX0ZBSUxFRDsNCj4gIA0KPiAgCWlmIChtYXBwaW5nLT5hX29wcy0+ZXJyb3JfcmVtb3ZlX3Bh
-Z2UpIHsNCj4gKwkJc3RydWN0IGZvbGlvICpmb2xpbyA9IHBhZ2VfZm9saW8ocCk7DQo+ICAJCWlu
-dCBlcnIgPSBtYXBwaW5nLT5hX29wcy0+ZXJyb3JfcmVtb3ZlX3BhZ2UobWFwcGluZywgcCk7DQo+
-ICANCj4gIAkJaWYgKGVyciAhPSAwKSB7DQo+ICAJCQlwcl9pbmZvKCIlI2x4OiBGYWlsZWQgdG8g
-cHVuY2ggcGFnZTogJWRcbiIsIHBmbiwgZXJyKTsNCj4gLQkJfSBlbHNlIGlmIChwYWdlX2hhc19w
-cml2YXRlKHApICYmDQo+IC0JCQkgICAhdHJ5X3RvX3JlbGVhc2VfcGFnZShwLCBHRlBfTk9JTykp
-IHsNCj4gKwkJfSBlbHNlIGlmIChmb2xpb19oYXNfcHJpdmF0ZShmb2xpbykgJiYNCj4gKwkJCSAg
-ICFmaWxlbWFwX3JlbGVhc2VfZm9saW8oZm9saW8sIEdGUF9OT0lPKSkgew0KPiAgCQkJcHJfaW5m
-bygiJSNseDogZmFpbGVkIHRvIHJlbGVhc2UgYnVmZmVyc1xuIiwgcGZuKTsNCj4gIAkJfSBlbHNl
-IHsNCj4gIAkJCXJldCA9IE1GX1JFQ09WRVJFRDsNCj4gLS0gDQo+IDIuMzguMQ==
+Recently a customer workload encountered a data corruption in a
+specific multi-threaded write operation. The workload combined
+racing unaligned adjacent buffered writes with low memory conditions
+that caused both writeback and memory reclaim to race with the
+writes.
+
+The result of this was random partial blocks containing zeroes
+instead of the correct data.  The underlying problem is that iomap
+caches the write iomap for the duration of the write() operation,
+but it fails to take into account that the extent underlying the
+iomap can change whilst the write is in progress.
+
+The short story is that an iomap can span mutliple folios, and so
+under low memory writeback can be cleaning folios the write()
+overlaps. Whilst the overlapping data is cached in memory, this
+isn't a problem, but because the folios are now clean they can be
+reclaimed. Once reclaimed, the write() does the wrong thing when
+re-instantiating partial folios because the iomap no longer reflects
+the underlying state of the extent. e.g. it thinks the extent is
+unwritten, so it zeroes the partial range, when in fact the
+underlying extent is now written and so it should have read the data
+from disk.  This is how we get random zero ranges in the file
+instead of the correct data.
+
+The gory details of the race condition can be found here:
+
+https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
+
+Fixing the problem has two aspects. The first aspect of the problem
+is ensuring that iomap can detect a stale cached iomap during a
+write in a race-free manner. We already do this stale iomap
+detection in the writeback path, so we have a mechanism for
+detecting that the iomap backing the data range may have changed
+and needs to be remapped.
+
+In the case of the write() path, we have to ensure that the iomap is
+validated at a point in time when the page cache is stable and
+cannot be reclaimed from under us. We also need to validate the
+extent before we start performing any modifications to the folio
+state or contents. Combine these two requirements together, and the
+only "safe" place to validate the iomap is after we have looked up
+and locked the folio we are going to copy the data into, but before
+we've performed any initialisation operations on that folio.
+
+If the iomap fails validation, we then mark it stale, unlock the
+folio and end the write. This effectively means a stale iomap
+results in a short write. Filesystems should already be able to
+handle this, as write operations can end short for many reasons and
+need to iterate through another mapping cycle to be completed. Hence
+the iomap changes needed to detect and handle stale iomaps during
+write() operations is relatively simple....
+
+However, the assumption is that filesystems should already be able
+to handle write failures safely, and that's where the second
+(first?) part of the problem exists. That is, handling a partial
+write is harder than just "punching out the unused delayed
+allocation extent". This is because mmap() based faults can race
+with writes, and if they land in the delalloc region that the write
+allocated, then punching out the delalloc region can cause data
+corruption.
+
+This data corruption problem is exposed by generic/346 when iomap is
+converted to detect stale iomaps during write() operations. Hence
+write failure in the filesytems needs to handle the fact that the
+write() in progress doesn't necessarily own the data in the page
+cache over the range of the delalloc extent it just allocated.
+
+As a result, we can't just truncate the page cache over the range
+the write() didn't reach and punch all the delalloc extent. We have
+to walk the page cache over the untouched range and skip over any
+dirty data region in the cache in that range. Which is ....
+non-trivial.
+
+That is, iterating the page cache has to handle partially populated
+folios (i.e. block size < page size) that contain data. The data
+might be discontiguous within a folio. Indeed, there might be
+*multiple* discontiguous data regions within a single folio. And to
+make matters more complex, multi-page folios mean we just don't know
+how many sub-folio regions we might have to iterate to find all
+these regions. All the corner cases between the conversions and
+rounding between filesystem block size, folio size and multi-page
+folio size combined with unaligned write offsets kept breaking my
+brain.
+
+Eventually, I realised that if the XFS code tracked the processed
+write regions by byte ranges instead of fileysetm block or page
+cache index, we could simply use mapping_seek_hole_data() to find
+the start and end of each discrete data region within the range we
+needed to scan. SEEK_DATA finds the start of the cached data region,
+SEEK_HOLE finds the end of the region. THese are byte based
+interfaces that understand partially uptodate folio regions, and so
+can iterate discrete sub-folio data regions directly. This largely
+solved the problem of discovering the dirty regions we need to keep
+the delalloc extent over.
+
+Of course, now xfs/196 fails. This is a error injection test that is
+supposed to exercise the delalloc extent recover code that the above
+fixes just completely reworked. the error injection assumes that it
+can just truncate the page cache over the write and then punch out
+the delalloc extent completely. This is fundamentally broken, and
+only has been working by chance - the chance is that writes are page
+aligned and page aligned writes don't install large folios in the
+page cache.
+
+IOWs, with sub-folio block size, and not know what size folios are
+in the cache, we can't actually guarantee that we can remove the
+cached dirty folios from the cache via truncation, and hence the new
+code will not remove the delalloc extents under those dirty folios.
+As a result the error injection results is writing zeroes to disk
+rather that removing the delalloc extents from memory. I can't make
+this error injection to work the way it was intended, so I removed
+it. The code that it is supposed to exercise is now exercised every
+time we detect a stale iomap, so we have much better coverage of the
+failed write error handling than the error injection provides us
+with, anyway....
+
+So, this passes fstests on 1kb and 4kb block sizes and the data
+corruption reproducer does not detect data corruption, so this set
+of fixes is /finally/ something I'd consider ready for merge.
+Comments and testing welcome!
+
+-Dave.
+
+Version 3:
+- Rearrange the deck chairs.
+- Remove mapping_seek_hole_data() export.
+- move code to iomap to allow mapping_seek_hole_data() not to be
+  exported.
+- add export to iomap to allow filesystems access to functionality
+  that uses mapping_seek_hole_data().
+- add punch callback to iomap export to allow filesystem specific
+  functionality for ranges found with mapping_seek_hole_data().
+- call the new iomap export from from filesystem ->iomap_end
+  callback so that iomap can call back into the filesystem again to
+  do the stuff the filesystem needs to do.
+- Document that the iomap punch callback assumes that the filesystem
+  must skip all extent types except for delalloc extents.
+- Document the lock order and limits on what the punch callback can
+  actually do.
+- cleaned up xfs_iomap_valid().
+
+
+Version 2:
+- https://lore.kernel.org/linux-xfs/20221115013043.360610-1-david@fromorbit.com/
+- export mapping_seek_hole_data()
+- fix missing initialisation of the iomap sequence in xfs_fs_map_blocks() in the
+  pnfs code.
+- move ->iomap_valid callback to the struct iomap_page_ops so that it is
+  returned with the iomap rather than having the iomap_ops plumbed through the
+  entire stack.
+- added a u64 validity_cookie to the struct iomap for carrying iomap
+  verification information along with the iomap itself.
+- added IOMAP_F_XATTR for XFS to be able to tell the difference between iomaps
+  that map attribute extents instead of file data extents.
+- converted the IOMAP_F_* flags to use the (1U << NN) definition pattern.
+- added patch to convert xfs_bmap_punch_delalloc_range() to take a byte range.
+
+
+Version 1:
+- https://lore.kernel.org/linux-xfs/20221101003412.3842572-1-david@fromorbit.com/
+- complete rework of iomap stale detection
+- complete rework of XFS partial delalloc write error handling.
+
+Original RFC:
+- https://lore.kernel.org/linux-xfs/20220921082959.1411675-1-david@fromorbit.com/
+
