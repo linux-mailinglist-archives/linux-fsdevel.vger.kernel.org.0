@@ -2,85 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 47C7062E7DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 23:11:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7CE0662E803
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 17 Nov 2022 23:16:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238946AbiKQWLI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 17 Nov 2022 17:11:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50488 "EHLO
+        id S240656AbiKQWQP convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 17 Nov 2022 17:16:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235100AbiKQWLE (ORCPT
+        with ESMTP id S240548AbiKQWPr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 17 Nov 2022 17:11:04 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C38CB6160;
-        Thu, 17 Nov 2022 14:11:01 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 5F1A26228C;
-        Thu, 17 Nov 2022 22:11:01 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D29BC433C1;
-        Thu, 17 Nov 2022 22:10:57 +0000 (UTC)
-Authentication-Results: smtp.kernel.org;
-        dkim=pass (1024-bit key) header.d=zx2c4.com header.i=@zx2c4.com header.b="Q4bD/XUA"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zx2c4.com; s=20210105;
-        t=1668723055;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=vJhj9Z3si41Okh7QjFL8sfRqIMi0Yk5+ouF0KwmQggU=;
-        b=Q4bD/XUAYdzoxgYLg+XIn4Lk+1x+8orB3IGL4+URLKCwS8OvQEFHtcJHobQ1IjE5hZQeq5
-        VnSTrX5zHZ2fE16n1KLU+eanYkc3vTgMFIfA+ELQ9AAw9UvTlkFM7FU8Z1ElmoQ046TyID
-        RHhzi0IVhFVn9STyoQTnIxbYkGv6Iw8=
-Received: by mail.zx2c4.com (ZX2C4 Mail Server) with ESMTPSA id 1cf8d90d (TLSv1.3:TLS_AES_256_GCM_SHA384:256:NO);
-        Thu, 17 Nov 2022 22:10:54 +0000 (UTC)
-Date:   Thu, 17 Nov 2022 23:10:50 +0100
-From:   "Jason A. Donenfeld" <Jason@zx2c4.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     linux-kernel@vger.kernel.org, patches@lists.linux.dev,
+        Thu, 17 Nov 2022 17:15:47 -0500
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30A3F7AF6D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 17 Nov 2022 14:15:41 -0800 (PST)
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-135-r8pLcNsHMNSPwdstNZNmIw-1; Thu, 17 Nov 2022 22:15:38 +0000
+X-MC-Unique: r8pLcNsHMNSPwdstNZNmIw-1
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Thu, 17 Nov
+ 2022 22:15:36 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.044; Thu, 17 Nov 2022 22:15:36 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Theodore Ts'o' <tytso@mit.edu>, Kees Cook <kees@kernel.org>
+CC:     "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Kees Cook <keescook@chromium.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "patches@lists.linux.dev" <patches@lists.linux.dev>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jakub Kicinski <kuba@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
         Catalin Marinas <catalin.marinas@arm.com>,
-        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
         Heiko Carstens <hca@linux.ibm.com>,
         Herbert Xu <herbert@gondor.apana.org.au>,
-        Christoph =?utf-8?Q?B=C3=B6hmwalder?= 
+        =?iso-8859-1?Q?Christoph_B=F6hmwalder?= 
         <christoph.boehmwalder@linbit.com>,
         Jani Nikula <jani.nikula@linux.intel.com>,
         Jason Gunthorpe <jgg@nvidia.com>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Theodore Ts'o <tytso@mit.edu>,
         Andreas Dilger <adilger.kernel@dilger.ca>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Richard Weinberger <richard@nod.at>,
         "Darrick J . Wong" <djwong@kernel.org>,
         SeongJae Park <sj@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+        "Thomas Gleixner" <tglx@linutronix.de>,
         Andrew Morton <akpm@linux-foundation.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
-        Helge Deller <deller@gmx.de>, netdev@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-mmc@vger.kernel.org, linux-parisc@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] treewide: use get_random_u32_inclusive() when
+        Helge Deller <deller@gmx.de>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "loongarch@lists.linux.dev" <loongarch@lists.linux.dev>,
+        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        "ydroneaud@opteya.com" <ydroneaud@opteya.com>
+Subject: RE: [PATCH v2 3/3] treewide: use get_random_u32_between() when
  possible
-Message-ID: <Y3axaspOlt/oEDhw@zx2c4.com>
+Thread-Topic: [PATCH v2 3/3] treewide: use get_random_u32_between() when
+ possible
+Thread-Index: AQHY+pt8WAMBAHgXDk6lkwvXqmmyGK5DraKg
+Date:   Thu, 17 Nov 2022 22:15:36 +0000
+Message-ID: <5b2afac148e24181a206e540768e465b@AcuMS.aculab.com>
 References: <20221114164558.1180362-1-Jason@zx2c4.com>
- <20221117202906.2312482-1-Jason@zx2c4.com>
- <20221117202906.2312482-4-Jason@zx2c4.com>
- <202211171349.F42BA5B0@keescook>
+ <20221114164558.1180362-4-Jason@zx2c4.com> <202211161436.A45AD719A@keescook>
+ <Y3V4g8eorwiU++Y3@zx2c4.com> <Y3V6QtYMayODVDOk@zx2c4.com>
+ <202211161628.164F47F@keescook> <Y3WDyl8ArQgeEoUU@zx2c4.com>
+ <0EE39896-C7B6-4CB6-87D5-22AA787740A9@kernel.org> <Y3ZWbcoGOdFjlPhS@mit.edu>
+In-Reply-To: <Y3ZWbcoGOdFjlPhS@mit.edu>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <202211171349.F42BA5B0@keescook>
-X-Spam-Status: No, score=-6.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Mimecast-Spam-Score: 0
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,PDS_BAD_THREAD_QP_64,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -88,19 +100,31 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 17, 2022 at 01:57:13PM -0800, Kees Cook wrote:
-> The only comment I have is that maybe these cases can just be left as-is
-> with _below()?
+From: Theodore Ts'o
+> Sent: 17 November 2022 15:43
+...
+> The problem with "between", "ranged", "spanning" is that they don't
+> tell the reader whether we're dealing with an "open interval" or a
+> "closed interval".  They are just different ways of saying that it's a
+> range between, say, 0 and 20.  But it doesn't tell you whether it
+> includes 0 or 20 or not.
 > 
-> > -             size_t len = get_random_u32_below(rs) + gs;
-> > +             size_t len = get_random_u32_inclusive(gs, rs + gs - 1);
-> 
-> It seems like writing it in the form of base plus [0, limit) is clearer?
-> 
-> 		size_t len = gs + get_random_u32_below(rs);
-> 
-> But there is only a handful, so *shrug*
+> The only way I can see for making it ambiguous is either to use the
+> terminology "closed interval" or "inclusive".  And "open" and "closed"
+> can have other meanings, so get_random_u32_inclusive() is going to be
+> less confusing than get_random_u32_closed().
 
-Okay, I'll drop that one.
+It has to be said that removing the extra function and requiring
+the callers use 'base + get_random_below(high [+1] - base)' is
+likely to be the only way to succinctly make the code readable
+and understandable.
 
-Jason
+Otherwise readers either have to look up another function to see
+what it does or waste variable brain cells on more trivia.
+
+	David
+
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
+
