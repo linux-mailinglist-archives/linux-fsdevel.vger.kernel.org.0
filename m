@@ -2,89 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE73E62ED34
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 06:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16D4962EE4C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 08:28:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240889AbiKRFaa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Nov 2022 00:30:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52506 "EHLO
+        id S241135AbiKRH2f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Nov 2022 02:28:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46082 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230004AbiKRFa3 (ORCPT
+        with ESMTP id S229476AbiKRH2d (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Nov 2022 00:30:29 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7BBF8F3DB;
-        Thu, 17 Nov 2022 21:30:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=tnEO6E1grr6Gr3aJvdASXdNYwfa3vFiu4Cif/7kHt0o=; b=hAXwshqplXRMcXB4Z6fOP1HiPs
-        BT9RjODtqGH3KfgrOf8sLezL1o2s6p15OuZBZgjTca13ohdU9Kj3I9hPfC1XBXCiYTjzchenK5vHU
-        tsLair41qG+krZuXb5RATFOZt0stL42n0ZTVfY++JNWrNtVCYX9OdIfXfXxIbgqUZcdY120BpRJrb
-        XOlJrkq5HWbVjpFzoiYNRvejjAM6hrOFMIjmCd52hrkzBarSajLx65XpC899CIqDqWo0uk69Fti9O
-        eNJUmL84wwKOX/tepHCWMpEGtADQ7KTYjUVSVHKSiLtAds//QSE5KMPvfabP7kq7z9tvfQN6legdU
-        ZSXkXhBg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ovtxP-001q6a-HB; Fri, 18 Nov 2022 05:30:31 +0000
-Date:   Fri, 18 Nov 2022 05:30:31 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Liu Shixin <liushixin2@huawei.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] fs/buffer: fix a NULL pointer dereference in
- drop_buffers()
-Message-ID: <Y3cYd6u9wT/ZTHbe@casper.infradead.org>
-References: <20221109095018.4108726-1-liushixin2@huawei.com>
+        Fri, 18 Nov 2022 02:28:33 -0500
+Received: from mail-yw1-x112b.google.com (mail-yw1-x112b.google.com [IPv6:2607:f8b0:4864:20::112b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4CC6712AF4;
+        Thu, 17 Nov 2022 23:28:33 -0800 (PST)
+Received: by mail-yw1-x112b.google.com with SMTP id 00721157ae682-370547b8ca0so42388627b3.0;
+        Thu, 17 Nov 2022 23:28:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=fIq4B8jpHjtTC9rO6U/0HlBjNi37g7n6MUt5O1wpmQg=;
+        b=dm0GlyXu/u1A7mUk7Kpzb+S9xN11ABAeHAmQ2R3TECYaO4UN8w7kl4nBwhGUMUASxx
+         te6IE0BM0UWzsm64/VfhthqpIEX8zbzCz/09hxY4uBcInKWKdv2uBzWA29Yn0SxS03Kg
+         S9JZQaZVmf2WCVlkinYCE/wuUriZmhJqhpazgkslkUvfx+zfWDqooBKhJV7X6Tvr1Ymq
+         BjbjUu7DaLLtzdykxn8SzyctnXGsiB/6VL3bdhJCpEsKpVsVPAICFrMO4rPrxSaqN1Gm
+         MBStvVruu7+oqD1a8AvZqm+CRqsJjq9Bci/HjCkvO4W6XOL1U3iv4KHZiZHGXFBtElZC
+         k6uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fIq4B8jpHjtTC9rO6U/0HlBjNi37g7n6MUt5O1wpmQg=;
+        b=pTQAkiQweCFMJ4uEdRPgcKEY3cx9CD0wRnIy6arr2fI7tbanK02in3Cz0FUievlkvI
+         SCptzvBwqDqACIuN7csiX4hUXzkjpQRX/cHsyWunVQ34p96b8PJhHbVsCJxSSs0ziMXS
+         1WyN/xmPCip4jiy1JKPLwtIiJLRnuYG1O2tJvvy/rhu7+EpiNBA6Qr489ftjbbyMhe0y
+         ffYlNqSAQFfiBRWlkb/i7DvoY7LdwnT+wftHuw7dHm0Yjf+9tbny8HMZ8OO/0Vsn768Y
+         RPMBmAC+TWC2AbKZRSOmJv6OwTIOteZNhSoxJk3y16dUIsFNgvWMhPcyW76DSUdtf9gN
+         awWQ==
+X-Gm-Message-State: ANoB5plpry3lwJV2bHUEn15Qw8gHSlZzWuvqJCvaaWaxZ9wiE6yvi5Da
+        qXRqZ/E+EC0Ixh6eCXyKWBAeClXIjwSvxO5qvmkDuZOwaN8=
+X-Google-Smtp-Source: AA0mqf73sdMy68XJbQb5H8Jg1dOLOXOpr9ua8cw7FhlPmjQN4idUvFlr60RJSMN1hAftvDfbKPSOXxzi93FI47+WTgY=
+X-Received: by 2002:a81:c206:0:b0:38d:c23a:c541 with SMTP id
+ z6-20020a81c206000000b0038dc23ac541mr5412773ywc.109.1668756512447; Thu, 17
+ Nov 2022 23:28:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221109095018.4108726-1-liushixin2@huawei.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20221118021410.24420-1-vishal.moola@gmail.com> <20221118021410.24420-2-vishal.moola@gmail.com>
+In-Reply-To: <20221118021410.24420-2-vishal.moola@gmail.com>
+From:   Vishal Moola <vishal.moola@gmail.com>
+Date:   Thu, 17 Nov 2022 23:28:21 -0800
+Message-ID: <CAOzc2pxYSpQGEEads3qfxyJgdcDzMoEyTg01Z3D2ZaAjUSOznw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] ext4: Convert move_extent_per_page() to use folios
+To:     linux-mm@kvack.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, akpm@linux-foundation.org,
+        willy@infradead.org, naoya.horiguchi@nec.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 09, 2022 at 05:50:18PM +0800, Liu Shixin wrote:
-> syzbot found a null-ptr-deref by KASAN:
-> 
->  BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:71 [inline]
->  BUG: KASAN: null-ptr-deref in atomic_read include/linux/atomic/atomic-instrumented.h:27 [inline]
->  BUG: KASAN: null-ptr-deref in buffer_busy fs/buffer.c:2856 [inline]
->  BUG: KASAN: null-ptr-deref in drop_buffers+0x61/0x2f0 fs/buffer.c:2868
->  Read of size 4 at addr 0000000000000060 by task syz-executor.5/24786
-> 
->  CPU: 0 PID: 24786 Comm: syz-executor.5 Not tainted 6.0.0-syzkaller-09589-g55be6084c8e0 #0
->  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
->  Call Trace:
->   <TASK>
->   __dump_stack lib/dump_stack.c:88 [inline]
->   dump_stack_lvl+0x1e3/0x2cb lib/dump_stack.c:106
->   print_report+0xf1/0x220 mm/kasan/report.c:436
->   kasan_report+0xfb/0x130 mm/kasan/report.c:495
->   kasan_check_range+0x2a7/0x2e0 mm/kasan/generic.c:189
->   instrument_atomic_read include/linux/instrumented.h:71 [inline]
->   atomic_read include/linux/atomic/atomic-instrumented.h:27 [inline]
->   buffer_busy fs/buffer.c:2856 [inline]
->   drop_buffers+0x61/0x2f0 fs/buffer.c:2868
->   try_to_free_buffers+0x2b1/0x640 fs/buffer.c:2898
-> [...]
-> 
-> We use folio_has_private() to decide whether call filemap_release_folio(),
-> which may call try_to_free_buffers() then. folio_has_private() return true
-> for both PG_private and PG_private_2. We should only call try_to_free_buffers()
-> for case PG_private. So we should recheck PG_private in try_to_free_buffers().
-> 
-> Reported-by: syzbot+fbdb4ec578ebdcfb9ed2@syzkaller.appspotmail.com
-> Fixes: 266cf658efcf ("FS-Cache: Recruit a page flags for cache management")
+On Thu, Nov 17, 2022 at 6:14 PM Vishal Moola (Oracle)
+<vishal.moola@gmail.com> wrote:
+>
+> Converts move_extent_per_page() to use folios. This change removes
+> 5 calls to compound_head() and is in preparation for the removal of
+> the try_to_release_page() wrapper.
+>
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> ---
+>  fs/ext4/move_extent.c | 52 ++++++++++++++++++++++++++-----------------
+>  1 file changed, 31 insertions(+), 21 deletions(-)
+>
+> diff --git a/fs/ext4/move_extent.c b/fs/ext4/move_extent.c
+> index 044e34cd835c..aa67eb240ca6 100644
+> --- a/fs/ext4/move_extent.c
+> +++ b/fs/ext4/move_extent.c
+> @@ -253,6 +253,7 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
+>  {
+>         struct inode *orig_inode = file_inode(o_filp);
+>         struct page *pagep[2] = {NULL, NULL};
+> +       struct folio *folio[2] = {NULL, NULL};
+>         handle_t *handle;
+>         ext4_lblk_t orig_blk_offset, donor_blk_offset;
+>         unsigned long blocksize = orig_inode->i_sb->s_blocksize;
+> @@ -313,6 +314,13 @@ move_extent_per_page(struct file *o_filp, struct inode *donor_inode,
+>          * hold page's lock, if it is still the case data copy is not
+>          * necessary, just swap data blocks between orig and donor.
+>          */
+> +       folio[0] = page_folio(pagep[0]);
+> +       folio[1] = page_folio(pagep[1]);
+> +
+> +       VM_BUG_ON_FOLIO(!folio_test_large(folio[0]), folio[0]);
+> +       VM_BUG_ON_FOLIO(!folio_test_large(folio[1]), folio[1]);
+> +       VM_BUG_ON_FOLIO(folio_nr_pages(folio[0]) != folio_nr_pages(folio[1]), folio[1]);
 
-but this can only happen for a filesystem which uses both bufferheads
-and PG_private_2.  afaik there aren't any of those in the tree.  so
-this bug can't actually happen.
-
-if you have your own filesystem that does, you need to submit it.
-
+Looks like I got my assertions backward. We want to BUG if the folios are large,
+or if they are different sizes. Disregard v2, its fixed in v3.
