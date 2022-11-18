@@ -2,98 +2,180 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D0FE162F5AF
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 14:15:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DD3162F5FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 14:29:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S242025AbiKRNPN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Nov 2022 08:15:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40026 "EHLO
+        id S241949AbiKRN3B (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Nov 2022 08:29:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234247AbiKRNPL (ORCPT
+        with ESMTP id S241915AbiKRN2r (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Nov 2022 08:15:11 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54F6459175
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 05:14:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668777249;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=DwgnOjsBwuRm3KvaCsNzS6B7/KxJyL7ZVpx0OHwNOwA=;
-        b=C04F8QIJBjjsddSNPZ51GWKK9KcMztKXaHhay6vaAvzAmApw5PVWLM0t0k7U4BsKcLyNTr
-        7tVEyobA3+MXLfsQunlKNf1cyYzNP6zhbk5jyf57GyYeTyMesbHkzNYt8Y4VDdjfWpkMQR
-        BzGV5qwV/Q3lRtv6hF2vgKtpjZ+XFHc=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-154-gGjGeDE0NEeha0WFuDPt1Q-1; Fri, 18 Nov 2022 08:14:02 -0500
-X-MC-Unique: gGjGeDE0NEeha0WFuDPt1Q-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AD4F1811E75;
-        Fri, 18 Nov 2022 13:14:01 +0000 (UTC)
-Received: from localhost (unknown [10.39.208.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 65BF640C83EC;
-        Fri, 18 Nov 2022 13:14:01 +0000 (UTC)
-Date:   Fri, 18 Nov 2022 14:13:58 +0100
-From:   Niels de Vos <ndevos@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Theodore Ts'o <tytso@mit.edu>, linux-fscrypt@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>,
-        Marcel Lauhoff <marcel.lauhoff@suse.com>
-Subject: Re: [RFC 0/4] fs: provide per-filesystem options to disable fscrypt
-Message-ID: <Y3eFFrhT3b0yoti9@ndevos-x1>
-References: <20221110141225.2308856-1-ndevos@redhat.com>
- <Y20a/akbY8Wcy3qg@mit.edu>
- <Y20rDl45vSmdEo3N@ndevos-x1>
- <Y3HZ/To8z76vBqYo@infradead.org>
+        Fri, 18 Nov 2022 08:28:47 -0500
+Received: from mail-wr1-x433.google.com (mail-wr1-x433.google.com [IPv6:2a00:1450:4864:20::433])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AA0E725C0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 05:28:43 -0800 (PST)
+Received: by mail-wr1-x433.google.com with SMTP id i12so5384055wrb.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 05:28:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jFuAN0qalS8PXGclZBpJGpqKwSse98B1zaIXuj/qhsM=;
+        b=X/gqqsl/WLpKtb9vOD4WiP4Oi7fWHjwjntx8mX7OxhsG5wzq+ZEu37/nMAgR/K0NTa
+         w3qxyDj/5ysz05YJVpUs55kmmloX1IkC2zB1+/KzU94RHSvVV8QJIGUQUlri/5EUyK2r
+         mGh3S7znVf5hxcm2FIq10hXZNhSXHhkk0XSUejjdU6tvjBJaDulCkhJ1yHJ5qUwTLhSd
+         MoeZaDkThsztpF4G73yNPcJGkFAhdKPv1GGINAnUYMuW1RHIMFNHAh629fNId0Ygj6h4
+         QlGc8/i2b3sseFW3mxLr72CnhypCMQDx+K68Ypw8eLM56TGZBoLoX2zeC77yyHo3GfeR
+         z9tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jFuAN0qalS8PXGclZBpJGpqKwSse98B1zaIXuj/qhsM=;
+        b=MWoDIA5UlDQS8kKsIxi8FfeqbRCGEGmNxl5c39D/cDK+q2iGQaTta+Mkim2sxF45ZW
+         pp9bsh1cQV2J+zwreajjkIK1XEHl8D2FDKmwiT/qaE+OYNagjayo6EkLab0TrbSLUGPC
+         yKt3v3PZ9ZShad19ov9T350DWBBbP7v1xUH5Q3Kwi9IJ4u7WbxHOllayQsgf9OkOUy7f
+         sNT5UgzIK8ojrb3aLukx1Jena4Zxe/T3e02b4IqYOCvhsUfiwGTqi0NT9Jmlp+B05s2n
+         ru+ChiuUPQIQD2didGi2nkfupO4ZtL5E8/ZhT9dvyr3HGuV1OxVGPxbDDVWGEzHlJHOR
+         uyew==
+X-Gm-Message-State: ANoB5pkuQ4Spx6MiGx/pANaxp1SQ4CxviZi69Z9lN5gIeHRnYkpFZPtb
+        zpRikL9a2VFTY8t23AETC1VwWQ==
+X-Google-Smtp-Source: AA0mqf6tYbIf5kiwBxBEeJpBK3Zoi0R3hbVIR4uxKZjI5EAk4XwJowCkhnyQfuyrbXxeKsj5OY9J7w==
+X-Received: by 2002:adf:aa91:0:b0:241:b2b2:a71d with SMTP id h17-20020adfaa91000000b00241b2b2a71dmr4389646wrc.326.1668778121454;
+        Fri, 18 Nov 2022 05:28:41 -0800 (PST)
+Received: from zen.linaroharston ([185.81.254.11])
+        by smtp.gmail.com with ESMTPSA id y10-20020adfe6ca000000b00236860e7e9esm3459102wrm.98.2022.11.18.05.28.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Nov 2022 05:28:40 -0800 (PST)
+Received: from zen (localhost [127.0.0.1])
+        by zen.linaroharston (Postfix) with ESMTP id 11C631FFB7;
+        Fri, 18 Nov 2022 13:28:40 +0000 (GMT)
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-4-chao.p.peng@linux.intel.com>
+ <87cz9o9mr8.fsf@linaro.org> <20221116031441.GA364614@chaop.bj.intel.com>
+ <87mt8q90rw.fsf@linaro.org> <20221117134520.GD422408@chaop.bj.intel.com>
+ <87a64p8vof.fsf@linaro.org> <20221118013201.GA456562@chaop.bj.intel.com>
+User-agent: mu4e 1.9.2; emacs 28.2.50
+From:   Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
+Subject: Re: [PATCH v9 3/8] KVM: Add KVM_EXIT_MEMORY_FAULT exit
+Date:   Fri, 18 Nov 2022 13:23:51 +0000
+In-reply-to: <20221118013201.GA456562@chaop.bj.intel.com>
+Message-ID: <87o7t475o7.fsf@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y3HZ/To8z76vBqYo@infradead.org>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 13, 2022 at 10:02:37PM -0800, Christoph Hellwig wrote:
-> On Thu, Nov 10, 2022 at 05:47:10PM +0100, Niels de Vos wrote:
-> > And, there actually are options like CONFIG_EXT4_FS_POSIX_ACL and
-> > CONFIG_EXT4_FS_SECURITY. Because these exist already, I did not expect
-> > too much concerns with proposing a CONFIG_EXT4_FS_ENCRYPTION...
-> 
-> ext4 is a little weird there as most file systems don't do that.
-> So I think these should go away for ext4 as well.
 
-Yeah, I understand that there is a preference for reducing the number of
-Kconfig options for filesystems. That indeed would make it a little
-easier for users, so I am supportive of that as well.
+Chao Peng <chao.p.peng@linux.intel.com> writes:
 
-> > Note that even with the additional options, enabling only
-> > CONFIG_FS_ENCRYPTION causes all the filesystems that support fscrypt to
-> > have it enabled. For users there is no change, except that they now have
-> > an option to disable fscrypt support per filesystem.
-> 
-> But why would you do that anyay?
+> On Thu, Nov 17, 2022 at 03:08:17PM +0000, Alex Benn=C3=A9e wrote:
+>>=20
+<snip>
+>> >> >> > +
+>> >> >> > +		/* KVM_EXIT_MEMORY_FAULT */
+>> >> >> > +		struct {
+>> >> >> > +  #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1 << 0)
+>> >> >> > +			__u32 flags;
+>> >> >> > +			__u32 padding;
+>> >> >> > +			__u64 gpa;
+>> >> >> > +			__u64 size;
+>> >> >> > +		} memory;
+>> >> >> > +
+>> >> >> > +If exit reason is KVM_EXIT_MEMORY_FAULT then it indicates that =
+the VCPU has
+>> >> >> > +encountered a memory error which is not handled by KVM kernel m=
+odule and
+>> >> >> > +userspace may choose to handle it. The 'flags' field indicates =
+the memory
+>> >> >> > +properties of the exit.
+>> >> >> > +
+>> >> >> > + - KVM_MEMORY_EXIT_FLAG_PRIVATE - indicates the memory error is=
+ caused by
+>> >> >> > +   private memory access when the bit is set. Otherwise the mem=
+ory error is
+>> >> >> > +   caused by shared memory access when the bit is clear.
+>> >> >>=20
+>> >> >> What does a shared memory access failure entail?
+>> >> >
+>> >> > In the context of confidential computing usages, guest can issue a
+>> >> > shared memory access while the memory is actually private from the =
+host
+>> >> > point of view. This exit with bit 0 cleared gives userspace a chanc=
+e to
+>> >> > convert the private memory to shared memory on host.
+>> >>=20
+>> >> I think this should be explicit rather than implied by the absence of
+>> >> another flag. Sean suggested you might want flags for RWX failures so
+>> >> maybe something like:
+>> >>=20
+>> >> 	KVM_MEMORY_EXIT_SHARED_FLAG_READ	(1 << 0)
+>> >> 	KVM_MEMORY_EXIT_SHARED_FLAG_WRITE	(1 << 1)
+>> >> 	KVM_MEMORY_EXIT_SHARED_FLAG_EXECUTE	(1 << 2)
+>> >>         KVM_MEMORY_EXIT_FLAG_PRIVATE            (1 << 3)
+>> >
+>> > Yes, but I would not add 'SHARED' to RWX, they are not share memory
+>> > specific, private memory can also set them once introduced.
+>>=20
+>> OK so how about:
+>>=20
+>>  	KVM_MEMORY_EXIT_FLAG_READ	(1 << 0)
+>>  	KVM_MEMORY_EXIT_FLAG_WRITE	(1 << 1)
+>>  	KVM_MEMORY_EXIT_FLAG_EXECUTE	(1 << 2)
+>>         KVM_MEMORY_EXIT_FLAG_SHARED     (1 << 3)
+>>         KVM_MEMORY_EXIT_FLAG_PRIVATE    (1 << 4)
+>
+> We don't actually need a new bit, the opposite side of private is
+> shared, i.e. flags with KVM_MEMORY_EXIT_FLAG_PRIVATE cleared expresses
+> 'shared'.
 
-An other mail in this thread contains a description about that. It is
-more about being able to provide a kernel build that is fully tested,
-and enabling more options (or being unable to disable features)
-increases the testing efforts that are needed.
+If that is always true and we never expect a 3rd type of memory that is
+fine. But given we are leaving room for expansion having an explicit bit
+allows for that as well as making cases of forgetting to set the flags
+more obvious.
 
-However, as Ted pointed out, there are other features that can not be
-disabled or limited per filesystem, so there will always be a gap in
-what can practically be tested.
-
-Thanks,
-Niels
-
+--=20
+Alex Benn=C3=A9e
