@@ -2,111 +2,329 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D978962F045
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 09:58:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A5A262F067
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 10:03:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241541AbiKRI6X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Nov 2022 03:58:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48474 "EHLO
+        id S241678AbiKRJDe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Nov 2022 04:03:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241299AbiKRI6V (ORCPT
+        with ESMTP id S241530AbiKRJDd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Nov 2022 03:58:21 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 720026EB42
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 00:57:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1668761842;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=p0ERrz7JCn9BnDY0Ayxan7lnfD5vEWFwGFrA85kPodc=;
-        b=OgUb7Rrvd0S/1tG9DsbgoEtyLBNYbCxqqbYFJDbu35hqQZr+wJtAgx+w6bHE4eJ5qICerB
-        PrUVi5E4XJ3R+fwhh48R+uyH9MRTyR0deqnoNeQqWHjDMXZH/jSahOOlZYNILqGReO7bUD
-        +MDfdnfgesbPwedipXYp9OSr/kKJZUc=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-587-OxE5eY7jOx685X9nwtQ2Hw-1; Fri, 18 Nov 2022 03:57:21 -0500
-X-MC-Unique: OxE5eY7jOx685X9nwtQ2Hw-1
-Received: by mail-wm1-f69.google.com with SMTP id m17-20020a05600c3b1100b003cf9cc47da5so1955753wms.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 00:57:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=p0ERrz7JCn9BnDY0Ayxan7lnfD5vEWFwGFrA85kPodc=;
-        b=rhAlYEK75XLSy+qVIVYPxiLybCvz2BmA3gKz7lBlrgCEI4Hafl5NRYl3FYqGGd+Sj6
-         ZSwtuZozXBNiHOsFaJ2U9nbvkp+fry+Dvaf4cPDHuHiO0XuNBIi3de4Rrb1vZ7wc8kab
-         KgvjQlmPtVte1vyZP2XWs3vE41aAydx6gTE8DPR+jb4OoQ8fKsbHRuEFGUx/+s0gbP8b
-         7fzDKTRz6GNgPFFkxkLnzRQwqlM6jIlQgFcgszXVllOS84Rdovh1VPK2kgV3ZZm4bUxD
-         iiE+9huVs1lLRSkcn0z7b9OBVk1MZqIsj9bmfGuJxdPkqUKEjluQ/si44JLaVly6Hh3X
-         n6dA==
-X-Gm-Message-State: ANoB5plaRNUHc3C3GhshOlgAxU/NshhkxAoRq4faH8iqaCP8LUZorx2w
-        gf99BGCcccQn3ki+VtIzxgNDILwm14+1H6ykVXJvX/lU1afa5LgFMIMDbJ/9gxibVwhVTVhutrg
-        JRo8CbMmjXYnWsNEMxwPjAR+3rQ==
-X-Received: by 2002:adf:facd:0:b0:231:482f:ed6b with SMTP id a13-20020adffacd000000b00231482fed6bmr3694256wrs.253.1668761840125;
-        Fri, 18 Nov 2022 00:57:20 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf50oZR0yD/v8/9UR7ki7wIw/KZLKr9m6FVoEPYMGY5P+v3sgErCbw58kQiRgWrcKNl7n+7VHQ==
-X-Received: by 2002:adf:facd:0:b0:231:482f:ed6b with SMTP id a13-20020adffacd000000b00231482fed6bmr3694247wrs.253.1668761839750;
-        Fri, 18 Nov 2022 00:57:19 -0800 (PST)
-Received: from ?IPV6:2003:cb:c704:f500:6512:fac3:2687:15ff? (p200300cbc704f5006512fac3268715ff.dip0.t-ipconnect.de. [2003:cb:c704:f500:6512:fac3:2687:15ff])
-        by smtp.gmail.com with ESMTPSA id 6-20020a05600c024600b003b50428cf66sm3709552wmj.33.2022.11.18.00.57.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Nov 2022 00:57:19 -0800 (PST)
-Message-ID: <16759fd4-3a8c-b52c-20c3-9a9129f26799@redhat.com>
-Date:   Fri, 18 Nov 2022 09:57:18 +0100
+        Fri, 18 Nov 2022 04:03:33 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7EC265CE;
+        Fri, 18 Nov 2022 01:03:30 -0800 (PST)
+Received: from dggpeml500023.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ND9mS1jQ9zmW4N;
+        Fri, 18 Nov 2022 17:03:04 +0800 (CST)
+Received: from [10.67.110.112] (10.67.110.112) by
+ dggpeml500023.china.huawei.com (7.185.36.114) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Fri, 18 Nov 2022 17:03:28 +0800
+Subject: Re: [PATCH -next v2 3/6] landlock: add chmod and chown support
+To:     =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>,
+        =?UTF-8?Q?G=c3=bcnther_Noack?= <gnoack3000@gmail.com>
+CC:     <paul@paul-moore.com>, <jmorris@namei.org>, <serge@hallyn.com>,
+        <shuah@kernel.org>, <corbet@lwn.net>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Konstantin Meskhidze <konstantin.meskhidze@huawei.com>
+References: <20220827111215.131442-1-xiujianfeng@huawei.com>
+ <20220827111215.131442-4-xiujianfeng@huawei.com> <Ywpw66EYRDTQIyTx@nuc>
+ <de8834b6-0ff2-1a81-f2d3-af33103e9942@huawei.com>
+ <de4620d2-3268-b3cc-71dd-acbbd204435e@digikod.net>
+ <2f286496-f4f8-76f7-2fb6-cc3dd5ffdeaa@huawei.com>
+ <4b69a4ac-28ab-16aa-14b1-04a6f64d5490@digikod.net>
+ <9caccd0a-319e-bbc9-084a-65c62d0b1145@huawei.com>
+ <abc960a1-e66e-792e-6869-cfd201c29dbe@digikod.net>
+From:   xiujianfeng <xiujianfeng@huawei.com>
+Message-ID: <1373bbe5-16b1-bf0e-5f92-14c31cb94897@huawei.com>
+Date:   Fri, 18 Nov 2022 17:03:28 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.9.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH] exec: Remove FOLL_FORCE for stack setup
-To:     Kees Cook <keescook@chromium.org>,
-        Eric Biederman <ebiederm@xmission.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20221118003410.never.653-kees@kernel.org>
-Content-Language: en-US
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20221118003410.never.653-kees@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <abc960a1-e66e-792e-6869-cfd201c29dbe@digikod.net>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.67.110.112]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500023.china.huawei.com (7.185.36.114)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 18.11.22 01:34, Kees Cook wrote:
-> It does not appear that FOLL_FORCE should be needed for setting up the
-> stack pages. They are allocated using the nascent brpm->vma, which was
-> newly created with VM_STACK_FLAGS, which an arch can override, but they
-> all appear to include VM_WRITE | VM_MAYWRITE. Remove FOLL_FORCE.
+
+
+在 2022/11/14 22:12, Mickaël Salaün 写道:
 > 
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: David Hildenbrand <david@redhat.com>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Link: https://lore.kernel.org/lkml/202211171439.CDE720EAD@keescook/
-> Signed-off-by: Kees Cook <keescook@chromium.org>
+> On 29/10/2022 10:33, xiujianfeng wrote:
+>> Hi,
+>>
+>> 在 2022/9/2 1:34, Mickaël Salaün 写道:
+>>> CCing linux-fsdevel@vger.kernel.org
+>>>
+>>>
+>>> On 01/09/2022 15:06, xiujianfeng wrote:
+>>>> Hi,
+>>>>
+>>>> 在 2022/8/30 0:01, Mickaël Salaün 写道:
+>>>>>
+>>>>> On 29/08/2022 03:17, xiujianfeng wrote:
+>>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> 在 2022/8/28 3:30, Günther Noack 写道:
+>>>>>>> Hello!
+>>>>>>>
+>>>>>>> the mapping between Landlock rights to LSM hooks is now as 
+>>>>>>> follows in
+>>>>>>> your patch set:
+>>>>>>>
+>>>>>>> * LANDLOCK_ACCESS_FS_CHMOD controls hook_path_chmod
+>>>>>>> * LANDLOCK_ACCESS_FS_CHGRP controls hook_path_chown
+>>>>>>>       (this hook can restrict both the chown(2) and chgrp(2) 
+>>>>>>> syscalls)
+>>>>>>>
+>>>>>>> Is this the desired mapping?
+>>>>>>>
+>>>>>>> The previous discussion I found on the topic was in
+>>>>>>>
+>>>>>>> [1]
+>>>>>>> https://lore.kernel.org/all/5873455f-fff9-618c-25b1-8b6a4ec94368@digikod.net/ 
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> [2]
+>>>>>>> https://lore.kernel.org/all/b1d69dfa-6d93-2034-7854-e2bc4017d20e@schaufler-ca.com/ 
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> [3]
+>>>>>>> https://lore.kernel.org/all/c369c45d-5aa8-3e39-c7d6-b08b165495fd@digikod.net/ 
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> In my understanding the main arguments were the ones in [2] and [3].
+>>>>>>>
+>>>>>>> There were no further responses to [3], so I was under the 
+>>>>>>> impression
+>>>>>>> that we were gravitating towards an approach where the
+>>>>>>> file-metadata-modification operations were grouped more coarsely?
+>>>>>>>
+>>>>>>> For example with the approach suggested in [3], which would be to
+>>>>>>> group the operations coarsely into (a) one Landlock right for
+>>>>>>> modifying file metadata that is used in security contexts, and 
+>>>>>>> (b) one
+>>>>>>> Landlock right for modifying metadata that was used in non-security
+>>>>>>> contexts. That would mean that there would be:
+>>>>>>>
+>>>>>>> (a) LANDLOCK_ACCESS_FS_MODIFY_SECURITY_ATTRIBUTES to control the
+>>>>>>> following operations:
+>>>>>>>       * chmod(2)-variants through hook_path_chmod,
+>>>>>>>       * chown(2)-variants and chgrp(2)-variants through
+>>>>>>> hook_path_chown,
+>>>>>>>       * setxattr(2)-variants and removexattr(2)-variants for 
+>>>>>>> extended
+>>>>>>>         attributes that are not "user extended attributes" as
+>>>>>>> described in
+>>>>>>>         xattr(7) through hook_inode_setxattr and 
+>>>>>>> hook_inode_removexattr
+>>>>>>>
+>>>>>>> (b) LANDLOCK_ACCESS_FS_MODIFY_NON_SECURITY_ATTRIBUTES to control the
+>>>>>>> following operations:
+>>>>>>>       * utimes(2) and other operations for setting other 
+>>>>>>> non-security
+>>>>>>>         sensitive attributes, probably through hook_inode_setattr(?)
+>>>>>>>       * xattr modifications like above, but for the "user extended
+>>>>>>>         attributes", though hook_inode_setxattr and
+>>>>>>> hook_inode_removexattr
+>>>>>>>
+>>>>>>> In my mind, this would be a sensible grouping, and it would also 
+>>>>>>> help
+>>>>>>> to decouple the userspace-exposed API from the underlying
+>>>>>>> implementation, as Casey suggested to do in [2].
+>>>>>>>
+>>>>>>> Specifically for this patch set, if you want to use this 
+>>>>>>> grouping, you
+>>>>>>> would only need to add one new Landlock right
+>>>>>>> (LANDLOCK_ACCESS_FS_MODIFY_SECURITY_ATTRIBUTES) as described above
+>>>>>>> under (a) (and maybe we can find a shorter name for it... :))?
+>>>>>>>
+>>>>>>> Did I miss any operations here that would be necessary to restrict?
+>>>>>>>
+>>>>>>> Would that make sense to you? Xiu, what is your opinion on how this
+>>>>>>> should be grouped? Do you have use cases in mind where a more
+>>>>>>> fine-grained grouping would be required?
+>>>>>>
+>>>>>> I apologize I may missed that discussion when I prepared v2:(
+>>>>>>
+>>>>>> Yes, agreed, this grouping is more sensible and resonnable. so in 
+>>>>>> this
+>>>>>> patchset only one right will be added, and I suppose the first commit
+>>>>>> which expand access_mask_t to u32 can be droped.
+>>>>>>
+>>>>>>>
+>>>>>>> —Günther
+>>>>>>>
+>>>>>>> P.S.: Regarding utimes: The hook_inode_setattr hook *also* gets 
+>>>>>>> called
+>>>>>>> on a variety on attribute changes including file ownership, file 
+>>>>>>> size
+>>>>>>> and file mode, so it might potentially interact with a bunch of 
+>>>>>>> other
+>>>>>>> existing Landlock rights. Maybe that is not the right approach. 
+>>>>>>> In any
+>>>>>>> case, it seems like it might require more thinking and it might be
+>>>>>>> sensible to do that in a separate patch set IMHO.
+>>>>>>
+>>>>>> Thanks for you reminder, that seems it's more complicated to support
+>>>>>> utimes, so I think we'd better not support it in this patchset.
+>>>>>
+>>>>> The issue with this approach is that it makes it impossible to 
+>>>>> properly
+>>>>> group such access rights. Indeed, to avoid inconsistencies and much 
+>>>>> more
+>>>>> complexity, we cannot extend a Landlock access right once it is 
+>>>>> defined.
+>>>>>
+>>>>> We also need to consider that file ownership and permissions have a
+>>>>> default (e.g. umask), which is also a way to set them. How to
+>>>>> consistently manage that? What if the application wants to protect its
+>>>>> files with chmod 0400?
+>>>>
+>>>> what do you mean by this? do you mean that we should have a set of
+>>>> default permissions for files created by applications within the
+>>>> sandbox, so that it can update metadata of its own file.
+>>>
+>>> I mean that we need a consistent access control system, and for this we
+>>> need to consider all the ways an extended attribute can be set.
+>>>
+>>> We can either extend the meaning of current access rights (controlled
+>>> with a ruleset flag for compatibility reasons), or create new access
+>>> rights. I think it would be better to add new dedicated rights to make
+>>> it more explicit and flexible.
+>>>
+>>> I'm not sure about the right approach to properly control file
+>>> permission. We need to think about it. Do you have some ideas?
+>>>
+>>> BTW, utimes can be controlled with the inode_setattr() LSM hook. Being
+>>> able to control arbitrary file time modification could be part of the
+>>> FS_WRITE_SAFE_METADATA, but modification and access time should always
+>>> be updated according to the file operation.
+>>>
+>>>
+>>>>
+>>>>>
+>>>>> About the naming, I think we can start with:
+>>>>> - LANDLOCK_ACCESS_FS_READ_METADATA (read any file/dir metadata);
+>>>>> - LANDLOCK_ACCESS_FS_WRITE_SAFE_METADATA: change file times, user 
+>>>>> xattr;
+>>>>
+>>>> do you mean we should have permission controls on metadata level or
+>>>> operation level? e.g. should we allow update on user xattr but deny
+>>>> update on security xattr? or should we disallow update on any xattr?
+>>>>
+>>>>> - LANDLOCK_ACCESS_FS_WRITE_UNSAFE_METADATA: interpreted by the kernel
+>>>>> (could change non-Landlock DAC or MAC, which could be considered as a
+>>>>> policy bypass; or other various xattr that might be interpreted by
+>>>>> filesystems), this should be denied most of the time.
+>>>>
+>>>> do you mean FS_WRITE_UNSAFE_METADATA is security-related? and
+>>>> FS_WRITE_SAFE_METADATA is non-security-related?
+>>>
+>>> Yes, FS_WRITE_UNSAFE_METADATA would be for security related
+>>> xattr/chmod/chown, and FS_WRITE_SAFE_METADATA for non-security xattr.
+>>> Both are mutually exclusive. This would involve the inode_setattr and
+>>> inode_setxattr LSM hooks. Looking at the calling sites, it seems
+>>> possible to replace all inode arguments with paths.
+> 
+> I though about differentiating user xattr, atime/mtime, DAC 
+> (chown/chmod, posix ACLs), and other xattr, but it would be too complex 
+> to get a consistent approach because of indirect consequences (e.g. 
+> controlling umask, setegid, settimeofday…). Let's make it simple for now.
+> 
+> Here is an update on my previous proposal:
+> 
+> LANDLOCK_ACCESS_FS_READ_METADATA to read any file/dir metadata (i.e. 
+> inode attr and xattr). In practice, for most use cases, this access 
+> right should be granted whenever LANDLOCK_ACCESS_READ_DIR is allowed.
+> 
+> LANDLOCK_ACCESS_FS_WRITE_METADATA to *explicitly* write any inode attr 
+> or xattr (i.e. chmod, chown, utime, and all xattr). It should be noted 
+> that file modification time and access time should always be updated 
+> according to the file operation (e.g. write, truncate) even when this 
+> access is not explicitly allowed (according to vfs_utimes(), 
+> ATTR_TIMES_SET and ATTR_TOUCH should enable to differentiate from 
+> implicit time changes).
+> 
+Thanks, I analyzed the relevant functions and the use of lsm hooks.
+so I think what to do will be as follows:
 
-Thanks for looking into this!
+LANDLOCK_ACCESS_FS_WRITE_METADATA controls the following hooks:
+1.security_path_chmod
+2.security_path_chown
+3.security_inode_setattr
+4.security_inode_setxattr
+5.security_inode_removexattr
+6.security_inode_set_acl
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+LANDLOCK_ACCESS_FS_READ_METADATA controls the following hooks:
+1.security_inode_getattr
+2.security_inode_get_acl
+3.security_inode_getxattr
 
--- 
-Thanks,
+and the following 7 hooks are using struct dentry * as parameter, should 
+be changed to struct path *, and also their callers.
 
-David / dhildenb
+security_inode_setattr
+security_inode_setxattr
+security_inode_removexattr
+security_inode_set_acl
+security_inode_getattr
+security_inode_get_acl
+security_inode_getxattr
 
+Looks like it's a big change.
+
+> 
+>>
+>> Sorry for the late reply, I have problems with this work, for example,
+>> before:
+>> security_inode_setattr(struct user_namespace *mnt_userns,
+>>                                            struct dentry *dentry,
+>>                                            struct iattr *attr)
+>> after:
+>> security_inode_setattr(struct user_namespace *mnt_userns,
+>>                                            struct path *path,
+>>                                            struct iattr *attr)
+>> then I change the second argument in notify_change() from struct *dentry
+>> to struct path *, that makes this kind of changes in fs/overlayfs/
+>> spread to lots of places because overlayfs basicly uses dentry instead
+>> of path, the worst case may be here:
+>>
+>> ovl_special_inode_operations.set_acl hook calls:
+>> -->
+>> ovl_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+>> struct posix_acl *acl, int type)
+>> -->
+>> ovl_setattr(struct user_namespace *mnt_userns, struct dentry
+>> *dentry,struct iattr *attr)
+>> -->
+>> ovl_do_notify_change(struct ovl_fs *ofs, struct dentry *upperdentry,
+>> struct iattr *attr)
+>>
+>> from the top of this callchain, I can not find a path to replace dentry,
+>> did I miss something? or do you have better idea?
+> 
+> I think this can be solved thanks to the ovl_path_real() helper.
+> .
