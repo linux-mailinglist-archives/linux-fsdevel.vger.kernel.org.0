@@ -2,82 +2,122 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9EA5962FA4A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 17:30:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CBBE962FAAB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 17:46:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241733AbiKRQa3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Nov 2022 11:30:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49904 "EHLO
+        id S242287AbiKRQp6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Nov 2022 11:45:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235347AbiKRQa1 (ORCPT
+        with ESMTP id S242234AbiKRQpk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Nov 2022 11:30:27 -0500
-Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CCA4792B65
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 08:30:26 -0800 (PST)
-Received: by mail-yb1-xb32.google.com with SMTP id 63so6239009ybq.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 08:30:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=LK8nJnDEBy2sbP90xfZU43QkEi075IC0lRWwF2/ommc=;
-        b=cSWcuLp1i5SXT4W0eT+DaCZmd+4fwdZC/g2FcmkpwqGXzDF8yHep2wVJXeo5Zxx1F1
-         zpiL/cRwBOrMCt+SmHBG/9nlDqApzLnqEG2j8rISK6VXNXpNI4STjc3ZPuNA5iPYrlLa
-         X+CMgAc1gHIKwUI1lYaojam4NB3kAxn5luQBg91B71m6OFdpOUxeVoq6dvik09xBUUEf
-         p6ymx1r/TsU6r2OS9cske1uHGlx2NhcQp9sqbT148ezhq9/oil+oLsMBT+czkDuWWgkZ
-         r7ZZhuMQehOPDbS3DiuCQKUIhoQAVOcTbuxtAY3E+7ZH6eNm14F68St4stuYsi22WA5k
-         2eTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LK8nJnDEBy2sbP90xfZU43QkEi075IC0lRWwF2/ommc=;
-        b=0geu86zrDHJ+if0X/xFEEYqrCZqK1al5YbBByV5ZlgjfDw4XCg/bsjciQJchayjuZv
-         sJiVJ4Cv9tvQezcNYxciL1G3yTIaSuW8Q9kdtamXTnyHMH6lFYfff2r1oLAIN+c4jhW4
-         rxmhu0cFD2F4N3YWcwW1KViAB+TqllSJSQt3ZrthL7JEtCF094YSdrC5arOBc64ibYkj
-         dA+ummetx8Ps4fPa1lUgFaPR37Lt9YJVjKYD1hZ4itkv4XSDGa6sL7HTDW1YSSQl7Z+h
-         Eg8fP8PUpzP0wJZKRiiLAz4uUazmWtRXOvdojj59bfbO0TyYZ2L4goijMd0ONixfRH6a
-         S58A==
-X-Gm-Message-State: ANoB5pnHmIh6q7KuNa6AdqcXrf74xqr4IFI14EWdBcFNNf3lsMEw4BA5
-        ocv774mdZvTIHk9EuScQ+I01nMvIBMx2GHYbro+ZJRNiT88=
-X-Google-Smtp-Source: AA0mqf5f/DZ43uBpWY1mdbPp05jzS7GJ6mBPu3cXOx4W1Tg83PlBeU7EsYfRHWXCAEspl6oicmMA0bSSAUzRyKUxqLA=
-X-Received: by 2002:a25:3458:0:b0:6cc:c17:27e6 with SMTP id
- b85-20020a253458000000b006cc0c1727e6mr7074317yba.245.1668789024220; Fri, 18
- Nov 2022 08:30:24 -0800 (PST)
+        Fri, 18 Nov 2022 11:45:40 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3C7FD13EAF;
+        Fri, 18 Nov 2022 08:45:34 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B457722809;
+        Fri, 18 Nov 2022 16:45:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1668789932; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gGWCBwR6W7N/T/oKVxq15JaXduGL74ybELQMLEOROjQ=;
+        b=oTTvOF9em1RBHrcDz3sPtZD55HB28JQKz0rq8O6fqbEdz69a/AXJF4jT92zC2TnMfoTP5o
+        N+/92zbPBa11XH4uj3j1PVuX4IFT5iMf+cuDaOPUiGYk17AhOFewCKsW2Vloee6rUH2cev
+        ywRRIq+dF6sPyizq6eVC4qLT8N+v1Fc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1668789932;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=gGWCBwR6W7N/T/oKVxq15JaXduGL74ybELQMLEOROjQ=;
+        b=w1a8SK5GtUV98VIRjCKPQTv/uTPpGl8AZCdCXalMKOScuLDWEelI6GTSk7XWYEsOviak8d
+        9ZPPVSaQ1GZLctAg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2CE531345B;
+        Fri, 18 Nov 2022 16:45:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id /+1SCqy2d2MoEAAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Fri, 18 Nov 2022 16:45:32 +0000
+Message-ID: <f427422c-9af3-dc0a-dcc3-2a1114eb77ea@suse.cz>
+Date:   Fri, 18 Nov 2022 17:45:31 +0100
 MIME-Version: 1.0
-References: <20221117043247.133294-1-yosryahmed@google.com>
-In-Reply-To: <20221117043247.133294-1-yosryahmed@google.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Fri, 18 Nov 2022 08:30:12 -0800
-Message-ID: <CALvZod4=WgJsxcoMyuFqrqgqsLKguC2Dvy0mwupYPp94UPhX7Q@mail.gmail.com>
-Subject: Re: [PATCH] proc/meminfo: fix spacing in SecPageTables
-To:     Yosry Ahmed <yosryahmed@google.com>
-Cc:     David Hildenbrand <david@redhat.com>,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH mm-unstable v1 04/20] mm: add early FAULT_FLAG_UNSHARE
+ consistency checks
+Content-Language: en-US
+To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Sean Christopherson <seanjc@google.com>,
-        Marc Zyngier <maz@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-5-david@redhat.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20221116102659.70287-5-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 16, 2022 at 8:32 PM Yosry Ahmed <yosryahmed@google.com> wrote:
->
-> SecPageTables has a tab after it instead of a space, this can break
-> fragile parsers that depend on spaces after the stat names.
->
-> Fixes: ebc97a ("mm: add NR_SECONDARY_PAGETABLE to count secondary page table uses.")
-> Signed-off-by: Yosry Ahmed <yosryahmed@google.com>
+On 11/16/22 11:26, David Hildenbrand wrote:
+> For now, FAULT_FLAG_UNSHARE only applies to anonymous pages, which
+> implies a COW mapping. Let's hide FAULT_FLAG_UNSHARE early if we're not
+> dealing with a COW mapping, such that we treat it like a read fault as
+> documented and don't have to worry about the flag throughout all fault
+> handlers.
+> 
+> While at it, centralize the check for mutual exclusion of
+> FAULT_FLAG_UNSHARE and FAULT_FLAG_WRITE and just drop the check that
+> either flag is set in the WP handler.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  mm/huge_memory.c |  3 ---
+>  mm/hugetlb.c     |  5 -----
+>  mm/memory.c      | 23 ++++++++++++++++++++---
+>  3 files changed, 20 insertions(+), 11 deletions(-)
 
-Acked-by: Shakeel Butt <shakeelb@google.com>
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+
