@@ -2,136 +2,152 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8170762FFF4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 23:21:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2E7A630018
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 23:29:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231598AbiKRWV4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Nov 2022 17:21:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44806 "EHLO
+        id S231611AbiKRW3L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Nov 2022 17:29:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231609AbiKRWVi (ORCPT
+        with ESMTP id S231617AbiKRW3F (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Nov 2022 17:21:38 -0500
-Received: from mail-pg1-x536.google.com (mail-pg1-x536.google.com [IPv6:2607:f8b0:4864:20::536])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DC02B404D
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 14:20:59 -0800 (PST)
-Received: by mail-pg1-x536.google.com with SMTP id s196so6168906pgs.3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 14:20:59 -0800 (PST)
+        Fri, 18 Nov 2022 17:29:05 -0500
+Received: from mail-pj1-x1030.google.com (mail-pj1-x1030.google.com [IPv6:2607:f8b0:4864:20::1030])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6357EBDF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 14:29:03 -0800 (PST)
+Received: by mail-pj1-x1030.google.com with SMTP id v4-20020a17090a088400b00212cb0ed97eso6327119pjc.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 14:29:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5GphRXPoQS/Vrh0W1iy/t4/ktGKCxOLwHIoEesDSbaM=;
-        b=raRmAtMoxAHvm+cWt8uB1qY/uL8fDIEEQ845ErKjspwsQs3PPVdWYxO0L75hvUHtQf
-         irIGDXPIQfiFZCUTJhRIhgfe39eZdzg1I+3UYhZDHvkfSJ1wvtHwpbqns84Jd0FZQ26h
-         X5XxE+yI1d4KH/6esRkeJawzO/h6pGYUYDWabReCievZ31cA7txONg8IKDOGzQCqLEgi
-         NpFuvwWrIZsXQd3hEuXSuX1qwNKErQdZHb8KOyrc3K2jS3RIawo6G6EdgzPJde6L7sL+
-         63UY4yKzlNYnzB22y8Nhvh9wAoZ2Pppr196ZI3eqghJQbPnZuYU7iygvqYazZL/ZXOz3
-         8lqg==
+        d=chromium.org; s=google;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UbBsvDU//DL6nEBTfVogOGw4gtrIt5cEgoWU7wg0yqE=;
+        b=An8R27hBelrmHfCbOWIi0CQbpB+FbdUKZd/K74OWA+t1inv8v4494buerQXpAbVoQ/
+         hawXo5IWqwOaOJXIlgQJ62nY4aZ8mzIQL8T0sN5QawgAa8EGZw3klOrzN/KXycM8ohn1
+         PnwiDQNXHvwQENzmlhMaoO6BFIxzwB92hREPE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5GphRXPoQS/Vrh0W1iy/t4/ktGKCxOLwHIoEesDSbaM=;
-        b=s0Ft+NkH7ddiHdqyvaiTMFlUd6U6uB8LgA0KGRqvMDxJQgMzI43w+vkAOdnyI4/7PJ
-         Q2CfXFTyFaGyugqUgS47gnQ8py6rrGZc6aBSbBud1tueRS8GRsjG14cT9bvLs+mdFLBx
-         qhaQqT4GhtF30/YbLyeYYplPMqvpphwZNedFKrcRcaKdsXctD+PUG+7YzNzBOcBfX9I0
-         Ytg5eAo0PF0Xqe7FjVU/mg2iR5Gq0f5n5ZtrC/vWTj6wJdUJzWlLhts9PVmwM1jizCrF
-         qiUEpeuut1CBQl+CwymtZ3XoWNsgYb+t6nrqSHAa6Mxpf/2C3xX9cJsCaJDwp5ENjcbH
-         A98w==
-X-Gm-Message-State: ANoB5pn/Uah9NoRoluyiFUjdI5/fB6Ih8T3sEy74+zimuQ0oDut38tfm
-        45JQOCxMxFiSWF9L59DOke0RjuEeIRMxIgV5N0Y5
-X-Google-Smtp-Source: AA0mqf5dYUJhLfi1dDKR+hOOUUP91cFW/0gakbsNFhwLrG03uEt2DOeFhA/+B/xFm4zqfF3zl8RZWLw9Ulw57+CuRFo=
-X-Received: by 2002:a63:dc45:0:b0:44e:46f9:7eeb with SMTP id
- f5-20020a63dc45000000b0044e46f97eebmr8404580pgj.3.1668810058627; Fri, 18 Nov
- 2022 14:20:58 -0800 (PST)
-MIME-Version: 1.0
-References: <20221110043614.802364-1-paul@paul-moore.com> <20221118015414.GA19423@mail.hallyn.com>
- <CAHC9VhSNGSpdYWf_6if+Q+8BZvR-zYYxBMmoYhRNH9rWpn7=AA@mail.gmail.com>
- <9989ecccca46cbbecd12ae8ecdfc693ea115a09a.camel@linux.ibm.com>
- <CAHC9VhRUfJAYxZUDSkmoHdr5Z+TPCHSbv-nfvJ8t4_zg04NNXQ@mail.gmail.com> <89e8f4c2e1bc59c76715fc00a0578564ecf4077d.camel@linux.ibm.com>
-In-Reply-To: <89e8f4c2e1bc59c76715fc00a0578564ecf4077d.camel@linux.ibm.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 18 Nov 2022 17:20:47 -0500
-Message-ID: <CAHC9VhQFg36rKjSsq0y4Uj4Rs5tR0DWxhvRefYuvT_vYk-5RxA@mail.gmail.com>
-Subject: Re: [RFC PATCH] lsm,fs: fix vfs_getxattr_alloc() return type and
- caller error paths
-To:     Mimi Zohar <zohar@linux.ibm.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UbBsvDU//DL6nEBTfVogOGw4gtrIt5cEgoWU7wg0yqE=;
+        b=pqqG6YReHRK32DFdisxaU6IAgDSMT5xr91jJ6Z0FSN+ZfnYTj81ZkRVlmrKYSFIWNw
+         GMYMVmql0j1xyTODDqW6CWNclRZSkjEqQE5QHhOT7Vm/5rDrPqySXsiiAt2eLPvD2yjU
+         rj+R/cq5zxM4Trqa+8pY4946g+Lv/O5rwG+r5SOcJnlLo8Dp8yOVdRyivToWgdaBPm53
+         w4l2t1Z92j3DyTgyp8LrxYUtI9UoVUlq8ugWDKQtq3lvJhkNLbcQ9K45xcN2Jj6katW+
+         aVh0sWi5hfcGMeKg66hiXNeGWTioIjDw1S9Td3Sm0sugTk78/BBa487bm7JZAUz9DU5E
+         viuQ==
+X-Gm-Message-State: ANoB5plNWsd7ngXBBTc5LPhp9fUXSlGSC6srtq/K0ckxI9eIDllXdBPd
+        HvZAHHhtJg4gQ7zwkLNZGCN8Lw==
+X-Google-Smtp-Source: AA0mqf6x3WR1+0wUVWwli47/xk6od69+oUWF0cQjmoupKb1o7R1u9AWIvzDIrLxmCvQfjLJnyEjRtg==
+X-Received: by 2002:a17:902:e009:b0:188:649b:9dbe with SMTP id o9-20020a170902e00900b00188649b9dbemr1414800plo.107.1668810543395;
+        Fri, 18 Nov 2022 14:29:03 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b29-20020aa7951d000000b00561382a5a25sm3714931pfp.26.2022.11.18.14.29.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Nov 2022 14:29:02 -0800 (PST)
+Date:   Fri, 18 Nov 2022 14:29:02 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-perf-users@vger.kernel.org,
         linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        linux-kselftest@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Richard Henderson <richard.henderson@linaro.org>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        "David S. Miller" <davem@davemloft.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Richard Weinberger <richard@nod.at>,
+        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Johannes Berg <johannes@sipsolutions.net>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Kentaro Takeda <takedakn@nttdata.co.jp>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Paul Moore <paul@paul-moore.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>
+Subject: Re: [PATCH mm-unstable v1 20/20] mm: rename FOLL_FORCE to FOLL_PTRACE
+Message-ID: <202211181427.4D1C3132FE@keescook>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-21-david@redhat.com>
+ <CAHk-=wgtEwpR-rE_=cXzecHMZ+zgrx5zf9UfvH0w-mKgckn4=Q@mail.gmail.com>
+ <Y3dnzgwJpjTQXI9y@hirez.programming.kicks-ass.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y3dnzgwJpjTQXI9y@hirez.programming.kicks-ass.net>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 18, 2022 at 2:09 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> On Fri, 2022-11-18 at 13:44 -0500, Paul Moore wrote:
-> > On Fri, Nov 18, 2022 at 1:30 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > > On Fri, 2022-11-18 at 08:44 -0500, Paul Moore wrote:
-> > > > On Thu, Nov 17, 2022 at 8:54 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > > > > On Wed, Nov 09, 2022 at 11:36:14PM -0500, Paul Moore wrote:
-> > > > > > The vfs_getxattr_alloc() function currently returns a ssize_t value
-> > > > > > despite the fact that it only uses int values internally for return
-> > > > > > values.  Fix this by converting vfs_getxattr_alloc() to return an
-> > > > > > int type and adjust the callers as necessary.  As part of these
-> > > > > > caller modifications, some of the callers are fixed to properly free
-> > > > > > the xattr value buffer on both success and failure to ensure that
-> > > > > > memory is not leaked in the failure case.
-> > > >
-> > > > > > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > > > >
-> > > > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > > > >
-> > > > > Do I understand right that the change to process_measurement()
-> > > > > will avoid an unnecessary call to krealloc() if the xattr has
-> > > > > not changed size between the two calls to ima_read_xattr()?
-> > > > > If something more than that is going on there, it might be
-> > > > > worth pointing out in the commit message.
-> > > >
-> > > > Yes, that was the intent, trying to avoid extra calls to krealloc().
-> > > >
-> > > > Mimi, have you had a chance to look at this patch yet?  In addition to
-> > > > cleaning up the vfs_getxattr_alloc() function it resolves some issues
-> > > > with IMA (memory leaks), but as you're the IMA expert I really need
-> > > > your review on this ...b
-> > >
-> > > All the other vfs_{get/set/list}xattr functions return ssize_t.  Why
-> > > should vfs_getxattr_alloc() be any different?
-> >
-> > The xattr_handler::get() function, the main engine behind
-> > vfs_getxattr_alloc() and the source of the non-error return values,
-> > returns an int.  The error return values returned by
-> > vfs_getxattr_alloc() are the usual -E* integer values.
-> >
-> > > The only time there could be a memory leak is when the
-> > > vfs_getxattr_alloc() caller provides a buffer which isn't large enough.
-> > > The one example in IMA/EVM is the call to evm_calc_hmac_or_hash(),
-> > > which is freeing the memory.
-> > >
-> > > Perhaps I'm missing something, but from an IMA/EVM perspective, I see a
-> > > style change (common exit), but not any memory leak fixes.  I'm fine
-> > > with the style change.
-> >
-> > Picking one at random, what about the change in
-> > ima_eventevmsig_init()?  The current code does not free @xattr_data on
-> > error which has the potential to leak memory if vfs_getxattr_alloc()'s
-> > second call to the xattr get'er function fails.  Granted, the
-> > likelihood of this, if it is even possible, is an open question, but I
-> > don't think that is an excuse for the callers to not do The Right
-> > Thing.
->
-> Oh!  This is about the 2nd handler call failing.
->
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>b
+On Fri, Nov 18, 2022 at 12:09:02PM +0100, Peter Zijlstra wrote:
+> On Wed, Nov 16, 2022 at 10:16:34AM -0800, Linus Torvalds wrote:
+> > Following the history of it is a big of a mess, because there's a
+> > number of renamings and re-organizations, but it seems to go back to
+> > 2007 and commit b6a2fea39318 ("mm: variable length argument support").
+> 
+> I went back and read parts of the discussions with Ollie, and the
+> .force=1 thing just magically appeared one day when we were sending
+> work-in-progress patches back and forth without mention of where it came
+> from :-/
+> 
+> And I certainly can't remember now..
+> 
+> Looking at it now, I have the same reaction as both you and Kees had, it
+> seems entirely superflous. So I'm all for trying to remove it.
 
-Merged into lsm/next, thanks all.
+Thanks for digging through the history! I've pushed the change to -next:
+https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git/commit/?h=for-next/execve&id=cd57e443831d8eeb083c7165bce195d886e216d4
 
 -- 
-paul-moore.com
+Kees Cook
