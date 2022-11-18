@@ -2,150 +2,282 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1813162FDC8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 20:09:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 74E4062FDC9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 20:11:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235221AbiKRTJS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Nov 2022 14:09:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41950 "EHLO
+        id S235341AbiKRTLt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Nov 2022 14:11:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42202 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232884AbiKRTJR (ORCPT
+        with ESMTP id S235056AbiKRTLr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Nov 2022 14:09:17 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4F946167FF;
-        Fri, 18 Nov 2022 11:09:16 -0800 (PST)
-Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AIHlEDh025654;
-        Fri, 18 Nov 2022 19:09:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : subject :
- from : to : cc : date : in-reply-to : references : content-type :
- mime-version : content-transfer-encoding; s=pp1;
- bh=ZHvkdtTxGcAYwukcBLGIquU21MOWuR1bsjsvrKFaGug=;
- b=TG9kuAo46hOEiVwzYWwUighe/PIqoYIku5HJXZxmwStsc4+g0Wfr8A5WlZDKLj7YIXts
- MoFNOQ/h74LP5G+R+NEyEAfxHVtVDq4qRCfXqTc2HMssiLKVDugSxC0OZfUVoVj475EZ
- m7eBro/lYMXrCk5MkRXCW8KErf23HrjYHOq8fP715nMDEAdPRAlqK7ue5AJu6O6O73Up
- 66XwCdusfZU6ok647qE3BnOWpNXtaCKfrjJYjsD2Fp4JM89X9xp9p2kZ7bKRWfQh9S/H
- 6Iz3RBD9KC8jxhmqT1fWuzritiLejhQuGju3mGVC5P+gMrfGmaxQsc5SuM6B6ZDRq/6x yg== 
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3kxd3w4c04-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Nov 2022 19:09:12 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AIJ5O42008746;
-        Fri, 18 Nov 2022 19:09:12 GMT
-Received: from b03cxnp07027.gho.boulder.ibm.com (b03cxnp07027.gho.boulder.ibm.com [9.17.130.14])
-        by ppma03dal.us.ibm.com with ESMTP id 3kt34akja6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Fri, 18 Nov 2022 19:09:12 +0000
-Received: from smtpav05.dal12v.mail.ibm.com ([9.208.128.132])
-        by b03cxnp07027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AIJ9BvD33620514
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 18 Nov 2022 19:09:11 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C47FA5804C;
-        Fri, 18 Nov 2022 19:09:10 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6FA195805D;
-        Fri, 18 Nov 2022 19:09:10 +0000 (GMT)
-Received: from li-f45666cc-3089-11b2-a85c-c57d1a57929f.ibm.com (unknown [9.160.49.134])
-        by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-        Fri, 18 Nov 2022 19:09:10 +0000 (GMT)
-Message-ID: <89e8f4c2e1bc59c76715fc00a0578564ecf4077d.camel@linux.ibm.com>
-Subject: Re: [RFC PATCH] lsm,fs: fix vfs_getxattr_alloc() return type and
- caller error paths
-From:   Mimi Zohar <zohar@linux.ibm.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     "Serge E. Hallyn" <serge@hallyn.com>,
-        linux-security-module@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Fri, 18 Nov 2022 14:09:10 -0500
-In-Reply-To: <CAHC9VhRUfJAYxZUDSkmoHdr5Z+TPCHSbv-nfvJ8t4_zg04NNXQ@mail.gmail.com>
-References: <20221110043614.802364-1-paul@paul-moore.com>
-         <20221118015414.GA19423@mail.hallyn.com>
-         <CAHC9VhSNGSpdYWf_6if+Q+8BZvR-zYYxBMmoYhRNH9rWpn7=AA@mail.gmail.com>
-         <9989ecccca46cbbecd12ae8ecdfc693ea115a09a.camel@linux.ibm.com>
-         <CAHC9VhRUfJAYxZUDSkmoHdr5Z+TPCHSbv-nfvJ8t4_zg04NNXQ@mail.gmail.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-X-Mailer: Evolution 3.28.5 (3.28.5-18.el8) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: AVXjbM40LhwEuOCx1YGysanpbE38px9X
-X-Proofpoint-ORIG-GUID: AVXjbM40LhwEuOCx1YGysanpbE38px9X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-18_06,2022-11-18_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
- lowpriorityscore=0 phishscore=0 mlxlogscore=967 malwarescore=0
- clxscore=1015 priorityscore=1501 impostorscore=0 mlxscore=0 adultscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211180113
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        Fri, 18 Nov 2022 14:11:47 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A9285F47
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 11:10:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668798652;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=NqA4BxQQXQQzSXtVZRe2POsdg5SmvU98u40yOhzQLSg=;
+        b=Z21iGFlXX+NA0AsJqyW8FIpAXoE71bZ43AZxHP0QLhC46BDKL0+ym6tGe7yaZlgbhe1LWc
+        kysQtxQJfS6VdQjOt/FwrdZKOZpHh7l/mUR8ph/ZIZIz0/W4i0nbZm3B6dqpNV6dSq1CQF
+        JpwCwEpwnDIwb7nUKQxvE1dwDWTYdE0=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-626-LcZdyxL9PsOPJyH2GPo2KA-1; Fri, 18 Nov 2022 14:10:48 -0500
+X-MC-Unique: LcZdyxL9PsOPJyH2GPo2KA-1
+Received: by mail-qv1-f71.google.com with SMTP id d8-20020a0cfe88000000b004bb65193fdcso5389838qvs.12
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 11:10:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NqA4BxQQXQQzSXtVZRe2POsdg5SmvU98u40yOhzQLSg=;
+        b=jsaT7TkWS0P3wKMB7rDsMMVu9IJ9XI8HSuYEz5dEkvufhB0A+UAQI4c3Cei5euDy29
+         F/86mMro6ZLLMaVyTLXS1PLayYwci8FoVglYNkEEABbUGL4hdduGjWK2jMfrdGcjzaJK
+         W8fRow9X7A+sVMlclCpm9gk5V4UgJMVrPNEIfiUooRgSqWsDA7YRm9fuCHn3kvHNikKp
+         UvcFgr5rsxyZe8MLeQ//dNebPP8DrMIJ5c6Fn1HKdSa6/Wdij9RFONYO3/IDL35BiuTk
+         MvsVXAv0+cl8/zPsTW+scqVO+J8jWom52350/B2u1RTKjxAVdWnlbriuQyAcIGROO/It
+         0bmA==
+X-Gm-Message-State: ANoB5pljOdYXdKTy5SH5KGMO2VMB0c+hj5AuBq5W0x3PmuaKWl1GMBvP
+        qkhCbMjEmknloltwLEFgUXhXhBAsYRe0yjS/THbKypOum7A1R4YvEC2nZdQeHk3v8q24lQezTpn
+        INfZLMezBMQyxMLNgK3oUQF9ROw==
+X-Received: by 2002:ad4:4e0e:0:b0:4bb:73a4:c1dc with SMTP id dl14-20020ad44e0e000000b004bb73a4c1dcmr8032040qvb.41.1668798648105;
+        Fri, 18 Nov 2022 11:10:48 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf6tl+/eZWiHYmFhSxfNlvwgmqWib1jXdbwcCoj/G5+PCUlEJWPJdjdBAzB35gUH6yoFm+UqsA==
+X-Received: by 2002:ad4:4e0e:0:b0:4bb:73a4:c1dc with SMTP id dl14-20020ad44e0e000000b004bb73a4c1dcmr8032009qvb.41.1668798647816;
+        Fri, 18 Nov 2022 11:10:47 -0800 (PST)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id 2-20020ac85642000000b003a5612c3f28sm2435124qtt.56.2022.11.18.11.10.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 18 Nov 2022 11:10:47 -0800 (PST)
+Date:   Fri, 18 Nov 2022 14:10:51 -0500
+From:   Brian Foster <bfoster@redhat.com>
+To:     Ivan Babrou <ivan@cloudflare.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-team@cloudflare.com, Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Theodore Ts'o <tytso@mit.edu>,
+        David Laight <David.Laight@aculab.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
+        Mike Rapoport <rppt@kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Kalesh Singh <kaleshsingh@google.com>
+Subject: Re: [PATCH v4] proc: report open files as size in stat() for
+ /proc/pid/fd
+Message-ID: <Y3fYu2VCBgREBBau@bfoster>
+References: <20221024173140.30673-1-ivan@cloudflare.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221024173140.30673-1-ivan@cloudflare.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, 2022-11-18 at 13:44 -0500, Paul Moore wrote:
-> On Fri, Nov 18, 2022 at 1:30 PM Mimi Zohar <zohar@linux.ibm.com> wrote:
-> > On Fri, 2022-11-18 at 08:44 -0500, Paul Moore wrote:
-> > > On Thu, Nov 17, 2022 at 8:54 PM Serge E. Hallyn <serge@hallyn.com> wrote:
-> > > > On Wed, Nov 09, 2022 at 11:36:14PM -0500, Paul Moore wrote:
-> > > > > The vfs_getxattr_alloc() function currently returns a ssize_t value
-> > > > > despite the fact that it only uses int values internally for return
-> > > > > values.  Fix this by converting vfs_getxattr_alloc() to return an
-> > > > > int type and adjust the callers as necessary.  As part of these
-> > > > > caller modifications, some of the callers are fixed to properly free
-> > > > > the xattr value buffer on both success and failure to ensure that
-> > > > > memory is not leaked in the failure case.
-> > >
-> > > > > Signed-off-by: Paul Moore <paul@paul-moore.com>
-> > > >
-> > > > Reviewed-by: Serge Hallyn <serge@hallyn.com>
-> > > >
-> > > > Do I understand right that the change to process_measurement()
-> > > > will avoid an unnecessary call to krealloc() if the xattr has
-> > > > not changed size between the two calls to ima_read_xattr()?
-> > > > If something more than that is going on there, it might be
-> > > > worth pointing out in the commit message.
-> > >
-> > > Yes, that was the intent, trying to avoid extra calls to krealloc().
-> > >
-> > > Mimi, have you had a chance to look at this patch yet?  In addition to
-> > > cleaning up the vfs_getxattr_alloc() function it resolves some issues
-> > > with IMA (memory leaks), but as you're the IMA expert I really need
-> > > your review on this ...b
-> >
-> > All the other vfs_{get/set/list}xattr functions return ssize_t.  Why
-> > should vfs_getxattr_alloc() be any different?
+On Mon, Oct 24, 2022 at 10:31:40AM -0700, Ivan Babrou wrote:
+> Many monitoring tools include open file count as a metric. Currently
+> the only way to get this number is to enumerate the files in /proc/pid/fd.
 > 
-> The xattr_handler::get() function, the main engine behind
-> vfs_getxattr_alloc() and the source of the non-error return values,
-> returns an int.  The error return values returned by
-> vfs_getxattr_alloc() are the usual -E* integer values.
+> The problem with the current approach is that it does many things people
+> generally don't care about when they need one number for a metric.
+> In our tests for cadvisor, which reports open file counts per cgroup,
+> we observed that reading the number of open files is slow. Out of 35.23%
+> of CPU time spent in `proc_readfd_common`, we see 29.43% spent in
+> `proc_fill_cache`, which is responsible for filling dentry info.
+> Some of this extra time is spinlock contention, but it's a contention
+> for the lock we don't want to take to begin with.
 > 
-> > The only time there could be a memory leak is when the
-> > vfs_getxattr_alloc() caller provides a buffer which isn't large enough.
-> > The one example in IMA/EVM is the call to evm_calc_hmac_or_hash(),
-> > which is freeing the memory.
-> >
-> > Perhaps I'm missing something, but from an IMA/EVM perspective, I see a
-> > style change (common exit), but not any memory leak fixes.  I'm fine
-> > with the style change.
+> We considered putting the number of open files in /proc/pid/status.
+> Unfortunately, counting the number of fds involves iterating the open_files
+> bitmap, which has a linear complexity in proportion with the number
+> of open files (bitmap slots really, but it's close). We don't want
+> to make /proc/pid/status any slower, so instead we put this info
+> in /proc/pid/fd as a size member of the stat syscall result.
+> Previously the reported number was zero, so there's very little
+> risk of breaking anything, while still providing a somewhat logical
+> way to count the open files with a fallback if it's zero.
 > 
-> Picking one at random, what about the change in
-> ima_eventevmsig_init()?  The current code does not free @xattr_data on
-> error which has the potential to leak memory if vfs_getxattr_alloc()'s
-> second call to the xattr get'er function fails.  Granted, the
-> likelihood of this, if it is even possible, is an open question, but I
-> don't think that is an excuse for the callers to not do The Right
-> Thing.
+> RFC for this patch included iterating open fds under RCU. Thanks
+> to Frank Hofmann for the suggestion to use the bitmap instead.
+> 
+> Previously:
+> 
+> ```
+> $ sudo stat /proc/1/fd | head -n2
+>   File: /proc/1/fd
+>   Size: 0         	Blocks: 0          IO Block: 1024   directory
+> ```
+> 
+> With this patch:
+> 
+> ```
+> $ sudo stat /proc/1/fd | head -n2
+>   File: /proc/1/fd
+>   Size: 65        	Blocks: 0          IO Block: 1024   directory
+> ```
+> 
+> Correctness check:
+> 
+> ```
+> $ sudo ls /proc/1/fd | wc -l
+> 65
+> ```
+> 
+> I added the docs for /proc/<pid>/fd while I'm at it.
+> 
+> Signed-off-by: Ivan Babrou <ivan@cloudflare.com>
+> 
+> ---
+> v4: Return errno from proc_fd_getattr() instead of setting negative size.
+>     Added an explicit include for linux/bitmap.h.
+> v3: Made use of bitmap_weight() to count the bits.
+> v2: Added missing rcu_read_lock() / rcu_read_unlock(),
+>     task_lock() / task_unlock() and put_task_struct().
+> ---
+>  Documentation/filesystems/proc.rst | 17 +++++++++++
+>  fs/proc/fd.c                       | 45 ++++++++++++++++++++++++++++++
+>  2 files changed, 62 insertions(+)
+> 
+> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> index 898c99eae8e4..ec6cfdf1796a 100644
+> --- a/Documentation/filesystems/proc.rst
+> +++ b/Documentation/filesystems/proc.rst
+> @@ -47,6 +47,7 @@ fixes/update part 1.1  Stefani Seibold <stefani@seibold.net>    June 9 2009
+>    3.10  /proc/<pid>/timerslack_ns - Task timerslack value
+>    3.11	/proc/<pid>/patch_state - Livepatch patch operation state
+>    3.12	/proc/<pid>/arch_status - Task architecture specific information
+> +  3.13  /proc/<pid>/fd - List of symlinks to open files
+>  
+>    4	Configuring procfs
+>    4.1	Mount options
+> @@ -2149,6 +2150,22 @@ AVX512_elapsed_ms
+>    the task is unlikely an AVX512 user, but depends on the workload and the
+>    scheduling scenario, it also could be a false negative mentioned above.
+>  
+> +3.13 /proc/<pid>/fd - List of symlinks to open files
+> +-------------------------------------------------------
+> +This directory contains symbolic links which represent open files
+> +the process is maintaining.  Example output::
+> +
+> +  lr-x------ 1 root root 64 Sep 20 17:53 0 -> /dev/null
+> +  l-wx------ 1 root root 64 Sep 20 17:53 1 -> /dev/null
+> +  lrwx------ 1 root root 64 Sep 20 17:53 10 -> 'socket:[12539]'
+> +  lrwx------ 1 root root 64 Sep 20 17:53 11 -> 'socket:[12540]'
+> +  lrwx------ 1 root root 64 Sep 20 17:53 12 -> 'socket:[12542]'
+> +
+> +The number of open files for the process is stored in 'size' member
+> +of stat() output for /proc/<pid>/fd for fast access.
+> +-------------------------------------------------------
+> +
+> +
+>  Chapter 4: Configuring procfs
+>  =============================
+>  
+> diff --git a/fs/proc/fd.c b/fs/proc/fd.c
+> index 913bef0d2a36..fc46d6fe080c 100644
+> --- a/fs/proc/fd.c
+> +++ b/fs/proc/fd.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/namei.h>
+>  #include <linux/pid.h>
+>  #include <linux/ptrace.h>
+> +#include <linux/bitmap.h>
+>  #include <linux/security.h>
+>  #include <linux/file.h>
+>  #include <linux/seq_file.h>
+> @@ -279,6 +280,30 @@ static int proc_readfd_common(struct file *file, struct dir_context *ctx,
+>  	return 0;
+>  }
+>  
+> +static int proc_readfd_count(struct inode *inode, loff_t *count)
+> +{
+> +	struct task_struct *p = get_proc_task(inode);
+> +	struct fdtable *fdt;
+> +
+> +	if (!p)
+> +		return -ENOENT;
+> +
+> +	task_lock(p);
+> +	if (p->files) {
+> +		rcu_read_lock();
+> +
+> +		fdt = files_fdtable(p->files);
+> +		*count = bitmap_weight(fdt->open_fds, fdt->max_fds);
+> +
+> +		rcu_read_unlock();
+> +	}
+> +	task_unlock(p);
+> +
+> +	put_task_struct(p);
+> +
+> +	return 0;
+> +}
+> +
+>  static int proc_readfd(struct file *file, struct dir_context *ctx)
+>  {
+>  	return proc_readfd_common(file, ctx, proc_fd_instantiate);
+> @@ -319,9 +344,29 @@ int proc_fd_permission(struct user_namespace *mnt_userns,
+>  	return rv;
+>  }
+>  
+> +static int proc_fd_getattr(struct user_namespace *mnt_userns,
+> +			const struct path *path, struct kstat *stat,
+> +			u32 request_mask, unsigned int query_flags)
+> +{
+> +	struct inode *inode = d_inode(path->dentry);
+> +	int rv = 0;
+> +
+> +	generic_fillattr(&init_user_ns, inode, stat);
+> +
 
-Oh!  This is about the 2nd handler call failing.
+Sorry I missed this on v3, but shouldn't this pass through the
+mnt_userns parameter?
 
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>b
+> +	/* If it's a directory, put the number of open fds there */
+> +	if (S_ISDIR(inode->i_mode)) {
+> +		rv = proc_readfd_count(inode, &stat->size);
+> +		if (rv < 0)
+> +			return rv;
+> +	}
+
+Also I suppose this could just do:
+
+	if (S_ISDIR(inode->i_mode))
+		rv = proc_readfd_count(inode, &stat->size);
+
+	return rv;
+
+But that's a nit. Otherwise seems reasonable to me.
+
+Brian
+
+> +
+> +	return rv;
+> +}
+> +
+>  const struct inode_operations proc_fd_inode_operations = {
+>  	.lookup		= proc_lookupfd,
+>  	.permission	= proc_fd_permission,
+> +	.getattr	= proc_fd_getattr,
+>  	.setattr	= proc_setattr,
+>  };
+>  
+> -- 
+> 2.37.3
+> 
 
