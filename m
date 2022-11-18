@@ -2,115 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6C7C662EF70
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 09:30:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D978962F045
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 09:58:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235199AbiKRIah (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Nov 2022 03:30:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48778 "EHLO
+        id S241541AbiKRI6X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Nov 2022 03:58:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48474 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241560AbiKRIaA (ORCPT
+        with ESMTP id S241299AbiKRI6V (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Nov 2022 03:30:00 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DD5E4D5E0;
-        Fri, 18 Nov 2022 00:29:34 -0800 (PST)
-Received: from dggpemm500023.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4ND91H6P2VzmVk8;
-        Fri, 18 Nov 2022 16:29:07 +0800 (CST)
-Received: from dggpemm100009.china.huawei.com (7.185.36.113) by
- dggpemm500023.china.huawei.com (7.185.36.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 18 Nov 2022 16:29:32 +0800
-Received: from [10.174.179.24] (10.174.179.24) by
- dggpemm100009.china.huawei.com (7.185.36.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Fri, 18 Nov 2022 16:29:32 +0800
-Subject: Re: [PATCH] fs/buffer: fix a NULL pointer dereference in
- drop_buffers()
-To:     Matthew Wilcox <willy@infradead.org>
-References: <20221109095018.4108726-1-liushixin2@huawei.com>
- <Y3cYd6u9wT/ZTHbe@casper.infradead.org>
- <ba12f39a-4b43-7297-f1fa-b4eb0bbd79a8@huawei.com>
- <Y3c7Pko8AC3ZThgX@casper.infradead.org>
-CC:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-From:   Liu Shixin <liushixin2@huawei.com>
-Message-ID: <f447866f-ae3b-a1b7-ce9c-31e138b6854a@huawei.com>
-Date:   Fri, 18 Nov 2022 16:29:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+        Fri, 18 Nov 2022 03:58:21 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 720026EB42
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 00:57:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1668761842;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=p0ERrz7JCn9BnDY0Ayxan7lnfD5vEWFwGFrA85kPodc=;
+        b=OgUb7Rrvd0S/1tG9DsbgoEtyLBNYbCxqqbYFJDbu35hqQZr+wJtAgx+w6bHE4eJ5qICerB
+        PrUVi5E4XJ3R+fwhh48R+uyH9MRTyR0deqnoNeQqWHjDMXZH/jSahOOlZYNILqGReO7bUD
+        +MDfdnfgesbPwedipXYp9OSr/kKJZUc=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-587-OxE5eY7jOx685X9nwtQ2Hw-1; Fri, 18 Nov 2022 03:57:21 -0500
+X-MC-Unique: OxE5eY7jOx685X9nwtQ2Hw-1
+Received: by mail-wm1-f69.google.com with SMTP id m17-20020a05600c3b1100b003cf9cc47da5so1955753wms.9
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 00:57:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:organization:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p0ERrz7JCn9BnDY0Ayxan7lnfD5vEWFwGFrA85kPodc=;
+        b=rhAlYEK75XLSy+qVIVYPxiLybCvz2BmA3gKz7lBlrgCEI4Hafl5NRYl3FYqGGd+Sj6
+         ZSwtuZozXBNiHOsFaJ2U9nbvkp+fry+Dvaf4cPDHuHiO0XuNBIi3de4Rrb1vZ7wc8kab
+         KgvjQlmPtVte1vyZP2XWs3vE41aAydx6gTE8DPR+jb4OoQ8fKsbHRuEFGUx/+s0gbP8b
+         7fzDKTRz6GNgPFFkxkLnzRQwqlM6jIlQgFcgszXVllOS84Rdovh1VPK2kgV3ZZm4bUxD
+         iiE+9huVs1lLRSkcn0z7b9OBVk1MZqIsj9bmfGuJxdPkqUKEjluQ/si44JLaVly6Hh3X
+         n6dA==
+X-Gm-Message-State: ANoB5plaRNUHc3C3GhshOlgAxU/NshhkxAoRq4faH8iqaCP8LUZorx2w
+        gf99BGCcccQn3ki+VtIzxgNDILwm14+1H6ykVXJvX/lU1afa5LgFMIMDbJ/9gxibVwhVTVhutrg
+        JRo8CbMmjXYnWsNEMxwPjAR+3rQ==
+X-Received: by 2002:adf:facd:0:b0:231:482f:ed6b with SMTP id a13-20020adffacd000000b00231482fed6bmr3694256wrs.253.1668761840125;
+        Fri, 18 Nov 2022 00:57:20 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf50oZR0yD/v8/9UR7ki7wIw/KZLKr9m6FVoEPYMGY5P+v3sgErCbw58kQiRgWrcKNl7n+7VHQ==
+X-Received: by 2002:adf:facd:0:b0:231:482f:ed6b with SMTP id a13-20020adffacd000000b00231482fed6bmr3694247wrs.253.1668761839750;
+        Fri, 18 Nov 2022 00:57:19 -0800 (PST)
+Received: from ?IPV6:2003:cb:c704:f500:6512:fac3:2687:15ff? (p200300cbc704f5006512fac3268715ff.dip0.t-ipconnect.de. [2003:cb:c704:f500:6512:fac3:2687:15ff])
+        by smtp.gmail.com with ESMTPSA id 6-20020a05600c024600b003b50428cf66sm3709552wmj.33.2022.11.18.00.57.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 18 Nov 2022 00:57:19 -0800 (PST)
+Message-ID: <16759fd4-3a8c-b52c-20c3-9a9129f26799@redhat.com>
+Date:   Fri, 18 Nov 2022 09:57:18 +0100
 MIME-Version: 1.0
-In-Reply-To: <Y3c7Pko8AC3ZThgX@casper.infradead.org>
-Content-Type: text/plain; charset="windows-1252"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+Subject: Re: [PATCH] exec: Remove FOLL_FORCE for stack setup
+To:     Kees Cook <keescook@chromium.org>,
+        Eric Biederman <ebiederm@xmission.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <20221118003410.never.653-kees@kernel.org>
+Content-Language: en-US
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <20221118003410.never.653-kees@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.179.24]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemm100009.china.huawei.com (7.185.36.113)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 18.11.22 01:34, Kees Cook wrote:
+> It does not appear that FOLL_FORCE should be needed for setting up the
+> stack pages. They are allocated using the nascent brpm->vma, which was
+> newly created with VM_STACK_FLAGS, which an arch can override, but they
+> all appear to include VM_WRITE | VM_MAYWRITE. Remove FOLL_FORCE.
+> 
+> Cc: Eric Biederman <ebiederm@xmission.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Link: https://lore.kernel.org/lkml/202211171439.CDE720EAD@keescook/
+> Signed-off-by: Kees Cook <keescook@chromium.org>
 
+Thanks for looking into this!
 
-On 2022/11/18 15:58, Matthew Wilcox wrote:
-> On Fri, Nov 18, 2022 at 03:54:54PM +0800, Liu Shixin wrote:
->> On 2022/11/18 13:30, Matthew Wilcox wrote:
->>> On Wed, Nov 09, 2022 at 05:50:18PM +0800, Liu Shixin wrote:
->>>> syzbot found a null-ptr-deref by KASAN:
->>>>
->>>>  BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:71 [inline]
->>>>  BUG: KASAN: null-ptr-deref in atomic_read include/linux/atomic/atomic-instrumented.h:27 [inline]
->>>>  BUG: KASAN: null-ptr-deref in buffer_busy fs/buffer.c:2856 [inline]
->>>>  BUG: KASAN: null-ptr-deref in drop_buffers+0x61/0x2f0 fs/buffer.c:2868
->>>>  Read of size 4 at addr 0000000000000060 by task syz-executor.5/24786
->>>>
->>>>  CPU: 0 PID: 24786 Comm: syz-executor.5 Not tainted 6.0.0-syzkaller-09589-g55be6084c8e0 #0
->>>>  Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
->>>>  Call Trace:
->>>>   <TASK>
->>>>   __dump_stack lib/dump_stack.c:88 [inline]
->>>>   dump_stack_lvl+0x1e3/0x2cb lib/dump_stack.c:106
->>>>   print_report+0xf1/0x220 mm/kasan/report.c:436
->>>>   kasan_report+0xfb/0x130 mm/kasan/report.c:495
->>>>   kasan_check_range+0x2a7/0x2e0 mm/kasan/generic.c:189
->>>>   instrument_atomic_read include/linux/instrumented.h:71 [inline]
->>>>   atomic_read include/linux/atomic/atomic-instrumented.h:27 [inline]
->>>>   buffer_busy fs/buffer.c:2856 [inline]
->>>>   drop_buffers+0x61/0x2f0 fs/buffer.c:2868
->>>>   try_to_free_buffers+0x2b1/0x640 fs/buffer.c:2898
->>>> [...]
->>>>
->>>> We use folio_has_private() to decide whether call filemap_release_folio(),
->>>> which may call try_to_free_buffers() then. folio_has_private() return true
->>>> for both PG_private and PG_private_2. We should only call try_to_free_buffers()
->>>> for case PG_private. So we should recheck PG_private in try_to_free_buffers().
->>>>
->>>> Reported-by: syzbot+fbdb4ec578ebdcfb9ed2@syzkaller.appspotmail.com
->>>> Fixes: 266cf658efcf ("FS-Cache: Recruit a page flags for cache management")
->>> but this can only happen for a filesystem which uses both bufferheads
->>> and PG_private_2.  afaik there aren't any of those in the tree.  so
->>> this bug can't actually happen.
->>>
->>> if you have your own filesystem that does, you need to submit it.
->> This null-ptr-deref is found by syzbot, not by my own filesystem. I review the related code and
->> found no other possible cause. There are lock protection all the place calling try_to_free_buffers().
->> So I only thought of this one possibility. I'm also trying to reproduce the problem but haven't
->> been successful.
->>
->> If this can't actually happen, maybe I'm missing something when review the code. I'll keep trying
->> to see if I can reproduce the problem.
-> perhaps you could include more information, like the rest of the call
-> stack so we can see what filesystem is involved?
-This is the original link about the bug:
-https://groups.google.com/g/syzkaller-bugs/c/sqeWJ62OEsc/m/kr6FRxXqBAAJ
->
-> .
->
+Reviewed-by: David Hildenbrand <david@redhat.com>
+
+-- 
+Thanks,
+
+David / dhildenb
 
