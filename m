@@ -2,243 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2CA3E62F207
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 11:00:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AEEC562F22C
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 18 Nov 2022 11:10:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241272AbiKRKA1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Nov 2022 05:00:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36922 "EHLO
+        id S241302AbiKRKJn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Nov 2022 05:09:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40948 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235210AbiKRKAY (ORCPT
+        with ESMTP id S241487AbiKRKJ3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Nov 2022 05:00:24 -0500
-Received: from mail-pj1-x1031.google.com (mail-pj1-x1031.google.com [IPv6:2607:f8b0:4864:20::1031])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B4FC222B6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 02:00:22 -0800 (PST)
-Received: by mail-pj1-x1031.google.com with SMTP id v4-20020a17090a088400b00212cb0ed97eso4594351pjc.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 02:00:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=w4Tv0F1uItwO4IHFiNDZHG9aEzkG+Q+HP5zfgRRlg7Q=;
-        b=lseM9UHtQiSZ5wY8hPbQUGoaPEPzQ2N4x5yTzW3cVgV1oqQ7kONRnY3bNQ7o5TurHT
-         ZJHvXvXxNrWZENrgIr3MoKP4IIAsCK5xsrneVz2kCe3EAzcLKMzuXYnuCmp774nlmizR
-         V6Xist7V8Qc5qrBOsrgRug0vCgLJhrfi/2/5ufqo5k05Kpwlkhq/EG95pTLNwKkarURn
-         XIrfDCuPPnCPwOpICKjcmJcezfJeWTERGRTbqlacXzig465HsZpXK+MzmeG8KYIKFajR
-         ixdRkOzWla7EwqxCFBc/iMor6RvoKGaFSRU4R86r/fI0b5bdSWm40+WL5zSh15pSxXTR
-         CSZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=w4Tv0F1uItwO4IHFiNDZHG9aEzkG+Q+HP5zfgRRlg7Q=;
-        b=nvwByrL6lyvtdKKzlKfisPMSvDwIpdiZDRq3mUigS1uvMyV8xfc+Mq9if/kO9VLvWr
-         sb6Gs9VOAuddn8L9X26nnPRja+HC0AhTu/Ps4Vuh87pw0MEBTSVO7W5IOc4hvna8PVNZ
-         zLsgfMf4iBTMMPPHkghSBWQu1qjWQdSLwG1i7lLVWYf6upRH2HfS3/C1t6LgrTagN1o0
-         FFZAoP/L3O9U5KyUdPVLVw3ldJ8VTQdH+hMQQtyEhYHdAnIp2TCUILdIe2pAEvZVH0hz
-         VtHpeNnLKXTrjeK33BRy55MzLVbz4NieG209YlEOANsdkmmKG6oANtf+oAge5CMKZZWB
-         l/1Q==
-X-Gm-Message-State: ANoB5pkBG01rGm6qsfiohoU9huqUQyT8+XYL+3l5brtKk6zQCDh5kjQx
-        PWEQukrFZOePnRW6Gq1qMZ8LkQ==
-X-Google-Smtp-Source: AA0mqf60nRcs2G+x9aqMKPfPjzEgHr1qUsJJdKgfHIYXSiZgm1tHigXAMjpI42JSWc02ylMk4JDARA==
-X-Received: by 2002:a17:90b:4390:b0:218:4d16:e0c7 with SMTP id in16-20020a17090b439000b002184d16e0c7mr7118201pjb.105.1668765621883;
-        Fri, 18 Nov 2022 02:00:21 -0800 (PST)
-Received: from C02DW0BEMD6R.bytedance.net ([2404:9dc0:cd01::24])
-        by smtp.gmail.com with ESMTPSA id n10-20020a6563ca000000b0043a18cef977sm2439463pgv.13.2022.11.18.02.00.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 18 Nov 2022 02:00:21 -0800 (PST)
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-To:     akpm@linux-foundation.org
-Cc:     akinobu.mita@gmail.com, dvyukov@google.com, jgg@nvidia.com,
-        willy@infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org, Qi Zheng <zhengqi.arch@bytedance.com>
-Subject: [PATCH v3] mm: fix unexpected changes to {failslab|fail_page_alloc}.attr
-Date:   Fri, 18 Nov 2022 18:00:11 +0800
-Message-Id: <20221118100011.2634-1-zhengqi.arch@bytedance.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+        Fri, 18 Nov 2022 05:09:29 -0500
+Received: from smtp-42a8.mail.infomaniak.ch (smtp-42a8.mail.infomaniak.ch [IPv6:2001:1600:4:17::42a8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DEF8B2B60D
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 02:09:27 -0800 (PST)
+Received: from smtp-2-0000.mail.infomaniak.ch (unknown [10.5.36.107])
+        by smtp-3-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4NDCDz57ShzMpvgL;
+        Fri, 18 Nov 2022 11:09:23 +0100 (CET)
+Received: from ns3096276.ip-94-23-54.eu (unknown [23.97.221.149])
+        by smtp-2-0000.mail.infomaniak.ch (Postfix) with ESMTPA id 4NDCDx3YlZzMppFH;
+        Fri, 18 Nov 2022 11:09:21 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=digikod.net;
+        s=20191114; t=1668766163;
+        bh=LuwiYNzAruu7wtGWb9RDS2lQo7BZE729+uX1o4+kCBY=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=AOVi71Og7GijO5GBdtvVHVT0UqUW5unZYXf7R2wSO3wE4w3vICxpRXL6gYOPDjODl
+         QzTQ4Nd8BUEoC8kYGm5XFBRF/1Mg1jQuF8SY+ELrQvAl7TZe3TYW+YGpc7N1Te7KCh
+         IqHKYI79fY/JW/AcyPkNb4M78P7elhKH0fpbv2PQ=
+Message-ID: <42f5923d-5e47-68d5-20a6-4b5342a9bd19@digikod.net>
+Date:   Fri, 18 Nov 2022 11:09:20 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: 
+Subject: Re: [PATCH v5 02/30] fs: pass dentry to set acl method
+Content-Language: en-US
+To:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, xiujianfeng <xiujianfeng@huawei.com>
+Cc:     Seth Forshee <sforshee@kernel.org>, Christoph Hellwig <hch@lst.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        linux-security-module@vger.kernel.org
+References: <20221018115700.166010-1-brauner@kernel.org>
+ <20221018115700.166010-3-brauner@kernel.org>
+From:   =?UTF-8?Q?Micka=c3=abl_Sala=c3=bcn?= <mic@digikod.net>
+In-Reply-To: <20221018115700.166010-3-brauner@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When we specify __GFP_NOWARN, we only expect that no warnings
-will be issued for current caller. But in the __should_failslab()
-and __should_fail_alloc_page(), the local GFP flags alter the
-global {failslab|fail_page_alloc}.attr, which is persistent and
-shared by all tasks. This is not what we expected, let's fix it.
+Hi Christian,
 
-Cc: stable@vger.kernel.org
-Fixes: 3f913fc5f974 ("mm: fix missing handler for __GFP_NOWARN")
-Reported-by: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
-Reviewed-by: Akinobu Mita <akinobu.mita@gmail.com>
----
- v1: https://lore.kernel.org/lkml/20221107033109.59709-1-zhengqi.arch@bytedance.com/
- v2: https://lore.kernel.org/lkml/20221108035232.87180-1-zhengqi.arch@bytedance.com/
+We are working on updating the security_inode_*attr LSM hooks to use 
+path instead of inode [1]. Indeed, this is required for path-based LSMs 
+such as Landlock, AppArmor and Tomoyo to make sense of attr/xattr 
+accesses. Could you please update this new ACL API to use struct path 
+instead of struct dentry?
 
- Changelog in v2 -> v3:
- - collect Reviewed-by
- - rebase onto the next-20221118
+[1] 
+https://lore.kernel.org/all/1373bbe5-16b1-bf0e-5f92-14c31cb94897@huawei.com/
 
- Changelog in v1 -> v2:
-  - add comment for __should_failslab() and __should_fail_alloc_page()
-    (suggested by Jason)
 
- include/linux/fault-inject.h |  7 +++++--
- lib/fault-inject.c           | 14 +++++++++-----
- mm/failslab.c                | 12 ++++++++++--
- mm/page_alloc.c              |  7 +++++--
- 4 files changed, 29 insertions(+), 11 deletions(-)
-
-diff --git a/include/linux/fault-inject.h b/include/linux/fault-inject.h
-index 9f6e25467844..444236dadcf0 100644
---- a/include/linux/fault-inject.h
-+++ b/include/linux/fault-inject.h
-@@ -20,7 +20,6 @@ struct fault_attr {
- 	atomic_t space;
- 	unsigned long verbose;
- 	bool task_filter;
--	bool no_warn;
- 	unsigned long stacktrace_depth;
- 	unsigned long require_start;
- 	unsigned long require_end;
-@@ -32,6 +31,10 @@ struct fault_attr {
- 	struct dentry *dname;
- };
- 
-+enum fault_flags {
-+	FAULT_NOWARN =	1 << 0,
-+};
-+
- #define FAULT_ATTR_INITIALIZER {					\
- 		.interval = 1,						\
- 		.times = ATOMIC_INIT(1),				\
-@@ -40,11 +43,11 @@ struct fault_attr {
- 		.ratelimit_state = RATELIMIT_STATE_INIT_DISABLED,	\
- 		.verbose = 2,						\
- 		.dname = NULL,						\
--		.no_warn = false,					\
- 	}
- 
- #define DECLARE_FAULT_ATTR(name) struct fault_attr name = FAULT_ATTR_INITIALIZER
- int setup_fault_attr(struct fault_attr *attr, char *str);
-+bool should_fail_ex(struct fault_attr *attr, ssize_t size, int flags);
- bool should_fail(struct fault_attr *attr, ssize_t size);
- 
- #ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
-diff --git a/lib/fault-inject.c b/lib/fault-inject.c
-index 4b8fafce415c..5971f7c3e49e 100644
---- a/lib/fault-inject.c
-+++ b/lib/fault-inject.c
-@@ -41,9 +41,6 @@ EXPORT_SYMBOL_GPL(setup_fault_attr);
- 
- static void fail_dump(struct fault_attr *attr)
- {
--	if (attr->no_warn)
--		return;
--
- 	if (attr->verbose > 0 && __ratelimit(&attr->ratelimit_state)) {
- 		printk(KERN_NOTICE "FAULT_INJECTION: forcing a failure.\n"
- 		       "name %pd, interval %lu, probability %lu, "
-@@ -103,7 +100,7 @@ static inline bool fail_stacktrace(struct fault_attr *attr)
-  * http://www.nongnu.org/failmalloc/
-  */
- 
--bool should_fail(struct fault_attr *attr, ssize_t size)
-+bool should_fail_ex(struct fault_attr *attr, ssize_t size, int flags)
- {
- 	bool stack_checked = false;
- 
-@@ -152,13 +149,20 @@ bool should_fail(struct fault_attr *attr, ssize_t size)
- 		return false;
- 
- fail:
--	fail_dump(attr);
-+	if (!(flags & FAULT_NOWARN))
-+		fail_dump(attr);
- 
- 	if (atomic_read(&attr->times) != -1)
- 		atomic_dec_not_zero(&attr->times);
- 
- 	return true;
- }
-+EXPORT_SYMBOL_GPL(should_fail_ex);
-+
-+bool should_fail(struct fault_attr *attr, ssize_t size)
-+{
-+	return should_fail_ex(attr, size, 0);
-+}
- EXPORT_SYMBOL_GPL(should_fail);
- 
- #ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
-diff --git a/mm/failslab.c b/mm/failslab.c
-index 58df9789f1d2..ffc420c0e767 100644
---- a/mm/failslab.c
-+++ b/mm/failslab.c
-@@ -16,6 +16,8 @@ static struct {
- 
- bool __should_failslab(struct kmem_cache *s, gfp_t gfpflags)
- {
-+	int flags = 0;
-+
- 	/* No fault-injection for bootstrap cache */
- 	if (unlikely(s == kmem_cache))
- 		return false;
-@@ -30,10 +32,16 @@ bool __should_failslab(struct kmem_cache *s, gfp_t gfpflags)
- 	if (failslab.cache_filter && !(s->flags & SLAB_FAILSLAB))
- 		return false;
- 
-+	/*
-+	 * In some cases, it expects to specify __GFP_NOWARN
-+	 * to avoid printing any information(not just a warning),
-+	 * thus avoiding deadlocks. See commit 6b9dbedbe349 for
-+	 * details.
-+	 */
- 	if (gfpflags & __GFP_NOWARN)
--		failslab.attr.no_warn = true;
-+		flags |= FAULT_NOWARN;
- 
--	return should_fail(&failslab.attr, s->object_size);
-+	return should_fail_ex(&failslab.attr, s->object_size, flags);
- }
- 
- static int __init setup_failslab(char *str)
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index f7a63684e6c4..baf97166172c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -3909,6 +3909,8 @@ __setup("fail_page_alloc=", setup_fail_page_alloc);
- 
- static bool __should_fail_alloc_page(gfp_t gfp_mask, unsigned int order)
- {
-+	int flags = 0;
-+
- 	if (order < fail_page_alloc.min_order)
- 		return false;
- 	if (gfp_mask & __GFP_NOFAIL)
-@@ -3919,10 +3921,11 @@ static bool __should_fail_alloc_page(gfp_t gfp_mask, unsigned int order)
- 			(gfp_mask & __GFP_DIRECT_RECLAIM))
- 		return false;
- 
-+	/* See comment in __should_failslab() */
- 	if (gfp_mask & __GFP_NOWARN)
--		fail_page_alloc.attr.no_warn = true;
-+		flags |= FAULT_NOWARN;
- 
--	return should_fail(&fail_page_alloc.attr, 1 << order);
-+	return should_fail_ex(&fail_page_alloc.attr, 1 << order, flags);
- }
- 
- #ifdef CONFIG_FAULT_INJECTION_DEBUG_FS
--- 
-2.20.1
-
+On 18/10/2022 13:56, Christian Brauner wrote:
+> The current way of setting and getting posix acls through the generic
+> xattr interface is error prone and type unsafe. The vfs needs to
+> interpret and fixup posix acls before storing or reporting it to
+> userspace. Various hacks exist to make this work. The code is hard to
+> understand and difficult to maintain in it's current form. Instead of
+> making this work by hacking posix acls through xattr handlers we are
+> building a dedicated posix acl api around the get and set inode
+> operations. This removes a lot of hackiness and makes the codepaths
+> easier to maintain. A lot of background can be found in [1].
+> 
+> Since some filesystem rely on the dentry being available to them when
+> setting posix acls (e.g., 9p and cifs) they cannot rely on set acl inode
+> operation. But since ->set_acl() is required in order to use the generic
+> posix acl xattr handlers filesystems that do not implement this inode
+> operation cannot use the handler and need to implement their own
+> dedicated posix acl handlers.
+> 
+> Update the ->set_acl() inode method to take a dentry argument. This
+> allows all filesystems to rely on ->set_acl().
+> 
+> As far as I can tell all codepaths can be switched to rely on the dentry
+> instead of just the inode. Note that the original motivation for passing
+> the dentry separate from the inode instead of just the dentry in the
+> xattr handlers was because of security modules that call
+> security_d_instantiate(). This hook is called during
+> d_instantiate_new(), d_add(), __d_instantiate_anon(), and
+> d_splice_alias() to initialize the inode's security context and possibly
+> to set security.* xattrs. Since this only affects security.* xattrs this
+> is completely irrelevant for posix acls.
+> 
+> Link: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org [1]
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+> ---
+> 
+> Notes:
+>      /* v2 */
+>      Christoph Hellwig <hch@lst.de>:
+>      - Split orangefs into a preparatory patch.
+>      
+>      /* v3 */
+>      unchanged
+>      
+>      /* v4 */
+>      unchanged
+>      
+>      /* v5 */
+>      unchanged
+> 
+>   Documentation/filesystems/vfs.rst |  2 +-
+>   fs/bad_inode.c                    |  2 +-
+>   fs/btrfs/acl.c                    |  3 ++-
+>   fs/btrfs/ctree.h                  |  2 +-
+>   fs/btrfs/inode.c                  |  2 +-
+>   fs/ceph/acl.c                     |  3 ++-
+>   fs/ceph/inode.c                   |  2 +-
+>   fs/ceph/super.h                   |  2 +-
+>   fs/ext2/acl.c                     |  3 ++-
+>   fs/ext2/acl.h                     |  2 +-
+>   fs/ext2/inode.c                   |  2 +-
+>   fs/ext4/acl.c                     |  3 ++-
+>   fs/ext4/acl.h                     |  2 +-
+>   fs/ext4/inode.c                   |  2 +-
+>   fs/f2fs/acl.c                     |  4 +++-
+>   fs/f2fs/acl.h                     |  2 +-
+>   fs/f2fs/file.c                    |  2 +-
+>   fs/fuse/acl.c                     |  3 ++-
+>   fs/fuse/fuse_i.h                  |  2 +-
+>   fs/gfs2/acl.c                     |  3 ++-
+>   fs/gfs2/acl.h                     |  2 +-
+>   fs/gfs2/inode.c                   |  2 +-
+>   fs/jffs2/acl.c                    |  3 ++-
+>   fs/jffs2/acl.h                    |  2 +-
+>   fs/jffs2/fs.c                     |  2 +-
+>   fs/jfs/acl.c                      |  3 ++-
+>   fs/jfs/file.c                     |  2 +-
+>   fs/jfs/jfs_acl.h                  |  2 +-
+>   fs/ksmbd/smb2pdu.c                |  4 ++--
+>   fs/ksmbd/smbacl.c                 |  4 ++--
+>   fs/ksmbd/vfs.c                    | 15 ++++++++-------
+>   fs/ksmbd/vfs.h                    |  4 ++--
+>   fs/nfs/nfs3_fs.h                  |  2 +-
+>   fs/nfs/nfs3acl.c                  |  3 ++-
+>   fs/nfsd/nfs2acl.c                 |  4 ++--
+>   fs/nfsd/nfs3acl.c                 |  4 ++--
+>   fs/nfsd/vfs.c                     |  4 ++--
+>   fs/ntfs3/file.c                   |  2 +-
+>   fs/ntfs3/ntfs_fs.h                |  4 ++--
+>   fs/ntfs3/xattr.c                  |  9 +++++----
+>   fs/ocfs2/acl.c                    |  3 ++-
+>   fs/ocfs2/acl.h                    |  2 +-
+>   fs/orangefs/acl.c                 |  5 +++--
+>   fs/orangefs/inode.c               |  7 ++++---
+>   fs/orangefs/orangefs-kernel.h     |  4 ++--
+>   fs/posix_acl.c                    | 18 +++++++++++-------
+>   fs/reiserfs/acl.h                 |  6 +++---
+>   fs/reiserfs/inode.c               |  2 +-
+>   fs/reiserfs/xattr_acl.c           |  9 ++++++---
+>   fs/xfs/xfs_acl.c                  |  3 ++-
+>   fs/xfs/xfs_acl.h                  |  2 +-
+>   fs/xfs/xfs_iops.c                 | 10 ++++++----
+>   include/linux/fs.h                |  2 +-
+>   include/linux/posix_acl.h         | 12 ++++++------
+>   mm/shmem.c                        |  2 +-
+>   55 files changed, 119 insertions(+), 93 deletions(-)
