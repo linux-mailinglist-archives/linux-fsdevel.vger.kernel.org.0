@@ -2,48 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A54E630CF2
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Nov 2022 08:25:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECCDE630D84
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Nov 2022 09:49:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232799AbiKSHZd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 19 Nov 2022 02:25:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36884 "EHLO
+        id S232732AbiKSItS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 19 Nov 2022 03:49:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55056 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232849AbiKSHZZ (ORCPT
+        with ESMTP id S229470AbiKSItQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 19 Nov 2022 02:25:25 -0500
+        Sat, 19 Nov 2022 03:49:16 -0500
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A114B97ED;
-        Fri, 18 Nov 2022 23:25:25 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C90CB65867;
+        Sat, 19 Nov 2022 00:49:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=v+TMF0GoA12PKZwucJCzZsmn+Fpr6Lb0dJsJFpaSjz8=; b=Mo4CcAFlo05KzZxw3DDzGY45u5
-        zzuw94a3Z1kAqqFmtCJKVxkGONaXJVZA88E0Ww6xcjiWlblogUrCR8M+CIIATCqnbkHBc4VWORz9a
-        n5steYdp4rvstRk6eTMJNkRWMtMYyGQdw2d6KbjtPvn4Nt6gMx3jH0FmmN70Bzv4a8TzuY6YlEugX
-        VA8tdcU5fSWKMWRmVyOPXAl+DyoZXGhKVi+ZVpPZtqX3nSkBybsQIWYjX3vuqc8BXs+A0jjRw2g1c
-        5ln6nzT0TeW3mzLPa9OlolyhM6f1JwwFPHQ57Yd58kkSASoiQoPuxdam3ooFkLhjvpo5pPP531Me4
-        2E1CKsfQ==;
+        bh=0TKN0dlGfGdFwo0dwprmBXt8F8zozs1lggU4kgtJGsE=; b=ADa12tjmGzsxLncfyrWy0a5a0r
+        w084JLxMODd12t/5V2nbkiin9AdRZWntJk/SJq6zqMOZKJLDSMuLUtKgR4lLPiciZa74Sktkmcy0j
+        Z7LP45wtH15ucIwu5tLJKgXVVycrcyI5/AG7QlNJ00LuhFb5IBhJq4ip74Dp0+dXXGpnAwlaSvLup
+        7VtfQF/z2da/GGs8ZC18zUxEMJQsia7RDerMAvB95iO70RzBIELFwpEZP3ZsUvH9WAxxiYwynB2v6
+        kUiF2UNsxiG6jV0ncs1IhE956RvrKELtml7GT6o/NEBLhlMbefvYJW2gx336rs32nwT5XT1J5JlzG
+        TOhpyLZQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1owIE5-0050bd-0l;
-        Sat, 19 Nov 2022 07:25:21 +0000
-Date:   Sat, 19 Nov 2022 07:25:21 +0000
+        id 1owJWO-0051Q8-21;
+        Sat, 19 Nov 2022 08:48:20 +0000
+Date:   Sat, 19 Nov 2022 08:48:20 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Peter Griffin <peter.griffin@linaro.org>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>, stable@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Will McVicker <willmcvicker@google.com>,
-        Peter Griffin <gpeter@google.com>
-Subject: Re: [PATCH] vfs: vfs_tmpfile: ensure O_EXCL flag is enforced
-Message-ID: <Y3iE4WjBfqmFJb/h@ZenIV>
-References: <20221103170210.464155-1-peter.griffin@linaro.org>
- <CAJfpeguUEb++huEOdtVMgC2hbqh4f5+7iOomJ=fin-RE=pu8jQ@mail.gmail.com>
- <CADrjBPotAaBMpPjaVZ_aXQMt-RF6wiYpeYZT=5dZS_E=vGv2eg@mail.gmail.com>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jeff Layton <jlayton@kernel.org>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Scott Mayhew <smayhew@redhat.com>,
+        Paul Moore <paul@paul-moore.com>, linux-nfs@vger.kernel.org,
+        selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5] vfs, security: Fix automount superblock LSM init
+ problem, preventing NFS sb sharing
+Message-ID: <Y3iYVFT40L0+/MzO@ZenIV>
+References: <166807856758.2972602.14175912201162072721.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CADrjBPotAaBMpPjaVZ_aXQMt-RF6wiYpeYZT=5dZS_E=vGv2eg@mail.gmail.com>
+In-Reply-To: <166807856758.2972602.14175912201162072721.stgit@warthog.procyon.org.uk>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
@@ -54,15 +58,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 14, 2022 at 02:38:15PM +0000, Peter Griffin wrote:
-
-> commit that reworked the tmpfile vfs logic and introduced the
-> regression. Can you pick up this commit and send it onto Linus
-> for inclusion into the next v6.1-rc release?
+On Thu, Nov 10, 2022 at 11:09:27AM +0000, David Howells wrote:
+> When NFS superblocks are created by automounting, their LSM parameters
+> aren't set in the fs_context struct prior to sget_fc() being called,
+> leading to failure to match existing superblocks.
 > 
-> Note, it fixes a regression for userspace introduced in this merge
-> window so I was hoping to get the fix into the next -rc so that the
-> v6.1 release does not contain this bug.
+> Fix this by adding a new LSM hook to load fc->security for submount
+> creation when alloc_fs_context() is creating the fs_context for it.
 
-Applied to #fixes and pushed out; will send a pull request to Linus
-tomorrow...
+FWIW, it feels like security_sb_mnt_opts_compat() would be a saner place
+for that.  It would need to get struct dentry *reference passed to it,
+but that should be it...
