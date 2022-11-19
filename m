@@ -2,61 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 55EE4630BAB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Nov 2022 05:08:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55FB9630BED
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Nov 2022 05:46:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229993AbiKSEIC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Nov 2022 23:08:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59008 "EHLO
+        id S231445AbiKSEqY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Nov 2022 23:46:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55316 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229470AbiKSEH7 (ORCPT
+        with ESMTP id S229663AbiKSEqW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Nov 2022 23:07:59 -0500
-Received: from mail-lj1-x241.google.com (mail-lj1-x241.google.com [IPv6:2a00:1450:4864:20::241])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32D3F8FB10;
-        Fri, 18 Nov 2022 20:07:58 -0800 (PST)
-Received: by mail-lj1-x241.google.com with SMTP id z24so9075373ljn.4;
-        Fri, 18 Nov 2022 20:07:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=dtRW27/VFkKfRExNy2R07fG81X6WC5yaz70q9JRBAiU=;
-        b=TtXIVPnDZ2ShtyoirzVFHNKPh8oO5RxHmR1Jln/WpZ2R0mz/omA64Nc4xWIcdeB5KS
-         EG/6ZdqTJ6+dzZnj4B1/ba0XEB+3LnlGUarb0AProNgXWuIkINRtF1oKz2sd/XUTZ2wf
-         WSXRATcVyhcRzZ0Zy7r7KwlOfrdcCG3GHRylR1qxE9M3m6nq+s0ypORbYGRxhGHP8ktz
-         kcqToSSYSeBQ3fgd+yysQis00CStwh08l95BpK7x3sbSIdAixGyMcdDiDcfNCNJG4qLF
-         jwXBF+9GTdUV6bTVsYdfcloCX9DEHY+i3LkH2jF6IOcbDAccSmg3q9WQXn7wdKR0NbYM
-         GTYw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dtRW27/VFkKfRExNy2R07fG81X6WC5yaz70q9JRBAiU=;
-        b=29Vo+NKzMhMEu3uy8flqd3KicER8SonayyJpoV9XG8U+DW7LXqbeVaw6rwnbgPgTXQ
-         vzTRsHSIpldch7V4oyig+RCrH8heFax3bxiXRaIG9y+H305bhqjkLXDwMhwL+wWsRRG0
-         h5HzrAKsSBR0c8m99Rmx4hTKZY+8i82rULfTcuOGYjJbH4MSis8rr71FuDzS31n+ig0X
-         X7pds3HPIPDwJQTcNmWsZRz+AaOjuoDsh/PJiPscv0gQjSrgcDyEwXeJ9JZXTuzJqw4o
-         VVXg+v6oPb3EzPbk+IMX7rp3CRCmx4TcWLM6yPHI/ZSE8Ljd7GpNgJcIE4Pxq82/7ZDH
-         /2iQ==
-X-Gm-Message-State: ANoB5pn97QtlLu5fYuD6sH+oMr1Zv46mr0Njo+4avoXS1TcORILguuXD
-        WsMT+Hk2f1AMLofgjTfWupiDbXlkXuA9dAYHCs0=
-X-Google-Smtp-Source: AA0mqf6TtkhSfRQWsSRKkFVrN1K2vpE+3E7DbjrBZGD1HMn4Be7sA4L0VCgEG63L5y4r/HHwk2Mwiv1G7ZioFSoo96Q=
-X-Received: by 2002:a05:651c:198f:b0:277:6a5:109b with SMTP id
- bx15-20020a05651c198f00b0027706a5109bmr3472454ljb.42.1668830876279; Fri, 18
- Nov 2022 20:07:56 -0800 (PST)
+        Fri, 18 Nov 2022 23:46:22 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DB8DA2883;
+        Fri, 18 Nov 2022 20:46:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=SJWklytu4XN4G6PI77eHjQA+9EaF4oxISWvc8B/9PuE=; b=oCkXTzhw0EUfCL14MWFML46AZV
+        RE4mrm4fRCV9t6PtQOuGnHYAqPP44npCEm4xsdp08/fgRHrS/EhUI4Y7M/RXLGioE8o+jIlXJt3QL
+        9Cak56NJSdR6EUQ5KVecxQaxBRchw4GS5i+u00Kh5YgPaZouRRneVNCk2E7m7MBfAVQvbgNv81apC
+        F+tRUd/YkK8nrakQmNUJs+0dOyU+Pml3zRuWJP74o6gSgJe45ePBi+iEQDpnztXBA2Ip3T6hexmVW
+        fEhnzuD8z/r6DkGB8Gg5KVNa5BfKgsnSd8wIn60/pff3Ml0K5h5/uqpG8KS2Zsa1w7DnstegOLiXw
+        +7Xm7ipw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1owFk9-004zAW-2t;
+        Sat, 19 Nov 2022 04:46:17 +0000
+Date:   Sat, 19 Nov 2022 04:46:17 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Peilin Ye <yepeilin.cs@gmail.com>
+Cc:     Peilin Ye <peilin.ye@bytedance.com>,
+        Cong Wang <cong.wang@bytedance.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] coredump: Use vmsplice_to_pipe() for pipes in
+ dump_emit_page()
+Message-ID: <Y3hfmYF6b5T35Xqi@ZenIV>
+References: <20221029005147.2553-1-yepeilin.cs@gmail.com>
+ <20221031210349.3346-1-yepeilin.cs@gmail.com>
 MIME-Version: 1.0
-From:   Jorropo <jorropo.pgm@gmail.com>
-Date:   Sat, 19 Nov 2022 05:07:45 +0100
-Message-ID: <CAHWihb_EYWKXOqdN0iDBDygk+EGbhaxWHTKVRhtpm_TihbCjtw@mail.gmail.com>
-Subject: [REGRESSION] XArray commit prevents booting with 6.0-rc1 or later
-To:     willy@infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, nborisov@suse.com,
-        regressions@lists.linux.dev, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221031210349.3346-1-yepeilin.cs@gmail.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -64,33 +53,20 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-#regzbot introduced v5.19-rc6..1dd685c414a7b9fdb3d23aca3aedae84f0b998ae
+On Mon, Oct 31, 2022 at 02:03:49PM -0700, Peilin Ye wrote:
 
-Hi, I recently tried to upgrade to linux v6.0.x but when trying to
-boot it fails with "error: out of memory" when or after loading
-initramfs (which then kpanics because the vfs root is missing).
-The latest releases I tested are v6.0.9 and v6.1-rc5 and it's broken there too.
+> +	n = vmsplice_to_pipe(file, &iter, 0);
+> +	if (n == -EBADF)
+> +		n = __kernel_write_iter(cprm->file, &iter, &pos);
 
-I bisected the error to this patch:
-1dd685c414a7b9fdb3d23aca3aedae84f0b998ae "XArray: Add calls to
-might_alloc()" is the first bad commit.
-I've confirmed this is not a side effect of a poor bitsect because
-1dd685c414a7b9fdb3d23aca3aedae84f0b998ae~1 (v5.19-rc6) works.
-I've tried reverting the failing commit on top of v6.0.9 and it didn't fixed it.
+Yuck.  If anything, I would rather put a flag into coredump_params
+and check it instead; this check for -EBADF is both unidiomatic and
+brittle.  Suppose someday somebody looks at vmsplice(2) and
+decides that it would make sense to lift the "is it a pipe" check
+into e.g. vmsplice_type().  There's no obvious reasons not to,
+unless one happens to know that coredump relies upon that check done
+in vmsplice_to_pipe().  It's asking for trouble several years down
+the road.
 
-My system is:
-CPU: Ryzen 3600
-Motherboard: B550 AORUS ELITE V2
-Ram: 48GB (16+32) of unmatched DDR4
-GPU: AMD rx580
-Various ssds, hdds and network cards plugged with various buses.
-
-You can find a folder with my .config, bisect logs and screenshots of
-the error messages there:
-https://jorropo.net/ipfs/QmaWH84UPEen4E9n69KZiLjPDaTi2aJvizv3JYiL7Gfmnr/
-https://ipfs.io/ipfs/QmaWH84UPEen4E9n69KZiLjPDaTi2aJvizv3JYiL7Gfmnr/
-
-I'll be happy to assist you if you need help reproducing this issue
-and or testing fixes.
-
-Thx, Jorropo
+Make it explicit and independent from details of error checking
+in vmsplice(2).
