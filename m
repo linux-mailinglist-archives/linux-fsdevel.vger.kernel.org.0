@@ -2,131 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 63D5163088F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Nov 2022 02:43:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD8D06308A7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 19 Nov 2022 02:46:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232369AbiKSBnA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 18 Nov 2022 20:43:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43160 "EHLO
+        id S232388AbiKSBqK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 18 Nov 2022 20:46:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232349AbiKSBmn (ORCPT
+        with ESMTP id S233544AbiKSBpt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 18 Nov 2022 20:42:43 -0500
-Received: from mail-pl1-x62f.google.com (mail-pl1-x62f.google.com [IPv6:2607:f8b0:4864:20::62f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75189A28A4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 16:48:43 -0800 (PST)
-Received: by mail-pl1-x62f.google.com with SMTP id d20so5953217plr.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 16:48:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eSj2/cLHt1SdQObKh67xzbIPuUwvEskces+Lnu0fKrQ=;
-        b=Lod+RJl5ay4LW7CCVlbLVUpVW9yWRmjZS7z4BgLn9FMTNVOMqDo575AiTzf60tmQ7k
-         1EX58Lueuy4m/3mWqyE+pMkUTKz3s5nj2gQwc6eVlmACBwow8YCLU/nsCqdAbZ8d2mIK
-         jF8QPdH+gSoH53sUSzO25R7eb3xC3lTEbIKviDGAW6J5r4ssCLHrEnQrkU0TlZ3k6wGV
-         REZwacxFiMi7qyROKMRk4RwZ1VzfdsgggKrDrjMzNMbleR1EmdEEgi+6NPSbBWYoSvOn
-         fk3RDude0PcKMooAKfQAuDS/qWB0tlSvfrhCSCJDGUtP3TuZOSvPVzb1db/bRzJ8/bjK
-         p/SQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eSj2/cLHt1SdQObKh67xzbIPuUwvEskces+Lnu0fKrQ=;
-        b=7Foa/booNMyBxCUAPVT/6/Zk9G6v0X4igXUO7MfINSMpFjZlPGo061LntgVsnKQMrN
-         KCKMeec8hxhb2z9IbYQm1UnVokHHNGDIqnpCzR85BSBxZqUq5rOdy8rcLGV/3fD5gFxd
-         vYpZpmxa21ZTR1fjm7zYdtTx9Ft8rWJVzV9r2cExc5eUElQcK/g/z40gekB/Njoz03xz
-         YKGg6Xcd/btvZpB5CLxlAjyppI9/rWMusccbGNo1/j6FcKRHtwflxGAhp4qHRCkkYsyF
-         rzSP+TaPWi+wsDDDts/ToJ+gEZdRgE3hY3C5sr+TCEc5DAdmy6RV6kTutAFzbW6vQ9dz
-         YmpQ==
-X-Gm-Message-State: ANoB5pmPAs1pGmVUcRi+LAq2V2y22KAt36Be/Y3mqrR15Bhaztst34xB
-        HMX9/2PTgTqPOdJNnJNIzF2z4w==
-X-Google-Smtp-Source: AA0mqf6swX3sJxyi4BgEUBAbZm2DOjd6hNV4fVJPFohM84Xw+4s8Nshz7t9X6MP8fLm+8fDHRp4zcA==
-X-Received: by 2002:a17:902:f391:b0:178:71f9:b8fc with SMTP id f17-20020a170902f39100b0017871f9b8fcmr2021518ple.44.1668818922973;
-        Fri, 18 Nov 2022 16:48:42 -0800 (PST)
-Received: from [10.255.94.72] ([139.177.225.224])
-        by smtp.gmail.com with ESMTPSA id e8-20020a630f08000000b0046faefad8a1sm3382499pgl.79.2022.11.18.16.48.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 18 Nov 2022 16:48:42 -0800 (PST)
-Message-ID: <4d6eb453-2ba5-12f3-8dff-7074a62441ce@bytedance.com>
-Date:   Sat, 19 Nov 2022 08:48:36 +0800
+        Fri, 18 Nov 2022 20:45:49 -0500
+Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 26DBD80980
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 17:09:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1668820149; x=1700356149;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gKgoktrAN057cqxOyJdMmYRPUXzTjJTZkfiT2avEmng=;
+  b=FJEuON30hazgwI5ZmL/vSgJgLjNIfxyjQ5Wb7bzGS3inaIV038EzNkTb
+   8dfd+va8/gntQOVA/VDFAzsTTOVZo9sCy96L5rXdK97mYixVEaoVD5RjJ
+   6zRemkzskL9IRlXYdWjBL/Qw3KIf0/7xANyHSEz/lHITwn3NxgFTh1qEt
+   kNSKRrrRZX+RHTv5sw6X3T4eikU5V4k/QByCJk4fQqktt4jMhPdjzLXvu
+   KnpLh4bfMeJKRRNiNh8/UMtOtO8dk66YA9hvKxUsQZ9eFFB5E4Ar9gFKF
+   TF8RP+eJqHbtS+gfzMJRag+eEyQADH1fP4I3YjB3mIJflhSpte9L71KA6
+   g==;
+X-IronPort-AV: E=Sophos;i="5.96,175,1665417600"; 
+   d="scan'208";a="328752048"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 19 Nov 2022 09:09:09 +0800
+IronPort-SDR: X9XBo/XDYCdLhM7H9looNCekrJam0iiOP5qcnH0F86laN+zogq8iW3X5Zpo0zzrSqUVwnImuYb
+ ZOo5l4FYL5z0sFpEESW3NM0aYNXcLqIDTODX08qP9C9pO8nx7D2ODFVgMs7sCbTIxFQmfNfRV9
+ LhiwmqMyIzzF+/3c89hAM1iSL0CQNJqs9ZrXlCfTFPY/R6CQyh+XhFbEj/9plbJ9qwKBMl4rnT
+ T68TdOaILVMhuPsXyMf/UvBdCFEqWs6v+68vUWBZJgSQdvJ/YfUMKIN81Z8tCim1ozye20A4Yf
+ dg0=
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Nov 2022 16:28:02 -0800
+IronPort-SDR: a/vpPgXQN1CFib3b6RYk6G9Yd9N6gYCUly1a1C/luQUiPv/FDk5jR2fAN8VNnhlNznVWO7l/M3
+ Fta5Etr4Rf72Q8RiQD+OxtiZ4ngcvTjGDEevRnU8ajtYuGttKljuLfFHycZ8K26SrPOIBWacH3
+ ECGGZ95sYw28ea4utAZaz6kQ+yIKwxT+xpjllxNxJfIQIW75Nu/8/aQcIehpaskmCV/I54ufEp
+ zg738BxnRJdgClLFlK8dFgKvXzKNAQBGDwiZ1Gfd/zDO3xWdUQ+lJvoICbgk9t49FPaE2VNlIc
+ WpM=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Nov 2022 17:09:10 -0800
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4NDbC86LKRz1RvTr
+        for <linux-fsdevel@vger.kernel.org>; Fri, 18 Nov 2022 17:09:08 -0800 (PST)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:mime-version
+        :x-mailer:message-id:date:subject:to:from; s=dkim; t=1668820148;
+         x=1671412149; bh=gKgoktrAN057cqxOyJdMmYRPUXzTjJTZkfiT2avEmng=; b=
+        uqDV/b/5DzM80mIqHnPt1Cp4dsLyF8LlLxdQaQqIyVzBKi42Hj7HtmU/GZGNU/Gu
+        e0uYihjrQGJXHV/SrNIBNYTtl82rUnk7iqO+EjuKreLzXNChjM50qrAa2iYk30lF
+        XXjX2pvl8z9QCwSl8ywuM4wGepO+8K/IcsU7E9qyRhN8UC1PP5sm8dopdUDBLLvN
+        AvBY0RemeRjZWdl+k7P5Bl6mIg3Ky0CGFhR6UO5qGTc46faf5tz0sK+Ezg51g3EE
+        NJLMo8129lTK3aBR+XldjaEMtHYYZ7Cw2FRk/bjXnFaaK3oUtUdSCKUKhIUihod/
+        v9UZnF05evdI2gleAA9Atg==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id zTuG_9qfR8J1 for <linux-fsdevel@vger.kernel.org>;
+        Fri, 18 Nov 2022 17:09:08 -0800 (PST)
+Received: from washi.fujisawa.hgst.com (washi.fujisawa.hgst.com [10.149.53.254])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4NDbC80tBKz1RvLy;
+        Fri, 18 Nov 2022 17:09:07 -0800 (PST)
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] zonefs fixes for 6.1-rc6
+Date:   Sat, 19 Nov 2022 10:09:06 +0900
+Message-Id: <20221119010906.955169-1-damien.lemoal@opensource.wdc.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.4.1
-Subject: Re: [PATCH v3] mm: fix unexpected changes to
- {failslab|fail_page_alloc}.attr
-Content-Language: en-US
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     akinobu.mita@gmail.com, dvyukov@google.com, jgg@nvidia.com,
-        willy@infradead.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20221118100011.2634-1-zhengqi.arch@bytedance.com>
- <20221118134236.17a67804b3b6e6c157d8ea02@linux-foundation.org>
-From:   Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20221118134236.17a67804b3b6e6c157d8ea02@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Linus,
 
+The following changes since commit 094226ad94f471a9f19e8f8e7140a09c2625ab=
+aa:
 
-On 2022/11/19 05:42, Andrew Morton wrote:
-> On Fri, 18 Nov 2022 18:00:11 +0800 Qi Zheng <zhengqi.arch@bytedance.com> wrote:
-> 
->> When we specify __GFP_NOWARN, we only expect that no warnings
->> will be issued for current caller. But in the __should_failslab()
->> and __should_fail_alloc_page(), the local GFP flags alter the
->> global {failslab|fail_page_alloc}.attr, which is persistent and
->> shared by all tasks. This is not what we expected, let's fix it.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 3f913fc5f974 ("mm: fix missing handler for __GFP_NOWARN")
->> Reported-by: Dmitry Vyukov <dvyukov@google.com>
->> Signed-off-by: Qi Zheng <zhengqi.arch@bytedance.com>
->> Reviewed-by: Akinobu Mita <akinobu.mita@gmail.com>
->>
->> ...
->>
->> -bool should_fail(struct fault_attr *attr, ssize_t size)
->> +bool should_fail_ex(struct fault_attr *attr, ssize_t size, int flags)
->>   {
->>   	bool stack_checked = false;
->>   
->> @@ -152,13 +149,20 @@ bool should_fail(struct fault_attr *attr, ssize_t size)
->>   		return false;
->>   
->>   fail:
->> -	fail_dump(attr);
->> +	if (!(flags & FAULT_NOWARN))
->> +		fail_dump(attr);
->>   
->>   	if (atomic_read(&attr->times) != -1)
->>   		atomic_dec_not_zero(&attr->times);
->>   
->>   	return true;
->>   }
->> +EXPORT_SYMBOL_GPL(should_fail_ex);
-> 
-> I don't see a need to export this?
+  Linux 6.1-rc5 (2022-11-13 13:12:55 -0800)
 
-Yes, my initial thought was that there might be a driver using this
-function, but there really isn't one yet.
+are available in the Git repository at:
 
-And I see you've helped remove this, thanks a lot. :)
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs t=
+ags/zonefs-6.1-rc6
 
-> 
-> 
+for you to fetch changes up to 61ba9e9712e187e019e6451bb9fc8eb24685fc50:
 
--- 
-Thanks,
-Qi
+  zonefs: Remove to_attr() helper function (2022-11-16 16:08:31 +0900)
+
+----------------------------------------------------------------
+zonefs fixes for 6.1-rc6
+
+ - Fix the IO error recovery path for failures happening in the last
+   zone of device, and that zone is a "runt" zone (smaller than the
+   other zone). The current code was failing to properly obtain a zone
+   report in that case.
+
+ - Remove the unused to_attr() function as it is unused, causing
+   compilation warnings with clang.
+
+----------------------------------------------------------------
+Damien Le Moal (2):
+      zonefs: fix zone report size in __zonefs_io_error()
+      zonefs: Remove to_attr() helper function
+
+ fs/zonefs/super.c | 37 +++++++++++++++++++++++++++----------
+ fs/zonefs/sysfs.c |  5 -----
+ 2 files changed, 27 insertions(+), 15 deletions(-)
