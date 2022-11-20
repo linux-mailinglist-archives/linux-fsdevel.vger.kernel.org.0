@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1077A631408
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Nov 2022 13:48:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5901A63140C
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Nov 2022 13:48:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229693AbiKTMsJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Nov 2022 07:48:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38280 "EHLO
+        id S229699AbiKTMsL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Nov 2022 07:48:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229519AbiKTMsC (ORCPT
+        with ESMTP id S229604AbiKTMsG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Nov 2022 07:48:02 -0500
+        Sun, 20 Nov 2022 07:48:06 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F24AF2BC3;
-        Sun, 20 Nov 2022 04:48:01 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E670B5F7B;
+        Sun, 20 Nov 2022 04:48:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=H44KGGMRN5KIHGaSWYtzgZPttwkuaR0yYnG9oUIggnc=; b=cMFcKZRA5Q0bUYbT22gtE3tSYD
-        xMQrCcrA3nIMBoLS8pNf+nBJOK7TSKeKb1ja7/jAXDH/Fg8eLELSXlRSYgDWtBuifJL2TUMNwGPPA
-        ZWEPHs8ZUN0B06taDDtlvU12f8QfuPiuXIZaTbmS1Qz+4H2lO8v0rbvzMn8Qw9Aps4mfDkakT97l6
-        ixLoPmaG4cjX2//VcogyVVK66mYpkg/9U6PFIvV42i/6c20GrgyyY9yto+KvvMb3Co0uLFxUidE6h
-        NlzHNfhM5MK4HRdkvpUCs5mSgh3XMqWAecOp+yYaUodEra7aOatkpKimnVygzYRdzeTw3JS53RQCR
-        0eHPosLw==;
+        bh=YrUCuQu+2uzFaLoEU8BrwS1ptUU7t/fRyGtauDGHSzg=; b=b8jBOS2Jy6+WNC63L5mpqVioI+
+        Uv5Uw9/9O+xsbGDEvyF+22W0trryKwcxZ7o03D5VOMHhWuoCfWuPDZMM2Lcrel9dao/b7zvZ/71dS
+        0/Qz8VNR0yYeobjukqa5oWiOLxKFX13i77Y0la8zSJ88MHsoXcIY0TNn3tt6ozDFDTsODPf3a+Y3y
+        0vkgEYtf2k2FKeWhUVb6i8bWN5Y1nQsD+t26wmxMiew4W3DWJeVMtkgtsIE3jaBHFi0We4+STSWyH
+        ioSvw2xsvuFYZD0ON3Kyy0XR1SvRY+aFNHKRm3yw4gFkv8WgPWn5vEiAIUunqt9C3sJZF4/j5+ZHQ
+        gOldFZJQ==;
 Received: from [2001:4bb8:181:6f70:ae5d:6675:76b9:6fc3] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1owjjp-004I9B-Ei; Sun, 20 Nov 2022 12:47:57 +0000
+        id 1owjjr-004I9u-Vh; Sun, 20 Nov 2022 12:48:00 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
@@ -37,9 +37,9 @@ Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
         Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
         "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
         linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 07/19] btrfs: support cloned bios in btree_csum_one_bio
-Date:   Sun, 20 Nov 2022 13:47:22 +0100
-Message-Id: <20221120124734.18634-8-hch@lst.de>
+Subject: [PATCH 08/19] btrfs: allow btrfs_submit_bio to split bios
+Date:   Sun, 20 Nov 2022 13:47:23 +0100
+Message-Id: <20221120124734.18634-9-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221120124734.18634-1-hch@lst.de>
 References: <20221120124734.18634-1-hch@lst.de>
@@ -56,73 +56,273 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-To allow splitting bios in btrfs_submit_bio, btree_csum_one_bio needs to
-be able to handle cloned bios.  As btree_csum_one_bio is always called
-before handing the bio to the block layer that is trivially done by using
-bio_for_each_segment instead of bio_for_each_segment_all.  Also switch
-the function to take a btrfs_bio and use that to derive the fs_info.
+Currently the I/O submitters have to split bios according to the
+chunk stripe boundaries.  This leads to extra lookups in the extent
+trees and a lot of boilerplate code.
+
+To drop this requirement, split the bio when __btrfs_map_block
+returns a mapping that is smaller than the requested size and
+keep a count of pending bios in the original btrfs_bio so that
+the upper level completion is only invoked when all clones have
+completed.
+
+Based on a patch from Qu Wenruo.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
 ---
- fs/btrfs/bio.c     |  2 +-
- fs/btrfs/disk-io.c | 14 ++++++--------
- fs/btrfs/disk-io.h |  2 +-
- 3 files changed, 8 insertions(+), 10 deletions(-)
+ fs/btrfs/bio.c | 107 +++++++++++++++++++++++++++++++++++++++++--------
+ fs/btrfs/bio.h |   1 +
+ 2 files changed, 91 insertions(+), 17 deletions(-)
 
 diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
-index 5978b795bf710..4979cf74da624 100644
+index 4979cf74da624..d710dab93ff1e 100644
 --- a/fs/btrfs/bio.c
 +++ b/fs/btrfs/bio.c
-@@ -440,7 +440,7 @@ static void __btrfs_submit_bio(struct bio *bio, struct btrfs_io_context *bioc,
- static blk_status_t btrfs_bio_csum(struct btrfs_bio *bbio)
- {
- 	if (bbio->bio.bi_opf & REQ_META)
--		return btree_csum_one_bio(&bbio->bio);
-+		return btree_csum_one_bio(bbio);
- 	return btrfs_csum_one_bio(bbio);
+@@ -17,6 +17,7 @@
+ #include "file-item.h"
+ 
+ static struct bio_set btrfs_bioset;
++static struct bio_set btrfs_clone_bioset;
+ static struct bio_set btrfs_repair_bioset;
+ static mempool_t btrfs_failed_bio_pool;
+ 
+@@ -37,6 +38,7 @@ static void btrfs_bio_init(struct btrfs_bio *bbio, struct btrfs_inode *inode,
+ 	bbio->inode = inode;
+ 	bbio->end_io = end_io;
+ 	bbio->private = private;
++	atomic_set(&bbio->pending_ios, 1);
  }
  
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index 2018d1b9ff3a5..c8b6ef511942c 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -431,17 +431,15 @@ static int csum_dirty_buffer(struct btrfs_fs_info *fs_info, struct bio_vec *bvec
- 	return csum_one_extent_buffer(eb);
+ /*
+@@ -74,6 +76,58 @@ struct bio *btrfs_bio_clone_partial(struct bio *orig, u64 offset, u64 size,
+ 	return bio;
  }
  
--blk_status_t btree_csum_one_bio(struct bio *bio)
-+blk_status_t btree_csum_one_bio(struct btrfs_bio *bbio)
++static struct bio *btrfs_split_bio(struct bio *orig, u64 map_length)
++{
++	struct btrfs_bio *orig_bbio = btrfs_bio(orig);
++	struct bio *bio;
++
++	bio = bio_split(orig, map_length >> SECTOR_SHIFT, GFP_NOFS,
++			&btrfs_clone_bioset);
++	btrfs_bio_init(btrfs_bio(bio), orig_bbio->inode, NULL, orig_bbio);
++
++	btrfs_bio(bio)->file_offset = orig_bbio->file_offset;
++	if (!(orig->bi_opf & REQ_BTRFS_ONE_ORDERED))
++		orig_bbio->file_offset += map_length;
++
++	atomic_inc(&orig_bbio->pending_ios);
++	return bio;
++}
++
++static void btrfs_orig_write_end_io(struct bio *bio);
++static void btrfs_bbio_propagate_error(struct btrfs_bio *bbio,
++				       struct btrfs_bio *orig_bbio)
++{
++	/*
++	 * For writes btrfs tolerates nr_mirrors - 1 write failures, so we
++	 * can't just blindly propagate a write failure here.
++	 * Instead increment the error count in the original I/O context so
++	 * that it is guaranteed to be larger than the error tolerance.
++	 */
++	if (bbio->bio.bi_end_io == &btrfs_orig_write_end_io) {
++		struct btrfs_io_stripe *orig_stripe = orig_bbio->bio.bi_private;
++		struct btrfs_io_context *orig_bioc = orig_stripe->bioc;
++
++		atomic_add(orig_bioc->max_errors, &orig_bioc->error);
++	} else {
++		orig_bbio->bio.bi_status = bbio->bio.bi_status;
++	}
++}
++
++static void btrfs_orig_bbio_end_io(struct btrfs_bio *bbio)
++{
++	if (bbio->bio.bi_pool == &btrfs_clone_bioset) {
++		struct btrfs_bio *orig_bbio = bbio->private;
++
++		if (bbio->bio.bi_status)
++			btrfs_bbio_propagate_error(bbio, orig_bbio);
++		bio_put(&bbio->bio);
++		bbio = orig_bbio;
++	}
++
++	if (atomic_dec_and_test(&bbio->pending_ios))
++		bbio->end_io(bbio);
++}
++
+ static int next_repair_mirror(struct btrfs_failed_bio *fbio, int cur_mirror)
  {
--	struct bio_vec *bvec;
--	struct btrfs_root *root;
-+	struct btrfs_fs_info *fs_info = bbio->inode->root->fs_info;
-+	struct bvec_iter iter;
-+	struct bio_vec bv;
- 	int ret = 0;
--	struct bvec_iter_all iter_all;
- 
--	ASSERT(!bio_flagged(bio, BIO_CLONED));
--	bio_for_each_segment_all(bvec, bio, iter_all) {
--		root = BTRFS_I(bvec->bv_page->mapping->host)->root;
--		ret = csum_dirty_buffer(root->fs_info, bvec);
-+	bio_for_each_segment(bv, &bbio->bio, iter) {
-+		ret = csum_dirty_buffer(fs_info, &bv);
- 		if (ret)
- 			break;
+ 	if (cur_mirror == fbio->num_copies)
+@@ -91,7 +145,7 @@ static int prev_repair_mirror(struct btrfs_failed_bio *fbio, int cur_mirror)
+ static void btrfs_repair_done(struct btrfs_failed_bio *fbio)
+ {
+ 	if (atomic_dec_and_test(&fbio->repair_count)) {
+-		fbio->bbio->end_io(fbio->bbio);
++		btrfs_orig_bbio_end_io(fbio->bbio);
+ 		mempool_free(fbio, &btrfs_failed_bio_pool);
  	}
-diff --git a/fs/btrfs/disk-io.h b/fs/btrfs/disk-io.h
-index 1e04ecc43a2ab..101260f57e816 100644
---- a/fs/btrfs/disk-io.h
-+++ b/fs/btrfs/disk-io.h
-@@ -114,7 +114,7 @@ int btrfs_buffer_uptodate(struct extent_buffer *buf, u64 parent_transid,
- int btrfs_read_extent_buffer(struct extent_buffer *buf,
- 			     struct btrfs_tree_parent_check *check);
+ }
+@@ -231,7 +285,7 @@ static void btrfs_check_read_bio(struct btrfs_bio *bbio,
+ 	if (unlikely(fbio))
+ 		btrfs_repair_done(fbio);
+ 	else
+-		bbio->end_io(bbio);
++		btrfs_orig_bbio_end_io(bbio);
+ }
  
--blk_status_t btree_csum_one_bio(struct bio *bio);
-+blk_status_t btree_csum_one_bio(struct btrfs_bio *bbio);
- int btrfs_alloc_log_tree_node(struct btrfs_trans_handle *trans,
- 			      struct btrfs_root *root);
- int btrfs_init_log_root_tree(struct btrfs_trans_handle *trans,
+ static void btrfs_log_dev_io_error(struct bio *bio, struct btrfs_device *dev)
+@@ -285,7 +339,7 @@ static void btrfs_simple_end_io(struct bio *bio)
+ 	} else {
+ 		if (bio_op(bio) == REQ_OP_ZONE_APPEND)
+ 			btrfs_record_physical_zoned(bbio);
+-		bbio->end_io(bbio);
++		btrfs_orig_bbio_end_io(bbio);
+ 	}
+ }
+ 
+@@ -299,7 +353,7 @@ static void btrfs_raid56_end_io(struct bio *bio)
+ 	if (bio_op(bio) == REQ_OP_READ && !(bbio->bio.bi_opf & REQ_META))
+ 		btrfs_check_read_bio(bbio, NULL);
+ 	else
+-		bbio->end_io(bbio);
++		btrfs_orig_bbio_end_io(bbio);
+ 
+ 	btrfs_put_bioc(bioc);
+ }
+@@ -326,7 +380,7 @@ static void btrfs_orig_write_end_io(struct bio *bio)
+ 	else
+ 		bio->bi_status = BLK_STS_OK;
+ 
+-	bbio->end_io(bbio);
++	btrfs_orig_bbio_end_io(bbio);
+ 	btrfs_put_bioc(bioc);
+ }
+ 
+@@ -566,8 +620,8 @@ static bool btrfs_wq_submit_bio(struct btrfs_bio *bbio,
+ 	return true;
+ }
+ 
+-void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
+-		      int mirror_num)
++static bool btrfs_submit_chunk(struct btrfs_fs_info *fs_info, struct bio *bio,
++			       int mirror_num)
+ {
+ 	struct btrfs_bio *bbio = btrfs_bio(bio);
+ 	u64 logical = bio->bi_iter.bi_sector << 9;
+@@ -586,11 +640,10 @@ void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
+ 		goto fail;
+ 	}
+ 
++	map_length = min(map_length, length);
+ 	if (map_length < length) {
+-		btrfs_crit(fs_info,
+-			   "mapping failed logical %llu bio len %llu len %llu",
+-			   logical, length, map_length);
+-		BUG();
++		bio = btrfs_split_bio(bio, map_length);
++		bbio = btrfs_bio(bio);
+ 	}
+ 
+ 	/*
+@@ -601,14 +654,14 @@ void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
+ 		bbio->saved_iter = bio->bi_iter;
+ 		ret = btrfs_lookup_bio_sums(bbio);
+ 		if (ret)
+-			goto fail;
++			goto fail_put_bio;
+ 	}
+ 
+ 	if (btrfs_op(bio) == BTRFS_MAP_WRITE) {
+ 		if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
+ 			ret = btrfs_extract_ordered_extent(btrfs_bio(bio));
+ 			if (ret)
+-				goto fail;
++				goto fail_put_bio;
+ 		}
+ 
+ 		/*
+@@ -620,19 +673,33 @@ void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
+ 		    !btrfs_is_data_reloc_root(bbio->inode->root)) {
+ 			if (should_async_write(bbio) &&
+ 			    btrfs_wq_submit_bio(bbio, bioc, &smap, mirror_num))
+-				return;
++				goto done;
+ 
+ 			ret = btrfs_bio_csum(bbio);
+ 			if (ret)
+-				goto fail;
++				goto fail_put_bio;
+ 		}
+ 	}
+ 
+ 	__btrfs_submit_bio(bio, bioc, &smap, mirror_num);
+-	return;
++done:
++	return map_length == length;
++
++fail_put_bio:
++	if (map_length < length)
++		bio_put(bio);
+ fail:
+ 	btrfs_bio_counter_dec(fs_info);
+ 	btrfs_bio_end_io(bbio, ret);
++	/* Do not submit another chunk */
++	return true;
++}
++
++void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
++		      int mirror_num)
++{
++	while (!btrfs_submit_chunk(fs_info, bio, mirror_num))
++		;
+ }
+ 
+ /*
+@@ -731,10 +798,13 @@ int __init btrfs_bioset_init(void)
+ 			offsetof(struct btrfs_bio, bio),
+ 			BIOSET_NEED_BVECS))
+ 		return -ENOMEM;
++	if (bioset_init(&btrfs_clone_bioset, BIO_POOL_SIZE,
++			offsetof(struct btrfs_bio, bio), 0))
++		goto out_free_bioset;
+ 	if (bioset_init(&btrfs_repair_bioset, BIO_POOL_SIZE,
+ 			offsetof(struct btrfs_bio, bio),
+ 			BIOSET_NEED_BVECS))
+-		goto out_free_bioset;
++		goto out_free_clone_bioset;
+ 	if (mempool_init_kmalloc_pool(&btrfs_failed_bio_pool, BIO_POOL_SIZE,
+ 				      sizeof(struct btrfs_failed_bio)))
+ 		goto out_free_repair_bioset;
+@@ -742,6 +812,8 @@ int __init btrfs_bioset_init(void)
+ 
+ out_free_repair_bioset:
+ 	bioset_exit(&btrfs_repair_bioset);
++out_free_clone_bioset:
++	bioset_exit(&btrfs_clone_bioset);
+ out_free_bioset:
+ 	bioset_exit(&btrfs_bioset);
+ 	return -ENOMEM;
+@@ -751,5 +823,6 @@ void __cold btrfs_bioset_exit(void)
+ {
+ 	mempool_exit(&btrfs_failed_bio_pool);
+ 	bioset_exit(&btrfs_repair_bioset);
++	bioset_exit(&btrfs_clone_bioset);
+ 	bioset_exit(&btrfs_bioset);
+ }
+diff --git a/fs/btrfs/bio.h b/fs/btrfs/bio.h
+index 334dcc3d5feb9..7c50f757cf510 100644
+--- a/fs/btrfs/bio.h
++++ b/fs/btrfs/bio.h
+@@ -55,6 +55,7 @@ struct btrfs_bio {
+ 
+ 	/* For internal use in read end I/O handling */
+ 	unsigned int mirror_num;
++	atomic_t pending_ios;
+ 	struct work_struct end_io_work;
+ 
+ 	/*
 -- 
 2.30.2
 
