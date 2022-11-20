@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 12618631403
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Nov 2022 13:48:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 616AE631406
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Nov 2022 13:48:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229575AbiKTMr7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Nov 2022 07:47:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38226 "EHLO
+        id S229587AbiKTMsI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Nov 2022 07:48:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38256 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229587AbiKTMr6 (ORCPT
+        with ESMTP id S229447AbiKTMsA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Nov 2022 07:47:58 -0500
+        Sun, 20 Nov 2022 07:48:00 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ABF452BC3;
-        Sun, 20 Nov 2022 04:47:56 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0786960E0;
+        Sun, 20 Nov 2022 04:48:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=coYMd43xDVYxrmpWlJwt6pmrCWM1er4O1btIza7wrKY=; b=A0kcsWbt47wfd2vy3DvImCUJu3
-        bkKvOLdtg77NQ2C3Wj5OZF2k+IwvR0g77ML0Q1YoksBEDk+5BBjNbc0ntu4COZCzMQrhpQ97kr3Sx
-        XUi5xBF1AaAtiU6DjZ65Cgc6jhF9CalNCpLgdNK1G+FJQrmUDuJgLpX3bdNA92++StZCsW+E4Ssz/
-        58pKlj51cO6er+sOeWcTz42MgNJe5HHrKD9lFgOo4r7x+pYXnAGQhOBWsKdOcLpv35uC2xUxxG5Se
-        qdDQNrivBLMZIAwlrMwlksWSV3xaE9J2fIvAlvjs+DO5EqlkWsDr01/oHKFWlAvW3CqJagmekK9Cq
-        zo4Bn7bg==;
+        bh=4xiwJtiyL6vfnbf/HsZxUAORK3ERVB/x7XJfO8fZSaM=; b=DhnvjruM0xq3iAy1SmuoOx6SQ9
+        1CReJAoqzFNzAKw5Tm1tnU5tHmrWryO+36mtYk6v9x6pIy9BTnlum3YvMWgVtYyP5ORBIHNzMFtvi
+        VzNgSneqmz0UBDoXSzwIm7z7yXo+R/O/mdwysBzstub2tEq0R8oCZD2TqQO6tubm570KUPo0HdFnj
+        m6pCd+G6/O1xsKlfVOhQhneolNrPkxyzQe17rLxCuIPAaSjhwECFZIttpp9eXGv1iz4eX4ClXxCiC
+        7awE8NbNDOi8pUsNGvoj0Nwt1oGiE+vtqWlp9rdsdffzI35gw5Mqva1YAR83Xgkh0oRzuBB1dGKUr
+        ZYHxcDcQ==;
 Received: from [2001:4bb8:181:6f70:ae5d:6675:76b9:6fc3] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1owjjj-004I6r-Vh; Sun, 20 Nov 2022 12:47:52 +0000
+        id 1owjjm-004I7Q-Kb; Sun, 20 Nov 2022 12:47:55 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
@@ -37,9 +37,9 @@ Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
         Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
         "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
         linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 05/19] btrfs: handle checksum generation in the storage layer
-Date:   Sun, 20 Nov 2022 13:47:20 +0100
-Message-Id: <20221120124734.18634-6-hch@lst.de>
+Subject: [PATCH 06/19] btrfs: handle recording of zoned writes in the storage layer
+Date:   Sun, 20 Nov 2022 13:47:21 +0100
+Message-Id: <20221120124734.18634-7-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221120124734.18634-1-hch@lst.de>
 References: <20221120124734.18634-1-hch@lst.de>
@@ -56,593 +56,254 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Instead of letting the callers of btrfs_submit_bio deal with checksumming
-the (meta)data in the bio and making decisions on when to offload the
-checksumming to the bio, leave that to btrfs_submit_bio.  Do do so the
-existing btrfs_submit_bio function is split into an upper and a lower
-half, so that the lower half can be offloaded to a workqueue.
-
-Note that this changes the behavior for direct writes to raid56 volumes so
-that async checksum offloading is not skipped when more I/O is expected.
-This runs counter to the argument explaining why it was done, although I
-can't measure any affects of the change.  Commits later in this series
-will make sure the entire direct writes is offloaded to the workqueue
-at once and thus make sure it is sent to the raid56 code from a single
-thread.
+Move the code that splits the ordered extents and records the physical
+location for them to the storage layer so that the higher level consumers
+don't have to care about physical block numbers at all.  This will also
+allow to eventually remove accounting for the zone append write sizes in
+the upper layer with a little bit more block layer work.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Naohiro Aota <naohiro.aota@wdc.com>
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
+Reviewed-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
 ---
- fs/btrfs/bio.c         | 207 +++++++++++++++++++++++++++++++++++------
- fs/btrfs/compression.c |   9 --
- fs/btrfs/disk-io.c     | 151 +-----------------------------
- fs/btrfs/disk-io.h     |   9 +-
- fs/btrfs/inode.c       |  67 +------------
- 5 files changed, 185 insertions(+), 258 deletions(-)
+ fs/btrfs/bio.c         |  8 ++++++++
+ fs/btrfs/btrfs_inode.h |  1 +
+ fs/btrfs/compression.c |  1 -
+ fs/btrfs/extent_io.c   |  6 ------
+ fs/btrfs/inode.c       | 38 +++++++-------------------------------
+ fs/btrfs/zoned.c       | 13 +++++--------
+ fs/btrfs/zoned.h       |  6 ++----
+ 7 files changed, 23 insertions(+), 50 deletions(-)
 
 diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
-index e1fbe7f67456b..67ee94fb92523 100644
+index 67ee94fb92523..5978b795bf710 100644
 --- a/fs/btrfs/bio.c
 +++ b/fs/btrfs/bio.c
-@@ -403,7 +403,169 @@ static void btrfs_submit_mirrored_bio(struct btrfs_io_context *bioc, int dev_nr)
- 	btrfs_submit_dev_bio(bioc->stripes[dev_nr].dev, bio);
+@@ -283,6 +283,8 @@ static void btrfs_simple_end_io(struct bio *bio)
+ 		INIT_WORK(&bbio->end_io_work, btrfs_end_bio_work);
+ 		queue_work(btrfs_end_io_wq(fs_info, bio), &bbio->end_io_work);
+ 	} else {
++		if (bio_op(bio) == REQ_OP_ZONE_APPEND)
++			btrfs_record_physical_zoned(bbio);
+ 		bbio->end_io(bbio);
+ 	}
  }
- 
--void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio, int mirror_num)
-+static void __btrfs_submit_bio(struct bio *bio, struct btrfs_io_context *bioc,
-+			       struct btrfs_io_stripe *smap, int mirror_num)
-+{
-+	/* Do not leak our private flag into the block layer */
-+	bio->bi_opf &= ~REQ_BTRFS_ONE_ORDERED;
-+
-+	if (!bioc) {
-+		/* Single mirror read/write fast path */
-+		btrfs_bio(bio)->mirror_num = mirror_num;
-+		bio->bi_iter.bi_sector = smap->physical >> SECTOR_SHIFT;
-+		bio->bi_private = smap->dev;
-+		bio->bi_end_io = btrfs_simple_end_io;
-+		btrfs_submit_dev_bio(smap->dev, bio);
-+	} else if (bioc->map_type & BTRFS_BLOCK_GROUP_RAID56_MASK) {
-+		/* Parity RAID write or read recovery */
-+		bio->bi_private = bioc;
-+		bio->bi_end_io = btrfs_raid56_end_io;
-+		if (bio_op(bio) == REQ_OP_READ)
-+			raid56_parity_recover(bio, bioc, mirror_num);
-+		else
-+			raid56_parity_write(bio, bioc);
-+	} else {
-+		/* Write to multiple mirrors */
-+		int total_devs = bioc->num_stripes;
-+		int dev_nr;
-+
-+		bioc->orig_bio = bio;
-+		for (dev_nr = 0; dev_nr < total_devs; dev_nr++)
-+			btrfs_submit_mirrored_bio(bioc, dev_nr);
-+	}
-+}
-+
-+static blk_status_t btrfs_bio_csum(struct btrfs_bio *bbio)
-+{
-+	if (bbio->bio.bi_opf & REQ_META)
-+		return btree_csum_one_bio(&bbio->bio);
-+	return btrfs_csum_one_bio(bbio);
-+}
-+
-+/*
-+ * async submit bios are used to offload expensive checksumming
-+ * onto the worker threads.
-+ */
-+struct async_submit_bio {
-+	struct btrfs_bio *bbio;
-+	struct btrfs_io_context *bioc;
-+	struct btrfs_io_stripe smap;
-+	int mirror_num;
-+	struct btrfs_work work;
-+};
-+
-+/*
-+ * In order to insert checksums into the metadata in large chunks,
-+ * we wait until bio submission time.   All the pages in the bio are
-+ * checksummed and sums are attached onto the ordered extent record.
-+ *
-+ * At IO completion time the cums attached on the ordered extent record
-+ * are inserted into the btree
-+ */
-+static void run_one_async_start(struct btrfs_work *work)
-+{
-+	struct async_submit_bio *async =
-+		container_of(work, struct async_submit_bio, work);
-+	blk_status_t ret;
-+
-+	ret = btrfs_bio_csum(async->bbio);
-+	if (ret)
-+		async->bbio->bio.bi_status = ret;
-+}
-+
-+/*
-+ * In order to insert checksums into the metadata in large chunks, we wait
-+ * until bio submission time.   All the pages in the bio are checksummed and
-+ * sums are attached onto the ordered extent record.
-+ *
-+ * At IO completion time the csums attached on the ordered extent record are
-+ * inserted into the tree.
-+ */
-+static void run_one_async_done(struct btrfs_work *work)
-+{
-+	struct async_submit_bio *async =
-+		container_of(work, struct async_submit_bio, work);
-+	struct bio *bio = &async->bbio->bio;
-+
-+	/* If an error occurred we just want to clean up the bio and move on */
-+	if (bio->bi_status) {
-+		btrfs_bio_end_io(async->bbio, bio->bi_status);
-+		return;
-+	}
-+
-+	/*
-+	 * All of the bios that pass through here are from async helpers.
-+	 * Use REQ_CGROUP_PUNT to issue them from the owning cgroup's context.
-+	 * This changes nothing when cgroups aren't in use.
-+	 */
-+	bio->bi_opf |= REQ_CGROUP_PUNT;
-+	__btrfs_submit_bio(bio, async->bioc, &async->smap, async->mirror_num);
-+}
-+
-+static void run_one_async_free(struct btrfs_work *work)
-+{
-+	kfree(container_of(work, struct async_submit_bio, work));
-+}
-+
-+static bool should_async_write(struct btrfs_bio *bbio)
-+{
-+	/*
-+	 * If the I/O is not issued by fsync and friends, (->sync_writers != 0),
-+	 * then try to defer the submission to a workqueue to parallelize the
-+	 * checksum calculation.
-+	 */
-+	if (atomic_read(&bbio->inode->sync_writers))
-+		return false;
-+
-+	/*
-+	 * Submit metadata writes synchronously if the checksum implementation
-+	 * is fast, or we are on a zoned device that wants I/O to be submitted
-+	 * in order.
-+	 */
-+	if (bbio->bio.bi_opf & REQ_META) {
-+		struct btrfs_fs_info *fs_info = bbio->inode->root->fs_info;
-+
-+		if (btrfs_is_zoned(fs_info))
-+			return false;
-+		if (test_bit(BTRFS_FS_CSUM_IMPL_FAST, &fs_info->flags))
-+			return false;
-+	}
-+
-+	return true;
-+}
-+
-+/*
-+ * Submit bio to an async queue.
-+ *
-+ * Returns true if the work has been succesfuly submitted, else false.
-+ */
-+static bool btrfs_wq_submit_bio(struct btrfs_bio *bbio,
-+				struct btrfs_io_context *bioc,
-+				struct btrfs_io_stripe *smap, int mirror_num)
-+{
-+	struct btrfs_fs_info *fs_info = bbio->inode->root->fs_info;
-+	struct async_submit_bio *async;
-+
-+	async = kmalloc(sizeof(*async), GFP_NOFS);
-+	if (!async)
-+		return false;
-+
-+	async->bbio = bbio;
-+	async->bioc = bioc;
-+	async->smap = *smap;
-+	async->mirror_num = mirror_num;
-+
-+	btrfs_init_work(&async->work, run_one_async_start, run_one_async_done,
-+			run_one_async_free);
-+	if (op_is_sync(bbio->bio.bi_opf))
-+		btrfs_queue_work(fs_info->hipri_workers, &async->work);
-+	else
-+		btrfs_queue_work(fs_info->workers, &async->work);
-+	return true;
-+}
-+
-+void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
-+		      int mirror_num)
- {
- 	struct btrfs_bio *bbio = btrfs_bio(bio);
- 	u64 logical = bio->bi_iter.bi_sector << 9;
-@@ -440,34 +602,25 @@ void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio, int mirror
- 			goto fail;
+@@ -603,6 +605,12 @@ void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio,
  	}
  
--	/* Do not leak our private flag into the block layer */
--	bio->bi_opf &= ~REQ_BTRFS_ONE_ORDERED;
--
--	if (!bioc) {
--		/* Single mirror read/write fast path */
--		btrfs_bio(bio)->mirror_num = mirror_num;
--		bio->bi_iter.bi_sector = smap.physical >> SECTOR_SHIFT;
--		bio->bi_private = smap.dev;
--		bio->bi_end_io = btrfs_simple_end_io;
--		btrfs_submit_dev_bio(smap.dev, bio);
--	} else if (bioc->map_type & BTRFS_BLOCK_GROUP_RAID56_MASK) {
--		/* Parity RAID write or read recovery */
--		bio->bi_private = bioc;
--		bio->bi_end_io = btrfs_raid56_end_io;
--		if (bio_op(bio) == REQ_OP_READ)
--			raid56_parity_recover(bio, bioc, mirror_num);
--		else
--			raid56_parity_write(bio, bioc);
--	} else {
--		/* Write to multiple mirrors */
--		int total_devs = bioc->num_stripes;
--		int dev_nr;
--
--		bioc->orig_bio = bio;
--		for (dev_nr = 0; dev_nr < total_devs; dev_nr++)
--			btrfs_submit_mirrored_bio(bioc, dev_nr);
-+	if (btrfs_op(bio) == BTRFS_MAP_WRITE) {
-+		/*
-+		 * Csum items for reloc roots have already been cloned at this
-+		 * point, so they are handled as part of the no-checksum case.
-+		 */
-+		if (!(bbio->inode->flags & BTRFS_INODE_NODATASUM) &&
-+		    !test_bit(BTRFS_FS_STATE_NO_CSUMS, &fs_info->fs_state) &&
-+		    !btrfs_is_data_reloc_root(bbio->inode->root)) {
-+			if (should_async_write(bbio) &&
-+			    btrfs_wq_submit_bio(bbio, bioc, &smap, mirror_num))
-+				return;
-+
-+			ret = btrfs_bio_csum(bbio);
+ 	if (btrfs_op(bio) == BTRFS_MAP_WRITE) {
++		if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
++			ret = btrfs_extract_ordered_extent(btrfs_bio(bio));
 +			if (ret)
 +				goto fail;
 +		}
- 	}
- 
-+	__btrfs_submit_bio(bio, bioc, &smap, mirror_num);
- 	return;
- fail:
- 	btrfs_bio_counter_dec(fs_info);
++
+ 		/*
+ 		 * Csum items for reloc roots have already been cloned at this
+ 		 * point, so they are handled as part of the no-checksum case.
+diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+index ba5f023aaf557..b83b731c63e13 100644
+--- a/fs/btrfs/btrfs_inode.h
++++ b/fs/btrfs/btrfs_inode.h
+@@ -410,6 +410,7 @@ void btrfs_submit_data_read_bio(struct btrfs_inode *inode, struct bio *bio,
+ 			int mirror_num, enum btrfs_compression_type compress_type);
+ int btrfs_check_sector_csum(struct btrfs_fs_info *fs_info, struct page *page,
+ 			    u32 pgoff, u8 *csum, const u8 * const csum_expected);
++blk_status_t btrfs_extract_ordered_extent(struct btrfs_bio *bbio);
+ bool btrfs_data_csum_ok(struct btrfs_bio *bbio, struct btrfs_device *dev,
+ 			u32 bio_offset, struct bio_vec *bv);
+ noinline int can_nocow_extent(struct inode *inode, u64 offset, u64 *len,
 diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index 9e695048e30f5..7ca4f97f5ec92 100644
+index 7ca4f97f5ec92..b632c95e70e76 100644
 --- a/fs/btrfs/compression.c
 +++ b/fs/btrfs/compression.c
-@@ -355,7 +355,6 @@ blk_status_t btrfs_submit_compressed_write(struct btrfs_inode *inode, u64 start,
- 	u64 cur_disk_bytenr = disk_start;
- 	u64 next_stripe_start;
- 	blk_status_t ret = BLK_STS_OK;
--	int skip_sum = inode->flags & BTRFS_INODE_NODATASUM;
- 	const bool use_append = btrfs_use_zone_append(inode, disk_start);
- 	const enum req_op bio_op = REQ_BTRFS_ONE_ORDERED |
- 		(use_append ? REQ_OP_ZONE_APPEND : REQ_OP_WRITE);
-@@ -437,14 +436,6 @@ blk_status_t btrfs_submit_compressed_write(struct btrfs_inode *inode, u64 start,
- 			submit = true;
+@@ -273,7 +273,6 @@ static void end_compressed_bio_write(struct btrfs_bio *bbio)
+ 	if (refcount_dec_and_test(&cb->pending_ios)) {
+ 		struct btrfs_fs_info *fs_info = btrfs_sb(cb->inode->i_sb);
  
- 		if (submit) {
--			if (!skip_sum) {
--				ret = btrfs_csum_one_bio(btrfs_bio(bio));
--				if (ret) {
--					btrfs_bio_end_io(btrfs_bio(bio), ret);
--					break;
--				}
--			}
+-		btrfs_record_physical_zoned(cb->inode, cb->start, &bbio->bio);
+ 		queue_work(fs_info->compressed_write_workers, &cb->write_end_work);
+ 	}
+ 	bio_put(&bbio->bio);
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index d31409b6d5a70..4672a954f9fd2 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -566,7 +566,6 @@ static void end_bio_extent_writepage(struct btrfs_bio *bbio)
+ 	u64 start;
+ 	u64 end;
+ 	struct bvec_iter_all iter_all;
+-	bool first_bvec = true;
+ 
+ 	ASSERT(!bio_flagged(bio, BIO_CLONED));
+ 	bio_for_each_segment_all(bvec, bio, iter_all) {
+@@ -588,11 +587,6 @@ static void end_bio_extent_writepage(struct btrfs_bio *bbio)
+ 		start = page_offset(page) + bvec->bv_offset;
+ 		end = start + bvec->bv_len - 1;
+ 
+-		if (first_bvec) {
+-			btrfs_record_physical_zoned(inode, start, bio);
+-			first_bvec = false;
+-		}
 -
- 			ASSERT(bio->bi_iter.bi_size);
- 			btrfs_submit_bio(fs_info, bio, 0);
- 			bio = NULL;
-diff --git a/fs/btrfs/disk-io.c b/fs/btrfs/disk-io.c
-index ae0ca51adc6e2..2018d1b9ff3a5 100644
---- a/fs/btrfs/disk-io.c
-+++ b/fs/btrfs/disk-io.c
-@@ -52,7 +52,6 @@
- #include "relocation.h"
- #include "scrub.h"
- #include "super.h"
--#include "file-item.h"
+ 		end_extent_writepage(page, error, start, end);
  
- #define BTRFS_SUPER_FLAG_SUPP	(BTRFS_HEADER_FLAG_WRITTEN |\
- 				 BTRFS_HEADER_FLAG_RELOC |\
-@@ -79,23 +78,6 @@ static void btrfs_free_csum_hash(struct btrfs_fs_info *fs_info)
- 		crypto_free_shash(fs_info->csum_shash);
- }
- 
--/*
-- * async submit bios are used to offload expensive checksumming
-- * onto the worker threads.  They checksum file and metadata bios
-- * just before they are sent down the IO stack.
-- */
--struct async_submit_bio {
--	struct btrfs_inode *inode;
--	struct bio *bio;
--	enum btrfs_wq_submit_cmd submit_cmd;
--	int mirror_num;
--
--	/* Optional parameter for used by direct io */
--	u64 dio_file_offset;
--	struct btrfs_work work;
--	blk_status_t status;
--};
--
- /*
-  * Compute the csum of a btree block and store the result to provided buffer.
-  */
-@@ -449,7 +431,7 @@ static int csum_dirty_buffer(struct btrfs_fs_info *fs_info, struct bio_vec *bvec
- 	return csum_one_extent_buffer(eb);
- }
- 
--static blk_status_t btree_csum_one_bio(struct bio *bio)
-+blk_status_t btree_csum_one_bio(struct bio *bio)
- {
- 	struct bio_vec *bvec;
- 	struct btrfs_root *root;
-@@ -709,139 +691,10 @@ int btrfs_validate_metadata_buffer(struct btrfs_bio *bbio,
+ 		btrfs_page_clear_writeback(fs_info, page, start, bvec->bv_len);
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index d569d9a2d0c5b..79286384ca156 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -2647,19 +2647,19 @@ static int split_zoned_em(struct btrfs_inode *inode, u64 start, u64 len,
  	return ret;
  }
  
--static void run_one_async_start(struct btrfs_work *work)
--{
--	struct async_submit_bio *async;
--	blk_status_t ret;
--
--	async = container_of(work, struct  async_submit_bio, work);
--	switch (async->submit_cmd) {
--	case WQ_SUBMIT_METADATA:
--		ret = btree_csum_one_bio(async->bio);
--		break;
--	case WQ_SUBMIT_DATA:
--	case WQ_SUBMIT_DATA_DIO:
--		ret = btrfs_csum_one_bio(btrfs_bio(async->bio));
--		break;
--	}
--	if (ret)
--		async->status = ret;
--}
--
--/*
-- * In order to insert checksums into the metadata in large chunks, we wait
-- * until bio submission time.   All the pages in the bio are checksummed and
-- * sums are attached onto the ordered extent record.
-- *
-- * At IO completion time the csums attached on the ordered extent record are
-- * inserted into the tree.
-- */
--static void run_one_async_done(struct btrfs_work *work)
--{
--	struct async_submit_bio *async =
--		container_of(work, struct  async_submit_bio, work);
--	struct btrfs_inode *inode = async->inode;
--	struct btrfs_bio *bbio = btrfs_bio(async->bio);
--
--	/* If an error occurred we just want to clean up the bio and move on */
--	if (async->status) {
--		btrfs_bio_end_io(bbio, async->status);
--		return;
--	}
--
--	/*
--	 * All of the bios that pass through here are from async helpers.
--	 * Use REQ_CGROUP_PUNT to issue them from the owning cgroup's context.
--	 * This changes nothing when cgroups aren't in use.
--	 */
--	async->bio->bi_opf |= REQ_CGROUP_PUNT;
--	btrfs_submit_bio(inode->root->fs_info, async->bio, async->mirror_num);
--}
--
--static void run_one_async_free(struct btrfs_work *work)
--{
--	struct async_submit_bio *async;
--
--	async = container_of(work, struct  async_submit_bio, work);
--	kfree(async);
--}
--
--/*
-- * Submit bio to an async queue.
-- *
-- * Retrun:
-- * - true if the work has been succesfuly submitted
-- * - false in case of error
-- */
--bool btrfs_wq_submit_bio(struct btrfs_inode *inode, struct bio *bio, int mirror_num,
--			 u64 dio_file_offset, enum btrfs_wq_submit_cmd cmd)
--{
--	struct btrfs_fs_info *fs_info = inode->root->fs_info;
--	struct async_submit_bio *async;
--
--	async = kmalloc(sizeof(*async), GFP_NOFS);
--	if (!async)
--		return false;
--
--	async->inode = inode;
--	async->bio = bio;
--	async->mirror_num = mirror_num;
--	async->submit_cmd = cmd;
--
--	btrfs_init_work(&async->work, run_one_async_start, run_one_async_done,
--			run_one_async_free);
--
--	async->dio_file_offset = dio_file_offset;
--
--	async->status = 0;
--
--	if (op_is_sync(bio->bi_opf))
--		btrfs_queue_work(fs_info->hipri_workers, &async->work);
--	else
--		btrfs_queue_work(fs_info->workers, &async->work);
--	return true;
--}
--
--static bool should_async_write(struct btrfs_fs_info *fs_info,
--			     struct btrfs_inode *bi)
--{
--	if (btrfs_is_zoned(fs_info))
--		return false;
--	if (atomic_read(&bi->sync_writers))
--		return false;
--	if (test_bit(BTRFS_FS_CSUM_IMPL_FAST, &fs_info->flags))
--		return false;
--	return true;
--}
--
- void btrfs_submit_metadata_bio(struct btrfs_inode *inode, struct bio *bio, int mirror_num)
+-static blk_status_t extract_ordered_extent(struct btrfs_inode *inode,
+-					   struct bio *bio, loff_t file_offset)
++blk_status_t btrfs_extract_ordered_extent(struct btrfs_bio *bbio)
+ {
++	u64 start = (u64)bbio->bio.bi_iter.bi_sector << SECTOR_SHIFT;
++	u64 len = bbio->bio.bi_iter.bi_size;
++	struct btrfs_inode *inode = bbio->inode;
+ 	struct btrfs_ordered_extent *ordered;
+-	u64 start = (u64)bio->bi_iter.bi_sector << SECTOR_SHIFT;
+ 	u64 file_len;
+-	u64 len = bio->bi_iter.bi_size;
+ 	u64 end = start + len;
+ 	u64 ordered_end;
+ 	u64 pre, post;
+ 	int ret = 0;
+ 
+-	ordered = btrfs_lookup_ordered_extent(inode, file_offset);
++	ordered = btrfs_lookup_ordered_extent(inode, bbio->file_offset);
+ 	if (WARN_ON_ONCE(!ordered))
+ 		return BLK_STS_IOERR;
+ 
+@@ -2699,7 +2699,7 @@ static blk_status_t extract_ordered_extent(struct btrfs_inode *inode,
+ 	ret = btrfs_split_ordered_extent(ordered, pre, post);
+ 	if (ret)
+ 		goto out;
+-	ret = split_zoned_em(inode, file_offset, file_len, pre, post);
++	ret = split_zoned_em(inode, bbio->file_offset, file_len, pre, post);
+ 
+ out:
+ 	btrfs_put_ordered_extent(ordered);
+@@ -2709,19 +2709,7 @@ static blk_status_t extract_ordered_extent(struct btrfs_inode *inode,
+ 
+ void btrfs_submit_data_write_bio(struct btrfs_inode *inode, struct bio *bio, int mirror_num)
  {
 -	struct btrfs_fs_info *fs_info = inode->root->fs_info;
--	struct btrfs_bio *bbio = btrfs_bio(bio);
 -	blk_status_t ret;
 -
- 	bio->bi_opf |= REQ_META;
--
--	if (btrfs_op(bio) != BTRFS_MAP_WRITE) {
--		btrfs_submit_bio(fs_info, bio, mirror_num);
--		return;
--	}
--
--	/*
--	 * Kthread helpers are used to submit writes so that checksumming can
--	 * happen in parallel across all CPUs.
--	 */
--	if (should_async_write(fs_info, inode) &&
--	    btrfs_wq_submit_bio(inode, bio, mirror_num, 0, WQ_SUBMIT_METADATA))
--		return;
--
--	ret = btree_csum_one_bio(bio);
--	if (ret) {
--		btrfs_bio_end_io(bbio, ret);
--		return;
+-	if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
+-		ret = extract_ordered_extent(inode, bio,
+-				page_offset(bio_first_bvec_all(bio)->bv_page));
+-		if (ret) {
+-			btrfs_bio_end_io(btrfs_bio(bio), ret);
+-			return;
+-		}
 -	}
 -
 -	btrfs_submit_bio(fs_info, bio, mirror_num);
 +	btrfs_submit_bio(inode->root->fs_info, bio, mirror_num);
  }
  
- #ifdef CONFIG_MIGRATION
-diff --git a/fs/btrfs/disk-io.h b/fs/btrfs/disk-io.h
-index 07ac66d693aee..1e04ecc43a2ab 100644
---- a/fs/btrfs/disk-io.h
-+++ b/fs/btrfs/disk-io.h
-@@ -114,14 +114,7 @@ int btrfs_buffer_uptodate(struct extent_buffer *buf, u64 parent_transid,
- int btrfs_read_extent_buffer(struct extent_buffer *buf,
- 			     struct btrfs_tree_parent_check *check);
- 
--enum btrfs_wq_submit_cmd {
--	WQ_SUBMIT_METADATA,
--	WQ_SUBMIT_DATA,
--	WQ_SUBMIT_DATA_DIO,
--};
--
--bool btrfs_wq_submit_bio(struct btrfs_inode *inode, struct bio *bio, int mirror_num,
--			 u64 dio_file_offset, enum btrfs_wq_submit_cmd cmd);
-+blk_status_t btree_csum_one_bio(struct bio *bio);
- int btrfs_alloc_log_tree_node(struct btrfs_trans_handle *trans,
- 			      struct btrfs_root *root);
- int btrfs_init_log_root_tree(struct btrfs_trans_handle *trans,
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index e58cf151cb5b1..d569d9a2d0c5b 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -2721,27 +2721,6 @@ void btrfs_submit_data_write_bio(struct btrfs_inode *inode, struct bio *bio, int
- 		}
+ void btrfs_submit_data_read_bio(struct btrfs_inode *inode, struct bio *bio,
+@@ -7814,8 +7802,6 @@ static void btrfs_end_dio_bio(struct btrfs_bio *bbio)
+ 		dip->bio.bi_status = err;
  	}
  
--	/*
--	 * If we need to checksum, and the I/O is not issued by fsync and
--	 * friends, that is ->sync_writers != 0, defer the submission to a
--	 * workqueue to parallelize it.
--	 *
--	 * Csum items for reloc roots have already been cloned at this point,
--	 * so they are handled as part of the no-checksum case.
--	 */
--	if (!(inode->flags & BTRFS_INODE_NODATASUM) &&
--	    !test_bit(BTRFS_FS_STATE_NO_CSUMS, &fs_info->fs_state) &&
--	    !btrfs_is_data_reloc_root(inode->root)) {
--		if (!atomic_read(&inode->sync_writers) &&
--		    btrfs_wq_submit_bio(inode, bio, mirror_num, 0, WQ_SUBMIT_DATA))
--			return;
+-	btrfs_record_physical_zoned(&dip->inode->vfs_inode, bbio->file_offset, bio);
 -
--		ret = btrfs_csum_one_bio(btrfs_bio(bio));
--		if (ret) {
--			btrfs_bio_end_io(btrfs_bio(bio), ret);
--			return;
--		}
--	}
- 	btrfs_submit_bio(fs_info, bio, mirror_num);
- }
- 
-@@ -7841,36 +7820,6 @@ static void btrfs_end_dio_bio(struct btrfs_bio *bbio)
+ 	bio_put(bio);
  	btrfs_dio_private_put(dip);
  }
+@@ -7874,15 +7860,6 @@ static void btrfs_submit_direct(const struct iomap_iter *iter,
+ 					      dip);
+ 		btrfs_bio(bio)->file_offset = file_offset;
  
--static void btrfs_submit_dio_bio(struct bio *bio, struct btrfs_inode *inode,
--				 u64 file_offset, int async_submit)
--{
--	struct btrfs_fs_info *fs_info = inode->root->fs_info;
--	blk_status_t ret;
--
--	if (inode->flags & BTRFS_INODE_NODATASUM)
--		goto map;
--
--	if (btrfs_op(bio) == BTRFS_MAP_WRITE) {
--		/* Check btrfs_submit_data_write_bio() for async submit rules */
--		if (async_submit && !atomic_read(&inode->sync_writers) &&
--		    btrfs_wq_submit_bio(inode, bio, 0, file_offset,
--					WQ_SUBMIT_DATA_DIO))
--			return;
--
--		/*
--		 * If we aren't doing async submit, calculate the csum of the
--		 * bio now.
--		 */
--		ret = btrfs_csum_one_bio(btrfs_bio(bio));
--		if (ret) {
--			btrfs_bio_end_io(btrfs_bio(bio), ret);
--			return;
+-		if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
+-			status = extract_ordered_extent(BTRFS_I(inode), bio,
+-							file_offset);
+-			if (status) {
+-				bio_put(bio);
+-				goto out_err;
+-			}
 -		}
--	}
--map:
--	btrfs_submit_bio(fs_info, bio, 0);
--}
 -
- static void btrfs_submit_direct(const struct iomap_iter *iter,
- 		struct bio *dio_bio, loff_t file_offset)
+ 		ASSERT(submit_len >= clone_len);
+ 		submit_len -= clone_len;
+ 
+@@ -7911,7 +7888,6 @@ static void btrfs_submit_direct(const struct iomap_iter *iter,
+ 
+ out_err_em:
+ 	free_extent_map(em);
+-out_err:
+ 	dio_bio->bi_status = status;
+ 	btrfs_dio_private_put(dip);
+ }
+diff --git a/fs/btrfs/zoned.c b/fs/btrfs/zoned.c
+index 2218b33dac568..04a16d70ed7a5 100644
+--- a/fs/btrfs/zoned.c
++++ b/fs/btrfs/zoned.c
+@@ -17,6 +17,7 @@
+ #include "space-info.h"
+ #include "fs.h"
+ #include "accessors.h"
++#include "bio.h"
+ 
+ /* Maximum number of zones to report per blkdev_report_zones() call */
+ #define BTRFS_REPORT_NR_ZONES   4096
+@@ -1655,21 +1656,17 @@ bool btrfs_use_zone_append(struct btrfs_inode *inode, u64 start)
+ 	return ret;
+ }
+ 
+-void btrfs_record_physical_zoned(struct inode *inode, u64 file_offset,
+-				 struct bio *bio)
++void btrfs_record_physical_zoned(struct btrfs_bio *bbio)
  {
-@@ -7878,11 +7827,8 @@ static void btrfs_submit_direct(const struct iomap_iter *iter,
- 		container_of(dio_bio, struct btrfs_dio_private, bio);
- 	struct inode *inode = iter->inode;
- 	struct btrfs_fs_info *fs_info = btrfs_sb(inode->i_sb);
--	const bool raid56 = (btrfs_data_alloc_profile(fs_info) &
--			     BTRFS_BLOCK_GROUP_RAID56_MASK);
- 	struct bio *bio;
- 	u64 start_sector;
--	int async_submit = 0;
- 	u64 submit_len;
- 	u64 clone_offset = 0;
- 	u64 clone_len;
-@@ -7949,19 +7895,10 @@ static void btrfs_submit_direct(const struct iomap_iter *iter,
- 		 * We transfer the initial reference to the last bio, so we
- 		 * don't need to increment the reference count for the last one.
- 		 */
--		if (submit_len > 0) {
-+		if (submit_len > 0)
- 			refcount_inc(&dip->refs);
--			/*
--			 * If we are submitting more than one bio, submit them
--			 * all asynchronously. The exception is RAID 5 or 6, as
--			 * asynchronous checksums make it difficult to collect
--			 * full stripe writes.
--			 */
--			if (!raid56)
--				async_submit = 1;
--		}
++	const u64 physical = bbio->bio.bi_iter.bi_sector << SECTOR_SHIFT;
+ 	struct btrfs_ordered_extent *ordered;
+-	const u64 physical = bio->bi_iter.bi_sector << SECTOR_SHIFT;
  
--		btrfs_submit_dio_bio(bio, BTRFS_I(inode), file_offset, async_submit);
-+		btrfs_submit_bio(fs_info, bio, 0);
+-	if (bio_op(bio) != REQ_OP_ZONE_APPEND)
+-		return;
+-
+-	ordered = btrfs_lookup_ordered_extent(BTRFS_I(inode), file_offset);
++	ordered = btrfs_lookup_ordered_extent(bbio->inode, bbio->file_offset);
+ 	if (WARN_ON(!ordered))
+ 		return;
  
- 		dio_data->submitted += clone_len;
- 		clone_offset += clone_len;
+ 	ordered->physical = physical;
+-	ordered->bdev = bio->bi_bdev;
++	ordered->bdev = bbio->bio.bi_bdev;
+ 
+ 	btrfs_put_ordered_extent(ordered);
+ }
+diff --git a/fs/btrfs/zoned.h b/fs/btrfs/zoned.h
+index f43990985d802..bc93a740e7cf3 100644
+--- a/fs/btrfs/zoned.h
++++ b/fs/btrfs/zoned.h
+@@ -57,8 +57,7 @@ void btrfs_redirty_list_add(struct btrfs_transaction *trans,
+ 			    struct extent_buffer *eb);
+ void btrfs_free_redirty_list(struct btrfs_transaction *trans);
+ bool btrfs_use_zone_append(struct btrfs_inode *inode, u64 start);
+-void btrfs_record_physical_zoned(struct inode *inode, u64 file_offset,
+-				 struct bio *bio);
++void btrfs_record_physical_zoned(struct btrfs_bio *bbio);
+ void btrfs_rewrite_logical_zoned(struct btrfs_ordered_extent *ordered);
+ bool btrfs_check_meta_write_pointer(struct btrfs_fs_info *fs_info,
+ 				    struct extent_buffer *eb,
+@@ -190,8 +189,7 @@ static inline bool btrfs_use_zone_append(struct btrfs_inode *inode, u64 start)
+ 	return false;
+ }
+ 
+-static inline void btrfs_record_physical_zoned(struct inode *inode,
+-					       u64 file_offset, struct bio *bio)
++static inline void btrfs_record_physical_zoned(struct btrfs_bio *bbio)
+ {
+ }
+ 
 -- 
 2.30.2
 
