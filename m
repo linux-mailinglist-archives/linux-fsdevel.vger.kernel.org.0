@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9065D631411
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Nov 2022 13:48:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4E03631415
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 20 Nov 2022 13:48:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbiKTMsV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 20 Nov 2022 07:48:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38350 "EHLO
+        id S229707AbiKTMsW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 20 Nov 2022 07:48:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38398 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229698AbiKTMsK (ORCPT
+        with ESMTP id S229706AbiKTMsP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 20 Nov 2022 07:48:10 -0500
+        Sun, 20 Nov 2022 07:48:15 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C1E3B2DD6;
-        Sun, 20 Nov 2022 04:48:09 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AC3D5FCA;
+        Sun, 20 Nov 2022 04:48:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=fByS+g64EMiWFF14f2uGuxi0pZk2JqZhpfZI4JpjY54=; b=vjbnIUiwIarnmHQpzjNgVKtZfm
-        /jmlp0DtXeRkGOTgsLxsMglt/8viThzMBwiwps37IcrolflzjU44sbhb1DmknNJre23K2JpszDCsG
-        ZbF03kJUVYPfdUqarJgHqJMaq8tc8z+P+JgEtFRTmsos31nMHi3Ag5sGUCeUkMUYG2X0oiMMcrnGj
-        SJM6ubdHaA7UZmYaP9UGmpbz4ELPcYivo/vt/Zqn0t5QMDhK8SHgTIilW78UDSIYoY/LybISqjb5i
-        8fWKFCMvDTTDF2gJHmYYIzHrirPrm5AxxvWH5twIeDQDGyRXBcB3Av0ularAn1tWDTh9AnidT4FUt
-        k8uP/Iow==;
+        bh=I7ntWIAP5h4X7v0C9etQbb/gTeHECSR+bicxrSpesZU=; b=PCJFzVxSunBpSpOx+UAdDyudW8
+        TBFjRv/SPS1LJvceJRmA5xzb00nSd0/bjVcsVFICn3ctasZgef3YcOQJoMeff5m/YUscudokcBhnz
+        7hOQUk214g79x6wUfAE5/ClVBEhhILQWgsd9p7e1zb/q/qNaJ0TKab05gf32uFWVjuwAnpv6SLfGo
+        IQCj2pOJH2rKju3WknXC0OOkrj5H0MZQBzpiod/C25IhOGnrMYAoEXsRGJ8fQBr5/oMKkpmRJtkTN
+        R7viBg3U+a02WtrWjhocMOGFq6De/Bl+6Z39wey0qcyP20r1pXI+kCtskob4wX3UOTMtPzKE+EYMQ
+        tv40RbEA==;
 Received: from [2001:4bb8:181:6f70:ae5d:6675:76b9:6fc3] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1owjjw-004ICH-VA; Sun, 20 Nov 2022 12:48:05 +0000
+        id 1owjjz-004ICl-OO; Sun, 20 Nov 2022 12:48:08 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
@@ -37,9 +37,9 @@ Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
         Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
         "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
         linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 10/19] btrfs: remove stripe boundary calculation for buffered I/O
-Date:   Sun, 20 Nov 2022 13:47:25 +0100
-Message-Id: <20221120124734.18634-11-hch@lst.de>
+Subject: [PATCH 11/19] btrfs: remove stripe boundary calculation for compressed I/O
+Date:   Sun, 20 Nov 2022 13:47:26 +0100
+Message-Id: <20221120124734.18634-12-hch@lst.de>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20221120124734.18634-1-hch@lst.de>
 References: <20221120124734.18634-1-hch@lst.de>
@@ -58,136 +58,267 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Qu Wenruo <wqu@suse.com>
 
-Remove btrfs_bio_ctrl::len_to_stripe_boundary, so that buffer
-I/O will no longer limit its bio size according to stripe length
-now that btrfs_submit_bio can split bios at stripe boundaries.
+Stop looking at the stripe boundary in alloc_compressed_bio() now that
+that btrfs_submit_bio can split bios, open code the now trivial code
+from alloc_compressed_bio() in btrfs_submit_compressed_read and stop
+maintaining the pending_ios count for reads as there is always just
+a single bio now.
 
 Signed-off-by: Qu Wenruo <wqu@suse.com>
-[hch: simplify calc_bio_boundaries a little more]
+[hch: remove more cruft in btrfs_submit_compressed_read,
+      use btrfs_zoned_get_device in alloc_compressed_bio]
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 Reviewed-by: Josef Bacik <josef@toxicpanda.com>
 ---
- fs/btrfs/extent_io.c | 71 ++++++++++++--------------------------------
- 1 file changed, 19 insertions(+), 52 deletions(-)
+ fs/btrfs/compression.c | 131 +++++++++++------------------------------
+ 1 file changed, 34 insertions(+), 97 deletions(-)
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 4672a954f9fd2..b49c82864389c 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -99,7 +99,6 @@ struct btrfs_bio_ctrl {
- 	struct bio *bio;
- 	int mirror_num;
- 	enum btrfs_compression_type compress_type;
--	u32 len_to_stripe_boundary;
- 	u32 len_to_oe_boundary;
- 	btrfs_bio_end_io_t end_io_func;
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index b632c95e70e76..e1e19accd1f5c 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -141,12 +141,15 @@ static int compression_decompress(int type, struct list_head *ws,
  
-@@ -881,7 +880,7 @@ static int btrfs_bio_add_page(struct btrfs_bio_ctrl *bio_ctrl,
+ static int btrfs_decompress_bio(struct compressed_bio *cb);
  
- 	ASSERT(bio);
- 	/* The limit should be calculated when bio_ctrl->bio is allocated */
--	ASSERT(bio_ctrl->len_to_oe_boundary && bio_ctrl->len_to_stripe_boundary);
-+	ASSERT(bio_ctrl->len_to_oe_boundary);
- 	if (bio_ctrl->compress_type != compress_type)
- 		return 0;
+-static void finish_compressed_bio_read(struct compressed_bio *cb)
++static void end_compressed_bio_read(struct btrfs_bio *bbio)
+ {
++	struct compressed_bio *cb = bbio->private;
+ 	unsigned int index;
+ 	struct page *page;
  
-@@ -917,9 +916,7 @@ static int btrfs_bio_add_page(struct btrfs_bio_ctrl *bio_ctrl,
- 	if (!contig)
- 		return 0;
+-	if (cb->status == BLK_STS_OK)
++	if (bbio->bio.bi_status)
++		cb->status = bbio->bio.bi_status;
++	else
+ 		cb->status = errno_to_blk_status(btrfs_decompress_bio(cb));
  
--	real_size = min(bio_ctrl->len_to_oe_boundary,
--			bio_ctrl->len_to_stripe_boundary) - bio_size;
--	real_size = min(real_size, size);
-+	real_size = min(bio_ctrl->len_to_oe_boundary - bio_size, size);
- 
- 	/*
- 	 * If real_size is 0, never call bio_add_*_page(), as even size is 0,
-@@ -936,58 +933,30 @@ static int btrfs_bio_add_page(struct btrfs_bio_ctrl *bio_ctrl,
- 	return ret;
+ 	/* Release the compressed pages */
+@@ -162,17 +165,6 @@ static void finish_compressed_bio_read(struct compressed_bio *cb)
+ 	/* Finally free the cb struct */
+ 	kfree(cb->compressed_pages);
+ 	kfree(cb);
+-}
+-
+-static void end_compressed_bio_read(struct btrfs_bio *bbio)
+-{
+-	struct compressed_bio *cb = bbio->private;
+-
+-	if (bbio->bio.bi_status)
+-		cb->status = bbio->bio.bi_status;
+-
+-	if (refcount_dec_and_test(&cb->pending_ios))
+-		finish_compressed_bio_read(cb);
+ 	bio_put(&bbio->bio);
  }
  
--static int calc_bio_boundaries(struct btrfs_bio_ctrl *bio_ctrl,
--			       struct btrfs_inode *inode, u64 file_offset)
-+static void calc_bio_boundaries(struct btrfs_bio_ctrl *bio_ctrl,
-+				struct btrfs_inode *inode, u64 file_offset)
+@@ -289,43 +281,30 @@ static void end_compressed_bio_write(struct btrfs_bio *bbio)
+  *                      from or written to.
+  * @endio_func:         The endio function to call after the IO for compressed data
+  *                      is finished.
+- * @next_stripe_start:  Return value of logical bytenr of where next stripe starts.
+- *                      Let the caller know to only fill the bio up to the stripe
+- *                      boundary.
+  */
+-
+-
+ static struct bio *alloc_compressed_bio(struct compressed_bio *cb, u64 disk_bytenr,
+ 					blk_opf_t opf,
+-					btrfs_bio_end_io_t endio_func,
+-					u64 *next_stripe_start)
++					btrfs_bio_end_io_t endio_func)
  {
--	struct btrfs_fs_info *fs_info = inode->root->fs_info;
+-	struct btrfs_fs_info *fs_info = btrfs_sb(cb->inode->i_sb);
 -	struct btrfs_io_geometry geom;
- 	struct btrfs_ordered_extent *ordered;
 -	struct extent_map *em;
- 	u64 logical = (bio_ctrl->bio->bi_iter.bi_sector << SECTOR_SHIFT);
+ 	struct bio *bio;
 -	int ret;
  
- 	/*
--	 * Pages for compressed extent are never submitted to disk directly,
--	 * thus it has no real boundary, just set them to U32_MAX.
--	 *
--	 * The split happens for real compressed bio, which happens in
--	 * btrfs_submit_compressed_read/write().
-+	 * Limit the extent to the ordered boundary for Zone Append.
-+	 * Compressed bios aren't submitted directly, so it doesn't apply
-+	 * to them.
- 	 */
--	if (bio_ctrl->compress_type != BTRFS_COMPRESS_NONE) {
--		bio_ctrl->len_to_oe_boundary = U32_MAX;
--		bio_ctrl->len_to_stripe_boundary = U32_MAX;
--		return 0;
+ 	bio = btrfs_bio_alloc(BIO_MAX_VECS, opf, BTRFS_I(cb->inode), endio_func,
+ 			      cb);
+ 	bio->bi_iter.bi_sector = disk_bytenr >> SECTOR_SHIFT;
+ 
+-	em = btrfs_get_chunk_map(fs_info, disk_bytenr, fs_info->sectorsize);
+-	if (IS_ERR(em)) {
+-		bio_put(bio);
+-		return ERR_CAST(em);
 -	}
--	em = btrfs_get_chunk_map(fs_info, logical, fs_info->sectorsize);
--	if (IS_ERR(em))
--		return PTR_ERR(em);
--	ret = btrfs_get_io_geometry(fs_info, em, btrfs_op(bio_ctrl->bio),
--				    logical, &geom);
++	if (bio_op(bio) == REQ_OP_ZONE_APPEND) {
++		struct btrfs_fs_info *fs_info = btrfs_sb(cb->inode->i_sb);
++		struct btrfs_device *device;
+ 
+-	if (bio_op(bio) == REQ_OP_ZONE_APPEND)
+-		bio_set_dev(bio, em->map_lookup->stripes[0].dev->bdev);
++		device = btrfs_zoned_get_device(fs_info, disk_bytenr,
++						fs_info->sectorsize);
++		if (IS_ERR(device)) {
++			bio_put(bio);
++			return ERR_CAST(device);
++		}
+ 
+-	ret = btrfs_get_io_geometry(fs_info, em, btrfs_op(bio), disk_bytenr, &geom);
 -	free_extent_map(em);
 -	if (ret < 0) {
--		return ret;
--	}
--	if (geom.len > U32_MAX)
--		bio_ctrl->len_to_stripe_boundary = U32_MAX;
--	else
--		bio_ctrl->len_to_stripe_boundary = (u32)geom.len;
+-		bio_put(bio);
+-		return ERR_PTR(ret);
++		bio_set_dev(bio, device->bdev);
+ 	}
+-	*next_stripe_start = disk_bytenr + geom.len;
+ 	refcount_inc(&cb->pending_ios);
+ 	return bio;
+ }
+@@ -352,7 +331,6 @@ blk_status_t btrfs_submit_compressed_write(struct btrfs_inode *inode, u64 start,
+ 	struct bio *bio = NULL;
+ 	struct compressed_bio *cb;
+ 	u64 cur_disk_bytenr = disk_start;
+-	u64 next_stripe_start;
+ 	blk_status_t ret = BLK_STS_OK;
+ 	const bool use_append = btrfs_use_zone_append(inode, disk_start);
+ 	const enum req_op bio_op = REQ_BTRFS_ONE_ORDERED |
+@@ -388,8 +366,7 @@ blk_status_t btrfs_submit_compressed_write(struct btrfs_inode *inode, u64 start,
+ 		/* Allocate new bio if submitted or not yet allocated */
+ 		if (!bio) {
+ 			bio = alloc_compressed_bio(cb, cur_disk_bytenr,
+-				bio_op | write_flags, end_compressed_bio_write,
+-				&next_stripe_start);
++				bio_op | write_flags, end_compressed_bio_write);
+ 			if (IS_ERR(bio)) {
+ 				ret = errno_to_blk_status(PTR_ERR(bio));
+ 				break;
+@@ -398,20 +375,12 @@ blk_status_t btrfs_submit_compressed_write(struct btrfs_inode *inode, u64 start,
+ 			if (blkcg_css)
+ 				bio->bi_opf |= REQ_CGROUP_PUNT;
+ 		}
+-		/*
+-		 * We should never reach next_stripe_start start as we will
+-		 * submit comp_bio when reach the boundary immediately.
+-		 */
+-		ASSERT(cur_disk_bytenr != next_stripe_start);
 -
--	if (bio_op(bio_ctrl->bio) != REQ_OP_ZONE_APPEND) {
--		bio_ctrl->len_to_oe_boundary = U32_MAX;
--		return 0;
--	}
+ 		/*
+ 		 * We have various limits on the real read size:
+-		 * - stripe boundary
+ 		 * - page boundary
+ 		 * - compressed length boundary
+ 		 */
+-		real_size = min_t(u64, U32_MAX, next_stripe_start - cur_disk_bytenr);
+-		real_size = min_t(u64, real_size, PAGE_SIZE - offset_in_page(offset));
++		real_size = min_t(u64, U32_MAX, PAGE_SIZE - offset_in_page(offset));
+ 		real_size = min_t(u64, real_size, compressed_len - offset);
+ 		ASSERT(IS_ALIGNED(real_size, fs_info->sectorsize));
+ 
+@@ -426,9 +395,6 @@ blk_status_t btrfs_submit_compressed_write(struct btrfs_inode *inode, u64 start,
+ 			submit = true;
+ 
+ 		cur_disk_bytenr += added;
+-		/* Reached stripe boundary */
+-		if (cur_disk_bytenr == next_stripe_start)
+-			submit = true;
+ 
+ 		/* Finished the range */
+ 		if (cur_disk_bytenr == disk_start + compressed_len)
+@@ -623,10 +589,9 @@ void btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+ 	struct extent_map_tree *em_tree;
+ 	struct compressed_bio *cb;
+ 	unsigned int compressed_len;
+-	struct bio *comp_bio = NULL;
++	struct bio *comp_bio;
+ 	const u64 disk_bytenr = bio->bi_iter.bi_sector << SECTOR_SHIFT;
+ 	u64 cur_disk_byte = disk_bytenr;
+-	u64 next_stripe_start;
+ 	u64 file_offset;
+ 	u64 em_len;
+ 	u64 em_start;
+@@ -693,37 +658,24 @@ void btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+ 	/* include any pages we added in add_ra-bio_pages */
+ 	cb->len = bio->bi_iter.bi_size;
+ 
++	comp_bio = btrfs_bio_alloc(BIO_MAX_VECS, REQ_OP_READ,
++				   BTRFS_I(cb->inode),
++				   end_compressed_bio_read, cb);
++	comp_bio->bi_iter.bi_sector = cur_disk_byte >> SECTOR_SHIFT;
++
+ 	while (cur_disk_byte < disk_bytenr + compressed_len) {
+ 		u64 offset = cur_disk_byte - disk_bytenr;
+ 		unsigned int index = offset >> PAGE_SHIFT;
+ 		unsigned int real_size;
+ 		unsigned int added;
+ 		struct page *page = cb->compressed_pages[index];
+-		bool submit = false;
+ 
+-		/* Allocate new bio if submitted or not yet allocated */
+-		if (!comp_bio) {
+-			comp_bio = alloc_compressed_bio(cb, cur_disk_byte,
+-					REQ_OP_READ, end_compressed_bio_read,
+-					&next_stripe_start);
+-			if (IS_ERR(comp_bio)) {
+-				cb->status = errno_to_blk_status(PTR_ERR(comp_bio));
+-				break;
+-			}
+-		}
+-		/*
+-		 * We should never reach next_stripe_start start as we will
+-		 * submit comp_bio when reach the boundary immediately.
+-		 */
+-		ASSERT(cur_disk_byte != next_stripe_start);
+ 		/*
+ 		 * We have various limit on the real read size:
+-		 * - stripe boundary
+ 		 * - page boundary
+ 		 * - compressed length boundary
+ 		 */
+-		real_size = min_t(u64, U32_MAX, next_stripe_start - cur_disk_byte);
+-		real_size = min_t(u64, real_size, PAGE_SIZE - offset_in_page(offset));
++		real_size = min_t(u64, U32_MAX, PAGE_SIZE - offset_in_page(offset));
+ 		real_size = min_t(u64, real_size, compressed_len - offset);
+ 		ASSERT(IS_ALIGNED(real_size, fs_info->sectorsize));
+ 
+@@ -734,35 +686,20 @@ void btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+ 		 */
+ 		ASSERT(added == real_size);
+ 		cur_disk_byte += added;
 -
--	/* Ordered extent not yet created, so we're good */
--	ordered = btrfs_lookup_ordered_extent(inode, file_offset);
--	if (!ordered) {
--		bio_ctrl->len_to_oe_boundary = U32_MAX;
--		return 0;
-+	if (bio_ctrl->compress_type == BTRFS_COMPRESS_NONE &&
-+	    bio_op(bio_ctrl->bio) == REQ_OP_ZONE_APPEND) {
-+		ordered = btrfs_lookup_ordered_extent(inode, file_offset);
-+		if (ordered) {
-+			bio_ctrl->len_to_oe_boundary = min_t(u32, U32_MAX,
-+					ordered->disk_bytenr +
-+					ordered->disk_num_bytes - logical);
-+			btrfs_put_ordered_extent(ordered);
-+			return;
-+		}
+-		/* Reached stripe boundary, need to submit */
+-		if (cur_disk_byte == next_stripe_start)
+-			submit = true;
+-
+-		/* Has finished the range, need to submit */
+-		if (cur_disk_byte == disk_bytenr + compressed_len)
+-			submit = true;
+-
+-		if (submit) {
+-			/*
+-			 * Save the initial offset of this chunk, as there
+-			 * is no direct correlation between compressed pages and
+-			 * the original file offset.  The field is only used for
+-			 * priting error messages.
+-			 */
+-			btrfs_bio(comp_bio)->file_offset = file_offset;
+-
+-			ASSERT(comp_bio->bi_iter.bi_size);
+-			btrfs_submit_bio(fs_info, comp_bio, mirror_num);
+-			comp_bio = NULL;
+-		}
  	}
  
--	bio_ctrl->len_to_oe_boundary = min_t(u32, U32_MAX,
--		ordered->disk_bytenr + ordered->disk_num_bytes - logical);
--	btrfs_put_ordered_extent(ordered);
--	return 0;
-+	bio_ctrl->len_to_oe_boundary = U32_MAX;
- }
+ 	if (memstall)
+ 		psi_memstall_leave(&pflags);
  
- static int alloc_new_bio(struct btrfs_inode *inode,
-@@ -1013,9 +982,7 @@ static int alloc_new_bio(struct btrfs_inode *inode,
- 		bio->bi_iter.bi_sector = (disk_bytenr + offset) >> SECTOR_SHIFT;
- 	bio_ctrl->bio = bio;
- 	bio_ctrl->compress_type = compress_type;
--	ret = calc_bio_boundaries(bio_ctrl, inode, file_offset);
--	if (ret < 0)
--		goto error;
-+	calc_bio_boundaries(bio_ctrl, inode, file_offset);
+-	if (refcount_dec_and_test(&cb->pending_ios))
+-		finish_compressed_bio_read(cb);
++	/*
++	 * Just stash the initial offset of this chunk, as there is no direct
++	 * correlation between compressed pages and the original file offset.
++	 * The field is only used for priting error messages anyway.
++	 */
++	btrfs_bio(comp_bio)->file_offset = file_offset;
++
++	ASSERT(comp_bio->bi_iter.bi_size);
++	btrfs_submit_bio(fs_info, comp_bio, mirror_num);
+ 	return;
  
- 	if (wbc) {
- 		/*
+ fail:
 -- 
 2.30.2
 
