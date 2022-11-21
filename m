@@ -2,130 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CC4C631F10
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 12:05:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4387063207D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 12:26:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229682AbiKULFt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Nov 2022 06:05:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59630 "EHLO
+        id S230286AbiKUL0h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Nov 2022 06:26:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50920 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229508AbiKULFs (ORCPT
+        with ESMTP id S230249AbiKUL0J (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Nov 2022 06:05:48 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D93663D4;
-        Mon, 21 Nov 2022 03:05:47 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0A11B60FF9;
-        Mon, 21 Nov 2022 11:05:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B26DAC433D6;
-        Mon, 21 Nov 2022 11:05:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1669028746;
-        bh=u4K6l+tDjSuwIb4zoR5rarX0XnI/SZIfH7BiykUNNBA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GGvnPAh3esdRVAOOsFDTE1jSnAzFQCHFJAQzfyn1Khy7X4wEDDNf7cZ38Ch6J8dV9
-         SBciLLndL26XAZGX25M5wH+1JbWWuHxFAsvnOb5aYvjzMJula3DGPyHMvWwef86SUK
-         kz5QYSyV8G3fj7sLyA3v7Ugrqvetj3eJ1iuxZG6Q=
-Date:   Mon, 21 Nov 2022 12:05:42 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Nayna <nayna@linux.vnet.ibm.com>, Nayna Jain <nayna@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-Message-ID: <Y3tbhmL4oG1YTyT/@kroah.com>
-References: <20221106210744.603240-1-nayna@linux.ibm.com>
- <20221106210744.603240-3-nayna@linux.ibm.com>
- <Y2uvUFQ9S2oaefSY@kroah.com>
- <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
- <Y2zLRw/TzV/sWgqO@kroah.com>
- <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
- <Y3anQukokMcQr+iE@kroah.com>
- <d615180d-6fe5-d977-da6a-e88fd8bf5345@linux.vnet.ibm.com>
- <Y3pSF2MRIXd6aH14@kroah.com>
- <88111914afc6204b2a3fb82ded5d9bfb6420bca6.camel@HansenPartnership.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <88111914afc6204b2a3fb82ded5d9bfb6420bca6.camel@HansenPartnership.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Mon, 21 Nov 2022 06:26:09 -0500
+Received: from mail-ej1-x64a.google.com (mail-ej1-x64a.google.com [IPv6:2a00:1450:4864:20::64a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0159B4F23
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 03:21:39 -0800 (PST)
+Received: by mail-ej1-x64a.google.com with SMTP id gt15-20020a1709072d8f00b007aaac7973fbso6464646ejc.23
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 03:21:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Ut094+1HiZ4Cjb1djYz8ZPvCLMxdVr+mJo3AtkrOKCA=;
+        b=PtZTUVznvnflFwUv9SKypxZQqr7i1LRYenCMrhMEOVGiPfxccwpjsY0A4YtFeeVnlF
+         h2lGU/CX2UGfxpSXxpMO1krIzX7InkrGi25tw16FUZGnYRG+48rz3JaSCOEXLpqgE/EM
+         opVGk0Q/rJdXGr0oIG5tziMO7oWC8RwHnTFpjZTCghBdovVeuHaJ0UfGVV+HSRF+Mevy
+         v/vENEx2/1GIDj3F6RVT8uC+lujEgt6uMMFBYmaBcrnbZqaZYAVFDM7x70bVO4+mtAA4
+         t18AcVUc3fi2I1HwUNs+HNibRi0u8zeQUEKGIUhxxWoUi8pcajXw5PvuDm5HDd/vf0M6
+         Dc+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ut094+1HiZ4Cjb1djYz8ZPvCLMxdVr+mJo3AtkrOKCA=;
+        b=WqHONMySr41zHaEDOLVsZyjawhaepxBe0wOJXoV9yQ7iyy2K9n75kgQdRXmEj66sNW
+         zKAD7mQnv21Y8Y21CNMnVBWKsa5vvyGDddiW62x8cuFzWPgMp/NnaTaL5d8QSMxVHzWt
+         Dspjv5sz7zKxXSq0wlIKyPo4ybseVW5qcCyMwfC+fLVoozBcIcG9PR4Uw6fB6sboG6pt
+         2rR29Ftoh07eckbzGcL7ftg5hZWi92iewXiDRlCVxyKebkplWL0Gs2t+ovG5shxSCTqR
+         4KZx/xX/UCgSIX6FFC/+cm8TWxKKi+z0T03wKb3a/GYbcRVsuTRGOyagcPvAZfLtlHnd
+         5vCA==
+X-Gm-Message-State: ANoB5plXfQtcOibFQ4JHH1gI6+YeD6GBQAUdWBkjeWJ3saxkXIIe4ufY
+        E2Pa65sGmzVhNb0NqV4Us22EDFLXA9k=
+X-Google-Smtp-Source: AA0mqf6ymM+aPMyFpxcfMJZ6dxw5jBiyJyJ7BqqZjljlNhaC6hbGZmGDYm3fYA/es+nh2vPHSPoyWsXw6P0=
+X-Received: from glider.muc.corp.google.com ([2a00:79e0:9c:201:db68:962:2bf6:6c7])
+ (user=glider job=sendgmr) by 2002:aa7:c788:0:b0:458:b9f9:9fba with SMTP id
+ n8-20020aa7c788000000b00458b9f99fbamr16132478eds.305.1669029698340; Mon, 21
+ Nov 2022 03:21:38 -0800 (PST)
+Date:   Mon, 21 Nov 2022 12:21:30 +0100
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.38.1.584.g0f3c55d4c2-goog
+Message-ID: <20221121112134.407362-1-glider@google.com>
+Subject: [PATCH 1/5] fs: ext4: initialize fsdata in pagecache_write()
+From:   Alexander Potapenko <glider@google.com>
+To:     glider@google.com
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        chao@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>,
+        syzbot+9767be679ef5016b6082@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Nov 20, 2022 at 10:14:26PM -0500, James Bottomley wrote:
-> On Sun, 2022-11-20 at 17:13 +0100, Greg Kroah-Hartman wrote:
-> > On Sat, Nov 19, 2022 at 01:20:09AM -0500, Nayna wrote:
-> > > 
-> > > On 11/17/22 16:27, Greg Kroah-Hartman wrote:
-> > > > On Mon, Nov 14, 2022 at 06:03:43PM -0500, Nayna wrote:
-> > > > > On 11/10/22 04:58, Greg Kroah-Hartman wrote:
-> [...]
-> > > > > > I do not understand, sorry.  What does namespaces have to do
-> > > > > > with this?
-> > > > > > sysfs can already handle namespaces just fine, why not use
-> > > > > > that?
-> > > > > Firmware objects are not namespaced. I mentioned it here as an
-> > > > > example of the difference between firmware and kernel objects.
-> > > > > It is also in response to the feedback from James Bottomley in
-> > > > > RFC v2 [
-> > > > > https://lore.kernel.org/linuxppc-dev/41ca51e8db9907d9060cc38ad
-> > > > > b59a66dcae4c59b.camel@HansenPartnership.com/].
-> > > > I do not understand, sorry.  Do you want to use a namespace for
-> > > > these or not?  The code does not seem to be using namespaces. 
-> > > > You can use sysfs with, or without, a namespace so I don't
-> > > > understand the issue here.
-> > > > 
-> > > > With your code, there is no namespace.
-> > > 
-> > > You are correct. There's no namespace for these.
-> > 
-> > So again, I do not understand.  Do you want to use filesystem
-> > namespaces, or do you not?
-> 
-> Since this seems to go back to my email quoted again, let me repeat:
-> the question isn't if this patch is namespaced; I think you've agreed
-> several times it isn't.  The question is if the exposed properties
-> would ever need to be namespaced.  This is a subtle and complex
-> question which isn't at all explored by the above interchange.
-> 
-> > How again can you not use sysfs or securityfs due to namespaces? 
-> > What is missing?
-> 
-> I already explained in the email that sysfs contains APIs like
-> simple_pin_... which are completely inimical to namespacing.
+When aops->write_begin() does not initialize fsdata, KMSAN reports
+an error passing the latter to aops->write_end().
 
-Then how does the networking code handle the namespace stuff in sysfs?
-That seems to work today, or am I missing something?
+Fix this by unconditionally initializing fsdata.
 
-If the namespace support needs to be fixed up in sysfs (or in
-securityfs), then great, let's do that, and not write a whole new
-filesystem just because that's not done.
+Cc: Eric Biggers <ebiggers@kernel.org>
+Fixes: c93d8f885809 ("ext4: add basic fs-verity support")
+Reported-by: syzbot+9767be679ef5016b6082@syzkaller.appspotmail.com
+Signed-off-by: Alexander Potapenko <glider@google.com>
+---
+ fs/ext4/verity.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Also this patch series also doesn't handle namespaces, so again, I am
-totally confused as to why this is even being discussed...
+diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
+index 3c640bd7ecaeb..30e3b65798b50 100644
+--- a/fs/ext4/verity.c
++++ b/fs/ext4/verity.c
+@@ -79,7 +79,7 @@ static int pagecache_write(struct inode *inode, const void *buf, size_t count,
+ 		size_t n = min_t(size_t, count,
+ 				 PAGE_SIZE - offset_in_page(pos));
+ 		struct page *page;
+-		void *fsdata;
++		void *fsdata = NULL;
+ 		int res;
+ 
+ 		res = aops->write_begin(NULL, mapping, pos, n, &page, &fsdata);
+-- 
+2.38.1.584.g0f3c55d4c2-goog
 
-thanks,
-
-greg k-h
