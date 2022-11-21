@@ -2,87 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA77C6320EE
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 12:42:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B08E6320F6
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 12:44:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230253AbiKULmM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Nov 2022 06:42:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38252 "EHLO
+        id S231465AbiKULoA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Nov 2022 06:44:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42264 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231497AbiKULly (ORCPT
+        with ESMTP id S231458AbiKULna (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Nov 2022 06:41:54 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 132A2AE76;
-        Mon, 21 Nov 2022 03:41:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=5OxVIP2sJTBTWq/HDoIIRbvS+t0aPa1aRm3P4GNn+Wk=; b=H4laSJ1TRP/mfaaM4wESvfDwE9
-        PFHpESfJfhILhDgGrfBvGQt/qt3VCehWWLDrm+3wbzIsgaj43DnA4q4kHZ+ocqjg6PqKq1+cW5fVL
-        +OMQXU+zdhPwvy2lgbUEFiM8B4tidtEmyesfJv4tcYq50Aknwyg4vWOvBRmPRK3SPfIZqaw7tdcuW
-        Gmmqwf6OEDTRSF/J0YFyK5U8pRokBYunI8v+jDzUb8KnybQIPKMh4gOd7ftySOe40RF0m5kxwQg54
-        SGmU5+8+6TGl481N79xPo+MNFGh6LImMgNKvgAsTcGfmiGz1aunrZhGOhvPVXkyukdyBLiojt1LYq
-        2Vq72oTw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1ox5Ay-005AXw-Rb; Mon, 21 Nov 2022 11:41:26 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 9F7A13006A4;
-        Mon, 21 Nov 2022 12:41:17 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id 870972BE3B104; Mon, 21 Nov 2022 12:41:17 +0100 (CET)
-Date:   Mon, 21 Nov 2022 12:41:17 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Kees Cook <keescook@chromium.org>,
-        Iurii Zaikin <yzaikin@google.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] sched: Move numa_balancing sysctls to its own file
-Message-ID: <Y3tj3SnsLxM5IIli@hirez.programming.kicks-ass.net>
-References: <20220908072531.87916-1-wangkefeng.wang@huawei.com>
- <YxqDa+WALRr8L7Q8@bombadil.infradead.org>
+        Mon, 21 Nov 2022 06:43:30 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 091A91C113
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 03:42:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669030941;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=f0yfsdol+yJgmcL0Jiq/hqGtRju0QVsHN+RKjYJPQas=;
+        b=gEOnELvplYAcYoop+/Jgazv41Hwc0vV30l3YGM+RyIWR2GZ42SaW43CdTocKMXv5REgmO5
+        R6F0trFkD7iYyxRZ6SteRDY0SCcUiwpwRmHNuu7H5zbO4V+uoDw9LaEV5hTciKsyPtUocY
+        /Ii5LKrXaHZDSJQSC3UxWFojt7I3mkI=
+Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com
+ [209.85.222.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-66-L9Z5qFwuMD6HuwgcBRsWJQ-1; Mon, 21 Nov 2022 06:42:19 -0500
+X-MC-Unique: L9Z5qFwuMD6HuwgcBRsWJQ-1
+Received: by mail-qk1-f197.google.com with SMTP id ay43-20020a05620a17ab00b006fa30ed61fdso15207884qkb.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 03:42:19 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f0yfsdol+yJgmcL0Jiq/hqGtRju0QVsHN+RKjYJPQas=;
+        b=l19OBnynw5ktcOV1HIhS7tzMwNPr8Ket6PXVR8uBkLaGKLOfobjUEnc3FJB/ZFxcTD
+         3gEMTT5RWdB0n1ZzMd/ZZtar+W/xnTShkgwWGKPksJBhoR75Pid6EaIZv+68r/SH2iKo
+         J7xd29F47Y021XdK+YFaelPG/t/5pAH3BEWpbqB1LWuQ2o22rKjvP7WOLy1ZoqxO72Vn
+         V9f1U/5W6Ymrw0yDWLxd1oOYmtqwjdA2aCjlCooGQer7zGKBmiALHOejFmccyjTs5vOJ
+         04qo7+D5BPbqiTylnmAJDqI6zj4KxFlRA6t2yJUq0nTqdAT38G7cap+nVf17SMGa1d9c
+         nWVw==
+X-Gm-Message-State: ANoB5plc8irBd3sX43rwUDfdX2YFSuTD81xtPNfctw2AhcywKKZmQSkc
+        +0UB1/0JJkqmSa+uXqlKRBrm9WZ3hc1gKmBP51NtWtDDcAIU/OqUgOsfX1O6tcFc6OcsfF5idh2
+        t4UuIW2cRtKtEDA9cH1/30rQkXw==
+X-Received: by 2002:a0c:ec04:0:b0:4c6:7622:3107 with SMTP id y4-20020a0cec04000000b004c676223107mr16719997qvo.118.1669030939406;
+        Mon, 21 Nov 2022 03:42:19 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf51P27yIXUDAMmN95CLRvQJ7pjzSqYkeXwmwj4+39MZ+JkgZotPJ6c+McvaUeb1FfoXdaTT2A==
+X-Received: by 2002:a0c:ec04:0:b0:4c6:7622:3107 with SMTP id y4-20020a0cec04000000b004c676223107mr16719984qvo.118.1669030939203;
+        Mon, 21 Nov 2022 03:42:19 -0800 (PST)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id u12-20020a05620a084c00b006ee949b8051sm7773590qku.51.2022.11.21.03.42.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 21 Nov 2022 03:42:18 -0800 (PST)
+Date:   Mon, 21 Nov 2022 06:42:24 -0500
+From:   Brian Foster <bfoster@redhat.com>
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     Ivan Babrou <ivan@cloudflare.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@cloudflare.com,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Theodore Ts'o <tytso@mit.edu>,
+        David Laight <David.Laight@aculab.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand <david@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Christoph Anton Mitterer <mail@christoph.anton.mitterer.name>,
+        Mike Rapoport <rppt@kernel.org>,
+        Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Kalesh Singh <kaleshsingh@google.com>
+Subject: Re: [PATCH v4] proc: report open files as size in stat() for
+ /proc/pid/fd
+Message-ID: <Y3tkIFOk78O5A47X@bfoster>
+References: <20221024173140.30673-1-ivan@cloudflare.com>
+ <Y3fYu2VCBgREBBau@bfoster>
+ <CABWYdi3csS3BpoMd8xO=ZXFeBH7KtuLkxzQ8VE5+rO5wrx-yQQ@mail.gmail.com>
+ <Y3feB8wHdfx48uCl@bfoster>
+ <20221119120111.2dh3tomoawwpyjrg@wittgenstein>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <YxqDa+WALRr8L7Q8@bombadil.infradead.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20221119120111.2dh3tomoawwpyjrg@wittgenstein>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Sep 08, 2022 at 05:06:03PM -0700, Luis Chamberlain wrote:
-> On Thu, Sep 08, 2022 at 03:25:31PM +0800, Kefeng Wang wrote:
-> > The sysctl_numa_balancing_promote_rate_limit and sysctl_numa_balancing
-> > are part of sched, move them to its own file.
+On Sat, Nov 19, 2022 at 01:01:11PM +0100, Christian Brauner wrote:
+> On Fri, Nov 18, 2022 at 02:33:27PM -0500, Brian Foster wrote:
+> > On Fri, Nov 18, 2022 at 11:18:36AM -0800, Ivan Babrou wrote:
+> > > On Fri, Nov 18, 2022 at 11:10 AM Brian Foster <bfoster@redhat.com> wrote:
+> > > > > +static int proc_fd_getattr(struct user_namespace *mnt_userns,
+> > > > > +                     const struct path *path, struct kstat *stat,
+> > > > > +                     u32 request_mask, unsigned int query_flags)
+> > > > > +{
+> > > > > +     struct inode *inode = d_inode(path->dentry);
+> > > > > +     int rv = 0;
+> > > > > +
+> > > > > +     generic_fillattr(&init_user_ns, inode, stat);
+> > > > > +
+> > > >
+> > > > Sorry I missed this on v3, but shouldn't this pass through the
+> > > > mnt_userns parameter?
+> > > 
+> > > The mnt_userns parameter was added in 549c729 (fs: make helpers idmap
+> > > mount aware), and it's not passed anywhere in fs/proc.
+> > > 
+> > > Looking at other uses of generic_fillattr, all of them use "init_user_ns":
+> > > 
 > > 
-> > Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> > Interesting. It looks like this would have used mnt_userns from
+> > vfs_getattr_nosec() before proc_fd_getattr() is wired up, right? I'm not
+> > familiar enough with that change to say whether /proc should use one
+> > value or the other, or perhaps it just doesn't matter.?
+> > 
+> > Christian?
 > 
-> There is quite a bit of random cleanup on each kernel release
-> for sysctls to do things like what you just did. Because of this it has its
-> own tree to help avoid conflicts. Can you base your patches on the
-> sysctl-testing branch here and re-submit:
+> Hey Brian,
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mcgrof/linux.git/log/?h=sysctl-testing
+> This should pass init_user_ns. So it is correct the way it is done now.
+> The init_user_ns is used to indicate that no idmappings are used and
+> since procfs doesn't support the creation of idmapped mounts and doesn't
+> need to, passing it here makes the most sense. Technically passing down
+> mnt_userns would work too but that would make it look like procfs could
+> support idmapped mounts which isn't the case and so we don't do it this
+> way.
 > 
-> If testing goes fine, then I'd move this to sysctl-next which linux-next
-> picks up for yet more testing.
-> 
-> Are scheduling folks OK with this patch and me picking it up on the
-> sysctl-next tree if all tests are a go?
 
-Yeah, think so, it just moves stuff around a bit.
+Got it, thanks for the context.
 
-ACK.
+Ivan,
+
+Sorry for the noise. FWIW, for this version of the patch:
+
+Reviewed-by: Brian Foster <bfoster@redhat.com>
+
+> Starting soon this will be a lot clearer too since we're about to
+> introduce struct mnt_idmap and replace passing around userns here.
+> That'll make things also safer as the helpers that currently could be
+> passed a mnt_userns - which could be any userns - will now only be able
+> to take mnt_idmap which is a different type.
+> 
+> Long story short, the way your patch does it is correct.
+> 
+> Thanks!
+> Christian
+> 
+
