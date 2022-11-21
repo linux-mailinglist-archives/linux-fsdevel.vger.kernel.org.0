@@ -2,50 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A63936325CA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 15:30:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4B126325CC
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 15:30:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229806AbiKUOaS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Nov 2022 09:30:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42558 "EHLO
+        id S229939AbiKUOaZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Nov 2022 09:30:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229595AbiKUOaR (ORCPT
+        with ESMTP id S229919AbiKUOaW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Nov 2022 09:30:17 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B7AB25BD71
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 06:29:20 -0800 (PST)
+        Mon, 21 Nov 2022 09:30:22 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2E25059853
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 06:29:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669040959;
+        s=mimecast20190719; t=1669040963;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=8W2APQF/MjITf9UOuO9CEPeWsugbmMpOKfelXWw/kqg=;
-        b=efQwQJS5cw1Lro7qV5FonkZRNzeSMlcefMj9PE/DsD5X98X9BP+ueLb27HP2UvDZAKeg5Z
-        35ss2K55QLEQmaHcWOxp7i+VWbxGakFl0ySMpIGzZsktz8woP4VSI29pm62WgPclVDMllp
-        0ZRIxvc0+oTV0FqcwTM7pMDpHcxVCWU=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=WXmc7II3otsSobbP8bGfU4JjoN1zWalo0oRGUBn1RE8=;
+        b=eW89sd9wUcjkJbRvV6XrjwW02S/yzh30UEJ83awZzfNl0BSXCNzOOYfpnIcr+iEoa0kpGK
+        ZVM6uxucxQc5S5K5sa7G9SbMiTop5tJoY8ub4Sey8Nro4+22o4EWXExoQu4EaIWM4ibRm9
+        ANawwIpOzz+oX0iRyLzkWq6as86IsRQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-638-cUbDEwfOPOqakrUVumvbEA-1; Mon, 21 Nov 2022 09:29:18 -0500
-X-MC-Unique: cUbDEwfOPOqakrUVumvbEA-1
+ us-mta-487-mmElv-ZHNz2EEjqD-ClyXw-1; Mon, 21 Nov 2022 09:29:19 -0500
+X-MC-Unique: mmElv-ZHNz2EEjqD-ClyXw-1
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D49DB1C09B64;
-        Mon, 21 Nov 2022 14:29:17 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 44DD886C14D;
+        Mon, 21 Nov 2022 14:29:19 +0000 (UTC)
 Received: from ovpn-193-186.brq.redhat.com (ovpn-193-186.brq.redhat.com [10.40.193.186])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id A6A242166B2E;
-        Mon, 21 Nov 2022 14:29:16 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1C5942166B26;
+        Mon, 21 Nov 2022 14:29:17 +0000 (UTC)
 From:   Lukas Czerner <lczerner@redhat.com>
 To:     Hugh Dickins <hughd@google.com>
 Cc:     Jan Kara <jack@suse.com>, Eric Sandeen <sandeen@redhat.com>,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
         djwong@kernel.org
-Subject: [PATCH v2 1/3] quota: add quota in-memory format support
-Date:   Mon, 21 Nov 2022 15:28:52 +0100
-Message-Id: <20221121142854.91109-2-lczerner@redhat.com>
+Subject: [PATCH v2 2/3] shmem: implement user/group quota support for tmpfs
+Date:   Mon, 21 Nov 2022 15:28:53 +0100
+Message-Id: <20221121142854.91109-3-lczerner@redhat.com>
 In-Reply-To: <20221121142854.91109-1-lczerner@redhat.com>
 References: <20221121142854.91109-1-lczerner@redhat.com>
 MIME-Version: 1.0
@@ -62,377 +62,539 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In memory quota format relies on quota infrastructure to store dquot
-information for us. While conventional quota formats for file systems
-with persistent storage can load quota information into dquot from the
-storage on-demand and hence quota dquot shrinker can free any dquot that
-is not currently being used, it must be avoided here. Otherwise we can
-lose valuable information, user provided limits, because there is no
-persistent storage to load the information from afterwards.
+Implement user and group quota support for tmpfs using system quota file
+in vfsv0 quota format. Because everything in tmpfs is temporary and as a
+result is lost on umount, the quota files are initialized on every
+mount. This also goes for quota limits, that needs to be set up after
+every mount.
 
-One information that in-memory quota format needs to keep track of is a
-sorted list of ids for each quota type. This is done by utilizing an rb
-tree which root is stored in mem_dqinfo->dqi_priv for each quota type.
-
-This format can be used to support quota on file system without persistent
-storage such as tmpfs.
+The quota support in tmpfs is well separated from the rest of the
+filesystem and is only enabled using mount option -o quota (and
+usrquota and grpquota for compatibility reasons). Only quota accounting
+is enabled this way, enforcement needs to be enable by regular quota
+tools (using Q_QUOTAON ioctl).
 
 Signed-off-by: Lukas Czerner <lczerner@redhat.com>
 ---
- fs/quota/Kconfig           |   8 ++
- fs/quota/Makefile          |   1 +
- fs/quota/dquot.c           |   3 +
- fs/quota/quota_mem.c       | 260 +++++++++++++++++++++++++++++++++++++
- include/linux/quota.h      |   7 +-
- include/uapi/linux/quota.h |   1 +
- 6 files changed, 279 insertions(+), 1 deletion(-)
- create mode 100644 fs/quota/quota_mem.c
+v2: Use the newly introduced in-memory only quota foramt QFMT_MEM_ONLY
 
-diff --git a/fs/quota/Kconfig b/fs/quota/Kconfig
-index b59cd172b5f9..8ea9656ca37b 100644
---- a/fs/quota/Kconfig
-+++ b/fs/quota/Kconfig
-@@ -67,6 +67,14 @@ config QFMT_V2
- 	  also supports 64-bit inode and block quota limits. If you need this
- 	  functionality say Y here.
+ Documentation/filesystems/tmpfs.rst |  12 ++
+ fs/quota/dquot.c                    |  10 +-
+ include/linux/shmem_fs.h            |   3 +
+ mm/shmem.c                          | 200 ++++++++++++++++++++++++----
+ 4 files changed, 197 insertions(+), 28 deletions(-)
+
+diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
+index 0408c245785e..9c4f228ef4f3 100644
+--- a/Documentation/filesystems/tmpfs.rst
++++ b/Documentation/filesystems/tmpfs.rst
+@@ -86,6 +86,18 @@ use up all the memory on the machine; but enhances the scalability of
+ that instance in a system with many CPUs making intensive use of it.
  
-+config QFMT_MEM
-+	tristate "Quota in-memory format support "
-+	depends on QUOTA
-+	help
-+	  This config option enables kernel support for in-memory quota
-+	  format support. Useful to support quota on file system without
-+	  permanent storage. If you need this functionality say Y here.
+ 
++tmpfs also supports quota with the following mount options
 +
- config QUOTACTL
- 	bool
- 	default n
-diff --git a/fs/quota/Makefile b/fs/quota/Makefile
-index 9160639daffa..935be3f7b731 100644
---- a/fs/quota/Makefile
-+++ b/fs/quota/Makefile
-@@ -5,3 +5,4 @@ obj-$(CONFIG_QFMT_V2)		+= quota_v2.o
- obj-$(CONFIG_QUOTA_TREE)	+= quota_tree.o
- obj-$(CONFIG_QUOTACTL)		+= quota.o kqid.o
- obj-$(CONFIG_QUOTA_NETLINK_INTERFACE)	+= netlink.o
-+obj-$(CONFIG_QFMT_MEM)		+= quota_mem.o
++========  =============================================================
++quota     Quota accounting is enabled on the mount. Tmpfs is using
++          hidden system quota files that are initialized on mount.
++          Quota limits can quota enforcement can be enabled using
++          standard quota tools.
++usrquota  Same as quota option. Exists for compatibility reasons.
++grpquota  Same as quota option. Exists for compatibility reasons.
++========  =============================================================
++
++
+ tmpfs has a mount option to set the NUMA memory allocation policy for
+ all files in that instance (if CONFIG_NUMA is enabled) - which can be
+ adjusted on the fly via 'mount -o remount ...'
 diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
-index 0427b44bfee5..f1a7a03632a2 100644
+index f1a7a03632a2..007604e7eb09 100644
 --- a/fs/quota/dquot.c
 +++ b/fs/quota/dquot.c
-@@ -736,6 +736,9 @@ dqcache_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
- 	spin_lock(&dq_list_lock);
- 	while (!list_empty(&free_dquots) && sc->nr_to_scan) {
- 		dquot = list_first_entry(&free_dquots, struct dquot, dq_free);
-+		if (test_bit(DQ_NO_SHRINK_B, &dquot->dq_flags) &&
-+		    !test_bit(DQ_FAKE_B, &dquot->dq_flags))
-+			continue;
- 		remove_dquot_hash(dquot);
- 		remove_free_dquot(dquot);
- 		remove_inuse(dquot);
-diff --git a/fs/quota/quota_mem.c b/fs/quota/quota_mem.c
-new file mode 100644
-index 000000000000..7d5e82122143
---- /dev/null
-+++ b/fs/quota/quota_mem.c
-@@ -0,0 +1,260 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * In memory quota format relies on quota infrastructure to store dquot
-+ * information for us. While conventional quota formats for file systems
-+ * with persistent storage can load quota information into dquot from the
-+ * storage on-demand and hence quota dquot shrinker can free any dquot
-+ * that is not currently being used, it must be avoided here. Otherwise we
-+ * can lose valuable information, user provided limits, because there is
-+ * no persistent storage to load the information from afterwards.
-+ *
-+ * One information that in-memory quota format needs to keep track of is
-+ * a sorted list of ids for each quota type. This is done by utilizing
-+ * an rb tree which root is stored in mem_dqinfo->dqi_priv for each quota
-+ * type.
-+ *
-+ * This format can be used to support quota on file system without persistent
-+ * storage such as tmpfs.
-+ */
-+#include <linux/errno.h>
-+#include <linux/fs.h>
-+#include <linux/mount.h>
-+#include <linux/kernel.h>
-+#include <linux/init.h>
-+#include <linux/module.h>
-+#include <linux/slab.h>
-+#include <linux/rbtree.h>
-+
-+#include <linux/quotaops.h>
-+#include <linux/quota.h>
-+
-+MODULE_AUTHOR("Lukas Czerner");
-+MODULE_DESCRIPTION("Quota in-memory format support");
-+MODULE_LICENSE("GPL");
-+
-+/*
-+ * The following constants define the amount of time given a user
-+ * before the soft limits are treated as hard limits (usually resulting
-+ * in an allocation failure). The timer is started when the user crosses
-+ * their soft limit, it is reset when they go below their soft limit.
-+ */
-+#define MAX_IQ_TIME  604800	/* (7*24*60*60) 1 week */
-+#define MAX_DQ_TIME  604800	/* (7*24*60*60) 1 week */
-+
-+struct quota_id {
-+	struct rb_node	node;
-+	qid_t		id;
-+};
-+
-+static int mem_check_quota_file(struct super_block *sb, int type)
-+{
-+	/* There is no real quota file, nothing to do */
-+	return 1;
-+}
-+
-+/*
-+ * There is no real quota file. Just allocate rb_root for quota ids and
-+ * set limits
-+ */
-+static int mem_read_file_info(struct super_block *sb, int type)
-+{
-+	struct quota_info *dqopt = sb_dqopt(sb);
-+	struct mem_dqinfo *info = &dqopt->info[type];
-+	int ret = 0;
-+
-+	down_read(&dqopt->dqio_sem);
-+	if (info->dqi_fmt_id != QFMT_MEM_ONLY) {
-+		ret = -EINVAL;
-+		goto out_unlock;
-+	}
-+
-+	info->dqi_priv = kzalloc(sizeof(struct rb_root), GFP_NOFS);
-+	if (!info->dqi_priv) {
-+		ret = -ENOMEM;
-+		goto out_unlock;
-+	}
-+
-+	/*
-+	 * Used space is stored as unsigned 64-bit value in bytes but
-+	 * quota core supports only signed 64-bit values so use that
-+	 * as a limit
-+	 */
-+	info->dqi_max_spc_limit = 0x7fffffffffffffffLL; /* 2^63-1 */
-+	info->dqi_max_ino_limit = 0x7fffffffffffffffLL;
-+
-+	info->dqi_bgrace = MAX_DQ_TIME;
-+	info->dqi_igrace = MAX_IQ_TIME;
-+	info->dqi_flags = 0;
-+
-+out_unlock:
-+	up_read(&dqopt->dqio_sem);
-+	return ret;
-+}
-+
-+static int mem_write_file_info(struct super_block *sb, int type)
-+{
-+	/* There is no real quota file, nothing to do */
-+	return 0;
-+}
-+
-+/*
-+ * Free all the quota_id entries in the rb tree and rb_root.
-+ */
-+static int mem_free_file_info(struct super_block *sb, int type)
-+{
-+	struct mem_dqinfo *info = &sb_dqopt(sb)->info[type];
-+	struct rb_root *root = info->dqi_priv;
-+	struct quota_id *entry;
-+	struct rb_node *node;
-+
-+	info->dqi_priv = NULL;
-+	node = rb_first(root);
-+	while (node) {
-+		entry = rb_entry(node, struct quota_id, node);
-+		node = rb_next(&entry->node);
-+
-+		rb_erase(&entry->node, root);
-+		kfree(entry);
-+	}
-+
-+	kfree(root);
-+	return 0;
-+}
-+
-+/*
-+ * There is no real quota file, nothing to read. Just insert the id in
-+ * the rb tree.
-+ */
-+static int mem_read_dquot(struct dquot *dquot)
-+{
-+	struct mem_dqinfo *info = sb_dqinfo(dquot->dq_sb, dquot->dq_id.type);
-+	struct rb_node **n = &((struct rb_root *)info->dqi_priv)->rb_node;
-+	struct rb_node *parent = NULL, *new_node = NULL;
-+	struct quota_id *new_entry, *entry;
-+	qid_t id = from_kqid(&init_user_ns, dquot->dq_id);
-+	struct quota_info *dqopt = sb_dqopt(dquot->dq_sb);
-+	int ret = 0;
-+
-+	down_write(&dqopt->dqio_sem);
-+
-+	while (*n) {
-+		parent = *n;
-+		entry = rb_entry(parent, struct quota_id, node);
-+
-+		if (id < entry->id)
-+			n = &(*n)->rb_left;
-+		else if (id > entry->id)
-+			n = &(*n)->rb_right;
-+		else
-+			goto out_unlock;
-+	}
-+
-+	new_entry = kmalloc(sizeof(struct quota_id), GFP_NOFS);
-+	if (!new_entry) {
-+		ret = -ENOMEM;
-+		goto out_unlock;
-+	}
-+
-+	new_entry->id = id;
-+	new_node = &new_entry->node;
-+	rb_link_node(new_node, parent, n);
-+	rb_insert_color(new_node, (struct rb_root *)info->dqi_priv);
-+	dquot->dq_off = 1;
-+	/*
-+	 * Make sure dquot is never released by a shrinker because we
-+	 * rely on quota infrastructure to store mem_dqblk in dquot.
-+	 */
-+	set_bit(DQ_NO_SHRINK_B, &dquot->dq_flags);
-+	set_bit(DQ_FAKE_B, &dquot->dq_flags);
-+
-+out_unlock:
-+	up_write(&dqopt->dqio_sem);
-+	return ret;
-+}
-+
-+static int mem_write_dquot(struct dquot *dquot)
-+{
-+	/* There is no real quota file, nothing to do */
-+	return 0;
-+}
-+
-+static int mem_release_dquot(struct dquot *dquot)
-+{
-+	/*
-+	 * Everything is in memory only, release once we're done with
-+	 * quota via mem_free_file_info().
-+	 */
-+	return 0;
-+}
-+
-+static int mem_get_next_id(struct super_block *sb, struct kqid *qid)
-+{
-+	struct mem_dqinfo *info = sb_dqinfo(sb, qid->type);
-+	struct rb_node *node = ((struct rb_root *)info->dqi_priv)->rb_node;
-+	qid_t id = from_kqid(&init_user_ns, *qid);
-+	struct quota_info *dqopt = sb_dqopt(sb);
-+	struct quota_id *entry = NULL;
-+	int ret = 0;
-+
-+	down_read(&dqopt->dqio_sem);
-+	while (node) {
-+		entry = rb_entry(node, struct quota_id, node);
-+
-+		if (id < entry->id)
-+			node = node->rb_left;
-+		else if (id > entry->id)
-+			node = node->rb_right;
-+		else
-+			goto got_next_id;
-+	}
-+
-+	if (!entry) {
-+		ret = -ENOENT;
-+		goto out_unlock;
-+	}
-+
-+	if (id > entry->id) {
-+		node = rb_next(&entry->node);
-+		if (!node) {
-+			ret = -ENOENT;
-+			goto out_unlock;
+@@ -716,11 +716,11 @@ int dquot_quota_sync(struct super_block *sb, int type)
+ 	for (cnt = 0; cnt < MAXQUOTAS; cnt++) {
+ 		if (type != -1 && cnt != type)
+ 			continue;
+-		if (!sb_has_quota_active(sb, cnt))
+-			continue;
+-		inode_lock(dqopt->files[cnt]);
+-		truncate_inode_pages(&dqopt->files[cnt]->i_data, 0);
+-		inode_unlock(dqopt->files[cnt]);
++		if (sb_has_quota_active(sb, cnt) && dqopt->files[cnt]) {
++			inode_lock(dqopt->files[cnt]);
++			truncate_inode_pages(&dqopt->files[cnt]->i_data, 0);
++			inode_unlock(dqopt->files[cnt]);
 +		}
-+		entry = rb_entry(node, struct quota_id, node);
+ 	}
+ 
+ 	return 0;
+diff --git a/include/linux/shmem_fs.h b/include/linux/shmem_fs.h
+index d500ea967dc7..02a328c98d3a 100644
+--- a/include/linux/shmem_fs.h
++++ b/include/linux/shmem_fs.h
+@@ -26,6 +26,9 @@ struct shmem_inode_info {
+ 	atomic_t		stop_eviction;	/* hold when working on inode */
+ 	struct timespec64	i_crtime;	/* file creation time */
+ 	unsigned int		fsflags;	/* flags for FS_IOC_[SG]ETFLAGS */
++#ifdef CONFIG_QUOTA
++	struct dquot		*i_dquot[MAXQUOTAS];
++#endif
+ 	struct inode		vfs_inode;
+ };
+ 
+diff --git a/mm/shmem.c b/mm/shmem.c
+index c1d8b8a1aa3b..26f2effd8f7c 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -79,6 +79,7 @@ static struct vfsmount *shm_mnt;
+ #include <linux/userfaultfd_k.h>
+ #include <linux/rmap.h>
+ #include <linux/uuid.h>
++#include <linux/quotaops.h>
+ 
+ #include <linux/uaccess.h>
+ 
+@@ -120,8 +121,13 @@ struct shmem_options {
+ #define SHMEM_SEEN_INODES 2
+ #define SHMEM_SEEN_HUGE 4
+ #define SHMEM_SEEN_INUMS 8
++#define SHMEM_SEEN_QUOTA 16
+ };
+ 
++static void shmem_set_inode_flags(struct inode *, unsigned int);
++static struct inode *shmem_get_inode_noquota(struct super_block *,
++			struct inode *, umode_t, dev_t, unsigned long);
++
+ #ifdef CONFIG_TMPFS
+ static unsigned long shmem_default_max_blocks(void)
+ {
+@@ -136,6 +142,10 @@ static unsigned long shmem_default_max_inodes(void)
+ }
+ #endif
+ 
++#if defined(CONFIG_TMPFS) && defined(CONFIG_QUOTA)
++#define SHMEM_QUOTA_TMPFS
++#endif
++
+ static int shmem_swapin_folio(struct inode *inode, pgoff_t index,
+ 			     struct folio **foliop, enum sgp_type sgp,
+ 			     gfp_t gfp, struct vm_area_struct *vma,
+@@ -198,26 +208,34 @@ static inline void shmem_unacct_blocks(unsigned long flags, long pages)
+ 		vm_unacct_memory(pages * VM_ACCT(PAGE_SIZE));
+ }
+ 
+-static inline bool shmem_inode_acct_block(struct inode *inode, long pages)
++static inline int shmem_inode_acct_block(struct inode *inode, long pages)
+ {
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
++	int err = -ENOSPC;
+ 
+ 	if (shmem_acct_block(info->flags, pages))
+-		return false;
++		return err;
+ 
+ 	if (sbinfo->max_blocks) {
+ 		if (percpu_counter_compare(&sbinfo->used_blocks,
+ 					   sbinfo->max_blocks - pages) > 0)
+ 			goto unacct;
++		if (dquot_alloc_block_nodirty(inode, pages)) {
++			err = -EDQUOT;
++			goto unacct;
++		}
+ 		percpu_counter_add(&sbinfo->used_blocks, pages);
++	} else if (dquot_alloc_block_nodirty(inode, pages)) {
++		err = -EDQUOT;
++		goto unacct;
+ 	}
+ 
+-	return true;
++	return 0;
+ 
+ unacct:
+ 	shmem_unacct_blocks(info->flags, pages);
+-	return false;
++	return err;
+ }
+ 
+ static inline void shmem_inode_unacct_blocks(struct inode *inode, long pages)
+@@ -225,6 +243,8 @@ static inline void shmem_inode_unacct_blocks(struct inode *inode, long pages)
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	struct shmem_sb_info *sbinfo = SHMEM_SB(inode->i_sb);
+ 
++	dquot_free_block_nodirty(inode, pages);
++
+ 	if (sbinfo->max_blocks)
+ 		percpu_counter_sub(&sbinfo->used_blocks, pages);
+ 	shmem_unacct_blocks(info->flags, pages);
+@@ -247,6 +267,62 @@ bool vma_is_shmem(struct vm_area_struct *vma)
+ static LIST_HEAD(shmem_swaplist);
+ static DEFINE_MUTEX(shmem_swaplist_mutex);
+ 
++#ifdef SHMEM_QUOTA_TMPFS
++
++#define SHMEM_MAXQUOTAS 2
++
++/*
++ * We don't have any quota files to read, or write to/from, but quota code
++ * requires .quota_read and .quota_write to exist.
++ */
++static ssize_t shmem_quota_write(struct super_block *sb, int type,
++				const char *data, size_t len, loff_t off)
++{
++	return len;
++}
++
++static ssize_t shmem_quota_read(struct super_block *sb, int type, char *data,
++			       size_t len, loff_t off)
++{
++	return len;
++}
++
++
++static int shmem_enable_quotas(struct super_block *sb)
++{
++	int type, err = 0;
++
++	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
++	for (type = 0; type < SHMEM_MAXQUOTAS; type++) {
++		err = dquot_load_quota_sb(sb, type, QFMT_MEM_ONLY,
++					  DQUOT_USAGE_ENABLED);
++		if (err)
++			goto out_err;
++	}
++	return 0;
++
++out_err:
++	pr_warn("tmpfs: failed to enable quota tracking (type=%d, err=%d)\n",
++		type, err);
++	for (type--; type >= 0; type--)
++		dquot_quota_off(sb, type);
++	return err;
++}
++
++static void shmem_disable_quotas(struct super_block *sb)
++{
++	int type;
++
++	for (type = 0; type < SHMEM_MAXQUOTAS; type++)
++		dquot_quota_off(sb, type);
++}
++
++static struct dquot **shmem_get_dquots(struct inode *inode)
++{
++	return SHMEM_I(inode)->i_dquot;
++}
++#endif /* SHMEM_QUOTA_TMPFS */
++
+ /*
+  * shmem_reserve_inode() performs bookkeeping to reserve a shmem inode, and
+  * produces a novel ino for the newly allocated inode.
+@@ -353,7 +429,6 @@ static void shmem_recalc_inode(struct inode *inode)
+ 	freed = info->alloced - info->swapped - inode->i_mapping->nrpages;
+ 	if (freed > 0) {
+ 		info->alloced -= freed;
+-		inode->i_blocks -= freed * BLOCKS_PER_PAGE;
+ 		shmem_inode_unacct_blocks(inode, freed);
+ 	}
+ }
+@@ -363,7 +438,7 @@ bool shmem_charge(struct inode *inode, long pages)
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	unsigned long flags;
+ 
+-	if (!shmem_inode_acct_block(inode, pages))
++	if (shmem_inode_acct_block(inode, pages))
+ 		return false;
+ 
+ 	/* nrpages adjustment first, then shmem_recalc_inode() when balanced */
+@@ -371,7 +446,6 @@ bool shmem_charge(struct inode *inode, long pages)
+ 
+ 	spin_lock_irqsave(&info->lock, flags);
+ 	info->alloced += pages;
+-	inode->i_blocks += pages * BLOCKS_PER_PAGE;
+ 	shmem_recalc_inode(inode);
+ 	spin_unlock_irqrestore(&info->lock, flags);
+ 
+@@ -387,7 +461,6 @@ void shmem_uncharge(struct inode *inode, long pages)
+ 
+ 	spin_lock_irqsave(&info->lock, flags);
+ 	info->alloced -= pages;
+-	inode->i_blocks -= pages * BLOCKS_PER_PAGE;
+ 	shmem_recalc_inode(inode);
+ 	spin_unlock_irqrestore(&info->lock, flags);
+ 
+@@ -1119,6 +1192,13 @@ static int shmem_setattr(struct user_namespace *mnt_userns,
+ 		}
+ 	}
+ 
++	 /* Transfer quota accounting */
++	if (i_uid_needs_update(mnt_userns, attr, inode) ||
++	    i_gid_needs_update(mnt_userns, attr, inode))
++		error = dquot_transfer(mnt_userns, inode, attr);
++	if (error)
++		return error;
++
+ 	setattr_copy(&init_user_ns, inode, attr);
+ 	if (attr->ia_valid & ATTR_MODE)
+ 		error = posix_acl_chmod(&init_user_ns, inode, inode->i_mode);
+@@ -1164,7 +1244,9 @@ static void shmem_evict_inode(struct inode *inode)
+ 	simple_xattrs_free(&info->xattrs);
+ 	WARN_ON(inode->i_blocks);
+ 	shmem_free_inode(inode->i_sb);
++	dquot_free_inode(inode);
+ 	clear_inode(inode);
++	dquot_drop(inode);
+ }
+ 
+ static int shmem_find_swap_entries(struct address_space *mapping,
+@@ -1569,14 +1651,14 @@ static struct folio *shmem_alloc_and_acct_folio(gfp_t gfp, struct inode *inode,
+ {
+ 	struct shmem_inode_info *info = SHMEM_I(inode);
+ 	struct folio *folio;
+-	int nr;
+-	int err = -ENOSPC;
++	int nr, err;
+ 
+ 	if (!IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE))
+ 		huge = false;
+ 	nr = huge ? HPAGE_PMD_NR : 1;
+ 
+-	if (!shmem_inode_acct_block(inode, nr))
++	err = shmem_inode_acct_block(inode, nr);
++	if (err)
+ 		goto failed;
+ 
+ 	if (huge)
+@@ -1949,7 +2031,6 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
+ 
+ 	spin_lock_irq(&info->lock);
+ 	info->alloced += folio_nr_pages(folio);
+-	inode->i_blocks += (blkcnt_t)BLOCKS_PER_PAGE << folio_order(folio);
+ 	shmem_recalc_inode(inode);
+ 	spin_unlock_irq(&info->lock);
+ 	alloced = true;
+@@ -2315,8 +2396,10 @@ static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
+ #define shmem_initxattrs NULL
+ #endif
+ 
+-static struct inode *shmem_get_inode(struct super_block *sb, struct inode *dir,
+-				     umode_t mode, dev_t dev, unsigned long flags)
++static struct inode *shmem_get_inode_noquota(struct super_block *sb,
++					     struct inode *dir,
++					     umode_t mode, dev_t dev,
++					     unsigned long flags)
+ {
+ 	struct inode *inode;
+ 	struct shmem_inode_info *info;
+@@ -2384,6 +2467,35 @@ static struct inode *shmem_get_inode(struct super_block *sb, struct inode *dir,
+ 	return inode;
+ }
+ 
++static struct inode *shmem_get_inode(struct super_block *sb, struct inode *dir,
++				     umode_t mode, dev_t dev, unsigned long flags)
++{
++	int err;
++	struct inode *inode;
++
++	inode = shmem_get_inode_noquota(sb, dir, mode, dev, flags);
++	if (inode) {
++		err = dquot_initialize(inode);
++		if (err)
++			goto errout;
++
++		err = dquot_alloc_inode(inode);
++		if (err) {
++			dquot_drop(inode);
++			goto errout;
++		}
++	}
++	return inode;
++
++errout:
++	inode->i_flags |= S_NOQUOTA;
++	iput(inode);
++	shmem_free_inode(sb);
++	if (err)
++		return ERR_PTR(err);
++	return NULL;
++}
++
+ #ifdef CONFIG_USERFAULTFD
+ int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+ 			   pmd_t *dst_pmd,
+@@ -2403,7 +2515,7 @@ int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+ 	int ret;
+ 	pgoff_t max_off;
+ 
+-	if (!shmem_inode_acct_block(inode, 1)) {
++	if (shmem_inode_acct_block(inode, 1)) {
+ 		/*
+ 		 * We may have got a page, returned -ENOENT triggering a retry,
+ 		 * and now we find ourselves with -ENOMEM. Release the page, to
+@@ -2487,7 +2599,6 @@ int shmem_mfill_atomic_pte(struct mm_struct *dst_mm,
+ 
+ 	spin_lock_irq(&info->lock);
+ 	info->alloced++;
+-	inode->i_blocks += BLOCKS_PER_PAGE;
+ 	shmem_recalc_inode(inode);
+ 	spin_unlock_irq(&info->lock);
+ 
+@@ -2908,7 +3019,7 @@ shmem_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+ 	int error = -ENOSPC;
+ 
+ 	inode = shmem_get_inode(dir->i_sb, dir, mode, dev, VM_NORESERVE);
+-	if (inode) {
++	if (!IS_ERR_OR_NULL(inode)) {
+ 		error = simple_acl_create(dir, inode);
+ 		if (error)
+ 			goto out_iput;
+@@ -2924,7 +3035,8 @@ shmem_mknod(struct user_namespace *mnt_userns, struct inode *dir,
+ 		inode_inc_iversion(dir);
+ 		d_instantiate(dentry, inode);
+ 		dget(dentry); /* Extra count - pin the dentry in core */
+-	}
++	} else if (IS_ERR(inode))
++		error = PTR_ERR(inode);
+ 	return error;
+ out_iput:
+ 	iput(inode);
+@@ -2939,7 +3051,7 @@ shmem_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+ 	int error = -ENOSPC;
+ 
+ 	inode = shmem_get_inode(dir->i_sb, dir, mode, 0, VM_NORESERVE);
+-	if (inode) {
++	if (!IS_ERR_OR_NULL(inode)) {
+ 		error = security_inode_init_security(inode, dir,
+ 						     NULL,
+ 						     shmem_initxattrs, NULL);
+@@ -2949,7 +3061,8 @@ shmem_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
+ 		if (error)
+ 			goto out_iput;
+ 		d_tmpfile(file, inode);
+-	}
++	} else if (IS_ERR(inode))
++		error = PTR_ERR(inode);
+ 	return finish_open_simple(file, error);
+ out_iput:
+ 	iput(inode);
+@@ -3126,6 +3239,8 @@ static int shmem_symlink(struct user_namespace *mnt_userns, struct inode *dir,
+ 				VM_NORESERVE);
+ 	if (!inode)
+ 		return -ENOSPC;
++	else if (IS_ERR(inode))
++		return PTR_ERR(inode);
+ 
+ 	error = security_inode_init_security(inode, dir, &dentry->d_name,
+ 					     shmem_initxattrs, NULL);
+@@ -3443,6 +3558,7 @@ enum shmem_param {
+ 	Opt_uid,
+ 	Opt_inode32,
+ 	Opt_inode64,
++	Opt_quota,
+ };
+ 
+ static const struct constant_table shmem_param_enums_huge[] = {
+@@ -3464,6 +3580,9 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
+ 	fsparam_u32   ("uid",		Opt_uid),
+ 	fsparam_flag  ("inode32",	Opt_inode32),
+ 	fsparam_flag  ("inode64",	Opt_inode64),
++	fsparam_flag  ("quota",		Opt_quota),
++	fsparam_flag  ("usrquota",	Opt_quota),
++	fsparam_flag  ("grpquota",	Opt_quota),
+ 	{}
+ };
+ 
+@@ -3547,6 +3666,13 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
+ 		ctx->full_inums = true;
+ 		ctx->seen |= SHMEM_SEEN_INUMS;
+ 		break;
++	case Opt_quota:
++#ifdef CONFIG_QUOTA
++		ctx->seen |= SHMEM_SEEN_QUOTA;
++#else
++		goto unsupported_parameter;
++#endif
++		break;
+ 	}
+ 	return 0;
+ 
+@@ -3646,6 +3772,12 @@ static int shmem_reconfigure(struct fs_context *fc)
+ 		goto out;
+ 	}
+ 
++	if (ctx->seen & SHMEM_SEEN_QUOTA &&
++	    !sb_any_quota_loaded(fc->root->d_sb)) {
++		err = "Cannot enable quota on remount";
++		goto out;
 +	}
 +
-+got_next_id:
-+	*qid = make_kqid(&init_user_ns, qid->type, entry->id);
-+out_unlock:
-+	up_read(&dqopt->dqio_sem);
-+	return ret;
-+}
-+
-+static const struct quota_format_ops mem_format_ops = {
-+	.check_quota_file	= mem_check_quota_file,
-+	.read_file_info		= mem_read_file_info,
-+	.write_file_info	= mem_write_file_info,
-+	.free_file_info		= mem_free_file_info,
-+	.read_dqblk		= mem_read_dquot,
-+	.commit_dqblk		= mem_write_dquot,
-+	.release_dqblk		= mem_release_dquot,
-+	.get_next_id		= mem_get_next_id,
-+};
-+
-+static struct quota_format_type mem_quota_format = {
-+	.qf_fmt_id	= QFMT_MEM_ONLY,
-+	.qf_ops		= &mem_format_ops,
-+	.qf_owner	= THIS_MODULE
-+};
-+
-+static int __init init_mem_quota_format(void)
-+{
-+	return register_quota_format(&mem_quota_format);
-+}
-+
-+static void __exit exit_mem_quota_format(void)
-+{
-+	unregister_quota_format(&mem_quota_format);
-+}
-+
-+module_init(init_mem_quota_format);
-+module_exit(exit_mem_quota_format);
-diff --git a/include/linux/quota.h b/include/linux/quota.h
-index fd692b4a41d5..4398e05c8b72 100644
---- a/include/linux/quota.h
-+++ b/include/linux/quota.h
-@@ -285,7 +285,11 @@ static inline void dqstats_dec(unsigned int type)
- #define DQ_FAKE_B	3	/* no limits only usage */
- #define DQ_READ_B	4	/* dquot was read into memory */
- #define DQ_ACTIVE_B	5	/* dquot is active (dquot_release not called) */
--#define DQ_LASTSET_B	6	/* Following 6 bits (see QIF_) are reserved\
-+#define DQ_NO_SHRINK_B	6	/* modified dquot (not DQ_FAKE_B) is never to
-+				 * be released by a shrinker. It should remain
-+				 * in memory until quotas are being disabled on
-+				 * unmount. */
-+#define DQ_LASTSET_B	7	/* Following 6 bits (see QIF_) are reserved\
- 				 * for the mask of entries set via SETQUOTA\
- 				 * quotactl. They are set under dq_data_lock\
- 				 * and the quota format handling dquot can\
-@@ -536,6 +540,7 @@ struct quota_module_name {
- 	{QFMT_VFS_OLD, "quota_v1"},\
- 	{QFMT_VFS_V0, "quota_v2"},\
- 	{QFMT_VFS_V1, "quota_v2"},\
-+	{QFMT_MEM_ONLY, "quota_mem"},\
- 	{0, NULL}}
+ 	if (ctx->seen & SHMEM_SEEN_HUGE)
+ 		sbinfo->huge = ctx->huge;
+ 	if (ctx->seen & SHMEM_SEEN_INUMS)
+@@ -3728,6 +3860,9 @@ static void shmem_put_super(struct super_block *sb)
+ {
+ 	struct shmem_sb_info *sbinfo = SHMEM_SB(sb);
  
- #endif /* _QUOTA_ */
-diff --git a/include/uapi/linux/quota.h b/include/uapi/linux/quota.h
-index f17c9636a859..ee9d2bad00c7 100644
---- a/include/uapi/linux/quota.h
-+++ b/include/uapi/linux/quota.h
-@@ -77,6 +77,7 @@
- #define	QFMT_VFS_V0 2
- #define QFMT_OCFS2 3
- #define	QFMT_VFS_V1 4
-+#define	QFMT_MEM_ONLY 5
++#ifdef SHMEM_QUOTA_TMPFS
++	shmem_disable_quotas(sb);
++#endif
+ 	free_percpu(sbinfo->ino_batch);
+ 	percpu_counter_destroy(&sbinfo->used_blocks);
+ 	mpol_put(sbinfo->mpol);
+@@ -3805,14 +3940,26 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+ #endif
+ 	uuid_gen(&sb->s_uuid);
  
- /* Size of block in which space limits are passed through the quota
-  * interface */
++#ifdef SHMEM_QUOTA_TMPFS
++	if (ctx->seen & SHMEM_SEEN_QUOTA) {
++		sb->dq_op = &dquot_operations;
++		sb->s_qcop = &dquot_quotactl_sysfile_ops;
++		sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
++
++		if (shmem_enable_quotas(sb))
++			goto failed;
++	}
++#endif  /* SHMEM_QUOTA_TMPFS */
++
+ 	inode = shmem_get_inode(sb, NULL, S_IFDIR | sbinfo->mode, 0, VM_NORESERVE);
+-	if (!inode)
++	if (IS_ERR_OR_NULL(inode))
+ 		goto failed;
+ 	inode->i_uid = sbinfo->uid;
+ 	inode->i_gid = sbinfo->gid;
+ 	sb->s_root = d_make_root(inode);
+ 	if (!sb->s_root)
+ 		goto failed;
++
+ 	return 0;
+ 
+ failed:
+@@ -3976,7 +4123,12 @@ static const struct super_operations shmem_ops = {
+ #ifdef CONFIG_TMPFS
+ 	.statfs		= shmem_statfs,
+ 	.show_options	= shmem_show_options,
+-#endif
++#ifdef CONFIG_QUOTA
++	.quota_read	= shmem_quota_read,
++	.quota_write	= shmem_quota_write,
++	.get_dquots	= shmem_get_dquots,
++#endif /* CONFIG_QUOTA */
++#endif /* CONFIG_TMPFS */
+ 	.evict_inode	= shmem_evict_inode,
+ 	.drop_inode	= generic_delete_inode,
+ 	.put_super	= shmem_put_super,
+@@ -4196,8 +4348,10 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, l
+ 
+ 	inode = shmem_get_inode(mnt->mnt_sb, NULL, S_IFREG | S_IRWXUGO, 0,
+ 				flags);
+-	if (unlikely(!inode)) {
++	if (IS_ERR_OR_NULL(inode)) {
+ 		shmem_unacct_size(flags, size);
++		if (IS_ERR(inode))
++			return (struct file *)inode;
+ 		return ERR_PTR(-ENOSPC);
+ 	}
+ 	inode->i_flags |= i_flags;
 -- 
 2.38.1
 
