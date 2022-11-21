@@ -2,135 +2,444 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B68CE632B13
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 18:34:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F3FF3632B6E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 18:48:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230256AbiKUReE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Nov 2022 12:34:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55824 "EHLO
+        id S230070AbiKURsY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Nov 2022 12:48:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229992AbiKUReD (ORCPT
+        with ESMTP id S229969AbiKURsX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Nov 2022 12:34:03 -0500
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01C34CD969;
-        Mon, 21 Nov 2022 09:33:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1669052039;
-        bh=1NBtM3ic574n1Twrt+hz9W3YFOsRlGAK5kI5ykv3AJw=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=hfMHqNKVYci9A6OL7RrPHVSj1+fjQqUesByvXCWTpD4VnwLtv5YDW1JRN8Csya7op
-         uLgPvLjaO2YbSOjN4wYahNIyWUkxX5TlI1+QLg3WaWhlujBxrtFTHrqy/uEngA/y2n
-         4d9ObYfWnPQFfG5r8u+cQVwMFWtQgcYi6z4E0Xh8=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 29B2B128647B;
-        Mon, 21 Nov 2022 12:33:59 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id Xzyyntl5lLVC; Mon, 21 Nov 2022 12:33:59 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1669052038;
-        bh=1NBtM3ic574n1Twrt+hz9W3YFOsRlGAK5kI5ykv3AJw=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=HoHMad2SLqp4HlUabcI9OV4eBb+9yM/KrRBmYc1yGrB3+7iRYKajqVC0FUeOCYulg
-         2XSfo2Ri/bc34rVnRpsXaX+LQpt123Zr9A2/dIVlxcff7qs5iYpgrK4abJ8D8k8uTb
-         m7TFERR+spJqRcqq+FeAE6mRuyUxoiJWyP8Om2HA=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 74E4812862F9;
-        Mon, 21 Nov 2022 12:33:57 -0500 (EST)
-Message-ID: <94fe007e8eab8bc7ae3f56b88ad94646b4673657.camel@HansenPartnership.com>
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Nayna <nayna@linux.vnet.ibm.com>, Nayna Jain <nayna@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Date:   Mon, 21 Nov 2022 12:33:55 -0500
-In-Reply-To: <Y3uT0PJ5g86TAj6t@kroah.com>
-References: <Y2uvUFQ9S2oaefSY@kroah.com>
-         <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
-         <Y2zLRw/TzV/sWgqO@kroah.com>
-         <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
-         <Y3anQukokMcQr+iE@kroah.com>
-         <d615180d-6fe5-d977-da6a-e88fd8bf5345@linux.vnet.ibm.com>
-         <Y3pSF2MRIXd6aH14@kroah.com>
-         <88111914afc6204b2a3fb82ded5d9bfb6420bca6.camel@HansenPartnership.com>
-         <Y3tbhmL4oG1YTyT/@kroah.com>
-         <10c85b8f4779700b82596c4a968daead65a29801.camel@HansenPartnership.com>
-         <Y3uT0PJ5g86TAj6t@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+        Mon, 21 Nov 2022 12:48:23 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9FE9513E80
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 09:48:21 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id F2E77B810EE
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 17:48:19 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F790C433C1;
+        Mon, 21 Nov 2022 17:48:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669052898;
+        bh=nGzRyiaNR/VbtRI0ujHq9CO6c2jbkkmSHZSEyZCiiOg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ejIdWY5zKGRAsk/B/3Lpl9ith2cGPYg3+7sYQeMOTXhRbwTIrEttlJV7RF9xeLtDL
+         gQbU5Og5dFmL9hR21OFTDLnZK2pXgY7+D+F33wEZLSj+rIVtcxc1AcuhGbazvjuHxG
+         7Yir1bTQCopoi5VVuaQG2VNz6DWDz7aJOr2GfhDubg6v2flWhLn+Sjk4uQpgFLb20J
+         p2GVmSKoFCVEMWDnCLNoMzUGYlfMHUHzMu4a52hFeA6YKq0sgU1iLnIYJxwMn1byGp
+         BofcNQ9vCVGv3iCGb86RegZ106jKGsISyHtSEiyqSZ2Msv9qzGHrbNHHcjaTTGx5vg
+         DeNVod0msM3CQ==
+Date:   Mon, 21 Nov 2022 09:48:18 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Lukas Czerner <lczerner@redhat.com>
+Cc:     Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.com>,
+        Eric Sandeen <sandeen@redhat.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] quota: add quota in-memory format support
+Message-ID: <Y3u54l2CVapQmK/w@magnolia>
+References: <20221121142854.91109-1-lczerner@redhat.com>
+ <20221121142854.91109-2-lczerner@redhat.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221121142854.91109-2-lczerner@redhat.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2022-11-21 at 16:05 +0100, Greg Kroah-Hartman wrote:
-> On Mon, Nov 21, 2022 at 09:03:18AM -0500, James Bottomley wrote:
-> > On Mon, 2022-11-21 at 12:05 +0100, Greg Kroah-Hartman wrote:
-> > > On Sun, Nov 20, 2022 at 10:14:26PM -0500, James Bottomley wrote:
-[...]
-> > > > I already explained in the email that sysfs contains APIs like
-> > > > simple_pin_... which are completely inimical to namespacing.
-> > > 
-> > > Then how does the networking code handle the namespace stuff in
-> > > sysfs? That seems to work today, or am I missing something?
-> > 
-> > have you actually tried?
-> > 
-> > jejb@lingrow:~> sudo unshare --net bash
-> > lingrow:/home/jejb # ls /sys/class/net/
-> > lo  tun0  tun10  wlan0
-> > lingrow:/home/jejb # ip link show
-> > 1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN mode DEFAULT
-> > group
-> > default qlen 1000
-> >     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-> > 
-> > So, as you see, I've entered a network namespace and ip link shows
-> > me the only interface I can see in that namespace (a down loopback)
-> > but sysfs shows me every interface on the system outside the
-> > namespace.
+On Mon, Nov 21, 2022 at 03:28:52PM +0100, Lukas Czerner wrote:
+> In memory quota format relies on quota infrastructure to store dquot
+> information for us. While conventional quota formats for file systems
+> with persistent storage can load quota information into dquot from the
+> storage on-demand and hence quota dquot shrinker can free any dquot that
+> is not currently being used, it must be avoided here. Otherwise we can
+> lose valuable information, user provided limits, because there is no
+> persistent storage to load the information from afterwards.
 > 
-> Then all of the code in include/kobject_ns.h is not being used?  We
-> have a whole kobject namespace set up for networking, I just assumed
-> they were using it.  If not, I'm all for ripping it out.
+> One information that in-memory quota format needs to keep track of is a
+> sorted list of ids for each quota type. This is done by utilizing an rb
+> tree which root is stored in mem_dqinfo->dqi_priv for each quota type.
+> 
+> This format can be used to support quota on file system without persistent
+> storage such as tmpfs.
+> 
+> Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+> ---
+>  fs/quota/Kconfig           |   8 ++
+>  fs/quota/Makefile          |   1 +
+>  fs/quota/dquot.c           |   3 +
+>  fs/quota/quota_mem.c       | 260 +++++++++++++++++++++++++++++++++++++
+>  include/linux/quota.h      |   7 +-
+>  include/uapi/linux/quota.h |   1 +
+>  6 files changed, 279 insertions(+), 1 deletion(-)
+>  create mode 100644 fs/quota/quota_mem.c
+> 
+> diff --git a/fs/quota/Kconfig b/fs/quota/Kconfig
+> index b59cd172b5f9..8ea9656ca37b 100644
+> --- a/fs/quota/Kconfig
+> +++ b/fs/quota/Kconfig
+> @@ -67,6 +67,14 @@ config QFMT_V2
+>  	  also supports 64-bit inode and block quota limits. If you need this
+>  	  functionality say Y here.
+>  
+> +config QFMT_MEM
+> +	tristate "Quota in-memory format support "
+> +	depends on QUOTA
+> +	help
+> +	  This config option enables kernel support for in-memory quota
+> +	  format support. Useful to support quota on file system without
+> +	  permanent storage. If you need this functionality say Y here.
+> +
+>  config QUOTACTL
+>  	bool
+>  	default n
+> diff --git a/fs/quota/Makefile b/fs/quota/Makefile
+> index 9160639daffa..935be3f7b731 100644
+> --- a/fs/quota/Makefile
+> +++ b/fs/quota/Makefile
+> @@ -5,3 +5,4 @@ obj-$(CONFIG_QFMT_V2)		+= quota_v2.o
+>  obj-$(CONFIG_QUOTA_TREE)	+= quota_tree.o
+>  obj-$(CONFIG_QUOTACTL)		+= quota.o kqid.o
+>  obj-$(CONFIG_QUOTA_NETLINK_INTERFACE)	+= netlink.o
+> +obj-$(CONFIG_QFMT_MEM)		+= quota_mem.o
+> diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> index 0427b44bfee5..f1a7a03632a2 100644
+> --- a/fs/quota/dquot.c
+> +++ b/fs/quota/dquot.c
+> @@ -736,6 +736,9 @@ dqcache_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+>  	spin_lock(&dq_list_lock);
+>  	while (!list_empty(&free_dquots) && sc->nr_to_scan) {
+>  		dquot = list_first_entry(&free_dquots, struct dquot, dq_free);
+> +		if (test_bit(DQ_NO_SHRINK_B, &dquot->dq_flags) &&
+> +		    !test_bit(DQ_FAKE_B, &dquot->dq_flags))
+> +			continue;
+>  		remove_dquot_hash(dquot);
+>  		remove_free_dquot(dquot);
+>  		remove_inuse(dquot);
+> diff --git a/fs/quota/quota_mem.c b/fs/quota/quota_mem.c
+> new file mode 100644
+> index 000000000000..7d5e82122143
+> --- /dev/null
+> +++ b/fs/quota/quota_mem.c
+> @@ -0,0 +1,260 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * In memory quota format relies on quota infrastructure to store dquot
+> + * information for us. While conventional quota formats for file systems
+> + * with persistent storage can load quota information into dquot from the
+> + * storage on-demand and hence quota dquot shrinker can free any dquot
+> + * that is not currently being used, it must be avoided here. Otherwise we
+> + * can lose valuable information, user provided limits, because there is
+> + * no persistent storage to load the information from afterwards.
 
-Hm, looking at the implementation, it seems to trigger off the
-superblock (meaning you have to remount inside a mount namespace) and
-it only works to control visibility in label based namespaces, so this
-does actually work
+Hmm.  dquots can't /ever/ be reclaimed?  struct dquot is ~256 bytes, and
+assuming 32-bit uids, the upper bound on dquot usage is 2^(32+8) bytes
+== 1TB of memory usage?  Once allocated, you'd have to reboot the whole
+machine to get that memory back?
 
-jejb@lingrow:~/git/linux> sudo unshare  --net --mount bash 
-lingrow:/home/jejb # mount -t sysfs none /sys
-lingrow:/home/jejb # ls /sys/class/net/
-lo
+Would it be wise to "persist" dquot contents to a (private) tmpfs file
+to facilitate incore dquot reclaim?  The tmpfs file data can be paged
+out, or even punched if all the dquot records in that page go back to
+default settings.
 
-The label based approach means that any given file can be shown in one
-and only one namespace, which works for net, but not much else
-(although it probably could be adapted).
+--D
 
-James
-
+> + *
+> + * One information that in-memory quota format needs to keep track of is
+> + * a sorted list of ids for each quota type. This is done by utilizing
+> + * an rb tree which root is stored in mem_dqinfo->dqi_priv for each quota
+> + * type.
+> + *
+> + * This format can be used to support quota on file system without persistent
+> + * storage such as tmpfs.
+> + */
+> +#include <linux/errno.h>
+> +#include <linux/fs.h>
+> +#include <linux/mount.h>
+> +#include <linux/kernel.h>
+> +#include <linux/init.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/rbtree.h>
+> +
+> +#include <linux/quotaops.h>
+> +#include <linux/quota.h>
+> +
+> +MODULE_AUTHOR("Lukas Czerner");
+> +MODULE_DESCRIPTION("Quota in-memory format support");
+> +MODULE_LICENSE("GPL");
+> +
+> +/*
+> + * The following constants define the amount of time given a user
+> + * before the soft limits are treated as hard limits (usually resulting
+> + * in an allocation failure). The timer is started when the user crosses
+> + * their soft limit, it is reset when they go below their soft limit.
+> + */
+> +#define MAX_IQ_TIME  604800	/* (7*24*60*60) 1 week */
+> +#define MAX_DQ_TIME  604800	/* (7*24*60*60) 1 week */
+> +
+> +struct quota_id {
+> +	struct rb_node	node;
+> +	qid_t		id;
+> +};
+> +
+> +static int mem_check_quota_file(struct super_block *sb, int type)
+> +{
+> +	/* There is no real quota file, nothing to do */
+> +	return 1;
+> +}
+> +
+> +/*
+> + * There is no real quota file. Just allocate rb_root for quota ids and
+> + * set limits
+> + */
+> +static int mem_read_file_info(struct super_block *sb, int type)
+> +{
+> +	struct quota_info *dqopt = sb_dqopt(sb);
+> +	struct mem_dqinfo *info = &dqopt->info[type];
+> +	int ret = 0;
+> +
+> +	down_read(&dqopt->dqio_sem);
+> +	if (info->dqi_fmt_id != QFMT_MEM_ONLY) {
+> +		ret = -EINVAL;
+> +		goto out_unlock;
+> +	}
+> +
+> +	info->dqi_priv = kzalloc(sizeof(struct rb_root), GFP_NOFS);
+> +	if (!info->dqi_priv) {
+> +		ret = -ENOMEM;
+> +		goto out_unlock;
+> +	}
+> +
+> +	/*
+> +	 * Used space is stored as unsigned 64-bit value in bytes but
+> +	 * quota core supports only signed 64-bit values so use that
+> +	 * as a limit
+> +	 */
+> +	info->dqi_max_spc_limit = 0x7fffffffffffffffLL; /* 2^63-1 */
+> +	info->dqi_max_ino_limit = 0x7fffffffffffffffLL;
+> +
+> +	info->dqi_bgrace = MAX_DQ_TIME;
+> +	info->dqi_igrace = MAX_IQ_TIME;
+> +	info->dqi_flags = 0;
+> +
+> +out_unlock:
+> +	up_read(&dqopt->dqio_sem);
+> +	return ret;
+> +}
+> +
+> +static int mem_write_file_info(struct super_block *sb, int type)
+> +{
+> +	/* There is no real quota file, nothing to do */
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Free all the quota_id entries in the rb tree and rb_root.
+> + */
+> +static int mem_free_file_info(struct super_block *sb, int type)
+> +{
+> +	struct mem_dqinfo *info = &sb_dqopt(sb)->info[type];
+> +	struct rb_root *root = info->dqi_priv;
+> +	struct quota_id *entry;
+> +	struct rb_node *node;
+> +
+> +	info->dqi_priv = NULL;
+> +	node = rb_first(root);
+> +	while (node) {
+> +		entry = rb_entry(node, struct quota_id, node);
+> +		node = rb_next(&entry->node);
+> +
+> +		rb_erase(&entry->node, root);
+> +		kfree(entry);
+> +	}
+> +
+> +	kfree(root);
+> +	return 0;
+> +}
+> +
+> +/*
+> + * There is no real quota file, nothing to read. Just insert the id in
+> + * the rb tree.
+> + */
+> +static int mem_read_dquot(struct dquot *dquot)
+> +{
+> +	struct mem_dqinfo *info = sb_dqinfo(dquot->dq_sb, dquot->dq_id.type);
+> +	struct rb_node **n = &((struct rb_root *)info->dqi_priv)->rb_node;
+> +	struct rb_node *parent = NULL, *new_node = NULL;
+> +	struct quota_id *new_entry, *entry;
+> +	qid_t id = from_kqid(&init_user_ns, dquot->dq_id);
+> +	struct quota_info *dqopt = sb_dqopt(dquot->dq_sb);
+> +	int ret = 0;
+> +
+> +	down_write(&dqopt->dqio_sem);
+> +
+> +	while (*n) {
+> +		parent = *n;
+> +		entry = rb_entry(parent, struct quota_id, node);
+> +
+> +		if (id < entry->id)
+> +			n = &(*n)->rb_left;
+> +		else if (id > entry->id)
+> +			n = &(*n)->rb_right;
+> +		else
+> +			goto out_unlock;
+> +	}
+> +
+> +	new_entry = kmalloc(sizeof(struct quota_id), GFP_NOFS);
+> +	if (!new_entry) {
+> +		ret = -ENOMEM;
+> +		goto out_unlock;
+> +	}
+> +
+> +	new_entry->id = id;
+> +	new_node = &new_entry->node;
+> +	rb_link_node(new_node, parent, n);
+> +	rb_insert_color(new_node, (struct rb_root *)info->dqi_priv);
+> +	dquot->dq_off = 1;
+> +	/*
+> +	 * Make sure dquot is never released by a shrinker because we
+> +	 * rely on quota infrastructure to store mem_dqblk in dquot.
+> +	 */
+> +	set_bit(DQ_NO_SHRINK_B, &dquot->dq_flags);
+> +	set_bit(DQ_FAKE_B, &dquot->dq_flags);
+> +
+> +out_unlock:
+> +	up_write(&dqopt->dqio_sem);
+> +	return ret;
+> +}
+> +
+> +static int mem_write_dquot(struct dquot *dquot)
+> +{
+> +	/* There is no real quota file, nothing to do */
+> +	return 0;
+> +}
+> +
+> +static int mem_release_dquot(struct dquot *dquot)
+> +{
+> +	/*
+> +	 * Everything is in memory only, release once we're done with
+> +	 * quota via mem_free_file_info().
+> +	 */
+> +	return 0;
+> +}
+> +
+> +static int mem_get_next_id(struct super_block *sb, struct kqid *qid)
+> +{
+> +	struct mem_dqinfo *info = sb_dqinfo(sb, qid->type);
+> +	struct rb_node *node = ((struct rb_root *)info->dqi_priv)->rb_node;
+> +	qid_t id = from_kqid(&init_user_ns, *qid);
+> +	struct quota_info *dqopt = sb_dqopt(sb);
+> +	struct quota_id *entry = NULL;
+> +	int ret = 0;
+> +
+> +	down_read(&dqopt->dqio_sem);
+> +	while (node) {
+> +		entry = rb_entry(node, struct quota_id, node);
+> +
+> +		if (id < entry->id)
+> +			node = node->rb_left;
+> +		else if (id > entry->id)
+> +			node = node->rb_right;
+> +		else
+> +			goto got_next_id;
+> +	}
+> +
+> +	if (!entry) {
+> +		ret = -ENOENT;
+> +		goto out_unlock;
+> +	}
+> +
+> +	if (id > entry->id) {
+> +		node = rb_next(&entry->node);
+> +		if (!node) {
+> +			ret = -ENOENT;
+> +			goto out_unlock;
+> +		}
+> +		entry = rb_entry(node, struct quota_id, node);
+> +	}
+> +
+> +got_next_id:
+> +	*qid = make_kqid(&init_user_ns, qid->type, entry->id);
+> +out_unlock:
+> +	up_read(&dqopt->dqio_sem);
+> +	return ret;
+> +}
+> +
+> +static const struct quota_format_ops mem_format_ops = {
+> +	.check_quota_file	= mem_check_quota_file,
+> +	.read_file_info		= mem_read_file_info,
+> +	.write_file_info	= mem_write_file_info,
+> +	.free_file_info		= mem_free_file_info,
+> +	.read_dqblk		= mem_read_dquot,
+> +	.commit_dqblk		= mem_write_dquot,
+> +	.release_dqblk		= mem_release_dquot,
+> +	.get_next_id		= mem_get_next_id,
+> +};
+> +
+> +static struct quota_format_type mem_quota_format = {
+> +	.qf_fmt_id	= QFMT_MEM_ONLY,
+> +	.qf_ops		= &mem_format_ops,
+> +	.qf_owner	= THIS_MODULE
+> +};
+> +
+> +static int __init init_mem_quota_format(void)
+> +{
+> +	return register_quota_format(&mem_quota_format);
+> +}
+> +
+> +static void __exit exit_mem_quota_format(void)
+> +{
+> +	unregister_quota_format(&mem_quota_format);
+> +}
+> +
+> +module_init(init_mem_quota_format);
+> +module_exit(exit_mem_quota_format);
+> diff --git a/include/linux/quota.h b/include/linux/quota.h
+> index fd692b4a41d5..4398e05c8b72 100644
+> --- a/include/linux/quota.h
+> +++ b/include/linux/quota.h
+> @@ -285,7 +285,11 @@ static inline void dqstats_dec(unsigned int type)
+>  #define DQ_FAKE_B	3	/* no limits only usage */
+>  #define DQ_READ_B	4	/* dquot was read into memory */
+>  #define DQ_ACTIVE_B	5	/* dquot is active (dquot_release not called) */
+> -#define DQ_LASTSET_B	6	/* Following 6 bits (see QIF_) are reserved\
+> +#define DQ_NO_SHRINK_B	6	/* modified dquot (not DQ_FAKE_B) is never to
+> +				 * be released by a shrinker. It should remain
+> +				 * in memory until quotas are being disabled on
+> +				 * unmount. */
+> +#define DQ_LASTSET_B	7	/* Following 6 bits (see QIF_) are reserved\
+>  				 * for the mask of entries set via SETQUOTA\
+>  				 * quotactl. They are set under dq_data_lock\
+>  				 * and the quota format handling dquot can\
+> @@ -536,6 +540,7 @@ struct quota_module_name {
+>  	{QFMT_VFS_OLD, "quota_v1"},\
+>  	{QFMT_VFS_V0, "quota_v2"},\
+>  	{QFMT_VFS_V1, "quota_v2"},\
+> +	{QFMT_MEM_ONLY, "quota_mem"},\
+>  	{0, NULL}}
+>  
+>  #endif /* _QUOTA_ */
+> diff --git a/include/uapi/linux/quota.h b/include/uapi/linux/quota.h
+> index f17c9636a859..ee9d2bad00c7 100644
+> --- a/include/uapi/linux/quota.h
+> +++ b/include/uapi/linux/quota.h
+> @@ -77,6 +77,7 @@
+>  #define	QFMT_VFS_V0 2
+>  #define QFMT_OCFS2 3
+>  #define	QFMT_VFS_V1 4
+> +#define	QFMT_MEM_ONLY 5
+>  
+>  /* Size of block in which space limits are passed through the quota
+>   * interface */
+> -- 
+> 2.38.1
+> 
