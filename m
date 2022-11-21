@@ -2,152 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E78ED632780
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 16:12:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3A38E63284E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 16:34:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230389AbiKUPMW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Nov 2022 10:12:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37964 "EHLO
+        id S232285AbiKUPeA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Nov 2022 10:34:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59366 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232168AbiKUPL4 (ORCPT
+        with ESMTP id S232432AbiKUPdg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Nov 2022 10:11:56 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BB3194A4E;
-        Mon, 21 Nov 2022 07:05:58 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 21 Nov 2022 10:33:36 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 24298CFEA6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 07:31:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669044675;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=43gjeh12mqeKKnzpxBrG6XHUmQQh+jBPDZXXmUO7BOQ=;
+        b=GBhwVYuUzMSa7xAE/WLKSkgfCC286b/oxxLexePjvz/kkxlq2jNPNii1xQrE5xaqbIoazv
+        76wpU5T2Qcy9qoVPdVVOjkm8KA2EZrlpvQapD9WY4b1OhthrFuw9ziC5KuHVGQir75lJNp
+        +7RFd/CVaiaGEBq/m3cpgD5CQ8Xh2sU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-1-iFy62VxxOjCf3yA5uhfvsQ-1; Mon, 21 Nov 2022 10:31:13 -0500
+X-MC-Unique: iFy62VxxOjCf3yA5uhfvsQ-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 0A6D4B81050;
-        Mon, 21 Nov 2022 15:05:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D4A6C433D6;
-        Mon, 21 Nov 2022 15:05:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1669043155;
-        bh=69fnffLkz/ILK6bYr21czslsgeqwii9nzQ1KmDeEAF8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=wgEmmbjYMxg528j5wuwTzPboE9RBUDUwjIV2gNsrOBwiIFh7KjwAVpFzD9dRUycw6
-         LGvn+xCfvrRYuDHNEFnQENBJpbGO6vP97nFlevknNth7LVb7SLaAmUZl7BdwzraGNC
-         hZmKPSHWuadxhFWfGEsvQJpgTCv4levVp/MeYLcA=
-Date:   Mon, 21 Nov 2022 16:05:52 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc:     Nayna <nayna@linux.vnet.ibm.com>, Nayna Jain <nayna@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-Message-ID: <Y3uT0PJ5g86TAj6t@kroah.com>
-References: <Y2uvUFQ9S2oaefSY@kroah.com>
- <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
- <Y2zLRw/TzV/sWgqO@kroah.com>
- <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
- <Y3anQukokMcQr+iE@kroah.com>
- <d615180d-6fe5-d977-da6a-e88fd8bf5345@linux.vnet.ibm.com>
- <Y3pSF2MRIXd6aH14@kroah.com>
- <88111914afc6204b2a3fb82ded5d9bfb6420bca6.camel@HansenPartnership.com>
- <Y3tbhmL4oG1YTyT/@kroah.com>
- <10c85b8f4779700b82596c4a968daead65a29801.camel@HansenPartnership.com>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8641888B76E;
+        Mon, 21 Nov 2022 15:31:11 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 245C04B400F;
+        Mon, 21 Nov 2022 15:31:06 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20221120210004.381842-1-jlayton@kernel.org>
+References: <20221120210004.381842-1-jlayton@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dhowells@redhat.com, Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        Marc Dionne <marc.dionne@auristor.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Xiubo Li <xiubli@redhat.com>,
+        Ilya Dryomov <idryomov@gmail.com>,
+        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
+        Ronnie Sahlberg <lsahlber@redhat.com>,
+        Shyam Prasad N <sprasad@microsoft.com>,
+        Tom Talpey <tom@talpey.com>,
+        Christine Caulfield <ccaulfie@redhat.com>,
+        David Teigland <teigland@redhat.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Bob Peterson <rpeterso@redhat.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mike Marshall <hubcap@omnibond.com>,
+        Martin Brandenburg <martin@omnibond.com>,
+        "Darrick J. Wong" <djwong@kernel.org>, hch@lst.de,
+        linux-kernel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        devel@lists.orangefs.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] filelock: move file locking definitions to separate header file
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <10c85b8f4779700b82596c4a968daead65a29801.camel@HansenPartnership.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <416909.1669044663.1@warthog.procyon.org.uk>
+Date:   Mon, 21 Nov 2022 15:31:03 +0000
+Message-ID: <416910.1669044663@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 21, 2022 at 09:03:18AM -0500, James Bottomley wrote:
-> On Mon, 2022-11-21 at 12:05 +0100, Greg Kroah-Hartman wrote:
-> > On Sun, Nov 20, 2022 at 10:14:26PM -0500, James Bottomley wrote:
-> > > On Sun, 2022-11-20 at 17:13 +0100, Greg Kroah-Hartman wrote:
-> > > > On Sat, Nov 19, 2022 at 01:20:09AM -0500, Nayna wrote:
-> > > > > 
-> > > > > On 11/17/22 16:27, Greg Kroah-Hartman wrote:
-> > > > > > On Mon, Nov 14, 2022 at 06:03:43PM -0500, Nayna wrote:
-> > > > > > > On 11/10/22 04:58, Greg Kroah-Hartman wrote:
-> > > [...]
-> > > > > > > > I do not understand, sorry.  What does namespaces have to
-> > > > > > > > do
-> > > > > > > > with this?
-> > > > > > > > sysfs can already handle namespaces just fine, why not
-> > > > > > > > use
-> > > > > > > > that?
-> > > > > > > Firmware objects are not namespaced. I mentioned it here as
-> > > > > > > an
-> > > > > > > example of the difference between firmware and kernel
-> > > > > > > objects.
-> > > > > > > It is also in response to the feedback from James Bottomley
-> > > > > > > in
-> > > > > > > RFC v2 [
-> > > > > > > https://lore.kernel.org/linuxppc-dev/41ca51e8db9907d9060cc38ad
-> > > > > > > b59a66dcae4c59b.camel@HansenPartnership.com/].
-> > > > > > I do not understand, sorry.  Do you want to use a namespace
-> > > > > > for
-> > > > > > these or not?  The code does not seem to be using
-> > > > > > namespaces. 
-> > > > > > You can use sysfs with, or without, a namespace so I don't
-> > > > > > understand the issue here.
-> > > > > > 
-> > > > > > With your code, there is no namespace.
-> > > > > 
-> > > > > You are correct. There's no namespace for these.
-> > > > 
-> > > > So again, I do not understand.  Do you want to use filesystem
-> > > > namespaces, or do you not?
-> > > 
-> > > Since this seems to go back to my email quoted again, let me
-> > > repeat: the question isn't if this patch is namespaced; I think
-> > > you've agreed several times it isn't.  The question is if the
-> > > exposed properties would ever need to be namespaced.  This is a
-> > > subtle and complex question which isn't at all explored by the
-> > > above interchange.
-> > > 
-> > > > How again can you not use sysfs or securityfs due to namespaces? 
-> > > > What is missing?
-> > > 
-> > > I already explained in the email that sysfs contains APIs like
-> > > simple_pin_... which are completely inimical to namespacing.
-> > 
-> > Then how does the networking code handle the namespace stuff in
-> > sysfs?
-> > That seems to work today, or am I missing something?
-> 
-> have you actually tried?
-> 
-> jejb@lingrow:~> sudo unshare --net bash
-> lingrow:/home/jejb # ls /sys/class/net/
-> lo  tun0  tun10  wlan0
-> lingrow:/home/jejb # ip link show
-> 1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN mode DEFAULT group
-> default qlen 1000
->     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-> 
-> So, as you see, I've entered a network namespace and ip link shows me
-> the only interface I can see in that namespace (a down loopback) but
-> sysfs shows me every interface on the system outside the namespace.
+Jeff Layton <jlayton@kernel.org> wrote:
 
-Then all of the code in include/kobject_ns.h is not being used?  We have
-a whole kobject namespace set up for networking, I just assumed they
-were using it.  If not, I'm all for ripping it out.
+> The file locking definitions have lived in fs.h since the dawn of time,
+> but they are only used by a small subset of the source files that
+> include it.
+> 
+> Move the file locking definitions to a new header file, and add the
+> appropriate #include directives to the source files that need them. By
+> doing this we trim down fs.h a bit and limit the amount of rebuilding
+> that has to be done when we make changes to the file locking APIs.
+> 
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-thanks,
+Reviewed-by: David Howells <dhowells@redhat.com>
 
-greg k-h
