@@ -2,98 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E98E1632949
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 17:22:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6819A63298E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 17:33:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229820AbiKUQWB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Nov 2022 11:22:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49288 "EHLO
+        id S229921AbiKUQdG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Nov 2022 11:33:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229936AbiKUQV6 (ORCPT
+        with ESMTP id S230293AbiKUQcu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Nov 2022 11:21:58 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57009D39F5;
-        Mon, 21 Nov 2022 08:21:54 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id s8so19584015lfc.8;
-        Mon, 21 Nov 2022 08:21:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nGszXrhI/beAaA/0cQ+zp9P0mKLEJrhifzp9axztoGE=;
-        b=WLV3G/L8IVLN5kLJshiYdt6AtRvIYNYJEHeMMrDK/1H2XKWM/ioNiYxLBF1E9Hlrru
-         bvwACIljsiaQ2JPUWMMvXugopf4p5VjAovDY/ZcHT1UfA91UNiA3E4d1rvvNmvx6AbkV
-         et2FHy5+RRxfyxvvwabKbxKNxCxyBLqDebsdf4My1yA+NCkvL3NQTuNTrnqzWV41iT4J
-         UCY9ge03Hapkjig8lan+qVw8Z+/HfZVz8I372k8LQs/kOZNOGw7Auo46VAXSP6IuOn7e
-         qr8xsCDpDeGMo6igs0bJU6QgTrzg4W7zygLEW/MU7IlDr0VnU0ws5kM6A9Ma5R+Wft90
-         URaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nGszXrhI/beAaA/0cQ+zp9P0mKLEJrhifzp9axztoGE=;
-        b=5M+0Dt44v3Aw05reySofPNS2s/PjRpc/ndVmMNrgVQOH13OLRJKgTF/zyVJhAuYpvV
-         H2u2pWbw2Bg4CPSwyNjCK7RjXIyrLwocOoI1Dtf65TSJjR6O/Unlf8ZMXd0l11WvH9XI
-         0kXWG3c6jxFmURcTon+hndTKcKO0DXQQVwmzIGXIUE41pHaoXqU82cLeLz1PtzVIGUES
-         +EQgcsfTpyOA2YEV5+3t8VnK5ZwfYMi1z7Pug8j411XOEy9LY+kICDZfC4Qo59YhB8c6
-         PMl7iyOKDiQWzO0TVqk3pju6H2qlnHRso460zMcrixTT5OqqKyA34g2CClvuoQwGzNfj
-         C/cg==
-X-Gm-Message-State: ANoB5pl1u+t2zsAbFvoh+YKdxAolFjXOyA8pEidnGM1FcF7DyNxkIlAv
-        hfgHzj3RmuGji7hqHVkckykZEdSBMDcJAh+vCX4=
-X-Google-Smtp-Source: AA0mqf7qbGrl1t7G/qKM8tcs5J9HH0wZfeLjZKhY0YCE4dkXhA650nxGNhG69RqXixRCKXZsGQd+8wKoyL7oiDEZ7wE=
-X-Received: by 2002:ac2:5236:0:b0:4af:eabe:dbf5 with SMTP id
- i22-20020ac25236000000b004afeabedbf5mr5946173lfl.668.1669047711876; Mon, 21
- Nov 2022 08:21:51 -0800 (PST)
+        Mon, 21 Nov 2022 11:32:50 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31A9BD0DCA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 08:31:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669048303;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=AdoRsC2dtNKs1Qa8jpBYbsBqJbZoSu/Gw2tBgqjEFcQ=;
+        b=grlB6BUjOPN23kZ2NFEM11Gdxn8URw0mPYcoHLrE4828m8pzPZHr9wRlnmiadd5tC2vdpF
+        ryb75CYJh/CXSraL/mMAh/Mk03L0uVgxbcxWA2QYveibUY7iXoD3hB6QuhuAh362Zq+txs
+        pl9M++foiBRf8ljMALYwcyzbY+1SKOQ=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-642-ERsPdNVHOZCRqS8BWISmQQ-1; Mon, 21 Nov 2022 11:31:39 -0500
+X-MC-Unique: ERsPdNVHOZCRqS8BWISmQQ-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E2E4788646E;
+        Mon, 21 Nov 2022 16:31:38 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 456FE17582;
+        Mon, 21 Nov 2022 16:31:37 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+To:     torvalds@linux-foundation.org
+cc:     dhowells@redhat.com, zhangpeng362@huawei.com,
+        asmadeus@codewreck.org,
+        syzbot+a76f6a6e524cf2080aa3@syzkaller.appspotmail.com,
+        Jeff Layton <jlayton@kernel.org>, ericvh@gmail.com,
+        lucho@ionkov.net, jefflexu@linux.alibaba.com,
+        linux-cachefs@redhat.com, linux_oss@crudebyte.com,
+        v9fs-developer@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] fscache: fix OOB Read in __fscache_acquire_volume
 MIME-Version: 1.0
-References: <20221120210004.381842-1-jlayton@kernel.org>
-In-Reply-To: <20221120210004.381842-1-jlayton@kernel.org>
-From:   Steve French <smfrench@gmail.com>
-Date:   Mon, 21 Nov 2022 10:21:40 -0600
-Message-ID: <CAH2r5mtg2K+5pNk7HRLLwf=Ub1KBiD1AJAaBf2yfseTA_VaLbA@mail.gmail.com>
-Subject: Re: [PATCH] filelock: move file locking definitions to separate
- header file
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        "Darrick J. Wong" <djwong@kernel.org>, hch@lst.de,
-        linux-kernel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        devel@lists.orangefs.org, linux-xfs@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <479289.1669048275.1@warthog.procyon.org.uk>
+Content-Transfer-Encoding: quoted-printable
+From:   David Howells <dhowells@redhat.com>
+Date:   Mon, 21 Nov 2022 16:31:34 +0000
+Message-ID: <479316.1669048294@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -101,1396 +69,136 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Acked-by: Steve French <stfrench@microsoft.com>
+Hi Linus,
 
-On Sun, Nov 20, 2022 at 3:01 PM Jeff Layton <jlayton@kernel.org> wrote:
->
-> The file locking definitions have lived in fs.h since the dawn of time,
-> but they are only used by a small subset of the source files that
-> include it.
->
-> Move the file locking definitions to a new header file, and add the
-> appropriate #include directives to the source files that need them. By
-> doing this we trim down fs.h a bit and limit the amount of rebuilding
-> that has to be done when we make changes to the file locking APIs.
->
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/9p/vfs_file.c          |   1 +
->  fs/afs/internal.h         |   1 +
->  fs/attr.c                 |   1 +
->  fs/ceph/locks.c           |   1 +
->  fs/cifs/cifsfs.c          |   1 +
->  fs/cifs/cifsglob.h        |   1 +
->  fs/cifs/cifssmb.c         |   1 +
->  fs/cifs/file.c            |   1 +
->  fs/cifs/smb2file.c        |   1 +
->  fs/dlm/plock.c            |   1 +
->  fs/fcntl.c                |   1 +
->  fs/file_table.c           |   1 +
->  fs/fuse/file.c            |   1 +
->  fs/gfs2/file.c            |   1 +
->  fs/inode.c                |   1 +
->  fs/ksmbd/smb2pdu.c        |   1 +
->  fs/ksmbd/vfs.c            |   1 +
->  fs/ksmbd/vfs_cache.c      |   1 +
->  fs/lockd/clntproc.c       |   1 +
->  fs/lockd/netns.h          |   1 +
->  fs/locks.c                |   1 +
->  fs/namei.c                |   1 +
->  fs/nfs/nfs4_fs.h          |   1 +
->  fs/nfs_common/grace.c     |   1 +
->  fs/nfsd/netns.h           |   1 +
->  fs/ocfs2/locks.c          |   1 +
->  fs/ocfs2/stack_user.c     |   1 +
->  fs/open.c                 |   1 +
->  fs/orangefs/file.c        |   1 +
->  fs/proc/fd.c              |   1 +
->  fs/utimes.c               |   1 +
->  fs/xattr.c                |   1 +
->  fs/xfs/xfs_buf.h          |   1 +
->  fs/xfs/xfs_file.c         |   1 +
->  fs/xfs/xfs_inode.c        |   1 +
->  include/linux/filelock.h  | 428 ++++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h        | 421 -------------------------------------
->  include/linux/lockd/xdr.h |   1 +
->  38 files changed, 464 insertions(+), 421 deletions(-)
->  create mode 100644 include/linux/filelock.h
->
-> Unless anyone has objections, I'll plan to merge this in via the file
-> locking tree for v6.3. I'd appreciate Acked-bys or Reviewed-bys from
-> maintainers, however.
->
-> diff --git a/fs/9p/vfs_file.c b/fs/9p/vfs_file.c
-> index aec43ba83799..5e3c4b5198a6 100644
-> --- a/fs/9p/vfs_file.c
-> +++ b/fs/9p/vfs_file.c
-> @@ -9,6 +9,7 @@
->  #include <linux/module.h>
->  #include <linux/errno.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/sched.h>
->  #include <linux/file.h>
->  #include <linux/stat.h>
-> diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-> index 723d162078a3..c41a82a08f8b 100644
-> --- a/fs/afs/internal.h
-> +++ b/fs/afs/internal.h
-> @@ -9,6 +9,7 @@
->  #include <linux/kernel.h>
->  #include <linux/ktime.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/pagemap.h>
->  #include <linux/rxrpc.h>
->  #include <linux/key.h>
-> diff --git a/fs/attr.c b/fs/attr.c
-> index 1552a5f23d6b..e643f17a5465 100644
-> --- a/fs/attr.c
-> +++ b/fs/attr.c
-> @@ -14,6 +14,7 @@
->  #include <linux/capability.h>
->  #include <linux/fsnotify.h>
->  #include <linux/fcntl.h>
-> +#include <linux/filelock.h>
->  #include <linux/security.h>
->  #include <linux/evm.h>
->  #include <linux/ima.h>
-> diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
-> index f3b461c708a8..476f25bba263 100644
-> --- a/fs/ceph/locks.c
-> +++ b/fs/ceph/locks.c
-> @@ -7,6 +7,7 @@
->
->  #include "super.h"
->  #include "mds_client.h"
-> +#include <linux/filelock.h>
->  #include <linux/ceph/pagelist.h>
->
->  static u64 lock_secret;
-> diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-> index fe220686bba4..8d255916b6bf 100644
-> --- a/fs/cifs/cifsfs.c
-> +++ b/fs/cifs/cifsfs.c
-> @@ -12,6 +12,7 @@
->
->  #include <linux/module.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/mount.h>
->  #include <linux/slab.h>
->  #include <linux/init.h>
-> diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
-> index 1420acf987f0..1b9fee67a25e 100644
-> --- a/fs/cifs/cifsglob.h
-> +++ b/fs/cifs/cifsglob.h
-> @@ -25,6 +25,7 @@
->  #include <uapi/linux/cifs/cifs_mount.h>
->  #include "../smbfs_common/smb2pdu.h"
->  #include "smb2pdu.h"
-> +#include <linux/filelock.h>
->
->  #define SMB_PATH_MAX 260
->  #define CIFS_PORT 445
-> diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
-> index 1724066c1536..0410658c00bd 100644
-> --- a/fs/cifs/cifssmb.c
-> +++ b/fs/cifs/cifssmb.c
-> @@ -15,6 +15,7 @@
->   /* want to reuse a stale file handle and only the caller knows the file info */
->
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/kernel.h>
->  #include <linux/vfs.h>
->  #include <linux/slab.h>
-> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> index 6c1431979495..c230e86f1e09 100644
-> --- a/fs/cifs/file.c
-> +++ b/fs/cifs/file.c
-> @@ -9,6 +9,7 @@
->   *
->   */
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/backing-dev.h>
->  #include <linux/stat.h>
->  #include <linux/fcntl.h>
-> diff --git a/fs/cifs/smb2file.c b/fs/cifs/smb2file.c
-> index ffbd9a99fc12..1f421bfbe797 100644
-> --- a/fs/cifs/smb2file.c
-> +++ b/fs/cifs/smb2file.c
-> @@ -7,6 +7,7 @@
->   *
->   */
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/stat.h>
->  #include <linux/slab.h>
->  #include <linux/pagemap.h>
-> diff --git a/fs/dlm/plock.c b/fs/dlm/plock.c
-> index 737f185aad8d..ed4357e62f35 100644
-> --- a/fs/dlm/plock.c
-> +++ b/fs/dlm/plock.c
-> @@ -4,6 +4,7 @@
->   */
->
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/miscdevice.h>
->  #include <linux/poll.h>
->  #include <linux/dlm.h>
-> diff --git a/fs/fcntl.c b/fs/fcntl.c
-> index 146c9ab0cd4b..7852e946fdf4 100644
-> --- a/fs/fcntl.c
-> +++ b/fs/fcntl.c
-> @@ -10,6 +10,7 @@
->  #include <linux/mm.h>
->  #include <linux/sched/task.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/file.h>
->  #include <linux/fdtable.h>
->  #include <linux/capability.h>
-> diff --git a/fs/file_table.c b/fs/file_table.c
-> index dd88701e54a9..372653b92617 100644
-> --- a/fs/file_table.c
-> +++ b/fs/file_table.c
-> @@ -13,6 +13,7 @@
->  #include <linux/init.h>
->  #include <linux/module.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/security.h>
->  #include <linux/cred.h>
->  #include <linux/eventpoll.h>
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 71bfb663aac5..0e6b3b8e2f27 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -18,6 +18,7 @@
->  #include <linux/falloc.h>
->  #include <linux/uio.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->
->  static int fuse_send_open(struct fuse_mount *fm, u64 nodeid,
->                           unsigned int open_flags, int opcode,
-> diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-> index 60c6fb91fb58..2a48c8df6d56 100644
-> --- a/fs/gfs2/file.c
-> +++ b/fs/gfs2/file.c
-> @@ -15,6 +15,7 @@
->  #include <linux/mm.h>
->  #include <linux/mount.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/gfs2_ondisk.h>
->  #include <linux/falloc.h>
->  #include <linux/swap.h>
-> diff --git a/fs/inode.c b/fs/inode.c
-> index b608528efd3a..f32aa2ec148d 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -5,6 +5,7 @@
->   */
->  #include <linux/export.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/mm.h>
->  #include <linux/backing-dev.h>
->  #include <linux/hash.h>
-> diff --git a/fs/ksmbd/smb2pdu.c b/fs/ksmbd/smb2pdu.c
-> index f2bcd2a5fb7f..d4d6f24790d6 100644
-> --- a/fs/ksmbd/smb2pdu.c
-> +++ b/fs/ksmbd/smb2pdu.c
-> @@ -12,6 +12,7 @@
->  #include <linux/ethtool.h>
->  #include <linux/falloc.h>
->  #include <linux/mount.h>
-> +#include <linux/filelock.h>
->
->  #include "glob.h"
->  #include "smbfsctl.h"
-> diff --git a/fs/ksmbd/vfs.c b/fs/ksmbd/vfs.c
-> index f9e85d6a160e..f73c4e119ffd 100644
-> --- a/fs/ksmbd/vfs.c
-> +++ b/fs/ksmbd/vfs.c
-> @@ -6,6 +6,7 @@
->
->  #include <linux/kernel.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/uaccess.h>
->  #include <linux/backing-dev.h>
->  #include <linux/writeback.h>
-> diff --git a/fs/ksmbd/vfs_cache.c b/fs/ksmbd/vfs_cache.c
-> index da9163b00350..552c3882a8f4 100644
-> --- a/fs/ksmbd/vfs_cache.c
-> +++ b/fs/ksmbd/vfs_cache.c
-> @@ -5,6 +5,7 @@
->   */
->
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/slab.h>
->  #include <linux/vmalloc.h>
->
-> diff --git a/fs/lockd/clntproc.c b/fs/lockd/clntproc.c
-> index 99fffc9cb958..e875a3571c41 100644
-> --- a/fs/lockd/clntproc.c
-> +++ b/fs/lockd/clntproc.c
-> @@ -12,6 +12,7 @@
->  #include <linux/types.h>
->  #include <linux/errno.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/nfs_fs.h>
->  #include <linux/utsname.h>
->  #include <linux/freezer.h>
-> diff --git a/fs/lockd/netns.h b/fs/lockd/netns.h
-> index 5bec78c8e431..17432c445fe6 100644
-> --- a/fs/lockd/netns.h
-> +++ b/fs/lockd/netns.h
-> @@ -3,6 +3,7 @@
->  #define __LOCKD_NETNS_H__
->
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <net/netns/generic.h>
->
->  struct lockd_net {
-> diff --git a/fs/locks.c b/fs/locks.c
-> index 8f01bee17715..a5cc90c958c9 100644
-> --- a/fs/locks.c
-> +++ b/fs/locks.c
-> @@ -52,6 +52,7 @@
->  #include <linux/capability.h>
->  #include <linux/file.h>
->  #include <linux/fdtable.h>
-> +#include <linux/filelock.h>
->  #include <linux/fs.h>
->  #include <linux/init.h>
->  #include <linux/security.h>
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 578c2110df02..d5121f51f900 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -20,6 +20,7 @@
->  #include <linux/kernel.h>
->  #include <linux/slab.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/namei.h>
->  #include <linux/pagemap.h>
->  #include <linux/sched/mm.h>
-> diff --git a/fs/nfs/nfs4_fs.h b/fs/nfs/nfs4_fs.h
-> index cfef738d765e..9822ad1aabef 100644
-> --- a/fs/nfs/nfs4_fs.h
-> +++ b/fs/nfs/nfs4_fs.h
-> @@ -23,6 +23,7 @@
->  #define NFS4_MAX_LOOP_ON_RECOVER (10)
->
->  #include <linux/seqlock.h>
-> +#include <linux/filelock.h>
->
->  struct idmap;
->
-> diff --git a/fs/nfs_common/grace.c b/fs/nfs_common/grace.c
-> index 0a9b72685f98..1479583fbb62 100644
-> --- a/fs/nfs_common/grace.c
-> +++ b/fs/nfs_common/grace.c
-> @@ -9,6 +9,7 @@
->  #include <net/net_namespace.h>
->  #include <net/netns/generic.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->
->  static unsigned int grace_net_id;
->  static DEFINE_SPINLOCK(grace_lock);
-> diff --git a/fs/nfsd/netns.h b/fs/nfsd/netns.h
-> index 8c854ba3285b..bc139401927d 100644
-> --- a/fs/nfsd/netns.h
-> +++ b/fs/nfsd/netns.h
-> @@ -10,6 +10,7 @@
->
->  #include <net/net_namespace.h>
->  #include <net/netns/generic.h>
-> +#include <linux/filelock.h>
->  #include <linux/percpu_counter.h>
->  #include <linux/siphash.h>
->
-> diff --git a/fs/ocfs2/locks.c b/fs/ocfs2/locks.c
-> index 73a3854b2afb..f37174e79fad 100644
-> --- a/fs/ocfs2/locks.c
-> +++ b/fs/ocfs2/locks.c
-> @@ -8,6 +8,7 @@
->   */
->
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/fcntl.h>
->
->  #include <cluster/masklog.h>
-> diff --git a/fs/ocfs2/stack_user.c b/fs/ocfs2/stack_user.c
-> index 64e6ddcfe329..05d4414d0c33 100644
-> --- a/fs/ocfs2/stack_user.c
-> +++ b/fs/ocfs2/stack_user.c
-> @@ -9,6 +9,7 @@
->
->  #include <linux/module.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/miscdevice.h>
->  #include <linux/mutex.h>
->  #include <linux/slab.h>
-> diff --git a/fs/open.c b/fs/open.c
-> index a81319b6177f..11a3202ea60c 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -33,6 +33,7 @@
->  #include <linux/dnotify.h>
->  #include <linux/compat.h>
->  #include <linux/mnt_idmapping.h>
-> +#include <linux/filelock.h>
->
->  #include "internal.h"
->
-> diff --git a/fs/orangefs/file.c b/fs/orangefs/file.c
-> index 732661aa2680..12ec31a9113b 100644
-> --- a/fs/orangefs/file.c
-> +++ b/fs/orangefs/file.c
-> @@ -14,6 +14,7 @@
->  #include "orangefs-kernel.h"
->  #include "orangefs-bufmap.h"
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/pagemap.h>
->
->  static int flush_racache(struct inode *inode)
-> diff --git a/fs/proc/fd.c b/fs/proc/fd.c
-> index 913bef0d2a36..2a1e7725dbcb 100644
-> --- a/fs/proc/fd.c
-> +++ b/fs/proc/fd.c
-> @@ -11,6 +11,7 @@
->  #include <linux/file.h>
->  #include <linux/seq_file.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->
->  #include <linux/proc_fs.h>
->
-> diff --git a/fs/utimes.c b/fs/utimes.c
-> index 39f356017635..00499e4ba955 100644
-> --- a/fs/utimes.c
-> +++ b/fs/utimes.c
-> @@ -7,6 +7,7 @@
->  #include <linux/uaccess.h>
->  #include <linux/compat.h>
->  #include <asm/unistd.h>
-> +#include <linux/filelock.h>
->
->  static bool nsec_valid(long nsec)
->  {
-> diff --git a/fs/xattr.c b/fs/xattr.c
-> index 61107b6bbed2..b81fd7d8520e 100644
-> --- a/fs/xattr.c
-> +++ b/fs/xattr.c
-> @@ -9,6 +9,7 @@
->    Copyright (c) 2004 Red Hat, Inc., James Morris <jmorris@redhat.com>
->   */
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/slab.h>
->  #include <linux/file.h>
->  #include <linux/xattr.h>
-> diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
-> index 549c60942208..c1f283cc22f6 100644
-> --- a/fs/xfs/xfs_buf.h
-> +++ b/fs/xfs/xfs_buf.h
-> @@ -11,6 +11,7 @@
->  #include <linux/spinlock.h>
->  #include <linux/mm.h>
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/dax.h>
->  #include <linux/uio.h>
->  #include <linux/list_lru.h>
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index e462d39c840e..591c696651f0 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -31,6 +31,7 @@
->  #include <linux/mman.h>
->  #include <linux/fadvise.h>
->  #include <linux/mount.h>
-> +#include <linux/filelock.h>
->
->  static const struct vm_operations_struct xfs_file_vm_ops;
->
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index aa303be11576..257e279df469 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -4,6 +4,7 @@
->   * All Rights Reserved.
->   */
->  #include <linux/iversion.h>
-> +#include <linux/filelock.h>
->
->  #include "xfs.h"
->  #include "xfs_fs.h"
-> diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-> new file mode 100644
-> index 000000000000..b686e7e74787
-> --- /dev/null
-> +++ b/include/linux/filelock.h
-> @@ -0,0 +1,428 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _LINUX_FILELOCK_H
-> +#define _LINUX_FILELOCK_H
-> +
-> +#include <linux/list.h>
-> +#include <linux/nfs_fs_i.h>
-> +
-> +#define FL_POSIX       1
-> +#define FL_FLOCK       2
-> +#define FL_DELEG       4       /* NFSv4 delegation */
-> +#define FL_ACCESS      8       /* not trying to lock, just looking */
-> +#define FL_EXISTS      16      /* when unlocking, test for existence */
-> +#define FL_LEASE       32      /* lease held on this file */
-> +#define FL_CLOSE       64      /* unlock on close */
-> +#define FL_SLEEP       128     /* A blocking lock */
-> +#define FL_DOWNGRADE_PENDING   256 /* Lease is being downgraded */
-> +#define FL_UNLOCK_PENDING      512 /* Lease is being broken */
-> +#define FL_OFDLCK      1024    /* lock is "owned" by struct file */
-> +#define FL_LAYOUT      2048    /* outstanding pNFS layout */
-> +#define FL_RECLAIM     4096    /* reclaiming from a reboot server */
-> +
-> +#define FL_CLOSE_POSIX (FL_POSIX | FL_CLOSE)
-> +
-> +/*
-> + * Special return value from posix_lock_file() and vfs_lock_file() for
-> + * asynchronous locking.
-> + */
-> +#define FILE_LOCK_DEFERRED 1
-> +
-> +struct file_lock;
-> +
-> +struct file_lock_operations {
-> +       void (*fl_copy_lock)(struct file_lock *, struct file_lock *);
-> +       void (*fl_release_private)(struct file_lock *);
-> +};
-> +
-> +struct lock_manager_operations {
-> +       void *lm_mod_owner;
-> +       fl_owner_t (*lm_get_owner)(fl_owner_t);
-> +       void (*lm_put_owner)(fl_owner_t);
-> +       void (*lm_notify)(struct file_lock *);  /* unblock callback */
-> +       int (*lm_grant)(struct file_lock *, int);
-> +       bool (*lm_break)(struct file_lock *);
-> +       int (*lm_change)(struct file_lock *, int, struct list_head *);
-> +       void (*lm_setup)(struct file_lock *, void **);
-> +       bool (*lm_breaker_owns_lease)(struct file_lock *);
-> +       bool (*lm_lock_expirable)(struct file_lock *cfl);
-> +       void (*lm_expire_lock)(void);
-> +};
-> +
-> +struct lock_manager {
-> +       struct list_head list;
-> +       /*
-> +        * NFSv4 and up also want opens blocked during the grace period;
-> +        * NLM doesn't care:
-> +        */
-> +       bool block_opens;
-> +};
-> +
-> +struct net;
-> +void locks_start_grace(struct net *, struct lock_manager *);
-> +void locks_end_grace(struct lock_manager *);
-> +bool locks_in_grace(struct net *);
-> +bool opens_in_grace(struct net *);
-> +
-> +
-> +/*
-> + * struct file_lock represents a generic "file lock". It's used to represent
-> + * POSIX byte range locks, BSD (flock) locks, and leases. It's important to
-> + * note that the same struct is used to represent both a request for a lock and
-> + * the lock itself, but the same object is never used for both.
-> + *
-> + * FIXME: should we create a separate "struct lock_request" to help distinguish
-> + * these two uses?
-> + *
-> + * The varous i_flctx lists are ordered by:
-> + *
-> + * 1) lock owner
-> + * 2) lock range start
-> + * 3) lock range end
-> + *
-> + * Obviously, the last two criteria only matter for POSIX locks.
-> + */
-> +struct file_lock {
-> +       struct file_lock *fl_blocker;   /* The lock, that is blocking us */
-> +       struct list_head fl_list;       /* link into file_lock_context */
-> +       struct hlist_node fl_link;      /* node in global lists */
-> +       struct list_head fl_blocked_requests;   /* list of requests with
-> +                                                * ->fl_blocker pointing here
-> +                                                */
-> +       struct list_head fl_blocked_member;     /* node in
-> +                                                * ->fl_blocker->fl_blocked_requests
-> +                                                */
-> +       fl_owner_t fl_owner;
-> +       unsigned int fl_flags;
-> +       unsigned char fl_type;
-> +       unsigned int fl_pid;
-> +       int fl_link_cpu;                /* what cpu's list is this on? */
-> +       wait_queue_head_t fl_wait;
-> +       struct file *fl_file;
-> +       loff_t fl_start;
-> +       loff_t fl_end;
-> +
-> +       struct fasync_struct *  fl_fasync; /* for lease break notifications */
-> +       /* for lease breaks: */
-> +       unsigned long fl_break_time;
-> +       unsigned long fl_downgrade_time;
-> +
-> +       const struct file_lock_operations *fl_ops;      /* Callbacks for filesystems */
-> +       const struct lock_manager_operations *fl_lmops; /* Callbacks for lockmanagers */
-> +       union {
-> +               struct nfs_lock_info    nfs_fl;
-> +               struct nfs4_lock_info   nfs4_fl;
-> +               struct {
-> +                       struct list_head link;  /* link in AFS vnode's pending_locks list */
-> +                       int state;              /* state of grant or error if -ve */
-> +                       unsigned int    debug_id;
-> +               } afs;
-> +       } fl_u;
-> +} __randomize_layout;
-> +
-> +struct file_lock_context {
-> +       spinlock_t              flc_lock;
-> +       struct list_head        flc_flock;
-> +       struct list_head        flc_posix;
-> +       struct list_head        flc_lease;
-> +};
-> +
-> +#define locks_inode(f) file_inode(f)
-> +
-> +#ifdef CONFIG_FILE_LOCKING
-> +extern int fcntl_getlk(struct file *, unsigned int, struct flock *);
-> +extern int fcntl_setlk(unsigned int, struct file *, unsigned int,
-> +                       struct flock *);
-> +
-> +#if BITS_PER_LONG == 32
-> +extern int fcntl_getlk64(struct file *, unsigned int, struct flock64 *);
-> +extern int fcntl_setlk64(unsigned int, struct file *, unsigned int,
-> +                       struct flock64 *);
-> +#endif
-> +
-> +extern int fcntl_setlease(unsigned int fd, struct file *filp, long arg);
-> +extern int fcntl_getlease(struct file *filp);
-> +
-> +/* fs/locks.c */
-> +void locks_free_lock_context(struct inode *inode);
-> +void locks_free_lock(struct file_lock *fl);
-> +extern void locks_init_lock(struct file_lock *);
-> +extern struct file_lock * locks_alloc_lock(void);
-> +extern void locks_copy_lock(struct file_lock *, struct file_lock *);
-> +extern void locks_copy_conflock(struct file_lock *, struct file_lock *);
-> +extern void locks_remove_posix(struct file *, fl_owner_t);
-> +extern void locks_remove_file(struct file *);
-> +extern void locks_release_private(struct file_lock *);
-> +extern void posix_test_lock(struct file *, struct file_lock *);
-> +extern int posix_lock_file(struct file *, struct file_lock *, struct file_lock *);
-> +extern int locks_delete_block(struct file_lock *);
-> +extern int vfs_test_lock(struct file *, struct file_lock *);
-> +extern int vfs_lock_file(struct file *, unsigned int, struct file_lock *, struct file_lock *);
-> +extern int vfs_cancel_lock(struct file *filp, struct file_lock *fl);
-> +bool vfs_inode_has_locks(struct inode *inode);
-> +extern int locks_lock_inode_wait(struct inode *inode, struct file_lock *fl);
-> +extern int __break_lease(struct inode *inode, unsigned int flags, unsigned int type);
-> +extern void lease_get_mtime(struct inode *, struct timespec64 *time);
-> +extern int generic_setlease(struct file *, long, struct file_lock **, void **priv);
-> +extern int vfs_setlease(struct file *, long, struct file_lock **, void **);
-> +extern int lease_modify(struct file_lock *, int, struct list_head *);
-> +
-> +struct notifier_block;
-> +extern int lease_register_notifier(struct notifier_block *);
-> +extern void lease_unregister_notifier(struct notifier_block *);
-> +
-> +struct files_struct;
-> +extern void show_fd_locks(struct seq_file *f,
-> +                        struct file *filp, struct files_struct *files);
-> +extern bool locks_owner_has_blockers(struct file_lock_context *flctx,
-> +                       fl_owner_t owner);
-> +
-> +static inline struct file_lock_context *
-> +locks_inode_context(const struct inode *inode)
-> +{
-> +       return smp_load_acquire(&inode->i_flctx);
-> +}
-> +
-> +#else /* !CONFIG_FILE_LOCKING */
-> +static inline int fcntl_getlk(struct file *file, unsigned int cmd,
-> +                             struct flock __user *user)
-> +{
-> +       return -EINVAL;
-> +}
-> +
-> +static inline int fcntl_setlk(unsigned int fd, struct file *file,
-> +                             unsigned int cmd, struct flock __user *user)
-> +{
-> +       return -EACCES;
-> +}
-> +
-> +#if BITS_PER_LONG == 32
-> +static inline int fcntl_getlk64(struct file *file, unsigned int cmd,
-> +                               struct flock64 *user)
-> +{
-> +       return -EINVAL;
-> +}
-> +
-> +static inline int fcntl_setlk64(unsigned int fd, struct file *file,
-> +                               unsigned int cmd, struct flock64 *user)
-> +{
-> +       return -EACCES;
-> +}
-> +#endif
-> +static inline int fcntl_setlease(unsigned int fd, struct file *filp, long arg)
-> +{
-> +       return -EINVAL;
-> +}
-> +
-> +static inline int fcntl_getlease(struct file *filp)
-> +{
-> +       return F_UNLCK;
-> +}
-> +
-> +static inline void
-> +locks_free_lock_context(struct inode *inode)
-> +{
-> +}
-> +
-> +static inline void locks_init_lock(struct file_lock *fl)
-> +{
-> +       return;
-> +}
-> +
-> +static inline void locks_copy_conflock(struct file_lock *new, struct file_lock *fl)
-> +{
-> +       return;
-> +}
-> +
-> +static inline void locks_copy_lock(struct file_lock *new, struct file_lock *fl)
-> +{
-> +       return;
-> +}
-> +
-> +static inline void locks_remove_posix(struct file *filp, fl_owner_t owner)
-> +{
-> +       return;
-> +}
-> +
-> +static inline void locks_remove_file(struct file *filp)
-> +{
-> +       return;
-> +}
-> +
-> +static inline void posix_test_lock(struct file *filp, struct file_lock *fl)
-> +{
-> +       return;
-> +}
-> +
-> +static inline int posix_lock_file(struct file *filp, struct file_lock *fl,
-> +                                 struct file_lock *conflock)
-> +{
-> +       return -ENOLCK;
-> +}
-> +
-> +static inline int locks_delete_block(struct file_lock *waiter)
-> +{
-> +       return -ENOENT;
-> +}
-> +
-> +static inline int vfs_test_lock(struct file *filp, struct file_lock *fl)
-> +{
-> +       return 0;
-> +}
-> +
-> +static inline int vfs_lock_file(struct file *filp, unsigned int cmd,
-> +                               struct file_lock *fl, struct file_lock *conf)
-> +{
-> +       return -ENOLCK;
-> +}
-> +
-> +static inline int vfs_cancel_lock(struct file *filp, struct file_lock *fl)
-> +{
-> +       return 0;
-> +}
-> +
-> +static inline int locks_lock_inode_wait(struct inode *inode, struct file_lock *fl)
-> +{
-> +       return -ENOLCK;
-> +}
-> +
-> +static inline int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
-> +{
-> +       return 0;
-> +}
-> +
-> +static inline void lease_get_mtime(struct inode *inode,
-> +                                  struct timespec64 *time)
-> +{
-> +       return;
-> +}
-> +
-> +static inline int generic_setlease(struct file *filp, long arg,
-> +                                   struct file_lock **flp, void **priv)
-> +{
-> +       return -EINVAL;
-> +}
-> +
-> +static inline int vfs_setlease(struct file *filp, long arg,
-> +                              struct file_lock **lease, void **priv)
-> +{
-> +       return -EINVAL;
-> +}
-> +
-> +static inline int lease_modify(struct file_lock *fl, int arg,
-> +                              struct list_head *dispose)
-> +{
-> +       return -EINVAL;
-> +}
-> +
-> +struct files_struct;
-> +static inline void show_fd_locks(struct seq_file *f,
-> +                       struct file *filp, struct files_struct *files) {}
-> +static inline bool locks_owner_has_blockers(struct file_lock_context *flctx,
-> +                       fl_owner_t owner)
-> +{
-> +       return false;
-> +}
-> +
-> +static inline struct file_lock_context *
-> +locks_inode_context(const struct inode *inode)
-> +{
-> +       return NULL;
-> +}
-> +#endif /* !CONFIG_FILE_LOCKING */
-> +
-> +static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
-> +{
-> +       return locks_lock_inode_wait(locks_inode(filp), fl);
-> +}
-> +
-> +#ifdef CONFIG_FILE_LOCKING
-> +static inline int break_lease(struct inode *inode, unsigned int mode)
-> +{
-> +       /*
-> +        * Since this check is lockless, we must ensure that any refcounts
-> +        * taken are done before checking i_flctx->flc_lease. Otherwise, we
-> +        * could end up racing with tasks trying to set a new lease on this
-> +        * file.
-> +        */
-> +       smp_mb();
-> +       if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease))
-> +               return __break_lease(inode, mode, FL_LEASE);
-> +       return 0;
-> +}
-> +
-> +static inline int break_deleg(struct inode *inode, unsigned int mode)
-> +{
-> +       /*
-> +        * Since this check is lockless, we must ensure that any refcounts
-> +        * taken are done before checking i_flctx->flc_lease. Otherwise, we
-> +        * could end up racing with tasks trying to set a new lease on this
-> +        * file.
-> +        */
-> +       smp_mb();
-> +       if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease))
-> +               return __break_lease(inode, mode, FL_DELEG);
-> +       return 0;
-> +}
-> +
-> +static inline int try_break_deleg(struct inode *inode, struct inode **delegated_inode)
-> +{
-> +       int ret;
-> +
-> +       ret = break_deleg(inode, O_WRONLY|O_NONBLOCK);
-> +       if (ret == -EWOULDBLOCK && delegated_inode) {
-> +               *delegated_inode = inode;
-> +               ihold(inode);
-> +       }
-> +       return ret;
-> +}
-> +
-> +static inline int break_deleg_wait(struct inode **delegated_inode)
-> +{
-> +       int ret;
-> +
-> +       ret = break_deleg(*delegated_inode, O_WRONLY);
-> +       iput(*delegated_inode);
-> +       *delegated_inode = NULL;
-> +       return ret;
-> +}
-> +
-> +static inline int break_layout(struct inode *inode, bool wait)
-> +{
-> +       smp_mb();
-> +       if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease))
-> +               return __break_lease(inode,
-> +                               wait ? O_WRONLY : O_WRONLY | O_NONBLOCK,
-> +                               FL_LAYOUT);
-> +       return 0;
-> +}
-> +
-> +#else /* !CONFIG_FILE_LOCKING */
-> +static inline int break_lease(struct inode *inode, unsigned int mode)
-> +{
-> +       return 0;
-> +}
-> +
-> +static inline int break_deleg(struct inode *inode, unsigned int mode)
-> +{
-> +       return 0;
-> +}
-> +
-> +static inline int try_break_deleg(struct inode *inode, struct inode **delegated_inode)
-> +{
-> +       return 0;
-> +}
-> +
-> +static inline int break_deleg_wait(struct inode **delegated_inode)
-> +{
-> +       BUG();
-> +       return 0;
-> +}
-> +
-> +static inline int break_layout(struct inode *inode, bool wait)
-> +{
-> +       return 0;
-> +}
-> +
-> +#endif /* CONFIG_FILE_LOCKING */
-> +
-> +#endif /* _LINUX_FILELOCK_H */
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 092673178e13..63f355058ab5 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1003,132 +1003,11 @@ static inline struct file *get_file(struct file *f)
->  #define MAX_LFS_FILESIZE       ((loff_t)LLONG_MAX)
->  #endif
->
-> -#define FL_POSIX       1
-> -#define FL_FLOCK       2
-> -#define FL_DELEG       4       /* NFSv4 delegation */
-> -#define FL_ACCESS      8       /* not trying to lock, just looking */
-> -#define FL_EXISTS      16      /* when unlocking, test for existence */
-> -#define FL_LEASE       32      /* lease held on this file */
-> -#define FL_CLOSE       64      /* unlock on close */
-> -#define FL_SLEEP       128     /* A blocking lock */
-> -#define FL_DOWNGRADE_PENDING   256 /* Lease is being downgraded */
-> -#define FL_UNLOCK_PENDING      512 /* Lease is being broken */
-> -#define FL_OFDLCK      1024    /* lock is "owned" by struct file */
-> -#define FL_LAYOUT      2048    /* outstanding pNFS layout */
-> -#define FL_RECLAIM     4096    /* reclaiming from a reboot server */
-> -
-> -#define FL_CLOSE_POSIX (FL_POSIX | FL_CLOSE)
-> -
-> -/*
-> - * Special return value from posix_lock_file() and vfs_lock_file() for
-> - * asynchronous locking.
-> - */
-> -#define FILE_LOCK_DEFERRED 1
-> -
->  /* legacy typedef, should eventually be removed */
->  typedef void *fl_owner_t;
->
->  struct file_lock;
->
-> -struct file_lock_operations {
-> -       void (*fl_copy_lock)(struct file_lock *, struct file_lock *);
-> -       void (*fl_release_private)(struct file_lock *);
-> -};
-> -
-> -struct lock_manager_operations {
-> -       void *lm_mod_owner;
-> -       fl_owner_t (*lm_get_owner)(fl_owner_t);
-> -       void (*lm_put_owner)(fl_owner_t);
-> -       void (*lm_notify)(struct file_lock *);  /* unblock callback */
-> -       int (*lm_grant)(struct file_lock *, int);
-> -       bool (*lm_break)(struct file_lock *);
-> -       int (*lm_change)(struct file_lock *, int, struct list_head *);
-> -       void (*lm_setup)(struct file_lock *, void **);
-> -       bool (*lm_breaker_owns_lease)(struct file_lock *);
-> -       bool (*lm_lock_expirable)(struct file_lock *cfl);
-> -       void (*lm_expire_lock)(void);
-> -};
-> -
-> -struct lock_manager {
-> -       struct list_head list;
-> -       /*
-> -        * NFSv4 and up also want opens blocked during the grace period;
-> -        * NLM doesn't care:
-> -        */
-> -       bool block_opens;
-> -};
-> -
-> -struct net;
-> -void locks_start_grace(struct net *, struct lock_manager *);
-> -void locks_end_grace(struct lock_manager *);
-> -bool locks_in_grace(struct net *);
-> -bool opens_in_grace(struct net *);
-> -
-> -/* that will die - we need it for nfs_lock_info */
-> -#include <linux/nfs_fs_i.h>
-> -
-> -/*
-> - * struct file_lock represents a generic "file lock". It's used to represent
-> - * POSIX byte range locks, BSD (flock) locks, and leases. It's important to
-> - * note that the same struct is used to represent both a request for a lock and
-> - * the lock itself, but the same object is never used for both.
-> - *
-> - * FIXME: should we create a separate "struct lock_request" to help distinguish
-> - * these two uses?
-> - *
-> - * The varous i_flctx lists are ordered by:
-> - *
-> - * 1) lock owner
-> - * 2) lock range start
-> - * 3) lock range end
-> - *
-> - * Obviously, the last two criteria only matter for POSIX locks.
-> - */
-> -struct file_lock {
-> -       struct file_lock *fl_blocker;   /* The lock, that is blocking us */
-> -       struct list_head fl_list;       /* link into file_lock_context */
-> -       struct hlist_node fl_link;      /* node in global lists */
-> -       struct list_head fl_blocked_requests;   /* list of requests with
-> -                                                * ->fl_blocker pointing here
-> -                                                */
-> -       struct list_head fl_blocked_member;     /* node in
-> -                                                * ->fl_blocker->fl_blocked_requests
-> -                                                */
-> -       fl_owner_t fl_owner;
-> -       unsigned int fl_flags;
-> -       unsigned char fl_type;
-> -       unsigned int fl_pid;
-> -       int fl_link_cpu;                /* what cpu's list is this on? */
-> -       wait_queue_head_t fl_wait;
-> -       struct file *fl_file;
-> -       loff_t fl_start;
-> -       loff_t fl_end;
-> -
-> -       struct fasync_struct *  fl_fasync; /* for lease break notifications */
-> -       /* for lease breaks: */
-> -       unsigned long fl_break_time;
-> -       unsigned long fl_downgrade_time;
-> -
-> -       const struct file_lock_operations *fl_ops;      /* Callbacks for filesystems */
-> -       const struct lock_manager_operations *fl_lmops; /* Callbacks for lockmanagers */
-> -       union {
-> -               struct nfs_lock_info    nfs_fl;
-> -               struct nfs4_lock_info   nfs4_fl;
-> -               struct {
-> -                       struct list_head link;  /* link in AFS vnode's pending_locks list */
-> -                       int state;              /* state of grant or error if -ve */
-> -                       unsigned int    debug_id;
-> -               } afs;
-> -       } fl_u;
-> -} __randomize_layout;
-> -
-> -struct file_lock_context {
-> -       spinlock_t              flc_lock;
-> -       struct list_head        flc_flock;
-> -       struct list_head        flc_posix;
-> -       struct list_head        flc_lease;
-> -};
-> -
->  /* The following constant reflects the upper bound of the file/locking space */
->  #ifndef OFFSET_MAX
->  #define INT_LIMIT(x)   (~((x)1 << (sizeof(x)*8 - 1)))
-> @@ -1138,211 +1017,6 @@ struct file_lock_context {
->
->  extern void send_sigio(struct fown_struct *fown, int fd, int band);
->
-> -#define locks_inode(f) file_inode(f)
-> -
-> -#ifdef CONFIG_FILE_LOCKING
-> -extern int fcntl_getlk(struct file *, unsigned int, struct flock *);
-> -extern int fcntl_setlk(unsigned int, struct file *, unsigned int,
-> -                       struct flock *);
-> -
-> -#if BITS_PER_LONG == 32
-> -extern int fcntl_getlk64(struct file *, unsigned int, struct flock64 *);
-> -extern int fcntl_setlk64(unsigned int, struct file *, unsigned int,
-> -                       struct flock64 *);
-> -#endif
-> -
-> -extern int fcntl_setlease(unsigned int fd, struct file *filp, long arg);
-> -extern int fcntl_getlease(struct file *filp);
-> -
-> -/* fs/locks.c */
-> -void locks_free_lock_context(struct inode *inode);
-> -void locks_free_lock(struct file_lock *fl);
-> -extern void locks_init_lock(struct file_lock *);
-> -extern struct file_lock * locks_alloc_lock(void);
-> -extern void locks_copy_lock(struct file_lock *, struct file_lock *);
-> -extern void locks_copy_conflock(struct file_lock *, struct file_lock *);
-> -extern void locks_remove_posix(struct file *, fl_owner_t);
-> -extern void locks_remove_file(struct file *);
-> -extern void locks_release_private(struct file_lock *);
-> -extern void posix_test_lock(struct file *, struct file_lock *);
-> -extern int posix_lock_file(struct file *, struct file_lock *, struct file_lock *);
-> -extern int locks_delete_block(struct file_lock *);
-> -extern int vfs_test_lock(struct file *, struct file_lock *);
-> -extern int vfs_lock_file(struct file *, unsigned int, struct file_lock *, struct file_lock *);
-> -extern int vfs_cancel_lock(struct file *filp, struct file_lock *fl);
-> -bool vfs_inode_has_locks(struct inode *inode);
-> -extern int locks_lock_inode_wait(struct inode *inode, struct file_lock *fl);
-> -extern int __break_lease(struct inode *inode, unsigned int flags, unsigned int type);
-> -extern void lease_get_mtime(struct inode *, struct timespec64 *time);
-> -extern int generic_setlease(struct file *, long, struct file_lock **, void **priv);
-> -extern int vfs_setlease(struct file *, long, struct file_lock **, void **);
-> -extern int lease_modify(struct file_lock *, int, struct list_head *);
-> -
-> -struct notifier_block;
-> -extern int lease_register_notifier(struct notifier_block *);
-> -extern void lease_unregister_notifier(struct notifier_block *);
-> -
-> -struct files_struct;
-> -extern void show_fd_locks(struct seq_file *f,
-> -                        struct file *filp, struct files_struct *files);
-> -extern bool locks_owner_has_blockers(struct file_lock_context *flctx,
-> -                       fl_owner_t owner);
-> -
-> -static inline struct file_lock_context *
-> -locks_inode_context(const struct inode *inode)
-> -{
-> -       return smp_load_acquire(&inode->i_flctx);
-> -}
-> -
-> -#else /* !CONFIG_FILE_LOCKING */
-> -static inline int fcntl_getlk(struct file *file, unsigned int cmd,
-> -                             struct flock __user *user)
-> -{
-> -       return -EINVAL;
-> -}
-> -
-> -static inline int fcntl_setlk(unsigned int fd, struct file *file,
-> -                             unsigned int cmd, struct flock __user *user)
-> -{
-> -       return -EACCES;
-> -}
-> -
-> -#if BITS_PER_LONG == 32
-> -static inline int fcntl_getlk64(struct file *file, unsigned int cmd,
-> -                               struct flock64 *user)
-> -{
-> -       return -EINVAL;
-> -}
-> -
-> -static inline int fcntl_setlk64(unsigned int fd, struct file *file,
-> -                               unsigned int cmd, struct flock64 *user)
-> -{
-> -       return -EACCES;
-> -}
-> -#endif
-> -static inline int fcntl_setlease(unsigned int fd, struct file *filp, long arg)
-> -{
-> -       return -EINVAL;
-> -}
-> -
-> -static inline int fcntl_getlease(struct file *filp)
-> -{
-> -       return F_UNLCK;
-> -}
-> -
-> -static inline void
-> -locks_free_lock_context(struct inode *inode)
-> -{
-> -}
-> -
-> -static inline void locks_init_lock(struct file_lock *fl)
-> -{
-> -       return;
-> -}
-> -
-> -static inline void locks_copy_conflock(struct file_lock *new, struct file_lock *fl)
-> -{
-> -       return;
-> -}
-> -
-> -static inline void locks_copy_lock(struct file_lock *new, struct file_lock *fl)
-> -{
-> -       return;
-> -}
-> -
-> -static inline void locks_remove_posix(struct file *filp, fl_owner_t owner)
-> -{
-> -       return;
-> -}
-> -
-> -static inline void locks_remove_file(struct file *filp)
-> -{
-> -       return;
-> -}
-> -
-> -static inline void posix_test_lock(struct file *filp, struct file_lock *fl)
-> -{
-> -       return;
-> -}
-> -
-> -static inline int posix_lock_file(struct file *filp, struct file_lock *fl,
-> -                                 struct file_lock *conflock)
-> -{
-> -       return -ENOLCK;
-> -}
-> -
-> -static inline int locks_delete_block(struct file_lock *waiter)
-> -{
-> -       return -ENOENT;
-> -}
-> -
-> -static inline int vfs_test_lock(struct file *filp, struct file_lock *fl)
-> -{
-> -       return 0;
-> -}
-> -
-> -static inline int vfs_lock_file(struct file *filp, unsigned int cmd,
-> -                               struct file_lock *fl, struct file_lock *conf)
-> -{
-> -       return -ENOLCK;
-> -}
-> -
-> -static inline int vfs_cancel_lock(struct file *filp, struct file_lock *fl)
-> -{
-> -       return 0;
-> -}
-> -
-> -static inline int locks_lock_inode_wait(struct inode *inode, struct file_lock *fl)
-> -{
-> -       return -ENOLCK;
-> -}
-> -
-> -static inline int __break_lease(struct inode *inode, unsigned int mode, unsigned int type)
-> -{
-> -       return 0;
-> -}
-> -
-> -static inline void lease_get_mtime(struct inode *inode,
-> -                                  struct timespec64 *time)
-> -{
-> -       return;
-> -}
-> -
-> -static inline int generic_setlease(struct file *filp, long arg,
-> -                                   struct file_lock **flp, void **priv)
-> -{
-> -       return -EINVAL;
-> -}
-> -
-> -static inline int vfs_setlease(struct file *filp, long arg,
-> -                              struct file_lock **lease, void **priv)
-> -{
-> -       return -EINVAL;
-> -}
-> -
-> -static inline int lease_modify(struct file_lock *fl, int arg,
-> -                              struct list_head *dispose)
-> -{
-> -       return -EINVAL;
-> -}
-> -
-> -struct files_struct;
-> -static inline void show_fd_locks(struct seq_file *f,
-> -                       struct file *filp, struct files_struct *files) {}
-> -static inline bool locks_owner_has_blockers(struct file_lock_context *flctx,
-> -                       fl_owner_t owner)
-> -{
-> -       return false;
-> -}
-> -
-> -static inline struct file_lock_context *
-> -locks_inode_context(const struct inode *inode)
-> -{
-> -       return NULL;
-> -}
-> -
-> -#endif /* !CONFIG_FILE_LOCKING */
-> -
->  static inline struct inode *file_inode(const struct file *f)
->  {
->         return f->f_inode;
-> @@ -1353,11 +1027,6 @@ static inline struct dentry *file_dentry(const struct file *file)
->         return d_real(file->f_path.dentry, file_inode(file));
->  }
->
-> -static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
-> -{
-> -       return locks_lock_inode_wait(locks_inode(filp), fl);
-> -}
-> -
->  struct fasync_struct {
->         rwlock_t                fa_lock;
->         int                     magic;
-> @@ -2641,96 +2310,6 @@ extern struct kobject *fs_kobj;
->
->  #define MAX_RW_COUNT (INT_MAX & PAGE_MASK)
->
-> -#ifdef CONFIG_FILE_LOCKING
-> -static inline int break_lease(struct inode *inode, unsigned int mode)
-> -{
-> -       /*
-> -        * Since this check is lockless, we must ensure that any refcounts
-> -        * taken are done before checking i_flctx->flc_lease. Otherwise, we
-> -        * could end up racing with tasks trying to set a new lease on this
-> -        * file.
-> -        */
-> -       smp_mb();
-> -       if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease))
-> -               return __break_lease(inode, mode, FL_LEASE);
-> -       return 0;
-> -}
-> -
-> -static inline int break_deleg(struct inode *inode, unsigned int mode)
-> -{
-> -       /*
-> -        * Since this check is lockless, we must ensure that any refcounts
-> -        * taken are done before checking i_flctx->flc_lease. Otherwise, we
-> -        * could end up racing with tasks trying to set a new lease on this
-> -        * file.
-> -        */
-> -       smp_mb();
-> -       if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease))
-> -               return __break_lease(inode, mode, FL_DELEG);
-> -       return 0;
-> -}
-> -
-> -static inline int try_break_deleg(struct inode *inode, struct inode **delegated_inode)
-> -{
-> -       int ret;
-> -
-> -       ret = break_deleg(inode, O_WRONLY|O_NONBLOCK);
-> -       if (ret == -EWOULDBLOCK && delegated_inode) {
-> -               *delegated_inode = inode;
-> -               ihold(inode);
-> -       }
-> -       return ret;
-> -}
-> -
-> -static inline int break_deleg_wait(struct inode **delegated_inode)
-> -{
-> -       int ret;
-> -
-> -       ret = break_deleg(*delegated_inode, O_WRONLY);
-> -       iput(*delegated_inode);
-> -       *delegated_inode = NULL;
-> -       return ret;
-> -}
-> -
-> -static inline int break_layout(struct inode *inode, bool wait)
-> -{
-> -       smp_mb();
-> -       if (inode->i_flctx && !list_empty_careful(&inode->i_flctx->flc_lease))
-> -               return __break_lease(inode,
-> -                               wait ? O_WRONLY : O_WRONLY | O_NONBLOCK,
-> -                               FL_LAYOUT);
-> -       return 0;
-> -}
-> -
-> -#else /* !CONFIG_FILE_LOCKING */
-> -static inline int break_lease(struct inode *inode, unsigned int mode)
-> -{
-> -       return 0;
-> -}
-> -
-> -static inline int break_deleg(struct inode *inode, unsigned int mode)
-> -{
-> -       return 0;
-> -}
-> -
-> -static inline int try_break_deleg(struct inode *inode, struct inode **delegated_inode)
-> -{
-> -       return 0;
-> -}
-> -
-> -static inline int break_deleg_wait(struct inode **delegated_inode)
-> -{
-> -       BUG();
-> -       return 0;
-> -}
-> -
-> -static inline int break_layout(struct inode *inode, bool wait)
-> -{
-> -       return 0;
-> -}
-> -
-> -#endif /* CONFIG_FILE_LOCKING */
-> -
->  /* fs/open.c */
->  struct audit_names;
->  struct filename {
-> diff --git a/include/linux/lockd/xdr.h b/include/linux/lockd/xdr.h
-> index 67e4a2c5500b..b60fbcd8cdfa 100644
-> --- a/include/linux/lockd/xdr.h
-> +++ b/include/linux/lockd/xdr.h
-> @@ -11,6 +11,7 @@
->  #define LOCKD_XDR_H
->
->  #include <linux/fs.h>
-> +#include <linux/filelock.h>
->  #include <linux/nfs.h>
->  #include <linux/sunrpc/xdr.h>
->
-> --
-> 2.38.1
->
+Could you apply this please?
 
+David
+---
+The type of a->key[0] is char in fscache_volume_same().  If the length of
+cache volume key is greater than 127, the value of a->key[0] is less than
+0.  In this case, klen becomes much larger than 255 after type conversion,
+because the type of klen is size_t.  As a result, memcmp() is read out of
+bounds.
 
--- 
-Thanks,
+This causes a slab-out-of-bounds Read in __fscache_acquire_volume(), as
+reported by Syzbot.
 
-Steve
+Fix this by changing the type of the stored key to "u8 *" rather than "cha=
+r
+*" (it isn't a simple string anyway).  Also put in a check that the volume
+name doesn't exceed NAME_MAX.
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+BUG: KASAN: slab-out-of-bounds in memcmp+0x16f/0x1c0 lib/string.c:757
+Read of size 8 at addr ffff888016f3aa90 by task syz-executor344/3613
+
+CPU: 0 PID: 3613 Comm: syz-executor344 Not tainted
+6.0.0-rc2-syzkaller-00327-g8379c0b31fbc #0
+Hardware name: Google Compute Engine/Google Compute Engine, BIOS
+Google 07/22/2022
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xcd/0x134 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:317 [inline]
+ print_report.cold+0x2ba/0x719 mm/kasan/report.c:433
+ kasan_report+0xb1/0x1e0 mm/kasan/report.c:495
+ memcmp+0x16f/0x1c0 lib/string.c:757
+ memcmp include/linux/fortify-string.h:420 [inline]
+ fscache_volume_same fs/fscache/volume.c:133 [inline]
+ fscache_hash_volume fs/fscache/volume.c:171 [inline]
+ __fscache_acquire_volume+0x76c/0x1080 fs/fscache/volume.c:328
+ fscache_acquire_volume include/linux/fscache.h:204 [inline]
+ v9fs_cache_session_get_cookie+0x143/0x240 fs/9p/cache.c:34
+ v9fs_session_init+0x1166/0x1810 fs/9p/v9fs.c:473
+ v9fs_mount+0xba/0xc90 fs/9p/vfs_super.c:126
+ legacy_get_tree+0x105/0x220 fs/fs_context.c:610
+ vfs_get_tree+0x89/0x2f0 fs/super.c:1530
+ do_new_mount fs/namespace.c:3040 [inline]
+ path_mount+0x1326/0x1e20 fs/namespace.c:3370
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount fs/namespace.c:3568 [inline]
+ __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f7d5064b1d9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 14 00 00 90 48 89 f8 48 89
+f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01
+f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffd1700c028 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffd1700c060 RCX: 00007f7d5064b1d9
+RDX: 0000000020000040 RSI: 0000000020000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000020000200 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000000f4240
+R13: 0000000000000000 R14: 00007ffd1700c04c R15: 00007ffd1700c050
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+
+Fixes: 62ab63352350 ("fscache: Implement volume registration")
+Reported-by: syzbot+a76f6a6e524cf2080aa3@syzkaller.appspotmail.com
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: Zhang Peng <zhangpeng362@huawei.com>
+Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+cc: Dominique Martinet <asmadeus@codewreck.org>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: v9fs-developer@lists.sourceforge.net
+cc: linux-cachefs@redhat.com
+Link: https://lore.kernel.org/r/Y3OH+Dmi0QIOK18n@codewreck.org/ # Zhang Pe=
+ng's v1 fix
+Link: https://lore.kernel.org/r/20221115140447.2971680-1-zhangpeng362@huaw=
+ei.com/ # Zhang Peng's v2 fix
+Link: https://lore.kernel.org/r/166869954095.3793579.8500020902371015443.s=
+tgit@warthog.procyon.org.uk/ # v1
+---
+ fs/fscache/volume.c     |    7 +++++--
+ include/linux/fscache.h |    2 +-
+ 2 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/fs/fscache/volume.c b/fs/fscache/volume.c
+index a058e0136bfe..ab8ceddf9efa 100644
+--- a/fs/fscache/volume.c
++++ b/fs/fscache/volume.c
+@@ -203,7 +203,11 @@ static struct fscache_volume *fscache_alloc_volume(co=
+nst char *volume_key,
+ 	struct fscache_volume *volume;
+ 	struct fscache_cache *cache;
+ 	size_t klen, hlen;
+-	char *key;
++	u8 *key;
++
++	klen =3D strlen(volume_key);
++	if (klen > NAME_MAX)
++		return NULL;
+ =
+
+ 	if (!coherency_data)
+ 		coherency_len =3D 0;
+@@ -229,7 +233,6 @@ static struct fscache_volume *fscache_alloc_volume(con=
+st char *volume_key,
+ 	/* Stick the length on the front of the key and pad it out to make
+ 	 * hashing easier.
+ 	 */
+-	klen =3D strlen(volume_key);
+ 	hlen =3D round_up(1 + klen + 1, sizeof(__le32));
+ 	key =3D kzalloc(hlen, GFP_KERNEL);
+ 	if (!key)
+diff --git a/include/linux/fscache.h b/include/linux/fscache.h
+index 36e5dd84cf59..8e312c8323a8 100644
+--- a/include/linux/fscache.h
++++ b/include/linux/fscache.h
+@@ -75,7 +75,7 @@ struct fscache_volume {
+ 	atomic_t			n_accesses;	/* Number of cache accesses in progress */
+ 	unsigned int			debug_id;
+ 	unsigned int			key_hash;	/* Hash of key string */
+-	char				*key;		/* Volume ID, eg. "afs@example.com@1234" */
++	u8				*key;		/* Volume ID, eg. "afs@example.com@1234" */
+ 	struct list_head		proc_link;	/* Link in /proc/fs/fscache/volumes */
+ 	struct hlist_bl_node		hash_link;	/* Link in hash table */
+ 	struct work_struct		work;
+
