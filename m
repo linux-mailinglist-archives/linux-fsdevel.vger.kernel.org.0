@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 02766632083
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 12:26:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0A4D9632085
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 12:26:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231160AbiKUL0n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Nov 2022 06:26:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52950 "EHLO
+        id S229706AbiKUL0t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Nov 2022 06:26:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230340AbiKUL0O (ORCPT
+        with ESMTP id S230342AbiKUL0P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Nov 2022 06:26:14 -0500
-Received: from mail-ej1-x649.google.com (mail-ej1-x649.google.com [IPv6:2a00:1450:4864:20::649])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1E02BFF74
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 03:21:47 -0800 (PST)
-Received: by mail-ej1-x649.google.com with SMTP id ga41-20020a1709070c2900b007aef14e8fd7so6500638ejc.21
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 03:21:47 -0800 (PST)
+        Mon, 21 Nov 2022 06:26:15 -0500
+Received: from mail-wm1-x349.google.com (mail-wm1-x349.google.com [IPv6:2a00:1450:4864:20::349])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5B802B54C5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 03:21:50 -0800 (PST)
+Received: by mail-wm1-x349.google.com with SMTP id h9-20020a1c2109000000b003cfd37aec58so6354378wmh.1
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 03:21:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iseMGXVhmQtR+5DQv6vAmctq3FLXZ3Zx0bYYW0I3bps=;
-        b=fvoRIPmpwjc9kwZJjlC8SWhtwYdajteuU8MNnEWUMvn5GkD+yGWYPUsDcdndaw8YjK
-         fa13YD7A3DdjmU3EhEj99KaM6rOjUxJKB/d/QJYdnY6fqKOJgZkPoO8RrrWJe1U4umr+
-         hiUfjkhq3hMpxwynNBwHUtYJWY9QJy0HLcUfde1YnzFDialtNBgsAL/Lpaq6bDXTMM62
-         N5V2k9a1D0kusoUoO9/V+NmAYKbT5IpfYNf/E/G22Vwu5YTvASjATJcEIMrdADAeDQc2
-         MVVCkuX8C8EJypjMeMPM03N72UYeZDw46ri4QQG9SKF+2INt3aYRQ+JZ/H1xOpAorNwU
-         0etA==
+        bh=+5wrCbW2TNaYb01/tuYYFENHET5JL1U7hc5fWA+Xdi0=;
+        b=sNA18t3VIhj8s/MCrsotPK65Vcuz2YR1Xj8oe9nNH5vPzwm6iPZt2X0Fc7s0yeYNzk
+         kcVq/GLKNy4xCjOiN3dPQ1eu2GOqYtIQk02hkZfOuEd7mV/pW1ZKoMoAKwdk/WlkUczu
+         VEFwbOMmBucZuvB4dVzjoZKobIlVhdSdhk1gHj3NlcrOxfhykMBq02Ddpx/UAcenV2d9
+         H6fFjTIDn+cvMsYeIEIrhjMZZ74aEv343aMnLSTE4WGvBXcbncZGKe/wfws0QqQql7yX
+         hbiDel8fgY1EKqDLgmq6zrkoNXrs0hkyg/paKn/mCux/h6gYGaXO8Q9fqkElW74W+eCO
+         HxRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iseMGXVhmQtR+5DQv6vAmctq3FLXZ3Zx0bYYW0I3bps=;
-        b=EuR6jNOfrQK3DAkeSvRtw2pIFuWyU9tvWVVavG6Ifds9h/uKxbRXDXA/NiaDZuIS8d
-         avUdxw8HaojvpAig3xYhX38NKBe6ZX8QMQbnOijZRoayvtMaN5gQnYG55aexS8gB9gWv
-         BJ1klXmCQCBUaazmd7/VcEwgVNUpmzJjQnDwG1VSmmu0Mwjo/hpvVU50WSnZJoAjJZXL
-         QXmmgZZsLNTtMWWYC0okXwnMWCjDF1mxFgkHlzMgIImTSgKLAnSlINToH94+bhMxqwnj
-         9mnzgaqVHF7ZgzGbt8gpLVKHNcK7aolXdWa61hGHcmRkIDOQvyA/8x2eSyhGQ135X6wY
-         Nm0Q==
-X-Gm-Message-State: ANoB5pk8uqvlfiSMdCKWdDpKAuC5jEQjyrj7vE0Sywao8H4SDJZVQrO2
-        vmWEDklWOpgWE5/XKX1ZUBPQy9sMyfU=
-X-Google-Smtp-Source: AA0mqf5//ubCLbRHw5k5ojH75x8ASFqsHvPLZaawkowyC5ynCgNspfsSIAS8NxDclO+KSFJJIsbTDrSav0k=
+        bh=+5wrCbW2TNaYb01/tuYYFENHET5JL1U7hc5fWA+Xdi0=;
+        b=5t1HMlQeHKQoguZd69hzcyjvhci0XZMqG5UUdvY3BtEfjDky185KMxUjMsZFmMb3fP
+         lBTfhxiBQQITcu9thxGaQb2Wr6h0nydsf0R53F7FulXn0+TW8jsdfq/yioaT4QAeuwLm
+         US2TSRXKJhjo4fAD4gNc+oYyklF3VhrPV2xJI8sXl3BeoTWzPEv0wsweq0BAQbuM9lzw
+         fWU5uZ4rc5dAsEVN0pZ8pIUpfzt5MHWLLKJ6U/6xxbwkr53HbBxOD4UzpIZ3TlH1SToY
+         kIjsW3dsiIxPlcU30iT9+kKldehaM18k2eY9a2thnhkpZM9nw9tUiriWkbJsAss8aE4h
+         RlYA==
+X-Gm-Message-State: ANoB5pkY3TyH2dldNmrZYhkVwsKKYUqLRWP4xCc0/H0ocAmKKRlrzaE2
+        ISByYbrLrU9/Leb/Yckv5vUYh6tUs8U=
+X-Google-Smtp-Source: AA0mqf7tPtGLz7FEjQT7OGHJ9yECs4p6OOzEpzUaOwIMlT2AhoWLN//j7QCBOd2xE5n98DwvX6ZF8x49BCU=
 X-Received: from glider.muc.corp.google.com ([2a00:79e0:9c:201:db68:962:2bf6:6c7])
- (user=glider job=sendgmr) by 2002:a17:907:8b13:b0:781:541:6599 with SMTP id
- sz19-20020a1709078b1300b0078105416599mr3206798ejc.45.1669029706445; Mon, 21
- Nov 2022 03:21:46 -0800 (PST)
-Date:   Mon, 21 Nov 2022 12:21:33 +0100
+ (user=glider job=sendgmr) by 2002:adf:f086:0:b0:22e:3725:8acc with SMTP id
+ n6-20020adff086000000b0022e37258accmr2585059wro.330.1669029709011; Mon, 21
+ Nov 2022 03:21:49 -0800 (PST)
+Date:   Mon, 21 Nov 2022 12:21:34 +0100
 In-Reply-To: <20221121112134.407362-1-glider@google.com>
 Mime-Version: 1.0
 References: <20221121112134.407362-1-glider@google.com>
 X-Mailer: git-send-email 2.38.1.584.g0f3c55d4c2-goog
-Message-ID: <20221121112134.407362-4-glider@google.com>
-Subject: [PATCH 4/5] fs: hfs: initialize fsdata in hfs_file_truncate()
+Message-ID: <20221121112134.407362-5-glider@google.com>
+Subject: [PATCH 5/5] fs: hfsplus: initialize fsdata in hfsplus_file_truncate()
 From:   Alexander Potapenko <glider@google.com>
 To:     glider@google.com
 Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
@@ -63,7 +63,7 @@ Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,22 +80,22 @@ Suggested-by: Eric Biggers <ebiggers@kernel.org>
 Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
 Signed-off-by: Alexander Potapenko <glider@google.com>
 ---
- fs/hfs/extent.c | 2 +-
+ fs/hfsplus/extents.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/hfs/extent.c b/fs/hfs/extent.c
-index 3f7e9bef98743..6d1878b99b305 100644
---- a/fs/hfs/extent.c
-+++ b/fs/hfs/extent.c
-@@ -486,7 +486,7 @@ void hfs_file_truncate(struct inode *inode)
- 		inode->i_size);
- 	if (inode->i_size > HFS_I(inode)->phys_size) {
+diff --git a/fs/hfsplus/extents.c b/fs/hfsplus/extents.c
+index 721f779b4ec3e..7a542f3dbe502 100644
+--- a/fs/hfsplus/extents.c
++++ b/fs/hfsplus/extents.c
+@@ -554,7 +554,7 @@ void hfsplus_file_truncate(struct inode *inode)
+ 	if (inode->i_size > hip->phys_size) {
  		struct address_space *mapping = inode->i_mapping;
+ 		struct page *page;
 -		void *fsdata;
 +		void *fsdata = NULL;
- 		struct page *page;
+ 		loff_t size = inode->i_size;
  
- 		/* XXX: Can use generic_cont_expand? */
+ 		res = hfsplus_write_begin(NULL, mapping, size, 0,
 -- 
 2.38.1.584.g0f3c55d4c2-goog
 
