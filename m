@@ -2,182 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 46088632513
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 15:07:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 562EF6325CB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 21 Nov 2022 15:30:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229618AbiKUOHU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Nov 2022 09:07:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40466 "EHLO
+        id S229730AbiKUOaX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Nov 2022 09:30:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229927AbiKUOGp (ORCPT
+        with ESMTP id S229595AbiKUOaU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Nov 2022 09:06:45 -0500
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [IPv6:2607:fcd0:100:8a00::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 215D5C7207;
-        Mon, 21 Nov 2022 06:03:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1669039402;
-        bh=S0ZSP+LpMvn5EG+QMrGCuiVBzAD0TgzklGkqSoGsMpY=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=LmOnMjf/PWybJ5EX60Fa9yOKxgTbOvaRNaY04/paLbN5uH4o4lPv4ZMxd1OjFSPog
-         Jb7NDJz0ZFryHqV2O6+rSEhBsA6OMwneoaJQKNnz1xxYLQrFIAyv+iok9dE2vugAWJ
-         Tb5oPQaOnH+VFy7FEgUaIo3Nvkw17Gh0THyBTrw0=
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 747E11286581;
-        Mon, 21 Nov 2022 09:03:22 -0500 (EST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id AUktWLsrhDZo; Mon, 21 Nov 2022 09:03:22 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-        d=hansenpartnership.com; s=20151216; t=1669039402;
-        bh=S0ZSP+LpMvn5EG+QMrGCuiVBzAD0TgzklGkqSoGsMpY=;
-        h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-        b=LmOnMjf/PWybJ5EX60Fa9yOKxgTbOvaRNaY04/paLbN5uH4o4lPv4ZMxd1OjFSPog
-         Jb7NDJz0ZFryHqV2O6+rSEhBsA6OMwneoaJQKNnz1xxYLQrFIAyv+iok9dE2vugAWJ
-         Tb5oPQaOnH+VFy7FEgUaIo3Nvkw17Gh0THyBTrw0=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::c14])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (prime256v1) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-        (Client did not present a certificate)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id A207B1286558;
-        Mon, 21 Nov 2022 09:03:20 -0500 (EST)
-Message-ID: <10c85b8f4779700b82596c4a968daead65a29801.camel@HansenPartnership.com>
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Nayna <nayna@linux.vnet.ibm.com>, Nayna Jain <nayna@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>
-Date:   Mon, 21 Nov 2022 09:03:18 -0500
-In-Reply-To: <Y3tbhmL4oG1YTyT/@kroah.com>
-References: <20221106210744.603240-1-nayna@linux.ibm.com>
-         <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
-         <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
-         <Y2zLRw/TzV/sWgqO@kroah.com>
-         <44191f02-7360-bca3-be8f-7809c1562e68@linux.vnet.ibm.com>
-         <Y3anQukokMcQr+iE@kroah.com>
-         <d615180d-6fe5-d977-da6a-e88fd8bf5345@linux.vnet.ibm.com>
-         <Y3pSF2MRIXd6aH14@kroah.com>
-         <88111914afc6204b2a3fb82ded5d9bfb6420bca6.camel@HansenPartnership.com>
-         <Y3tbhmL4oG1YTyT/@kroah.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+        Mon, 21 Nov 2022 09:30:20 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E12855C747
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 06:29:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669040960;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+GqZOZ3Ge0gmFEUW/+k13x8e6CReeYjz07m3XvBDfBs=;
+        b=gcO03OUs+pas7HK6cbPXJKxbZ5BouhdRflKE/eV5TV1i4F61+muUWvrlnryGh0p5EE/jRI
+        kxdLDt/B/msd7pn5DjKvKJ0Ka+jsajFZykN3q1Sp6faaUbJEnsR1ezVvYuGTHGu/22sRSD
+        FUN+KzCocmqLCrTn112sk9WqOryNH9w=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-75-lVT5P5mzNSKrEWyssnzScA-1; Mon, 21 Nov 2022 09:29:16 -0500
+X-MC-Unique: lVT5P5mzNSKrEWyssnzScA-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6B0A6811E84;
+        Mon, 21 Nov 2022 14:29:16 +0000 (UTC)
+Received: from ovpn-193-186.brq.redhat.com (ovpn-193-186.brq.redhat.com [10.40.193.186])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 563162166B2E;
+        Mon, 21 Nov 2022 14:29:15 +0000 (UTC)
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     Hugh Dickins <hughd@google.com>
+Cc:     Jan Kara <jack@suse.com>, Eric Sandeen <sandeen@redhat.com>,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        djwong@kernel.org
+Subject: [PATCH v2 0/3] [RFC] shmem: user and group quota support for tmpfs
+Date:   Mon, 21 Nov 2022 15:28:51 +0100
+Message-Id: <20221121142854.91109-1-lczerner@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2022-11-21 at 12:05 +0100, Greg Kroah-Hartman wrote:
-> On Sun, Nov 20, 2022 at 10:14:26PM -0500, James Bottomley wrote:
-> > On Sun, 2022-11-20 at 17:13 +0100, Greg Kroah-Hartman wrote:
-> > > On Sat, Nov 19, 2022 at 01:20:09AM -0500, Nayna wrote:
-> > > > 
-> > > > On 11/17/22 16:27, Greg Kroah-Hartman wrote:
-> > > > > On Mon, Nov 14, 2022 at 06:03:43PM -0500, Nayna wrote:
-> > > > > > On 11/10/22 04:58, Greg Kroah-Hartman wrote:
-> > [...]
-> > > > > > > I do not understand, sorry.  What does namespaces have to
-> > > > > > > do
-> > > > > > > with this?
-> > > > > > > sysfs can already handle namespaces just fine, why not
-> > > > > > > use
-> > > > > > > that?
-> > > > > > Firmware objects are not namespaced. I mentioned it here as
-> > > > > > an
-> > > > > > example of the difference between firmware and kernel
-> > > > > > objects.
-> > > > > > It is also in response to the feedback from James Bottomley
-> > > > > > in
-> > > > > > RFC v2 [
-> > > > > > https://lore.kernel.org/linuxppc-dev/41ca51e8db9907d9060cc38ad
-> > > > > > b59a66dcae4c59b.camel@HansenPartnership.com/].
-> > > > > I do not understand, sorry.  Do you want to use a namespace
-> > > > > for
-> > > > > these or not?  The code does not seem to be using
-> > > > > namespaces. 
-> > > > > You can use sysfs with, or without, a namespace so I don't
-> > > > > understand the issue here.
-> > > > > 
-> > > > > With your code, there is no namespace.
-> > > > 
-> > > > You are correct. There's no namespace for these.
-> > > 
-> > > So again, I do not understand.  Do you want to use filesystem
-> > > namespaces, or do you not?
-> > 
-> > Since this seems to go back to my email quoted again, let me
-> > repeat: the question isn't if this patch is namespaced; I think
-> > you've agreed several times it isn't.  The question is if the
-> > exposed properties would ever need to be namespaced.  This is a
-> > subtle and complex question which isn't at all explored by the
-> > above interchange.
-> > 
-> > > How again can you not use sysfs or securityfs due to namespaces? 
-> > > What is missing?
-> > 
-> > I already explained in the email that sysfs contains APIs like
-> > simple_pin_... which are completely inimical to namespacing.
-> 
-> Then how does the networking code handle the namespace stuff in
-> sysfs?
-> That seems to work today, or am I missing something?
+people have been asking for quota support in tmpfs many times in the past
+mostly to avoid one malicious user, or misbehaving user/program to consume
+all of the system memory. This has been partially solved with the size
+mount option, but some problems still prevail.
 
-have you actually tried?
+One of the problems is the fact that /dev/shm is still generally unprotected
+with this and another is administration overhead of managing multiple tmpfs
+mounts and lack of more fine grained control.
 
-jejb@lingrow:~> sudo unshare --net bash
-lingrow:/home/jejb # ls /sys/class/net/
-lo  tun0  tun10  wlan0
-lingrow:/home/jejb # ip link show
-1: lo: <LOOPBACK> mtu 65536 qdisc noop state DOWN mode DEFAULT group
-default qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+Quota support can solve all these problems in a somewhat standard way
+people are already familiar with from regular file systems. It can give us
+more fine grained control over how much memory user/groups can consume.
+Additionally it can also control number of inodes and with special quota
+mount options introduced with a second patch we can set global limits
+allowing us to replace the size mount option with quota entirely.
 
-So, as you see, I've entered a network namespace and ip link shows me
-the only interface I can see in that namespace (a down loopback) but
-sysfs shows me every interface on the system outside the namespace.
+Currently the standard userspace quota tools (quota, xfs_quota) are only
+using quotactl ioctl which is expecting a block device. I patched quota [1]
+and xfs_quota [2] to use quotactl_fd in case we want to run the tools on
+mount point directory to work nicely with tmpfs.
 
-This is pretty much the story of containers and sysfs: if you mount it
-inside the container, it leaks information about the host
-configuration.  Since I created a container with full root, I could
-actually fiddle with the host network parameters on interfaces I
-shouldn't be able to see within the container using sysfs ... which is
-one reason we try to persuade people to use a user namespace instead of
-full root.
- 
-> If the namespace support needs to be fixed up in sysfs (or in
-> securityfs), then great, let's do that, and not write a whole new
-> filesystem just because that's not done.
+The implementation was tested on patched version of xfstests [3].
 
-As I said: a fix is proposed for securityfs.  I think everyone in
-containers concluded long ago that sysfs is too big an Augean Stable.
+Changes in v2:
+  - Instead of using quota format QFMT_VFS_V1 with all the complexities
+    around writing/reading quota files, instroduce new in-memory only
+    quota format (PATCH 1/3) and use that instead as suggested by
+    Jan Kara.
+  - Rename global quota limits mount options to something much more
+    sensible as suggested by Darrick J. Wong.
+  - Improve documentation.
+  - Check if qlobal quota limits aren't too large.
 
-> Also this patch series also doesn't handle namespaces, so again, I am
-> totally confused as to why this is even being discussed...
+-Lukas
 
-Well, it's not my patch.  I came into this saying *if* there was ever a
-reason to namespace these parameters then please don't use interfaces
-inimical to namespacing.  My personal view is that this should all just
-go in securityfs because that defers answering the question of whether
-it would eventually be namespaced.
+[1] https://github.com/lczerner/quota/tree/quotactl_fd_support
+[2] https://github.com/lczerner/xfsprogs/tree/quotactl_fd_support
+[3] https://github.com/lczerner/xfstests/tree/tmpfs_quota_support
 
-James
+
+
+
+
+
 
