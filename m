@@ -2,49 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F3028633CE6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 13:51:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 16324633CFC
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 13:59:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232729AbiKVMvc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Nov 2022 07:51:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56306 "EHLO
+        id S230261AbiKVM7Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Nov 2022 07:59:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32990 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232697AbiKVMvb (ORCPT
+        with ESMTP id S229505AbiKVM7X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Nov 2022 07:51:31 -0500
+        Tue, 22 Nov 2022 07:59:23 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A68EA61525;
-        Tue, 22 Nov 2022 04:51:30 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A19661B9F
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 04:59:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=kqed8cf0rF+7M2izq/OCegTtCpnXXbVi+7tx8ySuLzQ=; b=wz/sjoR41PLdlCr51Yyiba68/j
-        xYoBna2Wc0GaLJtCDl6BcuOXjzr5BEVDrXhYD/8DjCuBVdIT7y2PV2oruOVKxNbw4a93C9onW6LBp
-        n6b+7z+opdNF9I0kFuh1xUi5pPldnv8f560Q4NLILIWlu4u0PfkpS+2IWbK3bBNiFIac+LdKU8N+y
-        LcKBdYNAJt8nJ/ne6FDRMuVUqMoIJpzYUdi/aT7qqqpnPfknzsTGaeBgJFDCyn2AcuvwL8IcdEYsx
-        MkQczJt4XI74ggYWkCbAGp0FDmORi6mjtR1YFV10KEyitirG9xuys6MX/smrOz6pSPCTyxMcQ9rYN
-        8OWYrT1g==;
+        bh=i57W19x5PXh8Z3pxQkjTS0ujZiYLHbcoZpQUee7crUs=; b=prla3oClXlJySOqAiMwQyq6HbW
+        ri297PC3xL/8GS4SFeW6Y+6QZILiqmuexwlK01g5n021bKE9edQRIFm3R+N/oSAoxnrCRT/DZQYHH
+        tXOUnfXKZrGNcRib0T6J75PIUtSX9RATZK+mTw7mcGNiAp0MSkEcJXgMboLX8BSZe+kkzxqi3qmm/
+        yl2FD5b7y9SwQCBcn8u5VCabEhSkRorvgZ0wuZ4EuC1M/nsUpmcHC2u9dH4N96JYyjymjcQuFMffq
+        mWTEGvJ86gxPDkhr4bzx+Lga2YxMYaDsR+IO/AuI11bzbDKDnnSfe+JuvhtlyRPEQgzcNPoxwiJ8W
+        ajFxHl7w==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oxSkH-009PqL-Ci; Tue, 22 Nov 2022 12:51:25 +0000
-Date:   Tue, 22 Nov 2022 04:51:25 -0800
+        id 1oxSrn-009Scv-M7; Tue, 22 Nov 2022 12:59:11 +0000
+Date:   Tue, 22 Nov 2022 04:59:11 -0800
 From:   Christoph Hellwig <hch@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 2/4] iov_iter: Add a function to extract a page list
- from an iterator
-Message-ID: <Y3zFzdWnWlEJ8X8/@infradead.org>
-References: <166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk>
- <166869689451.3723671.18242195992447653092.stgit@warthog.procyon.org.uk>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Lukas Czerner <lczerner@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.com>,
+        Eric Sandeen <sandeen@redhat.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] quota: add quota in-memory format support
+Message-ID: <Y3zHn4egPhwMRcDE@infradead.org>
+References: <20221121142854.91109-1-lczerner@redhat.com>
+ <20221121142854.91109-2-lczerner@redhat.com>
+ <Y3u54l2CVapQmK/w@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <166869689451.3723671.18242195992447653092.stgit@warthog.procyon.org.uk>
+In-Reply-To: <Y3u54l2CVapQmK/w@magnolia>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -55,15 +53,13 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 17, 2022 at 02:54:54PM +0000, David Howells wrote:
-> An additional function, iov_iter_extract_mode() is also provided so that the
-> mode of retention that will be employed for an iterator can be queried - and
-> therefore how the caller should dispose of the pages later.
+On Mon, Nov 21, 2022 at 09:48:18AM -0800, Darrick J. Wong wrote:
+> Would it be wise to "persist" dquot contents to a (private) tmpfs file
+> to facilitate incore dquot reclaim?  The tmpfs file data can be paged
+> out, or even punched if all the dquot records in that page go back to
+> default settings.
 
-Any reason to not just add an out paramter to the main function and
-return this directly instead of an extra helper?
-
-> +EXPORT_SYMBOL(iov_iter_extract_pages);
-
-get_user_pages_fast, pin_user_pages_fast are very intentionally
-EXPORT_SYMBOL_GPL, which should not be bypassed by an iov_* wrapper.
+That seems like a good idea for memory usage, but I think this might
+also make the code much simpler, as that just requires fairly trivial
+quota_read and quota_write methods in the shmem code instead of new
+support for an in-memory quota file.
