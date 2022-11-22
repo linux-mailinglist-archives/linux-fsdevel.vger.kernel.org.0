@@ -2,180 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0DD43633BC8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 12:50:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 97016633C46
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 13:20:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233436AbiKVLut (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Nov 2022 06:50:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39918 "EHLO
+        id S233688AbiKVMUn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Nov 2022 07:20:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233407AbiKVLuq (ORCPT
+        with ESMTP id S233605AbiKVMUl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Nov 2022 06:50:46 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0A522649B;
-        Tue, 22 Nov 2022 03:50:44 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Tue, 22 Nov 2022 07:20:41 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF86D4AF08;
+        Tue, 22 Nov 2022 04:20:40 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 623B221DF6;
-        Tue, 22 Nov 2022 11:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1669117843; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2NLPPfPbXlzc9i/UApoe0eWMkGXj0rSu14qKp78k83Q=;
-        b=aaf7AvVSTti7nWTsOAhtHAbmUjXO5oF/M0gRQkqDM9n1/Kb4qfy7y2EGj4D6X5Hm8dJvr/
-        iReg3lu/HilnKT6lrbqIlioO3/1KgXpI0t+F0s6Dv+U3zYfVkPSKi+h8x8YYvxXaMe34vW
-        KdefrqR3x0yAZGtaIUTZOW5EWfg5exk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1669117843;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=2NLPPfPbXlzc9i/UApoe0eWMkGXj0rSu14qKp78k83Q=;
-        b=whym30YgCMTfGJ3hGiBVRplm8FQ1g3T/JAPm7pM264eA9NzLo98RlPC2aaI23YwCUTegbp
-        ncvYD4qHnMFcRaAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 55EEB13AA1;
-        Tue, 22 Nov 2022 11:50:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id LajrFJO3fGMnEgAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 22 Nov 2022 11:50:43 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id D7AB3A070E; Tue, 22 Nov 2022 12:50:42 +0100 (CET)
-Date:   Tue, 22 Nov 2022 12:50:42 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Stephen Brennan <stephen.s.brennan@oracle.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v4 0/5] fsnotify: fix softlockups iterating over d_subdirs
-Message-ID: <20221122115042.qssn25wbtxxhaeys@quack3>
-References: <20221028001016.332663-1-stephen.s.brennan@oracle.com>
- <20221111220614.991928-1-stephen.s.brennan@oracle.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 97E89B81A52;
+        Tue, 22 Nov 2022 12:20:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7BB3C433C1;
+        Tue, 22 Nov 2022 12:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669119638;
+        bh=omBfWXmMhLMm+WJGcOqaotuYzo99NcFtkFUjLGTxJkU=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=lCqeNISkHr5FV5oUA/uF7cCqbH3pbaJZzL0H/JeQImnqkxBP/qna4Vwgxuxwwf4kc
+         djCzx51ajPQzJsx7t6fcFaQ3CPrg1HyiCa0H584zbvwYZVAhxyYK9KeJP/cZSm7jN0
+         AEQFZIjKudut9Bn5O9uHSqMDAio5e4wG5sa2i3DoX7eTRf+obcb5zEzndUU3Fwo275
+         rIYFdUuTfDxxMV446wuHU7u2FLiPhi/QMUcdaTapUWa++/h/6C38Q3lKoDzCYdb8Qd
+         YelQN+YEM82ey5KUKNOPaXvgHVIDzs2zei/oxdiPIwrOhlWjLs2M+5ia9+Ld6VGXMR
+         y+AjrCDtny9iA==
+Message-ID: <a731e688122d1a6fdb2f7bdbd71d403fa110e9f2.camel@kernel.org>
+Subject: Re: [PATCH] filelock: move file locking definitions to separate
+ header file
+From:   Jeff Layton <jlayton@kernel.org>
+To:     Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
+Cc:     hch@lst.de, linux-kernel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net,
+        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
+        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        samba-technical@lists.samba.org, cluster-devel@redhat.com,
+        linux-nfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
+        devel@lists.orangefs.org, linux-xfs@vger.kernel.org
+Date:   Tue, 22 Nov 2022 07:20:35 -0500
+In-Reply-To: <0c6a44ff-409e-99b2-eaa9-fd6e87a9e104@linux.alibaba.com>
+References: <20221120210004.381842-1-jlayton@kernel.org>
+         <0c6a44ff-409e-99b2-eaa9-fd6e87a9e104@linux.alibaba.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.1 (3.46.1-1.fc37) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221111220614.991928-1-stephen.s.brennan@oracle.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Stephen!
+On Tue, 2022-11-22 at 09:51 +0800, Joseph Qi wrote:
+> Hi,
+>=20
+> On 11/21/22 4:59 AM, Jeff Layton wrote:
+> > The file locking definitions have lived in fs.h since the dawn of time,
+> > but they are only used by a small subset of the source files that
+> > include it.
+> >=20
+> > Move the file locking definitions to a new header file, and add the
+> > appropriate #include directives to the source files that need them. By
+> > doing this we trim down fs.h a bit and limit the amount of rebuilding
+> > that has to be done when we make changes to the file locking APIs.
+> >=20
+> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> > ---
+> >  fs/9p/vfs_file.c          |   1 +
+> >  fs/afs/internal.h         |   1 +
+> >  fs/attr.c                 |   1 +
+> >  fs/ceph/locks.c           |   1 +
+> >  fs/cifs/cifsfs.c          |   1 +
+> >  fs/cifs/cifsglob.h        |   1 +
+> >  fs/cifs/cifssmb.c         |   1 +
+> >  fs/cifs/file.c            |   1 +
+> >  fs/cifs/smb2file.c        |   1 +
+> >  fs/dlm/plock.c            |   1 +
+> >  fs/fcntl.c                |   1 +
+> >  fs/file_table.c           |   1 +
+> >  fs/fuse/file.c            |   1 +
+> >  fs/gfs2/file.c            |   1 +
+> >  fs/inode.c                |   1 +
+> >  fs/ksmbd/smb2pdu.c        |   1 +
+> >  fs/ksmbd/vfs.c            |   1 +
+> >  fs/ksmbd/vfs_cache.c      |   1 +
+> >  fs/lockd/clntproc.c       |   1 +
+> >  fs/lockd/netns.h          |   1 +
+> >  fs/locks.c                |   1 +
+> >  fs/namei.c                |   1 +
+> >  fs/nfs/nfs4_fs.h          |   1 +
+> >  fs/nfs_common/grace.c     |   1 +
+> >  fs/nfsd/netns.h           |   1 +
+> >  fs/ocfs2/locks.c          |   1 +
+> >  fs/ocfs2/stack_user.c     |   1 +
+>=20
+> Seems it misses the related changes in:
+> fs/ocfs2/stackglue.c
+>=20
 
-On Fri 11-11-22 14:06:09, Stephen Brennan wrote:
-> Here's my v4 patch series that aims to eliminate soft lockups when updating
-> dentry flags in fsnotify. I've incorporated Jan's suggestion of simply
-> allowing the flag to be lazily cleared in the fsnotify_parent() function,
-> via Amir's patch. This allowed me to drop patch #2 from my previous series
-> (fsnotify: Protect i_fsnotify_mask and child flags with inode rwsem). I
-> replaced it with "fsnotify: require inode lock held during child flag
-> update", patch #5 in this series. I also added "dnotify: move
-> fsnotify_recalc_mask() outside spinlock" to address the sleep-during-atomic
-> issues with dnotify.
+I was able to build ocfs2.ko just fine without any changes to
+stackglue.c. What problem do you see here?
 
-Yes, the series is now much simpler. Thanks!
-
-> Jan expressed concerns about lock ordering of the inode rwsem with the
-> fsnotify group mutex. I built this with lockdep enabled (see below for the
-> lock debugging .config section -- I'm not too familiar with lockdep so I
-> wanted a sanity check). I ran all the fanotify, inotify, and dnotify tests
-> I could find in LTP, with no lockdep splats to be found. I don't know that
-> this can completely satisfy the concerns about lock ordering: I'm reading
-> through the code to better understand the concern about "the removal of
-> oneshot mark during modify event generation". But I'm encouraged by the
-> LTP+lockdep results.
-
-So I had a look and I think your patches could cause deadlock at least for
-nfsd. The problem is with things like inotify IN_ONESHOT marks. They get
-autodeleted as soon as they trigger. Thus e.g. fsnotify_mkdir() can trigger
-IN_ONESHOT mark and goes on removing it by calling fsnotify_destroy_mark()
-from inotify_handle_inode_event(). And nfsd calls e.g. fsnotify_mkdir()
-while holding dir->i_rwsem held. So we have lock ordering like:
-
-nfsd_mkdir()
-  inode_lock(dir);
-    ...
-    __nfsd_mkdir(dir, ...)
-      fsnotify_mkdir(dir, dentry);
-        ...
-        inotify_handle_inode_event()
-          ...
-          fsnotify_destroy_mark()
-            fsnotify_group_lock(group)
-
-So we have dir->i_rwsem > group->mark_mutex. But we also have callchains
-like:
-
-inotify_add_watch()
-  inotify_update_watch()
-    fsnotify_group_lock(group)
-    inotify_update_existing_watch()
-      ...
-      fsnotify_recalc_mask()
-        inode_lock(dir); -> added by your series
-
-which creates ordering group->mark_mutex > dir->i_rwsem.
-
-It is even worse with dnotify which (even with your patches) ends up
-calling fsnotify_recalc_mask() from dnotify_handle_event() so we have a
-possibility of direct A->A deadlock. But I'd leave dnotify aside, I think
-that can be massaged to not need to call fsnotify_recalc_mask()
-(__fsnotify_recalc_mask() would be enough there).
-
-Still I'm not 100% sure about a proper way out of this. The simplicity of
-alias->d_subdirs iteration with i_rwsem held is compeling. We could mandate
-that fsnotify hooks cannot be called with inode->i_rwsem held (and fixup
-nfsd) but IMO that is pushing the complexity from the fsnotify core into
-its users which is undesirable. Maybe we could grab inode->i_rwsem in those
-places adding / removing notification marks before we grab
-group->mark_mutex, just verify (with lockdep) that fsnotify_recalc_mask()
-has the inode->i_rwsem held and be done with it? That pushes a bit of
-complexity into the fsnotify backends but it is not too bad.
-fsnotify_recalc_mask() gets only called by dnotify, inotify, and fanotify.
-Amir?
-
-> I originally wrote this series to make the last patch (#5) optional: if for
-> some reason we didn't think it was necessary to hold the inode rwsem, then
-> we could omit it -- the main penalty being the race condition described in
-> the patch description. I tested without the last patch and LTP passed also
-> with lockdep enabled, but of course when multiple tasks did an inotifywait
-> on the same directory (with many negative dentries) only the first waited
-> for the flag updates, the rest of the tasks immediately returned despite
-> the flags not being ready.
-> 
-> I agree with Amir that as long as the lock ordering is fine, we should keep
-> patch #5. And if that's the case, I can reorder the series a bit to make it
-> a bit more logical, and eliminate logic in
-> fsnotify_update_children_dentry_flags() for handling d_move/cursor races,
-> which I promptly delete later in the series.
-> 
-> 1. fsnotify: clear PARENT_WATCHED flags lazily
-> 2. fsnotify: Use d_find_any_alias to get dentry associated with inode
-> 3. dnotify: move fsnotify_recalc_mask() outside spinlock
-> 4. fsnotify: require inode lock held during child flag update
-> 5. fsnotify: allow sleepable child flag update
-> 
-> Thanks for continuing to read this series, I hope we're making progress
-> toward a simpler way to fix these scaling issues!
-
-Yeah, so I'd be for making sure i_rwsem is held where we need it first and
-only after that add reschedule handling into
-fsnotify_update_children_dentry_flags(). That makes the series more
-logical.
-
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks,
+--=20
+Jeff Layton <jlayton@kernel.org>
