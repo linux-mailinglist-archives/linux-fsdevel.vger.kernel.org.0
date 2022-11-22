@@ -2,133 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7905B633AA6
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 11:57:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C4A7633AFB
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 12:15:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232517AbiKVK5p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Nov 2022 05:57:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50476 "EHLO
+        id S232341AbiKVLPr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Nov 2022 06:15:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232635AbiKVK5l (ORCPT
+        with ESMTP id S233136AbiKVLP1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Nov 2022 05:57:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EBB5625CF;
-        Tue, 22 Nov 2022 02:57:38 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id A771AB819F6;
-        Tue, 22 Nov 2022 10:57:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 473ADC433C1;
-        Tue, 22 Nov 2022 10:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669114656;
-        bh=dSudoXz7KlBoU1Klan/84sEPqQWrkeKs1jTdna8n9qQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=c1xEeK3mb7by2grAU0c8mMy5GZw8KlM0ofIELtw+q41xshTfx9/g7gxW4tEjtOFCo
-         3Bvt7JMQLr2GQKI4uTXbaZY7QUqXVJWoWg7VRTtD1/58QDYhBMk2WEg7havS9AMpXD
-         Q7J6iNc+QKkK9YpC+4Ts/sBlMQhxme1f0LxdNhRNvqErKL1a6wOJLnmGkk6Qt/Qyh7
-         MXM/4pAy5fXik9SgsBAvmqFnzgjb7AnN0Mi9mBUUNf/cvk5LIQmmhm/htq989C4TXu
-         BUbMaeK2TH6I+4H/LywBDCMxZvroMDRTU9y/wP1RBkjibnhaDyMq0g/rZbkck7lIa1
-         mHUa9bA+xw13Q==
-Date:   Tue, 22 Nov 2022 11:57:31 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     linux-fsdevel@vger.kernel.org, fstests <fstests@vger.kernel.org>,
-        LSM <linux-security-module@vger.kernel.org>
-Subject: Re: sgid clearing rules?
-Message-ID: <20221122105731.parciulns5mg4jwr@wittgenstein>
-References: <CAJfpegsVAUUg5p6DbL1nA_oRF4Bui+saqbFjjYn=VYtd-N2Xew@mail.gmail.com>
+        Tue, 22 Nov 2022 06:15:27 -0500
+Received: from mail-vs1-xe2e.google.com (mail-vs1-xe2e.google.com [IPv6:2607:f8b0:4864:20::e2e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 109425BD41;
+        Tue, 22 Nov 2022 03:13:47 -0800 (PST)
+Received: by mail-vs1-xe2e.google.com with SMTP id t14so14085767vsr.9;
+        Tue, 22 Nov 2022 03:13:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ctwvpJ4WmLw8p9CFeleB7Pgd59LFpS1OykmA2+lU2U=;
+        b=b6gPC3FpAAoIsTrR/GjtWKbzKFsmS3SYe7WsW32gCahQi1HxOvCju2+tL83BVRwwG0
+         0nEFRgiiYSbd8tu4OiovxpIUT2VydWFiloCnps2GHxHiskGDzTcqJ+C7e6pjssUU4+4I
+         45MlrD7dxprQUpOvpPH4w1obxKoJqsPIkxjHe85bMFuekTi5c6jJ3+wQ2I/mH9I7k+iZ
+         5NV6LNcHggfuQcqEz/4CZM4pkh0EjvrysF98WHT5V56TOLx9EIiujHaDkR8TSZw4aQUX
+         QItzPMSSeejDkdIiKGFq6CnnbXwBaSmUDuvzj3ktAPddAkBZJotJHooi4VwA6GXdBMdf
+         WAmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ctwvpJ4WmLw8p9CFeleB7Pgd59LFpS1OykmA2+lU2U=;
+        b=I51GSTN5BZ2Ee6/kxYlTjwZQyegZPSHmFbbpJ5tv9CtamoVqaBPJ4n/ImIKURr0pgT
+         8Ar2xoQ5KcPNEO1s1e3GQEXBvbdnDwvYyzWyK8mmR910EVt57tXsH+QRYg+EnRxNn6B6
+         6XCt3/i52e8DUs4SwXZuT8LwSwxRZbSk7eY8zdszpEijEdE5knEPKvV0KvdT2/ajAcdq
+         rN3L5x/SMrDnj344/56xJLNPkwvGkGz+qnMr/p77O7zEFD8/ou8wEk/pqA+u6PWWVHNC
+         OlcxcPLm4BW5tZe1qKjWTcvqPZam8/1xjgfNJ7p/+Tm1zV37BqrNjSrvTnuRtuD0vQqR
+         mtig==
+X-Gm-Message-State: ANoB5pn1x/TUzNvlPi6akHNU8XdqQMbLHGydsNvMMF2TV/UczvA2z6q9
+        arWjMy142bwG2em/ThBwI0bDJb2MDZ1UTDHsSWF1gpEhmCk=
+X-Google-Smtp-Source: AA0mqf74RvZ9FOqf4Ak0ELFEqSpBYvkzZ3F8GxTEFa5nqLuTAn7Lk0xRxiTrgc/F38UyOU7gm4M4xAVNRxC0H2jJvW8=
+X-Received: by 2002:a05:6102:3bc1:b0:3a7:9b8c:2e4c with SMTP id
+ a1-20020a0561023bc100b003a79b8c2e4cmr1731318vsv.72.1669115626788; Tue, 22 Nov
+ 2022 03:13:46 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAJfpegsVAUUg5p6DbL1nA_oRF4Bui+saqbFjjYn=VYtd-N2Xew@mail.gmail.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20221122021536.1629178-1-drosen@google.com>
+In-Reply-To: <20221122021536.1629178-1-drosen@google.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Tue, 22 Nov 2022 13:13:35 +0200
+Message-ID: <CAOQ4uxiyRxsZjkku_V2dBMvh1AGiKQx-iPjsD5tmGPv1PgJHvQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 00/21] FUSE BPF: A Stacked Filesystem Extension for FUSE
+To:     Daniel Rosenberg <drosen@google.com>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-unionfs@vger.kernel.org,
+        bpf@vger.kernel.org, kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 21, 2022 at 02:14:13PM +0100, Miklos Szeredi wrote:
-> I'm looking at sgid clearing in case of file modification.  Seems like
-> the intent was:
-> 
->  - if not a regular file, then don't clear
->  - else if task has CAP_FSETID in init_user_ns, then don't clear
+On Tue, Nov 22, 2022 at 4:15 AM Daniel Rosenberg <drosen@google.com> wrote:
+>
+> These patches extend FUSE to be able to act as a stacked filesystem. This
+> allows pure passthrough, where the fuse file system simply reflects the lower
+> filesystem, and also allows optional pre and post filtering in BPF and/or the
+> userspace daemon as needed. This can dramatically reduce or even eliminate
+> transitions to and from userspace.
+>
+> For this patch set, I have removed the code related to the bpf side of things
+> since that is undergoing some large reworks to get it in line with the more
+> recent BPF developements. This set of patches implements direct passthrough to
+> the lower filesystem with no alteration. Looking at the v1 code should give a
+> pretty good idea of what the general shape of the bpf calls will look like.
+> Without the bpf side, it's like a less efficient bind mount. Not very useful
+> on its own, but still useful to get eyes on it since the backing calls will be
+> larglely the same when bpf is in the mix.
+>
+> This changes the format of adding a backing file/bpf slightly from v1. It's now
+> a bit more modular. You add a block of data at the end of a lookup response to
+> give the bpf fd and backing id, but there is now a type header to both blocks,
+> and a reserved value for future additions. In the future, we may allow for
+> multiple bpfs or backing files, and this will allow us to extend it without any
+> UAPI breaking changes. Multiple BPFs would be useful for combining fuse-bpf
+> implementations without needing to manually combine bpf fragments. Multiple
+> backing files would allow implementing things like a limited overlayfs.
+> In this patch set, this is only a single block, with only backing supported,
+> although I've left the definitions reflecting the BPF case as well.
+> For bpf, the plan is to have two blocks, with the bpf one coming first.
+> Any further extensions are currently just speculative.
+>
+> You can run this without needing to set up a userspace daemon by adding these
+> mount options: root_dir=[fd],no_daemon where fd is an open file descriptor
+> pointing to the folder you'd like to use as the root directory. The fd can be
+> immediately closed after mounting. This is useful for running various fs tests.
+>
 
-This one is a remnant of the past. The code was simply not updated to
-reflect the new penultimate rule you mention below. This is fixed in
--next based on the VFS work we did (It also includes Amirs patches we
-reviewed a few weeks ago for file_remove_privs() in ovl.).
+Which tests did you run?
 
->  - else if group exec is set, then clear
->  - else if gid is in task's group list, then don't clear
->  - else if gid and uid are mapped in current namespace and task has
-> CAP_FSETID in current namespace, then don't clear
->  - else clear
-> 
+My recommendation (if you haven't done that already):
+Add a variant to libfuse test_passthrough (test_examples.py):
+@pytest.mark.parametrize("name", ('passthrough', 'passthrough_plus',
+                           'passthrough_fh', 'passthrough_ll',
+'passthrough_bpf'))
 
-The setgid stripping series in -next implements these rules.
+and compose the no_daemon cmdline for the 'passthrough_bpf' mount.
 
-> However behavior seems to deviate from that if group exec is clear and
-> *suid* bit is not set.  The reason is that inode_has_no_xattr() will
-> set S_NOSEC and __file_remove_privs() will bail out before even
-> starting to interpret the rules.
+This gives pretty good basic test coverage for FUSE passthrough operations.
 
-Great observation. The dentry_needs_remove_privs() now calls the new
-setattr_should_drop_sgid() helper which drops the setgid bit according
-to the rules above. And yes, we should drop the S_IXGRP check from
-is_sxid() for consistency.
-The scenario where things get wonky with the S_IXGRP check present must
-be when setattr_should_drop_sgid() retains the setgid bit. In that case
-is_sxid() will mark the inode as not being security relevant even though
-the setgid bit is still set on it. This dates back to mandatory locking
-when the setgid bit was used for that. But mandatory locks are out of
-the door for a while now and this is no longer true and also wasn't
-enforced consistently for countless years even when they were still
-there. So we should make this helper consistent with the rest.
+I've extended test_passthrough_hp() for my libfuse_passthrough patches [1],
+but it's the same principle.
 
-I will run the patch below through xfstests with
+Thanks,
+Amir.
 
--g acl,attr,cap,idmapped,io_uring,perms,unlink
-
-which should cover all setgid tests (We've added plenty of new tests to
-the "perms" group.). Could you please review whether this make sense to you?
-
-From cbe6cec88c6cfc66e0fb61f602bb2810c3c48578 Mon Sep 17 00:00:00 2001
-From: Christian Brauner <brauner@kernel.org>
-Date: Tue, 22 Nov 2022 11:40:32 +0100
-Subject: [PATCH] fs: use consistent setgid checks in is_sxid()
-
-Now that we made the VFS setgid checking consistent an inode can't be
-marked security irrelevant even if the setgid bit is still set. Make
-this function consistent with the other helpers.
-
-Reported-by: Miklos Szeredi <miklos@szeredi.hu>
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
----
- include/linux/fs.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index b39c5efca180..d07cadac547e 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3527,7 +3527,7 @@ int __init list_bdev_fs_names(char *buf, size_t size);
- 
- static inline bool is_sxid(umode_t mode)
- {
--	return (mode & S_ISUID) || ((mode & S_ISGID) && (mode & S_IXGRP));
-+	return (mode & S_ISUID) || ((mode & S_ISGID));
- }
- 
- static inline int check_sticky(struct user_namespace *mnt_userns,
-
-base-commit: f380367f1811222c3853d942676a451a2353b762
--- 
-2.34.1
-
+[1] https://github.com/amir73il/libfuse/commits/fuse_passthrough
+* 'passthrough_module' uses 'libfuse_passthrough' which enables
+   Allesio's FUSE_DEV_IOC_PASSTHROUGH_OPEN by default.
