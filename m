@@ -2,144 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE9216341BC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 17:43:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1A49D634210
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 18:00:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234407AbiKVQnc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Nov 2022 11:43:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44288 "EHLO
+        id S234410AbiKVRAa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Nov 2022 12:00:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57660 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234110AbiKVQnW (ORCPT
+        with ESMTP id S233693AbiKVRA2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Nov 2022 11:43:22 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DABC61B8C;
-        Tue, 22 Nov 2022 08:43:13 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0EAEE61796;
-        Tue, 22 Nov 2022 16:43:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7CD1C433D6;
-        Tue, 22 Nov 2022 16:43:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1669135392;
-        bh=HhGB03f7yfLJTw6SIRqhGxERi9Gom4x4ToervBUNQF8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ai29wCwrSrFMalECnQg3VZFE6JJ7w1PVvNsX/nUcTdZGvwJT9FgVXh0Qu1fP/KZjg
-         gLL1mmmGyJUPfkwUZ8U8rfzyORb4k7cg2ocWkdlYVwXPJu4ByDHKX8FbqktGuqI0/r
-         L84ihOeSNwOdUyo5JUrjvyIoAUgVxWDKIToY6zCM=
-Date:   Tue, 22 Nov 2022 17:43:08 +0100
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     John Ogness <john.ogness@linutronix.de>
-Cc:     Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        linux-kernel@vger.kernel.org,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Jiri Slaby <jirislaby@kernel.org>,
-        kgdb-bugreport@lists.sourceforge.net, linux-serial@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Johannes Berg <johannes@sipsolutions.net>,
-        linux-um@lists.infradead.org, Aaron Tomlin <atomlin@redhat.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org, Ard Biesheuvel <ardb@kernel.org>,
-        linux-efi@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Alim Akhtar <alim.akhtar@samsung.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org,
-        Michal Simek <michal.simek@xilinx.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mathias Nyman <mathias.nyman@linux.intel.com>,
-        linux-usb@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>,
-        Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
-        Helge Deller <deller@gmx.de>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Javier Martinez Canillas <javierm@redhat.com>,
-        Juergen Gross <jgross@suse.com>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Tom Rix <trix@redhat.com>, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH printk v5 00/40] reduce console_lock scope
-Message-ID: <Y3z8HOt0yOd1nceY@kroah.com>
-References: <20221116162152.193147-1-john.ogness@linutronix.de>
+        Tue, 22 Nov 2022 12:00:28 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F167723B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 08:59:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669136363;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Tcwj7zKb9FBT/27d+SqzgATb/+/cwGoTvbOKyV2oUC0=;
+        b=iHEkcRHPLgjafGUvDi2GKLRYnJNsWpEQNSOH/AG3yzkPVG11fS6Axu2JSGpyllTg5AvNso
+        j9aa/WhcDDiEgrxXV3mAVzhO8/ATJRq/fpXwjPsNI3OILqXqK+hJJQo3k5IlPXorZfsQC3
+        3tCO6ddQDJxB5Ba6u0XysiGXmTxC4yw=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-287-JQ_2NlVqNXWytsCaeXiHdg-1; Tue, 22 Nov 2022 11:59:21 -0500
+X-MC-Unique: JQ_2NlVqNXWytsCaeXiHdg-1
+Received: by mail-wm1-f69.google.com with SMTP id bg25-20020a05600c3c9900b003cf3ed7e27bso8327898wmb.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 08:59:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Tcwj7zKb9FBT/27d+SqzgATb/+/cwGoTvbOKyV2oUC0=;
+        b=l1mMyf9XtfC7mNCiCPvXxHK+csIl0OxaiZkOuvMfghZLmng7UcCG/g7JO/WXCyk1E/
+         gUBZy3BJ/hapYvhAju9ntdGsJ5cAHGr8wF8BDuHEv1BD4ZuQ9PIiU20LHKsLZXu57Iwj
+         HxExT602v3XSf3j6vueR58tve7ipD0z3hbwgXVwei6XNEhktNwnSk3rTcISmQBkq1Ycs
+         FLTB87fAnKZyASitIiVxsF6yp9tOSzWJX8dKnKGK36CIvhzVAoCRtlFEN35MfGzOM9lQ
+         Pfj7gGmempAmkFK0ki9SFG3OU2Ps5bboUJY1hwwudqIPWAiH3ympCeZ6hi/WwfzBqR9i
+         ElHw==
+X-Gm-Message-State: ANoB5pm24qC51sg/aytTsv0ZZ2gOYjPYuIyYYqH/ylImx0yQNbIFcShc
+        AIXY1rjztfqA3+jeteeu4SQ2upxlajslyyZq2yDGGSEzYgKi9Xt/e6NZ7Gg7mYiVszaUCI4qIde
+        8bpIMReN3Ecp/W1NAawp+6YzKFw==
+X-Received: by 2002:adf:ffd2:0:b0:236:59ab:cf33 with SMTP id x18-20020adfffd2000000b0023659abcf33mr14799065wrs.568.1669136360580;
+        Tue, 22 Nov 2022 08:59:20 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf5ipsttDVyqGsvGwOwucuPtVofF5/nvmxT4xT5wxGK/GIy0z+5wA9kNhYU6aZgNw7rXtz8gyA==
+X-Received: by 2002:adf:ffd2:0:b0:236:59ab:cf33 with SMTP id x18-20020adfffd2000000b0023659abcf33mr14799050wrs.568.1669136360259;
+        Tue, 22 Nov 2022 08:59:20 -0800 (PST)
+Received: from gerbillo.redhat.com (146-241-120-203.dyn.eolo.it. [146.241.120.203])
+        by smtp.gmail.com with ESMTPSA id k1-20020a5d6281000000b0022ae0965a8asm14469756wru.24.2022.11.22.08.59.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Nov 2022 08:59:19 -0800 (PST)
+Message-ID: <819762b6eb549f74d0ebbb6663f042ae9b6cd86d.camel@redhat.com>
+Subject: Re: [REPOST PATCH] epoll: use refcount to reduce ep_mutex contention
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     Soheil Hassas Yeganeh <soheil@google.com>
+Cc:     linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Jason Baron <jbaron@akamai.com>,
+        Roman Penyaev <rpenyaev@suse.de>, netdev@vger.kernel.org,
+        Carlos Maiolino <cmaiolino@redhat.com>
+Date:   Tue, 22 Nov 2022 17:59:18 +0100
+In-Reply-To: <CACSApvYq=r3YAyZ_XceoRz1BuU+Q+MypXaG_S1fMoYCyFEpbrw@mail.gmail.com>
+References: <e102081e103d897cc0b76908acdac1bf0b65050d.1669130955.git.pabeni@redhat.com>
+         <CACSApvYq=r3YAyZ_XceoRz1BuU+Q+MypXaG_S1fMoYCyFEpbrw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 (3.42.4-2.fc35) 
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221116162152.193147-1-john.ogness@linutronix.de>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 16, 2022 at 05:27:12PM +0106, John Ogness wrote:
-> This is v5 of a series to prepare for threaded/atomic
-> printing. v4 is here [0]. This series focuses on reducing the
-> scope of the BKL console_lock. It achieves this by switching to
-> SRCU and a dedicated mutex for console list iteration and
-> modification, respectively. The console_lock will no longer
-> offer this protection.
-> 
-> Also, during the review of v2 it came to our attention that
-> many console drivers are checking CON_ENABLED to see if they
-> are registered. Because this flag can change without
-> unregistering and because this flag does not represent an
-> atomic point when an (un)registration process is complete,
-> a new console_is_registered() function is introduced. This
-> function uses the console_list_lock to synchronize with the
-> (un)registration process to provide a reliable status.
-> 
-> All users of the console_lock for list iteration have been
-> modified. For the call sites where the console_lock is still
-> needed (for other reasons), comments are added to explain
-> exactly why the console_lock is needed.
-> 
-> All users of CON_ENABLED for registration status have been
-> modified to use console_is_registered(). Note that there are
-> still users of CON_ENABLED, but this is for legitimate purposes
-> about a registered console being able to print.
-> 
-> The base commit for this series is from Paul McKenney's RCU tree
-> and provides an NMI-safe SRCU implementation [1]. Without the
-> NMI-safe SRCU implementation, this series is not less safe than
-> mainline. But we will need the NMI-safe SRCU implementation for
-> atomic consoles anyway, so we might as well get it in
-> now. Especially since it _does_ increase the reliability for
-> mainline in the panic path.
-> 
-> Changes since v4:
-> 
-> printk:
-> 
-> - Introduce console_init_seq() to handle the now rather complex
->   procedure to find an appropriate start sequence number for a
->   new console upon registration.
-> 
-> - When registering a non-boot console and boot consoles are
->   registered, try to flush all the consoles to get the next @seq
->   value before falling back to use the @seq of the enabled boot
->   console that is furthest behind.
-> 
-> - For console_force_preferred_locked(), make the console the
->   head of the console list.
-> 
+Hello,
 
+Thank you for the prompt feedback!
 
-Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+On Tue, 2022-11-22 at 11:18 -0500, Soheil Hassas Yeganeh wrote:
+> On Tue, Nov 22, 2022 at 10:43 AM Paolo Abeni <pabeni@redhat.com> wrote:
+> > 
+> > We are observing huge contention on the epmutex during an http
+> > connection/rate test:
+> > 
+> >  83.17% 0.25%  nginx            [kernel.kallsyms]         [k] entry_SYSCALL_64_after_hwframe
+> > [...]
+> >            |--66.96%--__fput
+> >                       |--60.04%--eventpoll_release_file
+> >                                  |--58.41%--__mutex_lock.isra.6
+> >                                            |--56.56%--osq_lock
+> > 
+> > The application is multi-threaded, creates a new epoll entry for
+> > each incoming connection, and does not delete it before the
+> > connection shutdown - that is, before the connection's fd close().
+> > 
+> > Many different threads compete frequently for the epmutex lock,
+> > affecting the overall performance.
+> > 
+> > To reduce the contention this patch introduces explicit reference counting
+> > for the eventpoll struct. Each registered event acquires a reference,
+> > and references are released at ep_remove() time. ep_free() doesn't touch
+> > anymore the event RB tree, it just unregisters the existing callbacks
+> > and drops a reference to the ep struct. The struct itself is freed when
+> > the reference count reaches 0. The reference count updates are protected
+> > by the mtx mutex so no additional atomic operations are needed.
+> > 
+> > Since ep_free() can't compete anymore with eventpoll_release_file()
+> > for epitems removal, we can drop the epmutex usage at disposal time.
+> > 
+> > With the patched kernel, in the same connection/rate scenario, the mutex
+> > operations disappear from the perf report, and the measured connections/rate
+> > grows by ~60%.
+> 
+> I locally tried this patch and I can reproduce the results.  Thank you
+> for the nice optimization!
+> 
+> > Tested-by: Xiumei Mu <xmu@redhat.com>
+> > Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+> > ---
+> > This is just a repost reaching out for more recipents,
+> > as suggested by Carlos.
+> > 
+> > Previous post at:
+> > 
+> > https://lore.kernel.org/linux-fsdevel/20221122102726.4jremle54zpcapia@andromeda/T/#m6f98d4ccbe0a385d10c04fd4018e782b793944e6
+> > ---
+> >  fs/eventpoll.c | 113 ++++++++++++++++++++++++++++---------------------
+> >  1 file changed, 64 insertions(+), 49 deletions(-)
+> > 
+> > diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> > index 52954d4637b5..6e415287aeb8 100644
+> > --- a/fs/eventpoll.c
+> > +++ b/fs/eventpoll.c
+> > @@ -226,6 +226,12 @@ struct eventpoll {
+> >         /* tracks wakeup nests for lockdep validation */
+> >         u8 nests;
+> >  #endif
+> > +
+> > +       /*
+> > +        * protected by mtx, used to avoid races between ep_free() and
+> > +        * ep_eventpoll_release()
+> > +        */
+> > +       unsigned int refcount;
+> 
+> nitpick: Given that napi_id and nest are both macro protected, you
+> might want to pull it right after min_wait_ts.
+
+Just to be on the same page: the above is just for an aesthetic reason,
+right? Is there some functional aspect I don't see?
+
+[...]
+
+> > @@ -2165,10 +2174,16 @@ int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
+> >                         error = -EEXIST;
+> >                 break;
+> >         case EPOLL_CTL_DEL:
+> > -               if (epi)
+> > -                       error = ep_remove(ep, epi);
+> > -               else
+> > +               if (epi) {
+> > +                       /*
+> > +                        * The eventpoll itself is still alive: the refcount
+> > +                        * can't go to zero here.
+> > +                        */
+> > +                       WARN_ON_ONCE(ep_remove(ep, epi));
+> 
+> There are similar examples of calling ep_remove() without checking the
+> return value in ep_insert().
+
+Yes, the error paths in ep_insert(). I added a comment referring to all
+of them, trying to explain that ep_dispose() is not needed there.
+
+> I believe we should add a similar comment there, and maybe a
+> WARN_ON_ONCE.  I'm not sure, but it might be worth adding a new helper
+> given this repeated pattern?
+
+I like the idea of such helper. I'll use it in the next iteration, if
+there is a reasonable agreement on this patch.
+
+Whould 'ep_remove_safe()' fit as the helper's name?
+
+Thanks,
+
+Paolo
+
