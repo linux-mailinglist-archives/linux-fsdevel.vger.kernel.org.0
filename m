@@ -2,172 +2,330 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A579C634056
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 16:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F90163407D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 16:44:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234071AbiKVPgg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Nov 2022 10:36:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44210 "EHLO
+        id S234000AbiKVPoC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Nov 2022 10:44:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234089AbiKVPgF (ORCPT
+        with ESMTP id S233966AbiKVPoB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Nov 2022 10:36:05 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 01AFA71F03;
-        Tue, 22 Nov 2022 07:35:54 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Tue, 22 Nov 2022 10:44:01 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 975371275E
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 07:43:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669131784;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=EA8n/mImoBrgJsm3K0x/vQ/UAIrAlDMF5YlwLReaHPI=;
+        b=caL3Izrw3bf7AgMocNerLKls5Uz9HuXAzim14RMQPtu23fA8mk4agApi6vYKMjWGDfQjaz
+        8iN0Emtc2X9LNPOeod/ogTjsbqOkODZjio7ZBS6oAk3T2SYdh1vqd01mIpNwWa0efp2Ana
+        An6evR4HDzlmpokKBz/ENbi0D/1p9Fk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-487-RnuIS3NBMPmP_Zq2pMUFCw-1; Tue, 22 Nov 2022 10:43:01 -0500
+X-MC-Unique: RnuIS3NBMPmP_Zq2pMUFCw-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 8357A22007;
-        Tue, 22 Nov 2022 15:35:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1669131353; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xzeEtRVGkBValjf4cAqJIIBnm0WLgHIJrOj2Qpyeryk=;
-        b=hSz8uo53GqZkaSBqbG3aIh16lgMQB2Sw8gZ6Z+fnEjIR6uPvpuBuVkR8TpcuCDJwN2rjjn
-        iqJmydTFhzXH0tY5jw9oJ6zK0Sx7/l0zZrHLYI1mzVvp/woqabMd2RthMdqBUz+tckoXxt
-        gvUiGWpp9yM7xLCq0tNctpGuD1es/pI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1669131353;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=xzeEtRVGkBValjf4cAqJIIBnm0WLgHIJrOj2Qpyeryk=;
-        b=87yFyDfodelF6paPP+3fZVkcbfCamfu6aYJAmnQjTNh2RXFp/RQ8a0uSheJsgsaRl+tSbc
-        rgSpbkEWiLk/2KDQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E380913B01;
-        Tue, 22 Nov 2022 15:35:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id /ANwNljsfGPGGwAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Tue, 22 Nov 2022 15:35:52 +0000
-Message-ID: <34835490-57d7-4e26-7474-008b2c4c6b39@suse.cz>
-Date:   Tue, 22 Nov 2022 16:35:52 +0100
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AE2C5887403;
+        Tue, 22 Nov 2022 15:43:00 +0000 (UTC)
+Received: from gerbillo.redhat.com (unknown [10.39.193.190])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1ED8940C83AD;
+        Tue, 22 Nov 2022 15:42:58 +0000 (UTC)
+From:   Paolo Abeni <pabeni@redhat.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Soheil Hassas Yeganeh <soheil@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Jason Baron <jbaron@akamai.com>,
+        Roman Penyaev <rpenyaev@suse.de>, netdev@vger.kernel.org,
+        Carlos Maiolino <cmaiolino@redhat.com>
+Subject: [REPOST PATCH] epoll: use refcount to reduce ep_mutex contention
+Date:   Tue, 22 Nov 2022 16:42:20 +0100
+Message-Id: <e102081e103d897cc0b76908acdac1bf0b65050d.1669130955.git.pabeni@redhat.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH mm-unstable v1 08/20] mm: extend FAULT_FLAG_UNSHARE
- support to anything in a COW mapping
-Content-Language: en-US
-To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>
-References: <20221116102659.70287-1-david@redhat.com>
- <20221116102659.70287-9-david@redhat.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <20221116102659.70287-9-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/16/22 11:26, David Hildenbrand wrote:
-> Extend FAULT_FLAG_UNSHARE to break COW on anything mapped into a
-> COW (i.e., private writable) mapping and adjust the documentation
-> accordingly.
-> 
-> FAULT_FLAG_UNSHARE will now also break COW when encountering the shared
-> zeropage, a pagecache page, a PFNMAP, ... inside a COW mapping, by
-> properly replacing the mapped page/pfn by a private copy (an exclusive
-> anonymous page).
-> 
-> Note that only do_wp_page() needs care: hugetlb_wp() already handles
-> FAULT_FLAG_UNSHARE correctly. wp_huge_pmd()/wp_huge_pud() also handles it
-> correctly, for example, splitting the huge zeropage on FAULT_FLAG_UNSHARE
-> such that we can handle FAULT_FLAG_UNSHARE on the PTE level.
-> 
-> This change is a requirement for reliable long-term R/O pinning in
-> COW mappings.
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+We are observing huge contention on the epmutex during an http
+connection/rate test:
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+ 83.17% 0.25%  nginx            [kernel.kallsyms]         [k] entry_SYSCALL_64_after_hwframe
+[...]
+           |--66.96%--__fput
+                      |--60.04%--eventpoll_release_file
+                                 |--58.41%--__mutex_lock.isra.6
+                                           |--56.56%--osq_lock
 
-> ---
->  include/linux/mm_types.h | 8 ++++----
->  mm/memory.c              | 4 ----
->  2 files changed, 4 insertions(+), 8 deletions(-)
-> 
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 5e7f4fac1e78..5e9aaad8c7b2 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -1037,9 +1037,9 @@ typedef struct {
->   * @FAULT_FLAG_REMOTE: The fault is not for current task/mm.
->   * @FAULT_FLAG_INSTRUCTION: The fault was during an instruction fetch.
->   * @FAULT_FLAG_INTERRUPTIBLE: The fault can be interrupted by non-fatal signals.
-> - * @FAULT_FLAG_UNSHARE: The fault is an unsharing request to unshare (and mark
-> - *                      exclusive) a possibly shared anonymous page that is
-> - *                      mapped R/O.
-> + * @FAULT_FLAG_UNSHARE: The fault is an unsharing request to break COW in a
-> + *                      COW mapping, making sure that an exclusive anon page is
-> + *                      mapped after the fault.
->   * @FAULT_FLAG_ORIG_PTE_VALID: whether the fault has vmf->orig_pte cached.
->   *                        We should only access orig_pte if this flag set.
->   *
-> @@ -1064,7 +1064,7 @@ typedef struct {
->   *
->   * The combination FAULT_FLAG_WRITE|FAULT_FLAG_UNSHARE is illegal.
->   * FAULT_FLAG_UNSHARE is ignored and treated like an ordinary read fault when
-> - * no existing R/O-mapped anonymous page is encountered.
-> + * applied to mappings that are not COW mappings.
->   */
->  enum fault_flag {
->  	FAULT_FLAG_WRITE =		1 << 0,
-> diff --git a/mm/memory.c b/mm/memory.c
-> index d47ad33c6487..56b21ab1e4d2 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -3432,10 +3432,6 @@ static vm_fault_t do_wp_page(struct vm_fault *vmf)
->  		}
->  		wp_page_reuse(vmf);
->  		return 0;
-> -	} else if (unshare) {
-> -		/* No anonymous page -> nothing to do. */
-> -		pte_unmap_unlock(vmf->pte, vmf->ptl);
-> -		return 0;
->  	}
->  copy:
->  	/*
+The application is multi-threaded, creates a new epoll entry for
+each incoming connection, and does not delete it before the
+connection shutdown - that is, before the connection's fd close().
+
+Many different threads compete frequently for the epmutex lock,
+affecting the overall performance.
+
+To reduce the contention this patch introduces explicit reference counting
+for the eventpoll struct. Each registered event acquires a reference,
+and references are released at ep_remove() time. ep_free() doesn't touch
+anymore the event RB tree, it just unregisters the existing callbacks
+and drops a reference to the ep struct. The struct itself is freed when
+the reference count reaches 0. The reference count updates are protected
+by the mtx mutex so no additional atomic operations are needed.
+
+Since ep_free() can't compete anymore with eventpoll_release_file()
+for epitems removal, we can drop the epmutex usage at disposal time.
+
+With the patched kernel, in the same connection/rate scenario, the mutex
+operations disappear from the perf report, and the measured connections/rate
+grows by ~60%.
+
+Tested-by: Xiumei Mu <xmu@redhat.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+---
+This is just a repost reaching out for more recipents,
+as suggested by Carlos.
+
+Previous post at:
+
+https://lore.kernel.org/linux-fsdevel/20221122102726.4jremle54zpcapia@andromeda/T/#m6f98d4ccbe0a385d10c04fd4018e782b793944e6
+---
+ fs/eventpoll.c | 113 ++++++++++++++++++++++++++++---------------------
+ 1 file changed, 64 insertions(+), 49 deletions(-)
+
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 52954d4637b5..6e415287aeb8 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -226,6 +226,12 @@ struct eventpoll {
+ 	/* tracks wakeup nests for lockdep validation */
+ 	u8 nests;
+ #endif
++
++	/*
++	 * protected by mtx, used to avoid races between ep_free() and
++	 * ep_eventpoll_release()
++	 */
++	unsigned int refcount;
+ };
+ 
+ /* Wrapper struct used by poll queueing */
+@@ -240,9 +246,6 @@ struct ep_pqueue {
+ /* Maximum number of epoll watched descriptors, per user */
+ static long max_user_watches __read_mostly;
+ 
+-/*
+- * This mutex is used to serialize ep_free() and eventpoll_release_file().
+- */
+ static DEFINE_MUTEX(epmutex);
+ 
+ static u64 loop_check_gen = 0;
+@@ -555,8 +558,7 @@ static void ep_remove_wait_queue(struct eppoll_entry *pwq)
+ 
+ /*
+  * This function unregisters poll callbacks from the associated file
+- * descriptor.  Must be called with "mtx" held (or "epmutex" if called from
+- * ep_free).
++ * descriptor.  Must be called with "mtx" held.
+  */
+ static void ep_unregister_pollwait(struct eventpoll *ep, struct epitem *epi)
+ {
+@@ -679,11 +681,37 @@ static void epi_rcu_free(struct rcu_head *head)
+ 	kmem_cache_free(epi_cache, epi);
+ }
+ 
++static void ep_get(struct eventpoll *ep)
++{
++	ep->refcount++;
++}
++
++/*
++ * Returns true if the event poll can be disposed
++ */
++static bool ep_put(struct eventpoll *ep)
++{
++	if (--ep->refcount)
++		return false;
++
++	WARN_ON_ONCE(!RB_EMPTY_ROOT(&ep->rbr.rb_root));
++	return true;
++}
++
++static void ep_dispose(struct eventpoll *ep)
++{
++	mutex_destroy(&ep->mtx);
++	free_uid(ep->user);
++	wakeup_source_unregister(ep->ws);
++	kfree(ep);
++}
++
+ /*
+  * Removes a "struct epitem" from the eventpoll RB tree and deallocates
+  * all the associated resources. Must be called with "mtx" held.
++ * Returns true if the eventpoll can be disposed.
+  */
+-static int ep_remove(struct eventpoll *ep, struct epitem *epi)
++static bool ep_remove(struct eventpoll *ep, struct epitem *epi)
+ {
+ 	struct file *file = epi->ffd.file;
+ 	struct epitems_head *to_free;
+@@ -731,28 +759,20 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
+ 	call_rcu(&epi->rcu, epi_rcu_free);
+ 
+ 	percpu_counter_dec(&ep->user->epoll_watches);
+-
+-	return 0;
++	return ep_put(ep);
+ }
+ 
+ static void ep_free(struct eventpoll *ep)
+ {
+ 	struct rb_node *rbp;
+ 	struct epitem *epi;
++	bool dispose;
+ 
+ 	/* We need to release all tasks waiting for these file */
+ 	if (waitqueue_active(&ep->poll_wait))
+ 		ep_poll_safewake(ep, NULL);
+ 
+-	/*
+-	 * We need to lock this because we could be hit by
+-	 * eventpoll_release_file() while we're freeing the "struct eventpoll".
+-	 * We do not need to hold "ep->mtx" here because the epoll file
+-	 * is on the way to be removed and no one has references to it
+-	 * anymore. The only hit might come from eventpoll_release_file() but
+-	 * holding "epmutex" is sufficient here.
+-	 */
+-	mutex_lock(&epmutex);
++	mutex_lock(&ep->mtx);
+ 
+ 	/*
+ 	 * Walks through the whole tree by unregistering poll callbacks.
+@@ -765,26 +785,14 @@ static void ep_free(struct eventpoll *ep)
+ 	}
+ 
+ 	/*
+-	 * Walks through the whole tree by freeing each "struct epitem". At this
+-	 * point we are sure no poll callbacks will be lingering around, and also by
+-	 * holding "epmutex" we can be sure that no file cleanup code will hit
+-	 * us during this operation. So we can avoid the lock on "ep->lock".
+-	 * We do not need to lock ep->mtx, either, we only do it to prevent
+-	 * a lockdep warning.
++	 * epitems in the rb tree are freed either with EPOLL_CTL_DEL
++	 * or at the relevant file close time by eventpoll_release_file()
+ 	 */
+-	mutex_lock(&ep->mtx);
+-	while ((rbp = rb_first_cached(&ep->rbr)) != NULL) {
+-		epi = rb_entry(rbp, struct epitem, rbn);
+-		ep_remove(ep, epi);
+-		cond_resched();
+-	}
++	dispose = ep_put(ep);
+ 	mutex_unlock(&ep->mtx);
+ 
+-	mutex_unlock(&epmutex);
+-	mutex_destroy(&ep->mtx);
+-	free_uid(ep->user);
+-	wakeup_source_unregister(ep->ws);
+-	kfree(ep);
++	if (dispose)
++		ep_dispose(ep);
+ }
+ 
+ static int ep_eventpoll_release(struct inode *inode, struct file *file)
+@@ -905,6 +913,7 @@ void eventpoll_release_file(struct file *file)
+ 	struct eventpoll *ep;
+ 	struct epitem *epi;
+ 	struct hlist_node *next;
++	bool dispose;
+ 
+ 	/*
+ 	 * We don't want to get "file->f_lock" because it is not
+@@ -912,25 +921,18 @@ void eventpoll_release_file(struct file *file)
+ 	 * cleanup path, and this means that no one is using this file anymore.
+ 	 * So, for example, epoll_ctl() cannot hit here since if we reach this
+ 	 * point, the file counter already went to zero and fget() would fail.
+-	 * The only hit might come from ep_free() but by holding the mutex
+-	 * will correctly serialize the operation. We do need to acquire
+-	 * "ep->mtx" after "epmutex" because ep_remove() requires it when called
+-	 * from anywhere but ep_free().
+ 	 *
+ 	 * Besides, ep_remove() acquires the lock, so we can't hold it here.
+ 	 */
+-	mutex_lock(&epmutex);
+-	if (unlikely(!file->f_ep)) {
+-		mutex_unlock(&epmutex);
+-		return;
+-	}
+ 	hlist_for_each_entry_safe(epi, next, file->f_ep, fllink) {
+ 		ep = epi->ep;
+-		mutex_lock_nested(&ep->mtx, 0);
+-		ep_remove(ep, epi);
++		mutex_lock(&ep->mtx);
++		dispose = ep_remove(ep, epi);
+ 		mutex_unlock(&ep->mtx);
++
++		if (dispose)
++			ep_dispose(ep);
+ 	}
+-	mutex_unlock(&epmutex);
+ }
+ 
+ static int ep_alloc(struct eventpoll **pep)
+@@ -953,6 +955,7 @@ static int ep_alloc(struct eventpoll **pep)
+ 	ep->rbr = RB_ROOT_CACHED;
+ 	ep->ovflist = EP_UNACTIVE_PTR;
+ 	ep->user = user;
++	ep->refcount = 1;
+ 
+ 	*pep = ep;
+ 
+@@ -1494,6 +1497,12 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
+ 	if (tep)
+ 		mutex_unlock(&tep->mtx);
+ 
++	/*
++	 * ep_remove() calls in the later error paths can't lead to ep_dispose()
++	 * as overall will lead to no refcount changes
++	 */
++	ep_get(ep);
++
+ 	/* now check if we've created too many backpaths */
+ 	if (unlikely(full_check && reverse_path_check())) {
+ 		ep_remove(ep, epi);
+@@ -2165,10 +2174,16 @@ int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
+ 			error = -EEXIST;
+ 		break;
+ 	case EPOLL_CTL_DEL:
+-		if (epi)
+-			error = ep_remove(ep, epi);
+-		else
++		if (epi) {
++			/*
++			 * The eventpoll itself is still alive: the refcount
++			 * can't go to zero here.
++			 */
++			WARN_ON_ONCE(ep_remove(ep, epi));
++			error = 0;
++		} else {
+ 			error = -ENOENT;
++		}
+ 		break;
+ 	case EPOLL_CTL_MOD:
+ 		if (epi) {
+-- 
+2.38.1
 
