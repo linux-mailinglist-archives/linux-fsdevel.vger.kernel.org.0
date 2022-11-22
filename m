@@ -2,450 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AECDE63308A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 00:13:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 807476331B0
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 01:58:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230390AbiKUXNM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Nov 2022 18:13:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34064 "EHLO
+        id S230506AbiKVA6Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Nov 2022 19:58:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbiKUXNK (ORCPT
+        with ESMTP id S229721AbiKVA6X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Nov 2022 18:13:10 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D316C563C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 15:13:09 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id b21so11948533plc.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 15:13:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yC6n1gtp8yTit1SrpaXMATmBIObJGrYd6eEntLBDmTY=;
-        b=8LR1VCVrhHQXcaWoA6WhL6sXWvhEiJSKEno9wTagerERvSgx1IOly09kbY07VRz/tA
-         sv02MMkW1S+jbnaOlTTV0Q3SbibNnPLDC1fOhbzrOB3+RrHiBfGUA8lry2yUhHq+rDq5
-         hz/Mk1eDmSHqZnbXw7/VOxQSLCWLCq+NAo9OY7Y4Mr3u+Y/xha9Ci1Bs6/Qd3HdPhfiK
-         FXAG+zmrhDMZHEtt12vGboLqGNGJ7kWCmbeaS7z55iMF+K5NTNuST1RocDQ5W9zQoCex
-         E0Q/tKE4IZOXb3+zYjb9USiAEuRSMPugffv3dZNZ+NpwzYSLadg9kITd602twzD+xXfC
-         CKDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yC6n1gtp8yTit1SrpaXMATmBIObJGrYd6eEntLBDmTY=;
-        b=XiJ8TzGtaJjGVWytFNrbsOjVo+JuUNXXSXBMV6PmUWe0EVC+R91WRhuFDW4SVGu2rI
-         UBdcgrCDKa5PuVvEEnF2L2rcfhhfif27tCdrNMNLoo7QkbJ3LYRVd/k86yqAwARG30o8
-         Qk5eqz56zS2FwyzTT7tglAGPeTZM7Pa0gDnpGe/VEoFL+ZiBV2vCZImCk41gp7jXN/06
-         GL7cpfI505suAylrnOgFxdobxIy6tJme8Zt2A9FxtCRCUqpNCPdz6ycesWvbVXVW4lbN
-         x1+n+0xLAxOPK7y/rOS/gdOJ4buGpynhXeowfesxvEnJlyBotCZ8FmrpJdphhcYXTJ4i
-         o3zA==
-X-Gm-Message-State: ANoB5pk8Q7rAgSzdM2M4Ud0o6Yxs4nBeDfkJgtDnx8Meqja86bnwaI+e
-        3JZaMhJrDc8DPn2VtYJGVLaYuw==
-X-Google-Smtp-Source: AA0mqf7tzJEM6rm7rVT1cXOSsvgwF3SkkcLaFxoMwa13GXrW5W3EM9WtoOCtL3QBch2ZYd6nBwk2gw==
-X-Received: by 2002:a17:90a:7e8b:b0:213:df24:ed80 with SMTP id j11-20020a17090a7e8b00b00213df24ed80mr28380084pjl.186.1669072388617;
-        Mon, 21 Nov 2022 15:13:08 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-65-106.pa.vic.optusnet.com.au. [49.186.65.106])
-        by smtp.gmail.com with ESMTPSA id h7-20020a056a00000700b005721983ea31sm9215732pfk.108.2022.11.21.15.13.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 21 Nov 2022 15:13:08 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1oxFyK-00H32Z-K1; Tue, 22 Nov 2022 10:13:04 +1100
-Date:   Tue, 22 Nov 2022 10:13:04 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Brian Foster <bfoster@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org
-Subject: Re: [PATCH 5/9] xfs: buffered write failure should not truncate the
- page cache
-Message-ID: <20221121231304.GM3600936@dread.disaster.area>
-References: <20221115013043.360610-1-david@fromorbit.com>
- <20221115013043.360610-6-david@fromorbit.com>
- <Y3TsPzd0XzXXIzQv@bfoster>
- <20221117004133.GD3600936@dread.disaster.area>
- <Y3e+7XH5gq5gc97u@bfoster>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y3e+7XH5gq5gc97u@bfoster>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Mon, 21 Nov 2022 19:58:23 -0500
+Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F401568C4E;
+        Mon, 21 Nov 2022 16:58:19 -0800 (PST)
+Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4NGQqG0KGfz4xVnf;
+        Tue, 22 Nov 2022 08:58:18 +0800 (CST)
+Received: from szxlzmapp01.zte.com.cn ([10.5.231.85])
+        by mse-fl2.zte.com.cn with SMTP id 2AM0wDIn085676;
+        Tue, 22 Nov 2022 08:58:13 +0800 (+08)
+        (envelope-from yang.yang29@zte.com.cn)
+Received: from mapi (szxlzmapp02[null])
+        by mapi (Zmail) with MAPI id mid14;
+        Tue, 22 Nov 2022 08:58:13 +0800 (CST)
+Date:   Tue, 22 Nov 2022 08:58:13 +0800 (CST)
+X-Zmail-TransId: 2b04637c1ea5ffffffff854dfe8c
+X-Mailer: Zmail v1.0
+Message-ID: <202211220858139474929@zte.com.cn>
+Mime-Version: 1.0
+From:   <yang.yang29@zte.com.cn>
+To:     <hdegoede@redhat.com>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <xu.panda@zte.com.cn>, <yang.yang29@zte.com.cn>
+Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIHZib3hmczogdXNlIHN0cnNjcHkoKSBpcyBtb3JlIHJvYnVzdCBhbmQgc2FmZXI=?=
+Content-Type: text/plain;
+        charset="UTF-8"
+X-MAIL: mse-fl2.zte.com.cn 2AM0wDIn085676
+X-Fangmail-Gw-Spam-Type: 0
+X-FangMail-Miltered: at cgslv5.04-192.168.250.138.novalocal with ID 637C1EAA.000 by FangMail milter!
+X-FangMail-Envelope: 1669078698/4NGQqG0KGfz4xVnf/637C1EAA.000/10.5.228.133/[10.5.228.133]/mse-fl2.zte.com.cn/<yang.yang29@zte.com.cn>
+X-Fangmail-Anti-Spam-Filtered: true
+X-Fangmail-MID-QID: 637C1EAA.000/4NGQqG0KGfz4xVnf
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 18, 2022 at 12:20:45PM -0500, Brian Foster wrote:
-> On Thu, Nov 17, 2022 at 11:41:33AM +1100, Dave Chinner wrote:
-> > On Wed, Nov 16, 2022 at 08:57:19AM -0500, Brian Foster wrote:
-> > > On Tue, Nov 15, 2022 at 12:30:39PM +1100, Dave Chinner wrote:
-> > > > From: Dave Chinner <dchinner@redhat.com>
-> > > > 
-> > > ...
-> > > > 
-> > > > Signed-off-by: Dave Chinner <dchinner@redhat.com> ---
-> > > > fs/xfs/xfs_iomap.c | 151
-> > > > ++++++++++++++++++++++++++++++++++++++++++--- 1 file
-> > > > changed, 141 insertions(+), 10 deletions(-)
-> > > > 
-> > > > diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c index
-> > > > 7bb55dbc19d3..2d48fcc7bd6f 100644 --- a/fs/xfs/xfs_iomap.c
-> > > > +++ b/fs/xfs/xfs_iomap.c @@ -1134,6 +1134,146 @@
-> > > > xfs_buffered_write_delalloc_punch( end_fsb - start_fsb); }
-> > > >  
-> > > ...
-> > > > +/* + * Punch out all the delalloc blocks in the range given
-> > > > except for those that + * have dirty data still pending in
-> > > > the page cache - those are going to be + * written and so
-> > > > must still retain the delalloc backing for writeback.  + * +
-> > > > * As we are scanning the page cache for data, we don't need
-> > > > to reimplement the + * wheel - mapping_seek_hole_data() does
-> > > > exactly what we need to identify the + * start and end of
-> > > > data ranges correctly even for sub-folio block sizes. This +
-> > > > * byte range based iteration is especially convenient
-> > > > because it means we don't + * have to care about variable
-> > > > size folios, nor where the start or end of the + * data
-> > > > range lies within a folio, if they lie within the same folio
-> > > > or even if + * there are multiple discontiguous data ranges
-> > > > within the folio.  + */ +static int
-> > > > +xfs_buffered_write_delalloc_release( +	struct inode
-> > > > *inode, +	loff_t			start_byte, +
-> > > > loff_t			end_byte) +{ +	loff_t
-> > > > punch_start_byte = start_byte; +	int
-> > > > error = 0; + +	/* +	 * Lock the mapping to avoid races
-> > > > with page faults re-instantiating +	 * folios and
-> > > > dirtying them via ->page_mkwrite whilst we walk the +	 *
-> > > > cache and perform delalloc extent removal. Failing to do
-> > > > this can +	 * leave dirty pages with no space
-> > > > reservation in the cache.  +	 */ +
-> > > > filemap_invalidate_lock(inode->i_mapping); +	while
-> > > > (start_byte < end_byte) { +		loff_t
-> > > > data_end; + +		start_byte =
-> > > > mapping_seek_hole_data(inode->i_mapping, +
-> > > > start_byte, end_byte, SEEK_DATA);
-> > > 
-> > > FWIW, the fact that mapping seek data is based on uptodate
-> > > status means that seek behavior can change based on prior
-> > > reads.
-> > 
-> > Yup. It should be obvious that any page cache scan based
-> > algorithm will change based on changing page cache residency.
-> > 
-> > > For example, see how seek hole/data presents reads of
-> > > unwritten ranges as data [1]. The same thing isn't observable
-> > > for holes because iomap doesn't check the mapping in that
-> > > case, but underlying iop state is the same and that is what
-> > > this code is looking at.
-> > 
-> > Well, yes.  That's the fundamental, underlying issue that this
-> > patchset is addressing for the write() operation: that the page
-> > cache contents and the underlying filesystem extent map are not
-> > guaranteed to be coherent and can be changed independently of
-> > each other.
-> > 
-> > The whole problem with looking exclusively at filesystem level
-> > extent state (and hence FIEMAP) is that the extent state doesn't
-> > tell us whether the is uncommitted data over the range of the
-> > extent in the page cache.  The filesystem extent state and page
-> > cache data *can't be coherent* in a writeback caching
-> > environment. This is the fundamental difference between what the
-> > filesystem extent map tells us (FIEMAP) and what querying the
-> > page cache tells us (SEEK_DATA/SEEK_HOLE).
-> > 
-> > This is also the underlying problem with iomap_truncate_page() -
-> > it fails to query the page cache for data over unwritten
-> > extents, so fails to zero the post-EOF part of dirty folios over
-> > unwritten extents and so it all goes wrong...
-> > 
-> > > The filtering being done here means we essentially only care
-> > > about dirty pages backed by delalloc blocks. That means if you
-> > > get here with a dirty page and the portion of the page
-> > > affected by this failed write is uptodate, this won't punch an
-> > > underlying delalloc block even though nothing else may have
-> > > written to it in the meantime.
-> > 
-> > Hmmm. IOMAP_F_NEW implies that the newly allocated delalloc
-> > iomap will not span ranges that have pre-existing *dirty* data
-> > in the page cache. Those *must* already have (del)allocated
-> > extents, hence the iomap for the newly allocated delalloc extent
-> > will always end before pre-existing dirty data in the page cache
-> > starts.
-> > 
-> > Hence the seek scan range over an IOMAP_F_NEW IOMAP_DELALLOC map
-> > precludes stepping into ranges that have pre-existing cached
-> > dirty data.
-> > 
-> > We also can't get a racing write() to the same range right now
-> > because this is all under IOLOCK_EXCL, hence we only ever see
-> > dirty folios as a result of race with page faults. page faults
-> > zero the entire folio they insert into the page cache and
-> > iomap_folio_mkwrite_iter() asserts that the entire folio is
-> > marked up to date. Hence if we find a dirty folio outside the
-> > range the write() dirtied, we are guaranteed that the entire
-> > dirty folio is up to date....
-> > 
-> > Yes, there can be pre-existing *clean* folios (and clean
-> > partially up to date folios) in the page cache, but we won't
-> > have dirty partially up to date pages in the middle of the range
-> > we are scanning. Hence we only need to care about the edge cases
-> > (folios that overlap start and ends). We skip the partially
-> > written start block, and we always punch up to the end block if
-> > it is different from the last block we punched up to. If the end
-> > of the data spans into a dirty folio, we know that dirty range
-> > is up to date because the seek scan only returns ranges that are
-> > up to date. Hence we don't punch those partial blocks out....
-> > 
-> > Regardless, let's assume we have a racing write that has
-> > partially updated and dirtied a folio (because we've moved to
-> > XFS_IOLOCK_SHARED locking for writes). This case is already
-> > handled by the mapping_seek_hole_data() based iteration.
-> > 
-> > That is, the mapping_seek_hole_data() loop provides us with
-> > *discrete ranges of up to date data* that are independent of
-> > folio size, up-to-date range granularity, dirty range tracking,
-> > filesystem block size, etc.
-> > 
-> > Hence if the next discrete range we discover is in the same
-> > dirty folio as the previous discrete range of up to date data,
-> > we know we have a sub-folio sized hole in the data that is not
-> > up to date.  Because there is no data over this range, we have
-> > to punch out the underlying delalloc extent over that range. 
-> > 
-> > IOWs, the dirty state of the folio and/or the granularity of the
-> > dirty range tracking is irrelevant here - we know there was no
-> > data in the cache (dlean or dirty) over this range because it is
-> > discontiguous with the previous range of data returned.
-> > 
-> > IOWs, if we have this "up to date" map on a dirty folio like
-> > this:
-> > 
-> > Data		+-------+UUUUUUU+-------+UUUUUUU+-------+
-> > Extent map	+DDDDDDD+DDDDDDD+DDDDDDD+DDDDDDD+DDDDDDD+
-> > 
-> > Then the unrolled iteration and punching we do would look like
-> > this:
-> > 
-> > First iteration of the range:
-> > 
-> > punch_start: V +-------+UUUUUUU+-------+UUUUUUU+-------+
-> > 
-> > SEEK_DATA:		V +-------+UUUUUUU+-------+UUUUUUU+-------+
-> > SEEK_HOLE:			^ Data range:		+UUUUUUU+
-> > Punch range:	+-------+ Extent map:
-> > +-------+DDDDDDD+DDDDDDD+DDDDDDD+DDDDDDD+
-> > 
-> > Second iteration:
-> > 
-> > punch_start			V
-> > +-------+UUUUUUU+-------+UUUUUUU+-------+ SEEK_DATA:
-> > V +-------+UUUUUUU+-------+UUUUUUU+-------+ SEEK_HOLE:
-> > ^ Data range:				+UUUUUUU+ Punch
-> > range:			+-------+ Extent map:
-> > +-------+DDDDDDD+-------+DDDDDDD+DDDDDDD+
-> > 
-> > Third iteration:
-> > 
-> > punch_start					V
-> > +-------+UUUUUUU+-------+UUUUUUU+-------+ SEEK_DATA: - moves
-> > into next folio in cache ....  Punch range:
-> > +-------+ ......  Extent map:
-> > +-------+DDDDDDD+-------+DDDDDDD+-------+ ......  (to end of
-> > scan range or start of next data)
-> > 
-> > As you can see, this scan does not care about folio size,
-> > sub-folio range granularity or filesystem block sizes.  It also
-> > matches exactly how writeback handles dirty, partially up to
-> > date folios, so there's no stray delalloc blocks left around to
-> > be tripped over after failed or short writes occur.
-> > 
-> > Indeed, if we move to sub-folio dirty range tracking, we can
-> > simply add a mapping_seek_hole_data() variant that walks dirty
-> > ranges in the page cache rather than up to date ranges. Then we
-> > can remove the inner loop from this code that looks up folios to
-> > determine dirty state. The above algorithm does not change - we
-> > just walk from discrete range to discrete range punching the
-> > gaps between them....
-> > 
-> > IOWs, the algorithm is largely future proof - the only thing
-> > that needs to change if we change iomap to track sub-folio dirty
-> > ranges is how we check the data range for being dirty. That
-> > should be no surprise, really, the surprise should be that we
-> > can make some simple mods to page cache seek to remove the need
-> > for checking dirty state in this code altogether....
-> > 
-> > > That sort of state can be created by a prior read of the range
-> > > on a sub-page block size fs, or perhaps a racing async
-> > > readahead (via read fault of a lower offset..?), etc.
-> > 
-> > Yup, generic/346 exercises this racing unaligned, sub-folio mmap
-> > write vs write() case. This test, specifically, was the reason I
-> > moved to using mapping_seek_hole_data() - g/346 found an endless
-> > stream of bugs in the sub-multi-page-folio range iteration code
-> > I kept trying to write....
-> > 
-> > > I suspect this is not a serious error because the page is
-> > > dirty and writeback will thus convert the block. The only
-> > > exception to that I can see is if the block is beyond EOF
-> > > (consider a mapped read to a page that straddles EOF, followed
-> > > by a post-eof write that fails), writeback won't actually map
-> > > the block directly.
-> > 
-> > I don't think that can happen. iomap_write_failed() calls
-> > truncate_pagecache_range() to remove any newly instantiated
-> > cached data beyond the original EOF. Hence the delalloc punch
-> > will remove everything beyond the original EOF that was
-> > allocated for the failed write. Hence when we get to writeback
-> > we're not going to find any up-to-date data beyond the EOF block
-> > in the page cache, nor any stray delalloc blocks way beyond
-> > EOF....
-> > 
-> 
-> It can happen if the page straddles eof. I don't think much of the
-> above relates to the behavior I'm describing. This doesn't require
-> racing writes, theoretical shared write locking, the IOMAP_F_NEW
-> flag or core iteration algorithm are not major factors, etc.
-> 
-> It's easier to just use examples. Consider the following sequence
-> on a bsize=1k fs on a kernel with this patch series. Note that my
-> xfs_io is hacked up to turn 'pwrite -f' into a "fail" flag that
-> triggers the -EFAULT error check in iomap_write_iter() by passing
-> a bad user buffer:
-> 
-> # set eof and make sure entire page is uptodate (even posteof)
-> $XFS_IO_PROG -fc "truncate 1k" -c "mmap 0 4k" -c "mread 0 4k"
-> $file # do a delalloc and open/close cycle to set dirty release
-> $XFS_IO_PROG -c "pwrite 0 1" -c "close" -c "open $file" $file #
-> fail an appending write to a posteof, discontig, uptodate range on
-> already dirty page $XFS_IO_PROG -c "pwrite -f 2k 1" -c fsync -c
-> "fiemap -v" $file
-> 
-Firstly, can you tell me which patchset you reproduced this on? Just
-a vanilla kernel, thev version of the patchset in this thread or the
-latest one I sent out?
+From: Xu Panda <xu.panda@zte.com.cn>
 
-Secondly, can you please send a patch with that failed write
-functionality upstream for xfs_io - it is clearly useful.
+The implementation of strscpy() is more robust and safer.
+That's now the recommended way to copy NUL terminated strings.
 
-> wrote 1/1 bytes at offset 0
-> 1.000000 bytes, 1 ops; 0.0003 sec (3.255 KiB/sec and 3333.3333 ops/sec)
-> pwrite: Bad address
-> /mnt/file:
->  EXT: FILE-OFFSET      BLOCK-RANGE      TOTAL FLAGS
->    0: [0..1]:          22..23               2   0x0
->    1: [2..3]:          hole                 2
->    2: [4..5]:          0..1                 2   0x7
-> 
-> So clearly there's a posteof delalloc (FIEMAP_EXTENT_DELALLOC == 0x4) block
-> there that hasn't been written to.
+Signed-off-by: Xu Panda <xu.panda@zte.com.cn>
+Signed-off-by: Yang Yang <yang.yang29@zte.com>
+---
+ fs/vboxsf/super.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Ok, so this is failing before even iomap_write_begin() is called,
-so it's a failed write that has not touched page cache state, but
-has allocated a delalloc block beyond EOF.
-
-This is a case that writeback handles because writeback
-is supposed skip writeback for pages and blocks beyond EOF. i.e.
-iomap_writepage_map() is passed the current EOF to terminate the
-writeback mapping loop when the folio being written back spans EOF.
-Hence iomap_writepage_map never walks past EOF and so does not ever
-iterate filesystem blocks that contain up to date data beyond in the
-page cache beyond EOF. That's why writeback leaves that stray
-delalloc block beyond, even though it's covered by up to date data.
-
-IOWs, it appears that the problem here is that the page cache
-considers data in the folio beyond EOF to be up to date and contain
-data, whilst most filesystems do not consider data beyond EOF to be
-valid. This means there is a boundary condition that
-mapping_seek_hole_data() doesn't handle correctly - it completely
-ignores EOF and so SEEK_DATA for an offset past EOF will report data
-beyond EOF if the file has been mmap()d and the last folio faulted
-in.
-
-This specific boundary condition behaviour is hidden by
-iomap_seek_data() and shmem_file_llseek() by not allowing seeks to
-start and/or end beyond EOF. Hence they never calls
-mapping_seek_hole_data() with a start byte beyond EOF and so will
-not ever try to find data in the page caceh beyond EOF.
-
-That looks easy enough to fix - just consider any data range
-returned that is beyond i_size_read() to require punching, and then
-the semantics match writeback ignoring anything beyond EOF....
-
-> I call this a landmine because it's an
-> unexpected/untracked instance of post-eof delalloc. I.e., post-eof block
-> reclamation won't pick it up because the inode was never tagged for speculative
-> preallocation:
-
-Of course - this wasn't allocated by speculative preallocation -
-that doesn't kick in until the file is >64kB in length, so
-xfs_bmapi_reserve_delalloc() doesn't set the flag saying there's
-post-eof preallocation to trim away on the inode.
-
-> > > It may convert if contiguous with delalloc blocks inside EOF (and
-> > > sufficiently sized physical extents exist), or even if not, should
-> > > still otherwise be cleaned up by the various other means we
-> > > already have to manage post-eof blocks.
-> > >
-> > > So IOW there's a tradeoff being made here for possible spurious
-> > > allocation and I/O and a subtle dependency on writeback that
-> > > should probably be documented somewhere.
-> > 
-> > As per above, I don't think there is any spurious/stale allocation
-> > left behind by the punch code, nor is there any dependency on
-> > writeback to ignore it such issues.
-> > 
-> 
-> The same sort of example as above (but within eof) demonstrates the
-> writeback dependency. I.e., with this series alone the punch code leaves
-> behind an in-eof uptodate delalloc block, but writeback comes along and
-> maps it regardless because it also only has uptodate granularity within
-> the dirty folio.
-
-This "unflushable delalloc extent" case can't happen within EOF. The
-page fault initialises the folio full of zeroes, so when we get the
-failed write, the only change is that we now have a single delalloc
-block within EOF that writeback will iterate over, allocate and
-write all the up to date zeros to it.
-
-Sure, this error path might cause a small amount of extra IO over
-the dirty folio, but it does not cause any other sort of issue.
-THere are no stray delalloc blocks, there are no data corruption
-issues, there are no stale data exposure issues, etc. Leaving a
-delalloc block under up-to-date page cache data should not cause
-a user vsible issue.
-
-> When writeback changes to only map dirty sub-ranges, clearly that no
-> longer happens and the landmine turns into a stale delalloc leak. This
-> is also easy to reproduce with the last dirty range RFC patches pulled
-> on top of this series.
-
-No, not even then. If we have sub-folio dirty ranges, we know this
-failed write range is *still clean* and so we'll punch it out,
-regardless of whether it is inside or outside EOF.
-
-> It may be possible to address that by doing more aggressive punching
-> past the i_size boundary here, but that comes with other tradeoffs.
-
-Tradeoffs such as .... ?
-
-> For example, if the target folio of a failed write
-> was already dirty and the target (sub-folio) range was previously an
-> Uptodate hole before the failing write may have performed delayed
-> allocation, we have no choice but to skip the punch for that sub-range
-> of the folio because we can't tell whether sub-folio Uptodate ranges
-> were actually written to or not. This means that delalloc block
-> allocations may persist for writes that never succeeded.
-
-I can add something like that, though I'd need to make sure it is
-clear that this is not a data corruption vector, just an side effect
-of a highly unlikely set of corner case conditions we only care
-about handling without corruption, not efficiency or performance.
-
-Cheers,
-
-Dave.
+diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
+index d2f6df69f611..1fb8f4df60cb 100644
+--- a/fs/vboxsf/super.c
++++ b/fs/vboxsf/super.c
+@@ -176,7 +176,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
+ 	}
+ 	folder_name->size = size;
+ 	folder_name->length = size - 1;
+-	strlcpy(folder_name->string.utf8, fc->source, size);
++	strscpy(folder_name->string.utf8, fc->source, size);
+ 	err = vboxsf_map_folder(folder_name, &sbi->root);
+ 	kfree(folder_name);
+ 	if (err) {
 -- 
-Dave Chinner
-david@fromorbit.com
+2.15.2
