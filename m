@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ECAF063330B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 03:18:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FB01633312
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 03:18:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232605AbiKVCSN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Nov 2022 21:18:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42770 "EHLO
+        id S231587AbiKVCS1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Nov 2022 21:18:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42682 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232616AbiKVCRO (ORCPT
+        with ESMTP id S231464AbiKVCRj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Nov 2022 21:17:14 -0500
-Received: from mail-yb1-xb4a.google.com (mail-yb1-xb4a.google.com [IPv6:2607:f8b0:4864:20::b4a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 65D28E6775
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 18:16:22 -0800 (PST)
-Received: by mail-yb1-xb4a.google.com with SMTP id k7-20020a256f07000000b006cbcc030bc8so12554827ybc.18
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 18:16:22 -0800 (PST)
+        Mon, 21 Nov 2022 21:17:39 -0500
+Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E23AE6EEC
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 18:16:24 -0800 (PST)
+Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-39967085ae9so75182047b3.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 18:16:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ydyHUSUVRLNupkLXr6P8WzdsU341BmaDDMAW+LRksTY=;
-        b=k+KyxhZMTRllx3lQFyjWbf+28UVtsTsFqm5n+/aW2I9WhizNoXiOdaaQkDKJd5Rj0u
-         hO64pYowvIgPhLWK5B50w4OIjBXWqMsmXMsK3BpMofw9xupyoMj8iGDFjKiS5ZLGtIQM
-         vf2CqSanuhwMpqzaA6j2GmjhW+C6WXaqn+aCrvwrJyf+Bg+VKdVJX3zH/5z95QjOmAYR
-         6oG/oLULfWKPkw2tcp6VjKDSHdn66CHYe0CqwzBwuBYF2/GVTIHJUuPWJD7jLAuH3wlr
-         DX4zRU8SXoKcbpHwtFdX+EOOV3uwqJ+eie1fI7Ta+5aREznvRvC2rn3Gi6vz7/pJw9gI
-         dVYA==
+        bh=mZmovE66ZdqhOmBbykw9B8nSGupb/ebR6gSpmGb5LGI=;
+        b=o7bbni3nAcZylijRv69Vs5PD7bchjW2PbDqhDwTIf/E1XkYKIhh8XNGNi/YPCo0HZF
+         pNkTB/LJmEZ1oIf8pbwqXf1yAqIu1gby/ZQSrozaSQFqMLUNSQ+G4wPg2+s1okCgHcpI
+         rCdLKMiB+OugLqqK1dHnnlANqrm/izNKItafjIuJM84hklmpSFFZ0tGtA1F95XtRip9p
+         0xy1xmnk9oFyZrX0QZB5Z/1zJsrsFzwy1XXnJge9o59l+jdFndAI/TDt2xseMgc30VLg
+         gl1+UHW8205lO3C4cSBQFSH8IuXm8TsTbL4nFlsnurGz1y19fyCqMnlIbqZ4Hlvv83V+
+         J/MA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ydyHUSUVRLNupkLXr6P8WzdsU341BmaDDMAW+LRksTY=;
-        b=uOSFwuWK7AL05sIV4L4za5g4GlIYWMx6OkCatNjq0bNi+5ecu/G4SGDITmn016ksjm
-         LPMypTLdIHhjukWgTWs78N4Azwavq+AW9/RZ/i0+Suzxyw0EVJdY78uUhwGM1NvRkqDr
-         1cGQ/z4WXsvXG9djR/Bm/YsBLtgi7m8WYIx7GWZ+asSDC8zy0dFgieJbnHnaWpGlXLyk
-         gpgtjC4S9iRXIH1VGInBHDANNw1bKdBG1ta6FQfZRKYd4pZmhStVrw4cKJDiMaBN72XN
-         mRL5mGu+h1fxyCls0soRk/LDe+1mdsrCaEw02LQsO1stMAZrfzY5iRJFf2sXhyNZG/Ud
-         RLpA==
-X-Gm-Message-State: ANoB5pkcYYsMpr+7n3OJF5sg/lqvG0/Ie/69twDLUcHc8H/CLpFX5wEd
-        TQn+bDKgsedilrlXs1lqD9Fks4GZhkA=
-X-Google-Smtp-Source: AA0mqf6RY+vOUOe+eEVuThyyVpCLoTK7JOhwb/Ik9aUtjrjQNd+3UCndd6B+au4Ss8OmcBoTTY5ZlCo+/Nc=
+        bh=mZmovE66ZdqhOmBbykw9B8nSGupb/ebR6gSpmGb5LGI=;
+        b=KBwQi8etVHGQygkrSeP43nqJv1IqamPUkbuPrQhLXSC8/FLHgYX0r4i4pCQNYne7yn
+         VPdeP+YYvghAYtw4ZZj0vdQXDOmw26kWngIKQOnl9Y6scW70QQjOx9QidppBznnVc465
+         VbXWb7uGskPxvpqx23F2wV/3b4ubElGy5OzdnGjWq43L/MR6giHTvJY+QpZysTPskntp
+         0VqIVeObNINFZxVFEm3CI5ZnfVnl6UTP4goquhO192wX2h935EP5/JYG7KmRCUYm+nmA
+         hf2u/XsMPSZOeTP7hEfnQEsu46Re8koo0g6yCYDmMD+7gOgrEmdIF8A1Vz2LinpHZ8pL
+         u36g==
+X-Gm-Message-State: ANoB5pn2+luO3eAY3V5+4IsIiUTAXAudmFt8b7N885KPqZYddtsbyZlr
+        XDyCqO2LlB69XDRYpfZrXn3ynY0fmNs=
+X-Google-Smtp-Source: AA0mqf6qA2TG/uVflDd0veqW/Cs6jYwHv7pDIhvA1ecR1WdwREWm6rcSIV+IaIpdMk2s/nh3ZLJU6vjVKSk=
 X-Received: from drosen.mtv.corp.google.com ([2620:15c:211:200:8539:aadd:13be:6e82])
- (user=drosen job=sendgmr) by 2002:a0d:ea96:0:b0:3a6:4f96:2639 with SMTP id
- t144-20020a0dea96000000b003a64f962639mr1916559ywe.440.1669083381448; Mon, 21
- Nov 2022 18:16:21 -0800 (PST)
-Date:   Mon, 21 Nov 2022 18:15:27 -0800
+ (user=drosen job=sendgmr) by 2002:a05:6902:50c:b0:6dd:df31:a7a2 with SMTP id
+ x12-20020a056902050c00b006dddf31a7a2mr19543665ybs.635.1669083383456; Mon, 21
+ Nov 2022 18:16:23 -0800 (PST)
+Date:   Mon, 21 Nov 2022 18:15:28 -0800
 In-Reply-To: <20221122021536.1629178-1-drosen@google.com>
 Mime-Version: 1.0
 References: <20221122021536.1629178-1-drosen@google.com>
 X-Mailer: git-send-email 2.38.1.584.g0f3c55d4c2-goog
-Message-ID: <20221122021536.1629178-13-drosen@google.com>
-Subject: [RFC PATCH v2 12/21] fuse-bpf: Support mknod/unlink/mkdir/rmdir
+Message-ID: <20221122021536.1629178-14-drosen@google.com>
+Subject: [RFC PATCH v2 13/21] fuse-bpf: Add support for read/write iter
 From:   Daniel Rosenberg <drosen@google.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
@@ -63,7 +63,7 @@ Cc:     Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,426 +71,563 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+This includes adjustments from Amir Goldstein's patch to FUSE
+Passthrough
+
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
 Signed-off-by: Paul Lawrence <paullawrence@google.com>
 ---
- fs/fuse/backing.c | 306 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/dir.c     |  14 +++
- fs/fuse/fuse_i.h  |  24 ++++
- 3 files changed, 344 insertions(+)
+ fs/fuse/backing.c | 377 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/fuse/control.c |   2 +-
+ fs/fuse/file.c    |   8 +
+ fs/fuse/fuse_i.h  |  19 ++-
+ fs/fuse/inode.c   |  13 ++
+ 5 files changed, 417 insertions(+), 2 deletions(-)
 
 diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
-index c8e95abc04aa..a7505d6887e0 100644
+index a7505d6887e0..425815d7f5dc 100644
 --- a/fs/fuse/backing.c
 +++ b/fs/fuse/backing.c
-@@ -205,6 +205,13 @@ static void fuse_stat_to_attr(struct fuse_conn *fc, struct inode *inode,
- 	attr->blksize = 1 << blkbits;
- }
+@@ -10,6 +10,7 @@
+ #include <linux/file.h>
+ #include <linux/fs_stack.h>
+ #include <linux/namei.h>
++#include <linux/uio.h>
  
-+/*
-+ * Unused io passed to fuse_bpf_backing when io operation needs no scratch space
-+ */
-+struct fuse_unused_io {
-+	int unused;
+ /*
+  * expression statement to wrap the backing filter logic
+@@ -74,6 +75,89 @@
+ 	handled;							\
+ })
+ 
++#define FUSE_BPF_IOCB_MASK (IOCB_APPEND | IOCB_DSYNC | IOCB_HIPRI | IOCB_NOWAIT | IOCB_SYNC)
++
++struct fuse_bpf_aio_req {
++	struct kiocb iocb;
++	refcount_t ref;
++	struct kiocb *iocb_orig;
++	struct timespec64 pre_atime;
 +};
 +
- struct fuse_open_io {
- 	struct fuse_open_in foi;
- 	struct fuse_open_out foo;
-@@ -930,6 +937,305 @@ int fuse_revalidate_backing(struct dentry *entry, unsigned int flags)
- 	return 1;
++static struct kmem_cache *fuse_bpf_aio_request_cachep;
++
++static void fuse_file_accessed(struct file *dst_file, struct file *src_file)
++{
++	struct inode *dst_inode;
++	struct inode *src_inode;
++
++	if (dst_file->f_flags & O_NOATIME)
++		return;
++
++	dst_inode = file_inode(dst_file);
++	src_inode = file_inode(src_file);
++
++	if ((!timespec64_equal(&dst_inode->i_mtime, &src_inode->i_mtime) ||
++	     !timespec64_equal(&dst_inode->i_ctime, &src_inode->i_ctime))) {
++		dst_inode->i_mtime = src_inode->i_mtime;
++		dst_inode->i_ctime = src_inode->i_ctime;
++	}
++
++	touch_atime(&dst_file->f_path);
++}
++
++static void fuse_copyattr(struct file *dst_file, struct file *src_file)
++{
++	struct inode *dst = file_inode(dst_file);
++	struct inode *src = file_inode(src_file);
++
++	dst->i_atime = src->i_atime;
++	dst->i_mtime = src->i_mtime;
++	dst->i_ctime = src->i_ctime;
++	i_size_write(dst, i_size_read(src));
++	fuse_invalidate_attr(dst);
++}
++
++static void fuse_file_start_write(struct file *fuse_file, struct file *backing_file,
++				  loff_t pos, size_t count)
++{
++	struct inode *inode = file_inode(fuse_file);
++	struct fuse_inode *fi = get_fuse_inode(inode);
++
++	if (inode->i_size < pos + count)
++		set_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
++
++	file_start_write(backing_file);
++}
++
++static void fuse_file_end_write(struct file *fuse_file, struct file *backing_file,
++				loff_t pos, size_t res)
++{
++	struct inode *inode = file_inode(fuse_file);
++	struct fuse_inode *fi = get_fuse_inode(inode);
++
++	file_end_write(backing_file);
++
++	if (res > 0)
++		fuse_write_update_attr(inode, pos, res);
++
++	clear_bit(FUSE_I_SIZE_UNSTABLE, &fi->state);
++	fuse_invalidate_attr(inode);
++}
++
++static void fuse_file_start_read(struct file *backing_file, struct timespec64 *pre_atime)
++{
++	*pre_atime = file_inode(backing_file)->i_atime;
++}
++
++static void fuse_file_end_read(struct file *fuse_file, struct file *backing_file,
++			  struct timespec64 *pre_atime)
++{
++	/* Mimic atime update policy of passthrough inode, not the value */
++	if (!timespec64_equal(&file_inode(backing_file)->i_atime, pre_atime))
++		fuse_invalidate_atime(file_inode(fuse_file));
++}
++
+ static void fuse_get_backing_path(struct file *file, struct path *path)
+ {
+ 	path_get(&file->f_path);
+@@ -656,6 +740,283 @@ int fuse_bpf_lseek(loff_t *out, struct inode *inode, struct file *file, loff_t o
+ 				file, offset, whence);
  }
  
-+static int fuse_mknod_initialize_in(struct fuse_args *fa, struct fuse_mknod_in *fmi,
-+				    struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev)
++static inline void fuse_bpf_aio_put(struct fuse_bpf_aio_req *aio_req)
 +{
-+	*fmi = (struct fuse_mknod_in) {
-+		.mode = mode,
-+		.rdev = new_encode_dev(rdev),
-+		.umask = current_umask(),
++	if (refcount_dec_and_test(&aio_req->ref))
++		kmem_cache_free(fuse_bpf_aio_request_cachep, aio_req);
++}
++
++static void fuse_bpf_aio_cleanup_handler(struct fuse_bpf_aio_req *aio_req, long res)
++{
++	struct kiocb *iocb = &aio_req->iocb;
++	struct kiocb *iocb_orig = aio_req->iocb_orig;
++	struct file *filp = iocb->ki_filp;
++	struct file *fuse_filp = iocb_orig->ki_filp;
++
++	if (iocb->ki_flags & IOCB_WRITE) {
++		__sb_writers_acquired(file_inode(iocb->ki_filp)->i_sb,
++				      SB_FREEZE_WRITE);
++		fuse_file_end_write(iocb_orig->ki_filp, iocb->ki_filp, iocb->ki_pos, res);
++	} else {
++		fuse_file_end_read(fuse_filp, filp, &aio_req->pre_atime);
++	}
++	iocb_orig->ki_pos = iocb->ki_pos;
++	fuse_bpf_aio_put(aio_req);
++}
++
++static void fuse_bpf_aio_rw_complete(struct kiocb *iocb, long res)
++{
++	struct fuse_bpf_aio_req *aio_req =
++		container_of(iocb, struct fuse_bpf_aio_req, iocb);
++	struct kiocb *iocb_orig = aio_req->iocb_orig;
++
++	fuse_bpf_aio_cleanup_handler(aio_req, res);
++	iocb_orig->ki_complete(iocb_orig, res);
++}
++
++struct fuse_read_iter_out {
++	uint64_t ret;
++};
++struct fuse_file_read_iter_io {
++	struct fuse_read_in fri;
++	struct fuse_read_iter_out frio;
++};
++
++static int fuse_file_read_iter_initialize_in(struct fuse_args *fa, struct fuse_file_read_iter_io *fri,
++					     struct kiocb *iocb, struct iov_iter *to)
++{
++	struct file *file = iocb->ki_filp;
++	struct fuse_file *ff = file->private_data;
++
++	fri->fri = (struct fuse_read_in) {
++		.fh = ff->fh,
++		.offset = iocb->ki_pos,
++		.size = to->count,
 +	};
++
++	/* TODO we can't assume 'to' is a kvec */
++	/* TODO we also can't assume the vector has only one component */
 +	*fa = (struct fuse_args) {
-+		.nodeid = get_node_id(dir),
-+		.opcode = FUSE_MKNOD,
-+		.in_numargs = 2,
-+		.in_args[0] = (struct fuse_in_arg) {
-+			.size = sizeof(*fmi),
-+			.value = fmi,
-+		},
-+		.in_args[1] = (struct fuse_in_arg) {
-+			.size = entry->d_name.len + 1,
-+			.value =  (void *) entry->d_name.name,
-+		},
-+	};
-+
-+	return 0;
-+}
-+
-+static int fuse_mknod_initialize_out(struct fuse_args *fa, struct fuse_mknod_in *fmi,
-+				     struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev)
-+{
-+	return 0;
-+}
-+
-+static int fuse_mknod_backing(struct fuse_args *fa, int *out,
-+			      struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev)
-+{
-+	const struct fuse_mknod_in *fmi = fa->in_args[0].value;
-+	struct fuse_inode *fuse_inode = get_fuse_inode(dir);
-+	struct inode *backing_inode = fuse_inode->backing_inode;
-+	struct path backing_path;
-+	struct inode *inode = NULL;
-+
-+	get_fuse_backing_path(entry, &backing_path);
-+	if (!backing_path.dentry)
-+		return -EBADF;
-+
-+	inode_lock_nested(backing_inode, I_MUTEX_PARENT);
-+	mode = fmi->mode;
-+	if (!IS_POSIXACL(backing_inode))
-+		mode &= ~fmi->umask;
-+	*out = vfs_mknod(&init_user_ns, backing_inode, backing_path.dentry, mode,
-+			new_decode_dev(fmi->rdev));
-+	inode_unlock(backing_inode);
-+	if (*out)
-+		goto out;
-+	if (d_really_is_negative(backing_path.dentry) ||
-+	    unlikely(d_unhashed(backing_path.dentry))) {
-+		*out = -EINVAL;
-+		/**
-+		 * TODO: overlayfs responds to this situation with a
-+		 * lookupOneLen. Should we do that too?
++		.opcode = FUSE_READ,
++		.nodeid = ff->nodeid,
++		.in_numargs = 1,
++		.in_args[0].size = sizeof(fri->fri),
++		.in_args[0].value = &fri->fri,
++		/*
++		 * TODO Design this properly.
++		 * Possible approach: do not pass buf to bpf
++		 * If going to userland, do a deep copy
++		 * For extra credit, do that to/from the vector, rather than
++		 * making an extra copy in the kernel
 +		 */
-+		goto out;
-+	}
-+	inode = fuse_iget_backing(dir->i_sb, fuse_inode->nodeid, backing_inode);
-+	if (IS_ERR(inode)) {
-+		*out = PTR_ERR(inode);
-+		goto out;
-+	}
-+	d_instantiate(entry, inode);
-+out:
-+	path_put(&backing_path);
-+	return *out;
-+}
-+
-+static int fuse_mknod_finalize(struct fuse_args *fa, int *out,
-+			       struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev)
-+{
-+	return 0;
-+}
-+
-+int fuse_bpf_mknod(int *out, struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev)
-+{
-+	return fuse_bpf_backing(dir, struct fuse_mknod_in, out,
-+				fuse_mknod_initialize_in, fuse_mknod_initialize_out,
-+				fuse_mknod_backing, fuse_mknod_finalize,
-+				dir, entry, mode, rdev);
-+}
-+
-+static int fuse_mkdir_initialize_in(struct fuse_args *fa, struct fuse_mkdir_in *fmi,
-+				    struct inode *dir, struct dentry *entry, umode_t mode)
-+{
-+	*fmi = (struct fuse_mkdir_in) {
-+		.mode = mode,
-+		.umask = current_umask(),
-+	};
-+	*fa = (struct fuse_args) {
-+		.nodeid = get_node_id(dir),
-+		.opcode = FUSE_MKDIR,
-+		.in_numargs = 2,
-+		.in_args[0] = (struct fuse_in_arg) {
-+			.size = sizeof(*fmi),
-+			.value = fmi,
-+		},
-+		.in_args[1] = (struct fuse_in_arg) {
-+			.size = entry->d_name.len + 1,
-+			.value =  (void *) entry->d_name.name,
-+		},
 +	};
 +
 +	return 0;
 +}
 +
-+static int fuse_mkdir_initialize_out(struct fuse_args *fa, struct fuse_mkdir_in *fmi,
-+				     struct inode *dir, struct dentry *entry, umode_t mode)
++static int fuse_file_read_iter_initialize_out(struct fuse_args *fa, struct fuse_file_read_iter_io *fri,
++					      struct kiocb *iocb, struct iov_iter *to)
 +{
++	fri->frio = (struct fuse_read_iter_out) {
++		.ret = fri->fri.size,
++	};
++
++	fa->out_numargs = 1;
++	fa->out_args[0].size = sizeof(fri->frio);
++	fa->out_args[0].value = &fri->frio;
++
 +	return 0;
 +}
 +
-+static int fuse_mkdir_backing(struct fuse_args *fa, int *out,
-+			      struct inode *dir, struct dentry *entry, umode_t mode)
++static int fuse_file_read_iter_backing(struct fuse_args *fa, ssize_t *out,
++				       struct kiocb *iocb, struct iov_iter *to)
 +{
-+	const struct fuse_mkdir_in *fmi = fa->in_args[0].value;
-+	struct fuse_inode *fuse_inode = get_fuse_inode(dir);
-+	struct inode *backing_inode = fuse_inode->backing_inode;
-+	struct path backing_path;
-+	struct inode *inode = NULL;
-+	struct dentry *d;
++	struct fuse_read_iter_out *frio = fa->out_args[0].value;
++	struct file *file = iocb->ki_filp;
++	struct fuse_file *ff = file->private_data;
 +
-+	get_fuse_backing_path(entry, &backing_path);
-+	if (!backing_path.dentry)
-+		return -EBADF;
++	if (!iov_iter_count(to))
++		return 0;
 +
-+	inode_lock_nested(backing_inode, I_MUTEX_PARENT);
-+	mode = fmi->mode;
-+	if (!IS_POSIXACL(backing_inode))
-+		mode &= ~fmi->umask;
-+	*out = vfs_mkdir(&init_user_ns, backing_inode, backing_path.dentry,
-+			mode);
-+	if (*out)
-+		goto out;
-+	if (d_really_is_negative(backing_path.dentry) ||
-+	    unlikely(d_unhashed(backing_path.dentry))) {
-+		d = lookup_one_len(entry->d_name.name,
-+				   backing_path.dentry->d_parent,
-+				   entry->d_name.len);
-+		if (IS_ERR(d)) {
-+			*out = PTR_ERR(d);
++	if ((iocb->ki_flags & IOCB_DIRECT) &&
++	    (!ff->backing_file->f_mapping->a_ops ||
++	     !ff->backing_file->f_mapping->a_ops->direct_IO))
++		return -EINVAL;
++
++	/* TODO This just plain ignores any change to fuse_read_in */
++	if (is_sync_kiocb(iocb)) {
++		struct timespec64 pre_atime;
++
++		fuse_file_start_read(ff->backing_file, &pre_atime);
++		*out = vfs_iter_read(ff->backing_file, to, &iocb->ki_pos,
++				iocb_to_rw_flags(iocb->ki_flags, FUSE_BPF_IOCB_MASK));
++		fuse_file_end_read(file, ff->backing_file, &pre_atime);
++	} else {
++		struct fuse_bpf_aio_req *aio_req;
++
++		*out = -ENOMEM;
++		aio_req = kmem_cache_zalloc(fuse_bpf_aio_request_cachep, GFP_KERNEL);
++		if (!aio_req)
 +			goto out;
-+		}
-+		dput(backing_path.dentry);
-+		backing_path.dentry = d;
++
++		aio_req->iocb_orig = iocb;
++		fuse_file_start_read(ff->backing_file, &aio_req->pre_atime);
++		kiocb_clone(&aio_req->iocb, iocb, ff->backing_file);
++		aio_req->iocb.ki_complete = fuse_bpf_aio_rw_complete;
++		refcount_set(&aio_req->ref, 2);
++		*out = vfs_iocb_iter_read(ff->backing_file, &aio_req->iocb, to);
++		fuse_bpf_aio_put(aio_req);
++		if (*out != -EIOCBQUEUED)
++			fuse_bpf_aio_cleanup_handler(aio_req, *out);
 +	}
-+	inode = fuse_iget_backing(dir->i_sb, fuse_inode->nodeid, backing_inode);
-+	if (IS_ERR(inode)) {
-+		*out = PTR_ERR(inode);
-+		goto out;
-+	}
-+	d_instantiate(entry, inode);
++
++	frio->ret = *out;
++
++	/* TODO Need to point value at the buffer for post-modification */
++
 +out:
-+	inode_unlock(backing_inode);
-+	path_put(&backing_path);
++	fuse_file_accessed(file, ff->backing_file);
++
 +	return *out;
 +}
 +
-+static int fuse_mkdir_finalize(struct fuse_args *fa, int *out,
-+			       struct inode *dir, struct dentry *entry, umode_t mode)
++static int fuse_file_read_iter_finalize(struct fuse_args *fa, ssize_t *out,
++					struct kiocb *iocb, struct iov_iter *to)
 +{
++	struct fuse_read_iter_out *frio = fa->out_args[0].value;
++
++	*out = frio->ret;
++
 +	return 0;
 +}
 +
-+int fuse_bpf_mkdir(int *out, struct inode *dir, struct dentry *entry, umode_t mode)
++int fuse_bpf_file_read_iter(ssize_t *out, struct inode *inode, struct kiocb *iocb, struct iov_iter *to)
 +{
-+	return fuse_bpf_backing(dir, struct fuse_mkdir_in, out,
-+				fuse_mkdir_initialize_in, fuse_mkdir_initialize_out,
-+				fuse_mkdir_backing, fuse_mkdir_finalize,
-+				dir, entry, mode);
++	return fuse_bpf_backing(inode, struct fuse_file_read_iter_io, out,
++				fuse_file_read_iter_initialize_in,
++				fuse_file_read_iter_initialize_out,
++				fuse_file_read_iter_backing,
++				fuse_file_read_iter_finalize,
++				iocb, to);
 +}
 +
-+static int fuse_rmdir_initialize_in(struct fuse_args *fa, struct fuse_unused_io *unused,
-+				    struct inode *dir, struct dentry *entry)
++struct fuse_write_iter_out {
++	uint64_t ret;
++};
++struct fuse_file_write_iter_io {
++	struct fuse_write_in fwi;
++	struct fuse_write_out fwo;
++	struct fuse_write_iter_out fwio;
++};
++
++static int fuse_file_write_iter_initialize_in(struct fuse_args *fa,
++					      struct fuse_file_write_iter_io *fwio,
++					      struct kiocb *iocb, struct iov_iter *from)
 +{
++	struct file *file = iocb->ki_filp;
++	struct fuse_file *ff = file->private_data;
++
++	*fwio = (struct fuse_file_write_iter_io) {
++		.fwi.fh = ff->fh,
++		.fwi.offset = iocb->ki_pos,
++		.fwi.size = from->count,
++	};
++
++	/* TODO we can't assume 'from' is a kvec */
 +	*fa = (struct fuse_args) {
-+		.nodeid = get_node_id(dir),
-+		.opcode = FUSE_RMDIR,
-+		.in_numargs = 1,
-+		.in_args[0] = (struct fuse_in_arg) {
-+			.size = entry->d_name.len + 1,
-+			.value =  (void *) entry->d_name.name,
-+		},
++		.opcode = FUSE_WRITE,
++		.nodeid = ff->nodeid,
++		.in_numargs = 2,
++		.in_args[0].size = sizeof(fwio->fwi),
++		.in_args[0].value = &fwio->fwi,
++		.in_args[1].size = fwio->fwi.size,
++		.in_args[1].value = from->kvec->iov_base,
 +	};
 +
 +	return 0;
 +}
 +
-+static int fuse_rmdir_initialize_out(struct fuse_args *fa, struct fuse_unused_io *unused,
-+				     struct inode *dir, struct dentry *entry)
++static int fuse_file_write_iter_initialize_out(struct fuse_args *fa,
++					       struct fuse_file_write_iter_io *fwio,
++					       struct kiocb *iocb, struct iov_iter *from)
 +{
-+	return 0;
-+}
-+
-+static int fuse_rmdir_backing(struct fuse_args *fa, int *out,
-+			      struct inode *dir, struct dentry *entry)
-+{
-+	struct path backing_path;
-+	struct dentry *backing_parent_dentry;
-+	struct inode *backing_inode;
-+
-+	get_fuse_backing_path(entry, &backing_path);
-+	if (!backing_path.dentry)
-+		return -EBADF;
-+
-+	backing_parent_dentry = dget_parent(backing_path.dentry);
-+	backing_inode = d_inode(backing_parent_dentry);
-+
-+	inode_lock_nested(backing_inode, I_MUTEX_PARENT);
-+	*out = vfs_rmdir(&init_user_ns, backing_inode, backing_path.dentry);
-+	inode_unlock(backing_inode);
-+
-+	dput(backing_parent_dentry);
-+	if (!*out)
-+		d_drop(entry);
-+	path_put(&backing_path);
-+	return *out;
-+}
-+
-+static int fuse_rmdir_finalize(struct fuse_args *fa, int *out, struct inode *dir, struct dentry *entry)
-+{
-+	return 0;
-+}
-+
-+int fuse_bpf_rmdir(int *out, struct inode *dir, struct dentry *entry)
-+{
-+	return fuse_bpf_backing(dir, struct fuse_unused_io, out,
-+				fuse_rmdir_initialize_in, fuse_rmdir_initialize_out,
-+				fuse_rmdir_backing, fuse_rmdir_finalize,
-+				dir, entry);
-+}
-+
-+static int fuse_unlink_initialize_in(struct fuse_args *fa, struct fuse_unused_io *unused,
-+				     struct inode *dir, struct dentry *entry)
-+{
-+	*fa = (struct fuse_args) {
-+		.nodeid = get_node_id(dir),
-+		.opcode = FUSE_UNLINK,
-+		.in_numargs = 1,
-+		.in_args[0] = (struct fuse_in_arg) {
-+			.size = entry->d_name.len + 1,
-+			.value =  (void *) entry->d_name.name,
-+		},
-+	};
++	/* TODO we can't assume 'from' is a kvec */
++	fa->out_numargs = 1;
++	fa->out_args[0].size = sizeof(fwio->fwio);
++	fa->out_args[0].value = &fwio->fwio;
 +
 +	return 0;
 +}
 +
-+static int fuse_unlink_initialize_out(struct fuse_args *fa, struct fuse_unused_io *unused,
-+				      struct inode *dir, struct dentry *entry)
++static int fuse_file_write_iter_backing(struct fuse_args *fa, ssize_t *out,
++					struct kiocb *iocb, struct iov_iter *from)
 +{
++	struct file *file = iocb->ki_filp;
++	struct fuse_file *ff = file->private_data;
++	struct fuse_write_iter_out *fwio = fa->out_args[0].value;
++	ssize_t count = iov_iter_count(from);
++
++	if (!count)
++		return 0;
++
++	/* TODO This just plain ignores any change to fuse_write_in */
++	/* TODO uint32_t seems smaller than ssize_t.... right? */
++	inode_lock(file_inode(file));
++
++	fuse_copyattr(file, ff->backing_file);
++
++	if (is_sync_kiocb(iocb)) {
++		fuse_file_start_write(file, ff->backing_file, iocb->ki_pos, count);
++		*out = vfs_iter_write(ff->backing_file, from, &iocb->ki_pos,
++					   iocb_to_rw_flags(iocb->ki_flags, FUSE_BPF_IOCB_MASK));
++		fuse_file_end_write(file, ff->backing_file, iocb->ki_pos, *out);
++	} else {
++		struct fuse_bpf_aio_req *aio_req;
++
++		*out = -ENOMEM;
++		aio_req = kmem_cache_zalloc(fuse_bpf_aio_request_cachep, GFP_KERNEL);
++		if (!aio_req)
++			goto out;
++
++		fuse_file_start_write(file, ff->backing_file, iocb->ki_pos, count);
++		__sb_writers_release(file_inode(ff->backing_file)->i_sb, SB_FREEZE_WRITE);
++		aio_req->iocb_orig = iocb;
++		kiocb_clone(&aio_req->iocb, iocb, ff->backing_file);
++		aio_req->iocb.ki_complete = fuse_bpf_aio_rw_complete;
++		refcount_set(&aio_req->ref, 2);
++		*out = vfs_iocb_iter_write(ff->backing_file, &aio_req->iocb, from);
++		fuse_bpf_aio_put(aio_req);
++		if (*out != -EIOCBQUEUED)
++			fuse_bpf_aio_cleanup_handler(aio_req, *out);
++	}
++
++out:
++	inode_unlock(file_inode(file));
++	fwio->ret = *out;
++	if (*out < 0)
++		return *out;
 +	return 0;
 +}
 +
-+static int fuse_unlink_backing(struct fuse_args *fa, int *out, struct inode *dir, struct dentry *entry)
++static int fuse_file_write_iter_finalize(struct fuse_args *fa, ssize_t *out,
++					 struct kiocb *iocb, struct iov_iter *from)
 +{
-+	struct path backing_path;
-+	struct dentry *backing_parent_dentry;
-+	struct inode *backing_inode;
++	struct fuse_write_iter_out *fwio = fa->out_args[0].value;
 +
-+	get_fuse_backing_path(entry, &backing_path);
-+	if (!backing_path.dentry)
-+		return -EBADF;
-+
-+	/* TODO Not sure if we should reverify like overlayfs, or get inode from d_parent */
-+	backing_parent_dentry = dget_parent(backing_path.dentry);
-+	backing_inode = d_inode(backing_parent_dentry);
-+
-+	inode_lock_nested(backing_inode, I_MUTEX_PARENT);
-+	*out = vfs_unlink(&init_user_ns, backing_inode, backing_path.dentry,
-+			 NULL);
-+	inode_unlock(backing_inode);
-+
-+	dput(backing_parent_dentry);
-+	if (!*out)
-+		d_drop(entry);
-+	path_put(&backing_path);
-+	return *out;
-+}
-+
-+static int fuse_unlink_finalize(struct fuse_args *fa, int *out,
-+				struct inode *dir, struct dentry *entry)
-+{
++	*out = fwio->ret;
 +	return 0;
 +}
 +
-+int fuse_bpf_unlink(int *out, struct inode *dir, struct dentry *entry)
++int fuse_bpf_file_write_iter(ssize_t *out, struct inode *inode, struct kiocb *iocb, struct iov_iter *from)
 +{
-+	return fuse_bpf_backing(dir, struct fuse_unused_io, out,
-+				fuse_unlink_initialize_in, fuse_unlink_initialize_out,
-+				fuse_unlink_backing, fuse_unlink_finalize,
-+				dir, entry);
++	return fuse_bpf_backing(inode, struct fuse_file_write_iter_io, out,
++				fuse_file_write_iter_initialize_in,
++				fuse_file_write_iter_initialize_out,
++				fuse_file_write_iter_backing,
++				fuse_file_write_iter_finalize,
++				iocb, from);
 +}
 +
- static int fuse_access_initialize_in(struct fuse_args *fa, struct fuse_access_in *fai,
- 				     struct inode *inode, int mask)
+ ssize_t fuse_backing_mmap(struct file *file, struct vm_area_struct *vma)
  {
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index e330a6af9ee7..729a0348fa01 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -869,6 +869,10 @@ static int fuse_mknod(struct user_namespace *mnt_userns, struct inode *dir,
- 	struct fuse_mknod_in inarg;
- 	struct fuse_mount *fm = get_fuse_mount(dir);
- 	FUSE_ARGS(args);
-+	int err;
+ 	int ret;
+@@ -1280,3 +1641,19 @@ int fuse_bpf_access(int *out, struct inode *inode, int mask)
+ 				fuse_access_initialize_in, fuse_access_initialize_out,
+ 				fuse_access_backing, fuse_access_finalize, inode, mask);
+ }
 +
-+	if (fuse_bpf_mknod(&err, dir, entry, mode, rdev))
-+		return err;
- 
- 	if (!fm->fc->dont_mask)
- 		mode &= ~current_umask();
-@@ -915,6 +919,10 @@ static int fuse_mkdir(struct user_namespace *mnt_userns, struct inode *dir,
- 	struct fuse_mkdir_in inarg;
- 	struct fuse_mount *fm = get_fuse_mount(dir);
- 	FUSE_ARGS(args);
-+	int err;
++int __init fuse_bpf_init(void)
++{
++	fuse_bpf_aio_request_cachep = kmem_cache_create("fuse_bpf_aio_req",
++						   sizeof(struct fuse_bpf_aio_req),
++						   0, SLAB_HWCACHE_ALIGN, NULL);
++	if (!fuse_bpf_aio_request_cachep)
++		return -ENOMEM;
 +
-+	if (fuse_bpf_mkdir(&err, dir, entry, mode))
-+		return err;
++	return 0;
++}
++
++void __exit fuse_bpf_cleanup(void)
++{
++	kmem_cache_destroy(fuse_bpf_aio_request_cachep);
++}
+diff --git a/fs/fuse/control.c b/fs/fuse/control.c
+index 247ef4f76761..685552453751 100644
+--- a/fs/fuse/control.c
++++ b/fs/fuse/control.c
+@@ -378,7 +378,7 @@ int __init fuse_ctl_init(void)
+ 	return register_filesystem(&fuse_ctl_fs_type);
+ }
  
- 	if (!fm->fc->dont_mask)
- 		mode &= ~current_umask();
-@@ -1001,6 +1009,9 @@ static int fuse_unlink(struct inode *dir, struct dentry *entry)
- 	if (fuse_is_bad(dir))
+-void __exit fuse_ctl_cleanup(void)
++void fuse_ctl_cleanup(void)
+ {
+ 	unregister_filesystem(&fuse_ctl_fs_type);
+ }
+diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+index 70a5bd5403ca..59f3d85106d3 100644
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -1604,6 +1604,7 @@ static ssize_t fuse_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	struct file *file = iocb->ki_filp;
+ 	struct fuse_file *ff = file->private_data;
+ 	struct inode *inode = file_inode(file);
++	ssize_t ret;
+ 
+ 	if (fuse_is_bad(inode))
  		return -EIO;
+@@ -1611,6 +1612,9 @@ static ssize_t fuse_file_read_iter(struct kiocb *iocb, struct iov_iter *to)
+ 	if (FUSE_IS_DAX(inode))
+ 		return fuse_dax_read_iter(iocb, to);
  
-+	if (fuse_bpf_unlink(&err, dir, entry))
-+		return err;
++	if (fuse_bpf_file_read_iter(&ret, inode, iocb, to))
++		return ret;
 +
- 	args.opcode = FUSE_UNLINK;
- 	args.nodeid = get_node_id(dir);
- 	args.in_numargs = 1;
-@@ -1024,6 +1035,9 @@ static int fuse_rmdir(struct inode *dir, struct dentry *entry)
- 	if (fuse_is_bad(dir))
+ 	if (!(ff->open_flags & FOPEN_DIRECT_IO))
+ 		return fuse_cache_read_iter(iocb, to);
+ 	else
+@@ -1622,6 +1626,7 @@ static ssize_t fuse_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	struct file *file = iocb->ki_filp;
+ 	struct fuse_file *ff = file->private_data;
+ 	struct inode *inode = file_inode(file);
++	ssize_t ret = 0;
+ 
+ 	if (fuse_is_bad(inode))
  		return -EIO;
+@@ -1629,6 +1634,9 @@ static ssize_t fuse_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 	if (FUSE_IS_DAX(inode))
+ 		return fuse_dax_write_iter(iocb, from);
  
-+	if (fuse_bpf_rmdir(&err, dir, entry))
-+		return err;
++	if (fuse_bpf_file_write_iter(&ret, inode, iocb, from))
++		return ret;
 +
- 	args.opcode = FUSE_RMDIR;
- 	args.nodeid = get_node_id(dir);
- 	args.in_numargs = 1;
+ 	if (!(ff->open_flags & FOPEN_DIRECT_IO))
+ 		return fuse_cache_write_iter(iocb, from);
+ 	else
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 794b1a06079c..dc5bba2a75ab 100644
+index dc5bba2a75ab..25cedaa9014c 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -1403,6 +1403,10 @@ int parse_fuse_bpf_entry(struct fuse_bpf_entry *fbe, int num_entries);
- int fuse_bpf_open(int *err, struct inode *inode, struct file *file, bool isdir);
- int fuse_bpf_create_open(int *out, struct inode *dir, struct dentry *entry,
- 			 struct file *file, unsigned int flags, umode_t mode);
-+int fuse_bpf_mknod(int *out, struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev);
-+int fuse_bpf_mkdir(int *out, struct inode *dir, struct dentry *entry, umode_t mode);
-+int fuse_bpf_rmdir(int *out, struct inode *dir, struct dentry *entry);
-+int fuse_bpf_unlink(int *out, struct inode *dir, struct dentry *entry);
+@@ -1130,7 +1130,7 @@ int fuse_dev_init(void);
+ void fuse_dev_cleanup(void);
+ 
+ int fuse_ctl_init(void);
+-void __exit fuse_ctl_cleanup(void);
++void fuse_ctl_cleanup(void);
+ 
+ /**
+  * Simple request sending that does request allocation and freeing
+@@ -1410,6 +1410,8 @@ int fuse_bpf_unlink(int *out, struct inode *dir, struct dentry *entry);
  int fuse_bpf_release(int *out, struct inode *inode, struct file *file);
  int fuse_bpf_releasedir(int *out, struct inode *inode, struct file *file);
  int fuse_bpf_lseek(loff_t *out, struct inode *inode, struct file *file, loff_t offset, int whence);
-@@ -1423,6 +1427,26 @@ static inline int fuse_bpf_create_open(int *out, struct inode *dir, struct dentr
++int fuse_bpf_file_read_iter(ssize_t *out, struct inode *inode, struct kiocb *iocb, struct iov_iter *to);
++int fuse_bpf_file_write_iter(ssize_t *out, struct inode *inode, struct kiocb *iocb, struct iov_iter *from);
+ int fuse_bpf_file_fallocate(int *out, struct inode *inode, struct file *file, int mode, loff_t offset, loff_t length);
+ int fuse_bpf_lookup(struct dentry **out, struct inode *dir, struct dentry *entry, unsigned int flags);
+ int fuse_bpf_access(int *out, struct inode *inode, int mask);
+@@ -1462,6 +1464,16 @@ static inline int fuse_bpf_lseek(loff_t *out, struct inode *inode, struct file *
  	return 0;
  }
  
-+static inline int fuse_bpf_mknod(int *out, struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev)
++static inline int fuse_bpf_file_read_iter(ssize_t *out, struct inode *inode, struct kiocb *iocb, struct iov_iter *to)
 +{
 +	return 0;
 +}
 +
-+static inline int fuse_bpf_mkdir(int *out, struct inode *dir, struct dentry *entry, umode_t mode)
++static inline int fuse_bpf_file_write_iter(ssize_t *out, struct inode *inode, struct kiocb *iocb, struct iov_iter *from)
 +{
 +	return 0;
 +}
 +
-+static inline int fuse_bpf_rmdir(int *out, struct inode *dir, struct dentry *entry)
-+{
-+	return 0;
-+}
-+
-+static inline int fuse_bpf_unlink(int *out, struct inode *dir, struct dentry *entry)
-+{
-+	return 0;
-+}
-+
- static inline int fuse_bpf_release(int *out, struct inode *inode, struct file *file)
+ static inline int fuse_bpf_file_fallocate(int *out, struct inode *inode, struct file *file, int mode, loff_t offset, loff_t length)
  {
  	return 0;
+@@ -1512,4 +1524,9 @@ static inline u64 attr_timeout(struct fuse_attr_out *o)
+ 	return time_to_jiffies(o->attr_valid, o->attr_valid_nsec);
+ }
+ 
++#ifdef CONFIG_FUSE_BPF
++int __init fuse_bpf_init(void);
++void __exit fuse_bpf_cleanup(void);
++#endif /* CONFIG_FUSE_BPF */
++
+ #endif /* _FS_FUSE_I_H */
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index bafb2832627d..9781faff6df6 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -2094,11 +2094,21 @@ static int __init fuse_init(void)
+ 	if (res)
+ 		goto err_sysfs_cleanup;
+ 
++#ifdef CONFIG_FUSE_BPF
++	res = fuse_bpf_init();
++	if (res)
++		goto err_ctl_cleanup;
++#endif
++
+ 	sanitize_global_limit(&max_user_bgreq);
+ 	sanitize_global_limit(&max_user_congthresh);
+ 
+ 	return 0;
+ 
++#ifdef CONFIG_FUSE_BPF
++ err_ctl_cleanup:
++	fuse_ctl_cleanup();
++#endif
+  err_sysfs_cleanup:
+ 	fuse_sysfs_cleanup();
+  err_dev_cleanup:
+@@ -2116,6 +2126,9 @@ static void __exit fuse_exit(void)
+ 	fuse_ctl_cleanup();
+ 	fuse_sysfs_cleanup();
+ 	fuse_fs_cleanup();
++#ifdef CONFIG_FUSE_BPF
++	fuse_bpf_cleanup();
++#endif
+ 	fuse_dev_cleanup();
+ }
+ 
 -- 
 2.38.1.584.g0f3c55d4c2-goog
 
