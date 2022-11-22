@@ -2,57 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C992163331A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 03:19:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB80863331C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 03:19:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232659AbiKVCTS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Nov 2022 21:19:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41978 "EHLO
+        id S232542AbiKVCTY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Nov 2022 21:19:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232537AbiKVCR5 (ORCPT
+        with ESMTP id S231536AbiKVCSL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Nov 2022 21:17:57 -0500
+        Mon, 21 Nov 2022 21:18:11 -0500
 Received: from mail-yb1-xb49.google.com (mail-yb1-xb49.google.com [IPv6:2607:f8b0:4864:20::b49])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E4EBE8709
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 18:16:29 -0800 (PST)
-Received: by mail-yb1-xb49.google.com with SMTP id q135-20020a25d98d000000b006eebd2f0844so113963ybg.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 18:16:29 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AF45E6EF5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 18:16:31 -0800 (PST)
+Received: by mail-yb1-xb49.google.com with SMTP id s16-20020a25aa10000000b006e894071c9bso9765605ybi.20
+        for <linux-fsdevel@vger.kernel.org>; Mon, 21 Nov 2022 18:16:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+7lnONjHdi886Ig9Mqdu5pD+AjkqXhnQE6noiyOFdJA=;
-        b=lrtwBrtXPPkYidFgin2J04BdRiJSMvbPz4VqiHsVwzBDAG9kDpeEPdifXAxmHw9zI0
-         NKIkiPinjAMKlnqhSyv2sygr81lgE3nvzHVOn8k8x8uiH8dfmKseRpx7dw9KRkf7Hg2c
-         lXbCB4QF3JdaNV7G03QBFnoniUskfNIfqqijZfJCWFEjW/44GdV8ysqFYt+GCyXJfN6g
-         r+1L/JiP9nTm8+tZ0g8k577RNDvLHeONZM4F+pfQhpVob28c+olV32piW3TxFwIYXYLH
-         57nmypvY34lk73vshQ6JxZ9nW5b8Rqizz3+kFsf9bb7liLpnIuarGf6lY2UXRbNq1ZoX
-         ucUQ==
+        bh=3ZCLjcJ4R3eU9/lQk3QpcBgc0zLovUHl4lozHOuR1ro=;
+        b=Onag8LXKUEYkNQDXASyE2XfkV9WriZxyqN3f46RXUNf+xJTp5wc9/Ps0FZY4IkN/So
+         AbmMbh0t8c0JnZvIieoFSE1EBshobKjZxKzNu97r2WkhJB1X/Ia6lpQBhufU7YzfmkAv
+         YDjy4vUmCdmgGRkRHuzn1To8UaEOwRZ6WUtH7P8oqZpARoArEyNJrPPn+4HH4pmP+F1c
+         d+CZeBxp97d6qmi6opkagbdWjO+WAhv/lud28ORlHNp68nkXZc+2xBT0Tpc9iMS6lhWa
+         0NWCnjXNlGUVxaYC99FCDe6hQ6b17FEytdtdSgwGyJeul8NCakUZyFsIDAsf540osdoG
+         0f+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+7lnONjHdi886Ig9Mqdu5pD+AjkqXhnQE6noiyOFdJA=;
-        b=X73BNZGoKWFqFcgrle4rYE7yMPZy2orisiEtZRixXhhHvqU7STuQJgHjf/MvL6bETL
-         Ng5/bIKuoOLhHCOFUU2AQSQUQnYhFE+R+W6t/MnE9aBukvbQnOy6YS1IXlgHFqYUulMU
-         70XnPVRMJL9/W0A7ecPUhGy+tp2ytH/q1IMw05gq1itwIgk4ZpQkR91DEmawm5JtvCXc
-         uZ7oM5w4Oio+WKemaSFe4mObYBK2nHqTov4j3Zz23UKJsdzEmgm1EfJnq6I1HpM6e69j
-         E4x8kEhQnmH/nEk7aANy4sUijJuItN0yvzNxDlJO8iEgRYAtV4U5txpe8A6l/FNV5ljr
-         OmPg==
-X-Gm-Message-State: ACrzQf3572opdBdPuSIMrXaBBV61VhHdVe2EJdEI04CburXpqnnBxRaQ
-        D5inhqakTak7lxLNvnHsNv9Rmp67Uk8=
-X-Google-Smtp-Source: AMsMyM5qNEluRhS7QKFWTOvy41GiEHaYUT0ydWTishvpXmRnJKjIU8Cs0lqnFvk4wZM2iqmoOyga+rGwBhU=
+        bh=3ZCLjcJ4R3eU9/lQk3QpcBgc0zLovUHl4lozHOuR1ro=;
+        b=N6f/ARoZSK69Ot4jJ5aROgj6mQsjr1WWrdi8y+qCQRBzUpAjPKWSFHLLLZyFTX7w+n
+         6A6tdVF+PvJ2pQQnOkrkOwZk5zRIgAmNe5J83ci2DpSFwgU+GIXEWCRboZlDCwbQuBTt
+         2WDZIMJIZn2t/Ow9/2V5O3TlTr/3PPqHW50U2iBHgjUG+eOJbAI5ug3gnCAK2qNgZht5
+         0y4LKyB/UpoLHXAvcFE7dpcbvfRcjveYDLvrrhcgsxyN1jHNDPVTBnyZAdiGm8xqHnVF
+         WCAR/EQ/SF/WI72xno3hPedMmMoOEkUlrfeNBlvIXWnb2PNGsaxTwRsfMtqiO+1XLc/Z
+         HqQg==
+X-Gm-Message-State: ANoB5plQItuQfAs8+r+gDoA59Iv610OKD/4VOGyCFrao/EiC/kMG0CTQ
+        cUPBVolXr1TpmqzC2qYgqHVgCRJEy0M=
+X-Google-Smtp-Source: AA0mqf6bOX01h/HY8m5g2/RqyJvAEQUaFiNQzJkxznyZMuDkIxQAJ34RzPLeCX9TjkXsyVZO4lIS883KTcc=
 X-Received: from drosen.mtv.corp.google.com ([2620:15c:211:200:8539:aadd:13be:6e82])
- (user=drosen job=sendgmr) by 2002:a25:1181:0:b0:6bf:bd96:2b01 with SMTP id
- 123-20020a251181000000b006bfbd962b01mr63735903ybr.17.1669083388163; Mon, 21
- Nov 2022 18:16:28 -0800 (PST)
-Date:   Mon, 21 Nov 2022 18:15:30 -0800
+ (user=drosen job=sendgmr) by 2002:a0d:ebcd:0:b0:39b:9c96:b6b7 with SMTP id
+ u196-20020a0debcd000000b0039b9c96b6b7mr3ywe.450.1669083390850; Mon, 21 Nov
+ 2022 18:16:30 -0800 (PST)
+Date:   Mon, 21 Nov 2022 18:15:31 -0800
 In-Reply-To: <20221122021536.1629178-1-drosen@google.com>
 Mime-Version: 1.0
 References: <20221122021536.1629178-1-drosen@google.com>
 X-Mailer: git-send-email 2.38.1.584.g0f3c55d4c2-goog
-Message-ID: <20221122021536.1629178-16-drosen@google.com>
-Subject: [RFC PATCH v2 15/21] fuse-bpf: Add support for sync operations
+Message-ID: <20221122021536.1629178-17-drosen@google.com>
+Subject: [RFC PATCH v2 16/21] fuse-bpf: Add Rename support
 From:   Daniel Rosenberg <drosen@google.com>
 To:     Miklos Szeredi <miklos@szeredi.hu>
 Cc:     Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
@@ -63,7 +63,7 @@ Cc:     Amir Goldstein <amir73il@gmail.com>, linux-kernel@vger.kernel.org,
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,250 +74,291 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 Signed-off-by: Daniel Rosenberg <drosen@google.com>
 Signed-off-by: Paul Lawrence <paullawrence@google.com>
 ---
- fs/fuse/backing.c | 142 ++++++++++++++++++++++++++++++++++++++++++++++
- fs/fuse/dir.c     |   3 +
- fs/fuse/file.c    |   6 ++
- fs/fuse/fuse_i.h  |  18 ++++++
- 4 files changed, 169 insertions(+)
+ fs/fuse/backing.c | 210 ++++++++++++++++++++++++++++++++++++++++++++++
+ fs/fuse/dir.c     |   7 ++
+ fs/fuse/fuse_i.h  |  18 ++++
+ 3 files changed, 235 insertions(+)
 
 diff --git a/fs/fuse/backing.c b/fs/fuse/backing.c
-index a15b5c107cfe..719292e03b18 100644
+index 719292e03b18..333181d6ad73 100644
 --- a/fs/fuse/backing.c
 +++ b/fs/fuse/backing.c
-@@ -652,6 +652,58 @@ int fuse_bpf_releasedir(int *out, struct inode *inode, struct file *file)
- 				fuse_release_backing, fuse_release_finalize, inode, file);
+@@ -1677,6 +1677,216 @@ int fuse_bpf_rmdir(int *out, struct inode *dir, struct dentry *entry)
+ 				dir, entry);
  }
  
-+static int fuse_flush_initialize_in(struct fuse_args *fa, struct fuse_flush_in *ffi,
-+				    struct file *file, fl_owner_t id)
++static int fuse_rename_backing_common(struct inode *olddir,
++				      struct dentry *oldent,
++				      struct inode *newdir,
++				      struct dentry *newent, unsigned int flags)
 +{
-+	struct fuse_file *fuse_file = file->private_data;
++	int err = 0;
++	struct path old_backing_path;
++	struct path new_backing_path;
++	struct dentry *old_backing_dir_dentry;
++	struct dentry *old_backing_dentry;
++	struct dentry *new_backing_dir_dentry;
++	struct dentry *new_backing_dentry;
++	struct dentry *trap = NULL;
++	struct inode *target_inode;
++	struct renamedata rd;
 +
-+	*ffi = (struct fuse_flush_in) {
-+		.fh = fuse_file->fh,
++	//TODO Actually deal with changing anything that isn't a flag
++	get_fuse_backing_path(oldent, &old_backing_path);
++	if (!old_backing_path.dentry)
++		return -EBADF;
++	get_fuse_backing_path(newent, &new_backing_path);
++	if (!new_backing_path.dentry) {
++		/*
++		 * TODO A file being moved from a backing path to another
++		 * backing path which is not yet instrumented with FUSE-BPF.
++		 * This may be slow and should be substituted with something
++		 * more clever.
++		 */
++		err = -EXDEV;
++		goto put_old_path;
++	}
++	if (new_backing_path.mnt != old_backing_path.mnt) {
++		err = -EXDEV;
++		goto put_new_path;
++	}
++	old_backing_dentry = old_backing_path.dentry;
++	new_backing_dentry = new_backing_path.dentry;
++	old_backing_dir_dentry = dget_parent(old_backing_dentry);
++	new_backing_dir_dentry = dget_parent(new_backing_dentry);
++	target_inode = d_inode(newent);
++
++	trap = lock_rename(old_backing_dir_dentry, new_backing_dir_dentry);
++	if (trap == old_backing_dentry) {
++		err = -EINVAL;
++		goto put_parents;
++	}
++	if (trap == new_backing_dentry) {
++		err = -ENOTEMPTY;
++		goto put_parents;
++	}
++
++	rd = (struct renamedata) {
++		.old_mnt_userns = &init_user_ns,
++		.old_dir = d_inode(old_backing_dir_dentry),
++		.old_dentry = old_backing_dentry,
++		.new_mnt_userns = &init_user_ns,
++		.new_dir = d_inode(new_backing_dir_dentry),
++		.new_dentry = new_backing_dentry,
++		.flags = flags,
 +	};
++	err = vfs_rename(&rd);
++	if (err)
++		goto unlock;
++	if (target_inode)
++		fsstack_copy_attr_all(target_inode,
++				get_fuse_inode(target_inode)->backing_inode);
++	fsstack_copy_attr_all(d_inode(oldent), d_inode(old_backing_dentry));
++unlock:
++	unlock_rename(old_backing_dir_dentry, new_backing_dir_dentry);
++put_parents:
++	dput(new_backing_dir_dentry);
++	dput(old_backing_dir_dentry);
++put_new_path:
++	path_put(&new_backing_path);
++put_old_path:
++	path_put(&old_backing_path);
++	return err;
++}
 +
++static int fuse_rename2_initialize_in(struct fuse_args *fa, struct fuse_rename2_in *fri,
++				      struct inode *olddir, struct dentry *oldent,
++				      struct inode *newdir, struct dentry *newent,
++				      unsigned int flags)
++{
++	*fri = (struct fuse_rename2_in) {
++		.newdir = get_node_id(newdir),
++		.flags = flags,
++	};
 +	*fa = (struct fuse_args) {
-+		.nodeid = get_node_id(file->f_inode),
-+		.opcode = FUSE_FLUSH,
-+		.in_numargs = 1,
-+		.in_args[0].size = sizeof(*ffi),
-+		.in_args[0].value = ffi,
-+		.force = true,
++		.nodeid = get_node_id(olddir),
++		.opcode = FUSE_RENAME2,
++		.in_numargs = 3,
++		.in_args[0] = (struct fuse_in_arg) {
++			.size = sizeof(*fri),
++			.value = fri,
++		},
++		.in_args[1] = (struct fuse_in_arg) {
++			.size = oldent->d_name.len + 1,
++			.value =  (void *) oldent->d_name.name,
++		},
++		.in_args[2] = (struct fuse_in_arg) {
++			.size = newent->d_name.len + 1,
++			.value =  (void *) newent->d_name.name,
++		},
 +	};
 +
 +	return 0;
 +}
 +
-+static int fuse_flush_initialize_out(struct fuse_args *fa, struct fuse_flush_in *ffi,
-+				     struct file *file, fl_owner_t id)
++static int fuse_rename2_initialize_out(struct fuse_args *fa, struct fuse_rename2_in *fri,
++				       struct inode *olddir, struct dentry *oldent,
++				       struct inode *newdir, struct dentry *newent,
++				       unsigned int flags)
 +{
 +	return 0;
 +}
 +
-+static int fuse_flush_backing(struct fuse_args *fa, int *out, struct file *file, fl_owner_t id)
++static int fuse_rename2_backing(struct fuse_args *fa, int *out,
++				struct inode *olddir, struct dentry *oldent,
++				struct inode *newdir, struct dentry *newent,
++				unsigned int flags)
 +{
-+	struct fuse_file *fuse_file = file->private_data;
-+	struct file *backing_file = fuse_file->backing_file;
++	const struct fuse_rename2_in *fri = fa->in_args[0].value;
 +
-+	*out = 0;
-+	if (backing_file->f_op->flush)
-+		*out = backing_file->f_op->flush(backing_file, id);
++	/* TODO: deal with changing dirs/ents */
++	*out = fuse_rename_backing_common(olddir, oldent, newdir, newent,
++					  fri->flags);
 +	return *out;
 +}
 +
-+static int fuse_flush_finalize(struct fuse_args *fa, int *out, struct file *file, fl_owner_t id)
++static int fuse_rename2_finalize(struct fuse_args *fa, int *out,
++				 struct inode *olddir, struct dentry *oldent,
++				 struct inode *newdir, struct dentry *newent,
++				 unsigned int flags)
 +{
 +	return 0;
 +}
 +
-+int fuse_bpf_flush(int *out, struct inode *inode, struct file *file, fl_owner_t id)
++int fuse_bpf_rename2(int *out, struct inode *olddir, struct dentry *oldent,
++		     struct inode *newdir, struct dentry *newent,
++		     unsigned int flags)
 +{
-+	return fuse_bpf_backing(inode, struct fuse_flush_in, out,
-+				fuse_flush_initialize_in, fuse_flush_initialize_out,
-+				fuse_flush_backing,
-+				fuse_flush_finalize,
-+				file, id);
++	return fuse_bpf_backing(olddir, struct fuse_rename2_in, out,
++				fuse_rename2_initialize_in,
++				fuse_rename2_initialize_out, fuse_rename2_backing,
++				fuse_rename2_finalize,
++				olddir, oldent, newdir, newent, flags);
 +}
 +
- struct fuse_lseek_io {
- 	struct fuse_lseek_in fli;
- 	struct fuse_lseek_out flo;
-@@ -740,6 +792,96 @@ int fuse_bpf_lseek(loff_t *out, struct inode *inode, struct file *file, loff_t o
- 				file, offset, whence);
- }
- 
-+static int fuse_fsync_initialize_in(struct fuse_args *fa, struct fuse_fsync_in *ffi,
-+				    struct file *file, loff_t start, loff_t end, int datasync)
++static int fuse_rename_initialize_in(struct fuse_args *fa, struct fuse_rename_in *fri,
++				     struct inode *olddir, struct dentry *oldent,
++				     struct inode *newdir, struct dentry *newent)
 +{
-+	struct fuse_file *fuse_file = file->private_data;
-+
-+	*ffi = (struct fuse_fsync_in) {
-+		.fh = fuse_file->fh,
-+		.fsync_flags = datasync ? FUSE_FSYNC_FDATASYNC : 0,
++	*fri = (struct fuse_rename_in) {
++		.newdir = get_node_id(newdir),
 +	};
-+
 +	*fa = (struct fuse_args) {
-+		.nodeid = get_fuse_inode(file->f_inode)->nodeid,
-+		.opcode = FUSE_FSYNC,
-+		.in_numargs = 1,
-+		.in_args[0].size = sizeof(*ffi),
-+		.in_args[0].value = ffi,
-+		.force = true,
++		.nodeid = get_node_id(olddir),
++		.opcode = FUSE_RENAME,
++		.in_numargs = 3,
++		.in_args[0] = (struct fuse_in_arg) {
++			.size = sizeof(*fri),
++			.value = fri,
++		},
++		.in_args[1] = (struct fuse_in_arg) {
++			.size = oldent->d_name.len + 1,
++			.value =  (void *) oldent->d_name.name,
++		},
++		.in_args[2] = (struct fuse_in_arg) {
++			.size = newent->d_name.len + 1,
++			.value =  (void *) newent->d_name.name,
++		},
 +	};
 +
 +	return 0;
 +}
 +
-+static int fuse_fsync_initialize_out(struct fuse_args *fa, struct fuse_fsync_in *ffi,
-+				     struct file *file, loff_t start, loff_t end, int datasync)
++static int fuse_rename_initialize_out(struct fuse_args *fa, struct fuse_rename_in *fri,
++				      struct inode *olddir, struct dentry *oldent,
++				      struct inode *newdir, struct dentry *newent)
 +{
 +	return 0;
 +}
 +
-+static int fuse_fsync_backing(struct fuse_args *fa, int *out,
-+			      struct file *file, loff_t start, loff_t end, int datasync)
++static int fuse_rename_backing(struct fuse_args *fa, int *out,
++			       struct inode *olddir, struct dentry *oldent,
++			       struct inode *newdir, struct dentry *newent)
 +{
-+	struct fuse_file *fuse_file = file->private_data;
-+	struct file *backing_file = fuse_file->backing_file;
-+	const struct fuse_fsync_in *ffi = fa->in_args[0].value;
-+	int new_datasync = (ffi->fsync_flags & FUSE_FSYNC_FDATASYNC) ? 1 : 0;
-+
-+	*out = vfs_fsync(backing_file, new_datasync);
-+	return 0;
++	/* TODO: deal with changing dirs/ents */
++	*out = fuse_rename_backing_common(olddir, oldent, newdir, newent, 0);
++	return *out;
 +}
 +
-+static int fuse_fsync_finalize(struct fuse_args *fa, int *out,
-+			       struct file *file, loff_t start, loff_t end, int datasync)
++static int fuse_rename_finalize(struct fuse_args *fa, int *out,
++				struct inode *olddir, struct dentry *oldent,
++				struct inode *newdir, struct dentry *newent)
 +{
 +	return 0;
 +}
 +
-+int fuse_bpf_fsync(int *out, struct inode *inode, struct file *file, loff_t start, loff_t end, int datasync)
++int fuse_bpf_rename(int *out, struct inode *olddir, struct dentry *oldent,
++		    struct inode *newdir, struct dentry *newent)
 +{
-+	return fuse_bpf_backing(inode, struct fuse_fsync_in, out,
-+				fuse_fsync_initialize_in, fuse_fsync_initialize_out,
-+				fuse_fsync_backing, fuse_fsync_finalize,
-+				file, start, end, datasync);
++	return fuse_bpf_backing(olddir, struct fuse_rename_in, out,
++				fuse_rename_initialize_in,
++				fuse_rename_initialize_out, fuse_rename_backing,
++				fuse_rename_finalize,
++				olddir, oldent, newdir, newent);
 +}
 +
-+static int fuse_dir_fsync_initialize_in(struct fuse_args *fa, struct fuse_fsync_in *ffi,
-+					struct file *file, loff_t start, loff_t end, int datasync)
-+{
-+	struct fuse_file *fuse_file = file->private_data;
-+
-+	*ffi = (struct fuse_fsync_in) {
-+		.fh = fuse_file->fh,
-+		.fsync_flags = datasync ? FUSE_FSYNC_FDATASYNC : 0,
-+	};
-+
-+	*fa = (struct fuse_args) {
-+		.nodeid = get_fuse_inode(file->f_inode)->nodeid,
-+		.opcode = FUSE_FSYNCDIR,
-+		.in_numargs = 1,
-+		.in_args[0].size = sizeof(*ffi),
-+		.in_args[0].value = ffi,
-+		.force = true,
-+	};
-+
-+	return 0;
-+}
-+
-+static int fuse_dir_fsync_initialize_out(struct fuse_args *fa, struct fuse_fsync_in *ffi,
-+					 struct file *file, loff_t start, loff_t end, int datasync)
-+{
-+	return 0;
-+}
-+
-+int fuse_bpf_dir_fsync(int *out, struct inode *inode, struct file *file, loff_t start, loff_t end, int datasync)
-+{
-+	return fuse_bpf_backing(inode, struct fuse_fsync_in, out,
-+				fuse_dir_fsync_initialize_in, fuse_dir_fsync_initialize_out,
-+				fuse_fsync_backing, fuse_fsync_finalize,
-+				file, start, end, datasync);
-+}
-+
- static inline void fuse_bpf_aio_put(struct fuse_bpf_aio_req *aio_req)
+ static int fuse_unlink_initialize_in(struct fuse_args *fa, struct fuse_unused_io *unused,
+ 				     struct inode *dir, struct dentry *entry)
  {
- 	if (refcount_dec_and_test(&aio_req->ref))
 diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index 729a0348fa01..55ed3fb9d4a3 100644
+index 55ed3fb9d4a3..6ad0eb92de3b 100644
 --- a/fs/fuse/dir.c
 +++ b/fs/fuse/dir.c
-@@ -1591,6 +1591,9 @@ static int fuse_dir_fsync(struct file *file, loff_t start, loff_t end,
- 	if (fuse_is_bad(inode))
- 		return -EIO;
+@@ -1116,6 +1116,10 @@ static int fuse_rename2(struct user_namespace *mnt_userns, struct inode *olddir,
+ 		return -EINVAL;
  
-+	if (fuse_bpf_dir_fsync(&err, inode, file, start, end, datasync))
-+		return err;
+ 	if (flags) {
++		if (fuse_bpf_rename2(&err, olddir, oldent, newdir, newent, flags))
++			return err;
 +
- 	if (fc->no_fsyncdir)
- 		return 0;
++		/* TODO: how should this go with bpfs involved? */
+ 		if (fc->no_rename2 || fc->minor < 23)
+ 			return -EINVAL;
  
-diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 59f3d85106d3..fa9ee2740a42 100644
---- a/fs/fuse/file.c
-+++ b/fs/fuse/file.c
-@@ -502,6 +502,9 @@ static int fuse_flush(struct file *file, fl_owner_t id)
- 	if (fuse_is_bad(inode))
- 		return -EIO;
- 
-+	if (fuse_bpf_flush(&err, file_inode(file), file, id))
-+		return err;
+@@ -1127,6 +1131,9 @@ static int fuse_rename2(struct user_namespace *mnt_userns, struct inode *olddir,
+ 			err = -EINVAL;
+ 		}
+ 	} else {
++		if (fuse_bpf_rename(&err, olddir, oldent, newdir, newent))
++			return err;
 +
- 	if (ff->open_flags & FOPEN_NOFLUSH && !fm->fc->writeback_cache)
- 		return 0;
- 
-@@ -577,6 +580,9 @@ static int fuse_fsync(struct file *file, loff_t start, loff_t end,
- 	if (fuse_is_bad(inode))
- 		return -EIO;
- 
-+	if (fuse_bpf_fsync(&err, inode, file, start, end, datasync))
-+		return err;
-+
- 	inode_lock(inode);
- 
- 	/*
+ 		err = fuse_rename_common(olddir, oldent, newdir, newent, 0,
+ 					 FUSE_RENAME,
+ 					 sizeof(struct fuse_rename_in));
 diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
-index 0ea3fb74caab..cb087364e9bb 100644
+index cb087364e9bb..3338ac84d083 100644
 --- a/fs/fuse/fuse_i.h
 +++ b/fs/fuse/fuse_i.h
-@@ -1409,7 +1409,10 @@ int fuse_bpf_rmdir(int *out, struct inode *dir, struct dentry *entry);
+@@ -1406,6 +1406,11 @@ int fuse_bpf_create_open(int *out, struct inode *dir, struct dentry *entry,
+ int fuse_bpf_mknod(int *out, struct inode *dir, struct dentry *entry, umode_t mode, dev_t rdev);
+ int fuse_bpf_mkdir(int *out, struct inode *dir, struct dentry *entry, umode_t mode);
+ int fuse_bpf_rmdir(int *out, struct inode *dir, struct dentry *entry);
++int fuse_bpf_rename2(int *out, struct inode *olddir, struct dentry *oldent,
++		     struct inode *newdir, struct dentry *newent,
++		     unsigned int flags);
++int fuse_bpf_rename(int *out, struct inode *olddir, struct dentry *oldent,
++		    struct inode *newdir, struct dentry *newent);
  int fuse_bpf_unlink(int *out, struct inode *dir, struct dentry *entry);
  int fuse_bpf_release(int *out, struct inode *inode, struct file *file);
  int fuse_bpf_releasedir(int *out, struct inode *inode, struct file *file);
-+int fuse_bpf_flush(int *out, struct inode *inode, struct file *file, fl_owner_t id);
- int fuse_bpf_lseek(loff_t *out, struct inode *inode, struct file *file, loff_t offset, int whence);
-+int fuse_bpf_fsync(int *out, struct inode *inode, struct file *file, loff_t start, loff_t end, int datasync);
-+int fuse_bpf_dir_fsync(int *out, struct inode *inode, struct file *file, loff_t start, loff_t end, int datasync);
- int fuse_bpf_file_read_iter(ssize_t *out, struct inode *inode, struct kiocb *iocb, struct iov_iter *to);
- int fuse_bpf_file_write_iter(ssize_t *out, struct inode *inode, struct kiocb *iocb, struct iov_iter *from);
- int fuse_bpf_file_fallocate(int *out, struct inode *inode, struct file *file, int mode, loff_t offset, loff_t length);
-@@ -1460,11 +1463,26 @@ static inline int fuse_bpf_releasedir(int *out, struct inode *inode, struct file
+@@ -1448,6 +1453,19 @@ static inline int fuse_bpf_rmdir(int *out, struct inode *dir, struct dentry *ent
  	return 0;
  }
  
-+static inline int fuse_bpf_flush(int *out, struct inode *inode, struct file *file, fl_owner_t id)
++static inline int fuse_bpf_rename2(int *out, struct inode *olddir, struct dentry *oldent,
++				   struct inode *newdir, struct dentry *newent,
++				   unsigned int flags)
 +{
 +	return 0;
 +}
 +
- static inline int fuse_bpf_lseek(loff_t *out, struct inode *inode, struct file *file, loff_t offset, int whence)
- {
- 	return 0;
- }
- 
-+static inline int fuse_bpf_fsync(int *out, struct inode *inode, struct file *file, loff_t start, loff_t end, int datasync)
++static inline int fuse_bpf_rename(int *out, struct inode *olddir, struct dentry *oldent,
++				  struct inode *newdir, struct dentry *newent)
 +{
 +	return 0;
 +}
 +
-+static inline int fuse_bpf_dir_fsync(int *out, struct inode *inode, struct file *file, loff_t start, loff_t end, int datasync)
-+{
-+	return 0;
-+}
-+
- static inline int fuse_bpf_file_read_iter(ssize_t *out, struct inode *inode, struct kiocb *iocb, struct iov_iter *to)
+ static inline int fuse_bpf_unlink(int *out, struct inode *dir, struct dentry *entry)
  {
  	return 0;
 -- 
