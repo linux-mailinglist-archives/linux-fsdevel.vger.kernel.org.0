@@ -2,121 +2,186 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EBE81633F29
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 15:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA7FC633F45
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 15:50:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232748AbiKVOpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Nov 2022 09:45:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60332 "EHLO
+        id S233369AbiKVOuL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Nov 2022 09:50:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232498AbiKVOpJ (ORCPT
+        with ESMTP id S233205AbiKVOuJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Nov 2022 09:45:09 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82A1D3C6F3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 06:44:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669128254;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Tue, 22 Nov 2022 09:50:09 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B3D64663CE;
+        Tue, 22 Nov 2022 06:50:08 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 683391F85D;
+        Tue, 22 Nov 2022 14:50:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1669128607; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=DOTrbU/zp22wPSskCmpvwxHNiz91TXL6UQP9VfM7zZI=;
-        b=afvh0ZdS3eZNis/acyO5gGCNjh5BydAm+JF7VztMexaN/ZtsfinzzumuqFT0kGTlmUwI/7
-        m+jtgpFVDEycJnI9WClYB96bJt6p2Rqtfz850V1jUeZtrfqKneoBvpWtBYIkzBfxiNP2x6
-        4ckJOY9GA/Qe2T2iZgGn0dherjvmCXk=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-412-Kg-O5iGiO7e_GFNxufrt8A-1; Tue, 22 Nov 2022 09:44:13 -0500
-X-MC-Unique: Kg-O5iGiO7e_GFNxufrt8A-1
-Received: by mail-ej1-f70.google.com with SMTP id gt15-20020a1709072d8f00b007aaac7973fbso8418570ejc.23
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 06:44:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DOTrbU/zp22wPSskCmpvwxHNiz91TXL6UQP9VfM7zZI=;
-        b=yAWVh9bCxxK2oSq0qHnYa32MEUCJjgHKwcnD3jvA2JRDVgW7iedZDMGXQCxtDMRL2r
-         SPiO9pq4SVRQx7L+IGk6WFPHIlZ96JrDNlMruYztsS8o/ri6zWJQ8QTRKFwOLFpL6WuQ
-         dk3q5ZhGvc2MPkFrfOUteGVjg1lbiYZI2IrLRJVfFBrgDSJwFgE8rjbujsDpyaCOKDIq
-         4IrG8sUjgUiDuxx4G5ufoi0eE7xI6fcjWcUK+sWEQbyt+ZikE5IKu1nkWdHeClkuUwq1
-         kxlUg0z5G5kJAmTCyqt5izHIcq2A0t5wcsDKxlcHlOrB+nSpQA45qpnJ2hjme7dcfUbC
-         s19Q==
-X-Gm-Message-State: ANoB5pl2VpOr7I8UOYQYf0+hySKZNF1rUe/TQloVgvjCtyWZE8lzJLFm
-        sK+Lbd+ky9QUA4Gegp3UXcRiY/rfC3MgY6AU8RH7+qU2bInhL+X+L2L1PJKJHkDifQi0BUUFbWK
-        Z7xCn53Flh2jmJyMjZS60m7tKcw==
-X-Received: by 2002:a17:906:eb04:b0:7ae:77ef:d048 with SMTP id mb4-20020a170906eb0400b007ae77efd048mr3812871ejb.740.1669128252357;
-        Tue, 22 Nov 2022 06:44:12 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf72PFdgk+/lBfsLT/u6KTtWXMDQcVEwzELUErmlK8MzhONJFc1zB3wqW5q26zETlXANiPDbnA==
-X-Received: by 2002:a17:906:eb04:b0:7ae:77ef:d048 with SMTP id mb4-20020a170906eb0400b007ae77efd048mr3812860ejb.740.1669128252117;
-        Tue, 22 Nov 2022 06:44:12 -0800 (PST)
-Received: from ?IPV6:2001:1c00:c1e:bf00:d69d:5353:dba5:ee81? (2001-1c00-0c1e-bf00-d69d-5353-dba5-ee81.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:d69d:5353:dba5:ee81])
-        by smtp.gmail.com with ESMTPSA id f24-20020a17090631d800b0078db18d7972sm6105509ejf.117.2022.11.22.06.44.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Nov 2022 06:44:11 -0800 (PST)
-Message-ID: <8648a01c-ee70-7c69-f24c-3a30866ae08f@redhat.com>
-Date:   Tue, 22 Nov 2022 15:44:10 +0100
+        bh=TuOeD9hS5w47LsnqcPKQtrXy6koctaIzcHPxwbxmwbA=;
+        b=aGZachSXiRVjKPJsrWk8CPop2PpOEMJr7spf/DAJ5bmOd/2f4r4PDMztApEKo2PcSlvmxW
+        kUYly+UTyuJUxKmOQFyKK0uK83vpsu8HLfHf74wJV6xsDgOcFpyyuGww7bQkx1IkhT+zig
+        CKpIYly4TJFynSwnq3h8C8XfDQxdhu4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1669128607;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TuOeD9hS5w47LsnqcPKQtrXy6koctaIzcHPxwbxmwbA=;
+        b=3O83wprOyy/Za1HsOlbBbN841s6+bHjQppNWEZSAiaC61+01222yq5NJYcQdKsFuOVce+G
+        lcMh2DB+p4IaJ9Ag==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id BDF4713AA1;
+        Tue, 22 Nov 2022 14:50:06 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id xuSnLZ7hfGM/fwAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Tue, 22 Nov 2022 14:50:06 +0000
+Message-ID: <d40947e4-06c4-8413-9d53-e4926abd9559@suse.cz>
+Date:   Tue, 22 Nov 2022 15:50:06 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.0
-Subject: Re: [PATCH linux-next] vboxfs: use strscpy() is more robust and safer
-To:     yang.yang29@zte.com.cn
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        xu.panda@zte.com.cn
-References: <202211220858139474929@zte.com.cn>
-Content-Language: en-US, nl
-From:   Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <202211220858139474929@zte.com.cn>
+Subject: Re: [PATCH mm-unstable v1 07/20] mm: don't call vm_ops->huge_fault()
+ in wp_huge_pmd()/wp_huge_pud() for private mappings
+Content-Language: en-US
+To:     David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-8-david@redhat.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <20221116102659.70287-8-david@redhat.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-On 11/22/22 01:58, yang.yang29@zte.com.cn wrote:
-> From: Xu Panda <xu.panda@zte.com.cn>
+On 11/16/22 11:26, David Hildenbrand wrote:
+> If we already have a PMD/PUD mapped write-protected in a private mapping
+> and we want to break COW either due to FAULT_FLAG_WRITE or
+> FAULT_FLAG_UNSHARE, there is no need to inform the file system just like on
+> the PTE path.
 > 
-> The implementation of strscpy() is more robust and safer.
-> That's now the recommended way to copy NUL terminated strings.
+> Let's just split (->zap) + fallback in that case.
 > 
-> Signed-off-by: Xu Panda <xu.panda@zte.com.cn>
-> Signed-off-by: Yang Yang <yang.yang29@zte.com>
+> This is a preparation for more generic FAULT_FLAG_UNSHARE support in
+> COW mappings.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Thanks, patch looks good to me:
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
+Nits:
 
 > ---
->  fs/vboxsf/super.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  mm/memory.c | 24 +++++++++++++++---------
+>  1 file changed, 15 insertions(+), 9 deletions(-)
 > 
-> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
-> index d2f6df69f611..1fb8f4df60cb 100644
-> --- a/fs/vboxsf/super.c
-> +++ b/fs/vboxsf/super.c
-> @@ -176,7 +176,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
+> diff --git a/mm/memory.c b/mm/memory.c
+> index c35e6cd32b6a..d47ad33c6487 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4802,6 +4802,7 @@ static inline vm_fault_t create_huge_pmd(struct vm_fault *vmf)
+>  static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
+>  {
+>  	const bool unshare = vmf->flags & FAULT_FLAG_UNSHARE;
+> +	vm_fault_t ret;
+>  
+>  	if (vma_is_anonymous(vmf->vma)) {
+>  		if (likely(!unshare) &&
+> @@ -4809,11 +4810,13 @@ static inline vm_fault_t wp_huge_pmd(struct vm_fault *vmf)
+>  			return handle_userfault(vmf, VM_UFFD_WP);
+>  		return do_huge_pmd_wp_page(vmf);
 >  	}
->  	folder_name->size = size;
->  	folder_name->length = size - 1;
-> -	strlcpy(folder_name->string.utf8, fc->source, size);
-> +	strscpy(folder_name->string.utf8, fc->source, size);
->  	err = vboxsf_map_folder(folder_name, &sbi->root);
->  	kfree(folder_name);
->  	if (err) {
+> -	if (vmf->vma->vm_ops->huge_fault) {
+> -		vm_fault_t ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
+>  
+> -		if (!(ret & VM_FAULT_FALLBACK))
+> -			return ret;
+> +	if (vmf->vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) {
+> +		if (vmf->vma->vm_ops->huge_fault) {
+
+I guess it could have been a single if with && and the reduced identation
+could fit keeping 'ret' declaration inside.
+AFAICS the later patches don't build more on top of this anyway.
+But also fine keeping as is.
+
+(the hunk below same)
+
+> +			ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PMD);
+> +			if (!(ret & VM_FAULT_FALLBACK))
+> +				return ret;
+> +		}
+>  	}
+>  
+>  	/* COW or write-notify handled on pte level: split pmd. */
+> @@ -4839,14 +4842,17 @@ static vm_fault_t wp_huge_pud(struct vm_fault *vmf, pud_t orig_pud)
+>  {
+>  #if defined(CONFIG_TRANSPARENT_HUGEPAGE) &&			\
+>  	defined(CONFIG_HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD)
+> +	vm_fault_t ret;
+> +
+>  	/* No support for anonymous transparent PUD pages yet */
+>  	if (vma_is_anonymous(vmf->vma))
+>  		goto split;
+> -	if (vmf->vma->vm_ops->huge_fault) {
+> -		vm_fault_t ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
+> -
+> -		if (!(ret & VM_FAULT_FALLBACK))
+> -			return ret;
+> +	if (vmf->vma->vm_flags & (VM_SHARED | VM_MAYSHARE)) {
+> +		if (vmf->vma->vm_ops->huge_fault) {
+> +			ret = vmf->vma->vm_ops->huge_fault(vmf, PE_SIZE_PUD);
+> +			if (!(ret & VM_FAULT_FALLBACK))
+> +				return ret;
+> +		}
+>  	}
+>  split:
+>  	/* COW or write-notify not handled on PUD level: split pud.*/
 
