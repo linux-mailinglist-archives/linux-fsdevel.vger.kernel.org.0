@@ -2,118 +2,97 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5399B633263
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 02:51:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BC369633293
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 03:03:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232380AbiKVBvq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 21 Nov 2022 20:51:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52654 "EHLO
+        id S232419AbiKVCDg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 21 Nov 2022 21:03:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231661AbiKVBvo (ORCPT
+        with ESMTP id S231788AbiKVCDe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 21 Nov 2022 20:51:44 -0500
-Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 123FCE123B;
-        Mon, 21 Nov 2022 17:51:41 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R211e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=joseph.qi@linux.alibaba.com;NM=1;PH=DS;RN=16;SR=0;TI=SMTPD_---0VVPgoyJ_1669081895;
-Received: from 30.222.0.245(mailfrom:joseph.qi@linux.alibaba.com fp:SMTPD_---0VVPgoyJ_1669081895)
-          by smtp.aliyun-inc.com;
-          Tue, 22 Nov 2022 09:51:37 +0800
-Message-ID: <0c6a44ff-409e-99b2-eaa9-fd6e87a9e104@linux.alibaba.com>
-Date:   Tue, 22 Nov 2022 09:51:35 +0800
+        Mon, 21 Nov 2022 21:03:34 -0500
+Received: from mail-yw1-x1135.google.com (mail-yw1-x1135.google.com [IPv6:2607:f8b0:4864:20::1135])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99AFBC7213;
+        Mon, 21 Nov 2022 18:03:33 -0800 (PST)
+Received: by mail-yw1-x1135.google.com with SMTP id 00721157ae682-36cbcda2157so130672307b3.11;
+        Mon, 21 Nov 2022 18:03:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=MZ0+4cnAIfX8CYYRaiH5tv4rfyf0U7kZyCR7bDyQ238=;
+        b=RJ+ecxNeq5OZaDvi87MRj0jKdDnKxJW6vlyOn6JrVyHunWT+N3e5eVwoeOSFQSeHZa
+         q9MyKsYrms9MjHtQN5ujcD00hNVidMOBEcxNNn6intEqcJjsO2re35O9qg4dW+81A0yr
+         NobhVUJdeN5vG0tJNtLeufzWfcUflEtcpqpv7chlvZ5JJsyTerUCzrd1duPQsMUDwedP
+         LidfeZR15y3SMMMXK9+ppwuoYRhZHnxVLApxkXydLfXko838yO9RIbvvbktmH0wky6v+
+         zPPW5QV+SoIcgzwmuEYuIQXrzgHUQaZ6M3V48gy8Lzc1RwbDJZnQKzjOpxoHLvnSn+fz
+         NEjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MZ0+4cnAIfX8CYYRaiH5tv4rfyf0U7kZyCR7bDyQ238=;
+        b=3MIKYwg1Cr8texsqOXKrZhy0zVY6DLfvj0uvGUtXpphZ0Syd2UZypOnfaeelopsM44
+         VB0pCBP54kU7i5oyayD+bzh81RZugQXdNQ8/qMuiDQlXfF4kgghq36JxNlN5OwY0EFSm
+         gEzfLg71/I/x7E4oHeqEbNGgdQ0kIFIO7tz8y3W29IKY2tpXmlKYUJS7n5Zq0I96rMAq
+         h/J0jcP5l88ng2hg1l+Q3NBL6ZhAY7kTu7MtB3cPvYyiyluQKq9gCtqJqitculO6B0lI
+         4r2PDitXHScolkSM7AJOYu+48nJCmZRo8r7azBM4uLdISoiCvSXVGwTU1LhNNMXE/Kke
+         0Xfg==
+X-Gm-Message-State: ANoB5pnaIi4Cc+h5roMQv3pAZ3oag9ZDpgj4VymXhRYKHjs/+swpprR9
+        +TjBbUuCSC7eXZRHKCWB4BPnEtWcoUDQalK2XdyFmo6IIr9FbA==
+X-Google-Smtp-Source: AA0mqf5WTEPcR1uyF8Gei17thsBbEMzCy12Xx8sABUso05SpPDnwmB8i02rN6v+5a/2gnxiJ6HqrYFpqcaJF98ZDpGg=
+X-Received: by 2002:a05:690c:691:b0:391:c586:65ce with SMTP id
+ bp17-20020a05690c069100b00391c58665cemr2439803ywb.65.1669082612716; Mon, 21
+ Nov 2022 18:03:32 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.4.2
-Subject: Re: [PATCH] filelock: move file locking definitions to separate
- header file
-Content-Language: en-US
-To:     Jeff Layton <jlayton@kernel.org>, Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>
-Cc:     hch@lst.de, linux-kernel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        devel@lists.orangefs.org, linux-xfs@vger.kernel.org
-References: <20221120210004.381842-1-jlayton@kernel.org>
-From:   Joseph Qi <joseph.qi@linux.alibaba.com>
-In-Reply-To: <20221120210004.381842-1-jlayton@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-        USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a25:9f88:0:0:0:0:0 with HTTP; Mon, 21 Nov 2022 18:03:32
+ -0800 (PST)
+From:   Felipe Bedetti <felipebedetticosta@gmail.com>
+Date:   Mon, 21 Nov 2022 23:03:32 -0300
+Message-ID: <CAFO8usxTRUKjioUXk7thEhocooQkAbfUiyF9=Ari+bYcfCaxYg@mail.gmail.com>
+Subject: Fw:Norah Colly
+To:     linux fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux geode <linux-geode@lists.infradead.org>,
+        linux hams <linux-hams@vger.kernel.org>,
+        linux hexagon <linux-hexagon@vger.kernel.org>,
+        linux hippi <linux-hippi@sunsite.dk>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=5.5 required=5.0 tests=BAYES_50,BODY_SINGLE_URI,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SHORT_SHORTNER,SPF_HELO_NONE,SPF_PASS,
+        SUSPICIOUS_RECIPS,TVD_SPACE_RATIO,T_PDS_SHORTFWD_URISHRT_FP
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2607:f8b0:4864:20:0:0:0:1135 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  2.5 SUSPICIOUS_RECIPS Similar addresses in recipient list
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [felipebedetticosta[at]gmail.com]
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  0.0 TVD_SPACE_RATIO No description available.
+        *  0.0 T_PDS_SHORTFWD_URISHRT_FP Apparently a short fwd/re with URI
+        *      shortener
+        *  1.6 SHORT_SHORTNER Short body with little more than a link to a
+        *      shortener
+        *  0.7 BODY_SINGLE_URI Message body is only a URI
+X-Spam-Level: *****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
-
-On 11/21/22 4:59 AM, Jeff Layton wrote:
-> The file locking definitions have lived in fs.h since the dawn of time,
-> but they are only used by a small subset of the source files that
-> include it.
-> 
-> Move the file locking definitions to a new header file, and add the
-> appropriate #include directives to the source files that need them. By
-> doing this we trim down fs.h a bit and limit the amount of rebuilding
-> that has to be done when we make changes to the file locking APIs.
-> 
-> Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> ---
->  fs/9p/vfs_file.c          |   1 +
->  fs/afs/internal.h         |   1 +
->  fs/attr.c                 |   1 +
->  fs/ceph/locks.c           |   1 +
->  fs/cifs/cifsfs.c          |   1 +
->  fs/cifs/cifsglob.h        |   1 +
->  fs/cifs/cifssmb.c         |   1 +
->  fs/cifs/file.c            |   1 +
->  fs/cifs/smb2file.c        |   1 +
->  fs/dlm/plock.c            |   1 +
->  fs/fcntl.c                |   1 +
->  fs/file_table.c           |   1 +
->  fs/fuse/file.c            |   1 +
->  fs/gfs2/file.c            |   1 +
->  fs/inode.c                |   1 +
->  fs/ksmbd/smb2pdu.c        |   1 +
->  fs/ksmbd/vfs.c            |   1 +
->  fs/ksmbd/vfs_cache.c      |   1 +
->  fs/lockd/clntproc.c       |   1 +
->  fs/lockd/netns.h          |   1 +
->  fs/locks.c                |   1 +
->  fs/namei.c                |   1 +
->  fs/nfs/nfs4_fs.h          |   1 +
->  fs/nfs_common/grace.c     |   1 +
->  fs/nfsd/netns.h           |   1 +
->  fs/ocfs2/locks.c          |   1 +
->  fs/ocfs2/stack_user.c     |   1 +
-
-Seems it misses the related changes in:
-fs/ocfs2/stackglue.c
-
-Thanks,
-Joseph
-
->  fs/open.c                 |   1 +
->  fs/orangefs/file.c        |   1 +
->  fs/proc/fd.c              |   1 +
->  fs/utimes.c               |   1 +
->  fs/xattr.c                |   1 +
->  fs/xfs/xfs_buf.h          |   1 +
->  fs/xfs/xfs_file.c         |   1 +
->  fs/xfs/xfs_inode.c        |   1 +
->  include/linux/filelock.h  | 428 ++++++++++++++++++++++++++++++++++++++
->  include/linux/fs.h        | 421 -------------------------------------
->  include/linux/lockd/xdr.h |   1 +
->  38 files changed, 464 insertions(+), 421 deletions(-)
->  create mode 100644 include/linux/filelock.h
-> 
-> Unless anyone has objections, I'll plan to merge this in via the file
-> locking tree for v6.3. I'd appreciate Acked-bys or Reviewed-bys from
-> maintainers, however.
-> 
+https://bit.ly/3gkfct7
