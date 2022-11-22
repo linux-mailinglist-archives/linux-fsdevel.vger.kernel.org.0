@@ -2,148 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA56E633DC4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 14:34:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 598E6633DD5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 14:38:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233773AbiKVNeB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Nov 2022 08:34:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34128 "EHLO
+        id S233591AbiKVNiI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Nov 2022 08:38:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233791AbiKVNd5 (ORCPT
+        with ESMTP id S233183AbiKVNiF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Nov 2022 08:33:57 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52B3551C1D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 05:33:56 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id k19so17972914lji.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 05:33:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ginkel.com; s=google;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5+UL8YmYuxaAzETdr30Z6QYBlXK72yteH1Bc1JcIfos=;
-        b=keIHJlTdlsw2h8a3PiynUjgxrGvKUiyAq6MElC7d6EJwVzp+xJ/zb5jrVwEVTXX8kh
-         p9YXCNez8zaqjD+MAKQ5lfGJ+3U37/CLGzqW434Nz2CHG4lbQG1q7VmrX6cWuupCMlJZ
-         QbgbuYkmCaYkyrP9kFOfhUQWe8VYCbM+9vyqo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5+UL8YmYuxaAzETdr30Z6QYBlXK72yteH1Bc1JcIfos=;
-        b=drYaJASUq+T949oNbxo18YRFjjEOEc0JQIifNdCAYR6EWJJYDqLY1pAs9PeEq+RFYg
-         xHv6wNn9phjQiAA3zOEUnS8NyPuk51kHoUC9A6/3VPHtWAE69C8eBLiXAOrPrnhCVoOY
-         hDAT1gzEFDYbro/rRJts8IBDVeI2X9B3ql3GIkEWqmzjvarPsbhvrZm2nKJ17WFiyugv
-         NzRcb+YBcSB/FMwJm0R/w9sL60yswDjuBhqW9tX6VwmQma8KksQRvkDkYo40KNGyl54E
-         X91x3uWTbUJ04znZC9kaHyNZnHLGdv6SnzhhtkmjaKti887kVAGgkadWr7RLh7eOU5t5
-         jXPw==
-X-Gm-Message-State: ANoB5pnugfkFgZAHWjiM82kfyNqesO5xBlIysJ2HzFy0cUUhPPbAhr2y
-        l1aplTUCuAqvm/9qTGpE74Krvh4xpc6uRVAVMOJrgKhgsLpuA749
-X-Google-Smtp-Source: AA0mqf64LHD1q4mcYCT3B+AmzEAcnWSzUbAxDKZlhZj89fn2Zm+eywNNH1Pu2IQUX8XAVUmA/kHdVqtiFa2hFoXJrUE=
-X-Received: by 2002:a2e:aaa4:0:b0:277:a84:44f5 with SMTP id
- bj36-20020a2eaaa4000000b002770a8444f5mr2404824ljb.312.1669124034057; Tue, 22
- Nov 2022 05:33:54 -0800 (PST)
+        Tue, 22 Nov 2022 08:38:05 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 126C265859
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 05:37:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669124227;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1dWvNrreQ//p1hYgd4mqv1o3a3/SDy+15g4X7BGwYuE=;
+        b=PxzPrg95GlxWVXzgp+WFCZ69cXB3rl/DW5a06hxtT54O1KTmPyNHlyvLWgF9PWs4ZLqMrN
+        UFPxCU2MM+v3VzQNDv/gzrTYlzaCkf2bSkXuM+V5v0VtVyorLsf6egT8/MS9S74cYcsRCu
+        vfgC84teNS2FKHvZRzeVfqKt5EnKDak=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-552-kmflS9rnOyGDOch6wHKwgg-1; Tue, 22 Nov 2022 08:37:04 -0500
+X-MC-Unique: kmflS9rnOyGDOch6wHKwgg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 249911C05EA2;
+        Tue, 22 Nov 2022 13:37:01 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.14])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E0BCF40C83AD;
+        Tue, 22 Nov 2022 13:36:59 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y3zFzdWnWlEJ8X8/@infradead.org>
+References: <Y3zFzdWnWlEJ8X8/@infradead.org> <166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk> <166869689451.3723671.18242195992447653092.stgit@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 2/4] iov_iter: Add a function to extract a page list from an iterator
 MIME-Version: 1.0
-From:   Thilo-Alexander Ginkel <thilo@ginkel.com>
-Date:   Tue, 22 Nov 2022 14:33:38 +0100
-Message-ID: <CANvSZQ8XjO=x51TB9qKy7EZWEF0nK_1oAf55yuHX5L6AGML=eA@mail.gmail.com>
-Subject: Prometheus Node Exporter and cadvisor seem to run into deadlocks (?)
- since change in fs/eventpoll.c
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Stefan Bader <stefan.bader@canonical.com>,
-        Kamal Mostafa <kamal@canonical.com>,
-        Benjamin Segall <bsegall@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <824668.1669124217.1@warthog.procyon.org.uk>
+Date:   Tue, 22 Nov 2022 13:36:57 +0000
+Message-ID: <824669.1669124217@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi there,
+Christoph Hellwig <hch@infradead.org> wrote:
 
-since applying the recent Ubuntu security release for the 5.4.0 kernel
-(5.4.0-134) our Node Exporter and cadvisor processes have started
-acting up when collecting metrics for consumption by Prometheus. What
-has previously taken under a second is now taking > 1 minute.
+> > +EXPORT_SYMBOL(iov_iter_extract_pages);
+> 
+> get_user_pages_fast, pin_user_pages_fast are very intentionally
+> EXPORT_SYMBOL_GPL, which should not be bypassed by an iov_* wrapper.
 
-A small reproducer in Go that queries netclass data (similar to what
-Node Exporter does) is available at [1].
+Ah, but I'm intending to replace:
 
-Bisecting did not really help (due to the non-deterministic nature of
-the bug), but an educated guess in the Node Exporter issue #2500
-discussion [2] on GitHub brought up the following commit as the
-possible culprit:
+	EXPORT_SYMBOL(iov_iter_get_pages2);
+	EXPORT_SYMBOL(iov_iter_get_pages_alloc2);
 
-commit bcf91619e32fe584ecfafa49a3db3d1db4ff70b2
-Author: Benjamin Segall <bsegall@google.com>
-Date:   Wed Jun 15 14:24:23 2022 -0700
+which *aren't* marked _GPL, so you need to argue that one with Al.
 
-    epoll: autoremove wakers even more aggressively
+David
 
-    BugLink: https://bugs.launchpad.net/bugs/1990190
-
-    commit a16ceb13961068f7209e34d7984f8e42d2c06159 upstream.
-
-    If a process is killed or otherwise exits while having active network
-    connections and many threads waiting on epoll_wait, the threads will all
-    be woken immediately, but not removed from ep->wq.  Then when network
-    traffic scans ep->wq in wake_up, every wakeup attempt will fail, and will
-    not remove the entries from the list.
-
-    This means that the cost of the wakeup attempt is far higher than usual,
-    does not decrease, and this also competes with the dying threads trying to
-    actually make progress and remove themselves from the wq.
-
-    Handle this by removing visited epoll wq entries unconditionally, rather
-    than only when the wakeup succeeds - the structure of ep_poll means that
-    the only potential loss is the timed_out->eavail heuristic, which now can
-    race and result in a redundant ep_send_events attempt.  (But only when
-    incoming data and a timeout actually race, not on every timeout)
-
-    Shakeel added:
-
-    : We are seeing this issue in production with real workloads and it has
-    : caused hard lockups.  Particularly network heavy workloads with a lot
-    : of threads in epoll_wait() can easily trigger this issue if they get
-    : killed (oom-killed in our case).
-
-    Link: https://lkml.kernel.org/r/xm26fsjotqda.fsf@google.com
-    Signed-off-by: Ben Segall <bsegall@google.com>
-    Tested-by: Shakeel Butt <shakeelb@google.com>
-    Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-    Cc: Linus Torvalds <torvalds@linux-foundation.org>
-    Cc: Shakeel Butt <shakeelb@google.com>
-    Cc: Eric Dumazet <edumazet@google.com>
-    Cc: Roman Penyaev <rpenyaev@suse.de>
-    Cc: Jason Baron <jbaron@akamai.com>
-    Cc: Khazhismel Kumykov <khazhy@google.com>
-    Cc: Heiher <r@hev.cc>
-    Cc: <stable@kernel.org>
-    Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-    Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Signed-off-by: Kamal Mostafa <kamal@canonical.com>
-    Signed-off-by: Stefan Bader <stefan.bader@canonical.com>
-
-I have reverted this commit in my test environment and haven't been
-able to reproduce the issue since.
-
-An alternative workaround seems to be to reduce Node Exporter's
-concurrency, which hints at some kind of race condition being
-involved.
-
-There are also reports for other distributions, which suggests that
-the issue is more wide-spread.
-
-My Vagrant-based test environment is available at [3].
-
-Any ideas?
-
-Thanks & kind regards,
-Thilo
-
-[1] https://github.com/prometheus/node_exporter/issues/2500#issuecomment-1304847221
-[2] https://github.com/prometheus/node_exporter/issues/2500#issuecomment-1322491565
-[3] https://github.com/tgbyte/stuck-node-exporter
