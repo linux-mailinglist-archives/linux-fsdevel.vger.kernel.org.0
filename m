@@ -2,116 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 97016633C46
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 13:20:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92E6F633CC9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 13:46:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233688AbiKVMUn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Nov 2022 07:20:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33980 "EHLO
+        id S232867AbiKVMql (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Nov 2022 07:46:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233605AbiKVMUl (ORCPT
+        with ESMTP id S232729AbiKVMqh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Nov 2022 07:20:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EF86D4AF08;
-        Tue, 22 Nov 2022 04:20:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 97E89B81A52;
-        Tue, 22 Nov 2022 12:20:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7BB3C433C1;
-        Tue, 22 Nov 2022 12:20:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669119638;
-        bh=omBfWXmMhLMm+WJGcOqaotuYzo99NcFtkFUjLGTxJkU=;
-        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=lCqeNISkHr5FV5oUA/uF7cCqbH3pbaJZzL0H/JeQImnqkxBP/qna4Vwgxuxwwf4kc
-         djCzx51ajPQzJsx7t6fcFaQ3CPrg1HyiCa0H584zbvwYZVAhxyYK9KeJP/cZSm7jN0
-         AEQFZIjKudut9Bn5O9uHSqMDAio5e4wG5sa2i3DoX7eTRf+obcb5zEzndUU3Fwo275
-         rIYFdUuTfDxxMV446wuHU7u2FLiPhi/QMUcdaTapUWa++/h/6C38Q3lKoDzCYdb8Qd
-         YelQN+YEM82ey5KUKNOPaXvgHVIDzs2zei/oxdiPIwrOhlWjLs2M+5ia9+Ld6VGXMR
-         y+AjrCDtny9iA==
-Message-ID: <a731e688122d1a6fdb2f7bdbd71d403fa110e9f2.camel@kernel.org>
-Subject: Re: [PATCH] filelock: move file locking definitions to separate
- header file
-From:   Jeff Layton <jlayton@kernel.org>
-To:     Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mark Fasheh <mark@fasheh.com>, Joel Becker <jlbec@evilplan.org>
-Cc:     hch@lst.de, linux-kernel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        devel@lists.orangefs.org, linux-xfs@vger.kernel.org
-Date:   Tue, 22 Nov 2022 07:20:35 -0500
-In-Reply-To: <0c6a44ff-409e-99b2-eaa9-fd6e87a9e104@linux.alibaba.com>
-References: <20221120210004.381842-1-jlayton@kernel.org>
-         <0c6a44ff-409e-99b2-eaa9-fd6e87a9e104@linux.alibaba.com>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.1 (3.46.1-1.fc37) 
+        Tue, 22 Nov 2022 07:46:37 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77F435914A;
+        Tue, 22 Nov 2022 04:46:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=vv6m9biE4Z2OXrFYdjKygGiyDF
+        HmEGbtxyodsXFLla2N9vRI5uc1Uc/WwCqA7uLl4zpxWxNFhKZbS+kjbz4xGeVbJK1ryDjSfzzQUHM
+        Kyg9tAZvsKvsU9aD0o5nz416qw7GfxOrgtUt3CJJEZChwo7eVgsNqMyFiLvJteqYDT3B+xt6djfff
+        JSdw5g5rD87hF8UY130eXlJF2bilwzqHH3Dw5u9EmUJVr0IaV7w5cYtiEgvVrUq3mbgokjQeM7h0f
+        0oRS+kpts3rnHiwuas6U0/s8ODEWWO0J3OztuYeOhvUsd0P3F6OjNy9geJ/TT+l3LCsR1jFhVuc66
+        9I93fOQQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1oxSfU-009Nkf-C1; Tue, 22 Nov 2022 12:46:28 +0000
+Date:   Tue, 22 Nov 2022 04:46:28 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 1/4] mm: Move FOLL_* defs to mm_types.h
+Message-ID: <Y3zEpABh/+jui71a@infradead.org>
+References: <166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk>
+ <166869688542.3723671.10243929000823258622.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <166869688542.3723671.10243929000823258622.stgit@warthog.procyon.org.uk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2022-11-22 at 09:51 +0800, Joseph Qi wrote:
-> Hi,
->=20
-> On 11/21/22 4:59 AM, Jeff Layton wrote:
-> > The file locking definitions have lived in fs.h since the dawn of time,
-> > but they are only used by a small subset of the source files that
-> > include it.
-> >=20
-> > Move the file locking definitions to a new header file, and add the
-> > appropriate #include directives to the source files that need them. By
-> > doing this we trim down fs.h a bit and limit the amount of rebuilding
-> > that has to be done when we make changes to the file locking APIs.
-> >=20
-> > Signed-off-by: Jeff Layton <jlayton@kernel.org>
-> > ---
-> >  fs/9p/vfs_file.c          |   1 +
-> >  fs/afs/internal.h         |   1 +
-> >  fs/attr.c                 |   1 +
-> >  fs/ceph/locks.c           |   1 +
-> >  fs/cifs/cifsfs.c          |   1 +
-> >  fs/cifs/cifsglob.h        |   1 +
-> >  fs/cifs/cifssmb.c         |   1 +
-> >  fs/cifs/file.c            |   1 +
-> >  fs/cifs/smb2file.c        |   1 +
-> >  fs/dlm/plock.c            |   1 +
-> >  fs/fcntl.c                |   1 +
-> >  fs/file_table.c           |   1 +
-> >  fs/fuse/file.c            |   1 +
-> >  fs/gfs2/file.c            |   1 +
-> >  fs/inode.c                |   1 +
-> >  fs/ksmbd/smb2pdu.c        |   1 +
-> >  fs/ksmbd/vfs.c            |   1 +
-> >  fs/ksmbd/vfs_cache.c      |   1 +
-> >  fs/lockd/clntproc.c       |   1 +
-> >  fs/lockd/netns.h          |   1 +
-> >  fs/locks.c                |   1 +
-> >  fs/namei.c                |   1 +
-> >  fs/nfs/nfs4_fs.h          |   1 +
-> >  fs/nfs_common/grace.c     |   1 +
-> >  fs/nfsd/netns.h           |   1 +
-> >  fs/ocfs2/locks.c          |   1 +
-> >  fs/ocfs2/stack_user.c     |   1 +
->=20
-> Seems it misses the related changes in:
-> fs/ocfs2/stackglue.c
->=20
+Looks good:
 
-I was able to build ocfs2.ko just fine without any changes to
-stackglue.c. What problem do you see here?
-
-Thanks,
---=20
-Jeff Layton <jlayton@kernel.org>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
