@@ -2,82 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 19EEB633ECD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 15:22:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EBE81633F29
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 22 Nov 2022 15:45:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233153AbiKVOWl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Nov 2022 09:22:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40742 "EHLO
+        id S232748AbiKVOpK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Nov 2022 09:45:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233963AbiKVOWd (ORCPT
+        with ESMTP id S232498AbiKVOpJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Nov 2022 09:22:33 -0500
+        Tue, 22 Nov 2022 09:45:09 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FEFA67F67
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 06:21:28 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82A1D3C6F3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 06:44:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669126887;
+        s=mimecast20190719; t=1669128254;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=cIJAo6xebFAIOtpr/qxmFW1V4vomSri9MAXvjkm3gSg=;
-        b=MnwRJgzK1M65HG0hvwPhInPYuzTQNcPVR7fm2BcRO3CEkNwJVSa+t08W/J/H4vhbJROeCA
-        JYhTKitoi11iZXz/59pBJa8RAFtbIPpQVqjsCLvvusEgTLmY75tYKPi5EdfNu4K8ymOTgk
-        IBu+jO1+mH0yolLZXMAEQ++nM08Ztg0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-656-psAMjxtvNgem1Uu6gg2dUQ-1; Tue, 22 Nov 2022 09:21:22 -0500
-X-MC-Unique: psAMjxtvNgem1Uu6gg2dUQ-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8DA37857F90;
-        Tue, 22 Nov 2022 14:21:21 +0000 (UTC)
-Received: from fedora (ovpn-193-106.brq.redhat.com [10.40.193.106])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4A6B5140EBF3;
-        Tue, 22 Nov 2022 14:21:20 +0000 (UTC)
-Date:   Tue, 22 Nov 2022 15:21:17 +0100
-From:   Lukas Czerner <lczerner@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.com>,
-        Eric Sandeen <sandeen@redhat.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] quota: add quota in-memory format support
-Message-ID: <20221122142117.epplqsm4ngwx5eyy@fedora>
-References: <20221121142854.91109-1-lczerner@redhat.com>
- <20221121142854.91109-2-lczerner@redhat.com>
- <Y3u54l2CVapQmK/w@magnolia>
- <Y3zHn4egPhwMRcDE@infradead.org>
+        bh=DOTrbU/zp22wPSskCmpvwxHNiz91TXL6UQP9VfM7zZI=;
+        b=afvh0ZdS3eZNis/acyO5gGCNjh5BydAm+JF7VztMexaN/ZtsfinzzumuqFT0kGTlmUwI/7
+        m+jtgpFVDEycJnI9WClYB96bJt6p2Rqtfz850V1jUeZtrfqKneoBvpWtBYIkzBfxiNP2x6
+        4ckJOY9GA/Qe2T2iZgGn0dherjvmCXk=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-412-Kg-O5iGiO7e_GFNxufrt8A-1; Tue, 22 Nov 2022 09:44:13 -0500
+X-MC-Unique: Kg-O5iGiO7e_GFNxufrt8A-1
+Received: by mail-ej1-f70.google.com with SMTP id gt15-20020a1709072d8f00b007aaac7973fbso8418570ejc.23
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 06:44:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DOTrbU/zp22wPSskCmpvwxHNiz91TXL6UQP9VfM7zZI=;
+        b=yAWVh9bCxxK2oSq0qHnYa32MEUCJjgHKwcnD3jvA2JRDVgW7iedZDMGXQCxtDMRL2r
+         SPiO9pq4SVRQx7L+IGk6WFPHIlZ96JrDNlMruYztsS8o/ri6zWJQ8QTRKFwOLFpL6WuQ
+         dk3q5ZhGvc2MPkFrfOUteGVjg1lbiYZI2IrLRJVfFBrgDSJwFgE8rjbujsDpyaCOKDIq
+         4IrG8sUjgUiDuxx4G5ufoi0eE7xI6fcjWcUK+sWEQbyt+ZikE5IKu1nkWdHeClkuUwq1
+         kxlUg0z5G5kJAmTCyqt5izHIcq2A0t5wcsDKxlcHlOrB+nSpQA45qpnJ2hjme7dcfUbC
+         s19Q==
+X-Gm-Message-State: ANoB5pl2VpOr7I8UOYQYf0+hySKZNF1rUe/TQloVgvjCtyWZE8lzJLFm
+        sK+Lbd+ky9QUA4Gegp3UXcRiY/rfC3MgY6AU8RH7+qU2bInhL+X+L2L1PJKJHkDifQi0BUUFbWK
+        Z7xCn53Flh2jmJyMjZS60m7tKcw==
+X-Received: by 2002:a17:906:eb04:b0:7ae:77ef:d048 with SMTP id mb4-20020a170906eb0400b007ae77efd048mr3812871ejb.740.1669128252357;
+        Tue, 22 Nov 2022 06:44:12 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf72PFdgk+/lBfsLT/u6KTtWXMDQcVEwzELUErmlK8MzhONJFc1zB3wqW5q26zETlXANiPDbnA==
+X-Received: by 2002:a17:906:eb04:b0:7ae:77ef:d048 with SMTP id mb4-20020a170906eb0400b007ae77efd048mr3812860ejb.740.1669128252117;
+        Tue, 22 Nov 2022 06:44:12 -0800 (PST)
+Received: from ?IPV6:2001:1c00:c1e:bf00:d69d:5353:dba5:ee81? (2001-1c00-0c1e-bf00-d69d-5353-dba5-ee81.cable.dynamic.v6.ziggo.nl. [2001:1c00:c1e:bf00:d69d:5353:dba5:ee81])
+        by smtp.gmail.com with ESMTPSA id f24-20020a17090631d800b0078db18d7972sm6105509ejf.117.2022.11.22.06.44.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Nov 2022 06:44:11 -0800 (PST)
+Message-ID: <8648a01c-ee70-7c69-f24c-3a30866ae08f@redhat.com>
+Date:   Tue, 22 Nov 2022 15:44:10 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y3zHn4egPhwMRcDE@infradead.org>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH linux-next] vboxfs: use strscpy() is more robust and safer
+To:     yang.yang29@zte.com.cn
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        xu.panda@zte.com.cn
+References: <202211220858139474929@zte.com.cn>
+Content-Language: en-US, nl
+From:   Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <202211220858139474929@zte.com.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 22, 2022 at 04:59:11AM -0800, Christoph Hellwig wrote:
-> On Mon, Nov 21, 2022 at 09:48:18AM -0800, Darrick J. Wong wrote:
-> > Would it be wise to "persist" dquot contents to a (private) tmpfs file
-> > to facilitate incore dquot reclaim?  The tmpfs file data can be paged
-> > out, or even punched if all the dquot records in that page go back to
-> > default settings.
+Hi,
+
+On 11/22/22 01:58, yang.yang29@zte.com.cn wrote:
+> From: Xu Panda <xu.panda@zte.com.cn>
 > 
-> That seems like a good idea for memory usage, but I think this might
-> also make the code much simpler, as that just requires fairly trivial
-> quota_read and quota_write methods in the shmem code instead of new
-> support for an in-memory quota file.
+> The implementation of strscpy() is more robust and safer.
+> That's now the recommended way to copy NUL terminated strings.
+> 
+> Signed-off-by: Xu Panda <xu.panda@zte.com.cn>
+> Signed-off-by: Yang Yang <yang.yang29@zte.com>
 
-You mean like the implementation in the v1 ?
+Thanks, patch looks good to me:
 
--Lukas
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+
+Regards,
+
+Hans
+
+
+
+> ---
+>  fs/vboxsf/super.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/vboxsf/super.c b/fs/vboxsf/super.c
+> index d2f6df69f611..1fb8f4df60cb 100644
+> --- a/fs/vboxsf/super.c
+> +++ b/fs/vboxsf/super.c
+> @@ -176,7 +176,7 @@ static int vboxsf_fill_super(struct super_block *sb, struct fs_context *fc)
+>  	}
+>  	folder_name->size = size;
+>  	folder_name->length = size - 1;
+> -	strlcpy(folder_name->string.utf8, fc->source, size);
+> +	strscpy(folder_name->string.utf8, fc->source, size);
+>  	err = vboxsf_map_folder(folder_name, &sbi->root);
+>  	kfree(folder_name);
+>  	if (err) {
 
