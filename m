@@ -2,310 +2,259 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7C02634B08
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 00:23:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C4B9634B54
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 00:45:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234988AbiKVXWB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Nov 2022 18:22:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42344 "EHLO
+        id S234975AbiKVXpW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 22 Nov 2022 18:45:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232341AbiKVXV5 (ORCPT
+        with ESMTP id S230009AbiKVXpV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Nov 2022 18:21:57 -0500
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 039B7C67F2;
-        Tue, 22 Nov 2022 15:21:55 -0800 (PST)
-Received: from pps.filterd (m0187473.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AMMIkd7039599;
-        Tue, 22 Nov 2022 23:21:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=oC+XCMatKOqJAPTjzW1TpIq92DjrOmvsufQ1aYb6wEU=;
- b=JHAeISiJntvnrNOSKgwUl5BmInZf6wvMboXQNH3jh5MtYpsdcxBdqea9PsEM7t1/+P6O
- chyy8BDAEdXl51nS+4Dte6sI1ueFQAdkhOyE9iAFhvQs22jb+pYl0cXS4WCwRGMObkSg
- Q88nvP1kjW0iY52MpecarOSbFabU17jKc3VdH3ffDZr4a3ei/DjSEzZf4XsS9YOzRosV
- gPgQucSKzmfVzE7jCn7oDevFId4fYryM9f3Q0JYmuxRcEfH3DulaODY747B6ccWeWoHx
- 3oVGGcPuJmJ3tqH9jbC99dEpDfyt2coTD6wn3D+K1giLjAuPYE/WBE6BC9DrDDAb00+w nQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m10ff3hwq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Nov 2022 23:21:16 +0000
-Received: from m0187473.ppops.net (m0187473.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2AMNAaos017423;
-        Tue, 22 Nov 2022 23:21:16 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m10ff3hw3-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Nov 2022 23:21:15 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2AMN5Xx3030809;
-        Tue, 22 Nov 2022 23:21:14 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma03dal.us.ibm.com with ESMTP id 3kxpsacwxe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 22 Nov 2022 23:21:14 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com ([9.208.128.115])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2AMNLDAp65274116
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 22 Nov 2022 23:21:13 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D9DB458060;
-        Tue, 22 Nov 2022 23:21:12 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1EF435803F;
-        Tue, 22 Nov 2022 23:21:11 +0000 (GMT)
-Received: from [9.163.61.172] (unknown [9.163.61.172])
-        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Tue, 22 Nov 2022 23:21:11 +0000 (GMT)
-Message-ID: <d3e8df29-d9b0-5e8e-4a53-d191762fe7f2@linux.vnet.ibm.com>
-Date:   Tue, 22 Nov 2022 18:21:10 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-Content-Language: en-US
-To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Nayna Jain <nayna@linux.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-fsdevel@vger.kernel.org,
-        linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>
-References: <20221106210744.603240-1-nayna@linux.ibm.com>
- <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
- <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
- <20221119114234.nnfxsqx4zxiku2h6@riteshh-domain>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-In-Reply-To: <20221119114234.nnfxsqx4zxiku2h6@riteshh-domain>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: rx6IXruI8J7qA8U13iaDwj3sbvme2lXD
-X-Proofpoint-GUID: pm16FMvUALsLfnxbRgs7NJS99XGmi9by
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Tue, 22 Nov 2022 18:45:21 -0500
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 04235C722C
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 15:45:20 -0800 (PST)
+Received: by mail-pf1-x429.google.com with SMTP id 140so15816852pfz.6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 15:45:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4Br32V4f5RhJzAJZzqIlTw5MxWMCxMPceRuTf9fFBWs=;
+        b=LMp1DNYW9KAAMAhwIRp13A+UoP5f9oi+tOL9pTcPwVL3Hc6Ia0RKrsPyHf7sk3dYlL
+         v9YR+AZs0izub2IeIbLi9+6o8cIngufh1uDpzVlhQ/ZFDkXxqwXovqRsjKBm6NZFGvv6
+         pSeTyc8+Xrg5pYq9dVwahpyuRyB+A0L7WHBm9FYVIm3CSim0mFWLdFJcXn1W/Cirm8wU
+         4cx6I/5Z9/oLvxF/W/DNvYvSDm5Y1x5ZXSK3G4AXZe853DkbvzdSe2ugzOjJtso17frU
+         aC8o3HsIYiTKdAMhTgI75zsB1Xqbrkav8T2gO/YrQ38GZirJO2OPKZh8DErpWJLFpzvk
+         XPlg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4Br32V4f5RhJzAJZzqIlTw5MxWMCxMPceRuTf9fFBWs=;
+        b=7V0L4S2yFopjMeYjqEjv1u/3YSCzsGFn+te1iWp+BfzJx1TcDU3dUGr1EQxHZx1hYe
+         4CC7GclV4mxVoo/4FoJd3l3EjslHYFV7c46Xh8DSjf+hhjN2mkb2tDVE/QijX1tvANGJ
+         QQD0s+gwPp/b90a8xlMDw/JCQdOC9PDLInE6UTW8dilev9WrWAadTesVyrgeOlVnZYf/
+         LwnyzQ/+dcJ5j9jlmalRkTU7dseNob4nc/OzZdXk3+5R+1UBAkjcA9+rfM0hja6D0iX0
+         KlXbiGCHkT3HLg8dKoFcHACA9cDrSTByVQ28kkhiK978smD9SFOMx0dBCihEphge9vsz
+         cUVw==
+X-Gm-Message-State: ANoB5pkCiVw+bZ2JA+POEI0ssoHpXCQSD5zvmnrsbPnZwjjQ9JN70FH5
+        s0uAKSUSlQh1DCxV14uw0rlitQ==
+X-Google-Smtp-Source: AA0mqf4vEA83Ja+O0Ci0KfXTX8Oj7a0KKnCvRMdSpSJjVAh65PF1JRO/J4lVuOvYHHckcCKBomIqGQ==
+X-Received: by 2002:a63:1626:0:b0:470:2c90:d89f with SMTP id w38-20020a631626000000b004702c90d89fmr7904405pgl.253.1669160719359;
+        Tue, 22 Nov 2022 15:45:19 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-65-106.pa.vic.optusnet.com.au. [49.186.65.106])
+        by smtp.gmail.com with ESMTPSA id e126-20020a621e84000000b00573769811d6sm6800188pfe.44.2022.11.22.15.45.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Nov 2022 15:45:18 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oxcx1-00HS2f-47; Wed, 23 Nov 2022 10:45:15 +1100
+Date:   Wed, 23 Nov 2022 10:45:15 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Catherine Hoang <catherine.hoang@oracle.com>,
+        linux-xfs@vger.kernel.org, linux-ext4 <linux-ext4@vger.kernel.org>,
+        Theodore Ts'o <tytso@mit.edu>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-api@vger.kernel.org
+Subject: Re: [PATCH v1] xfs_spaceman: add fsuuid command
+Message-ID: <20221122234515.GT3600936@dread.disaster.area>
+References: <20221109222335.84920-1-catherine.hoang@oracle.com>
+ <Y3abjYmX//CF/ey0@magnolia>
+ <20221117215125.GH3600936@dread.disaster.area>
+ <Y3bKjm2vOwy/jV4Z@magnolia>
+ <20221121233357.GO3600936@dread.disaster.area>
+ <Y3xqhXjJpXosOPPH@magnolia>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-22_13,2022-11-18_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- priorityscore=1501 spamscore=0 clxscore=1011 lowpriorityscore=0
- bulkscore=0 suspectscore=0 impostorscore=0 malwarescore=0 mlxscore=0
- adultscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211220174
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Y3xqhXjJpXosOPPH@magnolia>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Mon, Nov 21, 2022 at 10:21:57PM -0800, Darrick J. Wong wrote:
+> [adding Ted, the ext4 list, fsdevel, and api, because why not?]
+> 
+> On Tue, Nov 22, 2022 at 10:33:57AM +1100, Dave Chinner wrote:
+> > On Thu, Nov 17, 2022 at 03:58:06PM -0800, Darrick J. Wong wrote:
+> > > On Fri, Nov 18, 2022 at 08:51:25AM +1100, Dave Chinner wrote:
+> > > > On Thu, Nov 17, 2022 at 12:37:33PM -0800, Darrick J. Wong wrote:
+> > > > > On Wed, Nov 09, 2022 at 02:23:35PM -0800, Catherine Hoang wrote:
+> > > > > > Add support for the fsuuid command to retrieve the UUID of a mounted
+> > > > > > filesystem.
+> > > > > > 
+> > > > > > Signed-off-by: Catherine Hoang <catherine.hoang@oracle.com>
+> > > > > > ---
+> 
+> <snip to the good part>
+> > > > > If you're really unlucky, the C compiler will put the fsuuid right
+> > > > > before the call frame, which is how stack smashing attacks work.  It
+> > > > > might also lay out bp[] immediately afterwards, which will give you
+> > > > > weird results as the unparse function overwrites its source buffer.  The
+> > > > > C compiler controls the stack layout, which means this can go bad in
+> > > > > subtle ways.
+> > > > > 
+> > > > > Either way, gcc complains about this (albeit in an opaque manner)...
+> > > > > 
+> > > > > In file included from ../include/xfs.h:9,
+> > > > >                  from ../include/libxfs.h:15,
+> > > > >                  from fsuuid.c:7:
+> > > > > In function ‘platform_uuid_unparse’,
+> > > > >     inlined from ‘fsuuid_f’ at fsuuid.c:45:3:
+> > > > > ../include/xfs/linux.h:100:9: error: ‘uuid_unparse’ reading 16 bytes from a region of size 0 [-Werror=stringop-overread]
+> > > > >   100 |         uuid_unparse(*uu, buffer);
+> > > > >       |         ^~~~~~~~~~~~~~~~~~~~~~~~~
+> > > > > ../include/xfs/linux.h: In function ‘fsuuid_f’:
+> > > > > ../include/xfs/linux.h:100:9: note: referencing argument 1 of type ‘const unsigned char *’
+> > > > > In file included from ../include/xfs/linux.h:13,
+> > > > >                  from ../include/xfs.h:9,
+> > > > >                  from ../include/libxfs.h:15,
+> > > > >                  from fsuuid.c:7:
+> > > > > /usr/include/uuid/uuid.h:107:13: note: in a call to function ‘uuid_unparse’
+> > > > >   107 | extern void uuid_unparse(const uuid_t uu, char *out);
+> > > > >       |             ^~~~~~~~~~~~
+> > > > > cc1: all warnings being treated as errors
+> > > > > 
+> > > > > ...so please allocate the struct fsuuid object dynamically.
+> > > > 
+> > > > So, follow common convention and you'll get it wrong, eh? That a
+> > > > score of -4 on Rusty's API Design scale.
+> > > > 
+> > > > http://sweng.the-davies.net/Home/rustys-api-design-manifesto
+> > > > 
+> > > > Flex arrays in user APIs like this just look plain dangerous to me.
+> > > > 
+> > > > Really, this says that the FSUUID API should have a fixed length
+> > > > buffer size defined in the API and the length used can be anything
+> > > > up to the maximum.
+> > > > 
+> > > > We already have this being added for the ioctl API:
+> > > > 
+> > > > #define UUID_SIZE 16
+> > > > 
+> > > > So why isn't the API definition this:
+> > > > 
+> > > > struct fsuuid {
+> > > >     __u32   fsu_len;
+> > > >     __u32   fsu_flags;
+> > > >     __u8    fsu_uuid[UUID_SIZE];
+> > > > };
+> > > > 
+> > > > Or if we want to support larger ID structures:
+> > > > 
+> > > > #define MAX_FSUUID_SIZE 256
+> > > > 
+> > > > struct fsuuid {
+> > > >     __u32   fsu_len;
+> > > >     __u32   fsu_flags;
+> > > >     __u8    fsu_uuid[MAX_FSUUID_SIZE];
+> > > > };
+> > > > 
+> > > > Then the structure can be safely placed on the stack, which means
+> > > > "the obvious use is (probably) the correct one" (a score of 7 on
+> > > > Rusty's API Design scale). It also gives the kernel a fixed upper
+> > > > bound that it can use to validate the incoming fsu_len variable
+> > > > against...
+> > > 
+> > > Too late now, this already shipped in 6.0.  Changing the struct size
+> > > would change the ioctl number, which is a totally new API.  This was
+> > > already discussed back in July on fsdevel/api.
+> > 
+> > It is certainly not too late - if we are going to lift this to the
+> > VFS, then we can simply make it a new ioctl. The horrible ext4 ioctl
+> > can ber left to rot in ext4 and nobody else ever needs to care that
+> > it exists.
+> 
+> You're wrong.  This was discussed **multiple times** this summer on
+> the fsdevel and API lists.  You had plenty of opportunity to make these
+> suggestions about the design, and yet you did not:
+> 
+> https://lore.kernel.org/linux-api/20220701201123.183468-1-bongiojp@gmail.com/
+> https://lore.kernel.org/linux-api/20220719065551.154132-1-bongiojp@gmail.com/
+> https://lore.kernel.org/linux-api/20220719234131.235187-1-bongiojp@gmail.com/
+> https://lore.kernel.org/linux-api/20220721224422.438351-1-bongiojp@gmail.com/
 
-On 11/19/22 06:48, Ritesh Harjani (IBM) wrote:
-> Hello Nayna,
 
-Hi Ritesh,
+There's good reason for that: this was posted and reviewed as *an
+EXT4 specific API*.  Why are you expecting XFS developers to closely
+review a patchset that was titled "Add ioctls to get/set the ext4
+superblock uuid."?
 
->
-> On 22/11/09 03:10PM, Nayna wrote:
->> On 11/9/22 08:46, Greg Kroah-Hartman wrote:
->>> On Sun, Nov 06, 2022 at 04:07:42PM -0500, Nayna Jain wrote:
->>>> securityfs is meant for Linux security subsystems to expose policies/logs
->>>> or any other information. However, there are various firmware security
->>>> features which expose their variables for user management via the kernel.
->>>> There is currently no single place to expose these variables. Different
->>>> platforms use sysfs/platform specific filesystem(efivarfs)/securityfs
->>>> interface as they find it appropriate. Thus, there is a gap in kernel
->>>> interfaces to expose variables for security features.
->>>>
->>>> Define a firmware security filesystem (fwsecurityfs) to be used by
->>>> security features enabled by the firmware. These variables are platform
->>>> specific. This filesystem provides platforms a way to implement their
->>>>    own underlying semantics by defining own inode and file operations.
->>>>
->>>> Similar to securityfs, the firmware security filesystem is recommended
->>>> to be exposed on a well known mount point /sys/firmware/security.
->>>> Platforms can define their own directory or file structure under this path.
->>>>
->>>> Example:
->>>>
->>>> # mount -t fwsecurityfs fwsecurityfs /sys/firmware/security
->>> Why not juset use securityfs in /sys/security/firmware/ instead?  Then
->>> you don't have to create a new filesystem and convince userspace to
->>> mount it in a specific location?
-> I am also curious to know on why not use securityfs, given the similarity
-> between the two. :)
-> More specifics on that below...
->
->>  From man 5 sysfs page:
->>
->> /sys/firmware: This subdirectory contains interfaces for viewing and
->> manipulating firmware-specific objects and attributes.
->>
->> /sys/kernel: This subdirectory contains various files and subdirectories
->> that provide information about the running kernel.
->>
->> The security variables which are being exposed via fwsecurityfs are managed
->> by firmware, stored in firmware managed space and also often consumed by
->> firmware for enabling various security features.
-> That's ok. As I see it users of securityfs can define their own fileops
-> (like how you are doing in fwsecurityfs).
-> See securityfs_create_file() & securityfs_create_symlink(), can accept the fops
-> & iops. Except maybe securityfs_create_dir(), that could be since there might
-> not be a usecase for it. But do you also need it in your case is the question to
-> ask.
+There was -no reasons- for me to pay attention to it, and I have
+enough to keep up with without having to care about the minutae of
+what ext4 internal information is being exposing to userspace.
 
-Please refer to the function plpks_secvars_init() in Patch 4/4.
+However, now it's being proposed as a *generic VFS API*, and so it's
+now important enough for developers from other filesystems to look
+at this ioctl API.
 
->
->>  From git commit b67dbf9d4c1987c370fd18fdc4cf9d8aaea604c2, the purpose of
->> securityfs(/sys/kernel/security) is to provide a common place for all kernel
->> LSMs. The idea of
-> Which was then seperated out by commit,
-> da31894ed7b654e2 ("securityfs: do not depend on CONFIG_SECURITY").
->
-> securityfs now has a seperate CONFIG_SECURITYFS config option. In fact I was even
-> thinking of why shouldn't we move security/inode.c into fs/securityfs/inode.c .
-> fs/* is a common place for all filesystems. Users of securityfs can call it's
-> exported kernel APIs to create files/dirs/symlinks.
->
-> If we move security/inode.c to fs/security/inode.c, then...
-> ...below call within securityfs_init() should be moved into some lsm sepecific
-> file.
->
-> #ifdef CONFIG_SECURITY
-> static struct dentry *lsm_dentry;
-> static ssize_t lsm_read(struct file *filp, char __user *buf, size_t count,
-> 			loff_t *ppos)
-> {
-> 	return simple_read_from_buffer(buf, count, ppos, lsm_names,
-> 		strlen(lsm_names));
-> }
->
-> static const struct file_operations lsm_ops = {
-> 	.read = lsm_read,
-> 	.llseek = generic_file_llseek,
-> };
-> #endif
->
-> securityfs_init()
->
-> #ifdef CONFIG_SECURITY
-> 	lsm_dentry = securityfs_create_file("lsm", 0444, NULL, NULL,
-> 						&lsm_ops);
-> #endif
->
-> So why not move it? Maybe others, can comment more on whether it's a good idea
-> to move security/inode.c into fs/security/inode.c?
-> This should then help others identify securityfs filesystem in fs/security/
-> for everyone to notice and utilize for their use?
->> fwsecurityfs(/sys/firmware/security) is to similarly provide a common place
->> for all firmware security objects.
->>
->> /sys/firmware already exists. The patch now defines a new /security
->> directory in it for firmware security features. Using /sys/kernel/security
->> would mean scattering firmware objects in multiple places and confusing the
->> purpose of /sys/kernel and /sys/firmware.
-> We can also think of it this way that, all security related exports should
-> happen via /sys/kernel/security/. Then /sys/kernel/security/firmware/ becomes
-> the security related firmware exports.
->
-> If you see find /sys -iname firmware, I am sure you will find other firmware
-> specifics directories related to other specific subsystems
-> (e.g.
-> root@qemu:/home/qemu# find /sys -iname firmware
-> /sys/devices/ndbus0/nmem0/firmware
-> /sys/devices/ndbus0/firmware
-> /sys/firmware
-> )
->
-> But it could be, I am not an expert here, although I was thinking a good
-> Documentation might solve this problem.
+> Jeremy built the functionality and followed the customary process,
+> sending four separate revisions for reviews.  He adapted his code based
+> on our feedback about how to future-proof it by adding an explicit
+> length parameter, and got it merged into ext4 in 6.0-rc1.
 
-Documentation on 
-sysfs(https://man7.org/linux/man-pages/man5/sysfs.5.html) already 
-differentiates /sys/firmware and /sys/kernel as I responded earlier.  
-The objects we are exposing are firmware objects and not kernel objects.
+*As an EXT4 modification*, not a generic VFS ioctl.
 
->
->> Even though fwsecurityfs code is based on securityfs, since the two
->> filesystems expose different types of objects and have different
->> requirements, there are distinctions:
->>
->> 1. fwsecurityfs lets users create files in userspace, securityfs only allows
->> kernel subsystems to create files.
-> Sorry could you please elaborate how? both securityfs & fwsecurityfs
-> calls simple_fill_super() which uses the same inode (i_op) and inode file
-> operations (i_fop) from fs/libfs.c for their root inode. So how it is enabling
-> user (as in userspace) to create a file in this filesystem?
->
-> So am I missing anything?
+> Now you want Catherine and I to tear down his work and initiate a design
+> review of YET ANOTHER NEW IOCTL just so the API can hit this one design
+> point you care about, and then convince Ted to go back and redo all the
+> work that has already been done.  All this to extract 16 bytes from the
+> kernel in a slightly different style than the existing XFS fsgeometry
+> ioctl.
 
-The ability to let user(as in userspace) to create a file in a 
-filesystem comes by allowing to define inode operations.
+I'm not asking you to tear anything down. Just leave the ext4 ioctl
+as it is currently defined and nothing existing breaks or needs
+reworking.
 
-Please look at the implementation differences for functions 
-xxx_create_dir() and xxx_create_dentry() of securityfs vs fwsecurityfs.  
-Also refer to Patch 4/4 for use of fwsecurityfs_create_dir() where inode 
-operations are defined.
+All I'm asking is that instead of lifting the ext4 ioctl verbatim,
+you lift it with a fixed maximum size for the uuid data array to
+replace the flex array. It's a *trivial change to make*, and yes, I
+know that this means it's not the same as the ext4 ioctl.
 
->
->> 2. firmware and kernel objects may have different requirements. For example,
->> consideration of namespacing. As per my understanding, namespacing is
->> applied to kernel resources and not firmware resources. That's why it makes
->> sense to add support for namespacing in securityfs, but we concluded that
->> fwsecurityfs currently doesn't need it. Another but similar example of it
-> It "currently" doesn't need it. But can it in future? Then why not go with
-> securityfs which has an additional namespacing feature available?
-> That's actually also the point of utilizing an existing FS which can get
-> features like this in future. As long as it doesn't affect the functionality
-> of your use case, we simply need not reject securityfs, no?
+But, really, who cares that it will be a different ioctl? Nobody but
+ext4 utilities will be using the ext4 ioctl, and we expect generic
+block/fs utilities and applications to use the VFS definition of the
+ioctl, not the ext4 specific one.
 
-Thanks for your review and feedback. To summarize:
+> This was /supposed/ to be a simple way for a less experienced staffer to
+> gain some experience wiring up an existing ioctl.  And, well, I hope she
+> doesn't take away that developing for Linux is institutionally broken
+> and frustrating, because that's what I've taken away from the last 2+
+> years of being here.
 
- From the perspective of our use case, we need to expose firmware 
-security objects to userspace for management. Not all of the objects 
-pre-exist and we would like to allow root to create them from userspace.
+When we lift stuff from filesystem specific scope (where few people
+care about API warts) to generic VFS scope that the whole world is
+expected to see, use and understand, you should expect a larger
+number of experienced developers to scrutinise it.  The wider scope
+of the API means the "acceptibility bar" is set higher.
 
- From a unification perspective, I have considered a common location at 
-/sys/firmware/security for managing any platform's security objects. And 
-I've proposed a generic filesystem, which could be used by any platform 
-to represent firmware security objects via /sys/firmware/security.
+Just because the code change is simple, it doesn't mean the issues
+surrounding the code change are simple or straight forward. Just
+because it went through a review on the ext4 list it doesn't mean
+the API or implementation is flawless.
 
-Here are some alternatives to generic filesystem in discussion:
+The point I'm making is that lifting fs ioctl APIs verbatim is a
+*known broken process* that leads to future pain fixing all the
+problems inherited from the original fs specific API and
+implementation.  If we want to lift functionality to be generic VFS
+UAPI and at the time of lifting we find problems with the UAPI
+and/or implementation, then we need to fix the problems before we
+expose the new VFS API to the entire world.
 
-1. Start with a platform-specific filesystem. If more platforms would 
-like to use the approach, it can be made generic. We would still have a 
-common location of /sys/firmware/security and new code would live in 
-arch. This is my preference and would be the best fit for our use case.
+Repeat past mistakes, or learn from them. Your choice...
 
-2. Use securityfs.  This would mean modifying it to satisfy other use 
-cases, including supporting userspace file creation. I don't know if the 
-securityfs maintainer would find that acceptable. I would also still 
-want some way to expose variables at /sys/firmware/security.
-
-3. Use a sysfs-based approach. This would be a platform-specific 
-implementation. However, sysfs has a similar issue to securityfs for 
-file creation. When I tried it in RFC v1[1], I had to implement a 
-workaround to achieve that.
-
-[1] 
-https://lore.kernel.org/linuxppc-dev/20220122005637.28199-3-nayna@linux.ibm.com/
-
-Thanks & Regards,
-
-      - Nayna
-
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
