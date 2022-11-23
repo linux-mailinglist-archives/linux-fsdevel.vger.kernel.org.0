@@ -2,169 +2,104 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 62046636962
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 19:59:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 611BA636968
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 20:00:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239127AbiKWS6u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 13:58:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56868 "EHLO
+        id S238974AbiKWTAR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 14:00:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58280 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236940AbiKWS6p (ORCPT
+        with ESMTP id S236748AbiKWTAP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 13:58:45 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 77B0C87543;
-        Wed, 23 Nov 2022 10:58:41 -0800 (PST)
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2ANI3vju030703;
-        Wed, 23 Nov 2022 18:58:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : to : cc : references : from : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=OWd1TMAtI9YXm3ugWju/m0erSY+DisOV9bmg4+k/m3k=;
- b=q4bGZ/SwCdcxMTCDce8bjFBUoDMN0CZ31q6DI7oTd3Lf9e8FOZgCgHZQ48zOuuWvzCUO
- g65mPRAX6xpkXngwmP/wW2GD7kRr8pBWi2zh25utGJupBCeSK8g2Bmri4qiorULyb0Qb
- l2lA14Gg2WxhPDnONXZDVVOXVwiFAvhq8uROjB5r8tWrD96R7LXyRZsTdvmb8I76XwXL
- 7vVlWY8kND9j0qkhpFUgym5pBE3b+hqvo6qmV5+7CivPva8+Xj8Dc4HsLsSzR6hg2QFm
- 2FGPRDZBXW/QdGmFtJBOtR5PtYtTO6s3vgGSnrKfZyvQ6qG+yzPHRYuSxvw5Tg+dp7lY Wg== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m0x813evb-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Nov 2022 18:58:04 +0000
-Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2ANIvaif024504;
-        Wed, 23 Nov 2022 18:58:03 GMT
-Received: from ppma03dal.us.ibm.com (b.bd.3ea9.ip4.static.sl-reverse.com [169.62.189.11])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m0x813ev0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Nov 2022 18:58:03 +0000
-Received: from pps.filterd (ppma03dal.us.ibm.com [127.0.0.1])
-        by ppma03dal.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2ANIpeoh007133;
-        Wed, 23 Nov 2022 18:58:02 GMT
-Received: from b01cxnp23033.gho.pok.ibm.com (b01cxnp23033.gho.pok.ibm.com [9.57.198.28])
-        by ppma03dal.us.ibm.com with ESMTP id 3kxpsakr3n-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Nov 2022 18:58:02 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com ([9.208.128.116])
-        by b01cxnp23033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2ANIw0Ji6030060
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Nov 2022 18:58:01 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C7C4258045;
-        Wed, 23 Nov 2022 18:58:00 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0A7DC5805F;
-        Wed, 23 Nov 2022 18:57:59 +0000 (GMT)
-Received: from [9.163.61.172] (unknown [9.163.61.172])
-        by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 23 Nov 2022 18:57:58 +0000 (GMT)
-Message-ID: <6f2a4a5f-ab5b-8c1b-47d5-d4e6dca5fc3a@linux.vnet.ibm.com>
-Date:   Wed, 23 Nov 2022 13:57:58 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-Content-Language: en-US
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-References: <20221106210744.603240-1-nayna@linux.ibm.com>
- <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
- <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
- <20221119114234.nnfxsqx4zxiku2h6@riteshh-domain>
- <d3e8df29-d9b0-5e8e-4a53-d191762fe7f2@linux.vnet.ibm.com>
- <a2752fdf-c89f-6f57-956e-ad035d32aec6@linux.vnet.ibm.com>
- <Y35C9O27J29bUDjA@kroah.com>
-From:   Nayna <nayna@linux.vnet.ibm.com>
-In-Reply-To: <Y35C9O27J29bUDjA@kroah.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 2YrEmH-Vwbi1pRZxNLbmgvdX-b8wwU50
-X-Proofpoint-ORIG-GUID: _wOu0IfhLy4hU6MJ6gGyX-1HjXY9bgsf
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Wed, 23 Nov 2022 14:00:15 -0500
+Received: from wedge010.net.lu.se (wedge010.net.lu.se [130.235.56.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD2988FE5C;
+        Wed, 23 Nov 2022 11:00:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; d=control.lth.se; s=edge;
+        c=relaxed/relaxed; t=1669230010; h=from:subject:to:date:message-id;
+        bh=kSHuC6LXb+PE+chwjpVMprQcFyficGssjG266e/qJ7w=;
+        b=dxrq+8mrvfFC7sKa9pReD2C66KhbInKE4TwtMIIxK+y+jRqGRJrBlY3QT8jS96tCiBqklzrK1+Z
+        G91MHAYJXosSpsLN3cY4ghFYj6Ko/rSDUAy8s6ub3oZ/YiE0L1XGUbYp6IjJpLolfnM104ciFCf2A
+        Yo06wq4YH+t9Lt8I/5oiuAzpvAl6Rcj8wsYZibxOGuGfbl7kUpvaw6rkZrFcEr8rl8a3Cg3e/IZG4
+        oJ/dbiZnPKtL31IfCXfOpnHOx9YLY/9yvBWK0tihE61U+QNAhHCcPlmrUyOgJfZ5iT/EtsNgxrqMc
+        z4Xanr0d/fXLo8SN41XRz7uxO+G+U5KtywkA==
+Received: from wexc007.uw.lu.se (130.235.59.251) by mail.lu.se
+ (130.235.56.200) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P256) id 15.1.2507.13; Wed, 23
+ Nov 2022 20:00:09 +0100
+Received: from [130.235.83.196] (130.235.139.100) by wexc007.uw.lu.se
+ (130.235.59.251) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P521) id 15.1.2507.13; Wed, 23
+ Nov 2022 20:00:10 +0100
+Message-ID: <9e45fed2-f9e9-8c5e-3c33-993de330f11e@control.lth.se>
+Date:   Wed, 23 Nov 2022 20:00:10 +0100
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-23_10,2022-11-23_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- malwarescore=0 mlxscore=0 mlxlogscore=999 spamscore=0 phishscore=0
- bulkscore=0 suspectscore=0 priorityscore=1501 clxscore=1015
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211230137
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.0
+From:   Anders Blomdell <anders.blomdell@control.lth.se>
+Subject: [PATCH v2 1/1] Make nfsd_splice_actor work with reads with a non-zero
+ offset that doesn't end on a page boundary
+To:     Jeff Layton <jlayton@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        "Al Viro" <viro@zeniv.linux.org.uk>
+CC:     <linux-nfs@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+Content-Language: en-US
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [130.235.139.100]
+X-ClientProxiedBy: wexc012.uw.lu.se (130.235.59.234) To wexc007.uw.lu.se
+ (130.235.59.251)
+X-CrossPremisesHeadersFilteredBySendConnector: wexc007.uw.lu.se
+X-OrganizationHeadersPreserved: wexc007.uw.lu.se
+Received-SPF: Pass (wedge010.net.lu.se: domain of
+ anders.blomdell@control.lth.se designates 130.235.59.251 as permitted sender)
+ receiver=wedge010.net.lu.se; client-ip=130.235.59.251; helo=wexc007.uw.lu.se;
+X-CrossPremisesHeadersFilteredBySendConnector: wedge010.net.lu.se
+X-OrganizationHeadersPreserved: wedge010.net.lu.se
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Make nfsd_splice_actor work with reads with a non-zero offset that doesn't end on a page boundary.
 
-On 11/23/22 10:57, Greg Kroah-Hartman wrote:
-> On Wed, Nov 23, 2022 at 10:05:49AM -0500, Nayna wrote:
->> On 11/22/22 18:21, Nayna wrote:
->>>  From the perspective of our use case, we need to expose firmware
->>> security objects to userspace for management. Not all of the objects
->>> pre-exist and we would like to allow root to create them from userspace.
->>>
->>>  From a unification perspective, I have considered a common location at
->>> /sys/firmware/security for managing any platform's security objects. And
->>> I've proposed a generic filesystem, which could be used by any platform
->>> to represent firmware security objects via /sys/firmware/security.
->>>
->>> Here are some alternatives to generic filesystem in discussion:
->>>
->>> 1. Start with a platform-specific filesystem. If more platforms would
->>> like to use the approach, it can be made generic. We would still have a
->>> common location of /sys/firmware/security and new code would live in
->>> arch. This is my preference and would be the best fit for our use case.
->>>
->>> 2. Use securityfs.  This would mean modifying it to satisfy other use
->>> cases, including supporting userspace file creation. I don't know if the
->>> securityfs maintainer would find that acceptable. I would also still
->>> want some way to expose variables at /sys/firmware/security.
->>>
->>> 3. Use a sysfs-based approach. This would be a platform-specific
->>> implementation. However, sysfs has a similar issue to securityfs for
->>> file creation. When I tried it in RFC v1[1], I had to implement a
->>> workaround to achieve that.
->>>
->>> [1] https://lore.kernel.org/linuxppc-dev/20220122005637.28199-3-nayna@linux.ibm.com/
->>>
->> Hi Greg,
->>
->> Based on the discussions so far, is Option 1, described above, an acceptable
->> next step?
-> No, as I said almost a year ago, I do not want to see platform-only
-> filesystems going and implementing stuff that should be shared by all
-> platforms.
+This was found when virtual machines with nfs-mounted qcow2 disks failed to boot properly (originally found
+on v6.0.5, fix also needed and tested on v6.0.9 and v6.1-rc6).
 
-Given there are no other exploiters for fwsecurityfs and there should be 
-no platform-specific fs, would modifying sysfs now to let userspace 
-create files cleanly be the way forward? Or, if we should strongly 
-consider securityfs, which would result in updating securityfs to allow 
-userspace creation of files and then expose variables via a more 
-platform-specific directory /sys/kernel/security/pks? We want to pick 
-the best available option and would find some hints on direction helpful 
-before we develop the next patch.
+Signed-off-by: Anders Blomdell <anders.blomdell@control.lth.se>
+Link: https://bugzilla.redhat.com/show_bug.cgi?id=2142132
+Fixes: bfbfb6182ad1 "nfsd_splice_actor(): handle compound pages"
+Cc: stable@vger.kernel.org # v6.0+
 
-Thanks & Regards,
+-- a/fs/nfsd/vfs.c
++++ b/fs/nfsd/vfs.c
+@@ -869,12 +869,13 @@ nfsd_splice_actor(struct pipe_inode_info *pipe, struct pipe_buffer *buf,
+  		  struct splice_desc *sd)
+  {
+  	struct svc_rqst *rqstp = sd->u.data;
+-	struct page *page = buf->page;	// may be a compound one
++	// buf->page may be a compound one
+  	unsigned offset = buf->offset;
++	struct page *first = buf->page + offset / PAGE_SIZE;
++	struct page *last = buf->page + (offset + sd->len - 1) / PAGE_SIZE;
 
-       - Nayna
+-	page += offset / PAGE_SIZE;
+-	for (int i = sd->len; i > 0; i -= PAGE_SIZE)
+-		svc_rqst_replace_page(rqstp, page++);
++	for (struct page *page = first; page <= last; page++)
++		svc_rqst_replace_page(rqstp, page);
+  	if (rqstp->rq_res.page_len == 0)	// first call
+  		rqstp->rq_res.page_base = offset % PAGE_SIZE;
+  	rqstp->rq_res.page_len += sd->len;
 
+-- 
+Anders Blomdell                  Email: anders.blomdell@control.lth.se
+Department of Automatic Control
+Lund University                  Phone:    +46 46 222 4625
+P.O. Box 118
+SE-221 00 Lund, Sweden
