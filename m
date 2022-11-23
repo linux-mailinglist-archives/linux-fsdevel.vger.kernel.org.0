@@ -2,57 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 47FA5635788
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 10:43:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EA311635899
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 11:01:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238056AbiKWJmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 04:42:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56992 "EHLO
+        id S236886AbiKWKB2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 05:01:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56504 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238045AbiKWJl4 (ORCPT
+        with ESMTP id S237036AbiKWKAg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 04:41:56 -0500
+        Wed, 23 Nov 2022 05:00:36 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6E5EB2D1F7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 01:38:26 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 74E1D2AF
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 01:52:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669196305;
+        s=mimecast20190719; t=1669197164;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=Nfwwsc3yZi5B8fS+p3U4qSxn5EjVAmPvxjDGJOfktv0=;
-        b=NcvnEeXLN7EsSWpp+Bq2I0qEkjzfnw1+jPO9RSIF+oGgQbIRIMjOPYg5cW4KqSM509yCvs
-        Dg9rpfMD3YUP6zcLkCdXdGJt2HokhQRvkMBe8dqJplzOqNRZBfqtOB1QYS02E6sfaR4MEL
-        FRlKgodnBKyHZoiphNBEaDN+YenWOQQ=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=vdzSPCFaOM+roc4IWBLm/QVFOA9Fwv4HtrXNA3GkRvU=;
+        b=DAfGJd2C0ZUnWUncxDVr+sVHsuDakayvPsbzF4Mha7gTt2zNNY8SveE0+9QRIsne7zPne7
+        Bz3LgMk+qxJpElaJclXFtFB800bauQyNRBDiMRiUVUezrRVsVl44gSKr0XgmtWK89uNIQD
+        Q7yXL5cbSEiz/F6V70jsx5HHV261o7U=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-343-MLBzwqj0NNKEwiDKAuPDog-1; Wed, 23 Nov 2022 04:38:22 -0500
-X-MC-Unique: MLBzwqj0NNKEwiDKAuPDog-1
+ us-mta-515-QMxYCx8xP-GguBbJt_yDXQ-1; Wed, 23 Nov 2022 04:52:37 -0500
+X-MC-Unique: QMxYCx8xP-GguBbJt_yDXQ-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id E955C85A5A6;
-        Wed, 23 Nov 2022 09:38:21 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0495A1C05B06;
+        Wed, 23 Nov 2022 09:52:37 +0000 (UTC)
 Received: from fedora (ovpn-193-217.brq.redhat.com [10.40.193.217])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 91EBEC1912A;
-        Wed, 23 Nov 2022 09:38:20 +0000 (UTC)
-Date:   Wed, 23 Nov 2022 10:38:13 +0100
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7D257C1912A;
+        Wed, 23 Nov 2022 09:52:29 +0000 (UTC)
+Date:   Wed, 23 Nov 2022 10:52:27 +0100
 From:   Lukas Czerner <lczerner@redhat.com>
 To:     Brian Foster <bfoster@redhat.com>
-Cc:     Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.com>,
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.com>,
         Eric Sandeen <sandeen@redhat.com>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, djwong@kernel.org
-Subject: Re: [PATCH v2 3/3] shmem: implement mount options for global quota
- limits
-Message-ID: <20221123093813.d42ytx3zaoolmgpa@fedora>
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] quota: add quota in-memory format support
+Message-ID: <20221123095227.ilii5htnlh3o6wil@fedora>
 References: <20221121142854.91109-1-lczerner@redhat.com>
- <20221121142854.91109-4-lczerner@redhat.com>
- <Y305HR5ZModyqtLz@bfoster>
+ <20221121142854.91109-2-lczerner@redhat.com>
+ <Y3u54l2CVapQmK/w@magnolia>
+ <20221122090448.x2vouglhpnh75exh@fedora>
+ <Y3zpjRtbGXMcXSiK@bfoster>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y305HR5ZModyqtLz@bfoster>
+In-Reply-To: <Y3zpjRtbGXMcXSiK@bfoster>
 X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
@@ -64,121 +66,139 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 22, 2022 at 04:03:25PM -0500, Brian Foster wrote:
-> On Mon, Nov 21, 2022 at 03:28:54PM +0100, Lukas Czerner wrote:
-> > Implement a set of mount options for setting glopbal quota limits on
-> > tmpfs.
+On Tue, Nov 22, 2022 at 10:23:57AM -0500, Brian Foster wrote:
+> On Tue, Nov 22, 2022 at 10:04:48AM +0100, Lukas Czerner wrote:
+> > On Mon, Nov 21, 2022 at 09:48:18AM -0800, Darrick J. Wong wrote:
+> > > On Mon, Nov 21, 2022 at 03:28:52PM +0100, Lukas Czerner wrote:
+> > > > In memory quota format relies on quota infrastructure to store dquot
+> > > > information for us. While conventional quota formats for file systems
+> > > > with persistent storage can load quota information into dquot from the
+> > > > storage on-demand and hence quota dquot shrinker can free any dquot that
+> > > > is not currently being used, it must be avoided here. Otherwise we can
+> > > > lose valuable information, user provided limits, because there is no
+> > > > persistent storage to load the information from afterwards.
+> > > > 
+> > > > One information that in-memory quota format needs to keep track of is a
+> > > > sorted list of ids for each quota type. This is done by utilizing an rb
+> > > > tree which root is stored in mem_dqinfo->dqi_priv for each quota type.
+> > > > 
+> > > > This format can be used to support quota on file system without persistent
+> > > > storage such as tmpfs.
+> > > > 
+> > > > Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+> > > > ---
+> > > >  fs/quota/Kconfig           |   8 ++
+> > > >  fs/quota/Makefile          |   1 +
+> > > >  fs/quota/dquot.c           |   3 +
+> > > >  fs/quota/quota_mem.c       | 260 +++++++++++++++++++++++++++++++++++++
+> > > >  include/linux/quota.h      |   7 +-
+> > > >  include/uapi/linux/quota.h |   1 +
+> > > >  6 files changed, 279 insertions(+), 1 deletion(-)
+> > > >  create mode 100644 fs/quota/quota_mem.c
+> > > > 
+> > > > diff --git a/fs/quota/Kconfig b/fs/quota/Kconfig
+> > > > index b59cd172b5f9..8ea9656ca37b 100644
+> > > > --- a/fs/quota/Kconfig
+> > > > +++ b/fs/quota/Kconfig
+> > > > @@ -67,6 +67,14 @@ config QFMT_V2
+> > > >  	  also supports 64-bit inode and block quota limits. If you need this
+> > > >  	  functionality say Y here.
+> > > >  
+> > > > +config QFMT_MEM
+> > > > +	tristate "Quota in-memory format support "
+> > > > +	depends on QUOTA
+> > > > +	help
+> > > > +	  This config option enables kernel support for in-memory quota
+> > > > +	  format support. Useful to support quota on file system without
+> > > > +	  permanent storage. If you need this functionality say Y here.
+> > > > +
+> > > >  config QUOTACTL
+> > > >  	bool
+> > > >  	default n
+> > > > diff --git a/fs/quota/Makefile b/fs/quota/Makefile
+> > > > index 9160639daffa..935be3f7b731 100644
+> > > > --- a/fs/quota/Makefile
+> > > > +++ b/fs/quota/Makefile
+> > > > @@ -5,3 +5,4 @@ obj-$(CONFIG_QFMT_V2)		+= quota_v2.o
+> > > >  obj-$(CONFIG_QUOTA_TREE)	+= quota_tree.o
+> > > >  obj-$(CONFIG_QUOTACTL)		+= quota.o kqid.o
+> > > >  obj-$(CONFIG_QUOTA_NETLINK_INTERFACE)	+= netlink.o
+> > > > +obj-$(CONFIG_QFMT_MEM)		+= quota_mem.o
+> > > > diff --git a/fs/quota/dquot.c b/fs/quota/dquot.c
+> > > > index 0427b44bfee5..f1a7a03632a2 100644
+> > > > --- a/fs/quota/dquot.c
+> > > > +++ b/fs/quota/dquot.c
+> > > > @@ -736,6 +736,9 @@ dqcache_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+> > > >  	spin_lock(&dq_list_lock);
+> > > >  	while (!list_empty(&free_dquots) && sc->nr_to_scan) {
+> > > >  		dquot = list_first_entry(&free_dquots, struct dquot, dq_free);
+> > > > +		if (test_bit(DQ_NO_SHRINK_B, &dquot->dq_flags) &&
+> > > > +		    !test_bit(DQ_FAKE_B, &dquot->dq_flags))
+> > > > +			continue;
+> > > >  		remove_dquot_hash(dquot);
+> > > >  		remove_free_dquot(dquot);
+> > > >  		remove_inuse(dquot);
+> > > > diff --git a/fs/quota/quota_mem.c b/fs/quota/quota_mem.c
+> > > > new file mode 100644
+> > > > index 000000000000..7d5e82122143
+> > > > --- /dev/null
+> > > > +++ b/fs/quota/quota_mem.c
+> > > > @@ -0,0 +1,260 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > > +/*
+> > > > + * In memory quota format relies on quota infrastructure to store dquot
+> > > > + * information for us. While conventional quota formats for file systems
+> > > > + * with persistent storage can load quota information into dquot from the
+> > > > + * storage on-demand and hence quota dquot shrinker can free any dquot
+> > > > + * that is not currently being used, it must be avoided here. Otherwise we
+> > > > + * can lose valuable information, user provided limits, because there is
+> > > > + * no persistent storage to load the information from afterwards.
+> > > 
+> > > Hmm.  dquots can't /ever/ be reclaimed?  struct dquot is ~256 bytes, and
+> > > assuming 32-bit uids, the upper bound on dquot usage is 2^(32+8) bytes
+> > > == 1TB of memory usage?  Once allocated, you'd have to reboot the whole
+> > > machine to get that memory back?
 > > 
-> > usrquota_block_hardlimit - global user quota block hard limit
-> > usrquota_inode_hardlimit - global user quota inode hard limit
-> > grpquota_block_hardlimit - global group quota block hard limit
-> > grpquota_inode_hardlimit - global group quota inode hard limit
+> > Hi Darrick,
 > > 
-> > Quota limit parameters accept a suffix k, m or g for kilo, mega and giga
-> > and can't be changed on remount. Default global quota limits are taking
-> > effect for any and all user/group except root the first time the quota
-> > entry for user/group id is being accessed - typically the first time an
-> > inode with a particular id ownership is being created after the mount. In
-> > other words, instead of the limits being initialized to zero, they are
-> > initialized with the particular value provided with these mount options.
-> > The limits can be changed for any user/group id at any time as it normally
-> > can.
+> > maybe there are some improvements to the documentation to be made. The
+> > dquots will be freed on unmount as it would normaly. Also only dquots
+> > containing actual user modified limits, so only dquots that are not
+> > DQ_FAKE_B are prevented to be reclaimed by a shrinker see the condition in
+> > dqcache_shrink_scan().
 > > 
-> > When any of the default quota limits are set, quota enforcement is enabled
-> > automatically as well.
+> > > 
+> > > Would it be wise to "persist" dquot contents to a (private) tmpfs file
+> > > to facilitate incore dquot reclaim?  The tmpfs file data can be paged
+> > > out, or even punched if all the dquot records in that page go back to
+> > > default settings.
 > > 
-> > None of the quota related mount options can be set or changed on remount.
+> > The dquot will be flagged as DQ_FAKE_B once the limits are set to 0. But
+> > when I think about it this pose a problem with the default quota limits
+> > because that would change the limits to the defaults once the dquot is
+> > reclaimed and then allocated again. This can be solved by making a
+> > custom .set_dqblk().
 > > 
-> > Signed-off-by: Lukas Czerner <lczerner@redhat.com>
-> > ---
-> > v2: Rename mount option to something more sensible.
-> >     Improve documentation.
-> >     Check if the user provided limit isn't too large.
-> > 
-> >  Documentation/filesystems/tmpfs.rst |  36 +++++--
-> >  include/linux/shmem_fs.h            |  10 ++
-> >  mm/shmem.c                          | 162 ++++++++++++++++++++++++++--
-> >  3 files changed, 190 insertions(+), 18 deletions(-)
-> > 
-> ...
-> > diff --git a/mm/shmem.c b/mm/shmem.c
-> > index 26f2effd8f7c..a66a1e4cd0cb 100644
-> > --- a/mm/shmem.c
-> > +++ b/mm/shmem.c
-> ...
-> > @@ -271,6 +273,57 @@ static DEFINE_MUTEX(shmem_swaplist_mutex);
-> >  
-> >  #define SHMEM_MAXQUOTAS 2
-> >  
-> > +int shmem_dquot_acquire(struct dquot *dquot)
-> > +{
-> > +	int type, ret = 0;
-> > +	unsigned int memalloc;
-> > +	struct quota_info *dqopt = sb_dqopt(dquot->dq_sb);
-> > +	struct shmem_sb_info *sbinfo = SHMEM_SB(dquot->dq_sb);
-> > +
-> > +
-> > +	mutex_lock(&dquot->dq_lock);
-> > +	memalloc = memalloc_nofs_save();
-> > +	if (test_bit(DQ_READ_B, &dquot->dq_flags)) {
-> > +		smp_mb__before_atomic();
-> > +		set_bit(DQ_ACTIVE_B, &dquot->dq_flags);
-> > +		goto out_iolock;
-> > +	}
-> > +
-> > +	type = dquot->dq_id.type;
-> > +	ret = dqopt->ops[type]->read_dqblk(dquot);
 > 
-> So according to patch 1, this callback would alloc the quota id and set
-> DQ_FAKE_B and DQ_NO_SHRINK_B on the dquot. The shrinker will skip dquots
-> that are (noshrink && !fake). So as of this point the dquot would be
-> reclaimable if it were ultimately freed with no other changes, right?
+> Hi Lukas,
+> 
+> I'm a little confused.. does the above mean the dquot limit would have
+> to be explicitly set to 0 by the admin in order to be reclaimed, even
+> though that limit would be initialized to some non-zero value via the
+> mount option? If so, wouldn't we want the ability to reclaim a dquot
+> when the usage counts go down to zero (i.e., so the user/group/whatever
+> for the dquot no longer has any tmpfs inode/block footprint), assuming
+> the limit hasn't also been modified from the initial defaults?
 
-Right, the flags are set in read_dqblk() of quota-mem; which is
-mem_read_dquot()
+By creating a custom ->set_dqblk() in shmem we can make sure that the
+dquot is non-reclaimable (set DQ_NO_SHRINK_B) *only* if the limits have
+been set by the user to anything other than the defaults (defaults being
+either 0, or value specified by the mount option). Also
+DQ_NO_SHRINK_B can't be set on ->dqblk_read() and the condition in
+dqcache_shrink_scan() would only test DQ_NO_SHRINK_B. Does it make more
+sense to you?
 
-> 
-> > +	if (ret < 0)
-> > +		goto out_iolock;
-> > +	/* Set the defaults */
-> > +	if (type == USRQUOTA) {
-> > +		dquot->dq_dqb.dqb_bhardlimit =
-> > +			(sbinfo->usrquota_block_hardlimit << PAGE_SHIFT);
-> > +		dquot->dq_dqb.dqb_ihardlimit = sbinfo->usrquota_inode_hardlimit;
-> > +	} else if (type == GRPQUOTA) {
-> > +		dquot->dq_dqb.dqb_bhardlimit =
-> > +			(sbinfo->grpquota_block_hardlimit << PAGE_SHIFT);
-> > +		dquot->dq_dqb.dqb_ihardlimit = sbinfo->grpquota_inode_hardlimit;
-> > +	}
-> 
-> Then we set default limits from the mount option on the dquot. The dquot
-> is still has DQ_FAKE_B, so presumably the dquot would remain reclaimable
-> (once freed) even though it has a limit set (the mount default).
-> 
-> AFAICS the only place that clears DQ_FAKE_B is the setquota path, so I
-> take it that means the dquot becomes ultimately unreclaimable if/when
-> the user sets a non-zero quota limit, and then it only becomes
-> reclaimable again when quota limits are explicitly set to zero. Is that
-> the case?
-> 
-> If so, a couple questions:
-> 
-> 1. Can a dquot ever be reclaimed if the user explicitly sets a quota
-> limit that matches the mount default?
-> 
-> 2. How does enforcement of default limits actually work? For example, it
-> looks like dquot_add_inodes() skips enforcement when DQ_FAKE_B is set.
-> Have I missed somewhere where this flag should be cleared in this case?
-
-Sigh, you're righ. This won't work. My test script didn't catch this,
-but setting DQ_FAKE_B will make the quota infrastructure think there are
-no limits and just bail out of testing them.
-
-Better solution might be to make a custom ->set_dqblk() and set
-DQ_NO_SHRINK_B only if it differs from the defaults in shmem. This would
-solve your question 1. as well.
-
-I'll think about it some more and resend.
+This is something I'd have to do for v3. Sorry for the confusion.
 
 Thanks!
 -Lukas
@@ -186,196 +206,307 @@ Thanks!
 > 
 > Brian
 > 
-> > +	/* Make sure flags update is visible after dquot has been filled */
-> > +	smp_mb__before_atomic();
-> > +	set_bit(DQ_READ_B, &dquot->dq_flags);
-> > +	set_bit(DQ_ACTIVE_B, &dquot->dq_flags);
-> > +out_iolock:
-> > +	memalloc_nofs_restore(memalloc);
-> > +	mutex_unlock(&dquot->dq_lock);
-> > +	return ret;
-> > +}
-> > +
-> > +const struct dquot_operations shmem_dquot_operations = {
-> > +	.write_dquot	= dquot_commit,
-> > +	.acquire_dquot	= shmem_dquot_acquire,
-> > +	.release_dquot	= dquot_release,
-> > +	.mark_dirty	= dquot_mark_dquot_dirty,
-> > +	.write_info	= dquot_commit_info,
-> > +	.alloc_dquot	= dquot_alloc,
-> > +	.destroy_dquot	= dquot_destroy,
-> > +	.get_next_id	= dquot_get_next_id,
-> > +};
-> > +
-> >  /*
-> >   * We don't have any quota files to read, or write to/from, but quota code
-> >   * requires .quota_read and .quota_write to exist.
-> > @@ -288,14 +341,14 @@ static ssize_t shmem_quota_read(struct super_block *sb, int type, char *data,
-> >  }
-> >  
-> >  
-> > -static int shmem_enable_quotas(struct super_block *sb)
-> > +static int shmem_enable_quotas(struct super_block *sb, unsigned int dquot_flags)
-> >  {
-> >  	int type, err = 0;
-> >  
-> >  	sb_dqopt(sb)->flags |= DQUOT_QUOTA_SYS_FILE | DQUOT_NOLIST_DIRTY;
-> >  	for (type = 0; type < SHMEM_MAXQUOTAS; type++) {
-> >  		err = dquot_load_quota_sb(sb, type, QFMT_MEM_ONLY,
-> > -					  DQUOT_USAGE_ENABLED);
-> > +					  dquot_flags);
-> >  		if (err)
-> >  			goto out_err;
-> >  	}
-> > @@ -3559,6 +3612,10 @@ enum shmem_param {
-> >  	Opt_inode32,
-> >  	Opt_inode64,
-> >  	Opt_quota,
-> > +	Opt_usrquota_block_hardlimit,
-> > +	Opt_usrquota_inode_hardlimit,
-> > +	Opt_grpquota_block_hardlimit,
-> > +	Opt_grpquota_inode_hardlimit,
-> >  };
-> >  
-> >  static const struct constant_table shmem_param_enums_huge[] = {
-> > @@ -3583,6 +3640,10 @@ const struct fs_parameter_spec shmem_fs_parameters[] = {
-> >  	fsparam_flag  ("quota",		Opt_quota),
-> >  	fsparam_flag  ("usrquota",	Opt_quota),
-> >  	fsparam_flag  ("grpquota",	Opt_quota),
-> > +	fsparam_string("usrquota_block_hardlimit",	Opt_usrquota_block_hardlimit),
-> > +	fsparam_string("usrquota_inode_hardlimit",	Opt_usrquota_inode_hardlimit),
-> > +	fsparam_string("grpquota_block_hardlimit",	Opt_grpquota_block_hardlimit),
-> > +	fsparam_string("grpquota_inode_hardlimit",	Opt_grpquota_inode_hardlimit),
-> >  	{}
-> >  };
-> >  
-> > @@ -3666,13 +3727,60 @@ static int shmem_parse_one(struct fs_context *fc, struct fs_parameter *param)
-> >  		ctx->full_inums = true;
-> >  		ctx->seen |= SHMEM_SEEN_INUMS;
-> >  		break;
-> > -	case Opt_quota:
-> >  #ifdef CONFIG_QUOTA
-> > +	case Opt_quota:
-> > +		ctx->seen |= SHMEM_SEEN_QUOTA;
-> > +		break;
-> > +	case Opt_usrquota_block_hardlimit:
-> > +		size = memparse(param->string, &rest);
-> > +		if (*rest || !size)
-> > +			goto bad_value;
-> > +		size = DIV_ROUND_UP(size, PAGE_SIZE);
-> > +		if (size > ULONG_MAX)
-> > +			return invalfc(fc,
-> > +				       "User quota block hardlimit too large.");
-> > +		ctx->usrquota_block_hardlimit = size;
-> > +		ctx->seen |=  SHMEM_SEEN_QUOTA;
-> > +		break;
-> > +	case Opt_grpquota_block_hardlimit:
-> > +		size = memparse(param->string, &rest);
-> > +		if (*rest || !size)
-> > +			goto bad_value;
-> > +		size = DIV_ROUND_UP(size, PAGE_SIZE);
-> > +		if (size > ULONG_MAX)
-> > +			return invalfc(fc,
-> > +				       "Group quota block hardlimit too large.");
-> > +		ctx->grpquota_block_hardlimit = size;
-> > +		ctx->seen |= SHMEM_SEEN_QUOTA;
-> > +		break;
-> > +	case Opt_usrquota_inode_hardlimit:
-> > +		size = memparse(param->string, &rest);
-> > +		if (*rest || !size)
-> > +			goto bad_value;
-> > +		if (size > ULONG_MAX)
-> > +			return invalfc(fc,
-> > +				       "User quota inode hardlimit too large.");
-> > +		ctx->usrquota_inode_hardlimit = size;
-> > +		ctx->seen |= SHMEM_SEEN_QUOTA;
-> > +		break;
-> > +	case Opt_grpquota_inode_hardlimit:
-> > +		size = memparse(param->string, &rest);
-> > +		if (*rest || !size)
-> > +			goto bad_value;
-> > +		if (size > ULONG_MAX)
-> > +			return invalfc(fc,
-> > +				       "Group quota inode hardlimit too large.");
-> > +		ctx->grpquota_inode_hardlimit = size;
-> >  		ctx->seen |= SHMEM_SEEN_QUOTA;
-> > +		break;
-> >  #else
-> > +	case Opt_quota:
-> > +	case Opt_usrquota_block_hardlimit:
-> > +	case Opt_grpquota_block_hardlimit:
-> > +	case Opt_usrquota_inode_hardlimit:
-> > +	case Opt_grpquota_inode_hardlimit:
-> >  		goto unsupported_parameter;
-> >  #endif
-> > -		break;
-> >  	}
-> >  	return 0;
-> >  
-> > @@ -3778,6 +3886,18 @@ static int shmem_reconfigure(struct fs_context *fc)
-> >  		goto out;
-> >  	}
-> >  
-> > +#ifdef CONFIG_QUOTA
-> > +#define CHANGED_LIMIT(name)						\
-> > +	(ctx->name## _hardlimit &&					\
-> > +	(ctx->name## _hardlimit != sbinfo->name## _hardlimit))
-> > +
-> > +	if (CHANGED_LIMIT(usrquota_block) || CHANGED_LIMIT(usrquota_inode) ||
-> > +	    CHANGED_LIMIT(grpquota_block) || CHANGED_LIMIT(grpquota_inode)) {
-> > +		err = "Cannot change global quota limit on remount";
-> > +		goto out;
-> > +	}
-> > +#endif /* CONFIG_QUOTA */
-> > +
-> >  	if (ctx->seen & SHMEM_SEEN_HUGE)
-> >  		sbinfo->huge = ctx->huge;
-> >  	if (ctx->seen & SHMEM_SEEN_INUMS)
-> > @@ -3942,11 +4062,22 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
-> >  
-> >  #ifdef SHMEM_QUOTA_TMPFS
-> >  	if (ctx->seen & SHMEM_SEEN_QUOTA) {
-> > -		sb->dq_op = &dquot_operations;
-> > +		unsigned int dquot_flags;
-> > +
-> > +		sb->dq_op = &shmem_dquot_operations;
-> >  		sb->s_qcop = &dquot_quotactl_sysfile_ops;
-> >  		sb->s_quota_types = QTYPE_MASK_USR | QTYPE_MASK_GRP;
-> >  
-> > -		if (shmem_enable_quotas(sb))
-> > +		dquot_flags = DQUOT_USAGE_ENABLED;
-> > +		/*
-> > +		 * If any of the global quota limits are set, enable
-> > +		 * quota enforcement
-> > +		 */
-> > +		if (ctx->usrquota_block_hardlimit || ctx->usrquota_inode_hardlimit ||
-> > +		    ctx->grpquota_block_hardlimit || ctx->grpquota_inode_hardlimit)
-> > +			dquot_flags |= DQUOT_LIMITS_ENABLED;
-> > +
-> > +		if (shmem_enable_quotas(sb, dquot_flags))
-> >  			goto failed;
-> >  	}
-> >  #endif  /* SHMEM_QUOTA_TMPFS */
-> > @@ -3960,6 +4091,17 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
-> >  	if (!sb->s_root)
-> >  		goto failed;
-> >  
-> > +#ifdef SHMEM_QUOTA_TMPFS
-> > +	/*
-> > +	 * Set quota hard limits after shmem_get_inode() to avoid setting
-> > +	 * it for root
-> > +	 */
-> > +	sbinfo->usrquota_block_hardlimit = ctx->usrquota_block_hardlimit;
-> > +	sbinfo->usrquota_inode_hardlimit = ctx->usrquota_inode_hardlimit;
-> > +	sbinfo->grpquota_block_hardlimit = ctx->grpquota_block_hardlimit;
-> > +	sbinfo->grpquota_inode_hardlimit = ctx->grpquota_inode_hardlimit;
-> > +#endif  /* SHMEM_QUOTA_TMPFS */
-> > +
-> >  	return 0;
-> >  
-> >  failed:
-> > -- 
-> > 2.38.1
+> > Other than this problem, does this address your concern about dquot
+> > reclaim?
+> > 
+> > Thanks!
+> > -Lukas
+> > 
+> > > 
+> > > --D
+> > > 
+> > > > + *
+> > > > + * One information that in-memory quota format needs to keep track of is
+> > > > + * a sorted list of ids for each quota type. This is done by utilizing
+> > > > + * an rb tree which root is stored in mem_dqinfo->dqi_priv for each quota
+> > > > + * type.
+> > > > + *
+> > > > + * This format can be used to support quota on file system without persistent
+> > > > + * storage such as tmpfs.
+> > > > + */
+> > > > +#include <linux/errno.h>
+> > > > +#include <linux/fs.h>
+> > > > +#include <linux/mount.h>
+> > > > +#include <linux/kernel.h>
+> > > > +#include <linux/init.h>
+> > > > +#include <linux/module.h>
+> > > > +#include <linux/slab.h>
+> > > > +#include <linux/rbtree.h>
+> > > > +
+> > > > +#include <linux/quotaops.h>
+> > > > +#include <linux/quota.h>
+> > > > +
+> > > > +MODULE_AUTHOR("Lukas Czerner");
+> > > > +MODULE_DESCRIPTION("Quota in-memory format support");
+> > > > +MODULE_LICENSE("GPL");
+> > > > +
+> > > > +/*
+> > > > + * The following constants define the amount of time given a user
+> > > > + * before the soft limits are treated as hard limits (usually resulting
+> > > > + * in an allocation failure). The timer is started when the user crosses
+> > > > + * their soft limit, it is reset when they go below their soft limit.
+> > > > + */
+> > > > +#define MAX_IQ_TIME  604800	/* (7*24*60*60) 1 week */
+> > > > +#define MAX_DQ_TIME  604800	/* (7*24*60*60) 1 week */
+> > > > +
+> > > > +struct quota_id {
+> > > > +	struct rb_node	node;
+> > > > +	qid_t		id;
+> > > > +};
+> > > > +
+> > > > +static int mem_check_quota_file(struct super_block *sb, int type)
+> > > > +{
+> > > > +	/* There is no real quota file, nothing to do */
+> > > > +	return 1;
+> > > > +}
+> > > > +
+> > > > +/*
+> > > > + * There is no real quota file. Just allocate rb_root for quota ids and
+> > > > + * set limits
+> > > > + */
+> > > > +static int mem_read_file_info(struct super_block *sb, int type)
+> > > > +{
+> > > > +	struct quota_info *dqopt = sb_dqopt(sb);
+> > > > +	struct mem_dqinfo *info = &dqopt->info[type];
+> > > > +	int ret = 0;
+> > > > +
+> > > > +	down_read(&dqopt->dqio_sem);
+> > > > +	if (info->dqi_fmt_id != QFMT_MEM_ONLY) {
+> > > > +		ret = -EINVAL;
+> > > > +		goto out_unlock;
+> > > > +	}
+> > > > +
+> > > > +	info->dqi_priv = kzalloc(sizeof(struct rb_root), GFP_NOFS);
+> > > > +	if (!info->dqi_priv) {
+> > > > +		ret = -ENOMEM;
+> > > > +		goto out_unlock;
+> > > > +	}
+> > > > +
+> > > > +	/*
+> > > > +	 * Used space is stored as unsigned 64-bit value in bytes but
+> > > > +	 * quota core supports only signed 64-bit values so use that
+> > > > +	 * as a limit
+> > > > +	 */
+> > > > +	info->dqi_max_spc_limit = 0x7fffffffffffffffLL; /* 2^63-1 */
+> > > > +	info->dqi_max_ino_limit = 0x7fffffffffffffffLL;
+> > > > +
+> > > > +	info->dqi_bgrace = MAX_DQ_TIME;
+> > > > +	info->dqi_igrace = MAX_IQ_TIME;
+> > > > +	info->dqi_flags = 0;
+> > > > +
+> > > > +out_unlock:
+> > > > +	up_read(&dqopt->dqio_sem);
+> > > > +	return ret;
+> > > > +}
+> > > > +
+> > > > +static int mem_write_file_info(struct super_block *sb, int type)
+> > > > +{
+> > > > +	/* There is no real quota file, nothing to do */
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +/*
+> > > > + * Free all the quota_id entries in the rb tree and rb_root.
+> > > > + */
+> > > > +static int mem_free_file_info(struct super_block *sb, int type)
+> > > > +{
+> > > > +	struct mem_dqinfo *info = &sb_dqopt(sb)->info[type];
+> > > > +	struct rb_root *root = info->dqi_priv;
+> > > > +	struct quota_id *entry;
+> > > > +	struct rb_node *node;
+> > > > +
+> > > > +	info->dqi_priv = NULL;
+> > > > +	node = rb_first(root);
+> > > > +	while (node) {
+> > > > +		entry = rb_entry(node, struct quota_id, node);
+> > > > +		node = rb_next(&entry->node);
+> > > > +
+> > > > +		rb_erase(&entry->node, root);
+> > > > +		kfree(entry);
+> > > > +	}
+> > > > +
+> > > > +	kfree(root);
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +/*
+> > > > + * There is no real quota file, nothing to read. Just insert the id in
+> > > > + * the rb tree.
+> > > > + */
+> > > > +static int mem_read_dquot(struct dquot *dquot)
+> > > > +{
+> > > > +	struct mem_dqinfo *info = sb_dqinfo(dquot->dq_sb, dquot->dq_id.type);
+> > > > +	struct rb_node **n = &((struct rb_root *)info->dqi_priv)->rb_node;
+> > > > +	struct rb_node *parent = NULL, *new_node = NULL;
+> > > > +	struct quota_id *new_entry, *entry;
+> > > > +	qid_t id = from_kqid(&init_user_ns, dquot->dq_id);
+> > > > +	struct quota_info *dqopt = sb_dqopt(dquot->dq_sb);
+> > > > +	int ret = 0;
+> > > > +
+> > > > +	down_write(&dqopt->dqio_sem);
+> > > > +
+> > > > +	while (*n) {
+> > > > +		parent = *n;
+> > > > +		entry = rb_entry(parent, struct quota_id, node);
+> > > > +
+> > > > +		if (id < entry->id)
+> > > > +			n = &(*n)->rb_left;
+> > > > +		else if (id > entry->id)
+> > > > +			n = &(*n)->rb_right;
+> > > > +		else
+> > > > +			goto out_unlock;
+> > > > +	}
+> > > > +
+> > > > +	new_entry = kmalloc(sizeof(struct quota_id), GFP_NOFS);
+> > > > +	if (!new_entry) {
+> > > > +		ret = -ENOMEM;
+> > > > +		goto out_unlock;
+> > > > +	}
+> > > > +
+> > > > +	new_entry->id = id;
+> > > > +	new_node = &new_entry->node;
+> > > > +	rb_link_node(new_node, parent, n);
+> > > > +	rb_insert_color(new_node, (struct rb_root *)info->dqi_priv);
+> > > > +	dquot->dq_off = 1;
+> > > > +	/*
+> > > > +	 * Make sure dquot is never released by a shrinker because we
+> > > > +	 * rely on quota infrastructure to store mem_dqblk in dquot.
+> > > > +	 */
+> > > > +	set_bit(DQ_NO_SHRINK_B, &dquot->dq_flags);
+> > > > +	set_bit(DQ_FAKE_B, &dquot->dq_flags);
+> > > > +
+> > > > +out_unlock:
+> > > > +	up_write(&dqopt->dqio_sem);
+> > > > +	return ret;
+> > > > +}
+> > > > +
+> > > > +static int mem_write_dquot(struct dquot *dquot)
+> > > > +{
+> > > > +	/* There is no real quota file, nothing to do */
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static int mem_release_dquot(struct dquot *dquot)
+> > > > +{
+> > > > +	/*
+> > > > +	 * Everything is in memory only, release once we're done with
+> > > > +	 * quota via mem_free_file_info().
+> > > > +	 */
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static int mem_get_next_id(struct super_block *sb, struct kqid *qid)
+> > > > +{
+> > > > +	struct mem_dqinfo *info = sb_dqinfo(sb, qid->type);
+> > > > +	struct rb_node *node = ((struct rb_root *)info->dqi_priv)->rb_node;
+> > > > +	qid_t id = from_kqid(&init_user_ns, *qid);
+> > > > +	struct quota_info *dqopt = sb_dqopt(sb);
+> > > > +	struct quota_id *entry = NULL;
+> > > > +	int ret = 0;
+> > > > +
+> > > > +	down_read(&dqopt->dqio_sem);
+> > > > +	while (node) {
+> > > > +		entry = rb_entry(node, struct quota_id, node);
+> > > > +
+> > > > +		if (id < entry->id)
+> > > > +			node = node->rb_left;
+> > > > +		else if (id > entry->id)
+> > > > +			node = node->rb_right;
+> > > > +		else
+> > > > +			goto got_next_id;
+> > > > +	}
+> > > > +
+> > > > +	if (!entry) {
+> > > > +		ret = -ENOENT;
+> > > > +		goto out_unlock;
+> > > > +	}
+> > > > +
+> > > > +	if (id > entry->id) {
+> > > > +		node = rb_next(&entry->node);
+> > > > +		if (!node) {
+> > > > +			ret = -ENOENT;
+> > > > +			goto out_unlock;
+> > > > +		}
+> > > > +		entry = rb_entry(node, struct quota_id, node);
+> > > > +	}
+> > > > +
+> > > > +got_next_id:
+> > > > +	*qid = make_kqid(&init_user_ns, qid->type, entry->id);
+> > > > +out_unlock:
+> > > > +	up_read(&dqopt->dqio_sem);
+> > > > +	return ret;
+> > > > +}
+> > > > +
+> > > > +static const struct quota_format_ops mem_format_ops = {
+> > > > +	.check_quota_file	= mem_check_quota_file,
+> > > > +	.read_file_info		= mem_read_file_info,
+> > > > +	.write_file_info	= mem_write_file_info,
+> > > > +	.free_file_info		= mem_free_file_info,
+> > > > +	.read_dqblk		= mem_read_dquot,
+> > > > +	.commit_dqblk		= mem_write_dquot,
+> > > > +	.release_dqblk		= mem_release_dquot,
+> > > > +	.get_next_id		= mem_get_next_id,
+> > > > +};
+> > > > +
+> > > > +static struct quota_format_type mem_quota_format = {
+> > > > +	.qf_fmt_id	= QFMT_MEM_ONLY,
+> > > > +	.qf_ops		= &mem_format_ops,
+> > > > +	.qf_owner	= THIS_MODULE
+> > > > +};
+> > > > +
+> > > > +static int __init init_mem_quota_format(void)
+> > > > +{
+> > > > +	return register_quota_format(&mem_quota_format);
+> > > > +}
+> > > > +
+> > > > +static void __exit exit_mem_quota_format(void)
+> > > > +{
+> > > > +	unregister_quota_format(&mem_quota_format);
+> > > > +}
+> > > > +
+> > > > +module_init(init_mem_quota_format);
+> > > > +module_exit(exit_mem_quota_format);
+> > > > diff --git a/include/linux/quota.h b/include/linux/quota.h
+> > > > index fd692b4a41d5..4398e05c8b72 100644
+> > > > --- a/include/linux/quota.h
+> > > > +++ b/include/linux/quota.h
+> > > > @@ -285,7 +285,11 @@ static inline void dqstats_dec(unsigned int type)
+> > > >  #define DQ_FAKE_B	3	/* no limits only usage */
+> > > >  #define DQ_READ_B	4	/* dquot was read into memory */
+> > > >  #define DQ_ACTIVE_B	5	/* dquot is active (dquot_release not called) */
+> > > > -#define DQ_LASTSET_B	6	/* Following 6 bits (see QIF_) are reserved\
+> > > > +#define DQ_NO_SHRINK_B	6	/* modified dquot (not DQ_FAKE_B) is never to
+> > > > +				 * be released by a shrinker. It should remain
+> > > > +				 * in memory until quotas are being disabled on
+> > > > +				 * unmount. */
+> > > > +#define DQ_LASTSET_B	7	/* Following 6 bits (see QIF_) are reserved\
+> > > >  				 * for the mask of entries set via SETQUOTA\
+> > > >  				 * quotactl. They are set under dq_data_lock\
+> > > >  				 * and the quota format handling dquot can\
+> > > > @@ -536,6 +540,7 @@ struct quota_module_name {
+> > > >  	{QFMT_VFS_OLD, "quota_v1"},\
+> > > >  	{QFMT_VFS_V0, "quota_v2"},\
+> > > >  	{QFMT_VFS_V1, "quota_v2"},\
+> > > > +	{QFMT_MEM_ONLY, "quota_mem"},\
+> > > >  	{0, NULL}}
+> > > >  
+> > > >  #endif /* _QUOTA_ */
+> > > > diff --git a/include/uapi/linux/quota.h b/include/uapi/linux/quota.h
+> > > > index f17c9636a859..ee9d2bad00c7 100644
+> > > > --- a/include/uapi/linux/quota.h
+> > > > +++ b/include/uapi/linux/quota.h
+> > > > @@ -77,6 +77,7 @@
+> > > >  #define	QFMT_VFS_V0 2
+> > > >  #define QFMT_OCFS2 3
+> > > >  #define	QFMT_VFS_V1 4
+> > > > +#define	QFMT_MEM_ONLY 5
+> > > >  
+> > > >  /* Size of block in which space limits are passed through the quota
+> > > >   * interface */
+> > > > -- 
+> > > > 2.38.1
+> > > > 
+> > > 
 > > 
 > > 
 > 
