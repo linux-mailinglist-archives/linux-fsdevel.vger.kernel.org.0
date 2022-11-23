@@ -2,329 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E795634E58
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 04:29:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6CBA1634F69
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 06:16:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235590AbiKWD33 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 22 Nov 2022 22:29:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46646 "EHLO
+        id S235748AbiKWFQO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 00:16:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48134 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234070AbiKWD31 (ORCPT
+        with ESMTP id S235745AbiKWFQI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 22 Nov 2022 22:29:27 -0500
-Received: from out199-2.us.a.mail.aliyun.com (out199-2.us.a.mail.aliyun.com [47.90.199.2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 40F9BE120F;
-        Tue, 22 Nov 2022 19:29:24 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=8;SR=0;TI=SMTPD_---0VVUtD9I_1669174159;
-Received: from 30.221.128.211(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VVUtD9I_1669174159)
-          by smtp.aliyun-inc.com;
-          Wed, 23 Nov 2022 11:29:20 +0800
-Message-ID: <f03ad01c-1b7a-8f77-86bb-aa41b2a77d37@linux.alibaba.com>
-Date:   Wed, 23 Nov 2022 11:29:19 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.4.0
-Subject: Re: [Linux-cachefs] [PATCH v4 1/2] fscache, cachefiles: add
- prepare_ondemand_read() callback
-Content-Language: en-US
-From:   Jingbo Xu <jefflexu@linux.alibaba.com>
-To:     xiang@kernel.org, chao@kernel.org, jlayton@kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-cachefs@redhat.com,
-        dhowells@redhat.com
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221117053017.21074-1-jefflexu@linux.alibaba.com>
- <20221117053017.21074-2-jefflexu@linux.alibaba.com>
-In-Reply-To: <20221117053017.21074-2-jefflexu@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+        Wed, 23 Nov 2022 00:16:08 -0500
+Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E5878ECCCB;
+        Tue, 22 Nov 2022 21:16:04 -0800 (PST)
+Received: by nautica.notk.org (Postfix, from userid 108)
+        id 2BF61C01B; Wed, 23 Nov 2022 06:16:09 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1669180569; bh=iPT0LtABgClIL1IGlsba5+6joAsD3/Hw7Ap3XlgNN6I=;
+        h=Date:From:To:Cc:Subject:From;
+        b=a7xbnafB3H1BP/6ISBXFHlURChsbJeqtBu9pSVEGJEut2Zyj8IFqiWf3qeS01wbVl
+         eYBu28PDGl65eMTviJ/4ZWumHt40WYugyHTv3WS6oCAVNhPVv6WgGo+NJaLOOeTwuT
+         4GcCV5GG9Fs/onKszzqYO4D3ApCWgFBtGtrx9lyr8brgApJfJZ9vufpyAVVB8WBm6k
+         6hSA4VRcdWfteZgeZg9zLsY3JVdPOxU+jlMG5vtws9vBM8KUwO/9OKstLDO2wy+dkm
+         xlBpIlRe/IqpTu/C79ApncdK67tOXMCHxIL1f1/O2fRPRGMM7S7VEAg/g9ene6/9wF
+         eyIyYC3nirXvw==
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
+X-Spam-Level: 
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
+Received: from odin.codewreck.org (localhost [127.0.0.1])
+        by nautica.notk.org (Postfix) with ESMTPS id 1A4CAC009;
+        Wed, 23 Nov 2022 06:16:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
+        t=1669180568; bh=iPT0LtABgClIL1IGlsba5+6joAsD3/Hw7Ap3XlgNN6I=;
+        h=Date:From:To:Cc:Subject:From;
+        b=KTas6DayCTmDcJZ+jvY6SnkEXjUxPMtowIElXhAWh0eD1FI3T7NPjLHOooyTD86PZ
+         6V+yNE7B6DQXPotPoI3tWiMU8dtX4weaThSpfqn1xAmoSN0ni0pPebRpkOBhde9Wc/
+         A3TfpiPKlkgmvlIyoeafduKBsiG77577wyaYdV2YGy+Em7Hf2nsIo3SmAiP603vzPP
+         5YIR43jnjwJbmnCy2l58hbEIjd9PguiJwvFFL31IJEf8NoTND5d3rBgFj6x3UyJwAN
+         p8hfUCuNeheNOZgvhsCSR3dTveVDHBpDs84cxJPvOmZNeQ9IBsqXTHmpX+kPW0QC+i
+         ToUSjs7GJy63g==
+Received: from localhost (odin.codewreck.org [local])
+        by odin.codewreck.org (OpenSMTPD) with ESMTPA id 315a764d;
+        Wed, 23 Nov 2022 05:15:56 +0000 (UTC)
+Date:   Wed, 23 Nov 2022 14:15:41 +0900
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Christian Schoenebeck <linux_oss@crudebyte.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v9fs-developer@lists.sourceforge.net
+Subject: [GIT PULL] 9p fixes for 6.1-rc7
+Message-ID: <Y32sfX54JJbldBIt@codewreck.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi David,
+The following changes since commit f0c4d9fc9cc9462659728d168387191387e903cc:
 
-How do you think of this patch?  It's already -rc6 and we'd like to
-enable erofs large folios for Linux 6.2.
+  Linux 6.1-rc4 (2022-11-06 15:07:11 -0800)
 
-If it's possible, could you review or ack this patch?  Many thanks.
+are available in the Git repository at:
 
+  https://github.com/martinetd/linux tags/9p-for-6.1-rc7
 
-Thanks,
-Jingbo Xu
+for you to fetch changes up to 391c18cf776eb4569ecda1f7794f360fe0a45a26:
 
+  9p/xen: check logical size for buffer size (2022-11-23 14:01:27 +0900)
 
-On 11/17/22 1:30 PM, Jingbo Xu wrote:
-> Add prepare_ondemand_read() callback dedicated for the on-demand read
-> scenario, so that callers from this scenario can be decoupled from
-> netfs_io_subrequest.
-> 
-> The original cachefiles_prepare_read() is now refactored to a generic
-> routine accepting a parameter list instead of netfs_io_subrequest.
-> There's no logic change, except that some debug info retrieved from
-> netfs_io_subrequest is removed from trace_cachefiles_prep_read().
-> 
-> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-> ---
->  fs/cachefiles/io.c                | 77 ++++++++++++++++++++-----------
->  include/linux/netfs.h             |  8 ++++
->  include/trace/events/cachefiles.h | 27 ++++++-----
->  3 files changed, 71 insertions(+), 41 deletions(-)
-> 
-> diff --git a/fs/cachefiles/io.c b/fs/cachefiles/io.c
-> index 000a28f46e59..13648348d9f9 100644
-> --- a/fs/cachefiles/io.c
-> +++ b/fs/cachefiles/io.c
-> @@ -385,38 +385,35 @@ static int cachefiles_write(struct netfs_cache_resources *cres,
->  				  term_func, term_func_priv);
->  }
->  
-> -/*
-> - * Prepare a read operation, shortening it to a cached/uncached
-> - * boundary as appropriate.
-> - */
-> -static enum netfs_io_source cachefiles_prepare_read(struct netfs_io_subrequest *subreq,
-> -						      loff_t i_size)
-> +static inline enum netfs_io_source
-> +cachefiles_do_prepare_read(struct netfs_cache_resources *cres,
-> +			   loff_t start, size_t *_len, loff_t i_size,
-> +			   unsigned long *_flags)
->  {
->  	enum cachefiles_prepare_read_trace why;
-> -	struct netfs_io_request *rreq = subreq->rreq;
-> -	struct netfs_cache_resources *cres = &rreq->cache_resources;
-> -	struct cachefiles_object *object;
-> +	struct cachefiles_object *object = NULL;
->  	struct cachefiles_cache *cache;
->  	struct fscache_cookie *cookie = fscache_cres_cookie(cres);
->  	const struct cred *saved_cred;
->  	struct file *file = cachefiles_cres_file(cres);
->  	enum netfs_io_source ret = NETFS_DOWNLOAD_FROM_SERVER;
-> +	size_t len = *_len;
->  	loff_t off, to;
->  	ino_t ino = file ? file_inode(file)->i_ino : 0;
->  	int rc;
->  
-> -	_enter("%zx @%llx/%llx", subreq->len, subreq->start, i_size);
-> +	_enter("%zx @%llx/%llx", len, start, i_size);
->  
-> -	if (subreq->start >= i_size) {
-> +	if (start >= i_size) {
->  		ret = NETFS_FILL_WITH_ZEROES;
->  		why = cachefiles_trace_read_after_eof;
->  		goto out_no_object;
->  	}
->  
->  	if (test_bit(FSCACHE_COOKIE_NO_DATA_TO_READ, &cookie->flags)) {
-> -		__set_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
-> +		__set_bit(NETFS_SREQ_COPY_TO_CACHE, _flags);
->  		why = cachefiles_trace_read_no_data;
-> -		if (!test_bit(NETFS_SREQ_ONDEMAND, &subreq->flags))
-> +		if (!test_bit(NETFS_SREQ_ONDEMAND, _flags))
->  			goto out_no_object;
->  	}
->  
-> @@ -437,7 +434,7 @@ static enum netfs_io_source cachefiles_prepare_read(struct netfs_io_subrequest *
->  retry:
->  	off = cachefiles_inject_read_error();
->  	if (off == 0)
-> -		off = vfs_llseek(file, subreq->start, SEEK_DATA);
-> +		off = vfs_llseek(file, start, SEEK_DATA);
->  	if (off < 0 && off >= (loff_t)-MAX_ERRNO) {
->  		if (off == (loff_t)-ENXIO) {
->  			why = cachefiles_trace_read_seek_nxio;
-> @@ -449,21 +446,22 @@ static enum netfs_io_source cachefiles_prepare_read(struct netfs_io_subrequest *
->  		goto out;
->  	}
->  
-> -	if (off >= subreq->start + subreq->len) {
-> +	if (off >= start + len) {
->  		why = cachefiles_trace_read_found_hole;
->  		goto download_and_store;
->  	}
->  
-> -	if (off > subreq->start) {
-> +	if (off > start) {
->  		off = round_up(off, cache->bsize);
-> -		subreq->len = off - subreq->start;
-> +		len = off - start;
-> +		*_len = len;
->  		why = cachefiles_trace_read_found_part;
->  		goto download_and_store;
->  	}
->  
->  	to = cachefiles_inject_read_error();
->  	if (to == 0)
-> -		to = vfs_llseek(file, subreq->start, SEEK_HOLE);
-> +		to = vfs_llseek(file, start, SEEK_HOLE);
->  	if (to < 0 && to >= (loff_t)-MAX_ERRNO) {
->  		trace_cachefiles_io_error(object, file_inode(file), to,
->  					  cachefiles_trace_seek_error);
-> @@ -471,12 +469,13 @@ static enum netfs_io_source cachefiles_prepare_read(struct netfs_io_subrequest *
->  		goto out;
->  	}
->  
-> -	if (to < subreq->start + subreq->len) {
-> -		if (subreq->start + subreq->len >= i_size)
-> +	if (to < start + len) {
-> +		if (start + len >= i_size)
->  			to = round_up(to, cache->bsize);
->  		else
->  			to = round_down(to, cache->bsize);
-> -		subreq->len = to - subreq->start;
-> +		len = to - start;
-> +		*_len = len;
->  	}
->  
->  	why = cachefiles_trace_read_have_data;
-> @@ -484,12 +483,11 @@ static enum netfs_io_source cachefiles_prepare_read(struct netfs_io_subrequest *
->  	goto out;
->  
->  download_and_store:
-> -	__set_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags);
-> -	if (test_bit(NETFS_SREQ_ONDEMAND, &subreq->flags)) {
-> -		rc = cachefiles_ondemand_read(object, subreq->start,
-> -					      subreq->len);
-> +	__set_bit(NETFS_SREQ_COPY_TO_CACHE, _flags);
-> +	if (test_bit(NETFS_SREQ_ONDEMAND, _flags)) {
-> +		rc = cachefiles_ondemand_read(object, start, len);
->  		if (!rc) {
-> -			__clear_bit(NETFS_SREQ_ONDEMAND, &subreq->flags);
-> +			__clear_bit(NETFS_SREQ_ONDEMAND, _flags);
->  			goto retry;
->  		}
->  		ret = NETFS_INVALID_READ;
-> @@ -497,10 +495,34 @@ static enum netfs_io_source cachefiles_prepare_read(struct netfs_io_subrequest *
->  out:
->  	cachefiles_end_secure(cache, saved_cred);
->  out_no_object:
-> -	trace_cachefiles_prep_read(subreq, ret, why, ino);
-> +	trace_cachefiles_prep_read(object, start, len, *_flags, ret, why, ino);
->  	return ret;
->  }
->  
-> +/*
-> + * Prepare a read operation, shortening it to a cached/uncached
-> + * boundary as appropriate.
-> + */
-> +static enum netfs_io_source cachefiles_prepare_read(struct netfs_io_subrequest *subreq,
-> +						    loff_t i_size)
-> +{
-> +	return cachefiles_do_prepare_read(&subreq->rreq->cache_resources,
-> +					  subreq->start, &subreq->len, i_size,
-> +					  &subreq->flags);
-> +}
-> +
-> +/*
-> + * Prepare an on-demand read operation, shortening it to a cached/uncached
-> + * boundary as appropriate.
-> + */
-> +static enum netfs_io_source
-> +cachefiles_prepare_ondemand_read(struct netfs_cache_resources *cres,
-> +				 loff_t start, size_t *_len, loff_t i_size,
-> +				 unsigned long *_flags)
-> +{
-> +	return cachefiles_do_prepare_read(cres, start, _len, i_size, _flags);
-> +}
-> +
->  /*
->   * Prepare for a write to occur.
->   */
-> @@ -621,6 +643,7 @@ static const struct netfs_cache_ops cachefiles_netfs_cache_ops = {
->  	.write			= cachefiles_write,
->  	.prepare_read		= cachefiles_prepare_read,
->  	.prepare_write		= cachefiles_prepare_write,
-> +	.prepare_ondemand_read	= cachefiles_prepare_ondemand_read,
->  	.query_occupancy	= cachefiles_query_occupancy,
->  };
->  
-> diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-> index f2402ddeafbf..95cc0397f0ee 100644
-> --- a/include/linux/netfs.h
-> +++ b/include/linux/netfs.h
-> @@ -267,6 +267,14 @@ struct netfs_cache_ops {
->  			     loff_t *_start, size_t *_len, loff_t i_size,
->  			     bool no_space_allocated_yet);
->  
-> +	/* Prepare an on-demand read operation, shortening it to a cached/uncached
-> +	 * boundary as appropriate.
-> +	 */
-> +	enum netfs_io_source (*prepare_ondemand_read)(struct netfs_cache_resources *cres,
-> +						      loff_t start, size_t *_len,
-> +						      loff_t i_size,
-> +						      unsigned long *_flags);
-> +
->  	/* Query the occupancy of the cache in a region, returning where the
->  	 * next chunk of data starts and how long it is.
->  	 */
-> diff --git a/include/trace/events/cachefiles.h b/include/trace/events/cachefiles.h
-> index d8d4d73fe7b6..171c0d7f0bb7 100644
-> --- a/include/trace/events/cachefiles.h
-> +++ b/include/trace/events/cachefiles.h
-> @@ -428,44 +428,43 @@ TRACE_EVENT(cachefiles_vol_coherency,
->  	    );
->  
->  TRACE_EVENT(cachefiles_prep_read,
-> -	    TP_PROTO(struct netfs_io_subrequest *sreq,
-> +	    TP_PROTO(struct cachefiles_object *obj,
-> +		     loff_t start,
-> +		     size_t len,
-> +		     unsigned short flags,
->  		     enum netfs_io_source source,
->  		     enum cachefiles_prepare_read_trace why,
->  		     ino_t cache_inode),
->  
-> -	    TP_ARGS(sreq, source, why, cache_inode),
-> +	    TP_ARGS(obj, start, len, flags, source, why, cache_inode),
->  
->  	    TP_STRUCT__entry(
-> -		    __field(unsigned int,		rreq		)
-> -		    __field(unsigned short,		index		)
-> +		    __field(unsigned int,		obj		)
->  		    __field(unsigned short,		flags		)
->  		    __field(enum netfs_io_source,	source		)
->  		    __field(enum cachefiles_prepare_read_trace,	why	)
->  		    __field(size_t,			len		)
->  		    __field(loff_t,			start		)
-> -		    __field(unsigned int,		netfs_inode	)
->  		    __field(unsigned int,		cache_inode	)
->  			     ),
->  
->  	    TP_fast_assign(
-> -		    __entry->rreq	= sreq->rreq->debug_id;
-> -		    __entry->index	= sreq->debug_index;
-> -		    __entry->flags	= sreq->flags;
-> +		    __entry->obj	= obj ? obj->debug_id : 0;
-> +		    __entry->flags	= flags;
->  		    __entry->source	= source;
->  		    __entry->why	= why;
-> -		    __entry->len	= sreq->len;
-> -		    __entry->start	= sreq->start;
-> -		    __entry->netfs_inode = sreq->rreq->inode->i_ino;
-> +		    __entry->len	= len;
-> +		    __entry->start	= start;
->  		    __entry->cache_inode = cache_inode;
->  			   ),
->  
-> -	    TP_printk("R=%08x[%u] %s %s f=%02x s=%llx %zx ni=%x B=%x",
-> -		      __entry->rreq, __entry->index,
-> +	    TP_printk("o=%08x %s %s f=%02x s=%llx %zx B=%x",
-> +		      __entry->obj,
->  		      __print_symbolic(__entry->source, netfs_sreq_sources),
->  		      __print_symbolic(__entry->why, cachefiles_prepare_read_traces),
->  		      __entry->flags,
->  		      __entry->start, __entry->len,
-> -		      __entry->netfs_inode, __entry->cache_inode)
-> +		      __entry->cache_inode)
->  	    );
->  
->  TRACE_EVENT(cachefiles_read,
+(yes, that's just now -- sorry, I just noticed a whitespace problem as I
+prepared this mail, there's no code change with what was tested and in
+-next for a few days)
 
--- 
-Thanks,
-Jingbo
+----------------------------------------------------------------
+9p-for-6.1-rc7
+
+Two fixes:
+ - 9p now uses a variable size for its recv buffer, but every place
+hadn't been updated properly to use it and some buffer overflows
+have been found and needed fixing.
+There's still one place where msize is incorrectly used in a safety
+check (p9_check_errors), but all paths leading to it should already
+be avoiding overflows and that patch took a bit more time to get
+right for zero-copy requests so I'll send it for 6.2
+ - yet another race condition in p9_conn_cancel introduced by a
+fix of a syzbot report in the same place, maybe at some point
+we'll get it right without burning it all down...
+
+----------------------------------------------------------------
+Dominique Martinet (1):
+      9p/xen: check logical size for buffer size
+
+GUO Zihua (2):
+      9p/fd: Fix write overflow in p9_read_work
+      9p/fd: Use P9_HDRSZ for header size
+
+Zhengchao Shao (1):
+      9p/fd: fix issue of list_del corruption in p9_fd_cancel()
+
+ net/9p/trans_fd.c  | 24 +++++++++++++-----------
+ net/9p/trans_xen.c |  9 +++++++++
+ 2 files changed, 22 insertions(+), 11 deletions(-)
+ 9 files changed, 254 insertions(+), 28 deletions(-)
+--
+Dominique
