@@ -2,156 +2,182 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B28A6362C6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 16:06:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13E22636317
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 16:16:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237959AbiKWPGf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 10:06:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41306 "EHLO
+        id S238589AbiKWPQk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 10:16:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237836AbiKWPGb (ORCPT
+        with ESMTP id S238587AbiKWPQh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 10:06:31 -0500
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 281D2DB1;
-        Wed, 23 Nov 2022 07:06:29 -0800 (PST)
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2ANEbIsg023628;
-        Wed, 23 Nov 2022 15:05:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=message-id : date :
- subject : from : to : cc : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=pp1;
- bh=dGvd4VZd9FPa4CkPPRes0myKBlACTZGqM/g+x0F1vP4=;
- b=jQhcy4o6P2yR+/fb7Kao/F0nN5lNKZe1Zw85dS4c0GnvSEGFW/JmTYOPPW4YqqwZJEgr
- AEqr8ygDEo1Urnh36ZQEFOKHdnm10Gj+Y86H53AOsaD2VBTvS7gZdBc4azjL4ncKvoar
- SlAVK33+4RArfsCCVu3WzWgev9GgZnYHEnioBEtEaOF+U2yBScnbGZOgsrsXT0M3/aE3
- MqxHplD+0J4Zz1FNOJExSTwAg7AwLXuy1dbHRGehQsPYNbuoCquhctttk33ashMi90o1
- B22vIKK68PfSdy+J6yr6oIp2SFG4t7ah+mVZYZnFfMWc6P2qgaifMsMMBrzZjqeTfnfc jQ== 
-Received: from pps.reinject (localhost [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m10w5yav4-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Nov 2022 15:05:55 +0000
-Received: from m0098421.ppops.net (m0098421.ppops.net [127.0.0.1])
-        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 2ANEc1gY026045;
-        Wed, 23 Nov 2022 15:05:54 GMT
-Received: from ppma01wdc.us.ibm.com (fd.55.37a9.ip4.static.sl-reverse.com [169.55.85.253])
-        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3m10w5yau6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Nov 2022 15:05:54 +0000
-Received: from pps.filterd (ppma01wdc.us.ibm.com [127.0.0.1])
-        by ppma01wdc.us.ibm.com (8.16.1.2/8.16.1.2) with SMTP id 2ANF5BIh018975;
-        Wed, 23 Nov 2022 15:05:53 GMT
-Received: from b01cxnp23032.gho.pok.ibm.com (b01cxnp23032.gho.pok.ibm.com [9.57.198.27])
-        by ppma01wdc.us.ibm.com with ESMTP id 3kxps9ke0a-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Wed, 23 Nov 2022 15:05:53 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com ([9.208.128.115])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 2ANF5qv264160174
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 23 Nov 2022 15:05:53 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id E4DF75806A;
-        Wed, 23 Nov 2022 15:05:51 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4FB0358064;
-        Wed, 23 Nov 2022 15:05:50 +0000 (GMT)
-Received: from [9.163.61.172] (unknown [9.163.61.172])
-        by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-        Wed, 23 Nov 2022 15:05:50 +0000 (GMT)
-Message-ID: <a2752fdf-c89f-6f57-956e-ad035d32aec6@linux.vnet.ibm.com>
-Date:   Wed, 23 Nov 2022 10:05:49 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.12.0
-Subject: Re: [PATCH 2/4] fs: define a firmware security filesystem named
- fwsecurityfs
-Content-Language: en-US
-From:   Nayna <nayna@linux.vnet.ibm.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Nayna Jain <nayna@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-security-module <linux-security-module@vger.kernel.org>,
-        linux-kernel@vger.kernel.org,
-        Michael Ellerman <mpe@ellerman.id.au>, npiggin@gmail.com,
-        christophe.leroy@csgroup.eu, Dov Murik <dovmurik@linux.ibm.com>,
-        George Wilson <gcwilson@linux.ibm.com>,
-        Matthew Garrett <mjg59@srcf.ucam.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Andrew Donnellan <ajd@linux.ibm.com>,
-        Stefan Berger <stefanb@linux.ibm.com>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-References: <20221106210744.603240-1-nayna@linux.ibm.com>
- <20221106210744.603240-3-nayna@linux.ibm.com> <Y2uvUFQ9S2oaefSY@kroah.com>
- <8447a726-c45d-8ebb-2a74-a4d759631e64@linux.vnet.ibm.com>
- <20221119114234.nnfxsqx4zxiku2h6@riteshh-domain>
- <d3e8df29-d9b0-5e8e-4a53-d191762fe7f2@linux.vnet.ibm.com>
-In-Reply-To: <d3e8df29-d9b0-5e8e-4a53-d191762fe7f2@linux.vnet.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: ADE2-NM2PMt6SFqJNMWDHHmcmzlLJstz
-X-Proofpoint-ORIG-GUID: DH_smz6n-IN3MkQiEHn_FK2ti-X-FIHB
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+        Wed, 23 Nov 2022 10:16:37 -0500
+Received: from mail-vs1-xe2b.google.com (mail-vs1-xe2b.google.com [IPv6:2607:f8b0:4864:20::e2b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54BB78CF24
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 07:16:36 -0800 (PST)
+Received: by mail-vs1-xe2b.google.com with SMTP id d185so17778255vsd.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 07:16:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZfI1bSmJwxZ8E8JJctQ0kdIuqLE/rz90cNSezybkcc0=;
+        b=F+vbxEgf6at1XjQpgMn7t7oEe25HbEyPaQxCtR79g1KQdgLc/vbKA4MbxHEHmj0wRe
+         QRTsspBkm7rVSo8FtcLfXfOIwmtZtuFgmWe+LiHGzB45vFPQaXKoDj1n/kN3X9Kfe7Ch
+         qDK2YOys1uUOBMa2CD2XIZR+SPs7GBuxwE3SRRdr2qzVigSarbtMeNZW3ZbAMjRnRgpj
+         bheYTDBz8wzJ9m7OiNEmUEoh/PyxPhtYFi6aEcUSQPDe2TE/8E6OP1EU06mku5l3Q4K9
+         bQHeT0SSvs7YU1VAivnhE1Bp0A+x9rWNZk/783sAoe9MZwXCvVRIxHGvfh+vVs1TowEX
+         QC1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZfI1bSmJwxZ8E8JJctQ0kdIuqLE/rz90cNSezybkcc0=;
+        b=Pq59IKqZ2/sraX9LjCJKohCt/HQwlyC2JYWFVNEdPj9iKD+5JMFaEkWVtey55TrgBx
+         EIsRYGgS67psA76ioR9DzOFek5iIrJB4/pt/oLcXBSKHPFU+BYRBchGmDBqlTgT7X8jC
+         Loiq2DqsuG0WcIWvC6Fuwn8ul9Hz51GjgA3reBkVINAkn4Sgy24OxzW99rLCjhndedRx
+         4kmsMPgCmC8SDpRRj246x+uBe27BQaiqwEH2EIyx565ruxRxkAEzHmq54Agw/54rbW1/
+         8by71i0u/yxNBCwDPbeX9kFkWhyqhjbGCy0FGDrC/pQFFlxHewjdPhOn5P7KTgbQGSBI
+         VXyA==
+X-Gm-Message-State: ANoB5pkNaC5kmI/Qmay2p1izraLH+ePPt8gPuvrVBaF+ZCuqLu7IUVTz
+        ttHaZElKWIsRi+gB5UEkRt+88AIsEt332650Fv7hEImN6Jw=
+X-Google-Smtp-Source: AA0mqf631X3ZIwz5xrVAYOt7C5HxY8M+dxu0GeFDV6mqdN04zUysBWFt62UjYAKHaRZ6NxUl4Stwo/PBGRh1PxCBAl0=
+X-Received: by 2002:a05:6102:2323:b0:3b0:6f73:d0bb with SMTP id
+ b3-20020a056102232300b003b06f73d0bbmr1604853vsa.71.1669216595252; Wed, 23 Nov
+ 2022 07:16:35 -0800 (PST)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-23_08,2022-11-23_01,2022-06-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- bulkscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0
- impostorscore=0 priorityscore=1501 spamscore=0 phishscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2210170000 definitions=main-2211230112
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20221103163045.fzl6netcffk23sxw@quack3> <CAOQ4uxhRYZgDSWr8ycB3hqxZgg6MWL65eP0eEkcZkGfcEpHpCg@mail.gmail.com>
+ <20221107111008.wt4s4hjumxzl5kqj@quack3> <CAOQ4uxhjCb=2f_sFfx+hn8B44+vgZgSbVe=es4CwiC7dFzMizA@mail.gmail.com>
+ <20221114191721.yp3phd5w5cx6nmk2@quack3> <CAOQ4uxiGD8iDhc+D_Qse_Ahq++V4nY=kxYJSVtr_2dM3w6bNVw@mail.gmail.com>
+ <20221115101614.wuk2f4dhnjycndt6@quack3> <CAOQ4uxhcXKmdq+=fexuyu-nUKc5XHG6crtcs-+tP6-M4z357pQ@mail.gmail.com>
+ <20221116105609.ctgh7qcdgtgorlls@quack3> <CAOQ4uxhQ2s2SOkvjCAoZmqNRGx3gyiTb0vdq4mLJd77pm987=g@mail.gmail.com>
+ <20221123101021.7a65fgjop3d45ryq@quack3>
+In-Reply-To: <20221123101021.7a65fgjop3d45ryq@quack3>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 23 Nov 2022 17:16:23 +0200
+Message-ID: <CAOQ4uxg0hfuyQk3dBXfF2VTtfyOg5bD_NPrz0VOSFuVoA4vpuw@mail.gmail.com>
+Subject: Re: thoughts about fanotify and HSM
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Wed, Nov 23, 2022 at 12:10 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Wed 16-11-22 18:24:06, Amir Goldstein wrote:
+> > > > Why then give up on the POST_WRITE events idea?
+> > > > Don't you think it could work?
+> > >
+> > > So as we are discussing, the POST_WRITE event is not useful when we want to
+> > > handle crash safety. And if we have some other mechanism (like SRCU) which
+> > > is able to guarantee crash safety, then what is the benefit of POST_WRITE?
+> > > I'm not against POST_WRITE, I just don't see much value in it if we have
+> > > another mechanism to deal with events straddling checkpoint.
+> > >
+> >
+> > Not sure I follow.
+> >
+> > I think that crash safety can be achieved also with PRE/POST_WRITE:
+> > - PRE_WRITE records an intent to write in persistent snapshot T
+> >   and add to in-memory map of in-progress writes of period T
+> > - When "checkpoint T" starts, new PRE_WRITES are recorded in both
+> >   T and T+1 persistent snapshots, but event is added only to
+> >   in-memory map of in-progress writes of period T+1
+> > - "checkpoint T" ends when all in-progress writes of T are completed
+>
+> So maybe I miss something but suppose the situation I was mentioning few
+> emails earlier:
+>
+> PRE_WRITE for F                 -> F recorded as modified in T
+> modify F
+> POST_WRITE for F
+>
+> PRE_WRITE for F                 -> ignored because F is already marked as
+>                                    modified
+>
+>                                 -> checkpoint T requested, modified files
+>                                    reported, process modified files
+> modify F
+> --------- crash
+>
+> Now unless filesystem freeze or SRCU is part of checkpoint, we will never
+> notify about the last modification to F. So I don't see how PRE +
+> POST_WRITE alone can achieve crash safety...
+>
+> And if we use filesystem freeze or SRCU as part of checkpoint, then
+> processing of POST_WRITE events does not give us anything new. E.g.
+> synchronize_srcu() during checkpoing before handing out list of modified
+> files makes sure all modifications to files for which PRE_MODIFY events
+> were generated (and thus are listed as modified in checkpoint T) are
+> visible for userspace.
+>
+> So am I missing some case where POST_WRITE would be more useful than SRCU?
+> Because at this point I'd rather implement SRCU than POST_WRITE.
+>
 
-On 11/22/22 18:21, Nayna wrote:
->
-> From the perspective of our use case, we need to expose firmware 
-> security objects to userspace for management. Not all of the objects 
-> pre-exist and we would like to allow root to create them from userspace.
->
-> From a unification perspective, I have considered a common location at 
-> /sys/firmware/security for managing any platform's security objects. 
-> And I've proposed a generic filesystem, which could be used by any 
-> platform to represent firmware security objects via 
-> /sys/firmware/security.
->
-> Here are some alternatives to generic filesystem in discussion:
->
-> 1. Start with a platform-specific filesystem. If more platforms would 
-> like to use the approach, it can be made generic. We would still have 
-> a common location of /sys/firmware/security and new code would live in 
-> arch. This is my preference and would be the best fit for our use case.
->
-> 2. Use securityfs.  This would mean modifying it to satisfy other use 
-> cases, including supporting userspace file creation. I don't know if 
-> the securityfs maintainer would find that acceptable. I would also 
-> still want some way to expose variables at /sys/firmware/security.
->
-> 3. Use a sysfs-based approach. This would be a platform-specific 
-> implementation. However, sysfs has a similar issue to securityfs for 
-> file creation. When I tried it in RFC v1[1], I had to implement a 
-> workaround to achieve that.
->
-> [1] 
-> https://lore.kernel.org/linuxppc-dev/20220122005637.28199-3-nayna@linux.ibm.com/
->
-Hi Greg,
+I tend to agree. Even if POST_WRITE can be done,
+SRCU will be far better.
 
-Based on the discussions so far, is Option 1, described above, an 
-acceptable next step?
+> > The trick with alternating snapshots "handover" is this
+> > (perhaps I never explained it and I need to elaborate on the wiki [1]):
+> >
+> > [1] https://github.com/amir73il/fsnotify-utils/wiki/Hierarchical-Storage-Management-API#Modified_files_query
+> >
+> > The changed files query results need to include recorded changes in both
+> > "finalizing" snapshot T and the new snapshot T+1 that was started in
+> > the beginning of the query.
+> >
+> > Snapshot T MUST NOT be discarded until checkpoint/handover
+> > is complete AND the query results that contain changes recorded
+> > in T and T+1 snapshots have been consumed.
+> >
+> > When the consumer ACKs that the query results have been safely stored
+> > or acted upon (I called this operation "bless" snapshot T+1) then and
+> > only then can snapshot T be discarded.
+> >
+> > After snapshot T is discarded a new query will start snapshot T+2.
+> > A changed files query result includes the id of the last blessed snapshot.
+> >
+> > I think this is more or less equivalent to the SRCU that you suggested,
+> > but all the work is done in userspace at application level.
+> >
+> > If you see any problem with this scheme or don't understand it
+> > please let me know and I will try to explain better.
+>
+> So until now I was imagining that query results will be returned like a one
+> big memcpy. I.e. one off event where the "persistent log daemon" hands over
+> the whole contents of checkpoint T to the client. Whatever happens with the
+> returned data is the bussiness of the client, whatever happens with the
+> checkpoint T records in the daemon is the daemon's bussiness. The model you
+> seem to speak about here is somewhat different - more like readdir() kind
+> of approach where client asks for access to checkpoint T data, daemon
+> provides the data record by record (probably serving the data from its
+> files on disk), and when the client is done and "closes" checkpoint T,
+> daemon's records about checkpoint T can be erased. Am I getting it right?
+>
 
-Thanks & Regards,
+Yes, something like that.
+The query result (which is actually a recursive readdir) could be huge.
+So it cannot really be returned as a blob, it must be steamed to consumers.
 
-       - Nayna
+> This however seems somewhat orthogonal to the SRCU idea. SRCU essentially
+> serves the only purpose - make sure that modifications to all files for
+> which we have received PRE_WRITE event are visible in respective files.
+>
 
+Absolutely right.
+Sorry for the noise, but at least you've learned one more thing
+about my persistent change snapshots architecture ;-)
+
+Thanks,
+Amir.
