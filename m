@@ -2,68 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B6A9635F89
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 14:28:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C6BF635F9C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 14:29:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237559AbiKWN2q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 08:28:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39238 "EHLO
+        id S237692AbiKWN3t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 08:29:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39306 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236956AbiKWN2N (ORCPT
+        with ESMTP id S237739AbiKWN3Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 08:28:13 -0500
-Received: from mail-ua1-x936.google.com (mail-ua1-x936.google.com [IPv6:2607:f8b0:4864:20::936])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47BCC77200
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 05:07:19 -0800 (PST)
-Received: by mail-ua1-x936.google.com with SMTP id a19so3792511uan.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 05:07:19 -0800 (PST)
+        Wed, 23 Nov 2022 08:29:25 -0500
+Received: from mail-pg1-x542.google.com (mail-pg1-x542.google.com [IPv6:2607:f8b0:4864:20::542])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6067D65E7B;
+        Wed, 23 Nov 2022 05:09:28 -0800 (PST)
+Received: by mail-pg1-x542.google.com with SMTP id 136so16753534pga.1;
+        Wed, 23 Nov 2022 05:09:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7zC6oSnSf6BcBX4kmnnFrHBlh7HIdEFiSeFjDUxu6/4=;
-        b=kD681cvi9urN32FUKzLTzUYNEMoQUdJfQzmO33VKpkAnW6TTbGdXxKUwBNQVuCnmEB
-         WIqjAn3XPYHqCLtmXNUImWplD0/HHQNfpsw90jLppXeqlLm8TkMoo9q8MTWWFeOUswRR
-         YsYtegX4B+caQUwj52Z6Ueut/1wDhoGYMuplWqWqr59zr/FIUMMKhPRQg9kghoqB1VOs
-         sDiVIwVg1408eGIrXusZAx8bX9wC7gT9D5dUdI3N9iyepP7kx60EQRFkZmv/IqscZ5Vg
-         9vFqu0I3mdBfnr+7K5w6YfESyQeW5sV2d/3RTeON+xIgFnwhJg0PCUFny60wmdP0C+2M
-         Yfkg==
+        h=content-transfer-encoding:in-reply-to:references:cc:to
+         :content-language:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/5sDDLj8hVe6h4SdJGwqUGXTtJZOuHWy81jfh5yIfz4=;
+        b=eaWlhzLlnIm3EtOzG/x4g8D+S7v2xDU4bBSwiM7/daKGHsTg5FiYpDXY39G7kPVkUx
+         sK9g3jdn6QjlC8sdOHrXH4XRPjn7W9x3HnQVL/oH/bdkqwolANJU7ihJGH+lE05yoOTW
+         DDWss6uD1QqL6K1LJmCjh4DTtFcVVvI44bGpmMdzZdR+tRfuQh2uDAWcaZTmhUkLH+dh
+         BzCQoF5NVIDfNzyZJH6Kyvv27dQDmyQFMfwTrdjLmzDQWw6aUYXE155vLY+NHCLsoxX3
+         YGlpOeVsX74+AEJHx5k1QlyjxDlrVhv1ZC+qay92GFTY4cCQ1+AZJ56Zx+CxsCeeQ/Sw
+         9pdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7zC6oSnSf6BcBX4kmnnFrHBlh7HIdEFiSeFjDUxu6/4=;
-        b=2f1PX2FXznuHyRFx2Lbrg52NG21eYS7USx6FqKStzDssxEjDW4UMm3xZBruFPUm+2A
-         LhEuzduxtLQS5J+zzypq+RGVthPriTZKy4Pa8VUBzNvb927GIAJMe0f3VOkyHaVlOJXP
-         ef4mk98U4SpA4PhGmRHV7zZjqoUQRTFQJpAEG0vEhdbGMb7dYI5EHmt4yz3sL5SEBKaL
-         j7LXE4tnIzqoB2ZZidr1Bz9S9HNkU5drvQ3ucgWR96VrsTbgQdylM0i0CacfKpmPSTP2
-         dEqs0CK+l8KCvnNTnuJ0/E0NESkSvpEqTbO2qpdfv4EwwiHOEn9mzTWb0kdxFTvg/8Bm
-         43mQ==
-X-Gm-Message-State: ANoB5pkL6ZsA33AKTzg07QRECsLNH5susFvuk0HW0GWWDXMiqJHwBwuQ
-        kIkaHPnfF0thDt435ViX2DMDziVMf2/1I5aemQsoFlGj
-X-Google-Smtp-Source: AA0mqf50ZR9NFeUmoS7wDQ2PYO40b2r0bZLfpICZR10Jz4HyHpMtKjarvNnnEG9BxxOOdETHnBA/ieHNy1vXbFmZpVM=
-X-Received: by 2002:ab0:14e8:0:b0:418:b9ed:8d94 with SMTP id
- f37-20020ab014e8000000b00418b9ed8d94mr5384716uae.60.1669208838220; Wed, 23
- Nov 2022 05:07:18 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:references:cc:to
+         :content-language:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/5sDDLj8hVe6h4SdJGwqUGXTtJZOuHWy81jfh5yIfz4=;
+        b=BtTgiBuVJlOtLgAigUIp2C4QsSfZENe9zaQy7qEVvpc25W5OTS3BTY3viNDXqHnvG4
+         AVl0euHzdv1hktmLu0ql+kLgw1UVmi5Wox5qV2fHaMzC6mY7egcFoQlPcKIWz3MQCnHZ
+         /lZsAAiWDp66xWd8upbGapurClgnBqvCEmrQj+yVejEUeddLB6as9pqGXnFFBqENg2e/
+         LxdQYl9MzLFzNgP3Fh8diOXqRb80nhVomkCnkLWNzNu3svS5LEpy/NCR53DL7g0iwYjO
+         VbJazvX90DZBJ1DZoAtQC49NZpeUEwIim2w9n+pmo7R5k5IdGKFomcc4SwCWWMF+8iLu
+         BrVg==
+X-Gm-Message-State: ANoB5pkJy/1SMpMFpf8Nzw18/+f5pK0FKOFRoLWhk+EvIjfIpBWodYeH
+        wSV2pkiKLDv+E6OUrETr2SkMCx/iVPQY1Q==
+X-Google-Smtp-Source: AA0mqf7/4JY+gdssUIZF6j0kOvV8JD3YBfxDGEkkTruZY9oR5aZU/3tYCKBkgJ7GgrM5WXuNBggm8A==
+X-Received: by 2002:a63:1f21:0:b0:46b:2bd4:f298 with SMTP id f33-20020a631f21000000b0046b2bd4f298mr9926147pgf.135.1669208967813;
+        Wed, 23 Nov 2022 05:09:27 -0800 (PST)
+Received: from [172.18.246.94] ([1.242.215.113])
+        by smtp.gmail.com with ESMTPSA id x12-20020aa79acc000000b0056bbba4302dsm12667533pfp.119.2022.11.23.05.09.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Nov 2022 05:09:27 -0800 (PST)
+From:   Sungjong Seo <sjdev.seo@gmail.com>
+X-Google-Original-From: Sungjong Seo <sj1557.seo@samsung.com>
+Message-ID: <747ec13e-b7c8-abfa-2247-c98aba6d86e8@samsung.com>
+Date:   Wed, 23 Nov 2022 22:09:19 +0900
 MIME-Version: 1.0
-References: <CAOQ4uxhRYZgDSWr8ycB3hqxZgg6MWL65eP0eEkcZkGfcEpHpCg@mail.gmail.com>
- <20221107111008.wt4s4hjumxzl5kqj@quack3> <CAOQ4uxhjCb=2f_sFfx+hn8B44+vgZgSbVe=es4CwiC7dFzMizA@mail.gmail.com>
- <20221114191721.yp3phd5w5cx6nmk2@quack3> <CAOQ4uxiGD8iDhc+D_Qse_Ahq++V4nY=kxYJSVtr_2dM3w6bNVw@mail.gmail.com>
- <20221115101614.wuk2f4dhnjycndt6@quack3> <CAOQ4uxhcXKmdq+=fexuyu-nUKc5XHG6crtcs-+tP6-M4z357pQ@mail.gmail.com>
- <20221116105609.ctgh7qcdgtgorlls@quack3> <CAOQ4uxhQ2s2SOkvjCAoZmqNRGx3gyiTb0vdq4mLJd77pm987=g@mail.gmail.com>
- <CAOQ4uxiuyYdN9PK4XN+Vd7+XO56OcW_GrSU-U62srxLGQbx3JQ@mail.gmail.com> <20221123104920.g72y2ny533p2eo7w@quack3>
-In-Reply-To: <20221123104920.g72y2ny533p2eo7w@quack3>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Wed, 23 Nov 2022 15:07:06 +0200
-Message-ID: <CAOQ4uxh8sLO9GH_JjyfywvCbXwoc_DiUvfaO8Fn=BK7WyMVdnQ@mail.gmail.com>
-Subject: Re: thoughts about fanotify and HSM
-To:     Jan Kara <jack@suse.cz>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Dave Chinner <david@fromorbit.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Reply-To: sj1557.seo@samsung.com
+Subject: Re: [PATCH v1 1/5] exfat: reduce the size of exfat_entry_set_cache
+Content-Language: en-US
+To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>,
+        Namjae Jeon <linkinjeon@kernel.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
+References: <PUZPR04MB63168831A4F57B74109A893A81069@PUZPR04MB6316.apcprd04.prod.outlook.com>
+In-Reply-To: <PUZPR04MB63168831A4F57B74109A893A81069@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
@@ -72,63 +81,110 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> > Hmm I guess "crash safety" is not well defined.
-> > You and I were talking about "system crash" and indeed, this was
-> > my only concern with kernel implementation of overlayfs watch.
-> >
-> > But with userspace HSM service, how can we guarantee that
-> > modifications did not happen while the service is down?
-> >
-> > I don't really have a good answer for this.
->
-> Very good point!
->
-> > Thinking out loud, we would somehow need to make the default
-> > permission deny for all modifications, maybe through some mount
-> > property (e.g. MOUNT_ATTR_PROT_READ), causing the pre-write
-> > hooks to default to EROFS if there is no "vfs filter" mount mark.
-> >
-> > Then it will be possible to expose a "safe" mount to users, where
-> > modifications can never go unnoticed even when HSM service
-> > crashes.
->
-> Yeah, something like this. Although the bootstrap of this during mount may
-> be a bit challenging. But maybe not.
->
+Hi, Yuezhang Mo,
 
-I don't think so.
-As I wrote on several occasions, some of the current HSMs are implemented
-as FUSE filesystems and require mount.
+> In normal, there are 19 directory entries at most for a file or
+> a directory.
+>   - A file directory entry
+>   - A stream extension directory entry
+>   - 1~17 file name directory entry
+> 
+> So the directory entries are in 3 sectors at most, it is enough
+> for struct exfat_entry_set_cache to pre-allocate 3 bh.
+> 
+> This commit changes the size of struct exfat_entry_set_cache as:
+> 
+>                    Before   After
+> 32-bit system      88       32    bytes
+> 64-bit system      168      48    bytes
+> 
+> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+> Reviewed-by: Andy Wu <Andy.Wu@sony.com>
+> Reviewed-by: Aoyama Wataru <wataru.aoyama@sony.com>
+> ---
+>  fs/exfat/exfat_fs.h | 24 ++++++++++++++++++++----
+>  1 file changed, 20 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/exfat/exfat_fs.h b/fs/exfat/exfat_fs.h
+> index a8f8eee4937c..7d2493cda5d8 100644
+> --- a/fs/exfat/exfat_fs.h
+> +++ b/fs/exfat/exfat_fs.h
+> @@ -9,6 +9,7 @@
+>  #include <linux/fs.h>
+>  #include <linux/ratelimit.h>
+>  #include <linux/nls.h>
+> +#include <linux/blkdev.h>
+>  
+>  #define EXFAT_ROOT_INO		1
+>  
+> @@ -41,6 +42,14 @@ enum {
+>  #define ES_2_ENTRIES		2
+>  #define ES_ALL_ENTRIES		0
+>  
+> +#define ES_FILE_ENTRY		0
+> +#define ES_STREAM_ENTRY		1
+> +#define ES_FIRST_FILENAME_ENTRY	2
 
-As I imagine an HSM system (and as our in-house system works)
-there is a filesystem containing populated and unpopulated files that admin
-can access without any filters and there is a mount that is exposed to users
-where the filtering and on-demand populate happens.
+New ES_ definitions seem to be an index in an entry set. However, this
+is confusing with definitions for specifying the range used when
+obtaining an entry set, such as ES_2_ENTRIES or ES_ALL_ENTRIES.
+Therefore, it would be better to use ES_IDX_ instead of ES_ to
+distinguish names such as ES_IDX_FILE, ES_IDX_STREAM and so on.
+(If you can think of a better prefix, it doesn't have to be ES_IDX_)
 
-I am less worried about bringup.
-My HttpDirFS POC already does mount move of a marked mount on startup.
-My concern was how to handle dying fanotify group safely.
+> +#define EXFAT_FILENAME_ENTRY_NUM(name_len) \
+> +	DIV_ROUND_UP(name_len, EXFAT_FILE_NAME_LEN)
+> +#define ES_LAST_FILENAME_ENTRY(name_len)	\
+> +	(ES_FIRST_FILENAME_ENTRY + EXFAT_FILENAME_ENTRY_NUM(name_len))
 
-> Also I'm thinking about other usecases - for HSM I agree we essentially
-> need to take the FS down if the userspace counterpart is not working. What
-> about other persistent change log usecases? Do we mandate that there is
-> only one "persistent change log" daemon in the system (or per filesystem?)
-> and that must be running or we take the filesystem down? And anybody who
-> wants reliable notifications needs to consume service of this daemon?
+As with the newly defined ES_ value above, it makes sense for the
+ES_LAST_FILENAME_ENTRY() MACRO to return the index of the last filename
+entry. So let's subtract 1 from the current MACRO.
 
-Yes, I envision a single systemd-fsmonitor daemon (or instance per sb) that
-can handle subscribing to changes on subtree and can deal with the permission
-of dispatching events on subtrees.
+> +
+>  #define DIR_DELETED		0xFFFF0321
+>  
+>  /* type values */
+> @@ -68,9 +77,6 @@ enum {
+>  #define MAX_NAME_LENGTH		255 /* max len of file name excluding NULL */
+>  #define MAX_VFSNAME_BUF_SIZE	((MAX_NAME_LENGTH + 1) * MAX_CHARSET_SIZE)
+>  
+> -/* Enough size to hold 256 dentry (even 512 Byte sector) */
+> -#define DIR_CACHE_SIZE		(256*sizeof(struct exfat_dentry)/512+1)
+> -
+>  #define EXFAT_HINT_NONE		-1
+>  #define EXFAT_MIN_SUBDIR	2
+>  
+> @@ -125,6 +131,16 @@ enum {
+>  #define BITS_PER_BYTE_MASK	0x7
+>  #define IGNORED_BITS_REMAINED(clu, clu_base) ((1 << ((clu) - (clu_base))) - 1)
+>  
+> +/* 19 entries = 1 file entry + 1 stream entry + 17 filename entries */
+> +#define ES_MAX_ENTRY_NUM	ES_LAST_FILENAME_ENTRY(MAX_NAME_LENGTH)
 
-To answer your question, I think the bare minimum that we need to provide
-is a property of the mount (probably an event mask) that requires at least one
-active fanotify vfs filter to allow certain permission events to go through.
+Of course, it needs to add 1 here.
 
-I think it would make sense to allow a single FAN_CLASS_VFS_FILTER
-group mark per sb and one per mount.
-
-If use cases that require more vfs filters per sb/mount arise, we can
-revisit that restriction later.
-
-Thanks,
-Amir.
+> +
+> +/*
+> + * 19 entries x 32 bytes/entry = 608 bytes.
+> + * The 608 bytes are in 3 sectors at most (even 512 Byte sector).
+> + */
+> +#define DIR_CACHE_SIZE		\
+> +	(DIV_ROUND_UP(EXFAT_DEN_TO_B(ES_MAX_ENTRY_NUM), SECTOR_SIZE) + 1)
+> +
+>  struct exfat_dentry_namebuf {
+>  	char *lfn;
+>  	int lfnbuf_len; /* usually MAX_UNINAME_BUF_SIZE */
+> @@ -166,11 +182,11 @@ struct exfat_hint {
+>  
+>  struct exfat_entry_set_cache {
+>  	struct super_block *sb;
+> -	bool modified;
+>  	unsigned int start_off;
+>  	int num_bh;
+>  	struct buffer_head *bh[DIR_CACHE_SIZE];
+>  	unsigned int num_entries;
+> +	bool modified;
+>  };
+>  
+>  struct exfat_dir_entry {
