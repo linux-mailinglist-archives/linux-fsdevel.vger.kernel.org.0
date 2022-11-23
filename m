@@ -2,345 +2,174 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45A29636029
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 14:40:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 85EF5636036
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 14:42:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236653AbiKWNkl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 08:40:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55086 "EHLO
+        id S236550AbiKWNma (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 08:42:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53926 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238114AbiKWNkX (ORCPT
+        with ESMTP id S238907AbiKWNmH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 08:40:23 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34D35C4C2B;
-        Wed, 23 Nov 2022 05:27:24 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C589EB81FE2;
-        Wed, 23 Nov 2022 13:27:22 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75392C433D6;
-        Wed, 23 Nov 2022 13:27:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669210041;
-        bh=iOyZXHb4U8+TXgWQN09Im62wfea9EeyaKLUdUgtusBg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bZOTkkFitIBaKgUHoJBHHTtx/CyffcXganHflr3pF05sNnBEPh5+bPDRHtlidzb5z
-         UBGPO/XYK6v4CxDqE9OnaZ0MOAHaBLnTVZjyJrxBJjSKGffTANdaE3vAa8MEwjFr4/
-         8lwL2yzj0YJPOqyYPthlZa4+GpFu9+hWYdy59JbOd18mvMMtKbKDs25NNAzh9c3vw0
-         11DCV4JA5RxLOqpDpyJjzE+gpsarlmhmeN8WgtEN5bF4W5bKLd3k05UH9jNETg6w0F
-         8Eyxf+5X6KymOcbghU7ZQ72T/ktondyVC8ShuIeSspc8qp2EyVsVc/ms9QGhumT9EL
-         LkIxMrkcZrjFA==
-Date:   Wed, 23 Nov 2022 14:27:15 +0100
-From:   Carlos Maiolino <cem@kernel.org>
-To:     Paolo Abeni <pabeni@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Soheil Hassas Yeganeh <soheil@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Jason Baron <jbaron@akamai.com>,
-        Roman Penyaev <rpenyaev@suse.de>, netdev@vger.kernel.org
-Subject: Re: [REPOST PATCH] epoll: use refcount to reduce ep_mutex contention
-Message-ID: <20221123132715.m75j6hkaehpkxnbd@andromeda>
-References: <JC496tgWfxduEmoxmrAOgiDTlftsRu1Lm9JOtXBEqnBKJVo0nLMyqk9ho4p08Q2PFZF6_F3j25b346oqwqSVOw==@protonmail.internalid>
- <e102081e103d897cc0b76908acdac1bf0b65050d.1669130955.git.pabeni@redhat.com>
+        Wed, 23 Nov 2022 08:42:07 -0500
+Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5FA00C9A9B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 05:30:25 -0800 (PST)
+Received: by mail-vs1-xe2c.google.com with SMTP id q127so17430040vsa.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 05:30:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=rnOSBrOnNqm4tJH25SDMPEcmSHajM5l6Da0ft21Y49w=;
+        b=JHHL0O3sPko06ycWPZFP2b3wSuU2bSC1VH24WIyt1WwoO+i7arb1PlMMcv0tIr3VtS
+         CuUZ9/hZGYQUuWQON+ig6B5zvbfVtAJAy2QVAUii5O4Lfpmfp3fi5n+qXMZxUash2omH
+         2SE9Ceevdv+2C+SAYZP3gF+mMaN3a+KnkvQafAYgWmcUd/Tpf9Z0UIlEnxeMMzuRdpho
+         1GppxXFjiJ9nbiO9A/FJ9CVNvSBaqxIBNZI3Pabmpx5k+tttEndY/NWnfqtEHt4S0GVa
+         qMT2Evtj8XUxcgI101qPH6E4dOreYcswAP0K48YVFNp+nDAS9/ibrDbuMSOAQrkuiCzE
+         Ou4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rnOSBrOnNqm4tJH25SDMPEcmSHajM5l6Da0ft21Y49w=;
+        b=4haqT1gaURobX1yhe+j8cQ/6TU6q3ksL0wpupCGBiule4OhXAqWL6gSi5vKjmr2Jz2
+         R7ZIjTpmhx5qrpZBrLwj85E4srLQlimPxTFIB1AxzCQrs+9wXOMf5/2q0lI5qiCmguS6
+         a7tAOFWsJ4VEmwT5U2D7GxTVGMRg3CKNvO8S4vQS3mE+4+iH66Qz1j4LBQJG/GtyHFiu
+         CGYzjG5U5OphuM8R4+Uw9yO3Dj1NE7r4j4RhP6mzOQpbVIqMOILcA3Pvm4MeugehYz6/
+         GTb7t/LEpNQtYn6QIog1ZaV/nUA7Z9AEWNtzGT1DjAkB9YffDGyQVfAZ2Sd0PsZ26ZZ3
+         mkag==
+X-Gm-Message-State: ANoB5pme4F/rkVgVZJ+fwdQg5sIiKUf6yDBGzzHNo43Hr+MCbs2Yaqcp
+        ts2Km2JOv5+1IS6s1AnWeiaETXJPMNKrgV0yb38=
+X-Google-Smtp-Source: AA0mqf7Fudd4X29D0dxKnBEM+ZphgpoysSfSE+OUSlzdipWZMME4YbMiKS+63rf1tdpYeLBwuwHwuuSWAxxfdb5xznY=
+X-Received: by 2002:a05:6102:5710:b0:3b0:7462:a91 with SMTP id
+ dg16-20020a056102571000b003b074620a91mr669783vsb.36.1669210224372; Wed, 23
+ Nov 2022 05:30:24 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e102081e103d897cc0b76908acdac1bf0b65050d.1669130955.git.pabeni@redhat.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <CAOQ4uxhRYZgDSWr8ycB3hqxZgg6MWL65eP0eEkcZkGfcEpHpCg@mail.gmail.com>
+ <20221107111008.wt4s4hjumxzl5kqj@quack3> <CAOQ4uxhjCb=2f_sFfx+hn8B44+vgZgSbVe=es4CwiC7dFzMizA@mail.gmail.com>
+ <20221114191721.yp3phd5w5cx6nmk2@quack3> <CAOQ4uxiGD8iDhc+D_Qse_Ahq++V4nY=kxYJSVtr_2dM3w6bNVw@mail.gmail.com>
+ <20221115101614.wuk2f4dhnjycndt6@quack3> <CAOQ4uxhcXKmdq+=fexuyu-nUKc5XHG6crtcs-+tP6-M4z357pQ@mail.gmail.com>
+ <20221116105609.ctgh7qcdgtgorlls@quack3> <CAOQ4uxhQ2s2SOkvjCAoZmqNRGx3gyiTb0vdq4mLJd77pm987=g@mail.gmail.com>
+ <CAOQ4uxi-42EQrE55_km=NYiTiEaiheVZq7WN=6UQ9rrBqg7C+w@mail.gmail.com> <20221123121150.chowzv37syhr6dkt@quack3>
+In-Reply-To: <20221123121150.chowzv37syhr6dkt@quack3>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Wed, 23 Nov 2022 15:30:12 +0200
+Message-ID: <CAOQ4uxixyBH_Mj4cPdP5fo4DZp+uz7XGU=cGJPkeW4s_pjdaNQ@mail.gmail.com>
+Subject: Re: thoughts about fanotify and HSM
+To:     Jan Kara <jack@suse.cz>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Dave Chinner <david@fromorbit.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 22, 2022 at 04:42:20PM +0100, Paolo Abeni wrote:
-> We are observing huge contention on the epmutex during an http
-> connection/rate test:
-> 
->  83.17% 0.25%  nginx            [kernel.kallsyms]         [k] entry_SYSCALL_64_after_hwframe
-> [...]
->            |--66.96%--__fput
->                       |--60.04%--eventpoll_release_file
->                                  |--58.41%--__mutex_lock.isra.6
->                                            |--56.56%--osq_lock
-> 
-> The application is multi-threaded, creates a new epoll entry for
-> each incoming connection, and does not delete it before the
-> connection shutdown - that is, before the connection's fd close().
-> 
-> Many different threads compete frequently for the epmutex lock,
-> affecting the overall performance.
-> 
-> To reduce the contention this patch introduces explicit reference counting
-> for the eventpoll struct. Each registered event acquires a reference,
-> and references are released at ep_remove() time. ep_free() doesn't touch
-> anymore the event RB tree, it just unregisters the existing callbacks
-> and drops a reference to the ep struct. The struct itself is freed when
-> the reference count reaches 0. The reference count updates are protected
-> by the mtx mutex so no additional atomic operations are needed.
-> 
-> Since ep_free() can't compete anymore with eventpoll_release_file()
-> for epitems removal, we can drop the epmutex usage at disposal time.
-> 
-> With the patched kernel, in the same connection/rate scenario, the mutex
-> operations disappear from the perf report, and the measured connections/rate
-> grows by ~60%.
+On Wed, Nov 23, 2022 at 2:11 PM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 21-11-22 18:40:06, Amir Goldstein wrote:
+> > On Wed, Nov 16, 2022 at 6:24 PM Amir Goldstein <amir73il@gmail.com> wrote:
+> > >
+> > > > > > Can't we introduce some SRCU lock / unlock into
+> > > > > > file_start_write() / file_end_write() and then invoke synchronize_srcu()
+> > > > > > during checkpoint after removing ignore marks? It will be much cheaper as
+> > > > > > we don't have to flush all dirty data to disk and also writes can keep
+> > > > > > flowing while we wait for outstanding writes straddling checkpoint to
+> > > > > > complete. What do you think?
+> > > > >
+> > > > > Maybe, but this is not enough.
+> > > > > Note that my patches [1] are overlapping fsnotify_mark_srcu with
+> > > > > file_start_write(), so we would need to overlay fsnotify_mark_srcu
+> > > > > with this new "modify SRCU".
+> > > > >
+> > > > > [1] https://github.com/amir73il/linux/commits/fanotify_pre_content
+> > > >
+> > > > Yes, I know that and frankly, that is what I find somewhat ugly :) I'd rather
+> > > > have the "modify SRCU" cover the whole region we need - which means
+> > > > including the generation of PRE_MODIFY event.
+> > > >
+> > >
+> > > Yeh, it would be great if we can pull this off.
+> >
+> > OK. I decided to give this a shot, see:
+> >
+> > https://github.com/amir73il/linux/commits/sb_write_barrier
+> >
+> > It is just a sketch to show the idea, very lightly tested.
+> > What I did is, instead of converting all the sb_start,end_write()
+> > call sites, which would be a huge change, only callers of
+> > sb_start,end_write_srcu() participate in the "modify SRCU".
+> >
+> > I then converted all the dir modify call sites and some other
+> > call sites to use helpers that take SRCU and call pre-modify hooks.
+> >
+> > [...]
+>
+> I've glanced over the changes and yes, that's what I was imagining :).
 
-I didn't have time to look into details here yet, but at a quick glance, it
-seems ok with the caveat I particularly don't like the idea of a possible
-event_poll structure hanging around in memory after eventpoll_release_file() is
-called, IMHO, once ->release returns, all resources associated with its file
-handle should be freed. But that's my personal opinion, and I can be completely
-wrong here.
+FYI, just pushed an update to that branch which includes *write_srcu
+wrappers for all the call sites of security_file_permission(file, MAY_WRITE),
+mostly file_start_write_area()/file_end_write_srcu().
 
-This shouldn't be really a problem, as the only access userspace has to the
-eventpoll structure is via the FD returned by epoll_create(), once a close() is
-issued to the same FD, userspace won't have access to it anymore, as the FD will
-be invalidated. But anyway, thought would be worth to raise up this for more
-experienced eye with eventpoll code.
+For async write, write_srcu only covers the pre-modify event and the
+io submittion.
 
-> 
-> Tested-by: Xiumei Mu <xmu@redhat.com>
-> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-> ---
-> This is just a repost reaching out for more recipents,
-> as suggested by Carlos.
-> 
-> Previous post at:
-> 
-> https://lore.kernel.org/linux-fsdevel/20221122102726.4jremle54zpcapia@andromeda/T/#m6f98d4ccbe0a385d10c04fd4018e782b793944e6
-> ---
->  fs/eventpoll.c | 113 ++++++++++++++++++++++++++++---------------------
->  1 file changed, 64 insertions(+), 49 deletions(-)
-> 
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index 52954d4637b5..6e415287aeb8 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -226,6 +226,12 @@ struct eventpoll {
->  	/* tracks wakeup nests for lockdep validation */
->  	u8 nests;
->  #endif
-> +
-> +	/*
-> +	 * protected by mtx, used to avoid races between ep_free() and
-> +	 * ep_eventpoll_release()
-> +	 */
-> +	unsigned int refcount;
->  };
-> 
->  /* Wrapper struct used by poll queueing */
-> @@ -240,9 +246,6 @@ struct ep_pqueue {
->  /* Maximum number of epoll watched descriptors, per user */
->  static long max_user_watches __read_mostly;
-> 
-> -/*
-> - * This mutex is used to serialize ep_free() and eventpoll_release_file().
-> - */
->  static DEFINE_MUTEX(epmutex);
-> 
->  static u64 loop_check_gen = 0;
-> @@ -555,8 +558,7 @@ static void ep_remove_wait_queue(struct eppoll_entry *pwq)
-> 
->  /*
->   * This function unregisters poll callbacks from the associated file
-> - * descriptor.  Must be called with "mtx" held (or "epmutex" if called from
-> - * ep_free).
-> + * descriptor.  Must be called with "mtx" held.
->   */
->  static void ep_unregister_pollwait(struct eventpoll *ep, struct epitem *epi)
->  {
-> @@ -679,11 +681,37 @@ static void epi_rcu_free(struct rcu_head *head)
->  	kmem_cache_free(epi_cache, epi);
->  }
-> 
-> +static void ep_get(struct eventpoll *ep)
-> +{
-> +	ep->refcount++;
-> +}
-> +
-> +/*
-> + * Returns true if the event poll can be disposed
-> + */
-> +static bool ep_put(struct eventpoll *ep)
-> +{
-> +	if (--ep->refcount)
-> +		return false;
-> +
-> +	WARN_ON_ONCE(!RB_EMPTY_ROOT(&ep->rbr.rb_root));
-> +	return true;
-> +}
-> +
-> +static void ep_dispose(struct eventpoll *ep)
-> +{
-> +	mutex_destroy(&ep->mtx);
-> +	free_uid(ep->user);
-> +	wakeup_source_unregister(ep->ws);
-> +	kfree(ep);
-> +}
-> +
->  /*
->   * Removes a "struct epitem" from the eventpoll RB tree and deallocates
->   * all the associated resources. Must be called with "mtx" held.
-> + * Returns true if the eventpoll can be disposed.
->   */
-> -static int ep_remove(struct eventpoll *ep, struct epitem *epi)
-> +static bool ep_remove(struct eventpoll *ep, struct epitem *epi)
->  {
->  	struct file *file = epi->ffd.file;
->  	struct epitems_head *to_free;
-> @@ -731,28 +759,20 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
->  	call_rcu(&epi->rcu, epi_rcu_free);
-> 
->  	percpu_counter_dec(&ep->user->epoll_watches);
-> -
-> -	return 0;
-> +	return ep_put(ep);
->  }
-> 
->  static void ep_free(struct eventpoll *ep)
->  {
->  	struct rb_node *rbp;
->  	struct epitem *epi;
-> +	bool dispose;
-> 
->  	/* We need to release all tasks waiting for these file */
->  	if (waitqueue_active(&ep->poll_wait))
->  		ep_poll_safewake(ep, NULL);
-> 
-> -	/*
-> -	 * We need to lock this because we could be hit by
-> -	 * eventpoll_release_file() while we're freeing the "struct eventpoll".
-> -	 * We do not need to hold "ep->mtx" here because the epoll file
-> -	 * is on the way to be removed and no one has references to it
-> -	 * anymore. The only hit might come from eventpoll_release_file() but
-> -	 * holding "epmutex" is sufficient here.
-> -	 */
-> -	mutex_lock(&epmutex);
-> +	mutex_lock(&ep->mtx);
-> 
->  	/*
->  	 * Walks through the whole tree by unregistering poll callbacks.
-> @@ -765,26 +785,14 @@ static void ep_free(struct eventpoll *ep)
->  	}
-> 
->  	/*
-> -	 * Walks through the whole tree by freeing each "struct epitem". At this
-> -	 * point we are sure no poll callbacks will be lingering around, and also by
-> -	 * holding "epmutex" we can be sure that no file cleanup code will hit
-> -	 * us during this operation. So we can avoid the lock on "ep->lock".
-> -	 * We do not need to lock ep->mtx, either, we only do it to prevent
-> -	 * a lockdep warning.
-> +	 * epitems in the rb tree are freed either with EPOLL_CTL_DEL
-> +	 * or at the relevant file close time by eventpoll_release_file()
->  	 */
-> -	mutex_lock(&ep->mtx);
-> -	while ((rbp = rb_first_cached(&ep->rbr)) != NULL) {
-> -		epi = rb_entry(rbp, struct epitem, rbn);
-> -		ep_remove(ep, epi);
-> -		cond_resched();
-> -	}
-> +	dispose = ep_put(ep);
->  	mutex_unlock(&ep->mtx);
-> 
-> -	mutex_unlock(&epmutex);
-> -	mutex_destroy(&ep->mtx);
-> -	free_uid(ep->user);
-> -	wakeup_source_unregister(ep->ws);
-> -	kfree(ep);
-> +	if (dispose)
-> +		ep_dispose(ep);
->  }
-> 
->  static int ep_eventpoll_release(struct inode *inode, struct file *file)
-> @@ -905,6 +913,7 @@ void eventpoll_release_file(struct file *file)
->  	struct eventpoll *ep;
->  	struct epitem *epi;
->  	struct hlist_node *next;
-> +	bool dispose;
-> 
->  	/*
->  	 * We don't want to get "file->f_lock" because it is not
-> @@ -912,25 +921,18 @@ void eventpoll_release_file(struct file *file)
->  	 * cleanup path, and this means that no one is using this file anymore.
->  	 * So, for example, epoll_ctl() cannot hit here since if we reach this
->  	 * point, the file counter already went to zero and fget() would fail.
-> -	 * The only hit might come from ep_free() but by holding the mutex
-> -	 * will correctly serialize the operation. We do need to acquire
-> -	 * "ep->mtx" after "epmutex" because ep_remove() requires it when called
-> -	 * from anywhere but ep_free().
->  	 *
->  	 * Besides, ep_remove() acquires the lock, so we can't hold it here.
->  	 */
-> -	mutex_lock(&epmutex);
-> -	if (unlikely(!file->f_ep)) {
-> -		mutex_unlock(&epmutex);
-> -		return;
-> -	}
->  	hlist_for_each_entry_safe(epi, next, file->f_ep, fllink) {
->  		ep = epi->ep;
-> -		mutex_lock_nested(&ep->mtx, 0);
-> -		ep_remove(ep, epi);
-> +		mutex_lock(&ep->mtx);
-> +		dispose = ep_remove(ep, epi);
->  		mutex_unlock(&ep->mtx);
-> +
-> +		if (dispose)
-> +			ep_dispose(ep);
->  	}
-> -	mutex_unlock(&epmutex);
->  }
-> 
->  static int ep_alloc(struct eventpoll **pep)
-> @@ -953,6 +955,7 @@ static int ep_alloc(struct eventpoll **pep)
->  	ep->rbr = RB_ROOT_CACHED;
->  	ep->ovflist = EP_UNACTIVE_PTR;
->  	ep->user = user;
-> +	ep->refcount = 1;
-> 
->  	*pep = ep;
-> 
-> @@ -1494,6 +1497,12 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
->  	if (tep)
->  		mutex_unlock(&tep->mtx);
-> 
-> +	/*
-> +	 * ep_remove() calls in the later error paths can't lead to ep_dispose()
-> +	 * as overall will lead to no refcount changes
-> +	 */
-> +	ep_get(ep);
-> +
->  	/* now check if we've created too many backpaths */
->  	if (unlikely(full_check && reverse_path_check())) {
->  		ep_remove(ep, epi);
-> @@ -2165,10 +2174,16 @@ int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
->  			error = -EEXIST;
->  		break;
->  	case EPOLL_CTL_DEL:
-> -		if (epi)
-> -			error = ep_remove(ep, epi);
-> -		else
-> +		if (epi) {
-> +			/*
-> +			 * The eventpoll itself is still alive: the refcount
-> +			 * can't go to zero here.
-> +			 */
-> +			WARN_ON_ONCE(ep_remove(ep, epi));
-> +			error = 0;
-> +		} else {
->  			error = -ENOENT;
-> +		}
->  		break;
->  	case EPOLL_CTL_MOD:
->  		if (epi) {
-> --
-> 2.38.1
-> 
+>
+> > > > > > The technical problem I see is how to deal with AIO / io_uring because
+> > > > > > SRCU needs to be released in the same context as it is acquired - that
+> > > > > > would need to be consulted with Paul McKenney if we can make it work. And
+> > > > > > another problem I see is that it might not be great to have this
+> > > > > > system-wide as e.g. on networking filesystems or pipes writes can block for
+> > > > > > really long.
+> > > > > >
+> >
+> > I averted this problem for now - file data writes are not covered by
+> > s_write_srcu with my POC branch.
+>
+> Since you've made the SRCU per sb there is no problem with writes blocking
+> too long on some filesystems. I've asked RCU guys about the problem with
+> SRCU being acquired / released from different contexts. Logically, it seems
+> it should be possible to make this work but maybe I miss some technical
+> detail.
+>
+> > The rationale is that with file data write, HSM would anyway need to
+> > use fsfreeze() to get any guarantee, so maybe s_write_srcu is not really
+> > useful here??
+> >
 
--- 
-Carlos Maiolino
+That was a wrong statement. For data writes HSM would need to do
+syncfs() after sb_write_barrier(), not fsfreeze.
+With the current POC branch, fsfreeze would only be needed to wait
+for the async write completions.
+
+> > It might be useful to use s_write_srcu to cover the pre-modify event
+> > up to after sb_start_write() in file write/aio/io_uring, but not byond it,
+> > so that sb_write_barrier()+fsfreeze() will provide full coverage for
+> > in-progress writes.
+> >
+> > Please let me know if this plan sounds reasonable.
+>
+> Let's see what RCU guys reply. I'd prefer to cover the whole write for
+> simplicity if it is reasonably possible.
+>
+
+OK.
+
+Other backup plans:
+- Set a flag in pre-modify events from async write so HSM
+  knowns that event is not "atomic" with modification
+- HSM may deny all events on this sort if it needs to record
+  a change or it may mark the snapshot "requires freeze"
+- Reliably deliver post-write events only for the async write
+  completions (also on error), so HSM can track only those
+  event pairs
+
+Thanks,
+Amir.
