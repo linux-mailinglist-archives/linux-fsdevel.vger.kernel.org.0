@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3545A635038
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 07:15:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAD49635031
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 07:15:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236033AbiKWGOU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 01:14:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51068 "EHLO
+        id S236036AbiKWGOb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 01:14:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229486AbiKWGNu (ORCPT
+        with ESMTP id S235978AbiKWGNu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 23 Nov 2022 01:13:50 -0500
 Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 235FFF3939
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F063AF2C26
         for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 22:13:47 -0800 (PST)
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20221123061345epoutp0237f94d15a1b5a38f8611adb8ce228524~qIgcSsn_91913519135epoutp02W
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 06:13:45 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20221123061345epoutp0237f94d15a1b5a38f8611adb8ce228524~qIgcSsn_91913519135epoutp02W
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20221123061346epoutp02e14915c4f10c5bee87cf8eb510d03794~qIgdBzVR81913519135epoutp02Y
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 06:13:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20221123061346epoutp02e14915c4f10c5bee87cf8eb510d03794~qIgdBzVR81913519135epoutp02Y
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1669184025;
-        bh=5O5uDT9HWnn4Ccadtd7fTCupkIwM/OnWfdBNErBUieg=;
+        s=mail20170921; t=1669184026;
+        bh=SaeKrlDyh6fhEVghEF1v9Ec1Wl/S+jtnq86cAYk6FMQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J+Mp0uJ/u1QezkgGdk6cxZ6zr6/HgR++wRRwC4b22S7PuLmdEvzQBaNJ9o6OQJsMc
-         I2oZOaIoaZ6m0Q13tWZ+zKnsNw15pxba+7UP3GwStQYKquOOme3zv7G8MQm9l2kNDI
-         UtA58eDXJnUCjrBR2F8T98bL2575T+9iEbz0u7SM=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20221123061342epcas5p119115974f34a518d3b83d7dabac38e90~qIgZzf6Yo2805328053epcas5p1S;
-        Wed, 23 Nov 2022 06:13:42 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4NH9mh4966z4x9Pp; Wed, 23 Nov
-        2022 06:13:40 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-        epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        83.91.01710.41ABD736; Wed, 23 Nov 2022 15:13:40 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        b=Lzp5Z7USiJTRfYzEKWFPBCWra+bGxZoBDtQ6C2XrbSbBEpgH+tsMqKs2Ti3Fpl3Bq
+         oS/te5lCcQ3LdXdAwLzrFUUwT2/cQAf0BXU+cbtT/Q2qwgIreA6nC+5JC3AUZxZlNa
+         aO44iuBnPjq1lc0DFP5zOWgU2FBj5aLd6wcn3UZ0=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+        20221123061345epcas5p32825de06abfc15b772f3e9db9375f0d3~qIgcbof_M0072800728epcas5p3c;
+        Wed, 23 Nov 2022 06:13:45 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.174]) by
+        epsnrtp1.localdomain (Postfix) with ESMTP id 4NH9mm12ZWz4x9Q1; Wed, 23 Nov
+        2022 06:13:44 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5D.60.39477.71ABD736; Wed, 23 Nov 2022 15:13:43 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
         epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-        20221123061037epcas5p4d57436204fbe0065819b156eeeddbfac~qIdtZjzIm1387613876epcas5p4L;
-        Wed, 23 Nov 2022 06:10:37 +0000 (GMT)
+        20221123061041epcas5p4413569a46ee730cd3033a9025c8f134a~qIdwfmK_k1387613876epcas5p4R;
+        Wed, 23 Nov 2022 06:10:41 +0000 (GMT)
 Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221123061037epsmtrp29863525cb7f744d91a2508cf38d69191~qIdtYR1U20473504735epsmtrp2Q;
-        Wed, 23 Nov 2022 06:10:37 +0000 (GMT)
-X-AuditID: b6c32a49-c9ffa700000006ae-f4-637dba14c7fb
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20221123061041epsmtrp18e13c583f63f524392e30d1f5cc61af2~qIdweb_Fy1974919749epsmtrp1I;
+        Wed, 23 Nov 2022 06:10:41 +0000 (GMT)
+X-AuditID: b6c32a4a-259fb70000019a35-93-637dba17073c
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
         epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        B9.C2.18644.D59BD736; Wed, 23 Nov 2022 15:10:37 +0900 (KST)
+        AF.C2.18644.169BD736; Wed, 23 Nov 2022 15:10:41 +0900 (KST)
 Received: from test-zns.sa.corp.samsungelectronics.net (unknown
         [107.110.206.5]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20221123061034epsmtip15ed7fc7e8497363a6f994535aa0d13b8~qIdqfGl_e2064620646epsmtip1F;
-        Wed, 23 Nov 2022 06:10:34 +0000 (GMT)
+        20221123061037epsmtip1c482a1a6bc4b461f55d5956fc9d20346~qIdtgYz_41981819818epsmtip1j;
+        Wed, 23 Nov 2022 06:10:37 +0000 (GMT)
 From:   Nitesh Shetty <nj.shetty@samsung.com>
 To:     axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
         dm-devel@redhat.com, kbusch@kernel.org, hch@lst.de,
@@ -63,88 +63,190 @@ Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         anuj20.g@samsung.com, joshi.k@samsung.com, p.raghav@samsung.com,
         nitheshshetty@gmail.com, gost.dev@samsung.com,
         Nitesh Shetty <nj.shetty@samsung.com>
-Subject: [PATCH v5 08/10] dm: Enable copy offload for dm-linear target
-Date:   Wed, 23 Nov 2022 11:28:25 +0530
-Message-Id: <20221123055827.26996-9-nj.shetty@samsung.com>
+Subject: [PATCH v5 09/10] dm kcopyd: use copy offload support
+Date:   Wed, 23 Nov 2022 11:28:26 +0530
+Message-Id: <20221123055827.26996-10-nj.shetty@samsung.com>
 X-Mailer: git-send-email 2.35.1.500.gb896f729e2
 In-Reply-To: <20221123055827.26996-1-nj.shetty@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Te0xTZxTPvbf3tsVVLoXNj7JH6caMMGjLCvtwgIsyvOwVpskeGoNNuaFI
-        X2nLAOOgFRiCEcTBhPIQxjTjEQgFFMuKFUSEiWQ6MOJ4jAGLIEVgT5GxlsLmf7/z+875nfM7
-        Xw4L4+YyeaxElZ7WqqQKAeHGuNi9Y3ugl+VzmSjT4A6b+q9j8PjpVQzWjxYQcGVgEINWexkO
-        79kuo7C2vgeFHdWLKOxZmyfgz7+NMOCZrmEETg+ZUGgdCYDfWfsY8I6lnIDnLkwzYWFvCw7b
-        p4wIvLhyDoPL57OYsHFugQFvjPjAwdVe/K1tlGl8gKAum0aZ1OBYM4O6M5BMmetyCarlmwyq
-        456BoE5l2h0J2eM4tdA5RFD5rXUItWx+kcqxnUQp89Q8Grv1QFK4nJbG01o+rZKp4xNVCRGC
-        d/fH7YkLCRWJA8Vh8A0BXyVV0hGCqPdiA6MTFQ7/Av5nUkWyg4qV6nQCYWS4Vp2sp/lytU4f
-        IaA18QqNRBOkkyp1yaqEIBWt3ykWiYJDHImHk+TGkuuIxoinXrpZgRuQEkYewmYBUgJuNZSj
-        eYgbi0t2IOC2sRFzBUsIONMyvBEsI6Dh61lis6Rybg53Yi5pQcDMWrgrKRsFkzUPHFosFkEG
-        gO/XWE7ei8xHwYkO27oSRpahYP7CE6az2pOMBtfGf1/HDNIPfNnyI+rEHHInOL9UhjuFACkE
-        BeMeTppNvglu/mDZSPEAfaVT6x4w8iWQ2Va2rg/IGjYoauvBXZNGgYnF4xtTe4LZ3lamC/PA
-        st26waeA2qJvCVdxFgJMd02I62EXyO4vwJxDYOQO0GQRuugXQHF/I+pqvBWcWplCXTwHtFdu
-        4pdBQ1PVhr43GP7TSLi8UGDWoHQtKx8BkzlWxmmEb3rKj+kpP6b/O1chWB3iTWt0ygRaF6IR
-        q+iU/35ZplaakfWb8I9pR0YnHgV1ISgL6UIACxN4cTJijsm4nHhp2lFaq47TJitoXRcS4th3
-        IcZ7VqZ2HJVKHyeWhIkkoaGhkrDXQ8WCbZyaEn8Zl0yQ6ukkmtbQ2s06lMXmGVB22dkjtm5F
-        Sv61Q/uqH6W83fdx7T57fae5+uhVn7vuYQrLJ1EJnelVlfb7bqk9B/OQZ9Jq5JO322fltSJe
-        L/638pXyZt9Dxy51jcFdnKU/Sua+EuNKnwKD/ie/Ex+Wyh9WZD3ss0VHbk9leMyk+/r/82qG
-        xC99y2KFsptbUf6a98m5ogOh7xcWHzZd+eUvLne/Kjv3oPGDq8F7mEd2C0frPI1e3tHmvQH3
-        hb5euL9xiP5osNR3UcBWjc12GwKsONDe4sRIg5M67Y8T03Ju6J78ij0XGNXa31wcEQ2iCvgz
-        W4RX3G22yOkHvBh+yTsLEZ9Kvmizn82fKNz7eCCQYXl+NU7A0MmlYn9Mq5P+C5JtjUecBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsWy7bCSnG7sztpkg1NbDSzWnzrGbNE04S+z
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxTZxTOvbe9Lc6yS2XwAhNLFxJAgVYLe1EQtiG5m8tCsoQluqRr2ruW
+        UdraluEcKkw+WiZUBw52MYLD4QRHJxQGxRIGCsiGbDOV2ciXw2Ww8DUIU5Gxlgub/573ec45
+        zznnzeFi/CJOIDddY6T0GplaiG9htfaEh0UC+3G5aPx5aB3oxeAnZ1Yx2DBiweHK4BAGHbNV
+        bHivqx2FVxpuorDj4gIKb67N4HBiycWCn3XfReBDJ41Ch2snvO64xYJ37OdxWF33kAPP9jWz
+        YdtkHgJbV6oxuPhVPgc2/jnHgv2uIDi02sdO8ifpsUGcbKdHOOTQ6DUWeWcwi2yqN+Nk86WT
+        ZMe9XJwsOTXrDigYY5NznU6cLLXVI+RiUzBZ1PUpSjZNzqCp3ocy4lWUTEHpBZRGrlWka5QJ
+        woNvS1+TxsSKxJHiOPiyUKCRZVIJwuQ3UyNT0tXu8YWCD2XqLDeVKjMYhNH74/XaLCMlUGkN
+        xgQhpVOodRJdlEGWacjSKKM0lHGvWCTaHeMOfC9D9aAiUWcRHM1z2tBcpCWwGPHiAkIC2juK
+        sGJkC5dPdCBgwFzA9gh84i8EtFxQMMIiAhZ6avDNjM6RJygj2BHwgLZymEcBCqw1i6xihMvF
+        iZ3ghzWuh/clSlFg6uha98CIKhTM1D3leEptIxJAy3UT6sEsIhSULny7bsEj9oHh06fZnkKA
+        iAaWMR8P7eWmf/zZjjIhPuDWF5MsD8aIHeBUS9V6fUBUeQF7+RLGtJoMnI96OAzeBqb7bBs4
+        EExZCjdwNrhS/jXOJOcjgB6mEUZIBAUDFszTBEaEA6s9mqG3g3MDjShj7A1KViZRhueBtgub
+        +CVw1bq5rgBw9++8DUwC5/lcDrPfUgTcPi09gwjoZ+ahn5mH/t+5BsHqkQBKZ8hUUoYY3W4N
+        lf3fJ8u1mU3I+kVEvNGGTIzPR3UjKBfpRgAXE/ryTr6eI+fzFLKPjlF6rVSfpaYM3UiMe99n
+        scAX5Fr3SWmMUrEkTiSJjY2VxO2JFQv9ebWVEXI+oZQZqQyK0lH6zTyU6xWYi+IGxaB/fU9K
+        il+jX+eqXTKSNuY7aA79Rf+7ZnZ+AY8yVe8vOtrvl5F97PYTe+3UcOX7ywf8KKskbGGrT+P0
+        1qvehTd+06nIX8E3w6M3DoQpTCcevdtrumTrNU84g/NFOZXXziX8FNJg7Xtn7+euiv7lXWmu
+        XRkVR9K6Lz/m7Qi3PJZfDJH9cegfUgk+eDrV3FobVCZ5sXLP9hap7svwj/lBCtV3kcvlFWn5
+        fckwKf5wWUROk+2w3uholAaXFB5XcilRkklde+TV+/RbIwdda/Ro2bh23wnxc73m5lfKVr8P
+        nU6le5yXHSXmacfSnK05D69pSLRMxGfOC6V1ATP3Q6RClkElE0dgeoPsX8rOOwiaBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrHIsWRmVeSWpSXmKPExsWy7bCSnG7iztpkg3+/2CzWnzrGbNE04S+z
         xeq7/WwWv8+eZ7bY+242q8XNAzuZLFauPspksXvhRyaLo//fslk8/HKLxWLSoWuMFk+vzmKy
         2HtL22LP3pMsFpd3zWGzmL/sKbvFxOObWS12PGlktNj2ez6zxeelLewW616/Z7E4cUva4vzf
         46wO4h6z7p9l89g56y67x/l7G1k8Lp8t9di0qpPNY/OSeo/dNxvYPHqb3wEVtN5n9Xi/7yqb
-        R9+WVYwenzfJebQf6Gby2PTkLVMAXxSXTUpqTmZZapG+XQJXRuOMY4wFjawV28/MZW1gnMHS
-        xcjJISFgIjHv9WvWLkYuDiGBHYwSS45OYoJISEos+3uEGcIWllj57zk7RFEzk0TPveNADgcH
-        m4C2xOn/HCBxEYEFTBKX771iBnGYBZYyScy+cpcNpFtYwE3iyP2v7CA2i4CqxOTNV8A28ApY
-        SSz9NJsVZJCEgL5E/31BkDCngLXEmYu7mEDCQkAle5bpQFQLSpyc+QTsaGYBeYnmrbOZJzAK
-        zEKSmoUktYCRaRWjZGpBcW56brFhgVFearlecWJucWleul5yfu4mRnAca2ntYNyz6oPeIUYm
-        DsZDjBIczEoivPWeNclCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeS90nYwXEkhPLEnNTk0tSC2C
-        yTJxcEo1MO2yXhF2Qi7QSmuv6vK51VWXFj6ReNfcM/0V98NIubneVyI+66XeT7zvOWe7aPrD
-        XMvn73N+ee9SUXL7uHzd49cMuhOMpn15W/G5vGffpKz0Ty61e5v9nv57JCbd/nLZloi9jowf
-        Jm6cd01TYFlg5ZmiaLU9bf5Nr1j+Nv7wW+QjeSOGxfdb2ro793Jez1DUqTa6oPNELPm7uuSv
-        G70MTNsWB0yTvMUUcqTkTLHpizfJHa4Hdd/GhL/f1ah5altL0nrTbxe93ljFPK97nGNxJsdi
-        Z2/V1ognHP+O7f69fLNGw83TZ8tF5+5U3Sp+5zd7gUT2MmOh5C/231weiXzfzf398KRz3DV7
-        Zmy+eEtkjcZFJZbijERDLeai4kQAu1HpnVIDAAA=
-X-CMS-MailID: 20221123061037epcas5p4d57436204fbe0065819b156eeeddbfac
+        R9+WVYwenzfJebQf6Gby2PTkLVMAXxSXTUpqTmZZapG+XQJXxqPp9gX9ChWNV7cwNTBulepi
+        5OSQEDCR2Hf3F1MXIxeHkMAORokPTw8zQSQkJZb9PcIMYQtLrPz3nB2iqJlJYn3zEdYuRg4O
+        NgFtidP/OUDiIgILmCQu33vFDOIwCyxlkph95S4bSLewgK3E1j0dYFNZBFQl+j5uAIvzClhL
+        XO/pARskIaAv0X9fECTMCRQ+c3EXE0hYSMBKYs8yHYhqQYmTM5+wgNjMAvISzVtnM09gFJiF
+        JDULSWoBI9MqRsnUguLc9NxiwwKjvNRyveLE3OLSvHS95PzcTYzgKNbS2sG4Z9UHvUOMTByM
+        hxglOJiVRHjrPWuShXhTEiurUovy44tKc1KLDzFKc7AoifNe6DoZLySQnliSmp2aWpBaBJNl
+        4uCUamCaKZEc/lmw8aPhTY/S/88qjky+J3slqSjhIGu1lPTm46dS+SZK8gu0e/T/r1CcnFDj
+        yTlXYMWpHV42iQ5erNl/vc1OTpizWEP08A0tY3bLRK5Nnj/P5Rh3JwHdlDQvw3L/gXvnn1Vm
+        cract0j5f/bTiUnBv7eZycwNU2fdGrEpMe29Y8jMh2IFRlOVHcWOXypuNfzw6c/+L1Pe6T34
+        9Xhfc/2zGsY3HxkaW83Z9Qyj1ITzhHnqTn+/k7rPui5H8tNG6atmezWE7n1nZE4OrQ6ITfqt
+        pSsvxvR22S/vhqDbPZv6kkum6jBFJL1wFcvaGHpj7ttCxsyNUfUWYvfyo1Ly9rUwiJ6u33Kb
+        JzVGiaU4I9FQi7moOBEAOVdKqlEDAAA=
+X-CMS-MailID: 20221123061041epcas5p4413569a46ee730cd3033a9025c8f134a
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221123061037epcas5p4d57436204fbe0065819b156eeeddbfac
+X-CMS-RootMailID: 20221123061041epcas5p4413569a46ee730cd3033a9025c8f134a
 References: <20221123055827.26996-1-nj.shetty@samsung.com>
-        <CGME20221123061037epcas5p4d57436204fbe0065819b156eeeddbfac@epcas5p4.samsung.com>
+        <CGME20221123061041epcas5p4413569a46ee730cd3033a9025c8f134a@epcas5p4.samsung.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Setting copy_offload_supported flag to enable offload.
+Introduce copy_jobs to use copy-offload, if supported by underlying devices
+otherwise fall back to existing method.
+
+run_copy_jobs() calls block layer copy offload API, if both source and
+destination request queue are same and support copy offload.
+On successful completion, destination regions copied count is made zero,
+failed regions are processed via existing method.
 
 Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
 ---
- drivers/md/dm-linear.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/md/dm-kcopyd.c | 56 +++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 50 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/md/dm-linear.c b/drivers/md/dm-linear.c
-index 3212ef6aa81b..b4b57bead495 100644
---- a/drivers/md/dm-linear.c
-+++ b/drivers/md/dm-linear.c
-@@ -61,6 +61,7 @@ static int linear_ctr(struct dm_target *ti, unsigned int argc, char **argv)
- 	ti->num_discard_bios = 1;
- 	ti->num_secure_erase_bios = 1;
- 	ti->num_write_zeroes_bios = 1;
-+	ti->copy_offload_supported = 1;
- 	ti->private = lc;
- 	return 0;
+diff --git a/drivers/md/dm-kcopyd.c b/drivers/md/dm-kcopyd.c
+index 4d3bbbea2e9a..2f9985f671ac 100644
+--- a/drivers/md/dm-kcopyd.c
++++ b/drivers/md/dm-kcopyd.c
+@@ -74,18 +74,20 @@ struct dm_kcopyd_client {
+ 	atomic_t nr_jobs;
  
+ /*
+- * We maintain four lists of jobs:
++ * We maintain five lists of jobs:
+  *
+- * i)   jobs waiting for pages
+- * ii)  jobs that have pages, and are waiting for the io to be issued.
+- * iii) jobs that don't need to do any IO and just run a callback
+- * iv) jobs that have completed.
++ * i)	jobs waiting to try copy offload
++ * ii)   jobs waiting for pages
++ * iii)  jobs that have pages, and are waiting for the io to be issued.
++ * iv) jobs that don't need to do any IO and just run a callback
++ * v) jobs that have completed.
+  *
+- * All four of these are protected by job_lock.
++ * All five of these are protected by job_lock.
+  */
+ 	spinlock_t job_lock;
+ 	struct list_head callback_jobs;
+ 	struct list_head complete_jobs;
++	struct list_head copy_jobs;
+ 	struct list_head io_jobs;
+ 	struct list_head pages_jobs;
+ };
+@@ -579,6 +581,43 @@ static int run_io_job(struct kcopyd_job *job)
+ 	return r;
+ }
+ 
++static int run_copy_job(struct kcopyd_job *job)
++{
++	int r, i, count = 0;
++	struct range_entry range;
++
++	struct request_queue *src_q, *dest_q;
++
++	for (i = 0; i < job->num_dests; i++) {
++		range.dst = job->dests[i].sector << SECTOR_SHIFT;
++		range.src = job->source.sector << SECTOR_SHIFT;
++		range.len = job->source.count << SECTOR_SHIFT;
++
++		src_q = bdev_get_queue(job->source.bdev);
++		dest_q = bdev_get_queue(job->dests[i].bdev);
++
++		if (src_q != dest_q || !blk_queue_copy(src_q))
++			break;
++
++		r = blkdev_issue_copy(job->source.bdev, job->dests[i].bdev,
++				&range, 1, NULL, NULL, GFP_KERNEL);
++		if (r)
++			break;
++
++		job->dests[i].count = 0;
++		count++;
++	}
++
++	if (count == job->num_dests) {
++		push(&job->kc->complete_jobs, job);
++	} else {
++		push(&job->kc->pages_jobs, job);
++		r = 0;
++	}
++
++	return r;
++}
++
+ static int run_pages_job(struct kcopyd_job *job)
+ {
+ 	int r;
+@@ -659,6 +698,7 @@ static void do_work(struct work_struct *work)
+ 	spin_unlock_irq(&kc->job_lock);
+ 
+ 	blk_start_plug(&plug);
++	process_jobs(&kc->copy_jobs, kc, run_copy_job);
+ 	process_jobs(&kc->complete_jobs, kc, run_complete_job);
+ 	process_jobs(&kc->pages_jobs, kc, run_pages_job);
+ 	process_jobs(&kc->io_jobs, kc, run_io_job);
+@@ -676,6 +716,8 @@ static void dispatch_job(struct kcopyd_job *job)
+ 	atomic_inc(&kc->nr_jobs);
+ 	if (unlikely(!job->source.count))
+ 		push(&kc->callback_jobs, job);
++	else if (job->source.bdev->bd_disk == job->dests[0].bdev->bd_disk)
++		push(&kc->copy_jobs, job);
+ 	else if (job->pages == &zero_page_list)
+ 		push(&kc->io_jobs, job);
+ 	else
+@@ -916,6 +958,7 @@ struct dm_kcopyd_client *dm_kcopyd_client_create(struct dm_kcopyd_throttle *thro
+ 	spin_lock_init(&kc->job_lock);
+ 	INIT_LIST_HEAD(&kc->callback_jobs);
+ 	INIT_LIST_HEAD(&kc->complete_jobs);
++	INIT_LIST_HEAD(&kc->copy_jobs);
+ 	INIT_LIST_HEAD(&kc->io_jobs);
+ 	INIT_LIST_HEAD(&kc->pages_jobs);
+ 	kc->throttle = throttle;
+@@ -971,6 +1014,7 @@ void dm_kcopyd_client_destroy(struct dm_kcopyd_client *kc)
+ 
+ 	BUG_ON(!list_empty(&kc->callback_jobs));
+ 	BUG_ON(!list_empty(&kc->complete_jobs));
++	WARN_ON(!list_empty(&kc->copy_jobs));
+ 	BUG_ON(!list_empty(&kc->io_jobs));
+ 	BUG_ON(!list_empty(&kc->pages_jobs));
+ 	destroy_workqueue(kc->kcopyd_wq);
 -- 
 2.35.1.500.gb896f729e2
 
