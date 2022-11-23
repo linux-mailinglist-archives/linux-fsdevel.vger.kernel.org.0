@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 700F7635E15
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 13:56:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 515FB635E3C
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 13:57:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237916AbiKWMsE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 07:48:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34400 "EHLO
+        id S237995AbiKWMxd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 07:53:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47808 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238040AbiKWMrW (ORCPT
+        with ESMTP id S236362AbiKWMvm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 07:47:22 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C738C71F33;
-        Wed, 23 Nov 2022 04:43:21 -0800 (PST)
+        Wed, 23 Nov 2022 07:51:42 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B634C85178;
+        Wed, 23 Nov 2022 04:44:24 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1A949B81F40;
-        Wed, 23 Nov 2022 12:43:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A217C4347C;
-        Wed, 23 Nov 2022 12:43:17 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 0966EB81F6E;
+        Wed, 23 Nov 2022 12:44:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10B16C4314A;
+        Wed, 23 Nov 2022 12:44:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669207398;
-        bh=8nCLnTjd0moyvDEAfw8zrPFSvHHSPL3gq5y8aBgKvxY=;
+        s=k20201202; t=1669207452;
+        bh=rLxlVDAiLFYqKwd50WpY4lApK6RTMDbrbj5wiERgHpo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RHEiDupT5vAozlkoxVM+eldD9wbrTGK/KJfPSHvuSMsjVHtPsKq2UA7G3HBlyVZOS
-         NbNKYmNj7KMz0/+PG+YxP//cASptSckq33ObwUMIXyYPLEHCg+I1Mks41rQeJMy8Kn
-         EX3XuIBliy8yUklEeC489RNTTEunIf+EzLpJd1NmXU2VdFB9oFvbRfTLemn1yaN6xg
-         5dvxJvkVhyM4rQDUttefutDyjjw/nX/ZuPSoGPTM/D5GeqS9QY+5ckuNCNAPv4lUIG
-         D36jhXxGRV5iYIP7yxtHMYLKRqwcv+8f/CmdmaKsWvTTy8Obr6uMRBWk3yu04vv0Uz
-         b2xGhdbXRk1fg==
+        b=dU1In0ihy2fFe8q4Wp0iegvaZ0zk8UVzAe6aX3ywk/WIpRiHqYJRlBpuLYaI1SiVv
+         ttT2u5QDs1kmLUvP86GLNq4ub5tF8tPRr8KbQ7x2qLO2Q8b3v7ONHwfZG6cg6GvSzZ
+         i9QAvrviNUHO0VZqUjtI78sEAfvyl3YS9NqVZg6KEcEeQBskO4WcUbEh2audvK1Kmk
+         R6donciRgBU1mZ9EHpe26V6RRtjlx+w9UgBYc+ocGlfbnhFZuGwD1gfKAVzAYgnyAh
+         IO78PYUvwZFMryOk10Uz2wNYtqf7goQG9NFwidy/AYf13GQGp2t95soDquxvVr/Kk3
+         TEM7gieCgZ5BQ==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
         Johannes Thumshirn <johannes.thumshirn@wdc.com>,
         Sasha Levin <sashal@kernel.org>, naohiro.aota@wdc.com,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.15 18/31] zonefs: fix zone report size in __zonefs_io_error()
-Date:   Wed, 23 Nov 2022 07:42:19 -0500
-Message-Id: <20221123124234.265396-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.10 13/22] zonefs: fix zone report size in __zonefs_io_error()
+Date:   Wed, 23 Nov 2022 07:43:28 -0500
+Message-Id: <20221123124339.265912-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221123124234.265396-1-sashal@kernel.org>
-References: <20221123124234.265396-1-sashal@kernel.org>
+In-Reply-To: <20221123124339.265912-1-sashal@kernel.org>
+References: <20221123124339.265912-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -93,10 +93,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 27 insertions(+), 10 deletions(-)
 
 diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
-index f8feaed0b54d..85a98590b6ef 100644
+index bf5cb6efb8c0..475d23a4f8da 100644
 --- a/fs/zonefs/super.c
 +++ b/fs/zonefs/super.c
-@@ -448,14 +448,22 @@ static void __zonefs_io_error(struct inode *inode, bool write)
+@@ -440,14 +440,22 @@ static void __zonefs_io_error(struct inode *inode, bool write)
  	struct super_block *sb = inode->i_sb;
  	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
  	unsigned int noio_flag;
@@ -121,7 +121,7 @@ index f8feaed0b54d..85a98590b6ef 100644
  	/*
  	 * Memory allocations in blkdev_report_zones() can trigger a memory
  	 * reclaim which may in turn cause a recursion into zonefs as well as
-@@ -1354,6 +1362,14 @@ static int zonefs_init_file_inode(struct inode *inode, struct blk_zone *zone,
+@@ -1364,6 +1372,14 @@ static int zonefs_init_file_inode(struct inode *inode, struct blk_zone *zone,
  	zi->i_ztype = type;
  	zi->i_zsector = zone->start;
  	zi->i_zone_size = zone->len << SECTOR_SHIFT;
@@ -136,7 +136,7 @@ index f8feaed0b54d..85a98590b6ef 100644
  
  	zi->i_max_size = min_t(loff_t, MAX_LFS_FILESIZE,
  			       zone->capacity << SECTOR_SHIFT);
-@@ -1396,11 +1412,11 @@ static struct dentry *zonefs_create_inode(struct dentry *parent,
+@@ -1406,11 +1422,11 @@ static struct dentry *zonefs_create_inode(struct dentry *parent,
  	struct inode *dir = d_inode(parent);
  	struct dentry *dentry;
  	struct inode *inode;
@@ -150,7 +150,7 @@ index f8feaed0b54d..85a98590b6ef 100644
  
  	inode = new_inode(parent->d_sb);
  	if (!inode)
-@@ -1425,7 +1441,7 @@ static struct dentry *zonefs_create_inode(struct dentry *parent,
+@@ -1435,7 +1451,7 @@ static struct dentry *zonefs_create_inode(struct dentry *parent,
  dput:
  	dput(dentry);
  
@@ -159,7 +159,7 @@ index f8feaed0b54d..85a98590b6ef 100644
  }
  
  struct zonefs_zone_data {
-@@ -1445,7 +1461,7 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
+@@ -1455,7 +1471,7 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
  	struct blk_zone *zone, *next, *end;
  	const char *zgroup_name;
  	char *file_name;
@@ -168,7 +168,7 @@ index f8feaed0b54d..85a98590b6ef 100644
  	unsigned int n = 0;
  	int ret;
  
-@@ -1463,8 +1479,8 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
+@@ -1473,8 +1489,8 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
  		zgroup_name = "seq";
  
  	dir = zonefs_create_inode(sb->s_root, zgroup_name, NULL, type);
@@ -179,7 +179,7 @@ index f8feaed0b54d..85a98590b6ef 100644
  		goto free;
  	}
  
-@@ -1510,8 +1526,9 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
+@@ -1520,8 +1536,9 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
  		 * Use the file number within its group as file name.
  		 */
  		snprintf(file_name, ZONEFS_NAME_MAX - 1, "%u", n);
