@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BD6C63585B
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 10:56:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44FCA63585F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 10:56:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237165AbiKWJ4I (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 04:56:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52344 "EHLO
+        id S237187AbiKWJ4T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 04:56:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50732 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237303AbiKWJyz (ORCPT
+        with ESMTP id S237082AbiKWJy5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 04:54:55 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54DA61165B6;
-        Wed, 23 Nov 2022 01:50:37 -0800 (PST)
+        Wed, 23 Nov 2022 04:54:57 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B3C91165A1;
+        Wed, 23 Nov 2022 01:50:41 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DF0E7B81EF6;
-        Wed, 23 Nov 2022 09:50:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAE34C433D6;
-        Wed, 23 Nov 2022 09:50:33 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id C348AB81EF3;
+        Wed, 23 Nov 2022 09:50:39 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 036EDC433D7;
+        Wed, 23 Nov 2022 09:50:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-        s=korg; t=1669197034;
-        bh=UGQq2vAjgVNWPbGeXTGZYDYoRCFJeJBo59GUhShHq8s=;
+        s=korg; t=1669197038;
+        bh=6f9kMGYCqPXsi0k0LVBuzTEbJ5fILjVvpxN31nNOmZE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MUjFf4JOGRrOSp4A9NYjjGRktjGuVUizrfkaPkjNKPCWlqJxmMZlJTVsL2pIWcAmV
-         EeqlqU3hTLBhrPuo852KJZIEUXGs89udD0JF8XiffZEdn95tDrxYMXEWBb/x5YCbGu
-         FpjamWIlRldQOj+bHRel5Stb9FXYy4C0fLaWqD28=
+        b=NEN9xmE8HYT91cNbV8FNHiw/kLFBH2RAHGFKuUrQ4vUpfZGlsvOMNxEAVbsE2gNlw
+         CVBFf9yPVCxWYmsxlWA0NzJ8CrScBNJTrxgGC2FE9/PQgeTcNfWdTG+kApJT9kUOrH
+         zbxKWNWA1qxhOmYIIC3m4QB/0cA9Q4XYyz0330Ps=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     stable@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        patches@lists.linux.dev, George Law <glaw@redhat.com>,
+        patches@lists.linux.dev, Matthew Wilcox <willy@infradead.org>,
         David Howells <dhowells@redhat.com>,
         Jeff Layton <jlayton@kernel.org>,
         Jingbo Xu <jefflexu@linux.alibaba.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-cachefs@redhat.com,
-        linux-fsdevel@vger.kernel.org, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.0 180/314] netfs: Fix missing xas_retry() calls in xarray iteration
-Date:   Wed, 23 Nov 2022 09:50:25 +0100
-Message-Id: <20221123084633.725996799@linuxfoundation.org>
+        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.0 181/314] netfs: Fix dodgy maths
+Date:   Wed, 23 Nov 2022 09:50:26 +0100
+Message-Id: <20221123084633.777016204@linuxfoundation.org>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20221123084625.457073469@linuxfoundation.org>
 References: <20221123084625.457073469@linuxfoundation.org>
@@ -59,102 +59,101 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: David Howells <dhowells@redhat.com>
 
-[ Upstream commit 7e043a80b5dae5c2d2cf84031501de7827fd6c00 ]
+[ Upstream commit 5e51c627c5acbcf82bb552e17533a79d2a6a2600 ]
 
-netfslib has a number of places in which it performs iteration of an xarray
-whilst being under the RCU read lock.  It *should* call xas_retry() as the
-first thing inside of the loop and do "continue" if it returns true in case
-the xarray walker passed out a special value indicating that the walk needs
-to be redone from the root[*].
+Fix the dodgy maths in netfs_rreq_unlock_folios().  start_page could be
+inside the folio, in which case the calculation of pgpos will be come up
+with a negative number (though for the moment rreq->start is rounded down
+earlier and folios would have to get merged whilst locked)
 
-Fix this by adding the missing retry checks.
+Alter how this works to just frame the tracking in terms of absolute file
+positions, rather than offsets from the start of the I/O request.  This
+simplifies the maths and makes it easier to follow.
 
-[*] I wonder if this should be done inside xas_find(), xas_next_node() and
-    suchlike, but I'm told that's not an simple change to effect.
-
-This can cause an oops like that below.  Note the faulting address - this
-is an internal value (|0x2) returned from xarray.
-
-BUG: kernel NULL pointer dereference, address: 0000000000000402
-...
-RIP: 0010:netfs_rreq_unlock+0xef/0x380 [netfs]
-...
-Call Trace:
- netfs_rreq_assess+0xa6/0x240 [netfs]
- netfs_readpage+0x173/0x3b0 [netfs]
- ? init_wait_var_entry+0x50/0x50
- filemap_read_page+0x33/0xf0
- filemap_get_pages+0x2f2/0x3f0
- filemap_read+0xaa/0x320
- ? do_filp_open+0xb2/0x150
- ? rmqueue+0x3be/0xe10
- ceph_read_iter+0x1fe/0x680 [ceph]
- ? new_sync_read+0x115/0x1a0
- new_sync_read+0x115/0x1a0
- vfs_read+0xf3/0x180
- ksys_read+0x5f/0xe0
- do_syscall_64+0x38/0x90
- entry_SYSCALL_64_after_hwframe+0x44/0xae
-
-Changes:
-========
-ver #2)
- - Changed an unsigned int to a size_t to reduce the likelihood of an
-   overflow as per Willy's suggestion.
- - Added an additional patch to fix the maths.
+Fix the issue by using folio_pos() and folio_size() to calculate the end
+position of the page.
 
 Fixes: 3d3c95046742 ("netfs: Provide readahead and readpage netfs helpers")
-Reported-by: George Law <glaw@redhat.com>
+Reported-by: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: David Howells <dhowells@redhat.com>
 Reviewed-by: Jeff Layton <jlayton@kernel.org>
 Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
-cc: Matthew Wilcox <willy@infradead.org>
 cc: linux-cachefs@redhat.com
 cc: linux-fsdevel@vger.kernel.org
-Link: https://lore.kernel.org/r/166749229733.107206.17482609105741691452.stgit@warthog.procyon.org.uk/ # v1
-Link: https://lore.kernel.org/r/166757987929.950645.12595273010425381286.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/Y2SJw7w1IsIik3nb@casper.infradead.org/
+Link: https://lore.kernel.org/r/166757988611.950645.7626959069846893164.stgit@warthog.procyon.org.uk/ # v2
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/netfs/buffered_read.c | 9 +++++++--
- fs/netfs/io.c            | 3 +++
- 2 files changed, 10 insertions(+), 2 deletions(-)
+ fs/netfs/buffered_read.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
 diff --git a/fs/netfs/buffered_read.c b/fs/netfs/buffered_read.c
-index 0ce535852151..baf668fb4315 100644
+index baf668fb4315..7679a68e8193 100644
 --- a/fs/netfs/buffered_read.c
 +++ b/fs/netfs/buffered_read.c
-@@ -46,10 +46,15 @@ void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
+@@ -17,9 +17,9 @@ void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
+ {
+ 	struct netfs_io_subrequest *subreq;
+ 	struct folio *folio;
+-	unsigned int iopos, account = 0;
+ 	pgoff_t start_page = rreq->start / PAGE_SIZE;
+ 	pgoff_t last_page = ((rreq->start + rreq->len) / PAGE_SIZE) - 1;
++	size_t account = 0;
+ 	bool subreq_failed = false;
+ 
+ 	XA_STATE(xas, &rreq->mapping->i_pages, start_page);
+@@ -39,23 +39,23 @@ void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
+ 	 */
+ 	subreq = list_first_entry(&rreq->subrequests,
+ 				  struct netfs_io_subrequest, rreq_link);
+-	iopos = 0;
+ 	subreq_failed = (subreq->error < 0);
+ 
+ 	trace_netfs_rreq(rreq, netfs_rreq_trace_unlock);
  
  	rcu_read_lock();
  	xas_for_each(&xas, folio, last_page) {
--		unsigned int pgpos = (folio_index(folio) - start_page) * PAGE_SIZE;
--		unsigned int pgend = pgpos + folio_size(folio);
-+		unsigned int pgpos, pgend;
+-		unsigned int pgpos, pgend;
++		loff_t pg_end;
  		bool pg_failed = false;
  
-+		if (xas_retry(&xas, folio))
-+			continue;
-+
-+		pgpos = (folio_index(folio) - start_page) * PAGE_SIZE;
-+		pgend = pgpos + folio_size(folio);
-+
+ 		if (xas_retry(&xas, folio))
+ 			continue;
+ 
+-		pgpos = (folio_index(folio) - start_page) * PAGE_SIZE;
+-		pgend = pgpos + folio_size(folio);
++		pg_end = folio_pos(folio) + folio_size(folio) - 1;
+ 
  		for (;;) {
++			loff_t sreq_end;
++
  			if (!subreq) {
  				pg_failed = true;
-diff --git a/fs/netfs/io.c b/fs/netfs/io.c
-index 428925899282..e374767d1b68 100644
---- a/fs/netfs/io.c
-+++ b/fs/netfs/io.c
-@@ -121,6 +121,9 @@ static void netfs_rreq_unmark_after_write(struct netfs_io_request *rreq,
- 		XA_STATE(xas, &rreq->mapping->i_pages, subreq->start / PAGE_SIZE);
+ 				break;
+@@ -63,11 +63,11 @@ void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
+ 			if (test_bit(NETFS_SREQ_COPY_TO_CACHE, &subreq->flags))
+ 				folio_start_fscache(folio);
+ 			pg_failed |= subreq_failed;
+-			if (pgend < iopos + subreq->len)
++			sreq_end = subreq->start + subreq->len - 1;
++			if (pg_end < sreq_end)
+ 				break;
  
- 		xas_for_each(&xas, folio, (subreq->start + subreq->len - 1) / PAGE_SIZE) {
-+			if (xas_retry(&xas, folio))
-+				continue;
+ 			account += subreq->transferred;
+-			iopos += subreq->len;
+ 			if (!list_is_last(&subreq->rreq_link, &rreq->subrequests)) {
+ 				subreq = list_next_entry(subreq, rreq_link);
+ 				subreq_failed = (subreq->error < 0);
+@@ -75,7 +75,8 @@ void netfs_rreq_unlock_folios(struct netfs_io_request *rreq)
+ 				subreq = NULL;
+ 				subreq_failed = false;
+ 			}
+-			if (pgend == iopos)
 +
- 			/* We might have multiple writes from the same huge
- 			 * folio, but we mustn't unlock a folio more than once.
- 			 */
++			if (pg_end == sreq_end)
+ 				break;
+ 		}
+ 
 -- 
 2.35.1
 
