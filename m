@@ -2,63 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 296CD6351DB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 09:06:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A94FA6352D2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 09:37:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236161AbiKWIFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 03:05:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43596 "EHLO
+        id S236553AbiKWIhN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 03:37:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43342 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236052AbiKWIFp (ORCPT
+        with ESMTP id S229472AbiKWIhM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 03:05:45 -0500
+        Wed, 23 Nov 2022 03:37:12 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76ABAF887B
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 00:04:42 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 665BAE9311
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 00:36:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669190681;
+        s=mimecast20190719; t=1669192582;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=RATXjSEMlvArFiAypct02J7pLW4b2IjGVBcHKkSxkmM=;
-        b=jGlc/nVt6juCw7jCUifP+AHtPPiDppMI/dDpnlKJZMePmdY3pW5R2KXxEkPiHYQ1IslE4N
-        IBaImX4HJtki3tEXXh1gYHLDqvvKic3oi4aKppS/oWQUdd9v7j6ZLMVxT/7g4BEQt0pJ3Z
-        M4WfbkZDeNrdjTx+POa2OkJIyTMocFc=
+        bh=ZXpADkosxLt0AA2jYCiJ8BdnoYTtcT80XliNqZ/i9wo=;
+        b=XDG/XiLQuno/dTRczof6EDx8SV2vwZPYUvuXYBKO2/j1fzPVcjIzbWVerNJdqTwbh+CHhT
+        qkfdWnBbgWHki7SlbLi+9U/yB8KIv+FaZAPdQOtwC3cUCMoXIT2Arw4D17ojkqeAT20qFa
+        ovG8DuksYkUcoYN4uIjy0UxLmZKoJ60=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-122-0DCy3A1zNn-7l0VVIwmRXQ-1; Wed, 23 Nov 2022 03:04:38 -0500
-X-MC-Unique: 0DCy3A1zNn-7l0VVIwmRXQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+ us-mta-610-hIQ5oH6kPV-Rik523lwo0w-1; Wed, 23 Nov 2022 03:36:19 -0500
+X-MC-Unique: hIQ5oH6kPV-Rik523lwo0w-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3FB54185A7A8;
-        Wed, 23 Nov 2022 08:04:37 +0000 (UTC)
-Received: from T590 (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1F7852024CBE;
-        Wed, 23 Nov 2022 08:04:23 +0000 (UTC)
-Date:   Wed, 23 Nov 2022 16:04:18 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Nitesh Shetty <nj.shetty@samsung.com>
-Cc:     axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        dm-devel@redhat.com, kbusch@kernel.org, hch@lst.de,
-        sagi@grimberg.me, james.smart@broadcom.com, kch@nvidia.com,
-        damien.lemoal@opensource.wdc.com, naohiro.aota@wdc.com,
-        jth@kernel.org, viro@zeniv.linux.org.uk,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        anuj20.g@samsung.com, joshi.k@samsung.com, p.raghav@samsung.com,
-        nitheshshetty@gmail.com, gost.dev@samsung.com, ming.lei@redhat.com
-Subject: Re: [PATCH v5 02/10] block: Add copy offload support infrastructure
-Message-ID: <Y33UAp6ncSPO84XI@T590>
-References: <20221123055827.26996-1-nj.shetty@samsung.com>
- <CGME20221123061017epcas5p246a589e20eac655ac340cfda6028ff35@epcas5p2.samsung.com>
- <20221123055827.26996-3-nj.shetty@samsung.com>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id ABFBA802D32;
+        Wed, 23 Nov 2022 08:36:18 +0000 (UTC)
+Received: from fedora (ovpn-193-217.brq.redhat.com [10.40.193.217])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6C7BD39D7C;
+        Wed, 23 Nov 2022 08:36:17 +0000 (UTC)
+Date:   Wed, 23 Nov 2022 09:36:15 +0100
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>,
+        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.com>,
+        Eric Sandeen <sandeen@redhat.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] quota: add quota in-memory format support
+Message-ID: <20221123083615.sj26ptongwhk6wcl@fedora>
+References: <20221121142854.91109-1-lczerner@redhat.com>
+ <20221121142854.91109-2-lczerner@redhat.com>
+ <Y3u54l2CVapQmK/w@magnolia>
+ <Y3zHn4egPhwMRcDE@infradead.org>
+ <20221122142117.epplqsm4ngwx5eyy@fedora>
+ <Y33SqRyAGTXVFBIF@infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221123055827.26996-3-nj.shetty@samsung.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+In-Reply-To: <Y33SqRyAGTXVFBIF@infradead.org>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
@@ -69,30 +67,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 23, 2022 at 11:28:19AM +0530, Nitesh Shetty wrote:
-> Introduce blkdev_issue_copy which supports source and destination bdevs,
-> and an array of (source, destination and copy length) tuples.
-> Introduce REQ_COPY copy offload operation flag. Create a read-write
-> bio pair with a token as payload and submitted to the device in order.
-> Read request populates token with source specific information which
-> is then passed with write request.
-> This design is courtesy Mikulas Patocka's token based copy
+On Tue, Nov 22, 2022 at 11:58:33PM -0800, Christoph Hellwig wrote:
+> On Tue, Nov 22, 2022 at 03:21:17PM +0100, Lukas Czerner wrote:
+> > > That seems like a good idea for memory usage, but I think this might
+> > > also make the code much simpler, as that just requires fairly trivial
+> > > quota_read and quota_write methods in the shmem code instead of new
+> > > support for an in-memory quota file.
+> > 
+> > You mean like the implementation in the v1 ?
+> 
+> Having now found it: yes.
+> 
 
-I thought this patchset is just for enabling copy command which is
-supported by hardware. But turns out it isn't, because blk_copy_offload()
-still submits read/write bios for doing the copy.
+Jan,
 
-I am just wondering why not let copy_file_range() cover this kind of copy,
-and the framework has been there.
+do you have any argument for this, since it was your suggestion?
 
-When I was researching pipe/splice code for supporting ublk zero copy[1], I
-have got idea for async copy_file_range(), such as: io uring based
-direct splice, user backed intermediate buffer, still zero copy, if these
-ideas are finally implemented, we could get super-fast generic offload copy,
-and bdev copy is really covered too.
+I also think that the implementation is much simpler with in-memory
+dquots because we will avoid all the hassle with creating and
+maintaining quota file in a proper format. It's not just reads and
+writes it's the entire machinery befind it in quota_v2.c and quota_tree.c.
 
-[1] https://lore.kernel.org/linux-block/20221103085004.1029763-1-ming.lei@redhat.com/
+But it is true that even with only user modified dquots being
+non-reclaimable until unmount it could theoreticaly represent a
+substantial memory consumption. Although I do wonder if this problem
+is even real. How many user/group ids would you expect extremely heavy
+quota user would have the limits set for? 1k, 10k, million, or even
+more? Do you know?
 
-thanks,
-Ming
+-Lukas
 
