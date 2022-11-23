@@ -2,143 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 73652636B4A
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 21:39:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BE78636D00
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 23:19:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235377AbiKWUjG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 15:39:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34708 "EHLO
+        id S229495AbiKWWTf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 17:19:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239447AbiKWUg6 (ORCPT
+        with ESMTP id S229379AbiKWWTe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 15:36:58 -0500
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0FD9DE9161
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 12:33:38 -0800 (PST)
-Received: by mail-pf1-x42e.google.com with SMTP id x66so9777713pfx.3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 12:33:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CqmvkkESPfhDMe/qDmW4BJUOiTicPIv5an9zs8Gyv18=;
-        b=H05YjYlWatbzx/wYDWLZlWtlE1KBwjnnlgWrAS57YeODNFQbfnbqnkGjrw+7lnDaor
-         oScBBYPzE4yA/do2o0oXxJV/7PAgcLDU8MGXopXi7Hyz2CY8RYXjIOxuZIHXCxSyrV4d
-         4jeZ+ngrXKdb0oQJMIfkShcljtHyJ8LXyw7yk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CqmvkkESPfhDMe/qDmW4BJUOiTicPIv5an9zs8Gyv18=;
-        b=EhrrTeTndmGzrzbMc8pS3YYv4yZTvqt250zBMUN5NdFw5LVjcV2uV1UCoSfnv2UYtE
-         QJdRaNwtq8hdFEHAfl8kM1oiIvNtcSZa3aRZdKwHd3g278FudUGHCxoBbcHmetTeZ0xX
-         wx2g2e2/Osin/CiclYHq34UGgyDgmBE9FfKT8zmDFEI21k1vcvAzcinikGJbS0TG22Ck
-         D7cF0DVLtZVa5lOr6vdN/ABM70i10ZFxAen6Ip1H9E1BwKcZXPdExPLpLmRKoDeBgslW
-         8yvKHwIEDd8gTbtXrNkHLaeKfLK/zRpFH0agg1XL1tAfIFM+KHZ0VQs/sJ1gx3N+qwvJ
-         rINw==
-X-Gm-Message-State: ANoB5pno01MpuH41klmUX8OEeOyTJ9fpBOrW/YQUg7H8nUNppS0LsfCQ
-        5Zh15JQr7RUJC+y3vr3mW6d8MsKksu5qew==
-X-Google-Smtp-Source: AA0mqf6riGge2Upi3s0qL7Pt9yizFE2Uv0r9Pari4md4A6OS7+wrgchqyGbEAb6kvLnW7c5WtJRCQw==
-X-Received: by 2002:a63:544b:0:b0:477:6336:dddf with SMTP id e11-20020a63544b000000b004776336dddfmr10371421pgm.371.1669235617813;
-        Wed, 23 Nov 2022 12:33:37 -0800 (PST)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com. [209.85.214.179])
-        by smtp.gmail.com with ESMTPSA id b1-20020a62a101000000b0056cc538baf0sm13055348pff.114.2022.11.23.12.33.37
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Nov 2022 12:33:37 -0800 (PST)
-Received: by mail-pl1-f179.google.com with SMTP id w4so8881977plp.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 12:33:37 -0800 (PST)
-X-Received: by 2002:ad4:4101:0:b0:4b1:856b:4277 with SMTP id
- i1-20020ad44101000000b004b1856b4277mr10112261qvp.129.1669235172559; Wed, 23
- Nov 2022 12:26:12 -0800 (PST)
+        Wed, 23 Nov 2022 17:19:34 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 72629114B87;
+        Wed, 23 Nov 2022 14:19:33 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 1B8C7B82543;
+        Wed, 23 Nov 2022 22:19:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88EDFC433D6;
+        Wed, 23 Nov 2022 22:19:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669241970;
+        bh=ZZiwh5s9GrphvhQmAD0il03WldxNsbh9fhgz97VZw4s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=cfWEMTHSzfV7pNdYK4NSlbwYxT08YbQL83lw1ZZe2T2w9m6gFY0Z33+VuOEcLDz0L
+         4DLMAlY7uhO1W/eb3OvFQ2l34uind+Oyc+zx56bOJHbzr5lkF7GWd+z9V7FAa6Hiti
+         8h+AS0qKCRGcg8cFz+nGlgLWx1hcWOaZDWKe/Bok/8kgFiwiWwIHMpWva7Eaurf0yc
+         inxjU41zPrNJLB8SOv58ttgUH4Wrfc9aTH0xSfVsdL+yeGs2dcPwn6LaaiDtdcKsk8
+         XAKo1Nvn9KtnhNAIv4HS6U/I9dWxpozPYWEc1JH+9LD9VTDhNWY+aZjLRkMczKQUqW
+         obOmJADBUyqfQ==
+Date:   Wed, 23 Nov 2022 22:19:29 +0000
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH v3] fsverity: stop using PG_error to track error status
+Message-ID: <Y36ccbZq9gsnbmWw@gmail.com>
+References: <20221028175807.55495-1-ebiggers@kernel.org>
+ <Y2y0cspSZG5dt6c+@sol.localdomain>
 MIME-Version: 1.0
-References: <1459152.1669208550@warthog.procyon.org.uk> <CAHk-=wghJtq-952e_8jd=vtV68y_HsDJ8=e0=C3-AsU2WL-8YA@mail.gmail.com>
- <1619343.1669233783@warthog.procyon.org.uk>
-In-Reply-To: <1619343.1669233783@warthog.procyon.org.uk>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 23 Nov 2022 12:25:56 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whJBOAOqB8wWxeAtKy3b9r4rn2Y48+zsuDDhKJ3D3D4cw@mail.gmail.com>
-Message-ID: <CAHk-=whJBOAOqB8wWxeAtKy3b9r4rn2Y48+zsuDDhKJ3D3D4cw@mail.gmail.com>
-Subject: Re: [PATCH v3] mm, netfs, fscache: Stop read optimisation when folio
- removed from pagecache
-To:     David Howells <dhowells@redhat.com>
-Cc:     willy@infradead.org, dwysocha@redhat.com,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
-        linux-cifs@vger.kernel.org, linux-afs@lists.infradead.org,
-        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y2y0cspSZG5dt6c+@sol.localdomain>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 23, 2022 at 12:03 PM David Howells <dhowells@redhat.com> wrote:
->
-> Linus Torvalds <torvalds@linux-foundation.org> wrote:
->
-> > But I also think it's strange in another way, with that odd placement of
-> >
-> >         mapping_clear_release_always(inode->i_mapping);
-> >
-> > at inode eviction time. That just feels very random.
->
-> I was under the impression that a warning got splashed if unexpected
-> address_space flags were set when ->evict_inode() returned.  I may be thinking
-> of page flags.  If it doesn't, fine, this isn't required.
+On Thu, Nov 10, 2022 at 12:21:06AM -0800, Eric Biggers wrote:
+> On Fri, Oct 28, 2022 at 10:58:07AM -0700, Eric Biggers wrote:
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > As a step towards freeing the PG_error flag for other uses, change ext4
+> > and f2fs to stop using PG_error to track verity errors.  Instead, if a
+> > verity error occurs, just mark the whole bio as failed.  The coarser
+> > granularity isn't really a problem since it isn't any worse than what
+> > the block layer provides, and errors from a multi-page readahead aren't
+> > reported to applications unless a single-page read fails too.
+> > 
+> > f2fs supports compression, which makes the f2fs changes a bit more
+> > complicated than desired, but the basic premise still works.
+> > 
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> > 
+> > In v3, I made a small simplification to the f2fs changes.  I'm also only
+> > sending the fsverity patch now, since the fscrypt one is now upstream.  
+> > 
+> >  fs/ext4/readpage.c |  8 ++----
+> >  fs/f2fs/compress.c | 64 ++++++++++++++++++++++------------------------
+> >  fs/f2fs/data.c     | 48 +++++++++++++++++++---------------
+> >  fs/verity/verify.c | 12 ++++-----
+> >  4 files changed, 67 insertions(+), 65 deletions(-)
+> 
+> I've applied this to the fsverity tree for 6.2.
+> 
+> Reviews would be greatly appreciated, of course.
+> 
 
-I don't know if the warning happens or not, but the thing I reacted to
-was just how *random* this was. There was no logic to it, nor any
-explanation.
+Jaegeuk and Chao, can I get a review or ack from one of you?
 
-I *suspect* that if we add this kind of new generic address space
-flag, then that flag should just be cleared by generic code when the
-address space is released.
-
-But I'm not saying it has to be done that way - I'm just saying that
-however it is done, please don't make it this random mess with no
-explanation.
-
-The *setting* of the flag was at least fairly obvious. I didn't find
-code like this odd:
-
-+       if (v9inode->netfs.cache)
-+               mapping_set_release_always(inode->i_mapping);
-
-and it makes all kinds of sense (ie I can read it as a "if I use netfs
-caching for this inode, then I want to be informed when a folio is
-released from this mapping").
-
-It's just the clearing that looked very random to me.
-
-Maybe just a comment would have helped, but I get the feeling that it
-migth as well just be cleared in "clear_inode()" or something like
-that.
-
-> > That code makes no sense what-so-ever. Why isn't it using
-> > "folio_has_private()"?
->
-> It should be, yes.
->
-> > Why is this done as an open-coded - and *badly* so - version of
-> > !folio_needs_release() that you for some reason made private to mm/vmscan.c?
->
-> Yeah, in retrospect, I should have put that in mm/internal.h.
-
-So if folio_needs_release() is in mm/internal.h, and then mm/filemap.c
-uses it in filemap_release_folio() instead of the odd open-coding, I
-think that would clear up my worries about both mm/filemap.c and
-mm/vmscan.c.
-
-                Linus
+- Eric
