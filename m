@@ -2,91 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EFA08636995
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 20:09:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C41706369D7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 20:24:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239688AbiKWTJJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 14:09:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40352 "EHLO
+        id S239406AbiKWTYV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 14:24:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239669AbiKWTJI (ORCPT
+        with ESMTP id S238859AbiKWTYU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 14:09:08 -0500
-Received: from mail-qk1-x734.google.com (mail-qk1-x734.google.com [IPv6:2607:f8b0:4864:20::734])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4D8A4A9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 11:09:06 -0800 (PST)
-Received: by mail-qk1-x734.google.com with SMTP id k2so13113578qkk.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 11:09:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=yPgzuaoqHuz3hc6GKBXrRYZsP8U7EhvDm+I1zVt6Kyc=;
-        b=EFNC4tQlvCILCh89xvIkqHD2HaIjFKosUdVGMRAv1CFQL71EGGppxAhkFklcwgTSBC
-         DHCoZhz3mvQ7jOPniFnrjTEdj3Ju25j/2/tkns12FsXfLuvllqmlGAwtDPqcAFeaDJST
-         IkO304Om2ISQ4EzhQM5kzUC5yFRh1EPVo8X9M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yPgzuaoqHuz3hc6GKBXrRYZsP8U7EhvDm+I1zVt6Kyc=;
-        b=K74JeBgObIE+FkCQBM3RwXQGiExyPgYvlKXCaoU74YQoFGgAVlnENLpUBJiHoAfliD
-         3AhzpAdLBEMVgWaaHU1dVeSVWbNA0IHK1GbnsLdD4pLra1IX9We1fEs0N55qaV2ZHHK3
-         tw/gB0pQ7Bv+aXRnJJ7q2w7GBhn+qtf0Xaw7K0VNRxrl+f24MHlcgWXNHAdcl7cLlgs0
-         VX3VMkK8HLbI7oGje6S6mSwo3Bi9M6/luja2WWKLwIfAaJSpIVqfl4TjvkN9FkzXoqdi
-         veGX2WU2LmtfhZfDBP/BcShhzXvzsBQ8Qgr2PO9559sgH5NDjjnDMk5oyP8/+ZMe2/mh
-         rpWA==
-X-Gm-Message-State: ANoB5plb6tOKhhFiC0Fu7PO9aULIB44Zvh1kNq4d56jgoWt17jfFFr2J
-        cpwQYI6s6GELgu8n+sqKhTKVquwViOTTEg==
-X-Google-Smtp-Source: AA0mqf54B7YXHhBqRExRBXGy2nEPeXwkP7MBl8m1FGly58DPlp+iXd1MnRnGO9bpBXzkOhpH5aOc6g==
-X-Received: by 2002:a05:620a:208d:b0:6ed:682a:4235 with SMTP id e13-20020a05620a208d00b006ed682a4235mr25305107qka.681.1669230545692;
-        Wed, 23 Nov 2022 11:09:05 -0800 (PST)
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com. [209.85.219.53])
-        by smtp.gmail.com with ESMTPSA id bx15-20020a05622a090f00b003a4f22c6507sm10319104qtb.48.2022.11.23.11.09.04
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Nov 2022 11:09:05 -0800 (PST)
-Received: by mail-qv1-f53.google.com with SMTP id d18so9253541qvs.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 11:09:04 -0800 (PST)
-X-Received: by 2002:ad4:4101:0:b0:4b1:856b:4277 with SMTP id
- i1-20020ad44101000000b004b1856b4277mr9787467qvp.129.1669230544666; Wed, 23
- Nov 2022 11:09:04 -0800 (PST)
-MIME-Version: 1.0
-References: <Y32sfX54JJbldBIt@codewreck.org>
-In-Reply-To: <Y32sfX54JJbldBIt@codewreck.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 23 Nov 2022 11:08:48 -0800
-X-Gmail-Original-Message-ID: <CAHk-=winPSOAoRAc3vUSy9UZ-kLpjehVkEsncbiyqZ4cZfV0xg@mail.gmail.com>
-Message-ID: <CAHk-=winPSOAoRAc3vUSy9UZ-kLpjehVkEsncbiyqZ4cZfV0xg@mail.gmail.com>
+        Wed, 23 Nov 2022 14:24:20 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 917D59C7BB;
+        Wed, 23 Nov 2022 11:24:19 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 4380BB82465;
+        Wed, 23 Nov 2022 19:24:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 057D3C433D6;
+        Wed, 23 Nov 2022 19:24:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669231457;
+        bh=JnvMqFARKDRgQcpv7qV4sfKwOEskmpy+MLQc3kVk6m0=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=JsDWn+vxh8zg8qimdWQW2WLNLobmtPm6ltVRwb6RMLbExIp2P5V3f4u2Sz1aPoZfh
+         3bBXORyWTaHWjHqAC+5hRtlDHbKYE0L2Z49r0DAcx/FDU+nc2v10KHPeZzyG/sEAbo
+         rcZDgeyOdS6G7mRhk59V4BGx/FXBVGJLjmooYRBjWuEXQCaIANy6gdhHk2Hwz24tjz
+         0mkCkyl5hPESpFP51fqe0cdIFS/tUi2dVYH89VYzZ5kJnbFyeOlIDiugY6Yjk/sJ4D
+         MqIu8dJ+CdYwNe+PDRVubPdOY7FaZBpJpatD1JsdmI7yVGHrXSHLf+3eCHzDD/ntqO
+         4D12L56XEvgUQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E53DDC395ED;
+        Wed, 23 Nov 2022 19:24:16 +0000 (UTC)
 Subject: Re: [GIT PULL] 9p fixes for 6.1-rc7
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <Y32sfX54JJbldBIt@codewreck.org>
+References: <Y32sfX54JJbldBIt@codewreck.org>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <Y32sfX54JJbldBIt@codewreck.org>
+X-PR-Tracked-Remote: https://github.com/martinetd/linux tags/9p-for-6.1-rc7
+X-PR-Tracked-Commit-Id: 391c18cf776eb4569ecda1f7794f360fe0a45a26
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: fd64898dfed510a55b66080f8ab5c9b06982bbce
+Message-Id: <166923145692.2332.11368016095153725752.pr-tracker-bot@kernel.org>
+Date:   Wed, 23 Nov 2022 19:24:16 +0000
 To:     Dominique Martinet <asmadeus@codewreck.org>
-Cc:     Christian Schoenebeck <linux_oss@crudebyte.com>,
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         v9fs-developer@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Nov 22, 2022 at 9:16 PM Dominique Martinet
-<asmadeus@codewreck.org> wrote:
->
->  net/9p/trans_fd.c  | 24 +++++++++++++-----------
->  net/9p/trans_xen.c |  9 +++++++++
->  2 files changed, 22 insertions(+), 11 deletions(-)
->  9 files changed, 254 insertions(+), 28 deletions(-)
+The pull request you sent on Wed, 23 Nov 2022 14:15:41 +0900:
 
-Strange bogus second line of statistics.
+> https://github.com/martinetd/linux tags/9p-for-6.1-rc7
 
-But the first line looks right, and I've pulled it. I'm assuming this
-is some odd cut-and-paste error on your part where you had some stale
-data from before.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/fd64898dfed510a55b66080f8ab5c9b06982bbce
 
-               Linus
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
