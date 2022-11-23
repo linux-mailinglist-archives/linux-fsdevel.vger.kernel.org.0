@@ -2,144 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5C0BF635D07
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 13:39:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 06773635DB4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 13:47:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237671AbiKWMjN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 07:39:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43228 "EHLO
+        id S237710AbiKWMok (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 07:44:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236148AbiKWMio (ORCPT
+        with ESMTP id S237398AbiKWMoB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 07:38:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F7FA25C5E
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 04:37:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669207071;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=YBG4FEs/FFeAepPw53/HoJSqPyKF5S2QkCZjLKqE5oY=;
-        b=LwAAiO3CKQs+ZxeQaja9lKIc3RWAL8pv78Kip/y3y1nI7v+PfMHR51n5jxQf+yw/nPxB3e
-        0FUvJXho2TZQ2YkrtIag/pA2gdEL7utnHDfVjjrwEaGw1a7wWrJYupImAxdWmWj9dy+qw0
-        WbqcKFFay2qqk8cZzMrdhwThPvi0YPI=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-635-EsTBnfGSMEizaV5yuPxjsA-1; Wed, 23 Nov 2022 07:37:50 -0500
-X-MC-Unique: EsTBnfGSMEizaV5yuPxjsA-1
-Received: by mail-qk1-f199.google.com with SMTP id i21-20020a05620a405500b006fb25ba3e00so22238579qko.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 04:37:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YBG4FEs/FFeAepPw53/HoJSqPyKF5S2QkCZjLKqE5oY=;
-        b=ZGLtOB4vVrneKKK1WDR2Nc8r/V4nVOHfkVIlWNesAnJB4Li0n8TO9pyJxXtTOJFlPf
-         azld+6TAtgkff/oAAtr2Ei5Ft6M0y+uMpRHm9C+rCgMuekELU1oeTmZHApTGHj5Xjrd+
-         IJwk/UQ+WbgiCualLZ4csPrwtEBHktPe4H4lHJZqqXwmlMDUL7s7lOB4aASkp06L43ss
-         1S6NTjZmoAmzIECwOBFAJNEYDnAKrRhvU+TAdQYWQrxVXGHqevBOZx2ZRvJPwtv/DUAJ
-         /KLlFzyUlV6+pO64xx7z8TUMaYRTqQgKAA+3bEbyyJPWNz+W39Zk9AHoJ7iqDH0q8g78
-         alsA==
-X-Gm-Message-State: ANoB5pmmoI7qBL+V/Z14tev6KLU8a6lE1h9m8XaVNj/2GFn3WXklRBTu
-        YbgigZTs64ZTlTPDGsjOQSqabe+OI1VqmXZPndW0JGSK9UB+7ZbnXKSoWSjYzccnhQYHNO8nSSw
-        NPHN3teA1b63Ye/gaVtjto9qFng==
-X-Received: by 2002:ae9:e009:0:b0:6fb:c25:ddb8 with SMTP id m9-20020ae9e009000000b006fb0c25ddb8mr10786162qkk.377.1669207069756;
-        Wed, 23 Nov 2022 04:37:49 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf4U4uICC1jZlLMZk7rGxcGISEnwVgE1TruGHG4MPnRqNFZ0jFgPFSMtWL3rctn9YgpXw+bJAA==
-X-Received: by 2002:ae9:e009:0:b0:6fb:c25:ddb8 with SMTP id m9-20020ae9e009000000b006fb0c25ddb8mr10786146qkk.377.1669207069543;
-        Wed, 23 Nov 2022 04:37:49 -0800 (PST)
-Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
-        by smtp.gmail.com with ESMTPSA id az42-20020a05620a172a00b006cfaee39ccesm12076404qkb.114.2022.11.23.04.37.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Nov 2022 04:37:49 -0800 (PST)
-Date:   Wed, 23 Nov 2022 07:37:55 -0500
-From:   Brian Foster <bfoster@redhat.com>
-To:     Lukas Czerner <lczerner@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.com>,
-        Eric Sandeen <sandeen@redhat.com>, linux-mm@kvack.org,
+        Wed, 23 Nov 2022 07:44:01 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9BBFC6F379;
+        Wed, 23 Nov 2022 04:42:13 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 92D07B81EA3;
+        Wed, 23 Nov 2022 12:42:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D8DC433D7;
+        Wed, 23 Nov 2022 12:42:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669207331;
+        bh=7HrHSbvCNa7WukYhl524NNVbHAbsFaL6mj/mEIVSwFE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=uW4O5P07178H+S7NqlmbAO1fBY9PCvxpglM5o3X7Ff/kifT1gmj20RnfOO5VfPou2
+         Wex5Y9KGF00BqGP1nvK4Dz2xVHHrW3yYSPfoTD1/bt6+4CO1agWl3D9fEyd+0E7rB2
+         cRJFliDvmnJxIyjn3CcfnoZGKxGHjArtpNwgweljcaOw8ZpnPjK6Q4BpwpG4J0Kg5a
+         vyjgW8Sa7RxjKUOPRa9UteikmNilFcyF9gYOlizT2Is5vKU+L9dcxR2rB5e8xoxgB/
+         iNN+jU35jukCGutbnGXlwNAmvcPXisPl1z6AgxVQLTkv+/429+PDDNoHbNfkwo1Ppa
+         AbZlNDygmm5Hw==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Sasha Levin <sashal@kernel.org>, naohiro.aota@wdc.com,
         linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] quota: add quota in-memory format support
-Message-ID: <Y34UI9MCyq6mcIlw@bfoster>
-References: <20221121142854.91109-1-lczerner@redhat.com>
- <20221121142854.91109-2-lczerner@redhat.com>
- <Y3u54l2CVapQmK/w@magnolia>
- <Y3zHn4egPhwMRcDE@infradead.org>
- <20221122142117.epplqsm4ngwx5eyy@fedora>
- <Y33SqRyAGTXVFBIF@infradead.org>
- <20221123083615.sj26ptongwhk6wcl@fedora>
+Subject: [PATCH AUTOSEL 6.0 29/44] zonefs: fix zone report size in __zonefs_io_error()
+Date:   Wed, 23 Nov 2022 07:40:38 -0500
+Message-Id: <20221123124057.264822-29-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221123124057.264822-1-sashal@kernel.org>
+References: <20221123124057.264822-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221123083615.sj26ptongwhk6wcl@fedora>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 23, 2022 at 09:36:15AM +0100, Lukas Czerner wrote:
-> On Tue, Nov 22, 2022 at 11:58:33PM -0800, Christoph Hellwig wrote:
-> > On Tue, Nov 22, 2022 at 03:21:17PM +0100, Lukas Czerner wrote:
-> > > > That seems like a good idea for memory usage, but I think this might
-> > > > also make the code much simpler, as that just requires fairly trivial
-> > > > quota_read and quota_write methods in the shmem code instead of new
-> > > > support for an in-memory quota file.
-> > > 
-> > > You mean like the implementation in the v1 ?
-> > 
-> > Having now found it: yes.
-> > 
-> 
-> Jan,
-> 
-> do you have any argument for this, since it was your suggestion?
-> 
-> I also think that the implementation is much simpler with in-memory
-> dquots because we will avoid all the hassle with creating and
-> maintaining quota file in a proper format. It's not just reads and
-> writes it's the entire machinery befind it in quota_v2.c and quota_tree.c.
-> 
-> But it is true that even with only user modified dquots being
-> non-reclaimable until unmount it could theoreticaly represent a
-> substantial memory consumption. Although I do wonder if this problem
-> is even real. How many user/group ids would you expect extremely heavy
-> quota user would have the limits set for? 1k, 10k, million, or even
-> more? Do you know?
-> 
+From: Damien Le Moal <damien.lemoal@opensource.wdc.com>
 
-I don't know this code well enough to have a strong opinion on the v1
-vs. v2 approach in general, but FWIW it does seem to me that the benefit
-of v1 from a memory savings perspective is perhaps overstated. AFAICT,
-tmpfs already pins inodes/denties (notably larger than dquots) in-core
-for the lifetime of the inode, so it's not like we'll be saving much
-memory from dquots that are actually in-use. I think this dquot memory
-should be limited indirectly by the max inode restriction, as well.
+[ Upstream commit 7dd12d65ac646046a3fe0bbf9a4e86f4514207b3 ]
 
-That means the potential wastage is measured in dquots that are no
-longer referenced, but have previously had a non-default quota limit set
-by the admin, right? Even with the v1 approach, I don't think it's wise
-to just push such otherwise unused dquots into swap space indefinitely.
+When an IO error occurs, the function __zonefs_io_error() is used to
+issue a zone report to obtain the latest zone information from the
+device. This function gets a zone report for all zones used as storage
+for a file, which is always 1 zone except for files representing
+aggregated conventional zones.
 
-Perhaps a reasonable approach to the memory usage issue is to just cap
-the number of dquots that are allowed to have custom limits on tmpfs?
-E.g., to echo Lukas above.. if there was a cap of something like 512-1k
-custom quota limits, would that really be a problem for quota users on
-tmpfs? Other users would still be covered by the default mount-time
-limits. Of course, you could always make such a cap flexible as a % of
-tmpfs size, or configurable via mount option, etc. Just a thought.
+The number of zones of a zone report for a file is calculated in
+__zonefs_io_error() by doing a bit-shift of the inode i_zone_size field,
+which is equal to or larger than the device zone size. However, this
+calculation does not take into account that the last zone of a zoned
+device may be smaller than the zone size reported by bdev_zone_sectors()
+(which is used to set the bit shift size). As a result, if an error
+occurs for an IO targetting such last smaller zone, the zone report will
+ask for 0 zones, leading to an invalid zone report.
 
-Brian
+Fix this by using the fact that all files require a 1 zone report,
+except if the inode i_zone_size field indicates a zone size larger than
+the device zone size. This exception case corresponds to a mount with
+aggregated conventional zones.
 
-> -Lukas
-> 
-> 
+A check for this exception is added to the file inode initialization
+during mount. If an invalid setup is detected, emit an error and fail
+the mount (check contributed by Johannes Thumshirn).
+
+Signed-off-by: Johannes Thumshirn <johannes.thumshirn@wdc.com>
+Signed-off-by: Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/zonefs/super.c | 37 +++++++++++++++++++++++++++----------
+ 1 file changed, 27 insertions(+), 10 deletions(-)
+
+diff --git a/fs/zonefs/super.c b/fs/zonefs/super.c
+index 860f0b1032c6..abc9a85106f2 100644
+--- a/fs/zonefs/super.c
++++ b/fs/zonefs/super.c
+@@ -478,14 +478,22 @@ static void __zonefs_io_error(struct inode *inode, bool write)
+ 	struct super_block *sb = inode->i_sb;
+ 	struct zonefs_sb_info *sbi = ZONEFS_SB(sb);
+ 	unsigned int noio_flag;
+-	unsigned int nr_zones =
+-		zi->i_zone_size >> (sbi->s_zone_sectors_shift + SECTOR_SHIFT);
++	unsigned int nr_zones = 1;
+ 	struct zonefs_ioerr_data err = {
+ 		.inode = inode,
+ 		.write = write,
+ 	};
+ 	int ret;
+ 
++	/*
++	 * The only files that have more than one zone are conventional zone
++	 * files with aggregated conventional zones, for which the inode zone
++	 * size is always larger than the device zone size.
++	 */
++	if (zi->i_zone_size > bdev_zone_sectors(sb->s_bdev))
++		nr_zones = zi->i_zone_size >>
++			(sbi->s_zone_sectors_shift + SECTOR_SHIFT);
++
+ 	/*
+ 	 * Memory allocations in blkdev_report_zones() can trigger a memory
+ 	 * reclaim which may in turn cause a recursion into zonefs as well as
+@@ -1407,6 +1415,14 @@ static int zonefs_init_file_inode(struct inode *inode, struct blk_zone *zone,
+ 	zi->i_ztype = type;
+ 	zi->i_zsector = zone->start;
+ 	zi->i_zone_size = zone->len << SECTOR_SHIFT;
++	if (zi->i_zone_size > bdev_zone_sectors(sb->s_bdev) << SECTOR_SHIFT &&
++	    !(sbi->s_features & ZONEFS_F_AGGRCNV)) {
++		zonefs_err(sb,
++			   "zone size %llu doesn't match device's zone sectors %llu\n",
++			   zi->i_zone_size,
++			   bdev_zone_sectors(sb->s_bdev) << SECTOR_SHIFT);
++		return -EINVAL;
++	}
+ 
+ 	zi->i_max_size = min_t(loff_t, MAX_LFS_FILESIZE,
+ 			       zone->capacity << SECTOR_SHIFT);
+@@ -1456,11 +1472,11 @@ static struct dentry *zonefs_create_inode(struct dentry *parent,
+ 	struct inode *dir = d_inode(parent);
+ 	struct dentry *dentry;
+ 	struct inode *inode;
+-	int ret;
++	int ret = -ENOMEM;
+ 
+ 	dentry = d_alloc_name(parent, name);
+ 	if (!dentry)
+-		return NULL;
++		return ERR_PTR(ret);
+ 
+ 	inode = new_inode(parent->d_sb);
+ 	if (!inode)
+@@ -1485,7 +1501,7 @@ static struct dentry *zonefs_create_inode(struct dentry *parent,
+ dput:
+ 	dput(dentry);
+ 
+-	return NULL;
++	return ERR_PTR(ret);
+ }
+ 
+ struct zonefs_zone_data {
+@@ -1505,7 +1521,7 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
+ 	struct blk_zone *zone, *next, *end;
+ 	const char *zgroup_name;
+ 	char *file_name;
+-	struct dentry *dir;
++	struct dentry *dir, *dent;
+ 	unsigned int n = 0;
+ 	int ret;
+ 
+@@ -1523,8 +1539,8 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
+ 		zgroup_name = "seq";
+ 
+ 	dir = zonefs_create_inode(sb->s_root, zgroup_name, NULL, type);
+-	if (!dir) {
+-		ret = -ENOMEM;
++	if (IS_ERR(dir)) {
++		ret = PTR_ERR(dir);
+ 		goto free;
+ 	}
+ 
+@@ -1570,8 +1586,9 @@ static int zonefs_create_zgroup(struct zonefs_zone_data *zd,
+ 		 * Use the file number within its group as file name.
+ 		 */
+ 		snprintf(file_name, ZONEFS_NAME_MAX - 1, "%u", n);
+-		if (!zonefs_create_inode(dir, file_name, zone, type)) {
+-			ret = -ENOMEM;
++		dent = zonefs_create_inode(dir, file_name, zone, type);
++		if (IS_ERR(dent)) {
++			ret = PTR_ERR(dent);
+ 			goto free;
+ 		}
+ 
+-- 
+2.35.1
 
