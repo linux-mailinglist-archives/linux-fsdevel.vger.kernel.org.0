@@ -2,80 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9FD44636D98
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 23:51:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4AF00636DB1
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 23:58:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229508AbiKWWuj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 17:50:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44374 "EHLO
+        id S229576AbiKWW6l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 17:58:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52346 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbiKWWuZ (ORCPT
+        with ESMTP id S229565AbiKWW6k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 17:50:25 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 784831144B3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 14:49:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669243745;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=WHpeeqm1MJ8TYn1nRD3MVhIBofwqjS4Ni77i3McPwEA=;
-        b=QvlLSfsA0nkcM/dVzqUYbskREDt/xnNItVXa808fHSgjRiJXxfyh6aYG18J+I6zrd4VNXf
-        jTG8F6G0vAXX8avnPJoiygk4f9IHGN6iifP8QMWP/87NCoQLjcc4R3naIUGdu9Qxi2KGSg
-        incoY5bRLSko1fiOVueZ5J/sjOQH24M=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-227-q0o80RfhNxCJu3990DjGhg-1; Wed, 23 Nov 2022 17:49:02 -0500
-X-MC-Unique: q0o80RfhNxCJu3990DjGhg-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7020D1C05AA3;
-        Wed, 23 Nov 2022 22:49:01 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.14])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2B620111E413;
-        Wed, 23 Nov 2022 22:48:59 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-Subject: [RFC PATCH v4 3/3] mm: Make filemap_release_folio() better inform
- shrink_folio_list()
-From:   David Howells <dhowells@redhat.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Steve French <sfrench@samba.org>,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Dave Wysochanski <dwysocha@redhat.com>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Ilya Dryomov <idryomov@gmail.com>, linux-cachefs@redhat.com,
-        linux-cifs@vger.kernel.org, linux-afs@lists.infradead.org,
-        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, dhowells@redhat.com,
-        Matthew Wilcox <willy@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-afs@lists.infradead.org, linux-nfs@vger.kernel.org,
-        linux-cifs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net, linux-erofs@lists.ozlabs.org,
-        linux-cachefs@redhat.com, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Wed, 23 Nov 2022 22:48:56 +0000
-Message-ID: <166924373637.1772793.2622483388224911574.stgit@warthog.procyon.org.uk>
-In-Reply-To: <166924370539.1772793.13730698360771821317.stgit@warthog.procyon.org.uk>
-References: <166924370539.1772793.13730698360771821317.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/1.5
+        Wed, 23 Nov 2022 17:58:40 -0500
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3360E93CED
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 14:58:39 -0800 (PST)
+Received: by mail-qt1-x82d.google.com with SMTP id l2so145083qtq.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 14:58:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kZnCvaEQ344vGtn47RMsQAQkT919w64rZm3gu+vPQMY=;
+        b=ZO8KT8PP+ynCgfpAsn0gLSY6SzCQhijyPIHusMskwtf9T1rrauFK8Ru8L7xDqiT98Q
+         whp7Qv/cl82o4vi2+YEdK/JvvoG6oPw59CunYWdS4vec2yu+4W+UTQwMrh5IPxj3UHlB
+         r/ebpwM/LCmalYllI981sk89ihQ71VnQhIaAA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kZnCvaEQ344vGtn47RMsQAQkT919w64rZm3gu+vPQMY=;
+        b=dFBvdtL7FPM58xcdI2QqaGCCBXkJuVentI1LZ4Lw7rTge42/XNhVN3dqc5p9WWzcTd
+         P3Ebf6PIr1aouF5XNoDd30A266uhifUuEw7A4HZeeH8JbNUQe2HaJb+MeiJG3cS+dQG7
+         wbtRWgckgN1JZ/SoDIilmKF+VErdOwgzQTtbYrNcNT5FJklWTpzqVb6YsRZxri7AkwvR
+         spEh6sP204b0yn4/o7g8emdMbqCEfdC0LdGrixDEEYkb+FI8cuxSnxJKh//byAUSq6tw
+         XbfWDoo++CEp/ZrLexE23wRpGsBX7sMA9wCp/WgzkYOssx09EuUsUjoEKqddnS3eXDhX
+         ZrKQ==
+X-Gm-Message-State: ANoB5pkGUeCDDSUwi8FlimZ6/jxZjUDcP7hCYctRT4MFJJel7gXmJzHA
+        uZ3kqapr3wUoAhCyHzJdkEBm+bkovl2PEw==
+X-Google-Smtp-Source: AA0mqf7h1hJm55dn69vRYNCT57HySF3u0rW8k/UAkpJ3zavxCNFIRRaf2CcyygZOoUEbKZassP6fSw==
+X-Received: by 2002:ac8:7452:0:b0:3a5:7a9c:242d with SMTP id h18-20020ac87452000000b003a57a9c242dmr28107625qtr.361.1669244318035;
+        Wed, 23 Nov 2022 14:58:38 -0800 (PST)
+Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com. [209.85.222.182])
+        by smtp.gmail.com with ESMTPSA id r2-20020ae9d602000000b006cebda00630sm12844734qkk.60.2022.11.23.14.58.37
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Nov 2022 14:58:37 -0800 (PST)
+Received: by mail-qk1-f182.google.com with SMTP id z17so4666qki.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 14:58:37 -0800 (PST)
+X-Received: by 2002:ac8:44b9:0:b0:3a5:81ec:c4bf with SMTP id
+ a25-20020ac844b9000000b003a581ecc4bfmr16610980qto.180.1669243994092; Wed, 23
+ Nov 2022 14:53:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+References: <166924370539.1772793.13730698360771821317.stgit@warthog.procyon.org.uk>
+In-Reply-To: <166924370539.1772793.13730698360771821317.stgit@warthog.procyon.org.uk>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Wed, 23 Nov 2022 14:52:58 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjq7gRdVUrwpQvEN1+um+hTkW8dZZATtfFS-fp9nNssRw@mail.gmail.com>
+Message-ID: <CAHk-=wjq7gRdVUrwpQvEN1+um+hTkW8dZZATtfFS-fp9nNssRw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/3] mm, netfs, fscache: Stop read optimisation when
+ folio removed from pagecache
+To:     David Howells <dhowells@redhat.com>
+Cc:     Ilya Dryomov <idryomov@gmail.com>,
+        Dave Wysochanski <dwysocha@redhat.com>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        linux-nfs@vger.kernel.org, linux-cifs@vger.kernel.org,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        linux-mm@kvack.org, Rohith Surabattula <rohiths.msft@gmail.com>,
+        v9fs-developer@lists.sourceforge.net, ceph-devel@vger.kernel.org,
+        linux-cachefs@redhat.com, linux-afs@lists.infradead.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Steve French <sfrench@samba.org>,
+        linux-fsdevel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        linux-erofs@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,157 +85,18 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Make filemap_release_folio() return one of three values:
+On Wed, Nov 23, 2022 at 2:48 PM David Howells <dhowells@redhat.com> wrote:
+>
+>   I've also got rid of the bit clearances
+> from the network filesystem evict_inode functions as they doesn't seem to
+> be necessary.
 
- (0) FILEMAP_CANT_RELEASE_FOLIO
+Well, the patches look superficially cleaner to me, at least. That
+"doesn't seem to be necessary" makes me a bit worried, and I'd have
+liked to see a more clear-cut "clearing it isn't necessary because X",
+but I _assume_ it's not necessary simply because the 'struct
+address_space" is released and never re-used.
 
-     Couldn't release the folio's private data, so the folio can't itself
-     be released.
+But making the lifetime of that bit explicit might just be a good idea.
 
- (1) FILEMAP_RELEASED_FOLIO
-
-     The private data on the folio was released and the folio can be
-     released.
-
- (2) FILEMAP_FOLIO_HAD_NO_PRIVATE
-
-     There was no private data on the folio and the folio can be released.
-
-The first must be zero so that existing tests of !filemap_release_folio()
-continue to work as expected; similarly the other two must both be non-zero
-so that existing tests of filemap_release_folio() continue to work as
-expected.
-
-Using this, make shrink_folio_list() choose which of three cases to follow
-based on the return from filemap_release_folio() rather than testing the
-folio's private bit itself.
-
-Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Matthew Wilcox <willy@infradead.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>
-cc: Steve French <sfrench@samba.org>
-cc: Shyam Prasad N <nspmangalore@gmail.com>
-cc: Rohith Surabattula <rohiths.msft@gmail.com>
-cc: Dave Wysochanski <dwysocha@redhat.com>
-cc: Dominique Martinet <asmadeus@codewreck.org>
-cc: Ilya Dryomov <idryomov@gmail.com>
-cc: linux-cachefs@redhat.com
-cc: linux-cifs@vger.kernel.org
-cc: linux-afs@lists.infradead.org
-cc: v9fs-developer@lists.sourceforge.net
-cc: ceph-devel@vger.kernel.org
-cc: linux-nfs@vger.kernel.org
-cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
-Link: https://lore.kernel.org/r/1459152.1669208550@warthog.procyon.org.uk/ # v3
----
-
- include/linux/pagemap.h |    7 ++++++-
- mm/filemap.c            |   20 ++++++++++++++------
- mm/vmscan.c             |   29 +++++++++++++++--------------
- 3 files changed, 35 insertions(+), 21 deletions(-)
-
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 9a824b43c6af..b763182b6d3f 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -1124,7 +1124,12 @@ void replace_page_cache_page(struct page *old, struct page *new);
- void delete_from_page_cache_batch(struct address_space *mapping,
- 				  struct folio_batch *fbatch);
- int try_to_release_page(struct page *page, gfp_t gfp);
--bool filemap_release_folio(struct folio *folio, gfp_t gfp);
-+enum filemap_released_folio {
-+	FILEMAP_CANT_RELEASE_FOLIO	= 0, /* (This must be 0) Release failed */
-+	FILEMAP_RELEASED_FOLIO		= 1, /* Folio's private data released */
-+	FILEMAP_FOLIO_HAD_NO_PRIVATE	= 2, /* Folio had no private data */
-+};
-+enum filemap_released_folio filemap_release_folio(struct folio *folio, gfp_t gfp);
- loff_t mapping_seek_hole_data(struct address_space *, loff_t start, loff_t end,
- 		int whence);
- 
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 93757247cd11..859831c70439 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -3934,20 +3934,28 @@ EXPORT_SYMBOL(generic_file_write_iter);
-  * this page (__GFP_IO), and whether the call may block
-  * (__GFP_RECLAIM & __GFP_FS).
-  *
-- * Return: %true if the release was successful, otherwise %false.
-+ * Return: %FILEMAP_RELEASED_FOLIO if the release was successful,
-+ * %FILEMAP_CANT_RELEASE_FOLIO if the private data couldn't be released and
-+ * %FILEMAP_FOLIO_HAD_NO_PRIVATE if there was no private data.
-  */
--bool filemap_release_folio(struct folio *folio, gfp_t gfp)
-+enum filemap_released_folio filemap_release_folio(struct folio *folio,
-+						  gfp_t gfp)
- {
- 	struct address_space * const mapping = folio->mapping;
-+	bool released;
- 
- 	BUG_ON(!folio_test_locked(folio));
- 	if (!folio_needs_release(folio))
--		return true;
-+		return FILEMAP_FOLIO_HAD_NO_PRIVATE;
- 	if (folio_test_writeback(folio))
--		return false;
-+		return FILEMAP_CANT_RELEASE_FOLIO;
- 
- 	if (mapping && mapping->a_ops->release_folio)
--		return mapping->a_ops->release_folio(folio, gfp);
--	return try_to_free_buffers(folio);
-+		released = mapping->a_ops->release_folio(folio, gfp);
-+	else
-+		released = try_to_free_buffers(folio);
-+
-+	return released ?
-+		FILEMAP_RELEASED_FOLIO : FILEMAP_CANT_RELEASE_FOLIO;
- }
- EXPORT_SYMBOL(filemap_release_folio);
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index b9316f447238..d5c7b3be9947 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -1978,25 +1978,26 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
- 		 * (refcount == 1) it can be freed.  Otherwise, leave
- 		 * the folio on the LRU so it is swappable.
- 		 */
--		if (folio_needs_release(folio)) {
--			if (!filemap_release_folio(folio, sc->gfp_mask))
--				goto activate_locked;
-+		switch (filemap_release_folio(folio, sc->gfp_mask)) {
-+		case FILEMAP_CANT_RELEASE_FOLIO:
-+			goto activate_locked;
-+		case FILEMAP_RELEASED_FOLIO:
- 			if (!mapping && folio_ref_count(folio) == 1) {
- 				folio_unlock(folio);
- 				if (folio_put_testzero(folio))
- 					goto free_it;
--				else {
--					/*
--					 * rare race with speculative reference.
--					 * the speculative reference will free
--					 * this folio shortly, so we may
--					 * increment nr_reclaimed here (and
--					 * leave it off the LRU).
--					 */
--					nr_reclaimed += nr_pages;
--					continue;
--				}
-+				/*
-+				 * rare race with speculative reference.  the
-+				 * speculative reference will free this folio
-+				 * shortly, so we may increment nr_reclaimed
-+				 * here (and leave it off the LRU).
-+				 */
-+				nr_reclaimed += nr_pages;
-+				continue;
- 			}
-+			break;
-+		case FILEMAP_FOLIO_HAD_NO_PRIVATE:
-+			break;
- 		}
- 
- 		if (folio_test_anon(folio) && !folio_test_swapbacked(folio)) {
-
-
+             Linus
