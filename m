@@ -2,56 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FC4E635028
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 07:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFE5D635024
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 23 Nov 2022 07:15:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235956AbiKWGN3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 23 Nov 2022 01:13:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50962 "EHLO
+        id S235963AbiKWGNt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 23 Nov 2022 01:13:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235722AbiKWGNZ (ORCPT
+        with ESMTP id S235931AbiKWGN1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 23 Nov 2022 01:13:25 -0500
+        Wed, 23 Nov 2022 01:13:27 -0500
 Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 515B6E8714
-        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 22:13:22 -0800 (PST)
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20221123061318epoutp020faa7b4b1e8f2e0080a37dbada05dbe7~qIgDSr4hg1661416614epoutp02j
-        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 06:13:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20221123061318epoutp020faa7b4b1e8f2e0080a37dbada05dbe7~qIgDSr4hg1661416614epoutp02j
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A5F1DF2C24
+        for <linux-fsdevel@vger.kernel.org>; Tue, 22 Nov 2022 22:13:24 -0800 (PST)
+Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20221123061323epoutp02fef706d1697d487ce5aee6939872e7b4~qIgHUeG2F1821418214epoutp02y
+        for <linux-fsdevel@vger.kernel.org>; Wed, 23 Nov 2022 06:13:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20221123061323epoutp02fef706d1697d487ce5aee6939872e7b4~qIgHUeG2F1821418214epoutp02y
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1669183998;
-        bh=1tZws8Hb1eFN18ZJBmssPvEBmaBiDwVui9GYaRE9iO8=;
+        s=mail20170921; t=1669184003;
+        bh=0FPx7LMsKlfQgDSh7pdXmYYh7T24JtpfZN1TEoPvn7c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mm/77p9x2UdmqmyZqjmQaZRWYXwjvL8L2mbt4LFwP1eXlvvWjLKfR/ggiu3oXLgb7
-         2utx3a7Eox/30VhgRJtbuBxskvcRTE3k8rzLvsCv/R1X89O7hdes+LJUMZnBoE2czf
-         UaqZhLUAXucMIhS2RjzTSuZMWVNA2Fw42SW5L+i8=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-        20221123061318epcas5p30a403cecbd22a8ef3969d1c68319a0ed~qIgCjTag_1162411624epcas5p3f;
-        Wed, 23 Nov 2022 06:13:18 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 4NH9mD35f2z4x9Pt; Wed, 23 Nov
-        2022 06:13:16 +0000 (GMT)
+        b=KONw9b5EggwVSQtG5RFa6eT8a1ZFy448ET40VG/kpDwM7LcAf8w0+ElvunNOG1dCP
+         BvrMQyx4fUKghzZhteCiM02uKWqK2IlKyNat4MqVPBjXtjRaO+oU1z1qFaGBmxxTCW
+         Uo+J72qMUBkpJApZOUlRD9pVRywhgX8rfzJyb6Wk=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+        20221123061322epcas5p4a63e3bc9742748460f0cbdd214de1c25~qIgGnUrYd1580315803epcas5p40;
+        Wed, 23 Nov 2022 06:13:22 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.179]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4NH9mJ3lqvz4x9Pv; Wed, 23 Nov
+        2022 06:13:20 +0000 (GMT)
 Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        35.30.39477.CF9BD736; Wed, 23 Nov 2022 15:13:16 +0900 (KST)
+        epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        A8.17.56352.00ABD736; Wed, 23 Nov 2022 15:13:20 +0900 (KST)
 Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
         epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20221123061017epcas5p246a589e20eac655ac340cfda6028ff35~qIdaetnlR1320613206epcas5p2s;
-        Wed, 23 Nov 2022 06:10:17 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        20221123061021epcas5p276b6d48db889932282d017b27c9a3291~qIdd7WvBX1320613206epcas5p23;
+        Wed, 23 Nov 2022 06:10:21 +0000 (GMT)
+Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
         epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221123061017epsmtrp20611c43eb55ee051bbf76ef63dee122f~qIdabu9J-0451404514epsmtrp2-;
-        Wed, 23 Nov 2022 06:10:17 +0000 (GMT)
-X-AuditID: b6c32a4a-259fb70000019a35-2b-637db9fc3898
+        20221123061021epsmtrp2aa0cf5e084413f713e1638c588adf37a~qIdd6Dns30451404514epsmtrp2L;
+        Wed, 23 Nov 2022 06:10:21 +0000 (GMT)
+X-AuditID: b6c32a4b-5f7fe7000001dc20-ce-637dba00b25d
 Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        20.0B.14392.949BD736; Wed, 23 Nov 2022 15:10:17 +0900 (KST)
+        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        36.B2.18644.D49BD736; Wed, 23 Nov 2022 15:10:21 +0900 (KST)
 Received: from test-zns.sa.corp.samsungelectronics.net (unknown
         [107.110.206.5]) by epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20221123061014epsmtip1e54b0e13ca838fc29c950958d0e1fe6e~qIdXddRF62063320633epsmtip19;
-        Wed, 23 Nov 2022 06:10:14 +0000 (GMT)
+        20221123061017epsmtip1f6dbbd226075454fb5dd076fb3daff6e~qIdaiGQur2539625396epsmtip1Y;
+        Wed, 23 Nov 2022 06:10:17 +0000 (GMT)
 From:   Nitesh Shetty <nj.shetty@samsung.com>
 To:     axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
         dm-devel@redhat.com, kbusch@kernel.org, hch@lst.de,
@@ -62,125 +62,114 @@ Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
         anuj20.g@samsung.com, joshi.k@samsung.com, p.raghav@samsung.com,
         nitheshshetty@gmail.com, gost.dev@samsung.com,
-        Nitesh Shetty <nj.shetty@samsung.com>
-Subject: [PATCH v5 02/10] block: Add copy offload support infrastructure
-Date:   Wed, 23 Nov 2022 11:28:19 +0530
-Message-Id: <20221123055827.26996-3-nj.shetty@samsung.com>
+        Nitesh Shetty <nj.shetty@samsung.com>,
+        Vincent Fu <vincent.fu@samsung.com>
+Subject: [PATCH v5 03/10] block: add emulation for copy
+Date:   Wed, 23 Nov 2022 11:28:20 +0530
+Message-Id: <20221123055827.26996-4-nj.shetty@samsung.com>
 X-Mailer: git-send-email 2.35.1.500.gb896f729e2
 In-Reply-To: <20221123055827.26996-1-nj.shetty@samsung.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0ybZRTO+33la4tj+VZwvHSbdtUlAgLtBvUFwZE5yOfmheCyBP5Abb+U
-        jtLWtji3qLABKixcxV2KctkGQnHgGGCBFRl3ECTAQMEgw7TEjJWrESdl2NKi+3fOc57nnPOc
-        Ny8L5+QwuSy5UkdrlGIFn3BnNHf5+gbYWj6WCCbHvFD9YC+OLhZs4qh2Jp9AG8MjODItlrih
-        qY4WDNXU9mCorWIFQz1bVgLN/TnNQEWdkwBZJvQYMk37o7umAQYab/2KQGVVFiYq7Lvjhozm
-        CwA1b5ThaK0yk4nqFpYYqH96HxrZ7HOL9Kb0s8ME1aKfYVIjv91mUOPDqVSDIZug7txMo9qm
-        0gkqN2PRTsiadaOW2icIKq/RAKi1hueozzouYVSD2YrF7I5PDk+ixVJaw6OVEpVUrpRF8E++
-        m/B6QohIIAwQhqJX+DylOIWO4B9/MyYgWq6w++fzPhArUu1QjFir5Qe9Fq5RpepoXpJKq4vg
-        02qpQh2sDtSKU7SpSlmgktaFCQWCwyF2YmJyknH9FlNdmfZhb9MQMx3Uy3IAmwXJYFg4/j2W
-        A9xZHLINwHVDNdOZrAI4c7EIOJO/AOz63UrsSB6PWghnwQTglNmKO5MsDA79NG+vsFgE6Q9/
-        3GI5cC8yD4Oft3Vsk3CyBIPWKhvT0cqTpOD8Vh3DIWCQh2DmhNoBe5BhsDfnH+CAIRkE82f3
-        OGA2+SocGm3FnJQ9cOCameGIcfJ5mNFUst0ekiVsuFBsZTo3PQ7Xl7IwZ+wJH/Y1unAuXFs0
-        udychTXF1YRTnAmg/mc9cBaOwqzBfNyxBE76wvrWICd8AH45WIc5B++GuRtmV38PaCzdiV+A
-        39aXu/r7wMn1C66YgveXK10nzQPQ0luIFQCe/ilD+qcM6f8fXQ5wA/Ch1doUGa0NUR9W0mf/
-        e2aJKqUBbH8KvxNGMPdgObATYCzQCSAL53t5pL3xkYTjIRWfO09rVAmaVAWt7QQh9nsX4txn
-        JSr7r1LqEoTBoYJgkUgUHHpEJOR7e9y46ifhkDKxjk6maTWt2dFhLDY3HYvublyNdPt0Bgsr
-        rRyrWK6e6YpI9A+SL9heku1/67vyugfsT2xjAxkKWjHP7mw2xJ/pvXntlE/RgWPCdpP07aVT
-        NQMTt+SqvU0ZEos5pztqjssZqj32JL+KKf6BUxi7cu+b3PhfIv5ozz66K44e5XpLA67kccMv
-        eRljj8SN3q+QKdm7sjl/u8fEZmfnZjyMr/ac8psvSCiNO3g6MrJurz7/fOOjaM/Vu2f63unR
-        VHQUnw7zrVLA2hv9Gy++P2XiVVuSer42Tj6ir15+8syVXxeub77MPuR74nbXF/2Cftvm/igb
-        3NfdmMc8eC7rMTYsP7kcha10XzZssRWiMuGl967fS2zmM7RJYqEfrtGK/wWgefYHnQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ra0hTYRzGec85nh0F47RMX7Uboww1rYnBm+ue1fFLSRFSGTbnaUrbGpur
-        nKZTk2qiVlDYlqmRirMSZ9psmrrMS2mmy8iBSqBFipdyIeVlOS3o2/P//Z7n05/CuS8JHypB
-        lsgqZEIJj3Qjal/x1gVF1F0RbevXeaPKN604yrg5j6OKgTwSzXZ146hhQu+C+pvqMFRe8RpD
-        5uLvGHrtGCfRZ7uNQLctHwEa6dNhqMEWiOobOghkfXGfRIWlIxx0q63aBZmG0wGqnS3E0XTJ
-        VQ56OjZJoHabL+qeb3PZ68XohrpIpk43wGG6B6sIxtqlYoyGGyRT/SiNMfdrSCYnc2KxkDXk
-        wky+7COZ3GcGwEwb1zHXmrIxxjg8jkWuOOW2M46VJFxkFVt3n3WLN8084chL0i631nRyNKBS
-        rAWuFKRD4a+eEVIL3CgubQbQ+HMaXxbesHS+5W9eBcsXvnKWS5kYzHpQQGgBRZF0IHzroJzc
-        gy7CoHVwFHceOF2CQf2HAdK5XkUz8Ivj6dKAoDfBq31yJ3anw2Cr9jdwYkhvhXlDK53YlRbA
-        zp4XmBNzFyv1pVuW2ythx71hwplxej3MrNHjNwGt+0/p/lNFADMAb1aulIqlSr6cL2MvBSuF
-        UqVKJg4WXZAawdKLA/xN4LlhKtgCMApYAKRwnod7WkSKiOseJ0xSs4oLMQqVhFVagC9F8Lzc
-        32s7Yri0WJjInmdZOav4ZzHK1UeD5Z2KkNoFqkslc+c8Y6K7fWUb9C0xXv5+F0V2PpGwO1Fa
-        8CDlu7fmeEOItTRzl+zn/JHiGX71Mf/kMLM+1NpbjcVJ03kE3y+1XTQ+Hnsg6kh7W2py1GN9
-        RP1cJC1J0oZq5+Jta8zlD332RI9I7qzuavbcuD934rQda3EUnDl87ropK/96PmPrnbJFqU48
-        KbvbIvkhyjeACnXjClWkx7fw5NmJe/30es9ec+xUtkfxK5txYUeeifLdvq9zn67AbA8XOAQZ
-        j9W570Zztl8JGd6cfmjHwWZHvNykboylPpWpoCZMkCpoRgHZiLDcGawqPFl249DRR4FjGxPW
-        BuGbeIQyXsgPwBVK4R9lADCfUQMAAA==
-X-CMS-MailID: 20221123061017epcas5p246a589e20eac655ac340cfda6028ff35
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0xTZxj2XDhtdXXHyuJnFewKLgOEtqOUD4Rp0G1nYQvoMhPdCCvljFtp
+        S0+RSUQuyrgo1wiMSgTGYAOnbEUYUkGsQxDGUBioLI6rxm2hOFiGBglrObD573me932f9/Ll
+        42KCAo6QG6Mx0HqNUi0m1uMtN9zcPNe1paikZfeEsLH3JgYzCpcweOFBAQEX+wcw2G495wDv
+        d15BYf2FLhSaq/9CYdfyDAEn/h7FYbFlBIEPh40obB/1gFfbb+FwqK2CgJV1DzmwqLvJAbZO
+        pyOwZbESg/O1pzjw0p+zOOwZ3QanTmcjcGCp22EvoIxj/QR1xfiAQw389j1ODfUnUqaGHIJq
+        +iqVMt9PI6i8k1ZbQuaYAzXbMUxQ+ZcbEGre5ExldZ5GKdP0DBq68UhcQDStjKT1Ilqj0kbG
+        aKICxcEfhO8L91FIZZ4yP+grFmmU8XSgeP97oZ5vx6htRxCLjirViTYpVMkwYsmbAXptooEW
+        RWsZQ6CY1kWqdXKdF6OMZxI1UV4a2uAvk0rf8LElfhIX/XmRQFcd8lnJzG1OGjKwNxfhcQEp
+        B2f7vubkIuu5AtKMgOvPTQhL5hBQaP6ZYMk8AqrPXOSslRRbrTgbaEPA0sWnqyQTBem5kzbC
+        5RKkB+hb5tp1RzIfBdnmTsxOMLITBZkdGajdajPpC5qGWIyTO8HNwYGVFnzSHyzm5q0YAVIC
+        CsY22WUeuRv8dKcNZVM2gVvl07gdY+QOcLL53Io/IGt44LY5D2NH3Q+651pwFm8Gf3RfXl1B
+        COat7QSLk0D92W8ItvgUAox3jQgb2AMyewsw+xAY6QYa2ySs7ARKei+hbOONIG9xGmV1Pmg9
+        v4ZdwLeNVav+W8HIQvoqpkDLnX9Wr52PgF8XatFCRGR8YSHjCwsZ/29dhWANyFZax8RH0YyP
+        zltDJ/33zCptvAlZ+Rnuwa3I5PgTLwuCchELAriY2JGf+u5xlYAfqTyWTOu14fpENc1YEB/b
+        wYsw4Ssqre1raQzhMrmfVK5QKOR+3gqZeAu/5gt3lYCMUhroOJrW0fq1OpTLE6ah5TOFRxoP
+        W2t+OJFyQuYcVJKiIF93TKgc8z0UFpL1zOBZaymY89++cHD5w6SOfROzVwdfzZkqDa6TwLwz
+        PDfXsVKq7DH/qTIWBJVr33rM1Jl+L/Ze15zcccB1d0ME1rCTEJX2uE7uepScUlbhcv67d8aF
+        WE/l4efcTueQsCfbgybcmT6e9H0nAdkaOv7lMVpYESj5aEvqwbj8rLk9vrruNo+M4ohnoqOu
+        yRtSnXpjhzf4p3nclR+QBrhjN1pimeWYqbJa/tK1mtckrSnqqtiPuV01qdnKhE9xcX1ImGXw
+        kJV+9HKGy44k4cLIruYfdeqcyo6E4/citr1kuo5fw6N+cfAU40y0UuaO6Rnlv1+4NM6iBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsWy7bCSnK7vztpkgztn2SzWnzrGbNE04S+z
+        xeq7/WwWv8+eZ7bY+242q8XNAzuZLFauPspksXvhRyaLo//fslk8/HKLxWLSoWuMFk+vzmKy
+        2HtL22LP3pMsFpd3zWGzmL/sKbvFxOObWS12PGlktNj2ez6zxeelLewW616/Z7E4cUva4nF3
+        B6PF+b/HWR0kPGbdP8vmsXPWXXaP8/c2snhcPlvqsWlVJ5vH5iX1HrtvNrB59Da/Aypovc/q
+        8X7fVTaPvi2rGD0+b5LzaD/QzeSx6clbpgC+KC6blNSczLLUIn27BK6MtolCBQv9K6a+vcDe
+        wHjeoYuRk0NCwERi0rt3LCC2kMAORom1//Ih4pISy/4eYYawhSVW/nvO3sXIBVTTzCRx+fh8
+        oAYODjYBbYnT/zlA4iICC4Di914xgzjMAmeYJBoufWAC6RYWMJfYfLkJzGYRUJU4duk8O4jN
+        K2Al8burF2yQhIC+RP99QZAwp4C1xJmLu5hAwkJAJXuW6UBUC0qcnPkE7E5mAXmJ5q2zmScw
+        CsxCkpqFJLWAkWkVo2RqQXFuem6xYYFRXmq5XnFibnFpXrpecn7uJkZwNGtp7WDcs+qD3iFG
+        Jg7GQ4wSHMxKIrz1njXJQrwpiZVVqUX58UWlOanFhxilOViUxHkvdJ2MFxJITyxJzU5NLUgt
+        gskycXBKNTCd9ZScvPPbYdWgDyIHbj9fp3iHjUm4/YBmbkRgXFL+NfspWideNgef6eq75rXO
+        g3dL/4NzC78b735drP33pGJD/KW7K40O7jCuCuNbfXKS66Hpz8p+fQ6RF4y+MunvxcCWB1OP
+        BrrKZF2TSppzrELMMUTW0WO6w4GibSY/y0+VfOSuX/M3Z7H0rCufQwSENerK3blag+3lUtyu
+        2B3eIq7Lu5jzEceiyc0fXuRf8C2SlPtx5sTKVMVJVu/vs0y/fmyD2blFh9nnOr9e+mPL0u0z
+        u9yN9kb17lweVnxhHa/0TYtT6yWKE8yq2VYEPJUO/nKv3Vsx4qmM49o/LOzGfD0cZ1yFp/gc
+        3Bi4J65Xw1FSiaU4I9FQi7moOBEAx7T9r1UDAAA=
+X-CMS-MailID: 20221123061021epcas5p276b6d48db889932282d017b27c9a3291
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
 X-Sendblock-Type: REQ_APPROVE
 CMS-TYPE: 105P
 DLP-Filter: Pass
 X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221123061017epcas5p246a589e20eac655ac340cfda6028ff35
+X-CMS-RootMailID: 20221123061021epcas5p276b6d48db889932282d017b27c9a3291
 References: <20221123055827.26996-1-nj.shetty@samsung.com>
-        <CGME20221123061017epcas5p246a589e20eac655ac340cfda6028ff35@epcas5p2.samsung.com>
+        <CGME20221123061021epcas5p276b6d48db889932282d017b27c9a3291@epcas5p2.samsung.com>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce blkdev_issue_copy which supports source and destination bdevs,
-and an array of (source, destination and copy length) tuples.
-Introduce REQ_COPY copy offload operation flag. Create a read-write
-bio pair with a token as payload and submitted to the device in order.
-Read request populates token with source specific information which
-is then passed with write request.
-This design is courtesy Mikulas Patocka's token based copy
-
-Larger copy will be divided, based on max_copy_sectors limit.
+For the devices which does not support copy, copy emulation is
+added. Copy-emulation is implemented by reading from source ranges
+into memory and writing to the corresponding destination asynchronously.
+For zoned device we maintain a linked list of read submission and try to
+submit corresponding write in same order.
+Also emulation is used, if copy offload fails or partially completes.
 
 Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
+Signed-off-by: Vincent Fu <vincent.fu@samsung.com>
 Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
 ---
- block/blk-lib.c           | 358 ++++++++++++++++++++++++++++++++++++++
- block/blk.h               |   2 +
- include/linux/blk_types.h |  44 +++++
- include/linux/blkdev.h    |   3 +
- include/uapi/linux/fs.h   |  15 ++
- 5 files changed, 422 insertions(+)
+ block/blk-lib.c        | 241 ++++++++++++++++++++++++++++++++++++++++-
+ block/blk-map.c        |   4 +-
+ include/linux/blkdev.h |   3 +
+ 3 files changed, 245 insertions(+), 3 deletions(-)
 
 diff --git a/block/blk-lib.c b/block/blk-lib.c
-index e59c3069e835..2ce3c872ca49 100644
+index 2ce3c872ca49..43b1d0ef5732 100644
 --- a/block/blk-lib.c
 +++ b/block/blk-lib.c
-@@ -115,6 +115,364 @@ int blkdev_issue_discard(struct block_device *bdev, sector_t sector,
+@@ -428,6 +428,239 @@ static inline int blk_copy_sanity_check(struct block_device *src_bdev,
+ 	return 0;
  }
- EXPORT_SYMBOL(blkdev_issue_discard);
  
-+/*
-+ * For synchronous copy offload/emulation, wait and process all in-flight BIOs.
-+ * This must only be called once all bios have been issued so that the refcount
-+ * can only decrease. This just waits for all bios to make it through
-+ * bio_copy_*_write_end_io. IO errors are propagated through cio->io_error.
-+ */
-+static int cio_await_completion(struct cio *cio)
++static void *blk_alloc_buf(sector_t req_size, sector_t *alloc_size,
++		gfp_t gfp_mask)
 +{
-+	int ret = 0;
++	int min_size = PAGE_SIZE;
++	void *buf;
 +
-+	atomic_dec(&cio->refcount);
-+
-+	if (cio->endio)
-+		return 0;
-+
-+	if (atomic_read(&cio->refcount)) {
-+		__set_current_state(TASK_UNINTERRUPTIBLE);
-+		blk_io_schedule();
++	while (req_size >= min_size) {
++		buf = kvmalloc(req_size, gfp_mask);
++		if (buf) {
++			*alloc_size = req_size;
++			return buf;
++		}
++		/* retry half the requested size */
++		req_size >>= 1;
 +	}
 +
-+	ret = cio->io_err;
-+	kfree(cio);
-+
-+	return ret;
++	return NULL;
 +}
 +
-+static void blk_copy_offload_write_end_io(struct bio *bio)
++static void blk_copy_emulate_write_end_io(struct bio *bio)
 +{
 +	struct copy_ctx *ctx = bio->bi_private;
 +	struct cio *cio = ctx->cio;
@@ -194,9 +183,8 @@ index e59c3069e835..2ce3c872ca49 100644
 +		cio->ranges[ri].comp_len = min_t(sector_t, clen,
 +				cio->ranges[ri].comp_len);
 +	}
-+	__free_page(bio->bi_io_vec[0].bv_page);
-+	bio_put(bio);
-+
++	kvfree(page_address(bio->bi_io_vec[0].bv_page));
++	bio_map_kern_endio(bio);
 +	if (atomic_dec_and_test(&ctx->refcount))
 +		kfree(ctx);
 +	if (atomic_dec_and_test(&cio->refcount)) {
@@ -208,7 +196,7 @@ index e59c3069e835..2ce3c872ca49 100644
 +	}
 +}
 +
-+static void blk_copy_offload_read_end_io(struct bio *read_bio)
++static void blk_copy_emulate_read_end_io(struct bio *read_bio)
 +{
 +	struct copy_ctx *ctx = read_bio->bi_private;
 +	struct cio *cio = ctx->cio;
@@ -242,7 +230,7 @@ index e59c3069e835..2ce3c872ca49 100644
 +		schedule_work(&ctx->dispatch_work);
 +
 +free_read_bio:
-+	bio_put(read_bio);
++	kfree(read_bio);
 +
 +	return;
 +
@@ -252,8 +240,7 @@ index e59c3069e835..2ce3c872ca49 100644
 +	cio->ranges[ri].comp_len = min_t(sector_t, clen,
 +					cio->ranges[ri].comp_len);
 +	__free_page(read_bio->bi_io_vec[0].bv_page);
-+	bio_put(ctx->write_bio);
-+	bio_put(read_bio);
++	bio_map_kern_endio(read_bio);
 +	if (atomic_dec_and_test(&ctx->refcount))
 +		kfree(ctx);
 +	if (atomic_dec_and_test(&cio->refcount)) {
@@ -265,71 +252,32 @@ index e59c3069e835..2ce3c872ca49 100644
 +	}
 +}
 +
-+static void blk_copy_dispatch_work_fn(struct work_struct *work)
-+{
-+	struct copy_ctx *ctx = container_of(work, struct copy_ctx,
-+			dispatch_work);
-+
-+	submit_bio(ctx->write_bio);
-+}
-+
-+static void blk_zoned_copy_dispatch_work_fn(struct work_struct *work)
-+{
-+	struct copy_ctx *ctx = container_of(work, struct copy_ctx,
-+			dispatch_work);
-+	struct cio *cio = ctx->cio;
-+	unsigned long flags = 0;
-+
-+	atomic_inc(&cio->refcount);
-+	spin_lock_irqsave(&cio->list_lock, flags);
-+
-+	while (!list_empty(&cio->list)) {
-+		ctx = list_first_entry(&cio->list, struct copy_ctx, list);
-+
-+		if (ctx->status == REQ_COPY_READ_PROGRESS)
-+			break;
-+
-+		atomic_inc(&ctx->refcount);
-+		ctx->status = REQ_COPY_WRITE_PROGRESS;
-+		spin_unlock_irqrestore(&cio->list_lock, flags);
-+		submit_bio(ctx->write_bio);
-+		spin_lock_irqsave(&cio->list_lock, flags);
-+
-+		list_del(&ctx->list);
-+		if (atomic_dec_and_test(&ctx->refcount))
-+			kfree(ctx);
-+	}
-+
-+	spin_unlock_irqrestore(&cio->list_lock, flags);
-+	if (atomic_dec_and_test(&cio->refcount))
-+		blk_wake_io_task(cio->waiter);
-+}
-+
 +/*
-+ * blk_copy_offload	- Use device's native copy offload feature.
-+ * we perform copy operation by sending 2 bio.
-+ * 1. First we send a read bio with REQ_COPY flag along with a token and source
-+ * and length. Once read bio reaches driver layer, device driver adds all the
-+ * source info to token and does a fake completion.
-+ * 2. Once read opration completes, we issue write with REQ_COPY flag with same
-+ * token. In driver layer, token info is used to form a copy offload command.
-+ *
-+ * For conventional devices we submit write bio independentenly once read
-+ * completes. For zoned devices , reads can complete out of order, so we
-+ * maintain a linked list and submit writes in the order, reads are submitted.
++ * If native copy offload feature is absent, this function tries to emulate,
++ * by copying data from source to a temporary buffer and from buffer to
++ * destination device.
 + */
-+static int blk_copy_offload(struct block_device *src_bdev,
++static int blk_copy_emulate(struct block_device *src_bdev,
 +		struct block_device *dst_bdev, struct range_entry *ranges,
 +		int nr, cio_iodone_t end_io, void *private, gfp_t gfp_mask)
 +{
-+	struct cio *cio;
-+	struct copy_ctx *ctx;
++	struct request_queue *sq = bdev_get_queue(src_bdev);
++	struct request_queue *dq = bdev_get_queue(dst_bdev);
 +	struct bio *read_bio, *write_bio;
-+	struct page *token;
-+	sector_t src_blk, copy_len, dst_blk;
-+	sector_t rem, max_copy_len;
++	void *buf = NULL;
++	struct copy_ctx *ctx;
++	struct cio *cio;
++	sector_t src, dst, offset, buf_len, req_len, rem = 0;
 +	int ri = 0, ret = 0;
 +	unsigned long flags;
++	sector_t max_src_hw_len = min_t(unsigned int, queue_max_hw_sectors(sq),
++			queue_max_segments(sq) << (PAGE_SHIFT - SECTOR_SHIFT))
++			<< SECTOR_SHIFT;
++	sector_t max_dst_hw_len = min_t(unsigned int, queue_max_hw_sectors(dq),
++			queue_max_segments(dq) << (PAGE_SHIFT - SECTOR_SHIFT))
++			<< SECTOR_SHIFT;
++	sector_t max_hw_len = min_t(unsigned int,
++			max_src_hw_len, max_dst_hw_len);
 +
 +	cio = kzalloc(sizeof(struct cio), GFP_KERNEL);
 +	if (!cio)
@@ -339,25 +287,26 @@ index e59c3069e835..2ce3c872ca49 100644
 +	cio->waiter = current;
 +	cio->endio = end_io;
 +	cio->private = private;
++
 +	if (bdev_is_zoned(dst_bdev)) {
 +		INIT_LIST_HEAD(&cio->list);
 +		spin_lock_init(&cio->list_lock);
 +	}
 +
-+	max_copy_len = min(bdev_max_copy_sectors(src_bdev),
-+			bdev_max_copy_sectors(dst_bdev)) << SECTOR_SHIFT;
-+
 +	for (ri = 0; ri < nr; ri++) {
-+		cio->ranges[ri].comp_len = ranges[ri].len;
-+		src_blk = ranges[ri].src;
-+		dst_blk = ranges[ri].dst;
-+		for (rem = ranges[ri].len; rem > 0; rem -= copy_len) {
-+			copy_len = min(rem, max_copy_len);
++		offset = ranges[ri].comp_len;
++		src = ranges[ri].src + offset;
++		dst = ranges[ri].dst + offset;
++		/* If IO fails, we truncate comp_len */
++		ranges[ri].comp_len = ranges[ri].len;
 +
-+			token = alloc_page(gfp_mask);
-+			if (unlikely(!token)) {
++		for (rem = ranges[ri].len - offset; rem > 0; rem -= buf_len) {
++			req_len = min_t(int, max_hw_len, rem);
++
++			buf = blk_alloc_buf(req_len, &buf_len, gfp_mask);
++			if (!buf) {
 +				ret = -ENOMEM;
-+				goto err_token;
++				goto err_alloc_buf;
 +			}
 +
 +			ctx = kzalloc(sizeof(struct copy_ctx), gfp_mask);
@@ -365,17 +314,16 @@ index e59c3069e835..2ce3c872ca49 100644
 +				ret = -ENOMEM;
 +				goto err_ctx;
 +			}
-+			read_bio = bio_alloc(src_bdev, 1, REQ_OP_READ | REQ_COPY
-+					| REQ_SYNC | REQ_NOMERGE, gfp_mask);
-+			if (!read_bio) {
-+				ret = -ENOMEM;
++
++			read_bio = bio_map_kern(sq, buf, buf_len, gfp_mask);
++			if (IS_ERR(read_bio)) {
++				ret = PTR_ERR(read_bio);
 +				goto err_read_bio;
 +			}
-+			write_bio = bio_alloc(dst_bdev, 1, REQ_OP_WRITE
-+					| REQ_COPY | REQ_SYNC | REQ_NOMERGE,
-+					gfp_mask);
-+			if (!write_bio) {
-+				cio->io_err = -ENOMEM;
++
++			write_bio = bio_map_kern(dq, buf, buf_len, gfp_mask);
++			if (IS_ERR(write_bio)) {
++				ret = PTR_ERR(write_bio);
 +				goto err_write_bio;
 +			}
 +
@@ -383,6 +331,20 @@ index e59c3069e835..2ce3c872ca49 100644
 +			ctx->range_idx = ri;
 +			ctx->write_bio = write_bio;
 +			atomic_set(&ctx->refcount, 1);
++
++			read_bio->bi_iter.bi_sector = src >> SECTOR_SHIFT;
++			read_bio->bi_iter.bi_size = buf_len;
++			read_bio->bi_opf = REQ_OP_READ | REQ_SYNC;
++			bio_set_dev(read_bio, src_bdev);
++			read_bio->bi_end_io = blk_copy_emulate_read_end_io;
++			read_bio->bi_private = ctx;
++
++			write_bio->bi_iter.bi_size = buf_len;
++			write_bio->bi_opf = REQ_OP_WRITE | REQ_SYNC;
++			bio_set_dev(write_bio, dst_bdev);
++			write_bio->bi_end_io = blk_copy_emulate_write_end_io;
++			write_bio->bi_iter.bi_sector = dst >> SECTOR_SHIFT;
++			write_bio->bi_private = ctx;
 +
 +			if (bdev_is_zoned(dst_bdev)) {
 +				INIT_WORK(&ctx->dispatch_work,
@@ -396,22 +358,11 @@ index e59c3069e835..2ce3c872ca49 100644
 +				INIT_WORK(&ctx->dispatch_work,
 +					blk_copy_dispatch_work_fn);
 +
-+			__bio_add_page(read_bio, token, PAGE_SIZE, 0);
-+			read_bio->bi_iter.bi_size = copy_len;
-+			read_bio->bi_iter.bi_sector = src_blk >> SECTOR_SHIFT;
-+			read_bio->bi_end_io = blk_copy_offload_read_end_io;
-+			read_bio->bi_private = ctx;
-+
-+			__bio_add_page(write_bio, token, PAGE_SIZE, 0);
-+			write_bio->bi_iter.bi_size = copy_len;
-+			write_bio->bi_end_io = blk_copy_offload_write_end_io;
-+			write_bio->bi_iter.bi_sector = dst_blk >> SECTOR_SHIFT;
-+			write_bio->bi_private = ctx;
-+
 +			atomic_inc(&cio->refcount);
 +			submit_bio(read_bio);
-+			src_blk += copy_len;
-+			dst_blk += copy_len;
++
++			src += buf_len;
++			dst += buf_len;
 +		}
 +	}
 +
@@ -423,225 +374,77 @@ index e59c3069e835..2ce3c872ca49 100644
 +err_read_bio:
 +	kfree(ctx);
 +err_ctx:
-+	__free_page(token);
-+err_token:
-+	ranges[ri].comp_len = min_t(sector_t,
++	kvfree(buf);
++err_alloc_buf:
++	ranges[ri].comp_len -= min_t(sector_t,
 +			ranges[ri].comp_len, (ranges[ri].len - rem));
 +
 +	cio->io_err = ret;
 +	return cio_await_completion(cio);
 +}
 +
-+static inline int blk_copy_sanity_check(struct block_device *src_bdev,
-+	struct block_device *dst_bdev, struct range_entry *ranges, int nr)
-+{
-+	unsigned int align_mask = max(bdev_logical_block_size(dst_bdev),
-+					bdev_logical_block_size(src_bdev)) - 1;
-+	sector_t len = 0;
-+	int i;
-+
-+	if (!nr)
-+		return -EINVAL;
-+
-+	if (nr >= MAX_COPY_NR_RANGE)
-+		return -EINVAL;
-+
-+	if (bdev_read_only(dst_bdev))
-+		return -EPERM;
-+
-+	for (i = 0; i < nr; i++) {
-+		if (!ranges[i].len)
-+			return -EINVAL;
-+
-+		len += ranges[i].len;
-+		if ((ranges[i].dst & align_mask) ||
-+				(ranges[i].src & align_mask) ||
-+				(ranges[i].len & align_mask))
-+			return -EINVAL;
-+		ranges[i].comp_len = 0;
-+	}
-+
-+	if (len && len >= MAX_COPY_TOTAL_LENGTH)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static inline bool blk_check_copy_offload(struct request_queue *src_q,
-+		struct request_queue *dst_q)
-+{
-+	return blk_queue_copy(dst_q) && blk_queue_copy(src_q);
-+}
-+
-+/*
-+ * blkdev_issue_copy - queue a copy
-+ * @src_bdev:	source block device
-+ * @dst_bdev:	destination block device
-+ * @ranges:	array of source/dest/len,
-+ *		ranges are expected to be allocated/freed by caller
-+ * @nr:		number of source ranges to copy
-+ * @end_io:	end_io function to be called on completion of copy operation,
-+ *		for synchronous operation this should be NULL
-+ * @private:	end_io function will be called with this private data, should be
-+ *		NULL, if operation is synchronous in nature
-+ * @gfp_mask:   memory allocation flags (for bio_alloc)
-+ *
-+ * Description:
-+ *	Copy source ranges from source block device to destination block
-+ *	device. length of a source range cannot be zero. Max total length of
-+ *	copy is limited to MAX_COPY_TOTAL_LENGTH and also maximum number of
-+ *	entries is limited to MAX_COPY_NR_RANGE
-+ */
-+int blkdev_issue_copy(struct block_device *src_bdev,
-+	struct block_device *dst_bdev, struct range_entry *ranges, int nr,
-+	cio_iodone_t end_io, void *private, gfp_t gfp_mask)
-+{
-+	struct request_queue *src_q = bdev_get_queue(src_bdev);
-+	struct request_queue *dst_q = bdev_get_queue(dst_bdev);
-+	int ret = -EINVAL;
-+
-+	ret = blk_copy_sanity_check(src_bdev, dst_bdev, ranges, nr);
-+	if (ret)
-+		return ret;
-+
-+	if (blk_check_copy_offload(src_q, dst_q))
-+		ret = blk_copy_offload(src_bdev, dst_bdev, ranges, nr,
+ static inline bool blk_check_copy_offload(struct request_queue *src_q,
+ 		struct request_queue *dst_q)
+ {
+@@ -460,15 +693,21 @@ int blkdev_issue_copy(struct block_device *src_bdev,
+ 	struct request_queue *src_q = bdev_get_queue(src_bdev);
+ 	struct request_queue *dst_q = bdev_get_queue(dst_bdev);
+ 	int ret = -EINVAL;
++	bool offload = false;
+ 
+ 	ret = blk_copy_sanity_check(src_bdev, dst_bdev, ranges, nr);
+ 	if (ret)
+ 		return ret;
+ 
+-	if (blk_check_copy_offload(src_q, dst_q))
++	offload = blk_check_copy_offload(src_q, dst_q);
++	if (offload)
+ 		ret = blk_copy_offload(src_bdev, dst_bdev, ranges, nr,
+ 				end_io, private, gfp_mask);
+ 
++	if (ret || !offload)
++		ret = blk_copy_emulate(src_bdev, dst_bdev, ranges, nr,
 +				end_io, private, gfp_mask);
 +
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(blkdev_issue_copy);
-+
- static int __blkdev_issue_write_zeroes(struct block_device *bdev,
- 		sector_t sector, sector_t nr_sects, gfp_t gfp_mask,
- 		struct bio **biop, unsigned flags)
-diff --git a/block/blk.h b/block/blk.h
-index 5929559acd71..6d534047f20d 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -308,6 +308,8 @@ static inline bool bio_may_exceed_limits(struct bio *bio,
- 		break;
- 	}
- 
-+	if (unlikely(op_is_copy(bio->bi_opf)))
-+		return false;
- 	/*
- 	 * All drivers must accept single-segments bios that are <= PAGE_SIZE.
- 	 * This is a quick and dirty check that relies on the fact that
-diff --git a/include/linux/blk_types.h b/include/linux/blk_types.h
-index e0b098089ef2..71278c862bba 100644
---- a/include/linux/blk_types.h
-+++ b/include/linux/blk_types.h
-@@ -422,6 +422,7 @@ enum req_flag_bits {
- 	 */
- 	/* for REQ_OP_WRITE_ZEROES: */
- 	__REQ_NOUNMAP,		/* do not free blocks when zeroing */
-+	__REQ_COPY,		/* copy request */
- 
- 	__REQ_NR_BITS,		/* stops here */
- };
-@@ -451,6 +452,7 @@ enum req_flag_bits {
- 
- #define REQ_DRV		(__force blk_opf_t)(1ULL << __REQ_DRV)
- #define REQ_SWAP	(__force blk_opf_t)(1ULL << __REQ_SWAP)
-+#define REQ_COPY	((__force blk_opf_t)(1ULL << __REQ_COPY))
- 
- #define REQ_FAILFAST_MASK \
- 	(REQ_FAILFAST_DEV | REQ_FAILFAST_TRANSPORT | REQ_FAILFAST_DRIVER)
-@@ -484,6 +486,11 @@ static inline bool op_is_write(blk_opf_t op)
- 	return !!(op & (__force blk_opf_t)1);
+ 	return ret;
+ }
+ EXPORT_SYMBOL_GPL(blkdev_issue_copy);
+diff --git a/block/blk-map.c b/block/blk-map.c
+index 19940c978c73..bcf8db2b75f1 100644
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -363,7 +363,7 @@ static void bio_invalidate_vmalloc_pages(struct bio *bio)
+ #endif
  }
  
-+static inline bool op_is_copy(blk_opf_t op)
-+{
-+	return (op & REQ_COPY);
-+}
-+
- /*
-  * Check if the bio or request is one that needs special treatment in the
-  * flush state machine.
-@@ -543,4 +550,41 @@ struct blk_rq_stat {
- 	u64 batch;
- };
- 
-+typedef void (cio_iodone_t)(void *private, int status);
-+
-+struct cio {
-+	struct range_entry *ranges;
-+	struct task_struct *waiter;     /* waiting task (NULL if none) */
-+	atomic_t refcount;
-+	int io_err;
-+	cio_iodone_t *endio;		/* applicable for async operation */
-+	void *private;			/* applicable for async operation */
-+
-+	/* For zoned device we maintain a linked list of IO submissions.
-+	 * This is to make sure we maintain the order of submissions.
-+	 * Otherwise some reads completing out of order, will submit writes not
-+	 * aligned with zone write pointer.
-+	 */
-+	struct list_head list;
-+	spinlock_t list_lock;
-+};
-+
-+enum copy_io_status {
-+	REQ_COPY_READ_PROGRESS,
-+	REQ_COPY_READ_COMPLETE,
-+	REQ_COPY_WRITE_PROGRESS,
-+};
-+
-+struct copy_ctx {
-+	struct cio *cio;
-+	struct work_struct dispatch_work;
-+	struct bio *write_bio;
-+	atomic_t refcount;
-+	int range_idx;			/* used in error/partial completion */
-+
-+	/* For zoned device linked list is maintained. Along with state of IO */
-+	struct list_head list;
-+	enum copy_io_status status;
-+};
-+
- #endif /* __LINUX_BLK_TYPES_H */
+-static void bio_map_kern_endio(struct bio *bio)
++void bio_map_kern_endio(struct bio *bio)
+ {
+ 	bio_invalidate_vmalloc_pages(bio);
+ 	bio_uninit(bio);
+@@ -380,7 +380,7 @@ static void bio_map_kern_endio(struct bio *bio)
+  *	Map the kernel address into a bio suitable for io to a block
+  *	device. Returns an error pointer in case of error.
+  */
+-static struct bio *bio_map_kern(struct request_queue *q, void *data,
++struct bio *bio_map_kern(struct request_queue *q, void *data,
+ 		unsigned int len, gfp_t gfp_mask)
+ {
+ 	unsigned long kaddr = (unsigned long)data;
 diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 3ac324208f2f..a3b12ad42ed7 100644
+index a3b12ad42ed7..b0b18c30a60b 100644
 --- a/include/linux/blkdev.h
 +++ b/include/linux/blkdev.h
-@@ -1065,6 +1065,9 @@ int __blkdev_issue_discard(struct block_device *bdev, sector_t sector,
- 		sector_t nr_sects, gfp_t gfp_mask, struct bio **biop);
- int blkdev_issue_secure_erase(struct block_device *bdev, sector_t sector,
- 		sector_t nr_sects, gfp_t gfp);
-+int blkdev_issue_copy(struct block_device *src_bdev,
-+		struct block_device *dst_bdev, struct range_entry *ranges,
-+		int nr, cio_iodone_t end_io, void *private, gfp_t gfp_mask);
+@@ -1068,6 +1068,9 @@ int blkdev_issue_secure_erase(struct block_device *bdev, sector_t sector,
+ int blkdev_issue_copy(struct block_device *src_bdev,
+ 		struct block_device *dst_bdev, struct range_entry *ranges,
+ 		int nr, cio_iodone_t end_io, void *private, gfp_t gfp_mask);
++struct bio *bio_map_kern(struct request_queue *q, void *data, unsigned int len,
++		gfp_t gfp_mask);
++void bio_map_kern_endio(struct bio *bio);
  
  #define BLKDEV_ZERO_NOUNMAP	(1 << 0)  /* do not free blocks */
  #define BLKDEV_ZERO_NOFALLBACK	(1 << 1)  /* don't write explicit zeroes */
-diff --git a/include/uapi/linux/fs.h b/include/uapi/linux/fs.h
-index b3ad173f619c..9248b6d259de 100644
---- a/include/uapi/linux/fs.h
-+++ b/include/uapi/linux/fs.h
-@@ -67,6 +67,21 @@ struct fstrim_range {
- /* maximum total copy length */
- #define MAX_COPY_TOTAL_LENGTH	(1 << 27)
- 
-+/* Maximum no of entries supported */
-+#define MAX_COPY_NR_RANGE	(1 << 12)
-+
-+/* range entry for copy offload, all fields should be byte addressed */
-+struct range_entry {
-+	__u64 src;		/* source to be copied */
-+	__u64 dst;		/* destination */
-+	__u64 len;		/* length in bytes to be copied */
-+
-+	/* length of data copy actually completed. This will be filled by
-+	 * kernel, once copy completes
-+	 */
-+	__u64 comp_len;
-+};
-+
- /* extent-same (dedupe) ioctls; these MUST match the btrfs ioctl definitions */
- #define FILE_DEDUPE_RANGE_SAME		0
- #define FILE_DEDUPE_RANGE_DIFFERS	1
 -- 
 2.35.1.500.gb896f729e2
 
