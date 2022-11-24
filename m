@@ -2,214 +2,465 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7EF5B637278
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Nov 2022 07:41:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE0C263734E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Nov 2022 09:07:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229811AbiKXGll (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Nov 2022 01:41:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45940 "EHLO
+        id S229657AbiKXIHv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Nov 2022 03:07:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54540 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229750AbiKXGle (ORCPT
+        with ESMTP id S229653AbiKXIHu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Nov 2022 01:41:34 -0500
-Received: from mx07-001d1705.pphosted.com (mx07-001d1705.pphosted.com [185.132.183.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49C63E14E6;
-        Wed, 23 Nov 2022 22:41:04 -0800 (PST)
-Received: from pps.filterd (m0209326.ppops.net [127.0.0.1])
-        by mx08-001d1705.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2AO6WRUH002142;
-        Thu, 24 Nov 2022 06:40:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sony.com; h=from : to : cc :
- subject : date : message-id : content-type : content-transfer-encoding :
- mime-version; s=S1; bh=xKKeZR6+SXGUXOimF0GeERuS7BNE4wQS3IqZd9D2IJ8=;
- b=p+6bY9cLsuAK27uPAhoagIkDthV5QdkTr/3G+e9zZD8gwt54cdrWmP0bc+7X328tB/P7
- cPyP7ctoV7QAhst9zQ7u2R9Vg+OWIYaXQ2lTmgNvYHcZdcASeoRg1KegqkilhChX8Ddg
- iCBGrwz+U3NJ4di8UefBQ/8aTQaaPeLvNRLKK3IwQIbb8r/iPIaF69sBNG5OqYaQx2JZ
- TzHvgy4UMxc97Y1sKfWo2T8nyIAFyAUgH58BlQggj2mrZa6Y9VqYgrTsU+TV35h6d+J3
- lDp87zRQfEkfHNcR9mP9cwtTUCxuSsK/YM/Xy4KDpuWDX3waESdmcD3/uuVeInZRw7k9 xA== 
-Received: from apc01-tyz-obe.outbound.protection.outlook.com (mail-tyzapc01lp2042.outbound.protection.outlook.com [104.47.110.42])
-        by mx08-001d1705.pphosted.com (PPS) with ESMTPS id 3kxrd5mtxk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Nov 2022 06:40:45 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fszdXAvc8b/a2/p/hsDHTvE3JgZ/kZoVQvBB66JpuxasbhpOgQiccdmEATWJ4IPQCIlFmEoIFIGTv10bGrq3ssa36QE+YixbUmdF41BRcKY1k7sC9KNa9P4TxGhwQctrB8/1Sh30OZTPeEYdGyTHVaouy84IoujOy55Evl5kB+nbcBSJztTyVV4Z4kizHyEGObc85zWFwASfmuu73c30yCXAGw1EFsse84+I7sItUmWZe96LJN6pCvspRnAKJ/ao6mx6jELLmC0vK9erhn3FZCk/mdVVatTHjZACe8KW97A9nHaLqyItypj8XOkT0ovMRnyL9+Wzgip3lemIQsuvXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xKKeZR6+SXGUXOimF0GeERuS7BNE4wQS3IqZd9D2IJ8=;
- b=PR5CfzZ4PhbFL4RJ2HA0rn/KLfVFBf+KbBiTv8ozOfsA50wmDX7rwy0wmgo0tZGkO2lzPjiwbOBF4nH0ao6LyjuNy8csr9f88lEYO5JeB37Z8mIoZMYBxolh7KBw9egYl87MckQ664egY0H+bAT1AFk2vnGHkNMzvX1opSySECA+OcBkkcDl8aGJHJVmIP7VOcG0+m674fkHlNO4AMLzY9dGXX8YOZ0/RYehBjgIXOaiF7Ww9czbsHCil2LRFxR6BmHhDHjXWgmDFRTaEPBkORqFWAxV7JwbQwnjooLXR9OFvZPj2xeXBnR/G8I3T4/aIwuG74f2h6awSD2FHX4wKA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=sony.com; dmarc=pass action=none header.from=sony.com;
- dkim=pass header.d=sony.com; arc=none
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com (2603:1096:301:fc::7)
- by SI2PR04MB4425.apcprd04.prod.outlook.com (2603:1096:4:e8::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5857.17; Thu, 24 Nov 2022 06:40:40 +0000
-Received: from PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::708b:1447:3c12:c222]) by PUZPR04MB6316.apcprd04.prod.outlook.com
- ([fe80::708b:1447:3c12:c222%8]) with mapi id 15.20.5857.008; Thu, 24 Nov 2022
- 06:40:40 +0000
-From:   "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-To:     "linkinjeon@kernel.org" <linkinjeon@kernel.org>,
-        "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>
-CC:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
-        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
-Subject: [PATCH v2 4/5] exfat: rename exfat_free_dentry_set() to
- exfat_put_dentry_set()
-Thread-Topic: [PATCH v2 4/5] exfat: rename exfat_free_dentry_set() to
- exfat_put_dentry_set()
-Thread-Index: Adj/zhk3xAnUZqh9RdCn2jEE9Dr+8w==
-Date:   Thu, 24 Nov 2022 06:40:40 +0000
-Message-ID: <PUZPR04MB6316E211D778619133DBB075810F9@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PUZPR04MB6316:EE_|SI2PR04MB4425:EE_
-x-ms-office365-filtering-correlation-id: dbea7db0-c004-4aca-ba01-08dacde6cd96
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 5SgMZfZR5mvN7U7ghU2GyB7f6VbvoUHQdiXQCLMkDv/iZfdbwX8lVdKicXNBPqJ/0lLeqCDscQWXqKz9G4cSNfLTjC4xb0pB7M3NvfV5iagkchTdWleBlVc743fZecoobvnmxL0mMjlim7x00+LBGuzfThL9krMqvmPAIN6xKvnBOPsKuv9Cc1OSaVDKxNbocVAG6TvhBAohMuYUIi2rMK1TfMa3tUJWUh9OVoaDC5lUne7fR7FoemKCTSLrctSZSpNpVW5t8mfqpSY0praZphaPw0F0ILdxwUHXEXkByOviZr1OhEzZUzjzWE4rBv4bAxST3qaZQP4MZXcVWxS6DXTO8SnnWYy31J2LOc/AtfFJ61JzesnexVjn7SVIqhu7V/wCmyErbnKpiM6OGeVDkIHZoqthY/W7+HMuAvbTTImXTwoLNzza5jqT9uoIdu5Of4qH9hNf0dSy0ByXH4JDw6ReaImxKbCeP6ASI3a3T5R6JxMh6Rafis1qRJMg768eujWZ95TUkKNXNjbRNTj9jrVKtsmaHzUzWRFhCp61u3sCaN6pkXN5TcBHPut4JyGZPVmSwTHBAbbgvLPnTSvnjjwa+lPVXJrDCIzQ67VjTIxQmD6rMfsCq96ZfOLWbw+wteqMbs9dQsvjCKEYy7KfiHKbvvI2qCCZao6YmTh8Z0DLOubDAEr1aE/weGY0v1Iiabg18TZOlmUDBNzeINxmXg==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PUZPR04MB6316.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(39860400002)(396003)(366004)(376002)(136003)(346002)(451199015)(41300700001)(8936002)(478600001)(54906003)(4326008)(5660300002)(316002)(66556008)(66476007)(66946007)(76116006)(52536014)(66446008)(64756008)(8676002)(71200400001)(107886003)(2906002)(7696005)(6506007)(9686003)(186003)(110136005)(122000001)(26005)(38070700005)(38100700002)(82960400001)(86362001)(83380400001)(33656002)(55016003);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?TEgyY1hrMjBza2N5akM4WlZweFA1c0dhKzNjRUpZVHpEUml4NUtoOExaNHBl?=
- =?utf-8?B?S1VUMHdtaVpZc1NQT1VrV1BOUytmYUxFeDRRcUVPN2Jvd0NxOVM3R1JsOEhV?=
- =?utf-8?B?bTJ1N0RYMFN5US9OYjBvZUE4ZGxxT3dRQkN5NWpNZWxxak9DdnpOMTBMMkda?=
- =?utf-8?B?dnZFbnBWSlE0NEhLOWN1Q0JmckJjbFp2Y0xUREJXeTlnWitvdzV5cE5HenY1?=
- =?utf-8?B?NUIyTkFTV1RtcStFdWFIL0ppRFFMTStVdURvdDlyVENhUlh0OUlJOVhPVWlj?=
- =?utf-8?B?UTZyam54QkRGZ01SVS9xK2lBNlZYRUVieXp5anV2WnJOZXY3TE8wcE1ONmVC?=
- =?utf-8?B?OTlGc2Y2eDRiRUlnckxtMzZVbVZWWUw4bUh3NW5odWtuazdFTDRKaW8vWUFL?=
- =?utf-8?B?WGZYenFOK0hMK1YyL25Td0hnQnJpQUZRK2YzT2hGelBWTHU2MmZvMnJJTjFD?=
- =?utf-8?B?VFNmQk1hdkRNKzJOTG9tTTY5TjN2b25VZFpaSVBpaVFSN0RlcE9kcmFmKzNV?=
- =?utf-8?B?dEh4VnZQSkRWTEdqQ1ROWnhVT1Z2R3F6bGo5V3VSYmFBNEw4KzZHMFRpMjNY?=
- =?utf-8?B?RkxWWlhkWGM0elpWMEZWK01IVERzUmtWYXIwUTRab3BhSHorOXVXQWNVZk8w?=
- =?utf-8?B?MWdHMjNuaEFYL0QvVlRtQjEvTnlTNk8xekI1bkpOYjYzQ0tWUGpTWkVqWXFV?=
- =?utf-8?B?bkp4OHlQTitCYmljYUZYa1VxMXRzdzlQV2l3RTlkNEwxQzN3NlpSVFNYdm42?=
- =?utf-8?B?VjRVZTVuUVBIWm9RYnN2b1lEb1EySzRuY0hlQkdQOTczTnNMczk1YjFzTlZP?=
- =?utf-8?B?akp4OWUwc0lvdjJhWEowYjlSOFY4TGpmNmFkdGR1aWtyem9IQXk3YThzMStt?=
- =?utf-8?B?YW9Od2dhOTdDYnc0U253KzRnQnpRaHkyRGN6d1E2SlFCdU1HWXpFdWhMTHhG?=
- =?utf-8?B?TnpjZjUwa0FkMGRKMEtINWZKQzJobXk0SGkxUWFZUXRtRVY2WE1IdVM3UVZo?=
- =?utf-8?B?eGlEa2pSc05Bb1NjbmtLYUNMQkt1UU1XNlNPZ0FqM2hiajFqT0Zsb0xzMyts?=
- =?utf-8?B?Tm9xRnlVNFh0OUNNU1RyN0dWWWt5aStUNzY2V1k2WVAyNW9yUGg1SXBPSUpS?=
- =?utf-8?B?UC94bndjcGNkRmlMZGRmd0cyMUsvdTYrQlhaVjVhdUZUZFBhQ21aa1ZvWnNE?=
- =?utf-8?B?QUVPRzRFbHRITHBiSkJQdk4veitJWmRzbURMcEdtTEJmakhjdGRON0FBVTRK?=
- =?utf-8?B?TUtUN2wyN0QxMnE0MkZGWTFsTm1Wblpyd0ptNHl4K3N4Q0NqdXV1Ly8yRzFz?=
- =?utf-8?B?MVJ4NHhTTkt3WWdHTXNVbXcxeW5kNUNCWHBUK1k0aVZNQVRvWjh3dzRKTDAr?=
- =?utf-8?B?MXF6VHpWSVUvSU5zdlI5a24vMSs3OU1HT2psSVM1RVRXdEVWMG5hZXN5NS9G?=
- =?utf-8?B?UExJQkliTVRVRmxTQTB3LzNXM0J6OTZVUjBqeGdVNm5ibWdMVGlNczFWSnp2?=
- =?utf-8?B?Sjg3MUdBVkdHb0R4ZHBuSitxZThJanMzaXNRaFpyZkJGRDR6UnFadFQ1YWhZ?=
- =?utf-8?B?UjU1dmZiYmhhTnJxcmMxclBLMHczK1RxNmhoUU5nWnJ2SWp3NFFjQjdkTTVM?=
- =?utf-8?B?dCtnWElsa2JvRjJ4TXB4QkNNR2FGMHUrakdRaVRTbWRKQzNIZFNlME5UZEFS?=
- =?utf-8?B?Q0JhSHpmRkVMbnY4eHFhMmxhRy9Qd0lBc3c5Sk9OMVpLRDh5ZkcwRFI1dDNi?=
- =?utf-8?B?VEZzVzBEdm5Rc3JWUnZUVGxWYkZhRHppTmpSWTFuTktMdExZalIzRTVVdzRR?=
- =?utf-8?B?UW9YZTZDRlpCbHB1T2JIaTlTQUdVTVg5OW13M1NLMjZwQUFyWUEveDlMcDBv?=
- =?utf-8?B?UkZ0Z0N0N2pBT0xzNGZiWDQzS3BPK3ozZHpaUFk1YnJwUERUdHY1dExPSFBy?=
- =?utf-8?B?OG1LUFZhMDQ1VmhLcVdMa1FhLzBBZExJcDVORHJIZEFPWHVsOWpNUkIwbTBt?=
- =?utf-8?B?VlpUQ0VGQ016MmZ3UmhuQi8wVytzblBHQSs0Zmk1OW1Fa0dHb00rUC9kelNC?=
- =?utf-8?B?NWpMTmpTRjZpbVkxckl3VzBNV3dsUDZXTWs0MXE3SFp5bWFkaFg0d1BKazA2?=
- =?utf-8?Q?f+qPY6iOShVG1IqBQjbi2ZOTA?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Thu, 24 Nov 2022 03:07:50 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B312E21E04
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Nov 2022 00:07:48 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id w4so840074plp.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Nov 2022 00:07:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iM0lTfYIhETIe2iFkmswE6KgPm9P1o45ifSWjqS2kL4=;
+        b=wHBWJu7XnahJRNfHski75v0ebXsfggZ9mxRunLaXrimWr77OZKf1RzA5GqGB6cACTG
+         hC6wX9IKSb0Xbm8xxkNbtohoLNxXB04sU7eauz8EQkvX/fKsM0H5ZgSyaYH7FgELFPQc
+         21/3lCLUmnS1cUCZWnaKMK69S5+RlynNwY6f1yw4nHQH8cTxcoWkkrylJ6piX3hcu3oj
+         LIN/Jomo1Kom9iFCF921rIBg2Gt4wAcOH0XFwS0dZHl9AvYbCdLlnqO9XlBpXOhnGS6N
+         e/HaDtCE9dycBKttx3jw+1XbDVr8cqRrcSbJMxiHVSTIUUie8mPQEEVNaCNEaGyDLnPf
+         M0Dw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=iM0lTfYIhETIe2iFkmswE6KgPm9P1o45ifSWjqS2kL4=;
+        b=MA27eJRbUco+z43ZvXNUUjil3hDx5wjPvccpHeuElbpiMcuiKugbzG8gBZwNf6emCK
+         /vTh2Jb8+jubDYSTMHeH2aAahV/tGLa+RGZW/UsC6oMJy5GeY9so4A+AqW4jwOD8plIc
+         MXOOAxm0zKIhjN3SmNnYt9Ni4pk0SnA4XT8stRiI2w+mJDwTHge7maANHsIUjxndxYMh
+         GLe2yStx8vbABM4KguotQ4xIgKXL4pXmYG+73yuiYEFaVVS9XVKFzieY4hL5g7+91VHe
+         1AKvGqlR86FB78zXxCnzUTOdoK7+ihmbpZ6dojhkgmori51NYiipX3Y+TVeEhKJRtjUe
+         EjRQ==
+X-Gm-Message-State: ANoB5pnz3kGO/oF20PV1M3Y1/A2/uzJBnSNgQHCVtZykWalvKriBp8fa
+        qgRrT5+pVt9jfqxxI93Hbsu04A==
+X-Google-Smtp-Source: AA0mqf4IiNFSAOrxBSxpg6zWv8oDD+4/IuodLjfEz8dZnd30u3VgZZvbsCqs9I5+E8aU3QDr2TMjdA==
+X-Received: by 2002:a17:90a:dc06:b0:218:9196:1cd1 with SMTP id i6-20020a17090adc0600b0021891961cd1mr27437978pjv.230.1669277268155;
+        Thu, 24 Nov 2022 00:07:48 -0800 (PST)
+Received: from [10.5.67.213] ([139.177.225.240])
+        by smtp.gmail.com with ESMTPSA id c14-20020aa7952e000000b005745481a614sm555587pfp.76.2022.11.24.00.07.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Nov 2022 00:07:47 -0800 (PST)
+Message-ID: <2250d2e8-f996-4d58-3679-775bcfd5a8dc@bytedance.com>
+Date:   Thu, 24 Nov 2022 16:07:42 +0800
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 3Gj2Xju+4iJNP5D5F4viA8bfOCMFr+7bK95Uk51BWNs+vhiWXQ0brkR0qZS1gAOa41QuWQ2FMY+0jV9B2dOTKxml9XoEZkqlgFt8GuHZYUTbb0MQC/zYRo3/NqBg1SG5kVUr8GFXd8cvRQgGYE/z+LQANcR6hQ2n1QznBfPwE5S2mjC3Fn6Zhrnr7kHxQtneGsC98YzD7IKL3tzmEIg+Abyi7oZbJ0MdqaGo+XEfEN+B8/k+K3eiIPrTxokIJEtlptUpcYgAcUQyy2zKX7JwWd6Vp4nLL4AjDxV0AQ2Xn6yVMdfAJydLh4PFmh7n9zjC2TPrxZoTe72y7Yvh6nHbQRvlXFAL3CIh+2WsEyDBsH6ppwxmf7ZCdppeiJ392fWBThN3hMQ/psv0qPK50u8zr3QTQea59SItgTB2MIt7D5pjNwaT/LDqBXIrRXD+Ub6yC24q0FiVRR50fgbBKRrUtbG/f07nBHopvZRR5Gr/zr66h9PSZjc86Rf7gjvEEgOS3E+JK34YxwPKTEkURDZNvjE+1JQvOprKJMZx3iNDE3OoR5jHZt7ZqHGKaeBW30hm4exde0DRKZ/QVDwB617OhwX2feQ0abMaT+BQXUBkqwudTwpVKUmgevncSYjVlc3r++uT+vfMcQAXTYCj0Ims5f79AS8gAlUrNeEop+XHpH9noTEIV+/lM8mzgsKrjfszOQj187fpzdu0PyLhrFs3017SPAtHtasja6CdDzSqAYQc/GbRROn9vB9B6h2ZpKWDjUZHMLrxye/ZCVaamZ+vn7i0+xAT0g7cUr/C/6lPFVLLcnRGbK9uBFJMPQAx4vQCGwIT8FfXknrUgsm74CDMUTxxhvyRw53RPJksFx+j98UEfGPhdiIb6QFAGYv6llxO
-X-OriginatorOrg: sony.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PUZPR04MB6316.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbea7db0-c004-4aca-ba01-08dacde6cd96
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Nov 2022 06:40:40.1101
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 66c65d8a-9158-4521-a2d8-664963db48e4
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vRZQJx1mwaPjRVai3kn/Ck4v0llp3kQ6qPElqCSAYAoIcpEpD57+QAo7xrITQppmrt0/ZCJV5nuNwWAA694bMA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SI2PR04MB4425
-X-Proofpoint-GUID: PpyTMHDIQlcsQcAQ0utRvtNjeZqFq74W
-X-Proofpoint-ORIG-GUID: PpyTMHDIQlcsQcAQ0utRvtNjeZqFq74W
-X-Sony-Outbound-GUID: PpyTMHDIQlcsQcAQ0utRvtNjeZqFq74W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.219,Aquarius:18.0.895,Hydra:6.0.545,FMLib:17.11.122.1
- definitions=2022-11-24_04,2022-11-23_01,2022-06-22_01
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.5.0
+Subject: Re: [Linux-cachefs] [PATCH v5 2/2] erofs: switch to
+ prepare_ondemand_read() in fscache mode
+To:     Jingbo Xu <jefflexu@linux.alibaba.com>, dhowells@redhat.com,
+        jlayton@kernel.org, xiang@kernel.org, chao@kernel.org,
+        linux-cachefs@redhat.com, linux-erofs@lists.ozlabs.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20221124034212.81892-1-jefflexu@linux.alibaba.com>
+ <20221124034212.81892-3-jefflexu@linux.alibaba.com>
+From:   Jia Zhu <zhujia.zj@bytedance.com>
+In-Reply-To: <20221124034212.81892-3-jefflexu@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-U2luY2Ugc3RydWN0IGV4ZmF0X2VudHJ5X3NldF9jYWNoZSBpcyBhbGxvY2F0ZWQgZnJvbSBzdGFj
-aywNCm5vIG5lZWQgdG8gZnJlZSwgc28gcmVuYW1lIGV4ZmF0X2ZyZWVfZGVudHJ5X3NldCgpIHRv
-DQpleGZhdF9wdXRfZGVudHJ5X3NldCgpLiBBZnRlciByZW5hbWluZywgdGhlIG5ldyBmdW5jdGlv
-biBwYWlyDQppcyBleGZhdF9nZXRfZGVudHJ5X3NldCgpL2V4ZmF0X3B1dF9kZW50cnlfc2V0KCku
-DQoNClNpZ25lZC1vZmYtYnk6IFl1ZXpoYW5nIE1vIDxZdWV6aGFuZy5Nb0Bzb255LmNvbT4NClJl
-dmlld2VkLWJ5OiBBbmR5IFd1IDxBbmR5Lld1QHNvbnkuY29tPg0KUmV2aWV3ZWQtYnk6IEFveWFt
-YSBXYXRhcnUgPHdhdGFydS5hb3lhbWFAc29ueS5jb20+DQotLS0NCiBmcy9leGZhdC9kaXIuYyAg
-ICAgIHwgMTYgKysrKysrKystLS0tLS0tLQ0KIGZzL2V4ZmF0L2V4ZmF0X2ZzLmggfCAgMiArLQ0K
-IGZzL2V4ZmF0L2lub2RlLmMgICAgfCAgMiArLQ0KIGZzL2V4ZmF0L25hbWVpLmMgICAgfCAgMiAr
-LQ0KIDQgZmlsZXMgY2hhbmdlZCwgMTEgaW5zZXJ0aW9ucygrKSwgMTEgZGVsZXRpb25zKC0pDQoN
-CmRpZmYgLS1naXQgYS9mcy9leGZhdC9kaXIuYyBiL2ZzL2V4ZmF0L2Rpci5jDQppbmRleCBhM2Zi
-NjA5ZGQxMjkuLmE5YTBiM2U0NmFmMiAxMDA2NDQNCi0tLSBhL2ZzL2V4ZmF0L2Rpci5jDQorKysg
-Yi9mcy9leGZhdC9kaXIuYw0KQEAgLTU1LDcgKzU1LDcgQEAgc3RhdGljIHZvaWQgZXhmYXRfZ2V0
-X3VuaW5hbWVfZnJvbV9leHRfZW50cnkoc3RydWN0IHN1cGVyX2Jsb2NrICpzYiwNCiAJCXVuaW5h
-bWUgKz0gRVhGQVRfRklMRV9OQU1FX0xFTjsNCiAJfQ0KIA0KLQlleGZhdF9mcmVlX2RlbnRyeV9z
-ZXQoJmVzLCBmYWxzZSk7DQorCWV4ZmF0X3B1dF9kZW50cnlfc2V0KCZlcywgZmFsc2UpOw0KIH0N
-CiANCiAvKiByZWFkIGEgZGlyZWN0b3J5IGVudHJ5IGZyb20gdGhlIG9wZW5lZCBkaXJlY3Rvcnkg
-Ki8NCkBAIC02MDIsNyArNjAyLDcgQEAgdm9pZCBleGZhdF91cGRhdGVfZGlyX2Noa3N1bV93aXRo
-X2VudHJ5X3NldChzdHJ1Y3QgZXhmYXRfZW50cnlfc2V0X2NhY2hlICplcykNCiAJZXMtPm1vZGlm
-aWVkID0gdHJ1ZTsNCiB9DQogDQotaW50IGV4ZmF0X2ZyZWVfZGVudHJ5X3NldChzdHJ1Y3QgZXhm
-YXRfZW50cnlfc2V0X2NhY2hlICplcywgaW50IHN5bmMpDQoraW50IGV4ZmF0X3B1dF9kZW50cnlf
-c2V0KHN0cnVjdCBleGZhdF9lbnRyeV9zZXRfY2FjaGUgKmVzLCBpbnQgc3luYykNCiB7DQogCWlu
-dCBpLCBlcnIgPSAwOw0KIA0KQEAgLTg2MCw3ICs4NjAsNyBAQCBpbnQgZXhmYXRfZ2V0X2RlbnRy
-eV9zZXQoc3RydWN0IGV4ZmF0X2VudHJ5X3NldF9jYWNoZSAqZXMsDQogDQogCWVwID0gZXhmYXRf
-Z2V0X2RlbnRyeV9jYWNoZWQoZXMsIDApOw0KIAlpZiAoIWV4ZmF0X3ZhbGlkYXRlX2VudHJ5KGV4
-ZmF0X2dldF9lbnRyeV90eXBlKGVwKSwgJm1vZGUpKQ0KLQkJZ290byBmcmVlX2VzOw0KKwkJZ290
-byBwdXRfZXM7DQogDQogCW51bV9lbnRyaWVzID0gdHlwZSA9PSBFU19BTExfRU5UUklFUyA/DQog
-CQllcC0+ZGVudHJ5LmZpbGUubnVtX2V4dCArIDEgOiB0eXBlOw0KQEAgLTg4Miw3ICs4ODIsNyBA
-QCBpbnQgZXhmYXRfZ2V0X2RlbnRyeV9zZXQoc3RydWN0IGV4ZmF0X2VudHJ5X3NldF9jYWNoZSAq
-ZXMsDQogCQkJaWYgKHBfZGlyLT5mbGFncyA9PSBBTExPQ19OT19GQVRfQ0hBSU4pDQogCQkJCWNs
-dSsrOw0KIAkJCWVsc2UgaWYgKGV4ZmF0X2dldF9uZXh0X2NsdXN0ZXIoc2IsICZjbHUpKQ0KLQkJ
-CQlnb3RvIGZyZWVfZXM7DQorCQkJCWdvdG8gcHV0X2VzOw0KIAkJCXNlYyA9IGV4ZmF0X2NsdXN0
-ZXJfdG9fc2VjdG9yKHNiaSwgY2x1KTsNCiAJCX0gZWxzZSB7DQogCQkJc2VjKys7DQpAQCAtODkw
-LDcgKzg5MCw3IEBAIGludCBleGZhdF9nZXRfZGVudHJ5X3NldChzdHJ1Y3QgZXhmYXRfZW50cnlf
-c2V0X2NhY2hlICplcywNCiANCiAJCWJoID0gc2JfYnJlYWQoc2IsIHNlYyk7DQogCQlpZiAoIWJo
-KQ0KLQkJCWdvdG8gZnJlZV9lczsNCisJCQlnb3RvIHB1dF9lczsNCiAJCWVzLT5iaFtlcy0+bnVt
-X2JoKytdID0gYmg7DQogCX0NCiANCkBAIC04OTgsMTIgKzg5OCwxMiBAQCBpbnQgZXhmYXRfZ2V0
-X2RlbnRyeV9zZXQoc3RydWN0IGV4ZmF0X2VudHJ5X3NldF9jYWNoZSAqZXMsDQogCWZvciAoaSA9
-IDE7IGkgPCBudW1fZW50cmllczsgaSsrKSB7DQogCQllcCA9IGV4ZmF0X2dldF9kZW50cnlfY2Fj
-aGVkKGVzLCBpKTsNCiAJCWlmICghZXhmYXRfdmFsaWRhdGVfZW50cnkoZXhmYXRfZ2V0X2VudHJ5
-X3R5cGUoZXApLCAmbW9kZSkpDQotCQkJZ290byBmcmVlX2VzOw0KKwkJCWdvdG8gcHV0X2VzOw0K
-IAl9DQogCXJldHVybiAwOw0KIA0KLWZyZWVfZXM6DQotCWV4ZmF0X2ZyZWVfZGVudHJ5X3NldChl
-cywgZmFsc2UpOw0KK3B1dF9lczoNCisJZXhmYXRfcHV0X2RlbnRyeV9zZXQoZXMsIGZhbHNlKTsN
-CiAJcmV0dXJuIC1FSU87DQogfQ0KIA0KZGlmZiAtLWdpdCBhL2ZzL2V4ZmF0L2V4ZmF0X2ZzLmgg
-Yi9mcy9leGZhdC9leGZhdF9mcy5oDQppbmRleCAyZmZlNTc5MmIxYTkuLjMyNGFjYzU3ZDAyOSAx
-MDA2NDQNCi0tLSBhL2ZzL2V4ZmF0L2V4ZmF0X2ZzLmgNCisrKyBiL2ZzL2V4ZmF0L2V4ZmF0X2Zz
-LmgNCkBAIC00OTMsNyArNDkzLDcgQEAgc3RydWN0IGV4ZmF0X2RlbnRyeSAqZXhmYXRfZ2V0X2Rl
-bnRyeV9jYWNoZWQoc3RydWN0IGV4ZmF0X2VudHJ5X3NldF9jYWNoZSAqZXMsDQogaW50IGV4ZmF0
-X2dldF9kZW50cnlfc2V0KHN0cnVjdCBleGZhdF9lbnRyeV9zZXRfY2FjaGUgKmVzLA0KIAkJc3Ry
-dWN0IHN1cGVyX2Jsb2NrICpzYiwgc3RydWN0IGV4ZmF0X2NoYWluICpwX2RpciwgaW50IGVudHJ5
-LA0KIAkJdW5zaWduZWQgaW50IHR5cGUpOw0KLWludCBleGZhdF9mcmVlX2RlbnRyeV9zZXQoc3Ry
-dWN0IGV4ZmF0X2VudHJ5X3NldF9jYWNoZSAqZXMsIGludCBzeW5jKTsNCitpbnQgZXhmYXRfcHV0
-X2RlbnRyeV9zZXQoc3RydWN0IGV4ZmF0X2VudHJ5X3NldF9jYWNoZSAqZXMsIGludCBzeW5jKTsN
-CiBpbnQgZXhmYXRfY291bnRfZGlyX2VudHJpZXMoc3RydWN0IHN1cGVyX2Jsb2NrICpzYiwgc3Ry
-dWN0IGV4ZmF0X2NoYWluICpwX2Rpcik7DQogDQogLyogaW5vZGUuYyAqLw0KZGlmZiAtLWdpdCBh
-L2ZzL2V4ZmF0L2lub2RlLmMgYi9mcy9leGZhdC9pbm9kZS5jDQppbmRleCBjZGNmMDM3YTMwNGYu
-LmE4NGVhZTcyNTU2ZCAxMDA2NDQNCi0tLSBhL2ZzL2V4ZmF0L2lub2RlLmMNCisrKyBiL2ZzL2V4
-ZmF0L2lub2RlLmMNCkBAIC04Myw3ICs4Myw3IEBAIGludCBfX2V4ZmF0X3dyaXRlX2lub2RlKHN0
-cnVjdCBpbm9kZSAqaW5vZGUsIGludCBzeW5jKQ0KIAl9DQogDQogCWV4ZmF0X3VwZGF0ZV9kaXJf
-Y2hrc3VtX3dpdGhfZW50cnlfc2V0KCZlcyk7DQotCXJldHVybiBleGZhdF9mcmVlX2RlbnRyeV9z
-ZXQoJmVzLCBzeW5jKTsNCisJcmV0dXJuIGV4ZmF0X3B1dF9kZW50cnlfc2V0KCZlcywgc3luYyk7
-DQogfQ0KIA0KIGludCBleGZhdF93cml0ZV9pbm9kZShzdHJ1Y3QgaW5vZGUgKmlub2RlLCBzdHJ1
-Y3Qgd3JpdGViYWNrX2NvbnRyb2wgKndiYykNCmRpZmYgLS1naXQgYS9mcy9leGZhdC9uYW1laS5j
-IGIvZnMvZXhmYXQvbmFtZWkuYw0KaW5kZXggOGQ3MjUyN2RmYjc4Li41NzUxMGQ3ZjU4Y2YgMTAw
-NjQ0DQotLS0gYS9mcy9leGZhdC9uYW1laS5jDQorKysgYi9mcy9leGZhdC9uYW1laS5jDQpAQCAt
-Njc2LDcgKzY3Niw3IEBAIHN0YXRpYyBpbnQgZXhmYXRfZmluZChzdHJ1Y3QgaW5vZGUgKmRpciwg
-c3RydWN0IHFzdHIgKnFuYW1lLA0KIAkJCSAgICAgZXAtPmRlbnRyeS5maWxlLmFjY2Vzc190aW1l
-LA0KIAkJCSAgICAgZXAtPmRlbnRyeS5maWxlLmFjY2Vzc19kYXRlLA0KIAkJCSAgICAgMCk7DQot
-CWV4ZmF0X2ZyZWVfZGVudHJ5X3NldCgmZXMsIGZhbHNlKTsNCisJZXhmYXRfcHV0X2RlbnRyeV9z
-ZXQoJmVzLCBmYWxzZSk7DQogDQogCWlmIChlaS0+c3RhcnRfY2x1ID09IEVYRkFUX0ZSRUVfQ0xV
-U1RFUikgew0KIAkJZXhmYXRfZnNfZXJyb3Ioc2IsDQotLSANCjIuMjUuMQ0KDQo=
+
+
+在 2022/11/24 11:42, Jingbo Xu 写道:
+> Switch to prepare_ondemand_read() interface and a self-contained request
+> completion to get rid of netfs_io_[request|subrequest].
+> 
+> The whole request will still be split into slices (subrequest) according
+> to the cache state of the backing file.  As long as one of the
+> subrequests fails, the whole request will be marked as failed.
+> 
+> Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
+Thanks.
+> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+> ---
+>   fs/erofs/fscache.c | 261 ++++++++++++++++-----------------------------
+>   1 file changed, 94 insertions(+), 167 deletions(-)
+> 
+> diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
+> index af5ed6b9c54d..3cfe1af7a46e 100644
+> --- a/fs/erofs/fscache.c
+> +++ b/fs/erofs/fscache.c
+> @@ -11,257 +11,180 @@ static DEFINE_MUTEX(erofs_domain_cookies_lock);
+>   static LIST_HEAD(erofs_domain_list);
+>   static struct vfsmount *erofs_pseudo_mnt;
+>   
+> -static struct netfs_io_request *erofs_fscache_alloc_request(struct address_space *mapping,
+> +struct erofs_fscache_request {
+> +	struct netfs_cache_resources cache_resources;
+> +	struct address_space	*mapping;	/* The mapping being accessed */
+> +	loff_t			start;		/* Start position */
+> +	size_t			len;		/* Length of the request */
+> +	size_t			submitted;	/* Length of submitted */
+> +	short			error;		/* 0 or error that occurred */
+> +	refcount_t		ref;
+> +};
+> +
+> +static struct erofs_fscache_request *erofs_fscache_req_alloc(struct address_space *mapping,
+>   					     loff_t start, size_t len)
+>   {
+> -	struct netfs_io_request *rreq;
+> +	struct erofs_fscache_request *req;
+>   
+> -	rreq = kzalloc(sizeof(struct netfs_io_request), GFP_KERNEL);
+> -	if (!rreq)
+> +	req = kzalloc(sizeof(struct erofs_fscache_request), GFP_KERNEL);
+> +	if (!req)
+>   		return ERR_PTR(-ENOMEM);
+>   
+> -	rreq->start	= start;
+> -	rreq->len	= len;
+> -	rreq->mapping	= mapping;
+> -	rreq->inode	= mapping->host;
+> -	INIT_LIST_HEAD(&rreq->subrequests);
+> -	refcount_set(&rreq->ref, 1);
+> -	return rreq;
+> -}
+> -
+> -static void erofs_fscache_put_request(struct netfs_io_request *rreq)
+> -{
+> -	if (!refcount_dec_and_test(&rreq->ref))
+> -		return;
+> -	if (rreq->cache_resources.ops)
+> -		rreq->cache_resources.ops->end_operation(&rreq->cache_resources);
+> -	kfree(rreq);
+> -}
+> -
+> -static void erofs_fscache_put_subrequest(struct netfs_io_subrequest *subreq)
+> -{
+> -	if (!refcount_dec_and_test(&subreq->ref))
+> -		return;
+> -	erofs_fscache_put_request(subreq->rreq);
+> -	kfree(subreq);
+> -}
+> +	req->mapping = mapping;
+> +	req->start   = start;
+> +	req->len     = len;
+> +	refcount_set(&req->ref, 1);
+>   
+> -static void erofs_fscache_clear_subrequests(struct netfs_io_request *rreq)
+> -{
+> -	struct netfs_io_subrequest *subreq;
+> -
+> -	while (!list_empty(&rreq->subrequests)) {
+> -		subreq = list_first_entry(&rreq->subrequests,
+> -				struct netfs_io_subrequest, rreq_link);
+> -		list_del(&subreq->rreq_link);
+> -		erofs_fscache_put_subrequest(subreq);
+> -	}
+> +	return req;
+>   }
+>   
+> -static void erofs_fscache_rreq_unlock_folios(struct netfs_io_request *rreq)
+> +static void erofs_fscache_req_complete(struct erofs_fscache_request *req)
+>   {
+> -	struct netfs_io_subrequest *subreq;
+>   	struct folio *folio;
+> -	unsigned int iopos = 0;
+> -	pgoff_t start_page = rreq->start / PAGE_SIZE;
+> -	pgoff_t last_page = ((rreq->start + rreq->len) / PAGE_SIZE) - 1;
+> -	bool subreq_failed = false;
+> +	bool failed = req->error;
+> +	pgoff_t start_page = req->start / PAGE_SIZE;
+> +	pgoff_t last_page = ((req->start + req->len) / PAGE_SIZE) - 1;
+>   
+> -	XA_STATE(xas, &rreq->mapping->i_pages, start_page);
+> -
+> -	subreq = list_first_entry(&rreq->subrequests,
+> -				  struct netfs_io_subrequest, rreq_link);
+> -	subreq_failed = (subreq->error < 0);
+> +	XA_STATE(xas, &req->mapping->i_pages, start_page);
+>   
+>   	rcu_read_lock();
+>   	xas_for_each(&xas, folio, last_page) {
+> -		unsigned int pgpos, pgend;
+> -		bool pg_failed = false;
+> -
+>   		if (xas_retry(&xas, folio))
+>   			continue;
+> -
+> -		pgpos = (folio_index(folio) - start_page) * PAGE_SIZE;
+> -		pgend = pgpos + folio_size(folio);
+> -
+> -		for (;;) {
+> -			if (!subreq) {
+> -				pg_failed = true;
+> -				break;
+> -			}
+> -
+> -			pg_failed |= subreq_failed;
+> -			if (pgend < iopos + subreq->len)
+> -				break;
+> -
+> -			iopos += subreq->len;
+> -			if (!list_is_last(&subreq->rreq_link,
+> -					  &rreq->subrequests)) {
+> -				subreq = list_next_entry(subreq, rreq_link);
+> -				subreq_failed = (subreq->error < 0);
+> -			} else {
+> -				subreq = NULL;
+> -				subreq_failed = false;
+> -			}
+> -			if (pgend == iopos)
+> -				break;
+> -		}
+> -
+> -		if (!pg_failed)
+> +		if (!failed)
+>   			folio_mark_uptodate(folio);
+> -
+>   		folio_unlock(folio);
+>   	}
+>   	rcu_read_unlock();
+> +
+> +	if (req->cache_resources.ops)
+> +		req->cache_resources.ops->end_operation(&req->cache_resources);
+> +
+> +	kfree(req);
+>   }
+>   
+> -static void erofs_fscache_rreq_complete(struct netfs_io_request *rreq)
+> +static void erofs_fscache_req_put(struct erofs_fscache_request *req)
+>   {
+> -	erofs_fscache_rreq_unlock_folios(rreq);
+> -	erofs_fscache_clear_subrequests(rreq);
+> -	erofs_fscache_put_request(rreq);
+> +	if (refcount_dec_and_test(&req->ref))
+> +		erofs_fscache_req_complete(req);
+>   }
+>   
+> -static void erofc_fscache_subreq_complete(void *priv,
+> +static void erofs_fscache_subreq_complete(void *priv,
+>   		ssize_t transferred_or_error, bool was_async)
+>   {
+> -	struct netfs_io_subrequest *subreq = priv;
+> -	struct netfs_io_request *rreq = subreq->rreq;
+> +	struct erofs_fscache_request *req = priv;
+>   
+>   	if (IS_ERR_VALUE(transferred_or_error))
+> -		subreq->error = transferred_or_error;
+> -
+> -	if (atomic_dec_and_test(&rreq->nr_outstanding))
+> -		erofs_fscache_rreq_complete(rreq);
+> -
+> -	erofs_fscache_put_subrequest(subreq);
+> +		req->error = transferred_or_error;
+> +	erofs_fscache_req_put(req);
+>   }
+>   
+>   /*
+> - * Read data from fscache and fill the read data into page cache described by
+> - * @rreq, which shall be both aligned with PAGE_SIZE. @pstart describes
+> - * the start physical address in the cache file.
+> + * Read data from fscache (cookie, pstart, len), and fill the read data into
+> + * page cache described by (req->mapping, lstart, len). @pstart describeis the
+> + * start physical address in the cache file.
+>    */
+>   static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
+> -				struct netfs_io_request *rreq, loff_t pstart)
+> +		struct erofs_fscache_request *req, loff_t pstart, size_t len)
+>   {
+>   	enum netfs_io_source source;
+> -	struct super_block *sb = rreq->mapping->host->i_sb;
+> -	struct netfs_io_subrequest *subreq;
+> -	struct netfs_cache_resources *cres = &rreq->cache_resources;
+> +	struct super_block *sb = req->mapping->host->i_sb;
+> +	struct netfs_cache_resources *cres = &req->cache_resources;
+>   	struct iov_iter iter;
+> -	loff_t start = rreq->start;
+> -	size_t len = rreq->len;
+> +	loff_t lstart = req->start + req->submitted;
+>   	size_t done = 0;
+>   	int ret;
+>   
+> -	atomic_set(&rreq->nr_outstanding, 1);
+> +	DBG_BUGON(len > req->len - req->submitted);
+>   
+>   	ret = fscache_begin_read_operation(cres, cookie);
+>   	if (ret)
+> -		goto out;
+> +		return ret;
+>   
+>   	while (done < len) {
+> -		subreq = kzalloc(sizeof(struct netfs_io_subrequest),
+> -				 GFP_KERNEL);
+> -		if (subreq) {
+> -			INIT_LIST_HEAD(&subreq->rreq_link);
+> -			refcount_set(&subreq->ref, 2);
+> -			subreq->rreq = rreq;
+> -			refcount_inc(&rreq->ref);
+> -		} else {
+> -			ret = -ENOMEM;
+> -			goto out;
+> -		}
+> -
+> -		subreq->start = pstart + done;
+> -		subreq->len	=  len - done;
+> -		subreq->flags = 1 << NETFS_SREQ_ONDEMAND;
+> +		loff_t sstart = pstart + done;
+> +		size_t slen = len - done;
+> +		unsigned long flags = 1 << NETFS_SREQ_ONDEMAND;
+>   
+> -		list_add_tail(&subreq->rreq_link, &rreq->subrequests);
+> -
+> -		source = cres->ops->prepare_read(subreq, LLONG_MAX);
+> -		if (WARN_ON(subreq->len == 0))
+> +		source = cres->ops->prepare_ondemand_read(cres,
+> +				sstart, &slen, LLONG_MAX, &flags, 0);
+> +		if (WARN_ON(slen == 0))
+>   			source = NETFS_INVALID_READ;
+>   		if (source != NETFS_READ_FROM_CACHE) {
+> -			erofs_err(sb, "failed to fscache prepare_read (source %d)",
+> -				  source);
+> -			ret = -EIO;
+> -			subreq->error = ret;
+> -			erofs_fscache_put_subrequest(subreq);
+> -			goto out;
+> +			erofs_err(sb, "failed to fscache prepare_read (source %d)", source);
+> +			return -EIO;
+>   		}
+>   
+> -		atomic_inc(&rreq->nr_outstanding);
+> +		refcount_inc(&req->ref);
+> +		iov_iter_xarray(&iter, READ, &req->mapping->i_pages,
+> +				lstart + done, slen);
+>   
+> -		iov_iter_xarray(&iter, READ, &rreq->mapping->i_pages,
+> -				start + done, subreq->len);
+> -
+> -		ret = fscache_read(cres, subreq->start, &iter,
+> -				   NETFS_READ_HOLE_FAIL,
+> -				   erofc_fscache_subreq_complete, subreq);
+> +		ret = fscache_read(cres, sstart, &iter, NETFS_READ_HOLE_FAIL,
+> +				   erofs_fscache_subreq_complete, req);
+>   		if (ret == -EIOCBQUEUED)
+>   			ret = 0;
+>   		if (ret) {
+>   			erofs_err(sb, "failed to fscache_read (ret %d)", ret);
+> -			goto out;
+> +			return ret;
+>   		}
+>   
+> -		done += subreq->len;
+> +		done += slen;
+>   	}
+> -out:
+> -	if (atomic_dec_and_test(&rreq->nr_outstanding))
+> -		erofs_fscache_rreq_complete(rreq);
+> -
+> -	return ret;
+> +	DBG_BUGON(done != len);
+> +	req->submitted += len;
+> +	return 0;
+>   }
+>   
+>   static int erofs_fscache_meta_read_folio(struct file *data, struct folio *folio)
+>   {
+>   	int ret;
+>   	struct super_block *sb = folio_mapping(folio)->host->i_sb;
+> -	struct netfs_io_request *rreq;
+> +	struct erofs_fscache_request *req;
+>   	struct erofs_map_dev mdev = {
+>   		.m_deviceid = 0,
+>   		.m_pa = folio_pos(folio),
+>   	};
+>   
+>   	ret = erofs_map_dev(sb, &mdev);
+> -	if (ret)
+> -		goto out;
+> +	if (ret) {
+> +		folio_unlock(folio);
+> +		return ret;
+> +	}
+>   
+> -	rreq = erofs_fscache_alloc_request(folio_mapping(folio),
+> +	req = erofs_fscache_req_alloc(folio_mapping(folio),
+>   				folio_pos(folio), folio_size(folio));
+> -	if (IS_ERR(rreq)) {
+> -		ret = PTR_ERR(rreq);
+> -		goto out;
+> +	if (IS_ERR(req)) {
+> +		folio_unlock(folio);
+> +		return PTR_ERR(req);
+>   	}
+>   
+> -	return erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
+> -				rreq, mdev.m_pa);
+> -out:
+> -	folio_unlock(folio);
+> +	ret = erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
+> +				req, mdev.m_pa, folio_size(folio));
+> +	if (ret)
+> +		req->error = ret;
+> +
+> +	erofs_fscache_req_put(req);
+>   	return ret;
+>   }
+>   
+>   /*
+>    * Read into page cache in the range described by (@pos, @len).
+>    *
+> - * On return, the caller is responsible for page unlocking if the output @unlock
+> - * is true, or the callee will take this responsibility through netfs_io_request
+> - * interface.
+> + * On return, if the output @unlock is true, the caller is responsible for page
+> + * unlocking; otherwise the callee will take this responsibility through request
+> + * completion.
+>    *
+>    * The return value is the number of bytes successfully handled, or negative
+>    * error code on failure. The only exception is that, the length of the range
+> - * instead of the error code is returned on failure after netfs_io_request is
+> - * allocated, so that .readahead() could advance rac accordingly.
+> + * instead of the error code is returned on failure after request is allocated,
+> + * so that .readahead() could advance rac accordingly.
+>    */
+>   static int erofs_fscache_data_read(struct address_space *mapping,
+>   				   loff_t pos, size_t len, bool *unlock)
+>   {
+>   	struct inode *inode = mapping->host;
+>   	struct super_block *sb = inode->i_sb;
+> -	struct netfs_io_request *rreq;
+> +	struct erofs_fscache_request *req;
+>   	struct erofs_map_blocks map;
+>   	struct erofs_map_dev mdev;
+>   	struct iov_iter iter;
+> @@ -318,13 +241,17 @@ static int erofs_fscache_data_read(struct address_space *mapping,
+>   	if (ret)
+>   		return ret;
+>   
+> -	rreq = erofs_fscache_alloc_request(mapping, pos, count);
+> -	if (IS_ERR(rreq))
+> -		return PTR_ERR(rreq);
+> +	req = erofs_fscache_req_alloc(mapping, pos, count);
+> +	if (IS_ERR(req))
+> +		return PTR_ERR(req);
+>   
+>   	*unlock = false;
+> -	erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
+> -			rreq, mdev.m_pa + (pos - map.m_la));
+> +	ret = erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
+> +			req, mdev.m_pa + (pos - map.m_la), count);
+> +	if (ret)
+> +		req->error = ret;
+> +
+> +	erofs_fscache_req_put(req);
+>   	return count;
+>   }
+>   
