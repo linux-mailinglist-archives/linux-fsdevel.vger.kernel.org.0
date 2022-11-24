@@ -2,141 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D38C8637967
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Nov 2022 13:55:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EA2663799A
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Nov 2022 14:02:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230034AbiKXMz3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Nov 2022 07:55:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41236 "EHLO
+        id S229815AbiKXNCR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Nov 2022 08:02:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229810AbiKXMzJ (ORCPT
+        with ESMTP id S230185AbiKXNB4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Nov 2022 07:55:09 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 98F6C942D7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Nov 2022 04:54:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 4A7516211E
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Nov 2022 12:54:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE9D7C433C1;
-        Thu, 24 Nov 2022 12:54:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669294478;
-        bh=jpNMkvOysz5RzRNcWKi0Sjbu4ch1oCoMeyMr7MxNaOk=;
-        h=Date:From:To:Cc:Subject:From;
-        b=J7uzAKb5C+4LPtMcx7507VCaenogYXRYwa/KDd9rcZ2ZRw3uv8qqEfmMg6aIRotUi
-         6+DTDIM/0yCHcnZYfIJVO9pHeA2sW0h/ZxPe1sdNbZW7zK/wXEOv52UxJntXEXN+Ek
-         fzwPWnZSVSMJFZmalHxt46DsSiUAegpBJPyAxsneLz4+ONv5uK38p66VftD0BkMF35
-         Ofn7xUz3yo++KcFnTJ4+352KjsRo6WZjHHzZljo2vuRmoLB6U5UG79A2x0zIPBqDWh
-         Zd0MmwtymSE7Ko0NQQrpeSEXPLk8fSjcDcJajLIEHyHlE7vADLkTDD3PfeiwCpJzgo
-         5uRe8JbzDVFjg==
-Date:   Thu, 24 Nov 2022 13:54:34 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     daniel@iogearbox.net, stgraber@ubuntu.com
-Subject: FOSDEM 2023: Kernel Devroom CfP
-Message-ID: <20221124125434.rhuagels7jrru4dc@wittgenstein>
+        Thu, 24 Nov 2022 08:01:56 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06D45A467D;
+        Thu, 24 Nov 2022 05:01:40 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id 4so1445137pli.0;
+        Thu, 24 Nov 2022 05:01:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:reply-to:user-agent:mime-version:date:message-id:from
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hvPyI4qF5zofuh1zrNXiSEAno3Z3fjXXC/WYMRPiFOk=;
+        b=nYcA6MSNLUlYNiApEdAQ5ok/m2zKIeHlXMUk7HJWFDxLrxXIBvtBgSEq10ZqcWynzL
+         QyrlUUlWFe0uUMOFbvOiyHaudq4/w6FIMfSUVia+lM/mUzAxoiRAerJTX8vPUA+RwQu0
+         wshp4som4V6SPrRBVlgsr07dC29X/rI6vKu4hPLbScdVRXgLG1zu0CvO4+CP2Tdh6fF5
+         XAH2gp3xRv10/41T7I9BhyISFWSB2/Pj43Zh4KKattNpIRDBcUSYY77po0G+8Y6WnWTb
+         nam2oDzHat0GsPf8mJ14i8D49FHqcwkI7vFxAwDNVcAOJfB0TeXkVAiXUPEvDs6R5oIx
+         3pOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:reply-to:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hvPyI4qF5zofuh1zrNXiSEAno3Z3fjXXC/WYMRPiFOk=;
+        b=LK2f3S4QjxVCK40i92hYf215RnraY5F9e/CBsHU3jq7fj3f2NtWWGYNpsRn4eNciZ/
+         DaMGis/8KPP64CHuv6DyIMI/GmlvT/tNdgV3DIydCHs7aEooCG3rqlmziDlXSYX0uneN
+         JjD5Va3JC9jCb4S85gC85P4aeAm0iqF3qivS8YgIuTNwb6VwvXSpxKMpmlNyuVaght4V
+         XBCPdmLzgbGZumBWjbvs3E+cGCqraf7+6Md0K0HA9PbJKHsBSdu9kfL0gqEXeZoKpXFg
+         99L2edSU+fvG9+R9TzlUXlcn6u7yGgz4q1G7u3yJbEMDs36QMq5qZFU/VwpSguZzlQSz
+         Ro3Q==
+X-Gm-Message-State: ANoB5pnE5d6PyAHzR0Qkxvm96SDAcSzuHZFM29ZIIuxQ3fDo3+x2Byd0
+        B0vmgXF8oJO1lVhY1N7fpOM=
+X-Google-Smtp-Source: AA0mqf5Jv//ltq6QrucPslFfZgCb/C+E0IzZjRrv2h9O1FL6wSkqcQ4dm+Ko2yKffZo2rgY7kVjrcQ==
+X-Received: by 2002:a17:902:868b:b0:186:8c19:d472 with SMTP id g11-20020a170902868b00b001868c19d472mr14119346plo.12.1669294899453;
+        Thu, 24 Nov 2022 05:01:39 -0800 (PST)
+Received: from [172.18.255.73] ([1.242.215.113])
+        by smtp.gmail.com with ESMTPSA id n9-20020a170902e54900b00178aaf6247bsm1295952plf.21.2022.11.24.05.01.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Nov 2022 05:01:39 -0800 (PST)
+From:   Sungjong Seo <sjdev.seo@gmail.com>
+X-Google-Original-From: Sungjong Seo <sj1557.seo@samsung.com>
+Message-ID: <45e7ecdd-c4a0-5d41-5e32-db53424558da@samsung.com>
+Date:   Thu, 24 Nov 2022 22:01:27 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Reply-To: sj1557.seo@samsung.com
+Subject: Re: [PATCH v2 0/5] exfat: move exfat_entry_set_cache from heap to
+ stack
+To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>,
+        "linkinjeon@kernel.org" <linkinjeon@kernel.org>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
+References: <PUZPR04MB631661A405BDD1987B969597810F9@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Content-Language: en-US
+In-Reply-To: <PUZPR04MB631661A405BDD1987B969597810F9@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hey everyone,
+Looks good.
+Thanks for your patchset.
 
-We are pleased to announce the Call for Participation (CFP) for the FOSDEM 2023
-Kernel Devroom.
+Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
 
-FOSDEM 2023 will be over the weekend of the 4th and 5th of February in Brussels,
-Belgium. FOSDEM is a free and non-commercial event organized by the community for
-the community. The goal is to provide free and open source software developers and
-communities a place to meet to:
-
-* Get in touch with other developers and projects;
-* Be informed about the latest developments in the free software world;
-* Be informed about the latest developments in the open source world;
-* Attend interesting talks and presentations on various topics by project leaders
-   and committers;
-* To promote the development and benefits of free software and open source solutions.
-* Participation and attendance is totally free, though the organizers gratefully
-   accept donations and sponsorship.
-
-## Format
-
-The Kernel Devroom will be running all day on Sunday, 5 February, starting at 9am
-and finishing at 5pm.
-
-We're looking for talk or demo proposals in one of the following 4 sizes:
-
-   10 minutes (e.g., a short demo)
-   20 minutes (e.g., a project update)
-   30 minutes (e.g., introduction to a new technology or a deep dive on a complex feature)
-   40 minutes (e.g., a deep dive on a complex feature)
-
-In all cases, please allow for at least 5 minutes of questions (10 min preferred for
-the 30 min slots). In general, shorter content will be more likely to get approved as
-we want to cover a wide range of topics.
-
-## Proposals
-
-Proposals should be sent through the FOSDEM scheduling system at:
-https://penta.fosdem.org/submission/FOSDEM23/ Note that if you submitted a proposal to
-FOSDEM in the past, you can and should re-use your existing account rather than register
-a new one. If you have no account yet please create a new one. Make sure to fill in your
-speaker bio.
-
-Please select the "Kernel" as the track and ensure you include the following information
-when submitting a proposal:
-
-| Section | Field	| Notes                                                                           |
-| ------- | ----------- | ------------------------------------------------------------------------------- |
-| Person  | Name(s)	| Your first, last and public names.                                              |
-| Person  | Abstract	| A short bio.                                                                    |
-| Person  | Photo	| Please provide a photo.                                                         |
-| Event	  | Event Title	| This is the title of your talk - please be descriptive to encourage attendance. |
-| Event	  | Abstract	| Short abstract of one or two paragraphs.                                        |
-| Event	  | Duration	| Please indicate the length of your talk; 10 min, 20 min, 30, or 40 min          |
-
-The CFP deadline is Saturday, 10 December 2022.
-
-## Topics
-
-The Kernel Devroom aims to cover a wide range of different topics so don't be shy. The following
-list should just serve as an inspiration:
-
-   * Filesystems and Storage
-   * io_uring
-   * Tracing
-   * eBPF
-   * Fuzzing
-   * System Boot
-   * Security
-   * Networking
-   * Namespaces and Cgroups
-   * Virtualization
-   * Rust in the Linux Kernel
-
-## Code of Conduct
-
-We'd like to remind all speakers and attendees that all of the presentations and discussions in
-our devroom are held under the guidelines set in the FOSDEM Code of Conduct and we expect attendees,
-speakers, and volunteers to follow the CoC at all times.
-
-If you submit a proposal and it is accepted, you will be required to confirm that you accept the
-FOSDEM CoC. If you have any questions about the CoC or wish to have one of the devroom organizers
-review your presentation slides or any other content for CoC compliance, please email us and we will
-do our best to assist you.
-
-Thanks!
-Daniel Borkmann
-Stéphane Graber
-Christian Brauner
+> This patchset reduces the size of exfat_entry_set_cache and moves
+> it from heap to stack.
+> 
+> Changes for v2:
+>   * [1/5] [5/5]
+>     - Rename ES_*_ENTRY to ES_IDX_*
+>     - Fix ES_IDX_LAST_FILENAME() to return the index of the last
+>       filename entry
+>     - Add ES_ENTRY_NUM() MACRO
+> 
+> Yuezhang Mo (5):
+>   exfat: reduce the size of exfat_entry_set_cache
+>   exfat: support dynamic allocate bh for exfat_entry_set_cache
+>   exfat: move exfat_entry_set_cache from heap to stack
+>   exfat: rename exfat_free_dentry_set() to exfat_put_dentry_set()
+>   exfat: replace magic numbers with Macros
+> 
+>  fs/exfat/dir.c      | 70 ++++++++++++++++++++++++++-------------------
+>  fs/exfat/exfat_fs.h | 37 ++++++++++++++++++------
+>  fs/exfat/inode.c    | 13 ++++-----
+>  fs/exfat/namei.c    | 11 ++++---
+>  4 files changed, 80 insertions(+), 51 deletions(-)
