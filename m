@@ -2,465 +2,260 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AE0C263734E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Nov 2022 09:07:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 20E1663759F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 24 Nov 2022 10:54:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229657AbiKXIHv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Nov 2022 03:07:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54540 "EHLO
+        id S230047AbiKXJyp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Nov 2022 04:54:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbiKXIHu (ORCPT
+        with ESMTP id S230006AbiKXJye (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Nov 2022 03:07:50 -0500
-Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B312E21E04
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Nov 2022 00:07:48 -0800 (PST)
-Received: by mail-pl1-x62e.google.com with SMTP id w4so840074plp.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Nov 2022 00:07:48 -0800 (PST)
+        Thu, 24 Nov 2022 04:54:34 -0500
+Received: from mail-vk1-xa35.google.com (mail-vk1-xa35.google.com [IPv6:2607:f8b0:4864:20::a35])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 660821255C5;
+        Thu, 24 Nov 2022 01:54:33 -0800 (PST)
+Received: by mail-vk1-xa35.google.com with SMTP id j24so611699vkk.0;
+        Thu, 24 Nov 2022 01:54:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iM0lTfYIhETIe2iFkmswE6KgPm9P1o45ifSWjqS2kL4=;
-        b=wHBWJu7XnahJRNfHski75v0ebXsfggZ9mxRunLaXrimWr77OZKf1RzA5GqGB6cACTG
-         hC6wX9IKSb0Xbm8xxkNbtohoLNxXB04sU7eauz8EQkvX/fKsM0H5ZgSyaYH7FgELFPQc
-         21/3lCLUmnS1cUCZWnaKMK69S5+RlynNwY6f1yw4nHQH8cTxcoWkkrylJ6piX3hcu3oj
-         LIN/Jomo1Kom9iFCF921rIBg2Gt4wAcOH0XFwS0dZHl9AvYbCdLlnqO9XlBpXOhnGS6N
-         e/HaDtCE9dycBKttx3jw+1XbDVr8cqRrcSbJMxiHVSTIUUie8mPQEEVNaCNEaGyDLnPf
-         M0Dw==
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=znZLdhUtS0rOajRMXtdBuYUM81G8XYp3wNm06MpyRAQ=;
+        b=Tu67bb6ygx0vUkZ+2K8StD1SuiJCiBl9tNobBdlL0q7mfLM4TbIC0TaC1hBOJGtWzD
+         3xWKSO7JUsHoV9daGNIgoy5fr5ddDO2N+kRlO67T/X7CJRJIT6/8H/8g3qVj4Vjni/PO
+         +atqFRy8Nksjqqeh66VShN+A+Wk7DiTKrT4XUcuLzzzLYFvsxsClPP5c3SDmXTZF7OcN
+         E2g6wAktS1Nz+0zkloTKTjNaoE4lZ5YTKbikeCItzKpKHHVMA+g8QPxFyNPEeGcTwUy0
+         wNVPeKITW+FtTd7XRN3v/tamUsNhZvhp53rgyyMB+ZKVA8JaUqoqqc5K2e+YfUX99Fb/
+         yDOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=iM0lTfYIhETIe2iFkmswE6KgPm9P1o45ifSWjqS2kL4=;
-        b=MA27eJRbUco+z43ZvXNUUjil3hDx5wjPvccpHeuElbpiMcuiKugbzG8gBZwNf6emCK
-         /vTh2Jb8+jubDYSTMHeH2aAahV/tGLa+RGZW/UsC6oMJy5GeY9so4A+AqW4jwOD8plIc
-         MXOOAxm0zKIhjN3SmNnYt9Ni4pk0SnA4XT8stRiI2w+mJDwTHge7maANHsIUjxndxYMh
-         GLe2yStx8vbABM4KguotQ4xIgKXL4pXmYG+73yuiYEFaVVS9XVKFzieY4hL5g7+91VHe
-         1AKvGqlR86FB78zXxCnzUTOdoK7+ihmbpZ6dojhkgmori51NYiipX3Y+TVeEhKJRtjUe
-         EjRQ==
-X-Gm-Message-State: ANoB5pnz3kGO/oF20PV1M3Y1/A2/uzJBnSNgQHCVtZykWalvKriBp8fa
-        qgRrT5+pVt9jfqxxI93Hbsu04A==
-X-Google-Smtp-Source: AA0mqf4IiNFSAOrxBSxpg6zWv8oDD+4/IuodLjfEz8dZnd30u3VgZZvbsCqs9I5+E8aU3QDr2TMjdA==
-X-Received: by 2002:a17:90a:dc06:b0:218:9196:1cd1 with SMTP id i6-20020a17090adc0600b0021891961cd1mr27437978pjv.230.1669277268155;
-        Thu, 24 Nov 2022 00:07:48 -0800 (PST)
-Received: from [10.5.67.213] ([139.177.225.240])
-        by smtp.gmail.com with ESMTPSA id c14-20020aa7952e000000b005745481a614sm555587pfp.76.2022.11.24.00.07.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Nov 2022 00:07:47 -0800 (PST)
-Message-ID: <2250d2e8-f996-4d58-3679-775bcfd5a8dc@bytedance.com>
-Date:   Thu, 24 Nov 2022 16:07:42 +0800
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=znZLdhUtS0rOajRMXtdBuYUM81G8XYp3wNm06MpyRAQ=;
+        b=cHiFb9QNGiq62HlT4A17Qe+oaiZKwYe4rv4IxP0BuQFTtt5vRAJ2IyYSiAZ298CdLi
+         1ublzRgpuv5d8JXSFG4P8nI+L5oh4qlkxe3wVr3xde+sCz0xCjwFF9poERy0mvTAdsa0
+         SE15/Jlg1oZU0uRpIGXIRCc2PZMqp34K+4VMvx685G6OUlwuXYUk7Yl88p4I1KgEnxou
+         oXFIAERTtQkZnpRSc6o2Tu9lhjLf67YxTLgjv8xfZG97I3HuJS4FlX27YCDuRrCQWJQy
+         sAKKb/Tm/lC/MEy7MWMc4CqsyHd9gOJ33Sv4BY/0/sODqYx2nvlu0vlKXv3Rb2X3PpF2
+         ozSA==
+X-Gm-Message-State: ANoB5pnoA8dtP3e3FUa2hiRL42dYIBUclM1DslBnX2kcAAIwSgObgXGL
+        87ryQ2pVPRmNn9TjgRf6Ea82M92M5uqkXIdmuvq3VVl6
+X-Google-Smtp-Source: AA0mqf4Mbu+taHe6j0moXui6AgZL8RVU2aQ/HargOrIRs439zbH5DSvCFHypYiTrNX0xB/4l7yrk2ySUhDqal4C/AtM=
+X-Received: by 2002:a1f:120b:0:b0:3bc:8497:27fd with SMTP id
+ 11-20020a1f120b000000b003bc849727fdmr7856792vks.15.1669283672400; Thu, 24 Nov
+ 2022 01:54:32 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.5.0
-Subject: Re: [Linux-cachefs] [PATCH v5 2/2] erofs: switch to
- prepare_ondemand_read() in fscache mode
-To:     Jingbo Xu <jefflexu@linux.alibaba.com>, dhowells@redhat.com,
-        jlayton@kernel.org, xiang@kernel.org, chao@kernel.org,
-        linux-cachefs@redhat.com, linux-erofs@lists.ozlabs.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20221124034212.81892-1-jefflexu@linux.alibaba.com>
- <20221124034212.81892-3-jefflexu@linux.alibaba.com>
-From:   Jia Zhu <zhujia.zj@bytedance.com>
-In-Reply-To: <20221124034212.81892-3-jefflexu@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+References: <20221117205249.1886336-1-amir73il@gmail.com>
+In-Reply-To: <20221117205249.1886336-1-amir73il@gmail.com>
+From:   Amir Goldstein <amir73il@gmail.com>
+Date:   Thu, 24 Nov 2022 11:54:20 +0200
+Message-ID: <CAOQ4uxhzuZ+5+ZARwRLrZhz7tVt19AST982CEpZnUaKGuBokcw@mail.gmail.com>
+Subject: Re: [PATCH v2] vfs: fix copy_file_range() averts filesystem freeze protection
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Luis Henriques <lhenriques@suse.com>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        Luis Henriques <lhenriques@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-
-在 2022/11/24 11:42, Jingbo Xu 写道:
-> Switch to prepare_ondemand_read() interface and a self-contained request
-> completion to get rid of netfs_io_[request|subrequest].
-> 
-> The whole request will still be split into slices (subrequest) according
-> to the cache state of the backing file.  As long as one of the
-> subrequests fails, the whole request will be marked as failed.
-> 
-> Reviewed-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-Reviewed-by: Jia Zhu <zhujia.zj@bytedance.com>
-Thanks.
-> Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+On Thu, Nov 17, 2022 at 10:53 PM Amir Goldstein <amir73il@gmail.com> wrote:
+>
+> Commit 868f9f2f8e00 ("vfs: fix copy_file_range() regression in cross-fs
+> copies") removed fallback to generic_copy_file_range() for cross-fs
+> cases inside vfs_copy_file_range().
+>
+> To preserve behavior of nfsd and ksmbd server-side-copy, the fallback to
+> generic_copy_file_range() was added in nfsd and ksmbd code, but that
+> call is missing sb_start_write(), fsnotify hooks and more.
+>
+> Ideally, nfsd and ksmbd would pass a flag to vfs_copy_file_range() that
+> will take care of the fallback, but that code would be subtle and we got
+> vfs_copy_file_range() logic wrong too many times already.
+>
+> Instead, add a flag to explicitly request vfs_copy_file_range() to
+> perform only generic_copy_file_range() and let nfsd and ksmbd use this
+> flag only in the fallback path.
+>
+> This choise keeps the logic changes to minimum in the non-nfsd/ksmbd code
+> paths to reduce the risk of further regressions.
+>
+> Fixes: 868f9f2f8e00 ("vfs: fix copy_file_range() regression in cross-fs copies")
+> Tested-by: Namjae Jeon <linkinjeon@kernel.org>
+> Tested-by: Luis Henriques <lhenriques@suse.de>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 > ---
->   fs/erofs/fscache.c | 261 ++++++++++++++++-----------------------------
->   1 file changed, 94 insertions(+), 167 deletions(-)
-> 
-> diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-> index af5ed6b9c54d..3cfe1af7a46e 100644
-> --- a/fs/erofs/fscache.c
-> +++ b/fs/erofs/fscache.c
-> @@ -11,257 +11,180 @@ static DEFINE_MUTEX(erofs_domain_cookies_lock);
->   static LIST_HEAD(erofs_domain_list);
->   static struct vfsmount *erofs_pseudo_mnt;
->   
-> -static struct netfs_io_request *erofs_fscache_alloc_request(struct address_space *mapping,
-> +struct erofs_fscache_request {
-> +	struct netfs_cache_resources cache_resources;
-> +	struct address_space	*mapping;	/* The mapping being accessed */
-> +	loff_t			start;		/* Start position */
-> +	size_t			len;		/* Length of the request */
-> +	size_t			submitted;	/* Length of submitted */
-> +	short			error;		/* 0 or error that occurred */
-> +	refcount_t		ref;
-> +};
+>
+> Hi Linus,
+>
+> I've tried Al, but he seems to be AFK, so since you ended up applying
+> the regressing commit, I might as well send you the fix as well.
+>
+> I intentionally chose a fix "for dummies", because I'd like to end this
+> copy_file_range() regression streak.
+>
+> I ran the copy_range fstests group on ext4/xfs/overlay to verify no
+> regressions in local fs and nfsv3/nfsv4 to test server-side-copy.
+>
+> I also patched copy_file_range() locally to test the "dumb" fallback
+> code on local fs.
+>
+> Namje tested ksmbd.
+>
+> Please apply.
+>
+
+Ping.
+
+Happy Thanksgiving!
+Amir.
+
+>
+> Changes since v1:
+> - Added Tested-by's
+>
+>  fs/ksmbd/vfs.c     |  6 +++---
+>  fs/nfsd/vfs.c      |  4 ++--
+>  fs/read_write.c    | 19 +++++++++++++++----
+>  include/linux/fs.h |  8 ++++++++
+>  4 files changed, 28 insertions(+), 9 deletions(-)
+>
+> diff --git a/fs/ksmbd/vfs.c b/fs/ksmbd/vfs.c
+> index 8de970d6146f..94b8ed4ef870 100644
+> --- a/fs/ksmbd/vfs.c
+> +++ b/fs/ksmbd/vfs.c
+> @@ -1794,9 +1794,9 @@ int ksmbd_vfs_copy_file_ranges(struct ksmbd_work *work,
+>                 ret = vfs_copy_file_range(src_fp->filp, src_off,
+>                                           dst_fp->filp, dst_off, len, 0);
+>                 if (ret == -EOPNOTSUPP || ret == -EXDEV)
+> -                       ret = generic_copy_file_range(src_fp->filp, src_off,
+> -                                                     dst_fp->filp, dst_off,
+> -                                                     len, 0);
+> +                       ret = vfs_copy_file_range(src_fp->filp, src_off,
+> +                                                 dst_fp->filp, dst_off, len,
+> +                                                 COPY_FILE_SPLICE);
+>                 if (ret < 0)
+>                         return ret;
+>
+> diff --git a/fs/nfsd/vfs.c b/fs/nfsd/vfs.c
+> index f650afedd67f..5cf11cde51f8 100644
+> --- a/fs/nfsd/vfs.c
+> +++ b/fs/nfsd/vfs.c
+> @@ -596,8 +596,8 @@ ssize_t nfsd_copy_file_range(struct file *src, u64 src_pos, struct file *dst,
+>         ret = vfs_copy_file_range(src, src_pos, dst, dst_pos, count, 0);
+>
+>         if (ret == -EOPNOTSUPP || ret == -EXDEV)
+> -               ret = generic_copy_file_range(src, src_pos, dst, dst_pos,
+> -                                             count, 0);
+> +               ret = vfs_copy_file_range(src, src_pos, dst, dst_pos, count,
+> +                                         COPY_FILE_SPLICE);
+>         return ret;
+>  }
+>
+> diff --git a/fs/read_write.c b/fs/read_write.c
+> index 328ce8cf9a85..24b9668d6377 100644
+> --- a/fs/read_write.c
+> +++ b/fs/read_write.c
+> @@ -1388,6 +1388,8 @@ ssize_t generic_copy_file_range(struct file *file_in, loff_t pos_in,
+>                                 struct file *file_out, loff_t pos_out,
+>                                 size_t len, unsigned int flags)
+>  {
+> +       lockdep_assert(sb_write_started(file_inode(file_out)->i_sb));
 > +
-> +static struct erofs_fscache_request *erofs_fscache_req_alloc(struct address_space *mapping,
->   					     loff_t start, size_t len)
->   {
-> -	struct netfs_io_request *rreq;
-> +	struct erofs_fscache_request *req;
->   
-> -	rreq = kzalloc(sizeof(struct netfs_io_request), GFP_KERNEL);
-> -	if (!rreq)
-> +	req = kzalloc(sizeof(struct erofs_fscache_request), GFP_KERNEL);
-> +	if (!req)
->   		return ERR_PTR(-ENOMEM);
->   
-> -	rreq->start	= start;
-> -	rreq->len	= len;
-> -	rreq->mapping	= mapping;
-> -	rreq->inode	= mapping->host;
-> -	INIT_LIST_HEAD(&rreq->subrequests);
-> -	refcount_set(&rreq->ref, 1);
-> -	return rreq;
-> -}
-> -
-> -static void erofs_fscache_put_request(struct netfs_io_request *rreq)
-> -{
-> -	if (!refcount_dec_and_test(&rreq->ref))
-> -		return;
-> -	if (rreq->cache_resources.ops)
-> -		rreq->cache_resources.ops->end_operation(&rreq->cache_resources);
-> -	kfree(rreq);
-> -}
-> -
-> -static void erofs_fscache_put_subrequest(struct netfs_io_subrequest *subreq)
-> -{
-> -	if (!refcount_dec_and_test(&subreq->ref))
-> -		return;
-> -	erofs_fscache_put_request(subreq->rreq);
-> -	kfree(subreq);
-> -}
-> +	req->mapping = mapping;
-> +	req->start   = start;
-> +	req->len     = len;
-> +	refcount_set(&req->ref, 1);
->   
-> -static void erofs_fscache_clear_subrequests(struct netfs_io_request *rreq)
-> -{
-> -	struct netfs_io_subrequest *subreq;
-> -
-> -	while (!list_empty(&rreq->subrequests)) {
-> -		subreq = list_first_entry(&rreq->subrequests,
-> -				struct netfs_io_subrequest, rreq_link);
-> -		list_del(&subreq->rreq_link);
-> -		erofs_fscache_put_subrequest(subreq);
-> -	}
-> +	return req;
->   }
->   
-> -static void erofs_fscache_rreq_unlock_folios(struct netfs_io_request *rreq)
-> +static void erofs_fscache_req_complete(struct erofs_fscache_request *req)
->   {
-> -	struct netfs_io_subrequest *subreq;
->   	struct folio *folio;
-> -	unsigned int iopos = 0;
-> -	pgoff_t start_page = rreq->start / PAGE_SIZE;
-> -	pgoff_t last_page = ((rreq->start + rreq->len) / PAGE_SIZE) - 1;
-> -	bool subreq_failed = false;
-> +	bool failed = req->error;
-> +	pgoff_t start_page = req->start / PAGE_SIZE;
-> +	pgoff_t last_page = ((req->start + req->len) / PAGE_SIZE) - 1;
->   
-> -	XA_STATE(xas, &rreq->mapping->i_pages, start_page);
-> -
-> -	subreq = list_first_entry(&rreq->subrequests,
-> -				  struct netfs_io_subrequest, rreq_link);
-> -	subreq_failed = (subreq->error < 0);
-> +	XA_STATE(xas, &req->mapping->i_pages, start_page);
->   
->   	rcu_read_lock();
->   	xas_for_each(&xas, folio, last_page) {
-> -		unsigned int pgpos, pgend;
-> -		bool pg_failed = false;
-> -
->   		if (xas_retry(&xas, folio))
->   			continue;
-> -
-> -		pgpos = (folio_index(folio) - start_page) * PAGE_SIZE;
-> -		pgend = pgpos + folio_size(folio);
-> -
-> -		for (;;) {
-> -			if (!subreq) {
-> -				pg_failed = true;
-> -				break;
-> -			}
-> -
-> -			pg_failed |= subreq_failed;
-> -			if (pgend < iopos + subreq->len)
-> -				break;
-> -
-> -			iopos += subreq->len;
-> -			if (!list_is_last(&subreq->rreq_link,
-> -					  &rreq->subrequests)) {
-> -				subreq = list_next_entry(subreq, rreq_link);
-> -				subreq_failed = (subreq->error < 0);
-> -			} else {
-> -				subreq = NULL;
-> -				subreq_failed = false;
-> -			}
-> -			if (pgend == iopos)
-> -				break;
-> -		}
-> -
-> -		if (!pg_failed)
-> +		if (!failed)
->   			folio_mark_uptodate(folio);
-> -
->   		folio_unlock(folio);
->   	}
->   	rcu_read_unlock();
+>         return do_splice_direct(file_in, &pos_in, file_out, &pos_out,
+>                                 len > MAX_RW_COUNT ? MAX_RW_COUNT : len, 0);
+>  }
+> @@ -1424,7 +1426,9 @@ static int generic_copy_file_checks(struct file *file_in, loff_t pos_in,
+>          * and several different sets of file_operations, but they all end up
+>          * using the same ->copy_file_range() function pointer.
+>          */
+> -       if (file_out->f_op->copy_file_range) {
+> +       if (flags & COPY_FILE_SPLICE) {
+> +               /* cross sb splice is allowed */
+> +       } else if (file_out->f_op->copy_file_range) {
+>                 if (file_in->f_op->copy_file_range !=
+>                     file_out->f_op->copy_file_range)
+>                         return -EXDEV;
+> @@ -1474,8 +1478,9 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+>                             size_t len, unsigned int flags)
+>  {
+>         ssize_t ret;
+> +       bool splice = flags & COPY_FILE_SPLICE;
+>
+> -       if (flags != 0)
+> +       if (flags & ~COPY_FILE_SPLICE)
+>                 return -EINVAL;
+>
+>         ret = generic_copy_file_checks(file_in, pos_in, file_out, pos_out, &len,
+> @@ -1501,14 +1506,14 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+>          * same sb using clone, but for filesystems where both clone and copy
+>          * are supported (e.g. nfs,cifs), we only call the copy method.
+>          */
+> -       if (file_out->f_op->copy_file_range) {
+> +       if (!splice && file_out->f_op->copy_file_range) {
+>                 ret = file_out->f_op->copy_file_range(file_in, pos_in,
+>                                                       file_out, pos_out,
+>                                                       len, flags);
+>                 goto done;
+>         }
+>
+> -       if (file_in->f_op->remap_file_range &&
+> +       if (!splice && file_in->f_op->remap_file_range &&
+>             file_inode(file_in)->i_sb == file_inode(file_out)->i_sb) {
+>                 ret = file_in->f_op->remap_file_range(file_in, pos_in,
+>                                 file_out, pos_out,
+> @@ -1528,6 +1533,8 @@ ssize_t vfs_copy_file_range(struct file *file_in, loff_t pos_in,
+>          * consistent story about which filesystems support copy_file_range()
+>          * and which filesystems do not, that will allow userspace tools to
+>          * make consistent desicions w.r.t using copy_file_range().
+> +        *
+> +        * We also get here if caller (e.g. nfsd) requested COPY_FILE_SPLICE.
+>          */
+>         ret = generic_copy_file_range(file_in, pos_in, file_out, pos_out, len,
+>                                       flags);
+> @@ -1582,6 +1589,10 @@ SYSCALL_DEFINE6(copy_file_range, int, fd_in, loff_t __user *, off_in,
+>                 pos_out = f_out.file->f_pos;
+>         }
+>
+> +       ret = -EINVAL;
+> +       if (flags != 0)
+> +               goto out;
 > +
-> +	if (req->cache_resources.ops)
-> +		req->cache_resources.ops->end_operation(&req->cache_resources);
+>         ret = vfs_copy_file_range(f_in.file, pos_in, f_out.file, pos_out, len,
+>                                   flags);
+>         if (ret > 0) {
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index e654435f1651..59ae95ddb679 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2089,6 +2089,14 @@ struct dir_context {
+>   */
+>  #define REMAP_FILE_ADVISORY            (REMAP_FILE_CAN_SHORTEN)
+>
+> +/*
+> + * These flags control the behavior of vfs_copy_file_range().
+> + * They are not available to the user via syscall.
+> + *
+> + * COPY_FILE_SPLICE: call splice direct instead of fs clone/copy ops
+> + */
+> +#define COPY_FILE_SPLICE               (1 << 0)
 > +
-> +	kfree(req);
->   }
->   
-> -static void erofs_fscache_rreq_complete(struct netfs_io_request *rreq)
-> +static void erofs_fscache_req_put(struct erofs_fscache_request *req)
->   {
-> -	erofs_fscache_rreq_unlock_folios(rreq);
-> -	erofs_fscache_clear_subrequests(rreq);
-> -	erofs_fscache_put_request(rreq);
-> +	if (refcount_dec_and_test(&req->ref))
-> +		erofs_fscache_req_complete(req);
->   }
->   
-> -static void erofc_fscache_subreq_complete(void *priv,
-> +static void erofs_fscache_subreq_complete(void *priv,
->   		ssize_t transferred_or_error, bool was_async)
->   {
-> -	struct netfs_io_subrequest *subreq = priv;
-> -	struct netfs_io_request *rreq = subreq->rreq;
-> +	struct erofs_fscache_request *req = priv;
->   
->   	if (IS_ERR_VALUE(transferred_or_error))
-> -		subreq->error = transferred_or_error;
-> -
-> -	if (atomic_dec_and_test(&rreq->nr_outstanding))
-> -		erofs_fscache_rreq_complete(rreq);
-> -
-> -	erofs_fscache_put_subrequest(subreq);
-> +		req->error = transferred_or_error;
-> +	erofs_fscache_req_put(req);
->   }
->   
->   /*
-> - * Read data from fscache and fill the read data into page cache described by
-> - * @rreq, which shall be both aligned with PAGE_SIZE. @pstart describes
-> - * the start physical address in the cache file.
-> + * Read data from fscache (cookie, pstart, len), and fill the read data into
-> + * page cache described by (req->mapping, lstart, len). @pstart describeis the
-> + * start physical address in the cache file.
->    */
->   static int erofs_fscache_read_folios_async(struct fscache_cookie *cookie,
-> -				struct netfs_io_request *rreq, loff_t pstart)
-> +		struct erofs_fscache_request *req, loff_t pstart, size_t len)
->   {
->   	enum netfs_io_source source;
-> -	struct super_block *sb = rreq->mapping->host->i_sb;
-> -	struct netfs_io_subrequest *subreq;
-> -	struct netfs_cache_resources *cres = &rreq->cache_resources;
-> +	struct super_block *sb = req->mapping->host->i_sb;
-> +	struct netfs_cache_resources *cres = &req->cache_resources;
->   	struct iov_iter iter;
-> -	loff_t start = rreq->start;
-> -	size_t len = rreq->len;
-> +	loff_t lstart = req->start + req->submitted;
->   	size_t done = 0;
->   	int ret;
->   
-> -	atomic_set(&rreq->nr_outstanding, 1);
-> +	DBG_BUGON(len > req->len - req->submitted);
->   
->   	ret = fscache_begin_read_operation(cres, cookie);
->   	if (ret)
-> -		goto out;
-> +		return ret;
->   
->   	while (done < len) {
-> -		subreq = kzalloc(sizeof(struct netfs_io_subrequest),
-> -				 GFP_KERNEL);
-> -		if (subreq) {
-> -			INIT_LIST_HEAD(&subreq->rreq_link);
-> -			refcount_set(&subreq->ref, 2);
-> -			subreq->rreq = rreq;
-> -			refcount_inc(&rreq->ref);
-> -		} else {
-> -			ret = -ENOMEM;
-> -			goto out;
-> -		}
-> -
-> -		subreq->start = pstart + done;
-> -		subreq->len	=  len - done;
-> -		subreq->flags = 1 << NETFS_SREQ_ONDEMAND;
-> +		loff_t sstart = pstart + done;
-> +		size_t slen = len - done;
-> +		unsigned long flags = 1 << NETFS_SREQ_ONDEMAND;
->   
-> -		list_add_tail(&subreq->rreq_link, &rreq->subrequests);
-> -
-> -		source = cres->ops->prepare_read(subreq, LLONG_MAX);
-> -		if (WARN_ON(subreq->len == 0))
-> +		source = cres->ops->prepare_ondemand_read(cres,
-> +				sstart, &slen, LLONG_MAX, &flags, 0);
-> +		if (WARN_ON(slen == 0))
->   			source = NETFS_INVALID_READ;
->   		if (source != NETFS_READ_FROM_CACHE) {
-> -			erofs_err(sb, "failed to fscache prepare_read (source %d)",
-> -				  source);
-> -			ret = -EIO;
-> -			subreq->error = ret;
-> -			erofs_fscache_put_subrequest(subreq);
-> -			goto out;
-> +			erofs_err(sb, "failed to fscache prepare_read (source %d)", source);
-> +			return -EIO;
->   		}
->   
-> -		atomic_inc(&rreq->nr_outstanding);
-> +		refcount_inc(&req->ref);
-> +		iov_iter_xarray(&iter, READ, &req->mapping->i_pages,
-> +				lstart + done, slen);
->   
-> -		iov_iter_xarray(&iter, READ, &rreq->mapping->i_pages,
-> -				start + done, subreq->len);
-> -
-> -		ret = fscache_read(cres, subreq->start, &iter,
-> -				   NETFS_READ_HOLE_FAIL,
-> -				   erofc_fscache_subreq_complete, subreq);
-> +		ret = fscache_read(cres, sstart, &iter, NETFS_READ_HOLE_FAIL,
-> +				   erofs_fscache_subreq_complete, req);
->   		if (ret == -EIOCBQUEUED)
->   			ret = 0;
->   		if (ret) {
->   			erofs_err(sb, "failed to fscache_read (ret %d)", ret);
-> -			goto out;
-> +			return ret;
->   		}
->   
-> -		done += subreq->len;
-> +		done += slen;
->   	}
-> -out:
-> -	if (atomic_dec_and_test(&rreq->nr_outstanding))
-> -		erofs_fscache_rreq_complete(rreq);
-> -
-> -	return ret;
-> +	DBG_BUGON(done != len);
-> +	req->submitted += len;
-> +	return 0;
->   }
->   
->   static int erofs_fscache_meta_read_folio(struct file *data, struct folio *folio)
->   {
->   	int ret;
->   	struct super_block *sb = folio_mapping(folio)->host->i_sb;
-> -	struct netfs_io_request *rreq;
-> +	struct erofs_fscache_request *req;
->   	struct erofs_map_dev mdev = {
->   		.m_deviceid = 0,
->   		.m_pa = folio_pos(folio),
->   	};
->   
->   	ret = erofs_map_dev(sb, &mdev);
-> -	if (ret)
-> -		goto out;
-> +	if (ret) {
-> +		folio_unlock(folio);
-> +		return ret;
-> +	}
->   
-> -	rreq = erofs_fscache_alloc_request(folio_mapping(folio),
-> +	req = erofs_fscache_req_alloc(folio_mapping(folio),
->   				folio_pos(folio), folio_size(folio));
-> -	if (IS_ERR(rreq)) {
-> -		ret = PTR_ERR(rreq);
-> -		goto out;
-> +	if (IS_ERR(req)) {
-> +		folio_unlock(folio);
-> +		return PTR_ERR(req);
->   	}
->   
-> -	return erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
-> -				rreq, mdev.m_pa);
-> -out:
-> -	folio_unlock(folio);
-> +	ret = erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
-> +				req, mdev.m_pa, folio_size(folio));
-> +	if (ret)
-> +		req->error = ret;
-> +
-> +	erofs_fscache_req_put(req);
->   	return ret;
->   }
->   
->   /*
->    * Read into page cache in the range described by (@pos, @len).
->    *
-> - * On return, the caller is responsible for page unlocking if the output @unlock
-> - * is true, or the callee will take this responsibility through netfs_io_request
-> - * interface.
-> + * On return, if the output @unlock is true, the caller is responsible for page
-> + * unlocking; otherwise the callee will take this responsibility through request
-> + * completion.
->    *
->    * The return value is the number of bytes successfully handled, or negative
->    * error code on failure. The only exception is that, the length of the range
-> - * instead of the error code is returned on failure after netfs_io_request is
-> - * allocated, so that .readahead() could advance rac accordingly.
-> + * instead of the error code is returned on failure after request is allocated,
-> + * so that .readahead() could advance rac accordingly.
->    */
->   static int erofs_fscache_data_read(struct address_space *mapping,
->   				   loff_t pos, size_t len, bool *unlock)
->   {
->   	struct inode *inode = mapping->host;
->   	struct super_block *sb = inode->i_sb;
-> -	struct netfs_io_request *rreq;
-> +	struct erofs_fscache_request *req;
->   	struct erofs_map_blocks map;
->   	struct erofs_map_dev mdev;
->   	struct iov_iter iter;
-> @@ -318,13 +241,17 @@ static int erofs_fscache_data_read(struct address_space *mapping,
->   	if (ret)
->   		return ret;
->   
-> -	rreq = erofs_fscache_alloc_request(mapping, pos, count);
-> -	if (IS_ERR(rreq))
-> -		return PTR_ERR(rreq);
-> +	req = erofs_fscache_req_alloc(mapping, pos, count);
-> +	if (IS_ERR(req))
-> +		return PTR_ERR(req);
->   
->   	*unlock = false;
-> -	erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
-> -			rreq, mdev.m_pa + (pos - map.m_la));
-> +	ret = erofs_fscache_read_folios_async(mdev.m_fscache->cookie,
-> +			req, mdev.m_pa + (pos - map.m_la), count);
-> +	if (ret)
-> +		req->error = ret;
-> +
-> +	erofs_fscache_req_put(req);
->   	return count;
->   }
->   
+>  struct iov_iter;
+>  struct io_uring_cmd;
+>
+> --
+> 2.25.1
+>
