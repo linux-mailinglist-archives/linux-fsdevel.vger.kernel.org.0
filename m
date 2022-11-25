@@ -2,44 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ADB80638322
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 05:32:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68D36638386
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 06:36:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229581AbiKYEcm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Nov 2022 23:32:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39260 "EHLO
+        id S229538AbiKYFgV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Nov 2022 00:36:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229489AbiKYEcj (ORCPT
+        with ESMTP id S229529AbiKYFgU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Nov 2022 23:32:39 -0500
+        Fri, 25 Nov 2022 00:36:20 -0500
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2C0BEB7F5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Nov 2022 20:32:38 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D524B1F2E2;
+        Thu, 24 Nov 2022 21:36:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=nXIjkNO7JBdHCwcuE82cTWAA9Yx6jdLEmr2MbksGCUA=; b=EOU3lsiA7ENNCud4kgkjBJw/4f
-        nUCA/lolnU4TxJ8sUCEJS5AH44RwNSIKiLDgP+20+trXc6UwepRMArbyisf/mIDoTGFpS4flqEKrz
-        WJhK3DzLZKuN3US89SPXOU3Equ1TpCSobMfrypv81LXw9r/qrIZ8r0/hcrJxOg/h8ZTXp9KF0coEY
-        g55mXLcRekcyL54BmcmuxVWr7HR3oHOdfVxRUYw1nCVokQIXlE0Gat5XgQLeg0QFsY941AaZsp/pN
-        Nlea5E6UTsfLZHA9A3hKnopFYY1Y2DdKe0hwxMaw3NfyipGhYfPF4hhAJqFx94h8Fp0Y1qiSGNQjZ
-        VPCvmERQ==;
+        bh=/Fy8IK15qJEgUw8XxuI3itfGpmDfS+C65ciFIe4IOEs=; b=DJkkcB9+bPhlo5VEmHPEHPOJXO
+        TYAZUlKV4rHswxZ0Cx6RrOzm0QRB9AOYhhnvj+b5UvoWy4ix+CpY09sDKezlqGCkSPSiueHH7XXXC
+        VNLNgoPZAglozigfkez0BXchLSpnH3acekVgBZMcjI0gT6zexLKD0I8qLoX4tK5hb2e04mCm2aSkH
+        Z8UkSY7YMcdZXhj28gpqcwE0sUJ7m2YrruZufQjF1Uk9rcFfu05mJ2GSAXpxG2+vq+EVHjS3jyTRk
+        IRO/dPbSu5GRyT1c6fgEat+6jv1aY0UIT4Baux4543rh2UXCIChk3o7FIjm2hpfezf9PTZ/xeixEE
+        xjX8k4SQ==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1oyQOC-006ai3-29;
-        Fri, 25 Nov 2022 04:32:36 +0000
-Date:   Fri, 25 Nov 2022 04:32:36 +0000
+        id 1oyRNk-006bGd-1M;
+        Fri, 25 Nov 2022 05:36:12 +0000
+Date:   Fri, 25 Nov 2022 05:36:12 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] fs: simplify vfs_get_super
-Message-ID: <Y4BFZEBT6eDZfYPu@ZenIV>
-References: <20221031124626.381838-1-hch@lst.de>
- <20221121075032.GA24804@lst.de>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        Luis Henriques <lhenriques@suse.com>,
+        Olga Kornievskaia <olga.kornievskaia@gmail.com>,
+        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
+        linux-cifs@vger.kernel.org, linux-nfs@vger.kernel.org,
+        Luis Henriques <lhenriques@suse.de>
+Subject: Re: [PATCH v2] vfs: fix copy_file_range() averts filesystem freeze
+ protection
+Message-ID: <Y4BUTK/pJAbBkUkW@ZenIV>
+References: <20221117205249.1886336-1-amir73il@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221121075032.GA24804@lst.de>
+In-Reply-To: <20221117205249.1886336-1-amir73il@gmail.com>
 Sender: Al Viro <viro@ftp.linux.org.uk>
 X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
@@ -50,15 +56,29 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 21, 2022 at 08:50:32AM +0100, Christoph Hellwig wrote:
-> On Mon, Oct 31, 2022 at 01:46:26PM +0100, Christoph Hellwig wrote:
-> > Remove the pointless keying argument and associated enum and pass the
-> > fill_super callback and a "bool reconf" instead.  Also mark the function
-> > static given that there are no users outside of super.c.
+On Thu, Nov 17, 2022 at 10:52:49PM +0200, Amir Goldstein wrote:
+> Commit 868f9f2f8e00 ("vfs: fix copy_file_range() regression in cross-fs
+> copies") removed fallback to generic_copy_file_range() for cross-fs
+> cases inside vfs_copy_file_range().
 > 
-> Al, can you pick this one up?
+> To preserve behavior of nfsd and ksmbd server-side-copy, the fallback to
+> generic_copy_file_range() was added in nfsd and ksmbd code, but that
+> call is missing sb_start_write(), fsnotify hooks and more.
+> 
+> Ideally, nfsd and ksmbd would pass a flag to vfs_copy_file_range() that
+> will take care of the fallback, but that code would be subtle and we got
+> vfs_copy_file_range() logic wrong too many times already.
+> 
+> Instead, add a flag to explicitly request vfs_copy_file_range() to
+> perform only generic_copy_file_range() and let nfsd and ksmbd use this
+> flag only in the fallback path.
+> 
+> This choise keeps the logic changes to minimum in the non-nfsd/ksmbd code
+> paths to reduce the risk of further regressions.
+> 
+> Fixes: 868f9f2f8e00 ("vfs: fix copy_file_range() regression in cross-fs copies")
+> Tested-by: Namjae Jeon <linkinjeon@kernel.org>
+> Tested-by: Luis Henriques <lhenriques@suse.de>
+> Signed-off-by: Amir Goldstein <amir73il@gmail.com>
 
-Applied, even though I want to see if we can lift sget_fc() out of that
-thing and turn it into something that would just handle the "here's
-a superblock, here's fc, here's fill_super callback, do the right
-thing" part and hopefully might be reused in bdev part...
+Applied...
