@@ -2,81 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DAF9B6390EA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 22:00:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 783676391A5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 23:54:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229918AbiKYVAa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Nov 2022 16:00:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46004 "EHLO
+        id S229787AbiKYWyN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Nov 2022 17:54:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229495AbiKYVA2 (ORCPT
+        with ESMTP id S229648AbiKYWyM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Nov 2022 16:00:28 -0500
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BDB8391C6;
-        Fri, 25 Nov 2022 13:00:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=s4UABV1ux66nah7EYyy5GKkUpPAottxYKhO0fUNPBjk=; b=WINL+1C5RFCsGAMmYeRmkGvFUH
-        CjKRYD87yhdW1z3mzkO/wvKYXVtXVi9s2FwZ3TMTHX1R3UhzXfNJyj+oHa95bXcWe7aQJeUsTvcrC
-        6SW/qHSRF2xMswuS+blR5PDDrMba6p/sKHR+K9DxLjdUtwACjcVgmk+kXEftKRQW6KuKZyBWC8WMT
-        aTnPTOpbuFPuBHCZbDBxaZWZJg8Ah+Kq/KVKlIgGaLbXz9VcJ5CUdT0u85zrRroq5Yor7t84S/0mL
-        Z45ew5LwhZtSyY8r5QTPzmcwfoHy5B1iMQcaFTEFyBpALMuPrYuP3iQJ+NfYmcQIk21hYlmGZ1p2U
-        DsObimCA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1oyfo1-006kkn-2O;
-        Fri, 25 Nov 2022 21:00:17 +0000
-Date:   Fri, 25 Nov 2022 21:00:17 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Zhen Lei <thunder.leizhen@huawei.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/2] fs: clear a UBSAN shift-out-of-bounds warning
-Message-ID: <Y4Es4TIbVos5CTO9@ZenIV>
-References: <20221125091358.1963-1-thunder.leizhen@huawei.com>
+        Fri, 25 Nov 2022 17:54:12 -0500
+Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F9A0317DF
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 14:54:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1669416851; x=1700952851;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=mUqPOOEtZqPZ5WLWSnCdZeVz7AV2KOJXM7SsJk9Tz5Q=;
+  b=gUQRK63ZfO6hQ2nCKrjShPwScjo4No9R2a0fVG9y15l/lnRyI5UjU5ZZ
+   DoNMadzsVHmGt+SuNop6FGvDyOdQaSd2l/e+pG2Q5iDsnB+T0UJw4Zp5E
+   RBUrLaUEIjL+4Vyn900Y9nFQm/GdatQC3J81gcXvXZO3Dam75ObrlSWM4
+   emUnx6cXpqHU6R3cL0fn1IeDjh5TLURnsQhl45/97TcRquR17Oe/BG1Or
+   K3WQ4IgTEnmzWkws7JYE1jiNDmEt7LehRxKB8jqPNp1UYfAHCSSLBjsFo
+   N2zGQGu28DDXnDJbDvQbo5vTRJtVyiHdgNbbtWLZGEmyDOzrhtRrjJTKb
+   A==;
+X-IronPort-AV: E=Sophos;i="5.96,194,1665417600"; 
+   d="scan'208";a="217496590"
+Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
+  by ob1.hgst.iphmx.com with ESMTP; 26 Nov 2022 06:54:10 +0800
+IronPort-SDR: P+Wy35s1UTz4MlgkvIn5NPr6e9SzkU5CqSv6tHuOg5/+/a/ebfs8Om9iTL/d/vVr4EopXfPvDX
+ 0FNDjbiHpCIv9bkPRaTTjhwI1EXSwNOgmjFNdvhybXFiCurOdM5O2jauhKmfXBEyU0Ofm1Udxg
+ PKVI5zEjJTwfyJzeRrt/P9NhwNVUPxKeYsB0hyyUrlDEkV26VWPQKOBCJt/gYhXg+6VlyD1Uy5
+ etE1HUcwBMy8X4vlOE032kjO8qHCpa802Hh+PaYoey9SbpbWjxvDYUbLXoGExq4y6dXtf3JsIu
+ eJU=
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Nov 2022 14:07:11 -0800
+IronPort-SDR: Mky8cMhl+q1l6bb9sLxVSFMfZ1xewp0r/xrAmgc8eNl7FlxV58gh8fuUe3E8CYQultZYQl5fcj
+ yjMXBL0MSogzrAJSfHqhzdsRHc3jjZr8169dvgpBeK/QbzAzHrWH3LwcYu9SExWMEkIOkyoI9X
+ xiefoHjv2Rw4ZoO7njcWhHZr0ork/CXhXqZniR3SmP+ecCPpNtSfEC/MGmcmUQR63dn+cEGN/T
+ GdsYeNRw+nr45qQAw8LBgpsIQyFRO1twHAIP+l2Ous5BIEv8wq/JezKjQOqQ+q2G0ru+h8VrH9
+ KXA=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Nov 2022 14:54:10 -0800
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4NJqtB48Ygz1RvTp
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 14:54:10 -0800 (PST)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:mime-version
+        :x-mailer:message-id:date:subject:to:from; s=dkim; t=1669416850;
+         x=1672008851; bh=mUqPOOEtZqPZ5WLWSnCdZeVz7AV2KOJXM7SsJk9Tz5Q=; b=
+        YAjpMyC85lP6qtDfS1x8BbkIlsnP8ce8pPIuYoOBG5FkQdEskXw/XEVrpW70I69m
+        QgpVRNjDgAKZtk2ROaWfmBOOPFLX9XbARxQ8dl4lAyjz3YTK3mpdHFBze71n6ul0
+        x64hWCxAQIiR4pJjmrElqL5PY24spj0KG2EmPSZst2WmnzeBiMlvpNlIvPpse+CV
+        /I4st5GrmCWUyqXplBtLFAxqNVuXu9DV+MKYGkRCcwb/IwgQ5Ra2Czzzy5SYA+RG
+        sFJOxkJRrjYbeiM0Xo3XeR/dCTHuMTIEOPBnUq2BxG25YIvA8PdihFUCpdGRZC9h
+        vriDDZQTeK+nYGswkQxmtg==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id tqD1t3pYUf7j for <linux-fsdevel@vger.kernel.org>;
+        Fri, 25 Nov 2022 14:54:10 -0800 (PST)
+Received: from washi.fujisawa.hgst.com (washi.fujisawa.hgst.com [10.149.53.254])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4NJqt95YQ8z1RvLy;
+        Fri, 25 Nov 2022 14:54:09 -0800 (PST)
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] zonefs fixes for 6.1-rc7
+Date:   Sat, 26 Nov 2022 07:54:08 +0900
+Message-Id: <20221125225408.769615-1-damien.lemoal@opensource.wdc.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221125091358.1963-1-thunder.leizhen@huawei.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 25, 2022 at 05:13:56PM +0800, Zhen Lei wrote:
-> v2 --> v3:
-> Updated the commit message of patch 2/2 based on Alexander Viro's suggestion.
+Linus,
 
-Not exactly what I meant...  I've tentatively applied it, with the
-following commit message:
+The following changes since commit 61ba9e9712e187e019e6451bb9fc8eb24685fc=
+50:
 
---------------------------------
-get rid of INT_LIMIT, use type_max() instead
+  zonefs: Remove to_attr() helper function (2022-11-16 16:08:31 +0900)
 
-INT_LIMIT() tries to do what type_max() does, except that type_max()
-doesn't rely upon undefined behaviour[*], might as well use type_max()
-instead.
+are available in the Git repository at:
 
-[*] if T is an N-bit signed integer type, the maximal value in T is
-pow(2, N - 1) - 1, all right, but naive expression for that value
-ends up with a couple of wraparounds and as usual for wraparounds
-in signed types, that's an undefined behaviour.  type_max() takes
-care to avoid those...
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs t=
+ags/zonefs-6.1-rc7
 
-Caught-by: UBSAN
-Suggested-by: Eric Biggers <ebiggers@kernel.org>
-Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-Reviewed-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
---------------------------------
+for you to fetch changes up to db58653ce0c7cf4d155727852607106f890005c0:
 
-Does anybody have objections against the commit message above?
+  zonefs: Fix active zone accounting (2022-11-25 17:01:22 +0900)
+
+----------------------------------------------------------------
+zonefs fixes for 6.1-rc7
+
+ - Fix a race between zonefs module initialization of sysfs attribute
+   directory and mounting a drive (from Xiaoxu).
+
+ - Fix active zone accounting in the rare case of an IO error due to a
+   zone transition to offline or read-only state (from me).
+
+----------------------------------------------------------------
+Damien Le Moal (1):
+      zonefs: Fix active zone accounting
+
+Zhang Xiaoxu (1):
+      zonefs: Fix race between modprobe and mount
+
+ fs/zonefs/super.c  | 23 +++++++++++++++++------
+ fs/zonefs/zonefs.h |  6 ++++--
+ 2 files changed, 21 insertions(+), 8 deletions(-)
