@@ -2,118 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 91A46638E71
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 17:45:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1480638F44
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 18:44:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229693AbiKYQpe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Nov 2022 11:45:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53592 "EHLO
+        id S229910AbiKYRoR convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Nov 2022 12:44:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41124 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbiKYQpd (ORCPT
+        with ESMTP id S229777AbiKYRoQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Nov 2022 11:45:33 -0500
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFB262BB38;
-        Fri, 25 Nov 2022 08:45:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=x53sQaWDa/88sDZr4eyy32ZPwwt0aIb86EtvxNAGN44=; b=FgIlSpJUVdmZH0PghTbL44P7IF
-        e4NY5MC1spnQ/Hghs2BPEnAn4l+90NGdQnegTxnvF3OJ+U61eJwM1xO7mu1dExG7v6tzYFJlIwp6P
-        B2aUL8HMJfhwXPEFKGEUx8W81rpFniQnI/SO1y7EbgaIaJZ1BUdY5gveE/1N4GNXa8B97uvPu85K6
-        Yklhfru9ymFK8ftcM08F8KvpHHcaOQRkbEAd2Tsqc4ddBcwjQEZAIlZg7vNI/YdzW+wA2axEbhN4Z
-        espCpyFT59uiQWc205hVxBxnTMNyu5Rhgwc6LnCyra/HjzGVoTTOmo0NKot9JbtDIoan182Jla8Wi
-        UlV/To0w==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1oyboR-006i8e-1U;
-        Fri, 25 Nov 2022 16:44:27 +0000
-Date:   Fri, 25 Nov 2022 16:44:27 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Jeff Layton <jlayton@kernel.org>
-Cc:     Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Xiubo Li <xiubli@redhat.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Steve French <sfrench@samba.org>, Paulo Alcantara <pc@cjr.nz>,
-        Ronnie Sahlberg <lsahlber@redhat.com>,
-        Shyam Prasad N <sprasad@microsoft.com>,
-        Tom Talpey <tom@talpey.com>,
-        Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Bob Peterson <rpeterso@redhat.com>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Mark Fasheh <mark@fasheh.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <joseph.qi@linux.alibaba.com>,
-        Mike Marshall <hubcap@omnibond.com>,
-        Martin Brandenburg <martin@omnibond.com>,
-        "Darrick J. Wong" <djwong@kernel.org>, hch@lst.de,
-        linux-kernel@vger.kernel.org, v9fs-developer@lists.sourceforge.net,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        ceph-devel@vger.kernel.org, linux-cifs@vger.kernel.org,
-        samba-technical@lists.samba.org, cluster-devel@redhat.com,
-        linux-nfs@vger.kernel.org, ocfs2-devel@oss.oracle.com,
-        devel@lists.orangefs.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] filelock: move file locking definitions to separate
- header file
-Message-ID: <Y4Dw65Nzt4bX9esd@ZenIV>
-References: <20221120210004.381842-1-jlayton@kernel.org>
- <Y4A6/ozhUncxbimi@ZenIV>
- <1d474f53670771f324745f597ec94b63a006d687.camel@kernel.org>
+        Fri, 25 Nov 2022 12:44:16 -0500
+X-Greylist: delayed 714 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 25 Nov 2022 09:44:09 PST
+Received: from herc.mirbsd.org (herc.mirbsd.org [IPv6:2001:470:1f15:10c:202:b3ff:feb7:54e8])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7AAEF2180B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 09:44:09 -0800 (PST)
+Received: from herc.mirbsd.org (tg@herc.mirbsd.org [192.168.0.82])
+        by herc.mirbsd.org (8.14.9/8.14.5) with ESMTP id 2APHO4Tk015230
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 25 Nov 2022 17:24:07 GMT
+Date:   Fri, 25 Nov 2022 17:24:04 +0000 (UTC)
+From:   Thorsten Glaser <tg@debian.org>
+X-X-Sender: tg@herc.mirbsd.org
+To:     1024811@bugs.debian.org
+cc:     adobriyan@gmail.com, linux-fsdevel@vger.kernel.org
+Subject: Re: Bug#1024811: linux: /proc/[pid]/stat unparsable
+In-Reply-To: <166939644927.12906.17757536147994071219.reportbug@x61w.mirbsd.org>
+Message-ID: <Pine.BSM.4.64L.2211251719211.1674@herc.mirbsd.org>
+References: <166939644927.12906.17757536147994071219.reportbug@x61w.mirbsd.org>
+Content-Language: de-DE-1901, en-GB
+X-Message-Flag: Your mailer is broken. Get an update at http://www.washington.edu/pine/getpine/pcpine.html for free.
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1d474f53670771f324745f597ec94b63a006d687.camel@kernel.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: TEXT/PLAIN; charset=utf-8
+Content-Transfer-Encoding: 8BIT
+X-Spam-Status: No, score=0.0 required=5.0 tests=BAYES_20,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 25, 2022 at 08:23:45AM -0500, Jeff Layton wrote:
+Dixi quod…
 
-> I left it in fs.h for now. Some of the file_operations prototypes need
-> that typedef, and I figure that anyone who is including filelock.h will
-> almost certainly need to include fs.h anyway. We could move it into a
-> separate header too, but it's probably not worth it.
-> 
-> HCH mentioned years ago though that we should just get rid of fl_owner_t
-> altogether and just use 'void *'. I didn't do it at the time because I
-> was focused on other changes, but this might be a good time to change
-> it.
+>The effect is that /proc/[pid]/stat cannot be parsed the way it is
+>documented, as it does not escape embedded whitespace characters;
 
-Might be...
+… nor parenthesēs:
 
-> > > +extern void show_fd_locks(struct seq_file *f,
-> > > +			 struct file *filp, struct files_struct *files);
-> > 
-> > If anything, that would be better off as fl_owner_t...  Again, a separate
-> > patch.
-> 
-> I'm not sure what you mean here. This prototype hasn't changed, and is
-> only called from procfs.
+tglase@x61w:~ $ ./mk\)sh -c 'echo $$; sleep 10' &
+[1] 13375
+tglase@x61w:~ $ 13375
+tglase@x61w:~ $ cat /proc/13375/stat
+13375 (mk)sh) S 13330 13375 13330 34837 13377 4194304 124 0 0 0 0 0 0 0 20 0 1 0 59029474 2977792 180 18446744073709551615 94911056490496 94911056739789 140721459110048 0 0 0 0 0 134307847 0 0 0 17 1 0 0 0 0 0 94911056765744 94911056773808 94911059955712 140721459115917 140721459115946 140721459115946 140721459118064 0
 
-Take a look at that function and its caller.  The use of 'files' argument there
-is (and can be) only as an opaque pointer to be compared to ->fl_owner; at that
-point it might be pointing to freed memory, for all we know (and give false
-positives if already reused).
+This is… sad — extremely so. It does not escape anything.
+I found proc_task_name(), which has an escape parameter,
+which is set to false here, but it’s only for /status
+which must escape newlines.
 
-TBH, I'd never been able to finish the audit of files_struct pointers passed
-into locks subsystem; there definitely are moments when code from fs/locks.c
-is dealing with pointers to already freed instances - show_fd_locks() at the
-very least.  They are not dereferenced, but beyond that...
+It’s used with false in /stat and /comm… the latter indeed
+needing no escapes.
+
+I’d argue that it needs a tristate argument, 0 for /comm
+to not escape anything, 1 for /status to escape newlines,
+and 2 for /stat to escape whitespace (and perhaps also a
+closing parenthesis, using \x29, so splitting both using
+scanf as indicated in the manpage and using parenthesēs
+as people seem to do on the ’net is fixed).
+
+bye,
+//mirabilos
+-- 
+22:20⎜<asarch> The crazy that persists in his craziness becomes a master
+22:21⎜<asarch> And the distance between the craziness and geniality is
+only measured by the success 18:35⎜<asarch> "Psychotics are consistently
+inconsistent. The essence of sanity is to be inconsistently inconsistent
