@@ -2,96 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4ADB463828B
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 03:52:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C464363829A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 04:06:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229661AbiKYCwA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 24 Nov 2022 21:52:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53352 "EHLO
+        id S229652AbiKYDGz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 24 Nov 2022 22:06:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34542 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbiKYCv7 (ORCPT
+        with ESMTP id S229529AbiKYDGy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 24 Nov 2022 21:51:59 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7317C29C81;
-        Thu, 24 Nov 2022 18:51:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:From:References:To:Subject:MIME-Version:Date:
-        Message-ID:Sender:Reply-To:Cc:Content-ID:Content-Description;
-        bh=WWyZ4GfuqQwjnEiGPBNjGmerSmAHeGHS1FWRjctLS5c=; b=ONIED5KAuazuCFSe5Sv0J83SAk
-        Z1iPtr0dD0YKb331mx7x9CgRUzUgCJzUeSmvnL+XbyfKasT7W195Q4Ni+6ssuUNKirP5Nhxfmhg+Y
-        UGSK77Nn0O69nLnHTMMuGvB4HV41EVE9RLPxr6CTtiK78WSCJ/8i4DBnoHIE1WIy+5THJMgPtgQ1k
-        cf31CG8JdBJjeIb1B6QKhvOKxZhz1YUVrrLHRN7O7q+nc0EiSIkA1AzmgTw0ctAZsRxnhTOQkyNb8
-        OY8VOqgF8Uuon+Mru4Pw1R+2J+jevU5D9fg6qxqN5P9fM0/uV0QGFJoDExRS2NkfzBUd0e9gzpkF2
-        +sGj9JmA==;
-Received: from [2601:1c2:d80:3110::a2e7]
-        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1oyOoi-00CI53-3Q; Fri, 25 Nov 2022 02:51:52 +0000
-Message-ID: <49d0555b-7bd3-f8c7-f9ff-683d9720c6c7@infradead.org>
-Date:   Thu, 24 Nov 2022 18:51:48 -0800
+        Thu, 24 Nov 2022 22:06:54 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 020802AC52;
+        Thu, 24 Nov 2022 19:06:49 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8D1DF6228D;
+        Fri, 25 Nov 2022 03:06:48 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E788C433C1;
+        Fri, 25 Nov 2022 03:06:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669345607;
+        bh=llHY7MD0O4KbESr1IfNXkVxCsoqrf0x1miTbM2if/kA=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=uf+swNBqVug8dnkjGi6j5UuJv+OHqO452APhypTnl+OgAgmoG1eNJj6PQA/nx740l
+         bDRO8mPlFQlAEgMrIqonf3SYk+ebcgd0HVpmilOxa/FlykLTL0CuA0cf529MnNZHUT
+         F1QJC/Uf4LKJc+9GglTGXmqc3eiqAGc5adZ41SgUuAsFwFCy11GLEYIn82xSFNA2V2
+         ODOPItWvuSlW0Z7vytudtYwqRgmAulY9ack9BPMsctSVjPoTgGEbzTM/YAtmDbvWa8
+         w7nKZDg0sqSaH0MXwR35X0YjMZu8w4Er9mbgv0Ftws+wNn+rIk2koBy+iXUdCkbS87
+         zYTcQc0QtymHg==
+Message-ID: <4b0a548a-5b04-24a6-944d-348d15605dd2@kernel.org>
+Date:   Fri, 25 Nov 2022 11:06:43 +0800
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
  Thunderbird/102.5.0
-Subject: Re: [PATCH] fs: namei: fix two excess parameter description warnings
+Subject: Re: [PATCH v3] fsverity: stop using PG_error to track error status
 Content-Language: en-US
-To:     Kushagra Verma <kushagra765@outlook.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <HK0PR01MB28019953A3C47F9B4479D877F8069@HK0PR01MB2801.apcprd01.prod.exchangelabs.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <HK0PR01MB28019953A3C47F9B4479D877F8069@HK0PR01MB2801.apcprd01.prod.exchangelabs.com>
-Content-Type: text/plain; charset=UTF-8
+To:     Eric Biggers <ebiggers@kernel.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+References: <20221028175807.55495-1-ebiggers@kernel.org>
+ <Y2y0cspSZG5dt6c+@sol.localdomain> <Y36ccbZq9gsnbmWw@gmail.com>
+From:   Chao Yu <chao@kernel.org>
+In-Reply-To: <Y36ccbZq9gsnbmWw@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On 2022/11/24 6:19, Eric Biggers wrote:
+> On Thu, Nov 10, 2022 at 12:21:06AM -0800, Eric Biggers wrote:
+>> On Fri, Oct 28, 2022 at 10:58:07AM -0700, Eric Biggers wrote:
+>>> From: Eric Biggers <ebiggers@google.com>
+>>>
+>>> As a step towards freeing the PG_error flag for other uses, change ext4
+>>> and f2fs to stop using PG_error to track verity errors.  Instead, if a
+>>> verity error occurs, just mark the whole bio as failed.  The coarser
+>>> granularity isn't really a problem since it isn't any worse than what
+>>> the block layer provides, and errors from a multi-page readahead aren't
+>>> reported to applications unless a single-page read fails too.
+>>>
+>>> f2fs supports compression, which makes the f2fs changes a bit more
+>>> complicated than desired, but the basic premise still works.
+>>>
+>>> Signed-off-by: Eric Biggers <ebiggers@google.com>
+>>> ---
+>>>
+>>> In v3, I made a small simplification to the f2fs changes.  I'm also only
+>>> sending the fsverity patch now, since the fscrypt one is now upstream.
+>>>
+>>>   fs/ext4/readpage.c |  8 ++----
+>>>   fs/f2fs/compress.c | 64 ++++++++++++++++++++++------------------------
+>>>   fs/f2fs/data.c     | 48 +++++++++++++++++++---------------
 
+Hi Eric,
 
-On 11/17/22 04:28, Kushagra Verma wrote:
-> While building the kernel documentation, two excess parameter description
-> warnings appear:
-> 	./fs/namei.c:3589: warning: Excess function parameter 'dentry'
-> 	description in 'vfs_tmpfile'
-> 	./fs/namei.c:3589: warning: Excess function parameter 'open_flag'
-> 	description in 'vfs_tmpfile'
+Result of "grep PageError fs/f2fs/* -n"
+
+...
+fs/f2fs/gc.c:1364:      ClearPageError(page);
+fs/f2fs/inline.c:177:   ClearPageError(page);
+fs/f2fs/node.c:1649:    ClearPageError(page);
+fs/f2fs/node.c:2078:            if (TestClearPageError(page))
+fs/f2fs/segment.c:3406: ClearPageError(page);
+
+Any plan to remove above PG_error flag operations? Maybe in a separated patch?
+
+Thanks,
+
+>>>   fs/verity/verify.c | 12 ++++-----
+>>>   4 files changed, 67 insertions(+), 65 deletions(-)
+>>
+>> I've applied this to the fsverity tree for 6.2.
+>>
+>> Reviews would be greatly appreciated, of course.
+>>
 > 
-> Fix these warnings by changing 'dentry' to 'parentpath' in the parameter
-> description and 'open_flag' to 'file' and change 'file' parameter's
-> description accordingly.
+> Jaegeuk and Chao, can I get a review or ack from one of you?
 > 
-> Signed-off-by: Kushagra Verma <kushagra765@outlook.com>
-
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-
-Thanks.
-
-> ---
->  fs/namei.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 578c2110df02..8e77e194fed5 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -3571,9 +3571,9 @@ static int do_open(struct nameidata *nd,
->  /**
->   * vfs_tmpfile - create tmpfile
->   * @mnt_userns:	user namespace of the mount the inode was found from
-> - * @dentry:	pointer to dentry of the base directory
-> + * @parentpath:	pointer to dentry of the base directory
->   * @mode:	mode of the new tmpfile
-> - * @open_flag:	flags
-> + * @file:	file information
->   *
->   * Create a temporary file.
->   *
-
--- 
-~Randy
+> - Eric
