@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 66170638683
+	by mail.lfdr.de (Postfix) with ESMTP id E7B1B638685
 	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 10:47:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229982AbiKYJrP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Nov 2022 04:47:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60686 "EHLO
+        id S229987AbiKYJrQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Nov 2022 04:47:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60680 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbiKYJqm (ORCPT
+        with ESMTP id S229632AbiKYJqm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 25 Nov 2022 04:46:42 -0500
 Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3788F3C6C9
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08A043C6C8
         for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 01:45:42 -0800 (PST)
-Received: by mail-io1-f70.google.com with SMTP id z15-20020a5e860f000000b006c09237cc06so1845144ioj.21
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 01:45:42 -0800 (PST)
+Received: by mail-io1-f70.google.com with SMTP id c20-20020a5d9754000000b006dbd4e6a5abso1846563ioo.17
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 01:45:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RNmOgQUdnHf0FOrxseVFmnTKfBB1wBhht5m8M1r4Ei8=;
-        b=dq8ow29IW0ZIeC4R4KWRPMMxtah+Zl7nt3oDCvetCWoCklanYsmJ9SEygJXHMF8N92
-         VHyaQ+V1qwV9snlXJwEb3l58ViyzfdwfdPxsn1aGAq9WZmmVN2Fb89tv+9axvU7stvr9
-         Uusd9ySiC50wtREXEsE05nF1LDwmqcAnFC0gd0cs46Cqofp69dVAaFi1ZT5thGC9FiQ4
-         zoym3i5mpgRV4ul2udXROErwktIW7CHqKKmAhH6Gc2sB5H+jnr8GI88rdnPxtL4dyg9h
-         DUlg9u4mrbnp5NEwmoLHeBwWnyq2twaALwPcUpLZRoaOmz/nDWPX2W2z+JHhHtPXb0l6
-         IAww==
-X-Gm-Message-State: ANoB5pmSlbP7StmRpveT5ouPzH21bKpfCT2jYQnnLtWiGl653yMSZZTY
-        /ejWMUfmiaVCKDfnfOGlqIa1ZeLwrVyPm0Evr/LahcFhureV
-X-Google-Smtp-Source: AA0mqf502lIFNy4s5sG3wHgBhsX5KJJ5ozRq1lUDw2kX+xrjH3pkFixYHATOhhnG2DnwLUJeo5TeGN5C+Gn6IAmh1FHKOzLL+TBY
+        bh=TyTObUbvHROomfZHrrlMZAPaJD3o9TopOofHcDq060Q=;
+        b=0V0eMpe+0Ckqm+pNL1nfCCJEkcpl/QHmNeJkDxp7r4YsvgvzZdrUd8Hn7mDqrqJ2Pi
+         j82gy9LDK0fdqCZjctJ+OmrakqLph3JMpYNHgQoka+UU7/zcfGF3i9fbLN/ov49UDue7
+         O9aB4SyPUyDTWaBFds1nQRAja42X7bb+jxOeSFt3G6Py150T+WoVLBWgYtIJDESCiH9z
+         hIZFX0CkdibP3oveUXW84PTHnFDGewVbCHeNM4rGL8PpNOSR/L2iYuaikIUIboeIzAaZ
+         9jIrsD+yw+WUaCpgZH7CU7QYBikdal+PelgDLj+MI6mtErmdikkNHK5OWZFAVfgEMT1s
+         jWPg==
+X-Gm-Message-State: ANoB5pnbGcRQ5Ev0g7je/INRKryfy+BAppoKiIAgbgoG3hUZymy7aRR9
+        m0kC/5GwmDyt9nKl9lJh3jBlr+dZR6lTS0gdGwTAjkUpJFfB
+X-Google-Smtp-Source: AA0mqf4o24n/Orx4YC0DHhmvarfVZCFeOWmEwqaYid9ZdvpmqLg6HCHxNJ0x2z6CJbpyaQZM/GuBpKmXcC96BFZ/o/nP/MOLsg4E
 MIME-Version: 1.0
-X-Received: by 2002:a5d:971a:0:b0:6d5:2f6e:834 with SMTP id
- h26-20020a5d971a000000b006d52f6e0834mr16781691iol.181.1669369541601; Fri, 25
+X-Received: by 2002:a05:6602:2814:b0:6de:ca95:45d8 with SMTP id
+ d20-20020a056602281400b006deca9545d8mr10997199ioe.26.1669369541410; Fri, 25
  Nov 2022 01:45:41 -0800 (PST)
 Date:   Fri, 25 Nov 2022 01:45:41 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000086b19705ee486240@google.com>
-Subject: [syzbot] KASAN: slab-out-of-bounds Write in hfs_asc2mac
-From:   syzbot <syzbot+dc3b1cf9111ab5fe98e7@syzkaller.appspotmail.com>
+Message-ID: <00000000000083c82605ee486236@google.com>
+Subject: [syzbot] possible deadlock in hfsplus_get_block
+From:   syzbot <syzbot+b7ef7c0c8d8098686ae2@syzkaller.appspotmail.com>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
@@ -59,130 +59,95 @@ syzbot found the following issue on:
 
 HEAD commit:    4312098baf37 Merge tag 'spi-fix-v6.1-rc6' of git://git.ker..
 git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=11fd0a73880000
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=121367e5880000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=8d01b6e3197974dd
-dashboard link: https://syzkaller.appspot.com/bug?extid=dc3b1cf9111ab5fe98e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=b7ef7c0c8d8098686ae2
 compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13e49a3d880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11a15a73880000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=122d9403880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1150559b880000
 
 Downloadable assets:
 disk image: https://storage.googleapis.com/syzbot-assets/4b7073d20a37/disk-4312098b.raw.xz
 vmlinux: https://storage.googleapis.com/syzbot-assets/36a0367a5593/vmlinux-4312098b.xz
 kernel image: https://storage.googleapis.com/syzbot-assets/265bedb3086b/bzImage-4312098b.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/cf5f83add496/mount_0.gz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/1a892c1e3bf7/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+dc3b1cf9111ab5fe98e7@syzkaller.appspotmail.com
+Reported-by: syzbot+b7ef7c0c8d8098686ae2@syzkaller.appspotmail.com
 
-loop0: detected capacity change from 0 to 64
-==================================================================
-BUG: KASAN: slab-out-of-bounds in hfs_asc2mac+0x467/0x9a0 fs/hfs/trans.c:133
-Write of size 1 at addr ffff88801848314e by task syz-executor391/3632
+============================================
+WARNING: possible recursive locking detected
+6.1.0-rc6-syzkaller-00012-g4312098baf37 #0 Not tainted
+--------------------------------------------
+syz-executor378/3638 is trying to acquire lock:
+ffff888023aa1548 (&HFSPLUS_I(inode)->extents_lock){+.+.}-{3:3}, at: hfsplus_get_block+0x3a3/0x1560 fs/hfsplus/extents.c:260
 
-CPU: 0 PID: 3632 Comm: syz-executor391 Not tainted 6.1.0-rc6-syzkaller-00012-g4312098baf37 #0
+but task is already holding lock:
+ffff888023aa3048 (&HFSPLUS_I(inode)->extents_lock){+.+.}-{3:3}, at: hfsplus_file_extend+0x1af/0x19d0 fs/hfsplus/extents.c:457
+
+other info that might help us debug this:
+ Possible unsafe locking scenario:
+
+       CPU0
+       ----
+  lock(&HFSPLUS_I(inode)->extents_lock);
+  lock(&HFSPLUS_I(inode)->extents_lock);
+
+ *** DEADLOCK ***
+
+ May be due to missing lock nesting notation
+
+4 locks held by syz-executor378/3638:
+ #0: ffff888026644460 (sb_writers#9){.+.+}-{0:0}, at: do_sys_ftruncate+0x24f/0x380 fs/open.c:190
+ #1: ffff888023aa3240 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:756 [inline]
+ #1: ffff888023aa3240 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: do_truncate+0x1e7/0x2e0 fs/open.c:63
+ #2: ffff888023aa3048 (&HFSPLUS_I(inode)->extents_lock){+.+.}-{3:3}, at: hfsplus_file_extend+0x1af/0x19d0 fs/hfsplus/extents.c:457
+ #3: ffff88807743d8f8 (&sbi->alloc_mutex){+.+.}-{3:3}, at: hfsplus_block_allocate+0x9f/0x900 fs/hfsplus/bitmap.c:35
+
+stack backtrace:
+CPU: 1 PID: 3638 Comm: syz-executor378 Not tainted 6.1.0-rc6-syzkaller-00012-g4312098baf37 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
 Call Trace:
  <TASK>
  __dump_stack lib/dump_stack.c:88 [inline]
  dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
- print_address_description+0x74/0x340 mm/kasan/report.c:284
- print_report+0x107/0x1f0 mm/kasan/report.c:395
- kasan_report+0xcd/0x100 mm/kasan/report.c:495
- hfs_asc2mac+0x467/0x9a0 fs/hfs/trans.c:133
- hfs_cat_build_key+0x92/0x170 fs/hfs/catalog.c:28
- hfs_lookup+0x1ab/0x2c0 fs/hfs/dir.c:31
- lookup_open fs/namei.c:3391 [inline]
- open_last_lookups fs/namei.c:3481 [inline]
- path_openat+0x10e6/0x2df0 fs/namei.c:3710
- do_filp_open+0x264/0x4f0 fs/namei.c:3740
- do_sys_openat2+0x124/0x4e0 fs/open.c:1310
- do_sys_open fs/open.c:1326 [inline]
- __do_sys_open fs/open.c:1334 [inline]
- __se_sys_open fs/open.c:1330 [inline]
- __x64_sys_open+0x221/0x270 fs/open.c:1330
+ print_deadlock_bug kernel/locking/lockdep.c:2990 [inline]
+ check_deadlock kernel/locking/lockdep.c:3033 [inline]
+ validate_chain+0x4843/0x6ae0 kernel/locking/lockdep.c:3818
+ __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
+ lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
+ __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
+ __mutex_lock kernel/locking/mutex.c:747 [inline]
+ mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
+ hfsplus_get_block+0x3a3/0x1560 fs/hfsplus/extents.c:260
+ block_read_full_folio+0x3b3/0xfa0 fs/buffer.c:2271
+ filemap_read_folio+0x187/0x7d0 mm/filemap.c:2407
+ do_read_cache_folio+0x2d3/0x790 mm/filemap.c:3534
+ do_read_cache_page mm/filemap.c:3576 [inline]
+ read_cache_page+0x56/0x270 mm/filemap.c:3585
+ read_mapping_page include/linux/pagemap.h:756 [inline]
+ hfsplus_block_allocate+0xf9/0x900 fs/hfsplus/bitmap.c:37
+ hfsplus_file_extend+0x9d4/0x19d0 fs/hfsplus/extents.c:468
+ hfsplus_get_block+0x415/0x1560 fs/hfsplus/extents.c:245
+ __block_write_begin_int+0x54c/0x1a80 fs/buffer.c:1991
+ __block_write_begin fs/buffer.c:2041 [inline]
+ block_write_begin+0x93/0x1e0 fs/buffer.c:2102
+ cont_write_begin+0x606/0x860 fs/buffer.c:2456
+ hfsplus_write_begin+0x86/0xd0 fs/hfsplus/inode.c:52
+ cont_expand_zero fs/buffer.c:2383 [inline]
+ cont_write_begin+0x2cf/0x860 fs/buffer.c:2446
+ hfsplus_write_begin+0x86/0xd0 fs/hfsplus/inode.c:52
+ generic_cont_expand_simple+0x151/0x250 fs/buffer.c:2347
+ hfsplus_setattr+0x168/0x280 fs/hfsplus/inode.c:263
+ notify_change+0xe38/0x10f0 fs/attr.c:420
+ do_truncate+0x1fb/0x2e0 fs/open.c:65
+ do_sys_ftruncate+0x2eb/0x380 fs/open.c:193
  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
  do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fdc79c9d839
+RIP: 0033:0x7f838df947c9
 Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffd57f47648 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fdc79c9d839
-RDX: 0000000000000100 RSI: 0000000000002000 RDI: 0000000020000800
-RBP: 00007fdc79c5d0d0 R08: 0000000000000245 R09: 0000000000000000
-R10: 00007ffd57f47510 R11: 0000000000000246 R12: 00007fdc79c5d160
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-
-Allocated by task 3632:
- kasan_save_stack mm/kasan/common.c:45 [inline]
- kasan_set_track+0x3d/0x60 mm/kasan/common.c:52
- ____kasan_kmalloc mm/kasan/common.c:371 [inline]
- __kasan_kmalloc+0x97/0xb0 mm/kasan/common.c:380
- kasan_kmalloc include/linux/kasan.h:211 [inline]
- __do_kmalloc_node mm/slab_common.c:955 [inline]
- __kmalloc+0xaf/0x1a0 mm/slab_common.c:968
- kmalloc include/linux/slab.h:558 [inline]
- hfs_find_init+0x8b/0x1e0 fs/hfs/bfind.c:21
- hfs_lookup+0x105/0x2c0 fs/hfs/dir.c:28
- lookup_open fs/namei.c:3391 [inline]
- open_last_lookups fs/namei.c:3481 [inline]
- path_openat+0x10e6/0x2df0 fs/namei.c:3710
- do_filp_open+0x264/0x4f0 fs/namei.c:3740
- do_sys_openat2+0x124/0x4e0 fs/open.c:1310
- do_sys_open fs/open.c:1326 [inline]
- __do_sys_open fs/open.c:1334 [inline]
- __se_sys_open fs/open.c:1330 [inline]
- __x64_sys_open+0x221/0x270 fs/open.c:1330
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-The buggy address belongs to the object at ffff888018483100
- which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 78 bytes inside of
- 96-byte region [ffff888018483100, ffff888018483160)
-
-The buggy address belongs to the physical page:
-page:ffffea00006120c0 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x18483
-flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
-raw: 00fff00000000200 dead000000000100 dead000000000122 ffff888012841780
-raw: 0000000000000000 0000000080200020 00000001ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY), pid 1, tgid 1 (swapper/0), ts 2311131230, free_ts 0
- prep_new_page mm/page_alloc.c:2539 [inline]
- get_page_from_freelist+0x742/0x7c0 mm/page_alloc.c:4288
- __alloc_pages+0x259/0x560 mm/page_alloc.c:5555
- alloc_page_interleave+0x22/0x1c0 mm/mempolicy.c:2118
- alloc_slab_page+0x70/0xf0 mm/slub.c:1794
- allocate_slab+0x5e/0x4b0 mm/slub.c:1939
- new_slab mm/slub.c:1992 [inline]
- ___slab_alloc+0x782/0xe20 mm/slub.c:3180
- __slab_alloc mm/slub.c:3279 [inline]
- slab_alloc_node mm/slub.c:3364 [inline]
- __kmem_cache_alloc_node+0x252/0x310 mm/slub.c:3437
- __do_kmalloc_node mm/slab_common.c:954 [inline]
- __kmalloc_node_track_caller+0x9c/0x190 mm/slab_common.c:975
- __do_krealloc mm/slab_common.c:1348 [inline]
- krealloc+0x61/0xf0 mm/slab_common.c:1381
- add_sysfs_param+0x134/0x800 kernel/params.c:660
- kernel_add_sysfs_param+0xb0/0x126 kernel/params.c:812
- param_sysfs_builtin+0x1fb/0x2a5 kernel/params.c:851
- param_sysfs_init+0x68/0x6c kernel/params.c:970
- do_one_initcall+0x1c9/0x400 init/main.c:1303
- do_initcall_level+0x168/0x218 init/main.c:1376
- do_initcalls+0x4b/0x8c init/main.c:1392
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff888018483000: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
- ffff888018483080: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
->ffff888018483100: 00 00 00 00 00 00 00 00 00 06 fc fc fc fc fc fc
-                                              ^
- ffff888018483180: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
- ffff888018483200: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
-==================================================================
+RSP: 002b:00007fffb8a18448 EFLAGS: 00000246 ORIG
 
 
 ---
