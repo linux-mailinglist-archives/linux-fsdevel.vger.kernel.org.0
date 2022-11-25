@@ -2,77 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE97C63903E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 20:22:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAF9B6390EA
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 22:00:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbiKYTWG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Nov 2022 14:22:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46398 "EHLO
+        id S229918AbiKYVAa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Nov 2022 16:00:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46004 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229493AbiKYTWG (ORCPT
+        with ESMTP id S229495AbiKYVA2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Nov 2022 14:22:06 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9D4342CDC5;
-        Fri, 25 Nov 2022 11:22:05 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 3861E60C1F;
-        Fri, 25 Nov 2022 19:22:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B799C433D6;
-        Fri, 25 Nov 2022 19:22:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669404124;
-        bh=KrOiWwXDrPvGkEAn2LB7RpjRNfGbTiRZkWJjSt4RC8I=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CPFBZj5sInDrrO6haYS/sTWeJTkias4f/BcMHkF1L6JEUbgV5mWsbFMpvn5uMpF6f
-         TJCnD0bXT/sY56bIRES8+yrqZ7+UoL9yb8CJa2JSsowup80KWFEOqutG4GkoQFi9If
-         ZEWKNQXRszfPq618gUgsErEv5+XY2kLZ4HsJF3A+zNWT2okwAN0bcZpqrRHfV9qPHy
-         Co2V1+1DiFXVqtvUbb1JHb2+iynCjzRL8m0Z2GezOg6bI6V0vatPT9INxGT7m6Kx3Q
-         e+B8UyDMRIR64AAzx61Pn2wdwiXD3/DwB88uMsGNkfZ684U+NuNKNA++dHr8Gjki4J
-         kNXPahX58Lx1Q==
-Date:   Fri, 25 Nov 2022 11:22:02 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Chao Yu <chao@kernel.org>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, Matthew Wilcox <willy@infradead.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [PATCH v3] fsverity: stop using PG_error to track error status
-Message-ID: <Y4EV2rNfdNWfzF9+@sol.localdomain>
-References: <20221028175807.55495-1-ebiggers@kernel.org>
- <6bce9afb-2561-7937-caea-8aadaa5a21cd@kernel.org>
+        Fri, 25 Nov 2022 16:00:28 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BDB8391C6;
+        Fri, 25 Nov 2022 13:00:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=s4UABV1ux66nah7EYyy5GKkUpPAottxYKhO0fUNPBjk=; b=WINL+1C5RFCsGAMmYeRmkGvFUH
+        CjKRYD87yhdW1z3mzkO/wvKYXVtXVi9s2FwZ3TMTHX1R3UhzXfNJyj+oHa95bXcWe7aQJeUsTvcrC
+        6SW/qHSRF2xMswuS+blR5PDDrMba6p/sKHR+K9DxLjdUtwACjcVgmk+kXEftKRQW6KuKZyBWC8WMT
+        aTnPTOpbuFPuBHCZbDBxaZWZJg8Ah+Kq/KVKlIgGaLbXz9VcJ5CUdT0u85zrRroq5Yor7t84S/0mL
+        Z45ew5LwhZtSyY8r5QTPzmcwfoHy5B1iMQcaFTEFyBpALMuPrYuP3iQJ+NfYmcQIk21hYlmGZ1p2U
+        DsObimCA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1oyfo1-006kkn-2O;
+        Fri, 25 Nov 2022 21:00:17 +0000
+Date:   Fri, 25 Nov 2022 21:00:17 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Zhen Lei <thunder.leizhen@huawei.com>
+Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
+        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 0/2] fs: clear a UBSAN shift-out-of-bounds warning
+Message-ID: <Y4Es4TIbVos5CTO9@ZenIV>
+References: <20221125091358.1963-1-thunder.leizhen@huawei.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6bce9afb-2561-7937-caea-8aadaa5a21cd@kernel.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20221125091358.1963-1-thunder.leizhen@huawei.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 25, 2022 at 11:36:14AM +0800, Chao Yu wrote:
-> On 2022/10/29 1:58, Eric Biggers wrote:
-> > @@ -116,43 +116,51 @@ struct bio_post_read_ctx {
-> >   	struct f2fs_sb_info *sbi;
-> >   	struct work_struct work;
-> >   	unsigned int enabled_steps;
-> > +	bool decompression_attempted;
-> 
-> How about adding some comments for decompression_attempted? Otherwise it
-> looks good to me.
-> 
+On Fri, Nov 25, 2022 at 05:13:56PM +0800, Zhen Lei wrote:
+> v2 --> v3:
+> Updated the commit message of patch 2/2 based on Alexander Viro's suggestion.
 
-I added the following:
+Not exactly what I meant...  I've tentatively applied it, with the
+following commit message:
 
-	/*
- 	 * decompression_attempted keeps track of whether
- 	 * f2fs_end_read_compressed_page() has been called on the pages in the
- 	 * bio that belong to a compressed cluster yet.
- 	 */
+--------------------------------
+get rid of INT_LIMIT, use type_max() instead
 
-- Eric
+INT_LIMIT() tries to do what type_max() does, except that type_max()
+doesn't rely upon undefined behaviour[*], might as well use type_max()
+instead.
+
+[*] if T is an N-bit signed integer type, the maximal value in T is
+pow(2, N - 1) - 1, all right, but naive expression for that value
+ends up with a couple of wraparounds and as usual for wraparounds
+in signed types, that's an undefined behaviour.  type_max() takes
+care to avoid those...
+
+Caught-by: UBSAN
+Suggested-by: Eric Biggers <ebiggers@kernel.org>
+Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+Reviewed-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+--------------------------------
+
+Does anybody have objections against the commit message above?
