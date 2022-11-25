@@ -2,124 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9C077638687
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 10:47:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9377D6386C8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 10:52:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229769AbiKYJrR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Nov 2022 04:47:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60786 "EHLO
+        id S230172AbiKYJwj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Nov 2022 04:52:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229672AbiKYJqn (ORCPT
+        with ESMTP id S230182AbiKYJwZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Nov 2022 04:46:43 -0500
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6435D3C6D6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 01:45:42 -0800 (PST)
-Received: by mail-il1-f200.google.com with SMTP id d19-20020a056e020c1300b00300b5a12c44so2600784ile.15
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 01:45:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=uJSMjFkkoYoWoxOf9TP0CnqnqKLajLSmNf328nPJR9k=;
-        b=lAcNcChb6GcXx6vIf/o0PNTsuSiz7P/h/goV5J4A43BWRQmLxKkUSha4iIJloFin+j
-         /qnLxAyv2G4Dqb/b2dYG6NIVle2A5D3ahHv/JVZO1hXCH+6AbEyVACfQjLJ6rg0ZVB53
-         03C60K6562ZaPnNJ9jGvhMJsIqzWqVItO+LMyjFaoFwibQLpiDR4+xJPTWDPrJsyloOI
-         vJ3wWcglUtF3xIwVVuWW562zSd2IQIt16e8M6gn8/sVp1P3j2Fx+BKSLudbA8K3vW5P1
-         jTY+x7A8CwWTimmdcN1hFDhI/oxyi661/uOJ531W11kM+zDQZT3GqsssIGQZYX4P6LBy
-         MjYw==
-X-Gm-Message-State: ANoB5pkbbKemylYdUtK87DTW4AVTpzR73AH4ZZXVnAWXYkaQbmURXJke
-        v5m5quw20S9HM4GASxLEyFDFf73GFGXgY6aD1i09vtH3DWWL
-X-Google-Smtp-Source: AA0mqf66iybkLuYsp/1HxXiXdpfkL/nESD9cfnhOmz4UQHBC2eTZmAMGcU7jY5i3eGOlQ4H+goWIfWVVuy1JCTYaq539Hf5wYCW4
+        Fri, 25 Nov 2022 04:52:25 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 126354843A
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 01:49:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669369766;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xKbQmNMIGnlDgYvEteAlL0wXb/z4xDLJRKQD4d/vVoI=;
+        b=SHPgwaET1CHgJykz1BXqFD3WaQihUq+AJlVpGU8s1IdAbSP6eTHuRsN7zoZc02NzItLuwX
+        vABElJR6Rf1eeyquo4ydkJ3hIk039MYhuELiUuVPCkzcOSnzHPHyau55t7gKBV/q1zD4eo
+        IyGFcrSFUSrX/T8CYrYnSEO68VJ7Oek=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-83-kQqoNabyND-Q-bGWIDEupw-1; Fri, 25 Nov 2022 04:49:20 -0500
+X-MC-Unique: kQqoNabyND-Q-bGWIDEupw-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0C6003815D2C;
+        Fri, 25 Nov 2022 09:49:20 +0000 (UTC)
+Received: from fedora (ovpn-193-67.brq.redhat.com [10.40.193.67])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C0136FD48;
+        Fri, 25 Nov 2022 09:49:18 +0000 (UTC)
+Date:   Fri, 25 Nov 2022 10:49:16 +0100
+From:   Lukas Czerner <lczerner@redhat.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Hugh Dickins <hughd@google.com>, Jan Kara <jack@suse.com>,
+        Eric Sandeen <sandeen@redhat.com>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, djwong@kernel.org
+Subject: Re: [PATCH v2 2/3] shmem: implement user/group quota support for
+ tmpfs
+Message-ID: <20221125094916.4vutvnxt4wiulygw@fedora>
+References: <20221121142854.91109-1-lczerner@redhat.com>
+ <20221121142854.91109-3-lczerner@redhat.com>
+ <20221123163745.nnunvbl3s6th6kjx@quack3>
+ <20221125085948.wbzzbimqeehcfqnh@fedora>
+ <20221125091453.nm2lbxl743ggrqxq@quack3>
 MIME-Version: 1.0
-X-Received: by 2002:a5e:dd42:0:b0:6bf:df76:be13 with SMTP id
- u2-20020a5edd42000000b006bfdf76be13mr9048450iop.108.1669369541815; Fri, 25
- Nov 2022 01:45:41 -0800 (PST)
-Date:   Fri, 25 Nov 2022 01:45:41 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000089f55405ee486239@google.com>
-Subject: [syzbot] kernel BUG in hfs_write_inode
-From:   syzbot <syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com>
-To:     damien.lemoal@opensource.wdc.com, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221125091453.nm2lbxl743ggrqxq@quack3>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Fri, Nov 25, 2022 at 10:14:53AM +0100, Jan Kara wrote:
+> On Fri 25-11-22 09:59:48, Lukas Czerner wrote:
+> > On Wed, Nov 23, 2022 at 05:37:45PM +0100, Jan Kara wrote:
+> > > On Mon 21-11-22 15:28:53, Lukas Czerner wrote:
+> > > > Implement user and group quota support for tmpfs using system quota file
+> > > > in vfsv0 quota format. Because everything in tmpfs is temporary and as a
+> > > > result is lost on umount, the quota files are initialized on every
+> > > > mount. This also goes for quota limits, that needs to be set up after
+> > > > every mount.
+> > > > 
+> > > > The quota support in tmpfs is well separated from the rest of the
+> > > > filesystem and is only enabled using mount option -o quota (and
+> > > > usrquota and grpquota for compatibility reasons). Only quota accounting
+> > > > is enabled this way, enforcement needs to be enable by regular quota
+> > > > tools (using Q_QUOTAON ioctl).
+> > > > 
+> > > > Signed-off-by: Lukas Czerner <lczerner@redhat.com>
+> > > 
+> > > ...
+> > > 
+> > > > diff --git a/Documentation/filesystems/tmpfs.rst b/Documentation/filesystems/tmpfs.rst
+> > > > index 0408c245785e..9c4f228ef4f3 100644
+> > > > --- a/Documentation/filesystems/tmpfs.rst
+> > > > +++ b/Documentation/filesystems/tmpfs.rst
+> > > > @@ -86,6 +86,18 @@ use up all the memory on the machine; but enhances the scalability of
+> > > >  that instance in a system with many CPUs making intensive use of it.
+> > > >  
+> > > >  
+> > > > +tmpfs also supports quota with the following mount options
+> > > > +
+> > > > +========  =============================================================
+> > > > +quota     Quota accounting is enabled on the mount. Tmpfs is using
+> > > > +          hidden system quota files that are initialized on mount.
+> > > > +          Quota limits can quota enforcement can be enabled using
+> > >                           ^^^ and?
+> > > 
+> > > > +          standard quota tools.
+> > > > +usrquota  Same as quota option. Exists for compatibility reasons.
+> > > > +grpquota  Same as quota option. Exists for compatibility reasons.
+> > > 
+> > > As we discussed with V1, I'd prefer if user & group quotas could be enabled
+> > > / disabled independently. Mostly to not differ from other filesystems
+> > > unnecessarily.
+> > 
+> > Ok, but other file systems (at least xfs and ext) differs. Mounting ext4
+> > file system with quota feature with default quota option settings will
+> > always enable accounting for both user and group. Mount options quota,
+> > usrquota and grpquota enables enforcement; selectively with the last
+> > two.
+> > 
+> > On xfs with no mount options quota is disabled. With quota, usrquota and
+> > grpquota enforcement is enabled, again selectively with the last two.
+> > 
+> > And yes, with this implementation tmpfs is again different. The idea was
+> > to allow enabling accounting and enforcement (with default limits)
+> > selectively.
+> > 
+> > So how would you like the tmpfs to do it? I think having accounting only
+> > can be useful and I'd like to keep it. Maybe adding qnoenforce,
+> > uqnoenforce and qgnoenforce mount options, but that seems cumbersome to
+> > me and enabling accounting by default seems a bit much. What do you think?
+> 
+> So I wanted things to be as similar to other filesystems as possible. So
+> quota, usrquota, grpquota would enable quota accounting & enforcement (the
+> last two selectively). If we want the possibility to enable accounting
+> without enforcement that can be done by some special mount options (and
+> possibly we can add them when there's user demand). Also note that there's
+> always the possibility to disable quota enforcement using quota tools when
+> needed. But IMHO 99% of users will want accounting & enforcement and thus
+> that should be the default like with other filesystems.
+> 
+> 								Honza
 
-syzbot found the following issue on:
+Alright I'll do that.
 
-HEAD commit:    65762d97e6fa Merge branch 'for-next/perf' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=14e324e3880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=56d0c7c3a2304e8f
-dashboard link: https://syzkaller.appspot.com/bug?extid=97e301b4b82ae803d21b
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10983553880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13315ebb880000
+Thanks!
+-Lukas
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/52f702197b30/disk-65762d97.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/72189c2789ce/vmlinux-65762d97.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ec0349196c98/Image-65762d97.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6bfea2266b7f/mount_0.gz
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+97e301b4b82ae803d21b@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-kernel BUG at fs/hfs/inode.c:446!
-Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 347 Comm: kworker/u4:3 Not tainted 6.1.0-rc6-syzkaller-32653-g65762d97e6fa #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
-Workqueue: writeback wb_workfn (flush-7:0)
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : hfs_write_inode+0x44c/0x450 fs/hfs/inode.c:446
-lr : hfs_write_inode+0x44c/0x450 fs/hfs/inode.c:446
-sp : ffff800012f9b960
-x29: ffff800012f9ba10 x28: ffff0000cb9013e0 x27: ffff0000cb901358
-x26: 0000000000000021 x25: 0000000000000007 x24: ffff0000cb9013e0
-x23: 0000000000000003 x22: 0000000000000000 x21: ffff800012f9b9a0
-x20: 0000000000000000 x19: ffff0000cb901358 x18: 00000000000000c0
-x17: ffff80000dda8198 x16: 0000000000000000 x15: 0000000000000000
-x14: 0000000000000000 x13: 0000000000000004 x12: ffff80000d51b008
-x11: ff80800008903460 x10: 0000000000000000 x9 : ffff800008903460
-x8 : ffff0000c4048000 x7 : ffff80000862d114 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000001 x1 : ffff80000d51afe0 x0 : 0000000000000000
-Call trace:
- hfs_write_inode+0x44c/0x450 fs/hfs/inode.c:446
- write_inode fs/fs-writeback.c:1440 [inline]
- __writeback_single_inode+0x240/0x2e4 fs/fs-writeback.c:1652
- writeback_sb_inodes+0x3e4/0x85c fs/fs-writeback.c:1870
- wb_writeback+0x198/0x328 fs/fs-writeback.c:2044
- wb_do_writeback+0xc8/0x384 fs/fs-writeback.c:2187
- wb_workfn+0x70/0x15c fs/fs-writeback.c:2227
- process_one_work+0x2d8/0x504 kernel/workqueue.c:2289
- worker_thread+0x340/0x610 kernel/workqueue.c:2436
- kthread+0x12c/0x158 kernel/kthread.c:376
- ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:863
-Code: d4210000 17ffff98 94ddff99 97e6893f (d4210000) 
----[ end trace 0000000000000000 ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
