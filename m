@@ -2,49 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4979363841E
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 07:43:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44911638444
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 08:10:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229610AbiKYGn6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Nov 2022 01:43:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47286 "EHLO
+        id S229585AbiKYHKh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Nov 2022 02:10:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229575AbiKYGn5 (ORCPT
+        with ESMTP id S229469AbiKYHKg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Nov 2022 01:43:57 -0500
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 888532A73D;
-        Thu, 24 Nov 2022 22:43:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=iYW/JhAzy/NAHRzRn6OtcNKWyJmGU2/7NHJP6EadOQU=; b=IcfdP1PWIKeGhwP833cmZzviRW
-        qu2ypsdSMoJrBuD6aw+etBv17UIzjGkE99o2W1bap/UOFePESA2JPkQ6HToAfMqus8ZvFhoi71k14
-        U9GJ7+Wk72/WgrF1x5RJgAo9YzGJnKoSnNUAu+tk+AqmMafvzrjN8pMBmQj6E3/Q2pNdDu3WLXLac
-        6QL4v+2y6v8HkK4Sb3nwFpW+3fdp2lh+dXVW5zPs6WuJQ0HrSixB5J+T8QazZ41YuQ/Y8KJiWWdM1
-        9SVoIARbFDi1mhwOuakuTYBlDpZB7QEtsFFhF1KBmCw2E9VAF4ivb7j5j5+NNNl81sKWcsFmzRd5a
-        UN0G5KBg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1oySRB-006btE-0g;
-        Fri, 25 Nov 2022 06:43:49 +0000
-Date:   Fri, 25 Nov 2022 06:43:49 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Zhen Lei <thunder.leizhen@huawei.com>
-Cc:     Eric Biggers <ebiggers@kernel.org>, linux-fsdevel@vger.kernel.org,
-        Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] fs: clear a UBSAN shift-out-of-bounds warning
-Message-ID: <Y4BkJd3Jy6MY3cdu@ZenIV>
-References: <20221121024418.1800-1-thunder.leizhen@huawei.com>
+        Fri, 25 Nov 2022 02:10:36 -0500
+Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76ACC1A809
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Nov 2022 23:10:35 -0800 (PST)
+Received: by mail-pl1-x630.google.com with SMTP id d6so3228250pll.7
+        for <linux-fsdevel@vger.kernel.org>; Thu, 24 Nov 2022 23:10:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lpI09D4mWcHJ7/K+doiGSv8YTaJguLCmdZoe5Iuc0aI=;
+        b=Dp9qdYV3Qk2KwfyXvm+XfGzKSUxj0sUur9Ht8R5nXrw3GNf57sNHPQO1lNfJ/yj5ks
+         ixg6x1HISo5F3qibG9UOBzghU/3isXfTPfG4g+x8+xMdBVSY1OHeJ9t7P0Wv9USubbbP
+         UrYZzT5galnrH7u280HXSGOXCA7/cGSIdN+zsa9PPRI1YTjBzgolztLkYZaHENa14AZI
+         dl388W8iHhl+E3sJz1VZq+9TXkYe6QZQKYQlo+rd/gZUP9rbL+X50IlBbFf/3adj1nWA
+         Uan/AzmsYhiABaYo8ywM4yGvKm5k1/C1Br5pVoAxnFPJgKHLqMeUxJU9v0pgG2LvIvW8
+         cDTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lpI09D4mWcHJ7/K+doiGSv8YTaJguLCmdZoe5Iuc0aI=;
+        b=yDNFh1lED4wloT16z9JVU3EXI7Lttq7KpIZXdZdb9D/gplUh0kDhMKsb3KZHc+DP1E
+         OB9ZH4xhJvGHGX3ghAKNBP12r79ygqa3yELnLqtC/aiLqsuzSqilrjUIYtSrE1bwKuqc
+         clj/1pmVJKjRu22hWvJR0Kmlx7eITH6PWsHZ7dQtXDawQT01kz5OMM/Ovd4ArqmVyfp+
+         A7czD6Sf1mAp99qProBA21426xUKjQPXHCW0cPil55av5hdKrgFENMvnF5knj1qJ+khS
+         mVK4IhSsntOWPD6f9MAG0Fim49CvU5thSwRgwybfNQmyPLrGBHf5LDPpYkrFbMj3v52U
+         Sp4g==
+X-Gm-Message-State: ANoB5pkdzBsnseHArP56/xNt+PpliD3/EjdvLATWiRWu1y+4FZi7YlIz
+        yjMmXNZF7RMB6WLnIl2imvb/jQ==
+X-Google-Smtp-Source: AA0mqf7V43Xz2Moi9FjtIMiTzYXGtNAY8tk5vkxd3bX6vBsI50geRZURKPxgk7qALSZm0Tv+Nb7QXA==
+X-Received: by 2002:a17:902:c611:b0:189:58a6:851d with SMTP id r17-20020a170902c61100b0018958a6851dmr6900338plr.146.1669360234978;
+        Thu, 24 Nov 2022 23:10:34 -0800 (PST)
+Received: from localhost.localdomain ([139.177.225.238])
+        by smtp.gmail.com with ESMTPSA id a5-20020a170902710500b0017d97d13b18sm2555352pll.65.2022.11.24.23.10.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Nov 2022 23:10:34 -0800 (PST)
+From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, xieyongji@bytedance.com,
+        Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+Subject: [PATCH] filemap: Fix some misleading comments
+Date:   Fri, 25 Nov 2022 15:09:59 +0800
+Message-Id: <20221125070959.49027-1-zhangjiachen.jaycee@bytedance.com>
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221121024418.1800-1-thunder.leizhen@huawei.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -52,16 +70,40 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 21, 2022 at 10:44:16AM +0800, Zhen Lei wrote:
-> v1 -- > v2:
-> 1. Replace INT_LIMIT(loff_t) with OFFSET_MAX in btrfs.
-> 2. Replace INT_LIMIT() with type_max().
+The users of filemap_write_and_wait_range() and file_write_and_wait_range()
+interfaces should set the lend parameter to LLONG_MAX, rather than -1, to
+indicate they want to writeback to the very end-of-file, as several kernel
+code paths are checking the 'wbc->range_end == LLONG_MAX' conditions.
 
-Looks fine, except that I'd rather go for commit message
-along the lines of "INT_LIMIT tries to do what type_max does,
-except that type_max doesn't rely upon undefined behaviour;
-might as well use type_max() instead"
+Signed-off-by: Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
+---
+ mm/filemap.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-If you want to credit UBSAN - sure, no problem, just don't
-clutter the commit message with that.  As it is, it reads
-as "make $TOOL STFU"...
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 65eee6ec1066..c6d066a39425 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -661,7 +661,8 @@ EXPORT_SYMBOL_GPL(filemap_range_has_writeback);
+  * Write out and wait upon file offsets lstart->lend, inclusive.
+  *
+  * Note that @lend is inclusive (describes the last byte to be written) so
+- * that this function can be used to write to the very end-of-file (end = -1).
++ * that this function can be used to write to the very end-of-file (@lend =
++ * LLONG_MAX).
+  *
+  * Return: error status of the address space.
+  */
+@@ -758,7 +759,8 @@ EXPORT_SYMBOL(file_check_and_advance_wb_err);
+  * Write out and wait upon file offsets lstart->lend, inclusive.
+  *
+  * Note that @lend is inclusive (describes the last byte to be written) so
+- * that this function can be used to write to the very end-of-file (end = -1).
++ * that this function can be used to write to the very end-of-file (@lend =
++ * LLONG_MAX).
+  *
+  * After writing out and waiting on the data, we check and advance the
+  * f_wb_err cursor to the latest value, and return any errors detected there.
+-- 
+2.20.1
+
