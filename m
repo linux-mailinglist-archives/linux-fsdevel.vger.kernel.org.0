@@ -2,48 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 25EEC639455
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Nov 2022 09:06:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3123639466
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Nov 2022 09:08:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229487AbiKZIGw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Nov 2022 03:06:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57864 "EHLO
+        id S229481AbiKZIIQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Nov 2022 03:08:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229436AbiKZIGt (ORCPT
+        with ESMTP id S229535AbiKZIHs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Nov 2022 03:06:49 -0500
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D5927FCD
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Nov 2022 00:06:47 -0800 (PST)
-Received: by mail-il1-f200.google.com with SMTP id k3-20020a92c243000000b0030201475a6bso4337728ilo.9
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Nov 2022 00:06:47 -0800 (PST)
+        Sat, 26 Nov 2022 03:07:48 -0500
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55240FCED
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Nov 2022 00:07:47 -0800 (PST)
+Received: by mail-io1-f69.google.com with SMTP id be26-20020a056602379a00b006dd80a0ba1cso2748788iob.11
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Nov 2022 00:07:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=vK0l+Lf+tCezD+tESCSp6qOqBtJJPkKIibcdWDf4hKY=;
-        b=N9tJ1/8qqxAikI146LNdUSN4j+eRRoCchOYdPimMVCx5bI07J/vWwQ1PM4RTk6OZR9
-         ZIzGnxzLwpYiwkh7hkZPAYGVlDOMY7W/AjQNNiuLf2oryFUOlSK2HwH50nnIaPZiKj9F
-         56Cdu4m4nT1jtZGNy8BJcbZ3DvxYJyNPLbEntNPbwwAugHSS7BdlqCWB29cwbhfJjao9
-         f2nq4eejPw4p3XXhZLUeeHvAyt7uoOblAKTKdbLTEkZBmN5C1c1MheQoRlxiwqUWE/Rm
-         2NY79Ugo9fAt3656Lw2uEoZbaIZ30DlFW1/kbSBUs/E/xc/4LUjsiOf82SFdrwpfXwLA
-         /+VA==
-X-Gm-Message-State: ANoB5plFWfr/Bc0SkJQczyCum0TjiMKRFHSGiS3uNhoEzPxOv+MFxUt4
-        hipiOMkV3rPxO2wDlJRWu9511Uw1/FniiYIK0UnaUYy5ES1b
-X-Google-Smtp-Source: AA0mqf56aCnoMyzSl3lzPjXeedmg6gvT1+nsuZbZ0tr3O/LdxsnEj4Jh9KoCUxCW9Uw/moewDn/b+bk7wqbXDDNHE+B+H33FIkyi
+        bh=m8ze7VYp6vrzD1rGwv501UMpLfYMzpEGSjqQxmeeKU4=;
+        b=BiP6OgAZKpoDGGDoRZ2WoO6hMQbuTFJ4cbv2RmKI7bYABvGMiRotywrG/oCSx8QsFP
+         7yKSm85AWLbdnHYg6CXuHqR4uoSDesxfPucGKbHrV6VHunnef881l626ctu9w3vLKmXG
+         sXLWJYaemtJpZ5gw5sWaj7R2Ex6+soRiPlMVBuZrHMrOCsQcvs593qdAR+8FJnOoLLLk
+         HSqwRrTCV3CEpJcrT2KsyfHoL8rEEX8qtSgfafMab5AHrdJMWZ8QgHKL6bUHL0TaZp9c
+         oGupwkZqxkH4VWTYKELKJRp1LWjwnMbbepU2JACjpQwr1+uSZY1AW419cwbEcOdwVP8S
+         VMhw==
+X-Gm-Message-State: ANoB5pl1FHUUv0OXULjRcFDFCbwWvZ21YsIIxagdyhkfXfVfTHF9f9UM
+        ZEa4Suw7eHzLr99l8OK5FLAsmHlrlpVVoq8eo15md+yQC3v7
+X-Google-Smtp-Source: AA0mqf5pIJPCnbucwYehje9CxitliutSNTaX7TZ6RnSMoVj0I7uqJmXQekSNpqCEUsZmcVKf/4w+3yzbS4GjWM6akXikEo+5WT6j
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2b7:b0:389:c2fd:bc13 with SMTP id
- d23-20020a05663802b700b00389c2fdbc13mr2189118jaq.12.1669450007061; Sat, 26
- Nov 2022 00:06:47 -0800 (PST)
-Date:   Sat, 26 Nov 2022 00:06:47 -0800
+X-Received: by 2002:a5e:8412:0:b0:6bf:ea95:9891 with SMTP id
+ h18-20020a5e8412000000b006bfea959891mr11873178ioj.8.1669450066651; Sat, 26
+ Nov 2022 00:07:46 -0800 (PST)
+Date:   Sat, 26 Nov 2022 00:07:46 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a42d2c05ee5b1e18@google.com>
-Subject: [syzbot] kernel BUG in hfsplus_create_attributes_file
-From:   syzbot <syzbot+a313c6d1d9ef87de2a66@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, brauner@kernel.org,
-        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <00000000000031714f05ee5b2257@google.com>
+Subject: [syzbot] possible deadlock in hfsplus_file_truncate
+From:   syzbot <syzbot+6030b3b1b9bf70e538c4@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
@@ -58,74 +57,145 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    6d464646530f Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=17a49603880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=23eec5c79c22aaf8
-dashboard link: https://syzkaller.appspot.com/bug?extid=a313c6d1d9ef87de2a66
+HEAD commit:    08ad43d554ba Merge tag 'net-6.1-rc7' of git://git.kernel.o..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11da779b880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8d01b6e3197974dd
+dashboard link: https://syzkaller.appspot.com/bug?extid=6030b3b1b9bf70e538c4
 compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14382015880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f791c3880000
+
+Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f22d29413625/disk-6d464646.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/389f0a5f1a4a/vmlinux-6d464646.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/48ddb02d82da/Image-6d464646.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/23c8423bc069/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/e40e255b7cf8/disk-08ad43d5.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dfabe238c5ee/vmlinux-08ad43d5.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2bcb24a7bbed/bzImage-08ad43d5.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a313c6d1d9ef87de2a66@syzkaller.appspotmail.com
+Reported-by: syzbot+6030b3b1b9bf70e538c4@syzkaller.appspotmail.com
 
-         and is ignored by this kernel. Remove the mand
-         option from the mount to silence this warning.
-=======================================================
-------------[ cut here ]------------
-kernel BUG at fs/hfsplus/xattr.c:175!
-Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-Modules linked in:
-CPU: 0 PID: 3072 Comm: syz-executor864 Not tainted 6.1.0-rc6-syzkaller-32662-g6d464646530f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
-pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-pc : hfsplus_create_attributes_file+0x6d4/0x6fc fs/hfsplus/xattr.c:175
-lr : hfsplus_create_attributes_file+0x6d4/0x6fc fs/hfsplus/xattr.c:175
-sp : ffff80000fbab650
-x29: ffff80000fbab670 x28: 0000000000000000 x27: ffff0000c6616000
-x26: ffff0000c94e6000 x25: 000000000000002e x24: 0000000000000080
-x23: 0000000000000000 x22: 0000000000010000 x21: 0000000000000001
-x20: ffff0000cb7fa8b0 x19: ffff0000c6616038 x18: 00000000000000c0
-x17: 0000000000000000 x16: ffff80000dbe6158 x15: ffff0000c7df0000
-x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c7df0000
-x11: ff808000088f78f0 x10: 0000000000000000 x9 : ffff8000088f78f0
-x8 : ffff0000c7df0000 x7 : ffff8000085f9554 x6 : 0000000000000000
-x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
-x2 : 0000000000000001 x1 : 0000000000010000 x0 : 0000000000000000
-Call trace:
- hfsplus_create_attributes_file+0x6d4/0x6fc fs/hfsplus/xattr.c:175
- __hfsplus_setxattr+0x180/0x4e8 fs/hfsplus/xattr.c:331
- hfsplus_initxattrs+0xac/0x130 fs/hfsplus/xattr_security.c:59
- security_inode_init_security+0x208/0x278 security/security.c:1119
- hfsplus_init_security+0x40/0x54 fs/hfsplus/xattr_security.c:71
- hfsplus_mknod+0x128/0x1bc fs/hfsplus/dir.c:498
- hfsplus_create+0x40/0x54 fs/hfsplus/dir.c:523
- lookup_open fs/namei.c:3413 [inline]
- open_last_lookups fs/namei.c:3481 [inline]
- path_openat+0x804/0x11c4 fs/namei.c:3710
- do_filp_open+0xdc/0x1b8 fs/namei.c:3740
- do_sys_openat2+0xb8/0x22c fs/open.c:1310
+loop4: detected capacity change from 0 to 1024
+======================================================
+WARNING: possible circular locking dependency detected
+6.1.0-rc6-syzkaller-00176-g08ad43d554ba #0 Not tainted
+------------------------------------------------------
+syz-executor.4/25725 is trying to acquire lock:
+ffff888146b700b0 (&tree->tree_lock){+.+.}-{3:3}, at: hfsplus_file_truncate+0x871/0xbb0 fs/hfsplus/extents.c:595
+
+but task is already holding lock:
+ffff888029f69c08 (&HFSPLUS_I(inode)->extents_lock){+.+.}-{3:3}, at: hfsplus_file_truncate+0x280/0xbb0 fs/hfsplus/extents.c:576
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (&HFSPLUS_I(inode)->extents_lock){+.+.}-{3:3}:
+       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
+       __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
+       __mutex_lock kernel/locking/mutex.c:747 [inline]
+       mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
+       hfsplus_file_extend+0x1af/0x19d0 fs/hfsplus/extents.c:457
+       hfsplus_bmap_reserve+0x123/0x500 fs/hfsplus/btree.c:358
+       hfsplus_create_cat+0x178/0xa20 fs/hfsplus/catalog.c:272
+       hfsplus_fill_super+0x1379/0x1b50 fs/hfsplus/super.c:560
+       mount_bdev+0x26c/0x3a0 fs/super.c:1401
+       legacy_get_tree+0xea/0x180 fs/fs_context.c:610
+       vfs_get_tree+0x88/0x270 fs/super.c:1531
+       do_new_mount+0x289/0xad0 fs/namespace.c:3040
+       do_mount fs/namespace.c:3383 [inline]
+       __do_sys_mount fs/namespace.c:3591 [inline]
+       __se_sys_mount+0x2d3/0x3c0 fs/namespace.c:3568
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+-> #0 (&tree->tree_lock){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3097 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3216 [inline]
+       validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
+       __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
+       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
+       __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
+       __mutex_lock kernel/locking/mutex.c:747 [inline]
+       mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
+       hfsplus_file_truncate+0x871/0xbb0 fs/hfsplus/extents.c:595
+       hfsplus_setattr+0x1b8/0x280 fs/hfsplus/inode.c:269
+       notify_change+0xe38/0x10f0 fs/attr.c:420
+       do_truncate+0x1fb/0x2e0 fs/open.c:65
+       handle_truncate fs/namei.c:3216 [inline]
+       do_open fs/namei.c:3561 [inline]
+       path_openat+0x2770/0x2df0 fs/namei.c:3713
+       do_filp_open+0x264/0x4f0 fs/namei.c:3740
+       do_sys_openat2+0x124/0x4e0 fs/open.c:1310
+       do_sys_open fs/open.c:1326 [inline]
+       __do_sys_creat fs/open.c:1402 [inline]
+       __se_sys_creat fs/open.c:1396 [inline]
+       __x64_sys_creat+0x11f/0x160 fs/open.c:1396
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&HFSPLUS_I(inode)->extents_lock);
+                               lock(&tree->tree_lock);
+                               lock(&HFSPLUS_I(inode)->extents_lock);
+  lock(&tree->tree_lock);
+
+ *** DEADLOCK ***
+
+3 locks held by syz-executor.4/25725:
+ #0: ffff888146b76460 (sb_writers#29){.+.+}-{0:0}, at: mnt_want_write+0x3b/0x80 fs/namespace.c:393
+ #1: ffff888029f69e00 (&sb->s_type->i_mutex_key#36){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:756 [inline]
+ #1: ffff888029f69e00 (&sb->s_type->i_mutex_key#36){+.+.}-{3:3}, at: do_truncate+0x1e7/0x2e0 fs/open.c:63
+ #2: ffff888029f69c08 (&HFSPLUS_I(inode)->extents_lock){+.+.}-{3:3}, at: hfsplus_file_truncate+0x280/0xbb0 fs/hfsplus/extents.c:576
+
+stack backtrace:
+CPU: 0 PID: 25725 Comm: syz-executor.4 Not tainted 6.1.0-rc6-syzkaller-00176-g08ad43d554ba #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
+ check_noncircular+0x2cc/0x390 kernel/locking/lockdep.c:2177
+ check_prev_add kernel/locking/lockdep.c:3097 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3216 [inline]
+ validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
+ __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
+ lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
+ __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
+ __mutex_lock kernel/locking/mutex.c:747 [inline]
+ mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
+ hfsplus_file_truncate+0x871/0xbb0 fs/hfsplus/extents.c:595
+ hfsplus_setattr+0x1b8/0x280 fs/hfsplus/inode.c:269
+ notify_change+0xe38/0x10f0 fs/attr.c:420
+ do_truncate+0x1fb/0x2e0 fs/open.c:65
+ handle_truncate fs/namei.c:3216 [inline]
+ do_open fs/namei.c:3561 [inline]
+ path_openat+0x2770/0x2df0 fs/namei.c:3713
+ do_filp_open+0x264/0x4f0 fs/namei.c:3740
+ do_sys_openat2+0x124/0x4e0 fs/open.c:1310
  do_sys_open fs/open.c:1326 [inline]
- __do_sys_openat fs/open.c:1342 [inline]
- __se_sys_openat fs/open.c:1337 [inline]
- __arm64_sys_openat+0xb0/0xe0 fs/open.c:1337
- __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
- invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
- el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
- do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
- el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:637
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:584
-Code: d4210000 97e6b81d d4210000 97e6b81b (d4210000) 
----[ end trace 0000000000000000 ]---
+ __do_sys_creat fs/open.c:1402 [inline]
+ __se_sys_creat fs/open.c:1396 [inline]
+ __x64_sys_creat+0x11f/0x160 fs/open.c:1396
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fe76648c0d9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fe767238168 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
+RAX: ffffffffffffffda RBX: 00007fe7665abf80 RCX: 00007fe76648c0d9
+RDX: 0000000000000000 RSI: 00000000000000b8 RDI: 0000000020000100
+RBP: 00007fe7664e7ae9 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffef191c68f R14: 00007fe767238300 R15: 0000000000022000
+ </TASK>
 
 
 ---
@@ -135,5 +205,3 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
