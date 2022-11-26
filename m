@@ -2,107 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1C1C063933B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Nov 2022 02:59:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 39D1E639357
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Nov 2022 03:25:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230001AbiKZB7L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Nov 2022 20:59:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40698 "EHLO
+        id S230142AbiKZCZk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Nov 2022 21:25:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54848 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbiKZB7K (ORCPT
+        with ESMTP id S230116AbiKZCZj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Nov 2022 20:59:10 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E464A1CFFD;
-        Fri, 25 Nov 2022 17:59:09 -0800 (PST)
-Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NJvv20VVbzqSdh;
-        Sat, 26 Nov 2022 09:55:10 +0800 (CST)
-Received: from dggpemm500006.china.huawei.com (7.185.36.236) by
- dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Sat, 26 Nov 2022 09:59:08 +0800
-Received: from [10.174.178.55] (10.174.178.55) by
- dggpemm500006.china.huawei.com (7.185.36.236) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Sat, 26 Nov 2022 09:59:07 +0800
-Subject: Re: [PATCH v3 0/2] fs: clear a UBSAN shift-out-of-bounds warning
-To:     Al Viro <viro@zeniv.linux.org.uk>
-CC:     Eric Biggers <ebiggers@kernel.org>,
-        <linux-fsdevel@vger.kernel.org>, "Chris Mason" <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>, <linux-btrfs@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20221125091358.1963-1-thunder.leizhen@huawei.com>
- <Y4Es4TIbVos5CTO9@ZenIV>
-From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <0a8264a8-e2a9-952a-97ce-a7f06920ad39@huawei.com>
-Date:   Sat, 26 Nov 2022 09:59:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
-MIME-Version: 1.0
-In-Reply-To: <Y4Es4TIbVos5CTO9@ZenIV>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.174.178.55]
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemm500006.china.huawei.com (7.185.36.236)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Fri, 25 Nov 2022 21:25:39 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 23E022FC17
+        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 18:25:38 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D1A21B80B3F
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Nov 2022 02:25:36 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 9AEBCC433D6;
+        Sat, 26 Nov 2022 02:25:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669429535;
+        bh=A6kdRcbyORys41WXoLq4eBjNend1hMiZPoaBWHR2pLk=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=NqpQ6OCMs+YhHNhwQmBsF93VgtxRhPFw6ZhSpjZt2++KeIP6ufp2Oh8LUdOZkIsOW
+         cOKd4SD5o9LvUvXg0P+2h1wj4CsG+5kPtMFM/qpCugYtet+QpKzVySoJ613ncFgFQO
+         LnyAN+ITYpeATs091AUN5Sf3MJFu2AQavgKy8DqaJsDFA8VZp/Jw1bSbs0qQof/2zo
+         43xqU5qGTjTF56ip7pT5qTngCpC6aq5GnKyDCbf91l+KbssmRw8Uuen8Wryj7fUw65
+         5N+BbWMYqrk6zFYliVTR1VtJfmwTivqvwfXiICoB0CrPzb0QBh1uSKzGFrG4Nv7yNF
+         jhEyAx3VOpazA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 88A65E270C7;
+        Sat, 26 Nov 2022 02:25:35 +0000 (UTC)
+Subject: Re: [GIT PULL] zonefs fixes for 6.1-rc7
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20221125225408.769615-1-damien.lemoal@opensource.wdc.com>
+References: <20221125225408.769615-1-damien.lemoal@opensource.wdc.com>
+X-PR-Tracked-List-Id: <linux-fsdevel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20221125225408.769615-1-damien.lemoal@opensource.wdc.com>
+X-PR-Tracked-Remote: ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs tags/zonefs-6.1-rc7
+X-PR-Tracked-Commit-Id: db58653ce0c7cf4d155727852607106f890005c0
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 3e0d88f911fb6815ac8349766859c99a2f0aa421
+Message-Id: <166942953555.27056.7719373679760941558.pr-tracker-bot@kernel.org>
+Date:   Sat, 26 Nov 2022 02:25:35 +0000
+To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The pull request you sent on Sat, 26 Nov 2022 07:54:08 +0900:
 
+> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs tags/zonefs-6.1-rc7
 
-On 2022/11/26 5:00, Al Viro wrote:
-> On Fri, Nov 25, 2022 at 05:13:56PM +0800, Zhen Lei wrote:
->> v2 --> v3:
->> Updated the commit message of patch 2/2 based on Alexander Viro's suggestion.
-> 
-> Not exactly what I meant...  I've tentatively applied it, with the
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/3e0d88f911fb6815ac8349766859c99a2f0aa421
 
-Haha, I felt like something was missing yesterday, too. But as far as my English
-level is concerned, I usually copy the words suggested by others directly.
-
-> following commit message:
-
-Thanks.
-
-> 
-> --------------------------------
-> get rid of INT_LIMIT, use type_max() instead
-> 
-> INT_LIMIT() tries to do what type_max() does, except that type_max()
-> doesn't rely upon undefined behaviour[*], might as well use type_max()
-> instead.
-> 
-> [*] if T is an N-bit signed integer type, the maximal value in T is
-> pow(2, N - 1) - 1, all right, but naive expression for that value
-> ends up with a couple of wraparounds and as usual for wraparounds
-> in signed types, that's an undefined behaviour.  type_max() takes
-> care to avoid those...
-> 
-> Caught-by: UBSAN
-> Suggested-by: Eric Biggers <ebiggers@kernel.org>
-> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
-> Reviewed-by: Eric Biggers <ebiggers@google.com>
-> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-> --------------------------------
-> 
-> Does anybody have objections against the commit message above?
-
-Looks good to me.
-
-> 
-> .
-> 
+Thank you!
 
 -- 
-Regards,
-  Zhen Lei
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
