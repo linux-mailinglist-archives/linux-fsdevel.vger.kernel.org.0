@@ -2,111 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B65106393BF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Nov 2022 04:29:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38B8D6393DB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Nov 2022 05:36:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230216AbiKZD3H (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Nov 2022 22:29:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37496 "EHLO
+        id S230124AbiKZEg1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Nov 2022 23:36:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42520 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230221AbiKZD2u (ORCPT
+        with ESMTP id S230114AbiKZEgX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Nov 2022 22:28:50 -0500
-Received: from mail-pf1-x431.google.com (mail-pf1-x431.google.com [IPv6:2607:f8b0:4864:20::431])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E585D1BE98
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 19:28:48 -0800 (PST)
-Received: by mail-pf1-x431.google.com with SMTP id q12so1525914pfn.10
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 19:28:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=j5Q0CkdkqL9ImdAVIDGKbxO6HhGOHH4+dcxvWGaloTI=;
-        b=vQcrIjz+iAM4/+6KK9dOteBewZBvvuRjY78MAP7M2DIEwDl8oHKd3zWvIBxPymedBf
-         w5Rl+FKB5mm8EamXRDV2s8ZYZC+OjgCQw1bcgYORXysDXExH5CA7rLzA/KYSrSm1Ki66
-         4ckYtkPBNi9EFEaqe2ZXhZpQ5igywGjXmEqbiEfDl9f9b92Tj8X8uNIC99qorP1ATkTH
-         o3j9q5Nl6x0hT7VrvpvS/cc8j6q1tTP3NQWvdftuplhsVIwaKyBSymofiBuEpuqtp3KT
-         c4HcAoi1GGw845MdrJMfDChzoMSR0m3RJMQC5vrR4sE/NwzJNDaGvNfDHE+iM6vBibim
-         EprQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=j5Q0CkdkqL9ImdAVIDGKbxO6HhGOHH4+dcxvWGaloTI=;
-        b=mej9prhhYMPrFm7AuEFNnYo1VWJMHDhIbjfUyGQK/zMoltWl/0jHvTuNWWUOhYzhg8
-         uD2EJ01Kkg347QLDrtvbmykQ8oS63YNTCc1wiBj5z2GrHnTg+odKhXU2Dnx6MbUvotKl
-         tz4v4IJYpPRIVMLhh0FF2meONxFuoJyrHXHN4EcYh1O5g2RXwflyNAUG9xPF1VFpVQAU
-         OFlQ0MIIzLV8wRQdRoIGivh/bG16RCZP/zIZy5AjndD/+RWI5IZeJW8z1ABQkNRu1NdQ
-         HegECqGHuvcNOXqBKRwpHn59U28Uu23LFs5Hvs7LGG06H4WsQ7U/QiTBKGYaLKBKv4kT
-         cXEQ==
-X-Gm-Message-State: ANoB5pl7mWJZUyJ7ugOTBS4GZx5Qtquh0J+4GZa+R2KUA1ljJpPxP39A
-        yXezlRKrq7i4GR5sOIMufclwHlcxZ6HXRG1IuoLas6Nb2r3Qzw==
-X-Google-Smtp-Source: AA0mqf6YrmynoSeLWrq1OCN23+0Rw6OG8maifO+H3HCjpykKHdKuyYwAhZaS6xlcO7VtSexNJ9pGce/dN9tHv7AhpWA=
-X-Received: by 2002:a05:6a00:c5:b0:56b:a4f6:e030 with SMTP id
- e5-20020a056a0000c500b0056ba4f6e030mr23264033pfj.85.1669433328402; Fri, 25
- Nov 2022 19:28:48 -0800 (PST)
+        Fri, 25 Nov 2022 23:36:23 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 165B440466;
+        Fri, 25 Nov 2022 20:36:22 -0800 (PST)
+Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.53])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NJzSK2KMKzmW95;
+        Sat, 26 Nov 2022 12:35:45 +0800 (CST)
+Received: from kwepemm600020.china.huawei.com (7.193.23.147) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Sat, 26 Nov 2022 12:36:20 +0800
+Received: from localhost.localdomain (10.175.112.125) by
+ kwepemm600020.china.huawei.com (7.193.23.147) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Sat, 26 Nov 2022 12:36:19 +0800
+From:   Peng Zhang <zhangpeng362@huawei.com>
+To:     <zippel@linux-m68k.org>, <akpm@osdl.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <sunnanyong@huawei.com>, <wangkefeng.wang@huawei.com>,
+        ZhangPeng <zhangpeng362@huawei.com>,
+        <syzbot+dc3b1cf9111ab5fe98e7@syzkaller.appspotmail.com>
+Subject: [PATCH] hfs: Fix OOB Write in hfs_asc2mac
+Date:   Sat, 26 Nov 2022 04:36:12 +0000
+Message-ID: <20221126043612.853428-1-zhangpeng362@huawei.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <20221125070959.49027-1-zhangjiachen.jaycee@bytedance.com> <20221125165242.a33918e30cc9dc70750ed95f@linux-foundation.org>
-In-Reply-To: <20221125165242.a33918e30cc9dc70750ed95f@linux-foundation.org>
-From:   Jiachen Zhang <zhangjiachen.jaycee@bytedance.com>
-Date:   Sat, 26 Nov 2022 11:28:37 +0800
-Message-ID: <CAFQAk7ja-d-QvccAYHWAUR=P3Jf9Sh33wn=MSTfao-BE9q9Qjw@mail.gmail.com>
-Subject: Re: [External] Re: [PATCH] filemap: Fix some misleading comments
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, xieyongji@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.112.125]
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemm600020.china.huawei.com (7.193.23.147)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Nov 26, 2022 at 8:52 AM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Fri, 25 Nov 2022 15:09:59 +0800 Jiachen Zhang <zhangjiachen.jaycee@bytedance.com> wrote:
->
-> > The users of filemap_write_and_wait_range() and file_write_and_wait_range()
-> > interfaces should set the lend parameter to LLONG_MAX, rather than -1, to
-> > indicate they want to writeback to the very end-of-file, as several kernel
-> > code paths are checking the 'wbc->range_end == LLONG_MAX' conditions.
->
-> Unclear.  LLONG_MAX differs from -1 on 64-bit and differs differently
-> on 32-bit.
->
+From: ZhangPeng <zhangpeng362@huawei.com>
 
-I think whether using -1 or LLONG_MAX causes no difference if there is
-no other code comparing  'wbc->range_end == LLONG_MAX'.  There is no
-case in the kernel code using -1 for now, but maybe we'd better fix
-the misleading comments to prevent future misuse.
+Syzbot reported a OOB Write bug:
 
-> > --- a/mm/filemap.c
-> > +++ b/mm/filemap.c
-> > @@ -661,7 +661,8 @@ EXPORT_SYMBOL_GPL(filemap_range_has_writeback);
-> >   * Write out and wait upon file offsets lstart->lend, inclusive.
-> >   *
-> >   * Note that @lend is inclusive (describes the last byte to be written) so
-> > - * that this function can be used to write to the very end-of-file (end = -1).
-> > + * that this function can be used to write to the very end-of-file (@lend =
-> > + * LLONG_MAX).
-> >   *
->
-> The write(2) manpage says "According to POSIX.1, if count is greater
-> than SSIZE_MAX, the result is implementation-defined; see NOTES for the
-> upper limit on Linux." And filemap_fdatawrite_wbc() enforces LONG_MAX,
-> which differs from LLONG_MAX on 32-bit.
->
-> I suspect more research is needed here.
+loop0: detected capacity change from 0 to 64
+==================================================================
+BUG: KASAN: slab-out-of-bounds in hfs_asc2mac+0x467/0x9a0
+fs/hfs/trans.c:133
+Write of size 1 at addr ffff88801848314e by task syz-executor391/3632
 
-The reason 'wbc.nr_to_write' might be set to LONG_MAX for
-filemap_fdatawrite_wbc() might be because 'nr_to_write' is defined as
-the 'long' type. Maybe it should be fine as 'lend' and 'range_end' are
-defined as type 'off_t'.
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
+ print_address_description+0x74/0x340 mm/kasan/report.c:284
+ print_report+0x107/0x1f0 mm/kasan/report.c:395
+ kasan_report+0xcd/0x100 mm/kasan/report.c:495
+ hfs_asc2mac+0x467/0x9a0 fs/hfs/trans.c:133
+ hfs_cat_build_key+0x92/0x170 fs/hfs/catalog.c:28
+ hfs_lookup+0x1ab/0x2c0 fs/hfs/dir.c:31
+ lookup_open fs/namei.c:3391 [inline]
+ open_last_lookups fs/namei.c:3481 [inline]
+ path_openat+0x10e6/0x2df0 fs/namei.c:3710
+ do_filp_open+0x264/0x4f0 fs/namei.c:3740
 
-Thanks,
-Jiachen
+If in->len is much larger than HFS_NAMELEN(31) which is the maximum
+length of an HFS filename, a OOB Write could occur in hfs_asc2mac(). In
+that case, when the dst reaches the boundary, the srclen is still
+greater than 0, which causes a OOB Write.
+Fix this by adding a Check on dstlen before Writing to dst address.
+
+Fixes: 328b92278650 ("[PATCH] hfs: NLS support")
+Reported-by: syzbot+dc3b1cf9111ab5fe98e7@syzkaller.appspotmail.com
+Signed-off-by: ZhangPeng <zhangpeng362@huawei.com>
+---
+ fs/hfs/trans.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/hfs/trans.c b/fs/hfs/trans.c
+index 39f5e343bf4d..886158db07b3 100644
+--- a/fs/hfs/trans.c
++++ b/fs/hfs/trans.c
+@@ -130,6 +130,8 @@ void hfs_asc2mac(struct super_block *sb, struct hfs_name *out, const struct qstr
+ 				dst += size;
+ 				dstlen -= size;
+ 			} else {
++				if (dstlen == 0)
++					goto out;
+ 				*dst++ = ch > 0xff ? '?' : ch;
+ 				dstlen--;
+ 			}
+-- 
+2.25.1
+
