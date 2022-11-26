@@ -2,125 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 783676391A5
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 25 Nov 2022 23:54:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EF43863927E
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Nov 2022 01:07:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229787AbiKYWyN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Nov 2022 17:54:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60404 "EHLO
+        id S230029AbiKZAHx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Nov 2022 19:07:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51946 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229648AbiKYWyM (ORCPT
+        with ESMTP id S229514AbiKZAHw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Nov 2022 17:54:12 -0500
-Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F9A0317DF
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 14:54:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1669416851; x=1700952851;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=mUqPOOEtZqPZ5WLWSnCdZeVz7AV2KOJXM7SsJk9Tz5Q=;
-  b=gUQRK63ZfO6hQ2nCKrjShPwScjo4No9R2a0fVG9y15l/lnRyI5UjU5ZZ
-   DoNMadzsVHmGt+SuNop6FGvDyOdQaSd2l/e+pG2Q5iDsnB+T0UJw4Zp5E
-   RBUrLaUEIjL+4Vyn900Y9nFQm/GdatQC3J81gcXvXZO3Dam75ObrlSWM4
-   emUnx6cXpqHU6R3cL0fn1IeDjh5TLURnsQhl45/97TcRquR17Oe/BG1Or
-   K3WQ4IgTEnmzWkws7JYE1jiNDmEt7LehRxKB8jqPNp1UYfAHCSSLBjsFo
-   N2zGQGu28DDXnDJbDvQbo5vTRJtVyiHdgNbbtWLZGEmyDOzrhtRrjJTKb
-   A==;
-X-IronPort-AV: E=Sophos;i="5.96,194,1665417600"; 
-   d="scan'208";a="217496590"
-Received: from h199-255-45-15.hgst.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 26 Nov 2022 06:54:10 +0800
-IronPort-SDR: P+Wy35s1UTz4MlgkvIn5NPr6e9SzkU5CqSv6tHuOg5/+/a/ebfs8Om9iTL/d/vVr4EopXfPvDX
- 0FNDjbiHpCIv9bkPRaTTjhwI1EXSwNOgmjFNdvhybXFiCurOdM5O2jauhKmfXBEyU0Ofm1Udxg
- PKVI5zEjJTwfyJzeRrt/P9NhwNVUPxKeYsB0hyyUrlDEkV26VWPQKOBCJt/gYhXg+6VlyD1Uy5
- etE1HUcwBMy8X4vlOE032kjO8qHCpa802Hh+PaYoey9SbpbWjxvDYUbLXoGExq4y6dXtf3JsIu
- eJU=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Nov 2022 14:07:11 -0800
-IronPort-SDR: Mky8cMhl+q1l6bb9sLxVSFMfZ1xewp0r/xrAmgc8eNl7FlxV58gh8fuUe3E8CYQultZYQl5fcj
- yjMXBL0MSogzrAJSfHqhzdsRHc3jjZr8169dvgpBeK/QbzAzHrWH3LwcYu9SExWMEkIOkyoI9X
- xiefoHjv2Rw4ZoO7njcWhHZr0ork/CXhXqZniR3SmP+ecCPpNtSfEC/MGmcmUQR63dn+cEGN/T
- GdsYeNRw+nr45qQAw8LBgpsIQyFRO1twHAIP+l2Ous5BIEv8wq/JezKjQOqQ+q2G0ru+h8VrH9
- KXA=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Nov 2022 14:54:10 -0800
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4NJqtB48Ygz1RvTp
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 14:54:10 -0800 (PST)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:mime-version
-        :x-mailer:message-id:date:subject:to:from; s=dkim; t=1669416850;
-         x=1672008851; bh=mUqPOOEtZqPZ5WLWSnCdZeVz7AV2KOJXM7SsJk9Tz5Q=; b=
-        YAjpMyC85lP6qtDfS1x8BbkIlsnP8ce8pPIuYoOBG5FkQdEskXw/XEVrpW70I69m
-        QgpVRNjDgAKZtk2ROaWfmBOOPFLX9XbARxQ8dl4lAyjz3YTK3mpdHFBze71n6ul0
-        x64hWCxAQIiR4pJjmrElqL5PY24spj0KG2EmPSZst2WmnzeBiMlvpNlIvPpse+CV
-        /I4st5GrmCWUyqXplBtLFAxqNVuXu9DV+MKYGkRCcwb/IwgQ5Ra2Czzzy5SYA+RG
-        sFJOxkJRrjYbeiM0Xo3XeR/dCTHuMTIEOPBnUq2BxG25YIvA8PdihFUCpdGRZC9h
-        vriDDZQTeK+nYGswkQxmtg==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id tqD1t3pYUf7j for <linux-fsdevel@vger.kernel.org>;
-        Fri, 25 Nov 2022 14:54:10 -0800 (PST)
-Received: from washi.fujisawa.hgst.com (washi.fujisawa.hgst.com [10.149.53.254])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4NJqt95YQ8z1RvLy;
-        Fri, 25 Nov 2022 14:54:09 -0800 (PST)
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] zonefs fixes for 6.1-rc7
-Date:   Sat, 26 Nov 2022 07:54:08 +0900
-Message-Id: <20221125225408.769615-1-damien.lemoal@opensource.wdc.com>
-X-Mailer: git-send-email 2.38.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Fri, 25 Nov 2022 19:07:52 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C5DD0DF7E;
+        Fri, 25 Nov 2022 16:07:50 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 48CD36101A;
+        Sat, 26 Nov 2022 00:07:50 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B10C433C1;
+        Sat, 26 Nov 2022 00:07:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+        s=korg; t=1669421269;
+        bh=Wa9+Z2zcoHWiPUV8B1ZEnHvwozxO2GsYV8j1FeMJNXw=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=UYHla2n6vf5fk6sCQ2zx35upgrF/tvwu7XhC4TjSFG0Icb7PsJ+0bqeDN+3P78XEX
+         G1aemuMU+gxs9FO+ijq2jGDLxAWyufgdSWO1Pu2D8VC8XBC4GNxVZQlPl/cw6GdQtm
+         hfUKBnXg+4DUiX5OXShGcq1PbAvV7+4En68rjdqc=
+Date:   Fri, 25 Nov 2022 16:07:48 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     syzbot <syzbot+8c7a4ca1cc31b7ce7070@syzkaller.appspotmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
+        willy@infradead.org, Dan Williams <dan.j.williams@intel.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [syzbot] WARNING in iov_iter_revert (3)
+Message-Id: <20221125160748.b620ba69dad1bc0fc5f6dea7@linux-foundation.org>
+In-Reply-To: <000000000000519d0205ee4ba094@google.com>
+References: <000000000000519d0205ee4ba094@google.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Linus,
+On Fri, 25 Nov 2022 05:37:43 -0800 syzbot <syzbot+8c7a4ca1cc31b7ce7070@syzkaller.appspotmail.com> wrote:
 
-The following changes since commit 61ba9e9712e187e019e6451bb9fc8eb24685fc=
-50:
+> Hello,
 
-  zonefs: Remove to_attr() helper function (2022-11-16 16:08:31 +0900)
+Thanks.  cc's added.
 
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/dlemoal/zonefs t=
-ags/zonefs-6.1-rc7
-
-for you to fetch changes up to db58653ce0c7cf4d155727852607106f890005c0:
-
-  zonefs: Fix active zone accounting (2022-11-25 17:01:22 +0900)
-
-----------------------------------------------------------------
-zonefs fixes for 6.1-rc7
-
- - Fix a race between zonefs module initialization of sysfs attribute
-   directory and mounting a drive (from Xiaoxu).
-
- - Fix active zone accounting in the rare case of an IO error due to a
-   zone transition to offline or read-only state (from me).
-
-----------------------------------------------------------------
-Damien Le Moal (1):
-      zonefs: Fix active zone accounting
-
-Zhang Xiaoxu (1):
-      zonefs: Fix race between modprobe and mount
-
- fs/zonefs/super.c  | 23 +++++++++++++++++------
- fs/zonefs/zonefs.h |  6 ++++--
- 2 files changed, 21 insertions(+), 8 deletions(-)
+> syzbot found the following issue on:
+> 
+> HEAD commit:    eb7081409f94 Linux 6.1-rc6
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=105ff881880000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8cdf448d3b35234
+> dashboard link: https://syzkaller.appspot.com/bug?extid=8c7a4ca1cc31b7ce7070
+> compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+> 
+> Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/4a019f55c517/disk-eb708140.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/eb36e890aa8b/vmlinux-eb708140.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/feee2c23ec64/bzImage-eb708140.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+8c7a4ca1cc31b7ce7070@syzkaller.appspotmail.com
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 7897 at lib/iov_iter.c:918 iov_iter_revert+0x394/0x850
+> Modules linked in:
+> CPU: 0 PID: 7897 Comm: syz-executor.2 Not tainted 6.1.0-rc6-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+> RIP: 0010:iov_iter_revert+0x394/0x850 lib/iov_iter.c:918
+> Code: 80 3c 01 00 48 8b 5c 24 20 74 08 48 89 df e8 e3 c9 a3 fd 4c 89 2b 48 83 c4 68 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 5c b1 4f fd <0f> 0b eb e8 48 8d 6b 18 48 89 e8 48 c1 e8 03 42 80 3c 28 00 74 08
+> RSP: 0018:ffffc90015fe7ac8 EFLAGS: 00010287
+> RAX: ffffffff843ae714 RBX: ffffc90015fe7e40 RCX: 0000000000040000
+> RDX: ffffc9000c1cc000 RSI: 000000000003ef70 RDI: 000000000003ef71
+> RBP: fffffffffff80e18 R08: ffffffff843ae3bc R09: fffffbfff1d2f2de
+> R10: fffffbfff1d2f2de R11: 1ffffffff1d2f2dd R12: fffffffffff80e18
+> R13: ffffc90015fe7e40 R14: ffffc90015fe7e50 R15: 000000007fefef0c
+> FS:  00007f212fd7e700(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 000000c00c59ffb8 CR3: 000000007dc32000 CR4: 00000000003506f0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <TASK>
+>  generic_file_read_iter+0x3d4/0x540 mm/filemap.c:2804
+>  do_iter_read+0x6e3/0xc10 fs/read_write.c:796
+>  vfs_readv fs/read_write.c:916 [inline]
+>  do_preadv+0x1f4/0x330 fs/read_write.c:1008
+>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>  do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+>  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> RIP: 0033:0x7f212f08b639
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007f212fd7e168 EFLAGS: 00000246 ORIG_RAX: 0000000000000147
+> RAX: ffffffffffffffda RBX: 00007f212f1ac1f0 RCX: 00007f212f08b639
+> RDX: 0000000000000001 RSI: 0000000020000100 RDI: 0000000000000003
+> RBP: 00007f212f0e6ae9 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 00007ffdc886837f R14: 00007f212fd7e300 R15: 0000000000022000
+>  </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
