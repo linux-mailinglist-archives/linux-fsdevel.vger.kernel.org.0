@@ -2,123 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E43FC6392DE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Nov 2022 01:55:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1C1C063933B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Nov 2022 02:59:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229793AbiKZAz6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 25 Nov 2022 19:55:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59640 "EHLO
+        id S230001AbiKZB7L (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 25 Nov 2022 20:59:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40698 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229570AbiKZAz5 (ORCPT
+        with ESMTP id S229733AbiKZB7K (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 25 Nov 2022 19:55:57 -0500
-Received: from mail-wm1-x344.google.com (mail-wm1-x344.google.com [IPv6:2a00:1450:4864:20::344])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF54459146
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 16:55:56 -0800 (PST)
-Received: by mail-wm1-x344.google.com with SMTP id p13-20020a05600c468d00b003cf8859ed1bso4507372wmo.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 25 Nov 2022 16:55:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=KLS2zcruSlKyOQ1OBKYSyr+7+6zj0YKBqr4fpDhq6DI=;
-        b=Ka80aDwYnbIo4dAxEck7vtRMTcm0TV+2D5HG46fjjpZ1kAQB0Kq+jOwYDpEQN7dHIa
-         ur2lz3ttU2JLJDzp+7KANzBndM9AYaoMdGIBqDgyA51pvU4V7tw4vDMf/dYqFh4fBfIf
-         IrkfjI6A43LvLvGS18QZLyPjXRMPINFiGcS9EN+OCFhSYAg2RA8QF2DZNY/z7CgIYh6q
-         q7r2KZ9D42HJMq/fLjvMQe11oemYPBKH2GeHEK3/Bx252mbQeCge3ZOyWe1PAwYGzVaR
-         Tc0hcNRgnnaGErXo4z2zAzGZ3EQwld3JuR5ei3GQszFSukq8NFH2YlZMqrm+sv6noAgz
-         x3SA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KLS2zcruSlKyOQ1OBKYSyr+7+6zj0YKBqr4fpDhq6DI=;
-        b=ExrsH6Ep9arebZVRsA3+V7SNBWPbJXdzIeQCnHk+n18toO1shAcMjDjoZkp2Rm978x
-         hTj5wWenpAT+f77jwRW/19hOE8WYzl7agi0fAI7zzbpOvkbAmgKfHz1WgUxIsbLxZ8uo
-         hBo2oQXPZctSKyKkpR0CTBv2aUMGEr/0C+u9VvaGHsFjsNbmkwwEndfajDrcZS4dlqeD
-         IKnOtGEesMX6z+Axo/SPwd5CWoAWMIPF27Y6EPDK4N5yLK452FiHGK+cy7FmI2F685gs
-         OTvkppuL1Gv3ivGY8DIOzb8RJOrWAUGRDXf/uXeqUp9OC5wwG9SQ9f6S7tQ/GUNwf5XQ
-         VrLQ==
-X-Gm-Message-State: ANoB5pmtSu2ax/jM0FPioRvxz/zgqlEZML4gWaogCF+UX2QJJNz4nzsR
-        UBTq7VAaiFxB2AN1ZeE+ny7SABAbYU/9YFIFCXE=
-X-Google-Smtp-Source: AA0mqf7GDbT0vOVsvjCAy0bzIAJGIrU+XHRqaWZ+7r7OOXCLeyrCybgo39iupmfrf0dlN/AAPME+cTvTlo9V3CDD4t0=
-X-Received: by 2002:a05:600c:4b17:b0:3cf:8b22:b567 with SMTP id
- i23-20020a05600c4b1700b003cf8b22b567mr15915930wmp.144.1669424155229; Fri, 25
- Nov 2022 16:55:55 -0800 (PST)
+        Fri, 25 Nov 2022 20:59:10 -0500
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E464A1CFFD;
+        Fri, 25 Nov 2022 17:59:09 -0800 (PST)
+Received: from dggpemm500024.china.huawei.com (unknown [172.30.72.54])
+        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NJvv20VVbzqSdh;
+        Sat, 26 Nov 2022 09:55:10 +0800 (CST)
+Received: from dggpemm500006.china.huawei.com (7.185.36.236) by
+ dggpemm500024.china.huawei.com (7.185.36.203) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Sat, 26 Nov 2022 09:59:08 +0800
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemm500006.china.huawei.com (7.185.36.236) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Sat, 26 Nov 2022 09:59:07 +0800
+Subject: Re: [PATCH v3 0/2] fs: clear a UBSAN shift-out-of-bounds warning
+To:     Al Viro <viro@zeniv.linux.org.uk>
+CC:     Eric Biggers <ebiggers@kernel.org>,
+        <linux-fsdevel@vger.kernel.org>, "Chris Mason" <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>, <linux-btrfs@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20221125091358.1963-1-thunder.leizhen@huawei.com>
+ <Y4Es4TIbVos5CTO9@ZenIV>
+From:   "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <0a8264a8-e2a9-952a-97ce-a7f06920ad39@huawei.com>
+Date:   Sat, 26 Nov 2022 09:59:06 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 MIME-Version: 1.0
-Received: by 2002:adf:d1cf:0:0:0:0:0 with HTTP; Fri, 25 Nov 2022 16:55:54
- -0800 (PST)
-Reply-To: samsonvichisunday@gmail.com
-From:   Aminu Bello <aminuadamuvitaform@gmail.com>
-Date:   Sat, 26 Nov 2022 01:55:54 +0100
-Message-ID: <CADwEiSu9iJ3WMgNUA4hL7J6GkEeyOdfxqf6fDnOquFQuZaiSmg@mail.gmail.com>
-Subject: INVITATION TO THE GREAT ILLUMINATI SOCIETY.
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: Yes, score=7.0 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FILL_THIS_FORM,
-        FILL_THIS_FORM_LONG,FREEMAIL_FROM,FREEMAIL_REPLYTO,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,SUBJ_ALL_CAPS,T_FILL_THIS_FORM_LOAN,
-        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5013]
-        *  0.5 SUBJ_ALL_CAPS Subject is all capitals
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [aminuadamuvitaform[at]gmail.com]
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2a00:1450:4864:20:0:0:0:344 listed in]
-        [list.dnswl.org]
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  2.9 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-        *  0.0 FILL_THIS_FORM Fill in a form with personal information
-        *  2.0 FILL_THIS_FORM_LONG Fill in a form with personal information
-        *  0.0 T_FILL_THIS_FORM_LOAN Answer loan question(s)
-X-Spam-Level: *******
+In-Reply-To: <Y4Es4TIbVos5CTO9@ZenIV>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.178.55]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemm500006.china.huawei.com (7.185.36.236)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=20
-INVITATION TO THE GREAT ILLUMINATI SOCIETY
-CONGRATULATIONS TO YOU....
-You have been chosen among the people given the opportunity this
-November to become rich and popular by joining the Great ILLUMINATI.
-This is an open invitation for you to become part of the world's
-biggest conglomerate and reach the peak of your career. a worthy goal
-and motivation to reach those upper layers of the pyramid to become
-one among the most Successful, Richest, Famous, Celebrated, Powerful
-and most decorated Personalities in the World???
-If you are interested, please respond to this message now with =E2=80=9CI
-ACCEPT" and fill the below details to get the step to join the
-Illuminati.
-KINDLY FILL BELOW DETAILS AND RETURN NOW.....
-Full names: ....................
-Your Country: .................
-State/ City: .............
-Age: ....................
-Marital status: ....................
-Occupation: ....................
-Monthly income: ....................
-WhatsApp Number: ......
-Postal Code: .....
-Home / House Address: .....
-NOTE: That you are not forced to join us, it is on your decision to
-become part of the world's biggest conglomerate and reach the peak of
-your career.
-Distance is not a barrier.
+
+
+On 2022/11/26 5:00, Al Viro wrote:
+> On Fri, Nov 25, 2022 at 05:13:56PM +0800, Zhen Lei wrote:
+>> v2 --> v3:
+>> Updated the commit message of patch 2/2 based on Alexander Viro's suggestion.
+> 
+> Not exactly what I meant...  I've tentatively applied it, with the
+
+Haha, I felt like something was missing yesterday, too. But as far as my English
+level is concerned, I usually copy the words suggested by others directly.
+
+> following commit message:
+
+Thanks.
+
+> 
+> --------------------------------
+> get rid of INT_LIMIT, use type_max() instead
+> 
+> INT_LIMIT() tries to do what type_max() does, except that type_max()
+> doesn't rely upon undefined behaviour[*], might as well use type_max()
+> instead.
+> 
+> [*] if T is an N-bit signed integer type, the maximal value in T is
+> pow(2, N - 1) - 1, all right, but naive expression for that value
+> ends up with a couple of wraparounds and as usual for wraparounds
+> in signed types, that's an undefined behaviour.  type_max() takes
+> care to avoid those...
+> 
+> Caught-by: UBSAN
+> Suggested-by: Eric Biggers <ebiggers@kernel.org>
+> Signed-off-by: Zhen Lei <thunder.leizhen@huawei.com>
+> Reviewed-by: Eric Biggers <ebiggers@google.com>
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+> --------------------------------
+> 
+> Does anybody have objections against the commit message above?
+
+Looks good to me.
+
+> 
+> .
+> 
+
+-- 
+Regards,
+  Zhen Lei
