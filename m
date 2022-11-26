@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B240639458
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Nov 2022 09:06:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 25EEC639455
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Nov 2022 09:06:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229500AbiKZIGy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Nov 2022 03:06:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57874 "EHLO
+        id S229487AbiKZIGw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 26 Nov 2022 03:06:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57864 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbiKZIGu (ORCPT
+        with ESMTP id S229436AbiKZIGt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Nov 2022 03:06:50 -0500
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1877E2870D
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Nov 2022 00:06:48 -0800 (PST)
-Received: by mail-il1-f199.google.com with SMTP id a14-20020a921a0e000000b00302a8ffa8e5so4295752ila.2
-        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Nov 2022 00:06:48 -0800 (PST)
+        Sat, 26 Nov 2022 03:06:49 -0500
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4D5927FCD
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Nov 2022 00:06:47 -0800 (PST)
+Received: by mail-il1-f200.google.com with SMTP id k3-20020a92c243000000b0030201475a6bso4337728ilo.9
+        for <linux-fsdevel@vger.kernel.org>; Sat, 26 Nov 2022 00:06:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=E1A4AISBldY6qXgzJxpm60uW0wD8JljyitpizBqwB7k=;
-        b=NovCYgRUqAVJs+BtTzAn0Sgy+azU7+r6PCDS+oHIoesQQxjQ+jGyOQQL0TTRQ9i0zB
-         O2HyS3x8nxSdPP5UHIjFrqA/s4o/jQWEhQLQhW8VyJIqb0A7664ip0ObuUKXW0O4L0ZY
-         kLcC4cF9hXNbU2DxDcnUr+kzhZ0HB8ZIHLwC+CL3WM5UwRj/+o4BITiwKc0YHgs8v4C2
-         6WWADEvnmciD+GsgEpTTGK9wPNvs9V00V1xxe8Q03YGQRd9GLSo2Zlh3mwOAyVQwPJB5
-         yIBxkEf9RFhRxuY/kFZqrm1YLa1hmv1wa15D1Zgha5tmoQjvO0ui3Z6yDPm6DTJ3JBzL
-         fE9w==
-X-Gm-Message-State: ANoB5plOH091omCaxm4r+ctlDBcIYgjeWpsadDzBgwu8yxIH5WuaNTbD
-        G0T9qtfn5w+xHfJTDB2CdnOJMFXSUYTwn+BfBTm45+I53dz2
-X-Google-Smtp-Source: AA0mqf5KJxjONv/z3ydt8/FFm+3mwQXHwuCK9jNyACtdgRLwRXglts3GwFePpMrVXCSd0Y9FHj5kd5V/pTr4kcICbtY6Gb663DcE
+        bh=vK0l+Lf+tCezD+tESCSp6qOqBtJJPkKIibcdWDf4hKY=;
+        b=N9tJ1/8qqxAikI146LNdUSN4j+eRRoCchOYdPimMVCx5bI07J/vWwQ1PM4RTk6OZR9
+         ZIzGnxzLwpYiwkh7hkZPAYGVlDOMY7W/AjQNNiuLf2oryFUOlSK2HwH50nnIaPZiKj9F
+         56Cdu4m4nT1jtZGNy8BJcbZ3DvxYJyNPLbEntNPbwwAugHSS7BdlqCWB29cwbhfJjao9
+         f2nq4eejPw4p3XXhZLUeeHvAyt7uoOblAKTKdbLTEkZBmN5C1c1MheQoRlxiwqUWE/Rm
+         2NY79Ugo9fAt3656Lw2uEoZbaIZ30DlFW1/kbSBUs/E/xc/4LUjsiOf82SFdrwpfXwLA
+         /+VA==
+X-Gm-Message-State: ANoB5plFWfr/Bc0SkJQczyCum0TjiMKRFHSGiS3uNhoEzPxOv+MFxUt4
+        hipiOMkV3rPxO2wDlJRWu9511Uw1/FniiYIK0UnaUYy5ES1b
+X-Google-Smtp-Source: AA0mqf56aCnoMyzSl3lzPjXeedmg6gvT1+nsuZbZ0tr3O/LdxsnEj4Jh9KoCUxCW9Uw/moewDn/b+bk7wqbXDDNHE+B+H33FIkyi
 MIME-Version: 1.0
-X-Received: by 2002:a02:cc4d:0:b0:373:2fc2:96d7 with SMTP id
- i13-20020a02cc4d000000b003732fc296d7mr14233452jaq.177.1669450007352; Sat, 26
+X-Received: by 2002:a05:6638:2b7:b0:389:c2fd:bc13 with SMTP id
+ d23-20020a05663802b700b00389c2fdbc13mr2189118jaq.12.1669450007061; Sat, 26
  Nov 2022 00:06:47 -0800 (PST)
 Date:   Sat, 26 Nov 2022 00:06:47 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a89dcd05ee5b1e2c@google.com>
-Subject: [syzbot] WARNING in hfsplus_cat_write_inode
-From:   syzbot <syzbot+4913dca2ea6e4d43f3f1@syzkaller.appspotmail.com>
-To:     damien.lemoal@opensource.wdc.com, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Message-ID: <000000000000a42d2c05ee5b1e18@google.com>
+Subject: [syzbot] kernel BUG in hfsplus_create_attributes_file
+From:   syzbot <syzbot+a313c6d1d9ef87de2a66@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, brauner@kernel.org,
+        keescook@chromium.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
@@ -58,56 +58,74 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    08ad43d554ba Merge tag 'net-6.1-rc7' of git://git.kernel.o..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1555a205880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8d01b6e3197974dd
-dashboard link: https://syzkaller.appspot.com/bug?extid=4913dca2ea6e4d43f3f1
+HEAD commit:    6d464646530f Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a49603880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=23eec5c79c22aaf8
+dashboard link: https://syzkaller.appspot.com/bug?extid=a313c6d1d9ef87de2a66
 compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10708b9b880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10127353880000
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14382015880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f791c3880000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e40e255b7cf8/disk-08ad43d5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dfabe238c5ee/vmlinux-08ad43d5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2bcb24a7bbed/bzImage-08ad43d5.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/1bda20b6bc4d/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/f22d29413625/disk-6d464646.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/389f0a5f1a4a/vmlinux-6d464646.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/48ddb02d82da/Image-6d464646.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/23c8423bc069/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+4913dca2ea6e4d43f3f1@syzkaller.appspotmail.com
+Reported-by: syzbot+a313c6d1d9ef87de2a66@syzkaller.appspotmail.com
 
+         and is ignored by this kernel. Remove the mand
+         option from the mount to silence this warning.
+=======================================================
 ------------[ cut here ]------------
-WARNING: CPU: 1 PID: 33 at fs/hfsplus/inode.c:616 hfsplus_cat_write_inode+0xb13/0xfe0
+kernel BUG at fs/hfsplus/xattr.c:175!
+Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
 Modules linked in:
-CPU: 1 PID: 33 Comm: kworker/u4:2 Not tainted 6.1.0-rc6-syzkaller-00176-g08ad43d554ba #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: writeback wb_workfn (flush-7:0)
-RIP: 0010:hfsplus_cat_write_inode+0xb13/0xfe0 fs/hfsplus/inode.c:616
-Code: 00 0f 85 df 04 00 00 44 89 f0 48 8d 65 d8 5b 41 5c 41 5d 41 5e 41 5f 5d c3 e8 f9 99 2f ff 0f 0b e9 d1 f7 ff ff e8 ed 99 2f ff <0f> 0b e9 7f fa ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c 13 f6 ff
-RSP: 0000:ffffc90000aa7120 EFLAGS: 00010293
-RAX: ffffffff825afe83 RBX: 0000000000000058 RCX: ffff8880182f9d40
-RDX: 0000000000000000 RSI: 0000000000000058 RDI: 00000000000000f8
-RBP: ffffc90000aa74d0 R08: ffffffff825af8f8 R09: ffffed100e907461
-R10: ffffed100e907461 R11: 1ffff1100e907460 R12: dffffc0000000000
-R13: ffffc90000aa71e0 R14: ffffc90000aa7180 R15: ffff88807483a300
-FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffdc37c3b60 CR3: 000000002762c000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- write_inode fs/fs-writeback.c:1440 [inline]
- __writeback_single_inode+0x4d6/0x670 fs/fs-writeback.c:1652
- writeback_sb_inodes+0xb3b/0x18f0 fs/fs-writeback.c:1878
- wb_writeback+0x41f/0x7b0 fs/fs-writeback.c:2052
- wb_do_writeback fs/fs-writeback.c:2195 [inline]
- wb_workfn+0x3cb/0xef0 fs/fs-writeback.c:2235
- process_one_work+0x877/0xdb0 kernel/workqueue.c:2289
- worker_thread+0xb14/0x1330 kernel/workqueue.c:2436
- kthread+0x266/0x300 kernel/kthread.c:376
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
- </TASK>
+CPU: 0 PID: 3072 Comm: syz-executor864 Not tainted 6.1.0-rc6-syzkaller-32662-g6d464646530f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : hfsplus_create_attributes_file+0x6d4/0x6fc fs/hfsplus/xattr.c:175
+lr : hfsplus_create_attributes_file+0x6d4/0x6fc fs/hfsplus/xattr.c:175
+sp : ffff80000fbab650
+x29: ffff80000fbab670 x28: 0000000000000000 x27: ffff0000c6616000
+x26: ffff0000c94e6000 x25: 000000000000002e x24: 0000000000000080
+x23: 0000000000000000 x22: 0000000000010000 x21: 0000000000000001
+x20: ffff0000cb7fa8b0 x19: ffff0000c6616038 x18: 00000000000000c0
+x17: 0000000000000000 x16: ffff80000dbe6158 x15: ffff0000c7df0000
+x14: 00000000000000b8 x13: 00000000ffffffff x12: ffff0000c7df0000
+x11: ff808000088f78f0 x10: 0000000000000000 x9 : ffff8000088f78f0
+x8 : ffff0000c7df0000 x7 : ffff8000085f9554 x6 : 0000000000000000
+x5 : 0000000000000000 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : 0000000000000001 x1 : 0000000000010000 x0 : 0000000000000000
+Call trace:
+ hfsplus_create_attributes_file+0x6d4/0x6fc fs/hfsplus/xattr.c:175
+ __hfsplus_setxattr+0x180/0x4e8 fs/hfsplus/xattr.c:331
+ hfsplus_initxattrs+0xac/0x130 fs/hfsplus/xattr_security.c:59
+ security_inode_init_security+0x208/0x278 security/security.c:1119
+ hfsplus_init_security+0x40/0x54 fs/hfsplus/xattr_security.c:71
+ hfsplus_mknod+0x128/0x1bc fs/hfsplus/dir.c:498
+ hfsplus_create+0x40/0x54 fs/hfsplus/dir.c:523
+ lookup_open fs/namei.c:3413 [inline]
+ open_last_lookups fs/namei.c:3481 [inline]
+ path_openat+0x804/0x11c4 fs/namei.c:3710
+ do_filp_open+0xdc/0x1b8 fs/namei.c:3740
+ do_sys_openat2+0xb8/0x22c fs/open.c:1310
+ do_sys_open fs/open.c:1326 [inline]
+ __do_sys_openat fs/open.c:1342 [inline]
+ __se_sys_openat fs/open.c:1337 [inline]
+ __arm64_sys_openat+0xb0/0xe0 fs/open.c:1337
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
+ el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x48/0x164 arch/arm64/kernel/syscall.c:206
+ el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:584
+Code: d4210000 97e6b81d d4210000 97e6b81b (d4210000) 
+---[ end trace 0000000000000000 ]---
 
 
 ---
