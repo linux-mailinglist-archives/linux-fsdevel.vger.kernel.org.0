@@ -2,275 +2,222 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D0BC763974B
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 26 Nov 2022 17:51:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 120586399EA
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Nov 2022 11:37:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229653AbiKZQvy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 26 Nov 2022 11:51:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54048 "EHLO
+        id S229600AbiK0KhD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Nov 2022 05:37:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229487AbiKZQvw (ORCPT
+        with ESMTP id S229526AbiK0KhB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 26 Nov 2022 11:51:52 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC0F417AA1;
-        Sat, 26 Nov 2022 08:51:50 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id l39-20020a05600c1d2700b003cf93c8156dso5492988wms.4;
-        Sat, 26 Nov 2022 08:51:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vN9PyBSjs8Dht8TLsEgLILbh6kQml9P6IFGITXb4rg4=;
-        b=Rb4NKzfa4WmBCqDvn6BQu7ppfX+/fChWamqf/r+6hZ/4xqcj9fKuLD9VM90skg2zsn
-         swh1l1apNXlUy8R3XafLunM18CgoOB5wj8H5B5ifv78KlNMnfdVDW99HBiQMZa8+kmS1
-         fY+b1+C50I6UawOjkbldVt1q8FHxYWZpCkfQhsY3OpBHohmWD2BP/8knd3YKF5xGJtlG
-         3KW38VF5O8k0PKP4XXip1d/3/Rt8ERS+tinYiWGmR5OJhzfeU1HYep0HOtj7YE0iqjby
-         sgOfR+71/aNTAydtDuyY5R99usSd/MietjwvAYTyQo35vNHEVhfcKeh/vRzXvjLNMnNr
-         D7Pg==
+        Sun, 27 Nov 2022 05:37:01 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F40AEE01
+        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Nov 2022 02:35:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669545315;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=a/FKhEJUKr4Au5jEDV0nA39boCfv1uOAmeL78/XZzlw=;
+        b=KAY1ggBja+xLxU+qgBSmoeX+1QRRXnyvIIrzKncszqGvUmNHx20HFOOM1hXSj16SDqXx2p
+        wGiUlKpAsQLFo2n/TSrCv2ZoaLiVaX+DPLc/8zKOoAVdiyKNldV7f/GzaIlas0yf+PCk4e
+        p22wLw4D791CTinA0LF6VWd6Etozys8=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-219-M64FiH4yMfKTB6eO3cDKBQ-1; Sun, 27 Nov 2022 05:35:13 -0500
+X-MC-Unique: M64FiH4yMfKTB6eO3cDKBQ-1
+Received: by mail-wm1-f70.google.com with SMTP id m17-20020a05600c3b1100b003cf9cc47da5so4811528wms.9
+        for <linux-fsdevel@vger.kernel.org>; Sun, 27 Nov 2022 02:35:12 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vN9PyBSjs8Dht8TLsEgLILbh6kQml9P6IFGITXb4rg4=;
-        b=gvkdb/1wMmGiZwx4mvGiBhZqLTNSmzybo00P+BgChp72TMpvbR7GJBSYlNgAyVKv4q
-         fONqjn3CQjDMns/vRNFOp9kc4KJPihQUv71d/JJgj88zBQlF1eWYP3mvs9XZtiQj6Q4P
-         IHCoD/VkjJNslq3wx19xGyYuWWSjlYWu2eGpIc+I269UZezgfKdXUYXXtb8DndIpxqrG
-         da3NTsRA4+QpeKdfpRMFuYWaigwzwR8WEJE2+5D1Nzc5QqtFi2J6Lw+JO8111lEsV/XM
-         8z1i42+q1A0fOEFsWXa2aKxPxImoPNGDKWwPKnycvnWZgNj8NZeanRWrSDr9/YUm9vkB
-         b7dw==
-X-Gm-Message-State: ANoB5pkTZ+lI/nfWm5guCHWDkst0QaKasxRX8Ng+jCXmTyQ50RZj/nOX
-        mrjTdfCMSHenUPxGjfqOcdY=
-X-Google-Smtp-Source: AA0mqf42aznnNyKmB2Z/SjtITTKNfD9oq5uAoQWErPvzGXfi/k/L5fDRiV+qOB68p6OwRJXOntkyWA==
-X-Received: by 2002:a05:600c:4e06:b0:3cf:703e:1d88 with SMTP id b6-20020a05600c4e0600b003cf703e1d88mr20930581wmq.155.1669481509252;
-        Sat, 26 Nov 2022 08:51:49 -0800 (PST)
-Received: from suse.localnet (host-79-55-110-244.retail.telecomitalia.it. [79.55.110.244])
-        by smtp.gmail.com with ESMTPSA id j23-20020a05600c1c1700b003cf57329221sm14190444wms.14.2022.11.26.08.51.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Nov 2022 08:51:48 -0800 (PST)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jeff Moyer <jmoyer@redhat.com>
-Subject: Re: [RESEND PATCH] fs/aio: Replace kmap{,_atomic}() with kmap_local_page()
-Date:   Sat, 26 Nov 2022 17:51:47 +0100
-Message-ID: <2600872.Lt9SDvczpP@suse>
-In-Reply-To: <20221016150656.5803-1-fmdefrancesco@gmail.com>
-References: <20221016150656.5803-1-fmdefrancesco@gmail.com>
+        h=content-transfer-encoding:in-reply-to:subject:organization:from
+         :content-language:references:cc:to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=a/FKhEJUKr4Au5jEDV0nA39boCfv1uOAmeL78/XZzlw=;
+        b=ccTrJ5c/pxmaNEAn89OZK2eiQYhdPO26Vd3fX4MjOGrsemKlkycC95iHw6WV6gYaOS
+         Z4S+R/u5yKUeb4IAOtRRqlhoTOABClplxI/Q7SFf8djmsw8yw462TXBG5gsE95UfOQKR
+         9upo32hPO8nUwt4Jv1X9oq7hLUX8sN4AfZYIpFbtUU3FalnwZtvFF5LnvMU+mw44f/YE
+         oDwsIatYJaS+a6wBm7+FdM7grJvQvMAGznplrMl1ZjPU6rZUoCxJLB9PL+ZK+2CIjvM4
+         oK6toWO5H7pg247mahL5ychWKd4+GJxWETvvK1BZU659d7B4hFu5EUA2+lV0Esz2Hk4q
+         Xy+w==
+X-Gm-Message-State: ANoB5pm1Ugq07tou/sKmROpIIYdZFvwLvIxmjWpbgqXHKDSpYFYTEbkQ
+        PX/uqmlQrrwUolFhT/V8lHmbU4tnqJ37WT5KEyaVr84W0LspXQGpcNexU4ef/XjiiH7aCU1Qi/g
+        CZCXxDeStceqTnFzk3p3ZOKageQ==
+X-Received: by 2002:a05:600c:4e88:b0:3b5:477:1e80 with SMTP id f8-20020a05600c4e8800b003b504771e80mr34594854wmq.200.1669545311990;
+        Sun, 27 Nov 2022 02:35:11 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf44zTk6J1KBaqs1seffTqR2+v9TqwwPSmjBWI2JrtJKUPaYELfhGu32bDJHUXiVwBKDfUuj3g==
+X-Received: by 2002:a05:600c:4e88:b0:3b5:477:1e80 with SMTP id f8-20020a05600c4e8800b003b504771e80mr34594816wmq.200.1669545311706;
+        Sun, 27 Nov 2022 02:35:11 -0800 (PST)
+Received: from ?IPV6:2003:cb:c724:dc00:5ea8:da59:8609:7da? (p200300cbc724dc005ea8da59860907da.dip0.t-ipconnect.de. [2003:cb:c724:dc00:5ea8:da59:8609:7da])
+        by smtp.gmail.com with ESMTPSA id u10-20020a05600c19ca00b003c5571c27a1sm14797024wmq.32.2022.11.27.02.35.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 27 Nov 2022 02:35:11 -0800 (PST)
+Message-ID: <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com>
+Date:   Sun, 27 Nov 2022 11:35:09 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.1
+To:     linux-kernel@vger.kernel.org, Hans Verkuil <hverkuil@xs4all.nl>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     x86@kernel.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
+        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
+        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-17-david@redhat.com>
+Content-Language: en-US
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE
+ usage
+In-Reply-To: <20221116102659.70287-17-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On domenica 16 ottobre 2022 17:06:56 CET Fabio M. De Francesco wrote:
-> The use of kmap() and kmap_atomic() are being deprecated in favor of
-> kmap_local_page().
->=20
-> There are two main problems with kmap(): (1) It comes with an overhead as
-> the mapping space is restricted and protected by a global lock for
-> synchronization and (2) it also requires global TLB invalidation when the
-> kmap=E2=80=99s pool wraps and it might block when the mapping space is fu=
-lly
-> utilized until a slot becomes available.
->=20
-> With kmap_local_page() the mappings are per thread, CPU local, can take
-> page faults, and can be called from any context (including interrupts).
-> It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
-> the tasks can be preempted and, when they are scheduled to run again, the
-> kernel virtual addresses are restored and still valid.
->=20
-> Since its use in fs/aio.c is safe everywhere, it should be preferred.
->=20
-> Therefore, replace kmap() and kmap_atomic() with kmap_local_page() in
-> fs/aio.c.
->=20
-> Tested with xfstests on a QEMU/KVM x86_32 VM, 6GB RAM, booting a kernel
-> with HIGHMEM64GB enabled.
->=20
-> Cc: "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>
-> Suggested-by: Ira Weiny <ira.weiny@intel.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-> Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+On 16.11.22 11:26, David Hildenbrand wrote:
+> FOLL_FORCE is really only for ptrace access. According to commit
+> 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are always
+> writable"), get_vaddr_frames() currently pins all pages writable as a
+> workaround for issues with read-only buffers.
+> 
+> FOLL_FORCE, however, seems to be a legacy leftover as it predates
+> commit 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are
+> always writable"). Let's just remove it.
+> 
+> Once the read-only buffer issue has been resolved, FOLL_WRITE could
+> again be set depending on the DMA direction.
+> 
+> Cc: Hans Verkuil <hverkuil@xs4all.nl>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Tomasz Figa <tfiga@chromium.org>
+> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 > ---
->=20
-> I've tested with "./check -g aio". The tests in this group fail 3/26
-> times, with and without my patch. Therefore, these changes don't introduce
-> further errors. I'm not aware of any further tests I may run, so that
-> any suggestions would be precious and much appreciated :-)
->=20
-> I'm resending this patch because some recipients were missing in the
-> previous submissions. In the meantime I'm also adding some more informati=
-on
-> in the commit message. There are no changes in the code.
->=20
->  fs/aio.c | 32 ++++++++++++++++----------------
->  1 file changed, 16 insertions(+), 16 deletions(-)
->=20
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 3c249b938632..343fea0c6d1a 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -567,7 +567,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigne=
-d=20
-int
-> nr_events) ctx->user_id =3D ctx->mmap_base;
->  	ctx->nr_events =3D nr_events; /* trusted copy */
->=20
-> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
->  	ring->nr =3D nr_events;	/* user copy */
->  	ring->id =3D ~0U;
->  	ring->head =3D ring->tail =3D 0;
-> @@ -575,7 +575,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigne=
-d=20
-int
-> nr_events) ring->compat_features =3D AIO_RING_COMPAT_FEATURES;
->  	ring->incompat_features =3D AIO_RING_INCOMPAT_FEATURES;
->  	ring->header_length =3D sizeof(struct aio_ring);
-> -	kunmap_atomic(ring);
-> +	kunmap_local(ring);
->  	flush_dcache_page(ctx->ring_pages[0]);
->=20
->  	return 0;
-> @@ -678,9 +678,9 @@ static int ioctx_add_table(struct kioctx *ctx, struct
-> mm_struct *mm) * we are protected from page migration
->  					 * changes ring_pages by -
->ring_lock.
->  					 */
-> -					ring =3D kmap_atomic(ctx-
->ring_pages[0]);
-> +					ring =3D kmap_local_page(ctx-
->ring_pages[0]);
->  					ring->id =3D ctx->id;
-> -					kunmap_atomic(ring);
-> +					kunmap_local(ring);
->  					return 0;
->  				}
->=20
-> @@ -1024,9 +1024,9 @@ static void user_refill_reqs_available(struct kioctx
-> *ctx) * against ctx->completed_events below will make sure we do the
->  		 * safe/right thing.
->  		 */
-> -		ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +		ring =3D kmap_local_page(ctx->ring_pages[0]);
->  		head =3D ring->head;
-> -		kunmap_atomic(ring);
-> +		kunmap_local(ring);
->=20
->  		refill_reqs_available(ctx, head, ctx->tail);
->  	}
-> @@ -1132,12 +1132,12 @@ static void aio_complete(struct aio_kiocb *iocb)
->  	if (++tail >=3D ctx->nr_events)
->  		tail =3D 0;
->=20
-> -	ev_page =3D kmap_atomic(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
-> +	ev_page =3D kmap_local_page(ctx->ring_pages[pos /=20
-AIO_EVENTS_PER_PAGE]);
->  	event =3D ev_page + pos % AIO_EVENTS_PER_PAGE;
->=20
->  	*event =3D iocb->ki_res;
->=20
-> -	kunmap_atomic(ev_page);
-> +	kunmap_local(ev_page);
->  	flush_dcache_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
->=20
->  	pr_debug("%p[%u]: %p: %p %Lx %Lx %Lx\n", ctx, tail, iocb,
-> @@ -1151,10 +1151,10 @@ static void aio_complete(struct aio_kiocb *iocb)
->=20
->  	ctx->tail =3D tail;
->=20
-> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
->  	head =3D ring->head;
->  	ring->tail =3D tail;
-> -	kunmap_atomic(ring);
-> +	kunmap_local(ring);
->  	flush_dcache_page(ctx->ring_pages[0]);
->=20
->  	ctx->completed_events++;
-> @@ -1214,10 +1214,10 @@ static long aio_read_events_ring(struct kioctx *c=
-tx,
->  	mutex_lock(&ctx->ring_lock);
->=20
->  	/* Access to ->ring_pages here is protected by ctx->ring_lock. */
-> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
->  	head =3D ring->head;
->  	tail =3D ring->tail;
-> -	kunmap_atomic(ring);
-> +	kunmap_local(ring);
->=20
->  	/*
->  	 * Ensure that once we've read the current tail pointer, that
-> @@ -1249,10 +1249,10 @@ static long aio_read_events_ring(struct kioctx *c=
-tx,
->  		avail =3D min(avail, nr - ret);
->  		avail =3D min_t(long, avail, AIO_EVENTS_PER_PAGE - pos);
->=20
-> -		ev =3D kmap(page);
-> +		ev =3D kmap_local_page(page);
->  		copy_ret =3D copy_to_user(event + ret, ev + pos,
->  					sizeof(*ev) * avail);
-> -		kunmap(page);
-> +		kunmap_local(ev);
->=20
->  		if (unlikely(copy_ret)) {
->  			ret =3D -EFAULT;
-> @@ -1264,9 +1264,9 @@ static long aio_read_events_ring(struct kioctx *ctx,
->  		head %=3D ctx->nr_events;
->  	}
->=20
-> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
->  	ring->head =3D head;
-> -	kunmap_atomic(ring);
-> +	kunmap_local(ring);
->  	flush_dcache_page(ctx->ring_pages[0]);
->=20
->  	pr_debug("%li  h%u t%u\n", ret, head, tail);
-> --
-> 2.36.1
-
-Al, Benjamin,
-
-I'm sending a gentle ping for this old patch too (and thanking Al again for=
-=20
-pointing me out how fs/ufs and fs/sysv conversions must be reworked and=20
-mistakes fixed).
-
-About this I've had Ira's and Jeff's "Reviewed-by:" tags. I also responded =
-in=20
-this thread to a couple of objections from Jeff which were regarding some=20
-ambiguities in the commit message.
-
-Please let me know if here too there are mistakes which must be fixed and c=
-ode=20
-to be reworked.
-
-I'm currently just a little more than a pure hobbyist, therefore please be=
-=20
-patient for the time it takes because until mid February 2023 I'll only be=
-=20
-able to work few hours per weeks using my spare time.=20
-
-I'm looking forward to hearing from you.
-
-Regards,
-
-=46abio
+>   drivers/media/common/videobuf2/frame_vector.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
+> index 542dde9d2609..062e98148c53 100644
+> --- a/drivers/media/common/videobuf2/frame_vector.c
+> +++ b/drivers/media/common/videobuf2/frame_vector.c
+> @@ -50,7 +50,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
+>   	start = untagged_addr(start);
+>   
+>   	ret = pin_user_pages_fast(start, nr_frames,
+> -				  FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
+> +				  FOLL_WRITE | FOLL_LONGTERM,
+>   				  (struct page **)(vec->ptrs));
+>   	if (ret > 0) {
+>   		vec->got_ref = true;
 
 
+Hi Andrew,
+
+see the discussion at [1] regarding a conflict and how to proceed with
+upstreaming. The conflict would be easy to resolve, however, also
+the patch description doesn't make sense anymore with [1].
+
+
+On top of mm-unstable, reverting this patch and applying [1] gives me
+an updated patch:
+
+
+ From 1e66c25f1467c1f1e5f275312f2c6df29308d4df Mon Sep 17 00:00:00 2001
+From: David Hildenbrand <david@redhat.com>
+Date: Wed, 16 Nov 2022 11:26:55 +0100
+Subject: [PATCH] mm/frame-vector: remove FOLL_FORCE usage
+
+GUP now supports reliable R/O long-term pinning in COW mappings, such
+that we break COW early. MAP_SHARED VMAs only use the shared zeropage so
+far in one corner case (DAXFS file with holes), which can be ignored
+because GUP does not support long-term pinning in fsdax (see
+check_vma_flags()).
+
+Consequently, FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM is no longer required
+for reliable R/O long-term pinning: FOLL_LONGTERM is sufficient. So stop
+using FOLL_FORCE, which is really only for ptrace access.
+
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Acked-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Tomasz Figa <tfiga@chromium.org>
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+  drivers/media/common/videobuf2/frame_vector.c | 2 +-
+  1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
+index aad72640f055..8606fdacf5b8 100644
+--- a/drivers/media/common/videobuf2/frame_vector.c
++++ b/drivers/media/common/videobuf2/frame_vector.c
+@@ -41,7 +41,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames, bool write,
+  	int ret_pin_user_pages_fast = 0;
+  	int ret = 0;
+  	int err;
+-	unsigned int gup_flags = FOLL_FORCE | FOLL_LONGTERM;
++	unsigned int gup_flags = FOLL_LONGTERM;
+  
+  	if (nr_frames == 0)
+  		return 0;
+-- 
+2.38.1
+
+
+
+Please let me know how you want to proceed. Ideally, you'd pick up
+[1] and apply this updated patch. Also, please tell me if I should
+send this updated patch in a separate mail (e.g., as reply to this mail).
+
+
+[1] https://lkml.kernel.org/r/71bdd3cf-b044-3f12-df58-7c16d5749587@xs4all.nl
+
+-- 
+Thanks,
+
+David / dhildenb
 
