@@ -2,75 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 993BD639C62
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Nov 2022 19:34:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B01C0639C67
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 27 Nov 2022 19:38:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229632AbiK0Sez (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 27 Nov 2022 13:34:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39790 "EHLO
+        id S229624AbiK0Si0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 27 Nov 2022 13:38:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229599AbiK0Sex (ORCPT
+        with ESMTP id S229500AbiK0SiY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 27 Nov 2022 13:34:53 -0500
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F9EFDF84;
-        Sun, 27 Nov 2022 10:34:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
-        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
-        Content-ID:Content-Description:In-Reply-To:References;
-        bh=HbkyPqtk4FWZA0Swpp/Ynilr1ADcBAXSKQQTZhA6dSQ=; b=owDdRAPN1wbgK+RWx93FJY56aQ
-        wvhGI7c7HPKJVRAynYXrANlNLmbookQEmyRq0c0Tsw9ARqG2MGf8zgc3TJPqgNQJF8V8jN637vHm2
-        A6PkjsSt4bGrC2I3T6tEJw4pnPRQUlNb32h4o7otjXe1ndVZN9qP8GHWZLQVntqXWoKW4Ct0RWY/7
-        /FK6d+gPLhS1lTnL13468xJmhTlPJ0xdVYOMKEkEBZMpyT8walcnBBvNwVg+hjKOdLmNRokxI/4FK
-        GSlpT9tmDyrxgDqHl6l6tgcFf+DagNmc66l1oVJ6Df9uH46z00EObakmTcGsnV4oNrjWcXYW7Dvo6
-        yVnO5IVg==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1ozMUM-007BiS-21;
-        Sun, 27 Nov 2022 18:34:50 +0000
-Date:   Sun, 27 Nov 2022 18:34:50 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: [git pull] more fixes
-Message-ID: <Y4Otysg7VQdEj1Jp@ZenIV>
+        Sun, 27 Nov 2022 13:38:24 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 88465A188;
+        Sun, 27 Nov 2022 10:38:23 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 18C6660E8B;
+        Sun, 27 Nov 2022 18:38:23 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DFA7C433D6;
+        Sun, 27 Nov 2022 18:38:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669574302;
+        bh=CYMIjb5gAdEwblJqPgCeMG3YnIc+UiEUP69wjHO+80o=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bov49eJquLLRRRmcovLLKyCn5XGNT4v6cAjKYpQeQMZN6QS1FOZ1GCvIQ4K79Qc7u
+         rNph3AH9GRBVKGwSGBgmE3ypDFS4+QeCbhVnPS/gUaNXsEq9JJSVJQEznZFZGFvLwR
+         r2xvCv6vlXRWkySZ9ooh2kQyfyKmLYpvhb2o+UKJ3QE7xHJTfUvVkcqADvfLIuzDwL
+         Ql5tAoI6h07U8YEjYN3luBlaUILwEbX71G+vqYFopLnu6mIHpOWResh1kuPIeOFul4
+         MUU37iC+ujd8UPRbojG4gYzl1e2aBp1AzXgkVQ5ALtOfMgsflHzN6GYNycH7iC3ez7
+         YMNtJD1azIKEQ==
+Date:   Sun, 27 Nov 2022 10:38:22 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, dan.j.williams@intel.com
+Subject: Re: [PATCH 0/2] fsdax,xfs: fix warning messages
+Message-ID: <Y4OuntOVjId9FLzL@magnolia>
+References: <1669301694-16-1-git-send-email-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <1669301694-16-1-git-send-email-ruansy.fnst@fujitsu.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit 406c706c7b7f1730aa787e914817b8d16b1e99f6:
+On Thu, Nov 24, 2022 at 02:54:52PM +0000, Shiyang Ruan wrote:
+> Many testcases failed in dax+reflink mode with warning message in dmesg.
+> This also effects dax+noreflink mode if we run the test after a
+> dax+reflink test.  So, the most urgent thing is solving the warning
+> messages.
+> 
+> Patch 1 fixes some mistakes and adds handling of CoW cases not
+> previously considered (srcmap is HOLE or UNWRITTEN).
+> Patch 2 adds the implementation of unshare for fsdax.
+> 
+> With these fixes, most warning messages in dax_associate_entry() are
+> gone.  But honestly, generic/388 will randomly failed with the warning.
+> The case shutdown the xfs when fsstress is running, and do it for many
+> times.  I think the reason is that dax pages in use are not able to be
+> invalidated in time when fs is shutdown.  The next time dax page to be
+> associated, it still remains the mapping value set last time.  I'll keep
+> on solving it.
+> 
+> The warning message in dax_writeback_one() can also be fixed because of
+> the dax unshare.
 
-  vfs: vfs_tmpfile: ensure O_EXCL flag is enforced (2022-11-19 02:22:11 -0500)
+This cuts down the amount of test failures quite a bit, but I think
+you're still missing a piece or two -- namely the part that refuses to
+enable S_DAX mode on a reflinked file when the inode is being loaded
+from disk.  However, thank you for fixing dax.c, because that was the
+part I couldn't figure out at all. :)
 
-are available in the Git repository at:
+--D
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-fixes
-
-for you to fetch changes up to 10bc8e4af65946b727728d7479c028742321b60a:
-
-  vfs: fix copy_file_range() averts filesystem freeze protection (2022-11-25 00:52:28 -0500)
-
-----------------------------------------------------------------
-Amir's copy_file_range() fix
-
-Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
-
-----------------------------------------------------------------
-Amir Goldstein (1):
-      vfs: fix copy_file_range() averts filesystem freeze protection
-
- fs/ksmbd/vfs.c     |  6 +++---
- fs/nfsd/vfs.c      |  4 ++--
- fs/read_write.c    | 19 +++++++++++++++----
- include/linux/fs.h |  8 ++++++++
- 4 files changed, 28 insertions(+), 9 deletions(-)
+> 
+> Shiyang Ruan (2):
+>   fsdax,xfs: fix warning messages at dax_[dis]associate_entry()
+>   fsdax,xfs: port unshare to fsdax
+> 
+>  fs/dax.c             | 166 ++++++++++++++++++++++++++++++-------------
+>  fs/xfs/xfs_iomap.c   |   6 +-
+>  fs/xfs/xfs_reflink.c |   8 ++-
+>  include/linux/dax.h  |   2 +
+>  4 files changed, 129 insertions(+), 53 deletions(-)
+> 
+> -- 
+> 2.38.1
+> 
