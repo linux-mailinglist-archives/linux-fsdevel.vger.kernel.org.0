@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 917FC63AF21
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 18:38:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6183B63AFAA
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 18:44:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233155AbiK1Ri4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Nov 2022 12:38:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51492 "EHLO
+        id S233387AbiK1RoJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Nov 2022 12:44:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52074 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233113AbiK1Rif (ORCPT
+        with ESMTP id S233380AbiK1Rn0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Nov 2022 12:38:35 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87D6EA450;
-        Mon, 28 Nov 2022 09:38:25 -0800 (PST)
+        Mon, 28 Nov 2022 12:43:26 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61D4E2B61E;
+        Mon, 28 Nov 2022 09:40:45 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id F1B88B80E9C;
-        Mon, 28 Nov 2022 17:38:23 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20452C433B5;
-        Mon, 28 Nov 2022 17:38:22 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id EF810B80E9F;
+        Mon, 28 Nov 2022 17:40:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BC37C433C1;
+        Mon, 28 Nov 2022 17:40:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669657102;
-        bh=OvIH+/rzbE4iIJMXArCK3MshVpQL1tOZGfQMHYX+yj0=;
+        s=k20201202; t=1669657242;
+        bh=sRmXIU9LXGrBYUAP7upYR+hqxJxpmyF8dsccJeW+ZIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eoDM5jRpjsRGljFg1j/wCGiD9sFLtLYvIJP93yp/3FFe7nSl9UPBKQZMCf8mQ+H5w
-         gfG11N2r7PoZ6exOGtBCy6Cv2Ve0DPlTr4PrnQxotYf1fSHQnKACvU3MNKhEp19c/x
-         CXfvDspgV2yGBITOzP3ydHOLknDJVrr7LpNRwnWgidkAqxXdLSFF9TSDY6IiQIUxHQ
-         kgePVySZhpVcaagdi5dYNprq1tmKYEipib0VC/+YetGFITiIv/xMsjtNx1cB8X1EJQ
-         lr77ax3e2RPnQGMs1ZkuOfFnOZrFFVgaRaNnW/kSi7FvEsANyPj2nI+GbU4XaCPFO6
-         LLtAU6oOoMk5g==
+        b=ut8n/MlyVdqPgf+6ZSlaIYeg7vrfhNCQ8jGZWXAogV5+EuVsGpqVG63s+YUrGJKre
+         eyIVVdr9B/101XkbjwKK5El/JvMLjgCcyItQRyHT0Mr2Gd1mNRRWfheHAA75MDS3Ew
+         LYE5dd77C1Lv+xz1fv3A1vh0Fu6AN028RVlo8sJ9T+ghQZK5LP0J8xn4rFf6SC3iun
+         AfhYIWdDIUvZNPdPi1t/ETqz6rqKH1Qxdj3lVlo70uLKdTRsGbmFUd1LQXJEg7EJQ4
+         v8bP9AR7rdkdJXXk1MctiBvHOI3sbllXJSN4SixgVIwLmWr+U48DXZ0kztNM8mv6t1
+         qlC4aR8pTG0/w==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Jann Horn <jannh@google.com>, Al Viro <viro@zeniv.linux.org.uk>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.0 13/39] fs: use acquire ordering in __fget_light()
-Date:   Mon, 28 Nov 2022 12:35:53 -0500
-Message-Id: <20221128173642.1441232-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 07/24] fs: use acquire ordering in __fget_light()
+Date:   Mon, 28 Nov 2022 12:40:07 -0500
+Message-Id: <20221128174027.1441921-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221128173642.1441232-1-sashal@kernel.org>
-References: <20221128173642.1441232-1-sashal@kernel.org>
+In-Reply-To: <20221128174027.1441921-1-sashal@kernel.org>
+References: <20221128174027.1441921-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -81,10 +81,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 10 insertions(+), 1 deletion(-)
 
 diff --git a/fs/file.c b/fs/file.c
-index 3bcc1ecc314a..57af5f8375fd 100644
+index ee9317346702..214364e19d76 100644
 --- a/fs/file.c
 +++ b/fs/file.c
-@@ -1002,7 +1002,16 @@ static unsigned long __fget_light(unsigned int fd, fmode_t mask)
+@@ -1029,7 +1029,16 @@ static unsigned long __fget_light(unsigned int fd, fmode_t mask)
  	struct files_struct *files = current->files;
  	struct file *file;
  
