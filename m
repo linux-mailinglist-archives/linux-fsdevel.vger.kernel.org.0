@@ -2,186 +2,212 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 822AB63A3CB
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 09:58:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C35D63A58F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 11:01:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230228AbiK1I6K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Nov 2022 03:58:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33096 "EHLO
+        id S230115AbiK1KBl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Nov 2022 05:01:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42404 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229835AbiK1I6I (ORCPT
+        with ESMTP id S230013AbiK1KBk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Nov 2022 03:58:08 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38E505FE6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 00:58:07 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id vp12so22734871ejc.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 00:58:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=iRo5DYRndKCx9sGSXzsZxPr88K/zqtuLTLl1O32mcFE=;
-        b=XOKEpyQaMH8DtU4ghoeum5LLPSyZKKSeL9ukREYJEhE5Pet4ng53VcgxrNVIVOiN3z
-         qM9BvX69vBwubqV7gI66eEPgV5zFoyHzRXj6Y/c3o1k6BVytkDV23dS8hW9lN3urO8Q7
-         YycsWj1XAMOHph6L7v2J+A4VSfKO7i7WBHunk=
+        Mon, 28 Nov 2022 05:01:40 -0500
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFD5519C1C
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 02:01:38 -0800 (PST)
+Received: by mail-il1-f199.google.com with SMTP id g4-20020a92cda4000000b00301ff06da14so8425476ild.11
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 02:01:38 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=iRo5DYRndKCx9sGSXzsZxPr88K/zqtuLTLl1O32mcFE=;
-        b=MRbswnBivwjmsd/euO0hpdUZx2Si8uRwWgRlJkXPj8mlpu9RP6x+d0MFOfwgHgYu2y
-         R1mQPYTeci9clSY9vOkQS8wRoQBfJxWhr10ixQlniEeZ2TX3C9kzQFpLdD6gJUYwtNf/
-         YumiQgHtFQ8zvjlNXLeVGp2Vmdd1DcJnoeZ+ZwvGTLzFdJ2vR1331TMlOMaePVQoyeER
-         bdcabii+aRqleTkUIE8IGybRh33eC6Y6Aia9oHbZWinqlDNBIHMQHgB2j/c5ISE2uvLA
-         deE/loUtqOLohSvJ8hpjjQB1cWYPsfkjwMjfrRPCr1ASYvCZt0O76awP/8LTpgwTCqA8
-         mrIg==
-X-Gm-Message-State: ANoB5pnPaC33oB2qPO4e0WG52lbxI6yNCya2Y/fxxCxeVgGZidSBeL3e
-        QLFsym/4pfOanMlvbbq9mYVzQplYzP6FWg==
-X-Google-Smtp-Source: AA0mqf6E7/TMXAX4iJf1B3/wNKniZlBu0ySiPzvNhL+07RsXZSFrCRZbHk80egvItZ1dH7Erpc6mpg==
-X-Received: by 2002:a17:906:130b:b0:7ad:92c5:637a with SMTP id w11-20020a170906130b00b007ad92c5637amr42435612ejb.87.1669625885635;
-        Mon, 28 Nov 2022 00:58:05 -0800 (PST)
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com. [209.85.208.52])
-        by smtp.gmail.com with ESMTPSA id e16-20020a170906315000b0078d793e7927sm4690786eje.4.2022.11.28.00.58.04
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 28 Nov 2022 00:58:04 -0800 (PST)
-Received: by mail-ed1-f52.google.com with SMTP id x2so14502371edd.2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 00:58:04 -0800 (PST)
-X-Received: by 2002:aa7:db98:0:b0:46a:d57:d9d0 with SMTP id
- u24-20020aa7db98000000b0046a0d57d9d0mr25216647edt.113.1669625884043; Mon, 28
- Nov 2022 00:58:04 -0800 (PST)
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KJ0zAetKM8xqYx9w6CjW4M0IZYfMI1Loa5QARS4sYzI=;
+        b=1ijtnZU9ozfCfFVcysw4qLwcL6tAs0ddt+vUDt5yLTmJhDBRoMrq+WLx3bOfsOXvVX
+         nZJMRWUfea20j8JN5iZRs//O4nzRUed8bb9f/PIeH6oqpYgRiotLIJWQ3TnIQ1/Unho5
+         ILdSwxuS6LMMp/3TckdDdv/G2OwVFujXB5lDaRFfozBnVwaUmWbLM1qtvDNIBdSxfb94
+         q42coiFg+ho3xPlyurmYLbMzCAflTOcWPJa6RAls5YGk0PcHMqXxKeND7so8aatY5oCa
+         k4VEEE0AIFGvFxW+K1G5xCkQ1zBEHbEPbw3ZHxD8U4OnBU0xs0L0SCuhJtPVFazxgLF9
+         Ky2w==
+X-Gm-Message-State: ANoB5pmVOxaUPKEVkRZyN2dLK5lj/lciUtg1Nq5w5NCU50JubU1RB5Q1
+        gK/ja3v/9DhG9duU5MdbxLxYsHQDlwI8sA/EfpLzKSu6Lkka
+X-Google-Smtp-Source: AA0mqf6KXEH77nYqKL8zqlC58k8MYOZN4h73m0W4KxB7ArRGAhJb3jExXOrexCyHq5DNySvyseaIeM3u0mmdItZwHITHu4EufJNQ
 MIME-Version: 1.0
-References: <20221116102659.70287-1-david@redhat.com> <20221116102659.70287-17-david@redhat.com>
- <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com> <08b65ac6-6786-1080-18f8-d2be109c85fc@xs4all.nl>
- <9d0bf98a-3d6a-1082-e992-1338e1525935@redhat.com>
-In-Reply-To: <9d0bf98a-3d6a-1082-e992-1338e1525935@redhat.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 28 Nov 2022 17:57:51 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BQBsBiY48o3FxmQT7H4063=dvDDwSB4S=AyLxXbXuJeA@mail.gmail.com>
-Message-ID: <CAAFQd5BQBsBiY48o3FxmQT7H4063=dvDDwSB4S=AyLxXbXuJeA@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE usage
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
+X-Received: by 2002:a05:6e02:485:b0:302:c316:caf3 with SMTP id
+ b5-20020a056e02048500b00302c316caf3mr12850444ils.295.1669629698362; Mon, 28
+ Nov 2022 02:01:38 -0800 (PST)
+Date:   Mon, 28 Nov 2022 02:01:38 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000013d47505ee84f53f@google.com>
+Subject: [syzbot] KASAN: slab-out-of-bounds Read in __hfs_brec_find
+From:   syzbot <syzbot+e836ff7133ac02be825f@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 28, 2022 at 5:19 PM David Hildenbrand <david@redhat.com> wrote:
->
-> On 28.11.22 09:17, Hans Verkuil wrote:
-> > Hi David,
-> >
-> > On 27/11/2022 11:35, David Hildenbrand wrote:
-> >> On 16.11.22 11:26, David Hildenbrand wrote:
-> >>> FOLL_FORCE is really only for ptrace access. According to commit
-> >>> 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are always
-> >>> writable"), get_vaddr_frames() currently pins all pages writable as a
-> >>> workaround for issues with read-only buffers.
-> >>>
-> >>> FOLL_FORCE, however, seems to be a legacy leftover as it predates
-> >>> commit 707947247e95 ("media: videobuf2-vmalloc: get_userptr: buffers are
-> >>> always writable"). Let's just remove it.
-> >>>
-> >>> Once the read-only buffer issue has been resolved, FOLL_WRITE could
-> >>> again be set depending on the DMA direction.
-> >>>
-> >>> Cc: Hans Verkuil <hverkuil@xs4all.nl>
-> >>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> >>> Cc: Tomasz Figa <tfiga@chromium.org>
-> >>> Cc: Marek Szyprowski <m.szyprowski@samsung.com>
-> >>> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> >>> Signed-off-by: David Hildenbrand <david@redhat.com>
-> >>> ---
-> >>>    drivers/media/common/videobuf2/frame_vector.c | 2 +-
-> >>>    1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/media/common/videobuf2/frame_vector.c b/drivers/media/common/videobuf2/frame_vector.c
-> >>> index 542dde9d2609..062e98148c53 100644
-> >>> --- a/drivers/media/common/videobuf2/frame_vector.c
-> >>> +++ b/drivers/media/common/videobuf2/frame_vector.c
-> >>> @@ -50,7 +50,7 @@ int get_vaddr_frames(unsigned long start, unsigned int nr_frames,
-> >>>        start = untagged_addr(start);
-> >>>          ret = pin_user_pages_fast(start, nr_frames,
-> >>> -                  FOLL_FORCE | FOLL_WRITE | FOLL_LONGTERM,
-> >>> +                  FOLL_WRITE | FOLL_LONGTERM,
-> >>>                      (struct page **)(vec->ptrs));
-> >>>        if (ret > 0) {
-> >>>            vec->got_ref = true;
-> >>
-> >>
-> >> Hi Andrew,
-> >>
-> >> see the discussion at [1] regarding a conflict and how to proceed with
-> >> upstreaming. The conflict would be easy to resolve, however, also
-> >> the patch description doesn't make sense anymore with [1].
-> >
-> > Might it be easier and less confusing if you post a v2 of this series
-> > with my patch first? That way it is clear that 1) my patch has to come
-> > first, and 2) that it is part of a single series and should be merged
-> > by the mm subsystem.
-> >
-> > Less chances of things going wrong that way.
-> >
-> > Just mention in the v2 cover letter that the first patch was added to
-> > make it easy to backport that fix without being hampered by merge
-> > conflicts if it was added after your frame_vector.c patch.
->
-> Yes, that's the way I would naturally do, it, however, Andrew prefers
-> delta updates for minor changes.
->
-> @Andrew, whatever you prefer!
->
-> Thanks!
->
+Hello,
 
-However you folks proceed with taking this patch, feel free to add my
-Acked-by. Thanks!
+syzbot found the following issue on:
 
-Best regards,
-Tomasz
+HEAD commit:    644e9524388a Merge tag 'for-v6.1-rc' of git://git.kernel.o..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=13139a87880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=8d01b6e3197974dd
+dashboard link: https://syzkaller.appspot.com/bug?extid=e836ff7133ac02be825f
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17a6d5bb880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14212d8d880000
 
-> --
-> Thanks,
->
-> David / dhildenb
->
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/0968428e17b4/disk-644e9524.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fd4c3bfd0777/vmlinux-644e9524.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ee4571f27f1c/bzImage-644e9524.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/97e079d270b2/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e836ff7133ac02be825f@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-out-of-bounds in hfs_strcmp+0x117/0x190 fs/hfs/string.c:84
+Read of size 1 at addr ffff88807eb62c4e by task kworker/u4:1/11
+
+CPU: 1 PID: 11 Comm: kworker/u4:1 Not tainted 6.1.0-rc6-syzkaller-00308-g644e9524388a #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+Workqueue: writeback wb_workfn (flush-7:0)
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
+ print_address_description+0x74/0x340 mm/kasan/report.c:284
+ print_report+0x107/0x1f0 mm/kasan/report.c:395
+ kasan_report+0xcd/0x100 mm/kasan/report.c:495
+ hfs_strcmp+0x117/0x190 fs/hfs/string.c:84
+ __hfs_brec_find+0x213/0x5c0 fs/hfs/bfind.c:75
+ hfs_brec_find+0x276/0x520 fs/hfs/bfind.c:138
+ hfs_write_inode+0x34c/0xb40 fs/hfs/inode.c:462
+ write_inode fs/fs-writeback.c:1440 [inline]
+ __writeback_single_inode+0x4d6/0x670 fs/fs-writeback.c:1652
+ writeback_sb_inodes+0xb3b/0x18f0 fs/fs-writeback.c:1878
+ wb_writeback+0x41f/0x7b0 fs/fs-writeback.c:2052
+ wb_do_writeback fs/fs-writeback.c:2195 [inline]
+ wb_workfn+0x3cb/0xef0 fs/fs-writeback.c:2235
+ process_one_work+0x877/0xdb0 kernel/workqueue.c:2289
+ worker_thread+0xb14/0x1330 kernel/workqueue.c:2436
+ kthread+0x266/0x300 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
+ </TASK>
+
+Allocated by task 11:
+ kasan_save_stack mm/kasan/common.c:45 [inline]
+ kasan_set_track+0x3d/0x60 mm/kasan/common.c:52
+ ____kasan_kmalloc mm/kasan/common.c:371 [inline]
+ __kasan_kmalloc+0x97/0xb0 mm/kasan/common.c:380
+ kasan_kmalloc include/linux/kasan.h:211 [inline]
+ __do_kmalloc_node mm/slab_common.c:955 [inline]
+ __kmalloc+0xaf/0x1a0 mm/slab_common.c:968
+ kmalloc include/linux/slab.h:558 [inline]
+ hfs_find_init+0x8b/0x1e0 fs/hfs/bfind.c:21
+ hfs_write_inode+0x2e6/0xb40 fs/hfs/inode.c:457
+ write_inode fs/fs-writeback.c:1440 [inline]
+ __writeback_single_inode+0x4d6/0x670 fs/fs-writeback.c:1652
+ writeback_sb_inodes+0xb3b/0x18f0 fs/fs-writeback.c:1878
+ wb_writeback+0x41f/0x7b0 fs/fs-writeback.c:2052
+ wb_do_writeback fs/fs-writeback.c:2195 [inline]
+ wb_workfn+0x3cb/0xef0 fs/fs-writeback.c:2235
+ process_one_work+0x877/0xdb0 kernel/workqueue.c:2289
+ worker_thread+0xb14/0x1330 kernel/workqueue.c:2436
+ kthread+0x266/0x300 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
+
+The buggy address belongs to the object at ffff88807eb62c00
+ which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 78 bytes inside of
+ 96-byte region [ffff88807eb62c00, ffff88807eb62c60)
+
+The buggy address belongs to the physical page:
+page:ffffea0001fad880 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7eb62
+flags: 0xfff00000000200(slab|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000200 ffffea0000620500 dead000000000004 ffff888012841780
+raw: 0000000000000000 0000000080200020 00000001ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x12c40(GFP_NOFS|__GFP_NOWARN|__GFP_NORETRY), pid 2973, tgid 2973 (init), ts 13043103035, free_ts 13014326159
+ prep_new_page mm/page_alloc.c:2539 [inline]
+ get_page_from_freelist+0x742/0x7c0 mm/page_alloc.c:4291
+ __alloc_pages+0x259/0x560 mm/page_alloc.c:5558
+ alloc_slab_page+0x70/0xf0 mm/slub.c:1794
+ allocate_slab+0x5e/0x4b0 mm/slub.c:1939
+ new_slab mm/slub.c:1992 [inline]
+ ___slab_alloc+0x782/0xe20 mm/slub.c:3180
+ __slab_alloc mm/slub.c:3279 [inline]
+ slab_alloc_node mm/slub.c:3364 [inline]
+ __kmem_cache_alloc_node+0x252/0x310 mm/slub.c:3437
+ __do_kmalloc_node mm/slab_common.c:954 [inline]
+ __kmalloc+0x9e/0x1a0 mm/slab_common.c:968
+ kmalloc include/linux/slab.h:558 [inline]
+ kzalloc include/linux/slab.h:689 [inline]
+ tomoyo_get_name+0x225/0x550 security/tomoyo/memory.c:173
+ tomoyo_assign_domain+0x369/0x7d0 security/tomoyo/domain.c:569
+ tomoyo_find_next_domain+0xdfc/0x1d80 security/tomoyo/domain.c:847
+ tomoyo_bprm_check_security+0xe3/0x130 security/tomoyo/tomoyo.c:101
+ security_bprm_check+0x50/0xb0 security/security.c:869
+ search_binary_handler fs/exec.c:1715 [inline]
+ exec_binprm fs/exec.c:1768 [inline]
+ bprm_execve+0x817/0x1590 fs/exec.c:1837
+ do_execveat_common+0x598/0x750 fs/exec.c:1942
+ do_execve fs/exec.c:2016 [inline]
+ __do_sys_execve fs/exec.c:2092 [inline]
+ __se_sys_execve fs/exec.c:2087 [inline]
+ __x64_sys_execve+0x8e/0xa0 fs/exec.c:2087
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1459 [inline]
+ free_pcp_prepare+0x80c/0x8f0 mm/page_alloc.c:1509
+ free_unref_page_prepare mm/page_alloc.c:3387 [inline]
+ free_unref_page_list+0xb4/0x7b0 mm/page_alloc.c:3529
+ release_pages+0x232a/0x25c0 mm/swap.c:1055
+ tlb_batch_pages_flush mm/mmu_gather.c:59 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:256 [inline]
+ tlb_flush_mmu+0x850/0xa70 mm/mmu_gather.c:263
+ tlb_finish_mmu+0xcb/0x200 mm/mmu_gather.c:363
+ exit_mmap+0x275/0x630 mm/mmap.c:3105
+ __mmput+0x114/0x3b0 kernel/fork.c:1185
+ exit_mm+0x1f5/0x2d0 kernel/exit.c:516
+ do_exit+0x5e7/0x2070 kernel/exit.c:807
+ do_group_exit+0x1fd/0x2b0 kernel/exit.c:950
+ __do_sys_exit_group kernel/exit.c:961 [inline]
+ __se_sys_exit_group kernel/exit.c:959 [inline]
+ __x64_sys_exit_group+0x3b/0x40 kernel/exit.c:959
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Memory state around the buggy address:
+ ffff88807eb62b00: fa fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff88807eb62b80: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+>ffff88807eb62c00: 00 00 00 00 00 00 00 00 00 06 fc fc fc fc fc fc
+                                              ^
+ ffff88807eb62c80: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+ ffff88807eb62d00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
