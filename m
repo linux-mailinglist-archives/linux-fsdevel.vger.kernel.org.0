@@ -2,433 +2,394 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6333C63B0F1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 19:18:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CEEC063B212
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 20:19:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234054AbiK1SSS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Nov 2022 13:18:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53342 "EHLO
+        id S233367AbiK1TTB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Nov 2022 14:19:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231502AbiK1SRo (ORCPT
+        with ESMTP id S233550AbiK1TSd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Nov 2022 13:17:44 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D19432D75D
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 10:00:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669658427;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=oScjHgUsfPCUpHvSbXmtkG9Jiz96znMS7UbDYb2DUKs=;
-        b=QdvC6ENWgNWO3MbspSUVdbttSY1/YvmkLp6XzsNWTIMnqyMEW5lYlnGqkmJ+Bg5Uio3X2y
-        NN1uwekEoTJuD9zNVcMB/5cDxhQDefWOB4xhBP4a+cTjpMFJPyQtjLN6uPF9tbiQNAlRrM
-        BXsQPmA6x+AdYlbaGuKujBTMgxtTC3A=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-627-NMjeBuW-NqybOW6x25rqjA-1; Mon, 28 Nov 2022 13:00:25 -0500
-X-MC-Unique: NMjeBuW-NqybOW6x25rqjA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 28 Nov 2022 14:18:33 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2FD602BB31;
+        Mon, 28 Nov 2022 11:18:24 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3E67529AA3BC;
-        Mon, 28 Nov 2022 18:00:25 +0000 (UTC)
-Received: from gerbillo.redhat.com (unknown [10.39.192.141])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5541940C6EC2;
-        Mon, 28 Nov 2022 18:00:23 +0000 (UTC)
-From:   Paolo Abeni <pabeni@redhat.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     Soheil Hassas Yeganeh <soheil@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Jason Baron <jbaron@akamai.com>, netdev@vger.kernel.org,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH v3] epoll: use refcount to reduce ep_mutex contention
-Date:   Mon, 28 Nov 2022 19:00:10 +0100
-Message-Id: <1aedd7e87097bc4352ba658ac948c585a655785a.1669657846.git.pabeni@redhat.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id D7C17B80FC9;
+        Mon, 28 Nov 2022 19:18:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A1FAC433C1;
+        Mon, 28 Nov 2022 19:18:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669663101;
+        bh=cSNJcLEebvWXEYQhjrIKZD9HkMS/dzw+itu/l77AXjg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=qEcWuUNdDza2ZBlsLEWZldNX193IZe2aFS0DmXQ2RhlCwfQdEcPqa+qpluTb5boBo
+         xTxkpe2TDdiAo46/ETob0JZjebaOTMTQC8UnmncaPdCOH7A4C5SHcn/L1nUE4yGMDX
+         pOhAz7qrNojOmh2lZWQFOf8n7ZlywTcNaoo5Z/9w2yZTvF6wPsjQjH2wbbgWM3PpBB
+         OJ0xgPe7HYj7zT6S/y/q6ONYqNbcI81nQg5jzNvCRa57OZzd2H4BMLYIZyPpZshIal
+         saSImZy/xuWnG1d2Iy5HIzhQpQIz7unmTBJjKnEqBSiImXoIxB6UlId0vLvja7Xu0C
+         PoCjvFfyb9v0g==
+Date:   Mon, 28 Nov 2022 11:18:19 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        Matthew Wilcox <willy@infradead.org>, Chao Yu <chao@kernel.org>
+Subject: Re: [PATCH v4] fsverity: stop using PG_error to track error status
+Message-ID: <Y4UJewp0sbHZ2z9Q@google.com>
+References: <20221125190642.12787-1-ebiggers@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-0.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,URIBL_BLACK autolearn=no
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221125190642.12787-1-ebiggers@kernel.org>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-We are observing huge contention on the epmutex during an http
-connection/rate test:
+On 11/25, Eric Biggers wrote:
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> As a step towards freeing the PG_error flag for other uses, change ext4
+> and f2fs to stop using PG_error to track verity errors.  Instead, if a
+> verity error occurs, just mark the whole bio as failed.  The coarser
+> granularity isn't really a problem since it isn't any worse than what
+> the block layer provides, and errors from a multi-page readahead aren't
+> reported to applications unless a single-page read fails too.
+> 
+> f2fs supports compression, which makes the f2fs changes a bit more
+> complicated than desired, but the basic premise still works.
+> 
+> Note: there are still a few uses of PageError in f2fs, but they are on
+> the write path, so they are unrelated and this patch doesn't touch them.
+> 
+> Reviewed-by: Chao Yu <chao@kernel.org>
 
- 83.17% 0.25%  nginx            [kernel.kallsyms]         [k] entry_SYSCALL_64_after_hwframe
-[...]
-           |--66.96%--__fput
-                      |--60.04%--eventpoll_release_file
-                                 |--58.41%--__mutex_lock.isra.6
-                                           |--56.56%--osq_lock
+Acked-by: Jaegeuk Kim <jaegeuk@kernel.org>
 
-The application is multi-threaded, creates a new epoll entry for
-each incoming connection, and does not delete it before the
-connection shutdown - that is, before the connection's fd close().
+Thanks,
 
-Many different threads compete frequently for the epmutex lock,
-affecting the overall performance.
-
-To reduce the contention this patch introduces explicit reference counting
-for the eventpoll struct. Each registered event acquires a reference,
-and references are released at ep_remove() time.
-
-Additionally, this introduces a new 'dying' flag to prevent races between
-ep_free() and eventpoll_release_file(): the latter marks, under f_lock
-spinlock, each epitem as before removing it, while ep_free() does not
-touch dying epitems.
-
-The eventpoll struct is released by whoever - among ep_free() and
-eventpoll_release_file() drops its last reference.
-
-With all the above in place, we can drop the epmutex usage at disposal time.
-
-Overall this produces a significant performance improvement in the
-mentioned connection/rate scenario: the mutex operations disappear from
-the topmost offenders in the perf report, and the measured connections/rate
-grows by ~60%.
-
-Tested-by: Xiumei Mu <xmu@redhat.com>
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
----
-v3: (addresses comments from Eric Biggers)
-- introduce the 'dying' flag, use it to dispose immediately struct eventpoll
-  at ep_free() time
-- update a leftover comments still referring to old epmutex usage
-
-v2 at:
-https://lore.kernel.org/linux-fsdevel/f35e58ed5af8131f0f402c3dc6c3033fa96d1843.1669312208.git.pabeni@redhat.com/
-
-v1 at:
-https://lore.kernel.org/linux-fsdevel/f35e58ed5af8131f0f402c3dc6c3033fa96d1843.1669312208.git.pabeni@redhat.com/
-
-Previous related effort at:
-https://lore.kernel.org/linux-fsdevel/20190727113542.162213-1-cj.chengjian@huawei.com/
-https://lkml.org/lkml/2017/10/28/81
----
- fs/eventpoll.c | 171 +++++++++++++++++++++++++++++++------------------
- 1 file changed, 109 insertions(+), 62 deletions(-)
-
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 52954d4637b5..af22e5e6f683 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -57,13 +57,7 @@
-  * we need a lock that will allow us to sleep. This lock is a
-  * mutex (ep->mtx). It is acquired during the event transfer loop,
-  * during epoll_ctl(EPOLL_CTL_DEL) and during eventpoll_release_file().
-- * Then we also need a global mutex to serialize eventpoll_release_file()
-- * and ep_free().
-- * This mutex is acquired by ep_free() during the epoll file
-- * cleanup path and it is also acquired by eventpoll_release_file()
-- * if a file has been pushed inside an epoll set and it is then
-- * close()d without a previous call to epoll_ctl(EPOLL_CTL_DEL).
-- * It is also acquired when inserting an epoll fd onto another epoll
-+ * The epmutex is acquired when inserting an epoll fd onto another epoll
-  * fd. We do this so that we walk the epoll tree and ensure that this
-  * insertion does not create a cycle of epoll file descriptors, which
-  * could lead to deadlock. We need a global mutex to prevent two
-@@ -153,6 +147,13 @@ struct epitem {
- 	/* The file descriptor information this item refers to */
- 	struct epoll_filefd ffd;
- 
-+	/*
-+	 * Protected by file->f_lock, true for to-be-released epitem already
-+	 * removed from the "struct file" items list; together with
-+	 * eventpoll->refcount orchestrates "struct eventpoll" disposal
-+	 */
-+	bool dying;
-+
- 	/* List containing poll wait queues */
- 	struct eppoll_entry *pwqlist;
- 
-@@ -217,6 +218,12 @@ struct eventpoll {
- 	u64 gen;
- 	struct hlist_head refs;
- 
-+	/*
-+	 * usage count, protected by mtx, used together with epitem->dying to
-+	 * orchestrate the disposal of this struct
-+	 */
-+	unsigned int refcount;
-+
- #ifdef CONFIG_NET_RX_BUSY_POLL
- 	/* used to track busy poll napi_id */
- 	unsigned int napi_id;
-@@ -240,9 +247,7 @@ struct ep_pqueue {
- /* Maximum number of epoll watched descriptors, per user */
- static long max_user_watches __read_mostly;
- 
--/*
-- * This mutex is used to serialize ep_free() and eventpoll_release_file().
-- */
-+/* Used for cycles detection */
- static DEFINE_MUTEX(epmutex);
- 
- static u64 loop_check_gen = 0;
-@@ -555,8 +560,7 @@ static void ep_remove_wait_queue(struct eppoll_entry *pwq)
- 
- /*
-  * This function unregisters poll callbacks from the associated file
-- * descriptor.  Must be called with "mtx" held (or "epmutex" if called from
-- * ep_free).
-+ * descriptor.  Must be called with "mtx" held.
-  */
- static void ep_unregister_pollwait(struct eventpoll *ep, struct epitem *epi)
- {
-@@ -679,11 +683,38 @@ static void epi_rcu_free(struct rcu_head *head)
- 	kmem_cache_free(epi_cache, epi);
- }
- 
-+static void ep_get(struct eventpoll *ep)
-+{
-+	ep->refcount++;
-+}
-+
-+/*
-+ * Returns true if the event poll can be disposed
-+ */
-+static bool ep_put(struct eventpoll *ep)
-+{
-+	if (--ep->refcount)
-+		return false;
-+
-+	WARN_ON_ONCE(!RB_EMPTY_ROOT(&ep->rbr.rb_root));
-+	return true;
-+}
-+
-+static void ep_dispose(struct eventpoll *ep)
-+{
-+	mutex_destroy(&ep->mtx);
-+	free_uid(ep->user);
-+	wakeup_source_unregister(ep->ws);
-+	kfree(ep);
-+}
-+
- /*
-  * Removes a "struct epitem" from the eventpoll RB tree and deallocates
-  * all the associated resources. Must be called with "mtx" held.
-+ * If the dying flag is set, do the removal only if force is true.
-+ * Returns true if the eventpoll can be disposed.
-  */
--static int ep_remove(struct eventpoll *ep, struct epitem *epi)
-+static bool __ep_remove(struct eventpoll *ep, struct epitem *epi, bool force)
- {
- 	struct file *file = epi->ffd.file;
- 	struct epitems_head *to_free;
-@@ -698,6 +729,11 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
- 
- 	/* Remove the current item from the list of epoll hooks */
- 	spin_lock(&file->f_lock);
-+	if (epi->dying && !force) {
-+		spin_unlock(&file->f_lock);
-+		return false;
-+	}
-+
- 	to_free = NULL;
- 	head = file->f_ep;
- 	if (head->first == &epi->fllink && !epi->fllink.next) {
-@@ -731,28 +767,28 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
- 	call_rcu(&epi->rcu, epi_rcu_free);
- 
- 	percpu_counter_dec(&ep->user->epoll_watches);
-+	return ep_put(ep);
-+}
- 
--	return 0;
-+/*
-+ * ep_remove variant for callers owing an additional reference to the ep
-+ */
-+static void ep_remove_safe(struct eventpoll *ep, struct epitem *epi)
-+{
-+	WARN_ON_ONCE(__ep_remove(ep, epi, false));
- }
- 
- static void ep_free(struct eventpoll *ep)
- {
- 	struct rb_node *rbp;
- 	struct epitem *epi;
-+	bool dispose;
- 
- 	/* We need to release all tasks waiting for these file */
- 	if (waitqueue_active(&ep->poll_wait))
- 		ep_poll_safewake(ep, NULL);
- 
--	/*
--	 * We need to lock this because we could be hit by
--	 * eventpoll_release_file() while we're freeing the "struct eventpoll".
--	 * We do not need to hold "ep->mtx" here because the epoll file
--	 * is on the way to be removed and no one has references to it
--	 * anymore. The only hit might come from eventpoll_release_file() but
--	 * holding "epmutex" is sufficient here.
--	 */
--	mutex_lock(&epmutex);
-+	mutex_lock(&ep->mtx);
- 
- 	/*
- 	 * Walks through the whole tree by unregistering poll callbacks.
-@@ -766,25 +802,21 @@ static void ep_free(struct eventpoll *ep)
- 
- 	/*
- 	 * Walks through the whole tree by freeing each "struct epitem". At this
--	 * point we are sure no poll callbacks will be lingering around, and also by
--	 * holding "epmutex" we can be sure that no file cleanup code will hit
--	 * us during this operation. So we can avoid the lock on "ep->lock".
--	 * We do not need to lock ep->mtx, either, we only do it to prevent
--	 * a lockdep warning.
-+	 * point we are sure no poll callbacks will be lingering around.
-+	 * Since we still own a reference to the eventpoll struct, the loop can't
-+	 * dispose it.
- 	 */
--	mutex_lock(&ep->mtx);
- 	while ((rbp = rb_first_cached(&ep->rbr)) != NULL) {
- 		epi = rb_entry(rbp, struct epitem, rbn);
--		ep_remove(ep, epi);
-+		ep_remove_safe(ep, epi);
- 		cond_resched();
- 	}
-+
-+	dispose = ep_put(ep);
- 	mutex_unlock(&ep->mtx);
- 
--	mutex_unlock(&epmutex);
--	mutex_destroy(&ep->mtx);
--	free_uid(ep->user);
--	wakeup_source_unregister(ep->ws);
--	kfree(ep);
-+	if (dispose)
-+		ep_dispose(ep);
- }
- 
- static int ep_eventpoll_release(struct inode *inode, struct file *file)
-@@ -904,33 +936,35 @@ void eventpoll_release_file(struct file *file)
- {
- 	struct eventpoll *ep;
- 	struct epitem *epi;
--	struct hlist_node *next;
-+	bool dispose;
- 
- 	/*
--	 * We don't want to get "file->f_lock" because it is not
--	 * necessary. It is not necessary because we're in the "struct file"
--	 * cleanup path, and this means that no one is using this file anymore.
--	 * So, for example, epoll_ctl() cannot hit here since if we reach this
--	 * point, the file counter already went to zero and fget() would fail.
--	 * The only hit might come from ep_free() but by holding the mutex
--	 * will correctly serialize the operation. We do need to acquire
--	 * "ep->mtx" after "epmutex" because ep_remove() requires it when called
--	 * from anywhere but ep_free().
--	 *
--	 * Besides, ep_remove() acquires the lock, so we can't hold it here.
-+	 * Use the 'dying' flag to prevent a concurrent ep_free() from touching
-+	 * the epitems list before eventpoll_release_file() can access the
-+	 * ep->mtx.
- 	 */
--	mutex_lock(&epmutex);
--	if (unlikely(!file->f_ep)) {
--		mutex_unlock(&epmutex);
--		return;
--	}
--	hlist_for_each_entry_safe(epi, next, file->f_ep, fllink) {
-+again:
-+	spin_lock(&file->f_lock);
-+	if (file->f_ep && file->f_ep->first) {
-+		/* detach from ep tree */
-+		epi = hlist_entry(file->f_ep->first, struct epitem, fllink);
-+		epi->dying = true;
-+		spin_unlock(&file->f_lock);
-+
-+		/*
-+		 * ep access is safe as we still own a reference to the ep
-+		 * struct
-+		 */
- 		ep = epi->ep;
--		mutex_lock_nested(&ep->mtx, 0);
--		ep_remove(ep, epi);
-+		mutex_lock(&ep->mtx);
-+		dispose = __ep_remove(ep, epi, true);
- 		mutex_unlock(&ep->mtx);
-+
-+		if (dispose)
-+			ep_dispose(ep);
-+		goto again;
- 	}
--	mutex_unlock(&epmutex);
-+	spin_unlock(&file->f_lock);
- }
- 
- static int ep_alloc(struct eventpoll **pep)
-@@ -953,6 +987,7 @@ static int ep_alloc(struct eventpoll **pep)
- 	ep->rbr = RB_ROOT_CACHED;
- 	ep->ovflist = EP_UNACTIVE_PTR;
- 	ep->user = user;
-+	ep->refcount = 1;
- 
- 	*pep = ep;
- 
-@@ -1494,16 +1529,22 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
- 	if (tep)
- 		mutex_unlock(&tep->mtx);
- 
-+	/*
-+	 * ep_remove() calls in the later error paths can't lead to ep_dispose()
-+	 * as overall will lead to no refcount changes
-+	 */
-+	ep_get(ep);
-+
- 	/* now check if we've created too many backpaths */
- 	if (unlikely(full_check && reverse_path_check())) {
--		ep_remove(ep, epi);
-+		ep_remove_safe(ep, epi);
- 		return -EINVAL;
- 	}
- 
- 	if (epi->event.events & EPOLLWAKEUP) {
- 		error = ep_create_wakeup_source(epi);
- 		if (error) {
--			ep_remove(ep, epi);
-+			ep_remove_safe(ep, epi);
- 			return error;
- 		}
- 	}
-@@ -1527,7 +1568,7 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
- 	 * high memory pressure.
- 	 */
- 	if (unlikely(!epq.epi)) {
--		ep_remove(ep, epi);
-+		ep_remove_safe(ep, epi);
- 		return -ENOMEM;
- 	}
- 
-@@ -2165,10 +2206,16 @@ int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
- 			error = -EEXIST;
- 		break;
- 	case EPOLL_CTL_DEL:
--		if (epi)
--			error = ep_remove(ep, epi);
--		else
-+		if (epi) {
-+			/*
-+			 * The eventpoll itself is still alive: the refcount
-+			 * can't go to zero here.
-+			 */
-+			ep_remove_safe(ep, epi);
-+			error = 0;
-+		} else {
- 			error = -ENOENT;
-+		}
- 		break;
- 	case EPOLL_CTL_MOD:
- 		if (epi) {
--- 
-2.38.1
-
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+> 
+> v4: Added a comment for decompression_attempted, added a paragraph to
+>     the commit message, and added Chao's Reviewed-by.
+> 
+> v3: made a small simplification to the f2fs changes.  Also dropped the
+>     fscrypt patch since it is upstream now.
+> 
+>  fs/ext4/readpage.c |  8 ++----
+>  fs/f2fs/compress.c | 64 ++++++++++++++++++++++------------------------
+>  fs/f2fs/data.c     | 53 +++++++++++++++++++++++---------------
+>  fs/verity/verify.c | 12 ++++-----
+>  4 files changed, 72 insertions(+), 65 deletions(-)
+> 
+> diff --git a/fs/ext4/readpage.c b/fs/ext4/readpage.c
+> index 3d21eae267fca..e604ea4e102b7 100644
+> --- a/fs/ext4/readpage.c
+> +++ b/fs/ext4/readpage.c
+> @@ -75,14 +75,10 @@ static void __read_end_io(struct bio *bio)
+>  	bio_for_each_segment_all(bv, bio, iter_all) {
+>  		page = bv->bv_page;
+>  
+> -		/* PG_error was set if verity failed. */
+> -		if (bio->bi_status || PageError(page)) {
+> +		if (bio->bi_status)
+>  			ClearPageUptodate(page);
+> -			/* will re-read again later */
+> -			ClearPageError(page);
+> -		} else {
+> +		else
+>  			SetPageUptodate(page);
+> -		}
+>  		unlock_page(page);
+>  	}
+>  	if (bio->bi_private)
+> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+> index d315c2de136f2..2b7a5cc4ed662 100644
+> --- a/fs/f2fs/compress.c
+> +++ b/fs/f2fs/compress.c
+> @@ -1711,50 +1711,27 @@ static void f2fs_put_dic(struct decompress_io_ctx *dic, bool in_task)
+>  	}
+>  }
+>  
+> -/*
+> - * Update and unlock the cluster's pagecache pages, and release the reference to
+> - * the decompress_io_ctx that was being held for I/O completion.
+> - */
+> -static void __f2fs_decompress_end_io(struct decompress_io_ctx *dic, bool failed,
+> -				bool in_task)
+> +static void f2fs_verify_cluster(struct work_struct *work)
+>  {
+> +	struct decompress_io_ctx *dic =
+> +		container_of(work, struct decompress_io_ctx, verity_work);
+>  	int i;
+>  
+> +	/* Verify, update, and unlock the decompressed pages. */
+>  	for (i = 0; i < dic->cluster_size; i++) {
+>  		struct page *rpage = dic->rpages[i];
+>  
+>  		if (!rpage)
+>  			continue;
+>  
+> -		/* PG_error was set if verity failed. */
+> -		if (failed || PageError(rpage)) {
+> -			ClearPageUptodate(rpage);
+> -			/* will re-read again later */
+> -			ClearPageError(rpage);
+> -		} else {
+> +		if (fsverity_verify_page(rpage))
+>  			SetPageUptodate(rpage);
+> -		}
+> +		else
+> +			ClearPageUptodate(rpage);
+>  		unlock_page(rpage);
+>  	}
+>  
+> -	f2fs_put_dic(dic, in_task);
+> -}
+> -
+> -static void f2fs_verify_cluster(struct work_struct *work)
+> -{
+> -	struct decompress_io_ctx *dic =
+> -		container_of(work, struct decompress_io_ctx, verity_work);
+> -	int i;
+> -
+> -	/* Verify the cluster's decompressed pages with fs-verity. */
+> -	for (i = 0; i < dic->cluster_size; i++) {
+> -		struct page *rpage = dic->rpages[i];
+> -
+> -		if (rpage && !fsverity_verify_page(rpage))
+> -			SetPageError(rpage);
+> -	}
+> -
+> -	__f2fs_decompress_end_io(dic, false, true);
+> +	f2fs_put_dic(dic, true);
+>  }
+>  
+>  /*
+> @@ -1764,6 +1741,8 @@ static void f2fs_verify_cluster(struct work_struct *work)
+>  void f2fs_decompress_end_io(struct decompress_io_ctx *dic, bool failed,
+>  				bool in_task)
+>  {
+> +	int i;
+> +
+>  	if (!failed && dic->need_verity) {
+>  		/*
+>  		 * Note that to avoid deadlocks, the verity work can't be done
+> @@ -1773,9 +1752,28 @@ void f2fs_decompress_end_io(struct decompress_io_ctx *dic, bool failed,
+>  		 */
+>  		INIT_WORK(&dic->verity_work, f2fs_verify_cluster);
+>  		fsverity_enqueue_verify_work(&dic->verity_work);
+> -	} else {
+> -		__f2fs_decompress_end_io(dic, failed, in_task);
+> +		return;
+> +	}
+> +
+> +	/* Update and unlock the cluster's pagecache pages. */
+> +	for (i = 0; i < dic->cluster_size; i++) {
+> +		struct page *rpage = dic->rpages[i];
+> +
+> +		if (!rpage)
+> +			continue;
+> +
+> +		if (failed)
+> +			ClearPageUptodate(rpage);
+> +		else
+> +			SetPageUptodate(rpage);
+> +		unlock_page(rpage);
+>  	}
+> +
+> +	/*
+> +	 * Release the reference to the decompress_io_ctx that was being held
+> +	 * for I/O completion.
+> +	 */
+> +	f2fs_put_dic(dic, in_task);
+>  }
+>  
+>  /*
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index a71e818cd67b4..1ae8da259d6c5 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -116,43 +116,56 @@ struct bio_post_read_ctx {
+>  	struct f2fs_sb_info *sbi;
+>  	struct work_struct work;
+>  	unsigned int enabled_steps;
+> +	/*
+> +	 * decompression_attempted keeps track of whether
+> +	 * f2fs_end_read_compressed_page() has been called on the pages in the
+> +	 * bio that belong to a compressed cluster yet.
+> +	 */
+> +	bool decompression_attempted;
+>  	block_t fs_blkaddr;
+>  };
+>  
+> +/*
+> + * Update and unlock a bio's pages, and free the bio.
+> + *
+> + * This marks pages up-to-date only if there was no error in the bio (I/O error,
+> + * decryption error, or verity error), as indicated by bio->bi_status.
+> + *
+> + * "Compressed pages" (pagecache pages backed by a compressed cluster on-disk)
+> + * aren't marked up-to-date here, as decompression is done on a per-compression-
+> + * cluster basis rather than a per-bio basis.  Instead, we only must do two
+> + * things for each compressed page here: call f2fs_end_read_compressed_page()
+> + * with failed=true if an error occurred before it would have normally gotten
+> + * called (i.e., I/O error or decryption error, but *not* verity error), and
+> + * release the bio's reference to the decompress_io_ctx of the page's cluster.
+> + */
+>  static void f2fs_finish_read_bio(struct bio *bio, bool in_task)
+>  {
+>  	struct bio_vec *bv;
+>  	struct bvec_iter_all iter_all;
+> +	struct bio_post_read_ctx *ctx = bio->bi_private;
+>  
+> -	/*
+> -	 * Update and unlock the bio's pagecache pages, and put the
+> -	 * decompression context for any compressed pages.
+> -	 */
+>  	bio_for_each_segment_all(bv, bio, iter_all) {
+>  		struct page *page = bv->bv_page;
+>  
+>  		if (f2fs_is_compressed_page(page)) {
+> -			if (bio->bi_status)
+> +			if (!ctx->decompression_attempted)
+>  				f2fs_end_read_compressed_page(page, true, 0,
+>  							in_task);
+>  			f2fs_put_page_dic(page, in_task);
+>  			continue;
+>  		}
+>  
+> -		/* PG_error was set if verity failed. */
+> -		if (bio->bi_status || PageError(page)) {
+> +		if (bio->bi_status)
+>  			ClearPageUptodate(page);
+> -			/* will re-read again later */
+> -			ClearPageError(page);
+> -		} else {
+> +		else
+>  			SetPageUptodate(page);
+> -		}
+>  		dec_page_count(F2FS_P_SB(page), __read_io_type(page));
+>  		unlock_page(page);
+>  	}
+>  
+> -	if (bio->bi_private)
+> -		mempool_free(bio->bi_private, bio_post_read_ctx_pool);
+> +	if (ctx)
+> +		mempool_free(ctx, bio_post_read_ctx_pool);
+>  	bio_put(bio);
+>  }
+>  
+> @@ -185,8 +198,10 @@ static void f2fs_verify_bio(struct work_struct *work)
+>  			struct page *page = bv->bv_page;
+>  
+>  			if (!f2fs_is_compressed_page(page) &&
+> -			    !fsverity_verify_page(page))
+> -				SetPageError(page);
+> +			    !fsverity_verify_page(page)) {
+> +				bio->bi_status = BLK_STS_IOERR;
+> +				break;
+> +			}
+>  		}
+>  	} else {
+>  		fsverity_verify_bio(bio);
+> @@ -245,6 +260,8 @@ static void f2fs_handle_step_decompress(struct bio_post_read_ctx *ctx,
+>  		blkaddr++;
+>  	}
+>  
+> +	ctx->decompression_attempted = true;
+> +
+>  	/*
+>  	 * Optimization: if all the bio's pages are compressed, then scheduling
+>  	 * the per-bio verity work is unnecessary, as verity will be fully
+> @@ -1062,6 +1079,7 @@ static struct bio *f2fs_grab_read_bio(struct inode *inode, block_t blkaddr,
+>  		ctx->sbi = sbi;
+>  		ctx->enabled_steps = post_read_steps;
+>  		ctx->fs_blkaddr = blkaddr;
+> +		ctx->decompression_attempted = false;
+>  		bio->bi_private = ctx;
+>  	}
+>  	iostat_alloc_and_bind_ctx(sbi, bio, ctx);
+> @@ -1089,7 +1107,6 @@ static int f2fs_submit_page_read(struct inode *inode, struct page *page,
+>  		bio_put(bio);
+>  		return -EFAULT;
+>  	}
+> -	ClearPageError(page);
+>  	inc_page_count(sbi, F2FS_RD_DATA);
+>  	f2fs_update_iostat(sbi, NULL, FS_DATA_READ_IO, F2FS_BLKSIZE);
+>  	__submit_bio(sbi, bio, DATA);
+> @@ -2141,7 +2158,6 @@ static int f2fs_read_single_page(struct inode *inode, struct page *page,
+>  	inc_page_count(F2FS_I_SB(inode), F2FS_RD_DATA);
+>  	f2fs_update_iostat(F2FS_I_SB(inode), NULL, FS_DATA_READ_IO,
+>  							F2FS_BLKSIZE);
+> -	ClearPageError(page);
+>  	*last_block_in_bio = block_nr;
+>  	goto out;
+>  out:
+> @@ -2289,7 +2305,6 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+>  
+>  		inc_page_count(sbi, F2FS_RD_DATA);
+>  		f2fs_update_iostat(sbi, inode, FS_DATA_READ_IO, F2FS_BLKSIZE);
+> -		ClearPageError(page);
+>  		*last_block_in_bio = blkaddr;
+>  	}
+>  
+> @@ -2306,7 +2321,6 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+>  	for (i = 0; i < cc->cluster_size; i++) {
+>  		if (cc->rpages[i]) {
+>  			ClearPageUptodate(cc->rpages[i]);
+> -			ClearPageError(cc->rpages[i]);
+>  			unlock_page(cc->rpages[i]);
+>  		}
+>  	}
+> @@ -2403,7 +2417,6 @@ static int f2fs_mpage_readpages(struct inode *inode,
+>  #ifdef CONFIG_F2FS_FS_COMPRESSION
+>  set_error_page:
+>  #endif
+> -			SetPageError(page);
+>  			zero_user_segment(page, 0, PAGE_SIZE);
+>  			unlock_page(page);
+>  		}
+> diff --git a/fs/verity/verify.c b/fs/verity/verify.c
+> index bde8c9b7d25f6..961ba248021f9 100644
+> --- a/fs/verity/verify.c
+> +++ b/fs/verity/verify.c
+> @@ -200,9 +200,8 @@ EXPORT_SYMBOL_GPL(fsverity_verify_page);
+>   * @bio: the bio to verify
+>   *
+>   * Verify a set of pages that have just been read from a verity file.  The pages
+> - * must be pagecache pages that are still locked and not yet uptodate.  Pages
+> - * that fail verification are set to the Error state.  Verification is skipped
+> - * for pages already in the Error state, e.g. due to fscrypt decryption failure.
+> + * must be pagecache pages that are still locked and not yet uptodate.  If a
+> + * page fails verification, then bio->bi_status is set to an error status.
+>   *
+>   * This is a helper function for use by the ->readahead() method of filesystems
+>   * that issue bios to read data directly into the page cache.  Filesystems that
+> @@ -244,9 +243,10 @@ void fsverity_verify_bio(struct bio *bio)
+>  		unsigned long level0_ra_pages =
+>  			min(max_ra_pages, params->level0_blocks - level0_index);
+>  
+> -		if (!PageError(page) &&
+> -		    !verify_page(inode, vi, req, page, level0_ra_pages))
+> -			SetPageError(page);
+> +		if (!verify_page(inode, vi, req, page, level0_ra_pages)) {
+> +			bio->bi_status = BLK_STS_IOERR;
+> +			break;
+> +		}
+>  	}
+>  
+>  	fsverity_free_hash_request(params->hash_alg, req);
+> 
+> base-commit: f0c4d9fc9cc9462659728d168387191387e903cc
+> -- 
+> 2.38.1
