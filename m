@@ -2,83 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD45563B51B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 23:59:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0105F63B59E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 00:08:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234194AbiK1W7t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Nov 2022 17:59:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50766 "EHLO
+        id S234334AbiK1XIV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Nov 2022 18:08:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229667AbiK1W7e (ORCPT
+        with ESMTP id S232801AbiK1XIU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Nov 2022 17:59:34 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 741FA2AE15;
-        Mon, 28 Nov 2022 14:59:33 -0800 (PST)
+        Mon, 28 Nov 2022 18:08:20 -0500
+Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7ACB12B637;
+        Mon, 28 Nov 2022 15:08:19 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id A62DBCE10AC;
-        Mon, 28 Nov 2022 22:59:31 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A99DC433D6;
-        Mon, 28 Nov 2022 22:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-        s=korg; t=1669676369;
-        bh=8eUsQnXrojDc3xf/FA0TCQqqadaNCz4PLnjHT4xDE/M=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=p/c6sfRX9un7PSA9WHRKHQPKKlq0P4NHxZWk+3LaBZS7DQenvFmjKk0jQBgH6o535
-         rwsyByROkiEJmDN58P/Z53hmZWo4xmybXT0VaPtvGqyQZyuQQjThzncIMjLPHHFdpc
-         3v4hl13h6A47jhJOM5850oDp2I/9vqahh0Q1uqps=
-Date:   Mon, 28 Nov 2022 14:59:27 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-mips@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        sparclinux@vger.kernel.org, linux-um@lists.infradead.org,
-        etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-samsung-soc@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org, linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE
- usage
-Message-Id: <20221128145927.df895bf1966cfa125cae9668@linux-foundation.org>
-In-Reply-To: <9d0bf98a-3d6a-1082-e992-1338e1525935@redhat.com>
-References: <20221116102659.70287-1-david@redhat.com>
-        <20221116102659.70287-17-david@redhat.com>
-        <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com>
-        <08b65ac6-6786-1080-18f8-d2be109c85fc@xs4all.nl>
-        <9d0bf98a-3d6a-1082-e992-1338e1525935@redhat.com>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
+        by sin.source.kernel.org (Postfix) with ESMTPS id E3D48CE109B;
+        Mon, 28 Nov 2022 23:08:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16DA4C433D6;
+        Mon, 28 Nov 2022 23:08:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669676896;
+        bh=xmDWkkpCiCrDtqwlAEG/iOC4CyDHvYHC5ggXKZgViCM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=bIzVbNaLrMmkKLiNRUOdJTh/0UY4Krs/3gxXj/U/B1iuRbecq5DfsXfE4hSCw/g/h
+         m+PuEcldMLu337SC1BMCgqhpTLMm2z/tYMQ/3egiYlnbeUQ6HXtzBeECooF9j0s8jP
+         bBIVvuzxLK0g53g67vaE9ihZOpTcuUmB3Qbq0h1YSylIMr6V0Vak+NbgiIa4or44nR
+         Budu5DByuiLkmGTG4sxeW/l38uXgMRFDAyMoio/vz4xgx5XqSUTQkS7awGet92y4lp
+         pgel+vNEERy2EjPfJsUKVhsq1BrqICiD8afXQTCzzXQE9J6EhNnyR6oZIlMdsKXWjw
+         vuFqeQGEDXOBw==
+Date:   Mon, 28 Nov 2022 15:08:15 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, dan.j.williams@intel.com
+Subject: Re: [PATCH 0/2] fsdax,xfs: fix warning messages
+Message-ID: <Y4U/XxlTx6SoELV0@magnolia>
+References: <1669301694-16-1-git-send-email-ruansy.fnst@fujitsu.com>
+ <Y4OuntOVjId9FLzL@magnolia>
+ <113e8b0d-7349-94ac-c017-3624c34fe73b@fujitsu.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <113e8b0d-7349-94ac-c017-3624c34fe73b@fujitsu.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -86,25 +57,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 28 Nov 2022 09:18:47 +0100 David Hildenbrand <david@redhat.com> wrote:
-
-> > Less chances of things going wrong that way.
+On Mon, Nov 28, 2022 at 10:16:23AM +0800, Shiyang Ruan wrote:
+> 
+> 
+> 在 2022/11/28 2:38, Darrick J. Wong 写道:
+> > On Thu, Nov 24, 2022 at 02:54:52PM +0000, Shiyang Ruan wrote:
+> > > Many testcases failed in dax+reflink mode with warning message in dmesg.
+> > > This also effects dax+noreflink mode if we run the test after a
+> > > dax+reflink test.  So, the most urgent thing is solving the warning
+> > > messages.
+> > > 
+> > > Patch 1 fixes some mistakes and adds handling of CoW cases not
+> > > previously considered (srcmap is HOLE or UNWRITTEN).
+> > > Patch 2 adds the implementation of unshare for fsdax.
+> > > 
+> > > With these fixes, most warning messages in dax_associate_entry() are
+> > > gone.  But honestly, generic/388 will randomly failed with the warning.
+> > > The case shutdown the xfs when fsstress is running, and do it for many
+> > > times.  I think the reason is that dax pages in use are not able to be
+> > > invalidated in time when fs is shutdown.  The next time dax page to be
+> > > associated, it still remains the mapping value set last time.  I'll keep
+> > > on solving it.
+> > > 
+> > > The warning message in dax_writeback_one() can also be fixed because of
+> > > the dax unshare.
 > > 
-> > Just mention in the v2 cover letter that the first patch was added to
-> > make it easy to backport that fix without being hampered by merge
-> > conflicts if it was added after your frame_vector.c patch.
+> > This cuts down the amount of test failures quite a bit, but I think
+> > you're still missing a piece or two -- namely the part that refuses to
+> > enable S_DAX mode on a reflinked file when the inode is being loaded
+> > from disk.  However, thank you for fixing dax.c, because that was the
+> > part I couldn't figure out at all. :)
 > 
-> Yes, that's the way I would naturally do, it, however, Andrew prefers 
-> delta updates for minor changes.
+> I didn't include it[1] in this patchset...
 > 
-> @Andrew, whatever you prefer!
+> [1] https://lore.kernel.org/linux-xfs/1663234002-17-1-git-send-email-ruansy.fnst@fujitsu.com/
 
-I'm inclined to let things sit as they are.  Cross-tree conflicts
-happen, and Linus handles them.  I'll flag this (very simple) conflict
-in the pull request, if MM merges second.  If v4l merges second then
-hopefully they will do the same.  But this one is so simple that Linus
-hardly needs our help.
+Oh, ok.  I'll pull that one in.  All the remaining test failures seem to
+be related to inode flag states or tests that trip over the lack of
+delalloc on dax+reflink files.
 
-But Linus won't be editing changelogs so that the changelog makes more
-sense after both trees are joined.  I'm inclined to let the changelog
-sit as it is as well.
+--D
+
+> 
+> --
+> Thanks,
+> Ruan.
+> 
+> > 
+> > --D
+> > 
+> > > 
+> > > Shiyang Ruan (2):
+> > >    fsdax,xfs: fix warning messages at dax_[dis]associate_entry()
+> > >    fsdax,xfs: port unshare to fsdax
+> > > 
+> > >   fs/dax.c             | 166 ++++++++++++++++++++++++++++++-------------
+> > >   fs/xfs/xfs_iomap.c   |   6 +-
+> > >   fs/xfs/xfs_reflink.c |   8 ++-
+> > >   include/linux/dax.h  |   2 +
+> > >   4 files changed, 129 insertions(+), 53 deletions(-)
+> > > 
+> > > -- 
+> > > 2.38.1
+> > > 
