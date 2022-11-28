@@ -2,121 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D4E763B5F4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 00:32:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5785263B5DE
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 00:30:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234709AbiK1Xcr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Nov 2022 18:32:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48160 "EHLO
+        id S234697AbiK1Xa2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Nov 2022 18:30:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234712AbiK1Xcl (ORCPT
+        with ESMTP id S234694AbiK1Xa0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Nov 2022 18:32:41 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE5BD60C1;
-        Mon, 28 Nov 2022 15:32:40 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 71E3BB8103F;
-        Mon, 28 Nov 2022 23:32:39 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1801AC433C1;
-        Mon, 28 Nov 2022 23:32:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669678358;
-        bh=nhzT3y8ECc0SM21u2kRL+g3RxzJpgEVvUa1o+ZAysIg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=FM+zDegQkndaejyfC/Pw0kByEiz8hd1zlGhElcy0NsHeEm/jITQZDs+eoaBfL/YiN
-         uQwnRCGHtz6CxzGfz8l1gMsi501ScGPcDTGYZPgCqkoewVwsAFWDtWEqhUye7OUkDz
-         jZR9shAQ6cW+qmJ5RNGBmDje5iWBRxkzMmL5A9C97kVMdtZQx4ilbvo8LbQUAwClAL
-         WFfYNJddlYY1l2j3Qmhs7V3h99abwYqh2CMTJdzqjwj2kMHJOaGtuCsWpyh1m1/uCS
-         0up4dVWOBfGM6MOvencqoCJguaAIzelAMtsaDXrPeRfAbBBZAt6lm8Mv8jdzK6SPBH
-         +cMrbDmD7VZIA==
-Date:   Tue, 29 Nov 2022 07:22:46 +0800
-From:   Jisheng Zhang <jszhang@kernel.org>
-To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] coredump: fix compile warning when ELF_CORE=n while
- COREDUMP=y
-Message-ID: <Y4VCxuC5UgY80R3t@xhacker>
-References: <20221128135056.325-1-jszhang@kernel.org>
- <20221128145956.6rgswicmtsuxxhdt@riteshh-domain>
+        Mon, 28 Nov 2022 18:30:26 -0500
+Received: from mail-pf1-x429.google.com (mail-pf1-x429.google.com [IPv6:2607:f8b0:4864:20::429])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 835D832065
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 15:30:25 -0800 (PST)
+Received: by mail-pf1-x429.google.com with SMTP id 130so12024881pfu.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 15:30:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/IOdLakO8ABzwedxcWnJjqY7QmYuZp1ksWCsEyktvNU=;
+        b=PtcaLdolfbI94PbhXibpQKT3kTDVpj5StkWff66CamClwVtgwuHdz2As4Z3QRSN282
+         011VXWnFgZ/EZmSIom53Xv59tPEhC1Xwe/PFiI27cVgCQTM9T9R8mVa4vKFiJiR232Wf
+         ddA8MYl4JeXZ/P+OiGT8D0Z+HbriyigoQZJIDH026ZStcEnWkmxSpfdXzVjRUb0ZoCEH
+         rR01rIxT/4eNk2U4lshXGtXmlIatyPrKM0ZbYoVeAGhNz1bzqDHddu8ewFuRIkswkXIh
+         5dNWDCxEdufAUoDMzYGocUV7DEf4M0pY0lWRnW55Pg2b3bLm/GVJSkq9nckhYCTPPgdf
+         WqLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/IOdLakO8ABzwedxcWnJjqY7QmYuZp1ksWCsEyktvNU=;
+        b=uzB9YbO7k2dA+OpAUv7Ei63GOJTSZiw3N4VX1oAarCxkM19+pU7geEEDDLZ2ry4K0Y
+         sAptm6fp1lg8R9O3IxZQBCENW/vD+egnlC9Kbc4H0smQlFS0SKDAnQXh8V3Bcg54+lHI
+         fYMpQBVWqeE/pwnN6w/S4ukciVEsKkJX1q1C3v9xm6ycsEkJ/MJPlzO+Aw7QQpsJqOMT
+         f0YDtzZ3MwSEUF0fhda81Of0kAJ0HeejlSMSHJzY+PhkjO14czhn6aLSaQklg+/RwkUQ
+         2Sxg9JH/XIZP5+rxTy+m9PTOWCXuTvTuOMQR9vYvWgQMk/CfDrSFcdoprlntq1SM0WYi
+         oY3w==
+X-Gm-Message-State: ANoB5pkKTP84hVv62v9JEjfFYMqlexcNSI17jNK1kkNyPYd0UMGP1uwE
+        5khPE8vBVyujGT684GLhZ3ADsGi2hkCfhQ==
+X-Google-Smtp-Source: AA0mqf4JmVyGWh8FDppfBxU7twvNjlK/KE39hRc6cK8T+LFASUKJBCiMhv/OXmjKY1hNNnnVB7Nmnw==
+X-Received: by 2002:a62:e908:0:b0:574:53f4:c4d6 with SMTP id j8-20020a62e908000000b0057453f4c4d6mr28979951pfh.81.1669678224991;
+        Mon, 28 Nov 2022 15:30:24 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-65-106.pa.vic.optusnet.com.au. [49.186.65.106])
+        by smtp.gmail.com with ESMTPSA id o25-20020aa79799000000b0056c3a0dc65fsm8501769pfp.71.2022.11.28.15.30.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Nov 2022 15:30:24 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1oznZt-002DMH-G8; Tue, 29 Nov 2022 10:30:21 +1100
+Date:   Tue, 29 Nov 2022 10:30:21 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 10/9] xfs: add debug knob to slow down writeback for fun
+Message-ID: <20221128233021.GW3600936@dread.disaster.area>
+References: <20221123055812.747923-1-david@fromorbit.com>
+ <Y4U3XWf5j1zVGvV4@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221128145956.6rgswicmtsuxxhdt@riteshh-domain>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y4U3XWf5j1zVGvV4@magnolia>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 28, 2022 at 08:29:56PM +0530, Ritesh Harjani (IBM) wrote:
-> On 22/11/28 09:50PM, Jisheng Zhang wrote:
-> > fix below build warning when ELF_CORE=n while COREDUMP=y:
-> >
-> > fs/coredump.c:834:12: warning: ‘dump_emit_page’ defined but not used [-Wunused-function]
-> >   834 | static int dump_emit_page(struct coredump_params *cprm, struct
-> >       page *page)
-> >       |            ^~~~~~~~~~~~~~
+On Mon, Nov 28, 2022 at 02:34:05PM -0800, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
 > 
-> Fixes: 06bbaa6dc53c: "[coredump] don't use __kernel_write() on kmap_local_page()"
+> Add a new error injection knob so that we can arbitrarily slow down
+> writeback to test for race conditions and aberrant reclaim behavior if
+> the writeback mechanisms are slow to issue writeback.  This will enable
+> functional testing for the ifork sequence counters introduced in commit
+> 745b3f76d1c8 ("xfs: maintain a sequence count for inode fork
+> manipulations").
 > 
-> >
-> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> > ---
-> >  fs/coredump.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/fs/coredump.c b/fs/coredump.c
-> > index 7bad7785e8e6..8663042ebe9c 100644
-> > --- a/fs/coredump.c
-> > +++ b/fs/coredump.c
-> > @@ -831,6 +831,7 @@ static int __dump_skip(struct coredump_params *cprm, size_t nr)
-> >  	}
-> >  }
-> >
-> > +#ifdef CONFIG_ELF_CORE
+> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> ---
+>  fs/xfs/libxfs/xfs_errortag.h |    4 +++-
+>  fs/xfs/xfs_aops.c            |   12 ++++++++++--
+>  fs/xfs/xfs_error.c           |   11 +++++++++++
+>  fs/xfs/xfs_error.h           |   22 ++++++++++++++++++++++
+>  4 files changed, 46 insertions(+), 3 deletions(-)
 > 
-> Instead of this ^^^, we could even move the definition of dump_emit_page() in
-> the same #ifdef as of dump_user_range(). Since dump_user_range() is the only
-> caller of dump_emit_page().
-> 
-> #ifdef CONFIG_ELF_CORE
-> [here]
-> int dump_user_range(struct coredump_params *cprm, unsigned long start,
-> 		    unsigned long len)
-> {..}
-> #endif
-> 
+> diff --git a/fs/xfs/libxfs/xfs_errortag.h b/fs/xfs/libxfs/xfs_errortag.h
+> index 580ccbd5aadc..f5f629174eca 100644
+> --- a/fs/xfs/libxfs/xfs_errortag.h
+> +++ b/fs/xfs/libxfs/xfs_errortag.h
+> @@ -61,7 +61,8 @@
+>  #define XFS_ERRTAG_LARP					39
+>  #define XFS_ERRTAG_DA_LEAF_SPLIT			40
+>  #define XFS_ERRTAG_ATTR_LEAF_TO_NODE			41
+> -#define XFS_ERRTAG_MAX					42
+> +#define XFS_ERRTAG_WB_DELAY_MS				42
+> +#define XFS_ERRTAG_MAX					43
+>  
+>  /*
+>   * Random factors for above tags, 1 means always, 2 means 1/2 time, etc.
+> @@ -107,5 +108,6 @@
+>  #define XFS_RANDOM_LARP					1
+>  #define XFS_RANDOM_DA_LEAF_SPLIT			1
+>  #define XFS_RANDOM_ATTR_LEAF_TO_NODE			1
+> +#define XFS_RANDOM_WB_DELAY_MS				3000
+>  
+>  #endif /* __XFS_ERRORTAG_H_ */
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index a22d90af40c8..4a13260527b9 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -17,6 +17,8 @@
+>  #include "xfs_bmap.h"
+>  #include "xfs_bmap_util.h"
+>  #include "xfs_reflink.h"
+> +#include "xfs_errortag.h"
+> +#include "xfs_error.h"
+>  
+>  struct xfs_writepage_ctx {
+>  	struct iomap_writepage_ctx ctx;
+> @@ -217,11 +219,15 @@ xfs_imap_valid(
+>  	 * checked (and found nothing at this offset) could have added
+>  	 * overlapping blocks.
+>  	 */
+> -	if (XFS_WPC(wpc)->data_seq != READ_ONCE(ip->i_df.if_seq))
+> +	if (XFS_WPC(wpc)->data_seq != READ_ONCE(ip->i_df.if_seq)) {
+> +		XFS_ERRORTAG_REPORT(ip->i_mount, XFS_ERRTAG_WB_DELAY_MS);
+>  		return false;
+> +	}
+>  	if (xfs_inode_has_cow_data(ip) &&
+> -	    XFS_WPC(wpc)->cow_seq != READ_ONCE(ip->i_cowfp->if_seq))
+> +	    XFS_WPC(wpc)->cow_seq != READ_ONCE(ip->i_cowfp->if_seq)) {
+> +		XFS_ERRORTAG_REPORT(ip->i_mount, XFS_ERRTAG_WB_DELAY_MS);
+>  		return false;
 
-I planed to patch like this, but I saw the final patch diffstat was
-a bit more. I'll send out a v2.
+These should be tracepoints, right?
 
-Thanks
+Otherwise I don't see a problem with the delay code.
 
-> But I guess that's just a nitpick. Feel free to add:
-> 
-> Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> 
-> -ritesh
-> 
-> >  static int dump_emit_page(struct coredump_params *cprm, struct page *page)
-> >  {
-> >  	struct bio_vec bvec = {
-> > @@ -863,6 +864,7 @@ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
-> >
-> >  	return 1;
-> >  }
-> > +#endif
-> >
-> >  int dump_emit(struct coredump_params *cprm, const void *addr, int nr)
-> >  {
-> > --
-> > 2.37.2
-> >
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
