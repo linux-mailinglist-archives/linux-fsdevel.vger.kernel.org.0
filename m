@@ -2,63 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 691D663A8B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 13:47:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68BDA63A953
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 14:20:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230099AbiK1MrJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Nov 2022 07:47:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52066 "EHLO
+        id S231719AbiK1NUM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Nov 2022 08:20:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47934 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231285AbiK1MrC (ORCPT
+        with ESMTP id S231693AbiK1NTu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Nov 2022 07:47:02 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A84C564EF;
-        Mon, 28 Nov 2022 04:47:00 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id 739E1CE0EA2;
-        Mon, 28 Nov 2022 12:46:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80B84C43470;
-        Mon, 28 Nov 2022 12:46:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669639617;
-        bh=U+TvJnD8x/jDIqAqkOE5wHhUsouSetYjngwRI/CAHlw=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=pUmTuI0bBsjgWGShD5FSUy3jOHhck0wGWW61TrcuqcL3jVpy539gpMXpRpTushxvx
-         A/RVFV+YgJzsSJGIxV3hQo38FBV3dDupxskLKWEjGSV0kjqoOfaWecgO67MqauLbes
-         el+8N3wO7njnKM0MhbdkQmRc3A4Vf+4sA/D7LucpYU987j59ydc0XhWn7jWc9OCVZT
-         rbTiwCIPuNO8W8uZB4SPg2wu2pBJ9OxadkV78x6BPt5uxHMB98bvQGeXGLc4DK+2Qs
-         7Oo+mak9OUaK2BJu3Y7+Zj+6MxbRaacnP4LvLNJi4f9EFLq3CZfeS6heWk5LBV7LzX
-         mracYUr1Mh1ww==
-Received: by mail-oi1-f172.google.com with SMTP id e205so11367655oif.11;
-        Mon, 28 Nov 2022 04:46:57 -0800 (PST)
-X-Gm-Message-State: ANoB5pkUlNI++6pT+tqK5gOHHvNdTdAe8ympJDFdtjm/3XKfadJgbYZS
-        MiEIONl71r3n8bZyl6e1NjeqsRbxVte5LDp40iE=
-X-Google-Smtp-Source: AA0mqf7xqDskPqPexut+11NirlZnMdbiGll/YEs6Hx6MtemVvtY7Luupm8Ao9BjOwBBcf8EWFwFZqNCn9viJPCVbrxA=
-X-Received: by 2002:aca:111a:0:b0:34f:63a5:a654 with SMTP id
- 26-20020aca111a000000b0034f63a5a654mr14689150oir.257.1669639616668; Mon, 28
- Nov 2022 04:46:56 -0800 (PST)
+        Mon, 28 Nov 2022 08:19:50 -0500
+Received: from mail-ej1-x635.google.com (mail-ej1-x635.google.com [IPv6:2a00:1450:4864:20::635])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B95F1F9DA
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 05:18:04 -0800 (PST)
+Received: by mail-ej1-x635.google.com with SMTP id td2so11593456ejc.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 05:18:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=szeredi.hu; s=google;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CzsKmQ/JNcqP1IAM5kkjrzrabag01L0YrvSh7VIxqOg=;
+        b=GvpNIdrtSxAMpdYe4bLJQOWncgZFUNJlbduQFYQ1WkSkKbMURP2Ga/73TuaojMWaQq
+         zrbO05nHC7kVlCnsh+o+3G4+nhSEEpJsestHCQgtJrJXllOyX3ieU6HZHxONrSW1Sdll
+         Oh/XXDOJ9wv8ZZEjRNbExmcd1Hsy73/o50aq0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CzsKmQ/JNcqP1IAM5kkjrzrabag01L0YrvSh7VIxqOg=;
+        b=1Lq3MUYwGsc6PoMBMWfAyn8pOIy4MH4puM55196tPAaA3nOUXnKWcn4/p+QPqUKKHR
+         XXTN0yyhwdmXwGuQvgzKfmtV9wrvstlweWgNbR9EvtTot4L4LZbzUTxqnKvxWVtFrAYB
+         UgbV5m8BPTKq5eD8aBn8A1a26XL3gfq+AJgnL9Q3XJHvhRV1huXlTD8WkXSUETiYJ8x4
+         0EwskVzgT03Bjc03ggK/Sd3AL/4lzXgpbQs6VvLK2A1FGgQQhiK5fGP0uMNtndoykSf3
+         hR45O6G8nl44CLTnmWQZ1rS/bzJqCylpIucFIhTwVvaF2GlHreweNXKT7aPaMvKM/M2A
+         fTIQ==
+X-Gm-Message-State: ANoB5pkkqlCUxOpc6Lw0yH5d8l8RZFSh0dBa4767W3dAEUeqWZX1VmTG
+        SaIZu3z1wW3F6cxONgaz/oLK7w==
+X-Google-Smtp-Source: AA0mqf4ZMthsJUb+2jIiRdscWm5XMBnxT9GhgyF+d8Q1b4p6XDKsRp5D3c3DqVPKFIPsXdL2P35QuQ==
+X-Received: by 2002:a17:907:76b7:b0:7bc:aea6:e89a with SMTP id jw23-20020a17090776b700b007bcaea6e89amr13615806ejc.671.1669641483214;
+        Mon, 28 Nov 2022 05:18:03 -0800 (PST)
+Received: from miu.piliscsaba.redhat.com (91-82-180-126.pool.digikabel.hu. [91.82.180.126])
+        by smtp.gmail.com with ESMTPSA id la18-20020a170907781200b007b2b98e1f2dsm4903072ejc.122.2022.11.28.05.18.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Nov 2022 05:18:02 -0800 (PST)
+Date:   Mon, 28 Nov 2022 14:18:00 +0100
+From:   Miklos Szeredi <miklos@szeredi.hu>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] fuse fixes for 6.1-rc8
+Message-ID: <Y4S1CNZ6Zk6k1SVn@miu.piliscsaba.redhat.com>
 MIME-Version: 1.0
-Received: by 2002:a05:6839:1a4e:0:0:0:0 with HTTP; Mon, 28 Nov 2022 04:46:56
- -0800 (PST)
-In-Reply-To: <PUZPR04MB631661A405BDD1987B969597810F9@PUZPR04MB6316.apcprd04.prod.outlook.com>
-References: <PUZPR04MB631661A405BDD1987B969597810F9@PUZPR04MB6316.apcprd04.prod.outlook.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Mon, 28 Nov 2022 21:46:56 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd-1=+2zo2sGQ8sZdJ7xcuOsWBXx+Cf_YromVUt6-thPwg@mail.gmail.com>
-Message-ID: <CAKYAXd-1=+2zo2sGQ8sZdJ7xcuOsWBXx+Cf_YromVUt6-thPwg@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] exfat: move exfat_entry_set_cache from heap to stack
-To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-Cc:     "sj1557.seo@samsung.com" <sj1557.seo@samsung.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
-        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,21 +63,21 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2022-11-24 15:40 GMT+09:00, Yuezhang.Mo@sony.com <Yuezhang.Mo@sony.com>:
-> This patchset reduces the size of exfat_entry_set_cache and moves
-> it from heap to stack.
->
-> Changes for v2:
->   * [1/5] [5/5]
->     - Rename ES_*_ENTRY to ES_IDX_*
->     - Fix ES_IDX_LAST_FILENAME() to return the index of the last
->       filename entry
->     - Add ES_ENTRY_NUM() MACRO
->
-> Yuezhang Mo (5):
->   exfat: reduce the size of exfat_entry_set_cache
->   exfat: support dynamic allocate bh for exfat_entry_set_cache
->   exfat: move exfat_entry_set_cache from heap to stack
->   exfat: rename exfat_free_dentry_set() to exfat_put_dentry_set()
->   exfat: replace magic numbers with Macros
-Applied, Thanks for your patches!
+Hi Linus,
+
+Please pull from:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-6.1-rc8
+
+Fix a regression introduced in -rc4.
+
+Thanks,
+Miklos
+
+----------------------------------------------------------------
+Miklos Szeredi (1):
+      fuse: lock inode unconditionally in fuse_fallocate()
+
+---
+ fs/fuse/file.c | 37 ++++++++++++++++---------------------
+ 1 file changed, 16 insertions(+), 21 deletions(-)
