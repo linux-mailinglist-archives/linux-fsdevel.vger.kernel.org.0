@@ -2,47 +2,47 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E3C263A59C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 11:03:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C727963A5A3
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 11:04:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230007AbiK1KDu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Nov 2022 05:03:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44838 "EHLO
+        id S230178AbiK1KEm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Nov 2022 05:04:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230044AbiK1KDq (ORCPT
+        with ESMTP id S230168AbiK1KEl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Nov 2022 05:03:46 -0500
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BCAB52AE1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 02:03:39 -0800 (PST)
-Received: by mail-il1-f198.google.com with SMTP id x10-20020a056e021bca00b00302b6c0a683so8558913ilv.23
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 02:03:39 -0800 (PST)
+        Mon, 28 Nov 2022 05:04:41 -0500
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7A9E9EA3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 02:04:39 -0800 (PST)
+Received: by mail-il1-f197.google.com with SMTP id j20-20020a056e02219400b00300a22a7fe0so8417922ila.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 02:04:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=t3Z7tD0qeX6aZfKu8J+Pu+V9SU8w3xwQLICQ/IZYsLw=;
-        b=WdPygN2ctQVWZbpSBsZN+pBFe61AIqoRH1TMO7W9kEpXF1MNEw9hSZDTk6TkFdxANZ
-         ab3RzUYpjFSNLyOLYF0b3G5o01T1N9Nfky7rSojOMfOwx18TD5X3WVwL1qujqcDxzQw8
-         17FajZBmJ16Zuh9m3OgpfrchzVTILxljUgYcwBY3oI929BStVeAMWONRJiE4j1w0/es4
-         1VI3KFzXaUupytF5e19BzMlEnvssGn5O2BFQqbzm4EGXkIuoDhTaw/HphRInEb0XdC/q
-         RIytLUVyGm35RWquNeM+Eu49jiUtGWcVHjvTaPJo9G9b5Fo49K48P3AoYHxs155cjyIe
-         SO/g==
-X-Gm-Message-State: ANoB5pmrzHljxYuCx/1wAGAaIxOedJJAENcXMVyDtZq/139FtvTfe1c1
-        vT2RwW0pS7OJ6XbcIe/9wszfYQFYMspsH4pQOHrpb4zeiXv1
-X-Google-Smtp-Source: AA0mqf6JuCYtFHLLS4RFlakMkxww1ZYJggnUkqrmDuT1eY/PB6+Gytg4KPQa6MO1p/QWC0kDA+quCQWo4F29eGZlWsSdj4LWFmwy
+        bh=zkU8DKyT8h5uQbsxAZF6Th+TAqNYWVm8OMIsDSZWCoo=;
+        b=8MxpbaT1ynfopi3+63+BW+yebhRzyCNv/GKg3gq/acrr3Or1bULHdud1XpLXk1Ewz5
+         3DkOl8UAefOhp9gDX7pGV804JXMferW1EM+nfvb4q7PjcJGiZBRknjp2UKG7yXVusPdH
+         ThIQREyewhhggv0m2VIo26c/u/MJupYEYI9NLz+CIQSUgPkuqxuHJR81Livx7KZV0/QU
+         DXkWuL3s7x1B2uo8FVPUwaWde4odLTzmphMCa5J+waUrrFFbAbaz1DjKZc29AXP/DK66
+         9194tbyvCrVdLIo7inrPuSt8GOP27B7ZBjvMpIrTEP42edpjDGmhN7fakUBuNDqY16Qh
+         sQ0g==
+X-Gm-Message-State: ANoB5pl3Pas+cvrYi/o7my5v4kj94zfpQ9iQYuylYhRY6wwhhh68ik+j
+        D9AMRisrBPlAFixd4CjqVaiSxnLzfnw6DW7IquKGuBlxDqEv
+X-Google-Smtp-Source: AA0mqf7/JMFO/itGaijjg7p+PTEZcydslt3sHG0FopbTI3QI3qLt+xT7D2m2c5G9p+fU+Wi0v6dwzpYU+l4IrrmsNRPI2Uje9/y0
 MIME-Version: 1.0
-X-Received: by 2002:a5d:80ce:0:b0:6de:c30c:4d49 with SMTP id
- h14-20020a5d80ce000000b006dec30c4d49mr14681560ior.83.1669629819147; Mon, 28
- Nov 2022 02:03:39 -0800 (PST)
-Date:   Mon, 28 Nov 2022 02:03:39 -0800
+X-Received: by 2002:a05:6e02:505:b0:303:148c:692c with SMTP id
+ d5-20020a056e02050500b00303148c692cmr1143004ils.114.1669629878863; Mon, 28
+ Nov 2022 02:04:38 -0800 (PST)
+Date:   Mon, 28 Nov 2022 02:04:38 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000046def705ee84fc7a@google.com>
-Subject: [syzbot] WARNING in hfsplus_ext_write_extent
-From:   syzbot <syzbot+41264293e62d9074e4a8@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Message-ID: <000000000000d60fa905ee84ff8d@google.com>
+Subject: [syzbot] KMSAN: uninit-value in hfsplus_attr_bin_cmp_key
+From:   syzbot <syzbot+c6d8e1bffb0970780d5c@syzkaller.appspotmail.com>
+To:     glider@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
@@ -57,63 +57,88 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    faf68e3523c2 Merge tag 'kbuild-fixes-v6.1-4' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16eb5555880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8d01b6e3197974dd
-dashboard link: https://syzkaller.appspot.com/bug?extid=41264293e62d9074e4a8
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+HEAD commit:    a472f15b3d1e kmsan: allow using __msan_instrument_asm_stor..
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=14886381880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1429f86b132e6d40
+dashboard link: https://syzkaller.appspot.com/bug?extid=c6d8e1bffb0970780d5c
+compiler:       clang version 15.0.0 (https://github.com/llvm/llvm-project.git 610139d2d9ce6746b3c617fb3e2f7886272d26ff), GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: i386
 
 Unfortunately, I don't have any reproducer for this issue yet.
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3bfa6577f378/disk-faf68e35.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7bf0af58cde3/vmlinux-faf68e35.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3e15d7d640b0/bzImage-faf68e35.xz
+disk image: https://storage.googleapis.com/syzbot-assets/a8bf743ab4c3/disk-a472f15b.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7248eae68bc7/vmlinux-a472f15b.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/0e33e55592a5/bzImage-a472f15b.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+41264293e62d9074e4a8@syzkaller.appspotmail.com
+Reported-by: syzbot+c6d8e1bffb0970780d5c@syzkaller.appspotmail.com
 
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(lock->magic != lock)
-WARNING: CPU: 0 PID: 56 at kernel/locking/mutex.c:582 __mutex_lock_common+0x1bb0/0x26e0 kernel/locking/mutex.c:582
-Modules linked in:
-CPU: 0 PID: 56 Comm: kworker/u4:4 Not tainted 6.1.0-rc6-syzkaller-00315-gfaf68e3523c2 #0
+=====================================================
+BUG: KMSAN: uninit-value in hfsplus_attr_bin_cmp_key+0xed/0x180 fs/hfsplus/attributes.c:42
+ hfsplus_attr_bin_cmp_key+0xed/0x180 fs/hfsplus/attributes.c:42
+ hfs_find_rec_by_key+0xac/0x240 fs/hfsplus/bfind.c:100
+ __hfsplus_brec_find+0x27a/0x7d0 fs/hfsplus/bfind.c:135
+ hfsplus_brec_find+0x46a/0x9d0 fs/hfsplus/bfind.c:195
+ hfsplus_find_attr+0x308/0x380
+ __hfsplus_getxattr+0x380/0xe50 fs/hfsplus/xattr.c:522
+ hfsplus_getxattr+0x11f/0x1d0 fs/hfsplus/xattr.c:590
+ hfsplus_security_getxattr+0x4f/0x60 fs/hfsplus/xattr_security.c:20
+ __vfs_getxattr+0x699/0x6f0 fs/xattr.c:407
+ cap_inode_need_killpriv+0x52/0xb0 security/commoncap.c:301
+ security_inode_need_killpriv+0x8f/0x140 security/security.c:1422
+ dentry_needs_remove_privs+0x1b4/0x3f0 fs/inode.c:1995
+ do_truncate+0x11f/0x2d0 fs/open.c:57
+ handle_truncate fs/namei.c:3216 [inline]
+ do_open fs/namei.c:3561 [inline]
+ path_openat+0x4cf7/0x5600 fs/namei.c:3713
+ do_filp_open+0x249/0x660 fs/namei.c:3740
+ do_sys_openat2+0x1f0/0x910 fs/open.c:1310
+ do_sys_open fs/open.c:1326 [inline]
+ __do_sys_creat fs/open.c:1402 [inline]
+ __se_sys_creat fs/open.c:1396 [inline]
+ __ia32_sys_creat+0xed/0x160 fs/open.c:1396
+ do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+ __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+ do_fast_syscall_32+0x33/0x70 arch/x86/entry/common.c:203
+ do_SYSENTER_32+0x1b/0x20 arch/x86/entry/common.c:246
+ entry_SYSENTER_compat_after_hwframe+0x70/0x82
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slab.h:742 [inline]
+ slab_alloc_node mm/slub.c:3398 [inline]
+ __kmem_cache_alloc_node+0x6ee/0xc90 mm/slub.c:3437
+ __do_kmalloc_node mm/slab_common.c:954 [inline]
+ __kmalloc+0x11d/0x3c0 mm/slab_common.c:968
+ kmalloc include/linux/slab.h:558 [inline]
+ hfsplus_find_init+0x8d/0x250 fs/hfsplus/bfind.c:21
+ __hfsplus_getxattr+0x2d1/0xe50 fs/hfsplus/xattr.c:516
+ hfsplus_getxattr+0x11f/0x1d0 fs/hfsplus/xattr.c:590
+ hfsplus_security_getxattr+0x4f/0x60 fs/hfsplus/xattr_security.c:20
+ __vfs_getxattr+0x699/0x6f0 fs/xattr.c:407
+ cap_inode_need_killpriv+0x52/0xb0 security/commoncap.c:301
+ security_inode_need_killpriv+0x8f/0x140 security/security.c:1422
+ dentry_needs_remove_privs+0x1b4/0x3f0 fs/inode.c:1995
+ do_truncate+0x11f/0x2d0 fs/open.c:57
+ handle_truncate fs/namei.c:3216 [inline]
+ do_open fs/namei.c:3561 [inline]
+ path_openat+0x4cf7/0x5600 fs/namei.c:3713
+ do_filp_open+0x249/0x660 fs/namei.c:3740
+ do_sys_openat2+0x1f0/0x910 fs/open.c:1310
+ do_sys_open fs/open.c:1326 [inline]
+ __do_sys_creat fs/open.c:1402 [inline]
+ __se_sys_creat fs/open.c:1396 [inline]
+ __ia32_sys_creat+0xed/0x160 fs/open.c:1396
+ do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+ __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+ do_fast_syscall_32+0x33/0x70 arch/x86/entry/common.c:203
+ do_SYSENTER_32+0x1b/0x20 arch/x86/entry/common.c:246
+ entry_SYSENTER_compat_after_hwframe+0x70/0x82
+
+CPU: 0 PID: 3846 Comm: syz-executor.3 Not tainted 6.1.0-rc6-syzkaller-63555-ga472f15b3d1e #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Workqueue: writeback wb_workfn
- (flush-7:3)
-
-RIP: 0010:__mutex_lock_common+0x1bb0/0x26e0 kernel/locking/mutex.c:582
-Code: 84 c0 0f 85 bd 08 00 00 83 3d 63 80 db 03 00 0f 85 6f e5 ff ff 48 c7 c7 a0 98 ed 8a 48 c7 c6 20 99 ed 8a 31 c0 e8 20 91 b7 f6 <0f> 0b e9 53 e5 ff ff e8 84 e5 65 f6 e9 5a fa ff ff 0f 0b e9 53 ef
-RSP: 0018:ffffc900015771e0 EFLAGS: 00010246
-
-RAX: 3dec4f730bdc4f00 RBX: ffff88806fda0190 RCX: ffff8880196b8000
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc90001577360 R08: ffffffff816e55cd R09: ffffed1017304f1c
-R10: ffffed1017304f1c R11: 1ffff11017304f1b R12: dffffc0000000000
-R13: 1ffff920002aee50 R14: 0000000000000000 R15: 0000000000000000
-FS:  0000000000000000(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f2ddf1a1000 CR3: 000000004730f000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- __mutex_lock kernel/locking/mutex.c:747 [inline]
- mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
- hfsplus_ext_write_extent+0x87/0x1e0 fs/hfsplus/extents.c:149
- hfsplus_write_inode+0x1e/0x5c0 fs/hfsplus/super.c:154
- write_inode fs/fs-writeback.c:1440 [inline]
- __writeback_single_inode+0x4d6/0x670 fs/fs-writeback.c:1652
- writeback_sb_inodes+0xb3b/0x18f0 fs/fs-writeback.c:1878
- wb_writeback+0x41f/0x7b0 fs/fs-writeback.c:2052
- wb_do_writeback fs/fs-writeback.c:2195 [inline]
- wb_workfn+0x3cb/0xef0 fs/fs-writeback.c:2235
- process_one_work+0x877/0xdb0 kernel/workqueue.c:2289
- worker_thread+0xb14/0x1330 kernel/workqueue.c:2436
- kthread+0x266/0x300 kernel/kthread.c:376
- ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
- </TASK>
+=====================================================
 
 
 ---
