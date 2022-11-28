@@ -2,112 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8948B63A63F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 11:38:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2012A63A646
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 28 Nov 2022 11:41:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230352AbiK1KiZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Nov 2022 05:38:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35680 "EHLO
+        id S230036AbiK1KlH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Nov 2022 05:41:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230479AbiK1KiD (ORCPT
+        with ESMTP id S229870AbiK1KlG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Nov 2022 05:38:03 -0500
-Received: from sender-of-o50.zoho.in (sender-of-o50.zoho.in [103.117.158.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B017313FA8;
-        Mon, 28 Nov 2022 02:37:28 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1669631807; cv=none; 
-        d=zohomail.in; s=zohoarc; 
-        b=f7Vkrq9jkn0HdgdrF+Wh4ncq+GGSsebcyRYBNsqcYTHRclUJfK6GZePbRmQDC0pmLvF4cIbYkjB0tjmOqAjT9DuNtyXkv/v0BL2whbqlr60zcCG6YUti8RD9JBSyPwKA7OrvVudPVnUUzC1+RRdVg3I7NG9b2jZll5jPewQ9nn4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1669631807; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=tnLz2qpKPI3vYwMGy9lOfRIw4je11ytpVT+lhHW/+Qg=; 
-        b=MVkIZcWesgBR1eRTLS74wg54CR+GOa4tXB5fkrfalio75ubmQPbOPgSq0R7/dtlLXFGMmkSamKwP/onRlzpthjsZsufD7VSDUI7lqlM70QQjLmw7DWXAHrQUJrF+QtKnyB0IHAKnVn3OS7RwWXRZ3VJb9dmEkVWyTb/SqdRdS+k=
-ARC-Authentication-Results: i=1; mx.zohomail.in;
-        dkim=pass  header.i=siddh.me;
-        spf=pass  smtp.mailfrom=code@siddh.me;
-        dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1669631807;
-        s=zmail; d=siddh.me; i=code@siddh.me;
-        h=Message-ID:Date:Date:MIME-Version:Subject:Subject:From:From:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=tnLz2qpKPI3vYwMGy9lOfRIw4je11ytpVT+lhHW/+Qg=;
-        b=tfokIDKX5BgrbyGBN6WgA9XNMY5994pwLNdGxOGtdG6KNNb8kRC1PN5mtsFbg+ep
-        nybrNGyYVe+LUU3ElQbK8TKlTx6LgXYMgz2E0ljqcqyTt/RPpizIfmXlWhJUseqV8Ng
-        eXUHnFJeGQ+6Jgmmla5h2oyEhsqCgTWrfczIBaTw=
-Received: from [192.168.1.9] (106.201.114.188 [106.201.114.188]) by mx.zoho.in
-        with SMTPS id 1669631805587181.18913226273196; Mon, 28 Nov 2022 16:06:45 +0530 (IST)
-Message-ID: <6a22e287-9d90-85a9-f5e6-49e600bf0d80@siddh.me>
-Date:   Mon, 28 Nov 2022 16:06:44 +0530
+        Mon, 28 Nov 2022 05:41:06 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87063323
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 02:41:04 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 4237521B88;
+        Mon, 28 Nov 2022 10:41:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1669632063; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1CVm6ryaq2N0dSdDXl1W+AalpScybxZa4tkUINqWSzs=;
+        b=B+/YdUmazryAH7DO6BMIWE2WqDSy4+WAitWePz41+Vzfk16IC9wjEIwyeIDe8a3wB+XeYP
+        1u22UaGzbeN1RyzhdFIezj0mEgaGRTXJNzsd3hyzMKeWDr+Z/7ExwLIZ0VcXN4Sea/qDAA
+        YaxGJXzV8FaMxT+jJ3WSGJ4IKSlCIKw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1669632063;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=1CVm6ryaq2N0dSdDXl1W+AalpScybxZa4tkUINqWSzs=;
+        b=gkWA+2Thu6RMSrtlxfVSA9nI+lISBQt17LPaAk4nUDP/qXKO8UtJycfpBenCEU+QZ2ad4/
+        YaKlwclrz7ZmAxAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3076D13273;
+        Mon, 28 Nov 2022 10:41:03 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id tZzLCz+QhGNrJQAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 28 Nov 2022 10:41:03 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 91AB0A070F; Mon, 28 Nov 2022 11:41:02 +0100 (CET)
+Date:   Mon, 28 Nov 2022 11:41:02 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     linux-fsdevel@vger.kernel.org, Ye Bin <yebin10@huawei.com>,
+        Jan Kara <jack@suse.cz>
+Subject: Re: [PATCH] unbugger ext2_empty_dir()
+Message-ID: <20221128104102.phypw45xcfrtrw7d@quack3>
+References: <Y4GFPajUjIBOa5i2@ZenIV>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [RESEND PATCH v2 0/2] watch_queue: Clean up some code
-From:   Siddh Raman Pant <code@siddh.me>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Eric Dumazet <edumazet@google.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Eric Biggers <ebiggers@kernel.org>
-Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        keyrings <keyrings@vger.kernel.org>,
-        linux-security-module <linux-security-module@vger.kernel.org>
-References: <cover.1668248462.git.code@siddh.me>
-Content-Language: en-US, en-GB, hi-IN
-In-Reply-To: <cover.1668248462.git.code@siddh.me>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y4GFPajUjIBOa5i2@ZenIV>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, 12 Nov 2022 16:00:39 +0530, Siddh Raman Pant wrote:
-> There is a dangling reference to pipe in a watch_queue after clearing it.
-> Thus, NULL that pointer while clearing.
+On Sat 26-11-22 03:17:17, Al Viro wrote:
+> 	In 27cfa258951a "ext2: fix fs corruption when trying to remove
+> a non-empty directory with IO error" a funny thing has happened:
 > 
-> This change renders wqueue->defunct superfluous, as the latter is only used
-> to check if watch_queue is cleared. With this change, the pipe is NULLed
-> while clearing, so we can just check if the pipe is NULL.
+> -               page = ext2_get_page(inode, i, dir_has_error, &page_addr);
+> +               page = ext2_get_page(inode, i, 0, &page_addr);
+>  
+>  -               if (IS_ERR(page)) {
+>  -                       dir_has_error = 1;
+>  -                       continue;
+>  -               }
+>  +               if (IS_ERR(page))
+>  +                       goto not_empty;
 > 
-> Extending comment for watch_queue->pipe in the definition of watch_queue
-> made the comment conventionally too long (it was already past 80 chars),
-> so I have changed the struct annotations to be kerneldoc-styled, so that
-> I can extend the comment mentioning that the pipe is NULL when watch_queue
-> is cleared. In the process, I have also hopefully improved documentation
-> by documenting things which weren't documented before.
+> And at not_empty: we hit ext2_put_page(page, page_addr), which does
+> put_page(page).  Which, unless I'm very mistaken, should oops
+> immediately when given ERR_PTR(-E...) as page.
 > 
-> Changes in v2:
-> - Merged the NULLing and removing defunct patches.
-> - Removed READ_ONCE barrier in lock_wqueue().
-> - Improved and fixed errors in struct docs.
-> - Better commit messages.
+> OK, shit happens, insufficiently tested patches included.  But when
+> commit in question describes the fault-injection test that exercised
+> that particular failure exit...
 > 
-> Original date of posting patch: 6 Aug 2022
+> Ow.
 > 
-> Siddh Raman Pant (2):
->   include/linux/watch_queue: Improve documentation
->   kernel/watch_queue: NULL the dangling *pipe, and use it for clear
->     check
-> 
->  include/linux/watch_queue.h | 100 ++++++++++++++++++++++++++----------
->  kernel/watch_queue.c        |  12 ++---
->  2 files changed, 79 insertions(+), 33 deletions(-)
-> 
+> Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
-Hi,
+Right. I've clearly missed this when reviewing & merging the fix. And Ye
+Bin obviously didn't test this with his reproducer ;). Anyway, thanks for
+catching this! I've merged the patch to my tree.
 
-Please review the quoted patches, which can be found on:
-https://lore.kernel.org/all/cover.1668248462.git.code@siddh.me/
+								Honza
 
-Please let me know if any changes are required.
-
-Thanks,
-Siddh
+> ---
+> diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
+> index 8f597753ac12..5202eddfc3c0 100644
+> --- a/fs/ext2/dir.c
+> +++ b/fs/ext2/dir.c
+> @@ -679,7 +679,7 @@ int ext2_empty_dir (struct inode * inode)
+>  		page = ext2_get_page(inode, i, 0, &page_addr);
+>  
+>  		if (IS_ERR(page))
+> -			goto not_empty;
+> +			return 0;
+>  
+>  		kaddr = page_addr;
+>  		de = (ext2_dirent *)kaddr;
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
