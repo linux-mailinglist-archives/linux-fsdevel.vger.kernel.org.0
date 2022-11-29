@@ -2,165 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E993A63BCB8
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 10:16:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 23A4C63BDBA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 11:13:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229650AbiK2JQ3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Nov 2022 04:16:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51642 "EHLO
+        id S232502AbiK2KNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Nov 2022 05:13:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33370 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229732AbiK2JQX (ORCPT
+        with ESMTP id S232549AbiK2KNZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Nov 2022 04:16:23 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4508A57B75
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Nov 2022 01:15:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669713326;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kLZwFc2T16+VzxzvdeqP7dZ+DZAGfAAiD+u0EUrSQ8s=;
-        b=OvXTU6p0Ct0GG3VEsw6AOZSjwusuY/Ng6cuNku1asLSrx9F6Mc66uLvd7qxMRAZbOAL+J5
-        Q8DdnyjmltiPLfDTqjLE3SaozLtbjrW5pWS5w+X7WF2iZ/48KkE540YFRqNv9Zfo0kmyyh
-        pze47cOZYmn8QXjChvz5wyc79I3BaI4=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-395-2qF4_ILeNjGEINtmYd53kg-1; Tue, 29 Nov 2022 04:15:24 -0500
-X-MC-Unique: 2qF4_ILeNjGEINtmYd53kg-1
-Received: by mail-wm1-f69.google.com with SMTP id bi19-20020a05600c3d9300b003cf9d6c4016so9882658wmb.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Nov 2022 01:15:24 -0800 (PST)
+        Tue, 29 Nov 2022 05:13:25 -0500
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 702FE5E3FE
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Nov 2022 02:11:55 -0800 (PST)
+Received: by mail-io1-f69.google.com with SMTP id g13-20020a056602072d00b006c60d59110fso8102305iox.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Nov 2022 02:11:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kLZwFc2T16+VzxzvdeqP7dZ+DZAGfAAiD+u0EUrSQ8s=;
-        b=JSu5w5xY549+JwwhA4yVrxMnn5ZvVpFyumV5wg+W3p2ZEAKy7iei7vTwJ/MOpfe1Ar
-         pSexPTQEVzcusaAOcv/SwD7N787rQg+2A7aTdDngnZFgrHpW4UMlvlxDXi6RR06IW7cE
-         3bbVMnBCOpKnhPDTc3WrOBeNT2JRnTyi9fgiveIucILZFZ2DpA2ggzy5b0NrA5AYUIJ1
-         FU91aWsd1km/DoZGhvi0t6eqNtwIyYNgL9ImoD1ENSXuyj56vM8WtR7iYwXidDTd1yWp
-         GvvlKNLaXiVvNTYC9MUIGvjyPdM+t30jEHpi5pg+JG0v/lfkMZ6NdV4VrFJwWZHJvwAh
-         3x/A==
-X-Gm-Message-State: ANoB5plG4rndsMQfc1EF1dPvzhUTllHQMXu6MMvfha77fKGO5QLV2++W
-        9sW5WSbx3TDirY7lM3mjQmN1BciB5eYjKv6RO66ha1bGd4scZ72Ig5PbvmRsRvqcxI/7vu0PalH
-        IgTdU57rMKgVtYIf28tigjtXt4A==
-X-Received: by 2002:a05:600c:430c:b0:3cf:8ed7:7124 with SMTP id p12-20020a05600c430c00b003cf8ed77124mr42243404wme.140.1669713323594;
-        Tue, 29 Nov 2022 01:15:23 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf5aMoFyhfTZRz6WGw0GcgDkcONZAiRyZAh+e0PFHXmVnEtFtgvwKaxuOXbIxhdoVgI1OB8H+Q==
-X-Received: by 2002:a05:600c:430c:b0:3cf:8ed7:7124 with SMTP id p12-20020a05600c430c00b003cf8ed77124mr42243382wme.140.1669713323266;
-        Tue, 29 Nov 2022 01:15:23 -0800 (PST)
-Received: from ?IPV6:2003:cb:c705:ca00:3fb8:c253:3bf7:b60e? (p200300cbc705ca003fb8c2533bf7b60e.dip0.t-ipconnect.de. [2003:cb:c705:ca00:3fb8:c253:3bf7:b60e])
-        by smtp.gmail.com with ESMTPSA id n26-20020a05600c3b9a00b003c6b70a4d69sm1498998wms.42.2022.11.29.01.15.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Nov 2022 01:15:22 -0800 (PST)
-Message-ID: <abcba252-13a0-50aa-79ec-28b649c892cd@redhat.com>
-Date:   Tue, 29 Nov 2022 10:15:20 +0100
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iikjYtuzyzNaBl0Fr5aqej9XCVNGzLadGpq6TZMWYlA=;
+        b=2gdmnRolibq9/LnvFq3FQEPQPvzyBGO5ltDMvmENofOhaJVfKeB0qf3E75QPaYHKof
+         rHwguQgMrOQGonlT3jsN1wVpADAmu2IGJAs81Oe1yZ0YQFn3YN6YWzufsyXNMOX50DTY
+         5a3X9FPxxAl7xoIplZ2POSBsvKAjJs/oKyqvo5L6Fxty+Vzrer2XLHQ+l+4k7oQzviBM
+         onJd4q0NdYhO0e15mIbRx/WWHx9iTp1m/Qav1n6j4ES1IjW9MfTIiR+Ueku+bICyrzkQ
+         SQif7F+9JMg9dXge/kj9LXITAHW54FzF6P6lD8rD1nGvLLFJfY181YsEf0M8Ivlytf03
+         37ig==
+X-Gm-Message-State: ANoB5pmsKPl4cXwYeZG9mFWfia0LEbqMageJtapc8R1P3kBVvOW98hiZ
+        p9eweYX/lo4ZtBRKjZlgQrLfoTDNBxOhk5mh3Qw26jBt+CaU
+X-Google-Smtp-Source: AA0mqf5twLoO/cP7GFkVWO66txAHHbqxKZev2FPt8SHeJLpZVIiATU6gKONpHYvEaC0BC5JxKpyIy2nRLwgjTS0YOUnHng+SIq0n
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE
- usage
-Content-Language: en-US
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
-        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
-        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-perf-users@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kselftest@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        John Hubbard <jhubbard@nvidia.com>,
-        Peter Xu <peterx@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Muchun Song <songmuchun@bytedance.com>,
-        Shuah Khan <shuah@kernel.org>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        David Airlie <airlied@gmail.com>,
-        Oded Gabbay <ogabbay@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Christoph Hellwig <hch@infradead.org>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-References: <20221116102659.70287-1-david@redhat.com>
- <20221116102659.70287-17-david@redhat.com>
- <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com>
- <08b65ac6-6786-1080-18f8-d2be109c85fc@xs4all.nl>
- <9d0bf98a-3d6a-1082-e992-1338e1525935@redhat.com>
- <20221128145927.df895bf1966cfa125cae9668@linux-foundation.org>
- <22b1107b-0acc-5772-a883-8f3c4682eb1b@redhat.com>
- <c2681582-1e24-7ed9-e4fb-e2dd17a93aed@xs4all.nl>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <c2681582-1e24-7ed9-e4fb-e2dd17a93aed@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Received: by 2002:a02:600d:0:b0:375:fc9a:4d78 with SMTP id
+ i13-20020a02600d000000b00375fc9a4d78mr19905740jac.194.1669716705316; Tue, 29
+ Nov 2022 02:11:45 -0800 (PST)
+Date:   Tue, 29 Nov 2022 02:11:45 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000001897ea05ee9937c0@google.com>
+Subject: [syzbot] INFO: trying to register non-static key in hfsplus_release_folio
+From:   syzbot <syzbot+91db21a2bf0e12eb92fd@syzkaller.appspotmail.com>
+To:     damien.lemoal@opensource.wdc.com, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 29.11.22 10:08, Hans Verkuil wrote:
-> On 29/11/2022 09:48, David Hildenbrand wrote:
->> On 28.11.22 23:59, Andrew Morton wrote:
->>> On Mon, 28 Nov 2022 09:18:47 +0100 David Hildenbrand <david@redhat.com> wrote:
->>>
->>>>> Less chances of things going wrong that way.
->>>>>
->>>>> Just mention in the v2 cover letter that the first patch was added to
->>>>> make it easy to backport that fix without being hampered by merge
->>>>> conflicts if it was added after your frame_vector.c patch.
->>>>
->>>> Yes, that's the way I would naturally do, it, however, Andrew prefers
->>>> delta updates for minor changes.
->>>>
->>>> @Andrew, whatever you prefer!
->>>
->>> I'm inclined to let things sit as they are.  Cross-tree conflicts
->>> happen, and Linus handles them.  I'll flag this (very simple) conflict
->>> in the pull request, if MM merges second.  If v4l merges second then
->>> hopefully they will do the same.  But this one is so simple that Linus
->>> hardly needs our help.
-> 
-> It's not about cross-tree conflicts, it's about the fact that my patch is
-> a fix that needs to be backported to older kernels. It should apply cleanly
-> to those older kernels if my patch goes in first, but if it is the other way
-> around I would have to make a new patch for the stable kernels.
+Hello,
 
-IIUC, the conflict will be resolved at merge time and the merge 
-resolution will be part of the merge commit. It doesn't matter in which 
-order the patches go upstream, the merge commit resolves the problematic 
-overlap.
+syzbot found the following issue on:
 
-So your patch will be upstream as intended, where it can be cleanly 
-backported.
+HEAD commit:    6d464646530f Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=124d67c3880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=54b747d981acc7b7
+dashboard link: https://syzkaller.appspot.com/bug?extid=91db21a2bf0e12eb92fd
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=170746ad880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=149dfd75880000
 
-Hope I am not twisting reality ;)
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d75f5f77b3a3/disk-6d464646.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9382f86e4d95/vmlinux-6d464646.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/cf2b5f0d51dd/Image-6d464646.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/6bdbba5eb556/mount_0.gz
 
--- 
-Thanks,
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+91db21a2bf0e12eb92fd@syzkaller.appspotmail.com
 
-David / dhildenb
+INFO: trying to register non-static key.
+The code is fine but needs lockdep annotation, or maybe
+you didn't initialize this object before use?
+turning off the locking correctness validator.
+CPU: 1 PID: 3072 Comm: syz-executor123 Not tainted 6.1.0-rc6-syzkaller-32662-g6d464646530f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
+Call trace:
+ dump_backtrace+0x1c4/0x1f0 arch/arm64/kernel/stacktrace.c:156
+ show_stack+0x2c/0x54 arch/arm64/kernel/stacktrace.c:163
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x104/0x16c lib/dump_stack.c:106
+ dump_stack+0x1c/0x58 lib/dump_stack.c:113
+ assign_lock_key+0x134/0x140 kernel/locking/lockdep.c:981
+ register_lock_class+0xc4/0x2f8 kernel/locking/lockdep.c:1294
+ __lock_acquire+0xa8/0x3084 kernel/locking/lockdep.c:4934
+ lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5668
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x54/0x6c kernel/locking/spinlock.c:154
+ spin_lock include/linux/spinlock.h:350 [inline]
+ hfsplus_release_folio+0x12c/0x214 fs/hfsplus/inode.c:110
+ filemap_release_folio+0xc0/0x238 mm/filemap.c:3948
+ block_invalidate_folio+0x1f4/0x3c4 fs/buffer.c:1526
+ folio_invalidate mm/truncate.c:159 [inline]
+ truncate_cleanup_folio+0xd4/0x334 mm/truncate.c:179
+ truncate_inode_pages_range+0x148/0xb8c mm/truncate.c:369
+ truncate_inode_pages mm/truncate.c:452 [inline]
+ truncate_inode_pages_final+0x8c/0x9c mm/truncate.c:487
+ hfsplus_evict_inode+0x20/0x68 fs/hfsplus/super.c:168
+ evict+0xec/0x334 fs/inode.c:664
+ iput_final fs/inode.c:1747 [inline]
+ iput+0x2c4/0x324 fs/inode.c:1773
+ hfsplus_put_super+0xb4/0xec fs/hfsplus/super.c:302
+ generic_shutdown_super+0x94/0x198 fs/super.c:492
+ kill_block_super+0x30/0x78 fs/super.c:1428
+ deactivate_locked_super+0x70/0xe8 fs/super.c:332
+ deactivate_super+0xd0/0xd4 fs/super.c:363
+ cleanup_mnt+0x184/0x1c0 fs/namespace.c:1186
+ __cleanup_mnt+0x20/0x30 fs/namespace.c:1193
+ task_work_run+0x100/0x148 kernel/task_work.c:179
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ do_notify_resume+0x174/0x1f0 arch/arm64/kernel/signal.c:1127
+ prepare_exit_to_user_mode arch/arm64/kernel/entry-common.c:137 [inline]
+ exit_to_user_mode arch/arm64/kernel/entry-common.c:142 [inline]
+ el0_svc+0x9c/0x150 arch/arm64/kernel/entry-common.c:638
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:584
+hfsplus: request for non-existent node 0 in B*Tree
 
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
