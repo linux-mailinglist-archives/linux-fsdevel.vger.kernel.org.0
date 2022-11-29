@@ -2,127 +2,162 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7FB8D63B660
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 01:08:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C12563B65B
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 01:07:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234977AbiK2AIJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Nov 2022 19:08:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40418 "EHLO
+        id S234939AbiK2AHn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Nov 2022 19:07:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40526 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234969AbiK2AHI (ORCPT
+        with ESMTP id S234940AbiK2AGw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Nov 2022 19:07:08 -0500
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2044.outbound.protection.outlook.com [40.107.212.44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF7423E0AA;
-        Mon, 28 Nov 2022 16:06:55 -0800 (PST)
+        Mon, 28 Nov 2022 19:06:52 -0500
+Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D597D3F052;
+        Mon, 28 Nov 2022 16:06:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1669680404; x=1701216404;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=22ZfhrM1h8QZiouM2ga1ogr5r0LTyNyL9sg/BLEx1FM=;
+  b=RzuFvusyrSFQn/AT5yO/xE/DlruMBgTQ372k1sTJveNlq3I1emKAjxXx
+   KFFQHV4bL/6jve79oYeC9odlArXpFmMA+Uk1D9kCFNs3HQ6/H3lTG8PVk
+   0GrhSmPg6jeOUrpeVJE4pqyWe+j8cW4oC7g12Hp5vRNOvBRvWMyEwmDKC
+   hCBePAtzQv1o7bG5GNOs6NH49s/V2ALBbFLLMunb+qqaca5D3uj8t9KvK
+   czMGJ+Dhf6d8Is3fZ7HvoIX925f++lTzBtv/m55mvKgaT+LGKQStSDT0s
+   6Hyz+cNWXSzT8yLAUgljC1Z1eJxy96Bknxw6Drsm9uu3dZsn6cXaCOr/c
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10545"; a="295356525"
+X-IronPort-AV: E=Sophos;i="5.96,201,1665471600"; 
+   d="scan'208";a="295356525"
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Nov 2022 16:06:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10545"; a="818015840"
+X-IronPort-AV: E=Sophos;i="5.96,201,1665471600"; 
+   d="scan'208";a="818015840"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orsmga005.jf.intel.com with ESMTP; 28 Nov 2022 16:06:43 -0800
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16; Mon, 28 Nov 2022 16:06:42 -0800
+Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16; Mon, 28 Nov 2022 16:06:42 -0800
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16 via Frontend Transport; Mon, 28 Nov 2022 16:06:42 -0800
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.168)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.16; Mon, 28 Nov 2022 16:06:42 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Of0tBZqTlkAHR+gG7Fl7SbGxypLfbXGayQAK9p1tPwASOXXEQOE1A7BSex+XwxgAIQ8G2NaDS/0votsEuODEN/cdJ+12Zb6iXlCVxjn+Wx1VSENyErEW5MunFehFsWRv8Bl08d6YpairZSc9mAvk4Nd9W4zEgL6XpYVdYEH2yevCC9AzskWBort/23aXsxyy3iR2pdOx+q8Xy7VRZnSyrvzz6j5yF2CThhnCvFEyKz5N8jIm0ZIIp380yn9Ea7GVb2kHtygkkbPCWP9TqGP+RSByaMOvhDtf8y04IGA2J4Rna7aa9e8GFRKw1KrG0aERUxlM4VfxK4GfaVKjGK0Aow==
+ b=VCmwOTYTUmZBIDLje1Abl2RapuZcuhjjJAGf3nh+vmlxQjdy0SCqpoFO5yvSJ1BUAiKND4LeI9H8mi99n8Pbc98pTHHdMDoRVqnqpc9953jemLSYuFCr2hK6jRzcnjQeixJvts+QgesSD8xkk/iDB/b3UcgfGdV+I8hl1lFp3lRdVVEHgNnj9Vj2MMbCSTRRiXDIpJ9h6xgbcbtV0uv5VKgYzAvodpseU7vSXv+rs4qsggkQYPwpo3xTSVkem9OBNmxldAUnk+ufNVELx2kbQTIY5qgn2kH0ekKNN8Dg7h0eQuJBQSHdZDzS3Er2O4NI2osjdY4WBoSbrCwc692omQ==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xNd89Q66h7ZOO8SF9fKSc9FtR0XbLbDRMcdyQAyUqxg=;
- b=e3J7napzQwqI/6NApMbKw2kuqk60cizO2HOFNdRy87EYDzmCe8xmWjbxXSqxgPbo5owZajPGLW02Ga4rJ4ZAL0+awIq8QzdyXMhnqCddXgP8U5Y47aevItSUtD/YxUk7NT/v5CqPTDiqgB82qkTk5lyeHOgmkdk9ESMIMOgSJm8lhwoKDd3y88HZ9j7MnXHU47OpHyilQLYYYheI7hF25h9lhe6t/A1EOcTG8HkK6yeTokLP20OBiMQR2aE30+rVlPiZezdfO7HdpmBBg6j5lGrTSnq0buCRxF1CtjDx/GTmsYs1vOL/eZGp5GCOoygmmHDMlGE08e6ZfeROV6SQUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xNd89Q66h7ZOO8SF9fKSc9FtR0XbLbDRMcdyQAyUqxg=;
- b=DbEIxiHPNuaHOZMboF7nOAOPwKoAmeMf08J4JJ8yK698ycUgCbEXDpT3gXcQf3ZdPQ83YfpgpfM5qQr4fhd9QGDwSKR2f8POETPCQMx3ahmIUUtXpsuQ3zcpQ1SL4muoJnGF9PfI3yM1oxqdAO1y+kwHy6U/r0faX/O4iZ8Q/b4=
-Received: from MW4PR03CA0233.namprd03.prod.outlook.com (2603:10b6:303:b9::28)
- by DM6PR12MB4864.namprd12.prod.outlook.com (2603:10b6:5:209::22) with
+ bh=qrgvvC24W0ZleATmnyhL/JjTW7ffoKr8STekCU+zQTE=;
+ b=hgfjI5XtTlC4pacJSc28w7qv+8eTl1M8asgChuJ/efUO1iDIsnXU2PvYsI7OuJEkkTLrsyJjF/txYaT21j3H8DvDNFjMbslIp4utWOrjKEhWqQ0s5mhi+AWkB1fAVB8qgxvHMzvfFApF3zi5oCH1bFswlpo0FtXHrXnckTt/Qie/7Vvesi/kMfer6ffJOU4RrI8JV60SfJrML6dh6pQQnueBeUxzOBbEBRRhjH8WVIHTsJp2tyEsyUjuOAzCQtQRLprFO0yyd5l14MmJ+PfEx5siZDu4Iz7kCjtVGmsfdnHl19kN9YTVY1nBcegfpSLujievYmYg5BKbdEKaxbqQdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com (2603:10b6:303:9b::16)
+ by CO1PR11MB4947.namprd11.prod.outlook.com (2603:10b6:303:99::11) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.23; Tue, 29 Nov
- 2022 00:06:50 +0000
-Received: from CO1NAM11FT099.eop-nam11.prod.protection.outlook.com
- (2603:10b6:303:b9:cafe::2) by MW4PR03CA0233.outlook.office365.com
- (2603:10b6:303:b9::28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.23 via Frontend
- Transport; Tue, 29 Nov 2022 00:06:50 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CO1NAM11FT099.mail.protection.outlook.com (10.13.175.171) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.5857.17 via Frontend Transport; Tue, 29 Nov 2022 00:06:50 +0000
-Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 28 Nov
- 2022 18:06:48 -0600
-Date:   Mon, 28 Nov 2022 18:06:32 -0600
-From:   Michael Roth <michael.roth@amd.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-CC:     <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-arch@vger.kernel.org>, <linux-api@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <qemu-devel@nongnu.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        <luto@kernel.org>, <jun.nakajima@intel.com>,
-        <dave.hansen@intel.com>, <ak@linux.intel.com>, <david@redhat.com>,
-        <aarcange@redhat.com>, <ddutile@redhat.com>, <dhildenb@redhat.com>,
-        Quentin Perret <qperret@google.com>, <tabba@google.com>,
-        <mhocko@suse.com>, Muchun Song <songmuchun@bytedance.com>,
-        <wei.w.wang@intel.com>
-Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
- create restricted user memory
-Message-ID: <20221129000632.sz6pobh6p7teouiu@amd.com>
-References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
- <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.22; Tue, 29 Nov
+ 2022 00:06:40 +0000
+Received: from CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::3862:3b51:be36:e6f3]) by CO1PR11MB5089.namprd11.prod.outlook.com
+ ([fe80::3862:3b51:be36:e6f3%6]) with mapi id 15.20.5857.023; Tue, 29 Nov 2022
+ 00:06:40 +0000
+Message-ID: <477f3642-608f-f710-9eed-6312a6e3f2d8@intel.com>
+Date:   Mon, 28 Nov 2022 16:06:37 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH v3] epoll: use refcount to reduce ep_mutex contention
+Content-Language: en-US
+To:     Paolo Abeni <pabeni@redhat.com>, <linux-fsdevel@vger.kernel.org>
+CC:     Soheil Hassas Yeganeh <soheil@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Jason Baron <jbaron@akamai.com>, <netdev@vger.kernel.org>,
+        Carlos Maiolino <cmaiolino@redhat.com>,
+        Eric Biggers <ebiggers@kernel.org>
+References: <1aedd7e87097bc4352ba658ac948c585a655785a.1669657846.git.pabeni@redhat.com>
+From:   Jacob Keller <jacob.e.keller@intel.com>
+In-Reply-To: <1aedd7e87097bc4352ba658ac948c585a655785a.1669657846.git.pabeni@redhat.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SJ0PR03CA0356.namprd03.prod.outlook.com
+ (2603:10b6:a03:39c::31) To CO1PR11MB5089.namprd11.prod.outlook.com
+ (2603:10b6:303:9b::16)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
-X-Originating-IP: [10.180.168.240]
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CO1NAM11FT099:EE_|DM6PR12MB4864:EE_
-X-MS-Office365-Filtering-Correlation-Id: 21a79ab7-be20-437b-bf06-08dad19d9d50
+X-MS-TrafficTypeDiagnostic: CO1PR11MB5089:EE_|CO1PR11MB4947:EE_
+X-MS-Office365-Filtering-Correlation-Id: 86740074-c8b5-49c8-1d66-08dad19d9753
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: pWZ/FK29m3a28AbYyuD8LMLpmWEx1JfoGtOQH2q9xHDYLZfLjXifX+Ap6ygllqG8O6n0BVf3QIcoieUJenqRstuU0J0ov/BbWLioNRgZZ7PDllYKdBBlArTHkTygHHnFyp9H+0F+yb3YXc9r5m+ctw4N7WunUDlHqLewf4PPzlZ3wQR8POL0UWxilnTQvuHAA9L9DQc2yozfSktSzRR1YbKXnFTu3Hx3ojFq6EtKaXYiYe7B1e0yeC6909vdZpNJxUfTAg4vymyAYtZAUZWjEREmQmKAlZAeNSIE8xgwMroAu865IF92z8aFzXCH2nccDDGa53QWHTLQu/SHDIMvqomLwnRz6bHuRC0kullNx18dOlaoifyk6RoWnUVExoKM+R2wqvfhwXlHrER0ctFEDNIWW+iF11/mcOpt3fS5sMm4FW53jYZqx2JMJ9AJ4lhpnMCtQoH3S1zUUByYMgqE6kepu9Ap26spMgGM96N9olt7uj2RJHy87RBTojqwNPhLQVp69FR3YULfKz8onz/T5CeJXw8lWUBs/BxYyaWA7tASNK1jnUq58TXBxenMsnz6rDP4qs+QZSxXV51bytOPXtzEKDRWJnvMPk66qSJvshoVAP8UmXAn1mIJ4ndtM/IyzKnVrfacZdVdDe45LPqDPfGiDNiAy4kYFPT06mb6TICv5yae6rpys0uZ3yM7XfpyMuLfgM+960aYuQPScL3t2+TVoWcRdVDHw9eptHxTVIg=
-X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(136003)(39860400002)(376002)(346002)(396003)(451199015)(40470700004)(36840700001)(46966006)(356005)(40480700001)(81166007)(36756003)(2906002)(40460700003)(86362001)(7406005)(7416002)(6666004)(478600001)(44832011)(70586007)(316002)(70206006)(41300700001)(45080400002)(5660300002)(36860700001)(4326008)(8676002)(54906003)(26005)(8936002)(6916009)(82740400003)(1076003)(336012)(16526019)(83380400001)(186003)(2616005)(82310400005)(426003)(47076005)(36900700001);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2022 00:06:50.4325
+X-Microsoft-Antispam-Message-Info: 3zXI+CTq+QUyDwvf930z96fH6oFos9Yc3QFJ56ovTJDPkkLj+1acve6tNgFo9ncYRxDN6cBCZ7sjRfC67astaL+Zvq3EH2UCmi1t9B4MxG8ZuWSYA5+XGd41jAQmqYAzLdw0WsnXaE1+erFMQOSHxM1Sj/8WNQcq9+96shVbPh0QAYwnySJn9iYnNNA8RkyPsbUCs9C8+EhwKSfknuJlSGXNH4vAm/TqDKNxjcZnHKSGPkPHXrkOcQSTsoSlabKhTIrFyHRsJ36CjggakGZ/DHvJ2UKkq/18w30MZwy4Ne3ewsa8UXSUV9N+xesJ6aCEhh/UUwkyxISBwya6x3TcG2srec6HlR6zfszgCfdRHQLa6JLEB6am7scXqmfkum/Iv4ooJc5iBoajvGx3m8pW/JwKpUAXpel8UhYCgYR4HUhNNhD0XVvP3LleVrYgTvQmTgRQTlno0Sm3idvFfxAtCKaqibMiBauggsTBF/q7oAtfNYEIHkILmTomGSRk72/ZtTBtmh8ya9wmCyC2vefmSobZlsIwqxu0dFh9kVeXvVZCjSv7wo0wAYcSxUrcoviayXKfli5mE3l/VJ0lzkxhrMawtrA+WnfbGbp1H8z1ofHuLhXrVkeF9j8OcKhG5lo5FbOef5x9S9LlsDvRqZN+tErwPuYrB4MwNQDMM6hJxvSCzw2rbzOGEGHvmBc7HpU9SqQUNhAL77Uf6NlBCYmFcSu25A9wt1oqTdY3w6WTMe7dgvHTsZIrsMhgkidSOpmW5xW4ets5acq3dAJA9SElaZUQAYVSk+qWtHbyX/B3Acw=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB5089.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(366004)(136003)(346002)(39860400002)(396003)(451199015)(316002)(54906003)(36756003)(53546011)(6506007)(38100700002)(41300700001)(4326008)(31696002)(8936002)(5660300002)(2616005)(186003)(86362001)(30864003)(6512007)(66556008)(26005)(6666004)(8676002)(82960400001)(66946007)(66476007)(83380400001)(2906002)(31686004)(966005)(6486002)(478600001)(66899015)(45980500001)(43740500002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U0dGZ20xc1ZUZDBqNDR5a1VzWWdabnFrS1ErcTBrR09aYXY3Q0tUU0pveGh4?=
+ =?utf-8?B?MjlRUGRiZXIwcXB0RkJ6WUJzLzdqV3k5UU5abTErMm1XYjU1MnFST09SR1Er?=
+ =?utf-8?B?WUMwMHY2WExKdkFWNUQwTituVTZkbWZyL1c5SHc3ZElxa3l6SkhVUy91ZlNE?=
+ =?utf-8?B?VGFMRks3NEtxOGVMUHZUcHJWRldyUXZISWdxa3BPYVlWY3dXT2Y5dmplYWc5?=
+ =?utf-8?B?UktQQXJ3K1FsMkV5NWNzd2hHeGlTV21IWU5yRjJPUnN6UkgxNFp1NUtQRTBJ?=
+ =?utf-8?B?alE4ZythRW1BRUpycVFEOGNhMUR5QmwrSEVITTVWTHVTK3l1Q1h3NnV3a2NR?=
+ =?utf-8?B?UUFzL0hSbm1jK2xVWjEreFJ1RUtyWUM3OEZqLzRYSDJXMGJubzk0RGtsS2xS?=
+ =?utf-8?B?RzRIUk9ibWY1Yk84dmNXWE9pbnNyR0JUc0ovYS91NHJSRTJVNVJPWi9iOHRD?=
+ =?utf-8?B?TUd4eW9rUXdTcm00TWVlWEZvSmZwWUlRZkQrLzRFYjlqaFd6M0MzWjB5Ynhj?=
+ =?utf-8?B?K0JpVUtJblVscWgrM0FpMGEwdzZTNmM5bGxqUGF1NG9OVXZmNVBuRVNxQ1g2?=
+ =?utf-8?B?WGt6M2hvSy9wNVBGVVY0YjIxd3VNU00xekMxcngxanROVGxEVlFEMDIrMUpo?=
+ =?utf-8?B?bThjK3JNNVEzVWZ0eHdHTUgvWUJQV2Q2aG9lMDhBVDRSSW54WkZZck5TaFpY?=
+ =?utf-8?B?OHVUanhhWDFHUEZBaGtxbDZYZEdpK293b0dTZU01c2drcmtCZFBhYWFoNGFG?=
+ =?utf-8?B?L05JYnJmZ0QrK0huKzhvVzBGSk44bUtYRy9ZM2ZTOXdxc043aFRsYUFQMTJY?=
+ =?utf-8?B?Y3VGa05ZYmlTM1ZhMFozek9IaDJhQmZzcWlsR2ZlMUhCYWdvRk1RNkdUWlo0?=
+ =?utf-8?B?Y3BlOXZCV1c0bHlsTkZFZlc5RDM5ZXdaU0pSUTdGc3BvWTBvbXBYSTBtclBx?=
+ =?utf-8?B?TDEzZ1lSeEFmOXJiNHNxUW1pcjM1OTRRT1JYT0oya3BDTC9ZVmI5OUxxWjRD?=
+ =?utf-8?B?QkJNMmNJVHREZHN4d2J0d3d2bVJxWDFYNWppUzZ4Y0ttL2hUSVVxdlZHOGF4?=
+ =?utf-8?B?eDdsRXhvNHJIMVFmS1dMTjBmRTRzZ1ZDcCtIaEt3MkJoWmdqWWxkVHVuUWtJ?=
+ =?utf-8?B?WHMzdGozMnluekZEQ3lWT1ZnY3N2WTIvN01pL3ZOMVR2N01oUjcrR2MwVUxr?=
+ =?utf-8?B?MGJoWWdpTUE3Tng4ZFk5L1p5MlVRU2lBcDU0SURDY3VRWEFNVjQ1R2QvWFhJ?=
+ =?utf-8?B?STRscHRPZExGNnhYWGc3UFptQ2VpOU90NzJUWTBsK1lIUUhpTm5RYkhMaTRo?=
+ =?utf-8?B?aEgyaWZyWUErMmJLMzJPcGw2UlZiMFdJSFRVeWU0ckRCK1FMNExIV1hVV3o5?=
+ =?utf-8?B?SjZmZnVPOUNBUjJMQkdtYU9MTGdaSnArMnRkTWtTay9DUHQrTXh1L3dxQjQz?=
+ =?utf-8?B?cXhGVkVXUU1VYXZLZVViN0Y3Ni92TnZoby9uV3NHV0lSQ2RHc1lqVG0xa09o?=
+ =?utf-8?B?TVBEV0RjcnVYR25QK0ozb0lWclZ6Sk9IMnYvNk0wbUZQVEQ0VVd4c1FNWVZp?=
+ =?utf-8?B?OEo4ZFRYbmYzOVFWT2NMdHdPKzVzcHhrUmtiWXY5ZDBnSVlxMkNRL1pwdk1I?=
+ =?utf-8?B?anhJU3RqUVE2ZHNwZEQxd0kwVXg2Wi9jQ3RaUmdCNzI4a2lZSncrYk1NblVy?=
+ =?utf-8?B?eFkxTnlhc1hkclJYa01PcDhkK05PUWlsdFovNEdzNjg5VnoxYUR3QjZjUlFz?=
+ =?utf-8?B?TzBJdkJrL3FMajhYcjlRb0ZaeWdGNS9VRElyRDg5ckI3cmxHODIydW9JNlVX?=
+ =?utf-8?B?THdweHFueC9DSWFpUmkyRE1EUTV2dmJhU2FDL2pBYUQxeGhyVjJYeXluM0tE?=
+ =?utf-8?B?cEZQYUwxNWFsYllUZ2JMYWgwa0VkVUZoTnZSbE1uRVZMQXJUTHZ6TlZPVWpO?=
+ =?utf-8?B?S1JUT1ltY1NRc29pWjFPWFdaVnErVXJsOHNsMmx2L29aWTJtV3BSRFppYUV0?=
+ =?utf-8?B?WU1Od1dHdFQyVktYVW03UGI5OExyWkM0eVRwTXRoMzlCb0NSVFB5QklySTFP?=
+ =?utf-8?B?WC9OLy9zNXpScmxidTB0ZGpuOEtmSlpOVHNNTXBTU1E5VlJOWHhUZGp5TnJY?=
+ =?utf-8?B?L2RYUnByK1NtVkRpbEZpOGtjRE92Ym96RlIzZW5LVUxFT2VNVEhyWktBdjlz?=
+ =?utf-8?B?cmc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86740074-c8b5-49c8-1d66-08dad19d9753
+X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB5089.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2022 00:06:40.7112
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21a79ab7-be20-437b-bf06-08dad19d9d50
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT099.eop-nam11.prod.protection.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4864
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ymHvUjqFmXKtSAqNqdcw0Gm+si+rbkt1omP7mrvfirqGe9AjIHNvcf+QIfU5BUcI8xO4Qi8fXCagUdbgHs6BGu2WQaX3V4yZXXNGshUVPyo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB4947
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -130,214 +165,400 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Oct 25, 2022 at 11:13:37PM +0800, Chao Peng wrote:
-> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->=20
 
-<snip>
 
-> +static struct file *restrictedmem_file_create(struct file *memfd)
+On 11/28/2022 10:00 AM, Paolo Abeni wrote:
+> We are observing huge contention on the epmutex during an http
+> connection/rate test:
+> 
+>   83.17% 0.25%  nginx            [kernel.kallsyms]         [k] entry_SYSCALL_64_after_hwframe
+> [...]
+>             |--66.96%--__fput
+>                        |--60.04%--eventpoll_release_file
+>                                   |--58.41%--__mutex_lock.isra.6
+>                                             |--56.56%--osq_lock
+> 
+> The application is multi-threaded, creates a new epoll entry for
+> each incoming connection, and does not delete it before the
+> connection shutdown - that is, before the connection's fd close().
+> 
+> Many different threads compete frequently for the epmutex lock,
+> affecting the overall performance.
+> 
+> To reduce the contention this patch introduces explicit reference counting
+> for the eventpoll struct. Each registered event acquires a reference,
+> and references are released at ep_remove() time.
+> 
+> Additionally, this introduces a new 'dying' flag to prevent races between
+> ep_free() and eventpoll_release_file(): the latter marks, under f_lock
+> spinlock, each epitem as before removing it, while ep_free() does not
+> touch dying epitems.
+> 
+> The eventpoll struct is released by whoever - among ep_free() and
+> eventpoll_release_file() drops its last reference.
+> 
+> With all the above in place, we can drop the epmutex usage at disposal time.
+> 
+> Overall this produces a significant performance improvement in the
+> mentioned connection/rate scenario: the mutex operations disappear from
+> the topmost offenders in the perf report, and the measured connections/rate
+> grows by ~60%.
+> 
+> Tested-by: Xiumei Mu <xmu@redhat.com>
+> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+> ---
+> v3: (addresses comments from Eric Biggers)
+> - introduce the 'dying' flag, use it to dispose immediately struct eventpoll
+>    at ep_free() time
+> - update a leftover comments still referring to old epmutex usage
+> 
+> v2 at:
+> https://lore.kernel.org/linux-fsdevel/f35e58ed5af8131f0f402c3dc6c3033fa96d1843.1669312208.git.pabeni@redhat.com/
+> 
+> v1 at:
+> https://lore.kernel.org/linux-fsdevel/f35e58ed5af8131f0f402c3dc6c3033fa96d1843.1669312208.git.pabeni@redhat.com/
+> 
+> Previous related effort at:
+> https://lore.kernel.org/linux-fsdevel/20190727113542.162213-1-cj.chengjian@huawei.com/
+> https://lkml.org/lkml/2017/10/28/81
+> ---
+>   fs/eventpoll.c | 171 +++++++++++++++++++++++++++++++------------------
+>   1 file changed, 109 insertions(+), 62 deletions(-)
+> 
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index 52954d4637b5..af22e5e6f683 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -57,13 +57,7 @@
+>    * we need a lock that will allow us to sleep. This lock is a
+>    * mutex (ep->mtx). It is acquired during the event transfer loop,
+>    * during epoll_ctl(EPOLL_CTL_DEL) and during eventpoll_release_file().
+> - * Then we also need a global mutex to serialize eventpoll_release_file()
+> - * and ep_free().
+> - * This mutex is acquired by ep_free() during the epoll file
+> - * cleanup path and it is also acquired by eventpoll_release_file()
+> - * if a file has been pushed inside an epoll set and it is then
+> - * close()d without a previous call to epoll_ctl(EPOLL_CTL_DEL).
+> - * It is also acquired when inserting an epoll fd onto another epoll
+> + * The epmutex is acquired when inserting an epoll fd onto another epoll
+>    * fd. We do this so that we walk the epoll tree and ensure that this
+>    * insertion does not create a cycle of epoll file descriptors, which
+>    * could lead to deadlock. We need a global mutex to prevent two
+> @@ -153,6 +147,13 @@ struct epitem {
+>   	/* The file descriptor information this item refers to */
+>   	struct epoll_filefd ffd;
+>   
+> +	/*
+> +	 * Protected by file->f_lock, true for to-be-released epitem already
+> +	 * removed from the "struct file" items list; together with
+> +	 * eventpoll->refcount orchestrates "struct eventpoll" disposal
+> +	 */
+> +	bool dying;
+> +
+>   	/* List containing poll wait queues */
+>   	struct eppoll_entry *pwqlist;
+>   
+> @@ -217,6 +218,12 @@ struct eventpoll {
+>   	u64 gen;
+>   	struct hlist_head refs;
+>   
+> +	/*
+> +	 * usage count, protected by mtx, used together with epitem->dying to
+> +	 * orchestrate the disposal of this struct
+> +	 */
+> +	unsigned int refcount;
+> +
+
+Why not use a kref (or at least struct refcount?) those provide some 
+guarantees like guaranteeing atomic operations and saturation when the 
+refcount value would overflow.
+
+>   #ifdef CONFIG_NET_RX_BUSY_POLL
+>   	/* used to track busy poll napi_id */
+>   	unsigned int napi_id;
+> @@ -240,9 +247,7 @@ struct ep_pqueue {
+>   /* Maximum number of epoll watched descriptors, per user */
+>   static long max_user_watches __read_mostly;
+>   
+> -/*
+> - * This mutex is used to serialize ep_free() and eventpoll_release_file().
+> - */
+> +/* Used for cycles detection */
+>   static DEFINE_MUTEX(epmutex);
+>   
+>   static u64 loop_check_gen = 0;
+> @@ -555,8 +560,7 @@ static void ep_remove_wait_queue(struct eppoll_entry *pwq)
+>   
+>   /*
+>    * This function unregisters poll callbacks from the associated file
+> - * descriptor.  Must be called with "mtx" held (or "epmutex" if called from
+> - * ep_free).
+> + * descriptor.  Must be called with "mtx" held.
+>    */
+>   static void ep_unregister_pollwait(struct eventpoll *ep, struct epitem *epi)
+>   {
+> @@ -679,11 +683,38 @@ static void epi_rcu_free(struct rcu_head *head)
+>   	kmem_cache_free(epi_cache, epi);
+>   }
+>   
+> +static void ep_get(struct eventpoll *ep)
 > +{
-> +	struct restrictedmem_data *data;
-> +	struct address_space *mapping;
-> +	struct inode *inode;
-> +	struct file *file;
+> +	ep->refcount++;
+> +}
+This would become something like "kref_get(&ep->kref)" or maybe even 
+something like "kref_get_unless_zero" or some other form depending on 
+exactly how you acquire a pointer to an eventpoll structure.
+
 > +
-> +	data =3D kzalloc(sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return ERR_PTR(-ENOMEM);
+> +/*
+> + * Returns true if the event poll can be disposed
+> + */
+> +static bool ep_put(struct eventpoll *ep)
+> +{
+> +	if (--ep->refcount)
+> +		return false;
 > +
-> +	data->memfd =3D memfd;
-> +	mutex_init(&data->lock);
-> +	INIT_LIST_HEAD(&data->notifiers);
+> +	WARN_ON_ONCE(!RB_EMPTY_ROOT(&ep->rbr.rb_root));
+> +	return true;
+> +}
+
+This could become kref_put(&ep->kref, ep_dispose).
+
 > +
-> +	inode =3D alloc_anon_inode(restrictedmem_mnt->mnt_sb);
-> +	if (IS_ERR(inode)) {
-> +		kfree(data);
-> +		return ERR_CAST(inode);
+> +static void ep_dispose(struct eventpoll *ep)
+> +{
+> +	mutex_destroy(&ep->mtx);
+> +	free_uid(ep->user);
+> +	wakeup_source_unregister(ep->ws);
+> +	kfree(ep);
+> +}
+This would takea  kref pointer, use container_of to get to the eventpoll 
+structure, and then perform necessary cleanup once all references drop.
+
+The exact specific steps here and whether it would still be safe to call 
+mutex_destroy is a bit unclear since you typically would only call 
+mutex_destroy when its absolutely sure that no one has locked the mutex.
+
+If you're careful about how kref_get is used you can avoid needing to be 
+holding mutex_destroy when ep_dispose is called. Since krefs are struct 
+refcount and thus atomic you don't need the lock to protect access or 
+ordering guaruantees.
+
+See Documentation/core-api/kref.rst for a better overview of the API and 
+how to use it safely. I suspect that with just kref you could also 
+safely avoid the "dying" flag as well, but I am not 100% sure.
+
+> +
+>   /*
+>    * Removes a "struct epitem" from the eventpoll RB tree and deallocates
+>    * all the associated resources. Must be called with "mtx" held.
+> + * If the dying flag is set, do the removal only if force is true.
+> + * Returns true if the eventpoll can be disposed.
+>    */
+> -static int ep_remove(struct eventpoll *ep, struct epitem *epi)
+> +static bool __ep_remove(struct eventpoll *ep, struct epitem *epi, bool force)
+>   {
+>   	struct file *file = epi->ffd.file;
+>   	struct epitems_head *to_free;
+> @@ -698,6 +729,11 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
+>   
+>   	/* Remove the current item from the list of epoll hooks */
+>   	spin_lock(&file->f_lock);
+> +	if (epi->dying && !force) {
+> +		spin_unlock(&file->f_lock);
+> +		return false;
 > +	}
 > +
-> +	inode->i_mode |=3D S_IFREG;
-> +	inode->i_op =3D &restrictedmem_iops;
-> +	inode->i_mapping->private_data =3D data;
+>   	to_free = NULL;
+>   	head = file->f_ep;
+>   	if (head->first == &epi->fllink && !epi->fllink.next) {
+> @@ -731,28 +767,28 @@ static int ep_remove(struct eventpoll *ep, struct epitem *epi)
+>   	call_rcu(&epi->rcu, epi_rcu_free);
+>   
+>   	percpu_counter_dec(&ep->user->epoll_watches);
+> +	return ep_put(ep);
+> +}
+>   
+> -	return 0;
+> +/*
+> + * ep_remove variant for callers owing an additional reference to the ep
+> + */
+> +static void ep_remove_safe(struct eventpoll *ep, struct epitem *epi)
+> +{
+> +	WARN_ON_ONCE(__ep_remove(ep, epi, false));
+>   }
+>   
+>   static void ep_free(struct eventpoll *ep)
+>   {
+>   	struct rb_node *rbp;
+>   	struct epitem *epi;
+> +	bool dispose;
+>   
+>   	/* We need to release all tasks waiting for these file */
+>   	if (waitqueue_active(&ep->poll_wait))
+>   		ep_poll_safewake(ep, NULL);
+>   
+> -	/*
+> -	 * We need to lock this because we could be hit by
+> -	 * eventpoll_release_file() while we're freeing the "struct eventpoll".
+> -	 * We do not need to hold "ep->mtx" here because the epoll file
+> -	 * is on the way to be removed and no one has references to it
+> -	 * anymore. The only hit might come from eventpoll_release_file() but
+> -	 * holding "epmutex" is sufficient here.
+> -	 */
+> -	mutex_lock(&epmutex);
+> +	mutex_lock(&ep->mtx);
+>   
+>   	/*
+>   	 * Walks through the whole tree by unregistering poll callbacks.
+> @@ -766,25 +802,21 @@ static void ep_free(struct eventpoll *ep)
+>   
+>   	/*
+>   	 * Walks through the whole tree by freeing each "struct epitem". At this
+> -	 * point we are sure no poll callbacks will be lingering around, and also by
+> -	 * holding "epmutex" we can be sure that no file cleanup code will hit
+> -	 * us during this operation. So we can avoid the lock on "ep->lock".
+> -	 * We do not need to lock ep->mtx, either, we only do it to prevent
+> -	 * a lockdep warning.
+> +	 * point we are sure no poll callbacks will be lingering around.
+> +	 * Since we still own a reference to the eventpoll struct, the loop can't
+> +	 * dispose it.
+>   	 */
+> -	mutex_lock(&ep->mtx);
+>   	while ((rbp = rb_first_cached(&ep->rbr)) != NULL) {
+>   		epi = rb_entry(rbp, struct epitem, rbn);
+> -		ep_remove(ep, epi);
+> +		ep_remove_safe(ep, epi);
+>   		cond_resched();
+>   	}
+> + > +	dispose = ep_put(ep);
+>   	mutex_unlock(&ep->mtx);
+>   
+> -	mutex_unlock(&epmutex);
+> -	mutex_destroy(&ep->mtx);
+> -	free_uid(ep->user);
+> -	wakeup_source_unregister(ep->ws);
+> -	kfree(ep);
+> +	if (dispose)
+> +		ep_dispose(ep);
+>   }
+>   
+>   static int ep_eventpoll_release(struct inode *inode, struct file *file)
+> @@ -904,33 +936,35 @@ void eventpoll_release_file(struct file *file)
+>   {
+>   	struct eventpoll *ep;
+>   	struct epitem *epi;
+> -	struct hlist_node *next;
+> +	bool dispose;
+>   
+>   	/*
+> -	 * We don't want to get "file->f_lock" because it is not
+> -	 * necessary. It is not necessary because we're in the "struct file"
+> -	 * cleanup path, and this means that no one is using this file anymore.
+> -	 * So, for example, epoll_ctl() cannot hit here since if we reach this
+> -	 * point, the file counter already went to zero and fget() would fail.
+> -	 * The only hit might come from ep_free() but by holding the mutex
+> -	 * will correctly serialize the operation. We do need to acquire
+> -	 * "ep->mtx" after "epmutex" because ep_remove() requires it when called
+> -	 * from anywhere but ep_free().
+> -	 *
+> -	 * Besides, ep_remove() acquires the lock, so we can't hold it here.
+> +	 * Use the 'dying' flag to prevent a concurrent ep_free() from touching
+> +	 * the epitems list before eventpoll_release_file() can access the
+> +	 * ep->mtx.
+>   	 */
+> -	mutex_lock(&epmutex);
+> -	if (unlikely(!file->f_ep)) {
+> -		mutex_unlock(&epmutex);
+> -		return;
+> -	}
+> -	hlist_for_each_entry_safe(epi, next, file->f_ep, fllink) {
+> +again:
+> +	spin_lock(&file->f_lock);
+> +	if (file->f_ep && file->f_ep->first) {
+> +		/* detach from ep tree */
+> +		epi = hlist_entry(file->f_ep->first, struct epitem, fllink);
+> +		epi->dying = true;
+> +		spin_unlock(&file->f_lock);
 > +
-> +	file =3D alloc_file_pseudo(inode, restrictedmem_mnt,
-> +				 "restrictedmem", O_RDWR,
-> +				 &restrictedmem_fops);
-> +	if (IS_ERR(file)) {
-> +		iput(inode);
-> +		kfree(data);
-> +		return ERR_CAST(file);
-> +	}
+> +		/*
+> +		 * ep access is safe as we still own a reference to the ep
+> +		 * struct
+> +		 */
+>   		ep = epi->ep;
+> -		mutex_lock_nested(&ep->mtx, 0);
+> -		ep_remove(ep, epi);
+> +		mutex_lock(&ep->mtx);
+> +		dispose = __ep_remove(ep, epi, true);
+>   		mutex_unlock(&ep->mtx);
 > +
-> +	file->f_flags |=3D O_LARGEFILE;
-> +
-> +	mapping =3D memfd->f_mapping;
-> +	mapping_set_unevictable(mapping);
-> +	mapping_set_gfp_mask(mapping,
-> +			     mapping_gfp_mask(mapping) & ~__GFP_MOVABLE);
-
-Is this supposed to prevent migration of pages being used for
-restrictedmem/shmem backend?
-
-In my case I've been testing SNP support based on UPM v9, and for
-large guests (128GB+), if I force 2M THPs via:
-
-  echo always >/sys/kernel/mm/transparent_hugepages/shmem_enabled
-
-it will in some cases trigger the below trace, which suggests that
-kcompactd is trying to call migrate_folio() on a PFN that was/is
-still allocated for guest private memory (and so has been removed from
-directmap as part of shared->private conversation via REG_REGION kvm
-ioctl, leading to the crash). This trace seems to occur during early
-OVMF boot while the guest is in the middle of pre-accepting on private
-memory (no lazy accept in this case).
-
-Is this expected behavior? What else needs to be done to ensure
-migrations aren't attempted in this case?
-
-Thanks!
-
--Mike
-
-
-# Host logs with debug info for crash during SNP boot
-
-=2E..
-[  904.373632] kvm_restricted_mem_get_pfn: GFN: 0x1caced1, PFN: 0x156b7f, p=
-age: ffffea0006b197b0, ref_count: 2
-[  904.373634] kvm_restricted_mem_get_pfn: GFN: 0x1caced2, PFN: 0x156840, p=
-age: ffffea0006b09400, ref_count: 2
-[  904.373637] kvm_restricted_mem_get_pfn: GFN: 0x1caced3, PFN: 0x156841, p=
-age: ffffea0006b09450, ref_count: 2
-[  904.373639] kvm_restricted_mem_get_pfn: GFN: 0x1caced4, PFN: 0x156842, p=
-age: ffffea0006b094a0, ref_count: 2
-[  904.373641] kvm_restricted_mem_get_pfn: GFN: 0x1caced5, PFN: 0x156843, p=
-age: ffffea0006b094f0, ref_count: 2
-[  904.373645] kvm_restricted_mem_get_pfn: GFN: 0x1caced6, PFN: 0x156844, p=
-age: ffffea0006b09540, ref_count: 2
-[  904.373647] kvm_restricted_mem_get_pfn: GFN: 0x1caced7, PFN: 0x156845, p=
-age: ffffea0006b09590, ref_count: 2
-[  904.373649] kvm_restricted_mem_get_pfn: GFN: 0x1caced8, PFN: 0x156846, p=
-age: ffffea0006b095e0, ref_count: 2
-[  904.373652] kvm_restricted_mem_get_pfn: GFN: 0x1caced9, PFN: 0x156847, p=
-age: ffffea0006b09630, ref_count: 2
-[  904.373654] kvm_restricted_mem_get_pfn: GFN: 0x1caceda, PFN: 0x156848, p=
-age: ffffea0006b09680, ref_count: 2
-[  904.373656] kvm_restricted_mem_get_pfn: GFN: 0x1cacedb, PFN: 0x156849, p=
-age: ffffea0006b096d0, ref_count: 2
-[  904.373661] kvm_restricted_mem_get_pfn: GFN: 0x1cacedc, PFN: 0x15684a, p=
-age: ffffea0006b09720, ref_count: 2
-[  904.373663] kvm_restricted_mem_get_pfn: GFN: 0x1cacedd, PFN: 0x15684b, p=
-age: ffffea0006b09770, ref_count: 2
-
-# PFN 0x15684c is allocated for guest private memory, will have been remove=
-d from directmap as part of RMP requirements
-
-[  904.373665] kvm_restricted_mem_get_pfn: GFN: 0x1cacede, PFN: 0x15684c, p=
-age: ffffea0006b097c0, ref_count: 2
-=2E..
-
-# kcompactd crashes trying to copy PFN 0x15684c to a new folio, crashes try=
-ing to access PFN via directmap
-
-[  904.470135] Migrating restricted page, SRC pfn: 0x15684c, folio_ref_coun=
-t: 2, folio_order: 0
-[  904.470154] BUG: unable to handle page fault for address: ffff88815684c0=
-00
-[  904.470314] kvm_restricted_mem_get_pfn: GFN: 0x1cafe00, PFN: 0x19f6d0, p=
-age: ffffea00081d2100, ref_count: 2
-[  904.477828] #PF: supervisor read access in kernel mode
-[  904.477831] #PF: error_code(0x0000) - not-present page
-[  904.477833] PGD 6601067 P4D 6601067 PUD 1569ad063 PMD 1569af063 PTE 800f=
-fffea97b3060
-[  904.508806] Oops: 0000 [#1] SMP NOPTI
-[  904.512892] CPU: 52 PID: 1563 Comm: kcompactd0 Tainted: G            E  =
-    6.0.0-rc7-hsnp-v7pfdv9d+ #10
-[  904.523473] Hardware name: AMD Corporation ETHANOL_X/ETHANOL_X, BIOS RXM=
-1006B 08/20/2021
-[  904.532499] RIP: 0010:copy_page+0x7/0x10
-[  904.536877] Code: 00 66 90 48 89 f8 48 89 d1 f3 a4 31 c0 c3 cc cc cc cc =
-48 89 c8 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc 66 90 b9 00 02 00 00 <f3=
-> 48 a5 c3 cc cc cc cc 90 48 83 ec 10 48 89 1c 24 4c 89 64 24 08
-[  904.557831] RSP: 0018:ffffc900106dfb78 EFLAGS: 00010286
-[  904.563661] RAX: ffff888000000000 RBX: ffffea0006b09810 RCX: 00000000000=
-00200
-[  904.571622] RDX: ffffea0000000000 RSI: ffff88815684c000 RDI: ffff88816bc=
-5d000
-[  904.579581] RBP: ffffc900106dfba0 R08: 0000000000000001 R09: ffffea0006b=
-097c0
-[  904.587541] R10: 0000000000000002 R11: ffffc900106dfb38 R12: ffffea00071=
-add60
-[  904.595502] R13: cccccccccccccccd R14: ffffea0006b09810 R15: ffff888159c=
-1e0f8
-[  904.603462] FS:  0000000000000000(0000) GS:ffff88a04df00000(0000) knlGS:=
-0000000000000000
-[  904.612489] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  904.618897] CR2: ffff88815684c000 CR3: 00000020eae16002 CR4: 00000000007=
-70ee0
-[  904.626855] PKRU: 55555554
-[  904.629870] Call Trace:
-[  904.632594]  <TASK>
-[  904.634928]  ? folio_copy+0x8c/0xe0
-[  904.638818]  migrate_folio+0x5b/0x110
-[  904.642901]  move_to_new_folio+0x5b/0x150
-[  904.647371]  migrate_pages+0x11bb/0x1830
-[  904.651743]  ? move_freelist_tail+0xc0/0xc0
-[  904.656406]  ? isolate_freepages_block+0x470/0x470
-[  904.661749]  compact_zone+0x681/0xda0
-[  904.665832]  kcompactd_do_work+0x1b3/0x2c0
-[  904.670400]  kcompactd+0x257/0x330
-[  904.674190]  ? prepare_to_wait_event+0x120/0x120
-[  904.679338]  ? kcompactd_do_work+0x2c0/0x2c0
-[  904.684098]  kthread+0xcf/0xf0
-[  904.687501]  ? kthread_complete_and_exit+0x20/0x20
-[  904.692844]  ret_from_fork+0x22/0x30
-[  904.696830]  </TASK>
-[  904.699262] Modules linked in: nf_conntrack_netlink(E) xfrm_user(E) xfrm=
-_algo(E) xt_addrtype(E) br_netfilter(E) xt_CHECKSUM(E) xt_MASQUERADE(E) xt_=
-conntrack(E) ipt_REJECT(E) nf_reject_ipv4(E) xt_tcpudp(E) ip6table_mangle(E=
-) ip6table_nat(E) iptable_mangle(E) iptable_nat(E) nf_nat(E) nf_conntrack(E=
-) nf_defrag_ipv6(E) nf_defrag_ipv4(E) nf_tables(E) nfnetlink(E) ip6table_fi=
-lter(E) ip6_tables(E) iptable_filter(E) bpfilter(E) intel_rapl_msr(E) intel=
-_rapl_common(E) amd64_edac(E) bridge(E) stp(E) llc(E) kvm_amd(E) overlay(E)=
- nls_iso8859_1(E) kvm(E) crct10dif_pclmul(E) ghash_clmulni_intel(E) aesni_i=
-ntel(E) crypto_simd(E) cryptd(E) rapl(E) ipmi_si(E) ipmi_devintf(E) wmi_bmo=
-f(E) ipmi_msghandler(E) efi_pstore(E) binfmt_misc(E) ast(E) drm_vram_helper=
-(E) joydev(E) drm_ttm_helper(E) ttm(E) drm_kms_helper(E) input_leds(E) i2c_=
-algo_bit(E) fb_sys_fops(E) syscopyarea(E) sysfillrect(E) sysimgblt(E) ccp(E=
-) k10temp(E) mac_hid(E) sch_fq_codel(E) parport_pc(E) ppdev(E) lp(E) parpor=
-t(E) drm(E) ip_tables(E)
-[  904.699316]  x_tables(E) autofs4(E) btrfs(E) blake2b_generic(E) zstd_com=
-press(E) raid10(E) raid456(E) async_raid6_recov(E) async_memcpy(E) async_pq=
-(E) async_xor(E) async_tx(E) xor(E) raid6_pq(E) libcrc32c(E) raid1(E) raid0=
-(E) multipath(E) linear(E) crc32_pclmul(E) hid_generic(E) usbhid(E) hid(E) =
-e1000e(E) i2c_piix4(E) wmi(E)
-[  904.828498] CR2: ffff88815684c000
-[  904.832193] ---[ end trace 0000000000000000 ]---
-[  904.937159] RIP: 0010:copy_page+0x7/0x10
-[  904.941524] Code: 00 66 90 48 89 f8 48 89 d1 f3 a4 31 c0 c3 cc cc cc cc =
-48 89 c8 c3 cc cc cc cc cc cc cc cc cc cc cc cc cc 66 90 b9 00 02 00 00 <f3=
-> 48 a5 c3 cc cc cc cc 90 48 83 ec 10 48 89 1c 24 4c 89 64 24 08
-[  904.962478] RSP: 0018:ffffc900106dfb78 EFLAGS: 00010286
-[  904.968305] RAX: ffff888000000000 RBX: ffffea0006b09810 RCX: 00000000000=
-00200
-[  904.976265] RDX: ffffea0000000000 RSI: ffff88815684c000 RDI: ffff88816bc=
-5d000
-[  904.984227] RBP: ffffc900106dfba0 R08: 0000000000000001 R09: ffffea0006b=
-097c0
-[  904.992187] R10: 0000000000000002 R11: ffffc900106dfb38 R12: ffffea00071=
-add60
-[  905.000145] R13: cccccccccccccccd R14: ffffea0006b09810 R15: ffff888159c=
-1e0f8
-[  905.008105] FS:  0000000000000000(0000) GS:ffff88a04df00000(0000) knlGS:=
-0000000000000000
-[  905.017132] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  905.023540] CR2: ffff88815684c000 CR3: 00000020eae16002 CR4: 00000000007=
-70ee0
-[  905.031501] PKRU: 55555554
-[  905.034558] kvm_restricted_mem_get_pfn: GFN: 0x1cafe01, PFN: 0x19f6d1, p=
-age: ffffea00081d2150, ref_count: 2
-[  905.045455] kvm_restricted_mem_get_pfn: GFN: 0x1cafe02, PFN: 0x19f6d2, p=
-age: ffffea00081d21a0, ref_count: 2
-=2E..
+> +		if (dispose)
+> +			ep_dispose(ep);
+> +		goto again;
+>   	}
+> -	mutex_unlock(&epmutex);
+> +	spin_unlock(&file->f_lock);
+>   }
+>   
+>   static int ep_alloc(struct eventpoll **pep)
+> @@ -953,6 +987,7 @@ static int ep_alloc(struct eventpoll **pep)
+>   	ep->rbr = RB_ROOT_CACHED;
+>   	ep->ovflist = EP_UNACTIVE_PTR;
+>   	ep->user = user;
+> +	ep->refcount = 1;
+>   
+>   	*pep = ep;
+>   
+> @@ -1494,16 +1529,22 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
+>   	if (tep)
+>   		mutex_unlock(&tep->mtx);
+>   
+> +	/*
+> +	 * ep_remove() calls in the later error paths can't lead to ep_dispose()
+> +	 * as overall will lead to no refcount changes
+> +	 */
+> +	ep_get(ep); > +
+>   	/* now check if we've created too many backpaths */
+>   	if (unlikely(full_check && reverse_path_check())) {
+> -		ep_remove(ep, epi);
+> +		ep_remove_safe(ep, epi);
+>   		return -EINVAL;
+>   	}
+>   
+>   	if (epi->event.events & EPOLLWAKEUP) {
+>   		error = ep_create_wakeup_source(epi);
+>   		if (error) {
+> -			ep_remove(ep, epi);
+> +			ep_remove_safe(ep, epi);
+>   			return error;
+>   		}
+>   	}
+> @@ -1527,7 +1568,7 @@ static int ep_insert(struct eventpoll *ep, const struct epoll_event *event,
+>   	 * high memory pressure.
+>   	 */
+>   	if (unlikely(!epq.epi)) {
+> -		ep_remove(ep, epi);
+> +		ep_remove_safe(ep, epi);
+>   		return -ENOMEM;
+>   	}
+>   
+> @@ -2165,10 +2206,16 @@ int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
+>   			error = -EEXIST;
+>   		break;
+>   	case EPOLL_CTL_DEL:
+> -		if (epi)
+> -			error = ep_remove(ep, epi);
+> -		else
+> +		if (epi) {
+> +			/*
+> +			 * The eventpoll itself is still alive: the refcount
+> +			 * can't go to zero here.
+> +			 */
+> +			ep_remove_safe(ep, epi);
+> +			error = 0;
+> +		} else {
+>   			error = -ENOENT;
+> +		}
+>   		break;
+>   	case EPOLL_CTL_MOD:
+>   		if (epi) {
