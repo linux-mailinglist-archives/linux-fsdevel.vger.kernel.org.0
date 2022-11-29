@@ -2,178 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 682FD63BECE
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 12:21:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F13E963BF00
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 12:31:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231587AbiK2LV5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Nov 2022 06:21:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58852 "EHLO
+        id S233204AbiK2LbC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Nov 2022 06:31:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36832 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230165AbiK2LV4 (ORCPT
+        with ESMTP id S231681AbiK2Lao (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Nov 2022 06:21:56 -0500
-Received: from wnew2-smtp.messagingengine.com (wnew2-smtp.messagingengine.com [64.147.123.27])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6F67F53EF9;
-        Tue, 29 Nov 2022 03:21:54 -0800 (PST)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailnew.west.internal (Postfix) with ESMTP id 2533C2B0677F;
-        Tue, 29 Nov 2022 06:21:47 -0500 (EST)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 29 Nov 2022 06:21:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-         h=cc:cc:content-type:date:date:from:from:in-reply-to
-        :in-reply-to:message-id:mime-version:references:reply-to:sender
-        :subject:subject:to:to; s=fm3; t=1669720905; x=1669728105; bh=at
-        8ufqDNaxbmVHg+nxQPls4+sUqFCV/uGf26OnoE264=; b=Uj0LUC+Th7V+VSL3Wv
-        EdqIQhblOE9VM+4KQiTy8MVpYzh8ghDALZwrhRGXHOI41QY5rn86ft3C4ExaJyFw
-        tpZeWaahScbyUrqpTrXSNOt014NNHT58TDP2ao1Wb8+zhuAMCd3tKvbmKq5xEZvw
-        GRQNm0PlT5nV6l/SQmT1WSgtxEzBzyg7Uw76OZaEbeZlr0RR1N7H0qU2xhe25qz3
-        nTwhHj01In7y5FlApU2+5t/BrzszBnn8zjqUmq+gYMh5HF69wbQRGbiMModAc+3r
-        cbwLnW72xQF6j87tlPn2Xd7bgEpwCWRQu6wNpPmYi6Jhqvyd/OXiUqiykUpgjcor
-        EgIg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
-        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
-        :mime-version:references:reply-to:sender:subject:subject:to:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; t=1669720905; x=1669728105; bh=at8ufqDNaxbmVHg+nxQPls4+sUqF
-        CV/uGf26OnoE264=; b=TuZpLKLMppDOmkhizhwn1gXseM7dGDauNCFvwOOmVHx8
-        pnYle/wmPZ1A+qeWsnf+7PZ8+lMCV3kMizSjcRfwnDjo05HDZwKa2TeI7ZwH+eoO
-        YzoXC72/rc3zc9dOzTRT/HcIcdhxZcFN+v0cnq26O/FyC56F0qdhPTvGWdY6X5Qa
-        Hv8jlMOos5zuYL9IhpNNgcitN3LW5+LGtB9JddVw58/wT4IYapD832z243xQj7sn
-        qs2hNx6vJs1mUi6fBWSiihWL29Z7Ilg5XOPf+mMhSvZ4mmdiLYySRjCaFuWk4qxg
-        LgDouMrJdkLCqppqW881D8aWLT+dgl/3Rjaqsw4IpQ==
-X-ME-Sender: <xms:R-uFY0QzbLeoSKoAlkAq6pdKJ7HpMrLqiWy3118_gmS3L3bA0Pmd7A>
-    <xme:R-uFYxwIx9EyfMUsYG0cW3-FsW47K_fzK_YlcLJJ1BwdfQ4BDoZkkNMoTlQ6cwP5c
-    LiB-wsvYS2yStuFvv4>
-X-ME-Received: <xmr:R-uFYx30N9zkFU7156fAB07S_Cv9qNI4M7a1qLZPCcwEfrBVbaXsxkztIaS0Dx4-k_sOxw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvgedrjeeggddvhecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttddttddttddvnecuhfhrohhmpedfmfhirhhi
-    lhhlucetrdcuufhhuhhtvghmohhvfdcuoehkihhrihhllhesshhhuhhtvghmohhvrdhnrg
-    hmvgeqnecuggftrfgrthhtvghrnhephfeigefhtdefhedtfedthefghedutddvueehtedt
-    tdehjeeukeejgeeuiedvkedtnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomhepkhhirhhilhhlsehshhhuthgvmhhovhdrnhgrmhgv
-X-ME-Proxy: <xmx:R-uFY4BqxH63XPqRmjg_R04J8UTRl_p20z9c5BYg744mlIjKWEYdBA>
-    <xmx:R-uFY9gclNuv-uxuE7QdwizjoOG-LQKbWfndnp9ime1Ke4uaddCbLQ>
-    <xmx:R-uFY0r0APjq-Sa-AeWZeqZNUjzmln5tKTwYBQ_0JYJoWZhr2aow3g>
-    <xmx:SeuFYxc9K6tiHQdiGlqUGR-x_tz5oQblJEYLMmc2RXaa7pgtSMi6l7xkSCw>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 29 Nov 2022 06:21:42 -0500 (EST)
-Received: by box.shutemov.name (Postfix, from userid 1000)
-        id A8A4810454E; Tue, 29 Nov 2022 14:21:39 +0300 (+03)
-Date:   Tue, 29 Nov 2022 14:21:39 +0300
-From:   "Kirill A. Shutemov" <kirill@shutemov.name>
-To:     Michael Roth <michael.roth@amd.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        mhocko@suse.com, Muchun Song <songmuchun@bytedance.com>,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
- create restricted user memory
-Message-ID: <20221129112139.usp6dqhbih47qpjl@box.shutemov.name>
-References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
- <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
- <20221129000632.sz6pobh6p7teouiu@amd.com>
+        Tue, 29 Nov 2022 06:30:44 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 384F342F7E
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Nov 2022 03:29:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669721387;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Ba4L6Jy3iTd5d984B4HuUQo6AgG8IkQsEu+Q1segjoE=;
+        b=Xz87xfMWlj7kx5CKXppVAuF18M1U/zrvqo9rsKHfL8ZOZo8EXtojMCqY2Uq817ih5rXZB/
+        lExVEYotWGvcGnilF3Ticre3IwrI3qtvthT9IGxvRe/yEG8YNBcmSRAnL8nc29uJ6g69B6
+        QoI2psaKii8Ua+TxzBbWW5UIhF4JJoc=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-50-gT1tT3LwMOWTPe4oEf9xCA-1; Tue, 29 Nov 2022 06:29:46 -0500
+X-MC-Unique: gT1tT3LwMOWTPe4oEf9xCA-1
+Received: by mail-qt1-f200.google.com with SMTP id f4-20020a05622a114400b003a57f828277so20855471qty.22
+        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Nov 2022 03:29:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ba4L6Jy3iTd5d984B4HuUQo6AgG8IkQsEu+Q1segjoE=;
+        b=HzRY79PhmCb3FFvM4sHvFgQHE7mFm6wlKSyrmQRsvbKmPZ84/yiUBLzFTBijj2dsHb
+         pYIsgR47K3xkRrozfkm5/wvuq86dc9t4rZWHzIuvwZoTo9mX5AYUQ7usmrBqL4rxgGG1
+         2EwXbx4K75NlEz5Xoxj6jHZN5Cc7n4f5epsEsqrKycbx2m7lS7Q2I0LVQjlfy7UBJzgU
+         XFfoK09s6F8LWRUOu6ze0MzNkdZMGg7aDUO8rKgb7rcvrrLZ0nm8G5acVGU8QdkZzKyC
+         jpWO2ymVoBUhzCrqLTYygS9xBv6lX7iCxkpBM+3XHwOTne/OfqgjuHJvlI4pC4nQD5Sx
+         3H9A==
+X-Gm-Message-State: ANoB5pnIKDLppM4CI1bSP9KcJ1G5OxhhJf3Efcp2YHXxoh/P5LPu/UOM
+        KBzwhEzGh2dkuSGcCJ+KtJX2njkg9RmFUqTdF6oJX7goYWmKQnvMxW8ARSnRXxwMAKTd/lkeszu
+        XXIg8w5FnFJqPBxvtcGurSX5bsw==
+X-Received: by 2002:a05:622a:1a01:b0:3a6:21e5:d409 with SMTP id f1-20020a05622a1a0100b003a621e5d409mr50174968qtb.206.1669721385745;
+        Tue, 29 Nov 2022 03:29:45 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf7LobABfCCcHaRkIFz/ZUyfvj0EToACFaPLbvEwhqy7/XZk6IzmRLIFs8uccjEne2PUKmWhvQ==
+X-Received: by 2002:a05:622a:1a01:b0:3a6:21e5:d409 with SMTP id f1-20020a05622a1a0100b003a621e5d409mr50174961qtb.206.1669721385513;
+        Tue, 29 Nov 2022 03:29:45 -0800 (PST)
+Received: from bfoster (c-24-61-119-116.hsd1.ma.comcast.net. [24.61.119.116])
+        by smtp.gmail.com with ESMTPSA id n1-20020a05620a294100b006fa16fe93bbsm10496012qkp.15.2022.11.29.03.29.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Nov 2022 03:29:45 -0800 (PST)
+Date:   Tue, 29 Nov 2022 06:29:51 -0500
+From:   Brian Foster <bfoster@redhat.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs/remap_range: avoid spurious writeback on zero length
+ request
+Message-ID: <Y4XtL9SzQN/A4w5U@bfoster>
+References: <20221128160813.3950889-1-bfoster@redhat.com>
+ <Y4TubQFwHExk07w4@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221129000632.sz6pobh6p7teouiu@amd.com>
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y4TubQFwHExk07w4@magnolia>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 28, 2022 at 06:06:32PM -0600, Michael Roth wrote:
-> On Tue, Oct 25, 2022 at 11:13:37PM +0800, Chao Peng wrote:
-> > From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+On Mon, Nov 28, 2022 at 09:22:53AM -0800, Darrick J. Wong wrote:
+> On Mon, Nov 28, 2022 at 11:08:13AM -0500, Brian Foster wrote:
+> > generic_remap_checks() can reduce the effective request length (i.e.,
+> > after the reflink extend to EOF case is handled) down to zero. If this
+> > occurs, __generic_remap_file_range_prep() proceeds through dio
+> > serialization, file mapping flush calls, and may invoke file_modified()
+> > before returning back to the filesystem caller, all of which immediately
+> > check for len == 0 and return.
 > > 
+> > While this is mostly harmless, it is spurious and not completely
+> > without side effect. A filemap write call can submit I/O (but not
+> > wait on it) when the specified end byte precedes the start but
+> > happens to land on the same aligned page boundary, which can occur
+> > from __generic_remap_file_range_prep() when len is 0.
+> > 
+> > The dedupe path already has a len == 0 check to break out before doing
+> > range comparisons. Lift this check a bit earlier in the function to
+> > cover the general case of len == 0 and avoid the unnecessary work.
+> > 
+> > Signed-off-by: Brian Foster <bfoster@redhat.com>
 > 
-> <snip>
+> Looks correct,
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 > 
-> > +static struct file *restrictedmem_file_create(struct file *memfd)
-> > +{
-> > +	struct restrictedmem_data *data;
-> > +	struct address_space *mapping;
-> > +	struct inode *inode;
-> > +	struct file *file;
-> > +
-> > +	data = kzalloc(sizeof(*data), GFP_KERNEL);
-> > +	if (!data)
-> > +		return ERR_PTR(-ENOMEM);
-> > +
-> > +	data->memfd = memfd;
-> > +	mutex_init(&data->lock);
-> > +	INIT_LIST_HEAD(&data->notifiers);
-> > +
-> > +	inode = alloc_anon_inode(restrictedmem_mnt->mnt_sb);
-> > +	if (IS_ERR(inode)) {
-> > +		kfree(data);
-> > +		return ERR_CAST(inode);
-> > +	}
-> > +
-> > +	inode->i_mode |= S_IFREG;
-> > +	inode->i_op = &restrictedmem_iops;
-> > +	inode->i_mapping->private_data = data;
-> > +
-> > +	file = alloc_file_pseudo(inode, restrictedmem_mnt,
-> > +				 "restrictedmem", O_RDWR,
-> > +				 &restrictedmem_fops);
-> > +	if (IS_ERR(file)) {
-> > +		iput(inode);
-> > +		kfree(data);
-> > +		return ERR_CAST(file);
-> > +	}
-> > +
-> > +	file->f_flags |= O_LARGEFILE;
-> > +
-> > +	mapping = memfd->f_mapping;
-> > +	mapping_set_unevictable(mapping);
-> > +	mapping_set_gfp_mask(mapping,
-> > +			     mapping_gfp_mask(mapping) & ~__GFP_MOVABLE);
+> Should there be an(other) "if (!*len) return 0;" after the
+> generic_remap_check_len call to skip the mtime update if the remap
+> request gets shortened to avoid remapping an unaligned eofblock into the
+> middle of the destination file?
 > 
-> Is this supposed to prevent migration of pages being used for
-> restrictedmem/shmem backend?
 
-Yes, my bad. I expected it to prevent migration, but it is not true.
+Looks sensible to me, though I guess I would do something like the
+appended diff. Do you want to just fold that into this patch?
 
-Looks like we need to bump refcount in restrictedmem_get_page() and reduce
-it back when KVM is no longer use it.
+Brian
 
-Chao, could you adjust it?
+--- 8< ---
 
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+diff --git a/fs/remap_range.c b/fs/remap_range.c
+index 32ea992f9acc..2f236c9c5802 100644
+--- a/fs/remap_range.c
++++ b/fs/remap_range.c
+@@ -347,7 +347,7 @@ __generic_remap_file_range_prep(struct file *file_in, loff_t pos_in,
+ 
+ 	ret = generic_remap_check_len(inode_in, inode_out, pos_out, len,
+ 			remap_flags);
+-	if (ret)
++	if (ret || *len == 0)
+ 		return ret;
+ 
+ 	/* If can't alter the file contents, we're done. */
+
