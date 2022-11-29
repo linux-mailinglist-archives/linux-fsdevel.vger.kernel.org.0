@@ -2,66 +2,126 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E28F163B673
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 01:16:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 568D763B6A8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 01:37:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234663AbiK2AQk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Nov 2022 19:16:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46132 "EHLO
+        id S234757AbiK2Ahr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Nov 2022 19:37:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56268 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234584AbiK2AQh (ORCPT
+        with ESMTP id S234740AbiK2Ahq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Nov 2022 19:16:37 -0500
-Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE2941DDC2
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 16:16:36 -0800 (PST)
-Received: by mail-pj1-x102e.google.com with SMTP id k5so11094476pjo.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 16:16:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rmT4p4LUlgKisuvS5tqZbtaFiBayJl0Eii/OEnGHHtU=;
-        b=tS0jlh80ya4JjgLjJkratxjwUQtwsJQ2uzig/9jrTFeTv6hzDbwbdiCwUogq75pSh1
-         tQ1QBpFoi/zAFhKfKq0mdpPwXMUNF85xOpaWwPh7t64FqCnm42OVKWXWE9vTWCY3wGoj
-         Hv4G3jWw9KYdtfRX08q4wTQBn9lP/oi5zbPD+MUBtNBAc5vE0Wxw6+QaVTe5cKjMuvaE
-         Cbpkgd5hXOiAbqcvvtszCD+aivtEc7x4MLcy0KMqnSoxu4LekuSFOEDF7sCCUpmP0aN3
-         bAzYnLWfegFRHx8EOoxpJ5XLtMnAXZLvQ2Sz+DIvqE6YTNepx+7C1vu98xZ7eFYQqHpt
-         HtRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rmT4p4LUlgKisuvS5tqZbtaFiBayJl0Eii/OEnGHHtU=;
-        b=NiGobJJhfaeirSnEEFGi5vRlZ0DL0zSJriHTJmd2tjrAGasgOgUmGs1vipRHnZZ4KK
-         1rStQjuG4rg4NBI5AXEnb2b7DVuFvtPAZCEMGhKcVA+SlLdQ+NBxfkcu1+Mg2tnsSQjw
-         zCexDOTX8aPKBHXwiOHzS6yhIBgAOUqEajHqWM2qqDcevdILbSembGCI0zHICvDMpeMh
-         SiN8KiFzUPbaIQQJehRmPggEHCHXOrcFNWYbTBGhmuN0Io/p5PRjgMn5eAs5a92MHmcF
-         RLo81qja+QipUP/m7Uy59FkUjh6woCxnlIwHyH3NgkXX+i1TLmOtfcOiAk0XGACiqN4G
-         x7nQ==
-X-Gm-Message-State: ANoB5pmyBc4WDaa450ZdqIYfXADOiLGLdM6lSoj9OEvuhWg9xK4bIEQy
-        l5PabcAtmVNRScO6bajkTr6BNw==
-X-Google-Smtp-Source: AA0mqf5+RMi8gPwujU5z/tOoNaZz4hNMrZtCkUI2nZql1qYR4idryLE601Q51u0M21dSkajfM6LruQ==
-X-Received: by 2002:a17:902:bb10:b0:189:6292:827e with SMTP id im16-20020a170902bb1000b001896292827emr21668249plb.97.1669680996313;
-        Mon, 28 Nov 2022 16:16:36 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-65-106.pa.vic.optusnet.com.au. [49.186.65.106])
-        by smtp.gmail.com with ESMTPSA id y22-20020a170902b49600b0018099c9618esm9388374plr.231.2022.11.28.16.16.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Nov 2022 16:16:35 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1ozoIa-002E5Z-Cw; Tue, 29 Nov 2022 11:16:32 +1100
-Date:   Tue, 29 Nov 2022 11:16:32 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     djwong@kernel.org
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] xfs, iomap: fix data corruption due to stale cached iomaps
-Message-ID: <20221129001632.GX3600936@dread.disaster.area>
+        Mon, 28 Nov 2022 19:37:46 -0500
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2059.outbound.protection.outlook.com [40.107.220.59])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8F6DC13F05;
+        Mon, 28 Nov 2022 16:37:44 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nHEzYeYcEt7e8N47qbjzWamYRy5M6pqPjFCYmZ4g4j4YjkFuOTqQDYHqs/h5o8CjGJD0soqwDlNhmlAnNF0VLU6DLvmHKkjy+snS+A1id56fNsN3NQ/aWDmTAOcvA1dvBFipgDKtQ/1ihYKwQM7WC+mXW8mgks48/MGb3eOkT97Loi+sPNd7c5w8CAsf+V5AK5xYXdHwvGKaaHLALHiU0CzBCUD/MHs+qU7zifRQJLVFq3oHLW4SjNmVu3DLbx7QYs8fQOn5/rjr0dOgwAt3ZFrQNSzMMLASBt6EUiYdtRfeE0xRUAlUJ00sOw0vxF6AOIt3YE0dDdp7Yse+tO6iKQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hjefGpLM6eJMXVqVNtuRjEFwMuEpVo1hfHWdK107+5g=;
+ b=OdFq+nZKvXxAuHoyQqVvmTx1hpIRw9ckyFHa9Q385YFAIrGfdzV6MEDr5ayCsuo/QSlVsREkuaWVZSYW9eH/wCdXyag+LsvDLowNkfU9C5nkwnoScuqOw+MBKQAET0ndhsKeb8Hnz8tUNzEqHLbR6j0QW2+hyQgBh8mXy/E3SDLnqFb7St7CAD/8jlEwsWxeWmmtc33DETlj2eeB7daf8N+XKgHriYzQNg6UoIp9H0ZyCB1OR1qmZ5/rcSbxqEdYxA0nIsnTY3JLVwouT4isHM0KUfB9adypZXmfHIp46+HcGof085/zbt2BxgokV8svkXrx+vT1rg4231nWRkTs5Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux.intel.com smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hjefGpLM6eJMXVqVNtuRjEFwMuEpVo1hfHWdK107+5g=;
+ b=CRESrgLCTyig/z/dyOTsJLQCEl5SFw6tsw/ZDBElvpsPg37DvicknnlhaBIyKtS5hU8OY1dT4L/DLm8dIZKJUUQ0yry2SO13e05sMXtOoS51DXrbtWeDjmu48twy6RZvKXh8rx/hh6jmTZ0NC7uLUmBVlson/38KYNWpt/mDEdY=
+Received: from MW4PR03CA0248.namprd03.prod.outlook.com (2603:10b6:303:b4::13)
+ by BN9PR12MB5365.namprd12.prod.outlook.com (2603:10b6:408:102::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.23; Tue, 29 Nov
+ 2022 00:37:42 +0000
+Received: from CO1NAM11FT069.eop-nam11.prod.protection.outlook.com
+ (2603:10b6:303:b4:cafe::ef) by MW4PR03CA0248.outlook.office365.com
+ (2603:10b6:303:b4::13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.23 via Frontend
+ Transport; Tue, 29 Nov 2022 00:37:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1NAM11FT069.mail.protection.outlook.com (10.13.174.129) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.5857.18 via Frontend Transport; Tue, 29 Nov 2022 00:37:41 +0000
+Received: from localhost (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 28 Nov
+ 2022 18:37:41 -0600
+Date:   Mon, 28 Nov 2022 18:37:25 -0600
+From:   Michael Roth <michael.roth@amd.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+CC:     <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-arch@vger.kernel.org>, <linux-api@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <qemu-devel@nongnu.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        <x86@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        <luto@kernel.org>, <jun.nakajima@intel.com>,
+        <dave.hansen@intel.com>, <ak@linux.intel.com>, <david@redhat.com>,
+        <aarcange@redhat.com>, <ddutile@redhat.com>, <dhildenb@redhat.com>,
+        Quentin Perret <qperret@google.com>, <tabba@google.com>,
+        <mhocko@suse.com>, Muchun Song <songmuchun@bytedance.com>,
+        <wei.w.wang@intel.com>
+Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
+ create restricted user memory
+Message-ID: <20221129003725.l34qhx6n44mq2gtl@amd.com>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+In-Reply-To: <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
+X-Originating-IP: [10.180.168.240]
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1NAM11FT069:EE_|BN9PR12MB5365:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7020e32d-c816-4706-ce34-08dad1a1ecd3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: XlNydLW3CsbPuUF/x5xiQLgERHp9/KZKIR4bXSgQE/5IC1NnGg/TPnGudVmYI7ZiP49Y7KjjB6Pt2jeEpfjl3UwmeS4Mb2QEWgXUEFR3Ub2bMYQ+0betdArusckaz5+2cqYkvil8e5IBxiizY2HZbO0syZ6GxRHE/nAtrfBTe6/kVUD3mjyGDzykR2f8Z4Go+CvUB3zzcJkW+LYNSGTweowm0rO1LGsE2Lgc2HTfPmTc1t2rPNnfz83nTu0YZkpa/+thFxxQmrSkgmuTgZSt2mklTGos32leOaMhXazu3vZLZY1G67dyyRoOTYanwzW45sVsEPx9wGr6LnyaibaD9hi4IGP5I/2lStZjLNhKi4Bb8TDz5lQPSDQC6q6U2clXSx7kcpZnkh6uZs6WZH1LyKyCJBFRCwCRUqtpe8pnVO13V3FqRWgyE/QzQKr+C+5TZ7Sg+IrGB+/ULqBcQAE2Ai9NTbCamQOPubniJxmuBj+S2Udvmr4s3wMIh7OW7SWjTcIjy+Wzl7Wu3NHHore3QVumllHZI2bmx2OrKu8tpPqZobwjnBmPA7G4kGk96cq7L0SAmLGwk5X4mGajLq7UBjhRw8oxyDVm9z9PCwecLsbnnyzjtNbeI0idmhCXm4xAZ4mo89sRFn+lh43aMQvmA9S7+l1qP+xiZf2OA5stMYY1OVzJnyuFu1dA2TaeedUHVSR8z1A9DfD6ukfcEH1mOpeCaTtD4QoCaQJS8BuR7TTqJltRIhrvKuwkDowdH+7yGrujLU4zhSBUxqNKnWbGUg==
+X-Forefront-Antispam-Report: CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230022)(4636009)(136003)(376002)(39860400002)(396003)(346002)(451199015)(36840700001)(46966006)(40470700004)(82310400005)(36756003)(8676002)(336012)(41300700001)(186003)(8936002)(70206006)(16526019)(70586007)(966005)(2616005)(6666004)(40460700003)(478600001)(316002)(4326008)(81166007)(356005)(86362001)(40480700001)(83380400001)(5660300002)(2906002)(426003)(47076005)(7416002)(7406005)(26005)(1076003)(36860700001)(54906003)(6916009)(44832011)(82740400003)(30864003)(36900700001);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 29 Nov 2022 00:37:41.7871
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7020e32d-c816-4706-ce34-08dad1a1ecd3
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource: CO1NAM11FT069.eop-nam11.prod.protection.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN9PR12MB5365
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -69,166 +129,367 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Darrick,
+On Tue, Oct 25, 2022 at 11:13:37PM +0800, Chao Peng wrote:
+> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> 
+> Introduce 'memfd_restricted' system call with the ability to create
+> memory areas that are restricted from userspace access through ordinary
+> MMU operations (e.g. read/write/mmap). The memory content is expected to
+> be used through a new in-kernel interface by a third kernel module.
+> 
+> memfd_restricted() is useful for scenarios where a file descriptor(fd)
+> can be used as an interface into mm but want to restrict userspace's
+> ability on the fd. Initially it is designed to provide protections for
+> KVM encrypted guest memory.
+> 
+> Normally KVM uses memfd memory via mmapping the memfd into KVM userspace
+> (e.g. QEMU) and then using the mmaped virtual address to setup the
+> mapping in the KVM secondary page table (e.g. EPT). With confidential
+> computing technologies like Intel TDX, the memfd memory may be encrypted
+> with special key for special software domain (e.g. KVM guest) and is not
+> expected to be directly accessed by userspace. Precisely, userspace
+> access to such encrypted memory may lead to host crash so should be
+> prevented.
+> 
+> memfd_restricted() provides semantics required for KVM guest encrypted
+> memory support that a fd created with memfd_restricted() is going to be
+> used as the source of guest memory in confidential computing environment
+> and KVM can directly interact with core-mm without the need to expose
+> the memoy content into KVM userspace.
+> 
+> KVM userspace is still in charge of the lifecycle of the fd. It should
+> pass the created fd to KVM. KVM uses the new restrictedmem_get_page() to
+> obtain the physical memory page and then uses it to populate the KVM
+> secondary page table entries.
+> 
+> The userspace restricted memfd can be fallocate-ed or hole-punched
+> from userspace. When these operations happen, KVM can get notified
+> through restrictedmem_notifier, it then gets chance to remove any
+> mapped entries of the range in the secondary page tables.
+> 
+> memfd_restricted() itself is implemented as a shim layer on top of real
+> memory file systems (currently tmpfs). Pages in restrictedmem are marked
+> as unmovable and unevictable, this is required for current confidential
+> usage. But in future this might be changed.
+> 
+> By default memfd_restricted() prevents userspace read, write and mmap.
+> By defining new bit in the 'flags', it can be extended to support other
+> restricted semantics in the future.
+> 
+> The system call is currently wired up for x86 arch.
+> 
+> Signed-off-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> ---
+>  arch/x86/entry/syscalls/syscall_32.tbl |   1 +
+>  arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+>  include/linux/restrictedmem.h          |  62 ++++++
+>  include/linux/syscalls.h               |   1 +
+>  include/uapi/asm-generic/unistd.h      |   5 +-
+>  include/uapi/linux/magic.h             |   1 +
+>  kernel/sys_ni.c                        |   3 +
+>  mm/Kconfig                             |   4 +
+>  mm/Makefile                            |   1 +
+>  mm/restrictedmem.c                     | 250 +++++++++++++++++++++++++
+>  10 files changed, 328 insertions(+), 1 deletion(-)
+>  create mode 100644 include/linux/restrictedmem.h
+>  create mode 100644 mm/restrictedmem.c
+> 
+> diff --git a/arch/x86/entry/syscalls/syscall_32.tbl b/arch/x86/entry/syscalls/syscall_32.tbl
+> index 320480a8db4f..dc70ba90247e 100644
+> --- a/arch/x86/entry/syscalls/syscall_32.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_32.tbl
+> @@ -455,3 +455,4 @@
+>  448	i386	process_mrelease	sys_process_mrelease
+>  449	i386	futex_waitv		sys_futex_waitv
+>  450	i386	set_mempolicy_home_node		sys_set_mempolicy_home_node
+> +451	i386	memfd_restricted	sys_memfd_restricted
+> diff --git a/arch/x86/entry/syscalls/syscall_64.tbl b/arch/x86/entry/syscalls/syscall_64.tbl
+> index c84d12608cd2..06516abc8318 100644
+> --- a/arch/x86/entry/syscalls/syscall_64.tbl
+> +++ b/arch/x86/entry/syscalls/syscall_64.tbl
+> @@ -372,6 +372,7 @@
+>  448	common	process_mrelease	sys_process_mrelease
+>  449	common	futex_waitv		sys_futex_waitv
+>  450	common	set_mempolicy_home_node	sys_set_mempolicy_home_node
+> +451	common	memfd_restricted	sys_memfd_restricted
+>  
+>  #
+>  # Due to a historical design error, certain syscalls are numbered differently
+> diff --git a/include/linux/restrictedmem.h b/include/linux/restrictedmem.h
+> new file mode 100644
+> index 000000000000..9c37c3ea3180
+> --- /dev/null
+> +++ b/include/linux/restrictedmem.h
+> @@ -0,0 +1,62 @@
+> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+> +#ifndef _LINUX_RESTRICTEDMEM_H
+> +
+> +#include <linux/file.h>
+> +#include <linux/magic.h>
+> +#include <linux/pfn_t.h>
+> +
+> +struct restrictedmem_notifier;
+> +
+> +struct restrictedmem_notifier_ops {
+> +	void (*invalidate_start)(struct restrictedmem_notifier *notifier,
+> +				 pgoff_t start, pgoff_t end);
+> +	void (*invalidate_end)(struct restrictedmem_notifier *notifier,
+> +			       pgoff_t start, pgoff_t end);
+> +};
+> +
+> +struct restrictedmem_notifier {
+> +	struct list_head list;
+> +	const struct restrictedmem_notifier_ops *ops;
+> +};
+> +
+> +#ifdef CONFIG_RESTRICTEDMEM
+> +
+> +void restrictedmem_register_notifier(struct file *file,
+> +				     struct restrictedmem_notifier *notifier);
+> +void restrictedmem_unregister_notifier(struct file *file,
+> +				       struct restrictedmem_notifier *notifier);
+> +
+> +int restrictedmem_get_page(struct file *file, pgoff_t offset,
+> +			   struct page **pagep, int *order);
+> +
+> +static inline bool file_is_restrictedmem(struct file *file)
+> +{
+> +	return file->f_inode->i_sb->s_magic == RESTRICTEDMEM_MAGIC;
+> +}
+> +
+> +#else
+> +
+> +static inline void restrictedmem_register_notifier(struct file *file,
+> +				     struct restrictedmem_notifier *notifier)
+> +{
+> +}
+> +
+> +static inline void restrictedmem_unregister_notifier(struct file *file,
+> +				       struct restrictedmem_notifier *notifier)
+> +{
+> +}
+> +
+> +static inline int restrictedmem_get_page(struct file *file, pgoff_t offset,
+> +					 struct page **pagep, int *order)
+> +{
+> +	return -1;
+> +}
+> +
+> +static inline bool file_is_restrictedmem(struct file *file)
+> +{
+> +	return false;
+> +}
+> +
+> +#endif /* CONFIG_RESTRICTEDMEM */
+> +
+> +#endif /* _LINUX_RESTRICTEDMEM_H */
+> diff --git a/include/linux/syscalls.h b/include/linux/syscalls.h
+> index a34b0f9a9972..f9e9e0c820c5 100644
+> --- a/include/linux/syscalls.h
+> +++ b/include/linux/syscalls.h
+> @@ -1056,6 +1056,7 @@ asmlinkage long sys_memfd_secret(unsigned int flags);
+>  asmlinkage long sys_set_mempolicy_home_node(unsigned long start, unsigned long len,
+>  					    unsigned long home_node,
+>  					    unsigned long flags);
+> +asmlinkage long sys_memfd_restricted(unsigned int flags);
+>  
+>  /*
+>   * Architecture-specific system calls
+> diff --git a/include/uapi/asm-generic/unistd.h b/include/uapi/asm-generic/unistd.h
+> index 45fa180cc56a..e93cd35e46d0 100644
+> --- a/include/uapi/asm-generic/unistd.h
+> +++ b/include/uapi/asm-generic/unistd.h
+> @@ -886,8 +886,11 @@ __SYSCALL(__NR_futex_waitv, sys_futex_waitv)
+>  #define __NR_set_mempolicy_home_node 450
+>  __SYSCALL(__NR_set_mempolicy_home_node, sys_set_mempolicy_home_node)
+>  
+> +#define __NR_memfd_restricted 451
+> +__SYSCALL(__NR_memfd_restricted, sys_memfd_restricted)
+> +
+>  #undef __NR_syscalls
+> -#define __NR_syscalls 451
+> +#define __NR_syscalls 452
+>  
+>  /*
+>   * 32 bit systems traditionally used different
+> diff --git a/include/uapi/linux/magic.h b/include/uapi/linux/magic.h
+> index 6325d1d0e90f..8aa38324b90a 100644
+> --- a/include/uapi/linux/magic.h
+> +++ b/include/uapi/linux/magic.h
+> @@ -101,5 +101,6 @@
+>  #define DMA_BUF_MAGIC		0x444d4142	/* "DMAB" */
+>  #define DEVMEM_MAGIC		0x454d444d	/* "DMEM" */
+>  #define SECRETMEM_MAGIC		0x5345434d	/* "SECM" */
+> +#define RESTRICTEDMEM_MAGIC	0x5245534d	/* "RESM" */
+>  
+>  #endif /* __LINUX_MAGIC_H__ */
+> diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
+> index 860b2dcf3ac4..7c4a32cbd2e7 100644
+> --- a/kernel/sys_ni.c
+> +++ b/kernel/sys_ni.c
+> @@ -360,6 +360,9 @@ COND_SYSCALL(pkey_free);
+>  /* memfd_secret */
+>  COND_SYSCALL(memfd_secret);
+>  
+> +/* memfd_restricted */
+> +COND_SYSCALL(memfd_restricted);
+> +
+>  /*
+>   * Architecture specific weak syscall entries.
+>   */
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 0331f1461f81..0177d53676c7 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -1076,6 +1076,10 @@ config IO_MAPPING
+>  config SECRETMEM
+>  	def_bool ARCH_HAS_SET_DIRECT_MAP && !EMBEDDED
+>  
+> +config RESTRICTEDMEM
+> +	bool
+> +	depends on TMPFS
+> +
+>  config ANON_VMA_NAME
+>  	bool "Anonymous VMA name support"
+>  	depends on PROC_FS && ADVISE_SYSCALLS && MMU
+> diff --git a/mm/Makefile b/mm/Makefile
+> index 9a564f836403..6cb6403ffd40 100644
+> --- a/mm/Makefile
+> +++ b/mm/Makefile
+> @@ -117,6 +117,7 @@ obj-$(CONFIG_PAGE_EXTENSION) += page_ext.o
+>  obj-$(CONFIG_PAGE_TABLE_CHECK) += page_table_check.o
+>  obj-$(CONFIG_CMA_DEBUGFS) += cma_debug.o
+>  obj-$(CONFIG_SECRETMEM) += secretmem.o
+> +obj-$(CONFIG_RESTRICTEDMEM) += restrictedmem.o
+>  obj-$(CONFIG_CMA_SYSFS) += cma_sysfs.o
+>  obj-$(CONFIG_USERFAULTFD) += userfaultfd.o
+>  obj-$(CONFIG_IDLE_PAGE_TRACKING) += page_idle.o
+> diff --git a/mm/restrictedmem.c b/mm/restrictedmem.c
+> new file mode 100644
+> index 000000000000..e5bf8907e0f8
+> --- /dev/null
+> +++ b/mm/restrictedmem.c
+> @@ -0,0 +1,250 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#include "linux/sbitmap.h"
+> +#include <linux/pagemap.h>
+> +#include <linux/pseudo_fs.h>
+> +#include <linux/shmem_fs.h>
+> +#include <linux/syscalls.h>
+> +#include <uapi/linux/falloc.h>
+> +#include <uapi/linux/magic.h>
+> +#include <linux/restrictedmem.h>
+> +
+> +struct restrictedmem_data {
+> +	struct mutex lock;
+> +	struct file *memfd;
+> +	struct list_head notifiers;
+> +};
+> +
+> +static void restrictedmem_notifier_invalidate(struct restrictedmem_data *data,
+> +				 pgoff_t start, pgoff_t end, bool notify_start)
+> +{
+> +	struct restrictedmem_notifier *notifier;
+> +
+> +	mutex_lock(&data->lock);
+> +	list_for_each_entry(notifier, &data->notifiers, list) {
+> +		if (notify_start)
+> +			notifier->ops->invalidate_start(notifier, start, end);
+> +		else
+> +			notifier->ops->invalidate_end(notifier, start, end);
+> +	}
+> +	mutex_unlock(&data->lock);
+> +}
+> +
+> +static int restrictedmem_release(struct inode *inode, struct file *file)
+> +{
+> +	struct restrictedmem_data *data = inode->i_mapping->private_data;
+> +
+> +	fput(data->memfd);
+> +	kfree(data);
+> +	return 0;
+> +}
+> +
+> +static long restrictedmem_fallocate(struct file *file, int mode,
+> +				    loff_t offset, loff_t len)
+> +{
+> +	struct restrictedmem_data *data = file->f_mapping->private_data;
+> +	struct file *memfd = data->memfd;
+> +	int ret;
+> +
+> +	if (mode & FALLOC_FL_PUNCH_HOLE) {
+> +		if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
+> +			return -EINVAL;
+> +	}
+> +
+> +	restrictedmem_notifier_invalidate(data, offset, offset + len, true);
 
-Can you please pull the data corruption fix from the tag below? The
-only change since the last posting was to remove the unused error
-variable from the iomap punch code. I haven't seen any regressions
-in local testing over the past week, so I think it is good to go.
+The KVM restrictedmem ops seem to expect pgoff_t, but here we pass
+loff_t. For SNP we've made this strange as part of the following patch
+and it seems to produce the expected behavior:
 
--Dave.
+  https://github.com/mdroth/linux/commit/d669c7d3003ff7a7a47e73e8c3b4eeadbd2c4eb6
 
-------
+> +	ret = memfd->f_op->fallocate(memfd, mode, offset, len);
+> +	restrictedmem_notifier_invalidate(data, offset, offset + len, false);
+> +	return ret;
+> +}
+> +
 
-The following changes since commit f0c4d9fc9cc9462659728d168387191387e903cc:
+<snip>
 
-  Linux 6.1-rc4 (2022-11-06 15:07:11 -0800)
+> +int restrictedmem_get_page(struct file *file, pgoff_t offset,
+> +			   struct page **pagep, int *order)
+> +{
+> +	struct restrictedmem_data *data = file->f_mapping->private_data;
+> +	struct file *memfd = data->memfd;
+> +	struct page *page;
+> +	int ret;
+> +
+> +	ret = shmem_getpage(file_inode(memfd), offset, &page, SGP_WRITE);
 
-are available in the Git repository at:
+This will result in KVM allocating pages that userspace hasn't necessary
+fallocate()'d. In the case of SNP we need to get the PFN so we can clean
+up the RMP entries when restrictedmem invalidations are issued for a GFN
+range.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs tags/xfs-iomap-stale-fixes
+If the guest supports lazy-acceptance however, these pages may not have
+been faulted in yet, and if the VMM defers actually fallocate()'ing space
+until the guest actually tries to issue a shared->private for that GFN
+(to support lazy-pinning), then there may never be a need to allocate
+pages for these backends.
 
-for you to fetch changes up to 6e8af15ccdc4e138a5b529c1901a0013e1dcaa09:
+However, the restrictedmem invalidations are for GFN ranges so there's
+no way to know inadvance whether it's been allocated yet or not. The
+xarray is one option but currently it defaults to 'private' so that
+doesn't help us here. It might if we introduced a 'uninitialized' state
+or something along that line instead of just the binary
+'shared'/'private' though...
 
-  xfs: drop write error injection is unfixable, remove it (2022-11-29 09:09:17 +1100)
+But for now we added a restrictedmem_get_page_noalloc() that uses
+SGP_NONE instead of SGP_WRITE to avoid accidentally allocating a bunch
+of memory as part of guest shutdown, and a
+kvm_restrictedmem_get_pfn_noalloc() variant to go along with that. But
+maybe a boolean param is better? Or maybe SGP_NOALLOC is the better
+default, and we just propagate an error to userspace if they didn't
+fallocate() in advance?
 
-----------------------------------------------------------------
-xfs, iomap: fix data corruption due to stale cached iomaps
+-Mike
 
-This patch series fixes a data corruption that occurs in a specific
-multi-threaded write workload. The workload combined
-racing unaligned adjacent buffered writes with low memory conditions
-that caused both writeback and memory reclaim to race with the
-writes.
-
-The result of this was random partial blocks containing zeroes
-instead of the correct data.  The underlying problem is that iomap
-caches the write iomap for the duration of the write() operation,
-but it fails to take into account that the extent underlying the
-iomap can change whilst the write is in progress.
-
-The short story is that an iomap can span mutliple folios, and so
-under low memory writeback can be cleaning folios the write()
-overlaps. Whilst the overlapping data is cached in memory, this
-isn't a problem, but because the folios are now clean they can be
-reclaimed. Once reclaimed, the write() does the wrong thing when
-re-instantiating partial folios because the iomap no longer reflects
-the underlying state of the extent. e.g. it thinks the extent is
-unwritten, so it zeroes the partial range, when in fact the
-underlying extent is now written and so it should have read the data
-from disk.  This is how we get random zero ranges in the file
-instead of the correct data.
-
-The gory details of the race condition can be found here:
-
-https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
-
-Fixing the problem has two aspects. The first aspect of the problem
-is ensuring that iomap can detect a stale cached iomap during a
-write in a race-free manner. We already do this stale iomap
-detection in the writeback path, so we have a mechanism for
-detecting that the iomap backing the data range may have changed
-and needs to be remapped.
-
-In the case of the write() path, we have to ensure that the iomap is
-validated at a point in time when the page cache is stable and
-cannot be reclaimed from under us. We also need to validate the
-extent before we start performing any modifications to the folio
-state or contents. Combine these two requirements together, and the
-only "safe" place to validate the iomap is after we have looked up
-and locked the folio we are going to copy the data into, but before
-we've performed any initialisation operations on that folio.
-
-If the iomap fails validation, we then mark it stale, unlock the
-folio and end the write. This effectively means a stale iomap
-results in a short write. Filesystems should already be able to
-handle this, as write operations can end short for many reasons and
-need to iterate through another mapping cycle to be completed. Hence
-the iomap changes needed to detect and handle stale iomaps during
-write() operations is relatively simple...
-
-However, the assumption is that filesystems should already be able
-to handle write failures safely, and that's where the second
-(first?) part of the problem exists. That is, handling a partial
-write is harder than just "punching out the unused delayed
-allocation extent". This is because mmap() based faults can race
-with writes, and if they land in the delalloc region that the write
-allocated, then punching out the delalloc region can cause data
-corruption.
-
-This data corruption problem is exposed by generic/346 when iomap is
-converted to detect stale iomaps during write() operations. Hence
-write failure in the filesytems needs to handle the fact that the
-write() in progress doesn't necessarily own the data in the page
-cache over the range of the delalloc extent it just allocated.
-
-As a result, we can't just truncate the page cache over the range
-the write() didn't reach and punch all the delalloc extent. We have
-to walk the page cache over the untouched range and skip over any
-dirty data region in the cache in that range. Which is ....
-non-trivial.
-
-That is, iterating the page cache has to handle partially populated
-folios (i.e. block size < page size) that contain data. The data
-might be discontiguous within a folio. Indeed, there might be
-*multiple* discontiguous data regions within a single folio. And to
-make matters more complex, multi-page folios mean we just don't know
-how many sub-folio regions we might have to iterate to find all
-these regions. All the corner cases between the conversions and
-rounding between filesystem block size, folio size and multi-page
-folio size combined with unaligned write offsets kept breaking my
-brain.
-
-However, if we convert the code to track the processed
-write regions by byte ranges instead of fileystem block or page
-cache index, we could simply use mapping_seek_hole_data() to find
-the start and end of each discrete data region within the range we
-needed to scan. SEEK_DATA finds the start of the cached data region,
-SEEK_HOLE finds the end of the region. These are byte based
-interfaces that understand partially uptodate folio regions, and so
-can iterate discrete sub-folio data regions directly. This largely
-solved the problem of discovering the dirty regions we need to keep
-the delalloc extent over.
-
-However, to use mapping_seek_hole_data() without needing to export
-it, we have to move all the delalloc extent cleanup to the iomap
-core and so now the iomap core can clean up delayed allocation
-extents in a safe, sane and filesystem neutral manner.
-
-With all this done, the original data corruption never occurs
-anymore, and we now have a generic mechanism for ensuring that page
-cache writes do not do the wrong thing when writeback and reclaim
-change the state of the physical extent and/or page cache contents
-whilst the write is in progress.
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
-
-----------------------------------------------------------------
-Dave Chinner (9):
-      xfs: write page faults in iomap are not buffered writes
-      xfs: punching delalloc extents on write failure is racy
-      xfs: use byte ranges for write cleanup ranges
-      xfs,iomap: move delalloc punching to iomap
-      iomap: buffered write failure should not truncate the page cache
-      xfs: xfs_bmap_punch_delalloc_range() should take a byte range
-      iomap: write iomap validity checks
-      xfs: use iomap_valid method to detect stale cached iomaps
-      xfs: drop write error injection is unfixable, remove it
-
- fs/iomap/buffered-io.c       | 254 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
- fs/iomap/iter.c              |  19 +++++++++-
- fs/xfs/libxfs/xfs_bmap.c     |   6 ++-
- fs/xfs/libxfs/xfs_errortag.h |  12 +++---
- fs/xfs/xfs_aops.c            |  18 ++++-----
- fs/xfs/xfs_bmap_util.c       |  10 +++--
- fs/xfs/xfs_bmap_util.h       |   2 +-
- fs/xfs/xfs_error.c           |  27 +++++++++----
- fs/xfs/xfs_file.c            |   2 +-
- fs/xfs/xfs_iomap.c           | 169 +++++++++++++++++++++++++++++++++++++++++++++++++---------------------------------
- fs/xfs/xfs_iomap.h           |   6 ++-
- fs/xfs/xfs_pnfs.c            |   6 ++-
- include/linux/iomap.h        |  47 +++++++++++++++++++----
- 13 files changed, 464 insertions(+), 114 deletions(-)
--- 
-Dave Chinner
-david@fromorbit.com
+> +	if (ret)
+> +		return ret;
+> +
+> +	*pagep = page;
+> +	if (order)
+> +		*order = thp_order(compound_head(page));
+> +
+> +	SetPageUptodate(page);
+> +	unlock_page(page);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(restrictedmem_get_page);
+> -- 
+> 2.25.1
+> 
