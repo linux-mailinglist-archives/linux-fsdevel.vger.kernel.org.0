@@ -2,207 +2,148 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1CFC063B715
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 02:22:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E936D63B74C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 02:35:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235052AbiK2BW3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Nov 2022 20:22:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50030 "EHLO
+        id S235097AbiK2Be7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Nov 2022 20:34:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34532 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235021AbiK2BWT (ORCPT
+        with ESMTP id S234915AbiK2Be5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Nov 2022 20:22:19 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 307B342F56;
-        Mon, 28 Nov 2022 17:22:04 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BFBF361195;
-        Tue, 29 Nov 2022 01:22:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23E7BC433D6;
-        Tue, 29 Nov 2022 01:22:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669684923;
-        bh=J1bUv5N+o2pBz4zrbz+h04R0Qnbsu21Wh5lla/Wk28M=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=G6GCFi6IXMYJ2fiflzu5FKoz1x1fecOX8Kug1V0WHOWV/epsh/f8+lu+i0Rhz97tF
-         4hVnAo42tDOXqPjPCMBcYtwJZbGpL26dSS81XQacGkL1GkLk78y4SQrV5vS8qiKnMY
-         3jzVlFD/u784Ok8reGH3dlFPWcEtqkFtK4z4/wINU77bwEFNppvN8QbeiJi2QYQLgP
-         N2NkO7iz8p7GnQlQiZ9dv9Vv41bZhdDUV5w8tGnLAb91f+VjrDNDDXLkqNBFZJ+bi7
-         zItmvFH4KqsNhHPvMtqnqtkuFgTxCzXci0rArPL3VZB5vv4XuWnc8p3JdXOVhx+CIt
-         N12sGM/Iup3yQ==
-Date:   Mon, 28 Nov 2022 17:22:02 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
+        Mon, 28 Nov 2022 20:34:57 -0500
+Received: from mail-pf1-x432.google.com (mail-pf1-x432.google.com [IPv6:2607:f8b0:4864:20::432])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1947642F7F
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 17:34:57 -0800 (PST)
+Received: by mail-pf1-x432.google.com with SMTP id x66so12265946pfx.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 17:34:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8UxR0vmo60MaG7PcPSAExNLPv9v74btYUzUjbptZdnw=;
+        b=FtcJe+Uu937tlBSvl8+oJHblsX7O5ip2QzxvDGMrtje7JTh6zZWGHZd6yTtEKi+ByG
+         Kc9v5fAaW60PHuovrWHwDJYPX7voRZ4Z/DhqbrC15uhQ2ZWNrdCUkFklGmdeuohLqSDI
+         OULxtKp8/nsCO6/Bc8Dv877fFmAilfXyDXHbp02Dq3YmKfwfdByB89faOjqPRSudESvE
+         9eY5tZx7+X8RECSDEexPY5sIg5XTHb/HFJsUdsrrhb7x1DthwoRoHOHcCZtIvzNX2T+a
+         D3u4+f6DskTnM4/mK2Q3hgR8Zc1UP1BIVkkLtFzOrIpwt1TXrJnQRXTYDWxJq/5Ge7ZH
+         c+Gg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8UxR0vmo60MaG7PcPSAExNLPv9v74btYUzUjbptZdnw=;
+        b=N4WE/oA2trpeoQ43+y1FSoWKSOeHfDtt6jqGEHreFnrzSzpNCSihqqFhywc9CBvXkJ
+         MRySI1crIn9cRDDyxBFGXuhCXszh7svve4mslzsp5tdsBkX+qeB987M7zF7aIbNNjYg+
+         OkE264klKZm/Vd10HIAVQZ3ABmx5p01ckM3vnEOpNgLjuYfd73V+0hqZVOPw5Nr3Zlak
+         ut8EyLgOcmef1oYJI0vTBpIj7HO1EVW4NJx2dFXeA/UvRxhKi9FGzPMN0GvQ5PS9et/Z
+         0XwFbNBKQrHB2yZYgupYsWCydzYbCjnIULFiE3z2wP3jUwutcYjkc8YxuKsnxKTFbThp
+         whVA==
+X-Gm-Message-State: ANoB5pniyK94isYAr/HFzNhgiAWl9ux3a2FlZU8vRgdmRGq4Z8IavK8L
+        LHyrokmr/5LI8/ptsLsBWISGjA==
+X-Google-Smtp-Source: AA0mqf6RitAbceu9CoV8/Tiea4fE55+y/t+UK4nK3ogoOUTC2ZvtezEgr29dqMX1MepyTXYmymkarQ==
+X-Received: by 2002:a63:1b60:0:b0:46f:b2a5:2e2d with SMTP id b32-20020a631b60000000b0046fb2a52e2dmr32937222pgm.400.1669685696608;
+        Mon, 28 Nov 2022 17:34:56 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-65-106.pa.vic.optusnet.com.au. [49.186.65.106])
+        by smtp.gmail.com with ESMTPSA id t3-20020a17090340c300b001897a8b537asm5011150pld.221.2022.11.28.17.34.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Nov 2022 17:34:56 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ozpWP-002FWy-CT; Tue, 29 Nov 2022 12:34:53 +1100
+Date:   Tue, 29 Nov 2022 12:34:53 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 11/9] xfs: add debug knob to slow down write for fun
-Message-ID: <Y4VeuqfVBU4/x9aB@magnolia>
+Subject: Re: [PATCH v2 10/9] xfs: add debug knob to slow down writeback for
+ fun
+Message-ID: <20221129013453.GY3600936@dread.disaster.area>
 References: <20221123055812.747923-1-david@fromorbit.com>
- <Y4U3dj5qvpKSQuNM@magnolia>
+ <Y4U3XWf5j1zVGvV4@magnolia>
+ <Y4VejsHGU/tZuRYs@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y4U3dj5qvpKSQuNM@magnolia>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y4VejsHGU/tZuRYs@magnolia>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Darrick J. Wong <djwong@kernel.org>
+On Mon, Nov 28, 2022 at 05:21:18PM -0800, Darrick J. Wong wrote:
+> From: Darrick J. Wong <djwong@kernel.org>
+> 
+> Add a new error injection knob so that we can arbitrarily slow down
+> writeback to test for race conditions and aberrant reclaim behavior if
+> the writeback mechanisms are slow to issue writeback.  This will enable
+> functional testing for the ifork sequence counters introduced in commit
+> 745b3f76d1c8 ("xfs: maintain a sequence count for inode fork
+> manipulations").
+> 
+> Signed-off-by: Darrick J. Wong <djwong@kernel.org>
+> ---
+> v2: this time with tracepoints
+> ---
+.....
 
-Add a new error injection knob so that we can arbitrarily slow down
-pagecahe writes to test for race conditions and aberrant reclaim
-behavior if the writeback mechanisms are slow to issue writeback.  This
-will enable functional testing for the ifork sequence counters
-introduced in commit XXXXXXXXXXXX that fixes write racing with reclaim
-writeback.
+> @@ -267,6 +270,14 @@ xfs_errortag_valid(
+>  	return true;
+>  }
+>  
+> +bool
+> +xfs_errortag_enabled(
+> +	struct xfs_mount	*mp,
+> +	unsigned int		tag)
+> +{
+> +	return mp->m_errortag && mp->m_errortag[tag] != 0;
+> +}
 
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
----
-v2: this time with tracepoints
----
- fs/xfs/libxfs/xfs_errortag.h |    4 +++-
- fs/xfs/xfs_error.c           |    3 +++
- fs/xfs/xfs_iomap.c           |   14 ++++++++++++--
- fs/xfs/xfs_trace.h           |   42 ++++++++++++++++++++++++++++++++++++++++++
- 4 files changed, 60 insertions(+), 3 deletions(-)
+Perhaps consider using the new xfs_errortag_valid() helper? i.e.
 
-diff --git a/fs/xfs/libxfs/xfs_errortag.h b/fs/xfs/libxfs/xfs_errortag.h
-index f5f629174eca..01a9e86b3037 100644
---- a/fs/xfs/libxfs/xfs_errortag.h
-+++ b/fs/xfs/libxfs/xfs_errortag.h
-@@ -62,7 +62,8 @@
- #define XFS_ERRTAG_DA_LEAF_SPLIT			40
- #define XFS_ERRTAG_ATTR_LEAF_TO_NODE			41
- #define XFS_ERRTAG_WB_DELAY_MS				42
--#define XFS_ERRTAG_MAX					43
-+#define XFS_ERRTAG_WRITE_DELAY_MS			43
-+#define XFS_ERRTAG_MAX					44
- 
- /*
-  * Random factors for above tags, 1 means always, 2 means 1/2 time, etc.
-@@ -109,5 +110,6 @@
- #define XFS_RANDOM_DA_LEAF_SPLIT			1
- #define XFS_RANDOM_ATTR_LEAF_TO_NODE			1
- #define XFS_RANDOM_WB_DELAY_MS				3000
-+#define XFS_RANDOM_WRITE_DELAY_MS			3000
- 
- #endif /* __XFS_ERRORTAG_H_ */
-diff --git a/fs/xfs/xfs_error.c b/fs/xfs/xfs_error.c
-index 13ac52e7f9e5..d9f9ee969fab 100644
---- a/fs/xfs/xfs_error.c
-+++ b/fs/xfs/xfs_error.c
-@@ -61,6 +61,7 @@ static unsigned int xfs_errortag_random_default[] = {
- 	XFS_RANDOM_DA_LEAF_SPLIT,
- 	XFS_RANDOM_ATTR_LEAF_TO_NODE,
- 	XFS_RANDOM_WB_DELAY_MS,
-+	XFS_RANDOM_WRITE_DELAY_MS,
- };
- 
- struct xfs_errortag_attr {
-@@ -177,6 +178,7 @@ XFS_ERRORTAG_ATTR_RW(larp,		XFS_ERRTAG_LARP);
- XFS_ERRORTAG_ATTR_RW(da_leaf_split,	XFS_ERRTAG_DA_LEAF_SPLIT);
- XFS_ERRORTAG_ATTR_RW(attr_leaf_to_node,	XFS_ERRTAG_ATTR_LEAF_TO_NODE);
- XFS_ERRORTAG_ATTR_RW(wb_delay_ms,	XFS_ERRTAG_WB_DELAY_MS);
-+XFS_ERRORTAG_ATTR_RW(write_delay_ms,	XFS_ERRTAG_WRITE_DELAY_MS);
- 
- static struct attribute *xfs_errortag_attrs[] = {
- 	XFS_ERRORTAG_ATTR_LIST(noerror),
-@@ -221,6 +223,7 @@ static struct attribute *xfs_errortag_attrs[] = {
- 	XFS_ERRORTAG_ATTR_LIST(da_leaf_split),
- 	XFS_ERRORTAG_ATTR_LIST(attr_leaf_to_node),
- 	XFS_ERRORTAG_ATTR_LIST(wb_delay_ms),
-+	XFS_ERRORTAG_ATTR_LIST(write_delay_ms),
- 	NULL,
- };
- ATTRIBUTE_GROUPS(xfs_errortag);
-diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-index 1bdd7afc1010..1005f1e36545 100644
---- a/fs/xfs/xfs_iomap.c
-+++ b/fs/xfs/xfs_iomap.c
-@@ -27,6 +27,8 @@
- #include "xfs_dquot_item.h"
- #include "xfs_dquot.h"
- #include "xfs_reflink.h"
-+#include "xfs_error.h"
-+#include "xfs_errortag.h"
- 
- #define XFS_ALLOC_ALIGN(mp, off) \
- 	(((off) >> mp->m_allocsize_log) << mp->m_allocsize_log)
-@@ -71,8 +73,16 @@ xfs_iomap_valid(
- 	struct inode		*inode,
- 	const struct iomap	*iomap)
- {
--	return iomap->validity_cookie ==
--			xfs_iomap_inode_sequence(XFS_I(inode), iomap->flags);
-+	struct xfs_inode	*ip = XFS_I(inode);
-+
-+	if (iomap->validity_cookie !=
-+			xfs_iomap_inode_sequence(ip, iomap->flags)) {
-+		trace_xfs_iomap_invalid(ip, iomap);
-+		return false;
-+	}
-+
-+	XFS_ERRORTAG_DELAY(ip->i_mount, XFS_ERRTAG_WRITE_DELAY_MS);
-+	return true;
- }
- 
- const struct iomap_page_ops xfs_iomap_page_ops = {
-diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-index c9ada9577a4a..421d1e504ac4 100644
---- a/fs/xfs/xfs_trace.h
-+++ b/fs/xfs/xfs_trace.h
-@@ -3396,6 +3396,48 @@ DEFINE_EVENT(xfs_wb_invalid_class, name, \
- DEFINE_WB_INVALID_EVENT(xfs_wb_cow_iomap_invalid);
- DEFINE_WB_INVALID_EVENT(xfs_wb_data_iomap_invalid);
- 
-+DECLARE_EVENT_CLASS(xfs_iomap_invalid_class,
-+	TP_PROTO(struct xfs_inode *ip, const struct iomap *iomap),
-+	TP_ARGS(ip, iomap),
-+	TP_STRUCT__entry(
-+		__field(dev_t, dev)
-+		__field(xfs_ino_t, ino)
-+		__field(u64, addr)
-+		__field(loff_t, pos)
-+		__field(u64, len)
-+		__field(u64, validity_cookie)
-+		__field(u64, inodeseq)
-+		__field(u16, type)
-+		__field(u16, flags)
-+	),
-+	TP_fast_assign(
-+		__entry->dev = VFS_I(ip)->i_sb->s_dev;
-+		__entry->ino = ip->i_ino;
-+		__entry->addr = iomap->addr;
-+		__entry->pos = iomap->offset;
-+		__entry->len = iomap->length;
-+		__entry->validity_cookie = iomap->validity_cookie;
-+		__entry->type = iomap->type;
-+		__entry->flags = iomap->flags;
-+		__entry->inodeseq = xfs_iomap_inode_sequence(ip, iomap->flags);
-+	),
-+	TP_printk("dev %d:%d ino 0x%llx pos 0x%llx addr 0x%llx bytecount 0x%llx type 0x%x flags 0x%x validity_cookie 0x%llx inodeseq 0x%llx",
-+		  MAJOR(__entry->dev), MINOR(__entry->dev),
-+		  __entry->ino,
-+		  __entry->pos,
-+		  __entry->addr,
-+		  __entry->len,
-+		  __entry->type,
-+		  __entry->flags,
-+		  __entry->validity_cookie,
-+		  __entry->inodeseq)
-+);
-+#define DEFINE_IOMAP_INVALID_EVENT(name) \
-+DEFINE_EVENT(xfs_iomap_invalid_class, name, \
-+	TP_PROTO(struct xfs_inode *ip, const struct iomap *iomap), \
-+	TP_ARGS(ip, iomap))
-+DEFINE_IOMAP_INVALID_EVENT(xfs_iomap_invalid);
-+
- /* refcount/reflink tracepoint definitions */
- 
- /* reflink tracepoints */
+{
+	if (!mp->errortag)
+		return false;
+	if (!xfs_errortag_valid(tag))
+		return false;
+	return mp->m_errortag[tag] != 0;
+}
+
+> +
+>  bool
+>  xfs_errortag_test(
+>  	struct xfs_mount	*mp,
+> diff --git a/fs/xfs/xfs_error.h b/fs/xfs/xfs_error.h
+> index 5191e9145e55..936d0c52d6af 100644
+> --- a/fs/xfs/xfs_error.h
+> +++ b/fs/xfs/xfs_error.h
+> @@ -45,6 +45,17 @@ extern bool xfs_errortag_test(struct xfs_mount *mp, const char *expression,
+>  		const char *file, int line, unsigned int error_tag);
+>  #define XFS_TEST_ERROR(expr, mp, tag)		\
+>  	((expr) || xfs_errortag_test((mp), #expr, __FILE__, __LINE__, (tag)))
+> +bool xfs_errortag_enabled(struct xfs_mount *mp, unsigned int tag);
+> +#define XFS_ERRORTAG_DELAY(mp, tag)		\
+> +	do { \
+> +		if (!xfs_errortag_enabled((mp), (tag))) \
+> +			break; \
+> +		xfs_warn_ratelimited((mp), \
+> +"Injecting %ums delay at file %s, line %d, on filesystem \"%s\"", \
+> +				(mp)->m_errortag[(tag)], __FILE__, __LINE__, \
+> +				(mp)->m_super->s_id); \
+> +		mdelay((mp)->m_errortag[(tag)]); \
+> +	} while (0)
+
+Putting a might_sleep() in this macro might be a good idea - that
+will catch delays being added inside spin lock contexts...
+
+Other than that, it looks fine.
+
+Reviewed-by: Dave Chinner <dchinner@redhat.com>
+
+-- 
+Dave Chinner
+david@fromorbit.com
