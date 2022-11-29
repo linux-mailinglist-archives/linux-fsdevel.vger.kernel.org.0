@@ -2,48 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1ADA663BC85
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 10:07:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9704263BC8E
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 10:08:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231184AbiK2JHf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Nov 2022 04:07:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46502 "EHLO
+        id S231724AbiK2JIy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Nov 2022 04:08:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48372 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229915AbiK2JHd (ORCPT
+        with ESMTP id S229730AbiK2JIx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Nov 2022 04:07:33 -0500
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8114426ADC;
-        Tue, 29 Nov 2022 01:07:30 -0800 (PST)
-Received: from dggemv704-chm.china.huawei.com (unknown [172.30.72.55])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4NLxKj5zsvz15MSg;
-        Tue, 29 Nov 2022 17:06:49 +0800 (CST)
-Received: from kwepemm600020.china.huawei.com (7.193.23.147) by
- dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 29 Nov 2022 17:07:28 +0800
-Received: from localhost.localdomain (10.175.112.125) by
- kwepemm600020.china.huawei.com (7.193.23.147) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Tue, 29 Nov 2022 17:07:27 +0800
-From:   Peng Zhang <zhangpeng362@huawei.com>
-To:     <zippel@linux-m68k.org>, <akpm@osdl.org>, <slava@dubeyko.com>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sunnanyong@huawei.com>, <wangkefeng.wang@huawei.com>,
-        ZhangPeng <zhangpeng362@huawei.com>,
-        <syzbot+dc3b1cf9111ab5fe98e7@syzkaller.appspotmail.com>
-Subject: [PATCH v2] hfs: Fix OOB Write in hfs_asc2mac
-Date:   Tue, 29 Nov 2022 09:07:06 +0000
-Message-ID: <20221129090706.2336748-1-zhangpeng362@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Tue, 29 Nov 2022 04:08:53 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00A572BC5;
+        Tue, 29 Nov 2022 01:08:51 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 90112615FC;
+        Tue, 29 Nov 2022 09:08:51 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EBBAC433D6;
+        Tue, 29 Nov 2022 09:08:43 +0000 (UTC)
+Message-ID: <c2681582-1e24-7ed9-e4fb-e2dd17a93aed@xs4all.nl>
+Date:   Tue, 29 Nov 2022 10:08:41 +0100
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.112.125]
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm600020.china.huawei.com (7.193.23.147)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH mm-unstable v1 16/20] mm/frame-vector: remove FOLL_FORCE
+ usage
+Content-Language: en-US
+To:     David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-ia64@vger.kernel.org, linux-mips@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org,
+        linux-um@lists.infradead.org, etnaviv@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org, linux-samsung-soc@vger.kernel.org,
+        linux-rdma@vger.kernel.org, linux-media@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        linux-perf-users@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kselftest@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Peter Xu <peterx@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Hugh Dickins <hughd@google.com>, Nadav Amit <namit@vmware.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Matthew Wilcox <willy@infradead.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Muchun Song <songmuchun@bytedance.com>,
+        Shuah Khan <shuah@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        David Airlie <airlied@gmail.com>,
+        Oded Gabbay <ogabbay@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alex Williamson <alex.williamson@redhat.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+References: <20221116102659.70287-1-david@redhat.com>
+ <20221116102659.70287-17-david@redhat.com>
+ <81fb0fa3-2e06-b765-56ac-a7d981194e59@redhat.com>
+ <08b65ac6-6786-1080-18f8-d2be109c85fc@xs4all.nl>
+ <9d0bf98a-3d6a-1082-e992-1338e1525935@redhat.com>
+ <20221128145927.df895bf1966cfa125cae9668@linux-foundation.org>
+ <22b1107b-0acc-5772-a883-8f3c4682eb1b@redhat.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+In-Reply-To: <22b1107b-0acc-5772-a883-8f3c4682eb1b@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,NICE_REPLY_A,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -51,61 +84,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: ZhangPeng <zhangpeng362@huawei.com>
+On 29/11/2022 09:48, David Hildenbrand wrote:
+> On 28.11.22 23:59, Andrew Morton wrote:
+>> On Mon, 28 Nov 2022 09:18:47 +0100 David Hildenbrand <david@redhat.com> wrote:
+>>
+>>>> Less chances of things going wrong that way.
+>>>>
+>>>> Just mention in the v2 cover letter that the first patch was added to
+>>>> make it easy to backport that fix without being hampered by merge
+>>>> conflicts if it was added after your frame_vector.c patch.
+>>>
+>>> Yes, that's the way I would naturally do, it, however, Andrew prefers
+>>> delta updates for minor changes.
+>>>
+>>> @Andrew, whatever you prefer!
+>>
+>> I'm inclined to let things sit as they are.  Cross-tree conflicts
+>> happen, and Linus handles them.  I'll flag this (very simple) conflict
+>> in the pull request, if MM merges second.  If v4l merges second then
+>> hopefully they will do the same.  But this one is so simple that Linus
+>> hardly needs our help.
 
-Syzbot reported a OOB Write bug:
+It's not about cross-tree conflicts, it's about the fact that my patch is
+a fix that needs to be backported to older kernels. It should apply cleanly
+to those older kernels if my patch goes in first, but if it is the other way
+around I would have to make a new patch for the stable kernels.
 
-loop0: detected capacity change from 0 to 64
-==================================================================
-BUG: KASAN: slab-out-of-bounds in hfs_asc2mac+0x467/0x9a0
-fs/hfs/trans.c:133
-Write of size 1 at addr ffff88801848314e by task syz-executor391/3632
+Also, the updated changelog in David's patch that sits on top of mine
+makes a lot more sense.
 
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
- print_address_description+0x74/0x340 mm/kasan/report.c:284
- print_report+0x107/0x1f0 mm/kasan/report.c:395
- kasan_report+0xcd/0x100 mm/kasan/report.c:495
- hfs_asc2mac+0x467/0x9a0 fs/hfs/trans.c:133
- hfs_cat_build_key+0x92/0x170 fs/hfs/catalog.c:28
- hfs_lookup+0x1ab/0x2c0 fs/hfs/dir.c:31
- lookup_open fs/namei.c:3391 [inline]
- open_last_lookups fs/namei.c:3481 [inline]
- path_openat+0x10e6/0x2df0 fs/namei.c:3710
- do_filp_open+0x264/0x4f0 fs/namei.c:3740
+If you really don't want to take my patch as part of this, then let me know
+and I'll take it through the media subsystem and hope for the best :-)
 
-If in->len is much larger than HFS_NAMELEN(31) which is the maximum
-length of an HFS filename, a OOB write could occur in hfs_asc2mac(). In
-that case, when the dst reaches the boundary, the srclen is still
-greater than 0, which causes a OOB write.
-Fix this by adding a check on dstlen in while() before writing to dst
-address.
+Regards,
 
-Fixes: 328b92278650 ("[PATCH] hfs: NLS support")
-Reported-by: syzbot+dc3b1cf9111ab5fe98e7@syzkaller.appspotmail.com
-Signed-off-by: ZhangPeng <zhangpeng362@huawei.com>
----
-v2:
-- Change the location of the check for dstlen
----
- fs/hfs/trans.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	Hans
 
-diff --git a/fs/hfs/trans.c b/fs/hfs/trans.c
-index 39f5e343bf4d..fdb0edb8a607 100644
---- a/fs/hfs/trans.c
-+++ b/fs/hfs/trans.c
-@@ -109,7 +109,7 @@ void hfs_asc2mac(struct super_block *sb, struct hfs_name *out, const struct qstr
- 	if (nls_io) {
- 		wchar_t ch;
- 
--		while (srclen > 0) {
-+		while (srclen > 0 && dstlen > 0) {
- 			size = nls_io->char2uni(src, srclen, &ch);
- 			if (size < 0) {
- 				ch = '?';
--- 
-2.25.1
+>>
+>> But Linus won't be editing changelogs so that the changelog makes more
+>> sense after both trees are joined.  I'm inclined to let the changelog
+>> sit as it is as well.
+> 
+> Works for me. Thanks Andrew!
+> 
 
