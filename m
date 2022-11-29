@@ -2,217 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3388763B66C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 01:13:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E28F163B673
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 01:16:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234584AbiK2ANE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 28 Nov 2022 19:13:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45244 "EHLO
+        id S234663AbiK2AQk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 28 Nov 2022 19:16:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46132 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234760AbiK2AM5 (ORCPT
+        with ESMTP id S234584AbiK2AQh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 28 Nov 2022 19:12:57 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F0E302DD7;
-        Mon, 28 Nov 2022 16:12:54 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8D76661512;
-        Tue, 29 Nov 2022 00:12:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F22E5C433C1;
-        Tue, 29 Nov 2022 00:12:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669680774;
-        bh=FjN5V5IHuRq3L7i0ZyJcoPqFG6uIYmaYihyqL7Linvc=;
-        h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-        b=GjS3cTpOTPEZzt0LC7D0IbEoscl17AJCHJAgV2OFe9JXwh11oiWBPJNsCUapMCC9S
-         ueVTsGhhFIyJ1LOhLDPLn7uhr1Jc6dsd7FSy+ohyyr4VCuu0nOMMXp+5a+GCvX//pw
-         /JVYYeRcUIA8NLJUgCnQh0wezWrMVq1b3/+Vs23+OsgbHWO2L4vL/Lvi07qCfIUTe2
-         4fG1g0UrO2svpa8mSWRsRsiMo6MGUUrT2ff1XIBPNO3oF6Ecv/islMBX8ablJRn19Y
-         H2X/CqiawIdZguN8SnMLTbc3q8gg1fIrRdNPlvWOR3FBXJvBQu/zZ6JvMJhAp2Ed6+
-         /NasBuTTHceZw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-        id 956725C0EBE; Mon, 28 Nov 2022 16:12:53 -0800 (PST)
-Date:   Mon, 28 Nov 2022 16:12:53 -0800
-From:   "Paul E. McKenney" <paulmck@kernel.org>
-To:     Amir Goldstein <amir73il@gmail.com>
-Cc:     Jan Kara <jack@suse.cz>, rcu@vger.kernel.org,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        Josh Triplett <josh@joshtriplett.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Subject: Re: SRCU use from different contexts
-Message-ID: <20221129001253.GO4001@paulmck-ThinkPad-P17-Gen-1>
-Reply-To: paulmck@kernel.org
-References: <20221123114645.3aowv3hw4hxqr2ed@quack3>
- <20221124002128.GN4001@paulmck-ThinkPad-P17-Gen-1>
- <CAOQ4uxge4cF_o80bbXPE2ZAjRwy9zNA6U1oXsdyYsiF-wVRvpA@mail.gmail.com>
- <20221124095840.zdcwnge4hbxqcz5d@quack3>
- <20221124161147.GQ4001@paulmck-ThinkPad-P17-Gen-1>
- <20221124174626.lueg3f65ikhp2f3l@quack3>
- <CAOQ4uxhL4Rmk1ria2_AEc0rJXPAaHLeuWQj9RKZqSv9TU_paTw@mail.gmail.com>
+        Mon, 28 Nov 2022 19:16:37 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE2941DDC2
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 16:16:36 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id k5so11094476pjo.5
+        for <linux-fsdevel@vger.kernel.org>; Mon, 28 Nov 2022 16:16:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rmT4p4LUlgKisuvS5tqZbtaFiBayJl0Eii/OEnGHHtU=;
+        b=tS0jlh80ya4JjgLjJkratxjwUQtwsJQ2uzig/9jrTFeTv6hzDbwbdiCwUogq75pSh1
+         tQ1QBpFoi/zAFhKfKq0mdpPwXMUNF85xOpaWwPh7t64FqCnm42OVKWXWE9vTWCY3wGoj
+         Hv4G3jWw9KYdtfRX08q4wTQBn9lP/oi5zbPD+MUBtNBAc5vE0Wxw6+QaVTe5cKjMuvaE
+         Cbpkgd5hXOiAbqcvvtszCD+aivtEc7x4MLcy0KMqnSoxu4LekuSFOEDF7sCCUpmP0aN3
+         bAzYnLWfegFRHx8EOoxpJ5XLtMnAXZLvQ2Sz+DIvqE6YTNepx+7C1vu98xZ7eFYQqHpt
+         HtRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rmT4p4LUlgKisuvS5tqZbtaFiBayJl0Eii/OEnGHHtU=;
+        b=NiGobJJhfaeirSnEEFGi5vRlZ0DL0zSJriHTJmd2tjrAGasgOgUmGs1vipRHnZZ4KK
+         1rStQjuG4rg4NBI5AXEnb2b7DVuFvtPAZCEMGhKcVA+SlLdQ+NBxfkcu1+Mg2tnsSQjw
+         zCexDOTX8aPKBHXwiOHzS6yhIBgAOUqEajHqWM2qqDcevdILbSembGCI0zHICvDMpeMh
+         SiN8KiFzUPbaIQQJehRmPggEHCHXOrcFNWYbTBGhmuN0Io/p5PRjgMn5eAs5a92MHmcF
+         RLo81qja+QipUP/m7Uy59FkUjh6woCxnlIwHyH3NgkXX+i1TLmOtfcOiAk0XGACiqN4G
+         x7nQ==
+X-Gm-Message-State: ANoB5pmyBc4WDaa450ZdqIYfXADOiLGLdM6lSoj9OEvuhWg9xK4bIEQy
+        l5PabcAtmVNRScO6bajkTr6BNw==
+X-Google-Smtp-Source: AA0mqf5+RMi8gPwujU5z/tOoNaZz4hNMrZtCkUI2nZql1qYR4idryLE601Q51u0M21dSkajfM6LruQ==
+X-Received: by 2002:a17:902:bb10:b0:189:6292:827e with SMTP id im16-20020a170902bb1000b001896292827emr21668249plb.97.1669680996313;
+        Mon, 28 Nov 2022 16:16:36 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-65-106.pa.vic.optusnet.com.au. [49.186.65.106])
+        by smtp.gmail.com with ESMTPSA id y22-20020a170902b49600b0018099c9618esm9388374plr.231.2022.11.28.16.16.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 28 Nov 2022 16:16:35 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1ozoIa-002E5Z-Cw; Tue, 29 Nov 2022 11:16:32 +1100
+Date:   Tue, 29 Nov 2022 11:16:32 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     djwong@kernel.org
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [GIT PULL] xfs, iomap: fix data corruption due to stale cached iomaps
+Message-ID: <20221129001632.GX3600936@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAOQ4uxhL4Rmk1ria2_AEc0rJXPAaHLeuWQj9RKZqSv9TU_paTw@mail.gmail.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Nov 25, 2022 at 02:45:53PM +0200, Amir Goldstein wrote:
-> On Thu, Nov 24, 2022 at 7:46 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Thu 24-11-22 08:11:47, Paul E. McKenney wrote:
-> > > On Thu, Nov 24, 2022 at 10:58:40AM +0100, Jan Kara wrote:
-> > > > On Thu 24-11-22 08:21:13, Amir Goldstein wrote:
-> > > > > [+fsdevel]
-> > > > >
-> > > > > On Thu, Nov 24, 2022 at 2:21 AM Paul E. McKenney <paulmck@kernel.org> wrote:
-> > > > > >
-> > > > > > On Wed, Nov 23, 2022 at 12:46:45PM +0100, Jan Kara wrote:
-> > > > > > > Hello!
-> > > > > > >
-> > > > > > > We were pondering with Amir about some issues with fsnotify subsystem and
-> > > > > > > as a building block we would need a mechanism to make sure write(2) has
-> > > > > > > completed. For simplicity we could imagine it like a sequence
-> > > > > > >
-> > > > > > > write(2)
-> > > > > > >   START
-> > > > > > >   do stuff to perform write
-> > > > > > >   END
-> > > > > > >
-> > > > > > > and we need a mechanism to wait for all processes that already passed START
-> > > > > > > to reach END. Ideally without blocking new writes while we wait for the
-> > > > > > > pending ones. Now this seems like a good task for SRCU. We could do:
-> > > > > > >
-> > > > > > > write(2)
-> > > > > > >   srcu_read_lock(&sb->s_write_rcu);
-> > > > > > >   do stuff to perform write
-> > > > > > >   srcu_read_unlock(&sb->s_write_rcu);
-> > > > > > >
-> > > > > > > and use synchronize_srcu(&sb->s_write_rcu) for waiting.
-> > > > > > >
-> > > > > > > But the trouble with writes is there are things like aio or io_uring where
-> > > > > > > the part with srcu_read_lock() happens from one task (the submitter) while
-> > > > > > > the part with srcu_read_unlock() happens from another context (usually worker
-> > > > > > > thread triggered by IRQ reporting that the HW has finished the IO).
-> > > > > > >
-> > > > > > > Is there any chance to make SRCU work in a situation like this? It seems to
-> > > > > > > me in principle it should be possible to make this work but maybe there are
-> > > > > > > some implementation constraints I'm missing...
-> > > > > >
-> > > > > > The srcu_read_lock_notrace() and srcu_read_unlock_notrace() functions
-> > > > > > will work for this, though that is not their intended purpose.  Plus you
-> > > > > > might want to trace these functions, which, as their names indicate, is
-> > > > > > not permitted.  I assume that you do not intend to use these functions
-> > > > > > from NMI handlers, though that really could be accommodated.  (But why
-> > > > > > would you need that?)
-> > > > > >
-> > > > > > So how about srcu_down_read() and srcu_up_read(), as shown in the
-> > > > > > (untested) patch below?
-> > > > > >
-> > > > > > Note that you do still need to pass the return value from srcu_down_read()
-> > > > > > into srcu_up_read().  I am guessing that io_uring has a convenient place
-> > > > > > that this value can be placed.  No idea about aio.
-> > > > > >
-> > > > >
-> > > > > Sure, aio completion has context.
-> > > > >
-> > > > > > Thoughts?
-> > > > >
-> > > > > That looks great! Thank you.
-> > > > >
-> > > > > Followup question:
-> > > > > Both fs/aio.c:aio_write() and io_uring/rw.c:io_write() do this ugly
-> > > > > thing:
-> > > > >
-> > > > > /*
-> > > > >  * Open-code file_start_write here to grab freeze protection,
-> > > > >  * which will be released by another thread in
-> > > > >  * aio_complete_rw().  Fool lockdep by telling it the lock got
-> > > > >  * released so that it doesn't complain about the held lock when
-> > > > >  * we return to userspace.
-> > > > >  */
-> > > > > if (S_ISREG(file_inode(file)->i_mode)) {
-> > > > >     sb_start_write(file_inode(file)->i_sb);
-> > > > >     __sb_writers_release(file_inode(file)->i_sb, SB_FREEZE_WRITE);
-> > > > > }
-> > > > >
-> > > > > And in write completion:
-> > > > >
-> > > > > /*
-> > > > >  * Tell lockdep we inherited freeze protection from submission
-> > > > >  * thread.
-> > > > >  */
-> > > > > if (S_ISREG(inode->i_mode))
-> > > > >     __sb_writers_acquired(inode->i_sb, SB_FREEZE_WRITE);
-> > > > > file_end_write(kiocb->ki_filp);
-> > > > >
-> > > > > I suppose we also need to "fool lockdep" w.r.t returning to userspace
-> > > > > with an acquired srcu?
-> > > >
-> > > > So AFAICT the whole point of Paul's new helpers is to not use lockdep and
-> > > > thus not have to play the "fool lockdep" games.
-> > >
-> > > Exactly!  ;-)
-> > >
-> > > But if you do return to userspace after invoking srcu_down_read(), it
-> > > is your responsibility to make sure that -something- eventually invokes
-> > > srcu_up_read().  Which might or might not be able to rely on userspace
-> > > doing something sensible.
-> > >
-> > > I would guess that you have a timeout or rely on close() for that purpose,
-> > > just as you presumably do for sb_start_write(), but figured I should
-> > > mention it.
-> >
-> > Yes. We actually do not rely on userspace but rather on HW to eventually
-> > signal IO completion. For misbehaving HW there are timeouts but the details
-> > depend very much on the protocol etc.. But as you say it is the same
-> > business as with sb_start_write() so nothing new here.
-> >
-> 
-> FYI, here is my POC branch that uses srcu_down,up_read()
-> for aio writes:
-> 
-> https://github.com/amir73il/linux/commits/sb_write_barrier
-> 
-> Note that NOT all writes take s_write_srcu, but all writes that
-> generate fsnotify pre-modify events without sb_start_write() held
-> MUST take s_write_srcu, so there is an assertion in fsnotify():
-> 
-> if (mask & FS_PRE_VFS) {
->     /* Avoid false positives with LOCK_STATE_UNKNOWN */
->     lockdep_assert_once(sb_write_started(sb) != LOCK_STATE_HELD);
->     if (mask & FSNOTIFY_PRE_MODIFY_EVENTS)
->         lockdep_assert_once(sb_write_srcu_started(sb));
-> }
-> 
-> For testing, I've added synchronize_srcu(&sb->s_write_srcu) at
-> the beginning of syncfs() and freeze_super().
-> 
-> Even though syncfs() is not the intended UAPI, it is a UAPI that could
-> make sense in the future (think SYNC_FILE_RANGE_WAIT_BEFORE
-> for the vfs level).
-> 
-> I've run the fstests groups aio and freeze that exercises these code
-> paths on xfs and on overlayfs and (after fixing all my bugs) I have not
-> observed any regressions nor any lockdep splats.
-> 
-> So you may add:
-> Tested-by: Amir Goldstein <amir73il@gmail.com>
+Hi Darrick,
 
-Very good, and thank you!  I will apply this on my next rebase.
+Can you please pull the data corruption fix from the tag below? The
+only change since the last posting was to remove the unused error
+variable from the iomap punch code. I haven't seen any regressions
+in local testing over the past week, so I think it is good to go.
 
-> Thanks again for the patch Paul!
+-Dave.
 
-I will be cherry-picking this on top of -rcu's srcunmisafe.2022.11.09a
-branch and sending you a public branch.  I do -not- expect to push this
-into the upcoming merge window unless you tell me that you need it.
-Preferably sooner rather than later.  ;-)
+------
 
-							Thanx, Paul
+The following changes since commit f0c4d9fc9cc9462659728d168387191387e903cc:
+
+  Linux 6.1-rc4 (2022-11-06 15:07:11 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs tags/xfs-iomap-stale-fixes
+
+for you to fetch changes up to 6e8af15ccdc4e138a5b529c1901a0013e1dcaa09:
+
+  xfs: drop write error injection is unfixable, remove it (2022-11-29 09:09:17 +1100)
+
+----------------------------------------------------------------
+xfs, iomap: fix data corruption due to stale cached iomaps
+
+This patch series fixes a data corruption that occurs in a specific
+multi-threaded write workload. The workload combined
+racing unaligned adjacent buffered writes with low memory conditions
+that caused both writeback and memory reclaim to race with the
+writes.
+
+The result of this was random partial blocks containing zeroes
+instead of the correct data.  The underlying problem is that iomap
+caches the write iomap for the duration of the write() operation,
+but it fails to take into account that the extent underlying the
+iomap can change whilst the write is in progress.
+
+The short story is that an iomap can span mutliple folios, and so
+under low memory writeback can be cleaning folios the write()
+overlaps. Whilst the overlapping data is cached in memory, this
+isn't a problem, but because the folios are now clean they can be
+reclaimed. Once reclaimed, the write() does the wrong thing when
+re-instantiating partial folios because the iomap no longer reflects
+the underlying state of the extent. e.g. it thinks the extent is
+unwritten, so it zeroes the partial range, when in fact the
+underlying extent is now written and so it should have read the data
+from disk.  This is how we get random zero ranges in the file
+instead of the correct data.
+
+The gory details of the race condition can be found here:
+
+https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
+
+Fixing the problem has two aspects. The first aspect of the problem
+is ensuring that iomap can detect a stale cached iomap during a
+write in a race-free manner. We already do this stale iomap
+detection in the writeback path, so we have a mechanism for
+detecting that the iomap backing the data range may have changed
+and needs to be remapped.
+
+In the case of the write() path, we have to ensure that the iomap is
+validated at a point in time when the page cache is stable and
+cannot be reclaimed from under us. We also need to validate the
+extent before we start performing any modifications to the folio
+state or contents. Combine these two requirements together, and the
+only "safe" place to validate the iomap is after we have looked up
+and locked the folio we are going to copy the data into, but before
+we've performed any initialisation operations on that folio.
+
+If the iomap fails validation, we then mark it stale, unlock the
+folio and end the write. This effectively means a stale iomap
+results in a short write. Filesystems should already be able to
+handle this, as write operations can end short for many reasons and
+need to iterate through another mapping cycle to be completed. Hence
+the iomap changes needed to detect and handle stale iomaps during
+write() operations is relatively simple...
+
+However, the assumption is that filesystems should already be able
+to handle write failures safely, and that's where the second
+(first?) part of the problem exists. That is, handling a partial
+write is harder than just "punching out the unused delayed
+allocation extent". This is because mmap() based faults can race
+with writes, and if they land in the delalloc region that the write
+allocated, then punching out the delalloc region can cause data
+corruption.
+
+This data corruption problem is exposed by generic/346 when iomap is
+converted to detect stale iomaps during write() operations. Hence
+write failure in the filesytems needs to handle the fact that the
+write() in progress doesn't necessarily own the data in the page
+cache over the range of the delalloc extent it just allocated.
+
+As a result, we can't just truncate the page cache over the range
+the write() didn't reach and punch all the delalloc extent. We have
+to walk the page cache over the untouched range and skip over any
+dirty data region in the cache in that range. Which is ....
+non-trivial.
+
+That is, iterating the page cache has to handle partially populated
+folios (i.e. block size < page size) that contain data. The data
+might be discontiguous within a folio. Indeed, there might be
+*multiple* discontiguous data regions within a single folio. And to
+make matters more complex, multi-page folios mean we just don't know
+how many sub-folio regions we might have to iterate to find all
+these regions. All the corner cases between the conversions and
+rounding between filesystem block size, folio size and multi-page
+folio size combined with unaligned write offsets kept breaking my
+brain.
+
+However, if we convert the code to track the processed
+write regions by byte ranges instead of fileystem block or page
+cache index, we could simply use mapping_seek_hole_data() to find
+the start and end of each discrete data region within the range we
+needed to scan. SEEK_DATA finds the start of the cached data region,
+SEEK_HOLE finds the end of the region. These are byte based
+interfaces that understand partially uptodate folio regions, and so
+can iterate discrete sub-folio data regions directly. This largely
+solved the problem of discovering the dirty regions we need to keep
+the delalloc extent over.
+
+However, to use mapping_seek_hole_data() without needing to export
+it, we have to move all the delalloc extent cleanup to the iomap
+core and so now the iomap core can clean up delayed allocation
+extents in a safe, sane and filesystem neutral manner.
+
+With all this done, the original data corruption never occurs
+anymore, and we now have a generic mechanism for ensuring that page
+cache writes do not do the wrong thing when writeback and reclaim
+change the state of the physical extent and/or page cache contents
+whilst the write is in progress.
+
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+
+----------------------------------------------------------------
+Dave Chinner (9):
+      xfs: write page faults in iomap are not buffered writes
+      xfs: punching delalloc extents on write failure is racy
+      xfs: use byte ranges for write cleanup ranges
+      xfs,iomap: move delalloc punching to iomap
+      iomap: buffered write failure should not truncate the page cache
+      xfs: xfs_bmap_punch_delalloc_range() should take a byte range
+      iomap: write iomap validity checks
+      xfs: use iomap_valid method to detect stale cached iomaps
+      xfs: drop write error injection is unfixable, remove it
+
+ fs/iomap/buffered-io.c       | 254 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ fs/iomap/iter.c              |  19 +++++++++-
+ fs/xfs/libxfs/xfs_bmap.c     |   6 ++-
+ fs/xfs/libxfs/xfs_errortag.h |  12 +++---
+ fs/xfs/xfs_aops.c            |  18 ++++-----
+ fs/xfs/xfs_bmap_util.c       |  10 +++--
+ fs/xfs/xfs_bmap_util.h       |   2 +-
+ fs/xfs/xfs_error.c           |  27 +++++++++----
+ fs/xfs/xfs_file.c            |   2 +-
+ fs/xfs/xfs_iomap.c           | 169 +++++++++++++++++++++++++++++++++++++++++++++++++---------------------------------
+ fs/xfs/xfs_iomap.h           |   6 ++-
+ fs/xfs/xfs_pnfs.c            |   6 ++-
+ include/linux/iomap.h        |  47 +++++++++++++++++++----
+ 13 files changed, 464 insertions(+), 114 deletions(-)
+-- 
+Dave Chinner
+david@fromorbit.com
