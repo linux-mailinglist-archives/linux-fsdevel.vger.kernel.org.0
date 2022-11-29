@@ -2,180 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7216663BF31
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 12:40:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3FF3163BFEA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 13:21:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231529AbiK2LkV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Nov 2022 06:40:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44756 "EHLO
+        id S233760AbiK2MVB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Nov 2022 07:21:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231321AbiK2LkO (ORCPT
+        with ESMTP id S232992AbiK2MVA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Nov 2022 06:40:14 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 57D27167D5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Nov 2022 03:39:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669721951;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=eRu/Hx0QeU09vI6dag4oeFynexJuKZWNYSe4MiEdyGs=;
-        b=DY1pFbkUM1MIGvkYmEzktWFDEJKIDajUf044NWj1aFCx6VfR3SCLfpmRCKjsnEYsub5Awe
-        QCfsxMM/j3ywnZurS9Qcb/sD9qqH41O+7AG53X/WBLMdI0vxZSJrISQFnIy14Yy+oxZprj
-        M77lSprXFA5jMIqYUDPGM/sCTQWturo=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-505-5bTVuSriMMmwmOGhYfF6CQ-1; Tue, 29 Nov 2022 06:39:10 -0500
-X-MC-Unique: 5bTVuSriMMmwmOGhYfF6CQ-1
-Received: by mail-wm1-f71.google.com with SMTP id e8-20020a05600c218800b003cf634f5280so4620455wme.8
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Nov 2022 03:39:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eRu/Hx0QeU09vI6dag4oeFynexJuKZWNYSe4MiEdyGs=;
-        b=NgPgWIlMFxmtG5HZFljs+ogvCetLVaCPOXZdnUJLMAFBNY0uh8DDm2DKDccRUttW0y
-         1xYdYz2xnfYBN3YVA+ve960GhdamC1lzongyKCd1SJaZuNlF2YJhKsh1nJ+oimRKJfFm
-         kVz0ekFs+T9PdRiXoODUaRgAAoVLRur0DDxg5t1fgV6jcu0JKIORleZu4q7eM+QcXrP8
-         DO5hjXCK+y3sizp5Up9751/lvrtiGxS2PnadYq4zplWaneK2zvUCPjQLTuKwAALO+M8T
-         g2sWzk6up55onl6xmSQ+Lt14r5xTlfSrrsQPqkVEjsb0xMI2m0KVhwBZtvtmTLBwo76u
-         f1dw==
-X-Gm-Message-State: ANoB5pl1p8KfQb8x2QbV7ZlVsgqCm4xizDctiaJVt+Au/pee998tCg65
-        iq55/sVKHVNWmUHVnxgLno0SyagRGmSfjdO29tBafu12rGl9aZNXLrdLFFKdB/nOXZnPcrddPlj
-        7cXc3ITtMNW6BwEzR1kS4kkfMyA==
-X-Received: by 2002:a7b:ca45:0:b0:3c4:bda1:7c57 with SMTP id m5-20020a7bca45000000b003c4bda17c57mr44926211wml.6.1669721948941;
-        Tue, 29 Nov 2022 03:39:08 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf6s03pDZ7+AzRjiuWChsKfmd6tu6WfpxK1aogO4cyP+8Olozy3bxlj+8EqBduo9KzTHvAm5sQ==
-X-Received: by 2002:a7b:ca45:0:b0:3c4:bda1:7c57 with SMTP id m5-20020a7bca45000000b003c4bda17c57mr44926175wml.6.1669721948661;
-        Tue, 29 Nov 2022 03:39:08 -0800 (PST)
-Received: from [192.168.3.108] (p5b0c6623.dip0.t-ipconnect.de. [91.12.102.35])
-        by smtp.gmail.com with ESMTPSA id bg11-20020a05600c3c8b00b003d069fc7372sm1471927wmb.1.2022.11.29.03.39.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Nov 2022 03:39:08 -0800 (PST)
-Message-ID: <6d7f7775-5703-c27a-e57b-03aafb4de712@redhat.com>
-Date:   Tue, 29 Nov 2022 12:39:06 +0100
+        Tue, 29 Nov 2022 07:21:00 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62F8F5D6B4;
+        Tue, 29 Nov 2022 04:20:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=wo3aQUARnvFFz3/ffXVvv/DF/a1pENBpfxbf9Xt1fwM=; b=KJTHbTIbPVkXCbiycEs5416p02
+        FtZDbTcFBFwPJznbCyxuFjP6mdBLkBOST6haJGyzOjeVODvjZW/ZWCiErFYVrnn3WOSRnaezdUkF7
+        HytYXVABQdSFQ1kYYVGN70z6gjMWJQn0tR54eaPdNChu+yY/VNMjhOQD5svbZiEH/ADhLiSSH0WEX
+        aOG+CfEyKKrcWZb0uS8UdgixShctMh4enJ38h6yed1tYWWQ7L3/t3Zft6T/rU69b2T7VPazS4LYCB
+        DWm+wr8IFHqueZGNSEqR4FqWPj0QFxweKEQihig3fIR4ba72YIaAz404owVNI4AYNvP9mRfC3cHNk
+        kUZn0bzA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1ozzbL-007f5j-1t;
+        Tue, 29 Nov 2022 12:20:39 +0000
+Date:   Tue, 29 Nov 2022 12:20:39 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Hillf Danton <hdanton@sina.com>
+Cc:     syzbot <syzbot+8c7a4ca1cc31b7ce7070@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, dan.j.williams@intel.com, hch@lst.de,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com,
+        willy@infradead.org
+Subject: Re: [syzbot] WARNING in iov_iter_revert (3)
+Message-ID: <Y4X5F43D+As21b6M@ZenIV>
+References: <000000000000519d0205ee4ba094@google.com>
+ <000000000000f5ecad05ee8fccf0@google.com>
+ <20221129090831.6281-1-hdanton@sina.com>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.1
-Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
- create restricted user memory
-Content-Language: en-US
-To:     "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Michael Roth <michael.roth@amd.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, aarcange@redhat.com, ddutile@redhat.com,
-        dhildenb@redhat.com, Quentin Perret <qperret@google.com>,
-        tabba@google.com, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
- <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
- <20221129000632.sz6pobh6p7teouiu@amd.com>
- <20221129112139.usp6dqhbih47qpjl@box.shutemov.name>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20221129112139.usp6dqhbih47qpjl@box.shutemov.name>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221129090831.6281-1-hdanton@sina.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 29.11.22 12:21, Kirill A. Shutemov wrote:
-> On Mon, Nov 28, 2022 at 06:06:32PM -0600, Michael Roth wrote:
->> On Tue, Oct 25, 2022 at 11:13:37PM +0800, Chao Peng wrote:
->>> From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
->>>
->>
->> <snip>
->>
->>> +static struct file *restrictedmem_file_create(struct file *memfd)
->>> +{
->>> +	struct restrictedmem_data *data;
->>> +	struct address_space *mapping;
->>> +	struct inode *inode;
->>> +	struct file *file;
->>> +
->>> +	data = kzalloc(sizeof(*data), GFP_KERNEL);
->>> +	if (!data)
->>> +		return ERR_PTR(-ENOMEM);
->>> +
->>> +	data->memfd = memfd;
->>> +	mutex_init(&data->lock);
->>> +	INIT_LIST_HEAD(&data->notifiers);
->>> +
->>> +	inode = alloc_anon_inode(restrictedmem_mnt->mnt_sb);
->>> +	if (IS_ERR(inode)) {
->>> +		kfree(data);
->>> +		return ERR_CAST(inode);
->>> +	}
->>> +
->>> +	inode->i_mode |= S_IFREG;
->>> +	inode->i_op = &restrictedmem_iops;
->>> +	inode->i_mapping->private_data = data;
->>> +
->>> +	file = alloc_file_pseudo(inode, restrictedmem_mnt,
->>> +				 "restrictedmem", O_RDWR,
->>> +				 &restrictedmem_fops);
->>> +	if (IS_ERR(file)) {
->>> +		iput(inode);
->>> +		kfree(data);
->>> +		return ERR_CAST(file);
->>> +	}
->>> +
->>> +	file->f_flags |= O_LARGEFILE;
->>> +
->>> +	mapping = memfd->f_mapping;
->>> +	mapping_set_unevictable(mapping);
->>> +	mapping_set_gfp_mask(mapping,
->>> +			     mapping_gfp_mask(mapping) & ~__GFP_MOVABLE);
->>
->> Is this supposed to prevent migration of pages being used for
->> restrictedmem/shmem backend?
+On Tue, Nov 29, 2022 at 05:08:31PM +0800, Hillf Danton wrote:
+> On 29 Nov 2022 04:04:35 +0000 Al Viro <viro@zeniv.linux.org.uk>
+> > On Mon, Nov 28, 2022 at 02:57:49PM -0800, syzbot wrote:
+> > > syzbot has found a reproducer for the following issue on:
+> > 
+> > [snip]
+> > 
+> > > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17219fbb880000
+> > 
+> > "syz_mount_image$ntfs3(" followed by arseloads of garbage.  And the thing
+> > conspiciously missing?  Why, any ntfs3 maintainers in Cc...  Or lists,
+> > for that matter...
+> > 
+> > >  generic_file_read_iter+0x3d4/0x540 mm/filemap.c:2804
+> > >  do_iter_read+0x6e3/0xc10 fs/read_write.c:796
+> > >  vfs_readv fs/read_write.c:916 [inline]
+> > >  do_preadv+0x1f4/0x330 fs/read_write.c:1008
+> > >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> > >  do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+> > >  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> > 
+> > At a guess - something's screwed in ntfs3 ->direct_IO() (return value, most
+> > likely).
 > 
-> Yes, my bad. I expected it to prevent migration, but it is not true.
+> 2798		retval = mapping->a_ops->direct_IO(iocb, iter);
+> 2799		if (retval >= 0) {
+> 2800		        iocb->ki_pos += retval;
+> 2801		        count -= retval;
+> 2802		}
+> 2803		if (retval != -EIOCBQUEUED)
+> 2804		        iov_iter_revert(iter, count - iov_iter_count(iter));
+> 2805		
+> 2806		/*
+> 2807		 * Btrfs can have a short DIO read if we encounter
+> 2808		 * compressed extents, so if there was an error, or if
+> 2809		 * we've already read everything we wanted to, or if
+> 2810		 * there was a short read because we hit EOF, go ahead
+> 2811		 * and return.  Otherwise fallthrough to buffered io for
+> 2812		 * the rest of the read.  Buffered reads will not work for
+> 2813		 * DAX files, so don't bother trying.
+> 2814		 */
+> 2815		if (retval < 0 || !count || IS_DAX(inode))
+> 2816		        return retval;
+> 2817		if (iocb->ki_pos >= i_size_read(inode))
+> 2818		        return retval;
+> 
+> 
+> If ntfs3 is supposed to do nothing wrong with retval set to 5, why is
+> iov_iter_revert() invoked? Is it correct to check -EIOCBQUEUED only if
+> the direct_IO callback returns error?
 
-Maybe add a comment that these pages are not movable and we don't want 
-to place them into movable pageblocks (including CMA and ZONE_MOVABLE). 
-That's the primary purpose of the GFP mask here.
+->direct_IO() should return the amount of data actually copied to userland;
+if that's how much it has consumed from iterator - great, iov_iter_revert(i, 0)
+is a no-op.  If it has consumed more, the caller will take care of that.
+If it has consumed say 4Kb of data from iterator, but claims that it has
+managed to store 12Kb into that, it's broken and should be fixed.
 
--- 
-Thanks,
-
-David / dhildenb
-
+If it wants to do revert on its own, for whatever reason, it is welcome - nothing
+will break, as long as you do *not* return the value greater than the amount you
+ended up taking from iterator.  However, I don't understand the reason why ntfs3
+wants to bother (and appears to get it wrong, at that); the current rules are
+such that caller will take care of revert.
