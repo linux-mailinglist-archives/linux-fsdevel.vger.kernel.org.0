@@ -2,136 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 23A4C63BDBA
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 11:13:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 782F663BDF2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 29 Nov 2022 11:25:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232502AbiK2KNu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Nov 2022 05:13:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33370 "EHLO
+        id S229814AbiK2KZd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Nov 2022 05:25:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48208 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232549AbiK2KNZ (ORCPT
+        with ESMTP id S229777AbiK2KZa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Nov 2022 05:13:25 -0500
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 702FE5E3FE
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Nov 2022 02:11:55 -0800 (PST)
-Received: by mail-io1-f69.google.com with SMTP id g13-20020a056602072d00b006c60d59110fso8102305iox.12
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Nov 2022 02:11:55 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iikjYtuzyzNaBl0Fr5aqej9XCVNGzLadGpq6TZMWYlA=;
-        b=2gdmnRolibq9/LnvFq3FQEPQPvzyBGO5ltDMvmENofOhaJVfKeB0qf3E75QPaYHKof
-         rHwguQgMrOQGonlT3jsN1wVpADAmu2IGJAs81Oe1yZ0YQFn3YN6YWzufsyXNMOX50DTY
-         5a3X9FPxxAl7xoIplZ2POSBsvKAjJs/oKyqvo5L6Fxty+Vzrer2XLHQ+l+4k7oQzviBM
-         onJd4q0NdYhO0e15mIbRx/WWHx9iTp1m/Qav1n6j4ES1IjW9MfTIiR+Ueku+bICyrzkQ
-         SQif7F+9JMg9dXge/kj9LXITAHW54FzF6P6lD8rD1nGvLLFJfY181YsEf0M8Ivlytf03
-         37ig==
-X-Gm-Message-State: ANoB5pmsKPl4cXwYeZG9mFWfia0LEbqMageJtapc8R1P3kBVvOW98hiZ
-        p9eweYX/lo4ZtBRKjZlgQrLfoTDNBxOhk5mh3Qw26jBt+CaU
-X-Google-Smtp-Source: AA0mqf5twLoO/cP7GFkVWO66txAHHbqxKZev2FPt8SHeJLpZVIiATU6gKONpHYvEaC0BC5JxKpyIy2nRLwgjTS0YOUnHng+SIq0n
+        Tue, 29 Nov 2022 05:25:30 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E894465E9;
+        Tue, 29 Nov 2022 02:25:29 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 8444E6163F;
+        Tue, 29 Nov 2022 10:25:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A06EDC433C1;
+        Tue, 29 Nov 2022 10:25:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669717528;
+        bh=NRLOmsfk8MrlF1SeO7QI1ZOUGcEP+Ip9WU2MdOCjcug=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=s97XJIDU33XGp3tUD24wXGXpMjRJgBmr07n1ALZnbsLTy/bzUO1QW/bGcjjn1ZWex
+         F8B8x0uV1KYOmnkNhppoZ9zQs/gghkNr6v1St7N6mJ8VAeT1bwIHYvcJ92pcxhP4c6
+         syEJ61xoeB5BqaU2U4VGNc5lFLvPwBeC8QLbxRj+oNRvwfnXrVk0iarxooOBkvnHm1
+         u1J9lN8fZ/saHqpg6fEGujOyffXPKCxklGPlPIUT7rK/QKqBob++wCNTL6WXTEoa4Q
+         9vpXF1PEXp/EDt8zez7Ze121wbtIExGUokR8Pfuly/Tu1KfzjWvfU4X4suWCn6/TtF
+         CJbAUJVviEQ4w==
+Date:   Tue, 29 Nov 2022 11:25:24 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     ditang chen <ditang.c@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        viro@zeniv.linux.org.uk, ebiederm@xmission.com
+Subject: Re: fs/pnode.c: propagate_one Oops in ltp/fs_bind test
+Message-ID: <20221129102524.ulsthvmf6tbfwhmb@wittgenstein>
+References: <CAHnGgyHAo+XQPchU4HaKshFbnyHYuD0EuHy17QvPRAZ4MFVq-w@mail.gmail.com>
 MIME-Version: 1.0
-X-Received: by 2002:a02:600d:0:b0:375:fc9a:4d78 with SMTP id
- i13-20020a02600d000000b00375fc9a4d78mr19905740jac.194.1669716705316; Tue, 29
- Nov 2022 02:11:45 -0800 (PST)
-Date:   Tue, 29 Nov 2022 02:11:45 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000001897ea05ee9937c0@google.com>
-Subject: [syzbot] INFO: trying to register non-static key in hfsplus_release_folio
-From:   syzbot <syzbot+91db21a2bf0e12eb92fd@syzkaller.appspotmail.com>
-To:     damien.lemoal@opensource.wdc.com, jlayton@kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHnGgyHAo+XQPchU4HaKshFbnyHYuD0EuHy17QvPRAZ4MFVq-w@mail.gmail.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Nov 15, 2022 at 11:04:01PM +0800, ditang chen wrote:
+> Here is a reproducer:
+> 1. Run netns.sh script in loop
+> # while true; do ./netns.sh; done
+> # cat netns.sh
+> #!/bin/bash
+> num=1000
+> function create_netns()
+> {
+> for((i=0; i<$num; i++))
+> do
+>   ip netns add local$i
+>   ip netns exec local$i pwd &
+> done
+> }
+> function clean_netns()
+> {
+> for((i=0; i<$num; i++))
+> do
+>     ip netns del local$i
+> done
+> }
+> create_netns
+> clean_netns
+> 
+> 2.  run fs_bind/fs_bind24 in loop, fs_bind24 only
+> # cat /opt/ltp/runtest/fs_bind
+> #DESCRIPTION:Bind mounts and shared subtrees
+> fs_bind24_sh fs_bind24.sh
+> # while true; do /opt/ltp/runltp -f fs_bind; done
+> 
+> This oops also exists in the latest kernel code：
 
-syzbot found the following issue on:
-
-HEAD commit:    6d464646530f Merge branch 'for-next/core' into for-kernelci
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=124d67c3880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=54b747d981acc7b7
-dashboard link: https://syzkaller.appspot.com/bug?extid=91db21a2bf0e12eb92fd
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=170746ad880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=149dfd75880000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/d75f5f77b3a3/disk-6d464646.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9382f86e4d95/vmlinux-6d464646.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/cf2b5f0d51dd/Image-6d464646.gz.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6bdbba5eb556/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+91db21a2bf0e12eb92fd@syzkaller.appspotmail.com
-
-INFO: trying to register non-static key.
-The code is fine but needs lockdep annotation, or maybe
-you didn't initialize this object before use?
-turning off the locking correctness validator.
-CPU: 1 PID: 3072 Comm: syz-executor123 Not tainted 6.1.0-rc6-syzkaller-32662-g6d464646530f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
-Call trace:
- dump_backtrace+0x1c4/0x1f0 arch/arm64/kernel/stacktrace.c:156
- show_stack+0x2c/0x54 arch/arm64/kernel/stacktrace.c:163
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x104/0x16c lib/dump_stack.c:106
- dump_stack+0x1c/0x58 lib/dump_stack.c:113
- assign_lock_key+0x134/0x140 kernel/locking/lockdep.c:981
- register_lock_class+0xc4/0x2f8 kernel/locking/lockdep.c:1294
- __lock_acquire+0xa8/0x3084 kernel/locking/lockdep.c:4934
- lock_acquire+0x100/0x1f8 kernel/locking/lockdep.c:5668
- __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
- _raw_spin_lock+0x54/0x6c kernel/locking/spinlock.c:154
- spin_lock include/linux/spinlock.h:350 [inline]
- hfsplus_release_folio+0x12c/0x214 fs/hfsplus/inode.c:110
- filemap_release_folio+0xc0/0x238 mm/filemap.c:3948
- block_invalidate_folio+0x1f4/0x3c4 fs/buffer.c:1526
- folio_invalidate mm/truncate.c:159 [inline]
- truncate_cleanup_folio+0xd4/0x334 mm/truncate.c:179
- truncate_inode_pages_range+0x148/0xb8c mm/truncate.c:369
- truncate_inode_pages mm/truncate.c:452 [inline]
- truncate_inode_pages_final+0x8c/0x9c mm/truncate.c:487
- hfsplus_evict_inode+0x20/0x68 fs/hfsplus/super.c:168
- evict+0xec/0x334 fs/inode.c:664
- iput_final fs/inode.c:1747 [inline]
- iput+0x2c4/0x324 fs/inode.c:1773
- hfsplus_put_super+0xb4/0xec fs/hfsplus/super.c:302
- generic_shutdown_super+0x94/0x198 fs/super.c:492
- kill_block_super+0x30/0x78 fs/super.c:1428
- deactivate_locked_super+0x70/0xe8 fs/super.c:332
- deactivate_super+0xd0/0xd4 fs/super.c:363
- cleanup_mnt+0x184/0x1c0 fs/namespace.c:1186
- __cleanup_mnt+0x20/0x30 fs/namespace.c:1193
- task_work_run+0x100/0x148 kernel/task_work.c:179
- resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
- do_notify_resume+0x174/0x1f0 arch/arm64/kernel/signal.c:1127
- prepare_exit_to_user_mode arch/arm64/kernel/entry-common.c:137 [inline]
- exit_to_user_mode arch/arm64/kernel/entry-common.c:142 [inline]
- el0_svc+0x9c/0x150 arch/arm64/kernel/entry-common.c:638
- el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
- el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:584
-hfsplus: request for non-existent node 0 in B*Tree
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+I've been running this since yesterday on v6.1-rc7 to reproduce and it
+didn't trigger. It's unclear whether you're saying that you've managed
+to reproduce this on mainline. It doesn't seem to be.
