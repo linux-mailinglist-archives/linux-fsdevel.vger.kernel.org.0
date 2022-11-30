@@ -2,87 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A260F63CE38
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Nov 2022 05:09:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ECF4063CE3E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Nov 2022 05:12:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231643AbiK3EJX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Nov 2022 23:09:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49494 "EHLO
+        id S232474AbiK3EMc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Nov 2022 23:12:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50786 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233244AbiK3EIy (ORCPT
+        with ESMTP id S232385AbiK3EM3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Nov 2022 23:08:54 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A12E729803;
-        Tue, 29 Nov 2022 20:08:50 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id F14A9B819FC;
-        Wed, 30 Nov 2022 04:08:48 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 998CAC433C1;
-        Wed, 30 Nov 2022 04:08:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669781327;
-        bh=YqgkfAkC7fkxgy0kQrNLPnoW4g3hvntZHdESVA87dbI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=rxus8bK+AeMi3jmPxJ9YYnQ9eNRWMKBAk2NIrm28RPOyPrHAoQhobrQQoaxb2HEDG
-         /zZAwrvErNsq4nYExnOVodJ4RtwBC3NZ1rRPYzmp9RrolDntYkFCQN+CjvyKBPa4g/
-         nTLsaqJK5B64jbADSGx3FW0qQITA3KEtD69rXwc3u6oDCG+peIQHeY7XJGUyzNPlBJ
-         p/u6ip95fQ45MosyDEKrktDzJJXIFNXUEaPijMYnBTjQDEEAQesxkNvkqSBiZ53e49
-         qinB1a9tdT8GaZYJG5BbKQghDiJjJ57aBgV+JZeAzqxXoaVaHtOm2fN2AYe5WLRH7S
-         3V5VeXop36R2A==
-Date:   Tue, 29 Nov 2022 20:08:47 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, dan.j.williams@intel.com
-Subject: Re: [PATCH 1/2] fsdax,xfs: fix warning messages at
+        Tue, 29 Nov 2022 23:12:29 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C4E5A1F2F4;
+        Tue, 29 Nov 2022 20:12:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1669781546; x=1701317546;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=FCe+ggnPOTosDVHXgqL2aUHH69GmXEhCPa+Zjcy7Mos=;
+  b=JmNQHmHijcWbn3x9SiBDcJW5oStxj1nYV7mrCzIV9Npos7P2PWtnBOmR
+   8+lzXaM0TxvWNPnKbu1AhRlc0nQ7i3o/p8YBMCX9HuohQ3d7oboXORSa2
+   gQADraUtRnjnnQUj5T2Wy4p28+PgzTDyjXEYT1S9MZlTlMZj5GbZyWwlV
+   Zumlt90Dh3QS9xq39WC5x3tgveTifrKtOY742ojIqjTGGC5RAiEQjhux/
+   vsLVOHJIGfP7MuSZ2HCn+GmPE4MbnfeW6Ib5RGWlqzQXQJQWTO/Q/5nQD
+   BpqtV0qvgbJDEGmsLpCCKiDoS5IFNskBXsYRGXjKi6EoA00QtISw0kM8B
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10546"; a="312914291"
+X-IronPort-AV: E=Sophos;i="5.96,205,1665471600"; 
+   d="scan'208";a="312914291"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 29 Nov 2022 20:12:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10546"; a="621731957"
+X-IronPort-AV: E=Sophos;i="5.96,205,1665471600"; 
+   d="scan'208";a="621731957"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by orsmga006.jf.intel.com with ESMTP; 29 Nov 2022 20:12:25 -0800
+Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16; Tue, 29 Nov 2022 20:12:25 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16; Tue, 29 Nov 2022 20:12:24 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16 via Frontend Transport; Tue, 29 Nov 2022 20:12:24 -0800
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.103)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.16; Tue, 29 Nov 2022 20:12:24 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VwcVfYMney+BBlXg5XmNkgkNU+8+qiG3VN1OBwKMT3seq818Ln0rrO07J+CBijvwCXTeYQtabNEY3tTRom31Hc2pGY4CqpyXMP4OGGGSUGPzYPGpWjj2Gzutc4VBNF/sDYYfxqLCe4WcVbGbljiVMG5drA1MKoN0GLnloXm4Zk5j3zvTLWk8efuB+yoX3OZ3UzbqFWYlo/zpkj4CvYwxuVHG1NK7qvkRnFmlEKzJrIJpNfxtBncfQ4PbFMUawOjCZ6BMxssfWMMOgbfsjemajjfSoylFAVDiGwplJBhuwM54x0uJ1LDYbvud9bIBGy/4NU74chyoCRx7/7GyJoJOaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sLauvTcUWy2xIET4K7aV4UT93X67B6eNLQBShcJRWR0=;
+ b=QGGKfCw7gGbBuYeIltbv725pK5qrQo2PT3l2Qnl+tL4ypTW3LE0KV9ouIMkQHnT1z+LLbDWXs9ocdS5IJaVVPObhg5gAzeBD1mPFw83Q3u8/lnQ7yC5SgfTYXWH3y6FnWPONEEUJDVfV2O/uAfOfk8nAu3/gf+/gK9f9kui0955aaFO4OlYH53E5dKbeUy0BkwsOkKMFK0cywLDLpyr9GW+Ekt8rDS2yyVlIFfLzIulzpZQtFkPyakttsNSYuCVX2k1MB9kK3LaNczsRpVwO+Wzsfoqjpqpnrv1nBUgkvyJuPFsBGZrfUfTbGSbuAQoE/+lY02BZ85a5RAm/r5fJYQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
+ (2603:10b6:301:50::20) by CY8PR11MB7799.namprd11.prod.outlook.com
+ (2603:10b6:930:78::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5880.6; Wed, 30 Nov
+ 2022 04:12:22 +0000
+Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
+ ([fe80::340d:cb77:604d:b0b]) by MWHPR1101MB2126.namprd11.prod.outlook.com
+ ([fe80::340d:cb77:604d:b0b%9]) with mapi id 15.20.5857.023; Wed, 30 Nov 2022
+ 04:12:22 +0000
+Date:   Tue, 29 Nov 2022 20:12:16 -0800
+From:   Dan Williams <dan.j.williams@intel.com>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>,
+        <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
+        <nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>
+CC:     <djwong@kernel.org>, <david@fromorbit.com>,
+        <dan.j.williams@intel.com>
+Subject: RE: [PATCH 1/2] fsdax,xfs: fix warning messages at
  dax_[dis]associate_entry()
-Message-ID: <Y4bXTywl3PQTY3Er@magnolia>
+Message-ID: <6386d82011018_c95729485@dwillia2-mobl3.amr.corp.intel.com.notmuch>
 References: <1669301694-16-1-git-send-email-ruansy.fnst@fujitsu.com>
  <1669301694-16-2-git-send-email-ruansy.fnst@fujitsu.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
 In-Reply-To: <1669301694-16-2-git-send-email-ruansy.fnst@fujitsu.com>
+X-ClientProxiedBy: SJ0PR05CA0080.namprd05.prod.outlook.com
+ (2603:10b6:a03:332::25) To MWHPR1101MB2126.namprd11.prod.outlook.com
+ (2603:10b6:301:50::20)
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWHPR1101MB2126:EE_|CY8PR11MB7799:EE_
+X-MS-Office365-Filtering-Correlation-Id: 57bad7e4-f8bb-40a4-1dac-08dad289147d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: Q1P6af0sCHy3RzA710KQxVd1SoX/EMBiMeq8dCQn5qwv/yE+baLKGUkY+oi12rVMSWfJxKONiv2mgrKOYDGmPoiqUGqxS6AiJqIighIaud6CJJa6ra9GaJ6tvY48B/tlsO1yL6kvavjUOtcHblLLVu5JxIcOhHmsB4G4XnMJTOtfn/8tGTCgeQdGtx4FyGWo0LsHYjIkUraDcjbf6ivbFPeYn8CVMzTxOyORaR2GQ5T6IG3hA/1PC702LknH8Hcg7hQ1y521MwHQVJWWfOHI3bgdY6cOgVVgUSYZZ2+8bGNbjpS1oazF8dPqqqY2XW+nCTIh2z2T3ZoFGH+QpzmSltlm1xKVc7/vhHPQqUVHwR7zrtrT8pQjcoehk2SJWwe1ng+6QLD4PGLk7ZsjIYJ4ART8R8zgVcBzNjICU7Ko6FjRj6mgFdvzKWTSvqw77ywv23aWbHyQ5hHR7kO3qdRDx0ZtKa9IMHKFxq6WH3ET7kNID7QKKEkwnV4lTQ12AuX1twDWu1MUppSNjRtq6+XRJgPyQ6AzYawD3gNy96U4lDGTNE3P1rMcSvlQ1m7Ncy5GG8h6mbCFWKIwzmloSiFO6cc6En84txSyK72zl8y4c/k1P3GhICwSbvNSncL9myp/CpkIHXQM5teE8Qpt0K+4rA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1101MB2126.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(39860400002)(376002)(396003)(366004)(346002)(136003)(451199015)(38100700002)(83380400001)(86362001)(2906002)(82960400001)(41300700001)(15650500001)(5660300002)(66476007)(8936002)(6506007)(6512007)(4326008)(186003)(107886003)(26005)(6666004)(9686003)(8676002)(316002)(6486002)(478600001)(66946007)(66556008);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VnZIwVQWtpFTgVQspypLuI1Jihny1VGKjkf03w4kKnm/5f4WmO0vvRi9IiKT?=
+ =?us-ascii?Q?iSI7XmAKXfwmPODODpxrP9GDxLfHiV3dGwRmlsgJE9rrEylv65TsBuanSYRu?=
+ =?us-ascii?Q?qWyw9b3//dvl4lTrUREZ5WdJP2v1YohFwiwaNlgIH5PedJU4Vr05LOuFotDk?=
+ =?us-ascii?Q?JhwBadrLESI2vkYXutj4XN47jEKh5lJtG29sLJmVBjSP34Tv/YpQS4H0M4X+?=
+ =?us-ascii?Q?8hMqexNMbdEnpEVinbSqfr2l6LDPk9R4aOstnGJlA7lUa8WyYUujtzwAFjya?=
+ =?us-ascii?Q?/DUXJdPffTs82RDjvCBQNT6BazbfAXdZkpqsrEuSg0+mAqt/iGhgQrEPdEJj?=
+ =?us-ascii?Q?iX46k7eHVW/5cLkuoj1MVLSytJcyAN/9hpP+GXrYluc9+6ZToQ3CbRMiaRav?=
+ =?us-ascii?Q?KSM4mKE/2z7XdIR5j2NXV5CxZg8U5wURiwgJj2Vf4x6+cHUUwQzZ/PmPEfnm?=
+ =?us-ascii?Q?u359H2Sha+3xTPDFOE/mixr82s+d0OguoGlhdGDrgYaeg8dROMIyHzNF76Yy?=
+ =?us-ascii?Q?/HaC45njxnyyEAetrtS+oDidoFomB5+QiUgsFr3ReKGmPqxdGbUt3tepDZG+?=
+ =?us-ascii?Q?QFCDOZl5TprrQ5FFeJuuOO/ezjz2AP36Jbymu5cREIAdJcSvpXkgO+FctwmQ?=
+ =?us-ascii?Q?eqSV7XyrB6xagskieQyURXDi921dkr/EnVZYWY5mlAsCOUY43ChXPOUd7ege?=
+ =?us-ascii?Q?P1VbEtwDtIXKaEbv10lwmIrfMp/i0Q9aKi7BrME82VxNzM+KiGprkeUszvU7?=
+ =?us-ascii?Q?SedJKBDRNS13wZIG4r3kY+o2CvNeGJ6RYI+c87ks9ih4ElM/GKC5aY33iyJp?=
+ =?us-ascii?Q?p/G9/AsLl3UCKOlcLwTJsGasz6vpDPLI6O3QsSB0W6d0s6lAltm+/eBSskhE?=
+ =?us-ascii?Q?lbtW9knRnZ/Lyj5pvhe/eMowLjqcS7O7bhIR+uUw/n1RkuFj2v0Kr+lZjj+K?=
+ =?us-ascii?Q?6L3LgrRZ/Y9GdH78RxXSOVA6G+W29nLQ7npgr6ZYKJuL89vEz7Puo8t/bopc?=
+ =?us-ascii?Q?nsMxq6KjCjx8aex7MYfJ7bqqsRNa4b84L3akVNSoC+gBNEyZK08A4kNmdmFn?=
+ =?us-ascii?Q?0V4bvE1wOV5aVqu+i9z56zfR8Sth487zJ8QXI660GPV5vRtb6Oq1tC8J0V3r?=
+ =?us-ascii?Q?PXiTjYkX2VRKqKArsVj+FzgkTkhY88cJseWd0zq5VTYPsZCedroSpI2f5L6k?=
+ =?us-ascii?Q?aT464FqqrsutnD82P7Xe412AqhHNHfAS9UKuQFGbMiDQJz5XmtEgqHw3XDit?=
+ =?us-ascii?Q?DxZmK38CpynxDgwJYjbl9Ig8QfXOOriY35schB2xboIMQkqmRE2VkiZ9oai0?=
+ =?us-ascii?Q?ZLlarn936hQIMid/5v9d1XyIf2PJXWFGEeA8wGmfKTmlqVpTwH0B7SgCF421?=
+ =?us-ascii?Q?qDitLNVpjr3skzC8r8RhtEsYjRvefMf0bpTYkTn/oRRegEysC68Pdu9JvvIl?=
+ =?us-ascii?Q?MAU7Wutsdl1ZpMIBIpRIPo66bTv9dNJb5Bu2X5LOXwN3EkPtLBy3KD+o7VxH?=
+ =?us-ascii?Q?tbSZE5BZmqCw+At0JCUCuo11dLAQMUP71DXzH/Pcxi9cLRwgfHgssObU+Oh8?=
+ =?us-ascii?Q?9TovpXyV0IeVQVEbFX1gO8Xl8qSaFUjMCmHbpXfbuNSypRSqptJnDaN+QhC3?=
+ =?us-ascii?Q?Gg=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 57bad7e4-f8bb-40a4-1dac-08dad289147d
+X-MS-Exchange-CrossTenant-AuthSource: MWHPR1101MB2126.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Nov 2022 04:12:22.4317
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: jKHp0hxkqD32aLjdba5LQ79MiCaNSpoAzzSMkeU8qKNvfagVmNgihBi36z02FsPG/m1AbCYs0wDmU+RsrPWjtYqF1HanfcMlJJ16UXLXvPk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7799
+X-OriginatorOrg: intel.com
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 24, 2022 at 02:54:53PM +0000, Shiyang Ruan wrote:
+Shiyang Ruan wrote:
 > This patch fixes the warning message reported in dax_associate_entry()
 > and dax_disassociate_entry().
 
-Hmm, that's quite a bit to put in a single patch, but I'll try to get
-through this...
+Can you include the xfstest test number and a snippet of the warning
+message.
 
 > 1. reset page->mapping and ->index when refcount counting down to 0.
 > 2. set IOMAP_F_SHARED flag when iomap read to allow one dax page to be
 > associated more than once for not only write but also read.
-
-That makes sense, I think.
-
 > 3. should zero the edge (when not aligned) if srcmap is HOLE or
-
-When is IOMAP_F_SHARED set on the /source/ mapping?
-
 > UNWRITTEN.
 > 4. iterator of two files in dedupe should be executed side by side, not
 > nested.
-
-Why?  Also, this seems like a separate change?
-
 > 5. use xfs_dax_write_iomap_ops for xfs zero and truncate. 
 
-Makes sense.
+Do these all need to be done at once, or is this 5 patches?
 
+> 
 > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
 > ---
 >  fs/dax.c           | 114 ++++++++++++++++++++++++++-------------------
@@ -100,314 +188,24 @@ Makes sense.
 > -			if (page->index-- > 0)
 > +			if (page->index-- > 1)
 
-Hmm.  So if the fsdax "page" sharing factor drops from 2 to 1, we'll now
-null out the mapping and index?  Before, we only did that when it
-dropped from 1 to 0.
+I think this wants either a helper function to make it clear that
+->index is being used as a share count, or go ahead and rename that
+field in this context with something like:
 
-Does this leave the page with no mapping?  And I guess a subsequent
-access will now take a fault to map it back in?
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 910d880e67eb..1a409288f39d 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -103,7 +103,10 @@ struct page {
+                        };
+                        /* See page-flags.h for PAGE_MAPPING_FLAGS */
+                        struct address_space *mapping;
+-                       pgoff_t index;          /* Our offset within mapping. */
++                       union {
++                               pgoff_t index;          /* Our offset within mapping. */
++                               unsigned long share;
++                       };
+                        /**
+                         * @private: Mapping-private opaque data.
+                         * Usually used for buffer_heads if PagePrivate.
 
->  				continue;
->  		} else
->  			WARN_ON_ONCE(page->mapping && page->mapping != mapping);
-> @@ -840,12 +840,6 @@ static bool dax_fault_is_synchronous(const struct iomap_iter *iter,
->  		(iter->iomap.flags & IOMAP_F_DIRTY);
->  }
->  
-> -static bool dax_fault_is_cow(const struct iomap_iter *iter)
-> -{
-> -	return (iter->flags & IOMAP_WRITE) &&
-> -		(iter->iomap.flags & IOMAP_F_SHARED);
-> -}
-> -
->  /*
->   * By this point grab_mapping_entry() has ensured that we have a locked entry
->   * of the appropriate size so we don't have to worry about downgrading PMDs to
-> @@ -859,13 +853,14 @@ static void *dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
->  {
->  	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
->  	void *new_entry = dax_make_entry(pfn, flags);
-> -	bool dirty = !dax_fault_is_synchronous(iter, vmf->vma);
-> -	bool cow = dax_fault_is_cow(iter);
-> +	bool write = iter->flags & IOMAP_WRITE;
-> +	bool dirty = write && !dax_fault_is_synchronous(iter, vmf->vma);
-> +	bool shared = iter->iomap.flags & IOMAP_F_SHARED;
->  
->  	if (dirty)
->  		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
->  
-> -	if (cow || (dax_is_zero_entry(entry) && !(flags & DAX_ZERO_PAGE))) {
-> +	if (shared || (dax_is_zero_entry(entry) && !(flags & DAX_ZERO_PAGE))) {
-
-Ah, ok, so now we're yanking the mapping if the extent is shared,
-presumably so that...
-
->  		unsigned long index = xas->xa_index;
->  		/* we are replacing a zero page with block mapping */
->  		if (dax_is_pmd_entry(entry))
-> @@ -877,12 +872,12 @@ static void *dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
->  
->  	xas_reset(xas);
->  	xas_lock_irq(xas);
-> -	if (cow || dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
-> +	if (shared || dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
->  		void *old;
->  
->  		dax_disassociate_entry(entry, mapping, false);
->  		dax_associate_entry(new_entry, mapping, vmf->vma, vmf->address,
-> -				cow);
-> +				shared);
-
-...down here we can rebuild the association, but this time we'll set the
-page->mapping to PAGE_MAPPING_DAX_COW?  I see a lot of similar changes,
-so I'm guessing this is how you fixed the failures that were a result of
-read file A -> reflink A to B -> read file B sequences?
-
->  		/*
->  		 * Only swap our new entry into the page cache if the current
->  		 * entry is a zero page or an empty entry.  If a normal PTE or
-> @@ -902,7 +897,7 @@ static void *dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
->  	if (dirty)
->  		xas_set_mark(xas, PAGECACHE_TAG_DIRTY);
->  
-> -	if (cow)
-> +	if (write && shared)
->  		xas_set_mark(xas, PAGECACHE_TAG_TOWRITE);
->  
->  	xas_unlock_irq(xas);
-> @@ -1107,23 +1102,35 @@ static int dax_iomap_cow_copy(loff_t pos, uint64_t length, size_t align_size,
-
-I think this function isn't well named.  It's copying into the parts of
-the @daddr page that are *not* covered by @pos/@length.  In other words,
-it's really copying *around* the range that's supplied, isn't it?
-
->  	loff_t end = pos + length;
->  	loff_t pg_end = round_up(end, align_size);
->  	bool copy_all = head_off == 0 && end == pg_end;
-> +	/* write zero at edge if srcmap is a HOLE or IOMAP_UNWRITTEN */
-> +	bool zero_edge = srcmap->flags & IOMAP_F_SHARED ||
-
-When is IOMAP_F_SHARED set on the /source/ mapping?  I don't understand
-that circumstance, so I don't understand why we want to zero around in
-that case.
-
-> +			 srcmap->type == IOMAP_UNWRITTEN;
-
-Though it's self evident why we'd do that if the source map is
-unwritten.
-
->  	void *saddr = 0;
->  	int ret = 0;
->  
-> -	ret = dax_iomap_direct_access(srcmap, pos, size, &saddr, NULL);
-> -	if (ret)
-> -		return ret;
-> +	if (!zero_edge) {
-> +		ret = dax_iomap_direct_access(srcmap, pos, size, &saddr, NULL);
-> +		if (ret)
-> +			return ret;
-> +	}
->  
->  	if (copy_all) {
-> -		ret = copy_mc_to_kernel(daddr, saddr, length);
-> -		return ret ? -EIO : 0;
-> +		if (zero_edge)
-> +			memset(daddr, 0, size);
-> +		else
-> +			ret = copy_mc_to_kernel(daddr, saddr, length);
-> +		goto out;
->  	}
->  
->  	/* Copy the head part of the range */
->  	if (head_off) {
-> -		ret = copy_mc_to_kernel(daddr, saddr, head_off);
-> -		if (ret)
-> -			return -EIO;
-> +		if (zero_edge)
-> +			memset(daddr, 0, head_off);
-> +		else {
-> +			ret = copy_mc_to_kernel(daddr, saddr, head_off);
-> +			if (ret)
-> +				return -EIO;
-> +		}
->  	}
->  
->  	/* Copy the tail part of the range */
-> @@ -1131,12 +1138,19 @@ static int dax_iomap_cow_copy(loff_t pos, uint64_t length, size_t align_size,
->  		loff_t tail_off = head_off + length;
->  		loff_t tail_len = pg_end - end;
->  
-> -		ret = copy_mc_to_kernel(daddr + tail_off, saddr + tail_off,
-> -					tail_len);
-> -		if (ret)
-> -			return -EIO;
-> +		if (zero_edge)
-> +			memset(daddr + tail_off, 0, tail_len);
-> +		else {
-> +			ret = copy_mc_to_kernel(daddr + tail_off,
-> +						saddr + tail_off, tail_len);
-> +			if (ret)
-> +				return -EIO;
-> +		}
->  	}
-> -	return 0;
-> +out:
-> +	if (zero_edge)
-> +		dax_flush(srcmap->dax_dev, daddr, size);
-> +	return ret ? -EIO : 0;
->  }
->  
->  /*
-> @@ -1235,13 +1249,9 @@ static int dax_memzero(struct iomap_iter *iter, loff_t pos, size_t size)
->  	if (ret < 0)
->  		return ret;
->  	memset(kaddr + offset, 0, size);
-> -	if (srcmap->addr != iomap->addr) {
-> -		ret = dax_iomap_cow_copy(pos, size, PAGE_SIZE, srcmap,
-> -					 kaddr);
-> -		if (ret < 0)
-> -			return ret;
-> -		dax_flush(iomap->dax_dev, kaddr, PAGE_SIZE);
-> -	} else
-> +	if (iomap->flags & IOMAP_F_SHARED)
-> +		ret = dax_iomap_cow_copy(pos, size, PAGE_SIZE, srcmap, kaddr);
-> +	else
->  		dax_flush(iomap->dax_dev, kaddr + offset, size);
->  	return ret;
->  }
-> @@ -1258,6 +1268,15 @@ static s64 dax_zero_iter(struct iomap_iter *iter, bool *did_zero)
->  	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
->  		return length;
->  
-> +	/*
-> +	 * invalidate the pages whose sharing state is to be changed
-> +	 * because of CoW.
-> +	 */
-> +	if (iomap->flags & IOMAP_F_SHARED)
-> +		invalidate_inode_pages2_range(iter->inode->i_mapping,
-> +					      pos >> PAGE_SHIFT,
-> +					      (pos + length - 1) >> PAGE_SHIFT);
-> +
->  	do {
->  		unsigned offset = offset_in_page(pos);
->  		unsigned size = min_t(u64, PAGE_SIZE - offset, length);
-> @@ -1318,12 +1337,13 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
->  		struct iov_iter *iter)
->  {
->  	const struct iomap *iomap = &iomi->iomap;
-> -	const struct iomap *srcmap = &iomi->srcmap;
-> +	const struct iomap *srcmap = iomap_iter_srcmap(iomi);
->  	loff_t length = iomap_length(iomi);
->  	loff_t pos = iomi->pos;
->  	struct dax_device *dax_dev = iomap->dax_dev;
->  	loff_t end = pos + length, done = 0;
->  	bool write = iov_iter_rw(iter) == WRITE;
-> +	bool cow = write && iomap->flags & IOMAP_F_SHARED;
->  	ssize_t ret = 0;
->  	size_t xfer;
->  	int id;
-> @@ -1350,7 +1370,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
->  	 * into page tables. We have to tear down these mappings so that data
->  	 * written by write(2) is visible in mmap.
->  	 */
-> -	if (iomap->flags & IOMAP_F_NEW) {
-> +	if (iomap->flags & IOMAP_F_NEW || cow) {
->  		invalidate_inode_pages2_range(iomi->inode->i_mapping,
->  					      pos >> PAGE_SHIFT,
->  					      (end - 1) >> PAGE_SHIFT);
-> @@ -1384,8 +1404,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
->  			break;
->  		}
->  
-> -		if (write &&
-> -		    srcmap->type != IOMAP_HOLE && srcmap->addr != iomap->addr) {
-> +		if (cow) {
->  			ret = dax_iomap_cow_copy(pos, length, PAGE_SIZE, srcmap,
->  						 kaddr);
->  			if (ret)
-> @@ -1532,7 +1551,7 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
->  		struct xa_state *xas, void **entry, bool pmd)
->  {
->  	const struct iomap *iomap = &iter->iomap;
-> -	const struct iomap *srcmap = &iter->srcmap;
-> +	const struct iomap *srcmap = iomap_iter_srcmap(iter);
->  	size_t size = pmd ? PMD_SIZE : PAGE_SIZE;
->  	loff_t pos = (loff_t)xas->xa_index << PAGE_SHIFT;
->  	bool write = iter->flags & IOMAP_WRITE;
-> @@ -1563,8 +1582,7 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
->  
->  	*entry = dax_insert_entry(xas, vmf, iter, *entry, pfn, entry_flags);
->  
-> -	if (write &&
-> -	    srcmap->type != IOMAP_HOLE && srcmap->addr != iomap->addr) {
-> +	if (write && iomap->flags & IOMAP_F_SHARED) {
->  		err = dax_iomap_cow_copy(pos, size, size, srcmap, kaddr);
->  		if (err)
->  			return dax_fault_return(err);
-> @@ -1936,15 +1954,15 @@ int dax_dedupe_file_range_compare(struct inode *src, loff_t srcoff,
-
-Does the dedupe change need to be in this patch?  It looks ok both
-before and after, so I don't know why it's necessary.
-
-Welp, thank you for fixing the problems, at least.  After a couple of
-days it looks like the serious problems have cleared up.
-
---D
-
->  		.len		= len,
->  		.flags		= IOMAP_DAX,
->  	};
-> -	int ret;
-> +	int ret, compared = 0;
->  
-> -	while ((ret = iomap_iter(&src_iter, ops)) > 0) {
-> -		while ((ret = iomap_iter(&dst_iter, ops)) > 0) {
-> -			dst_iter.processed = dax_range_compare_iter(&src_iter,
-> -						&dst_iter, len, same);
-> -		}
-> -		if (ret <= 0)
-> -			src_iter.processed = ret;
-> +	while ((ret = iomap_iter(&src_iter, ops)) > 0 &&
-> +	       (ret = iomap_iter(&dst_iter, ops)) > 0) {
-> +		compared = dax_range_compare_iter(&src_iter, &dst_iter, len,
-> +						  same);
-> +		if (compared < 0)
-> +			return ret;
-> +		src_iter.processed = dst_iter.processed = compared;
->  	}
->  	return ret;
->  }
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index 07da03976ec1..d9401d0300ad 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -1215,7 +1215,7 @@ xfs_read_iomap_begin(
->  		return error;
->  	error = xfs_bmapi_read(ip, offset_fsb, end_fsb - offset_fsb, &imap,
->  			       &nimaps, 0);
-> -	if (!error && (flags & IOMAP_REPORT))
-> +	if (!error && ((flags & IOMAP_REPORT) || IS_DAX(inode)))
->  		error = xfs_reflink_trim_around_shared(ip, &imap, &shared);
->  	xfs_iunlock(ip, lockmode);
->  
-> @@ -1370,7 +1370,7 @@ xfs_zero_range(
->  
->  	if (IS_DAX(inode))
->  		return dax_zero_range(inode, pos, len, did_zero,
-> -				      &xfs_direct_write_iomap_ops);
-> +				      &xfs_dax_write_iomap_ops);
->  	return iomap_zero_range(inode, pos, len, did_zero,
->  				&xfs_buffered_write_iomap_ops);
->  }
-> @@ -1385,7 +1385,7 @@ xfs_truncate_page(
->  
->  	if (IS_DAX(inode))
->  		return dax_truncate_page(inode, pos, did_zero,
-> -					&xfs_direct_write_iomap_ops);
-> +					&xfs_dax_write_iomap_ops);
->  	return iomap_truncate_page(inode, pos, did_zero,
->  				   &xfs_buffered_write_iomap_ops);
->  }
-> -- 
-> 2.38.1
-> 
