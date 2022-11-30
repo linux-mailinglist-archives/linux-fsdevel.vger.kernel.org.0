@@ -2,149 +2,247 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BBB1163D185
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Nov 2022 10:17:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C66963D245
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Nov 2022 10:44:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231314AbiK3JRk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Nov 2022 04:17:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47696 "EHLO
+        id S233860AbiK3JoH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Nov 2022 04:44:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230385AbiK3JRi (ORCPT
+        with ESMTP id S229580AbiK3JoF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Nov 2022 04:17:38 -0500
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B296E26C5
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Nov 2022 01:17:35 -0800 (PST)
-Received: by mail-il1-f197.google.com with SMTP id n10-20020a056e02140a00b00302aa23f73fso14864372ilo.20
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Nov 2022 01:17:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+zphegq90GW1x9G8vrnMaANEk0Gmkp3erLONgtZDYO0=;
-        b=ttjdnh6dcQ+Bj20APG3OpQKts25l5rgqEHv9DV8zUp5a8J/teOy8+eg9K8qXgXxr3A
-         wgVzY9VglWibD2/LAZOLa/YFVRxnTwIoONYR9vzZMJCvEFYPNUr+Ym5pY0USGvzoMa/w
-         4OrkAhJH1j2n4vk/dYtIpEMt1VV30cvrqTZYWa/JfGnF/hdPWrmZmzydH9hGsdarhCRi
-         VRXHAFmAdB+QPhkFIckXBlw2lIBX/pTfNFXj5eMJuV9xltRGOtwkbXlKgMriNSncq2bY
-         eqf8Dg+qz1pAbRWA8Un+nGlCB9xPsCWqsy8eQ/zoFWsCEydBCoCHvewqJCmlSxezhKH3
-         xdDQ==
-X-Gm-Message-State: ANoB5plJFKOJVuh8WjslNeAU0ZpxzdeT0cD5s6nmZtbh9GQ0/bvxQBud
-        Bqy/3tS3uLRD7ovpNMrrMfefPTWWYKc3B7gdt0bDf0xQqjUl
-X-Google-Smtp-Source: AA0mqf7tfi02Qx8uj7wciiDDsiTC1DMXgJn9QUXyX1nR2F0HHMXoiZAgRlcowV4pwedZ4qg9inLJ/HiiLatuC+3veGO00AMd5x9m
+        Wed, 30 Nov 2022 04:44:05 -0500
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 86C221EEE2;
+        Wed, 30 Nov 2022 01:44:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1669801444; x=1701337444;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=S7IFmJUYj2DIJw7QNc2jhnguuUzMp+pGaR87dR42Bvg=;
+  b=lCBjEz5J13wfyd4GwzvbgZN43MlYEZ8wrW6vSDHXR2nK3gvNDQWl/b+F
+   RyYpQEl7oBm+53SnvUbpKn2xYBcH7rdIZSuioe16+dH9gcvQeX9BvIMPa
+   KwthUpBtgEa57piZCRN8rztWUj7qEreupOdB7LYuqTWGnD5QuUMEh4+QK
+   9JdOOd4uHfAf2Zs5zGQeej5wg1RpzvADuHdYN437s3Sr/upVZEMed1tCS
+   vo0Tpe7BDJI2urtizkeEB/muEpid8oGHmlbf2+7IqqJNuQYaBTts1s/de
+   t6YkRnvYSQj6EIzeSW16CVzL+vWkLV2pUN4wUymZaQE6BZxDcuFoR8+zb
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10546"; a="379633056"
+X-IronPort-AV: E=Sophos;i="5.96,206,1665471600"; 
+   d="scan'208";a="379633056"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2022 01:44:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10546"; a="637934502"
+X-IronPort-AV: E=Sophos;i="5.96,206,1665471600"; 
+   d="scan'208";a="637934502"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by orsmga007.jf.intel.com with ESMTP; 30 Nov 2022 01:43:53 -0800
+Date:   Wed, 30 Nov 2022 17:39:31 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Michael Roth <michael.roth@amd.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
+        Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        mhocko@suse.com, Muchun Song <songmuchun@bytedance.com>,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
+ create restricted user memory
+Message-ID: <20221130093931.GA945726@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
+ <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
+ <20221129003725.l34qhx6n44mq2gtl@amd.com>
+ <20221129140615.GC902164@chaop.bj.intel.com>
+ <20221129190658.jefuep7nglp25ugt@amd.com>
+ <20221129191815.atuv6arhodjbnvb2@amd.com>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ad0c:0:b0:302:e073:6149 with SMTP id
- w12-20020a92ad0c000000b00302e0736149mr16194154ilh.241.1669799855116; Wed, 30
- Nov 2022 01:17:35 -0800 (PST)
-Date:   Wed, 30 Nov 2022 01:17:35 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000035d6f905eeac935e@google.com>
-Subject: [syzbot] kernel BUG in hfs_bnode_unhash
-From:   syzbot <syzbot+b7ceb040f7552ed64dc9@syzkaller.appspotmail.com>
-To:     akpm@linux-foundation.org, fmdefrancesco@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        slava@dubeyko.com, syzkaller-bugs@googlegroups.com,
-        willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221129191815.atuv6arhodjbnvb2@amd.com>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Tue, Nov 29, 2022 at 01:18:15PM -0600, Michael Roth wrote:
+> On Tue, Nov 29, 2022 at 01:06:58PM -0600, Michael Roth wrote:
+> > On Tue, Nov 29, 2022 at 10:06:15PM +0800, Chao Peng wrote:
+> > > On Mon, Nov 28, 2022 at 06:37:25PM -0600, Michael Roth wrote:
+> > > > On Tue, Oct 25, 2022 at 11:13:37PM +0800, Chao Peng wrote:
+> > > ...
+> > > > > +static long restrictedmem_fallocate(struct file *file, int mode,
+> > > > > +				    loff_t offset, loff_t len)
+> > > > > +{
+> > > > > +	struct restrictedmem_data *data = file->f_mapping->private_data;
+> > > > > +	struct file *memfd = data->memfd;
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	if (mode & FALLOC_FL_PUNCH_HOLE) {
+> > > > > +		if (!PAGE_ALIGNED(offset) || !PAGE_ALIGNED(len))
+> > > > > +			return -EINVAL;
+> > > > > +	}
+> > > > > +
+> > > > > +	restrictedmem_notifier_invalidate(data, offset, offset + len, true);
+> > > > 
+> > > > The KVM restrictedmem ops seem to expect pgoff_t, but here we pass
+> > > > loff_t. For SNP we've made this strange as part of the following patch
+> > > > and it seems to produce the expected behavior:
+> > > 
+> > > That's correct. Thanks.
+> > > 
+> > > > 
+> > > >   https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgithub.com%2Fmdroth%2Flinux%2Fcommit%2Fd669c7d3003ff7a7a47e73e8c3b4eeadbd2c4eb6&amp;data=05%7C01%7CMichael.Roth%40amd.com%7C0c26815eb6af4f1a243508dad23cf713%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C638053456609134623%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=kAL42bmyBB0alVwh%2FN%2BT3D%2BiVTdxxMsJ7V4TNuCTjM4%3D&amp;reserved=0
+> > > > 
+> > > > > +	ret = memfd->f_op->fallocate(memfd, mode, offset, len);
+> > > > > +	restrictedmem_notifier_invalidate(data, offset, offset + len, false);
+> > > > > +	return ret;
+> > > > > +}
+> > > > > +
+> > > > 
+> > > > <snip>
+> > > > 
+> > > > > +int restrictedmem_get_page(struct file *file, pgoff_t offset,
+> > > > > +			   struct page **pagep, int *order)
+> > > > > +{
+> > > > > +	struct restrictedmem_data *data = file->f_mapping->private_data;
+> > > > > +	struct file *memfd = data->memfd;
+> > > > > +	struct page *page;
+> > > > > +	int ret;
+> > > > > +
+> > > > > +	ret = shmem_getpage(file_inode(memfd), offset, &page, SGP_WRITE);
+> > > > 
+> > > > This will result in KVM allocating pages that userspace hasn't necessary
+> > > > fallocate()'d. In the case of SNP we need to get the PFN so we can clean
+> > > > up the RMP entries when restrictedmem invalidations are issued for a GFN
+> > > > range.
+> > > 
+> > > Yes fallocate() is unnecessary unless someone wants to reserve some
+> > > space (e.g. for determination or performance purpose), this matches its
+> > > semantics perfectly at:
+> > > https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.man7.org%2Flinux%2Fman-pages%2Fman2%2Ffallocate.2.html&amp;data=05%7C01%7CMichael.Roth%40amd.com%7C0c26815eb6af4f1a243508dad23cf713%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C638053456609134623%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=acBSquFG%2FHtpbcZfHDZrP2O63bu06rI0pjiPJFSJSj8%3D&amp;reserved=0
+> > > 
+> > > > 
+> > > > If the guest supports lazy-acceptance however, these pages may not have
+> > > > been faulted in yet, and if the VMM defers actually fallocate()'ing space
+> > > > until the guest actually tries to issue a shared->private for that GFN
+> > > > (to support lazy-pinning), then there may never be a need to allocate
+> > > > pages for these backends.
+> > > > 
+> > > > However, the restrictedmem invalidations are for GFN ranges so there's
+> > > > no way to know inadvance whether it's been allocated yet or not. The
+> > > > xarray is one option but currently it defaults to 'private' so that
+> > > > doesn't help us here. It might if we introduced a 'uninitialized' state
+> > > > or something along that line instead of just the binary
+> > > > 'shared'/'private' though...
+> > > 
+> > > How about if we change the default to 'shared' as we discussed at
+> > > https://nam11.safelinks.protection.outlook.com/?url=https%3A%2F%2Flore.kernel.org%2Fall%2FY35gI0L8GMt9%2BOkK%40google.com%2F&amp;data=05%7C01%7CMichael.Roth%40amd.com%7C0c26815eb6af4f1a243508dad23cf713%7C3dd8961fe4884e608e11a82d994e183d%7C0%7C0%7C638053456609134623%7CUnknown%7CTWFpbGZsb3d8eyJWIjoiMC4wLjAwMDAiLCJQIjoiV2luMzIiLCJBTiI6Ik1haWwiLCJXVCI6Mn0%3D%7C3000%7C%7C%7C&amp;sdata=Q1vZWQiZ7mx12Qn5aKl4s8Ea9hNbwCJBb%2BjiA1du3Os%3D&amp;reserved=0?
+> > 
+> > Need to look at this a bit more, but I think that could work as well.
+> > 
+> > > > 
+> > > > But for now we added a restrictedmem_get_page_noalloc() that uses
+> > > > SGP_NONE instead of SGP_WRITE to avoid accidentally allocating a bunch
+> > > > of memory as part of guest shutdown, and a
+> > > > kvm_restrictedmem_get_pfn_noalloc() variant to go along with that. But
+> > > > maybe a boolean param is better? Or maybe SGP_NOALLOC is the better
+> > > > default, and we just propagate an error to userspace if they didn't
+> > > > fallocate() in advance?
+> > > 
+> > > This (making fallocate() a hard requirement) not only complicates the
+> > > userspace but also forces the lazy-faulting going through a long path of
+> > > exiting to userspace. Unless we don't have other options I would not go
+> > > this way.
+> > 
+> > Unless I'm missing something, it's already the case that userspace is
+> > responsible for handling all the shared->private transitions in response
+> > to KVM_EXIT_MEMORY_FAULT or (in our case) KVM_EXIT_VMGEXIT. So it only
+> > places the additional requirements on the VMM that if they *don't*
+> > preallocate, then they'll need to issue the fallocate() prior to issuing
+> > the KVM_MEM_ENCRYPT_REG_REGION ioctl in response to these events.
 
-syzbot found the following issue on:
+Preallocating and memory conversion between shared<->private are two
+different things. No double fallocate() and conversion can be called
+together in response to KVM_EXIT_MEMORY_FAULT, but they don't have to be
+paired. And the fallocate() does not have to operate on the same memory
+range as memory conversion does.
 
-HEAD commit:    01f856ae6d0c Merge tag 'net-6.1-rc8-2' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1136a06b880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2325e409a9a893e1
-dashboard link: https://syzkaller.appspot.com/bug?extid=b7ceb040f7552ed64dc9
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+> > 
+> > QEMU for example already has a separate 'prealloc' option for cases
+> > where they want to prefault all the guest memory, so it makes sense to
+> > continue making that an optional thing with regard to UPM.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Making 'prealloc' work for UPM in QEMU does sound reasonable. Anyway,
+it's just an option so not change the assumption here.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/5428d604f56a/disk-01f856ae.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e953d290d254/vmlinux-01f856ae.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3f71610a4904/bzImage-01f856ae.xz
+> 
+> Although I guess what you're suggesting doesn't stop userspace from
+> deciding whether they want to prefault or not. I know the Google folks
+> had some concerns over unexpected allocations causing 2x memory usage
+> though so giving userspace full control of what is/isn't allocated in
+> the restrictedmem backend seems to make it easier to guard against this,
+> but I think checking the xarray and defaulting to 'shared' would work
+> for us if that's the direction we end up going.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+b7ceb040f7552ed64dc9@syzkaller.appspotmail.com
+Yeah, that looks very likely the direction satisfying all people here.
 
-------------[ cut here ]------------
-kernel BUG at fs/hfs/bnode.c:310!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 1 PID: 27750 Comm: syz-executor.3 Not tainted 6.1.0-rc7-syzkaller-00101-g01f856ae6d0c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-RIP: 0010:hfs_bnode_unhash+0x155/0x160 fs/hfs/bnode.c:310
-Code: ff ff 48 89 df e8 4b 8e 80 ff e9 17 ff ff ff 89 d9 80 e1 07 80 c1 03 38 c1 7c c6 48 89 df e8 32 8e 80 ff eb bc e8 3b 72 2c ff <0f> 0b 66 0f 1f 84 00 00 00 00 00 53 48 89 fb e8 27 72 2c ff 48 85
-RSP: 0018:ffffc900033cf2a8 EFLAGS: 00010246
-RAX: ffffffff825e25b5 RBX: 0000000000000000 RCX: 0000000000040000
-RDX: ffffc9000d24b000 RSI: 000000000003ffff RDI: 0000000000040000
-RBP: 1ffff1100e8b5428 R08: ffffffff825f3bb7 R09: ffffed1028a44c51
-R10: ffffed1028a44c51 R11: 1ffff11028a44c50 R12: dffffc0000000000
-R13: ffff8880745aa140 R14: ffff888145226200 R15: 0000000000000004
-FS:  00007f33db891700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555556f50848 CR3: 0000000027323000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- hfs_release_folio+0x34c/0x530 fs/hfs/inode.c:122
- fallback_migrate_folio+0x196/0x3e0 mm/migrate.c:909
- move_to_new_folio+0x259/0xd80 mm/migrate.c:951
- __unmap_and_move+0x6b6/0xeb0 mm/migrate.c:1112
- unmap_and_move+0x39a/0x1090 mm/migrate.c:1184
- migrate_pages+0x572/0x1450 mm/migrate.c:1461
- compact_zone+0x282e/0x3770 mm/compaction.c:2421
- compact_node+0x279/0x610 mm/compaction.c:2703
- compact_nodes mm/compaction.c:2719 [inline]
- sysctl_compaction_handler+0xa8/0x140 mm/compaction.c:2761
- proc_sys_call_handler+0x576/0x890 fs/proc/proc_sysctl.c:604
- call_write_iter include/linux/fs.h:2199 [inline]
- new_sync_write fs/read_write.c:491 [inline]
- vfs_write+0x7dc/0xc50 fs/read_write.c:584
- ksys_write+0x177/0x2a0 fs/read_write.c:637
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f33daa8c0d9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f33db891168 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: ffffffffffffffda RBX: 00007f33dababf80 RCX: 00007f33daa8c0d9
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 00007f33daae7ae9 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffe0f1fd16f R14: 00007f33db891300 R15: 0000000000022000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:hfs_bnode_unhash+0x155/0x160 fs/hfs/bnode.c:310
-Code: ff ff 48 89 df e8 4b 8e 80 ff e9 17 ff ff ff 89 d9 80 e1 07 80 c1 03 38 c1 7c c6 48 89 df e8 32 8e 80 ff eb bc e8 3b 72 2c ff <0f> 0b 66 0f 1f 84 00 00 00 00 00 53 48 89 fb e8 27 72 2c ff 48 85
-RSP: 0018:ffffc900033cf2a8 EFLAGS: 00010246
-RAX: ffffffff825e25b5 RBX: 0000000000000000 RCX: 0000000000040000
-RDX: ffffc9000d24b000 RSI: 000000000003ffff RDI: 0000000000040000
-RBP: 1ffff1100e8b5428 R08: ffffffff825f3bb7 R09: ffffed1028a44c51
-R10: ffffed1028a44c51 R11: 1ffff11028a44c50 R12: dffffc0000000000
-R13: ffff8880745aa140 R14: ffff888145226200 R15: 0000000000000004
-FS:  00007f33db891700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555556f50848 CR3: 0000000027323000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Chao
+> 
+> -Mike
+> 
+> > 
+> > -Mike
+> > 
+> > > 
+> > > Chao
+> > > > 
+> > > > -Mike
+> > > > 
+> > > > > +	if (ret)
+> > > > > +		return ret;
+> > > > > +
+> > > > > +	*pagep = page;
+> > > > > +	if (order)
+> > > > > +		*order = thp_order(compound_head(page));
+> > > > > +
+> > > > > +	SetPageUptodate(page);
+> > > > > +	unlock_page(page);
+> > > > > +
+> > > > > +	return 0;
+> > > > > +}
+> > > > > +EXPORT_SYMBOL_GPL(restrictedmem_get_page);
+> > > > > -- 
+> > > > > 2.25.1
+> > > > > 
