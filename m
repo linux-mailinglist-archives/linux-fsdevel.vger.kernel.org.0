@@ -2,171 +2,204 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CDF3663CE61
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Nov 2022 05:34:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 708E463CEC2
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Nov 2022 06:37:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233169AbiK3Eer (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Nov 2022 23:34:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35738 "EHLO
+        id S232477AbiK3Fhr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Nov 2022 00:37:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43396 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232911AbiK3Eea (ORCPT
+        with ESMTP id S229875AbiK3Fhn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Nov 2022 23:34:30 -0500
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B9FA1C93B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 29 Nov 2022 20:34:29 -0800 (PST)
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20221130043426epoutp04b33db41a79eedc291991144fa2900f12~sQquqnbjQ1783317833epoutp047
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Nov 2022 04:34:26 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20221130043426epoutp04b33db41a79eedc291991144fa2900f12~sQquqnbjQ1783317833epoutp047
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1669782866;
-        bh=RhwyLtLRal+QZabo3XMxSj3WTjVY9/niepRkdDiMltQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VGBDCxtwmOfsXAJjcOptEWMJtALhdwVjD86eOE6R9/Dcd/k61k641N81ons5C1FcB
-         tQ2vcjEZUG4kwNmu64Rbvi4oLRmWiNXbz0gqbMrtXv3qxqwIOjw4lq+Oss9t44vnA1
-         NWcI868OQsZ6uqTlJD0mKapa85NOBBvKL/PjFRH4=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-        epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-        20221130043426epcas5p14146e3fe701874a0fae62fd456c6b9e6~sQqt6rutC0431904319epcas5p1K;
-        Wed, 30 Nov 2022 04:34:26 +0000 (GMT)
-Received: from epsmges5p2new.samsung.com (unknown [182.195.38.176]) by
-        epsnrtp4.localdomain (Postfix) with ESMTP id 4NMRDq5fljz4x9QB; Wed, 30 Nov
-        2022 04:34:19 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-        epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        05.0A.39477.B4DD6836; Wed, 30 Nov 2022 13:34:19 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-        20221130042855epcas5p28a892bc5d2b37a713a71b7fa55133095~sQl5zOb2G2276422764epcas5p2n;
-        Wed, 30 Nov 2022 04:28:55 +0000 (GMT)
-Received: from epsmgms1p2.samsung.com (unknown [182.195.42.42]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221130042855epsmtrp2cb2597a35f998d3be03227f0c7a35ecf~sQl5wmr1z2076220762epsmtrp2h;
-        Wed, 30 Nov 2022 04:28:55 +0000 (GMT)
-X-AuditID: b6c32a4a-007ff70000019a35-be-6386dd4b5f56
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        4A.90.18644.70CD6836; Wed, 30 Nov 2022 13:28:55 +0900 (KST)
-Received: from test-zns (unknown [107.110.206.5]) by epsmtip2.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20221130042850epsmtip215b5fc4dce992794a71b94362d374fe2~sQl1dJQ-21697616976epsmtip2R;
-        Wed, 30 Nov 2022 04:28:50 +0000 (GMT)
-Date:   Wed, 30 Nov 2022 09:47:28 +0530
-From:   Nitesh Shetty <nj.shetty@samsung.com>
-To:     Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc:     axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        dm-devel@redhat.com, kbusch@kernel.org, hch@lst.de,
-        sagi@grimberg.me, james.smart@broadcom.com, kch@nvidia.com,
-        naohiro.aota@wdc.com, jth@kernel.org, viro@zeniv.linux.org.uk,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        anuj20.g@samsung.com, joshi.k@samsung.com, p.raghav@samsung.com,
-        nitheshshetty@gmail.com, gost.dev@samsung.com
-Subject: Re: [PATCH v5 10/10] fs: add support for copy file range in zonefs
-Message-ID: <20221130041728.GB17533@test-zns>
+        Wed, 30 Nov 2022 00:37:43 -0500
+Received: from mail-qk1-x72c.google.com (mail-qk1-x72c.google.com [IPv6:2607:f8b0:4864:20::72c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 860491C431;
+        Tue, 29 Nov 2022 21:37:41 -0800 (PST)
+Received: by mail-qk1-x72c.google.com with SMTP id z17so11511316qki.11;
+        Tue, 29 Nov 2022 21:37:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oKPR57ek3ooMmQ0+P1pqWsdpJjQbw5NulQVkSVNRu1E=;
+        b=EV9IW20OrVRhM9suJigdFA5+18vgpaTzBQ4q+EXeow1qz2b+V1im7z7Z6un2WNmsTw
+         mCjzcFHsC0O2l8XqSsqY6cXPq8fOO6TEHI00P3BZpTGlAzkOc3ZOiVwpuRiAZabZOYvl
+         Lukmglq1AqQDcNY3fJjSBiw7OaJBjC4/xvxGajobULDjHKs+appLj7gV1Zi3/oBpivIB
+         qzwz/UI2wntk8bkfbUiwElEYaV7OMR7MBUYSvkbbvDuKcSwFNkdHKKaWP9QDGFvnN4dQ
+         SzPfMvpWUWg8Yu+b8+x1KJpSWgl8bmqyrtEqG4SbbwOKX8dqKY5e7JecV8COzAh7CMGS
+         JpPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oKPR57ek3ooMmQ0+P1pqWsdpJjQbw5NulQVkSVNRu1E=;
+        b=KXw+iYTz2YiGPc7mn8xYEbvsvQeLmcMNSRTs+3ay6ymf22zBtMbDF9H2EhYOKTMd6l
+         smYQDEQjpmd0ImwgvKsd5oOviJsl+lYqEpfTy1E6JHUVJ/HXXFG3P5yCyI1lB3k+CGIW
+         zrx9SRKdF03h8wUuUFEoCcIj2BLJdgZOPqCE/+B31NvLHlw7tksh8FyIr4oD1qAcu5OP
+         +hBoUtYhp7SF6pefCeAoOj6aldrZ9mBaZS5PBJ8ABes1KmD/LByJ9n4QxH8zu0LB8xdw
+         DYEQ6hsB7r9473cKdJaJk7PRoYRvYZpey5WosLNSqRWdmzxk2SmkjR+nzbk9P0S6/l3p
+         FryA==
+X-Gm-Message-State: ANoB5pm4ki/H82HGAyIrr4GMbxQKnb7v4g6HT8+kNnzSqq8rTdc1kKdN
+        EfG7t0H6h7Nvh9kwzYJHLg==
+X-Google-Smtp-Source: AA0mqf4oXB/zkTlgTxjuRLQfqUfakOmEWU22ocH6K0bhvbU2hXohDbj2ZXGfjq+i/zU0MPFGBLmkkw==
+X-Received: by 2002:ae9:e115:0:b0:6fc:2903:1dd1 with SMTP id g21-20020ae9e115000000b006fc29031dd1mr31838425qkm.232.1669786660561;
+        Tue, 29 Nov 2022 21:37:40 -0800 (PST)
+Received: from bytedance.attlocal.net ([130.44.212.155])
+        by smtp.gmail.com with ESMTPSA id i11-20020ac8764b000000b003a611cb2a95sm321010qtr.9.2022.11.29.21.37.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Nov 2022 21:37:40 -0800 (PST)
+From:   Peilin Ye <yepeilin.cs@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Peilin Ye <peilin.ye@bytedance.com>,
+        Cong Wang <cong.wang@bytedance.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Peilin Ye <yepeilin.cs@gmail.com>
+Subject: [PATCH v3] coredump: Use vmsplice_to_pipe() for pipes in dump_emit_page()
+Date:   Tue, 29 Nov 2022 21:37:34 -0800
+Message-Id: <20221130053734.2811-1-yepeilin.cs@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20221031210349.3346-1-yepeilin.cs@gmail.com>
+References: <20221031210349.3346-1-yepeilin.cs@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <b22652ee-9cca-a5b1-e9f1-862ed8f0354d@opensource.wdc.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf0xTVxTHd9/rjwdSfAJ1VxqBlGECDGgZ4GWBOTdinjIjY3PZjxD2Ul4o
-        obRdWxCNbhVpyZgoEFmgMmEgA8HBBOaACpI6VmBiRQIKk18LxUwH8ivZBkNX+mDxv8855/u9
-        55x7cwnco4jvTaQpdYxGSSvEPFfO9VuBgSHx40aZpLdehJr6f8FRTuE6jhrGz/PQ2oANR53z
-        F7lotLsdQ1caejBk/nYRQz3P53hoemWMg4otIwDZh00Y6hwLRjc6+zhoqKOchyq+s/NRkbWF
-        i9pmTgO0XJPLR41PnnJQ75gI2dat3Dd3UqbJAR7VbhrnU7aJaxxqaCCTaq7/kke1XP6CMo/q
-        eVTBmXmHwDDJpZ52DfOoc631gFpu9qHyur/CqOaZOSzB/eP0GDlDpzAaP0YpU6WkKVNjxfHv
-        Jb+dHBklkYZIo9FesZ+SzmBixXHvJIQcSFM4Vhf7ZdGKTEcqgdZqxWFvxGhUmTrGT67S6mLF
-        jDpFoY5Qh2rpDG2mMjVUyehel0ok4ZEO4afp8pwaO0d9hp89Vd7C14Nhbj5wISAZAf+uXODk
-        A1fCgzQD2Ge7zWeDJQAXqvI3g2UAf77xFN+yfFPRzmULHQBOVdk2/bMAdiyWOlUcMgCu/zOB
-        5QOC4JHB8NfnxEbai4yEc2cNTj1OPsRhiaWGv1HwJOPhUE6DkwVkCGydfIizvAP2lc1wNtiF
-        PABv38tzDi4k/WH3dSu2cRAkq13gH4M/cjeaQTIO5hccYSf1hI+trXyWveHyfCeP5WPwyoU6
-        HuvNBdB03wTYwj5o6D/vbIyTcji/Nrtp2A1L+hsxNu8OC9ZmMDYvgG2XttgfXm2q3NTvgiN/
-        nd5kCk7+1gbYGyrF4cqfRn4h8DW9sJzphX4svworzUsOJhwsgrXPCBYDYVNHWCXg1oNdjFqb
-        kcpoI9XhSubY/08uU2U0A+ffCDrUBqanFkItACOABUACF3sJFhMNMg9BCn38BKNRJWsyFYzW
-        AiIdj1WEewtlKsfnUuqSpRHRkoioqKiI6NeipOKXBdWlQTIPMpXWMekMo2Y0Wz6McPHWY/vt
-        3OOrxZKCrwtnT2X7usk/Ip8YRmN6/RV2Zm+Sj+ycqtdSljTp82gkYE9hL7QN3H2lQ+R7Lbtx
-        Kq9qJRd3MyzUbsuqGfzsoq0g90EqVMVkhyw/mBCmxwC97i5N7yGyPji4+uiw3dpTccjaY/xX
-        H7h/+NJVPTFg9zrh+9MOyxwdf+fkzaSKxmpPqut781xx+7Ok99NFHnn2o4dz7jTlxL1U//n9
-        Ct+DiYG9brXCnUm3SkXyNqGhpPz3y8g7ZTA+YHes6OQnif2Pj4SF63/I2U6dNW9jFvYZ3+0L
-        a5ySLt3cXiZ468K0UZgpQHUf1vkN8FeNLcHBwnuRXUcDQt1PuWrEHK2clgbhGi39HwPz2YSk
-        BAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrIIsWRmVeSWpSXmKPExsWy7bCSvC77nbZkg68buCzWnzrGbNE04S+z
-        xeq7/WwWv8+eZ7bY+242q8XNAzuZLFauPspksXvhRyaLo//fslk8/HKLxWLSoWuMFk+vzmKy
-        2HtL22LP3pMsFpd3zWGzmL/sKbvFxOObWS12PGlktPi8tIXdYt3r9ywWJ25JW5z/e5zVQcxj
-        1v2zbB47Z91l9zh/byOLx+WzpR6bVnWyeWxeUu+x+2YDm0dv8zuggtb7rB7v911l8+jbsorR
-        4/MmOY/2A91MHpuevGUK4IvisklJzcksSy3St0vgyph27Bp7wWGWil9zJrM1MK5j7mLk5JAQ
-        MJGYO38naxcjF4eQwA5GiQt75rFAJCQllv09AlUkLLHy33N2iKInjBJ3/z1lB0mwCKhK/P15
-        j6mLkYODTUBb4vR/DpCwiICpxNueVrA5zAL3mCVefeIEsYUFvCUuN60Ga+UV0JXYcv8OM8TM
-        GcwS/x+uZYFICEqcnPkEqllL4sa/l2DzmQWkJZb/A5vPKeAmceZSOyuILSqgLHFg23GmCYyC
-        s5B0z0LSPQuhewEj8ypGydSC4tz03GLDAqO81HK94sTc4tK8dL3k/NxNjOBY19Lawbhn1Qe9
-        Q4xMHIyHGCU4mJVEeD8GtSYL8aYkVlalFuXHF5XmpBYfYpTmYFES573QdTJeSCA9sSQ1OzW1
-        ILUIJsvEwSnVwCTlEcm6+Z9qokRv97kEPqvld7hOLFpSsNVl1tol9ycbKV+8/WAWv6Xenmjp
-        fdqf/Vj/eBo8Ob9wo0+WMpfsL77JpROftHGs/z6Hod+s/G15pm3Ft/8/4z6fMY4O/6XEZ+aq
-        cSX5kXjWF26zLZ03e0xWTXMxtd/nU6prmBq+bk+ataVDXUq4zG0uLZlNwvLJnydvDHl/JKKA
-        8ZndKt79FRb/mJonx0nWSpRvC6360zXRpOxMsNHj7cdjH7ZMWdAitNjXcmf95dnxlWE5eTEZ
-        K23LQ+dusv+1ySlCqEp4k7Lov6VVhyfMvnJr4xymJEEP9Y1fTH4mrLq1dlP2kVte77fbuB48
-        eMOM84Yh0JF+SizFGYmGWsxFxYkA8Q6H+GQDAAA=
-X-CMS-MailID: 20221130042855epcas5p28a892bc5d2b37a713a71b7fa55133095
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-        boundary="----GsYAgckb8ZPIB7TqR4NYyp-jgnPv5c.LE-kW9H5hDU_d1TDU=_80488_"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221123061044epcas5p2ac082a91fc8197821f29e84278b6203c
-References: <20221123055827.26996-1-nj.shetty@samsung.com>
-        <CGME20221123061044epcas5p2ac082a91fc8197821f29e84278b6203c@epcas5p2.samsung.com>
-        <20221123055827.26996-11-nj.shetty@samsung.com>
-        <729254f8-2468-e694-715e-72bcbef80ff3@opensource.wdc.com>
-        <349a4d66-3a9f-a095-005c-1f180c5f3aac@opensource.wdc.com>
-        <20221129122232.GC16802@test-zns>
-        <b22652ee-9cca-a5b1-e9f1-862ed8f0354d@opensource.wdc.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-------GsYAgckb8ZPIB7TqR4NYyp-jgnPv5c.LE-kW9H5hDU_d1TDU=_80488_
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
+From: Peilin Ye <peilin.ye@bytedance.com>
 
-On Wed, Nov 30, 2022 at 08:45:55AM +0900, Damien Le Moal wrote:
-> On 11/29/22 21:22, Nitesh Shetty wrote:
-> > Acked. I do see a gap in current zonefs cfr implementation. I will drop this
-> 
-> cfr ?
->
+Currently, there is a copy for each page when dumping VMAs to pipe
+handlers using dump_emit_page().  For example:
 
-yes, will drop zonefs cfr for next version.
+  fs/binfmt_elf.c:elf_core_dump()
+      fs/coredump.c:dump_user_range()
+                     :dump_emit_page()
+        fs/read_write.c:__kernel_write_iter()
+                fs/pipe.c:pipe_write()
+             lib/iov_iter.c:copy_page_from_iter()
 
-> > implementation for next version. Once we finalize on block copy offload
-> > implementation, will re-pick this and send with above reviews fixed.
-> > 
-> > Thank you,
-> > Nitesh
-> 
-> Please trim your replies.
-> 
+Use vmsplice_to_pipe() instead of __kernel_write_iter() to avoid this
+copy for pipe handlers.
 
-Noted
+Tested by dumping a 32-GByte core into a simple handler that splice()s
+from stdin to disk in a loop, PIPE_DEF_BUFFERS (16) pages at a time.
 
-> 
-> -- 
-> Damien Le Moal
-> Western Digital Research
-> 
-> 
+                              Before           After   Improved by
+  Time to Completion   40.77 seconds   35.49 seconds        12.95%
+  CPU Usage                   92.27%          86.40%         6.36%
 
-Thanks,
-Nitesh Shetty
+Suggested-by: Cong Wang <cong.wang@bytedance.com>
+Signed-off-by: Peilin Ye <peilin.ye@bytedance.com>
+---
+change in v3:
+  - do not rely on error checking in vmsplice_to_pipe() (Al Viro)
+  - rebase onto linux-next
 
-------GsYAgckb8ZPIB7TqR4NYyp-jgnPv5c.LE-kW9H5hDU_d1TDU=_80488_
-Content-Type: text/plain; charset="utf-8"
+change in v2:
+  - fix warning in net/tls/tls_sw.c (kernel test robot)
 
+ fs/coredump.c            | 10 +++++++++-
+ fs/splice.c              |  4 ++--
+ include/linux/coredump.h |  3 +++
+ include/linux/splice.h   |  3 +++
+ 4 files changed, 17 insertions(+), 3 deletions(-)
 
-------GsYAgckb8ZPIB7TqR4NYyp-jgnPv5c.LE-kW9H5hDU_d1TDU=_80488_--
+diff --git a/fs/coredump.c b/fs/coredump.c
+index de78bde2991b..7f0981d71881 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -42,6 +42,7 @@
+ #include <linux/timekeeping.h>
+ #include <linux/sysctl.h>
+ #include <linux/elf.h>
++#include <linux/splice.h>
+ 
+ #include <linux/uaccess.h>
+ #include <asm/mmu_context.h>
+@@ -586,6 +587,8 @@ void do_coredump(const kernel_siginfo_t *siginfo)
+ 			goto fail_unlock;
+ 		}
+ 
++		set_bit(COREDUMP_USE_PIPE, &cprm.flags);
++
+ 		if (cprm.limit == 1) {
+ 			/* See umh_pipe_setup() which sets RLIMIT_CORE = 1.
+ 			 *
+@@ -861,7 +864,12 @@ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ 		return 0;
+ 	pos = file->f_pos;
+ 	iov_iter_bvec(&iter, ITER_SOURCE, &bvec, 1, PAGE_SIZE);
+-	n = __kernel_write_iter(cprm->file, &iter, &pos);
++
++	if (test_bit(COREDUMP_USE_PIPE, &cprm->flags))
++		n = vmsplice_to_pipe(file, &iter, 0);
++	else
++		n = __kernel_write_iter(cprm->file, &iter, &pos);
++
+ 	if (n != PAGE_SIZE)
+ 		return 0;
+ 	file->f_pos = pos;
+diff --git a/fs/splice.c b/fs/splice.c
+index 5969b7a1d353..c9be20f4115e 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1234,8 +1234,8 @@ static long vmsplice_to_user(struct file *file, struct iov_iter *iter,
+  * as splice-from-memory, where the regular splice is splice-from-file (or
+  * to file). In both cases the output is a pipe, naturally.
+  */
+-static long vmsplice_to_pipe(struct file *file, struct iov_iter *iter,
+-			     unsigned int flags)
++long vmsplice_to_pipe(struct file *file, struct iov_iter *iter,
++		      unsigned int flags)
+ {
+ 	struct pipe_inode_info *pipe;
+ 	long ret = 0;
+diff --git a/include/linux/coredump.h b/include/linux/coredump.h
+index d3eba4360150..3e34009487bf 100644
+--- a/include/linux/coredump.h
++++ b/include/linux/coredump.h
+@@ -28,8 +28,11 @@ struct coredump_params {
+ 	int vma_count;
+ 	size_t vma_data_size;
+ 	struct core_vma_metadata *vma_meta;
++	unsigned long flags;
+ };
+ 
++#define COREDUMP_USE_PIPE	0
++
+ /*
+  * These are the only things you should do on a core-file: use only these
+  * functions to write out all the necessary info.
+diff --git a/include/linux/splice.h b/include/linux/splice.h
+index a55179fd60fc..38b3560a318b 100644
+--- a/include/linux/splice.h
++++ b/include/linux/splice.h
+@@ -10,6 +10,7 @@
+ #define SPLICE_H
+ 
+ #include <linux/pipe_fs_i.h>
++#include <linux/uio.h>
+ 
+ /*
+  * Flags passed in from splice/tee/vmsplice
+@@ -81,6 +82,8 @@ extern ssize_t splice_direct_to_actor(struct file *, struct splice_desc *,
+ extern long do_splice(struct file *in, loff_t *off_in,
+ 		      struct file *out, loff_t *off_out,
+ 		      size_t len, unsigned int flags);
++extern long vmsplice_to_pipe(struct file *file, struct iov_iter *iter,
++			     unsigned int flags);
+ 
+ extern long do_tee(struct file *in, struct file *out, size_t len,
+ 		   unsigned int flags);
+-- 
+2.20.1
+
