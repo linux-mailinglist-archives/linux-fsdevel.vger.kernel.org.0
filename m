@@ -2,171 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3941163CDCD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Nov 2022 04:28:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E42D763CDEA
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Nov 2022 04:41:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232803AbiK3D2w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 29 Nov 2022 22:28:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49354 "EHLO
+        id S232912AbiK3DlO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 29 Nov 2022 22:41:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230049AbiK3D2v (ORCPT
+        with ESMTP id S231757AbiK3DlF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 29 Nov 2022 22:28:51 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [145.40.73.55])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 894925A6D3;
-        Tue, 29 Nov 2022 19:28:49 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id B5E33CE110D;
-        Wed, 30 Nov 2022 03:28:47 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0BBFC433C1;
-        Wed, 30 Nov 2022 03:28:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669778925;
-        bh=pd1oR2EJlnnq8COYozIsiG3lk5t8ltaeT/tSLA1dWsg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=XzBrmobqhSoN37uonzAHO6DCbFjNYn7l5Yk4IWfrPbdDRoPUCFFyZReRoj7wxYmp2
-         89ckmgTmDUU0haAQDqe0Go7u+WH6uCklvZ3KPSKhdk7s21Dp8v+7hmbKgdiHA7w/dh
-         lbCyjTsZBhtD64OyoTeXX0ah2+XuD17FlOUQzczLoDDyqypF7R10VBjMKa+H4zxwAn
-         2CDJiWQpMOa5jJ7DCWzLmTyO6urxS46sWxoG2+gB5RLnPMHMyR79y0e1j6ihmxq72b
-         jLPCwy/fiEM4F68sGenvJ9VALdRUGX9fyptubNJh9Tn1xQe7YJ6uk2P9PB2ZsgRJ4Y
-         ZHCi5OPSfpCng==
-Date:   Tue, 29 Nov 2022 19:28:45 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
-        nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        david@fromorbit.com, dan.j.williams@intel.com
-Subject: Re: [PATCH 2/2] fsdax,xfs: port unshare to fsdax
-Message-ID: <Y4bN7f8XXviJ6zRz@magnolia>
-References: <1669301694-16-1-git-send-email-ruansy.fnst@fujitsu.com>
- <1669301694-16-3-git-send-email-ruansy.fnst@fujitsu.com>
+        Tue, 29 Nov 2022 22:41:05 -0500
+Received: from mail-qv1-xf36.google.com (mail-qv1-xf36.google.com [IPv6:2607:f8b0:4864:20::f36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CB0C70DE7;
+        Tue, 29 Nov 2022 19:41:05 -0800 (PST)
+Received: by mail-qv1-xf36.google.com with SMTP id h10so11155801qvq.7;
+        Tue, 29 Nov 2022 19:41:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xoKwaxsoBTuq6caiMH51+e7OBBLm1ZQwP+caQE5Hz20=;
+        b=MzAwN7oBWwvha7Zlwgs6liSVdb1KbBAyeKIDEaNZaOdDjbIgac4GcW5KTBGkjpQE3f
+         pYo3whXLEgbbB47IomRI1kyqGdJ9zlDAzon5JQ2R3ZUAhcxgEHcp0ghwbPSV0BD1Nu+P
+         Wb4c+WZi/9GaflpFa3xEeRR7nkwH7Z4NurCHByL55Ld/F/iOOJna/4u1D3OKhJf3hEsf
+         zPlUcoIfCU937f9VtpNjbGzxVzwt7OzPi++BHenfPBrqLpgXr2F7mvZXM91ruNVE+mls
+         rucFXZNSYawLiBUujtS+6CuSH0wvrCxLWhoU23zk/yLBxXTMJ4PbdY5eB1PjoqYtlD9B
+         wQkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xoKwaxsoBTuq6caiMH51+e7OBBLm1ZQwP+caQE5Hz20=;
+        b=TKuZJs20wfaF3o7kiAmVVubvBll2bq5TWrQ5XzXih9dIv4aEoJsVGMmDC3OQiS8Xww
+         cvQ8DWCSmCGQcaNhvRO+4ulW3siC0sa9vPo0wM7FT/cnMcOB21qpub1WqwXJoKinWW6w
+         Zh4PoVZWbPdujOYaS/Huh18M97bRngm1zw1xMSlB23cBH86Ffv/7hzK0tZcuE99WZzWE
+         gpx+3tjTrbkVOEQD2xGVr+5rLfBRQ0sFmqtcxqNVhc8t+vQuyDKNTZtAhQXqMGw7SY2w
+         OBIoJFG2QI0FIC0o4bu085gzLk2S1JMoUnOOBVmwwNmemCumoQlbgUCaCZP1tPZ2i4ga
+         PRXg==
+X-Gm-Message-State: ANoB5plhiL1AEHjIpeDEuxjwBaCksBqZRD+PiJ5jVPc9yEu44yB3+0k9
+        zMTZzvA5cIfwhjf8fwQDFLdDOxz7pg==
+X-Google-Smtp-Source: AA0mqf7tlkWerd5rkQoMPHDrUNDmPDiFf+gKXZLcaMuERvq8N5JAav7JnU5BULtTFecNTLUzycGrBw==
+X-Received: by 2002:ad4:5291:0:b0:4c6:e1ba:b1c with SMTP id v17-20020ad45291000000b004c6e1ba0b1cmr25609989qvr.73.1669779664172;
+        Tue, 29 Nov 2022 19:41:04 -0800 (PST)
+Received: from bytedance ([130.44.212.155])
+        by smtp.gmail.com with ESMTPSA id do33-20020a05620a2b2100b006cdd0939ffbsm209018qkb.86.2022.11.29.19.41.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Nov 2022 19:41:03 -0800 (PST)
+Date:   Tue, 29 Nov 2022 19:40:59 -0800
+From:   Peilin Ye <yepeilin.cs@gmail.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Peilin Ye <peilin.ye@bytedance.com>,
+        Cong Wang <cong.wang@bytedance.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] coredump: Use vmsplice_to_pipe() for pipes in
+ dump_emit_page()
+Message-ID: <20221130034059.GA2246@bytedance>
+References: <20221029005147.2553-1-yepeilin.cs@gmail.com>
+ <20221031210349.3346-1-yepeilin.cs@gmail.com>
+ <Y3hfmYF6b5T35Xqi@ZenIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1669301694-16-3-git-send-email-ruansy.fnst@fujitsu.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y3hfmYF6b5T35Xqi@ZenIV>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 24, 2022 at 02:54:54PM +0000, Shiyang Ruan wrote:
-> Implement unshare in fsdax mode: copy data from srcmap to iomap.
+On Sat, Nov 19, 2022 at 04:46:17AM +0000, Al Viro wrote:
+> On Mon, Oct 31, 2022 at 02:03:49PM -0700, Peilin Ye wrote:
 > 
-> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-
-Heh, I had a version nearly like this in my tree.  Makes reviewing
-easier:
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-
---D
-
-> ---
->  fs/dax.c             | 52 ++++++++++++++++++++++++++++++++++++++++++++
->  fs/xfs/xfs_reflink.c |  8 +++++--
->  include/linux/dax.h  |  2 ++
->  3 files changed, 60 insertions(+), 2 deletions(-)
+> > +	n = vmsplice_to_pipe(file, &iter, 0);
+> > +	if (n == -EBADF)
+> > +		n = __kernel_write_iter(cprm->file, &iter, &pos);
 > 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 5ea7c0926b7f..3d0bf68ab6b0 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1235,6 +1235,58 @@ static vm_fault_t dax_pmd_load_hole(struct xa_state *xas, struct vm_fault *vmf,
->  }
->  #endif /* CONFIG_FS_DAX_PMD */
->  
-> +static s64 dax_unshare_iter(struct iomap_iter *iter)
-> +{
-> +	struct iomap *iomap = &iter->iomap;
-> +	const struct iomap *srcmap = iomap_iter_srcmap(iter);
-> +	loff_t pos = iter->pos;
-> +	loff_t length = iomap_length(iter);
-> +	int id = 0;
-> +	s64 ret = 0;
-> +	void *daddr = NULL, *saddr = NULL;
-> +
-> +	/* don't bother with blocks that are not shared to start with */
-> +	if (!(iomap->flags & IOMAP_F_SHARED))
-> +		return length;
-> +	/* don't bother with holes or unwritten extents */
-> +	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
-> +		return length;
-> +
-> +	id = dax_read_lock();
-> +	ret = dax_iomap_direct_access(iomap, pos, length, &daddr, NULL);
-> +	if (ret < 0)
-> +		goto out_unlock;
-> +
-> +	ret = dax_iomap_direct_access(srcmap, pos, length, &saddr, NULL);
-> +	if (ret < 0)
-> +		goto out_unlock;
-> +
-> +	ret = copy_mc_to_kernel(daddr, saddr, length);
-> +	if (ret)
-> +		ret = -EIO;
-> +
-> +out_unlock:
-> +	dax_read_unlock(id);
-> +	return ret;
-> +}
-> +
-> +int dax_file_unshare(struct inode *inode, loff_t pos, loff_t len,
-> +		const struct iomap_ops *ops)
-> +{
-> +	struct iomap_iter iter = {
-> +		.inode		= inode,
-> +		.pos		= pos,
-> +		.len		= len,
-> +		.flags		= IOMAP_WRITE | IOMAP_UNSHARE | IOMAP_DAX,
-> +	};
-> +	int ret;
-> +
-> +	while ((ret = iomap_iter(&iter, ops)) > 0)
-> +		iter.processed = dax_unshare_iter(&iter);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(dax_file_unshare);
-> +
->  static int dax_memzero(struct iomap_iter *iter, loff_t pos, size_t size)
->  {
->  	const struct iomap *iomap = &iter->iomap;
-> diff --git a/fs/xfs/xfs_reflink.c b/fs/xfs/xfs_reflink.c
-> index 93bdd25680bc..fe46bce8cae6 100644
-> --- a/fs/xfs/xfs_reflink.c
-> +++ b/fs/xfs/xfs_reflink.c
-> @@ -1693,8 +1693,12 @@ xfs_reflink_unshare(
->  
->  	inode_dio_wait(inode);
->  
-> -	error = iomap_file_unshare(inode, offset, len,
-> -			&xfs_buffered_write_iomap_ops);
-> +	if (IS_DAX(inode))
-> +		error = dax_file_unshare(inode, offset, len,
-> +				&xfs_dax_write_iomap_ops);
-> +	else
-> +		error = iomap_file_unshare(inode, offset, len,
-> +				&xfs_buffered_write_iomap_ops);
->  	if (error)
->  		goto out;
->  
-> diff --git a/include/linux/dax.h b/include/linux/dax.h
-> index ba985333e26b..2b5ecb591059 100644
-> --- a/include/linux/dax.h
-> +++ b/include/linux/dax.h
-> @@ -205,6 +205,8 @@ static inline void dax_unlock_mapping_entry(struct address_space *mapping,
->  }
->  #endif
->  
-> +int dax_file_unshare(struct inode *inode, loff_t pos, loff_t len,
-> +		const struct iomap_ops *ops);
->  int dax_zero_range(struct inode *inode, loff_t pos, loff_t len, bool *did_zero,
->  		const struct iomap_ops *ops);
->  int dax_truncate_page(struct inode *inode, loff_t pos, bool *did_zero,
-> -- 
-> 2.38.1
+> Yuck.  If anything, I would rather put a flag into coredump_params
+> and check it instead; this check for -EBADF is both unidiomatic and
+> brittle.  Suppose someday somebody looks at vmsplice(2) and
+> decides that it would make sense to lift the "is it a pipe" check
+> into e.g. vmsplice_type().  There's no obvious reasons not to,
+> unless one happens to know that coredump relies upon that check done
+> in vmsplice_to_pipe().  It's asking for trouble several years down
+> the road.
 > 
+> Make it explicit and independent from details of error checking
+> in vmsplice(2).
+
+Thanks for the review!  I was a bit hesitant about introducing a new
+field to coredump_params for this optimization.  Will do it in v3.
+
+Peilin Ye
+
