@@ -2,129 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0610B63D291
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Nov 2022 10:55:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9936963D307
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Nov 2022 11:17:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234988AbiK3JzW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Nov 2022 04:55:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56210 "EHLO
+        id S235612AbiK3KRT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Nov 2022 05:17:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234987AbiK3JzU (ORCPT
+        with ESMTP id S235611AbiK3KRR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Nov 2022 04:55:20 -0500
-Received: from esa1.hgst.iphmx.com (esa1.hgst.iphmx.com [68.232.141.245])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2688A2B18F
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Nov 2022 01:55:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1669802119; x=1701338119;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=PfmM6a5gkT8LDyP+3VBEQwikCCOkyxOtDnm2zOUOXHY=;
-  b=bOhdPQo4aTmglXEoxSAw7wTg6UBpLbEWU14/x7zPqZ/kB8hQwDNrLZo1
-   Qi40r/E41n4iJO78Cp1WUXOGSSAtq/SjwICAB82ARefY1sNnEuX8ys+AN
-   QRDfWWc5gd78lau3vrGINrCRwIrjgvo0Dx5wR6QVptqB4iE635+rupNx8
-   TJQ931wuflHVvCh2B+sZGDdbthilRdANNtCxklj709S0diiaEOnNWaV5C
-   B6kesr6ZPWaDRV1La+pTd+MWqC/BIV8cfdlTkRtKMpQGv1aMai9RzLs3w
-   UajDD2472XR9a7aOWRvUoecYHO7JHRTnkOl8nHnXmsWUM5de6iaOnm3EU
-   A==;
-X-IronPort-AV: E=Sophos;i="5.96,206,1665417600"; 
-   d="scan'208";a="329640822"
-Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
-  by ob1.hgst.iphmx.com with ESMTP; 30 Nov 2022 17:55:17 +0800
-IronPort-SDR: SdeAOMw5EeihEPdorBVRlDvxcDeXejd02GNbKYTFUtX3HrPTpagxOacsOwx7QL6ehLyYaD2W+w
- JbAP28NmsHk/gQkiaqPybX0clZGX1ysJlIUP0lRxzFRnPnk2AdO9WS1Jr1+UXbEfGq4fPOJeOd
- 7IRNTStpvb7pSDHSmHwqVGK2TiUd1L6II0M+V2NC44I3If49oeSykv4CcwWMsDmq6P6Npv9UnU
- tUzWB0Z4FD+QcJb+ig3FoHmJHeeUYk59AahZqEZo/eTDr6J3TPIUegbgHm7iuGhKX9W1oE6sEO
- vsQ=
-Received: from uls-op-cesaip01.wdc.com ([10.248.3.36])
-  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Nov 2022 01:13:57 -0800
-IronPort-SDR: U52Hr3nOqfm89fvoia+DLMUZVaE5doP/h4VU7i+5NHisImBnh/EV8Kycw0IeDcAkIEOR7cMLgH
- j0mitxhxUk86n9x74+QzYYvFOfU8MN7blMBFZemBaqy7dASv6HquwG3YwTqAP+toThJCPslPDH
- 2VB5FzeiK9rm6WKYPq+xzLDfjMVwNLFHmDqXds0KnaAn6V0G/JLVxDRQ2n4AGPoYpzghNn0Cxj
- GjMoImYjOxjLclCvZBJHobd30AkFwOtmrVuQukH+8yD1eR57Dm4hKRYl5eaHV+zCR+b8FlIOk9
- QEk=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 30 Nov 2022 01:55:18 -0800
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4NMZM90ddhz1RwqL
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Nov 2022 01:55:17 -0800 (PST)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1669802108; x=1672394109; bh=PfmM6a5gkT8LDyP+3VBEQwikCCOkyxOtDnm
-        2zOUOXHY=; b=WO70GxcfoJkaidzfqKTpf6XdrSJR92gGBcqtVjjWImgnNKJFA3C
-        1qQ9Pac2+l9iEMRSkNYcb3YtQr2CmP64cVFOL1AzWKkAattcadn9VRgdDzzu3sYw
-        a+b7n0DmPMTxgPx0L+moOK5KuWtWefFwiMikDVPA+Rm9ccaiG+TK/Gt1Nscesz8s
-        zfjKvyMMqoH4tmasBu11mn7xan6xxRBhghlPHoQ+BCXda+WI3SAj0t1z+JF5L3w+
-        lOZ1r/wbs/0FcsfgTQXKDer3VH0RggQmo59VaOB/EpQKyYPqFr39FgByPQi74sIu
-        yFIjzvJNf44Tp2JxaVnhNqH5C0oypUoGLzQ==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id I1zpF2-hqBKa for <linux-fsdevel@vger.kernel.org>;
-        Wed, 30 Nov 2022 01:55:08 -0800 (PST)
-Received: from [10.225.163.66] (unknown [10.225.163.66])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4NMZLx09szz1RvLy;
-        Wed, 30 Nov 2022 01:55:04 -0800 (PST)
-Message-ID: <1ef5747a-9469-4365-ffc9-05daa6f69288@opensource.wdc.com>
-Date:   Wed, 30 Nov 2022 18:55:03 +0900
+        Wed, 30 Nov 2022 05:17:17 -0500
+Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1763FC42
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Nov 2022 02:17:17 -0800 (PST)
+Received: by mail-wm1-x333.google.com with SMTP id p13-20020a05600c468d00b003cf8859ed1bso1014707wmo.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Nov 2022 02:17:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Th+G2QFbGAX06mg1aIwvVRiXrgkLj2KZ0HoeEj27hRA=;
+        b=IHMKiRifX69U6VmNR7uTj7+/25rkD6+kBYzyHgaleFHg4tYr7tH5K6Ry/6xPEhj469
+         qLBlM6aRg5gB45Y6qgNzvvKg14q60WtnDXNhQXBOHZMfm9pZ9v7TvpBvSSjTEa2zJ+vy
+         GfFkAO9FN1+16fr3+KKDh21voaC4sYU2/L2bODVHxClr4BB6a14atm8J827VSHUpas8q
+         sDCPOftzCMsB3K9U2hxJoRkO1MuGgTnHcjvMOvFbx3JRQAlWgSYJGXJkeRygMv8FbZtc
+         2IB/SQmDa+/7WubfOMi85uU8x+jFB5Em1DQIrcQ6OPMbETo6apoXr9fU4TX1BOiuAMD9
+         vqww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Th+G2QFbGAX06mg1aIwvVRiXrgkLj2KZ0HoeEj27hRA=;
+        b=w6gaD+YGMZMRxhjif82EqhuEhWnx0T7VIuUxrpBkhYSiHbfI3+3pPltnSD1LBKxy2O
+         UN3BQ6mn2uwkwqDlMwW+NP6WKePvToP/P1ilKs1CD52shjjEv6rYtqMdKURvIT8HGqog
+         YTyqZXIgGb5ZbcwfaoGXK/XwHYqktICKl5GA+rqPvernVHJB/ZbJhmBNni8A/kLQeBXC
+         /5yv8ZusAp/7ytdnsZnnTPA7kXS7YWVE+J6FFjsCOynoSVzpYIuf8lcf1QRZ4qUIaZ4c
+         FNd3Wrv+UnFDwL4A3uK5Qe7uS+iqlYfhgmZVFGhcOhxzMEIiFAE/vsXWCyTn5BZOIW2d
+         rdUQ==
+X-Gm-Message-State: ANoB5pkSm/NgsU4VQ/1/3f94TUIxumP/tN79+b8eO7LL4tQH1ooSnG4o
+        2h5zNniHJRLjbTDyKCL2pcNC0Vcs0pH27XXJ6Ik=
+X-Google-Smtp-Source: AA0mqf5yzpCOTcTsQ+Zz/KbM4XpaaeVqQFAAFBxNmQgW6QjT/InOFGUlU9DGHKjz7ViGpjrJ6eah+YGSLGIMDipcNbU=
+X-Received: by 2002:a05:600c:4f12:b0:3cf:e7bd:303a with SMTP id
+ l18-20020a05600c4f1200b003cfe7bd303amr32310567wmq.151.1669803435636; Wed, 30
+ Nov 2022 02:17:15 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [PATCH v5 10/10] fs: add support for copy file range in zonefs
-Content-Language: en-US
-To:     Nitesh Shetty <nj.shetty@samsung.com>
-Cc:     axboe@kernel.dk, agk@redhat.com, snitzer@kernel.org,
-        dm-devel@redhat.com, kbusch@kernel.org, hch@lst.de,
-        sagi@grimberg.me, james.smart@broadcom.com, kch@nvidia.com,
-        naohiro.aota@wdc.com, jth@kernel.org, viro@zeniv.linux.org.uk,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        anuj20.g@samsung.com, joshi.k@samsung.com, p.raghav@samsung.com,
-        nitheshshetty@gmail.com, gost.dev@samsung.com
-References: <20221123055827.26996-1-nj.shetty@samsung.com>
- <CGME20221123061044epcas5p2ac082a91fc8197821f29e84278b6203c@epcas5p2.samsung.com>
- <20221123055827.26996-11-nj.shetty@samsung.com>
- <729254f8-2468-e694-715e-72bcbef80ff3@opensource.wdc.com>
- <349a4d66-3a9f-a095-005c-1f180c5f3aac@opensource.wdc.com>
- <20221129122232.GC16802@test-zns>
- <b22652ee-9cca-a5b1-e9f1-862ed8f0354d@opensource.wdc.com>
- <20221130041728.GB17533@test-zns>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <20221130041728.GB17533@test-zns>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Received: by 2002:a05:6000:1366:0:0:0:0 with HTTP; Wed, 30 Nov 2022 02:17:15
+ -0800 (PST)
+From:   David Alex <davidalexman56@gmail.com>
+Date:   Wed, 30 Nov 2022 02:17:15 -0800
+Message-ID: <CABYJXBYMGHEpyZcORdjCy-QRiN+WMf9CPLk8ctoV+zB-bLx98A@mail.gmail.com>
+Subject: Re: I give you this money due to my health
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: Yes, score=6.1 required=5.0 tests=ADVANCE_FEE_2_NEW_MONEY,
+        BAYES_50,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FROM,LOTS_OF_MONEY,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,UNDISC_MONEY,
+        XFER_LOTSA_MONEY autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Report: * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
+        *      https://www.dnswl.org/, no trust
+        *      [2a00:1450:4864:20:0:0:0:333 listed in]
+        [list.dnswl.org]
+        *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+        *      [score: 0.5000]
+        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
+        *       in digit
+        *      [davidalexman56[at]gmail.com]
+        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
+        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
+        *      provider
+        *      [davidalexman56[at]gmail.com]
+        * -0.0 SPF_PASS SPF: sender matches SPF record
+        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
+        *      envelope-from domain
+        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
+        *      author's domain
+        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
+        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
+        *       valid
+        *  0.0 LOTS_OF_MONEY Huge... sums of money
+        *  0.0 XFER_LOTSA_MONEY Transfer a lot of money
+        *  3.2 UNDISC_MONEY Undisclosed recipients + money/fraud signs
+        *  2.0 ADVANCE_FEE_2_NEW_MONEY Advance Fee fraud and lots of money
+X-Spam-Level: ******
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 11/30/22 13:17, Nitesh Shetty wrote:
-> On Wed, Nov 30, 2022 at 08:45:55AM +0900, Damien Le Moal wrote:
->> On 11/29/22 21:22, Nitesh Shetty wrote:
->>> Acked. I do see a gap in current zonefs cfr implementation. I will drop this
->>
->> cfr ?
->>
-> 
-> yes, will drop zonefs cfr for next version.
-
-I meant: I do not understand "cfr". I now realize that it probably means
-copy-file-range ? Please be clear and do not use abbreviations.
-
--- 
-Damien Le Moal
-Western Digital Research
-
+Hello my name is David Alex I am sick ischemic heart disease I read
+about you on a website. I have a few days to live I want to send you
+my money I know you will need it $5,000,000 I do not have a wife or
+children I lost my wife 4 years ago..I want you to take this money and
+use it well and also help orphan children.. If you accept my offer
+please reply me now.
+May the lord bless you as you do this
