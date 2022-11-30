@@ -2,36 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 05DC663D9C5
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Nov 2022 16:46:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 89B8963DA96
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 30 Nov 2022 17:28:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229986AbiK3Pq2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Nov 2022 10:46:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39898 "EHLO
+        id S230206AbiK3Q17 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Nov 2022 11:27:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48388 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229568AbiK3Pq0 (ORCPT
+        with ESMTP id S230185AbiK3Q16 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Nov 2022 10:46:26 -0500
-Received: from mx6.didiglobal.com (mx6.didiglobal.com [111.202.70.123])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 0DF96813B2;
-        Wed, 30 Nov 2022 07:46:23 -0800 (PST)
-Received: from mail.didiglobal.com (unknown [10.79.71.35])
-        by mx6.didiglobal.com (Maildata Gateway V2.8) with ESMTPS id 631AB11035FE0B;
-        Wed, 30 Nov 2022 23:46:19 +0800 (CST)
-Received: from ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) by
- ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Wed, 30 Nov 2022 23:46:19 +0800
-Received: from ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769])
- by ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769%8]) with mapi
- id 15.01.2375.017; Wed, 30 Nov 2022 23:46:19 +0800
-X-MD-Sfrom: chengkaitao@didiglobal.com
-X-MD-SrcIP: 10.79.71.35
-From:   =?utf-8?B?56iL5Z6y5rabIENoZW5na2FpdGFvIENoZW5n?= 
+        Wed, 30 Nov 2022 11:27:58 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B08ADF85;
+        Wed, 30 Nov 2022 08:27:56 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 014482129A;
+        Wed, 30 Nov 2022 16:27:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1669825675; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=nXfNG6Sww8fGURySTb8eVABizwa45hjeSXnodgsxL7A=;
+        b=K5AhfMD1mmeSLfJHmy5N+Z9Fp6PpPk7Tg6j3Gg7JBI1HUIpk9Q1kujuQk6AXGNNyV145KQ
+        d9PwmobJ2stCSZPjUM0avskb5R4vue2G5ijhEc6FYiczmjflCS0mD9rGkb6uCxCJrsuy3j
+        g3oV+3D2ydZVm0DCiTt0qtKaJSdI6oU=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D03D313A70;
+        Wed, 30 Nov 2022 16:27:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id pufuMYqEh2NEPgAAMHmgww
+        (envelope-from <mhocko@suse.com>); Wed, 30 Nov 2022 16:27:54 +0000
+Date:   Wed, 30 Nov 2022 17:27:54 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     =?utf-8?B?56iL5Z6y5rab?= Chengkaitao Cheng 
         <chengkaitao@didiglobal.com>
-To:     Tao pilgrim <pilgrimtao@gmail.com>,
-        "mhocko@suse.com" <mhocko@suse.com>
-CC:     "tj@kernel.org" <tj@kernel.org>,
+Cc:     Tao pilgrim <pilgrimtao@gmail.com>,
+        "tj@kernel.org" <tj@kernel.org>,
         "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
         "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
         "corbet@lwn.net" <corbet@lwn.net>,
@@ -46,7 +60,6 @@ CC:     "tj@kernel.org" <tj@kernel.org>,
         "ebiederm@xmission.com" <ebiederm@xmission.com>,
         "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
         "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
-        "mhocko@kernel.org" <mhocko@kernel.org>,
         "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
         "yuzhao@google.com" <yuzhao@google.com>,
         "willy@infradead.org" <willy@infradead.org>,
@@ -66,22 +79,16 @@ CC:     "tj@kernel.org" <tj@kernel.org>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH] mm: memcontrol: protect the memory in cgroup from being
  oom killed
-Thread-Topic: [PATCH] mm: memcontrol: protect the memory in cgroup from being
- oom killed
-Thread-Index: AQHZBK+NwNVzWF9Xk0ibAn/rxGrWSq5XnGYA
-Date:   Wed, 30 Nov 2022 15:46:19 +0000
-Message-ID: <7EF16CB9-C34A-410B-BEBE-0303C1BB7BA0@didiglobal.com>
-In-Reply-To: <CAAWJmAYPUK+1GBS0R460pDvDKrLr9zs_X2LT2yQTP_85kND5Ew@mail.gmail.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.79.71.102]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <F2E62DA506DBDC4AAC4A9FA211F5ACC7@didichuxing.com>
-Content-Transfer-Encoding: base64
+Message-ID: <Y4eEiqwMMkHv9ELM@dhcp22.suse.cz>
+References: <CAAWJmAYPUK+1GBS0R460pDvDKrLr9zs_X2LT2yQTP_85kND5Ew@mail.gmail.com>
+ <7EF16CB9-C34A-410B-BEBE-0303C1BB7BA0@didiglobal.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7EF16CB9-C34A-410B-BEBE-0303C1BB7BA0@didiglobal.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -89,61 +96,109 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gMjAyMi0xMS0zMCAyMToxNTowNiwgIk1pY2hhbCBIb2NrbyIgPG1ob2Nrb0BzdXNlLmNvbT4g
-d3JvdGU6DQo+IE9uIFdlZCAzMC0xMS0yMiAxNTowMTo1OCwgY2hlbmdrYWl0YW8gd3JvdGU6DQo+
-ID4gRnJvbTogY2hlbmdrYWl0YW8gPHBpbGdyaW10YW9AZ21haWwuY29tPg0KPiA+DQo+ID4gV2Ug
-Y3JlYXRlZCBhIG5ldyBpbnRlcmZhY2UgPG1lbW9yeS5vb20ucHJvdGVjdD4gZm9yIG1lbW9yeSwg
-SWYgdGhlcmUgaXMNCj4gPiB0aGUgT09NIGtpbGxlciB1bmRlciBwYXJlbnQgbWVtb3J5IGNncm91
-cCwgYW5kIHRoZSBtZW1vcnkgdXNhZ2Ugb2YgYQ0KPiA+IGNoaWxkIGNncm91cCBpcyB3aXRoaW4g
-aXRzIGVmZmVjdGl2ZSBvb20ucHJvdGVjdCBib3VuZGFyeSwgdGhlIGNncm91cCdzDQo+ID4gdGFz
-a3Mgd29uJ3QgYmUgT09NIGtpbGxlZCB1bmxlc3MgdGhlcmUgaXMgbm8gdW5wcm90ZWN0ZWQgdGFz
-a3MgaW4gb3RoZXINCj4gPiBjaGlsZHJlbiBjZ3JvdXBzLiBJdCBkcmF3cyBvbiB0aGUgbG9naWMg
-b2YgPG1lbW9yeS5taW4vbG93PiBpbiB0aGUNCj4gPiBpbmhlcml0YW5jZSByZWxhdGlvbnNoaXAu
-DQo+DQo+IENvdWxkIHlvdSBiZSBtb3JlIHNwZWNpZmljIGFib3V0IHVzZWNhc2VzPyBIb3cgZG8g
-eW91IHR1bmUgb29tLnByb3RlY3QNCj4gd3J0IHRvIG90aGVyIHR1bmFibGVzPyBIb3cgZG9lcyB0
-aGlzIGludGVyYWN0IHdpdGggdGhlIG9vbV9zY29yZV9hZGoNCj4gdHVuaW5pbmcgKGUuZy4gYSBm
-aXJzdCBoYW5kIG9vbSB2aWN0aW0gd2l0aCB0aGUgc2NvcmVfYWRqIDEwMDAgc2l0dGluZw0KPiBp
-biBhIG9vbSBwcm90ZWN0ZWQgbWVtY2cpPw0KDQpXZSBwcmVmZXIgdXNlcnMgdG8gdXNlIHNjb3Jl
-X2FkaiBhbmQgb29tLnByb3RlY3QgaW5kZXBlbmRlbnRseS4gU2NvcmVfYWRqIGlzIA0KYSBwYXJh
-bWV0ZXIgYXBwbGljYWJsZSB0byBob3N0LCBhbmQgb29tLnByb3RlY3QgaXMgYSBwYXJhbWV0ZXIg
-YXBwbGljYWJsZSB0byBjZ3JvdXAuIA0KV2hlbiB0aGUgcGh5c2ljYWwgbWFjaGluZSdzIG1lbW9y
-eSBzaXplIGlzIHBhcnRpY3VsYXJseSBsYXJnZSwgdGhlIHNjb3JlX2FkaiANCmdyYW51bGFyaXR5
-IGlzIGFsc28gdmVyeSBsYXJnZS4gSG93ZXZlciwgb29tLnByb3RlY3QgY2FuIGFjaGlldmUgbW9y
-ZSBmaW5lLWdyYWluZWQgDQphZGp1c3RtZW50Lg0KDQpXaGVuIHRoZSBzY29yZV9hZGogb2YgdGhl
-IHByb2Nlc3NlcyBhcmUgdGhlIHNhbWUsIEkgbGlzdCB0aGUgZm9sbG93aW5nIGNhc2VzIA0KZm9y
-IGV4cGxhbmF0aW9uLA0KDQogICAgICAgICAgcm9vdA0KICAgICAgICAgICB8DQogICAgICAgIGNn
-cm91cCBBDQogICAgICAgLyAgICAgICAgXA0KIGNncm91cCBCICAgICAgY2dyb3VwIEMNCih0YXNr
-IG0sbikgICAgICh0YXNrIHgseSkNCg0Kc2NvcmVfYWRqKGFsbCB0YXNrKSA9IDA7DQpvb20ucHJv
-dGVjdChjZ3JvdXAgQSkgPSAwOw0Kb29tLnByb3RlY3QoY2dyb3VwIEIpID0gMDsNCm9vbS5wcm90
-ZWN0KGNncm91cCBDKSA9IDNHOw0KdXNhZ2UodGFzayBtKSA9IDFHDQp1c2FnZSh0YXNrIG4pID0g
-MkcNCnVzYWdlKHRhc2sgeCkgPSAxRw0KdXNhZ2UodGFzayB5KSA9IDJHDQoNCm9vbSBraWxsZXIg
-b3JkZXIgb2YgY2dyb3VwIEE6IG4gPiBtID4geSA+IHgNCm9vbSBraWxsZXIgb3JkZXIgb2YgaG9z
-dDogICAgIHkgPSBuID4geCA9IG0NCg0KSWYgY2dyb3VwIEEgaXMgYSBkaXJlY3RvcnkgbWFpbnRh
-aW5lZCBieSB1c2VycywgdXNlcnMgY2FuIHVzZSBvb20ucHJvdGVjdCANCnRvIHByb3RlY3QgcmVs
-YXRpdmVseSBpbXBvcnRhbnQgdGFza3MgeCBhbmQgeS4NCg0KSG93ZXZlciwgd2hlbiBzY29yZV9h
-ZGogYW5kIG9vbS5wcm90ZWN0IGFyZSB1c2VkIGF0IHRoZSBzYW1lIHRpbWUsIHdlIA0Kd2lsbCBh
-bHNvIGNvbnNpZGVyIHRoZSBpbXBhY3Qgb2YgYm90aCwgYXMgZXhwcmVzc2VkIGluIHRoZSBmb2xs
-b3dpbmcgZm9ybXVsYS4gDQpidXQgSSBoYXZlIHRvIGFkbWl0IHRoYXQgaXQgaXMgYW4gdW5zdGFi
-bGUgcmVzdWx0Lg0Kc2NvcmUgPSB0YXNrX3VzYWdlICsgc2NvcmVfYWRqICogdG90YWxwYWdlIC0g
-ZW9vbS5wcm90ZWN0ICogdGFza191c2FnZSAvIGxvY2FsX21lbWNnX3VzYWdlDQoNCj4gSSBoYXZl
-bid0IHJlYWxseSByZWFkIHRocm91Z2ggdGhlIHdob2xlIHBhdGNoIGJ1dCB0aGlzIHN0cnVjayBt
-ZSBvZGQuDQoNCj4gPiBAQCAtNTUyLDggKzU1MiwxOSBAQCBzdGF0aWMgaW50IHByb2Nfb29tX3Nj
-b3JlKHN0cnVjdCBzZXFfZmlsZSAqbSwgc3RydWN0IHBpZF9uYW1lc3BhY2UgKm5zLA0KPiA+IAl1
-bnNpZ25lZCBsb25nIHRvdGFscGFnZXMgPSB0b3RhbHJhbV9wYWdlcygpICsgdG90YWxfc3dhcF9w
-YWdlczsNCj4gPiAJdW5zaWduZWQgbG9uZyBwb2ludHMgPSAwOw0KPiA+IAlsb25nIGJhZG5lc3M7
-DQo+ID4gKyNpZmRlZiBDT05GSUdfTUVNQ0cNCj4gPiArCXN0cnVjdCBtZW1fY2dyb3VwICptZW1j
-ZzsNCj4gPiANCj4gPiAtCWJhZG5lc3MgPSBvb21fYmFkbmVzcyh0YXNrLCB0b3RhbHBhZ2VzKTsN
-Cj4gPiArCXJjdV9yZWFkX2xvY2soKTsNCj4gPiArCW1lbWNnID0gbWVtX2Nncm91cF9mcm9tX3Rh
-c2sodGFzayk7DQo+ID4gKwlpZiAobWVtY2cgJiYgIWNzc190cnlnZXQoJm1lbWNnLT5jc3MpKQ0K
-PiA+ICsJCW1lbWNnID0gTlVMTDsNCj4gPiArCXJjdV9yZWFkX3VubG9jaygpOw0KPiA+ICsNCj4g
-PiArCXVwZGF0ZV9wYXJlbnRfb29tX3Byb3RlY3Rpb24ocm9vdF9tZW1fY2dyb3VwLCBtZW1jZyk7
-DQo+ID4gKwljc3NfcHV0KCZtZW1jZy0+Y3NzKTsNCj4gPiArI2VuZGlmDQo+ID4gKwliYWRuZXNz
-ID0gb29tX2JhZG5lc3ModGFzaywgdG90YWxwYWdlcywgTUVNQ0dfT09NX1BST1RFQ1QpOw0KPg0K
-PiB0aGUgYmFkbmVzcyBtZWFucyBkaWZmZXJlbnQgdGhpbmcgZGVwZW5kaW5nIG9uIHdoaWNoIG1l
-bWNnIGhpZXJhcmNoeQ0KPiBzdWJ0cmVlIHlvdSBsb29rIGF0LiBTY2FsaW5nIGJhc2VkIG9uIHRo
-ZSBnbG9iYWwgb29tIGNvdWxkIGdldCByZWFsbHkNCj4gbWlzbGVhZGluZy4NCg0KSSBhbHNvIHRv
-b2sgaXQgaW50byBjb25zaWRlcmF0aW9uLiBJIHBsYW5uZWQgdG8gY2hhbmdlICIvcHJvYy9waWQv
-b29tX3Njb3JlIiANCnRvIGEgd3JpdGFibGUgbm9kZS4gV2hlbiB3cml0aW5nIHRvIGRpZmZlcmVu
-dCBjZ3JvdXAgcGF0aHMsIGRpZmZlcmVudCB2YWx1ZXMgDQp3aWxsIGJlIG91dHB1dC4gVGhlIGRl
-ZmF1bHQgb3V0cHV0IGlzIHJvb3QgY2dyb3VwLiBEbyB5b3UgdGhpbmsgdGhpcyBpZGVhIGlzIA0K
-ZmVhc2libGU/DQotLSANCkNoZW5na2FpdGFvDQpCZXN0IHdpc2hlcw0KDQo=
+On Wed 30-11-22 15:46:19, 程垲涛 Chengkaitao Cheng wrote:
+> On 2022-11-30 21:15:06, "Michal Hocko" <mhocko@suse.com> wrote:
+> > On Wed 30-11-22 15:01:58, chengkaitao wrote:
+> > > From: chengkaitao <pilgrimtao@gmail.com>
+> > >
+> > > We created a new interface <memory.oom.protect> for memory, If there is
+> > > the OOM killer under parent memory cgroup, and the memory usage of a
+> > > child cgroup is within its effective oom.protect boundary, the cgroup's
+> > > tasks won't be OOM killed unless there is no unprotected tasks in other
+> > > children cgroups. It draws on the logic of <memory.min/low> in the
+> > > inheritance relationship.
+> >
+> > Could you be more specific about usecases?
+
+This is a very important question to answer.
+
+> > How do you tune oom.protect
+> > wrt to other tunables? How does this interact with the oom_score_adj
+> > tunining (e.g. a first hand oom victim with the score_adj 1000 sitting
+> > in a oom protected memcg)?
+> 
+> We prefer users to use score_adj and oom.protect independently. Score_adj is 
+> a parameter applicable to host, and oom.protect is a parameter applicable to cgroup. 
+> When the physical machine's memory size is particularly large, the score_adj 
+> granularity is also very large. However, oom.protect can achieve more fine-grained 
+> adjustment.
+
+Let me clarify a bit. I am not trying to defend oom_score_adj. It has
+it's well known limitations and it is is essentially unusable for many
+situations other than - hide or auto-select potential oom victim.
+
+> When the score_adj of the processes are the same, I list the following cases 
+> for explanation,
+> 
+>           root
+>            |
+>         cgroup A
+>        /        \
+>  cgroup B      cgroup C
+> (task m,n)     (task x,y)
+> 
+> score_adj(all task) = 0;
+> oom.protect(cgroup A) = 0;
+> oom.protect(cgroup B) = 0;
+> oom.protect(cgroup C) = 3G;
+
+How can you enforce protection at C level without any protection at A
+level? This would easily allow arbitrary cgroup to hide from the oom
+killer and spill over to other cgroups.
+
+> usage(task m) = 1G
+> usage(task n) = 2G
+> usage(task x) = 1G
+> usage(task y) = 2G
+> 
+> oom killer order of cgroup A: n > m > y > x
+> oom killer order of host:     y = n > x = m
+> 
+> If cgroup A is a directory maintained by users, users can use oom.protect 
+> to protect relatively important tasks x and y.
+> 
+> However, when score_adj and oom.protect are used at the same time, we 
+> will also consider the impact of both, as expressed in the following formula. 
+> but I have to admit that it is an unstable result.
+> score = task_usage + score_adj * totalpage - eoom.protect * task_usage / local_memcg_usage
+
+I hope I am not misreading but this has some rather unexpected
+properties. First off, bigger memory consumers in a protected memcg are
+protected more. Also I would expect the protection discount would
+be capped by the actual usage otherwise excessive protection
+configuration could skew the results considerably.
+ 
+> > I haven't really read through the whole patch but this struck me odd.
+> 
+> > > @@ -552,8 +552,19 @@ static int proc_oom_score(struct seq_file *m, struct pid_namespace *ns,
+> > > 	unsigned long totalpages = totalram_pages() + total_swap_pages;
+> > > 	unsigned long points = 0;
+> > > 	long badness;
+> > > +#ifdef CONFIG_MEMCG
+> > > +	struct mem_cgroup *memcg;
+> > > 
+> > > -	badness = oom_badness(task, totalpages);
+> > > +	rcu_read_lock();
+> > > +	memcg = mem_cgroup_from_task(task);
+> > > +	if (memcg && !css_tryget(&memcg->css))
+> > > +		memcg = NULL;
+> > > +	rcu_read_unlock();
+> > > +
+> > > +	update_parent_oom_protection(root_mem_cgroup, memcg);
+> > > +	css_put(&memcg->css);
+> > > +#endif
+> > > +	badness = oom_badness(task, totalpages, MEMCG_OOM_PROTECT);
+> >
+> > the badness means different thing depending on which memcg hierarchy
+> > subtree you look at. Scaling based on the global oom could get really
+> > misleading.
+> 
+> I also took it into consideration. I planned to change "/proc/pid/oom_score" 
+> to a writable node. When writing to different cgroup paths, different values 
+> will be output. The default output is root cgroup. Do you think this idea is 
+> feasible?
+
+I do not follow. Care to elaborate?
+-- 
+Michal Hocko
+SUSE Labs
