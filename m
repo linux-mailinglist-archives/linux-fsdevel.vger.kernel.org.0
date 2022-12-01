@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7C83063F735
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 19:11:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7DAB263F737
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 19:11:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230292AbiLASLf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Dec 2022 13:11:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35586 "EHLO
+        id S230274AbiLASLg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Dec 2022 13:11:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35588 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230080AbiLASLM (ORCPT
+        with ESMTP id S229974AbiLASLS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Dec 2022 13:11:12 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 08E07B7DD3
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Dec 2022 10:10:09 -0800 (PST)
+        Thu, 1 Dec 2022 13:11:18 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29A11A1C0A
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Dec 2022 10:10:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669918209;
+        s=mimecast20190719; t=1669918213;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/RRSBXKEuMTARerk08P46GOMkWlFJsfYfNR8FUKMSw4=;
-        b=CnrlvZ0jg6gV2SRun91DSLKCfFfXGzVkGGN/fkHww8AJTpNyDU3pYWp9PmkDERSY6sANSG
-        YnU8F4A9AIUjGtiHfnypY/P77n9Fea0/yxSWMzjdV5yo8wzdrgkAfugAEH8zd/7M9J4xwm
-        +YF3XoErzSwZOOlMAFEo9uqKnGB3at4=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=L4wpGn5ZS2+dyBPI2xOTo6pp4/bLux152wPskgwYzHs=;
+        b=bpEuVYXCkJ3p9jLJZewoOOl/AKTa6LyibgVIa94RrXmrfaod+7ZAW6TQzyO9V/8ntBZHzx
+        UQmeYJIttsg9APkQUjWVWhophd/ZbbD8Y+SluzbehweuQup+8zIO8KU4PIFNS4DXJppul7
+        VlzZ//C9UbPdW0cYLTQIffLdKMozKko=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-145-1HJZEzCnOxqwKhT49I0i9w-1; Thu, 01 Dec 2022 13:10:05 -0500
-X-MC-Unique: 1HJZEzCnOxqwKhT49I0i9w-1
+ us-mta-524-lPeyQ7tHNp6F5-oZuvgMwA-1; Thu, 01 Dec 2022 13:10:09 -0500
+X-MC-Unique: lPeyQ7tHNp6F5-oZuvgMwA-1
 Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 48A8B2A5955C;
-        Thu,  1 Dec 2022 18:10:03 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9845D1010431;
+        Thu,  1 Dec 2022 18:10:05 +0000 (UTC)
 Received: from pasta.redhat.com (ovpn-192-141.brq.redhat.com [10.40.192.141])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0B25CC15BB4;
-        Thu,  1 Dec 2022 18:10:00 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A27AFC15BB4;
+        Thu,  1 Dec 2022 18:10:03 +0000 (UTC)
 From:   Andreas Gruenbacher <agruenba@redhat.com>
 To:     Christoph Hellwig <hch@infradead.org>,
         "Darrick J . Wong" <djwong@kernel.org>,
@@ -46,9 +46,9 @@ To:     Christoph Hellwig <hch@infradead.org>,
 Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, cluster-devel@redhat.com
-Subject: [RFC v2 1/3] fs: Add folio_may_straddle_isize helper
-Date:   Thu,  1 Dec 2022 19:09:55 +0100
-Message-Id: <20221201180957.1268079-2-agruenba@redhat.com>
+Subject: [RFC v2 2/3] iomap: Turn iomap_page_ops into iomap_folio_ops
+Date:   Thu,  1 Dec 2022 19:09:56 +0100
+Message-Id: <20221201180957.1268079-3-agruenba@redhat.com>
 In-Reply-To: <20221201160619.1247788-1-agruenba@redhat.com>
 References: <20221201160619.1247788-1-agruenba@redhat.com>
 MIME-Version: 1.0
@@ -64,164 +64,237 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a folio_may_straddle_isize() helper as a replacement for
-pagecache_isize_extended() when we have a locked folio.
-
-Use the new helper in generic_write_end(), iomap_write_end(),
-ext4_write_end(), and ext4_journalled_write_end().
+Rename the iomap page_ops into folio_ops, and rename the operations
+accordingly.  Move looking up the folio into ->folio_prepare(), and
+unlocking and putting the folio into ->folio_done().  We'll need the
+added flexibility in gfs2.
 
 Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 ---
- fs/buffer.c            |  5 ++---
- fs/ext4/inode.c        | 13 ++++++-------
- fs/iomap/buffered-io.c |  5 +----
- include/linux/mm.h     |  2 ++
- mm/truncate.c          | 34 ++++++++++++++++++++++++++++++++++
- 5 files changed, 45 insertions(+), 14 deletions(-)
+ fs/gfs2/bmap.c         | 40 +++++++++++++++++++++++++----------
+ fs/iomap/buffered-io.c | 48 +++++++++++++++++++++++-------------------
+ include/linux/iomap.h  | 24 ++++++++++-----------
+ 3 files changed, 67 insertions(+), 45 deletions(-)
 
-diff --git a/fs/buffer.c b/fs/buffer.c
-index d9c6d1fbb6dd..bbae1437994b 100644
---- a/fs/buffer.c
-+++ b/fs/buffer.c
-@@ -2164,16 +2164,15 @@ int generic_write_end(struct file *file, struct address_space *mapping,
- 	 * But it's important to update i_size while still holding page lock:
- 	 * page writeout could otherwise come in and zero beyond i_size.
- 	 */
--	if (pos + copied > inode->i_size) {
-+	if (pos + copied > old_size) {
- 		i_size_write(inode, pos + copied);
- 		i_size_changed = true;
-+		folio_may_straddle_isize(inode, page_folio(page), old_size, pos);
+diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
+index 3bdb2c668a71..18dcaa95408e 100644
+--- a/fs/gfs2/bmap.c
++++ b/fs/gfs2/bmap.c
+@@ -959,36 +959,54 @@ static int __gfs2_iomap_get(struct inode *inode, loff_t pos, loff_t length,
+ 	goto out;
+ }
+ 
+-static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
+-				   unsigned len)
++static struct folio *
++gfs2_iomap_folio_prepare(struct inode *inode, unsigned fgp,
++			 loff_t pos, unsigned len)
+ {
+ 	unsigned int blockmask = i_blocksize(inode) - 1;
+ 	struct gfs2_sbd *sdp = GFS2_SB(inode);
+ 	unsigned int blocks;
++	struct folio *folio;
++	int ret;
+ 
+ 	blocks = ((pos & blockmask) + len + blockmask) >> inode->i_blkbits;
+-	return gfs2_trans_begin(sdp, RES_DINODE + blocks, 0);
++	ret = gfs2_trans_begin(sdp, RES_DINODE + blocks, 0);
++	if (ret)
++		return ERR_PTR(ret);
++
++	folio = __filemap_get_folio(inode->i_mapping, pos >> PAGE_SHIFT, fgp,
++				    mapping_gfp_mask(inode->i_mapping));
++	if (!folio)
++		gfs2_trans_end(sdp);
++
++	return folio;
+ }
+ 
+-static void gfs2_iomap_page_done(struct inode *inode, loff_t pos,
+-				 unsigned copied, struct page *page)
++static void
++gfs2_iomap_folio_done(struct inode *inode, struct folio *folio,
++		      loff_t pos, unsigned copied)
+ {
+ 	struct gfs2_trans *tr = current->journal_info;
+ 	struct gfs2_inode *ip = GFS2_I(inode);
+ 	struct gfs2_sbd *sdp = GFS2_SB(inode);
+ 
+-	if (page && !gfs2_is_stuffed(ip))
+-		gfs2_page_add_databufs(ip, page, offset_in_page(pos), copied);
++	folio_unlock(folio);
++
++	if (!gfs2_is_stuffed(ip))
++		gfs2_page_add_databufs(ip, &folio->page, offset_in_page(pos),
++				       copied);
+ 
+ 	if (tr->tr_num_buf_new)
+ 		__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
+ 
+ 	gfs2_trans_end(sdp);
++
++	folio_put(folio);
+ }
+ 
+-static const struct iomap_page_ops gfs2_iomap_page_ops = {
+-	.page_prepare = gfs2_iomap_page_prepare,
+-	.page_done = gfs2_iomap_page_done,
++static const struct iomap_folio_ops gfs2_iomap_folio_ops = {
++	.folio_prepare = gfs2_iomap_folio_prepare,
++	.folio_done = gfs2_iomap_folio_done,
+ };
+ 
+ static int gfs2_iomap_begin_write(struct inode *inode, loff_t pos,
+@@ -1064,7 +1082,7 @@ static int gfs2_iomap_begin_write(struct inode *inode, loff_t pos,
  	}
  
- 	unlock_page(page);
- 	put_page(page);
+ 	if (gfs2_is_stuffed(ip) || gfs2_is_jdata(ip))
+-		iomap->page_ops = &gfs2_iomap_page_ops;
++		iomap->folio_ops = &gfs2_iomap_folio_ops;
+ 	return 0;
  
--	if (old_size < pos)
--		pagecache_isize_extended(inode, old_size, pos);
- 	/*
- 	 * Don't mark the inode dirty under page lock. First, it unnecessarily
- 	 * makes the holding time of page lock longer. Second, it forces lock
-diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
-index 2b5ef1b64249..48e6b4716415 100644
---- a/fs/ext4/inode.c
-+++ b/fs/ext4/inode.c
-@@ -1320,13 +1320,13 @@ static int ext4_write_end(struct file *file,
- 	 * If FS_IOC_ENABLE_VERITY is running on this inode, then Merkle tree
- 	 * blocks are being written past EOF, so skip the i_size update.
- 	 */
--	if (!verity)
-+	if (!verity) {
- 		i_size_changed = ext4_update_inode_size(inode, pos + copied);
-+		folio_may_straddle_isize(inode, page_folio(page), old_size, pos);
-+	}
- 	unlock_page(page);
- 	put_page(page);
- 
--	if (old_size < pos && !verity)
--		pagecache_isize_extended(inode, old_size, pos);
- 	/*
- 	 * Don't mark the inode dirty under page lock. First, it unnecessarily
- 	 * makes the holding time of page lock longer. Second, it forces lock
-@@ -1432,16 +1432,15 @@ static int ext4_journalled_write_end(struct file *file,
- 		if (!partial)
- 			SetPageUptodate(page);
- 	}
--	if (!verity)
-+	if (!verity) {
- 		size_changed = ext4_update_inode_size(inode, pos + copied);
-+		folio_may_straddle_isize(inode, page_folio(page), old_size, pos);
-+	}
- 	ext4_set_inode_state(inode, EXT4_STATE_JDATA);
- 	EXT4_I(inode)->i_datasync_tid = handle->h_transaction->t_tid;
- 	unlock_page(page);
- 	put_page(page);
- 
--	if (old_size < pos && !verity)
--		pagecache_isize_extended(inode, old_size, pos);
--
- 	if (size_changed) {
- 		ret2 = ext4_mark_inode_dirty(handle, inode);
- 		if (!ret)
+ out_trans_end:
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 91ee0b308e13..96e643de32a0 100644
+index 96e643de32a0..9f1656f3df17 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
-@@ -713,15 +713,12 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
- 	if (pos + ret > old_size) {
- 		i_size_write(iter->inode, pos + ret);
- 		iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
-+		folio_may_straddle_isize(iter->inode, folio, old_size, pos);
+@@ -587,7 +587,7 @@ static int iomap_write_begin_inline(const struct iomap_iter *iter,
+ static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 		size_t len, struct folio **foliop)
+ {
+-	const struct iomap_page_ops *page_ops = iter->iomap.page_ops;
++	const struct iomap_folio_ops *folio_ops = iter->iomap.folio_ops;
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+ 	struct folio *folio;
+ 	unsigned fgp = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE | FGP_NOFS;
+@@ -606,17 +606,18 @@ static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 	if (!mapping_large_folio_support(iter->inode->i_mapping))
+ 		len = min_t(size_t, len, PAGE_SIZE - offset_in_page(pos));
+ 
+-	if (page_ops && page_ops->page_prepare) {
+-		status = page_ops->page_prepare(iter->inode, pos, len);
+-		if (status)
+-			return status;
++	if (folio_ops && folio_ops->folio_prepare) {
++		folio = folio_ops->folio_prepare(iter->inode, fgp, pos, len);
++	} else {
++		folio = __filemap_get_folio(iter->inode->i_mapping,
++				pos >> PAGE_SHIFT, fgp,
++				mapping_gfp_mask(iter->inode->i_mapping));
  	}
- 	folio_unlock(folio);
 -
--	if (old_size < pos)
--		pagecache_isize_extended(iter->inode, old_size, pos);
- 	if (page_ops && page_ops->page_done)
- 		page_ops->page_done(iter->inode, pos, ret, &folio->page);
- 	folio_put(folio);
+-	folio = __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
+-			fgp, mapping_gfp_mask(iter->inode->i_mapping));
+-	if (!folio) {
+-		status = (iter->flags & IOMAP_NOWAIT) ? -EAGAIN : -ENOMEM;
+-		goto out_no_page;
++	if (IS_ERR_OR_NULL(folio)) {
++		status = PTR_ERR(folio);
++		if (folio == NULL)
++			status = (iter->flags & IOMAP_NOWAIT) ? -EAGAIN : -ENOMEM;
++		return status;
+ 	}
+ 	if (pos + len > folio_pos(folio) + folio_size(folio))
+ 		len = folio_pos(folio) + folio_size(folio) - pos;
+@@ -635,13 +636,13 @@ static int iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
+ 	return 0;
+ 
+ out_unlock:
+-	folio_unlock(folio);
+-	folio_put(folio);
++	if (folio_ops && folio_ops->folio_done) {
++		folio_ops->folio_done(iter->inode, folio, pos, 0);
++	} else {
++		folio_unlock(folio);
++		folio_put(folio);
++	}
+ 	iomap_write_failed(iter->inode, pos, len);
 -
+-out_no_page:
+-	if (page_ops && page_ops->page_done)
+-		page_ops->page_done(iter->inode, pos, 0, NULL);
+ 	return status;
+ }
+ 
+@@ -691,7 +692,7 @@ static size_t iomap_write_end_inline(const struct iomap_iter *iter,
+ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
+ 		size_t copied, struct folio *folio)
+ {
+-	const struct iomap_page_ops *page_ops = iter->iomap.page_ops;
++	const struct iomap_folio_ops *folio_ops = iter->iomap.folio_ops;
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+ 	loff_t old_size = iter->inode->i_size;
+ 	size_t ret;
+@@ -715,10 +716,13 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
+ 		iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
+ 		folio_may_straddle_isize(iter->inode, folio, old_size, pos);
+ 	}
+-	folio_unlock(folio);
+-	if (page_ops && page_ops->page_done)
+-		page_ops->page_done(iter->inode, pos, ret, &folio->page);
+-	folio_put(folio);
++	if (folio_ops && folio_ops->folio_done) {
++		folio_ops->folio_done(iter->inode, folio, pos, ret);
++	} else {
++		folio_unlock(folio);
++		folio_put(folio);
++	}
++
  	if (ret < len)
  		iomap_write_failed(iter->inode, pos + ret, len - ret);
  	return ret;
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 8bbcccbc5565..e1f03c9ed8df 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -1890,6 +1890,8 @@ int generic_access_phys(struct vm_area_struct *vma, unsigned long addr,
+diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+index 238a03087e17..9d3a6ad222cc 100644
+--- a/include/linux/iomap.h
++++ b/include/linux/iomap.h
+@@ -76,7 +76,7 @@ struct vm_fault;
+  */
+ #define IOMAP_NULL_ADDR -1ULL	/* addr is not valid */
  
- extern void truncate_pagecache(struct inode *inode, loff_t new);
- extern void truncate_setsize(struct inode *inode, loff_t newsize);
-+void folio_may_straddle_isize(struct inode *inode, struct folio *folio,
-+			      loff_t old_size, loff_t start);
- void pagecache_isize_extended(struct inode *inode, loff_t from, loff_t to);
- void truncate_pagecache_range(struct inode *inode, loff_t offset, loff_t end);
- int generic_error_remove_page(struct address_space *mapping, struct page *page);
-diff --git a/mm/truncate.c b/mm/truncate.c
-index c0be77e5c008..9a5d3c3c12d0 100644
---- a/mm/truncate.c
-+++ b/mm/truncate.c
-@@ -779,6 +779,40 @@ void truncate_setsize(struct inode *inode, loff_t newsize)
+-struct iomap_page_ops;
++struct iomap_folio_ops;
+ 
+ struct iomap {
+ 	u64			addr; /* disk offset of mapping, bytes */
+@@ -88,7 +88,7 @@ struct iomap {
+ 	struct dax_device	*dax_dev; /* dax_dev for dax operations */
+ 	void			*inline_data;
+ 	void			*private; /* filesystem private */
+-	const struct iomap_page_ops *page_ops;
++	const struct iomap_folio_ops *folio_ops;
+ };
+ 
+ static inline sector_t iomap_sector(const struct iomap *iomap, loff_t pos)
+@@ -115,19 +115,19 @@ static inline bool iomap_inline_data_valid(const struct iomap *iomap)
  }
- EXPORT_SYMBOL(truncate_setsize);
  
-+/**
-+ * folio_may_straddle_isize - update pagecache after extending i_size
-+ * @inode:	inode for which i_size was extended
-+ * @folio:	folio to maybe mark read-only
-+ * @old_size:	original inode size
-+ * @start:	start of the write
-+ *
-+ * Handle extending an inode by a write that starts behind the old inode size.
-+ * If a block-aligned hole exists between the old inode size and the start of
-+ * the write, we mark the folio read-only so that page_mkwrite() is called on
-+ * the nearest write access to the page.  That way, the filesystem can be sure
-+ * that page_mkwrite() is called on the page before a user writes to the page
-+ * via mmap.
-+ *
-+ * This function must be called while we still hold i_rwsem - this not only
-+ * makes sure i_size is stable but also that userspace cannot observe the new
-+ * i_size value before we are prepared to handle mmap writes there.
-+ */
-+void folio_may_straddle_isize(struct inode *inode, struct folio *folio,
-+			      loff_t old_size, loff_t start)
-+{
-+	unsigned int blocksize = i_blocksize(inode);
-+
-+	if (round_up(old_size, blocksize) >= round_down(start, blocksize))
-+		return;
-+
-+	/*
-+	 * See clear_page_dirty_for_io() for details why folio_set_dirty()
-+	 * is needed.
-+	 */
-+	if (folio_mkclean(folio))
-+		folio_set_dirty(folio);
-+}
-+
- /**
-  * pagecache_isize_extended - update pagecache after extension of i_size
-  * @inode:	inode for which i_size was extended
+ /*
+- * When a filesystem sets page_ops in an iomap mapping it returns, page_prepare
+- * and page_done will be called for each page written to.  This only applies to
+- * buffered writes as unbuffered writes will not typically have pages
++ * When a filesystem sets folio_ops in an iomap mapping it returns, folio_prepare
++ * and folio_done will be called for each folio written to.  This only applies to
++ * buffered writes as unbuffered writes will not typically have folios
+  * associated with them.
+  *
+- * When page_prepare succeeds, page_done will always be called to do any
+- * cleanup work necessary.  In that page_done call, @page will be NULL if the
+- * associated page could not be obtained.
++ * When folio_prepare succeeds, folio_done will always be called to do any
++ * cleanup work necessary.
+  */
+-struct iomap_page_ops {
+-	int (*page_prepare)(struct inode *inode, loff_t pos, unsigned len);
+-	void (*page_done)(struct inode *inode, loff_t pos, unsigned copied,
+-			struct page *page);
++struct iomap_folio_ops {
++	struct folio *(*folio_prepare)(struct inode *inode, unsigned fgp,
++				       loff_t pos, unsigned len);
++	void (*folio_done)(struct inode *inode, struct folio *folio,
++			   loff_t pos, unsigned copied);
+ };
+ 
+ /*
 -- 
 2.38.1
 
