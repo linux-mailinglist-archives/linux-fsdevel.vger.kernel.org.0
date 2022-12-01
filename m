@@ -2,52 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D175563F4F5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 17:14:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E6CD63F50E
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 17:17:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231612AbiLAQO5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Dec 2022 11:14:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59980 "EHLO
+        id S232223AbiLAQRc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Dec 2022 11:17:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33752 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229630AbiLAQOz (ORCPT
+        with ESMTP id S232225AbiLAQRZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Dec 2022 11:14:55 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC6B54443;
-        Thu,  1 Dec 2022 08:14:54 -0800 (PST)
+        Thu, 1 Dec 2022 11:17:25 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EFE6BB7D7;
+        Thu,  1 Dec 2022 08:17:18 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EAC3062056;
-        Thu,  1 Dec 2022 16:14:53 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A5C5C433C1;
-        Thu,  1 Dec 2022 16:14:53 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BB017B81F8A;
+        Thu,  1 Dec 2022 16:17:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63631C433C1;
+        Thu,  1 Dec 2022 16:17:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669911293;
-        bh=RA+oYTRjg5pJois2KzjtgaU2E3HhxewyaArdgu/qh4I=;
+        s=k20201202; t=1669911435;
+        bh=xEUa0q1V/GeuhlVvbRVjNYe9PdAEmhY+C71nTUjdMVM=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tHG04wr1uG6lJKID3geDq5590EAVNGQa5BbtUYJ3uN2I/iu+Mm6ylnKRwH28/G7YX
-         QfuGBwTCyl1vBS8bZD7EXBvSujfrEKzMD8DRtEuRsIjY6gE07nhs2S0gkbjIiS2gmz
-         Y6Ged32jEWtITYeUAwZWHyF/0AFgc0no/Ac9cNIgeJmKg7uYJG7cMLgacWAEtui60B
-         W6MGnz/A8+XZKQ3zwWLrchrv8AtkHdF325qqXiLjtIyU2SCa+qwPgm3Oy3iqtEXiZ/
-         m8e57TxoG7P41iCRCwgjy/d47Le65e31WloOgK2Wj2R+wkBD/7echONk/PHVKk9jd+
-         7lKpQcltG6ZJg==
-Date:   Thu, 1 Dec 2022 08:14:52 -0800
+        b=vNU6OPABKKc+65PXc3d8NgpN3RZX0rAXLRxEytiZIHpxUsPNvmuoT6sAmN2B/Afkj
+         qFzvPQQsag2/oGaStn/+BPaDQvIshVzRzmYOzrbPHCXBdnZ1TkkzPetuNQbvTNd1vB
+         H7w3P6xXbwE3tEgxOUk5L902I14ChkDxX4hrzo+24bc53Efn3MWkGsw/pdrKYJ1W81
+         2nIYcilIGAJFzlZNNISEFXmD3NwmLAF7H8N8S4MlcCalqRkRBIbhy/8SDie73xrbEz
+         hALH6HKvcb7vFOC6XOESVJDj7gw05C1Emr6vPP8kBt3pmizLcFHXnjz9myigd42+I3
+         ICjVH5KGaPh9Q==
+Date:   Thu, 1 Dec 2022 08:17:14 -0800
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
 Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
         nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
         david@fromorbit.com, dan.j.williams@intel.com,
         akpm@linux-foundation.org
-Subject: Re: [PATCH v2 1/8] fsdax: introduce page->share for fsdax in reflink
- mode
-Message-ID: <Y4jS/F7VH3zKdsBi@magnolia>
+Subject: Re: [PATCH v2 2/8] fsdax: invalidate pages when CoW
+Message-ID: <Y4jTii+tENz3IeXy@magnolia>
 References: <1669908538-55-1-git-send-email-ruansy.fnst@fujitsu.com>
- <1669908538-55-2-git-send-email-ruansy.fnst@fujitsu.com>
+ <1669908538-55-3-git-send-email-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1669908538-55-2-git-send-email-ruansy.fnst@fujitsu.com>
+In-Reply-To: <1669908538-55-3-git-send-email-ruansy.fnst@fujitsu.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -57,147 +56,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 01, 2022 at 03:28:51PM +0000, Shiyang Ruan wrote:
-> fsdax page is used not only when CoW, but also mapread. To make the it
-> easily understood, use 'share' to indicate that the dax page is shared
-> by more than one extent.  And add helper functions to use it.
-> 
-> Also, the flag needs to be renamed to PAGE_MAPPING_DAX_SHARED.
+On Thu, Dec 01, 2022 at 03:28:52PM +0000, Shiyang Ruan wrote:
+> CoW changes the share state of a dax page, but the share count of the
+> page isn't updated.  The next time access this page, it should have been
+> a newly accessed, but old association exists.  So, we need to clear the
+> share state when CoW happens, in both dax_iomap_rw() and
+> dax_zero_iter().
 > 
 > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> ---
->  fs/dax.c                   | 38 ++++++++++++++++++++++----------------
->  include/linux/mm_types.h   |  5 ++++-
->  include/linux/page-flags.h |  2 +-
->  3 files changed, 27 insertions(+), 18 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 1c6867810cbd..85b81963ea31 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -334,35 +334,41 @@ static unsigned long dax_end_pfn(void *entry)
->  	for (pfn = dax_to_pfn(entry); \
->  			pfn < dax_end_pfn(entry); pfn++)
->  
-> -static inline bool dax_mapping_is_cow(struct address_space *mapping)
-> +static inline bool dax_mapping_is_shared(struct page *page)
 
-dax_page_is_shared?
-
->  {
-> -	return (unsigned long)mapping == PAGE_MAPPING_DAX_COW;
-> +	return (unsigned long)page->mapping == PAGE_MAPPING_DAX_SHARED;
->  }
->  
->  /*
-> - * Set the page->mapping with FS_DAX_MAPPING_COW flag, increase the refcount.
-> + * Set the page->mapping with PAGE_MAPPING_DAX_SHARED flag, increase the
-> + * refcount.
->   */
-> -static inline void dax_mapping_set_cow(struct page *page)
-> +static inline void dax_mapping_set_shared(struct page *page)
-
-It's odd that a function of a struct page still has 'mapping' in the
-name.
-
-dax_page_increase_shared?
-
-or perhaps simply
-
-dax_page_bump_sharing and dax_page_drop_sharing?
-
-Otherwise this mechanical change looks pretty straightforward.
+Looks ok,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
->  {
-> -	if ((uintptr_t)page->mapping != PAGE_MAPPING_DAX_COW) {
-> +	if ((uintptr_t)page->mapping != PAGE_MAPPING_DAX_SHARED) {
->  		/*
->  		 * Reset the index if the page was already mapped
->  		 * regularly before.
->  		 */
->  		if (page->mapping)
-> -			page->index = 1;
-> -		page->mapping = (void *)PAGE_MAPPING_DAX_COW;
-> +			page->share = 1;
-> +		page->mapping = (void *)PAGE_MAPPING_DAX_SHARED;
->  	}
-> -	page->index++;
-> +	page->share++;
-> +}
+> ---
+>  fs/dax.c | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
+> 
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 85b81963ea31..482dda85ccaf 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -1264,6 +1264,15 @@ static s64 dax_zero_iter(struct iomap_iter *iter, bool *did_zero)
+>  	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
+>  		return length;
+>  
+> +	/*
+> +	 * invalidate the pages whose sharing state is to be changed
+> +	 * because of CoW.
+> +	 */
+> +	if (iomap->flags & IOMAP_F_SHARED)
+> +		invalidate_inode_pages2_range(iter->inode->i_mapping,
+> +					      pos >> PAGE_SHIFT,
+> +					      (pos + length - 1) >> PAGE_SHIFT);
 > +
-> +static inline unsigned long dax_mapping_decrease_shared(struct page *page)
-> +{
-> +	return --page->share;
->  }
->  
->  /*
-> - * When it is called in dax_insert_entry(), the cow flag will indicate that
-> + * When it is called in dax_insert_entry(), the shared flag will indicate that
->   * whether this entry is shared by multiple files.  If so, set the page->mapping
-> - * FS_DAX_MAPPING_COW, and use page->index as refcount.
-> + * PAGE_MAPPING_DAX_SHARED, and use page->share as refcount.
->   */
->  static void dax_associate_entry(void *entry, struct address_space *mapping,
-> -		struct vm_area_struct *vma, unsigned long address, bool cow)
-> +		struct vm_area_struct *vma, unsigned long address, bool shared)
+>  	do {
+>  		unsigned offset = offset_in_page(pos);
+>  		unsigned size = min_t(u64, PAGE_SIZE - offset, length);
+> @@ -1324,12 +1333,13 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+>  		struct iov_iter *iter)
 >  {
->  	unsigned long size = dax_entry_size(entry), pfn, index;
->  	int i = 0;
-> @@ -374,8 +380,8 @@ static void dax_associate_entry(void *entry, struct address_space *mapping,
->  	for_each_mapped_pfn(entry, pfn) {
->  		struct page *page = pfn_to_page(pfn);
+>  	const struct iomap *iomap = &iomi->iomap;
+> -	const struct iomap *srcmap = &iomi->srcmap;
+> +	const struct iomap *srcmap = iomap_iter_srcmap(iomi);
+>  	loff_t length = iomap_length(iomi);
+>  	loff_t pos = iomi->pos;
+>  	struct dax_device *dax_dev = iomap->dax_dev;
+>  	loff_t end = pos + length, done = 0;
+>  	bool write = iov_iter_rw(iter) == WRITE;
+> +	bool cow = write && iomap->flags & IOMAP_F_SHARED;
+>  	ssize_t ret = 0;
+>  	size_t xfer;
+>  	int id;
+> @@ -1356,7 +1366,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+>  	 * into page tables. We have to tear down these mappings so that data
+>  	 * written by write(2) is visible in mmap.
+>  	 */
+> -	if (iomap->flags & IOMAP_F_NEW) {
+> +	if (iomap->flags & IOMAP_F_NEW || cow) {
+>  		invalidate_inode_pages2_range(iomi->inode->i_mapping,
+>  					      pos >> PAGE_SHIFT,
+>  					      (end - 1) >> PAGE_SHIFT);
+> @@ -1390,8 +1400,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+>  			break;
+>  		}
 >  
-> -		if (cow) {
-> -			dax_mapping_set_cow(page);
-> +		if (shared) {
-> +			dax_mapping_set_shared(page);
->  		} else {
->  			WARN_ON_ONCE(page->mapping);
->  			page->mapping = mapping;
-> @@ -396,9 +402,9 @@ static void dax_disassociate_entry(void *entry, struct address_space *mapping,
->  		struct page *page = pfn_to_page(pfn);
->  
->  		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
-> -		if (dax_mapping_is_cow(page->mapping)) {
-> -			/* keep the CoW flag if this page is still shared */
-> -			if (page->index-- > 0)
-> +		if (dax_mapping_is_shared(page)) {
-> +			/* keep the shared flag if this page is still shared */
-> +			if (dax_mapping_decrease_shared(page) > 0)
->  				continue;
->  		} else
->  			WARN_ON_ONCE(page->mapping && page->mapping != mapping);
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 500e536796ca..f46cac3657ad 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -103,7 +103,10 @@ struct page {
->  			};
->  			/* See page-flags.h for PAGE_MAPPING_FLAGS */
->  			struct address_space *mapping;
-> -			pgoff_t index;		/* Our offset within mapping. */
-> +			union {
-> +				pgoff_t index;		/* Our offset within mapping. */
-> +				unsigned long share;	/* share count for fsdax */
-> +			};
->  			/**
->  			 * @private: Mapping-private opaque data.
->  			 * Usually used for buffer_heads if PagePrivate.
-> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
-> index 0b0ae5084e60..c8a3aa02278d 100644
-> --- a/include/linux/page-flags.h
-> +++ b/include/linux/page-flags.h
-> @@ -641,7 +641,7 @@ PAGEFLAG_FALSE(VmemmapSelfHosted, vmemmap_self_hosted)
->   * Different with flags above, this flag is used only for fsdax mode.  It
->   * indicates that this page->mapping is now under reflink case.
->   */
-> -#define PAGE_MAPPING_DAX_COW	0x1
-> +#define PAGE_MAPPING_DAX_SHARED	0x1
->  
->  static __always_inline bool folio_mapping_flags(struct folio *folio)
->  {
+> -		if (write &&
+> -		    srcmap->type != IOMAP_HOLE && srcmap->addr != iomap->addr) {
+> +		if (cow) {
+>  			ret = dax_iomap_cow_copy(pos, length, PAGE_SIZE, srcmap,
+>  						 kaddr);
+>  			if (ret)
 > -- 
 > 2.38.1
 > 
