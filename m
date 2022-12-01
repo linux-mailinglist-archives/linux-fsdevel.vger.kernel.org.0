@@ -2,139 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E0BE363F2DF
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 15:30:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CCC2063F34A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 16:02:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231397AbiLAOaY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Dec 2022 09:30:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46964 "EHLO
+        id S231586AbiLAPCj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Dec 2022 10:02:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229481AbiLAOaV (ORCPT
+        with ESMTP id S231584AbiLAPCh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Dec 2022 09:30:21 -0500
-Received: from mx6.didiglobal.com (mx6.didiglobal.com [111.202.70.123])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 9BD5BA7AB5;
-        Thu,  1 Dec 2022 06:30:17 -0800 (PST)
-Received: from mail.didiglobal.com (unknown [10.79.71.35])
-        by mx6.didiglobal.com (Maildata Gateway V2.8) with ESMTPS id 5AA13110363200;
-        Thu,  1 Dec 2022 22:30:12 +0800 (CST)
-Received: from ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) by
- ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Thu, 1 Dec 2022 22:30:12 +0800
-Received: from ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769])
- by ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769%8]) with mapi
- id 15.01.2375.017; Thu, 1 Dec 2022 22:30:11 +0800
-X-MD-Sfrom: chengkaitao@didiglobal.com
-X-MD-SrcIP: 10.79.71.35
-From:   =?utf-8?B?56iL5Z6y5rabIENoZW5na2FpdGFvIENoZW5n?= 
-        <chengkaitao@didiglobal.com>
-To:     Michal Hocko <mhocko@suse.com>
-CC:     Tao pilgrim <pilgrimtao@gmail.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
-        "shakeelb@google.com" <shakeelb@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
-        "cgel.zte@gmail.com" <cgel.zte@gmail.com>,
-        "ran.xiaokai@zte.com.cn" <ran.xiaokai@zte.com.cn>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
-        "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
-        "yuzhao@google.com" <yuzhao@google.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vasily.averin@linux.dev" <vasily.averin@linux.dev>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "surenb@google.com" <surenb@google.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "sujiaxun@uniontech.com" <sujiaxun@uniontech.com>,
-        "feng.tang@intel.com" <feng.tang@intel.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "Bagas Sanjaya" <bagasdotme@gmail.com>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] mm: memcontrol: protect the memory in cgroup from being
- oom killed
-Thread-Topic: [PATCH] mm: memcontrol: protect the memory in cgroup from being
- oom killed
-Thread-Index: AQHZBK+NwNVzWF9Xk0ibAn/rxGrWSq5XnGYA//+FgwCAAVYiAP//vByAgACohID//5lJgAAA0fUAABOecIA=
-Date:   Thu, 1 Dec 2022 14:30:11 +0000
-Message-ID: <C9FFF5A4-B883-4C0D-A802-D94080D6C3A4@didiglobal.com>
-In-Reply-To: <Y4inSsNpmomzRt8J@dhcp22.suse.cz>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.79.64.101]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C0A32D731A459844B8D5001BAE8B8536@didichuxing.com>
-Content-Transfer-Encoding: base64
+        Thu, 1 Dec 2022 10:02:37 -0500
+Received: from mail-wr1-x42e.google.com (mail-wr1-x42e.google.com [IPv6:2a00:1450:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 31D0D326D2
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Dec 2022 07:02:32 -0800 (PST)
+Received: by mail-wr1-x42e.google.com with SMTP id o5so3149098wrm.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Dec 2022 07:02:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AnWb/wVSNdKj3pgyeMUpqSMtTHsefsQxEggI3iRte0I=;
+        b=awhQR/IK5q42tm3jsJWdBfs/KzYDAI+a/+tgVKyWKK1usmdu83M7jvdpKEabsmzrw5
+         YK0C91yT3kWLT0lY7lVsiBbNwP5EGN9FKFCusE1IrXxPDPJksIf9ATZ3W1uj+Wx/DVCh
+         VIlv3WWwOSNokSkF5/OcgwaDI1dIIW+bnGYSWd3bVE0g2ihNxpp4S+/SvU2gXEnk/4sK
+         INZVqVt7shp3t10QQIlcMg6UtGpO6WQR1dlDTjHsD5UICWArdBVmGTehzB5tAuMwTxbP
+         4zpBvTvhaEOLhEdwNBnanR2zQjqhjE4Pb3iIIR5fo8LUyd90MRniQHkCxdZMJPmkSm2A
+         MtLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AnWb/wVSNdKj3pgyeMUpqSMtTHsefsQxEggI3iRte0I=;
+        b=fbHCUwjQDPy7CI9Pa32dJHXPeRNocNmZRqAelMwD3OwVjYCol/QLarXUusqFP9fcr3
+         KwKCRIKqyobmKkcbqqYnvXrpDNPqDkmnFUv0gNvRu3uGnNoT5BE1+T6IoXi9YSd1u6sk
+         WPrBLOKWX6/mLXlN8Xk9qkjE6lwcsX+Mf/ChYOd6vghTazeCklYw00smHMDEDN6IySX6
+         flYEm7mMTS77kbTpIIKOO6LEXWBKxF3QdOGOkevcYBLsJMN6goQuZerOZPNcsR9gftpX
+         JHNAa0d+e00gTwzTMq2k6LaOp/C/wPLReoEwSPSUAAiYEUw5AlDe3ZLq8CHoISOdo42K
+         oYPg==
+X-Gm-Message-State: ANoB5pl35CBOJ1BmRAYl+QigiqwaGSCsKor/DSjsneFy56D7UUdGkWCv
+        LYgRXFa+O1iBc7f+z/DSHEZMTkwJEYAV5O8j
+X-Google-Smtp-Source: AA0mqf6vbkbi36FpoDynrVXbxaE/yUvxBZldu8vEkUyqahsXnciixUJsDqpc9kt/trtxJbcGDfMo/A==
+X-Received: by 2002:a5d:510b:0:b0:241:fe9d:fbf4 with SMTP id s11-20020a5d510b000000b00241fe9dfbf4mr22755438wrt.412.1669906950323;
+        Thu, 01 Dec 2022 07:02:30 -0800 (PST)
+Received: from daandemeyer-fedora-PC1EV17T.thefacebook.com ([2620:10d:c092:400::5:23b6])
+        by smtp.googlemail.com with ESMTPSA id y7-20020adfe6c7000000b002423edd7e50sm906342wrm.32.2022.12.01.07.02.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Dec 2022 07:02:29 -0800 (PST)
+From:   Daan De Meyer <daan.j.demeyer@gmail.com>
+To:     linux-fsdevel@vger.kernel.org
+Cc:     Daan De Meyer <daan.j.demeyer@gmail.com>, brauner@kernel.org
+Subject: [PATCH] selftests: Add missing <sys/syscall.h> to mount_setattr test
+Date:   Thu,  1 Dec 2022 16:02:18 +0100
+Message-Id: <20221201150218.2374366-1-daan.j.demeyer@gmail.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-QXQgMjAyMi0xMi0wMSAyMTowODoyNiwgIk1pY2hhbCBIb2NrbyIgPG1ob2Nrb0BzdXNlLmNvbT4g
-d3JvdGU6DQo+T24gVGh1IDAxLTEyLTIyIDEzOjQ0OjU4LCBNaWNoYWwgSG9ja28gd3JvdGU6DQo+
-PiBPbiBUaHUgMDEtMTItMjIgMTA6NTI6MzUsIOeoi+Wesua2myBDaGVuZ2thaXRhbyBDaGVuZyB3
-cm90ZToNCj4+ID4gQXQgMjAyMi0xMi0wMSAxNjo0OToyNywgIk1pY2hhbCBIb2NrbyIgPG1ob2Nr
-b0BzdXNlLmNvbT4gd3JvdGU6DQo+Wy4uLl0NCj4+IFRoZXJlIGlzIGEgbWlzdW5kZXJzdGFuZGlu
-Zywgb29tLnByb3RlY3QgZG9lcyBub3QgcmVwbGFjZSB0aGUgdXNlcidzIA0KPj4gdGFpbGVkIHBv
-bGljaWVzLCBJdHMgcHVycG9zZSBpcyB0byBtYWtlIGl0IGVhc2llciBhbmQgbW9yZSBlZmZpY2ll
-bnQgZm9yIA0KPj4gdXNlcnMgdG8gY3VzdG9taXplIHBvbGljaWVzLCBvciB0cnkgdG8gYXZvaWQg
-dXNlcnMgY29tcGxldGVseSBhYmFuZG9uaW5nIA0KPj4gdGhlIG9vbSBzY29yZSB0byBmb3JtdWxh
-dGUgbmV3IHBvbGljaWVzLg0KPg0KPiBUaGVuIHlvdSBzaG91bGQgZm9jdXMgb24gZXhwbGFpbmlu
-ZyBvbiBob3cgdGhpcyBtYWtlcyB0aG9zZSBwb2xpY2llcyBhbmQNCj4gZWFzaWVyIGFuZCBtb2Ug
-ZWZmaWNpZW50LiBJIGRvIG5vdCBzZWUgaXQuDQoNCkluIGZhY3QsIHRoZXJlIGFyZSBzb21lIHJl
-bGV2YW50IGNvbnRlbnRzIGluIHRoZSBwcmV2aW91cyBjaGF0IHJlY29yZHMuIA0KSWYgb29tLnBy
-b3RlY3QgaXMgYXBwbGllZCwgaXQgd2lsbCBoYXZlIHRoZSBmb2xsb3dpbmcgYmVuZWZpdHMNCjEu
-IFVzZXJzIG9ubHkgbmVlZCB0byBmb2N1cyBvbiB0aGUgbWFuYWdlbWVudCBvZiB0aGUgbG9jYWwg
-Y2dyb3VwLCBub3QgdGhlIA0KaW1wYWN0IG9uIG90aGVyIHVzZXJzJyBjZ3JvdXBzLg0KMi4gVXNl
-cnMgYW5kIHN5c3RlbSBkbyBub3QgbmVlZCB0byBzcGVuZCBleHRyYSB0aW1lIG9uIGNvbXBsaWNh
-dGVkIGFuZCANCnJlcGVhdGVkIHNjYW5uaW5nIGFuZCBjb25maWd1cmF0aW9uLiBUaGV5IGp1c3Qg
-bmVlZCB0byBjb25maWd1cmUgdGhlIA0Kb29tLnByb3RlY3Qgb2Ygc3BlY2lmaWMgY2dyb3Vwcywg
-d2hpY2ggaXMgYSBvbmUtdGltZSB0YXNrDQoNCj4+ID4gPldoeSBjYW5ub3QgeW91IHNpbXBseSBk
-aXNjb3VudCB0aGUgcHJvdGVjdGlvbiBmcm9tIGFsbCBwcm9jZXNzZXMNCj4+ID4gPmVxdWFsbHk/
-IEkgZG8gbm90IGZvbGxvdyB3aHkgdGhlIHRhc2tfdXNhZ2UgaGFzIHRvIHBsYXkgYW55IHJvbGUg
-aW4NCj4+ID4gPnRoYXQuDQo+PiA+IA0KPj4gPiBJZiBhbGwgcHJvY2Vzc2VzIGFyZSBwcm90ZWN0
-ZWQgZXF1YWxseSwgdGhlIG9vbSBwcm90ZWN0aW9uIG9mIGNncm91cCBpcyANCj4+ID4gbWVhbmlu
-Z2xlc3MuIEZvciBleGFtcGxlLCBpZiB0aGVyZSBhcmUgbW9yZSBwcm9jZXNzZXMgaW4gdGhlIGNn
-cm91cCwgDQo+PiA+IHRoZSBjZ3JvdXAgY2FuIHByb3RlY3QgbW9yZSBtZW1zLCBpdCBpcyB1bmZh
-aXIgdG8gY2dyb3VwcyB3aXRoIGZld2VyIA0KPj4gPiBwcm9jZXNzZXMuIFNvIHdlIG5lZWQgdG8g
-a2VlcCB0aGUgdG90YWwgYW1vdW50IG9mIG1lbW9yeSB0aGF0IGFsbCANCj4+ID4gcHJvY2Vzc2Vz
-IGluIHRoZSBjZ3JvdXAgbmVlZCB0byBwcm90ZWN0IGNvbnNpc3RlbnQgd2l0aCB0aGUgdmFsdWUg
-b2YgDQo+PiA+IGVvb20ucHJvdGVjdC4NCj4+IA0KPj4gWW91IGFyZSBtaXhpbmcgdHdvIGRpZmZl
-cmVudCBjb25jZXB0cyB0b2dldGhlciBJIGFtIGFmcmFpZC4gVGhlIHBlcg0KPj4gbWVtY2cgcHJv
-dGVjdGlvbiBzaG91bGQgcHJvdGVjdCB0aGUgY2dyb3VwIChpLmUuIGFsbCBwcm9jZXNzZXMgaW4g
-dGhhdA0KPj4gY2dyb3VwKSB3aGlsZSB5b3Ugd2FudCBpdCB0byBiZSBhbHNvIHByb2Nlc3MgYXdh
-cmUuIFRoaXMgcmVzdWx0cyBpbiBhDQo+PiB2ZXJ5IHVuY2xlYXIgcnVudGltZSBiZWhhdmlvciB3
-aGVuIGEgcHJvY2VzcyBmcm9tIGEgbW9yZSBwcm90ZWN0ZWQgbWVtY2cNCj4+IGlzIHNlbGVjdGVk
-IGJhc2VkIG9uIGl0cyBpbmRpdmlkdWFsIG1lbW9yeSB1c2FnZS4NCj4NClRoZSBjb3JyZWN0IHN0
-YXRlbWVudCBoZXJlIHNob3VsZCBiZSB0aGF0IGVhY2ggbWVtY2cgcHJvdGVjdGlvbiBzaG91bGQg
-DQpwcm90ZWN0IHRoZSBudW1iZXIgb2YgbWVtcyBzcGVjaWZpZWQgYnkgdGhlIG9vbS5wcm90ZWN0
-LiBGb3IgZXhhbXBsZSwgDQphIGNncm91cCdzIHVzYWdlIGlzIDZHLCBhbmQgaXQncyBvb20ucHJv
-dGVjdCBpcyAyRywgd2hlbiBhbiBvb20ga2lsbGVyIG9jY3VycywgDQpJbiB0aGUgd29yc3QgY2Fz
-ZSwgd2Ugd2lsbCBvbmx5IHJlZHVjZSB0aGUgbWVtb3J5IHVzZWQgYnkgdGhpcyBjZ3JvdXAgdG8g
-MkcgDQp0aHJvdWdoIHRoZSBvbSBraWxsZXIuDQoNCj5MZXQgbWUgYmUgbW9yZSBzcGVjaWZpYyBo
-ZXJlLiBBbHRob3VnaCBpdCBpcyBwcmltYXJpbHkgcHJvY2Vzc2VzIHdoaWNoDQo+YXJlIHRoZSBw
-cmltYXJ5IHNvdXJjZSBvZiBtZW1jZyBjaGFyZ2VzIHRoZSBtZW1vcnkgYWNjb3VudGVkIGZvciB0
-aGUgb29tDQo+YmFkbmVzcyBwdXJwb3NlcyBpcyBub3QgcmVhbGx5IGNvbXBhcmFibGUgdG8gdGhl
-IG92ZXJhbCBtZW1jZyBjaGFyZ2VkDQo+bWVtb3J5LiBLZXJuZWwgbWVtb3J5LCBub24tbWFwcGVk
-IG1lbW9yeSBhbGwgdGhhdCBjYW4gZ2VuZXJhdGUgcmF0aGVyDQo+aW50ZXJlc3RpbmcgY29ybmVy
-Y2FzZXMuDQoNClNvcnJ5LCBJJ20gdGhvdWdodGxlc3MgZW5vdWdoIGFib3V0IHNvbWUgc3BlY2lh
-bCBtZW1vcnkgc3RhdGlzdGljcy4gSSB3aWxsIGZpeCANCml0IGluIHRoZSBuZXh0IHZlcnNpb24N
-CiANClRoYW5rcyBmb3IgeW91ciBjb21tZW50IQ0KY2hlbmdrYWl0YW8NCg0K
+Including <sys/syscall.h> is required to define __NR_mount_setattr
+and __NR_open_tree which the mount_setattr test relies on.
+
+Signed-off-by: Daan De Meyer <daan.j.demeyer@gmail.com>
+---
+ tools/testing/selftests/mount_setattr/mount_setattr_test.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+index 8c5fea68ae67..da85f8af482c 100644
+--- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
++++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+@@ -11,6 +11,7 @@
+ #include <sys/wait.h>
+ #include <sys/vfs.h>
+ #include <sys/statvfs.h>
++#include <sys/syscall.h>
+ #include <sys/sysinfo.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+-- 
+2.38.1
+
