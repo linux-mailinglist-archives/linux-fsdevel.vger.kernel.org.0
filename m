@@ -2,67 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 19C0263F4AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 17:01:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E8F8C63F4D5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 17:08:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232110AbiLAQBQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Dec 2022 11:01:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47404 "EHLO
+        id S232014AbiLAQIT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Dec 2022 11:08:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51716 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232108AbiLAQBP (ORCPT
+        with ESMTP id S231743AbiLAQIS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Dec 2022 11:01:15 -0500
-Received: from mail-ej1-x62b.google.com (mail-ej1-x62b.google.com [IPv6:2a00:1450:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1298EB3906;
-        Thu,  1 Dec 2022 08:01:14 -0800 (PST)
-Received: by mail-ej1-x62b.google.com with SMTP id e27so5221010ejc.12;
-        Thu, 01 Dec 2022 08:01:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MAmHcTLy3hmcDrRNavtQUgMw98PbaTbM7w6twBSfXic=;
-        b=hLHpNSYoXsKEdrsQBISE3ZxIWI54lE426PYVbSMG9yJGu4k/f6zxghgHlIlwpLNR6j
-         h5/eXvhsPNapewmZXrSiMVqyHUZoJ1hjoWMcH6LIMGbXjgDJYgNR42VChw9gx+SVRoL9
-         fyY8T7truV0UChNuh+3c+NEQBalDJbkygjtkYITSsKuxwEGisWtD0aNwQQIPQzk5LRsN
-         1wtoU7fwUuTp9ytOtDlQpFHVnG2CBQ7/AYEKXQhgdROWAUiS6dhRTk65Qnu3vtPKlv2v
-         bVEIe20aUSLj6/LEDdLyUM/Mb07P5L9sXFLc31FoD7gZwtgE98Z7yIbz/ePmXnw8v6mm
-         2TXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MAmHcTLy3hmcDrRNavtQUgMw98PbaTbM7w6twBSfXic=;
-        b=OHkuUBxNTv56ZwUYRadKEm+UMpXQ5r+bGQSRoWTAupQdPxbsRs0LOGUMxUsw8iRoRz
-         IbWbYZRCigGXRNxgx4oOHhbddHOXcjKAwi8KGkx3/VpQvzCE7q1OBUWrxEDKGPiBKwQD
-         JilKvR9DE09Y9WoCYTEvRZN4a7bz4bgTkxJ6qSQvWd5eavR47cqV703a1bFE0cYwAItL
-         43MRb+inY4YsHCSkdn2PAA0R5T4C36xNMZRKQkpP1NpiKvYmqdAUewGj20Qe56CK7bJ9
-         Jt3z2Z4rrpzBzjRPjQRGP2sMavc4X6WYN70VGKGpDFFS/0T/iYHyXq85S9sICp76gdrp
-         FRJg==
-X-Gm-Message-State: ANoB5plz2YeDveu/T3xHnd54jVz7cqY9UPg0UQn05GJ0O6V4sP7cC7v+
-        M2i0Lpv8Yu5UChaoIlRr55Sab7frJ651qw==
-X-Google-Smtp-Source: AA0mqf7nGMGyjhCn5xB8KGJM8fwKqlnPWcu0lVgxd0pHQvV+O5L4ZEhXY0Xv3837SMybXs23a3uD6w==
-X-Received: by 2002:a17:906:9f13:b0:7bf:661b:6b0e with SMTP id fy19-20020a1709069f1300b007bf661b6b0emr18786284ejc.191.1669910472221;
-        Thu, 01 Dec 2022 08:01:12 -0800 (PST)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id h26-20020a1709063b5a00b0078db5bddd9csm1385453ejf.22.2022.12.01.08.01.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Dec 2022 08:01:11 -0800 (PST)
-From:   Uros Bizjak <ubizjak@gmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Uros Bizjak <ubizjak@gmail.com>,
-        Christian Brauner <brauner@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [PATCH] posix_acl: Fix the type of sentinel in get_acl
-Date:   Thu,  1 Dec 2022 17:01:03 +0100
-Message-Id: <20221201160103.76012-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.38.1
+        Thu, 1 Dec 2022 11:08:18 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1084AB5DBF
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Dec 2022 08:06:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1669910792;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=PamKx232vfxvsaWPi1/5x3ys13CWorTpvsS3jNFLNq0=;
+        b=JZ3c8RwL1iXOaDs98FMrhQFu7IMuPvDippByulywqkHOkR/An3mSzFjMaSM2HMumxDl4mF
+        GKO3P3cpPfw0DUcqOcGCTA90XmQYgAWOFgLE4l9ejc7El0mtsMP9vdiLnCa+X61OS7/Wqu
+        VYF04IFRXWPps0+teHNFzFd5bcg/Qm0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-377-4kkp5bLeOxOLIRlBDC_4bg-1; Thu, 01 Dec 2022 11:06:23 -0500
+X-MC-Unique: 4kkp5bLeOxOLIRlBDC_4bg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3A233858F13;
+        Thu,  1 Dec 2022 16:06:22 +0000 (UTC)
+Received: from pasta.redhat.com (ovpn-192-141.brq.redhat.com [10.40.192.141])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2DE53111E3FA;
+        Thu,  1 Dec 2022 16:06:19 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
+Subject: [RFC 0/3] Turn iomap_page_ops into iomap_folio_ops
+Date:   Thu,  1 Dec 2022 17:06:16 +0100
+Message-Id: <20221201160619.1247788-1-agruenba@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,28 +61,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The type should be struct posix_acl * instead of void *.
+Hello,
 
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
----
- fs/posix_acl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+we're seeing a race between journaled data writes and the shrinker on
+gfs2.  What's happening is that gfs2_iomap_page_done() is called after
+the page has been unlocked, so try_to_free_buffers() can come in and
+free the buffers while gfs2_iomap_page_done() is trying to add them to
+the transaction.  Not good.
 
-diff --git a/fs/posix_acl.c b/fs/posix_acl.c
-index 74dc0f571dc9..3dadc37638a8 100644
---- a/fs/posix_acl.c
-+++ b/fs/posix_acl.c
-@@ -108,7 +108,7 @@ EXPORT_SYMBOL(forget_all_cached_acls);
- 
- struct posix_acl *get_acl(struct inode *inode, int type)
- {
--	void *sentinel;
-+	struct posix_acl *sentinel;
- 	struct posix_acl **p;
- 	struct posix_acl *acl;
- 
+This is a proposal to change iomap_page_ops so that page_prepare()
+prepares the write and grabs the locked page, and page_done() unlocks
+and puts that page again.  While at it, this also converts the hooks
+from pages to folios.
+
+To move the pagecache_isize_extended() call in iomap_write_end() out of
+the way, a new folio_may_straddle_isize() helper is introduced that
+takes a locked folio.  That is then used when the inode size is updated,
+before the folio is unlocked.
+
+I've also converted the other applicable folio_may_straddle_isize()
+users, namely generic_write_end(), ext4_write_end(), and
+ext4_journalled_write_end().
+
+Any thoughts?
+
+Thanks,
+Andreas
+
+Andreas Gruenbacher (3):
+  fs: Add folio_may_straddle_isize helper
+  iomap: Turn iomap_page_ops into iomap_folio_ops
+  gfs2: Fix race between shrinker and gfs2_iomap_folio_done
+
+ fs/buffer.c            |  5 ++---
+ fs/ext4/inode.c        | 13 +++++------
+ fs/gfs2/bmap.c         | 39 +++++++++++++++++++++++---------
+ fs/iomap/buffered-io.c | 51 +++++++++++++++++++++---------------------
+ include/linux/iomap.h  | 24 ++++++++++----------
+ include/linux/mm.h     |  2 ++
+ mm/truncate.c          | 34 ++++++++++++++++++++++++++++
+ 7 files changed, 110 insertions(+), 58 deletions(-)
+
 -- 
 2.38.1
 
