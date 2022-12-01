@@ -2,72 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 563E463E6B3
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 01:52:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DADEE63E75A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 02:54:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229610AbiLAAwV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Nov 2022 19:52:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38310 "EHLO
+        id S229617AbiLAByS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Nov 2022 20:54:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59556 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229448AbiLAAwU (ORCPT
+        with ESMTP id S229916AbiLAByH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Nov 2022 19:52:20 -0500
-Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3F2169324
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Nov 2022 16:52:18 -0800 (PST)
-Received: by mail-pf1-x434.google.com with SMTP id r7so370072pfl.11
-        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Nov 2022 16:52:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SYKYdxyKPtZTuclEa/DlBvagxLBIJj6S+cE59VjlIW4=;
-        b=EdOXDSlaMLmGfZfVvKqM/WCE1lzER3Nbdcab6XA2yfly3+D+dyWiRaSCAiXKTGqhaw
-         j50t2DyiwR4Ka9Z+eS0Kidvaa9rsWjES1/BfUL0MawrEkgZVOacn+hVIfW7PuNHMM5/d
-         eWL34IQcRbZEZ/HMbpnjYVAyNSdGs+6Vbh5FhEMXCga1dp18sunnmlPxuFkcGgockm9B
-         S3MzALAClyXv6FyGgUge0ODGLrMXJVYNqPJETM+OU8EuOl/3++tUDKx9JZPN7OyROH3x
-         vBZDKhkD/w9uCUmIaCNpMkYQ2nfAiQxs54C+Ilwfj9VrP6LRZnmhAaTzCUq+BV02A/C6
-         K/IA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SYKYdxyKPtZTuclEa/DlBvagxLBIJj6S+cE59VjlIW4=;
-        b=t9PWY5FtHlnFGPvTn3OwG/YoMdkbegONVyBAYb41uVGvWqNjxmtUHxxzSGS8f3xb4h
-         nNpcMbDgDPrupolBZxzA7aMCrqvPfUMSfhubMZzffRrkJFDyvXXs8uG33gSqNurT125d
-         Un8ZwrIibp7SF/Jm3HCXdCngQ74r7WYX6qlRljDGAq8MhIEFMnzqFnBg4XPqR574l4Tp
-         I6U4ThThJPePhqh2one7GLgjEY5FozEJrHqfIonGG+5H+mhzE2mcQ/w4NtoJoNucAO1m
-         YSc5UDnDqWMWSRW6Sk6hReGcD+49ilNjHkBtyDW9lcOFQCjbCK7zSL67xTLfxquecb5P
-         nmzA==
-X-Gm-Message-State: ANoB5pkPAbY7SSRoSaroVrrgqJF+an4JDJGoPt+6ivIM7ZpY37b+iGTh
-        sUWIMFU6dO5DbB87gQjJHJk9CqGG4Pkxeg==
-X-Google-Smtp-Source: AA0mqf4O/QT60/7hyCo7rh/KmIHdvsC/6Adn7BSyljx6Ci6c/z3NzIAWHuJG4Zx/1Uw6YGSfm1Ev6A==
-X-Received: by 2002:a63:d34e:0:b0:477:650a:705c with SMTP id u14-20020a63d34e000000b00477650a705cmr37659008pgi.588.1669855938239;
-        Wed, 30 Nov 2022 16:52:18 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-65-106.pa.vic.optusnet.com.au. [49.186.65.106])
-        by smtp.gmail.com with ESMTPSA id 3-20020a631543000000b0044ed37dbca8sm1504054pgv.2.2022.11.30.16.52.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Nov 2022 16:52:17 -0800 (PST)
-Received: from [192.168.253.23] (helo=devoid.disaster.area)
-        by dread.disaster.area with esmtp (Exim 4.92.3)
-        (envelope-from <dave@fromorbit.com>)
-        id 1p0XoE-0031ny-Bx; Thu, 01 Dec 2022 11:52:14 +1100
-Received: from dave by devoid.disaster.area with local (Exim 4.96)
-        (envelope-from <dave@devoid.disaster.area>)
-        id 1p0XoE-00G5ws-0v;
-        Thu, 01 Dec 2022 11:52:14 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     linux-xfs@vger.kernel.org
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: [PATCH] [RFC] iomap: zeroing needs to be pagecache aware
-Date:   Thu,  1 Dec 2022 11:52:14 +1100
-Message-Id: <20221201005214.3836105-1-david@fromorbit.com>
-X-Mailer: git-send-email 2.38.1
+        Wed, 30 Nov 2022 20:54:07 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F91E9AE23;
+        Wed, 30 Nov 2022 17:54:06 -0800 (PST)
+Received: from dggemv711-chm.china.huawei.com (unknown [172.30.72.55])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4NMzcW6qsYzHwJB;
+        Thu,  1 Dec 2022 09:53:15 +0800 (CST)
+Received: from kwepemm600020.china.huawei.com (7.193.23.147) by
+ dggemv711-chm.china.huawei.com (10.1.198.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Thu, 1 Dec 2022 09:53:49 +0800
+Received: from [10.174.179.160] (10.174.179.160) by
+ kwepemm600020.china.huawei.com (7.193.23.147) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.31; Thu, 1 Dec 2022 09:53:48 +0800
+Message-ID: <2ca8a20b-047d-bae1-5a01-0892be4d7e7d@huawei.com>
+Date:   Thu, 1 Dec 2022 09:53:48 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH] hfs: Fix OOB Write in hfs_asc2mac
+Content-Language: en-US
+To:     Viacheslav Dubeyko <slava@dubeyko.com>
+CC:     <zippel@linux-m68k.org>, <akpm@osdl.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, <sunnanyong@huawei.com>,
+        <wangkefeng.wang@huawei.com>,
+        <syzbot+dc3b1cf9111ab5fe98e7@syzkaller.appspotmail.com>
+References: <20221126043612.853428-1-zhangpeng362@huawei.com>
+ <9F97B7A6-9E20-4D70-BA79-8301D80DF9DB@dubeyko.com>
+ <8e298cc0-27b9-a61a-48cc-64a9186048c8@huawei.com>
+ <481BF13E-8CEA-48B4-A29B-0BDE4CAABAF9@dubeyko.com>
+From:   "zhangpeng (AS)" <zhangpeng362@huawei.com>
+In-Reply-To: <481BF13E-8CEA-48B4-A29B-0BDE4CAABAF9@dubeyko.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.174.179.160]
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600020.china.huawei.com (7.193.23.147)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,245 +60,112 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Dave Chinner <dchinner@redhat.com>
 
-Unwritten extents can have page cache data over the range being
-zeroed so we can't just skip them entirely. Fix this by checking for
-an existing dirty folio over the unwritten range we are zeroing
-and only performing zeroing if the folio is already dirty.
+On 2022/11/30 3:08, Viacheslav Dubeyko wrote:
+>> On Nov 28, 2022, at 6:23 PM, zhangpeng (AS) <zhangpeng362@huawei.com> wrote:
+>>
+>> On 2022/11/29 3:29, Viacheslav Dubeyko wrote:
+>>>> On Nov 25, 2022, at 8:36 PM, Peng Zhang <zhangpeng362@huawei.com> wrote:
+>>>>
+>>>> From: ZhangPeng <zhangpeng362@huawei.com>
+>>>>
+>>>> Syzbot reported a OOB Write bug:
+>>>>
+>>>> loop0: detected capacity change from 0 to 64
+>>>> ==================================================================
+>>>> BUG: KASAN: slab-out-of-bounds in hfs_asc2mac+0x467/0x9a0
+>>>> fs/hfs/trans.c:133
+>>>> Write of size 1 at addr ffff88801848314e by task syz-executor391/3632
+>>>>
+>>>> Call Trace:
+>>>> <TASK>
+>>>> __dump_stack lib/dump_stack.c:88 [inline]
+>>>> dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
+>>>> print_address_description+0x74/0x340 mm/kasan/report.c:284
+>>>> print_report+0x107/0x1f0 mm/kasan/report.c:395
+>>>> kasan_report+0xcd/0x100 mm/kasan/report.c:495
+>>>> hfs_asc2mac+0x467/0x9a0 fs/hfs/trans.c:133
+>>>> hfs_cat_build_key+0x92/0x170 fs/hfs/catalog.c:28
+>>>> hfs_lookup+0x1ab/0x2c0 fs/hfs/dir.c:31
+>>>> lookup_open fs/namei.c:3391 [inline]
+>>>> open_last_lookups fs/namei.c:3481 [inline]
+>>>> path_openat+0x10e6/0x2df0 fs/namei.c:3710
+>>>> do_filp_open+0x264/0x4f0 fs/namei.c:3740
+>>>>
+>>>> If in->len is much larger than HFS_NAMELEN(31) which is the maximum
+>>>> length of an HFS filename, a OOB Write could occur in hfs_asc2mac(). In
+>>>> that case, when the dst reaches the boundary, the srclen is still
+>>>> greater than 0, which causes a OOB Write.
+>>>> Fix this by adding a Check on dstlen before Writing to dst address.
+>>>>
+>>>> Fixes: 328b92278650 ("[PATCH] hfs: NLS support")
+>>>> Reported-by: syzbot+dc3b1cf9111ab5fe98e7@syzkaller.appspotmail.com
+>>>> Signed-off-by: ZhangPeng <zhangpeng362@huawei.com>
+>>>> ---
+>>>> fs/hfs/trans.c | 2 ++
+>>>> 1 file changed, 2 insertions(+)
+>>>>
+>>>> diff --git a/fs/hfs/trans.c b/fs/hfs/trans.c
+>>>> index 39f5e343bf4d..886158db07b3 100644
+>>>> --- a/fs/hfs/trans.c
+>>>> +++ b/fs/hfs/trans.c
+>>>> @@ -130,6 +130,8 @@ void hfs_asc2mac(struct super_block *sb, struct hfs_name *out, const struct qstr
+>>>> 				dst += size;
+>>>> 				dstlen -= size;
+>>>> 			} else {
+>>>> +				if (dstlen == 0)
+>>>> +					goto out;
+>>> Maybe, it makes sense to use dstlen instead of srclen in while()?
+>>>
+>>> We have now:
+>>>
+>>> while (srclen > 0) {
+>>>     <skipped>
+>>> } else {
+>>>     <skipped>
+>>> }
+>>>
+>>> We can use instead:
+>>>
+>>> while (dstlen > 0) {
+>>>     <skipped>
+>>> } else {
+>>>     <skipped>
+>>> }
+>>>
+>>> Will it fix the issue?
+>>>
+>>> Thanks,
+>>> Slava.
+>> Thank you for your help.
+>>
+>> After testing, it fix the issue.
+>> Would it be better to add dstlen > 0 instead of replacing srclen > 0 with dstlen > 0?
+>> Because there may be dstlen > 0 and srclen <= 0.
+>>
+>> we can use:
+>>
+>> while (srclen > 0 && dstlen > 0) {
+>>    <skipped>
+>> } else {
+>>    <skipped>
+>> }
+>>
+> Looks good to me.
 
-XXX: how do we detect a iomap containing a cow mapping over a hole
-in iomap_zero_iter()? The XFS code implies this case also needs to
-zero the page cache if there is data present, so trigger for page
-cache lookup only in iomap_zero_iter() needs to handle this case as
-well.
+Can I put you down as a Reviewed-by or Suggested-by?
 
-Before:
+Thanks,
+Zhang Peng
 
-$ time sudo ./pwrite-trunc /mnt/scratch/foo 50000
-path /mnt/scratch/foo, 50000 iters
-
-real    0m14.103s
-user    0m0.015s
-sys     0m0.020s
-
-$ sudo strace -c ./pwrite-trunc /mnt/scratch/foo 50000
-path /mnt/scratch/foo, 50000 iters
-% time     seconds  usecs/call     calls    errors syscall
------- ----------- ----------- --------- --------- ----------------
- 85.90    0.847616          16     50000           ftruncate
- 14.01    0.138229           2     50000           pwrite64
-....
-
-After:
-
-$ time sudo ./pwrite-trunc /mnt/scratch/foo 50000
-path /mnt/scratch/foo, 50000 iters
-
-real    0m0.144s
-user    0m0.021s
-sys     0m0.012s
-
-$ sudo strace -c ./pwrite-trunc /mnt/scratch/foo 50000
-path /mnt/scratch/foo, 50000 iters
-% time     seconds  usecs/call     calls    errors syscall
------- ----------- ----------- --------- --------- ----------------
- 53.86    0.505964          10     50000           ftruncate
- 46.12    0.433251           8     50000           pwrite64
-....
-
-Yup, we get back all the performance.
-
-As for the "mmap write beyond EOF" data exposure aspect
-documented here:
-
-https://lore.kernel.org/linux-xfs/20221104182358.2007475-1-bfoster@redhat.com/
-
-With this command:
-
-$ sudo xfs_io -tfc "falloc 0 1k" -c "pwrite 0 1k" \
-  -c "mmap 0 4k" -c "mwrite 3k 1k" -c "pwrite 32k 4k" \
-  -c fsync -c "pread -v 3k 32" /mnt/scratch/foo
-
-Before:
-
-wrote 1024/1024 bytes at offset 0
-1 KiB, 1 ops; 0.0000 sec (34.877 MiB/sec and 35714.2857 ops/sec)
-wrote 4096/4096 bytes at offset 32768
-4 KiB, 1 ops; 0.0000 sec (229.779 MiB/sec and 58823.5294 ops/sec)
-00000c00:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
-00000c10:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
-read 32/32 bytes at offset 3072
-32.000000 bytes, 1 ops; 0.0000 sec (568.182 KiB/sec and 18181.8182 ops/sec
-
-After:
-
-wrote 1024/1024 bytes at offset 0
-1 KiB, 1 ops; 0.0000 sec (40.690 MiB/sec and 41666.6667 ops/sec)
-wrote 4096/4096 bytes at offset 32768
-4 KiB, 1 ops; 0.0000 sec (150.240 MiB/sec and 38461.5385 ops/sec)
-00000c00:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-00000c10:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-read 32/32 bytes at offset 3072
-32.000000 bytes, 1 ops; 0.0000 sec (558.036 KiB/sec and 17857.1429 ops/sec)
-
-We see that this post-eof unwritten extent dirty page zeroing is
-working correctly.
-
-This has passed through most of fstests on a couple of test VMs
-without issues at the moment, so I think this approach to fixing the
-issue is going to be solid once we've worked out how to detect the
-COW-hole mapping case.
-
-Signed-off-by: Dave Chinner <dchinner@redhat.com>
----
- fs/iomap/buffered-io.c | 50 +++++++++++++++++++++++++++++++++++-------
- fs/xfs/xfs_iops.c      | 12 +---------
- 2 files changed, 43 insertions(+), 19 deletions(-)
-
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 356193e44cf0..0969e4525507 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -585,14 +585,14 @@ static int iomap_write_begin_inline(const struct iomap_iter *iter,
- }
- 
- static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
--		size_t len, struct folio **foliop)
-+		size_t len, struct folio **foliop, unsigned fgp)
- {
- 	const struct iomap_page_ops *page_ops = iter->iomap.page_ops;
- 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
- 	struct folio *folio;
--	unsigned fgp = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE | FGP_NOFS;
- 	int status = 0;
- 
-+	fgp |= FGP_LOCK | FGP_WRITE | FGP_STABLE | FGP_NOFS;
- 	if (iter->flags & IOMAP_NOWAIT)
- 		fgp |= FGP_NOWAIT;
- 
-@@ -615,7 +615,12 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
- 	folio = __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
- 			fgp, mapping_gfp_mask(iter->inode->i_mapping));
- 	if (!folio) {
--		status = (iter->flags & IOMAP_NOWAIT) ? -EAGAIN : -ENOMEM;
-+		if (!(fgp & FGP_CREAT))
-+			status = -ENODATA;
-+		else if (iter->flags & IOMAP_NOWAIT)
-+			status = -EAGAIN;
-+		else
-+			status = -ENOMEM;
- 		goto out_no_page;
- 	}
- 
-@@ -791,7 +796,7 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
- 			break;
- 		}
- 
--		status = iomap_write_begin(iter, pos, bytes, &folio);
-+		status = iomap_write_begin(iter, pos, bytes, &folio, FGP_CREAT);
- 		if (unlikely(status))
- 			break;
- 		if (iter->iomap.flags & IOMAP_F_STALE)
-@@ -1101,7 +1106,7 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
- 		unsigned long bytes = min_t(loff_t, PAGE_SIZE - offset, length);
- 		struct folio *folio;
- 
--		status = iomap_write_begin(iter, pos, bytes, &folio);
-+		status = iomap_write_begin(iter, pos, bytes, &folio, FGP_CREAT);
- 		if (unlikely(status))
- 			return status;
- 		if (iter->iomap.flags & IOMAP_F_STALE)
-@@ -1147,10 +1152,14 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 	loff_t pos = iter->pos;
- 	loff_t length = iomap_length(iter);
- 	loff_t written = 0;
-+	unsigned fgp = FGP_CREAT;
- 
- 	/* already zeroed?  we're done. */
--	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
-+	if (srcmap->type == IOMAP_HOLE)
- 		return length;
-+	/* only do page cache lookups over unwritten extents */
-+	if (srcmap->type == IOMAP_UNWRITTEN)
-+		fgp = 0;
- 
- 	do {
- 		struct folio *folio;
-@@ -1158,9 +1167,20 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		size_t offset;
- 		size_t bytes = min_t(u64, SIZE_MAX, length);
- 
--		status = iomap_write_begin(iter, pos, bytes, &folio);
--		if (status)
-+		status = iomap_write_begin(iter, pos, bytes, &folio, fgp);
-+		if (status) {
-+			if (status == -ENODATA) {
-+				/*
-+				 * No folio was found, so skip to the start of
-+				 * the next potential entry in the page cache
-+				 * and continue from there.
-+				 */
-+				if (bytes > PAGE_SIZE - offset_in_page(pos))
-+					bytes = PAGE_SIZE - offset_in_page(pos);
-+				goto loop_continue;
-+			}
- 			return status;
-+		}
- 		if (iter->iomap.flags & IOMAP_F_STALE)
- 			break;
- 
-@@ -1168,6 +1188,19 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		if (bytes > folio_size(folio) - offset)
- 			bytes = folio_size(folio) - offset;
- 
-+		/*
-+		 * If the folio over an unwritten extent is clean, then we
-+		 * aren't going to touch the data in it at all. We don't want to
-+		 * mark it dirty or change the uptodate state of data in the
-+		 * page, so we just unlock it and skip to the next range over
-+		 * the unwritten extent we need to check.
-+		 */
-+		if (srcmap->type == IOMAP_UNWRITTEN &&
-+		    !folio_test_dirty(folio)) {
-+			folio_unlock(folio);
-+			goto loop_continue;
-+		}
-+
- 		folio_zero_range(folio, offset, bytes);
- 		folio_mark_accessed(folio);
- 
-@@ -1175,6 +1208,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
- 		if (WARN_ON_ONCE(bytes == 0))
- 			return -EIO;
- 
-+loop_continue:
- 		pos += bytes;
- 		length -= bytes;
- 		written += bytes;
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index 2e10e1c66ad6..d7c2f8c49f94 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -839,17 +839,7 @@ xfs_setattr_size(
- 		trace_xfs_zero_eof(ip, oldsize, newsize - oldsize);
- 		error = xfs_zero_range(ip, oldsize, newsize - oldsize,
- 				&did_zeroing);
--	} else {
--		/*
--		 * iomap won't detect a dirty page over an unwritten block (or a
--		 * cow block over a hole) and subsequently skips zeroing the
--		 * newly post-EOF portion of the page. Flush the new EOF to
--		 * convert the block before the pagecache truncate.
--		 */
--		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
--						     newsize);
--		if (error)
--			return error;
-+	} else if (newsize != oldsize) {
- 		error = xfs_truncate_page(ip, newsize, &did_zeroing);
- 	}
- 
--- 
-2.38.1
-
+> Thanks,
+> Slava.
+>
+>> Thanks,
+>> Zhang Peng
+>>
+>>>> 				*dst++ = ch > 0xff ? '?' : ch;
+>>>> 				dstlen--;
+>>>> 			}
+>>>> -- 
+>>>> 2.25.1
