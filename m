@@ -2,42 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E40E863EA86
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 08:49:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 034C363EB94
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 09:49:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbiLAHtN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Dec 2022 02:49:13 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57292 "EHLO
+        id S229752AbiLAItx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Dec 2022 03:49:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52194 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229628AbiLAHtK (ORCPT
+        with ESMTP id S229843AbiLAIte (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Dec 2022 02:49:10 -0500
-Received: from mx6.didiglobal.com (mx6.didiglobal.com [111.202.70.123])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 7C809442C1;
-        Wed, 30 Nov 2022 23:49:06 -0800 (PST)
-Received: from mail.didiglobal.com (unknown [10.79.71.35])
-        by mx6.didiglobal.com (Maildata Gateway V2.8) with ESMTPS id EDC44110021101;
-        Thu,  1 Dec 2022 15:49:04 +0800 (CST)
-Received: from ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) by
- ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Thu, 1 Dec 2022 15:49:04 +0800
-Received: from ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769])
- by ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769%8]) with mapi
- id 15.01.2375.017; Thu, 1 Dec 2022 15:49:04 +0800
-X-MD-Sfrom: chengkaitao@didiglobal.com
-X-MD-SrcIP: 10.79.71.35
-From:   =?utf-8?B?56iL5Z6y5rabIENoZW5na2FpdGFvIENoZW5n?= 
+        Thu, 1 Dec 2022 03:49:34 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C157A11A1D;
+        Thu,  1 Dec 2022 00:49:32 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 2D59C1FD68;
+        Thu,  1 Dec 2022 08:49:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1669884568; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=guIxpxNAKGFiX13aZHwKzc4sgDiWlaSOm8SorFitB8w=;
+        b=N3ADfolne44ylq/Uj9XYi305h0aolKKN92dzo6nzondChOAnn42JLZGonKi8piI1EwfYrL
+        5qhGgcY5pZR1iPH0r/oAwVw5Bk3BusbtMcafYF38Bf26AKI3S6FsOcdGIdLeNuc4XPcekJ
+        rezD8+qtp+o1njMbFZ0/5oGMnYYS78Q=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1A4B813B4A;
+        Thu,  1 Dec 2022 08:49:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id gHRmBphqiGM8GgAAMHmgww
+        (envelope-from <mhocko@suse.com>); Thu, 01 Dec 2022 08:49:28 +0000
+Date:   Thu, 1 Dec 2022 09:49:27 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     =?utf-8?B?56iL5Z6y5rab?= Chengkaitao Cheng 
         <chengkaitao@didiglobal.com>
-To:     "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>
-CC:     Tao pilgrim <pilgrimtao@gmail.com>,
+Cc:     Tao pilgrim <pilgrimtao@gmail.com>,
         "tj@kernel.org" <tj@kernel.org>,
         "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
         "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
         "corbet@lwn.net" <corbet@lwn.net>,
+        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
         "shakeelb@google.com" <shakeelb@google.com>,
         "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
         "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
         "cgel.zte@gmail.com" <cgel.zte@gmail.com>,
         "ran.xiaokai@zte.com.cn" <ran.xiaokai@zte.com.cn>,
@@ -65,22 +79,16 @@ CC:     Tao pilgrim <pilgrimtao@gmail.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Subject: Re: [PATCH] mm: memcontrol: protect the memory in cgroup from being
  oom killed
-Thread-Topic: [PATCH] mm: memcontrol: protect the memory in cgroup from being
- oom killed
-Thread-Index: AQHZBK+NwNVzWF9Xk0ibAn/rxGrWSq5XnGYA//+FgwCAAVYiAIAAMVUA
-Date:   Thu, 1 Dec 2022 07:49:04 +0000
-Message-ID: <5019F6D4-D341-4A5E-BAA1-1359A090114A@didiglobal.com>
-In-Reply-To: <E5A5BCC3-460E-4E81-8DD3-88B4A2868285@didiglobal.com>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.79.64.101]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <55EEAD05261B624DAB9E7E4EE8B22659@didichuxing.com>
-Content-Transfer-Encoding: base64
+Message-ID: <Y4hqlzNeZ6Osu0pI@dhcp22.suse.cz>
+References: <Y4eEiqwMMkHv9ELM@dhcp22.suse.cz>
+ <E5A5BCC3-460E-4E81-8DD3-88B4A2868285@didiglobal.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <E5A5BCC3-460E-4E81-8DD3-88B4A2868285@didiglobal.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -88,61 +96,186 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-QXQgMjAyMi0xMi0wMSAwNzoyOToxMSwgIlJvbWFuIEd1c2hjaGluIiA8cm9tYW4uZ3VzaGNoaW5A
-bGludXguZGV2PiB3cm90ZToNCj5PbiBXZWQsIE5vdiAzMCwgMjAyMiBhdCAwMzowMTo1OFBNICsw
-ODAwLCBjaGVuZ2thaXRhbyB3cm90ZToNCj4+IEZyb206IGNoZW5na2FpdGFvIDxwaWxncmltdGFv
-QGdtYWlsLmNvbT4NCj4+IA0KPj4gV2UgY3JlYXRlZCBhIG5ldyBpbnRlcmZhY2UgPG1lbW9yeS5v
-b20ucHJvdGVjdD4gZm9yIG1lbW9yeSwgSWYgdGhlcmUgaXMNCj4+IHRoZSBPT00ga2lsbGVyIHVu
-ZGVyIHBhcmVudCBtZW1vcnkgY2dyb3VwLCBhbmQgdGhlIG1lbW9yeSB1c2FnZSBvZiBhDQo+PiBj
-aGlsZCBjZ3JvdXAgaXMgd2l0aGluIGl0cyBlZmZlY3RpdmUgb29tLnByb3RlY3QgYm91bmRhcnks
-IHRoZSBjZ3JvdXAncw0KPj4gdGFza3Mgd29uJ3QgYmUgT09NIGtpbGxlZCB1bmxlc3MgdGhlcmUg
-aXMgbm8gdW5wcm90ZWN0ZWQgdGFza3MgaW4gb3RoZXINCj4+IGNoaWxkcmVuIGNncm91cHMuIEl0
-IGRyYXdzIG9uIHRoZSBsb2dpYyBvZiA8bWVtb3J5Lm1pbi9sb3c+IGluIHRoZQ0KPj4gaW5oZXJp
-dGFuY2UgcmVsYXRpb25zaGlwLg0KPj4gDQo+PiBJdCBoYXMgdGhlIGZvbGxvd2luZyBhZHZhbnRh
-Z2VzLA0KPj4gMS4gV2UgaGF2ZSB0aGUgYWJpbGl0eSB0byBwcm90ZWN0IG1vcmUgaW1wb3J0YW50
-IHByb2Nlc3Nlcywgd2hlbiB0aGVyZQ0KPj4gaXMgYSBtZW1jZydzIE9PTSBraWxsZXIuIFRoZSBv
-b20ucHJvdGVjdCBvbmx5IHRha2VzIGVmZmVjdCBsb2NhbCBtZW1jZywNCj4+IGFuZCBkb2VzIG5v
-dCBhZmZlY3QgdGhlIE9PTSBraWxsZXIgb2YgdGhlIGhvc3QuDQo+PiAyLiBIaXN0b3JpY2FsbHks
-IHdlIGNhbiBvZnRlbiB1c2Ugb29tX3Njb3JlX2FkaiB0byBjb250cm9sIGEgZ3JvdXAgb2YNCj4+
-IHByb2Nlc3NlcywgSXQgcmVxdWlyZXMgdGhhdCBhbGwgcHJvY2Vzc2VzIGluIHRoZSBjZ3JvdXAg
-bXVzdCBoYXZlIGENCj4+IGNvbW1vbiBwYXJlbnQgcHJvY2Vzc2VzLCB3ZSBoYXZlIHRvIHNldCB0
-aGUgY29tbW9uIHBhcmVudCBwcm9jZXNzJ3MNCj4+IG9vbV9zY29yZV9hZGosIGJlZm9yZSBpdCBm
-b3JrcyBhbGwgY2hpbGRyZW4gcHJvY2Vzc2VzLiBTbyB0aGF0IGl0IGlzDQo+PiB2ZXJ5IGRpZmZp
-Y3VsdCB0byBhcHBseSBpdCBpbiBvdGhlciBzaXR1YXRpb25zLiBOb3cgb29tLnByb3RlY3QgaGFz
-IG5vDQo+PiBzdWNoIHJlc3RyaWN0aW9ucywgd2UgY2FuIHByb3RlY3QgYSBjZ3JvdXAgb2YgcHJv
-Y2Vzc2VzIG1vcmUgZWFzaWx5LiBUaGUNCj4+IGNncm91cCBjYW4ga2VlcCBzb21lIG1lbW9yeSwg
-ZXZlbiBpZiB0aGUgT09NIGtpbGxlciBoYXMgdG8gYmUgY2FsbGVkLg0KPg0KPkl0IHJlbWluZHMg
-bWUgb3VyIGF0dGVtcHRzIHRvIHByb3ZpZGUgYSBtb3JlIHNvcGhpc3RpY2F0ZWQgY2dyb3VwLWF3
-YXJlIG9vbQ0KPmtpbGxlci4gDQoNCkFzIHlvdSBzYWlkLCBJIGFsc28gbGlrZSBzaW1wbGUgc3Ry
-YXRlZ2llcyBhbmQgY29uY2lzZSBjb2RlIHZlcnkgbXVjaCwgc28gaW4gDQp0aGUgZGVzaWduIG9m
-IG9vbS5wcm90ZWN0LCB3ZSByZXVzZSB0aGUgZXZhbHVhdGlvbiBtZXRob2Qgb2Ygb29tX3Njb3Jl
-LCANCndlIGRyYXdzIG9uIHRoZSBsb2dpYyBvZiA8bWVtb3J5Lm1pbi9sb3c+IGluIHRoZSBpbmhl
-cml0YW5jZSByZWxhdGlvbnNoaXAuIA0KTWVtb3J5Lm1pbi9sb3cgaGF2ZSBiZWVuIGRlbW9uc3Ry
-YXRlZCBmb3IgYSBsb25nIHRpbWUuIEkgZGlkIGl0IHRvIHJlZHVjZSANCnRoZSBidXJkZW4gb24g
-dGhlIGtlcm5lbC4NCg0KPlRoZSBwcm9ibGVtIGlzIHRoYXQgdGhlIGRlY2lzaW9uIHdoaWNoIHBy
-b2Nlc3MoZXMpIHRvIGtpbGwgb3IgcHJlc2VydmUNCj5pcyBpbmRpdmlkdWFsIHRvIGEgc3BlY2lm
-aWMgd29ya2xvYWQgKGFuZCBjYW4gYmUgZXZlbiB0aW1lLWRlcGVuZGVudA0KPmZvciBhIGdpdmVu
-IHdvcmtsb2FkKS4gDQoNCkl0IGlzIGNvcnJlY3QgdG8ga2lsbCBhIHByb2Nlc3Mgd2l0aCBoaWdo
-IHdvcmtsb2FkLCBidXQgaXQgbWF5IG5vdCBiZSB0aGUgDQptb3N0IGFwcHJvcHJpYXRlLiBJIHRo
-aW5rIHRoZSBzcGVjaWZpYyBwcm9jZXNzIHRvIGtpbGwgbmVlZHMgdG8gYmUgZGVjaWRlZCANCmJ5
-IHRoZSB1c2VyLiBJIHRoaW5rIGl0IGlzIHRoZSBvcmlnaW5hbCBpbnRlbnRpb24gb2Ygc2NvcmVf
-YWRqIGRlc2lnbi4NCg0KPlNvIGl0J3MgcmVhbGx5IGhhcmQgdG8gY29tZSB1cCB3aXRoIGFuIGlu
-LWtlcm5lbA0KPm1lY2hhbmlzbSB3aGljaCBpcyBhdCB0aGUgc2FtZSB0aW1lIGZsZXhpYmxlIGVu
-b3VnaCB0byB3b3JrIGZvciB0aGUgbWFqb3JpdHkNCj5vZiB1c2VycyBhbmQgcmVsaWFibGUgZW5v
-dWdoIHRvIHNlcnZlIGFzIHRoZSBsYXN0IG9vbSByZXNvcnQgbWVhc3VyZSAod2hpY2gNCj5pcyB0
-aGUgYmFzaWMgZ29hbCBvZiB0aGUga2VybmVsIG9vbSBraWxsZXIpLg0KPg0KT3VyIGdvYWwgaXMg
-dG8gZmluZCBhIG1ldGhvZCB0aGF0IGlzIGxlc3MgaW50cnVzaXZlIHRvIHRoZSBleGlzdGluZyAN
-Cm1lY2hhbmlzbXMgb2YgdGhlIGtlcm5lbCwgYW5kIGZpbmQgYSBtb3JlIHJlYXNvbmFibGUgc3Vw
-cGxlbWVudCANCm9yIGFsdGVybmF0aXZlIHRvIHRoZSBsaW1pdGF0aW9ucyBvZiBzY29yZV9hZGou
-DQoNCj5QcmV2aW91c2x5IHRoZSBjb25zZW5zdXMgd2FzIHRvIGtlZXAgdGhlIGluLWtlcm5lbCBv
-b20ga2lsbGVyIGR1bWIgYW5kIHJlbGlhYmxlDQo+YW5kIGltcGxlbWVudCBjb21wbGV4IHBvbGlj
-aWVzIGluIHVzZXJzcGFjZSAoZS5nLiBzeXN0ZW1kLW9vbWQgZXRjKS4NCj4NCj5JcyB0aGVyZSBh
-IHJlYXNvbiB3aHkgc3VjaCBhcHByb2FjaCBjYW4ndCB3b3JrIGluIHlvdXIgY2FzZT8NCg0KSSB0
-aGluayB0aGF0IGFzIGtlcm5lbCBkZXZlbG9wZXJzLCB3ZSBzaG91bGQgdHJ5IG91ciBiZXN0IHRv
-IHByb3ZpZGUgDQp1c2VycyB3aXRoIHNpbXBsZXIgYW5kIG1vcmUgcG93ZXJmdWwgaW50ZXJmYWNl
-cy4gSXQgaXMgY2xlYXIgdGhhdCB0aGUgDQpjdXJyZW50IG9vbSBzY29yZSBtZWNoYW5pc20gaGFz
-IG1hbnkgbGltaXRhdGlvbnMuIFVzZXJzIG5lZWQgdG8gDQpkbyBhIGxvdCBvZiB0aW1lZCBsb29w
-IGRldGVjdGlvbiBpbiBvcmRlciB0byBjb21wbGV0ZSB3b3JrIHNpbWlsYXIgDQp0byB0aGUgb29t
-IHNjb3JlIG1lY2hhbmlzbSwgb3IgZGV2ZWxvcCBhIG5ldyBtZWNoYW5pc20ganVzdCB0byANCnNr
-aXAgdGhlIGltcGVyZmVjdCBvb20gc2NvcmUgbWVjaGFuaXNtLiBUaGlzIGlzIGFuIGluZWZmaWNp
-ZW50IGFuZCANCmZvcmNlZCBiZWhhdmlvcg0KDQpUaGFua3MgZm9yIHlvdXIgY29tbWVudCENCg0K
+On Thu 01-12-22 04:52:27, 程垲涛 Chengkaitao Cheng wrote:
+> At 2022-12-01 00:27:54, "Michal Hocko" <mhocko@suse.com> wrote:
+> >On Wed 30-11-22 15:46:19, 程垲涛 Chengkaitao Cheng wrote:
+> >> On 2022-11-30 21:15:06, "Michal Hocko" <mhocko@suse.com> wrote:
+> >> > On Wed 30-11-22 15:01:58, chengkaitao wrote:
+> >> > > From: chengkaitao <pilgrimtao@gmail.com>
+> >> > >
+> >> > > We created a new interface <memory.oom.protect> for memory, If there is
+> >> > > the OOM killer under parent memory cgroup, and the memory usage of a
+> >> > > child cgroup is within its effective oom.protect boundary, the cgroup's
+> >> > > tasks won't be OOM killed unless there is no unprotected tasks in other
+> >> > > children cgroups. It draws on the logic of <memory.min/low> in the
+> >> > > inheritance relationship.
+> >> >
+> >> > Could you be more specific about usecases?
+> >
+> >This is a very important question to answer.
+> 
+> usecases 1: users say that they want to protect an important process 
+> with high memory consumption from being killed by the oom in case 
+> of docker container failure, so as to retain more critical on-site 
+> information or a self recovery mechanism. At this time, they suggest 
+> setting the score_adj of this process to -1000, but I don't agree with 
+> it, because the docker container is not important to other docker 
+> containers of the same physical machine. If score_adj of the process 
+> is set to -1000, the probability of oom in other container processes will 
+> increase.
+> 
+> usecases 2: There are many business processes and agent processes 
+> mixed together on a physical machine, and they need to be classified 
+> and protected. However, some agents are the parents of business 
+> processes, and some business processes are the parents of agent 
+> processes, It will be troublesome to set different score_adj for them. 
+> Business processes and agents cannot determine which level their 
+> score_adj should be at, If we create another agent to set all processes's 
+> score_adj, we have to cycle through all the processes on the physical 
+> machine regularly, which looks stupid.
+
+I do agree that oom_score_adj is far from ideal tool for these usecases.
+But I also agree with Roman that these could be addressed by an oom
+killer implementation in the userspace which can have much better
+tailored policies. OOM protection limits would require tuning and also
+regular revisions (e.g. memory consumption by any workload might change
+with different kernel versions) to provide what you are looking for.
+ 
+> >> > How do you tune oom.protect
+> >> > wrt to other tunables? How does this interact with the oom_score_adj
+> >> > tunining (e.g. a first hand oom victim with the score_adj 1000 sitting
+> >> > in a oom protected memcg)?
+> >> 
+> >> We prefer users to use score_adj and oom.protect independently. Score_adj is 
+> >> a parameter applicable to host, and oom.protect is a parameter applicable to cgroup. 
+> >> When the physical machine's memory size is particularly large, the score_adj 
+> >> granularity is also very large. However, oom.protect can achieve more fine-grained 
+> >> adjustment.
+> >
+> >Let me clarify a bit. I am not trying to defend oom_score_adj. It has
+> >it's well known limitations and it is is essentially unusable for many
+> >situations other than - hide or auto-select potential oom victim.
+> >
+> >> When the score_adj of the processes are the same, I list the following cases 
+> >> for explanation,
+> >> 
+> >>           root
+> >>            |
+> >>         cgroup A
+> >>        /        \
+> >>  cgroup B      cgroup C
+> >> (task m,n)     (task x,y)
+> >> 
+> >> score_adj(all task) = 0;
+> >> oom.protect(cgroup A) = 0;
+> >> oom.protect(cgroup B) = 0;
+> >> oom.protect(cgroup C) = 3G;
+> >
+> >How can you enforce protection at C level without any protection at A
+> >level? 
+> 
+> The basic idea of this scheme is that all processes in the same cgroup are 
+> equally important. If some processes need extra protection, a new cgroup 
+> needs to be created for unified settings. I don't think it is necessary to 
+> implement protection in cgroup C, because task x and task y are equally 
+> important. Only the four processes (task m, n, x and y) in cgroup A, have 
+> important and secondary differences.
+> 
+> > This would easily allow arbitrary cgroup to hide from the oom
+> > killer and spill over to other cgroups.
+> 
+> I don't think this will happen, because eoom.protect only works on parent 
+> cgroup. If "oom.protect(parent cgroup) = 0", from perspective of 
+> grandpa cgroup, task x and y will not be specially protected.
+
+Just to confirm I am on the same page. This means that there won't be
+any protection in case of the global oom in the above example. So
+effectively the same semantic as the low/min protection.
+
+> >> usage(task m) = 1G
+> >> usage(task n) = 2G
+> >> usage(task x) = 1G
+> >> usage(task y) = 2G
+> >> 
+> >> oom killer order of cgroup A: n > m > y > x
+> >> oom killer order of host:     y = n > x = m
+> >> 
+> >> If cgroup A is a directory maintained by users, users can use oom.protect 
+> >> to protect relatively important tasks x and y.
+> >> 
+> >> However, when score_adj and oom.protect are used at the same time, we 
+> >> will also consider the impact of both, as expressed in the following formula. 
+> >> but I have to admit that it is an unstable result.
+> >> score = task_usage + score_adj * totalpage - eoom.protect * task_usage / local_memcg_usage
+> >
+> >I hope I am not misreading but this has some rather unexpected
+> >properties. First off, bigger memory consumers in a protected memcg are
+> >protected more. 
+> 
+> Since cgroup needs to reasonably distribute the protection quota to all 
+> processes in the cgroup, I think that processes consuming more memory 
+> should get more quota. It is fair to processes consuming less memory 
+> too, even if processes consuming more memory get more quota, its 
+> oom_score is still higher than the processes consuming less memory. 
+> When the oom killer appears in local cgroup, the order of oom killer 
+> remains unchanged
+
+Why cannot you simply discount the protection from all processes
+equally? I do not follow why the task_usage has to play any role in
+that.
+
+> 
+> >Also I would expect the protection discount would
+> >be capped by the actual usage otherwise excessive protection
+> >configuration could skew the results considerably.
+> 
+> In the calculation, we will select the minimum value of memcg_usage and 
+> oom.protect
+> 
+> >> > I haven't really read through the whole patch but this struck me odd.
+> >> 
+> >> > > @@ -552,8 +552,19 @@ static int proc_oom_score(struct seq_file *m, struct pid_namespace *ns,
+> >> > > 	unsigned long totalpages = totalram_pages() + total_swap_pages;
+> >> > > 	unsigned long points = 0;
+> >> > > 	long badness;
+> >> > > +#ifdef CONFIG_MEMCG
+> >> > > +	struct mem_cgroup *memcg;
+> >> > > 
+> >> > > -	badness = oom_badness(task, totalpages);
+> >> > > +	rcu_read_lock();
+> >> > > +	memcg = mem_cgroup_from_task(task);
+> >> > > +	if (memcg && !css_tryget(&memcg->css))
+> >> > > +		memcg = NULL;
+> >> > > +	rcu_read_unlock();
+> >> > > +
+> >> > > +	update_parent_oom_protection(root_mem_cgroup, memcg);
+> >> > > +	css_put(&memcg->css);
+> >> > > +#endif
+> >> > > +	badness = oom_badness(task, totalpages, MEMCG_OOM_PROTECT);
+> >> >
+> >> > the badness means different thing depending on which memcg hierarchy
+> >> > subtree you look at. Scaling based on the global oom could get really
+> >> > misleading.
+> >> 
+> >> I also took it into consideration. I planned to change "/proc/pid/oom_score" 
+> >> to a writable node. When writing to different cgroup paths, different values 
+> >> will be output. The default output is root cgroup. Do you think this idea is 
+> >> feasible?
+> >
+> >I do not follow. Care to elaborate?
+> 
+> Take two example，
+> cmd: cat /proc/pid/oom_score
+> output: Scaling based on the global oom
+> 
+> cmd: echo "/cgroupA/cgroupB" > /proc/pid/oom_score
+> output: Scaling based on the cgroupB oom
+> (If the task is not in the cgroupB's hierarchy subtree, output: invalid parameter)
+
+This is a terrible interface. First of all it assumes a state for the
+file without any way to guarantee atomicity. How do you deal with two
+different callers accessing the file?
+
+-- 
+Michal Hocko
+SUSE Labs
