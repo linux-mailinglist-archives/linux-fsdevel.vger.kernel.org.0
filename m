@@ -2,77 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BAF3563FBAB
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 00:10:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D183063FC2D
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 00:42:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231704AbiLAXKe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Dec 2022 18:10:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39546 "EHLO
+        id S231922AbiLAXm4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Dec 2022 18:42:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47856 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231446AbiLAXKW (ORCPT
+        with ESMTP id S231825AbiLAXmw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Dec 2022 18:10:22 -0500
-Received: from mail-qt1-x82f.google.com (mail-qt1-x82f.google.com [IPv6:2607:f8b0:4864:20::82f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF561C3FEC
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Dec 2022 15:09:35 -0800 (PST)
-Received: by mail-qt1-x82f.google.com with SMTP id y15so2995323qtv.5
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Dec 2022 15:09:35 -0800 (PST)
+        Thu, 1 Dec 2022 18:42:52 -0500
+Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 448F321E20
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Dec 2022 15:42:50 -0800 (PST)
+Received: by mail-wm1-x32c.google.com with SMTP id i81-20020a1c3b54000000b003d070274a61so4822218wma.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Dec 2022 15:42:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20210112.gappssmtp.com; s=20210112;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+        d=google.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8r55NhVr723cwq0xc0lLRrnya0twXWY3CzmxTQ/dZkI=;
-        b=dLEd/+ZmyTUCV4O9y9TMSltJmihMtv9UXsNn0xX/Q968beeCQDCwHJi5pPHXVTR78O
-         7qeKTHd/S19uxhBD+8OH4MNNWg8+UR/rfukSPVBb4KHSTm/7gX/u5vhXETibNpCSOrwp
-         xZ25CEfHMqwJkdU2iKMXAEIduAAyNECuDJY2CQkWK2gIVU105XWuXU2Bbq7tg4wN/7td
-         /5QuwrSerATX7eI1xdLjGI4GireFJdMa/ovBXLHaS+uPHDuvsWLknxj/FCxDfdUVY5Rr
-         vkRASZNdaPLrGg6PYBQE4GKTk8agTtdgxKkzdauMId1H1aWDduJIlV7XAZc5aQgMCKOk
-         oIdg==
+        bh=u1BLYwZY5bN3vN/ic/ptPGLS2PPXZuxHx6fXaHe8QR0=;
+        b=dmCf3lPhz6Btg5yVeFhWhov2J0EQqLJkDGPXTDytBHHVUcx5x6NhD9Stvt/1l0dHsN
+         wxxY420AHgaSh4/w0+xSPe13fHayNW3J68lMwpPj2DIffCL+rWanaLlislEYBPCSr0yG
+         Vm78/XGGHrUi1T/kn6uhtu1ED9pWVsiUfgPQ8h+D06v3VzvcYZaCj16+2hF7gBOt0UMe
+         Z+4fHjbu1vfAO6J/Mh0xOkP0PUFKbfZnbw/+ZG3AbXRhy/ChMFx4QcYEGxV7orlsSG9P
+         YkhMzMEy6T/Y/fvW2No/a+8wx2aKq8uFcwoKjIRaAenSjDxBHYDlKXiCiNUJX4qj4znL
+         NM7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=8r55NhVr723cwq0xc0lLRrnya0twXWY3CzmxTQ/dZkI=;
-        b=M2RnAzSJZu6QRrM5oUS8MQO1vsBAbC1qG7I62+hROSF+4yNqN4jgzWobyGXL28yzO0
-         HlLGwp/HnHNP3E5ZHDhISQDF1eOMTgKZmQo+GoRx0Gh1mD/N04IID+ZW4taxMiNYFTiE
-         A2/YZgiaw3mlPaOEcMxYisRjQPCtZLIaggLMFCKgMGxRe1RtzObu2BxMJ9MoclTmDCbz
-         MQ8vswDxnMhJDFEDW45sk2GZJD4Exj19C9qhHghCaQrGTJWna8JhSQlqboHXy4xidTBe
-         /8Sz/LCVzfPbAsPx+p1IBKSzNuqaAzegwRHzKPWxu7G1SrKY6gHp9hj3/mR8vXv5WFbv
-         cCYA==
-X-Gm-Message-State: ANoB5pmdfpY7SRTbdJX+rzuIHbzEGv0QANYspyT2F4/4gikRxtAx8eUm
-        vLCYIF2O9QMNrug1StHSLV4GDw==
-X-Google-Smtp-Source: AA0mqf51axYhjkuyzk2AapRyYK9AGpKHMB+EfDiTiwEmH3b8i9FdDC6v9AeUlfPtkn/xwisHR+FMlA==
-X-Received: by 2002:ac8:6897:0:b0:3a6:964c:c638 with SMTP id m23-20020ac86897000000b003a6964cc638mr2355191qtq.52.1669936174809;
-        Thu, 01 Dec 2022 15:09:34 -0800 (PST)
-Received: from smtpclient.apple (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
-        by smtp.gmail.com with ESMTPSA id r12-20020a05620a298c00b006e16dcf99c8sm4384142qkp.71.2022.12.01.15.09.31
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Dec 2022 15:09:34 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
-Subject: Re: [PATCH] hfs: Fix OOB Write in hfs_asc2mac
-From:   Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <2ca8a20b-047d-bae1-5a01-0892be4d7e7d@huawei.com>
-Date:   Thu, 1 Dec 2022 15:09:22 -0800
-Cc:     zippel@linux-m68k.org, akpm@osdl.org,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, sunnanyong@huawei.com,
-        wangkefeng.wang@huawei.com,
-        syzbot+dc3b1cf9111ab5fe98e7@syzkaller.appspotmail.com
+        bh=u1BLYwZY5bN3vN/ic/ptPGLS2PPXZuxHx6fXaHe8QR0=;
+        b=DS81l//uoQLbez5jgNyoUndi8a7dpB6BTzopwr8NS26Oxi1VlqkrZBUwcci2qBXJWs
+         Vu6qLVvW4Hjrcmql+o9j5HeFt3Q9j+qqIGlT72uuZKcgvH/V+2F3xe1KL6CNjuRn29Rd
+         iJpO91S1ff6QEHUs6N4AARi+AEgdj3ASHIsUoicQm9A6eJ/2+3jQ8NMvdgmJvPzkQYht
+         G4FaCACN1j7nwOBRyQigEc+Ioa0Tt/a2QJcijI2O3komnyd2yJKNC/O50lWQfe7XJhH9
+         EVBKCWcpFbTiulMuAIve3R9Jj0hnf79/c8gEYAQp2jZaxAvd0XeeUdTPj5fTzMLlZ2qY
+         O9Ww==
+X-Gm-Message-State: ANoB5pkcS1MnPJYO7xSRUlOna1toMpUSeKGRSkTqcW/illQDbqEPgUPk
+        88FAH91YZfFoOXS/6ZcIg9rx9YBkE0xoMrFBetpaww==
+X-Google-Smtp-Source: AA0mqf7VajGpoGBZ4xg9b6825l8cjMfES8HHBJP3GkS3HSaplese1PNiHOiYM2HCdMSJ/GEEWhjGWyeI4tovImT4Xb4=
+X-Received: by 2002:a1c:f616:0:b0:3cf:b1c2:c911 with SMTP id
+ w22-20020a1cf616000000b003cfb1c2c911mr42263037wmc.16.1669938168621; Thu, 01
+ Dec 2022 15:42:48 -0800 (PST)
+MIME-Version: 1.0
+References: <D3AF9D1E-12E1-434F-AEA4-5892E8BC66AB@gmail.com>
+ <CAFCauYOuVrSFmeckMi+2xteCcuuCfsuNtdMB0spo2afcGOxSeg@mail.gmail.com> <8242669C-B41F-4310-A244-973D9793E652@gmail.com>
+In-Reply-To: <8242669C-B41F-4310-A244-973D9793E652@gmail.com>
+From:   Victor Hsieh <victorhsieh@google.com>
+Date:   Thu, 1 Dec 2022 15:42:35 -0800
+Message-ID: <CAFCauYPGtUHyu+hjET97YnG+a3hraeGTaMeR=wUm8duKu=w7fw@mail.gmail.com>
+Subject: Re: Feature proposal: support file content integrity verification
+ based on fs-verity
+To:     Gerry Liu <liuj97@gmail.com>
+Cc:     Eric Biggers <ebiggers@google.com>,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
+        linux-fscrypt@vger.kernel.org, fuse-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <7E14DFDD-CA11-46A7-8140-C4A0F9AD069D@dubeyko.com>
-References: <20221126043612.853428-1-zhangpeng362@huawei.com>
- <9F97B7A6-9E20-4D70-BA79-8301D80DF9DB@dubeyko.com>
- <8e298cc0-27b9-a61a-48cc-64a9186048c8@huawei.com>
- <481BF13E-8CEA-48B4-A29B-0BDE4CAABAF9@dubeyko.com>
- <2ca8a20b-047d-bae1-5a01-0892be4d7e7d@huawei.com>
-To:     "zhangpeng (AS)" <zhangpeng362@huawei.com>
-X-Mailer: Apple Mail (2.3696.120.41.1.1)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,136 +74,94 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Thu, Dec 1, 2022 at 1:51 AM Gerry Liu <liuj97@gmail.com> wrote:
+>
+>
+>
+> > 2022=E5=B9=B411=E6=9C=8829=E6=97=A5 08:44=EF=BC=8CVictor Hsieh <victorh=
+sieh@google.com> =E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > On Thu, Nov 17, 2022 at 9:19 PM Gmail <liuj97@gmail.com> wrote:
+> >>
+> >> Hello fuse-devel,
+> >>
+> >> The fs-verity framework provides file content integrity verification s=
+ervices for filesystems. Currently ext4/btrfs/f2fs has enabled support for =
+fs-verity. Here I would like to propose implementing FUSE file content inte=
+grity verification based on fs-verity.
+> >>
+> >> Our current main use case is to support integrity verification for con=
+fidential containers using virtio-fs. With the new integrity verification f=
+eature, we can ensure that files from virtio-fs are trusted and fs-verity r=
+oot digests are available for remote attestation. The integrity verificatio=
+n feature can also be used to support other FUSE based solutions.
+> > I'd argue FUSE isn't the right layer for supporting fs-verity
+> > verification.  The verification can happen in the read path of
+> > virtio-fs (or any FUSE-based filesystem).  In fact, Android is already
+> > doing this in "authfs" fully in userspace.
+> Hi Victor,
+> Thanks for your comments:)
+>
+> There=E2=80=99s a trust boundary problem here. There are two possible way=
+s to verify data integrity:
+> 1) verify data integrity in fuse kernel driver
+> 2) verify data integrity in fuse server.
+>
+> For hardware TEE(Trusted Execution Environment) based confidential vm/con=
+tainer with virtio-fs, the fuse server running on the host side is outside =
+of trust domain, and the fuse driver is inside of trust domain. It is there=
+fore recommended to verify data integrity in the fuse driver. The same situ=
+ation may exist for fuse device based fuse server. The application trusts k=
+ernel but doesn=E2=80=99t trust the fuse server.
 
+It sounded like your case is similar to ours: the storage isn't
+considered trusted (across the VM boundary).  Note that fs-verity can
+only give you the consistent (and efficient) file measurement over the
+file content.  If your storage is not trusted, you do have to ensure
+the measurement of the *file paths* are the expected values, otherwise
+the attacker can replace/rename one file with another.  For example,
+the trusted process would have to know a mapping from file name to the
+measurement, and check the measurement of the fs-verity-enabled files
+before every open.   I can see how supporting fs-verity in virtio-fs
+can be a stepping stone to solving your problem, but I'm not in a good
+position to suggest whether it's a good idea or not.  But we did solve
+our problem purely in userspace also using FUSE.
 
-> On Nov 30, 2022, at 5:53 PM, zhangpeng (AS) <zhangpeng362@huawei.com> =
-wrote:
->=20
->=20
-> On 2022/11/30 3:08, Viacheslav Dubeyko wrote:
->>> On Nov 28, 2022, at 6:23 PM, zhangpeng (AS) =
-<zhangpeng362@huawei.com> wrote:
->>>=20
->>> On 2022/11/29 3:29, Viacheslav Dubeyko wrote:
->>>>> On Nov 25, 2022, at 8:36 PM, Peng Zhang <zhangpeng362@huawei.com> =
-wrote:
->>>>>=20
->>>>> From: ZhangPeng <zhangpeng362@huawei.com>
->>>>>=20
->>>>> Syzbot reported a OOB Write bug:
->>>>>=20
->>>>> loop0: detected capacity change from 0 to 64
->>>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>>> BUG: KASAN: slab-out-of-bounds in hfs_asc2mac+0x467/0x9a0
->>>>> fs/hfs/trans.c:133
->>>>> Write of size 1 at addr ffff88801848314e by task =
-syz-executor391/3632
->>>>>=20
->>>>> Call Trace:
->>>>> <TASK>
->>>>> __dump_stack lib/dump_stack.c:88 [inline]
->>>>> dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
->>>>> print_address_description+0x74/0x340 mm/kasan/report.c:284
->>>>> print_report+0x107/0x1f0 mm/kasan/report.c:395
->>>>> kasan_report+0xcd/0x100 mm/kasan/report.c:495
->>>>> hfs_asc2mac+0x467/0x9a0 fs/hfs/trans.c:133
->>>>> hfs_cat_build_key+0x92/0x170 fs/hfs/catalog.c:28
->>>>> hfs_lookup+0x1ab/0x2c0 fs/hfs/dir.c:31
->>>>> lookup_open fs/namei.c:3391 [inline]
->>>>> open_last_lookups fs/namei.c:3481 [inline]
->>>>> path_openat+0x10e6/0x2df0 fs/namei.c:3710
->>>>> do_filp_open+0x264/0x4f0 fs/namei.c:3740
->>>>>=20
->>>>> If in->len is much larger than HFS_NAMELEN(31) which is the =
-maximum
->>>>> length of an HFS filename, a OOB Write could occur in =
-hfs_asc2mac(). In
->>>>> that case, when the dst reaches the boundary, the srclen is still
->>>>> greater than 0, which causes a OOB Write.
->>>>> Fix this by adding a Check on dstlen before Writing to dst =
-address.
->>>>>=20
->>>>> Fixes: 328b92278650 ("[PATCH] hfs: NLS support")
->>>>> Reported-by: syzbot+dc3b1cf9111ab5fe98e7@syzkaller.appspotmail.com
->>>>> Signed-off-by: ZhangPeng <zhangpeng362@huawei.com>
->>>>> ---
->>>>> fs/hfs/trans.c | 2 ++
->>>>> 1 file changed, 2 insertions(+)
->>>>>=20
->>>>> diff --git a/fs/hfs/trans.c b/fs/hfs/trans.c
->>>>> index 39f5e343bf4d..886158db07b3 100644
->>>>> --- a/fs/hfs/trans.c
->>>>> +++ b/fs/hfs/trans.c
->>>>> @@ -130,6 +130,8 @@ void hfs_asc2mac(struct super_block *sb, =
-struct hfs_name *out, const struct qstr
->>>>> 				dst +=3D size;
->>>>> 				dstlen -=3D size;
->>>>> 			} else {
->>>>> +				if (dstlen =3D=3D 0)
->>>>> +					goto out;
->>>> Maybe, it makes sense to use dstlen instead of srclen in while()?
->>>>=20
->>>> We have now:
->>>>=20
->>>> while (srclen > 0) {
->>>>    <skipped>
->>>> } else {
->>>>    <skipped>
->>>> }
->>>>=20
->>>> We can use instead:
->>>>=20
->>>> while (dstlen > 0) {
->>>>    <skipped>
->>>> } else {
->>>>    <skipped>
->>>> }
->>>>=20
->>>> Will it fix the issue?
->>>>=20
->>>> Thanks,
->>>> Slava.
->>> Thank you for your help.
->>>=20
->>> After testing, it fix the issue.
->>> Would it be better to add dstlen > 0 instead of replacing srclen > 0 =
-with dstlen > 0?
->>> Because there may be dstlen > 0 and srclen <=3D 0.
->>>=20
->>> we can use:
->>>=20
->>> while (srclen > 0 && dstlen > 0) {
->>>   <skipped>
->>> } else {
->>>   <skipped>
->>> }
->>>=20
->> Looks good to me.
->=20
-> Can I put you down as a Reviewed-by or Suggested-by?
-
-Sure. I hope to see the second version of the patch.
-
-Reviewed-by: Viacheslav Dubeyko <slava@dubeyko.com>
-
-Thanks,
-Slava.
-
->=20
+>
 > Thanks,
-> Zhang Peng
->=20
->> Thanks,
->> Slava.
->>=20
->>> Thanks,
->>> Zhang Peng
->>>=20
->>>>> 				*dst++ =3D ch > 0xff ? '?' : ch;
->>>>> 				dstlen--;
->>>>> 			}
->>>>> --=20
->>>>> 2.25.1
-
+> Gerry
+>
+> >
+> > Although FUSE lacks the support of "unrestricted" ioctl, which makes
+> > it impossible for the filesystem to receive the fs-verity ioctls.
+> > Same to statx.  I think that's where we'd need a change in FUSE
+> > protocol.
+> >
+> >>
+> >> Fs-verity supports generating and verifying file content hash values. =
+For the sake of simplicity, we may only support hash value verification of =
+file content in the first stage, and enable support for hash value generati=
+on in the later stage.
+> >>
+> >> The following FUSE protocol changes are therefore proposed to support =
+fs-verity:
+> >> 1) add flag =E2=80=9CFUSE_FS_VERITY=E2=80=9D to negotiate fs-verity su=
+pport
+> >> 2) add flag =E2=80=9CFUSE_ATTR_FSVERITY=E2=80=9D for fuse servers to m=
+ark that inodes have associated fs-verity meta data.
+> >> 3) add op =E2=80=9CFUSE_FSVERITY=E2=80=9D to get/set fs-verity descrip=
+tor and hash values.
+> >
+> >>
+> >> The FUSE protocol does not specify how fuse servers store fs-verity me=
+tadata. The fuse server can store fs-verity metadata in its own ways.
+> >>
+> >> I did a quick prototype and the changes seems moderate, about 250 line=
+s of code changes.
+> >>
+> >> Would love to hear about your feedback:)
+> >>
+> >> Thanks,
+> >> Gerry
+> >>
+>
