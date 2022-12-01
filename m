@@ -2,153 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EABF363F8E4
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 21:18:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 815BA63F9D4
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 22:30:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230236AbiLAUSw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Dec 2022 15:18:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49072 "EHLO
+        id S230378AbiLAVaN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Dec 2022 16:30:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229924AbiLAUSr (ORCPT
+        with ESMTP id S231252AbiLAVaD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Dec 2022 15:18:47 -0500
-Received: from mail-vs1-xe2f.google.com (mail-vs1-xe2f.google.com [IPv6:2607:f8b0:4864:20::e2f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2B63CBEC78
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Dec 2022 12:18:46 -0800 (PST)
-Received: by mail-vs1-xe2f.google.com with SMTP id d185so2784789vsd.0
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Dec 2022 12:18:46 -0800 (PST)
+        Thu, 1 Dec 2022 16:30:03 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46C04C3591
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Dec 2022 13:30:01 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id x66so3116896pfx.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Dec 2022 13:30:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wKwMHNRDEyrqfNNtqjeN2AckKw8W+9jAhp6b0tHJzAg=;
-        b=QGBpRqlAhom0bP5ghs++SQ0kVKw7xKay94rq3h+eTb0N0vxtK7JKHE1ro5HyTbIp+h
-         +/r6zZIobiB3m2dIWO5sz5Me+B0IMVDB4f9c+dN+wiU4SXzO10PkjgvSOapu/LOK0YP+
-         OCifArNT1zm6fCtnRyZ2nQrzjmpRWhCeP3wqH2XaqCU8dmNbynWRkf/8+IjxqWMIk5Jr
-         1vNfXYnATqYbFCt+w0gmSfhEYH3oB7whUysg2oU7JbaXz+Qa/as8WVgs/rpKSFtOgDex
-         SoH5IisPZjKW+Mnp8h/ETnV867Ez9oUpm1teUOTCw3dg/TprMb/0VY/gXUqrW4+xaiVM
-         t8Qg==
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=N4h80UNUS79jX4Y4VHbk2odBURDMrNuryh2RN0FwTUs=;
+        b=MHbyO0KzWqWDcko/HpBbj01/JqUdQ4Gd7GFAQ3FgQ8FeZ/Z+rOs+HvIG4gWSk9aKAi
+         /3OHhS/ZI0i4WbNx6hXU6y9Fn9FGFOweLBc0w6UwiWZ4nFNCtkPjktlQ/GvA+wn+Sd3P
+         2R+YOkZE806/ATQA4zDbkPZRYtT05axZHAiBLs5oNplSt/W/HgMlgLEYOW0Y6w1qqAlw
+         R75OhgJl/fvapTvLOkfXunrX03V83nhRXQ5GjMFsu6v2M7xvDObqVBlcoV35NByWxaC6
+         revzZnMUwFo6mvToOpVS8bRbbuaIq4arZbZegCJrCF6h2ESqzAblJ32JsFo93Yta5Fxp
+         n+uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wKwMHNRDEyrqfNNtqjeN2AckKw8W+9jAhp6b0tHJzAg=;
-        b=mqaU7Du+ex+PJ3S4B/MPY8zTQV1kVuenJE4K9oO5NpHw7bqp3j+yNevqjLnfxEikv8
-         z9cB1/2R+18aorZqiRaZszmhfoq5T9DkbBvbMV7ezhB35Ntq60gTmUhxM1yHRe8XgF2g
-         nzrFXc4YsInRY5B8OqRL7ZjkzhlAvjk6BbCEpP2ZjkolzyRn253owwatJCIMTiVgnRSA
-         ZHyXb4xcvh7yTLAsbYas89FL0DPKm7bYVoveFHca/uBIEC0zzGGtCloM/tL/bKHF8gnx
-         AvLz7xGWOqLulJc6/A9v18SAkQLa8fDp7iEdY46NSYrZzffgyY2hLJZcTIBOFQCvBZqu
-         06jw==
-X-Gm-Message-State: ANoB5pkNxJtH3vrGg0oKEs0SBPgKQ6p38CAdYbhfXptd+h5TmSYPEWa8
-        9varXufLq4JDo4MwUGCmsoPAop40U2b5RX7iw0JSlA==
-X-Google-Smtp-Source: AA0mqf7lzC6HDmJ36ZEfupvHktoyf8OOlp8FVnaZCzxKkjEB1ctoWbC+2lFW3z+tLBPC6ewQWqfSTXfe+yikfF4shL0=
-X-Received: by 2002:a67:ea04:0:b0:3a7:d7bc:c2e9 with SMTP id
- g4-20020a67ea04000000b003a7d7bcc2e9mr29491950vso.61.1669925925058; Thu, 01
- Dec 2022 12:18:45 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=N4h80UNUS79jX4Y4VHbk2odBURDMrNuryh2RN0FwTUs=;
+        b=dqsEHoX52K5xGY4L/dR8BjOJ73/v7TX9uISw6YIua/o+TEgl/oxSncWNF4P35id0jV
+         8vPA8DdawFzXAySwudB8Fsbt12bQfHcdvCvy6pShCtBdDJmyQ3hewRGkypKle01JYEgb
+         AkzqsgJD8Q93uem2nYdQCoD2BmJCGVGAioCDFnCH82hf51KIO7ZLqIS8es5Xjxq4yvR3
+         DKGRZmsir3YI0l39N+4FFR016Ss4iFtikduiGoyanmb6yhBXQEbDIRLW1Kucj1fEKOgG
+         SFOUq7+uNuyxF4NhKyiLcpneAffHojdbyKe+2m3PMB4bckJjgJ6qBYfXtfEksDbSbBxm
+         g20g==
+X-Gm-Message-State: ANoB5plT60G8CVZqTxyzkehR+XHB+XhJHQWtDFZKpehG5EdluUItVF1/
+        iDOS/pSrySQ8Gya8cAPNub6vxw==
+X-Google-Smtp-Source: AA0mqf5jBMwE7VJtXdUtb9MV4o9tCdBmLTQr+bzOQc7ZjJ/ZjrEiVNzds8k8js/z73QdAqb5M76IJw==
+X-Received: by 2002:a62:79cc:0:b0:575:bd04:504c with SMTP id u195-20020a6279cc000000b00575bd04504cmr12486711pfc.72.1669930200568;
+        Thu, 01 Dec 2022 13:30:00 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-65-106.pa.vic.optusnet.com.au. [49.186.65.106])
+        by smtp.gmail.com with ESMTPSA id d33-20020a631d21000000b00477e0f7ab89sm2949537pgd.38.2022.12.01.13.29.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Dec 2022 13:30:00 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1p0r80-003N0l-GZ; Fri, 02 Dec 2022 08:29:56 +1100
+Date:   Fri, 2 Dec 2022 08:29:56 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
+Subject: Re: [RFC v2 0/3] Turn iomap_page_ops into iomap_folio_ops
+Message-ID: <20221201212956.GO3600936@dread.disaster.area>
+References: <20221201160619.1247788-1-agruenba@redhat.com>
+ <20221201180957.1268079-1-agruenba@redhat.com>
 MIME-Version: 1.0
-References: <20221130070158.44221-1-chengkaitao@didiglobal.com> <Y4fnRyIp17NXpti9@P9FQF9L96D.corp.robot.car>
-In-Reply-To: <Y4fnRyIp17NXpti9@P9FQF9L96D.corp.robot.car>
-From:   Mina Almasry <almasrymina@google.com>
-Date:   Thu, 1 Dec 2022 12:18:33 -0800
-Message-ID: <CAHS8izN3ej1mqUpnNQ8c-1Bx5EeO7q5NOkh0qrY_4PLqc8rkHA@mail.gmail.com>
-Subject: Re: [PATCH] mm: memcontrol: protect the memory in cgroup from being
- oom killed
-To:     Roman Gushchin <roman.gushchin@linux.dev>,
-        Yosry Ahmed <yosryahmed@google.com>
-Cc:     chengkaitao <pilgrimtao@gmail.com>, tj@kernel.org,
-        lizefan.x@bytedance.com, hannes@cmpxchg.org, corbet@lwn.net,
-        mhocko@kernel.org, shakeelb@google.com, akpm@linux-foundation.org,
-        songmuchun@bytedance.com, cgel.zte@gmail.com,
-        ran.xiaokai@zte.com.cn, viro@zeniv.linux.org.uk,
-        zhengqi.arch@bytedance.com, ebiederm@xmission.com,
-        Liam.Howlett@oracle.com, chengzhihao1@huawei.com,
-        haolee.swjtu@gmail.com, yuzhao@google.com, willy@infradead.org,
-        vasily.averin@linux.dev, vbabka@suse.cz, surenb@google.com,
-        sfr@canb.auug.org.au, mcgrof@kernel.org, sujiaxun@uniontech.com,
-        feng.tang@intel.com, cgroups@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221201180957.1268079-1-agruenba@redhat.com>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 30, 2022 at 3:29 PM Roman Gushchin <roman.gushchin@linux.dev> wrote:
->
-> On Wed, Nov 30, 2022 at 03:01:58PM +0800, chengkaitao wrote:
-> > From: chengkaitao <pilgrimtao@gmail.com>
-> >
-> > We created a new interface <memory.oom.protect> for memory, If there is
-> > the OOM killer under parent memory cgroup, and the memory usage of a
-> > child cgroup is within its effective oom.protect boundary, the cgroup's
-> > tasks won't be OOM killed unless there is no unprotected tasks in other
-> > children cgroups. It draws on the logic of <memory.min/low> in the
-> > inheritance relationship.
-> >
-> > It has the following advantages,
-> > 1. We have the ability to protect more important processes, when there
-> > is a memcg's OOM killer. The oom.protect only takes effect local memcg,
-> > and does not affect the OOM killer of the host.
-> > 2. Historically, we can often use oom_score_adj to control a group of
-> > processes, It requires that all processes in the cgroup must have a
-> > common parent processes, we have to set the common parent process's
-> > oom_score_adj, before it forks all children processes. So that it is
-> > very difficult to apply it in other situations. Now oom.protect has no
-> > such restrictions, we can protect a cgroup of processes more easily. The
-> > cgroup can keep some memory, even if the OOM killer has to be called.
->
-> It reminds me our attempts to provide a more sophisticated cgroup-aware oom
-> killer. The problem is that the decision which process(es) to kill or preserve
-> is individual to a specific workload (and can be even time-dependent
-> for a given workload). So it's really hard to come up with an in-kernel
-> mechanism which is at the same time flexible enough to work for the majority
-> of users and reliable enough to serve as the last oom resort measure (which
-> is the basic goal of the kernel oom killer).
->
-> Previously the consensus was to keep the in-kernel oom killer dumb and reliable
-> and implement complex policies in userspace (e.g. systemd-oomd etc).
->
-> Is there a reason why such approach can't work in your case?
->
+On Thu, Dec 01, 2022 at 07:09:54PM +0100, Andreas Gruenbacher wrote:
+> Hi again,
+> 
+> [Same thing, but with the patches split correctly this time.]
+> 
+> we're seeing a race between journaled data writes and the shrinker on
+> gfs2.  What's happening is that gfs2_iomap_page_done() is called after
+> the page has been unlocked, so try_to_free_buffers() can come in and
+> free the buffers while gfs2_iomap_page_done() is trying to add them to
+> the transaction.  Not good.
+> 
+> This is a proposal to change iomap_page_ops so that page_prepare()
+> prepares the write and grabs the locked page, and page_done() unlocks
+> and puts that page again.  While at it, this also converts the hooks
+> from pages to folios.
+> 
+> To move the pagecache_isize_extended() call in iomap_write_end() out of
+> the way, a new folio_may_straddle_isize() helper is introduced that
+> takes a locked folio.  That is then used when the inode size is updated,
+> before the folio is unlocked.
+> 
+> I've also converted the other applicable folio_may_straddle_isize()
+> users, namely generic_write_end(), ext4_write_end(), and
+> ext4_journalled_write_end().
+> 
+> Any thoughts?
 
-FWIW we run into similar issues and the systemd-oomd approach doesn't
-work reliably enough for us to disable the kernel oom-killer. The
-issue as I understand is when the machine is under heavy memory
-pressure our userspace oom-killer fails to run quickly enough to save
-the machine from getting completely stuck. Why our oom-killer fails to
-run is more nuanced. There are cases where it seems stuck to itself to
-acquire memory to do the oom-killing or stuck on some lock that needs
-to be released by a process that itself is stuck trying to acquire
-memory to release the lock, etc.
+I doubt that moving page cache operations from the iomap core to
+filesystem specific callouts will be acceptible. I recently proposed
+patches that added page cache walking to an XFS iomap callout to fix
+a data corruption, but they were NAKd on the basis that iomap is
+supposed to completely abstract away the folio and page cache
+manipulations from the filesystem.
 
-When the kernel oom-killer does run we would like to shield the
-important jobs from it and kill the batch jobs or restartable
-processes instead. So we have a similar feature to what is proposed
-here internally. Our design is a bit different. For us we enable the
-userspace to completely override the oom_badness score pretty much:
+This patchset seems to be doing the same thing - moving page cache
+and folio management directly in filesystem specific callouts. Hence
+I'm going to assume that the same architectural demarcation is
+going to apply here, too...
 
-1. Every process has /proc/pid/oom_score_badness which overrides the
-kernel's calculation if set.
-2. Every memcg has a memory.oom_score_badness which indicates this
-memcg's oom importance.
+FYI, there is already significant change committed to the iomap
+write path in the current XFS tree as a result of the changes I
+mention - there is stale IOMAP detection which adds a new page ops
+method and adds new error paths with a locked folio in
+iomap_write_begin(). 
 
-On global oom the kernel pretty much kills the baddest process in the
-badesset memcg, so we can 'protect' the important jobs from
-oom-killing that way.
+And this other data corruption (and performance) fix for handling
+zeroing over unwritten extents properly:
 
-I haven't tried upstreaming this because I assume there would be
-little appetite for it in a general use case, but if the general use
-case is interesting for some it would be good to collaborate on some
-way for folks that enable the kernel oom-killer to shield certain jobs
-that are important.
+https://lore.kernel.org/linux-xfs/20221201005214.3836105-1-david@fromorbit.com/
 
-> Thanks!
->
+changes the way folios are looked up and instantiated in the page
+cache in iomap_write_begin(). It also adds new error conditions that
+need to be returned to callers so to implement conditional "folio
+must be present and dirty" page cache zeroing from
+iomap_zero_iter(). Those semantics would also have to be supported
+by gfs2, and that greatly complicates modifying and testing iomap
+core changes.
+
+To avoid all this, can we simple move the ->page_done() callout in
+the error path and iomap_write_end() to before we unlock the folio?
+You've already done that for pagecache_isize_extended(), and I can't
+see anything obvious in the gfs2 ->page_done callout that
+would cause issues if it is called with a locked dirty folio...
+
+Cheers,
+
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
