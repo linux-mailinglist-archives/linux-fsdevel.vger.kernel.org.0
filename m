@@ -2,231 +2,318 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 71CB663E5E9
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 00:58:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 563E463E6B3
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 01:52:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229675AbiK3X6q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 30 Nov 2022 18:58:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45870 "EHLO
+        id S229610AbiLAAwV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 30 Nov 2022 19:52:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229653AbiK3X6o (ORCPT
+        with ESMTP id S229448AbiLAAwU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 30 Nov 2022 18:58:44 -0500
-Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D847655A9F;
-        Wed, 30 Nov 2022 15:58:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1669852723; x=1701388723;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=VsUJ3EzwHCFyp+FRnNMB45IfG/dc6jDepLYiRGfqs6o=;
-  b=KLHKeOpGSARqk/7+nKoAEhkn57Umuza3PR2uaK6liGN5xCuk6VRIfbFd
-   hidT/0cIJkZq8sHfw1/yNGPbi7nnCaaouLnilVPLM0LryzSQXsJ8cjhsI
-   RJK1a3DU2exDFT8Gar+Qz4FQYsHhMqUgDe1T0Nqc/9mzNr9202poMkmip
-   w+lF4xxnSwqjuN+OkCC69AQUjJpNbGt3e80lTe+vyZr8RaCXauEjzV93h
-   dAv0IQbg16auATytUVvXkJHebEJ5+kkZSwJPa+wpTp+S+WrUeaeYZ3Gjs
-   UgpnVKE6e1l97m8yK7QRaTbssCtk8x5ajaetHI/1vR8tLqZvpqbSyPNNu
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10547"; a="315563157"
-X-IronPort-AV: E=Sophos;i="5.96,207,1665471600"; 
-   d="scan'208";a="315563157"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Nov 2022 15:58:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10547"; a="622077786"
-X-IronPort-AV: E=Sophos;i="5.96,207,1665471600"; 
-   d="scan'208";a="622077786"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orsmga006.jf.intel.com with ESMTP; 30 Nov 2022 15:58:43 -0800
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Wed, 30 Nov 2022 15:58:42 -0800
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Wed, 30 Nov 2022 15:58:42 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16 via Frontend Transport; Wed, 30 Nov 2022 15:58:42 -0800
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.168)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.16; Wed, 30 Nov 2022 15:58:42 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Xzfu2RENVeSJNrJIYA3nEYSj78Ikem7FJi4/X8/EIKWLDj05QMdMfFsCh3ewDa+FUX9xSFqMknCdHvB2QDIyF1mstgliyYyJSg7LjFfv27HtJPCpOfcnQxS9eeE/vKpg6ogGM34cmNffkbc0iB8/4LkTF+oVlZJsC+dONqyNluCdYampAxEq0g9ZKXyL/jmcGzMBraIsap4DTYx5UgTIWKwgiypcJd5RngvB17LWOvsIvRMyorrFXR/6QbpGE4xdPixujwH+iyfYeJ2C4OVobYq5/ZzmFllZK6lKBvWETMyebMGsH07O9QurhgnGZnqpIrA43fxA4WA5woLF81w+Jw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=12xDd/zgycmw+G1Rz63tq3xFS5db/T6ftStwJ252/jw=;
- b=WGadCJkuIa497DpTCBDE3IyfNzqyVFKeLZalMP6TkzNqpv5hLVUq6EC91wGWHAlWV8Nuq2zuDdVpoqwHgKxL+ii+VcvlkiziGZVg5vlVk5lqgWvfUT0FEpaBMEG6qJ0UpvhVeyAzGoWVuXj/ijASPZK7OeTURLu8PNmJB2zirIjeCpSznUC1sP8hhAz/eRpvPUem9tLRud7ubndLnKHa/W2nkAuhcpAaXIGMKrHiBNRzS6/23O6paQDrywrrUm7NCGNJepOZXEOnSAxzM0UN4EwvXFM+Pud/E5zkoW+yFMJMvLhiMgcrETYcvAQ4kiak0VbMrbgLV0xcVutPXJaKoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
- (2603:10b6:301:50::20) by PH8PR11MB6755.namprd11.prod.outlook.com
- (2603:10b6:510:1ca::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5857.23; Wed, 30 Nov
- 2022 23:58:40 +0000
-Received: from MWHPR1101MB2126.namprd11.prod.outlook.com
- ([fe80::340d:cb77:604d:b0b]) by MWHPR1101MB2126.namprd11.prod.outlook.com
- ([fe80::340d:cb77:604d:b0b%9]) with mapi id 15.20.5857.023; Wed, 30 Nov 2022
- 23:58:40 +0000
-Date:   Wed, 30 Nov 2022 15:58:31 -0800
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     "Darrick J. Wong" <djwong@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-CC:     Andrew Morton <akpm@linux-foundation.org>,
-        Shiyang Ruan <ruansy.fnst@fujitsu.com>,
-        <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-        <david@fromorbit.com>
-Subject: Re: [PATCH 0/2] fsdax,xfs: fix warning messages
-Message-ID: <6387ee2769155_c957294c8@dwillia2-mobl3.amr.corp.intel.com.notmuch>
-References: <1669301694-16-1-git-send-email-ruansy.fnst@fujitsu.com>
- <6386d512ce3fc_c9572944e@dwillia2-mobl3.amr.corp.intel.com.notmuch>
- <20221130132725.cd332f03ad3fb5902a54c919@linux-foundation.org>
- <6387cfcbea21f_3cbe0294b9@dwillia2-xfh.jf.intel.com.notmuch>
- <Y4fid4ZFSUWvWzNH@magnolia>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Y4fid4ZFSUWvWzNH@magnolia>
-X-ClientProxiedBy: BYAPR05CA0090.namprd05.prod.outlook.com
- (2603:10b6:a03:e0::31) To MWHPR1101MB2126.namprd11.prod.outlook.com
- (2603:10b6:301:50::20)
+        Wed, 30 Nov 2022 19:52:20 -0500
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C3F2169324
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Nov 2022 16:52:18 -0800 (PST)
+Received: by mail-pf1-x434.google.com with SMTP id r7so370072pfl.11
+        for <linux-fsdevel@vger.kernel.org>; Wed, 30 Nov 2022 16:52:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SYKYdxyKPtZTuclEa/DlBvagxLBIJj6S+cE59VjlIW4=;
+        b=EdOXDSlaMLmGfZfVvKqM/WCE1lzER3Nbdcab6XA2yfly3+D+dyWiRaSCAiXKTGqhaw
+         j50t2DyiwR4Ka9Z+eS0Kidvaa9rsWjES1/BfUL0MawrEkgZVOacn+hVIfW7PuNHMM5/d
+         eWL34IQcRbZEZ/HMbpnjYVAyNSdGs+6Vbh5FhEMXCga1dp18sunnmlPxuFkcGgockm9B
+         S3MzALAClyXv6FyGgUge0ODGLrMXJVYNqPJETM+OU8EuOl/3++tUDKx9JZPN7OyROH3x
+         vBZDKhkD/w9uCUmIaCNpMkYQ2nfAiQxs54C+Ilwfj9VrP6LRZnmhAaTzCUq+BV02A/C6
+         K/IA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SYKYdxyKPtZTuclEa/DlBvagxLBIJj6S+cE59VjlIW4=;
+        b=t9PWY5FtHlnFGPvTn3OwG/YoMdkbegONVyBAYb41uVGvWqNjxmtUHxxzSGS8f3xb4h
+         nNpcMbDgDPrupolBZxzA7aMCrqvPfUMSfhubMZzffRrkJFDyvXXs8uG33gSqNurT125d
+         Un8ZwrIibp7SF/Jm3HCXdCngQ74r7WYX6qlRljDGAq8MhIEFMnzqFnBg4XPqR574l4Tp
+         I6U4ThThJPePhqh2one7GLgjEY5FozEJrHqfIonGG+5H+mhzE2mcQ/w4NtoJoNucAO1m
+         YSc5UDnDqWMWSRW6Sk6hReGcD+49ilNjHkBtyDW9lcOFQCjbCK7zSL67xTLfxquecb5P
+         nmzA==
+X-Gm-Message-State: ANoB5pkPAbY7SSRoSaroVrrgqJF+an4JDJGoPt+6ivIM7ZpY37b+iGTh
+        sUWIMFU6dO5DbB87gQjJHJk9CqGG4Pkxeg==
+X-Google-Smtp-Source: AA0mqf4O/QT60/7hyCo7rh/KmIHdvsC/6Adn7BSyljx6Ci6c/z3NzIAWHuJG4Zx/1Uw6YGSfm1Ev6A==
+X-Received: by 2002:a63:d34e:0:b0:477:650a:705c with SMTP id u14-20020a63d34e000000b00477650a705cmr37659008pgi.588.1669855938239;
+        Wed, 30 Nov 2022 16:52:18 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-65-106.pa.vic.optusnet.com.au. [49.186.65.106])
+        by smtp.gmail.com with ESMTPSA id 3-20020a631543000000b0044ed37dbca8sm1504054pgv.2.2022.11.30.16.52.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Nov 2022 16:52:17 -0800 (PST)
+Received: from [192.168.253.23] (helo=devoid.disaster.area)
+        by dread.disaster.area with esmtp (Exim 4.92.3)
+        (envelope-from <dave@fromorbit.com>)
+        id 1p0XoE-0031ny-Bx; Thu, 01 Dec 2022 11:52:14 +1100
+Received: from dave by devoid.disaster.area with local (Exim 4.96)
+        (envelope-from <dave@devoid.disaster.area>)
+        id 1p0XoE-00G5ws-0v;
+        Thu, 01 Dec 2022 11:52:14 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     linux-xfs@vger.kernel.org
+Cc:     linux-fsdevel@vger.kernel.org
+Subject: [PATCH] [RFC] iomap: zeroing needs to be pagecache aware
+Date:   Thu,  1 Dec 2022 11:52:14 +1100
+Message-Id: <20221201005214.3836105-1-david@fromorbit.com>
+X-Mailer: git-send-email 2.38.1
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWHPR1101MB2126:EE_|PH8PR11MB6755:EE_
-X-MS-Office365-Filtering-Correlation-Id: 38c568b8-47cf-47cd-4964-08dad32ecdbc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: /4DzgwG5LPslZQuCUhR8m2x978dp0BJ1PHwA9lTjD9WYrXMDS+OaipcFeSGegk0kBaUXCjYSxCOEEtcWI899EWrkVxNIwu8vosEMXdQXnySGJ1RnFdlhe+bYnCCt9xX43YpJEI5tIZ+FI4QbFOsO991fR0scX3y3HMabLKqgVu/kn7R0TV6llVf6bITuQr6rojf30mM9k9HeQ6Ib4UDDlYLQUcCQxJtZSU53ux0+3uznsufxjJwIHO2mikREBda73oVbFSL/SRRaIGNdO2BXvzt/jTZJI/Tiudd6LmJRM1RoDjIznv5jsyC0oGDP7b3pJmbC8fCNp2Nu97NIQWPtHPWlqyQOyaDdwrjVGHTzlqttBt581Fz1Yljss1ikAXIjBkXu/wezZlWVg1JAAtsbpgg8W2RxFjt2Gb0wAgNdMSVEIceRlwH2r7gKDrIl8W3IhF35ZIKTxW3W88ACbD0t93dqC6axHirk9jPnWKl+/HD4b8lrhxGWLaBg7lf958w+HI/YgJwglxKvkI2vA7nzo410SfMDvWEKtOoOlhO7O3zUfEglrcEqQVmX0IWZRaKDTtZB6x6CvYYG+rRveJBNiZFpRZ2aix08R9PhgBNDhwMxd0nWkreJJQqUJpNv3ZUypZXzocBD2uQYRb4fE+8vJyGN+tYnst4FlcqW6JuNC7aRpvfmUMBr00XT0H2V4f+Bl+LEQ5gIXptw5UVVGR0IKw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MWHPR1101MB2126.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(396003)(39860400002)(136003)(346002)(366004)(451199015)(41300700001)(6486002)(86362001)(5660300002)(66476007)(83380400001)(8676002)(316002)(66946007)(26005)(4326008)(110136005)(9686003)(6512007)(6506007)(66556008)(6666004)(966005)(186003)(478600001)(82960400001)(54906003)(8936002)(2906002)(15650500001)(38100700002);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?PhiBfkH3z5aZvnwsialWA9lIrJn6c/pWcPZwJdirsCN+0/McPPt5YyqMLAGT?=
- =?us-ascii?Q?oa74AI63Ubl0A98dUHS0wlUtqD9G5tqcdvN5Ql7XCjukwiTCTfkNF+0aVOY5?=
- =?us-ascii?Q?bTRhD4KTknQOX/cyPqTyp5O2vNGtXVWBNtEhkryEwjC1pA/3pofH89h7rqj+?=
- =?us-ascii?Q?s1WSA+HA1W36rGkj5asdx+Eb3FZwA/qVQhUgcrdMLTar9dECB8PL73oZNcTA?=
- =?us-ascii?Q?IqNYki8fJUN4psOUwWDOYKImQYFNa76CnmRCepL+rsapB577NVogWN0bQk+o?=
- =?us-ascii?Q?tcG9IBVT1awmSURFAhaGcwttbmgyPmhqrYUMtSPgZrOTEzwT7mwTTXOca0Kd?=
- =?us-ascii?Q?GBtZaNjLE6pZpc6OgOJYzCJfGvKpvAdrY+KhbBUYGvRcW05j+k5f5ZEcoGef?=
- =?us-ascii?Q?6TqbWXUA075LV3CusxmL14FUOdyeW6yOkgsnRsWbHaYPqD9uhk+lkYL4vQA2?=
- =?us-ascii?Q?VN5UQ9LdEr7iasbq/FEa9OPSFNKRHSWAR5z3dtBM29dmRZ9BiltutObFixZ7?=
- =?us-ascii?Q?RqXFIbaVCfK21W+CLbSxlNs3l+u3vFfQcN53ATCiQDqxFvkGAecQfdoX/3VS?=
- =?us-ascii?Q?1LfrZUk3J8QaJ+Bd5uYYwa7NOxCaNu1vZ/OJ6YjDZ/njj1e7kC9hNnaa/NiM?=
- =?us-ascii?Q?HATnIo/Mp3caJo03BMl03g0JCvZ0+EMldz88iOI8BjKfjfeFkMXHiWzhm1i6?=
- =?us-ascii?Q?c5eOBPZpFE/PTyu1KG4X8yceXie/WLuqBUTBYPgFGU4dNsOjuZEiorCzRiKF?=
- =?us-ascii?Q?nGALz6YyVfQwWLeH4SOm6gmng8Hax2yVuGuGJ6bsgIQjv6zJeSjP668UqHSr?=
- =?us-ascii?Q?kOyP1U7e0J9JLl3fXiB9lcJbyYTZ66CmxTh7WyXUDtCyCRObQMnIySgcHz23?=
- =?us-ascii?Q?0MaMmrPe0k9d9t6mhJ9J5lE57aARf9nR+ApiMG64E14KQB56em/KZOh0vSU5?=
- =?us-ascii?Q?eJapYne5aznNJFRRxy2pbZpEv0Ou7tez0l5hG/DhYe8HgMNkhNBaK7lElwE9?=
- =?us-ascii?Q?uaTVhmEyRFM+AdrHwDMkr9VXexGc4CuEIRweBVSuh3pNpq8Ofuzx7rIMlFBW?=
- =?us-ascii?Q?W66Jinx4tEOnktcwuG8NY/P9+zkVNQHZfD5/HHovko6iNv47A1BFC1naRFBc?=
- =?us-ascii?Q?e1IRGnXG9u7inUOXovtCjS3pbg9VM50P7HvJ0wZA/h0+piL0IxX028+bOCSK?=
- =?us-ascii?Q?yn+3cpVz5RDWgxhVwKPXL2yBoUUHqRkugHPJ0d+xMlniZlPIb0Bry69Wd5FZ?=
- =?us-ascii?Q?aqSy3ui0qjPXTB8XYc3I2wtrvlaVpx4NU0UZKlwqX8U2fRW287Y1lVxjZXNf?=
- =?us-ascii?Q?dKG//QNoYInnq4apzoK2m/T8F46m5zwauPEWMfNViNZxuAij4CSZ7BKfKee+?=
- =?us-ascii?Q?eauaXkAf8ODzcveJy3JtN23DJXY+6ZUBADKwUC3ICiOmFNfXIuhCXM4Odw6u?=
- =?us-ascii?Q?tEcGeGdngDuwtJNrhgQylA+tQfKEOnfby9gLzUBN2CsxH0fEHeNgFku/B9Ot?=
- =?us-ascii?Q?wlukbH8O/HSo0ElofdYNIKlezn36TD0Jw9Ic5T250Tjw7UCI69IhA87fsnrr?=
- =?us-ascii?Q?07oCN+T/VwE7U8rKGqiiHCTN4O4YSZlDhn4gxn2dhDeofAHJeXpbQpsQ60NW?=
- =?us-ascii?Q?1w=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 38c568b8-47cf-47cd-4964-08dad32ecdbc
-X-MS-Exchange-CrossTenant-AuthSource: MWHPR1101MB2126.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Nov 2022 23:58:40.2002
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rukAqVaH3CIMDzJDVlfNKqfFWgxAc2VlszriU4aofRWcODg8aWPj48/j2Ek4EygxtOJOsx404QQ+yRwCZF/kdkulY3laOOV4RSL/xVCSAhs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB6755
-X-OriginatorOrg: intel.com
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Darrick J. Wong wrote:
-> On Wed, Nov 30, 2022 at 01:48:59PM -0800, Dan Williams wrote:
-> > Andrew Morton wrote:
-> > > On Tue, 29 Nov 2022 19:59:14 -0800 Dan Williams <dan.j.williams@intel.com> wrote:
-> > > 
-> > > > [ add Andrew ]
-> > > > 
-> > > > Shiyang Ruan wrote:
-> > > > > Many testcases failed in dax+reflink mode with warning message in dmesg.
-> > > > > This also effects dax+noreflink mode if we run the test after a
-> > > > > dax+reflink test.  So, the most urgent thing is solving the warning
-> > > > > messages.
-> > > > > 
-> > > > > Patch 1 fixes some mistakes and adds handling of CoW cases not
-> > > > > previously considered (srcmap is HOLE or UNWRITTEN).
-> > > > > Patch 2 adds the implementation of unshare for fsdax.
-> > > > > 
-> > > > > With these fixes, most warning messages in dax_associate_entry() are
-> > > > > gone.  But honestly, generic/388 will randomly failed with the warning.
-> > > > > The case shutdown the xfs when fsstress is running, and do it for many
-> > > > > times.  I think the reason is that dax pages in use are not able to be
-> > > > > invalidated in time when fs is shutdown.  The next time dax page to be
-> > > > > associated, it still remains the mapping value set last time.  I'll keep
-> > > > > on solving it.
-> > > > > 
-> > > > > The warning message in dax_writeback_one() can also be fixed because of
-> > > > > the dax unshare.
-> > > > 
-> > > > Thank you for digging in on this, I had been pinned down on CXL tasks
-> > > > and worried that we would need to mark FS_DAX broken for a cycle, so
-> > > > this is timely.
-> > > > 
-> > > > My only concern is that these patches look to have significant collisions with
-> > > > the fsdax page reference counting reworks pending in linux-next. Although,
-> > > > those are still sitting in mm-unstable:
-> > > > 
-> > > > http://lore.kernel.org/r/20221108162059.2ee440d5244657c4f16bdca0@linux-foundation.org
-> > > 
-> > > As far as I know, Dan's "Fix the DAX-gup mistake" series is somewhat
-> > > stuck.  Jan pointed out:
-> > > 
-> > > https://lore.kernel.org/all/20221109113849.p7pwob533ijgrytu@quack3/T/#u
-> > > 
-> > > or have Jason's issues since been addressed?
-> > 
-> > No, they have not. I do think the current series is a step forward, but
-> > given the urgency remains low for the time being (CXL hotplug use case
-> > further out, no known collisions with ongoing folio work, and no
-> > MEMORY_DEVICE_PRIVATE users looking to build any conversions on top for
-> > 6.2) I am ok to circle back for 6.3 for that follow on work to be
-> > integrated.
-> > 
-> > > > My preference would be to move ahead with both in which case I can help
-> > > > rebase these fixes on top. In that scenario everything would go through
-> > > > Andrew.
-> > > > 
-> > > > However, if we are getting too late in the cycle for that path I think
-> > > > these dax-fixes take precedence, and one more cycle to let the page
-> > > > reference count reworks sit is ok.
-> > > 
-> > > That sounds a decent approach.  So we go with this series ("fsdax,xfs:
-> > > fix warning messages") and aim at 6.3-rc1 with "Fix the DAX-gup
-> > > mistake"?
-> > > 
-> > 
-> > Yeah, that's the path of least hassle.
-> 
-> Sounds good.  I still want to see patch 1 of this series broken up into
-> smaller pieces though.  Once the series goes through review, do you want
-> me to push the fixes to Linus, seeing as xfs is the only user of this
-> functionality?
+From: Dave Chinner <dchinner@redhat.com>
 
-Yes, that was my primary feedback as well, and merging through xfs makes
-sense to me.
+Unwritten extents can have page cache data over the range being
+zeroed so we can't just skip them entirely. Fix this by checking for
+an existing dirty folio over the unwritten range we are zeroing
+and only performing zeroing if the folio is already dirty.
+
+XXX: how do we detect a iomap containing a cow mapping over a hole
+in iomap_zero_iter()? The XFS code implies this case also needs to
+zero the page cache if there is data present, so trigger for page
+cache lookup only in iomap_zero_iter() needs to handle this case as
+well.
+
+Before:
+
+$ time sudo ./pwrite-trunc /mnt/scratch/foo 50000
+path /mnt/scratch/foo, 50000 iters
+
+real    0m14.103s
+user    0m0.015s
+sys     0m0.020s
+
+$ sudo strace -c ./pwrite-trunc /mnt/scratch/foo 50000
+path /mnt/scratch/foo, 50000 iters
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 85.90    0.847616          16     50000           ftruncate
+ 14.01    0.138229           2     50000           pwrite64
+....
+
+After:
+
+$ time sudo ./pwrite-trunc /mnt/scratch/foo 50000
+path /mnt/scratch/foo, 50000 iters
+
+real    0m0.144s
+user    0m0.021s
+sys     0m0.012s
+
+$ sudo strace -c ./pwrite-trunc /mnt/scratch/foo 50000
+path /mnt/scratch/foo, 50000 iters
+% time     seconds  usecs/call     calls    errors syscall
+------ ----------- ----------- --------- --------- ----------------
+ 53.86    0.505964          10     50000           ftruncate
+ 46.12    0.433251           8     50000           pwrite64
+....
+
+Yup, we get back all the performance.
+
+As for the "mmap write beyond EOF" data exposure aspect
+documented here:
+
+https://lore.kernel.org/linux-xfs/20221104182358.2007475-1-bfoster@redhat.com/
+
+With this command:
+
+$ sudo xfs_io -tfc "falloc 0 1k" -c "pwrite 0 1k" \
+  -c "mmap 0 4k" -c "mwrite 3k 1k" -c "pwrite 32k 4k" \
+  -c fsync -c "pread -v 3k 32" /mnt/scratch/foo
+
+Before:
+
+wrote 1024/1024 bytes at offset 0
+1 KiB, 1 ops; 0.0000 sec (34.877 MiB/sec and 35714.2857 ops/sec)
+wrote 4096/4096 bytes at offset 32768
+4 KiB, 1 ops; 0.0000 sec (229.779 MiB/sec and 58823.5294 ops/sec)
+00000c00:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
+00000c10:  58 58 58 58 58 58 58 58 58 58 58 58 58 58 58 58  XXXXXXXXXXXXXXXX
+read 32/32 bytes at offset 3072
+32.000000 bytes, 1 ops; 0.0000 sec (568.182 KiB/sec and 18181.8182 ops/sec
+
+After:
+
+wrote 1024/1024 bytes at offset 0
+1 KiB, 1 ops; 0.0000 sec (40.690 MiB/sec and 41666.6667 ops/sec)
+wrote 4096/4096 bytes at offset 32768
+4 KiB, 1 ops; 0.0000 sec (150.240 MiB/sec and 38461.5385 ops/sec)
+00000c00:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+00000c10:  00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+read 32/32 bytes at offset 3072
+32.000000 bytes, 1 ops; 0.0000 sec (558.036 KiB/sec and 17857.1429 ops/sec)
+
+We see that this post-eof unwritten extent dirty page zeroing is
+working correctly.
+
+This has passed through most of fstests on a couple of test VMs
+without issues at the moment, so I think this approach to fixing the
+issue is going to be solid once we've worked out how to detect the
+COW-hole mapping case.
+
+Signed-off-by: Dave Chinner <dchinner@redhat.com>
+---
+ fs/iomap/buffered-io.c | 50 +++++++++++++++++++++++++++++++++++-------
+ fs/xfs/xfs_iops.c      | 12 +---------
+ 2 files changed, 43 insertions(+), 19 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 356193e44cf0..0969e4525507 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -585,14 +585,14 @@ static int iomap_write_begin_inline(const struct iomap_iter *iter,
+ }
+ 
+ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
+-		size_t len, struct folio **foliop)
++		size_t len, struct folio **foliop, unsigned fgp)
+ {
+ 	const struct iomap_page_ops *page_ops = iter->iomap.page_ops;
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+ 	struct folio *folio;
+-	unsigned fgp = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE | FGP_NOFS;
+ 	int status = 0;
+ 
++	fgp |= FGP_LOCK | FGP_WRITE | FGP_STABLE | FGP_NOFS;
+ 	if (iter->flags & IOMAP_NOWAIT)
+ 		fgp |= FGP_NOWAIT;
+ 
+@@ -615,7 +615,12 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
+ 	folio = __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
+ 			fgp, mapping_gfp_mask(iter->inode->i_mapping));
+ 	if (!folio) {
+-		status = (iter->flags & IOMAP_NOWAIT) ? -EAGAIN : -ENOMEM;
++		if (!(fgp & FGP_CREAT))
++			status = -ENODATA;
++		else if (iter->flags & IOMAP_NOWAIT)
++			status = -EAGAIN;
++		else
++			status = -ENOMEM;
+ 		goto out_no_page;
+ 	}
+ 
+@@ -791,7 +796,7 @@ static loff_t iomap_write_iter(struct iomap_iter *iter, struct iov_iter *i)
+ 			break;
+ 		}
+ 
+-		status = iomap_write_begin(iter, pos, bytes, &folio);
++		status = iomap_write_begin(iter, pos, bytes, &folio, FGP_CREAT);
+ 		if (unlikely(status))
+ 			break;
+ 		if (iter->iomap.flags & IOMAP_F_STALE)
+@@ -1101,7 +1106,7 @@ static loff_t iomap_unshare_iter(struct iomap_iter *iter)
+ 		unsigned long bytes = min_t(loff_t, PAGE_SIZE - offset, length);
+ 		struct folio *folio;
+ 
+-		status = iomap_write_begin(iter, pos, bytes, &folio);
++		status = iomap_write_begin(iter, pos, bytes, &folio, FGP_CREAT);
+ 		if (unlikely(status))
+ 			return status;
+ 		if (iter->iomap.flags & IOMAP_F_STALE)
+@@ -1147,10 +1152,14 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 	loff_t pos = iter->pos;
+ 	loff_t length = iomap_length(iter);
+ 	loff_t written = 0;
++	unsigned fgp = FGP_CREAT;
+ 
+ 	/* already zeroed?  we're done. */
+-	if (srcmap->type == IOMAP_HOLE || srcmap->type == IOMAP_UNWRITTEN)
++	if (srcmap->type == IOMAP_HOLE)
+ 		return length;
++	/* only do page cache lookups over unwritten extents */
++	if (srcmap->type == IOMAP_UNWRITTEN)
++		fgp = 0;
+ 
+ 	do {
+ 		struct folio *folio;
+@@ -1158,9 +1167,20 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 		size_t offset;
+ 		size_t bytes = min_t(u64, SIZE_MAX, length);
+ 
+-		status = iomap_write_begin(iter, pos, bytes, &folio);
+-		if (status)
++		status = iomap_write_begin(iter, pos, bytes, &folio, fgp);
++		if (status) {
++			if (status == -ENODATA) {
++				/*
++				 * No folio was found, so skip to the start of
++				 * the next potential entry in the page cache
++				 * and continue from there.
++				 */
++				if (bytes > PAGE_SIZE - offset_in_page(pos))
++					bytes = PAGE_SIZE - offset_in_page(pos);
++				goto loop_continue;
++			}
+ 			return status;
++		}
+ 		if (iter->iomap.flags & IOMAP_F_STALE)
+ 			break;
+ 
+@@ -1168,6 +1188,19 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 		if (bytes > folio_size(folio) - offset)
+ 			bytes = folio_size(folio) - offset;
+ 
++		/*
++		 * If the folio over an unwritten extent is clean, then we
++		 * aren't going to touch the data in it at all. We don't want to
++		 * mark it dirty or change the uptodate state of data in the
++		 * page, so we just unlock it and skip to the next range over
++		 * the unwritten extent we need to check.
++		 */
++		if (srcmap->type == IOMAP_UNWRITTEN &&
++		    !folio_test_dirty(folio)) {
++			folio_unlock(folio);
++			goto loop_continue;
++		}
++
+ 		folio_zero_range(folio, offset, bytes);
+ 		folio_mark_accessed(folio);
+ 
+@@ -1175,6 +1208,7 @@ static loff_t iomap_zero_iter(struct iomap_iter *iter, bool *did_zero)
+ 		if (WARN_ON_ONCE(bytes == 0))
+ 			return -EIO;
+ 
++loop_continue:
+ 		pos += bytes;
+ 		length -= bytes;
+ 		written += bytes;
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index 2e10e1c66ad6..d7c2f8c49f94 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -839,17 +839,7 @@ xfs_setattr_size(
+ 		trace_xfs_zero_eof(ip, oldsize, newsize - oldsize);
+ 		error = xfs_zero_range(ip, oldsize, newsize - oldsize,
+ 				&did_zeroing);
+-	} else {
+-		/*
+-		 * iomap won't detect a dirty page over an unwritten block (or a
+-		 * cow block over a hole) and subsequently skips zeroing the
+-		 * newly post-EOF portion of the page. Flush the new EOF to
+-		 * convert the block before the pagecache truncate.
+-		 */
+-		error = filemap_write_and_wait_range(inode->i_mapping, newsize,
+-						     newsize);
+-		if (error)
+-			return error;
++	} else if (newsize != oldsize) {
+ 		error = xfs_truncate_page(ip, newsize, &did_zeroing);
+ 	}
+ 
+-- 
+2.38.1
+
