@@ -2,166 +2,234 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D183063FC2D
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 00:42:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 92D8063FC63
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 00:58:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231922AbiLAXm4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Dec 2022 18:42:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47856 "EHLO
+        id S231994AbiLAX60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Dec 2022 18:58:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231825AbiLAXmw (ORCPT
+        with ESMTP id S231923AbiLAX6N (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Dec 2022 18:42:52 -0500
-Received: from mail-wm1-x32c.google.com (mail-wm1-x32c.google.com [IPv6:2a00:1450:4864:20::32c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 448F321E20
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Dec 2022 15:42:50 -0800 (PST)
-Received: by mail-wm1-x32c.google.com with SMTP id i81-20020a1c3b54000000b003d070274a61so4822218wma.3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 01 Dec 2022 15:42:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u1BLYwZY5bN3vN/ic/ptPGLS2PPXZuxHx6fXaHe8QR0=;
-        b=dmCf3lPhz6Btg5yVeFhWhov2J0EQqLJkDGPXTDytBHHVUcx5x6NhD9Stvt/1l0dHsN
-         wxxY420AHgaSh4/w0+xSPe13fHayNW3J68lMwpPj2DIffCL+rWanaLlislEYBPCSr0yG
-         Vm78/XGGHrUi1T/kn6uhtu1ED9pWVsiUfgPQ8h+D06v3VzvcYZaCj16+2hF7gBOt0UMe
-         Z+4fHjbu1vfAO6J/Mh0xOkP0PUFKbfZnbw/+ZG3AbXRhy/ChMFx4QcYEGxV7orlsSG9P
-         YkhMzMEy6T/Y/fvW2No/a+8wx2aKq8uFcwoKjIRaAenSjDxBHYDlKXiCiNUJX4qj4znL
-         NM7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=u1BLYwZY5bN3vN/ic/ptPGLS2PPXZuxHx6fXaHe8QR0=;
-        b=DS81l//uoQLbez5jgNyoUndi8a7dpB6BTzopwr8NS26Oxi1VlqkrZBUwcci2qBXJWs
-         Vu6qLVvW4Hjrcmql+o9j5HeFt3Q9j+qqIGlT72uuZKcgvH/V+2F3xe1KL6CNjuRn29Rd
-         iJpO91S1ff6QEHUs6N4AARi+AEgdj3ASHIsUoicQm9A6eJ/2+3jQ8NMvdgmJvPzkQYht
-         G4FaCACN1j7nwOBRyQigEc+Ioa0Tt/a2QJcijI2O3komnyd2yJKNC/O50lWQfe7XJhH9
-         EVBKCWcpFbTiulMuAIve3R9Jj0hnf79/c8gEYAQp2jZaxAvd0XeeUdTPj5fTzMLlZ2qY
-         O9Ww==
-X-Gm-Message-State: ANoB5pkcS1MnPJYO7xSRUlOna1toMpUSeKGRSkTqcW/illQDbqEPgUPk
-        88FAH91YZfFoOXS/6ZcIg9rx9YBkE0xoMrFBetpaww==
-X-Google-Smtp-Source: AA0mqf7VajGpoGBZ4xg9b6825l8cjMfES8HHBJP3GkS3HSaplese1PNiHOiYM2HCdMSJ/GEEWhjGWyeI4tovImT4Xb4=
-X-Received: by 2002:a1c:f616:0:b0:3cf:b1c2:c911 with SMTP id
- w22-20020a1cf616000000b003cfb1c2c911mr42263037wmc.16.1669938168621; Thu, 01
- Dec 2022 15:42:48 -0800 (PST)
+        Thu, 1 Dec 2022 18:58:13 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C667DBFCFE;
+        Thu,  1 Dec 2022 15:58:12 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 6BF3C6178A;
+        Thu,  1 Dec 2022 23:58:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C27F0C433C1;
+        Thu,  1 Dec 2022 23:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669939091;
+        bh=zPyaMFVNtJz39yxuPqF88oHgpJ3uncDzubuWa5rwGJc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MhniUVuXFz96YDbTNmKxsR23Xfn0Bw5dVPYyb3Pfrt+WgCyOOL59YbJchYz1ZXNmG
+         xmSoWIvChXKlmhedoutyUiutSWeBHfRvrQmMUs/vAaYxpZyN5p1gAQz38l8uu77Cqm
+         h2LPjjYUEdL48kiIp7MBEnmE/U4C4o+QDl5sR1M2OHjHSackl/pvXF8Mbf0tDH5eLX
+         CsPgJlVUgOGDbo/kXPbKH1AP/RCFUpj+ikg+Fc4damulzHfFWu0l+NZpt+EPI/lmrD
+         3WPFQb2PbmnVCbJAV0j3Bo8+fBP1CtAeVzudaQu8BsV/14FamWbu/kGV7emLyjr7Ip
+         vxKs0XuvavxOA==
+Date:   Thu, 1 Dec 2022 15:58:11 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, dan.j.williams@intel.com,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH v2 3/8] fsdax: zero the edges if source is HOLE or
+ UNWRITTEN
+Message-ID: <Y4k/kxuPOirdlctI@magnolia>
+References: <1669908538-55-1-git-send-email-ruansy.fnst@fujitsu.com>
+ <1669908538-55-4-git-send-email-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-References: <D3AF9D1E-12E1-434F-AEA4-5892E8BC66AB@gmail.com>
- <CAFCauYOuVrSFmeckMi+2xteCcuuCfsuNtdMB0spo2afcGOxSeg@mail.gmail.com> <8242669C-B41F-4310-A244-973D9793E652@gmail.com>
-In-Reply-To: <8242669C-B41F-4310-A244-973D9793E652@gmail.com>
-From:   Victor Hsieh <victorhsieh@google.com>
-Date:   Thu, 1 Dec 2022 15:42:35 -0800
-Message-ID: <CAFCauYPGtUHyu+hjET97YnG+a3hraeGTaMeR=wUm8duKu=w7fw@mail.gmail.com>
-Subject: Re: Feature proposal: support file content integrity verification
- based on fs-verity
-To:     Gerry Liu <liuj97@gmail.com>
-Cc:     Eric Biggers <ebiggers@google.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-fsdevel@vger.kernel.org,
-        linux-fscrypt@vger.kernel.org, fuse-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1669908538-55-4-git-send-email-ruansy.fnst@fujitsu.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 1, 2022 at 1:51 AM Gerry Liu <liuj97@gmail.com> wrote:
->
->
->
-> > 2022=E5=B9=B411=E6=9C=8829=E6=97=A5 08:44=EF=BC=8CVictor Hsieh <victorh=
-sieh@google.com> =E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Thu, Nov 17, 2022 at 9:19 PM Gmail <liuj97@gmail.com> wrote:
-> >>
-> >> Hello fuse-devel,
-> >>
-> >> The fs-verity framework provides file content integrity verification s=
-ervices for filesystems. Currently ext4/btrfs/f2fs has enabled support for =
-fs-verity. Here I would like to propose implementing FUSE file content inte=
-grity verification based on fs-verity.
-> >>
-> >> Our current main use case is to support integrity verification for con=
-fidential containers using virtio-fs. With the new integrity verification f=
-eature, we can ensure that files from virtio-fs are trusted and fs-verity r=
-oot digests are available for remote attestation. The integrity verificatio=
-n feature can also be used to support other FUSE based solutions.
-> > I'd argue FUSE isn't the right layer for supporting fs-verity
-> > verification.  The verification can happen in the read path of
-> > virtio-fs (or any FUSE-based filesystem).  In fact, Android is already
-> > doing this in "authfs" fully in userspace.
-> Hi Victor,
-> Thanks for your comments:)
->
-> There=E2=80=99s a trust boundary problem here. There are two possible way=
-s to verify data integrity:
-> 1) verify data integrity in fuse kernel driver
-> 2) verify data integrity in fuse server.
->
-> For hardware TEE(Trusted Execution Environment) based confidential vm/con=
-tainer with virtio-fs, the fuse server running on the host side is outside =
-of trust domain, and the fuse driver is inside of trust domain. It is there=
-fore recommended to verify data integrity in the fuse driver. The same situ=
-ation may exist for fuse device based fuse server. The application trusts k=
-ernel but doesn=E2=80=99t trust the fuse server.
+On Thu, Dec 01, 2022 at 03:28:53PM +0000, Shiyang Ruan wrote:
+> If srcmap contains invalid data, such as HOLE and UNWRITTEN, the dest
+> page should be zeroed.  Otherwise, since it's a pmem, old data may
+> remains on the dest page, the result of CoW will be incorrect.
+> 
+> The function name is also not easy to understand, rename it to
+> "dax_iomap_copy_around()", which means it copys data around the range.
+> 
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> ---
+>  fs/dax.c | 78 ++++++++++++++++++++++++++++++++++----------------------
+>  1 file changed, 48 insertions(+), 30 deletions(-)
+> 
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 482dda85ccaf..6b6e07ad8d80 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -1092,7 +1092,7 @@ static int dax_iomap_direct_access(const struct iomap *iomap, loff_t pos,
+>  }
+>  
+>  /**
+> - * dax_iomap_cow_copy - Copy the data from source to destination before write
+> + * dax_iomap_copy_around - Copy the data from source to destination before write
 
-It sounded like your case is similar to ours: the storage isn't
-considered trusted (across the VM boundary).  Note that fs-verity can
-only give you the consistent (and efficient) file measurement over the
-file content.  If your storage is not trusted, you do have to ensure
-the measurement of the *file paths* are the expected values, otherwise
-the attacker can replace/rename one file with another.  For example,
-the trusted process would have to know a mapping from file name to the
-measurement, and check the measurement of the fs-verity-enabled files
-before every open.   I can see how supporting fs-verity in virtio-fs
-can be a stepping stone to solving your problem, but I'm not in a good
-position to suggest whether it's a good idea or not.  But we did solve
-our problem purely in userspace also using FUSE.
+ * dax_iomap_copy_around - Prepare for an unaligned write to a
+ * shared/cow page by copying the data before and after the range to be
+ * written.
 
->
-> Thanks,
-> Gerry
->
-> >
-> > Although FUSE lacks the support of "unrestricted" ioctl, which makes
-> > it impossible for the filesystem to receive the fs-verity ioctls.
-> > Same to statx.  I think that's where we'd need a change in FUSE
-> > protocol.
-> >
-> >>
-> >> Fs-verity supports generating and verifying file content hash values. =
-For the sake of simplicity, we may only support hash value verification of =
-file content in the first stage, and enable support for hash value generati=
-on in the later stage.
-> >>
-> >> The following FUSE protocol changes are therefore proposed to support =
-fs-verity:
-> >> 1) add flag =E2=80=9CFUSE_FS_VERITY=E2=80=9D to negotiate fs-verity su=
-pport
-> >> 2) add flag =E2=80=9CFUSE_ATTR_FSVERITY=E2=80=9D for fuse servers to m=
-ark that inodes have associated fs-verity meta data.
-> >> 3) add op =E2=80=9CFUSE_FSVERITY=E2=80=9D to get/set fs-verity descrip=
-tor and hash values.
-> >
-> >>
-> >> The FUSE protocol does not specify how fuse servers store fs-verity me=
-tadata. The fuse server can store fs-verity metadata in its own ways.
-> >>
-> >> I did a quick prototype and the changes seems moderate, about 250 line=
-s of code changes.
-> >>
-> >> Would love to hear about your feedback:)
-> >>
-> >> Thanks,
-> >> Gerry
-> >>
->
+Other than that, this make sense,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+
+--D
+
+>   * @pos:	address to do copy from.
+>   * @length:	size of copy operation.
+>   * @align_size:	aligned w.r.t align_size (either PMD_SIZE or PAGE_SIZE)
+> @@ -1101,35 +1101,50 @@ static int dax_iomap_direct_access(const struct iomap *iomap, loff_t pos,
+>   *
+>   * This can be called from two places. Either during DAX write fault (page
+>   * aligned), to copy the length size data to daddr. Or, while doing normal DAX
+> - * write operation, dax_iomap_actor() might call this to do the copy of either
+> + * write operation, dax_iomap_iter() might call this to do the copy of either
+>   * start or end unaligned address. In the latter case the rest of the copy of
+> - * aligned ranges is taken care by dax_iomap_actor() itself.
+> + * aligned ranges is taken care by dax_iomap_iter() itself.
+> + * If the srcmap contains invalid data, such as HOLE and UNWRITTEN, zero the
+> + * area to make sure no old data remains.
+>   */
+> -static int dax_iomap_cow_copy(loff_t pos, uint64_t length, size_t align_size,
+> +static int dax_iomap_copy_around(loff_t pos, uint64_t length, size_t align_size,
+>  		const struct iomap *srcmap, void *daddr)
+>  {
+>  	loff_t head_off = pos & (align_size - 1);
+>  	size_t size = ALIGN(head_off + length, align_size);
+>  	loff_t end = pos + length;
+>  	loff_t pg_end = round_up(end, align_size);
+> +	/* copy_all is usually in page fault case */
+>  	bool copy_all = head_off == 0 && end == pg_end;
+> +	/* zero the edges if srcmap is a HOLE or IOMAP_UNWRITTEN */
+> +	bool zero_edge = srcmap->flags & IOMAP_F_SHARED ||
+> +			 srcmap->type == IOMAP_UNWRITTEN;
+>  	void *saddr = 0;
+>  	int ret = 0;
+>  
+> -	ret = dax_iomap_direct_access(srcmap, pos, size, &saddr, NULL);
+> -	if (ret)
+> -		return ret;
+> +	if (!zero_edge) {
+> +		ret = dax_iomap_direct_access(srcmap, pos, size, &saddr, NULL);
+> +		if (ret)
+> +			return ret;
+> +	}
+>  
+>  	if (copy_all) {
+> -		ret = copy_mc_to_kernel(daddr, saddr, length);
+> -		return ret ? -EIO : 0;
+> +		if (zero_edge)
+> +			memset(daddr, 0, size);
+> +		else
+> +			ret = copy_mc_to_kernel(daddr, saddr, length);
+> +		goto out;
+>  	}
+>  
+>  	/* Copy the head part of the range */
+>  	if (head_off) {
+> -		ret = copy_mc_to_kernel(daddr, saddr, head_off);
+> -		if (ret)
+> -			return -EIO;
+> +		if (zero_edge)
+> +			memset(daddr, 0, head_off);
+> +		else {
+> +			ret = copy_mc_to_kernel(daddr, saddr, head_off);
+> +			if (ret)
+> +				return -EIO;
+> +		}
+>  	}
+>  
+>  	/* Copy the tail part of the range */
+> @@ -1137,12 +1152,19 @@ static int dax_iomap_cow_copy(loff_t pos, uint64_t length, size_t align_size,
+>  		loff_t tail_off = head_off + length;
+>  		loff_t tail_len = pg_end - end;
+>  
+> -		ret = copy_mc_to_kernel(daddr + tail_off, saddr + tail_off,
+> -					tail_len);
+> -		if (ret)
+> -			return -EIO;
+> +		if (zero_edge)
+> +			memset(daddr + tail_off, 0, tail_len);
+> +		else {
+> +			ret = copy_mc_to_kernel(daddr + tail_off,
+> +						saddr + tail_off, tail_len);
+> +			if (ret)
+> +				return -EIO;
+> +		}
+>  	}
+> -	return 0;
+> +out:
+> +	if (zero_edge)
+> +		dax_flush(srcmap->dax_dev, daddr, size);
+> +	return ret ? -EIO : 0;
+>  }
+>  
+>  /*
+> @@ -1241,13 +1263,10 @@ static int dax_memzero(struct iomap_iter *iter, loff_t pos, size_t size)
+>  	if (ret < 0)
+>  		return ret;
+>  	memset(kaddr + offset, 0, size);
+> -	if (srcmap->addr != iomap->addr) {
+> -		ret = dax_iomap_cow_copy(pos, size, PAGE_SIZE, srcmap,
+> -					 kaddr);
+> -		if (ret < 0)
+> -			return ret;
+> -		dax_flush(iomap->dax_dev, kaddr, PAGE_SIZE);
+> -	} else
+> +	if (iomap->flags & IOMAP_F_SHARED)
+> +		ret = dax_iomap_copy_around(pos, size, PAGE_SIZE, srcmap,
+> +					    kaddr);
+> +	else
+>  		dax_flush(iomap->dax_dev, kaddr + offset, size);
+>  	return ret;
+>  }
+> @@ -1401,8 +1420,8 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+>  		}
+>  
+>  		if (cow) {
+> -			ret = dax_iomap_cow_copy(pos, length, PAGE_SIZE, srcmap,
+> -						 kaddr);
+> +			ret = dax_iomap_copy_around(pos, length, PAGE_SIZE,
+> +						    srcmap, kaddr);
+>  			if (ret)
+>  				break;
+>  		}
+> @@ -1547,7 +1566,7 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
+>  		struct xa_state *xas, void **entry, bool pmd)
+>  {
+>  	const struct iomap *iomap = &iter->iomap;
+> -	const struct iomap *srcmap = &iter->srcmap;
+> +	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+>  	size_t size = pmd ? PMD_SIZE : PAGE_SIZE;
+>  	loff_t pos = (loff_t)xas->xa_index << PAGE_SHIFT;
+>  	bool write = iter->flags & IOMAP_WRITE;
+> @@ -1578,9 +1597,8 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
+>  
+>  	*entry = dax_insert_entry(xas, vmf, iter, *entry, pfn, entry_flags);
+>  
+> -	if (write &&
+> -	    srcmap->type != IOMAP_HOLE && srcmap->addr != iomap->addr) {
+> -		err = dax_iomap_cow_copy(pos, size, size, srcmap, kaddr);
+> +	if (write && iomap->flags & IOMAP_F_SHARED) {
+> +		err = dax_iomap_copy_around(pos, size, size, srcmap, kaddr);
+>  		if (err)
+>  			return dax_fault_return(err);
+>  	}
+> -- 
+> 2.38.1
+> 
