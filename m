@@ -2,103 +2,202 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EA7BB63F4D8
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 17:08:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D175563F4F5
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 17:14:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231860AbiLAQIl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Dec 2022 11:08:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52156 "EHLO
+        id S231612AbiLAQO5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Dec 2022 11:14:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59980 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232151AbiLAQIf (ORCPT
+        with ESMTP id S229630AbiLAQOz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Dec 2022 11:08:35 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19AC3E00
-        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Dec 2022 08:07:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669910852;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=qqommci96us+QVDcXaQm47rsizn+sT4z8GqL5KIOQ8U=;
-        b=fI2eG2QIOnhah48j25e69uL647LB7FKbpOG/XSd9woM9ROr4ISTi0fj0LSa8eN2QhWxY4j
-        zZl+WeQtBF66ZMOSTZzoREHFBD43EC3bURv1++CXkwphRMOSclRGxbXHGhyVxAGeposI4v
-        xcw1Rvv3BHsTlUrkJuQARjli8Ueh9vU=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-369-qMK60ov8MSi3UZwPT7S-dA-1; Thu, 01 Dec 2022 11:07:00 -0500
-X-MC-Unique: qMK60ov8MSi3UZwPT7S-dA-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 1 Dec 2022 11:14:55 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6FC6B54443;
+        Thu,  1 Dec 2022 08:14:54 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 30959800186;
-        Thu,  1 Dec 2022 16:06:29 +0000 (UTC)
-Received: from pasta.redhat.com (ovpn-192-141.brq.redhat.com [10.40.192.141])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2AB4D111E3FA;
-        Thu,  1 Dec 2022 16:06:27 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
-Subject: [RFC 3/3] gfs2: Fix race between shrinker and gfs2_iomap_folio_done
-Date:   Thu,  1 Dec 2022 17:06:19 +0100
-Message-Id: <20221201160619.1247788-4-agruenba@redhat.com>
-In-Reply-To: <20221201160619.1247788-1-agruenba@redhat.com>
-References: <20221201160619.1247788-1-agruenba@redhat.com>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id EAC3062056;
+        Thu,  1 Dec 2022 16:14:53 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A5C5C433C1;
+        Thu,  1 Dec 2022 16:14:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1669911293;
+        bh=RA+oYTRjg5pJois2KzjtgaU2E3HhxewyaArdgu/qh4I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=tHG04wr1uG6lJKID3geDq5590EAVNGQa5BbtUYJ3uN2I/iu+Mm6ylnKRwH28/G7YX
+         QfuGBwTCyl1vBS8bZD7EXBvSujfrEKzMD8DRtEuRsIjY6gE07nhs2S0gkbjIiS2gmz
+         Y6Ged32jEWtITYeUAwZWHyF/0AFgc0no/Ac9cNIgeJmKg7uYJG7cMLgacWAEtui60B
+         W6MGnz/A8+XZKQ3zwWLrchrv8AtkHdF325qqXiLjtIyU2SCa+qwPgm3Oy3iqtEXiZ/
+         m8e57TxoG7P41iCRCwgjy/d47Le65e31WloOgK2Wj2R+wkBD/7echONk/PHVKk9jd+
+         7lKpQcltG6ZJg==
+Date:   Thu, 1 Dec 2022 08:14:52 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        david@fromorbit.com, dan.j.williams@intel.com,
+        akpm@linux-foundation.org
+Subject: Re: [PATCH v2 1/8] fsdax: introduce page->share for fsdax in reflink
+ mode
+Message-ID: <Y4jS/F7VH3zKdsBi@magnolia>
+References: <1669908538-55-1-git-send-email-ruansy.fnst@fujitsu.com>
+ <1669908538-55-2-git-send-email-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1669908538-55-2-git-send-email-ruansy.fnst@fujitsu.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-In gfs2_iomap_folio_done(), add the modified buffer heads to the current
-transaction while the folio is still locked.  Otherwise, the shrinker
-can come in and free them before we get to gfs2_page_add_databufs().
+On Thu, Dec 01, 2022 at 03:28:51PM +0000, Shiyang Ruan wrote:
+> fsdax page is used not only when CoW, but also mapread. To make the it
+> easily understood, use 'share' to indicate that the dax page is shared
+> by more than one extent.  And add helper functions to use it.
+> 
+> Also, the flag needs to be renamed to PAGE_MAPPING_DAX_SHARED.
+> 
+> Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
+> ---
+>  fs/dax.c                   | 38 ++++++++++++++++++++++----------------
+>  include/linux/mm_types.h   |  5 ++++-
+>  include/linux/page-flags.h |  2 +-
+>  3 files changed, 27 insertions(+), 18 deletions(-)
+> 
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 1c6867810cbd..85b81963ea31 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -334,35 +334,41 @@ static unsigned long dax_end_pfn(void *entry)
+>  	for (pfn = dax_to_pfn(entry); \
+>  			pfn < dax_end_pfn(entry); pfn++)
+>  
+> -static inline bool dax_mapping_is_cow(struct address_space *mapping)
+> +static inline bool dax_mapping_is_shared(struct page *page)
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
----
- fs/gfs2/bmap.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+dax_page_is_shared?
 
-diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index 18dcaa95408e..d8d9ee843ac9 100644
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -990,18 +990,17 @@ gfs2_iomap_folio_done(struct inode *inode, struct folio *folio,
- 	struct gfs2_inode *ip = GFS2_I(inode);
- 	struct gfs2_sbd *sdp = GFS2_SB(inode);
- 
--	folio_unlock(folio);
--
- 	if (!gfs2_is_stuffed(ip))
- 		gfs2_page_add_databufs(ip, &folio->page, offset_in_page(pos),
- 				       copied);
- 
-+	folio_unlock(folio);
-+	folio_put(folio);
-+
- 	if (tr->tr_num_buf_new)
- 		__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
- 
- 	gfs2_trans_end(sdp);
--
--	folio_put(folio);
- }
- 
- static const struct iomap_folio_ops gfs2_iomap_folio_ops = {
--- 
-2.38.1
+>  {
+> -	return (unsigned long)mapping == PAGE_MAPPING_DAX_COW;
+> +	return (unsigned long)page->mapping == PAGE_MAPPING_DAX_SHARED;
+>  }
+>  
+>  /*
+> - * Set the page->mapping with FS_DAX_MAPPING_COW flag, increase the refcount.
+> + * Set the page->mapping with PAGE_MAPPING_DAX_SHARED flag, increase the
+> + * refcount.
+>   */
+> -static inline void dax_mapping_set_cow(struct page *page)
+> +static inline void dax_mapping_set_shared(struct page *page)
 
+It's odd that a function of a struct page still has 'mapping' in the
+name.
+
+dax_page_increase_shared?
+
+or perhaps simply
+
+dax_page_bump_sharing and dax_page_drop_sharing?
+
+Otherwise this mechanical change looks pretty straightforward.
+
+--D
+
+>  {
+> -	if ((uintptr_t)page->mapping != PAGE_MAPPING_DAX_COW) {
+> +	if ((uintptr_t)page->mapping != PAGE_MAPPING_DAX_SHARED) {
+>  		/*
+>  		 * Reset the index if the page was already mapped
+>  		 * regularly before.
+>  		 */
+>  		if (page->mapping)
+> -			page->index = 1;
+> -		page->mapping = (void *)PAGE_MAPPING_DAX_COW;
+> +			page->share = 1;
+> +		page->mapping = (void *)PAGE_MAPPING_DAX_SHARED;
+>  	}
+> -	page->index++;
+> +	page->share++;
+> +}
+> +
+> +static inline unsigned long dax_mapping_decrease_shared(struct page *page)
+> +{
+> +	return --page->share;
+>  }
+>  
+>  /*
+> - * When it is called in dax_insert_entry(), the cow flag will indicate that
+> + * When it is called in dax_insert_entry(), the shared flag will indicate that
+>   * whether this entry is shared by multiple files.  If so, set the page->mapping
+> - * FS_DAX_MAPPING_COW, and use page->index as refcount.
+> + * PAGE_MAPPING_DAX_SHARED, and use page->share as refcount.
+>   */
+>  static void dax_associate_entry(void *entry, struct address_space *mapping,
+> -		struct vm_area_struct *vma, unsigned long address, bool cow)
+> +		struct vm_area_struct *vma, unsigned long address, bool shared)
+>  {
+>  	unsigned long size = dax_entry_size(entry), pfn, index;
+>  	int i = 0;
+> @@ -374,8 +380,8 @@ static void dax_associate_entry(void *entry, struct address_space *mapping,
+>  	for_each_mapped_pfn(entry, pfn) {
+>  		struct page *page = pfn_to_page(pfn);
+>  
+> -		if (cow) {
+> -			dax_mapping_set_cow(page);
+> +		if (shared) {
+> +			dax_mapping_set_shared(page);
+>  		} else {
+>  			WARN_ON_ONCE(page->mapping);
+>  			page->mapping = mapping;
+> @@ -396,9 +402,9 @@ static void dax_disassociate_entry(void *entry, struct address_space *mapping,
+>  		struct page *page = pfn_to_page(pfn);
+>  
+>  		WARN_ON_ONCE(trunc && page_ref_count(page) > 1);
+> -		if (dax_mapping_is_cow(page->mapping)) {
+> -			/* keep the CoW flag if this page is still shared */
+> -			if (page->index-- > 0)
+> +		if (dax_mapping_is_shared(page)) {
+> +			/* keep the shared flag if this page is still shared */
+> +			if (dax_mapping_decrease_shared(page) > 0)
+>  				continue;
+>  		} else
+>  			WARN_ON_ONCE(page->mapping && page->mapping != mapping);
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 500e536796ca..f46cac3657ad 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -103,7 +103,10 @@ struct page {
+>  			};
+>  			/* See page-flags.h for PAGE_MAPPING_FLAGS */
+>  			struct address_space *mapping;
+> -			pgoff_t index;		/* Our offset within mapping. */
+> +			union {
+> +				pgoff_t index;		/* Our offset within mapping. */
+> +				unsigned long share;	/* share count for fsdax */
+> +			};
+>  			/**
+>  			 * @private: Mapping-private opaque data.
+>  			 * Usually used for buffer_heads if PagePrivate.
+> diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+> index 0b0ae5084e60..c8a3aa02278d 100644
+> --- a/include/linux/page-flags.h
+> +++ b/include/linux/page-flags.h
+> @@ -641,7 +641,7 @@ PAGEFLAG_FALSE(VmemmapSelfHosted, vmemmap_self_hosted)
+>   * Different with flags above, this flag is used only for fsdax mode.  It
+>   * indicates that this page->mapping is now under reflink case.
+>   */
+> -#define PAGE_MAPPING_DAX_COW	0x1
+> +#define PAGE_MAPPING_DAX_SHARED	0x1
+>  
+>  static __always_inline bool folio_mapping_flags(struct folio *folio)
+>  {
+> -- 
+> 2.38.1
+> 
