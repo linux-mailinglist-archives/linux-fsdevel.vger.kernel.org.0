@@ -2,254 +2,139 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9007363F2DA
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 15:29:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E0BE363F2DF
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 15:30:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231547AbiLAO3Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Dec 2022 09:29:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46540 "EHLO
+        id S231397AbiLAOaY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Dec 2022 09:30:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46964 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229968AbiLAO3W (ORCPT
+        with ESMTP id S229481AbiLAOaV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Dec 2022 09:29:22 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46122A7A9F;
-        Thu,  1 Dec 2022 06:29:21 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id v124-20020a1cac82000000b003cf7a4ea2caso4007167wme.5;
-        Thu, 01 Dec 2022 06:29:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LO8HYd4h632EoelSH71DA9q0EI9uMmpEDkXZLk2p4rg=;
-        b=NL+96sIlffx6zg1RYCnRJNyHuyVFo0uBCoId+r/h6BLbjJckmOlPxEIvLMGViXnJfx
-         M/B52y3zs8lEilCRQ5K0ZgfFQgSzpyWHXZc4JxXKEkcfb3jbW+NoBNydJ5vmtwRUXlXU
-         IDPHJNMan9290O3XQL6kbtNYHGVeimWTTWgtDPEZr16LUEet7T8NUF78zSgfB5vqdIgS
-         ILyP783+Sq6md9pLW76r+VxpCPDWu6UIumPzqoAqBMgg+RXzWwUpakbWZQZo5Ya0E8K6
-         kGJ9Ih7ZqXuOL0cmDg3ayvULohpVWlJ7P5S74tNdhnN/s0eKFV8wbvZPALZDo8dwF/uJ
-         S5tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LO8HYd4h632EoelSH71DA9q0EI9uMmpEDkXZLk2p4rg=;
-        b=MKgrtsn2eRq0gBdUcpKqURUgyCTZpd2MnesRut7FMFvyeOQkFBijRyAf6ews95av8r
-         Cjlj2xQP6ola49Vs2MUgF/E/q/qZ02kn1HnfdAq/kA0CyrOc5aYDgO6ruVLM1huWHD7A
-         HqIcpTSiPOPRDFufN7w88f3/UZLDhnQsUJdMn1dbpzgdRULR3ZvP0vcO3y3RxN7UCBTx
-         K112G1bF6XKCUBMSevevNruR8UayXSMq2aVVJhF4NVdGgvtJOBBpBcrtbbCsGX/cPDcI
-         4FeQvdzZxHV6JijsNSsALmv1wmc1rsyWKl8GX44N0zp9cbOBl8DiXI2PVaBVybLsTejN
-         4uyQ==
-X-Gm-Message-State: ANoB5pnpH5KBNvOXdQ57l4ERIHqAevZJhfwaVJSqPvAl7L6muSVEiscj
-        x3fCc4mHhzD1Z48JQBz7Cco=
-X-Google-Smtp-Source: AA0mqf5rd8rHx+AM/g2GEdExoUBA16Udgb2kplNsq78CUZEipA4C97pd141rZnkWVlkqZ56FYzZeUw==
-X-Received: by 2002:a05:600c:5254:b0:3d0:75d5:c64b with SMTP id fc20-20020a05600c525400b003d075d5c64bmr5345838wmb.12.1669904959550;
-        Thu, 01 Dec 2022 06:29:19 -0800 (PST)
-Received: from suse.localnet (host-79-55-110-244.retail.telecomitalia.it. [79.55.110.244])
-        by smtp.gmail.com with ESMTPSA id k27-20020a5d525b000000b00242269c8b8esm4493830wrc.25.2022.12.01.06.29.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Dec 2022 06:29:18 -0800 (PST)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>, Jeff Moyer <jmoyer@redhat.com>
-Subject: Re: [RESEND PATCH] fs/aio: Replace kmap{,_atomic}() with kmap_local_page()
-Date:   Thu, 01 Dec 2022 15:29:17 +0100
-Message-ID: <5882941.lOV4Wx5bFT@suse>
-In-Reply-To: <20221016150656.5803-1-fmdefrancesco@gmail.com>
-References: <20221016150656.5803-1-fmdefrancesco@gmail.com>
+        Thu, 1 Dec 2022 09:30:21 -0500
+Received: from mx6.didiglobal.com (mx6.didiglobal.com [111.202.70.123])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 9BD5BA7AB5;
+        Thu,  1 Dec 2022 06:30:17 -0800 (PST)
+Received: from mail.didiglobal.com (unknown [10.79.71.35])
+        by mx6.didiglobal.com (Maildata Gateway V2.8) with ESMTPS id 5AA13110363200;
+        Thu,  1 Dec 2022 22:30:12 +0800 (CST)
+Received: from ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) by
+ ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Thu, 1 Dec 2022 22:30:12 +0800
+Received: from ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769])
+ by ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769%8]) with mapi
+ id 15.01.2375.017; Thu, 1 Dec 2022 22:30:11 +0800
+X-MD-Sfrom: chengkaitao@didiglobal.com
+X-MD-SrcIP: 10.79.71.35
+From:   =?utf-8?B?56iL5Z6y5rabIENoZW5na2FpdGFvIENoZW5n?= 
+        <chengkaitao@didiglobal.com>
+To:     Michal Hocko <mhocko@suse.com>
+CC:     Tao pilgrim <pilgrimtao@gmail.com>,
+        "tj@kernel.org" <tj@kernel.org>,
+        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
+        "shakeelb@google.com" <shakeelb@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
+        "cgel.zte@gmail.com" <cgel.zte@gmail.com>,
+        "ran.xiaokai@zte.com.cn" <ran.xiaokai@zte.com.cn>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+        "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
+        "yuzhao@google.com" <yuzhao@google.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "vasily.averin@linux.dev" <vasily.averin@linux.dev>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "surenb@google.com" <surenb@google.com>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "sujiaxun@uniontech.com" <sujiaxun@uniontech.com>,
+        "feng.tang@intel.com" <feng.tang@intel.com>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Bagas Sanjaya" <bagasdotme@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] mm: memcontrol: protect the memory in cgroup from being
+ oom killed
+Thread-Topic: [PATCH] mm: memcontrol: protect the memory in cgroup from being
+ oom killed
+Thread-Index: AQHZBK+NwNVzWF9Xk0ibAn/rxGrWSq5XnGYA//+FgwCAAVYiAP//vByAgACohID//5lJgAAA0fUAABOecIA=
+Date:   Thu, 1 Dec 2022 14:30:11 +0000
+Message-ID: <C9FFF5A4-B883-4C0D-A802-D94080D6C3A4@didiglobal.com>
+In-Reply-To: <Y4inSsNpmomzRt8J@dhcp22.suse.cz>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.79.64.101]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <C0A32D731A459844B8D5001BAE8B8536@didichuxing.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On domenica 16 ottobre 2022 17:06:56 CET Fabio M. De Francesco wrote:
-> The use of kmap() and kmap_atomic() are being deprecated in favor of
-> kmap_local_page().
->=20
-> There are two main problems with kmap(): (1) It comes with an overhead as
-> the mapping space is restricted and protected by a global lock for
-> synchronization and (2) it also requires global TLB invalidation when the
-> kmap=E2=80=99s pool wraps and it might block when the mapping space is fu=
-lly
-> utilized until a slot becomes available.
->=20
-> With kmap_local_page() the mappings are per thread, CPU local, can take
-> page faults, and can be called from any context (including interrupts).
-> It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
-> the tasks can be preempted and, when they are scheduled to run again, the
-> kernel virtual addresses are restored and still valid.
->=20
-> Since its use in fs/aio.c is safe everywhere, it should be preferred.
->=20
-> Therefore, replace kmap() and kmap_atomic() with kmap_local_page() in
-> fs/aio.c.
->=20
-> Tested with xfstests on a QEMU/KVM x86_32 VM, 6GB RAM, booting a kernel
-> with HIGHMEM64GB enabled.
->=20
-> Cc: "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>
-> Suggested-by: Ira Weiny <ira.weiny@intel.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
-> Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
-> ---
-
-I'm sorry to resend again. Last time I forgot to forward the "Reviewed-by:"=
-=20
-tag from Jeff (thanks!).
-
->=20
-> I've tested with "./check -g aio". The tests in this group fail 3/26
-> times, with and without my patch. Therefore, these changes don't introduce
-> further errors. I'm not aware of any further tests I may run, so that
-> any suggestions would be precious and much appreciated :-)
->=20
-> I'm resending this patch because some recipients were missing in the
-> previous submissions. In the meantime I'm also adding some more informati=
-on
-> in the commit message. There are no changes in the code.
->=20
->  fs/aio.c | 32 ++++++++++++++++----------------
->  1 file changed, 16 insertions(+), 16 deletions(-)
->=20
-> diff --git a/fs/aio.c b/fs/aio.c
-> index 3c249b938632..343fea0c6d1a 100644
-> --- a/fs/aio.c
-> +++ b/fs/aio.c
-> @@ -567,7 +567,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigne=
-d=20
-int
-> nr_events) ctx->user_id =3D ctx->mmap_base;
->  	ctx->nr_events =3D nr_events; /* trusted copy */
->=20
-> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
->  	ring->nr =3D nr_events;	/* user copy */
->  	ring->id =3D ~0U;
->  	ring->head =3D ring->tail =3D 0;
-> @@ -575,7 +575,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigne=
-d=20
-int
-> nr_events) ring->compat_features =3D AIO_RING_COMPAT_FEATURES;
->  	ring->incompat_features =3D AIO_RING_INCOMPAT_FEATURES;
->  	ring->header_length =3D sizeof(struct aio_ring);
-> -	kunmap_atomic(ring);
-> +	kunmap_local(ring);
->  	flush_dcache_page(ctx->ring_pages[0]);
->=20
->  	return 0;
-> @@ -678,9 +678,9 @@ static int ioctx_add_table(struct kioctx *ctx, struct
-> mm_struct *mm) * we are protected from page migration
->  					 * changes ring_pages by -
->ring_lock.
->  					 */
-> -					ring =3D kmap_atomic(ctx-
->ring_pages[0]);
-> +					ring =3D kmap_local_page(ctx-
->ring_pages[0]);
->  					ring->id =3D ctx->id;
-> -					kunmap_atomic(ring);
-> +					kunmap_local(ring);
->  					return 0;
->  				}
->=20
-> @@ -1024,9 +1024,9 @@ static void user_refill_reqs_available(struct kioctx
-> *ctx) * against ctx->completed_events below will make sure we do the
->  		 * safe/right thing.
->  		 */
-> -		ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +		ring =3D kmap_local_page(ctx->ring_pages[0]);
->  		head =3D ring->head;
-> -		kunmap_atomic(ring);
-> +		kunmap_local(ring);
->=20
->  		refill_reqs_available(ctx, head, ctx->tail);
->  	}
-> @@ -1132,12 +1132,12 @@ static void aio_complete(struct aio_kiocb *iocb)
->  	if (++tail >=3D ctx->nr_events)
->  		tail =3D 0;
->=20
-> -	ev_page =3D kmap_atomic(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
-> +	ev_page =3D kmap_local_page(ctx->ring_pages[pos /=20
-AIO_EVENTS_PER_PAGE]);
->  	event =3D ev_page + pos % AIO_EVENTS_PER_PAGE;
->=20
->  	*event =3D iocb->ki_res;
->=20
-> -	kunmap_atomic(ev_page);
-> +	kunmap_local(ev_page);
->  	flush_dcache_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
->=20
->  	pr_debug("%p[%u]: %p: %p %Lx %Lx %Lx\n", ctx, tail, iocb,
-> @@ -1151,10 +1151,10 @@ static void aio_complete(struct aio_kiocb *iocb)
->=20
->  	ctx->tail =3D tail;
->=20
-> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
->  	head =3D ring->head;
->  	ring->tail =3D tail;
-> -	kunmap_atomic(ring);
-> +	kunmap_local(ring);
->  	flush_dcache_page(ctx->ring_pages[0]);
->=20
->  	ctx->completed_events++;
-> @@ -1214,10 +1214,10 @@ static long aio_read_events_ring(struct kioctx *c=
-tx,
->  	mutex_lock(&ctx->ring_lock);
->=20
->  	/* Access to ->ring_pages here is protected by ctx->ring_lock. */
-> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
->  	head =3D ring->head;
->  	tail =3D ring->tail;
-> -	kunmap_atomic(ring);
-> +	kunmap_local(ring);
->=20
->  	/*
->  	 * Ensure that once we've read the current tail pointer, that
-> @@ -1249,10 +1249,10 @@ static long aio_read_events_ring(struct kioctx *c=
-tx,
->  		avail =3D min(avail, nr - ret);
->  		avail =3D min_t(long, avail, AIO_EVENTS_PER_PAGE - pos);
->=20
-> -		ev =3D kmap(page);
-> +		ev =3D kmap_local_page(page);
->  		copy_ret =3D copy_to_user(event + ret, ev + pos,
->  					sizeof(*ev) * avail);
-> -		kunmap(page);
-> +		kunmap_local(ev);
->=20
->  		if (unlikely(copy_ret)) {
->  			ret =3D -EFAULT;
-> @@ -1264,9 +1264,9 @@ static long aio_read_events_ring(struct kioctx *ctx,
->  		head %=3D ctx->nr_events;
->  	}
->=20
-> -	ring =3D kmap_atomic(ctx->ring_pages[0]);
-> +	ring =3D kmap_local_page(ctx->ring_pages[0]);
->  	ring->head =3D head;
-> -	kunmap_atomic(ring);
-> +	kunmap_local(ring);
->  	flush_dcache_page(ctx->ring_pages[0]);
->=20
->  	pr_debug("%li  h%u t%u\n", ret, head, tail);
-> --
-> 2.36.1
-
-
-
-
+QXQgMjAyMi0xMi0wMSAyMTowODoyNiwgIk1pY2hhbCBIb2NrbyIgPG1ob2Nrb0BzdXNlLmNvbT4g
+d3JvdGU6DQo+T24gVGh1IDAxLTEyLTIyIDEzOjQ0OjU4LCBNaWNoYWwgSG9ja28gd3JvdGU6DQo+
+PiBPbiBUaHUgMDEtMTItMjIgMTA6NTI6MzUsIOeoi+Wesua2myBDaGVuZ2thaXRhbyBDaGVuZyB3
+cm90ZToNCj4+ID4gQXQgMjAyMi0xMi0wMSAxNjo0OToyNywgIk1pY2hhbCBIb2NrbyIgPG1ob2Nr
+b0BzdXNlLmNvbT4gd3JvdGU6DQo+Wy4uLl0NCj4+IFRoZXJlIGlzIGEgbWlzdW5kZXJzdGFuZGlu
+Zywgb29tLnByb3RlY3QgZG9lcyBub3QgcmVwbGFjZSB0aGUgdXNlcidzIA0KPj4gdGFpbGVkIHBv
+bGljaWVzLCBJdHMgcHVycG9zZSBpcyB0byBtYWtlIGl0IGVhc2llciBhbmQgbW9yZSBlZmZpY2ll
+bnQgZm9yIA0KPj4gdXNlcnMgdG8gY3VzdG9taXplIHBvbGljaWVzLCBvciB0cnkgdG8gYXZvaWQg
+dXNlcnMgY29tcGxldGVseSBhYmFuZG9uaW5nIA0KPj4gdGhlIG9vbSBzY29yZSB0byBmb3JtdWxh
+dGUgbmV3IHBvbGljaWVzLg0KPg0KPiBUaGVuIHlvdSBzaG91bGQgZm9jdXMgb24gZXhwbGFpbmlu
+ZyBvbiBob3cgdGhpcyBtYWtlcyB0aG9zZSBwb2xpY2llcyBhbmQNCj4gZWFzaWVyIGFuZCBtb2Ug
+ZWZmaWNpZW50LiBJIGRvIG5vdCBzZWUgaXQuDQoNCkluIGZhY3QsIHRoZXJlIGFyZSBzb21lIHJl
+bGV2YW50IGNvbnRlbnRzIGluIHRoZSBwcmV2aW91cyBjaGF0IHJlY29yZHMuIA0KSWYgb29tLnBy
+b3RlY3QgaXMgYXBwbGllZCwgaXQgd2lsbCBoYXZlIHRoZSBmb2xsb3dpbmcgYmVuZWZpdHMNCjEu
+IFVzZXJzIG9ubHkgbmVlZCB0byBmb2N1cyBvbiB0aGUgbWFuYWdlbWVudCBvZiB0aGUgbG9jYWwg
+Y2dyb3VwLCBub3QgdGhlIA0KaW1wYWN0IG9uIG90aGVyIHVzZXJzJyBjZ3JvdXBzLg0KMi4gVXNl
+cnMgYW5kIHN5c3RlbSBkbyBub3QgbmVlZCB0byBzcGVuZCBleHRyYSB0aW1lIG9uIGNvbXBsaWNh
+dGVkIGFuZCANCnJlcGVhdGVkIHNjYW5uaW5nIGFuZCBjb25maWd1cmF0aW9uLiBUaGV5IGp1c3Qg
+bmVlZCB0byBjb25maWd1cmUgdGhlIA0Kb29tLnByb3RlY3Qgb2Ygc3BlY2lmaWMgY2dyb3Vwcywg
+d2hpY2ggaXMgYSBvbmUtdGltZSB0YXNrDQoNCj4+ID4gPldoeSBjYW5ub3QgeW91IHNpbXBseSBk
+aXNjb3VudCB0aGUgcHJvdGVjdGlvbiBmcm9tIGFsbCBwcm9jZXNzZXMNCj4+ID4gPmVxdWFsbHk/
+IEkgZG8gbm90IGZvbGxvdyB3aHkgdGhlIHRhc2tfdXNhZ2UgaGFzIHRvIHBsYXkgYW55IHJvbGUg
+aW4NCj4+ID4gPnRoYXQuDQo+PiA+IA0KPj4gPiBJZiBhbGwgcHJvY2Vzc2VzIGFyZSBwcm90ZWN0
+ZWQgZXF1YWxseSwgdGhlIG9vbSBwcm90ZWN0aW9uIG9mIGNncm91cCBpcyANCj4+ID4gbWVhbmlu
+Z2xlc3MuIEZvciBleGFtcGxlLCBpZiB0aGVyZSBhcmUgbW9yZSBwcm9jZXNzZXMgaW4gdGhlIGNn
+cm91cCwgDQo+PiA+IHRoZSBjZ3JvdXAgY2FuIHByb3RlY3QgbW9yZSBtZW1zLCBpdCBpcyB1bmZh
+aXIgdG8gY2dyb3VwcyB3aXRoIGZld2VyIA0KPj4gPiBwcm9jZXNzZXMuIFNvIHdlIG5lZWQgdG8g
+a2VlcCB0aGUgdG90YWwgYW1vdW50IG9mIG1lbW9yeSB0aGF0IGFsbCANCj4+ID4gcHJvY2Vzc2Vz
+IGluIHRoZSBjZ3JvdXAgbmVlZCB0byBwcm90ZWN0IGNvbnNpc3RlbnQgd2l0aCB0aGUgdmFsdWUg
+b2YgDQo+PiA+IGVvb20ucHJvdGVjdC4NCj4+IA0KPj4gWW91IGFyZSBtaXhpbmcgdHdvIGRpZmZl
+cmVudCBjb25jZXB0cyB0b2dldGhlciBJIGFtIGFmcmFpZC4gVGhlIHBlcg0KPj4gbWVtY2cgcHJv
+dGVjdGlvbiBzaG91bGQgcHJvdGVjdCB0aGUgY2dyb3VwIChpLmUuIGFsbCBwcm9jZXNzZXMgaW4g
+dGhhdA0KPj4gY2dyb3VwKSB3aGlsZSB5b3Ugd2FudCBpdCB0byBiZSBhbHNvIHByb2Nlc3MgYXdh
+cmUuIFRoaXMgcmVzdWx0cyBpbiBhDQo+PiB2ZXJ5IHVuY2xlYXIgcnVudGltZSBiZWhhdmlvciB3
+aGVuIGEgcHJvY2VzcyBmcm9tIGEgbW9yZSBwcm90ZWN0ZWQgbWVtY2cNCj4+IGlzIHNlbGVjdGVk
+IGJhc2VkIG9uIGl0cyBpbmRpdmlkdWFsIG1lbW9yeSB1c2FnZS4NCj4NClRoZSBjb3JyZWN0IHN0
+YXRlbWVudCBoZXJlIHNob3VsZCBiZSB0aGF0IGVhY2ggbWVtY2cgcHJvdGVjdGlvbiBzaG91bGQg
+DQpwcm90ZWN0IHRoZSBudW1iZXIgb2YgbWVtcyBzcGVjaWZpZWQgYnkgdGhlIG9vbS5wcm90ZWN0
+LiBGb3IgZXhhbXBsZSwgDQphIGNncm91cCdzIHVzYWdlIGlzIDZHLCBhbmQgaXQncyBvb20ucHJv
+dGVjdCBpcyAyRywgd2hlbiBhbiBvb20ga2lsbGVyIG9jY3VycywgDQpJbiB0aGUgd29yc3QgY2Fz
+ZSwgd2Ugd2lsbCBvbmx5IHJlZHVjZSB0aGUgbWVtb3J5IHVzZWQgYnkgdGhpcyBjZ3JvdXAgdG8g
+MkcgDQp0aHJvdWdoIHRoZSBvbSBraWxsZXIuDQoNCj5MZXQgbWUgYmUgbW9yZSBzcGVjaWZpYyBo
+ZXJlLiBBbHRob3VnaCBpdCBpcyBwcmltYXJpbHkgcHJvY2Vzc2VzIHdoaWNoDQo+YXJlIHRoZSBw
+cmltYXJ5IHNvdXJjZSBvZiBtZW1jZyBjaGFyZ2VzIHRoZSBtZW1vcnkgYWNjb3VudGVkIGZvciB0
+aGUgb29tDQo+YmFkbmVzcyBwdXJwb3NlcyBpcyBub3QgcmVhbGx5IGNvbXBhcmFibGUgdG8gdGhl
+IG92ZXJhbCBtZW1jZyBjaGFyZ2VkDQo+bWVtb3J5LiBLZXJuZWwgbWVtb3J5LCBub24tbWFwcGVk
+IG1lbW9yeSBhbGwgdGhhdCBjYW4gZ2VuZXJhdGUgcmF0aGVyDQo+aW50ZXJlc3RpbmcgY29ybmVy
+Y2FzZXMuDQoNClNvcnJ5LCBJJ20gdGhvdWdodGxlc3MgZW5vdWdoIGFib3V0IHNvbWUgc3BlY2lh
+bCBtZW1vcnkgc3RhdGlzdGljcy4gSSB3aWxsIGZpeCANCml0IGluIHRoZSBuZXh0IHZlcnNpb24N
+CiANClRoYW5rcyBmb3IgeW91ciBjb21tZW50IQ0KY2hlbmdrYWl0YW8NCg0K
