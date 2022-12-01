@@ -2,49 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67FDE63F028
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 13:06:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 575D763F039
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  1 Dec 2022 13:14:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231260AbiLAMGu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Dec 2022 07:06:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50534 "EHLO
+        id S229752AbiLAMOr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Dec 2022 07:14:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55746 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230454AbiLAMGt (ORCPT
+        with ESMTP id S229627AbiLAMOq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Dec 2022 07:06:49 -0500
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C620934EE;
-        Thu,  1 Dec 2022 04:06:47 -0800 (PST)
-Received: from dggpemm500007.china.huawei.com (unknown [172.30.72.55])
-        by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4NNF7j6kRqzqSqk;
-        Thu,  1 Dec 2022 20:02:41 +0800 (CST)
-Received: from [10.174.178.174] (10.174.178.174) by
- dggpemm500007.china.huawei.com (7.185.36.183) with Microsoft SMTP Server
+        Thu, 1 Dec 2022 07:14:46 -0500
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5916A8933B
+        for <linux-fsdevel@vger.kernel.org>; Thu,  1 Dec 2022 04:14:44 -0800 (PST)
+Received: from dggpemm100009.china.huawei.com (unknown [172.30.72.57])
+        by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4NNFNk4mtJzHwLD;
+        Thu,  1 Dec 2022 20:13:58 +0800 (CST)
+Received: from [10.174.179.24] (10.174.179.24) by
+ dggpemm100009.china.huawei.com (7.185.36.113) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.31; Thu, 1 Dec 2022 20:06:45 +0800
-Subject: Re: [PATCH v2] chardev: fix error handling in cdev_device_add()
-To:     Greg KH <gregkh@linuxfoundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <logang@deltatee.com>, <dan.j.williams@intel.com>,
-        <hans.verkuil@cisco.com>, <alexandre.belloni@free-electrons.com>,
-        <viro@zeniv.linux.org.uk>
-References: <20221025113957.693723-1-yangyingliang@huawei.com>
- <Y1fNnwLlY079xGVY@kroah.com>
- <ae7cbce0-3506-e21b-fa9b-37a13fe00b77@huawei.com>
- <Y1fmgCS7fuf/LQBc@kroah.com>
-From:   Yang Yingliang <yangyingliang@huawei.com>
-Message-ID: <65b29177-6892-7578-b2ae-a09d5adab661@huawei.com>
-Date:   Thu, 1 Dec 2022 20:06:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+ 15.1.2375.31; Thu, 1 Dec 2022 20:14:41 +0800
+Subject: Re: [PATCH] hfsplus: fix OOB of hfsplus_unistr in hfsplus_uni2asc()
+To:     Viacheslav Dubeyko <slava@dubeyko.com>
+References: <20221129023949.4186612-1-liushixin2@huawei.com>
+ <E5B1AB48-05CB-4A1A-8EA2-373BA1C119EB@dubeyko.com>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Ting-Chang Hou <tchou@synology.com>,
+        <linux-fsdevel@vger.kernel.org>
+From:   Liu Shixin <liushixin2@huawei.com>
+Message-ID: <0f5675f9-6501-967b-250e-46e305955f04@huawei.com>
+Date:   Thu, 1 Dec 2022 20:14:41 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 MIME-Version: 1.0
-In-Reply-To: <Y1fmgCS7fuf/LQBc@kroah.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.174.178.174]
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemm500007.china.huawei.com (7.185.36.183)
+In-Reply-To: <E5B1AB48-05CB-4A1A-8EA2-373BA1C119EB@dubeyko.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.174.179.24]
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ dggpemm100009.china.huawei.com (7.185.36.113)
 X-CFilter-Loop: Reflected
 X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,NICE_REPLY_A,
         RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -55,71 +51,79 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Greg,
-
-On 2022/10/25 21:37, Greg KH wrote:
-> On Tue, Oct 25, 2022 at 09:20:12PM +0800, Yang Yingliang wrote:
->> Hi, Greg
+On 2022/11/30 3:15, Viacheslav Dubeyko wrote:
+>
+>> On Nov 28, 2022, at 6:39 PM, Liu Shixin <liushixin2@huawei.com> wrote:
 >>
->> On 2022/10/25 19:50, Greg KH wrote:
->>> On Tue, Oct 25, 2022 at 07:39:57PM +0800, Yang Yingliang wrote:
->>>> While doing fault injection test, I got the following report:
->>>>
->>>> ------------[ cut here ]------------
->>>> kobject: '(null)' (0000000039956980): is not initialized, yet kobject_put() is being called.
->>>> WARNING: CPU: 3 PID: 6306 at kobject_put+0x23d/0x4e0
->>>> CPU: 3 PID: 6306 Comm: 283 Tainted: G        W          6.1.0-rc2-00005-g307c1086d7c9 #1253
->>>> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubuntu1.1 04/01/2014
->>>> RIP: 0010:kobject_put+0x23d/0x4e0
->>>> Call Trace:
->>>>    <TASK>
->>>>    cdev_device_add+0x15e/0x1b0
->>>>    __iio_device_register+0x13b4/0x1af0 [industrialio]
->>>>    __devm_iio_device_register+0x22/0x90 [industrialio]
->>>>    max517_probe+0x3d8/0x6b4 [max517]
->>>>    i2c_device_probe+0xa81/0xc00
->>>>
->>>> When device_add() is injected fault and returns error, if dev->devt is not set,
->>>> cdev_add() is not called, cdev_del() is not needed. Fix this by checking dev->devt
->>>> in error path.
->>> Nit, please wrap your changelog text at 72 columns.
->>>
->>>> Fixes: 233ed09d7fda ("chardev: add helper function to register char devs with a struct device")
->>>> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
->>>> ---
->>>> v1 -> v2:
->>>>     Add information to update commit message.
->>>>     v1 link: https://lore.kernel.org/lkml/1959fa74-b06c-b8bc-d14f-b71e5c4290ee@huawei.com/T/
->>>> ---
->>>>    fs/char_dev.c | 2 +-
->>>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>>
->>>> diff --git a/fs/char_dev.c b/fs/char_dev.c
->>>> index ba0ded7842a7..3f667292608c 100644
->>>> --- a/fs/char_dev.c
->>>> +++ b/fs/char_dev.c
->>>> @@ -547,7 +547,7 @@ int cdev_device_add(struct cdev *cdev, struct device *dev)
->>>>    	}
->>>>    	rc = device_add(dev);
->>>> -	if (rc)
->>>> +	if (rc && dev->devt)
->>> No, this is a layering violation and one that you do not know is really
->>> going to be true or not.  the devt being present, or not, should not be
->>> an issue of if the device_add failed or not.  This isn't correct, sorry.
->> Do you mean it's not a bug or the warn can be ignored or it's bug in driver
->> ?
->> I see devt is checked before calling cdev_del() in cdev_device_del().
-> Ah!  The core doesn't set devt, the caller has that set.  That makes
-> more sense now, sorry for the confusion on my side.
+>> syzbot found a slab-out-of-bounds Read in hfsplus_uni2asc:
+>>
+>> BUG: KASAN: slab-out-of-bounds in hfsplus_uni2asc+0x683/0x1290 fs/hfsplus/unicode.c:179
+>> Read of size 2 at addr ffff88801887a40c by task syz-executor412/3632
+>>
+>> CPU: 1 PID: 3632 Comm: syz-executor412 Not tainted 6.1.0-rc6-syzkaller-00315-gfaf68e3523c2 #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+>> Call Trace:
+>>  <TASK>
+>>  __dump_stack lib/dump_stack.c:88 [inline]
+>>  dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
+>>  print_address_description+0x74/0x340 mm/kasan/report.c:284
+>>  print_report+0x107/0x1f0 mm/kasan/report.c:395
+>>  kasan_report+0xcd/0x100 mm/kasan/report.c:495
+>>  hfsplus_uni2asc+0x683/0x1290 fs/hfsplus/unicode.c:179
+>>  hfsplus_readdir+0x8be/0x1230 fs/hfsplus/dir.c:207
+>>  iterate_dir+0x257/0x5f0
+>>  __do_sys_getdents64 fs/readdir.c:369 [inline]
+>>  __se_sys_getdents64+0x1db/0x4c0 fs/readdir.c:354
+>>  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+>>  do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+>>  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+>>
+>> The length of arrags ustr->unicode is HFSPLUS_MAX_STRLEN. Limit the value
+>> of ustr->length to no more than HFSPLUS_MAX_STRLEN.
+>>
+>> Reported-by: syzbot+076d963e115823c4b9be@syzkaller.appspotmail.com
+>> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+>> ---
+>> fs/hfsplus/unicode.c | 2 ++
+>> 1 file changed, 2 insertions(+)
+>>
+>> diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
+>> index 73342c925a4b..3df43a176acb 100644
+>> --- a/fs/hfsplus/unicode.c
+>> +++ b/fs/hfsplus/unicode.c
+>> @@ -133,6 +133,8 @@ int hfsplus_uni2asc(struct super_block *sb,
+>> 	op = astr;
+>> 	ip = ustr->unicode;
+>> 	ustrlen = be16_to_cpu(ustr->length);
+>> +	if (ustrlen > HFSPLUS_MAX_STRLEN)
+>> +		ustrlen = HFSPLUS_MAX_STRLEN;
+> Hmmm.. It’s strange. As far as I can see, we read ustr from the volume
+> because be16_to_cpu() is used. But how ustrlen can be bigger than HFSPLUS_MAX_STRLEN
+> if we read it from volume? Do we have corrupted volume? What the environment of
+> the issue?
 >
-> Yes, this looks correct, the diff didn't have the full context and I was
-> confused.
->
-> I'll go queue this up, very nice work.
->
-> greg k-h
-I didn't find this patch in your trees, does it been merged?
+> Thanks,
+> Slava.
+The bug is reported by syzbot. You can find the reprodution program there.
+Link: https://syzkaller.appspot.com/bug?id=8a0515c326633c38c5145308835518579ea8af1e
+
+It seems that there is a corrupted volume. But I don't know much about this so I'm not sure.
+Is there any useful information here?
+
+I noticed that syzbot found another bug of hfsplus recently, which seem to related to
+corrupted volume too.
+https://syzkaller.appspot.com/bug?id=9fa98e04385363b08013093b659020d8dedae2ec
+
 
 Thanks,
-Yang
+.
+>
+>> 	len = *len_p;
+>> 	ce1 = NULL;
+>> 	compose = !test_bit(HFSPLUS_SB_NODECOMPOSE, &HFSPLUS_SB(sb)->flags);
+>> -- 
+>> 2.25.1
+>>
 > .
+>
+
