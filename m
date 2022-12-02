@@ -2,68 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA06064039A
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 10:44:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB10164039B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 10:44:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232970AbiLBJos (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Dec 2022 04:44:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46504 "EHLO
+        id S232996AbiLBJou (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Dec 2022 04:44:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46804 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233059AbiLBJo0 (ORCPT
+        with ESMTP id S232990AbiLBJoc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Dec 2022 04:44:26 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B83A3BE103
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Dec 2022 01:43:28 -0800 (PST)
+        Fri, 2 Dec 2022 04:44:32 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEFD3BEC6C
+        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Dec 2022 01:43:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1669974208;
+        s=mimecast20190719; t=1669974215;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=JPL3HeqWrrSKDJIfWXlo82sdG8gZ+m15F8/peAepuFE=;
-        b=KZ4nfOosw+D+bRvrFKoeoCfFK6v8I+LbAigwMKBcHSKxez4LA5VMW/FSSzhol0iQ680hXW
-        +Y5PfiGNRBt46oqMWdlHW6b+VKXQx2hmdOWVZf6WdJtNZCb/J3x2EVyh/u4W0Lw+3wm0NM
-        JU9CDQ+bh672gJ42QsgVrGXuiEn3M3U=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=GAaMjLyXvXMKeDdYrAPmiwXHGFLX7s1JiUj1YL0qpa4=;
+        b=Bz1JXPyo1NoB0gtw/dol35QYMMeuMJF4+z11+fmfiPxe6f/5Rz49/OqPmO7DGZaMhxvyba
+        aRTi1prOnI7SNSb5Wx32zd4jlxsMp+XoYPt/DWTvE4EAlQdA23dZj6ry7K0jwyrWlYFM9F
+        WnetJXvz/MHLzwUOjB2gTlx5MW5ZgLw=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-348-6efNmvdpPW2mpW2TiorUrg-1; Fri, 02 Dec 2022 04:43:22 -0500
-X-MC-Unique: 6efNmvdpPW2mpW2TiorUrg-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+ us-mta-55-kbGyC1fINjCX-zee2ZRkMg-1; Fri, 02 Dec 2022 04:43:32 -0500
+X-MC-Unique: kbGyC1fINjCX-zee2ZRkMg-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0DD0338173CB;
-        Fri,  2 Dec 2022 09:43:22 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4F43E8630C4;
+        Fri,  2 Dec 2022 09:43:31 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A55E2028E96;
-        Fri,  2 Dec 2022 09:43:19 +0000 (UTC)
-Subject: [PATCH v3 0/4] iov_iter: Add extraction helpers
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E7FE24B4014;
+        Fri,  2 Dec 2022 09:43:29 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+Subject: [PATCH v3 1/4] mm: Move FOLL_* defs to mm_types.h
 From:   David Howells <dhowells@redhat.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Shyam Prasad N <nspmangalore@gmail.com>,
-        Christoph Hellwig <hch@lst.de>, linux-cachefs@redhat.com,
-        linux-cifs@vger.kernel.org, linux-mm@kvack.org,
-        Steve French <sfrench@samba.org>,
-        Rohith Surabattula <rohiths.msft@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
+Cc:     Matthew Wilcox <willy@infradead.org>,
         John Hubbard <jhubbard@nvidia.com>,
-        Jeff Layton <jlayton@kernel.org>, dhowells@redhat.com,
+        Christoph Hellwig <hch@lst.de>, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
         Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         Jeff Layton <jlayton@kernel.org>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 02 Dec 2022 09:43:16 +0000
-Message-ID: <166997419665.9475.15014699817597102032.stgit@warthog.procyon.org.uk>
+Date:   Fri, 02 Dec 2022 09:43:27 +0000
+Message-ID: <166997420723.9475.3907844523056304049.stgit@warthog.procyon.org.uk>
+In-Reply-To: <166997419665.9475.15014699817597102032.stgit@warthog.procyon.org.uk>
+References: <166997419665.9475.15014699817597102032.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/1.5
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,98 +73,193 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Move FOLL_* definitions to linux/mm_types.h to make them more accessible
+without having to drag in all of linux/mm.h and everything that drags in
+too[1].
 
-Hi Al,
+Suggested-by: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: David Howells <dhowells@redhat.com>
+Reviewed-by: John Hubbard <jhubbard@nvidia.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: linux-mm@kvack.org
+cc: linux-fsdevel@vger.kernel.org
 
-Here are four patches to provide support for extracting pages from an
-iov_iter, where such a thing makes sense, if you could take a look?
-
-[!] NOTE that I've switched the functions to be exported GPL-only at
-    Christoph's request[1].  They are, however, intended as a replacement
-    for iov_iter_get_pages*(), which is not marked _GPL - so that
-    functionality will probably become unavailable to non-GPL 3rd party
-    modules in future.
-
-The first couple of patches provide iov_iter general stuff:
-
- (1) Move the FOLL_* flags to linux/mm_types.h so that linux/uio.h can make
-     use of them.
-
- (2) Add a function to list-only, get or pin pages from an iterator as a
-     future replacement for iov_iter_get_pages*().  Pointers to the pages
-     are placed into an array (which will get allocated if not provided)
-     and, depending on the iterator type and direction, the pages will have
-     a ref or a pin get on them, or left untouched (on the assumption that
-     the caller manages their lifetime).
-
-     The determination is:
-
-	UBUF/IOVEC + READ	-> pin
-	UBUF/IOVEC + WRITE	-> get
-	PIPE + READ		-> list-only
-	BVEC/XARRAY		-> list-only
-	Anything else		-> EFAULT
-
-     The function also returns an indication of which of "list only, get or
-     pin" the extraction function did to aid in cleaning up (returning 0,
-     FOLL_GET or FOLL_PIN as appropriate).
-
-Then there are a couple of patches that add stuff to netfslib that I want
-to use there as well as in cifs:
-
- (3) Add a netfslib function to use (2) to extract pages from an ITER_IOBUF
-     or ITER_UBUF iterator into an ITER_BVEC iterator.  This will get or
-     pin the pages as appropriate.
-
- (4) Add a netfslib function to extract pages from an iterator that's of
-     type ITER_UBUF/IOVEC/BVEC/KVEC/XARRAY and add them to a scatterlist.
-
-     The function in (2) is used for a UBUF and IOVEC iterators, so those
-     need cleaning up afterwards.  BVEC and XARRAY iterators are ungot and
-     unpinned and may be rendered into elements that span multiple pages,
-     for example if large folios are present.
-
-Changes:
-========
-ver #3)
- - Switch to using EXPORT_SYMBOL_GPL to prevent indirect 3rd-party access
-   to get/pin_user_pages_fast()[1].
-
-ver #2)
- - Rolled the extraction cleanup mode query function into the extraction
-   function, returning the indication through the argument list.
- - Fixed patch 4 (extract to scatterlist) to actually use the new
-   extraction API.
-
-I've pushed the patches here also:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-extract
-
-David
-
-Link: https://lore.kernel.org/r/Y3zFzdWnWlEJ8X8/@infradead.org/ [1]
-Link: https://lore.kernel.org/r/166697254399.61150.1256557652599252121.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166722777223.2555743.162508599131141451.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166732024173.3186319.18204305072070871546.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk/ # rfc
-
+Link: https://lore.kernel.org/linux-fsdevel/Y1%2FhSO+7kAJhGShG@casper.infradead.org/ [1]
+Link: https://lore.kernel.org/r/166732025009.3186319.3402781784409891214.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166869688542.3723671.10243929000823258622.stgit@warthog.procyon.org.uk/ # rfc
 ---
-David Howells (4):
-      mm: Move FOLL_* defs to mm_types.h
-      iov_iter: Add a function to extract a page list from an iterator
-      netfs: Add a function to extract a UBUF or IOVEC into a BVEC iterator
-      netfs: Add a function to extract an iterator into a scatterlist
 
+ include/linux/mm.h       |   74 ----------------------------------------------
+ include/linux/mm_types.h |   73 +++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 73 insertions(+), 74 deletions(-)
 
- fs/netfs/Makefile        |   1 +
- fs/netfs/iterator.c      | 367 +++++++++++++++++++++++++++++++++++++++
- include/linux/mm.h       |  74 --------
- include/linux/mm_types.h |  73 ++++++++
- include/linux/netfs.h    |   7 +
- include/linux/uio.h      |   4 +
- lib/iov_iter.c           | 350 +++++++++++++++++++++++++++++++++++++
- mm/vmalloc.c             |   1 +
- 8 files changed, 803 insertions(+), 74 deletions(-)
- create mode 100644 fs/netfs/iterator.c
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 8bbcccbc5565..7a7a287818ad 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2941,80 +2941,6 @@ static inline vm_fault_t vmf_error(int err)
+ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
+ 			 unsigned int foll_flags);
+ 
+-#define FOLL_WRITE	0x01	/* check pte is writable */
+-#define FOLL_TOUCH	0x02	/* mark page accessed */
+-#define FOLL_GET	0x04	/* do get_page on page */
+-#define FOLL_DUMP	0x08	/* give error on hole if it would be zero */
+-#define FOLL_FORCE	0x10	/* get_user_pages read/write w/o permission */
+-#define FOLL_NOWAIT	0x20	/* if a disk transfer is needed, start the IO
+-				 * and return without waiting upon it */
+-#define FOLL_NOFAULT	0x80	/* do not fault in pages */
+-#define FOLL_HWPOISON	0x100	/* check page is hwpoisoned */
+-#define FOLL_MIGRATION	0x400	/* wait for page to replace migration entry */
+-#define FOLL_TRIED	0x800	/* a retry, previous pass started an IO */
+-#define FOLL_REMOTE	0x2000	/* we are working on non-current tsk/mm */
+-#define FOLL_ANON	0x8000	/* don't do file mappings */
+-#define FOLL_LONGTERM	0x10000	/* mapping lifetime is indefinite: see below */
+-#define FOLL_SPLIT_PMD	0x20000	/* split huge pmd before returning */
+-#define FOLL_PIN	0x40000	/* pages must be released via unpin_user_page */
+-#define FOLL_FAST_ONLY	0x80000	/* gup_fast: prevent fall-back to slow gup */
+-
+-/*
+- * FOLL_PIN and FOLL_LONGTERM may be used in various combinations with each
+- * other. Here is what they mean, and how to use them:
+- *
+- * FOLL_LONGTERM indicates that the page will be held for an indefinite time
+- * period _often_ under userspace control.  This is in contrast to
+- * iov_iter_get_pages(), whose usages are transient.
+- *
+- * FIXME: For pages which are part of a filesystem, mappings are subject to the
+- * lifetime enforced by the filesystem and we need guarantees that longterm
+- * users like RDMA and V4L2 only establish mappings which coordinate usage with
+- * the filesystem.  Ideas for this coordination include revoking the longterm
+- * pin, delaying writeback, bounce buffer page writeback, etc.  As FS DAX was
+- * added after the problem with filesystems was found FS DAX VMAs are
+- * specifically failed.  Filesystem pages are still subject to bugs and use of
+- * FOLL_LONGTERM should be avoided on those pages.
+- *
+- * FIXME: Also NOTE that FOLL_LONGTERM is not supported in every GUP call.
+- * Currently only get_user_pages() and get_user_pages_fast() support this flag
+- * and calls to get_user_pages_[un]locked are specifically not allowed.  This
+- * is due to an incompatibility with the FS DAX check and
+- * FAULT_FLAG_ALLOW_RETRY.
+- *
+- * In the CMA case: long term pins in a CMA region would unnecessarily fragment
+- * that region.  And so, CMA attempts to migrate the page before pinning, when
+- * FOLL_LONGTERM is specified.
+- *
+- * FOLL_PIN indicates that a special kind of tracking (not just page->_refcount,
+- * but an additional pin counting system) will be invoked. This is intended for
+- * anything that gets a page reference and then touches page data (for example,
+- * Direct IO). This lets the filesystem know that some non-file-system entity is
+- * potentially changing the pages' data. In contrast to FOLL_GET (whose pages
+- * are released via put_page()), FOLL_PIN pages must be released, ultimately, by
+- * a call to unpin_user_page().
+- *
+- * FOLL_PIN is similar to FOLL_GET: both of these pin pages. They use different
+- * and separate refcounting mechanisms, however, and that means that each has
+- * its own acquire and release mechanisms:
+- *
+- *     FOLL_GET: get_user_pages*() to acquire, and put_page() to release.
+- *
+- *     FOLL_PIN: pin_user_pages*() to acquire, and unpin_user_pages to release.
+- *
+- * FOLL_PIN and FOLL_GET are mutually exclusive for a given function call.
+- * (The underlying pages may experience both FOLL_GET-based and FOLL_PIN-based
+- * calls applied to them, and that's perfectly OK. This is a constraint on the
+- * callers, not on the pages.)
+- *
+- * FOLL_PIN should be set internally by the pin_user_pages*() APIs, never
+- * directly by the caller. That's in order to help avoid mismatches when
+- * releasing pages: get_user_pages*() pages must be released via put_page(),
+- * while pin_user_pages*() pages must be released via unpin_user_page().
+- *
+- * Please see Documentation/core-api/pin_user_pages.rst for more information.
+- */
+-
+ static inline int vm_fault_to_errno(vm_fault_t vm_fault, int foll_flags)
+ {
+ 	if (vm_fault & VM_FAULT_OOM)
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 500e536796ca..0c80a5ad6e6a 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -1003,4 +1003,77 @@ enum fault_flag {
+ 
+ typedef unsigned int __bitwise zap_flags_t;
+ 
++/*
++ * FOLL_PIN and FOLL_LONGTERM may be used in various combinations with each
++ * other. Here is what they mean, and how to use them:
++ *
++ * FOLL_LONGTERM indicates that the page will be held for an indefinite time
++ * period _often_ under userspace control.  This is in contrast to
++ * iov_iter_get_pages(), whose usages are transient.
++ *
++ * FIXME: For pages which are part of a filesystem, mappings are subject to the
++ * lifetime enforced by the filesystem and we need guarantees that longterm
++ * users like RDMA and V4L2 only establish mappings which coordinate usage with
++ * the filesystem.  Ideas for this coordination include revoking the longterm
++ * pin, delaying writeback, bounce buffer page writeback, etc.  As FS DAX was
++ * added after the problem with filesystems was found FS DAX VMAs are
++ * specifically failed.  Filesystem pages are still subject to bugs and use of
++ * FOLL_LONGTERM should be avoided on those pages.
++ *
++ * FIXME: Also NOTE that FOLL_LONGTERM is not supported in every GUP call.
++ * Currently only get_user_pages() and get_user_pages_fast() support this flag
++ * and calls to get_user_pages_[un]locked are specifically not allowed.  This
++ * is due to an incompatibility with the FS DAX check and
++ * FAULT_FLAG_ALLOW_RETRY.
++ *
++ * In the CMA case: long term pins in a CMA region would unnecessarily fragment
++ * that region.  And so, CMA attempts to migrate the page before pinning, when
++ * FOLL_LONGTERM is specified.
++ *
++ * FOLL_PIN indicates that a special kind of tracking (not just page->_refcount,
++ * but an additional pin counting system) will be invoked. This is intended for
++ * anything that gets a page reference and then touches page data (for example,
++ * Direct IO). This lets the filesystem know that some non-file-system entity is
++ * potentially changing the pages' data. In contrast to FOLL_GET (whose pages
++ * are released via put_page()), FOLL_PIN pages must be released, ultimately, by
++ * a call to unpin_user_page().
++ *
++ * FOLL_PIN is similar to FOLL_GET: both of these pin pages. They use different
++ * and separate refcounting mechanisms, however, and that means that each has
++ * its own acquire and release mechanisms:
++ *
++ *     FOLL_GET: get_user_pages*() to acquire, and put_page() to release.
++ *
++ *     FOLL_PIN: pin_user_pages*() to acquire, and unpin_user_pages to release.
++ *
++ * FOLL_PIN and FOLL_GET are mutually exclusive for a given function call.
++ * (The underlying pages may experience both FOLL_GET-based and FOLL_PIN-based
++ * calls applied to them, and that's perfectly OK. This is a constraint on the
++ * callers, not on the pages.)
++ *
++ * FOLL_PIN should be set internally by the pin_user_pages*() APIs, never
++ * directly by the caller. That's in order to help avoid mismatches when
++ * releasing pages: get_user_pages*() pages must be released via put_page(),
++ * while pin_user_pages*() pages must be released via unpin_user_page().
++ *
++ * Please see Documentation/core-api/pin_user_pages.rst for more information.
++ */
++#define FOLL_WRITE	0x01	/* check pte is writable */
++#define FOLL_TOUCH	0x02	/* mark page accessed */
++#define FOLL_GET	0x04	/* do get_page on page */
++#define FOLL_DUMP	0x08	/* give error on hole if it would be zero */
++#define FOLL_FORCE	0x10	/* get_user_pages read/write w/o permission */
++#define FOLL_NOWAIT	0x20	/* if a disk transfer is needed, start the IO
++				 * and return without waiting upon it */
++#define FOLL_NOFAULT	0x80	/* do not fault in pages */
++#define FOLL_HWPOISON	0x100	/* check page is hwpoisoned */
++#define FOLL_MIGRATION	0x400	/* wait for page to replace migration entry */
++#define FOLL_TRIED	0x800	/* a retry, previous pass started an IO */
++#define FOLL_REMOTE	0x2000	/* we are working on non-current tsk/mm */
++#define FOLL_ANON	0x8000	/* don't do file mappings */
++#define FOLL_LONGTERM	0x10000	/* mapping lifetime is indefinite: see below */
++#define FOLL_SPLIT_PMD	0x20000	/* split huge pmd before returning */
++#define FOLL_PIN	0x40000	/* pages must be released via unpin_user_page */
++#define FOLL_FAST_ONLY	0x80000	/* gup_fast: prevent fall-back to slow gup */
++
+ #endif /* _LINUX_MM_TYPES_H */
 
 
