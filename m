@@ -2,61 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 37524640F3C
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 21:38:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3E887640F7E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 21:52:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234826AbiLBUi0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Dec 2022 15:38:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43504 "EHLO
+        id S234333AbiLBUwT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Dec 2022 15:52:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234744AbiLBUiZ (ORCPT
+        with ESMTP id S234164AbiLBUwK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Dec 2022 15:38:25 -0500
-Received: from mail-qt1-x830.google.com (mail-qt1-x830.google.com [IPv6:2607:f8b0:4864:20::830])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35B64C82EB
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Dec 2022 12:38:24 -0800 (PST)
-Received: by mail-qt1-x830.google.com with SMTP id cg5so6826978qtb.12
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Dec 2022 12:38:24 -0800 (PST)
+        Fri, 2 Dec 2022 15:52:10 -0500
+Received: from mail-oi1-x22f.google.com (mail-oi1-x22f.google.com [IPv6:2607:f8b0:4864:20::22f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32230E0B1
+        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Dec 2022 12:52:09 -0800 (PST)
+Received: by mail-oi1-x22f.google.com with SMTP id s186so6404442oia.5
+        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Dec 2022 12:52:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=dubeyko-com.20210112.gappssmtp.com; s=20210112;
         h=to:references:message-id:content-transfer-encoding:cc:date
          :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0JOcxwhxiaCN4P7YWLL832teuG1uo7i/ABv0IaQTb0E=;
-        b=reBeD053PlaDOPDSnyvPRP39vnzXXg2sA1itIFF2NtImWJNKi/J4MhYB0BsdCJBUDZ
-         I89EceiVXhDw9DE7erUVEXWQdiGHTqBLRc0DbBhRONRv0//kulqIFSvt6xpzlyO/oCUQ
-         CdS9WyJCcWiQQWcY6jZmZmPD2DtiWYTWDsLk1SmVLlx0QARzF2kMxL7DYj6FR8awrbZC
-         mpsJhMtjqvTlnCEoKg4eiUxoiClTC/5TCK+sovq45cqIW5peytkcjvFDDdxOzJtUbbEo
-         6u3N4w3ii6R0rLesUiQrAjNTvL086cL/giED5c5O0hUvQ1z3xkwmFbwuOQYpr69RCl5M
-         NSnQ==
+        bh=BNopcQzyMrDOh/b/vCRXkHr0H7DdGm+B3oHqrj558/o=;
+        b=Die1nGt6J60l86Yi+h0GfQHRGFQZ6y5EBu8ES0Y60XkiAG98hhXbhwiZTJJapd5tqC
+         Y0FfGbwNdIS8j64+XHqEeH3rd4sSad6MxK0se3o6K8AE2IQGUGjvEkCyhZtOTdWempMn
+         8h+lUmJ5h3PpQGDSuHjeMStqg+zvlIviSCvMBH0xvxZ7DEFaep5xgBLfomNWfpT4ZFKt
+         cBHgR+eIqwGofCuPqfo7BrHvvt2lBQvb1WPhx0h+uxZSZoUMLtSZfAeSzMO8L77vbkQ2
+         v9KrG0HtD11IpV2HL0Fjgam/3BneHHTeNW25jjTjMHAoSmWevpQUCm93yFWMkwF6B9CZ
+         m5SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=to:references:message-id:content-transfer-encoding:cc:date
          :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0JOcxwhxiaCN4P7YWLL832teuG1uo7i/ABv0IaQTb0E=;
-        b=o9qk2N/vEN7NQnXVrTrrTigOQTLi4d2lI+x9WiLX7xKhb3GMj73ElvyXIVMXSUc73K
-         2f9CT9bprwevUcoZDFiu9aT0fjDMBef7uck4cKbaYmjQBehayACkp1GraE1Ly+0NRT36
-         jd8RGdgFV9lsb0Zp0mdvvulySjxCMvkI+QilRZKrOizHGxb2i8ig+slGP9JIwTrMEzf+
-         PLyyN196KNx4J3QOPLVwirngFazvqsqpaFjmO8Cze42HM+b1qyT1RDb0ZWOBUp8ctqUV
-         Rtb7FGelFgxcmeETF45r5Nb7fwSrpCL3xWPK+8hQyxOc8aSgm5+CznKzN/mtDz/IcAw1
-         N8kA==
-X-Gm-Message-State: ANoB5plajCeXS+viNulJcL41sYZCDyhwYavr3p8yO81DcD3a67t8oIya
-        WtEB4wYQWm24TB0xiJmROoOx1A==
-X-Google-Smtp-Source: AA0mqf6IcPIo2erPqqnbdgRw4umsKGiZJaMf7hfV1peyeO+X2MxwX8vViJNz/QQdAr7SUCeKMPrQyw==
-X-Received: by 2002:a05:622a:4a11:b0:3a5:1cc6:ae12 with SMTP id fv17-20020a05622a4a1100b003a51cc6ae12mr67298178qtb.103.1670013503222;
-        Fri, 02 Dec 2022 12:38:23 -0800 (PST)
+        bh=BNopcQzyMrDOh/b/vCRXkHr0H7DdGm+B3oHqrj558/o=;
+        b=RmwZaY8jkclbDLiRDGMrpA/pQi74NgWjfbagBARmrdpW3nxrmbUBKYU9TbTI9L53RK
+         FwjhWozAy087T8kvue54e+2DC+glJysuH7THKksGYg84MlmYtX78l0lfNJD7XiLXBNMy
+         uGWSJJnVlJHT2D4UR12JZQ+b45t3yci0u6iREyh7n1GumTMbRSpAM9aLTqPgLlUceO/k
+         LIWmkcm43WuYKwS5VzLwjMhamYuzki/BP1KiO39LA832n33dkInUTcSW8r4rScQE5IUk
+         TD+lUnbS/61ZBTT2nh8+A1+5e1pDLKj9tFCE55sKWElWgLMMXs/NdPGaN4+Dt/zC9Wgf
+         7B9Q==
+X-Gm-Message-State: ANoB5pnpYfRhmSCJ7xpcCJJFZVpFRzFA5wEQ2NdoN237csR+NXB9uMvx
+        DE3t21u7QxfeHUxCqwyVUdn4Mw==
+X-Google-Smtp-Source: AA0mqf4RQat+esU5YQe1DuNW4jFEYehg1OHgIrBnGpvDqoJZ81OazoeMrPpcRO3+/5iW4PcxexG9lw==
+X-Received: by 2002:a05:6808:1444:b0:35a:2613:c9f with SMTP id x4-20020a056808144400b0035a26130c9fmr35617871oiv.250.1670014328404;
+        Fri, 02 Dec 2022 12:52:08 -0800 (PST)
 Received: from smtpclient.apple (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
-        by smtp.gmail.com with ESMTPSA id t3-20020a05620a450300b006eea4b5abcesm6713795qkp.89.2022.12.02.12.38.21
+        by smtp.gmail.com with ESMTPSA id n7-20020a056870a44700b00130d060ce80sm4737802oal.31.2022.12.02.12.52.06
         (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 02 Dec 2022 12:38:22 -0800 (PST)
+        Fri, 02 Dec 2022 12:52:07 -0800 (PST)
 Content-Type: text/plain;
-        charset=utf-8
+        charset=us-ascii
 Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
-Subject: Re: [PATCH] hfsplus: Add module parameter to enable force writes
+Subject: Re: [PATCH] hfsplus: Fix bug causing custom uid and gid being unable
+ to be assigned with mount
 From:   Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <53821C76-DAFE-4505-9EC8-BE4ACBEA9DD9@live.com>
-Date:   Fri, 2 Dec 2022 12:38:19 -0800
+In-Reply-To: <93F5197D-2B61-4129-B5D4-771934F70577@live.com>
+Date:   Fri, 2 Dec 2022 12:52:05 -0800
 Cc:     "willy@infradead.org" <willy@infradead.org>,
         "ira.weiny@intel.com" <ira.weiny@intel.com>,
         "axboe@kernel.dk" <axboe@kernel.dk>,
@@ -64,11 +65,12 @@ Cc:     "willy@infradead.org" <willy@infradead.org>,
         "bvanassche@acm.org" <bvanassche@acm.org>,
         "keescook@chromium.org" <keescook@chromium.org>,
         "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <6AE11F8A-3C10-46A3-9F42-B5F72F1FC634@dubeyko.com>
-References: <53821C76-DAFE-4505-9EC8-BE4ACBEA9DD9@live.com>
+Message-Id: <55A80630-60FB-44BE-9628-29104AB8A7D0@dubeyko.com>
+References: <93F5197D-2B61-4129-B5D4-771934F70577@live.com>
 To:     Aditya Garg <gargaditya08@live.com>
 X-Mailer: Apple Mail (2.3696.120.41.1.1)
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -82,160 +84,90 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-> On Dec 1, 2022, at 10:01 PM, Aditya Garg <gargaditya08@live.com> =
-wrote:
+> On Dec 2, 2022, at 7:39 AM, Aditya Garg <gargaditya08@live.com> wrote:
 >=20
 > From: Aditya Garg <gargaditya08@live.com>
 >=20
-> This patch enables users to permanently enable writes of HFS+ locked
-> and/or journaled volumes using a module parameter.
+> Inspite of specifying UID and GID in mount command, the specified UID =
+and
+> GID was not being assigned. This patch fixes this issue.
 >=20
-> Why module parameter?
-> Reason being, its not convenient to manually mount the volume with =
-force
-> everytime. There are use cases which are fine with force enabling =
-writes
-> on journaled volumes. I've seen many on various online forums and I am =
-one
-> of them as well.
->=20
-> Isn't it risky?
-> Yes obviously it is, as the driver itself warns users for the same. =
-But
-> any user using the parameter obviously shall be well aware of the =
-risks
-> involved. To be honest, I've been writing on a 100Gb journaled volume =
-for
-> a few days, including both large and small files, and haven't faced =
-any
-> corruption yet.
->=20
-
-If you created HFS+ volume under Linux, then you never have journal
-and problem of journal replay (even if you created journaled volume).
-So, I see the only one case when you have journal with transactions.
-You are using HFS+ volume in Linux and Mac OS X. It means that
-Mac OS X can create transactions in the journal and Linux needs
-to manage it somehow.
-
-Even if you don=E2=80=99t see any corruptions after such short testing, =
-then
-it doesn=E2=80=99t mean that you are safe. The key trouble that you can
-silently lose the data because some metadata state could sit
-in the journal and no replay operation has happened. Yes, you can
-ignore the transactions in the journal and continue to store data and
-modify metadata. But if journal still contain valid transactions, then
-mount operation under Mac OS X will replay journal. And it sounds
-that journal replay under Mac OS X can corrupt metadata and data
-state that was modified/created under Linux.
-
-So, I believe that your suggestion is slightly dangerous because
-people loves to make mistakes and really hates to lose data.
-
-Thanks,
-Slava.=20
-
 > Signed-off-by: Aditya Garg <gargaditya08@live.com>
 > ---
-> fs/hfsplus/super.c | 46 ++++++++++++++++++++++++++++++++++++----------
-> 1 file changed, 36 insertions(+), 10 deletions(-)
+> fs/hfsplus/hfsplus_fs.h | 2 ++
+> fs/hfsplus/inode.c      | 4 ++--
+> fs/hfsplus/options.c    | 2 ++
+> 3 files changed, 6 insertions(+), 2 deletions(-)
 >=20
-> diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-> index 122ed89eb..2367a2407 100644
-> --- a/fs/hfsplus/super.c
-> +++ b/fs/hfsplus/super.c
-> @@ -24,6 +24,16 @@ static void hfsplus_free_inode(struct inode =
-*inode);
-> #include "hfsplus_fs.h"
-> #include "xattr.h"
+> diff --git a/fs/hfsplus/hfsplus_fs.h b/fs/hfsplus/hfsplus_fs.h
+> index a5db2e3b2..6aa919e59 100644
+> --- a/fs/hfsplus/hfsplus_fs.h
+> +++ b/fs/hfsplus/hfsplus_fs.h
+> @@ -198,6 +198,8 @@ struct hfsplus_sb_info {
+> #define HFSPLUS_SB_HFSX		3
+> #define HFSPLUS_SB_CASEFOLD	4
+> #define HFSPLUS_SB_NOBARRIER	5
+> +#define HFSPLUS_SB_UID		6
+> +#define HFSPLUS_SB_GID		7
 >=20
-> +static unsigned int force_journaled_rw;
-> +module_param(force_journaled_rw, uint, 0644);
-> +MODULE_PARM_DESC(force_journaled_rw, "Force enable writes on =
-Journaled HFS+ volumes. "
-> +		"([0] =3D disabled, 1 =3D enabled)");
-> +
-> +static unsigned int force_locked_rw;
-> +module_param(force_locked_rw, uint, 0644);
-> +MODULE_PARM_DESC(force_locked_rw, "Force enable writes on locked HFS+ =
-volumes. "
-> +		"([0] =3D disabled, 1 =3D enabled)");
-> +
-> static int hfsplus_system_read_inode(struct inode *inode)
+> static inline struct hfsplus_sb_info *HFSPLUS_SB(struct super_block =
+*sb)
 > {
-> 	struct hfsplus_vh *vhdr =3D HFSPLUS_SB(inode->i_sb)->s_vhdr;
-> @@ -346,14 +356,22 @@ static int hfsplus_remount(struct super_block =
-*sb, int *flags, char *data)
-> 			/* nothing */
-> 		} else if (vhdr->attributes &
-> 				cpu_to_be32(HFSPLUS_VOL_SOFTLOCK)) {
-> -			pr_warn("filesystem is marked locked, leaving =
-read-only.\n");
-> -			sb->s_flags |=3D SB_RDONLY;
-> -			*flags |=3D SB_RDONLY;
-> +			if (force_locked_rw) {
-> +				pr_warn("filesystem is marked locked, =
-but writes have been force enabled.\n");
-> +			} else {
-> +				pr_warn("filesystem is marked locked, =
-leaving read-only.\n");
-> +				sb->s_flags |=3D SB_RDONLY;
-> +				*flags |=3D SB_RDONLY;
-> +			}
-> 		} else if (vhdr->attributes &
-> 				cpu_to_be32(HFSPLUS_VOL_JOURNALED)) {
-> -			pr_warn("filesystem is marked journaled, leaving =
-read-only.\n");
-> -			sb->s_flags |=3D SB_RDONLY;
-> -			*flags |=3D SB_RDONLY;
-> +			if (force_journaled_rw) {
-> +				pr_warn("filesystem is marked journaled, =
-but writes have been force enabled.\n");
-> +			} else {
-> +				pr_warn("filesystem is marked journaled, =
-leaving read-only.\n");
-> +				sb->s_flags |=3D SB_RDONLY;
-> +				*flags |=3D SB_RDONLY;
-> +			}
-> 		}
-> 	}
-> 	return 0;
-> @@ -459,12 +477,20 @@ static int hfsplus_fill_super(struct super_block =
-*sb, void *data, int silent)
-> 	} else if (test_and_clear_bit(HFSPLUS_SB_FORCE, &sbi->flags)) {
-> 		/* nothing */
-> 	} else if (vhdr->attributes & cpu_to_be32(HFSPLUS_VOL_SOFTLOCK)) =
-{
-> -		pr_warn("Filesystem is marked locked, mounting =
-read-only.\n");
-> -		sb->s_flags |=3D SB_RDONLY;
-> +		if (force_locked_rw) {
-> +			pr_warn("Filesystem is marked locked, but writes =
-have been force enabled.\n");
-> +		} else {
-> +			pr_warn("Filesystem is marked locked, mounting =
-read-only.\n");
-> +			sb->s_flags |=3D SB_RDONLY;
-> +		}
-> 	} else if ((vhdr->attributes & =
-cpu_to_be32(HFSPLUS_VOL_JOURNALED)) &&
-> 			!sb_rdonly(sb)) {
-> -		pr_warn("write access to a journaled filesystem is not =
-supported, use the force option at your own risk, mounting =
-read-only.\n");
-> -		sb->s_flags |=3D SB_RDONLY;
-> +		if (force_journaled_rw) {
-> +			pr_warn("write access to a journaled filesystem =
-is not supported, but has been force enabled.\n");
-> +		} else {
-> +			pr_warn("write access to a journaled filesystem =
-is not supported, use the force option at your own risk, mounting =
-read-only.\n");
-> +			sb->s_flags |=3D SB_RDONLY;
-> +		}
-> 	}
+> diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+> index aeab83ed1..4d1077db8 100644
+> --- a/fs/hfsplus/inode.c
+> +++ b/fs/hfsplus/inode.c
+> @@ -192,11 +192,11 @@ static void hfsplus_get_perms(struct inode =
+*inode,
+> 	mode =3D be16_to_cpu(perms->mode);
 >=20
-> 	err =3D -EINVAL;
+> 	i_uid_write(inode, be32_to_cpu(perms->owner));
+> -	if (!i_uid_read(inode) && !mode)
+> +	if (test_bit(HFSPLUS_SB_UID, &sbi->flags))
+> 		inode->i_uid =3D sbi->uid;
+>=20
+> 	i_gid_write(inode, be32_to_cpu(perms->group));
+> -	if (!i_gid_read(inode) && !mode)
+> +	if (test_bit(HFSPLUS_SB_GID, &sbi->flags))
+> 		inode->i_gid =3D sbi->gid;
+
+I am slightly confused. Do you mean that all files/folders will have the =
+same UID/GID always?
+What if user changes the UID/GID a particular file/folder? Also, what if =
+we mounted
+file system without specifying the UID/GID, then what UID/GID will be =
+returned by
+your logic?
+
+Thanks,
+Slava.
+
+>=20
+> 	if (dir) {
+> diff --git a/fs/hfsplus/options.c b/fs/hfsplus/options.c
+> index 047e05c57..10a0bdacb 100644
+> --- a/fs/hfsplus/options.c
+> +++ b/fs/hfsplus/options.c
+> @@ -137,6 +137,7 @@ int hfsplus_parse_options(char *input, struct =
+hfsplus_sb_info *sbi)
+> 				return 0;
+> 			}
+> 			sbi->uid =3D make_kuid(current_user_ns(), =
+(uid_t)tmp);
+> +			set_bit(HFSPLUS_SB_UID, &sbi->flags);
+> 			if (!uid_valid(sbi->uid)) {
+> 				pr_err("invalid uid specified\n");
+> 				return 0;
+> @@ -148,6 +149,7 @@ int hfsplus_parse_options(char *input, struct =
+hfsplus_sb_info *sbi)
+> 				return 0;
+> 			}
+> 			sbi->gid =3D make_kgid(current_user_ns(), =
+(gid_t)tmp);
+> +			set_bit(HFSPLUS_SB_GID, &sbi->flags);
+> 			if (!gid_valid(sbi->gid)) {
+> 				pr_err("invalid gid specified\n");
+> 				return 0;
 > --=20
 > 2.38.1
 >=20
