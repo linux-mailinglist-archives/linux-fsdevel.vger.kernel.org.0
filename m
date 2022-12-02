@@ -2,195 +2,175 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D802640204
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 09:20:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31BEE64025B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 09:39:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232952AbiLBIUl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Dec 2022 03:20:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32902 "EHLO
+        id S231837AbiLBIj0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Dec 2022 03:39:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55914 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232891AbiLBITT (ORCPT
+        with ESMTP id S232887AbiLBIix (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Dec 2022 03:19:19 -0500
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F5B113F95
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Dec 2022 00:18:42 -0800 (PST)
-Received: by mail-io1-f72.google.com with SMTP id l22-20020a05660227d600b006dfa191ca8aso4047468ios.20
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Dec 2022 00:18:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TKLCXP3Fc53XDlKgAGWSc0dbiE40YMywDv9lWM66wec=;
-        b=ITox4A/67dIm4rBPHx/C6ZSqZtoNPwShfR/1VpFuPdMIMvw8dRYI7nYa8fdnf7aJKL
-         aYH7IUgb1g1kVApMVc59H3IR30APadKp5NVwrf/pjWsnNFtXbAqB0l16STwX0s8z+biN
-         uAsMz7Xb/1+a+TqWJRS1pgJNJARxSSJ5aP4pKAI4FcS7tDc0/OLOUqKsl15XHlwAnGmv
-         6oFPR2JiEzNLUgNeQgrdz9pf3UMTl1ygHd6rclvsRDMXY53MQr9ogxA9/b+OBCrlwtPR
-         +5UIdgLrYfWuKuZ1WiT/qQSzCyt4fsMQY0g09hvbJ4132WVi6Sw5F1qI0P0xLW++Ire9
-         Pdpg==
-X-Gm-Message-State: ANoB5plAiDkIdu1uDWdjCnwPVKNwbAqtUdUGV+pJim3wr/SZyT/Ro33j
-        eWlWgmPGCCQavIDyhIGmToF1rO5SBmYQWAIybRCaqcDvHXs4
-X-Google-Smtp-Source: AA0mqf5puYac5s5/K/MITpXoT45GzdArKdIqvIeMh1MSgy/9gM7WesDvEhJnPCN4VYQj/3/6erAacFkPKQKglQ01v8IAcA4RJxGT
+        Fri, 2 Dec 2022 03:38:53 -0500
+Received: from mx5.didiglobal.com (mx5.didiglobal.com [111.202.70.122])
+        by lindbergh.monkeyblade.net (Postfix) with SMTP id 1982A1CFD3;
+        Fri,  2 Dec 2022 00:37:56 -0800 (PST)
+Received: from mail.didiglobal.com (unknown [10.79.71.35])
+        by mx5.didiglobal.com (Maildata Gateway V2.8) with ESMTPS id 5360AB055B002;
+        Fri,  2 Dec 2022 16:37:53 +0800 (CST)
+Received: from ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) by
+ ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.17; Fri, 2 Dec 2022 16:37:53 +0800
+Received: from ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769])
+ by ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769%8]) with mapi
+ id 15.01.2375.017; Fri, 2 Dec 2022 16:37:52 +0800
+X-MD-Sfrom: chengkaitao@didiglobal.com
+X-MD-SrcIP: 10.79.71.35
+From:   =?utf-8?B?56iL5Z6y5rabIENoZW5na2FpdGFvIENoZW5n?= 
+        <chengkaitao@didiglobal.com>
+To:     Michal Hocko <mhocko@suse.com>
+CC:     Tao pilgrim <pilgrimtao@gmail.com>,
+        "tj@kernel.org" <tj@kernel.org>,
+        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
+        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
+        "shakeelb@google.com" <shakeelb@google.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
+        "cgel.zte@gmail.com" <cgel.zte@gmail.com>,
+        "ran.xiaokai@zte.com.cn" <ran.xiaokai@zte.com.cn>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        "zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
+        "ebiederm@xmission.com" <ebiederm@xmission.com>,
+        "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
+        "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
+        "yuzhao@google.com" <yuzhao@google.com>,
+        "willy@infradead.org" <willy@infradead.org>,
+        "vasily.averin@linux.dev" <vasily.averin@linux.dev>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "surenb@google.com" <surenb@google.com>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "mcgrof@kernel.org" <mcgrof@kernel.org>,
+        "sujiaxun@uniontech.com" <sujiaxun@uniontech.com>,
+        "feng.tang@intel.com" <feng.tang@intel.com>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "Bagas Sanjaya" <bagasdotme@gmail.com>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH] mm: memcontrol: protect the memory in cgroup from being
+ oom killed
+Thread-Topic: [PATCH] mm: memcontrol: protect the memory in cgroup from being
+ oom killed
+Thread-Index: AQHZBK+NwNVzWF9Xk0ibAn/rxGrWSq5XnGYA//+FgwCAAVYiAP//vByAgACohID//5lJgAAA0fUAABOecID//4cygIABqLMA
+Date:   Fri, 2 Dec 2022 08:37:52 +0000
+Message-ID: <771CC621-A19E-4174-B3D0-F451B1D7D69A@didiglobal.com>
+In-Reply-To: <Y4jFnY7kMdB8ReSW@dhcp22.suse.cz>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.79.65.102]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5B5BD234FEA1914B8C9C78E8E2953F58@didichuxing.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-Received: by 2002:a02:3f60:0:b0:375:2d83:f970 with SMTP id
- c32-20020a023f60000000b003752d83f970mr31914751jaf.205.1669969121385; Fri, 02
- Dec 2022 00:18:41 -0800 (PST)
-Date:   Fri, 02 Dec 2022 00:18:41 -0800
-In-Reply-To: <0000000000002dabd805ee5b222e@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000044243d05eed3fc71@google.com>
-Subject: Re: [syzbot] possible deadlock in hfsplus_file_extend
-From:   syzbot <syzbot+325b61d3c9a17729454b@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
-
-HEAD commit:    ef4d3ea40565 afs: Fix server->active leak in afs_put_server
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=17b09247880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2325e409a9a893e1
-dashboard link: https://syzkaller.appspot.com/bug?extid=325b61d3c9a17729454b
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=161ff423880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1130b38d880000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/e840f63d5bd2/disk-ef4d3ea4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/004e32e50436/vmlinux-ef4d3ea4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e371ed85328c/bzImage-ef4d3ea4.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/208dde4bde06/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+325b61d3c9a17729454b@syzkaller.appspotmail.com
-
-loop0: detected capacity change from 0 to 1024
-======================================================
-WARNING: possible circular locking dependency detected
-6.1.0-rc7-syzkaller-00103-gef4d3ea40565 #0 Not tainted
-------------------------------------------------------
-syz-executor112/3638 is trying to acquire lock:
-ffff88807e8e07c8 (&HFSPLUS_I(inode)->extents_lock){+.+.}-{3:3}, at: hfsplus_file_extend+0x1af/0x19d0 fs/hfsplus/extents.c:457
-
-but task is already holding lock:
-ffff8880183fe0b0 (&tree->tree_lock){+.+.}-{3:3}, at: hfsplus_find_init+0x143/0x1b0
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1 (&tree->tree_lock){+.+.}-{3:3}:
-       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
-       __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
-       __mutex_lock kernel/locking/mutex.c:747 [inline]
-       mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
-       hfsplus_file_truncate+0x871/0xbb0 fs/hfsplus/extents.c:595
-       hfsplus_setattr+0x1b8/0x280 fs/hfsplus/inode.c:269
-       notify_change+0xe38/0x10f0 fs/attr.c:420
-       do_truncate+0x1fb/0x2e0 fs/open.c:65
-       handle_truncate fs/namei.c:3216 [inline]
-       do_open fs/namei.c:3561 [inline]
-       path_openat+0x2770/0x2df0 fs/namei.c:3714
-       do_filp_open+0x264/0x4f0 fs/namei.c:3741
-       do_sys_openat2+0x124/0x4e0 fs/open.c:1310
-       do_sys_open fs/open.c:1326 [inline]
-       __do_sys_creat fs/open.c:1402 [inline]
-       __se_sys_creat fs/open.c:1396 [inline]
-       __x64_sys_creat+0x11f/0x160 fs/open.c:1396
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #0 (&HFSPLUS_I(inode)->extents_lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3097 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3216 [inline]
-       validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
-       __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
-       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
-       __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
-       __mutex_lock kernel/locking/mutex.c:747 [inline]
-       mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
-       hfsplus_file_extend+0x1af/0x19d0 fs/hfsplus/extents.c:457
-       hfsplus_bmap_reserve+0x123/0x500 fs/hfsplus/btree.c:358
-       hfsplus_rename_cat+0x1ab/0x1070 fs/hfsplus/catalog.c:456
-       hfsplus_rename+0x129/0x1b0 fs/hfsplus/dir.c:552
-       vfs_rename+0xd53/0x1130 fs/namei.c:4779
-       do_renameat2+0xb53/0x1370 fs/namei.c:4930
-       __do_sys_renameat2 fs/namei.c:4963 [inline]
-       __se_sys_renameat2 fs/namei.c:4960 [inline]
-       __x64_sys_renameat2+0xce/0xe0 fs/namei.c:4960
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&tree->tree_lock);
-                               lock(&HFSPLUS_I(inode)->extents_lock);
-                               lock(&tree->tree_lock);
-  lock(&HFSPLUS_I(inode)->extents_lock);
-
- *** DEADLOCK ***
-
-7 locks held by syz-executor112/3638:
- #0: ffff8880183fa460 (sb_writers#9){.+.+}-{0:0}, at: mnt_want_write+0x3b/0x80 fs/namespace.c:393
- #1: ffff8880183fa748 (&type->s_vfs_rename_key){+.+.}-{3:3}, at: lock_rename+0x54/0x1a0 fs/namei.c:2994
- #2: ffff88807e8e1e00 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: inode_lock_nested include/linux/fs.h:791 [inline]
- #2: ffff88807e8e1e00 (&type->i_mutex_dir_key#6/1){+.+.}-{3:3}, at: lock_rename+0xa0/0x1a0 fs/namei.c:2998
- #3: ffff88807e8e2b80 (&sb->s_type->i_mutex_key#15/2){+.+.}-{3:3}, at: lock_rename+0x16e/0x1a0
- #4: ffff88807e8e3900 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: inode_lock include/linux/fs.h:756 [inline]
- #4: ffff88807e8e3900 (&sb->s_type->i_mutex_key#15){+.+.}-{3:3}, at: lock_two_nondirectories+0xdd/0x130 fs/inode.c:1121
- #5: ffff88807e8e3fc0 (&sb->s_type->i_mutex_key#15/4){+.+.}-{3:3}, at: vfs_rename+0x80a/0x1130 fs/namei.c:4749
- #6: ffff8880183fe0b0 (&tree->tree_lock){+.+.}-{3:3}, at: hfsplus_find_init+0x143/0x1b0
-
-stack backtrace:
-CPU: 1 PID: 3638 Comm: syz-executor112 Not tainted 6.1.0-rc7-syzkaller-00103-gef4d3ea40565 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
- check_noncircular+0x2cc/0x390 kernel/locking/lockdep.c:2177
- check_prev_add kernel/locking/lockdep.c:3097 [inline]
- check_prevs_add kernel/locking/lockdep.c:3216 [inline]
- validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
- __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
- lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
- __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
- __mutex_lock kernel/locking/mutex.c:747 [inline]
- mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
- hfsplus_file_extend+0x1af/0x19d0 fs/hfsplus/extents.c:457
- hfsplus_bmap_reserve+0x123/0x500 fs/hfsplus/btree.c:358
- hfsplus_rename_cat+0x1ab/0x1070 fs/hfsplus/catalog.c:456
- hfsplus_rename+0x129/0x1b0 fs/hfsplus/dir.c:552
- vfs_rename+0xd53/0x1130 fs/namei.c:4779
- do_renameat2+0xb53/0x1370 fs/namei.c:4930
- __do_sys_renameat2 fs/namei.c:4963 [inline]
- __se_sys_renameat2 fs/namei.c:4960 [inline]
- __x64_sys_renameat2+0xce/0xe0 fs/namei.c:4960
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f1c184509f9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff069f5818 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
-RAX: ffffffffffffffda RBX: 2f30656c69662f2e RCX: 00007f1c184509f9
-RDX: 0000000000000007 RSI: 00000000200001c0 RDI: 0000000000000007
-RBP: 00007f1c18410290 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000200002c0 R11: 000000
-
+QXQgMjAyMi0xMi0wMSAyMzoxNzo0OSwgIk1pY2hhbCBIb2NrbyIgPG1ob2Nrb0BzdXNlLmNvbT4g
+d3JvdGU6DQo+T24gVGh1IDAxLTEyLTIyIDE0OjMwOjExLCDnqIvlnrLmtpsgQ2hlbmdrYWl0YW8g
+Q2hlbmcgd3JvdGU6DQo+PiBBdCAyMDIyLTEyLTAxIDIxOjA4OjI2LCAiTWljaGFsIEhvY2tvIiA8
+bWhvY2tvQHN1c2UuY29tPiB3cm90ZToNCj4+ID5PbiBUaHUgMDEtMTItMjIgMTM6NDQ6NTgsIE1p
+Y2hhbCBIb2NrbyB3cm90ZToNCj4+ID4+IE9uIFRodSAwMS0xMi0yMiAxMDo1MjozNSwg56iL5Z6y
+5rabIENoZW5na2FpdGFvIENoZW5nIHdyb3RlOg0KPj4gPj4gPiBBdCAyMDIyLTEyLTAxIDE2OjQ5
+OjI3LCAiTWljaGFsIEhvY2tvIiA8bWhvY2tvQHN1c2UuY29tPiB3cm90ZToNCj4+ID5bLi4uXQ0K
+Pj4gPj4gVGhlcmUgaXMgYSBtaXN1bmRlcnN0YW5kaW5nLCBvb20ucHJvdGVjdCBkb2VzIG5vdCBy
+ZXBsYWNlIHRoZSB1c2VyJ3MgDQo+PiA+PiB0YWlsZWQgcG9saWNpZXMsIEl0cyBwdXJwb3NlIGlz
+IHRvIG1ha2UgaXQgZWFzaWVyIGFuZCBtb3JlIGVmZmljaWVudCBmb3IgDQo+PiA+PiB1c2VycyB0
+byBjdXN0b21pemUgcG9saWNpZXMsIG9yIHRyeSB0byBhdm9pZCB1c2VycyBjb21wbGV0ZWx5IGFi
+YW5kb25pbmcgDQo+PiA+PiB0aGUgb29tIHNjb3JlIHRvIGZvcm11bGF0ZSBuZXcgcG9saWNpZXMu
+DQo+PiA+DQo+PiA+IFRoZW4geW91IHNob3VsZCBmb2N1cyBvbiBleHBsYWluaW5nIG9uIGhvdyB0
+aGlzIG1ha2VzIHRob3NlIHBvbGljaWVzIGFuZA0KPj4gPiBlYXNpZXIgYW5kIG1vZSBlZmZpY2ll
+bnQuIEkgZG8gbm90IHNlZSBpdC4NCj4+IA0KPj4gSW4gZmFjdCwgdGhlcmUgYXJlIHNvbWUgcmVs
+ZXZhbnQgY29udGVudHMgaW4gdGhlIHByZXZpb3VzIGNoYXQgcmVjb3Jkcy4gDQo+PiBJZiBvb20u
+cHJvdGVjdCBpcyBhcHBsaWVkLCBpdCB3aWxsIGhhdmUgdGhlIGZvbGxvd2luZyBiZW5lZml0cw0K
+Pj4gMS4gVXNlcnMgb25seSBuZWVkIHRvIGZvY3VzIG9uIHRoZSBtYW5hZ2VtZW50IG9mIHRoZSBs
+b2NhbCBjZ3JvdXAsIG5vdCB0aGUgDQo+PiBpbXBhY3Qgb24gb3RoZXIgdXNlcnMnIGNncm91cHMu
+DQo+DQo+UHJvdGVjdGlvbiBiYXNlZCBiYWxhbmNpbmcgY2Fubm90IHJlYWxseSB3b3JrIGluIGFu
+IGlzb2xhdGlvbi4NCg0KSSB0aGluayB0aGF0IGEgY2dyb3VwIG9ubHkgbmVlZHMgdG8gY29uY2Vy
+biB0aGUgcHJvdGVjdGlvbiB2YWx1ZSBvZiB0aGUgY2hpbGQgDQpjZ3JvdXAsIHdoaWNoIGlzIGlu
+ZGVwZW5kZW50IGluIGEgY2VydGFpbiBzZW5zZS4NCg0KPj4gMi4gVXNlcnMgYW5kIHN5c3RlbSBk
+byBub3QgbmVlZCB0byBzcGVuZCBleHRyYSB0aW1lIG9uIGNvbXBsaWNhdGVkIGFuZCANCj4+IHJl
+cGVhdGVkIHNjYW5uaW5nIGFuZCBjb25maWd1cmF0aW9uLiBUaGV5IGp1c3QgbmVlZCB0byBjb25m
+aWd1cmUgdGhlIA0KPj4gb29tLnByb3RlY3Qgb2Ygc3BlY2lmaWMgY2dyb3Vwcywgd2hpY2ggaXMg
+YSBvbmUtdGltZSB0YXNrDQo+DQo+VGhpcyB3aWxsIG5vdCB3b3JrIHNhbWUgd2F5IGFzIHRoZSBt
+ZW1vcnkgcmVjbGFpbSBwcm90ZWN0aW9uIGNhbm5vdCB3b3JrDQo+aW4gYW4gaXNvbGF0aW9uIG9u
+IHRoZSBtZW1jZyBsZXZlbC4NCg0KVGhlIHBhcmVudCBjZ3JvdXAncyBvb20ucHJvdGVjdCBjYW4g
+Y2hhbmdlIHRoZSBhY3R1YWwgcHJvdGVjdGVkIG1lbW9yeSBzaXplIA0Kb2YgdGhlIGNoaWxkIGNn
+cm91cCwgd2hpY2ggaXMgZXhhY3RseSB3aGF0IHdlIG5lZWQuIEJlY2F1c2Ugb2YgaXQsIHRoZSBj
+aGlsZCBjZ3JvdXAgDQpjYW4gc2V0IGl0cyBvd24gb29tLnByb3RlY3QgYXQgd2lsbC4NCg0KPj4g
+Pj4gPiA+V2h5IGNhbm5vdCB5b3Ugc2ltcGx5IGRpc2NvdW50IHRoZSBwcm90ZWN0aW9uIGZyb20g
+YWxsIHByb2Nlc3Nlcw0KPj4gPj4gPiA+ZXF1YWxseT8gSSBkbyBub3QgZm9sbG93IHdoeSB0aGUg
+dGFza191c2FnZSBoYXMgdG8gcGxheSBhbnkgcm9sZSBpbg0KPj4gPj4gPiA+dGhhdC4NCj4+ID4+
+ID4gDQo+PiA+PiA+IElmIGFsbCBwcm9jZXNzZXMgYXJlIHByb3RlY3RlZCBlcXVhbGx5LCB0aGUg
+b29tIHByb3RlY3Rpb24gb2YgY2dyb3VwIGlzIA0KPj4gPj4gPiBtZWFuaW5nbGVzcy4gRm9yIGV4
+YW1wbGUsIGlmIHRoZXJlIGFyZSBtb3JlIHByb2Nlc3NlcyBpbiB0aGUgY2dyb3VwLCANCj4+ID4+
+ID4gdGhlIGNncm91cCBjYW4gcHJvdGVjdCBtb3JlIG1lbXMsIGl0IGlzIHVuZmFpciB0byBjZ3Jv
+dXBzIHdpdGggZmV3ZXIgDQo+PiA+PiA+IHByb2Nlc3Nlcy4gU28gd2UgbmVlZCB0byBrZWVwIHRo
+ZSB0b3RhbCBhbW91bnQgb2YgbWVtb3J5IHRoYXQgYWxsIA0KPj4gPj4gPiBwcm9jZXNzZXMgaW4g
+dGhlIGNncm91cCBuZWVkIHRvIHByb3RlY3QgY29uc2lzdGVudCB3aXRoIHRoZSB2YWx1ZSBvZiAN
+Cj4+ID4+ID4gZW9vbS5wcm90ZWN0Lg0KPj4gPj4gDQo+PiA+PiBZb3UgYXJlIG1peGluZyB0d28g
+ZGlmZmVyZW50IGNvbmNlcHRzIHRvZ2V0aGVyIEkgYW0gYWZyYWlkLiBUaGUgcGVyDQo+PiA+PiBt
+ZW1jZyBwcm90ZWN0aW9uIHNob3VsZCBwcm90ZWN0IHRoZSBjZ3JvdXAgKGkuZS4gYWxsIHByb2Nl
+c3NlcyBpbiB0aGF0DQo+PiA+PiBjZ3JvdXApIHdoaWxlIHlvdSB3YW50IGl0IHRvIGJlIGFsc28g
+cHJvY2VzcyBhd2FyZS4gVGhpcyByZXN1bHRzIGluIGENCj4+ID4+IHZlcnkgdW5jbGVhciBydW50
+aW1lIGJlaGF2aW9yIHdoZW4gYSBwcm9jZXNzIGZyb20gYSBtb3JlIHByb3RlY3RlZCBtZW1jZw0K
+Pj4gPj4gaXMgc2VsZWN0ZWQgYmFzZWQgb24gaXRzIGluZGl2aWR1YWwgbWVtb3J5IHVzYWdlLg0K
+Pj4gPg0KPj4gVGhlIGNvcnJlY3Qgc3RhdGVtZW50IGhlcmUgc2hvdWxkIGJlIHRoYXQgZWFjaCBt
+ZW1jZyBwcm90ZWN0aW9uIHNob3VsZCANCj4+IHByb3RlY3QgdGhlIG51bWJlciBvZiBtZW1zIHNw
+ZWNpZmllZCBieSB0aGUgb29tLnByb3RlY3QuIEZvciBleGFtcGxlLCANCj4+IGEgY2dyb3VwJ3Mg
+dXNhZ2UgaXMgNkcsIGFuZCBpdCdzIG9vbS5wcm90ZWN0IGlzIDJHLCB3aGVuIGFuIG9vbSBraWxs
+ZXIgb2NjdXJzLCANCj4+IEluIHRoZSB3b3JzdCBjYXNlLCB3ZSB3aWxsIG9ubHkgcmVkdWNlIHRo
+ZSBtZW1vcnkgdXNlZCBieSB0aGlzIGNncm91cCB0byAyRyANCj4+IHRocm91Z2ggdGhlIG9tIGtp
+bGxlci4NCj4NCj5JIGRvIG5vdCBzZWUgaG93IHRoYXQgY291bGQgYmUgZ3VhcmFudGVlZC4gUGxl
+YXNlIGtlZXAgaW4gbWluZCB0aGF0IGENCj5ub24tdHJpdmlhbCBhbW91bnQgb2YgbWVtb3J5IHJl
+c291cmNlcyBjb3VsZCBiZSBjb21wbGV0ZWx5IGluZGVwZW5kZW50DQo+b24gYW55IHByb2Nlc3Mg
+bGlmZSB0aW1lIChqdXN0IGNvbnNpZGVyIHRtcGZzIGFzIGEgdHJpdmlhbCBleGFtcGxlKS4NCj4N
+Cj4+ID5MZXQgbWUgYmUgbW9yZSBzcGVjaWZpYyBoZXJlLiBBbHRob3VnaCBpdCBpcyBwcmltYXJp
+bHkgcHJvY2Vzc2VzIHdoaWNoDQo+PiA+YXJlIHRoZSBwcmltYXJ5IHNvdXJjZSBvZiBtZW1jZyBj
+aGFyZ2VzIHRoZSBtZW1vcnkgYWNjb3VudGVkIGZvciB0aGUgb29tDQo+PiA+YmFkbmVzcyBwdXJw
+b3NlcyBpcyBub3QgcmVhbGx5IGNvbXBhcmFibGUgdG8gdGhlIG92ZXJhbCBtZW1jZyBjaGFyZ2Vk
+DQo+PiA+bWVtb3J5LiBLZXJuZWwgbWVtb3J5LCBub24tbWFwcGVkIG1lbW9yeSBhbGwgdGhhdCBj
+YW4gZ2VuZXJhdGUgcmF0aGVyDQo+PiA+aW50ZXJlc3RpbmcgY29ybmVyY2FzZXMuDQo+PiANCj4+
+IFNvcnJ5LCBJJ20gdGhvdWdodGxlc3MgZW5vdWdoIGFib3V0IHNvbWUgc3BlY2lhbCBtZW1vcnkg
+c3RhdGlzdGljcy4gSSB3aWxsIGZpeCANCj4+IGl0IGluIHRoZSBuZXh0IHZlcnNpb24NCj4NCj5M
+ZXQgbWUganVzdCBlbXBoYXNpc2UgdGhhdCB3ZSBhcmUgdGFsa2luZyBhYm91dCBmdW5kYW1lbnRh
+bCBkaXNjb25uZWN0Lg0KPlJzcyBiYXNlZCBhY2NvdW50aW5nIGhhcyBiZWVuIHVzZWQgZm9yIHRo
+ZSBPT00ga2lsbGVyIHNlbGVjdGlvbiBiZWNhdXNlDQo+dGhlIG1lbW9yeSBnZXRzIHVubWFwcGVk
+IGFuZCBfcG90ZW50aWFsbHlfIGZyZWVkIHdoZW4gdGhlIHByb2Nlc3MgZ29lcw0KPmF3YXkuIE1l
+bWNnIGNoYW5nZXMgYXJlIGJvdW5kIHRvIHRoZSBvYmplY3QgbGlmZSB0aW1lIGFuZCBhcyBzYWlk
+IGluDQo+bWFueSBjYXNlcyB0aGVyZSBpcyBubyBkaXJlY3QgcmVsYXRpb24gd2l0aCBhbnkgcHJv
+Y2VzcyBsaWZlIHRpbWUuDQoNCkJhc2VkIG9uIHlvdXIgcXVlc3Rpb24sIEkgd2FudCB0byByZXZp
+c2UgdGhlIGZvcm11bGEgYXMgZm9sbG93cywNCnNjb3JlID0gdGFza191c2FnZSArIHNjb3JlX2Fk
+aiAqIHRvdGFscGFnZSAtIGVvb20ucHJvdGVjdCAqICh0YXNrX3VzYWdlIC0gdGFza19yc3NzaGFy
+ZSkgLyANCihsb2NhbF9tZW1jZ191c2FnZSArIGxvY2FsX21lbWNnX3N3YXBjYWNoZSkNCg0KQWZ0
+ZXIgdGhlIHByb2Nlc3MgaXMga2lsbGVkLCB0aGUgdW5tYXBwZWQgY2FjaGUgYW5kIHNoYXJlbWVt
+IHdpbGwgbm90IGJlIA0KcmVsZWFzZWQgaW1tZWRpYXRlbHksIHNvIHRoZXkgc2hvdWxkIG5vdCBh
+cHBseSB0byBjZ3JvdXAgZm9yIHByb3RlY3Rpb24gcXVvdGEuIA0KSW4gZXh0cmVtZSBlbnZpcm9u
+bWVudHMsIHRoZSBtZW1vcnkgdGhhdCBjYW5ub3QgYmUgcmVsZWFzZWQgYnkgdGhlIG9vbSBraWxs
+ZXIgDQooaS5lLiBzb21lIG1lbXMgdGhhdCBoYXZlIG5vdCBiZWVuIGNoYXJnZWQgdG8gdGhlIHBy
+b2Nlc3MpIG1heSBvY2N1cHkgYSBsYXJnZSANCnNoYXJlIG9mIHByb3RlY3Rpb24gcXVvdGEsIGJ1
+dCBpdCBpcyBleHBlY3RlZC4gT2YgY291cnNlLCB0aGUgaWRlYSBtYXkgaGF2ZSBzb21lIA0KcHJv
+YmxlbXMgdGhhdCBJIGhhdmVuJ3QgY29uc2lkZXJlZC4NCg0KPg0KPkhvcGUgdGhhdCBjbGFyaWZp
+ZXMuDQoNClRoYW5rcyBmb3IgeW91ciBjb21tZW50IQ0KY2hlbmdrYWl0YW8NCg0K
