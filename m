@@ -2,52 +2,52 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 92D8063FC63
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 00:58:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A80DF63FC6E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 01:05:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231994AbiLAX60 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 1 Dec 2022 18:58:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60670 "EHLO
+        id S230347AbiLBAFP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 1 Dec 2022 19:05:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231923AbiLAX6N (ORCPT
+        with ESMTP id S229713AbiLBAFO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 1 Dec 2022 18:58:13 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C667DBFCFE;
-        Thu,  1 Dec 2022 15:58:12 -0800 (PST)
+        Thu, 1 Dec 2022 19:05:14 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25CAABFCE0;
+        Thu,  1 Dec 2022 16:05:13 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6BF3C6178A;
-        Thu,  1 Dec 2022 23:58:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C27F0C433C1;
-        Thu,  1 Dec 2022 23:58:11 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id CBECCB82059;
+        Fri,  2 Dec 2022 00:05:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F792C433D6;
+        Fri,  2 Dec 2022 00:05:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1669939091;
-        bh=zPyaMFVNtJz39yxuPqF88oHgpJ3uncDzubuWa5rwGJc=;
+        s=k20201202; t=1669939510;
+        bh=c+iAZh65tKEp0i1bpbgnXu4ijblLpd36N+S65zLMVJs=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MhniUVuXFz96YDbTNmKxsR23Xfn0Bw5dVPYyb3Pfrt+WgCyOOL59YbJchYz1ZXNmG
-         xmSoWIvChXKlmhedoutyUiutSWeBHfRvrQmMUs/vAaYxpZyN5p1gAQz38l8uu77Cqm
-         h2LPjjYUEdL48kiIp7MBEnmE/U4C4o+QDl5sR1M2OHjHSackl/pvXF8Mbf0tDH5eLX
-         CsPgJlVUgOGDbo/kXPbKH1AP/RCFUpj+ikg+Fc4damulzHfFWu0l+NZpt+EPI/lmrD
-         3WPFQb2PbmnVCbJAV0j3Bo8+fBP1CtAeVzudaQu8BsV/14FamWbu/kGV7emLyjr7Ip
-         vxKs0XuvavxOA==
-Date:   Thu, 1 Dec 2022 15:58:11 -0800
+        b=ApbQWgm3zmiXoDBkYjYpFoW9skHXwiyIWGCChZFbFtYfyL/YbgcMAzunHiGm9p2Sc
+         WXQjFS1l+AExzW6SmzLiVNqIgeLFsTZahlObbCldXwZSb+Ur+NYkSMk4JM0QhX8WQW
+         I5/20cyOXzOq5j9+6Lg69WpogPFn/mhmHAhmaNepIfFauk4JIs81TbLEnUzFqm4seG
+         8yf3qc9PJVyUNKJCTKqmnxN5ezo02ragmaaZIv3ZiblYyRYuSuJpw9Rd6d7YcQ86Ak
+         wsRalmm5RmGZeAKPqb49OvtiZgUodB6EK0diNga6mQ2+bDpv0AlxDvXrI4nVqS0s17
+         SOmhJWR6UG+Ag==
+Date:   Thu, 1 Dec 2022 16:05:09 -0800
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Shiyang Ruan <ruansy.fnst@fujitsu.com>
 Cc:     linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
         nvdimm@lists.linux.dev, linux-fsdevel@vger.kernel.org,
         david@fromorbit.com, dan.j.williams@intel.com,
         akpm@linux-foundation.org
-Subject: Re: [PATCH v2 3/8] fsdax: zero the edges if source is HOLE or
- UNWRITTEN
-Message-ID: <Y4k/kxuPOirdlctI@magnolia>
+Subject: Re: [PATCH v2 4/8] fsdax,xfs: set the shared flag when file extent
+ is shared
+Message-ID: <Y4lBNf7kPwWlT4Tv@magnolia>
 References: <1669908538-55-1-git-send-email-ruansy.fnst@fujitsu.com>
- <1669908538-55-4-git-send-email-ruansy.fnst@fujitsu.com>
+ <1669908538-55-5-git-send-email-ruansy.fnst@fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1669908538-55-4-git-send-email-ruansy.fnst@fujitsu.com>
+In-Reply-To: <1669908538-55-5-git-send-email-ruansy.fnst@fujitsu.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -57,179 +57,95 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 01, 2022 at 03:28:53PM +0000, Shiyang Ruan wrote:
-> If srcmap contains invalid data, such as HOLE and UNWRITTEN, the dest
-> page should be zeroed.  Otherwise, since it's a pmem, old data may
-> remains on the dest page, the result of CoW will be incorrect.
-> 
-> The function name is also not easy to understand, rename it to
-> "dax_iomap_copy_around()", which means it copys data around the range.
+On Thu, Dec 01, 2022 at 03:28:54PM +0000, Shiyang Ruan wrote:
+> If a dax page is shared, mapread at different offsets can also trigger
+> page fault on same dax page.  So, change the flag from "cow" to
+> "shared".  And get the shared flag from filesystem when read.
 > 
 > Signed-off-by: Shiyang Ruan <ruansy.fnst@fujitsu.com>
-> ---
->  fs/dax.c | 78 ++++++++++++++++++++++++++++++++++----------------------
->  1 file changed, 48 insertions(+), 30 deletions(-)
-> 
-> diff --git a/fs/dax.c b/fs/dax.c
-> index 482dda85ccaf..6b6e07ad8d80 100644
-> --- a/fs/dax.c
-> +++ b/fs/dax.c
-> @@ -1092,7 +1092,7 @@ static int dax_iomap_direct_access(const struct iomap *iomap, loff_t pos,
->  }
->  
->  /**
-> - * dax_iomap_cow_copy - Copy the data from source to destination before write
-> + * dax_iomap_copy_around - Copy the data from source to destination before write
 
- * dax_iomap_copy_around - Prepare for an unaligned write to a
- * shared/cow page by copying the data before and after the range to be
- * written.
-
-Other than that, this make sense,
+Makes sense.
 Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
 --D
 
->   * @pos:	address to do copy from.
->   * @length:	size of copy operation.
->   * @align_size:	aligned w.r.t align_size (either PMD_SIZE or PAGE_SIZE)
-> @@ -1101,35 +1101,50 @@ static int dax_iomap_direct_access(const struct iomap *iomap, loff_t pos,
->   *
->   * This can be called from two places. Either during DAX write fault (page
->   * aligned), to copy the length size data to daddr. Or, while doing normal DAX
-> - * write operation, dax_iomap_actor() might call this to do the copy of either
-> + * write operation, dax_iomap_iter() might call this to do the copy of either
->   * start or end unaligned address. In the latter case the rest of the copy of
-> - * aligned ranges is taken care by dax_iomap_actor() itself.
-> + * aligned ranges is taken care by dax_iomap_iter() itself.
-> + * If the srcmap contains invalid data, such as HOLE and UNWRITTEN, zero the
-> + * area to make sure no old data remains.
->   */
-> -static int dax_iomap_cow_copy(loff_t pos, uint64_t length, size_t align_size,
-> +static int dax_iomap_copy_around(loff_t pos, uint64_t length, size_t align_size,
->  		const struct iomap *srcmap, void *daddr)
->  {
->  	loff_t head_off = pos & (align_size - 1);
->  	size_t size = ALIGN(head_off + length, align_size);
->  	loff_t end = pos + length;
->  	loff_t pg_end = round_up(end, align_size);
-> +	/* copy_all is usually in page fault case */
->  	bool copy_all = head_off == 0 && end == pg_end;
-> +	/* zero the edges if srcmap is a HOLE or IOMAP_UNWRITTEN */
-> +	bool zero_edge = srcmap->flags & IOMAP_F_SHARED ||
-> +			 srcmap->type == IOMAP_UNWRITTEN;
->  	void *saddr = 0;
->  	int ret = 0;
->  
-> -	ret = dax_iomap_direct_access(srcmap, pos, size, &saddr, NULL);
-> -	if (ret)
-> -		return ret;
-> +	if (!zero_edge) {
-> +		ret = dax_iomap_direct_access(srcmap, pos, size, &saddr, NULL);
-> +		if (ret)
-> +			return ret;
-> +	}
->  
->  	if (copy_all) {
-> -		ret = copy_mc_to_kernel(daddr, saddr, length);
-> -		return ret ? -EIO : 0;
-> +		if (zero_edge)
-> +			memset(daddr, 0, size);
-> +		else
-> +			ret = copy_mc_to_kernel(daddr, saddr, length);
-> +		goto out;
->  	}
->  
->  	/* Copy the head part of the range */
->  	if (head_off) {
-> -		ret = copy_mc_to_kernel(daddr, saddr, head_off);
-> -		if (ret)
-> -			return -EIO;
-> +		if (zero_edge)
-> +			memset(daddr, 0, head_off);
-> +		else {
-> +			ret = copy_mc_to_kernel(daddr, saddr, head_off);
-> +			if (ret)
-> +				return -EIO;
-> +		}
->  	}
->  
->  	/* Copy the tail part of the range */
-> @@ -1137,12 +1152,19 @@ static int dax_iomap_cow_copy(loff_t pos, uint64_t length, size_t align_size,
->  		loff_t tail_off = head_off + length;
->  		loff_t tail_len = pg_end - end;
->  
-> -		ret = copy_mc_to_kernel(daddr + tail_off, saddr + tail_off,
-> -					tail_len);
-> -		if (ret)
-> -			return -EIO;
-> +		if (zero_edge)
-> +			memset(daddr + tail_off, 0, tail_len);
-> +		else {
-> +			ret = copy_mc_to_kernel(daddr + tail_off,
-> +						saddr + tail_off, tail_len);
-> +			if (ret)
-> +				return -EIO;
-> +		}
->  	}
-> -	return 0;
-> +out:
-> +	if (zero_edge)
-> +		dax_flush(srcmap->dax_dev, daddr, size);
-> +	return ret ? -EIO : 0;
+> ---
+>  fs/dax.c           | 19 +++++++------------
+>  fs/xfs/xfs_iomap.c |  2 +-
+>  2 files changed, 8 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/dax.c b/fs/dax.c
+> index 6b6e07ad8d80..f1eb59bee0b5 100644
+> --- a/fs/dax.c
+> +++ b/fs/dax.c
+> @@ -846,12 +846,6 @@ static bool dax_fault_is_synchronous(const struct iomap_iter *iter,
+>  		(iter->iomap.flags & IOMAP_F_DIRTY);
 >  }
 >  
+> -static bool dax_fault_is_cow(const struct iomap_iter *iter)
+> -{
+> -	return (iter->flags & IOMAP_WRITE) &&
+> -		(iter->iomap.flags & IOMAP_F_SHARED);
+> -}
+> -
 >  /*
-> @@ -1241,13 +1263,10 @@ static int dax_memzero(struct iomap_iter *iter, loff_t pos, size_t size)
->  	if (ret < 0)
->  		return ret;
->  	memset(kaddr + offset, 0, size);
-> -	if (srcmap->addr != iomap->addr) {
-> -		ret = dax_iomap_cow_copy(pos, size, PAGE_SIZE, srcmap,
-> -					 kaddr);
-> -		if (ret < 0)
-> -			return ret;
-> -		dax_flush(iomap->dax_dev, kaddr, PAGE_SIZE);
-> -	} else
-> +	if (iomap->flags & IOMAP_F_SHARED)
-> +		ret = dax_iomap_copy_around(pos, size, PAGE_SIZE, srcmap,
-> +					    kaddr);
-> +	else
->  		dax_flush(iomap->dax_dev, kaddr + offset, size);
->  	return ret;
->  }
-> @@ -1401,8 +1420,8 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
->  		}
->  
->  		if (cow) {
-> -			ret = dax_iomap_cow_copy(pos, length, PAGE_SIZE, srcmap,
-> -						 kaddr);
-> +			ret = dax_iomap_copy_around(pos, length, PAGE_SIZE,
-> +						    srcmap, kaddr);
->  			if (ret)
->  				break;
->  		}
-> @@ -1547,7 +1566,7 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
->  		struct xa_state *xas, void **entry, bool pmd)
+>   * By this point grab_mapping_entry() has ensured that we have a locked entry
+>   * of the appropriate size so we don't have to worry about downgrading PMDs to
+> @@ -865,13 +859,14 @@ static void *dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
 >  {
->  	const struct iomap *iomap = &iter->iomap;
-> -	const struct iomap *srcmap = &iter->srcmap;
-> +	const struct iomap *srcmap = iomap_iter_srcmap(iter);
->  	size_t size = pmd ? PMD_SIZE : PAGE_SIZE;
->  	loff_t pos = (loff_t)xas->xa_index << PAGE_SHIFT;
->  	bool write = iter->flags & IOMAP_WRITE;
-> @@ -1578,9 +1597,8 @@ static vm_fault_t dax_fault_iter(struct vm_fault *vmf,
+>  	struct address_space *mapping = vmf->vma->vm_file->f_mapping;
+>  	void *new_entry = dax_make_entry(pfn, flags);
+> -	bool dirty = !dax_fault_is_synchronous(iter, vmf->vma);
+> -	bool cow = dax_fault_is_cow(iter);
+> +	bool write = iter->flags & IOMAP_WRITE;
+> +	bool dirty = write && !dax_fault_is_synchronous(iter, vmf->vma);
+> +	bool shared = iter->iomap.flags & IOMAP_F_SHARED;
 >  
->  	*entry = dax_insert_entry(xas, vmf, iter, *entry, pfn, entry_flags);
+>  	if (dirty)
+>  		__mark_inode_dirty(mapping->host, I_DIRTY_PAGES);
 >  
-> -	if (write &&
-> -	    srcmap->type != IOMAP_HOLE && srcmap->addr != iomap->addr) {
-> -		err = dax_iomap_cow_copy(pos, size, size, srcmap, kaddr);
-> +	if (write && iomap->flags & IOMAP_F_SHARED) {
-> +		err = dax_iomap_copy_around(pos, size, size, srcmap, kaddr);
->  		if (err)
->  			return dax_fault_return(err);
->  	}
+> -	if (cow || (dax_is_zero_entry(entry) && !(flags & DAX_ZERO_PAGE))) {
+> +	if (shared || (dax_is_zero_entry(entry) && !(flags & DAX_ZERO_PAGE))) {
+>  		unsigned long index = xas->xa_index;
+>  		/* we are replacing a zero page with block mapping */
+>  		if (dax_is_pmd_entry(entry))
+> @@ -883,12 +878,12 @@ static void *dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
+>  
+>  	xas_reset(xas);
+>  	xas_lock_irq(xas);
+> -	if (cow || dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
+> +	if (shared || dax_is_zero_entry(entry) || dax_is_empty_entry(entry)) {
+>  		void *old;
+>  
+>  		dax_disassociate_entry(entry, mapping, false);
+>  		dax_associate_entry(new_entry, mapping, vmf->vma, vmf->address,
+> -				cow);
+> +				shared);
+>  		/*
+>  		 * Only swap our new entry into the page cache if the current
+>  		 * entry is a zero page or an empty entry.  If a normal PTE or
+> @@ -908,7 +903,7 @@ static void *dax_insert_entry(struct xa_state *xas, struct vm_fault *vmf,
+>  	if (dirty)
+>  		xas_set_mark(xas, PAGECACHE_TAG_DIRTY);
+>  
+> -	if (cow)
+> +	if (write && shared)
+>  		xas_set_mark(xas, PAGECACHE_TAG_TOWRITE);
+>  
+>  	xas_unlock_irq(xas);
+> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+> index 07da03976ec1..881de99766ca 100644
+> --- a/fs/xfs/xfs_iomap.c
+> +++ b/fs/xfs/xfs_iomap.c
+> @@ -1215,7 +1215,7 @@ xfs_read_iomap_begin(
+>  		return error;
+>  	error = xfs_bmapi_read(ip, offset_fsb, end_fsb - offset_fsb, &imap,
+>  			       &nimaps, 0);
+> -	if (!error && (flags & IOMAP_REPORT))
+> +	if (!error && ((flags & IOMAP_REPORT) || IS_DAX(inode)))
+>  		error = xfs_reflink_trim_around_shared(ip, &imap, &shared);
+>  	xfs_iunlock(ip, lockmode);
+>  
 > -- 
 > 2.38.1
 > 
