@@ -2,73 +2,83 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E04A9640481
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 11:22:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E137640494
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 11:27:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233256AbiLBKWw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Dec 2022 05:22:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35250 "EHLO
+        id S233356AbiLBK1S (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Dec 2022 05:27:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36828 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233186AbiLBKWv (ORCPT
+        with ESMTP id S233341AbiLBK1A (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Dec 2022 05:22:51 -0500
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0B1125C6A;
-        Fri,  2 Dec 2022 02:22:50 -0800 (PST)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id D937167373; Fri,  2 Dec 2022 11:22:45 +0100 (CET)
-Date:   Fri, 2 Dec 2022 11:22:45 +0100
+        Fri, 2 Dec 2022 05:27:00 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AC8126AC0;
+        Fri,  2 Dec 2022 02:26:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=y5ud92nQf37ZqSh+JetkXlw12So9y6VeRppDRV99M7g=; b=4zgnIMqUuuHUVJitlEUYYYmcM3
+        kEsixiasYAjMMM5btmQIU+Zpfae0Lkl0d/VgRiT0cVctnlluIqtGna14M5iCcdN3h0Ew0rEik2/4d
+        fWLNknQ18SZSE/Ly9TVNlqNGRO7s5sTCSBfJlT7VDUzcKA0Co24ispszFFmX9PbeFYIIvjvYcYeGb
+        eXqTyL7EYkd/JrlE2RK/cLP9EYCvJzudmk+wc84VuY/nGJtsLrD/ZASRSmRcHACAq/9RkrB2A6BWX
+        5K/UGcRKqwfqzpiJbFmUFmGLlYSyg/Tovfe8z9j/3QLyGCwXe7Ppu+pk6A13jwtUAULbBrtWXHVe1
+        1/EZJ7Ow==;
+Received: from [2001:4bb8:192:26e7:bcd3:7e81:e7de:56fd] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1p13Fm-00FQvi-FR; Fri, 02 Dec 2022 10:26:47 +0000
 From:   Christoph Hellwig <hch@lst.de>
-To:     "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Cc:     Christoph Hellwig <hch@lst.de>,
+To:     Andrew Morton <akpm@linux-foundation.org>,
         Namjae Jeon <linkinjeon@kernel.org>,
         Sungjong Seo <sj1557.seo@samsung.com>,
         Jan Kara <jack@suse.com>,
         OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
         Mikulas Patocka <mikulas@artax.karlin.mff.cuni.cz>,
         Dave Kleikamp <shaggy@kernel.org>,
-        Bob Copeland <me@bobcopeland.com>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Bob Copeland <me@bobcopeland.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         jfs-discussion@lists.sourceforge.net,
         linux-karma-devel@lists.sourceforge.net, linux-mm@kvack.org
-Subject: Re: start removing writepage instances
-Message-ID: <20221202102245.GA17715@lst.de>
-References: <20221113162902.883850-1-hch@lst.de> <20221116183900.yzpcymelnnwppoh7@riteshh-domain>
+Subject: start removing writepage instances v2
+Date:   Fri,  2 Dec 2022 11:26:37 +0100
+Message-Id: <20221202102644.770505-1-hch@lst.de>
+X-Mailer: git-send-email 2.30.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221116183900.yzpcymelnnwppoh7@riteshh-domain>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Nov 17, 2022 at 12:09:00AM +0530, Ritesh Harjani (IBM) wrote:
->    reclaim. Now IIUC from previous discussions [1][2][3], reclaims happens from
->    the tail end of the LRU list which could do an I/O of a single page while 
->    an ongoing writeback was in progress of multiple pages. This disrupts the I/O 
->    pattern to become more random in nature, compared to, if we would have let 
->    writeback/flusher do it's job of writing back dirty pages.
+Hi all,
 
-Yes.
+The VM doesn't need or want ->writepage for writeback and is fine with
+just having ->writepages as long as ->migrate_folio is implemented.
 
->    Also many filesystems behave very differently within their ->writepage calls,
->    e.g. ext4 doesn't actually write in ->writepage for DELAYED blocks.
+This series removes all ->writepage instances that use
+block_write_full_page directly and also have a plain mpage_writepages
+based ->writepages.
 
-I don't think it's many file systems.  As far as I can tell only ext4
-actually is significantly different.
+Andrew, can you pick this up through the -mm tree?
 
-> 2. Now the other place from where ->writepage can be called from is, writeout()
->    function, which is a fallback function for migration (fallback_migrate_folio()).
->    fallback_migrate_folio() is called from move_to_new_folio() if ->migrate_folio 
->    is not defined for the FS.
+Changes since v1:
+ - dropped the ext2 and udf patches that Jan merged through
+   his tree
+ - collected a bunch of ACKs
 
-Also there is generic_writepages and folio_write_one/write_one_page.
-
-> Is above a correct understanding?
-
-Yes.
+Diffstat:
+ exfat/inode.c   |    9 ++-------
+ fat/inode.c     |    9 ++-------
+ hfs/inode.c     |    2 +-
+ hfsplus/inode.c |    2 +-
+ hpfs/file.c     |    9 ++-------
+ jfs/inode.c     |    7 +------
+ omfs/file.c     |    7 +------
+ 7 files changed, 10 insertions(+), 35 deletions(-)
