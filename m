@@ -2,224 +2,361 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 17D0A640017
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 07:01:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 986E164003B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 07:18:31 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232068AbiLBGB1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Dec 2022 01:01:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55306 "EHLO
+        id S232262AbiLBGS3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Dec 2022 01:18:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39748 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231367AbiLBGBX (ORCPT
+        with ESMTP id S232236AbiLBGSW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Dec 2022 01:01:23 -0500
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2032.outbound.protection.outlook.com [40.92.103.32])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 173897B57F;
-        Thu,  1 Dec 2022 22:01:22 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U1MRFFEBaOlnKpgZdRI9mfN0UPZ+1Q5+6X2j2UDEzqHSpHDuTf4z1Kcrs489XJtTkvh8IyDDq4XhcjvzCxW3mI8m3lYx+lbrXyGkxdreb7c2nSqsY68khZm5G+wb+68k3uVWdQ7TPCbdLHLoSFM5KrCTR+O/2t/7LzJZNuyLfKo32dso+AR2WL3j9hj/43pWfRlAP9yiJnseBylfIWFYTMDO5Ivz6Z/FPSpQe8cIYgsfMUsdKVReCZVLpAQm01lPeyWzwYSwGJiZapJtCpKHqyZeGhVU55ZKrWK1omrFu+FuA5W3ZMP+4rZo5Yb2kqZ02zhPO7o2NINzTBvG4Ee/Xw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xV6Pvff4GuBymTgIIBw/Ps3ArFxz1+1GoeMc/bsJq8A=;
- b=lHcmI/GIbpcf1LZHmXKshYvhWylw9O2aOM5H8qLu9LzpNRyrbt2y77FZG/s6Qe5d4CICRuFGYVXlP8Ib4r1wQASvWMmSAMaoxK5tJ6+Qo0Hfs5Yf6mN/LvljRMTZoq6dQex0eE2WgVDs7NO7pN534zpoXeEozxjuXKDejnhNNDIwLQkMXJSQS+bqqSygIVPagK8ZK1aFtBmWKzA43CvCvw04agFF4CjZYe7xowvGXUgDq7OPTyND//xaVsKIMqwSABAIj/YfYszaPFjguUlSWcxQrI/KAY3dn72oEDqc1Jm5Do+d0hGNr4c1svDHtG+R1YvwLYJ1JqySHFrZgKWazg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xV6Pvff4GuBymTgIIBw/Ps3ArFxz1+1GoeMc/bsJq8A=;
- b=o/aykkAP72ZCrVg5rVQkpadD3omK1XYsTp5T4Otq/Nt04xMUvVfznXSPoaKrn2/JqA3Es0WEs+sNcvAWsFhP/HXvnrxqXEKvkJ+h80APOhbXBNjj7kpZfJSOt1y0M0ZzQD8O9s6Hth3SB5xw6T3DELHn2CGHTNcqPXeTRKdxrv92ItyifacUccpouUIy41o9pRV+pumXMtAu44Esq6Y1UI4Jee3rTcipBt1azUrv7BmuP1mKzIIJAAk11GOM1eg2G0zuD6uhXMe1qBDSNR1QgywB4i/KKcan3/LwvKtPtPgmIS6L3X5xYfrEQd3ARtM832frm+h6VWRnmq4PK+B4sw==
-Received: from BM1PR01MB0931.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00:2::9) by
- MA1PR01MB4242.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:15::7) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5880.8; Fri, 2 Dec 2022 06:01:16 +0000
-Received: from BM1PR01MB0931.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::68ba:5320:b72:4b1]) by BM1PR01MB0931.INDPRD01.PROD.OUTLOOK.COM
- ([fe80::68ba:5320:b72:4b1%4]) with mapi id 15.20.5880.008; Fri, 2 Dec 2022
- 06:01:16 +0000
-From:   Aditya Garg <gargaditya08@live.com>
-To:     "willy@infradead.org" <willy@infradead.org>,
-        "ira.weiny@intel.com" <ira.weiny@intel.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: [PATCH] hfsplus: Add module parameter to enable force writes
-Thread-Topic: [PATCH] hfsplus: Add module parameter to enable force writes
-Thread-Index: AQHZBhN9MNP94cgWt0ywcFHXTOJUWg==
-Date:   Fri, 2 Dec 2022 06:01:16 +0000
-Message-ID: <53821C76-DAFE-4505-9EC8-BE4ACBEA9DD9@live.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-tmn:  [IfNeKhMxLx8eMsXb+qLYm2qBYioAwsh5I/maREVBl9qM+kijCPbB+3SA7iA5FfLx]
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BM1PR01MB0931:EE_|MA1PR01MB4242:EE_
-x-ms-office365-filtering-correlation-id: 9e9d8063-ca8a-4233-7606-08dad42a9fd4
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: IayyXXUM/sLhnuq8/SaaFbQUcKFwFGPBHZV8oEhc1lPjteZpTcLa8I9Rt6feXVu0gO+tVt5H34gpp+hj0dbuRvxrAX+DhME/ekZU0C9IBGmEcAaetgnyb4E6HhYStoVYln1tE7+SuIr6FBq5+Ks3QWXpAd0olJpsfYUBpKib58jn6EGvJDyAv/NNMX/knTdcivN77FxGPlnPEhmT+pexP1LLkMUiNgcIMI5eS3nJQxBj8xMMC8dlEegYMlF+p4YtREuFi4pAXjGod0HiWdYgtNH1+V/MwuGkf/12eVgRGGk25dZFtQkoY4kApgo7fIpQjWewq+exiI8Px68in7M/wrER5jl1oYOPMSza1vaMJwqfNo6fNStu2cDLKx3ZOdNjVwV9WVAd0T4FMOvnCPI0foSGFsRk8VgYz1gX8Fr6xIV5wkhONSr7Jc1q+gXkZJBBpuYWAdpIB1Uurxrt2jUcVtsq8IPiEIfUQEAVEhD+Z8jXeWE/fCqA6vhVfZ91gMBdej9+NYyvdzrRPMnTHX5yw5gpdnVQFAwBPyLFwiLS+NB3IzOQSt+H8sD6D2VoG/nmXeg1/hAUp/hvIE6k0XUBTHfZKpUs/ZvbI2MZABCqsEA=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?80oa2n1amOZByGpdo6WN1R0miPgkSr9BkyHOCI/uRvySnmAQRmzpSPtPOWKx?=
- =?us-ascii?Q?ok1ckxw19P6W6Tqe76i1L5KEJg7lDMmQahZKxNIK7TMFAPJTV5AflrbcevXB?=
- =?us-ascii?Q?wKE3UUqjlzcU2Xw4QrnCsin+YT8tmxw7FLPQuG2i4oL5vjnWjlPizBfU73yg?=
- =?us-ascii?Q?3Sx0KEfI6H/aK17HbVaTgGvJ3rGQDGiw6M8ehUheiFK/Z7hJB10DHJbi/zIN?=
- =?us-ascii?Q?+XXMHYoh0GUS/RiWklk2vo4d7CesTr4FYbniqQVypO55oenPNgKatfAPTkkG?=
- =?us-ascii?Q?U78eNSPe+G8i7KdpI2SHYFOKoy06Sgftn1UqSmuG2O9Ns4rZT9BESXTMDboU?=
- =?us-ascii?Q?mpUKOybpcwfV2NahXBmj/7FzaHbVvwW8n4+OMx6XMD+W1E40nux5cAZgA9y/?=
- =?us-ascii?Q?MerCs21dmf70l79krRHwIeGuZwbTCK4dZAFdDgTyeSJ0eBVbq9iWegPsotu/?=
- =?us-ascii?Q?KOBJwswN4IZpkT0mJh890JCJJVzEd8XpUCgL5xMpXnhcghbwtDFQEyKRgvTV?=
- =?us-ascii?Q?Kw7ww1haHuCqrlTC/0EkqqplYxNwNzKg89YLrwasDZnwQb12gwzgXwPdTH2Q?=
- =?us-ascii?Q?eQowz9e+TIrrbZG8UgM+KILG3Xm7jrKu0GOR6YItWIZsWiy4XLP1D26Nsam0?=
- =?us-ascii?Q?Zya8qKdmDEAmzGWub7LZMXA3J2UuqUdDtW9WDVaH6a7C0sXf04ga9z4uA7ol?=
- =?us-ascii?Q?ltxrKlgpB5FtCizvAXK4zU3Ip9sR6eeBclJz/04lfS47zhU57m8qryK8WTeY?=
- =?us-ascii?Q?Rv28qYDsnJeReYx1SEEaw9rhjBvK4NRhchCJVYwPNwOiVZxK4DbXb7ELbjBS?=
- =?us-ascii?Q?HFt6c9e3G8gpWi5euGtLJScIZMEbCC3gpC2MNypn9f4+uI+5Hmc8X0DpLcMA?=
- =?us-ascii?Q?x4xgyQB+q2E2fn4bUWs2YSYbz0RQzyurGRhYT6TR+kNXc06UkIcm/hhENIFu?=
- =?us-ascii?Q?7QmaA4wh/E+xDKhuE/+V/Px69ZmJkimj8UEU6k+JkeWoUZycJTEm+XhurfWr?=
- =?us-ascii?Q?vFfAh4huWL2UI5jKBl1zZb/1UKU2tcq7yd8YS2CQsjWuqlWGU9YOmgQQhmqb?=
- =?us-ascii?Q?EOdnkmZAEZL0oOsvo4018eDLz3w9RmWK5TtTTtiZLpmwk2GD0vS2VCGPGAdc?=
- =?us-ascii?Q?XtWqJrasFEUzaZxJz3iAYdLT+zB1acZBRXbJwOVNbi6DXS1a4Tmzt7iZmVLv?=
- =?us-ascii?Q?18DH/F/WkOMInGYUovlE8O0Z2mYhMTnXG/7LnKKxc/VzfNJqHgs/w7/OFCqG?=
- =?us-ascii?Q?OfH/9/uxUaVql90YSZtWHd7RRYAPaCHKruXVugmIC83pctBO5BpBhi4/O89m?=
- =?us-ascii?Q?N4kVB2XuHIg8BDwwqU9N/C8GBZW+L5a4zBf/Wo4goxULvQ=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <0B621F8D5A9EEA41849DEF499AB7DB19@INDPRD01.PROD.OUTLOOK.COM>
-Content-Transfer-Encoding: quoted-printable
+        Fri, 2 Dec 2022 01:18:22 -0500
+Received: from mga07.intel.com (mga07.intel.com [134.134.136.100])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 80666CA78D;
+        Thu,  1 Dec 2022 22:18:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1669961900; x=1701497900;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9pJ+b2yeHo2LDdteBDTW1h9o4MtUauJFK7JJvjQzm24=;
+  b=MNvrhzKNOrplFVQykiuUTNcXxgzJUPCy7yCTvXHYsdtxJbNVgmlLKBqu
+   bZ5OEgUplhxs268MKTRgsgVtiUXhppeRC5GYXOiYsvn0nwHk6wjzTdySB
+   Re6LL4NqYyilA2kQ7Uo+m6EKQgAuPVDU8spgy48YW1YH8ebzOHNtLNnDn
+   qOkDVL6rm0YVeFvOUB761BXiEw1P9IGHH/xpGoDYiGsTDQ8NmlCz6ZcrD
+   qZN0UZyWBWEyJ4UVOIRNvEC93nVLa157nCYFl7obqa8eW1+i9oaCyo0tc
+   Bo0MblN5ZTUtHPYPtf+uoB134CrkMBD27elegcjg6mRrs28l2udN2JdsF
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10548"; a="380170336"
+X-IronPort-AV: E=Sophos;i="5.96,210,1665471600"; 
+   d="scan'208";a="380170336"
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2022 22:18:19 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10548"; a="733698561"
+X-IronPort-AV: E=Sophos;i="5.96,210,1665471600"; 
+   d="scan'208";a="733698561"
+Received: from chaop.bj.intel.com ([10.240.193.75])
+  by FMSMGA003.fm.intel.com with ESMTP; 01 Dec 2022 22:18:08 -0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        Chao Peng <chao.p.peng@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+Subject: [PATCH v10 0/9] KVM: mm: fd-based approach for supporting KVM
+Date:   Fri,  2 Dec 2022 14:13:38 +0800
+Message-Id: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-42ed3.templateTenant
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BM1PR01MB0931.INDPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9e9d8063-ca8a-4233-7606-08dad42a9fd4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Dec 2022 06:01:16.1250
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MA1PR01MB4242
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Aditya Garg <gargaditya08@live.com>
+This patch series implements KVM guest private memory for confidential
+computing scenarios like Intel TDX[1]. If a TDX host accesses
+TDX-protected guest memory, machine check can happen which can further
+crash the running host system, this is terrible for multi-tenant
+configurations. The host accesses include those from KVM userspace like
+QEMU. This series addresses KVM userspace induced crash by introducing
+new mm and KVM interfaces so KVM userspace can still manage guest memory
+via a fd-based approach, but it can never access the guest memory
+content.
 
-This patch enables users to permanently enable writes of HFS+ locked
-and/or journaled volumes using a module parameter.
+The patch series touches both core mm and KVM code. I appreciate
+Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
+reviews are always welcome.
+  - 01: mm change, target for mm tree
+  - 02-09: KVM change, target for KVM tree
 
-Why module parameter?
-Reason being, its not convenient to manually mount the volume with force
-everytime. There are use cases which are fine with force enabling writes
-on journaled volumes. I've seen many on various online forums and I am one
-of them as well.
+Given KVM is the only current user for the mm part, I have chatted with
+Paolo and he is OK to merge the mm change through KVM tree, but
+reviewed-by/acked-by is still expected from the mm people.
 
-Isn't it risky?
-Yes obviously it is, as the driver itself warns users for the same. But
-any user using the parameter obviously shall be well aware of the risks
-involved. To be honest, I've been writing on a 100Gb journaled volume for
-a few days, including both large and small files, and haven't faced any
-corruption yet.
+The patches have been verified with Intel TDX environment, but Vishal
+has done an excellent work on the selftests[4] which are dedicated for
+this series, making it possible to test this series without innovative
+hardware and fancy steps of building a VM environment. See Test section
+below for more info.
 
-Signed-off-by: Aditya Garg <gargaditya08@live.com>
----
- fs/hfsplus/super.c | 46 ++++++++++++++++++++++++++++++++++++----------
- 1 file changed, 36 insertions(+), 10 deletions(-)
 
-diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
-index 122ed89eb..2367a2407 100644
---- a/fs/hfsplus/super.c
-+++ b/fs/hfsplus/super.c
-@@ -24,6 +24,16 @@ static void hfsplus_free_inode(struct inode *inode);
- #include "hfsplus_fs.h"
- #include "xattr.h"
-=20
-+static unsigned int force_journaled_rw;
-+module_param(force_journaled_rw, uint, 0644);
-+MODULE_PARM_DESC(force_journaled_rw, "Force enable writes on Journaled HFS=
-+ volumes. "
-+		"([0] =3D disabled, 1 =3D enabled)");
-+
-+static unsigned int force_locked_rw;
-+module_param(force_locked_rw, uint, 0644);
-+MODULE_PARM_DESC(force_locked_rw, "Force enable writes on locked HFS+ volu=
-mes. "
-+		"([0] =3D disabled, 1 =3D enabled)");
-+
- static int hfsplus_system_read_inode(struct inode *inode)
- {
- 	struct hfsplus_vh *vhdr =3D HFSPLUS_SB(inode->i_sb)->s_vhdr;
-@@ -346,14 +356,22 @@ static int hfsplus_remount(struct super_block *sb, in=
-t *flags, char *data)
- 			/* nothing */
- 		} else if (vhdr->attributes &
- 				cpu_to_be32(HFSPLUS_VOL_SOFTLOCK)) {
--			pr_warn("filesystem is marked locked, leaving read-only.\n");
--			sb->s_flags |=3D SB_RDONLY;
--			*flags |=3D SB_RDONLY;
-+			if (force_locked_rw) {
-+				pr_warn("filesystem is marked locked, but writes have been force enabl=
-ed.\n");
-+			} else {
-+				pr_warn("filesystem is marked locked, leaving read-only.\n");
-+				sb->s_flags |=3D SB_RDONLY;
-+				*flags |=3D SB_RDONLY;
-+			}
- 		} else if (vhdr->attributes &
- 				cpu_to_be32(HFSPLUS_VOL_JOURNALED)) {
--			pr_warn("filesystem is marked journaled, leaving read-only.\n");
--			sb->s_flags |=3D SB_RDONLY;
--			*flags |=3D SB_RDONLY;
-+			if (force_journaled_rw) {
-+				pr_warn("filesystem is marked journaled, but writes have been force en=
-abled.\n");
-+			} else {
-+				pr_warn("filesystem is marked journaled, leaving read-only.\n");
-+				sb->s_flags |=3D SB_RDONLY;
-+				*flags |=3D SB_RDONLY;
-+			}
- 		}
- 	}
- 	return 0;
-@@ -459,12 +477,20 @@ static int hfsplus_fill_super(struct super_block *sb,=
- void *data, int silent)
- 	} else if (test_and_clear_bit(HFSPLUS_SB_FORCE, &sbi->flags)) {
- 		/* nothing */
- 	} else if (vhdr->attributes & cpu_to_be32(HFSPLUS_VOL_SOFTLOCK)) {
--		pr_warn("Filesystem is marked locked, mounting read-only.\n");
--		sb->s_flags |=3D SB_RDONLY;
-+		if (force_locked_rw) {
-+			pr_warn("Filesystem is marked locked, but writes have been force enable=
-d.\n");
-+		} else {
-+			pr_warn("Filesystem is marked locked, mounting read-only.\n");
-+			sb->s_flags |=3D SB_RDONLY;
-+		}
- 	} else if ((vhdr->attributes & cpu_to_be32(HFSPLUS_VOL_JOURNALED)) &&
- 			!sb_rdonly(sb)) {
--		pr_warn("write access to a journaled filesystem is not supported, use th=
-e force option at your own risk, mounting read-only.\n");
--		sb->s_flags |=3D SB_RDONLY;
-+		if (force_journaled_rw) {
-+			pr_warn("write access to a journaled filesystem is not supported, but h=
-as been force enabled.\n");
-+		} else {
-+			pr_warn("write access to a journaled filesystem is not supported, use t=
-he force option at your own risk, mounting read-only.\n");
-+			sb->s_flags |=3D SB_RDONLY;
-+		}
- 	}
-=20
- 	err =3D -EINVAL;
---=20
-2.38.1
+Introduction
+============
+KVM userspace being able to crash the host is horrible. Under current
+KVM architecture, all guest memory is inherently accessible from KVM
+userspace and is exposed to the mentioned crash issue. The goal of this
+series is to provide a solution to align mm and KVM, on a userspace
+inaccessible approach of exposing guest memory. 
+
+Normally, KVM populates secondary page table (e.g. EPT) by using a host
+virtual address (hva) from core mm page table (e.g. x86 userspace page
+table). This requires guest memory being mmaped into KVM userspace, but
+this is also the source where the mentioned crash issue can happen. In
+theory, apart from those 'shared' memory for device emulation etc, guest
+memory doesn't have to be mmaped into KVM userspace.
+
+This series introduces fd-based guest memory which will not be mmaped
+into KVM userspace. KVM populates secondary page table by using a
+fd/offset pair backed by a memory file system. The fd can be created
+from a supported memory filesystem like tmpfs/hugetlbfs and KVM can
+directly interact with them with newly introduced in-kernel interface,
+therefore remove the KVM userspace from the path of accessing/mmaping
+the guest memory. 
+
+Kirill had a patch [2] to address the same issue in a different way. It
+tracks guest encrypted memory at the 'struct page' level and relies on
+HWPOISON to reject the userspace access. The patch has been discussed in
+several online and offline threads and resulted in a design document [3]
+which is also the original proposal for this series. Later this patch
+series evolved as more comments received in community but the major
+concepts in [3] still hold true so recommend reading.
+
+The patch series may also be useful for other usages, for example, pure
+software approach may use it to harden itself against unintentional
+access to guest memory. This series is designed with these usages in
+mind but doesn't have code directly support them and extension might be
+needed.
+
+
+mm change
+=========
+Introduces a new memfd_restricted system call which can create memory
+file that is restricted from userspace access via normal MMU operations
+like read(), write() or mmap() etc and the only way to use it is
+passing it to a third kernel module like KVM and relying on it to
+access the fd through the newly added restrictedmem kernel interface.
+The restrictedmem interface bridges the memory file subsystems
+(tmpfs/hugetlbfs etc) and their users (KVM in this case) and provides
+bi-directional communication between them. 
+
+
+KVM change
+==========
+Extends the KVM memslot to provide guest private (encrypted) memory from
+a fd. With this extension, a single memslot can maintain both private
+memory through private fd (restricted_fd/restricted_offset) and shared
+(unencrypted) memory through userspace mmaped host virtual address
+(userspace_addr). For a particular guest page, the corresponding page in
+KVM memslot can be only either private or shared and only one of the
+shared/private parts of the memslot is visible to guest. For how this
+new extension is used in QEMU, please refer to kvm_set_phys_mem() in
+below TDX-enabled QEMU repo.
+
+Introduces new KVM_EXIT_MEMORY_FAULT exit to allow userspace to get the
+chance on decision-making for shared <-> private memory conversion. The
+exit can be an implicit conversion in KVM page fault handler or an
+explicit conversion from guest OS.
+
+Introduces new KVM ioctl KVM_SET_MEMORY_ATTRIBUTES to maintain whether a
+page is private or shared. This ioctl allows userspace to convert a page
+between private <-> shared. The data maintained tells the truth whether
+a guest page is private or shared and this information will be used in
+KVM page fault handler to decide whether the private or the shared part
+of the memslot is visible to guest.
+
+
+Test
+====
+Ran two kinds of tests:
+  - Selftests [4] from Vishal and VM boot tests in non-TDX environment
+    Code also in below repo: https://github.com/chao-p/linux/tree/privmem-v10
+
+  - Functional tests in TDX capable environment
+    Tested the new functionalities in TDX environment. Code repos:
+    Linux: https://github.com/chao-p/linux/tree/privmem-v10-tdx
+    QEMU: https://github.com/chao-p/qemu/tree/privmem-v10
+
+    An example QEMU command line for TDX test:
+    -object tdx-guest,id=tdx,debug=off,sept-ve-disable=off \
+    -machine confidential-guest-support=tdx \
+    -object memory-backend-memfd-private,id=ram1,size=${mem} \
+    -machine memory-backend=ram1
+
+
+TODO
+====
+  - Page accounting and limiting for encrypted memory
+  - hugetlbfs support
+
+
+Changelog
+=========
+v10:
+  - mm: hook up restricted_memfd to memory failure and route it to
+    kernel users through .error() callback.
+  - mm: call invalidate() notifier only for FALLOC_FL_PUNCH_HOLE, i.e.
+    not for allocation.
+  - KVM: introduce new ioctl KVM_SET_MEMORY_ATTRIBUTES for memory
+    conversion instead of reusing KVM_MEMORY_ENCRYPT_{UN,}REG_REGION.
+  - KVM: refine gfn-based mmu_notifier_retry() mechanism.
+  - KVM: improve lpage_info updating code.
+  - KVM: fix the bug in private memory handling that a private fault may
+    fall into a non-private memslot.
+  - KVM: handle memory machine check error for fd-based memory.
+v9:
+  - mm: move inaccessible memfd into separated syscall.
+  - mm: return page instead of pfn_t for inaccessible_get_pfn and remove
+    inaccessible_put_pfn.
+  - KVM: rename inaccessible/private to restricted and CONFIG change to
+    make the code friendly to pKVM.
+  - KVM: add invalidate_begin/end pair to fix race contention and revise
+    the lock protection for invalidation path.
+  - KVM: optimize setting lpage_info for > 2M level by direct accessing
+    lower level's result.
+  - KVM: avoid load xarray in kvm_mmu_max_mapping_level() and instead let
+    the caller to pass in is_private.
+  - KVM: API doc improvement.
+v8:
+  - mm: redesign mm part by introducing a shim layer(inaccessible_memfd)
+    in memfd to avoid touch the memory file systems directly.
+  - mm: exclude F_SEAL_AUTO_ALLOCATE as it is for shared memory and
+    cause confusion in this series, will send out separately.
+  - doc: exclude the man page change, it's not kernel patch and will
+    send out separately.
+  - KVM: adapt to use the new mm inaccessible_memfd interface.
+  - KVM: update lpage_info when setting mem_attr_array to support
+    large page.
+  - KVM: change from xa_store_range to xa_store for mem_attr_array due
+    to xa_store_range overrides all entries which is not intended
+    behavior for us.
+  - KVM: refine the mmu_invalidate_retry_gfn mechanism for private page.
+  - KVM: reorganize KVM_MEMORY_ENCRYPT_{UN,}REG_REGION and private page
+    handling code suggested by Sean.
+v7:
+  - mm: introduce F_SEAL_AUTO_ALLOCATE to avoid double allocation.
+  - KVM: use KVM_MEMORY_ENCRYPT_{UN,}REG_REGION to record
+    private/shared info.
+  - KVM: use similar sync mechanism between zap/page fault paths as
+    mmu_notifier for memfile_notifier based invalidation.
+v6:
+  - mm: introduce MEMFILE_F_* flags into memfile_node to allow checking
+    feature consistence among all memfile_notifier users and get rid of
+    internal flags like SHM_F_INACCESSIBLE.
+  - mm: make pfn_ops callbacks being members of memfile_backing_store
+    and then refer to it directly in memfile_notifier.
+  - mm: remove backing store unregister.
+  - mm: remove RLIMIT_MEMLOCK based memory accounting and limiting.
+  - KVM: reorganize patch sequence for page fault handling and private
+    memory enabling.
+v5:
+  - Add man page for MFD_INACCESSIBLE flag and improve KVM API do for
+    the new memslot extensions.
+  - mm: introduce memfile_{un}register_backing_store to allow memory
+    backing store to register/unregister it from memfile_notifier.
+  - mm: remove F_SEAL_INACCESSIBLE, use in-kernel flag
+    (SHM_F_INACCESSIBLE for shmem) instead. 
+  - mm: add memory accounting and limiting (RLIMIT_MEMLOCK based) for
+    MFD_INACCESSIBLE memory.
+  - KVM: remove the overlap check for mapping the same file+offset into
+    multiple gfns due to perf consideration, warned in document.
+v4:
+  - mm: rename memfd_ops to memfile_notifier and separate it from
+    memfd.c to standalone memfile-notifier.c.
+  - KVM: move pfn_ops to per-memslot scope from per-vm scope and allow
+    registering multiple memslots to the same memory backing store.
+  - KVM: add a 'kvm' reference in memslot so that we can recover kvm in
+    memfile_notifier handlers.
+  - KVM: add 'private_' prefix for the new fields in memslot.
+  - KVM: reshape the 'type' to 'flag' for kvm_memory_exit
+v3:
+  - Remove 'RFC' prefix.
+  - Fix race condition between memfile_notifier handlers and kvm destroy.
+  - mm: introduce MFD_INACCESSIBLE flag for memfd_create() to force
+    setting F_SEAL_INACCESSIBLE when the fd is created.
+  - KVM: add the shared part of the memslot back to make private/shared
+    pages live in one memslot.
+
+Reference
+=========
+[1] Intel TDX:
+https://www.intel.com/content/www/us/en/developer/articles/technical/intel-trust-domain-extensions.html
+[2] Kirill's implementation:
+https://lore.kernel.org/all/20210416154106.23721-1-kirill.shutemov@linux.intel.com/T/ 
+[3] Original design proposal:
+https://lore.kernel.org/all/20210824005248.200037-1-seanjc@google.com/  
+[4] Selftest:
+https://lore.kernel.org/all/20221111014244.1714148-1-vannapurve@google.com/
+
+
+Chao Peng (8):
+  KVM: Introduce per-page memory attributes
+  KVM: Extend the memslot to support fd-based private memory
+  KVM: Add KVM_EXIT_MEMORY_FAULT exit
+  KVM: Use gfn instead of hva for mmu_notifier_retry
+  KVM: Unmap existing mappings when change the memory attributes
+  KVM: Update lpage info when private/shared memory are mixed
+  KVM: Handle page fault for private memory
+  KVM: Enable and expose KVM_MEM_PRIVATE
+
+Kirill A. Shutemov (1):
+  mm: Introduce memfd_restricted system call to create restricted user
+    memory
+
+ Documentation/virt/kvm/api.rst         | 125 ++++++-
+ arch/x86/entry/syscalls/syscall_32.tbl |   1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |   1 +
+ arch/x86/include/asm/kvm_host.h        |   9 +
+ arch/x86/kvm/Kconfig                   |   3 +
+ arch/x86/kvm/mmu/mmu.c                 | 205 ++++++++++-
+ arch/x86/kvm/mmu/mmu_internal.h        |  14 +-
+ arch/x86/kvm/mmu/mmutrace.h            |   1 +
+ arch/x86/kvm/mmu/tdp_mmu.c             |   2 +-
+ arch/x86/kvm/x86.c                     |  17 +-
+ include/linux/kvm_host.h               | 103 +++++-
+ include/linux/restrictedmem.h          |  71 ++++
+ include/linux/syscalls.h               |   1 +
+ include/uapi/asm-generic/unistd.h      |   5 +-
+ include/uapi/linux/kvm.h               |  53 +++
+ include/uapi/linux/magic.h             |   1 +
+ kernel/sys_ni.c                        |   3 +
+ mm/Kconfig                             |   4 +
+ mm/Makefile                            |   1 +
+ mm/memory-failure.c                    |   3 +
+ mm/restrictedmem.c                     | 318 +++++++++++++++++
+ virt/kvm/Kconfig                       |   6 +
+ virt/kvm/kvm_main.c                    | 469 +++++++++++++++++++++----
+ 23 files changed, 1323 insertions(+), 93 deletions(-)
+ create mode 100644 include/linux/restrictedmem.h
+ create mode 100644 mm/restrictedmem.c
+
+
+base-commit: df0bb47baa95aad133820b149851d5b94cbc6790
+-- 
+2.25.1
 
