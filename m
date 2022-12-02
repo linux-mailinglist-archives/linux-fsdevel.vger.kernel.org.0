@@ -2,204 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA9596400AE
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 07:53:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D1BCE6400ED
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 08:13:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232428AbiLBGxp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Dec 2022 01:53:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43738 "EHLO
+        id S232151AbiLBHN1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 2 Dec 2022 02:13:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232314AbiLBGxn (ORCPT
+        with ESMTP id S230447AbiLBHNZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Dec 2022 01:53:43 -0500
-Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2254BB7C1;
-        Thu,  1 Dec 2022 22:53:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1669964022; x=1701500022;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=hsL57ikcNVoLHdsSPb/2quBPJAcrsHQWRoxcjDJhwfk=;
-  b=eT0WFURXcMGeVYPNWIXxRON88XkgDgnK57MP8L9HBxKxsLmaAF3wJG7q
-   rnDKkrgZoX9TcVbQjFOyiHKO0gbbZ9fcMwwssDAXYyl0WJvN4OeI0hfn/
-   Kn0FuzeN0TDa37Lo4FaguVQsHPwL8t1p0mbouzgGyTeMfR+/WJw28w2b8
-   rh2r81QD8/4ACEi8dpcM54W2kVY5TcI1TPegcZnSzlgwg7wDRxmJr7X5t
-   P2v2sBsKA3vddkTIPlScUBDZCzecu1t1zNo639kpdVQMg7YY5Tl2lDL/u
-   KEf8CmRexAJLimiQPuCvaGZlDcib1wrhzm98hW6Vv0ekfUBtGpO0LdthQ
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10548"; a="299253379"
-X-IronPort-AV: E=Sophos;i="5.96,210,1665471600"; 
-   d="scan'208";a="299253379"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Dec 2022 22:53:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10548"; a="708374082"
-X-IronPort-AV: E=Sophos;i="5.96,210,1665471600"; 
-   d="scan'208";a="708374082"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by fmsmga008.fm.intel.com with ESMTP; 01 Dec 2022 22:53:30 -0800
-Date:   Fri, 2 Dec 2022 14:49:09 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Vishal Annapurve <vannapurve@google.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-        Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        Muchun Song <songmuchun@bytedance.com>, wei.w.wang@intel.com
-Subject: Re: [PATCH v9 1/8] mm: Introduce memfd_restricted system call to
- create restricted user memory
-Message-ID: <20221202064909.GA1070297@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20221025151344.3784230-1-chao.p.peng@linux.intel.com>
- <20221025151344.3784230-2-chao.p.peng@linux.intel.com>
- <CAGtprH9Qu==pohH9ZSTzX9rZWSO0QWJ9rGK6NRGaiDetWAPLYg@mail.gmail.com>
+        Fri, 2 Dec 2022 02:13:25 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 63FDF60B50;
+        Thu,  1 Dec 2022 23:13:23 -0800 (PST)
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 806591FDB2;
+        Fri,  2 Dec 2022 07:13:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+        t=1669965201; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=p8xc9/NvQfEQJ4e4z6/baVfh/lD5CFR3fcc+Q0PHSQI=;
+        b=ybjOTPvRHpXwAhn3vINNm69twJGz58PGyPK1sd3JJZbdDiPz2XdYP0ZhZwebDY3UWbwKVN
+        wDbUB5l15WW/8w+/RXjEQ/x1eSgM/aHnw1oZfWYT+5bACHpQI3sPlbXhA4JfNpeIOUAKNi
+        wP2uRuN6cIXW9o6qJboZbFKuFHljxrc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+        s=susede2_ed25519; t=1669965201;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=p8xc9/NvQfEQJ4e4z6/baVfh/lD5CFR3fcc+Q0PHSQI=;
+        b=pNHg4CJKoV+kTyzOXNJhCE1t7cDzJtp0kSAmdAcNEpT9EoHNSazpnSisumGDH/FUhyIQ0d
+        rahTJqu09ovnd6Ag==
+Received: from imap1.suse-dmz.suse.de (imap1.suse-dmz.suse.de [192.168.254.73])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap1.suse-dmz.suse.de (Postfix) with ESMTPS id F18E013644;
+        Fri,  2 Dec 2022 07:13:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap1.suse-dmz.suse.de with ESMTPSA
+        id D8OZOZCliWPifwAAGKfGzw
+        (envelope-from <hare@suse.de>); Fri, 02 Dec 2022 07:13:20 +0000
+Message-ID: <ab4f15be-2e4a-0a5c-8d36-051b3808be2f@suse.de>
+Date:   Fri, 2 Dec 2022 08:13:21 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGtprH9Qu==pohH9ZSTzX9rZWSO0QWJ9rGK6NRGaiDetWAPLYg@mail.gmail.com>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [PATCH 0/6] block: add support for REQ_OP_VERIFY
+Content-Language: en-US
+To:     Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "djwong@kernel.org" <djwong@kernel.org>,
+        "kbusch@kernel.org" <kbusch@kernel.org>, "hch@lst.de" <hch@lst.de>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "javier@javigon.com" <javier@javigon.com>,
+        "johannes.thumshirn@wdc.com" <johannes.thumshirn@wdc.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "dongli.zhang@oracle.com" <dongli.zhang@oracle.com>,
+        "jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        "clm@fb.com" <clm@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
+        "jack@suse.com" <jack@suse.com>, "tytso@mit.edu" <tytso@mit.edu>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "idryomov@gmail.com" <idryomov@gmail.com>,
+        "danil.kipnis@cloud.ionos.com" <danil.kipnis@cloud.ionos.com>,
+        "ebiggers@google.com" <ebiggers@google.com>,
+        "jinpu.wang@cloud.ionos.com" <jinpu.wang@cloud.ionos.com>
+References: <20220630091406.19624-1-kch@nvidia.com>
+ <YsXJdXnXsMtaC8DJ@casper.infradead.org>
+ <d14fe396-b39b-6b3e-ae74-eb6a8b64e379@nvidia.com>
+From:   Hannes Reinecke <hare@suse.de>
+In-Reply-To: <d14fe396-b39b-6b3e-ae74-eb6a8b64e379@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 01, 2022 at 06:16:46PM -0800, Vishal Annapurve wrote:
-> On Tue, Oct 25, 2022 at 8:18 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
-> >
+On 12/1/22 19:12, Chaitanya Kulkarni wrote:
+> On 7/6/22 10:42, Matthew Wilcox wrote:
+>> On Thu, Jun 30, 2022 at 02:14:00AM -0700, Chaitanya Kulkarni wrote:
+>>> This adds support for the REQ_OP_VERIFY. In this version we add
+>>
+>> IMO, VERIFY is a useless command.  The history of storage is full of
+>> devices which simply lie.  Since there's no way for the host to check if
+>> the device did any work, cheap devices may simply implement it as a NOOP.
+> 
+> In past few months at various storage conferences I've talked to
+> different people to address your comment where device being
+> a liar verify implementation or even implementing NOOP.
+> 
+> With all do respect this is not true.
+> 
+[ .. ]
+
+Be careful to not fall into the copy-offload trap.
+The arguments given do pretty much mirror the discussion we had during 
+designing and implementing copy offload.
+
+Turns out that the major benefit for any of these 'advanced' commands is 
+not so much functionality but rather performance.
+If the functionality provided by the command is _slower_ as when the 
+host would be doing is manually there hardly is a point even calling 
+that functionality; we've learned that the hard way with copy offload, 
+and I guess the same it true for 'verify'.
+Thing is, none of the command will _tell_ you how long that command will 
+take; you just have to issue it and wait for it to complete.
+(Remember TRIM? And device which took minutes to complete it?)
+
+For copy offload we only recently added a bit telling the application 
+whether it's worth calling it, or if we should rather do it the old 
+fashioned way.
+
+But all of the above discussion has nothing to do with the 
+implementation. Why should we disallow an implementation for a 
+functionality which is present in hardware?
+How could we figure out the actual usability if we don't test?
+Where is the innovation?
+
+We need room for experimenting; if it turns out to be useless we can 
+always disable or remove it later. But we shouldn't bar implementations 
+because hardware _might_ be faulty.
+
+I do see at least two topics for the next LSF:
+
+- Implementation of REQ_OP_VERIFY
+- Innovation rules for the kernel
 ...
-> > +}
-> > +
-> > +SYSCALL_DEFINE1(memfd_restricted, unsigned int, flags)
-> > +{
-> 
-> Looking at the underlying shmem implementation, there seems to be no
-> way to enable transparent huge pages specifically for restricted memfd
-> files.
-> 
-> Michael discussed earlier about tweaking
-> /sys/kernel/mm/transparent_hugepage/shmem_enabled setting to allow
-> hugepages to be used while backing restricted memfd. Such a change
-> will affect the rest of the shmem usecases as well. Even setting the
-> shmem_enabled policy to "advise" wouldn't help unless file based
-> advise for hugepage allocation is implemented.
 
-Had a look at fadvise() and looks it does not support HUGEPAGE for any
-filesystem yet.
+Cheers,
 
-> 
-> Does it make sense to provide a flag here to allow creating restricted
-> memfds backed possibly by huge pages to give a more granular control?
+Hannes
+-- 
+Dr. Hannes Reinecke                Kernel Storage Architect
+hare@suse.de                              +49 911 74053 688
+SUSE Software Solutions GmbH, Maxfeldstr. 5, 90409 Nürnberg
+HRB 36809 (AG Nürnberg), Geschäftsführer: Ivo Totev, Andrew
+Myers, Andrew McDonald, Martje Boudien Moerman
 
-We do have a unused 'flags' can be extended for such usage, but I would
-let Kirill have further look, perhaps need more discussions.
-
-Chao
-> 
-> > +       struct file *file, *restricted_file;
-> > +       int fd, err;
-> > +
-> > +       if (flags)
-> > +               return -EINVAL;
-> > +
-> > +       fd = get_unused_fd_flags(0);
-> > +       if (fd < 0)
-> > +               return fd;
-> > +
-> > +       file = shmem_file_setup("memfd:restrictedmem", 0, VM_NORESERVE);
-> > +       if (IS_ERR(file)) {
-> > +               err = PTR_ERR(file);
-> > +               goto err_fd;
-> > +       }
-> > +       file->f_mode |= FMODE_LSEEK | FMODE_PREAD | FMODE_PWRITE;
-> > +       file->f_flags |= O_LARGEFILE;
-> > +
-> > +       restricted_file = restrictedmem_file_create(file);
-> > +       if (IS_ERR(restricted_file)) {
-> > +               err = PTR_ERR(restricted_file);
-> > +               fput(file);
-> > +               goto err_fd;
-> > +       }
-> > +
-> > +       fd_install(fd, restricted_file);
-> > +       return fd;
-> > +err_fd:
-> > +       put_unused_fd(fd);
-> > +       return err;
-> > +}
-> > +
-> > +void restrictedmem_register_notifier(struct file *file,
-> > +                                    struct restrictedmem_notifier *notifier)
-> > +{
-> > +       struct restrictedmem_data *data = file->f_mapping->private_data;
-> > +
-> > +       mutex_lock(&data->lock);
-> > +       list_add(&notifier->list, &data->notifiers);
-> > +       mutex_unlock(&data->lock);
-> > +}
-> > +EXPORT_SYMBOL_GPL(restrictedmem_register_notifier);
-> > +
-> > +void restrictedmem_unregister_notifier(struct file *file,
-> > +                                      struct restrictedmem_notifier *notifier)
-> > +{
-> > +       struct restrictedmem_data *data = file->f_mapping->private_data;
-> > +
-> > +       mutex_lock(&data->lock);
-> > +       list_del(&notifier->list);
-> > +       mutex_unlock(&data->lock);
-> > +}
-> > +EXPORT_SYMBOL_GPL(restrictedmem_unregister_notifier);
-> > +
-> > +int restrictedmem_get_page(struct file *file, pgoff_t offset,
-> > +                          struct page **pagep, int *order)
-> > +{
-> > +       struct restrictedmem_data *data = file->f_mapping->private_data;
-> > +       struct file *memfd = data->memfd;
-> > +       struct page *page;
-> > +       int ret;
-> > +
-> > +       ret = shmem_getpage(file_inode(memfd), offset, &page, SGP_WRITE);
-> > +       if (ret)
-> > +               return ret;
-> > +
-> > +       *pagep = page;
-> > +       if (order)
-> > +               *order = thp_order(compound_head(page));
-> > +
-> > +       SetPageUptodate(page);
-> > +       unlock_page(page);
-> > +
-> > +       return 0;
-> > +}
-> > +EXPORT_SYMBOL_GPL(restrictedmem_get_page);
-> > --
-> > 2.25.1
-> >
