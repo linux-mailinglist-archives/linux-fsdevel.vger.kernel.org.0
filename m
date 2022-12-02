@@ -2,138 +2,108 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AB8E640BEC
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 18:18:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E1BB640C95
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  2 Dec 2022 18:50:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234199AbiLBRSM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Dec 2022 12:18:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54950 "EHLO
+        id S234259AbiLBRui convert rfc822-to-8bit (ORCPT
+        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 2 Dec 2022 12:50:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44810 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234089AbiLBRSJ (ORCPT
+        with ESMTP id S233389AbiLBRuh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Dec 2022 12:18:09 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2F4E9D969A
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Dec 2022 09:16:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670001380;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=CW4axpY/WkASdhmPKJthM+tNRg8V7lNskJpRuDs78M8=;
-        b=eqfzDeRWM//lLTF0odW4wYdBFYeBT9yjeRbqXjY6+D+6xLMlogqVo475OvVRw650h2t8OH
-        wRT+j+mKqa0JdHYliR1rna4nkA+vUPkmBUuGfT5Uj0PqCpFlx+DXzdS7BwrmguAuhhPyY5
-        v3XfkKhYxoheGJ949Bph7oy7RZ/XRLs=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-590-6ydDHLUSNQaMhMi-06NKSQ-1; Fri, 02 Dec 2022 12:16:16 -0500
-X-MC-Unique: 6ydDHLUSNQaMhMi-06NKSQ-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 9C351894E83;
-        Fri,  2 Dec 2022 17:16:16 +0000 (UTC)
-Received: from bfoster.redhat.com (unknown [10.22.8.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 580D240C947B;
-        Fri,  2 Dec 2022 17:16:16 +0000 (UTC)
-From:   Brian Foster <bfoster@redhat.com>
-To:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     ikent@redhat.com, onestero@redhat.com, willy@infradead.org,
-        ebiederm@redhat.com
-Subject: [PATCH v3 5/5] procfs: use efficient tgid pid search on root readdir
-Date:   Fri,  2 Dec 2022 12:16:20 -0500
-Message-Id: <20221202171620.509140-6-bfoster@redhat.com>
-In-Reply-To: <20221202171620.509140-1-bfoster@redhat.com>
-References: <20221202171620.509140-1-bfoster@redhat.com>
+        Fri, 2 Dec 2022 12:50:37 -0500
+X-Greylist: delayed 901 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 02 Dec 2022 09:50:36 PST
+Received: from SJSMAIL01.us.kioxia.com (usmailhost21.kioxia.com [12.0.68.226])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 12167DEA79;
+        Fri,  2 Dec 2022 09:50:36 -0800 (PST)
+Received: from SJSMAIL01.us.kioxia.com (10.90.133.90) by
+ SJSMAIL01.us.kioxia.com (10.90.133.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2375.34; Fri, 2 Dec 2022 09:33:33 -0800
+Received: from SJSMAIL01.us.kioxia.com ([::1]) by SJSMAIL01.us.kioxia.com
+ ([fe80::f5ad:7ba5:d6cc:6f21%3]) with mapi id 15.01.2375.034; Fri, 2 Dec 2022
+ 09:33:33 -0800
+From:   Clay Mayers <Clay.Mayers@kioxia.com>
+To:     Keith Busch <kbusch@kernel.org>, Hannes Reinecke <hare@suse.de>
+CC:     Matthew Wilcox <willy@infradead.org>,
+        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
+        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
+        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "djwong@kernel.org" <djwong@kernel.org>, "hch@lst.de" <hch@lst.de>,
+        "sagi@grimberg.me" <sagi@grimberg.me>,
+        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
+        "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
+        "javier@javigon.com" <javier@javigon.com>,
+        "johannes.thumshirn@wdc.com" <johannes.thumshirn@wdc.com>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "dongli.zhang@oracle.com" <dongli.zhang@oracle.com>,
+        "jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>,
+        "josef@toxicpanda.com" <josef@toxicpanda.com>,
+        "clm@fb.com" <clm@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
+        "jack@suse.com" <jack@suse.com>, "tytso@mit.edu" <tytso@mit.edu>,
+        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "idryomov@gmail.com" <idryomov@gmail.com>,
+        "danil.kipnis@cloud.ionos.com" <danil.kipnis@cloud.ionos.com>,
+        "ebiggers@google.com" <ebiggers@google.com>,
+        "jinpu.wang@cloud.ionos.com" <jinpu.wang@cloud.ionos.com>
+Subject: RE: [PATCH 0/6] block: add support for REQ_OP_VERIFY
+Thread-Topic: [PATCH 0/6] block: add support for REQ_OP_VERIFY
+Thread-Index: AQHYjGHN/dRfjWV95kG4kItzDx62xa1xpq+AgOihlACAAJ5aAIAAwrsAgACBBAD//5Rf8A==
+Date:   Fri, 2 Dec 2022 17:33:33 +0000
+Message-ID: <f68009b7cc744c02ad69d68fd7e61751@kioxia.com>
+References: <20220630091406.19624-1-kch@nvidia.com>
+ <YsXJdXnXsMtaC8DJ@casper.infradead.org>
+ <d14fe396-b39b-6b3e-ae74-eb6a8b64e379@nvidia.com>
+ <Y4kC9NIXevPlji+j@casper.infradead.org>
+ <72a51a83-c25a-ef52-55fb-2b73aec70305@suse.de>
+ <Y4oSiPH0ENFktioQ@kbusch-mbp.dhcp.thefacebook.com>
+In-Reply-To: <Y4oSiPH0ENFktioQ@kbusch-mbp.dhcp.thefacebook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.93.77.43]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-find_ge_pid() walks every allocated id and checks every associated
-pid in the namespace for a link to a PIDTYPE_TGID task. If the pid
-namespace contains processes with large numbers of threads, this
-search doesn't scale and can notably increase getdents() syscall
-latency.
+> From: Keith Busch
+> On Fri, Dec 02, 2022 at 08:16:30AM +0100, Hannes Reinecke wrote:
+> > On 12/1/22 20:39, Matthew Wilcox wrote:
+> > > On Thu, Dec 01, 2022 at 06:12:46PM +0000, Chaitanya Kulkarni wrote:
+> > > > So nobody can get away with a lie.
+> > >
+> > > And yet devices do exist which lie.  I'm not surprised that vendors
+> > > vehemently claim that they don't, or "nobody would get away with it".
+> > > But, of course, they do.  And there's no way for us to find out if
+> > > they're lying!
 
-For example, on a mostly idle 2.4GHz Intel Xeon running Fedora on
-5.19.0-rc2, 'strace -T xfs_io -c readdir /proc' shows the following:
-
-  getdents64(... /* 814 entries */, 32768) = 20624 <0.000568>
-
-With the addition of a dummy (i.e. idle) process running that
-creates an additional 100k threads, that latency increases to:
-
-  getdents64(... /* 815 entries */, 32768) = 20656 <0.011315>
-
-While this may not be noticeable to users in one off /proc scans or
-simple usage of ps or top, we have users that report problems caused
-by this latency increase in these sort of scaled environments with
-custom tooling that makes heavier use of task monitoring.
-
-Optimize the tgid task scanning in proc_pid_readdir() by using the
-more efficient find_get_tgid_task() helper. This significantly
-improves readdir() latency when the pid namespace is populated with
-processes with very large thread counts. For example, the above 100k
-idle task test against a patched kernel now results in the
-following:
-
-Idle:
-  getdents64(... /* 861 entries */, 32768) = 21048 <0.000670>
-
-"" + 100k threads:
-  getdents64(... /* 862 entries */, 32768) = 21096 <0.000959>
-
-... which is a much smaller latency hit after the high thread count
-task is started.
-
-Signed-off-by: Brian Foster <bfoster@redhat.com>
----
- fs/proc/base.c | 17 +----------------
- 1 file changed, 1 insertion(+), 16 deletions(-)
-
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 9e479d7d202b..ac34b6bb7249 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -3475,24 +3475,9 @@ struct tgid_iter {
- };
- static struct tgid_iter next_tgid(struct pid_namespace *ns, struct tgid_iter iter)
- {
--	struct pid *pid;
--
- 	if (iter.task)
- 		put_task_struct(iter.task);
--	rcu_read_lock();
--retry:
--	iter.task = NULL;
--	pid = find_ge_pid(iter.tgid, ns);
--	if (pid) {
--		iter.tgid = pid_nr_ns(pid, ns);
--		iter.task = pid_task(pid, PIDTYPE_TGID);
--		if (!iter.task) {
--			iter.tgid += 1;
--			goto retry;
--		}
--		get_task_struct(iter.task);
--	}
--	rcu_read_unlock();
-+	iter.task = find_get_tgid_task(&iter.tgid, ns);
- 	return iter;
- }
+My guess, if true, is it's rationalized with the device is already
+doing patrols in the background - why verify when it's already
+been recently patrolled?
  
--- 
-2.37.3
+> > >
+> > But we'll never be able to figure that out unless we try.
+> >
+> > Once we've tried we will have proof either way.
+> 
+> As long as the protocols don't provide proof-of-work, trying this
+> doesn't really prove anything with respect to this concern.
+
+I'm out of my depth here, but isn't VERIFY tightly related to PI and
+at the heart of detecting SAN bit-rot? The proof of work can be via
+end-to-end data protection. VERIFY has to actually read to detect bad
+host generated PI guard/tags.  I'm assuming the PI checks can be
+disabled for WRITE and enabled for VERIFY as the test.
 
