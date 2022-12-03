@@ -2,80 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8E826641414
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Dec 2022 05:19:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E746764147D
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  3 Dec 2022 07:22:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230426AbiLCETf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 2 Dec 2022 23:19:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60740 "EHLO
+        id S231210AbiLCGWk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 3 Dec 2022 01:22:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43582 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229981AbiLCETd (ORCPT
+        with ESMTP id S229557AbiLCGWi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 2 Dec 2022 23:19:33 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 822E1E9889
-        for <linux-fsdevel@vger.kernel.org>; Fri,  2 Dec 2022 20:19:32 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id q7so7475801ljp.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 02 Dec 2022 20:19:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20210112.gappssmtp.com; s=20210112;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ccD2JrUqoo8dGTQE9lIA6Ic8NF4n65yiBkZdSFL8aqk=;
-        b=CABa0c6Z8GB68LpfcT6ifNmMsRl7DojSt4Fz1SE0rQ5YTWctV66UCulvr3VgqKgoPM
-         C8XUke796Bj/HUETpCMj69/cGSEj0lU8xCpBLAHjeANAQ07/qld/hw+W732EEmu5Ghtw
-         ob24fAgs3ragUTh6oQvWZHvxqpi01iWPHK9X+81oVWSvCBtue4daxQkaz9pdB1B0Qc3z
-         PYnL5RsoKUmqc9z+sum4t4NTPJwft9tylToWPiTLf3kPle1ukpBEeQwlZOYto9xy4ATd
-         8jTZ5KbajYSifVbIbmsKlcBeDvSgPI/dFKN38mEqDjt4LyeVg6xPThyCiWzBnvK8UQ/q
-         SQKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
-         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ccD2JrUqoo8dGTQE9lIA6Ic8NF4n65yiBkZdSFL8aqk=;
-        b=MWJL9x+qM3SXeevaNWcAcTPQ0WDHXb14O5X50+R81aBwMHHQ9TtR9oEi65T6MOZT6k
-         fDHv9gYr7KDZK44zdTi5i/vfXzXGpH/4FLpaJ4ZLjas/BhXmjG8HDNbQrpNSNoyaDf/h
-         U527lta3ABJlhXhq/w/83qBskCQDb/bqaUDy/S1jakbpK6Ufh1USavlDfYYyl2YdpMkh
-         hXWZLMVxNvAxNx6arro/+VEDmvFbixA8GqK0BZKMODi+suU+VXGXCl/ebZt2sqkPZKGA
-         MUcxzIHX1ROkdpmTTc9/aB5hA8py+uEQyVymr62NhhgHpzJdl2BhzQgSUSmb8DMfCC71
-         FYBg==
-X-Gm-Message-State: ANoB5pm2s7ZCoLOC9/IgFCR6XbbXKtuNn/VHUjaM/ZAA8TCFsCMK7EvR
-        IW1neuCLSyRy6e2YbypB6wxs5qN2QBucHBVvWhYcIw==
-X-Google-Smtp-Source: AA0mqf7wH0C0pDIAs+KLfjhRNQCtQ/GYw24Q7zFEM++AAYMYahqX8fgtbDrgd5iOVZMlUmFCMtte/A==
-X-Received: by 2002:a2e:be08:0:b0:277:857:87ab with SMTP id z8-20020a2ebe08000000b00277085787abmr16751284ljq.442.1670041170764;
-        Fri, 02 Dec 2022 20:19:30 -0800 (PST)
-Received: from smtpclient.apple (77.241.136.54.bredband.3.dk. [77.241.136.54])
-        by smtp.gmail.com with ESMTPSA id z8-20020a056512370800b004a91d1b3070sm1243597lfr.308.2022.12.02.20.19.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 02 Dec 2022 20:19:30 -0800 (PST)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Mime-Version: 1.0 (1.0)
-Subject: Re: [PATCH 0/6] block: add support for REQ_OP_VERIFY
-Date:   Sat, 3 Dec 2022 07:19:17 +0300
-Message-Id: <4F15C752-AE73-4F10-B5DD-C37353782111@javigon.com>
-References: <Y4oSiPH0ENFktioQ@kbusch-mbp.dhcp.thefacebook.com>
-Cc:     Hannes Reinecke <hare@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        linux-block@vger.kernel.org, linux-raid@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        axboe@kernel.dk, djwong@kernel.org, hch@lst.de, sagi@grimberg.me,
-        jejb@linux.ibm.com, martin.petersen@oracle.com,
-        Johannes.Thumshirn@wdc.com, bvanassche@acm.org,
-        dongli.zhang@oracle.com, jefflexu@linux.alibaba.com,
-        josef@toxicpanda.com, clm@fb.com, dsterba@suse.com, jack@suse.com,
-        tytso@mit.edu, adilger.kernel@dilger.ca, jlayton@kernel.org,
-        idryomov@gmail.com, danil.kipnis@cloud.ionos.com,
-        ebiggers@google.com, jinpu.wang@cloud.ionos.com
-In-Reply-To: <Y4oSiPH0ENFktioQ@kbusch-mbp.dhcp.thefacebook.com>
-To:     Keith Busch <kbusch@kernel.org>
-X-Mailer: iPhone Mail (20B82)
+        Sat, 3 Dec 2022 01:22:38 -0500
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2057.outbound.protection.outlook.com [40.92.102.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A68EA392;
+        Fri,  2 Dec 2022 22:22:33 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QkNl4JbvbjRnQHtwAcbzuQRvab6yW2wQNnLGLjiRcWO2EWMl7mFWYqgkq+DnX9Q6FnhDmJHBTz2Ro2veYaOT9IpPgl/Mwz0ZHaZlBN/hnAKnRprZsIFez0AaegBJYh3W3W/s+SstogNLABgq5R/8fiT4nkGWz3GSUF4zXZOW/ut0heOnkE3OoBgCJw9Qun+CoGDx/FdHJFq+3zWyQQPQGy/W/23rrS1EhHY+QVCxAOFh8VKiXYBciAOqOSXqQPdRNrAjLCkpQOCMzWGQvd8N7vvpkKcgEp2A+bo/QxZunivfQOE91OTnUJqkoakU0YCd0t7d/d3GV81oRDiE/kze/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=upT+DNiQwVYP+pMz2bwGrHeWsmYjdoDqN20WmtuvMQ4=;
+ b=MfgHkri7tGwzfPfdrhySBujB3yZXYngcbnPxe64g7jqe8No8C/AIFx7c8ipqNhJJgtq/AEQvjIAOO1dVT3yhxu1F4DLLtsdfoXJKnxjFZQ2Fpm2BuKxufNvPIQ83NVTY4o0WZ7nb8SFaYsHPUaFSe/NdFIvHSNe3VcUJrV//9jRH5OyKZfIQ31dKmixAwhBCDKBsXLT8PYD3N7HCvJwhnKWncPj68soy7Tk2weiFysJy+xIuNUAQqzlRXTE8WQBstB6JdHl09mEJCw6nv1z3uKSuYsH1XV3/kWrMHElalmy+vcX61GVabPHdLWk3tXawZhp5rCMo5z9WBhdn7a2qiw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=upT+DNiQwVYP+pMz2bwGrHeWsmYjdoDqN20WmtuvMQ4=;
+ b=N+WUVW78r+yKTcVX+ScVP4HavOWSs3kqxNDWhtkMPQ2AVSdUt1NZTUEanYM6kmw/LRzS3bqxMNPdbMHXD+Dpz05+UGG1t30F1AeBBzkOWYB9ijrslGiBMrNMAMv5Qyn/qi49VXg/MO9F/V3PNKBznxvvQrxKZMNwvc5DNbIScVekz1Mkr4vAmShJo09MKNqvQ3iQqDh/wAiRPNUv6nM+su+6r5q06ERhQy6Cv8WL2k1pRAnsmNkCWvwY5b4MjFHXxikXbyEtHVQx2zQz0HWoJ86gP5Z8YK4BtWmG0+Q31voViYLVpKAOdBuAIzIrDE6cR/9oI6xXsBAaezD4hlayhA==
+Received: from BM1PR01MB0931.INDPRD01.PROD.OUTLOOK.COM (2603:1096:b00:2::9) by
+ MAZPR01MB7039.INDPRD01.PROD.OUTLOOK.COM (2603:1096:a01:59::7) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.5880.8; Sat, 3 Dec 2022 06:22:28 +0000
+Received: from BM1PR01MB0931.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::68ba:5320:b72:4b1]) by BM1PR01MB0931.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::68ba:5320:b72:4b1%4]) with mapi id 15.20.5880.011; Sat, 3 Dec 2022
+ 06:22:27 +0000
+From:   Aditya Garg <gargaditya08@live.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+CC:     "willy@infradead.org" <willy@infradead.org>,
+        "ira.weiny@intel.com" <ira.weiny@intel.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
+        "slava@dubeyko.com" <slava@dubeyko.com>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH] hfsplus: Add module parameter to enable force writes
+Thread-Topic: [PATCH] hfsplus: Add module parameter to enable force writes
+Thread-Index: AQHZBhN91tyHb5NS2Eynd+A7F1BLCK5bFC0AgACe1YA=
+Date:   Sat, 3 Dec 2022 06:22:27 +0000
+Message-ID: <05EDE31B-9ADC-4421-B96B-98C3A8EE4C95@live.com>
+References: <53821C76-DAFE-4505-9EC8-BE4ACBEA9DD9@live.com>
+ <20221202125344.4254ab20d2fe0a8e784b33e8@linux-foundation.org>
+In-Reply-To: <20221202125344.4254ab20d2fe0a8e784b33e8@linux-foundation.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [hWh02CEy5dQ4wMVAzKk+861WK0BWXklM]
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BM1PR01MB0931:EE_|MAZPR01MB7039:EE_
+x-ms-office365-filtering-correlation-id: a91679de-b2eb-44e7-7c13-08dad4f6c033
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: LoB5i0/xlJI2q0SAKUIat82Fu1ydcCpw4CAOLGVuErUJOL5UdpEx30S7cINr2dwzpBBpxuzFlqs2dbJ+Aof7Y4s3d2bPWfVD2RoUtsQfNmIbz5cRhTOM9yfTQyU1CoUfG6H7gC4+p5Bhd8FvmJpvokXYiz5q6fnb5Q90YpDkSADMhyJC+cetLCg/sA9EyaXzchBOjhfkuST1d/bgLY/XVh8M2E3pt27jDsLhWhPl8IRpibZXzSXeOx+Sc3deAQRs347VimBUATyq/WYs+z+X6vLG10/gF5dwrXGt8LT1aMfSZWmbV6uniIedBG87VYVa5ImK9gei8mvglovlBQjG/VfGvHp+YrAosStq99QU0BTEkZUo6c5Sp5oKHUYe7oD/GbNiZTCDSySpZ0CaKXZP50rq/s5QNXclql2zjmuNuZuoOf9ekeXfdB68v+Ngbd2LuBXTE0XILEWyRPKdUfbX0KI+OMzXP03amaOpCx2zCu9oi9nLLJ2VIWMDtL0w98hAXHkv/BQF8EeAl+lAa8KaMvaaKY4cNGN5aIUWjF/UAC8VA1fHUG8bf+TTUF3f5u8uvsjSgo8Xq+pNHb6gAOOYxXZ43GPMiw9Mo0zeKRxfD+KEoibGRrncmYpLaHjtcDoc4FYgIBVDDHkXcmvZVVOo1A==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aEhaWlBnY3hqRy8rTmlFcXlmWGgxcmh2SnRlaDA5bnZrVUJ3VDBucXRBQkNT?=
+ =?utf-8?B?eEJTRWRhbkJ0blB5dmJYYjJFdnNDcnNnT3owNjUrbnZTd3J1ZWtiS2EvbjlI?=
+ =?utf-8?B?bE1udWZ3UmdWbWRDVjRLSU1zMVFUY1VWZDBJczV3N3pJTjE1dU81YnNqbFla?=
+ =?utf-8?B?d1d4bldUbjBuVVdxbDByYUFsZGVsa3owRSt4aGZWbG8xN2hlRkdhM2VkdUZk?=
+ =?utf-8?B?YTRaZ1cva1BVRFo5K3BTSjdXVFMrbmtkTStDQnA4b0lrNVpXVUFndWxuV3Zr?=
+ =?utf-8?B?WTlrZG5wUnYvTU43eEZmdTIyU3dlc2hOQThBb3hNSzVSb2pwbll2UzNpVWNT?=
+ =?utf-8?B?cWhwRS9MajgzalkxWWw3QnJ0NmNZblY5K0lML2p5UmYyTnNqV2E5dHZ4MU56?=
+ =?utf-8?B?dGthWXpQOGdjaUF0WG9yMmRRNGI4emUwdDRmOFFMUTVKVW4wNnYxdnFnaXFs?=
+ =?utf-8?B?d0pjaU9zaWxaMmlnN09tVFVqK0lNYmlUZmM5VlRSTTBxT01mUjU1VWlOZXpU?=
+ =?utf-8?B?U1FWSW56WHJrSG5oSWZoazE0N1ZXaUpCbUJ5d3NDOUg0M21zNlBmOVRTSGN3?=
+ =?utf-8?B?eXRnS2pXR2U2VzRUK1JYMDNOclZQbG04ZnRvR0xOWGRDakw2YUFMdHZrUFY0?=
+ =?utf-8?B?NkVSaXRWLzZqTEhNSmhxWEJuSTdDaEFQTGFwZDUyaHBiRk1Ub3JiL3ZYM1ZP?=
+ =?utf-8?B?YWZHd3NLRlV4RFFvWHpXZ3lNUnczMWtmQkhEWmlFRE5NVHVjb0VPclJxU2pM?=
+ =?utf-8?B?TTVsTjYrenZKNW5FWFl6bWthOG4zNUR1czY5RkI4ZXJmKzNtTUdHY1VRUUR5?=
+ =?utf-8?B?ekFHemN2NktvUk1nQTB6TzlOdFdHcU16NnFOdzZpVXM4a1ZaWlVuUnNCSnB0?=
+ =?utf-8?B?WXVpM2hqL2l4eWE1M3VRa0FwaStEUE9melRLTVdOdzZoa2FjRkgvUlNOM1Fr?=
+ =?utf-8?B?TEFveXBacWpuYnNQeDNsZnZiSi9PVDhpRm5zMFF3eWRoU2tGSzg2cGduTVA4?=
+ =?utf-8?B?anRqZDJJV2k1cHZxQWVDS2RpUysyRWNLVHZwb2ZkdnpheHliZnNWb2tVV2Vq?=
+ =?utf-8?B?ekJmZmg0c1BoZi80WTJnZ2ZRUENpVUhxL0JFOGhTK3ptMyt0cHVKUTZ5WEpY?=
+ =?utf-8?B?MTFVK3BZZWYwSm9uVEFSMjd1ZjNTeUxLVVpQd3RFYy92WDBVMi82TmNySmVw?=
+ =?utf-8?B?ajVpNm4xMzRFbDloTEJHbFRpd3ZLNjhDTXhYQnVQMFhHUHlsY3ZUUW1BMThK?=
+ =?utf-8?B?R3pXU21zRUJNb0FqdXg3TkpRTkE2ZXl4enVtRmRGTk5GSm5ocEFyMXNhZGJm?=
+ =?utf-8?B?N1hkRjQvbDJRd29aNngzUXpDY2FOdm9NOWI3Y09OS0F3Uy9yVHY1T1gwdWJs?=
+ =?utf-8?B?WjhKdTk2czFsM1pwbjRoUUNJeUxaUG5TUVc3NlA2QVpMNDJ0Y0g4bnpBU0Rq?=
+ =?utf-8?B?QmlEMzhha0lMZ0QvTWgvRnV4SGtOWXkxWi9YT3hYMGt4VUNlNWpuZ1UvVzdQ?=
+ =?utf-8?B?S1JoTGZZOHVFZ0w1UWozd1R6Z0pBQmUvTFZ5K0tFSmJxTHkyektneGluK2VO?=
+ =?utf-8?B?SzlLa3FZcjVQTzNkOUZKaS9LT1liRThCSllGZXNld1dZZFVkN0Z4SmlDa0kr?=
+ =?utf-8?B?WWhXRjVYQ1B5bXRPWURuempERFpJOUZRSG9ZbHVRQy9zRjRaL2xtOHJRRjZR?=
+ =?utf-8?B?WjBteVU3aGNWaWF2cDU0OFBUbkFWSm03ZHI0ZzlpTGJoWjhtYVcvUUZ3PT0=?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <E916C2FA14ED724DA04E8FAB49CEC878@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-42ed3.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BM1PR01MB0931.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: a91679de-b2eb-44e7-7c13-08dad4f6c033
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2022 06:22:27.7520
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAZPR01MB7039
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,28 +122,13 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-
-> On 2 Dec 2022, at 17.58, Keith Busch <kbusch@kernel.org> wrote:
->=20
-> =EF=BB=BFOn Fri, Dec 02, 2022 at 08:16:30AM +0100, Hannes Reinecke wrote:
->>> On 12/1/22 20:39, Matthew Wilcox wrote:
->>> On Thu, Dec 01, 2022 at 06:12:46PM +0000, Chaitanya Kulkarni wrote:
->>>> So nobody can get away with a lie.
->>>=20
->>> And yet devices do exist which lie.  I'm not surprised that vendors
->>> vehemently claim that they don't, or "nobody would get away with it".
->>> But, of course, they do.  And there's no way for us to find out if
->>> they're lying!
->>>=20
->> But we'll never be able to figure that out unless we try.
->>=20
->> Once we've tried we will have proof either way.
->=20
-> As long as the protocols don't provide proof-of-work, trying this
-> doesn't really prove anything with respect to this concern.
-
-Is this something we should bring to NVMe? Seems like the main disagreement c=
-an be addressed there.=20
-
-I will check internally if there is any existing proof-of-work that we are m=
-issing.=20=
+DQo+IFByZXN1bWFibHkgYW55b25lIHdobyBlbmFibGVzIHRoaXMga25vd3MgdGhlIHJpc2ssIGFu
+ZCBpZiBpdCdzIGENCj4gY29udmVuaWVuY2UsIHdoeSBub3QuDQo+IA0KPiBEb2N1bWVudGF0aW9u
+L2ZpbGVzeXN0ZW1zL2hmc3BsdXMucnN0IHdvdWxkIGJlIGEgZ29vZCBwbGFjZSB0byBkb2N1bWVu
+dA0KPiB0aGlzIG1vZHVsZSBwYXJhbWV0ZXIgcGxlYXNlLg0KDQpJ4oCZbGwgYWRkIGl0IHRvIHRo
+ZSB2Mg0KDQo+IEFsbCB0aGVzZSBzdXBlciBsb25nIGxpbmVzIGFyZSBhbiBleWVzb3JlLiAgSG93
+IGFib3V0DQo+IA0KPiBwcl93YXJuKCJ3cml0ZSBhY2Nlc3MgdG8gYSBqb3VybmFsZWQgZmlsZXN5
+c3RlbSBpcyAiDQo+ICJub3Qgc3VwcG9ydGVkLCBidXQgaGFzIGJlZW4gZm9yY2UgZW5hYmxlZC5c
+biIpOw0KDQpJ4oCZbGwgZml4IHRoaXMsIGJ1dCB5b3UnbGwgZmluZCBhIGxvdCBvZiBleWVzb3Jl
+IGxpbmVzIGluIHRoaXMgZHJpdmVyLCB3aGljaCBJIGd1ZXNzIHNvbWVvbmUgd291bGQgaGF2ZSB0
+byBmaXggdGhlbi4NCg0K
