@@ -2,79 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DEFDE642DB1
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Dec 2022 17:50:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 00F2C6435BC
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Dec 2022 21:34:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231307AbiLEQu3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Dec 2022 11:50:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47310 "EHLO
+        id S232414AbiLEUer (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Dec 2022 15:34:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41232 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232406AbiLEQtu (ORCPT
+        with ESMTP id S230232AbiLEUer (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Dec 2022 11:49:50 -0500
-Received: from mail-ot1-x342.google.com (mail-ot1-x342.google.com [IPv6:2607:f8b0:4864:20::342])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66CA82624
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Dec 2022 08:49:05 -0800 (PST)
-Received: by mail-ot1-x342.google.com with SMTP id v19-20020a9d5a13000000b0066e82a3872dso5582307oth.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Dec 2022 08:49:05 -0800 (PST)
+        Mon, 5 Dec 2022 15:34:47 -0500
+Received: from mail-yw1-x1129.google.com (mail-yw1-x1129.google.com [IPv6:2607:f8b0:4864:20::1129])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0584714084;
+        Mon,  5 Dec 2022 12:34:46 -0800 (PST)
+Received: by mail-yw1-x1129.google.com with SMTP id 00721157ae682-3b56782b3f6so130549427b3.13;
+        Mon, 05 Dec 2022 12:34:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=O4WPtqOs6pYDke8VCfpzwsIX+8zN33o8tLS2XMy/lFU=;
-        b=EvWmzEra/azIE+dhpMGnktmqmSoesb8PSCiM/05QKkVO5anMKEbRHSG7nojCSOyYWk
-         9IDI1UgS5rC+uB5j5uOW4no2X6seMos8u1Uby8q6RKzl1vCALcAn7vpiT6rpclAi8Jt0
-         gPKoEl0xikkT9S+7dg4LTBa5X4VHIsnKU2e6OrEO/j4h9xN1NPllzu29Dg0k3gFH+bOt
-         HMDW+rYw/YqhqvZ6y4oXgIeqTNVodnF9zHtiwgFo2Y0tEc6ReoK23o3+Epe6dWg/8ai1
-         Z4r7fWQ42rAk0Fys+lVH3VBvE+2FTvVvceopyfVxKS8DxJV3KaRTE9M5zTY24mYt1gIO
-         /rEQ==
+        bh=GeLGTXERGukeSNOQDu2YmR7uT9/qpiRMDyykHkleQ2o=;
+        b=pV6KI/HZBQddAaryd4yKdtAZIjXHM+fQOQl8vls8oCF/Y0syljnC36hzxgQFzf3t1W
+         ZEfFPue68nbSQYyN45g3vyc1tKTsDhhDmdhY4NZzbyws1OLLs/EBYBCLeHMjUZ7AqQkG
+         bPHpYPqJ1AEZL4uauJNarKOb8Kjs0EiXHDayRbW+LvH0eVfIfd+Kt4GAhbisw/fJv8H5
+         ye4ctWjmmYNQlCsceyNtIQIp7VQQPqFfnpnwbiE6A67xPTrxsvIZPcz5N+C3swPGuMEV
+         zdL6BSwaRQTncT/q4vMGhtHQUJU0KVbms8kPcPSjUkErq0sjFtA3tGrr1dDn23Y/Q2aR
+         UEOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:to:subject:message-id:date:from:reply-to
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=O4WPtqOs6pYDke8VCfpzwsIX+8zN33o8tLS2XMy/lFU=;
-        b=B6vEowkMH3U6JmX8qMI0hajaN+rkZFfiEqEiWjD3drs+w2FYUaWi/ELvEuVFww6i7G
-         Doo6BzfeiLady7nKLj2QZROUgxN3PhCw8Qm3fbhXHgazulvvKoRxq1GSYyXPYtMtEr0R
-         QFP9rDfBxBg/EHPe6s7+4YLAVB7FNyj6+4UPKI/pLX4i2i/2xnvbH6UzaqhmQJwCVuOu
-         DFsv6NzTugQSYZ1q37+Vz146YeDKIR5qqlLAeRfVzp7kZ3kypIP0XNAKfR9AUYMWbK7w
-         JxoGOO3ghsbU767XnUkp28YXDWtigXeUaXx4RellpwgeRckji+utQCl/bhQDu2+uQqRl
-         KbnQ==
-X-Gm-Message-State: ANoB5pkSLt+fsktrWfu1TuXSMjSE0SmLHp0qqJ+n27X+yLQpDWzxZsSY
-        HmPKcAIlHMG2Xhs47BmI2Zp2rh7qZ9Ut8Ci3w2VhH0OCPZlCNg==
-X-Google-Smtp-Source: AA0mqf6rJpockmAlPLGWb5IdXxyZXi5oeB/VlA7nQtTh5mH5GBjbP93nFRUHbmrw3A3v2AKvxeLYo6EVgAyGoUC2980=
-X-Received: by 2002:a05:6830:61ce:b0:66b:e4e2:8d25 with SMTP id
- cc14-20020a05683061ce00b0066be4e28d25mr41635604otb.152.1670258933537; Mon, 05
- Dec 2022 08:48:53 -0800 (PST)
+        bh=GeLGTXERGukeSNOQDu2YmR7uT9/qpiRMDyykHkleQ2o=;
+        b=7Xvmzz+819vhpwQqnUVItJFWwv95vzbsCNcb8bWbsISlJEMOFqTBBU8gHBlO8KfYld
+         QBfhl6l5ncv3fbdZXc2VSZHQ0fuqTplXQZ5bE4w0SPo74ga+23SGGbjBcolWdL6mTxrP
+         usqs+tsA/f9NjVwV3OBRlpQ5hhS0qQG9my2YY2lHLDMiT2zOx21LwVt47Fueq3qtTn6c
+         8e1BEbV6KaMa/CINCWNYqZtmZFybHztyM4uLfVtDoQYF4IBKHtRs9QNH8rpHOhftELML
+         KYt18bq30JA80z4EsQZhKsFySgTFSB5RIIOBJhhIxNbPtQZREoGr07hsqUSMri9Vk1WU
+         9hMg==
+X-Gm-Message-State: ANoB5pmvPbTPorojTAjsaDb7WA+CggN+6JXeBBDYx3MUgp2Zrk3AhP94
+        7BU4WWPaMGi7am0TdrrPSnfbsNP0a0qDYOYq7Yc=
+X-Google-Smtp-Source: AA0mqf6gVcUjGEuTNRozrYnWxY5uXjxRLCGPLpX8tEkUr/ot069nsH0uaNB29RtGgsmUEgc5iySKcYLMmK606QxvYxY=
+X-Received: by 2002:a81:4905:0:b0:3a8:fad9:13c0 with SMTP id
+ w5-20020a814905000000b003a8fad913c0mr60110141ywa.23.1670272485151; Mon, 05
+ Dec 2022 12:34:45 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a05:6358:7211:b0:dd:1fa2:ef73 with HTTP; Mon, 5 Dec 2022
- 08:48:53 -0800 (PST)
-Reply-To: plml47@hotmail.com
-From:   Philip Manul <lometogo1999@gmail.com>
-Date:   Mon, 5 Dec 2022 08:48:53 -0800
-Message-ID: <CAFtqZGFXDNDSmyfAW1goTwuOjaKBWi=RMxR7avPMnWxdOUFKOg@mail.gmail.com>
-Subject: REP:
-To:     in <in@proposal.net>
+References: <20221017202451.4951-1-vishal.moola@gmail.com> <20221017202451.4951-15-vishal.moola@gmail.com>
+ <9c01bb74-97b3-d1c0-6a5f-dc8b11113e1a@kernel.org> <CAOzc2pweRFtsUj65=U-N-+ASf3cQybwMuABoVB+ciHzD1gKWhQ@mail.gmail.com>
+ <CAOzc2pzoG1CN3Bpx5oe37GwRv71TpTQmFH6m58kTqOmeW7KLOw@mail.gmail.com>
+In-Reply-To: <CAOzc2pzoG1CN3Bpx5oe37GwRv71TpTQmFH6m58kTqOmeW7KLOw@mail.gmail.com>
+From:   Vishal Moola <vishal.moola@gmail.com>
+Date:   Mon, 5 Dec 2022 12:34:33 -0800
+Message-ID: <CAOzc2pzp0JEanJTgzSrRt3ziRCrR6rGCjpwJvAD8uCqsHqXnHg@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v3 14/23] f2fs: Convert f2fs_write_cache_pages()
+ to use filemap_get_folios_tag()
+To:     Chao Yu <chao@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        fengnan chang <fengnanchang@gmail.com>,
+        linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=2.1 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
-X-Spam-Level: **
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
---=20
-Guten tag,
-Mein Name ist Philip Manul. Ich bin von Beruf Rechtsanwalt. Ich habe
-einen verstorbenen Kunden, der zuf=C3=A4llig denselben Namen mit Ihnen
-teilt. Ich habe alle Papierdokumente in meinem Besitz. Ihr Verwandter,
-mein verstorbener Kunde, hat hier in meinem Land einen nicht
-beanspruchten Fonds zur=C3=BCckgelassen. Ich warte auf Ihre Antwort zum
-Verfahren.
-Philip Manul.
+On Tue, Nov 22, 2022 at 6:26 PM Vishal Moola <vishal.moola@gmail.com> wrote:
+>
+> On Mon, Nov 14, 2022 at 1:38 PM Vishal Moola <vishal.moola@gmail.com> wrote:
+> >
+> > On Sun, Nov 13, 2022 at 11:02 PM Chao Yu <chao@kernel.org> wrote:
+> > >
+> > > On 2022/10/18 4:24, Vishal Moola (Oracle) wrote:
+> > > > Converted the function to use a folio_batch instead of pagevec. This is in
+> > > > preparation for the removal of find_get_pages_range_tag().
+> > > >
+> > > > Also modified f2fs_all_cluster_page_ready to take in a folio_batch instead
+> > > > of pagevec. This does NOT support large folios. The function currently
+> > >
+> > > Vishal,
+> > >
+> > > It looks this patch tries to revert Fengnan's change:
+> > >
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=01fc4b9a6ed8eacb64e5609bab7ac963e1c7e486
+> > >
+> > > How about doing some tests to evaluate its performance effect?
+> >
+> > Yeah I'll play around with it to see how much of a difference it makes.
+>
+> I did some testing. Looks like reverting Fengnan's change allows for
+> occasional, but significant, spikes in write latency. I'll work on a variation
+> of the patch that maintains the use of F2FS_ONSTACK_PAGES and send
+> that in the next version of the patch series. Thanks for pointing that out!
+
+Following Matthew's comment, I'm thinking we should go with this patch
+as is. The numbers between both variations did not have substantial
+differences with regard to latency.
+
+While the new variant would maintain the use of F2FS_ONSTACK_PAGES,
+the code becomes messier and would end up limiting the number of
+folios written back once large folio support is added. This means it would
+have to be converted down to this version later anyways.
+
+Does leaving this patch as is sound good to you?
+
+For reference, here's what the version continuing to use a page
+array of size F2FS_ONSTACK_PAGES would change:
+
++               nr_pages = 0;
++again:
++               nr_folios = filemap_get_folios_tag(mapping, &index, end,
++                               tag, &fbatch);
++               if (nr_folios == 0) {
++                       if (nr_pages)
++                               goto write;
++                               goto write;
+                        break;
++               }
+
++               for (i = 0; i < nr_folios; i++) {
++                       struct folio* folio = fbatch.folios[i];
++
++                       idx = 0;
++                       p = folio_nr_pages(folio);
++add_more:
++                       pages[nr_pages] = folio_page(folio,idx);
++                       folio_ref_inc(folio);
++                       if (++nr_pages == F2FS_ONSTACK_PAGES) {
++                               index = folio->index + idx + 1;
++                               folio_batch_release(&fbatch);
++                               goto write;
++                       }
++                       if (++idx < p)
++                               goto add_more;
++               }
++               folio_batch_release(&fbatch);
++               goto again;
++write:
+
+> How do the remaining f2fs patches in the series look to you?
+> Patch 16/23 f2fs_sync_meta_pages() in particular seems like it may
+> be prone to problems. If there are any changes that need to be made to
+> it I can include those in the next version as well.
+
+Thanks for reviewing the patches so far. I wanted to follow up on asking
+for review of the last couple of patches.
