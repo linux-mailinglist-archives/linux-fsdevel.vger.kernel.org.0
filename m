@@ -2,272 +2,268 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F158F642A71
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Dec 2022 15:34:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA98B642BD2
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Dec 2022 16:31:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232117AbiLEOef (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Dec 2022 09:34:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43450 "EHLO
+        id S232905AbiLEPbq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Dec 2022 10:31:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229970AbiLEOed (ORCPT
+        with ESMTP id S232705AbiLEPbE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Dec 2022 09:34:33 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D06EE186D5;
-        Mon,  5 Dec 2022 06:34:31 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id bs21so18892007wrb.4;
-        Mon, 05 Dec 2022 06:34:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cztX5Ue33tQ3eMiQbG6qcXAJ75+hHLZXrTtuSbFa9F4=;
-        b=W6c7NEmuUfQ8+4lVrVaU30vp1q9GAU4udyMiNHpVxYgcTRjmuxC+EdB/ZxPzS8KgVn
-         Q7XDq3N0jwMv11o6peTlai0RfxlTsi2Tlnz9SIMipmlrTwoeR/UdWSHdx1hFzEBnMP+g
-         v5FdXm1oIEo7kSEvGR7zxd6e9qU6Sgy7I07ttKGqPME3YpqVrK0neqoMzrTSu9kZNhLq
-         CIjTVJD5+X7p/tANcaopIqE99Txa12m3rWtKeE5QJHDoeMmSmBReqoMK/PP3Ng4F6RKM
-         KysKaspO9sj/ujAeZOVhwEHd9vrB6NYttrO83hdHsvVfwQoya/IxYcPGrFldAq4T/W2Y
-         MXHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cztX5Ue33tQ3eMiQbG6qcXAJ75+hHLZXrTtuSbFa9F4=;
-        b=UHPgqDX4x1nbweQIbIyOX3ZMUl+wE3FQk4VXafUGaZALxlFJsnAYp1ArY/vPxPkQWR
-         8lJpjCBrpuTIBhc+Cg5gNYo1PJq3Wknj7+TR41RJt8k2FuTyg2UpkmHrrqE+6F0uyQKa
-         WZnU52SJ/tPRx5H7nw+dbct3gtB46N/b8Uya3rgn7HbIkF/GCfsdYKCYJGmIzx3j02Rj
-         MEnfq2J9J3xQ+LZMSbfGKKXbHlsYgl/b6CYjyXMJAgZ650l7W7ukZGMQp3ASy9PhVRXu
-         921P2wJloUEWw7hL2uEq0aPgLsR3nnIziHZheZ4dwyk839zF+/lgFW7ZYMzf2WOd03wy
-         0czA==
-X-Gm-Message-State: ANoB5pmIRIU+7D5e1Drwk/N8dDNzjkP65KPC1OoHK3WUI8YkDIdiU0h4
-        rz0cqN3sIJuqHEOlPijLD2l53aMae3hGwmDnFSxN7uuzaixdrH5n
-X-Google-Smtp-Source: AA0mqf563T7zMkt+85nHmLQqY3CwK5GpWtZ5WrXRuMZ0xJ2xp8EQiLwr9FtYo8v8YQPI1dZl/gaDFRWmLb6o3RZDxdY=
-X-Received: by 2002:a5d:51ce:0:b0:236:78cd:f3e7 with SMTP id
- n14-20020a5d51ce000000b0023678cdf3e7mr48591560wrv.140.1670250870227; Mon, 05
- Dec 2022 06:34:30 -0800 (PST)
+        Mon, 5 Dec 2022 10:31:04 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 984C3C769;
+        Mon,  5 Dec 2022 07:29:58 -0800 (PST)
+Received: from [192.168.10.9] (unknown [39.45.130.220])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 99CBF66015BC;
+        Mon,  5 Dec 2022 15:29:48 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1670254197;
+        bh=2bjuDBl8NE/9ZgIEVWteEyFSeWYDZRciTha5fd+y5wY=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=k6xb+UmHTlOKRkeDCOYetikN0rr/+hksIIDwI1nLRHt6WrNV9wN+iyQWeA4uJ+Q43
+         uifq/zzWWAPwjipt3UkaG8590BeI6ZIE113j30xqySPmU8Jgc/UohiQB6SMB8K7Iel
+         ACINYXxpSA1v7GwpLIMRRG2TsyvRN3j8TlBNz4J141lsUgsZfoFdAzPuUzwALqEsIu
+         Q6NCxQ3lwYn8N9HcmVxBZnqt4yFO9TOFiZ7cdmxpO41p0mDmsgVHcv8RpHKXLQmsws
+         I2ZJMfB0ygYQTN37uV/EcBtfm+HuqB2mfqBxrTaoIurJwsjnpHnS40gpaZRNbhh4Sr
+         zfoTceFf9eXag==
+Message-ID: <31fe345b-06ac-8c2c-1540-76dd09eca3ee@collabora.com>
+Date:   Mon, 5 Dec 2022 20:29:43 +0500
 MIME-Version: 1.0
-References: <CAHnGgyHAo+XQPchU4HaKshFbnyHYuD0EuHy17QvPRAZ4MFVq-w@mail.gmail.com>
- <20221129102524.ulsthvmf6tbfwhmb@wittgenstein> <CAHnGgyEQjcGSDPC=k-ikGQC460jov2bum0AzjD+Jm-8fDwXGbg@mail.gmail.com>
-In-Reply-To: <CAHnGgyEQjcGSDPC=k-ikGQC460jov2bum0AzjD+Jm-8fDwXGbg@mail.gmail.com>
-From:   ditang chen <ditang.c@gmail.com>
-Date:   Mon, 5 Dec 2022 22:34:19 +0800
-Message-ID: <CAHnGgyEX9ZnK6FabDOs8=Y_kCX=QkhTiryW4AQDURaepJWNh6w@mail.gmail.com>
-Subject: Re: fs/pnode.c: propagate_one Oops in ltp/fs_bind test
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        viro@zeniv.linux.org.uk, ebiederm@xmission.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Zach O'Keefe <zokeefe@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>, kernel@collabora.com,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        "open list : KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list : PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
+        "open list : MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Paul Gofman <pgofman@codeweavers.com>
+Subject: Re: [PATCH v6 0/3] Implement IOCTL to get and/or the clear info about
+ PTEs
+Content-Language: en-US
+To:     David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>
+References: <20221109102303.851281-1-usama.anjum@collabora.com>
+ <9c167d01-ef09-ec4e-b4a1-2fff62bf01fe@redhat.com>
+ <6fdce544-8d4f-8b3c-9208-735769a9e624@collabora.com>
+ <a90ee936-67a9-340d-bf2c-2f331617b0da@redhat.com>
+ <254130e7-7fb1-6cf1-e8fa-5bc2d4450431@collabora.com>
+ <bfcae708-db21-04b4-0bbe-712badd03071@redhat.com>
+ <3d069746-d440-f1a6-1b64-5ee196c2fc21@collabora.com>
+ <d7f7b120-b62d-dc2e-ad7a-f7957d3456e3@redhat.com>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <d7f7b120-b62d-dc2e-ad7a-f7957d3456e3@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-cc linux-fsdevel@vger.kernel.org linux-kernel@vger.kernel.org
+On 11/30/22 5:10 PM, David Hildenbrand wrote:
+> On 30.11.22 12:42, Muhammad Usama Anjum wrote:
+>> On 11/21/22 8:55 PM, David Hildenbrand wrote:
+>>> On 21.11.22 16:00, Muhammad Usama Anjum wrote:
+>>>> Hello,
+>>>>
+>>>> Thank you for replying.
+>>>>
+>>>> On 11/14/22 8:46 PM, David Hildenbrand wrote:
+>>>>>> The soft-dirtiness is stored in the PTE. VMA is marked dirty to store
+>>>>>> the
+>>>>>> dirtiness for reused regions. Clearing the soft-dirty status of whole
+>>>>>> process is straight forward. When we want to clear/monitor the
+>>>>>> soft-dirtiness of a part of the virtual memory, there is a lot of
+>>>>>> internal
+>>>>>> noise. We don't want the non-dirty pages to become dirty because of how
+>>>>>> the
+>>>>>> soft-dirty feature has been working. Soft-dirty feature wasn't being
+>>>>>> used
+>>>>>> the way we want to use now. While monitoring a part of memory, it is not
+>>>>>> acceptable to get non-dirty pages as dirty. Non-dirty pages become dirty
+>>>>>> when the two VMAs are merged without considering if they both are
+>>>>>> dirty or
+>>>>>> not (34228d473efe). To monitor changes over the memory, sometimes
+>>>>>> VMAs are
+>>>>>> split to clear the soft-dirty bit in the VMA flags. But sometimes kernel
+>>>>>> decide to merge them backup. It is so waste of resources.
+>>>>>
+>>>>> Maybe you'd want a per-process option to not merge if the VM_SOFTDIRTY
+>>>>> property differs. But that might be just one alternative for handling
+>>>>> this
+>>>>> case.
+>>>>>
+>>>>>>
+>>>>>> To keep things consistent, the default behavior of the IOCTL is to
+>>>>>> output
+>>>>>> even the extra non-dirty pages as dirty from the kernel noise. A
+>>>>>> optional
+>>>>>> PAGEMAP_NO_REUSED_REGIONS flag is added for those use cases which aren't
+>>>>>> tolerant of extra non-dirty pages. This flag can be considered as
+>>>>>> something
+>>>>>> which is by-passing the already present buggy implementation in the
+>>>>>> kernel.
+>>>>>> It is not buggy per say as the issue can be solved if we don't allow the
+>>>>>> two VMA which have different soft-dirty bits to get merged. But we are
+>>>>>> allowing that so that the total number of VMAs doesn't increase. This
+>>>>>> was
+>>>>>> acceptable at the time, but now with the use case of monitoring a
+>>>>>> part of
+>>>>>> memory for soft-dirty doesn't want this merging. So either we need to
+>>>>>> revert 34228d473efe and PAGEMAP_NO_REUSED_REGIONS flag will not be
+>>>>>> needed
+>>>>>> or we should allow PAGEMAP_NO_REUSED_REGIONS or similar mechanism to
+>>>>>> ignore
+>>>>>> the extra dirty pages which aren't dirty in reality.
+>>>>>>
+>>>>>> When PAGEMAP_NO_REUSED_REGIONS flag is used, only the PTEs are
+>>>>>> checked to
+>>>>>> find if the pages are dirty. So re-used regions cannot be detected. This
+>>>>>> has the only side-effect of not checking the VMAs. So this is
+>>>>>> limitation of
+>>>>>> using this flag which should be acceptable in the current state of code.
+>>>>>> This limitation is okay for the users as they can clear the
+>>>>>> soft-dirty bit
+>>>>>> of the VMA before starting to monitor a range of memory for
+>>>>>> soft-dirtiness.
+>>>>>>
+>>>>>>
+>>>>>>> Please separate that part out from the other changes; I am still not
+>>>>>>> convinced that we want this and what the semantical implications are.
+>>>>>>>
+>>>>>>> Let's take a look at an example: can_change_pte_writable()
+>>>>>>>
+>>>>>>>        /* Do we need write faults for softdirty tracking? */
+>>>>>>>        if (vma_soft_dirty_enabled(vma) && !pte_soft_dirty(pte))
+>>>>>>>            return false;
+>>>>>>>
+>>>>>>> We care about PTE softdirty tracking, if it is enabled for the VMA.
+>>>>>>> Tracking is enabled if: vma_soft_dirty_enabled()
+>>>>>>>
+>>>>>>>        /*
+>>>>>>>         * Soft-dirty is kind of special: its tracking is enabled when
+>>>>>>>         * the vma flags not set.
+>>>>>>>         */
+>>>>>>>        return !(vma->vm_flags & VM_SOFTDIRTY);
+>>>>>>>
+>>>>>>> Consequently, if VM_SOFTDIRTY is set, we are not considering the
+>>>>>>> soft_dirty
+>>>>>>> PTE bits accordingly.
+>>>>>> Sorry, I'm unable to completely grasp the meaning of the example. We
+>>>>>> have
+>>>>>> followed clear_refs_write() to write the soft-dirty bit clearing code in
+>>>>>> the current patch. Dirtiness of the VMA and the PTE may be set
+>>>>>> independently. Newer allocated memory has dirty bit set in the VMA. When
+>>>>>> something is written the memory, the soft dirty bit is set in the
+>>>>>> PTEs as
+>>>>>> well regardless if the soft dirty bit is set in the VMA or not.
+>>>>>>
+>>>>>
+>>>>> Let me try to find a simple explanation:
+>>>>>
+>>>>> After clearing a SOFTDIRTY PTE flag inside an area with VM_SOFTDIRTY set,
+>>>>> there are ways that PTE could get written to and it could become dirty,
+>>>>> without the PTE becoming softdirty.
+>>>>>
+>>>>> Essentially, inside a VMA with VM_SOFTDIRTY set, the PTE softdirty values
+>>>>> might be stale: there might be entries that are softdirty even though the
+>>>>> PTE is *not* marked softdirty.
+>>>> Can someone please share the example to reproduce this? In all of my
+>>>> testing, even if I ignore VM_SOFTDIRTY and only base my decision of
+>>>> soft-dirtiness on individual pages, it always passes.
+>>>
+>>> Quick reproducer (the first and easiest one that triggered :) )
+>>> attached.
+>>>
+>>> With no kernel changes, it works as expected.
+>>>
+>>> # ./softdirty_mprotect
+>>>
+>>>
+>>> With the following kernel change to simulate what you propose it fails:
+>>>
+>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>>> index d22687d2e81e..f2c682bf7f64 100644
+>>> --- a/fs/proc/task_mmu.c
+>>> +++ b/fs/proc/task_mmu.c
+>>> @@ -1457,8 +1457,8 @@ static pagemap_entry_t pte_to_pagemap_entry(struct
+>>> pagemapread *pm,
+>>>                  flags |= PM_FILE;
+>>>          if (page && !migration && page_mapcount(page) == 1)
+>>>                  flags |= PM_MMAP_EXCLUSIVE;
+>>> -       if (vma->vm_flags & VM_SOFTDIRTY)
+>>> -               flags |= PM_SOFT_DIRTY;
+>>> +       //if (vma->vm_flags & VM_SOFTDIRTY)
+>>> +       //      flags |= PM_SOFT_DIRTY;
+>>>            return make_pme(frame, flags);
+>>>   }
+>>>
+>>>
+>>> # ./softdirty_mprotect
+>>> Page #1 should be softdirty
+>>>
+>> Thank you so much for sharing the issue and reproducer.
+>>
+>> After remapping the second part of the memory and m-protecting +
+>> m-unprotecting the whole memory, the PTE of the first half of the memory
+>> doesn't get marked as soft dirty even after writing multiple times to it.
+>> Even if soft-dirtiness is cleared on the whole process, the PTE of the
+>> first half memory doesn't get dirty. This seems like more of a bug in
+>> mprotect. The mprotect should not mess up with the soft-dirty flag in the
+>> PTEs.
+>>
+>> I'm debugging this. I hope to find the issue soon. Soft-dirty tracking in
+>> PTEs should be working correctly irrespective of the VM_SOFTDIRTY is set or
+>> not on the VMA.
+> 
+> No, it's not a bug and these are not the VM_SOFTDIRTY semantics -- just
+> because you think they should be like this. As people explained,
+> VM_SOFTDIRTY implies *until now* that any PTE is consideres softdirty. And
+> there are other scenarios that can similarly trigger something like that,
+> besides mprotect().
+> 
+> Sorry if I sound annoyed, but please
+> 
+> 1) factor out that from your patch set for now
+> 2) find a way to handle this cleanly, for example, not merging VMAs that
+>    differ in VM_SOFTDIRTY
+> 
 
-ditang chen <ditang.c@gmail.com> =E4=BA=8E2022=E5=B9=B412=E6=9C=884=E6=97=
-=A5=E5=91=A8=E6=97=A5 23:46=E5=86=99=E9=81=93=EF=BC=9A
->
-> Thank you for your reply ~~
->
-> In the second step, it's easier to reproduce using the following script=
-=EF=BC=9A
-> # cat /opt/ltp/testcases/bin/fs_bind24.sh
-> #!/bin/sh
-> FS_BIND_TESTFUNC=3Dtest
->
-> test()
-> {
->         tst_res TINFO "bind: shared child to shared parent"
->
->         fs_bind_makedir rshared dir1
->         mkdir dir1/1 dir1/1/2 dir1/1/2/3 dir1/1/2/fs_bind_check dir2 dir3=
- dir4
->         touch dir4/ls
->
->         EXPECT_PASS mount --bind dir1/1/2 dir2
->         EXPECT_PASS mount --make-rslave dir1
->         EXPECT_PASS mount --make-rshared dir1
->
->         EXPECT_PASS mount --bind dir1/1/2/3 dir3
->         EXPECT_PASS mount --make-rslave dir1
->
->         while true
->         do
->                 EXPECT_PASS mount --bind dir4 dir2/fs_bind_check
->                 EXPECT_PASS umount dir2/fs_bind_check
->         done
->
->         fs_bind_check dir1/1/2/fs_bind_check/ dir4
->
->         EXPECT_PASS umount dir2/fs_bind_check
->         EXPECT_PASS umount dir3
->         EXPECT_PASS umount dir2
->         EXPECT_PASS umount dir1
-> }
->
-> . fs_bind_lib.sh
-> tst_run
->
-> And then=EF=BC=8Crun netns.sh while running fs_bind:
-> # /opt/ltp/runltp -f fs_bind
->
-> Here is a reproducer in 6.1.0-rc7:
-> [  115.848393] BUG: kernel NULL pointer dereference, address: 00000000000=
-00010
-> [  115.848967] #PF: supervisor read access in kernel mode
-> [  115.849386] #PF: error_code(0x0000) - not-present page
-> [  115.849803] PGD 0 P4D 0
-> [  115.850012] Oops: 0000 [#1] PREEMPT SMP PTI
-> [  115.850354] CPU: 0 PID: 15591 Comm: mount Not tainted 6.1.0-rc7 #3
-> [  115.850851] Hardware name: innotek GmbH VirtualBox/VirtualBox, BIOS
-> VirtualBox 12/01/2006
-> [  115.851510] RIP: 0010:propagate_one.part.0+0x7f/0x1a0
-> [  115.851924] Code: 75 eb 4c 8b 05 c2 25 37 02 4c 89 ca 48 8b 4a 10
-> 49 39 d0 74 1e 48 3b 81 e0 00 00 00 74 26 48 8b 92 e0 00 00 00 be 01
-> 00 00 00 <48> 8b 4a 10 49 39 d0 75 e2 40 84 f6 74 38 4c 89 05 84 25 37
-> 02 4d
-> [  115.853441] RSP: 0018:ffffb8d5443d7d50 EFLAGS: 00010282
-> [  115.853865] RAX: ffff8e4d87c41c80 RBX: ffff8e4d88ded780 RCX: ffff8e4da=
-4333a00
-> [  115.854458] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8e4d8=
-8ded780
-> [  115.855044] RBP: ffff8e4d88ded780 R08: ffff8e4da4338000 R09: ffff8e4da=
-43388c0
-> [  115.855693] R10: 0000000000000002 R11: ffffb8d540158000 R12: ffffb8d54=
-43d7da8
-> [  115.856304] R13: ffff8e4d88ded780 R14: 0000000000000000 R15: 000000000=
-0000000
-> [  115.856859] FS:  00007f92c90c9800(0000) GS:ffff8e4dfdc00000(0000)
-> knlGS:0000000000000000
-> [  115.857531] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  115.858006] CR2: 0000000000000010 CR3: 0000000022f4c002 CR4: 000000000=
-00706f0
-> [  115.858598] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000=
-0000000
-> [  115.859393] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000=
-0000400
-> [  115.860099] Call Trace:
-> [  115.860358]  <TASK>
-> [  115.860535]  propagate_mnt+0x14d/0x190
-> [  115.860848]  attach_recursive_mnt+0x274/0x3e0
-> [  115.861212]  path_mount+0x8c8/0xa60
-> [  115.861503]  __x64_sys_mount+0xf6/0x140
-> [  115.861819]  do_syscall_64+0x5b/0x80
-> [  115.862117]  ? do_faccessat+0x123/0x250
-> [  115.862435]  ? syscall_exit_to_user_mode+0x17/0x40
-> [  115.862826]  ? do_syscall_64+0x67/0x80
-> [  115.863133]  ? syscall_exit_to_user_mode+0x17/0x40
-> [  115.863527]  ? do_syscall_64+0x67/0x80
-> [  115.863835]  ? do_syscall_64+0x67/0x80
-> [  115.864144]  ? do_syscall_64+0x67/0x80
-> [  115.864452]  ? exc_page_fault+0x70/0x170
-> [  115.864775]  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> [  115.865187] RIP: 0033:0x7f92c92b0ebe
-> [  115.865480] Code: 48 8b 0d 75 4f 0c 00 f7 d8 64 89 01 48 83 c8 ff
-> c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 49 89 ca b8 a5 00 00
-> 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 42 4f 0c 00 f7 d8 64 89
-> 01 48
-> [  115.866984] RSP: 002b:00007fff000aa728 EFLAGS: 00000246 ORIG_RAX:
-> 00000000000000a5
-> [  115.867607] RAX: ffffffffffffffda RBX: 000055a77888d6b0 RCX: 00007f92c=
-92b0ebe
-> [  115.868240] RDX: 000055a77888d8e0 RSI: 000055a77888e6e0 RDI: 000055a77=
-888e620
-> [  115.868823] RBP: 0000000000000000 R08: 0000000000000000 R09: 000000000=
-0000001
-> [  115.869403] R10: 0000000000001000 R11: 0000000000000246 R12: 000055a77=
-888e620
-> [  115.869994] R13: 000055a77888d8e0 R14: 00000000ffffffff R15: 00007f92c=
-93e4076
-> [  115.870581]  </TASK>
-> [  115.870763] Modules linked in: nft_fib_inet nft_fib_ipv4
-> nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6
-> nft_reject nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6
-> nf_defrag_ipv4 ip_set rfkill nf_tables nfnetlink qrtr snd_intel8x0
-> sunrpc snd_ac97_codec ac97_bus snd_pcm snd_timer intel_rapl_msr
-> intel_rapl_common snd vboxguest intel_powerclamp video rapl joydev
-> soundcore i2c_piix4 wmi fuse zram xfs vmwgfx crct10dif_pclmul
-> crc32_pclmul crc32c_intel polyval_clmulni polyval_generic
-> drm_ttm_helper ttm e1000 ghash_clmulni_intel serio_raw ata_generic
-> pata_acpi scsi_dh_rdac scsi_dh_emc scsi_dh_alua dm_multipath
-> [  115.875288] CR2: 0000000000000010
-> [  115.875641] ---[ end trace 0000000000000000 ]---
-> [  115.876135] RIP: 0010:propagate_one.part.0+0x7f/0x1a0
-> [  115.876551] Code: 75 eb 4c 8b 05 c2 25 37 02 4c 89 ca 48 8b 4a 10
-> 49 39 d0 74 1e 48 3b 81 e0 00 00 00 74 26 48 8b 92 e0 00 00 00 be 01
-> 00 00 00 <48> 8b 4a 10 49 39 d0 75 e2 40 84 f6 74 38 4c 89 05 84 25 37
-> 02 4d
-> [  115.878086] RSP: 0018:ffffb8d5443d7d50 EFLAGS: 00010282
-> [  115.878511] RAX: ffff8e4d87c41c80 RBX: ffff8e4d88ded780 RCX: ffff8e4da=
-4333a00
-> [  115.879128] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff8e4d8=
-8ded780
-> [  115.879715] RBP: ffff8e4d88ded780 R08: ffff8e4da4338000 R09: ffff8e4da=
-43388c0
-> [  115.880359] R10: 0000000000000002 R11: ffffb8d540158000 R12: ffffb8d54=
-43d7da8
-> [  115.880962] R13: ffff8e4d88ded780 R14: 0000000000000000 R15: 000000000=
-0000000
-> [  115.881548] FS:  00007f92c90c9800(0000) GS:ffff8e4dfdc00000(0000)
-> knlGS:0000000000000000
-> [  115.882234] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [  115.882713] CR2: 0000000000000010 CR3: 0000000022f4c002 CR4: 000000000=
-00706f0
-> [  115.883314] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 000000000=
-0000000
-> [  115.883966] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 000000000=
-0000400
->
-> Best regards,
-> --
->
->
-> Christian Brauner <brauner@kernel.org> =E4=BA=8E2022=E5=B9=B411=E6=9C=882=
-9=E6=97=A5=E5=91=A8=E4=BA=8C 18:25=E5=86=99=E9=81=93=EF=BC=9A
->
->
-> >
-> > On Tue, Nov 15, 2022 at 11:04:01PM +0800, ditang chen wrote:
-> > > Here is a reproducer:
-> > > 1. Run netns.sh script in loop
-> > > # while true; do ./netns.sh; done
-> > > # cat netns.sh
-> > > #!/bin/bash
-> > > num=3D1000
-> > > function create_netns()
-> > > {
-> > > for((i=3D0; i<$num; i++))
-> > > do
-> > >   ip netns add local$i
-> > >   ip netns exec local$i pwd &
-> > > done
-> > > }
-> > > function clean_netns()
-> > > {
-> > > for((i=3D0; i<$num; i++))
-> > > do
-> > >     ip netns del local$i
-> > > done
-> > > }
-> > > create_netns
-> > > clean_netns
-> > >
-> > > 2.  run fs_bind/fs_bind24 in loop, fs_bind24 only
-> > > # cat /opt/ltp/runtest/fs_bind
-> > > #DESCRIPTION:Bind mounts and shared subtrees
-> > > fs_bind24_sh fs_bind24.sh
-> > > # while true; do /opt/ltp/runltp -f fs_bind; done
-> > >
-> > > This oops also exists in the latest kernel code=EF=BC=9A
-> >
-> > I've been running this since yesterday on v6.1-rc7 to reproduce and it
-> > didn't trigger. It's unclear whether you're saying that you've managed
-> > to reproduce this on mainline. It doesn't seem to be.
+I'm extremely sorry for the annoyance. I absolutely understand your point.
+The problem is that the half of this IOCTL wouldn't be useful without
+solving the extra soft-dirty pages issue. We don't want to upstream
+something which we wouldn't be using until 2 is solved. This is why we are
+trying to solve the point 2 before upstreaming the 1. I'm working on ideas
+on how this can be resolved or redesigned entirely. Maybe Cyril will share
+the ideas soon once he has some time. He was involved in the soft-dirty
+feature development.
+
+-- 
+BR,
+Muhammad Usama Anjum
