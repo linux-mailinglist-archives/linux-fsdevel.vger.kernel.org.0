@@ -2,325 +2,251 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C72266425BA
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Dec 2022 10:24:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CB88F642609
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  5 Dec 2022 10:47:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230496AbiLEJYe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Dec 2022 04:24:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44528 "EHLO
+        id S231375AbiLEJrt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Dec 2022 04:47:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230006AbiLEJYa (ORCPT
+        with ESMTP id S230405AbiLEJrs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Dec 2022 04:24:30 -0500
-Received: from mail-lf1-x129.google.com (mail-lf1-x129.google.com [IPv6:2a00:1450:4864:20::129])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6526115A2A
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Dec 2022 01:24:28 -0800 (PST)
-Received: by mail-lf1-x129.google.com with SMTP id p8so17538572lfu.11
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Dec 2022 01:24:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Owo0phbbJOrq6sWBiQ2bW5Gab2bMQcmAUmytHNbH9wo=;
-        b=CBfUM4ABoy4rHbnJbQWlgFZPr36WGkyWiutGX6w63I8DmF/IJiild6FcVSNN7OWJZ7
-         pXxUiVma9yq+PhDIrUun9M9Va0gKBpKxjzL4hSd+yyVkziX/hM+hdNnS2HrixHqWqr+w
-         9uPS+gbUSproyB0am3JO8sKBKWWHQ/lzz53ju3Q567AM4L0/1VsnFw7a7e+xLX5dqtAL
-         ltPfrvJFTtJCH5f/cWONsgU7aRsJDDYFPsxECnuUV1Upx768mYuIz8CszK1XiyhlQVRZ
-         mn1NjlqoOAVwrxhEaj2jBzLXfvyd3qLezPV3GfuypCofEI10LU/+uMeT5vEdTm2OxrYD
-         evrA==
+        Mon, 5 Dec 2022 04:47:48 -0500
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C0FB65A0
+        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Dec 2022 01:47:47 -0800 (PST)
+Received: by mail-il1-f198.google.com with SMTP id j20-20020a056e02219400b00300a22a7fe0so11707694ila.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Dec 2022 01:47:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Owo0phbbJOrq6sWBiQ2bW5Gab2bMQcmAUmytHNbH9wo=;
-        b=hr4OSuYdtyTe9SqauxCg5dZ1tGWoskO8sWQMFQRjWz1BggY0gNSqMRp7191ppr8AkQ
-         /r4pIhYQqHON1Akf93JaXvwtoWdTxa5+zTuBb2jqbOwGCGqTI3UfgTL9hQYV3cSsEhFA
-         hp2hPw5k+8R6kE1wbpB7QRO+p/iEnz/E4CD8wKHxPk6+BgjjRaaiuYi5fS9+nRJHCC7u
-         pS5Quc6vj2aGFM+kfaDjduA2u3GKGq2X5DZOk2gpSoG1RZxLTM/Y7uQxy18pcfo6g3dK
-         Guh46mguYBTg9DkOz7qWM7dEvFYc90hiZoWN5w6oRYZLXnerOzoM59HtEmx/0Y5vm04D
-         t8dw==
-X-Gm-Message-State: ANoB5pnfJSnbhgKXRL2RwEMb4sp7VCmzePVMBB8pszuwvN8xY4imEg4f
-        nUohFtNGtnS1XqJopACKpO23tNN5RxqYQRht1SYXlw==
-X-Google-Smtp-Source: AA0mqf7hmc7cmV5dRxw88/fxJnTLIThfoQtt0oTYjymTMQQZpTJzvpZeXdF6ZMUHCf5Dbxm0DrPC0sEiLurEnocH1bU=
-X-Received: by 2002:a05:6512:104e:b0:4b5:604a:5b24 with SMTP id
- c14-20020a056512104e00b004b5604a5b24mr2898439lfb.550.1670232266434; Mon, 05
- Dec 2022 01:24:26 -0800 (PST)
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TEKKEZGF+jgdIDc8NVBi3tp/tqdDla5lQNVIkx0HBX4=;
+        b=PDHo0xdgsmqu2OYw3q4SipFkFN4Fl2PhB04MD5AQcRH6byEAqxAeZF5C2eMFfM0LDq
+         yvCLNP9Aw7CmGkobUsz/nYXuPYEcGj0KHebUHm9LhcL1/3kRsyrR2jEqGqw52zlry+ns
+         h3h0HgMeoUUzoa4VXDdfpjY7ivbTUOLVVpNyk+uZL5AxNzqROhNpp0sOu0ztp2KxC1JL
+         wRsb6mBy4WLqbg/Vror5Dq9OP5P1Uh6QENGIbdiyjb+AQyJXQSAqYwEHqen6uH/0UNv0
+         UKksvnSxz38aY4sksUhe4b5n7NGSlwbuybgBGGPg/wsxMBOWYQKsCkzf14YCtnvaQAGa
+         ihPA==
+X-Gm-Message-State: ANoB5pkvJnl1+dqo4+3tCXVQ0YHUqmRUlEygfoaKkV2bSFI+u5nzJoFV
+        FtNgBqWieJacLm7KtDLoI8IM1iEOp5y1W9w35dMHrp+C0pyS
+X-Google-Smtp-Source: AA0mqf7xNzka+tLGeTasGH5jvcELtTAyV3P0g8v3mT4BTvojg5BCpo89j/YKPphQeSfFLG++MPhgib2Mjf4rGYYTPWGuzfLjW31N
 MIME-Version: 1.0
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com> <20221202061347.1070246-6-chao.p.peng@linux.intel.com>
-In-Reply-To: <20221202061347.1070246-6-chao.p.peng@linux.intel.com>
-From:   Fuad Tabba <tabba@google.com>
-Date:   Mon, 5 Dec 2022 09:23:49 +0000
-Message-ID: <CA+EHjTy5+Ke_7Uh72p--H9kGcE-PK4EVmp7ym6Q1-PO28u6CCQ@mail.gmail.com>
-Subject: Re: [PATCH v10 5/9] KVM: Use gfn instead of hva for mmu_notifier_retry
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com
+X-Received: by 2002:a02:cf21:0:b0:38a:2f59:53d7 with SMTP id
+ s1-20020a02cf21000000b0038a2f5953d7mr4288843jar.10.1670233666821; Mon, 05 Dec
+ 2022 01:47:46 -0800 (PST)
+Date:   Mon, 05 Dec 2022 01:47:46 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000067270b05ef119467@google.com>
+Subject: [syzbot] KASAN: use-after-free Read in hfsplus_btree_open
+From:   syzbot <syzbot+8d39c1e195e443de0dfe@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, fmdefrancesco@gmail.com,
+        ira.weiny@intel.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, slava@dubeyko.com,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Chao,
+Hello,
 
-On Fri, Dec 2, 2022 at 6:19 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
->
-> Currently in mmu_notifier invalidate path, hva range is recorded and
-> then checked against by mmu_notifier_retry_hva() in the page fault
-> handling path. However, for the to be introduced private memory, a page
-> fault may not have a hva associated, checking gfn(gpa) makes more sense.
->
-> For existing hva based shared memory, gfn is expected to also work. The
-> only downside is when aliasing multiple gfns to a single hva, the
-> current algorithm of checking multiple ranges could result in a much
-> larger range being rejected. Such aliasing should be uncommon, so the
-> impact is expected small.
->
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> ---
->  arch/x86/kvm/mmu/mmu.c   |  8 +++++---
->  include/linux/kvm_host.h | 33 +++++++++++++++++++++------------
->  virt/kvm/kvm_main.c      | 32 +++++++++++++++++++++++---------
->  3 files changed, 49 insertions(+), 24 deletions(-)
->
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 4736d7849c60..e2c70b5afa3e 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -4259,7 +4259,7 @@ static bool is_page_fault_stale(struct kvm_vcpu *vcpu,
->                 return true;
->
->         return fault->slot &&
-> -              mmu_invalidate_retry_hva(vcpu->kvm, mmu_seq, fault->hva);
-> +              mmu_invalidate_retry_gfn(vcpu->kvm, mmu_seq, fault->gfn);
->  }
->
->  static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
-> @@ -6098,7 +6098,9 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
->
->         write_lock(&kvm->mmu_lock);
->
-> -       kvm_mmu_invalidate_begin(kvm, gfn_start, gfn_end);
-> +       kvm_mmu_invalidate_begin(kvm);
-> +
-> +       kvm_mmu_invalidate_range_add(kvm, gfn_start, gfn_end);
->
->         flush = kvm_rmap_zap_gfn_range(kvm, gfn_start, gfn_end);
->
-> @@ -6112,7 +6114,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
->                 kvm_flush_remote_tlbs_with_address(kvm, gfn_start,
->                                                    gfn_end - gfn_start);
->
-> -       kvm_mmu_invalidate_end(kvm, gfn_start, gfn_end);
-> +       kvm_mmu_invalidate_end(kvm);
->
->         write_unlock(&kvm->mmu_lock);
->  }
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 02347e386ea2..3d69484d2704 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -787,8 +787,8 @@ struct kvm {
->         struct mmu_notifier mmu_notifier;
->         unsigned long mmu_invalidate_seq;
->         long mmu_invalidate_in_progress;
-> -       unsigned long mmu_invalidate_range_start;
-> -       unsigned long mmu_invalidate_range_end;
-> +       gfn_t mmu_invalidate_range_start;
-> +       gfn_t mmu_invalidate_range_end;
->  #endif
->         struct list_head devices;
->         u64 manual_dirty_log_protect;
-> @@ -1389,10 +1389,9 @@ void kvm_mmu_free_memory_cache(struct kvm_mmu_memory_cache *mc);
->  void *kvm_mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc);
->  #endif
->
-> -void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
-> -                             unsigned long end);
-> -void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
-> -                           unsigned long end);
-> +void kvm_mmu_invalidate_begin(struct kvm *kvm);
-> +void kvm_mmu_invalidate_range_add(struct kvm *kvm, gfn_t start, gfn_t end);
-> +void kvm_mmu_invalidate_end(struct kvm *kvm);
->
->  long kvm_arch_dev_ioctl(struct file *filp,
->                         unsigned int ioctl, unsigned long arg);
-> @@ -1963,9 +1962,9 @@ static inline int mmu_invalidate_retry(struct kvm *kvm, unsigned long mmu_seq)
->         return 0;
->  }
->
-> -static inline int mmu_invalidate_retry_hva(struct kvm *kvm,
-> +static inline int mmu_invalidate_retry_gfn(struct kvm *kvm,
->                                            unsigned long mmu_seq,
-> -                                          unsigned long hva)
-> +                                          gfn_t gfn)
->  {
->         lockdep_assert_held(&kvm->mmu_lock);
->         /*
-> @@ -1974,10 +1973,20 @@ static inline int mmu_invalidate_retry_hva(struct kvm *kvm,
->          * that might be being invalidated. Note that it may include some false
+syzbot found the following issue on:
 
-nit: "might be" (or) "is being"
+HEAD commit:    a4412fdd49dc error-injection: Add prompt for function erro..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=119c684d880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=2325e409a9a893e1
+dashboard link: https://syzkaller.appspot.com/bug?extid=8d39c1e195e443de0dfe
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
 
->          * positives, due to shortcuts when handing concurrent invalidations.
+Unfortunately, I don't have any reproducer for this issue yet.
 
-nit: handling
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/3bbe66b25958/disk-a4412fdd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/6851483ca667/vmlinux-a4412fdd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2d5b23cb4616/bzImage-a4412fdd.xz
 
->          */
-> -       if (unlikely(kvm->mmu_invalidate_in_progress) &&
-> -           hva >= kvm->mmu_invalidate_range_start &&
-> -           hva < kvm->mmu_invalidate_range_end)
-> -               return 1;
-> +       if (unlikely(kvm->mmu_invalidate_in_progress)) {
-> +               /*
-> +                * Dropping mmu_lock after bumping mmu_invalidate_in_progress
-> +                * but before updating the range is a KVM bug.
-> +                */
-> +               if (WARN_ON_ONCE(kvm->mmu_invalidate_range_start == INVALID_GPA ||
-> +                                kvm->mmu_invalidate_range_end == INVALID_GPA))
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8d39c1e195e443de0dfe@syzkaller.appspotmail.com
 
-INVALID_GPA is an x86-specific define in
-arch/x86/include/asm/kvm_host.h, so this doesn't build on other
-architectures. The obvious fix is to move it to
-include/linux/kvm_host.h.
+loop1: detected capacity change from 0 to 1024
+==================================================================
+BUG: KASAN: use-after-free in hfsplus_btree_open+0x918/0xd00 fs/hfsplus/btree.c:155
+Read of size 4 at addr ffff88804402bc74 by task syz-executor.1/6533
 
-Cheers,
-/fuad
+CPU: 1 PID: 6533 Comm: syz-executor.1 Not tainted 6.1.0-rc7-syzkaller-00123-ga4412fdd49dc #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
+ print_address_description+0x74/0x340 mm/kasan/report.c:284
+ print_report+0x107/0x1f0 mm/kasan/report.c:395
+ kasan_report+0xcd/0x100 mm/kasan/report.c:495
+ hfsplus_btree_open+0x918/0xd00 fs/hfsplus/btree.c:155
+ hfsplus_fill_super+0xa7b/0x1b50 fs/hfsplus/super.c:473
+ mount_bdev+0x26c/0x3a0 fs/super.c:1401
+ legacy_get_tree+0xea/0x180 fs/fs_context.c:610
+ vfs_get_tree+0x88/0x270 fs/super.c:1531
+ do_new_mount+0x289/0xad0 fs/namespace.c:3040
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount+0x2d3/0x3c0 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7f974568d60a
+Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f974632af88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00000000000005e7 RCX: 00007f974568d60a
+RDX: 0000000020000600 RSI: 0000000020000640 RDI: 00007f974632afe0
+RBP: 00007f974632b020 R08: 00007f974632b020 R09: 0000000000a00010
+R10: 0000000000a00010 R11: 0000000000000202 R12: 0000000020000600
+R13: 0000000020000640 R14: 00007f974632afe0 R15: 0000000020000140
+ </TASK>
 
-> +                       return 1;
-> +
-> +               if (gfn >= kvm->mmu_invalidate_range_start &&
-> +                   gfn < kvm->mmu_invalidate_range_end)
-> +                       return 1;
-> +       }
-> +
->         if (kvm->mmu_invalidate_seq != mmu_seq)
->                 return 1;
->         return 0;
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index b882eb2c76a2..ad55dfbc75d7 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -540,9 +540,7 @@ static void kvm_mmu_notifier_invalidate_range(struct mmu_notifier *mn,
->
->  typedef bool (*hva_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
->
-> -typedef void (*on_lock_fn_t)(struct kvm *kvm, unsigned long start,
-> -                            unsigned long end);
-> -
-> +typedef void (*on_lock_fn_t)(struct kvm *kvm);
->  typedef void (*on_unlock_fn_t)(struct kvm *kvm);
->
->  struct kvm_hva_range {
-> @@ -628,7 +626,8 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
->                                 locked = true;
->                                 KVM_MMU_LOCK(kvm);
->                                 if (!IS_KVM_NULL_FN(range->on_lock))
-> -                                       range->on_lock(kvm, range->start, range->end);
-> +                                       range->on_lock(kvm);
-> +
->                                 if (IS_KVM_NULL_FN(range->handler))
->                                         break;
->                         }
-> @@ -715,8 +714,7 @@ static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
->         kvm_handle_hva_range(mn, address, address + 1, pte, kvm_set_spte_gfn);
->  }
->
-> -void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
-> -                             unsigned long end)
-> +void kvm_mmu_invalidate_begin(struct kvm *kvm)
->  {
->         /*
->          * The count increase must become visible at unlock time as no
-> @@ -724,6 +722,17 @@ void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
->          * count is also read inside the mmu_lock critical section.
->          */
->         kvm->mmu_invalidate_in_progress++;
-> +
-> +       if (likely(kvm->mmu_invalidate_in_progress == 1)) {
-> +               kvm->mmu_invalidate_range_start = INVALID_GPA;
-> +               kvm->mmu_invalidate_range_end = INVALID_GPA;
-> +       }
-> +}
-> +
-> +void kvm_mmu_invalidate_range_add(struct kvm *kvm, gfn_t start, gfn_t end)
-> +{
-> +       WARN_ON_ONCE(!kvm->mmu_invalidate_in_progress);
-> +
->         if (likely(kvm->mmu_invalidate_in_progress == 1)) {
->                 kvm->mmu_invalidate_range_start = start;
->                 kvm->mmu_invalidate_range_end = end;
-> @@ -744,6 +753,12 @@ void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
->         }
->  }
->
-> +static bool kvm_mmu_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
-> +{
-> +       kvm_mmu_invalidate_range_add(kvm, range->start, range->end);
-> +       return kvm_unmap_gfn_range(kvm, range);
-> +}
-> +
->  static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
->                                         const struct mmu_notifier_range *range)
->  {
-> @@ -752,7 +767,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
->                 .start          = range->start,
->                 .end            = range->end,
->                 .pte            = __pte(0),
-> -               .handler        = kvm_unmap_gfn_range,
-> +               .handler        = kvm_mmu_unmap_gfn_range,
->                 .on_lock        = kvm_mmu_invalidate_begin,
->                 .on_unlock      = kvm_arch_guest_memory_reclaimed,
->                 .flush_on_ret   = true,
-> @@ -791,8 +806,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
->         return 0;
->  }
->
-> -void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
-> -                           unsigned long end)
-> +void kvm_mmu_invalidate_end(struct kvm *kvm)
->  {
->         /*
->          * This sequence increase will notify the kvm page fault that
-> --
-> 2.25.1
->
+Allocated by task 4560:
+ kasan_save_stack mm/kasan/common.c:45 [inline]
+ kasan_set_track+0x3d/0x60 mm/kasan/common.c:52
+ __kasan_slab_alloc+0x65/0x70 mm/kasan/common.c:325
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slab.h:737 [inline]
+ slab_alloc_node mm/slub.c:3398 [inline]
+ slab_alloc mm/slub.c:3406 [inline]
+ __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
+ kmem_cache_alloc_lru+0x180/0x2e0 mm/slub.c:3429
+ alloc_inode_sb include/linux/fs.h:3125 [inline]
+ f2fs_alloc_inode+0x14d/0x520 fs/f2fs/super.c:1366
+ alloc_inode fs/inode.c:259 [inline]
+ iget_locked+0x191/0x830 fs/inode.c:1286
+ f2fs_iget+0x51/0x4bb0 fs/f2fs/inode.c:505
+ f2fs_fill_super+0x52c4/0x6c40 fs/f2fs/super.c:4333
+ mount_bdev+0x26c/0x3a0 fs/super.c:1401
+ legacy_get_tree+0xea/0x180 fs/fs_context.c:610
+ vfs_get_tree+0x88/0x270 fs/super.c:1531
+ do_new_mount+0x289/0xad0 fs/namespace.c:3040
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount+0x2d3/0x3c0 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Last potentially related work creation:
+ kasan_save_stack+0x2b/0x50 mm/kasan/common.c:45
+ __kasan_record_aux_stack+0xb0/0xc0 mm/kasan/generic.c:481
+ call_rcu+0x163/0x9c0 kernel/rcu/tree.c:2798
+ f2fs_fill_super+0x5669/0x6c40 fs/f2fs/super.c:4516
+ mount_bdev+0x26c/0x3a0 fs/super.c:1401
+ legacy_get_tree+0xea/0x180 fs/fs_context.c:610
+ vfs_get_tree+0x88/0x270 fs/super.c:1531
+ do_new_mount+0x289/0xad0 fs/namespace.c:3040
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount+0x2d3/0x3c0 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+The buggy address belongs to the object at ffff88804402b540
+ which belongs to the cache f2fs_inode_cache of size 2144
+The buggy address is located 1844 bytes inside of
+ 2144-byte region [ffff88804402b540, ffff88804402bda0)
+
+The buggy address belongs to the physical page:
+page:ffffea0001100a00 refcount:1 mapcount:0 mapping:0000000000000000 index:0xffff88804402f360 pfn:0x44028
+head:ffffea0001100a00 order:3 compound_mapcount:0 compound_pincount:0
+memcg:ffff88801df0f201
+flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000010200 0000000000000000 dead000000000001 ffff88801ccc23c0
+raw: ffff88804402f360 00000000800e0001 00000001ffffffff ffff88801df0f201
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Reclaimable, gfp_mask 0x1d2050(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL|__GFP_RECLAIMABLE), pid 4517, tgid 4516 (syz-executor.1), ts 148789358194, free_ts 135585079530
+ prep_new_page mm/page_alloc.c:2539 [inline]
+ get_page_from_freelist+0x742/0x7c0 mm/page_alloc.c:4291
+ __alloc_pages+0x259/0x560 mm/page_alloc.c:5558
+ alloc_slab_page+0x70/0xf0 mm/slub.c:1794
+ allocate_slab+0x5e/0x4b0 mm/slub.c:1939
+ new_slab mm/slub.c:1992 [inline]
+ ___slab_alloc+0x782/0xe20 mm/slub.c:3180
+ __slab_alloc mm/slub.c:3279 [inline]
+ slab_alloc_node mm/slub.c:3364 [inline]
+ slab_alloc mm/slub.c:3406 [inline]
+ __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
+ kmem_cache_alloc_lru+0x233/0x2e0 mm/slub.c:3429
+ alloc_inode_sb include/linux/fs.h:3125 [inline]
+ f2fs_alloc_inode+0x14d/0x520 fs/f2fs/super.c:1366
+ alloc_inode fs/inode.c:259 [inline]
+ iget_locked+0x191/0x830 fs/inode.c:1286
+ f2fs_iget+0x51/0x4bb0 fs/f2fs/inode.c:505
+ f2fs_fill_super+0x38b1/0x6c40 fs/f2fs/super.c:4222
+ mount_bdev+0x26c/0x3a0 fs/super.c:1401
+ legacy_get_tree+0xea/0x180 fs/fs_context.c:610
+ vfs_get_tree+0x88/0x270 fs/super.c:1531
+ do_new_mount+0x289/0xad0 fs/namespace.c:3040
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount+0x2d3/0x3c0 fs/namespace.c:3568
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1459 [inline]
+ free_pcp_prepare+0x80c/0x8f0 mm/page_alloc.c:1509
+ free_unref_page_prepare mm/page_alloc.c:3387 [inline]
+ free_unref_page+0x7d/0x5f0 mm/page_alloc.c:3483
+ free_slab mm/slub.c:2031 [inline]
+ discard_slab mm/slub.c:2037 [inline]
+ __unfreeze_partials+0x1ab/0x200 mm/slub.c:2586
+ put_cpu_partial+0x106/0x170 mm/slub.c:2662
+ qlist_free_all+0x2b/0x70 mm/kasan/quarantine.c:187
+ kasan_quarantine_reduce+0x169/0x180 mm/kasan/quarantine.c:294
+ __kasan_slab_alloc+0x1f/0x70 mm/kasan/common.c:302
+ kasan_slab_alloc include/linux/kasan.h:201 [inline]
+ slab_post_alloc_hook mm/slab.h:737 [inline]
+ slab_alloc_node mm/slub.c:3398 [inline]
+ slab_alloc mm/slub.c:3406 [inline]
+ __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
+ kmem_cache_alloc_lru+0x180/0x2e0 mm/slub.c:3429
+ alloc_inode_sb include/linux/fs.h:3125 [inline]
+ sock_alloc_inode+0x21/0xc0 net/socket.c:304
+ alloc_inode fs/inode.c:259 [inline]
+ new_inode_pseudo+0x61/0x1d0 fs/inode.c:1018
+ sock_alloc net/socket.c:627 [inline]
+ __sock_create+0x12b/0x850 net/socket.c:1479
+ sock_create net/socket.c:1566 [inline]
+ __sys_socket_create net/socket.c:1603 [inline]
+ __sys_socket+0x119/0x360 net/socket.c:1636
+ __do_sys_socket net/socket.c:1649 [inline]
+ __se_sys_socket net/socket.c:1647 [inline]
+ __x64_sys_socket+0x76/0x80 net/socket.c:1647
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Memory state around the buggy address:
+ ffff88804402bb00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88804402bb80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88804402bc00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                             ^
+ ffff88804402bc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88804402bd00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
