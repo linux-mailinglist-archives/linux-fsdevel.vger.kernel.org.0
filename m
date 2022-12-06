@@ -2,168 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9A67E643A5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Dec 2022 01:41:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 73E24643D0B
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Dec 2022 07:16:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233419AbiLFAlg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Dec 2022 19:41:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
+        id S233338AbiLFGP6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Dec 2022 01:15:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51524 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233037AbiLFAl0 (ORCPT
+        with ESMTP id S230151AbiLFGP5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Dec 2022 19:41:26 -0500
-Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DD15112D
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Dec 2022 16:41:25 -0800 (PST)
-Received: by mail-pf1-x430.google.com with SMTP id 65so404649pfx.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Dec 2022 16:41:25 -0800 (PST)
+        Tue, 6 Dec 2022 01:15:57 -0500
+Received: from mail-pg1-x532.google.com (mail-pg1-x532.google.com [IPv6:2607:f8b0:4864:20::532])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C900327169;
+        Mon,  5 Dec 2022 22:15:56 -0800 (PST)
+Received: by mail-pg1-x532.google.com with SMTP id v3so12519278pgh.4;
+        Mon, 05 Dec 2022 22:15:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=g1HJHevNxrj1Nq/NT7g6yR6y+nhBZjMl2neMxR4W590=;
-        b=m5t9TolEhunsnLAs8ghRCY5jduXJTUVrI828QMb9aaMDHIl9N52I0BcpPgXmJWJwHJ
-         8O/axD8BEanTUffxKBpeoT/71MR//Ncm3X2gdqz7aFSVJrBM1Wbfryc+Rv8pyLm6oklN
-         hdck+j11IhNQpknHmA6Td97jo/v98RGjlHlkI=
+        d=gmail.com; s=20210112;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cao+GfaGrq2ECO1hr0MTI44zHM0MFwGfvfdh/iV+l9o=;
+        b=ANIjq6WCcDktRPe1ueay3wixt+JhU/DP767DDqVBVffq1j1J01LAu8298A1+Kc84X6
+         IWiMQiYbzpg1y2rlsYmUXyUaqtIlkhUKRB9mAfjZuzwBEjJxLyvQahoErlTOG5o2ee98
+         o0pa7npb3BbvNcYzOrN20P45Bw29uSOO1SVw3YPjz0Tmntd5h3xlFvyFIDx/4fxsME6E
+         Vi2Hhku8FkpJGdqzLV6pP2ddZiwHaI4zqdQTnCwVHuvhZ4IHu9xA5xtFx/m3YBevFzEK
+         bwUZYPulvssSh+9RLgEB6BFJBCsNOneXmaDRMrCwX7w6wa3IbDYpDcd4H/3hNGa2Qd7g
+         yHVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=g1HJHevNxrj1Nq/NT7g6yR6y+nhBZjMl2neMxR4W590=;
-        b=fN9QPC8yoPukebPguM3tF2YcPJazLQ2vungUS/QVfgX4kfg8JLG8XMEs7BGHsMsnWf
-         w3fkxZJL4qRFtFFUDDeU4HSLxGtgp9ILWzaDT1BR4W8HeU9wCgP76d3lMpe3LRvEws6m
-         DaKo0ZUmjtsF/a2vDKI5egvq6UMhs2LDOUPrFtJLdxX0JblC8skUbpWxNofxgu3I6viC
-         NmtVlh6v9C6zBzzb3MbD4v3Lg3/QuCUB128/nUJxbvZdzERtXNjD/0y26EJz9uU2lW4d
-         hBd/KYTXi0PF83LdEnShwrcno1NzoqTd2hhlwkCWOPThayCNWd9X5X2anlIZ0BNAo8fw
-         wv7g==
-X-Gm-Message-State: ANoB5pnGYjBSW7mBaUdcwmb76B9IpZTcyZrv8b2Rb34jckeq0ECUcfHu
-        Xl6vKS4iN5jyy8Ldka/WWcn6JQ==
-X-Google-Smtp-Source: AA0mqf7bocP7PDul7rRtHY2oLz5aO8HTy1YdBhNhRPTn1YaCEYjEKUj/QL8QuzpT2xX9GPdxtsjU/w==
-X-Received: by 2002:a63:1824:0:b0:46e:baf4:ab7a with SMTP id y36-20020a631824000000b0046ebaf4ab7amr79923468pgl.37.1670287284417;
-        Mon, 05 Dec 2022 16:41:24 -0800 (PST)
-Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
-        by smtp.gmail.com with ESMTPSA id b7-20020a170902650700b00186b549cdc2sm11187939plk.157.2022.12.05.16.41.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 16:41:24 -0800 (PST)
-Date:   Mon, 5 Dec 2022 16:41:23 -0800
-From:   Kees Cook <keescook@chromium.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Alexey Izbyshev <izbyshev@ispras.ru>,
-        Andrei Vagin <avagin@gmail.com>,
-        Bernd Edlinger <bernd.edlinger@hotmail.de>,
-        Bo Liu <liubo03@inspur.com>,
-        Christian Brauner <brauner@kernel.org>,
-        David Hildenbrand <david@redhat.com>,
-        Dmitry Safonov <0x7f454c46@gmail.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        Liu Shixin <liushixin2@huawei.com>,
-        Li Zetao <lizetao1@huawei.com>, Rolf Eike Beer <eb@emlix.com>,
-        Wang Yufen <wangyufen@huawei.com>
-Subject: [GIT PULL] execve updates for v6.2-rc1
-Message-ID: <202212051637.93142F409@keescook>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cao+GfaGrq2ECO1hr0MTI44zHM0MFwGfvfdh/iV+l9o=;
+        b=tQwZc3LV6Y3I9Y0WzApLfA4s5aZokRrX2h6zU9ed4WSF9VtRKH7E+ODD2fs38aVsS/
+         EDkUP+sW+Ky2cH6sjks8ioXpxZfuB9/iRdjxQim1ToCWedK+ytrz6ZPcLjX3qyvU2nI1
+         Y7guKdNHyDY/CQMep6BuH8OnrD4OLo3m2D3gZK06e0mbdAPv5Oq1yY3dJjOa0UQyLZYu
+         6uI8ZL6VyCCI88BKzoCpr0m6DTziwBnq3WCua0AJAtuY5xU9AReXixVK8Q0IZx+5R0fr
+         BEPWWt0Ri3eTNlGR1lEmSHYQSXjzq6j2wgRw/DmNwohLKLIiqeJ9ZTX9HzAe3aSR3x5V
+         TS4g==
+X-Gm-Message-State: ANoB5pmq0+W5Y+tsVBUirShg7YLqXfGJtz4bXfCoMzwifEMU9HWyL1Ol
+        B25lH1el5o+oprOZLe4SxZw=
+X-Google-Smtp-Source: AA0mqf51fDDfA8tYm68EG4YmthSBGmIpHHULymVB6KvmwTqLu5LaTA/sjuYrnkEPYohep97WifxOtg==
+X-Received: by 2002:a63:495e:0:b0:43c:a5cb:5d1b with SMTP id y30-20020a63495e000000b0043ca5cb5d1bmr60848658pgk.134.1670307356320;
+        Mon, 05 Dec 2022 22:15:56 -0800 (PST)
+Received: from PS-CAN-014uA51.localdomain ([58.63.247.51])
+        by smtp.googlemail.com with ESMTPSA id r13-20020aa7962d000000b00576d4d69909sm3720153pfg.8.2022.12.05.22.15.54
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Dec 2022 22:15:55 -0800 (PST)
+From:   Chen Xiao <abigwc@gmail.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Chen Xiao <abigwc@gmail.com>
+Subject: [PATCH] fs: use helper function file_inode() to get inode
+Date:   Tue,  6 Dec 2022 14:15:34 +0800
+Message-Id: <1670307334-3638-1-git-send-email-abigwc@gmail.com>
+X-Mailer: git-send-email 1.8.3.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+Commit 496ad9aa8ef44 ("new helper: file_inode(file)") introduced
+the helper file_inode(file) but dir_emit_dot forgot to use it.
 
-Please pull these execve updates for v6.2-rc1. Most are small
-refactorings and bug fixes, but three things stand out: switching timens
-(which got reverted before) looks solid now, FOLL_FORCE has been removed
-(no failures seen yet across several weeks in -next), and some
-whitespace cleanups (which are long overdue). The latter does end up
-conflicting with changes from Al[1], but should be trivial to resolve.
+Signed-off-by: Chen Xiao <abigwc@gmail.com>
+---
+ include/linux/fs.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks!
-
--Kees
-
-[1] https://lore.kernel.org/linux-next/20221128143704.3fe8f7b1@canb.auug.org.au/
-
-The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
-
-  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.2-rc1
-
-for you to fetch changes up to 6a46bf558803dd2b959ca7435a5c143efe837217:
-
-  binfmt_misc: fix shift-out-of-bounds in check_special_flags (2022-12-02 13:57:04 -0800)
-
-----------------------------------------------------------------
-execve updates for v6.2-rc1
-
-- Add timens support (when switching mm). This version has survived
-  in -next for the entire cycle (Andrei Vagin).
-
-- Various small bug fixes, refactoring, and readability improvements
-  (Bernd Edlinger, Rolf Eike Beer, Bo Liu, Li Zetao Liu Shixin).
-
-- Remove FOLL_FORCE for stack setup (Kees Cook).
-
-- Whilespace cleanups (Rolf Eike Beer, Kees Cook).
-
-----------------------------------------------------------------
-Andrei Vagin (2):
-      fs/exec: switch timens when a task gets a new mm
-      selftests/timens: add a test for vfork+exit
-
-Bernd Edlinger (1):
-      exec: Copy oldsighand->action under spin-lock
-
-Bo Liu (1):
-      binfmt_elf: replace IS_ERR() with IS_ERR_VALUE()
-
-Kees Cook (3):
-      exec: Add comments on check_unsafe_exec() fs counting
-      binfmt: Fix whitespace issues
-      exec: Remove FOLL_FORCE for stack setup
-
-Li Zetao (1):
-      fs/binfmt_elf: Fix memory leak in load_elf_binary()
-
-Liu Shixin (1):
-      binfmt_misc: fix shift-out-of-bounds in check_special_flags
-
-Rolf Eike Beer (4):
-      ELF uapi: add spaces before '{'
-      exec: simplify initial stack size expansion
-      binfmt_elf: fix documented return value for load_elf_phdrs()
-      binfmt_elf: simplify error handling in load_elf_phdrs()
-
-Wang Yufen (1):
-      binfmt: Fix error return code in load_elf_fdpic_binary()
-
- fs/binfmt_elf.c                             |  35 +++----
- fs/binfmt_elf_fdpic.c                       |   7 +-
- fs/binfmt_misc.c                            |   8 +-
- fs/exec.c                                   |  38 +++++---
- include/linux/nsproxy.h                     |   1 +
- include/uapi/linux/elf.h                    |  14 +--
- kernel/fork.c                               |   9 --
- kernel/nsproxy.c                            |  23 ++++-
- tools/testing/selftests/timens/.gitignore   |   1 +
- tools/testing/selftests/timens/Makefile     |   2 +-
- tools/testing/selftests/timens/vfork_exec.c | 139 ++++++++++++++++++++++++++++
- 11 files changed, 219 insertions(+), 58 deletions(-)
- create mode 100644 tools/testing/selftests/timens/vfork_exec.c
-
+diff --git a/include/linux/fs.h b/include/linux/fs.h
+index 59ae95d..014aef9 100644
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -3567,7 +3567,7 @@ static inline bool dir_emit(struct dir_context *ctx,
+ static inline bool dir_emit_dot(struct file *file, struct dir_context *ctx)
+ {
+ 	return ctx->actor(ctx, ".", 1, ctx->pos,
+-			  file->f_path.dentry->d_inode->i_ino, DT_DIR);
++			  file_inode(file)->i_ino, DT_DIR);
+ }
+ static inline bool dir_emit_dotdot(struct file *file, struct dir_context *ctx)
+ {
 -- 
-Kees Cook
+1.8.3.1
+
