@@ -2,57 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11ACA64484B
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Dec 2022 16:48:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DD2A3644858
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Dec 2022 16:50:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229867AbiLFPsU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 6 Dec 2022 10:48:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38616 "EHLO
+        id S234115AbiLFPt4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 6 Dec 2022 10:49:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232135AbiLFPsA (ORCPT
+        with ESMTP id S233864AbiLFPtb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 6 Dec 2022 10:48:00 -0500
-Received: from mail-lj1-x22f.google.com (mail-lj1-x22f.google.com [IPv6:2a00:1450:4864:20::22f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F117B876
-        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Dec 2022 07:47:59 -0800 (PST)
-Received: by mail-lj1-x22f.google.com with SMTP id h10so17665017ljk.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Dec 2022 07:47:59 -0800 (PST)
+        Tue, 6 Dec 2022 10:49:31 -0500
+Received: from mail-lj1-x22c.google.com (mail-lj1-x22c.google.com [IPv6:2a00:1450:4864:20::22c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B43AD286D5
+        for <linux-fsdevel@vger.kernel.org>; Tue,  6 Dec 2022 07:49:28 -0800 (PST)
+Received: by mail-lj1-x22c.google.com with SMTP id h10so17669837ljk.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 06 Dec 2022 07:49:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=m1kCqWlRYfobNKnwTTmG2lD4ZIH0ubVAosfgV6W3Dk4=;
-        b=km4nt3h3SHb/kEB2LuEUazieUkF9KftHb5F5G6SyTF0tkPyKfN2VeOikiWxEBRycBp
-         HsbvpDP5MQFX5lKttQgca1p57UvCAGjzgI85ey19QT3BdjKfqI9Cvl6Wv6b4IRjUUGio
-         SNCBKhia8UVi2JEXoKNgW6LJLeJ34+7z8/13c3LqbFAKDJMO8Gy/+VyTLMrA7AhhENd1
-         TNOqx+MF6+0Q7sMMqfp/4fXIA6AYYQUMyiQMrZUKrOwSlFwEERF41f5MgnrniS4C+Zx7
-         aT0+T5Mh7IQLLskdVC1oVbKnMT2sukhYGiYH6rQJUVqDRrBUtxo2Y0A4TZ8KfOE3PyHH
-         RKTg==
+        bh=ZgXzVCO1OCRwjAZ65xIfYxlpH5JEmDjmLd1r8UgB90I=;
+        b=YDlQIMLZ1TrD8HLPFmpAy1nUjSqrC6DimAKnD5PX/9U/Hkfbl+PAuaqn6eyudePAL/
+         XdAO4Y2LJu8jK/u/vHUKJ4Yrg4Bu6CcI9Cp13NQSd4EEALaMTAF43oGOBbkSHLMWJZew
+         VBVjPJhisKdIegVeU2j+I1gfsP+HHDHSdHqItbK0ObvCJ3vGHDcvYAVHdqiK+hpVDt6A
+         aGqh+YFoCDDnlu6vbz0TU8iT9GjKwmc4omVbFWDhRxxhtyC86vojtae5sUA2v56QZaQS
+         XofeqJgFBJ7sIBVYgxziNf/pL9NIeN66U/SJva0SZj6ungKTfSgVexSSbj4DvlFx82mM
+         v0tw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=m1kCqWlRYfobNKnwTTmG2lD4ZIH0ubVAosfgV6W3Dk4=;
-        b=RnyEFvdLjhJI2p+cndx6M7Q3YkcNKBijg7kRGnWE6jFXr+oE/Hl3uFETGgrWj0ByOO
-         E31agQmp5nf7nP4/a9+XQY5+ebxPw/5uNyhss/SfC/luMKGvkbIJOE4Ub0Y8rb/l0Brw
-         hfvAoSwuw4MaI+SvN63cF0WHAbxdtgz+4JOEmIFG+mbWAcUf7pNX80hYxLnMTa0rGw6r
-         dxPuJ8VhscFk4rLPgd1VZWqPAZ7uaK3ZkWH/ABZj7dugZL7Ki3+BDStPqvG9wSF/yw9A
-         CQ2ySpMPff4/RWJLxGvaAIX8Ig/ViKaANi9ddgWwsT3m57o1PvHr9th1shL/w+uWI30d
-         qADQ==
-X-Gm-Message-State: ANoB5plo6iLg3X4XvhlqV1WGxlMLy9I6rkk6sszz3JcH2G6SwrNmSh4e
-        sN1fosaINJIusbx5yZ13ayqJ5EntMnLXWkmP1y7MDQ==
-X-Google-Smtp-Source: AA0mqf670rgKAoKyVamK5fGEwo/r7qIQAwktaBqfm7a0tY0XJdGyAcQGRLzmDTdXbe+6R04s2ufEeuo3JFvMsirw8Vc=
-X-Received: by 2002:a2e:a80d:0:b0:277:1295:31ca with SMTP id
- l13-20020a2ea80d000000b00277129531camr27009331ljq.280.1670341677228; Tue, 06
- Dec 2022 07:47:57 -0800 (PST)
+        bh=ZgXzVCO1OCRwjAZ65xIfYxlpH5JEmDjmLd1r8UgB90I=;
+        b=td+pgxfwBNnP/2SmTsSDwINj/LZ6dqIs8sjzkfBHJzeN1XSX5f6HAPxSo082EJFMsU
+         1aXF0CZtuoJb8oXp8BJ8jqJr7QCQCFOl5WlCr3oNI+x2G0uMg2eNcutSroLl3GZVPj6O
+         EA+hGEQrQF0a8nkyk8aB7KLG9Ke7KPBGDCzltsyE35a1LwLdF5EIcGkf7/kt+LBW4p+/
+         DqewSBjmrjZXhjKurD4Gs9SzAhyDT4vB2kz1DFRK0gf4FDE1qXzZDDM20xMG38dd1pau
+         Aovpby8EXkDvhUW95bosI0i1Nh52vUTJnDpwQp+uRuIhTqOtJ3WAZ/320WGKFmAsVYmC
+         lN6g==
+X-Gm-Message-State: ANoB5pk+th7xF1zpavDdkRLpiGHCY9p+VSrdToNWdB1wxZyGxNFvKwqe
+        45TWefpVD7oD++LOF9uPOZZb9MSGvH75qF1wRvbsNQ==
+X-Google-Smtp-Source: AA0mqf53ULfcaVf99mN6yfwo/i5dAXkqh588pxGSl1Mpx6AZ2ttTevA2OsFQ6+Jwt2fKkYQ85oGqqCkL/Y3QkpgFpUk=
+X-Received: by 2002:a2e:964c:0:b0:279:f197:440d with SMTP id
+ z12-20020a2e964c000000b00279f197440dmr4247034ljh.517.1670341766820; Tue, 06
+ Dec 2022 07:49:26 -0800 (PST)
 MIME-Version: 1.0
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com> <20221202061347.1070246-5-chao.p.peng@linux.intel.com>
-In-Reply-To: <20221202061347.1070246-5-chao.p.peng@linux.intel.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-6-chao.p.peng@linux.intel.com> <CA+EHjTy5+Ke_7Uh72p--H9kGcE-PK4EVmp7ym6Q1-PO28u6CCQ@mail.gmail.com>
+ <20221206115623.GB1216605@chaop.bj.intel.com>
+In-Reply-To: <20221206115623.GB1216605@chaop.bj.intel.com>
 From:   Fuad Tabba <tabba@google.com>
-Date:   Tue, 6 Dec 2022 15:47:20 +0000
-Message-ID: <CA+EHjTyzZ2n8kQxH_Qx72aRq1k+dETJXTsoOM3tggPZAZkYbCA@mail.gmail.com>
-Subject: Re: [PATCH v10 4/9] KVM: Add KVM_EXIT_MEMORY_FAULT exit
+Date:   Tue, 6 Dec 2022 15:48:50 +0000
+Message-ID: <CA+EHjTx3_Vkh9Jb_ZJNi5Xx=O24eM-jpF0gR+UGf9W0ORgNyhQ@mail.gmail.com>
+Subject: Re: [PATCH v10 5/9] KVM: Use gfn instead of hva for mmu_notifier_retry
 To:     Chao Peng <chao.p.peng@linux.intel.com>
 Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
@@ -101,107 +103,255 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Hi,
 
-On Fri, Dec 2, 2022 at 6:19 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
+On Tue, Dec 6, 2022 at 12:01 PM Chao Peng <chao.p.peng@linux.intel.com> wrote:
 >
-> This new KVM exit allows userspace to handle memory-related errors. It
-> indicates an error happens in KVM at guest memory range [gpa, gpa+size).
-> The flags includes additional information for userspace to handle the
-> error. Currently bit 0 is defined as 'private memory' where '1'
-> indicates error happens due to private memory access and '0' indicates
-> error happens due to shared memory access.
+> On Mon, Dec 05, 2022 at 09:23:49AM +0000, Fuad Tabba wrote:
+> > Hi Chao,
+> >
+> > On Fri, Dec 2, 2022 at 6:19 AM Chao Peng <chao.p.peng@linux.intel.com> wrote:
+> > >
+> > > Currently in mmu_notifier invalidate path, hva range is recorded and
+> > > then checked against by mmu_notifier_retry_hva() in the page fault
+> > > handling path. However, for the to be introduced private memory, a page
+> > > fault may not have a hva associated, checking gfn(gpa) makes more sense.
+> > >
+> > > For existing hva based shared memory, gfn is expected to also work. The
+> > > only downside is when aliasing multiple gfns to a single hva, the
+> > > current algorithm of checking multiple ranges could result in a much
+> > > larger range being rejected. Such aliasing should be uncommon, so the
+> > > impact is expected small.
+> > >
+> > > Suggested-by: Sean Christopherson <seanjc@google.com>
+> > > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> > > ---
+> > >  arch/x86/kvm/mmu/mmu.c   |  8 +++++---
+> > >  include/linux/kvm_host.h | 33 +++++++++++++++++++++------------
+> > >  virt/kvm/kvm_main.c      | 32 +++++++++++++++++++++++---------
+> > >  3 files changed, 49 insertions(+), 24 deletions(-)
+> > >
+> > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > > index 4736d7849c60..e2c70b5afa3e 100644
+> > > --- a/arch/x86/kvm/mmu/mmu.c
+> > > +++ b/arch/x86/kvm/mmu/mmu.c
+> > > @@ -4259,7 +4259,7 @@ static bool is_page_fault_stale(struct kvm_vcpu *vcpu,
+> > >                 return true;
+> > >
+> > >         return fault->slot &&
+> > > -              mmu_invalidate_retry_hva(vcpu->kvm, mmu_seq, fault->hva);
+> > > +              mmu_invalidate_retry_gfn(vcpu->kvm, mmu_seq, fault->gfn);
+> > >  }
+> > >
+> > >  static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault)
+> > > @@ -6098,7 +6098,9 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+> > >
+> > >         write_lock(&kvm->mmu_lock);
+> > >
+> > > -       kvm_mmu_invalidate_begin(kvm, gfn_start, gfn_end);
+> > > +       kvm_mmu_invalidate_begin(kvm);
+> > > +
+> > > +       kvm_mmu_invalidate_range_add(kvm, gfn_start, gfn_end);
+> > >
+> > >         flush = kvm_rmap_zap_gfn_range(kvm, gfn_start, gfn_end);
+> > >
+> > > @@ -6112,7 +6114,7 @@ void kvm_zap_gfn_range(struct kvm *kvm, gfn_t gfn_start, gfn_t gfn_end)
+> > >                 kvm_flush_remote_tlbs_with_address(kvm, gfn_start,
+> > >                                                    gfn_end - gfn_start);
+> > >
+> > > -       kvm_mmu_invalidate_end(kvm, gfn_start, gfn_end);
+> > > +       kvm_mmu_invalidate_end(kvm);
+> > >
+> > >         write_unlock(&kvm->mmu_lock);
+> > >  }
+> > > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > > index 02347e386ea2..3d69484d2704 100644
+> > > --- a/include/linux/kvm_host.h
+> > > +++ b/include/linux/kvm_host.h
+> > > @@ -787,8 +787,8 @@ struct kvm {
+> > >         struct mmu_notifier mmu_notifier;
+> > >         unsigned long mmu_invalidate_seq;
+> > >         long mmu_invalidate_in_progress;
+> > > -       unsigned long mmu_invalidate_range_start;
+> > > -       unsigned long mmu_invalidate_range_end;
+> > > +       gfn_t mmu_invalidate_range_start;
+> > > +       gfn_t mmu_invalidate_range_end;
+> > >  #endif
+> > >         struct list_head devices;
+> > >         u64 manual_dirty_log_protect;
+> > > @@ -1389,10 +1389,9 @@ void kvm_mmu_free_memory_cache(struct kvm_mmu_memory_cache *mc);
+> > >  void *kvm_mmu_memory_cache_alloc(struct kvm_mmu_memory_cache *mc);
+> > >  #endif
+> > >
+> > > -void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
+> > > -                             unsigned long end);
+> > > -void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
+> > > -                           unsigned long end);
+> > > +void kvm_mmu_invalidate_begin(struct kvm *kvm);
+> > > +void kvm_mmu_invalidate_range_add(struct kvm *kvm, gfn_t start, gfn_t end);
+> > > +void kvm_mmu_invalidate_end(struct kvm *kvm);
+> > >
+> > >  long kvm_arch_dev_ioctl(struct file *filp,
+> > >                         unsigned int ioctl, unsigned long arg);
+> > > @@ -1963,9 +1962,9 @@ static inline int mmu_invalidate_retry(struct kvm *kvm, unsigned long mmu_seq)
+> > >         return 0;
+> > >  }
+> > >
+> > > -static inline int mmu_invalidate_retry_hva(struct kvm *kvm,
+> > > +static inline int mmu_invalidate_retry_gfn(struct kvm *kvm,
+> > >                                            unsigned long mmu_seq,
+> > > -                                          unsigned long hva)
+> > > +                                          gfn_t gfn)
+> > >  {
+> > >         lockdep_assert_held(&kvm->mmu_lock);
+> > >         /*
+> > > @@ -1974,10 +1973,20 @@ static inline int mmu_invalidate_retry_hva(struct kvm *kvm,
+> > >          * that might be being invalidated. Note that it may include some false
+> >
+> > nit: "might be" (or) "is being"
+> >
+> > >          * positives, due to shortcuts when handing concurrent invalidations.
+> >
+> > nit: handling
 >
-> When private memory is enabled, this new exit will be used for KVM to
-> exit to userspace for shared <-> private memory conversion in memory
-> encryption usage. In such usage, typically there are two kind of memory
-> conversions:
->   - explicit conversion: happens when guest explicitly calls into KVM
->     to map a range (as private or shared), KVM then exits to userspace
->     to perform the map/unmap operations.
->   - implicit conversion: happens in KVM page fault handler where KVM
->     exits to userspace for an implicit conversion when the page is in a
->     different state than requested (private or shared).
->
-> Suggested-by: Sean Christopherson <seanjc@google.com>
-> Co-developed-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-> Signed-off-by: Yu Zhang <yu.c.zhang@linux.intel.com>
-> Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
-> Reviewed-by: Fuad Tabba <tabba@google.com>
-> ---
->  Documentation/virt/kvm/api.rst | 22 ++++++++++++++++++++++
->  include/uapi/linux/kvm.h       |  8 ++++++++
->  2 files changed, 30 insertions(+)
->
-> diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-> index 99352170c130..d9edb14ce30b 100644
-> --- a/Documentation/virt/kvm/api.rst
-> +++ b/Documentation/virt/kvm/api.rst
-> @@ -6634,6 +6634,28 @@ array field represents return values. The userspace should update the return
->  values of SBI call before resuming the VCPU. For more details on RISC-V SBI
->  spec refer, https://github.com/riscv/riscv-sbi-doc.
->
-> +::
-> +
-> +               /* KVM_EXIT_MEMORY_FAULT */
-> +               struct {
-> +  #define KVM_MEMORY_EXIT_FLAG_PRIVATE (1ULL << 0)
-> +                       __u64 flags;
+> Both are existing code, but I can fix it either.
 
-I see you've removed the padding and increased the flag size.
+That was just a nit, please feel free to ignore it, especially if it
+might cause headaches in the future with merges.
+>
+> >
+> > >          */
+> > > -       if (unlikely(kvm->mmu_invalidate_in_progress) &&
+> > > -           hva >= kvm->mmu_invalidate_range_start &&
+> > > -           hva < kvm->mmu_invalidate_range_end)
+> > > -               return 1;
+> > > +       if (unlikely(kvm->mmu_invalidate_in_progress)) {
+> > > +               /*
+> > > +                * Dropping mmu_lock after bumping mmu_invalidate_in_progress
+> > > +                * but before updating the range is a KVM bug.
+> > > +                */
+> > > +               if (WARN_ON_ONCE(kvm->mmu_invalidate_range_start == INVALID_GPA ||
+> > > +                                kvm->mmu_invalidate_range_end == INVALID_GPA))
+> >
+> > INVALID_GPA is an x86-specific define in
+> > arch/x86/include/asm/kvm_host.h, so this doesn't build on other
+> > architectures. The obvious fix is to move it to
+> > include/linux/kvm_host.h.
+>
+> Hmm, INVALID_GPA is defined as ZERO for x86, not 100% confident this is
+> correct choice for other architectures, but after search it has not been
+> used for other architectures, so should be safe to make it common.
+
+With this fixed,
 
 Reviewed-by: Fuad Tabba <tabba@google.com>
+And the necessary work to port to arm64 (on qemu/arm64):
 Tested-by: Fuad Tabba <tabba@google.com>
 
 Cheers,
 /fuad
 
 
-
-
-> +                       __u64 gpa;
-> +                       __u64 size;
-> +               } memory;
-> +
-> +If exit reason is KVM_EXIT_MEMORY_FAULT then it indicates that the VCPU has
-> +encountered a memory error which is not handled by KVM kernel module and
-> +userspace may choose to handle it. The 'flags' field indicates the memory
-> +properties of the exit.
-> +
-> + - KVM_MEMORY_EXIT_FLAG_PRIVATE - indicates the memory error is caused by
-> +   private memory access when the bit is set. Otherwise the memory error is
-> +   caused by shared memory access when the bit is clear.
-> +
-> +'gpa' and 'size' indicate the memory range the error occurs at. The userspace
-> +may handle the error and return to KVM to retry the previous memory access.
-> +
->  ::
 >
->      /* KVM_EXIT_NOTIFY */
-> diff --git a/include/uapi/linux/kvm.h b/include/uapi/linux/kvm.h
-> index 13bff963b8b0..c7e9d375a902 100644
-> --- a/include/uapi/linux/kvm.h
-> +++ b/include/uapi/linux/kvm.h
-> @@ -300,6 +300,7 @@ struct kvm_xen_exit {
->  #define KVM_EXIT_RISCV_SBI        35
->  #define KVM_EXIT_RISCV_CSR        36
->  #define KVM_EXIT_NOTIFY           37
-> +#define KVM_EXIT_MEMORY_FAULT     38
->
->  /* For KVM_EXIT_INTERNAL_ERROR */
->  /* Emulate instruction failed. */
-> @@ -541,6 +542,13 @@ struct kvm_run {
->  #define KVM_NOTIFY_CONTEXT_INVALID     (1 << 0)
->                         __u32 flags;
->                 } notify;
-> +               /* KVM_EXIT_MEMORY_FAULT */
-> +               struct {
-> +#define KVM_MEMORY_EXIT_FLAG_PRIVATE   (1ULL << 0)
-> +                       __u64 flags;
-> +                       __u64 gpa;
-> +                       __u64 size;
-> +               } memory;
->                 /* Fix the size of the union. */
->                 char padding[256];
->         };
-> --
-> 2.25.1
->
+> Thanks,
+> Chao
+> >
+> > Cheers,
+> > /fuad
+> >
+> > > +                       return 1;
+> > > +
+> > > +               if (gfn >= kvm->mmu_invalidate_range_start &&
+> > > +                   gfn < kvm->mmu_invalidate_range_end)
+> > > +                       return 1;
+> > > +       }
+> > > +
+> > >         if (kvm->mmu_invalidate_seq != mmu_seq)
+> > >                 return 1;
+> > >         return 0;
+> > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > > index b882eb2c76a2..ad55dfbc75d7 100644
+> > > --- a/virt/kvm/kvm_main.c
+> > > +++ b/virt/kvm/kvm_main.c
+> > > @@ -540,9 +540,7 @@ static void kvm_mmu_notifier_invalidate_range(struct mmu_notifier *mn,
+> > >
+> > >  typedef bool (*hva_handler_t)(struct kvm *kvm, struct kvm_gfn_range *range);
+> > >
+> > > -typedef void (*on_lock_fn_t)(struct kvm *kvm, unsigned long start,
+> > > -                            unsigned long end);
+> > > -
+> > > +typedef void (*on_lock_fn_t)(struct kvm *kvm);
+> > >  typedef void (*on_unlock_fn_t)(struct kvm *kvm);
+> > >
+> > >  struct kvm_hva_range {
+> > > @@ -628,7 +626,8 @@ static __always_inline int __kvm_handle_hva_range(struct kvm *kvm,
+> > >                                 locked = true;
+> > >                                 KVM_MMU_LOCK(kvm);
+> > >                                 if (!IS_KVM_NULL_FN(range->on_lock))
+> > > -                                       range->on_lock(kvm, range->start, range->end);
+> > > +                                       range->on_lock(kvm);
+> > > +
+> > >                                 if (IS_KVM_NULL_FN(range->handler))
+> > >                                         break;
+> > >                         }
+> > > @@ -715,8 +714,7 @@ static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
+> > >         kvm_handle_hva_range(mn, address, address + 1, pte, kvm_set_spte_gfn);
+> > >  }
+> > >
+> > > -void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
+> > > -                             unsigned long end)
+> > > +void kvm_mmu_invalidate_begin(struct kvm *kvm)
+> > >  {
+> > >         /*
+> > >          * The count increase must become visible at unlock time as no
+> > > @@ -724,6 +722,17 @@ void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
+> > >          * count is also read inside the mmu_lock critical section.
+> > >          */
+> > >         kvm->mmu_invalidate_in_progress++;
+> > > +
+> > > +       if (likely(kvm->mmu_invalidate_in_progress == 1)) {
+> > > +               kvm->mmu_invalidate_range_start = INVALID_GPA;
+> > > +               kvm->mmu_invalidate_range_end = INVALID_GPA;
+> > > +       }
+> > > +}
+> > > +
+> > > +void kvm_mmu_invalidate_range_add(struct kvm *kvm, gfn_t start, gfn_t end)
+> > > +{
+> > > +       WARN_ON_ONCE(!kvm->mmu_invalidate_in_progress);
+> > > +
+> > >         if (likely(kvm->mmu_invalidate_in_progress == 1)) {
+> > >                 kvm->mmu_invalidate_range_start = start;
+> > >                 kvm->mmu_invalidate_range_end = end;
+> > > @@ -744,6 +753,12 @@ void kvm_mmu_invalidate_begin(struct kvm *kvm, unsigned long start,
+> > >         }
+> > >  }
+> > >
+> > > +static bool kvm_mmu_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
+> > > +{
+> > > +       kvm_mmu_invalidate_range_add(kvm, range->start, range->end);
+> > > +       return kvm_unmap_gfn_range(kvm, range);
+> > > +}
+> > > +
+> > >  static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+> > >                                         const struct mmu_notifier_range *range)
+> > >  {
+> > > @@ -752,7 +767,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+> > >                 .start          = range->start,
+> > >                 .end            = range->end,
+> > >                 .pte            = __pte(0),
+> > > -               .handler        = kvm_unmap_gfn_range,
+> > > +               .handler        = kvm_mmu_unmap_gfn_range,
+> > >                 .on_lock        = kvm_mmu_invalidate_begin,
+> > >                 .on_unlock      = kvm_arch_guest_memory_reclaimed,
+> > >                 .flush_on_ret   = true,
+> > > @@ -791,8 +806,7 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+> > >         return 0;
+> > >  }
+> > >
+> > > -void kvm_mmu_invalidate_end(struct kvm *kvm, unsigned long start,
+> > > -                           unsigned long end)
+> > > +void kvm_mmu_invalidate_end(struct kvm *kvm)
+> > >  {
+> > >         /*
+> > >          * This sequence increase will notify the kvm page fault that
+> > > --
+> > > 2.25.1
+> > >
