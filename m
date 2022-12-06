@@ -2,141 +2,168 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA09A643A57
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Dec 2022 01:37:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9A67E643A5E
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Dec 2022 01:41:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233030AbiLFAhc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Dec 2022 19:37:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50438 "EHLO
+        id S233419AbiLFAlg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Dec 2022 19:41:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56322 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232930AbiLFAhA (ORCPT
+        with ESMTP id S233037AbiLFAl0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Dec 2022 19:37:00 -0500
-Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C2C622B3F
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Dec 2022 16:35:45 -0800 (PST)
-Received: by mail-qt1-x82d.google.com with SMTP id cg5so12692709qtb.12
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Dec 2022 16:35:45 -0800 (PST)
+        Mon, 5 Dec 2022 19:41:26 -0500
+Received: from mail-pf1-x430.google.com (mail-pf1-x430.google.com [IPv6:2607:f8b0:4864:20::430])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0DD15112D
+        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Dec 2022 16:41:25 -0800 (PST)
+Received: by mail-pf1-x430.google.com with SMTP id 65so404649pfx.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Dec 2022 16:41:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=dubeyko-com.20210112.gappssmtp.com; s=20210112;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ne2kQ17Z3A3jdHPo12NzWN07bL28Bd+Tg02BrzT7QcM=;
-        b=8B7MCsObOOvSR6mCIokEm9+fr1yaDvUvjD7xLGijdBTs3173zrpzOBCSMq7GbxNBOM
-         jlA32HML4qaWiA3bC6/MPSgXaUVCfDcNO6Eh0Y0wkVZv0g1YdCxC7+6gaO3SEVPZoGb5
-         HrrRV5vE7unUe9agoAJ8B1Pp8NbAhAYjBb9QhoDja4o0GsDM0tFW8pGusiEyqX4zxzkF
-         CljQBwGY9gpwXG1kIXBI+qeSYEVIsVEySuVkFdkM0H9hKa0A4GvD1jan7GRU9WkJps92
-         YP/pq8joOPnl2SuuUW4hLh9dHzTeG3C8HOQaTrrE/uf+/pB8p30p04rCt3j/O4H92pqq
-         BKMQ==
+        d=chromium.org; s=google;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=g1HJHevNxrj1Nq/NT7g6yR6y+nhBZjMl2neMxR4W590=;
+        b=m5t9TolEhunsnLAs8ghRCY5jduXJTUVrI828QMb9aaMDHIl9N52I0BcpPgXmJWJwHJ
+         8O/axD8BEanTUffxKBpeoT/71MR//Ncm3X2gdqz7aFSVJrBM1Wbfryc+Rv8pyLm6oklN
+         hdck+j11IhNQpknHmA6Td97jo/v98RGjlHlkI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ne2kQ17Z3A3jdHPo12NzWN07bL28Bd+Tg02BrzT7QcM=;
-        b=KYciV/TUUMM/nkcqeRVXTaQVHRK2t4ZPkeRW2EXh8P2YZEb1fnoiNZSpFjYawbDSVP
-         lh1ZQaL7auHT50zvBrPJROn88BeNHSQNORyHf0Rygt/7Uza/6yjVlR8ugG8eV1mphr0P
-         ya96AyF2ACsIsEr2nLrPd6Ai778L+NKu1UZjaPWw96pdyxYypOSE5gRASwFWmfYTqI9S
-         aTAnYkah1q1alihfdF5v7DmYhi2iqIPQ7BfaKksnY1Tg2vK4EFXeRqTUkSFdDoQ3UK3H
-         WLamqB2jRW+cP0Zdu1OGUJz5J6byENSzAvyHowpn+3e7MgLv7Xsvk8ugOy7DQlfrdH/p
-         kDJw==
-X-Gm-Message-State: ANoB5pl7H7YAaFledVRW9iHvLU57uI9W5JOaUjn3xoWTAwfMqvtA40he
-        +y6lBzDUa/I36YCXYot/w8UqaA==
-X-Google-Smtp-Source: AA0mqf6Oos0yfJkVZaqeYo7679Myu1FELMEk7IoUBQqnjFE3jKyqOBdEBqH00X3hxXMU9cg1xpS1Kw==
-X-Received: by 2002:ac8:4d4f:0:b0:3a6:1dea:8c1c with SMTP id x15-20020ac84d4f000000b003a61dea8c1cmr68663245qtv.157.1670286942302;
-        Mon, 05 Dec 2022 16:35:42 -0800 (PST)
-Received: from smtpclient.apple (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
-        by smtp.gmail.com with ESMTPSA id 134-20020a37088c000000b006ec771d8f89sm327312qki.112.2022.12.05.16.35.40
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 05 Dec 2022 16:35:41 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
-Subject: Re: [PATCH] hfsplus: Fix bug causing custom uid and gid being unable
- to be assigned with mount
-From:   Viacheslav Dubeyko <slava@dubeyko.com>
-In-Reply-To: <1D7AAEE4-9603-43A4-B89D-6F791EDCB929@live.com>
-Date:   Mon, 5 Dec 2022 16:35:36 -0800
-Cc:     "willy@infradead.org" <willy@infradead.org>,
-        "ira.weiny@intel.com" <ira.weiny@intel.com>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "keescook@chromium.org" <keescook@chromium.org>,
-        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
-        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <A2B962C1-AD33-413D-B64A-CD179AFBEA8D@dubeyko.com>
-References: <93F5197D-2B61-4129-B5D4-771934F70577@live.com>
- <55A80630-60FB-44BE-9628-29104AB8A7D0@dubeyko.com>
- <1D7AAEE4-9603-43A4-B89D-6F791EDCB929@live.com>
-To:     Aditya Garg <gargaditya08@live.com>
-X-Mailer: Apple Mail (2.3696.120.41.1.1)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g1HJHevNxrj1Nq/NT7g6yR6y+nhBZjMl2neMxR4W590=;
+        b=fN9QPC8yoPukebPguM3tF2YcPJazLQ2vungUS/QVfgX4kfg8JLG8XMEs7BGHsMsnWf
+         w3fkxZJL4qRFtFFUDDeU4HSLxGtgp9ILWzaDT1BR4W8HeU9wCgP76d3lMpe3LRvEws6m
+         DaKo0ZUmjtsF/a2vDKI5egvq6UMhs2LDOUPrFtJLdxX0JblC8skUbpWxNofxgu3I6viC
+         NmtVlh6v9C6zBzzb3MbD4v3Lg3/QuCUB128/nUJxbvZdzERtXNjD/0y26EJz9uU2lW4d
+         hBd/KYTXi0PF83LdEnShwrcno1NzoqTd2hhlwkCWOPThayCNWd9X5X2anlIZ0BNAo8fw
+         wv7g==
+X-Gm-Message-State: ANoB5pnGYjBSW7mBaUdcwmb76B9IpZTcyZrv8b2Rb34jckeq0ECUcfHu
+        Xl6vKS4iN5jyy8Ldka/WWcn6JQ==
+X-Google-Smtp-Source: AA0mqf7bocP7PDul7rRtHY2oLz5aO8HTy1YdBhNhRPTn1YaCEYjEKUj/QL8QuzpT2xX9GPdxtsjU/w==
+X-Received: by 2002:a63:1824:0:b0:46e:baf4:ab7a with SMTP id y36-20020a631824000000b0046ebaf4ab7amr79923468pgl.37.1670287284417;
+        Mon, 05 Dec 2022 16:41:24 -0800 (PST)
+Received: from www.outflux.net (smtp.outflux.net. [198.145.64.163])
+        by smtp.gmail.com with ESMTPSA id b7-20020a170902650700b00186b549cdc2sm11187939plk.157.2022.12.05.16.41.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Dec 2022 16:41:24 -0800 (PST)
+Date:   Mon, 5 Dec 2022 16:41:23 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Alexey Izbyshev <izbyshev@ispras.ru>,
+        Andrei Vagin <avagin@gmail.com>,
+        Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Bo Liu <liubo03@inspur.com>,
+        Christian Brauner <brauner@kernel.org>,
+        David Hildenbrand <david@redhat.com>,
+        Dmitry Safonov <0x7f454c46@gmail.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Kees Cook <keescook@chromium.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Liu Shixin <liushixin2@huawei.com>,
+        Li Zetao <lizetao1@huawei.com>, Rolf Eike Beer <eb@emlix.com>,
+        Wang Yufen <wangyufen@huawei.com>
+Subject: [GIT PULL] execve updates for v6.2-rc1
+Message-ID: <202212051637.93142F409@keescook>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Linus,
 
+Please pull these execve updates for v6.2-rc1. Most are small
+refactorings and bug fixes, but three things stand out: switching timens
+(which got reverted before) looks solid now, FOLL_FORCE has been removed
+(no failures seen yet across several weeks in -next), and some
+whitespace cleanups (which are long overdue). The latter does end up
+conflicting with changes from Al[1], but should be trivial to resolve.
 
-> On Dec 2, 2022, at 11:56 PM, Aditya Garg <gargaditya08@live.com> =
-wrote:
->=20
->=20
->> Also, what if we mounted
->> file system without specifying the UID/GID, then what UID/GID will be =
-returned by
->> your logic?
->=20
-> So this case is if I run =E2=80=9Csudo mount /dev/sda1 /mnt=E2=80=9D
->=20
-> Here the driver will not do any spoofing, and the real owners of the =
-files shall be displayed. Thus running =E2=80=9Cls -l=E2=80=9D on a =
-mounted partition without specifying UID/GID, files written by macOS =
-shall be shown as 99 as the owner, iPadOS as 501, and if any file was =
-written on Linux, the user who wrote it will be the owner.
->=20
-> If the user/group of any file was changed using chown, then the new =
-user/group of the file will be displayed.
+Thanks!
 
-My question is much more simple.
+-Kees
 
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index aeab83ed1..4d1077db8 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -192,11 +192,11 @@ static void hfsplus_get_perms(struct inode *inode,
-	mode =3D be16_to_cpu(perms->mode);
+[1] https://lore.kernel.org/linux-next/20221128143704.3fe8f7b1@canb.auug.org.au/
 
-	i_uid_write(inode, be32_to_cpu(perms->owner));
--	if (!i_uid_read(inode) && !mode)
-+	if (test_bit(HFSPLUS_SB_UID, &sbi->flags))
-		inode->i_uid =3D sbi->uid;
+The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
 
-	i_gid_write(inode, be32_to_cpu(perms->group));
--	if (!i_gid_read(inode) && !mode)
-+	if (test_bit(HFSPLUS_SB_GID, &sbi->flags))
-		inode->i_gid =3D sbi->gid;
+  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
 
-Before this change, logic called i_uid_read(inode) and checked mode.
-Now, we check only HFSPLUS_SB_UID/HFSPLUS_SB_GID flags.
-So, if we mount HFS+ volume by =E2=80=9Csudo mount /dev/sda1 /mnt=E2=80=9D=
-, then
-HFSPLUS_SB_UID and HFSPLUS_SB_GID flags will be unset.
-And current logic will do nothing. Is it correct logic? Maybe, we need
-to use sbi->uid/gid if flag(s)HFSPLUS_SB_UID/HFSPLUS_SB_GID are set.
-And if not, then to use old logic. Am I correct here? Or am I still =
-missing
-something here?
+are available in the Git repository at:
 
-Thanks,
-Slava.
+  https://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git tags/execve-v6.2-rc1
 
+for you to fetch changes up to 6a46bf558803dd2b959ca7435a5c143efe837217:
 
+  binfmt_misc: fix shift-out-of-bounds in check_special_flags (2022-12-02 13:57:04 -0800)
+
+----------------------------------------------------------------
+execve updates for v6.2-rc1
+
+- Add timens support (when switching mm). This version has survived
+  in -next for the entire cycle (Andrei Vagin).
+
+- Various small bug fixes, refactoring, and readability improvements
+  (Bernd Edlinger, Rolf Eike Beer, Bo Liu, Li Zetao Liu Shixin).
+
+- Remove FOLL_FORCE for stack setup (Kees Cook).
+
+- Whilespace cleanups (Rolf Eike Beer, Kees Cook).
+
+----------------------------------------------------------------
+Andrei Vagin (2):
+      fs/exec: switch timens when a task gets a new mm
+      selftests/timens: add a test for vfork+exit
+
+Bernd Edlinger (1):
+      exec: Copy oldsighand->action under spin-lock
+
+Bo Liu (1):
+      binfmt_elf: replace IS_ERR() with IS_ERR_VALUE()
+
+Kees Cook (3):
+      exec: Add comments on check_unsafe_exec() fs counting
+      binfmt: Fix whitespace issues
+      exec: Remove FOLL_FORCE for stack setup
+
+Li Zetao (1):
+      fs/binfmt_elf: Fix memory leak in load_elf_binary()
+
+Liu Shixin (1):
+      binfmt_misc: fix shift-out-of-bounds in check_special_flags
+
+Rolf Eike Beer (4):
+      ELF uapi: add spaces before '{'
+      exec: simplify initial stack size expansion
+      binfmt_elf: fix documented return value for load_elf_phdrs()
+      binfmt_elf: simplify error handling in load_elf_phdrs()
+
+Wang Yufen (1):
+      binfmt: Fix error return code in load_elf_fdpic_binary()
+
+ fs/binfmt_elf.c                             |  35 +++----
+ fs/binfmt_elf_fdpic.c                       |   7 +-
+ fs/binfmt_misc.c                            |   8 +-
+ fs/exec.c                                   |  38 +++++---
+ include/linux/nsproxy.h                     |   1 +
+ include/uapi/linux/elf.h                    |  14 +--
+ kernel/fork.c                               |   9 --
+ kernel/nsproxy.c                            |  23 ++++-
+ tools/testing/selftests/timens/.gitignore   |   1 +
+ tools/testing/selftests/timens/Makefile     |   2 +-
+ tools/testing/selftests/timens/vfork_exec.c | 139 ++++++++++++++++++++++++++++
+ 11 files changed, 219 insertions(+), 58 deletions(-)
+ create mode 100644 tools/testing/selftests/timens/vfork_exec.c
+
+-- 
+Kees Cook
