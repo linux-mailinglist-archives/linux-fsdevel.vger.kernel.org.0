@@ -2,77 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5AEE964390A
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Dec 2022 00:05:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA09A643A57
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  6 Dec 2022 01:37:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234110AbiLEXEn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 5 Dec 2022 18:04:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56072 "EHLO
+        id S233030AbiLFAhc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 5 Dec 2022 19:37:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234088AbiLEXEO (ORCPT
+        with ESMTP id S232930AbiLFAhA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 5 Dec 2022 18:04:14 -0500
-Received: from mail-pg1-x529.google.com (mail-pg1-x529.google.com [IPv6:2607:f8b0:4864:20::529])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C12831E718
-        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Dec 2022 15:04:12 -0800 (PST)
-Received: by mail-pg1-x529.google.com with SMTP id v3so11812709pgh.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Dec 2022 15:04:12 -0800 (PST)
+        Mon, 5 Dec 2022 19:37:00 -0500
+Received: from mail-qt1-x82d.google.com (mail-qt1-x82d.google.com [IPv6:2607:f8b0:4864:20::82d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C2C622B3F
+        for <linux-fsdevel@vger.kernel.org>; Mon,  5 Dec 2022 16:35:45 -0800 (PST)
+Received: by mail-qt1-x82d.google.com with SMTP id cg5so12692709qtb.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 05 Dec 2022 16:35:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=EMxgvk2yFo8Rbo93eUfFPWH3YMgPyr5c5rnRRAyyLVQ=;
-        b=iOrSXyGTxznYf60vxpgZw1BUGdPVNNnMlULWbDKMC/irJbL/DtCnl3UE6To5r3i0l7
-         cBucxsHbsUsdJdGcFE4d82oijuHcHOqR+xhnFPOq0V2wdAC2GeDLMz/hiHnnM9mqqqtP
-         PLka0Va0yo9KktVSFPbzPYQBWMMSZBgkOu+uWLMI2lxVX83AvcNKwrJuNq02j/0M6Ifq
-         qZwwzMUcXXwV3+yKx0oEYc5qd1ddbGHf3Wpv7XvB4ctfZTc7PmpAu5k1fEG/aL15KyHB
-         cT0wsUcmslmk1OebxljI2vMc9KmCx+lK941ay7frIZgQuyyOclqJqhWcLEm4nH1VbCf5
-         NRYg==
+        d=dubeyko-com.20210112.gappssmtp.com; s=20210112;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ne2kQ17Z3A3jdHPo12NzWN07bL28Bd+Tg02BrzT7QcM=;
+        b=8B7MCsObOOvSR6mCIokEm9+fr1yaDvUvjD7xLGijdBTs3173zrpzOBCSMq7GbxNBOM
+         jlA32HML4qaWiA3bC6/MPSgXaUVCfDcNO6Eh0Y0wkVZv0g1YdCxC7+6gaO3SEVPZoGb5
+         HrrRV5vE7unUe9agoAJ8B1Pp8NbAhAYjBb9QhoDja4o0GsDM0tFW8pGusiEyqX4zxzkF
+         CljQBwGY9gpwXG1kIXBI+qeSYEVIsVEySuVkFdkM0H9hKa0A4GvD1jan7GRU9WkJps92
+         YP/pq8joOPnl2SuuUW4hLh9dHzTeG3C8HOQaTrrE/uf+/pB8p30p04rCt3j/O4H92pqq
+         BKMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EMxgvk2yFo8Rbo93eUfFPWH3YMgPyr5c5rnRRAyyLVQ=;
-        b=VT+/nAyQVU5TwOZv5nQnY9RyTIZXMTuFz0FkXGAPSAy8w5ht6poAouYD9LrogVLur5
-         y0hmWhY8I/9bzeVdXCT2DmrXFRSfKjM3mLN+0sRIqBJOJPCA5VK3k1IO+0y1aEq2mF+l
-         GBHLiOLqKiJg4O4D9haDc1LoHZmU/+SH4/Y8EHUrS5odbwOx2AqvOlZ2PMCJNktfLm5R
-         A0cLpubQDAGzwtMsn0C1Y85mGWOgfyyXG+VpMSbGh04NvrCjDCB5sCqdZSPPKabI4jR7
-         8SOn33QdWgvZrCG2mxjaxPfI/hh7bjvGzmvD4TK1qD1cIyKZ47AGVRt2F44tvPOjN9Ik
-         K6Cg==
-X-Gm-Message-State: ANoB5pkkfA3QXdDEo/nmdVSo/0fNMsBdYQf3lOuU5CyJKVwCToLbOl4J
-        H75Lek6Y0QvlEU4mTeTJoT2QtQ==
-X-Google-Smtp-Source: AA0mqf5eDxwr9JDrHbPttLGwszxyGTK5GHFn8edQbmPwIKgeDp4Nde0sxZFhRR/hZfKvOlnUTyuXfw==
-X-Received: by 2002:a63:d48:0:b0:474:6739:6a09 with SMTP id 8-20020a630d48000000b0047467396a09mr66392507pgn.292.1670281452243;
-        Mon, 05 Dec 2022 15:04:12 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-54-199.pa.nsw.optusnet.com.au. [49.181.54.199])
-        by smtp.gmail.com with ESMTPSA id b15-20020a170902d50f00b00174f61a7d09sm11120251plg.247.2022.12.05.15.04.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Dec 2022 15:04:11 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1p2KVM-004y9z-6R; Tue, 06 Dec 2022 10:04:08 +1100
-Date:   Tue, 6 Dec 2022 10:04:08 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
-Subject: Re: [RFC v2 0/3] Turn iomap_page_ops into iomap_folio_ops
-Message-ID: <20221205230408.GQ3600936@dread.disaster.area>
-References: <20221201160619.1247788-1-agruenba@redhat.com>
- <20221201180957.1268079-1-agruenba@redhat.com>
- <20221201212956.GO3600936@dread.disaster.area>
- <CAHc6FU6u9A0S-EwyB6vq89XPj1rucL8U0oqq__OzB1d0evM-yA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHc6FU6u9A0S-EwyB6vq89XPj1rucL8U0oqq__OzB1d0evM-yA@mail.gmail.com>
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ne2kQ17Z3A3jdHPo12NzWN07bL28Bd+Tg02BrzT7QcM=;
+        b=KYciV/TUUMM/nkcqeRVXTaQVHRK2t4ZPkeRW2EXh8P2YZEb1fnoiNZSpFjYawbDSVP
+         lh1ZQaL7auHT50zvBrPJROn88BeNHSQNORyHf0Rygt/7Uza/6yjVlR8ugG8eV1mphr0P
+         ya96AyF2ACsIsEr2nLrPd6Ai778L+NKu1UZjaPWw96pdyxYypOSE5gRASwFWmfYTqI9S
+         aTAnYkah1q1alihfdF5v7DmYhi2iqIPQ7BfaKksnY1Tg2vK4EFXeRqTUkSFdDoQ3UK3H
+         WLamqB2jRW+cP0Zdu1OGUJz5J6byENSzAvyHowpn+3e7MgLv7Xsvk8ugOy7DQlfrdH/p
+         kDJw==
+X-Gm-Message-State: ANoB5pl7H7YAaFledVRW9iHvLU57uI9W5JOaUjn3xoWTAwfMqvtA40he
+        +y6lBzDUa/I36YCXYot/w8UqaA==
+X-Google-Smtp-Source: AA0mqf6Oos0yfJkVZaqeYo7679Myu1FELMEk7IoUBQqnjFE3jKyqOBdEBqH00X3hxXMU9cg1xpS1Kw==
+X-Received: by 2002:ac8:4d4f:0:b0:3a6:1dea:8c1c with SMTP id x15-20020ac84d4f000000b003a61dea8c1cmr68663245qtv.157.1670286942302;
+        Mon, 05 Dec 2022 16:35:42 -0800 (PST)
+Received: from smtpclient.apple (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
+        by smtp.gmail.com with ESMTPSA id 134-20020a37088c000000b006ec771d8f89sm327312qki.112.2022.12.05.16.35.40
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 05 Dec 2022 16:35:41 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
+Subject: Re: [PATCH] hfsplus: Fix bug causing custom uid and gid being unable
+ to be assigned with mount
+From:   Viacheslav Dubeyko <slava@dubeyko.com>
+In-Reply-To: <1D7AAEE4-9603-43A4-B89D-6F791EDCB929@live.com>
+Date:   Mon, 5 Dec 2022 16:35:36 -0800
+Cc:     "willy@infradead.org" <willy@infradead.org>,
+        "ira.weiny@intel.com" <ira.weiny@intel.com>,
+        "axboe@kernel.dk" <axboe@kernel.dk>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "bvanassche@acm.org" <bvanassche@acm.org>,
+        "keescook@chromium.org" <keescook@chromium.org>,
+        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
+        "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A2B962C1-AD33-413D-B64A-CD179AFBEA8D@dubeyko.com>
+References: <93F5197D-2B61-4129-B5D4-771934F70577@live.com>
+ <55A80630-60FB-44BE-9628-29104AB8A7D0@dubeyko.com>
+ <1D7AAEE4-9603-43A4-B89D-6F791EDCB929@live.com>
+To:     Aditya Garg <gargaditya08@live.com>
+X-Mailer: Apple Mail (2.3696.120.41.1.1)
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
         autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -80,118 +84,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 02, 2022 at 02:54:00AM +0100, Andreas Gruenbacher wrote:
-> On Thu, Dec 1, 2022 at 10:30 PM Dave Chinner <david@fromorbit.com> wrote:
-> > On Thu, Dec 01, 2022 at 07:09:54PM +0100, Andreas Gruenbacher wrote:
-> > > Hi again,
-> > >
-> > > [Same thing, but with the patches split correctly this time.]
-> > >
-> > > we're seeing a race between journaled data writes and the shrinker on
-> > > gfs2.  What's happening is that gfs2_iomap_page_done() is called after
-> > > the page has been unlocked, so try_to_free_buffers() can come in and
-> > > free the buffers while gfs2_iomap_page_done() is trying to add them to
-> > > the transaction.  Not good.
-> > >
-> > > This is a proposal to change iomap_page_ops so that page_prepare()
-> > > prepares the write and grabs the locked page, and page_done() unlocks
-> > > and puts that page again.  While at it, this also converts the hooks
-> > > from pages to folios.
-> > >
-> > > To move the pagecache_isize_extended() call in iomap_write_end() out of
-> > > the way, a new folio_may_straddle_isize() helper is introduced that
-> > > takes a locked folio.  That is then used when the inode size is updated,
-> > > before the folio is unlocked.
-> > >
-> > > I've also converted the other applicable folio_may_straddle_isize()
-> > > users, namely generic_write_end(), ext4_write_end(), and
-> > > ext4_journalled_write_end().
-> > >
-> > > Any thoughts?
-> >
-> > I doubt that moving page cache operations from the iomap core to
-> > filesystem specific callouts will be acceptible. I recently proposed
-> > patches that added page cache walking to an XFS iomap callout to fix
-> > a data corruption, but they were NAKd on the basis that iomap is
-> > supposed to completely abstract away the folio and page cache
-> > manipulations from the filesystem.
-> 
-> Right. The resulting code is really quite disgusting, for a
-> fundamentalist dream of abstraction.
-> 
-> > This patchset seems to be doing the same thing - moving page cache
-> > and folio management directly in filesystem specific callouts. Hence
-> > I'm going to assume that the same architectural demarcation is
-> > going to apply here, too...
-> >
-> > FYI, there is already significant change committed to the iomap
-> > write path in the current XFS tree as a result of the changes I
-> > mention - there is stale IOMAP detection which adds a new page ops
-> > method and adds new error paths with a locked folio in
-> > iomap_write_begin().
-> 
-> That would have belonged on the iomap-for-next branch rather than in
-> the middle of a bunch of xfs commits.
 
-Damned if you do, damned if you don't.
 
-There were non-trivial cross dependencies between XFS and iomap in
-that patch set.  The initial IOMAP_F_STALE infrastructure needed XFS
-changes first, otherwise it could deadlock at ENOSPC on write page
-faults. i.e. the iomap change in isolation broke stuff, so we're
-forced to either carry XFs changes in iomap or iomap changes in XFS
-so that there are no regressions in a given tree.
+> On Dec 2, 2022, at 11:56 PM, Aditya Garg <gargaditya08@live.com> =
+wrote:
+>=20
+>=20
+>> Also, what if we mounted
+>> file system without specifying the UID/GID, then what UID/GID will be =
+returned by
+>> your logic?
+>=20
+> So this case is if I run =E2=80=9Csudo mount /dev/sda1 /mnt=E2=80=9D
+>=20
+> Here the driver will not do any spoofing, and the real owners of the =
+files shall be displayed. Thus running =E2=80=9Cls -l=E2=80=9D on a =
+mounted partition without specifying UID/GID, files written by macOS =
+shall be shown as 99 as the owner, iPadOS as 501, and if any file was =
+written on Linux, the user who wrote it will be the owner.
+>=20
+> If the user/group of any file was changed using chown, then the new =
+user/group of the file will be displayed.
 
-Then we had to move XFS functionality to iomap to fix another data
-corruption that the IOMAP_F_STALE infrastructure exposed in XFS via
-generic/346. Once the code was moved, then we could build it up into
-the page cache scanning functionality in iomap. And only then could
-we add the XFS IOMAP_F_STALE validation to XFS to solve the original
-data corruption that started all this off.
+My question is much more simple.
 
-IOWs, there were so many cross dependencies between XFs and iomap
-that it was largely impossible to break it up into two separate sets
-of indpendent patches that didn't cause regressions in one or the
-other tree. And in the end, we'd still have to merge the iomap tree
-into XFS or vice versa to actually test that the data corruption fix
-worked.
+diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
+index aeab83ed1..4d1077db8 100644
+--- a/fs/hfsplus/inode.c
++++ b/fs/hfsplus/inode.c
+@@ -192,11 +192,11 @@ static void hfsplus_get_perms(struct inode *inode,
+	mode =3D be16_to_cpu(perms->mode);
 
-In situations like this, we commonly take the entire series into one
-of the two trees rather than make a whole lot more work for
-ourselves by trying to separate them out. And in this case, because
-it was XFS data corruption and race conditions that needed fixing,
-it made sense to take it through the XFS tree so that it gets
-coverage from all the XFS testing that happens - the iomap tree gets
-a lot less early coverage than the XFS tree...
+	i_uid_write(inode, be32_to_cpu(perms->owner));
+-	if (!i_uid_read(inode) && !mode)
++	if (test_bit(HFSPLUS_SB_UID, &sbi->flags))
+		inode->i_uid =3D sbi->uid;
 
-> > And this other data corruption (and performance) fix for handling
-> > zeroing over unwritten extents properly:
-> >
-> > https://lore.kernel.org/linux-xfs/20221201005214.3836105-1-david@fromorbit.com/
-> >
-> > changes the way folios are looked up and instantiated in the page
-> > cache in iomap_write_begin(). It also adds new error conditions that
-> > need to be returned to callers so to implement conditional "folio
-> > must be present and dirty" page cache zeroing from
-> > iomap_zero_iter(). Those semantics would also have to be supported
-> > by gfs2, and that greatly complicates modifying and testing iomap
-> > core changes.
-> >
-> > To avoid all this, can we simple move the ->page_done() callout in
-> > the error path and iomap_write_end() to before we unlock the folio?
-> > You've already done that for pagecache_isize_extended(), and I can't
-> > see anything obvious in the gfs2 ->page_done callout that
-> > would cause issues if it is called with a locked dirty folio...
-> 
-> Yes, I guess we can do that once pagecache_isize_extended() is
-> replaced by folio_may_straddle_isize().
-> 
-> Can people please scrutinize the math in folio_may_straddle_isize() in
-> particular?
+	i_gid_write(inode, be32_to_cpu(perms->group));
+-	if (!i_gid_read(inode) && !mode)
++	if (test_bit(HFSPLUS_SB_GID, &sbi->flags))
+		inode->i_gid =3D sbi->gid;
 
-I'll look at it more closely in the next couple of days.
+Before this change, logic called i_uid_read(inode) and checked mode.
+Now, we check only HFSPLUS_SB_UID/HFSPLUS_SB_GID flags.
+So, if we mount HFS+ volume by =E2=80=9Csudo mount /dev/sda1 /mnt=E2=80=9D=
+, then
+HFSPLUS_SB_UID and HFSPLUS_SB_GID flags will be unset.
+And current logic will do nothing. Is it correct logic? Maybe, we need
+to use sbi->uid/gid if flag(s)HFSPLUS_SB_UID/HFSPLUS_SB_GID are set.
+And if not, then to use old logic. Am I correct here? Or am I still =
+missing
+something here?
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+Thanks,
+Slava.
+
+
