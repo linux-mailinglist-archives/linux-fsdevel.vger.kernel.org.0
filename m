@@ -2,132 +2,118 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A6CE645D87
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Dec 2022 16:19:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33891645E35
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Dec 2022 16:58:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229663AbiLGPTL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Dec 2022 10:19:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33600 "EHLO
+        id S229769AbiLGP6T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Dec 2022 10:58:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229497AbiLGPTJ (ORCPT
+        with ESMTP id S229738AbiLGP6S (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Dec 2022 10:19:09 -0500
-Received: from mga01.intel.com (mga01.intel.com [192.55.52.88])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75EDB1E3DC;
-        Wed,  7 Dec 2022 07:19:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1670426348; x=1701962348;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=jSuyaBC+CEdahrEMqj1EGdbe+9W/yLc3hrTCB1EDaSs=;
-  b=Bd80++yc/u9Sg9fSdqD2reRXYGDX/dr1JBIJXODlt77ytFxYU7hE9LfB
-   LS9x5t4esauEUdO+pspid+oZN4uTk4452zf8qG/ZIXz7/w5+CWKaCa/a6
-   FJNEeIXNOc3pSTdjFEMaH8i7IQdJtDQR2zvVRaSKPi3QpBcFB7CG+uQeR
-   Af7VFB0GGdq8j1qj7CfmYU9r73CGJMktD9Hdabaqkod2Tupx0ElPawjeG
-   yOurzxfawV6drBDeGANKtUzxPOQsiEGsVN42qk3YxP1WUwMo50mDj8uPv
-   j62KYmciTP4Cphsehjv4yMQKtisUwgTJF4IOE+yzvAQhCEhbZxjNIOC2u
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10553"; a="343948387"
-X-IronPort-AV: E=Sophos;i="5.96,225,1665471600"; 
-   d="scan'208";a="343948387"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2022 07:19:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10553"; a="710096874"
-X-IronPort-AV: E=Sophos;i="5.96,225,1665471600"; 
-   d="scan'208";a="710096874"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
-  by fmsmga008.fm.intel.com with ESMTP; 07 Dec 2022 07:18:57 -0800
-Date:   Wed, 7 Dec 2022 23:14:37 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Isaku Yamahata <isaku.yamahata@gmail.com>
-Cc:     Fuad Tabba <tabba@google.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH v10 5/9] KVM: Use gfn instead of hva for
- mmu_notifier_retry
-Message-ID: <20221207151437.GF1275553@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-6-chao.p.peng@linux.intel.com>
- <CA+EHjTy5+Ke_7Uh72p--H9kGcE-PK4EVmp7ym6Q1-PO28u6CCQ@mail.gmail.com>
- <20221206115623.GB1216605@chaop.bj.intel.com>
- <20221207063411.GB3632095@ls.amr.corp.intel.com>
+        Wed, 7 Dec 2022 10:58:18 -0500
+Received: from mail-qk1-x72a.google.com (mail-qk1-x72a.google.com [IPv6:2607:f8b0:4864:20::72a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33F6829CBB
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Dec 2022 07:58:16 -0800 (PST)
+Received: by mail-qk1-x72a.google.com with SMTP id s10so8730739qkg.8
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Dec 2022 07:58:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qs0nZ1rFh/s7MTR6+29xGDMlHk1tahA90qx6nUbU6w0=;
+        b=W3sB3oJvRoNx0VC2yM2FQ6Ev/+nc13R58IJFJndvG5zrSCt4KXWHdZ6zV2f5P04vwC
+         coYp7i/4L0D6qBB2/mM6gC8B5Hap5ikN4lYCxc3NuIUa5HEE4oGDq26/N2dHmz2j+6xW
+         xTvds0opU2zCXTeoD7kWOdDY+WZHi3NFuBZ84RxKKSv84sq/tsjhKfs3IHaizDPOd9Ps
+         ZV90N1vR/8LTGEYyr62UIaXclWH/qK1088y+O21hgS7g6HBOCXlupU4IX/C1w/UMEYSB
+         Na7a2jWUpQbOwmVLiE8yXlpyo/WKygc+zlp4rghG9CldbdiwoayMt8s+1pKTrPW6y9vh
+         Oq6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=qs0nZ1rFh/s7MTR6+29xGDMlHk1tahA90qx6nUbU6w0=;
+        b=IXN/IB+wlu+6nkE11dxI0ws22ckAXzOrKbfpsHx8GfRjtkTbxiWEk6sUhkzPp0lYMs
+         kCqsyaq7QI8rNI/RZ9QLenD+Kwk86nDVxisQjI+GbELlzyQdeRZUaiQ7+7ozjH01HUl7
+         YHOjS4KMdrDAbOLO1QZQr+7XwkYqYUi7rAGmmLiZs7kXShKC/jaXnzhEgPtfX6pkzbLL
+         EEf50CZ4pgsZCOCZxi2c4TD1Ow9WEWJWfcmB2OYOe/rr/fFqXzF91DIC2ksGh8Qzvmgi
+         ftnt0+SioTnBQF9qILZfB1XMrPx+twaksxoEWymc7gGTLbcFNo0tn91xNBlF+WD9nZIm
+         N0PQ==
+X-Gm-Message-State: ANoB5pnNwhGU/LSh6sk824qkMfndr13FZMPMt0leDsaMRmkMg3xqWQu2
+        Jl5Tg0w09FqCDdjCuN4i6C9F3xISmU2edydXyvALAw==
+X-Google-Smtp-Source: AA0mqf6MVYwoYOhFT0gxk5rqGIihkNKVqwUwRwH46llz3gEgyDjhmfIbn9BLQr53oVvP6jd52Fdnrhp6onLZcC0LK/g=
+X-Received: by 2002:a05:620a:cf5:b0:6fe:c37b:880e with SMTP id
+ c21-20020a05620a0cf500b006fec37b880emr9851138qkj.221.1670428695952; Wed, 07
+ Dec 2022 07:58:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221207063411.GB3632095@ls.amr.corp.intel.com>
-X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+From:   Naresh Kamboju <naresh.kamboju@linaro.org>
+Date:   Wed, 7 Dec 2022 21:28:04 +0530
+Message-ID: <CA+G9fYv_UU+oVUbd8Mzt8FkXscenX2kikRSCZ7DPXif9i5erNg@mail.gmail.com>
+Subject: next: LTP: syscalls: epoll_clt() if fd is an invalid fd expected
+ EBADF: EINVAL (22)
+To:     open list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, regressions@lists.linux.dev,
+        lkft-triage@lists.linaro.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        LTP List <ltp@lists.linux.it>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>, chrubis <chrubis@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 06, 2022 at 10:34:11PM -0800, Isaku Yamahata wrote:
-> On Tue, Dec 06, 2022 at 07:56:23PM +0800,
-> Chao Peng <chao.p.peng@linux.intel.com> wrote:
-> 
-> > > > -       if (unlikely(kvm->mmu_invalidate_in_progress) &&
-> > > > -           hva >= kvm->mmu_invalidate_range_start &&
-> > > > -           hva < kvm->mmu_invalidate_range_end)
-> > > > -               return 1;
-> > > > +       if (unlikely(kvm->mmu_invalidate_in_progress)) {
-> > > > +               /*
-> > > > +                * Dropping mmu_lock after bumping mmu_invalidate_in_progress
-> > > > +                * but before updating the range is a KVM bug.
-> > > > +                */
-> > > > +               if (WARN_ON_ONCE(kvm->mmu_invalidate_range_start == INVALID_GPA ||
-> > > > +                                kvm->mmu_invalidate_range_end == INVALID_GPA))
-> > > 
-> > > INVALID_GPA is an x86-specific define in
-> > > arch/x86/include/asm/kvm_host.h, so this doesn't build on other
-> > > architectures. The obvious fix is to move it to
-> > > include/linux/kvm_host.h.
-> > 
-> > Hmm, INVALID_GPA is defined as ZERO for x86, not 100% confident this is
-> > correct choice for other architectures, but after search it has not been
-> > used for other architectures, so should be safe to make it common.
-> 
-> INVALID_GPA is defined as all bit 1.  Please notice "~" (tilde).
-> 
-> #define INVALID_GPA (~(gpa_t)0)
+LTP syscalls epoll_ctl02 is failing on Linux next master.
+The reported problem is always reproducible and starts from next-20221205.
 
-Thanks for mention. Still looks right moving it to include/linux/kvm_host.h. 
-Chao
-> -- 
-> Isaku Yamahata <isaku.yamahata@gmail.com>
+GOOD tag: next-20221202
+BAD tag: next-20221205
+
+tst_test.c:1524: TINFO: Timeout per run is 0h 05m 00s
+epoll_ctl02.c:87: TPASS: epoll_clt(...) if epfd is an invalid fd : EBADF (9)
+epoll_ctl02.c:87: TPASS: epoll_clt(...) if fd does not support epoll : EPERM (1)
+epoll_ctl02.c:87: TFAIL: epoll_clt(...) if fd is an invalid fd
+expected EBADF: EINVAL (22)
+epoll_ctl02.c:87: TPASS: epoll_clt(...) if op is not supported : EINVAL (22)
+epoll_ctl02.c:87: TPASS: epoll_clt(...) if fd is the same as epfd : EINVAL (22)
+epoll_ctl02.c:87: TPASS: epoll_clt(...) if events is NULL : EFAULT (14)
+epoll_ctl02.c:87: TPASS: epoll_clt(...) if fd is not registered with
+EPOLL_CTL_DEL : ENOENT (2)
+epoll_ctl02.c:87: TPASS: epoll_clt(...) if fd is not registered with
+EPOLL_CTL_MOD : ENOENT (2)
+epoll_ctl02.c:87: TPASS: epoll_clt(...) if fd is already registered
+with EPOLL_CTL_ADD : EEXIST (17)
+
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+
+
+Test results:
+https://lkft.validation.linaro.org/scheduler/job/5931196#L1367
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20221207/testrun/13492039/suite/ltp-syscalls/test/epoll_ctl02/log
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20221205/testrun/13412113/suite/ltp-syscalls/test/epoll_ctl02/details/
+
+Test results comparison:
+https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20221207/testrun/13492039/suite/ltp-syscalls/test/epoll_ctl02/history/
+
+metadata:
+  git_ref: master
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git_sha: ee9bda616d36d2dc864aa294c2656fad88c9efa0
+  git_describe: next-20221205
+  kernel_version: 6.1.0-rc7
+  kernel-config: https://builds.tuxbuild.com/2ITqQKvBJSwcIYKcYvEdPjjrw64/config
+  build-url: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next/-/pipelines/713047540
+  artifact-location: https://builds.tuxbuild.com/2ITqQKvBJSwcIYKcYvEdPjjrw64
+  toolchain: gcc-11
+
+--
+Linaro LKFT
+https://lkft.linaro.org
