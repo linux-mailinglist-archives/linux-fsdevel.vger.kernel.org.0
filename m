@@ -2,114 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DF9F76462DF
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Dec 2022 21:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 84DCA64640A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  7 Dec 2022 23:27:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230115AbiLGUxL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 7 Dec 2022 15:53:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39884 "EHLO
+        id S229685AbiLGW1Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 7 Dec 2022 17:27:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230109AbiLGUww (ORCPT
+        with ESMTP id S229513AbiLGW1X (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 7 Dec 2022 15:52:52 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5D478139F;
-        Wed,  7 Dec 2022 12:51:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=UORhhcQqOaIvpRwHi0DMFterbhwvG2EXcBZ82YBwQMU=; b=HB0cbntyJzwuDFdxDCnp+Vlwhk
-        tSONA7EaFAT9b+ZkRhi8SCpbuaWYeyV5dX92dXFFQy0XLTwjZ8b+qZwY47nxK7r2JS3AhDY/Y2q18
-        YQWeVOWuZLc56HAj71ksdMyTmxK6OQToCGUwu1P6WxiBWym+wp+/POSm1HgoJ8F5etqzNTjvaY9bB
-        oumvoTFfM93KB+IZtwPw2qExrWTiQawM9qjY/9m+jEcmlrXCaa4To5UgSUoi6LVA0YsHiwMLJcwMm
-        Txs6DUb29cPIuy/ivStLtb5yUJUpwXE8cCLBgzfJaZSs2U6XAo+6S6gBoGM5zgOeszjBtmgcza8E+
-        ms0w9KNw==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1p31Np-00CLcf-VD; Wed, 07 Dec 2022 20:51:14 +0000
-Date:   Wed, 7 Dec 2022 12:51:13 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>,
-        Pankaj Raghav <p.raghav@samsung.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Cc:     Yangtao Li <frank.li@vivo.com>, chao@kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, fengnanchang@gmail.com,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        vishal.moola@gmail.com,
-        Javier =?iso-8859-1?Q?Gonz=E1lez?= <javier.gonz@samsung.com>,
-        Adam Manzanares <a.manzanares@samsung.com>
-Subject: Re: [PATCH] f2fs: Support enhanced hot/cold data separation for f2fs
-Message-ID: <Y5D8wYGpp/95ShTV@bombadil.infradead.org>
-References: <Y4ZaBd1r45waieQs@casper.infradead.org>
- <20221130124804.79845-1-frank.li@vivo.com>
- <Y4d0UReDb+EmUJOz@casper.infradead.org>
+        Wed, 7 Dec 2022 17:27:23 -0500
+Received: from mail-io1-xd32.google.com (mail-io1-xd32.google.com [IPv6:2607:f8b0:4864:20::d32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CB12716D5
+        for <linux-fsdevel@vger.kernel.org>; Wed,  7 Dec 2022 14:27:22 -0800 (PST)
+Received: by mail-io1-xd32.google.com with SMTP id n63so8261210iod.7
+        for <linux-fsdevel@vger.kernel.org>; Wed, 07 Dec 2022 14:27:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=E6iNgn6tk9NKSC6em5LUaxYi23kEXMA8wWQ/A+TIsuM=;
+        b=JEYuxx4faUl/mXyDiboBJCytx8+6HH34bwhg/QEt15x0+Aqvlc2quizZtvo1O+TG0U
+         KeoWvMleX8NKbtVqLjvtjbTFO2JNDVeBek5gNOraQxvIPz3E1uUS6RJ5dX1WvKKIOZ7y
+         euM8sS4zGNvWmQqKL9JZuqz4KBNcrBkX3J5FNGpjIgjikkoMWYaesIucw/p1VTA3BS2f
+         mQIawjLRxymROxbiDQZ0m1qe8QmmvXbd1NGtzpqlS60eQrDZza9dP624DWJw8R4CHA8F
+         jibStbQ1pbkkwY7pjwCvSefP3IqDnqrTrIuHScgNi6QZO7ZJOHu6rWRmqtUFcpP4Kc6c
+         lpUQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E6iNgn6tk9NKSC6em5LUaxYi23kEXMA8wWQ/A+TIsuM=;
+        b=zWBng1EC1GcKpAhZbxQ5nH8P7gDUJjeAwboN9ZtZn4RilyLdRipqArLUOEcDTipSQM
+         sxdkgWwu0h93SVhzEarwbiKeA2XeCMFnday5J55TIjFq9o4T31MGhsrJJwBwHnT2mBKb
+         ruIRp8z1VOpT6SAKFFjhqJiTypgDcdY/kdBoCH0AMG6JUPOeY0s+/JHILBSdyqsYQCeU
+         fvaiIffPkLRMAyaZhDatig3EaDz3c/rPOsFwV2hvg3Deb/YXEln20qhTFTD/lFv5TKvG
+         an4q+37IOGlWmpvNmJUAR9DYyKUjrFlzpshtwzU+snkNLNynHFYWO9djEMUwz7vsA6QK
+         XITg==
+X-Gm-Message-State: ANoB5plCIcQfAatdnCKF4an9P2pd9AaT8NLUSOt9bOel7uw9ALFGYA49
+        jIyIAPi2tjxhp9vmnzIhTjF0CeivGZvj2TfAIPq8dhsEWiRn19VFGz4=
+X-Google-Smtp-Source: AA0mqf7UVEuSnzHfpH6eTqiF1bDc1jJ7UGXfh44X72St/ctRV8R8g3GUravzdm1Vk6ByeE8L+nuAJb2bo7Rt6v0a3as=
+X-Received: by 2002:a02:b395:0:b0:389:922b:cab4 with SMTP id
+ p21-20020a02b395000000b00389922bcab4mr28941784jan.137.1670452041873; Wed, 07
+ Dec 2022 14:27:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y4d0UReDb+EmUJOz@casper.infradead.org>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <CA+G9fYv_UU+oVUbd8Mzt8FkXscenX2kikRSCZ7DPXif9i5erNg@mail.gmail.com>
+ <b7d8193c-7e15-f5cd-08d4-8ef788d9bb36@kernel.dk>
+In-Reply-To: <b7d8193c-7e15-f5cd-08d4-8ef788d9bb36@kernel.dk>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Wed, 7 Dec 2022 23:27:11 +0100
+Message-ID: <CADYN=9LaiBU-Q5=FSvFKTi_qzE1C45DkdUAfbaZH7FZhn2tbYw@mail.gmail.com>
+Subject: Re: next: LTP: syscalls: epoll_clt() if fd is an invalid fd expected
+ EBADF: EINVAL (22)
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Naresh Kamboju <naresh.kamboju@linaro.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, regressions@lists.linux.dev,
+        lkft-triage@lists.linaro.org,
+        Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        LTP List <ltp@lists.linux.it>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Arnd Bergmann <arnd@arndb.de>, chrubis <chrubis@suse.cz>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Nov 30, 2022 at 03:18:41PM +0000, Matthew Wilcox wrote:
-> On Wed, Nov 30, 2022 at 08:48:04PM +0800, Yangtao Li wrote:
-> > Hi,
-> > 
-> > > Thanks for reviewing this.  I think the real solution to this is
-> > > that f2fs should be using large folios.  That way, the page cache
-> > > will keep track of dirtiness on a per-folio basis, and if your folios
-> > > are at least as large as your cluster size, you won't need to do the
-> > > f2fs_prepare_compress_overwrite() dance.  And you'll get at least fifteen
-> > > dirty folios per call instead of fifteen dirty pages, so your costs will
-> > > be much lower.
-> > >
-> > > Is anyone interested in doing the work to convert f2fs to support
-> > > large folios?  I can help, or you can look at the work done for XFS,
-> > > AFS and a few other filesystems.
-> > 
-> > Seems like an interesting job. Not sure if I can be of any help.
-> > What needs to be done currently to support large folio?
-> > 
-> > Are there any roadmaps and reference documents.
-> 
-> >From a filesystem point of view, you need to ensure that you handle folios
-> larger than PAGE_SIZE correctly.  The easiest way is to spread the use
-> of folios throughout the filesystem.  For example, today the first thing
-> we do in f2fs_read_data_folio() is convert the folio back into a page.
-> That works because f2fs hasn't told the kernel that it supports large
-> folios, so the VFS won't create large folios for it.
-> 
-> It's a lot of subtle things.  Here's an obvious one:
->                         zero_user_segment(page, 0, PAGE_SIZE);
-> There's a folio equivalent that will zero an entire folio.
-> 
-> But then there is code which assumes the number of blocks per page (maybe
-> not in f2fs?) and so on.  Every filesystem will have its own challenges.
-> 
-> One way to approach this is to just enable large folios (see commit
-> 6795801366da or 8549a26308f9) and see what breaks when you run xfstests
-> over it.  Probably quite a lot!
+On Wed, 7 Dec 2022 at 17:22, Jens Axboe <axboe@kernel.dk> wrote:
+>
+> On 12/7/22 8:58?AM, Naresh Kamboju wrote:
+> > LTP syscalls epoll_ctl02 is failing on Linux next master.
+> > The reported problem is always reproducible and starts from next-20221205.
+> >
+> > GOOD tag: next-20221202
+> > BAD tag: next-20221205
+> >
+> > tst_test.c:1524: TINFO: Timeout per run is 0h 05m 00s
+> > epoll_ctl02.c:87: TPASS: epoll_clt(...) if epfd is an invalid fd : EBADF (9)
+> > epoll_ctl02.c:87: TPASS: epoll_clt(...) if fd does not support epoll : EPERM (1)
+> > epoll_ctl02.c:87: TFAIL: epoll_clt(...) if fd is an invalid fd
+> > expected EBADF: EINVAL (22)
+> > epoll_ctl02.c:87: TPASS: epoll_clt(...) if op is not supported : EINVAL (22)
+> > epoll_ctl02.c:87: TPASS: epoll_clt(...) if fd is the same as epfd : EINVAL (22)
+> > epoll_ctl02.c:87: TPASS: epoll_clt(...) if events is NULL : EFAULT (14)
+> > epoll_ctl02.c:87: TPASS: epoll_clt(...) if fd is not registered with
+> > EPOLL_CTL_DEL : ENOENT (2)
+> > epoll_ctl02.c:87: TPASS: epoll_clt(...) if fd is not registered with
+> > EPOLL_CTL_MOD : ENOENT (2)
+> > epoll_ctl02.c:87: TPASS: epoll_clt(...) if fd is already registered
+> > with EPOLL_CTL_ADD : EEXIST (17)
+>
+> This should fix it:
+>
+>
+> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+> index ec7ffce8265a..de9c551e1993 100644
+> --- a/fs/eventpoll.c
+> +++ b/fs/eventpoll.c
+> @@ -2195,6 +2195,7 @@ int do_epoll_ctl(int epfd, int op, int fd, struct epoll_event *epds,
+>         }
+>
+>         /* Get the "struct file *" for the target file */
+> +       error = -EBADF;
+>         tf = fdget(fd);
+>         if (!tf.file)
+>                 goto error_fput;
 
-Me and Pankaj are very interested in helping on this front. And so we'll
-start to organize and talk every week about this to see what is missing.
-First order of business however will be testing so we'll have to
-establish a public baseline to ensure we don't regress. For this we intend
-on using kdevops so that'll be done first.
+Yes this patch fixed the issue [1].
 
-If folks have patches they want to test in consideration for folio /
-iomap enhancements feel free to Cc us :)
-
-After we establish a baseline we can move forward with taking on tasks
-which will help with this conversion.
-
-[0] https://github.com/linux-kdevops/kdevops
-
-  Luis
+Cheers,
+Anders
+[1] https://lkft.validation.linaro.org/scheduler/job/5931365#L1371
