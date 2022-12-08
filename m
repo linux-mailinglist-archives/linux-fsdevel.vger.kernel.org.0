@@ -2,35 +2,50 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CC698646A05
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Dec 2022 08:59:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D130F646A3A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Dec 2022 09:14:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229790AbiLHH7i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Dec 2022 02:59:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47734 "EHLO
+        id S229844AbiLHIOc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Dec 2022 03:14:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55790 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229808AbiLHH7d (ORCPT
+        with ESMTP id S229877AbiLHIOU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Dec 2022 02:59:33 -0500
-Received: from mx5.didiglobal.com (mx5.didiglobal.com [111.202.70.122])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 03B5B54451;
-        Wed,  7 Dec 2022 23:59:30 -0800 (PST)
-Received: from mail.didiglobal.com (unknown [10.79.65.18])
-        by mx5.didiglobal.com (Maildata Gateway V2.8) with ESMTPS id C98DBB001DA02;
-        Thu,  8 Dec 2022 15:59:27 +0800 (CST)
-Received: from ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) by
- ZJY02-ACTMBX-06.didichuxing.com (10.79.65.18) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Thu, 8 Dec 2022 15:59:27 +0800
-Received: from ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769])
- by ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769%8]) with mapi
- id 15.01.2375.017; Thu, 8 Dec 2022 15:59:27 +0800
-X-MD-Sfrom: chengkaitao@didiglobal.com
-X-MD-SrcIP: 10.79.65.18
-From:   =?utf-8?B?56iL5Z6y5rabIENoZW5na2FpdGFvIENoZW5n?= 
+        Thu, 8 Dec 2022 03:14:20 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 770615B595;
+        Thu,  8 Dec 2022 00:14:12 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 28E733369B;
+        Thu,  8 Dec 2022 08:14:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1670487251; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=u0hWHCxU1/envycw51Ct9du7tEezNa6pk2WQ6bJqy/w=;
+        b=qSOLY1dx+vkJzivbCTsCM6e4XSENfZXkIpKv/uIg1CATNmHjNY4qQmbEfTF1zBvlpfBfZT
+        kuFp6GA6Rdwoo2SHhC7mZK5EewUghzIzzQc8AXOLSmLt0/rP/+25c/0VjGpPh0kd2FCN9f
+        GxRQzJWB1DXd3jhReywaSOAFI2wqhaE=
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EE926138E0;
+        Thu,  8 Dec 2022 08:14:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id Uy66OdKckWMOHgAAMHmgww
+        (envelope-from <mhocko@suse.com>); Thu, 08 Dec 2022 08:14:10 +0000
+Date:   Thu, 8 Dec 2022 09:14:10 +0100
+From:   Michal Hocko <mhocko@suse.com>
+To:     =?utf-8?B?56iL5Z6y5rab?= Chengkaitao Cheng 
         <chengkaitao@didiglobal.com>
-To:     Michal Hocko <mhocko@suse.com>, chengkaitao <pilgrimtao@gmail.com>
-CC:     "tj@kernel.org" <tj@kernel.org>,
+Cc:     chengkaitao <pilgrimtao@gmail.com>,
+        "tj@kernel.org" <tj@kernel.org>,
         "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
         "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
         "corbet@lwn.net" <corbet@lwn.net>,
@@ -60,22 +75,16 @@ CC:     "tj@kernel.org" <tj@kernel.org>,
         "linux-mm@kvack.org" <linux-mm@kvack.org>
 Subject: Re: [PATCH v2] mm: memcontrol: protect the memory in cgroup from
  being oom killed
-Thread-Topic: [PATCH v2] mm: memcontrol: protect the memory in cgroup from
- being oom killed
-Thread-Index: AQHZCrfAdhr5zYTMtke9YS08C4BFfq5jExWAgACNdAA=
-Date:   Thu, 8 Dec 2022 07:59:27 +0000
-Message-ID: <CEFD5AB7-17FB-4CC0-B818-1988484B8E55@didiglobal.com>
-In-Reply-To: <Y5GTM5HLhGrx9zFO@dhcp22.suse.cz>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.79.65.92]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <CABC8BE52CB22F45A909440FC229C1FC@didichuxing.com>
-Content-Transfer-Encoding: base64
+Message-ID: <Y5Gc0jiDlWlRlMYH@dhcp22.suse.cz>
+References: <Y5GTM5HLhGrx9zFO@dhcp22.suse.cz>
+ <CEFD5AB7-17FB-4CC0-B818-1988484B8E55@didiglobal.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CEFD5AB7-17FB-4CC0-B818-1988484B8E55@didiglobal.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -83,36 +92,57 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-QXQgMjAyMi0xMi0wOCAxNTozMzowNywgIk1pY2hhbCBIb2NrbyIgPG1ob2Nrb0BzdXNlLmNvbT4g
-d3JvdGU6DQo+T24gVGh1IDA4LTEyLTIyIDExOjQ2OjQ0LCBjaGVuZ2thaXRhbyB3cm90ZToNCj4+
-IEZyb206IGNoZW5na2FpdGFvIDxwaWxncmltdGFvQGdtYWlsLmNvbT4NCj4+IA0KPj4gV2UgY3Jl
-YXRlZCBhIG5ldyBpbnRlcmZhY2UgPG1lbW9yeS5vb20ucHJvdGVjdD4gZm9yIG1lbW9yeSwgSWYg
-dGhlcmUgaXMNCj4+IHRoZSBPT00ga2lsbGVyIHVuZGVyIHBhcmVudCBtZW1vcnkgY2dyb3VwLCBh
-bmQgdGhlIG1lbW9yeSB1c2FnZSBvZiBhDQo+PiBjaGlsZCBjZ3JvdXAgaXMgd2l0aGluIGl0cyBl
-ZmZlY3RpdmUgb29tLnByb3RlY3QgYm91bmRhcnksIHRoZSBjZ3JvdXAncw0KPj4gdGFza3Mgd29u
-J3QgYmUgT09NIGtpbGxlZCB1bmxlc3MgdGhlcmUgaXMgbm8gdW5wcm90ZWN0ZWQgdGFza3MgaW4g
-b3RoZXINCj4+IGNoaWxkcmVuIGNncm91cHMuIEl0IGRyYXdzIG9uIHRoZSBsb2dpYyBvZiA8bWVt
-b3J5Lm1pbi9sb3c+IGluIHRoZQ0KPj4gaW5oZXJpdGFuY2UgcmVsYXRpb25zaGlwLg0KPj4gDQo+
-PiBJdCBoYXMgdGhlIGZvbGxvd2luZyBhZHZhbnRhZ2VzLA0KPj4gMS4gV2UgaGF2ZSB0aGUgYWJp
-bGl0eSB0byBwcm90ZWN0IG1vcmUgaW1wb3J0YW50IHByb2Nlc3Nlcywgd2hlbiB0aGVyZQ0KPj4g
-aXMgYSBtZW1jZydzIE9PTSBraWxsZXIuIFRoZSBvb20ucHJvdGVjdCBvbmx5IHRha2VzIGVmZmVj
-dCBsb2NhbCBtZW1jZywNCj4+IGFuZCBkb2VzIG5vdCBhZmZlY3QgdGhlIE9PTSBraWxsZXIgb2Yg
-dGhlIGhvc3QuDQo+PiAyLiBIaXN0b3JpY2FsbHksIHdlIGNhbiBvZnRlbiB1c2Ugb29tX3Njb3Jl
-X2FkaiB0byBjb250cm9sIGEgZ3JvdXAgb2YNCj4+IHByb2Nlc3NlcywgSXQgcmVxdWlyZXMgdGhh
-dCBhbGwgcHJvY2Vzc2VzIGluIHRoZSBjZ3JvdXAgbXVzdCBoYXZlIGENCj4+IGNvbW1vbiBwYXJl
-bnQgcHJvY2Vzc2VzLCB3ZSBoYXZlIHRvIHNldCB0aGUgY29tbW9uIHBhcmVudCBwcm9jZXNzJ3MN
-Cj4+IG9vbV9zY29yZV9hZGosIGJlZm9yZSBpdCBmb3JrcyBhbGwgY2hpbGRyZW4gcHJvY2Vzc2Vz
-LiBTbyB0aGF0IGl0IGlzDQo+PiB2ZXJ5IGRpZmZpY3VsdCB0byBhcHBseSBpdCBpbiBvdGhlciBz
-aXR1YXRpb25zLiBOb3cgb29tLnByb3RlY3QgaGFzIG5vDQo+PiBzdWNoIHJlc3RyaWN0aW9ucywg
-d2UgY2FuIHByb3RlY3QgYSBjZ3JvdXAgb2YgcHJvY2Vzc2VzIG1vcmUgZWFzaWx5LiBUaGUNCj4+
-IGNncm91cCBjYW4ga2VlcCBzb21lIG1lbW9yeSwgZXZlbiBpZiB0aGUgT09NIGtpbGxlciBoYXMg
-dG8gYmUgY2FsbGVkLg0KPj4gDQo+PiBTaWduZWQtb2ZmLWJ5OiBjaGVuZ2thaXRhbyA8cGlsZ3Jp
-bXRhb0BnbWFpbC5jb20+DQo+PiAtLS0NCj4+IHYyOiBNb2RpZnkgdGhlIGZvcm11bGEgb2YgdGhl
-IHByb2Nlc3MgcmVxdWVzdCBtZW1jZyBwcm90ZWN0aW9uIHF1b3RhLg0KPg0KPlRoZSBuZXcgZm9y
-bXVsYSBkb2Vzbid0IHJlYWxseSBhZGRyZXNzIGNvbmNlcm5zIGV4cHJlc3NlZCBwcmV2aW91c2x5
-Lg0KPlBsZWFzZSByZWFkIG15IGZlZWRiYWNrIGNhcmVmdWxseSBhZ2FpbiBhbmQgZm9sbG93IHVw
-IHdpdGggcXVlc3Rpb25zIGlmDQo+c29tZXRoaW5nIGlzIG5vdCBjbGVhci4NCg0KVGhlIHByZXZp
-b3VzIGRpc2N1c3Npb24gd2FzIHF1aXRlIHNjYXR0ZXJlZC4gQ2FuIHlvdSBoZWxwIG1lIHN1bW1h
-cml6ZQ0KeW91ciBjb25jZXJucyBhZ2Fpbj8gTGV0IG1lIHRoaW5rIGFib3V0IHRoZSBvcHRpbWl6
-YXRpb24gcGxhbiBmb3IgdGhlc2UNCnByb2JsZW1zLg0KLS0gDQpUaGFua3MgZm9yIHlvdXIgY29t
-bWVudCENCmNoZW5na2FpdGFvDQoNCg==
+On Thu 08-12-22 07:59:27, 程垲涛 Chengkaitao Cheng wrote:
+> At 2022-12-08 15:33:07, "Michal Hocko" <mhocko@suse.com> wrote:
+> >On Thu 08-12-22 11:46:44, chengkaitao wrote:
+> >> From: chengkaitao <pilgrimtao@gmail.com>
+> >> 
+> >> We created a new interface <memory.oom.protect> for memory, If there is
+> >> the OOM killer under parent memory cgroup, and the memory usage of a
+> >> child cgroup is within its effective oom.protect boundary, the cgroup's
+> >> tasks won't be OOM killed unless there is no unprotected tasks in other
+> >> children cgroups. It draws on the logic of <memory.min/low> in the
+> >> inheritance relationship.
+> >> 
+> >> It has the following advantages,
+> >> 1. We have the ability to protect more important processes, when there
+> >> is a memcg's OOM killer. The oom.protect only takes effect local memcg,
+> >> and does not affect the OOM killer of the host.
+> >> 2. Historically, we can often use oom_score_adj to control a group of
+> >> processes, It requires that all processes in the cgroup must have a
+> >> common parent processes, we have to set the common parent process's
+> >> oom_score_adj, before it forks all children processes. So that it is
+> >> very difficult to apply it in other situations. Now oom.protect has no
+> >> such restrictions, we can protect a cgroup of processes more easily. The
+> >> cgroup can keep some memory, even if the OOM killer has to be called.
+> >> 
+> >> Signed-off-by: chengkaitao <pilgrimtao@gmail.com>
+> >> ---
+> >> v2: Modify the formula of the process request memcg protection quota.
+> >
+> >The new formula doesn't really address concerns expressed previously.
+> >Please read my feedback carefully again and follow up with questions if
+> >something is not clear.
+> 
+> The previous discussion was quite scattered. Can you help me summarize
+> your concerns again?
+
+The most important part is http://lkml.kernel.org/r/Y4jFnY7kMdB8ReSW@dhcp22.suse.cz
+: Let me just emphasise that we are talking about fundamental disconnect.
+: Rss based accounting has been used for the OOM killer selection because
+: the memory gets unmapped and _potentially_ freed when the process goes
+: away. Memcg changes are bound to the object life time and as said in
+: many cases there is no direct relation with any process life time.
+
+That is to the per-process discount based on rss or any per-process
+memory metrics.
+
+Another really important question is the actual configurability. The
+hierarchical protection has to be enforced and that means that same as
+memory reclaim protection it has to be enforced top-to-bottom in the
+cgroup hierarchy. That makes the oom protection rather non-trivial to
+configure without having a good picture of a larger part of the cgroup
+hierarchy as it cannot be tuned based on a reclaim feedback.
+-- 
+Michal Hocko
+SUSE Labs
