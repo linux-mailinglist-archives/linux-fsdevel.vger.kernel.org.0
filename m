@@ -2,147 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D130F646A3A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Dec 2022 09:14:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1BA7646A79
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Dec 2022 09:26:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229844AbiLHIOc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Dec 2022 03:14:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55790 "EHLO
+        id S229749AbiLHI0v (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Dec 2022 03:26:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34958 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229877AbiLHIOU (ORCPT
+        with ESMTP id S229605AbiLHI0s (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Dec 2022 03:14:20 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 770615B595;
-        Thu,  8 Dec 2022 00:14:12 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 28E733369B;
-        Thu,  8 Dec 2022 08:14:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1670487251; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=u0hWHCxU1/envycw51Ct9du7tEezNa6pk2WQ6bJqy/w=;
-        b=qSOLY1dx+vkJzivbCTsCM6e4XSENfZXkIpKv/uIg1CATNmHjNY4qQmbEfTF1zBvlpfBfZT
-        kuFp6GA6Rdwoo2SHhC7mZK5EewUghzIzzQc8AXOLSmLt0/rP/+25c/0VjGpPh0kd2FCN9f
-        GxRQzJWB1DXd3jhReywaSOAFI2wqhaE=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EE926138E0;
-        Thu,  8 Dec 2022 08:14:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Uy66OdKckWMOHgAAMHmgww
-        (envelope-from <mhocko@suse.com>); Thu, 08 Dec 2022 08:14:10 +0000
-Date:   Thu, 8 Dec 2022 09:14:10 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     =?utf-8?B?56iL5Z6y5rab?= Chengkaitao Cheng 
-        <chengkaitao@didiglobal.com>
-Cc:     chengkaitao <pilgrimtao@gmail.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
-        "shakeelb@google.com" <shakeelb@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
-        "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
-        "yuzhao@google.com" <yuzhao@google.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vasily.averin@linux.dev" <vasily.averin@linux.dev>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "surenb@google.com" <surenb@google.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "sujiaxun@uniontech.com" <sujiaxun@uniontech.com>,
-        "feng.tang@intel.com" <feng.tang@intel.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH v2] mm: memcontrol: protect the memory in cgroup from
- being oom killed
-Message-ID: <Y5Gc0jiDlWlRlMYH@dhcp22.suse.cz>
-References: <Y5GTM5HLhGrx9zFO@dhcp22.suse.cz>
- <CEFD5AB7-17FB-4CC0-B818-1988484B8E55@didiglobal.com>
+        Thu, 8 Dec 2022 03:26:48 -0500
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B440E5D6BD
+        for <linux-fsdevel@vger.kernel.org>; Thu,  8 Dec 2022 00:26:47 -0800 (PST)
+Received: by mail-il1-f200.google.com with SMTP id i14-20020a056e020d8e00b003034b93bd07so640143ilj.14
+        for <linux-fsdevel@vger.kernel.org>; Thu, 08 Dec 2022 00:26:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D29xb/Z+5WTN+XE9gVFvEvb1Rr+QEuNqVEJlqmRpp0M=;
+        b=PB8wgq1rw0zmxQWywAwd4Oq1V9PWJXkGHTsMQw6Nkxd1/aDIz31tHXadcBmQh7MBho
+         MNMCUMPtHwcx9Szu0xIfettjLZGK1GthEOdP6cUb4mI/A68ZJWEdJ7mrEnyT3gYVDJLJ
+         uNg5JHdmtudl/FDpEYV4JQvnXNyMGG2iyc1qolJSfWsGSYKSyP5w5QIQONAP9Qsw/AtX
+         B6e/3wkoDz3wCGZBJbJmI4r0rz1Uscbd70g/Em5mCTWvNoLGtnqnN8SosZz4ti8hyf9p
+         cb7rTPmnKYTUkclvdJKnpkeOO7jIFtS5zbhWyb1FMIli6FutNU+U84SZGfwTBUP7fxzs
+         p/DQ==
+X-Gm-Message-State: ANoB5pmSPAD3zq89VTkWm0UfToEFtHPakePDJJ7uKbkibqQdbukfZ9RG
+        W3GXyBwTjvknzvag9AKcAYgLaf3WurTdrx4waiBCDsJbZ1iK
+X-Google-Smtp-Source: AA0mqf6OZIlrIcwPi4EKxoCOPTvFm9R7wZj5Ia0OcP59nLg1Sq5aDU6vAnNembaWj2uhSp7qiYgPPAaAJU1x8lWYUH0wU38l4tS5
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CEFD5AB7-17FB-4CC0-B818-1988484B8E55@didiglobal.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6638:3822:b0:38a:486d:4f71 with SMTP id
+ i34-20020a056638382200b0038a486d4f71mr7464024jav.102.1670488007099; Thu, 08
+ Dec 2022 00:26:47 -0800 (PST)
+Date:   Thu, 08 Dec 2022 00:26:47 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000043c9a105ef4cccf7@google.com>
+Subject: [syzbot] KMSAN: uninit-value in hfs_brec_find
+From:   syzbot <syzbot+5ce571007a695806e949@syzkaller.appspotmail.com>
+To:     glider@google.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 08-12-22 07:59:27, 程垲涛 Chengkaitao Cheng wrote:
-> At 2022-12-08 15:33:07, "Michal Hocko" <mhocko@suse.com> wrote:
-> >On Thu 08-12-22 11:46:44, chengkaitao wrote:
-> >> From: chengkaitao <pilgrimtao@gmail.com>
-> >> 
-> >> We created a new interface <memory.oom.protect> for memory, If there is
-> >> the OOM killer under parent memory cgroup, and the memory usage of a
-> >> child cgroup is within its effective oom.protect boundary, the cgroup's
-> >> tasks won't be OOM killed unless there is no unprotected tasks in other
-> >> children cgroups. It draws on the logic of <memory.min/low> in the
-> >> inheritance relationship.
-> >> 
-> >> It has the following advantages,
-> >> 1. We have the ability to protect more important processes, when there
-> >> is a memcg's OOM killer. The oom.protect only takes effect local memcg,
-> >> and does not affect the OOM killer of the host.
-> >> 2. Historically, we can often use oom_score_adj to control a group of
-> >> processes, It requires that all processes in the cgroup must have a
-> >> common parent processes, we have to set the common parent process's
-> >> oom_score_adj, before it forks all children processes. So that it is
-> >> very difficult to apply it in other situations. Now oom.protect has no
-> >> such restrictions, we can protect a cgroup of processes more easily. The
-> >> cgroup can keep some memory, even if the OOM killer has to be called.
-> >> 
-> >> Signed-off-by: chengkaitao <pilgrimtao@gmail.com>
-> >> ---
-> >> v2: Modify the formula of the process request memcg protection quota.
-> >
-> >The new formula doesn't really address concerns expressed previously.
-> >Please read my feedback carefully again and follow up with questions if
-> >something is not clear.
-> 
-> The previous discussion was quite scattered. Can you help me summarize
-> your concerns again?
+Hello,
 
-The most important part is http://lkml.kernel.org/r/Y4jFnY7kMdB8ReSW@dhcp22.suse.cz
-: Let me just emphasise that we are talking about fundamental disconnect.
-: Rss based accounting has been used for the OOM killer selection because
-: the memory gets unmapped and _potentially_ freed when the process goes
-: away. Memcg changes are bound to the object life time and as said in
-: many cases there is no direct relation with any process life time.
+syzbot found the following issue on:
 
-That is to the per-process discount based on rss or any per-process
-memory metrics.
+HEAD commit:    30d2727189c5 kmsan: fix memcpy tests
+git tree:       https://github.com/google/kmsan.git master
+console output: https://syzkaller.appspot.com/x/log.txt?x=15931383880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=a2144983ada8b4f3
+dashboard link: https://syzkaller.appspot.com/bug?extid=5ce571007a695806e949
+compiler:       clang version 15.0.0 (https://github.com/llvm/llvm-project.git 610139d2d9ce6746b3c617fb3e2f7886272d26ff), GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: i386
 
-Another really important question is the actual configurability. The
-hierarchical protection has to be enforced and that means that same as
-memory reclaim protection it has to be enforced top-to-bottom in the
-cgroup hierarchy. That makes the oom protection rather non-trivial to
-configure without having a good picture of a larger part of the cgroup
-hierarchy as it cannot be tuned based on a reclaim feedback.
--- 
-Michal Hocko
-SUSE Labs
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1e8c2d419c2e/disk-30d27271.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9e8a728a72a9/vmlinux-30d27271.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/89f71c80c707/bzImage-30d27271.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5ce571007a695806e949@syzkaller.appspotmail.com
+
+hfs: keylen 9474 too large
+=====================================================
+BUG: KMSAN: uninit-value in hfs_brec_find+0x671/0x9b0 fs/hfs/bfind.c:141
+ hfs_brec_find+0x671/0x9b0 fs/hfs/bfind.c:141
+ hfs_brec_read+0x3b/0x190 fs/hfs/bfind.c:165
+ hfs_cat_find_brec+0xfb/0x450 fs/hfs/catalog.c:194
+ hfs_fill_super+0x1f49/0x2400 fs/hfs/super.c:419
+ mount_bdev+0x508/0x840 fs/super.c:1401
+ hfs_mount+0x49/0x60 fs/hfs/super.c:456
+ legacy_get_tree+0x10c/0x280 fs/fs_context.c:610
+ vfs_get_tree+0xa1/0x500 fs/super.c:1531
+ do_new_mount+0x694/0x1580 fs/namespace.c:3040
+ path_mount+0x71a/0x1eb0 fs/namespace.c:3370
+ do_mount fs/namespace.c:3383 [inline]
+ __do_sys_mount fs/namespace.c:3591 [inline]
+ __se_sys_mount+0x734/0x840 fs/namespace.c:3568
+ __ia32_sys_mount+0xdf/0x140 fs/namespace.c:3568
+ do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+ __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+ do_fast_syscall_32+0x33/0x70 arch/x86/entry/common.c:203
+ do_SYSENTER_32+0x1b/0x20 arch/x86/entry/common.c:246
+ entry_SYSENTER_compat_after_hwframe+0x70/0x82
+
+Local variable fd created at:
+ hfs_fill_super+0x5e/0x2400 fs/hfs/super.c:381
+ mount_bdev+0x508/0x840 fs/super.c:1401
+
+CPU: 0 PID: 5557 Comm: syz-executor.2 Not tainted 6.1.0-rc8-syzkaller-64144-g30d2727189c5 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+=====================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
