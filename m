@@ -2,201 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 020496471A5
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Dec 2022 15:25:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C0FC6647469
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  8 Dec 2022 17:36:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229760AbiLHOZI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 8 Dec 2022 09:25:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48892 "EHLO
+        id S229821AbiLHQgT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 8 Dec 2022 11:36:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229979AbiLHOYp (ORCPT
+        with ESMTP id S229523AbiLHQgR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 8 Dec 2022 09:24:45 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7B50C45080;
-        Thu,  8 Dec 2022 06:23:58 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Thu, 8 Dec 2022 11:36:17 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6A92061533;
+        Thu,  8 Dec 2022 08:36:16 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 3F65B208CE;
-        Thu,  8 Dec 2022 14:23:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-        t=1670509437; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=DX6YDzb8PyIKMrTf468EmhvBSzk6iJctUJatHJ6cuIA=;
-        b=Qz7O1fJU8HHKKGBJmw8kfV/cErZ0iiN4f0bZfE5jsTRKpgLCCwWA2WlbQKYkLPlqYUsdIv
-        QL4Tw0VatsYd6IlM50vHZ/Vh+5Gf/HUmlVUUZOZbte/Xefcdyd2eJjwb7GOYwzbCqbDOFp
-        u3emrcIcxK2r4dEtCLvHkYxAVTnsGc0=
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 1574913416;
-        Thu,  8 Dec 2022 14:23:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id SgCvBH3zkWODbAAAMHmgww
-        (envelope-from <mhocko@suse.com>); Thu, 08 Dec 2022 14:23:57 +0000
-Date:   Thu, 8 Dec 2022 15:23:56 +0100
-From:   Michal Hocko <mhocko@suse.com>
-To:     =?utf-8?B?56iL5Z6y5rab?= Chengkaitao Cheng 
-        <chengkaitao@didiglobal.com>
-Cc:     chengkaitao <pilgrimtao@gmail.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
-        "shakeelb@google.com" <shakeelb@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
-        "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
-        "yuzhao@google.com" <yuzhao@google.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vasily.averin@linux.dev" <vasily.averin@linux.dev>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "surenb@google.com" <surenb@google.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "sujiaxun@uniontech.com" <sujiaxun@uniontech.com>,
-        "feng.tang@intel.com" <feng.tang@intel.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH v2] mm: memcontrol: protect the memory in cgroup from
- being oom killed
-Message-ID: <Y5HzfLB7lu4+BOu1@dhcp22.suse.cz>
-References: <Y5Gc0jiDlWlRlMYH@dhcp22.suse.cz>
- <3E260DAC-2E2F-48B7-98BB-036EF0A423DC@didiglobal.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id ED6E3B82437;
+        Thu,  8 Dec 2022 16:36:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9CE40C433D2;
+        Thu,  8 Dec 2022 16:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670517373;
+        bh=cTM7EXlrKYPyXUg9Ipbs5EUQ4K34enjX5X4s7Fr/Ihw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=MwZVojDbaBuC6mzyUu8ShNe4YcH2boyMOZqA35NVkbmWNI952TRte96PEx18HNOkU
+         HnWJESrkmMvdci+stbfEtHIr7o2BqlHN4NiouH1aMApg28s/GNwNvQ+fZa5vMvf/ri
+         2OKf0CWyB2isXyMWnYQLz1D/uTS8d5USG0RwwFIRdCrKV6EPdhRXJYCsoLgRjNv9x7
+         jmauUBpA+/7EJYxpwlGL7SzonZKCSSkibh3rUfYVuCjhYzbibrZijX9r3M+2cg1JPl
+         c1pMuMoB6nRotPTIqJfSr+fZYE55UWgws5kmanQdXturwM0BDnrV4KNIXg6dNGeFK4
+         fifj77wNkUH9w==
+Date:   Thu, 8 Dec 2022 08:36:13 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     djwong@kernel.org
+Cc:     aalbersh@redhat.com, abaci@linux.alibaba.com, dchinner@redhat.com,
+        guoxuenan@huawei.com, hch@lst.de, hsiangkao@linux.alibaba.com,
+        leo.lilong@huawei.com, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, lukas@herbolt.com, sandeen@redhat.com,
+        syzbot+912776840162c13db1a3@syzkaller.appspotmail.com,
+        yang.lee@linux.alibaba.com, yangx.jy@fujitsu.com
+Subject: [ANNOUNCE] xfs-linux: for-next updated to 52f31ed22821
+Message-ID: <167051717541.3814129.14692218228376897367.stg-ugh@magnolia>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <3E260DAC-2E2F-48B7-98BB-036EF0A423DC@didiglobal.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 08-12-22 14:07:06, 程垲涛 Chengkaitao Cheng wrote:
-> At 2022-12-08 16:14:10, "Michal Hocko" <mhocko@suse.com> wrote:
-> >On Thu 08-12-22 07:59:27, 程垲涛 Chengkaitao Cheng wrote:
-> >> At 2022-12-08 15:33:07, "Michal Hocko" <mhocko@suse.com> wrote:
-> >> >On Thu 08-12-22 11:46:44, chengkaitao wrote:
-> >> >> From: chengkaitao <pilgrimtao@gmail.com>
-> >> >> 
-> >> >> We created a new interface <memory.oom.protect> for memory, If there is
-> >> >> the OOM killer under parent memory cgroup, and the memory usage of a
-> >> >> child cgroup is within its effective oom.protect boundary, the cgroup's
-> >> >> tasks won't be OOM killed unless there is no unprotected tasks in other
-> >> >> children cgroups. It draws on the logic of <memory.min/low> in the
-> >> >> inheritance relationship.
-> >> >> 
-> >> >> It has the following advantages,
-> >> >> 1. We have the ability to protect more important processes, when there
-> >> >> is a memcg's OOM killer. The oom.protect only takes effect local memcg,
-> >> >> and does not affect the OOM killer of the host.
-> >> >> 2. Historically, we can often use oom_score_adj to control a group of
-> >> >> processes, It requires that all processes in the cgroup must have a
-> >> >> common parent processes, we have to set the common parent process's
-> >> >> oom_score_adj, before it forks all children processes. So that it is
-> >> >> very difficult to apply it in other situations. Now oom.protect has no
-> >> >> such restrictions, we can protect a cgroup of processes more easily. The
-> >> >> cgroup can keep some memory, even if the OOM killer has to be called.
-> >> >> 
-> >> >> Signed-off-by: chengkaitao <pilgrimtao@gmail.com>
-> >> >> ---
-> >> >> v2: Modify the formula of the process request memcg protection quota.
-> >> >
-> >> >The new formula doesn't really address concerns expressed previously.
-> >> >Please read my feedback carefully again and follow up with questions if
-> >> >something is not clear.
-> >> 
-> >> The previous discussion was quite scattered. Can you help me summarize
-> >> your concerns again?
-> >
-> >The most important part is http://lkml.kernel.org/r/Y4jFnY7kMdB8ReSW@dhcp22.suse.cz
-> >: Let me just emphasise that we are talking about fundamental disconnect.
-> >: Rss based accounting has been used for the OOM killer selection because
-> >: the memory gets unmapped and _potentially_ freed when the process goes
-> >: away. Memcg changes are bound to the object life time and as said in
-> >: many cases there is no direct relation with any process life time.
-> >
-> We need to discuss the relationship between memcg's mem and process's mem, 
-> 
-> task_usage = task_anon(rss_anon) + task_mapped_file(rss_file) 
-> 	 + task_mapped_share(rss_share) + task_pgtables + task_swapents
-> 
-> memcg_usage	= memcg_anon + memcg_file + memcg_pgtables + memcg_share
-> 	= all_task_anon + all_task_mapped_file + all_task_mapped_share 
-> 	 + all_task_pgtables + unmapped_file + unmapped_share
-> 	= all_task_usage + unmapped_file + unmapped_share - all_task_swapents
+Hi folks,
 
-You are missing all the kernel charged objects (aka __GFP_ACCOUNT
-allocations resp. SLAB_ACCOUNT for slab caches). Depending on the
-workload this can be really a very noticeable portion. So not this is
-not just about unmapped cache or shm.
+The for-next branch of the xfs-linux repository at:
 
-> >That is to the per-process discount based on rss or any per-process
-> >memory metrics.
-> >
-> >Another really important question is the actual configurability. The
-> >hierarchical protection has to be enforced and that means that same as
-> >memory reclaim protection it has to be enforced top-to-bottom in the
-> >cgroup hierarchy. That makes the oom protection rather non-trivial to
-> >configure without having a good picture of a larger part of the cgroup
-> >hierarchy as it cannot be tuned based on a reclaim feedback.
-> 
-> There is an essential difference between reclaim and oom killer.
+git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git
 
-oom killer is a memory reclaim of the last resort. So yes, there is some
-difference but fundamentally it is about releasing some memory. And long
-term we have learned that the more clever it tries to be the more likely
-corner cases can happen. It is simply impossible to know the best
-candidate so this is a just a best effort. We try to aim for
-predictability at least.
+has just been updated.
 
-> The reclaim 
-> cannot be directly perceived by users,
+Patches often get missed, so please check if your outstanding patches
+were in this update. If they have not been in this update, please
+resubmit them to linux-xfs@vger.kernel.org so they can be picked up in
+the next update.  This is it as far as the main XFS merge is concerned.
+There will be one more tag (and announcement) to add the fsdax
+corruption fixes, which I intend to push during the second week of the
+merge window.
 
-I very strongly disagree with this statement. First the direct reclaim is a
-direct source of latencies because the work is done on behalf of the
-allocating process. There are side effect possible as well because
-refaults have their cost as well.
+The new head of the for-next branch is commit:
 
-> so memcg need to count indicators 
-> similar to pgscan_(kswapd/direct). However, when the user process is killed 
-> by oom killer, users can clearly perceive and count (such as the number of 
-> restarts of a certain type of process). At the same time, the kernel also has 
-> memory.events to count some information about the oom killer, which can 
-> also be used for feedback adjustment.
+52f31ed22821 xfs: dquot shrinker doesn't check for XFS_DQFLAG_FREEING
 
-Yes we have those metrics already. I suspect I haven't made myself
-clear. I didn't say there are no measures to see how oom behaves. What
-I've said that I _suspect_ that oom protection would be really hard to
-configure correctly because unlike the memory reclaim which happens
-during the normal operation, oom is a relatively rare event and it is
-quite hard to use it for any feedback mechanisms. But I am really open
-to be convinced otherwise and this is in fact what I have been asking
-for since the beginning. I would love to see some examples on the
-reasonable configuration for a practical usecase. It is one thing to say
-that you can set the protection to a certain value and a different one
-to have a way to determine that value. See my point?
+61 new commits:
 
--- 
-Michal Hocko
-SUSE Labs
+Darrick J. Wong (44):
+[9a48b4a6fd51] xfs: fully initialize xfs_da_args in xchk_directory_blocks
+[be1317fdb8d4] xfs: don't track the AGFL buffer in the scrub AG context
+[3e59c0103e66] xfs: log the AGI/AGF buffers when rolling transactions during an AG repair
+[48ff40458f87] xfs: standardize GFP flags usage in online scrub
+[b255fab0f80c] xfs: make AGFL repair function avoid crosslinked blocks
+[a7a0f9a5503f] xfs: return EINTR when a fatal signal terminates scrub
+[0a713bd41ea2] xfs: fix return code when fatal signal encountered during dquot scrub
+[fcd2a43488d5] xfs: initialize the check_owner object fully
+[6bf2f8791597] xfs: don't retry repairs harder when EAGAIN is returned
+[306195f355bb] xfs: pivot online scrub away from kmem.[ch]
+[9e13975bb062] xfs: load rtbitmap and rtsummary extent mapping btrees at mount time
+[11f97e684583] xfs: skip fscounters comparisons when the scan is incomplete
+[93b0c58ed04b] xfs: don't return -EFSCORRUPTED from repair when resources cannot be grabbed
+[5f369dc5b4eb] xfs: make rtbitmap ILOCKing consistent when scanning the rt bitmap file
+[e74331d6fa2c] xfs: online checking of the free rt extent count
+[033985b6fe87] xfs: fix perag loop in xchk_bmap_check_rmaps
+[6a5777865eeb] xfs: teach scrub to check for adjacent bmaps when rmap larger than bmap
+[830ffa09fb13] xfs: block map scrub should handle incore delalloc reservations
+[f23c40443d1c] xfs: check quota files for unwritten extents
+[31785537010a] xfs: check that CoW fork extents are not shared
+[5eef46358fae] xfs: teach scrub to flag non-extents format cow forks
+[bd5ab5f98741] xfs: don't warn about files that are exactly s_maxbytes long
+[f36b954a1f1b] xfs: check inode core when scrubbing metadata files
+[823ca26a8f07] Merge tag 'scrub-fix-ag-header-handling-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
+[af1077fa87c3] Merge tag 'scrub-cleanup-malloc-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
+[3d8426b13bac] Merge tag 'scrub-fix-return-value-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
+[b76f593b33aa] Merge tag 'scrub-fix-rtmeta-ilocking-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
+[7aab8a05e7c7] Merge tag 'scrub-fscounters-enhancements-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
+[cc5f38fa12fc] Merge tag 'scrub-bmap-enhancements-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
+[7b082b5e8afa] Merge tag 'scrub-check-metadata-inode-records-6.2_2022-11-16' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeA
+[2653d53345bd] xfs: fix incorrect error-out in xfs_remove
+[7dd73802f97d] Merge tag 'xfs-iomap-stale-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/dgc/linux-xfs into xfs-6.2-mergeB
+[c2beff99eb03] xfs: add debug knob to slow down writeback for fun
+[254e3459285c] xfs: add debug knob to slow down write for fun
+[032e160305f6] xfs: invalidate block device page cache during unmount
+[fd5beaff250d] xfs: use memcpy, not strncpy, to format the attr prefix during listxattr
+[e5827a007aa4] xfs: shut up -Wuninitialized in xfsaild_push
+[4c6dbfd2756b] xfs: attach dquots to inode before reading data/cow fork mappings
+[cd14f15b0e64] Merge tag 'iomap-write-race-testing-6.2_2022-11-30' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeC
+[4b4d11bbeca4] Merge tag 'random-fixes-6.2_2022-11-30' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeC
+[9d720a5a658f] xfs: hoist refcount record merge predicates
+[b25d1984aa88] xfs: estimate post-merge refcounts correctly
+[948961964b24] Merge tag 'maxrefcount-fixes-6.2_2022-12-01' of git://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux into xfs-6.2-mergeD
+[ddfdd530e43f] xfs: invalidate xfs_bufs when allocating cow extents
+
+Dave Chinner (10):
+[118e021b4b66] xfs: write page faults in iomap are not buffered writes
+[198dd8aedee6] xfs: punching delalloc extents on write failure is racy
+[b71f889c18ad] xfs: use byte ranges for write cleanup ranges
+[9c7babf94a0d] xfs,iomap: move delalloc punching to iomap
+[f43dc4dc3eff] iomap: buffered write failure should not truncate the page cache
+[7348b322332d] xfs: xfs_bmap_punch_delalloc_range() should take a byte range
+[d7b64041164c] iomap: write iomap validity checks
+[304a68b9c63b] xfs: use iomap_valid method to detect stale cached iomaps
+[6e8af15ccdc4] xfs: drop write error injection is unfixable, remove it
+[52f31ed22821] xfs: dquot shrinker doesn't check for XFS_DQFLAG_FREEING
+
+Guo Xuenan (3):
+[1eb52a6a7198] xfs: wait iclog complete before tearing down AIL
+[575689fc0ffa] xfs: fix super block buf log item UAF during force shutdown
+[8c25febf2396] xfs: get rid of assert from xfs_btree_islastblock
+
+Long Li (2):
+[59f6ab40fd87] xfs: fix sb write verify for lazysbcount
+[28b4b0596343] xfs: fix incorrect i_nlink caused by inode racing
+
+Lukas Herbolt (1):
+[64c80dfd04d1] xfs: Print XFS UUID on mount and umount events.
+
+Yang Li (1):
+[1f5619ed8810] xfs: Remove duplicated include in xfs_iomap.c
+
+Code Diffstat:
+
+fs/iomap/buffered-io.c         | 254 ++++++++++++++++++++++++++++++++++++++++-
+fs/iomap/iter.c                |  19 ++-
+fs/xfs/libxfs/xfs_bmap.c       |   8 +-
+fs/xfs/libxfs/xfs_btree.h      |   1 -
+fs/xfs/libxfs/xfs_errortag.h   |  18 +--
+fs/xfs/libxfs/xfs_refcount.c   | 146 ++++++++++++++++++++---
+fs/xfs/libxfs/xfs_sb.c         |   4 +-
+fs/xfs/scrub/agheader.c        |  47 +++++---
+fs/xfs/scrub/agheader_repair.c |  81 ++++++++++---
+fs/xfs/scrub/attr.c            |  11 +-
+fs/xfs/scrub/bitmap.c          |  11 +-
+fs/xfs/scrub/bmap.c            | 147 +++++++++++++++++++-----
+fs/xfs/scrub/btree.c           |  14 ++-
+fs/xfs/scrub/common.c          |  48 +++++---
+fs/xfs/scrub/common.h          |   2 +-
+fs/xfs/scrub/dabtree.c         |   4 +-
+fs/xfs/scrub/dir.c             |  10 +-
+fs/xfs/scrub/fscounters.c      | 109 +++++++++++++++++-
+fs/xfs/scrub/inode.c           |   2 +-
+fs/xfs/scrub/quota.c           |   8 +-
+fs/xfs/scrub/refcount.c        |  12 +-
+fs/xfs/scrub/repair.c          |  51 ++++++---
+fs/xfs/scrub/scrub.c           |   6 +-
+fs/xfs/scrub/scrub.h           |  18 +--
+fs/xfs/scrub/symlink.c         |   2 +-
+fs/xfs/xfs_aops.c              |  32 +++---
+fs/xfs/xfs_bmap_util.c         |  10 +-
+fs/xfs/xfs_bmap_util.h         |   2 +-
+fs/xfs/xfs_buf.c               |   1 +
+fs/xfs/xfs_buf_item.c          |   2 +
+fs/xfs/xfs_error.c             |  46 ++++++--
+fs/xfs/xfs_error.h             |  13 +++
+fs/xfs/xfs_file.c              |   2 +-
+fs/xfs/xfs_fsmap.c             |   4 +-
+fs/xfs/xfs_icache.c            |   6 +
+fs/xfs/xfs_inode.c             |   2 +-
+fs/xfs/xfs_iomap.c             | 185 ++++++++++++++++++------------
+fs/xfs/xfs_iomap.h             |   6 +-
+fs/xfs/xfs_log.c               |  46 +++++---
+fs/xfs/xfs_mount.c             |  15 +++
+fs/xfs/xfs_pnfs.c              |   6 +-
+fs/xfs/xfs_qm.c                |  16 ++-
+fs/xfs/xfs_rtalloc.c           |  60 +++++++++-
+fs/xfs/xfs_super.c             |   2 +-
+fs/xfs/xfs_trace.c             |   2 +
+fs/xfs/xfs_trace.h             |  86 ++++++++++++++
+fs/xfs/xfs_trans_ail.c         |   4 +-
+fs/xfs/xfs_xattr.c             |   2 +-
+include/linux/iomap.h          |  47 ++++++--
+49 files changed, 1317 insertions(+), 313 deletions(-)
