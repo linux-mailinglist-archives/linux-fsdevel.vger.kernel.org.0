@@ -2,227 +2,419 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39DA0647D25
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Dec 2022 06:07:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2AF35647D63
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  9 Dec 2022 06:43:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229640AbiLIFHZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 9 Dec 2022 00:07:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43086 "EHLO
+        id S229790AbiLIFnU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 9 Dec 2022 00:43:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229460AbiLIFHX (ORCPT
+        with ESMTP id S229721AbiLIFnT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 9 Dec 2022 00:07:23 -0500
-Received: from mx6.didiglobal.com (mx6.didiglobal.com [111.202.70.123])
-        by lindbergh.monkeyblade.net (Postfix) with SMTP id 047056D7D1;
-        Thu,  8 Dec 2022 21:07:17 -0800 (PST)
-Received: from mail.didiglobal.com (unknown [10.79.65.15])
-        by mx6.didiglobal.com (Maildata Gateway V2.8) with ESMTPS id AD30211053B806;
-        Fri,  9 Dec 2022 13:07:15 +0800 (CST)
-Received: from ZJY03-ACTMBX-05.didichuxing.com (10.79.71.35) by
- ZJY02-ACTMBX-05.didichuxing.com (10.79.65.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.17; Fri, 9 Dec 2022 13:07:15 +0800
-Received: from ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769])
- by ZJY03-ACTMBX-05.didichuxing.com ([fe80::1dcd:f7bf:746e:c769%8]) with mapi
- id 15.01.2375.017; Fri, 9 Dec 2022 13:07:15 +0800
-X-MD-Sfrom: chengkaitao@didiglobal.com
-X-MD-SrcIP: 10.79.65.15
-From:   =?utf-8?B?56iL5Z6y5rabIENoZW5na2FpdGFvIENoZW5n?= 
-        <chengkaitao@didiglobal.com>
-To:     Michal Hocko <mhocko@suse.com>
-CC:     chengkaitao <pilgrimtao@gmail.com>,
-        "tj@kernel.org" <tj@kernel.org>,
-        "lizefan.x@bytedance.com" <lizefan.x@bytedance.com>,
-        "hannes@cmpxchg.org" <hannes@cmpxchg.org>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "roman.gushchin@linux.dev" <roman.gushchin@linux.dev>,
-        "shakeelb@google.com" <shakeelb@google.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "songmuchun@bytedance.com" <songmuchun@bytedance.com>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "zhengqi.arch@bytedance.com" <zhengqi.arch@bytedance.com>,
-        "ebiederm@xmission.com" <ebiederm@xmission.com>,
-        "Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
-        "chengzhihao1@huawei.com" <chengzhihao1@huawei.com>,
-        "haolee.swjtu@gmail.com" <haolee.swjtu@gmail.com>,
-        "yuzhao@google.com" <yuzhao@google.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "vasily.averin@linux.dev" <vasily.averin@linux.dev>,
-        "vbabka@suse.cz" <vbabka@suse.cz>,
-        "surenb@google.com" <surenb@google.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "mcgrof@kernel.org" <mcgrof@kernel.org>,
-        "sujiaxun@uniontech.com" <sujiaxun@uniontech.com>,
-        "feng.tang@intel.com" <feng.tang@intel.com>,
-        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>
-Subject: Re: [PATCH v2] mm: memcontrol: protect the memory in cgroup from
- being oom killed
-Thread-Topic: [PATCH v2] mm: memcontrol: protect the memory in cgroup from
- being oom killed
-Thread-Index: AQHZCrfAdhr5zYTMtke9YS08C4BFfq5jExWAgACNdAD//34EAIAA6LeA//9+mQCAAXznAA==
-Date:   Fri, 9 Dec 2022 05:07:15 +0000
-Message-ID: <114DF8F0-3E68-4F2B-8E35-0943EC2F51AE@didiglobal.com>
-In-Reply-To: <Y5HzfLB7lu4+BOu1@dhcp22.suse.cz>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.79.64.101]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <DA91DED913509948B405E42D422872D4@didichuxing.com>
-Content-Transfer-Encoding: base64
+        Fri, 9 Dec 2022 00:43:19 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62D591F9DB;
+        Thu,  8 Dec 2022 21:43:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1670564597; x=1702100597;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=EdQ4WJbI5oovMOy+rCCworAEuapbWvvmXW9eI2B37YI=;
+  b=WqesXYA3Q7+70pyzTQVfqTRcJEQkoxz2Z0r2CIoAiXbLiyXCs98wRd/g
+   uOWosZb1ietkztbt6Ki719dnS/m7GR3rx+1n6x/yz3IjP/HXHLHkKNcyx
+   S9ThPhoji/u+G/hAMO6oafpZs2HtQwHrWcnDeLA5kNP3gEnL4Gv4NeaJG
+   +hZVe9MreXhlK7803QXt0CizyEfd1pbbHL8PYbDwMe9qaBZxtNJl3tR9E
+   ZpPtxnpRYTlAAWkSQnyXkAAULuPmkMASx2aRFcxHs4stKb7QMsh2QQAkc
+   8+FGFPWeK+cH2fq0HKDW0HutBBBQrORITaI+CevP35za5gZ46JPGyKK6Q
+   g==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10555"; a="317412085"
+X-IronPort-AV: E=Sophos;i="5.96,230,1665471600"; 
+   d="scan'208";a="317412085"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2022 21:43:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10555"; a="710769820"
+X-IronPort-AV: E=Sophos;i="5.96,230,1665471600"; 
+   d="scan'208";a="710769820"
+Received: from yy-desk-7060.sh.intel.com (HELO localhost) ([10.239.159.76])
+  by fmsmga008.fm.intel.com with ESMTP; 08 Dec 2022 21:43:06 -0800
+Date:   Fri, 9 Dec 2022 13:43:05 +0800
+From:   Yuan Yao <yuan.yao@linux.intel.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v10 6/9] KVM: Unmap existing mappings when change the
+ memory attributes
+Message-ID: <20221209054305.e3hlnfh7ptxtkoek@yy-desk-7060>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-7-chao.p.peng@linux.intel.com>
+ <20221207081314.hfyavisybcraezrh@yy-desk-7060>
+ <20221208112043.GC1304936@chaop.bj.intel.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221208112043.GC1304936@chaop.bj.intel.com>
+User-Agent: NeoMutt/20171215
+X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-QXQgMjAyMi0xMi0wOCAyMjoyMzo1NiwgIk1pY2hhbCBIb2NrbyIgPG1ob2Nrb0BzdXNlLmNvbT4g
-d3JvdGU6DQo+T24gVGh1IDA4LTEyLTIyIDE0OjA3OjA2LCDnqIvlnrLmtpsgQ2hlbmdrYWl0YW8g
-Q2hlbmcgd3JvdGU6DQo+PiBBdCAyMDIyLTEyLTA4IDE2OjE0OjEwLCAiTWljaGFsIEhvY2tvIiA8
-bWhvY2tvQHN1c2UuY29tPiB3cm90ZToNCj4+ID5PbiBUaHUgMDgtMTItMjIgMDc6NTk6MjcsIOeo
-i+Wesua2myBDaGVuZ2thaXRhbyBDaGVuZyB3cm90ZToNCj4+ID4+IEF0IDIwMjItMTItMDggMTU6
-MzM6MDcsICJNaWNoYWwgSG9ja28iIDxtaG9ja29Ac3VzZS5jb20+IHdyb3RlOg0KPj4gPj4gPk9u
-IFRodSAwOC0xMi0yMiAxMTo0Njo0NCwgY2hlbmdrYWl0YW8gd3JvdGU6DQo+PiA+PiA+PiBGcm9t
-OiBjaGVuZ2thaXRhbyA8cGlsZ3JpbXRhb0BnbWFpbC5jb20+DQo+PiA+PiA+PiANCj4+ID4+ID4+
-IFdlIGNyZWF0ZWQgYSBuZXcgaW50ZXJmYWNlIDxtZW1vcnkub29tLnByb3RlY3Q+IGZvciBtZW1v
-cnksIElmIHRoZXJlIGlzDQo+PiA+PiA+PiB0aGUgT09NIGtpbGxlciB1bmRlciBwYXJlbnQgbWVt
-b3J5IGNncm91cCwgYW5kIHRoZSBtZW1vcnkgdXNhZ2Ugb2YgYQ0KPj4gPj4gPj4gY2hpbGQgY2dy
-b3VwIGlzIHdpdGhpbiBpdHMgZWZmZWN0aXZlIG9vbS5wcm90ZWN0IGJvdW5kYXJ5LCB0aGUgY2dy
-b3VwJ3MNCj4+ID4+ID4+IHRhc2tzIHdvbid0IGJlIE9PTSBraWxsZWQgdW5sZXNzIHRoZXJlIGlz
-IG5vIHVucHJvdGVjdGVkIHRhc2tzIGluIG90aGVyDQo+PiA+PiA+PiBjaGlsZHJlbiBjZ3JvdXBz
-LiBJdCBkcmF3cyBvbiB0aGUgbG9naWMgb2YgPG1lbW9yeS5taW4vbG93PiBpbiB0aGUNCj4+ID4+
-ID4+IGluaGVyaXRhbmNlIHJlbGF0aW9uc2hpcC4NCj4+ID4+ID4+IA0KPj4gPj4gPj4gSXQgaGFz
-IHRoZSBmb2xsb3dpbmcgYWR2YW50YWdlcywNCj4+ID4+ID4+IDEuIFdlIGhhdmUgdGhlIGFiaWxp
-dHkgdG8gcHJvdGVjdCBtb3JlIGltcG9ydGFudCBwcm9jZXNzZXMsIHdoZW4gdGhlcmUNCj4+ID4+
-ID4+IGlzIGEgbWVtY2cncyBPT00ga2lsbGVyLiBUaGUgb29tLnByb3RlY3Qgb25seSB0YWtlcyBl
-ZmZlY3QgbG9jYWwgbWVtY2csDQo+PiA+PiA+PiBhbmQgZG9lcyBub3QgYWZmZWN0IHRoZSBPT00g
-a2lsbGVyIG9mIHRoZSBob3N0Lg0KPj4gPj4gPj4gMi4gSGlzdG9yaWNhbGx5LCB3ZSBjYW4gb2Z0
-ZW4gdXNlIG9vbV9zY29yZV9hZGogdG8gY29udHJvbCBhIGdyb3VwIG9mDQo+PiA+PiA+PiBwcm9j
-ZXNzZXMsIEl0IHJlcXVpcmVzIHRoYXQgYWxsIHByb2Nlc3NlcyBpbiB0aGUgY2dyb3VwIG11c3Qg
-aGF2ZSBhDQo+PiA+PiA+PiBjb21tb24gcGFyZW50IHByb2Nlc3Nlcywgd2UgaGF2ZSB0byBzZXQg
-dGhlIGNvbW1vbiBwYXJlbnQgcHJvY2VzcydzDQo+PiA+PiA+PiBvb21fc2NvcmVfYWRqLCBiZWZv
-cmUgaXQgZm9ya3MgYWxsIGNoaWxkcmVuIHByb2Nlc3Nlcy4gU28gdGhhdCBpdCBpcw0KPj4gPj4g
-Pj4gdmVyeSBkaWZmaWN1bHQgdG8gYXBwbHkgaXQgaW4gb3RoZXIgc2l0dWF0aW9ucy4gTm93IG9v
-bS5wcm90ZWN0IGhhcyBubw0KPj4gPj4gPj4gc3VjaCByZXN0cmljdGlvbnMsIHdlIGNhbiBwcm90
-ZWN0IGEgY2dyb3VwIG9mIHByb2Nlc3NlcyBtb3JlIGVhc2lseS4gVGhlDQo+PiA+PiA+PiBjZ3Jv
-dXAgY2FuIGtlZXAgc29tZSBtZW1vcnksIGV2ZW4gaWYgdGhlIE9PTSBraWxsZXIgaGFzIHRvIGJl
-IGNhbGxlZC4NCj4+ID4+ID4+IA0KPj4gPj4gPj4gU2lnbmVkLW9mZi1ieTogY2hlbmdrYWl0YW8g
-PHBpbGdyaW10YW9AZ21haWwuY29tPg0KPj4gPj4gPj4gLS0tDQo+PiA+PiA+PiB2MjogTW9kaWZ5
-IHRoZSBmb3JtdWxhIG9mIHRoZSBwcm9jZXNzIHJlcXVlc3QgbWVtY2cgcHJvdGVjdGlvbiBxdW90
-YS4NCj4+ID4+ID4NCj4+ID4+ID5UaGUgbmV3IGZvcm11bGEgZG9lc24ndCByZWFsbHkgYWRkcmVz
-cyBjb25jZXJucyBleHByZXNzZWQgcHJldmlvdXNseS4NCj4+ID4+ID5QbGVhc2UgcmVhZCBteSBm
-ZWVkYmFjayBjYXJlZnVsbHkgYWdhaW4gYW5kIGZvbGxvdyB1cCB3aXRoIHF1ZXN0aW9ucyBpZg0K
-Pj4gPj4gPnNvbWV0aGluZyBpcyBub3QgY2xlYXIuDQo+PiA+PiANCj4+ID4+IFRoZSBwcmV2aW91
-cyBkaXNjdXNzaW9uIHdhcyBxdWl0ZSBzY2F0dGVyZWQuIENhbiB5b3UgaGVscCBtZSBzdW1tYXJp
-emUNCj4+ID4+IHlvdXIgY29uY2VybnMgYWdhaW4/DQo+PiA+DQo+PiA+VGhlIG1vc3QgaW1wb3J0
-YW50IHBhcnQgaXMgaHR0cDovL2xrbWwua2VybmVsLm9yZy9yL1k0akZuWTdrTWRCOFJlU1dAZGhj
-cDIyLnN1c2UuY3oNCj4+ID46IExldCBtZSBqdXN0IGVtcGhhc2lzZSB0aGF0IHdlIGFyZSB0YWxr
-aW5nIGFib3V0IGZ1bmRhbWVudGFsIGRpc2Nvbm5lY3QuDQo+PiA+OiBSc3MgYmFzZWQgYWNjb3Vu
-dGluZyBoYXMgYmVlbiB1c2VkIGZvciB0aGUgT09NIGtpbGxlciBzZWxlY3Rpb24gYmVjYXVzZQ0K
-Pj4gPjogdGhlIG1lbW9yeSBnZXRzIHVubWFwcGVkIGFuZCBfcG90ZW50aWFsbHlfIGZyZWVkIHdo
-ZW4gdGhlIHByb2Nlc3MgZ29lcw0KPj4gPjogYXdheS4gTWVtY2cgY2hhbmdlcyBhcmUgYm91bmQg
-dG8gdGhlIG9iamVjdCBsaWZlIHRpbWUgYW5kIGFzIHNhaWQgaW4NCj4+ID46IG1hbnkgY2FzZXMg
-dGhlcmUgaXMgbm8gZGlyZWN0IHJlbGF0aW9uIHdpdGggYW55IHByb2Nlc3MgbGlmZSB0aW1lLg0K
-Pj4gPg0KPj4gV2UgbmVlZCB0byBkaXNjdXNzIHRoZSByZWxhdGlvbnNoaXAgYmV0d2VlbiBtZW1j
-ZydzIG1lbSBhbmQgcHJvY2VzcydzIG1lbSwgDQo+PiANCj4+IHRhc2tfdXNhZ2UgPSB0YXNrX2Fu
-b24ocnNzX2Fub24pICsgdGFza19tYXBwZWRfZmlsZShyc3NfZmlsZSkgDQo+PiAJICsgdGFza19t
-YXBwZWRfc2hhcmUocnNzX3NoYXJlKSArIHRhc2tfcGd0YWJsZXMgKyB0YXNrX3N3YXBlbnRzDQo+
-PiANCj4+IG1lbWNnX3VzYWdlCT0gbWVtY2dfYW5vbiArIG1lbWNnX2ZpbGUgKyBtZW1jZ19wZ3Rh
-YmxlcyArIG1lbWNnX3NoYXJlDQo+PiAJPSBhbGxfdGFza19hbm9uICsgYWxsX3Rhc2tfbWFwcGVk
-X2ZpbGUgKyBhbGxfdGFza19tYXBwZWRfc2hhcmUgDQo+PiAJICsgYWxsX3Rhc2tfcGd0YWJsZXMg
-KyB1bm1hcHBlZF9maWxlICsgdW5tYXBwZWRfc2hhcmUNCj4+IAk9IGFsbF90YXNrX3VzYWdlICsg
-dW5tYXBwZWRfZmlsZSArIHVubWFwcGVkX3NoYXJlIC0gYWxsX3Rhc2tfc3dhcGVudHMNCj4NCj5Z
-b3UgYXJlIG1pc3NpbmcgYWxsIHRoZSBrZXJuZWwgY2hhcmdlZCBvYmplY3RzIChha2EgX19HRlBf
-QUNDT1VOVA0KPmFsbG9jYXRpb25zIHJlc3AuIFNMQUJfQUNDT1VOVCBmb3Igc2xhYiBjYWNoZXMp
-LiBEZXBlbmRpbmcgb24gdGhlDQo+d29ya2xvYWQgdGhpcyBjYW4gYmUgcmVhbGx5IGEgdmVyeSBu
-b3RpY2VhYmxlIHBvcnRpb24uIFNvIG5vdCB0aGlzIGlzDQo+bm90IGp1c3QgYWJvdXQgdW5tYXBw
-ZWQgY2FjaGUgb3Igc2htLg0KPg0KS21lbSBpcyBpbmRlZWQgbWlzc2luZyBoZXJlLCB0aGFua3Mg
-Zm9yIHJlbWluZGluZy4gYnV0IHRoZSBwYXRjaCBpcyBhbHNvIGFwcGxpY2FibGUgDQp3aGVuIGtt
-ZW0gaXMgYWRkZWQuDQoNCj4+ID5UaGF0IGlzIHRvIHRoZSBwZXItcHJvY2VzcyBkaXNjb3VudCBi
-YXNlZCBvbiByc3Mgb3IgYW55IHBlci1wcm9jZXNzDQo+PiA+bWVtb3J5IG1ldHJpY3MuDQo+PiA+
-DQo+PiA+QW5vdGhlciByZWFsbHkgaW1wb3J0YW50IHF1ZXN0aW9uIGlzIHRoZSBhY3R1YWwgY29u
-ZmlndXJhYmlsaXR5LiBUaGUNCj4+ID5oaWVyYXJjaGljYWwgcHJvdGVjdGlvbiBoYXMgdG8gYmUg
-ZW5mb3JjZWQgYW5kIHRoYXQgbWVhbnMgdGhhdCBzYW1lIGFzDQo+PiA+bWVtb3J5IHJlY2xhaW0g
-cHJvdGVjdGlvbiBpdCBoYXMgdG8gYmUgZW5mb3JjZWQgdG9wLXRvLWJvdHRvbSBpbiB0aGUNCj4+
-ID5jZ3JvdXAgaGllcmFyY2h5LiBUaGF0IG1ha2VzIHRoZSBvb20gcHJvdGVjdGlvbiByYXRoZXIg
-bm9uLXRyaXZpYWwgdG8NCj4+ID5jb25maWd1cmUgd2l0aG91dCBoYXZpbmcgYSBnb29kIHBpY3R1
-cmUgb2YgYSBsYXJnZXIgcGFydCBvZiB0aGUgY2dyb3VwDQo+PiA+aGllcmFyY2h5IGFzIGl0IGNh
-bm5vdCBiZSB0dW5lZCBiYXNlZCBvbiBhIHJlY2xhaW0gZmVlZGJhY2suDQo+PiANCj4+IFRoZXJl
-IGlzIGFuIGVzc2VudGlhbCBkaWZmZXJlbmNlIGJldHdlZW4gcmVjbGFpbSBhbmQgb29tIGtpbGxl
-ci4NCj4NCj5vb20ga2lsbGVyIGlzIGEgbWVtb3J5IHJlY2xhaW0gb2YgdGhlIGxhc3QgcmVzb3J0
-LiBTbyB5ZXMsIHRoZXJlIGlzIHNvbWUNCj5kaWZmZXJlbmNlIGJ1dCBmdW5kYW1lbnRhbGx5IGl0
-IGlzIGFib3V0IHJlbGVhc2luZyBzb21lIG1lbW9yeS4gQW5kIGxvbmcNCj50ZXJtIHdlIGhhdmUg
-bGVhcm5lZCB0aGF0IHRoZSBtb3JlIGNsZXZlciBpdCB0cmllcyB0byBiZSB0aGUgbW9yZSBsaWtl
-bHkNCj5jb3JuZXIgY2FzZXMgY2FuIGhhcHBlbi4gSXQgaXMgc2ltcGx5IGltcG9zc2libGUgdG8g
-a25vdyB0aGUgYmVzdA0KPmNhbmRpZGF0ZSBzbyB0aGlzIGlzIGEganVzdCBhIGJlc3QgZWZmb3J0
-LiBXZSB0cnkgdG8gYWltIGZvcg0KPnByZWRpY3RhYmlsaXR5IGF0IGxlYXN0Lg0KDQpJcyB0aGUg
-Y3VycmVudCBvb21fc2NvcmUgc3RyYXRlZ3kgcHJlZGljdGFibGU/IEkgZG9uJ3QgdGhpbmsgc28u
-IFRoZSBzY29yZV9hZGogDQpoYXMgYnJva2VuIHRoZSBwcmVkaWN0YWJpbGl0eSBvZiBvb21fc2Nv
-cmUgKGl0IGlzIG5vIGxvbmdlciBzaW1wbHkga2lsbGluZyB0aGUgDQpwcm9jZXNzIHRoYXQgdXNl
-cyB0aGUgbW9zdCBtZW1zKS4gQW5kIEkgdGhpbmsgdGhhdCBzY29yZV9hZGogYW5kIG9vbS5wcm90
-ZWN0IA0KYXJlIG5vdCBmb3IgdGhlIGtlcm5lbCB0byBjaG9vc2UgdGhlIGJlc3QgY2FuZGlkYXRl
-LCBidXQgZm9yIHRoZSB1c2VyIHRvIGNob29zZSANCnRoZSBjYW5kaWRhdGUgbW9yZSBjb252ZW5p
-ZW50bHkuIElmIHRoZSB1c2VyIGRvZXMgbm90IGNvbmZpZ3VyZSB0aGUgc2NvcmVfYWRqIA0KYW5k
-IG9vbS5wcm90ZWN0LCB0aGUga2VybmVsIHdpbGwgZm9sbG93IHRoZSBzaW1wbGVzdCBhbmQgbW9z
-dCBkaXJlY3QgbG9naWMgKGtpbGxpbmcgDQp0aGUgcHJvY2VzcyB0aGF0IHVzZXMgdGhlIG1vc3Qg
-bWVtcykuDQoNCj4NCj4+IFRoZSByZWNsYWltIA0KPj4gY2Fubm90IGJlIGRpcmVjdGx5IHBlcmNl
-aXZlZCBieSB1c2VycywNCj4NCj5JIHZlcnkgc3Ryb25nbHkgZGlzYWdyZWUgd2l0aCB0aGlzIHN0
-YXRlbWVudC4gRmlyc3QgdGhlIGRpcmVjdCByZWNsYWltIGlzIGENCj5kaXJlY3Qgc291cmNlIG9m
-IGxhdGVuY2llcyBiZWNhdXNlIHRoZSB3b3JrIGlzIGRvbmUgb24gYmVoYWxmIG9mIHRoZQ0KPmFs
-bG9jYXRpbmcgcHJvY2Vzcy4gVGhlcmUgYXJlIHNpZGUgZWZmZWN0IHBvc3NpYmxlIGFzIHdlbGwg
-YmVjYXVzZQ0KPnJlZmF1bHRzIGhhdmUgdGhlaXIgY29zdCBhcyB3ZWxsLg0KDQpUaGUgImRpcmVj
-dCBwZXJjZXB0aW9uIiBoZXJlIGRvZXMgbm90IG1lYW4gdGhhdCByZWNsYWltIHdpbGwgbm90IGFm
-ZmVjdCB0aGUgDQpwZXJmb3JtYW5jZSBvZiB1c2VyIHByb2Nlc3NlcywgYnV0IGVtcGhhc2l6ZXMg
-dGhhdCB1c2VycyBjYW5ub3QgbWFrZSANCmZlZWRiYWNrIGFkanVzdG1lbnRzIGJhc2VkIG9uIHRo
-ZWlyIG93biBzdGF0ZSBhbmQgbXVzdCByZWx5IG9uIHRoZSBoZWxwIA0Kb2Yga2VybmVsIGluZGlj
-YXRvcnMuDQo+DQo+PiBzbyBtZW1jZyBuZWVkIHRvIGNvdW50IGluZGljYXRvcnMgDQo+PiBzaW1p
-bGFyIHRvIHBnc2Nhbl8oa3N3YXBkL2RpcmVjdCkuIEhvd2V2ZXIsIHdoZW4gdGhlIHVzZXIgcHJv
-Y2VzcyBpcyBraWxsZWQgDQo+PiBieSBvb20ga2lsbGVyLCB1c2VycyBjYW4gY2xlYXJseSBwZXJj
-ZWl2ZSBhbmQgY291bnQgKHN1Y2ggYXMgdGhlIG51bWJlciBvZiANCj4+IHJlc3RhcnRzIG9mIGEg
-Y2VydGFpbiB0eXBlIG9mIHByb2Nlc3MpLiBBdCB0aGUgc2FtZSB0aW1lLCB0aGUga2VybmVsIGFs
-c28gaGFzIA0KPj4gbWVtb3J5LmV2ZW50cyB0byBjb3VudCBzb21lIGluZm9ybWF0aW9uIGFib3V0
-IHRoZSBvb20ga2lsbGVyLCB3aGljaCBjYW4gDQo+PiBhbHNvIGJlIHVzZWQgZm9yIGZlZWRiYWNr
-IGFkanVzdG1lbnQuDQo+DQo+WWVzIHdlIGhhdmUgdGhvc2UgbWV0cmljcyBhbHJlYWR5LiBJIHN1
-c3BlY3QgSSBoYXZlbid0IG1hZGUgbXlzZWxmDQo+Y2xlYXIuIEkgZGlkbid0IHNheSB0aGVyZSBh
-cmUgbm8gbWVhc3VyZXMgdG8gc2VlIGhvdyBvb20gYmVoYXZlcy4gV2hhdA0KPkkndmUgc2FpZCB0
-aGF0IEkgX3N1c3BlY3RfIHRoYXQgb29tIHByb3RlY3Rpb24gd291bGQgYmUgcmVhbGx5IGhhcmQg
-dG8NCj5jb25maWd1cmUgY29ycmVjdGx5IGJlY2F1c2UgdW5saWtlIHRoZSBtZW1vcnkgcmVjbGFp
-bSB3aGljaCBoYXBwZW5zDQo+ZHVyaW5nIHRoZSBub3JtYWwgb3BlcmF0aW9uLCBvb20gaXMgYSBy
-ZWxhdGl2ZWx5IHJhcmUgZXZlbnQgYW5kIGl0IGlzDQo+cXVpdGUgaGFyZCB0byB1c2UgaXQgZm9y
-IGFueSBmZWVkYmFjayBtZWNoYW5pc21zLiANCg0KV2UgZGlzY3Vzc2VkIHNpbWlsYXIgY2FzZXMs
-DQpodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1tbS9FRjFEQzAzNS00NDJGLTRCQUUtQjg2
-Ri02QzZCMTBCNEEwOTRAZGlkaWdsb2JhbC5jb20vDQoqIE1vcmUgYW5kIG1vcmUgdXNlcnMgd2Fu
-dCB0byBzYXZlIGNvc3RzIGFzIG11Y2ggYXMgcG9zc2libGUgYnkgc2V0dGluZyB0aGUgDQoqIG1l
-bS5tYXggdG8gYSB2ZXJ5IHNtYWxsIHZhbHVlLCByZXN1bHRpbmcgaW4gYSBzbWFsbCBudW1iZXIg
-b2Ygb29tIGV2ZW50cywgDQoqIGJ1dCB1c2VycyBjYW4gdG9sZXJhdGUgdGhlbSwgYW5kIHVzZXJz
-IHdhbnQgdG8gbWluaW1pemUgdGhlIGltcGFjdCBvZiBvb20gDQoqIGV2ZW50cyBhdCB0aGlzIHRp
-bWUuIEluIHNpbWlsYXIgc2NlbmFyaW9zLCBvb20gZXZlbnRzIGFyZSBubyBsb25nZXIgYWJub3Jt
-YWwgDQoqIGFuZCB1bnByZWRpY3RhYmxlLiBXZSBuZWVkIHRvIHByb3ZpZGUgY29udmVuaWVudCBv
-b20gcG9saWNpZXMgZm9yIHVzZXJzIHRvIA0KKiBjaG9vc2UuDQoNCj4gQnV0IEkgYW0gcmVhbGx5
-IG9wZW4NCj50byBiZSBjb252aW5jZWQgb3RoZXJ3aXNlIGFuZCB0aGlzIGlzIGluIGZhY3Qgd2hh
-dCBJIGhhdmUgYmVlbiBhc2tpbmcNCj5mb3Igc2luY2UgdGhlIGJlZ2lubmluZy4gSSB3b3VsZCBs
-b3ZlIHRvIHNlZSBzb21lIGV4YW1wbGVzIG9uIHRoZQ0KPnJlYXNvbmFibGUgY29uZmlndXJhdGlv
-biBmb3IgYSBwcmFjdGljYWwgdXNlY2FzZS4NCg0KSGVyZSBpcyBhIHNpbXBsZSBleGFtcGxlLiBJ
-biBhIGRvY2tlciBjb250YWluZXIsIHVzZXJzIGNhbiBkaXZpZGUgYWxsIHByb2Nlc3NlcyANCmlu
-dG8gdHdvIGNhdGVnb3JpZXMgKGltcG9ydGFudCBhbmQgbm9ybWFsKSwgYW5kIHB1dCB0aGVtIGlu
-IGRpZmZlcmVudCBjZ3JvdXBzLiANCk9uZSBjZ3JvdXAncyBvb20ucHJvdGVjdCBpcyBzZXQgdG8g
-Im1heCIsIHRoZSBvdGhlciBpcyBzZXQgdG8gIjAiLiBJbiB0aGlzIHdheSwgDQppbXBvcnRhbnQg
-cHJvY2Vzc2VzIGluIHRoZSBjb250YWluZXIgY2FuIGJlIHByb3RlY3RlZC4NCg0KPiBJdCBpcyBv
-bmUgdGhpbmcgdG8gc2F5DQo+dGhhdCB5b3UgY2FuIHNldCB0aGUgcHJvdGVjdGlvbiB0byBhIGNl
-cnRhaW4gdmFsdWUgYW5kIGEgZGlmZmVyZW50IG9uZQ0KPnRvIGhhdmUgYSB3YXkgdG8gZGV0ZXJt
-aW5lIHRoYXQgdmFsdWUuIFNlZSBteSBwb2ludD8NCg0KQWNjb3JkaW5nIHRvIHRoZSBjdXJyZW50
-IHNpdHVhdGlvbiwgaWYgdGhlIHNjb3JlX2FkaiBpcyBzZXQsIHRoZSBvbmx5IHdheSBmb3IgDQp0
-aGUga2VybmVsIHRvIGRldGVybWluZSB0aGUgdmFsdWUgaXMgImNhdCAvcHJvYy9waWQvb29tX2Nv
-cmUiLiBJbiB0aGUgDQpvb20ucHJvdGVjdCBzY2hlbWUsIEkgYWxzbyBwcm9wb3NlIHRvIGNoYW5n
-ZSAiL3Byb2MvcGlkL29vbV9jb3JlIi4gDQpQbGVhc2UgcmVmZXIgdG8gdGhlIGxpbmssDQpodHRw
-czovL2xvcmUua2VybmVsLm9yZy9saW51eC1tbS9DMkNDMzZDMS0yOUFFLTRCNjUtQTE4QS0xOUE3
-NDU2NTIxODJAZGlkaWdsb2JhbC5jb20vDQoNCj4NCj4tLSANCj5NaWNoYWwgSG9ja28NCj5TVVNF
-IExhYnMNCg0K
+On Thu, Dec 08, 2022 at 07:20:43PM +0800, Chao Peng wrote:
+> On Wed, Dec 07, 2022 at 04:13:14PM +0800, Yuan Yao wrote:
+> > On Fri, Dec 02, 2022 at 02:13:44PM +0800, Chao Peng wrote:
+> > > Unmap the existing guest mappings when memory attribute is changed
+> > > between shared and private. This is needed because shared pages and
+> > > private pages are from different backends, unmapping existing ones
+> > > gives a chance for page fault handler to re-populate the mappings
+> > > according to the new attribute.
+> > >
+> > > Only architecture has private memory support needs this and the
+> > > supported architecture is expected to rewrite the weak
+> > > kvm_arch_has_private_mem().
+> > >
+> > > Also, during memory attribute changing and the unmapping time frame,
+> > > page fault handler may happen in the same memory range and can cause
+> > > incorrect page state, invoke kvm_mmu_invalidate_* helpers to let the
+> > > page fault handler retry during this time frame.
+> > >
+> > > Signed-off-by: Chao Peng <chao.p.peng@linux.intel.com>
+> > > ---
+> > >  include/linux/kvm_host.h |   7 +-
+> > >  virt/kvm/kvm_main.c      | 168 ++++++++++++++++++++++++++-------------
+> > >  2 files changed, 116 insertions(+), 59 deletions(-)
+> > >
+> > > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+> > > index 3d69484d2704..3331c0c92838 100644
+> > > --- a/include/linux/kvm_host.h
+> > > +++ b/include/linux/kvm_host.h
+> > > @@ -255,7 +255,6 @@ bool kvm_setup_async_pf(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa,
+> > >  int kvm_async_pf_wakeup_all(struct kvm_vcpu *vcpu);
+> > >  #endif
+> > >
+> > > -#ifdef KVM_ARCH_WANT_MMU_NOTIFIER
+> > >  struct kvm_gfn_range {
+> > >  	struct kvm_memory_slot *slot;
+> > >  	gfn_t start;
+> > > @@ -264,6 +263,8 @@ struct kvm_gfn_range {
+> > >  	bool may_block;
+> > >  };
+> > >  bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range);
+> > > +
+> > > +#ifdef KVM_ARCH_WANT_MMU_NOTIFIER
+> > >  bool kvm_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range);
+> > >  bool kvm_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range);
+> > >  bool kvm_set_spte_gfn(struct kvm *kvm, struct kvm_gfn_range *range);
+> > > @@ -785,11 +786,12 @@ struct kvm {
+> > >
+> > >  #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
+> > >  	struct mmu_notifier mmu_notifier;
+> > > +#endif
+> > >  	unsigned long mmu_invalidate_seq;
+> > >  	long mmu_invalidate_in_progress;
+> > >  	gfn_t mmu_invalidate_range_start;
+> > >  	gfn_t mmu_invalidate_range_end;
+> > > -#endif
+> > > +
+> > >  	struct list_head devices;
+> > >  	u64 manual_dirty_log_protect;
+> > >  	struct dentry *debugfs_dentry;
+> > > @@ -1480,6 +1482,7 @@ bool kvm_arch_dy_has_pending_interrupt(struct kvm_vcpu *vcpu);
+> > >  int kvm_arch_post_init_vm(struct kvm *kvm);
+> > >  void kvm_arch_pre_destroy_vm(struct kvm *kvm);
+> > >  int kvm_arch_create_vm_debugfs(struct kvm *kvm);
+> > > +bool kvm_arch_has_private_mem(struct kvm *kvm);
+> > >
+> > >  #ifndef __KVM_HAVE_ARCH_VM_ALLOC
+> > >  /*
+> > > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+> > > index ad55dfbc75d7..4e1e1e113bf0 100644
+> > > --- a/virt/kvm/kvm_main.c
+> > > +++ b/virt/kvm/kvm_main.c
+> > > @@ -520,6 +520,62 @@ void kvm_destroy_vcpus(struct kvm *kvm)
+> > >  }
+> > >  EXPORT_SYMBOL_GPL(kvm_destroy_vcpus);
+> > >
+> > > +void kvm_mmu_invalidate_begin(struct kvm *kvm)
+> > > +{
+> > > +	/*
+> > > +	 * The count increase must become visible at unlock time as no
+> > > +	 * spte can be established without taking the mmu_lock and
+> > > +	 * count is also read inside the mmu_lock critical section.
+> > > +	 */
+> > > +	kvm->mmu_invalidate_in_progress++;
+> > > +
+> > > +	if (likely(kvm->mmu_invalidate_in_progress == 1)) {
+> > > +		kvm->mmu_invalidate_range_start = INVALID_GPA;
+> > > +		kvm->mmu_invalidate_range_end = INVALID_GPA;
+> > > +	}
+> > > +}
+> > > +
+> > > +void kvm_mmu_invalidate_range_add(struct kvm *kvm, gfn_t start, gfn_t end)
+> > > +{
+> > > +	WARN_ON_ONCE(!kvm->mmu_invalidate_in_progress);
+> > > +
+> > > +	if (likely(kvm->mmu_invalidate_in_progress == 1)) {
+> > > +		kvm->mmu_invalidate_range_start = start;
+> > > +		kvm->mmu_invalidate_range_end = end;
+> > > +	} else {
+> > > +		/*
+> > > +		 * Fully tracking multiple concurrent ranges has diminishing
+> > > +		 * returns. Keep things simple and just find the minimal range
+> > > +		 * which includes the current and new ranges. As there won't be
+> > > +		 * enough information to subtract a range after its invalidate
+> > > +		 * completes, any ranges invalidated concurrently will
+> > > +		 * accumulate and persist until all outstanding invalidates
+> > > +		 * complete.
+> > > +		 */
+> > > +		kvm->mmu_invalidate_range_start =
+> > > +			min(kvm->mmu_invalidate_range_start, start);
+> > > +		kvm->mmu_invalidate_range_end =
+> > > +			max(kvm->mmu_invalidate_range_end, end);
+> > > +	}
+> > > +}
+> > > +
+> > > +void kvm_mmu_invalidate_end(struct kvm *kvm)
+> > > +{
+> > > +	/*
+> > > +	 * This sequence increase will notify the kvm page fault that
+> > > +	 * the page that is going to be mapped in the spte could have
+> > > +	 * been freed.
+> > > +	 */
+> > > +	kvm->mmu_invalidate_seq++;
+> > > +	smp_wmb();
+> > > +	/*
+> > > +	 * The above sequence increase must be visible before the
+> > > +	 * below count decrease, which is ensured by the smp_wmb above
+> > > +	 * in conjunction with the smp_rmb in mmu_invalidate_retry().
+> > > +	 */
+> > > +	kvm->mmu_invalidate_in_progress--;
+> > > +}
+> > > +
+> > >  #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
+> > >  static inline struct kvm *mmu_notifier_to_kvm(struct mmu_notifier *mn)
+> > >  {
+> > > @@ -714,45 +770,6 @@ static void kvm_mmu_notifier_change_pte(struct mmu_notifier *mn,
+> > >  	kvm_handle_hva_range(mn, address, address + 1, pte, kvm_set_spte_gfn);
+> > >  }
+> > >
+> > > -void kvm_mmu_invalidate_begin(struct kvm *kvm)
+> > > -{
+> > > -	/*
+> > > -	 * The count increase must become visible at unlock time as no
+> > > -	 * spte can be established without taking the mmu_lock and
+> > > -	 * count is also read inside the mmu_lock critical section.
+> > > -	 */
+> > > -	kvm->mmu_invalidate_in_progress++;
+> > > -
+> > > -	if (likely(kvm->mmu_invalidate_in_progress == 1)) {
+> > > -		kvm->mmu_invalidate_range_start = INVALID_GPA;
+> > > -		kvm->mmu_invalidate_range_end = INVALID_GPA;
+> > > -	}
+> > > -}
+> > > -
+> > > -void kvm_mmu_invalidate_range_add(struct kvm *kvm, gfn_t start, gfn_t end)
+> > > -{
+> > > -	WARN_ON_ONCE(!kvm->mmu_invalidate_in_progress);
+> > > -
+> > > -	if (likely(kvm->mmu_invalidate_in_progress == 1)) {
+> > > -		kvm->mmu_invalidate_range_start = start;
+> > > -		kvm->mmu_invalidate_range_end = end;
+> > > -	} else {
+> > > -		/*
+> > > -		 * Fully tracking multiple concurrent ranges has diminishing
+> > > -		 * returns. Keep things simple and just find the minimal range
+> > > -		 * which includes the current and new ranges. As there won't be
+> > > -		 * enough information to subtract a range after its invalidate
+> > > -		 * completes, any ranges invalidated concurrently will
+> > > -		 * accumulate and persist until all outstanding invalidates
+> > > -		 * complete.
+> > > -		 */
+> > > -		kvm->mmu_invalidate_range_start =
+> > > -			min(kvm->mmu_invalidate_range_start, start);
+> > > -		kvm->mmu_invalidate_range_end =
+> > > -			max(kvm->mmu_invalidate_range_end, end);
+> > > -	}
+> > > -}
+> > > -
+> > >  static bool kvm_mmu_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
+> > >  {
+> > >  	kvm_mmu_invalidate_range_add(kvm, range->start, range->end);
+> > > @@ -806,23 +823,6 @@ static int kvm_mmu_notifier_invalidate_range_start(struct mmu_notifier *mn,
+> > >  	return 0;
+> > >  }
+> > >
+> > > -void kvm_mmu_invalidate_end(struct kvm *kvm)
+> > > -{
+> > > -	/*
+> > > -	 * This sequence increase will notify the kvm page fault that
+> > > -	 * the page that is going to be mapped in the spte could have
+> > > -	 * been freed.
+> > > -	 */
+> > > -	kvm->mmu_invalidate_seq++;
+> > > -	smp_wmb();
+> > > -	/*
+> > > -	 * The above sequence increase must be visible before the
+> > > -	 * below count decrease, which is ensured by the smp_wmb above
+> > > -	 * in conjunction with the smp_rmb in mmu_invalidate_retry().
+> > > -	 */
+> > > -	kvm->mmu_invalidate_in_progress--;
+> > > -}
+> > > -
+> > >  static void kvm_mmu_notifier_invalidate_range_end(struct mmu_notifier *mn,
+> > >  					const struct mmu_notifier_range *range)
+> > >  {
+> > > @@ -1140,6 +1140,11 @@ int __weak kvm_arch_create_vm_debugfs(struct kvm *kvm)
+> > >  	return 0;
+> > >  }
+> > >
+> > > +bool __weak kvm_arch_has_private_mem(struct kvm *kvm)
+> > > +{
+> > > +	return false;
+> > > +}
+> > > +
+> > >  static struct kvm *kvm_create_vm(unsigned long type, const char *fdname)
+> > >  {
+> > >  	struct kvm *kvm = kvm_arch_alloc_vm();
+> > > @@ -2349,15 +2354,47 @@ static u64 kvm_supported_mem_attributes(struct kvm *kvm)
+> > >  	return 0;
+> > >  }
+> > >
+> > > +static void kvm_unmap_mem_range(struct kvm *kvm, gfn_t start, gfn_t end)
+> > > +{
+> > > +	struct kvm_gfn_range gfn_range;
+> > > +	struct kvm_memory_slot *slot;
+> > > +	struct kvm_memslots *slots;
+> > > +	struct kvm_memslot_iter iter;
+> > > +	int i;
+> > > +	int r = 0;
+> > > +
+> > > +	gfn_range.pte = __pte(0);
+> > > +	gfn_range.may_block = true;
+> > > +
+> > > +	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
+> > > +		slots = __kvm_memslots(kvm, i);
+> > > +
+> > > +		kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
+> > > +			slot = iter.slot;
+> > > +			gfn_range.start = max(start, slot->base_gfn);
+> > > +			gfn_range.end = min(end, slot->base_gfn + slot->npages);
+> > > +			if (gfn_range.start >= gfn_range.end)
+> > > +				continue;
+> > > +			gfn_range.slot = slot;
+> > > +
+> > > +			r |= kvm_unmap_gfn_range(kvm, &gfn_range);
+> > > +		}
+> > > +	}
+> > > +
+> > > +	if (r)
+> > > +		kvm_flush_remote_tlbs(kvm);
+> > > +}
+> > > +
+> > >  static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
+> > >  					   struct kvm_memory_attributes *attrs)
+> > >  {
+> > >  	gfn_t start, end;
+> > >  	unsigned long i;
+> > >  	void *entry;
+> > > +	int idx;
+> > >  	u64 supported_attrs = kvm_supported_mem_attributes(kvm);
+> > >
+> > > -	/* flags is currently not used. */
+> > > +	/* 'flags' is currently not used. */
+> > >  	if (attrs->flags)
+> > >  		return -EINVAL;
+> > >  	if (attrs->attributes & ~supported_attrs)
+> > > @@ -2372,6 +2409,13 @@ static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
+> > >
+> > >  	entry = attrs->attributes ? xa_mk_value(attrs->attributes) : NULL;
+> > >
+> > > +	if (kvm_arch_has_private_mem(kvm)) {
+> > > +		KVM_MMU_LOCK(kvm);
+> > > +		kvm_mmu_invalidate_begin(kvm);
+> > > +		kvm_mmu_invalidate_range_add(kvm, start, end);
+> >
+> > Nit: this works for KVM_MEMORY_ATTRIBUTE_PRIVATE, but
+> > the invalidation should be necessary yet for attribute change of:
+> >
+> > KVM_MEMORY_ATTRIBUTE_READ
+> > KVM_MEMORY_ATTRIBUTE_WRITE
+> > KVM_MEMORY_ATTRIBUTE_EXECUTE
+>
+> The unmapping is only needed for confidential usages which uses
+> KVM_MEMORY_ATTRIBUTE_PRIVATE only and the other flags are defined here
+> for other usages like pKVM. As Fuad commented in a different reply, pKVM
+> supports in-place remapping and unmapping is unnecessary.
+
+Ah, I see. It's fine to me, thanks.
+
+>
+> Thanks,
+> Chao
+> >
+> > > +		KVM_MMU_UNLOCK(kvm);
+> > > +	}
+> > > +
+> > >  	mutex_lock(&kvm->lock);
+> > >  	for (i = start; i < end; i++)
+> > >  		if (xa_err(xa_store(&kvm->mem_attr_array, i, entry,
+> > > @@ -2379,6 +2423,16 @@ static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
+> > >  			break;
+> > >  	mutex_unlock(&kvm->lock);
+> > >
+> > > +	if (kvm_arch_has_private_mem(kvm)) {
+> > > +		idx = srcu_read_lock(&kvm->srcu);
+> > > +		KVM_MMU_LOCK(kvm);
+> > > +		if (i > start)
+> > > +			kvm_unmap_mem_range(kvm, start, i);
+> > > +		kvm_mmu_invalidate_end(kvm);
+> >
+> > Ditto.
+> >
+> > > +		KVM_MMU_UNLOCK(kvm);
+> > > +		srcu_read_unlock(&kvm->srcu, idx);
+> > > +	}
+> > > +
+> > >  	attrs->address = i << PAGE_SHIFT;
+> > >  	attrs->size = (end - i) << PAGE_SHIFT;
+> > >
+> > > --
+> > > 2.25.1
+> > >
+> > >
