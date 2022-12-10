@@ -2,99 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7E35D649046
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Dec 2022 19:56:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB439649061
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Dec 2022 20:31:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229732AbiLJS4Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 10 Dec 2022 13:56:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57266 "EHLO
+        id S229888AbiLJT0i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 10 Dec 2022 14:26:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34866 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229627AbiLJS4O (ORCPT
+        with ESMTP id S229560AbiLJT0h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 10 Dec 2022 13:56:14 -0500
-Received: from mail-pl1-x630.google.com (mail-pl1-x630.google.com [IPv6:2607:f8b0:4864:20::630])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA0A7140E4
-        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Dec 2022 10:56:12 -0800 (PST)
-Received: by mail-pl1-x630.google.com with SMTP id k7so8134045pll.6
-        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Dec 2022 10:56:12 -0800 (PST)
+        Sat, 10 Dec 2022 14:26:37 -0500
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0598F140C5
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Dec 2022 11:26:35 -0800 (PST)
+Received: by mail-qt1-x835.google.com with SMTP id h16so6116082qtu.2
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Dec 2022 11:26:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5BAfj1TUWcLU/4xi1NPgM5DxMY1WtLCmBV7r8HGWOig=;
-        b=V1PfQkIgRuQmvy52c2VEJIERS7c0lpvgINy11k/zAAXxfHSdZn5t477BC1OlPdJ6WI
-         +nb0BN9iRJgfksoL/+IFfL14QqJkCPVq0lK3EblpZ4BJo4igISFL+MWOgbvU3LnLt9qK
-         R81Z8kiOzf7MlyNosacufHlTPa3faGJnmt3SRS6CncIFp16XPVmY8rR3iu8teTe1E7Tp
-         wtIpZliYQvEPDmyke1hsGvEA3/vYFa0W1dn18GDimRRLNkoB0pqkfWUCJUpRtVLrbWFc
-         O/HLU/iy0FHWaSGxQEGgzB1CZ4UcoQv7wGhyWv0gLZz6koGUucBCVoHtTIOuHUxsAAsT
-         Np5Q==
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=9keNZ0RhWpm80fJ+6HQd3eTsL6/cMWIZJqgwBSVMw/8=;
+        b=AsnDh9ot6s1fEkVxMGlieHt+EfJ66tv2wPgVZGQWQB2v1xvCvtMRNiWnQGRkOyBjHM
+         V+zFoKMFfbLI2u/a4e4k/3sTCrriUYjrJzW2CuJcgA6D/pkvxGDzYhbpRBQ7mmYAZcFN
+         +LTQMS3rq3/35Xqu2xCHQiqWxlHaskORT42Qs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5BAfj1TUWcLU/4xi1NPgM5DxMY1WtLCmBV7r8HGWOig=;
-        b=EecIG5Bh+hVMklLbA8ETwLMIG/e5m9lO4mXeEb8ddL3IgE2wKxBDpyezc9zLpcFZrt
-         NLYb+rLDIwNAILFocB9aM3dvmD0buek8ghvSGPc3Eg6QFKNCtaF4SkPSrovLg9ydxTl1
-         9GkH9V/qTJq2lV3F0j3PMuLZbVo1UI8XrmM3Zg/Xh0nXqjzCyEsE7sRuNWfn8kft+veQ
-         jsad7NthQru95T6Hdy2pXbuNY1MQHDK/hv4QmAn5Tmlb0ahHbCfj8YwQ5ZtIQg5uXA3C
-         fKYwhhkwv+vV2Ya7VOsgg/tMP0gzybB7lguRrKsoLpeBBdQUW5tjeC4Nnbs0rt67dAvA
-         vWcA==
-X-Gm-Message-State: ANoB5pm35aVSGOFbfl08en1EPnJP/yIkMA25NnduPmvLCEhLS1Jdvf+D
-        aCksrZVeZfhxP3VQrzc2MODOUuoB0UKhj9GlyCs=
-X-Google-Smtp-Source: AA0mqf7MQ4eiXna6U+eypaYqb3hRmzoEsawWB7Ge9/W6CPtRtl1Ctxu9XcsQfStv/UKk0u7RQ9HxJw==
-X-Received: by 2002:a17:90a:5798:b0:213:bee0:84bc with SMTP id g24-20020a17090a579800b00213bee084bcmr2380054pji.0.1670698572246;
-        Sat, 10 Dec 2022 10:56:12 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id n9-20020a17090a670900b002190eabb890sm2877967pjj.25.2022.12.10.10.56.11
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=9keNZ0RhWpm80fJ+6HQd3eTsL6/cMWIZJqgwBSVMw/8=;
+        b=nMbseIiO+0xoFPh5wRcYZkSwr8aODxYAnmc8DCI8qMSaIxGL9bjH3SL5rt7thVDNjz
+         95itnmwu5v79IXS+EQkjxNHXiH1XstNwHRtNzQvXTlgyNjzP93OZ9RN8ZJ6mjqenkZ/L
+         CCek+a4lB44AvevXiJrZLxNmrgXoyE7FSqxej1OLPFz7CGqq0LcNdB+VaM4HptiVDGW/
+         xGc6MHZBaptHCyptpbxhJ/H2aUPRQxnqPe3Uq6z4ipAsjde1rV+VYVi8w7ylaL3cXRMi
+         2w1PGHA9t9oYHoiaGzeFjKfUaY7IKwIpaK4etxXSfsM5aSWWCi5D8B+r8fVAFaF9c1WA
+         CIVg==
+X-Gm-Message-State: ANoB5pn/vPHfXNCsuXXG9zBDHduWZpWh+I1I10spxlbXfbVq1iuO3HL1
+        OeGIzxMi7N80Ko7M/ixiOYtekkP6nbtqAA7z
+X-Google-Smtp-Source: AA0mqf4qIBfea9dWrxqQEfivjmYCjOPlm2B0pVwz7foQZ2jpzfRwevpYHuIsBI0Jzmi+qSt2oef/SQ==
+X-Received: by 2002:a05:622a:250a:b0:39c:da20:d452 with SMTP id cm10-20020a05622a250a00b0039cda20d452mr14634858qtb.43.1670700393741;
+        Sat, 10 Dec 2022 11:26:33 -0800 (PST)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com. [209.85.160.172])
+        by smtp.gmail.com with ESMTPSA id t13-20020ac8530d000000b0035badb499c7sm3155431qtn.21.2022.12.10.11.26.32
+        for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 10 Dec 2022 10:56:11 -0800 (PST)
-Message-ID: <a144f353-760a-a8f3-ba7f-3255c283540b@kernel.dk>
-Date:   Sat, 10 Dec 2022 11:56:10 -0700
+        Sat, 10 Dec 2022 11:26:32 -0800 (PST)
+Received: by mail-qt1-f172.google.com with SMTP id s9so5832984qtx.6
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Dec 2022 11:26:32 -0800 (PST)
+X-Received: by 2002:ac8:4992:0:b0:3a7:648d:23d4 with SMTP id
+ f18-20020ac84992000000b003a7648d23d4mr18157067qtq.180.1670700392241; Sat, 10
+ Dec 2022 11:26:32 -0800 (PST)
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [GIT PULL] Writeback fix
-Content-Language: en-US
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jan Kara <jack@suse.cz>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Linux-MM <linux-mm@kvack.org>
-References: <9f6a8d1a-aa05-626d-6764-99c376722ed7@kernel.dk>
- <CAHk-=wgqkWVi3nm6HJvOOy+GUVmPt9Wun+_ZVp47wZU43FET9w@mail.gmail.com>
- <b2785384-dfc3-a073-523f-4cbf5610f005@kernel.dk>
- <CAHk-=whi+0Kjd+QgUQwuWZaGmmc5x1Fdxi_VsobWkJnM+o7WSA@mail.gmail.com>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <CAHk-=whi+0Kjd+QgUQwuWZaGmmc5x1Fdxi_VsobWkJnM+o7WSA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+References: <b0901cba-3cb8-a309-701e-7b8cb13f0e8a@kernel.dk> <CAHk-=whgzBzTR5t6Dc6gZ_XS1q=UrqeiBf62op_fahbwns+xvQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whgzBzTR5t6Dc6gZ_XS1q=UrqeiBf62op_fahbwns+xvQ@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sat, 10 Dec 2022 11:26:16 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wiT67DtHF8dSu8nJpA7h+T4jBxfAuR7rcp0iLpKfvF=tw@mail.gmail.com>
+Message-ID: <CAHk-=wiT67DtHF8dSu8nJpA7h+T4jBxfAuR7rcp0iLpKfvF=tw@mail.gmail.com>
+Subject: Re: [GIT PULL] Add support for epoll min wait time
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     netdev <netdev@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/10/22 11:14 AM, Linus Torvalds wrote:
-> On Sat, Dec 10, 2022 at 10:11 AM Jens Axboe <axboe@kernel.dk> wrote:
->>
->> Just to be clear, this was deliberately held for the 6.2 merge window,
->> but I can also see that I completely missed that in the pull request.
->> Sorry about that, that should've been clear.
-> 
-> Oh, it looked very much like a "lastminute single fix for 6.1".
+On Sat, Dec 10, 2022 at 10:51 AM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Now, maybe there is some reason why the tty like VMIN/VTIME just isn't
+> relevant, but I do think that people have successfully used VMIN/VTIME
+> for long enough that it should be at least given some thought.
 
-Yeah understandably, that was my fault.
+Side note: another thing the tty layer model does is to make this be a
+per-tty thing.
 
-> Your other pull requests are in my "for 6.2" queue.
+That's actually noticeable in regular 'poll()/select()' usage, so it
+has interesting semantics: if VTIME is 0 (ie there is no inter-event
+timeout), then poll/select will return "readable" only once you hit
+VMIN characters.
 
-Great, thanks.
+Maybe this isn't relevant for the epoll() situation, but it might be
+worth thinking about.
 
--- 
-Jens Axboe
+It's most definitely not obvious that any epoll() timeout should be
+the same for different file descriptors.
 
+Willy already mentioned "urgent file descriptors", and making these
+things be per-fd would very naturally solve that whole situation too.
 
+Again: I don't want to in any way force a "tty-like" solution. I'm
+just saying that this kind of thing does have a long history, and I do
+get the feeling that the tty solution is the more flexible one.
+
+And while the tty model is "per tty" (it's obviously hidden in the
+termios structure), any epoll equivalent would have to be different
+(presumably per-event or something).
+
+So I'm also not advocating some 1:1 equivalence, just bringing up the
+whole "ttys do this similar thing but they seem to have a more
+flexible model".
+
+            Linus
