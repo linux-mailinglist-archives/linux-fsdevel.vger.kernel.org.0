@@ -2,111 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5CEA0648ED8
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Dec 2022 14:15:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8EC4F648F7C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 10 Dec 2022 16:36:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229665AbiLJNPU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 10 Dec 2022 08:15:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53924 "EHLO
+        id S229704AbiLJPgN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 10 Dec 2022 10:36:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34454 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229634AbiLJNPS (ORCPT
+        with ESMTP id S229750AbiLJPgL (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 10 Dec 2022 08:15:18 -0500
-X-Greylist: delayed 514 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Sat, 10 Dec 2022 05:15:15 PST
-Received: from hoggar.fisica.ufpr.br (hoggar.fisica.ufpr.br [IPv6:2801:82:80ff:7fff::2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 822CAB7D2;
-        Sat, 10 Dec 2022 05:15:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=fisica.ufpr.br;
-        s=201705; t=1670677594;
-        bh=k1rB58ErS/iAm3rvDzRcxYOQIzkcaaY3A2e6xx7mlFA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lHKVbmYv/YFYZllRLCOIH8/JNqr/AU+5bRs16lFbyUXjTh7F7BH46s/jTRqyzCniU
-         jCPEv1ThwCqjr4A8kOIHv9l/5BX/OSQQ13CmR4u2m67gBeQMDIHQluny8vp/QbN/4G
-         D5rjr8hSn15BmYDUgEKDpZ/xba31C2HcH5hT6/qBvnCXtIcRXwJLsGIpqpT9f9M81N
-         dPgyaVmalT7cQoChT6zWzEYCmKuXmdBiD466MF+ayduNMhda/w6fg9IWIi3iB8n2w/
-         aIybLvPPecoA253cylTCCqdGE91bsE0w/9GIvhHg0Oc4qNIw9QxkKIoB+LNo5A6Oxu
-         0EcUYcQGhFuXg==
-Received: by hoggar.fisica.ufpr.br (Postfix, from userid 577)
-        id EDAC5362037A; Sat, 10 Dec 2022 10:06:34 -0300 (-03)
-Date:   Sat, 10 Dec 2022 10:06:34 -0300
-From:   Carlos Carvalho <carlos@fisica.ufpr.br>
-To:     "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc:     Clay Mayers <Clay.Mayers@kioxia.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Hannes Reinecke <hare@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "djwong@kernel.org" <djwong@kernel.org>, "hch@lst.de" <hch@lst.de>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "javier@javigon.com" <javier@javigon.com>,
-        "johannes.thumshirn@wdc.com" <johannes.thumshirn@wdc.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "dongli.zhang@oracle.com" <dongli.zhang@oracle.com>,
-        "jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>,
-        "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        "clm@fb.com" <clm@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
-        "jack@suse.com" <jack@suse.com>, "tytso@mit.edu" <tytso@mit.edu>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "idryomov@gmail.com" <idryomov@gmail.com>,
-        "danil.kipnis@cloud.ionos.com" <danil.kipnis@cloud.ionos.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        "jinpu.wang@cloud.ionos.com" <jinpu.wang@cloud.ionos.com>
-Subject: Re: [PATCH 0/6] block: add support for REQ_OP_VERIFY
-Message-ID: <Y5SEWnNUpgKxOB/W@fisica.ufpr.br>
-References: <20220630091406.19624-1-kch@nvidia.com>
- <YsXJdXnXsMtaC8DJ@casper.infradead.org>
- <d14fe396-b39b-6b3e-ae74-eb6a8b64e379@nvidia.com>
- <Y4kC9NIXevPlji+j@casper.infradead.org>
- <72a51a83-c25a-ef52-55fb-2b73aec70305@suse.de>
- <Y4oSiPH0ENFktioQ@kbusch-mbp.dhcp.thefacebook.com>
- <f68009b7cc744c02ad69d68fd7e61751@kioxia.com>
- <yq14ju5gvfh.fsf@ca-mkp.ca.oracle.com>
+        Sat, 10 Dec 2022 10:36:11 -0500
+Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84C651A05A
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Dec 2022 07:36:08 -0800 (PST)
+Received: by mail-pg1-x52b.google.com with SMTP id 82so5470233pgc.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 10 Dec 2022 07:36:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=elWpkMu9uvmX8KORhhsGTHHeksVLQvKNN2+y014piN4=;
+        b=7fIxFc8PdxVzLipmWL1/2K8U2jb4YdayUP83JWdobun6jWZnkt5AQLHTgCp4mihs3Q
+         gYscd/jzLsGz68h/AvlgX0h898iBcUzkMO3zE/fPHUrWGP+gaZK3A63hOb0ksAUK170J
+         4PftAzLeQnJ6HPFCCiZSInjCSUhjJhFbu7mLxapVEPqKcwdWntRdAbAdUeqH5u9pdnAo
+         WojW+n/+vHMOfEGvI8TIfk+qm2dwVVno+P6dBfCBD2NnIJisn2m4g4rHjT3kLoSiUo/a
+         uLsgWFi/rwignXbuSW2IsliI0uuS+abrPNkhW2sBW8tip3l/gXU7dAIwS4YBoya2pNGJ
+         WWzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=elWpkMu9uvmX8KORhhsGTHHeksVLQvKNN2+y014piN4=;
+        b=3vZOHs2i8t12vymC8ijHMNf1/STZgRDkPaTzA3ko48rlo2EtFMm7hMV9L7BnKA7y9/
+         aYZ0Qxu9vCeQqaRvjMg+x+Rf9nSOUvl8ZGbH1fdD+F4+6oKgrl3+NyRv18egEYgXLkQK
+         EWhl9/vjwCqoOVgLSGYlrXflUAjeruKzxD8JgffRasd2irPL6Rbi3Uvn70+/shkDv1yc
+         jwUUCz33qCXH4FLA6S8Pew5hWkBlCl725/pon50wiqUdHXcOcazcdwQKEoois4W/dTLk
+         t/rchsx9eWudSxW9Dn+pXq2dHdv/98YB07gqq9r7u1I3yb8nhdq75YYwTGkHi2Vw+uWa
+         5D8Q==
+X-Gm-Message-State: ANoB5pmD1SffBB2NIxaflnwae9fcUHC8DZO7yDn6U1syL2OdMcA+SiUx
+        00qZ1ZsgkJQeUBTs9OxETDF6Ig==
+X-Google-Smtp-Source: AA0mqf5+prjSl5p6SdIXE3naieXMpu9y8y5yGy2EBVyl/iqUBUAgUwsPW5GZfOxg2lBPdXaHKLgZKw==
+X-Received: by 2002:a05:6a00:1c96:b0:578:451c:84a9 with SMTP id y22-20020a056a001c9600b00578451c84a9mr31296pfw.2.1670686567976;
+        Sat, 10 Dec 2022 07:36:07 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id w124-20020a628282000000b005774f19b41csm2899198pfd.88.2022.12.10.07.36.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 10 Dec 2022 07:36:07 -0800 (PST)
+Message-ID: <9f6a8d1a-aa05-626d-6764-99c376722ed7@kernel.dk>
+Date:   Sat, 10 Dec 2022 08:36:06 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <yq14ju5gvfh.fsf@ca-mkp.ca.oracle.com>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,SPF_HELO_PASS,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] Writeback fix
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Martin K. Petersen (martin.petersen@oracle.com) wrote on Fri, Dec 09, 2022 at 01:52:01AM -03:
-> I suspect that these days it is very hard to find a storage device that
-> doesn't do media management internally in the background. So from the
-> perspective of physically exercising the media, VERIFY is probably not
-> terribly useful anymore.
-> 
-> In that light, having to run VERIFY over the full block range of a
-> device to identify unreadable blocks seems like a fairly clunky
-> mechanism. Querying the device for a list of unrecoverable blocks
-> already identified by the firmware seems like a better interface.
+Hi Linus,
 
-Sure.
+Just a single writeback fix from Jan, for sanity checking adding freed
+inodes to lists.
 
-> But I think device validation is a secondary issue. The more
-> pertinent question is whether we have use cases in the kernel (MD,
-> btrfs) which would benefit from being able to preemptively identify
-> unreadable blocks?
+Please pull!
 
-Certainly we have. Currently admins have to periodically run full block range
-checks in redundant arrays to detect bad blocks and correct them while
-redundancy is available. Otherwise when a disk fails and you try to reconstruct
-the replacement you hit another block in the remaining disks that's bad and you
-cannot complete the reconstruction and have data loss. These checks are a
-burden because they have HIGH overhead, significantly reducing bandwidth for
-the normal use of the array.
 
-If there was a standard interface for getting the list of bad blocks that the
-firmware secretly knows the kernel could implement the repair continuosly, with
-logs etc. That'd really be a relief for admins and, specially, users.
+The following changes since commit eb7081409f94a9a8608593d0fb63a1aa3d6f95d8:
+
+  Linux 6.1-rc6 (2022-11-20 16:02:16 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/writeback-2022-12-08
+
+for you to fetch changes up to d6798bc243fabfcb86c1d39168f1619304d2b9f9:
+
+  writeback: Add asserts for adding freed inode to lists (2022-11-24 07:21:51 -0700)
+
+----------------------------------------------------------------
+writeback-2022-12-08
+
+----------------------------------------------------------------
+Jan Kara (1):
+      writeback: Add asserts for adding freed inode to lists
+
+ fs/fs-writeback.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+-- 
+Jens Axboe
+
