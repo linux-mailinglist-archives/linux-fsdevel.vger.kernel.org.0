@@ -2,87 +2,102 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B6B146492A1
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Dec 2022 07:04:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F0EA64934E
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 11 Dec 2022 10:28:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230035AbiLKGEG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Dec 2022 01:04:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51384 "EHLO
+        id S230031AbiLKJ2r (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Dec 2022 04:28:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60612 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229721AbiLKGEF (ORCPT
+        with ESMTP id S230026AbiLKJ2o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Dec 2022 01:04:05 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D349F12AB1;
-        Sat, 10 Dec 2022 22:04:03 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 636CA60CA3;
-        Sun, 11 Dec 2022 06:04:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A34B2C433D2;
-        Sun, 11 Dec 2022 06:03:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670738642;
-        bh=U9Rhp55xf6rXsF3RAaS6Y+CbURUJS89vuN+H36qlHoI=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=gvn7tDTwTp770J0jxxGbJ/eD63c2MIQ371jcBZF6XySVsl5cwc/6/VJo7EmthNzpR
-         ox3i1TMBwhRRllHhRuEMj7/Ug14/jRwkSLG9TzG1xFIyrs+jBie1F8LMjwY/9KeJtK
-         eIJeshb0ZiuFM2HlcrQabSdC3HRmw7LCtQjh0nG2y2NaUW5CC69gWekQmEFR96jvA+
-         W3ZPJEJYx+e3y7DQ4q8N6XLP/qxyzl9WAQoFLBlxikvESbccCCFgAfPRaObz5IC/oX
-         VspM7gm8zxvpsnKEKbW6OjUEbeBubLYFyePfm/TrC3WWIJWxybX8d6rAxbBHKq/UQM
-         W5JZ+7R9vuEBQ==
-Message-ID: <489f2daa-4559-6c32-71e2-8bab65fb8154@kernel.org>
-Date:   Sun, 11 Dec 2022 14:03:57 +0800
+        Sun, 11 Dec 2022 04:28:44 -0500
+Received: from sender-of-o50.zoho.in (sender-of-o50.zoho.in [103.117.158.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA794DFE1;
+        Sun, 11 Dec 2022 01:28:41 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1670750905; cv=none; 
+        d=zohomail.in; s=zohoarc; 
+        b=cQkedRHhiBcjvDmL5SSj3EN64o2w3Gdj4WQMOf5RefBfQMjq/+8+W3nedGE85dJreENyBpyyy6iC+XXF3/SDAC9xPJ9gtr/CoF5lM9hvftcJmTm/jQ6AxJyDO5OkK58+fUo9m5lalB1JrBySAs8sKfAAhQrEpIKVilEFcLSR2fc=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
+        t=1670750905; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:MIME-Version:Message-ID:Subject:To; 
+        bh=Xkq9oi0Kqa5o104HB6937If/FFeLhwwTtuDxZaE+Zqc=; 
+        b=BmvVCaLPZNXJPRRR8p8V21FhXHRjWLtxnX1kvMyxp67EI9JohzrjT6viQohiV0vLPJEizk59EokjXMnZ/BsQkjYFS9tsi077ahmtbcgizXDM6K/DmvVTWqTWZcYZYMxNgV3XAAM2jJU4U8WE2TU0CjTohBZs60HrGWgpw+VQy5w=
+ARC-Authentication-Results: i=1; mx.zohomail.in;
+        dkim=pass  header.i=siddh.me;
+        spf=pass  smtp.mailfrom=code@siddh.me;
+        dmarc=pass header.from=<code@siddh.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1670750905;
+        s=zmail; d=siddh.me; i=code@siddh.me;
+        h=From:From:To:To:Cc:Cc:Message-ID:Subject:Subject:Date:Date:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=Xkq9oi0Kqa5o104HB6937If/FFeLhwwTtuDxZaE+Zqc=;
+        b=JaFqXGITxG+8CXPDWBNTgz3m6SybcsAHvkQOzRwpwLfpjAZI6lGKfCwH6hIlbdAR
+        YyKYElShH/6sH2X1xmvZe5hyjtFmSYfcSY/C2fjGTOr4lx2S8TMV05mwBpvP1BjNcON
+        l6ZLI5y4f+pF6Wj+3mZuV2EVcggZE12q6iZd+VEU=
+Received: from kampyooter.. (110.226.31.37 [110.226.31.37]) by mx.zoho.in
+        with SMTPS id 1670750904303896.6418334535564; Sun, 11 Dec 2022 14:58:24 +0530 (IST)
+From:   Siddh Raman Pant <code@siddh.me>
+To:     Christian Brauner <brauner@kernel.org>,
+        Seth Forshee <sforshee@kernel.org>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kselftests <linux-kselftest@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <20221211092820.85527-1-code@siddh.me>
+Subject: [PATCH] selftests/mount_setattr: Remove redefinition of struct mount_attr
+Date:   Sun, 11 Dec 2022 14:58:20 +0530
+X-Mailer: git-send-email 2.35.1
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.1
-Subject: Re: [f2fs-dev] [PATCH v4 16/23] f2fs: Convert f2fs_sync_meta_pages()
- to use filemap_get_folios_tag()
-Content-Language: en-US
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-cifs@vger.kernel.org, linux-nilfs@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-mm@kvack.org, ceph-devel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-afs@lists.infradead.org,
-        linux-btrfs@vger.kernel.org
-References: <20221102161031.5820-1-vishal.moola@gmail.com>
- <20221102161031.5820-17-vishal.moola@gmail.com>
-From:   Chao Yu <chao@kernel.org>
-In-Reply-To: <20221102161031.5820-17-vishal.moola@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/11/3 0:10, Vishal Moola (Oracle) wrote:
-> Convert function to use folios throughout. This is in preparation for the
-> removal of find_get_pages_range_tag(). This change removes 5 calls to
-> compound_head().
-> 
-> Initially the function was checking if the previous page index is truly the
-> previous page i.e. 1 index behind the current page. To convert to folios and
-> maintain this check we need to make the check
-> folio->index != prev + folio_nr_pages(previous folio) since we don't know
-> how many pages are in a folio.
-> 
-> At index i == 0 the check is guaranteed to succeed, so to workaround indexing
-> bounds we can simply ignore the check for that specific index. This makes the
-> initial assignment of prev trivial, so I removed that as well.
-> 
-> Also modified a comment in commit_checkpoint for consistency.
-> 
-> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+It is already included via sys/mount.h on line 10.
 
-Acked-by: Chao Yu <chao@kernel.org>
+GCC error reproducible by: make kselftest TARGETS=3D"mount_setattr"
 
-Thanks,
+mount_setattr_test.c:107:8: error: redefinition of =E2=80=98struct mount_at=
+tr=E2=80=99
+  107 | struct mount_attr {
+      |        ^~~~~~~~~~
+In file included from /usr/include/x86_64-linux-gnu/sys/mount.h:32,
+                 from mount_setattr_test.c:10:
+../../../../usr/include/linux/mount.h:129:8: note: originally defined here
+  129 | struct mount_attr {
+      |        ^~~~~~~~~~
+
+Signed-off-by: Siddh Raman Pant <code@siddh.me>
+---
+ tools/testing/selftests/mount_setattr/mount_setattr_test.c | 7 -------
+ 1 file changed, 7 deletions(-)
+
+diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/t=
+ools/testing/selftests/mount_setattr/mount_setattr_test.c
+index 8c5fea68ae67..582669ca38e9 100644
+--- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
++++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+@@ -103,13 +103,6 @@
+ =09#else
+ =09=09#define __NR_mount_setattr 442
+ =09#endif
+-
+-struct mount_attr {
+-=09__u64 attr_set;
+-=09__u64 attr_clr;
+-=09__u64 propagation;
+-=09__u64 userns_fd;
+-};
+ #endif
+=20
+ #ifndef __NR_open_tree
+--=20
+2.35.1
+
+
