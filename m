@@ -2,63 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D842764A2D9
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 15:07:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C69EB64A398
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 15:42:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232085AbiLLOHl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Dec 2022 09:07:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36934 "EHLO
+        id S232108AbiLLOmD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Dec 2022 09:42:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52902 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233349AbiLLOHR (ORCPT
+        with ESMTP id S232193AbiLLOl7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Dec 2022 09:07:17 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A3A6FEE23
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Dec 2022 06:06:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670853989;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=BnKNKCUfPqFnNMjwGbysQKMPFT1aIwiUOTRP8sokNS0=;
-        b=JNxqcjEMnX5Uy+O2BfbnnXskJx6KDt9H7qesu1Ta4fpdd/9BWZowRq0muvjggGDIctGnQc
-        Qj7kgWGkl3Qnam/BjHnZyQz6w6nZJQ3DyDYFCB0ULZjyuIEZ3bMNRcCEEz7I1a2m4qGQkQ
-        fqog6TraMpLxT2XatdIa/UwSBpOwXSw=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-34-bx6lb4zuOX-WBKqrJgfkNw-1; Mon, 12 Dec 2022 09:06:24 -0500
-X-MC-Unique: bx6lb4zuOX-WBKqrJgfkNw-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Mon, 12 Dec 2022 09:41:59 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A7B6E6477;
+        Mon, 12 Dec 2022 06:41:57 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EB93B29DD98C;
-        Mon, 12 Dec 2022 14:06:23 +0000 (UTC)
-Received: from madcap2.tricolour.com (ovpn-0-3.rdu2.redhat.com [10.22.0.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 74DCB492C14;
-        Mon, 12 Dec 2022 14:06:22 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
-Cc:     Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Richard Guy Briggs <rgb@redhat.com>, Jan Kara <jack@suse.cz>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: [PATCH v5 3/3] fanotify,audit: Allow audit to use the full permission event response
-Date:   Mon, 12 Dec 2022 09:06:11 -0500
-Message-Id: <79fcf72ea442eeede53ed5e6de567f8df8ef7d83.1670606054.git.rgb@redhat.com>
-In-Reply-To: <cover.1670606054.git.rgb@redhat.com>
-References: <cover.1670606054.git.rgb@redhat.com>
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2ABE7B80A09;
+        Mon, 12 Dec 2022 14:41:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95CE0C433EF;
+        Mon, 12 Dec 2022 14:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670856114;
+        bh=49yiOOZXNHxawLGdF5jaeIemWnDUH+xC0nzErDnYjL4=;
+        h=Date:To:Cc:References:From:Subject:In-Reply-To:From;
+        b=n8xLMOU0bLG+06pQhoH9AbcOhe69C8Zly9RLAQ10uYBXbidwiMeWjZOvalz0iy3SD
+         bheByXSHQ+WLsHN9KFYet/HV67Uj437+Q5xUEZP4ATjRAn0VGj8QOEm04zMRlp8MPe
+         faogHkgm3YP1getVruEGkC4Lh1MR86MRnQJND1kfBzaQRawe5X3zL9S8LmY8RGBwya
+         igwos3kMQ4claGjqRPg/VcBFUMKS3jOOwAnrAvdZ/1hX61RtYcwBA6LW86t7ksM/rc
+         UW0Vnz7D5hGc38jpAX6MiZ31A969eZ+YuzJlUYUOG1or01nYfPtY2cU4bYkDtv/MS3
+         0vUsMTm8qvbCw==
+Message-ID: <0a95ba7b-9335-ce03-0f47-5d9f4cce988f@kernel.org>
+Date:   Mon, 12 Dec 2022 22:41:52 +0800
 MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Content-Language: en-US
+To:     Vishal Moola <vishal.moola@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        fengnan chang <fengnanchang@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+References: <20221017202451.4951-1-vishal.moola@gmail.com>
+ <20221017202451.4951-15-vishal.moola@gmail.com>
+ <9c01bb74-97b3-d1c0-6a5f-dc8b11113e1a@kernel.org>
+ <CAOzc2pweRFtsUj65=U-N-+ASf3cQybwMuABoVB+ciHzD1gKWhQ@mail.gmail.com>
+ <CAOzc2pzoG1CN3Bpx5oe37GwRv71TpTQmFH6m58kTqOmeW7KLOw@mail.gmail.com>
+ <CAOzc2pzp0JEanJTgzSrRt3ziRCrR6rGCjpwJvAD8uCqsHqXnHg@mail.gmail.com>
+From:   Chao Yu <chao@kernel.org>
+Subject: Re: [f2fs-dev] [PATCH v3 14/23] f2fs: Convert
+ f2fs_write_cache_pages() to use filemap_get_folios_tag()
+In-Reply-To: <CAOzc2pzp0JEanJTgzSrRt3ziRCrR6rGCjpwJvAD8uCqsHqXnHg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,128 +65,96 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch passes the full response so that the audit function can use all
-of it. The audit function was updated to log the additional information in
-the AUDIT_FANOTIFY record.
+Hi Vishal,
 
-Currently the only type of fanotify info that is defined is an audit
-rule number, but convert it to hex encoding to future-proof the field.
-Hex encoding suggested by Paul Moore <paul@paul-moore.com>.
+Sorry for the delay reply.
 
-Sample records:
-  type=FANOTIFY msg=audit(1600385147.372:590): resp=2 fan_type=1 fan_info=3137 subj_trust=3 obj_trust=5
-  type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0 fan_info=3F subj_trust=2 obj_trust=2
+On 2022/12/6 4:34, Vishal Moola wrote:
+> On Tue, Nov 22, 2022 at 6:26 PM Vishal Moola <vishal.moola@gmail.com> wrote:
+>>
+>> On Mon, Nov 14, 2022 at 1:38 PM Vishal Moola <vishal.moola@gmail.com> wrote:
+>>>
+>>> On Sun, Nov 13, 2022 at 11:02 PM Chao Yu <chao@kernel.org> wrote:
+>>>>
+>>>> On 2022/10/18 4:24, Vishal Moola (Oracle) wrote:
+>>>>> Converted the function to use a folio_batch instead of pagevec. This is in
+>>>>> preparation for the removal of find_get_pages_range_tag().
+>>>>>
+>>>>> Also modified f2fs_all_cluster_page_ready to take in a folio_batch instead
+>>>>> of pagevec. This does NOT support large folios. The function currently
+>>>>
+>>>> Vishal,
+>>>>
+>>>> It looks this patch tries to revert Fengnan's change:
+>>>>
+>>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=01fc4b9a6ed8eacb64e5609bab7ac963e1c7e486
+>>>>
+>>>> How about doing some tests to evaluate its performance effect?
+>>>
+>>> Yeah I'll play around with it to see how much of a difference it makes.
+>>
+>> I did some testing. Looks like reverting Fengnan's change allows for
+>> occasional, but significant, spikes in write latency. I'll work on a variation
+>> of the patch that maintains the use of F2FS_ONSTACK_PAGES and send
+>> that in the next version of the patch series. Thanks for pointing that out!
+> 
+> Following Matthew's comment, I'm thinking we should go with this patch
+> as is. The numbers between both variations did not have substantial
+> differences with regard to latency.
+> 
+> While the new variant would maintain the use of F2FS_ONSTACK_PAGES,
+> the code becomes messier and would end up limiting the number of
+> folios written back once large folio support is added. This means it would
+> have to be converted down to this version later anyways.
+> 
+> Does leaving this patch as is sound good to you?
+> 
+> For reference, here's what the version continuing to use a page
+> array of size F2FS_ONSTACK_PAGES would change:
+> 
+> +               nr_pages = 0;
+> +again:
+> +               nr_folios = filemap_get_folios_tag(mapping, &index, end,
+> +                               tag, &fbatch);
+> +               if (nr_folios == 0) {
+> +                       if (nr_pages)
+> +                               goto write;
+> +                               goto write;
 
-Suggested-by: Steve Grubb <sgrubb@redhat.com>
-Link: https://lore.kernel.org/r/3075502.aeNJFYEL58@x2
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- fs/notify/fanotify/fanotify.c |  3 ++-
- include/linux/audit.h         |  9 +++++----
- kernel/auditsc.c              | 25 ++++++++++++++++++++++---
- 3 files changed, 29 insertions(+), 8 deletions(-)
+Duplicated code.
 
-diff --git a/fs/notify/fanotify/fanotify.c b/fs/notify/fanotify/fanotify.c
-index 24ec1d66d5a8..29bdd99b29fa 100644
---- a/fs/notify/fanotify/fanotify.c
-+++ b/fs/notify/fanotify/fanotify.c
-@@ -273,7 +273,8 @@ static int fanotify_get_response(struct fsnotify_group *group,
- 
- 	/* Check if the response should be audited */
- 	if (event->response & FAN_AUDIT)
--		audit_fanotify(event->response & ~FAN_AUDIT);
-+		audit_fanotify(event->response & ~FAN_AUDIT,
-+			       &event->audit_rule);
- 
- 	pr_debug("%s: group=%p event=%p about to return ret=%d\n", __func__,
- 		 group, event, ret);
-diff --git a/include/linux/audit.h b/include/linux/audit.h
-index d6b7d0c7ce43..31086a72e32a 100644
---- a/include/linux/audit.h
-+++ b/include/linux/audit.h
-@@ -14,6 +14,7 @@
- #include <linux/audit_arch.h>
- #include <uapi/linux/audit.h>
- #include <uapi/linux/netfilter/nf_tables.h>
-+#include <uapi/linux/fanotify.h>
- 
- #define AUDIT_INO_UNSET ((unsigned long)-1)
- #define AUDIT_DEV_UNSET ((dev_t)-1)
-@@ -416,7 +417,7 @@ extern void __audit_log_capset(const struct cred *new, const struct cred *old);
- extern void __audit_mmap_fd(int fd, int flags);
- extern void __audit_openat2_how(struct open_how *how);
- extern void __audit_log_kern_module(char *name);
--extern void __audit_fanotify(u32 response);
-+extern void __audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar);
- extern void __audit_tk_injoffset(struct timespec64 offset);
- extern void __audit_ntp_log(const struct audit_ntp_data *ad);
- extern void __audit_log_nfcfg(const char *name, u8 af, unsigned int nentries,
-@@ -523,10 +524,10 @@ static inline void audit_log_kern_module(char *name)
- 		__audit_log_kern_module(name);
- }
- 
--static inline void audit_fanotify(u32 response)
-+static inline void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
- {
- 	if (!audit_dummy_context())
--		__audit_fanotify(response);
-+		__audit_fanotify(response, friar);
- }
- 
- static inline void audit_tk_injoffset(struct timespec64 offset)
-@@ -679,7 +680,7 @@ static inline void audit_log_kern_module(char *name)
- {
- }
- 
--static inline void audit_fanotify(u32 response)
-+static inline void audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
- { }
- 
- static inline void audit_tk_injoffset(struct timespec64 offset)
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index d1fb821de104..8d523066d81f 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -64,6 +64,7 @@
- #include <uapi/linux/limits.h>
- #include <uapi/linux/netfilter/nf_tables.h>
- #include <uapi/linux/openat2.h> // struct open_how
-+#include <uapi/linux/fanotify.h>
- 
- #include "audit.h"
- 
-@@ -2877,10 +2878,28 @@ void __audit_log_kern_module(char *name)
- 	context->type = AUDIT_KERN_MODULE;
- }
- 
--void __audit_fanotify(u32 response)
-+void __audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
- {
--	audit_log(audit_context(), GFP_KERNEL,
--		AUDIT_FANOTIFY,	"resp=%u", response);
-+	struct audit_context *ctx = audit_context();
-+	struct audit_buffer *ab;
-+	char numbuf[12];
-+
-+	if (friar->hdr.type == FAN_RESPONSE_INFO_NONE) {
-+		audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-+			  "resp=%u fan_type=%u fan_info=3F subj_trust=2 obj_trust=2",
-+			  response, FAN_RESPONSE_INFO_NONE);
-+		return;
-+	}
-+	ab = audit_log_start(ctx, GFP_KERNEL, AUDIT_FANOTIFY);
-+	if (ab) {
-+		audit_log_format(ab, "resp=%u fan_type=%u fan_info=",
-+				 response, friar->hdr.type);
-+		snprintf(numbuf, sizeof(numbuf), "%u", friar->rule_number);
-+		audit_log_n_hex(ab, numbuf, sizeof(numbuf));
-+		audit_log_format(ab, " subj_trust=%u obj_trust=%u",
-+				 friar->subj_trust, friar->obj_trust);
-+		audit_log_end(ab);
-+	}
- }
- 
- void __audit_tk_injoffset(struct timespec64 offset)
--- 
-2.27.0
+>                          break;
+> +               }
+> 
+> +               for (i = 0; i < nr_folios; i++) {
+> +                       struct folio* folio = fbatch.folios[i];
+> +
+> +                       idx = 0;
+> +                       p = folio_nr_pages(folio);
+> +add_more:
+> +                       pages[nr_pages] = folio_page(folio,idx);
+> +                       folio_ref_inc(folio);
+> +                       if (++nr_pages == F2FS_ONSTACK_PAGES) {
+> +                               index = folio->index + idx + 1;
+> +                               folio_batch_release(&fbatch);
+> +                               goto write;
+> +                       }
+> +                       if (++idx < p)
+> +                               goto add_more;
+> +               }
+> +               folio_batch_release(&fbatch);
+> +               goto again;
+> +write:
 
+Looks fine to me, can you please send a formal patch?
+
+Thanks,
+
+> 
+>> How do the remaining f2fs patches in the series look to you?
+>> Patch 16/23 f2fs_sync_meta_pages() in particular seems like it may
+>> be prone to problems. If there are any changes that need to be made to
+>> it I can include those in the next version as well.
+> 
+> Thanks for reviewing the patches so far. I wanted to follow up on asking
+> for review of the last couple of patches.
