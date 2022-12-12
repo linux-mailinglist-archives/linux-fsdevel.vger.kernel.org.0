@@ -2,71 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F3D70649751
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 01:14:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 60716649762
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 01:35:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230435AbiLLAOu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Dec 2022 19:14:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40774 "EHLO
+        id S230468AbiLLAfJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Dec 2022 19:35:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44586 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230031AbiLLAOt (ORCPT
+        with ESMTP id S230247AbiLLAfI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Dec 2022 19:14:49 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6A4BCE3F;
-        Sun, 11 Dec 2022 16:14:47 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id w15so10469560wrl.9;
-        Sun, 11 Dec 2022 16:14:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XZNwRSZP5neiNWnbupMyKTJhLQAAXokLk6mXrXmu368=;
-        b=qMGs0kQ9OSHMO2fhdWkWP9l8r/1yCg8pdTwPiHuDSpSY77BP63bXUuWFzYtFJeqVIJ
-         BMl+2REa9Q/TeHLa5tFS9Lkz3oCXRmQwVHO6RgOXPMXznlway4WOniAWqLNOiWGpATRN
-         qnYXSaY+Gb6+CWwwKIfaLwzzuKk5MgL/78Jr9eXbs1sOITUz9EqgXtLaevAAQQUtyjZz
-         DTNsOYIYI7Sl7MFas8WA+JW5UTRzZub6zL8woGeGpggkF8f8qwiGjrjvimWgrlcm08py
-         kIlv2V91pRPJPgznn5gu5SDdSZIynFZBNy3YFUu2HiNP1JshAwf+ytrEQlaJaGi8Eo5z
-         C4xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XZNwRSZP5neiNWnbupMyKTJhLQAAXokLk6mXrXmu368=;
-        b=zXBXuywGqkTgYA4RtsBb+kE7Si7vlYY2FS6t52jFE3SXmztQXUvslJ6IBOVkqNfblq
-         maUlzrf4cODMNoIkKCFVqJpzaP5540lQ8PFAqsjuv3ExEK683a1BGOLMpzHuW9mpGMX5
-         JPJlwy+AK0TNzcKj33+xPI98wYZz/S5iaNSRU/rwnp5ENnOtLCOZhPG++VTEBAbZSqqM
-         LxXnfIrpxSP6PLyaeP3j929Yfl0sBGpnurHvt7bGwvYGFsYKHRQ9lj8+pVhN+vySkbQR
-         jVUHltc77Q4GPQXEWx/qwgEP6E8kCMwrSDDOQCe83WCp5bO7iNYlO1p6eFNv4F5uUfrQ
-         0qpA==
-X-Gm-Message-State: ANoB5pnYXkyvoeWeWSoTExYzK6lmwvJQmATp4APWk4In99u1AaSM4iIF
-        2gLU4ku8S3tv6n5PlF/tOdLbwkDdDlw=
-X-Google-Smtp-Source: AA0mqf7uj/+NKNOefT8NP++hC3L8FljN8vywiRZUmgfFgKQ8nZ6ZBA4rrpCFgvguCSzb+idmGAE8Bw==
-X-Received: by 2002:a5d:6a0c:0:b0:242:4bbe:2d20 with SMTP id m12-20020a5d6a0c000000b002424bbe2d20mr8085645wru.42.1670804086279;
-        Sun, 11 Dec 2022 16:14:46 -0800 (PST)
-Received: from suse.localnet (host-95-247-100-134.retail.telecomitalia.it. [95.247.100.134])
-        by smtp.gmail.com with ESMTPSA id q4-20020adffec4000000b00241c6729c2bsm7321964wrs.26.2022.12.11.16.14.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 11 Dec 2022 16:14:45 -0800 (PST)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Evgeniy Dushistov <dushistov@mail.ru>,
-        Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 3/3] fs/ufs: Replace kmap() with kmap_local_page()
-Date:   Mon, 12 Dec 2022 01:14:44 +0100
-Message-ID: <4792154.31r3eYUQgx@suse>
-In-Reply-To: <Y5ZcMPzPG9h6C9eh@ZenIV>
-References: <20221211213111.30085-1-fmdefrancesco@gmail.com>
- <20221211213111.30085-4-fmdefrancesco@gmail.com> <Y5ZcMPzPG9h6C9eh@ZenIV>
+        Sun, 11 Dec 2022 19:35:08 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E7029BC84;
+        Sun, 11 Dec 2022 16:35:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
+        Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=lXQVO+HzUiEDtpmJjo1le4xFkMrZkqsuu8+0BugeNt8=; b=b4LLAdTSNX9EpSpC6s2NpfYhTj
+        qxPC1iHG+psVna3hVMs59SlzHZVLGTyAEjtnpmoHSLAN3SAIGVwsYTW9brDXrS2x8lPksTfDkdVB9
+        Ub/gDEube3/ckeUc045KRGl+Ps2nPxY+bw2MmhgZjMOONtU5bDpxlRBIPUuaSuQNaQcVIftdIQTRa
+        AjXJySblVKanJObMp0tfCd3Jl2dwvrw1olo/ZOa5A5EjXmgfnPm4ozJdF6eTHM+Hx2iRicO68ClzG
+        G0zRZakSXpVCgTPMxbvySzCDHZ1EMpkEZ0INjQESvGvXNg+wHTQR1C5QIM5N7dQwxwpPECeqmncz+
+        cgbUquOA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1p4Wme-00B872-2U;
+        Mon, 12 Dec 2022 00:35:04 +0000
+Date:   Mon, 12 Dec 2022 00:35:04 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: [git pull] vfs.git iov_iter pile
+Message-ID: <Y5Z3OMYJOMxQqXQf@ZenIV>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,104 +47,129 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On domenica 11 dicembre 2022 23:39:44 CET Al Viro wrote:
-> On Sun, Dec 11, 2022 at 10:31:11PM +0100, Fabio M. De Francesco wrote:
-> > +/*
-> > + * Calls to ufs_get_page()/ufs_put_page() must be nested according to the
-> > + * rules documented in kmap_local_page()/kunmap_local().
-> > + *
-> > + * NOTE: ufs_find_entry() and ufs_dotdot() act as calls to ufs_get_page()
-> > + * and must be treated accordingly for nesting purposes.
-> > + */
-> > 
-> >  static void *ufs_get_page(struct inode *dir, unsigned long n, struct page
-> >  **page) {
-> > 
-> > +	char *kaddr;
-> > +
-> > 
-> >  	struct address_space *mapping = dir->i_mapping;
-> >  	*page = read_mapping_page(mapping, n, NULL);
-> >  	if (!IS_ERR(*page)) {
-> > 
-> > -		kmap(*page);
-> > +		kmap_local_page(*page);
-> > 
-> >  		if (unlikely(!PageChecked(*page))) {
-> > 
-> > -			if (!ufs_check_page(*page))
-> > +			if (!ufs_check_page(*page, kaddr))
-> 
-> 	Er...  Building the patched tree is occasionally useful.
->
-I don't know why gcc didn't catch this (gcc version 12.2.1 20221020 [revision 
-0aaef83351473e8f4eb774f8f999bbe87a4866d7] (SUSE Linux)):
+Minor conflicts with erofs branch; conflicting changes in this one
+are all of form s/READ/ITER_DEST/ in iov_iter_xarray() calls.
 
-setarch i686
-make ARCH=i386 O=../build-linux-x86_32-debug/ -j12
-make[1]: Entering directory '/usr/src/git/kernels/build-linux-x86_32-debug'
-  GEN     Makefile
-  DESCEND bpf/resolve_btfids
-  CALL    /usr/src/git/kernels/linux/scripts/checksyscalls.sh
-  CC [M]  fs/ufs/dir.o
-  LD [M]  fs/ufs/ufs.o
-  MODPOST Module.symvers
-Kernel: arch/x86/boot/bzImage is ready  (#3)
-  LD [M]  fs/ufs/ufs.ko
-  BTF [M] fs/ufs/ufs.ko
-make[1]: Leaving directory '/usr/src/git/kernels/build-linux-x86_32-debug'
+The following changes since commit eb7081409f94a9a8608593d0fb63a1aa3d6f95d8:
 
-> Here kaddr is obviously uninitialized and compiler would've
-> probably caught that.
->
-I'd better use option W=1 next time.
->
-> 	And return value of kmap_local_page() is lost, which
-> is related to the previous issue ;-)
-> 
-> >  				goto fail;
-> >  		
-> >  		}
-> >  	
-> >  	}
-> > 
-> > -	return page;
-> > +	return *page;
-> 
-> Hell, no.  Callers expect the pointer to the first byte of
-> your page.  What it should return is kaddr.
->
-I'm sorry that I entirely missed this :-(
-> 
-> > @@ -388,7 +406,8 @@ int ufs_add_link(struct dentry *dentry, struct inode
-> > *inode)> 
-> >  	mark_inode_dirty(dir);
-> >  	/* OFFSET_CACHE */
-> >  
-> >  out_put:
-> > -	ufs_put_page(page);
-> > +	ufs_put_page(page, kaddr);
-> > +	return 0;
-> > 
-> >  out_unlock:
-> >  	unlock_page(page);
-> >  	goto out_put;
-> 
-> That can't be right.  Places like
->         if (err)
-> 		goto out_unlock;
-> do not expect err to be lost.  You end up returning 0 now.  Something 
-strange
-> happened here (in the previous commit, perhaps?)
->
-I don't yet know. Maybe that it is related to a copy-paste error or something 
-like that...
+  Linux 6.1-rc6 (2022-11-20 16:02:16 -0800)
 
-As said, I'll send next version ASAP.
+are available in the Git repository at:
 
-Again thanks for your kind help,
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-iov_iter
 
-Fabio
+for you to fetch changes up to de4eda9de2d957ef2d6a8365a01e26a435e958cb:
 
+  use less confusing names for iov_iter direction initializers (2022-11-25 13:01:55 -0500)
 
+----------------------------------------------------------------
+iov_iter work; most of that is about getting rid of
+direction misannotations and (hopefully) preventing
+more of the same for the future.
 
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
+
+----------------------------------------------------------------
+Al Viro (12):
+      get rid of unlikely() on page_copy_sane() calls
+      csum_and_copy_to_iter(): handle ITER_DISCARD
+      [s390] copy_oldmem_kernel() - WRITE is "data source", not destination
+      [fsi] WRITE is "data source", not destination...
+      [infiniband] READ is "data destination", not source...
+      [s390] zcore: WRITE is "data source", not destination...
+      [s390] memcpy_real(): WRITE is "data source", not destination...
+      [target] fix iov_iter_bvec() "direction" argument
+      [vhost] fix 'direction' argument of iov_iter_{init,bvec}()
+      [xen] fix "direction" argument of iov_iter_kvec()
+      iov_iter: saner checks for attempt to copy to/from iterator
+      use less confusing names for iov_iter direction initializers
+
+ arch/s390/kernel/crash_dump.c            |  2 +-
+ arch/s390/mm/maccess.c                   |  2 +-
+ arch/x86/kernel/cpu/microcode/intel.c    |  2 +-
+ arch/x86/kernel/crash_dump_64.c          |  2 +-
+ crypto/testmgr.c                         |  4 +--
+ drivers/acpi/pfr_update.c                |  2 +-
+ drivers/block/drbd/drbd_main.c           |  2 +-
+ drivers/block/drbd/drbd_receiver.c       |  2 +-
+ drivers/block/loop.c                     | 12 ++++----
+ drivers/block/nbd.c                      | 10 +++----
+ drivers/char/random.c                    |  4 +--
+ drivers/fsi/fsi-sbefifo.c                |  6 ++--
+ drivers/infiniband/ulp/rtrs/rtrs-clt.c   |  2 +-
+ drivers/isdn/mISDN/l1oip_core.c          |  2 +-
+ drivers/misc/vmw_vmci/vmci_queue_pair.c  |  6 ++--
+ drivers/net/ppp/ppp_generic.c            |  2 +-
+ drivers/nvme/host/tcp.c                  |  4 +--
+ drivers/nvme/target/io-cmd-file.c        |  4 +--
+ drivers/nvme/target/tcp.c                |  2 +-
+ drivers/s390/char/zcore.c                |  2 +-
+ drivers/scsi/sg.c                        |  2 +-
+ drivers/target/iscsi/iscsi_target_util.c |  4 +--
+ drivers/target/target_core_file.c        |  4 +--
+ drivers/usb/usbip/usbip_common.c         |  2 +-
+ drivers/vhost/net.c                      |  6 ++--
+ drivers/vhost/scsi.c                     | 10 +++----
+ drivers/vhost/vhost.c                    |  6 ++--
+ drivers/vhost/vringh.c                   |  4 +--
+ drivers/vhost/vsock.c                    |  4 +--
+ drivers/xen/pvcalls-back.c               |  8 ++---
+ fs/9p/vfs_addr.c                         |  4 +--
+ fs/9p/vfs_dir.c                          |  2 +-
+ fs/9p/xattr.c                            |  4 +--
+ fs/afs/cmservice.c                       |  2 +-
+ fs/afs/dir.c                             |  2 +-
+ fs/afs/file.c                            |  4 +--
+ fs/afs/internal.h                        |  4 +--
+ fs/afs/rxrpc.c                           | 10 +++----
+ fs/afs/write.c                           |  4 +--
+ fs/aio.c                                 |  4 +--
+ fs/btrfs/ioctl.c                         |  4 +--
+ fs/ceph/addr.c                           |  4 +--
+ fs/ceph/file.c                           |  4 +--
+ fs/cifs/connect.c                        |  6 ++--
+ fs/cifs/file.c                           |  4 +--
+ fs/cifs/fscache.c                        |  4 +--
+ fs/cifs/smb2ops.c                        |  4 +--
+ fs/cifs/transport.c                      |  6 ++--
+ fs/coredump.c                            |  2 +-
+ fs/erofs/fscache.c                       |  6 ++--
+ fs/fscache/io.c                          |  2 +-
+ fs/fuse/ioctl.c                          |  4 +--
+ fs/netfs/io.c                            |  6 ++--
+ fs/nfs/fscache.c                         |  4 +--
+ fs/nfsd/vfs.c                            |  4 +--
+ fs/ocfs2/cluster/tcp.c                   |  2 +-
+ fs/orangefs/inode.c                      |  8 ++---
+ fs/proc/vmcore.c                         |  6 ++--
+ fs/read_write.c                          | 12 ++++----
+ fs/seq_file.c                            |  2 +-
+ fs/splice.c                              | 10 +++----
+ include/linux/uio.h                      |  3 ++
+ io_uring/net.c                           | 14 ++++-----
+ io_uring/rw.c                            | 10 +++----
+ kernel/trace/trace_events_user.c         |  2 +-
+ lib/iov_iter.c                           | 50 ++++++++++++++++++--------------
+ mm/madvise.c                             |  2 +-
+ mm/page_io.c                             |  4 +--
+ mm/process_vm_access.c                   |  2 +-
+ net/9p/client.c                          |  2 +-
+ net/bluetooth/6lowpan.c                  |  2 +-
+ net/bluetooth/a2mp.c                     |  2 +-
+ net/bluetooth/smp.c                      |  2 +-
+ net/ceph/messenger_v1.c                  |  4 +--
+ net/ceph/messenger_v2.c                  | 14 ++++-----
+ net/compat.c                             |  3 +-
+ net/ipv4/tcp.c                           |  4 +--
+ net/netfilter/ipvs/ip_vs_sync.c          |  2 +-
+ net/smc/smc_clc.c                        |  6 ++--
+ net/smc/smc_tx.c                         |  2 +-
+ net/socket.c                             | 12 ++++----
+ net/sunrpc/socklib.c                     |  6 ++--
+ net/sunrpc/svcsock.c                     |  4 +--
+ net/sunrpc/xprtsock.c                    |  6 ++--
+ net/tipc/topsrv.c                        |  2 +-
+ net/tls/tls_device.c                     |  4 +--
+ net/xfrm/espintcp.c                      |  2 +-
+ security/keys/keyctl.c                   |  4 +--
+ 88 files changed, 224 insertions(+), 214 deletions(-)
