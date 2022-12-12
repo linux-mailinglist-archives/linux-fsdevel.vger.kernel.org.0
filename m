@@ -2,139 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11E976497AA
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 02:29:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2279764983D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 04:30:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230520AbiLLB3z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Dec 2022 20:29:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55888 "EHLO
+        id S230408AbiLLDaD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Dec 2022 22:30:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60994 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229475AbiLLB3x (ORCPT
+        with ESMTP id S230393AbiLLDaA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Dec 2022 20:29:53 -0500
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E40CB65EC;
-        Sun, 11 Dec 2022 17:29:50 -0800 (PST)
-Received: from dggpemm100009.china.huawei.com (unknown [172.30.72.55])
-        by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4NVkYK6gnMz15NJf;
-        Mon, 12 Dec 2022 09:28:53 +0800 (CST)
-Received: from huawei.com (10.175.113.32) by dggpemm100009.china.huawei.com
- (7.185.36.113) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Mon, 12 Dec
- 2022 09:29:48 +0800
-From:   Liu Shixin <liushixin2@huawei.com>
-To:     Viacheslav Dubeyko <slava@dubeyko.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Fabio M . De Francesco" <fmdefrancesco@gmail.com>
-CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Liu Shixin <liushixin2@huawei.com>
-Subject: [PATCH v2] hfs: fix missing hfs_bnode_get() in __hfs_bnode_create
-Date:   Mon, 12 Dec 2022 10:16:27 +0800
-Message-ID: <20221212021627.3766829-1-liushixin2@huawei.com>
-X-Mailer: git-send-email 2.25.1
+        Sun, 11 Dec 2022 22:30:00 -0500
+Received: from mail-pl1-x632.google.com (mail-pl1-x632.google.com [IPv6:2607:f8b0:4864:20::632])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B67B9DE90;
+        Sun, 11 Dec 2022 19:29:59 -0800 (PST)
+Received: by mail-pl1-x632.google.com with SMTP id 17so3293233pll.0;
+        Sun, 11 Dec 2022 19:29:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:reply-to:user-agent:mime-version:date:message-id:from
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=DFgrDYhwuet6qjJ8Wq4sAS0uEiwAbXa5YALkWoY0Wck=;
+        b=CfI2c265dZResWya/YCRxbZJeNm+wWXrt3ejL/JdVZYrEs3uGVmhCIt7wFam1u9ZDv
+         TqIM/NZGil4Lc0+wUaN1EaWIB8IALKqgAM/xEQa/VvXmnUaOiSq8BQipxwsBd6wOHmv2
+         /Tff/l5/3FUSFndWolsvOjWYHP/diJOCjc4YHGl+CRYWNY0V+EB51SDl3n+2KW3y8kM9
+         bF1tRJYUgmbHkmUpXdMWW2wWGyME1zN1/wDOoTTkhgMA4A+dNVkVn1PzdkxgAsrE9x0V
+         3I6nQa8ucXXTn3dPby/kSsF2QI0j36gxmcYVWIJ1yGIxAiZPbmY9wxt0q9XYglaWTFfJ
+         jILg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:reply-to:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DFgrDYhwuet6qjJ8Wq4sAS0uEiwAbXa5YALkWoY0Wck=;
+        b=NRsmI2vk3DpPMLBxw/U2qRHmjIRE/3xvNA04vKDoiYezpPLrWAkuxixciFGtAX//CO
+         iU2SAQCTQvH9i/R9552HysZLRVpppIqYx5QSigzAtiTaUpB4I98lET02Tn/1juD1tbao
+         gfw2BNAUll/UJ+940oe9UVeb+Z7vXKEyodyuDrj2Xc9wpinmmomtQETWBba5Wpeq61Es
+         N3hc+TC89/FmeybAVzoagyfvhnd/qp8i2F8KOiLCgPLXUCTc6MmGBfuC6kdb8elcShm0
+         Zg/95VqDnAo3PpXkXRtq4dmRuWfbmUogBYVzOWrHFcA81XWuanka/mYVmX6zWNwo31OE
+         jX0w==
+X-Gm-Message-State: ANoB5pkpqD7rx27ZleUQU+g46/GNO6kqo5fkAXZ0JBjlPFtOqObutCiq
+        swfSMM2WOVQUXghisV8G40gRJtzd+SAcxQ==
+X-Google-Smtp-Source: AA0mqf6i9aWHyuq++jCdiWIG4ie0EpsS5rt1pb/Uk2cp1zdc+tfPqJhU6zQ63b/iE3WwxK80JCobOg==
+X-Received: by 2002:a17:90a:c304:b0:20d:bd63:830a with SMTP id g4-20020a17090ac30400b0020dbd63830amr14630926pjt.49.1670815799253;
+        Sun, 11 Dec 2022 19:29:59 -0800 (PST)
+Received: from [172.22.60.4] ([1.242.215.113])
+        by smtp.gmail.com with ESMTPSA id gf12-20020a17090ac7cc00b0021904307a53sm4338816pjb.19.2022.12.11.19.29.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 11 Dec 2022 19:29:58 -0800 (PST)
+From:   Sungjong Seo <sjdev.seo@gmail.com>
+X-Google-Original-From: Sungjong Seo <sj1557.seo@samsung.com>
+Message-ID: <5229bc2c-2191-8e4d-f711-4787f8306226@samsung.com>
+Date:   Mon, 12 Dec 2022 12:29:54 +0900
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.175.113.32]
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemm100009.china.huawei.com (7.185.36.113)
-X-CFilter-Loop: Reflected
-X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Reply-To: sj1557.seo@samsung.com
+Subject: Re: [PATCH v1 6/6] exfat: reuse exfat_find_location() to simplify
+ exfat_get_dentry_set()
+To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>,
+        "linkinjeon@kernel.org" <linkinjeon@kernel.org>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
+        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
+References: <PUZPR04MB631628014876FC50CD7EF2A781189@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Content-Language: en-US
+In-Reply-To: <PUZPR04MB631628014876FC50CD7EF2A781189@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Syzbot found a kernel BUG in hfs_bnode_put():
+Hi. Yuezhang,
 
- kernel BUG at fs/hfs/bnode.c:466!
- invalid opcode: 0000 [#1] PREEMPT SMP KASAN
- CPU: 0 PID: 3634 Comm: kworker/u4:5 Not tainted 6.1.0-rc7-syzkaller-00190-g97ee9d1c1696 #0
- Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
- Workqueue: writeback wb_workfn (flush-7:0)
- RIP: 0010:hfs_bnode_put+0x46f/0x480 fs/hfs/bnode.c:466
- Code: 8a 80 ff e9 73 fe ff ff 89 d9 80 e1 07 80 c1 03 38 c1 0f 8c a0 fe ff ff 48 89 df e8 db 8a 80 ff e9 93 fe ff ff e8 a1 68 2c ff <0f> 0b e8 9a 68 2c ff 0f 0b 0f 1f 84 00 00 00 00 00 55 41 57 41 56
- RSP: 0018:ffffc90003b4f258 EFLAGS: 00010293
- RAX: ffffffff825e318f RBX: 0000000000000000 RCX: ffff8880739dd7c0
- RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
- RBP: ffffc90003b4f430 R08: ffffffff825e2d9b R09: ffffed10045157d1
- R10: ffffed10045157d1 R11: 1ffff110045157d0 R12: ffff8880228abe80
- R13: ffff88807016c000 R14: dffffc0000000000 R15: ffff8880228abe00
- FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
- CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
- CR2: 00007fa6ebe88718 CR3: 000000001e93d000 CR4: 00000000003506f0
- DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
- DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
- Call Trace:
-  <TASK>
-  hfs_write_inode+0x1bc/0xb40
-  write_inode fs/fs-writeback.c:1440 [inline]
-  __writeback_single_inode+0x4d6/0x670 fs/fs-writeback.c:1652
-  writeback_sb_inodes+0xb3b/0x18f0 fs/fs-writeback.c:1878
-  __writeback_inodes_wb+0x125/0x420 fs/fs-writeback.c:1949
-  wb_writeback+0x440/0x7b0 fs/fs-writeback.c:2054
-  wb_check_start_all fs/fs-writeback.c:2176 [inline]
-  wb_do_writeback fs/fs-writeback.c:2202 [inline]
-  wb_workfn+0x827/0xef0 fs/fs-writeback.c:2235
-  process_one_work+0x877/0xdb0 kernel/workqueue.c:2289
-  worker_thread+0xb14/0x1330 kernel/workqueue.c:2436
-  kthread+0x266/0x300 kernel/kthread.c:376
-  ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:306
-  </TASK>
+On 12/5/22 14:10, Yuezhang.Mo@sony.com wrote:
+> In exfat_get_dentry_set(), part of the code is the same as
+> exfat_find_location(), reuse exfat_find_location() to simplify
+> exfat_get_dentry_set().
+> 
+> Code refinement, no functional changes.
+> 
+> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+> Reviewed-by: Andy Wu <Andy.Wu@sony.com>
+> Reviewed-by: Aoyama Wataru <wataru.aoyama@sony.com>
+> ---
+>  fs/exfat/dir.c | 17 ++++-------------
+>  1 file changed, 4 insertions(+), 13 deletions(-)
+> 
+> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+> index 8121a7e073bc..834c0e634250 100644
+> --- a/fs/exfat/dir.c
+> +++ b/fs/exfat/dir.c
+> @@ -818,7 +818,7 @@ int exfat_get_dentry_set(struct exfat_entry_set_cache *es,
+>  		unsigned int type)
+>  {
+>  	int ret, i, num_bh;
+> -	unsigned int off, byte_offset, clu = 0;
+> +	unsigned int off;
+>  	sector_t sec;
+>  	struct exfat_sb_info *sbi = EXFAT_SB(sb);
+>  	struct exfat_dentry *ep;
+> @@ -831,27 +831,16 @@ int exfat_get_dentry_set(struct exfat_entry_set_cache *es,
+>  		return -EIO;
+>  	}
+>  
+> -	byte_offset = EXFAT_DEN_TO_B(entry);
+> -	ret = exfat_walk_fat_chain(sb, p_dir, byte_offset, &clu);
+> +	ret = exfat_find_location(sb, p_dir, entry, &sec, &off);
+>  	if (ret)
+>  		return ret;
+>  
+>  	memset(es, 0, sizeof(*es));
+>  	es->sb = sb;
+>  	es->modified = false;
+> -
+> -	/* byte offset in cluster */
+> -	byte_offset = EXFAT_CLU_OFFSET(byte_offset, sbi);
+> -
+> -	/* byte offset in sector */
+> -	off = EXFAT_BLK_OFFSET(byte_offset, sb);
+>  	es->start_off = off;
+>  	es->bh = es->__bh;
+>  
+> -	/* sector offset in cluster */
+> -	sec = EXFAT_B_TO_BLK(byte_offset, sb);
+> -	sec += exfat_cluster_to_sector(sbi, clu);
+> -
+>  	bh = sb_bread(sb, sec);
+>  	if (!bh)
+>  		return -EIO;
+> @@ -878,6 +867,8 @@ int exfat_get_dentry_set(struct exfat_entry_set_cache *es,
+>  	for (i = 1; i < num_bh; i++) {
+>  		/* get the next sector */
+>  		if (exfat_is_last_sector_in_cluster(sbi, sec)) {
+> +			int clu = exfat_sector_to_cluster(sbi, sec);
+> +
+'clu' should be defined as 'unsigned int'.
+ However, as of now, exfat_sector_to_cluster() seems to be unused
+function and to return wrong type 'int'. So it should be fixed prior to
+this patch.
 
-The BUG_ON() is triggered at here:
+Could you send  patchset again includes the fix?
 
-/* Dispose of resources used by a node */
-void hfs_bnode_put(struct hfs_bnode *node)
-{
-	if (node) {
- 		<skipped>
- 		BUG_ON(!atomic_read(&node->refcnt)); <- we have issue here!!!!
- 		<skipped>
- 	}
-}
-
-By tracing the refcnt, I found the node is created by hfs_bmap_alloc()
-with refcnt 1. Then the node is used by hfs_btree_write(). There is a
-missing of hfs_bnode_get() after find the node. The issue happened in
-following path:
-
-<alloc>
- hfs_bmap_alloc
-   hfs_bnode_find
-     __hfs_bnode_create   <- allocate a new node with refcnt 1.
-   hfs_bnode_put          <- decrease the refcnt
-
-<write>
- hfs_btree_write
-   hfs_bnode_find
-     __hfs_bnode_create
-       hfs_bnode_findhash <- find the node without refcnt increased.
-   hfs_bnode_put	  <- trigger the BUG_ON() since refcnt is 0.
-
-Reported-by: syzbot+5b04b49a7ec7226c7426@syzkaller.appspotmail.com
-Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
-Signed-off-by: Liu Shixin <liushixin2@huawei.com>
----
-v1->v2: Add more detail explanation suggested by Viacheslav.
-
- fs/hfs/bnode.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
-index 2015e42e752a..6add6ebfef89 100644
---- a/fs/hfs/bnode.c
-+++ b/fs/hfs/bnode.c
-@@ -274,6 +274,7 @@ static struct hfs_bnode *__hfs_bnode_create(struct hfs_btree *tree, u32 cnid)
- 		tree->node_hash[hash] = node;
- 		tree->node_hash_cnt++;
- 	} else {
-+		hfs_bnode_get(node2);
- 		spin_unlock(&tree->hash_lock);
- 		kfree(node);
- 		wait_event(node2->lock_wq, !test_bit(HFS_BNODE_NEW, &node2->flags));
--- 
-2.25.1
-
+>  			if (p_dir->flags == ALLOC_NO_FAT_CHAIN)
+>  				clu++;
+>  			else if (exfat_get_next_cluster(sb, &clu))
