@@ -2,83 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6A9626498F7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 07:30:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 13D0864991D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 08:02:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231326AbiLLGab (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Dec 2022 01:30:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39618 "EHLO
+        id S231370AbiLLHB6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Dec 2022 02:01:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44700 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229697AbiLLGaa (ORCPT
+        with ESMTP id S231362AbiLLHB5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Dec 2022 01:30:30 -0500
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0E07B1EA;
-        Sun, 11 Dec 2022 22:30:28 -0800 (PST)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id 70C1268AA6; Mon, 12 Dec 2022 07:30:18 +0100 (CET)
-Date:   Mon, 12 Dec 2022 07:30:17 +0100
-From:   "hch@lst.de" <hch@lst.de>
-To:     Carlos Carvalho <carlos@fisica.ufpr.br>
-Cc:     "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Clay Mayers <Clay.Mayers@kioxia.com>,
-        Keith Busch <kbusch@kernel.org>,
-        Hannes Reinecke <hare@suse.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Chaitanya Kulkarni <chaitanyak@nvidia.com>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-raid@vger.kernel.org" <linux-raid@vger.kernel.org>,
-        "linux-nvme@lists.infradead.org" <linux-nvme@lists.infradead.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "axboe@kernel.dk" <axboe@kernel.dk>,
-        "djwong@kernel.org" <djwong@kernel.org>, "hch@lst.de" <hch@lst.de>,
-        "sagi@grimberg.me" <sagi@grimberg.me>,
-        "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
-        "javier@javigon.com" <javier@javigon.com>,
-        "johannes.thumshirn@wdc.com" <johannes.thumshirn@wdc.com>,
-        "bvanassche@acm.org" <bvanassche@acm.org>,
-        "dongli.zhang@oracle.com" <dongli.zhang@oracle.com>,
-        "jefflexu@linux.alibaba.com" <jefflexu@linux.alibaba.com>,
-        "josef@toxicpanda.com" <josef@toxicpanda.com>,
-        "clm@fb.com" <clm@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
-        "jack@suse.com" <jack@suse.com>, "tytso@mit.edu" <tytso@mit.edu>,
-        "adilger.kernel@dilger.ca" <adilger.kernel@dilger.ca>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "idryomov@gmail.com" <idryomov@gmail.com>,
-        "danil.kipnis@cloud.ionos.com" <danil.kipnis@cloud.ionos.com>,
-        "ebiggers@google.com" <ebiggers@google.com>,
-        "jinpu.wang@cloud.ionos.com" <jinpu.wang@cloud.ionos.com>
-Subject: Re: [PATCH 0/6] block: add support for REQ_OP_VERIFY
-Message-ID: <20221212063017.GA9290@lst.de>
-References: <20220630091406.19624-1-kch@nvidia.com> <YsXJdXnXsMtaC8DJ@casper.infradead.org> <d14fe396-b39b-6b3e-ae74-eb6a8b64e379@nvidia.com> <Y4kC9NIXevPlji+j@casper.infradead.org> <72a51a83-c25a-ef52-55fb-2b73aec70305@suse.de> <Y4oSiPH0ENFktioQ@kbusch-mbp.dhcp.thefacebook.com> <f68009b7cc744c02ad69d68fd7e61751@kioxia.com> <yq14ju5gvfh.fsf@ca-mkp.ca.oracle.com> <Y5SEWnNUpgKxOB/W@fisica.ufpr.br>
+        Mon, 12 Dec 2022 02:01:57 -0500
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0A2A4BF49
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Dec 2022 23:01:56 -0800 (PST)
+Received: by mail-io1-f71.google.com with SMTP id n23-20020a056602341700b00689fc6dbfd6so5627725ioz.8
+        for <linux-fsdevel@vger.kernel.org>; Sun, 11 Dec 2022 23:01:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iJobm6A9HB39E5YwY9AR8u4OqB6O5B/ZShprtKCSEJE=;
+        b=aOD1jhLOn5V3REckdukXEKPFIvaH9HazfIKrZ698U1DmpfAyrzYQ3lKYVWiXwO2f0O
+         zsFp4WjzG2ZZcKdqbEQlyIuelvLNBK1Hipc7k0l0/WKB+Si1NdJSgz0p7FWwOK0LR9UV
+         9rcDg5pvNt/y0q8evtb7Gwo3YEyu4zqLx/5yBPZiKevJKcSR3O+nf6wNWeLS7Dpq2MCe
+         Qi1vxQawgvZ+ZHoheApxPeZDcMkZrcODOZcrZqV1bJQyCh36Hb1kI1FyLKPDjF/Up80D
+         gnvWj+HIyy4vFGAn3/cxt/zbHLyPeOF6+2NT0pKNjQ2Nc0SXD0KMzUvw7DSOSfLMkBTo
+         GcsA==
+X-Gm-Message-State: ANoB5pkymIYYeE/pu3KEIf3Xgi60aUO2WHAufvlpDVSfiCd1OAhmkEQk
+        StinZxYpr7rR+oMU5CtB7Jsye3C/oWc16CvmVjwzQ9uCa30U
+X-Google-Smtp-Source: AA0mqf6Kisa8uab80mIczxrSWkzAMrMxQ8kVuWS1Vn0KUgNR4XdeVcmZ7rhZPBrJXsMJZ+Fy9wxzeIpibQPASbQ2pqktRSonOFPz
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y5SEWnNUpgKxOB/W@fisica.ufpr.br>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a92:d590:0:b0:303:4c6:dd96 with SMTP id
+ a16-20020a92d590000000b0030304c6dd96mr26194532iln.246.1670828515385; Sun, 11
+ Dec 2022 23:01:55 -0800 (PST)
+Date:   Sun, 11 Dec 2022 23:01:55 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000023e98b05ef9c14c5@google.com>
+Subject: [syzbot] BUG: unable to handle kernel paging request in current_time
+From:   syzbot <syzbot+6f1094dbac66f87b75e5@syzkaller.appspotmail.com>
+To:     damien.lemoal@opensource.wdc.com, jlayton@kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 10, 2022 at 10:06:34AM -0300, Carlos Carvalho wrote:
-> Certainly we have. Currently admins have to periodically run full block range
-> checks in redundant arrays to detect bad blocks and correct them while
-> redundancy is available. Otherwise when a disk fails and you try to reconstruct
-> the replacement you hit another block in the remaining disks that's bad and you
-> cannot complete the reconstruction and have data loss. These checks are a
-> burden because they have HIGH overhead, significantly reducing bandwidth for
-> the normal use of the array.
-> 
-> If there was a standard interface for getting the list of bad blocks that the
-> firmware secretly knows the kernel could implement the repair continuosly, with
-> logs etc. That'd really be a relief for admins and, specially, users.
+Hello,
 
-Both SCSI and NVMe can do this through the GET LBA STATUS command -
-in SCSI this was a later addition abusing the command, and in NVMe
-only the abuse survived.  NVMe also has a log page an AEN associated
-for it, I'd have to spend more time reading SBC to remember if SCSI
-also has a notification mechanism of some sort.
+syzbot found the following issue on:
+
+HEAD commit:    a5541c0811a0 Merge branch 'for-next/core' into for-kernelci
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=13f3872f880000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cbd4e584773e9397
+dashboard link: https://syzkaller.appspot.com/bug?extid=6f1094dbac66f87b75e5
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13918e67880000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10870133880000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4b7702208fb9/disk-a5541c08.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9ec0153ec051/vmlinux-a5541c08.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6f8725ad290a/Image-a5541c08.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/31a0c6469932/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6f1094dbac66f87b75e5@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 64
+Unable to handle kernel paging request at virtual address 003f1d3fea3fdfc7
+Mem abort info:
+  ESR = 0x0000000096000004
+  EC = 0x25: DABT (current EL), IL = 32 bits
+  SET = 0, FnV = 0
+  EA = 0, S1PTW = 0
+  FSC = 0x04: level 0 translation fault
+Data abort info:
+  ISV = 0, ISS = 0x00000004
+  CM = 0, WnR = 0
+[003f1d3fea3fdfc7] address between user and kernel address ranges
+Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 PID: 3072 Comm: syz-executor332 Not tainted 6.1.0-rc8-syzkaller-33330-ga5541c0811a0 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/30/2022
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : timestamp_truncate fs/inode.c:2448 [inline]
+pc : current_time+0x48/0x18c fs/inode.c:2486
+lr : current_time+0x3c/0x18c fs/inode.c:2479
+sp : ffff80000ff7ba40
+x29: ffff80000ff7ba60 x28: 0000000000000040 x27: ffff0000c6c47618
+x26: ffff0000ca57ec30 x25: 0000000000000000 x24: ffff0000cb410d58
+x23: d93f1d3fea3fd93f x22: ffff0000cb410d58 x21: 0000000000008000
+x20: 000000000000002b x19: 0000000007270e00 x18: 0000000000000000
+x17: 0000000000000000 x16: ffff80000dbe6158 x15: ffff0000c61e3480
+x14: 0000000000000008 x13: 0000000000000000 x12: ffff0000c61e3480
+x11: ff808000082263ec x10: 0000000000000000 x9 : ffff8000082263ec
+x8 : ffff0000c61e3480 x7 : ffff8000085febdc x6 : 0000000000000000
+x5 : 0000000000000080 x4 : 0000000000000001 x3 : 0000000000000000
+x2 : 0000000000000006 x1 : 0000000000000000 x0 : 0000000000000000
+Call trace:
+ current_time+0x48/0x18c fs/inode.c:2486
+ hfs_new_inode+0xdc/0x304 fs/hfs/inode.c:203
+ hfs_create+0x38/0xc8 fs/hfs/dir.c:198
+ lookup_open fs/namei.c:3413 [inline]
+ open_last_lookups fs/namei.c:3481 [inline]
+ path_openat+0x804/0x11c4 fs/namei.c:3711
+ do_filp_open+0xdc/0x1b8 fs/namei.c:3741
+ do_sys_openat2+0xb8/0x22c fs/open.c:1310
+ do_sys_open fs/open.c:1326 [inline]
+ __do_sys_openat fs/open.c:1342 [inline]
+ __se_sys_openat fs/open.c:1337 [inline]
+ __arm64_sys_openat+0xb0/0xe0 fs/open.c:1337
+ __invoke_syscall arch/arm64/kernel/syscall.c:38 [inline]
+ invoke_syscall arch/arm64/kernel/syscall.c:52 [inline]
+ el0_svc_common+0x138/0x220 arch/arm64/kernel/syscall.c:142
+ do_el0_svc+0x48/0x140 arch/arm64/kernel/syscall.c:197
+ el0_svc+0x58/0x150 arch/arm64/kernel/entry-common.c:637
+ el0t_64_sync_handler+0x84/0xf0 arch/arm64/kernel/entry-common.c:655
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:584
+Code: 97f09d9d f9401677 b4000917 a940cff4 (f94346f6) 
+---[ end trace 0000000000000000 ]---
+----------------
+Code disassembly (best guess):
+   0:	97f09d9d 	bl	0xffffffffffc27674
+   4:	f9401677 	ldr	x23, [x19, #40]
+   8:	b4000917 	cbz	x23, 0x128
+   c:	a940cff4 	ldp	x20, x19, [sp, #8]
+* 10:	f94346f6 	ldr	x22, [x23, #1672] <-- trapping instruction
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
