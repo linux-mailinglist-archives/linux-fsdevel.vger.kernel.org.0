@@ -2,46 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4B891649872
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 05:46:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F239F649878
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 05:49:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231240AbiLLEqB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Dec 2022 23:46:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46304 "EHLO
+        id S231249AbiLLEsy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Dec 2022 23:48:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229799AbiLLEp7 (ORCPT
+        with ESMTP id S231202AbiLLEsl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Dec 2022 23:45:59 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DA6E64E9;
-        Sun, 11 Dec 2022 20:45:57 -0800 (PST)
+        Sun, 11 Dec 2022 23:48:41 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4742663D9;
+        Sun, 11 Dec 2022 20:48:40 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2A9D560EAB;
-        Mon, 12 Dec 2022 04:45:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4021DC433D2;
-        Mon, 12 Dec 2022 04:45:56 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id D3A79B80B72;
+        Mon, 12 Dec 2022 04:48:38 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56B1BC433D2;
+        Mon, 12 Dec 2022 04:48:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670820356;
-        bh=ZiPqywrfVYJKyTMOBz5ADrSOCtd+XOKFfeu5S1nMah4=;
+        s=k20201202; t=1670820517;
+        bh=P8vfT0mshHozuGK5w2ZRZj2IsGSxzeJ1hYUPDymSUpA=;
         h=Date:From:To:Cc:Subject:From;
-        b=HHl82Mya2ZR0wKm/58rpz/ANETzs4T9/LlUcAtG6Jj/kdDcSPMy3nUSluiVp8JwXG
-         5Zx/BL/ckxlDkCXUPLL9ML9luXQVYAs6fZ+ytcqXBYsADAqzIE7i3GKmkbTrSW/Kw2
-         3XWKMbBePAmK7rN4+xXQ8ZaI0tsddiJh0pnmP8PZueq0XoVAbGF6TIgTBuagMf3cb6
-         Lct0ctXRuaxw6z9+1GJaxO70Dsudj2HbinzikLEoff2C/Ux+gZAKDKEfXZsivs/eKS
-         MgwgMj5QowZcxObgBI0FlnIbym4sDn6ocMgkng+dpntHP+WBUO09whZTmB+UJ6+foK
-         l2I392lOG5/3w==
-Date:   Sun, 11 Dec 2022 20:45:54 -0800
+        b=oRfLPsbhhzn6jLWFdlSW5/taJKYumF3eyRG6EcL4YW6sqOLFj4LLaHj6VXSSK40pr
+         Hv/+9C6Os/u8mW4Ko5Rx8JyzQBryXRoTVcGRN1TyF68EbgPW2fE6j4NG9PfMLQs6Ce
+         Fa2RwGYuDTemB8vFMLZdS4aYYJPJKlbvPQaJEOJc/MJvHvlQ0ewBVY5XQg6+7qe9Qr
+         39D8WQ2euxHusx0zuZJE52IRL6NtNBwZPc9aQiC2Jb0AeLMaz9KQCvZdrswp07u3ez
+         J+jKuIuPrkG8E4cf8B1YiU2uSQP8a23eQ4W2ELRPkHSt8Whx7ilNFj96Ji/7n4kaFF
+         UbIBpi6gYmeIA==
+Date:   Sun, 11 Dec 2022 20:48:35 -0800
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fscrypt@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
-        linux-mtd@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>,
-        Jaegeuk Kim <jaegeuk@kernel.org>
-Subject: [GIT PULL] fscrypt updates for 6.2
-Message-ID: <Y5ayAsXkTF3jK13s@sol.localdomain>
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>
+Subject: [GIT PULL] fsverity updates for 6.2
+Message-ID: <Y5ayo48TtNrPgU9D@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -60,42 +59,31 @@ The following changes since commit f0c4d9fc9cc9462659728d168387191387e903cc:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fscrypt-for-linus
+  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git tags/fsverity-for-linus
 
-for you to fetch changes up to 41952551acb405080726aa38a8a7ce317d9de4bb:
+for you to fetch changes up to a4bbf53d88c728da9ff6c316b1e4ded63a8f3940:
 
-  fscrypt: add additional documentation for SM4 support (2022-12-02 10:43:00 -0800)
-
-----------------------------------------------------------------
-
-This release adds SM4 encryption support, contributed by Tianjia Zhang.
-SM4 is a Chinese block cipher that is an alternative to AES.
-
-I recommend against using SM4, but (according to Tianjia) some people
-are being required to use it.  Since SM4 has been turning up in many
-other places (crypto API, wireless, TLS, OpenSSL, ARMv8 CPUs, etc.), it
-hasn't been very controversial, and some people have to use it, I don't
-think it would be fair for me to reject this optional feature.
-
-Besides the above, there are a couple cleanups.
+  fsverity: simplify fsverity_get_digest() (2022-11-29 21:07:41 -0800)
 
 ----------------------------------------------------------------
-Eric Biggers (4):
-      fscrypt: pass super_block to fscrypt_put_master_key_activeref()
-      fscrypt: add comment for fscrypt_valid_enc_modes_v1()
-      fscrypt: remove unused Speck definitions
-      fscrypt: add additional documentation for SM4 support
 
-Tianjia Zhang (2):
-      blk-crypto: Add support for SM4-XTS blk crypto mode
-      fscrypt: Add SM4 XTS/CTS symmetric algorithm support
+The main change this cycle is to stop using the PG_error flag to track
+verity failures, and instead just track failures at the bio level.  This
+follows a similar fscrypt change that went into 6.1, and it is a step
+towards freeing up PG_error for other uses.
 
- Documentation/filesystems/fscrypt.rst |  7 +++++++
- block/blk-crypto.c                    |  6 ++++++
- fs/crypto/fscrypt_private.h           | 13 ++++---------
- fs/crypto/keyring.c                   | 14 ++++++--------
- fs/crypto/keysetup.c                  | 17 ++++++++++++++++-
- fs/crypto/policy.c                    | 12 ++++++++++++
- include/linux/blk-crypto.h            |  1 +
- include/uapi/linux/fscrypt.h          |  4 ++--
- 8 files changed, 54 insertions(+), 20 deletions(-)
+There's also one other small cleanup.
+
+----------------------------------------------------------------
+Eric Biggers (2):
+      fsverity: stop using PG_error to track error status
+      fsverity: simplify fsverity_get_digest()
+
+ fs/ext4/readpage.c           |  8 ++----
+ fs/f2fs/compress.c           | 64 +++++++++++++++++++++-----------------------
+ fs/f2fs/data.c               | 53 ++++++++++++++++++++++--------------
+ fs/verity/fsverity_private.h |  5 ++++
+ fs/verity/hash_algs.c        |  6 +++++
+ fs/verity/measure.c          | 19 ++-----------
+ fs/verity/verify.c           | 12 ++++-----
+ 7 files changed, 85 insertions(+), 82 deletions(-)
