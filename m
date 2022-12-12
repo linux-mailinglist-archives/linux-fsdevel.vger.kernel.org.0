@@ -2,100 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 42EB864A445
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 16:37:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3222D64A577
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 18:04:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232542AbiLLPho (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Dec 2022 10:37:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44696 "EHLO
+        id S232934AbiLLREc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Dec 2022 12:04:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232537AbiLLPhe (ORCPT
+        with ESMTP id S232814AbiLLREK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Dec 2022 10:37:34 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79805FAF2;
-        Mon, 12 Dec 2022 07:37:33 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Mon, 12 Dec 2022 12:04:10 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 306B81056C;
+        Mon, 12 Dec 2022 09:04:04 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 30D85B80D8C;
-        Mon, 12 Dec 2022 15:37:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B95C3C433EF;
-        Mon, 12 Dec 2022 15:37:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670859450;
-        bh=bQjHMEaKvjiDu5gcF5ghATIIUpXsdMD8g72o/V7Njb0=;
-        h=Date:From:To:Cc:Subject:From;
-        b=YDsQ85XQB6Mr86XiBFCvmb6vUdAjUkakzRQCA9XfMOXg7a4utz20UPR51SasSNGed
-         NwaevPxWWVxwjCL67L36THQvYsa/0yYB+Hix0Q+b8OP03TbAb4zTUynEaHk0kXzRf3
-         D0hWY2LFzWYPG1MaDclrZUNNYb30gw5bhvg/UoY8ZlFg1bYRB82UtZ1wnJsMPo4MIT
-         FfG3TQJjsLemi4OQhxMmGx7/IVX6/4HBcV9/fid6EB/y7S9yfa2qnydGJHlJxEWk5p
-         kFHQ/IG+KiQ3I2Jor6Nngq07xYXYFwOl1GTsoPDo0oVrXEDc1QCnSYBOIAUjdHbUFZ
-         i2w8kvxE6+BPg==
-Date:   Mon, 12 Dec 2022 09:37:29 -0600
-From:   Seth Forshee <sforshee@kernel.org>
+        by smtp-out2.suse.de (Postfix) with ESMTPS id C35B41FE2B;
+        Mon, 12 Dec 2022 17:04:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1670864642; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type;
+        bh=PbexLX/SJWGWEaHMvMhd2z7nCseXDShLAsC7Ku5L2ag=;
+        b=zng91BHEFl8BjH0bHbXDmDNMtz31OQJ051dnzZ9gIbqSJA578YWqfzhUIW2ZaDFL68foU2
+        3xsNWYu8Anmo5by52Xoh4fdxnO58a23PpBm8GsOIlrvoTBArUEwikSoGQdY9fpUeh3t+YV
+        hf+6NCWz+UXTBfsUJRA+IBWowkpHwq4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1670864642;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type;
+        bh=PbexLX/SJWGWEaHMvMhd2z7nCseXDShLAsC7Ku5L2ag=;
+        b=gj0phcg33sAwv0AihoRlz1ZRujeSTuKZmgXjgOh8inURCmpBRG1tUT0b7d2w8gx8p32wrf
+        IuC68vsRAoy1KMCQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id B5C0E13456;
+        Mon, 12 Dec 2022 17:04:02 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id AVdZLAJfl2OvGAAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 12 Dec 2022 17:04:02 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 3D308A0727; Mon, 12 Dec 2022 18:04:02 +0100 (CET)
+Date:   Mon, 12 Dec 2022 18:04:02 +0100
+From:   Jan Kara <jack@suse.cz>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] xattr audit fix for v6.2
-Message-ID: <Y5dKudhCyAktI/8E@do-x1extreme>
+Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org
+Subject: [GIT PULL] udf and ext2 fixes for 6.2-rc1
+Message-ID: <20221212170402.w4mqtu4a65kphtju@quack3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+  Hello Linus,
 
-/* Summary */
-This is a single patch to remove auditing of the
-capability check in simple_xattr_list(). This check is done to check
-whether trusted xattrs should be included by listxattr(2). SELinux will
-normally log a denial when capable() is called and the task's SELinux
-context doesn't have the corresponding capability permission allowed,
-which can end up spamming the log. Since a failed check here cannot be
-used to infer malicious intent, auditing is of no real value, and it
-makes sense to stop auditing the capability check.
+  could you please pull from
 
-/* Testing */
-The patch is based off of 6.1-rc4 and has been sitting in linux-next. No
-build failures or warnings were observed and fstests, selftests, and LTP
-show no regressions.
+git://git.kernel.org/pub/scm/linux/kernel/git/jack/linux-fs.git fixes_for_v6.2-rc1
 
-/* Conflicts */
-At the time of creating this PR no merge conflicts were reported from
-linux-next. A test merge with current mainline also showed no conflicts.
+to get:
+ * couple of smaller cleanups and fixes for ext2
+ * fixes of a data corruption issues in udf when handling holes and
+   preallocation extents
+ * fixes and cleanups of several smaller issues in udf
+ * add maintainer entry for isofs
 
-The following changes since commit f0c4d9fc9cc9462659728d168387191387e903cc:
+Top of the tree is 1f3868f06855. The full shortlog is:
 
-  Linux 6.1-rc4 (2022-11-06 15:07:11 -0800)
+Al Viro (1):
+      ext2: unbugger ext2_empty_dir()
 
-are available in the Git repository at:
+Bartosz Taudul (1):
+      udf: Increase UDF_MAX_READ_VERSION to 0x0260
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/fs.xattr.simple.noaudit.v6.2
+Bo Liu (1):
+      ext2: Fix some kernel-doc warnings
 
-for you to fetch changes up to e7eda157c4071cd1e69f4b1687b0fbe1ae5e6f46:
+Christoph Hellwig (2):
+      ext2: remove ->writepage
+      udf: remove ->writepage
 
-  fs: don't audit the capability check in simple_xattr_list() (2022-11-07 16:55:45 +0100)
+Jan Kara (6):
+      maintainers: Add ISOFS entry
+      ext2: Don't flush page immediately for DIRSYNC directories
+      udf: Fix preallocation discarding at indirect extent boundary
+      udf: Do not bother looking for prealloc extents if i_lenExtents matches i_size
+      udf: Discard preallocation before extending file with a hole
+      udf: Fix extending file within last block
 
-Please consider pulling these changes from the signed
-fs.xattr.simple.noaudit.v6.2.
+Li zeming (1):
+      fs: udf: Optimize udf_free_in_core_inode and udf_find_fileset function
 
-Thanks!
-Seth
+Rong Tao (1):
+      fs/ext2: Fix code indentation
 
-----------------------------------------------------------------
-fs.xattr.simple.noaudit.v6.2
+Shigeru Yoshida (1):
+      udf: Avoid double brelse() in udf_rename()
 
-----------------------------------------------------------------
-Ondrej Mosnacek (1):
-      fs: don't audit the capability check in simple_xattr_list()
+The diffstat is
 
- fs/xattr.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS       |  7 +++++
+ fs/ext2/balloc.c  | 12 ++++----
+ fs/ext2/dir.c     | 41 +++++++++++++++------------
+ fs/ext2/inode.c   |  6 ----
+ fs/ext2/super.c   |  2 +-
+ fs/udf/inode.c    | 83 +++++++++++++++++++++++--------------------------------
+ fs/udf/namei.c    |  8 +++---
+ fs/udf/super.c    |  4 +--
+ fs/udf/truncate.c | 48 ++++++++++----------------------
+ fs/udf/udf_sb.h   |  6 +++-
+ 10 files changed, 98 insertions(+), 119 deletions(-)
+
+							Thanks
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
