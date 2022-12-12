@@ -2,106 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 94C9D64A151
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 14:38:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0609864A2D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 15:07:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232819AbiLLNif (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Dec 2022 08:38:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36590 "EHLO
+        id S233365AbiLLOH1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Dec 2022 09:07:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36784 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232816AbiLLNhr (ORCPT
+        with ESMTP id S232182AbiLLOHN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Dec 2022 08:37:47 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 38B2713F5E;
-        Mon, 12 Dec 2022 05:37:22 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Mon, 12 Dec 2022 09:07:13 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B9248E082
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Dec 2022 06:06:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1670853983;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=6mputtDy4dWIDPb3FUVAgAtzJ7Z3mOw2PcyT5++zmA4=;
+        b=bcdjHNsITvXgQAG5pWLGl67kOo8ve07gkyC+sY5Ur4wTdq/8oyiaFPn5ndqCuaHYLkJpEN
+        rxMH/oli5THYEN8xIeJuDufgI6m9ddMqULHdH3BNyw2BHiytWBL09tetey4v5dZRCjkFMQ
+        p2FjmuYet/esLZoFSzzKUjVYEHhFMc0=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-1-s32lfLa_PVy0nE8lKG7nHQ-1; Mon, 12 Dec 2022 09:06:19 -0500
+X-MC-Unique: s32lfLa_PVy0nE8lKG7nHQ-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id E0AE034400;
-        Mon, 12 Dec 2022 13:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1670852240; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TKypSIdcoy898mpfc6Pyz2EaNFcY/Huodk8xnbTMnYQ=;
-        b=iv4WXAmUUsF9MEuqV9UTmGO3gDR1uLGqo14V9kGfMr8ercXgZk278W8LX74/t815E/JazT
-        wHZ4HABWaX4BECQkKoAwVxNvzAKeIBTMwEDSnF3bkZjzZb97i4iFyBxyogPBWNpzWjTkap
-        g/gRv0ofCgoJaTpxQqq883RAT3P9FPQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1670852240;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=TKypSIdcoy898mpfc6Pyz2EaNFcY/Huodk8xnbTMnYQ=;
-        b=9QLw9/yLYpmbeyE3E/1UeSFFVSzcjUfyfuE03TQ30GvyyeTdAB0cHSD5NJiYyjPTRX3Viy
-        mrnYZllBvrUAvSBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id D34F213456;
-        Mon, 12 Dec 2022 13:37:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 6eaLM5Aul2MYJgAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 12 Dec 2022 13:37:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 57449A0728; Mon, 12 Dec 2022 14:37:20 +0100 (CET)
-Date:   Mon, 12 Dec 2022 14:37:20 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Miaohe Lin <linmiaohe@huawei.com>
-Cc:     viro@zeniv.linux.org.uk, tytso@mit.edu, jack@suse.cz,
-        axboe@kernel.dk, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] writeback: remove obsolete macro EXPIRE_DIRTY_ATIME
-Message-ID: <20221212133720.xvnmz4nsfwknwqr4@quack3>
-References: <20221210101042.2012931-1-linmiaohe@huawei.com>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CB33186C043;
+        Mon, 12 Dec 2022 14:06:18 +0000 (UTC)
+Received: from madcap2.tricolour.com (ovpn-0-3.rdu2.redhat.com [10.22.0.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 49331492C14;
+        Mon, 12 Dec 2022 14:06:17 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: [PATCH v5 0/3] fanotify: Allow user space to pass back additional audit info
+Date:   Mon, 12 Dec 2022 09:06:08 -0500
+Message-Id: <cover.1670606054.git.rgb@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221210101042.2012931-1-linmiaohe@huawei.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat 10-12-22 18:10:42, Miaohe Lin wrote:
-> EXPIRE_DIRTY_ATIME is not used anymore. Remove it.
-> 
-> Signed-off-by: Miaohe Lin <linmiaohe@huawei.com>
+The Fanotify API can be used for access control by requesting permission
+event notification. The user space tooling that uses it may have a
+complicated policy that inherently contains additional context for the
+decision. If this information were available in the audit trail, policy
+writers can close the loop on debugging policy. Also, if this additional
+information were available, it would enable the creation of tools that
+can suggest changes to the policy similar to how audit2allow can help
+refine labeled security.
 
-Sure. Thanks! Feel free to add:
+This patchset defines a new flag (FAN_INFO) and new extensions that
+define additional information which are appended after the response
+structure returned from user space on a permission event.  The appended
+information is organized with headers containing a type and size that
+can be delegated to interested subsystems.  One new information type is
+defined to audit the triggering rule number.  
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+A newer kernel will work with an older userspace and an older kernel
+will behave as expected and reject a newer userspace, leaving it up to
+the newer userspace to test appropriately and adapt as necessary.
 
-								Honza
+The audit function was updated to log the additional information in the
+AUDIT_FANOTIFY record. The following are examples of the new record
+format:
+  type=FANOTIFY msg=audit(1600385147.372:590): resp=2 fan_type=1 fan_info=3137 subj_trust=3 obj_trust=5
+  type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0 fan_info=3F subj_trust=? obj_trust=?
 
-> ---
->  fs/fs-writeback.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
-> index 9958d4020771..6bad645ac36f 100644
-> --- a/fs/fs-writeback.c
-> +++ b/fs/fs-writeback.c
-> @@ -1345,8 +1345,6 @@ static bool inode_dirtied_after(struct inode *inode, unsigned long t)
->  	return ret;
->  }
->  
-> -#define EXPIRE_DIRTY_ATIME 0x0001
-> -
->  /*
->   * Move expired (dirtied before dirtied_before) dirty inodes from
->   * @delaying_queue to @dispatch_queue.
-> -- 
-> 2.27.0
-> 
+changelog:
+v1:
+- first version by Steve Grubb <sgrubb@redhat.com>
+Link: https://lore.kernel.org/r/2042449.irdbgypaU6@x2
+
+v2:
+- enhancements suggested by Jan Kara <jack@suse.cz>
+- 1/3 change %d to %u in pr_debug
+- 2/3 change response from __u32 to __u16
+- mod struct fanotify_response and fanotify_perm_event add extra_info_type, extra_info_buf
+- extra_info_buf size max FANOTIFY_MAX_RESPONSE_EXTRA_LEN, add struct fanotify_response_audit_rule
+- extend debug statements
+- remove unneeded macros
+- [internal] change interface to finish_permission_event() and process_access_response()
+- 3/3 update format of extra information
+- [internal] change interface to audit_fanotify()
+- change ctx_type= to fan_type=
+Link: https://lore.kernel.org/r/cover.1651174324.git.rgb@redhat.com
+
+v3:
+- 1/3 switch {,__}audit_fanotify() from uint to u32
+- 2/3 re-add fanotify_get_response switch case FAN_DENY: to avoid unnecessary churn
+- add FAN_EXTRA flag to indicate more info and break with old kernel
+- change response from u16 to u32 to avoid endian issues
+- change extra_info_buf to union
+- move low-cost fd check earlier
+- change FAN_RESPONSE_INFO_AUDIT_NONE to FAN_RESPONSE_INFO_NONE
+- switch to u32 for internal and __u32 for uapi
+Link: https://lore.kernel.org/all/cover.1652730821.git.rgb@redhat.com
+
+v4:
+- scrap FAN_INVALID_RESPONSE_MASK in favour of original to catch invalid response == 0
+- introduce FANOTIFY_RESPONSE_* macros
+- uapi: remove union
+- keep original struct fanotify_response, add fan_info infra starting with audit reason
+- uapi add struct fanotify_response_info_header{type/pad/len} and struct fanotify_response_info_audit_rule{hdr/rule}
+- rename fan_ctx= to fan_info=, FAN_EXTRA to FAN_INFO
+- change event struct from type/buf to len/buf
+- enable multiple info extensions in one message
+- hex encode fan_info in __audit_fanotify()
+- record type FANOTIFY extended to "type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0 fan_info=3F"                                                                                                                     
+Link: https://lore.kernel.org/all/cover.1659996830.git.rgb@redhat.com
+
+v5:
+- fixed warnings in p2/4 and p3/4 found by <lkp@intel.com>
+- restore original behaviour for !FAN_INFO case and fanotify_get_response()
+- rename member audit_rule to rule_number
+- eliminate memory leak of info_buf on failure (no longer dynamic)
+- rename buf:info, count:info_len, c:remain, ib:infop
+- fix pr_debug
+- return -ENOENT on FAN_INFO and fd==FAN_NOFD to signal new kernel
+- fanotify_write() remove redundant size check
+- add u32 subj_trust obj_trust fields with unknown value "2"
+- split out to helper process_access_response_info()
+- restore finish_permission_event() response_struct to u32
+- assume and enforce one rule to audit, pass struct directly to __audit_fanotify()
+- change fanotify_perm_event struct to union hdr/audir_rule
+- add vspace to fanotify_write() and process_access_response_info()
+- squash 3/4 with 4/4
+- fix v3 and v4 links
+Link: https://lore.kernel.org/all/cover.1670606054.git.rgb@redhat.com
+
+Richard Guy Briggs (3):
+  fanotify: Ensure consistent variable type for response
+  fanotify: define struct members to hold response decision context
+  fanotify,audit: Allow audit to use the full permission event response
+
+ fs/notify/fanotify/fanotify.c      |  8 ++-
+ fs/notify/fanotify/fanotify.h      |  6 +-
+ fs/notify/fanotify/fanotify_user.c | 88 ++++++++++++++++++++++--------
+ include/linux/audit.h              |  9 +--
+ include/linux/fanotify.h           |  5 ++
+ include/uapi/linux/fanotify.h      | 30 +++++++++-
+ kernel/auditsc.c                   | 25 ++++++++-
+ 7 files changed, 138 insertions(+), 33 deletions(-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.27.0
+
