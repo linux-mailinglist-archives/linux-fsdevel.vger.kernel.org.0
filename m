@@ -2,72 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2016D64A86D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 21:10:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA02E64A8D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 21:42:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233196AbiLLUJC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Dec 2022 15:09:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48898 "EHLO
+        id S232816AbiLLUmW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Dec 2022 15:42:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36678 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233105AbiLLUI6 (ORCPT
+        with ESMTP id S231770AbiLLUmV (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Dec 2022 15:08:58 -0500
-Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 223F1175AE;
-        Mon, 12 Dec 2022 12:08:53 -0800 (PST)
-Received: by mail-wr1-x42a.google.com with SMTP id co23so13382111wrb.4;
-        Mon, 12 Dec 2022 12:08:53 -0800 (PST)
+        Mon, 12 Dec 2022 15:42:21 -0500
+Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E09E1836D;
+        Mon, 12 Dec 2022 12:42:20 -0800 (PST)
+Received: by mail-lf1-x136.google.com with SMTP id j4so1591921lfk.0;
+        Mon, 12 Dec 2022 12:42:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SBYX0Bgct53uW6OYZnLeYHLy/9+c4kuah33Xo7h5GMc=;
-        b=MVl5ZiJTcKmUY1/MYMx9OVoFugiZCKG6Ah+BAinij8e0fX5ra7K78mqtzyLq94FWsA
-         In14DzMhzoiX2ZkEKYnOxCKVmOXg4w0HqKCmjztjwAXkGd7LmaZ55iJ2aokxhHoCZWBs
-         MeKLtTggXzJFLK22L3FQR+T9FLg4tndpSIXd/fVlQWzk/iXC7RPoKU5RYSJLxOXact+L
-         z0q/lyEpw3noibsLuXSBpOdQm79ep0K2S8ApF8Zfxy7m2PXKx+Y8pvOW/WM/2r5VR8K7
-         Y+KQZEYAriGwBWIQTq9/Js9p6bLMXRvOLa1kOVtMXFzcINS+sYqqxr6ksMfFiqsRey7w
-         Ei2A==
+        bh=yi/YU2j+x5BuBXWGZECLyVNnhDuHpoWKcj/4vAm5ZMM=;
+        b=oOgV5/nZXIJ7z3WGB87na/XQqphJaBwH31shYnYLgVsAkqnqGP9ANCU8XxSaVepA3F
+         H5X6wyIooFT+gM+QZRt1Sm3wMYug0br0sLn7OFHe7iIMjLzg+BD12k1r3o/na5erZ191
+         0U66+aW0w5kiobDV5Oc29ktK46VRPYzF9EJV9v7EWzTlaNtdFmWSsNMHn0QYapxi7m2p
+         D+hVIRibo7AOXbOIeHegP/A+wGZNFWMZea35DYiIfEZIarlhOoS61h68gyDvnfWY1CYe
+         wA09vaJyJFG7lGRLshcP4MGm4Oa2oC7v7kYK8ubAfqf0IOel2jbtKYpaQGnEMIAcMi+H
+         0Ujw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SBYX0Bgct53uW6OYZnLeYHLy/9+c4kuah33Xo7h5GMc=;
-        b=OGmMZdeWZIkpIa2w/8P8MpcIyGSsKJ4hFitXgDMrvWLbE/vSSlPcGSXhoS8poTqlsq
-         hXGGxo1rhg4/ktYN/EHJAGH6bgtd/04Ng4vwK1sI70JvnCzEIfXARu3rdJfFzYJduwEt
-         z799Q2NUZigXVNTeTUV5A83Z85zS1erHBRZVbxLq5FbBk0+GSogFOsjtpdV5Sw6/yz25
-         1viuV7tro8gQWLQqkM/lSWTcKqkpIStJN9RCh/fv2p9XlO+iCYvD1TFzmOfpdRJM65aj
-         DwPDZx6EfgTpm41TWQJ/t6dG5GbUwUgOH1MmgJWxlGkeU5jBAsOPQ4nnkWtZQY5Nc8wh
-         bsZQ==
-X-Gm-Message-State: ANoB5pnUqLJhJwLUU46WZzjxKSiBzJ0PoD95ghLRXb/V7O3V68cBAOnv
-        uYoxdG/r4NWNPVCkJmP0PhU=
-X-Google-Smtp-Source: AA0mqf7mkN6VaKEXNOipzgBKrRs07XriztMXV512rHubp1p0SIIhGRx3Jlc3O4VZszf/5HOLKLHdIQ==
-X-Received: by 2002:a05:6000:38e:b0:242:2390:15a with SMTP id u14-20020a056000038e00b002422390015amr16877183wrf.71.1670875731570;
-        Mon, 12 Dec 2022 12:08:51 -0800 (PST)
-Received: from suse.localnet (host-79-41-27-125.retail.telecomitalia.it. [79.41.27.125])
-        by smtp.gmail.com with ESMTPSA id h17-20020a5d4fd1000000b0024246991121sm9527080wrw.116.2022.12.12.12.08.49
+        bh=yi/YU2j+x5BuBXWGZECLyVNnhDuHpoWKcj/4vAm5ZMM=;
+        b=iVRmgA34Cs+wFW0G5X5yVLkL9xlKKO5TJZYiM9HF578d3ow/hfJfGeFEfXMq025zFU
+         RjPU/vPuWplUiacexkcZGn4PBCCnmKoihQtNl+67YvaY8MtgHcUtZhGPtqetKPgHXP6D
+         OakCdOKeDLP4rVGnkgWpvfx20oqolYEV9QY5Fn0RWQeDl2D53v9vGVkkkWmcwv/VDn2P
+         rEcV15dx+t2Z+C6xly21juU3yCvmEwO3lErVCq3N8lBJGd7MQ7oywJ4L6wbVznV2iFJl
+         Kw48qxjXRP9F2b7I9VwbSQZylpEWMtzzM4C0fbEIjzRo5vWOwImPU8AXxUy8zuLTUg3W
+         n38A==
+X-Gm-Message-State: ANoB5plp8CPYs0mX0wgnmByYhXkKO9FwE0FCOuyoOxp0ry2iv9WVHvjV
+        Pa6J6EpmPxJhyIR7fozKpPM=
+X-Google-Smtp-Source: AA0mqf7cXS2euKC0ZOav0ITrVzUpkE7E7dSgVR8pY+Nwymn7QVy/xAXhgqPGVfX4UK1gsbQPsCEu4w==
+X-Received: by 2002:a05:6512:281d:b0:4b0:38f1:1266 with SMTP id cf29-20020a056512281d00b004b038f11266mr6251017lfb.34.1670877738553;
+        Mon, 12 Dec 2022 12:42:18 -0800 (PST)
+Received: from grain.localdomain ([5.18.253.97])
+        by smtp.gmail.com with ESMTPSA id s16-20020a05651c049000b00279ee47099dsm81671ljc.116.2022.12.12.12.42.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 12 Dec 2022 12:08:50 -0800 (PST)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Al Viro <viro@zeniv.linux.org.uk>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Evgeniy Dushistov <dushistov@mail.ru>,
-        Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Evgeniy Dushistov <dushistov@mail.ru>,
-        Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 2/3] fs/ufs: Change the signature of ufs_get_page()
-Date:   Mon, 12 Dec 2022 21:08:49 +0100
-Message-ID: <8194794.NyiUUSuA9g@suse>
-In-Reply-To: <Y5Zc0qZ3+zsI74OZ@ZenIV>
-References: <20221211213111.30085-1-fmdefrancesco@gmail.com>
- <20221211213111.30085-3-fmdefrancesco@gmail.com> <Y5Zc0qZ3+zsI74OZ@ZenIV>
+        Mon, 12 Dec 2022 12:42:17 -0800 (PST)
+Received: by grain.localdomain (Postfix, from userid 1000)
+        id 46A275A0020; Mon, 12 Dec 2022 23:42:16 +0300 (MSK)
+Date:   Mon, 12 Dec 2022 23:42:16 +0300
+From:   Cyrill Gorcunov <gorcunov@gmail.com>
+To:     Muhammad Usama Anjum <usama.anjum@collabora.com>
+Cc:     =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <emmir@google.com>,
+        Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Peter Xu <peterx@redhat.com>, Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Zach O'Keefe <zokeefe@google.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>, kernel@collabora.com,
+        Gabriel Krisman Bertazi <krisman@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Peter Enderborg <peter.enderborg@sony.com>,
+        "open list : KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>, Shuah Khan <shuah@kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list : PROC FILESYSTEM" <linux-fsdevel@vger.kernel.org>,
+        "open list : MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+        Paul Gofman <pgofman@codeweavers.com>
+Subject: Re: [PATCH v6 2/3] fs/proc/task_mmu: Implement IOCTL to get and/or
+ the clear info about PTEs
+Message-ID: <Y5eSKBJ9hTtw9cbK@grain>
+References: <20221109102303.851281-1-usama.anjum@collabora.com>
+ <20221109102303.851281-3-usama.anjum@collabora.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221109102303.851281-3-usama.anjum@collabora.com>
+User-Agent: Mutt/2.2.9 (2022-11-12)
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -78,79 +98,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On domenica 11 dicembre 2022 23:42:26 CET Al Viro wrote:
-> On Sun, Dec 11, 2022 at 10:31:10PM +0100, Fabio M. De Francesco wrote:
-> >  out_put:
-> >  	ufs_put_page(page);
-> > 
-> > -out:
-> > -	return err;
-> > 
-> >  out_unlock:
-> >  	unlock_page(page);
-> >  	goto out_put;
-> 
-> Something strange has happened, all right - look at the situation
-> after that patch.  You've got
-> 
-> out_put:
-> 	ufs_put_page(page);
-> out_unlock:
-> 	unlock_page(page);
-> 	goto out_put;
-> 
-> Which is obviously bogus.
+On Wed, Nov 09, 2022 at 03:23:02PM +0500, Muhammad Usama Anjum wrote:
+...
+> +
+> +static long do_pagemap_sd_cmd(struct mm_struct *mm, struct pagemap_scan_arg *arg)
+> +{
+> +	struct mmu_notifier_range range;
+> +	unsigned long __user start, end;
+> +	struct pagemap_scan_private p;
+> +	int ret;
+> +
+> +	start = (unsigned long)untagged_addr(arg->start);
+> +	if ((!IS_ALIGNED(start, PAGE_SIZE)) || (!access_ok((void __user *)start, arg->len)))
+> +		return -EINVAL;
+> +
+> +	if (IS_GET_OP(arg) &&
+> +	    ((arg->vec_len == 0) || (!access_ok((struct page_region *)arg->vec, arg->vec_len))))
+> +		return -ENOMEM;
+> +
+> +	if (IS_SD_OP(arg) && ((arg->required_mask & PAGEMAP_NONSD_OP_MASK) ||
+> +	     (arg->anyof_mask & PAGEMAP_NONSD_OP_MASK)))
+> +		return -EINVAL;
+> +
+> +	end = start + arg->len;
+> +	p.max_pages = arg->max_pages;
+> +	p.found_pages = 0;
+> +	p.flags = arg->flags;
+> +	p.required_mask = arg->required_mask;
+> +	p.anyof_mask = arg->anyof_mask;
+> +	p.excluded_mask = arg->excluded_mask;
+> +	p.return_mask = arg->return_mask;
+> +	p.vec_index = 0;
+> +	p.vec_len = arg->vec_len;
+> +
+> +	if (IS_GET_OP(arg)) {
+> +		p.vec = vzalloc(arg->vec_len * sizeof(struct page_region));
+> +		if (!p.vec)
+> +			return -ENOMEM;
+> +	} else {
+> +		p.vec = NULL;
+> +	}
 
-I finally could go back to this small series and while working to fix the 
-errors that yesterday you had found out I think I saw what happened...
-
-Are you talking about ufs_add_link, right?
-
-If so, you wrote what follows at point 14 of one of your emails:
-
------
-
-14) ufs_add_link() - similar adjustment to new calling conventions
-for ufs_get_page().  Uses of page_addr: fed to ufs_put_page() (same as
-in ufs_find_entry() kaddr is guaranteed to point into the same page and
-thus can be used instead) and calculation of position in directory, same
-as we'd seen in ufs_set_link().  The latter becomes page_offset(page) +
-offset_in_page(de), killing page_addr off.  BTW, we get
-                kaddr = ufs_get_page(dir, n, &page);
-                err = PTR_ERR(kaddr);
-                if (IS_ERR(kaddr))
-                        goto out;
-with out: being just 'return err;', which suggests
-                kaddr = ufs_get_page(dir, n, &page);
-                if (IS_ERR(kaddr))
-                        return ERR_PTR(kaddr);
-instead (and that was the only goto out; so the label can be removed).
-The value stored in err in case !IS_ERR(kaddr) is (thankfully) never
-used - would've been a bug otherwise.  So this is an equivalent 
-transformation.
-
------
-
-Did you notice "so the label can be removed"?
-I must have misinterpreted what you wrote there. Did I?
-
-I removed the "out" label, according to what it seemed to me the correct way 
-to interpret your words.
-
-However at that moment I didn't see the endless loop at the end of the 
-function. Then I "fixed" (sigh!) it in 3/3 by terminating that endless loop
-with a "return 0". 
-
-However that was another mistake because after "got_it:" label we have "err = 
-ufs_commit_chunk(page, pos, rec_len);". 
-
-To summarize: I can delete _only_ the label and leave the "return err;" in the 
-block after the "out_put:" label. 
-
-Am I looking at it correctly now?
-
-Thanks,
-
-Fabio
-
-
+Hi Muhammad! I'm really sorry for diving in such late (unfortunatelly too busy to
+step in yet). Anyway, while in general such interface looks reasonable here are
+few moments which really bothers me: as far as I undertstand you don't need
+vzalloc here, plain vmalloc should works as well since you copy only filled
+results back to userspace. Next -- there is no restriction on vec_len parameter,
+is not here a door for DoS from userspace? Say I could start a number of ioctl
+on same pagemap and try to allocate very big amount of vec_len in summay causing
+big pressure on kernel's memory. Or I miss something obvious here?
