@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id ED280649764
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 01:36:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5AC3C649770
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 12 Dec 2022 01:39:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230475AbiLLAgL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 11 Dec 2022 19:36:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44884 "EHLO
+        id S230482AbiLLAjf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 11 Dec 2022 19:39:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46304 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230247AbiLLAgJ (ORCPT
+        with ESMTP id S230339AbiLLAje (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 11 Dec 2022 19:36:09 -0500
+        Sun, 11 Dec 2022 19:39:34 -0500
 Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 403F2BC84;
-        Sun, 11 Dec 2022 16:36:09 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02229F49;
+        Sun, 11 Dec 2022 16:39:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=linux.org.uk; s=zeniv-20220401; h=Sender:Content-Type:MIME-Version:
         Message-ID:Subject:Cc:To:From:Date:Reply-To:Content-Transfer-Encoding:
         Content-ID:Content-Description:In-Reply-To:References;
-        bh=AdN7B0jlh18ORN/MVeIMLXn+O6G1rq6aSz4OhUNS+d4=; b=SHYRtOXj58GMphFH0r44Ic5u37
-        57TS7AhGipItJ+XQ9bXV4iJougB6iYK+vyscRGRvCbZv4mRVkzbDObvac/gSwlKmvDvioCLzCU9cz
-        9ZolXTRAwRZccxC6gVeD8NIAjd9p1FN9dVtJ6oHd1c0TXAOjQybzMtFFBXyLk3KhbFov7xA4w5V0H
-        7nSHvWAh4lBzZVcZdlXzxoijKpPTJjYFwkhnMhAGoOdoH1aOORSqn0Rsy2uGGTyKWuGx60eglYPN+
-        MiK+j8IaZ5p0cxIxza1Ipe72vwsZAZtO9FGWZsmA0urHFfxvcwYzN1rwicACStHb+POKoxveJrTXV
-        bSQNWTFg==;
+        bh=qm0mFnlyJOAlXiyB+isl1PMFIu7if3LnNLFWM+HFydA=; b=lHIQSixMLwxR2Nua76sGJSIdTy
+        Vf3wPnjb1Tsr8WPZ+VviEO0fcrECKo/ttdHALYa1DvqAymdABTj1cwAn7WMFyCOlifoerIHq8tMJn
+        6jMO0UiJMIZVpU6GjoS7/OzxH8b3/xlkJp5KMLf7Y6UPFz/+v1PcSf0NY3RUvb29//CnmrHmqCCuU
+        VuO6IP4IRhnAOaZkRBxlasnWAgAzHNzuzyesclVONAheUiCnnQoK+p0S38bg+2cxfi/wYspvdFS6z
+        U8rNQy0sl9/5cVRG1Y2DFutJPkTc2z7WCZGdb8JJZRWk6JeamHlMeI+FF5jIUGxOtkHLAlqVv/VIw
+        QwHkJ0Pw==;
 Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1p4Wnf-00B88o-2q;
-        Mon, 12 Dec 2022 00:36:07 +0000
-Date:   Mon, 12 Dec 2022 00:36:07 +0000
+        id 1p4Wqy-00B8AW-1M;
+        Mon, 12 Dec 2022 00:39:32 +0000
+Date:   Mon, 12 Dec 2022 00:39:32 +0000
 From:   Al Viro <viro@zeniv.linux.org.uk>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [git pull] vfs.git namespace fix
-Message-ID: <Y5Z3d+DP8TwJCDr8@ZenIV>
+Subject: [git pull] vfs.git misc pile
+Message-ID: <Y5Z4RCCOiu1OrmS2@ZenIV>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -47,26 +47,47 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+The last commit in there (sysvfs very belated fix) had been there only
+since Friday, but it's a really obvious fix - the bug had been introduced
+in minixfs and sysvfs in 2002, minixfs got caught and fixed 2 years later
+and sysvfs one got missed.  Fix is the same one-liner.  Up to you...
+
 The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
 
   Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-namespace
+  git://git.kernel.org/pub/scm/linux/kernel/git/viro/vfs.git tags/pull-misc
 
-for you to fetch changes up to 61d8e42667716f71f2c26e327e66f2940d809f80:
+for you to fetch changes up to e0c49bd2b4d3cd1751491eb2d940bce968ac65e9:
 
-  copy_mnt_ns(): handle a corner case (overmounted mntns bindings) saner (2022-11-24 22:55:57 -0500)
+  fs: sysv: Fix sysv_nblocks() returns wrong value (2022-12-10 14:13:37 -0500)
 
 ----------------------------------------------------------------
-fix of weird corner case in copy_mnt_ns()
+misc pile
 
 Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 
 ----------------------------------------------------------------
-Al Viro (1):
-      copy_mnt_ns(): handle a corner case (overmounted mntns bindings) saner
+Chen Zhongjin (1):
+      fs: sysv: Fix sysv_nblocks() returns wrong value
 
- fs/namespace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Christoph Hellwig (1):
+      fs: simplify vfs_get_super
+
+Jeff Layton (1):
+      fs: drop useless condition from inode_needs_update_time
+
+Zhen Lei (2):
+      btrfs: replace INT_LIMIT(loff_t) with OFFSET_MAX
+      get rid of INT_LIMIT, use type_max() instead
+
+ Documentation/filesystems/mount_api.rst | 11 ------
+ fs/btrfs/ordered-data.c                 |  6 ++--
+ fs/inode.c                              |  3 --
+ fs/super.c                              | 60 +++++----------------------------
+ fs/sysv/itree.c                         |  2 +-
+ include/linux/fs.h                      |  5 ++-
+ include/linux/fs_context.h              | 14 --------
+ 7 files changed, 15 insertions(+), 86 deletions(-)
