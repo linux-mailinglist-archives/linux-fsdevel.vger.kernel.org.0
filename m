@@ -2,143 +2,85 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB22C64B4E3
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 13:12:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4762864B567
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 13:47:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235568AbiLMMMM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Dec 2022 07:12:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60520 "EHLO
+        id S235196AbiLMMrN (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Dec 2022 07:47:13 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49896 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235552AbiLMMMC (ORCPT
+        with ESMTP id S230349AbiLMMrK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Dec 2022 07:12:02 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE90E1580D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 04:11:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670933483;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RAI9mgdskd1ADV22NmxESjpEH55uCsxgWZtJxV8d/1E=;
-        b=caOmXm1E7gz8oafskYHHvIeJnnybkyA4VanxlrzsqVUuGs62d07HBYXOJGVGXaOZNSBAQP
-        BVrn6OhPbRPcipRlhkMcurhyp9w8tFFKQcKTd5zSkLC3DR6BwPwHB3Lfb1pyQUgHjvvAVI
-        LkMrXM4aN/ZeyIkVvAZEwe0AKbK03yA=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-267-dvOezT1eOcaie-ZF4hHeYw-1; Tue, 13 Dec 2022 07:11:22 -0500
-X-MC-Unique: dvOezT1eOcaie-ZF4hHeYw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 13 Dec 2022 07:47:10 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 681062EE;
+        Tue, 13 Dec 2022 04:47:06 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6CBB23C0F425;
-        Tue, 13 Dec 2022 12:11:21 +0000 (UTC)
-Received: from lxbceph1.gsslab.pek2.redhat.com (unknown [10.72.47.117])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9CC3640AE1F4;
-        Tue, 13 Dec 2022 12:11:17 +0000 (UTC)
-From:   xiubli@redhat.com
-To:     jlayton@kernel.org, idryomov@gmail.com, ceph-devel@vger.kernel.org
+        by dfw.source.kernel.org (Postfix) with ESMTPS id F4237614C8;
+        Tue, 13 Dec 2022 12:47:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 719CBC433D2;
+        Tue, 13 Dec 2022 12:47:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670935625;
+        bh=TAaNkCOgM1asqcXO/g5N+4KvMGb9eBkyQa4Gy0QTAeg=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=LB0wP0EAfGMsyh70AKPRTKds55kqMiQIsqJKkh0dxs3QvC1UYNplh24NhvqbPQQKG
+         r19WqwYZHP36yRMG9TqlJFC8oEeivE+GQpl8N2UwttE+cWmSyXxkyRDi8BFtagcp2+
+         UA+BfPbKNOL3LN/Cbme1GZBFkqTtyB7y7MnA03NZ3AVvDS2tQUs8pDWN2YaD1Yk1oK
+         ERllxGmc9pqYAkKaX3IKJUtJuuH+bGMFE6k9XTTXsBC5msAn2QOl3PSsDt8JBS2bQF
+         9oo+JqrWp4ySY4yfydHomfCLqF7ulBRgQHnaT55mEkbulvF5jWes6LUXVDFoXDqxDd
+         3zTUC8L+S1Pew==
+Message-ID: <f71ab29339c88eb2cfa8f7294d03777d7a227907.camel@kernel.org>
+Subject: Re: [PATCH v4 0/2] ceph: fix the use-after-free bug for file_lock
+From:   Jeff Layton <jlayton@kernel.org>
+To:     xiubli@redhat.com, idryomov@gmail.com, ceph-devel@vger.kernel.org
 Cc:     mchangir@redhat.com, lhenriques@suse.de, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Xiubo Li <xiubli@redhat.com>, stable@vger.kernel.org
-Subject: [PATCH v4 2/2] ceph: add ceph specific member support for file_lock
-Date:   Tue, 13 Dec 2022 20:11:03 +0800
-Message-Id: <20221213121103.213631-3-xiubli@redhat.com>
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Date:   Tue, 13 Dec 2022 07:47:03 -0500
 In-Reply-To: <20221213121103.213631-1-xiubli@redhat.com>
 References: <20221213121103.213631-1-xiubli@redhat.com>
+Content-Type: text/plain; charset="ISO-8859-15"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.2 (3.46.2-1.fc37) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Xiubo Li <xiubli@redhat.com>
+On Tue, 2022-12-13 at 20:11 +0800, xiubli@redhat.com wrote:
+> From: Xiubo Li <xiubli@redhat.com>
+>=20
+> Changed in V4:
+> - repeat the afs in fs.h instead of adding ceph specific header file
+>=20
+> Changed in V3:
+> - switched to vfs_inode_has_locks() helper to fix another ceph file lock
+> bug, thanks Jeff!
+> - this patch series is based on Jeff's previous VFS lock patch:
+>   https://patchwork.kernel.org/project/ceph-devel/list/?series=3D695950
+>=20
+> Changed in V2:
+> - switch to file_lock.fl_u to fix the race bug
+> - and the most code will be in the ceph layer
+>=20
+> Xiubo Li (2):
+>   ceph: switch to vfs_inode_has_locks() to fix file lock bug
+>   ceph: add ceph specific member support for file_lock
+>=20
+>  fs/ceph/caps.c     |  2 +-
+>  fs/ceph/locks.c    | 24 ++++++++++++++++++------
+>  fs/ceph/super.h    |  1 -
+>  include/linux/fs.h |  3 +++
+>  4 files changed, 22 insertions(+), 8 deletions(-)
+>=20
 
-When ceph releasing the file_lock it will try to get the inode pointer
-from the fl->fl_file, which the memory could already be released by
-another thread in filp_close(). Because in VFS layer the fl->fl_file
-doesn't increase the file's reference counter.
+Both patches look good to me. You can add:
 
-Will switch to use ceph dedicate lock info to track the inode.
-
-And in ceph_fl_release_lock() we should skip all the operations if
-the fl->fl_u.ceph_fl.fl_inode is not set, which should come from
-the request file_lock. And we will set fl->fl_u.ceph_fl.fl_inode when
-inserting it to the inode lock list, which is when copying the lock.
-
-Cc: stable@vger.kernel.org
-Cc: Jeff Layton <jlayton@kernel.org>
-URL: https://tracker.ceph.com/issues/57986
-Signed-off-by: Xiubo Li <xiubli@redhat.com>
----
- fs/ceph/locks.c    | 20 ++++++++++++++++++--
- include/linux/fs.h |  3 +++
- 2 files changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
-index b191426bf880..cf78608a3f9a 100644
---- a/fs/ceph/locks.c
-+++ b/fs/ceph/locks.c
-@@ -34,18 +34,34 @@ static void ceph_fl_copy_lock(struct file_lock *dst, struct file_lock *src)
- {
- 	struct inode *inode = file_inode(dst->fl_file);
- 	atomic_inc(&ceph_inode(inode)->i_filelock_ref);
-+	dst->fl_u.ceph.fl_inode = igrab(inode);
- }
- 
-+/*
-+ * Do not use the 'fl->fl_file' in release function, which
-+ * is possibly already released by another thread.
-+ */
- static void ceph_fl_release_lock(struct file_lock *fl)
- {
--	struct inode *inode = file_inode(fl->fl_file);
--	struct ceph_inode_info *ci = ceph_inode(inode);
-+	struct inode *inode = fl->fl_u.ceph.fl_inode;
-+	struct ceph_inode_info *ci;
-+
-+	/*
-+	 * If inode is NULL it should be a request file_lock,
-+	 * nothing we can do.
-+	 */
-+	if (!inode)
-+		return;
-+
-+	ci = ceph_inode(inode);
- 	if (atomic_dec_and_test(&ci->i_filelock_ref)) {
- 		/* clear error when all locks are released */
- 		spin_lock(&ci->i_ceph_lock);
- 		ci->i_ceph_flags &= ~CEPH_I_ERROR_FILELOCK;
- 		spin_unlock(&ci->i_ceph_lock);
- 	}
-+	fl->fl_u.ceph.fl_inode = NULL;
-+	iput(inode);
- }
- 
- static const struct file_lock_operations ceph_fl_lock_ops = {
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 7b52fdfb6da0..6106374f5257 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -1119,6 +1119,9 @@ struct file_lock {
- 			int state;		/* state of grant or error if -ve */
- 			unsigned int	debug_id;
- 		} afs;
-+		struct {
-+			struct inode *fl_inode;
-+		} ceph;
- 	} fl_u;
- } __randomize_layout;
- 
--- 
-2.31.1
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
