@@ -2,66 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B85264BB06
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 18:30:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B7FC964BB0F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 18:31:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236350AbiLMRas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Dec 2022 12:30:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49178 "EHLO
+        id S236317AbiLMRbB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Dec 2022 12:31:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49182 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235878AbiLMRah (ORCPT
+        with ESMTP id S236310AbiLMRaj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Dec 2022 12:30:37 -0500
+        Tue, 13 Dec 2022 12:30:39 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 920D323152
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E183023381
         for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 09:29:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670952588;
+        s=mimecast20190719; t=1670952589;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=P1G95qaTROMe5TeWa2MEdzfjCg/0RQKcVeEKeOMEgQQ=;
-        b=cI2JJuD1orAfSLLixAInkYfRyZIU/EpyuWDkGFHz9TM06HokyMvAwrfig8Vcae75eBiBA4
-        Vfyc+UIYwj1rYKrZeX2eqv6/UmTEeasbx/RmtzUzrH/Wa+sbqc+MJc4O3ynpix72Mcdol/
-        QDEETqWSQKWfP7nULZplXsOJ+JZDrS0=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=r0lyKZLytTPe2tgsoK8ec8CNBM0ybARfQleJk6OVIIM=;
+        b=FTWI/44Yv8CWHo51W0omCQAVQQwlYEzZbbQFYXYdumFcXwA0YsDJOW0ZdkPswuwYtm/WOQ
+        i4k/jw1/mvwo/2BJAruohVo6bgxI8PJkeuqvqzejVz369GR16Xo6L2HN6h9C/lT7K8/L9h
+        X7L3mD5wUQHia2q1+LKMTSe3vJZA9EU=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-652-FJ7n8XV7MISQnbGx160IjQ-1; Tue, 13 Dec 2022 12:29:46 -0500
-X-MC-Unique: FJ7n8XV7MISQnbGx160IjQ-1
-Received: by mail-ed1-f71.google.com with SMTP id b13-20020a056402350d00b00464175c3f1eso7711714edd.11
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 09:29:46 -0800 (PST)
+ us-mta-56-IoF2YPiuObyTZou2fvpgZw-1; Tue, 13 Dec 2022 12:29:47 -0500
+X-MC-Unique: IoF2YPiuObyTZou2fvpgZw-1
+Received: by mail-ej1-f69.google.com with SMTP id nb4-20020a1709071c8400b007c18ba778e9so1881041ejc.16
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 09:29:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P1G95qaTROMe5TeWa2MEdzfjCg/0RQKcVeEKeOMEgQQ=;
-        b=dLelhNE0msOD/zMQ2TrQTiMyHOxlUNjjQmFXNRzgiJT11iLusT8PRnCiXaC/XdGrp9
-         5tTKjtgM2tcwTdwb5as8fCqc4BjNCRnf9yV1ubfVclA6JqVS6XM0OFB+4mNBoe2wnF87
-         Fm5uzf2T2HciXYxcPthyS+ziRELmR9Rku5Dxdh+XeE8njbF/fadpGFs1XDDbs/NKcuHS
-         TxMQ8OXhhOEacJFEjPt4ebuI3UeSAKeYD2uxC8LKghX6I0G5GE71kn2pyLPNAexEuKC3
-         7ZGQfOd/XooINnRgbfHJ5p7ufI8LgXoUm3kuOWDjryj0uJ4ic112zR6enpXVxepirlX/
-         3z+Q==
-X-Gm-Message-State: ANoB5pnuGE6jbGvXHHInHJ2LhlWCC/QGCAhnmyDmU/MSN16gGHl1g1E5
-        SSZbyMeS68YdRiKQtr4XxgOjhEdOM7VRQWcFz0fzMUNAYSW59rWBws/kovObqIERXAf021XKXuO
-        hjjLyS/9CO+7J0aV/ZIpsePva
-X-Received: by 2002:a05:6402:65a:b0:46c:2034:f481 with SMTP id u26-20020a056402065a00b0046c2034f481mr21253796edx.8.1670952585544;
-        Tue, 13 Dec 2022 09:29:45 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf49GadwBBNQqxZylW80lnXLXsFDzu+9jd/T//0zrTD7s7L3ad+tNrjoVsQREKpKn+QzrVVffg==
-X-Received: by 2002:a05:6402:65a:b0:46c:2034:f481 with SMTP id u26-20020a056402065a00b0046c2034f481mr21253788edx.8.1670952585386;
-        Tue, 13 Dec 2022 09:29:45 -0800 (PST)
+        bh=r0lyKZLytTPe2tgsoK8ec8CNBM0ybARfQleJk6OVIIM=;
+        b=3kJeTSgla9WoOQsfqhYDZkDvvlRtDQRqRIrwE3IcKpjeWCPLUVTYPxgy42fTD8mR/c
+         Zh7EmoOvCoD2l1I+GnlG/F3Psw1hw1HVI1s4nv+Ih4Y3xgaDFTnPyGWGwvAXNIJ/TYdF
+         xpT0Zzi7J9VU+UhQDRVMlrg/8WF54JOQDOA8ljQG78yCLiV/pOv3PIspTWD5nsQI4SPM
+         ndS9LCzcwLaDtjCZfrpbrvn7yM2ciIfDfIdA+tf4sRTV1CfHMG6OqkO8aTxPBFqHbfaA
+         vEi/EgUPES9HTsL+UU0ktMfId35HCRG+ET9UX+UZ3qwIAWYw1QptPWGNjll9WfbRtG/0
+         jhlQ==
+X-Gm-Message-State: ANoB5pny2+h2eTb2O0/XmJFtP09AZ1tGHrjPYqHOZ6NqLO+fNDiMOB79
+        uUxPPVHGVPdYKPz1qPESNz6JusvoAUadr0iXdr10pitdKp7FoRApAc15h5yMZeMqZsfUtDYrETL
+        NBwlARpRBg9+PUI4afWlx9ckL
+X-Received: by 2002:a05:6402:5389:b0:461:fc07:b9a7 with SMTP id ew9-20020a056402538900b00461fc07b9a7mr22768384edb.2.1670952586865;
+        Tue, 13 Dec 2022 09:29:46 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf4MMVU2ZSTGshSUNs1Im4i1IYGnQpezMKu2iDzHR1GIoaE/NP6NezsSzt33Apg0fNAeBJPfMA==
+X-Received: by 2002:a05:6402:5389:b0:461:fc07:b9a7 with SMTP id ew9-20020a056402538900b00461fc07b9a7mr22768369edb.2.1670952586679;
+        Tue, 13 Dec 2022 09:29:46 -0800 (PST)
 Received: from aalbersh.remote.csb ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id ec14-20020a0564020d4e00b0047025bf942bsm1204187edb.16.2022.12.13.09.29.44
+        by smtp.gmail.com with ESMTPSA id ec14-20020a0564020d4e00b0047025bf942bsm1204187edb.16.2022.12.13.09.29.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Dec 2022 09:29:44 -0800 (PST)
+        Tue, 13 Dec 2022 09:29:46 -0800 (PST)
 From:   Andrey Albershteyn <aalbersh@redhat.com>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     Andrey Albershteyn <aalbersh@redhat.com>
-Subject: [RFC PATCH 07/11] xfs: disable direct read path for fs-verity sealed files
-Date:   Tue, 13 Dec 2022 18:29:31 +0100
-Message-Id: <20221213172935.680971-8-aalbersh@redhat.com>
+Subject: [RFC PATCH 08/11] xfs: don't enable large folios on fs-verity sealed inode
+Date:   Tue, 13 Dec 2022 18:29:32 +0100
+Message-Id: <20221213172935.680971-9-aalbersh@redhat.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20221213172935.680971-1-aalbersh@redhat.com>
 References: <20221213172935.680971-1-aalbersh@redhat.com>
@@ -77,48 +77,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The direct path is not supported on verity files. Attempts to use direct
-I/O path on such files should fall back to buffered I/O path.
+fs-verity doesn't work with large folios. Don't enable large folios
+on those inode which are already sealed with fs-verity (indicated by
+diflag).
 
 Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
 ---
- fs/xfs/xfs_file.c | 14 +++++++++++---
- 1 file changed, 11 insertions(+), 3 deletions(-)
+ fs/xfs/xfs_iops.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 5eadd9a37c50e..fb4181e38a19d 100644
---- a/fs/xfs/xfs_file.c
-+++ b/fs/xfs/xfs_file.c
-@@ -245,7 +245,8 @@ xfs_file_dax_read(
- 	struct kiocb		*iocb,
- 	struct iov_iter		*to)
- {
--	struct xfs_inode	*ip = XFS_I(iocb->ki_filp->f_mapping->host);
-+	struct inode		*inode = iocb->ki_filp->f_mapping->host;
-+	struct xfs_inode	*ip = XFS_I(inode);
- 	ssize_t			ret = 0;
+diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
+index b229d25c1c3d6..a4c8db588690e 100644
+--- a/fs/xfs/xfs_iops.c
++++ b/fs/xfs/xfs_iops.c
+@@ -1294,7 +1294,12 @@ xfs_setup_inode(
+ 	gfp_mask = mapping_gfp_mask(inode->i_mapping);
+ 	mapping_set_gfp_mask(inode->i_mapping, (gfp_mask & ~(__GFP_FS)));
  
- 	trace_xfs_file_dax_read(iocb, to);
-@@ -298,10 +299,17 @@ xfs_file_read_iter(
+-	mapping_set_large_folios(inode->i_mapping);
++	/*
++	 * As fs-verity doesn't support folios so far, we won't enable them on
++	 * sealed inodes
++	 */
++	if (!IS_VERITY(inode))
++		mapping_set_large_folios(inode->i_mapping);
  
- 	if (IS_DAX(inode))
- 		ret = xfs_file_dax_read(iocb, to);
--	else if (iocb->ki_flags & IOCB_DIRECT)
-+	else if (iocb->ki_flags & IOCB_DIRECT && !fsverity_active(inode))
- 		ret = xfs_file_dio_read(iocb, to);
--	else
-+	else {
-+		/*
-+		 * In case fs-verity is enabled, we also fallback to the
-+		 * buffered read from the direct read path. Therefore,
-+		 * IOCB_DIRECT is set and need to be cleared
-+		 */
-+		iocb->ki_flags &= ~IOCB_DIRECT;
- 		ret = xfs_file_buffered_read(iocb, to);
-+	}
- 
- 	if (ret > 0)
- 		XFS_STATS_ADD(mp, xs_read_bytes, ret);
+ 	/*
+ 	 * If there is no attribute fork no ACL can exist on this inode,
 -- 
 2.31.1
 
