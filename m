@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4FC1A64B1F5
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 10:13:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BE2864B226
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 10:20:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234884AbiLMJNG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Dec 2022 04:13:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45600 "EHLO
+        id S234558AbiLMJUY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Dec 2022 04:20:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234847AbiLMJMh (ORCPT
+        with ESMTP id S234570AbiLMJTz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Dec 2022 04:12:37 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C52DF61;
-        Tue, 13 Dec 2022 01:09:28 -0800 (PST)
+        Tue, 13 Dec 2022 04:19:55 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C132BFB;
+        Tue, 13 Dec 2022 01:19:45 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id DE4A361416;
-        Tue, 13 Dec 2022 09:09:27 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDC1AC433EF;
-        Tue, 13 Dec 2022 09:09:25 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A6951B810DF;
+        Tue, 13 Dec 2022 09:19:43 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32500C433EF;
+        Tue, 13 Dec 2022 09:19:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670922567;
-        bh=8iAi5AH6DG/T/Z7FK7c4S8el98Lz7cVuoKlGLlfITsY=;
+        s=k20201202; t=1670923182;
+        bh=tFne0xthz+EtxoclkKpYRT/JOXwYWJ7gjsUvH8OM7I4=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=kgO/pqi0LO7KYxCxvDkwJ8sQqKBvU2YVRrhHQpFxknrxC8cLl1D4C3D23KGgpI0SV
-         4FHX3jAXU9/B/G7g6iJ7JE3PuTBpg7XoOezfJVivQR5jw2vGSBwLnVJLtg8UymQ3Yc
-         Jlr1+eNCGUyYYF6hXevc7u7UR8fhvfC7gUOIuy9Kwd8GFAD/TpBqscOaK3bzXBQqqU
-         dz3+dSN0oxVnA18oGsozy8NFbYWVcv9x5+lFlGeOJAtPZF8fa0L2TVb/r42vZHl8TB
-         bEqIEz4qzpn8paRisFkGSQ3tvsfWALUEKJlDafTJpj50wInsvBo8rugVYDfRL0wpd4
-         61D7PjJK3mY3g==
-Date:   Tue, 13 Dec 2022 10:09:22 +0100
+        b=DnKMSZqDUBWL1JuPMZAxngIXaWqyoSy7c8zHUtL5eMi3GJCFdcMx6cOvWDS9sqaQC
+         6x5/dlLuZoEZNx0fECKM+Bn4+deLKKKUsRY0cMVCOq/cGNaFyFwjMHtX19/wsSfgFM
+         X4rsXRLfQqP5rpBa9cA2m+fJUZVt0Xz4BGfTQbdj6AlWomQ2fLEPrLQP612/90aPkJ
+         ZsHyW06fy9OK85cbAhuy4FepC4R223CVZQpWgZbP54vWFmPhEefWrDzvGWI6iCBIPq
+         m1BUbPTzi6S2JYJPn7OXinZ6pHLUv3zxF2QDujq1QDbfITvZV5axMRb4YyPke8SbkB
+         1PgYg7rNDqPAA==
+Date:   Tue, 13 Dec 2022 10:19:37 +0100
 From:   Christian Brauner <brauner@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] acl updates for v6.2
-Message-ID: <20221213090922.svty4cb4jmkaccgp@wittgenstein>
-References: <20221212111919.98855-1-brauner@kernel.org>
- <CAHk-=witvjWrYOqbgURdeH7cv7bkVT5O2wd_HcoY6L-3_3yK8A@mail.gmail.com>
+Subject: Re: [GIT PULL] vfsuid updates for v6.2
+Message-ID: <20221213091937.dmshin7hd6hqsliq@wittgenstein>
+References: <20221212123348.169903-1-brauner@kernel.org>
+ <CAHk-=wj4BpEwUd=OkTv1F9uykvSrsBNZJVHMp+p_+e2kiV71_A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHk-=witvjWrYOqbgURdeH7cv7bkVT5O2wd_HcoY6L-3_3yK8A@mail.gmail.com>
+In-Reply-To: <CAHk-=wj4BpEwUd=OkTv1F9uykvSrsBNZJVHMp+p_+e2kiV71_A@mail.gmail.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -53,54 +53,52 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 12, 2022 at 06:56:59PM -0800, Linus Torvalds wrote:
-> On Mon, Dec 12, 2022 at 3:19 AM Christian Brauner <brauner@kernel.org> wrote:
+On Mon, Dec 12, 2022 at 07:28:59PM -0800, Linus Torvalds wrote:
+> On Mon, Dec 12, 2022 at 4:34 AM Christian Brauner <brauner@kernel.org> wrote:
 > >
-> >    For a long and detailed
-> > explanation for just some of the issues [1] provides a good summary.
+> > This pull request converts all remaining places that still make use of non-type
+> > safe idmapping helpers to rely on the new type safe vfs{g,u}id based helpers.
+> > Afterwards it removes all the old non-type safe helpers.
 > 
-> There is no link [1].
+> So I've pulled this, but I'm not entirely happy about some of those
+> crazy helpers.
 > 
-> > A few implementation details:
-> >
-> > * The series makes sure to retain exactly the same security and integrity module
-> >   permission checks. See [2] for annotated callchains.
+> In particular, the whole "ordering" helpers are really not something
+> that should be used in general, I feel. I'm talking about
+> vfsuid_gt_kuid() and friends - it's an entirely insane operation and
+> makes no sense at all.
+
+Oh yes, I very much agree.
+
 > 
-> There is no link [2].
+> Yes, yes, I understand why they exist (those crazy IMA rules), but I
+
+I would've really liked to have avoided their existence altogether but I
+have no clear idea what ima is doing with these comparisons. And
+everytime we do wider scoped vfs work I spend about 1 or 2 good weeks in
+security/ just to understand what all the various security modules do,
+audit callchains and then come up with something that doesn't break half
+of them. And often this means unpleasant compromises in the vfs layer
+which I really don't like.
+
+And just to be clear, I don't want to be on of those "LSMs are bad"
+people. I do really think they provide additional value.
+But I think it's fair to acknowledge that the hook infrastructure with
+multiple LSMs makes the vfs and developers pay when reworking codepaths.
+
+And the fact that some things that are LSM-like (ima etc.) have separate
+hooks doesn't help either.
+
+> feel that those functions *really* shouldn't be exposed to anybody
+> else.
 > 
-> This was an extensive changelog for my merge commit, so it's all fine
-> and I've pulled it, but it does look like some pieces were either
-> missing, or there was a bit of a cut-and-paste from previous
-> explanations without the links..
+> IOW, making those insane functions available in <linux/idmapping.h>
+> really seems wrong to me. They are crazy special cases, and I think
+> they should exist purely in that crazy ima_security file.
+> 
+> Again - I've pulled this, but I'm hoping to see a future commit that
+> limits that craziness to the only user, in the hope that this disease
+> will never spread.
 
-Bah, there was a single stray word "mainline" in the pr after the
-/* Conflicts */ section because I copied it over a small (relatively
-uninteresting) paragraph.
-
-So the two missing links are:
-
-[1]: https://lore.kernel.org/all/20220801145520.1532837-1-brauner@kernel.org
-[2]: https://gist.github.com/brauner/12c795b93a05dc3b3056b1982549a633
-
-they are also listed in the cover letter for the series.
-
-I think I might need a script to look for missing links in the pull
-request. I've had a missing link before. Hopefully I'll get around to
-this.
-
-About the cut-and-paste: What follows is just my personal
-theory/preference but I think it helps to understand how the pr message
-come together. If the series is a self-contained topic and not a
-collection of a pile of commits than I aim for the description given in
-the cover letter and the description given in the merge/pull request
-message to be almost indistinguishable. So the cover letter I keep in
-git edit --branch-description will morph into the merge/pull request
-message.
-
-So I often will try to write the cover letter in a form that is suitable
-for the merge commit. Of course, the cover letter will often contain
-additional technical information that might not be suitable for the
-cover letter. Such sections will then be cut our or rewritten for the pr
-message.
-
-Christian
+Let me see what I can do about this. Hopefully I can still find
+something during the merge window.
