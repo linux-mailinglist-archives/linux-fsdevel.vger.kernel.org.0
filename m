@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C74F664B288
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 10:40:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B620564B389
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 11:48:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234964AbiLMJki (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Dec 2022 04:40:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35924 "EHLO
+        id S235267AbiLMKsg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Dec 2022 05:48:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39522 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230494AbiLMJkh (ORCPT
+        with ESMTP id S235197AbiLMKsI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Dec 2022 04:40:37 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 321FE15A19;
-        Tue, 13 Dec 2022 01:40:36 -0800 (PST)
+        Tue, 13 Dec 2022 05:48:08 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 418E31E700;
+        Tue, 13 Dec 2022 02:47:09 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E0168B80B73;
-        Tue, 13 Dec 2022 09:40:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AA86C433D2;
-        Tue, 13 Dec 2022 09:40:32 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id DA94CB810CC;
+        Tue, 13 Dec 2022 10:47:07 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EA63C433D2;
+        Tue, 13 Dec 2022 10:47:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670924433;
-        bh=94w9PQjxXcHSOdNO2ViYGpWqz7tr3/iZR+3+yFegweE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SVamNgLrq9RgdNb2QHI4sORF1eidc1gT/INF9gIEFlkz7rhfbUEzbfKaU6V4SAy6P
-         MMydcluzBR6Ovux0Igz8jvX4+wjgSIsMRRHmrYDmyKlPXJXtz+XjOGrnFrWNC1oVcM
-         o7kF+F5Bp2S5di7E45j86ePqLzlmCSSHpYZFrc4PHPJ4lXjUhP62Yy1jwe3bMIfIY0
-         OQkSs/cenNOTqyyRuQ/8TyaYM7/kJVkYRIwrqHKALKnNBkN1C8mTowwDkACSmTZJ5V
-         q1g2/B6ny2kD23LHQ6LYjUHpw+dSt98yBpqaKWF3vNNK27Sh18Tut/QMbt+rwD8xHf
-         ei9dXkQ2x1Teg==
-Date:   Tue, 13 Dec 2022 10:40:29 +0100
+        s=k20201202; t=1670928426;
+        bh=n1hDnyLATu1NrxJXGrzGdJ+OhzBscdwZGmuwCYDV9TM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ut9wwf1CoQ9ZU5rnlqQGxvTPOPCTwbNrSWjI0r9s4OSBeBhKOrqDr3fp6YJ45Uk/+
+         +tV81FMtj/6cy64cwJkat/4saR6oQ/LWCeR1H2XGCI46RXMyOXMmZRMhRNISIPft/I
+         8nxGUUh2Hu+GciYhmuqWZCn+0XL76TEZ2Jtn0TNm+bt6MQMKl4dPwfte5DBxg0yZyn
+         cWH5Sc3YSRhr+pdn+hXQ4jZCgGRjGWfvdK8+DmRk9U8jIN/95yj2D7bOBE22/oiRYm
+         xgmuQBVhzwqgTx14IC8eRxzoMuyXJQ80qyOPfGomgrKNFCez74qdP90/smW29AY2C5
+         pNrAPCfYA0j2w==
 From:   Christian Brauner <brauner@kernel.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [GIT PULL] fs idmapped updates for v6.2
-Message-ID: <20221213094029.4csl2ff7ovtkxikt@wittgenstein>
-References: <20221212131915.176194-1-brauner@kernel.org>
- <CAHk-=wj+tqv2nyUZ5T5EwYWzDAAuhxQ+-DA2nC9yYOTUo5NOPg@mail.gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] simple xattr updates for v6.2
+Date:   Tue, 13 Dec 2022 11:46:44 +0100
+Message-Id: <20221213104643.238650-1-brauner@kernel.org>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wj+tqv2nyUZ5T5EwYWzDAAuhxQ+-DA2nC9yYOTUo5NOPg@mail.gmail.com>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4798; i=brauner@kernel.org; h=from:subject; bh=n1hDnyLATu1NrxJXGrzGdJ+OhzBscdwZGmuwCYDV9TM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSTPCL+ifvjIzNZF6m99epqzpi3Znv1xyizWxT5rhJg+ewt8 TI2p7ShlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiI6AmG/74LvJdkSDC9ef1/zZ0Ptg oZk9tnXlVR6XyxKvbaXe1s3peMDFumhH97XzNd+c278zGRHPozJX//Fo72kErLKllYfJD3Mz8A
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -53,44 +53,106 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 12, 2022 at 07:40:29PM -0800, Linus Torvalds wrote:
-> On Mon, Dec 12, 2022 at 5:19 AM Christian Brauner <brauner@kernel.org> wrote:
-> >
-> > Please note the tag contains all other branches for this cycle merged in.
-> 
-> Well, considering that the explanation basically assumed I had already
-> merged those (and I had), I wish you also had made the diffstat and
-> the shortlog reflect that.
+Hey Linus,
 
-I wasn't sure what the best way was.
-I'll make a note to use a better shortlog this time.
+(I thought I had sent this one yesterday but I only did my usual --dry-run
+ routine. So this one is one day late.)
 
-> 
-> As it was, now the diffstat and shortlog ends up containing not what
-> this last pull request brought in, but what they *all* brought in...
+/* Summary */
+This ports the simple xattr infrastucture to rely on a simple rbtree protected
+by a read-write lock instead of a linked list protected by a spinlock.
 
-I didn't want it to look like I was trying to hide the pretty obvious
-ugliness of the branch by editing the shortlog.
+A while ago we received reports about scaling issues for filesystems using the
+simple xattr infrastructure that also support setting a larger number of
+xattrs. Specifically, cgroups and tmpfs.
 
-> 
-> I'm also not super-happy with how ugly your history for this branch
-> was. You had literally merged the acl rework branch three times - at
-> different points of that branch.
+Both cgroupfs and tmpfs can be mounted by unprivileged users in unprivileged
+containers and root in an unprivileged container can set an unrestricted number
+of security.* xattrs and privileged users can also set unlimited trusted.*
+xattrs. A few more words on further that below. Other xattrs such as user.* are
+restricted for kernfs-based instances to a fairly limited number.
 
-I hate the history of that branch. And I have zero idea why I didn't
-rebase when I applied it before I pushed it into linux-next.
+As there are apparently users that have a fairly large number of xattrs we
+should scale a bit better. Using a simple linked list protected by a spinlock
+used for set, get, and list operations doesn't scale well if users use a lot of
+xattrs even if it's not a crazy number.
 
-I really had to fight the __very__ strong urge to rebase before sending
-this pr. I had to step outside for a walk to resist it.
+Let's switch to a simple rbtree protected by a rwlock. It scales way better and
+gets rid of the perf issues some people reported. We originally had fancier
+solutions even using an rcu+seqlock protected rbtree but we had concerns about
+being to clever and also that deletion from an rbtree with rcu+seqlock isn't
+entirely safe.
 
-> 
-> Do we have other ugly history in the tree? Yes. But we've been getting
-> better. This was _not_ one of those "getting better" moments.
-> 
-> Oh well. I can see what you wanted to do, and I agree with the end
-> result, I just don't particularly like how this was done.
-> 
-> I've pulled it.
+The rbtree plus rwlock is perfectly fine. By far the most common operation is
+getting an xattr. While setting an xattr is not and should be comparatively
+rare. And listxattr() often only happens when copying xattrs between files or
+together with the contents to a new file.
 
-Thank you!
+Holding a lock across listxattr() is unproblematic because it doesn't list the
+values of xattrs. It can only be used to list the names of all xattrs set on a
+file. And the number of xattr names that can be listed with listxattr() is
+limited to XATTR_LIST_MAX aka 65536 bytes. If a larger buffer is passed then
+vfs_listxattr() caps it to XATTR_LIST_MAX and if more xattr names are found it
+will return -E2BIG. In short, the maximum amount of memory that can be
+retrieved via listxattr() is limited and thus listxattr() bounded.
+
+Of course, the API is broken as documented on xattr(7) already. While I have no
+idea how the xattr api ended up in this state we should probably try to come up
+with something here at some point. An iterator pattern similar to readdir() as
+an alternative to listxattr() or something else.
+
+Right now it is extremly strange that users can set millions of xattrs but then
+can't use listxattr() to know which xattrs are actually set. And it's really
+trivial to do:
+for i in {1..1000000}; do setfattr -n security.$i -v $i ./file1; done
+And around 5000 xattrs it's impossible to use listxattr() to figure out which
+xattrs are actually set. So I have suggested that we try to limit the number of
+xattrs for simple xattrs at least. But that's a future patch and I don't
+consider it very urgent.
+
+A bonus of this port to rbtree+rwlock is that we shrink the memory consumption
+for users of the simple xattr infrastructure.
+
+This also adds kernel documentation to all the functions.
+
+/* Testing */
+clang: Ubuntu clang version 15.0.2-1
+gcc: gcc (Ubuntu 12.2.0-3ubuntu1) 12.2.0
+
+All patches are based on v6.1-rc1 and have been sitting in linux-next. No build
+failures or warnings were observed. All old and new tests in fstests,
+selftests, and LTP pass without regressions.
+
+/* Conflicts */
+At the time of creating this PR no merge conflicts were reported from
+linux-next and no merge conflicts showed up doing a test-merge with current
+mainline.
+
+The following changes since commit 9abf2313adc1ca1b6180c508c25f22f9395cc780:
+
+  Linux 6.1-rc1 (2022-10-16 15:36:24 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/fs.xattr.simple.rework.rbtree.rwlock.v6.2
+
+for you to fetch changes up to 3b4c7bc01727e3a465759236eeac03d0dd686da3:
+
+  xattr: use rbtree for simple_xattrs (2022-11-12 10:49:26 +0100)
+
+Please consider pulling these changes from the signed fs.xattr.simple.rework.rbtree.rwlock.v6.2 tag.
+
+Thanks!
 Christian
+
+----------------------------------------------------------------
+fs.xattr.simple.rework.rbtree.rwlock.v6.2
+
+----------------------------------------------------------------
+Christian Brauner (1):
+      xattr: use rbtree for simple_xattrs
+
+ fs/xattr.c            | 317 +++++++++++++++++++++++++++++++++++++++-----------
+ include/linux/xattr.h |  38 ++----
+ mm/shmem.c            |   2 +-
+ 3 files changed, 260 insertions(+), 97 deletions(-)
