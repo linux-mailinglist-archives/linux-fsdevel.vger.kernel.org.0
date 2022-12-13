@@ -2,66 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B938364BB17
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 18:31:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7B85264BB06
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 18:30:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236046AbiLMRbi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Dec 2022 12:31:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49180 "EHLO
+        id S236350AbiLMRas (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Dec 2022 12:30:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236262AbiLMRan (ORCPT
+        with ESMTP id S235878AbiLMRah (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Dec 2022 12:30:43 -0500
+        Tue, 13 Dec 2022 12:30:37 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7DEFE2338C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 09:29:50 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 920D323152
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 09:29:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670952589;
+        s=mimecast20190719; t=1670952588;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=DMVdYEIjGzzgVCYG3YnfAdNBSxBfSOUyway7T/qxVAM=;
-        b=EPPcIlxEx/API2vsSodwikaOvjd5ittuUfdOaebZuJLy8sxwkiDhrgQVtMNhFRyMZ2vJIf
-        xldeGkDbEsnXUpcmZ2JANokqpezVc/CubbmTgQqbU7hrynlQPSghALcfQIsOsJwwABVBYj
-        0lIdzbY0+WyCkgi1CDxEsXsdE+hXPX4=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=P1G95qaTROMe5TeWa2MEdzfjCg/0RQKcVeEKeOMEgQQ=;
+        b=cI2JJuD1orAfSLLixAInkYfRyZIU/EpyuWDkGFHz9TM06HokyMvAwrfig8Vcae75eBiBA4
+        Vfyc+UIYwj1rYKrZeX2eqv6/UmTEeasbx/RmtzUzrH/Wa+sbqc+MJc4O3ynpix72Mcdol/
+        QDEETqWSQKWfP7nULZplXsOJ+JZDrS0=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-226-iXwPUxe7NkmLoqvCpmsDwA-1; Tue, 13 Dec 2022 12:29:46 -0500
-X-MC-Unique: iXwPUxe7NkmLoqvCpmsDwA-1
-Received: by mail-ej1-f70.google.com with SMTP id qb2-20020a1709077e8200b007bf01e43797so9793459ejc.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 09:29:45 -0800 (PST)
+ us-mta-652-FJ7n8XV7MISQnbGx160IjQ-1; Tue, 13 Dec 2022 12:29:46 -0500
+X-MC-Unique: FJ7n8XV7MISQnbGx160IjQ-1
+Received: by mail-ed1-f71.google.com with SMTP id b13-20020a056402350d00b00464175c3f1eso7711714edd.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 09:29:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=DMVdYEIjGzzgVCYG3YnfAdNBSxBfSOUyway7T/qxVAM=;
-        b=b31+fe9ZI2qUrezgXyiwvvDH7YLfSf7iET+Sgo9tFMsqqXyo3vyrxMmRo1RLzvQOFp
-         dyiELxH1BTwQlnM/Sje5ZS7a+62qVzWOOfSwEAmBVmt0fVvhaPmrmTwwlX/FOZ/4qTJo
-         gcIy+px8hQ3GuOoGYt5XzgH78rmiLB9RWCt0FJ7fnMoL+qQr9S364/t4gCbWEBoMKGIK
-         QXw5vWs1VHddsZ4rjyLUQMVCWBJhQ5qCWl+Zec4ECiQ6kaeW3fDhgFXzKMVwyweq0xBr
-         LbfX2j+rjD1J/42so3jmv1vYfyeGubvqehIGEopZPN19tVoyLQT044CX9tWMA7Keg45W
-         LF5g==
-X-Gm-Message-State: ANoB5pkQ4rvENMa6YrlFKhgDuarMz/m2YC3Gc2dTlPbNqjVbJhBLj7Bk
-        vUFdnWY3huqUHhkGRffSUNe+gqEGJ4pdHQWfDLOrzFqADoa01udMdeJCAeaSx5mjovqO4+XqROl
-        Q2xMw0hxznrv24eOAjjW0Y8Lr
-X-Received: by 2002:a05:6402:f19:b0:46f:7453:a999 with SMTP id i25-20020a0564020f1900b0046f7453a999mr17902901eda.39.1670952584654;
-        Tue, 13 Dec 2022 09:29:44 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf5dpb+BtrXOV48EoDvxcYKIw/k9+7UnUHv1T33vANcGszfmmkbpje/gNx4hIvVmQXcwPVhXtQ==
-X-Received: by 2002:a05:6402:f19:b0:46f:7453:a999 with SMTP id i25-20020a0564020f1900b0046f7453a999mr17902886eda.39.1670952584513;
-        Tue, 13 Dec 2022 09:29:44 -0800 (PST)
+        bh=P1G95qaTROMe5TeWa2MEdzfjCg/0RQKcVeEKeOMEgQQ=;
+        b=dLelhNE0msOD/zMQ2TrQTiMyHOxlUNjjQmFXNRzgiJT11iLusT8PRnCiXaC/XdGrp9
+         5tTKjtgM2tcwTdwb5as8fCqc4BjNCRnf9yV1ubfVclA6JqVS6XM0OFB+4mNBoe2wnF87
+         Fm5uzf2T2HciXYxcPthyS+ziRELmR9Rku5Dxdh+XeE8njbF/fadpGFs1XDDbs/NKcuHS
+         TxMQ8OXhhOEacJFEjPt4ebuI3UeSAKeYD2uxC8LKghX6I0G5GE71kn2pyLPNAexEuKC3
+         7ZGQfOd/XooINnRgbfHJ5p7ufI8LgXoUm3kuOWDjryj0uJ4ic112zR6enpXVxepirlX/
+         3z+Q==
+X-Gm-Message-State: ANoB5pnuGE6jbGvXHHInHJ2LhlWCC/QGCAhnmyDmU/MSN16gGHl1g1E5
+        SSZbyMeS68YdRiKQtr4XxgOjhEdOM7VRQWcFz0fzMUNAYSW59rWBws/kovObqIERXAf021XKXuO
+        hjjLyS/9CO+7J0aV/ZIpsePva
+X-Received: by 2002:a05:6402:65a:b0:46c:2034:f481 with SMTP id u26-20020a056402065a00b0046c2034f481mr21253796edx.8.1670952585544;
+        Tue, 13 Dec 2022 09:29:45 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf49GadwBBNQqxZylW80lnXLXsFDzu+9jd/T//0zrTD7s7L3ad+tNrjoVsQREKpKn+QzrVVffg==
+X-Received: by 2002:a05:6402:65a:b0:46c:2034:f481 with SMTP id u26-20020a056402065a00b0046c2034f481mr21253788edx.8.1670952585386;
+        Tue, 13 Dec 2022 09:29:45 -0800 (PST)
 Received: from aalbersh.remote.csb ([109.183.6.197])
-        by smtp.gmail.com with ESMTPSA id ec14-20020a0564020d4e00b0047025bf942bsm1204187edb.16.2022.12.13.09.29.43
+        by smtp.gmail.com with ESMTPSA id ec14-20020a0564020d4e00b0047025bf942bsm1204187edb.16.2022.12.13.09.29.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Dec 2022 09:29:43 -0800 (PST)
+        Tue, 13 Dec 2022 09:29:44 -0800 (PST)
 From:   Andrey Albershteyn <aalbersh@redhat.com>
 To:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     Andrey Albershteyn <aalbersh@redhat.com>
-Subject: [RFC PATCH 06/11] xfs: initialize fs-verity on file open and cleanup on inode destruction
-Date:   Tue, 13 Dec 2022 18:29:30 +0100
-Message-Id: <20221213172935.680971-7-aalbersh@redhat.com>
+Subject: [RFC PATCH 07/11] xfs: disable direct read path for fs-verity sealed files
+Date:   Tue, 13 Dec 2022 18:29:31 +0100
+Message-Id: <20221213172935.680971-8-aalbersh@redhat.com>
 X-Mailer: git-send-email 2.31.1
 In-Reply-To: <20221213172935.680971-1-aalbersh@redhat.com>
 References: <20221213172935.680971-1-aalbersh@redhat.com>
@@ -69,7 +69,7 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,64 +77,48 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-fs-verity will read and attach metadata (not the tree itself) from
-a disk for those inodes which already have fs-verity enabled.
+The direct path is not supported on verity files. Attempts to use direct
+I/O path on such files should fall back to buffered I/O path.
 
 Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
 ---
- fs/xfs/xfs_file.c  | 8 ++++++++
- fs/xfs/xfs_super.c | 2 ++
- 2 files changed, 10 insertions(+)
+ fs/xfs/xfs_file.c | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
 diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-index 242165580e682..5eadd9a37c50e 100644
+index 5eadd9a37c50e..fb4181e38a19d 100644
 --- a/fs/xfs/xfs_file.c
 +++ b/fs/xfs/xfs_file.c
-@@ -32,6 +32,7 @@
- #include <linux/mman.h>
- #include <linux/fadvise.h>
- #include <linux/mount.h>
-+#include <linux/fsverity.h>
- 
- static const struct vm_operations_struct xfs_file_vm_ops;
- 
-@@ -1170,9 +1171,16 @@ xfs_file_open(
- 	struct inode	*inode,
- 	struct file	*file)
+@@ -245,7 +245,8 @@ xfs_file_dax_read(
+ 	struct kiocb		*iocb,
+ 	struct iov_iter		*to)
  {
-+	int		error = 0;
-+
- 	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
- 		return -EIO;
- 	file->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC;
-+
-+	error = fsverity_file_open(inode, file);
-+	if (error)
-+		return error;
-+
- 	return generic_file_open(inode, file);
- }
+-	struct xfs_inode	*ip = XFS_I(iocb->ki_filp->f_mapping->host);
++	struct inode		*inode = iocb->ki_filp->f_mapping->host;
++	struct xfs_inode	*ip = XFS_I(inode);
+ 	ssize_t			ret = 0;
  
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 8f1e9b9ed35d9..50c2c819ba940 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -45,6 +45,7 @@
- #include <linux/magic.h>
- #include <linux/fs_context.h>
- #include <linux/fs_parser.h>
-+#include <linux/fsverity.h>
+ 	trace_xfs_file_dax_read(iocb, to);
+@@ -298,10 +299,17 @@ xfs_file_read_iter(
  
- static const struct super_operations xfs_super_operations;
+ 	if (IS_DAX(inode))
+ 		ret = xfs_file_dax_read(iocb, to);
+-	else if (iocb->ki_flags & IOCB_DIRECT)
++	else if (iocb->ki_flags & IOCB_DIRECT && !fsverity_active(inode))
+ 		ret = xfs_file_dio_read(iocb, to);
+-	else
++	else {
++		/*
++		 * In case fs-verity is enabled, we also fallback to the
++		 * buffered read from the direct read path. Therefore,
++		 * IOCB_DIRECT is set and need to be cleared
++		 */
++		iocb->ki_flags &= ~IOCB_DIRECT;
+ 		ret = xfs_file_buffered_read(iocb, to);
++	}
  
-@@ -647,6 +648,7 @@ xfs_fs_destroy_inode(
- 	ASSERT(!rwsem_is_locked(&inode->i_rwsem));
- 	XFS_STATS_INC(ip->i_mount, vn_rele);
- 	XFS_STATS_INC(ip->i_mount, vn_remove);
-+	fsverity_cleanup_inode(inode);
- 	xfs_inode_mark_reclaimable(ip);
- }
- 
+ 	if (ret > 0)
+ 		XFS_STATS_ADD(mp, xs_read_bytes, ret);
 -- 
 2.31.1
 
