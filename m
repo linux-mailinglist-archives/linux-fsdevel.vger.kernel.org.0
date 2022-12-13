@@ -2,67 +2,107 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F34364AF7F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 06:54:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB4A964AF8C
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 07:01:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234304AbiLMFyF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Dec 2022 00:54:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41426 "EHLO
+        id S234314AbiLMGBY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Dec 2022 01:01:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43616 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234274AbiLMFyA (ORCPT
+        with ESMTP id S229884AbiLMGBW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Dec 2022 00:54:00 -0500
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92F9D1A3A0;
-        Mon, 12 Dec 2022 21:53:59 -0800 (PST)
-Received: by verein.lst.de (Postfix, from userid 2407)
-        id AB4DF6732D; Tue, 13 Dec 2022 06:53:55 +0100 (CET)
-Date:   Tue, 13 Dec 2022 06:53:55 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     David Sterba <dsterba@suse.cz>
-Cc:     Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>,
-        Damien Le Moal <damien.lemoal@wdc.com>,
-        Naohiro Aota <naohiro.aota@wdc.com>,
-        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
-        Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
-        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 02/19] btrfs: handle checksum validation and repair at
- the storage layer
-Message-ID: <20221213055355.GA882@lst.de>
-References: <20221120124734.18634-1-hch@lst.de> <20221120124734.18634-3-hch@lst.de> <20221212221347.GC5824@twin.jikos.cz>
+        Tue, 13 Dec 2022 01:01:22 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B29E31A225;
+        Mon, 12 Dec 2022 22:01:16 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2D58AB810D9;
+        Tue, 13 Dec 2022 06:01:15 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A71D3C433EF;
+        Tue, 13 Dec 2022 06:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1670911273;
+        bh=Zm0ZW55NBxkf93eC0YUdg0I7MwwoIiM8sdJEKEUMCYs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MSlQoMZ4SBMRhVsILSn4ozXPcuxJMF++qfycdW1UDNLsHeKL/Y2CGLz47ohDTDghl
+         l+3LtPZJY+YpBzk1TmTfNPCl7jMN404vFSj5h6bcVJeN3rO+Dtz/xDf3IjahQAIggB
+         7sfucFqYs/CXHhXelTjXPbWtIapZR9eAglP7yMmhiNtomzjMbWminUjzgsF14RKw/7
+         WS8PO6iIm8RsWeSizc/XOem2RFDpnAGZrQC3Vh1ZYYntqX2984nV93Oi2sLmOd7g8X
+         Bzo11AdEvTrGSxEcPnKPxFYN1O0pCXzEHEUmYMLi1fSNQL74zisCMElyO0poh22826
+         NjInCkS1B1a8w==
+Date:   Mon, 12 Dec 2022 22:01:11 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Paolo Abeni <pabeni@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org,
+        Soheil Hassas Yeganeh <soheil@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Jason Baron <jbaron@akamai.com>, netdev@vger.kernel.org,
+        Carlos Maiolino <cmaiolino@redhat.com>
+Subject: Re: [PATCH v3] epoll: use refcount to reduce ep_mutex contention
+Message-ID: <Y5gVJz+qDfw0tEP1@sol.localdomain>
+References: <1aedd7e87097bc4352ba658ac948c585a655785a.1669657846.git.pabeni@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221212221347.GC5824@twin.jikos.cz>
-User-Agent: Mutt/1.5.17 (2007-11-01)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <1aedd7e87097bc4352ba658ac948c585a655785a.1669657846.git.pabeni@redhat.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 12, 2022 at 11:13:47PM +0100, David Sterba wrote:
-> > There is one significant behavior change here:  If repair fails or
-> > is impossible to start with, the whole bio will be failed to the
-> > upper layer.  This is the behavior that all I/O submitters execept
-> > for buffered I/O already emulated in their end_io handler.  For
-> > buffered I/O this now means that a large readahead request can
-> > fail due to a single bad sector, but as readahead errors are igored
-> > the following readpage if the sector is actually accessed will
-> > still be able to read.  This also matches the I/O failure handling
-> > in other file systems.
+On Mon, Nov 28, 2022 at 07:00:10PM +0100, Paolo Abeni wrote:
+> We are observing huge contention on the epmutex during an http
+> connection/rate test:
 > 
-> This patch is apparently doing several things at once, please split it.
-> Thanks.
+>  83.17% 0.25%  nginx            [kernel.kallsyms]         [k] entry_SYSCALL_64_after_hwframe
+> [...]
+>            |--66.96%--__fput
+>                       |--60.04%--eventpoll_release_file
+>                                  |--58.41%--__mutex_lock.isra.6
+>                                            |--56.56%--osq_lock
+> 
+> The application is multi-threaded, creates a new epoll entry for
+> each incoming connection, and does not delete it before the
+> connection shutdown - that is, before the connection's fd close().
+> 
+> Many different threads compete frequently for the epmutex lock,
+> affecting the overall performance.
+> 
+> To reduce the contention this patch introduces explicit reference counting
+> for the eventpoll struct. Each registered event acquires a reference,
+> and references are released at ep_remove() time.
+> 
+> Additionally, this introduces a new 'dying' flag to prevent races between
+> ep_free() and eventpoll_release_file(): the latter marks, under f_lock
+> spinlock, each epitem as before removing it, while ep_free() does not
+> touch dying epitems.
+> 
+> The eventpoll struct is released by whoever - among ep_free() and
+> eventpoll_release_file() drops its last reference.
+> 
+> With all the above in place, we can drop the epmutex usage at disposal time.
+> 
+> Overall this produces a significant performance improvement in the
+> mentioned connection/rate scenario: the mutex operations disappear from
+> the topmost offenders in the perf report, and the measured connections/rate
+> grows by ~60%.
+> 
+> Tested-by: Xiumei Mu <xmu@redhat.com>
+> Signed-off-by: Paolo Abeni <pabeni@redhat.com>
 
-We went through this last time:  yes, it apparently does multiple
-things, but they are so deeply interconnected that they can't be
-logically split.  Josef asked to maybe look into opting in, but
-that would require a temporary flag in the btrfs_bio and not
-significantly reduce the patch side, but just add a few more
-patches for the switchover of direct, buffered and compressed I/O.
+I am trying to understand whether this patch is correct.
+
+One thing that would help would be to use more standard naming:
+
+	ep_put => ep_refcount_dec_and_test (or ep_put_and_test)
+	ep_dispose => ep_free
+	ep_free => ep_clear_and_put
+
+- Eric
