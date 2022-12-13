@@ -2,70 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3661164BDD9
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 21:18:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9181864BDE8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 21:27:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237181AbiLMUSO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Dec 2022 15:18:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60126 "EHLO
+        id S237959AbiLMU12 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Dec 2022 15:27:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42742 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236651AbiLMURv (ORCPT
+        with ESMTP id S238426AbiLMU1E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Dec 2022 15:17:51 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 211C62714E
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 12:15:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1670962551;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=XsEdZNGVmnTvoH2VquKqwJ5kQo3gqU2sUkgS6EmDZfQ=;
-        b=BxMNPcXO6r9s9l+B6uXdRxnPN+tni06s7FrlJti+1WS+Fw3Xr4Tf565DU9SRg0rHFrXb8I
-        unYgLGcXWzQVT8P1zSN/++7SjWni3RFx0T7yqMdxewjyve0qJKErGWn1aL0zfjawGXMe0V
-        MDn7cEKPgM+CHxaRtQ/asZiTOI5OpQc=
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com
- [209.85.128.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-37-LRViPMdkM_-kXj-h1xUrCQ-1; Tue, 13 Dec 2022 15:15:49 -0500
-X-MC-Unique: LRViPMdkM_-kXj-h1xUrCQ-1
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-40306a5a42cso180480087b3.1
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 12:15:49 -0800 (PST)
+        Tue, 13 Dec 2022 15:27:04 -0500
+Received: from mail-qt1-x834.google.com (mail-qt1-x834.google.com [IPv6:2607:f8b0:4864:20::834])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00F4725C5A
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 12:21:50 -0800 (PST)
+Received: by mail-qt1-x834.google.com with SMTP id a16so810894qtw.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 12:21:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NbCY+fI/Ey+phMuttTwF7rYe8wV2xh87eNL3820Wga0=;
+        b=K7Pol+pT5qqsHR2uFM19q6jdnDugRrXLSIGAfCJ6QK0S5IL2QZo0BWUiI/rh3+nnFZ
+         DMN5o82+7dLHvUziq+k53MO8sTx2H0OdtYtwMRBOklT6DxJ1R6c9T4juXnN1uhZfTMkQ
+         8ebBLut6ULAC68VuTlLhqVjWAOHQ9uRz1tfRM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=XsEdZNGVmnTvoH2VquKqwJ5kQo3gqU2sUkgS6EmDZfQ=;
-        b=FBAObWrR1HXIDG8XQL12iVI0gHD7nw2EyWI/g5LIpECxYTSpTXr0soQKZ85Ihrc8YK
-         72RX04HHyLQ36pa6sSUQFH3Y0Q5+4VbnrIMsOY9oSHe2hkt69vuJbV27EXSxGpktSPik
-         Z6jltPermJMwP06+RbE9DVkdd2oGFvlhabR+axgYT5OETkikvmEsTyIK1QaCoY5pSdaI
-         6d878WI5fc15t4bdNqAXwyju+V/TxN+aGCwFDaUV7PTWFmsCDaqRpRFd7zikTvC38zNN
-         8eLlvYrL7nAlLqooeujzo6mFLiJr9vXAEDvfmIqzf+5AWzwh3cTmVoJ6S1TVsER+nUT0
-         XixA==
-X-Gm-Message-State: ANoB5plsflkpMUOWuANBKzkWuxCUR0Fpot8y4t1oO64a459jADXl403+
-        AXRZ6uyTiYsKoQ/Sbx3T5bX7bbSVJ3Qu3NmoLoCGXAlJCeUfrA9Mv7yFYRpgsw4k9RaKwAkWHgh
-        23c7sqBuW3lmP1VKkT0ESJmIS5jVrMla45IquYyY++g==
-X-Received: by 2002:a05:6902:1370:b0:6ff:eb24:45aa with SMTP id bt16-20020a056902137000b006ffeb2445aamr21101678ybb.321.1670962549307;
-        Tue, 13 Dec 2022 12:15:49 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf7CM1nfbCNHI0ZHI5MDflEDMT6ZkLZC5c2EhDzPUZV7YYp/sc72g7k5DBblPmLsDSxwy5HcT9sotLQ8mGWxeJk=
-X-Received: by 2002:a05:6902:1370:b0:6ff:eb24:45aa with SMTP id
- bt16-20020a056902137000b006ffeb2445aamr21101671ybb.321.1670962549051; Tue, 13
- Dec 2022 12:15:49 -0800 (PST)
+        bh=NbCY+fI/Ey+phMuttTwF7rYe8wV2xh87eNL3820Wga0=;
+        b=OxQYA6p/HzG4nQOHCm2epWMIfbMW4WXpbxSDVJyqVgeJdFNA9GF+nluV5mLECE/OQt
+         7NQoPxjNu/NT3aiCQhIVUn/+lROvb4VT+e9CoZWj95IQak3wIt2F7QhJiWLF4RmTQUfw
+         KtZIBRjhMkDkJM2S3OIYASn4hdDtdgTGgLi5QTpvNPPGewvH8QNLOhz1ZOEirb6yXkG0
+         Oq2hZIGXvZ+hifrDV79kYkR7vjrQD+sTBymESAuvWiqIDa6RVs8yiI+UbyYsSF7s6A8R
+         mI3K+p+ccb0425mKEEzilvpRqkqUbgIpIPfJZxiRzgXHLdHFdwAoxs7w7XgaEtjsJrWr
+         ZW3A==
+X-Gm-Message-State: ANoB5pllA+hgAt+3G0Joxa16M7B6CmJ0lSGnTLe9VVVyzydzv6Pcgue6
+        RxnXGRzgw2pYu2mqRudqEJdfY66SaOXr5X6p
+X-Google-Smtp-Source: AA0mqf61JiYf80mkEX/MrKUDMeFsT49pCGPaImhsUUuh2H/jgcu98jPzeJtWvHBPAysSnqFwDsHZkA==
+X-Received: by 2002:ac8:4251:0:b0:3a8:1ef2:7c6b with SMTP id r17-20020ac84251000000b003a81ef27c6bmr7337760qtm.13.1670962909691;
+        Tue, 13 Dec 2022 12:21:49 -0800 (PST)
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com. [209.85.160.172])
+        by smtp.gmail.com with ESMTPSA id l14-20020ac84cce000000b0038b684a1642sm456310qtv.32.2022.12.13.12.21.48
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Dec 2022 12:21:48 -0800 (PST)
+Received: by mail-qt1-f172.google.com with SMTP id h16so858104qtu.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 12:21:48 -0800 (PST)
+X-Received: by 2002:a05:622a:5a87:b0:3a5:47de:a214 with SMTP id
+ fz7-20020a05622a5a8700b003a547dea214mr71129549qtb.304.1670962908425; Tue, 13
+ Dec 2022 12:21:48 -0800 (PST)
 MIME-Version: 1.0
-References: <20221213194833.1636649-1-agruenba@redhat.com> <Y5janUs2/29XZRbc@magnolia>
-In-Reply-To: <Y5janUs2/29XZRbc@magnolia>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Tue, 13 Dec 2022 21:15:38 +0100
-Message-ID: <CAHc6FU7CZZb48FZSELYg-29ehTUcAzLZoKNGdLSg1XK7Wx9Cfg@mail.gmail.com>
-Subject: Re: [PATCH] iomap: Move page_done callback under the folio lock
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Christoph Hellwig <hch@infradead.org>, linux-xfs@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
+References: <CAHk-=wj+tqv2nyUZ5T5EwYWzDAAuhxQ+-DA2nC9yYOTUo5NOPg@mail.gmail.com>
+ <20221213115427.286063-1-brauner@kernel.org>
+In-Reply-To: <20221213115427.286063-1-brauner@kernel.org>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Tue, 13 Dec 2022 12:21:32 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wjgCDh98SKyPytCi0r=w+RMRD6wq-FV-HZ6iQGpbAvGcA@mail.gmail.com>
+Message-ID: <CAHk-=wjgCDh98SKyPytCi0r=w+RMRD6wq-FV-HZ6iQGpbAvGcA@mail.gmail.com>
+Subject: Re: [PATCH] mnt_idmapping: move ima-only helpers to ima
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,69 +74,13 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 13, 2022 at 9:03 PM Darrick J. Wong <djwong@kernel.org> wrote:
-> On Tue, Dec 13, 2022 at 08:48:33PM +0100, Andreas Gruenbacher wrote:
-> > Hi Darrick,
-> >
-> > I'd like to get the following iomap change into this merge window.  This
-> > only affects gfs2, so I can push it as part of the gfs2 updates if you
-> > don't mind, provided that I'll get your Reviewed-by confirmation.
-> > Otherwise, if you'd prefer to pass this through the xfs tree, could you
-> > please take it?
+On Tue, Dec 13, 2022 at 3:54 AM Christian Brauner <brauner@kernel.org> wrote:
 >
-> I don't mind you pushing changes to ->page_done through the gfs2 tree,
-> but don't you need to move the other callsite at the bottom of
-> iomap_write_begin?
+> The vfs{g,u}id_{gt,lt}_* helpers are currently not needed outside of
+> ima and we shouldn't incentivize people to use them by placing them into
+> the header. Let's just define them locally in the one file in ima where
+> they are used.
 
-No, in the failure case in iomap_write_begin(), the folio isn't
-relevant because it's not being written to.
+Thanks, LGTM.
 
-Thanks for paying attention,
-Andreas
-
-> --D
->
-> > Thanks,
-> > Andreas
-> >
-> > --
-> >
-> > Move the ->page_done() call in iomap_write_end() under the folio lock.
-> > This closes a race between journaled data writes and the shrinker in
-> > gfs2.  What's happening is that gfs2_iomap_page_done() is called after
-> > the page has been unlocked, so try_to_free_buffers() can come in and
-> > free the buffers while gfs2_iomap_page_done() is trying to add them to
-> > the current transaction.  The folio lock prevents that from happening.
-> >
-> > The only user of ->page_done() is gfs2, so other filesystems are not
-> > affected.
-> >
-> > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> > ---
-> >  fs/iomap/buffered-io.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> > index 91ee0b308e13..476c9ed1b333 100644
-> > --- a/fs/iomap/buffered-io.c
-> > +++ b/fs/iomap/buffered-io.c
-> > @@ -714,12 +714,12 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
-> >               i_size_write(iter->inode, pos + ret);
-> >               iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
-> >       }
-> > +     if (page_ops && page_ops->page_done)
-> > +             page_ops->page_done(iter->inode, pos, ret, &folio->page);
-> >       folio_unlock(folio);
-> >
-> >       if (old_size < pos)
-> >               pagecache_isize_extended(iter->inode, old_size, pos);
-> > -     if (page_ops && page_ops->page_done)
-> > -             page_ops->page_done(iter->inode, pos, ret, &folio->page);
-> >       folio_put(folio);
-> >
-> >       if (ret < len)
-> > --
-> > 2.38.1
-> >
->
-
+                Linus
