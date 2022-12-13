@@ -2,139 +2,125 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AD35664B485
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 12:54:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B75F564B4BA
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 13:04:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235216AbiLMLyn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Dec 2022 06:54:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48242 "EHLO
+        id S235454AbiLMMEf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Dec 2022 07:04:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54992 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235447AbiLMLye (ORCPT
+        with ESMTP id S235104AbiLMMEd (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Dec 2022 06:54:34 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D0490D56
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 03:54:33 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 6229061419
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 11:54:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2BB4C433D2;
-        Tue, 13 Dec 2022 11:54:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670932472;
-        bh=UZ1L5VNm3LuEl1iNxZll9H6Kep5xz5z7JhJMtn+8+HI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CGtDk8jBZFa5btpG4Iy49iXc6Aaih4eSLEEcJ9UYJI486Ny6XEoD9XovJeSfJpOqe
-         DzayNeQjld8HPS4fn18wUVKgeWCsbu42p77Co2yfov4/fw2cRC4R6CLiKsS30CFOz7
-         XuiYxFRuyHum60g/8i5cYryHzIXx1XibERercG24KLfMYsT3FvneAKm0ya3qEtqSNP
-         n9jqhdV6e/HTqH6N3ZOMIgSC+sylm+sfe1CEqjPJJBl8RCrZZja/DWB+EH08ROORRM
-         pmb8K7sIOXksVBAO3gfDz2dI3PSeM25m6IqOc6DnrdLpu20VdXZQvOXvNbtPg2c+bp
-         6kQuFZHM79CVA==
-From:   Christian Brauner <brauner@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Brauner <brauner@kernel.org>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] mnt_idmapping: move ima-only helpers to ima
-Date:   Tue, 13 Dec 2022 12:54:27 +0100
-Message-Id: <20221213115427.286063-1-brauner@kernel.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAHk-=wj+tqv2nyUZ5T5EwYWzDAAuhxQ+-DA2nC9yYOTUo5NOPg@mail.gmail.com>
-References: 
+        Tue, 13 Dec 2022 07:04:33 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 116915FF7;
+        Tue, 13 Dec 2022 04:04:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1670933071; x=1702469071;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Mmu9iz+w3ikTp4SbfrscqkeC55Id70T9EZSgNrTlufI=;
+  b=e967PJunPwWLSe4kiRQX43P+//IFrMIQ64q/15C+g0aLGJzx/UbPpVuM
+   NY9urI1m4MPM+buI+QuGwhlJj2EBnsAd6sFSirrwPVgQJZteBfp0ddnBM
+   rrpboGVQytpHpG5fNvUnz7O7Y/PPokyQFHhpY34nC+bJgAO8NiiYlKG1M
+   hgJZ5lJZ3+d/ieM+X9eanV+9Hr5s/htldCtZVsdv3hfUFwGoF8dD8YVwz
+   w17jzbgLU/MqpJOIKp1FlCWoNDAYzFVNSGr0GfqZmU3fVo3u2t5th9jYf
+   Uq7Z1SvjGBjQuziaJLHbol8UxDaFpMsLAesJMNu7VTGJS8IyzxeLEjDT8
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10559"; a="315751828"
+X-IronPort-AV: E=Sophos;i="5.96,241,1665471600"; 
+   d="scan'208";a="315751828"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2022 04:04:30 -0800
+X-IronPort-AV: E=McAfee;i="6500,9779,10559"; a="598800801"
+X-IronPort-AV: E=Sophos;i="5.96,241,1665471600"; 
+   d="scan'208";a="598800801"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.255.31.20]) ([10.255.31.20])
+  by orsmga003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Dec 2022 04:04:17 -0800
+Message-ID: <4d736cc0-f249-6531-c0af-7093c2c2537f@intel.com>
+Date:   Tue, 13 Dec 2022 20:04:14 +0800
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2635; i=brauner@kernel.org; h=from:subject; bh=UZ1L5VNm3LuEl1iNxZll9H6Kep5xz5z7JhJMtn+8+HI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSTPSH/IJ1R9ZsvFNZn5em9NZZyd+RMnexsfVZ//f5u+9ybT DyZcHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABPZ8oaRoT1D/JLFJbVPpwPecRe9/z K16F6Ey7+GdyI/jxq0GwooHGP4H5hmcTOs8DpbzdV3J2RSDjflTJtstfnvV5eJNfwvjpcnsAAA
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Firefox/102.0 Thunderbird/102.5.1
+Subject: Re: [PATCH v10 3/9] KVM: Extend the memslot to support fd-based
+ private memory
+Content-Language: en-US
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-4-chao.p.peng@linux.intel.com>
+ <cd950a78-5c5b-16ef-d0a6-ad2878af067e@intel.com>
+ <20221208113003.GE1304936@chaop.bj.intel.com>
+From:   Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20221208113003.GE1304936@chaop.bj.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-5.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,HK_RANDOM_ENVFROM,
+        HK_RANDOM_FROM,NICE_REPLY_A,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The vfs{g,u}id_{gt,lt}_* helpers are currently not needed outside of
-ima and we shouldn't incentivize people to use them by placing them into
-the header. Let's just define them locally in the one file in ima where
-they are used.
+On 12/8/2022 7:30 PM, Chao Peng wrote:
+> On Thu, Dec 08, 2022 at 04:37:03PM +0800, Xiaoyao Li wrote:
+>> On 12/2/2022 2:13 PM, Chao Peng wrote:
+>>
+>> ..
+>>
+>>> Together with the change, a new config HAVE_KVM_RESTRICTED_MEM is added
+>>> and right now it is selected on X86_64 only.
+>>>
+>>
+>>  From the patch implementation, I have no idea why HAVE_KVM_RESTRICTED_MEM is
+>> needed.
+> 
+> The reason is we want KVM further controls the feature enabling. An
+> opt-in CONFIG_RESTRICTEDMEM can cause problem if user sets that for
+> unsupported architectures.
 
-Suggested-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
----
- include/linux/mnt_idmapping.h       | 20 --------------------
- security/integrity/ima/ima_policy.c | 24 ++++++++++++++++++++++++
- 2 files changed, 24 insertions(+), 20 deletions(-)
+HAVE_KVM_RESTRICTED_MEM is not used in this patch. It's better to 
+introduce it in the patch that actually uses it.
 
-diff --git a/include/linux/mnt_idmapping.h b/include/linux/mnt_idmapping.h
-index 092c52aa6c2c..0ccca33a7a6d 100644
---- a/include/linux/mnt_idmapping.h
-+++ b/include/linux/mnt_idmapping.h
-@@ -96,26 +96,6 @@ static inline bool vfsgid_eq_kgid(vfsgid_t vfsgid, kgid_t kgid)
- 	return vfsgid_valid(vfsgid) && __vfsgid_val(vfsgid) == __kgid_val(kgid);
- }
- 
--static inline bool vfsuid_gt_kuid(vfsuid_t vfsuid, kuid_t kuid)
--{
--	return __vfsuid_val(vfsuid) > __kuid_val(kuid);
--}
--
--static inline bool vfsgid_gt_kgid(vfsgid_t vfsgid, kgid_t kgid)
--{
--	return __vfsgid_val(vfsgid) > __kgid_val(kgid);
--}
--
--static inline bool vfsuid_lt_kuid(vfsuid_t vfsuid, kuid_t kuid)
--{
--	return __vfsuid_val(vfsuid) < __kuid_val(kuid);
--}
--
--static inline bool vfsgid_lt_kgid(vfsgid_t vfsgid, kgid_t kgid)
--{
--	return __vfsgid_val(vfsgid) < __kgid_val(kgid);
--}
--
- /*
-  * vfs{g,u}ids are created from k{g,u}ids.
-  * We don't allow them to be created from regular {u,g}id.
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 54c475f98ce1..edd95ba02c11 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -71,6 +71,30 @@ struct ima_rule_opt_list {
- 	char *items[];
- };
- 
-+/*
-+ * These comparators are needed nowhere outside of ima so just define them here.
-+ * This pattern should hopefully never be needed outside of ima.
-+ */
-+static inline bool vfsuid_gt_kuid(vfsuid_t vfsuid, kuid_t kuid)
-+{
-+	return __vfsuid_val(vfsuid) > __kuid_val(kuid);
-+}
-+
-+static inline bool vfsgid_gt_kgid(vfsgid_t vfsgid, kgid_t kgid)
-+{
-+	return __vfsgid_val(vfsgid) > __kgid_val(kgid);
-+}
-+
-+static inline bool vfsuid_lt_kuid(vfsuid_t vfsuid, kuid_t kuid)
-+{
-+	return __vfsuid_val(vfsuid) < __kuid_val(kuid);
-+}
-+
-+static inline bool vfsgid_lt_kgid(vfsgid_t vfsgid, kgid_t kgid)
-+{
-+	return __vfsgid_val(vfsgid) < __kgid_val(kgid);
-+}
-+
- struct ima_rule_entry {
- 	struct list_head list;
- 	int action;
-
-base-commit: 764822972d64e7f3e6792278ecc7a3b3c81087cd
--- 
-2.34.1
+> Here is the original discussion:
+> https://lore.kernel.org/all/YkJLFu98hZOvTSrL@google.com/
+> 
+> Thanks,
+> Chao
 
