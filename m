@@ -2,130 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3E9B864B089
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 08:46:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7275764B1F4
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 10:13:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234295AbiLMHqo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Dec 2022 02:46:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56398 "EHLO
+        id S235122AbiLMJNB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Dec 2022 04:13:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45798 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229803AbiLMHqm (ORCPT
+        with ESMTP id S234722AbiLMJMg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Dec 2022 02:46:42 -0500
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA80BAE70
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Dec 2022 23:46:40 -0800 (PST)
-Received: by mail-io1-f69.google.com with SMTP id o16-20020a056602225000b006e032e361ccso1427316ioo.13
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Dec 2022 23:46:40 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sF7s08UHH6oAcOgt+chmOQN+BwW3CcMhQwNJPjVRmuY=;
-        b=Z5y6JRWykuYKXVVra4QqRNvxhlErLzMac/kdsQjIdy+PEPCE8FmpXekPjdWThAmSkG
-         uO+t9kem34g/HpeF6T6cgJgqd9z7KQNaGsi+mp/nQRdb2y2xiUEBXxWO1FdwTIwaOWm+
-         SI0kht75TbOmB0gYAEDjQXcZwsszgk+iYqRu+DrMKIqC/CJERZjwnXsLVqnhIWFtvLIf
-         rVTU4U1g4Wb5AIRbmOMxhIfdyk2sYgkMgu+gB3ItNk712kqvU0Qqk0tnN3JfmwTjXOFY
-         19RVXfJmkB2d+uSHuyvao23iJrdVxlQfinsIkVOTCTcggc0uiBCphn/mljQN9A7DU1mx
-         hDew==
-X-Gm-Message-State: ANoB5plJGHxKs3if3ajUXlMIY++DOkey7qUj4dD1KZT+RI5gc16A1Z2T
-        07helO99PtsF4MsGeLXV7Fv3pbC3HZ8ffNhWii4fvGUSWunR
-X-Google-Smtp-Source: AA0mqf7+KYjZa4VURFejUauaDewv5pmNbGP5zTXtVQrCyzYZDtpe+c2PHgQNi6uLWOOlvfAN8MMKeI5KmMzLIoTeAFpM1Bq6qcwV
+        Tue, 13 Dec 2022 04:12:36 -0500
+Received: from wout5-smtp.messagingengine.com (wout5-smtp.messagingengine.com [64.147.123.21])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0E81BE50;
+        Tue, 13 Dec 2022 01:09:23 -0800 (PST)
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+        by mailout.west.internal (Postfix) with ESMTP id 5FA59320097E;
+        Tue, 13 Dec 2022 04:09:21 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute3.internal (MEProxy); Tue, 13 Dec 2022 04:09:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm1; t=1670922560; x=
+        1671008960; bh=x6EvN9RCMMZUQL1h6HXvoOYLnZvU8WJ2nMis5bUscl4=; b=H
+        dl/8r/bqnayq2L2QpDq/yb8wV+sFSMd15m0tcmhyL1dGd9kJ3jaSIktL/AYws4yW
+        C7qVbkttNbALjLUxXnNwNnkKNYsYUDP7iEq4L0NIHzHrHAPDv4i+gEkZkd8E0FR3
+        ZfA2nVXE46b1Myiki31bqUPcpVsMA9LRjaobNyuimN7ho2gMfbwF6eQyLI5EnT72
+        Y/Z7e0jmzrLMw98NDlH4E8p0Cg6hg/bMmMMVKO4EtP90COUOoDuSwSbA0lIjG1fM
+        XBStvN/ohSM4Hghc2PTOqZTzknLfPNC5qUrIPCLLhJdu5hl1ojVuTUuDENBeXiNb
+        B5X15Xtxe5LCcCkRc2TrQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1670922560; x=
+        1671008960; bh=x6EvN9RCMMZUQL1h6HXvoOYLnZvU8WJ2nMis5bUscl4=; b=C
+        HktLlN4HvSSYumBT+hzJcR2FabLQPoDTQG9bBtXkADytI+qNT3iMbj47XzM7a1Ku
+        9riuKEB76Mdjv5RRUSmJIQXm9yEvTL1/eC/f1XjZ2FqKnvsNEsKkphmbLghI/3tv
+        rFrgrBCsE+HWk+c7ynsM2mZ7K8lnhQ2chFxVYoY9UU+JwjuPHygIr5ubqBez6ZZU
+        dqXqmjoxtmegtpavxpU8oTjsXUKnH1suepbVFGTXzJECHBq5w3gpm4Q3NxaPZ0Sc
+        /MXPg/GA5BAJIyXe8lmQN73yTBaI9ClySHn55LJ5gkagT3NiY4bnYIrSY2TRN7m5
+        Ra4AV1rXris/I8oWhkAxw==
+X-ME-Sender: <xms:P0GYY3TVtQNkawVHKO0UUDYKcrnScExv3-le4P2wx50Kmx6p8zU1QA>
+    <xme:P0GYY4w2GJnqG3vv_F5TE3kkgM-C88eKzV9MIFqhjD_keDsP6QuqjaTw1bqQfNzyG
+    J_BehbNsRux>
+X-ME-Received: <xmr:P0GYY81ZwZhCLJYlTj7LvZTyc3bZbcbn3wkzf-P3JbiFQK9Eturn272KGCdM2TCDYd4qZ3AFGS-rtoLIkdYuVuKDFCs842S9KpIve0mQPwJgI0qqLQK9>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrfedtucetufdoteggodetrfdotffvucfrrh
+    hofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epkfffgggfuffvvehfhfgjtgfgsehtjeertddtfeejnecuhfhrohhmpefkrghnucfmvghn
+    thcuoehrrghvvghnsehthhgvmhgrfidrnhgvtheqnecuggftrfgrthhtvghrnhepffekvd
+    fhgfelueehleeiuedtkefgfefghfehvdevhffhgfevgefggfdtkeevgfdtnecuffhomhgr
+    ihhnpehmrghrtgdrihhnfhhopdhkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehrrghvvghnsehthhgvmhgrfidrnhgv
+    th
+X-ME-Proxy: <xmx:QEGYY3DW4JTpRuwQe2fWBvSs3AeaW2duDQ95armVpZs5r9NizGeK6Q>
+    <xmx:QEGYYwiy52-Ulngvs_4EZ-3JzKUdnUSHgHAx0qORBh5Q4kFUX3-png>
+    <xmx:QEGYY7qZ4F-LpQyp9K5V-bbts_ZPqhLYh0B41VUMdCIp-dLhqDAYNg>
+    <xmx:QEGYY_qOGMCCFkBzTQX2Gm2ZMF7pcf6v5XMiM_rlKlcGfwZ1lpGS_A>
+Feedback-ID: i31e841b0:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 13 Dec 2022 04:09:14 -0500 (EST)
+Message-ID: <8967d08f-712c-5b64-efdc-4426e2b9d63a@themaw.net>
+Date:   Tue, 13 Dec 2022 17:09:10 +0800
 MIME-Version: 1.0
-X-Received: by 2002:a6b:fd0e:0:b0:6df:5e6c:f5c7 with SMTP id
- c14-20020a6bfd0e000000b006df5e6cf5c7mr25663576ioi.207.1670917599866; Mon, 12
- Dec 2022 23:46:39 -0800 (PST)
-Date:   Mon, 12 Dec 2022 23:46:39 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fd3bbe05efb0d1fd@google.com>
-Subject: [syzbot] WARNING in walk_component
-From:   syzbot <syzbot+eba014ac93ef29f83dc8@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+Subject: Re: [PATCH 0/3 v2] NFS: NFSD: Allow crossing mounts when re-exporting
+To:     Jeff Layton <jlayton@kernel.org>,
+        Richard Weinberger <richard@nod.at>, linux-nfs@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        chuck.lever@oracle.com, anna@kernel.org,
+        trond.myklebust@hammerspace.com, viro@zeniv.linux.org.uk,
+        chris.chilvers@appsbroker.com, david.young@appsbroker.com,
+        luis.turcitu@appsbroker.com, david@sigma-star.at,
+        benmaynard@google.com
+References: <20221207084309.8499-1-richard@nod.at>
+ <2de81c537335da895bafcd9f50a239c439fb0439.camel@kernel.org>
+Content-Language: en-US
+From:   Ian Kent <raven@themaw.net>
+In-Reply-To: <2de81c537335da895bafcd9f50a239c439fb0439.camel@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On 13/12/22 01:06, Jeff Layton wrote:
+> On Wed, 2022-12-07 at 09:43 +0100, Richard Weinberger wrote:
+>> Currently when re-exporting a NFS share the NFS cross mount feature does
+>> not work [0].
+>> This patch series outlines an approach to address the problem.
+>>
+>> Crossing mounts does not work for two reasons:
+>>
+>> 1. As soon the NFS client (on the re-exporting server) sees a different
+>> filesystem id, it installs an automount. That way the other filesystem
+>> will be mounted automatically when someone enters the directory.
+>> But the cross mount logic of KNFS does not know about automount.
+>> This patch series addresses the problem and teach both KNFSD
+>> and the exportfs logic of NFS to deal with automount.
+>>
+>> 2. When KNFSD detects crossing of a mount point, it asks rpc.mountd to install
+>> a new export for the target mount point. Beside of authentication rpc.mountd
+>> also has to find a filesystem id for the new export. Is the to be exported
+>> filesystem a NFS share, rpc.mountd cannot derive a filesystem id from it and
+>> refuses to export. In the logs you'll see errors such as:
+>>
+>> mountd: Cannot export /srv/nfs/vol0, possibly unsupported filesystem or fsid= required
+>>
+>> To deal with that I've changed rpc.mountd to use generate and store fsids [1].
+>> Since the kernel side of my changes did change for a long time I decided to
+>> try upstreaming it first.
+>> A 3rd iteration of my rpc.mountd will happen soon.
+>>
+>> [0] https://marc.info/?l=linux-nfs&m=161653016627277&w=2
+>> [1] https://lore.kernel.org/linux-nfs/20220217131531.2890-1-richard@nod.at/
+>>
+>> Changes since v1:
+>> https://lore.kernel.org/linux-nfs/20221117191151.14262-1-richard@nod.at/
+>>
+>> - Use LOOKUP_AUTOMOUNT only when NFSEXP_CROSSMOUNT is set (Jeff Layton)
+>>
+>> Richard Weinberger (3):
+>>    NFSD: Teach nfsd_mountpoint() auto mounts
+>>    fs: namei: Allow follow_down() to uncover auto mounts
+>>    NFS: nfs_encode_fh: Remove S_AUTOMOUNT check
+>>
+>>   fs/namei.c            | 6 +++---
+>>   fs/nfs/export.c       | 2 +-
+>>   fs/nfsd/vfs.c         | 8 ++++++--
+>>   include/linux/namei.h | 2 +-
+>>   4 files changed, 11 insertions(+), 7 deletions(-)
+>>
+> This set looks reasonable to me.
+>
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
-syzbot found the following issue on:
+Right, looks ok to me too, at least from the POV of that follow_down()
 
-HEAD commit:    f3e8416619ce Merge tag 'soc-fixes-6.1-5' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b594c7880000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=b83f3e90d74765ea
-dashboard link: https://syzkaller.appspot.com/bug?extid=eba014ac93ef29f83dc8
-compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=117d216b880000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/70829c2e18e5/disk-f3e84166.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5f84024c6f5e/vmlinux-f3e84166.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/50805dc3b682/bzImage-f3e84166.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/a7108de1d0f9/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+eba014ac93ef29f83dc8@syzkaller.appspotmail.com
-
-DEBUG_RWSEMS_WARN_ON(!is_rwsem_reader_owned(sem)): count = 0x0, magic = 0xffff88806aa92b10, owner = 0x0, curr 0xffff88807a496040, list empty
-WARNING: CPU: 1 PID: 7332 at kernel/locking/rwsem.c:1336 __up_read+0x5c0/0x720 kernel/locking/rwsem.c:1336
-Modules linked in:
-
-CPU: 1 PID: 7332 Comm: syz-executor.2 Not tainted 6.1.0-rc8-syzkaller-00035-gf3e8416619ce #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-RIP: 0010:__up_read+0x5c0/0x720 kernel/locking/rwsem.c:1336
-Code: 03 80 3c 02 00 0f 85 35 01 00 00 49 8b 17 4d 89 f1 4c 89 e9 48 c7 c6 80 2b 4c 8a ff 34 24 48 c7 c7 c0 28 4c 8a e8 6d ba 45 08 <0f> 0b 5e e9 38 fb ff ff 48 89 df e8 20 54 6a 00 e9 b2 fa ff ff 48
-RSP: 0018:ffffc900067af940 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffffffff8e512de8 RCX: 0000000000000000
-RDX: ffff88807a496040 RSI: ffffffff81649a0c RDI: fffff52000cf5f1a
-RBP: ffff88806aa92b18 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000080000000 R11: 0000000000000000 R12: 1ffff92000cf5f2c
-R13: ffff88806aa92b10 R14: ffff88807a496040 R15: ffff88806aa92b10
-FS:  00007f38e75a7700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f46be509000 CR3: 0000000017b11000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- inode_unlock_shared include/linux/fs.h:771 [inline]
- lookup_slow fs/namei.c:1703 [inline]
- walk_component+0x34a/0x5a0 fs/namei.c:1993
- link_path_walk.part.0+0x74e/0xe20 fs/namei.c:2320
- link_path_walk fs/namei.c:2245 [inline]
- path_parentat+0xa8/0x1b0 fs/namei.c:2521
- filename_parentat+0x1c3/0x5a0 fs/namei.c:2544
- do_renameat2+0x1c3/0xc90 fs/namei.c:4848
- __do_sys_renameat2 fs/namei.c:4963 [inline]
- __se_sys_renameat2 fs/namei.c:4960 [inline]
- __x64_sys_renameat2+0xe8/0x120 fs/namei.c:4960
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f38e688c0d9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f38e75a7168 EFLAGS: 00000246 ORIG_RAX: 000000000000013c
-RAX: ffffffffffffffda RBX: 00007f38e69ac050 RCX: 00007f38e688c0d9
-RDX: 0000000000000004 RSI: 00000000200004c0 RDI: 0000000000000004
-RBP: 00007f38e68e7ae9 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000020000500 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007fff1016202f R14: 00007f38e75a7300 R15: 0000000000022000
- </TASK>
+change.
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Reviewed-by: Ian Kent <raven@themaw.net>
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-syzbot can test patches for this issue, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+
+Ian
+
