@@ -2,69 +2,109 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 685E264BD5E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 20:34:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BE10B64BD8D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 20:49:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236852AbiLMTeA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Dec 2022 14:34:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43438 "EHLO
+        id S236025AbiLMTtf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Dec 2022 14:49:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49824 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235640AbiLMTd6 (ORCPT
+        with ESMTP id S236512AbiLMTt2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Dec 2022 14:33:58 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 817A0B868;
-        Tue, 13 Dec 2022 11:33:57 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 13 Dec 2022 14:49:28 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9B1DE18B21
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 11:48:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1670960920;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+8pZurhuZVgsVplxwZPRPpmvoNKXXd5kuVycITJEXSU=;
+        b=RYjPGsSmja6DSRnEFhL2CnuFFKyzPg+eB1QrfTWl0UQnRPeBLWk8m/7gJVgQG4uQVvqwTo
+        HdIY7P7EbXjToULMlPa1V0/qXcpheU2NtX3+EdMfJbMCS/KHn0qWUSjdIWq5WCqzYgMdHE
+        Sk25JCGwctUHZHWnl/b4Xf2lIvhgIdg=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-255-1F0AJb-PMwi4_TGn2VvH0A-1; Tue, 13 Dec 2022 14:48:35 -0500
+X-MC-Unique: 1F0AJb-PMwi4_TGn2VvH0A-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 1CCD5614D7;
-        Tue, 13 Dec 2022 19:33:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 650E1C433EF;
-        Tue, 13 Dec 2022 19:33:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670960036;
-        bh=xDfy76WPvUiI9NW5O+KVtoaGIA40PH1420HVharcVJo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Lyaf1iEKludQzosSQ3j8HJEPqdRGtqXE39wA2C6/dXhDF6R1uEdcX8DqS/QaZ6wLx
-         La1Wo4sOxDCJOvQX2WdIcU+EN6JVjnkZdbY+SOs9VT5kh00zyq4MAi/LCp3COTvPhP
-         Pxx3L9ZceTyFGLkmjslB0vAWAGB8VsqTiyqpwVGQaGKKjGfbKZmYYJP2gBExoNyKJN
-         aqzz1i+AQGZDYEQ7t/QDjCPOJ0Z0BM3Fm8KBaBTBT11inlSs5oE29/1bRlOhCDGoA2
-         ilS6c7lcmowi7OTTB/Dm1zmNcqC9ULjZAIAWj3muC8HgFJDTYDwr4DbPlCjJYfAS0Y
-         BuR5cNxLxUqYg==
-Date:   Tue, 13 Dec 2022 11:33:54 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Andrey Albershteyn <aalbersh@redhat.com>,
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 72475185A794;
+        Tue, 13 Dec 2022 19:48:35 +0000 (UTC)
+Received: from pasta.redhat.com (ovpn-192-138.brq.redhat.com [10.40.192.138])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1193D1121315;
+        Tue, 13 Dec 2022 19:48:33 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     "Darrick J . Wong" <djwong@kernel.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 02/11] pagemap: add mapping_clear_large_folios()
- wrapper
-Message-ID: <Y5jTosRngrhzPoge@sol.localdomain>
-References: <20221213172935.680971-1-aalbersh@redhat.com>
- <20221213172935.680971-3-aalbersh@redhat.com>
- <Y5i8igBLu+6OQt8H@casper.infradead.org>
+Subject: [PATCH] iomap: Move page_done callback under the folio lock
+Date:   Tue, 13 Dec 2022 20:48:33 +0100
+Message-Id: <20221213194833.1636649-1-agruenba@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y5i8igBLu+6OQt8H@casper.infradead.org>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 13, 2022 at 05:55:22PM +0000, Matthew Wilcox wrote:
-> I'm happy to work with you to add support for large folios to verity.
-> It hasn't been high priority for me, but I'm now working on folio support
-> for bufferhead filesystems and this would probably fit in.
+Hi Darrick,
 
-I'd be very interested to know what else is needed after commit 98dc08bae678
-("fsverity: stop using PG_error to track error status") which is upstream now,
-and
-https://lore.kernel.org/linux-fsdevel/20221028224539.171818-1-ebiggers@kernel.org/T/#u
-("fsverity: support for non-4K pages") which is planned for 6.3.
+I'd like to get the following iomap change into this merge window.  This
+only affects gfs2, so I can push it as part of the gfs2 updates if you
+don't mind, provided that I'll get your Reviewed-by confirmation.
+Otherwise, if you'd prefer to pass this through the xfs tree, could you
+please take it?
 
-- Eric
+Thanks,
+Andreas
+
+--
+
+Move the ->page_done() call in iomap_write_end() under the folio lock.
+This closes a race between journaled data writes and the shrinker in
+gfs2.  What's happening is that gfs2_iomap_page_done() is called after
+the page has been unlocked, so try_to_free_buffers() can come in and
+free the buffers while gfs2_iomap_page_done() is trying to add them to
+the current transaction.  The folio lock prevents that from happening.
+
+The only user of ->page_done() is gfs2, so other filesystems are not
+affected.
+
+Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+---
+ fs/iomap/buffered-io.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 91ee0b308e13..476c9ed1b333 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -714,12 +714,12 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
+ 		i_size_write(iter->inode, pos + ret);
+ 		iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
+ 	}
++	if (page_ops && page_ops->page_done)
++		page_ops->page_done(iter->inode, pos, ret, &folio->page);
+ 	folio_unlock(folio);
+ 
+ 	if (old_size < pos)
+ 		pagecache_isize_extended(iter->inode, old_size, pos);
+-	if (page_ops && page_ops->page_done)
+-		page_ops->page_done(iter->inode, pos, ret, &folio->page);
+ 	folio_put(folio);
+ 
+ 	if (ret < len)
+-- 
+2.38.1
+
