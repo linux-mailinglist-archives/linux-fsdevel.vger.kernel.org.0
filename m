@@ -2,64 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9546A64AE2B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 04:29:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CC72A64AE5A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 13 Dec 2022 04:40:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234010AbiLMD3W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 12 Dec 2022 22:29:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39792 "EHLO
+        id S234264AbiLMDkv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 12 Dec 2022 22:40:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233980AbiLMD3T (ORCPT
+        with ESMTP id S234254AbiLMDku (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 12 Dec 2022 22:29:19 -0500
-Received: from mail-qt1-x831.google.com (mail-qt1-x831.google.com [IPv6:2607:f8b0:4864:20::831])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F2B571B9C0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Dec 2022 19:29:17 -0800 (PST)
-Received: by mail-qt1-x831.google.com with SMTP id g7so10882559qts.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Dec 2022 19:29:17 -0800 (PST)
+        Mon, 12 Dec 2022 22:40:50 -0500
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 022B2165B0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Dec 2022 19:40:49 -0800 (PST)
+Received: by mail-qt1-x835.google.com with SMTP id s9so10610411qtx.6
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Dec 2022 19:40:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linux-foundation.org; s=google;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=zp0U9Kl4wDERv8LP4SRbd+OyzbRFeaPhMPOi3/LSHe4=;
-        b=VrN+0XdiySagFbzfZT3HDYXIZ9s7TWs9LITr1N9EkXfEoqvxLaPWUJn0CCF0lzpS2q
-         mn6sM/KMo0sAcPdY48YkP/E8319NigCboqyj9OXDaOzw+vBHk9hMdOxiptzyzMQuGQO5
-         b4Un4hq68aqroz/YhO57TR4fQjc/VNj8lkZm8=
+        bh=tUAqA2SlkGJGoP8jdNp8BFCeN3i3DSiZETy07vaICDs=;
+        b=g9Nl4T/+fTHSkFjHq2JeyH2Z1NmJhIvGaWhttKU1xSkd8QffENkiRwL1EFi8dsGs1n
+         zpDjgklpa4gBd1ZEL6VEnRPTQ5RtKrdkKHENJrwDOWxEAnh8oW5CRMFuErOtRa+54qtF
+         4HWD5YH8xkBqOV50nhvtn1xHXJhKz74isoqRg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=zp0U9Kl4wDERv8LP4SRbd+OyzbRFeaPhMPOi3/LSHe4=;
-        b=uUjFLTXYaXvH2A/2EGNslepjpfzSuWtpoHJPnuh1HoPAm4z4+DWDKoxwh5fHsn84Um
-         +uMrRTJsFX7zRc8/U6taL3TvK7HsspAGkhS+K3ouxWiFJqo6hXBVAiXTbXqOTHAAbVa0
-         OdkLqPTPp2q3k0uZ/nUhHYbvNPgJB2wVy8cW0EPKvc45UKeNVKHr43xuBKTy+ji/9oww
-         3SXnHIAJDNvP4q0a7D1ykmcmWvAEG8XEts4bQdLnXa8H+m/pIFxaFLW2H+KoD3j0obUw
-         KEM0dGbkGG9i56pRXuDC7OVT3XgGNfQSl3aMZtZzeSmaxgvwsg1YLMQHhG77Emjc2oIc
-         b1CQ==
-X-Gm-Message-State: ANoB5pn3JYp9MFdtHgOHvRJ5be7JoGidtuCQg0s5ogHBv1M3bcL5Fy+R
-        of1k76cixZvGufgDZPS6Rb/7Ue8BwHARWoHy
-X-Google-Smtp-Source: AA0mqf4tng8q6hjKcGavuYlPPKmvcGQBq6af2thY38uA+1OeatyWLy6tNNi3DsvKVZKSWrRNedPOHw==
-X-Received: by 2002:ac8:7616:0:b0:3a7:ea57:bf0e with SMTP id t22-20020ac87616000000b003a7ea57bf0emr26594949qtq.25.1670902156811;
-        Mon, 12 Dec 2022 19:29:16 -0800 (PST)
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com. [209.85.222.174])
-        by smtp.gmail.com with ESMTPSA id w26-20020ac86b1a000000b003995f6513b9sm6684318qts.95.2022.12.12.19.29.15
+        bh=tUAqA2SlkGJGoP8jdNp8BFCeN3i3DSiZETy07vaICDs=;
+        b=vWnTpKdHCkDzytp5hevVrUNJ0pLtEK7MH5YjjP86kP1HRrMXmEwKUZ7ixsMGOkPlU2
+         4FDoMSp10w3SlBjeJWyIXXrgv/P17GCNchcGTsJ0hhSo9XyvGp4n3GE9ABtKqSWbSEsp
+         tRiCGXFJAgU1hdjCoe+wuZZw97ARk/S85QmU2AkQZbGA2ujZIXSoXPqHYW/VEEc5Jd2P
+         W1raPmcqlcyw19rDde+QqVfoIdOoKK3P4QspUT7PQAhvqbb2HurzAexkEuf736PB14mv
+         A8pa3GYzrcXr7Qh7MLzxP9uKzfh+uevBl+Is6WcCzrNWGsdsAmyEYKvb1/PUm3d71Jc6
+         tLrQ==
+X-Gm-Message-State: ANoB5pl0u2VWuDwJcgku71QBOirv0Lm2RGz/v3UGkBrZ5WRCJsRX38oT
+        0f0NmNWmL3m9giCFqixiZ6K/qB8meEBQRCIf
+X-Google-Smtp-Source: AA0mqf4JgJkJZ9Ji7DSiQY18XnaCL7WMdOxMpEVtnYT4q/FZfF4ZF8baDR8LsaWQjBpRSa5G8p1j9Q==
+X-Received: by 2002:a05:622a:4017:b0:3a5:8084:9f60 with SMTP id cf23-20020a05622a401700b003a580849f60mr28240475qtb.64.1670902847248;
+        Mon, 12 Dec 2022 19:40:47 -0800 (PST)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com. [209.85.160.174])
+        by smtp.gmail.com with ESMTPSA id r12-20020ac8424c000000b003a4f435e381sm6747580qtm.18.2022.12.12.19.40.45
         for <linux-fsdevel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 12 Dec 2022 19:29:16 -0800 (PST)
-Received: by mail-qk1-f174.google.com with SMTP id j26so5999885qki.10
-        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Dec 2022 19:29:15 -0800 (PST)
-X-Received: by 2002:ae9:ef48:0:b0:6fe:d4a6:dcef with SMTP id
- d69-20020ae9ef48000000b006fed4a6dcefmr10633201qkg.594.1670902155636; Mon, 12
- Dec 2022 19:29:15 -0800 (PST)
+        Mon, 12 Dec 2022 19:40:45 -0800 (PST)
+Received: by mail-qt1-f174.google.com with SMTP id fu10so10916576qtb.0
+        for <linux-fsdevel@vger.kernel.org>; Mon, 12 Dec 2022 19:40:45 -0800 (PST)
+X-Received: by 2002:ac8:4988:0:b0:3a7:ef7b:6aa5 with SMTP id
+ f8-20020ac84988000000b003a7ef7b6aa5mr7555265qtq.436.1670902844805; Mon, 12
+ Dec 2022 19:40:44 -0800 (PST)
 MIME-Version: 1.0
-References: <20221212123348.169903-1-brauner@kernel.org>
-In-Reply-To: <20221212123348.169903-1-brauner@kernel.org>
+References: <20221212131915.176194-1-brauner@kernel.org>
+In-Reply-To: <20221212131915.176194-1-brauner@kernel.org>
 From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 12 Dec 2022 19:28:59 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wj4BpEwUd=OkTv1F9uykvSrsBNZJVHMp+p_+e2kiV71_A@mail.gmail.com>
-Message-ID: <CAHk-=wj4BpEwUd=OkTv1F9uykvSrsBNZJVHMp+p_+e2kiV71_A@mail.gmail.com>
-Subject: Re: [GIT PULL] vfsuid updates for v6.2
+Date:   Mon, 12 Dec 2022 19:40:29 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wj+tqv2nyUZ5T5EwYWzDAAuhxQ+-DA2nC9yYOTUo5NOPg@mail.gmail.com>
+Message-ID: <CAHk-=wj+tqv2nyUZ5T5EwYWzDAAuhxQ+-DA2nC9yYOTUo5NOPg@mail.gmail.com>
+Subject: Re: [GIT PULL] fs idmapped updates for v6.2
 To:     Christian Brauner <brauner@kernel.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
@@ -73,30 +73,27 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 12, 2022 at 4:34 AM Christian Brauner <brauner@kernel.org> wrote:
+On Mon, Dec 12, 2022 at 5:19 AM Christian Brauner <brauner@kernel.org> wrote:
 >
-> This pull request converts all remaining places that still make use of non-type
-> safe idmapping helpers to rely on the new type safe vfs{g,u}id based helpers.
-> Afterwards it removes all the old non-type safe helpers.
+> Please note the tag contains all other branches for this cycle merged in.
 
-So I've pulled this, but I'm not entirely happy about some of those
-crazy helpers.
+Well, considering that the explanation basically assumed I had already
+merged those (and I had), I wish you also had made the diffstat and
+the shortlog reflect that.
 
-In particular, the whole "ordering" helpers are really not something
-that should be used in general, I feel. I'm talking about
-vfsuid_gt_kuid() and friends - it's an entirely insane operation and
-makes no sense at all.
+As it was, now the diffstat and shortlog ends up containing not what
+this last pull request brought in, but what they *all* brought in...
 
-Yes, yes, I understand why they exist (those crazy IMA rules), but I
-feel that those functions *really* shouldn't be exposed to anybody
-else.
+I'm also not super-happy with how ugly your history for this branch
+was. You had literally merged the acl rework branch three times - at
+different points of that branch.
 
-IOW, making those insane functions available in <linux/idmapping.h>
-really seems wrong to me. They are crazy special cases, and I think
-they should exist purely in that crazy ima_security file.
+Do we have other ugly history in the tree? Yes. But we've been getting
+better. This was _not_ one of those "getting better" moments.
 
-Again - I've pulled this, but I'm hoping to see a future commit that
-limits that craziness to the only user, in the hope that this disease
-will never spread.
+Oh well. I can see what you wanted to do, and I agree with the end
+result, I just don't particularly like how this was done.
 
-                Linus
+I've pulled it.
+
+             Linus
