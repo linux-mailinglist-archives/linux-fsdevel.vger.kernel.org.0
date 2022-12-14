@@ -2,89 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DAD1F64C411
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 07:52:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A518E64C469
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 08:36:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237401AbiLNGwQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Dec 2022 01:52:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39214 "EHLO
+        id S237440AbiLNHg1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Dec 2022 02:36:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56630 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229615AbiLNGwO (ORCPT
+        with ESMTP id S229454AbiLNHg0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Dec 2022 01:52:14 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E41045582;
-        Tue, 13 Dec 2022 22:52:13 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 801EB6181B;
-        Wed, 14 Dec 2022 06:52:13 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6922C433D2;
-        Wed, 14 Dec 2022 06:52:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671000732;
-        bh=uB3/VeNb2+E5JcJLM4VRq5oQgPUO+MOKFU9Idpe8kfc=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Tv7bJx11/Nf8xIF4/IPCrqHr/oMMr3GMNPMXn9BsPnTJs1UllJNc+YUKkxQ4XrUjr
-         uaE8SkfeZTxkKYahp1KiDWkmzplxNwrtSPbNfWiN1eDhAR5mmjAc1eRwn5DdUR1P7e
-         6hP88Y6OP1JNKbtmj0hYNvm48WfPgFQYCH3mMpHiVdM62rN4Xoe00J7jsnYAQnRM4F
-         3KoLCwvB8ynUWg0rroOVvpjtk6nABvzTfF1lqOSrCB6wBqehaamLGpvCqiB3hV179D
-         k1mRPe2fJdfzngWC6ACZudjojASw9H3LgNnSf2YgRhiRH/n3qkloUmRTNtOrJwghvp
-         m6SxKQw37dD9Q==
-Date:   Tue, 13 Dec 2022 22:52:11 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Andrey Albershteyn <aalbersh@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 02/11] pagemap: add mapping_clear_large_folios()
- wrapper
-Message-ID: <Y5lym4fJK+9u2cxe@sol.localdomain>
-References: <20221213172935.680971-1-aalbersh@redhat.com>
- <20221213172935.680971-3-aalbersh@redhat.com>
- <Y5i8igBLu+6OQt8H@casper.infradead.org>
- <Y5jTosRngrhzPoge@sol.localdomain>
- <20221213211010.GX3600936@dread.disaster.area>
+        Wed, 14 Dec 2022 02:36:26 -0500
+Received: from mail-pj1-x102e.google.com (mail-pj1-x102e.google.com [IPv6:2607:f8b0:4864:20::102e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BF8E9175A2;
+        Tue, 13 Dec 2022 23:36:25 -0800 (PST)
+Received: by mail-pj1-x102e.google.com with SMTP id u15-20020a17090a3fcf00b002191825cf02so6188166pjm.2;
+        Tue, 13 Dec 2022 23:36:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oD3KwJVrSoSFDnHdhsSq1u/h9sH78UzRHgxOi9bsI3c=;
+        b=HQAinVlxck5zoUcbsSArLckmv63dxOeV5KiPW9phjyWWNgow/gxfjM2htsCahlaMR5
+         773i5XNJTVsoqn2RYopuVe9evbvWt6sIdvgwKWlDYFmw9xKm/Ug3iaeOcFXGGiZ8BDkt
+         M5WtHycaiuSSPKcsYPRnqbQWTFDPxPz1XNXP+m6atltTystxUrayFz6/7Au5rbDEYBFp
+         A14OA1mJeknWL2ineMi9eMCmloBaVG9FzhmuIKzy30rEbRq87mOGXLMuAHuhW0YwEPyX
+         WKBro4gWO4mllYfsacNpGcbjVIqy26wBGpQhoBm8UpNajJWq0nGRKc2B+F4KTS5jZLYR
+         zWTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oD3KwJVrSoSFDnHdhsSq1u/h9sH78UzRHgxOi9bsI3c=;
+        b=LlyUYgYWSnZf6OdIDe2ZpvBIA9ujG2zblDS9w/0Fw1crfnGVtHbxQ6empUEX5SorrO
+         yG/donA45VCkFsmtJFuPU8hlh5zzqpMT57fHs7Jjj4gLnCAkBYeTgkAglbZGd9vb9/QJ
+         0LouoT3XFbyZnyGPEwODMdMh86sAy6msPyicQIzvNP6x+YaGZlmRPoa9d7XRNNNXcMGT
+         /LRy3l2V4ZoKREwldm18kejol3HLy/W8KzyVgZnpZqmroB176SWLD2pIlehl+PjNEP58
+         7TfkeUPV5BrklDZ9zGUMLdmLfrAE1E+R6Zh7yGD1FMMxdidywKJvzp93O4nJKcJucz15
+         iITA==
+X-Gm-Message-State: ANoB5pn4Uc2xbMiwsPxaMQDsvar9Y9CCRgRWsTqeA5mgU90TasRBEHpy
+        3YeiuHfKhPcSqJG43DUrxLuGe2ALO0lHLQ==
+X-Google-Smtp-Source: AA0mqf6r//6nfYeVV4BllWjTN4gqg0JqjiXWXEp+e5bSItut341+b7MEwWGWsl/ZyRLEOWNsQw4pbQ==
+X-Received: by 2002:a17:902:b282:b0:189:efe8:1e with SMTP id u2-20020a170902b28200b00189efe8001emr25547271plr.68.1671003385193;
+        Tue, 13 Dec 2022 23:36:25 -0800 (PST)
+Received: from localhost ([116.128.244.169])
+        by smtp.gmail.com with ESMTPSA id c4-20020a170902c1c400b0018853416bbcsm1154896plc.7.2022.12.13.23.36.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 13 Dec 2022 23:36:24 -0800 (PST)
+From:   Hongyu Xie <xy521521@gmail.com>
+X-Google-Original-From: Hongyu Xie <xiehongyu1@kylinos.cn>
+To:     viro@zeniv.linux.org.uk
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Hongyu Xie <xiehongyu1@kylinos.cn>
+Subject: [PATCH -next] fs: coredump: using preprocessor directives for dump_emit_page
+Date:   Wed, 14 Dec 2022 15:36:21 +0800
+Message-Id: <20221214073621.766757-1-xiehongyu1@kylinos.cn>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221213211010.GX3600936@dread.disaster.area>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 14, 2022 at 08:10:10AM +1100, Dave Chinner wrote:
-> On Tue, Dec 13, 2022 at 11:33:54AM -0800, Eric Biggers wrote:
-> > On Tue, Dec 13, 2022 at 05:55:22PM +0000, Matthew Wilcox wrote:
-> > > I'm happy to work with you to add support for large folios to verity.
-> > > It hasn't been high priority for me, but I'm now working on folio support
-> > > for bufferhead filesystems and this would probably fit in.
-> > 
-> > I'd be very interested to know what else is needed after commit 98dc08bae678
-> > ("fsverity: stop using PG_error to track error status") which is upstream now,
-> > and
-> > https://lore.kernel.org/linux-fsdevel/20221028224539.171818-1-ebiggers@kernel.org/T/#u
-> > ("fsverity: support for non-4K pages") which is planned for 6.3.
-> 
-> Did you change the bio interfaces to iterate a bvec full of
-> variable sized folios, or does it still expect a bio to only have
-> PAGE_SIZE pages attached to it?
-> 
+When CONFIG_COREDUMP is set and CONFIG_ELF_CORE is not set, you get warning
+like:
+fs/coredump.c:841:12: error: ‘dump_emit_page’ defined but not used
+[-Werror=unused-function]
+841 | static int dump_emit_page(struct coredump_params *cprm, struct
+page *page)
 
-You can take a look at fsverity_verify_bio() with
-https://lore.kernel.org/r/20221028224539.171818-2-ebiggers@kernel.org applied.
-It uses bio_for_each_segment_all() to iterate through the bio's segments.  For
-each segment, it verifies each data block in the segment, assuming bv_len and
-bv_offset are multiples of the Merkle tree block size.  The file position of
-each data block is computed as '(page->index << PAGE_SHIFT) + bv_offset'.
+dump_emit_page only called in dump_user_range, since dump_user_range
+using #ifdef preprocessor directives, use #ifdef for dump_emit_page too.
 
-I suppose the issue is going to be that only the first page of a folio actually
-has an index.  Using bio_for_each_folio_all() would avoid this problem, I think?
+Fixes: 06bbaa6dc53c ("[coredump] don't use __kernel_write() on kmap_local_page()")
+Signed-off-by: Hongyu Xie <xiehongyu1@kylinos.cn>
+---
+ fs/coredump.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-- Eric
+diff --git a/fs/coredump.c b/fs/coredump.c
+index de78bde2991b..95390a73b912 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -838,6 +838,7 @@ static int __dump_skip(struct coredump_params *cprm, size_t nr)
+ 	}
+ }
+ 
++#ifdef CONFIG_ELF_CORE
+ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ {
+ 	struct bio_vec bvec = {
+@@ -870,6 +871,7 @@ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ 
+ 	return 1;
+ }
++#endif
+ 
+ int dump_emit(struct coredump_params *cprm, const void *addr, int nr)
+ {
+-- 
+2.34.1
+
