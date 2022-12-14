@@ -2,73 +2,157 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A02BE64C8A9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 13:04:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4642064CCDD
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 16:09:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238411AbiLNMEO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Dec 2022 07:04:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40592 "EHLO
+        id S238528AbiLNPJm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Dec 2022 10:09:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238265AbiLNMDp (ORCPT
+        with ESMTP id S229829AbiLNPJi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Dec 2022 07:03:45 -0500
-Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 210A425C5C;
-        Wed, 14 Dec 2022 04:02:38 -0800 (PST)
-Received: by mail-lj1-x230.google.com with SMTP id z4so6408175ljq.6;
-        Wed, 14 Dec 2022 04:02:38 -0800 (PST)
+        Wed, 14 Dec 2022 10:09:38 -0500
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D027713F6D;
+        Wed, 14 Dec 2022 07:09:36 -0800 (PST)
+Received: from pps.filterd (m0333521.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 2BEF47pt019004;
+        Wed, 14 Dec 2022 15:09:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id : references : in-reply-to : content-type :
+ content-id : content-transfer-encoding : mime-version; s=corp-2022-7-12;
+ bh=T6xOha0be92gQK75D7WxIU5etnmBMRiZNTFMYNWzpR0=;
+ b=RMVCRoYTrPiCw26zhgjCkkSHA+I/+ligsNGUOS4QI15Aj3e1T3wnBY1tol5RfHrU4Jxb
+ iZ4xOkH4kQLUTcmgkckHvw0GfqjqNeGxhee0Z2Ao2cXjkhtc7jwrQW091dLF2Jm52hG6
+ UIPWI0bMChI2W/YbTo8m2qIXhFuXQ/nCCSHI3k1mgJroLVKiv12aM6umCmI84JMSL1Q6
+ vmlMdNnFWXJuYGxh18xK8I8whOVDQKg8omoX0w/dk68qmPkkje1niOAS9CBXvuK4+1Br
+ pw3cRf5Xz88c0w7Y7DhlkifJQOAOUArlMgqvZ4BnFcnFubj9ODz9HOXWtt4O974IZrGw VA== 
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3meyex2g7d-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Dec 2022 15:09:16 +0000
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 2BEEDv9E003995;
+        Wed, 14 Dec 2022 15:09:14 GMT
+Received: from nam12-bn8-obe.outbound.protection.outlook.com (mail-bn8nam12lp2170.outbound.protection.outlook.com [104.47.55.170])
+        by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3meyew6nda-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Dec 2022 15:09:14 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bMcVZHdc6c8bbJpEIS5CjUdDrAfG0c8TcFsedX0V/q92v+t/RINbbJ4OHWicCReyFpbeOS32PUFyuHHmfH7twPKz7lsxFSmU2Tm78oE7Q4lT5Cal5GjNBYs6qZbBlIjjiucFSfVk16bMSDTeRB800TAkuhSJOZH6FFpLkvqDXlxmT5NJrZaLS3mKJBE+vg2YOSIJlwehMOvENohco1Qgw6wL/CdPW/7YJXz3bFvMiUo27/AS2IRtwg52bl9I1nWMMTaUYLV5icSy3HKA3eV3inW4eJnQJNnbkaumVr/IaHNYP0MrNUxcatLP/qUJPtwy18CU/yj4Sxh5OOeYJB131Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=T6xOha0be92gQK75D7WxIU5etnmBMRiZNTFMYNWzpR0=;
+ b=ZXGnlhfxe7EGMnRYYBVUaUHptbh/icBWBqBSxJj7QLCgWAuCQ9GXJZr4r2hJ5oBDPj0nOkm6q/IZshQ4sNYa/mHIrRUA5m3W4qJjLjdBNZGvygwrLz7TqOgcp+VNGNkeHwvq1uNQoJ1gNKwLcVqjhKYnqCpIzz6HNakQtxm59wEj98GZw8Mev0jlq4pEfF7kOB0ZSZyhXpB1/efw+TLyXdEQX/k23lcfNlSXZl3r3DO+Qg6RvgwGiiOZrAkFcVwMhdIIcDTGGXqe1dyMrvg+qRLfm0kidnSbbkolqoTLlGTeEtWgvS5kStUHTcQK6q6xIFvM1GpStgNWbtqGt3gJdw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=4NAGef5mpK/XbuHGrtzJS0zI0UQGDSqXJ/sI3StH8Pg=;
-        b=KJYw1rceBzoNsDgfbCRYUChxUV4OY9B2zKfQRtbAe8kvOGYwzf5JEuMPa3/qVqDbZG
-         cYjhYZXN6dbEXlV1j5xu2vxmxmMBiYrQ2CNO+6mnhfF6kXbX8g8NuAz00PrhUmt+ey5p
-         g09P1ZZsYBR/QGO6RAgdAoTcI6UUzdWHHvrCFY7rQh4VFQCq8wq8gIXcT1rbd3YkwG+g
-         MmNELUuXdiKYf/DwY2TxtqGfgnLCI9tuh7NxpbLi76CyouVXgRdOu5WB+ti8/hi00DJM
-         AfPP2nyxnGkmrFwI2DxJP/jw3NrJLAQXacfzYT2jYQcJVJqK97ZBNl8Ncb4heF911zZu
-         uIGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4NAGef5mpK/XbuHGrtzJS0zI0UQGDSqXJ/sI3StH8Pg=;
-        b=o4q1RjlYLi6LO3IW+2YjMkHCVj1uXmqWsAHutwSZ377N9ca38pYZMMoqab1eaKM7ly
-         XyqBBp7ma6E8Ae1I6pK+Kg67oyAjGiRnG+cR6nhayBlKQUHMCaYT8UGxI3Aus+x3nrCw
-         KQlIxUTeXRUjjTmv57EOtV7qaAM8KcwHwx3ynT/4AFBAFw+EpHwKCJvtgD+u03ypsIUq
-         kyaIpMQXl00l3pOwGDQhv8ZRK5IHVyhLPE9isS8//lzaw8vDKhHIfPCIZwqzd6mj2M10
-         HfmK3BGgUap/UL2jIht4bBlRisYVX98i1edMeEmunGg5FtU5Ij9VTWa7rkiOQYoNeijz
-         //Xg==
-X-Gm-Message-State: ANoB5plcXE29dlT/+Z2m/ykf+FLGrn3Mg0lWHm5iZT+nP/Iw+U8uo/wo
-        SfC9H8Z8fKEZROwAtdNclgIDkXiX1ItedO714zY=
-X-Google-Smtp-Source: AA0mqf6NQPYwChBBWS6sgRBy487g8mK6msqO3t9a73tolktOThr5Tz59imiqYYRBiWygPpkGQfI4FUDPXq9MJ+SXWBM=
-X-Received: by 2002:a05:651c:2042:b0:27a:3cf0:6edc with SMTP id
- t2-20020a05651c204200b0027a3cf06edcmr1481846ljo.475.1671019356251; Wed, 14
- Dec 2022 04:02:36 -0800 (PST)
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=T6xOha0be92gQK75D7WxIU5etnmBMRiZNTFMYNWzpR0=;
+ b=AWi+VngwuZ3HJ0T0i+u4QrvGjpLpBIeQ6/Q3y7o0pNCMY2E8+7Zq22Wh8hjAPFZ4AA1Y2plemBXbeCPJAYxOpEhf27LUIzX8AZaa/XopCGz8Y77o5SWPq+x/Ha6qIRVbHRlGcnOz2Np4cljD1MbrtUSb+P/8tB+9d9ycgEk7bIc=
+Received: from DS7PR10MB5134.namprd10.prod.outlook.com (2603:10b6:5:3a1::23)
+ by DS0PR10MB6974.namprd10.prod.outlook.com (2603:10b6:8:148::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5924.11; Wed, 14 Dec
+ 2022 15:09:12 +0000
+Received: from DS7PR10MB5134.namprd10.prod.outlook.com
+ ([fe80::e208:8886:f6f1:ab09]) by DS7PR10MB5134.namprd10.prod.outlook.com
+ ([fe80::e208:8886:f6f1:ab09%9]) with mapi id 15.20.5880.019; Wed, 14 Dec 2022
+ 15:09:12 +0000
+From:   Chuck Lever III <chuck.lever@oracle.com>
+To:     Anna Schumaker <anna@kernel.org>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>
+CC:     Linux NFS Mailing List <linux-nfs@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        Al Viro <viro@zeniv.linux.org.uk>, Ian Kent <raven@themaw.net>,
+        "chris.chilvers@appsbroker.com" <chris.chilvers@appsbroker.com>,
+        "david.young@appsbroker.com" <david.young@appsbroker.com>,
+        "luis.turcitu@appsbroker.com" <luis.turcitu@appsbroker.com>,
+        "david@sigma-star.at" <david@sigma-star.at>,
+        "benmaynard@google.com" <benmaynard@google.com>,
+        Richard Weinberger <richard@nod.at>
+Subject: Re: [PATCH 3/3] NFS: nfs_encode_fh: Remove S_AUTOMOUNT check
+Thread-Topic: [PATCH 3/3] NFS: nfs_encode_fh: Remove S_AUTOMOUNT check
+Thread-Index: AQHZChf9fDsgUtMhNUKtyOAuOArmha5th9sA
+Date:   Wed, 14 Dec 2022 15:09:12 +0000
+Message-ID: <92B44C88-61B5-4450-B027-60F9F7A614FF@oracle.com>
+References: <20221207084309.8499-1-richard@nod.at>
+ <20221207084309.8499-4-richard@nod.at>
+In-Reply-To: <20221207084309.8499-4-richard@nod.at>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3696.120.41.1.1)
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DS7PR10MB5134:EE_|DS0PR10MB6974:EE_
+x-ms-office365-filtering-correlation-id: eae3a383-a789-42e4-15ef-08dadde528da
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: blvecmjHqSoiUDyYFPlUjDIt6jupazOpCu9vQ419eNmaOjp3P8Lkdez6T2bLIChMjY52UP0+u4NzzTT1vPa8TJFG3qtxZ0TQPZ7BaFtbdVOTIQK8UblHyqc15+n4p/CvQgMjRhh2KU8C+lBdLD7CtBnvAJVB6pSmYH4Aq3ADvra9mugoL04KwwZCegpAptTRLhhzj9cEiFf1zUVvJ7UIZdwsQr47/qM8zzMRzg79XxuVy0LoiZ9PWtzo2WB7DZ+yHjqpq/hW+y0J3qICBtk+1LN4MiOip3VU+niDkn/4JpIuOQZZjWX4P9yBPIMZAX2UJIcHb9EqR+3xohr3cedsQ4i0SAHsIjfJNxnsG/2e+010sJwa6+R99BrUY9hjI+Jcjs8hEirKU61emmZ+MKgsPYPBM0NBIcd+hUGlUxUAitZYbrxb7TEKN+ob4DWFk3e7T0yJAjqSbZNNVi3lUQfOJZf0sdsGbO6GyPm9NQv5WxrnxNdKk0KmMb091R7wVdNiWIm5+gyxNs3hNiR8fcVx9463gbGKQbq98lvHhQvY2cu090UTYVfd+vhV5fTuKEvqb951LDFlgxPzs9zR/tD45tiPpO0rP/7eOOWhuvzX3uSE68yRtYFhkuo4TJgvMBTELGGwDW1pI2FKOdZJraMuYK7qBa0GNuKiaR7ADbPzsxEOp6T327ocpl//gedexM/8kT9v/+vAD6zjkj9IdzVEqy7i7bjHleKtFmtBBODYAhE=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR10MB5134.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(396003)(366004)(346002)(39860400002)(136003)(376002)(451199015)(6512007)(6486002)(71200400001)(316002)(66946007)(54906003)(110136005)(26005)(66556008)(6506007)(4326008)(66476007)(64756008)(66446008)(91956017)(2616005)(53546011)(478600001)(186003)(76116006)(8676002)(8936002)(41300700001)(83380400001)(4744005)(5660300002)(7416002)(2906002)(33656002)(36756003)(122000001)(38100700002)(38070700005)(86362001)(45980500001);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?xrlKzS/m/LxNVxxxrgcBNUY40cCEhmTimJXxJTfWVr7ocfhSYEquvdCJxcQe?=
+ =?us-ascii?Q?4K9OLWyTrbqMNTxBta8AAHMlggrbTy54byM/tQw7H3rTpYLVSkgHcE/y3ilN?=
+ =?us-ascii?Q?zjRI4YAJ3SSYkoeqa0B4rV364TW7KAa4DvDPXhXS/COL2MM14TNFr8ZdDZlc?=
+ =?us-ascii?Q?IlGvkwLklWv0SOazVRt0F76QNsw3dA0XRYmdHrChNOdctjXEHvKSCjc2mcbP?=
+ =?us-ascii?Q?acp5FdBJnGxBWB4/ueCvGmPxAu/mRS+8nhvl65KUt4uop6qnUB3QzDjeZd1X?=
+ =?us-ascii?Q?jOQZTRHZ6TrPMaJxpm/UKZ/5YZwnyfImM4Ojg1N7CAPz2l6wTYB4voyi9XV1?=
+ =?us-ascii?Q?LO+PQd+JmmdVIhMfGAZw8Fxgl1n7P9vJYdTU9joov8Qe/tKk1cDXTxdKGfB7?=
+ =?us-ascii?Q?o59BkaCziV96cGis7RE+t7lGV9I34jAiNjWRcUr1CXCb6AUpvOAYvl4Gs5ek?=
+ =?us-ascii?Q?5Oia0us9Ypmch3oWtI9OiIs1otUCgpgxYvfUPsRYgJO3iklsXQaK6KjuHVJN?=
+ =?us-ascii?Q?2BbE7mVHnnefweQK7NYGYOB4WSGlkGJiZAqbqj9mk0G6sh4iPV4GpeiFAkEM?=
+ =?us-ascii?Q?UkYTKBysJNhCntpb/CyL1/cvWcOtOqBmTIui0HtqGmCP2G4YzPCauKwIclxO?=
+ =?us-ascii?Q?ZGntg/+a8912uI3T/fVNzVKh/IJ2Hb8jf38LVgcOyX/iSXPpa8DaOgNuHR0r?=
+ =?us-ascii?Q?YSWSfxCsBoBHdOZ7vgttBPw+h87M+OjBMXDsm44YZIuXPrtbe2E4j00ELdN/?=
+ =?us-ascii?Q?lmtnlFjvYfmngQfwyxYapXKaiTxCi1kLmsQDPWY2jtJ4Vsl8S0v01HRYBvN6?=
+ =?us-ascii?Q?LuCJ4U3MXd4UuGQ5LoDOa2hohk/uQ1RtoehkSOgEqT1y4Bpy6vznXKHIPeb2?=
+ =?us-ascii?Q?C51r+r+bdocmuBGdkOSdEsNvhd9PzM+WvITHmlvFlIQrcwRqS16gLHCObIlO?=
+ =?us-ascii?Q?W6MaliK9+3Rcwdv7VLo6r5+aA37kU7wcjquRbc/13/z5WRQXC2pL1NJbym+r?=
+ =?us-ascii?Q?taeYMGpVC7f3Hfi59FqvNKN5C2UDA8iWGEH4KllOhwDMh0lfutm00f5XD+bf?=
+ =?us-ascii?Q?+jae2v9Kb+iZaYk8dDOLAcvI084II7L4we+a3eeZQCpPnnA+aMnBzgTO95PF?=
+ =?us-ascii?Q?9lZlpJaZ4kx9sSWnrPQm6IRmZ0MvkqeoA7iwOM81n8MMXm/YP8R5Qr5pBkBw?=
+ =?us-ascii?Q?mi9en7iXuitAUjBXliwEGmxjIYjzTNeh7sqbTlmZX4EyLMQQBKpiDsuyCWIx?=
+ =?us-ascii?Q?1nP7HZRa4+Ozek9nj8x1xqjJOuu0QrtJ1Km29dDuir1XQGSWCIf3/oj5HRiS?=
+ =?us-ascii?Q?74S5bRx96c3sFychuD+NMC/6wRhPepTVULSxvK0EZ8WFhzkLcdLEQA6ZR0wN?=
+ =?us-ascii?Q?8pIfmsvLoy1XOJBiHtiP6FFi6pwRPJiHA0obsH2+oMSsAPWR8L+a9mQI5+M2?=
+ =?us-ascii?Q?NhKToJb5hgDXcpu1qNzC2vjFzoDRrkT7wUJ85cf+3Sw0geR+e1ZasYzFDnPd?=
+ =?us-ascii?Q?PZa/S038X5OfC6tffp9DBVwWQ12C59sau5LsaD/sooxJvvD3o4b5+oiKppm/?=
+ =?us-ascii?Q?8z57PNRkChrDmumVu7oeB2jLpc4JetJlf4KmZ+zmJcZ+G4QtCYtovbXtP4MQ?=
+ =?us-ascii?Q?Sg=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <BB3FCD4B09512C43A59F138EF848BAC8@namprd10.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20221212003711.24977-10-laoar.shao@gmail.com> <202212141512.469bca4-yujie.liu@intel.com>
-In-Reply-To: <202212141512.469bca4-yujie.liu@intel.com>
-From:   Yafang Shao <laoar.shao@gmail.com>
-Date:   Wed, 14 Dec 2022 20:01:59 +0800
-Message-ID: <CALOAHbA27JAf3JBpYfyQR+C88MJ5rWEJ9MAL-X-YqLSW2OQqYA@mail.gmail.com>
-Subject: Re: [RFC PATCH bpf-next 9/9] bpf: Use active vm to account bpf map
- memory usage
-To:     kernel test robot <yujie.liu@intel.com>
-Cc:     oe-lkp@lists.linux.dev, lkp@intel.com,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        bpf@vger.kernel.org, ast@kernel.org, daniel@iogearbox.net,
-        andrii@kernel.org, kafai@fb.com, songliubraving@fb.com, yhs@fb.com,
-        john.fastabend@gmail.com, kpsingh@kernel.org, sdf@google.com,
-        haoluo@google.com, jolsa@kernel.org, tj@kernel.org,
-        dennis@kernel.org, cl@linux.com, akpm@linux-foundation.org,
-        penberg@kernel.org, rientjes@google.com, iamjoonsoo.kim@lge.com,
-        vbabka@suse.cz, roman.gushchin@linux.dev, 42.hyeyoo@gmail.com,
-        linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR10MB5134.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: eae3a383-a789-42e4-15ef-08dadde528da
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Dec 2022 15:09:12.8820
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Z2nSujQR1/O/Z2HJxvD25FYykRCI1idEsdiR5BDoile9Js4SsgAlwaF/zARAuqrcmLO7og5UDJHmczOkS30aYA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR10MB6974
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2022-12-14_06,2022-12-14_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 bulkscore=0
+ spamscore=0 mlxscore=0 mlxlogscore=999 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2212140121
+X-Proofpoint-GUID: 3nzQb0tYHnovcu9Cd1QfkEQlZoCuiRRe
+X-Proofpoint-ORIG-GUID: 3nzQb0tYHnovcu9Cd1QfkEQlZoCuiRRe
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -76,198 +160,41 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 14, 2022 at 4:48 PM kernel test robot <yujie.liu@intel.com> wrote:
->
-> Greeting,
->
-> FYI, we noticed WARNING:suspicious_RCU_usage due to commit (built with gcc-11):
->
-> commit: 8f13ff79ed924e23a36eb5c610ce48998ed69fd5 ("[RFC PATCH bpf-next 9/9] bpf: Use active vm to account bpf map memory usage")
-> url: https://github.com/intel-lab-lkp/linux/commits/Yafang-Shao/mm-bpf-Add-BPF-into-proc-meminfo/20221212-083842
-> base: https://git.kernel.org/cgit/linux/kernel/git/bpf/bpf-next.git master
-> patch link: https://lore.kernel.org/all/20221212003711.24977-10-laoar.shao@gmail.com/
-> patch subject: [RFC PATCH bpf-next 9/9] bpf: Use active vm to account bpf map memory usage
->
-> in testcase: boot
->
-> on test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
->
-> caused below changes (please refer to attached dmesg/kmsg for entire log/backtrace):
->
->
-> [   31.975760][    T1] WARNING: suspicious RCU usage
-> [   31.976682][    T1] 6.1.0-rc7-01609-g8f13ff79ed92 #5 Not tainted
-> [   31.977802][    T1] -----------------------------
-> [   31.978710][    T1] include/linux/rcupdate.h:376 Illegal context switch in RCU read-side critical section!
-> [   31.980465][    T1]
-> [   31.980465][    T1] other info that might help us debug this:
-> [   31.980465][    T1]
-> [   31.982355][    T1]
-> [   31.982355][    T1] rcu_scheduler_active = 2, debug_locks = 1
-> [   31.983818][    T1] 1 lock held by swapper/0/1:
-> [ 31.984695][ T1] #0: ffffffff853269a0 (rcu_read_lock){....}-{1:2}, at: page_ext_get (??:?)
-> [   31.986346][    T1]
-> [   31.986346][    T1] stack backtrace:
-> [   31.987467][    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.1.0-rc7-01609-g8f13ff79ed92 #5
-> [   31.989054][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.0-debian-1.16.0-4 04/01/2014
-> [   31.990880][    T1] Call Trace:
-> [   31.991554][    T1]  <TASK>
-> [ 31.992173][ T1] dump_stack_lvl (??:?)
-> [ 31.993034][ T1] __might_resched (??:?)
-> [ 31.993970][ T1] __kmem_cache_alloc_node (??:?)
-> [ 31.994993][ T1] ? active_vm_slab_add (??:?)
-> [ 31.995976][ T1] ? active_vm_slab_add (??:?)
-> [ 31.996918][ T1] __kmalloc_node (??:?)
-> [ 31.997789][ T1] active_vm_slab_add (??:?)
-> [ 31.998727][ T1] ? kasan_unpoison (??:?)
-> [ 31.999615][ T1] __kmem_cache_alloc_node (??:?)
-> [ 32.000615][ T1] ? __bpf_map_area_alloc (syscall.c:?)
-> [ 32.001599][ T1] ? __bpf_map_area_alloc (syscall.c:?)
-> [ 32.002575][ T1] __kmalloc_node (??:?)
-> [ 32.003439][ T1] __bpf_map_area_alloc (syscall.c:?)
-> [ 32.004417][ T1] array_map_alloc (arraymap.c:?)
-> [ 32.005326][ T1] map_create (syscall.c:?)
-> [ 32.006173][ T1] __sys_bpf (syscall.c:?)
-> [ 32.006988][ T1] ? link_create (syscall.c:?)
-> [ 32.007873][ T1] ? lock_downgrade (lockdep.c:?)
-> [ 32.008790][ T1] kern_sys_bpf (??:?)
-> [ 32.009636][ T1] ? bpf_sys_bpf (??:?)
-> [ 32.010469][ T1] ? trace_hardirqs_on (??:?)
-> [ 32.011395][ T1] ? _raw_spin_unlock_irqrestore (??:?)
-> [ 32.012432][ T1] ? __stack_depot_save (??:?)
-> [ 32.013391][ T1] skel_map_create+0xba/0xeb
-> [ 32.014423][ T1] ? skel_map_update_elem+0xe3/0xe3
-> [ 32.015527][ T1] ? kasan_save_stack (??:?)
-> [ 32.016422][ T1] ? kasan_set_track (??:?)
-> [ 32.017308][ T1] ? __kasan_kmalloc (??:?)
-> [ 32.018233][ T1] ? kernel_init (main.c:?)
-> [ 32.019090][ T1] ? lock_acquire (??:?)
-> [ 32.019968][ T1] ? find_held_lock (lockdep.c:?)
-> [ 32.020858][ T1] ? __kmem_cache_alloc_node (??:?)
-> [ 32.021875][ T1] bpf_load_and_run+0x93/0x3f5
-> [ 32.022920][ T1] ? skel_map_create+0xeb/0xeb
-> [ 32.023959][ T1] ? lock_downgrade (lockdep.c:?)
-> [ 32.024885][ T1] ? __kmem_cache_alloc_node (??:?)
-> [ 32.025919][ T1] ? load_skel (bpf_preload_kern.c:?)
-> [ 32.026767][ T1] ? rcu_read_lock_sched_held (??:?)
-> [ 32.027781][ T1] ? __kmalloc_node (??:?)
-> [ 32.030065][ T1] load_skel (bpf_preload_kern.c:?)
-> [ 32.030869][ T1] ? bpf_load_and_run+0x3f5/0x3f5
-> [ 32.031963][ T1] ? kvm_clock_get_cycles (kvmclock.c:?)
-> [ 32.032914][ T1] ? btf_vmlinux_init (bpf_preload_kern.c:?)
-> [ 32.033801][ T1] load (bpf_preload_kern.c:?)
-> [ 32.034501][ T1] ? btf_vmlinux_init (bpf_preload_kern.c:?)
-> [ 32.035407][ T1] do_one_initcall (??:?)
-> [ 32.036266][ T1] ? trace_event_raw_event_initcall_level (??:?)
-> [ 32.037446][ T1] ? parse_one (??:?)
-> [ 32.038320][ T1] ? __kmem_cache_alloc_node (??:?)
-> [ 32.039369][ T1] do_initcalls (main.c:?)
-> [ 32.040314][ T1] kernel_init_freeable (main.c:?)
-> [ 32.041304][ T1] ? console_on_rootfs (main.c:?)
-> [ 32.042213][ T1] ? usleep_range_state (??:?)
-> [ 32.043197][ T1] ? rest_init (main.c:?)
-> [ 32.044036][ T1] ? rest_init (main.c:?)
-> [ 32.044879][ T1] kernel_init (main.c:?)
-> [ 32.045715][ T1] ret_from_fork (??:?)
-> [   32.046587][    T1]  </TASK>
-> [   32.047273][    T1] BUG: sleeping function called from invalid context at include/linux/sched/mm.h:274
-> [   32.048966][    T1] in_atomic(): 1, irqs_disabled(): 0, non_block: 0, pid: 1, name: swapper/0
-> [   32.050596][    T1] preempt_count: 1, expected: 0
-> [   32.051521][    T1] 1 lock held by swapper/0/1:
-> [ 32.052424][ T1] #0: ffffffff853269a0 (rcu_read_lock){....}-{1:2}, at: page_ext_get (??:?)
-> [   32.054113][    T1] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.1.0-rc7-01609-g8f13ff79ed92 #5
-> [   32.055686][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.0-debian-1.16.0-4 04/01/2014
-> [   32.057527][    T1] Call Trace:
-> [   32.058191][    T1]  <TASK>
-> [ 32.058803][ T1] dump_stack_lvl (??:?)
-> [ 32.059668][ T1] __might_resched.cold (core.c:?)
-> [ 32.060638][ T1] __kmem_cache_alloc_node (??:?)
-> [ 32.061654][ T1] ? active_vm_slab_add (??:?)
-> [ 32.062615][ T1] ? active_vm_slab_add (??:?)
-> [ 32.063557][ T1] __kmalloc_node (??:?)
-> [ 32.064421][ T1] active_vm_slab_add (??:?)
-> [ 32.065373][ T1] ? kasan_unpoison (??:?)
-> [ 32.066294][ T1] __kmem_cache_alloc_node (??:?)
-> [ 32.067294][ T1] ? __bpf_map_area_alloc (syscall.c:?)
-> [ 32.068314][ T1] ? __bpf_map_area_alloc (syscall.c:?)
-> [ 32.069306][ T1] __kmalloc_node (??:?)
-> [ 32.070215][ T1] __bpf_map_area_alloc (syscall.c:?)
-> [ 32.071210][ T1] array_map_alloc (arraymap.c:?)
-> [ 32.072134][ T1] map_create (syscall.c:?)
-> [ 32.072972][ T1] __sys_bpf (syscall.c:?)
-> [ 32.073810][ T1] ? link_create (syscall.c:?)
-> [ 32.074693][ T1] ? lock_downgrade (lockdep.c:?)
-> [ 32.075609][ T1] kern_sys_bpf (??:?)
-> [ 32.076455][ T1] ? bpf_sys_bpf (??:?)
-> [ 32.077295][ T1] ? trace_hardirqs_on (??:?)
-> [ 32.078232][ T1] ? _raw_spin_unlock_irqrestore (??:?)
-> [ 32.079288][ T1] ? __stack_depot_save (??:?)
-> [ 32.080258][ T1] skel_map_create+0xba/0xeb
-> [ 32.081264][ T1] ? skel_map_update_elem+0xe3/0xe3
-> [ 32.082356][ T1] ? kasan_save_stack (??:?)
-> [ 32.083234][ T1] ? kasan_set_track (??:?)
-> [ 32.084107][ T1] ? __kasan_kmalloc (??:?)
-> [ 32.085024][ T1] ? kernel_init (main.c:?)
-> [ 32.085901][ T1] ? lock_acquire (??:?)
-> [ 32.086784][ T1] ? find_held_lock (lockdep.c:?)
-> [ 32.087674][ T1] ? __kmem_cache_alloc_node (??:?)
-> [ 32.088715][ T1] bpf_load_and_run+0x93/0x3f5
-> [ 32.090649][ T1] ? skel_map_create+0xeb/0xeb
-> [ 32.091749][ T1] ? lock_downgrade (lockdep.c:?)
-> [ 32.092728][ T1] ? __kmem_cache_alloc_node (??:?)
-> [ 32.093794][ T1] ? load_skel (bpf_preload_kern.c:?)
-> [ 32.094612][ T1] ? rcu_read_lock_sched_held (??:?)
-> [ 32.095606][ T1] ? __kmalloc_node (??:?)
-> [ 32.096490][ T1] load_skel (bpf_preload_kern.c:?)
-> [ 32.097314][ T1] ? bpf_load_and_run+0x3f5/0x3f5
-> [ 32.098412][ T1] ? kvm_clock_get_cycles (kvmclock.c:?)
-> [ 32.099362][ T1] ? btf_vmlinux_init (bpf_preload_kern.c:?)
-> [ 32.100271][ T1] load (bpf_preload_kern.c:?)
-> [ 32.100966][ T1] ? btf_vmlinux_init (bpf_preload_kern.c:?)
-> [ 32.101872][ T1] do_one_initcall (??:?)
-> [ 32.102719][ T1] ? trace_event_raw_event_initcall_level (??:?)
-> [ 32.103859][ T1] ? parse_one (??:?)
-> [ 32.104645][ T1] ? __kmem_cache_alloc_node (??:?)
-> [ 32.105625][ T1] do_initcalls (main.c:?)
-> [ 32.106438][ T1] kernel_init_freeable (main.c:?)
-> [ 32.107333][ T1] ? console_on_rootfs (main.c:?)
-> [ 32.108213][ T1] ? usleep_range_state (??:?)
-> [ 32.109175][ T1] ? rest_init (main.c:?)
-> [ 32.110000][ T1] ? rest_init (main.c:?)
-> [ 32.110836][ T1] kernel_init (main.c:?)
-> [ 32.111633][ T1] ret_from_fork (??:?)
-> [   32.112419][    T1]  </TASK>
-> [ 32.144051][ T1] initcall load+0x0/0x4a returned 0 after 169883 usecs
->
->
-> If you fix the issue, kindly add following tag
-> | Reported-by: kernel test robot <yujie.liu@intel.com>
-> | Link: https://lore.kernel.org/oe-lkp/202212141512.469bca4-yujie.liu@intel.com
->
->
-> To reproduce:
->
->         # build kernel
->         cd linux
->         cp config-6.1.0-rc7-01609-g8f13ff79ed92 .config
->         make HOSTCC=gcc-11 CC=gcc-11 ARCH=x86_64 olddefconfig prepare modules_prepare bzImage modules
->         make HOSTCC=gcc-11 CC=gcc-11 ARCH=x86_64 INSTALL_MOD_PATH=<mod-install-dir> modules_install
->         cd <mod-install-dir>
->         find lib/ | cpio -o -H newc --quiet | gzip > modules.cgz
->
->
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp qemu -k <bzImage> -m modules.cgz job-script # job-script is attached in this email
->
->         # if come across any failure that blocks the test,
->         # please remove ~/.lkp and /lkp dir to run from a clean state.
->
->
 
-Many thanks for the report. Should add GFP_ATOMIC to fix it. I missed
-the rcu_read_lock() in page_ext_get().
 
--- 
-Regards
-Yafang
+> On Dec 7, 2022, at 3:43 AM, Richard Weinberger <richard@nod.at> wrote:
+>=20
+> Now with NFSD being able to cross into auto mounts,
+> the check can be removed.
+>=20
+> Signed-off-by: Richard Weinberger <richard@nod.at>
+> ---
+> fs/nfs/export.c | 2 +-
+> 1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/fs/nfs/export.c b/fs/nfs/export.c
+> index 01596f2d0a1e..0a5ee1754d50 100644
+> --- a/fs/nfs/export.c
+> +++ b/fs/nfs/export.c
+> @@ -42,7 +42,7 @@ nfs_encode_fh(struct inode *inode, __u32 *p, int *max_l=
+en, struct inode *parent)
+> 	dprintk("%s: max fh len %d inode %p parent %p",
+> 		__func__, *max_len, inode, parent);
+>=20
+> -	if (*max_len < len || IS_AUTOMOUNT(inode)) {
+> +	if (*max_len < len) {
+> 		dprintk("%s: fh len %d too small, required %d\n",
+> 			__func__, *max_len, len);
+> 		*max_len =3D len;
+> --=20
+> 2.26.2
+>=20
+
+I plan to take this through the nfsd tree, thus this one needs
+an Ack from the NFS client maintainers.
+
+--
+Chuck Lever
+
+
+
