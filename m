@@ -2,57 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 201E164C5BB
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 10:20:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2AAD64C709
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 11:25:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237867AbiLNJTT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Dec 2022 04:19:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35706 "EHLO
+        id S237658AbiLNKZA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Dec 2022 05:25:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45032 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237868AbiLNJTC (ORCPT
+        with ESMTP id S237788AbiLNKY5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Dec 2022 04:19:02 -0500
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9C5401AA1C;
-        Wed, 14 Dec 2022 01:19:01 -0800 (PST)
-Received: by mail-pf1-f173.google.com with SMTP id x66so4017256pfx.3;
-        Wed, 14 Dec 2022 01:19:01 -0800 (PST)
+        Wed, 14 Dec 2022 05:24:57 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 857B2E0CC
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Dec 2022 02:24:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1671013450;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=9yG5JV06r9TcNN4oFhlXP0Fq7y0VXR4zsj82aFUNl6c=;
+        b=G1qtEDOMlNvyBL6R57MlkQ43auALJvTFOm4h+wTyQjx0B9BDfiD6JFjRVtR9Vm0zqHjCKs
+        BoDrmQDzVg7PmeJoNgFmYtG3QQWrWlkPcqg2YBPZSgN+VEdU5uvnGrTC4x+0ohgdIhBpL0
+        ROMi+9vr9DHF9qrGPzZQv+gWkZBkMt4=
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
+ [209.85.219.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-608-Edb0zZboNMSW8VFjpeuKCQ-1; Wed, 14 Dec 2022 05:24:07 -0500
+X-MC-Unique: Edb0zZboNMSW8VFjpeuKCQ-1
+Received: by mail-yb1-f198.google.com with SMTP id b4-20020a253404000000b006fad1bb09f4so19892276yba.1
+        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Dec 2022 02:24:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Y5WGO5nEyaT5i7OBaG0eVmR371egFZjtKo7Vs5i57j8=;
-        b=jMjJyttpCGndEH+ZTmL7aF0XTr6zfJenlfXALCtALkKExh0cIYnJx1cZQ5zs8WKmvR
-         WUmn7w+llYuLstz1Tm+hBgoKQklyE1KKaoGFJpMgMmM/OrAkw36B9Tzxw4Eyq7z4Pl/C
-         o7VzAUBjPDvMwXc6nFJxE4QD/ftBjw56HUS9aAFSp1RONz2xpvocirGqp7HWhzLh0+5u
-         ttHYya6Fiyk9gQREXjYmzuFjjp9EW9xXb7/EiT/Ghf1DmoY6X5eX1n+La/4qwn6b95UW
-         GZHRtKIWXVrEP96Q7A0lSZWAKrC5c+FqAfkHxWi3tjCgcPNZP71/weBF9NrHGXYvN8kC
-         A3pQ==
-X-Gm-Message-State: ANoB5pmE8E2WXcEJYou5SuotwM4uJ4hnVmtSTD/DAdP+z/KtvZU+NP1b
-        yasXPMHHTMe2vu8eANu2ClGRxaxkEJ359RwHYyiR+w==
-X-Google-Smtp-Source: AA0mqf4S1lf6KvFMo7z16nZPiPES28nKoiq1i1S+fc1W/q/E7H66Lz7vk3e4RPCs1Fhq5Kv8TI6bhQ==
-X-Received: by 2002:a05:6a00:1310:b0:56d:74bf:3256 with SMTP id j16-20020a056a00131000b0056d74bf3256mr28796828pfu.22.1671009541089;
-        Wed, 14 Dec 2022 01:19:01 -0800 (PST)
-Received: from localhost ([116.162.0.145])
-        by smtp.gmail.com with ESMTPSA id x2-20020a628602000000b00576d4d69909sm9013299pfd.8.2022.12.14.01.19.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Dec 2022 01:19:00 -0800 (PST)
-From:   Hongyu Xie <xiehongyu1@kylinos.cn>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Hongyu Xie <xiehongyu1@kylinos.cn>
-Subject: [PATCH -next V2] fs: coredump: using preprocessor directives for dump_emit_page
-Date:   Wed, 14 Dec 2022 17:18:57 +0800
-Message-Id: <20221214091857.790080-1-xiehongyu1@kylinos.cn>
-X-Mailer: git-send-email 2.34.1
+        bh=9yG5JV06r9TcNN4oFhlXP0Fq7y0VXR4zsj82aFUNl6c=;
+        b=nV4hIQ+Y+RPFypahNm00rfAgPZHYldccmzJOXltUoSFzopp9kbqyaNwJqsmeCZoozO
+         Cg7cjeZAa4CDT8qRcpNjSCmoFPj51aeqN0Bj1VN3RBnV152kbYCOZCabP++tFHtl35BN
+         WHKa0Z8pmStYaCXkQzrxqoC28CZBMPXD4qaX2YcgmcxFRmva1vSLgZF04qcevgCueLPy
+         mZm/TCoZcNm+QZ981NJWNHfhB4YN3YQ79I/+JyaQCk15eoAWX0YvaRytpm5ayAkSLPCO
+         mCy/eglsvNp1TCVePYBkZs5O/fYpg7bVtTs2sQjL3lD/fhJuksbv/iHNcatoZ4gTL4We
+         bmUA==
+X-Gm-Message-State: ANoB5plGYSb8BcAhk92GfAlLmV4bNSoeajVQoZF08X6f+IgmSr9MPi2s
+        YIBBb+pF47ZadvGUketpfWRO7bjJPqagw6oLfsyd/YynUaxiKhbityjZLess1jUAwREkKpennz9
+        RrP6cfXWGPCUsOgGa550GIfyweuvjj1p+IEX8fO58TA==
+X-Received: by 2002:a25:909:0:b0:6f6:e111:a9ec with SMTP id 9-20020a250909000000b006f6e111a9ecmr48384783ybj.259.1671013446803;
+        Wed, 14 Dec 2022 02:24:06 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf61cW0VEZXZNysLUpNNresP+dckKKxSg1BOV8+R05IGkzjNCFGZ/0C6A9iUp0+CkXmSutXnr6PHEpDQw0QN8Ys=
+X-Received: by 2002:a25:909:0:b0:6f6:e111:a9ec with SMTP id
+ 9-20020a250909000000b006f6e111a9ecmr48384777ybj.259.1671013446592; Wed, 14
+ Dec 2022 02:24:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.4 required=5.0 tests=BAYES_00,
-        FREEMAIL_ENVFROM_END_DIGIT,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H3,
-        RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_PASS autolearn=no
+References: <20221213194833.1636649-1-agruenba@redhat.com> <Y5janUs2/29XZRbc@magnolia>
+ <Y5l9zhhyOE+RNVgO@infradead.org>
+In-Reply-To: <Y5l9zhhyOE+RNVgO@infradead.org>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Wed, 14 Dec 2022 11:23:55 +0100
+Message-ID: <CAHc6FU6_RduhNAmA3SgDN74Zux9OZtyRg-bUU4c3YGgO8tm9+Q@mail.gmail.com>
+Subject: Re: [PATCH] iomap: Move page_done callback under the folio lock
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -60,45 +74,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When CONFIG_COREDUMP is set and CONFIG_ELF_CORE is not set, you get warning
-like:
-fs/coredump.c:841:12: error: ‘dump_emit_page’ defined but not used
-[-Werror=unused-function]
-841 | static int dump_emit_page(struct coredump_params *cprm, struct
-page *page)
+On Wed, Dec 14, 2022 at 10:07 AM Christoph Hellwig <hch@infradead.org> wrote:
+> On Tue, Dec 13, 2022 at 12:03:41PM -0800, Darrick J. Wong wrote:
+> > On Tue, Dec 13, 2022 at 08:48:33PM +0100, Andreas Gruenbacher wrote:
+> > > Hi Darrick,
+> > >
+> > > I'd like to get the following iomap change into this merge window.  This
+> > > only affects gfs2, so I can push it as part of the gfs2 updates if you
+> > > don't mind, provided that I'll get your Reviewed-by confirmation.
+> > > Otherwise, if you'd prefer to pass this through the xfs tree, could you
+> > > please take it?
+> >
+> > I don't mind you pushing changes to ->page_done through the gfs2 tree,
+> > but don't you need to move the other callsite at the bottom of
+> > iomap_write_begin?
+>
+> Yes.
 
-dump_emit_page only called in dump_user_range, since dump_user_range
-using #ifdef preprocessor directives, use #ifdef for dump_emit_page too.
+I assume you mean yes to the former, because the ->page_done() call in
+iomap_write_begin() really doesn't need to be moved.
 
-Fixes: 06bbaa6dc53c ("[coredump] don't use __kernel_write() on kmap_local_page()")
-Signed-off-by: Hongyu Xie <xiehongyu1@kylinos.cn>
----
+> And if we touch this anyway it really should switch to passing
+> a folio, which also nicely breaks any in progress code (if there is any)
+> and makes them notice the change.
 
-v2: change sending mail address
+Okay.
 
- fs/coredump.c | 2 ++
- 1 file changed, 2 insertions(+)
+> That being said, do you mean 6.2 with "this window"?  Unless the gfs2
+> changes are a critical bug fix, I don't think Linux will take them if
+> applied after 6.1 was released.
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index de78bde2991b..95390a73b912 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -838,6 +838,7 @@ static int __dump_skip(struct coredump_params *cprm, size_t nr)
- 	}
- }
- 
-+#ifdef CONFIG_ELF_CORE
- static int dump_emit_page(struct coredump_params *cprm, struct page *page)
- {
- 	struct bio_vec bvec = {
-@@ -870,6 +871,7 @@ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
- 
- 	return 1;
- }
-+#endif
- 
- int dump_emit(struct coredump_params *cprm, const void *addr, int nr)
- {
--- 
-2.34.1
+Yes, I really mean the merge window that is currently open.
+
+Thanks,
+Andreas
 
