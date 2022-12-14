@@ -2,70 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A75164C19F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 02:04:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45FD564C1A7
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 02:06:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237587AbiLNBEF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Dec 2022 20:04:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40238 "EHLO
+        id S237620AbiLNBGh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Dec 2022 20:06:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41140 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237331AbiLNBEB (ORCPT
+        with ESMTP id S237306AbiLNBGf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Dec 2022 20:04:01 -0500
-Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5922EFCFB
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 17:04:00 -0800 (PST)
-Received: by mail-pj1-x1029.google.com with SMTP id o1-20020a17090a678100b00219cf69e5f0so5486340pjj.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 17:04:00 -0800 (PST)
+        Tue, 13 Dec 2022 20:06:35 -0500
+Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 540DF1D302
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 17:06:35 -0800 (PST)
+Received: by mail-pl1-x62b.google.com with SMTP id a9so1738442pld.7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 17:06:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zpUmdOuAvPLOXWGLYtoeozqDtZuDJ0T7JGbSJUQF3s0=;
-        b=w8fNmYnh+h0hOxp0QP+B2r1PGviUfYD7Ji6odwgkRaS/3X8U3LXIZsh0RoIifjvqKy
-         AZRDrRwXRdJHUD+Rzis2omEeMSfr+g3xkuKkPLJUmwkEFDecZ4bojz0ahoSTCu9Xy6rn
-         29IVb7a3O1agDYwccPCL+FI4qEuyDtUzj+xsTSuRRJai6C22a9RqzegDsP/DxauYl70I
-         idfPOhbf/OSo7m78CLlK1FIlS1VV1O2/VSGgDjFy1uwvbi1cpO6ttEWDdRCuFhPC4PSH
-         z0mIxHD6SUpP8Bjcxui4xmBlA4n48wTqGMSM37Oy1b+isTJBdJVbPwP34S/BTS0v5mHQ
-         kbUA==
+        bh=dr6HKjJL5YZPttTn+gV2aPe+Mf5XhziCJpI/tZW/Q84=;
+        b=qPFSTQxlk2cH6kCSHhOdQw3BFZd0Awj/PK0ojqrpU7mLzHUkyVb2i5urjWlFmyNErJ
+         V0gBdfjsb5GI4MhB+oO2jhW2qDzl+41KUXnmLnurOo5V8VGs9VHCA2iJyE6BQCS6fdhV
+         4JiAXSWKYFYLTp0RrV/qXI870nrPDNcgWtR+pj4dfiXBbSXKu+zgBRGm6uws3c5R0BIb
+         1plMooNFe/hflm4gaQ2rABIURCYaMR9SjoJCeC0C+dljPbkyUwTVcEt7v8/mgSQ0hoov
+         Uo5qPerRuPOFiSw4k45i0V9bl/35eMAdy0YCDuQpRoLbZ/nRGdVOR8Ava2n3p0BKPGm8
+         W4Fg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zpUmdOuAvPLOXWGLYtoeozqDtZuDJ0T7JGbSJUQF3s0=;
-        b=nEpr6ZxBNLjr6RlovZSC4yNEVBsedGSNsege1lOPV8aHP0LsSLlLU9DtwW38dK8skX
-         onZ4LxPT72m83dk0mhL8x9y7cLPQ4i1cuTg2qLsfyJ74SN/AvPhtXiV0j/SQZB5hSQbH
-         2TiJl6tGz4vKKG4Iu5TMibHAiEWfy2Lxc87fAaLKSfMVrzIpaMa9vigyV+4MFebJWoSj
-         OVf4n+MvFgJ92fx+xXBIgF8gcBmQ7Z3wDzuSUqvTJuPhuiwX6AtTNZD+c5JzL0sSos44
-         vGMxe322iay1kT1YLVua6FEKt4d/KYAdjRWNHa7zo7XBpQHJD+lXS8HPVL0KQoxsH8p1
-         KSbg==
-X-Gm-Message-State: ANoB5pnpjhAC++EzNQCXx/gjaUnbsqsv/sOa2Oknwk0DlHtgIrLO1DfD
-        /42WrJG9Q9EvCP3kfWu8Iyh5Jg==
-X-Google-Smtp-Source: AA0mqf7rAVl4WzMknooT99JjC0M0vKLT4ko1CgBWNeqep8OjR2PYpf+ZiORN7jKrVMH9M3T8UgpFdA==
-X-Received: by 2002:a17:902:c3cd:b0:189:d3dc:a9c4 with SMTP id j13-20020a170902c3cd00b00189d3dca9c4mr21879575plj.36.1670979839841;
-        Tue, 13 Dec 2022 17:03:59 -0800 (PST)
+        bh=dr6HKjJL5YZPttTn+gV2aPe+Mf5XhziCJpI/tZW/Q84=;
+        b=MOl6XVUGu3Py9+XMUOTRw9K3sQFyAHHXb2a6VVLxppLABL2V+1CJr7SSpqY8jujiDy
+         e6YY8VJ4YqCCH97+9SgswX2qpr7Yop7NSzG1b7tXVUBGY0Hajd0p2LeWSlEP6p1Qazrm
+         F+sU0z4D/+LGKIzMTG6SMIl7f23rKZGpWABm8pGvADWFbc6hO6lAmEV84eVoM7TNTTjZ
+         Vji/uCDSO+mZbeNfZ18uAtoGAX6BmQo6GF78WoLBNbWHb8uMjWdqEmlfniV3xfkpiP1i
+         QK02BDq68AVTBG+WAry1N0LScdj2oBqJfz+gkfMZbBLifeK1700MUZNMN3CJVWi8vEOU
+         mh+Q==
+X-Gm-Message-State: ANoB5pmkSPDbX8OuwS+atuBtPoFOrZBJmslIiUwpyaKtamaDNWIIJAuK
+        mRLRWVEsi+hSKW9Ozwr0aak70g3K/fgTgxwB
+X-Google-Smtp-Source: AA0mqf5yZ/qk94hUHNSjnOOltj3W5wqj71c+FuQkaPNREywvONC19g4YqKYs504kdGGUTHBbs4EAMw==
+X-Received: by 2002:a17:902:f243:b0:189:d051:129 with SMTP id j3-20020a170902f24300b00189d0510129mr18388020plc.66.1670979994877;
+        Tue, 13 Dec 2022 17:06:34 -0800 (PST)
 Received: from dread.disaster.area (pa49-181-138-158.pa.nsw.optusnet.com.au. [49.181.138.158])
-        by smtp.gmail.com with ESMTPSA id 73-20020a63064c000000b0047915d582ccsm7335057pgg.20.2022.12.13.17.03.59
+        by smtp.gmail.com with ESMTPSA id i17-20020a170902c95100b001897de9bae3sm481147pla.204.2022.12.13.17.06.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Dec 2022 17:03:59 -0800 (PST)
+        Tue, 13 Dec 2022 17:06:34 -0800 (PST)
 Received: from dave by dread.disaster.area with local (Exim 4.92.3)
         (envelope-from <david@fromorbit.com>)
-        id 1p5GBg-0089ay-Eh; Wed, 14 Dec 2022 12:03:56 +1100
-Date:   Wed, 14 Dec 2022 12:03:56 +1100
+        id 1p5GEC-0089cy-05; Wed, 14 Dec 2022 12:06:32 +1100
+Date:   Wed, 14 Dec 2022 12:06:31 +1100
 From:   Dave Chinner <david@fromorbit.com>
-To:     Eric Sandeen <sandeen@redhat.com>
-Cc:     Andrey Albershteyn <aalbersh@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 03/11] xfs: add attribute type for fs-verity
-Message-ID: <20221214010356.GC3600936@dread.disaster.area>
+To:     Andrey Albershteyn <aalbersh@redhat.com>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 04/11] xfs: add fs-verity ro-compat flag
+Message-ID: <20221214010631.GD3600936@dread.disaster.area>
 References: <20221213172935.680971-1-aalbersh@redhat.com>
- <20221213172935.680971-4-aalbersh@redhat.com>
- <733b882c-30fc-eea0-db01-55d25f272d92@redhat.com>
+ <20221213172935.680971-5-aalbersh@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <733b882c-30fc-eea0-db01-55d25f272d92@redhat.com>
+In-Reply-To: <20221213172935.680971-5-aalbersh@redhat.com>
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
@@ -75,49 +73,50 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 13, 2022 at 11:43:42AM -0600, Eric Sandeen wrote:
-> On 12/13/22 11:29 AM, Andrey Albershteyn wrote:
-> > The Merkle tree pages and descriptor are stored in the extended
-> > attributes of the inode. Add new attribute type for fs-verity
-> > metadata. Skip fs-verity attributes for getfattr as it can not parse
-> > binary page names.
-> > 
-> > Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+On Tue, Dec 13, 2022 at 06:29:28PM +0100, Andrey Albershteyn wrote:
+> To mark inodes sealed with fs-verity the new XFS_DIFLAG2_VERITY flag
+> will be added in further patch. This requires ro-compat flag to let
+> older kernels know that fs with fs-verity can not be modified.
 > 
+> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
+> ---
+>  fs/xfs/libxfs/xfs_format.h | 10 ++++++----
+>  fs/xfs/libxfs/xfs_sb.c     |  2 ++
+>  fs/xfs/xfs_mount.h         |  2 ++
+>  3 files changed, 10 insertions(+), 4 deletions(-)
 > 
-> >  DECLARE_EVENT_CLASS(xfs_attr_list_class,
-> > diff --git a/fs/xfs/xfs_xattr.c b/fs/xfs/xfs_xattr.c
-> > index 5b57f6348d630..acbfa29d04af0 100644
-> > --- a/fs/xfs/xfs_xattr.c
-> > +++ b/fs/xfs/xfs_xattr.c
-> > @@ -237,6 +237,9 @@ xfs_xattr_put_listent(
-> >  	if (flags & XFS_ATTR_PARENT)
-> >  		return;
-> >  
-> > +	if (flags & XFS_ATTR_VERITY)
-> > +		return;
-> > +
-> 
-> Just a nitpick, but now that there are already 2 cases like this, I wonder
-> if it would be wise to #define something like an XFS_ATTR_VISIBLE_MASK
-> (or maybe XFS_ATTR_INTERNAL_MASK) and use that to decide, rather than
-> testing each one individually?
+> diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
+> index f413819b2a8aa..2b76e646e6f14 100644
+> --- a/fs/xfs/libxfs/xfs_format.h
+> +++ b/fs/xfs/libxfs/xfs_format.h
+> @@ -353,11 +353,13 @@ xfs_sb_has_compat_feature(
+>  #define XFS_SB_FEAT_RO_COMPAT_RMAPBT   (1 << 1)		/* reverse map btree */
+>  #define XFS_SB_FEAT_RO_COMPAT_REFLINK  (1 << 2)		/* reflinked files */
+>  #define XFS_SB_FEAT_RO_COMPAT_INOBTCNT (1 << 3)		/* inobt block counts */
+> +#define XFS_SB_FEAT_RO_COMPAT_VERITY   (1 << 4)		/* fs-verity */
 
-Seems like a good idea to me.
+Yup, define this now, but ....
 
-There's also a couple of other spots that a comment about internal
-vs externally visible xattr namespaces might be appropriate. e.g
-xfs_attr_filter() in the ioctl code should never have internal xattr
-namespaces added to it, and similarly a comment at the top of
-fs/xfs/xfs_xattr.c that the interfaces implemented in the file are
-only for exposing externally visible xattr namespaces to users.
+>  #define XFS_SB_FEAT_RO_COMPAT_ALL \
+> -		(XFS_SB_FEAT_RO_COMPAT_FINOBT | \
+> -		 XFS_SB_FEAT_RO_COMPAT_RMAPBT | \
+> -		 XFS_SB_FEAT_RO_COMPAT_REFLINK| \
+> -		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT)
+> +		(XFS_SB_FEAT_RO_COMPAT_FINOBT  | \
+> +		 XFS_SB_FEAT_RO_COMPAT_RMAPBT  | \
+> +		 XFS_SB_FEAT_RO_COMPAT_REFLINK | \
+> +		 XFS_SB_FEAT_RO_COMPAT_INOBTCNT| \
+> +		 XFS_SB_FEAT_RO_COMPAT_VERITY)
 
-That way it becomes more obvious that we handle internal vs external
-xattr namespaces very differently.
+This hunk should be in a separate patch at the end of the series
+so that VERITY enabled filesystems won't mount until all the
+infrastructure is in place to handle it correctly. This means git
+bisects won't land in the middle of the patchset where
+VERITY is accepted as valid but the functionality doesn't work.
 
-Cheers,
+Otherwise looks good.
 
-Dave.
+-Dave.
 -- 
 Dave Chinner
 david@fromorbit.com
