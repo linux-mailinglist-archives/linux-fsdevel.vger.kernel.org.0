@@ -2,50 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6D81164C3CD
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 07:31:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DAD1F64C411
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 07:52:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237276AbiLNGbr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Dec 2022 01:31:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55652 "EHLO
+        id S237401AbiLNGwQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Dec 2022 01:52:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39214 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236805AbiLNGbp (ORCPT
+        with ESMTP id S229615AbiLNGwO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Dec 2022 01:31:45 -0500
+        Wed, 14 Dec 2022 01:52:14 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1928F22532;
-        Tue, 13 Dec 2022 22:31:45 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E41045582;
+        Tue, 13 Dec 2022 22:52:13 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9326B61806;
-        Wed, 14 Dec 2022 06:31:44 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC50DC433D2;
-        Wed, 14 Dec 2022 06:31:43 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 801EB6181B;
+        Wed, 14 Dec 2022 06:52:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6922C433D2;
+        Wed, 14 Dec 2022 06:52:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1670999504;
-        bh=G/q5FNGbWxlaFIHROgk6HyoBAPt60p+Fbemkeg9vHLI=;
+        s=k20201202; t=1671000732;
+        bh=uB3/VeNb2+E5JcJLM4VRq5oQgPUO+MOKFU9Idpe8kfc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=EYhzUhCaU73n2OtTVpMW5d4Hs4PZ/iN9S+Mgrp0xYYJ20iPMKDt55NLnoVfGy6jSw
-         lsi18sj8zhz3igG7piz10Bn9RBEd+Wjxmc7FysMnQJaxEsFoG8d6Z9FqWNOC38NSkB
-         xHH8cBxUssjKf7qm20WBiTaGpJ4G3YtQYXlHghsIkb4NKbWosmFfRJ6N3xeP2inZkD
-         XbPYkl1ajGz+usYXhUeVKZhQja8xsE3wYdWXul4GGVMIoUg/qNL66S/AfI6awpdken
-         XftBqUF4WUdtQDhDkno0Mel2Sg5o1JdBXVYYpIXgqeL+TN4lKcjVnoqi3uKPThG5BN
-         OiXlJIYJEAh/Q==
-Date:   Tue, 13 Dec 2022 22:31:42 -0800
+        b=Tv7bJx11/Nf8xIF4/IPCrqHr/oMMr3GMNPMXn9BsPnTJs1UllJNc+YUKkxQ4XrUjr
+         uaE8SkfeZTxkKYahp1KiDWkmzplxNwrtSPbNfWiN1eDhAR5mmjAc1eRwn5DdUR1P7e
+         6hP88Y6OP1JNKbtmj0hYNvm48WfPgFQYCH3mMpHiVdM62rN4Xoe00J7jsnYAQnRM4F
+         3KoLCwvB8ynUWg0rroOVvpjtk6nABvzTfF1lqOSrCB6wBqehaamLGpvCqiB3hV179D
+         k1mRPe2fJdfzngWC6ACZudjojASw9H3LgNnSf2YgRhiRH/n3qkloUmRTNtOrJwghvp
+         m6SxKQw37dD9Q==
+Date:   Tue, 13 Dec 2022 22:52:11 -0800
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     Dave Chinner <david@fromorbit.com>
-Cc:     Andrey Albershteyn <aalbersh@redhat.com>,
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Andrey Albershteyn <aalbersh@redhat.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 00/11] fs-verity support for XFS
-Message-ID: <Y5ltzp6yeMo1oDSk@sol.localdomain>
+Subject: Re: [RFC PATCH 02/11] pagemap: add mapping_clear_large_folios()
+ wrapper
+Message-ID: <Y5lym4fJK+9u2cxe@sol.localdomain>
 References: <20221213172935.680971-1-aalbersh@redhat.com>
- <Y5jllLwXlfB7BzTz@sol.localdomain>
- <20221213221139.GZ3600936@dread.disaster.area>
+ <20221213172935.680971-3-aalbersh@redhat.com>
+ <Y5i8igBLu+6OQt8H@casper.infradead.org>
+ <Y5jTosRngrhzPoge@sol.localdomain>
+ <20221213211010.GX3600936@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221213221139.GZ3600936@dread.disaster.area>
+In-Reply-To: <20221213211010.GX3600936@dread.disaster.area>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -55,74 +59,32 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 14, 2022 at 09:11:39AM +1100, Dave Chinner wrote:
-> On Tue, Dec 13, 2022 at 12:50:28PM -0800, Eric Biggers wrote:
-> > On Tue, Dec 13, 2022 at 06:29:24PM +0100, Andrey Albershteyn wrote:
-> > > Not yet implemented:
-> > > - No pre-fetching of Merkle tree pages in the
-> > >   read_merkle_tree_page()
+On Wed, Dec 14, 2022 at 08:10:10AM +1100, Dave Chinner wrote:
+> On Tue, Dec 13, 2022 at 11:33:54AM -0800, Eric Biggers wrote:
+> > On Tue, Dec 13, 2022 at 05:55:22PM +0000, Matthew Wilcox wrote:
+> > > I'm happy to work with you to add support for large folios to verity.
+> > > It hasn't been high priority for me, but I'm now working on folio support
+> > > for bufferhead filesystems and this would probably fit in.
 > > 
-> > This would be helpful, but not essential.
-> > 
-> > > - No marking of already verified Merkle tree pages (each read, the
-> > >   whole tree is verified).
+> > I'd be very interested to know what else is needed after commit 98dc08bae678
+> > ("fsverity: stop using PG_error to track error status") which is upstream now,
+> > and
+> > https://lore.kernel.org/linux-fsdevel/20221028224539.171818-1-ebiggers@kernel.org/T/#u
+> > ("fsverity: support for non-4K pages") which is planned for 6.3.
 > 
-> Ah, I wasn't aware that this was missing.
+> Did you change the bio interfaces to iterate a bvec full of
+> variable sized folios, or does it still expect a bio to only have
+> PAGE_SIZE pages attached to it?
 > 
-> > 
-> > This is essential to have, IMO.
-> > 
-> > You *could* do what btrfs does, where it caches the Merkle tree pages in the
-> > inode's page cache past i_size, even though btrfs stores the Merkle tree
-> > separately from the file data on-disk.
-> >
-> > However, I'd guess that the other XFS developers would have an adversion to that
-> > approach, even though it would not affect the on-disk storage.
-> 
-> Yup, on an architectural level it just seems wrong to cache secure
-> verification metadata in the same user accessible address space as
-> the data it verifies.
-> 
-> > The alternatives would be to create a separate in-memory-only inode for the
-> > cache, or to build a custom cache with its own shrinker.
-> 
-> The merkel tree blocks are cached in the XFS buffer cache.
-> 
-> Andrey, could we just add a new flag to the xfs_buf->b_flags to
-> indicate that the buffer contains verified merkle tree records?
-> i.e. if it's not set after we've read the buffer, we need to verify
-> the buffer and set th verified buffer in cache and we can skip the
-> verification?
 
-Well, my proposal at
-https://lore.kernel.org/r/20221028224539.171818-2-ebiggers@kernel.org is to keep
-tracking the "verified" status at the individual Merkle tree block level, by
-adding a bitmap fsverity_info::hash_block_verified.  That is part of the
-fs/verity/ infrastructure, and all filesystems would be able to use it.
+You can take a look at fsverity_verify_bio() with
+https://lore.kernel.org/r/20221028224539.171818-2-ebiggers@kernel.org applied.
+It uses bio_for_each_segment_all() to iterate through the bio's segments.  For
+each segment, it verifies each data block in the segment, assuming bv_len and
+bv_offset are multiples of the Merkle tree block size.  The file position of
+each data block is computed as '(page->index << PAGE_SHIFT) + bv_offset'.
 
-However, since it's necessary to re-verify blocks that have been evicted and
-then re-instantiated, my patch also repurposes PG_checked as an indicator for
-whether the Merkle tree pages are newly instantiated.  For a "non-page-cache
-cache", that part would need to be replaced with something equivalent.
-
-A different aproach would be to make it so that every time a page (or "cache
-buffer", to call it something more generic) of N Merkle tree blocks is read,
-then all N of those blocks are verified immediately.  Then there would be no
-need to track the "verified" status of individual blocks.
-
-My concerns with that approach are:
-
-  * Most data reads only need a single Merkle tree block at the deepest level.
-    If at least N tree blocks were verified any time that any were verified at
-    all, that would make the worst-case read latency worse.
-
-  * It's possible that the parents of N tree blocks are split across a cache
-    buffer.  Thus, while N blocks can't have more than N parents, and in
-    practice would just have 1-2, those 2 parents could be split into two
-    separate cache buffers, with a total length of 2*N.  Verifying all of those
-    would really increase the worst-case latency as well.
-
-So I'm thinking that tracking the "verified" status of tree blocks individually
-is the right way to go.  But I'd appreciate any other thoughts on this.
+I suppose the issue is going to be that only the first page of a folio actually
+has an index.  Using bio_for_each_folio_all() would avoid this problem, I think?
 
 - Eric
