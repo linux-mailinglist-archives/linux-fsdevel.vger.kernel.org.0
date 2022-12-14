@@ -2,156 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A67A064C1E7
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 02:35:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8BAE964C219
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 03:04:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236790AbiLNBfb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 13 Dec 2022 20:35:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50440 "EHLO
+        id S236833AbiLNCEt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 13 Dec 2022 21:04:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60188 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236861AbiLNBf3 (ORCPT
+        with ESMTP id S236287AbiLNCEq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 13 Dec 2022 20:35:29 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB074275C5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 17:35:27 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id u5so5291081pjy.5
-        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 17:35:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LTHFKEiyCyDjyn+fmvMkZ3QGGzOIZVWACg6V9ksy+hA=;
-        b=KEhBwYElA8QxuBnHM8Owodd6OBOWm+bhXzdBHwANr9QLhHwGHE61EqHr/J0ofXDY4U
-         mFOU0d7x9KyNZUaYoHfibCrEg/xABa8DwON3FwXlPgz8QFtXFkm7E0SKFLESz5mpufsK
-         ddkaKcIZVqgIF2p+xBKNKjDEdiHKaxSBilAgtVIcszhHsxjKX4xiqpvugWVyimPpT/4v
-         AeuIUJeQ5iKEsxvn1EYYsmpxuaZVA9RQa90P7BN6QiqC9xNBOjNewd5lnS+lWA56hWc/
-         5FgYa5li/vNqOXRBQn6RkOlKk/D6UrM8Y1Lbx5OIJNtnAbud/RR8geAwdI2u0GIyNdHH
-         Hq+Q==
+        Tue, 13 Dec 2022 21:04:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44FC72AF5
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 18:03:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1670983438;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZxWgAtzssiZUci/PlwUY7k+wYk7RgEHn1aQq5Ig7ASE=;
+        b=EqjexTW5hBV3c3qvtShzFrHj84rEnHZfrXgIKlGZGARxZxwew+A9TLJBYYFjUA9cIPm00T
+        3Zkvs+VLglPJLqHfR1SQ00q/RBrksZ2q1Uevr79gAXutDWJj4M+lGmUsf6XZ8qhM3zgk/0
+        w0MXJcSMm5pDvIZkpvTzihskIHWY6F0=
+Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com
+ [209.85.210.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-651-IjRWjgNbODqpuvXoCSrBrA-1; Tue, 13 Dec 2022 21:03:57 -0500
+X-MC-Unique: IjRWjgNbODqpuvXoCSrBrA-1
+Received: by mail-pf1-f197.google.com with SMTP id n16-20020a056a000d5000b005764608bb24so3192209pfv.12
+        for <linux-fsdevel@vger.kernel.org>; Tue, 13 Dec 2022 18:03:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LTHFKEiyCyDjyn+fmvMkZ3QGGzOIZVWACg6V9ksy+hA=;
-        b=NZeQ3gP0m8qIAAEgUZ1rAQCIkFcLMaMmyRwBrQbC+fN7QdisnY7CvZSYwoPVeaN3Rn
-         kJmqGp8CzqdoS1o9CzE9CCZbyMaPWzDOVX3uqXPIHN1c2yAsUQCkgtEReFFOcSOuzj+h
-         rd8qJthCfHsax8RDfX6+nEAOpWwmeGO323PtYb311vq9pY8rWil22h2RDZJwAz/8m87A
-         92WpplnDG6kkY1BF6v/8RFYPeRg7fd9OsHahXF4ld5IuXVrjm7MHj4MvIwnfUbGaA1VL
-         TPDgO3DpPLOuNQwKF43PqA+nahOPk9/h7Reuq19z/0d6cN9BHl8374tDc0l73Los5gnx
-         QYcQ==
-X-Gm-Message-State: ANoB5pmUsLq9dFMHmwBToNPFnzmB+hQ99FF3NFGBUluBCBQbrWKPkgrD
-        mYWoVhBWLIbLW9fpJwKdLhki9Q==
-X-Google-Smtp-Source: AA0mqf47yirrdZxr3UVmGdSrsIJARYJgit1eaupiJXW/6zt28/fqcQyf2yi/vcDWhLnJchyLHY4oMg==
-X-Received: by 2002:a17:903:28f:b0:190:bf01:3a45 with SMTP id j15-20020a170903028f00b00190bf013a45mr7040311plr.25.1670981727126;
-        Tue, 13 Dec 2022 17:35:27 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-138-158.pa.nsw.optusnet.com.au. [49.181.138.158])
-        by smtp.gmail.com with ESMTPSA id u18-20020a170903125200b001897916be2bsm486238plh.268.2022.12.13.17.35.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 13 Dec 2022 17:35:26 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1p5Gg8-008A8N-3E; Wed, 14 Dec 2022 12:35:24 +1100
-Date:   Wed, 14 Dec 2022 12:35:24 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Andrey Albershteyn <aalbersh@redhat.com>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 06/11] xfs: initialize fs-verity on file open and
- cleanup on inode destruction
-Message-ID: <20221214013524.GF3600936@dread.disaster.area>
-References: <20221213172935.680971-1-aalbersh@redhat.com>
- <20221213172935.680971-7-aalbersh@redhat.com>
+        h=content-language:content-transfer-encoding:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZxWgAtzssiZUci/PlwUY7k+wYk7RgEHn1aQq5Ig7ASE=;
+        b=XaoZr/YYqbeqPpmbOIfZKZP7E8vzh0lsxMum7SHjCNDx4FaqvjVaBAy6LQQ2QoEHBA
+         SxEKSS4B1jWdiDXvnV276CUpJmYYb/NxVC9QTT/P/5EKqE1J0qc4JkArmausb8fNnWXg
+         /nfoM/3ZW6BXaKcedRysrbxmgQrjqE39k0ytyhgJEvxBPLGb9tlUCLaYCWdFgmL9+TeY
+         guVWuH2jG53cKoRHbxodmUwV+7Xjj12bdpmDRcjvF4zIG7TGyX2Xlh5Okq20fjY6xmwX
+         CPDnC7R0A/fILSj2czCRIll8ALcOFpVB8N300whMj88DuS0j9av7Uva3UqVGXIyWxPa5
+         egYQ==
+X-Gm-Message-State: ANoB5pnKCW9VWwHDiPHzXhAT/3NabAN8972fK746OC1WhismGPb30yzY
+        t13xmbw44bZwZYj5BtrES4MnIxsUP+L1JQx/peG0/8BDP8RBamWKVG03z2WLswTVcs42GvS11Fw
+        ZhtfZR/IZgH3wgYPPEZx0j5LkMw==
+X-Received: by 2002:a17:902:6905:b0:189:340c:20d2 with SMTP id j5-20020a170902690500b00189340c20d2mr24488968plk.23.1670983436073;
+        Tue, 13 Dec 2022 18:03:56 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf58GHtAnUtVx7eHJgWLx44Wxgv4SDCZhO6Z6Z6rNRrAmwxlPG98KL5qMp4Cs3IqOyWZ/lYpmg==
+X-Received: by 2002:a17:902:6905:b0:189:340c:20d2 with SMTP id j5-20020a170902690500b00189340c20d2mr24488949plk.23.1670983435793;
+        Tue, 13 Dec 2022 18:03:55 -0800 (PST)
+Received: from [10.72.13.36] ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id j7-20020a170902690700b0017ec1b1bf9fsm516185plk.217.2022.12.13.18.03.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 13 Dec 2022 18:03:55 -0800 (PST)
+Subject: Re: [PATCH v4 2/2] ceph: add ceph specific member support for
+ file_lock
+To:     Ilya Dryomov <idryomov@gmail.com>
+Cc:     jlayton@kernel.org, ceph-devel@vger.kernel.org,
+        mchangir@redhat.com, lhenriques@suse.de, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20221213121103.213631-1-xiubli@redhat.com>
+ <20221213121103.213631-3-xiubli@redhat.com>
+ <CAOi1vP-jTA38riQ+E239vz2omTmX7fQvnzf9BcmkLVU_0PyngA@mail.gmail.com>
+From:   Xiubo Li <xiubli@redhat.com>
+Message-ID: <e970159b-ec60-434e-59ce-36128fe99bcf@redhat.com>
+Date:   Wed, 14 Dec 2022 10:03:49 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221213172935.680971-7-aalbersh@redhat.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+In-Reply-To: <CAOi1vP-jTA38riQ+E239vz2omTmX7fQvnzf9BcmkLVU_0PyngA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 13, 2022 at 06:29:30PM +0100, Andrey Albershteyn wrote:
-> fs-verity will read and attach metadata (not the tree itself) from
-> a disk for those inodes which already have fs-verity enabled.
-> 
-> Signed-off-by: Andrey Albershteyn <aalbersh@redhat.com>
-> ---
->  fs/xfs/xfs_file.c  | 8 ++++++++
->  fs/xfs/xfs_super.c | 2 ++
->  2 files changed, 10 insertions(+)
-> 
-> diff --git a/fs/xfs/xfs_file.c b/fs/xfs/xfs_file.c
-> index 242165580e682..5eadd9a37c50e 100644
-> --- a/fs/xfs/xfs_file.c
-> +++ b/fs/xfs/xfs_file.c
-> @@ -32,6 +32,7 @@
->  #include <linux/mman.h>
->  #include <linux/fadvise.h>
->  #include <linux/mount.h>
-> +#include <linux/fsverity.h>
->  
->  static const struct vm_operations_struct xfs_file_vm_ops;
->  
-> @@ -1170,9 +1171,16 @@ xfs_file_open(
->  	struct inode	*inode,
->  	struct file	*file)
->  {
-> +	int		error = 0;
-> +
->  	if (xfs_is_shutdown(XFS_M(inode->i_sb)))
->  		return -EIO;
->  	file->f_mode |= FMODE_NOWAIT | FMODE_BUF_RASYNC | FMODE_BUF_WASYNC;
-> +
-> +	error = fsverity_file_open(inode, file);
-> +	if (error)
-> +		return error;
 
-This is a hot path, so shouldn't we elide the function call
-altogether if verity is not enabled on the inode? i.e:
+On 14/12/2022 02:05, Ilya Dryomov wrote:
+> On Tue, Dec 13, 2022 at 1:11 PM <xiubli@redhat.com> wrote:
+>> From: Xiubo Li <xiubli@redhat.com>
+>>
+>> When ceph releasing the file_lock it will try to get the inode pointer
+>> from the fl->fl_file, which the memory could already be released by
+>> another thread in filp_close(). Because in VFS layer the fl->fl_file
+>> doesn't increase the file's reference counter.
+>>
+>> Will switch to use ceph dedicate lock info to track the inode.
+>>
+>> And in ceph_fl_release_lock() we should skip all the operations if
+>> the fl->fl_u.ceph_fl.fl_inode is not set, which should come from
+>> the request file_lock. And we will set fl->fl_u.ceph_fl.fl_inode when
+>> inserting it to the inode lock list, which is when copying the lock.
+>>
+>> Cc: stable@vger.kernel.org
+>> Cc: Jeff Layton <jlayton@kernel.org>
+>> URL: https://tracker.ceph.com/issues/57986
+>> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+>> ---
+>>   fs/ceph/locks.c    | 20 ++++++++++++++++++--
+>>   include/linux/fs.h |  3 +++
+>>   2 files changed, 21 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
+>> index b191426bf880..cf78608a3f9a 100644
+>> --- a/fs/ceph/locks.c
+>> +++ b/fs/ceph/locks.c
+>> @@ -34,18 +34,34 @@ static void ceph_fl_copy_lock(struct file_lock *dst, struct file_lock *src)
+>>   {
+>>          struct inode *inode = file_inode(dst->fl_file);
+>>          atomic_inc(&ceph_inode(inode)->i_filelock_ref);
+>> +       dst->fl_u.ceph.fl_inode = igrab(inode);
+>>   }
+>>
+>> +/*
+>> + * Do not use the 'fl->fl_file' in release function, which
+>> + * is possibly already released by another thread.
+>> + */
+>>   static void ceph_fl_release_lock(struct file_lock *fl)
+>>   {
+>> -       struct inode *inode = file_inode(fl->fl_file);
+>> -       struct ceph_inode_info *ci = ceph_inode(inode);
+>> +       struct inode *inode = fl->fl_u.ceph.fl_inode;
+>> +       struct ceph_inode_info *ci;
+>> +
+>> +       /*
+>> +        * If inode is NULL it should be a request file_lock,
+>> +        * nothing we can do.
+>> +        */
+>> +       if (!inode)
+>> +               return;
+>> +
+>> +       ci = ceph_inode(inode);
+>>          if (atomic_dec_and_test(&ci->i_filelock_ref)) {
+>>                  /* clear error when all locks are released */
+>>                  spin_lock(&ci->i_ceph_lock);
+>>                  ci->i_ceph_flags &= ~CEPH_I_ERROR_FILELOCK;
+>>                  spin_unlock(&ci->i_ceph_lock);
+>>          }
+>> +       fl->fl_u.ceph.fl_inode = NULL;
+>> +       iput(inode);
+>>   }
+>>
+>>   static const struct file_lock_operations ceph_fl_lock_ops = {
+>> diff --git a/include/linux/fs.h b/include/linux/fs.h
+>> index 7b52fdfb6da0..6106374f5257 100644
+>> --- a/include/linux/fs.h
+>> +++ b/include/linux/fs.h
+>> @@ -1119,6 +1119,9 @@ struct file_lock {
+>>                          int state;              /* state of grant or error if -ve */
+>>                          unsigned int    debug_id;
+>>                  } afs;
+>> +               struct {
+>> +                       struct inode *fl_inode;
+> Hi Xiubo,
+>
+> Nit: I think it could be just "inode", without the prefix which is
+> already present in the union field name.
 
-	if (IS_VERITY(inode)) {
-		error = fsverity_file_open(inode, file);
-		if (error)
-			return error;
-	}
+Okay, I can fix this in the next version.
 
-It doesn't really matter for a single file open, but when you're
-opening a few million inodes every second the function call overhead
-only to immediately return because IS_VERITY() is false adds up...
+Thanks.
 
->  	return generic_file_open(inode, file);
->  }
->  
-> diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-> index 8f1e9b9ed35d9..50c2c819ba940 100644
-> --- a/fs/xfs/xfs_super.c
-> +++ b/fs/xfs/xfs_super.c
-> @@ -45,6 +45,7 @@
->  #include <linux/magic.h>
->  #include <linux/fs_context.h>
->  #include <linux/fs_parser.h>
-> +#include <linux/fsverity.h>
->  
->  static const struct super_operations xfs_super_operations;
->  
-> @@ -647,6 +648,7 @@ xfs_fs_destroy_inode(
->  	ASSERT(!rwsem_is_locked(&inode->i_rwsem));
->  	XFS_STATS_INC(ip->i_mount, vn_rele);
->  	XFS_STATS_INC(ip->i_mount, vn_remove);
-> +	fsverity_cleanup_inode(inode);
+- Xiubo
 
-Similarly, shouldn't this be:
 
-	if (fsverity_active(inode))
-		fsverity_cleanup_inode(inode);
+> Thanks,
+>
+>                  Ilya
+>
 
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
