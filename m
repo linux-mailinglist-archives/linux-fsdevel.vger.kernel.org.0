@@ -2,108 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E2F8764CFF4
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 20:16:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E109C64CFF8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 20:17:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239069AbiLNTQG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Dec 2022 14:16:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41354 "EHLO
+        id S238470AbiLNTRL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Dec 2022 14:17:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41760 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238809AbiLNTQC (ORCPT
+        with ESMTP id S239209AbiLNTRC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Dec 2022 14:16:02 -0500
-Received: from mail-qv1-xf31.google.com (mail-qv1-xf31.google.com [IPv6:2607:f8b0:4864:20::f31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C03160EA
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Dec 2022 11:15:54 -0800 (PST)
-Received: by mail-qv1-xf31.google.com with SMTP id h10so414975qvq.7
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Dec 2022 11:15:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=omnibond-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8hfd8zAToSdzoK0fgf7KAIEFt+FxnQhco6jJDWQ8kcw=;
-        b=dR+feQN0VFxYmzmPqpClZWVGlfFTTob0isDNrP7epY7UpEsSnly93dg8s/XEKllovj
-         tETGg8V/bNsv0TetZPWH1+eCm6rHOmwe3F+EAfyYLaszin7VR7QSwJnJAZcvsIaBFtUI
-         WBqlHvNzR4ocrWP6HRv+JEJtTwI9hQIahHkaxOfJTdLt+T25MneMN2G1Uh8W63IZDQIc
-         wLNBxrX1SXS6dSekF2cYwHujD4bqfPKmPAfHKchzmI1jkW4le4Y4ZVkBzbnlzqCZQCvl
-         u4NpGyM8aM2Lp3XbyfCMgbbjPQBYlb4D3hpSfglotEhvTbJDcB+hcZ09QNfTKr/h11tM
-         s0vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8hfd8zAToSdzoK0fgf7KAIEFt+FxnQhco6jJDWQ8kcw=;
-        b=eFH8rNCSopyxRw+rWj/IWNPSUQvsWkgfcIZD1ju2brRMxIgzAa6lBRpzFjssL4nOob
-         XaxkThmMASSzMTAiPI7ulCHYK6bSrFbIpTOY6YqNoKgccNoOlNKkY5zncFAsDWXBWHPZ
-         oV3PnSL2jHn5ipdJZmEDO1OO/kF+SPl5AKops2UsxBQ7rdzgfr8bN3HPgSU5gEwJweWy
-         gEv4G5PReh7ULUNUL7j/chghfsWQQ2fVpCwa3JCXXiDefk8EzwsfC3/4Qni3/a1wo9Hq
-         fqgX+dLXVw+ls798Cd3WUuWGu5CzX/QBRFxQs3kjyMm3ZJm4/mdiOnmZxLvpgqSip+Kn
-         2uUw==
-X-Gm-Message-State: ANoB5pl7OqXEjWT+fGK0KZT8jhAkScw/3uaT1N/xG0HCX/MG4dDZ6Z8i
-        p6uXxo1fkCq32ySgD1JDWzRcXhdELHcC9bXUzSmItV3PeWt7/oY2
-X-Google-Smtp-Source: AA0mqf53mDWZFIYq5wZXD6e8D8URM20PslKERiFkl3uLqhw2khmXGyf37Rj510P8fAs0dRrRGp1Fi8yrK36O3OCTlMM=
-X-Received: by 2002:a0c:90c3:0:b0:4c7:e13:6459 with SMTP id
- p61-20020a0c90c3000000b004c70e136459mr36460242qvp.11.1671045353367; Wed, 14
- Dec 2022 11:15:53 -0800 (PST)
-MIME-Version: 1.0
-From:   Mike Marshall <hubcap@omnibond.com>
-Date:   Wed, 14 Dec 2022 14:15:42 -0500
-Message-ID: <CAOg9mSR0m_Tb_1uKHMXseJ2AEUpvN3siaJd9rC-Fykx4QEXMXA@mail.gmail.com>
-Subject: [GIT PULL] orangefs pull request for 6.2
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     devel@lists.orangefs.org, Mike Marshall <hubcap@omnibond.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Wed, 14 Dec 2022 14:17:02 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92C5A101C1;
+        Wed, 14 Dec 2022 11:17:00 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0FD4561857;
+        Wed, 14 Dec 2022 19:17:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 63BC3C433EF;
+        Wed, 14 Dec 2022 19:16:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1671045419;
+        bh=DEU23idWnHqHEI4rr4cJ5kq50LF+J35SVC+UqRvM9lE=;
+        h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+        b=NlyNkwFqkxmc5CXq/bwiDo847PTLuhVwCzIC1snqWwE+iQ5IF25BQUp5W8TWMqDVJ
+         f65lgjK+GttPScU2kCE0f58+Ufsvd8wcEWcgXhm05/QDC+2JQAg9yFmzjBaGEY1yQB
+         K42F+RsGJrQCrUuzWq/occqgR8pYxpDSGlsOxyLorEYrr+9QRiA0MPXxpe2wN+k6th
+         SXqlrSb5dQpRw5vU7blc+M0o7h4b9JfNUNFoq//BJCd62Wn2GTu1sz9b01D5fPy9dB
+         xeInwVb7nPUv9yy0EZ9FBu8VbivDqNSTBLd3Tc72IMN3bA53MQ2rT/0vPBa5kiJ62p
+         QiWbjjS/JU/5A==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 526CFC41612;
+        Wed, 14 Dec 2022 19:16:59 +0000 (UTC)
+Subject: Re: [GIT PULL] xfs: new code for 6.2
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <167095620599.1676030.3465657691717452291.stg-ugh@magnolia>
+References: <167095620599.1676030.3465657691717452291.stg-ugh@magnolia>
+X-PR-Tracked-List-Id: <linux-xfs.vger.kernel.org>
+X-PR-Tracked-Message-Id: <167095620599.1676030.3465657691717452291.stg-ugh@magnolia>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.2-merge-8
+X-PR-Tracked-Commit-Id: 52f31ed228212ba572c44e15e818a3a5c74122c0
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 87be949912eedb73690d8eaeb086f24bfe17438d
+Message-Id: <167104541932.22233.3380119867797546136.pr-tracker-bot@kernel.org>
+Date:   Wed, 14 Dec 2022 19:16:59 +0000
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     djwong@kernel.org, torvalds@linux-foundation.org,
+        aalbersh@redhat.com, abaci@linux.alibaba.com, dchinner@redhat.com,
+        guoxuenan@huawei.com, hch@lst.de, hsiangkao@linux.alibaba.com,
+        leo.lilong@huawei.com, linux-fsdevel@vger.kernel.org,
+        linux-xfs@vger.kernel.org, lukas@herbolt.com, sandeen@redhat.com,
+        syzbot+912776840162c13db1a3@syzkaller.appspotmail.com,
+        yang.lee@linux.alibaba.com, yangx.jy@fujitsu.com
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit b7b275e60bcd5f89771e865a8239325f86d9927d:
+The pull request you sent on Tue, 13 Dec 2022 10:58:54 -0800:
 
-  Linux 6.1-rc7 (2022-11-27 13:31:48 -0800)
+> git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git tags/xfs-6.2-merge-8
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/87be949912eedb73690d8eaeb086f24bfe17438d
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/hubcap/linux.git/
-tags/for-linus-6.2-ofs1
+Thank you!
 
-for you to fetch changes up to 31720a2b109b3080eb77e97b8f6f50a27b4ae599:
-
-  orangefs: Fix kmemleak in orangefs_{kernel,client}_debug_init()
-(2022-12-07 15:18:30 -0500)
-
-----------------------------------------------------------------
-orangefs: four fixes from Zhang Xiaoxu and two from Colin Ian King
-
-Zhang: fixed problems with memory leaks on exit in sysfs and debufs.
-fs/orangefs/orangefs-debugfs.c
-fs/orangefs/orangefs-sysfs.c
-fs/orangefs/orangefs-debugfs.c
-fs/orangefs/orangefs-mod.c
-
-Colin: removed an unused variable and an unneeded assignment.
-fs/orangefs/file.c
-fs/orangefs/inode.c
-
-----------------------------------------------------------------
-Colin Ian King (2):
-      orangefs: remove variable i
-      orangefs: remove redundant assignment to variable buffer_index
-
-Zhang Xiaoxu (4):
-      orangefs: Fix sysfs not cleanup when dev init failed
-      orangefs: Fix kmemleak in orangefs_prepare_debugfs_help_string()
-      orangefs: Fix kmemleak in orangefs_sysfs_init()
-      orangefs: Fix kmemleak in orangefs_{kernel,client}_debug_init()
-
- fs/orangefs/file.c             |  1 -
- fs/orangefs/inode.c            |  2 --
- fs/orangefs/orangefs-debugfs.c | 29 ++++-------------
- fs/orangefs/orangefs-mod.c     |  8 ++---
- fs/orangefs/orangefs-sysfs.c   | 71 +++++++++++++++++++++++++++++++++++++-----
- 5 files changed, 73 insertions(+), 38 deletions(-)
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
