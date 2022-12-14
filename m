@@ -2,153 +2,144 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E7B3364C70C
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 11:25:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7614C64C606
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 14 Dec 2022 10:33:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237818AbiLNKZM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Dec 2022 05:25:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45122 "EHLO
+        id S237615AbiLNJdO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Dec 2022 04:33:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45248 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237801AbiLNKZE (ORCPT
+        with ESMTP id S237866AbiLNJdG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Dec 2022 05:25:04 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C0FB11D651
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Dec 2022 02:24:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671013457;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=9DJ2kTciZzCUi4gXkRMDzEafqQw+pBRgsl61iDLuufk=;
-        b=gfMDp63EH2iLAwKsMhNu8+vdNtFpVmZ6j3KHqmXdjnEpL63eCDYF4/kvJqhCQyBcQx467O
-        GX4m2WJLRw9YZVSTV0Za7IKxQJVNwLQJ8323PnKrKr991wG+qAFGCPm3tWGMc02OD9aDp5
-        waMUjj1KCBS0lIiUDOMRIOQ5w04LgwE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-622-lUglsYFDMFq9neTi2pjZgw-1; Wed, 14 Dec 2022 05:24:12 -0500
-X-MC-Unique: lUglsYFDMFq9neTi2pjZgw-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 382D318A6460;
-        Wed, 14 Dec 2022 10:24:12 +0000 (UTC)
-Received: from pasta.redhat.com (ovpn-192-138.brq.redhat.com [10.40.192.138])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D4A5F51FF;
-        Wed, 14 Dec 2022 10:24:10 +0000 (UTC)
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-To:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2] iomap: Move page_done callback under the folio lock
-Date:   Wed, 14 Dec 2022 11:24:09 +0100
-Message-Id: <20221214102409.1857526-1-agruenba@redhat.com>
-In-Reply-To: <Y5l9zhhyOE+RNVgO@infradead.org>
-References: <Y5l9zhhyOE+RNVgO@infradead.org>
+        Wed, 14 Dec 2022 04:33:06 -0500
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E6AC13EA1;
+        Wed, 14 Dec 2022 01:33:02 -0800 (PST)
+Received: from kwepemm600015.china.huawei.com (unknown [172.30.72.55])
+        by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4NX96p4LFDzJpKv;
+        Wed, 14 Dec 2022 17:29:22 +0800 (CST)
+Received: from huawei.com (10.175.101.6) by kwepemm600015.china.huawei.com
+ (7.193.23.52) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2375.34; Wed, 14 Dec
+ 2022 17:32:59 +0800
+From:   ChenXiaoSong <chenxiaosong2@huawei.com>
+To:     <roman.gushchin@linux.dev>, <axboe@kernel.dk>,
+        <bvanassche@acm.org>, <tytso@mit.edu>, <akpm@linux-foundation.org>
+CC:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] hfsplus: fix uninit-value in hfsplus_delete_cat()
+Date:   Wed, 14 Dec 2022 18:37:07 +0800
+Message-ID: <20221214103707.3893954-1-chenxiaosong2@huawei.com>
+X-Mailer: git-send-email 2.31.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.175.101.6]
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm600015.china.huawei.com (7.193.23.52)
+X-CFilter-Loop: Reflected
+X-Spam-Status: No, score=-4.2 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Move the ->page_done() call in iomap_write_end() under the folio lock.
-This closes a race between journaled data writes and the shrinker in
-gfs2.  What's happening is that gfs2_iomap_page_done() is called after
-the page has been unlocked, so try_to_free_buffers() can come in and
-free the buffers while gfs2_iomap_page_done() is trying to add them to
-the current transaction.  The folio lock prevents that from happening.
+Syzkaller reported BUG as follows:
 
-The only current user of ->page_done() is gfs2, so other filesystems are
-not affected.  Still, to catch out any new users, switch from page to
-folio in ->page_done().
+  =====================================================
+  BUG: KMSAN: uninit-value in hfsplus_subfolders_dec
+                              fs/hfsplus/catalog.c:248 [inline]
+  BUG: KMSAN: uninit-value in hfsplus_delete_cat+0x1207/0x14d0
+                              fs/hfsplus/catalog.c:419
+   hfsplus_subfolders_dec fs/hfsplus/catalog.c:248 [inline]
+   hfsplus_delete_cat+0x1207/0x14d0 fs/hfsplus/catalog.c:419
+   hfsplus_rmdir+0x141/0x3d0 fs/hfsplus/dir.c:425
+   hfsplus_rename+0x102/0x2e0 fs/hfsplus/dir.c:545
+   vfs_rename+0x1e4c/0x2800 fs/namei.c:4779
+   do_renameat2+0x173d/0x1dc0 fs/namei.c:4930
+   __do_sys_renameat2 fs/namei.c:4963 [inline]
+   __se_sys_renameat2 fs/namei.c:4960 [inline]
+   __ia32_sys_renameat2+0x14b/0x1f0 fs/namei.c:4960
+   do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+   __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+   do_fast_syscall_32+0x33/0x70 arch/x86/entry/common.c:203
+   do_SYSENTER_32+0x1b/0x20 arch/x86/entry/common.c:246
+   entry_SYSENTER_compat_after_hwframe+0x70/0x82
 
-Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+  Uninit was stored to memory at:
+   hfsplus_subfolders_inc fs/hfsplus/catalog.c:232 [inline]
+   hfsplus_create_cat+0x19e3/0x19f0 fs/hfsplus/catalog.c:314
+   hfsplus_mknod+0x1fd/0x560 fs/hfsplus/dir.c:494
+   hfsplus_mkdir+0x54/0x60 fs/hfsplus/dir.c:529
+   vfs_mkdir+0x62a/0x870 fs/namei.c:4036
+   do_mkdirat+0x466/0x7b0 fs/namei.c:4061
+   __do_sys_mkdirat fs/namei.c:4076 [inline]
+   __se_sys_mkdirat fs/namei.c:4074 [inline]
+   __ia32_sys_mkdirat+0xc4/0x120 fs/namei.c:4074
+   do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+   __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+   do_fast_syscall_32+0x33/0x70 arch/x86/entry/common.c:203
+   do_SYSENTER_32+0x1b/0x20 arch/x86/entry/common.c:246
+   entry_SYSENTER_compat_after_hwframe+0x70/0x82
+
+  Uninit was created at:
+   __alloc_pages+0x9f1/0xe80 mm/page_alloc.c:5581
+   alloc_pages+0xaae/0xd80 mm/mempolicy.c:2285
+   alloc_slab_page mm/slub.c:1794 [inline]
+   allocate_slab+0x1b5/0x1010 mm/slub.c:1939
+   new_slab mm/slub.c:1992 [inline]
+   ___slab_alloc+0x10c3/0x2d60 mm/slub.c:3180
+   __slab_alloc mm/slub.c:3279 [inline]
+   slab_alloc_node mm/slub.c:3364 [inline]
+   slab_alloc mm/slub.c:3406 [inline]
+   __kmem_cache_alloc_lru mm/slub.c:3413 [inline]
+   kmem_cache_alloc_lru+0x6f3/0xb30 mm/slub.c:3429
+   alloc_inode_sb include/linux/fs.h:3125 [inline]
+   hfsplus_alloc_inode+0x56/0xc0 fs/hfsplus/super.c:627
+   alloc_inode+0x83/0x440 fs/inode.c:259
+   iget_locked+0x2a1/0xe20 fs/inode.c:1286
+   hfsplus_iget+0x5f/0xb60 fs/hfsplus/super.c:64
+   hfsplus_btree_open+0x13b/0x1cf0 fs/hfsplus/btree.c:150
+   hfsplus_fill_super+0x12b0/0x2a80 fs/hfsplus/super.c:473
+   mount_bdev+0x508/0x840 fs/super.c:1401
+   hfsplus_mount+0x49/0x60 fs/hfsplus/super.c:641
+   legacy_get_tree+0x10c/0x280 fs/fs_context.c:610
+   vfs_get_tree+0xa1/0x500 fs/super.c:1531
+   do_new_mount+0x694/0x1580 fs/namespace.c:3040
+   path_mount+0x71a/0x1eb0 fs/namespace.c:3370
+   do_mount fs/namespace.c:3383 [inline]
+   __do_sys_mount fs/namespace.c:3591 [inline]
+   __se_sys_mount+0x734/0x840 fs/namespace.c:3568
+   __ia32_sys_mount+0xdf/0x140 fs/namespace.c:3568
+   do_syscall_32_irqs_on arch/x86/entry/common.c:112 [inline]
+   __do_fast_syscall_32+0xa2/0x100 arch/x86/entry/common.c:178
+   do_fast_syscall_32+0x33/0x70 arch/x86/entry/common.c:203
+   do_SYSENTER_32+0x1b/0x20 arch/x86/entry/common.c:246
+   entry_SYSENTER_compat_after_hwframe+0x70/0x82
+  =====================================================
+
+Fix this by initializing 'subfolders' of 'struct hfsplus_inode_info'
+in hfsplus_iget().
+
+Link: https://syzkaller.appspot.com/bug?id=981f82f21b973f2f5663dfea581ff8cee1ddfef2
+Signed-off-by: ChenXiaoSong <chenxiaosong2@huawei.com>
 ---
- fs/gfs2/bmap.c         |  7 ++++---
- fs/iomap/buffered-io.c |  4 ++--
- include/linux/iomap.h  | 10 +++++-----
- 3 files changed, 11 insertions(+), 10 deletions(-)
+ fs/hfsplus/super.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index e7537fd305dd..c4ee47f8e499 100644
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -968,14 +968,15 @@ static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
- }
+diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+index 122ed89ebf9f..612c07857667 100644
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -72,6 +72,7 @@ struct inode *hfsplus_iget(struct super_block *sb, unsigned long ino)
+ 	mutex_init(&HFSPLUS_I(inode)->extents_lock);
+ 	HFSPLUS_I(inode)->flags = 0;
+ 	HFSPLUS_I(inode)->extent_state = 0;
++	HFSPLUS_I(inode)->subfolders = 0;
+ 	HFSPLUS_I(inode)->rsrc_inode = NULL;
+ 	atomic_set(&HFSPLUS_I(inode)->opencnt, 0);
  
- static void gfs2_iomap_page_done(struct inode *inode, loff_t pos,
--				 unsigned copied, struct page *page)
-+				 unsigned copied, struct folio *folio)
- {
- 	struct gfs2_trans *tr = current->journal_info;
- 	struct gfs2_inode *ip = GFS2_I(inode);
- 	struct gfs2_sbd *sdp = GFS2_SB(inode);
- 
--	if (page && !gfs2_is_stuffed(ip))
--		gfs2_page_add_databufs(ip, page, offset_in_page(pos), copied);
-+	if (folio && !gfs2_is_stuffed(ip))
-+		gfs2_page_add_databufs(ip, &folio->page, offset_in_page(pos),
-+				       copied);
- 
- 	if (tr->tr_num_buf_new)
- 		__mark_inode_dirty(inode, I_DIRTY_DATASYNC);
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 91ee0b308e13..d988c1bedf70 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -714,12 +714,12 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
- 		i_size_write(iter->inode, pos + ret);
- 		iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
- 	}
-+	if (page_ops && page_ops->page_done)
-+		page_ops->page_done(iter->inode, pos, ret, folio);
- 	folio_unlock(folio);
- 
- 	if (old_size < pos)
- 		pagecache_isize_extended(iter->inode, old_size, pos);
--	if (page_ops && page_ops->page_done)
--		page_ops->page_done(iter->inode, pos, ret, &folio->page);
- 	folio_put(folio);
- 
- 	if (ret < len)
-diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 238a03087e17..bd6d80453726 100644
---- a/include/linux/iomap.h
-+++ b/include/linux/iomap.h
-@@ -116,18 +116,18 @@ static inline bool iomap_inline_data_valid(const struct iomap *iomap)
- 
- /*
-  * When a filesystem sets page_ops in an iomap mapping it returns, page_prepare
-- * and page_done will be called for each page written to.  This only applies to
-- * buffered writes as unbuffered writes will not typically have pages
-+ * and page_done will be called for each folio written to.  This only applies
-+ * to buffered writes as unbuffered writes will not typically have folios
-  * associated with them.
-  *
-  * When page_prepare succeeds, page_done will always be called to do any
-- * cleanup work necessary.  In that page_done call, @page will be NULL if the
-- * associated page could not be obtained.
-+ * cleanup work necessary.  In that page_done call, @folio will be NULL if the
-+ * associated folio could not be obtained.
-  */
- struct iomap_page_ops {
- 	int (*page_prepare)(struct inode *inode, loff_t pos, unsigned len);
- 	void (*page_done)(struct inode *inode, loff_t pos, unsigned copied,
--			struct page *page);
-+			struct folio *folio);
- };
- 
- /*
 -- 
-2.38.1
+2.31.1
 
