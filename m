@@ -2,199 +2,296 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4326764D2FE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Dec 2022 00:06:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9BB3E64D515
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Dec 2022 02:49:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229551AbiLNXGk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Dec 2022 18:06:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44078 "EHLO
+        id S229631AbiLOBs7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 14 Dec 2022 20:48:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43510 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229461AbiLNXGj (ORCPT
+        with ESMTP id S229626AbiLOBsr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Dec 2022 18:06:39 -0500
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DCF4C29814
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Dec 2022 15:06:37 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id n4so1343204plp.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 14 Dec 2022 15:06:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eo+tShyeYOSb4TMPbZlPrflwRazEiE7fEZhuw1NYlFQ=;
-        b=kxfOUpIL6u90JuaFTN6zHl8mfTaXY/h51Eal38XQY2mN/b6gcjyi14DvYFn9DdRVhm
-         Hkp6pvGrhnUiKXUTAfu3IMaYTwoA6z3vXCEn1Ivw8O7Osg/70KcjRlhF2OFeyEcnBjLk
-         zcpTtsPep+8CzYBE0pTVj57WwL5tH8DbY3JDI/OW0p0p0TvRKZ1e2WKjimOJeNq7VbYx
-         msu7zT3cO0Mwv4HxtgvdFTRN/IAqBw2x3nUjzfbKgYRAXexwY6U8403NRqxg3s8QmYha
-         Ma5kzLul2qeeuIoHRYXYwlAR8/istDQz8DmsRXxz/kRI5X4oByWNPRgOM6J2s5qiaCFb
-         mMMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Eo+tShyeYOSb4TMPbZlPrflwRazEiE7fEZhuw1NYlFQ=;
-        b=cm22t1xQCVFWRwh5QuOlNKpfPnoJSDogr1HyXo67qI1NBqYBzO/BegyX2eFjiFdZbr
-         ELRc71RV/v2uqHMrzVUkH/G2iT//khkkj4P1pusQ8IKpAr/xoQHprWiyA/RaWc5RMmO/
-         MMUglDTeYGLVCdAK9za9c73O8ZF/CYoTgx7TjpP4MBXm9yESObrqngM8EHVMlgk9nPAE
-         lblWHM0sg8Tz2ZktUZwbao0BcgVZ44t924XQVDL4LFQ6EAQslxJJ6m1G//XRqNtRKaCW
-         kxnz1NKYy/32LlPq6BNkMkOKtB/tczeo2DNyEE+UnPeuPOnI416oQ4fF9xYBZ0G/6U4L
-         Mxkg==
-X-Gm-Message-State: ANoB5pljIy0F3mlFXeGF/7xIhRaLtHEhCNJpMnJFzntUrgR6JaP8EWyz
-        Zf5a0vJ5c/j7LukT493MnGx0ag==
-X-Google-Smtp-Source: AA0mqf5ssTDKtyM8pGGP1bkAJ7YbdwMQ2Gad5d2kvkXsNlbceqljut0uue/0Zhx66eI/PUWOPs1AyQ==
-X-Received: by 2002:a05:6a20:a694:b0:ad:eaea:e07 with SMTP id ba20-20020a056a20a69400b000adeaea0e07mr9160352pzb.10.1671059197357;
-        Wed, 14 Dec 2022 15:06:37 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-138-158.pa.nsw.optusnet.com.au. [49.181.138.158])
-        by smtp.gmail.com with ESMTPSA id h25-20020a63f919000000b0047681fa88d1sm332918pgi.53.2022.12.14.15.06.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 14 Dec 2022 15:06:36 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1p5apc-008W55-N9; Thu, 15 Dec 2022 10:06:32 +1100
-Date:   Thu, 15 Dec 2022 10:06:32 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Andrey Albershteyn <aalbersh@redhat.com>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH 00/11] fs-verity support for XFS
-Message-ID: <20221214230632.GA1971568@dread.disaster.area>
-References: <20221213172935.680971-1-aalbersh@redhat.com>
- <Y5jllLwXlfB7BzTz@sol.localdomain>
- <20221213221139.GZ3600936@dread.disaster.area>
- <Y5ltzp6yeMo1oDSk@sol.localdomain>
+        Wed, 14 Dec 2022 20:48:47 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 508FA537FC;
+        Wed, 14 Dec 2022 17:48:46 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D095561CD3;
+        Thu, 15 Dec 2022 01:48:45 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B56FDC433EF;
+        Thu, 15 Dec 2022 01:48:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1671068925;
+        bh=ojlxsqHj3+udjuB/zrA6wUVW60/Z8ZKDNPvSfZT7Efw=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=dOd9p0hIwuZZIOBJQh5ug6BMt9lDvWcd6AUyY9paTGx2xxa9gHoWUE+aKWjZRsnwI
+         k5UdHjluDM1CEQbv0150adrYFUxyko/PBS9fJB9Tvu1kMZ5JNC86+sRmS/7I8iMytO
+         CwW4T1eyL+ImKY8ASgyk54byohY1nxG1maXQBkCzWoGQtasLa/EPTDxorocKr2dHHB
+         /9/3wX4gpJ0Sh71mwdByqZYaA13wHrhHgLMuN+GThj0c2E1iqM0Xx0h5NmUQQArsDu
+         pvIGbFRWIGl55UMnatv8rWT8iBIb0FO+UrJjA+XdwJFay6cCdV91dU10jmqYwk9OXI
+         oUYUdFN/yFZFg==
+Message-ID: <6770f692-490e-34fc-46f8-4f65aa071f58@kernel.org>
+Date:   Thu, 15 Dec 2022 09:48:41 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y5ltzp6yeMo1oDSk@sol.localdomain>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.0
+Subject: Re: [RFC PATCH] f2fs: Convert f2fs_write_cache_pages() to use
+ filemap_get_folios_tag()
+Content-Language: en-US
+To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        fengnanchang@gmail.com, linux-fsdevel@vger.kernel.org
+References: <0a95ba7b-9335-ce03-0f47-5d9f4cce988f@kernel.org>
+ <20221212191317.9730-1-vishal.moola@gmail.com>
+From:   Chao Yu <chao@kernel.org>
+In-Reply-To: <20221212191317.9730-1-vishal.moola@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 13, 2022 at 10:31:42PM -0800, Eric Biggers wrote:
-> On Wed, Dec 14, 2022 at 09:11:39AM +1100, Dave Chinner wrote:
-> > On Tue, Dec 13, 2022 at 12:50:28PM -0800, Eric Biggers wrote:
-> > > On Tue, Dec 13, 2022 at 06:29:24PM +0100, Andrey Albershteyn wrote:
-> > > > Not yet implemented:
-> > > > - No pre-fetching of Merkle tree pages in the
-> > > >   read_merkle_tree_page()
-> > > 
-> > > This would be helpful, but not essential.
-> > > 
-> > > > - No marking of already verified Merkle tree pages (each read, the
-> > > >   whole tree is verified).
-> > 
-> > Ah, I wasn't aware that this was missing.
-> > 
-> > > 
-> > > This is essential to have, IMO.
-> > > 
-> > > You *could* do what btrfs does, where it caches the Merkle tree pages in the
-> > > inode's page cache past i_size, even though btrfs stores the Merkle tree
-> > > separately from the file data on-disk.
-> > >
-> > > However, I'd guess that the other XFS developers would have an adversion to that
-> > > approach, even though it would not affect the on-disk storage.
-> > 
-> > Yup, on an architectural level it just seems wrong to cache secure
-> > verification metadata in the same user accessible address space as
-> > the data it verifies.
-> > 
-> > > The alternatives would be to create a separate in-memory-only inode for the
-> > > cache, or to build a custom cache with its own shrinker.
-> > 
-> > The merkel tree blocks are cached in the XFS buffer cache.
-> > 
-> > Andrey, could we just add a new flag to the xfs_buf->b_flags to
-> > indicate that the buffer contains verified merkle tree records?
-> > i.e. if it's not set after we've read the buffer, we need to verify
-> > the buffer and set th verified buffer in cache and we can skip the
-> > verification?
+On 2022/12/13 3:13, Vishal Moola (Oracle) wrote:
+> Converted the function to use a folio_batch instead of pagevec. This is in
+> preparation for the removal of find_get_pages_range_tag().
 > 
-> Well, my proposal at
-> https://lore.kernel.org/r/20221028224539.171818-2-ebiggers@kernel.org is to keep
-> tracking the "verified" status at the individual Merkle tree block level, by
-> adding a bitmap fsverity_info::hash_block_verified.  That is part of the
-> fs/verity/ infrastructure, and all filesystems would be able to use it.
-
-Yeah, i had a look at that rewrite of the verification code last
-night - I get the gist of what it is doing, but a single patch of
-that complexity is largely impossible to sanely review...
-
-Correct me if I'm wrong, but won't using a bitmap with 1 bit per
-verified block cause problems with contiguous memory allocation
-pretty quickly? i.e. a 64kB bitmap only tracks 512k blocks, which is
-only 2GB of merkle tree data. Hence at file sizes of 100+GB, the
-bitmap would have to be kvmalloc()d to guarantee allocation will
-succeed.
-
-I'm not really worried about the bitmap memory usage, just that it
-handles large contiguous allocations sanely. I suspect we may
-eventually need a sparse bitmap (e.g. the old btrfs bit-radix
-implementation) to track verification in really large files
-efficiently.
-
-> However, since it's necessary to re-verify blocks that have been evicted and
-> then re-instantiated, my patch also repurposes PG_checked as an indicator for
-> whether the Merkle tree pages are newly instantiated.  For a "non-page-cache
-> cache", that part would need to be replaced with something equivalent.
-
-Which we could get as a boolean state from the XFS buffer cache
-fairly easily - did we find the buffer in cache, or was it read from
-disk...
-
-> A different aproach would be to make it so that every time a page (or "cache
-> buffer", to call it something more generic) of N Merkle tree blocks is read,
-> then all N of those blocks are verified immediately.  Then there would be no
-> need to track the "verified" status of individual blocks.
-
-That won't work with XFS - merkle tree blocks are not contiguous in
-the attribute b-tree so there is no efficient "sequential bulk read"
-option available. The xattr structure is largely chosen because it
-allows for fast, deterministic single merkle tree block
-operations....
-
-> My concerns with that approach are:
+> Also modified f2fs_all_cluster_page_ready to take in a folio_batch instead
+> of pagevec. This does NOT support large folios. The function currently
+> only utilizes folios of size 1 so this shouldn't cause any issues right
+> now.
 > 
->   * Most data reads only need a single Merkle tree block at the deepest level.
-
-Yup, see above. :)
-
->     If at least N tree blocks were verified any time that any were verified at
->     all, that would make the worst-case read latency worse.
-
-*nod*
-
->   * It's possible that the parents of N tree blocks are split across a cache
->     buffer.  Thus, while N blocks can't have more than N parents, and in
->     practice would just have 1-2, those 2 parents could be split into two
->     separate cache buffers, with a total length of 2*N.  Verifying all of those
->     would really increase the worst-case latency as well.
+> This version of the patch limits the number of pages fetched to
+> F2FS_ONSTACK_PAGES. If that ever happens, update the start index here
+> since filemap_get_folios_tag() updates the index to be after the last
+> found folio, not necessarily the last used page.
 > 
-> So I'm thinking that tracking the "verified" status of tree blocks individually
-> is the right way to go.  But I'd appreciate any other thoughts on this.
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> ---
+> 
+> Let me know if you prefer this version and I'll include it in v5
+> of the patch series when I rebase it after the merge window.
+> 
+> ---
+>   fs/f2fs/data.c | 86 ++++++++++++++++++++++++++++++++++----------------
+>   1 file changed, 59 insertions(+), 27 deletions(-)
+> 
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index a71e818cd67b..1703e353f0e0 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -2939,6 +2939,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>   	int ret = 0;
+>   	int done = 0, retry = 0;
+>   	struct page *pages[F2FS_ONSTACK_PAGES];
+> +	struct folio_batch fbatch;
+>   	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
+>   	struct bio *bio = NULL;
+>   	sector_t last_block;
+> @@ -2959,6 +2960,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>   		.private = NULL,
+>   	};
+>   #endif
+> +	int nr_folios, p, idx;
+>   	int nr_pages;
+>   	pgoff_t index;
+>   	pgoff_t end;		/* Inclusive */
+> @@ -2969,6 +2971,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>   	int submitted = 0;
+>   	int i;
+>   
+> +	folio_batch_init(&fbatch);
+> +
+>   	if (get_dirty_pages(mapping->host) <=
+>   				SM_I(F2FS_M_SB(mapping))->min_hot_blocks)
+>   		set_inode_flag(mapping->host, FI_HOT_DATA);
+> @@ -2994,13 +2998,38 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>   		tag_pages_for_writeback(mapping, index, end);
+>   	done_index = index;
+>   	while (!done && !retry && (index <= end)) {
+> -		nr_pages = find_get_pages_range_tag(mapping, &index, end,
+> -				tag, F2FS_ONSTACK_PAGES, pages);
+> -		if (nr_pages == 0)
+> +		nr_pages = 0;
+> +again:
+> +		nr_folios = filemap_get_folios_tag(mapping, &index, end,
+> +				tag, &fbatch);
+> +		if (nr_folios == 0) {
+> +			if (nr_pages)
+> +				goto write;
+>   			break;
+> +		}
+>   
+> +		for (i = 0; i < nr_folios; i++) {
+> +			struct folio* folio = fbatch.folios[i];
+> +
+> +			idx = 0;
+> +			p = folio_nr_pages(folio);
+> +add_more:
+> +			pages[nr_pages] = folio_page(folio,idx);
+> +			folio_ref_inc(folio);
 
-I think that having the fsverity code track verified indexes itself
-is a much more felxible and self contained and the right way to go
-about it.
+It looks if CONFIG_LRU_GEN is not set, folio_ref_inc() does nothing. For those
+folios recorded in pages array, we need to call folio_get() here to add one more
+reference on each of them?
 
-The other issue is that verify_page() assumes that it can drop the
-reference to the cached object itself - the caller actually owns the
-reference to the object, not the verify_page() code. Hence if we are
-passing opaque buffers to verify_page() rather page cache pages, we
-need a ->drop_block method that gets called instead of put_page().
-This will allow the filesystem to hold a reference to the merkle
-tree block data while the verification occurs, ensuring that they
-don't get reclaimed by memory pressure whilst still in use...
+> +			if (++nr_pages == F2FS_ONSTACK_PAGES) {
+> +				index = folio->index + idx + 1;
+> +				folio_batch_release(&fbatch);
 
-Cheers,
+Otherwise after folio_batch_release(), it may cause use-after-free issue
+when accessing pages array? Or am I missing something?
 
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+> +				goto write;
+> +			}
+> +			if (++idx < p)
+> +				goto add_more;
+> +		}
+> +		folio_batch_release(&fbatch);
+> +		goto again;
+> +write:
+>   		for (i = 0; i < nr_pages; i++) {
+>   			struct page *page = pages[i];
+> +			struct folio *folio = page_folio(page);
+>   			bool need_readd;
+>   readd:
+>   			need_readd = false;
+> @@ -3017,7 +3046,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>   				}
+>   
+>   				if (!f2fs_cluster_can_merge_page(&cc,
+> -								page->index)) {
+> +								folio->index)) {
+>   					ret = f2fs_write_multi_pages(&cc,
+>   						&submitted, wbc, io_type);
+>   					if (!ret)
+> @@ -3026,27 +3055,28 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>   				}
+>   
+>   				if (unlikely(f2fs_cp_error(sbi)))
+> -					goto lock_page;
+> +					goto lock_folio;
+>   
+>   				if (!f2fs_cluster_is_empty(&cc))
+> -					goto lock_page;
+> +					goto lock_folio;
+>   
+>   				if (f2fs_all_cluster_page_ready(&cc,
+>   					pages, i, nr_pages, true))
+> -					goto lock_page;
+> +					goto lock_folio;
+>   
+>   				ret2 = f2fs_prepare_compress_overwrite(
+>   							inode, &pagep,
+> -							page->index, &fsdata);
+> +							folio->index, &fsdata);
+>   				if (ret2 < 0) {
+>   					ret = ret2;
+>   					done = 1;
+>   					break;
+>   				} else if (ret2 &&
+>   					(!f2fs_compress_write_end(inode,
+> -						fsdata, page->index, 1) ||
+> +						fsdata, folio->index, 1) ||
+>   					 !f2fs_all_cluster_page_ready(&cc,
+> -						pages, i, nr_pages, false))) {
+> +						pages, i, nr_pages,
+> +						false))) {
+>   					retry = 1;
+>   					break;
+>   				}
+> @@ -3059,46 +3089,47 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>   				break;
+>   			}
+>   #ifdef CONFIG_F2FS_FS_COMPRESSION
+> -lock_page:
+> +lock_folio:
+>   #endif
+> -			done_index = page->index;
+> +			done_index = folio->index;
+>   retry_write:
+> -			lock_page(page);
+> +			folio_lock(folio);
+>   
+> -			if (unlikely(page->mapping != mapping)) {
+> +			if (unlikely(folio->mapping != mapping)) {
+>   continue_unlock:
+> -				unlock_page(page);
+> +				folio_unlock(folio);
+>   				continue;
+>   			}
+>   
+> -			if (!PageDirty(page)) {
+> +			if (!folio_test_dirty(folio)) {
+>   				/* someone wrote it for us */
+>   				goto continue_unlock;
+>   			}
+>   
+> -			if (PageWriteback(page)) {
+> +			if (folio_test_writeback(folio)) {
+>   				if (wbc->sync_mode != WB_SYNC_NONE)
+> -					f2fs_wait_on_page_writeback(page,
+> +					f2fs_wait_on_page_writeback(
+> +							&folio->page,
+>   							DATA, true, true);
+>   				else
+>   					goto continue_unlock;
+>   			}
+>   
+> -			if (!clear_page_dirty_for_io(page))
+> +			if (!folio_clear_dirty_for_io(folio))
+>   				goto continue_unlock;
+>   
+>   #ifdef CONFIG_F2FS_FS_COMPRESSION
+>   			if (f2fs_compressed_file(inode)) {
+> -				get_page(page);
+> -				f2fs_compress_ctx_add_page(&cc, page);
+> +				folio_get(folio);
+> +				f2fs_compress_ctx_add_page(&cc, &folio->page);
+>   				continue;
+>   			}
+>   #endif
+> -			ret = f2fs_write_single_data_page(page, &submitted,
+> -					&bio, &last_block, wbc, io_type,
+> -					0, true);
+> +			ret = f2fs_write_single_data_page(&folio->page,
+> +					&submitted, &bio, &last_block,
+> +					wbc, io_type, 0, true);
+>   			if (ret == AOP_WRITEPAGE_ACTIVATE)
+> -				unlock_page(page);
+> +				folio_unlock(folio);
+>   #ifdef CONFIG_F2FS_FS_COMPRESSION
+>   result:
+>   #endif
+> @@ -3122,7 +3153,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>   					}
+>   					goto next;
+>   				}
+> -				done_index = page->index + 1;
+> +				done_index = folio->index +
+> +					folio_nr_pages(folio);
+>   				done = 1;
+>   				break;
+>   			}
+> @@ -3136,7 +3168,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
+>   			if (need_readd)
+>   				goto readd;
+>   		}
+> -		release_pages(pages, nr_pages);
+> +		release_pages(pages,nr_pages);
+
+No need to change?
+
+Thanks,
+
+>   		cond_resched();
+>   	}
+>   #ifdef CONFIG_F2FS_FS_COMPRESSION
