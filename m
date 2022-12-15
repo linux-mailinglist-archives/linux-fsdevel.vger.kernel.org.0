@@ -2,90 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 11DE664E3DE
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Dec 2022 23:42:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1DEE364E4AF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Dec 2022 00:30:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbiLOWmY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Dec 2022 17:42:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36708 "EHLO
+        id S229460AbiLOXa4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Dec 2022 18:30:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60242 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229480AbiLOWmX (ORCPT
+        with ESMTP id S229891AbiLOXav (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Dec 2022 17:42:23 -0500
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B0BBD58BF1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Dec 2022 14:42:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.de; s=s31663417;
-        t=1671144139; bh=3oIJmH8dPuhuKzA9sfPCzKvM+IHoMHC9mDv8O5LZFak=;
-        h=X-UI-Sender-Class:Date:From:To:Subject;
-        b=NiWhsFJgNWwMlazYv5As5/9TSJkOcQC056S8ywkccG8OY5Ti2Hb1A6jvkOEH03tR5
-         WevXc+d6bFDhofU2t0ACI7/23eGqxcCvgsmyrs4bkQLHNjYPc4poRYWAH1BQ/PpjB4
-         ODasrbU8VSf4rUbU5AmwZRFYiBLAHvuCognQsQ3YC60cBuyPIrPRGxm/TeGm3WLrbJ
-         xDaG0yA4k5EVa8bh0CnIzsSSuNrKf3vmPrJc7M/mFWK0xH8Ia4BCTacB5UTC7h7uaU
-         MA6DbH2Ro3nwNCiitsbKKk6QmE2aTieGINr6bQmEDSA+ijcCU3KME04qfLyMFXb+Wo
-         LS2WHya0VAUGQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from ls3530 ([92.116.161.210]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1M3DNt-1p4aYA2KaL-003giH; Thu, 15
- Dec 2022 23:42:19 +0100
-Date:   Thu, 15 Dec 2022 23:42:18 +0100
-From:   Helge Deller <deller@gmx.de>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs/stat.c: Drop choose_32_64() macro
-Message-ID: <Y5uiykbotOf9H8BI@ls3530>
+        Thu, 15 Dec 2022 18:30:51 -0500
+Received: from mail-pj1-x1032.google.com (mail-pj1-x1032.google.com [IPv6:2607:f8b0:4864:20::1032])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF2512251D
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Dec 2022 15:30:49 -0800 (PST)
+Received: by mail-pj1-x1032.google.com with SMTP id gt4so773309pjb.1
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Dec 2022 15:30:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jzY+tBphGrKVYDEjcY0BJ7N2Vzc4aYAbJghO6/Dj0Ew=;
+        b=ANB1oJWrSFG9Cq9YbfSu5FK3UHRQfjVBfpm97HJvWMMkD+j0DGS9O1wVzh6Wh0Oree
+         b5cHhH9i4OwAu6sBo9PSt1xXeo2u+k6Y1bI5ZGY/wRvs1FrxSOpr5l0QsROv8GP7B2EI
+         k1rvUb3npghaUY6Bm5GfLi+fkwQ4epLHC9n0ZnxoHSUlX5rRLitkSQm6rw6KwBiLtlIF
+         QxELHPkfJi5cPuWicQPQZQnu/ERQ9ePIU/HkEQF7uWQMFgnuAAZvxh8PTcKQEdwIMVqE
+         WTeGvL11yd9pI9LhfoJCltcwwosgip/fD9tE6gTqwlbUtG96BwtO2hEIZnHDwM5a5sMS
+         g3rQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=jzY+tBphGrKVYDEjcY0BJ7N2Vzc4aYAbJghO6/Dj0Ew=;
+        b=kuP2VjS9h+pUrO19qtvb1koRbT/wqWWq8Z6QovjKzGJxW04StIvzbxC82Qy0vrXNaP
+         Dy7K3TsaQ+OT3ujdHYtiEJ2V7VFT/+a6/YoWkMbqTUtIHQaZvVFFFNAH/9ENUmLVESvb
+         nexc98UAWimfaj34AU2WF892jSrkxSdQYSUb+IczWkD/6Lodsn4LHVWxyviz2sLBCFBm
+         /fN/5dp3k5BbNwTFdfKInzI2FJt4Od2wdpoW3C+G8UpbJ4Z+ec3JiFuySFLHyQ5HGM0g
+         O2tfDNQ9bNPmwmSVsKu+NV8J55uZjgXjSIznAfp49zUyE4t9SRnPKPpho7erQLb0UbRp
+         ccgQ==
+X-Gm-Message-State: ANoB5pnVli16EjbZkc2vex2vuGlJ8riZxWvwMyTL7nh/YTUdALfecE3L
+        K3s40oQN2SaEOTwevsimN7Ma2DxcNAAVTxIlmX4=
+X-Google-Smtp-Source: AA0mqf5+g5ETJavbVdEUvFCDMg7PM4nyywgtYCuPOSuKBn6aN62gyRRBzy0pcPpz0/UvGVi6yVxVag==
+X-Received: by 2002:a17:90b:1914:b0:219:3e05:64b7 with SMTP id mp20-20020a17090b191400b002193e0564b7mr6888956pjb.0.1671147048529;
+        Thu, 15 Dec 2022 15:30:48 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d5-20020a17090abf8500b002192db1f8e8sm178575pjs.23.2022.12.15.15.30.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Dec 2022 15:30:47 -0800 (PST)
+Message-ID: <7d6731de-b583-9552-24e3-601fbdae6a1b@kernel.dk>
+Date:   Thu, 15 Dec 2022 16:30:46 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Provags-ID: V03:K1:qcrMVNHoOrxN/2rs3ENLATqIvsMGNOkKUgb2YQwRuPTpMGBkVzX
- 9EtTcjCS/L1tEQI3RQZzW78RLMDFOfidBi0D7cViE+V83ZJKtZLzcfYvijvJmRMZs0u4KUB
- irthPD+NrL/4cYeVx5OgSgvR2QX7I1SI25ftm9oHQL1N/zdChZvYt2FLrZK3JeB32lKyS/0
- DdRXJfpN9z7Lvhlm9kz7g==
-UI-OutboundReport: notjunk:1;M01:P0:JrR2bAOwKmw=;wDXYaOC4Gj2lojmn/BiIUH4DT+E
- uJXFFQVyfWjQtXlJJC5pMiTVKzNLWttwDNjN+E1pnHNCXYOJJA5859wh+ECGwzQzuOsUBCYJZ
- ad3aRqTfYgUG/LxFa5oRcRnAWeNOSO1CLh6HzGJpPzvylrB8F9KAAm/1w32aS48tdfCdIAJu5
- 2AUByo/KDzdJXKRZ2kC3mj0WtXjnLWNcAEy0AOD3L+RNc5H74Ql75wb7vvhDdn7+5mKf+AFFj
- DQl4mQ2aA+JT5akkBeIJbmNgUGjAdUjIBhHgeupusDB1enksNHB+7Px9lYX1fQ9w5Bwtv1nUI
- 0Y4gQteXCs5/jIKycUhchxEPJeATlLpAwIJ1XGhNOlm5DOMCFYiUCSN4ybSDnS3CMHKhpPjjg
- 2ECOHlpi+sXc8kUJMRHmsOY3eK6XL8z2/GgSBorwAXfdlHCRr70jBtfuN5Yw1jUcvL9zFNpai
- U+0HeQ2Yp2ghplaEcpLkzUacEtU1MifpaHeMRcW0YWbRWP3BnSgnUyqLLONOKrHkXb8ZOpEFZ
- wGiE8SCji4ayPMtEHLs8+Gxtk5TaTcgedPGNAXSiECmy/6DOVNimZLYLKo6e+ZMJ8hhZaJsbW
- GebiJIm5SyCQ6LiQooPRoI5VBeGRJeTKwk6DKOynmmCijXogRm+RimUHV7yxaMxP+BQcuZibM
- hzsK/Q7Io9U+UBitUc/WFYeJU5rKrUZgwg0vBokzYbfa4SeRK0/OCIgZAo3bi7gVSjgqCrKRD
- 7deCcan28pWuASmoMNiNnex9h35nFgDxSepT2hckLyTctocLkzYbS8RCv15gb7SBuPbqf5X4C
- daI76g67fV3ZbCzOe3MXdqmkvrR/PhZKJXvRxJfbycf+xxWVVbBanuu9YK38qajywyEcNS4Hj
- fxY60g9bFHzBEL0xHWFXFRVi1QZ5I4kOw2MNBZuzNpGsJ8KVjHUkkSq/doobC7QRNGZnqB0R3
- ed49Vg==
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,RCVD_IN_DNSWL_LOW,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+From:   Jens Axboe <axboe@kernel.dk>
+Subject: [GIT PULL] Writeback fixes for 6.2-rc1
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Linux-MM <linux-mm@kvack.org>
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The choose_32_64() macro is never used. Drop it.
+Hi Linus,
 
-Signed-off-by: Helge Deller <deller@gmx.de>
+Let's try this again, now correctly labeled for 6.2-rc1 and with an
+improved commit message for Jan's patch.
 
-diff --git a/fs/stat.c b/fs/stat.c
-index ef50573c72a2..1813eb6d2114 100644
-=2D-- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -354,12 +354,6 @@ SYSCALL_DEFINE2(fstat, unsigned int, fd, struct __old=
-_kernel_stat __user *, stat
+Here are a few writeback fixes that should go into this release, in
+particular:
 
- #ifdef __ARCH_WANT_NEW_STAT
+- Sanity check adding freed inodes to lists (Jan)
 
--#if BITS_PER_LONG =3D=3D 32
--#  define choose_32_64(a,b) a
--#else
--#  define choose_32_64(a,b) b
--#endif
--
- #ifndef INIT_STRUCT_STAT_PADDING
- #  define INIT_STRUCT_STAT_PADDING(st) memset(&st, 0, sizeof(st))
- #endif
+- Removal of an old unused define (Miaohe)
+
+Please pull!
+
+
+The following changes since commit eb7081409f94a9a8608593d0fb63a1aa3d6f95d8:
+
+  Linux 6.1-rc6 (2022-11-20 16:02:16 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.dk/linux.git tags/for-6.2/writeback-2022-12-12
+
+for you to fetch changes up to 23e188a16423a6e65290abf39dd427ff047e6843:
+
+  writeback: remove obsolete macro EXPIRE_DIRTY_ATIME (2022-12-12 13:08:42 -0700)
+
+----------------------------------------------------------------
+for-6.2/writeback-2022-12-12
+
+----------------------------------------------------------------
+Jan Kara (1):
+      writeback: Add asserts for adding freed inode to lists
+
+Miaohe Lin (1):
+      writeback: remove obsolete macro EXPIRE_DIRTY_ATIME
+
+ fs/fs-writeback.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+-- 
+Jens Axboe
+
