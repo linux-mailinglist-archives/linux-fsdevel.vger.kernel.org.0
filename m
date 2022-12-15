@@ -2,158 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 482C564DAE2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Dec 2022 13:10:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CAD3F64DC28
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Dec 2022 14:20:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230115AbiLOMJ7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Dec 2022 07:09:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36238 "EHLO
+        id S229973AbiLONUt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Dec 2022 08:20:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230140AbiLOMJx (ORCPT
+        with ESMTP id S229695AbiLONUn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Dec 2022 07:09:53 -0500
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 655BD2DAB2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Dec 2022 04:09:39 -0800 (PST)
-Received: by mail-il1-f199.google.com with SMTP id i21-20020a056e021d1500b003041b04e3ebso11467980ila.7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Dec 2022 04:09:39 -0800 (PST)
+        Thu, 15 Dec 2022 08:20:43 -0500
+Received: from mail-ej1-x634.google.com (mail-ej1-x634.google.com [IPv6:2a00:1450:4864:20::634])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53D9F25F;
+        Thu, 15 Dec 2022 05:20:42 -0800 (PST)
+Received: by mail-ej1-x634.google.com with SMTP id t17so52212484eju.1;
+        Thu, 15 Dec 2022 05:20:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=UHG2DQ/q3tdCjR3+JAIlJLfOPaVrBzMAXmKA5muIVjo=;
+        b=O2u/MK0hQn54Ffs39OhuZsWMjYRlhWISZrALEx40MtN2rVh3iFJ64EJczYyr2rewRl
+         aPN/F5LQ+mCwSH74U7YN6jO9KYtnH+6J452jQI7qWzMNj98SaGFmrOW6jYs2/kRWiylF
+         kGLgX1Z8sUu7Pku4wluW64TXDnNHB611nMpRMvXXOUZDgvdkfTVt+fpYFQ4mhSSj1nh4
+         VFnoTEw5CQIzQ/OejJFqeUMxEQFeZBe0jaiA5VZRzNTJQqXWV4PgF0CKy57SMLUq2wih
+         YBMkFFn77J5pU806AHEBBfy2NS+AD9VHki9nNXtLhgrlunQr66wQg9k+Hc9NMhSB/1A8
+         Vssw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v19udvftbSniCnGYGHf56v07WyW0/5U5GTfBbyBO90c=;
-        b=5wUuZ+BQkBv+S2t4iVrwXO18dZNXH7F0JEW/domo1GBQ0Vto2mTVn+uIbbO1bOeN/x
-         J22KwhjPRu1QRrgxHsInOlbuJGO0r8+oa/92jUmCQMDA82+TP9aKMxHtjLsPfuZ7ZrHc
-         K4dS/zWf3DSjwjK2zsGpOZSSl1DYvH2zDQrkcRPLgj+1UHWLGKtXUNT8yMYEacjoZbD3
-         cZ9HPA+hgu4CeIExHqy9WBoLuGhMLWkYBUZyP2ny3JWiq4RC1sEVwp7aSOvu44pT7usQ
-         QYIJbq8UEyrTu6PBpYKP6ueK2VymXh6R++BdQ2aNiltdCsh418YkJfCctqqA1UP0EEZo
-         sPQQ==
-X-Gm-Message-State: ANoB5pm+EM+dYc/NfvRGX6F0Ef0nq2fSbRuqK+9aTYG4BGvN+sXk1kHQ
-        oFebYZ5Ndx5cikezN0V5I7MiXNaE7L2QCCCYzv/HZEANs7yw
-X-Google-Smtp-Source: AA0mqf5zWAGLL9UBjbjeZ1bOxINhrzvPhsdG/fSsF/lRHV1F0vx2rXhHPfbMkgHrE5BWlCqh3vMRwBacp21CyA6j5aucZnCKP1qK
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UHG2DQ/q3tdCjR3+JAIlJLfOPaVrBzMAXmKA5muIVjo=;
+        b=TGuSwnOdlP+FR+yfZMBW56A590XXkb9RX3fN9A8DduDuakq1VYjG5zDFX1YvVwjWJQ
+         wvy2Z4GWSmQIwAAW9N7QGa0r4gCoXApCWCRlwdQoPbcMWBsiks473Wkz5fV7bvC0c3Pk
+         QnGxZR0JIRg7wuOHveSXKbPY3+uw8Bpw6tRjpUg6Ql5aqLfrZOk4GFqBtMVe9aZmKA6b
+         FW8Zaju/MmldIHvE1YbMm5gF9jpLjg70vuWf0cXsGY89fFVIsJOxC8QzeRe2yM/ain4c
+         LAX2cl6aanV+3No71dXAVrCseVgq+jCLUnv+AuFtI9XOeHAOlsBZRUjQX/n4fLZOMpMB
+         Apvg==
+X-Gm-Message-State: ANoB5pnpgoWWvCzcCy2ypHZgUVGX6vRgkM718aRlfPcqf8E79QIbQRuZ
+        Zc1t9M3HAuU37Txo6W/nwYtmayE3Pa7iSUt5ylw=
+X-Google-Smtp-Source: AA0mqf7CwzjnS9VrR+9xfqWcAfIDbwxwTeK7REnuDbDXTRA+q+Wc9kzW/kiM0XtlZN2oqPpJxLNrZ2iq+4TIQdmIySg=
+X-Received: by 2002:a17:907:a074:b0:7c1:bb5:5705 with SMTP id
+ ia20-20020a170907a07400b007c10bb55705mr11708113ejc.544.1671110440722; Thu, 15
+ Dec 2022 05:20:40 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a5d:88c3:0:b0:6d6:5fe4:8212 with SMTP id
- i3-20020a5d88c3000000b006d65fe48212mr46681325iol.180.1671106178714; Thu, 15
- Dec 2022 04:09:38 -0800 (PST)
-Date:   Thu, 15 Dec 2022 04:09:38 -0800
-In-Reply-To: <00000000000098830505eec4fe41@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000002a15a005efdcbab1@google.com>
-Subject: Re: [syzbot] BUG: unable to handle kernel paging request in path_openat
-From:   syzbot <syzbot+59a66cac604a6b49ecce@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+References: <20221214033512.659913-1-xiubli@redhat.com> <20221214033512.659913-2-xiubli@redhat.com>
+In-Reply-To: <20221214033512.659913-2-xiubli@redhat.com>
+From:   Ilya Dryomov <idryomov@gmail.com>
+Date:   Thu, 15 Dec 2022 14:20:29 +0100
+Message-ID: <CAOi1vP9Je-DnqUdYcBi_zSDUgj30aYrTeGq1MSwS66E7ptaTSg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/2] ceph: switch to vfs_inode_has_locks() to fix file
+ lock bug
+To:     xiubli@redhat.com
+Cc:     jlayton@kernel.org, ceph-devel@vger.kernel.org,
+        mchangir@redhat.com, lhenriques@suse.de, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+On Wed, Dec 14, 2022 at 4:35 AM <xiubli@redhat.com> wrote:
+>
+> From: Xiubo Li <xiubli@redhat.com>
+>
+> For the POSIX locks they are using the same owner, which is the
+> thread id. And multiple POSIX locks could be merged into single one,
+> so when checking whether the 'file' has locks may fail.
+>
+> For a file where some openers use locking and others don't is a
+> really odd usage pattern though. Locks are like stoplights -- they
+> only work if everyone pays attention to them.
+>
+> Just switch ceph_get_caps() to check whether any locks are set on
+> the inode. If there are POSIX/OFD/FLOCK locks on the file at the
+> time, we should set CHECK_FILELOCK, regardless of what fd was used
+> to set the lock.
+>
+> Cc: stable@vger.kernel.org
+> Cc: Jeff Layton <jlayton@kernel.org>
+> Fixes: ff5d913dfc71 ("ceph: return -EIO if read/write against filp that lost file locks")
+> Reviewed-by: Jeff Layton <jlayton@kernel.org>
+> Signed-off-by: Xiubo Li <xiubli@redhat.com>
+> ---
+>  fs/ceph/caps.c  | 2 +-
+>  fs/ceph/locks.c | 4 ----
+>  fs/ceph/super.h | 1 -
+>  3 files changed, 1 insertion(+), 6 deletions(-)
+>
+> diff --git a/fs/ceph/caps.c b/fs/ceph/caps.c
+> index 065e9311b607..948136f81fc8 100644
+> --- a/fs/ceph/caps.c
+> +++ b/fs/ceph/caps.c
+> @@ -2964,7 +2964,7 @@ int ceph_get_caps(struct file *filp, int need, int want, loff_t endoff, int *got
+>
+>         while (true) {
+>                 flags &= CEPH_FILE_MODE_MASK;
+> -               if (atomic_read(&fi->num_locks))
+> +               if (vfs_inode_has_locks(inode))
+>                         flags |= CHECK_FILELOCK;
+>                 _got = 0;
+>                 ret = try_get_cap_refs(inode, need, want, endoff,
+> diff --git a/fs/ceph/locks.c b/fs/ceph/locks.c
+> index 3e2843e86e27..b191426bf880 100644
+> --- a/fs/ceph/locks.c
+> +++ b/fs/ceph/locks.c
+> @@ -32,18 +32,14 @@ void __init ceph_flock_init(void)
+>
+>  static void ceph_fl_copy_lock(struct file_lock *dst, struct file_lock *src)
+>  {
+> -       struct ceph_file_info *fi = dst->fl_file->private_data;
+>         struct inode *inode = file_inode(dst->fl_file);
+>         atomic_inc(&ceph_inode(inode)->i_filelock_ref);
+> -       atomic_inc(&fi->num_locks);
+>  }
+>
+>  static void ceph_fl_release_lock(struct file_lock *fl)
+>  {
+> -       struct ceph_file_info *fi = fl->fl_file->private_data;
+>         struct inode *inode = file_inode(fl->fl_file);
+>         struct ceph_inode_info *ci = ceph_inode(inode);
+> -       atomic_dec(&fi->num_locks);
+>         if (atomic_dec_and_test(&ci->i_filelock_ref)) {
+>                 /* clear error when all locks are released */
+>                 spin_lock(&ci->i_ceph_lock);
+> diff --git a/fs/ceph/super.h b/fs/ceph/super.h
+> index 14454f464029..e7662ff6f149 100644
+> --- a/fs/ceph/super.h
+> +++ b/fs/ceph/super.h
+> @@ -804,7 +804,6 @@ struct ceph_file_info {
+>         struct list_head rw_contexts;
+>
+>         u32 filp_gen;
+> -       atomic_t num_locks;
+>  };
+>
+>  struct ceph_dir_file_info {
+> --
+> 2.31.1
+>
 
-HEAD commit:    041fae9c105a Merge tag 'f2fs-for-6.2-rc1' of git://git.ker..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=154d4400480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bc96ce6808e37967
-dashboard link: https://syzkaller.appspot.com/bug?extid=59a66cac604a6b49ecce
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=104af21b880000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b91d77880000
+Hi Xiubo,
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/09a117be80ce/disk-041fae9c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ac71ead731f7/vmlinux-041fae9c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f39b53cf5591/bzImage-041fae9c.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/fc2c06c4a4bb/mount_0.gz
+You marked this for stable but there is an obvious dependency on
+vfs_inode_has_locks() that just got merged for 6.2-rc1.  Are you
+intending to take it into stable kernels as well?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+59a66cac604a6b49ecce@syzkaller.appspotmail.com
+Thanks,
 
-ntfs: (device loop0): check_windows_hibernation_status(): Failed to find inode number for hiberfil.sys.
-ntfs: (device loop0): load_system_files(): Failed to determine if Windows is hibernated.  Mounting read-only.  Run chkdsk.
-ntfs: (device loop0): ntfs_lookup(): ntfs_lookup_ino_by_name() failed with error code 16777149.
-BUG: unable to handle page fault for address: ffffffffff0000ab
-#PF: supervisor read access in kernel mode
-#PF: error_code(0x0000) - not-present page
-PGD d08f067 P4D d08f067 PUD d091067 PMD d0b1067 PTE 0
-Oops: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 5072 Comm: syz-executor156 Not tainted 6.1.0-syzkaller-10971-g041fae9c105a #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-RIP: 0010:lookup_open fs/namei.c:3405 [inline]
-RIP: 0010:open_last_lookups fs/namei.c:3481 [inline]
-RIP: 0010:path_openat+0x1147/0x2dd0 fs/namei.c:3711
-Code: 48 89 d8 48 89 5c 24 10 48 83 c3 68 49 89 de 49 c1 ee 03 43 80 3c 26 00 74 08 48 89 df e8 61 7c ed ff 48 89 9c 24 c0 00 00 00 <4c> 8b 23 8b 9c 24 80 00 00 00 83 e3 40 31 ff 89 de e8 63 e6 97 ff
-RSP: 0018:ffffc90003bcf940 EFLAGS: 00010246
-RAX: ffffffffff000043 RBX: ffffffffff0000ab RCX: 0000000003bcf803
-RDX: 0000000000000001 RSI: ffffffff8aedc900 RDI: ffffffff8b4bbba0
-RBP: ffffc90003bcfb70 R08: dffffc0000000000 R09: fffffbfff1d30a3e
-R10: fffffbfff1d30a3e R11: 1ffffffff1d30a3d R12: dffffc0000000000
-R13: ffffc90003bcfbc0 R14: 1fffffffffe00015 R15: 1ffff1100e6b97a0
-FS:  00005555572d3300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff0000ab CR3: 0000000027baf000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- do_filp_open+0x264/0x4f0 fs/namei.c:3741
- do_sys_openat2+0x124/0x4e0 fs/open.c:1310
- do_sys_open fs/open.c:1326 [inline]
- __do_sys_creat fs/open.c:1402 [inline]
- __se_sys_creat fs/open.c:1396 [inline]
- __x64_sys_creat+0x11f/0x160 fs/open.c:1396
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fa47a6ba749
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 51 14 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 c0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe9f456828 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
-RAX: ffffffffffffffda RBX: 0031656c69662f2e RCX: 00007fa47a6ba749
-RDX: 00007fa47a678dc3 RSI: 0000000000000000 RDI: 0000000020000080
-RBP: 00007fa47a679fe0 R08: 000000000001ee42 R09: 0000000000000000
-R10: 00007ffe9f4566f0 R11: 0000000000000246 R12: 00007fa47a67a070
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-Modules linked in:
-CR2: ffffffffff0000ab
----[ end trace 0000000000000000 ]---
-RIP: 0010:lookup_open fs/namei.c:3405 [inline]
-RIP: 0010:open_last_lookups fs/namei.c:3481 [inline]
-RIP: 0010:path_openat+0x1147/0x2dd0 fs/namei.c:3711
-Code: 48 89 d8 48 89 5c 24 10 48 83 c3 68 49 89 de 49 c1 ee 03 43 80 3c 26 00 74 08 48 89 df e8 61 7c ed ff 48 89 9c 24 c0 00 00 00 <4c> 8b 23 8b 9c 24 80 00 00 00 83 e3 40 31 ff 89 de e8 63 e6 97 ff
-RSP: 0018:ffffc90003bcf940 EFLAGS: 00010246
-RAX: ffffffffff000043 RBX: ffffffffff0000ab RCX: 0000000003bcf803
-RDX: 0000000000000001 RSI: ffffffff8aedc900 RDI: ffffffff8b4bbba0
-RBP: ffffc90003bcfb70 R08: dffffc0000000000 R09: fffffbfff1d30a3e
-R10: fffffbfff1d30a3e R11: 1ffffffff1d30a3d R12: dffffc0000000000
-R13: ffffc90003bcfbc0 R14: 1fffffffffe00015 R15: 1ffff1100e6b97a0
-FS:  00005555572d3300(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffffffffff0000ab CR3: 0000000027baf000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	48 89 d8             	mov    %rbx,%rax
-   3:	48 89 5c 24 10       	mov    %rbx,0x10(%rsp)
-   8:	48 83 c3 68          	add    $0x68,%rbx
-   c:	49 89 de             	mov    %rbx,%r14
-   f:	49 c1 ee 03          	shr    $0x3,%r14
-  13:	43 80 3c 26 00       	cmpb   $0x0,(%r14,%r12,1)
-  18:	74 08                	je     0x22
-  1a:	48 89 df             	mov    %rbx,%rdi
-  1d:	e8 61 7c ed ff       	callq  0xffed7c83
-  22:	48 89 9c 24 c0 00 00 	mov    %rbx,0xc0(%rsp)
-  29:	00
-* 2a:	4c 8b 23             	mov    (%rbx),%r12 <-- trapping instruction
-  2d:	8b 9c 24 80 00 00 00 	mov    0x80(%rsp),%ebx
-  34:	83 e3 40             	and    $0x40,%ebx
-  37:	31 ff                	xor    %edi,%edi
-  39:	89 de                	mov    %ebx,%esi
-  3b:	e8 63 e6 97 ff       	callq  0xff97e6a3
-
+                Ilya
