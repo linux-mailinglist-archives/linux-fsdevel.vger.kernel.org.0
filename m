@@ -2,70 +2,75 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4BA7764E23A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Dec 2022 21:14:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7EF7764E29D
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Dec 2022 21:57:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229939AbiLOUOy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 15 Dec 2022 15:14:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58026 "EHLO
+        id S229718AbiLOU5o (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Dec 2022 15:57:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46030 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229543AbiLOUOw (ORCPT
+        with ESMTP id S229462AbiLOU5n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 15 Dec 2022 15:14:52 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2989430F71
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Dec 2022 12:14:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671135244;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=4SAnb8xM8pzY328qotBad3LRnalliWFM+XFPh7Dppkw=;
-        b=iDb/pL5ePJG4trr7MqQMDUZbs4EmD+kwBxd+pCCy5/YM/WTB51EwlV8A95JpGB8faV5S/8
-        XkGnq8nfxZGjKmPJuscOiOxh/8cOO5nSIXQLdd8nzQlKGgFPk4dOokO62IrB/7MTpzNF3W
-        f9TpENA2e9dpV/QyTGehsE2XFSkn5Z0=
-Received: from mail-yb1-f199.google.com (mail-yb1-f199.google.com
- [209.85.219.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-659--cR2oq0eNWKRh7tB7HJGLA-1; Thu, 15 Dec 2022 15:14:03 -0500
-X-MC-Unique: -cR2oq0eNWKRh7tB7HJGLA-1
-Received: by mail-yb1-f199.google.com with SMTP id k7-20020a256f07000000b006cbcc030bc8so13958ybc.18
-        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Dec 2022 12:14:03 -0800 (PST)
+        Thu, 15 Dec 2022 15:57:43 -0500
+Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA1D6528AE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Dec 2022 12:57:41 -0800 (PST)
+Received: by mail-pf1-x42e.google.com with SMTP id c13so435700pfp.5
+        for <linux-fsdevel@vger.kernel.org>; Thu, 15 Dec 2022 12:57:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FGlgG65UXPdq7YvcqlgjjW36/ERNfTZqDYuDWENGbu8=;
+        b=v4T1uygL5ZIuGoU1nKeJ2S6HM0bKfVT8vOSMQRBFHs7ZdQOKZm2ZLafTTVXRMN8n2r
+         0ZUf2QIvTfXYMpoD2jwtabM9kr9JGGrRrkIEN9NqLlvXlGArXNJiumj3A1k4tESITmdl
+         WFb466dCE568BXZh+aYXBerMt29s5RS9bqmeHNLzLmzmwKtqE5trAqqK7JgBKwkVdHu6
+         w9zX9He9+eY5aI2OVhjUUaIJOFMe1/7ZfQbxAAH/ZdRT9onbGCy5fH54dPZBeS+kdNKx
+         2KSBE5vriWptao3hYIm+d/+RsGLbIWHanDkJJqFByjs/TgNHNI767QKuZmM+mF6a5p+6
+         26ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4SAnb8xM8pzY328qotBad3LRnalliWFM+XFPh7Dppkw=;
-        b=F0hYhpqFCapet26j1TQEuWxlQeuWNwOKB86kiKQdPazNWIoxBg19FkI2reTyPyyPgl
-         iYQm5DkrFoWPCxG8xfg8zaahcH+W4ts+KfDN76Q/JRvf6DBqtyi2tI1z54cao6lbGsX/
-         7oMKLQlsp2u/+qmfntPRH3ju2rEHfjXHnFXH9KCLfBoQSU5P2jbBOFMO334p3k5uI0rF
-         inFrF8obeXz4qihFqfxzP6DDme2PjRQFTjmkmzh0YIl1kQJxRZ2A6GyjTbDR0xoXb9p0
-         +kxnwY03OXeX/9VJIhkS8GZh3Vc1GjgFrskVM1dxWHuCyMAsnMmhLFmA2nLKGf3rxdzj
-         iThg==
-X-Gm-Message-State: ANoB5pmn0BHcgtPvdLhVYmTTdZY/VFSEhyeQKCz0f8GTvJQjQyckJG9E
-        YQtwJFysfevrpyYRunWFd+5Jsw6MKfF5j8RdWXIpdyFa8LhQdmgnv/N04U4cNIliywljx8idi1h
-        T1QanPdKoMGicpx6WiR2+ph59Epto0gl0BcLKzpRdog==
-X-Received: by 2002:a25:5d5:0:b0:6f9:5e19:4729 with SMTP id 204-20020a2505d5000000b006f95e194729mr43103238ybf.311.1671135242060;
-        Thu, 15 Dec 2022 12:14:02 -0800 (PST)
-X-Google-Smtp-Source: AA0mqf6J2MzYzMecMxwHefxxY6C66d+L8mAnjoVE3bvCq16qlNYB82xOiMyGxoxXsR3gvnJDlvCwzqfKxxd1HTPgniE=
-X-Received: by 2002:a25:5d5:0:b0:6f9:5e19:4729 with SMTP id
- 204-20020a2505d5000000b006f95e194729mr43103232ybf.311.1671135241744; Thu, 15
- Dec 2022 12:14:01 -0800 (PST)
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FGlgG65UXPdq7YvcqlgjjW36/ERNfTZqDYuDWENGbu8=;
+        b=nXanMzBJn+Iq+AH0pI4efq3XVzmxPFOQxVE0NPaHbVph+uGV60y4Ds/E52lVvdzG7r
+         baDjbaHLFNvRpytBDb5TAgbQgaNM+4xTjG99zMHdrtR5U5eMVxZJBrArpNeSMs6VzeFn
+         CNcZt02w0Ayzy1TCh8QAO+81Txp/v9EThVMzXZah83wFkdoBiy4F0WaNk7t6ZyRpVRIK
+         zmIQFj+HvJ0Q80lGzxlZlPwcfNh8L+pceL8wjVZUdhxPssXNSsbV7FONqmH4K3nzcAFL
+         DenyH/wQZrF6IxeZBBk2spUzPaGhmnPlco6LO1YGh9UGBzBVp65/j3VjP1viME5Rxwan
+         ZSYw==
+X-Gm-Message-State: ANoB5pklowr51QLiyp5+sSWN2vo+gyjDcqAiCDY4cXmk+d/WG0L2fBDX
+        JPH83YRE5YxPVMNDc86y1yV/+g==
+X-Google-Smtp-Source: AA0mqf7+C0W4VsYl4Q0pz20esq6X7Hc9K9Y5ZTA8oeFHjubSafBeKjFUoLBintjBMQS1JAPSm9kBJg==
+X-Received: by 2002:a62:53c5:0:b0:563:cc80:fb66 with SMTP id h188-20020a6253c5000000b00563cc80fb66mr27930943pfb.0.1671137861454;
+        Thu, 15 Dec 2022 12:57:41 -0800 (PST)
+Received: from dread.disaster.area (pa49-181-138-158.pa.nsw.optusnet.com.au. [49.181.138.158])
+        by smtp.gmail.com with ESMTPSA id k18-20020aa79992000000b0056d7cc80ea4sm36829pfh.110.2022.12.15.12.57.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 15 Dec 2022 12:57:40 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1p5vIP-008sJh-34; Fri, 16 Dec 2022 07:57:37 +1100
+Date:   Fri, 16 Dec 2022 07:57:37 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Andrey Albershteyn <aalbersh@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 00/11] fs-verity support for XFS
+Message-ID: <20221215205737.GD1971568@dread.disaster.area>
+References: <20221213172935.680971-1-aalbersh@redhat.com>
+ <Y5jllLwXlfB7BzTz@sol.localdomain>
+ <20221213221139.GZ3600936@dread.disaster.area>
+ <Y5ltzp6yeMo1oDSk@sol.localdomain>
+ <20221214230632.GA1971568@dread.disaster.area>
+ <Y5rDCcYGgH72Wn/e@sol.localdomain>
 MIME-Version: 1.0
-References: <Y5l9zhhyOE+RNVgO@infradead.org> <20221214102409.1857526-1-agruenba@redhat.com>
-In-Reply-To: <20221214102409.1857526-1-agruenba@redhat.com>
-From:   Andreas Gruenbacher <agruenba@redhat.com>
-Date:   Thu, 15 Dec 2022 21:13:50 +0100
-Message-ID: <CAHc6FU7pgH+nLS_0WFx8aFBenKtNy0z6DBiyAUSdjix0t57t5g@mail.gmail.com>
-Subject: Re: [PATCH v2] iomap: Move page_done callback under the folio lock
-To:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J. Wong" <djwong@kernel.org>
-Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y5rDCcYGgH72Wn/e@sol.localdomain>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,107 +78,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 14, 2022 at 11:24 AM Andreas Gruenbacher
-<agruenba@redhat.com> wrote:
->
-> Move the ->page_done() call in iomap_write_end() under the folio lock.
-> This closes a race between journaled data writes and the shrinker in
-> gfs2.  What's happening is that gfs2_iomap_page_done() is called after
-> the page has been unlocked, so try_to_free_buffers() can come in and
-> free the buffers while gfs2_iomap_page_done() is trying to add them to
-> the current transaction.  The folio lock prevents that from happening.
->
-> The only current user of ->page_done() is gfs2, so other filesystems are
-> not affected.  Still, to catch out any new users, switch from page to
-> folio in ->page_done().
->
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> ---
->  fs/gfs2/bmap.c         |  7 ++++---
->  fs/iomap/buffered-io.c |  4 ++--
->  include/linux/iomap.h  | 10 +++++-----
->  3 files changed, 11 insertions(+), 10 deletions(-)
->
-> diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-> index e7537fd305dd..c4ee47f8e499 100644
-> --- a/fs/gfs2/bmap.c
-> +++ b/fs/gfs2/bmap.c
-> @@ -968,14 +968,15 @@ static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
->  }
->
->  static void gfs2_iomap_page_done(struct inode *inode, loff_t pos,
-> -                                unsigned copied, struct page *page)
-> +                                unsigned copied, struct folio *folio)
->  {
->         struct gfs2_trans *tr = current->journal_info;
->         struct gfs2_inode *ip = GFS2_I(inode);
->         struct gfs2_sbd *sdp = GFS2_SB(inode);
->
-> -       if (page && !gfs2_is_stuffed(ip))
-> -               gfs2_page_add_databufs(ip, page, offset_in_page(pos), copied);
-> +       if (folio && !gfs2_is_stuffed(ip))
-> +               gfs2_page_add_databufs(ip, &folio->page, offset_in_page(pos),
-> +                                      copied);
->
->         if (tr->tr_num_buf_new)
->                 __mark_inode_dirty(inode, I_DIRTY_DATASYNC);
+On Wed, Dec 14, 2022 at 10:47:37PM -0800, Eric Biggers wrote:
+> On Thu, Dec 15, 2022 at 10:06:32AM +1100, Dave Chinner wrote:
+> > > Well, my proposal at
+> > > https://lore.kernel.org/r/20221028224539.171818-2-ebiggers@kernel.org is to keep
+> > > tracking the "verified" status at the individual Merkle tree block level, by
+> > > adding a bitmap fsverity_info::hash_block_verified.  That is part of the
+> > > fs/verity/ infrastructure, and all filesystems would be able to use it.
+> > 
+> > Yeah, i had a look at that rewrite of the verification code last
+> > night - I get the gist of what it is doing, but a single patch of
+> > that complexity is largely impossible to sanely review...
+> 
+> Thanks for taking a look at it.  It doesn't really lend itself to being split
+> up, unfortunately, but I'll see what I can do.
+> 
+> > Correct me if I'm wrong, but won't using a bitmap with 1 bit per
+> > verified block cause problems with contiguous memory allocation
+> > pretty quickly? i.e. a 64kB bitmap only tracks 512k blocks, which is
+> > only 2GB of merkle tree data. Hence at file sizes of 100+GB, the
+> > bitmap would have to be kvmalloc()d to guarantee allocation will
+> > succeed.
+> > 
+> > I'm not really worried about the bitmap memory usage, just that it
+> > handles large contiguous allocations sanely. I suspect we may
+> > eventually need a sparse bitmap (e.g. the old btrfs bit-radix
+> > implementation) to track verification in really large files
+> > efficiently.
+> 
+> Well, that's why my patch uses kvmalloc() to allocate the bitmap.
+> 
+> I did originally think it was going to have to be a sparse bitmap that ties into
+> the shrinker so that pages of it can be evicted.  But if you do the math, the
+> required bitmap size is only 1 / 2^22 the size of the file, assuming the Merkle
+> tree uses SHA-256 and 4K blocks.  So a 100MB file only needs a 24-byte bitmap,
+> and the bitmap for any file under 17GB fits in a 4K page.
+> 
+> My patch puts an arbitrary limit at a 1 MiB bitmap, which would be a 4.4TB file.
+> 
+> It's not ideal to say "4 TB Ought To Be Enough For Anybody".  But it does feel
+> that it's not currently worth the extra complexity and runtime overhead of
+> implementing a full-blown sparse bitmap with cache eviction support, when no one
+> currently has a use case for fsverity on files anywhere near that large.
 
-This is still screwed up. We really need to unlock the page before
-calling into __mark_inode_dirty() and ending the transaction. The
-current page_done() hook would force us to then re-lock the page just
-so that the caller can unlock it again. This just doesn't make sense,
-particularly since the page_prepare and page_done hooks only exist to
-allow gfs2 to do data journaling via iomap. I'll follow up with a more
-useful approach ...
+I think we can live with that for the moment, but I suspect that 4TB
+filesize limit will become an issue sooner rather than later. What
+will happen if someone tries to measure a file larger than this
+limit? What's the failure mode?
 
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index 91ee0b308e13..d988c1bedf70 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -714,12 +714,12 @@ static size_t iomap_write_end(struct iomap_iter *iter, loff_t pos, size_t len,
->                 i_size_write(iter->inode, pos + ret);
->                 iter->iomap.flags |= IOMAP_F_SIZE_CHANGED;
->         }
-> +       if (page_ops && page_ops->page_done)
-> +               page_ops->page_done(iter->inode, pos, ret, folio);
->         folio_unlock(folio);
->
->         if (old_size < pos)
->                 pagecache_isize_extended(iter->inode, old_size, pos);
-> -       if (page_ops && page_ops->page_done)
-> -               page_ops->page_done(iter->inode, pos, ret, &folio->page);
->         folio_put(folio);
->
->         if (ret < len)
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 238a03087e17..bd6d80453726 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -116,18 +116,18 @@ static inline bool iomap_inline_data_valid(const struct iomap *iomap)
->
->  /*
->   * When a filesystem sets page_ops in an iomap mapping it returns, page_prepare
-> - * and page_done will be called for each page written to.  This only applies to
-> - * buffered writes as unbuffered writes will not typically have pages
-> + * and page_done will be called for each folio written to.  This only applies
-> + * to buffered writes as unbuffered writes will not typically have folios
->   * associated with them.
->   *
->   * When page_prepare succeeds, page_done will always be called to do any
-> - * cleanup work necessary.  In that page_done call, @page will be NULL if the
-> - * associated page could not be obtained.
-> + * cleanup work necessary.  In that page_done call, @folio will be NULL if the
-> + * associated folio could not be obtained.
->   */
->  struct iomap_page_ops {
->         int (*page_prepare)(struct inode *inode, loff_t pos, unsigned len);
->         void (*page_done)(struct inode *inode, loff_t pos, unsigned copied,
-> -                       struct page *page);
-> +                       struct folio *folio);
->  };
->
->  /*
-> --
-> 2.38.1
->
+Cheers,
 
+Dave.
+
+-- 
+Dave Chinner
+david@fromorbit.com
