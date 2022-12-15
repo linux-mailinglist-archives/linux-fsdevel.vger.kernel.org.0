@@ -2,296 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9BB3E64D515
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Dec 2022 02:49:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DDEAE64D69B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 15 Dec 2022 07:47:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229631AbiLOBs7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 14 Dec 2022 20:48:59 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43510 "EHLO
+        id S229601AbiLOGro (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 15 Dec 2022 01:47:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229626AbiLOBsr (ORCPT
+        with ESMTP id S229451AbiLOGrm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 14 Dec 2022 20:48:47 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 508FA537FC;
-        Wed, 14 Dec 2022 17:48:46 -0800 (PST)
+        Thu, 15 Dec 2022 01:47:42 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7DAD3E0BF;
+        Wed, 14 Dec 2022 22:47:41 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D095561CD3;
-        Thu, 15 Dec 2022 01:48:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B56FDC433EF;
-        Thu, 15 Dec 2022 01:48:43 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 7E6B8B81A26;
+        Thu, 15 Dec 2022 06:47:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0423AC433EF;
+        Thu, 15 Dec 2022 06:47:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671068925;
-        bh=ojlxsqHj3+udjuB/zrA6wUVW60/Z8ZKDNPvSfZT7Efw=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=dOd9p0hIwuZZIOBJQh5ug6BMt9lDvWcd6AUyY9paTGx2xxa9gHoWUE+aKWjZRsnwI
-         k5UdHjluDM1CEQbv0150adrYFUxyko/PBS9fJB9Tvu1kMZ5JNC86+sRmS/7I8iMytO
-         CwW4T1eyL+ImKY8ASgyk54byohY1nxG1maXQBkCzWoGQtasLa/EPTDxorocKr2dHHB
-         /9/3wX4gpJ0Sh71mwdByqZYaA13wHrhHgLMuN+GThj0c2E1iqM0Xx0h5NmUQQArsDu
-         pvIGbFRWIGl55UMnatv8rWT8iBIb0FO+UrJjA+XdwJFay6cCdV91dU10jmqYwk9OXI
-         oUYUdFN/yFZFg==
-Message-ID: <6770f692-490e-34fc-46f8-4f65aa071f58@kernel.org>
-Date:   Thu, 15 Dec 2022 09:48:41 +0800
+        s=k20201202; t=1671086859;
+        bh=tY1pH6u316sgaqlU1fqZ7NzWxeOJOnB62LOoW3a5ljE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kgzBkdCF2tSJ3KQgbq9KSDciEMgwfOLZ2fQ+fuuyx/eIdduS7mAAiXANh4uAMg1DE
+         huO/dZdVrsBGjvQpM1Q1hL+C5VMRTUiJ9JyJvGcNaAziD/UlisTi9SFz8rz/5Dj7YI
+         0irU9qmnLRhwgYd9HQpqydhbsfDHPtz6p0p8gudcYk86LKbTFjq2Qg8qYwBQoG7oLA
+         k/KFeK7xfoqri64UFCqjTIE5rwzChBpM+/Kt4/qeEKiT3BggXxwDHHVUyhzln2EQtY
+         AKaLiJiV/9BwpNdg3ua2Sie/F8PbDKxO1g3OcnYxCmWrk/sb/XXci4NzvPk9gKPLLu
+         aHmDnqpts+TUw==
+Date:   Wed, 14 Dec 2022 22:47:37 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Andrey Albershteyn <aalbersh@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH 00/11] fs-verity support for XFS
+Message-ID: <Y5rDCcYGgH72Wn/e@sol.localdomain>
+References: <20221213172935.680971-1-aalbersh@redhat.com>
+ <Y5jllLwXlfB7BzTz@sol.localdomain>
+ <20221213221139.GZ3600936@dread.disaster.area>
+ <Y5ltzp6yeMo1oDSk@sol.localdomain>
+ <20221214230632.GA1971568@dread.disaster.area>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.5.0
-Subject: Re: [RFC PATCH] f2fs: Convert f2fs_write_cache_pages() to use
- filemap_get_folios_tag()
-Content-Language: en-US
-To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
-        fengnanchang@gmail.com, linux-fsdevel@vger.kernel.org
-References: <0a95ba7b-9335-ce03-0f47-5d9f4cce988f@kernel.org>
- <20221212191317.9730-1-vishal.moola@gmail.com>
-From:   Chao Yu <chao@kernel.org>
-In-Reply-To: <20221212191317.9730-1-vishal.moola@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221214230632.GA1971568@dread.disaster.area>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022/12/13 3:13, Vishal Moola (Oracle) wrote:
-> Converted the function to use a folio_batch instead of pagevec. This is in
-> preparation for the removal of find_get_pages_range_tag().
+On Thu, Dec 15, 2022 at 10:06:32AM +1100, Dave Chinner wrote:
+> > Well, my proposal at
+> > https://lore.kernel.org/r/20221028224539.171818-2-ebiggers@kernel.org is to keep
+> > tracking the "verified" status at the individual Merkle tree block level, by
+> > adding a bitmap fsverity_info::hash_block_verified.  That is part of the
+> > fs/verity/ infrastructure, and all filesystems would be able to use it.
 > 
-> Also modified f2fs_all_cluster_page_ready to take in a folio_batch instead
-> of pagevec. This does NOT support large folios. The function currently
-> only utilizes folios of size 1 so this shouldn't cause any issues right
-> now.
+> Yeah, i had a look at that rewrite of the verification code last
+> night - I get the gist of what it is doing, but a single patch of
+> that complexity is largely impossible to sanely review...
+
+Thanks for taking a look at it.  It doesn't really lend itself to being split
+up, unfortunately, but I'll see what I can do.
+
+> Correct me if I'm wrong, but won't using a bitmap with 1 bit per
+> verified block cause problems with contiguous memory allocation
+> pretty quickly? i.e. a 64kB bitmap only tracks 512k blocks, which is
+> only 2GB of merkle tree data. Hence at file sizes of 100+GB, the
+> bitmap would have to be kvmalloc()d to guarantee allocation will
+> succeed.
 > 
-> This version of the patch limits the number of pages fetched to
-> F2FS_ONSTACK_PAGES. If that ever happens, update the start index here
-> since filemap_get_folios_tag() updates the index to be after the last
-> found folio, not necessarily the last used page.
-> 
-> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
-> ---
-> 
-> Let me know if you prefer this version and I'll include it in v5
-> of the patch series when I rebase it after the merge window.
-> 
-> ---
->   fs/f2fs/data.c | 86 ++++++++++++++++++++++++++++++++++----------------
->   1 file changed, 59 insertions(+), 27 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index a71e818cd67b..1703e353f0e0 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -2939,6 +2939,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->   	int ret = 0;
->   	int done = 0, retry = 0;
->   	struct page *pages[F2FS_ONSTACK_PAGES];
-> +	struct folio_batch fbatch;
->   	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
->   	struct bio *bio = NULL;
->   	sector_t last_block;
-> @@ -2959,6 +2960,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->   		.private = NULL,
->   	};
->   #endif
-> +	int nr_folios, p, idx;
->   	int nr_pages;
->   	pgoff_t index;
->   	pgoff_t end;		/* Inclusive */
-> @@ -2969,6 +2971,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->   	int submitted = 0;
->   	int i;
->   
-> +	folio_batch_init(&fbatch);
-> +
->   	if (get_dirty_pages(mapping->host) <=
->   				SM_I(F2FS_M_SB(mapping))->min_hot_blocks)
->   		set_inode_flag(mapping->host, FI_HOT_DATA);
-> @@ -2994,13 +2998,38 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->   		tag_pages_for_writeback(mapping, index, end);
->   	done_index = index;
->   	while (!done && !retry && (index <= end)) {
-> -		nr_pages = find_get_pages_range_tag(mapping, &index, end,
-> -				tag, F2FS_ONSTACK_PAGES, pages);
-> -		if (nr_pages == 0)
-> +		nr_pages = 0;
-> +again:
-> +		nr_folios = filemap_get_folios_tag(mapping, &index, end,
-> +				tag, &fbatch);
-> +		if (nr_folios == 0) {
-> +			if (nr_pages)
-> +				goto write;
->   			break;
-> +		}
->   
-> +		for (i = 0; i < nr_folios; i++) {
-> +			struct folio* folio = fbatch.folios[i];
-> +
-> +			idx = 0;
-> +			p = folio_nr_pages(folio);
-> +add_more:
-> +			pages[nr_pages] = folio_page(folio,idx);
-> +			folio_ref_inc(folio);
+> I'm not really worried about the bitmap memory usage, just that it
+> handles large contiguous allocations sanely. I suspect we may
+> eventually need a sparse bitmap (e.g. the old btrfs bit-radix
+> implementation) to track verification in really large files
+> efficiently.
 
-It looks if CONFIG_LRU_GEN is not set, folio_ref_inc() does nothing. For those
-folios recorded in pages array, we need to call folio_get() here to add one more
-reference on each of them?
+Well, that's why my patch uses kvmalloc() to allocate the bitmap.
 
-> +			if (++nr_pages == F2FS_ONSTACK_PAGES) {
-> +				index = folio->index + idx + 1;
-> +				folio_batch_release(&fbatch);
+I did originally think it was going to have to be a sparse bitmap that ties into
+the shrinker so that pages of it can be evicted.  But if you do the math, the
+required bitmap size is only 1 / 2^22 the size of the file, assuming the Merkle
+tree uses SHA-256 and 4K blocks.  So a 100MB file only needs a 24-byte bitmap,
+and the bitmap for any file under 17GB fits in a 4K page.
 
-Otherwise after folio_batch_release(), it may cause use-after-free issue
-when accessing pages array? Or am I missing something?
+My patch puts an arbitrary limit at a 1 MiB bitmap, which would be a 4.4TB file.
 
-> +				goto write;
-> +			}
-> +			if (++idx < p)
-> +				goto add_more;
-> +		}
-> +		folio_batch_release(&fbatch);
-> +		goto again;
-> +write:
->   		for (i = 0; i < nr_pages; i++) {
->   			struct page *page = pages[i];
-> +			struct folio *folio = page_folio(page);
->   			bool need_readd;
->   readd:
->   			need_readd = false;
-> @@ -3017,7 +3046,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->   				}
->   
->   				if (!f2fs_cluster_can_merge_page(&cc,
-> -								page->index)) {
-> +								folio->index)) {
->   					ret = f2fs_write_multi_pages(&cc,
->   						&submitted, wbc, io_type);
->   					if (!ret)
-> @@ -3026,27 +3055,28 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->   				}
->   
->   				if (unlikely(f2fs_cp_error(sbi)))
-> -					goto lock_page;
-> +					goto lock_folio;
->   
->   				if (!f2fs_cluster_is_empty(&cc))
-> -					goto lock_page;
-> +					goto lock_folio;
->   
->   				if (f2fs_all_cluster_page_ready(&cc,
->   					pages, i, nr_pages, true))
-> -					goto lock_page;
-> +					goto lock_folio;
->   
->   				ret2 = f2fs_prepare_compress_overwrite(
->   							inode, &pagep,
-> -							page->index, &fsdata);
-> +							folio->index, &fsdata);
->   				if (ret2 < 0) {
->   					ret = ret2;
->   					done = 1;
->   					break;
->   				} else if (ret2 &&
->   					(!f2fs_compress_write_end(inode,
-> -						fsdata, page->index, 1) ||
-> +						fsdata, folio->index, 1) ||
->   					 !f2fs_all_cluster_page_ready(&cc,
-> -						pages, i, nr_pages, false))) {
-> +						pages, i, nr_pages,
-> +						false))) {
->   					retry = 1;
->   					break;
->   				}
-> @@ -3059,46 +3089,47 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->   				break;
->   			}
->   #ifdef CONFIG_F2FS_FS_COMPRESSION
-> -lock_page:
-> +lock_folio:
->   #endif
-> -			done_index = page->index;
-> +			done_index = folio->index;
->   retry_write:
-> -			lock_page(page);
-> +			folio_lock(folio);
->   
-> -			if (unlikely(page->mapping != mapping)) {
-> +			if (unlikely(folio->mapping != mapping)) {
->   continue_unlock:
-> -				unlock_page(page);
-> +				folio_unlock(folio);
->   				continue;
->   			}
->   
-> -			if (!PageDirty(page)) {
-> +			if (!folio_test_dirty(folio)) {
->   				/* someone wrote it for us */
->   				goto continue_unlock;
->   			}
->   
-> -			if (PageWriteback(page)) {
-> +			if (folio_test_writeback(folio)) {
->   				if (wbc->sync_mode != WB_SYNC_NONE)
-> -					f2fs_wait_on_page_writeback(page,
-> +					f2fs_wait_on_page_writeback(
-> +							&folio->page,
->   							DATA, true, true);
->   				else
->   					goto continue_unlock;
->   			}
->   
-> -			if (!clear_page_dirty_for_io(page))
-> +			if (!folio_clear_dirty_for_io(folio))
->   				goto continue_unlock;
->   
->   #ifdef CONFIG_F2FS_FS_COMPRESSION
->   			if (f2fs_compressed_file(inode)) {
-> -				get_page(page);
-> -				f2fs_compress_ctx_add_page(&cc, page);
-> +				folio_get(folio);
-> +				f2fs_compress_ctx_add_page(&cc, &folio->page);
->   				continue;
->   			}
->   #endif
-> -			ret = f2fs_write_single_data_page(page, &submitted,
-> -					&bio, &last_block, wbc, io_type,
-> -					0, true);
-> +			ret = f2fs_write_single_data_page(&folio->page,
-> +					&submitted, &bio, &last_block,
-> +					wbc, io_type, 0, true);
->   			if (ret == AOP_WRITEPAGE_ACTIVATE)
-> -				unlock_page(page);
-> +				folio_unlock(folio);
->   #ifdef CONFIG_F2FS_FS_COMPRESSION
->   result:
->   #endif
-> @@ -3122,7 +3153,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->   					}
->   					goto next;
->   				}
-> -				done_index = page->index + 1;
-> +				done_index = folio->index +
-> +					folio_nr_pages(folio);
->   				done = 1;
->   				break;
->   			}
-> @@ -3136,7 +3168,7 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->   			if (need_readd)
->   				goto readd;
->   		}
-> -		release_pages(pages, nr_pages);
-> +		release_pages(pages,nr_pages);
+It's not ideal to say "4 TB Ought To Be Enough For Anybody".  But it does feel
+that it's not currently worth the extra complexity and runtime overhead of
+implementing a full-blown sparse bitmap with cache eviction support, when no one
+currently has a use case for fsverity on files anywhere near that large.
 
-No need to change?
+> The other issue is that verify_page() assumes that it can drop the
+> reference to the cached object itself - the caller actually owns the
+> reference to the object, not the verify_page() code. Hence if we are
+> passing opaque buffers to verify_page() rather page cache pages, we
+> need a ->drop_block method that gets called instead of put_page().
+> This will allow the filesystem to hold a reference to the merkle
+> tree block data while the verification occurs, ensuring that they
+> don't get reclaimed by memory pressure whilst still in use...
 
-Thanks,
+Yes, probably the prototype of ->read_merkle_tree_page will need to change too.
 
->   		cond_resched();
->   	}
->   #ifdef CONFIG_F2FS_FS_COMPRESSION
+- Eric
