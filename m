@@ -2,79 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7BED264EA56
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Dec 2022 12:26:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9C27F64ED79
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Dec 2022 16:07:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230077AbiLPL0m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Dec 2022 06:26:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34768 "EHLO
+        id S231284AbiLPPHo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Dec 2022 10:07:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39064 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229632AbiLPL0k (ORCPT
+        with ESMTP id S231310AbiLPPHW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Dec 2022 06:26:40 -0500
-Received: from mail-qt1-x82e.google.com (mail-qt1-x82e.google.com [IPv6:2607:f8b0:4864:20::82e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BBB4286D9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Dec 2022 03:26:40 -0800 (PST)
-Received: by mail-qt1-x82e.google.com with SMTP id s9so2401993qtx.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Dec 2022 03:26:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=a7C4DlTIJe/XAzDTApvBRiD8XTjnKR9AH5A3VoUGLOg=;
-        b=NwQY0lOyux8zQdS9zMAo0gTIVBQw4Tpq5Bt9XfwxOWeeZoExJwK4JnJSNs6XbHTM+i
-         Lv5bhR0Bu8KLvRSNai/hEYLSdT1W9Ro3qa4We7yN3/PP2J3AnHLZ4Lfu7LFF67Lx8MY2
-         w+h/UW7V9V8UrlOYYhT/brFKFpP4g/HD7/LKY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a7C4DlTIJe/XAzDTApvBRiD8XTjnKR9AH5A3VoUGLOg=;
-        b=vZRrJcSTjgMNgD0jvMPTlR3In+xMKiYL5NG8mHQbFMDbyHyDD8L7Q0ctAyK+i9lbVR
-         UmSHsBhCiqqSosxygAJFSbkakwo3AuSzj7U5UzsZ9Kh9Sy8iKMXaZV3lm1tJOxcwLZ69
-         5ywOu0J8jXQ9EqiJgrPlA2K5yPejU41OF3UlBTkLSc7hMdy9AVuZTAYimLnvttT9YP/4
-         UwJHUfufpE4DCaGYBoDm1CGUu43pb44BuKpf9I0tWcKLH5aecBDF/LfbH+/+XIOXk/Px
-         qgqzasZTG9bi0RsMq+mr8Yb1nuMJT8daiN4+Jo3gknExUcHiverKu3U9JFblsltb4Cl/
-         en1A==
-X-Gm-Message-State: AFqh2kpC7O9p2ZXwwVBmw3y3mI7+UNPv+HXYmDV1NwFkW9ZAqL6sNFZa
-        /e1tVtxk8TJ9HZGVxyM8ifyzTqme1WdWm60M
-X-Google-Smtp-Source: AMrXdXsEw7JEHxZOoh6zH8hla+AeWdxZdbt9Ief8Vuv+W55WAqk95DUOfj9eY8fZRSXQzIUt3xiuIw==
-X-Received: by 2002:ac8:5214:0:b0:3a5:3234:cc7b with SMTP id r20-20020ac85214000000b003a53234cc7bmr3255156qtn.65.1671189998784;
-        Fri, 16 Dec 2022 03:26:38 -0800 (PST)
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com. [209.85.160.177])
-        by smtp.gmail.com with ESMTPSA id v23-20020ac87497000000b003a689a5b177sm1204357qtq.8.2022.12.16.03.26.37
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 16 Dec 2022 03:26:37 -0800 (PST)
-Received: by mail-qt1-f177.google.com with SMTP id fu10so2462289qtb.0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Dec 2022 03:26:37 -0800 (PST)
-X-Received: by 2002:ac8:4992:0:b0:3a7:648d:23d4 with SMTP id
- f18-20020ac84992000000b003a7648d23d4mr19675311qtq.180.1671189997363; Fri, 16
- Dec 2022 03:26:37 -0800 (PST)
+        Fri, 16 Dec 2022 10:07:22 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3FAEE5E0AA
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Dec 2022 07:06:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1671203191;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=+u0GILR+K9NlvYK7wKkYXg0kWtYj9HkTrgQnClsscW4=;
+        b=DmiaNLYY9KrtHOlBU3oYH7mH8K8Vop9u5k2/XBQ2fUXGHJGEE/zO5YaaB6yZFoV0V/OZKd
+        AybDn1iBEjqWEZuqieJv6UotuLdM+2SUeNF71d0cye/z+R9PmHqxc++TgjEVd7rhXekasZ
+        KSU14VH0XRlYu25mq+Pl0ntAnHhYCRk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-59-vjJE4hp5Pemote4bu_3TBQ-1; Fri, 16 Dec 2022 10:06:30 -0500
+X-MC-Unique: vjJE4hp5Pemote4bu_3TBQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7301C101A521;
+        Fri, 16 Dec 2022 15:06:29 +0000 (UTC)
+Received: from pasta.redhat.com (ovpn-192-182.brq.redhat.com [10.40.192.182])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 31F5414171C0;
+        Fri, 16 Dec 2022 15:06:26 +0000 (UTC)
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+To:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
+Subject: [RFC v3 0/7] Turn iomap_page_ops into iomap_folio_ops
+Date:   Fri, 16 Dec 2022 16:06:19 +0100
+Message-Id: <20221216150626.670312-1-agruenba@redhat.com>
 MIME-Version: 1.0
-References: <CAO4mrfcX8J73DWunmdYjf_SK5TyLfp9W9rmESTj57PCkG2qkBw@mail.gmail.com>
- <5eff70b8-04fc-ee87-973a-2099a65f6e29@opensource.wdc.com> <Y5s7F/4WKe8BtftB@ZenIV>
- <80dc24c5-2c4c-b8da-5017-31aae65a4dfa@opensource.wdc.com> <Y5vo00v2F4zVKeug@ZenIV>
-In-Reply-To: <Y5vo00v2F4zVKeug@ZenIV>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Fri, 16 Dec 2022 03:26:21 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wgOFV=QmwWQW0QxDNkeDt4t5dOty7AvGyWRyj-O=8db9A@mail.gmail.com>
-Message-ID: <CAHk-=wgOFV=QmwWQW0QxDNkeDt4t5dOty7AvGyWRyj-O=8db9A@mail.gmail.com>
-Subject: Re: possible deadlock in __ata_sff_interrupt
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Wei Chen <harperchen1110@gmail.com>, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-        syzbot <syzkaller@googlegroups.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -82,48 +61,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Dec 15, 2022 at 7:41 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
->
-> CPU1: ptrace(2)
->         ptrace_check_attach()
->                 read_lock(&tasklist_lock);
->
-> CPU2: setpgid(2)
->         write_lock_irq(&tasklist_lock);
->         spins
->
-> CPU1: takes an interrupt that would call kill_fasync().  grep and the
-> first instance of kill_fasync() is in hpet_interrupt() - it's not
-> something exotic.  IRQs disabled on CPU2 won't stop it.
->         kill_fasync(..., SIGIO, ...)
->                 kill_fasync_rcu()
->                         read_lock_irqsave(&fa->fa_lock, flags);
->                         send_sigio()
->                                 read_lock_irqsave(&fown->lock, flags);
->                                 read_lock(&tasklist_lock);
->
-> ... and CPU1 spins as well.
+This is an updated proposal for changing the iomap page_ops operations
+to make them more flexible so that they better suite the filesystem
+needs.  It closes a race on gfs2 and cleans up the recent iomap changes
+merged in the following upstream commit:
 
-Nope. See kernel/locking/qrwlock.c:
+87be949912ee ("Merge tag 'xfs-6.2-merge-8' of git://git.kernel.org/pub/scm/fs/xfs/xfs-linux")
 
-        /*
-         * Readers come here when they cannot get the lock without waiting
-         */
-        if (unlikely(in_interrupt())) {
-                /*
-                 * Readers in interrupt context will get the lock immediately
-                 * if the writer is just waiting (not holding the lock yet),
-                 * so spin with ACQUIRE semantics until the lock is available
-                 * without waiting in the queue.
-                 */
-                atomic_cond_read_acquire(&lock->cnts, !(VAL & _QW_LOCKED));
-                return;
-        }
+The first patch introduces a folio_may_straddle_isize() helper as a
+replacement for pagecache_isize_extended() when we have a locked folio.
+This still needs independent verification, but it looks like a
+worthwhile improvement to me.  I've left it in this patch queue for now,
+but I can moved out of the way if prefered.
 
-and that's the new "civilized" reader unfairness.
+Any thoughts?
 
-The traditional rwlock was unconditionally unfair to writers, to the
-point that there were starvation issues because new readers would
-always get the lock.
+Thanks,
+Andreas
 
-         Linus
+Andreas Gruenbacher (7):
+  fs: Add folio_may_straddle_isize helper
+  iomap: Add iomap_folio_done helper
+  iomap/gfs2: Unlock and put folio in page_done handler
+  iomap: Add iomap_folio_prepare helper
+  iomap: Get page in page_prepare handler
+  iomap/xfs: Eliminate the iomap_valid handler
+  iomap: Rename page_ops to folio_ops
+
+ fs/buffer.c            |  5 +--
+ fs/ext4/inode.c        | 13 +++---
+ fs/gfs2/bmap.c         | 43 +++++++++++++------
+ fs/iomap/buffered-io.c | 95 +++++++++++++++++++++---------------------
+ fs/xfs/xfs_iomap.c     | 42 +++++++++++++------
+ include/linux/iomap.h  | 46 +++++++-------------
+ include/linux/mm.h     |  2 +
+ mm/truncate.c          | 35 ++++++++++++++++
+ 8 files changed, 169 insertions(+), 112 deletions(-)
+
+-- 
+2.38.1
+
