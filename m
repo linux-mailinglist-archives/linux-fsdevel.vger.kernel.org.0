@@ -2,66 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D328164EDE3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Dec 2022 16:27:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBA3B64EDEC
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Dec 2022 16:27:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231410AbiLPP11 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Dec 2022 10:27:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49400 "EHLO
+        id S231124AbiLPP1g (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Dec 2022 10:27:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49730 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231396AbiLPP1H (ORCPT
+        with ESMTP id S231406AbiLPP1I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Dec 2022 10:27:07 -0500
+        Fri, 16 Dec 2022 10:27:08 -0500
 Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C7F0E62EB2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Dec 2022 07:27:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2209D654EE
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Dec 2022 07:27:05 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 5813E5D116;
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 6F5055D11A;
         Fri, 16 Dec 2022 15:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1671204422; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7bLSeYzzY8KC7c145u9yY7DEDzPG/x2tmkap0b4nIpk=;
-        b=KkAxnMg6C0Tye+Nt24mKMIzSE8TWgl5y62qn1W/hQyLPZTsitc2gDgkcLXY6UKbib1VuKH
-        YpM0sbhpA9vH6cHtulJ/6CNWGIuNX/wizzKiP0OowNGTpFQvjcL6shv3s68vZqzTZAWcXt
-        U4oQVV7GgPllIC3nykJKH5y3EdgLXbw=
+        bh=wE8xnNEo354lxHLxVgr91ZXktWxx/iWQdoLYJC7j/hM=;
+        b=MXZeHdRbPXxGEj2qnn4q8stE2JuNUjqhS2wSuQX2Phvi8uCH5fmunFQ6QYfgDL+FdfJOov
+        pyAwUET74KIcXNTvdeuT3KjPWgskaSfUibA8z99H9b/eqRvC3H3f/AE9Pn9g65UVmmhhIX
+        wckqhLJKq26FVWJCNcIvm3Wi5sZ7Z10=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1671204422;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=7bLSeYzzY8KC7c145u9yY7DEDzPG/x2tmkap0b4nIpk=;
-        b=TE0nYdyXoTm1TCYHOC6uFNnp5nv789qmn/98g3mqPHua3oA+K+atK0lM6s/rFSjKzHoHLI
-        kacpEk1hed2hm/CQ==
+        bh=wE8xnNEo354lxHLxVgr91ZXktWxx/iWQdoLYJC7j/hM=;
+        b=TUfgOw429STm1UVqH2+BcEhWfr/9rq4ZDJX+RGm1KemA2mw+oTY1iEARbsYSNTERFcfXe2
+        Pj/LQgB9I+6wPRAw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 2ADB613904;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 499601390D;
         Fri, 16 Dec 2022 15:27:02 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id zLN0CkaOnGPRCAAAMHmgww
+        id RKElEUaOnGPbCAAAMHmgww
         (envelope-from <jack@suse.cz>); Fri, 16 Dec 2022 15:27:02 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 8B640A0767; Fri, 16 Dec 2022 16:26:56 +0100 (CET)
+        id 90C74A0768; Fri, 16 Dec 2022 16:26:56 +0100 (CET)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
-Cc:     Jan Kara <jack@suse.cz>
-Subject: [PATCH 05/20] udf: Move udf_expand_dir_adinicb() to its callsite
-Date:   Fri, 16 Dec 2022 16:24:09 +0100
-Message-Id: <20221216152656.6236-5-jack@suse.cz>
+Cc:     Jan Kara <jack@suse.cz>,
+        syzbot+69c9fdccc6dd08961d34@syzkaller.appspotmail.com
+Subject: [PATCH 06/20] udf: Implement searching for directory entry using new iteration code
+Date:   Fri, 16 Dec 2022 16:24:10 +0100
+Message-Id: <20221216152656.6236-6-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20221216121344.14025-1-jack@suse.cz>
 References: <20221216121344.14025-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6777; i=jack@suse.cz; h=from:subject; bh=rK0qeUVr/Q7UNyNbN8fLYHguuTfWJst9TEWT2wg+9mc=; b=owGbwMvMwME4Z+4qdvsUh5uMp9WSGJLn9M7qL214ZHj6vy5vjHDLepFJM7w6ee8UvzsQ+OH+K33r o8dYOxmNWRgYORhkxRRZVkde1L42z6hra6iGDMwgViaQKQxcnAIwkQvv2P97GtjdNClIrbjwNavZIt VWjrlytn4y64Uvka//evjFptmEyV84v9N6f63y2Uvibqdu2vYmfy8PKG0rXeAUeiWWKfvif9d975cm KrBLJesmm5/e48l69Hr/JcGMRzG/c1TrrgVmzlSNY3Tk9i3r35HauMz4xpd/s15JJJSe4Cm4dtTEfG vJz0+ns/XePJVXYV57aWlpjKDdS8ULooFaGfFsEnuXSNjU1Cx+u5uRc7fIhaArZyaEFPgt7LzEXzNT eZV29uJD/fdk3dkmhiw1efdZcCHXxPK60gcKpv+M+mPyrd+qnOkusqiKNJl2JnCZaOeK8up/N6Z6tR gcYMtMXGEW5nlqvV+8Ycd5Tbb/AA==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2379; i=jack@suse.cz; h=from:subject; bh=oEyTZGpo56D7PXSJtPmxHY19CXw00hKZYRHHLFnE4AY=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBjnI2bw174ANWKCpGMaMjw/NJoqy0n6ClE5Ny7PhQF OddabwaJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCY5yNmwAKCRCcnaoHP2RA2cGXCA Df0vTfoOn/BKyfNOuDd82r50LVYBAuN+UjXbPbZLgMrOpCZcY+QkJGmeZpahlWnErtBz2aW3Q9ZkN/ 2h35scP+Zdrd1jP+Fdn4A8qMR4aFSu5RB/xl/Cre+8DZ1ZTYVUwrNR/MlkjaeFIKabBVuFIx/3dsbT qVrhgo/YEatieL9m+oAi9wKBqKlzSPob2nj0RrLMKpjVtz2RQclDG4SfCiLANOJ428sMS5R7R4JsFb eIeuNmrVZOhrwiVf0bTlxzr05Yc1u/YLIP3bo3Th0fJPWGQx6Jpue9+gdFse4LQ4AST2Di0Yk7AbUD Pn2NmQe1ZhpVoO0YtzvXKW9Zo4UZiQ
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -73,216 +74,93 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-There is just one caller of udf_expand_dir_adinicb(). Move the function
-to its caller into namei.c as it is more about directory handling than
-anything else anyway.
+Implement searching for directory entry - udf_fiiter_find_entry() -
+using new directory iteration code.
 
+Reported-by: syzbot+69c9fdccc6dd08961d34@syzkaller.appspotmail.com
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/udf/inode.c   | 82 ------------------------------------------------
- fs/udf/namei.c   | 82 ++++++++++++++++++++++++++++++++++++++++++++++++
- fs/udf/udfdecl.h |  2 --
- 3 files changed, 82 insertions(+), 84 deletions(-)
+ fs/udf/namei.c | 67 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 67 insertions(+)
 
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index fba828578208..787e6a7b355e 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -320,88 +320,6 @@ int udf_expand_file_adinicb(struct inode *inode)
- 	return err;
- }
- 
--struct buffer_head *udf_expand_dir_adinicb(struct inode *inode,
--					    udf_pblk_t *block, int *err)
--{
--	udf_pblk_t newblock;
--	struct buffer_head *dbh = NULL;
--	struct kernel_lb_addr eloc;
--	struct extent_position epos;
--	uint8_t alloctype;
--	struct udf_inode_info *iinfo = UDF_I(inode);
--	struct udf_fileident_iter iter;
--	uint8_t *impuse;
--	int ret;
--
--	if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_SHORT_AD))
--		alloctype = ICBTAG_FLAG_AD_SHORT;
--	else
--		alloctype = ICBTAG_FLAG_AD_LONG;
--
--	if (!inode->i_size) {
--		iinfo->i_alloc_type = alloctype;
--		mark_inode_dirty(inode);
--		return NULL;
--	}
--
--	/* alloc block, and copy data to it */
--	*block = udf_new_block(inode->i_sb, inode,
--			       iinfo->i_location.partitionReferenceNum,
--			       iinfo->i_location.logicalBlockNum, err);
--	if (!(*block))
--		return NULL;
--	newblock = udf_get_pblock(inode->i_sb, *block,
--				  iinfo->i_location.partitionReferenceNum,
--				0);
--	if (!newblock)
--		return NULL;
--	dbh = udf_tgetblk(inode->i_sb, newblock);
--	if (!dbh)
--		return NULL;
--	lock_buffer(dbh);
--	memcpy(dbh->b_data, iinfo->i_data, inode->i_size);
--	memset(dbh->b_data + inode->i_size, 0,
--	       inode->i_sb->s_blocksize - inode->i_size);
--	set_buffer_uptodate(dbh);
--	unlock_buffer(dbh);
--
--	/* Drop inline data, add block instead */
--	iinfo->i_alloc_type = alloctype;
--	memset(iinfo->i_data + iinfo->i_lenEAttr, 0, iinfo->i_lenAlloc);
--	iinfo->i_lenAlloc = 0;
--	eloc.logicalBlockNum = *block;
--	eloc.partitionReferenceNum =
--				iinfo->i_location.partitionReferenceNum;
--	iinfo->i_lenExtents = inode->i_size;
--	epos.bh = NULL;
--	epos.block = iinfo->i_location;
--	epos.offset = udf_file_entry_alloc_offset(inode);
--	udf_add_aext(inode, &epos, &eloc, inode->i_size, 0);
--	brelse(epos.bh);
--	mark_inode_dirty(inode);
--
--	/* Now fixup tags in moved directory entries */
--	for (ret = udf_fiiter_init(&iter, inode, 0);
--	     !ret && iter.pos < inode->i_size;
--	     ret = udf_fiiter_advance(&iter)) {
--		iter.fi.descTag.tagLocation = cpu_to_le32(*block);
--		if (iter.fi.lengthOfImpUse != cpu_to_le16(0))
--			impuse = dbh->b_data + iter.pos +
--						sizeof(struct fileIdentDesc);
--		else
--			impuse = NULL;
--		udf_fiiter_write_fi(&iter, impuse);
--	}
--	/*
--	 * We don't expect the iteration to fail as the directory has been
--	 * already verified to be correct
--	 */
--	WARN_ON_ONCE(ret);
--	udf_fiiter_release(&iter);
--
--	return dbh;
--}
--
- static int udf_get_block(struct inode *inode, sector_t block,
- 			 struct buffer_head *bh_result, int create)
- {
 diff --git a/fs/udf/namei.c b/fs/udf/namei.c
-index 7c95c549dd64..78bc4bbb7c54 100644
+index 78bc4bbb7c54..145883d15c0f 100644
 --- a/fs/udf/namei.c
 +++ b/fs/udf/namei.c
-@@ -326,6 +326,88 @@ static struct dentry *udf_lookup(struct inode *dir, struct dentry *dentry,
- 	return d_splice_alias(inode, dentry);
+@@ -140,6 +140,73 @@ int udf_write_fi(struct inode *inode, struct fileIdentDesc *cfi,
+ 	return 0;
  }
  
-+static struct buffer_head *udf_expand_dir_adinicb(struct inode *inode,
-+					udf_pblk_t *block, int *err)
++/**
++ * udf_fiiter_find_entry - find entry in given directory.
++ *
++ * @dir:	directory inode to search in
++ * @child:	qstr of the name
++ * @iter:	iter to use for searching
++ *
++ * This function searches in the directory @dir for a file name @child. When
++ * found, @iter points to the position in the directory with given entry.
++ *
++ * Returns 0 on success, < 0 on error (including -ENOENT).
++ */
++static int udf_fiiter_find_entry(struct inode *dir, const struct qstr *child,
++				 struct udf_fileident_iter *iter)
 +{
-+	udf_pblk_t newblock;
-+	struct buffer_head *dbh = NULL;
-+	struct kernel_lb_addr eloc;
-+	struct extent_position epos;
-+	uint8_t alloctype;
-+	struct udf_inode_info *iinfo = UDF_I(inode);
-+	struct udf_fileident_iter iter;
-+	uint8_t *impuse;
++	int flen;
++	unsigned char *fname = NULL;
++	struct super_block *sb = dir->i_sb;
++	int isdotdot = child->len == 2 &&
++		child->name[0] == '.' && child->name[1] == '.';
 +	int ret;
 +
-+	if (UDF_QUERY_FLAG(inode->i_sb, UDF_FLAG_USE_SHORT_AD))
-+		alloctype = ICBTAG_FLAG_AD_SHORT;
-+	else
-+		alloctype = ICBTAG_FLAG_AD_LONG;
++	fname = kmalloc(UDF_NAME_LEN, GFP_NOFS);
++	if (!fname)
++		return -ENOMEM;
 +
-+	if (!inode->i_size) {
-+		iinfo->i_alloc_type = alloctype;
-+		mark_inode_dirty(inode);
-+		return NULL;
++	for (ret = udf_fiiter_init(iter, dir, 0);
++	     !ret && iter->pos < dir->i_size;
++	     ret = udf_fiiter_advance(iter)) {
++		if (iter->fi.fileCharacteristics & FID_FILE_CHAR_DELETED) {
++			if (!UDF_QUERY_FLAG(sb, UDF_FLAG_UNDELETE))
++				continue;
++		}
++
++		if (iter->fi.fileCharacteristics & FID_FILE_CHAR_HIDDEN) {
++			if (!UDF_QUERY_FLAG(sb, UDF_FLAG_UNHIDE))
++				continue;
++		}
++
++		if ((iter->fi.fileCharacteristics & FID_FILE_CHAR_PARENT) &&
++		    isdotdot)
++			goto out_ok;
++
++		if (!iter->fi.lengthFileIdent)
++			continue;
++
++		flen = udf_get_filename(sb, iter->name,
++				iter->fi.lengthFileIdent, fname, UDF_NAME_LEN);
++		if (flen < 0) {
++			ret = flen;
++			goto out_err;
++		}
++
++		if (udf_match(flen, fname, child->len, child->name))
++			goto out_ok;
 +	}
++	if (!ret)
++		ret = -ENOENT;
 +
-+	/* alloc block, and copy data to it */
-+	*block = udf_new_block(inode->i_sb, inode,
-+			       iinfo->i_location.partitionReferenceNum,
-+			       iinfo->i_location.logicalBlockNum, err);
-+	if (!(*block))
-+		return NULL;
-+	newblock = udf_get_pblock(inode->i_sb, *block,
-+				  iinfo->i_location.partitionReferenceNum,
-+				0);
-+	if (!newblock)
-+		return NULL;
-+	dbh = udf_tgetblk(inode->i_sb, newblock);
-+	if (!dbh)
-+		return NULL;
-+	lock_buffer(dbh);
-+	memcpy(dbh->b_data, iinfo->i_data, inode->i_size);
-+	memset(dbh->b_data + inode->i_size, 0,
-+	       inode->i_sb->s_blocksize - inode->i_size);
-+	set_buffer_uptodate(dbh);
-+	unlock_buffer(dbh);
++out_err:
++	udf_fiiter_release(iter);
++out_ok:
++	kfree(fname);
 +
-+	/* Drop inline data, add block instead */
-+	iinfo->i_alloc_type = alloctype;
-+	memset(iinfo->i_data + iinfo->i_lenEAttr, 0, iinfo->i_lenAlloc);
-+	iinfo->i_lenAlloc = 0;
-+	eloc.logicalBlockNum = *block;
-+	eloc.partitionReferenceNum =
-+				iinfo->i_location.partitionReferenceNum;
-+	iinfo->i_lenExtents = inode->i_size;
-+	epos.bh = NULL;
-+	epos.block = iinfo->i_location;
-+	epos.offset = udf_file_entry_alloc_offset(inode);
-+	udf_add_aext(inode, &epos, &eloc, inode->i_size, 0);
-+	brelse(epos.bh);
-+	mark_inode_dirty(inode);
-+
-+	/* Now fixup tags in moved directory entries */
-+	for (ret = udf_fiiter_init(&iter, inode, 0);
-+	     !ret && iter.pos < inode->i_size;
-+	     ret = udf_fiiter_advance(&iter)) {
-+		iter.fi.descTag.tagLocation = cpu_to_le32(*block);
-+		if (iter.fi.lengthOfImpUse != cpu_to_le16(0))
-+			impuse = dbh->b_data + iter.pos +
-+						sizeof(struct fileIdentDesc);
-+		else
-+			impuse = NULL;
-+		udf_fiiter_write_fi(&iter, impuse);
-+	}
-+	/*
-+	 * We don't expect the iteration to fail as the directory has been
-+	 * already verified to be correct
-+	 */
-+	WARN_ON_ONCE(ret);
-+	udf_fiiter_release(&iter);
-+
-+	return dbh;
++	return ret;
 +}
 +
- static struct fileIdentDesc *udf_add_entry(struct inode *dir,
- 					   struct dentry *dentry,
- 					   struct udf_fileident_bh *fibh,
-diff --git a/fs/udf/udfdecl.h b/fs/udf/udfdecl.h
-index 22a8466e335c..676fa2996ffe 100644
---- a/fs/udf/udfdecl.h
-+++ b/fs/udf/udfdecl.h
-@@ -169,8 +169,6 @@ static inline struct inode *udf_iget(struct super_block *sb,
- 	return __udf_iget(sb, ino, false);
- }
- extern int udf_expand_file_adinicb(struct inode *);
--extern struct buffer_head *udf_expand_dir_adinicb(struct inode *inode,
--						  udf_pblk_t *block, int *err);
- extern struct buffer_head *udf_bread(struct inode *inode, udf_pblk_t block,
- 				      int create, int *err);
- extern int udf_setsize(struct inode *, loff_t);
+ /**
+  * udf_find_entry - find entry in given directory.
+  *
 -- 
 2.35.3
 
