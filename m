@@ -2,70 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 30A4B64F001
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Dec 2022 18:05:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F82A64F031
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Dec 2022 18:16:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231663AbiLPRFb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Dec 2022 12:05:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59322 "EHLO
+        id S231743AbiLPRQr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Dec 2022 12:16:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36870 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231642AbiLPRF1 (ORCPT
+        with ESMTP id S230449AbiLPRQq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Dec 2022 12:05:27 -0500
-Received: from mail-pg1-x52d.google.com (mail-pg1-x52d.google.com [IPv6:2607:f8b0:4864:20::52d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B35E46BCBD
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Dec 2022 09:05:25 -0800 (PST)
-Received: by mail-pg1-x52d.google.com with SMTP id v3so2187260pgh.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Dec 2022 09:05:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=d6OCT2ZdbDad/BMX0pnYZXGlc+e0Af4ihyKy0ZnG13g=;
-        b=Z0kmH3yeP9Pw0NncQFCv47w2VUJEbyqW6wCtFqkqD35DzlnQjOymTL+UIizo91OQJV
-         cb0kZr+GoPvoKk7VIQcBxGOOKum+LwY304gfBuOFvktTcQ6eucNVWmwasTR+x5mrxlVm
-         gnkRdOPRq4ruRtwFXXARRsU13Njjzms5ldIpvk3E/COI4DMoiOu9FldaJbUDbM3KPhLC
-         3z+O/MQW6suHxTx+ukoHtZAEtChDXTCoe0OOSFcA/TvX6DhappkvNrejJMbPPrqlG0l0
-         fhUqJ93Dp6iPHkyFu5Fq51DzpAepYTiuFjdBpvyAIo6b/6LKeUxI04HggIUgvV/nzfNS
-         Y8+g==
+        Fri, 16 Dec 2022 12:16:46 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 918D02A275
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Dec 2022 09:15:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1671210957;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=FMxxbypNViBdI4yIgrSC4IXd1P5dO6tqxf8uJ4BBzw8=;
+        b=hvZALtjRA6pYnbDarAOcKYmL3WB9TX/xmoRa4VKPjH5HxwUbpqCsV8sIO4C2sdLT+quRho
+        Z5H2gdlvCJz8h0L0pzQUIxV9dHAaQpMotjj2piooyCf8dbtSaBuFl19htS4JCnhHNzDyuv
+        RWRS2I5SusBMXLj43CJm3Inx0b6Hl+E=
+Received: from mail-yb1-f200.google.com (mail-yb1-f200.google.com
+ [209.85.219.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-104-ISuuaQFQOheYlrvoqPnLvg-1; Fri, 16 Dec 2022 12:15:56 -0500
+X-MC-Unique: ISuuaQFQOheYlrvoqPnLvg-1
+Received: by mail-yb1-f200.google.com with SMTP id n197-20020a25d6ce000000b00702558fba96so3405749ybg.0
+        for <linux-fsdevel@vger.kernel.org>; Fri, 16 Dec 2022 09:15:56 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=d6OCT2ZdbDad/BMX0pnYZXGlc+e0Af4ihyKy0ZnG13g=;
-        b=iKLkrt2QJEioneXCGmOljIwasz5Wul757yQ+2UhGMKqpAYjZ7hZByqYNSsSRFGReWa
-         kwq1qs5WuJnfqNpl+bpb7a7CPxB1q9m3TYUndTj16S40uZijXI5f2HI7OXMAxiHy/fBJ
-         AmHHXJ+gMLJaeiH8tB9esr7VnLijQinPGyt3jXgRd2ShDA+Vm0PpZxoeNP5W+JRzLSby
-         GC9HovKu6ZJyy0RD4cRf7NtN43sH084PbyjqPovBe3/A6TTEPHWMKDF2XYxXEXzv44ea
-         NHmVySq+IVSPSPekHZerp4RC5hcnpGnwWZjVQCd65rdeO4I9jmUh4QRPa6lLqL40Ourd
-         01xg==
-X-Gm-Message-State: ANoB5pmmwFisdidTN2QZklN52M8pcV91rVOqhplKztRED20B48nTIVT8
-        SyqN2k4M7OOr/j7TrkroL3iNp4W0LoQniJ0IHfT5
-X-Google-Smtp-Source: AA0mqf456SOTI8h5405bjuHYKyboskc6RX/a1Ar+YL3tEroIPWZYM0tvvsDsxRnA/dxrNyn4bb9+vxyTCfLgcpe9goM=
-X-Received: by 2002:a63:64c5:0:b0:479:2109:506 with SMTP id
- y188-20020a6364c5000000b0047921090506mr1494989pgb.92.1671210325149; Fri, 16
- Dec 2022 09:05:25 -0800 (PST)
+        bh=FMxxbypNViBdI4yIgrSC4IXd1P5dO6tqxf8uJ4BBzw8=;
+        b=fSYO0V4zn0ZpqCBf/DEeau3yW/DzLGJGBY8/a7fpGMWvOtX6N23Vmo/eAAfFLe2yRY
+         84wU8jFmhKNkYDNSq8431/Ri/lQqg7GcsQHvY3TY4SksWHif+0NwKTNGzY1pwjg3JoZT
+         RGGh046KE4PAIXp/6s+Fl5PKnn5/iVkd0u5DZwoeR+5XgqYcl97Kh68ISx78B8FXQkeN
+         9FJfhlGMkdFCftGtu/zn92lTv831SMyLQMFgq76joSiAV+/VnhJ3NV0SfQCwkVStQBmt
+         KioOkTN9Sr6tl1XaezSmCc0z4MHW4Fdrjrhrx0fB0DoEwwJKOgrTBMp0+S436pt9sbHj
+         /CjA==
+X-Gm-Message-State: ANoB5pklU8r2zOOeTWhVwq4XtE7DCU8d0VGeZ3yv9inWQT/t3t6pYxen
+        FsXiTgoNRRAk2ev4p7sOXM34oq27ivP9QEhV+wKUDNmmEKwyvoNX7iq4wKSBvCU8M46wrontYeO
+        cYenG5Fop+HAolRIeJ0mt8PeJZ6UTEMylnjBAOitAEQ==
+X-Received: by 2002:a81:8407:0:b0:3e2:c77b:2563 with SMTP id u7-20020a818407000000b003e2c77b2563mr27749512ywf.54.1671210955579;
+        Fri, 16 Dec 2022 09:15:55 -0800 (PST)
+X-Google-Smtp-Source: AA0mqf5sSx3su6laK9Kl+Wo+aUvlhEYchIP7sOq3J3e9vBxi/aJmFLAxjsr1EmGJ4JGxvgXw8z2oIHThFHswEOSM94k=
+X-Received: by 2002:a81:8407:0:b0:3e2:c77b:2563 with SMTP id
+ u7-20020a818407000000b003e2c77b2563mr27749506ywf.54.1671210955331; Fri, 16
+ Dec 2022 09:15:55 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1670606054.git.rgb@redhat.com> <45da8423b9b1e8fc7abd68cd2269acff8cf9022a.1670606054.git.rgb@redhat.com>
- <20221216164342.ojcbdifdmafq5njw@quack3>
-In-Reply-To: <20221216164342.ojcbdifdmafq5njw@quack3>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 16 Dec 2022 12:05:14 -0500
-Message-ID: <CAHC9VhQCQJ6_0RtHQHuA2FDje-3ick3b3ar8K8NAnuMF=ww2cA@mail.gmail.com>
-Subject: Re: [PATCH v5 2/3] fanotify: define struct members to hold response
- decision context
-To:     Jan Kara <jack@suse.cz>
-Cc:     Richard Guy Briggs <rgb@redhat.com>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>
+References: <20221216150626.670312-1-agruenba@redhat.com> <20221216150626.670312-6-agruenba@redhat.com>
+ <Y5ydHlw4orl/gP3a@casper.infradead.org>
+In-Reply-To: <Y5ydHlw4orl/gP3a@casper.infradead.org>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Fri, 16 Dec 2022 18:15:44 +0100
+Message-ID: <CAHc6FU7Svp7XG8T5X4kak8Gz2kB2_OK1b5xbtn6uKrEnb6=3TQ@mail.gmail.com>
+Subject: Re: [RFC v3 5/7] iomap: Get page in page_prepare handler
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -73,31 +77,21 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 16, 2022 at 11:43 AM Jan Kara <jack@suse.cz> wrote:
+On Fri, Dec 16, 2022 at 5:30 PM Matthew Wilcox <willy@infradead.org> wrote:
+> On Fri, Dec 16, 2022 at 04:06:24PM +0100, Andreas Gruenbacher wrote:
+> > +     if (page_ops && page_ops->page_prepare)
+> > +             folio = page_ops->page_prepare(iter, pos, len);
+> > +     else
+> > +             folio = iomap_folio_prepare(iter, pos);
+> > +     if (IS_ERR_OR_NULL(folio)) {
+> > +             if (!folio)
+> > +                     return (iter->flags & IOMAP_NOWAIT) ? -EAGAIN : -ENOMEM;
+> > +             return PTR_ERR(folio);
 >
-> On Mon 12-12-22 09:06:10, Richard Guy Briggs wrote:
-> > This patch adds a flag, FAN_INFO and an extensible buffer to provide
-> > additional information about response decisions.  The buffer contains
-> > one or more headers defining the information type and the length of the
-> > following information.  The patch defines one additional information
-> > type, FAN_RESPONSE_INFO_AUDIT_RULE, to audit a rule number.  This will
-> > allow for the creation of other information types in the future if other
-> > users of the API identify different needs.
-> >
-> > Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> > Link: https://lore.kernel.org/r/2745105.e9J7NaK4W3@x2
-> > Suggested-by: Jan Kara <jack@suse.cz>
-> > Link: https://lore.kernel.org/r/20201001101219.GE17860@quack2.suse.cz
-> > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
->
-> Thanks for the patches. They look very good to me. Just two nits below. I
-> can do the small updates on commit if there would be no other changes. But
-> I'd like to get some review from audit guys for patch 3/3 before I commit
-> this.
+> Wouldn't it be cleaner if iomap_folio_prepare() always
+> returned an ERR_PTR on failure?
 
-It's in my review queue, but it's a bit lower in the pile as my
-understanding is that the linux-next folks don't like to see new
-things in the next branches until after the merge window closes.
+Yes indeed, thanks.
 
--- 
-paul-moore.com
+Andreas
+
