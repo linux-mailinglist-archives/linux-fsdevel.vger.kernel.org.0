@@ -2,66 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4D9BE64EDDD
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Dec 2022 16:27:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A536664EDDB
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 16 Dec 2022 16:27:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231338AbiLPP1T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Dec 2022 10:27:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49322 "EHLO
+        id S231392AbiLPP1O (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Dec 2022 10:27:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231382AbiLPP1E (ORCPT
+        with ESMTP id S231338AbiLPP1E (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 16 Dec 2022 10:27:04 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D98F260374
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6D2AF654D2
         for <linux-fsdevel@vger.kernel.org>; Fri, 16 Dec 2022 07:27:01 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 981BE343E3;
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 2D5C55D114;
         Fri, 16 Dec 2022 15:27:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
         t=1671204420; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=snuDeHHcHgtI8OCe0wF4NjrXc/xa5XPfZ1tsWS+PIeA=;
-        b=TRDmaDVowHMNlRK8kpLGtEB4elt/lFZH5+98xdnHN1Rio/7zCrQ3twWo9oVdm1VqlSg/BN
-        kdbeELEcYgNF3Hp9+Ou4DKT25Z5BVoJkeyc7gzOfJGUBCYfpWzezQKgtqBAw2WjrWg6f2r
-        bUrzVGNkV7gc0MwPTHcF/Nd12vH168w=
+        bh=8UwxbFjsuL6vvLg3oZaYLBVsUEYcSXkKCMWa/009se4=;
+        b=aXgWZbFYuznjEDAbAr7FgJHbElPSZ1KjjQuczfWGICzEnw1fZcZErJceidnRzPfYF5t5kN
+        G0nItpTJzuiGNSGxXcdMul6KkhjfHmKJAGR7iSRqyiS8HZfyWPXC/MkVwsuFb1m7g3wC07
+        6roJ3WDB13wKObKXB+R6C35VdszN8tM=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
         s=susede2_ed25519; t=1671204420;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=snuDeHHcHgtI8OCe0wF4NjrXc/xa5XPfZ1tsWS+PIeA=;
-        b=FNKkkso26QvE2b3OqfstFlmie3DYqdHdk8+oU7hslolKKFVAKxWKRoyCuGKwK2BzFxPwPP
-        Aq1VEg/uUf6ZA7Dg==
+        bh=8UwxbFjsuL6vvLg3oZaYLBVsUEYcSXkKCMWa/009se4=;
+        b=+pdm2W82C/8Rin4ZB3zZ1V5SjA3gSd3nZdBof4LWnrxGAxnfeHR4co20AvKNXVJ9hk9jOI
+        JPSwtpTDCQSMKJCw==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id EDD801390A;
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id E994913909;
         Fri, 16 Dec 2022 15:26:59 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id XUmPOUOOnGPBCAAAMHmgww
+        id f4h+OEOOnGO/CAAAMHmgww
         (envelope-from <jack@suse.cz>); Fri, 16 Dec 2022 15:26:59 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 78D35A0764; Fri, 16 Dec 2022 16:26:56 +0100 (CET)
+        id 7F409A0765; Fri, 16 Dec 2022 16:26:56 +0100 (CET)
 From:   Jan Kara <jack@suse.cz>
 To:     <linux-fsdevel@vger.kernel.org>
 Cc:     Jan Kara <jack@suse.cz>
-Subject: [PATCH 02/20] udf: New directory iteration code
-Date:   Fri, 16 Dec 2022 16:24:06 +0100
-Message-Id: <20221216152656.6236-2-jack@suse.cz>
+Subject: [PATCH 03/20] udf: Convert udf_readdir() to new directory iteration
+Date:   Fri, 16 Dec 2022 16:24:07 +0100
+Message-Id: <20221216152656.6236-3-jack@suse.cz>
 X-Mailer: git-send-email 2.35.3
 In-Reply-To: <20221216121344.14025-1-jack@suse.cz>
 References: <20221216121344.14025-1-jack@suse.cz>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=14099; i=jack@suse.cz; h=from:subject; bh=HZogkvSCWTQv418G4y+KTgyvrs0B0OnTedds6QtlZAQ=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBjnI2XabSWvU80ARKCWwS8tFla3EoJkV7VeJlpc+v1 azjoFaqJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCY5yNlwAKCRCcnaoHP2RA2dMcB/ 9us8l18M1uhJDSoY7s+Gvq83IOm5jq3LoH6+35fZ3Gkgo10HVDuX/InJ0FNQZ4a/JnxeD8fsiaNNqe I2agnZEOUFf6EbXUZd3fRIptCbcd/SW4YyGM3tNOtU/RaO2KCpfkLHkv4keLWAGW2NkPBGHw5F2N0U 1tzIxvVdUtEbS/5w6nxWa9BsoI4KieBns4x5C2iVCBPcF/ZNduA7rjbWKVRd7wJauImBeO46GYuTZY AfZ2zAj/rCh/gU6Vce7FwmNZXo7j7OrsVdVWdF0Zt/cvREIXsmVEg4tmSGfbqOmE385UV/XC4ON1Bc vNY063vMVBlDuMsE4/pnzCeLqxrgEB
+X-Developer-Signature: v=1; a=openpgp-sha256; l=6087; i=jack@suse.cz; h=from:subject; bh=QeetFQsnLUPNyGx2eZiYYtWPpBxk54L/faIWvYP+L/M=; b=owEBbQGS/pANAwAIAZydqgc/ZEDZAcsmYgBjnI2Y5Ycug/0xL1ttqdcIeo35vbkPZCbb4eaH9O1n n6FBTemJATMEAAEIAB0WIQSrWdEr1p4yirVVKBycnaoHP2RA2QUCY5yNmAAKCRCcnaoHP2RA2bftB/ 0S7Fh3LxrRCVB6XkM2vJ2P2FiuvldXAy1iwXtELO8rFxv3tLXvEHi6k+ajSe/ZR6KNXCDg3n25zyAS biuQD1XwKM1gpiguUOyivoxX7+nRm7U+Pi2W4vAE0dIcepECFnVqlUqni20sghObQz9CNuNujKnIHh sIY4D3zMSHDPjzvtLMQzL5PWuZqFlOttI65v6dlzKpH6uF2cRmULN4mCq61ha0n9UZ0Wrv90nVkjHG aXCnQGhTBrr+bxPUdsqdHWu50+1nL6rlaZby7TtyP55wU6KUFSRetijDuIg6c6DpZOILAahazHzpI+ GFzux/dKgQgKG1RGEx301z34wQVLQS
 X-Developer-Key: i=jack@suse.cz; a=openpgp; fpr=93C6099A142276A28BBE35D815BC833443038D8C
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -73,463 +73,218 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add new support code for iterating directory entries. The code is also
-more carefully verifying validity of on-disk directory entries to avoid
-crashes on malicious media.
+Convert udf_readdir() to new directory iteration functions.
 
 Signed-off-by: Jan Kara <jack@suse.cz>
 ---
- fs/udf/directory.c | 395 +++++++++++++++++++++++++++++++++++++++++++++
- fs/udf/udfdecl.h   |  23 +++
- 2 files changed, 418 insertions(+)
+ fs/udf/dir.c | 148 ++++++++++-----------------------------------------
+ 1 file changed, 27 insertions(+), 121 deletions(-)
 
-diff --git a/fs/udf/directory.c b/fs/udf/directory.c
-index 16bcf2c6b8b3..66117e834e29 100644
---- a/fs/udf/directory.c
-+++ b/fs/udf/directory.c
-@@ -17,6 +17,401 @@
- #include <linux/fs.h>
- #include <linux/string.h>
- #include <linux/bio.h>
-+#include <linux/crc-itu-t.h>
-+#include <linux/iversion.h>
-+
-+static int udf_verify_fi(struct udf_fileident_iter *iter)
-+{
-+	unsigned int len;
-+
-+	if (iter->fi.descTag.tagIdent != cpu_to_le16(TAG_IDENT_FID)) {
-+		udf_err(iter->dir->i_sb,
-+			"directory (ino %lu) has entry at pos %llu with incorrect tag %x\n",
-+			iter->dir->i_ino, (unsigned long long)iter->pos,
-+			le16_to_cpu(iter->fi.descTag.tagIdent));
-+		return -EFSCORRUPTED;
-+	}
-+	len = udf_dir_entry_len(&iter->fi);
-+	if (iter->fi.lengthOfImpUse & 3) {
-+		udf_err(iter->dir->i_sb,
-+			"directory (ino %lu) has entry at pos %llu with unaligned lenght of impUse field\n",
-+			iter->dir->i_ino, (unsigned long long)iter->pos);
-+		return -EFSCORRUPTED;
-+	}
-+	/*
-+	 * This is in fact allowed by the spec due to long impUse field but
-+	 * we don't support it. If there is real media with this large impUse
-+	 * field, support can be added.
-+	 */
-+	if (len > 1 << iter->dir->i_blkbits) {
-+		udf_err(iter->dir->i_sb,
-+			"directory (ino %lu) has too big (%u) entry at pos %llu\n",
-+			iter->dir->i_ino, len, (unsigned long long)iter->pos);
-+		return -EFSCORRUPTED;
-+	}
-+	if (iter->pos + len > iter->dir->i_size) {
-+		udf_err(iter->dir->i_sb,
-+			"directory (ino %lu) has entry past directory size at pos %llu\n",
-+			iter->dir->i_ino, (unsigned long long)iter->pos);
-+		return -EFSCORRUPTED;
-+	}
-+	if (udf_dir_entry_len(&iter->fi) !=
-+	    sizeof(struct tag) + le16_to_cpu(iter->fi.descTag.descCRCLength)) {
-+		udf_err(iter->dir->i_sb,
-+			"directory (ino %lu) has entry where CRC length (%u) does not match entry length (%u)\n",
-+			iter->dir->i_ino,
-+			(unsigned)le16_to_cpu(iter->fi.descTag.descCRCLength),
-+			(unsigned)(udf_dir_entry_len(&iter->fi) -
-+							sizeof(struct tag)));
-+		return -EFSCORRUPTED;
-+	}
-+	return 0;
-+}
-+
-+static int udf_copy_fi(struct udf_fileident_iter *iter)
-+{
-+	struct udf_inode_info *iinfo = UDF_I(iter->dir);
-+	int blksize = 1 << iter->dir->i_blkbits;
-+	int err, off, len, nameoff;
-+
-+	/* Skip copying when we are at EOF */
-+	if (iter->pos >= iter->dir->i_size) {
-+		iter->name = NULL;
-+		return 0;
-+	}
-+	if (iter->dir->i_size < iter->pos + sizeof(struct fileIdentDesc)) {
-+		udf_err(iter->dir->i_sb,
-+			"directory (ino %lu) has entry straddling EOF\n",
-+			iter->dir->i_ino);
-+		return -EFSCORRUPTED;
-+	}
-+	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB) {
-+		memcpy(&iter->fi, iinfo->i_data + iinfo->i_lenEAttr + iter->pos,
-+		       sizeof(struct fileIdentDesc));
-+		err = udf_verify_fi(iter);
-+		if (err < 0)
-+			return err;
-+		iter->name = iinfo->i_data + iinfo->i_lenEAttr + iter->pos +
-+			sizeof(struct fileIdentDesc) +
-+			le16_to_cpu(iter->fi.lengthOfImpUse);
-+		return 0;
-+	}
-+
-+	off = iter->pos & (blksize - 1);
-+	len = min_t(int, sizeof(struct fileIdentDesc), blksize - off);
-+	memcpy(&iter->fi, iter->bh[0]->b_data + off, len);
-+	if (len < sizeof(struct fileIdentDesc))
-+		memcpy((char *)(&iter->fi) + len, iter->bh[1]->b_data,
-+		       sizeof(struct fileIdentDesc) - len);
-+	err = udf_verify_fi(iter);
-+	if (err < 0)
-+		return err;
-+
-+	/* Handle directory entry name */
-+	nameoff = off + sizeof(struct fileIdentDesc) +
-+				le16_to_cpu(iter->fi.lengthOfImpUse);
-+	if (off + udf_dir_entry_len(&iter->fi) <= blksize) {
-+		iter->name = iter->bh[0]->b_data + nameoff;
-+	} else if (nameoff >= blksize) {
-+		iter->name = iter->bh[1]->b_data + (nameoff - blksize);
-+	} else {
-+		iter->name = iter->namebuf;
-+		len = blksize - nameoff;
-+		memcpy(iter->name, iter->bh[0]->b_data + nameoff, len);
-+		memcpy(iter->name + len, iter->bh[1]->b_data,
-+		       iter->fi.lengthFileIdent - len);
-+	}
-+	return 0;
-+}
-+
-+/* Readahead 8k once we are at 8k boundary */
-+static void udf_readahead_dir(struct udf_fileident_iter *iter)
-+{
-+	unsigned int ralen = 16 >> (iter->dir->i_blkbits - 9);
-+	struct buffer_head *tmp, *bha[16];
-+	int i, num;
-+	udf_pblk_t blk;
-+
-+	if (iter->loffset & (ralen - 1))
-+		return;
-+
-+	if (iter->loffset + ralen > (iter->elen >> iter->dir->i_blkbits))
-+		ralen = (iter->elen >> iter->dir->i_blkbits) - iter->loffset;
-+	num = 0;
-+	for (i = 0; i < ralen; i++) {
-+		blk = udf_get_lb_pblock(iter->dir->i_sb, &iter->eloc,
-+					iter->loffset + i);
-+		tmp = udf_tgetblk(iter->dir->i_sb, blk);
-+		if (tmp && !buffer_uptodate(tmp) && !buffer_locked(tmp))
-+			bha[num++] = tmp;
-+		else
-+			brelse(tmp);
-+	}
-+	if (num) {
-+		bh_readahead_batch(num, bha, REQ_RAHEAD);
-+		for (i = 0; i < num; i++)
-+			brelse(bha[i]);
-+	}
-+}
-+
-+static struct buffer_head *udf_fiiter_bread_blk(struct udf_fileident_iter *iter)
-+{
-+	udf_pblk_t blk;
-+
-+	udf_readahead_dir(iter);
-+	blk = udf_get_lb_pblock(iter->dir->i_sb, &iter->eloc, iter->loffset);
-+	return udf_tread(iter->dir->i_sb, blk);
-+}
-+
-+/*
-+ * Updates loffset to point to next directory block; eloc, elen & epos are
-+ * updated if we need to traverse to the next extent as well.
-+ */
-+static int udf_fiiter_advance_blk(struct udf_fileident_iter *iter)
-+{
-+	iter->loffset++;
-+	if (iter->loffset < iter->elen >> iter->dir->i_blkbits)
-+		return 0;
-+
-+	iter->loffset = 0;
-+	if (udf_next_aext(iter->dir, &iter->epos, &iter->eloc, &iter->elen, 1)
-+			!= (EXT_RECORDED_ALLOCATED >> 30)) {
-+		if (iter->pos == iter->dir->i_size) {
-+			iter->elen = 0;
-+			return 0;
-+		}
-+		udf_err(iter->dir->i_sb,
-+			"extent after position %llu not allocated in directory (ino %lu)\n",
-+			(unsigned long long)iter->pos, iter->dir->i_ino);
-+		return -EFSCORRUPTED;
-+	}
-+	return 0;
-+}
-+
-+static int udf_fiiter_load_bhs(struct udf_fileident_iter *iter)
-+{
-+	int blksize = 1 << iter->dir->i_blkbits;
-+	int off = iter->pos & (blksize - 1);
-+	int err;
-+	struct fileIdentDesc *fi;
-+
-+	/* Is there any further extent we can map from? */
-+	if (!iter->bh[0] && iter->elen) {
-+		iter->bh[0] = udf_fiiter_bread_blk(iter);
-+		if (!iter->bh[0]) {
-+			err = -ENOMEM;
-+			goto out_brelse;
-+		}
-+		if (!buffer_uptodate(iter->bh[0])) {
-+			err = -EIO;
-+			goto out_brelse;
-+		}
-+	}
-+	/* There's no next block so we are done */
-+	if (iter->pos >= iter->dir->i_size)
-+		return 0;
-+	/* Need to fetch next block as well? */
-+	if (off + sizeof(struct fileIdentDesc) > blksize)
-+		goto fetch_next;
-+	fi = (struct fileIdentDesc *)(iter->bh[0]->b_data + off);
-+	/* Need to fetch next block to get name? */
-+	if (off + udf_dir_entry_len(fi) > blksize) {
-+fetch_next:
-+		udf_fiiter_advance_blk(iter);
-+		iter->bh[1] = udf_fiiter_bread_blk(iter);
-+		if (!iter->bh[1]) {
-+			err = -ENOMEM;
-+			goto out_brelse;
-+		}
-+		if (!buffer_uptodate(iter->bh[1])) {
-+			err = -EIO;
-+			goto out_brelse;
-+		}
-+	}
-+	return 0;
-+out_brelse:
-+	brelse(iter->bh[0]);
-+	brelse(iter->bh[1]);
-+	iter->bh[0] = iter->bh[1] = NULL;
-+	return err;
-+}
-+
-+int udf_fiiter_init(struct udf_fileident_iter *iter, struct inode *dir,
-+		    loff_t pos)
-+{
-+	struct udf_inode_info *iinfo = UDF_I(dir);
-+	int err = 0;
-+
-+	iter->dir = dir;
-+	iter->bh[0] = iter->bh[1] = NULL;
-+	iter->pos = pos;
-+	iter->elen = 0;
-+	iter->epos.bh = NULL;
-+	iter->name = NULL;
-+
-+	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB)
-+		return udf_copy_fi(iter);
-+
-+	if (inode_bmap(dir, iter->pos >> dir->i_blkbits, &iter->epos,
-+		       &iter->eloc, &iter->elen, &iter->loffset) !=
-+	    (EXT_RECORDED_ALLOCATED >> 30)) {
-+		if (pos == dir->i_size)
-+			return 0;
-+		udf_err(dir->i_sb,
-+			"position %llu not allocated in directory (ino %lu)\n",
-+			(unsigned long long)pos, dir->i_ino);
-+		return -EFSCORRUPTED;
-+	}
-+	err = udf_fiiter_load_bhs(iter);
-+	if (err < 0)
-+		return err;
-+	err = udf_copy_fi(iter);
-+	if (err < 0) {
-+		udf_fiiter_release(iter);
-+		return err;
-+	}
-+	return 0;
-+}
-+
-+int udf_fiiter_advance(struct udf_fileident_iter *iter)
-+{
-+	unsigned int oldoff, len;
-+	int blksize = 1 << iter->dir->i_blkbits;
-+	int err;
-+
-+	oldoff = iter->pos & (blksize - 1);
-+	len = udf_dir_entry_len(&iter->fi);
-+	iter->pos += len;
-+	if (UDF_I(iter->dir)->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
-+		if (oldoff + len >= blksize) {
-+			brelse(iter->bh[0]);
-+			iter->bh[0] = NULL;
-+			/* Next block already loaded? */
-+			if (iter->bh[1]) {
-+				iter->bh[0] = iter->bh[1];
-+				iter->bh[1] = NULL;
-+			} else {
-+				udf_fiiter_advance_blk(iter);
-+			}
-+		}
-+		err = udf_fiiter_load_bhs(iter);
-+		if (err < 0)
-+			return err;
-+	}
-+	return udf_copy_fi(iter);
-+}
-+
-+void udf_fiiter_release(struct udf_fileident_iter *iter)
-+{
-+	iter->dir = NULL;
-+	brelse(iter->bh[0]);
-+	brelse(iter->bh[1]);
-+	iter->bh[0] = iter->bh[1] = NULL;
-+}
-+
-+static void udf_copy_to_bufs(void *buf1, int len1, void *buf2, int len2,
-+			     int off, void *src, int len)
-+{
-+	int copy;
-+
-+	if (off >= len1) {
-+		off -= len1;
-+	} else {
-+		copy = min(off + len, len1) - off;
-+		memcpy(buf1 + off, src, copy);
-+		src += copy;
-+		len -= copy;
-+		off = 0;
-+	}
-+	if (len > 0) {
-+		if (WARN_ON_ONCE(off + len > len2 || !buf2))
-+			return;
-+		memcpy(buf2 + off, src, len);
-+	}
-+}
-+
-+static uint16_t udf_crc_fi_bufs(void *buf1, int len1, void *buf2, int len2,
-+				int off, int len)
-+{
-+	int copy;
-+	uint16_t crc = 0;
-+
-+	if (off >= len1) {
-+		off -= len1;
-+	} else {
-+		copy = min(off + len, len1) - off;
-+		crc = crc_itu_t(crc, buf1 + off, copy);
-+		len -= copy;
-+		off = 0;
-+	}
-+	if (len > 0) {
-+		if (WARN_ON_ONCE(off + len > len2 || !buf2))
-+			return 0;
-+		crc = crc_itu_t(crc, buf2 + off, len);
-+	}
-+	return crc;
-+}
-+
-+static void udf_copy_fi_to_bufs(char *buf1, int len1, char *buf2, int len2,
-+				int off, struct fileIdentDesc *fi,
-+				uint8_t *impuse, uint8_t *name)
-+{
-+	uint16_t crc;
-+	int fioff = off;
-+	int crcoff = off + sizeof(struct tag);
-+	unsigned int crclen = udf_dir_entry_len(fi) - sizeof(struct tag);
-+
-+	udf_copy_to_bufs(buf1, len1, buf2, len2, off, fi,
-+			 sizeof(struct fileIdentDesc));
-+	off += sizeof(struct fileIdentDesc);
-+	if (impuse)
-+		udf_copy_to_bufs(buf1, len1, buf2, len2, off, impuse,
-+				 le16_to_cpu(fi->lengthOfImpUse));
-+	off += le16_to_cpu(fi->lengthOfImpUse);
-+	if (name)
-+		udf_copy_to_bufs(buf1, len1, buf2, len2, off, name,
-+				 fi->lengthFileIdent);
-+
-+	crc = udf_crc_fi_bufs(buf1, len1, buf2, len2, crcoff, crclen);
-+	fi->descTag.descCRC = cpu_to_le16(crc);
-+	fi->descTag.descCRCLength = cpu_to_le16(crclen);
-+	fi->descTag.tagChecksum = udf_tag_checksum(&fi->descTag);
-+
-+	udf_copy_to_bufs(buf1, len1, buf2, len2, fioff, fi, sizeof(struct tag));
-+}
-+
-+void udf_fiiter_write_fi(struct udf_fileident_iter *iter, uint8_t *impuse)
-+{
-+	struct udf_inode_info *iinfo = UDF_I(iter->dir);
-+	void *buf1, *buf2 = NULL;
-+	int len1, len2 = 0, off;
-+	int blksize = 1 << iter->dir->i_blkbits;
-+
-+	off = iter->pos & (blksize - 1);
-+	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB) {
-+		buf1 = iinfo->i_data + iinfo->i_lenEAttr;
-+		len1 = iter->dir->i_size;
-+	} else {
-+		buf1 = iter->bh[0]->b_data;
-+		len1 = blksize;
-+		if (iter->bh[1]) {
-+			buf2 = iter->bh[1]->b_data;
-+			len2 = blksize;
-+		}
-+	}
-+
-+	udf_copy_fi_to_bufs(buf1, len1, buf2, len2, off, &iter->fi, impuse,
-+			    iter->name == iter->namebuf ? iter->name : NULL);
-+
-+	if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_IN_ICB) {
-+		mark_inode_dirty(iter->dir);
-+	} else {
-+		mark_buffer_dirty_inode(iter->bh[0], iter->dir);
-+		if (iter->bh[1])
-+			mark_buffer_dirty_inode(iter->bh[1], iter->dir);
-+	}
-+	inode_inc_iversion(iter->dir);
-+}
+diff --git a/fs/udf/dir.c b/fs/udf/dir.c
+index be640f4b2f2c..212393b12c22 100644
+--- a/fs/udf/dir.c
++++ b/fs/udf/dir.c
+@@ -39,26 +39,13 @@
+ static int udf_readdir(struct file *file, struct dir_context *ctx)
+ {
+ 	struct inode *dir = file_inode(file);
+-	struct udf_inode_info *iinfo = UDF_I(dir);
+-	struct udf_fileident_bh fibh = { .sbh = NULL, .ebh = NULL};
+-	struct fileIdentDesc *fi = NULL;
+-	struct fileIdentDesc cfi;
+-	udf_pblk_t block, iblock;
+ 	loff_t nf_pos, emit_pos = 0;
+ 	int flen;
+-	unsigned char *fname = NULL, *copy_name = NULL;
+-	unsigned char *nameptr;
+-	uint16_t liu;
+-	uint8_t lfi;
+-	loff_t size = udf_ext0_offset(dir) + dir->i_size;
+-	struct buffer_head *tmp, *bha[16];
+-	struct kernel_lb_addr eloc;
+-	uint32_t elen;
+-	sector_t offset;
+-	int i, num, ret = 0;
+-	struct extent_position epos = { NULL, 0, {0, 0} };
++	unsigned char *fname = NULL;
++	int ret = 0;
+ 	struct super_block *sb = dir->i_sb;
+ 	bool pos_valid = false;
++	struct udf_fileident_iter iter;
  
- struct fileIdentDesc *udf_fileident_read(struct inode *dir, loff_t *nf_pos,
- 					 struct udf_fileident_bh *fibh,
-diff --git a/fs/udf/udfdecl.h b/fs/udf/udfdecl.h
-index 7e258f15b8ef..22a8466e335c 100644
---- a/fs/udf/udfdecl.h
-+++ b/fs/udf/udfdecl.h
-@@ -86,6 +86,24 @@ extern const struct address_space_operations udf_aops;
- extern const struct address_space_operations udf_adinicb_aops;
- extern const struct address_space_operations udf_symlink_aops;
+ 	if (ctx->pos == 0) {
+ 		if (!dir_emit_dot(file, ctx))
+@@ -66,7 +53,7 @@ static int udf_readdir(struct file *file, struct dir_context *ctx)
+ 		ctx->pos = 1;
+ 	}
+ 	nf_pos = (ctx->pos - 1) << 2;
+-	if (nf_pos >= size)
++	if (nf_pos >= dir->i_size)
+ 		goto out;
  
-+struct udf_fileident_iter {
-+	struct inode *dir;		/* Directory we are working with */
-+	loff_t pos;			/* Logical position in a dir */
-+	struct buffer_head *bh[2];	/* Buffer containing 'pos' and possibly
-+					 * next buffer if entry straddles
-+					 * blocks */
-+	struct kernel_lb_addr eloc;	/* Start of extent containing 'pos' */
-+	uint32_t elen;			/* Length of extent containing 'pos' */
-+	sector_t loffset;		/* Block offset of 'pos' within above
-+					 * extent */
-+	struct extent_position epos;	/* Position after the above extent */
-+	struct fileIdentDesc fi;	/* Copied directory entry */
-+	uint8_t *name;			/* Pointer to entry name */
-+	uint8_t namebuf[UDF_NAME_LEN_CS0]; /* Storage for entry name in case
-+					 * the name is split between two blocks
-+					 */
-+};
-+
- struct udf_fileident_bh {
- 	struct buffer_head *sbh;
- 	struct buffer_head *ebh;
-@@ -243,6 +261,11 @@ extern udf_pblk_t udf_new_block(struct super_block *sb, struct inode *inode,
- 				 uint16_t partition, uint32_t goal, int *err);
+ 	/*
+@@ -90,138 +77,57 @@ static int udf_readdir(struct file *file, struct dir_context *ctx)
+ 		goto out;
+ 	}
  
- /* directory.c */
-+int udf_fiiter_init(struct udf_fileident_iter *iter, struct inode *dir,
-+		    loff_t pos);
-+int udf_fiiter_advance(struct udf_fileident_iter *iter);
-+void udf_fiiter_release(struct udf_fileident_iter *iter);
-+void udf_fiiter_write_fi(struct udf_fileident_iter *iter, uint8_t *impuse);
- extern struct fileIdentDesc *udf_fileident_read(struct inode *, loff_t *,
- 						struct udf_fileident_bh *,
- 						struct fileIdentDesc *,
+-	if (nf_pos == 0)
+-		nf_pos = udf_ext0_offset(dir);
+-
+-	fibh.soffset = fibh.eoffset = nf_pos & (sb->s_blocksize - 1);
+-	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
+-		if (inode_bmap(dir, nf_pos >> sb->s_blocksize_bits,
+-		    &epos, &eloc, &elen, &offset)
+-		    != (EXT_RECORDED_ALLOCATED >> 30)) {
+-			ret = -ENOENT;
+-			goto out;
+-		}
+-		block = udf_get_lb_pblock(sb, &eloc, offset);
+-		if ((++offset << sb->s_blocksize_bits) < elen) {
+-			if (iinfo->i_alloc_type == ICBTAG_FLAG_AD_SHORT)
+-				epos.offset -= sizeof(struct short_ad);
+-			else if (iinfo->i_alloc_type ==
+-					ICBTAG_FLAG_AD_LONG)
+-				epos.offset -= sizeof(struct long_ad);
+-		} else {
+-			offset = 0;
+-		}
+-
+-		if (!(fibh.sbh = fibh.ebh = udf_tread(sb, block))) {
+-			ret = -EIO;
+-			goto out;
+-		}
+-
+-		if (!(offset & ((16 >> (sb->s_blocksize_bits - 9)) - 1))) {
+-			i = 16 >> (sb->s_blocksize_bits - 9);
+-			if (i + offset > (elen >> sb->s_blocksize_bits))
+-				i = (elen >> sb->s_blocksize_bits) - offset;
+-			for (num = 0; i > 0; i--) {
+-				block = udf_get_lb_pblock(sb, &eloc, offset + i);
+-				tmp = udf_tgetblk(sb, block);
+-				if (tmp && !buffer_uptodate(tmp) && !buffer_locked(tmp))
+-					bha[num++] = tmp;
+-				else
+-					brelse(tmp);
+-			}
+-			if (num) {
+-				bh_readahead_batch(num, bha, REQ_RAHEAD);
+-				for (i = 0; i < num; i++)
+-					brelse(bha[i]);
+-			}
+-		}
+-	}
+-
+-	while (nf_pos < size) {
++	for (ret = udf_fiiter_init(&iter, dir, nf_pos);
++	     !ret && iter.pos < dir->i_size;
++	     ret = udf_fiiter_advance(&iter)) {
+ 		struct kernel_lb_addr tloc;
+-		loff_t cur_pos = nf_pos;
++		udf_pblk_t iblock;
+ 
+-		/* Update file position only if we got past the current one */
+-		if (nf_pos >= emit_pos) {
+-			ctx->pos = (nf_pos >> 2) + 1;
+-			pos_valid = true;
+-		}
+-
+-		fi = udf_fileident_read(dir, &nf_pos, &fibh, &cfi, &epos, &eloc,
+-					&elen, &offset);
+-		if (!fi)
+-			goto out;
+ 		/* Still not at offset where user asked us to read from? */
+-		if (cur_pos < emit_pos)
++		if (iter.pos < emit_pos)
+ 			continue;
+ 
+-		liu = le16_to_cpu(cfi.lengthOfImpUse);
+-		lfi = cfi.lengthFileIdent;
+-
+-		if (fibh.sbh == fibh.ebh) {
+-			nameptr = udf_get_fi_ident(fi);
+-		} else {
+-			int poffset;	/* Unpaded ending offset */
+-
+-			poffset = fibh.soffset + sizeof(struct fileIdentDesc) + liu + lfi;
+-
+-			if (poffset >= lfi) {
+-				nameptr = (char *)(fibh.ebh->b_data + poffset - lfi);
+-			} else {
+-				if (!copy_name) {
+-					copy_name = kmalloc(UDF_NAME_LEN,
+-							    GFP_NOFS);
+-					if (!copy_name) {
+-						ret = -ENOMEM;
+-						goto out;
+-					}
+-				}
+-				nameptr = copy_name;
+-				memcpy(nameptr, udf_get_fi_ident(fi),
+-				       lfi - poffset);
+-				memcpy(nameptr + lfi - poffset,
+-				       fibh.ebh->b_data, poffset);
+-			}
+-		}
++		/* Update file position only if we got past the current one */
++		pos_valid = true;
++		ctx->pos = (iter.pos >> 2) + 1;
+ 
+-		if ((cfi.fileCharacteristics & FID_FILE_CHAR_DELETED) != 0) {
++		if (iter.fi.fileCharacteristics & FID_FILE_CHAR_DELETED) {
+ 			if (!UDF_QUERY_FLAG(sb, UDF_FLAG_UNDELETE))
+ 				continue;
+ 		}
+ 
+-		if ((cfi.fileCharacteristics & FID_FILE_CHAR_HIDDEN) != 0) {
++		if (iter.fi.fileCharacteristics & FID_FILE_CHAR_HIDDEN) {
+ 			if (!UDF_QUERY_FLAG(sb, UDF_FLAG_UNHIDE))
+ 				continue;
+ 		}
+ 
+-		if (cfi.fileCharacteristics & FID_FILE_CHAR_PARENT) {
++		if (iter.fi.fileCharacteristics & FID_FILE_CHAR_PARENT) {
+ 			if (!dir_emit_dotdot(file, ctx))
+-				goto out;
++				goto out_iter;
+ 			continue;
+ 		}
+ 
+-		flen = udf_get_filename(sb, nameptr, lfi, fname, UDF_NAME_LEN);
++		flen = udf_get_filename(sb, iter.name,
++				iter.fi.lengthFileIdent, fname, UDF_NAME_LEN);
+ 		if (flen < 0)
+ 			continue;
+ 
+-		tloc = lelb_to_cpu(cfi.icb.extLocation);
++		tloc = lelb_to_cpu(iter.fi.icb.extLocation);
+ 		iblock = udf_get_lb_pblock(sb, &tloc, 0);
+ 		if (!dir_emit(ctx, fname, flen, iblock, DT_UNKNOWN))
+-			goto out;
+-	} /* end while */
+-
+-	ctx->pos = (nf_pos >> 2) + 1;
+-	pos_valid = true;
++			goto out_iter;
++	}
+ 
++	if (!ret) {
++		ctx->pos = (iter.pos >> 2) + 1;
++		pos_valid = true;
++	}
++out_iter:
++	udf_fiiter_release(&iter);
+ out:
+ 	if (pos_valid)
+ 		file->f_version = inode_query_iversion(dir);
+-	if (fibh.sbh != fibh.ebh)
+-		brelse(fibh.ebh);
+-	brelse(fibh.sbh);
+-	brelse(epos.bh);
+ 	kfree(fname);
+-	kfree(copy_name);
+ 
+ 	return ret;
+ }
 -- 
 2.35.3
 
