@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A742B64F5BB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Dec 2022 01:12:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8F6164F5D1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Dec 2022 01:13:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230324AbiLQAMR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Dec 2022 19:12:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45484 "EHLO
+        id S230314AbiLQANA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Dec 2022 19:13:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44198 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230217AbiLQALd (ORCPT
+        with ESMTP id S230309AbiLQAMH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Dec 2022 19:11:33 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D2FC4081A;
-        Fri, 16 Dec 2022 16:10:35 -0800 (PST)
+        Fri, 16 Dec 2022 19:12:07 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 84E8D13CEC;
+        Fri, 16 Dec 2022 16:10:59 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1633BB81E4C;
-        Sat, 17 Dec 2022 00:10:34 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D23FC433D2;
-        Sat, 17 Dec 2022 00:10:31 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AFF70B81E56;
+        Sat, 17 Dec 2022 00:10:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7129FC433EF;
+        Sat, 17 Dec 2022 00:10:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671235832;
+        s=k20201202; t=1671235856;
         bh=EG+e9gZtWBtSxd40PAuJyMF+fz0eBwH1KLEtrXDgJ8E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mWrtpq5ICOPcl4U33ijFf5SsKGIKWN0YwIlfpT5CbOqPFZhKSSaVPDPELFJ/6RNTa
-         f6r4RSBC5U8FWr+E4Vs30uJX8k81QzmEmw6D7hd5aTHLPjmfsDJM7W4ZOlmucUMjMU
-         DwqbUX6sT2lAfBaxL0H/Zp3cUA2HjXw4eBzsECRJ5ujNnJCAPGy8iq1pVjy+HxarJs
-         Yh4pl8YDCTFgljNArpYEDucfOM6AjpSOTXMTFhEBwLYzsWWBD174tPtBzm9n/v3psx
-         6N9SXE2rmDMwgcFXUcfPdqMSQETbAVqr6Ax3fPv2ZmimEGaH5JZ2G0Yqt4CN5AqMyb
-         rE/It/yBps6kg==
+        b=IR+F2bYdblhvglt4e6TMMKPGQ/Zu7djvxwj7vmeZ+jDClajtsACujBcl1xzTpwSa4
+         XNN3BEi4hc6cDjXchOm1Z7MJaGPekP5VBoSj0GPEKxWmWVFGkKWDAdyFdzGW8x6fxc
+         XZvz+l65Q8XADFx/VczL1hpYwcBPVLiw6MtzmX3qpYp2F2i2gYNorQpdeub5jP6AdI
+         wRsbyH73Kr9+TrqGvMlKoClujA7avsON6UscjmyokNO9Sp0gy2exyjArWI1wQJuHmo
+         hY+55nqIneH/PSrzgU679pk4aTyHw3CbuuM35mw5IhAi/Iq2gTeZqi1nZ7qBCFJ/0Z
+         DBSW9AqZJn08Q==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Liu Shixin <liushixin2@huawei.com>,
         Kees Cook <keescook@chromium.org>,
         Sasha Levin <sashal@kernel.org>, viro@zeniv.linux.org.uk,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 6.0 6/8] binfmt_misc: fix shift-out-of-bounds in check_special_flags
-Date:   Fri, 16 Dec 2022 19:10:10 -0500
-Message-Id: <20221217001013.41239-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.15 5/5] binfmt_misc: fix shift-out-of-bounds in check_special_flags
+Date:   Fri, 16 Dec 2022 19:10:38 -0500
+Message-Id: <20221217001038.41355-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221217001013.41239-1-sashal@kernel.org>
-References: <20221217001013.41239-1-sashal@kernel.org>
+In-Reply-To: <20221217001038.41355-1-sashal@kernel.org>
+References: <20221217001038.41355-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
