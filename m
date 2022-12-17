@@ -2,136 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4E0D664FC09
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Dec 2022 20:09:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 68BCE64FC42
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Dec 2022 21:43:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230259AbiLQTJx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Dec 2022 14:09:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53108 "EHLO
+        id S229675AbiLQUnR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Dec 2022 15:43:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41334 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230272AbiLQTJa (ORCPT
+        with ESMTP id S229656AbiLQUnQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Dec 2022 14:09:30 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B39A514012;
-        Sat, 17 Dec 2022 11:07:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=C/d4CkPzxxf9PWfMqX+OIeo1O9qLzk3Xkc5g2CBzozM=; b=HV9M0gN0vrn/zwQGC2UwIEuyl4
-        3198pgg2q1IYlRflUnm4Vxdn8mYRLx51xVgP/C6PmztCsKiYKYNV1fWJNNbVFxaX6yrsOAlUCThpd
-        3lzf49lTEYxuIkFvNP37LQeNETJbZBEzQ0mPBt+yjydQhLM/KAD6xdTum0qBgHTEFegZdSUSfmz6T
-        IlSxFbsP7zGihzAlXNjEG34SUl6VjSdlKEU9lmu8S5tIIsm7vqhx9LnGACHJggqTAGOObkQyBFnRm
-        JkVxGLjfMRNfNv01oTjaIhBjeF+ZU+9M0rKok135LUDLx477aE16F/6QoolPq1JxVVp+r0I2RmLax
-        TBuRI1yw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1p6cWe-00Goeb-GX; Sat, 17 Dec 2022 19:07:12 +0000
-Date:   Sat, 17 Dec 2022 19:07:12 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Ira Weiny <ira.weiny@intel.com>
+        Sat, 17 Dec 2022 15:43:16 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 34EB9DFA6;
+        Sat, 17 Dec 2022 12:43:15 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id k22-20020a05600c1c9600b003d1ee3a6289so3971108wms.2;
+        Sat, 17 Dec 2022 12:43:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AU2IHu9IHMCR1i1u9LEoX9i/onRwkHb2knf00zrEks4=;
+        b=GCR5sXlcaFKQMc4NLH4mTaeumKn6omx6zF4b3X1iJAolWtsv6akZkBhaS/+8e2U5gp
+         kDsdkyIc6DN2OXHSpjMhKMFaBrzxyvm1vj9wVrghsu5aUWshsN2sx7zYLXWQofplaROy
+         m6WZqjRom1vzLPgb1MdZj6RBVjo8m1mpQ/RKvbgqac+FcMXF0VJETpqox6Frw1oVp+rk
+         AU3xddx/oB0e9Y2kqkdiXKKGm7Dd9wWeAuppLjUef7dmFaWrvI/ERqYqjdhPr+deM4K6
+         bHEgsePwoYWpNkXCt3yFGTjqt4EGs+REeXIMvTRakv7zCLwuGXxNS9OECyob4Q6grnK4
+         H3Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AU2IHu9IHMCR1i1u9LEoX9i/onRwkHb2knf00zrEks4=;
+        b=Ft4hmL7wikNhxG+zYd6UpuFxkmFEBti5RVisSy/bCDBg32UxKn2QjnjTAdAJmi8o1d
+         r3OhKi/831BVlqjiUxbSvTV3pw/QxgfEIwHXt3rBxxGD6zQxOPLq35L0g7s0XJBMEIpU
+         MnLQVHeAFoatQTAfhd362O97TpugXrFyz8M/Nz9IFAC5pMfTcxWEB0I3eYkA/1YCQo63
+         SEB5OqQFp4XsAGBe6W7b81Mp61Nreu55riOr5CPMyQDdOq4AbFJvGSwK7rbFFzvbMD1Y
+         eBi2/OGkUiAOWXS+4xvSSCsvHcpLYdOk96MqSQP9Eolsswo0asFlQU1qw1kFV72okfGI
+         H1bg==
+X-Gm-Message-State: ANoB5pm6uui/JM9lC8sNtUCjgyvd/y4NnjiJpC/vHH2zqidG/lGSPHpM
+        8y2fEt+D+MA/htPpJniwHP8=
+X-Google-Smtp-Source: AA0mqf4S/dvHuUmCg3kSnrkkcO/8DeKZcm42AwqZF0hQk75EgVLlPo4DZ3nFXuI1aPwi97gMqpdtXw==
+X-Received: by 2002:a7b:c30e:0:b0:3cf:ab98:2245 with SMTP id k14-20020a7bc30e000000b003cfab982245mr28604634wmj.28.1671309793586;
+        Sat, 17 Dec 2022 12:43:13 -0800 (PST)
+Received: from suse.localnet (host-79-17-30-229.retail.telecomitalia.it. [79.17.30.229])
+        by smtp.gmail.com with ESMTPSA id g2-20020a056000118200b0025e86026866sm1493210wrx.0.2022.12.17.12.43.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 17 Dec 2022 12:43:12 -0800 (PST)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     reiserfs-devel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        linux-fsdevel@vger.kernel.org,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Subject: Re: [PATCH 2/8] reiserfs: use kmap_local_folio() in
- _get_block_create_0()
-Message-ID: <Y54TYOqbPuKlfiHk@casper.infradead.org>
+        linux-fsdevel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH 0/8] Convert reiserfs from b_page to b_folio
+Date:   Sat, 17 Dec 2022 21:43:11 +0100
+Message-ID: <11295613.F0gNSz5aLb@suse>
+In-Reply-To: <20221216205348.3781217-1-willy@infradead.org>
 References: <20221216205348.3781217-1-willy@infradead.org>
- <20221216205348.3781217-3-willy@infradead.org>
- <Y5343RPkHRdIkR9a@iweiny-mobl>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y5343RPkHRdIkR9a@iweiny-mobl>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 17, 2022 at 09:14:05AM -0800, Ira Weiny wrote:
-> On Fri, Dec 16, 2022 at 08:53:41PM +0000, Matthew Wilcox (Oracle) wrote:
-> > Switch from the deprecated kmap() to kmap_local_folio().  For the
-> > kunmap_local(), I subtract off 'chars' to prevent the possibility that
-> > p has wrapped into the next page.
-> 
-> Thanks for tackling this one.  I think the conversion is mostly safe because I
-> don't see any reason the mapping is passed to another thread.
-> 
-> But comments like this make me leary:
-> 
->          "But, this means the item might move if kmap schedules"
-> 
-> What does that mean?  That seems to imply there is something wrong with the
-> base code separate from the kmapping.
+On venerd=EC 16 dicembre 2022 21:53:39 CET Matthew Wilcox (Oracle) wrote:
+> These patches apply on top of
+> https://lore.kernel.org/linux-fsdevel/20221215214402.3522366-1-willy@infr=
+adead
+> .org/
+>=20
+> The non-trivial ones mostly revolve around uses of kmap()/kmap_atomic(),
+> so review from the experts on those would be welcome.
 
-I should probably have deleted that comment.  I'm pretty sure what it
-refers to is that we don't hold a lock that prevents the item from
-moving.  When ReiserFS was written, we didn't have CONFIG_PREEMPT, so 
-if kmap() scheduled, that was a point at which the item could move.
-I don't think I introduced any additional brokenness by converting
-from kmap() to kmap_local().  Maybe I'm wrong and somebody who
-understands ReiserFS can explain.
+I took a quick look at your conversions and they made me recall that months=
+=20
+ago you converted to kmap_local_folio() a previous conversion from kmap() t=
+o=20
+kmap_local_page() in ext2_get_page(): commit 37ce0b319b287 ("ext2: Use a fo=
+lio=20
+in ext2_get_page()").
 
-> To the patch, I think subtracting chars might be an issue.  If chars > offset
-> and the loop takes the first 'if (done) break;' path then p will end up
-> pointing at the previous page wouldn't it?
+So I just saw kmap_local_folio again. Unfortunately, because of my=20
+inexperience,  I'm not able to see why we should prefer the use of this=20
+function instead of kmap_local_page().
 
-I thought about that and managed to convince myself that chars was
-always < offset.  But now I'm not sure again.  Easiest way to fix
-this is actually to move the p += chars before the if (done) break;.
+Can you please tell me why and when we should prefer kmap_local_folio() in=
+=20
+those cases too where kmap_local_page() can work properly? I'm asking becau=
+se=20
+these days I'm converting other *_get_page() from kmap() (including the ser=
+ies=20
+to fs/ufs that I sent today).
 
-I also need to rev this patch because it assumes that b_folio is a
-single page.
+> If these all look
+> good to people, I can pass them off to Andrew for the 6.3 merge window.
+>=20
+> Running xfstests against reiserfs gives me 313/701 failures before and
+> after this set of patches.
 
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index 008855ddb365..be13ce7a38e1 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -295,7 +295,6 @@ static int _get_block_create_0(struct inode *inode, sector_t block,
- 	int ret;
- 	int result;
- 	int done = 0;
--	unsigned long offset;
- 
- 	/* prepare the key to look for the 'block'-th block of file */
- 	make_cpu_key(&key, inode,
-@@ -380,17 +379,16 @@ static int _get_block_create_0(struct inode *inode, sector_t block,
- 		set_buffer_uptodate(bh_result);
- 		goto finished;
- 	}
--	/* read file tail into part of page */
--	offset = (cpu_key_k_offset(&key) - 1) & (PAGE_SIZE - 1);
- 	copy_item_head(&tmp_ih, ih);
- 
- 	/*
- 	 * we only want to kmap if we are reading the tail into the page.
- 	 * this is not the common case, so we don't kmap until we are
--	 * sure we need to.  But, this means the item might move if
--	 * kmap schedules
-+	 * sure we need to.
- 	 */
--	p = kmap_local_folio(bh_result->b_folio, offset);
-+	p = kmap_local_folio(bh_result->b_folio,
-+			offset_in_folio(bh_result->b_folio,
-+					cpu_key_k_offset(&key) - 1));
- 	memset(p, 0, inode->i_sb->s_blocksize);
- 	do {
- 		if (!is_direct_le_ih(ih)) {
-@@ -413,12 +411,11 @@ static int _get_block_create_0(struct inode *inode, sector_t block,
- 			chars = ih_item_len(ih) - path.pos_in_item;
- 		}
- 		memcpy(p, ih_item_body(bh, ih) + path.pos_in_item, chars);
-+		p += chars;
- 
- 		if (done)
- 			break;
- 
--		p += chars;
--
- 		/*
- 		 * we done, if read direct item is not the last item of
- 		 * node FIXME: we could try to check right delimiting key
+It has happened several times to me too. Some patches of mine have failures=
+=20
+from xfstests whose amounts and types don't change with or without my chang=
+es.
+
+Several of them have already been merged. I guess that if they don't add=20
+further failures everything is alright.
+
+However, something is broken for sure... xfstests or the filesystems? :-/=20
+
+Thanks,
+
+=46abio
+
+> I don't have a huge amount of confidence
+> that we're really getting good coverage from that test run!
+>=20
+> Matthew Wilcox (Oracle) (8):
+>   reiserfs: use b_folio instead of b_page in some obvious cases
+>   reiserfs: use kmap_local_folio() in _get_block_create_0()
+>   reiserfs: Convert direct2indirect() to call folio_zero_range()
+>   reiserfs: Convert reiserfs_delete_item() to use kmap_local_folio()
+>   reiserfs: Convert do_journal_end() to use kmap_local_folio()
+>   reiserfs: Convert map_block_for_writepage() to use kmap_local_folio()
+>   reiserfs: Convert convert_tail_for_hole() to use folios
+>   reiserfs: Use flush_dcache_folio() in reiserfs_quota_write()
+>=20
+>  fs/reiserfs/inode.c           | 73 +++++++++++++++++------------------
+>  fs/reiserfs/journal.c         | 12 +++---
+>  fs/reiserfs/prints.c          |  4 +-
+>  fs/reiserfs/stree.c           |  9 +++--
+>  fs/reiserfs/super.c           |  2 +-
+>  fs/reiserfs/tail_conversion.c | 19 ++++-----
+>  6 files changed, 59 insertions(+), 60 deletions(-)
+>=20
+> --
+> 2.35.1
+
+
+
+
