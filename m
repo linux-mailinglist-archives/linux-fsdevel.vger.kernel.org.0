@@ -2,112 +2,154 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A106B64F5F1
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Dec 2022 01:15:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5BB2E64F6E1
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Dec 2022 02:59:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229978AbiLQAPL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 16 Dec 2022 19:15:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45350 "EHLO
+        id S230110AbiLQB7m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 16 Dec 2022 20:59:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37438 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230437AbiLQANr (ORCPT
+        with ESMTP id S230086AbiLQB7j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 16 Dec 2022 19:13:47 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4F447682E;
-        Fri, 16 Dec 2022 16:11:34 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 73BCFB81E4A;
-        Sat, 17 Dec 2022 00:11:33 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61EA4C433F0;
-        Sat, 17 Dec 2022 00:11:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671235892;
-        bh=vMndOG5sdgeg8DD+EqgRVsExZdtKN+MFV/3z5NYiEF0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=BTkob2+/C9qE2PyryiIjgdrz+6SMuXG16swzphD1uoLabaET6+5HM2b86SXYxB7H2
-         efnUf935ensHLDpxZqoqR4IBT715MCgw460zPaQ+GxvPaGP/dzTYEbA4qxWLNuxbI+
-         d5FinO2xNp61sT2qOmsVjU/haZyXKx5ZbS+DoYoU0L2N9TfrimUfCHY2R89DoKLXHa
-         sQMM2z1XLqeEVbUs7n9yXZcdsUDhsI7ghigmsRTKio+F6MHNT5dqMDkBl/yw44dISJ
-         kYwM3NDt+Tc2++y9o6LyNqpAQiMoa7fWH7nmj+hojKWi4vIuV8NUEH9LIkIkYWHplB
-         SM1m+BRuVPkBQ==
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Liu Shixin <liushixin2@huawei.com>,
-        Kees Cook <keescook@chromium.org>,
-        Sasha Levin <sashal@kernel.org>, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.9] binfmt_misc: fix shift-out-of-bounds in check_special_flags
-Date:   Fri, 16 Dec 2022 19:11:28 -0500
-Message-Id: <20221217001129.41587-1-sashal@kernel.org>
-X-Mailer: git-send-email 2.35.1
+        Fri, 16 Dec 2022 20:59:39 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F806C76F;
+        Fri, 16 Dec 2022 17:59:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=a/I0Z/ZlO9e9LGuO8VIziVIPtAnVdRWKVjtg7u7czyA=; b=Dvpv7Zp3q3V+1b3yW0+sXDN5MA
+        m40zL6ch7/mIhRbIkrwasbdtPP+ni/AW3DLaZ3yxd/MVu0iec9vYz3jv1O3SwROjiQnwL08Mm4NbG
+        ImTfjlnZBKQkXo0Vw9WCHYvOVIpI2YN27wiNCgOwW5YYv0dO4L7pI8wA1qN8gXDM0AMgg0oSmb/A1
+        Ua/kv9V7lq/YAUeFH7uVtvZISzKpAN2fSSmWmrfGZ5O5AeIAIJ9bupuKwQ/8gJgDhp/nmFii9xUGL
+        HVUF92OUSsTocaEcY16mfOHdNIxM/9HwdkYVAXvHMLzG7AS6+MIyrwersK+Wh5cQAcMABIrLbaqX6
+        axwyZz1Q==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1p6MU8-00CMF4-2G;
+        Sat, 17 Dec 2022 01:59:32 +0000
+Date:   Sat, 17 Dec 2022 01:59:32 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Boqun Feng <boqun.feng@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Wei Chen <harperchen1110@gmail.com>, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        syzbot <syzkaller@googlegroups.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+Subject: Re: possible deadlock in __ata_sff_interrupt
+Message-ID: <Y50ihHKFbderCqH1@ZenIV>
+References: <CAO4mrfcX8J73DWunmdYjf_SK5TyLfp9W9rmESTj57PCkG2qkBw@mail.gmail.com>
+ <5eff70b8-04fc-ee87-973a-2099a65f6e29@opensource.wdc.com>
+ <Y5s7F/4WKe8BtftB@ZenIV>
+ <80dc24c5-2c4c-b8da-5017-31aae65a4dfa@opensource.wdc.com>
+ <Y5vo00v2F4zVKeug@ZenIV>
+ <CAHk-=wgOFV=QmwWQW0QxDNkeDt4t5dOty7AvGyWRyj-O=8db9A@mail.gmail.com>
+ <Y50BqT3nSF7+JEzt@ZenIV>
+ <Y50FIckzrV9sWlid@boqun-archlinux>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y50FIckzrV9sWlid@boqun-archlinux>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Liu Shixin <liushixin2@huawei.com>
+On Fri, Dec 16, 2022 at 03:54:09PM -0800, Boqun Feng wrote:
+> On Fri, Dec 16, 2022 at 11:39:21PM +0000, Al Viro wrote:
+> > [Boqun Feng Cc'd]
+> > 
+> > On Fri, Dec 16, 2022 at 03:26:21AM -0800, Linus Torvalds wrote:
+> > > On Thu, Dec 15, 2022 at 7:41 PM Al Viro <viro@zeniv.linux.org.uk> wrote:
+> > > >
+> > > > CPU1: ptrace(2)
+> > > >         ptrace_check_attach()
+> > > >                 read_lock(&tasklist_lock);
+> > > >
+> > > > CPU2: setpgid(2)
+> > > >         write_lock_irq(&tasklist_lock);
+> > > >         spins
+> > > >
+> > > > CPU1: takes an interrupt that would call kill_fasync().  grep and the
+> > > > first instance of kill_fasync() is in hpet_interrupt() - it's not
+> > > > something exotic.  IRQs disabled on CPU2 won't stop it.
+> > > >         kill_fasync(..., SIGIO, ...)
+> > > >                 kill_fasync_rcu()
+> > > >                         read_lock_irqsave(&fa->fa_lock, flags);
+> > > >                         send_sigio()
+> > > >                                 read_lock_irqsave(&fown->lock, flags);
+> > > >                                 read_lock(&tasklist_lock);
+> > > >
+> > > > ... and CPU1 spins as well.
+> > > 
+> > > Nope. See kernel/locking/qrwlock.c:
+> > 
+> > [snip rwlocks are inherently unfair, queued ones are somewhat milder, but
+> > all implementations have writers-starving behaviour for read_lock() at least
+> > when in_interrupt()]
+> > 
+> > D'oh...  Consider requested "Al, you are a moron" duly delivered...  I plead
+> > having been on way too low caffeine and too little sleep ;-/
+> > 
+> > Looking at the original report, looks like the scenario there is meant to be
+> > the following:
+> > 
+> > CPU1: read_lock(&tasklist_lock)
+> > 	tasklist_lock grabbed
+> > 
+> > CPU2: get an sg write(2) feeding request to libata; host->lock is taken,
+> > 	request is immediately completed and scsi_done() is about to be called.
+> > 	host->lock grabbed
+> > 
+> > CPU3: write_lock_irq(&tasklist_lock)
+> > 	spins on tasklist_lock until CPU1 gets through.
+> > 
+> > CPU2: get around to kill_fasync() called by sg_rq_end_io() and to grabbing
+> > 	tasklist_lock inside send_sigio()
+> > 	spins, since it's not in an interrupt and there's a pending writer
+> > 	host->lock is held, spin until CPU3 gets through.
+> 
+> Right, for a reader not in_interrupt(), it may be blocked by a random
+> waiting writer because of the fairness, even the lock is currently held
+> by a reader:
+> 
+> 	CPU 1			CPU 2		CPU 3
+> 	read_lock(&tasklist_lock); // get the lock
+> 
+> 						write_lock_irq(&tasklist_lock); // wait for the lock
+> 
+> 				read_lock(&tasklist_lock); // cannot get the lock because of the fairness
 
-[ Upstream commit 6a46bf558803dd2b959ca7435a5c143efe837217 ]
+IOW, any caller of scsi_done() from non-interrupt context while
+holding a spinlock that is also taken in an interrupt...
 
-UBSAN reported a shift-out-of-bounds warning:
+And we have drivers/scsi/scsi_error.c:scsi_send_eh_cmnd(), which calls
+->queuecommand() under a mutex, with
+#define DEF_SCSI_QCMD(func_name) \
+        int func_name(struct Scsi_Host *shost, struct scsi_cmnd *cmd)   \
+        {                                                               \
+                unsigned long irq_flags;                                \
+                int rc;                                                 \
+                spin_lock_irqsave(shost->host_lock, irq_flags);         \
+                rc = func_name##_lck(cmd);                              \
+                spin_unlock_irqrestore(shost->host_lock, irq_flags);    \
+                return rc;                                              \
+        }
 
- left shift of 1 by 31 places cannot be represented in type 'int'
- Call Trace:
-  <TASK>
-  __dump_stack lib/dump_stack.c:88 [inline]
-  dump_stack_lvl+0x8d/0xcf lib/dump_stack.c:106
-  ubsan_epilogue+0xa/0x44 lib/ubsan.c:151
-  __ubsan_handle_shift_out_of_bounds+0x1e7/0x208 lib/ubsan.c:322
-  check_special_flags fs/binfmt_misc.c:241 [inline]
-  create_entry fs/binfmt_misc.c:456 [inline]
-  bm_register_write+0x9d3/0xa20 fs/binfmt_misc.c:654
-  vfs_write+0x11e/0x580 fs/read_write.c:582
-  ksys_write+0xcf/0x120 fs/read_write.c:637
-  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-  do_syscall_64+0x34/0x80 arch/x86/entry/common.c:80
-  entry_SYSCALL_64_after_hwframe+0x63/0xcd
- RIP: 0033:0x4194e1
+being commonly used for ->queuecommand() instances.  So any scsi_done()
+in foo_lck() (quite a few of such) + use of ->host_lock in interrupt
+for the same driver (also common)...
 
-Since the type of Node's flags is unsigned long, we should define these
-macros with same type too.
+I wonder why that hadn't triggered the same warning a long time
+ago - these warnings had been around for at least two years.
 
-Signed-off-by: Liu Shixin <liushixin2@huawei.com>
-Signed-off-by: Kees Cook <keescook@chromium.org>
-Link: https://lore.kernel.org/r/20221102025123.1117184-1-liushixin2@huawei.com
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/binfmt_misc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/binfmt_misc.c b/fs/binfmt_misc.c
-index 2bda9245cabe..558e4007131e 100644
---- a/fs/binfmt_misc.c
-+++ b/fs/binfmt_misc.c
-@@ -42,10 +42,10 @@ static LIST_HEAD(entries);
- static int enabled = 1;
- 
- enum {Enabled, Magic};
--#define MISC_FMT_PRESERVE_ARGV0 (1 << 31)
--#define MISC_FMT_OPEN_BINARY (1 << 30)
--#define MISC_FMT_CREDENTIALS (1 << 29)
--#define MISC_FMT_OPEN_FILE (1 << 28)
-+#define MISC_FMT_PRESERVE_ARGV0 (1UL << 31)
-+#define MISC_FMT_OPEN_BINARY (1UL << 30)
-+#define MISC_FMT_CREDENTIALS (1UL << 29)
-+#define MISC_FMT_OPEN_FILE (1UL << 28)
- 
- typedef struct {
- 	struct list_head list;
--- 
-2.35.1
-
+Am I missing something here?
