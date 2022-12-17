@@ -2,254 +2,230 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67FE964FD0B
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Dec 2022 00:33:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EE2264FD11
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Dec 2022 00:40:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230051AbiLQXdP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Dec 2022 18:33:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35488 "EHLO
+        id S229675AbiLQXkG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Dec 2022 18:40:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36048 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229611AbiLQXdN (ORCPT
+        with ESMTP id S229506AbiLQXkE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Dec 2022 18:33:13 -0500
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 302B7E02D;
-        Sat, 17 Dec 2022 15:33:12 -0800 (PST)
+        Sat, 17 Dec 2022 18:40:04 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 91D232BFD;
+        Sat, 17 Dec 2022 15:40:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1671319992; x=1702855992;
+  t=1671320403; x=1702856403;
   h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=zP2djP5sk3/PWieX8Vflq//qGwxRyh/AMBWAVcHRBQI=;
-  b=IiORlZOr7hkFl/NLA7ofL0/i6mE08xNAWt3WaLL1Lvm40tPeu9VJL2FQ
-   bkIeztaSPkD4HBDCD5QcaMfuSTBe0wdCcxx17mjWYrm7/Lr3pctqXkEAb
-   zCQVmhR/5BBDXM76blGq5+5QyTAT6S+q6nmATtj2oRi6YEh6kEoxYAtWD
-   4m3B889ouo65HrO0WvclXcIYfLn++g20OxwpgF/hIxI93yXlXuOjkfuJG
-   zy8uwIJb2soSyo1daLgHmeDeTnGC7aJUYWx5mZRsXu70ZzU+1dlsLDBHU
-   UlYhmg9OpeCZ3XUMUh8VKmU1fHI+e7GN81RvJC6A/OZCxX5okjMnWGWBb
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10564"; a="298837424"
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=uyGg/O0AErkhsARyN5rJ6h5Q7ntE2Ln5p81fG+DeuGs=;
+  b=hKzNWwOqFboao9CEh/JqrgTNpAhkID3MDpl7GK5cxGKvEP2m9DFY55BI
+   L3IMk9/idDRDf6J+XZJOLZZIMuP+B/ngHwliOC1dfuz9uunIYNK6GIVvV
+   iiXJ2wSBy7ECCs7h4Wv25tzJ+GuMWyHkGnvGlBt8IglMBBvekRo9HWy3J
+   6aM7BNMfp+m3YSuKJZTlVJX0FOlV3U2V3DE5FHPKduDfY8b+tnn5svTA0
+   Fb1otzVI6Dr9MMM/jVLNbbmFdehBNrWiAqY+EGBFC29NrdN2MXZEv91HN
+   BqSeJniTichvmZTiaR1tMEhoe8BLTdQkM4OdZFHbRLcjC7/DssokyaUoN
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10564"; a="321050832"
 X-IronPort-AV: E=Sophos;i="5.96,253,1665471600"; 
-   d="scan'208";a="298837424"
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2022 15:33:11 -0800
+   d="scan'208";a="321050832"
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Dec 2022 15:40:03 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10564"; a="713629474"
+X-IronPort-AV: E=McAfee;i="6500,9779,10564"; a="774515644"
 X-IronPort-AV: E=Sophos;i="5.96,253,1665471600"; 
-   d="scan'208";a="713629474"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmsmga008.fm.intel.com with ESMTP; 17 Dec 2022 15:33:11 -0800
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+   d="scan'208";a="774515644"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by orsmga004.jf.intel.com with ESMTP; 17 Dec 2022 15:40:03 -0800
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Sat, 17 Dec 2022 15:33:11 -0800
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ 15.1.2507.16; Sat, 17 Dec 2022 15:40:02 -0800
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Sat, 17 Dec 2022 15:33:11 -0800
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ 15.1.2507.16; Sat, 17 Dec 2022 15:40:02 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16 via Frontend Transport; Sat, 17 Dec 2022 15:33:11 -0800
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.170)
- by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ 15.1.2507.16 via Frontend Transport; Sat, 17 Dec 2022 15:40:02 -0800
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.16; Sat, 17 Dec 2022 15:33:10 -0800
+ 15.1.2507.16; Sat, 17 Dec 2022 15:40:01 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TBR10VjQwZ34yJUFylbNQe+J6l2KISVvxaXrg4ZKz82eISzeMmNRGjvS0oaEgC4q+JK5yifW1Bhqe/dMPf6998JG5oQ9lgjGgRk48Wha95MP4WtzuIjni0HunrvxwPoBZ5YoOFO/O/8sqO47mPbCFsFBWOF2+5k1WRbvieH6c9iHmoisOFslRclWfCdFzZFseIpQBvMaBL+nIBpMVRYehVGatBu23Wue8MX1IU1n305c2vo1lbV/NS2cCrjno9cC1L/AGJwJM2FfMibOaVROWYClAfDXx0tAUyAB28+SzdOxlrqT46U8uiBB3vTrp2/Q3SAd3gM2amf/580Dttz/Qw==
+ b=a9T1gDZmBX9hDp0inq5ZjBv+0i0RW5GI8MFj3nu2bqRFcivq3PY7+8kq3wO4jHFJd0M3iR4fhgxGgBxpti0CyRJunfTVbvDQT5/c3WsELBeJ5CQY4prD6APmy4yl2qqdu5gm1vYpsGOXx/XKOaQbwXxacIAPkqYSBgkCPQylztsh7Z2NyztRN+Km2J91M8JqAUNHG7Cy9OX/VVi8shVeMpUrS5kNrv+ZqQqbq863nuN4lN+BQly25E6379Ro4e5+G/DLTyS6kUZybXMHu/5E8SB5zsEwOBDx8lucsn8lr2b9fh2JN9Pb2OsadexdVjaj76ulocsg3sBkboKnEvOTRg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HI6C50bEHgqvEl0QCHUV6PrhwUqDSKyUXIwvJoQZVO4=;
- b=Ngzg/ymYHWqpjUVJZZ9M7ZzePzDUe81Cbevq5+qmUmoWWvjIaRaCHQPv5Pb3orTSrIZsrb0E1yTKUiBnL3nH3xtUdYaJ91RWW8rHLkjPyRbDTAYZcO5P2SLeoPMyuSLMq5XCX2FSCzo77OIEiHr7AfQEs9LDqDrcwaJlGXKKW7vR/Mvk4neaX0CuRZzjYctNTXxm/N/aemtfLMgsBFVXOUInJrRulXGGeJfTyalz1w7aQ46kW2GvpqBcY6vIBuen2wzh/MiQ9yyQc2ApL3cdag6F5EcxcNFjr9AE9rq+LBam/swE8u44BkckZbBiLUrafsDGkw86qaYonp6pxD2U/Q==
+ bh=Y7MVjWnm6CSm0iCHXBt0sXNcL9ZH2rWPAV9M1aWhy1w=;
+ b=NlbfXpL4QH6hJyORrowcX2CBNOW4fuc3lDNtPuhy6zBB9FBiHjvWPIztze++YouqskK6QS4JVzqL5EY8csjXPQINfNdfF8tE+YldECIo8RepbDEWG4iY6lAE0u0XtVfLVnG4xLS9+/Ggy7iIn+LiLqQdnk77rULnpOq5Mgiw1eZfaTlK20sZp8I+49EImRWfvPlCSK5UKH2uRqJCRxfvmLbqUb8GM1M/IgZ3uIxaaZz7XXnpCRedIwiO4iPBlwGHky/YswAO1TCyijREnxP4L+WT1aAl35R2WuMvE/1k0Jlpn/G3r45vx6eUcxgpmD1kT5CA8di5MXGntYPxFBj9yA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by CY5PR11MB6319.namprd11.prod.outlook.com (2603:10b6:930:3d::6) with
+ by CH0PR11MB5265.namprd11.prod.outlook.com (2603:10b6:610:e0::19) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5924.15; Sat, 17 Dec
- 2022 23:33:09 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5924.16; Sat, 17 Dec
+ 2022 23:39:59 +0000
 Received: from SA1PR11MB6733.namprd11.prod.outlook.com
  ([fe80::288d:5cae:2f30:828b]) by SA1PR11MB6733.namprd11.prod.outlook.com
  ([fe80::288d:5cae:2f30:828b%6]) with mapi id 15.20.5924.011; Sat, 17 Dec 2022
- 23:33:08 +0000
-Date:   Sat, 17 Dec 2022 15:33:05 -0800
+ 23:39:59 +0000
+Date:   Sat, 17 Dec 2022 15:39:56 -0800
 From:   Ira Weiny <ira.weiny@intel.com>
-To:     Matthew Wilcox <willy@infradead.org>
-CC:     <reiserfs-devel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
-        <linux-fsdevel@vger.kernel.org>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Subject: Re: [PATCH 2/8] reiserfs: use kmap_local_folio() in
- _get_block_create_0()
-Message-ID: <Y55RsbPJDZQi1BeC@iweiny-mobl>
+To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+CC:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        <reiserfs-devel@vger.kernel.org>, Jan Kara <jack@suse.cz>,
+        <linux-fsdevel@vger.kernel.org>
+Subject: Re: [PATCH 0/8] Convert reiserfs from b_page to b_folio
+Message-ID: <Y55TTKG2tgWL7UsQ@iweiny-mobl>
 References: <20221216205348.3781217-1-willy@infradead.org>
- <20221216205348.3781217-3-willy@infradead.org>
- <Y5343RPkHRdIkR9a@iweiny-mobl>
- <Y54TYOqbPuKlfiHk@casper.infradead.org>
-Content-Type: text/plain; charset="us-ascii"
+ <11295613.F0gNSz5aLb@suse>
+Content-Type: text/plain; charset="iso-8859-1"
 Content-Disposition: inline
-In-Reply-To: <Y54TYOqbPuKlfiHk@casper.infradead.org>
-X-ClientProxiedBy: SJ0PR03CA0215.namprd03.prod.outlook.com
- (2603:10b6:a03:39f::10) To SA1PR11MB6733.namprd11.prod.outlook.com
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <11295613.F0gNSz5aLb@suse>
+X-ClientProxiedBy: BY5PR13CA0001.namprd13.prod.outlook.com
+ (2603:10b6:a03:180::14) To SA1PR11MB6733.namprd11.prod.outlook.com
  (2603:10b6:806:25c::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|CY5PR11MB6319:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0dc4ce50-714f-492a-e380-08dae0870e0a
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|CH0PR11MB5265:EE_
+X-MS-Office365-Filtering-Correlation-Id: 08e2d942-1caa-4227-50eb-08dae08802da
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: wL9sGsVWNpai87pFOBPqBgu4b/rvRL6JpD0kkMhXGQzE3GBgyqnuIuVVUdT7zZXUzI3CkQQ9MYMIkRD+nYVxYTK7MBQ8I1RRILlxm5ITZPLYt3bl2Lq6/U/WDjhoGc0Ajh8jj+6nIxwjUgBX+vso2hVmTpPbmJFrWVJc5+fBCHyAJ8AH/JmVI0Al4pGDC+ppgn6BbwNICUiudOXQCsffqut1HcaOAq3E0SddMJ3Rip1k9GEMu1p6DtSjL10sH2xdMQPzqVaY2hmpN+Ol9gSbaPPTXRO2HO3fpJiQoYURiojGMgZIxj3pDAaLxgk9CJLgAyRUeUVLgSQio7fZ4J5dyzJ3uYSjvqVWrk6xGJmrVmi9VVRq5t6/5LbacRj8kHAHeizmDMoNTJnAEtvdedl4vj8Ywx7012L+Z3t8j4T0JtBhzlxKAPJRTwII76uap4iX45DSFfkP9H0+V0GUsVuXTW4VjsMUGyHjvFStrypDrxJXc/ZYBrTcCZtSeJW7O5mvdwoBcVQWFwOEduXH1m0eQkKDSVq4u9L4RX0VQTPJCRLh7SPUBiGRALagR198jzIp0oQQriUuWAJOjd2MamHBc84Afakh3l0MycZ1wHNtl8pPRTQ53qivTe7Egxq4MqEmZOXFJ2RoQpF6fQD9lRW75Q==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(7916004)(366004)(136003)(396003)(376002)(346002)(39860400002)(451199015)(33716001)(86362001)(82960400001)(41300700001)(316002)(6916009)(38100700002)(66556008)(66476007)(4326008)(66946007)(8676002)(54906003)(8936002)(44832011)(6506007)(6512007)(9686003)(26005)(83380400001)(6486002)(186003)(478600001)(6666004)(5660300002)(2906002);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: ciS8MShTrdAqc0sInDWt5kpkpqtJHOHSOEQbYzgZpOhNEYgpIaLEMuWQsglcjKyRkI53106f8FIQIIFGBpptw3eLorWc+albS1MljapYWTbf6QUYbgamktQFVj0wn7LlCdU3rvBpFPLYtfgwYZdXIqt8CRnmBQhrIDh8Z2zjYEXV5LsOy7UBiewW+9w79Ju7Wc2Kz0acD5005CQQAKxh39cgDXzLzA1tRnnlIud/X0JgCdNx2Zak4Z/QaF/RBgMlhtEnC+g2MuKorAu3ssxm+tXYhG9dG7CDqa3xyBvRuhCLsOG2vUXQIFvIGoPUm1NuKpuwctFUjH2rVxvicsqoY7F7LlICABQwCvfeqluRbdwAHuBUoeX/+FKyHKBFoGqwXg9ToFNQNcDKHYkfeJWampx7P7xtwj/JttGBRWjNPQVDupxLzd4dIDDXhMTuO6CDSoJp/dJkHA2SNBEylI1YQk/NCCfhT2mqZzti1O7Jj8aRJJRtTgGg4Pnq837iZoXNQ8tmKsL7tFPBTHBRlgxskzQSHOCZXC7NQd8v5LTShX9y/C8TRkFT3bWrt1U0sBNDtpDN4gvaUygLtOFYCNQ1gFEvb8Ah9Gw5h5tK67JNKz6LjrkjLtJ1NOOhvcmHttUWpEpE0FKXgRH2KhIIJ1yfr4Fpa5wZ6Bwpp7brTI5wiPA=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(7916004)(366004)(396003)(376002)(136003)(346002)(39860400002)(451199015)(82960400001)(38100700002)(66899015)(41300700001)(8936002)(5660300002)(66476007)(8676002)(66556008)(4326008)(66946007)(33716001)(83380400001)(478600001)(6486002)(316002)(6916009)(54906003)(2906002)(44832011)(26005)(186003)(9686003)(6512007)(86362001)(6666004)(6506007)(966005);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?4Ldup3PYKLjpP2KlGgyIY9wCdreTB7PWG4RnhQ8Kph4cjwUaCtP+7p4yebyG?=
- =?us-ascii?Q?9riO/rVBUVJTMpajnPc8qlRyX7Z5IVEArNzRIrVrsk+9RsYTZMHTAUuAXpJh?=
- =?us-ascii?Q?MQJWV1youKH03aDEK4u4kZTRByfqvtJmkpFgL1Q7kEAkXjXNow5TTnG4ulrg?=
- =?us-ascii?Q?KsdMZUEywPb8jTD0Yc9w3So5bmks5jjhdf8Ec4LDUXEChUbvTFxbOll3jzEQ?=
- =?us-ascii?Q?kMm9XUgVmk+kn12WQb//AeAuhLT2+ZgTqSkCLwiRpxOMs2ke4aniXf4tf784?=
- =?us-ascii?Q?L9uYc8WyKGv8mz5R8GMg/lym2trT4/3ihhpwSuJvPvm4IGCvV3il/pCtumrR?=
- =?us-ascii?Q?mNqEmFi51+pC8qKAXiQFjkzqA4kZ1XRsL1BK/PGIfj6xIHN072T1eGo7usSc?=
- =?us-ascii?Q?tHXBk0f4c2PIj6iHSaQcce3eP7lj492GQmhTflFBI7sotnJKFcCQFIBZ66kw?=
- =?us-ascii?Q?OTMnBAGLT9pLby3zz+tZWBt/Tdt+N7NGJTl82DZ/9S+Bw8I7V6OUnBDSG21s?=
- =?us-ascii?Q?SjxAJT1kojIQccPiR0UYp7tDJ+TA6JIU02HqiLOvstL21fJA1Tko1ISzz5Vx?=
- =?us-ascii?Q?SvKsbCq2ES6nHcTGkwRTaePMX8wfP9/tgWjh00cAIXQZorW6Xu/z+y8Z8Z3y?=
- =?us-ascii?Q?XrIEhAntEllqNcWFDPdwWQrNc9GDVkDlXo6dxoi7r0ZvvLtF+KpMH80ritO9?=
- =?us-ascii?Q?D8fjC4gWNlOAEzhH3fZtw3F13XgYRRDzFygeAM2DXr40lu6NwqYekeFGOZep?=
- =?us-ascii?Q?f77LXbZjSno9ytx2/j+/AqDz7n8ZZSc7nohM5XWaxxsdrBxu1Lw/ypw7qZs7?=
- =?us-ascii?Q?GuTEMmt3a/83scpWbbWe5RewCx00QZWCIttf8+cNz58LTHriD3ydNZsD3NIv?=
- =?us-ascii?Q?KmzHcFOeG4SGO1rRPRkSOoBJF3F2gSb+4VGG+mObsq9QFRVR9dnjU160IK/m?=
- =?us-ascii?Q?/pgCFHnvOP11Hw7mKa0Cek9ju2czCWdXJsEWlPlO0aGk1YIQx/LacltevqeR?=
- =?us-ascii?Q?iYTwfog31BnOX23iTW86U4crwR5SuDGyPj/3V7iykYUreAVfS4Ed9y+0O369?=
- =?us-ascii?Q?txhZsMhR7yaF5+Xi5U15jgNfrUUx8F/g4mSURm7AUlKYnfqUk1HgoQoeNFaY?=
- =?us-ascii?Q?QyFht2VMWFpfRUa8eXsHFIyr8tlQBld0H9fzC1x0o2QCGVv6wmk6NZLVUUzw?=
- =?us-ascii?Q?5cGLnoq/yVT7RuZgv6BayGjazAWcaYJFmiSeWElrYID8Kd7v+AzL1xTTpDsQ?=
- =?us-ascii?Q?Ju3g+mRoh+/VecCwdJbAIMmqS+KstmhSxId32mbmxFqJvDZRhGD+Q99isCIF?=
- =?us-ascii?Q?FcBBqB+ZAAdTr8KQTAc5UI+d24HHr7yeyJryu+yVy1grcJpbasESOlYSxcyx?=
- =?us-ascii?Q?DakrG9xtvULRNGWjQ6akLqT/M7u9+1MpauNNCiYNrWIcbvpCkubaufyaz5lg?=
- =?us-ascii?Q?TxWw9L+rdJG8TsYx+HcFQiB0BFqaLXmCpd/PqbB18bOkH0EvphPeakEUiwCA?=
- =?us-ascii?Q?TooqvibxERhK1B1WwFg4i3oow+eIJfK5Wu8atesYqGoM1q5QJETL+GDzXwOS?=
- =?us-ascii?Q?eYdMW7y8Xc/KgPaso17AdXqjxkVK66GzeUAsXl74?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0dc4ce50-714f-492a-e380-08dae0870e0a
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?exzYjr8gTr9tuvdtjfz71zsYi997KChIBfmbTM77N/h/GQqT/H03+/ck4K?=
+ =?iso-8859-1?Q?p/0C9l597xHNuLzgecM0DCcuCGTz1Ruj8a692VQWto0MZLxP04Kd5kedUh?=
+ =?iso-8859-1?Q?k2tcjC+Fw5uSb+OTidwUwBjDIPCXic2yBHCDKPmJ+FVf9/2MXSiMNBtm2/?=
+ =?iso-8859-1?Q?tXnsUysGOz8NhQKZwrKrYwAlgmU1aJE6GhY9n4ZAFoZBKuJnwh3/pf4jzZ?=
+ =?iso-8859-1?Q?db7X+Fg2QBu3hSxr6xDOiiyq9tPCvdw6IxvJo3KluTvzOuBR3Zd7HmZz1h?=
+ =?iso-8859-1?Q?ZeVqaNkr7/lbNUiniRW4oDjO2WipxGIpd+vTl9w9cc6I7mR+WG2JJFEoMs?=
+ =?iso-8859-1?Q?SmZ20y+OHvwLhDO4K8J8dyiKgd+RBZsPTZpEC12MfHSlGwqNB8pPOGrsAh?=
+ =?iso-8859-1?Q?8hX80LB+m9xRA2bToyXYNzfwJmvbYAWFSt9hvX/4i3AQNfAy6+958Ohljh?=
+ =?iso-8859-1?Q?BPsOJlfn0vS+SE5tiMoTBRW79jmg3cdFwQKxWOMH2YXIELZoZ0GpgzlkHJ?=
+ =?iso-8859-1?Q?xaf+ZxRCO/JZlD8li/MInLgKBOOCilrGnzL5XCNZ/xthij0ZXRgAXqvPCn?=
+ =?iso-8859-1?Q?Ax2dn7/1m20MPGTArRRuZD0cR/W5r8Pqc8KcFSi0AnuJX3FgUFQAduQSWe?=
+ =?iso-8859-1?Q?p1T7uv1mxbiD7UyVl5AABEwRENy9egNwTf8YA+cV/sUvYgyb9+7zxaEJYA?=
+ =?iso-8859-1?Q?PFzY4uKvNIoneIn//Vq4iicOGTl1vOB/GEtFc2+KaadSUxzBHVdVNjwiCF?=
+ =?iso-8859-1?Q?SLWB56+HTFcNhzrAqFsSl8LrMZIHVbtoVRJTHqNjecIyOFKMyZ7Apoho+g?=
+ =?iso-8859-1?Q?4+reYS676sHmV+LaOytDNzZwMZpnJD9CzPIB8AFs4kSyiskAhTrhPoIZA2?=
+ =?iso-8859-1?Q?R4gW7AyREadxcPweILrzuRHSC0z5dLreFpY0CgGZnInPm4nbiEP5CBlQ/G?=
+ =?iso-8859-1?Q?UpQUvSK9Ww/11w5WqMitojnSRdcskVz0ok68aKMYOGjTe4bNS33pGosqf/?=
+ =?iso-8859-1?Q?2JAr95eoON2vLOh+fqWvZL14c4VqoNo1Zqa8CBLUSYKbyWUa7Wdfx1KWvl?=
+ =?iso-8859-1?Q?1ggPJ2D8ZXww6vh9Hekny6zUK5fHO/rdv/tBrlcDCPVYC5+mGI2rfrqsGo?=
+ =?iso-8859-1?Q?T7AipZICRwZvKjDG5xZgbogjgEL8ur9l958o8XT0/SPf/qZsmCBfK20H6M?=
+ =?iso-8859-1?Q?VEae1Yma09miorYklx+joDrMq4nNh4zuiePsWSyPSwrHdxil28p/uLXJDw?=
+ =?iso-8859-1?Q?R0zGGapSmljvdVdRA/F+Wx6zcMP/wWyPqyb5JB2PoXiOqLx2d44n50Pzhj?=
+ =?iso-8859-1?Q?i+x2O24Xc//7VmF+zg7CC/kNTdWBvZCRMDmCm+vg82gtSlLhK00D5TBBJi?=
+ =?iso-8859-1?Q?QQ4yGEDsyqOe5EJ99LF37TyN0DulXXF/nSo+nEdIrsh/Zlh7R6NV53Gefh?=
+ =?iso-8859-1?Q?1SN+jJorc/JCkRC/2Xeh1mY4CfEMjZvpeqC11HLDgf3GmG0BlzB2iT37za?=
+ =?iso-8859-1?Q?Gn3TjHL03PfKREqABezuCUROOk48qhbmHNeXG64OMDP1nrHkrpy5VNIz4C?=
+ =?iso-8859-1?Q?a91p7ktRCBywfcpE7fuIzOfaFaWBNf8qh6yo9BX2t5ec+qPgrIl0TmzezM?=
+ =?iso-8859-1?Q?Vf94ZKR9s/EnlsqdFGexdH4rVPGqEIIAsb?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 08e2d942-1caa-4227-50eb-08dae08802da
 X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2022 23:33:08.8553
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 17 Dec 2022 23:39:59.5788
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IMghAWZfqXu756cpgQbY/eko4565JxPlrtcBJigTy/i5wG+XKbRW5dprH1Qg3OKtZA42TCvfsG/UTW/riThVKg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6319
+X-MS-Exchange-CrossTenant-UserPrincipalName: vcleajBrd3cLbyXfsANTUjc042lAxMFVsfhkAjtSfM+P0tzPIRY/byHSSpQscAS9F/VIBgAmhJsCWQh/fetCXA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR11MB5265
 X-OriginatorOrg: intel.com
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 17, 2022 at 07:07:12PM +0000, Matthew Wilcox wrote:
-> On Sat, Dec 17, 2022 at 09:14:05AM -0800, Ira Weiny wrote:
-> > On Fri, Dec 16, 2022 at 08:53:41PM +0000, Matthew Wilcox (Oracle) wrote:
-> > > Switch from the deprecated kmap() to kmap_local_folio().  For the
-> > > kunmap_local(), I subtract off 'chars' to prevent the possibility that
-> > > p has wrapped into the next page.
+On Sat, Dec 17, 2022 at 09:43:11PM +0100, Fabio M. De Francesco wrote:
+> On venerdì 16 dicembre 2022 21:53:39 CET Matthew Wilcox (Oracle) wrote:
+> > These patches apply on top of
+> > https://lore.kernel.org/linux-fsdevel/20221215214402.3522366-1-willy@infradead
+> > .org/
 > > 
-> > Thanks for tackling this one.  I think the conversion is mostly safe because I
-> > don't see any reason the mapping is passed to another thread.
+> > The non-trivial ones mostly revolve around uses of kmap()/kmap_atomic(),
+> > so review from the experts on those would be welcome.
+> 
+> I took a quick look at your conversions and they made me recall that months 
+> ago you converted to kmap_local_folio() a previous conversion from kmap() to 
+> kmap_local_page() in ext2_get_page(): commit 37ce0b319b287 ("ext2: Use a folio 
+> in ext2_get_page()").
+> 
+> So I just saw kmap_local_folio again. Unfortunately, because of my 
+> inexperience,  I'm not able to see why we should prefer the use of this 
+> function instead of kmap_local_page().
+> 
+> Can you please tell me why and when we should prefer kmap_local_folio() in 
+> those cases too where kmap_local_page() can work properly? I'm asking because 
+> these days I'm converting other *_get_page() from kmap() (including the series 
+> to fs/ufs that I sent today).
+
+Fabio kmap_local_folio() works on folios and handles determining which page in
+the folio is the correct one to map.
+
+AFAICT (from a quick grep) fs/ufs does not have folio support.  I am sure
+Mathew would appreciate converting fs/ufs to folios if you have the time and
+want to figure it out.
+
+Ira
+
+> 
+> > If these all look
+> > good to people, I can pass them off to Andrew for the 6.3 merge window.
 > > 
-> > But comments like this make me leary:
+> > Running xfstests against reiserfs gives me 313/701 failures before and
+> > after this set of patches.
+> 
+> It has happened several times to me too. Some patches of mine have failures 
+> from xfstests whose amounts and types don't change with or without my changes.
+> 
+> Several of them have already been merged. I guess that if they don't add 
+> further failures everything is alright.
+> 
+> However, something is broken for sure... xfstests or the filesystems? :-/ 
+> 
+> Thanks,
+> 
+> Fabio
+> 
+> > I don't have a huge amount of confidence
+> > that we're really getting good coverage from that test run!
 > > 
-> >          "But, this means the item might move if kmap schedules"
+> > Matthew Wilcox (Oracle) (8):
+> >   reiserfs: use b_folio instead of b_page in some obvious cases
+> >   reiserfs: use kmap_local_folio() in _get_block_create_0()
+> >   reiserfs: Convert direct2indirect() to call folio_zero_range()
+> >   reiserfs: Convert reiserfs_delete_item() to use kmap_local_folio()
+> >   reiserfs: Convert do_journal_end() to use kmap_local_folio()
+> >   reiserfs: Convert map_block_for_writepage() to use kmap_local_folio()
+> >   reiserfs: Convert convert_tail_for_hole() to use folios
+> >   reiserfs: Use flush_dcache_folio() in reiserfs_quota_write()
 > > 
-> > What does that mean?  That seems to imply there is something wrong with the
-> > base code separate from the kmapping.
+> >  fs/reiserfs/inode.c           | 73 +++++++++++++++++------------------
+> >  fs/reiserfs/journal.c         | 12 +++---
+> >  fs/reiserfs/prints.c          |  4 +-
+> >  fs/reiserfs/stree.c           |  9 +++--
+> >  fs/reiserfs/super.c           |  2 +-
+> >  fs/reiserfs/tail_conversion.c | 19 ++++-----
+> >  6 files changed, 59 insertions(+), 60 deletions(-)
+> > 
+> > --
+> > 2.35.1
 > 
-> I should probably have deleted that comment.  I'm pretty sure what it
-> refers to is that we don't hold a lock that prevents the item from
-> moving.  When ReiserFS was written, we didn't have CONFIG_PREEMPT, so 
-> if kmap() scheduled, that was a point at which the item could move.
-> I don't think I introduced any additional brokenness by converting
-> from kmap() to kmap_local().
-
-Agreed.  I only said mostly safe because of the question about chars below.
-
-> Maybe I'm wrong and somebody who
-> understands ReiserFS can explain.
-
-Yep.
-
 > 
-> > To the patch, I think subtracting chars might be an issue.  If chars > offset
-> > and the loop takes the first 'if (done) break;' path then p will end up
-> > pointing at the previous page wouldn't it?
 > 
-> I thought about that and managed to convince myself that chars was
-> always < offset.  But now I'm not sure again.  Easiest way to fix
-> this is actually to move the p += chars before the if (done) break;.
-
-I thought about that too.  So yea that is fine.
-
 > 
-> I also need to rev this patch because it assumes that b_folio is a
-> single page.
-> 
-> diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-> index 008855ddb365..be13ce7a38e1 100644
-> --- a/fs/reiserfs/inode.c
-> +++ b/fs/reiserfs/inode.c
-> @@ -295,7 +295,6 @@ static int _get_block_create_0(struct inode *inode, sector_t block,
->  	int ret;
->  	int result;
->  	int done = 0;
-> -	unsigned long offset;
->  
->  	/* prepare the key to look for the 'block'-th block of file */
->  	make_cpu_key(&key, inode,
-> @@ -380,17 +379,16 @@ static int _get_block_create_0(struct inode *inode, sector_t block,
->  		set_buffer_uptodate(bh_result);
->  		goto finished;
->  	}
-> -	/* read file tail into part of page */
-> -	offset = (cpu_key_k_offset(&key) - 1) & (PAGE_SIZE - 1);
->  	copy_item_head(&tmp_ih, ih);
->  
->  	/*
->  	 * we only want to kmap if we are reading the tail into the page.
->  	 * this is not the common case, so we don't kmap until we are
-> -	 * sure we need to.  But, this means the item might move if
-> -	 * kmap schedules
-> +	 * sure we need to.
->  	 */
-> -	p = kmap_local_folio(bh_result->b_folio, offset);
-> +	p = kmap_local_folio(bh_result->b_folio,
-> +			offset_in_folio(bh_result->b_folio,
-> +					cpu_key_k_offset(&key) - 1));
-
-Yes good addition.
-
-With these changes:
-
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-
->  	memset(p, 0, inode->i_sb->s_blocksize);
->  	do {
->  		if (!is_direct_le_ih(ih)) {
-> @@ -413,12 +411,11 @@ static int _get_block_create_0(struct inode *inode, sector_t block,
->  			chars = ih_item_len(ih) - path.pos_in_item;
->  		}
->  		memcpy(p, ih_item_body(bh, ih) + path.pos_in_item, chars);
-> +		p += chars;
->  
->  		if (done)
->  			break;
->  
-> -		p += chars;
-> -
->  		/*
->  		 * we done, if read direct item is not the last item of
->  		 * node FIXME: we could try to check right delimiting key
