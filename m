@@ -2,56 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90C6D64FA9C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Dec 2022 16:45:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AFA164FA96
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 17 Dec 2022 16:45:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231356AbiLQPjt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 17 Dec 2022 10:39:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46924 "EHLO
+        id S231463AbiLQPko (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 17 Dec 2022 10:40:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231495AbiLQPh4 (ORCPT
+        with ESMTP id S231321AbiLQPjr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 17 Dec 2022 10:37:56 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A5213B9;
-        Sat, 17 Dec 2022 07:30:42 -0800 (PST)
+        Sat, 17 Dec 2022 10:39:47 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5485FD28;
+        Sat, 17 Dec 2022 07:30:52 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 201D5B803F1;
-        Sat, 17 Dec 2022 15:30:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5941CC433D2;
-        Sat, 17 Dec 2022 15:30:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 5B7E360C16;
+        Sat, 17 Dec 2022 15:30:44 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04457C433D2;
+        Sat, 17 Dec 2022 15:30:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671291030;
-        bh=bfN1oduN1+2E8UPQqLRFS7LImw7HIQK0zER4VeQedzY=;
+        s=k20201202; t=1671291043;
+        bh=y+kmgpEiykvKKnDemjnarN7AvnnMPA0u9a6lbU9fUVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JzhITfTDbKEqghZh/s3tcEDLngwf5Mjb9QjZVTwTv3k1LSMRbCRD1MaVdRlGJvcZ+
-         Po1CncmQ6Dow39ddcGk8akLYFXKeuJ4gP0oVK4WdOqd2gVpqa8MoEC1DSmgLKdWI1v
-         x6TFP187l6+FoCtkQaK7Bjoy4KvNrqY+hwUHt7Bnljw3/6QluwvDpuMzlwCFGQEmQS
-         qnQUQSXge+ZNIN7k/m0qIE3sSOO6fCtEpGb7hXMyUXci1I4piqD2ZX1kuu6f5/AS85
-         kRs55XxVQXQqOI/K/sTjlaNu7/MWkyL8HEsH1/n6bLmhwOlp+wiOp84w0GzlELRX9X
-         kMyjnrsNTpZ1g==
+        b=PZfasNxAH19clQwmspfHc0RQX4Gqbc2ttYaigdT/56euZBSBhyK6Vxy29uj0FLIBZ
+         s6yTriSFIZUShexsSHAJRncoHDwMuHjIC08eSJzBb+ShbLcos6gGqN3H41vk32FsPU
+         cNRQIgp6C/AIpLPKNylR3AaAoaUpMd5M+Tt9luTYTxUA+0IEd1Uxq2BvzlAl4ktS+D
+         9HCpTf/1Sc2WGj8MpcU4xHLhLOdUkH5hz+MPOSHF3ctcDehtJu4X9awsKqaOK4z7Hl
+         3+bcdcYDLRQXB7SnhoFIJ1fvlyN2d+a9vzy2A6CQs+1WvueqCl2K76BD/2gGUja9Fb
+         9dhYkHwXIfNaw==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     ZhangPeng <zhangpeng362@huawei.com>,
-        syzbot+e836ff7133ac02be825f@syzkaller.appspotmail.com,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        Kefeng Wang <wangkefeng.wang@huawei.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Nanyong Sun <sunnanyong@huawei.com>,
-        Viacheslav Dubeyko <slava@dubeyko.com>,
+Cc:     Jianglei Nie <niejianglei2021@163.com>,
+        Baoquan He <bhe@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Chen Lifu <chenlifu@huawei.com>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Li Chen <lchen@ambarella.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Russell King <linux@armlinux.org.uk>,
+        ye xingchen <ye.xingchen@zte.com.cn>,
+        Zeal Robot <zealci@zte.com.cn>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, hannes@cmpxchg.org,
+        Sasha Levin <sashal@kernel.org>, kexec@lists.infradead.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 8/8] hfs: fix OOB Read in __hfs_brec_find
-Date:   Sat, 17 Dec 2022 10:30:10 -0500
-Message-Id: <20221217153012.99273-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 5/8] proc/vmcore: fix potential memory leak in vmcore_init()
+Date:   Sat, 17 Dec 2022 10:30:28 -0500
+Message-Id: <20221217153033.99394-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221217153012.99273-1-sashal@kernel.org>
-References: <20221217153012.99273-1-sashal@kernel.org>
+In-Reply-To: <20221217153033.99394-1-sashal@kernel.org>
+References: <20221217153033.99394-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -65,79 +68,60 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: ZhangPeng <zhangpeng362@huawei.com>
+From: Jianglei Nie <niejianglei2021@163.com>
 
-[ Upstream commit 8d824e69d9f3fa3121b2dda25053bae71e2460d2 ]
+[ Upstream commit 12b9d301ff73122aebd78548fa4c04ca69ed78fe ]
 
-Syzbot reported a OOB read bug:
+Patch series "Some minor cleanup patches resent".
 
-==================================================================
-BUG: KASAN: slab-out-of-bounds in hfs_strcmp+0x117/0x190
-fs/hfs/string.c:84
-Read of size 1 at addr ffff88807eb62c4e by task kworker/u4:1/11
-CPU: 1 PID: 11 Comm: kworker/u4:1 Not tainted
-6.1.0-rc6-syzkaller-00308-g644e9524388a #0
-Workqueue: writeback wb_workfn (flush-7:0)
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1b1/0x28e lib/dump_stack.c:106
- print_address_description+0x74/0x340 mm/kasan/report.c:284
- print_report+0x107/0x1f0 mm/kasan/report.c:395
- kasan_report+0xcd/0x100 mm/kasan/report.c:495
- hfs_strcmp+0x117/0x190 fs/hfs/string.c:84
- __hfs_brec_find+0x213/0x5c0 fs/hfs/bfind.c:75
- hfs_brec_find+0x276/0x520 fs/hfs/bfind.c:138
- hfs_write_inode+0x34c/0xb40 fs/hfs/inode.c:462
- write_inode fs/fs-writeback.c:1440 [inline]
+The first three patches trivial clean up patches.
 
-If the input inode of hfs_write_inode() is incorrect:
-struct inode
-  struct hfs_inode_info
-    struct hfs_cat_key
-      struct hfs_name
-        u8 len # len is greater than HFS_NAMELEN(31) which is the
-maximum length of an HFS filename
+And for the patch "kexec: replace crash_mem_range with range", I got a
+ibm-p9wr ppc64le system to test, it works well.
 
-OOB read occurred:
-hfs_write_inode()
-  hfs_brec_find()
-    __hfs_brec_find()
-      hfs_cat_keycmp()
-        hfs_strcmp() # OOB read occurred due to len is too large
+This patch (of 4):
 
-Fix this by adding a Check on len in hfs_write_inode() before calling
-hfs_brec_find().
+elfcorehdr_alloc() allocates a memory chunk for elfcorehdr_addr with
+kzalloc().  If is_vmcore_usable() returns false, elfcorehdr_addr is a
+predefined value.  If parse_crash_elf_headers() gets some error and
+returns a negetive value, the elfcorehdr_addr should be released with
+elfcorehdr_free().
 
-Link: https://lkml.kernel.org/r/20221130065959.2168236-1-zhangpeng362@huawei.com
-Signed-off-by: ZhangPeng <zhangpeng362@huawei.com>
-Reported-by: <syzbot+e836ff7133ac02be825f@syzkaller.appspotmail.com>
-Cc: Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: Kefeng Wang <wangkefeng.wang@huawei.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Nanyong Sun <sunnanyong@huawei.com>
-Cc: Viacheslav Dubeyko <slava@dubeyko.com>
+Fix it by calling elfcorehdr_free() when parse_crash_elf_headers() fails.
+
+Link: https://lkml.kernel.org/r/20220929042936.22012-1-bhe@redhat.com
+Link: https://lkml.kernel.org/r/20220929042936.22012-2-bhe@redhat.com
+Signed-off-by: Jianglei Nie <niejianglei2021@163.com>
+Signed-off-by: Baoquan He <bhe@redhat.com>
+Acked-by: Baoquan He <bhe@redhat.com>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Chen Lifu <chenlifu@huawei.com>
+Cc: "Eric W . Biederman" <ebiederm@xmission.com>
+Cc: Li Chen <lchen@ambarella.com>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: ye xingchen <ye.xingchen@zte.com.cn>
+Cc: Zeal Robot <zealci@zte.com.cn>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfs/inode.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/proc/vmcore.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-index da243c84e93b..9c5badc9db00 100644
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -453,6 +453,8 @@ int hfs_write_inode(struct inode *inode, struct writeback_control *wbc)
- 		/* panic? */
- 		return -EIO;
- 
-+	if (HFS_I(main_inode)->cat_key.CName.len > HFS_NAMELEN)
-+		return -EIO;
- 	fd.search_key->cat = HFS_I(main_inode)->cat_key;
- 	if (hfs_brec_find(&fd))
- 		/* panic? */
+diff --git a/fs/proc/vmcore.c b/fs/proc/vmcore.c
+index 0bfd71bec7f2..2ed309191d91 100644
+--- a/fs/proc/vmcore.c
++++ b/fs/proc/vmcore.c
+@@ -1177,6 +1177,7 @@ static int __init vmcore_init(void)
+ 		return rc;
+ 	rc = parse_crash_elf_headers();
+ 	if (rc) {
++		elfcorehdr_free(elfcorehdr_addr);
+ 		pr_warn("Kdump: vmcore not initialized\n");
+ 		return rc;
+ 	}
 -- 
 2.35.1
 
