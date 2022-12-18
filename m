@@ -2,111 +2,206 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D4BB365044E
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Dec 2022 19:29:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B263650456
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Dec 2022 19:30:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231202AbiLRS3f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Dec 2022 13:29:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35396 "EHLO
+        id S230488AbiLRSa4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 18 Dec 2022 13:30:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231190AbiLRS3K (ORCPT
+        with ESMTP id S230173AbiLRSaG (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 18 Dec 2022 13:29:10 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C6D8BE0D;
-        Sun, 18 Dec 2022 09:59:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=QHxCpl9hSA5ThyPhmLxPcSgWkJDOiughbSZ1LxLOjvI=; b=AM8b4Z0OmheYiQi/balspbtUoJ
-        rWuu21SuCIrDlcx9M/kqYV5qKjdtE6AXTcKV6ggklkGyPuCmHYOvNP28lnrODtOMgqutkAjhMQUWv
-        Ux/p1Hx1Bs50324WDHQRCiBzXye9eP/EtNl4xeMhZkr1J1cTPmQlByN/9k12x7F0ujlPs4lpyBJCV
-        VUU608eRX/Ghdpy5Y8UqL97cpfoVt4kc+PLpGvsCLHZBplQ5R6ZCieEYlTj8fsH5HyqHAO4oyJ5f4
-        F58mRmz3w3hgOreF5sDBWTRjp4Jerir8XSsZXwk+chV51daZfv78mDrTwSiKZ7Iq3VfGALbcbOv7l
-        YSo6AnFg==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1p6xwn-00006Q-Ci; Sun, 18 Dec 2022 17:59:37 +0000
-Date:   Sun, 18 Dec 2022 17:59:37 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Cc:     Ira Weiny <ira.weiny@intel.com>, reiserfs-devel@vger.kernel.org,
-        Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 0/8] Convert reiserfs from b_page to b_folio
-Message-ID: <Y59VCfAXmg1jow2o@casper.infradead.org>
-References: <20221216205348.3781217-1-willy@infradead.org>
- <11295613.F0gNSz5aLb@suse>
- <Y55TTKG2tgWL7UsQ@iweiny-mobl>
- <3515948.LM0AJKV5NW@suse>
+        Sun, 18 Dec 2022 13:30:06 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D152CBE00;
+        Sun, 18 Dec 2022 10:14:41 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 549EE60DCF;
+        Sun, 18 Dec 2022 18:14:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1D55C433D2;
+        Sun, 18 Dec 2022 18:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1671387280;
+        bh=h+5T1W0dbq0VrSbd0eXpFWwkbNKlv3NdepKrKO5N/X0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dDZAnqBL5dRU+C4AocCXG0LJs6s88+o21A2CzVvHw+R8n7Fmpt6ZGmdstE1vmQw9P
+         8U3dPmsC71VtH7QUIiUXr9Nb0svpp5Uk1vmBbKG32Svd6gd0oT6NihbWJox8n9aAVS
+         eRhJVXaFjr1iLMtV7+e0vp/g5pwOoWcJ+5DIeD89vr2JDgiPCG7tvSAyAO7aMdSYgC
+         HQdSYvM5iRudseuUhGYp2y7mwCpEkEOBMpH64zXu/GNxtXYd/U7dPnl2tiPyUConzn
+         CMLAr+PZNkPRb6D8wfkRg+kD4991YFMRfNTRiLXm7BBd3fYsIasuE9lyplsA0zdk6P
+         pYTb7xXp+zU0g==
+Date:   Sun, 18 Dec 2022 10:14:40 -0800
+From:   "Darrick J. Wong" <djwong@kernel.org>
+To:     Zorro Lang <zlang@redhat.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>, linux-fsdevel@vger.kernel.org,
+        fstests@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, Christian Brauner <brauner@kernel.org>
+Subject: Re: Why fstests g/673 and g/683~687 suddently fail (on xfs, ext4...)
+ on latest linux v6.1+ ?
+Message-ID: <Y59YkDch8b6v/KfD@magnolia>
+References: <20221218103850.cbqdq3bmw7zl7iad@zlang-mailbox>
+ <CAOQ4uxhmCgyorYVtD6=n=khqwUc=MPbZs+y=sqt09XbGoNm_tA@mail.gmail.com>
+ <20221218130432.fgitgsn522shmpwi@zlang-mailbox>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3515948.LM0AJKV5NW@suse>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20221218130432.fgitgsn522shmpwi@zlang-mailbox>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Dec 18, 2022 at 09:09:56AM +0100, Fabio M. De Francesco wrote:
-> It all started when months ago I saw a patch from Matthew about the conversion 
-> from kmap_local_page() to kmap_local_folio() in ext2_get_page().
+On Sun, Dec 18, 2022 at 09:04:32PM +0800, Zorro Lang wrote:
+> On Sun, Dec 18, 2022 at 02:11:01PM +0200, Amir Goldstein wrote:
+> > On Sun, Dec 18, 2022 at 1:06 PM Zorro Lang <zlang@redhat.com> wrote:
+> > >
+> > > Hi,
+> > >
+> > > fstests generic/673 and generic/683~687 are a series of test cases to
+> > > verify suid and sgid bits are dropped properly. xfs-list writes these
+> > > cases to verify xfs behavior follows vfs, e.g. [1]. And these cases
+> > > test passed on xfs and ext4 for long time. Even on my last regression
+> > > test on linux v6.1-rc8+, they were passed too.
+> > >
+> > > But now the default behavior looks like be changed again, xfs and ext4
+> > > start to fail [2] on latest linux v6.1+ (HEAD [0]), So there must be
+> > > changed. I'd like to make sure what's changed, and if it's expected?
+> > 
+> > I think that is expected and I assume Christian was planning to fix the tests.
+> > 
+> > See Christian's pull request:
+> > https://lore.kernel.org/linux-fsdevel/20221212112053.99208-1-brauner@kernel.org/
+> > 
+> > "Note, that some xfstests will now fail as these patches will cause the setgid
+> > bit to be lost in certain conditions for unprivileged users modifying a setgid
+> > file when they would've been kept otherwise. I think this risk is worth taking
+> > and I explained and mentioned this multiple times on the list:
+> > https://lore.kernel.org/linux-fsdevel/20221122142010.zchf2jz2oymx55qi@wittgenstein"
 > 
-> Here I wanted to comment on the xfstests failures but, when I read patch 2/8 
-> of this series and saw kmap() converted to kmap_local_folio(), I thought to 
-> also use this opportunity to ask about why and when kmap_local_folio() should 
-> be preferred over kmap_local_page().
+> Hi Amir,
 > 
-> Obviously, I have nothing against these conversions. I would only like to 
-> understand what are the reasons behind the preference for the folio function.
+> Thanks for your reply. Yes, these test cases were failed on overlayfs, passed on
+> xfs, ext4 and btrfs. Now it's reversed, overlayfs passed on this test, xfs and
+> ext4 failed.
 
-I should probably update this, but here's a good start on folio vs page:
-https://lore.kernel.org/linux-fsdevel/YvV1KTyzZ+Jrtj9x@casper.infradead.org/
+Odd, I'll have to look into why things work here ... maybe it's the
+selinux contexts?
 
-> Mine is a general question about design, necessity, opportunity: what were the 
-> reasons why, in the above-mentioned cases, the use of kmap_local_folio() has 
-> been preferred over kmap_local_page()? 
-> 
-> I saw that this series is about converting from b_page to b_folio, therefore 
-> kmap_local_folio() is the obvious choice here.
-> 
-> But my mind went back again to ext2_get_page :-)
-> 
-> It looks to me that ext2_get_page() was working properly with 
-> kmap_local_page() (since you made the conversion from kmap()). Therefore I 
-> could not understand why it is preferred to call read_mapping_folio() to get a 
-> folio and then map a page of that folio with kmap_local_folio(). 
-> 
-> I used to think that read_mapping_page() + kmap_local_page() was all we 
-> needed. ATM I have not enough knowledge of VFS/filesystems to understand on my 
-> own what we gain from the other way to local map pages.    
+> Anyway, if this's an expected behavior change, and it's reviewed and accepted by
+> linux upstream, I don't have objection. Just to make sure if there's a regression.
+> Feel free to send patch to fstests@ to update the expected results, and show
+> details about why change them again :)
 
-read_mapping_page() is scheduled for removal.  All callers need to be
-converted to read_mapping_folio() (or another variant if preferable).
-I don't mind following along behind your conversions to kmap_local_page()
-and converting them to kmap_local_folio(), but if I can go straight from
-kmap() / kmap_atomic() to kmap_local_folio(), then I'll do that.
+Somewhat unrelated, but are you going to merge
+https://lore.kernel.org/fstests/20220816121551.88407-1-glass@fydeos.io/
 
-Eventually, kmap_local_page() will _probably_ disappear.  ext2_get_page()
-is really only partially converted, and you can see that by the way it
-calls ext2_check_page() instead of ext2_check_folio().  I have a design
-in place for ext2_check_folio() that handles mapping large folios,
-but it isn't on the top of my pile right now.
+?
 
-> I'd really like to work on converting fs/ufs to folios but you know that I'll 
-> have enough time to work on other projects only starting by the end of 
-> January. 
+--D
+
+> Thanks,
+> Zorro
 > 
-> AFAIK this task has mainly got to do with the conversions of the address space 
-> operations (correct?). I know too little to be able to estimate how much time 
-> it takes but I'm pretty sure it needs more than I currently can set aside.
+> > 
+> > Thanks,
+> > Amir.
+> > 
+> > >
+> > > Thanks,
+> > > Zorro
+> > >
+> > > [0]
+> > > commit f9ff5644bcc04221bae56f922122f2b7f5d24d62
+> > > Author: Linus Torvalds <torvalds@linux-foundation.org>
+> > > Date:   Sat Dec 17 08:55:19 2022 -0600
+> > >
+> > >     Merge tag 'hsi-for-6.2' of git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-h
+> > >
+> > > [1]
+> > > commit e014f37db1a2d109afa750042ac4d69cf3e3d88e
+> > > Author: Darrick J. Wong <djwong@kernel.org>
+> > > Date:   Tue Mar 8 10:51:16 2022 -0800
+> > >
+> > >     xfs: use setattr_copy to set vfs inode attributes
+> > >
+> > > [2]
+> > > FSTYP         -- xfs (debug)
+> > > PLATFORM      -- Linux/s390x ibm-z-510 6.1.0+ #1 SMP Sat Dec 17 13:23:59 EST 2022
+> > > MKFS_OPTIONS  -- -f -m crc=1,finobt=1,reflink=1,rmapbt=0,bigtime=1,inobtcount=1 -b size=1024 /dev/loop1
+> > > MOUNT_OPTIONS -- -o context=system_u:object_r:root_t:s0 /dev/loop1 /mnt/fstests/SCRATCH_DIR
+> > >
+> > > generic/673       - output mismatch (see /var/lib/xfstests/results//generic/673.out.bad)
+> > >     --- tests/generic/673.out   2022-12-17 13:57:40.336589178 -0500
+> > >     +++ /var/lib/xfstests/results//generic/673.out.bad  2022-12-18 00:00:53.627210256 -0500
+> > >     @@ -51,7 +51,7 @@
+> > >      310f146ce52077fcd3308dcbe7632bb2  SCRATCH_MNT/a
+> > >      2666 -rw-rwSrw- SCRATCH_MNT/a
+> > >      3784de23efab7a2074c9ec66901e39e5  SCRATCH_MNT/a
+> > >     -2666 -rw-rwSrw- SCRATCH_MNT/a
+> > >     +666 -rw-rw-rw- SCRATCH_MNT/a
+> > >
+> > >      Test 10 - qa_user, group-exec file, only sgid
+> > >     ...
+> > >     (Run 'diff -u /var/lib/xfstests/tests/generic/673.out /var/lib/xfstests/results//generic/673.out.bad'  to see the entire diff)
+> > > Ran: generic/673
+> > > Failures: generic/673
+> > > Failed 1 of 1 tests
+> > >
+> > > FSTYP         -- xfs (debug)
+> > > PLATFORM      -- Linux/s390x ibm-z-510 6.1.0+ #1 SMP Sat Dec 17 13:23:59 EST 2022
+> > > MKFS_OPTIONS  -- -f -m crc=1,finobt=1,reflink=1,rmapbt=0,bigtime=1,inobtcount=1 -b size=1024 /dev/loop1
+> > > MOUNT_OPTIONS -- -o context=system_u:object_r:root_t:s0 /dev/loop1 /mnt/fstests/SCRATCH_DIR
+> > >
+> > > generic/683       - output mismatch (see /var/lib/xfstests/results//generic/683.out.bad)
+> > >     --- tests/generic/683.out   2022-12-17 13:57:40.696589178 -0500
+> > >     +++ /var/lib/xfstests/results//generic/683.out.bad  2022-12-18 00:04:55.297220255 -0500
+> > >     @@ -33,7 +33,7 @@
+> > >
+> > >      Test 9 - qa_user, non-exec file falloc, only sgid
+> > >      2666 -rw-rwSrw- TEST_DIR/683/a
+> > >     -2666 -rw-rwSrw- TEST_DIR/683/a
+> > >     +666 -rw-rw-rw- TEST_DIR/683/a
+> > >
+> > >      Test 10 - qa_user, group-exec file falloc, only sgid
+> > >     ...
+> > >     (Run 'diff -u /var/lib/xfstests/tests/generic/683.out /var/lib/xfstests/results//generic/683.out.bad'  to see the entire diff)
+> > > Ran: generic/683
+> > > Failures: generic/683
+> > > Failed 1 of 1 tests
+> > >
+> > > FSTYP         -- xfs (debug)
+> > > PLATFORM      -- Linux/s390x ibm-z-510 6.1.0+ #1 SMP Sat Dec 17 13:23:59 EST 2022
+> > > MKFS_OPTIONS  -- -f -m crc=1,finobt=1,reflink=1,rmapbt=0,bigtime=1,inobtcount=1 -b size=1024 /dev/loop1
+> > > MOUNT_OPTIONS -- -o context=system_u:object_r:root_t:s0 /dev/loop1 /mnt/fstests/SCRATCH_DIR
+> > >
+> > > generic/684       - output mismatch (see /var/lib/xfstests/results//generic/684.out.bad)
+> > >     --- tests/generic/684.out   2022-12-17 13:57:40.766589178 -0500
+> > >     +++ /var/lib/xfstests/results//generic/684.out.bad  2022-12-18 00:05:27.597220255 -0500
+> > >     @@ -33,7 +33,7 @@
+> > >
+> > >      Test 9 - qa_user, non-exec file fpunch, only sgid
+> > >      2666 -rw-rwSrw- TEST_DIR/684/a
+> > >     -2666 -rw-rwSrw- TEST_DIR/684/a
+> > >     +666 -rw-rw-rw- TEST_DIR/684/a
+> > >
+> > >      Test 10 - qa_user, group-exec file fpunch, only sgid
+> > >     ...
+> > >     (Run 'diff -u /var/lib/xfstests/tests/generic/684.out /var/lib/xfstests/results//generic/684.out.bad'  to see the entire diff)
+> > > Ran: generic/684
+> > > Failures: generic/684
+> > > Failed 1 of 1 tests
+> > > ....
+> > > ....
+> > >
+> > >
+> > > Thanks,
+> > > Zorro
+> > >
+> > 
 > 
-> Instead I could easily devolve the time it is needed for making the  
-> memcpy_{to|from}_folio() helpers you talked about in a patch of this series, 
-> unless you or Matthew prefer to do yourselves. Please let me know.
-
-I've been wondering about a memcpy_(to|from)_folio() helper too, but I
-haven't read Ira's message about it yet.  I'll comment over there.
