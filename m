@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7CC0665050C
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Dec 2022 23:13:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 015D9650505
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 18 Dec 2022 23:13:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231224AbiLRWNa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 18 Dec 2022 17:13:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41436 "EHLO
-        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231243AbiLRWN1 (ORCPT
-        <rfc822;linux-fsdevel@vger.kernel.org>);
+        id S231251AbiLRWN1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
         Sun, 18 Dec 2022 17:13:27 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4E93C1173
-        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Dec 2022 14:11:13 -0800 (PST)
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41448 "EHLO
+        lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S230427AbiLRWN0 (ORCPT
+        <rfc822;linux-fsdevel@vger.kernel.org>);
+        Sun, 18 Dec 2022 17:13:26 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B49802188
+        for <linux-fsdevel@vger.kernel.org>; Sun, 18 Dec 2022 14:11:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671401472;
+        s=mimecast20190719; t=1671401474;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=QloeDAWDhNne++m1CakCVHuvgCTtzpcI2+OpIgPLSTo=;
-        b=DsY5+5urhqD4ejeCbgoY0VLZL9pLbSr2eNR2b3yKBRy1bAkpSdEgJBQArjIg+8BR0J81dm
-        wm2UhRn6WzOf9qTFBhuFq2uTJcI2e6jWzIDOGZUapJtjoR0wzCSklZw3WsDFtNooe2d5b5
-        MrVzyQyO+3+SZhgoXTXBn6wTYSKJsAk=
+        bh=irD2GLwmm9jLOEic9Txw0La3I6P2VC9FcUcMSRUsrP0=;
+        b=P3sBho3GYIGX0B4/OMteoDPMcohWbSmu0drkONATHRavHQzPgvQchzh2sFMQLNZaaYup6H
+        u6NuGmywwcIxorh7sHKoww1PXLgPdHUkyIDSSBRa07IndQWQaPDyz3C7wU+BQm+Z13+sLb
+        llq40vUbn4urhXCPnmwFoTXiFaOYHG4=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-453-Oww25riHNyC1a_58HxQhXg-1; Sun, 18 Dec 2022 17:11:09 -0500
-X-MC-Unique: Oww25riHNyC1a_58HxQhXg-1
+ us-mta-622-Yyar6fanPTi1Ep0SF6l7vA-1; Sun, 18 Dec 2022 17:11:11 -0500
+X-MC-Unique: Yyar6fanPTi1Ep0SF6l7vA-1
 Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id C70E12932486;
-        Sun, 18 Dec 2022 22:11:08 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 504C33C0D857;
+        Sun, 18 Dec 2022 22:11:11 +0000 (UTC)
 Received: from pasta.redhat.com (ovpn-192-22.brq.redhat.com [10.40.192.22])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D1F772166B26;
-        Sun, 18 Dec 2022 22:11:06 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E3DC2166B26;
+        Sun, 18 Dec 2022 22:11:08 +0000 (UTC)
 From:   Andreas Gruenbacher <agruenba@redhat.com>
 To:     Christoph Hellwig <hch@infradead.org>,
         "Darrick J . Wong" <djwong@kernel.org>,
@@ -46,9 +46,9 @@ To:     Christoph Hellwig <hch@infradead.org>,
 Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, cluster-devel@redhat.com
-Subject: [RFC v4 5/7] iomap/gfs2: Get page in page_prepare handler
-Date:   Sun, 18 Dec 2022 23:10:52 +0100
-Message-Id: <20221218221054.3946886-6-agruenba@redhat.com>
+Subject: [RFC v4 6/7] iomap/xfs: Eliminate the iomap_valid handler
+Date:   Sun, 18 Dec 2022 23:10:53 +0100
+Message-Id: <20221218221054.3946886-7-agruenba@redhat.com>
 In-Reply-To: <20221216150626.670312-1-agruenba@redhat.com>
 References: <20221216150626.670312-1-agruenba@redhat.com>
 MIME-Version: 1.0
@@ -64,120 +64,150 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Change the iomap ->page_prepare() handler to get and return a locked
-folio instead of doing that in iomap_write_begin().  This allows to
-recover from out-of-memory situations in ->page_prepare(), which
-eliminates the corresponding error handling code in iomap_write_begin().
-The ->page_done() handler is now not called with a NULL folio anymore.
-
-Filesystems are expected to use the iomap_folio_prepare() helper for
-getting locked folios in their ->page_prepare() handlers.
+Eliminate the ->iomap_valid() handler by switching to a ->page_prepare()
+handler and validating the mapping there.
 
 Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
 ---
- fs/gfs2/bmap.c         | 16 +++++++++++++---
- fs/iomap/buffered-io.c | 17 ++++++-----------
- include/linux/iomap.h  |  9 +++++----
- 3 files changed, 24 insertions(+), 18 deletions(-)
+ fs/iomap/buffered-io.c | 25 +++++--------------------
+ fs/xfs/xfs_iomap.c     | 38 +++++++++++++++++++++++++++-----------
+ include/linux/iomap.h  | 17 -----------------
+ 3 files changed, 32 insertions(+), 48 deletions(-)
 
-diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-index 11115fce68cb..ed8ceed64100 100644
---- a/fs/gfs2/bmap.c
-+++ b/fs/gfs2/bmap.c
-@@ -959,15 +959,25 @@ static int __gfs2_iomap_get(struct inode *inode, loff_t pos, loff_t length,
- 	goto out;
- }
- 
--static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
--				   unsigned len)
-+static struct folio *
-+gfs2_iomap_page_prepare(struct iomap_iter *iter, loff_t pos, unsigned len)
- {
-+	struct inode *inode = iter->inode;
- 	unsigned int blockmask = i_blocksize(inode) - 1;
- 	struct gfs2_sbd *sdp = GFS2_SB(inode);
- 	unsigned int blocks;
-+	struct folio *folio;
+diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+index 819562633998..32a2a287d32c 100644
+--- a/fs/iomap/buffered-io.c
++++ b/fs/iomap/buffered-io.c
+@@ -628,7 +628,7 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
+ 	const struct iomap_page_ops *page_ops = iter->iomap.page_ops;
+ 	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+ 	struct folio *folio;
+-	int status = 0;
 +	int status;
  
- 	blocks = ((pos & blockmask) + len + blockmask) >> inode->i_blkbits;
--	return gfs2_trans_begin(sdp, RES_DINODE + blocks, 0);
-+	status = gfs2_trans_begin(sdp, RES_DINODE + blocks, 0);
-+	if (status)
-+		return ERR_PTR(status);
-+
+ 	BUG_ON(pos + len > iter->iomap.offset + iter->iomap.length);
+ 	if (srcmap != &iter->iomap)
+@@ -644,27 +644,12 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
+ 		folio = page_ops->page_prepare(iter, pos, len);
+ 	else
+ 		folio = iomap_folio_prepare(iter, pos);
+-	if (IS_ERR(folio))
+-		return PTR_ERR(folio);
+-
+-	/*
+-	 * Now we have a locked folio, before we do anything with it we need to
+-	 * check that the iomap we have cached is not stale. The inode extent
+-	 * mapping can change due to concurrent IO in flight (e.g.
+-	 * IOMAP_UNWRITTEN state can change and memory reclaim could have
+-	 * reclaimed a previously partially written page at this index after IO
+-	 * completion before this write reaches this file offset) and hence we
+-	 * could do the wrong thing here (zero a page range incorrectly or fail
+-	 * to zero) and corrupt data.
+-	 */
+-	if (page_ops && page_ops->iomap_valid) {
+-		bool iomap_valid = page_ops->iomap_valid(iter->inode,
+-							&iter->iomap);
+-		if (!iomap_valid) {
++	if (IS_ERR(folio)) {
++		if (folio == ERR_PTR(-ESTALE)) {
+ 			iter->iomap.flags |= IOMAP_F_STALE;
+-			status = 0;
+-			goto out_unlock;
++			return 0;
+ 		}
++		return PTR_ERR(folio);
+ 	}
+ 
+ 	if (pos + len > folio_pos(folio) + folio_size(folio))
+diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
+index 669c1bc5c3a7..ae83cb89279d 100644
+--- a/fs/xfs/xfs_iomap.c
++++ b/fs/xfs/xfs_iomap.c
+@@ -62,29 +62,45 @@ xfs_iomap_inode_sequence(
+ 	return cookie | READ_ONCE(ip->i_df.if_seq);
+ }
+ 
+-/*
+- * Check that the iomap passed to us is still valid for the given offset and
+- * length.
+- */
+-static bool
+-xfs_iomap_valid(
+-	struct inode		*inode,
+-	const struct iomap	*iomap)
++static struct folio *
++xfs_page_prepare(
++	struct iomap_iter	*iter,
++	loff_t			pos,
++	unsigned		len)
+ {
++	struct inode		*inode = iter->inode;
++	struct iomap		*iomap = &iter->iomap;
+ 	struct xfs_inode	*ip = XFS_I(inode);
++	struct folio *folio;
+ 
 +	folio = iomap_folio_prepare(iter, pos);
 +	if (IS_ERR(folio))
-+		gfs2_trans_end(sdp);
++		return folio;
++
++	/*
++	 * Now we have a locked folio, before we do anything with it we need to
++	 * check that the iomap we have cached is not stale. The inode extent
++	 * mapping can change due to concurrent IO in flight (e.g.
++	 * IOMAP_UNWRITTEN state can change and memory reclaim could have
++	 * reclaimed a previously partially written page at this index after IO
++	 * completion before this write reaches this file offset) and hence we
++	 * could do the wrong thing here (zero a page range incorrectly or fail
++	 * to zero) and corrupt data.
++	 */
+ 	if (iomap->validity_cookie !=
+ 			xfs_iomap_inode_sequence(ip, iomap->flags)) {
+ 		trace_xfs_iomap_invalid(ip, iomap);
+-		return false;
++		folio_unlock(folio);
++		folio_put(folio);
++		return ERR_PTR(-ESTALE);
+ 	}
+ 
+ 	XFS_ERRORTAG_DELAY(ip->i_mount, XFS_ERRTAG_WRITE_DELAY_MS);
+-	return true;
 +	return folio;
  }
  
- static void gfs2_iomap_page_done(struct inode *inode, loff_t pos,
-diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 93647dae934a..819562633998 100644
---- a/fs/iomap/buffered-io.c
-+++ b/fs/iomap/buffered-io.c
-@@ -607,7 +607,7 @@ static void iomap_folio_done(struct iomap_iter *iter, loff_t pos, size_t ret,
+ const struct iomap_page_ops xfs_iomap_page_ops = {
+-	.iomap_valid		= xfs_iomap_valid,
++	.page_prepare		= xfs_page_prepare,
+ };
  
- 	if (page_ops && page_ops->page_done) {
- 		page_ops->page_done(iter->inode, pos, ret, folio);
--	} else if (folio) {
-+	} else {
- 		folio_unlock(folio);
- 		folio_put(folio);
- 	}
-@@ -640,17 +640,12 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
- 	if (!mapping_large_folio_support(iter->inode->i_mapping))
- 		len = min_t(size_t, len, PAGE_SIZE - offset_in_page(pos));
- 
--	if (page_ops && page_ops->page_prepare) {
--		status = page_ops->page_prepare(iter->inode, pos, len);
--		if (status)
--			return status;
--	}
--
--	folio = iomap_folio_prepare(iter, pos);
--	if (IS_ERR(folio)) {
--		iomap_folio_done(iter, pos, 0, NULL);
-+	if (page_ops && page_ops->page_prepare)
-+		folio = page_ops->page_prepare(iter, pos, len);
-+	else
-+		folio = iomap_folio_prepare(iter, pos);
-+	if (IS_ERR(folio))
- 		return PTR_ERR(folio);
--	}
- 
- 	/*
- 	 * Now we have a locked folio, before we do anything with it we need to
+ int
 diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-index 0bf16ef22d81..c74ab8c53b47 100644
+index c74ab8c53b47..1c8b9a04b0bb 100644
 --- a/include/linux/iomap.h
 +++ b/include/linux/iomap.h
-@@ -13,6 +13,7 @@
- struct address_space;
- struct fiemap_extent_info;
- struct inode;
-+struct iomap_iter;
- struct iomap_dio;
- struct iomap_writepage_ctx;
- struct iov_iter;
-@@ -131,12 +132,12 @@ static inline bool iomap_inline_data_valid(const struct iomap *iomap)
-  * associated with them.
-  *
-  * When page_prepare succeeds, page_done will always be called to do any
-- * cleanup work necessary.  In that page_done call, @folio will be NULL if the
-- * associated folio could not be obtained.  When folio is not NULL, page_done
-- * is responsible for unlocking and putting the folio.
-+ * cleanup work necessary.  page_done is responsible for unlocking and putting
-+ * @folio.
-  */
- struct iomap_page_ops {
--	int (*page_prepare)(struct inode *inode, loff_t pos, unsigned len);
-+	struct folio *(*page_prepare)(struct iomap_iter *iter, loff_t pos,
-+			unsigned len);
+@@ -140,23 +140,6 @@ struct iomap_page_ops {
+ 			unsigned len);
  	void (*page_done)(struct inode *inode, loff_t pos, unsigned copied,
  			struct folio *folio);
+-
+-	/*
+-	 * Check that the cached iomap still maps correctly to the filesystem's
+-	 * internal extent map. FS internal extent maps can change while iomap
+-	 * is iterating a cached iomap, so this hook allows iomap to detect that
+-	 * the iomap needs to be refreshed during a long running write
+-	 * operation.
+-	 *
+-	 * The filesystem can store internal state (e.g. a sequence number) in
+-	 * iomap->validity_cookie when the iomap is first mapped to be able to
+-	 * detect changes between mapping time and whenever .iomap_valid() is
+-	 * called.
+-	 *
+-	 * This is called with the folio over the specified file position held
+-	 * locked by the iomap code.
+-	 */
+-	bool (*iomap_valid)(struct inode *inode, const struct iomap *iomap);
+ };
  
+ /*
 -- 
 2.38.1
 
