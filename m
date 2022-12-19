@@ -2,114 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5FD1C650A11
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Dec 2022 11:26:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 864496509EF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Dec 2022 11:17:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231766AbiLSK0J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Dec 2022 05:26:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41222 "EHLO
+        id S231682AbiLSKRb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Dec 2022 05:17:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36770 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231830AbiLSKZz (ORCPT
+        with ESMTP id S231545AbiLSKR3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Dec 2022 05:25:55 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B476CE41;
-        Mon, 19 Dec 2022 02:25:50 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        Mon, 19 Dec 2022 05:17:29 -0500
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 00FCF2DFD;
+        Mon, 19 Dec 2022 02:17:27 -0800 (PST)
+Received: from zn.tnic (p5de8e9fe.dip0.t-ipconnect.de [93.232.233.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 4E8BB37323;
-        Mon, 19 Dec 2022 10:25:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1671445549; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3dICCo4812NSE+Ksmy3//irJG0tDZgjWzexkQRofcf4=;
-        b=04zDuimBkZFtqJfiwxJUdw8+ClImZRpwGh3Hqc685njyuL1AJSbVSJRozZNlWm33juOQlN
-        hTHs21Mm/5IZdYYBx205LIUvTVraqw1oc5+OY9zfwLTJL4tVh3syqfLzxpTSVmw2sYQX82
-        HQX1lVVm80KmNEYFeqSkGJ/PHuVwQhU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1671445549;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=3dICCo4812NSE+Ksmy3//irJG0tDZgjWzexkQRofcf4=;
-        b=752P1krkWV/pAvwnMceaKk+TTkkrOBx+IWdoxCPUPGP9+qdWAHYBEegkxc8b7s4iMIDxeX
-        R52yQgepv44hObAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3C19313910;
-        Mon, 19 Dec 2022 10:25:49 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id NFydDi08oGOJNAAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 19 Dec 2022 10:25:49 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id B199AA0732; Mon, 19 Dec 2022 11:10:23 +0100 (CET)
-Date:   Mon, 19 Dec 2022 11:10:23 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Jan Kara <jack@suse.cz>, Richard Guy Briggs <rgb@redhat.com>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v5 2/3] fanotify: define struct members to hold response
- decision context
-Message-ID: <20221219101023.6bqjj3jg3il2fbzf@quack3>
-References: <cover.1670606054.git.rgb@redhat.com>
- <45da8423b9b1e8fc7abd68cd2269acff8cf9022a.1670606054.git.rgb@redhat.com>
- <20221216164342.ojcbdifdmafq5njw@quack3>
- <CAHC9VhQCQJ6_0RtHQHuA2FDje-3ick3b3ar8K8NAnuMF=ww2cA@mail.gmail.com>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 241F21EC0662;
+        Mon, 19 Dec 2022 11:17:26 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1671445046;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Td6DN6d9KHuO8Ni0x4sFSPaN76BIetZ9amTLwGfBuQY=;
+        b=Gi31BrcudDAIpa+PJzR9Rm2IwbH2EvgIUujPE8wya8WJCeKy/2ekrtTK9r05L2S9b69Vty
+        nPxnhxFIIyGflDiLpYzFN3KhRz/d2AlJ8y/q4NmLiN36+iptFsaIT87iBVCGpQcQ6JiTDL
+        XdJKVV4+vR907NBBpfad61/X4A6kZl0=
+Date:   Mon, 19 Dec 2022 11:17:22 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v10 2/9] KVM: Introduce per-page memory attributes
+Message-ID: <Y6A6MkFjckQ18fFH@zn.tnic>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-3-chao.p.peng@linux.intel.com>
+ <Y5yKEpwCzZpNoBrp@zn.tnic>
+ <20221219081532.GD1691829@chaop.bj.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhQCQJ6_0RtHQHuA2FDje-3ick3b3ar8K8NAnuMF=ww2cA@mail.gmail.com>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20221219081532.GD1691829@chaop.bj.intel.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 16-12-22 12:05:14, Paul Moore wrote:
-> On Fri, Dec 16, 2022 at 11:43 AM Jan Kara <jack@suse.cz> wrote:
-> >
-> > On Mon 12-12-22 09:06:10, Richard Guy Briggs wrote:
-> > > This patch adds a flag, FAN_INFO and an extensible buffer to provide
-> > > additional information about response decisions.  The buffer contains
-> > > one or more headers defining the information type and the length of the
-> > > following information.  The patch defines one additional information
-> > > type, FAN_RESPONSE_INFO_AUDIT_RULE, to audit a rule number.  This will
-> > > allow for the creation of other information types in the future if other
-> > > users of the API identify different needs.
-> > >
-> > > Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> > > Link: https://lore.kernel.org/r/2745105.e9J7NaK4W3@x2
-> > > Suggested-by: Jan Kara <jack@suse.cz>
-> > > Link: https://lore.kernel.org/r/20201001101219.GE17860@quack2.suse.cz
-> > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> >
-> > Thanks for the patches. They look very good to me. Just two nits below. I
-> > can do the small updates on commit if there would be no other changes. But
-> > I'd like to get some review from audit guys for patch 3/3 before I commit
-> > this.
+On Mon, Dec 19, 2022 at 04:15:32PM +0800, Chao Peng wrote:
+> Tamping down with error number a bit:
 > 
-> It's in my review queue, but it's a bit lower in the pile as my
-> understanding is that the linux-next folks don't like to see new
-> things in the next branches until after the merge window closes.
+>         if (attrs->flags)
+>                 return -ENXIO;
+>         if (attrs->attributes & ~supported_attrs)
+>                 return -EOPNOTSUPP;
+>         if (!PAGE_ALIGNED(attrs->address) || !PAGE_ALIGNED(attrs->size) ||
+>             attrs->size == 0)
+>                 return -EINVAL;
+>         if (attrs->address + attrs->size < attrs->address)
+>                 return -E2BIG;
 
-Sure, there's no hurry :). I just wanted to make it clear where the things
-stand.
+Yap, better.
 
-								Honza
+I guess you should add those to the documentation of the ioctl too
+so that people can find out why it fails. Or, well, they can look
+at the code directly too but still... imagine some blurb about
+user-friendliness here...
+
+:-)
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
