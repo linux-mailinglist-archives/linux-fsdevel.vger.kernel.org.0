@@ -2,52 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2EE29650C4E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Dec 2022 14:00:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33B27650D75
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 19 Dec 2022 15:37:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231689AbiLSNAp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Dec 2022 08:00:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59400 "EHLO
+        id S232484AbiLSOhV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Dec 2022 09:37:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231292AbiLSNAn (ORCPT
+        with ESMTP id S232548AbiLSOgz (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Dec 2022 08:00:43 -0500
-Received: from todd.t-8ch.de (todd.t-8ch.de [IPv6:2a01:4f8:c010:41de::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E494612B;
-        Mon, 19 Dec 2022 05:00:40 -0800 (PST)
-From:   Thomas =?utf-8?q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=weissschuh.net;
-        s=mail; t=1671454839;
-        bh=LXP8YNxMczzf+pLAFEBraHS71TcH5D0s/f2HVc8xxo4=;
-        h=From:Date:Subject:To:Cc:From;
-        b=Rwnr78Y9jfXzdcmkxygZwu95fm9+vfXTRkow+2qgz3mbjfKlU0XXr05lUjAj4NdCG
-         L1ykEBJDjcDajDxRwD7rnMIjud/KujFSohf+xLxxVepyCh2T9yJQ1HxMGG/Fi9tVTR
-         Dr+Ow3J0tTlKs3rzJK7BqxUhcL9SF4Qp0j7pDM00=
-Date:   Mon, 19 Dec 2022 13:00:34 +0000
-Subject: [PATCH v3] nsfs: add compat ioctl handler
+        Mon, 19 Dec 2022 09:36:55 -0500
+Received: from mail.skyhub.de (mail.skyhub.de [IPv6:2a01:4f8:190:11c2::b:1457])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB46712090;
+        Mon, 19 Dec 2022 06:36:34 -0800 (PST)
+Received: from zn.tnic (p5de8e9fe.dip0.t-ipconnect.de [93.232.233.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ECC051EC06BD;
+        Mon, 19 Dec 2022 15:36:32 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1671460593;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=Nr0Z4OvkPMBKiUgwrvy1b0JeJ5CuH4u8cdycIbF3VTo=;
+        b=g4O8WnDjjWmrtbFmMTY4G0yltCqzIeXhWywY3xwLBgdFTN9TCYZMZhAq9By4cTHHjnVkHt
+        354idtEXaLQwUDtNstFC6rPiAS1iw8va+w5OrbtVNCuvMSntL0hbmQcddYbRIVl0pEcCkP
+        SG+jpLF4Ne/7gzC4KSRDGyQn3EtYD1Q=
+Date:   Mon, 19 Dec 2022 15:36:28 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v10 3/9] KVM: Extend the memslot to support fd-based
+ private memory
+Message-ID: <Y6B27MpZO8o1Asfe@zn.tnic>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-4-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
-Message-Id: <20221214-nsfs-ioctl-compat-v3-1-b7f0eb7ccdd0@weissschuh.net>
-X-B4-Tracking: v=1; b=H4sIAHJgoGMC/4WOQQ6CMBBFr0K6tqbTQguuvIdx0ZZim2BrGMAYw
- t0tLjWR1eT/5L0/C0E3BIfkVCxkcHPAkGIO4lAQ63W8ORranAlnnAOHkkbskIZkx57adH/okUJV
- 1qaTVQ1akcwZjY6aQUfrMxmnvs+lDzim4fXZmSGfyz/lDJTRWqiuBaeUaevz0wVEtH7yx+jGbWY
- PNyAb1UjGmOHf+DXzM9/9gm8a3lTGiAZEJ38067q+ASgwZ45CAQAA
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrey Vagin <avagin@openvz.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Serge Hallyn <serge@hallyn.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Karel Zak <kzak@redhat.com>,
-        Thomas =?utf-8?q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-X-Mailer: b4 0.11.0-dev-e429b
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1671454836; l=1768;
- i=linux@weissschuh.net; s=20221212; h=from:subject:message-id;
- bh=LXP8YNxMczzf+pLAFEBraHS71TcH5D0s/f2HVc8xxo4=;
- b=2gw9Voe7WdS31apTPWwDknLxyefznbIjUh+p5EDw3UsHntsLl2MoJyz8yQNxCJd8WpeYr6tPuoa/
- JXy7VWNLCOnCmbpuJnqf1Hy9TMT05hjvRfgGbxwRR6TUGXJUNKZ3
-X-Developer-Key: i=linux@weissschuh.net; a=ed25519;
- pk=KcycQgFPX2wGR5azS7RhpBqedglOZVgRPfdFSPB1LNw=
+Content-Disposition: inline
+In-Reply-To: <20221202061347.1070246-4-chao.p.peng@linux.intel.com>
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
         autolearn=ham autolearn_force=no version=3.4.6
@@ -57,49 +82,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-As all parameters and return values of the ioctls have the same
-representation on both 32bit and 64bit we can reuse the normal ioctl
-handler for the compat handler via compat_ptr_ioctl().
+On Fri, Dec 02, 2022 at 02:13:41PM +0800, Chao Peng wrote:
+> In memory encryption usage, guest memory may be encrypted with special
+> key and can be accessed only by the guest itself. We call such memory
+> private memory. It's valueless and sometimes can cause problem to allow
 
-All nsfs ioctls return a plain "int" filedescriptor which is a signed
-4-byte integer type on both 32bit and 64bit.
-The only parameter taken is by NS_GET_OWNER_UID and is a pointer to a
-"uid_t" which is a 4-byte unsigned integer type on both 32bit and 64bit.
+valueless?
 
-Fixes: 6786741dbf99 ("nsfs: add ioctl to get an owning user namespace for ns file descriptor")
-Reported-by: Karel Zak <kzak@redhat.com>
-Link: https://github.com/util-linux/util-linux/pull/1924#issuecomment-1344133656
-Signed-off-by: Thomas Weißschuh <linux@weissschuh.net>
----
-Changes in v3:
-- Resend without changes
-  v1 and v2 did not reach the mailing lists due to an issue in my mail setup
-- Link to v2: https://lore.kernel.org/r/20221214-nsfs-ioctl-compat-v2-0-b295bb3913f6@weissschuh.net
+I can't parse that.
 
-Changes in v2:
-- Use compat_ptr_ioctl()
-- Link to v1: https://lore.kernel.org/r/20221214-nsfs-ioctl-compat-v1-0-b169796000b2@weissschuh.net
----
- fs/nsfs.c | 1 +
- 1 file changed, 1 insertion(+)
+> userspace to access guest private memory. This new KVM memslot extension
+> allows guest private memory being provided through a restrictedmem
+> backed file descriptor(fd) and userspace is restricted to access the
+> bookmarked memory in the fd.
 
-diff --git a/fs/nsfs.c b/fs/nsfs.c
-index 3506f6074288..c28f69edef97 100644
---- a/fs/nsfs.c
-+++ b/fs/nsfs.c
-@@ -21,6 +21,7 @@ static long ns_ioctl(struct file *filp, unsigned int ioctl,
- static const struct file_operations ns_file_operations = {
- 	.llseek		= no_llseek,
- 	.unlocked_ioctl = ns_ioctl,
-+	.compat_ioctl   = compat_ptr_ioctl,
- };
- 
- static char *ns_dname(struct dentry *dentry, char *buffer, int buflen)
+bookmarked?
 
----
-base-commit: f9ff5644bcc04221bae56f922122f2b7f5d24d62
-change-id: 20221214-nsfs-ioctl-compat-1548bf6581a7
+> This new extension, indicated by the new flag KVM_MEM_PRIVATE, adds two
+> additional KVM memslot fields restricted_fd/restricted_offset to allow
+> userspace to instruct KVM to provide guest memory through restricted_fd.
+> 'guest_phys_addr' is mapped at the restricted_offset of restricted_fd
+> and the size is 'memory_size'.
+> 
+> The extended memslot can still have the userspace_addr(hva). When use, a
 
-Best regards,
+"When un use, ..."
+
+...
+
+> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> index a8e379a3afee..690cb21010e7 100644
+> --- a/arch/x86/kvm/Kconfig
+> +++ b/arch/x86/kvm/Kconfig
+> @@ -50,6 +50,8 @@ config KVM
+>  	select INTERVAL_TREE
+>  	select HAVE_KVM_PM_NOTIFIER if PM
+>  	select HAVE_KVM_MEMORY_ATTRIBUTES
+> +	select HAVE_KVM_RESTRICTED_MEM if X86_64
+> +	select RESTRICTEDMEM if HAVE_KVM_RESTRICTED_MEM
+
+Those deps here look weird.
+
+RESTRICTEDMEM should be selected by TDX_GUEST as it can't live without
+it.
+
+Then you don't have to select HAVE_KVM_RESTRICTED_MEM simply because of
+X86_64 - you need that functionality when the respective guest support
+is enabled in KVM.
+
+Then, looking forward into your patchset, I'm not sure you even
+need HAVE_KVM_RESTRICTED_MEM - you could make it all depend on
+CONFIG_RESTRICTEDMEM. But that's KVM folks call - I'd always aim for
+less Kconfig items because we have waay too many.
+
+Thx.
+
 -- 
-Thomas Weißschuh <linux@weissschuh.net>
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
