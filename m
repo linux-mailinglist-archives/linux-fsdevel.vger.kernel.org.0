@@ -2,125 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AF8E665265A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Dec 2022 19:34:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2A42B6527E8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Dec 2022 21:33:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233948AbiLTSe5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Dec 2022 13:34:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34996 "EHLO
+        id S234291AbiLTUcf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Dec 2022 15:32:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230142AbiLTSez (ORCPT
+        with ESMTP id S234409AbiLTUcB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Dec 2022 13:34:55 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02672283;
-        Tue, 20 Dec 2022 10:34:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=i/0dNg/LAcrE2r3WsBk6QSdMSI82eF4SrtzGc5f53Nc=; b=WQfWVJi0VNAvTVOO5wgus+nc32
-        isjT3Rizfb3MM+/hgYvU6o9t6QOAzWAxzYy9xI2iFVDN/gGLzZd0J/3GtoKGUybfzFKDTDPlh3Lx6
-        IZPTxZDEt4W9MqWxfJian1GVAAyb+3k/DEURgq6GdmByLTBGWNjroZnudSu9e1xcGeNFkrk8JObUB
-        b7958Jxr5Hvo1MV/atr9grn2gHiO+4xC2gvzKEhTNaqRkvcDvX3Qft6OHQrXBtfbqGLlSBPi8mby1
-        3e2zRQNQmTFmSy5s/qMTOmPp3A3gUaoSjQWn+h58Gd/XdBdWFn6Sc0+5lbFBZblJ1dNEiPwwdeybt
-        F/c77JXA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1p7hS5-00246z-Ol; Tue, 20 Dec 2022 18:34:57 +0000
-Date:   Tue, 20 Dec 2022 18:34:57 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     Jan Kara <jack@suse.cz>, reiserfs-devel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Subject: Re: [PATCH 5/8] reiserfs: Convert do_journal_end() to use
- kmap_local_folio()
-Message-ID: <Y6IAUetp7nihz9Qu@casper.infradead.org>
-References: <20221216205348.3781217-1-willy@infradead.org>
- <20221216205348.3781217-6-willy@infradead.org>
- <Y55WUrzblTsw6FfQ@iweiny-mobl>
- <Y6GB75HMEKfcGcsO@casper.infradead.org>
- <20221220111801.jhukawk3lbuonxs3@quack3>
- <Y6HpzAFNA33jQ3bl@iweiny-desk3>
+        Tue, 20 Dec 2022 15:32:01 -0500
+Received: from sender-of-o50.zoho.in (sender-of-o50.zoho.in [103.117.158.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B2E51F636;
+        Tue, 20 Dec 2022 12:31:20 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1671568268; cv=none; 
+        d=zohomail.in; s=zohoarc; 
+        b=AIc5uaO3ypMUPMx3xjmDnPW1UDmslbJttmZf8L9NU0Rz/6VVWPKkgAEWv3NPmNesImnjkCeRz4KDUa+DVGs6hX5NiU9pG6M/XNvx1Sp6Dq20nRixmbCfF1DoOacIqPdTILOkieMWF63xXt7rL7oIIN2Vz15snr3Z44CWLNIaLiY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
+        t=1671568268; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=MwpXKEJAPVR+byJdB5oIAwS4ZE/NgA8mrHIQ8L3UdxQ=; 
+        b=Ux9m/rWxrQPC7m1Ld/p7XMtM9JMX9vmfduafJjBQ1y9+yey+IvWO/H0lXOAJd8cRzf7LOhJrDyBIKaznzSkMo3zcD6Eybu5vmhb2lmDddSV7v0omfUfPg5wv5u9IZuLNlGYko9CIPEYY6BpvpRknvCNqWxjx6agJ+jwRYHGFyvA=
+ARC-Authentication-Results: i=1; mx.zohomail.in;
+        dkim=pass  header.i=siddh.me;
+        spf=pass  smtp.mailfrom=code@siddh.me;
+        dmarc=pass header.from=<code@siddh.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1671568268;
+        s=zmail; d=siddh.me; i=code@siddh.me;
+        h=Message-ID:Date:Date:MIME-Version:From:From:Subject:Subject:To:To:Cc:Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=MwpXKEJAPVR+byJdB5oIAwS4ZE/NgA8mrHIQ8L3UdxQ=;
+        b=jTOmAqMexqMX0S9XtrQ0BdGZgCbmPtk17u9NJNA6oiASBgLqsDtF/q2Snd9kWygq
+        IuvLnUMDLT2S6mXgiWHyQcxnqOJw6EkFWVTgnGjNenBoA+6PTzw3oo2YuyHnpm+D+lj
+        vY839xcFVCpIZFmYCpUOutOOYfLnt10UwKM/ZnVQ=
+Received: from [192.168.1.9] (110.226.31.37 [110.226.31.37]) by mx.zoho.in
+        with SMTPS id 1671568266792170.31739805186044; Wed, 21 Dec 2022 02:01:06 +0530 (IST)
+Message-ID: <9e1390c5-844c-9fa5-693e-da9d10c64e21@siddh.me>
+Date:   Wed, 21 Dec 2022 02:01:04 +0530
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y6HpzAFNA33jQ3bl@iweiny-desk3>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.5.1
+From:   Siddh Raman Pant <code@siddh.me>
+Subject: Re: [PATCH] selftests: Add missing <sys/syscall.h> to mount_setattr
+ test
+To:     Daan De Meyer <daan.j.demeyer@gmail.com>
+Cc:     Christian Brauner <brauner@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-kselftests <linux-kselftest@vger.kernel.org>,
+        Seth Forshee <sforshee@kernel.org>,
+        Shuah Khan <shuah@kernel.org>
+References: <20221201150218.2374366-1-daan.j.demeyer@gmail.com>
+Content-Language: en-US, en-GB, hi-IN
+In-Reply-To: <20221201150218.2374366-1-daan.j.demeyer@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
+X-Spam-Status: No, score=-3.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 20, 2022 at 08:58:52AM -0800, Ira Weiny wrote:
-> On Tue, Dec 20, 2022 at 12:18:01PM +0100, Jan Kara wrote:
-> > On Tue 20-12-22 09:35:43, Matthew Wilcox wrote:
-> > > But that doesn't solve the "What about fs block size > PAGE_SIZE"
-> > > problem that we also want to solve.  Here's a concrete example:
-> > > 
-> > >  static __u32 jbd2_checksum_data(__u32 crc32_sum, struct buffer_head *bh)
-> > >  {
-> > > -       struct page *page = bh->b_page;
-> > > +       struct folio *folio = bh->b_folio;
-> > >         char *addr;
-> > >         __u32 checksum;
-> > >  
-> > > -       addr = kmap_atomic(page);
-> > > -       checksum = crc32_be(crc32_sum,
-> > > -               (void *)(addr + offset_in_page(bh->b_data)), bh->b_size);
-> > > -       kunmap_atomic(addr);
-> > > +       BUG_ON(IS_ENABLED(CONFIG_HIGHMEM) && bh->b_size > PAGE_SIZE);
-> > > +
-> > > +       addr = kmap_local_folio(folio, offset_in_folio(folio, bh->b_data));
-> > > +       checksum = crc32_be(crc32_sum, addr, bh->b_size);
-> > > +       kunmap_local(addr);
-> > >  
-> > >         return checksum;
-> > >  }
-> > > 
-> > > I don't want to add a lot of complexity to handle the case of b_size >
-> > > PAGE_SIZE on a HIGHMEM machine since that's not going to benefit terribly
-> > > many people.  I'd rather have the assertion that we don't support it.
-> > > But if there's a good higher-level abstraction I'm missing here ...
-> > 
-> > Just out of curiosity: So far I was thinking folio is physically contiguous
-> > chunk of memory. And if it is, then it does not seem as a huge overkill if
-> > kmap_local_folio() just maps the whole folio?
+On Thu, Dec 01 2022 at 20:32:18 +0530, Daan De Meyer wrote:
+> Including <sys/syscall.h> is required to define __NR_mount_setattr
+> and __NR_open_tree which the mount_setattr test relies on.
 > 
-> Willy proposed that previously but we could not come to a consensus on how to
-> do it.
+> Signed-off-by: Daan De Meyer <daan.j.demeyer@gmail.com>
+> ---
+>  tools/testing/selftests/mount_setattr/mount_setattr_test.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> https://lore.kernel.org/all/Yv2VouJb2pNbP59m@iweiny-desk3/
-> 
-> FWIW I still think increasing the entries to cover any foreseeable need would
-> be sufficient because HIGHMEM does not need to be optimized.  Couldn't we hide
-> the entry count into some config option which is only set if a FS needs a
-> larger block size on a HIGHMEM system?
+> diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> index 8c5fea68ae67..da85f8af482c 100644
+> --- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> +++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> @@ -11,6 +11,7 @@
+>  #include <sys/wait.h>
+>  #include <sys/vfs.h>
+>  #include <sys/statvfs.h>
+> +#include <sys/syscall.h>
+>  #include <sys/sysinfo.h>
+>  #include <stdlib.h>
+>  #include <unistd.h>
 
-"any foreseeable need"?  I mean ... I'd like to support 2MB folios,
-even on HIGHMEM machines, and that's 512 entries.  If we're doing
-memcpy_to_folio(), we know that's only one mapping, but still, 512
-entries is _a lot_ of address space to be reserving on a 32-bit machine.
-I don't know exactly what the address space layout is on x86-PAE or
-ARM-PAE these days, but as I recall, the low 3GB is user and the high
-1GB is divided between LOWMEM and VMAP space; something like 800MB of
-LOWMEM and 200MB of vmap/kmap/PCI iomem/...
+Tested-by: Siddh Raman Pant <code@siddh.me>
 
-Where I think we can absolutely get away with this reasoning is having
-a kmap_local_buffer().  It's perfectly reasonable to restrict fs block
-size to 64kB (after all, we've been limiting it to 4kB on x86 for thirty
-years), and having a __kmap_local_pfns(pfn, n, prot) doesn't seem like
-a terribly bad idea to me.
+Though this oversight actually led to gcc detecting another
+another error [1], as it entered the #ifndef __NR_mount_setattr
+block.
 
-So ... is this our path forward:
+Thanks,
+Siddh
 
- - Introduce a complex memcpy_to/from_folio() in highmem.c that mirrors
-   zero_user_segments()
- - Have a simple memcpy_to/from_folio() in highmem.h that mirrors
-   zero_user_segments()
- - Convert __kmap_local_pfn_prot() to __kmap_local_pfns()
- - Add kmap_local_buffer() that can handle buffer_heads up to, say, 16x
-   PAGE_SIZE
+[1] https://lore.kernel.org/all/20221211092820.85527-1-code@siddh.me/
