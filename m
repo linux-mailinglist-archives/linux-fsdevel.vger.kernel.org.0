@@ -2,57 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5923B6529DE
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Dec 2022 00:31:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E5D916529E4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Dec 2022 00:32:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234268AbiLTXbL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Dec 2022 18:31:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35810 "EHLO
+        id S234074AbiLTXcF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Dec 2022 18:32:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36170 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234258AbiLTXbJ (ORCPT
+        with ESMTP id S234255AbiLTXb4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Dec 2022 18:31:09 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9A2D31FF8D
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Dec 2022 15:31:07 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id v23so8755779pju.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Dec 2022 15:31:07 -0800 (PST)
+        Tue, 20 Dec 2022 18:31:56 -0500
+Received: from mail-pl1-x636.google.com (mail-pl1-x636.google.com [IPv6:2607:f8b0:4864:20::636])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 05AA91FF8D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Dec 2022 15:31:55 -0800 (PST)
+Received: by mail-pl1-x636.google.com with SMTP id n4so13866222plp.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Dec 2022 15:31:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=paul-moore-com.20210112.gappssmtp.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zre1kotzR+gyUnyjZM5SkqNzTaEPBauNGGmkiFmJLxA=;
-        b=Nf1RbDbe6Y7p3znBVUX7koicto5J7BA6jgcX2c87vxea33bkv885eV83wfLPpyOMZX
-         FPwkPEZYpZIEIEUQjPIVz5H2c9MVNo82yrmz8ZPbwQigqsTOIDcGNVH7wkSEssQ8Pl99
-         u/q9rzfa2e3pi0GXOnhRM9WLI8JoeUI5Lx8PpVTz6+AkAYPQZvO67Bog+UXvM490HitC
-         Mj6HC927l+M2MGRLlR07qQgp+ObRq4x/YEemGN4ULFMdxTHJzoIO1zc4urBglPkPkWDG
-         tnT7vR0Lhix+ILtzZUJEqSvCWy76VA7dSJhWfywRVAwnMNJFKscL+XE0pduN+GsViM81
-         WVag==
+        bh=aNvwx1f2Fh9J2I3ow+8tnVvZQ5g3r2kgzwtdsL7kVXU=;
+        b=oWguqbs4iid3zUKQbiLJ8Pywmc14jtVoWF+gl/hsbMUrxll/0vAhbU7/XcJo4y1XFr
+         3YaGiddbcxU9ha/qQDrQymW9M461agfVdQFv0sKy86Z/X8AWCI/ut/XnkdNyce2mirg/
+         s3I9gvTQMuS4Ksat8ZW4edrFpu8ADFEyvYHoUFzLIiiyheCXkb7/nz2+QB+vjTo4cJTc
+         C/uhH9B8TfAFznkvg27CgaUj0JzDhfMGkF9yPcSqYGm7ugypHmdKxTg3rwCEvAHZYRGO
+         2ZLHg8poJlUUrVKsJW2kaSKSgDeT0M2fKm4oRhn2yoWrjaqSIVCHE1wqGRJMvBxTV8sU
+         MCqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Zre1kotzR+gyUnyjZM5SkqNzTaEPBauNGGmkiFmJLxA=;
-        b=7TaGHkP0AOBKdAEFq6c215OlRBs46ILgD1VF9eUXomSwbPzzRh14uht0zvPn6+DtqU
-         rUtMAbIYDpfd+ZmYSwfj8UJg5H91hSZJ3G66mT8nQtinvbBwnjX7M87MLEqFVma1aU8S
-         rqnMVDfWuQLfO/wDt+mchrYbfhOIzcv4/9vRToYUfseISqhik6bxu0Gr8HphD0O7MPkf
-         BVcg4rc6cHM/05nWV9hZo8vuCqpmvxuGau4iyWyN/7DWp4Yby2e9vGNL3Oa9Kv9j9HpT
-         aP0a5LA12vABBBM3lErQSAKNP7qRZGX4EiG1QOCQi7/IX9bPDAa4ivoJOutF4L3GsLsq
-         /YsA==
-X-Gm-Message-State: ANoB5pm/yrFniAkbZGzd2Qz/ClVy14OTsXRHegGifEyXhjahs48PQdIt
-        Pybr+R3VwaDt7WcYuxHPTqUjQXoLQ+gXqBvpufJo
-X-Google-Smtp-Source: AA0mqf7+YJR0aQlb22cA8u1ukv0bd+pXUGYeqBMNcL0hZcYc3FUyoIGarrrn28B0nOfNbTsag/TgPOEscRMb7Pf8iqk=
-X-Received: by 2002:a17:902:9892:b0:186:c3b2:56d1 with SMTP id
- s18-20020a170902989200b00186c3b256d1mr81913259plp.15.1671579067046; Tue, 20
- Dec 2022 15:31:07 -0800 (PST)
+        bh=aNvwx1f2Fh9J2I3ow+8tnVvZQ5g3r2kgzwtdsL7kVXU=;
+        b=yuys96eUxbncN0mRJoh736cIDv+gxUWpMk2frb5l2NXbyxmCo/HyRH1t+qDnyFgWvp
+         E+e7o1kJtEj6ZKdkxZNqWVcmgqsqWdv1Xeqc2dCR0gvNRSl0APJudniyLUMTx2dNq9SP
+         6WGk8W26+jNZvd0S2MxkX0Q7LcBZr00x7MAwN6nvVWunhNGUyjqE6rAEBTP+7ooK2ysD
+         yFLGt3jcLJ9bzTOuyP305d9acMOdcp19Dbgxhpce3cbkkvdzMvcChDI4t1QQcKsccA0y
+         df9NbdkEZl1jZ8CMKhZKlN/ZBxmieUVZ6qfRgxvs1gelzma5yQBCvcwGD9ImP5UFFhQY
+         IGRg==
+X-Gm-Message-State: AFqh2kq+8WQNNQSTON9FoQ6DzVK1P2K3G7TpQmtGSTSFX523Ffso4x7Z
+        uLgUhb+owGi44PzsFeJClIj2inBGlFFz8Fatl1pj
+X-Google-Smtp-Source: AMrXdXvBpq9QnNE8Y4rIAjEUbNiQzoI2AuEU1LAlXJlJ3cXz5EoaZFQzreLaQrZb/OX0AgiBktAoy1GSdjW3Et+zoLw=
+X-Received: by 2002:a17:90a:6481:b0:221:5597:5de7 with SMTP id
+ h1-20020a17090a648100b0022155975de7mr2001291pjj.147.1671579114449; Tue, 20
+ Dec 2022 15:31:54 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1670606054.git.rgb@redhat.com> <33f683794883676be88e503594ba094db2ff6bbb.1670606054.git.rgb@redhat.com>
-In-Reply-To: <33f683794883676be88e503594ba094db2ff6bbb.1670606054.git.rgb@redhat.com>
+References: <cover.1670606054.git.rgb@redhat.com> <79fcf72ea442eeede53ed5e6de567f8df8ef7d83.1670606054.git.rgb@redhat.com>
+In-Reply-To: <79fcf72ea442eeede53ed5e6de567f8df8ef7d83.1670606054.git.rgb@redhat.com>
 From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 20 Dec 2022 18:30:56 -0500
-Message-ID: <CAHC9VhTyqAvevFFBwB0NLGRB9wwgp22VH_vDXq-FbjzL63A2cg@mail.gmail.com>
-Subject: Re: [PATCH v5 1/3] fanotify: Ensure consistent variable type for response
+Date:   Tue, 20 Dec 2022 18:31:43 -0500
+Message-ID: <CAHC9VhQont7=S9pvTpLUmxVSj-g-j2ZhVCLiUki69vtp8rf-9A@mail.gmail.com>
+Subject: Re: [PATCH v5 3/3] fanotify,audit: Allow audit to use the full
+ permission event response
 To:     Richard Guy Briggs <rgb@redhat.com>
 Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>,
@@ -72,21 +73,94 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 On Mon, Dec 12, 2022 at 9:06 AM Richard Guy Briggs <rgb@redhat.com> wrote:
 >
-> The user space API for the response variable is __u32. This patch makes
-> sure that the whole path through the kernel uses u32 so that there is
-> no sign extension or truncation of the user space response.
+> This patch passes the full response so that the audit function can use all
+> of it. The audit function was updated to log the additional information in
+> the AUDIT_FANOTIFY record.
+>
+> Currently the only type of fanotify info that is defined is an audit
+> rule number, but convert it to hex encoding to future-proof the field.
+> Hex encoding suggested by Paul Moore <paul@paul-moore.com>.
+>
+> Sample records:
+>   type=FANOTIFY msg=audit(1600385147.372:590): resp=2 fan_type=1 fan_info=3137 subj_trust=3 obj_trust=5
+>   type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0 fan_info=3F subj_trust=2 obj_trust=2
 >
 > Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> Link: https://lore.kernel.org/r/12617626.uLZWGnKmhe@x2
+> Link: https://lore.kernel.org/r/3075502.aeNJFYEL58@x2
 > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
 > ---
->  fs/notify/fanotify/fanotify.h      | 2 +-
->  fs/notify/fanotify/fanotify_user.c | 6 +++---
->  include/linux/audit.h              | 6 +++---
->  kernel/auditsc.c                   | 2 +-
->  4 files changed, 8 insertions(+), 8 deletions(-)
+>  fs/notify/fanotify/fanotify.c |  3 ++-
+>  include/linux/audit.h         |  9 +++++----
+>  kernel/auditsc.c              | 25 ++++++++++++++++++++++---
+>  3 files changed, 29 insertions(+), 8 deletions(-)
 
-Acked-by: Paul Moore <paul@paul-moore.com> (audit)
+...
 
---
+> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
+> index d1fb821de104..8d523066d81f 100644
+> --- a/kernel/auditsc.c
+> +++ b/kernel/auditsc.c
+> @@ -64,6 +64,7 @@
+>  #include <uapi/linux/limits.h>
+>  #include <uapi/linux/netfilter/nf_tables.h>
+>  #include <uapi/linux/openat2.h> // struct open_how
+> +#include <uapi/linux/fanotify.h>
+>
+>  #include "audit.h"
+>
+> @@ -2877,10 +2878,28 @@ void __audit_log_kern_module(char *name)
+>         context->type = AUDIT_KERN_MODULE;
+>  }
+>
+> -void __audit_fanotify(u32 response)
+> +void __audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
+>  {
+> -       audit_log(audit_context(), GFP_KERNEL,
+> -               AUDIT_FANOTIFY, "resp=%u", response);
+> +       struct audit_context *ctx = audit_context();
+> +       struct audit_buffer *ab;
+> +       char numbuf[12];
+> +
+> +       if (friar->hdr.type == FAN_RESPONSE_INFO_NONE) {
+> +               audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
+> +                         "resp=%u fan_type=%u fan_info=3F subj_trust=2 obj_trust=2",
+> +                         response, FAN_RESPONSE_INFO_NONE);
+
+The fan_info, subj_trust, and obj_trust constant values used here are
+awfully magic-numbery and not the usual sentinel values one might
+expect for a "none" operation, e.g. zeros/INT_MAX/etc. I believe a
+comment here explaining the values would be a good idea.
+
+> +               return;
+> +       }
+> +       ab = audit_log_start(ctx, GFP_KERNEL, AUDIT_FANOTIFY);
+> +       if (ab) {
+> +               audit_log_format(ab, "resp=%u fan_type=%u fan_info=",
+> +                                response, friar->hdr.type);
+> +               snprintf(numbuf, sizeof(numbuf), "%u", friar->rule_number);
+> +               audit_log_n_hex(ab, numbuf, sizeof(numbuf));
+
+It looks like the kernel's printf format string parsing supports %X so
+why not just use that for now, we can always complicate it later if
+needed.  It would probably also remove the need for the @ab, @numbuf,
+and @ctx variables.  For example:
+
+audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
+  "resp=%u fan_type=%u fan_info=%X subj_trust=%u obj_trust=%u",
+  response, friar->hdr.type, friar->rule_number,
+  friar->subj_trust, friar->obj_trust);
+
+Am I missing something?
+
+> +               audit_log_format(ab, " subj_trust=%u obj_trust=%u",
+> +                                friar->subj_trust, friar->obj_trust);
+> +               audit_log_end(ab);
+> +       }
+>  }
+>
+>  void __audit_tk_injoffset(struct timespec64 offset)
+> --
+> 2.27.0
+
+-- 
 paul-moore.com
