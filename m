@@ -2,87 +2,181 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 263D1651C09
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Dec 2022 09:00:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 159BF651BF5
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Dec 2022 08:47:57 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233194AbiLTIAq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Dec 2022 03:00:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35476 "EHLO
+        id S233142AbiLTHrx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Dec 2022 02:47:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60078 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233295AbiLTIAi (ORCPT
+        with ESMTP id S229556AbiLTHrt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Dec 2022 03:00:38 -0500
-X-Greylist: delayed 1879 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Tue, 20 Dec 2022 00:00:36 PST
-Received: from m126.mail.126.com (m126.mail.126.com [220.181.12.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7E4C9D106
-        for <linux-fsdevel@vger.kernel.org>; Tue, 20 Dec 2022 00:00:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
-        Content-Type; bh=a8f9jHLGSU6GKTT+G2bdn7m6o60FMwWFVpWddddotCE=;
-        b=EKGzBcUgIPoBgVoJgi95PspR9rRVz6MS0Uvgs11El8Flp3gG5QfWlpDZ2T0fv2
-        1FzlwgzVXaHwdNqZzEJ323DD4tRx8xUZXdkpkybFr/NQqnOCd7Q17eYsmeBaH5Zn
-        GNJLeQiNtW+lvwIck/4hDYGG7Yy80FsnTHEl8CNe4hIw8=
-Received: from localhost.localdomain (unknown [116.128.244.169])
-        by zwqz-smtp-mta-g0-1 (Coremail) with SMTP id _____wA3MPI+ZKFjE64QAA--.28631S2;
-        Tue, 20 Dec 2022 15:29:04 +0800 (CST)
-From:   lingfuyi <lingfuyi@126.com>
-To:     viro@zeniv.linux.org.uk
-Cc:     linux-fsdevel@vger.kernel.org, lingfuyi <lingfuyi@126.com>
-Subject: [PATCH] fs: add macro when api not used
-Date:   Tue, 20 Dec 2022 15:28:58 +0800
-Message-Id: <20221220072858.32439-1-lingfuyi@126.com>
-X-Mailer: git-send-email 2.20.1
+        Tue, 20 Dec 2022 02:47:49 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BAD2A106;
+        Mon, 19 Dec 2022 23:47:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1671522468; x=1703058468;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=18JY1Rv+JmD8fqHB1Zwfy2CyVc6av0CO+XzWDU5pLU8=;
+  b=cvT3hrCnlih0FOk9rqv+UWjL3sEjGz0Y7aaLsz37QwUFtTyPcNKqcYFE
+   p4HFw9mVsrCDLGtvZFb65MKGgey0+vZ5rHKCU6Khc15qVY3oZp3HnvqTI
+   RcPpA+cy9HNUSBNNWdo63xMW1LG3Iu5YtiuinDx0oJbXVeR/qn/k5+GHp
+   Fx2Bt8MCL/zjLBAlv+6Y19rX0NPzDFLz+qpvt/9uj5rJ0CDvzOfxs827I
+   s7bvoHeI1wcA5LJb5xYGllAOWxAFKIO958eWZEXm0unBG29D4aM2V3/Oe
+   8kPqSp3/Yy7YbJfbHC3t1ie9PykQtP6HYnngfkP7IsuILxbCmk0BJpzMz
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10566"; a="317187844"
+X-IronPort-AV: E=Sophos;i="5.96,258,1665471600"; 
+   d="scan'208";a="317187844"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2022 23:47:47 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10566"; a="896319288"
+X-IronPort-AV: E=Sophos;i="5.96,258,1665471600"; 
+   d="scan'208";a="896319288"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by fmsmga006.fm.intel.com with ESMTP; 19 Dec 2022 23:47:34 -0800
+Date:   Tue, 20 Dec 2022 15:43:18 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v10 3/9] KVM: Extend the memslot to support fd-based
+ private memory
+Message-ID: <20221220074318.GC1724933@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-4-chao.p.peng@linux.intel.com>
+ <Y6B27MpZO8o1Asfe@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: _____wA3MPI+ZKFjE64QAA--.28631S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7XFyfKF18Wr1xXw4kuFWUtwb_yoWDJFg_ur
-        1Iva1rCr4kuF1Sqw4UW3sFv34UWr1DJrs3Cws5KwnYyFWDJay7Ar4DAFyrJw1kWwnF934U
-        Ca4ktayrJF1j9jkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sRCQ6LJUUUUU==
-X-Originating-IP: [116.128.244.169]
-X-CM-SenderInfo: polqwwxx1lqiyswou0bp/1tbiqAfdR1pD-RQ4ZgAAsb
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y6B27MpZO8o1Asfe@zn.tnic>
+X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-when CONFIG_ELF_CORE not defined but dump_emit_page only used in
-dump_user_range(),will case some error like this:
+On Mon, Dec 19, 2022 at 03:36:28PM +0100, Borislav Petkov wrote:
+> On Fri, Dec 02, 2022 at 02:13:41PM +0800, Chao Peng wrote:
+> > In memory encryption usage, guest memory may be encrypted with special
+> > key and can be accessed only by the guest itself. We call such memory
+> > private memory. It's valueless and sometimes can cause problem to allow
+> 
+> valueless?
+> 
+> I can't parse that.
 
-fs/coredump.c:841:12: error: ‘dump_emit_page’ defined but not used
-[-Werror=unused-function]
-static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+It's unnecessary and ...
 
-Signed-off-by: lingfuyi <lingfuyi@126.com>
----
- fs/coredump.c | 2 ++
- 1 file changed, 2 insertions(+)
+> 
+> > userspace to access guest private memory. This new KVM memslot extension
+> > allows guest private memory being provided through a restrictedmem
+> > backed file descriptor(fd) and userspace is restricted to access the
+> > bookmarked memory in the fd.
+> 
+> bookmarked?
 
-diff --git a/fs/coredump.c b/fs/coredump.c
-index de78bde2991b..95390a73b912 100644
---- a/fs/coredump.c
-+++ b/fs/coredump.c
-@@ -838,6 +838,7 @@ static int __dump_skip(struct coredump_params *cprm, size_t nr)
- 	}
- }
- 
-+#ifdef CONFIG_ELF_CORE
- static int dump_emit_page(struct coredump_params *cprm, struct page *page)
- {
- 	struct bio_vec bvec = {
-@@ -870,6 +871,7 @@ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
- 
- 	return 1;
- }
-+#endif
- 
- int dump_emit(struct coredump_params *cprm, const void *addr, int nr)
- {
--- 
-2.20.1
+userspace is restricted to access the memory content in the fd.
 
+> 
+> > This new extension, indicated by the new flag KVM_MEM_PRIVATE, adds two
+> > additional KVM memslot fields restricted_fd/restricted_offset to allow
+> > userspace to instruct KVM to provide guest memory through restricted_fd.
+> > 'guest_phys_addr' is mapped at the restricted_offset of restricted_fd
+> > and the size is 'memory_size'.
+> > 
+> > The extended memslot can still have the userspace_addr(hva). When use, a
+> 
+> "When un use, ..."
+
+When both userspace_addr and restricted_fd/offset were used, ...
+
+> 
+> ...
+> 
+> > diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
+> > index a8e379a3afee..690cb21010e7 100644
+> > --- a/arch/x86/kvm/Kconfig
+> > +++ b/arch/x86/kvm/Kconfig
+> > @@ -50,6 +50,8 @@ config KVM
+> >  	select INTERVAL_TREE
+> >  	select HAVE_KVM_PM_NOTIFIER if PM
+> >  	select HAVE_KVM_MEMORY_ATTRIBUTES
+> > +	select HAVE_KVM_RESTRICTED_MEM if X86_64
+> > +	select RESTRICTEDMEM if HAVE_KVM_RESTRICTED_MEM
+> 
+> Those deps here look weird.
+> 
+> RESTRICTEDMEM should be selected by TDX_GUEST as it can't live without
+> it.
+
+RESTRICTEDMEM is needed by TDX_HOST, not TDX_GUEST.
+
+> 
+> Then you don't have to select HAVE_KVM_RESTRICTED_MEM simply because of
+> X86_64 - you need that functionality when the respective guest support
+> is enabled in KVM.
+
+Letting the actual feature(e.g. TDX or pKVM) select it or add dependency
+sounds a viable and clearer solution. Sean, let me know your opinion.
+
+> 
+> Then, looking forward into your patchset, I'm not sure you even
+> need HAVE_KVM_RESTRICTED_MEM - you could make it all depend on
+> CONFIG_RESTRICTEDMEM. But that's KVM folks call - I'd always aim for
+> less Kconfig items because we have waay too many.
+
+The only reason to add another HAVE_KVM_RESTRICTED_MEM is some code only
+works for 64bit[*] and CONFIG_RESTRICTEDMEM is not sufficient to enforce
+that.
+
+[*] https://lore.kernel.org/all/YkJLFu98hZOvTSrL@google.com/
+
+Thanks,
+Chao
+> 
+> Thx.
+> 
+> -- 
+> Regards/Gruss,
+>     Boris.
+> 
+> https://people.kernel.org/tglx/notes-about-netiquette
