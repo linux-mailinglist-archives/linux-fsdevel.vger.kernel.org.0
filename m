@@ -2,726 +2,203 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4A8F965249E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Dec 2022 17:27:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EE94565250D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Dec 2022 17:59:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233945AbiLTQ1E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 20 Dec 2022 11:27:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35486 "EHLO
+        id S233336AbiLTQ7E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Dec 2022 11:59:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48534 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233918AbiLTQ1B (ORCPT
+        with ESMTP id S229723AbiLTQ7D (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 20 Dec 2022 11:27:01 -0500
-Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0EBBE1AF25;
-        Tue, 20 Dec 2022 08:26:58 -0800 (PST)
-Received: from localhost.localdomain (unknown [39.45.25.143])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        (Authenticated sender: usama.anjum)
-        by madras.collabora.co.uk (Postfix) with ESMTPSA id 578166602CA0;
-        Tue, 20 Dec 2022 16:26:51 +0000 (GMT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-        s=mail; t=1671553617;
-        bh=H/yXJ+C5YIAsByTqG2HS8f40ouw5wHWvBLV2umMJBWE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=obpNYqXUxEOjSrti3bPlgqfPTuW193Kwt7bQmLKGZIF2Cphwe6FhH96wSqkBYI+wO
-         BLqowYo3XgQgizNvWPC3Bo8tLXsFFvjKmIhzKjQBNgCO97+g9iz8PkqXbV4gyUMzi7
-         IIUOJM/DttOAyTk8V3cHjpLxQ9wb2lsRHCipat6mC+QqG1hAwELr5nkbubVovtuHpb
-         v/aY1qpAvmZ+IY51RqJwi8eSdOIfDF2cw7SA5jyH6I84xkFtCxT/h1ffzChObZVvtS
-         jX7IWUwHeGK5CmGp76KZYklz2rGuB/YWIWSMo3/kBQEzTgjeaLTnnOq1aBxVG6Fn0b
-         hxpGnPL1ubLsQ==
-From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
-        kernel@collabora.com, peterx@redhat.com, david@redhat.com,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RFC] mm: implement granular soft-dirty vma support
-Date:   Tue, 20 Dec 2022 21:26:05 +0500
-Message-Id: <20221220162606.1595355-1-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.30.2
+        Tue, 20 Dec 2022 11:59:03 -0500
+Received: from mga14.intel.com (mga14.intel.com [192.55.52.115])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A390EB1F4;
+        Tue, 20 Dec 2022 08:59:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1671555542; x=1703091542;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=rW9X1oxUj2wffGBugp9bhcRfrdMa3tFdhW91yoE5G+A=;
+  b=nhgAGPcxUvHp3rO6ai+X4Fp8yXUo5vplvkx8qaP+31pblf4CJwEvN4uy
+   FWPmMO/OzSCfyEVyA/zJVYsl/wsWpX6NNUVr5TuY1DVHFUavVb7j2obFv
+   fzFoJdYIfTGJd2xv6aI4DS1N5gmSSqXQBFSH6jY2X8Bt0QAXq740b+rVg
+   yoHYbQsgBWUI1NJ9+6jArwtthLaZ3+BLL+S/Bo8caGrJASmMaZmuGt3O7
+   09h15brh70Pz/qMK391J9Oe+f/4a+nuhHLAmViff+5QE4lpU5xlfKnIia
+   Bl1a4ygagtVJ8c/tZMh+LY1DEgRPUTdkw3v4attDLFoN94oEFOymiCrny
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10567"; a="319713837"
+X-IronPort-AV: E=Sophos;i="5.96,259,1665471600"; 
+   d="scan'208";a="319713837"
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 Dec 2022 08:58:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10567"; a="653181153"
+X-IronPort-AV: E=Sophos;i="5.96,259,1665471600"; 
+   d="scan'208";a="653181153"
+Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
+  by fmsmga007.fm.intel.com with ESMTP; 20 Dec 2022 08:58:59 -0800
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16; Tue, 20 Dec 2022 08:58:58 -0800
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.16 via Frontend Transport; Tue, 20 Dec 2022 08:58:58 -0800
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.171)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.16; Tue, 20 Dec 2022 08:58:58 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZwVAlpbqfTu1BdWiOVfjqjC/OExRucL+/RMMfUWMQvc4fUKqyyY0aVhkauDn7sR6Vf1vp269vy3BNOeGobA/oHYmAQhm25aL0QEV8yj8bqQEONytFgEAwxQEm0a7JVmhORVoqO+OAQqnZhj3NPmFNzg2f8csJcpdNvAh1Uy+6IrugncGYAzG8naSpLVQ7gb2Onjg2b1KSrOkqC5cTrTZYmTSff93JgULo/0NRqbjKM+FXEHdfECjGL4PJKUei4vYvKWQlJ9/RAqj/jrqnxNRDMvp292Pm0afTsyGCuGO0yyK4ORBlQ5r7NRf7SPmgr1tU1JLfUaIrkJde4/yVCk4tg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=d0ipdrlD2U9XDNTIAn8zgr6uUkvePemD3sk2E1sl/zo=;
+ b=AY6bNV3Iby7xqo30rZ5McfNX1/+sn+Mrj9H1nggVV6YysmcLkI4HzfofxEcq+kgq4Hbo4ZgTYDP6T0RYihGrDQpl6v7ZGtD+ykLtbKuXIGvHjJDjreT5aCdPrzxcdHU6VKDifwHZS2USF2+8B1D0K8MXqOfgfsdHoBjrLBGKgmOuXk6vsfmbdszZfH5UC7R03rBfafQoEWif3w+VZ6EXCkPpgt9NtuemVWMiHO15r46725W7kn2cOpu3iuEeJIXcSc3Qa1blRx9jkTgqLLP/yA2siOphfJFA1jego8x03Y2JYxo5OYygtRN9Y8ZL+8UgWfBIqhfkppkasCs0Tp5UpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by MN2PR11MB4678.namprd11.prod.outlook.com (2603:10b6:208:264::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5924.16; Tue, 20 Dec
+ 2022 16:58:56 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::288d:5cae:2f30:828b]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::288d:5cae:2f30:828b%6]) with mapi id 15.20.5924.016; Tue, 20 Dec 2022
+ 16:58:56 +0000
+Date:   Tue, 20 Dec 2022 08:58:52 -0800
+From:   Ira Weiny <ira.weiny@intel.com>
+To:     Jan Kara <jack@suse.cz>
+CC:     Matthew Wilcox <willy@infradead.org>,
+        <reiserfs-devel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+Subject: Re: [PATCH 5/8] reiserfs: Convert do_journal_end() to use
+ kmap_local_folio()
+Message-ID: <Y6HpzAFNA33jQ3bl@iweiny-desk3>
+References: <20221216205348.3781217-1-willy@infradead.org>
+ <20221216205348.3781217-6-willy@infradead.org>
+ <Y55WUrzblTsw6FfQ@iweiny-mobl>
+ <Y6GB75HMEKfcGcsO@casper.infradead.org>
+ <20221220111801.jhukawk3lbuonxs3@quack3>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20221220111801.jhukawk3lbuonxs3@quack3>
+X-ClientProxiedBy: SJ0PR03CA0127.namprd03.prod.outlook.com
+ (2603:10b6:a03:33c::12) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|MN2PR11MB4678:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6c93ed7f-58ce-46be-408b-08dae2ab7b6b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: r/0fog5+Kn8hcd5XqEGgU86816wdpY+uG0TsnFlN3t2NB5Kurrkk0+sOSHazgCxfNAS1vNIS26qHQHmSz0GXdYoUnLsPajXBOJKgibdXa3OQEVxHU0E4fbmMxKZ82H7pAKY1Uz2VAkKtj23DmR5Q63Kihzxi2DD2wE7OTv9ZlYKWc5V5Jzo/kYLp/+jeMpvUgthLfY8HAmmlVfLdDT4U161qxOAk8JzzFDBcczIH/wRxHHLMXq5Xxqe/PgBQQxyfPriup1opAL20GMIxD5uMMeOZaxLwolBRt4IEtL40jkNQeVa9bBKRdIGmntXAoOl5tF8VlyE6yhDzS34WNd0jFG0KfTSpIvElgaAUG2EWIytm6+6EZoBpO1wuz0b6xLzGUgF4mmyCTNaHV4rcMuyst9BQKtkaPpc23uw+QInY+sXq/vobNXSEbDHDPy0vbeeX8frabnSsqQ1laL2aGZvAd4LFyDMskjyC9EwOCJ2ldNM3sUMwVuZGLa+QfzBGQBYQ+BH35vjPB5mVlTkfNiijW81JpTIAo1UkhHGSSUfJa6gGMAdWeMTGWjS3aK+swsIK5ltdyUVE6duhrWTC6d+l2R1+uX4Nk13Vi6d1yH8VocBmv/0lBggp4jpT8CGSWAf9WOQNuPJZ/3GVTYBsr0AfJA==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(7916004)(396003)(346002)(376002)(366004)(39860400002)(136003)(451199015)(6666004)(8936002)(5660300002)(83380400001)(186003)(6512007)(44832011)(26005)(41300700001)(9686003)(2906002)(478600001)(316002)(966005)(6486002)(82960400001)(6506007)(6916009)(54906003)(33716001)(86362001)(4326008)(66476007)(66946007)(66556008)(38100700002)(8676002);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?VtyIpxqaScwchupfI5VaGyagOF1dDnW+j6/pb05TRzpv14auvh5ZCMi+aQTh?=
+ =?us-ascii?Q?0q4Gu/hW68oihthDwAEtIAN1Ey2TFs1PUWjI+GJ1yAv6Tg8TNDulyPpYM7mv?=
+ =?us-ascii?Q?9P4k6yIPYI43mldUcv9t5+RIzLG09FETDBR8J4/cWIBgEr0OftGgJ1cRTOh2?=
+ =?us-ascii?Q?7sy2R/3zmVkVKYpdSafSyVrpT/iW40iQCenGNA8FRj8kdsFkYHUb0QaVLccM?=
+ =?us-ascii?Q?yZ+WtC0zjo0BcRo2freO2MbovbUH1p1jNjO8olQH5qcexjTtCOUgKF0+Tv1n?=
+ =?us-ascii?Q?8kb7G5f/bw3ryKpItxLbhr9BCLHxxg8sB8NIHo8lyIK27St5TgRIVoLX2UKT?=
+ =?us-ascii?Q?KucCZANOlKJEeYdr3Y9z/xL5/rOn0TDHcyTTffhuyfgWTr5Q0HraiXS9mz1O?=
+ =?us-ascii?Q?vqxxcY4sx7VWY5YtAzfCzSEg0PBGYn3sJH4au2NOxk3QAaablhUSM//osIZx?=
+ =?us-ascii?Q?vEkEps8BYCvDOKrtkJfv0M+iT3waT5gdN14jgimOW6nHqUEl7iUN3+wa/IFb?=
+ =?us-ascii?Q?CAyiFDu3Y5kANg4huq26Bb73D6PqMU7PrppA3/zZxr9ZbakTNdPiVuOpTHK3?=
+ =?us-ascii?Q?uZjuSYvwo9T66jCOr2Vy+/H6lRTFyvxXFids1ErNbz7cMl5NCUg1iNoHxBwZ?=
+ =?us-ascii?Q?aCZF8G2PYI0ATOHHLcm+aohi9LYmoHca+l3zgIXc+8iAhEBBs4GVUzXEaRi7?=
+ =?us-ascii?Q?hfXH6V8PcoTBZOLbkIub/QYfY6/O1Yz9hhd+AVoNIpCmspNZ9YG9mpQ+OPhI?=
+ =?us-ascii?Q?XD0DmpfHastlZIrUlBmnZ5ejTNLfDZLO4s7az4IY6yRzdESyWnleAGISwmTV?=
+ =?us-ascii?Q?XHhPsmTY5Itz6YmNQh8Xa4iPSVunFqX5yu9OkmuCkzU2+qoOEmNb2+YVmc8i?=
+ =?us-ascii?Q?z6ZmDpUP0Io28a6FsCGWQo9m61KzbyYkRK48eY5FOqj2kzDANMHPbozA9Go+?=
+ =?us-ascii?Q?YXpc5nCIY6MXjSm7xfNFLT8nMpbVcvdznuh/BTh7IUBugI/wm/bTIsdpcjtN?=
+ =?us-ascii?Q?AoQaUvT04HOlbaL5H/iKQ+6JGh93VgRJ/cEvQ63MlaFVlPZmtvJ2ctA6RTky?=
+ =?us-ascii?Q?+cA808qX4God8ksuRobmOBH9PVZhFGsU6djqVLPvMX5xF7VoXwBjBEkwnmIv?=
+ =?us-ascii?Q?JMpEXOaSFkMOwt3Tdi8h7/hHT5H6uQXkzbQ7AvUpVO8GkLhG47rlrG15TsIc?=
+ =?us-ascii?Q?962q53YcsV0eZGBFDHFcqq2Ym657U4cnTq8HaFYTSiLA9MdBaNDJ8Zqg5aHk?=
+ =?us-ascii?Q?u58F2q+pLua8XCHZMA/PYiDYcqMA1p7nmkIgysnuVz/4Bx9dHnMh4bC11qDN?=
+ =?us-ascii?Q?tBP3RhIde4le6cnUEON+grbFZ/ORlekrZyG40cUcB4FzYr9KfseLKN+HQy5o?=
+ =?us-ascii?Q?NcMpVditNHcTf3PJ5RDCnPx8paaA0FPqeu23NcKK3w6n3O24vDficJnz4c3f?=
+ =?us-ascii?Q?nDwL4xLz7i3Y21tMs/k3H1P2IEVkC4XhgenPiJPipayLTGBhxQeRQM4DARve?=
+ =?us-ascii?Q?Rrc7aKbnr3jHmNdN0IrPvqeJUqSsTiv1knyPj1L+VRtyjYENZnXKz4qaD5Fh?=
+ =?us-ascii?Q?KAZYHRxduIO4WKW85DYatXgmFA1Z1siHAx9cW04t?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6c93ed7f-58ce-46be-408b-08dae2ab7b6b
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 Dec 2022 16:58:56.6132
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: YGd1cHt8ojvd+6opft/1k6ebbHkI22Ago+L062atomjdFJ8ubQVxnKPw8hTliK4kI2bc7WwMtBdglKWCPv5YNg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR11MB4678
+X-OriginatorOrg: intel.com
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The VM_SOFTDIRTY is used to mark a whole VMA soft-dirty. Sometimes
-soft-dirty and non-soft-dirty VMAs are merged making the non-soft-dirty
-region soft-dirty. This creates problems as the whole VMA region comes
-out to be soft-dirty while in-reality no there is no soft-dirty page.
-This can be solved by not merging the VMAs with different soft-dirty
-flags. But it has potential to cause regression as the number of VMAs
-can increase drastically.
+On Tue, Dec 20, 2022 at 12:18:01PM +0100, Jan Kara wrote:
+> On Tue 20-12-22 09:35:43, Matthew Wilcox wrote:
+> > But that doesn't solve the "What about fs block size > PAGE_SIZE"
+> > problem that we also want to solve.  Here's a concrete example:
+> > 
+> >  static __u32 jbd2_checksum_data(__u32 crc32_sum, struct buffer_head *bh)
+> >  {
+> > -       struct page *page = bh->b_page;
+> > +       struct folio *folio = bh->b_folio;
+> >         char *addr;
+> >         __u32 checksum;
+> >  
+> > -       addr = kmap_atomic(page);
+> > -       checksum = crc32_be(crc32_sum,
+> > -               (void *)(addr + offset_in_page(bh->b_data)), bh->b_size);
+> > -       kunmap_atomic(addr);
+> > +       BUG_ON(IS_ENABLED(CONFIG_HIGHMEM) && bh->b_size > PAGE_SIZE);
+> > +
+> > +       addr = kmap_local_folio(folio, offset_in_folio(folio, bh->b_data));
+> > +       checksum = crc32_be(crc32_sum, addr, bh->b_size);
+> > +       kunmap_local(addr);
+> >  
+> >         return checksum;
+> >  }
+> > 
+> > I don't want to add a lot of complexity to handle the case of b_size >
+> > PAGE_SIZE on a HIGHMEM machine since that's not going to benefit terribly
+> > many people.  I'd rather have the assertion that we don't support it.
+> > But if there's a good higher-level abstraction I'm missing here ...
+> 
+> Just out of curiosity: So far I was thinking folio is physically contiguous
+> chunk of memory. And if it is, then it does not seem as a huge overkill if
+> kmap_local_folio() just maps the whole folio?
 
-This patch introduces non-soft-dirty regions tracking on VMA level. The
-implementation is clean when non-soft-dirty regions are tracked. There
-is no overhead for cases when soft-dirty flag isn't used by the
-application. The real non-soft-dirty tracking in the VMA starts when the
-soft-dirty flag is cleared from the user side. Then the list is
-manipulated along with the VMA manipulations like split/merge/expand the
-VMAs.
+Willy proposed that previously but we could not come to a consensus on how to
+do it.
 
-The sd flag is still shown in the smaps file. Only the softdirty will
-not show up in format strings as its corresponding VM_SOFTDIRTY has
-been removed which seems justified.
+https://lore.kernel.org/all/Yv2VouJb2pNbP59m@iweiny-desk3/
 
-Overall, this patch should correct the soft-dirty tracking on the VMA
-level. There shouldn't be any impact on the user's view other than now
-the user will not get affected by kernel's internal activity (VMA
-merging/splitting).
+FWIW I still think increasing the entries to cover any foreseeable need would
+be sufficient because HIGHMEM does not need to be optimized.  Couldn't we hide
+the entry count into some config option which is only set if a FS needs a
+larger block size on a HIGHMEM system?
 
-Cc: Cyrill Gorcunov <gorcunov@gmail.com>
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
-Cyrill has pointed to this kind of solution [1].
+Ira
 
-[1] https://lore.kernel.org/all/Y4W0axw0ZgORtfkt@grain
----
- fs/exec.c                      |   2 +-
- fs/proc/task_mmu.c             |  52 ++++++++++-----
- include/linux/mm.h             |   7 +-
- include/linux/mm_inline.h      | 117 +++++++++++++++++++++++++++++++++
- include/linux/mm_types.h       |   7 ++
- include/trace/events/mmflags.h |   7 --
- kernel/fork.c                  |   4 ++
- mm/gup.c                       |   6 +-
- mm/huge_memory.c               |   8 +--
- mm/internal.h                  |  22 ++++++-
- mm/mmap.c                      |  45 +++++--------
- mm/mprotect.c                  |   4 +-
- 12 files changed, 214 insertions(+), 67 deletions(-)
-
-diff --git a/fs/exec.c b/fs/exec.c
-index ab913243a367..30616601567c 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -270,7 +270,7 @@ static int __bprm_mm_init(struct linux_binprm *bprm)
- 	BUILD_BUG_ON(VM_STACK_FLAGS & VM_STACK_INCOMPLETE_SETUP);
- 	vma->vm_end = STACK_TOP_MAX;
- 	vma->vm_start = vma->vm_end - PAGE_SIZE;
--	vma->vm_flags = VM_SOFTDIRTY | VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
-+	vma->vm_flags = VM_STACK_FLAGS | VM_STACK_INCOMPLETE_SETUP;
- 	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
- 
- 	err = insert_vm_struct(mm, vma);
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index f444da25e2e2..bdb4eaf21986 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -683,9 +683,6 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
- 		[ilog2(VM_DONTDUMP)]	= "dd",
- #ifdef CONFIG_ARM64_BTI
- 		[ilog2(VM_ARM64_BTI)]	= "bt",
--#endif
--#ifdef CONFIG_MEM_SOFT_DIRTY
--		[ilog2(VM_SOFTDIRTY)]	= "sd",
- #endif
- 		[ilog2(VM_MIXEDMAP)]	= "mm",
- 		[ilog2(VM_HUGEPAGE)]	= "hg",
-@@ -723,6 +720,10 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
- 			seq_putc(m, ' ');
- 		}
- 	}
-+
-+	/* non_sd_reg isn't initialized for vsyscall vma */
-+	if (is_nsdr_list_initialized(&vma->non_sd_reg) && is_vma_sd(vma))
-+		seq_puts(m, "sd");
- 	seq_putc(m, '\n');
- }
- 
-@@ -1299,10 +1300,24 @@ static ssize_t clear_refs_write(struct file *file, const char __user *buf,
- 
- 		if (type == CLEAR_REFS_SOFT_DIRTY) {
- 			mas_for_each(&mas, vma, ULONG_MAX) {
--				if (!(vma->vm_flags & VM_SOFTDIRTY))
--					continue;
--				vma->vm_flags &= ~VM_SOFTDIRTY;
--				vma_set_page_prot(vma);
-+				struct non_sd_reg *r;
-+
-+				if (list_empty(&vma->non_sd_reg)) {
-+					r = kmalloc(sizeof(struct non_sd_reg), GFP_KERNEL);
-+					list_add(&r->nsdr_head, &vma->non_sd_reg);
-+				} else if (list_is_singular(&vma->non_sd_reg)) {
-+					r = list_first_entry(&vma->non_sd_reg,
-+							     struct non_sd_reg, nsdr_head);
-+				} else {
-+					while (!list_is_singular(&vma->non_sd_reg)) {
-+						r = list_first_entry(&vma->non_sd_reg,
-+								     struct non_sd_reg, nsdr_head);
-+						list_del(&r->nsdr_head);
-+						kfree(r);
-+					}
-+				}
-+				r->start = vma->vm_start;
-+				r->end = vma->vm_end;
- 			}
- 
- 			inc_tlb_flush_pending(mm);
-@@ -1397,10 +1412,13 @@ static int pagemap_pte_hole(unsigned long start, unsigned long end,
- 		if (!vma)
- 			break;
- 
--		/* Addresses in the VMA. */
--		if (vma->vm_flags & VM_SOFTDIRTY)
--			pme = make_pme(0, PM_SOFT_DIRTY);
- 		for (; addr < min(end, vma->vm_end); addr += PAGE_SIZE) {
-+			/* Addresses in the VMA. */
-+			if (is_vma_addr_sd(vma, addr))
-+				pme = make_pme(0, PM_SOFT_DIRTY);
-+			else
-+				pme = make_pme(0, 0);
-+
- 			err = add_to_pagemap(addr, &pme, pm);
- 			if (err)
- 				goto out;
-@@ -1458,7 +1476,7 @@ static pagemap_entry_t pte_to_pagemap_entry(struct pagemapread *pm,
- 		flags |= PM_FILE;
- 	if (page && !migration && page_mapcount(page) == 1)
- 		flags |= PM_MMAP_EXCLUSIVE;
--	if (vma->vm_flags & VM_SOFTDIRTY)
-+	if (is_vma_addr_sd(vma, addr))
- 		flags |= PM_SOFT_DIRTY;
- 
- 	return make_pme(frame, flags);
-@@ -1481,7 +1499,7 @@ static int pagemap_pmd_range(pmd_t *pmdp, unsigned long addr, unsigned long end,
- 		pmd_t pmd = *pmdp;
- 		struct page *page = NULL;
- 
--		if (vma->vm_flags & VM_SOFTDIRTY)
-+		if (is_vma_addr_sd(vma, addr))
- 			flags |= PM_SOFT_DIRTY;
- 
- 		if (pmd_present(pmd)) {
-@@ -1578,9 +1596,6 @@ static int pagemap_hugetlb_range(pte_t *ptep, unsigned long hmask,
- 	int err = 0;
- 	pte_t pte;
- 
--	if (vma->vm_flags & VM_SOFTDIRTY)
--		flags |= PM_SOFT_DIRTY;
--
- 	pte = huge_ptep_get(ptep);
- 	if (pte_present(pte)) {
- 		struct page *page = pte_page(pte);
-@@ -1603,7 +1618,12 @@ static int pagemap_hugetlb_range(pte_t *ptep, unsigned long hmask,
- 	}
- 
- 	for (; addr != end; addr += PAGE_SIZE) {
--		pagemap_entry_t pme = make_pme(frame, flags);
-+		pagemap_entry_t pme;
-+
-+		if (is_vma_addr_sd(vma, addr))
-+			pme = make_pme(frame, flags | PM_SOFT_DIRTY);
-+		else
-+			pme = make_pme(frame, flags);
- 
- 		err = add_to_pagemap(addr, &pme, pm);
- 		if (err)
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 517225fce10f..a2f11aa96d90 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -287,12 +287,6 @@ extern unsigned int kobjsize(const void *objp);
- #define VM_WIPEONFORK	0x02000000	/* Wipe VMA contents in child. */
- #define VM_DONTDUMP	0x04000000	/* Do not include in the core dump */
- 
--#ifdef CONFIG_MEM_SOFT_DIRTY
--# define VM_SOFTDIRTY	0x08000000	/* Not soft dirty clean area */
--#else
--# define VM_SOFTDIRTY	0
--#endif
--
- #define VM_MIXEDMAP	0x10000000	/* Can contain "struct page" and pure PFN pages */
- #define VM_HUGEPAGE	0x20000000	/* MADV_HUGEPAGE marked this vma */
- #define VM_NOHUGEPAGE	0x40000000	/* MADV_NOHUGEPAGE marked this vma */
-@@ -609,6 +603,7 @@ static inline void vma_init(struct vm_area_struct *vma, struct mm_struct *mm)
- 	vma->vm_mm = mm;
- 	vma->vm_ops = &dummy_vm_ops;
- 	INIT_LIST_HEAD(&vma->anon_vma_chain);
-+	INIT_LIST_HEAD(&vma->non_sd_reg);
- }
- 
- static inline void vma_set_anonymous(struct vm_area_struct *vma)
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index e8ed225d8f7c..d515c2a9b10a 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -578,4 +578,121 @@ pte_install_uffd_wp_if_needed(struct vm_area_struct *vma, unsigned long addr,
- #endif
- }
- 
-+static inline int nsdr_clone(struct vm_area_struct *new_vma, struct vm_area_struct *vma)
-+{
-+	struct non_sd_reg *r, *reg;
-+
-+	list_for_each_entry(r, &vma->non_sd_reg, nsdr_head) {
-+		reg = kmalloc(sizeof(struct non_sd_reg), GFP_KERNEL);
-+		if (!reg)
-+			return -ENOMEM;
-+		reg->start = r->start;
-+		reg->end = r->end;
-+		list_add_tail(&reg->nsdr_head, &new_vma->non_sd_reg);
-+	}
-+	return 0;
-+}
-+
-+static inline void nsdr_clear(struct vm_area_struct *vma)
-+{
-+	struct non_sd_reg *r, *r_tmp;
-+
-+	list_for_each_entry_safe(r, r_tmp, &vma->non_sd_reg, nsdr_head) {
-+		list_del(&r->nsdr_head);
-+		kfree(r);
-+	}
-+}
-+
-+static inline bool is_vma_range_sd(struct vm_area_struct *vma, unsigned long addr,
-+				   unsigned long end)
-+{
-+	struct non_sd_reg *r;
-+
-+	list_for_each_entry(r, &vma->non_sd_reg, nsdr_head) {
-+		if (addr >= r->start && end <= r->end)
-+			return false;
-+	}
-+	return true;
-+}
-+
-+static inline bool is_vma_addr_sd(struct vm_area_struct *vma, unsigned long addr)
-+{
-+	struct non_sd_reg *r;
-+
-+	list_for_each_entry(r, &vma->non_sd_reg, nsdr_head) {
-+		if (addr >= r->start && addr < r->end)
-+			return false;
-+	}
-+	return true;
-+}
-+
-+static inline bool is_vma_sd(struct vm_area_struct *vma)
-+{
-+	struct non_sd_reg *r;
-+
-+	if (list_is_singular(&vma->non_sd_reg)) {
-+		r = list_first_entry(&vma->non_sd_reg, struct non_sd_reg, nsdr_head);
-+		if (r->start == vma->vm_start && r->end == vma->vm_end)
-+			return false;
-+	}
-+	return true;
-+}
-+
-+static inline bool is_nsdr_list_initialized(struct list_head *list)
-+{
-+	return (list->next != NULL);
-+}
-+
-+static inline void nsdr_move(struct vm_area_struct *vma_to, struct vm_area_struct *vma_from)
-+{
-+	struct non_sd_reg *r, *r_tmp;
-+
-+	list_for_each_entry_safe(r, r_tmp, &vma_from->non_sd_reg, nsdr_head)
-+		list_move_tail(&r->nsdr_head, &vma_to->non_sd_reg);
-+}
-+
-+static inline int nsdr_adjust_new_first(struct vm_area_struct *new, struct vm_area_struct *vma)
-+{
-+	struct non_sd_reg *r, *r_tmp, *reg;
-+	unsigned long mid = vma->vm_start;
-+
-+	list_for_each_entry_safe(r, r_tmp, &vma->non_sd_reg, nsdr_head) {
-+		if (r->start < mid && r->end > mid) {
-+			reg = kmalloc(sizeof(struct non_sd_reg), GFP_KERNEL);
-+			if (!reg)
-+				return -ENOMEM;
-+			reg->start = r->start;
-+			reg->end = mid;
-+			list_add_tail(&reg->nsdr_head, &new->non_sd_reg);
-+
-+			r->start = mid;
-+		} else if (r->end <= mid) {
-+			list_move_tail(&r->nsdr_head, &new->non_sd_reg);
-+		}
-+	}
-+	return 0;
-+}
-+
-+static inline int nsdr_adjust_new_after(struct vm_area_struct *new, struct vm_area_struct *vma)
-+{
-+	struct non_sd_reg *r, *r_tmp, *reg;
-+	unsigned long mid = vma->vm_end;
-+
-+	list_for_each_entry_safe(r, r_tmp, &vma->non_sd_reg, nsdr_head) {
-+		if (r->start < mid && r->end > mid) {
-+			reg = kmalloc(sizeof(struct non_sd_reg), GFP_KERNEL);
-+			if (!reg)
-+				return -ENOMEM;
-+			reg->start = mid;
-+			reg->end = r->end;
-+			list_add_tail(&reg->nsdr_head, &new->non_sd_reg);
-+
-+			r->end = vma->vm_end;
-+		} else if (r->start >= mid) {
-+			list_move_tail(&r->nsdr_head, &new->non_sd_reg);
-+		}
-+	}
-+	return 0;
-+}
-+
- #endif
-diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-index 3b8475007734..c4e2dfc75d26 100644
---- a/include/linux/mm_types.h
-+++ b/include/linux/mm_types.h
-@@ -595,8 +595,15 @@ struct vm_area_struct {
- 	struct mempolicy *vm_policy;	/* NUMA policy for the VMA */
- #endif
- 	struct vm_userfaultfd_ctx vm_userfaultfd_ctx;
-+	struct list_head non_sd_reg;
- } __randomize_layout;
- 
-+struct non_sd_reg {
-+	struct list_head nsdr_head;
-+	unsigned long start;
-+	unsigned long end;
-+};
-+
- struct kioctx_table;
- struct mm_struct {
- 	struct {
-diff --git a/include/trace/events/mmflags.h b/include/trace/events/mmflags.h
-index 412b5a46374c..75cd0da07673 100644
---- a/include/trace/events/mmflags.h
-+++ b/include/trace/events/mmflags.h
-@@ -151,12 +151,6 @@ IF_HAVE_PG_SKIP_KASAN_POISON(PG_skip_kasan_poison, "skip_kasan_poison")
- #define __VM_ARCH_SPECIFIC_1 {VM_ARCH_1,	"arch_1"	}
- #endif
- 
--#ifdef CONFIG_MEM_SOFT_DIRTY
--#define IF_HAVE_VM_SOFTDIRTY(flag,name) {flag, name },
--#else
--#define IF_HAVE_VM_SOFTDIRTY(flag,name)
--#endif
--
- #ifdef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
- # define IF_HAVE_UFFD_MINOR(flag, name) {flag, name},
- #else
-@@ -191,7 +185,6 @@ IF_HAVE_UFFD_MINOR(VM_UFFD_MINOR,	"uffd_minor"	)		\
- 	__VM_ARCH_SPECIFIC_1				,		\
- 	{VM_WIPEONFORK,			"wipeonfork"	},		\
- 	{VM_DONTDUMP,			"dontdump"	},		\
--IF_HAVE_VM_SOFTDIRTY(VM_SOFTDIRTY,	"softdirty"	)		\
- 	{VM_MIXEDMAP,			"mixedmap"	},		\
- 	{VM_HUGEPAGE,			"hugepage"	},		\
- 	{VM_NOHUGEPAGE,			"nohugepage"	},		\
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 9f7fe3541897..3f8d2c30efbf 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -474,6 +474,7 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
- 		 */
- 		*new = data_race(*orig);
- 		INIT_LIST_HEAD(&new->anon_vma_chain);
-+		INIT_LIST_HEAD(&new->non_sd_reg);
- 		dup_anon_vma_name(orig, new);
- 	}
- 	return new;
-@@ -481,6 +482,7 @@ struct vm_area_struct *vm_area_dup(struct vm_area_struct *orig)
- 
- void vm_area_free(struct vm_area_struct *vma)
- {
-+	nsdr_clear(vma);
- 	free_anon_vma_name(vma);
- 	kmem_cache_free(vm_area_cachep, vma);
- }
-@@ -650,6 +652,8 @@ static __latent_entropy int dup_mmap(struct mm_struct *mm,
- 		retval = dup_userfaultfd(tmp, &uf);
- 		if (retval)
- 			goto fail_nomem_anon_vma_fork;
-+		if (nsdr_clone(tmp, mpnt))
-+			goto fail_nomem_anon_vma_fork;
- 		if (tmp->vm_flags & VM_WIPEONFORK) {
- 			/*
- 			 * VM_WIPEONFORK gets a clean slate in the child.
-diff --git a/mm/gup.c b/mm/gup.c
-index c2c2c6dbcfcf..aec7a0ea98b7 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -496,7 +496,7 @@ static int follow_pfn_pte(struct vm_area_struct *vma, unsigned long address,
- /* FOLL_FORCE can write to even unwritable PTEs in COW mappings. */
- static inline bool can_follow_write_pte(pte_t pte, struct page *page,
- 					struct vm_area_struct *vma,
--					unsigned int flags)
-+					unsigned int flags, unsigned long addr)
- {
- 	/* If the pte is writable, we can write to the page. */
- 	if (pte_write(pte))
-@@ -526,7 +526,7 @@ static inline bool can_follow_write_pte(pte_t pte, struct page *page,
- 		return false;
- 
- 	/* ... and a write-fault isn't required for other reasons. */
--	if (vma_soft_dirty_enabled(vma) && !pte_soft_dirty(pte))
-+	if (vma_addr_soft_dirty_enabled(vma, addr, PAGE_SIZE) && !pte_soft_dirty(pte))
- 		return false;
- 	return !userfaultfd_pte_wp(vma, pte);
- }
-@@ -562,7 +562,7 @@ static struct page *follow_page_pte(struct vm_area_struct *vma,
- 	 * have to worry about pte_devmap() because they are never anon.
- 	 */
- 	if ((flags & FOLL_WRITE) &&
--	    !can_follow_write_pte(pte, page, vma, flags)) {
-+	    !can_follow_write_pte(pte, page, vma, flags, address)) {
- 		page = NULL;
- 		goto out;
- 	}
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index abe6cfd92ffa..a6f74e5535bd 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1405,7 +1405,7 @@ static inline bool can_change_pmd_writable(struct vm_area_struct *vma,
- 		return false;
- 
- 	/* Do we need write faults for softdirty tracking? */
--	if (vma_soft_dirty_enabled(vma) && !pmd_soft_dirty(pmd))
-+	if (vma_addr_soft_dirty_enabled(vma, addr, HPAGE_SIZE) && !pmd_soft_dirty(pmd))
- 		return false;
- 
- 	/* Do we need write faults for uffd-wp tracking? */
-@@ -1425,7 +1425,7 @@ static inline bool can_change_pmd_writable(struct vm_area_struct *vma,
- /* FOLL_FORCE can write to even unwritable PMDs in COW mappings. */
- static inline bool can_follow_write_pmd(pmd_t pmd, struct page *page,
- 					struct vm_area_struct *vma,
--					unsigned int flags)
-+					unsigned int flags, unsigned long addr)
- {
- 	/* If the pmd is writable, we can write to the page. */
- 	if (pmd_write(pmd))
-@@ -1455,7 +1455,7 @@ static inline bool can_follow_write_pmd(pmd_t pmd, struct page *page,
- 		return false;
- 
- 	/* ... and a write-fault isn't required for other reasons. */
--	if (vma_soft_dirty_enabled(vma) && !pmd_soft_dirty(pmd))
-+	if (vma_addr_soft_dirty_enabled(vma, addr, PAGE_SIZE) && !pmd_soft_dirty(pmd))
- 		return false;
- 	return !userfaultfd_huge_pmd_wp(vma, pmd);
- }
-@@ -1475,7 +1475,7 @@ struct page *follow_trans_huge_pmd(struct vm_area_struct *vma,
- 	VM_BUG_ON_PAGE(!PageHead(page) && !is_zone_device_page(page), page);
- 
- 	if ((flags & FOLL_WRITE) &&
--	    !can_follow_write_pmd(*pmd, page, vma, flags))
-+	    !can_follow_write_pmd(*pmd, page, vma, flags, addr))
- 		return NULL;
- 
- 	/* Avoid dumping huge zero page */
-diff --git a/mm/internal.h b/mm/internal.h
-index bcf75a8b032d..35f682ce7b17 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -12,6 +12,7 @@
- #include <linux/pagemap.h>
- #include <linux/rmap.h>
- #include <linux/tracepoint-defs.h>
-+#include <linux/mm_inline.h>
- 
- struct folio_batch;
- 
-@@ -830,6 +831,25 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags);
- 
- extern bool mirrored_kernelcore;
- 
-+static inline bool vma_addr_soft_dirty_enabled(struct vm_area_struct *vma,
-+					       unsigned long addr, unsigned long end)
-+{
-+	/*
-+	 * NOTE: we must check this before VM_SOFTDIRTY on soft-dirty
-+	 * enablements, because when without soft-dirty being compiled in,
-+	 * VM_SOFTDIRTY is defined as 0x0, then !(vm_flags & VM_SOFTDIRTY)
-+	 * will be constantly true.
-+	 */
-+	if (!IS_ENABLED(CONFIG_MEM_SOFT_DIRTY))
-+		return false;
-+
-+	/*
-+	 * Soft-dirty is kind of special: its tracking is enabled when the
-+	 * vma flags not set.
-+	 */
-+	return !(is_vma_range_sd(vma, addr, end));
-+}
-+
- static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
- {
- 	/*
-@@ -845,7 +865,7 @@ static inline bool vma_soft_dirty_enabled(struct vm_area_struct *vma)
- 	 * Soft-dirty is kind of special: its tracking is enabled when the
- 	 * vma flags not set.
- 	 */
--	return !(vma->vm_flags & VM_SOFTDIRTY);
-+	return !(is_vma_sd(vma));
- }
- 
- #endif	/* __MM_INTERNAL_H */
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 5d54cde108c0..687fbc19ee8e 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -587,6 +587,7 @@ inline int vma_expand(struct ma_state *mas, struct vm_area_struct *vma,
- 	}
- 
- 	if (remove_next) {
-+		nsdr_move(vma, next);
- 		if (file) {
- 			uprobe_munmap(next, next->vm_start, next->vm_end);
- 			fput(file);
-@@ -868,15 +869,7 @@ static inline int is_mergeable_vma(struct vm_area_struct *vma,
- 				struct vm_userfaultfd_ctx vm_userfaultfd_ctx,
- 				struct anon_vma_name *anon_name)
- {
--	/*
--	 * VM_SOFTDIRTY should not prevent from VMA merging, if we
--	 * match the flags but dirty bit -- the caller should mark
--	 * merged VMA as dirty. If dirty bit won't be excluded from
--	 * comparison, we increase pressure on the memory system forcing
--	 * the kernel to generate new VMAs when old one could be
--	 * extended instead.
--	 */
--	if ((vma->vm_flags ^ vm_flags) & ~VM_SOFTDIRTY)
-+	if (vma->vm_flags ^ vm_flags)
- 		return 0;
- 	if (vma->vm_file != file)
- 		return 0;
-@@ -1050,6 +1043,9 @@ struct vm_area_struct *vma_merge(struct mm_struct *mm,
- 		err = __vma_adjust(prev, prev->vm_start,
- 					next->vm_end, prev->vm_pgoff, NULL,
- 					prev);
-+		if (err)
-+			return NULL;
-+		err = nsdr_adjust_new_first(prev, next);
- 		res = prev;
- 	} else if (merge_prev) {			/* cases 2, 5, 7 */
- 		err = __vma_adjust(prev, prev->vm_start,
-@@ -1092,7 +1088,7 @@ static int anon_vma_compatible(struct vm_area_struct *a, struct vm_area_struct *
- 	return a->vm_end == b->vm_start &&
- 		mpol_equal(vma_policy(a), vma_policy(b)) &&
- 		a->vm_file == b->vm_file &&
--		!((a->vm_flags ^ b->vm_flags) & ~(VM_ACCESS_FLAGS | VM_SOFTDIRTY)) &&
-+		!((a->vm_flags ^ b->vm_flags) & ~(VM_ACCESS_FLAGS)) &&
- 		b->vm_pgoff == a->vm_pgoff + ((b->vm_start - a->vm_start) >> PAGE_SHIFT);
- }
- 
-@@ -2236,8 +2232,14 @@ int __split_vma(struct mm_struct *mm, struct vm_area_struct *vma,
- 		err = vma_adjust(vma, vma->vm_start, addr, vma->vm_pgoff, new);
- 
- 	/* Success. */
--	if (!err)
--		return 0;
-+	if (!err) {
-+		if (new_below)
-+			err = nsdr_adjust_new_first(new, vma);
-+		else
-+			err = nsdr_adjust_new_after(new, vma);
-+		if (!err)
-+			return err;
-+	}
- 
- 	/* Avoid vm accounting in close() operation */
- 	new->vm_start = new->vm_end;
-@@ -2728,17 +2730,6 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
- 	if (file)
- 		uprobe_mmap(vma);
- 
--	/*
--	 * New (or expanded) vma always get soft dirty status.
--	 * Otherwise user-space soft-dirty page tracker won't
--	 * be able to distinguish situation when vma area unmapped,
--	 * then new mapped in-place (which must be aimed as
--	 * a completely new data area).
--	 */
--	vma->vm_flags |= VM_SOFTDIRTY;
--
--	vma_set_page_prot(vma);
--
- 	validate_mm(mm);
- 	return addr;
- 
-@@ -2947,7 +2938,7 @@ static int do_brk_flags(struct ma_state *mas, struct vm_area_struct *vma,
- 	 */
- 	if (vma &&
- 	    (!vma->anon_vma || list_is_singular(&vma->anon_vma_chain)) &&
--	    ((vma->vm_flags & ~VM_SOFTDIRTY) == flags)) {
-+	    (vma->vm_flags == flags)) {
- 		mas_set_range(mas, vma->vm_start, addr + len - 1);
- 		if (mas_preallocate(mas, vma, GFP_KERNEL))
- 			goto unacct_fail;
-@@ -2958,7 +2949,6 @@ static int do_brk_flags(struct ma_state *mas, struct vm_area_struct *vma,
- 			anon_vma_interval_tree_pre_update_vma(vma);
- 		}
- 		vma->vm_end = addr + len;
--		vma->vm_flags |= VM_SOFTDIRTY;
- 		mas_store_prealloc(mas, vma);
- 
- 		if (vma->anon_vma) {
-@@ -2991,7 +2981,6 @@ static int do_brk_flags(struct ma_state *mas, struct vm_area_struct *vma,
- 	mm->data_vm += len >> PAGE_SHIFT;
- 	if (flags & VM_LOCKED)
- 		mm->locked_vm += (len >> PAGE_SHIFT);
--	vma->vm_flags |= VM_SOFTDIRTY;
- 	validate_mm(mm);
- 	return 0;
- 
-@@ -3224,6 +3213,8 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
- 		new_vma->vm_pgoff = pgoff;
- 		if (vma_dup_policy(vma, new_vma))
- 			goto out_free_vma;
-+		if (nsdr_clone(new_vma, vma))
-+			goto out_free_vma;
- 		if (anon_vma_clone(new_vma, vma))
- 			goto out_free_mempol;
- 		if (new_vma->vm_file)
-@@ -3395,7 +3386,7 @@ static struct vm_area_struct *__install_special_mapping(
- 	vma->vm_start = addr;
- 	vma->vm_end = addr + len;
- 
--	vma->vm_flags = vm_flags | mm->def_flags | VM_DONTEXPAND | VM_SOFTDIRTY;
-+	vma->vm_flags = vm_flags | mm->def_flags | VM_DONTEXPAND;
- 	vma->vm_flags &= VM_LOCKED_CLEAR_MASK;
- 	vma->vm_page_prot = vm_get_page_prot(vma->vm_flags);
- 
-diff --git a/mm/mprotect.c b/mm/mprotect.c
-index ce6119456d54..562d017aa9ff 100644
---- a/mm/mprotect.c
-+++ b/mm/mprotect.c
-@@ -52,7 +52,7 @@ bool can_change_pte_writable(struct vm_area_struct *vma, unsigned long addr,
- 		return false;
- 
- 	/* Do we need write faults for softdirty tracking? */
--	if (vma_soft_dirty_enabled(vma) && !pte_soft_dirty(pte))
-+	if (vma_addr_soft_dirty_enabled(vma, addr, addr + PAGE_SIZE) && !pte_soft_dirty(pte))
- 		return false;
- 
- 	/* Do we need write faults for uffd-wp tracking? */
-@@ -610,7 +610,7 @@ mprotect_fixup(struct mmu_gather *tlb, struct vm_area_struct *vma,
- 			   vma->vm_userfaultfd_ctx, anon_vma_name(vma));
- 	if (*pprev) {
- 		vma = *pprev;
--		VM_WARN_ON((vma->vm_flags ^ newflags) & ~VM_SOFTDIRTY);
-+		VM_WARN_ON(vma->vm_flags ^ newflags);
- 		goto success;
- 	}
- 
--- 
-2.30.2
-
+> Or are you concerned about
+> the overhead of finding big enough hole in the vmap area?
+> 
+> 								Honza
+> -- 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
