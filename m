@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 90A256517DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Dec 2022 02:23:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7C7B3651818
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Dec 2022 02:25:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232978AbiLTBWo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Dec 2022 20:22:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52406 "EHLO
+        id S232392AbiLTBZV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 19 Dec 2022 20:25:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52340 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233102AbiLTBV5 (ORCPT
+        with ESMTP id S233153AbiLTBXM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Dec 2022 20:21:57 -0500
+        Mon, 19 Dec 2022 20:23:12 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB8FB11C35;
-        Mon, 19 Dec 2022 17:21:25 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06EAEFD06;
+        Mon, 19 Dec 2022 17:21:58 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 4731EB81104;
-        Tue, 20 Dec 2022 01:21:24 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0827FC433EF;
-        Tue, 20 Dec 2022 01:21:21 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8BA1DB80FA6;
+        Tue, 20 Dec 2022 01:21:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63A50C433D2;
+        Tue, 20 Dec 2022 01:21:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1671499283;
-        bh=O7ZPnSdU+9nfWxyIj09iRYt36PSNkVWc7abHvEsM3jU=;
+        s=k20201202; t=1671499315;
+        bh=nmve3Wvv0jN9QTuSC7ZJjuoWhxFK9Sc1Lgzhw9Sdz5Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l79GltoUtUIrOTCIUIiPm9lpQJKSDmQTDHXdBJRiXi7HTd+gT3KLrQF1lQSAMgcd5
-         NVhM7qTxrq3NxwCXa2WfG+MXl/6YX9Y7wlNMWEZri6FvEIy17hb4puWau7y1/ubAIP
-         jI2U984GHVtpb3Gid7l3FT4+qwSvtA2BsYRUyDuh+DlfEYA/FZgvvcYTYO8DmaxYbW
-         4859GlP0P5kI519Q/xwjXLl1XNgGVymI2HoYGQrSC7vwHQD0ZLHcleY91X3bq+nnQ8
-         yZv1QPGE6NEU57Uw6I7CEqGJgYig8nXoH96ooFlC20p7DQPSkKOvV73Uet9lsaxjBJ
-         uVroiPwaI5zVA==
+        b=apB520lYO9aaHDuqzKF7R5MkiarKkfAfj3w/IzfqOCGFJW0ASEiP16IDUgr6eKRYo
+         lbGEBOejBPYOoCHwqBlS/9ECZhQlx3iQSMK3n5KoYLzu331vUZhBVWnGBrIWbWwex/
+         2Feu3YJ5bg/Rs/Owu3bTTMDvQluX1qyEHpcpex6PJqomMPdnG2baieDwCguFUUKsrf
+         2A4g7m6/mqSXV9Q6JEX2obb4OsQngLa6UJvAgGfTJNyXb6iDhdBJB0FcPneVPjzOCI
+         WcI9RYaCaDIyeIc+AchdaNVJz6fk4Obq1W7Vx0leSZhadzrSRUb7C1ZY3G/t5voSl/
+         ipEEEuASosDOA==
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Dave Chinner <dchinner@redhat.com>, Christoph Hellwig <hch@lst.de>,
         "Darrick J . Wong" <djwong@kernel.org>,
         Sasha Levin <sashal@kernel.org>, hch@infradead.org,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 13/16] iomap: write iomap validity checks
-Date:   Mon, 19 Dec 2022 20:20:50 -0500
-Message-Id: <20221220012053.1222101-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.0 13/16] iomap: write iomap validity checks
+Date:   Mon, 19 Dec 2022 20:21:23 -0500
+Message-Id: <20221220012127.1222311-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.35.1
-In-Reply-To: <20221220012053.1222101-1-sashal@kernel.org>
-References: <20221220012053.1222101-1-sashal@kernel.org>
+In-Reply-To: <20221220012127.1222311-1-sashal@kernel.org>
+References: <20221220012127.1222311-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -127,7 +127,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  3 files changed, 81 insertions(+), 10 deletions(-)
 
 diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-index 91ee0b308e13..8354b0fdaa94 100644
+index 77d59c159248..a611ad58736a 100644
 --- a/fs/iomap/buffered-io.c
 +++ b/fs/iomap/buffered-io.c
 @@ -584,7 +584,7 @@ static int iomap_write_begin_inline(const struct iomap_iter *iter,
