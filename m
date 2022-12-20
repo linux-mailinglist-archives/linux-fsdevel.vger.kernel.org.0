@@ -2,158 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E40896519DB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Dec 2022 05:02:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 44D77651BA7
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 20 Dec 2022 08:28:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233073AbiLTECQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 19 Dec 2022 23:02:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34830 "EHLO
+        id S233776AbiLTH2e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 20 Dec 2022 02:28:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45240 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233116AbiLTEBW (ORCPT
+        with ESMTP id S233506AbiLTH17 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 19 Dec 2022 23:01:22 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 976CD3895
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Dec 2022 20:01:16 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id t11-20020a17090a024b00b0021932afece4so15193412pje.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 19 Dec 2022 20:01:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3i7/epIg3s+Kg1aMbgN7iVzAn5rV9ORpLJbbqj4cTkw=;
-        b=yDnv1q8deLFxHxBQNOIR/iufCtokHzMiD1MzZapj25LREJBioDi20wFFxr6jfLaKWo
-         7uVB/HDXY0kbxexXHnLj1I1cvVe8f8LjBQnhubnsOLFa90yep2eNTLKrYYrp2ag9WjyN
-         fNVLpBcX+Do3+G6w1lldnJb8pHbiJZJBWwaaMcJ+mB9suLe7QAQs9/TrJ1NAcnYp4H65
-         R1OM6Ou+FyvXBu/gjOXebVI4gR+yAEc3G+mSfPTQzVfoQJYMkcK8uB5z1jLlEKxRjv+X
-         MRoUuthRnZ9Ge1ZA6zkVnEEfJ302ExHTm2Jy/39Kfh/Oq72YCu9PD2oizMD/QOM/5ON9
-         8UAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3i7/epIg3s+Kg1aMbgN7iVzAn5rV9ORpLJbbqj4cTkw=;
-        b=GX7eV67oGfPHiE68dDTTzfGcii7OqL7xAO9CBuQp9CMB0mvgdfPx4E1DaRM5QdUN7T
-         D5BrVsZzie/rkp+RcB+sIgUytEF5U/wXFtrcc2jfr+iPzhI0rj46xaCb0C9auPDcWPdB
-         4KONJG7oU/Zh6yd0mTzks5DYnq89+iih1Exr/frfisp9VRmhdb95qK7y25wz9v/B/GJI
-         Eep7nTpgoMbsDUMe6M7XX3uTK8k7KQzwedviYALp2gXVainwECORhoIh4U+eBvGohL9X
-         YZZBl/eLISlobafw5BN5ot3iTLta7ny/eJ/HYGEfCjtE1af0QmGiGZ8QFGvHTbN30hTU
-         2r9w==
-X-Gm-Message-State: ANoB5pmrp467n/8jc0DKhJRDHp9RlGr8LHHLaJ8hcFkY8cvenHAMDde9
-        NiudU3qY9OzOgKf4Jld2dZTn+w==
-X-Google-Smtp-Source: AA0mqf63Bp0La3N1p3vEbRqVZRTRw6skueolslB9+Rk3feMRmvq/+KAqiFRLkqu92YSXrsqnI5uzZw==
-X-Received: by 2002:a17:902:e193:b0:189:8002:1996 with SMTP id y19-20020a170902e19300b0018980021996mr38673719pla.35.1671508876105;
-        Mon, 19 Dec 2022 20:01:16 -0800 (PST)
-Received: from dread.disaster.area (pa49-181-138-158.pa.nsw.optusnet.com.au. [49.181.138.158])
-        by smtp.gmail.com with ESMTPSA id d11-20020a170902cecb00b0018980f14ecfsm8070483plg.115.2022.12.19.20.01.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Dec 2022 20:01:15 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1p7ToW-00AZBS-Ui; Tue, 20 Dec 2022 15:01:12 +1100
-Date:   Tue, 20 Dec 2022 15:01:12 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Darrick J . Wong" <djwong@kernel.org>, hch@infradead.org,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.1 13/16] iomap: write iomap validity checks
-Message-ID: <20221220040112.GG1971568@dread.disaster.area>
-References: <20221220012053.1222101-1-sashal@kernel.org>
- <20221220012053.1222101-13-sashal@kernel.org>
+        Tue, 20 Dec 2022 02:27:59 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61042120B6;
+        Mon, 19 Dec 2022 23:27:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1671521220; x=1703057220;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=c7MFanM5OsQxf4mfVMxJdtJD6xfrjMgUk4/0Zk73muk=;
+  b=diQ/TTC4A/f0m3ip6hLGojkoKtLi1yb+0prGnGDiqcK0tG3ov2K3kDcX
+   jDVl1uj0ZpchIffz/L8jjz8ZWqs11AW66NO3YuEZ/8gI9Z0aIzgKbHD7R
+   hn+zzznAoF7u6IPp8uaC9ejjRz+ohaBy+PHB9fToL6oNo/7ywztCd2Bjf
+   scTJgKSLdnrI5QQul4tv/Hu/EL1zV/rfJch0LZq+FIIxKXiSeEBXHJ9YT
+   dPApISjd4ejTcZibrseEFNAyr6bhP8Id+lOdw2jBLQbtg5Kd0lMMG4jyj
+   yTjzNTVUdmUW/MxNKza3/GkRbh/V4MEK9zejFlGcAUXN+Cp+BbobD+3im
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10566"; a="317184648"
+X-IronPort-AV: E=Sophos;i="5.96,258,1665471600"; 
+   d="scan'208";a="317184648"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Dec 2022 23:26:55 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10566"; a="714332739"
+X-IronPort-AV: E=Sophos;i="5.96,258,1665471600"; 
+   d="scan'208";a="714332739"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by fmsmga008.fm.intel.com with ESMTP; 19 Dec 2022 23:26:44 -0800
+Date:   Tue, 20 Dec 2022 15:22:28 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "Wang, Wei W" <wei.w.wang@intel.com>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "Lutomirski, Andy" <luto@kernel.org>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "tabba@google.com" <tabba@google.com>,
+        "Hocko, Michal" <mhocko@suse.com>,
+        "michael.roth@amd.com" <michael.roth@amd.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "vannapurve@google.com" <vannapurve@google.com>,
+        "rppt@kernel.org" <rppt@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "qperret@google.com" <qperret@google.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "ddutile@redhat.com" <ddutile@redhat.com>,
+        "naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
+        "Christopherson,, Sean" <seanjc@google.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
+        "hughd@google.com" <hughd@google.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "steven.price@arm.com" <steven.price@arm.com>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linmiaohe@huawei.com" <linmiaohe@huawei.com>
+Subject: Re: [PATCH v10 1/9] mm: Introduce memfd_restricted system call to
+ create restricted user memory
+Message-ID: <20221220072228.GA1724933@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-2-chao.p.peng@linux.intel.com>
+ <5c6e2e516f19b0a030eae9bf073d555c57ca1f21.camel@intel.com>
+ <20221219075313.GB1691829@chaop.bj.intel.com>
+ <deba096c85e41c3a15d122f2159986a74b16770f.camel@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20221220012053.1222101-13-sashal@kernel.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <deba096c85e41c3a15d122f2159986a74b16770f.camel@intel.com>
+X-Spam-Status: No, score=-7.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Dec 19, 2022 at 08:20:50PM -0500, Sasha Levin wrote:
-> From: Dave Chinner <dchinner@redhat.com>
+On Mon, Dec 19, 2022 at 08:48:10AM +0000, Huang, Kai wrote:
+> On Mon, 2022-12-19 at 15:53 +0800, Chao Peng wrote:
+> > > 
+> > > [...]
+> > > 
+> > > > +
+> > > > +	/*
+> > > > +	 * These pages are currently unmovable so don't place them into
+> > > > movable
+> > > > +	 * pageblocks (e.g. CMA and ZONE_MOVABLE).
+> > > > +	 */
+> > > > +	mapping = memfd->f_mapping;
+> > > > +	mapping_set_unevictable(mapping);
+> > > > +	mapping_set_gfp_mask(mapping,
+> > > > +			     mapping_gfp_mask(mapping) & ~__GFP_MOVABLE);
+> > > 
+> > > But, IIUC removing __GFP_MOVABLE flag here only makes page allocation from
+> > > non-
+> > > movable zones, but doesn't necessarily prevent page from being migrated.  My
+> > > first glance is you need to implement either a_ops->migrate_folio() or just
+> > > get_page() after faulting in the page to prevent.
+> > 
+> > The current api restrictedmem_get_page() already does this, after the
+> > caller calling it, it holds a reference to the page. The caller then
+> > decides when to call put_page() appropriately.
 > 
-> [ Upstream commit d7b64041164ca177170191d2ad775da074ab2926 ]
+> I tried to dig some history. Perhaps I am missing something, but it seems Kirill
+> said in v9 that this code doesn't prevent page migration, and we need to
+> increase page refcount in restrictedmem_get_page():
 > 
-> A recent multithreaded write data corruption has been uncovered in
-> the iomap write code. The core of the problem is partial folio
-> writes can be flushed to disk while a new racing write can map it
-> and fill the rest of the page:
+> https://lore.kernel.org/linux-mm/20221129112139.usp6dqhbih47qpjl@box.shutemov.name/
 > 
-> writeback			new write
-> 
-> allocate blocks
->   blocks are unwritten
-> submit IO
-> .....
-> 				map blocks
-> 				iomap indicates UNWRITTEN range
-> 				loop {
-> 				  lock folio
-> 				  copyin data
-> .....
-> IO completes
->   runs unwritten extent conv
->     blocks are marked written
-> 				  <iomap now stale>
-> 				  get next folio
-> 				}
-> 
-> Now add memory pressure such that memory reclaim evicts the
-> partially written folio that has already been written to disk.
-> 
-> When the new write finally gets to the last partial page of the new
-> write, it does not find it in cache, so it instantiates a new page,
-> sees the iomap is unwritten, and zeros the part of the page that
-> it does not have data from. This overwrites the data on disk that
-> was originally written.
-> 
-> The full description of the corruption mechanism can be found here:
-> 
-> https://lore.kernel.org/linux-xfs/20220817093627.GZ3600936@dread.disaster.area/
-> 
-> To solve this problem, we need to check whether the iomap is still
-> valid after we lock each folio during the write. We have to do it
-> after we lock the page so that we don't end up with state changes
-> occurring while we wait for the folio to be locked.
-> 
-> Hence we need a mechanism to be able to check that the cached iomap
-> is still valid (similar to what we already do in buffered
-> writeback), and we need a way for ->begin_write to back out and
-> tell the high level iomap iterator that we need to remap the
-> remaining write range.
-> 
-> The iomap needs to grow some storage for the validity cookie that
-> the filesystem provides to travel with the iomap. XFS, in
-> particular, also needs to know some more information about what the
-> iomap maps (attribute extents rather than file data extents) to for
-> the validity cookie to cover all the types of iomaps we might need
-> to validate.
-> 
-> Signed-off-by: Dave Chinner <dchinner@redhat.com>
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> But looking at this series it seems restrictedmem_get_page() in this v10 is
+> identical to the one in v9 (except v10 uses 'folio' instead of 'page')?
 
-This commit is not a standalone backport candidate. It is a pure
-infrastructure change that does nothing by itself except to add more
-code that won't get executed. There are another 7-8 patches that
-need to be backported along with this patch to fix the data
-corruption that is mentioned in this commit.
+restrictedmem_get_page() increases page refcount several versions ago so
+no change in v10 is needed. You probably missed my reply:
 
-I'd stronly suggest that you leave this whole series of commits to
-the XFS LTS maintainers to backport if they so choose to - randomly
-backporting commits from the middle of the series only makes their
-job more complex....
+https://lore.kernel.org/linux-mm/20221129135844.GA902164@chaop.bj.intel.com/
 
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+The current solution is clear: unless we have better approach, we will
+let restrictedmem user (KVM in this case) to hold the refcount to
+prevent page migration.
+
+Thanks,
+Chao
+> 
+> Anyway if this is not fixed, then it should be fixed.  Otherwise, a comment at
+> the place where page refcount is increased will be helpful to help people
+> understand page migration is actually prevented.
+> 
