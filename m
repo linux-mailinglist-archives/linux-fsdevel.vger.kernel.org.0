@@ -2,65 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4DD4653524
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Dec 2022 18:28:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BBB1E653526
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Dec 2022 18:28:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234844AbiLUR2h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Dec 2022 12:28:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39024 "EHLO
+        id S234873AbiLUR2i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Dec 2022 12:28:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38694 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234890AbiLUR2N (ORCPT
+        with ESMTP id S234892AbiLUR2P (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Dec 2022 12:28:13 -0500
-Received: from mail-wm1-x32a.google.com (mail-wm1-x32a.google.com [IPv6:2a00:1450:4864:20::32a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9729B21E1D;
-        Wed, 21 Dec 2022 09:28:09 -0800 (PST)
-Received: by mail-wm1-x32a.google.com with SMTP id bi26-20020a05600c3d9a00b003d3404a89faso2771068wmb.1;
-        Wed, 21 Dec 2022 09:28:09 -0800 (PST)
+        Wed, 21 Dec 2022 12:28:15 -0500
+Received: from mail-wm1-x329.google.com (mail-wm1-x329.google.com [IPv6:2a00:1450:4864:20::329])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8E861AA2F;
+        Wed, 21 Dec 2022 09:28:10 -0800 (PST)
+Received: by mail-wm1-x329.google.com with SMTP id r126-20020a1c4484000000b003d6b8e8e07fso1879437wma.0;
+        Wed, 21 Dec 2022 09:28:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pv+f7Qaep3g1XcMnashW4dr0+STOgPcgnTmOuhDg7/E=;
-        b=dx0flUNhrBgzVh2VnHyf7+ho7NV23dHAxQ9JeCm7Wk5bwY6vWZQO/jrt/BItgPQ7CA
-         ulMNEQxUWhVyaoFaw2BaAqKIljM4Wyxv7c1HKTTSwqvzLgD6LXA21UTG9ytFNtX7czjC
-         pignEoYpBvdsxurgG1jCJrY7Y5k6r2P7X+WCtyYuvlNJyAwIYiQFSF73HEqV7tGhsIFg
-         SvMpotb+QLZ4GXbz426B7XcwmWM5Lr5pZOghGP3tc83QnT1fFGayUnRqEhkjPBoltooA
-         FtAD4xfjCuxP4UP4sE4iAkgZTqkn8R97Jkifb6v3Y2J2tIIszAFDpqMqthYy6plJ/NLG
-         1JjQ==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5jghot3JZGfw4NoEk9T1OvZadmJ48FJEB71fkAQxUvE=;
+        b=AM0+hwuKhzQzdVYUfOb9yOvy8esRc+T3neeFtmk4M1JgZT+wtLQ06C1cMtn2Mk7Cu0
+         DADbLi09ofUMUQWPiSCj+Ao7UyncFobXxYNJQSWKhIVVa9cYc6qsy81IPsiRY19aloEV
+         O6ZbjetK0Y42uzJko2GtPVATJzdZSvHrO3JtbuJHbYJpFAj/+kcPuK++Raq8H+wJ9uBp
+         8KE6TYtDRGiXcViP/HRyLVpYCqJRhqPxwPpJMUkt16xoMOV2FlxcP1++G1J1XohrvFxv
+         xddavz8CBuBHQpXbWuREqjEZwVAP/HJEGXGPawK5/hfO3yWTJDkxDv3m+PhR0g4lQ6Dp
+         GvuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pv+f7Qaep3g1XcMnashW4dr0+STOgPcgnTmOuhDg7/E=;
-        b=PglZNZfH4Ne5zYNgthmrrOtrGRpESwCIMfWVsqvo4hwwQg8tCM65DM6rVXFg/dsIXd
-         hQt6eeEseA4h9nPtYZR6119T+Z+7IBMtJ6B9UfgNyvoN5mFUfsB/IeAuaCflr524nUNQ
-         IsEzYEoi3XTQqg1acmuXeNLWpJ6gWfg14ET6R4gvnyCaZjn7kiWYxMCtPpaYnJq7kGgx
-         CEfbY0v7c867gR9vJpvQtBt2Wu8mPhPLEyP6DD7L23hdyxkD0aeR4FdEJ/NWapzDOLuK
-         nb/9HARhDolgzsh+riVvbXslY+T8GXkctHCmctXOam6WwifCQ2gT22qhg0Y2yMP56fpi
-         VBjw==
-X-Gm-Message-State: AFqh2kppc/jZf5zkv0rfE798wV18/VLx5z5vDzYslcMHF/CAOC8gDf46
-        zo7/YX3hnWcQ9OhpdB0bGjE=
-X-Google-Smtp-Source: AMrXdXtFNIAw+skNPswTN0DXJvjAscuZylzUT3+8MdknsJzHZ94M5fRHNnyA713k0l3ohsN2xTLX8g==
-X-Received: by 2002:a05:600c:4e46:b0:3d2:3761:b717 with SMTP id e6-20020a05600c4e4600b003d23761b717mr2263461wmq.37.1671643687983;
-        Wed, 21 Dec 2022 09:28:07 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5jghot3JZGfw4NoEk9T1OvZadmJ48FJEB71fkAQxUvE=;
+        b=rl680KRmeg8KS16+D0jnOGx00WIQTyxH6taFMqcRSXbB+l2gEzBw8pgRIDIckza07H
+         gbNZd/dgjen68vArd5HnXUFAjVNxFIbRBeY4ams2i4+NEHlwI8kdoPL0xgcn108e7Cqf
+         8BRyQvm8PAxjGmrPa4p8bVjylXMZv9VpQmAXKRNn/SAwodtNEJaV2By2Wnu5Nrr0UScf
+         3U5g6nfj8blFT9d7ZiGy2bFr3GH6ERWhOB0DoGnrVJP+SjVAcbSG5XYGzvSoKIgMfg25
+         2KYKd4DxDrmgIsvYrSuGI6Pp0Xzv/WiAN8ZF/CZLQZle8c77Eaci13JfWfCZN/BgJii0
+         rhTQ==
+X-Gm-Message-State: AFqh2kqIzk5EpE6eMdiQNozJJiueUPlPcLRQyKoRn+7XQQrpvw0o2a7d
+        PwPMA2VCd7YsoRzN6VNa/m9b/rg2BjE=
+X-Google-Smtp-Source: AMrXdXv6YTC9OD5QAs53Or70fPklPQ23fthVfpqFTvWYD/6Jt5JUk7IZZ8a/wwBNHXV/Ho+/khTLGw==
+X-Received: by 2002:a05:600c:3ac3:b0:3d1:cfcb:7d19 with SMTP id d3-20020a05600c3ac300b003d1cfcb7d19mr2563989wms.32.1671643689523;
+        Wed, 21 Dec 2022 09:28:09 -0800 (PST)
 Received: from localhost.localdomain (host-95-251-45-63.retail.telecomitalia.it. [95.251.45.63])
-        by smtp.gmail.com with ESMTPSA id n15-20020a05600c500f00b003cffd3c3d6csm3003260wmr.12.2022.12.21.09.28.06
+        by smtp.gmail.com with ESMTPSA id n15-20020a05600c500f00b003cffd3c3d6csm3003260wmr.12.2022.12.21.09.28.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Dec 2022 09:28:07 -0800 (PST)
+        Wed, 21 Dec 2022 09:28:08 -0800 (PST)
 From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
 To:     Evgeniy Dushistov <dushistov@mail.ru>,
         Al Viro <viro@zeniv.linux.org.uk>,
         Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
         bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Subject: [PATCH v4 0/3] fs/ufs: Replace kmap() with kmap_local_page 
-Date:   Wed, 21 Dec 2022 18:27:59 +0100
-Message-Id: <20221221172802.18743-1-fmdefrancesco@gmail.com>
+Subject: [PATCH v4 1/3] fs/ufs: Use the offset_in_page() helper
+Date:   Wed, 21 Dec 2022 18:28:00 +0100
+Message-Id: <20221221172802.18743-2-fmdefrancesco@gmail.com>
 X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20221221172802.18743-1-fmdefrancesco@gmail.com>
+References: <20221221172802.18743-1-fmdefrancesco@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
@@ -72,88 +74,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-kmap() is being deprecated in favor of kmap_local_page().
+Use the offset_in_page() helper because it is more suitable than doing
+explicit subtractions between pointers to directory entries and kernel
+virtual addresses of mapped pages.
 
-There are two main problems with kmap(): (1) It comes with an overhead as
-the mapping space is restricted and protected by a global lock for
-synchronization and (2) it also requires global TLB invalidation when the
-kmap’s pool wraps and it might block when the mapping space is fully
-utilized until a slot becomes available.
+Cc: Ira Weiny <ira.weiny@intel.com>
+Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+---
+ fs/ufs/dir.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-With kmap_local_page() the mappings are per thread, CPU local, can take
-page faults, and can be called from any context (including interrupts).
-It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
-the tasks can be preempted and, when they are scheduled to run again, the
-kernel virtual addresses are restored and still valid.
-
-Since its use in fs/ufs is safe everywhere, it should be preferred.
-
-Therefore, replace kmap() with kmap_local_page() in fs/ufs. kunmap_local()
-requires the mapping address, so return that address from ufs_get_page()
-to be used in ufs_put_page().
-
-This series could have not been ever made because nothing prevented the
-previous patch from working properly but Al Viro made a long series of
-very appreciated comments about how many unnecessary and redundant lines
-of code I could have removed. He could see things I was entirely unable
-to notice. Furthermore, he also provided solutions and details about how
-I could decompose a single patch into a small series of three
-independent units.[1][2][3]
-
-I want to thank him so much for the patience, kindness and the time he
-decided to spend to provide those analysis and write three messages full
-of interesting insights.[1][2][3]
-
-Changes from v1:
-	1/3: No changes.
-	2/3: Restore the return of "err" that was mistakenly deleted
-	     together with the removal of the "out" label in
-	     ufs_add_link(). Thanks to Al Viro.[4]
-	     Return the address of the kmap()'ed page instead of a
-	     pointer to a pointer to the mapped page; a page_address()
-	     had been overlooked in ufs_get_page(). Thanks to Al
-	     Viro.[5]
-	3/3: Return the kernel virtual address got from the call to
-	     kmap_local_page() after conversion from kmap(). Again
-	     thanks to Al Viro.[6]
-
-Changes from v2:
-	1/3: No changes.
-	2/3: Rework ufs_get_page() because the previous version had two
-	     errors: (1) It could return an invalid pages with the out
-	     argument "page" and (2) it could return "page_address(page)"
-	     also in cases where read_mapping_page() returned an error
-	     and the page is never kmap()'ed. Thanks to Al Viro.[7]
-	3/3: Rework ufs_get_page() after conversion to
-	     kmap_local_page(), in accordance to the last changes in 2/3.
-
-Changes from v3:
-	1/3: No changes.
-	2/3: No changes.
-	3/3: Replace kunmap() with kunmap_local().
-
-[1] https://lore.kernel.org/lkml/Y4E++JERgUMoqfjG@ZenIV/
-[2] https://lore.kernel.org/lkml/Y4FG0O7VWTTng5yh@ZenIV/
-[3] https://lore.kernel.org/lkml/Y4ONIFJatIGsVNpf@ZenIV/
-[4] https://lore.kernel.org/lkml/Y5Zc0qZ3+zsI74OZ@ZenIV/
-[5] https://lore.kernel.org/lkml/Y5ZZy23FFAnQDR3C@ZenIV/
-[6] https://lore.kernel.org/lkml/Y5ZcMPzPG9h6C9eh@ZenIV/
-[7] https://lore.kernel.org/lkml/Y5glgpD7fFifC4Fi@ZenIV/#t
-
-The cover letter of the v1 series is at
-https://lore.kernel.org/lkml/20221211213111.30085-1-fmdefrancesco@gmail.com/
-The cover letter of the v2 series is at
-https://lore.kernel.org/lkml/20221212231906.19424-1-fmdefrancesco@gmail.com/
-The cover letter of the v3 series is at
-https://lore.kernel.org/lkml/20221217184749.968-1-fmdefrancesco@gmail.com/
-
-Fabio M. De Francesco (3):
-  fs/ufs: Use the offset_in_page() helper
-  fs/ufs: Change the signature of ufs_get_page()
-  fs/ufs: Replace kmap() with kmap_local_page()
-
- fs/ufs/dir.c | 134 +++++++++++++++++++++++++++------------------------
- 1 file changed, 71 insertions(+), 63 deletions(-)
-
+diff --git a/fs/ufs/dir.c b/fs/ufs/dir.c
+index 391efaf1d528..69f78583c9c1 100644
+--- a/fs/ufs/dir.c
++++ b/fs/ufs/dir.c
+@@ -87,8 +87,7 @@ void ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
+ 		  struct page *page, struct inode *inode,
+ 		  bool update_times)
+ {
+-	loff_t pos = page_offset(page) +
+-			(char *) de - (char *) page_address(page);
++	loff_t pos = page_offset(page) + offset_in_page(de);
+ 	unsigned len = fs16_to_cpu(dir->i_sb, de->d_reclen);
+ 	int err;
+ 
+@@ -371,8 +370,7 @@ int ufs_add_link(struct dentry *dentry, struct inode *inode)
+ 	return -EINVAL;
+ 
+ got_it:
+-	pos = page_offset(page) +
+-			(char*)de - (char*)page_address(page);
++	pos = page_offset(page) + offset_in_page(de);
+ 	err = ufs_prepare_chunk(page, pos, rec_len);
+ 	if (err)
+ 		goto out_unlock;
+@@ -497,8 +495,8 @@ int ufs_delete_entry(struct inode *inode, struct ufs_dir_entry *dir,
+ {
+ 	struct super_block *sb = inode->i_sb;
+ 	char *kaddr = page_address(page);
+-	unsigned from = ((char*)dir - kaddr) & ~(UFS_SB(sb)->s_uspi->s_dirblksize - 1);
+-	unsigned to = ((char*)dir - kaddr) + fs16_to_cpu(sb, dir->d_reclen);
++	unsigned int from = offset_in_page(dir) & ~(UFS_SB(sb)->s_uspi->s_dirblksize - 1);
++	unsigned int to = offset_in_page(dir) + fs16_to_cpu(sb, dir->d_reclen);
+ 	loff_t pos;
+ 	struct ufs_dir_entry *pde = NULL;
+ 	struct ufs_dir_entry *de = (struct ufs_dir_entry *) (kaddr + from);
+@@ -522,7 +520,7 @@ int ufs_delete_entry(struct inode *inode, struct ufs_dir_entry *dir,
+ 		de = ufs_next_entry(sb, de);
+ 	}
+ 	if (pde)
+-		from = (char*)pde - (char*)page_address(page);
++		from = offset_in_page(pde);
+ 
+ 	pos = page_offset(page) + from;
+ 	lock_page(page);
 -- 
 2.39.0
+
