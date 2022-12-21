@@ -2,71 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 67C446533D8
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Dec 2022 17:16:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C4F9F6534ED
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Dec 2022 18:19:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232176AbiLUQQl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Dec 2022 11:16:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55102 "EHLO
+        id S234907AbiLURS5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Dec 2022 12:18:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60368 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233349AbiLUQQi (ORCPT
+        with ESMTP id S234797AbiLURSR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Dec 2022 11:16:38 -0500
-Received: from mail-oa1-x2c.google.com (mail-oa1-x2c.google.com [IPv6:2001:4860:4864:20::2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E0E2220F0
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Dec 2022 08:16:37 -0800 (PST)
-Received: by mail-oa1-x2c.google.com with SMTP id 586e51a60fabf-143ffc8c2b2so19704867fac.2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Dec 2022 08:16:37 -0800 (PST)
+        Wed, 21 Dec 2022 12:18:17 -0500
+Received: from mail-yb1-xb36.google.com (mail-yb1-xb36.google.com [IPv6:2607:f8b0:4864:20::b36])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B63A624F27;
+        Wed, 21 Dec 2022 09:17:42 -0800 (PST)
+Received: by mail-yb1-xb36.google.com with SMTP id c140so17222733ybf.11;
+        Wed, 21 Dec 2022 09:17:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
+        d=gmail.com; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hsa6T3GulZ+3V9yadTNjqSGffTKaOIWWpdQCi5qCyYQ=;
-        b=L/DfgXegMdR/EV/AaMV4u/NVGnEQaXOgFHypZOdnIsfFew73CI/qPbpNneTYaRR9UY
-         atbbDIh3qekit0O5oviVJlLf8AczqZdbosdc2t+YE/eif2gRRSJXXRAu3NKsTh3lFjit
-         QDtM56khL1hVvtaStQLRu8DxrVnl4dCaZ7BEI=
+        bh=obPoXeoGwnXe5CqGdFwqw1lMSLFBWN5B3Ufm/DPfw6U=;
+        b=hBa2jQX+YX2How1HUjfStPdAV3ULq0M3X5sJVB0HPxl6WZtflb+yvVtaXKtIe03h11
+         +tRUjiQl40NP+Na+qEt+ivcTx3vCoCewMUDQAaodyaKBDxh4if2ET1+dtz0F0pATAs5/
+         +L4mco6VjT9x0iMoCnAkAkKUUKBfJPLV9gTwyqtrELDs7Y/weYhOLvFaP1C2bEOKjOtx
+         ElNFX9E77xkLUqa81LUSQpLxsk9xGe2PR9HlZHkUYhvnxezZOzV18ENSfyIlqO2YKoah
+         t421pTE9AJrZBgwKlx+QP1h0rrSizVfLngo4/ai8yZDwTdjCNkvxsGhYXECd+YjUOm/x
+         WSEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Hsa6T3GulZ+3V9yadTNjqSGffTKaOIWWpdQCi5qCyYQ=;
-        b=IttpzJDq2tnNWnH37CyzFllv7/hfbtNnbkH9u5aZeavD24jpfKZX2yQXwghPR2CgdO
-         hBzjUkhmstP7FcWYX37apmEKYWDyGbywkCeFFe1s5/eDgiv84QBxjPBZksXX7uA1NFyF
-         GbNU7OnS867YPfu3bqOZQm5nNKuLeblEfwque5GRzsqr60ackXOkZE8qF1pCxvyNy2nN
-         D/9DzBOrZXUYv7vT4Ry7u5hcz+5bHZo7ROzxHTzXRO+lJfvUZ56FPBPdtgZLckMxYaex
-         MlkfTW3xSQHyPHYglfGeoOQ+UvfBYHWms/IhD3opdBGajv7EwKhX8PJA6B2mBeJVbWQw
-         cOhQ==
-X-Gm-Message-State: AFqh2kqCaWPBaeK7TyBN0Y90/GRVB79XIcesC560Dp8+SEd6rj8mBLbc
-        LXCYm3CBxE61+78PwTpgGo44Bz8oRBSfBfOa
-X-Google-Smtp-Source: AMrXdXsHeU9nVw0178kEB2vH44TQxiMs2VSyuryYqcPK2yvjxaeAconAxxWYgrWvNkoFX2uivvrGXw==
-X-Received: by 2002:a05:6871:a6a5:b0:14c:62fb:61f7 with SMTP id wh37-20020a056871a6a500b0014c62fb61f7mr920705oab.45.1671639395514;
-        Wed, 21 Dec 2022 08:16:35 -0800 (PST)
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com. [209.85.222.175])
-        by smtp.gmail.com with ESMTPSA id de36-20020a05620a372400b006cf19068261sm11177621qkb.116.2022.12.21.08.16.32
-        for <linux-fsdevel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Dec 2022 08:16:32 -0800 (PST)
-Received: by mail-qk1-f175.google.com with SMTP id e6so7010089qkl.4
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Dec 2022 08:16:32 -0800 (PST)
-X-Received: by 2002:a05:620a:674:b0:6ff:a7de:ce22 with SMTP id
- a20-20020a05620a067400b006ffa7dece22mr76603qkh.72.1671639392425; Wed, 21 Dec
- 2022 08:16:32 -0800 (PST)
+        bh=obPoXeoGwnXe5CqGdFwqw1lMSLFBWN5B3Ufm/DPfw6U=;
+        b=hCu8LJW/B/Nr++zemZkOXuNJrsuicaM5N+pRGSTgzomB0oZDENFF7phwbp5I0GI+Qd
+         X7pxPyWtnTjr1FnJEyNkF1kGCTDp6k8mnoe+FiMJRWJJkjhawHDRQiSBEE6A/hiYepqe
+         /eM/bJDNp91EKZObf+O9Im5JLOZcCkvRuCijKGsaCLqyOodvjhH5cCL7Zb7k62liV3hz
+         PHtrDzmKduuKqWebOBiVywrFNFu6X00Sfebp0LNIT7RJVTllfgp0sP0/ZNTr0drAqRCv
+         0G8vEeECpiXVRZ5NX5282VhQ1ihKeviC7raS8fRkSe7OyCEk5SCIwfY8QXf/rd24Lkcu
+         dhsw==
+X-Gm-Message-State: AFqh2kp8c+1qoy7T1wsjq+mHCq9F6+mtNU9ipK0pWRKDdKEAYWqTFT09
+        HHm2PTpua3ghHs86VxPxpBpSHIH0IJl4kTbsUy0=
+X-Google-Smtp-Source: AMrXdXtveEC2+hgy7ihrRHqxFTx3SQ7hEr55PWvD3HSbqv1EZNCaA/UJLaeerK30Q6U0Ho5qcXvBgkxSvXY5yoOTtr0=
+X-Received: by 2002:a25:dd83:0:b0:758:65d6:915f with SMTP id
+ u125-20020a25dd83000000b0075865d6915fmr188536ybg.582.1671643061860; Wed, 21
+ Dec 2022 09:17:41 -0800 (PST)
 MIME-Version: 1.0
-References: <20221220141743.813176-1-brauner@kernel.org>
-In-Reply-To: <20221220141743.813176-1-brauner@kernel.org>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed, 21 Dec 2022 08:16:16 -0800
-X-Gmail-Original-Message-ID: <CAHk-=winz9C7v81xSboTO6P0H8aF8wAjM5vK6n2pKO2FmS5d7A@mail.gmail.com>
-Message-ID: <CAHk-=winz9C7v81xSboTO6P0H8aF8wAjM5vK6n2pKO2FmS5d7A@mail.gmail.com>
-Subject: Re: [GIT PULL] vfsuid fix for v6.2-rc1
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Seth Forshee <sforshee@kernel.org>
+References: <0a95ba7b-9335-ce03-0f47-5d9f4cce988f@kernel.org>
+ <20221212191317.9730-1-vishal.moola@gmail.com> <6770f692-490e-34fc-46f8-4f65aa071f58@kernel.org>
+ <Y5trNfldXrM4FIyU@casper.infradead.org>
+In-Reply-To: <Y5trNfldXrM4FIyU@casper.infradead.org>
+From:   Vishal Moola <vishal.moola@gmail.com>
+Date:   Wed, 21 Dec 2022 09:17:30 -0800
+Message-ID: <CAOzc2pzoyBg=jgYNNfsmum9tKFOAy65zVsEyDE3vKoiti7FZDA@mail.gmail.com>
+Subject: Re: [RFC PATCH] f2fs: Convert f2fs_write_cache_pages() to use filemap_get_folios_tag()
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, linux-mm@kvack.org,
+        fengnanchang@gmail.com, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,16 +70,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Dec 20, 2022 at 6:18 AM Christian Brauner <brauner@kernel.org> wrote:
+On Thu, Dec 15, 2022 at 10:45 AM Matthew Wilcox <willy@infradead.org> wrote:
 >
-> This moves the ima specific vfs{g,u}id_t comparison helpers out of the header
-> and into the one file in ima where they are used. We shouldn't incentivize
-> people to use them by placing them into the header. As discussed and suggested
-> by Linus in [1] let's just define them locally in the one file in ima where
-> they are used.
+> On Thu, Dec 15, 2022 at 09:48:41AM +0800, Chao Yu wrote:
+> > On 2022/12/13 3:13, Vishal Moola (Oracle) wrote:
+> > > +add_more:
+> > > +                   pages[nr_pages] = folio_page(folio,idx);
+> > > +                   folio_ref_inc(folio);
+> >
+> > It looks if CONFIG_LRU_GEN is not set, folio_ref_inc() does nothing. For those
+> > folios recorded in pages array, we need to call folio_get() here to add one more
+> > reference on each of them?
 >
-> Link: https://lore.kernel.org/lkml/CAHk-=wj+tqv2nyUZ5T5EwYWzDAAuhxQ+-DA2nC9yYOTUo5NOPg@mail.gmail.com [1]
+> static inline void folio_get(struct folio *folio)
+> {
+>         VM_BUG_ON_FOLIO(folio_ref_zero_or_close_to_overflow(folio), folio);
+>         folio_ref_inc(folio);
+> }
+>
+> That said, folio_ref_inct() is very much MM-internal and filesystems
+> should be using folio_get(), so please make that modification in the
+> next revision, Vishal.
 
-That wasn't actually the correct link...
-
-              Linus
+Ok, I'll go through and fix all of those in the next version.
