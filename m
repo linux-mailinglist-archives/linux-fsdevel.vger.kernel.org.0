@@ -2,171 +2,197 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E45316531D6
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Dec 2022 14:34:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B8FE6531EE
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 21 Dec 2022 14:43:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229814AbiLUNef (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 21 Dec 2022 08:34:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41150 "EHLO
+        id S230264AbiLUNng (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 21 Dec 2022 08:43:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43234 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbiLUNee (ORCPT
+        with ESMTP id S229789AbiLUNnf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 21 Dec 2022 08:34:34 -0500
-Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6EFD32BC2
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Dec 2022 05:34:32 -0800 (PST)
-Received: by mail-lf1-x132.google.com with SMTP id bf43so23516214lfb.6
-        for <linux-fsdevel@vger.kernel.org>; Wed, 21 Dec 2022 05:34:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+0FXHdAxlQCKNpVHPu4ljr9mTHK7rsIQ0NRxjjSRv34=;
-        b=W8nt8VldUhaBpwI/xNMJ3Bxbtj6Nosqr6KDgWsdch+8IZSqSqqMTaIHnWaFZ6Ik3lG
-         jUspcRWQ/FbdttBiDW3CmDqHVPALZnU6spBvYOAsRCoYd204nS41d+2aI1Z7G8OyTyeN
-         1yhjSUiiWjVr2GvNfofsZtFpisNWasWGrkXUp5EJGq8IzdNNvJY3u0jv3NmJeyTZQcXU
-         CADPUL/7zTS0CnXrwJ4wVOjh7VCJzfQGoQ2d9AWYconnan31xUt4JbGw6troC/1P3i4g
-         OSz3JvS0WDWiKN3itScFH2OkQu6g8ywuS9aaKTHHIANJCWKwePlJxsqjLlN2uMPJ15rE
-         5AdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+0FXHdAxlQCKNpVHPu4ljr9mTHK7rsIQ0NRxjjSRv34=;
-        b=zdMs27MCcIneJWSW94dfHHWHQ3sVzQlZXnIE1mKQ0hRx1mEVYkNlfVhgTt6+6nm2kl
-         caNyOkRbR/3AU41MlLsDs3ouHXKSx8YzP+uRitQK3n5LB3AQRp73ZtDyitsYsWqh1z26
-         GpOFsTZFRydoNAWcC5AZCinZvYxw6gk88a69wQKBD/zOHsy0w2okDC9sbHgzRIPhfQ3F
-         a1jqn00pbqg1ZltwZ/5ckYCsH8sU2qG8slzWpgHQp72jC7ztJBMH+JZoKSFYsefK7uxC
-         se1Uio9nt92XuT6ePogMqClLaMyDbqbCo99U0ncO0HJuBXs+qayx96FEgheTpk6uRoaW
-         iSDg==
-X-Gm-Message-State: AFqh2kqrYxSeIlKoWg4YtdpSaKfV+Im1YkMBdjf1XabPZUNFMCM1+Naa
-        v5J9fYku48JP+9+8O7wPxniTgg==
-X-Google-Smtp-Source: AMrXdXviJW015I7NYa4eijEHW4N5KVbIX+8IA0aNfy7QoBevqLdLiSjSiO9lAKC34bmkVJvY/Lbmtg==
-X-Received: by 2002:a19:f705:0:b0:4be:a4cb:be37 with SMTP id z5-20020a19f705000000b004bea4cbbe37mr569117lfe.15.1671629670779;
-        Wed, 21 Dec 2022 05:34:30 -0800 (PST)
-Received: from mutt (c-e429e555.07-21-73746f28.bbcust.telenor.se. [85.229.41.228])
-        by smtp.gmail.com with ESMTPSA id w23-20020a19c517000000b004b5701b5337sm1843649lfe.104.2022.12.21.05.34.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Dec 2022 05:34:30 -0800 (PST)
-Date:   Wed, 21 Dec 2022 14:34:28 +0100
-From:   Anders Roxell <anders.roxell@linaro.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Ian Kent <raven@themaw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Minchan Kim <minchan@kernel.org>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Rick Lindsley <ricklind@linux.vnet.ibm.com>,
-        David Howells <dhowells@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Carlos Maiolino <cmaiolino@redhat.com>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        elver@google.com, arnd@arndb.de
-Subject: Re: [PATCH 1/2] kernfs: dont take i_lock on inode attr read
-Message-ID: <20221221133428.GE69385@mutt>
-References: <166606025456.13363.3829702374064563472.stgit@donald.themaw.net>
- <166606036215.13363.1288735296954908554.stgit@donald.themaw.net>
- <Y2BMonmS0SdOn5yh@slm.duckdns.org>
+        Wed, 21 Dec 2022 08:43:35 -0500
+Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D4A70FD2F;
+        Wed, 21 Dec 2022 05:43:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1671630213; x=1703166213;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=KeOWd+1s5+y+piSUTaodricsl+2xgK/0jmwlSljJARM=;
+  b=H2lhxz8q4YJTpIViEVDPCYU52PGAYs5BwE0RwSTi2YMdg24ADkMxnoAq
+   JzHTa2zb7qy6FuEfPxAR3wKDmzBn9rXOdxcW8kiMTqZV8wQRFnosagiIp
+   dDSK9JZNIHo5G11ul/94dob5MrLNqM05P5QBx/hO61R8LNfybSUhRRguU
+   +763/0rbo2hHmGRVg3RWZ+jFtIQZWIDUDcaznUWl+owo/ikQVcQ9zV/iN
+   9YycOMh0uWsRf5ogaCIzKRwJID9d68Oi70qhNKTIMlVbiQJKA2AInnpLQ
+   a6OrajCHXmyJLJMDAhntjhyVmFgkpi8wL9OJL8Nrsfiz+UmoLi+0jrXeX
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10567"; a="318567865"
+X-IronPort-AV: E=Sophos;i="5.96,262,1665471600"; 
+   d="scan'208";a="318567865"
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2022 05:43:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10567"; a="651401281"
+X-IronPort-AV: E=Sophos;i="5.96,262,1665471600"; 
+   d="scan'208";a="651401281"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by orsmga002.jf.intel.com with ESMTP; 21 Dec 2022 05:43:21 -0800
+Date:   Wed, 21 Dec 2022 21:39:05 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     "Huang, Kai" <kai.huang@intel.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "Lutomirski, Andy" <luto@kernel.org>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "Hocko, Michal" <mhocko@suse.com>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "tabba@google.com" <tabba@google.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "michael.roth@amd.com" <michael.roth@amd.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "rppt@kernel.org" <rppt@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "vbabka@suse.cz" <vbabka@suse.cz>,
+        "mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>,
+        "ddutile@redhat.com" <ddutile@redhat.com>,
+        "qperret@google.com" <qperret@google.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "vannapurve@google.com" <vannapurve@google.com>,
+        "naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
+        "Christopherson,, Sean" <seanjc@google.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
+        "hughd@google.com" <hughd@google.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "Wang, Wei W" <wei.w.wang@intel.com>,
+        "steven.price@arm.com" <steven.price@arm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linmiaohe@huawei.com" <linmiaohe@huawei.com>
+Subject: Re: [PATCH v10 1/9] mm: Introduce memfd_restricted system call to
+ create restricted user memory
+Message-ID: <20221221133905.GA1766136@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-2-chao.p.peng@linux.intel.com>
+ <5c6e2e516f19b0a030eae9bf073d555c57ca1f21.camel@intel.com>
+ <20221219075313.GB1691829@chaop.bj.intel.com>
+ <deba096c85e41c3a15d122f2159986a74b16770f.camel@intel.com>
+ <20221220072228.GA1724933@chaop.bj.intel.com>
+ <126046ce506df070d57e6fe5ab9c92cdaf4cf9b7.camel@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Y2BMonmS0SdOn5yh@slm.duckdns.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <126046ce506df070d57e6fe5ab9c92cdaf4cf9b7.camel@intel.com>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022-10-31 12:30, Tejun Heo wrote:
-> On Tue, Oct 18, 2022 at 10:32:42AM +0800, Ian Kent wrote:
-> > The kernfs write lock is held when the kernfs node inode attributes
-> > are updated. Therefore, when either kernfs_iop_getattr() or
-> > kernfs_iop_permission() are called the kernfs node inode attributes
-> > won't change.
+On Tue, Dec 20, 2022 at 08:33:05AM +0000, Huang, Kai wrote:
+> On Tue, 2022-12-20 at 15:22 +0800, Chao Peng wrote:
+> > On Mon, Dec 19, 2022 at 08:48:10AM +0000, Huang, Kai wrote:
+> > > On Mon, 2022-12-19 at 15:53 +0800, Chao Peng wrote:
+> > > > > 
+> > > > > [...]
+> > > > > 
+> > > > > > +
+> > > > > > +	/*
+> > > > > > +	 * These pages are currently unmovable so don't place them into
+> > > > > > movable
+> > > > > > +	 * pageblocks (e.g. CMA and ZONE_MOVABLE).
+> > > > > > +	 */
+> > > > > > +	mapping = memfd->f_mapping;
+> > > > > > +	mapping_set_unevictable(mapping);
+> > > > > > +	mapping_set_gfp_mask(mapping,
+> > > > > > +			     mapping_gfp_mask(mapping) & ~__GFP_MOVABLE);
+> > > > > 
+> > > > > But, IIUC removing __GFP_MOVABLE flag here only makes page allocation from
+> > > > > non-
+> > > > > movable zones, but doesn't necessarily prevent page from being migrated.  My
+> > > > > first glance is you need to implement either a_ops->migrate_folio() or just
+> > > > > get_page() after faulting in the page to prevent.
+> > > > 
+> > > > The current api restrictedmem_get_page() already does this, after the
+> > > > caller calling it, it holds a reference to the page. The caller then
+> > > > decides when to call put_page() appropriately.
+> > > 
+> > > I tried to dig some history. Perhaps I am missing something, but it seems Kirill
+> > > said in v9 that this code doesn't prevent page migration, and we need to
+> > > increase page refcount in restrictedmem_get_page():
+> > > 
+> > > https://lore.kernel.org/linux-mm/20221129112139.usp6dqhbih47qpjl@box.shutemov.name/
+> > > 
+> > > But looking at this series it seems restrictedmem_get_page() in this v10 is
+> > > identical to the one in v9 (except v10 uses 'folio' instead of 'page')?
 > > 
-> > Consequently concurrent kernfs_refresh_inode() calls always copy the
-> > same values from the kernfs node.
+> > restrictedmem_get_page() increases page refcount several versions ago so
+> > no change in v10 is needed. You probably missed my reply:
 > > 
-> > So there's no need to take the inode i_lock to get consistent values
-> > for generic_fillattr() and generic_permission(), the kernfs read lock
-> > is sufficient.
-> > 
-> > Signed-off-by: Ian Kent <raven@themaw.net>
+> > https://lore.kernel.org/linux-mm/20221129135844.GA902164@chaop.bj.intel.com/
 > 
-> Acked-by: Tejun Heo <tj@kernel.org>
+> But for non-restricted-mem case, it is correct for KVM to decrease page's
+> refcount after setting up mapping in the secondary mmu, otherwise the page will
+> be pinned by KVM for normal VM (since KVM uses GUP to get the page).
 
-Hi,
+That's true. Actually even true for restrictedmem case, most likely we
+will still need the kvm_release_pfn_clean() for KVM generic code. On one
+side, other restrictedmem users like pKVM may not require page pinning
+at all. On the other side, see below.
 
-Building an allmodconfig arm64 kernel on yesterdays next-20221220 and
-booting that in qemu I see the following "BUG: KCSAN: data-race in
-set_nlink / set_nlink".
+> 
+> So what we are expecting is: for KVM if the page comes from restricted mem, then
+> KVM cannot decrease the refcount, otherwise for normal page via GUP KVM should.
 
+I argue that this page pinning (or page migration prevention) is not
+tied to where the page comes from, instead related to how the page will
+be used. Whether the page is restrictedmem backed or GUP() backed, once
+it's used by current version of TDX then the page pinning is needed. So
+such page migration prevention is really TDX thing, even not KVM generic
+thing (that's why I think we don't need change the existing logic of
+kvm_release_pfn_clean()). Wouldn't better to let TDX code (or who
+requires that) to increase/decrease the refcount when it populates/drops
+the secure EPT entries? This is exactly what the current TDX code does:
 
-==================================================================
-[ 1540.388669][  T123] BUG: KCSAN: data-race in set_nlink / set_nlink
-[ 1540.392779][  T123] 
-[ 1540.394302][  T123] write to 0xffff00000adcc3e4 of 4 bytes by task 126 on cpu 0:
-[ 1540.398828][ T123] set_nlink (/home/anders/src/kernel/next/fs/inode.c:371) 
-[ 1540.401609][ T123] kernfs_refresh_inode (/home/anders/src/kernel/next/fs/kernfs/inode.c:181) 
-[ 1540.404925][ T123] kernfs_iop_getattr (/home/anders/src/kernel/next/fs/kernfs/inode.c:194) 
-[ 1540.408088][ T123] vfs_getattr_nosec (/home/anders/src/kernel/next/fs/stat.c:133) 
-[ 1540.411334][ T123] vfs_statx (/home/anders/src/kernel/next/fs/stat.c:170) 
-[ 1540.414224][ T123] vfs_fstatat (/home/anders/src/kernel/next/fs/stat.c:276) 
-[ 1540.417166][ T123] __do_sys_newfstatat (/home/anders/src/kernel/next/fs/stat.c:446) 
-[ 1540.420539][ T123] __arm64_sys_newfstatat (/home/anders/src/kernel/next/fs/stat.c:440 /home/anders/src/kernel/next/fs/stat.c:440) 
-[ 1540.424003][ T123] el0_svc_common.constprop.0 (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:38 /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:52 /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:142) 
-[ 1540.427648][ T123] do_el0_svc (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:197) 
-[ 1540.430378][ T123] el0_svc (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:133 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:142 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:638) 
-[ 1540.433053][ T123] el0t_64_sync_handler (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:656) 
-[ 1540.436421][ T123] el0t_64_sync (/home/anders/src/kernel/next/arch/arm64/kernel/entry.S:584) 
-[ 1540.439303][  T123] 
-[ 1540.440828][  T123] 1 lock held by systemd-udevd/126:
-[ 1540.444055][ T123] #0: ffff00000609b960 (&root->kernfs_rwsem){++++}-{3:3}, at: kernfs_iop_getattr (/home/anders/src/kernel/next/fs/kernfs/inode.c:193) 
-[ 1540.450699][  T123] irq event stamp: 185034
-[ 1540.453373][ T123] hardirqs last enabled at (185034): seqcount_lockdep_reader_access (/home/anders/src/kernel/next/mm/page_alloc.c:5302) 
-[ 1540.460087][ T123] hardirqs last disabled at (185033): seqcount_lockdep_reader_access (/home/anders/src/kernel/next/include/linux/seqlock.h:103 (discriminator 4)) 
-[ 1540.466686][ T123] softirqs last enabled at (185001): fpsimd_restore_current_state (/home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:264 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1780) 
-[ 1540.473310][ T123] softirqs last disabled at (184999): fpsimd_restore_current_state (/home/anders/src/kernel/next/include/linux/bottom_half.h:20 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:242 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1773) 
-[ 1540.479872][  T123] 
-[ 1540.481406][  T123] read to 0xffff00000adcc3e4 of 4 bytes by task 123 on cpu 0:
-[ 1540.485893][ T123] set_nlink (/home/anders/src/kernel/next/fs/inode.c:368) 
-[ 1540.488663][ T123] kernfs_refresh_inode (/home/anders/src/kernel/next/fs/kernfs/inode.c:181) 
-[ 1540.491961][ T123] kernfs_iop_permission (/home/anders/src/kernel/next/fs/kernfs/inode.c:290) 
-[ 1540.495260][ T123] inode_permission (/home/anders/src/kernel/next/fs/namei.c:458 /home/anders/src/kernel/next/fs/namei.c:525) 
-[ 1540.498450][ T123] link_path_walk (/home/anders/src/kernel/next/fs/namei.c:1715 /home/anders/src/kernel/next/fs/namei.c:2262) 
-[ 1540.501552][ T123] path_lookupat (/home/anders/src/kernel/next/fs/namei.c:2473 (discriminator 2)) 
-[ 1540.504592][ T123] filename_lookup (/home/anders/src/kernel/next/fs/namei.c:2503) 
-[ 1540.507740][ T123] user_path_at_empty (/home/anders/src/kernel/next/fs/namei.c:2876) 
-[ 1540.511010][ T123] do_readlinkat (/home/anders/src/kernel/next/fs/stat.c:477) 
-[ 1540.514097][ T123] __arm64_sys_readlinkat (/home/anders/src/kernel/next/fs/stat.c:504 /home/anders/src/kernel/next/fs/stat.c:501 /home/anders/src/kernel/next/fs/stat.c:501) 
-[ 1540.517598][ T123] el0_svc_common.constprop.0 (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:38 /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:52 /home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:142) 
-[ 1540.521319][ T123] do_el0_svc (/home/anders/src/kernel/next/arch/arm64/kernel/syscall.c:197) 
-[ 1540.524125][ T123] el0_svc (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:133 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:142 /home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:638) 
-[ 1540.526795][ T123] el0t_64_sync_handler (/home/anders/src/kernel/next/arch/arm64/kernel/entry-common.c:656) 
-[ 1540.530224][ T123] el0t_64_sync (/home/anders/src/kernel/next/arch/arm64/kernel/entry.S:584) 
-[ 1540.533176][  T123] 
-[ 1540.534710][  T123] 1 lock held by systemd-udevd/123:
-[ 1540.537977][ T123] #0: ffff00000609b960 (&root->kernfs_rwsem){++++}-{3:3}, at: kernfs_iop_permission (/home/anders/src/kernel/next/fs/kernfs/inode.c:289) 
-[ 1540.544892][  T123] irq event stamp: 216564
-[ 1540.547603][ T123] hardirqs last enabled at (216564): seqcount_lockdep_reader_access (/home/anders/src/kernel/next/mm/page_alloc.c:5302) 
-[ 1540.554368][ T123] hardirqs last disabled at (216563): seqcount_lockdep_reader_access (/home/anders/src/kernel/next/include/linux/seqlock.h:103 (discriminator 4)) 
-[ 1540.561107][ T123] softirqs last enabled at (216533): fpsimd_restore_current_state (/home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:264 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1780) 
-[ 1540.567833][ T123] softirqs last disabled at (216531): fpsimd_restore_current_state (/home/anders/src/kernel/next/include/linux/bottom_half.h:20 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:242 /home/anders/src/kernel/next/arch/arm64/kernel/fpsimd.c:1773) 
-[ 1540.574496][  T123] 
-[ 1540.576050][  T123] Reported by Kernel Concurrency Sanitizer on:
-[ 1540.587925][  T123] Hardware name: linux,dummy-virt (DT)
-[ 1540.591282][  T123] ==================================================================
+get_page():
+https://github.com/intel/tdx/blob/kvm-upstream/arch/x86/kvm/vmx/tdx.c#L1217
 
+put_page():
+https://github.com/intel/tdx/blob/kvm-upstream/arch/x86/kvm/vmx/tdx.c#L1334
 
-Reverting this patch I don't see the data race anymore.
-
-Cheers,
-Anders
+Thanks,
+Chao
+> 
+> > 
+> > The current solution is clear: unless we have better approach, we will
+> > let restrictedmem user (KVM in this case) to hold the refcount to
+> > prevent page migration.
+> > 
+> 
+> OK.  Will leave to others :)
+> 
