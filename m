@@ -2,309 +2,440 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 96993653BB5
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Dec 2022 06:17:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5A34653BCD
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Dec 2022 06:41:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229531AbiLVFRr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Dec 2022 00:17:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36876 "EHLO
+        id S232553AbiLVFlT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Dec 2022 00:41:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235153AbiLVFRH (ORCPT
+        with ESMTP id S229531AbiLVFlR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Dec 2022 00:17:07 -0500
-Received: from mga09.intel.com (mga09.intel.com [134.134.136.24])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 76B14186B7;
-        Wed, 21 Dec 2022 21:13:53 -0800 (PST)
+        Thu, 22 Dec 2022 00:41:17 -0500
+Received: from mga03.intel.com (mga03.intel.com [134.134.136.65])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 66F0A2BC0;
+        Wed, 21 Dec 2022 21:41:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1671686033; x=1703222033;
+  t=1671687676; x=1703223676;
   h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=gjDOTrejfvU1JS+kyRfSzyrPM6HthrD4LYyGBfTHWgU=;
-  b=VNWMvRqHlqkk+GwV1cM6bSSBJKIFrMlSV8mhiEG+B6kurRtTzUjWXP0W
-   43OaVO9NKI5ntLIxOnXEZxsd8uQxDZTrsmfoKOPcwSxEc3vr9uiNIf5QH
-   iChhlLnCqTf0IM0ylxNIMIGagkljnStXIFniM36V4Ty2xQRs9uDioII1I
-   h5CpCGf77HuV8IftniPu84D7QoyyNbIp5u+xaBp5ywV8K5n3ANLqyG43I
-   wpUksi0vp7QqZjeYlvj/jwNWDyFvABCmIXbY4uT5QdP84JP5/piaRDpM2
-   Tkha3MtLZBb/pxYr0GI8IRUIxjEhEqFMhedmaieUyvzki338sWMvE3MYD
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10568"; a="321228018"
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=Zo/fbzhz2/KeSWjzHSyX/uhSqAWWLw9x+eTLpxwC4cQ=;
+  b=Ewe0pbzo/JlspJ9Voi2O7xjeM3Ix9/Z7XPTupF02GSL22nHn87dElkHd
+   y1u532TT416bEkO4Tov/TRdIJchx3bmseqBPS1rcci51zOrh93m+NLHDW
+   YHHLeAfP3sNs0zqkDpFQuu1cXp2J84zx+vQfNxN6IHFVIqP53eHEjMjwl
+   Z5zSpXcvBdJ8LgiQtetmX5OrCyqf39vvzKprw+2z+ChDZylgbc8iYsSoq
+   5HOt7UnadG/QD44pzHmVuzdWXssXnL2biaomGHV2OQ1emUrXdtxZVEDUS
+   QHBk6p6X6YhruTN2h5hiwC20NArcqNtb98O5K3odo1ivSFBxQccFbKVOf
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10568"; a="321965933"
 X-IronPort-AV: E=Sophos;i="5.96,264,1665471600"; 
-   d="scan'208";a="321228018"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2022 21:13:53 -0800
+   d="scan'208";a="321965933"
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Dec 2022 21:41:15 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10568"; a="645080042"
+X-IronPort-AV: E=McAfee;i="6500,9779,10568"; a="980457893"
 X-IronPort-AV: E=Sophos;i="5.96,264,1665471600"; 
-   d="scan'208";a="645080042"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orsmga007.jf.intel.com with ESMTP; 21 Dec 2022 21:13:52 -0800
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+   d="scan'208";a="980457893"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmsmga005.fm.intel.com with ESMTP; 21 Dec 2022 21:41:15 -0800
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Wed, 21 Dec 2022 21:13:52 -0800
-Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
+ 15.1.2507.16; Wed, 21 Dec 2022 21:41:14 -0800
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16; Wed, 21 Dec 2022 21:13:51 -0800
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.16 via Frontend Transport; Wed, 21 Dec 2022 21:13:51 -0800
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.169)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+ 15.1.2507.16 via Frontend Transport; Wed, 21 Dec 2022 21:41:14 -0800
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.45) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.16; Wed, 21 Dec 2022 21:13:49 -0800
+ 15.1.2507.16; Wed, 21 Dec 2022 21:41:14 -0800
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ZP0njF6WAmqS7cFjy/VdNEIObt1kkKHyMO8yb6DjMPCBGZEDSy8YQ+uP7ZnIAKLShk05aMW6sGNYlciPInooc9An9Rc/1bGta/ZP6Z53XtGuYs3E6w+Gfg2ugRQi1ARwhzPrl66SYcfohqhXg2ceO6qUVjw7k7ZOjsCmcvQK8JZZUksTav/3nUNq0Cgu+0HKDCODo6zDrfDEOW5cS0jv76rjGjLC8dyI4JlwPzc9x8fA3wYil0mNoBLhfPsawS5KHpD+ApnrqsKlXcAGyTHOvczGdas5hSmXYGwCNLNxVsi1Kp0Vnsi2Xa+2Or5cDNSJLWFCG00onPTbl/KONtoiTQ==
+ b=iTU8TDA6YDU2wwWT3bOHmrWH2nqIXhaMIVITMvupSjawAUXt9wnmzSnaZd8qzVw6WQpQ+a/NTl0y8JrAGn0bVIeR73JC2ELWg+i7skfZ7MmobQeg1b8GwV3JuTjzgbNj1485ctXCTAECvl2DJqotXavWVmqqAufWBIoFyT9y2uYxFk1PbNARNFHjPFrwdw3rMvIoNV88hDeTy+H+/aHBxI+k2goHHMeEhdd7SM8VngKg5fi3svBlxUV361ny5S5KwxW7QXRK1pzDa1WttbTAxbjb6ZkFIc4KeTzItvgH9w8SUwmEF2obEaQen6PxuafMbHXBsMBxBEm3IqULR7SLHA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s8b608D77EZGKNyl200jVR8vldWynzDDunqC7STo9tQ=;
- b=INBJazG1zn3TBbnKc0mIN0vY+FtL7ylRYTpxour0EH1Chy/cbLvWJvW4Q/2D6shZ0/YcQ+e75Fmrz73unenjJY14agtnwiQwHKbD7CNo0cNVEmXcare0wymuTTwIWh/U+qRwxjwdhqTI1w+RW4xGdWS+qkF7BXEetBqz10NyR7IHSvWAhYBAJgJEvIuTnNbwgOLfVM5hkgWZLj5FnOyJT8x0eFXkiftei9HlgsnSsdHUHyyGOvNHKdDUwWKv1TdG4HbpVsTIcbLosjHMk+sM9Rj70XiDXuBZXWOZgPvoyYEPwVm5YIYyGolvJRpYYVO3YcQ6+7JIiTBP/aM5EHFavA==
+ bh=zXjmNwxDO3Xec2XZAZarYMfYNHW0ySRLe1UZNq3/iwc=;
+ b=BI+Fq0yBc55e0YS9bpry/p/4oyssudd5ddmtDv1a3VszqEqC9f2VeGUxs2Etz+IsMGQ1UxLxuLT/nzAoyJ+MlH3QbvuSrUxulBCHjcG/+Mf94NWFoNJ7Zm+lh1gOJUzHS62MTDENAWxYkp+Pk85lXiYxuwpfwXr/4W0YfAhJktvTrGSXXkXISzzRl9rwZ2EK7UyIoHSzsFZJDQ1sOekmTlrMCwDSdAFy90mim9WXQ5Ma/L2zYRrlzlWZLRDC4cecPekT2blp7I9o8tHNS7CqdXTO2QNHTN+k1/JvEw1D64aOoMEpquMby490pOVePF/yfJ0gcDJDJxDCB5R0GrFVRQ==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
  dkim=pass header.d=intel.com; arc=none
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=intel.com;
 Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by CY8PR11MB7265.namprd11.prod.outlook.com (2603:10b6:930:98::18) with
+ by CY5PR11MB6439.namprd11.prod.outlook.com (2603:10b6:930:34::11) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5924.16; Thu, 22 Dec
- 2022 05:13:47 +0000
+ 2022 05:41:07 +0000
 Received: from SA1PR11MB6733.namprd11.prod.outlook.com
  ([fe80::288d:5cae:2f30:828b]) by SA1PR11MB6733.namprd11.prod.outlook.com
  ([fe80::288d:5cae:2f30:828b%6]) with mapi id 15.20.5924.016; Thu, 22 Dec 2022
- 05:13:47 +0000
-Date:   Wed, 21 Dec 2022 21:13:43 -0800
+ 05:41:07 +0000
+Date:   Wed, 21 Dec 2022 21:41:01 -0800
 From:   Ira Weiny <ira.weiny@intel.com>
 To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
 CC:     Evgeniy Dushistov <dushistov@mail.ru>,
         Al Viro <viro@zeniv.linux.org.uk>,
         <linux-kernel@vger.kernel.org>, <bpf@vger.kernel.org>,
         <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH v4 2/3] fs/ufs: Change the signature of ufs_get_page()
-Message-ID: <Y6Pnh98KZj0D+FUR@iweiny-desk3>
+Subject: Re: [PATCH v4 3/3] fs/ufs: Replace kmap() with kmap_local_page()
+Message-ID: <Y6Pt7QXbXjaFpNjx@iweiny-desk3>
 References: <20221221172802.18743-1-fmdefrancesco@gmail.com>
- <20221221172802.18743-3-fmdefrancesco@gmail.com>
-Content-Type: text/plain; charset="us-ascii"
+ <20221221172802.18743-4-fmdefrancesco@gmail.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20221221172802.18743-3-fmdefrancesco@gmail.com>
-X-ClientProxiedBy: BY5PR17CA0061.namprd17.prod.outlook.com
- (2603:10b6:a03:167::38) To SA1PR11MB6733.namprd11.prod.outlook.com
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20221221172802.18743-4-fmdefrancesco@gmail.com>
+X-ClientProxiedBy: SJ0PR03CA0006.namprd03.prod.outlook.com
+ (2603:10b6:a03:33a::11) To SA1PR11MB6733.namprd11.prod.outlook.com
  (2603:10b6:806:25c::17)
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|CY8PR11MB7265:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5db47e37-526d-409e-8fa6-08dae3db4e22
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|CY5PR11MB6439:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4c426229-0a56-4854-61f8-08dae3df1fc2
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: R1SPRMRx3IKBnFW14rymWwIaV9ZjJVTnORiD1rfHfDx4IaPzRfD5aGVthvlg5/PG5KV2wMQejVuevM3jtwjoGimQeWkRQCKbD5YuVgMbXb3WH5Ja9T9iCukKku2SFl1Y0nF11yfB1okgJSqRn8GnL9Kilfsj3YrWDtM0C4KGdbjZ9GViGHhnXNi31WdP7vGtyYYWuVZutbzyVc1DTknHh7vAx9FtXiin4KgweM0C2+8+BLIW8S3nv1d4RzyJiSW1Yv9KVBTGsnAr4OXwxV09XJr05CLUNLZjcf1fRXlH5SXcV9okmOD+HkcYXN5G4nuwTq8PSFA4cues5xMmUpmQJXp6Qah6ugylfz6jaoOcvBa+NGEsigKfPr25RXq8BPMOC+0FsllpSyMXmJFSG7L+xKQgQyBzi9+y6KxeopS63vHld+1pxRbGuy30k67UeTN0A65+/dtBIad36ZfUWn1dom8izFKryX4Zg6t7cG/lczgnFrR+z5N8Sq2FQpXYCmkF9wIB62NhjDrD/Y/yYiRT3nGabBvUL1gia61iEKjb/maK6BvaqeWCXAM/gHaGMc/+qAO2S2ODMKpb4vyZGgFkpE4l2pBWVkL8CARRaUGqGRj+0W3PihNXZLjVK5m6xmTnJtcJiZXM0uTaxnHyFGZwMQ2SmxZpj0/ncKVnXF3ARpG2PJ1AXbrsuT2EIy5r5gru
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(7916004)(39860400002)(396003)(376002)(136003)(346002)(366004)(451199015)(6486002)(6506007)(478600001)(66476007)(26005)(9686003)(66556008)(186003)(6916009)(86362001)(66946007)(316002)(6512007)(54906003)(6666004)(8676002)(8936002)(4326008)(5660300002)(82960400001)(2906002)(41300700001)(38100700002)(44832011)(33716001)(83380400001)(67856001);DIR:OUT;SFP:1102;
+X-Microsoft-Antispam-Message-Info: hKIAfpXI5UVmqcqMu25e2PA/dTjFdBP0QHDKpLV92vqw96zNDP1IVxcp2zXhvjO0mFu4hXHbfe0AVpQ/S+6z2ur1KrVqMx7qFL7Vi/3KTWHaLkrySMKSgiyarFBDkPicNcoqSGX+w1bACeTUHKhLnNqvEiwZfWAabHaombkxc4/q5cF+5nZ6ysubSeYhsBGkx4B6I7p/bsDShbnbnUKgT23ooQTkQ3DKtGMsMaK0mFZg+p9aJeHZjnDZJhONoLO96x306jgQgO0/90ycC12Q46xml1+Ao/6jFvQq/o6v470niNEnbuIepO+yvrTVSuFDtoC0HvgsSjjK9IQy7t8AQfP75EFUuuEzId46qoRGFc2ToSQFzXtpf0+S6YQJYiys73MkFNaLRTD6AcEHJEIVNwJ2tlI67TNf5shrtuqsYVStj/I1t2ezDXXBQKYt10j7dOTIS4dn5rfpVcfREjRiUPCbqqx29YRi4D6t1bF1ldAQ/bKh6d1EqqAr/sHUDc5Gdi9F+iifpTGUQfyCOAYFX+aiLDIhCDfqgTxWaSecEGylyhhzbBx35RjpFuzrubdmeFV/iKRcdrtQUSveEYlz/oscqgYf2M6JYAT3jzHi46XujgVZiO9a9P4UD7iTHm9jst5mTVwxH/ynNpvivjAe0g==
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(7916004)(346002)(136003)(39860400002)(376002)(366004)(396003)(451199015)(54906003)(6506007)(6916009)(478600001)(316002)(82960400001)(6486002)(33716001)(38100700002)(8676002)(66476007)(66946007)(86362001)(66556008)(4326008)(83380400001)(5660300002)(8936002)(6666004)(9686003)(2906002)(41300700001)(186003)(6512007)(26005)(44832011);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?P+ILRYTz4TqCusH0DmE92DL9AxWS2D61/oRFuK81mIVy8WLqh9yQ4mIjCG+y?=
- =?us-ascii?Q?FPBQ5b4zVT6AFumHxSs2KkZSSSoywQfqYCBnKmaGxfFSVPFtl/dwzt2r7Juz?=
- =?us-ascii?Q?kxPA5ktgYGR/0E9DJ2hTtyJNoqb30XXZkiWTk5roFWKQC8maMRwPVLSxc2R+?=
- =?us-ascii?Q?+oBCxNxhqiEyIomWnYTBGBTCUDkwuc1RbV6azgrDDiZjxnL3n+kK2ZMh4Bbr?=
- =?us-ascii?Q?Esvppcc/T6uEWV5CsSsCsSPQnpHonrEzBlev/PEn2F/beeaDddGmu2vayzRz?=
- =?us-ascii?Q?kgtGqwsggrqX4cCL+ija+CqNf9+Xz5jxnmT+nzCozAs22L5xHKCRi5zeV+E6?=
- =?us-ascii?Q?J9gqAAdYaRz8CChTNFHeMHiN6EngmZFX8ZH15LWink3JnuXwTeEHXyp4kV+t?=
- =?us-ascii?Q?QSbzQ3l4ZMMKaR4rDYbuucEY01bHlpZXi+inNYWk1FLJTYwyJZ5hRg3uKQcR?=
- =?us-ascii?Q?/hxT8TWkzrj5Mewrdh+wxMWc1XJ4/deqDzc51LuLNYUAXHcl8cQKkXtexL/i?=
- =?us-ascii?Q?OXXfHALu3pVDUTrmCu8oie1MUsa53oVzhdYZSfrOeZ4FeeqoQez0i0WU2Wfz?=
- =?us-ascii?Q?3cN8Zw2fkkLrg+LyUJQOiMKtMCFcP+dAbGq+BLGYDxXj3px9I2cyuDjHftzi?=
- =?us-ascii?Q?sR5RAy2MymjNQ/llkuWvJMGWrZY7ziTEiFoC1RXUnzs6Sblq90mZrZHe/DCA?=
- =?us-ascii?Q?Q6FnHn+3wWGc9RLgqjJ/6U1NYmVDivOpP+zHaRp0FoP7mQ0EjQj4lG+Gj6o5?=
- =?us-ascii?Q?yiZqeHvK44qKMfaMX1VwtIjUzbNGJZ2WVgq6oj7TwOuOHIlwH5zNFAgIvkxU?=
- =?us-ascii?Q?UC72+p2CVthfPo1AX9ZO62pIsqwgvfMVe3K4P6IQHLAF7gbRMvXvd2S2szG+?=
- =?us-ascii?Q?3MmUWQGe2l7eFiJSfXJBZ2LzqlV7lJr7j638hmPP6Im1T4b1nXNOCVCaR8U/?=
- =?us-ascii?Q?GBpS7zmRwYwGVAN2iHUEUuqxKUCe1pnkNlRb59pYYRsG37nkpwPF1I5U7XmQ?=
- =?us-ascii?Q?Z7w7fJoxtFwPM46/FH/4mIqQOOSbKKNOhhj+8ijcowMXcil59GBzZMgpdxyo?=
- =?us-ascii?Q?xqIufSS2ZOnUi3/DRz5LH4bj4ndVUMXLD63I9MmKpQ1k1dQWLfRhZAaunPe2?=
- =?us-ascii?Q?B+ucZj9XrCt+ithmiJQ0VpHU89j4FeIQ/wMoy85r9aNcutexOvZuMn0wiXzJ?=
- =?us-ascii?Q?Vsz+BHdBX65JIY2iZiGRxBWKpoI2hpn4EAZbquiBeapUO9buvBBR8/8l/ONT?=
- =?us-ascii?Q?Yg4bBFyod10PJkbAWOxR1WIXJw3jQ95Z9LKHREnOhL0FahjUwrV5PehRSP/s?=
- =?us-ascii?Q?hUw/cdxGlLoJXq1EOyHhi+uRmiUdFvr/BGeaFnoRcZUsqmxdEbeRFMyd3KE1?=
- =?us-ascii?Q?F8bRrMelP6YXVuTusMKjUK7U0jymDg63wNOBDm+mIQ/jISLf4vZLG2SxAILa?=
- =?us-ascii?Q?SewNLOLxF2hf5n0cJx01r57qtcCqAVUNR3vZYb3qBZLNH4JHX+vZfGA3dzRa?=
- =?us-ascii?Q?21FL603PzjgxDEcRo+4KTb1KeCE61mfj9ns07R8cRZR5yuKNRBUaK8srl/xO?=
- =?us-ascii?Q?FFDgzCLO+pz3WrnMnuboG0MfHSmgZKJjzfYiuY2O?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5db47e37-526d-409e-8fa6-08dae3db4e22
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?S2FMcWdwaXRwSC9iem5XRlpobzFhQm1sZU13MFo0alVNTjdEZ2xleGRxQi8w?=
+ =?utf-8?B?Z2VuYmwrZXhKVy9ienhUYnVnNVRjMTJDNk9uRHYxWnpqelBSbGtPTDNnaG1t?=
+ =?utf-8?B?RGtqY2ZCUExGSFVUUW1uWld2bit5YlJvRDFQeWgrVzJxTlVHWCtxYStZQ0Mz?=
+ =?utf-8?B?NkZEcVBETmdsQUtLc2VIWFlGczIxazJ4dUVmV2NOTUFhMTNEY3o4TTF1bWNT?=
+ =?utf-8?B?LzJ3VWRBZTBDK25hRThSa0lZdkN5N0ZmbnFqTStwcUozTlZnSXgzN2ZmakdK?=
+ =?utf-8?B?T3plam1RZU1DbXBpdWh3dkcxTHBrS2Z6T25mRytJZkgrWG1LQkZ2WXhBT3d0?=
+ =?utf-8?B?ckRPMHJFakdvWkt5KzZQZzBIZWhHNmdyWUt6aDY4WjluOEdESjBOc1pMcm11?=
+ =?utf-8?B?K0hFd1NpYWdsUTVqOW1OWWJXczk1VTN6eERhaHA1MXZXejl3bHhoZ2VNVGRl?=
+ =?utf-8?B?Nm9FK050S1VHRnF0OGhBWitDN3VXNmV1ZjVialNqbHgrT0w5S1hsaFhYNTB4?=
+ =?utf-8?B?emY3ZXFmMkQ0RjNlUGMrYmo0TEl0Mi9VT3haVWh6Z25RVW55TmNZeEpSRU9S?=
+ =?utf-8?B?QWg3WlRzdVNUNlMwdks0d3NianFrVmV0KzByREQwcUtvTjJNZWpHZzgzTXNH?=
+ =?utf-8?B?a2N1WHhGc3lRNHBJWGFiN0EweW84V1d3QWpKOVJUZFBDdWl4OEkxa1VEV2kv?=
+ =?utf-8?B?OVpqblp5aTZoNG1UYWpuR3BSSEtVVkRnd20vNUR3MU1DZi9aeDd6L2lGMkty?=
+ =?utf-8?B?VXFCNWR6NEt0U1dDYmptdi8wNHgzdWxaaTNuQTJaSVZpVzVKeWphSDkzYU9x?=
+ =?utf-8?B?bFdNUWhmaHpCQVBscnlSSDYrVDFEa1MvOHRWa2tJQUFMU3VHRlpFYm96QXNX?=
+ =?utf-8?B?N2syUlUxSXdsdXNZempSM1BZRjR0VU5PSS9RWC9sL3RPQ3BPeUlubGU2SXMy?=
+ =?utf-8?B?TnY3bGVPWmFSdlpEdGV4TStFU1NGVStjL3hkd0VtTWo0SEh1UjdzVEhFUzli?=
+ =?utf-8?B?eHpTaWhpaFF0emxrTWVONWtMQ2tscmx3YVVwNkUzZTZUazgzTE9qcjY5cFBo?=
+ =?utf-8?B?ODVtYUZTODVhWWFPaGVDTjJYOE5ZdkE4UUF3cHlKN0tHbEJ5ZTVjZWVtT3Bl?=
+ =?utf-8?B?K2Uramo2Q0RzTTNXTGJhaVJYRXl3SDk0cE1Cb1NpaWRtMS9zQ3p0ZFFyL2Fm?=
+ =?utf-8?B?enM4Q2psQUU4QTU4dlhoQVpjRU5kVWhYbzlEUVU5S2lHNG5Ld0hLT3BtRHcx?=
+ =?utf-8?B?cGR0VnlFMXgzT0NTMnl0WC90N2hjZkE1ZWtFWFB4aHpCUnhrV05jV2RGbExL?=
+ =?utf-8?B?TzhsS3JrTEhVTGhPYmM2UkVmQklzTWQvQkgzV2YydlllalhweDVzdEJJOGJI?=
+ =?utf-8?B?N3JrRmdIWWgxYzVtVU5lUFh2WEpLVHZRMnpMVXVJQURxL1VWaHhFdHJiZWxZ?=
+ =?utf-8?B?bmNpN1dFSis4TDNIQ250OGg4Q3A0eWlIdmordC9KM2xHVFdKcUpWdzZ3d3l6?=
+ =?utf-8?B?bEdZbVd5VnordlFKZW5EeU5tR3Nnb2pKUHI0bW56YXpXOVdZQWFMWTRLNHNL?=
+ =?utf-8?B?VjhBYWtpMW93QXU1aytlR0tTdlRRZ1ppcE1CVy9Cdml1bkVvUWt1ZVIvQm9z?=
+ =?utf-8?B?RWk2eS9rS3hxVU5ZdkJ0V1M2dUxDZ01Ed0x4aWtFVnArdkNEM2ExWEc2SUE1?=
+ =?utf-8?B?MHZBYzAyN3NSSW1mem5IQVJVcjhiZG1BREZ6VU9EdVNMcjBmTGdhbTJ1RGxS?=
+ =?utf-8?B?eWUvWjR2Y2dvWmZremlKaU16VThWcDRPVUE4MTI3OENhV0FBdHJoTFBQY0JW?=
+ =?utf-8?B?SDNpRCtQSDlDTjNmSVF2UnNKUS9oWDE1cDFseXNVRWJRaDRKMEJwMUNHZGRP?=
+ =?utf-8?B?QmZCOHpXdjlxTnkrdDl4a0dVYWdIMjV1bjlONEU2cExiNUJxYUsxamRPUEtk?=
+ =?utf-8?B?WWhmanlwZ2ZiU3lMbmdvVDFjdXF5V1JDTVZvUU5LYThzYllkU29maTVxVjNP?=
+ =?utf-8?B?WVRaTEJpRW04T0lMNis0K1NyWW9XRXZRdE14TS9VYWNWS3VtMGhHd2RaUHkr?=
+ =?utf-8?B?U2xXR2JsOXllNU80Z0xFYnllSXNnR1lRRk1KQUtLOWJsQUhsQmRydWV1UFlN?=
+ =?utf-8?Q?w0gZfnkRrq3w7iNb8Zx/nHFZc?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4c426229-0a56-4854-61f8-08dae3df1fc2
 X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Dec 2022 05:13:47.6451
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Dec 2022 05:41:07.7641
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LtStDiDZV1ePWqGHeE5WBcuCGNu/ebSwUrVgdfCpCvwbG+xxRLimrJyRuRSOTG9+SR9D51msN/I55Y681Gou0Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7265
+X-MS-Exchange-CrossTenant-UserPrincipalName: IewGuNQzgIeqbfkjzLbmd3lj1BePXDim15soIpmyL6BaOgBilor9U7NYANCB4KMPyeCztrtuikndV+uhZc200Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6439
 X-OriginatorOrg: intel.com
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 21, 2022 at 06:28:01PM +0100, Fabio M. De Francesco wrote:
-> Change the signature of ufs_get_page() in order to prepare this function
-> to the conversion to the use of kmap_local_page(). Change also those call
-> sites which are required to conform its invocations to the new
-> signature.
+On Wed, Dec 21, 2022 at 06:28:02PM +0100, Fabio M. De Francesco wrote:
+> kmap() is being deprecated in favor of kmap_local_page().
 > 
-> Cc: Ira Weiny <ira.weiny@intel.com>
+> There are two main problems with kmap(): (1) It comes with an overhead as
+> the mapping space is restricted and protected by a global lock for
+> synchronization and (2) it also requires global TLB invalidation when the
+> kmap’s pool wraps and it might block when the mapping space is fully
+> utilized until a slot becomes available.
+> 
+> With kmap_local_page() the mappings are per thread, CPU local, can take
+> page faults, and can be called from any context (including interrupts).
+> It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
+> the tasks can be preempted and, when they are scheduled to run again, the
+> kernel virtual addresses are restored and still valid.
+> 
+> Since its use in fs/ufs is safe everywhere, it should be preferred.
+> 
+> Therefore, replace kmap() with kmap_local_page() in fs/ufs. kunmap_local()
+> requires the mapping address, so return that address from ufs_get_page()
+> to be used in ufs_put_page().
+
+I don't see the calls to kunmap() in ufs_rename converted here?
+
+Did I miss them?
+
+I think those calls need to be changed to ufs_put_page() calls in a precursor
+patch to this one unless I'm missing something.
+
+> 
 > Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+> Suggested-by: Ira Weiny <ira.weiny@intel.com>
 > Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
 > ---
->  fs/ufs/dir.c | 49 +++++++++++++++++++++----------------------------
->  1 file changed, 21 insertions(+), 28 deletions(-)
+>  fs/ufs/dir.c | 75 ++++++++++++++++++++++++++++++++--------------------
+>  1 file changed, 46 insertions(+), 29 deletions(-)
 > 
 > diff --git a/fs/ufs/dir.c b/fs/ufs/dir.c
-> index 69f78583c9c1..9fa86614d2d1 100644
+> index 9fa86614d2d1..ed3568da29a8 100644
 > --- a/fs/ufs/dir.c
 > +++ b/fs/ufs/dir.c
-> @@ -185,7 +185,7 @@ static bool ufs_check_page(struct page *page)
+> @@ -61,9 +61,9 @@ static int ufs_commit_chunk(struct page *page, loff_t pos, unsigned len)
+>  	return err;
+>  }
+>  
+> -static inline void ufs_put_page(struct page *page)
+> +static inline void ufs_put_page(struct page *page, void *page_addr)
+>  {
+> -	kunmap(page);
+> +	kunmap_local((void *)((unsigned long)page_addr & PAGE_MASK));
+
+Any address in the page can be passed to kunmap_local() as this mask is done
+internally.
+
+>  	put_page(page);
+>  }
+>  
+> @@ -76,7 +76,7 @@ ino_t ufs_inode_by_name(struct inode *dir, const struct qstr *qstr)
+>  	de = ufs_find_entry(dir, qstr, &page);
+>  	if (de) {
+>  		res = fs32_to_cpu(dir->i_sb, de->d_ino);
+> -		ufs_put_page(page);
+> +		ufs_put_page(page, de);
+>  	}
+>  	return res;
+>  }
+> @@ -99,18 +99,17 @@ void ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
+>  	ufs_set_de_type(dir->i_sb, de, inode->i_mode);
+>  
+>  	err = ufs_commit_chunk(page, pos, len);
+> -	ufs_put_page(page);
+> +	ufs_put_page(page, de);
+>  	if (update_times)
+>  		dir->i_mtime = dir->i_ctime = current_time(dir);
+>  	mark_inode_dirty(dir);
+>  }
+>  
+>  
+> -static bool ufs_check_page(struct page *page)
+> +static bool ufs_check_page(struct page *page, char *kaddr)
+>  {
+>  	struct inode *dir = page->mapping->host;
+>  	struct super_block *sb = dir->i_sb;
+> -	char *kaddr = page_address(page);
+>  	unsigned offs, rec_len;
+>  	unsigned limit = PAGE_SIZE;
+>  	const unsigned chunk_mask = UFS_SB(sb)->s_uspi->s_dirblksize - 1;
+> @@ -185,23 +184,32 @@ static bool ufs_check_page(struct page *page)
 >  	return false;
 >  }
 >  
-> -static struct page *ufs_get_page(struct inode *dir, unsigned long n)
-> +static void *ufs_get_page(struct inode *dir, unsigned long n, struct page **p)
+> +/*
+> + * Calls to ufs_get_page()/ufs_put_page() must be nested according to the
+> + * rules documented in kmap_local_page()/kunmap_local().
+> + *
+> + * NOTE: ufs_find_entry() and ufs_dotdot() act as calls to ufs_get_page()
+> + * and must be treated accordingly for nesting purposes.
+> + */
+>  static void *ufs_get_page(struct inode *dir, unsigned long n, struct page **p)
 >  {
+> +	char *kaddr;
+> +
 >  	struct address_space *mapping = dir->i_mapping;
 >  	struct page *page = read_mapping_page(mapping, n, NULL);
-> @@ -195,8 +195,10 @@ static struct page *ufs_get_page(struct inode *dir, unsigned long n)
->  			if (!ufs_check_page(page))
+>  	if (!IS_ERR(page)) {
+> -		kmap(page);
+> +		kaddr = kmap_local_page(page);
+>  		if (unlikely(!PageChecked(page))) {
+> -			if (!ufs_check_page(page))
+> +			if (!ufs_check_page(page, kaddr))
 >  				goto fail;
 >  		}
-> +		*p = page;
-> +		return page_address(page);
+>  		*p = page;
+> -		return page_address(page);
+> +		return kaddr;
 >  	}
-> -	return page;
-> +	return ERR_CAST(page);
+>  	return ERR_CAST(page);
 >  
 >  fail:
->  	ufs_put_page(page);
-> @@ -227,15 +229,12 @@ ufs_next_entry(struct super_block *sb, struct ufs_dir_entry *p)
+> -	ufs_put_page(page);
+> +	ufs_put_page(page, kaddr);
+>  	return ERR_PTR(-EIO);
+>  }
 >  
+> @@ -227,6 +235,13 @@ ufs_next_entry(struct super_block *sb, struct ufs_dir_entry *p)
+>  					fs16_to_cpu(sb, p->d_reclen));
+>  }
+>  
+> +/*
+> + * Calls to ufs_get_page()/ufs_put_page() must be nested according to the
+> + * rules documented in kmap_local_page()/kunmap_local().
+> + *
+> + * ufs_dotdot() acts as a call to ufs_get_page() and must be treated
+> + * accordingly for nesting purposes.
+> + */
 >  struct ufs_dir_entry *ufs_dotdot(struct inode *dir, struct page **p)
 >  {
-> -	struct page *page = ufs_get_page(dir, 0);
-> -	struct ufs_dir_entry *de = NULL;
-> +	struct ufs_dir_entry *de = ufs_get_page(dir, 0, p);
-
-I don't know why but ufs_get_page() returning an address read really odd to me.
-But rolling around my head alternative names nothing seems better than this.
-
->  
-> -	if (!IS_ERR(page)) {
-> -		de = ufs_next_entry(dir->i_sb,
-> -				    (struct ufs_dir_entry *)page_address(page));
-> -		*p = page;
-> -	}
-> -	return de;
-> +	if (!IS_ERR(de))
-> +		return ufs_next_entry(dir->i_sb, de);
-> +	else
-> +		return NULL;
+>  	struct ufs_dir_entry *de = ufs_get_page(dir, 0, p);
+> @@ -238,12 +253,15 @@ struct ufs_dir_entry *ufs_dotdot(struct inode *dir, struct page **p)
 >  }
 >  
 >  /*
-> @@ -273,11 +272,10 @@ struct ufs_dir_entry *ufs_find_entry(struct inode *dir, const struct qstr *qstr,
->  		start = 0;
->  	n = start;
->  	do {
-> -		char *kaddr;
-> -		page = ufs_get_page(dir, n);
-> -		if (!IS_ERR(page)) {
-> -			kaddr = page_address(page);
-> -			de = (struct ufs_dir_entry *) kaddr;
-> +		char *kaddr = ufs_get_page(dir, n, &page);
-> +
-> +		if (!IS_ERR(kaddr)) {
-> +			de = (struct ufs_dir_entry *)kaddr;
->  			kaddr += ufs_last_byte(dir, n) - reclen;
->  			while ((char *) de <= kaddr) {
->  				if (ufs_match(sb, namelen, name, de))
-> @@ -328,12 +326,10 @@ int ufs_add_link(struct dentry *dentry, struct inode *inode)
->  	for (n = 0; n <= npages; n++) {
->  		char *dir_end;
->  
-> -		page = ufs_get_page(dir, n);
-> -		err = PTR_ERR(page);
-> -		if (IS_ERR(page))
-> -			goto out;
-> +		kaddr = ufs_get_page(dir, n, &page);
-> +		if (IS_ERR(kaddr))
-> +			return PTR_ERR(kaddr);
->  		lock_page(page);
-> -		kaddr = page_address(page);
->  		dir_end = kaddr + ufs_last_byte(dir, n);
->  		de = (struct ufs_dir_entry *)kaddr;
->  		kaddr += PAGE_SIZE - reclen;
-> @@ -395,7 +391,6 @@ int ufs_add_link(struct dentry *dentry, struct inode *inode)
+> - *	ufs_find_entry()
+> + * Finds an entry in the specified directory with the wanted name. It returns a
+> + * pointer to the directory's entry. The page in which the entry was found is
+> + * in the res_page out parameter. The page is returned mapped and unlocked.
+> + * The entry is guaranteed to be valid.
+>   *
+> - * finds an entry in the specified directory with the wanted name. It
+> - * returns the page in which the entry was found, and the entry itself
+> - * (as a parameter - res_dir). Page is returned mapped and unlocked.
+> - * Entry is guaranteed to be valid.
+
+I don't follow why this comment needed changing for this patch.  It probably
+warrants it's own patch.
+
+> + * On Success ufs_put_page() should be called on *res_page.
+> + *
+> + * ufs_find_entry() acts as a call to ufs_get_page() and must be treated
+> + * accordingly for nesting purposes.
+>   */
+>  struct ufs_dir_entry *ufs_find_entry(struct inode *dir, const struct qstr *qstr,
+>  				     struct page **res_page)
+> @@ -282,7 +300,7 @@ struct ufs_dir_entry *ufs_find_entry(struct inode *dir, const struct qstr *qstr,
+>  					goto found;
+>  				de = ufs_next_entry(sb, de);
+>  			}
+> -			ufs_put_page(page);
+> +			ufs_put_page(page, kaddr);
+>  		}
+>  		if (++n >= npages)
+>  			n = 0;
+> @@ -360,7 +378,7 @@ int ufs_add_link(struct dentry *dentry, struct inode *inode)
+>  			de = (struct ufs_dir_entry *) ((char *) de + rec_len);
+>  		}
+>  		unlock_page(page);
+> -		ufs_put_page(page);
+> +		ufs_put_page(page, kaddr);
+>  	}
+>  	BUG();
+>  	return -EINVAL;
+> @@ -390,7 +408,7 @@ int ufs_add_link(struct dentry *dentry, struct inode *inode)
+>  	mark_inode_dirty(dir);
 >  	/* OFFSET_CACHE */
 >  out_put:
->  	ufs_put_page(page);
-> -out:
+> -	ufs_put_page(page);
+> +	ufs_put_page(page, kaddr);
 >  	return err;
 >  out_unlock:
 >  	unlock_page(page);
-> @@ -429,6 +424,7 @@ ufs_readdir(struct file *file, struct dir_context *ctx)
->  	unsigned chunk_mask = ~(UFS_SB(sb)->s_uspi->s_dirblksize - 1);
->  	bool need_revalidate = !inode_eq_iversion(inode, file->f_version);
->  	unsigned flags = UFS_SB(sb)->s_flags;
-> +	struct page *page;
-
-NIT: Does page now leave the scope of the for loop?
-
->  
->  	UFSD("BEGIN\n");
->  
-> @@ -439,16 +435,14 @@ ufs_readdir(struct file *file, struct dir_context *ctx)
->  		char *kaddr, *limit;
->  		struct ufs_dir_entry *de;
-
-Couldn't that be declared here?
-
-Regardless I don't think this is broken.
-
-Reviewed-by: Ira Weiny <ira.weiny@intel.com>
-
->  
-> -		struct page *page = ufs_get_page(inode, n);
-> -
-> -		if (IS_ERR(page)) {
-> +		kaddr = ufs_get_page(inode, n, &page);
-> +		if (IS_ERR(kaddr)) {
->  			ufs_error(sb, __func__,
->  				  "bad page in #%lu",
->  				  inode->i_ino);
->  			ctx->pos += PAGE_SIZE - offset;
->  			return -EIO;
+> @@ -468,13 +486,13 @@ ufs_readdir(struct file *file, struct dir_context *ctx)
+>  					       ufs_get_de_namlen(sb, de),
+>  					       fs32_to_cpu(sb, de->d_ino),
+>  					       d_type)) {
+> -					ufs_put_page(page);
+> +					ufs_put_page(page, kaddr);
+>  					return 0;
+>  				}
+>  			}
+>  			ctx->pos += fs16_to_cpu(sb, de->d_reclen);
 >  		}
-> -		kaddr = page_address(page);
->  		if (unlikely(need_revalidate)) {
->  			if (offset) {
->  				offset = ufs_validate_entry(sb, kaddr, offset, chunk_mask);
-> @@ -595,12 +589,11 @@ int ufs_empty_dir(struct inode * inode)
+> -		ufs_put_page(page);
+> +		ufs_put_page(page, kaddr);
+>  	}
+>  	return 0;
+>  }
+> @@ -485,10 +503,10 @@ ufs_readdir(struct file *file, struct dir_context *ctx)
+>   * previous entry.
+>   */
+>  int ufs_delete_entry(struct inode *inode, struct ufs_dir_entry *dir,
+> -		     struct page * page)
+> +		     struct page *page)
+>  {
+>  	struct super_block *sb = inode->i_sb;
+> -	char *kaddr = page_address(page);
+> +	char *kaddr = (char *)((unsigned long)dir & PAGE_MASK);
+
+I feel like this deserves a comment to clarify that dir points somewhere in the
+page we need the base address of.
+
+>  	unsigned int from = offset_in_page(dir) & ~(UFS_SB(sb)->s_uspi->s_dirblksize - 1);
+>  	unsigned int to = offset_in_page(dir) + fs16_to_cpu(sb, dir->d_reclen);
+>  	loff_t pos;
+> @@ -527,7 +545,7 @@ int ufs_delete_entry(struct inode *inode, struct ufs_dir_entry *dir,
+>  	inode->i_ctime = inode->i_mtime = current_time(inode);
+>  	mark_inode_dirty(inode);
+>  out:
+> -	ufs_put_page(page);
+> +	ufs_put_page(page, kaddr);
+>  	UFSD("EXIT\n");
+>  	return err;
+>  }
+> @@ -551,8 +569,7 @@ int ufs_make_empty(struct inode * inode, struct inode *dir)
+>  		goto fail;
+>  	}
+>  
+> -	kmap(page);
+> -	base = (char*)page_address(page);
+> +	base = kmap_local_page(page);
+
+NIT: I'd make this conversion a separate patch.
+
+Ira
+
+>  	memset(base, 0, PAGE_SIZE);
+>  
+>  	de = (struct ufs_dir_entry *) base;
+> @@ -569,7 +586,7 @@ int ufs_make_empty(struct inode * inode, struct inode *dir)
+>  	de->d_reclen = cpu_to_fs16(sb, chunk_size - UFS_DIR_REC_LEN(1));
+>  	ufs_set_de_namlen(sb, de, 2);
+>  	strcpy (de->d_name, "..");
+> -	kunmap(page);
+> +	kunmap_local(base);
+>  
+>  	err = ufs_commit_chunk(page, 0, chunk_size);
+>  fail:
+> @@ -585,9 +602,9 @@ int ufs_empty_dir(struct inode * inode)
+>  	struct super_block *sb = inode->i_sb;
+>  	struct page *page = NULL;
+>  	unsigned long i, npages = dir_pages(inode);
+> +	char *kaddr;
+>  
 >  	for (i = 0; i < npages; i++) {
->  		char *kaddr;
+> -		char *kaddr;
 >  		struct ufs_dir_entry *de;
-> -		page = ufs_get_page(inode, i);
 >  
-> -		if (IS_ERR(page))
-> +		kaddr = ufs_get_page(inode, i, &page);
-> +		if (IS_ERR(kaddr))
->  			continue;
+>  		kaddr = ufs_get_page(inode, i, &page);
+> @@ -620,12 +637,12 @@ int ufs_empty_dir(struct inode * inode)
+>  			}
+>  			de = ufs_next_entry(sb, de);
+>  		}
+> -		ufs_put_page(page);
+> +		ufs_put_page(page, kaddr);
+>  	}
+>  	return 1;
 >  
-> -		kaddr = page_address(page);
->  		de = (struct ufs_dir_entry *)kaddr;
->  		kaddr += ufs_last_byte(inode, i) - UFS_DIR_REC_LEN(1);
+>  not_empty:
+> -	ufs_put_page(page);
+> +	ufs_put_page(page, kaddr);
+>  	return 0;
+>  }
 >  
 > -- 
 > 2.39.0
