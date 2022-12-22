@@ -2,60 +2,62 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3CF6965476F
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Dec 2022 21:43:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6AF2B654786
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Dec 2022 21:48:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230479AbiLVUnS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Dec 2022 15:43:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60038 "EHLO
+        id S229668AbiLVUsR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Dec 2022 15:48:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230260AbiLVUnQ (ORCPT
+        with ESMTP id S229525AbiLVUsP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Dec 2022 15:43:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4FF3D389
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Dec 2022 12:42:32 -0800 (PST)
+        Thu, 22 Dec 2022 15:48:15 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1BDF522B1B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Dec 2022 12:47:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671741751;
+        s=mimecast20190719; t=1671742049;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=ltDpmYqCGhbOq/yrPkshjRh5qr1TMsJK7Tg/zkPd44k=;
-        b=Ip7aZHcaK8qJNNwB0EJbJ44YW/LwJxHPMpJWAQkZ1IAhhGE1MDQE3P1Dl4t1ZJCDckEp4K
-        ZyrnswMswhkeG+emV8XPiI5bE/Z3umZG/XkH0WChPZi329TRamT3lDzSwpYIYurd7y17MX
-        0zlPXEIxfxRAwHDOo6SS7Bnk34NLKh4=
+        bh=MBkwW1AcUtBRbFAy7tADg9c0t3Qyu1AJkfHSKMyEdjg=;
+        b=eI1EHfi3TZsTDB+rk1CwrSqg3K1yvwicH2HLeRK83ZkZALzkALp2E/eRzndFYl7KqTRf7y
+        l+AJm6cl8MxoeVTNDMvcUE4LjTry4PNe8OCCtQ9+Xq30uo1iPwWrxDi10mhxX83aBtQGm9
+        TdnnhsfLZG/yk7DtEsIursmJz1dRJ2o=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-18-HPGPMRxlOoWd85n9TnjEdg-1; Thu, 22 Dec 2022 15:42:27 -0500
-X-MC-Unique: HPGPMRxlOoWd85n9TnjEdg-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+ us-mta-13-W0ApSfykO0OlxaKD-rvsxQ-1; Thu, 22 Dec 2022 15:47:25 -0500
+X-MC-Unique: W0ApSfykO0OlxaKD-rvsxQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id F13AC3815D21;
-        Thu, 22 Dec 2022 20:42:26 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 260B53C01E0A;
+        Thu, 22 Dec 2022 20:47:25 +0000 (UTC)
 Received: from madcap2.tricolour.ca (ovpn-0-3.rdu2.redhat.com [10.22.0.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 681EC2166B26;
-        Thu, 22 Dec 2022 20:42:25 +0000 (UTC)
-Date:   Thu, 22 Dec 2022 15:42:23 -0500
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A3ABE14152F4;
+        Thu, 22 Dec 2022 20:47:23 +0000 (UTC)
+Date:   Thu, 22 Dec 2022 15:47:21 -0500
 From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-api@vger.kernel.org,
-        Amir Goldstein <amir73il@gmail.com>,
+To:     Jan Kara <jack@suse.cz>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
         LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>
-Subject: Re: [PATCH v5 3/3] fanotify,audit: Allow audit to use the full
- permission event response
-Message-ID: <Y6TBL7+W7Q1lYc9Q@madcap2.tricolour.ca>
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v5 2/3] fanotify: define struct members to hold response
+ decision context
+Message-ID: <Y6TCWe4/nR957pFh@madcap2.tricolour.ca>
 References: <cover.1670606054.git.rgb@redhat.com>
- <79fcf72ea442eeede53ed5e6de567f8df8ef7d83.1670606054.git.rgb@redhat.com>
- <CAHC9VhQont7=S9pvTpLUmxVSj-g-j2ZhVCLiUki69vtp8rf-9A@mail.gmail.com>
+ <45da8423b9b1e8fc7abd68cd2269acff8cf9022a.1670606054.git.rgb@redhat.com>
+ <20221216164342.ojcbdifdmafq5njw@quack3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHC9VhQont7=S9pvTpLUmxVSj-g-j2ZhVCLiUki69vtp8rf-9A@mail.gmail.com>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+In-Reply-To: <20221216164342.ojcbdifdmafq5njw@quack3>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
@@ -66,111 +68,133 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2022-12-20 18:31, Paul Moore wrote:
-> On Mon, Dec 12, 2022 at 9:06 AM Richard Guy Briggs <rgb@redhat.com> wrote:
-> >
-> > This patch passes the full response so that the audit function can use all
-> > of it. The audit function was updated to log the additional information in
-> > the AUDIT_FANOTIFY record.
-> >
-> > Currently the only type of fanotify info that is defined is an audit
-> > rule number, but convert it to hex encoding to future-proof the field.
-> > Hex encoding suggested by Paul Moore <paul@paul-moore.com>.
-> >
-> > Sample records:
-> >   type=FANOTIFY msg=audit(1600385147.372:590): resp=2 fan_type=1 fan_info=3137 subj_trust=3 obj_trust=5
-> >   type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0 fan_info=3F subj_trust=2 obj_trust=2
-> >
+On 2022-12-16 17:43, Jan Kara wrote:
+> On Mon 12-12-22 09:06:10, Richard Guy Briggs wrote:
+> > This patch adds a flag, FAN_INFO and an extensible buffer to provide
+> > additional information about response decisions.  The buffer contains
+> > one or more headers defining the information type and the length of the
+> > following information.  The patch defines one additional information
+> > type, FAN_RESPONSE_INFO_AUDIT_RULE, to audit a rule number.  This will
+> > allow for the creation of other information types in the future if other
+> > users of the API identify different needs.
+> > 
 > > Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> > Link: https://lore.kernel.org/r/3075502.aeNJFYEL58@x2
+> > Link: https://lore.kernel.org/r/2745105.e9J7NaK4W3@x2
+> > Suggested-by: Jan Kara <jack@suse.cz>
+> > Link: https://lore.kernel.org/r/20201001101219.GE17860@quack2.suse.cz
 > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> > ---
-> >  fs/notify/fanotify/fanotify.c |  3 ++-
-> >  include/linux/audit.h         |  9 +++++----
-> >  kernel/auditsc.c              | 25 ++++++++++++++++++++++---
-> >  3 files changed, 29 insertions(+), 8 deletions(-)
+> 
+> Thanks for the patches. They look very good to me. Just two nits below. I
+> can do the small updates on commit if there would be no other changes. But
+> I'd like to get some review from audit guys for patch 3/3 before I commit
+> this.
+
+I'd prefer to send a followup patch based on your recommendations rather
+than have you modify it.  It does save some back and forth though...
+
+> > diff --git a/fs/notify/fanotify/fanotify_user.c b/fs/notify/fanotify/fanotify_user.c
+> > index caa1211bac8c..cf3584351e00 100644
+> > --- a/fs/notify/fanotify/fanotify_user.c
+> > +++ b/fs/notify/fanotify/fanotify_user.c
+> > @@ -283,19 +283,44 @@ static int create_fd(struct fsnotify_group *group, const struct path *path,
+> >  	return client_fd;
+> >  }
+> >  
+> > +static int process_access_response_info(int fd, const char __user *info, size_t info_len,
+> > +					struct fanotify_response_info_audit_rule *friar)
+> 
+> I prefer to keep lines within 80 columns, unless there is really good
+> reason (like with strings) to have them longer.
+
+Sure.  In this case, it buys us little since the last line is lined up
+with the arguments openning bracket and it one long struct name unless I
+unalign that argument and back up the indent by one.
+
+> BTW, why do you call the info structure 'friar'? I feel some language twist
+> escapes me ;)
+
+Fanotify_Response_Info_Audit_Rule, it is a pronounceable word, and
+besides they have a long reputation for making good beer.  :-D
+
+> > +{
+> > +	if (fd == FAN_NOFD)
+> > +		return -ENOENT;
+> 
+> I would not test 'fd' in this function at all. After all it is not part of
+> the response info structure and you do check it in
+> process_access_response() anyway.
+
+I wrestled with that.  I was even tempted to swallow the following fd
+check too, but the flow would not have made as much sense for the
+non-INFO case.
+
+My understanding from Amir was that FAN_NOFD was only to be sent in in
+conjuction with FAN_INFO to test if a newer kernel was present.
+
+I presumed that if FAN_NOFD was present without FAN_INFO that was an
+invalid input to an old kernel.
+
+> > +
+> > +	if (info_len != sizeof(*friar))
+> > +		return -EINVAL;
+> > +
+> > +	if (copy_from_user(friar, info, sizeof(*friar)))
+> > +		return -EFAULT;
+> > +
+> > +	if (friar->hdr.type != FAN_RESPONSE_INFO_AUDIT_RULE)
+> > +		return -EINVAL;
+> > +	if (friar->hdr.pad != 0)
+> > +		return -EINVAL;
+> > +	if (friar->hdr.len != sizeof(*friar))
+> > +		return -EINVAL;
+> > +
+> > +	return info_len;
+> > +}
+> > +
 > 
 > ...
 > 
-> > diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> > index d1fb821de104..8d523066d81f 100644
-> > --- a/kernel/auditsc.c
-> > +++ b/kernel/auditsc.c
-> > @@ -64,6 +64,7 @@
-> >  #include <uapi/linux/limits.h>
-> >  #include <uapi/linux/netfilter/nf_tables.h>
-> >  #include <uapi/linux/openat2.h> // struct open_how
-> > +#include <uapi/linux/fanotify.h>
-> >
-> >  #include "audit.h"
-> >
-> > @@ -2877,10 +2878,28 @@ void __audit_log_kern_module(char *name)
-> >         context->type = AUDIT_KERN_MODULE;
-> >  }
-> >
-> > -void __audit_fanotify(u32 response)
-> > +void __audit_fanotify(u32 response, struct fanotify_response_info_audit_rule *friar)
-> >  {
-> > -       audit_log(audit_context(), GFP_KERNEL,
-> > -               AUDIT_FANOTIFY, "resp=%u", response);
-> > +       struct audit_context *ctx = audit_context();
-> > +       struct audit_buffer *ab;
-> > +       char numbuf[12];
+> > @@ -327,10 +359,18 @@ static int process_access_response(struct fsnotify_group *group,
+> >  		return -EINVAL;
+> >  	}
+> >  
+> > -	if (fd < 0)
+> > +	if ((response & FAN_AUDIT) && !FAN_GROUP_FLAG(group, FAN_ENABLE_AUDIT))
+> >  		return -EINVAL;
+> >  
+> > -	if ((response & FAN_AUDIT) && !FAN_GROUP_FLAG(group, FAN_ENABLE_AUDIT))
+> > +	if (response & FAN_INFO) {
+> > +		ret = process_access_response_info(fd, info, info_len, &friar);
+> > +		if (ret < 0)
+> > +			return ret;
+> > +	} else {
+> > +		ret = 0;
+> > +	}
 > > +
-> > +       if (friar->hdr.type == FAN_RESPONSE_INFO_NONE) {
-> > +               audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
-> > +                         "resp=%u fan_type=%u fan_info=3F subj_trust=2 obj_trust=2",
-> > +                         response, FAN_RESPONSE_INFO_NONE);
+> > +	if (fd < 0)
+> >  		return -EINVAL;
 > 
-> The fan_info, subj_trust, and obj_trust constant values used here are
-> awfully magic-numbery and not the usual sentinel values one might
-> expect for a "none" operation, e.g. zeros/INT_MAX/etc. I believe a
-> comment here explaining the values would be a good idea.
-
-Ack.  I'll add a comment.  I would have preferred zero for default of
-unset, but Steve requested 0/1/2 no/yes/unknown.
-
-> > +               return;
-> > +       }
-> > +       ab = audit_log_start(ctx, GFP_KERNEL, AUDIT_FANOTIFY);
-> > +       if (ab) {
-> > +               audit_log_format(ab, "resp=%u fan_type=%u fan_info=",
-> > +                                response, friar->hdr.type);
-> > +               snprintf(numbuf, sizeof(numbuf), "%u", friar->rule_number);
-> > +               audit_log_n_hex(ab, numbuf, sizeof(numbuf));
+> And here I'd do:
 > 
-> It looks like the kernel's printf format string parsing supports %X so
-> why not just use that for now, we can always complicate it later if
-> needed.  It would probably also remove the need for the @ab, @numbuf,
-> and @ctx variables.  For example:
+> 	if (fd == FAN_NOFD)
+> 		return 0;
+> 	if (fd < 0)
+> 		return -EINVAL;
 > 
-> audit_log(audit_context(), GFP_KERNEL, AUDIT_FANOTIFY,
->   "resp=%u fan_type=%u fan_info=%X subj_trust=%u obj_trust=%u",
->   response, friar->hdr.type, friar->rule_number,
->   friar->subj_trust, friar->obj_trust);
-> 
-> Am I missing something?
+> As we talked in previous revisions we'd specialcase FAN_NOFD to just verify
+> extra info is understood by the kernel so that application writing fanotify
+> responses has a way to check which information it can provide to the
+> kernel.
 
-No, I am.  Thank you, that's much cleaner.
+The reason for including it in process_access_response_info() is to make
+sure that it is included in the FAN_INFO case to detect this extension.
+If it were included here
 
-> > +               audit_log_format(ab, " subj_trust=%u obj_trust=%u",
-> > +                                friar->subj_trust, friar->obj_trust);
-> > +               audit_log_end(ab);
-> > +       }
-> >  }
-> >
-> >  void __audit_tk_injoffset(struct timespec64 offset)
-> > --
-> > 2.27.0
+> 								Honza
 > 
 > -- 
-> paul-moore.com
-> 
-> --
-> Linux-audit mailing list
-> Linux-audit@redhat.com
-> https://listman.redhat.com/mailman/listinfo/linux-audit
-> 
+> Jan Kara <jack@suse.com>
+> SUSE Labs, CR
 
 - RGB
 
