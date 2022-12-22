@@ -2,65 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9B9896540AD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Dec 2022 13:05:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D39C6654216
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Dec 2022 14:45:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235576AbiLVMFY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Dec 2022 07:05:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39712 "EHLO
+        id S235065AbiLVNpV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Dec 2022 08:45:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34954 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235788AbiLVMFB (ORCPT
+        with ESMTP id S229548AbiLVNpU (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Dec 2022 07:05:01 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99A1D389D4
-        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Dec 2022 03:56:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1671710171;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=mRKidmqSKLNtQGQfAKwhWxh0PYTmuJUINjlyOCWghFA=;
-        b=i3EvwZ6UZOpaI2V5jSQwAeLgWIaIpgBbVe1CM9FUMrb5VmWYREGjbgSpFTtm17XzabOPFq
-        zgwvgSXt595y9rpm5LlZfu2bsOPD1Cx777cPMhQyYOyInD+WLvpcxBk2BlE8X6OI46kwJg
-        SUTREB9jhRoVNJEjEvctowa3TUakqK8=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-494-eNQ5OV07MFODFRfd2A4wtw-1; Thu, 22 Dec 2022 06:56:08 -0500
-X-MC-Unique: eNQ5OV07MFODFRfd2A4wtw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Thu, 22 Dec 2022 08:45:20 -0500
+Received: from mx1.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 531A31902B
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Dec 2022 05:45:18 -0800 (PST)
+Received: from theinternet.molgen.mpg.de (theinternet.molgen.mpg.de [141.14.31.7])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 936FA381A733;
-        Thu, 22 Dec 2022 11:56:07 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.96])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 472372026D4B;
-        Thu, 22 Dec 2022 11:56:06 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-To:     torvalds@linux-foundation.org
-cc:     dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Gaosheng Cui <cuigaosheng1@huawei.com>,
-        Colin Ian King <colin.i.king@gmail.com>,
-        linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [GIT PULL] afs: A fix, two cleanups and writepage removal
+        (Authenticated sender: buczek)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 3262260027FCB;
+        Thu, 22 Dec 2022 14:45:15 +0100 (CET)
+Subject: Re: Re: Bug#1024811: linux: /proc/[pid]/stat unparsable
+To:     Thorsten Glaser <tg@mirbsd.de>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        linux-fsdevel@vger.kernel.org
+Cc:     1024811@bugs.debian.org
+References: <166939644927.12906.17757536147994071219.reportbug@x61w.mirbsd.org>
+ <Y4Hshbyk9TEsSQsm@p183> <d1f6877d-a084-2099-5764-979ee163eace@evolvis.org>
+From:   Donald Buczek <buczek@molgen.mpg.de>
+Message-ID: <a721c273-9724-a652-1888-9c5d5ece7661@molgen.mpg.de>
+Date:   Thu, 22 Dec 2022 14:45:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.12.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2219504.1671710165.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Thu, 22 Dec 2022 11:56:05 +0000
-Message-ID: <2219505.1671710165@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+In-Reply-To: <d1f6877d-a084-2099-5764-979ee163eace@evolvis.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-5.3 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -68,51 +48,58 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Linus,
+On 12/22/22 1:53 AM, Thorsten Glaser wrote:
+> On Sat, 26 Nov 2022, Alexey Dobriyan wrote:
+> 
+>> /proc never escaped "comm" field of /proc/*/stat.
+> 
+> Yes, that’s precisely the bug.
+> 
+>> To parse /proc/*/stat reliably, search for '(' from the beginning, then
+>> for ')' backwards. Everything in between parenthesis is "comm".
+> 
+> That’s not guaranteed to stay reliable: fields can be, and have
+> been in the past, added, and new %s fields will break this. Do
+> not rely on it either.
+> 
+>> Everything else are numbers separated by spaces.
+> 
+> Currently, yes.
+> 
+> But the field is *clearly* documented as intended to be
+> parsable by scanf(3), which splits on white space. So the
+> Linux kernel MUST encode embedded whitespace so the
+> documented(!) access method works.
 
-Could you pull this please?  There's a fix for a couple of missing resourc=
-e
-counter decrements, two small cleanups of now-unused bits of code and a
-patch to remove writepage support from afs.
+No, Escaping would break existing programs which parse the line by searching for the ')' from the right. The format, surly, is ugly, but that is how it is.
 
-Thanks,
-David
----
-The following changes since commit b6bb9676f2165d518b35ba3bea5f1fcfc0d969b=
-f:
+If some documentation suggests, that you can just parse it with scanf, the documentation should be corrected/improved instead.
 
-  Merge tag 'm68knommu-for-v6.2' of git://git.kernel.org/pub/scm/linux/ker=
-nel/git/gerg/m68knommu (2022-12-20 08:56:35 -0600)
+Are you referring to proc(5) "The fields, in order, with their proper scanf(3) format specifiers, are listed below" [1] or something else?
 
-are available in the Git repository at:
+The referenced manual page is wrong in regard to the length, too. There is no 16 character limit to the field, because it can contain a workqueue task name, too:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git tags=
-/afs-next-20221222
+    buczek@theinternet:/tmp$ cat /proc/27190/stat
+    27190 (kworker/11:2-mm_percpu_wq) I 2 0 0 0 -1 69238880 0 0 0 0 0 170 0 0 20 0 1 0 109348986 0 0 18446744073709551615 0 0 0 0 0 0 0 2147483647 0 0 0 0 17 11 0 0 0 0 0 0 0 0 0 0 0 0 0
 
-for you to fetch changes up to a9eb558a5bea66cc43950632f5fffec6b5795233:
+The current limit seems to be 64 characters [2] when escaping is off, as it is the case with /proc/pid/stat. But generally the length of the field and thereby of the whole line seems to be rather undefined. So to parse that, you either either need to do some try-and-restart-with-a-bigger-buffer dance or use a buffer size of which you just hope that it will be big enough for the forseable time. 
 
-  afs: Stop implementing ->writepage() (2022-12-22 11:40:35 +0000)
+In fact, if you start escaping now you might also break programs which rely on the current 64 character limit.
 
-----------------------------------------------------------------
-afs next
+Best
 
-----------------------------------------------------------------
-Colin Ian King (1):
-      afs: remove variable nr_servers
+  Donald
 
-David Howells (2):
-      afs: Fix lost servers_outstanding count
-      afs: Stop implementing ->writepage()
+[1]: https://man7.org/linux/man-pages/man5/proc.5.html
+[2]: https://elixir.bootlin.com/linux/latest/source/fs/proc/array.c#L99
 
-Gaosheng Cui (1):
-      afs: remove afs_cache_netfs and afs_zap_permits() declarations
+> 
+> bye,
+> //mirabilos
+> 
 
- fs/afs/dir.c      |  1 +
- fs/afs/file.c     |  3 +-
- fs/afs/fs_probe.c |  5 +++-
- fs/afs/internal.h |  8 ------
- fs/afs/volume.c   |  6 +---
- fs/afs/write.c    | 83 +++++++++++++++++++++++++++++++-------------------=
------
- 6 files changed, 55 insertions(+), 51 deletions(-)
 
+-- 
+Donald Buczek
+buczek@molgen.mpg.de
+Tel: +49 30 8413 1433
