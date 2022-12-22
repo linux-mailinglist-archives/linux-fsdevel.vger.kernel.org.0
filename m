@@ -2,154 +2,79 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D160E6543CD
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Dec 2022 16:06:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D92E0654563
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 22 Dec 2022 17:52:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235914AbiLVPGi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 22 Dec 2022 10:06:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52792 "EHLO
+        id S230271AbiLVQv4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 22 Dec 2022 11:51:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54594 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235885AbiLVPGR (ORCPT
+        with ESMTP id S230071AbiLVQvy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 22 Dec 2022 10:06:17 -0500
-Received: from out162-62-57-210.mail.qq.com (out162-62-57-210.mail.qq.com [162.62.57.210])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4C6EC2253A;
-        Thu, 22 Dec 2022 07:06:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
-        s=s201512; t=1671721564;
-        bh=qWvhPFkxHOCw18z6l8gnbRxNK5NNo+0WZuA+FGjUVJo=;
-        h=From:To:Cc:Subject:Date;
-        b=iCHCuIlDGueNA+LavRIq2LscZn8zHFg/Ondq1gq6K+4Azaasqq+HUCqkFaDz7z7VJ
-         Vtv4/2wBT8kUg6EGO3DLAv9IPA4C8khelfxoCJSt85bog9mY7IZmolPIA9sssr934T
-         Hn49yo4S6rjQsG0LUnqVhK/cePBKSg7tprVMxUGQ=
-Received: from wen-VirtualBox.lan ([222.182.118.246])
-        by newxmesmtplogicsvrsza2-0.qq.com (NewEsmtp) with SMTP
-        id 180A06B2; Thu, 22 Dec 2022 23:06:00 +0800
-X-QQ-mid: xmsmtpt1671721560txq9dgjgs
-Message-ID: <tencent_B38979DE0FF3B9B3EA887A37487B123BBD05@qq.com>
-X-QQ-XMAILINFO: MR/iVh5QLeieZhEVUGBRfdeskQHM+wLLc6O0DDT56u6OXEDqKbv/OCJieHhgG+
-         R4ZP76y2PVchPdP70r94/V8Bm6jfLZdrwuV2mlJW3EFWWNYaVEyXeTc0RKkEyTAXl304mB8wD+hx
-         zSnOhqPfHmRGLMS+9QE1Ind8z+XXyw97XtHY6ieqSzFRZIm9mFPYrC8ACxA9dU45SVoIALUP/tHR
-         Rry7avhQoB3G3s7yar3cI3IDnbLNCkUaf3maEfFAGsNbT38BvXkgbN2fbhFR6TPMiaKJ922vW84/
-         2Gwtcl63xzc/QlUqCj6ymr9wam+vpFvU97CwmkFI5E9ZorlQvouR1UGbM2BvhLG/SPw7pQthRoKY
-         hiz5zMWpc+DrG5QdU1jSwH5YjejNqMZvpquo6X73fUxtzIGi/c6/B57tmW1jRMp7LyhkE1cismsw
-         A7985Gl54dAqpBkm4Gj7t9/v5g4tdm0hRoPrTZUzaMfHZMLcs3Um0iIzL0jPxCOQGW1AXgYWv/zm
-         92O1xosZ0zWJYIJ0FFr5MTOlVB0HO27cZsbhEgutFr0+DgPbhDK9I6uIXsizlzgCWplc1cjR4Kov
-         398cPUsMVdx6OYpaMJrTz6S8/pmHuH3gegIw4duOMLYjYyXlXfnzIQXXVhhfH6PGh0L4P/0qHbTn
-         wbyjbtngAY3WVb00D0YLTyvnJyMZhm/pNEpuGmtMshlGo1ZI2xCEhyB6OfsNX8jdkwY+H0DWBLyE
-         nEywgkmbnhmOKklXKl6Ox9yaZe3kcYhHsQHqvujXYR6YQdTVdIT30upQrXxlBtIEMuYssaNgSs0h
-         ELRM0izRcYyuW80X/P/EE6OQx/Tli46BWHiC6LWiOaHt5GjBSjnUlJoJI46ieWqX7/Rx0T022qij
-         qRpA9JfZM8iYxGYOcaaWMp4ERBGw0h5r96nezi1TvLz7CzIBgFpQoAFLFNF/CAmT7FxbVybbMQiX
-         cib1tQ0vY37DU/mJIMR7C9o2ODJcHDQeG/JcWXBW2lGYjvDGwX3CmbkPQqCZ0XSP8ePWJJmM1vZ5
-         hjRCHPFgCPhFWcCmRsTR9cKlUsj2q112qBUNfplA==
-From:   wenyang.linux@foxmail.com
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Wen Yang <wenyang.linux@foxmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] eventfd: use a generic helper instead of an open coded wait_event
-Date:   Thu, 22 Dec 2022 23:05:52 +0800
-X-OQ-MSGID: <20221222150552.190999-1-wenyang.linux@foxmail.com>
-X-Mailer: git-send-email 2.25.1
+        Thu, 22 Dec 2022 11:51:54 -0500
+Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9802930F5E
+        for <linux-fsdevel@vger.kernel.org>; Thu, 22 Dec 2022 08:51:53 -0800 (PST)
+Received: from cwcc.thunk.org (pool-173-48-120-46.bstnma.fios.verizon.net [173.48.120.46])
+        (authenticated bits=0)
+        (User authenticated as tytso@ATHENA.MIT.EDU)
+        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 2BMGpOt9009971
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 22 Dec 2022 11:51:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
+        t=1671727886; bh=8VQE476fItcQEyvNi8YKNC8SHTVYFOvKq/RWJ11ZYc4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To;
+        b=Y1HUp4TlkjWs/IvOpsjLbqbpZe+niMvbTyQFgq18Rn7JlP6ObL6lD9ZL5Xnb/S0ue
+         7iHqTFmahQYKRygUKPKZDG8lqTJ8ZzzJIfFiovx5n6ShIphokTD5AF1yJhNOU8A8O2
+         hyU19A5xaWaML2UA+BXAGFCY3f51984ew9C5fSNV8mrd9gB2NefJn6U/o338pQKl16
+         bWZ/t/Sf4bjjkjzOCuuRpEy4IFbCPX2c+X/kAQAFZW9JzTBbaQhIiLnUcUTH6208gg
+         7unZOMQnyuw8bTiHMGjyn04+lWpvvkSCvQzOVH/QpmmM3Q4olO1oAhAP6SHieRES+t
+         JdB6A/aagyooQ==
+Received: by cwcc.thunk.org (Postfix, from userid 15806)
+        id C831615C39F2; Thu, 22 Dec 2022 11:51:23 -0500 (EST)
+Date:   Thu, 22 Dec 2022 11:51:23 -0500
+From:   "Theodore Ts'o" <tytso@mit.edu>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: Separate mailing list (and git and patchwork) for fsverity?
+Message-ID: <Y6SLC9DG1s/4NhPL@mit.edu>
+References: <Y5jRbLEJh3S46Jer@sol.localdomain>
+ <Y6ObULdVm2UN5kw1@sol.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        HELO_DYNAMIC_IPADDR,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,RDNS_DYNAMIC,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y6ObULdVm2UN5kw1@sol.localdomain>
+X-Spam-Status: No, score=-1.5 required=5.0 tests=BAYES_00,DKIM_INVALID,
+        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE,SUSPICIOUS_RECIPS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Wen Yang <wenyang.linux@foxmail.com>
+On Wed, Dec 21, 2022 at 03:48:32PM -0800, Eric Biggers wrote:
+> > What would people say about having a separate mailing list, git repo, and
+> > patchwork project for fsverity?  So the fsverity entry would look like:
+> > 
+> > FSVERITY: READ-ONLY FILE-BASED AUTHENTICITY PROTECTION
+> > [...]
+> > L:      linux-fsverity@vger.kernel.org
+> > Q:      https://patchwork.kernel.org/project/linux-fsverity/list/
+> > T:      git git://git.kernel.org/pub/scm/fs/fsverity/fsverity.git
+> > [...]
 
-Use wait_event_interruptible_locked_irq() in the eventfd_{write,read} to
-avoid the longer, open coded equivalent.
+This makes sense to me.  I wonder if we should use the new
+https://lists.linux.dev mailing list hosting service with a mailing
+list name fsverity@lsts.linux.dev?
 
-Signed-off-by: Wen Yang <wenyang.linux@foxmail.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
----
- fs/eventfd.c | 43 +++++++------------------------------------
- 1 file changed, 7 insertions(+), 36 deletions(-)
+The thinking was that we would eventually migrate lists from vger to
+the new list infrastructure, so it might make sense to just use it for
+a new list.  All mailing lists lists.linux.dev are archived on
+lore.kernel.org, so other than the e-mail address and using something
+a bit more modern than Majordomo for list management, it's mostly the
+same.
 
-diff --git a/fs/eventfd.c b/fs/eventfd.c
-index 249ca6c0b784..5ff944a17d6d 100644
---- a/fs/eventfd.c
-+++ b/fs/eventfd.c
-@@ -228,7 +228,6 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
- 	struct file *file = iocb->ki_filp;
- 	struct eventfd_ctx *ctx = file->private_data;
- 	__u64 ucnt = 0;
--	DECLARE_WAITQUEUE(wait, current);
- 
- 	if (iov_iter_count(to) < sizeof(ucnt))
- 		return -EINVAL;
-@@ -239,23 +238,9 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
- 			spin_unlock_irq(&ctx->wqh.lock);
- 			return -EAGAIN;
- 		}
--		__add_wait_queue(&ctx->wqh, &wait);
--		for (;;) {
--			set_current_state(TASK_INTERRUPTIBLE);
--			if (ctx->count)
--				break;
--			if (signal_pending(current)) {
--				__remove_wait_queue(&ctx->wqh, &wait);
--				__set_current_state(TASK_RUNNING);
--				spin_unlock_irq(&ctx->wqh.lock);
--				return -ERESTARTSYS;
--			}
--			spin_unlock_irq(&ctx->wqh.lock);
--			schedule();
--			spin_lock_irq(&ctx->wqh.lock);
--		}
--		__remove_wait_queue(&ctx->wqh, &wait);
--		__set_current_state(TASK_RUNNING);
-+
-+		if (wait_event_interruptible_locked_irq(ctx->wqh, ctx->count))
-+			return -ERESTARTSYS;
- 	}
- 	eventfd_ctx_do_read(ctx, &ucnt);
- 	current->in_eventfd = 1;
-@@ -275,7 +260,6 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
- 	struct eventfd_ctx *ctx = file->private_data;
- 	ssize_t res;
- 	__u64 ucnt;
--	DECLARE_WAITQUEUE(wait, current);
- 
- 	if (count < sizeof(ucnt))
- 		return -EINVAL;
-@@ -288,23 +272,10 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
- 	if (ULLONG_MAX - ctx->count > ucnt)
- 		res = sizeof(ucnt);
- 	else if (!(file->f_flags & O_NONBLOCK)) {
--		__add_wait_queue(&ctx->wqh, &wait);
--		for (res = 0;;) {
--			set_current_state(TASK_INTERRUPTIBLE);
--			if (ULLONG_MAX - ctx->count > ucnt) {
--				res = sizeof(ucnt);
--				break;
--			}
--			if (signal_pending(current)) {
--				res = -ERESTARTSYS;
--				break;
--			}
--			spin_unlock_irq(&ctx->wqh.lock);
--			schedule();
--			spin_lock_irq(&ctx->wqh.lock);
--		}
--		__remove_wait_queue(&ctx->wqh, &wait);
--		__set_current_state(TASK_RUNNING);
-+		res = wait_event_interruptible_locked_irq(ctx->wqh,
-+							  ULLONG_MAX - ctx->count > ucnt);
-+		if (!res)
-+			res =  sizeof(ucnt);
- 	}
- 	if (likely(res > 0)) {
- 		ctx->count += ucnt;
--- 
-2.25.1
-
+						- Ted
