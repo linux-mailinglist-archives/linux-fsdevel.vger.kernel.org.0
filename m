@@ -2,117 +2,112 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 61A0D654F8C
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Dec 2022 12:15:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9C066551B1
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Dec 2022 15:56:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235814AbiLWLPa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Dec 2022 06:15:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41190 "EHLO
+        id S236425AbiLWO4U (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Dec 2022 09:56:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41068 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229735AbiLWLP2 (ORCPT
+        with ESMTP id S229658AbiLWO4U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Dec 2022 06:15:28 -0500
-Received: from nautica.notk.org (ipv6.notk.org [IPv6:2001:41d0:1:7a93::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6378AE95;
-        Fri, 23 Dec 2022 03:15:24 -0800 (PST)
-Received: by nautica.notk.org (Postfix, from userid 108)
-        id 00301C01B; Fri, 23 Dec 2022 12:15:35 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1671794136; bh=VN5EBYZqJL3wQsJ8/hshGhgSI3cKSXMIvWYt8/UPKFM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=GvUwMFT0Q6aYikdx7+ZWM69hPxdNa0tfsCa0zyvxN5AGOR2mzoqBpf5hTdluw552j
-         NcUZVbAwPk+Q6QaLM4SBJfXG+uMh/thXSBkscaP5OT0xD293L485SbIlwyDCXmMRXw
-         XuhsCzHTxUI0HsaNHe8EUcnfuvcOLcktHEy0qbbs+e0FZFJOJSxOmeZ2yDrwgpB2GO
-         z0vWfoxc2UcneQr8p2jGupykyZVkvsqnMt+GPv3ONNQpT0+DwCucO8kV11bnfAMDFv
-         2BqTq5QbMtBGQ15ytRRB3G+SW1zZwVmAgzZ5uEBQ3ChszRytXobxC9uAm1zknvW2ZM
-         sXAbXW3iaI7dg==
+        Fri, 23 Dec 2022 09:56:20 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 467FA1A047;
+        Fri, 23 Dec 2022 06:56:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=T0IzOuznf6jL2kGG15kuuaoVimSHPTfo71bEOOPjJZA=; b=YrW2NgDwKTrbrWOGs0aUyCmthg
+        dnuyDQ5co4JncqoOjZq6C/PqP2cYfpc0fk/o38kq68yanbk+vSUrGn4t4JFmcWses3SMl3mgpVJlX
+        g9N2WhR/neB3l0EN+WMaUg75aeODf6+6qtz9tNJPhR97MKY8esuoIBtqI9gsBaPyM24rydkv/Wm8b
+        i9WR3hcB1wCHxhRpTqsjese7K49E+sIzwRDqi1iXgqQ5awmoKgXlOUN125D+wGkPnhRhxVlD/p8en
+        UQNKFAqaJXKxFxyM1KohD3Tjb0GA3qVDkDB7u1qk9POnBcC5n/VLgUw+P4khYydw/uSmk0XDR4BM7
+        8IS2WJhA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1p8jT1-0096pR-35; Fri, 23 Dec 2022 14:56:11 +0000
+Date:   Fri, 23 Dec 2022 06:56:11 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
+Subject: Re: [RFC v3 1/7] fs: Add folio_may_straddle_isize helper
+Message-ID: <Y6XBi/YJ4QV3NK5q@infradead.org>
+References: <20221216150626.670312-1-agruenba@redhat.com>
+ <20221216150626.670312-2-agruenba@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221216150626.670312-2-agruenba@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
-X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
-Received: from odin.codewreck.org (localhost [127.0.0.1])
-        by nautica.notk.org (Postfix) with ESMTPS id 020A0C009;
-        Fri, 23 Dec 2022 12:15:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org; s=2;
-        t=1671794135; bh=VN5EBYZqJL3wQsJ8/hshGhgSI3cKSXMIvWYt8/UPKFM=;
-        h=Date:From:To:Cc:Subject:From;
-        b=jOIbSBD9sy53EBNLvHZoaDht+SWLUur99xN+t8rN/Iq/KOSSsXhz4OWts8/XOVvid
-         qlAAqfzFC9tbdEuxgkSPLQa8lzc1K0uElivb3PlF8i4ISlgDGEkZY6A5lhN8jtLcto
-         Wtx8rDPRuogYQQ8uC9CbllnziA94bauWo6LYrbBAT3Pqa0OVBVHiZ0KAPDIn4W05X3
-         NFliLgwxrTvX6x5M5Ranzgo6zkEOJ/SCHk/jO8sUeFNfo9RKKBEwvT2bt+pjyPmnPf
-         ia1ohKTTHEXS00Sx/lYinTD1j3jdujTQnafgAxkE4WWjubNP8q65wZ/RrTyFX6OK2V
-         9SZvqifuhhKgw==
-Received: from localhost (odin.codewreck.org [local])
-        by odin.codewreck.org (OpenSMTPD) with ESMTPA id c8efe9ed;
-        Fri, 23 Dec 2022 11:15:18 +0000 (UTC)
-Date:   Fri, 23 Dec 2022 20:15:03 +0900
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Christian Schoenebeck <linux_oss@crudebyte.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        v9fs-developer@lists.sourceforge.net
-Subject: [GIT PULL] 9p fixes for 6.2-rc1
-Message-ID: <Y6WNt21HKZmWTG3/@codewreck.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-The following changes since commit b7b275e60bcd5f89771e865a8239325f86d9927d:
+On Fri, Dec 16, 2022 at 04:06:20PM +0100, Andreas Gruenbacher wrote:
+> Add a folio_may_straddle_isize() helper as a replacement for
+> pagecache_isize_extended() when we have a locked folio.
 
-  Linux 6.1-rc7 (2022-11-27 13:31:48 -0800)
+I find the naming very confusing.  Any good reason to not follow
+the naming of pagecache_isize_extended an call it
+folio_isize_extended?
 
-are available in the Git repository at:
+> Use the new helper in generic_write_end(), iomap_write_end(),
+> ext4_write_end(), and ext4_journalled_write_end().
 
-  https://github.com/martinetd/linux tags/9p-for-6.2-rc1
+Please split this into a patch per caller in addition to the one
+adding the helper, and write commit logs explaining the rationale
+for the helper.  The obious ones I'm trying to guess are that
+the new helper avoid a page cache radix tree lookup and a lock
+page/folio cycle, but I'd rather hear that from the horses mouth
+in the commit log.
 
-for you to fetch changes up to 1a4f69ef15ec29b213e2b086b2502644e8ef76ee:
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -2164,16 +2164,15 @@ int generic_write_end(struct file *file, struct address_space *mapping,
+>  	 * But it's important to update i_size while still holding page lock:
+>  	 * page writeout could otherwise come in and zero beyond i_size.
+>  	 */
+> -	if (pos + copied > inode->i_size) {
+> +	if (pos + copied > old_size) {
 
-  9p/client: fix data race on req->status (2022-12-13 13:02:15 +0900)
+This is and unrelated and undocument (but useful) change.  Please split
+it out as well.
 
-----------------------------------------------------------------
-9p-for-6.2-rc1
+> + * This function must be called while we still hold i_rwsem - this not only
+> + * makes sure i_size is stable but also that userspace cannot observe the new
+> + * i_size value before we are prepared to handle mmap writes there.
 
-- improve p9_check_errors to check buffer size instead of msize when possible
-(e.g. not zero-copy)
-- some more syzbot and KCSAN fixes
-- minor headers include cleanup
+Please add a lockdep_assert_held_write to enforce that.
 
-----------------------------------------------------------------
-Christian Schoenebeck (2):
-      net/9p: distinguish zero-copy requests
-      net/9p: fix response size check in p9_check_errors()
+> +void folio_may_straddle_isize(struct inode *inode, struct folio *folio,
+> +			      loff_t old_size, loff_t start)
+> +{
+> +	unsigned int blocksize = i_blocksize(inode);
+> +
+> +	if (round_up(old_size, blocksize) >= round_down(start, blocksize))
+> +		return;
+> +
+> +	/*
+> +	 * See clear_page_dirty_for_io() for details why folio_set_dirty()
+> +	 * is needed.
+> +	 */
+> +	if (folio_mkclean(folio))
+> +		folio_set_dirty(folio);
 
-Christophe JAILLET (2):
-      9p/fs: Remove unneeded idr.h #include
-      9p/net: Remove unneeded idr.h #include
+Should pagecache_isize_extended be rewritten to use this helper,
+i.e. turn this into a factoring out of a helper?
 
-Dominique Martinet (2):
-      9p/xen: do not memcpy header into req->rc
-      9p/client: fix data race on req->status
+> +EXPORT_SYMBOL(folio_may_straddle_isize);
 
-Schspa Shi (1):
-      9p: set req refcount to zero to avoid uninitialized usage
-
- fs/9p/fid.c            |  1 -
- fs/9p/v9fs.c           |  1 -
- fs/9p/vfs_addr.c       |  1 -
- fs/9p/vfs_dentry.c     |  1 -
- fs/9p/vfs_dir.c        |  1 -
- fs/9p/vfs_file.c       |  1 -
- fs/9p/vfs_inode.c      |  1 -
- fs/9p/vfs_inode_dotl.c |  1 -
- fs/9p/vfs_super.c      |  1 -
- include/net/9p/9p.h    |  2 ++
- net/9p/client.c        | 33 ++++++++++++++++++++++-----------
- net/9p/trans_fd.c      | 13 ++++++-------
- net/9p/trans_rdma.c    |  5 ++---
- net/9p/trans_virtio.c  | 10 +++++-----
- net/9p/trans_xen.c     |  8 +++++---
- 15 files changed, 42 insertions(+), 38 deletions(-)
---
-Dominique
+Please make this an EXPORT_SYMBOL_GPL just like folio_mkclean.
