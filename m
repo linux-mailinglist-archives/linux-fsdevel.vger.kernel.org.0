@@ -2,46 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5D20F655443
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Dec 2022 21:37:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA6FD65543E
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Dec 2022 21:37:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233304AbiLWUhA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Dec 2022 15:37:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56414 "EHLO
+        id S233147AbiLWUg7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Dec 2022 15:36:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56416 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232555AbiLWUg6 (ORCPT
+        with ESMTP id S232834AbiLWUg6 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 23 Dec 2022 15:36:58 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 15F581D307;
-        Fri, 23 Dec 2022 12:36:56 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7236C1D309;
+        Fri, 23 Dec 2022 12:36:57 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 95C8861D28;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 0630261EED;
+        Fri, 23 Dec 2022 20:36:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C4AAC433F0;
         Fri, 23 Dec 2022 20:36:56 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1111C433D2;
-        Fri, 23 Dec 2022 20:36:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1671827816;
-        bh=kuHoLDiwzIWt/yosaiuNbL76iPgmKQeB3oMrh4p5xhg=;
-        h=From:To:Cc:Subject:Date:From;
-        b=B7Cu5MHwFXyHpkWZYORJe5npw6Jrf1ax1VKcHSg3IFIcJDzGR9a97Ncit2dNZPAIn
-         zchceSAsxgUW9LWZwY+Qs21W42THfLhyb73HWKYCQMD6C3nyrNmv03p6rEqIKff2vX
-         rGocAZ5zYfyRKsGNeRx5kmBn6OpsxJaxvfI0pqee3hx1HNdZXebmxhO1m0ANxY9Osp
-         w/RSqDNgQw3oGnoM8VKaM1pEOZnyb0VQUtFSgmrbPXZ4DFlh6cLeHnmzpgqJ0IJS7e
-         oHfsWT1U3jch+XCx3vCHk3VC1pQueY3KEUpgWxfGU6DxWmkttz2NYAqCwQeIyJzmL0
-         RCxP/GM9U3Qmg==
+        bh=iUdBvdNiQeVKQXe2/6eUg98m/CYbzWe1kqf/gTptRGs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=o8C+LgP264e1gacZYiTziQL/GH12JCvASKiy5SXoD1HtZfRYZgkHJnfdt2sNMXL0v
+         X34BZqbXGrrKNvyzK3y83BjWzbYzV5+Q1Is+CpOJXNGdxZDkXLyjDTQUga5Q2CZpCw
+         OqVIOMlddULiPdjDnZ3AymdRzg1VekEkK3hxKn9z04fj6l6qHYAgUz5kgQN0f41Od9
+         gAi0ffWHW59SXVPnfoc5xbsnhxtkkvYOI/9lYfpiJE0UuQWSj5+gwE6Mx9N32bmvLx
+         gZsX1DoA4hCdVrVaOBmsJQJMOwKM95SYpLYribt5jmS/hpnI7h7Xb+DI4LHfKiL+mL
+         ZLwS/xH9MtKVQ==
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fscrypt@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org,
         Andrey Albershteyn <aalbersh@redhat.com>
-Subject: [PATCH v2 00/11] fsverity: support for non-4K pages
-Date:   Fri, 23 Dec 2022 12:36:27 -0800
-Message-Id: <20221223203638.41293-1-ebiggers@kernel.org>
+Subject: [PATCH v2 01/11] fsverity: use unsigned long for level_start
+Date:   Fri, 23 Dec 2022 12:36:28 -0800
+Message-Id: <20221223203638.41293-2-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20221223203638.41293-1-ebiggers@kernel.org>
+References: <20221223203638.41293-1-ebiggers@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -54,94 +56,82 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[This patchset applies to mainline + some fsverity cleanups I sent out
- recently.  You can get everything from tag "fsverity-non4k-v2" of
- https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git ]
+From: Eric Biggers <ebiggers@google.com>
 
-Currently, filesystems (ext4, f2fs, and btrfs) only support fsverity
-when the Merkle tree block size, filesystem block size, and page size
-are all the same.  In practice that means 4K, since increasing the page
-size, e.g. to 16K, forces the Merkle tree block size and filesystem
-block size to be increased accordingly.  That can be impractical; for
-one, users want the same file signatures to work on all systems.
+fs/verity/ isn't consistent with whether Merkle tree block indices are
+'unsigned long' or 'u64'.  There's no real point to using u64 for them,
+though, since (a) a Merkle tree with over ULONG_MAX blocks would only be
+needed for a file larger than MAX_LFS_FILESIZE, and (b) for reads, the
+status of all Merkle tree blocks has to be tracked in memory.
 
-Therefore, this patchset reduces the coupling between these sizes.
+Therefore, let's make things a bit more efficient on 32-bit systems by
+using 'unsigned long[]' for merkle_tree_params::level_start, instead of
+'u64[]'.  Also, to be extra safe, explicitly check that there aren't
+more than ULONG_MAX Merkle tree blocks.
 
-First, patches 1-4 are cleanups.
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ fs/verity/fsverity_private.h |  2 +-
+ fs/verity/open.c             | 20 +++++++++++++++-----
+ 2 files changed, 16 insertions(+), 6 deletions(-)
 
-Second, patches 5-9 allow the Merkle tree block size to be less than the
-page size or filesystem block size, provided that it's not larger than
-either one.  This involves, among other things, changing the way that
-fs/verity/verify.c tracks which hash blocks have been verified.
-
-Finally, patches 10-11 make ext4 support fsverity when the filesystem
-block size is less than the page size.  Note, f2fs doesn't need similar
-changes because f2fs always assumes that the filesystem block size and
-page size are the same anyway.  I haven't looked into btrfs yet.
-
-I've tested this patchset using the "verity" group of tests in xfstests
-with the following xfstests patchset applied:
-"[PATCH v2 00/10] xfstests: update verity tests for non-4K block and page size"
-(https://lore.kernel.org/fstests/20221223010554.281679-1-ebiggers@kernel.org/T/#u)
-
-Note: on the thread "[RFC PATCH 00/11] fs-verity support for XFS"
-(https://lore.kernel.org/linux-xfs/20221213172935.680971-1-aalbersh@redhat.com/T/#u)
-there have been many requests for other things to support, including:
-
-  * folios in the pagecache
-  * alternative Merkle tree caching methods
-  * direct I/O
-  * merkle_tree_block_size > page_size
-  * extremely large files, using a reclaimable bitmap
-
-We shouldn't try to boil the ocean, though, so to keep the scope of this
-patchset manageable I haven't changed it significantly from v1.  This
-patchset does bring us closer to many of the above, just not all the way
-there.  I'd like to follow up this patchset with a change to support
-folios, which should be straightforward.  Next, we can do a change to
-generalize the Merkle tree interface to allow XFS to use an alternative
-caching method, as that sounds like the highest priority item for XFS.
-
-Anyway, the changelog is:
-
-Changed in v2:
-   - Rebased onto the recent fsverity cleanups.
-   - Split some parts of the big "support verification" patch into
-     separate patches.
-   - Passed the data_pos to verify_data_block() instead of computing it
-     using page->index, to make it ready for folio and DIO support.
-   - Eliminated some unnecessary arithmetic in verify_data_block().
-   - Changed the log_* fields in merkle_tree_params to u8.
-   - Restored PageLocked and !PageUptodate checks for pagecache pages.
-   - Eliminated the change to fsverity_hash_buffer().
-   - Other small cleanups
-
-Eric Biggers (11):
-  fsverity: use unsigned long for level_start
-  fsverity: simplify Merkle tree readahead size calculation
-  fsverity: store log2(digest_size) precomputed
-  fsverity: use EFBIG for file too large to enable verity
-  fsverity: replace fsverity_hash_page() with fsverity_hash_block()
-  fsverity: support verification with tree block size < PAGE_SIZE
-  fsverity: support enabling with tree block size < PAGE_SIZE
-  ext4: simplify ext4_readpage_limit()
-  f2fs: simplify f2fs_readpage_limit()
-  fs/buffer.c: support fsverity in block_read_full_folio()
-  ext4: allow verity with fs block size < PAGE_SIZE
-
- Documentation/filesystems/fsverity.rst |  76 +++---
- fs/buffer.c                            |  67 ++++-
- fs/ext4/readpage.c                     |   3 +-
- fs/ext4/super.c                        |   5 -
- fs/f2fs/data.c                         |   3 +-
- fs/verity/enable.c                     | 260 ++++++++++----------
- fs/verity/fsverity_private.h           |  20 +-
- fs/verity/hash_algs.c                  |  24 +-
- fs/verity/open.c                       |  98 ++++++--
- fs/verity/verify.c                     | 325 +++++++++++++++++--------
- include/linux/fsverity.h               |  14 +-
- 11 files changed, 565 insertions(+), 330 deletions(-)
-
+diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
+index a16038a0ee67d..e8b40c8000be7 100644
+--- a/fs/verity/fsverity_private.h
++++ b/fs/verity/fsverity_private.h
+@@ -52,7 +52,7 @@ struct merkle_tree_params {
+ 	 * Starting block index for each tree level, ordered from leaf level (0)
+ 	 * to root level ('num_levels - 1')
+ 	 */
+-	u64 level_start[FS_VERITY_MAX_LEVELS];
++	unsigned long level_start[FS_VERITY_MAX_LEVELS];
+ };
+ 
+ /*
+diff --git a/fs/verity/open.c b/fs/verity/open.c
+index e0ef1a6283943..83ccc3c137363 100644
+--- a/fs/verity/open.c
++++ b/fs/verity/open.c
+@@ -34,6 +34,7 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
+ 	struct fsverity_hash_alg *hash_alg;
+ 	int err;
+ 	u64 blocks;
++	u64 blocks_in_level[FS_VERITY_MAX_LEVELS];
+ 	u64 offset;
+ 	int level;
+ 
+@@ -94,17 +95,26 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
+ 		}
+ 		blocks = (blocks + params->hashes_per_block - 1) >>
+ 			 params->log_arity;
+-		/* temporarily using level_start[] to store blocks in level */
+-		params->level_start[params->num_levels++] = blocks;
++		blocks_in_level[params->num_levels++] = blocks;
+ 	}
+-	params->level0_blocks = params->level_start[0];
++	params->level0_blocks = blocks_in_level[0];
+ 
+ 	/* Compute the starting block of each level */
+ 	offset = 0;
+ 	for (level = (int)params->num_levels - 1; level >= 0; level--) {
+-		blocks = params->level_start[level];
+ 		params->level_start[level] = offset;
+-		offset += blocks;
++		offset += blocks_in_level[level];
++	}
++
++	/*
++	 * Since the data, and thus also the Merkle tree, cannot have more than
++	 * ULONG_MAX pages, hash block indices can always fit in an
++	 * 'unsigned long'.  To be safe, explicitly check for it too.
++	 */
++	if (offset > ULONG_MAX) {
++		fsverity_err(inode, "Too many blocks in Merkle tree");
++		err = -EFBIG;
++		goto out_err;
+ 	}
+ 
+ 	params->tree_size = offset << log_blocksize;
 -- 
 2.39.0
 
