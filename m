@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 36908655477
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Dec 2022 21:37:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F3D5655452
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Dec 2022 21:37:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231946AbiLWUhV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Dec 2022 15:37:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56538 "EHLO
+        id S231584AbiLWUhG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Dec 2022 15:37:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231238AbiLWUhJ (ORCPT
+        with ESMTP id S232915AbiLWUg7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Dec 2022 15:37:09 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C65991D307;
-        Fri, 23 Dec 2022 12:36:59 -0800 (PST)
+        Fri, 23 Dec 2022 15:36:59 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27B2D1DA51;
+        Fri, 23 Dec 2022 12:36:58 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 673CAB8213F;
-        Fri, 23 Dec 2022 20:36:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8F55C433EF;
-        Fri, 23 Dec 2022 20:36:56 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id B8E7E61EF5;
+        Fri, 23 Dec 2022 20:36:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 529BEC433F0;
+        Fri, 23 Dec 2022 20:36:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1671827817;
-        bh=wN7s/A4toTfgS+KIXn99r7XJg8+e84l5l3auBwZ0mnc=;
+        bh=hUMxvtChJHIBiEf3QPm8r6dGOW77G56OuiC6WrUXTPs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d+p4IyQ3t6U+M3aSYLY7BTKWPteCG8tVzna1JJQAIpse35DoJuLJVcnL9qLS4mzyh
-         k7KwBMCk5nVGNNDuy2jvKNYRFsk5/nDWizFU+pzBPFBHk7xgCOw85MKqG17wjP18lX
-         X8T9nGdOTH1z0NJ+Vos6/3qahMbaj5/jamCSA4XFqXx0oI+PtiZ/MgtUbJ2VNW1Rvo
-         RCCMc80qeU3NmXJ6t9NCaBooCNzueEY61w6QyElnwELbfer37W5f7YGtJsKYPqErmQ
-         41EyJ9E5j5WcBWIHGP00Uhg49JEFBe4CwecifaNHeN7+914nLOLfgCq/fZ5IsWLkaD
-         dHUMnqCIZJZgw==
+        b=oyXzMNc4twgXBPEgKTMYdpGLLF0S+W/JjUp0sjBRFNQ3R4P31+mrvxJ1ZdzEO/JJc
+         2yKvKtQA9ldermdyYk7cM+zj2pjKPm0I75L/OXvjsuQE/OAGY837S/3OT0He6mjGqY
+         3j3T4wKkte1o51XsKB+PHC1Izsf/oUC1bfVwiOg4gw7gjU0B9svWzFhfkBbDrPocAD
+         1XMwZ/QDk5X9Rg0lKgwPpLFxyvZngASNHLl8b9jIRzfvRwbLUsillkGJn73NxFi93d
+         fVFDCv4mQrgG9lGb015HN3LMPQmH2Ovw7RAizFoP6ZmdtiGTgHwaPIU7gmKvmC/rH7
+         WO6RF5z584vmA==
 From:   Eric Biggers <ebiggers@kernel.org>
 To:     linux-fscrypt@vger.kernel.org
 Cc:     linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
         linux-f2fs-devel@lists.sourceforge.net,
         linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org,
         Andrey Albershteyn <aalbersh@redhat.com>
-Subject: [PATCH v2 03/11] fsverity: store log2(digest_size) precomputed
-Date:   Fri, 23 Dec 2022 12:36:30 -0800
-Message-Id: <20221223203638.41293-4-ebiggers@kernel.org>
+Subject: [PATCH v2 04/11] fsverity: use EFBIG for file too large to enable verity
+Date:   Fri, 23 Dec 2022 12:36:31 -0800
+Message-Id: <20221223203638.41293-5-ebiggers@kernel.org>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20221223203638.41293-1-ebiggers@kernel.org>
 References: <20221223203638.41293-1-ebiggers@kernel.org>
@@ -58,59 +58,53 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Eric Biggers <ebiggers@google.com>
 
-Add log_digestsize to struct merkle_tree_params so that it can be used
-in verify.c.  Also save memory by using u8 for all the log_* fields.
+Currently, there is an implementation limit where files can't have more
+than 8 Merkle tree levels.  With SHA-256 and 4K blocks, this limit is
+never reached, since a file would need to be larger than 2**64 bytes to
+need 9 levels.  However, with SHA-512, 9 levels are needed for files
+larger than about 1.15 EB, which is possible on btrfs.  Therefore, this
+limit technically became reachable when btrfs added fsverity support.
+
+Meanwhile, support for merkle_tree_block_size < PAGE_SIZE will introduce
+another implementation limit on file size, resulting from the use of an
+in-memory bitmap to track which Merkle tree blocks have been verified.
+
+In any case, currently FS_IOC_ENABLE_VERITY fails with EINVAL when the
+file is too large.  This is undocumented, and also ambiguous since
+EINVAL can mean other things too.  Let's change the error code to EFBIG,
+which is much clearer, and document it.
 
 Signed-off-by: Eric Biggers <ebiggers@google.com>
 ---
- fs/verity/fsverity_private.h | 5 +++--
- fs/verity/open.c             | 3 ++-
- fs/verity/verify.c           | 2 +-
- 3 files changed, 6 insertions(+), 4 deletions(-)
+ Documentation/filesystems/fsverity.rst | 1 +
+ fs/verity/open.c                       | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/verity/fsverity_private.h b/fs/verity/fsverity_private.h
-index 48b97f5d05569..fc1c2797fab19 100644
---- a/fs/verity/fsverity_private.h
-+++ b/fs/verity/fsverity_private.h
-@@ -42,8 +42,9 @@ struct merkle_tree_params {
- 	unsigned int digest_size;	/* same as hash_alg->digest_size */
- 	unsigned int block_size;	/* size of data and tree blocks */
- 	unsigned int hashes_per_block;	/* number of hashes per tree block */
--	unsigned int log_blocksize;	/* log2(block_size) */
--	unsigned int log_arity;		/* log2(hashes_per_block) */
-+	u8 log_digestsize;		/* log2(digest_size) */
-+	u8 log_blocksize;		/* log2(block_size) */
-+	u8 log_arity;			/* log2(hashes_per_block) */
- 	unsigned int num_levels;	/* number of levels in Merkle tree */
- 	u64 tree_size;			/* Merkle tree size in bytes */
- 	unsigned long tree_pages;	/* Merkle tree size in pages */
+diff --git a/Documentation/filesystems/fsverity.rst b/Documentation/filesystems/fsverity.rst
+index cb8e7573882a1..66cdca30ff58b 100644
+--- a/Documentation/filesystems/fsverity.rst
++++ b/Documentation/filesystems/fsverity.rst
+@@ -161,6 +161,7 @@ FS_IOC_ENABLE_VERITY can fail with the following errors:
+ - ``EBUSY``: this ioctl is already running on the file
+ - ``EEXIST``: the file already has verity enabled
+ - ``EFAULT``: the caller provided inaccessible memory
++- ``EFBIG``: the file is too large to enable verity on
+ - ``EINTR``: the operation was interrupted by a fatal signal
+ - ``EINVAL``: unsupported version, hash algorithm, or block size; or
+   reserved bits are set; or the file descriptor refers to neither a
 diff --git a/fs/verity/open.c b/fs/verity/open.c
-index e356eefb54d7b..ca8de73e5a0b8 100644
+index ca8de73e5a0b8..09512daa22db5 100644
 --- a/fs/verity/open.c
 +++ b/fs/verity/open.c
-@@ -76,7 +76,8 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
- 		err = -EINVAL;
- 		goto out_err;
- 	}
--	params->log_arity = params->log_blocksize - ilog2(params->digest_size);
-+	params->log_digestsize = ilog2(params->digest_size);
-+	params->log_arity = log_blocksize - params->log_digestsize;
- 	params->hashes_per_block = 1 << params->log_arity;
- 
- 	/*
-diff --git a/fs/verity/verify.c b/fs/verity/verify.c
-index 4c57a1bd01afc..d2fcb6a21ea8e 100644
---- a/fs/verity/verify.c
-+++ b/fs/verity/verify.c
-@@ -35,7 +35,7 @@ static void hash_at_level(const struct merkle_tree_params *params,
- 
- 	/* Offset of the wanted hash (in bytes) within the hash block */
- 	*hoffset = (position & ((1 << params->log_arity) - 1)) <<
--		   (params->log_blocksize - params->log_arity);
-+		   params->log_digestsize;
- }
- 
- static inline int cmp_hashes(const struct fsverity_info *vi,
+@@ -92,7 +92,7 @@ int fsverity_init_merkle_tree_params(struct merkle_tree_params *params,
+ 	while (blocks > 1) {
+ 		if (params->num_levels >= FS_VERITY_MAX_LEVELS) {
+ 			fsverity_err(inode, "Too many levels in Merkle tree");
+-			err = -EINVAL;
++			err = -EFBIG;
+ 			goto out_err;
+ 		}
+ 		blocks = (blocks + params->hashes_per_block - 1) >>
 -- 
 2.39.0
 
