@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3759D6551E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Dec 2022 16:04:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BD5246551E7
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Dec 2022 16:07:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236487AbiLWPEo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Dec 2022 10:04:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44928 "EHLO
+        id S236325AbiLWPHp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Dec 2022 10:07:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46138 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236241AbiLWPEm (ORCPT
+        with ESMTP id S230229AbiLWPHo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Dec 2022 10:04:42 -0500
+        Fri, 23 Dec 2022 10:07:44 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAC0326AA8;
-        Fri, 23 Dec 2022 07:04:41 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D1602A512;
+        Fri, 23 Dec 2022 07:07:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=rkraw/UwIGEGYOHlz31aQJfCzeNez/ZU9s/Wo2gr+Z0=; b=hxQsiRqRbaoIatru27BOAcLtfs
-        eYIYxzLYRIiQL1RaI+g4hnfWkpQ0Iu4VEScNJMAyVQ4EbeyTnlG7Bv9JqS4WKpMn9D0NLPCyB0rZ6
-        cYYYAuSSkfjFWzCBgS5EbuJKimWJ5XBQQqi1PNtbnZGun+Q/7Hw7RIuaj4/HtLX0ojnHaq8/lPh2f
-        gg3VPO25weH1DyD6XqgHGOJqurcg+bjl0UTXthoHgNR2HI8L7f/ON8H4/19FfqIheUFTCU43FK7OO
-        l2h7iidgG7SHRzODurj4RRtzfQqiN8cLeJVU/JvaFxqRJpBnytnPq7sZmEMl8JUxU2lnOQL1ywmeu
-        1Tn5Qs/A==;
+        bh=0TYedYNU8D+NUsXvfS4xuhZ4V3OYraEeUZQLBYD+RCs=; b=N/kEBwpG/unle7Ub25VZd1qwlL
+        3mcmvNm62Dh0AFgtKPC4/IhdjqunTc4Um2w18WeW8MuqmMDvNPOLVpa0uhMrxYKZovg0p2eoN3nlz
+        fSFMZzpKkbmwYhpAoWzd6fMptO08RVZ2c5569jALuy77lbTd5BPRczbGVo3+UK64PPXqavJqWB8Mx
+        cRM7TthccktrQ9KvlYt6hOsN1M30doasAqnBo7KrwqxKA3eP8CVkQcluN0jc+4t1l8ix3Fgg6SHpq
+        LqyK7H8eEukQNwy4lgD9KRUGXMr/lGwKAnzPW0K+vkxKcxa2P+RGr7lybtBv2kf/U/xb5aXXiAdqr
+        G1zEUabQ==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1p8jbB-009BDI-JR; Fri, 23 Dec 2022 15:04:37 +0000
-Date:   Fri, 23 Dec 2022 07:04:37 -0800
+        id 1p8je6-009DGB-Qi; Fri, 23 Dec 2022 15:07:38 +0000
+Date:   Fri, 23 Dec 2022 07:07:38 -0800
 From:   Christoph Hellwig <hch@infradead.org>
 To:     Andreas Gruenbacher <agruenba@redhat.com>
 Cc:     Christoph Hellwig <hch@infradead.org>,
@@ -36,14 +36,14 @@ Cc:     Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-ext4@vger.kernel.org, cluster-devel@redhat.com
-Subject: Re: [RFC v3 4/7] iomap: Add iomap_folio_prepare helper
-Message-ID: <Y6XDhb2IkNOdaT/t@infradead.org>
+Subject: Re: [RFC v3 5/7] iomap: Get page in page_prepare handler
+Message-ID: <Y6XEOtT9Gc3p0kd4@infradead.org>
 References: <20221216150626.670312-1-agruenba@redhat.com>
- <20221216150626.670312-5-agruenba@redhat.com>
+ <20221216150626.670312-6-agruenba@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221216150626.670312-5-agruenba@redhat.com>
+In-Reply-To: <20221216150626.670312-6-agruenba@redhat.com>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -54,17 +54,26 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> +struct folio *iomap_folio_prepare(struct iomap_iter *iter, loff_t pos)
-> +{
-> +	unsigned fgp = FGP_LOCK | FGP_WRITE | FGP_CREAT | FGP_STABLE | FGP_NOFS;
-> +
-> +	if (iter->flags & IOMAP_NOWAIT)
-> +		fgp |= FGP_NOWAIT;
-> +
-> +	return __filemap_get_folio(iter->inode->i_mapping, pos >> PAGE_SHIFT,
-> +			fgp, mapping_gfp_mask(iter->inode->i_mapping));
-> +}
-> +EXPORT_SYMBOL(iomap_folio_prepare);
+On Fri, Dec 16, 2022 at 04:06:24PM +0100, Andreas Gruenbacher wrote:
+> Change the iomap ->page_prepare() handler to get and return a locked
+> folio instead of doing that in iomap_write_begin().  This allows to
+> recover from out-of-memory situations in ->page_prepare(), which
+> eliminates the corresponding error handling code in iomap_write_begin().
+> The ->page_done() handler is now not called with a NULL folio anymore.
 
-I'd name this __iomap_get_folio to match __filemap_get_folio.
-And all iomap exports are EXPORT_SYMBOL_GPL.
+Ah, okay - this is the other half of what I asked for earlier, so
+we're aligned.  Sorry for the noise earlier.  I'd still prefer the
+naming I suggest, though.
+
+> +	if (page_ops && page_ops->page_prepare)
+> +		folio = page_ops->page_prepare(iter, pos, len);
+> +	else
+> +		folio = iomap_folio_prepare(iter, pos);
+> +	if (IS_ERR_OR_NULL(folio)) {
+> +		if (!folio)
+> +			return (iter->flags & IOMAP_NOWAIT) ? -EAGAIN : -ENOMEM;
+> +		return PTR_ERR(folio);
+>  	}
+
+Maybe encapsulate this in a iomap_get_folio wrapper just to keep the
+symmetry with the done side.
