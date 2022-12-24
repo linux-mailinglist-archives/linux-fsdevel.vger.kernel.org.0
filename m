@@ -2,131 +2,89 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8B07C6558DF
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Dec 2022 08:17:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 38D666558E5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Dec 2022 08:21:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229457AbiLXHRD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 24 Dec 2022 02:17:03 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46640 "EHLO
+        id S230201AbiLXHVf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 24 Dec 2022 02:21:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48086 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230019AbiLXHRC (ORCPT
+        with ESMTP id S230167AbiLXHVe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 24 Dec 2022 02:17:02 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DF6CDF32;
-        Fri, 23 Dec 2022 23:17:00 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id bx10so6323802wrb.0;
-        Fri, 23 Dec 2022 23:17:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XYdZuRzobQmIoU+GUW5xOEJnXoxJQHcF7omPb4wLhQE=;
-        b=eq72v+3LBcvOBON4Ls8rGWFwmCnNJ9OoeCpYt2shZ7Ig+ysrUxOmn9O11XkB6/zY5s
-         aMC049QaZskHhQ4SRo08bepBWyFG+c2jdBMUY/oO5LFX+2EWeK6heXXIzUJnRRbwLbqk
-         r0JM+zP3L++NEEyKLOnrWzxnv4/etWfrwRAkW4bueLz7YXb5SO9WLJVTYOcIwpGFNrfa
-         qmBtdsPFf1+iKGbNt4PEWFZTMPkARWda5C8Rv1VvK08SobuZGHuPwoi9h2iIrBaGcbPL
-         uqU68dwGSxGevUWA9iiqaotddgjnh38XJohEa0VW+yfW6hm0ptId0uRHXrJtY09ItW9u
-         ZfrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XYdZuRzobQmIoU+GUW5xOEJnXoxJQHcF7omPb4wLhQE=;
-        b=N3U42WV8yh5KB26d6srPvAmcfqH01E+SC9DsoG7I3p5WXgq/ABI0vmsrzQcSnm31gZ
-         okGBl9A76EVVGPdIhrm2pYWsfe6C3qFn68IvsArbJwlXy4WouPKcRKBiEjwCgmoGZH2Y
-         PdgznCRkybATvrUPe/dEsn6dXhcuLj5T5uTRPQggo8iF9Z19fVpdBQ4pVoW2tliXYHnv
-         PsTB8D1Xj9a7DF1lp8z6vQfMmuhYwyJgzPxMHSBppTlmd6vXZEX1KHOCP3pNH9P5Ho/U
-         blVraGiLjmGJlggqqMfgdZGhzgEHTt6ReS9IXI7Z11cLlUPcfPtnBaiMzH83hxBzoA0x
-         FX/A==
-X-Gm-Message-State: AFqh2kqiLsrQWCkkqiLAojnGF0iax7ESVSY2dobujsixuWseiC/xJr7b
-        1WvqkbWViQRYGsLaSH+85Fc=
-X-Google-Smtp-Source: AMrXdXsBK3+3LWL4MW0/QLZP0R0349A+rn33at/1vXHt8anZlbc/DKK8ciK4wp9oBd2h+g0CELjmww==
-X-Received: by 2002:adf:ec88:0:b0:242:52b6:9054 with SMTP id z8-20020adfec88000000b0024252b69054mr8030764wrn.58.1671866219446;
-        Fri, 23 Dec 2022 23:16:59 -0800 (PST)
-Received: from localhost ([102.36.222.112])
-        by smtp.gmail.com with ESMTPSA id k16-20020a056000005000b002258235bda3sm4865843wrx.61.2022.12.23.23.16.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 23 Dec 2022 23:16:59 -0800 (PST)
-Date:   Sat, 24 Dec 2022 10:16:56 +0300
-From:   Dan Carpenter <error27@gmail.com>
-To:     oe-kbuild@lists.linux.dev, wenyang.linux@foxmail.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-        Wen Yang <wenyang.linux@foxmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] eventfd: use a generic helper instead of an open coded
- wait_event
-Message-ID: <202212240819.6KA20geM-lkp@intel.com>
+        Sat, 24 Dec 2022 02:21:34 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 44F6712ACF;
+        Fri, 23 Dec 2022 23:21:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Transfer-Encoding
+        :Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+        Sender:Reply-To:Content-ID:Content-Description;
+        bh=YgyS9Hi5REvv1K/NGxcEShlxYPQgP5TjuKggBBZ0AXE=; b=EFJCqV3y2QPxOmS8ITM38KaR2P
+        uR3WTFMx5W2pVWreyJapHzU5dZPfMwzpB1pjkr59JlE16ozG4ptqVBBynVROPEAGRwGN5EbD2Xkt+
+        W00//KiOW2jIe6wM18pQ7qLUcfcYnxg7v+oelGjbAbNk9JrX9N4+HYvFbTtJX18FTVj8gnX4f1/yI
+        pdcm40a7+lXBMzvU6SOT0vs33CtsqSUyP2rQGplxXbe9F8cGY78XHwyNYS48cS4b50SFEZTw4hOLq
+        tT2rgF3AV1n+0TloFi11auxeXqR9/3mVtQtQS0AUvENgAIgzFFalQ5CIhOIIVC8cLXHOZleL381sL
+        PdhYtQ1Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1p8yqS-00FvQQ-7V; Sat, 24 Dec 2022 07:21:24 +0000
+Date:   Fri, 23 Dec 2022 23:21:24 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Andreas =?iso-8859-1?Q?Gr=FCnbacher?= 
+        <andreas.gruenbacher@gmail.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
+Subject: Re: [RFC v3 1/7] fs: Add folio_may_straddle_isize helper
+Message-ID: <Y6aodOf7Q016xSay@infradead.org>
+References: <20221216150626.670312-1-agruenba@redhat.com>
+ <20221216150626.670312-2-agruenba@redhat.com>
+ <Y6XBi/YJ4QV3NK5q@infradead.org>
+ <CAHpGcMKJO7HhgyU5NKX3h6vVeNAGp-8xFrOf+nSTEWHC-PekzA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <tencent_B38979DE0FF3B9B3EA887A37487B123BBD05@qq.com>
-X-Spam-Status: No, score=-1.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHpGcMKJO7HhgyU5NKX3h6vVeNAGp-8xFrOf+nSTEWHC-PekzA@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi,
+On Fri, Dec 23, 2022 at 11:04:51PM +0100, Andreas Grünbacher wrote:
+> > I find the naming very confusing.  Any good reason to not follow
+> > the naming of pagecache_isize_extended an call it
+> > folio_isize_extended?
+> 
+> A good reason for a different name is because
+> folio_may_straddle_isize() requires a locked folio, while
+> pagecache_isize_extended() will fail if the folio is still locked. So
+> this doesn't follow the usual "replace 'page' with 'folio'" pattern.
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+pagecache also doesn't say page, it says pagecache.  I'd still prepfer
+to keep the postfix the same.  And I think the fact that it needs
+a locked folio should also have an assert, which both documents this
+and catches errors.  I think that's much better than an arbitrarily
+different name.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/wenyang-linux-foxmail-com/eventfd-use-a-generic-helper-instead-of-an-open-coded-wait_event/20221222-234947
-patch link:    https://lore.kernel.org/r/tencent_B38979DE0FF3B9B3EA887A37487B123BBD05%40qq.com
-patch subject: [PATCH] eventfd: use a generic helper instead of an open coded wait_event
-config: i386-randconfig-m021
-compiler: gcc-11 (Debian 11.3.0-8) 11.3.0
+> > Should pagecache_isize_extended be rewritten to use this helper,
+> > i.e. turn this into a factoring out of a helper?
+> 
+> I'm not really sure about that. The boundary conditions in the two
+> functions are not identical. I think the logic in
+> folio_may_straddle_isize() is sufficient for the
+> extending-write-under-folio-lock case, but I'd still need confirmation
+> for that. If the same logic would also be enough in
+> pagecache_isize_extended() is more unclear to me.
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <error27@gmail.com>
-
-smatch warnings:
-fs/eventfd.c:254 eventfd_read() warn: inconsistent returns '&ctx->wqh.lock'.
-
-vim +254 fs/eventfd.c
-
-12aceb89b0bce1 Jens Axboe     2020-05-01  226  static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
-e1ad7468c77ddb Davide Libenzi 2007-05-10  227  {
-12aceb89b0bce1 Jens Axboe     2020-05-01  228  	struct file *file = iocb->ki_filp;
-b6364572d641c8 Eric Biggers   2018-01-06  229  	struct eventfd_ctx *ctx = file->private_data;
-b6364572d641c8 Eric Biggers   2018-01-06  230  	__u64 ucnt = 0;
-e1ad7468c77ddb Davide Libenzi 2007-05-10  231  
-12aceb89b0bce1 Jens Axboe     2020-05-01  232  	if (iov_iter_count(to) < sizeof(ucnt))
-b6364572d641c8 Eric Biggers   2018-01-06  233  		return -EINVAL;
-d48eb233159522 Davide Libenzi 2007-05-18  234  	spin_lock_irq(&ctx->wqh.lock);
-12aceb89b0bce1 Jens Axboe     2020-05-01  235  	if (!ctx->count) {
-12aceb89b0bce1 Jens Axboe     2020-05-01  236  		if ((file->f_flags & O_NONBLOCK) ||
-12aceb89b0bce1 Jens Axboe     2020-05-01  237  		    (iocb->ki_flags & IOCB_NOWAIT)) {
-12aceb89b0bce1 Jens Axboe     2020-05-01  238  			spin_unlock_irq(&ctx->wqh.lock);
-12aceb89b0bce1 Jens Axboe     2020-05-01  239  			return -EAGAIN;
-12aceb89b0bce1 Jens Axboe     2020-05-01  240  		}
-c908f8e6a3a1eb Wen Yang       2022-12-22  241  
-c908f8e6a3a1eb Wen Yang       2022-12-22  242  		if (wait_event_interruptible_locked_irq(ctx->wqh, ctx->count))
-12aceb89b0bce1 Jens Axboe     2020-05-01  243  			return -ERESTARTSYS;
-
-spin_unlock_irq(&ctx->wqh.lock);
-
-e1ad7468c77ddb Davide Libenzi 2007-05-10  244  	}
-b6364572d641c8 Eric Biggers   2018-01-06  245  	eventfd_ctx_do_read(ctx, &ucnt);
-9f0deaa12d832f Dylan Yudaken  2022-08-16  246  	current->in_eventfd = 1;
-e1ad7468c77ddb Davide Libenzi 2007-05-10  247  	if (waitqueue_active(&ctx->wqh))
-a9a08845e9acbd Linus Torvalds 2018-02-11  248  		wake_up_locked_poll(&ctx->wqh, EPOLLOUT);
-9f0deaa12d832f Dylan Yudaken  2022-08-16  249  	current->in_eventfd = 0;
-d48eb233159522 Davide Libenzi 2007-05-18  250  	spin_unlock_irq(&ctx->wqh.lock);
-12aceb89b0bce1 Jens Axboe     2020-05-01  251  	if (unlikely(copy_to_iter(&ucnt, sizeof(ucnt), to) != sizeof(ucnt)))
-b6364572d641c8 Eric Biggers   2018-01-06  252  		return -EFAULT;
-cb289d6244a37c Davide Libenzi 2010-01-13  253  
-12aceb89b0bce1 Jens Axboe     2020-05-01 @254  	return sizeof(ucnt);
-cb289d6244a37c Davide Libenzi 2010-01-13  255  }
-
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
-
+That's another thing that really needs to into the commit log,
+why is the condition different and pagecache_isize_extended can't
+just be extended for it (if it really can't).
