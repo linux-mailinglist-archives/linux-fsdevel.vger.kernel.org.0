@@ -2,149 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F3BF6554DA
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 23 Dec 2022 23:07:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E450965570D
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 24 Dec 2022 02:31:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231201AbiLWWFH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 23 Dec 2022 17:05:07 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38210 "EHLO
+        id S236556AbiLXBbk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 23 Dec 2022 20:31:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57708 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229650AbiLWWFF (ORCPT
+        with ESMTP id S236447AbiLXBbR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 23 Dec 2022 17:05:05 -0500
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BEBCE1C435;
-        Fri, 23 Dec 2022 14:05:04 -0800 (PST)
-Received: by mail-qt1-x82a.google.com with SMTP id bp44so2057258qtb.0;
-        Fri, 23 Dec 2022 14:05:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=XOJ5z7kFjWc68B5B6Sh1NWt9teGCI8E34Z2/SZr41S8=;
-        b=CaDLvp1QLFx2Hzqz3sPsHWemPlSRGIVm6N0Ga8quwoX390HaGi6C/ooR/jUv1tMncn
-         EAHfSzlVh7lg8HE7dlsOVfNt1aRvMKnylga/ihg1jTkePYaOSPOk26xGxzFUN1n+kULd
-         31rZLbaBrNcWdfmGI9utk6Jt6MRev80E/G15Yzt63eA9U2dWEwNtaqsWq/B3UuPMhjDw
-         QNmanZbagRuK/IDoRljUMi2u8Gml6zKNvOK9DkEgqLmRIEHvHZIvj0vApRbArdAb0OtN
-         kL85EmMcMOM1LTnJBA0ann4v1DzewhMieom0TfuLVs0sXLxUqRVZt8otJPdK943rUnIk
-         SvdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XOJ5z7kFjWc68B5B6Sh1NWt9teGCI8E34Z2/SZr41S8=;
-        b=cgaCEcMrxFaiixLKBOCFSj2dwJ8zhZ3YwQXabk1VvRkjf2o6HjmOxjTXtaWtVFy418
-         ekTGsVrSgI4Ec1QhLDyWsQAdM/VV0PeFkR4YU4Wh7DmO24IwcoaziRmRtBZO5TEK+fXv
-         /vRTY7YKJ0uTW/DOQcaYbXrh80B9qNfwWQa1ee/K5zCftEJ2m3ruCQZzLe5faQTtlR87
-         OprOx2iZ1C8vavRTZn5uFrOtZMdEW+sjMT2i8myq4y+eqAL93md3mM21mh/N3dCLWFMD
-         iXUrZLxGCiAkD6lw/PRtAIPt8fLziLKMetJWechI3Tt7+mm1UFYEVZSWzf3lj3qxf8wQ
-         3agw==
-X-Gm-Message-State: AFqh2kripjgXQ8S791MlpdKvKPJ3usHDz2S/oZu0B8m731M1r8b0l4RI
-        I6iUqousRflBgqRfuQpXllaQRDU+j7R+Bsl6TCwfPKn7orCDYg==
-X-Google-Smtp-Source: AMrXdXuipY+SQ8jSfCWfT/V64MUdmK6UvoWduFpm5A8Hx7l02aMdqZw2KCqhbqXafoBpp8zEGiBHF8fUV8HiMG2klj4=
-X-Received: by 2002:a05:622a:244c:b0:3a8:12f6:69ff with SMTP id
- bl12-20020a05622a244c00b003a812f669ffmr451928qtb.567.1671833103695; Fri, 23
- Dec 2022 14:05:03 -0800 (PST)
+        Fri, 23 Dec 2022 20:31:17 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7139F2CCBD;
+        Fri, 23 Dec 2022 17:30:23 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B05C5B821B3;
+        Sat, 24 Dec 2022 01:30:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89B1BC433EF;
+        Sat, 24 Dec 2022 01:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1671845415;
+        bh=q+tZE9wQPv6WvHJsaIuC+jJOEkR+mGJaWDXaMBaY0I0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=JNfM/EOnuIULXo1N2FpXt7rxjwBZ9eWqmc/BF8Tpp6alUV4GXJ6pa2RdyxyiSpjIu
+         kvEMBdLRk/GCUWz2ppE9nxO+joBt3yOteHaaTIuvAyhvmAb1I6gL5nDTKlEyDB0Wfh
+         f+o6eiGNzghRZt1RxdbeKWCl+PKpZ+hqBgysYGkUghHf74hbXdFmghbOKInyCXMvXr
+         qIPtZLNGm+hU0qXnUF8cFB9uMPgeFX8/I9X40l8ipG74RtFtSMJJ2QLPUZO/cihHsO
+         iz4iS4gVW386T9imCmpAdNDy2k7tcIPteuqsfeEvpTXBS7mOxpdY2T6LO+olAw1Bav
+         LkuoxHZ7qetlQ==
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Shang XiaoJing <shangxiaojing@huawei.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 6.1 15/26] chardev: Fix potential memory leak when cdev_add() failed
+Date:   Fri, 23 Dec 2022 20:29:19 -0500
+Message-Id: <20221224012930.392358-15-sashal@kernel.org>
+X-Mailer: git-send-email 2.35.1
+In-Reply-To: <20221224012930.392358-1-sashal@kernel.org>
+References: <20221224012930.392358-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20221216150626.670312-1-agruenba@redhat.com> <20221216150626.670312-2-agruenba@redhat.com>
- <Y6XBi/YJ4QV3NK5q@infradead.org>
-In-Reply-To: <Y6XBi/YJ4QV3NK5q@infradead.org>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Fri, 23 Dec 2022 23:04:51 +0100
-Message-ID: <CAHpGcMKJO7HhgyU5NKX3h6vVeNAGp-8xFrOf+nSTEWHC-PekzA@mail.gmail.com>
-Subject: Re: [RFC v3 1/7] fs: Add folio_may_straddle_isize helper
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am Fr., 23. Dez. 2022 um 16:06 Uhr schrieb Christoph Hellwig
-<hch@infradead.org>:
-> On Fri, Dec 16, 2022 at 04:06:20PM +0100, Andreas Gruenbacher wrote:
-> > Add a folio_may_straddle_isize() helper as a replacement for
-> > pagecache_isize_extended() when we have a locked folio.
->
-> I find the naming very confusing.  Any good reason to not follow
-> the naming of pagecache_isize_extended an call it
-> folio_isize_extended?
+From: Shang XiaoJing <shangxiaojing@huawei.com>
 
-A good reason for a different name is because
-folio_may_straddle_isize() requires a locked folio, while
-pagecache_isize_extended() will fail if the folio is still locked. So
-this doesn't follow the usual "replace 'page' with 'folio'" pattern.
+[ Upstream commit 4634c973096a64662a24d9914c47cebc2a8b72f4 ]
 
-> > Use the new helper in generic_write_end(), iomap_write_end(),
-> > ext4_write_end(), and ext4_journalled_write_end().
->
-> Please split this into a patch per caller in addition to the one
-> adding the helper, and write commit logs explaining the rationale
-> for the helper.  The obious ones I'm trying to guess are that
-> the new helper avoid a page cache radix tree lookup and a lock
-> page/folio cycle, but I'd rather hear that from the horses mouth
-> in the commit log.
+Some init function of cdev(like comedi) will call kobject_set_name()
+before cdev_add(), but won't free the cdev.kobj.name or put the ref cnt
+of cdev.kobj when cdev_add() failed. As the result, cdev.kobj.name will
+be leaked.
 
-Yes, that's what the horse says.
+Free the name of kobject in cdev_add() fail path to prevent memleak. With
+this fix, the callers don't need to care about freeing the name of
+kobject if cdev_add() fails.
 
-> > --- a/fs/buffer.c
-> > +++ b/fs/buffer.c
-> > @@ -2164,16 +2164,15 @@ int generic_write_end(struct file *file, struct address_space *mapping,
-> >        * But it's important to update i_size while still holding page lock:
-> >        * page writeout could otherwise come in and zero beyond i_size.
-> >        */
-> > -     if (pos + copied > inode->i_size) {
-> > +     if (pos + copied > old_size) {
->
-> This is and unrelated and undocument (but useful) change.  Please split
-> it out as well.
->
-> > + * This function must be called while we still hold i_rwsem - this not only
-> > + * makes sure i_size is stable but also that userspace cannot observe the new
-> > + * i_size value before we are prepared to handle mmap writes there.
->
-> Please add a lockdep_assert_held_write to enforce that.
->
-> > +void folio_may_straddle_isize(struct inode *inode, struct folio *folio,
-> > +                           loff_t old_size, loff_t start)
-> > +{
-> > +     unsigned int blocksize = i_blocksize(inode);
-> > +
-> > +     if (round_up(old_size, blocksize) >= round_down(start, blocksize))
-> > +             return;
-> > +
-> > +     /*
-> > +      * See clear_page_dirty_for_io() for details why folio_set_dirty()
-> > +      * is needed.
-> > +      */
-> > +     if (folio_mkclean(folio))
-> > +             folio_set_dirty(folio);
->
-> Should pagecache_isize_extended be rewritten to use this helper,
-> i.e. turn this into a factoring out of a helper?
+unreferenced object 0xffff8881000fa8c0 (size 8):
+  comm "modprobe", pid 239, jiffies 4294905173 (age 51.308s)
+  hex dump (first 8 bytes):
+    63 6f 6d 65 64 69 00 ff                          comedi..
+  backtrace:
+    [<000000005f9878f7>] __kmalloc_node_track_caller+0x4c/0x1c0
+    [<000000000fd70302>] kstrdup+0x3f/0x70
+    [<000000009428bc33>] kstrdup_const+0x46/0x60
+    [<00000000ed50d9de>] kvasprintf_const+0xdb/0xf0
+    [<00000000b2766964>] kobject_set_name_vargs+0x3c/0xe0
+    [<00000000f2424ef7>] kobject_set_name+0x62/0x90
+    [<000000005d5a125b>] 0xffffffffa0013098
+    [<00000000f331e663>] do_one_initcall+0x7a/0x380
+    [<00000000aa7bac96>] do_init_module+0x5c/0x230
+    [<000000005fd72335>] load_module+0x227d/0x2420
+    [<00000000ad550cf1>] __do_sys_finit_module+0xd5/0x140
+    [<00000000069a60c5>] do_syscall_64+0x3f/0x90
+    [<00000000c5e0d521>] entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-I'm not really sure about that. The boundary conditions in the two
-functions are not identical. I think the logic in
-folio_may_straddle_isize() is sufficient for the
-extending-write-under-folio-lock case, but I'd still need confirmation
-for that. If the same logic would also be enough in
-pagecache_isize_extended() is more unclear to me.
+Suggested-by: Greg KH <gregkh@linuxfoundation.org>
+Signed-off-by: Shang XiaoJing <shangxiaojing@huawei.com>
+Link: https://lore.kernel.org/r/20221102072659.23671-1-shangxiaojing@huawei.com
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/char_dev.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-> > +EXPORT_SYMBOL(folio_may_straddle_isize);
->
-> Please make this an EXPORT_SYMBOL_GPL just like folio_mkclean.
+diff --git a/fs/char_dev.c b/fs/char_dev.c
+index ba0ded7842a7..340e4543b24a 100644
+--- a/fs/char_dev.c
++++ b/fs/char_dev.c
+@@ -483,17 +483,24 @@ int cdev_add(struct cdev *p, dev_t dev, unsigned count)
+ 	p->dev = dev;
+ 	p->count = count;
+ 
+-	if (WARN_ON(dev == WHITEOUT_DEV))
+-		return -EBUSY;
++	if (WARN_ON(dev == WHITEOUT_DEV)) {
++		error = -EBUSY;
++		goto err;
++	}
+ 
+ 	error = kobj_map(cdev_map, dev, count, NULL,
+ 			 exact_match, exact_lock, p);
+ 	if (error)
+-		return error;
++		goto err;
+ 
+ 	kobject_get(p->kobj.parent);
+ 
+ 	return 0;
++
++err:
++	kfree_const(p->kobj.name);
++	p->kobj.name = NULL;
++	return error;
+ }
+ 
+ /**
+-- 
+2.35.1
 
-Thanks,
-Andreas
