@@ -2,98 +2,297 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AEC746563B1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 16:07:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CA70965643E
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 17:56:04 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231801AbiLZPH4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Dec 2022 10:07:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57688 "EHLO
+        id S232210AbiLZQ4C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Dec 2022 11:56:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50326 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229496AbiLZPHy (ORCPT
+        with ESMTP id S232165AbiLZQzb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Dec 2022 10:07:54 -0500
-Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AAA61C04;
-        Mon, 26 Dec 2022 07:07:53 -0800 (PST)
-Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id 6A75B1B7;
-        Mon, 26 Dec 2022 15:04:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1672067062;
-        bh=b1y7zXkinhxvot9jeetf8cDO0mX7qUONskkFtfjYn9M=;
-        h=Date:Subject:To:CC:References:From:In-Reply-To;
-        b=bmGO0e+PcHHy/MZcIUThzTX+m8GtUlc4/5m6aSlVDWGSgWPweaVF1Nf2kxvc9HdGn
-         8L8gJ7zy5uTPEoBUSOIbtKjlnVoQNCRY853bV8eXAr514L5uy2tI0i0DW1fs8OhrH9
-         lhHPrvbT7E1CCUPVCB7VBIddsjqLg12jTDfoPFUc=
-Received: from [192.168.211.153] (192.168.211.153) by
- vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Mon, 26 Dec 2022 18:07:51 +0300
-Message-ID: <9e11da02-80f1-55f3-8bb5-28c3508e5396@paragon-software.com>
-Date:   Mon, 26 Dec 2022 19:07:50 +0400
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH] fs/ntfs3: fix wrong cast in xattr.c
-Content-Language: en-US
-To:     Daniel Pinto <danielpinto52@gmail.com>,
-        kernel test robot <lkp@intel.com>
-CC:     <ntfs3@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <oe-kbuild-all@lists.linux.dev>,
+        Mon, 26 Dec 2022 11:55:31 -0500
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A609F6413;
+        Mon, 26 Dec 2022 08:55:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1672073701; x=1703609701;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=SfZzdNV19bg9UmQpe6KYIZYymHxtUypJH/O7nO8s6g4=;
+  b=h31mID8Nj5IvQhElF9vkmX2MwemEqgYnIN6yGlU2CZyWEac6EvWXINt7
+   l5mr/uWh8P0XXMqpyY+DImnkCpzuQoiOLMHQNkjnGqMbt6mMQVAkvWg4z
+   hj+qhEZ5WAY5AFarg1LsBGlqdJ9qL67uPj6rUFbhHN0Y70lSuVLXgTXW8
+   rqQTxFviXwYYhJIIuAHkrPJNJDSzNLB+ShXcNPWJYa9GYJ/s3OqPVu6yD
+   idmnf7K4mV/AcO6GoTntodEJf3aM2/aWvOftu6AcpJLXRQRv1nfRoEGvR
+   9MlniTegoPbXWLjkxruZ33hcPBnYfy+hr1LAdqJpFRbQ79mQ4RMo4rCfc
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10572"; a="308338533"
+X-IronPort-AV: E=Sophos;i="5.96,276,1665471600"; 
+   d="scan'208";a="308338533"
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Dec 2022 08:55:00 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10572"; a="646205184"
+X-IronPort-AV: E=Sophos;i="5.96,276,1665471600"; 
+   d="scan'208";a="646205184"
+Received: from lkp-server01.sh.intel.com (HELO b5d47979f3ad) ([10.239.97.150])
+  by orsmga007.jf.intel.com with ESMTP; 26 Dec 2022 08:54:55 -0800
+Received: from kbuild by b5d47979f3ad with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1p9qkZ-000EZN-0D;
+        Mon, 26 Dec 2022 16:54:55 +0000
+Date:   Tue, 27 Dec 2022 00:54:10 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     virtualization@lists.linux-foundation.org,
+        speakup@linux-speakup.org, netdev@vger.kernel.org,
+        loongarch@lists.linux.dev, linux-xfs@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-media@vger.kernel.org, linux-iio@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-cxl@vger.kernel.org,
+        linux-block@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
         Linux Memory Management List <linux-mm@kvack.org>
-References: <be1a2495-1c46-cda1-4f89-7e3a39d939db@gmail.com>
-From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
-In-Reply-To: <be1a2495-1c46-cda1-4f89-7e3a39d939db@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Subject: [linux-next:master] BUILD REGRESSION
+ c76083fac3bae1a87ae3d005b5cb1cbc761e31d5
+Message-ID: <63a9d1b2.869GAwHafmAB6R7M%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [192.168.211.153]
-X-ClientProxiedBy: vobn-exch-01.paragon-software.com (172.30.72.13) To
- vdlg-exch-02.paragon-software.com (172.30.1.105)
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 15.11.2022 12:17, Daniel Pinto wrote:
-> cpu_to_be32 and be32_to_cpu respectively return and receive
-> __be32, change the cast to the correct types.
->
-> Fixes the following sparse warnings:
-> fs/ntfs3/xattr.c:811:48: sparse: sparse: incorrect type in
->                           assignment (different base types)
-> fs/ntfs3/xattr.c:901:34: sparse: sparse: cast to restricted __be32
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Daniel Pinto <danielpinto52@gmail.com>
-> ---
->   fs/ntfs3/xattr.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/fs/ntfs3/xattr.c b/fs/ntfs3/xattr.c
-> index 8620a7b4b3e6..6056ecbe8e4f 100644
-> --- a/fs/ntfs3/xattr.c
-> +++ b/fs/ntfs3/xattr.c
-> @@ -808,7 +808,7 @@ static int ntfs_getxattr(const struct xattr_handler *handler, struct dentry *de,
->   			err = sizeof(u32);
->   			*(u32 *)buffer = le32_to_cpu(ni->std_fa);
->   			if (!strcmp(name, SYSTEM_NTFS_ATTRIB_BE))
-> -				*(u32 *)buffer = cpu_to_be32(*(u32 *)buffer);
-> +				*(__be32 *)buffer = cpu_to_be32(*(u32 *)buffer);
->   		}
->   		goto out;
->   	}
-> @@ -898,7 +898,7 @@ static noinline int ntfs_setxattr(const struct xattr_handler *handler,
->   		if (size != sizeof(u32))
->   			goto out;
->   		if (!strcmp(name, SYSTEM_NTFS_ATTRIB_BE))
-> -			new_fa = cpu_to_le32(be32_to_cpu(*(u32 *)value));
-> +			new_fa = cpu_to_le32(be32_to_cpu(*(__be32 *)value));
->   		else
->   			new_fa = cpu_to_le32(*(u32 *)value);
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: c76083fac3bae1a87ae3d005b5cb1cbc761e31d5  Add linux-next specific files for 20221226
 
-Thank you for your work, applied!
+Error/Warning reports:
+
+https://lore.kernel.org/oe-kbuild-all/202212020520.0OkMIno3-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202212041528.4TbQL9ys-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202212051759.cEv6fyHy-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202212061455.6GE7y0jg-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202212080938.RHVtvwt0-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202212090509.NjAl9tbo-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202212242239.hWUlGmm0-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202212250859.uLjFpJy3-lkp@intel.com
+
+Error/Warning: (recently discovered and may have been fixed)
+
+ERROR: modpost: "input_ff_create_memless" [drivers/hid/hid-betopff.ko] undefined!
+ERROR: modpost: "input_ff_create_memless" [drivers/hid/hid-logitech.ko] undefined!
+ERROR: modpost: "input_ff_create_memless" [drivers/hid/hid-megaworld.ko] undefined!
+ERROR: modpost: "input_ff_create_memless" [drivers/hid/hid-mf.ko] undefined!
+ERROR: modpost: "input_ff_create_memless" [drivers/input/misc/drv260x.ko] undefined!
+ERROR: modpost: "input_ff_create_memless" [drivers/input/misc/drv2665.ko] undefined!
+ERROR: modpost: "input_ff_create_memless" [drivers/input/misc/gpio-vibra.ko] undefined!
+ERROR: modpost: "input_ff_create_memless" [drivers/input/misc/regulator-haptic.ko] undefined!
+ERROR: modpost: "input_ff_create_memless" [drivers/input/misc/sc27xx-vibra.ko] undefined!
+aarch64-linux-ld: ID map text too big or misaligned
+arch/arm/kernel/entry-armv.S:485:5: warning: "CONFIG_ARM_THUMB" is not defined, evaluates to 0 [-Wundef]
+arch/arm64/include/asm/pgtable-hwdef.h:82:64: warning: "PMD_SHIFT" is not defined, evaluates to 0 [-Wundef]
+arch/loongarch/kernel/asm-offsets.c:265:6: warning: no previous prototype for 'output_pbe_defines' [-Wmissing-prototypes]
+drivers/regulator/tps65219-regulator.c:310:32: warning: parameter 'dev' set but not used [-Wunused-but-set-parameter]
+drivers/regulator/tps65219-regulator.c:310:60: warning: parameter 'dev' set but not used [-Wunused-but-set-parameter]
+drivers/regulator/tps65219-regulator.c:370:26: sparse:    int
+drivers/regulator/tps65219-regulator.c:370:26: sparse:    struct regulator_dev *[assigned] rdev
+drivers/regulator/tps65219-regulator.c:370:26: warning: ordered comparison of pointer with integer zero [-Wextra]
+loongarch64-linux-ld: sleep.c:(.text+0x22c): undefined reference to `loongarch_wakeup_start'
+sleep.c:(.text+0x228): undefined reference to `loongarch_wakeup_start'
+
+Unverified Error/Warning (likely false positive, please contact us if interested):
+
+drivers/accessibility/speakup/main.c:1290:26: sparse: sparse: obsolete array initializer, use C99 syntax
+drivers/block/null_blk/zoned.c:769 zone_cond_store() warn: potential spectre issue 'dev->zones' [w] (local cap)
+drivers/block/virtio_blk.c:721:9: sparse:    bad type *
+drivers/block/virtio_blk.c:721:9: sparse:    unsigned int *
+drivers/block/virtio_blk.c:721:9: sparse: sparse: incompatible types in comparison expression (different base types):
+drivers/block/virtio_blk.c:721:9: sparse: sparse: no generic selection for 'restricted __le32 [addressable] virtio_cread_v'
+drivers/block/virtio_blk.c:721:9: sparse: sparse: no generic selection for 'restricted __le32 virtio_cread_v'
+drivers/cxl/core/mbox.c:832:18: sparse: sparse: cast from non-scalar
+drivers/cxl/core/mbox.c:832:18: sparse: sparse: cast to non-scalar
+drivers/i2c/busses/i2c-qcom-geni.c:1028:28: sparse: sparse: symbol 'i2c_master_hub' was not declared. Should it be static?
+drivers/iio/adc/twl6030-gpadc.c:955:16-23: duplicated argument to & or |
+drivers/iio/light/tsl2563.c:751:8-33: WARNING: Threaded IRQ with no primary handler requested without IRQF_ONESHOT (unless it is nested IRQ)
+drivers/media/platform/ti/davinci/vpif.c:483:20: sparse: sparse: cast from non-scalar
+drivers/media/platform/ti/davinci/vpif.c:483:20: sparse: sparse: cast to non-scalar
+drivers/media/test-drivers/visl/visl-video.c:690:22: sparse: sparse: symbol 'visl_qops' was not declared. Should it be static?
+fs/exfat/dir.c:862 exfat_get_dentry_set() warn: missing unwind goto?
+fs/xfs/xfs_iomap.c:86:29: sparse: sparse: symbol 'xfs_iomap_page_ops' was not declared. Should it be static?
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- alpha-allyesconfig
+|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
+|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
+|-- arc-allyesconfig
+|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
+|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
+|-- arc-randconfig-r024-20221225
+|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
+|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
+|-- arc-randconfig-s041-20221225
+|   `-- fs-xfs-xfs_iomap.c:sparse:sparse:symbol-xfs_iomap_page_ops-was-not-declared.-Should-it-be-static
+|-- arm-allyesconfig
+|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
+|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
+|-- arm-badge4_defconfig
+|   `-- arch-arm-kernel-entry-armv.S:warning:CONFIG_ARM_THUMB-is-not-defined-evaluates-to
+|-- arm64-allyesconfig
+|   |-- aarch64-linux-ld:ID-map-text-too-big-or-misaligned
+|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
+|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
+|-- arm64-randconfig-c034-20221225
+|   `-- arch-arm64-include-asm-pgtable-hwdef.h:warning:PMD_SHIFT-is-not-defined-evaluates-to
+|-- csky-randconfig-c033-20221225
+|   |-- drivers-iio-light-tsl2563.c:WARNING:Threaded-IRQ-with-no-primary-handler-requested-without-IRQF_ONESHOT-(unless-it-is-nested-IRQ)
+|   `-- drivers-mtd-ubi-build.c:WARNING:conversion-to-bool-not-needed-here
+|-- i386-allyesconfig
+|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
+|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
+|-- i386-randconfig-c021-20221226
+|   `-- drivers-iio-light-tsl2563.c:WARNING:Threaded-IRQ-with-no-primary-handler-requested-without-IRQF_ONESHOT-(unless-it-is-nested-IRQ)
+|-- i386-randconfig-m021-20221226
+|   `-- fs-exfat-dir.c-exfat_get_dentry_set()-warn:missing-unwind-goto
+|-- i386-randconfig-s002
+|   `-- fs-xfs-xfs_iomap.c:sparse:sparse:symbol-xfs_iomap_page_ops-was-not-declared.-Should-it-be-static
+|-- ia64-allmodconfig
+|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
+|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
+|-- loongarch-allyesconfig
+|   `-- arch-loongarch-kernel-asm-offsets.c:warning:no-previous-prototype-for-output_pbe_defines
+|-- loongarch-randconfig-s043-20221225
+|   |-- arch-loongarch-kernel-asm-offsets.c:warning:no-previous-prototype-for-output_pbe_defines
+|   |-- drivers-cxl-core-mbox.c:sparse:sparse:cast-from-non-scalar
+|   |-- drivers-cxl-core-mbox.c:sparse:sparse:cast-to-non-scalar
+|   |-- drivers-i2c-busses-i2c-qcom-geni.c:sparse:sparse:symbol-i2c_master_hub-was-not-declared.-Should-it-be-static
+|   |-- fs-xfs-xfs_iomap.c:sparse:sparse:symbol-xfs_iomap_page_ops-was-not-declared.-Should-it-be-static
+|   |-- loongarch64-linux-ld:sleep.c:(.text):undefined-reference-to-loongarch_wakeup_start
+|   `-- sleep.c:(.text):undefined-reference-to-loongarch_wakeup_start
+|-- m68k-allmodconfig
+|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
+|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
+clang_recent_errors
+|-- hexagon-buildonly-randconfig-r003-20221225
+|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
+|-- hexagon-randconfig-r002-20221225
+|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
+|-- riscv-randconfig-r021-20221225
+|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
+|-- x86_64-allyesconfig
+|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
+`-- x86_64-randconfig-a003-20221226
+    `-- vmlinux.o:warning:objtool:___ksymtab_gpl-_RNvNtCsfATHBUcknU9_6kernel5print16call_printk_cont:data-relocation-to-ENDBR:_RNvNtCsfATHBUcknU9_6kernel5print16call_printk_cont
+
+elapsed time: 720m
+
+configs tested: 89
+configs skipped: 2
+
+gcc tested configs:
+um                             i386_defconfig
+um                           x86_64_defconfig
+arc                                 defconfig
+alpha                               defconfig
+i386                 randconfig-a012-20221226
+x86_64                    rhel-8.3-kselftests
+arm                                 defconfig
+i386                 randconfig-a011-20221226
+x86_64                          rhel-8.3-func
+i386                                defconfig
+i386                 randconfig-a013-20221226
+x86_64                           rhel-8.3-bpf
+s390                             allmodconfig
+s390                                defconfig
+ia64                             allmodconfig
+i386                 randconfig-a014-20221226
+x86_64                           rhel-8.3-syz
+x86_64                              defconfig
+i386                 randconfig-a016-20221226
+s390                             allyesconfig
+i386                 randconfig-a015-20221226
+x86_64                         rhel-8.3-kunit
+x86_64                           rhel-8.3-kvm
+x86_64                            allnoconfig
+x86_64               randconfig-a014-20221226
+powerpc                           allnoconfig
+x86_64               randconfig-a013-20221226
+x86_64                               rhel-8.3
+arm64                            allyesconfig
+x86_64               randconfig-a011-20221226
+arm                              allyesconfig
+x86_64               randconfig-a012-20221226
+i386                             allyesconfig
+x86_64               randconfig-a015-20221226
+x86_64               randconfig-a016-20221226
+sh                               allmodconfig
+m68k                             allyesconfig
+mips                             allyesconfig
+powerpc                          allmodconfig
+x86_64                           allyesconfig
+m68k                             allmodconfig
+arc                              allyesconfig
+alpha                            allyesconfig
+arm                  randconfig-r046-20221225
+arc                  randconfig-r043-20221225
+arc                  randconfig-r043-20221226
+riscv                randconfig-r042-20221226
+s390                 randconfig-r044-20221226
+x86_64                           alldefconfig
+sh                          lboxre2_defconfig
+arc                               allnoconfig
+sh                             shx3_defconfig
+arm                           tegra_defconfig
+microblaze                          defconfig
+m68k                       m5475evb_defconfig
+m68k                        m5407c3_defconfig
+xtensa                              defconfig
+mips                      maltasmvp_defconfig
+parisc                           alldefconfig
+arm                          badge4_defconfig
+powerpc                     mpc83xx_defconfig
+sh                          rsk7201_defconfig
+sh                 kfr2r09-romimage_defconfig
+powerpc                    klondike_defconfig
+sh                  sh7785lcr_32bit_defconfig
+
+clang tested configs:
+x86_64                          rhel-8.3-rust
+i386                 randconfig-a004-20221226
+i386                 randconfig-a001-20221226
+x86_64               randconfig-a002-20221226
+i386                 randconfig-a003-20221226
+i386                 randconfig-a002-20221226
+x86_64               randconfig-a003-20221226
+x86_64               randconfig-a006-20221226
+i386                 randconfig-a005-20221226
+i386                 randconfig-a006-20221226
+x86_64               randconfig-a001-20221226
+x86_64               randconfig-a004-20221226
+x86_64               randconfig-a005-20221226
+hexagon              randconfig-r045-20221225
+hexagon              randconfig-r041-20221225
+hexagon              randconfig-r041-20221226
+arm                  randconfig-r046-20221226
+s390                 randconfig-r044-20221225
+hexagon              randconfig-r045-20221226
+riscv                randconfig-r042-20221225
+powerpc                     tqm5200_defconfig
+arm                         shannon_defconfig
+arm                         orion5x_defconfig
+arm                           sama7_defconfig
+x86_64                           allyesconfig
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
