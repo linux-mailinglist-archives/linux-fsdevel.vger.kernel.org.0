@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5EFCD656350
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:23:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55DCF656348
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:23:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232085AbiLZOXW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Dec 2022 09:23:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39664 "EHLO
+        id S229533AbiLZOXR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Dec 2022 09:23:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39178 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232039AbiLZOWo (ORCPT
+        with ESMTP id S232103AbiLZOWn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Dec 2022 09:22:44 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5E1D263A8;
-        Mon, 26 Dec 2022 06:22:21 -0800 (PST)
+        Mon, 26 Dec 2022 09:22:43 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C72236404;
+        Mon, 26 Dec 2022 06:22:20 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id E10B8B80C02;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4E37A60EC4;
+        Mon, 26 Dec 2022 14:22:20 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6962AC433F1;
         Mon, 26 Dec 2022 14:22:19 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5ED7AC433F0;
-        Mon, 26 Dec 2022 14:22:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672064538;
-        bh=fCynkXJ2ApONoQQC/ojXHkaREg+LG2l1GbUTcOSrgdM=;
+        s=k20201202; t=1672064539;
+        bh=C9hpYs5SfjcSEusd2O4PwIN/sol9PZlsNg0ce4muq9s=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=TywsxGype9uslbISt9pHvZte/7BFs4KYX5tGNNHq6Gup5Au/egJh7ajRWW3I5ZY6Q
-         dNfGRf9udc6MGdngo3llDZgMSBEXVBbCV8dA/hlX3gRFavc1BrO/Kp3IKliFEjPAFL
-         1KvJTFn/9E+la6xGnkOkAu2oJJB2kvshIF/swsc6BufW1QvXw9vpZD+mXHVM69klHw
-         4aLnUwBp/aHUw2sDfrITGtGlVVvQHLgvPAKuIx1lt20P7xTRAGAiKpkdtqYn8LJUef
-         oVMbChNvkmBGKIonMuxEPSwToZQRH0hnn7xKYy4NeWiawDHyYfsC0+oQuZG2dkxgLk
-         XdDQgRcxyvCtw==
+        b=qrZ66dr2mYGyXJ9dpyMUaNCLPxhIlaRWjTHgoAyF1lEmGiF1AJYUsM6NaZqbcFx2w
+         7iJMyDNL/grtQhmS59x3ND4/dpiaBtDMPKoUeARpwTTtB+ETaTFN6aUqWUaRIkquw7
+         zwzqy4o+GgFBqFSjIvRCajWdCSfZ/+GpzuXo87Wg7Du+iwhe13CvkF0e6y48ueZ+sX
+         R+b8cGcvZ1ZCJ6xt0gJb3iQmQLGKMtdgSdeI5Lfmnd4qAICxRaRCEfPDiR7l4tM6ld
+         jYyBH2ygLjy5X7Xv7yQ5/HV9Q3trWHLryksVqYLDC9OOk3D15QtkxcsZ0UwoqstCk8
+         5JpDY7kEq+b1w==
 Received: by pali.im (Postfix)
-        id 1AAC69D7; Mon, 26 Dec 2022 15:22:18 +0100 (CET)
+        id 251389D7; Mon, 26 Dec 2022 15:22:19 +0100 (CET)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     linux-fsdevel@vger.kernel.org,
         linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
@@ -53,9 +53,9 @@ To:     linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Kari Argillander <kari.argillander@gmail.com>,
         Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [RFC PATCH v2 16/18] cifs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
-Date:   Mon, 26 Dec 2022 15:21:48 +0100
-Message-Id: <20221226142150.13324-17-pali@kernel.org>
+Subject: [RFC PATCH v2 17/18] cifs: Remove usage of load_nls_default() calls
+Date:   Mon, 26 Dec 2022 15:21:49 +0100
+Message-Id: <20221226142150.13324-18-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20221226142150.13324-1-pali@kernel.org>
 References: <20221226142150.13324-1-pali@kernel.org>
@@ -71,363 +71,248 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-NLS table for utf8 is broken and cannot be fixed.
+cifs functions will use UTF-8 encoding when nls_table is set to NULL. So
+there is no need to load "dummy" NLS table for some operations.
 
-So instead of broken utf8 nls functions char2uni() and uni2char() use
-functions utf8s_to_utf16s() and utf16s_to_utf8s() which implements correct
-conversion between UTF-16 and UTF-8.
-
-When iochatset=utf8 is used then set ctx->iocharset to NULL and use it for
-distinguish between the fact if NLS table or native UTF-8 functions should
-be used.
+On few places in dfs_cache replace utf8 nls by utf8_to_utf32() function
+which converts UTF-8 sequence to unicode code points (stored as type
+unicode_t). This should fix handling of (UTF-16) CIFS paths with UTF-16
+surrogare pairs, which utf8 nls module cannot handle.
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- fs/cifs/cifs_unicode.c | 128 +++++++++++++++++++++++++++--------------
- fs/cifs/cifs_unicode.h |   2 +-
- fs/cifs/cifsfs.c       |   2 +
- fs/cifs/connect.c      |   8 ++-
- fs/cifs/dir.c          |  28 +++++++--
- fs/cifs/winucase.c     |  14 +++--
- 6 files changed, 124 insertions(+), 58 deletions(-)
+ fs/cifs/cifssmb.c   |  8 ++------
+ fs/cifs/dfs_cache.c | 24 ++++++++----------------
+ fs/cifs/smb2pdu.c   | 18 ++++--------------
+ 3 files changed, 14 insertions(+), 36 deletions(-)
 
-diff --git a/fs/cifs/cifs_unicode.c b/fs/cifs/cifs_unicode.c
-index e7582dd79179..94b861e666e3 100644
---- a/fs/cifs/cifs_unicode.c
-+++ b/fs/cifs/cifs_unicode.c
-@@ -130,20 +130,17 @@ cifs_mapchar(char *target, const __u16 *from, const struct nls_table *cp,
- 		  convert_sfu_char(src_char, target))
- 		return len;
+diff --git a/fs/cifs/cifssmb.c b/fs/cifs/cifssmb.c
+index 23f10e0d6e7e..3db882fdc21d 100644
+--- a/fs/cifs/cifssmb.c
++++ b/fs/cifs/cifssmb.c
+@@ -69,7 +69,6 @@ cifs_reconnect_tcon(struct cifs_tcon *tcon, int smb_command)
+ 	int rc;
+ 	struct cifs_ses *ses;
+ 	struct TCP_Server_Info *server;
+-	struct nls_table *nls_codepage;
+ 	int retries;
  
--	/* if character not one of seven in special remap set */
--	len = cp->uni2char(src_char, target, NLS_MAX_CHARSET_SIZE);
--	if (len <= 0)
--		goto surrogate_pair;
+ 	/*
+@@ -147,8 +146,6 @@ cifs_reconnect_tcon(struct cifs_tcon *tcon, int smb_command)
+ 	}
+ 	spin_unlock(&ses->chan_lock);
+ 
+-	nls_codepage = load_nls_default();
 -
--	return len;
-+	if (cp) {
-+		/* if character not one of seven in special remap set */
-+		len = cp->uni2char(src_char, target, NLS_MAX_CHARSET_SIZE);
-+		if (len <= 0)
-+			goto unknown;
-+	} else {
-+		len = utf16s_to_utf8s(from, 3, UTF16_LITTLE_ENDIAN, target, 6);
-+		if (len <= 0)
-+			goto unknown;
-+	}
+ 	/*
+ 	 * Recheck after acquire mutex. If another thread is negotiating
+ 	 * and the server never sends an answer the socket will be closed
+@@ -182,7 +179,7 @@ cifs_reconnect_tcon(struct cifs_tcon *tcon, int smb_command)
+ 	mutex_lock(&ses->session_mutex);
+ 	rc = cifs_negotiate_protocol(0, ses, server);
+ 	if (!rc)
+-		rc = cifs_setup_session(0, ses, server, nls_codepage);
++		rc = cifs_setup_session(0, ses, server, NULL);
  
--surrogate_pair:
--	/* convert SURROGATE_PAIR and IVS */
--	if (strcmp(cp->charset, "utf8"))
--		goto unknown;
--	len = utf16s_to_utf8s(from, 3, UTF16_LITTLE_ENDIAN, target, 6);
--	if (len <= 0)
--		goto unknown;
- 	return len;
+ 	/* do we need to reconnect tcon? */
+ 	if (rc || !tcon->need_reconnect) {
+@@ -192,7 +189,7 @@ cifs_reconnect_tcon(struct cifs_tcon *tcon, int smb_command)
  
- unknown:
-@@ -239,6 +236,37 @@ cifs_from_utf16(char *to, const __le16 *from, int tolen, int fromlen,
- 	return outlen;
+ skip_sess_setup:
+ 	cifs_mark_open_files_invalid(tcon);
+-	rc = cifs_tree_connect(0, tcon, nls_codepage);
++	rc = cifs_tree_connect(0, tcon, NULL);
+ 	mutex_unlock(&ses->session_mutex);
+ 	cifs_dbg(FYI, "reconnect tcon rc = %d\n", rc);
+ 
+@@ -228,7 +225,6 @@ cifs_reconnect_tcon(struct cifs_tcon *tcon, int smb_command)
+ 		rc = -EAGAIN;
+ 	}
+ 
+-	unload_nls(nls_codepage);
+ 	return rc;
  }
  
-+static int cifs_utf8s_to_utf16s(const char *s, int inlen, __le16 *pwcs)
-+{
-+	__le16 *op;
-+	int size;
-+	unicode_t u;
-+
-+	op = pwcs;
-+	while (inlen > 0 && *s) {
-+		if (*s & 0x80) {
-+			size = utf8_to_utf32(s, inlen, &u);
-+			if (size <= 0) {
-+				u = 0x003f; /* A question mark */
-+				size = 1;
-+			}
-+			s += size;
-+			inlen -= size;
-+			if (u >= 0x10000) {
-+				u -= 0x10000;
-+				*op++ = __cpu_to_le16(0xd800 | ((u >> 10) & 0x03ff));
-+				*op++ = __cpu_to_le16(0xdc00 | (u & 0x03ff));
-+			} else {
-+				*op++ = __cpu_to_le16(u);
-+			}
-+		} else {
-+			*op++ = __cpu_to_le16(*s++);
-+			inlen--;
-+		}
-+	}
-+	return op - pwcs;
-+}
-+
+diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
+index 43ad1176dcb9..4794f2cf721a 100644
+--- a/fs/cifs/dfs_cache.c
++++ b/fs/cifs/dfs_cache.c
+@@ -66,8 +66,6 @@ static struct workqueue_struct *dfscache_wq __read_mostly;
+ static int cache_ttl;
+ static DEFINE_SPINLOCK(cache_ttl_lock);
+ 
+-static struct nls_table *cache_cp;
+-
  /*
-  * NAME:	cifs_strtoUTF16()
-  *
-@@ -254,24 +282,14 @@ cifs_strtoUTF16(__le16 *to, const char *from, int len,
- 	wchar_t wchar_to; /* needed to quiet sparse */
- 
- 	/* special case for utf8 to handle no plane0 chars */
--	if (!strcmp(codepage->charset, "utf8")) {
-+	if (!codepage) {
- 		/*
- 		 * convert utf8 -> utf16, we assume we have enough space
- 		 * as caller should have assumed conversion does not overflow
--		 * in destination len is length in wchar_t units (16bits)
--		 */
--		i  = utf8s_to_utf16s(from, len, UTF16_LITTLE_ENDIAN,
--				       (wchar_t *) to, len);
--
--		/* if success terminate and exit */
--		if (i >= 0)
--			goto success;
--		/*
--		 * if fails fall back to UCS encoding as this
--		 * function should not return negative values
--		 * currently can fail only if source contains
--		 * invalid encoded characters
-+		 * in destination len is length in __le16 units
- 		 */
-+		i  = cifs_utf8s_to_utf16s(from, len, to);
-+		goto success;
- 	}
- 
- 	for (i = 0; len && *from; i++, from += charlen, len -= charlen) {
-@@ -502,25 +520,29 @@ cifsConvertToUTF16(__le16 *target, const char *source, int srclen,
- 		 * as they use backslash as separator.
- 		 */
- 		if (dst_char == 0) {
--			charlen = cp->char2uni(source + i, srclen - i, &tmp);
--			dst_char = cpu_to_le16(tmp);
--
--			/*
--			 * if no match, use question mark, which at least in
--			 * some cases serves as wild card
--			 */
--			if (charlen > 0)
--				goto ctoUTF16;
--
--			/* convert SURROGATE_PAIR */
--			if (strcmp(cp->charset, "utf8") || !wchar_to)
--				goto unknown;
--			if (*(source + i) & 0x80) {
--				charlen = utf8_to_utf32(source + i, 6, &u);
--				if (charlen < 0)
-+			if (cp) {
-+				charlen = cp->char2uni(source + i, srclen - i, &tmp);
-+				dst_char = cpu_to_le16(tmp);
-+
-+				/*
-+				 * if no match, use question mark, which at least in
-+				 * some cases serves as wild card
-+				 */
-+				if (charlen > 0)
-+					goto ctoUTF16;
-+				else
- 					goto unknown;
--			} else
-+			}
-+
-+			/* UTF-8 to UTF-16 conversion */
-+
-+			if (!wchar_to)
- 				goto unknown;
-+
-+			charlen = utf8_to_utf32(source + i, 6, &u);
-+			if (charlen < 0)
-+				goto unknown;
-+
- 			ret  = utf8s_to_utf16s(source + i, charlen,
- 					       UTF16_LITTLE_ENDIAN,
- 					       wchar_to, 6);
-@@ -589,8 +611,26 @@ cifs_local_to_utf16_bytes(const char *from, int len,
- {
- 	int charlen;
- 	int i;
-+	int outlen;
-+	unicode_t u_to;
- 	wchar_t wchar_to;
- 
-+	if (!codepage) {
-+		outlen = 0;
-+		for (i = 0; len && *from; i++, from += charlen, len -= charlen) {
-+			charlen = utf8_to_utf32(from, len, &u_to);
-+			/* Failed conversion defaults to a question mark */
-+			if (charlen < 1) {
-+				charlen = 1;
-+				outlen += 2;
-+			} else if (u_to <= 0xFFFF)
-+				outlen += 2;
-+			else
-+				outlen += 4;
-+		}
-+		return outlen;
-+	}
-+
- 	for (i = 0; len && *from; i++, from += charlen, len -= charlen) {
- 		charlen = codepage->char2uni(from, len, &wchar_to);
- 		/* Failed conversion defaults to a question mark */
-diff --git a/fs/cifs/cifs_unicode.h b/fs/cifs/cifs_unicode.h
-index 80b3d845419f..b9a3290faaf7 100644
---- a/fs/cifs/cifs_unicode.h
-+++ b/fs/cifs/cifs_unicode.h
-@@ -106,7 +106,7 @@ extern __le16 *cifs_strndup_to_utf16(const char *src, const int maxlen,
- 				     int remap);
- #endif
- 
--wchar_t cifs_toupper(wchar_t in);
-+unicode_t cifs_toupper(unicode_t in);
- 
- /*
-  * UniStrcat:  Concatenate the second string to the first
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index 10e00c624922..1537bc8bb698 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -591,6 +591,8 @@ cifs_show_options(struct seq_file *s, struct dentry *root)
- 					   cifs_sb->ctx->dir_mode);
- 	if (cifs_sb->ctx->iocharset)
- 		seq_printf(s, ",iocharset=%s", cifs_sb->ctx->iocharset);
-+	else
-+		seq_puts(s, ",iocharset=utf8");
- 	if (tcon->seal)
- 		seq_puts(s, ",seal");
- 	else if (tcon->ses->server->ignore_signature)
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index d371259d6808..fb841a7baef6 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -2676,7 +2676,11 @@ compare_mount_options(struct super_block *sb, struct cifs_mnt_data *mnt_data)
- 	    old->ctx->dir_mode != new->ctx->dir_mode)
- 		return 0;
- 
--	if (strcmp(old->local_nls->charset, new->local_nls->charset))
-+	if (old->local_nls && !new->local_nls)
-+		return 0;
-+	if (!old->local_nls && new->local_nls)
-+		return 0;
-+	if (old->local_nls && new->local_nls && strcmp(old->local_nls->charset, new->local_nls->charset))
- 		return 0;
- 
- 	if (old->ctx->acregmax != new->ctx->acregmax)
-@@ -3162,7 +3166,7 @@ int cifs_setup_cifs_sb(struct cifs_sb_info *cifs_sb)
- 	if (ctx->iocharset == NULL) {
- 		/* load_nls_default cannot return null */
- 		cifs_sb->local_nls = load_nls_default();
--	} else {
-+	} else if (strcmp(ctx->iocharset, "utf8") != 0) {
- 		cifs_sb->local_nls = load_nls(ctx->iocharset);
- 		if (cifs_sb->local_nls == NULL) {
- 			cifs_dbg(VFS, "CIFS mount error: iocharset %s not found\n",
-diff --git a/fs/cifs/dir.c b/fs/cifs/dir.c
-index ad4208bf1e32..83deba65e188 100644
---- a/fs/cifs/dir.c
-+++ b/fs/cifs/dir.c
-@@ -804,16 +804,22 @@ static int cifs_ci_hash(const struct dentry *dentry, struct qstr *q)
- {
- 	struct nls_table *codepage = CIFS_SB(dentry->d_sb)->local_nls;
- 	unsigned long hash;
-+	unicode_t u;
- 	wchar_t c;
- 	int i, charlen;
- 
- 	hash = init_name_hash(dentry);
- 	for (i = 0; i < q->len; i += charlen) {
--		charlen = codepage->char2uni(&q->name[i], q->len - i, &c);
-+		if (codepage) {
-+			charlen = codepage->char2uni(&q->name[i], q->len - i, &c);
-+			if (likely(charlen > 0))
-+				u = c;
-+		} else
-+			charlen = utf8_to_utf32(&q->name[i], q->len - i, &u);
- 		/* error out if we can't convert the character */
- 		if (unlikely(charlen < 0))
- 			return charlen;
--		hash = partial_name_hash(cifs_toupper(c), hash);
-+		hash = partial_name_hash(cifs_toupper(u), hash);
- 	}
- 	q->hash = end_name_hash(hash);
- 
-@@ -824,6 +830,7 @@ static int cifs_ci_compare(const struct dentry *dentry,
- 		unsigned int len, const char *str, const struct qstr *name)
- {
- 	struct nls_table *codepage = CIFS_SB(dentry->d_sb)->local_nls;
-+	unicode_t u1, u2;
- 	wchar_t c1, c2;
- 	int i, l1, l2;
- 
-@@ -837,9 +844,18 @@ static int cifs_ci_compare(const struct dentry *dentry,
- 		return 1;
- 
- 	for (i = 0; i < len; i += l1) {
--		/* Convert characters in both strings to UTF-16. */
--		l1 = codepage->char2uni(&str[i], len - i, &c1);
--		l2 = codepage->char2uni(&name->name[i], name->len - i, &c2);
-+		/* Convert characters in both strings to UTF-32. */
-+		if (codepage) {
-+			l1 = codepage->char2uni(&str[i], len - i, &c1);
-+			l2 = codepage->char2uni(&name->name[i], name->len - i, &c2);
-+			if (likely(l1 > 0))
-+				u1 = c1;
-+			if (likely(l2 > 0))
-+				u2 = c2;
-+		} else {
-+			l1 = utf8_to_utf32(&str[i], len - i, &u1);
-+			l2 = utf8_to_utf32(&name->name[i], name->len - i, &u2);
-+		}
- 
- 		/*
- 		 * If we can't convert either character, just declare it to
-@@ -860,7 +876,7 @@ static int cifs_ci_compare(const struct dentry *dentry,
- 			return 1;
- 
- 		/* Now compare uppercase versions of these characters */
--		if (cifs_toupper(c1) != cifs_toupper(c2))
-+		if (cifs_toupper(u1) != cifs_toupper(u2))
- 			return 1;
- 	}
- 
-diff --git a/fs/cifs/winucase.c b/fs/cifs/winucase.c
-index 2f075b5b50df..b3647b35a7e1 100644
---- a/fs/cifs/winucase.c
-+++ b/fs/cifs/winucase.c
-@@ -17,7 +17,7 @@
- 
- #include <linux/nls.h>
- 
--wchar_t cifs_toupper(wchar_t in);  /* quiet sparse */
-+unicode_t cifs_toupper(unicode_t in);  /* quiet sparse */
- 
- static const wchar_t t2_00[256] = {
- 	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-@@ -615,20 +615,24 @@ static const wchar_t *const toplevel[256] = {
- };
- 
- /**
-- * cifs_toupper - convert a wchar_t from lower to uppercase
-+ * cifs_toupper - convert a unicode_t from lower to uppercase
-  * @in: character to convert from lower to uppercase
-  *
-- * This function consults the static tables above to convert a wchar_t from
-+ * This function consults the static tables above to convert a unicode_t from
-  * lower to uppercase. In the event that there is no mapping, the original
-  * "in" character is returned.
+  * Number of entries in the cache
   */
--wchar_t
--cifs_toupper(wchar_t in)
-+unicode_t
-+cifs_toupper(unicode_t in)
- {
- 	unsigned char idx;
- 	const wchar_t *tbl;
- 	wchar_t out;
+@@ -173,14 +171,14 @@ char *dfs_cache_canonical_path(const char *path, const struct nls_table *cp, int
+ 	if (!path || strlen(path) < 3 || (*path != '\\' && *path != '/'))
+ 		return ERR_PTR(-EINVAL);
  
-+	/* cifs_toupper table has only defines for plane-0 */
-+	if (in > 0xffff)
-+		return in;
-+
- 	/* grab upper byte */
- 	idx = (in & 0xff00) >> 8;
+-	if (unlikely(strcmp(cp->charset, cache_cp->charset))) {
++	if (unlikely(cp)) {
+ 		tmp = (char *)cifs_strndup_to_utf16(path, strlen(path), &plen, cp, remap);
+ 		if (!tmp) {
+ 			cifs_dbg(VFS, "%s: failed to convert path to utf16\n", __func__);
+ 			return ERR_PTR(-EINVAL);
+ 		}
+ 
+-		npath = cifs_strndup_from_utf16(tmp, plen, true, cache_cp);
++		npath = cifs_strndup_from_utf16(tmp, plen, true, NULL);
+ 		kfree(tmp);
+ 
+ 		if (!npath) {
+@@ -392,9 +390,6 @@ int dfs_cache_init(void)
+ 		INIT_HLIST_HEAD(&cache_htable[i]);
+ 
+ 	atomic_set(&cache_count, 0);
+-	cache_cp = load_nls("utf8");
+-	if (!cache_cp)
+-		cache_cp = load_nls_default();
+ 
+ 	cifs_dbg(FYI, "%s: initialized DFS referral cache\n", __func__);
+ 	return 0;
+@@ -408,11 +403,11 @@ static int cache_entry_hash(const void *data, int size, unsigned int *hash)
+ {
+ 	int i, clen;
+ 	const unsigned char *s = data;
+-	wchar_t c;
++	unicode_t c;
+ 	unsigned int h = 0;
+ 
+ 	for (i = 0; i < size; i += clen) {
+-		clen = cache_cp->char2uni(&s[i], size - i, &c);
++		clen = utf8_to_utf32(&s[i], size - i, &c);
+ 		if (unlikely(clen < 0)) {
+ 			cifs_dbg(VFS, "%s: can't convert char\n", __func__);
+ 			return clen;
+@@ -601,14 +596,14 @@ static int add_cache_entry_locked(struct dfs_info3_param *refs, int numrefs)
+ static bool dfs_path_equal(const char *s1, int len1, const char *s2, int len2)
+ {
+ 	int i, l1, l2;
+-	wchar_t c1, c2;
++	unicode_t c1, c2;
+ 
+ 	if (len1 != len2)
+ 		return false;
+ 
+ 	for (i = 0; i < len1; i += l1) {
+-		l1 = cache_cp->char2uni(&s1[i], len1 - i, &c1);
+-		l2 = cache_cp->char2uni(&s2[i], len2 - i, &c2);
++		l1 = utf8_to_utf32(&s1[i], len1 - i, &c1);
++		l2 = utf8_to_utf32(&s2[i], len2 - i, &c2);
+ 		if (unlikely(l1 < 0 && l2 < 0)) {
+ 			if (s1[i] != s2[i])
+ 				return false;
+@@ -698,7 +693,6 @@ static struct cache_entry *lookup_cache_entry(const char *path)
+ void dfs_cache_destroy(void)
+ {
+ 	cancel_delayed_work_sync(&refresh_task);
+-	unload_nls(cache_cp);
+ 	free_mount_group_list();
+ 	flush_cache_ents();
+ 	kmem_cache_destroy(cache_slab);
+@@ -744,11 +738,9 @@ static int get_dfs_referral(const unsigned int xid, struct cifs_ses *ses, const
+ 
+ 	if (!ses || !ses->server || !ses->server->ops->get_dfs_refer)
+ 		return -EOPNOTSUPP;
+-	if (unlikely(!cache_cp))
+-		return -EINVAL;
+ 
+ 	cifs_dbg(FYI, "%s: ipc=%s referral=%s\n", __func__, ses->tcon_ipc->tree_name, path);
+-	rc =  ses->server->ops->get_dfs_refer(xid, ses, path, refs, numrefs, cache_cp,
++	rc =  ses->server->ops->get_dfs_refer(xid, ses, path, refs, numrefs, NULL,
+ 					      NO_MAP_UNI_RSVD);
+ 	if (!rc) {
+ 		struct dfs_info3_param *ref = *refs;
+diff --git a/fs/cifs/smb2pdu.c b/fs/cifs/smb2pdu.c
+index a5695748a89b..3dc69787ae17 100644
+--- a/fs/cifs/smb2pdu.c
++++ b/fs/cifs/smb2pdu.c
+@@ -144,7 +144,6 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon,
+ 	       struct TCP_Server_Info *server)
+ {
+ 	int rc = 0;
+-	struct nls_table *nls_codepage;
+ 	struct cifs_ses *ses;
+ 	int retries;
+ 
+@@ -250,8 +249,6 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon,
+ 		 tcon->ses->chans_need_reconnect,
+ 		 tcon->need_reconnect);
+ 
+-	nls_codepage = load_nls_default();
+-
+ 	/*
+ 	 * Recheck after acquire mutex. If another thread is negotiating
+ 	 * and the server never sends an answer the socket will be closed
+@@ -284,7 +281,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon,
+ 	mutex_lock(&ses->session_mutex);
+ 	rc = cifs_negotiate_protocol(0, ses, server);
+ 	if (!rc) {
+-		rc = cifs_setup_session(0, ses, server, nls_codepage);
++		rc = cifs_setup_session(0, ses, server, NULL);
+ 		if ((rc == -EACCES) && !tcon->retry) {
+ 			mutex_unlock(&ses->session_mutex);
+ 			rc = -EHOSTDOWN;
+@@ -309,7 +306,7 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon,
+ 	if (tcon->use_persistent)
+ 		tcon->need_reopen_files = true;
+ 
+-	rc = cifs_tree_connect(0, tcon, nls_codepage);
++	rc = cifs_tree_connect(0, tcon, NULL);
+ 	mutex_unlock(&ses->session_mutex);
+ 
+ 	cifs_dbg(FYI, "reconnect tcon rc = %d\n", rc);
+@@ -345,7 +342,6 @@ smb2_reconnect(__le16 smb2_command, struct cifs_tcon *tcon,
+ 		rc = -EAGAIN;
+ 	}
+ failed:
+-	unload_nls(nls_codepage);
+ 	return rc;
+ }
+ 
+@@ -503,12 +499,10 @@ build_encrypt_ctxt(struct smb2_encryption_neg_context *pneg_ctxt)
+ static unsigned int
+ build_netname_ctxt(struct smb2_netname_neg_context *pneg_ctxt, char *hostname)
+ {
+-	struct nls_table *cp = load_nls_default();
+-
+ 	pneg_ctxt->ContextType = SMB2_NETNAME_NEGOTIATE_CONTEXT_ID;
+ 
+ 	/* copy up to max of first 100 bytes of server name to NetName field */
+-	pneg_ctxt->DataLength = cpu_to_le16(2 * cifs_strtoUTF16(pneg_ctxt->NetName, hostname, 100, cp));
++	pneg_ctxt->DataLength = cpu_to_le16(2 * cifs_strtoUTF16(pneg_ctxt->NetName, hostname, 100, NULL));
+ 	/* context size is DataLength + minimal smb2_neg_context */
+ 	return ALIGN(le16_to_cpu(pneg_ctxt->DataLength) + sizeof(struct smb2_neg_context), 8);
+ }
+@@ -2568,7 +2562,6 @@ alloc_path_with_tree_prefix(__le16 **out_path, int *out_size, int *out_len,
+ 			    const char *treename, const __le16 *path)
+ {
+ 	int treename_len, path_len;
+-	struct nls_table *cp;
+ 	const __le16 sep[] = {cpu_to_le16('\\'), cpu_to_le16(0x0000)};
+ 
+ 	/*
+@@ -2595,8 +2588,7 @@ alloc_path_with_tree_prefix(__le16 **out_path, int *out_size, int *out_len,
+ 	if (!*out_path)
+ 		return -ENOMEM;
+ 
+-	cp = load_nls_default();
+-	cifs_strtoUTF16(*out_path, treename, treename_len, cp);
++	cifs_strtoUTF16(*out_path, treename, treename_len, NULL);
+ 
+ 	/* Do not append the separator if the path is empty */
+ 	if (path[0] != cpu_to_le16(0x0000)) {
+@@ -2604,8 +2596,6 @@ alloc_path_with_tree_prefix(__le16 **out_path, int *out_size, int *out_len,
+ 		UniStrcat(*out_path, path);
+ 	}
+ 
+-	unload_nls(cp);
+-
+ 	return 0;
+ }
  
 -- 
 2.20.1
