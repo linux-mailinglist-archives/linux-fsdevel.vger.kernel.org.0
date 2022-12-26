@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD1B665633B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:23:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2352B656330
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:23:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232181AbiLZOWx (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Dec 2022 09:22:53 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39178 "EHLO
+        id S230089AbiLZOWs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Dec 2022 09:22:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39118 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231935AbiLZOWK (ORCPT
+        with ESMTP id S231896AbiLZOWJ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Dec 2022 09:22:10 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 718F0262D;
-        Mon, 26 Dec 2022 06:22:09 -0800 (PST)
+        Mon, 26 Dec 2022 09:22:09 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ECE8A2613;
+        Mon, 26 Dec 2022 06:22:08 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1C31FB80D42;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 728FB60EB1;
         Mon, 26 Dec 2022 14:22:08 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9EA4C433D2;
-        Mon, 26 Dec 2022 14:22:06 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B26BEC433F0;
+        Mon, 26 Dec 2022 14:22:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672064526;
-        bh=ONMvtrjl0bWB4AJ/38sMd2FmiCDCBw+bnetddn3dC24=;
+        s=k20201202; t=1672064527;
+        bh=7z2lZ+Be7RkuOUgzW/6Khhu+Fp4b8cIx0oWTtjIwGLE=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=BtF/0hhHi7VDPuh08/nofWycrKkja0tYnSt9ZU1A049aN/GJy21ObSnDwEwMD2iCM
-         93ORyhD0HbbugTIyy62xetc+3pR6P9jADZXJKGu3XfBkY04qNSHxWLK+jEqO8dNax9
-         kcBgBevZ7IoV1tmQIhSXsy+WTTFoKKE910vIxllHEulPCLiG+Cf2cjt1LXplFtfopP
-         Rsml4vweLF5idhuSWLsluFqQA/8vPBuEH0TzTvghg4L3QEY28s5+x6zAqkiRMyLCJm
-         LfHApyp/MSrXItoCw5ijEpjQayVrmZNJOT5lbYO5G7SWc2PDpzmaHtBCR6xjqdkF+U
-         r58o+Uruxdt2Q==
+        b=pW2+TFrbcj9Y/de7k5L+kL7JaFTjxs8ZabMRJesm96TzLOlfKyD2ZU68GdwWD8OXT
+         /MkTbPYx6x8/RdXTBHi3KPZQxXa8UGIALdcDx5R4UUCAIeGxc5H3qa0eefxO9C/Jd9
+         p6VIQ9PDX11m451GS7nAbpjNoq02pEoNbs7obTnCtto51IJC/LsXKGSoIa/p3oigPD
+         SLjqwoOadzlBmO6fGa6k6SBurFCHiz+fFOrARIv28c5D32lF8h6Tan2asFNhWWAZmq
+         GN/kH9H2zR240mg+LXhnncrZFZ0qrN76B7p4mgr/FFafhpqv3pN5093qKOle7exmNL
+         rLQ12nQGwmE7g==
 Received: by pali.im (Postfix)
-        id 63BF99D7; Mon, 26 Dec 2022 15:22:06 +0100 (CET)
+        id 6D4ED9D7; Mon, 26 Dec 2022 15:22:07 +0100 (CET)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     linux-fsdevel@vger.kernel.org,
         linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
@@ -53,9 +53,9 @@ To:     linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Kari Argillander <kari.argillander@gmail.com>,
         Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [RFC PATCH v2 05/18] befs: Fix printing iocharset= mount option
-Date:   Mon, 26 Dec 2022 15:21:37 +0100
-Message-Id: <20221226142150.13324-6-pali@kernel.org>
+Subject: [RFC PATCH v2 06/18] befs: Rename enum value Opt_charset to Opt_iocharset to match mount option
+Date:   Mon, 26 Dec 2022 15:21:38 +0100
+Message-Id: <20221226142150.13324-7-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20221226142150.13324-1-pali@kernel.org>
 References: <20221226142150.13324-1-pali@kernel.org>
@@ -75,22 +75,38 @@ Mount option is named iocharset= and not charset=
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- fs/befs/linuxvfs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/befs/linuxvfs.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/fs/befs/linuxvfs.c b/fs/befs/linuxvfs.c
-index 32749fcee090..f983852ba863 100644
+index f983852ba863..5c66550f7933 100644
 --- a/fs/befs/linuxvfs.c
 +++ b/fs/befs/linuxvfs.c
-@@ -777,7 +777,7 @@ static int befs_show_options(struct seq_file *m, struct dentry *root)
- 		seq_printf(m, ",gid=%u",
- 			   from_kgid_munged(&init_user_ns, opts->gid));
- 	if (opts->iocharset)
--		seq_printf(m, ",charset=%s", opts->iocharset);
-+		seq_printf(m, ",iocharset=%s", opts->iocharset);
- 	if (opts->debug)
- 		seq_puts(m, ",debug");
- 	return 0;
+@@ -677,13 +677,13 @@ static struct dentry *befs_get_parent(struct dentry *child)
+ }
+ 
+ enum {
+-	Opt_uid, Opt_gid, Opt_charset, Opt_debug, Opt_err,
++	Opt_uid, Opt_gid, Opt_iocharset, Opt_debug, Opt_err,
+ };
+ 
+ static const match_table_t befs_tokens = {
+ 	{Opt_uid, "uid=%d"},
+ 	{Opt_gid, "gid=%d"},
+-	{Opt_charset, "iocharset=%s"},
++	{Opt_iocharset, "iocharset=%s"},
+ 	{Opt_debug, "debug"},
+ 	{Opt_err, NULL}
+ };
+@@ -744,7 +744,7 @@ parse_options(char *options, struct befs_mount_options *opts)
+ 			opts->gid = gid;
+ 			opts->use_gid = 1;
+ 			break;
+-		case Opt_charset:
++		case Opt_iocharset:
+ 			kfree(opts->iocharset);
+ 			opts->iocharset = match_strdup(&args[0]);
+ 			if (!opts->iocharset) {
 -- 
 2.20.1
 
