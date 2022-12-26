@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1963865633F
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:23:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1AFC5656352
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:23:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232226AbiLZOW4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Dec 2022 09:22:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39148 "EHLO
+        id S232101AbiLZOXZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Dec 2022 09:23:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40058 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232056AbiLZOWk (ORCPT
+        with ESMTP id S232082AbiLZOWm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Dec 2022 09:22:40 -0500
+        Mon, 26 Dec 2022 09:22:42 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8A3AF63BF;
-        Mon, 26 Dec 2022 06:22:16 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8C38E63DE;
+        Mon, 26 Dec 2022 06:22:17 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 26BC760EB5;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 2AB7760ECC;
+        Mon, 26 Dec 2022 14:22:17 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44A37C433D2;
         Mon, 26 Dec 2022 14:22:16 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DDD4C433F2;
-        Mon, 26 Dec 2022 14:22:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672064535;
-        bh=KTlaKtoc30smqwDFYdlWnFXEn9JLsGy9kBhgPLFkugI=;
+        s=k20201202; t=1672064536;
+        bh=UK6BsAqbMHD2yEk56WVb4gYlz7RwyfUXM7sbl2vvPCA=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=k1C6pep7mjb2vxyhmR6RmjD5TxwJDJwot8DuSPJBJDV53ijpJR+rV1MBrf7h3cb6m
-         me7Pg6aNRllW0ZdOkLjWFHwaqfLeK8FixgI8Lx9frkhm8Sz/qPflhrh1HrDSZR1KZ5
-         Yj7LUS4AdmfbcvFn88aAEZmGxv+mlpNPtAa/cv4CKXt3VjW687mqwFX0Tuk/r5DrB6
-         zY5bk1RoDqtWT5rYh/oIZr+vl4bHQO/fg9xySFujE/B5pvIbJrJi8m+ci3q1N818jj
-         rIWMcCC2am4zCGZDtMhvUJWbhz6CE/2B9XB0p4kL3gxo7YjZXJf7Slpjd3mPm0exA1
-         kGWP5cEi4dzEQ==
+        b=efntnbsbXMUd/3GVdPWgMJrVdE4PvcR0ghBC55RqUJ4rPHQlXrJMXeykHqg94BVpB
+         hu2ZGUq8HkJSJnELi0aFA0lGyrMRBKpN+N3VjxBZq6OEW1vrHiVQun4Hhm2c6algSG
+         8fh6m1xxtDXfE38s3iwstylP1uwUkLdJEtfKPZY6XcEKjnJzCtr0SN+BPTpyiHwI5J
+         44uZ8tYtcuRDPT0WXsPT34PpSRjG+5roeG9qcYMnjMFfLmyk5HE1RHWxi+P+iRGlGx
+         W+wkKS7UAwKqhk8UvHsm5Ltkew/N9vQ6WAzRtLJod71xGKcxsd5OJ286VWej6f4UQV
+         ZJmdCwwMPQHPQ==
 Received: by pali.im (Postfix)
-        id E8E4C9D7; Mon, 26 Dec 2022 15:22:14 +0100 (CET)
+        id F1EC09D7; Mon, 26 Dec 2022 15:22:15 +0100 (CET)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     linux-fsdevel@vger.kernel.org,
         linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
@@ -53,9 +53,9 @@ To:     linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Kari Argillander <kari.argillander@gmail.com>,
         Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [RFC PATCH v2 13/18] jfs: Fix buffer overflow in jfs_strfromUCS_le() function
-Date:   Mon, 26 Dec 2022 15:21:45 +0100
-Message-Id: <20221226142150.13324-14-pali@kernel.org>
+Subject: [RFC PATCH v2 14/18] jfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
+Date:   Mon, 26 Dec 2022 15:21:46 +0100
+Message-Id: <20221226142150.13324-15-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20221226142150.13324-1-pali@kernel.org>
 References: <20221226142150.13324-1-pali@kernel.org>
@@ -71,100 +71,113 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Function jfs_strfromUCS_le() writes to unknown offset in buffer allocated
-by __get_free_page(GFP_KERNEL). So it cannot expects that there is least
-NLS_MAX_CHARSET_SIZE bytes space before end of that buffer.
+NLS table for utf8 is broken and cannot be fixed.
 
-Fix this issue by add a new parameter maxlen for jfs_strfromUCS_le()
-function. And use it for passing remaining size of buffer to prevent buffer
-overflow in kernel.
+So instead of broken utf8 nls functions char2uni() and uni2char() use
+functions utf8s_to_utf16s() and utf16s_to_utf8s() which implements correct
+conversion between UTF-16 and UTF-8.
+
+These functions implements also correct processing of UTF-16 surrogate
+pairs and therefore after this change jfs driver would be able to correctly
+handle also file names with 4-byte UTF-8 sequences.
+
+When iochatset=utf8 is used then set sbi->nls_tab to NULL and use it for
+distinguish between the fact if NLS table or native UTF-8 functions should
+be used.
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- fs/jfs/jfs_dtree.c   | 13 ++++++++++---
- fs/jfs/jfs_unicode.c |  6 +++---
- fs/jfs/jfs_unicode.h |  2 +-
- 3 files changed, 14 insertions(+), 7 deletions(-)
+ fs/jfs/jfs_unicode.c | 17 +++++++++++++++--
+ fs/jfs/super.c       | 24 +++++++++++++++---------
+ 2 files changed, 30 insertions(+), 11 deletions(-)
 
-diff --git a/fs/jfs/jfs_dtree.c b/fs/jfs/jfs_dtree.c
-index 92b7c533407c..a09c9bc46351 100644
---- a/fs/jfs/jfs_dtree.c
-+++ b/fs/jfs/jfs_dtree.c
-@@ -2715,6 +2715,7 @@ int jfs_readdir(struct file *file, struct dir_context *ctx)
- 	int d_namleft, len, outlen;
- 	unsigned long dirent_buf;
- 	char *name_ptr;
-+	int maxlen;
- 	u32 dir_index;
- 	int do_index = 0;
- 	uint loop_count = 0;
-@@ -2937,7 +2938,10 @@ int jfs_readdir(struct file *file, struct dir_context *ctx)
- 			}
- 
- 			/* copy the name of head/only segment */
--			outlen = jfs_strfromUCS_le(name_ptr, d->name, len,
-+			maxlen = PAGE_SIZE - sizeof(struct jfs_dirent) -
-+				 (name_ptr - jfs_dirent->name);
-+			outlen = jfs_strfromUCS_le(name_ptr, maxlen,
-+						   d->name, len,
- 						   codepage);
- 			jfs_dirent->name_len = outlen;
- 
-@@ -2957,8 +2961,11 @@ int jfs_readdir(struct file *file, struct dir_context *ctx)
- 					goto skip_one;
- 				}
- 				len = min(d_namleft, DTSLOTDATALEN);
--				outlen = jfs_strfromUCS_le(name_ptr, t->name,
--							   len, codepage);
-+				maxlen = PAGE_SIZE - sizeof(struct jfs_dirent) -
-+					 (name_ptr - jfs_dirent->name);
-+				outlen = jfs_strfromUCS_le(name_ptr, maxlen,
-+							   t->name, len,
-+							   codepage);
- 				jfs_dirent->name_len += outlen;
- 
- 				next = t->next;
 diff --git a/fs/jfs/jfs_unicode.c b/fs/jfs/jfs_unicode.c
-index 1d0f65d13b58..2db923872bf1 100644
+index 2db923872bf1..0b0b80063a98 100644
 --- a/fs/jfs/jfs_unicode.c
 +++ b/fs/jfs/jfs_unicode.c
-@@ -16,7 +16,7 @@
-  * FUNCTION:	Convert little-endian unicode string to character string
-  *
-  */
--int jfs_strfromUCS_le(char *to, const __le16 * from,
-+int jfs_strfromUCS_le(char *to, int maxlen, const __le16 * from,
- 		      int len, struct nls_table *codepage)
+@@ -46,6 +46,9 @@ int jfs_strfromUCS_le(char *to, int maxlen, const __le16 * from,
+ 				}
+ 			}
+ 		}
++	} else {
++		outlen = utf16s_to_utf8s((const wchar_t *)from, len,
++					 UTF16_LITTLE_ENDIAN, to, maxlen-1);
+ 	}
+ 	to[outlen] = 0;
+ 	return outlen;
+@@ -61,6 +64,7 @@ static int jfs_strtoUCS(wchar_t * to, const unsigned char *from, int len,
+ 		struct nls_table *codepage)
  {
+ 	int charlen;
++	int outlen;
  	int i;
-@@ -25,12 +25,12 @@ int jfs_strfromUCS_le(char *to, const __le16 * from,
- 	int warn = !!warn_again;	/* once per string */
  
  	if (codepage) {
--		for (i = 0; (i < len) && from[i]; i++) {
-+		for (i = 0; (i < len) && from[i] && outlen < maxlen-1; i++) {
- 			int charlen;
- 			charlen =
- 			    codepage->uni2char(le16_to_cpu(from[i]),
- 					       &to[outlen],
--					       NLS_MAX_CHARSET_SIZE);
-+					       maxlen-1-outlen);
- 			if (charlen > 0)
- 				outlen += charlen;
- 			else {
-diff --git a/fs/jfs/jfs_unicode.h b/fs/jfs/jfs_unicode.h
-index 9db62d047daa..8b5c74315e07 100644
---- a/fs/jfs/jfs_unicode.h
-+++ b/fs/jfs/jfs_unicode.h
-@@ -19,7 +19,7 @@ typedef struct {
- extern signed char UniUpperTable[512];
- extern UNICASERANGE UniUpperRange[];
- extern int get_UCSname(struct component_name *, struct dentry *);
--extern int jfs_strfromUCS_le(char *, const __le16 *, int, struct nls_table *);
-+extern int jfs_strfromUCS_le(char *, int, const __le16 *, int, struct nls_table *);
+@@ -75,10 +79,19 @@ static int jfs_strtoUCS(wchar_t * to, const unsigned char *from, int len,
+ 				return charlen;
+ 			}
+ 		}
++		outlen = i;
++	} else {
++		outlen = utf8s_to_utf16s(from, len, UTF16_LITTLE_ENDIAN,
++					 to, len);
++		if (outlen < 1) {
++			jfs_err("jfs_strtoUCS: utf8s_to_utf16s returned %d.",
++				outlen);
++			return outlen;
++		}
+ 	}
  
- #define free_UCSname(COMP) kfree((COMP)->name)
+-	to[i] = 0;
+-	return i;
++	to[outlen] = 0;
++	return outlen;
+ }
  
+ /*
+diff --git a/fs/jfs/super.c b/fs/jfs/super.c
+index a2bb3d5d3f69..f26460147b62 100644
+--- a/fs/jfs/super.c
++++ b/fs/jfs/super.c
+@@ -261,16 +261,20 @@ static int parse_options(char *options, struct super_block *sb, s64 *newLVSize,
+ 			/* Don't do anything ;-) */
+ 			break;
+ 		case Opt_iocharset:
+-			if (nls_map && nls_map != (void *) -1)
++			if (nls_map && nls_map != (void *) -1) {
+ 				unload_nls(nls_map);
+-			/* compatibility alias none means ISO-8859-1 */
+-			if (strcmp(args[0].from, "none") == 0)
+-				nls_map = load_nls("iso8859-1");
+-			else
+-				nls_map = load_nls(args[0].from);
+-			if (!nls_map) {
+-				pr_err("JFS: charset not found\n");
+-				goto cleanup;
++				nls_map = NULL;
++			}
++			if (strcmp(args[0].from, "utf8") != 0) {
++				/* compatibility alias none means ISO-8859-1 */
++				if (strcmp(args[0].from, "none") == 0)
++					nls_map = load_nls("iso8859-1");
++				else
++					nls_map = load_nls(args[0].from);
++				if (!nls_map) {
++					pr_err("JFS: charset not found\n");
++					goto cleanup;
++				}
+ 			}
+ 			break;
+ 		case Opt_resize:
+@@ -713,6 +717,8 @@ static int jfs_show_options(struct seq_file *seq, struct dentry *root)
+ 		seq_printf(seq, ",discard=%u", sbi->minblks_trim);
+ 	if (sbi->nls_tab)
+ 		seq_printf(seq, ",iocharset=%s", sbi->nls_tab->charset);
++	else
++		seq_puts(seq, ",iocharset=utf8");
+ 	if (sbi->flag & JFS_ERR_CONTINUE)
+ 		seq_printf(seq, ",errors=continue");
+ 	if (sbi->flag & JFS_ERR_PANIC)
 -- 
 2.20.1
 
