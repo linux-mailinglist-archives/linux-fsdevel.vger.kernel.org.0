@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 745AF65632B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:23:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8249565633A
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:23:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232031AbiLZOWo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Dec 2022 09:22:44 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39146 "EHLO
+        id S232166AbiLZOWw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Dec 2022 09:22:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40002 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229880AbiLZOWj (ORCPT
+        with ESMTP id S232030AbiLZOWj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 26 Dec 2022 09:22:39 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 344736355;
-        Mon, 26 Dec 2022 06:22:12 -0800 (PST)
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29CBD2608;
+        Mon, 26 Dec 2022 06:22:13 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B9D3B60ECE;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id BB22A60EB5;
+        Mon, 26 Dec 2022 14:22:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3473C433D2;
         Mon, 26 Dec 2022 14:22:11 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3ACBC4339B;
-        Mon, 26 Dec 2022 14:22:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672064531;
-        bh=e4FwSq1/2Vygd9UHJiO4l6thoqlGGbMWoa45GXTb6aQ=;
+        s=k20201202; t=1672064532;
+        bh=Xsp3m3OsW4jVnQPkMQLxfCHZ/XiAut6pdb2ruAApCB4=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=bXPSBq/bP7mDyKk/wd7W2JTWVlPXVT2RboTFlj9iSVPG35ulA+hgbCALFNyvoXpAK
-         Yzx7mAKXyDpUHW94zb7wQL8yTchXrjXuuat00MS5ai8YUUD0012uIT4a5QiKrben11
-         NiCBuc4j+WeR06kzqsy28JXcIIE6y+D28+aE+zwpIREYdOSEgPGowa1iHU/YDo8dzW
-         EDUPDrgHTcuWSdij1wFlpD7SH5tOX3XQmKdIqRVayV6bWYMjfxjNz2Z7B7fMS4XACc
-         N5+iICo51y3MEYVCT6SMx5h1Hb+Klz6/2ZgMj20wf0bPyTD31iHliqfFx2bD/geecu
-         dLKaXbfGnsmnw==
+        b=Up4OAqH55iaCAJw883S9943eBNly3aIMlynhdSIFfKbVseamKeJfQH0MxLPkAHuPa
+         0RO+8XOWxMOAchvnruly8oZKaVEQHv93la8lc8DwyAqnDlp/+ol3zsBzwGycA5kTs3
+         PiipsjZFO53qGXeQAlkyrZ2Iet0frsmuqAA9GT26/1kj2XkqsT9ysgskuXT64p/YCW
+         NdTkq630GuiyNhUfa+c2ohwTj+LBm3CEJKAf/qfyCBgrckS9wp2z+abpEpNKo+7RC4
+         qzXqOV8xr4EQF3Y0KwHx44xvTMy2W5MYRu++4b1Ux+ux6ypyB58J8MsaHiompDhxdR
+         lLWkEteZYAALA==
 Received: by pali.im (Postfix)
-        id 8CD359D7; Mon, 26 Dec 2022 15:22:10 +0100 (CET)
+        id 8C8A49D7; Mon, 26 Dec 2022 15:22:11 +0100 (CET)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     linux-fsdevel@vger.kernel.org,
         linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
@@ -53,9 +53,9 @@ To:     linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Kari Argillander <kari.argillander@gmail.com>,
         Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [RFC PATCH v2 09/18] hfs: Explicitly set hsb->nls_disk when hsb->nls_io is set
-Date:   Mon, 26 Dec 2022 15:21:41 +0100
-Message-Id: <20221226142150.13324-10-pali@kernel.org>
+Subject: [RFC PATCH v2 10/18] hfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
+Date:   Mon, 26 Dec 2022 15:21:42 +0100
+Message-Id: <20221226142150.13324-11-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20221226142150.13324-1-pali@kernel.org>
 References: <20221226142150.13324-1-pali@kernel.org>
@@ -71,136 +71,160 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-It does not make any sense to set hsb->nls_io (NLS iocharset used between
-VFS and hfs driver) when hsb->nls_disk (NLS codepage used between hfs
-driver and disk) is not set.
+NLS table for utf8 is broken and cannot be fixed.
 
-Reverse engineering driver code shown what is doing in this special case:
+So instead of broken utf8 nls functions char2uni() and uni2char() use
+functions utf8_to_utf32() and utf32_to_utf8() which implements correct
+encoding and decoding between Unicode code points and UTF-8 sequence.
 
-    When codepage was not defined but iocharset was then
-    hfs driver copied 8bit character from disk directly to
-    16bit unicode wchar_t type. Which means it did conversion
-    from Latin1 (ISO-8859-1) to Unicode because first 256
-    Unicode code points matches 8bit ISO-8859-1 codepage table.
-    So when iocharset was specified and codepage not, then
-    codepage used implicit value "iso8859-1".
-
-So when hsb->nls_disk is not set and hsb->nls_io is then explicitly set
-hsb->nls_disk to "iso8859-1".
-
-Such setup is obviously incompatible with Mac OS systems as they do not
-support iso8859-1 encoding for hfs. So print warning into dmesg about this
-fact.
-
-After this change hsb->nls_disk is always set, so remove code paths for
-case when hsb->nls_disk was not set as they are not needed anymore.
+When iochatset=utf8 is used then set hsb->nls_io to NULL and use it for
+distinguish between the fact if NLS table or native UTF-8 functions should
+be used.
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- fs/hfs/super.c | 31 +++++++++++++++++++++++++++++++
- fs/hfs/trans.c | 38 ++++++++++++++------------------------
- 2 files changed, 45 insertions(+), 24 deletions(-)
+ fs/hfs/super.c | 33 ++++++++++++++++++++++-----------
+ fs/hfs/trans.c | 24 ++++++++++++++++++++----
+ 2 files changed, 42 insertions(+), 15 deletions(-)
 
 diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index 6764afa98a6f..cea19ed06bce 100644
+index cea19ed06bce..5a63df41da05 100644
 --- a/fs/hfs/super.c
 +++ b/fs/hfs/super.c
-@@ -351,6 +351,37 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
+@@ -149,10 +149,13 @@ static int hfs_show_options(struct seq_file *seq, struct dentry *root)
+ 		seq_printf(seq, ",part=%u", sbi->part);
+ 	if (sbi->session >= 0)
+ 		seq_printf(seq, ",session=%u", sbi->session);
+-	if (sbi->nls_disk)
++	if (sbi->nls_disk) {
+ 		seq_printf(seq, ",codepage=%s", sbi->nls_disk->charset);
+-	if (sbi->nls_io)
+-		seq_printf(seq, ",iocharset=%s", sbi->nls_io->charset);
++		if (sbi->nls_io)
++			seq_printf(seq, ",iocharset=%s", sbi->nls_io->charset);
++		else
++			seq_puts(seq, ",iocharset=utf8");
++	}
+ 	if (sbi->s_quiet)
+ 		seq_printf(seq, ",quiet");
+ 	return 0;
+@@ -225,6 +228,7 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
+ 	char *p;
+ 	substring_t args[MAX_OPT_ARGS];
+ 	int tmp, token;
++	bool have_iocharset;
+ 
+ 	/* initialize the sb with defaults */
+ 	hsb->s_uid = current_uid();
+@@ -239,6 +243,8 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
+ 	if (!options)
+ 		return 1;
+ 
++	have_iocharset = false;
++
+ 	while ((p = strsep(&options, ",")) != NULL) {
+ 		if (!*p)
+ 			continue;
+@@ -332,18 +338,22 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
+ 			kfree(p);
+ 			break;
+ 		case opt_iocharset:
+-			if (hsb->nls_io) {
++			if (have_iocharset) {
+ 				pr_err("unable to change iocharset\n");
+ 				return 0;
+ 			}
+ 			p = match_strdup(&args[0]);
+-			if (p)
+-				hsb->nls_io = load_nls(p);
+-			if (!hsb->nls_io) {
+-				pr_err("unable to load iocharset \"%s\"\n", p);
+-				kfree(p);
++			if (!p)
+ 				return 0;
++			if (strcmp(p, "utf8") != 0) {
++				hsb->nls_io = load_nls(p);
++				if (!hsb->nls_io) {
++					pr_err("unable to load iocharset \"%s\"\n", p);
++					kfree(p);
++					return 0;
++				}
+ 			}
++			have_iocharset = true;
+ 			kfree(p);
+ 			break;
+ 		default:
+@@ -351,7 +361,7 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
  		}
  	}
  
-+	if (hsb->nls_io && !hsb->nls_disk) {
-+		/*
-+		 * Previous version of hfs driver did something unexpected:
-+		 * When codepage was not defined but iocharset was then
-+		 * hfs driver copied 8bit character from disk directly to
-+		 * 16bit unicode wchar_t type. Which means it did conversion
-+		 * from Latin1 (ISO-8859-1) to Unicode because first 256
-+		 * Unicode code points matches 8bit ISO-8859-1 codepage table.
-+		 * So when iocharset was specified and codepage not, then
-+		 * codepage used implicit value "iso8859-1".
-+		 *
-+		 * To not change this previous default behavior as some users
-+		 * may depend on it, we load iso8859-1 NLS table explicitly
-+		 * to simplify code and make it more reable what happens.
-+		 *
-+		 * In context of hfs driver it is really strange to use
-+		 * ISO-8859-1 codepage table for storing data to disk, but
-+		 * nothing forbids it. Just it is highly incompatible with
-+		 * Mac OS systems. So via pr_warn() inform user that this
-+		 * is not probably what he wants.
-+		 */
-+		pr_warn("iocharset was specified but codepage not, "
-+			"using default codepage=iso8859-1\n");
-+		pr_warn("this default codepage=iso8859-1 is incompatible with "
-+			"Mac OS systems and may be changed in the future");
-+		hsb->nls_disk = load_nls("iso8859-1");
-+		if (!hsb->nls_disk) {
-+			pr_err("unable to load iso8859-1 codepage\n");
-+			return 0;
-+		}
-+	}
- 	if (hsb->nls_disk && !hsb->nls_io) {
+-	if (hsb->nls_io && !hsb->nls_disk) {
++	if (have_iocharset && !hsb->nls_disk) {
+ 		/*
+ 		 * Previous version of hfs driver did something unexpected:
+ 		 * When codepage was not defined but iocharset was then
+@@ -382,7 +392,8 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
+ 			return 0;
+ 		}
+ 	}
+-	if (hsb->nls_disk && !hsb->nls_io) {
++	if (hsb->nls_disk &&
++	    !have_iocharset && strcmp(CONFIG_NLS_DEFAULT, "utf8") != 0) {
  		hsb->nls_io = load_nls_default();
  		if (!hsb->nls_io) {
+ 			pr_err("unable to load default iocharset\n");
 diff --git a/fs/hfs/trans.c b/fs/hfs/trans.c
-index fdb0edb8a607..dbf535d52d37 100644
+index dbf535d52d37..01f37b395f10 100644
 --- a/fs/hfs/trans.c
 +++ b/fs/hfs/trans.c
-@@ -48,18 +48,13 @@ int hfs_mac2asc(struct super_block *sb, char *out, const struct hfs_name *in)
+@@ -44,7 +44,7 @@ int hfs_mac2asc(struct super_block *sb, char *out, const struct hfs_name *in)
+ 		srclen = HFS_NAMELEN;
+ 	dst = out;
+ 	dstlen = HFS_MAX_NAMELEN;
+-	if (nls_io) {
++	if (nls_disk) {
  		wchar_t ch;
  
  		while (srclen > 0) {
--			if (nls_disk) {
--				size = nls_disk->char2uni(src, srclen, &ch);
--				if (size <= 0) {
--					ch = '?';
--					size = 1;
--				}
--				src += size;
--				srclen -= size;
--			} else {
--				ch = *src++;
--				srclen--;
-+			size = nls_disk->char2uni(src, srclen, &ch);
-+			if (size <= 0) {
-+				ch = '?';
-+				size = 1;
- 			}
-+			src += size;
-+			srclen -= size;
+@@ -57,7 +57,12 @@ int hfs_mac2asc(struct super_block *sb, char *out, const struct hfs_name *in)
+ 			srclen -= size;
  			if (ch == '/')
  				ch = ':';
- 			size = nls_io->uni2char(ch, dst, dstlen);
-@@ -119,20 +114,15 @@ void hfs_asc2mac(struct super_block *sb, struct hfs_name *out, const struct qstr
- 			srclen -= size;
- 			if (ch == ':')
- 				ch = '/';
--			if (nls_disk) {
--				size = nls_disk->uni2char(ch, dst, dstlen);
--				if (size < 0) {
--					if (size == -ENAMETOOLONG)
--						goto out;
--					*dst = '?';
--					size = 1;
--				}
--				dst += size;
--				dstlen -= size;
--			} else {
--				*dst++ = ch > 0xff ? '?' : ch;
--				dstlen--;
-+			size = nls_disk->uni2char(ch, dst, dstlen);
-+			if (size < 0) {
-+				if (size == -ENAMETOOLONG)
-+					goto out;
-+				*dst = '?';
-+				size = 1;
- 			}
-+			dst += size;
-+			dstlen -= size;
- 		}
- 	} else {
- 		char ch;
+-			size = nls_io->uni2char(ch, dst, dstlen);
++			if (nls_io)
++				size = nls_io->uni2char(ch, dst, dstlen);
++			else if (dstlen > 0)
++				size = utf32_to_utf8(ch, dst, dstlen);
++			else
++				size = -ENAMETOOLONG;
+ 			if (size < 0) {
+ 				if (size == -ENAMETOOLONG)
+ 					goto out;
+@@ -101,11 +106,22 @@ void hfs_asc2mac(struct super_block *sb, struct hfs_name *out, const struct qstr
+ 	srclen = in->len;
+ 	dst = out->name;
+ 	dstlen = HFS_NAMELEN;
+-	if (nls_io) {
++	if (nls_disk) {
+ 		wchar_t ch;
++		unicode_t u;
+ 
+ 		while (srclen > 0 && dstlen > 0) {
+-			size = nls_io->char2uni(src, srclen, &ch);
++			if (nls_io)
++				size = nls_io->char2uni(src, srclen, &ch);
++			else {
++				size = utf8_to_utf32(src, srclen, &u);
++				if (size >= 0) {
++					if (u <= MAX_WCHAR_T)
++						ch = u;
++					else
++						size = -EINVAL;
++				}
++			}
+ 			if (size < 0) {
+ 				ch = '?';
+ 				size = 1;
 -- 
 2.20.1
 
