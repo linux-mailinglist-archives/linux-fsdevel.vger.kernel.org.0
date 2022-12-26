@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4AB1B65630B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:22:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3EFE065630D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:22:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231593AbiLZOWG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Dec 2022 09:22:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39092 "EHLO
+        id S231785AbiLZOWH (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Dec 2022 09:22:07 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229532AbiLZOWF (ORCPT
+        with ESMTP id S229568AbiLZOWF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 26 Dec 2022 09:22:05 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29D57DDD;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BED411140;
         Mon, 26 Dec 2022 06:22:04 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B856360EA0;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4C9DC60E16;
+        Mon, 26 Dec 2022 14:22:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57260C433F0;
         Mon, 26 Dec 2022 14:22:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BFB62C433D2;
-        Mon, 26 Dec 2022 14:22:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1672064523;
-        bh=RE53Fciq2nRixBCsoy3+egocitH34STsez30iGbOyhc=;
-        h=From:To:Subject:Date:From;
-        b=HhvlJSnhDxEB2hW0pKagPKBpltkDOgH34p8DXvkq2ap8tamup3CfInSKrYghK+89Z
-         FVh7d9NiilF5DA0ewfpzdBT67ag9zu0mwMy5tkrvWuPKKisesjm5cwDxpA23QrAAp+
-         Un2hAExH3isoqv+J76Hnbt40z2gzMqyoePufWK8kqLUG10O1Lv5PXjDW/y/51Ml8CK
-         kmDrSN/W8NbIbn7u8MfWpooCPgTDAPJat6mQ1FEWOCW/uTBHpAOoEsxXE2c1ENuTFI
-         gY1UBZu2Vxj3Bo+eUbpOX1Tuv0lx9fSTXmu2hTUiGzHfI+zI1zboiY+b8DPNz4LbD5
-         qfKHRgFB8GSQA==
+        bh=+iN0Mmisxx535Wrdu3nGmwSoR4sCrIL6dvBb31QghsE=;
+        h=From:To:Subject:Date:In-Reply-To:References:From;
+        b=fxaBgKBUOjxEifZXzIHKavSrzqT4XX0H1ndS42m2r4CDPpQyo6npRkR0RrBwlVTW5
+         Vjr/NW77j/sgtdxZ2bttJm5DXQMYqX//OQwM5IIWXQL7/wMyhkDWaudLae5d0m8Jz/
+         2e++wXrdHcc4sLwcEd0vCAN3aX9ZpZj4nnrs0RH6h62DiL3X7Zpi+Nc1f4vxMT10BG
+         EC8DMCpenOPsU/lffuSNAx9k4daYC7FyakkBBVmPFsjl9pCgNAwB77/SzaMevnkhCo
+         SKBqrBSkjUiG53YI2wiP9oED5K4iHk2R5KoPvM47cfbB0S58OTj5GLvO1nbw3Sq7R4
+         oRR0LsAiwQ0CA==
 Received: by pali.im (Postfix)
-        id 03B949D7; Mon, 26 Dec 2022 15:21:59 +0100 (CET)
+        id 16AC19E4; Mon, 26 Dec 2022 15:22:01 +0100 (CET)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     linux-fsdevel@vger.kernel.org,
         linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
@@ -53,10 +53,12 @@ To:     linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Kari Argillander <kari.argillander@gmail.com>,
         Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [RFC PATCH v2 00/18] fs: Remove usage of broken nls_utf8 and drop it
-Date:   Mon, 26 Dec 2022 15:21:32 +0100
-Message-Id: <20221226142150.13324-1-pali@kernel.org>
+Subject: [RFC PATCH v2 01/18] fat: Fix iocharset=utf8 mount option
+Date:   Mon, 26 Dec 2022 15:21:33 +0100
+Message-Id: <20221226142150.13324-2-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20221226142150.13324-1-pali@kernel.org>
+References: <20221226142150.13324-1-pali@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -69,105 +71,312 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Module nls_utf8 is broken in several ways. It does not support (full)
-UTF-8, despite its name. It cannot handle 4-byte UTF-8 sequences and
-tolower/toupper table is not implemented at all. Which means that it is
-not suitable for usage in case-insensitive filesystems or UTF-16
-filesystems (because of e.g. missing UTF-16 surrogate pairs processing).
+Currently iocharset=utf8 mount option is broken and error is printed to
+dmesg when it is used. To use UTF-8 as iocharset, it is required to use
+utf8=1 mount option.
 
-This is RFC v2 patch series which unify and fix iocharset=utf8 mount
-option in all fs drivers and converts all remaining fs drivers to use
-utf8s_to_utf16s(), utf16s_to_utf8s(), utf8_to_utf32(), utf32_to_utf8
-functions for implementing UTF-8 support instead of nls_utf8.
+Fix iocharset=utf8 mount option to use be equivalent to the utf8=1 mount
+option and remove printing error from dmesg.
 
-So at the end it allows to completely drop this broken nls_utf8 module.
+FAT by definition is case-insensitive but current Linux implementation is
+case-sensitive for non-ASCII characters when UTF-8 is used. This patch does
+not change this UTF-8 behavior. Only more comments in fat_utf8_strnicmp()
+function are added about it.
 
-For more details look at email thread where was discussed fs unification:
-https://lore.kernel.org/linux-fsdevel/20200102211855.gg62r7jshp742d6i@pali/t/#u
+After this patch iocharset=utf8 starts working, so there is no need to have
+separate config option FAT_DEFAULT_UTF8 as FAT_DEFAULT_IOCHARSET for utf8
+also starts working. So remove redundant config option FAT_DEFAULT_UTF8.
 
-This patch series is mostly untested and presented as RFC. Please let me
-know what do you think about it and if is the correct way how to fix
-broken UTF-8 support in fs drivers. As explained in above email thread I
-think it does not make sense to try fixing whole NLS framework and it is
-easier to just drop this nls_utf8 module.
+Signed-off-by: Pali Rohár <pali@kernel.org>
+---
+ Documentation/filesystems/vfat.rst | 13 ++-----------
+ fs/fat/Kconfig                     | 19 +------------------
+ fs/fat/dir.c                       | 17 +++++++----------
+ fs/fat/fat.h                       | 22 ++++++++++++++++++++++
+ fs/fat/inode.c                     | 28 +++++++++++-----------------
+ fs/fat/namei_vfat.c                | 26 +++++++++++++++++++-------
+ 6 files changed, 62 insertions(+), 63 deletions(-)
 
-Note: this patch series does not address UTF-8 fat case-sensitivity issue:
-https://lore.kernel.org/linux-fsdevel/20200119221455.bac7dc55g56q2l4r@pali/
-
-Changes since RFC v1:
-* Dropped already merged udf and isofs patches
-* Addressed review comments:
-  - updated documentation
-  - usage of seq_puts
-  - some code moved to local variables
-  - usage of true/false instead of 1/0
-  - rebased on top of master branch
-
-Link to RFC v1:
-https://lore.kernel.org/linux-fsdevel/20210808162453.1653-1-pali@kernel.org/
-
-Pali Rohár (18):
-  fat: Fix iocharset=utf8 mount option
-  hfsplus: Add iocharset= mount option as alias for nls=
-  ntfs: Undeprecate iocharset= mount option
-  ntfs: Fix error processing when load_nls() fails
-  befs: Fix printing iocharset= mount option
-  befs: Rename enum value Opt_charset to Opt_iocharset to match mount
-    option
-  befs: Fix error processing when load_nls() fails
-  befs: Allow to use native UTF-8 mode
-  hfs: Explicitly set hsb->nls_disk when hsb->nls_io is set
-  hfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
-  hfsplus: Do not use broken utf8 NLS table for iocharset=utf8 mount
-    option
-  jfs: Remove custom iso8859-1 implementation
-  jfs: Fix buffer overflow in jfs_strfromUCS_le() function
-  jfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
-  ntfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
-  cifs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
-  cifs: Remove usage of load_nls_default() calls
-  nls: Drop broken nls_utf8 module
-
- Documentation/filesystems/hfsplus.rst |   3 +
- Documentation/filesystems/ntfs.rst    |   5 +-
- Documentation/filesystems/vfat.rst    |  13 +--
- fs/befs/linuxvfs.c                    |  24 +++--
- fs/cifs/cifs_unicode.c                | 128 +++++++++++++++++---------
- fs/cifs/cifs_unicode.h                |   2 +-
- fs/cifs/cifsfs.c                      |   2 +
- fs/cifs/cifssmb.c                     |   8 +-
- fs/cifs/connect.c                     |   8 +-
- fs/cifs/dfs_cache.c                   |  24 ++---
- fs/cifs/dir.c                         |  28 ++++--
- fs/cifs/smb2pdu.c                     |  18 +---
- fs/cifs/winucase.c                    |  14 ++-
- fs/fat/Kconfig                        |  19 +---
- fs/fat/dir.c                          |  17 ++--
- fs/fat/fat.h                          |  22 +++++
- fs/fat/inode.c                        |  28 +++---
- fs/fat/namei_vfat.c                   |  26 ++++--
- fs/hfs/super.c                        |  62 +++++++++++--
- fs/hfs/trans.c                        |  62 +++++++------
- fs/hfsplus/dir.c                      |   7 +-
- fs/hfsplus/options.c                  |  39 +++++---
- fs/hfsplus/super.c                    |   7 +-
- fs/hfsplus/unicode.c                  |  31 ++++++-
- fs/hfsplus/xattr.c                    |  20 ++--
- fs/hfsplus/xattr_security.c           |   6 +-
- fs/jfs/jfs_dtree.c                    |  13 ++-
- fs/jfs/jfs_unicode.c                  |  35 +++----
- fs/jfs/jfs_unicode.h                  |   2 +-
- fs/jfs/super.c                        |  29 ++++--
- fs/nls/Kconfig                        |   9 --
- fs/nls/Makefile                       |   1 -
- fs/nls/nls_utf8.c                     |  67 --------------
- fs/ntfs/dir.c                         |   6 +-
- fs/ntfs/inode.c                       |   5 +-
- fs/ntfs/super.c                       |  60 ++++++------
- fs/ntfs/unistr.c                      |  29 +++++-
- 37 files changed, 493 insertions(+), 386 deletions(-)
- delete mode 100644 fs/nls/nls_utf8.c
-
+diff --git a/Documentation/filesystems/vfat.rst b/Documentation/filesystems/vfat.rst
+index 760a4d83fdf9..28cacba7bb9a 100644
+--- a/Documentation/filesystems/vfat.rst
++++ b/Documentation/filesystems/vfat.rst
+@@ -65,19 +65,10 @@ VFAT MOUNT OPTIONS
+ 	in Unicode format, but Unix for the most part doesn't
+ 	know how to deal with Unicode.
+ 	By default, FAT_DEFAULT_IOCHARSET setting is used.
+-
+-	There is also an option of doing UTF-8 translations
+-	with the utf8 option.
+-
+-.. note:: ``iocharset=utf8`` is not recommended. If unsure, you should consider
+-	  the utf8 option instead.
++	**utf8** is supported too and recommended to use.
+ 
+ **utf8=<bool>**
+-	UTF-8 is the filesystem safe version of Unicode that
+-	is used by the console. It can be enabled or disabled
+-	for the filesystem with this option.
+-	If 'uni_xlate' gets set, UTF-8 gets disabled.
+-	By default, FAT_DEFAULT_UTF8 setting is used.
++	Alias for ``iocharset=utf8`` mount option.
+ 
+ **uni_xlate=<bool>**
+ 	Translate unhandled Unicode characters to special
+diff --git a/fs/fat/Kconfig b/fs/fat/Kconfig
+index 238cc55f84c4..e98aaa3bb55b 100644
+--- a/fs/fat/Kconfig
++++ b/fs/fat/Kconfig
+@@ -93,29 +93,12 @@ config FAT_DEFAULT_IOCHARSET
+ 	  like FAT to use. It should probably match the character set
+ 	  that most of your FAT filesystems use, and can be overridden
+ 	  with the "iocharset" mount option for FAT filesystems.
+-	  Note that "utf8" is not recommended for FAT filesystems.
+-	  If unsure, you shouldn't set "utf8" here - select the next option
+-	  instead if you would like to use UTF-8 encoded file names by default.
++	  "utf8" is supported too and recommended to use.
+ 	  See <file:Documentation/filesystems/vfat.rst> for more information.
+ 
+ 	  Enable any character sets you need in File Systems/Native Language
+ 	  Support.
+ 
+-config FAT_DEFAULT_UTF8
+-	bool "Enable FAT UTF-8 option by default"
+-	depends on VFAT_FS
+-	default n
+-	help
+-	  Set this if you would like to have "utf8" mount option set
+-	  by default when mounting FAT filesystems.
+-
+-	  Even if you say Y here can always disable UTF-8 for
+-	  particular mount by adding "utf8=0" to mount options.
+-
+-	  Say Y if you use UTF-8 encoding for file names, N otherwise.
+-
+-	  See <file:Documentation/filesystems/vfat.rst> for more information.
+-
+ config FAT_KUNIT_TEST
+ 	tristate "Unit Tests for FAT filesystems" if !KUNIT_ALL_TESTS
+ 	depends on KUNIT && FAT_FS
+diff --git a/fs/fat/dir.c b/fs/fat/dir.c
+index 00235b8a1823..15166b0c4a6e 100644
+--- a/fs/fat/dir.c
++++ b/fs/fat/dir.c
+@@ -33,11 +33,6 @@
+ #define FAT_MAX_UNI_CHARS	((MSDOS_SLOTS - 1) * 13 + 1)
+ #define FAT_MAX_UNI_SIZE	(FAT_MAX_UNI_CHARS * sizeof(wchar_t))
+ 
+-static inline unsigned char fat_tolower(unsigned char c)
+-{
+-	return ((c >= 'A') && (c <= 'Z')) ? c+32 : c;
+-}
+-
+ static inline loff_t fat_make_i_pos(struct super_block *sb,
+ 				    struct buffer_head *bh,
+ 				    struct msdos_dir_entry *de)
+@@ -258,10 +253,12 @@ static inline int fat_name_match(struct msdos_sb_info *sbi,
+ 	if (a_len != b_len)
+ 		return 0;
+ 
+-	if (sbi->options.name_check != 's')
+-		return !nls_strnicmp(sbi->nls_io, a, b, a_len);
+-	else
++	if (sbi->options.name_check == 's')
+ 		return !memcmp(a, b, a_len);
++	else if (sbi->options.utf8)
++		return !fat_utf8_strnicmp(a, b, a_len);
++	else
++		return !nls_strnicmp(sbi->nls_io, a, b, a_len);
+ }
+ 
+ enum { PARSE_INVALID = 1, PARSE_NOT_LONGNAME, PARSE_EOF, };
+@@ -384,7 +381,7 @@ static int fat_parse_short(struct super_block *sb,
+ 					de->lcase & CASE_LOWER_BASE);
+ 		if (chl <= 1) {
+ 			if (!isvfat)
+-				ptname[i] = nocase ? c : fat_tolower(c);
++				ptname[i] = nocase ? c : fat_ascii_to_lower(c);
+ 			i++;
+ 			if (c != ' ') {
+ 				name_len = i;
+@@ -421,7 +418,7 @@ static int fat_parse_short(struct super_block *sb,
+ 		if (chl <= 1) {
+ 			k++;
+ 			if (!isvfat)
+-				ptname[i] = nocase ? c : fat_tolower(c);
++				ptname[i] = nocase ? c : fat_ascii_to_lower(c);
+ 			i++;
+ 			if (c != ' ') {
+ 				name_len = i;
+diff --git a/fs/fat/fat.h b/fs/fat/fat.h
+index a415c02ede39..6b0a6041c8d7 100644
+--- a/fs/fat/fat.h
++++ b/fs/fat/fat.h
+@@ -311,6 +311,28 @@ static inline void fatwchar_to16(__u8 *dst, const wchar_t *src, size_t len)
+ #endif
+ }
+ 
++static inline unsigned char fat_ascii_to_lower(unsigned char c)
++{
++	return ((c >= 'A') && (c <= 'Z')) ? c+32 : c;
++}
++
++static inline int fat_utf8_strnicmp(const unsigned char *a,
++				    const unsigned char *b,
++				    int len)
++{
++	int i;
++
++	/*
++	 * FIXME: UTF-8 doesn't provide FAT semantics
++	 * Case-insensitive support is only for 7-bit ASCII characters
++	 */
++	for (i = 0; i < len; i++) {
++		if (fat_ascii_to_lower(a[i]) != fat_ascii_to_lower(b[i]))
++			return 1;
++	}
++	return 0;
++}
++
+ /* fat/cache.c */
+ extern void fat_cache_inval_inode(struct inode *inode);
+ extern int fat_get_cluster(struct inode *inode, int cluster,
+diff --git a/fs/fat/inode.c b/fs/fat/inode.c
+index d99b8549ec8f..818c9c37b419 100644
+--- a/fs/fat/inode.c
++++ b/fs/fat/inode.c
+@@ -956,7 +956,9 @@ static int fat_show_options(struct seq_file *m, struct dentry *root)
+ 		/* strip "cp" prefix from displayed option */
+ 		seq_printf(m, ",codepage=%s", &sbi->nls_disk->charset[2]);
+ 	if (isvfat) {
+-		if (sbi->nls_io)
++		if (opts->utf8)
++			seq_puts(m, ",iocharset=utf8");
++		else if (sbi->nls_io)
+ 			seq_printf(m, ",iocharset=%s", sbi->nls_io->charset);
+ 
+ 		switch (opts->shortname) {
+@@ -993,8 +995,6 @@ static int fat_show_options(struct seq_file *m, struct dentry *root)
+ 		if (opts->nocase)
+ 			seq_puts(m, ",nocase");
+ 	} else {
+-		if (opts->utf8)
+-			seq_puts(m, ",utf8");
+ 		if (opts->unicode_xlate)
+ 			seq_puts(m, ",uni_xlate");
+ 		if (!opts->numtail)
+@@ -1156,8 +1156,6 @@ static int parse_options(struct super_block *sb, char *options, int is_vfat,
+ 	opts->errors = FAT_ERRORS_RO;
+ 	*debug = 0;
+ 
+-	opts->utf8 = IS_ENABLED(CONFIG_FAT_DEFAULT_UTF8) && is_vfat;
+-
+ 	if (!options)
+ 		goto out;
+ 
+@@ -1318,10 +1316,14 @@ static int parse_options(struct super_block *sb, char *options, int is_vfat,
+ 					| VFAT_SFN_CREATE_WIN95;
+ 			break;
+ 		case Opt_utf8_no:		/* 0 or no or false */
+-			opts->utf8 = 0;
++			fat_reset_iocharset(opts);
+ 			break;
+ 		case Opt_utf8_yes:		/* empty or 1 or yes or true */
+-			opts->utf8 = 1;
++			fat_reset_iocharset(opts);
++			iocharset = kstrdup("utf8", GFP_KERNEL);
++			if (!iocharset)
++				return -ENOMEM;
++			opts->iocharset = iocharset;
+ 			break;
+ 		case Opt_uni_xl_no:		/* 0 or no or false */
+ 			opts->unicode_xlate = 0;
+@@ -1359,18 +1361,11 @@ static int parse_options(struct super_block *sb, char *options, int is_vfat,
+ 	}
+ 
+ out:
+-	/* UTF-8 doesn't provide FAT semantics */
+-	if (!strcmp(opts->iocharset, "utf8")) {
+-		fat_msg(sb, KERN_WARNING, "utf8 is not a recommended IO charset"
+-		       " for FAT filesystems, filesystem will be "
+-		       "case sensitive!");
+-	}
++	opts->utf8 = !strcmp(opts->iocharset, "utf8") && is_vfat;
+ 
+ 	/* If user doesn't specify allow_utime, it's initialized from dmask. */
+ 	if (opts->allow_utime == (unsigned short)-1)
+ 		opts->allow_utime = ~opts->fs_dmask & (S_IWGRP | S_IWOTH);
+-	if (opts->unicode_xlate)
+-		opts->utf8 = 0;
+ 	if (opts->nfs == FAT_NFS_NOSTALE_RO) {
+ 		sb->s_flags |= SB_RDONLY;
+ 		sb->s_export_op = &fat_export_ops_nostale;
+@@ -1828,8 +1823,7 @@ int fat_fill_super(struct super_block *sb, void *data, int silent, int isvfat,
+ 		goto out_fail;
+ 	}
+ 
+-	/* FIXME: utf8 is using iocharset for upper/lower conversion */
+-	if (sbi->options.isvfat) {
++	if (sbi->options.isvfat && !sbi->options.utf8) {
+ 		sbi->nls_io = load_nls(sbi->options.iocharset);
+ 		if (!sbi->nls_io) {
+ 			fat_msg(sb, KERN_ERR, "IO charset %s not found",
+diff --git a/fs/fat/namei_vfat.c b/fs/fat/namei_vfat.c
+index 21620054e1c4..5c585e79d863 100644
+--- a/fs/fat/namei_vfat.c
++++ b/fs/fat/namei_vfat.c
+@@ -134,6 +134,7 @@ static int vfat_hash(const struct dentry *dentry, struct qstr *qstr)
+ static int vfat_hashi(const struct dentry *dentry, struct qstr *qstr)
+ {
+ 	struct nls_table *t = MSDOS_SB(dentry->d_sb)->nls_io;
++	int utf8 = MSDOS_SB(dentry->d_sb)->options.utf8;
+ 	const unsigned char *name;
+ 	unsigned int len;
+ 	unsigned long hash;
+@@ -142,8 +143,17 @@ static int vfat_hashi(const struct dentry *dentry, struct qstr *qstr)
+ 	len = vfat_striptail_len(qstr);
+ 
+ 	hash = init_name_hash(dentry);
+-	while (len--)
+-		hash = partial_name_hash(nls_tolower(t, *name++), hash);
++	if (utf8) {
++		/*
++		 * FIXME: UTF-8 doesn't provide FAT semantics
++		 * Case-insensitive support is only for 7-bit ASCII characters
++		 */
++		while (len--)
++			hash = partial_name_hash(fat_ascii_to_lower(*name++), hash);
++	} else {
++		while (len--)
++			hash = partial_name_hash(nls_tolower(t, *name++), hash);
++	}
+ 	qstr->hash = end_name_hash(hash);
+ 
+ 	return 0;
+@@ -156,16 +166,18 @@ static int vfat_cmpi(const struct dentry *dentry,
+ 		unsigned int len, const char *str, const struct qstr *name)
+ {
+ 	struct nls_table *t = MSDOS_SB(dentry->d_sb)->nls_io;
++	int utf8 = MSDOS_SB(dentry->d_sb)->options.utf8;
+ 	unsigned int alen, blen;
+ 
+ 	/* A filename cannot end in '.' or we treat it like it has none */
+ 	alen = vfat_striptail_len(name);
+ 	blen = __vfat_striptail_len(len, str);
+-	if (alen == blen) {
+-		if (nls_strnicmp(t, name->name, str, alen) == 0)
+-			return 0;
+-	}
+-	return 1;
++	if (alen != blen)
++		return 1;
++	else if (utf8)
++		return fat_utf8_strnicmp(name->name, str, alen);
++	else
++		return nls_strnicmp(t, name->name, str, alen);
+ }
+ 
+ /*
 -- 
 2.20.1
 
