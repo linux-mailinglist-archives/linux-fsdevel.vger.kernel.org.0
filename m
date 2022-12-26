@@ -2,46 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 111A8656391
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:49:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5E83E656392
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:49:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232136AbiLZOtB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Dec 2022 09:49:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53028 "EHLO
+        id S232147AbiLZOtD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Dec 2022 09:49:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53038 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232116AbiLZOs7 (ORCPT
+        with ESMTP id S232131AbiLZOtB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Dec 2022 09:48:59 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 045472671;
-        Mon, 26 Dec 2022 06:48:59 -0800 (PST)
+        Mon, 26 Dec 2022 09:49:01 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E987113A;
+        Mon, 26 Dec 2022 06:49:00 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 9108760EB5;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 9DFBE60EB7;
+        Mon, 26 Dec 2022 14:48:59 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAC47C433F0;
         Mon, 26 Dec 2022 14:48:58 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A156AC433EF;
-        Mon, 26 Dec 2022 14:48:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672066138;
-        bh=t42rzSF63UtJbC+INg7CeJ566q6MXleMtnlAOPACee0=;
+        s=k20201202; t=1672066139;
+        bh=Gp5EtMJFgsNe5Cnm3csTCYrVo/+AdvOlzhpJX18NYIU=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=rEDNYzc25u8cnFiyPzUgYJVm85NpLpYz46Ddn691UNowXbzBiSahtHHodt48CTK22
-         YaGgsg0BD9c7f4FqNcY2l+jtzVEl3g41rnmMFFbA85R9tTX4ER12Gg04UnerI8oVZV
-         Gqb6EC87E54d0jrb/3IsXJcsKz1LJxLAkT6iDUmYuQqcQoxBevCXNT/LHbzcHdo3iv
-         PhvFJC29dveLRJdkEx1pR40dBossRibygPBmzlm+ThSnzhk2ufarW2Mq3MCTdWF5fd
-         HKb9hP2MzKo2wbzC6DrOPZgApAwpQQk0DfjWMMUo6WjUkG+gOJLLiGS6llAv8vbay1
-         7cJthUq9z5z+A==
+        b=VeVqREZ33H8gT2B38h987+v9Ybj/sWgs9DDo8x7rbloSY814aL9t/2UvlzBwzqvK3
+         E0qoXq7R6RYAPVSTq36kQd99VwdPx3T7JtNb77eKK2A6ZLBXdgtqVF6ULsSeYIqO+y
+         ZDVvEELv2IK3LilTUfuBJYb/JcOeFcpLiG4tfuUnbNBDsYK6Gad8P8cRmUckrPPsox
+         GbrEzyz3bLZjEFBlzDacrpvfcJHCBXKxa//Wf81botJxe4S+gR14FKB9kvi5Z0Mqob
+         /u+8iOz8JgSxcXVHJ/3FPqqBcdPF2+oKYlz2zkZ/i393T5utMvAsVa+1jAfadTDEN4
+         syE/N0BOSF51g==
 Received: by pali.im (Postfix)
-        id 3D2F89E4; Mon, 26 Dec 2022 15:48:55 +0100 (CET)
+        id 43230A32; Mon, 26 Dec 2022 15:48:56 +0100 (CET)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>,
         Jan Kara <jack@suse.cz>,
         Alexander Viro <viro@zeniv.linux.org.uk>
-Subject: [RFC PATCH 1/3] nls: Simplify ASCII implementation
-Date:   Mon, 26 Dec 2022 15:42:59 +0100
-Message-Id: <20221226144301.16382-2-pali@kernel.org>
+Subject: [RFC PATCH 2/3] nls: Simplify ISO-8859-1 implementation
+Date:   Mon, 26 Dec 2022 15:43:00 +0100
+Message-Id: <20221226144301.16382-3-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20221226144301.16382-1-pali@kernel.org>
 References: <20221226144301.16382-1-pali@kernel.org>
@@ -57,23 +57,23 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Conversion between 7bit ASCII and UNICODE code point is simple because all
-7bit ASCII values has 1:1 mapping in UNICODE code points. 7bit ASCII is
+Conversion between ISO-8859-1 and UNICODE code point is simple because all
+ISO-8859-1 values has 1:1 mapping in UNICODE code points. ISO-8859-1 is
 just subset of UNICODE code points.
 
-So define conversion between 7bit ASCII and UNICODE code point in
+So define conversion between ISO-8859-1 and UNICODE code point in
 straightforward way.
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- fs/nls/nls_ascii.c | 85 +++++-----------------------------------------
- 1 file changed, 9 insertions(+), 76 deletions(-)
+ fs/nls/nls_iso8859-1.c | 142 +++--------------------------------------
+ 1 file changed, 9 insertions(+), 133 deletions(-)
 
-diff --git a/fs/nls/nls_ascii.c b/fs/nls/nls_ascii.c
-index a2620650d5e4..b6ad260b8c02 100644
---- a/fs/nls/nls_ascii.c
-+++ b/fs/nls/nls_ascii.c
-@@ -13,72 +13,6 @@
+diff --git a/fs/nls/nls_iso8859-1.c b/fs/nls/nls_iso8859-1.c
+index 69ac020d43b1..17144c17b40c 100644
+--- a/fs/nls/nls_iso8859-1.c
++++ b/fs/nls/nls_iso8859-1.c
+@@ -13,129 +13,6 @@
  #include <linux/nls.h>
  #include <linux/errno.h>
  
@@ -118,6 +118,46 @@ index a2620650d5e4..b6ad260b8c02 100644
 -	0x0074, 0x0075, 0x0076, 0x0077,
 -	0x0078, 0x0079, 0x007a, 0x007b,
 -	0x007c, 0x007d, 0x007e, 0x007f,
+-	/* 0x80*/
+-	0x0080, 0x0081, 0x0082, 0x0083,
+-	0x0084, 0x0085, 0x0086, 0x0087,
+-	0x0088, 0x0089, 0x008a, 0x008b,
+-	0x008c, 0x008d, 0x008e, 0x008f,
+-	/* 0x90*/
+-	0x0090, 0x0091, 0x0092, 0x0093,
+-	0x0094, 0x0095, 0x0096, 0x0097,
+-	0x0098, 0x0099, 0x009a, 0x009b,
+-	0x009c, 0x009d, 0x009e, 0x009f,
+-	/* 0xa0*/
+-	0x00a0, 0x00a1, 0x00a2, 0x00a3,
+-	0x00a4, 0x00a5, 0x00a6, 0x00a7,
+-	0x00a8, 0x00a9, 0x00aa, 0x00ab,
+-	0x00ac, 0x00ad, 0x00ae, 0x00af,
+-	/* 0xb0*/
+-	0x00b0, 0x00b1, 0x00b2, 0x00b3,
+-	0x00b4, 0x00b5, 0x00b6, 0x00b7,
+-	0x00b8, 0x00b9, 0x00ba, 0x00bb,
+-	0x00bc, 0x00bd, 0x00be, 0x00bf,
+-	/* 0xc0*/
+-	0x00c0, 0x00c1, 0x00c2, 0x00c3,
+-	0x00c4, 0x00c5, 0x00c6, 0x00c7,
+-	0x00c8, 0x00c9, 0x00ca, 0x00cb,
+-	0x00cc, 0x00cd, 0x00ce, 0x00cf,
+-	/* 0xd0*/
+-	0x00d0, 0x00d1, 0x00d2, 0x00d3,
+-	0x00d4, 0x00d5, 0x00d6, 0x00d7,
+-	0x00d8, 0x00d9, 0x00da, 0x00db,
+-	0x00dc, 0x00dd, 0x00de, 0x00df,
+-	/* 0xe0*/
+-	0x00e0, 0x00e1, 0x00e2, 0x00e3,
+-	0x00e4, 0x00e5, 0x00e6, 0x00e7,
+-	0x00e8, 0x00e9, 0x00ea, 0x00eb,
+-	0x00ec, 0x00ed, 0x00ee, 0x00ef,
+-	/* 0xf0*/
+-	0x00f0, 0x00f1, 0x00f2, 0x00f3,
+-	0x00f4, 0x00f5, 0x00f6, 0x00f7,
+-	0x00f8, 0x00f9, 0x00fa, 0x00fb,
+-	0x00fc, 0x00fd, 0x00fe, 0x00ff,
 -};
 -
 -static const unsigned char page00[256] = {
@@ -137,16 +177,33 @@ index a2620650d5e4..b6ad260b8c02 100644
 -	0x68, 0x69, 0x6a, 0x6b, 0x6c, 0x6d, 0x6e, 0x6f, /* 0x68-0x6f */
 -	0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77, /* 0x70-0x77 */
 -	0x78, 0x79, 0x7a, 0x7b, 0x7c, 0x7d, 0x7e, 0x7f, /* 0x78-0x7f */
+-
+-	0x80, 0x81, 0x82, 0x83, 0x84, 0x85, 0x86, 0x87, /* 0x80-0x87 */
+-	0x88, 0x89, 0x8a, 0x8b, 0x8c, 0x8d, 0x8e, 0x8f, /* 0x88-0x8f */
+-	0x90, 0x91, 0x92, 0x93, 0x94, 0x95, 0x96, 0x97, /* 0x90-0x97 */
+-	0x98, 0x99, 0x9a, 0x9b, 0x9c, 0x9d, 0x9e, 0x9f, /* 0x98-0x9f */
+-	0xa0, 0xa1, 0xa2, 0xa3, 0xa4, 0xa5, 0xa6, 0xa7, /* 0xa0-0xa7 */
+-	0xa8, 0xa9, 0xaa, 0xab, 0xac, 0xad, 0xae, 0xaf, /* 0xa8-0xaf */
+-	0xb0, 0xb1, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6, 0xb7, /* 0xb0-0xb7 */
+-	0xb8, 0xb9, 0xba, 0xbb, 0xbc, 0xbd, 0xbe, 0xbf, /* 0xb8-0xbf */
+-	0xc0, 0xc1, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, /* 0xc0-0xc7 */
+-	0xc8, 0xc9, 0xca, 0xcb, 0xcc, 0xcd, 0xce, 0xcf, /* 0xc8-0xcf */
+-	0xd0, 0xd1, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, /* 0xd0-0xd7 */
+-	0xd8, 0xd9, 0xda, 0xdb, 0xdc, 0xdd, 0xde, 0xdf, /* 0xd8-0xdf */
+-	0xe0, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, /* 0xe0-0xe7 */
+-	0xe8, 0xe9, 0xea, 0xeb, 0xec, 0xed, 0xee, 0xef, /* 0xe8-0xef */
+-	0xf0, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, /* 0xf0-0xf7 */
+-	0xf8, 0xf9, 0xfa, 0xfb, 0xfc, 0xfd, 0xfe, 0xff, /* 0xf8-0xff */
 -};
 -
 -static const unsigned char *const page_uni2charset[256] = {
--	page00,
+-	page00, NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   NULL,   
 -};
 -
  static const unsigned char charset2lower[256] = {
  	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, /* 0x00-0x07 */
  	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, /* 0x08-0x0f */
-@@ -119,26 +53,25 @@ static const unsigned char charset2upper[256] = {
+@@ -210,26 +87,25 @@ static const unsigned char charset2upper[256] = {
  
  static int uni2char(wchar_t uni, unsigned char *out, int boundlen)
  {
@@ -161,7 +218,7 @@ index a2620650d5e4..b6ad260b8c02 100644
 -	if (uni2charset && uni2charset[cl])
 -		out[0] = uni2charset[cl];
 -	else
-+	if (!uni || uni > 127)
++	if (!uni || uni > 255)
  		return -EINVAL;
 +
 +	out[0] = uni;
@@ -175,7 +232,7 @@ index a2620650d5e4..b6ad260b8c02 100644
 +	if (boundlen <= 0)
 +		return -ENAMETOOLONG;
 +
-+	if (!*rawstring || *rawstring > 127)
++	if (!*rawstring)
  		return -EINVAL;
 +
 +	*uni = *rawstring;
