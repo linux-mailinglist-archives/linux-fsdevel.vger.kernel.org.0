@@ -2,38 +2,38 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8249565633A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:23:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 237B065633C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 15:23:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232166AbiLZOWw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Dec 2022 09:22:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40002 "EHLO
+        id S232202AbiLZOWy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Dec 2022 09:22:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40020 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232030AbiLZOWj (ORCPT
+        with ESMTP id S232042AbiLZOWk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Dec 2022 09:22:39 -0500
+        Mon, 26 Dec 2022 09:22:40 -0500
 Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29CBD2608;
-        Mon, 26 Dec 2022 06:22:13 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EA453626F;
+        Mon, 26 Dec 2022 06:22:14 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id BB22A60EB5;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id DC8AA60EBD;
+        Mon, 26 Dec 2022 14:22:13 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F32A9C433EF;
         Mon, 26 Dec 2022 14:22:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3473C433D2;
-        Mon, 26 Dec 2022 14:22:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672064532;
-        bh=Xsp3m3OsW4jVnQPkMQLxfCHZ/XiAut6pdb2ruAApCB4=;
+        s=k20201202; t=1672064533;
+        bh=y7MXoqLkJePjPQXj3TFzpaNKan0GSNj9EZYy1FjI9g4=;
         h=From:To:Subject:Date:In-Reply-To:References:From;
-        b=Up4OAqH55iaCAJw883S9943eBNly3aIMlynhdSIFfKbVseamKeJfQH0MxLPkAHuPa
-         0RO+8XOWxMOAchvnruly8oZKaVEQHv93la8lc8DwyAqnDlp/+ol3zsBzwGycA5kTs3
-         PiipsjZFO53qGXeQAlkyrZ2Iet0frsmuqAA9GT26/1kj2XkqsT9ysgskuXT64p/YCW
-         NdTkq630GuiyNhUfa+c2ohwTj+LBm3CEJKAf/qfyCBgrckS9wp2z+abpEpNKo+7RC4
-         qzXqOV8xr4EQF3Y0KwHx44xvTMy2W5MYRu++4b1Ux+ux6ypyB58J8MsaHiompDhxdR
-         lLWkEteZYAALA==
+        b=S3ViSU88TaCehP3ML1X9O0tbfUFnzVxZAaKgV1lWa4jeRpmGD7Yo8jaoIGA84PNL7
+         L0JMUibflgJbT3PuFYAEM7tLDxz8lY/TNmxgQd8IB4j0ScHQf1H8HTmitora8vDBiV
+         6NKhpgoaNEHDmgDZI/0BgjB/Xw92r9UOLjsC8i8kSKfXQwr3+/CI6wpTuIrlLXdOqg
+         90g0hWvdyFlXX06PJWdSDJXhG4DfhNhn6hlhkEP+gvkKFSuGORNmP3M4KRsci/4Cx5
+         2B7t0F5CStktntNVl049TvyQmvSaVXbf32PqNmBdznjno2ekvADz/+YlmSDbws9wPh
+         7f4LbuEO54lIA==
 Received: by pali.im (Postfix)
-        id 8C8A49D7; Mon, 26 Dec 2022 15:22:11 +0100 (CET)
+        id AE1A99D7; Mon, 26 Dec 2022 15:22:12 +0100 (CET)
 From:   =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
 To:     linux-fsdevel@vger.kernel.org,
         linux-ntfs-dev@lists.sourceforge.net, linux-cifs@vger.kernel.org,
@@ -53,9 +53,9 @@ To:     linux-fsdevel@vger.kernel.org,
         Christoph Hellwig <hch@infradead.org>,
         Kari Argillander <kari.argillander@gmail.com>,
         Viacheslav Dubeyko <slava@dubeyko.com>
-Subject: [RFC PATCH v2 10/18] hfs: Do not use broken utf8 NLS table for iocharset=utf8 mount option
-Date:   Mon, 26 Dec 2022 15:21:42 +0100
-Message-Id: <20221226142150.13324-11-pali@kernel.org>
+Subject: [RFC PATCH v2 11/18] hfsplus: Do not use broken utf8 NLS table for iocharset=utf8 mount option
+Date:   Mon, 26 Dec 2022 15:21:43 +0100
+Message-Id: <20221226142150.13324-12-pali@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20221226142150.13324-1-pali@kernel.org>
 References: <20221226142150.13324-1-pali@kernel.org>
@@ -77,154 +77,270 @@ So instead of broken utf8 nls functions char2uni() and uni2char() use
 functions utf8_to_utf32() and utf32_to_utf8() which implements correct
 encoding and decoding between Unicode code points and UTF-8 sequence.
 
-When iochatset=utf8 is used then set hsb->nls_io to NULL and use it for
+Note that this fs driver does not support full Unicode range, specially
+UTF-16 surrogate pairs are unsupported. This patch does not change this
+limitation and support for UTF-16 surrogate pairs stay unimplemented.
+
+When iochatset=utf8 is used then set sbi->nls to NULL and use it for
 distinguish between the fact if NLS table or native UTF-8 functions should
 be used.
 
 Signed-off-by: Pali Rohár <pali@kernel.org>
 ---
- fs/hfs/super.c | 33 ++++++++++++++++++++++-----------
- fs/hfs/trans.c | 24 ++++++++++++++++++++----
- 2 files changed, 42 insertions(+), 15 deletions(-)
+ fs/hfsplus/dir.c            |  7 +++++--
+ fs/hfsplus/options.c        | 32 ++++++++++++++++++--------------
+ fs/hfsplus/super.c          |  7 +------
+ fs/hfsplus/unicode.c        | 31 ++++++++++++++++++++++++++++---
+ fs/hfsplus/xattr.c          | 20 +++++++++++++-------
+ fs/hfsplus/xattr_security.c |  6 ++++--
+ 6 files changed, 69 insertions(+), 34 deletions(-)
 
-diff --git a/fs/hfs/super.c b/fs/hfs/super.c
-index cea19ed06bce..5a63df41da05 100644
---- a/fs/hfs/super.c
-+++ b/fs/hfs/super.c
-@@ -149,10 +149,13 @@ static int hfs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_printf(seq, ",part=%u", sbi->part);
- 	if (sbi->session >= 0)
- 		seq_printf(seq, ",session=%u", sbi->session);
--	if (sbi->nls_disk)
-+	if (sbi->nls_disk) {
- 		seq_printf(seq, ",codepage=%s", sbi->nls_disk->charset);
--	if (sbi->nls_io)
--		seq_printf(seq, ",iocharset=%s", sbi->nls_io->charset);
-+		if (sbi->nls_io)
-+			seq_printf(seq, ",iocharset=%s", sbi->nls_io->charset);
-+		else
-+			seq_puts(seq, ",iocharset=utf8");
-+	}
- 	if (sbi->s_quiet)
- 		seq_printf(seq, ",quiet");
- 	return 0;
-@@ -225,6 +228,7 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
+diff --git a/fs/hfsplus/dir.c b/fs/hfsplus/dir.c
+index 84714bbccc12..b19cb6c34dd2 100644
+--- a/fs/hfsplus/dir.c
++++ b/fs/hfsplus/dir.c
+@@ -144,7 +144,9 @@ static int hfsplus_readdir(struct file *file, struct dir_context *ctx)
+ 	err = hfs_find_init(HFSPLUS_SB(sb)->cat_tree, &fd);
+ 	if (err)
+ 		return err;
+-	strbuf = kmalloc(NLS_MAX_CHARSET_SIZE * HFSPLUS_MAX_STRLEN + 1, GFP_KERNEL);
++	len = (HFSPLUS_SB(sb)->nls ? NLS_MAX_CHARSET_SIZE : 4) *
++	      HFSPLUS_MAX_STRLEN + 1;
++	strbuf = kmalloc(len, GFP_KERNEL);
+ 	if (!strbuf) {
+ 		err = -ENOMEM;
+ 		goto out;
+@@ -203,7 +205,8 @@ static int hfsplus_readdir(struct file *file, struct dir_context *ctx)
+ 		hfs_bnode_read(fd.bnode, &entry, fd.entryoffset,
+ 			fd.entrylength);
+ 		type = be16_to_cpu(entry.type);
+-		len = NLS_MAX_CHARSET_SIZE * HFSPLUS_MAX_STRLEN;
++		len = (HFSPLUS_SB(sb)->nls ? NLS_MAX_CHARSET_SIZE : 4) *
++		      HFSPLUS_MAX_STRLEN;
+ 		err = hfsplus_uni2asc(sb, &fd.key->cat.name, strbuf, &len);
+ 		if (err)
+ 			goto out;
+diff --git a/fs/hfsplus/options.c b/fs/hfsplus/options.c
+index d3dc0d4ba77f..ede7776d1da9 100644
+--- a/fs/hfsplus/options.c
++++ b/fs/hfsplus/options.c
+@@ -104,6 +104,9 @@ int hfsplus_parse_options(char *input, struct hfsplus_sb_info *sbi)
  	char *p;
  	substring_t args[MAX_OPT_ARGS];
  	int tmp, token;
 +	bool have_iocharset;
- 
- 	/* initialize the sb with defaults */
- 	hsb->s_uid = current_uid();
-@@ -239,6 +243,8 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
- 	if (!options)
- 		return 1;
- 
-+	have_iocharset = false;
 +
- 	while ((p = strsep(&options, ",")) != NULL) {
- 		if (!*p)
- 			continue;
-@@ -332,18 +338,22 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
- 			kfree(p);
- 			break;
++	have_iocharset = false;
+ 
+ 	if (!input)
+ 		goto done;
+@@ -175,20 +178,24 @@ int hfsplus_parse_options(char *input, struct hfsplus_sb_info *sbi)
+ 			pr_warn("option nls= is deprecated, use iocharset=\n");
+ 			fallthrough;
  		case opt_iocharset:
--			if (hsb->nls_io) {
+-			if (sbi->nls) {
 +			if (have_iocharset) {
- 				pr_err("unable to change iocharset\n");
+ 				pr_err("unable to change nls mapping\n");
  				return 0;
  			}
  			p = match_strdup(&args[0]);
 -			if (p)
--				hsb->nls_io = load_nls(p);
--			if (!hsb->nls_io) {
--				pr_err("unable to load iocharset \"%s\"\n", p);
+-				sbi->nls = load_nls(p);
+-			if (!sbi->nls) {
+-				pr_err("unable to load nls mapping \"%s\"\n",
+-				       p);
 -				kfree(p);
 +			if (!p)
  				return 0;
 +			if (strcmp(p, "utf8") != 0) {
-+				hsb->nls_io = load_nls(p);
-+				if (!hsb->nls_io) {
-+					pr_err("unable to load iocharset \"%s\"\n", p);
++				sbi->nls = load_nls(p);
++				if (!sbi->nls) {
++					pr_err("unable to load nls mapping "
++						"\"%s\"\n", p);
 +					kfree(p);
 +					return 0;
 +				}
  			}
-+			have_iocharset = true;
  			kfree(p);
++			have_iocharset = true;
  			break;
- 		default:
-@@ -351,7 +361,7 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
+ 		case opt_decompose:
+ 			clear_bit(HFSPLUS_SB_NODECOMPOSE, &sbi->flags);
+@@ -211,13 +218,10 @@ int hfsplus_parse_options(char *input, struct hfsplus_sb_info *sbi)
+ 	}
+ 
+ done:
+-	if (!sbi->nls) {
+-		/* try utf8 first, as this is the old default behaviour */
+-		sbi->nls = load_nls("utf8");
+-		if (!sbi->nls)
+-			sbi->nls = load_nls_default();
+-		if (!sbi->nls)
+-			return 0;
++	if (!have_iocharset) {
++		/* use utf8, as this is the old default behaviour */
++		pr_debug("using native UTF-8 without nls\n");
++		/* no sbi->nls means that native UTF-8 code is used */
+ 	}
+ 
+ 	return 1;
+diff --git a/fs/hfsplus/super.c b/fs/hfsplus/super.c
+index 122ed89ebf9f..8a66a77ad3e1 100644
+--- a/fs/hfsplus/super.c
++++ b/fs/hfsplus/super.c
+@@ -403,11 +403,7 @@ static int hfsplus_fill_super(struct super_block *sb, void *data, int silent)
+ 
+ 	/* temporarily use utf8 to correctly find the hidden dir below */
+ 	nls = sbi->nls;
+-	sbi->nls = load_nls("utf8");
+-	if (!sbi->nls) {
+-		pr_err("unable to load nls for utf8\n");
+-		goto out_unload_nls;
+-	}
++	sbi->nls = NULL;
+ 
+ 	/* Grab the volume header */
+ 	if (hfsplus_read_wrapper(sb)) {
+@@ -585,7 +581,6 @@ static int hfsplus_fill_super(struct super_block *sb, void *data, int silent)
  		}
  	}
  
--	if (hsb->nls_io && !hsb->nls_disk) {
-+	if (have_iocharset && !hsb->nls_disk) {
- 		/*
- 		 * Previous version of hfs driver did something unexpected:
- 		 * When codepage was not defined but iocharset was then
-@@ -382,7 +392,8 @@ static int parse_options(char *options, struct hfs_sb_info *hsb)
- 			return 0;
- 		}
- 	}
--	if (hsb->nls_disk && !hsb->nls_io) {
-+	if (hsb->nls_disk &&
-+	    !have_iocharset && strcmp(CONFIG_NLS_DEFAULT, "utf8") != 0) {
- 		hsb->nls_io = load_nls_default();
- 		if (!hsb->nls_io) {
- 			pr_err("unable to load default iocharset\n");
-diff --git a/fs/hfs/trans.c b/fs/hfs/trans.c
-index dbf535d52d37..01f37b395f10 100644
---- a/fs/hfs/trans.c
-+++ b/fs/hfs/trans.c
-@@ -44,7 +44,7 @@ int hfs_mac2asc(struct super_block *sb, char *out, const struct hfs_name *in)
- 		srclen = HFS_NAMELEN;
- 	dst = out;
- 	dstlen = HFS_MAX_NAMELEN;
--	if (nls_io) {
-+	if (nls_disk) {
- 		wchar_t ch;
+-	unload_nls(sbi->nls);
+ 	sbi->nls = nls;
+ 	return 0;
  
- 		while (srclen > 0) {
-@@ -57,7 +57,12 @@ int hfs_mac2asc(struct super_block *sb, char *out, const struct hfs_name *in)
- 			srclen -= size;
- 			if (ch == '/')
- 				ch = ':';
--			size = nls_io->uni2char(ch, dst, dstlen);
-+			if (nls_io)
-+				size = nls_io->uni2char(ch, dst, dstlen);
-+			else if (dstlen > 0)
-+				size = utf32_to_utf8(ch, dst, dstlen);
+diff --git a/fs/hfsplus/unicode.c b/fs/hfsplus/unicode.c
+index 73342c925a4b..dc9be40d049f 100644
+--- a/fs/hfsplus/unicode.c
++++ b/fs/hfsplus/unicode.c
+@@ -190,7 +190,12 @@ int hfsplus_uni2asc(struct super_block *sb,
+ 				c0 = ':';
+ 				break;
+ 			}
+-			res = nls->uni2char(c0, op, len);
++			if (nls)
++				res = nls->uni2char(c0, op, len);
++			else if (len > 0)
++				res = utf32_to_utf8(c0, op, len);
 +			else
-+				size = -ENAMETOOLONG;
- 			if (size < 0) {
- 				if (size == -ENAMETOOLONG)
++				res = -ENAMETOOLONG;
+ 			if (res < 0) {
+ 				if (res == -ENAMETOOLONG)
  					goto out;
-@@ -101,11 +106,22 @@ void hfs_asc2mac(struct super_block *sb, struct hfs_name *out, const struct qstr
- 	srclen = in->len;
- 	dst = out->name;
- 	dstlen = HFS_NAMELEN;
--	if (nls_io) {
-+	if (nls_disk) {
- 		wchar_t ch;
-+		unicode_t u;
+@@ -233,7 +238,12 @@ int hfsplus_uni2asc(struct super_block *sb,
+ 			cc = c0;
+ 		}
+ done:
+-		res = nls->uni2char(cc, op, len);
++		if (nls)
++			res = nls->uni2char(cc, op, len);
++		else if (len > 0)
++			res = utf32_to_utf8(cc, op, len);
++		else
++			res = -ENAMETOOLONG;
+ 		if (res < 0) {
+ 			if (res == -ENAMETOOLONG)
+ 				goto out;
+@@ -256,7 +266,22 @@ int hfsplus_uni2asc(struct super_block *sb,
+ static inline int asc2unichar(struct super_block *sb, const char *astr, int len,
+ 			      wchar_t *uc)
+ {
+-	int size = HFSPLUS_SB(sb)->nls->char2uni(astr, len, uc);
++	struct nls_table *nls = HFSPLUS_SB(sb)->nls;
++	unicode_t u;
++	int size;
++
++	if (nls)
++		size = nls->char2uni(astr, len, uc);
++	else {
++		size = utf8_to_utf32(astr, len, &u);
++		if (size >= 0) {
++			/* TODO: Add support for UTF-16 surrogate pairs */
++			if (u <= MAX_WCHAR_T)
++				*uc = u;
++			else
++				size = -EINVAL;
++		}
++	}
+ 	if (size <= 0) {
+ 		*uc = '?';
+ 		size = 1;
+diff --git a/fs/hfsplus/xattr.c b/fs/hfsplus/xattr.c
+index 49891b12c415..607f46b3d0f3 100644
+--- a/fs/hfsplus/xattr.c
++++ b/fs/hfsplus/xattr.c
+@@ -422,11 +422,13 @@ int hfsplus_setxattr(struct inode *inode, const char *name,
+ 		     const void *value, size_t size, int flags,
+ 		     const char *prefix, size_t prefixlen)
+ {
++	int xattr_name_len;
+ 	char *xattr_name;
+ 	int res;
  
- 		while (srclen > 0 && dstlen > 0) {
--			size = nls_io->char2uni(src, srclen, &ch);
-+			if (nls_io)
-+				size = nls_io->char2uni(src, srclen, &ch);
-+			else {
-+				size = utf8_to_utf32(src, srclen, &u);
-+				if (size >= 0) {
-+					if (u <= MAX_WCHAR_T)
-+						ch = u;
-+					else
-+						size = -EINVAL;
-+				}
-+			}
- 			if (size < 0) {
- 				ch = '?';
- 				size = 1;
+-	xattr_name = kmalloc(NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN + 1,
+-		GFP_KERNEL);
++	xattr_name_len = (HFSPLUS_SB(inode->i_sb)->nls ? NLS_MAX_CHARSET_SIZE : 4) *
++			 HFSPLUS_ATTR_MAX_STRLEN + 1;
++	xattr_name = kmalloc(xattr_name_len, GFP_KERNEL);
+ 	if (!xattr_name)
+ 		return -ENOMEM;
+ 	strcpy(xattr_name, prefix);
+@@ -578,9 +580,11 @@ ssize_t hfsplus_getxattr(struct inode *inode, const char *name,
+ {
+ 	int res;
+ 	char *xattr_name;
++	int xattr_name_len;
+ 
+-	xattr_name = kmalloc(NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN + 1,
+-			     GFP_KERNEL);
++	xattr_name_len = (HFSPLUS_SB(inode->i_sb)->nls ? NLS_MAX_CHARSET_SIZE : 4) *
++			 HFSPLUS_ATTR_MAX_STRLEN + 1;
++	xattr_name = kmalloc(xattr_name_len, GFP_KERNEL);
+ 	if (!xattr_name)
+ 		return -ENOMEM;
+ 
+@@ -699,8 +703,9 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
+ 		return err;
+ 	}
+ 
+-	strbuf = kmalloc(NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN +
+-			XATTR_MAC_OSX_PREFIX_LEN + 1, GFP_KERNEL);
++	xattr_name_len = (HFSPLUS_SB(inode->i_sb)->nls ? NLS_MAX_CHARSET_SIZE : 4) *
++			 HFSPLUS_ATTR_MAX_STRLEN + XATTR_MAC_OSX_PREFIX_LEN + 1;
++	strbuf = kmalloc(xattr_name_len, GFP_KERNEL);
+ 	if (!strbuf) {
+ 		res = -ENOMEM;
+ 		goto out;
+@@ -732,7 +737,8 @@ ssize_t hfsplus_listxattr(struct dentry *dentry, char *buffer, size_t size)
+ 		if (be32_to_cpu(attr_key.cnid) != inode->i_ino)
+ 			goto end_listxattr;
+ 
+-		xattr_name_len = NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN;
++		xattr_name_len = (HFSPLUS_SB(inode->i_sb)->nls ? NLS_MAX_CHARSET_SIZE : 4) *
++				 HFSPLUS_ATTR_MAX_STRLEN;
+ 		if (hfsplus_uni2asc(inode->i_sb,
+ 			(const struct hfsplus_unistr *)&fd.key->attr.key_name,
+ 					strbuf, &xattr_name_len)) {
+diff --git a/fs/hfsplus/xattr_security.c b/fs/hfsplus/xattr_security.c
+index c1c7a16cbf21..b4b45c796ef4 100644
+--- a/fs/hfsplus/xattr_security.c
++++ b/fs/hfsplus/xattr_security.c
+@@ -38,11 +38,13 @@ static int hfsplus_initxattrs(struct inode *inode,
+ 				void *fs_info)
+ {
+ 	const struct xattr *xattr;
++	int xattr_name_len;
+ 	char *xattr_name;
+ 	int err = 0;
+ 
+-	xattr_name = kmalloc(NLS_MAX_CHARSET_SIZE * HFSPLUS_ATTR_MAX_STRLEN + 1,
+-		GFP_KERNEL);
++	xattr_name_len = (HFSPLUS_SB(inode->i_sb)->nls ? NLS_MAX_CHARSET_SIZE : 4) *
++			 HFSPLUS_ATTR_MAX_STRLEN + 1;
++	xattr_name = kmalloc(xattr_name_len, GFP_KERNEL);
+ 	if (!xattr_name)
+ 		return -ENOMEM;
+ 	for (xattr = xattr_array; xattr->name != NULL; xattr++) {
 -- 
 2.20.1
 
