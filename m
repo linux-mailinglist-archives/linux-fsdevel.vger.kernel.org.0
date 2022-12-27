@@ -2,297 +2,233 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CA70965643E
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 26 Dec 2022 17:56:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB16865664F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Dec 2022 02:00:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232210AbiLZQ4C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Dec 2022 11:56:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50326 "EHLO
+        id S232418AbiL0A7u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Dec 2022 19:59:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232165AbiLZQzb (ORCPT
+        with ESMTP id S230375AbiL0A7t (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Dec 2022 11:55:31 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A609F6413;
-        Mon, 26 Dec 2022 08:55:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1672073701; x=1703609701;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=SfZzdNV19bg9UmQpe6KYIZYymHxtUypJH/O7nO8s6g4=;
-  b=h31mID8Nj5IvQhElF9vkmX2MwemEqgYnIN6yGlU2CZyWEac6EvWXINt7
-   l5mr/uWh8P0XXMqpyY+DImnkCpzuQoiOLMHQNkjnGqMbt6mMQVAkvWg4z
-   hj+qhEZ5WAY5AFarg1LsBGlqdJ9qL67uPj6rUFbhHN0Y70lSuVLXgTXW8
-   rqQTxFviXwYYhJIIuAHkrPJNJDSzNLB+ShXcNPWJYa9GYJ/s3OqPVu6yD
-   idmnf7K4mV/AcO6GoTntodEJf3aM2/aWvOftu6AcpJLXRQRv1nfRoEGvR
-   9MlniTegoPbXWLjkxruZ33hcPBnYfy+hr1LAdqJpFRbQ79mQ4RMo4rCfc
-   w==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10572"; a="308338533"
-X-IronPort-AV: E=Sophos;i="5.96,276,1665471600"; 
-   d="scan'208";a="308338533"
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Dec 2022 08:55:00 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10572"; a="646205184"
-X-IronPort-AV: E=Sophos;i="5.96,276,1665471600"; 
-   d="scan'208";a="646205184"
-Received: from lkp-server01.sh.intel.com (HELO b5d47979f3ad) ([10.239.97.150])
-  by orsmga007.jf.intel.com with ESMTP; 26 Dec 2022 08:54:55 -0800
-Received: from kbuild by b5d47979f3ad with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1p9qkZ-000EZN-0D;
-        Mon, 26 Dec 2022 16:54:55 +0000
-Date:   Tue, 27 Dec 2022 00:54:10 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     virtualization@lists.linux-foundation.org,
-        speakup@linux-speakup.org, netdev@vger.kernel.org,
-        loongarch@lists.linux.dev, linux-xfs@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-media@vger.kernel.org, linux-iio@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-cxl@vger.kernel.org,
-        linux-block@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: [linux-next:master] BUILD REGRESSION
- c76083fac3bae1a87ae3d005b5cb1cbc761e31d5
-Message-ID: <63a9d1b2.869GAwHafmAB6R7M%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Mon, 26 Dec 2022 19:59:49 -0500
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C752425E8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Dec 2022 16:59:47 -0800 (PST)
+Received: by mail-il1-f199.google.com with SMTP id o10-20020a056e02102a00b003006328df7bso7849523ilj.17
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Dec 2022 16:59:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=46X/1ebZ09bWORLFjyXEMURdLbgiW/4n8efT0Ulsrdw=;
+        b=pbSKTLGHo8gamwkfWED3zq/6CEe87c8sxFzMRZxqYJkPWxaD78PnqoiHPpIEZIoFSo
+         HxKH7mGhVZF6Z/MLdhTpvBQ0TlveLvQ58JgDg4t1fJs6X4Hmq+efdyenLSXNrdgsrkwN
+         cdtTT7s+66DKY8wdzE2MjyIKoslUWjbw5YHd4We0OIVQGfIBE1kg5KrmeFtyiIFZ7T0h
+         87uJRiRd6Y/wwWD+ko13uY0TvZtKj05qtVq10aQWHnzKCpDiRTn/uLr37LeRsghnH+1+
+         RXML/kKAhhvnH0o0IvJ8X1He0jeJNb9ISb22zJ1XZcbGmfNrhg6ri51nUTsYnt3zNurw
+         14+w==
+X-Gm-Message-State: AFqh2kpKJE24teahk4jEHvdC5IjytMgcVjg/dL3EWDHxWkovgLsnFfV2
+        9W4bYhqkMjSynyfgwTlogegM951ZUZoxJqHaKngwB1FTGBET
+X-Google-Smtp-Source: AMrXdXtlb+kQZADtnNW+zvhlZ/SPh+L9NqMiqjcM7ct7d004hnxBpJ552on4ZJbQLwT9KqqnMte32zyfOBWLjovIkhBeYgZ8Eoi7
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a92:c047:0:b0:30c:6e9:253b with SMTP id
+ o7-20020a92c047000000b0030c06e9253bmr348834ilf.97.1672102787153; Mon, 26 Dec
+ 2022 16:59:47 -0800 (PST)
+Date:   Mon, 26 Dec 2022 16:59:47 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a806c405f0c4c45b@google.com>
+Subject: [syzbot] [hfs?] possible deadlock in hfs_find_init (2)
+From:   syzbot <syzbot+e390d66dda462b51fde1@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: c76083fac3bae1a87ae3d005b5cb1cbc761e31d5  Add linux-next specific files for 20221226
+Hello,
 
-Error/Warning reports:
+syzbot found the following issue on:
 
-https://lore.kernel.org/oe-kbuild-all/202212020520.0OkMIno3-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202212041528.4TbQL9ys-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202212051759.cEv6fyHy-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202212061455.6GE7y0jg-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202212080938.RHVtvwt0-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202212090509.NjAl9tbo-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202212242239.hWUlGmm0-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202212250859.uLjFpJy3-lkp@intel.com
+HEAD commit:    51094a24b85e Merge tag 'hardening-v6.2-rc1-fixes' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15e0dc54480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4e2d7bfa2d6d5a76
+dashboard link: https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
 
-Error/Warning: (recently discovered and may have been fixed)
+Unfortunately, I don't have any reproducer for this issue yet.
 
-ERROR: modpost: "input_ff_create_memless" [drivers/hid/hid-betopff.ko] undefined!
-ERROR: modpost: "input_ff_create_memless" [drivers/hid/hid-logitech.ko] undefined!
-ERROR: modpost: "input_ff_create_memless" [drivers/hid/hid-megaworld.ko] undefined!
-ERROR: modpost: "input_ff_create_memless" [drivers/hid/hid-mf.ko] undefined!
-ERROR: modpost: "input_ff_create_memless" [drivers/input/misc/drv260x.ko] undefined!
-ERROR: modpost: "input_ff_create_memless" [drivers/input/misc/drv2665.ko] undefined!
-ERROR: modpost: "input_ff_create_memless" [drivers/input/misc/gpio-vibra.ko] undefined!
-ERROR: modpost: "input_ff_create_memless" [drivers/input/misc/regulator-haptic.ko] undefined!
-ERROR: modpost: "input_ff_create_memless" [drivers/input/misc/sc27xx-vibra.ko] undefined!
-aarch64-linux-ld: ID map text too big or misaligned
-arch/arm/kernel/entry-armv.S:485:5: warning: "CONFIG_ARM_THUMB" is not defined, evaluates to 0 [-Wundef]
-arch/arm64/include/asm/pgtable-hwdef.h:82:64: warning: "PMD_SHIFT" is not defined, evaluates to 0 [-Wundef]
-arch/loongarch/kernel/asm-offsets.c:265:6: warning: no previous prototype for 'output_pbe_defines' [-Wmissing-prototypes]
-drivers/regulator/tps65219-regulator.c:310:32: warning: parameter 'dev' set but not used [-Wunused-but-set-parameter]
-drivers/regulator/tps65219-regulator.c:310:60: warning: parameter 'dev' set but not used [-Wunused-but-set-parameter]
-drivers/regulator/tps65219-regulator.c:370:26: sparse:    int
-drivers/regulator/tps65219-regulator.c:370:26: sparse:    struct regulator_dev *[assigned] rdev
-drivers/regulator/tps65219-regulator.c:370:26: warning: ordered comparison of pointer with integer zero [-Wextra]
-loongarch64-linux-ld: sleep.c:(.text+0x22c): undefined reference to `loongarch_wakeup_start'
-sleep.c:(.text+0x228): undefined reference to `loongarch_wakeup_start'
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a26f3769fdfb/disk-51094a24.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/5decc3ae71d7/vmlinux-51094a24.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dd2ac18a5b04/bzImage-51094a24.xz
 
-Unverified Error/Warning (likely false positive, please contact us if interested):
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+e390d66dda462b51fde1@syzkaller.appspotmail.com
 
-drivers/accessibility/speakup/main.c:1290:26: sparse: sparse: obsolete array initializer, use C99 syntax
-drivers/block/null_blk/zoned.c:769 zone_cond_store() warn: potential spectre issue 'dev->zones' [w] (local cap)
-drivers/block/virtio_blk.c:721:9: sparse:    bad type *
-drivers/block/virtio_blk.c:721:9: sparse:    unsigned int *
-drivers/block/virtio_blk.c:721:9: sparse: sparse: incompatible types in comparison expression (different base types):
-drivers/block/virtio_blk.c:721:9: sparse: sparse: no generic selection for 'restricted __le32 [addressable] virtio_cread_v'
-drivers/block/virtio_blk.c:721:9: sparse: sparse: no generic selection for 'restricted __le32 virtio_cread_v'
-drivers/cxl/core/mbox.c:832:18: sparse: sparse: cast from non-scalar
-drivers/cxl/core/mbox.c:832:18: sparse: sparse: cast to non-scalar
-drivers/i2c/busses/i2c-qcom-geni.c:1028:28: sparse: sparse: symbol 'i2c_master_hub' was not declared. Should it be static?
-drivers/iio/adc/twl6030-gpadc.c:955:16-23: duplicated argument to & or |
-drivers/iio/light/tsl2563.c:751:8-33: WARNING: Threaded IRQ with no primary handler requested without IRQF_ONESHOT (unless it is nested IRQ)
-drivers/media/platform/ti/davinci/vpif.c:483:20: sparse: sparse: cast from non-scalar
-drivers/media/platform/ti/davinci/vpif.c:483:20: sparse: sparse: cast to non-scalar
-drivers/media/test-drivers/visl/visl-video.c:690:22: sparse: sparse: symbol 'visl_qops' was not declared. Should it be static?
-fs/exfat/dir.c:862 exfat_get_dentry_set() warn: missing unwind goto?
-fs/xfs/xfs_iomap.c:86:29: sparse: sparse: symbol 'xfs_iomap_page_ops' was not declared. Should it be static?
+======================================================
+WARNING: possible circular locking dependency detected
+6.1.0-syzkaller-14587-g51094a24b85e #0 Not tainted
+------------------------------------------------------
+syz-executor.5/14715 is trying to acquire lock:
+ffff8880470440b0
+ (&tree->tree_lock
+/1){+.+.}-{3:3}
+, at: hfs_find_init+0x167/0x1e0
 
-Error/Warning ids grouped by kconfigs:
+but task is already holding lock:
+ffff88804170c1f8
+ (&HFS_I(tree->inode)->extents_lock
+){+.+.}-{3:3}
+, at: hfs_extend_file+0xde/0x1420 fs/hfs/extent.c:397
 
-gcc_recent_errors
-|-- alpha-allyesconfig
-|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
-|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
-|-- arc-allyesconfig
-|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
-|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
-|-- arc-randconfig-r024-20221225
-|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
-|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
-|-- arc-randconfig-s041-20221225
-|   `-- fs-xfs-xfs_iomap.c:sparse:sparse:symbol-xfs_iomap_page_ops-was-not-declared.-Should-it-be-static
-|-- arm-allyesconfig
-|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
-|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
-|-- arm-badge4_defconfig
-|   `-- arch-arm-kernel-entry-armv.S:warning:CONFIG_ARM_THUMB-is-not-defined-evaluates-to
-|-- arm64-allyesconfig
-|   |-- aarch64-linux-ld:ID-map-text-too-big-or-misaligned
-|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
-|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
-|-- arm64-randconfig-c034-20221225
-|   `-- arch-arm64-include-asm-pgtable-hwdef.h:warning:PMD_SHIFT-is-not-defined-evaluates-to
-|-- csky-randconfig-c033-20221225
-|   |-- drivers-iio-light-tsl2563.c:WARNING:Threaded-IRQ-with-no-primary-handler-requested-without-IRQF_ONESHOT-(unless-it-is-nested-IRQ)
-|   `-- drivers-mtd-ubi-build.c:WARNING:conversion-to-bool-not-needed-here
-|-- i386-allyesconfig
-|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
-|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
-|-- i386-randconfig-c021-20221226
-|   `-- drivers-iio-light-tsl2563.c:WARNING:Threaded-IRQ-with-no-primary-handler-requested-without-IRQF_ONESHOT-(unless-it-is-nested-IRQ)
-|-- i386-randconfig-m021-20221226
-|   `-- fs-exfat-dir.c-exfat_get_dentry_set()-warn:missing-unwind-goto
-|-- i386-randconfig-s002
-|   `-- fs-xfs-xfs_iomap.c:sparse:sparse:symbol-xfs_iomap_page_ops-was-not-declared.-Should-it-be-static
-|-- ia64-allmodconfig
-|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
-|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
-|-- loongarch-allyesconfig
-|   `-- arch-loongarch-kernel-asm-offsets.c:warning:no-previous-prototype-for-output_pbe_defines
-|-- loongarch-randconfig-s043-20221225
-|   |-- arch-loongarch-kernel-asm-offsets.c:warning:no-previous-prototype-for-output_pbe_defines
-|   |-- drivers-cxl-core-mbox.c:sparse:sparse:cast-from-non-scalar
-|   |-- drivers-cxl-core-mbox.c:sparse:sparse:cast-to-non-scalar
-|   |-- drivers-i2c-busses-i2c-qcom-geni.c:sparse:sparse:symbol-i2c_master_hub-was-not-declared.-Should-it-be-static
-|   |-- fs-xfs-xfs_iomap.c:sparse:sparse:symbol-xfs_iomap_page_ops-was-not-declared.-Should-it-be-static
-|   |-- loongarch64-linux-ld:sleep.c:(.text):undefined-reference-to-loongarch_wakeup_start
-|   `-- sleep.c:(.text):undefined-reference-to-loongarch_wakeup_start
-|-- m68k-allmodconfig
-|   |-- drivers-regulator-tps65219-regulator.c:warning:ordered-comparison-of-pointer-with-integer-zero
-|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
-clang_recent_errors
-|-- hexagon-buildonly-randconfig-r003-20221225
-|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
-|-- hexagon-randconfig-r002-20221225
-|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
-|-- riscv-randconfig-r021-20221225
-|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
-|-- x86_64-allyesconfig
-|   `-- drivers-regulator-tps65219-regulator.c:warning:parameter-dev-set-but-not-used
-`-- x86_64-randconfig-a003-20221226
-    `-- vmlinux.o:warning:objtool:___ksymtab_gpl-_RNvNtCsfATHBUcknU9_6kernel5print16call_printk_cont:data-relocation-to-ENDBR:_RNvNtCsfATHBUcknU9_6kernel5print16call_printk_cont
+which lock already depends on the new lock.
 
-elapsed time: 720m
 
-configs tested: 89
-configs skipped: 2
+the existing dependency chain (in reverse order) is:
 
-gcc tested configs:
-um                             i386_defconfig
-um                           x86_64_defconfig
-arc                                 defconfig
-alpha                               defconfig
-i386                 randconfig-a012-20221226
-x86_64                    rhel-8.3-kselftests
-arm                                 defconfig
-i386                 randconfig-a011-20221226
-x86_64                          rhel-8.3-func
-i386                                defconfig
-i386                 randconfig-a013-20221226
-x86_64                           rhel-8.3-bpf
-s390                             allmodconfig
-s390                                defconfig
-ia64                             allmodconfig
-i386                 randconfig-a014-20221226
-x86_64                           rhel-8.3-syz
-x86_64                              defconfig
-i386                 randconfig-a016-20221226
-s390                             allyesconfig
-i386                 randconfig-a015-20221226
-x86_64                         rhel-8.3-kunit
-x86_64                           rhel-8.3-kvm
-x86_64                            allnoconfig
-x86_64               randconfig-a014-20221226
-powerpc                           allnoconfig
-x86_64               randconfig-a013-20221226
-x86_64                               rhel-8.3
-arm64                            allyesconfig
-x86_64               randconfig-a011-20221226
-arm                              allyesconfig
-x86_64               randconfig-a012-20221226
-i386                             allyesconfig
-x86_64               randconfig-a015-20221226
-x86_64               randconfig-a016-20221226
-sh                               allmodconfig
-m68k                             allyesconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
-x86_64                           allyesconfig
-m68k                             allmodconfig
-arc                              allyesconfig
-alpha                            allyesconfig
-arm                  randconfig-r046-20221225
-arc                  randconfig-r043-20221225
-arc                  randconfig-r043-20221226
-riscv                randconfig-r042-20221226
-s390                 randconfig-r044-20221226
-x86_64                           alldefconfig
-sh                          lboxre2_defconfig
-arc                               allnoconfig
-sh                             shx3_defconfig
-arm                           tegra_defconfig
-microblaze                          defconfig
-m68k                       m5475evb_defconfig
-m68k                        m5407c3_defconfig
-xtensa                              defconfig
-mips                      maltasmvp_defconfig
-parisc                           alldefconfig
-arm                          badge4_defconfig
-powerpc                     mpc83xx_defconfig
-sh                          rsk7201_defconfig
-sh                 kfr2r09-romimage_defconfig
-powerpc                    klondike_defconfig
-sh                  sh7785lcr_32bit_defconfig
+-> #1
+ (&HFS_I(tree->inode)->extents_lock
+){+.+.}-{3:3}
+:
+       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
+       __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
+       __mutex_lock kernel/locking/mutex.c:747 [inline]
+       mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
+       hfs_extend_file+0xde/0x1420 fs/hfs/extent.c:397
+       hfs_bmap_reserve+0xfa/0x410 fs/hfs/btree.c:234
+       __hfs_ext_write_extent+0x1ea/0x460 fs/hfs/extent.c:121
+       __hfs_ext_cache_extent+0x67/0x980 fs/hfs/extent.c:174
+       hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
+       hfs_extend_file+0x323/0x1420 fs/hfs/extent.c:401
+       hfs_get_block+0x3fc/0xbb0 fs/hfs/extent.c:353
+       __block_write_begin_int+0x54c/0x1a80 fs/buffer.c:1991
+       __block_write_begin fs/buffer.c:2041 [inline]
+       block_write_begin+0x93/0x1e0 fs/buffer.c:2102
+       cont_write_begin+0x606/0x860 fs/buffer.c:2456
+       hfs_write_begin+0x86/0xd0 fs/hfs/inode.c:58
+       cont_expand_zero fs/buffer.c:2383 [inline]
+       cont_write_begin+0x2cf/0x860 fs/buffer.c:2446
+       hfs_write_begin+0x86/0xd0 fs/hfs/inode.c:58
+       generic_perform_write+0x2e4/0x5e0 mm/filemap.c:3772
+       __generic_file_write_iter+0x176/0x400 mm/filemap.c:3900
+       generic_file_write_iter+0xab/0x310 mm/filemap.c:3932
+       do_iter_write+0x6c2/0xc20 fs/read_write.c:861
+       vfs_writev fs/read_write.c:934 [inline]
+       do_pwritev+0x200/0x350 fs/read_write.c:1031
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
-clang tested configs:
-x86_64                          rhel-8.3-rust
-i386                 randconfig-a004-20221226
-i386                 randconfig-a001-20221226
-x86_64               randconfig-a002-20221226
-i386                 randconfig-a003-20221226
-i386                 randconfig-a002-20221226
-x86_64               randconfig-a003-20221226
-x86_64               randconfig-a006-20221226
-i386                 randconfig-a005-20221226
-i386                 randconfig-a006-20221226
-x86_64               randconfig-a001-20221226
-x86_64               randconfig-a004-20221226
-x86_64               randconfig-a005-20221226
-hexagon              randconfig-r045-20221225
-hexagon              randconfig-r041-20221225
-hexagon              randconfig-r041-20221226
-arm                  randconfig-r046-20221226
-s390                 randconfig-r044-20221225
-hexagon              randconfig-r045-20221226
-riscv                randconfig-r042-20221225
-powerpc                     tqm5200_defconfig
-arm                         shannon_defconfig
-arm                         orion5x_defconfig
-arm                           sama7_defconfig
-x86_64                           allyesconfig
+-> #0 (
+&tree->tree_lock
+/1){+.+.}-{3:3}
+:
+       check_prev_add kernel/locking/lockdep.c:3097 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3216 [inline]
+       validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
+       __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
+       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
+       __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
+       __mutex_lock kernel/locking/mutex.c:747 [inline]
+       mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
+       hfs_find_init+0x167/0x1e0
+       hfs_ext_read_extent fs/hfs/extent.c:200 [inline]
+       hfs_extend_file+0x2f8/0x1420 fs/hfs/extent.c:401
+       hfs_bmap_reserve+0xfa/0x410 fs/hfs/btree.c:234
+       hfs_cat_create+0x1b5/0x8a0 fs/hfs/catalog.c:104
+       hfs_create+0x62/0xd0 fs/hfs/dir.c:202
+       lookup_open fs/namei.c:3413 [inline]
+       open_last_lookups fs/namei.c:3481 [inline]
+       path_openat+0x12ac/0x2dd0 fs/namei.c:3711
+       do_filp_open+0x264/0x4f0 fs/namei.c:3741
+       do_sys_openat2+0x124/0x4e0 fs/open.c:1310
+       do_sys_open fs/open.c:1326 [inline]
+       __do_sys_open fs/open.c:1334 [inline]
+       __se_sys_open fs/open.c:1330 [inline]
+       __x64_sys_open+0x221/0x270 fs/open.c:1330
+       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+       do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+       entry_SYSCALL_64_after_hwframe+0x63/0xcd
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&HFS_I(tree->inode)->extents_lock);
+                               lock(&tree->tree_lock/1);
+                               lock(&HFS_I(tree->inode)->extents_lock);
+  lock(&tree->tree_lock/1);
+
+ *** DEADLOCK ***
+
+4 locks held by syz-executor.5/14715:
+ #0: ffff88802c73a460 (sb_writers#19){.+.+}-{0:0}, at: mnt_want_write+0x3b/0x80 fs/namespace.c:508
+ #1: ffff88804170bd28 (&type->i_mutex_dir_key#11){++++}-{3:3}, at: inode_lock include/linux/fs.h:756 [inline]
+ #1: ffff88804170bd28 (&type->i_mutex_dir_key#11){++++}-{3:3}, at: open_last_lookups fs/namei.c:3478 [inline]
+ #1: ffff88804170bd28 (&type->i_mutex_dir_key#11){++++}-{3:3}, at: path_openat+0x7b9/0x2dd0 fs/namei.c:3711
+ #2: ffff88802a7440b0 (&tree->tree_lock){+.+.}-{3:3}, at: hfs_find_init+0x167/0x1e0
+ #3: ffff88804170c1f8 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xde/0x1420 fs/hfs/extent.c:397
+
+stack backtrace:
+CPU: 0 PID: 14715 Comm: syz-executor.5 Not tainted 6.1.0-syzkaller-14587-g51094a24b85e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1b1/0x290 lib/dump_stack.c:106
+ check_noncircular+0x2cc/0x390 kernel/locking/lockdep.c:2177
+ check_prev_add kernel/locking/lockdep.c:3097 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3216 [inline]
+ validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
+ __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
+ lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
+ __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
+ __mutex_lock kernel/locking/mutex.c:747 [inline]
+ mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
+ hfs_find_init+0x167/0x1e0
+ hfs_ext_read_extent fs/hfs/extent.c:200 [inline]
+ hfs_extend_file+0x2f8/0x1420 fs/hfs/extent.c:401
+ hfs_bmap_reserve+0xfa/0x410 fs/hfs/btree.c:234
+ hfs_cat_create+0x1b5/0x8a0 fs/hfs/catalog.c:104
+ hfs_create+0x62/0xd0 fs/hfs/dir.c:202
+ lookup_open fs/namei.c:3413 [inline]
+ open_last_lookups fs/namei.c:3481 [inline]
+ path_openat+0x12ac/0x2dd0 fs/namei.c:3711
+ do_filp_open+0x264/0x4f0 fs/namei.c:3741
+ do_sys_openat2+0x124/0x4e0 fs/open.c:1310
+ do_sys_open fs/open.c:1326 [inline]
+ __do_sys_open fs/open.c:1334 [inline]
+ __se_sys_open fs/open.c:1330 [inline]
+ __x64_sys_open+0x221/0x270 fs/open.c:1330
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fc71f08c0a9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc71fe9b168 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
+RAX: ffffffffffffffda RBX: 00007fc71f1ac050 RCX: 00007fc71f08c0a9
+RDX: 0000000000000000 RSI: 000000000014d27e RDI: 0000000020000180
+RBP: 00007fc71f0e7ae9 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffd5d3e729f R14: 00007fc71fe9b300 R15: 0000000000022000
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
