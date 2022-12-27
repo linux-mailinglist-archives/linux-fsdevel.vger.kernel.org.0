@@ -2,51 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB16865664F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Dec 2022 02:00:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8B254656725
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Dec 2022 04:42:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232418AbiL0A7u (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 26 Dec 2022 19:59:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41488 "EHLO
+        id S229818AbiL0Dmj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 26 Dec 2022 22:42:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46314 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230375AbiL0A7t (ORCPT
+        with ESMTP id S229581AbiL0Dmh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 26 Dec 2022 19:59:49 -0500
+        Mon, 26 Dec 2022 22:42:37 -0500
 Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C752425E8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Dec 2022 16:59:47 -0800 (PST)
-Received: by mail-il1-f199.google.com with SMTP id o10-20020a056e02102a00b003006328df7bso7849523ilj.17
-        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Dec 2022 16:59:47 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A69326178
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Dec 2022 19:42:35 -0800 (PST)
+Received: by mail-il1-f199.google.com with SMTP id e9-20020a056e020b2900b003036757d5caso8051243ilu.10
+        for <linux-fsdevel@vger.kernel.org>; Mon, 26 Dec 2022 19:42:35 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=46X/1ebZ09bWORLFjyXEMURdLbgiW/4n8efT0Ulsrdw=;
-        b=pbSKTLGHo8gamwkfWED3zq/6CEe87c8sxFzMRZxqYJkPWxaD78PnqoiHPpIEZIoFSo
-         HxKH7mGhVZF6Z/MLdhTpvBQ0TlveLvQ58JgDg4t1fJs6X4Hmq+efdyenLSXNrdgsrkwN
-         cdtTT7s+66DKY8wdzE2MjyIKoslUWjbw5YHd4We0OIVQGfIBE1kg5KrmeFtyiIFZ7T0h
-         87uJRiRd6Y/wwWD+ko13uY0TvZtKj05qtVq10aQWHnzKCpDiRTn/uLr37LeRsghnH+1+
-         RXML/kKAhhvnH0o0IvJ8X1He0jeJNb9ISb22zJ1XZcbGmfNrhg6ri51nUTsYnt3zNurw
-         14+w==
-X-Gm-Message-State: AFqh2kpKJE24teahk4jEHvdC5IjytMgcVjg/dL3EWDHxWkovgLsnFfV2
-        9W4bYhqkMjSynyfgwTlogegM951ZUZoxJqHaKngwB1FTGBET
-X-Google-Smtp-Source: AMrXdXtlb+kQZADtnNW+zvhlZ/SPh+L9NqMiqjcM7ct7d004hnxBpJ552on4ZJbQLwT9KqqnMte32zyfOBWLjovIkhBeYgZ8Eoi7
+        bh=HT6NQ6ZRebuvpIly3+Uy5dHIc3hJIKXVu5Ccu6rq1p0=;
+        b=dVbSBDiq2RkwQuFa/+Ul6EeJBlVgUEEtPei+HmQz5qt926jX75fML32hxkokdpzKXQ
+         8bjTyRkaxbUzt3GmFRzOsKnKVSl/RM7T2OiXmkOMXd9wcdInj61r1bGktL3K/xHfd4A9
+         B4Sp/8Nlii3ifT+kmu2zdqjGhpC02GB1eH9kERvyty4+vvL9aBP084vO4JBTzu99L+rg
+         Iprm9cfrwz64qZkjkxFZ22/5GdfryFu1wSctjreyfvLdXkrihzZQ+GJ1SU2nPr1iBsQU
+         sfaHEJ+2/9SpY4nP4xF0ovUkEnlpQuNXVbY6OAyiN+Vv9UOglErVHqGo20VBuAaexwLd
+         Rm9g==
+X-Gm-Message-State: AFqh2kqp2MGfCfrwZY//7Dcd4mJ+3SX2KiQRzuNNL3WYoJlXlVJathnW
+        nB6NwVvGz/VVTQ06OvIWcVrE4uG+KzHaM5+JlTaea0nIJ62x
+X-Google-Smtp-Source: AMrXdXvEBUw/+j92DS13gGV1YYD8pfVnt1DDN1C+6fGvxMOtNoH67qiCOWXbqOO6jJk3Q4Xggs0aQqVHRKyEDMp0Ip8nP86GqhOt
 MIME-Version: 1.0
-X-Received: by 2002:a92:c047:0:b0:30c:6e9:253b with SMTP id
- o7-20020a92c047000000b0030c06e9253bmr348834ilf.97.1672102787153; Mon, 26 Dec
- 2022 16:59:47 -0800 (PST)
-Date:   Mon, 26 Dec 2022 16:59:47 -0800
+X-Received: by 2002:a92:7a03:0:b0:303:395:7359 with SMTP id
+ v3-20020a927a03000000b0030303957359mr1670658ilc.253.1672112554932; Mon, 26
+ Dec 2022 19:42:34 -0800 (PST)
+Date:   Mon, 26 Dec 2022 19:42:34 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000a806c405f0c4c45b@google.com>
-Subject: [syzbot] [hfs?] possible deadlock in hfs_find_init (2)
-From:   syzbot <syzbot+e390d66dda462b51fde1@syzkaller.appspotmail.com>
-To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+Message-ID: <000000000000dc83d605f0c70a11@google.com>
+Subject: [syzbot] [nilfs2?] kernel BUG in folio_end_writeback
+From:   syzbot <syzbot+7e5cf1d80677ec185e63@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org, konishi.ryusuke@gmail.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-nilfs@vger.kernel.org,
         syzkaller-bugs@googlegroups.com, willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
         HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
@@ -57,172 +60,71 @@ Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    51094a24b85e Merge tag 'hardening-v6.2-rc1-fixes' of git:/..
+HEAD commit:    0a924817d2ed Merge tag '6.2-rc-smb3-client-fixes-part2' of..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15e0dc54480000
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=16228274480000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=4e2d7bfa2d6d5a76
-dashboard link: https://syzkaller.appspot.com/bug?extid=e390d66dda462b51fde1
+dashboard link: https://syzkaller.appspot.com/bug?extid=7e5cf1d80677ec185e63
 compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-
-Unfortunately, I don't have any reproducer for this issue yet.
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14494888480000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11c189f8480000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/a26f3769fdfb/disk-51094a24.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5decc3ae71d7/vmlinux-51094a24.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dd2ac18a5b04/bzImage-51094a24.xz
+disk image: https://storage.googleapis.com/syzbot-assets/b0959a409a79/disk-0a924817.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/388daa76797b/vmlinux-0a924817.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/b9d2d406c075/bzImage-0a924817.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/166e13821ab4/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e390d66dda462b51fde1@syzkaller.appspotmail.com
+Reported-by: syzbot+7e5cf1d80677ec185e63@syzkaller.appspotmail.com
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.1.0-syzkaller-14587-g51094a24b85e #0 Not tainted
-------------------------------------------------------
-syz-executor.5/14715 is trying to acquire lock:
-ffff8880470440b0
- (&tree->tree_lock
-/1){+.+.}-{3:3}
-, at: hfs_find_init+0x167/0x1e0
-
-but task is already holding lock:
-ffff88804170c1f8
- (&HFS_I(tree->inode)->extents_lock
-){+.+.}-{3:3}
-, at: hfs_extend_file+0xde/0x1420 fs/hfs/extent.c:397
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #1
- (&HFS_I(tree->inode)->extents_lock
-){+.+.}-{3:3}
-:
-       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
-       __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
-       __mutex_lock kernel/locking/mutex.c:747 [inline]
-       mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
-       hfs_extend_file+0xde/0x1420 fs/hfs/extent.c:397
-       hfs_bmap_reserve+0xfa/0x410 fs/hfs/btree.c:234
-       __hfs_ext_write_extent+0x1ea/0x460 fs/hfs/extent.c:121
-       __hfs_ext_cache_extent+0x67/0x980 fs/hfs/extent.c:174
-       hfs_ext_read_extent fs/hfs/extent.c:202 [inline]
-       hfs_extend_file+0x323/0x1420 fs/hfs/extent.c:401
-       hfs_get_block+0x3fc/0xbb0 fs/hfs/extent.c:353
-       __block_write_begin_int+0x54c/0x1a80 fs/buffer.c:1991
-       __block_write_begin fs/buffer.c:2041 [inline]
-       block_write_begin+0x93/0x1e0 fs/buffer.c:2102
-       cont_write_begin+0x606/0x860 fs/buffer.c:2456
-       hfs_write_begin+0x86/0xd0 fs/hfs/inode.c:58
-       cont_expand_zero fs/buffer.c:2383 [inline]
-       cont_write_begin+0x2cf/0x860 fs/buffer.c:2446
-       hfs_write_begin+0x86/0xd0 fs/hfs/inode.c:58
-       generic_perform_write+0x2e4/0x5e0 mm/filemap.c:3772
-       __generic_file_write_iter+0x176/0x400 mm/filemap.c:3900
-       generic_file_write_iter+0xab/0x310 mm/filemap.c:3932
-       do_iter_write+0x6c2/0xc20 fs/read_write.c:861
-       vfs_writev fs/read_write.c:934 [inline]
-       do_pwritev+0x200/0x350 fs/read_write.c:1031
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
--> #0 (
-&tree->tree_lock
-/1){+.+.}-{3:3}
-:
-       check_prev_add kernel/locking/lockdep.c:3097 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3216 [inline]
-       validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
-       __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
-       lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
-       __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
-       __mutex_lock kernel/locking/mutex.c:747 [inline]
-       mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
-       hfs_find_init+0x167/0x1e0
-       hfs_ext_read_extent fs/hfs/extent.c:200 [inline]
-       hfs_extend_file+0x2f8/0x1420 fs/hfs/extent.c:401
-       hfs_bmap_reserve+0xfa/0x410 fs/hfs/btree.c:234
-       hfs_cat_create+0x1b5/0x8a0 fs/hfs/catalog.c:104
-       hfs_create+0x62/0xd0 fs/hfs/dir.c:202
-       lookup_open fs/namei.c:3413 [inline]
-       open_last_lookups fs/namei.c:3481 [inline]
-       path_openat+0x12ac/0x2dd0 fs/namei.c:3711
-       do_filp_open+0x264/0x4f0 fs/namei.c:3741
-       do_sys_openat2+0x124/0x4e0 fs/open.c:1310
-       do_sys_open fs/open.c:1326 [inline]
-       __do_sys_open fs/open.c:1334 [inline]
-       __se_sys_open fs/open.c:1330 [inline]
-       __x64_sys_open+0x221/0x270 fs/open.c:1330
-       do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-       do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
-       entry_SYSCALL_64_after_hwframe+0x63/0xcd
-
-other info that might help us debug this:
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&HFS_I(tree->inode)->extents_lock);
-                               lock(&tree->tree_lock/1);
-                               lock(&HFS_I(tree->inode)->extents_lock);
-  lock(&tree->tree_lock/1);
-
- *** DEADLOCK ***
-
-4 locks held by syz-executor.5/14715:
- #0: ffff88802c73a460 (sb_writers#19){.+.+}-{0:0}, at: mnt_want_write+0x3b/0x80 fs/namespace.c:508
- #1: ffff88804170bd28 (&type->i_mutex_dir_key#11){++++}-{3:3}, at: inode_lock include/linux/fs.h:756 [inline]
- #1: ffff88804170bd28 (&type->i_mutex_dir_key#11){++++}-{3:3}, at: open_last_lookups fs/namei.c:3478 [inline]
- #1: ffff88804170bd28 (&type->i_mutex_dir_key#11){++++}-{3:3}, at: path_openat+0x7b9/0x2dd0 fs/namei.c:3711
- #2: ffff88802a7440b0 (&tree->tree_lock){+.+.}-{3:3}, at: hfs_find_init+0x167/0x1e0
- #3: ffff88804170c1f8 (&HFS_I(tree->inode)->extents_lock){+.+.}-{3:3}, at: hfs_extend_file+0xde/0x1420 fs/hfs/extent.c:397
-
-stack backtrace:
-CPU: 0 PID: 14715 Comm: syz-executor.5 Not tainted 6.1.0-syzkaller-14587-g51094a24b85e #0
+------------[ cut here ]------------
+kernel BUG at mm/filemap.c:1615!
+invalid opcode: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 15 Comm: ksoftirqd/0 Not tainted 6.1.0-syzkaller-14321-g0a924817d2ed #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+RIP: 0010:folio_end_writeback+0x34d/0x530 mm/filemap.c:1615
+Code: 84 87 00 00 00 e8 13 5a d2 ff e9 36 fd ff ff e8 09 5a d2 ff 4c 89 f7 48 c7 c6 20 84 f8 8a e8 ca 3a 10 00 0f 0b e8 f3 59 d2 ff <0f> 0b e8 ec 59 d2 ff 4c 89 f7 48 c7 c6 60 86 f8 8a e8 ad 3a 10 00
+RSP: 0018:ffffc90000147b88 EFLAGS: 00010246
+RAX: ffffffff81b9813d RBX: 0000000000000082 RCX: ffff88813fefba80
+RDX: 0000000080000100 RSI: ffffffff8aedcc60 RDI: ffffffff8b4bbfe0
+RBP: 1ffffd40000ed426 R08: dffffc0000000000 R09: fffffbfff1d2cabe
+R10: fffffbfff1d2cabe R11: 1ffffffff1d2cabd R12: ffffea000076a134
+R13: dffffc0000000000 R14: ffffea000076a100 R15: 1ffffd40000ed420
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff727105718 CR3: 00000000291ab000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
  <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x1b1/0x290 lib/dump_stack.c:106
- check_noncircular+0x2cc/0x390 kernel/locking/lockdep.c:2177
- check_prev_add kernel/locking/lockdep.c:3097 [inline]
- check_prevs_add kernel/locking/lockdep.c:3216 [inline]
- validate_chain+0x1898/0x6ae0 kernel/locking/lockdep.c:3831
- __lock_acquire+0x1292/0x1f60 kernel/locking/lockdep.c:5055
- lock_acquire+0x182/0x3c0 kernel/locking/lockdep.c:5668
- __mutex_lock_common+0x1bd/0x26e0 kernel/locking/mutex.c:603
- __mutex_lock kernel/locking/mutex.c:747 [inline]
- mutex_lock_nested+0x17/0x20 kernel/locking/mutex.c:799
- hfs_find_init+0x167/0x1e0
- hfs_ext_read_extent fs/hfs/extent.c:200 [inline]
- hfs_extend_file+0x2f8/0x1420 fs/hfs/extent.c:401
- hfs_bmap_reserve+0xfa/0x410 fs/hfs/btree.c:234
- hfs_cat_create+0x1b5/0x8a0 fs/hfs/catalog.c:104
- hfs_create+0x62/0xd0 fs/hfs/dir.c:202
- lookup_open fs/namei.c:3413 [inline]
- open_last_lookups fs/namei.c:3481 [inline]
- path_openat+0x12ac/0x2dd0 fs/namei.c:3711
- do_filp_open+0x264/0x4f0 fs/namei.c:3741
- do_sys_openat2+0x124/0x4e0 fs/open.c:1310
- do_sys_open fs/open.c:1326 [inline]
- __do_sys_open fs/open.c:1334 [inline]
- __se_sys_open fs/open.c:1330 [inline]
- __x64_sys_open+0x221/0x270 fs/open.c:1330
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7fc71f08c0a9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fc71fe9b168 EFLAGS: 00000246 ORIG_RAX: 0000000000000002
-RAX: ffffffffffffffda RBX: 00007fc71f1ac050 RCX: 00007fc71f08c0a9
-RDX: 0000000000000000 RSI: 000000000014d27e RDI: 0000000020000180
-RBP: 00007fc71f0e7ae9 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007ffd5d3e729f R14: 00007fc71fe9b300 R15: 0000000000022000
+ end_bio_bh_io_sync+0xb1/0x110 fs/buffer.c:2655
+ req_bio_endio block/blk-mq.c:794 [inline]
+ blk_update_request+0x51c/0x1040 block/blk-mq.c:926
+ blk_mq_end_request+0x39/0x70 block/blk-mq.c:1053
+ blk_complete_reqs block/blk-mq.c:1131 [inline]
+ blk_done_softirq+0x119/0x160 block/blk-mq.c:1136
+ __do_softirq+0x277/0x738 kernel/softirq.c:571
+ run_ksoftirqd+0xa2/0x100 kernel/softirq.c:934
+ smpboot_thread_fn+0x533/0xa10 kernel/smpboot.c:164
+ kthread+0x266/0x300 kernel/kthread.c:376
+ ret_from_fork+0x1f/0x30 arch/x86/entry/entry_64.S:308
  </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:folio_end_writeback+0x34d/0x530 mm/filemap.c:1615
+Code: 84 87 00 00 00 e8 13 5a d2 ff e9 36 fd ff ff e8 09 5a d2 ff 4c 89 f7 48 c7 c6 20 84 f8 8a e8 ca 3a 10 00 0f 0b e8 f3 59 d2 ff <0f> 0b e8 ec 59 d2 ff 4c 89 f7 48 c7 c6 60 86 f8 8a e8 ad 3a 10 00
+RSP: 0018:ffffc90000147b88 EFLAGS: 00010246
+RAX: ffffffff81b9813d RBX: 0000000000000082 RCX: ffff88813fefba80
+RDX: 0000000080000100 RSI: ffffffff8aedcc60 RDI: ffffffff8b4bbfe0
+RBP: 1ffffd40000ed426 R08: dffffc0000000000 R09: fffffbfff1d2cabe
+R10: fffffbfff1d2cabe R11: 1ffffffff1d2cabd R12: ffffea000076a134
+R13: dffffc0000000000 R14: ffffea000076a100 R15: 1ffffd40000ed420
+FS:  0000000000000000(0000) GS:ffff8880b9800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff727105718 CR3: 00000000291ab000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
 ---
@@ -232,3 +134,5 @@ syzbot engineers can be reached at syzkaller@googlegroups.com.
 
 syzbot will keep track of this issue. See:
 https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
