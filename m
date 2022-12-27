@@ -2,117 +2,88 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1EBD0656E8C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 27 Dec 2022 21:13:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 81DB2657157
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Dec 2022 00:54:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229608AbiL0UNs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 27 Dec 2022 15:13:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60736 "EHLO
+        id S229608AbiL0Xyj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 27 Dec 2022 18:54:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42270 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229488AbiL0UNr (ORCPT
+        with ESMTP id S229502AbiL0Xyi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 27 Dec 2022 15:13:47 -0500
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7CC9FE67
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Dec 2022 12:13:46 -0800 (PST)
-Received: by mail-il1-f197.google.com with SMTP id s2-20020a056e02216200b0030bc3be69e5so9200700ilv.20
-        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Dec 2022 12:13:46 -0800 (PST)
+        Tue, 27 Dec 2022 18:54:38 -0500
+Received: from mail-pf1-x434.google.com (mail-pf1-x434.google.com [IPv6:2607:f8b0:4864:20::434])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EC106265
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Dec 2022 15:54:37 -0800 (PST)
+Received: by mail-pf1-x434.google.com with SMTP id g20so1499743pfb.3
+        for <linux-fsdevel@vger.kernel.org>; Tue, 27 Dec 2022 15:54:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=message-id:date:content-id:mime-version:from:references:in-reply-to
+         :cc:to:subject:from:to:cc:subject:date:message-id:reply-to;
+        bh=xbsqSQDw/Z+yvUnm1+/bd37S1CGCwYm3bDqcZLgekfA=;
+        b=JaNRvRdB7MpGg+7L4xHbVjRVEWC9JAVX0Dp+4lxICwsW7YvKwqp60dVC8UwT5JnHES
+         /CLrojtMg0uwZZaxVdA7OtSctztjxAPfHKmJHBiPh+n2LFAf7CJJkTXS6tttuPKhX/5Q
+         z/E2+KwWe6nwZN9V0oKQJxtQwcIkrMQbav6E4eo/df9wvvCmvDlNplV6AKyt71cr1MFr
+         FjcPuFcggmYneG8KUu8akR+/885lLrdCs7oizB0L3yomTthehfSkOm1SqSmzyPFn3/J1
+         HGQgD8XFxzXUzgjsS1Nz6rEbQfT8xhhNuPWMMkgmxmYIKB7Umo61+8kedvBulIzYFtF7
+         Ba4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PJzU91V+2caAyK9xQGuPXZk4ZLFFV8aPHDjR8GkZScc=;
-        b=RVTzxx2/m7XkoUU0uKcKoXKydmui0zXtUmQGy/WOA99ryp6PU7msTIenOHkeXmJSw0
-         9DRyBqdDiidWdl4Pg1qNNCnb1HhyQqFHCbsHD2Ed+mw6wBzzOzCXgj7FYdvt9ldcj3oE
-         NnIkNdyl5YSL5pVV6f8kvc5wYGB598Sv26TLy3GG3nHaCRCdtx0Xyepgrp3hreiF9dRk
-         LzoJyqd1xMwfosoSFE42zAil0ZbO5EDWXrrX49M+OPTQu22WQcZA3HcU1P2w403vOX9E
-         POwFEv99i/2d5C1bIJxqRi5wnOVUifzNbNjj/87H8mpBEm64cM2Ygk/YF/iNwc4eks1/
-         BHeA==
-X-Gm-Message-State: AFqh2krCNu5MEWZpbP595Xe/CFhIFS8yuMiYnOe9hyqM7hRfO8jbU2i4
-        JU3hN0pA3Vky7tUKmQQP9i0a6WOxuPcqQlsHT1eHrZBr83kg
-X-Google-Smtp-Source: AMrXdXsvTZu9GiWOGwn+s+ah4rOIU7VaQs1NzVOvhW6auU7h1mGH1U1ycI1BxtRkni8/D4jAl3JdnMw3YTBzR/qtWZGLJnWOWhSM
+        h=message-id:date:content-id:mime-version:from:references:in-reply-to
+         :cc:to:subject:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xbsqSQDw/Z+yvUnm1+/bd37S1CGCwYm3bDqcZLgekfA=;
+        b=oezeX+GMA+9Rib5a6DQx4zJOmnllQD0GnH5Pg/x2y2tbVHQtgXTFHD2qyzBvY7jlJq
+         joY25BJsBTQjZZHeyTh3klOdMZIrpnhm4Ice4JLJ8lvdha0xK6GclxVb2EHeMD1TGY5D
+         6vCvhucGyheNocnhbiKvyZOUPEo0sM0HIev8oSSNsdGkMRZ5Pt6NlpF0k2md57RVDAsg
+         7ycye6gBBENBMYaYSFqxzG+uzjO9PRVzK16KaETNEDNYIVb+grxzrJ77946jDySO72SM
+         Qu+At8nyHmVa2vMHr27Ayv2C+pHjfN6oCm805kjjNHIMZwCpwSGPuuEHXQ0Ro1uK2Nc4
+         W5bQ==
+X-Gm-Message-State: AFqh2krdtXvnzu0vQjQnEoeRHZA8e5MJcdjjNGzyLBlmfkcYsln6Qhva
+        IHgItNoRojXDFHUURrhnI3E=
+X-Google-Smtp-Source: AMrXdXtL3QbsZdB/LXXEO4G56sVTvw+QXYg8qq8udRKlqHiHXls8Kh4m3knYSmhXBQemWU86ie3B/A==
+X-Received: by 2002:aa7:90d9:0:b0:580:df2d:47c4 with SMTP id k25-20020aa790d9000000b00580df2d47c4mr13428034pfk.19.1672185277408;
+        Tue, 27 Dec 2022 15:54:37 -0800 (PST)
+Received: from jromail.nowhere (h219-110-108-104.catv02.itscom.jp. [219.110.108.104])
+        by smtp.gmail.com with ESMTPSA id x28-20020aa7941c000000b0055f209690c0sm9114026pfo.50.2022.12.27.15.54.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 27 Dec 2022 15:54:37 -0800 (PST)
+Received: from localhost ([127.0.0.1] helo=jrobl) by jrobl id 1pAJmF-0003so-0i ; Wed, 28 Dec 2022 08:54:35 +0900
+Subject: Re: [GIT PULL] acl updates for v6.2
+To:     Christian Brauner <brauner@kernel.org>
+Cc:     linux-fsdevel@vger.kernel.org
+In-Reply-To: <20221227183115.ho5irvmwednenxxq@wittgenstein>
+References: <20221212111919.98855-1-brauner@kernel.org> <29161.1672154875@jrobl> <20221227183115.ho5irvmwednenxxq@wittgenstein>
+From:   hooanon05g@gmail.com
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:13c1:b0:39d:72ab:a7c5 with SMTP id
- i1-20020a05663813c100b0039d72aba7c5mr2026740jaj.247.1672172025679; Tue, 27
- Dec 2022 12:13:45 -0800 (PST)
-Date:   Tue, 27 Dec 2022 12:13:45 -0800
-In-Reply-To: <000000000000eb49a905f061ada5@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000009813d705f0d4e3e5@google.com>
-Subject: Re: [syzbot] [vfs?] [ntfs3?] WARNING in do_symlinkat
-From:   syzbot <syzbot+e78eab0c1cf4649256ed@syzkaller.appspotmail.com>
-To:     almaz.alexandrovich@paragon-software.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
-        viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
-        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <14928.1672185275.1@jrobl>
+Date:   Wed, 28 Dec 2022 08:54:35 +0900
+Message-ID: <14929.1672185275@jrobl>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-syzbot has found a reproducer for the following issue on:
+Christian Brauner:
+> Hey, I'll try to take a look before new years.
+>
+> But what xfstests exactly is reporting a failure?
+> What xfstests config did you use?
+> How can I reproduce this?
+> Did you bisect it to this series specifically?
 
-HEAD commit:    1b929c02afd3 Linux 6.2-rc1
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=11625c6c480000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=68e0be42c8ee4bb4
-dashboard link: https://syzkaller.appspot.com/bug?extid=e78eab0c1cf4649256ed
-compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11621288480000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=148ad5a8480000
+It is not xfstests.
+It is just a part of my local tests for another security issue.
+Now I am trying creating a simplest reproducible senario, but it may
+take some time. May be a few weeks.
+So I'd say "Have nice holidays, and thanx for the reply."
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2d8c5072480f/disk-1b929c02.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/46687f1395db/vmlinux-1b929c02.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/26f1afa5ec00/bzImage-1b929c02.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6ad275e8bd72/mount_0.gz
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+e78eab0c1cf4649256ed@syzkaller.appspotmail.com
-
-WARNING: CPU: 1 PID: 6646 at kernel/locking/rwsem.c:1361 __up_write kernel/locking/rwsem.c:1360 [inline]
-WARNING: CPU: 1 PID: 6646 at kernel/locking/rwsem.c:1361 up_write+0x4f9/0x580 kernel/locking/rwsem.c:1615
-Modules linked in:
-CPU: 1 PID: 6646 Comm: syz-executor272 Not tainted 6.2.0-rc1-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
-RIP: 0010:__up_write kernel/locking/rwsem.c:1360 [inline]
-RIP: 0010:up_write+0x4f9/0x580 kernel/locking/rwsem.c:1615
-Code: c7 e0 ab ed 8a 48 c7 c6 80 ae ed 8a 48 8b 54 24 28 48 8b 4c 24 18 4d 89 e0 4c 8b 4c 24 30 31 c0 53 e8 9b 59 e8 ff 48 83 c4 08 <0f> 0b e9 6b fd ff ff 48 c7 c1 18 9c 96 8e 80 e1 07 80 c1 03 38 c1
-RSP: 0018:ffffc9000b807d40 EFLAGS: 00010292
-RAX: 298a0fb209e0d400 RBX: ffffffff8aedacc0 RCX: ffff88801965d7c0
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc9000b807e10 R08: ffffffff816f2c9d R09: fffff52001700f61
-R10: fffff52001700f61 R11: 1ffff92001700f60 R12: 0000000000000000
-R13: ffff88806f2036d0 R14: 1ffff92001700fb0 R15: dffffc0000000000
-FS:  00007f7a51ed8700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fff0eaf7c5c CR3: 000000007721d000 CR4: 00000000003506e0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- inode_unlock include/linux/fs.h:761 [inline]
- done_path_create fs/namei.c:3857 [inline]
- do_symlinkat+0x242/0x5f0 fs/namei.c:4433
- __do_sys_symlinkat fs/namei.c:4447 [inline]
- __se_sys_symlinkat fs/namei.c:4444 [inline]
- __x64_sys_symlinkat+0x95/0xa0 fs/namei.c:4444
- do_syscall_x64 arch/x86/entry/common.c:50 [inline]
- do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
- entry_SYSCALL_64_after_hwframe+0x63/0xcd
-RIP: 0033:0x7f7a5a151049
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 15 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f7a51ed82f8 EFLAGS: 00000246 ORIG_RAX: 000000000000010a
-RAX: ffffffffffffffda RBX: 00007f7a5a1f5790 RCX: 00007f7a5a151049
-RDX: 0000000020000280 RSI: 00000000ffffff9c RDI: 00000000200004c0
-RBP: 00007f7a5a1c1fb8 R08: 00007f7a51ed8700 R09: 0000000000000000
-R10: 00007f7a51ed8700 R11: 0000000000000246 R12: 00007f7a5a1a2640
-R13: 00007f7a5a1c1eb8 R14: 0030656c69662f2e R15: 00007f7a5a1f5798
- </TASK>
-
+J. R. Okajima
