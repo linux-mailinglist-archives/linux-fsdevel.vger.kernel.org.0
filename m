@@ -2,113 +2,81 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A87F46573FF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Dec 2022 09:40:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E22DA657EA4
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Dec 2022 16:56:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232495AbiL1Ikm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Dec 2022 03:40:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45180 "EHLO
+        id S234195AbiL1P4C (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Dec 2022 10:56:02 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43764 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229526AbiL1Ikf (ORCPT
+        with ESMTP id S234175AbiL1Pzy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Dec 2022 03:40:35 -0500
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5694AF006
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Dec 2022 00:40:34 -0800 (PST)
-Received: from [2a02:8108:963f:de38:eca4:7d19:f9a2:22c5]; authenticated
-        by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        id 1pARzE-00014n-Ay; Wed, 28 Dec 2022 09:40:32 +0100
-Message-ID: <2aa5cc7e-ca00-22a7-5e2f-7eb73556181e@leemhuis.info>
-Date:   Wed, 28 Dec 2022 09:40:31 +0100
+        Wed, 28 Dec 2022 10:55:54 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A844BCA1;
+        Wed, 28 Dec 2022 07:55:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=6wGBkXWPpYjazxvcUxjswCd89wx6pPvJfoOTyM3QCW0=; b=On4SKrzV9Wx6r81NZbva4k9nEo
+        pr6uIv9hdLfqf6V2Xa/YbVIDBgvKq6gqmrhuTuQIkSkSsbGosBms+BWiHbN1IkQnJlheOs31HHNOw
+        QRWhQzin2Acs8stxmKvgqFSEqqeVFJerctSHUEc6NrKPeYwF9iotOmVNTKuRwyvqKyxR3i0XpYY/T
+        tOjw7E7kKjKXIQeHBzXT4SuxVxr6Qan5D5Tn/5rmp0UYiHMPq8Xw58Hg5KECDd5wZgGi43AyFxFdN
+        jWhkQs1cF+HcT6/7KoR5N8MKZuy9A7Bk7hATnR32nrmDEnDRXOMBSxYSTUsilcX/m5XDAaeR//Aqu
+        FjXDU/ZQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pAYmM-0067SQ-6j; Wed, 28 Dec 2022 15:55:42 +0000
+Date:   Wed, 28 Dec 2022 07:55:42 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Andreas =?iso-8859-1?Q?Gr=FCnbacher?= 
+        <andreas.gruenbacher@gmail.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
+Subject: Re: [RFC v3 4/7] iomap: Add iomap_folio_prepare helper
+Message-ID: <Y6xm/sJXHaMxO1HI@infradead.org>
+References: <20221216150626.670312-1-agruenba@redhat.com>
+ <20221216150626.670312-5-agruenba@redhat.com>
+ <Y6XDhb2IkNOdaT/t@infradead.org>
+ <CAHpGcMLzTrn3ZUB4S8gjpz+aGj+R1hAu38m-PL5rVj-W-0G2ZA@mail.gmail.com>
+ <Y6ao9tiimcg/DFGl@infradead.org>
+ <Y6gUAtg4MZC2ZG6v@casper.infradead.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [GIT PULL] acl updates for v6.2 #forregzbot
-Content-Language: en-US, de-DE
-To:     "regressions@lists.linux.dev" <regressions@lists.linux.dev>
-Cc:     linux-fsdevel@vger.kernel.org
-References: <20221212111919.98855-1-brauner@kernel.org>
- <29161.1672154875@jrobl>
-From:   Thorsten Leemhuis <regressions@leemhuis.info>
-In-Reply-To: <29161.1672154875@jrobl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1672216834;359ba8da;
-X-HE-SMSGID: 1pARzE-00014n-Ay
-X-Spam-Status: No, score=-3.0 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y6gUAtg4MZC2ZG6v@casper.infradead.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[Note: this mail contains only information for Linux kernel regression
-tracking. Mails like these contain '#forregzbot' in the subject to make
-then easy to spot and filter out. The author also tried to remove most
-or all individuals from the list of recipients to spare them the hassle.]
+On Sun, Dec 25, 2022 at 09:12:34AM +0000, Matthew Wilcox wrote:
+> > > I was looking at it from the filesystem point of view: this helper is
+> > > meant to be used in ->folio_prepare() handlers, so
+> > > iomap_folio_prepare() seemed to be a better name than
+> > > __iomap_get_folio().
+> > 
+> > Well, I think the right name for the methods that gets a folio is
+> > probably ->folio_get anyway.
+> 
+> For the a_ops, the convention I've been following is:
+> 
+> folio_mark_dirty()
+>  -> aops->dirty_folio()
+>    -> iomap_dirty_folio()
+> 
+> ie VERB_folio() as the name of the operation, and MODULE_VERB_folio()
+> as the implementation.  Seems to work pretty well.
 
-On 27.12.22 16:27, J. R. Okajima wrote:
-> 
-> Christian Brauner:
->> This series passes the LTP and xfstests suites without any regressions. For
->> xfstests the following combinations were tested:
-> 
-> I've found a behaviour got changed from v6.1 to v6.2-rc1 on ext3 (ext4).
-
-Thanks for the report. To be sure below issue doesn't fall through the
-cracks unnoticed, I'm adding it to regzbot, my Linux kernel regression
-tracking bot:
-
-#regzbot ^introduced v6.1..v6.2-rc1
-#regzbot title fs: ext3/acl: behavior changed (ls and getact show
-slightly different output)
-#regzbot ignore-activity
-
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
-
-P.S.: As the Linux kernel's regression tracker I deal with a lot of
-reports and sometimes miss something important when writing mails like
-this. If that's the case here, don't hesitate to tell me in a public
-reply, it's in everyone's interest to set the public record straight.
-
-> ----------------------------------------
-> on v6.1
-> + ls -ld /dev/shm/rw/hd-test/newdir
-> drwxrwsr-x 2 nobody nogroup 1024 Dec 27 14:46 /dev/shm/rw/hd-test/newdir
-> 
-> + getfacl -d /dev/shm/rw/hd-test/newdir
-> # file: dev/shm/rw/hd-test/newdir
-> # owner: nobody
-> # group: nogroup
-> # flags: -s-
-> 
-> ----------------------------------------
-> on v6.2-rc1
-> + ls -ld /dev/shm/rw/hd-test/newdir
-> drwxrwsr-x+ 2 nobody nogroup 1024 Dec 27 23:51 /dev/shm/rw/hd-test/newdir
-> 
-> + getfacl -d /dev/shm/rw/hd-test/newdir
-> # file: dev/shm/rw/hd-test/newdir
-> # owner: nobody
-> # group: nogroup
-> # flags: -s-
-> user::rwx
-> user:root:rwx
-> group::r-x
-> mask::rwx
-> other::r-x
-> 
-> ----------------------------------------
-> 
-> - in the output from 'ls -l', the extra '+' appears
-> - in the output from 'getfacl -d', some lines are appended
-> - in those lines, I am not sure whether 'user:root:rwx' is correct or
->   not. Even it is correct, getfacl on v6.1 didn't produce such lines.
-> 
-> Is this change intentional?
-> In other words, is this patch series for a bugfix?
-> 
-> 
-> J. R. Okajima
+Yeay, ->get_folio sounds fine if not even better as it matches
+filemap_get_folio.
