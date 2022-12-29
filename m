@@ -2,52 +2,53 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E3D9D658D19
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Dec 2022 14:30:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E7FA4658EC8
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Dec 2022 17:11:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229988AbiL2NaR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Dec 2022 08:30:17 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50748 "EHLO
+        id S233666AbiL2QLL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Dec 2022 11:11:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbiL2NaP (ORCPT
+        with ESMTP id S230449AbiL2QKy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Dec 2022 08:30:15 -0500
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53044FACF;
-        Thu, 29 Dec 2022 05:30:11 -0800 (PST)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4NjTlj0fLRz8R040;
-        Thu, 29 Dec 2022 21:30:09 +0800 (CST)
-Received: from szxlzmapp04.zte.com.cn ([10.5.231.166])
-        by mse-fl1.zte.com.cn with SMTP id 2BTDTxbk062621;
-        Thu, 29 Dec 2022 21:29:59 +0800 (+08)
-        (envelope-from yang.yang29@zte.com.cn)
-Received: from mapi (szxlzmapp01[null])
-        by mapi (Zmail) with MAPI id mid14;
-        Thu, 29 Dec 2022 21:30:03 +0800 (CST)
-Date:   Thu, 29 Dec 2022 21:30:03 +0800 (CST)
-X-Zmail-TransId: 2b0363ad965bffffffff8efe8e3d
-X-Mailer: Zmail v1.0
-Message-ID: <202212292130035747813@zte.com.cn>
-Mime-Version: 1.0
-From:   <yang.yang29@zte.com.cn>
-To:     <akpm@linux-foundation.org>, <hannes@cmpxchg.org>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <willy@infradead.org>,
-        <iamjoonsoo.kim@lge.com>, <yang.yang29@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIHN3YXBfc3RhdGU6IHVwZGF0ZSBzaGFkb3dfbm9kZXMgZm9yIGFub255bW91cyBwYWdl?=
-Content-Type: text/plain;
-        charset="UTF-8"
-X-MAIL: mse-fl1.zte.com.cn 2BTDTxbk062621
-X-Fangmail-Gw-Spam-Type: 0
-X-FangMail-Miltered: at cgslv5.04-192.168.250.137.novalocal with ID 63AD9661.000 by FangMail milter!
-X-FangMail-Envelope: 1672320609/4NjTlj0fLRz8R040/63AD9661.000/10.5.228.132/[10.5.228.132]/mse-fl1.zte.com.cn/<yang.yang29@zte.com.cn>
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 63AD9661.000/4NjTlj0fLRz8R040
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_MSPIKE_H2,
-        SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+        Thu, 29 Dec 2022 11:10:54 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6C81210A7;
+        Thu, 29 Dec 2022 08:10:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=rRMjyybI4BLGnpomTYi5lWNLUT7Kcy+Hv5Mat8aX7RQ=; b=30PC0fVD2644K3q35Oc0cw5f1v
+        LTpWsGmTAvtWdovsneRivRCLXQqwtM1G/u5qMZ5ReUGiW2Bqqbmpak/j5/zXkmZE70FB7O3OIzsPw
+        bnM+fLK7J9EoU3zXk5qFE5qD0b4FftkAYzJbSDH8SyjZzLfSLu8MinxJO6b5m0Y3eHuy0fPDRKsdz
+        MQ1tnejaevDS0o1+/tm8Uhlrx2xgd6/YjnsvkyvwBiI/b/8osn+I7sutWA8g4koNVqcjSQY1ulCGe
+        7bYVL4pD9JBD2CGWxGIZ0qwEV/fMEKKx0GrCUmjV5QQYg2eju3SaZHsWOZq67PuuaYSXwL7trb+2q
+        bCFKXNtQ==;
+Received: from rrcs-67-53-201-206.west.biz.rr.com ([67.53.201.206] helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pAvUI-00HKJB-Qm; Thu, 29 Dec 2022 16:10:35 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com,
+        linux-mm@kvack.org
+Subject: remove generic_writepages
+Date:   Thu, 29 Dec 2022 06:10:25 -1000
+Message-Id: <20221229161031.391878-1-hch@lst.de>
+X-Mailer: git-send-email 2.35.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-0.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,RCVD_IN_SBL_CSS,SPF_HELO_NONE,SPF_NONE autolearn=no
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,57 +56,24 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Yang Yang <yang.yang29@zte.com.cn>
+Hi all,
 
-Shadow_nodes is for shadow nodes reclaiming of workingset handling,
-it is updated when page cache add or delete since long time ago
-workingset only supported page cache. But when workingset supports
-anonymous page detection[1], we missied updating shadow nodes for
-it.
+this series removes generic_writepages by open coding the current
+functionality in the three remaining callers.  Besides removing some
+code the main benefit is that one of the few remaining ->writepage
+callers from outside the core page cache code go away.
 
-[1] commit aae466b0052e ("mm/swap: implement workingset detection for anonymous LRU")
+Note that testing has been a bit limited - ntfs3 does not seem to
+be supported by xfstests at all, and xfstests on ocfs2 is a complete
+shit show even for the base line.
 
-Signed-off-by: Yang Yang <yang.yang29@zte.com>
----
- include/linux/xarray.h | 3 ++-
- mm/swap_state.c        | 4 ++++
- 2 files changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 44dd6d6e01bc..cd2ccb09c596 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -1643,7 +1643,8 @@ static inline void xas_set_order(struct xa_state *xas, unsigned long index,
-  * @update: Function to call when updating a node.
-  *
-  * The XArray can notify a caller after it has updated an xa_node.
-- * This is advanced functionality and is only needed by the page cache.
-+ * This is advanced functionality and is only needed by the page cache
-+ * and anonymous page.
-  */
- static inline void xas_set_update(struct xa_state *xas, xa_update_node_t update)
- {
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index cb9aaa00951d..ed7c652d06db 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -94,6 +94,8 @@ int add_to_swap_cache(struct folio *folio, swp_entry_t entry,
- 	unsigned long i, nr = folio_nr_pages(folio);
- 	void *old;
-
-+	xas_set_update(&xas, workingset_update_node);
-+
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 	VM_BUG_ON_FOLIO(folio_test_swapcache(folio), folio);
- 	VM_BUG_ON_FOLIO(!folio_test_swapbacked(folio), folio);
-@@ -145,6 +147,8 @@ void __delete_from_swap_cache(struct folio *folio,
- 	pgoff_t idx = swp_offset(entry);
- 	XA_STATE(xas, &address_space->i_pages, idx);
-
-+	xas_set_update(&xas, workingset_update_node);
-+
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 	VM_BUG_ON_FOLIO(!folio_test_swapcache(folio), folio);
- 	VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
--- 
-2.15.2
+Diffstat:
+ fs/jbd2/commit.c          |   25 ---------------------
+ fs/jbd2/journal.c         |    1 
+ fs/mpage.c                |    8 ------
+ fs/ntfs3/inode.c          |   33 +++++++++++++---------------
+ fs/ocfs2/journal.c        |   16 +++++++++++++
+ include/linux/jbd2.h      |    2 -
+ include/linux/writeback.h |    2 -
+ mm/page-writeback.c       |   53 +++++++++++++---------------------------------
+ 8 files changed, 45 insertions(+), 95 deletions(-)
