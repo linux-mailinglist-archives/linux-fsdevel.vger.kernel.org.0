@@ -2,104 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 51DE0658674
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 28 Dec 2022 20:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3386465889F
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Dec 2022 03:26:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230413AbiL1Tm5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Dec 2022 14:42:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49976 "EHLO
+        id S232879AbiL2C0K (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 28 Dec 2022 21:26:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230080AbiL1Tm4 (ORCPT
+        with ESMTP id S231722AbiL2C0I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Dec 2022 14:42:56 -0500
-Received: from mail-yw1-x1149.google.com (mail-yw1-x1149.google.com [IPv6:2607:f8b0:4864:20::1149])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2A4E22197
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Dec 2022 11:42:55 -0800 (PST)
-Received: by mail-yw1-x1149.google.com with SMTP id 00721157ae682-352e29ff8c2so185571277b3.21
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Dec 2022 11:42:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=h66ZlJIW0sPnpY7cABzav3ob2j9zOJpX5LkgC0xA0/8=;
-        b=ZmaFVF7jonGinSfOfqJLrvexRkxJcgPqsnKMM2BWGIh/BVHh7PqXo08JdBFt3JvzDT
-         MtFcfUdyqDiaFCLySq0/hKOSrDV1GcyYBXtmNsEtbbs0AD5T4KILU972sTh9LBVzvylG
-         tQ34yld8u16qX7XcANjKxhlHCij158UtIOUP/9gRAC7H35s/1sJXhDZT3sMLn3/tZhV7
-         aWcN73j9+nlL33mr6ie5dvAYJUjVKshl6AviGRMeNglXhoCBBVDSmhZzyQClFEryL6aG
-         E8UwArx1nYdxTy3CYrwtb/ObqUZ8XeDEoelJ/4aWBtjKXZWtTcThztS84KOf7idyfQVd
-         fSSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=h66ZlJIW0sPnpY7cABzav3ob2j9zOJpX5LkgC0xA0/8=;
-        b=2OXipLrl0ORbONz1b32p7Q8jQ/a3uZ4F6iASYW65cIGfdjtZZ+oE8D2vkOlBRc8R5P
-         uc/WHMYGXUgr5H3EUWQNMTPhzhZE3PrwJdZtkTidJrDp7iYnIg/A7BM09wVkF4Z56VPy
-         BziGgxPTAdLEbXM1M8CazY9od7J0yAaBXLwFgmHz0GmS6PUz/aiCvuwfZJ4A7kvQs8Wt
-         e26g51UhO9mJYmiI9m0dRFtZ/jY5orGqALUN6gyK7/GFCA9/e84vhp4yd3l1t0Xa+BoD
-         Sx7YzjCzC8zDAmvUvbub7fo5BVKKDm6gtiE1zm+ebck/40HPA1iCkgIlPZWurtJbKW4K
-         680g==
-X-Gm-Message-State: AFqh2koF7MKiilLN9CROBqiitd7MCku4Js5iYCcFPmFCgGZpGdsQcgfs
-        4buYz4QkIWNDSCjrlgwJuLzc3Ax9WjE=
-X-Google-Smtp-Source: AMrXdXvVoybg1IWCnNxBiUrrq4mqKVmvhjCYdrsqR+1uBXDBxNLu6NltWyq75pQsNEPLUw321kk56Lsqvsg=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2620:15c:211:200:77b8:ecbc:954d:4461])
- (user=surenb job=sendgmr) by 2002:a25:d496:0:b0:70c:4fa3:2cce with SMTP id
- m144-20020a25d496000000b0070c4fa32ccemr3787363ybf.539.1672256574382; Wed, 28
- Dec 2022 11:42:54 -0800 (PST)
-Date:   Wed, 28 Dec 2022 11:42:49 -0800
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.39.0.314.g84b9a713c41-goog
-Message-ID: <20221228194249.170354-1-surenb@google.com>
-Subject: [PATCH 1/1] mm: fix vma->anon_name memory leak for anonymous shmem VMAs
-From:   Suren Baghdasaryan <surenb@google.com>
-To:     akpm@linux-foundation.org
-Cc:     hughd@google.com, hannes@cmpxchg.org, david@redhat.com,
-        vincent.whitchurch@axis.com, seanjc@google.com, rppt@kernel.org,
-        shy828301@gmail.com, pasha.tatashin@soleen.com,
-        paul.gortmaker@windriver.com, peterx@redhat.com, vbabka@suse.cz,
-        Liam.Howlett@Oracle.com, ccross@google.com, willy@infradead.org,
-        arnd@arndb.de, cgel.zte@gmail.com, yuzhao@google.com,
-        bagasdotme@gmail.com, suleiman@google.com, steven@liquorix.net,
-        heftig@archlinux.org, cuigaosheng1@huawei.com,
-        kirill@shutemov.name, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        surenb@google.com,
-        syzbot+91edf9178386a07d06a7@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-9.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+        Wed, 28 Dec 2022 21:26:08 -0500
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E002012748
+        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Dec 2022 18:26:04 -0800 (PST)
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20221229022600epoutp011baa635b1e3697e6210edf421c2856c7~1In29eX1j3155531555epoutp014
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Dec 2022 02:26:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20221229022600epoutp011baa635b1e3697e6210edf421c2856c7~1In29eX1j3155531555epoutp014
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1672280760;
+        bh=yCfFymG1uGMcGI1YQBEefKbvvmKH1U9EW84umDT7dwA=;
+        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+        b=IKa3QQT++yVlltGSXfVrQZQfqtEIp72+mJlaKgmi2jS1rGAWC5VsOu/S+reCpr8oW
+         wDXnANhqI2KV/cV9OHyzj7vwbLqVblziJz2ikW/4SG+gOfOkOffCPfWagiYRj0gqqS
+         8XPCvE85UfcLsa00gBUkjWQmq8xN9XAC42levN2I=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20221229022559epcas1p29ced4249e8f80e6e4fd0c506ea3ac39f~1In2ziOVw1633416334epcas1p26;
+        Thu, 29 Dec 2022 02:25:59 +0000 (GMT)
+Received: from epsmges1p3.samsung.com (unknown [182.195.36.225]) by
+        epsnrtp2.localdomain (Postfix) with ESMTP id 4NjC1M45C2z4x9Q0; Thu, 29 Dec
+        2022 02:25:59 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        5A.FF.02461.7BAFCA36; Thu, 29 Dec 2022 11:25:59 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20221229022559epcas1p2bffa37c9ec99b5d50438be6e8f01d575~1In2Mfrbk1633416334epcas1p25;
+        Thu, 29 Dec 2022 02:25:59 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20221229022559epsmtrp2ed673c6c8a3ff0ccf102d4d0543d571f~1In2Lzsn80461104611epsmtrp2c;
+        Thu, 29 Dec 2022 02:25:59 +0000 (GMT)
+X-AuditID: b6c32a37-873ff7000000099d-c2-63acfab7851d
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        3C.93.02211.7BAFCA36; Thu, 29 Dec 2022 11:25:59 +0900 (KST)
+Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
+        (KnoxPortal) with ESMTPA id
+        20221229022559epsmtip1a0bb3e7645deebb11182b47d33dee376~1In2CXqJT0385503855epsmtip1I;
+        Thu, 29 Dec 2022 02:25:59 +0000 (GMT)
+From:   "Sungjong Seo" <sj1557.seo@samsung.com>
+To:     <linkinjeon@kernel.org>
+Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "'Wang Yugui'" <wangyugui@e16-tech.com>
+In-Reply-To: <PUZPR04MB6316182889B5CE8003A5324981EC9@PUZPR04MB6316.apcprd04.prod.outlook.com>
+Subject: RE: [PATCH v1] exfat: fix unexpected EOF while reading dir
+Date:   Thu, 29 Dec 2022 11:25:58 +0900
+Message-ID: <019201d91b2c$e34ee610$a9ecb230$@samsung.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQLMYJ9qc07sXglr1cn65GyOp8Tb9AJty/lfrIoppXA=
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPJsWRmVeSWpSXmKPExsWy7bCmvu72X2uSDSa+UrCYOG0ps8WevSdZ
+        LC7vmsNm8WDeF3YHFo/Vz+YweWxa1cnm8XmTXABzVAOjTWJRckZmWapCal5yfkpmXrqtUmiI
+        m66FkkJGfnGJrVK0oaGRnqGBuZ6RkZGesWWslZGpkkJeYm6qrVKFLlSvkkJRcgFQbW5lMdCA
+        nFQ9qLhecWpeikNWfinIiXrFibnFpXnpesn5uUoKZYk5pUAjlPQTGpkz5s04xFrwkbvizgGb
+        BsYtnF2MHBwSAiYSR/+xdTFycQgJ7GCUmNXylxHC+cQosXHnNxYI5xujxIfZb9i7GDnBOnbO
+        28wMkdjLKPFy/zl2COclo8SN49NZQarYBHQlntz4yQxiiwhIS8y7OIUJZB+zQJ7E+ZsxICan
+        QKzElP35IBXCAs4SKyf2gVWwCKhKNL1yBwnzClhKXFt0gg3CFpQ4OfMJC4jNLCAvsf3tHGaI
+        cxQkdn86ygqxyEri3fmrjBA1IhKzO9vAzpQQ+Mgu8a7rMhtEg4vEivP3WSFsYYlXx7dA/SUl
+        8fndXjaIhm5GieMf37FAJGYwSizpcICw7SWaW5vZIF7RlFi/Sx8irCix8/dcRghbUOL0tW5m
+        iCP4JN597WGFhDSvREebEESJisT3DztZJjAqz0Ly2iwkr81C8sIshGULGFlWMYqlFhTnpqcW
+        GxYYI0f2JkZw4tQy38E47e0HvUOMTByMhxglOJiVRHg1zq5OFuJNSaysSi3Kjy8qzUktPsQ4
+        kREY2BOZpUST84HJO68k3tDMzNLC0sjE0NjM0JCwsImxgYERMMmaW5obEyFsaWBiZmRiYWxp
+        bKYkzpu/f1GykEB6YklqdmpqQWoRzFFMHJxSDUwB7EZb1noLy0btf3Lpx57Dp6tvG/yfb7zv
+        tZrNz6VcCvazDLt8MxOy2TKidjDWaDsenj6pRyk6osF290ePg6krTS4XPyt2ZH25rqHfmUVk
+        1uzF646Zrp7zpI/7aG2CyOu918MuWMVP+fVkzskd92Wa9DlnBBzxWchjOvuNYpfSiZWXuXX/
+        thY/l910OmOCu2rLnn8ninkzf4t1qmV+c53O3ZK4JGRlGtOvjR/45905tcrexLOnR/1gxkbW
+        +2amezIrnvA+tubXil7guyMtPv9QXPlN+aeC3/dFyIWab35yZPKth1NK9aeVPb7+l/PQx3+h
+        uU/s9DdUGaS9XrW9qT0899KZCE7/pH/VZwx21L5VYinOSDTUYi4qTgQAkhUPkIIEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsWy7bCSnO72X2uSDR7d5raYOG0ps8WevSdZ
+        LC7vmsNm8WDeF3YHFo/Vz+YweWxa1cnm8XmTXABzFJdNSmpOZllqkb5dAlfGvBmHWAs+clfc
+        OWDTwLiFs4uRk0NCwERi57zNzF2MXBxCArsZJc51z2fsYuQASkhJHNynCWEKSxw+XAxR8pxR
+        4uK8I8wgvWwCuhJPbvwEs0UEpCXmXZzCBGIzCxRIHHr3nA2iYR2jxJdTX1lABnEKxEpM2Z8P
+        UiMs4CyxcmIfE0iYRUBVoumVO0iYV8BS4tqiE2wQtqDEyZlPWCBGakv0PmxlhLDlJba/ncMM
+        cb6CxO5PR1khTrCSeHf+KlSNiMTszjbmCYzCs5CMmoVk1Cwko2YhaVnAyLKKUTK1oDg3PbfY
+        sMAwL7Vcrzgxt7g0L10vOT93EyM4KrQ0dzBuX/VB7xAjEwfjIUYJDmYlEV6Ns6uThXhTEiur
+        Uovy44tKc1KLDzFKc7AoifNe6DoZLySQnliSmp2aWpBaBJNl4uCUamBS/e05IbXA80Is37bY
+        7JpdWy5obNg649glkzssE803G8r9T+de32bn2Xa+aKpfzTbD45eFdl96uVT3yMNta7o3tebq
+        v+LSurhdaVrvoZvpW3zFXIqeNDtec1i8o/PkmsyfRn0NRfX2tqvWH1RvfX1mXRCvZLaFRMCM
+        vg27vRYr5DSdebj5xo4NQr82P0gzecj6XOdY1MW+ux3LFa/8l1jY/r6AY3JjD+vBls8dtzYE
+        GWo7v5dZdKN8Yyj/0Q/LpmUvu/62O0es2zFo480wx8o3qyoMjKU0dihcWPnJ+LIw6wo9/9c/
+        //wx9E4oYw6Wyria/ePP4+MXdq5kfGO448wyj1wdIcdonVT7zSZxM3keKbEUZyQaajEXFScC
+        AKnoR1/5AgAA
+X-CMS-MailID: 20221229022559epcas1p2bffa37c9ec99b5d50438be6e8f01d575
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+X-ArchiveUser: EV
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20221226072359epcas1p4fa9052333561109f76db171f4c57324a
+References: <CGME20221226072359epcas1p4fa9052333561109f76db171f4c57324a@epcas1p4.samsung.com>
+        <PUZPR04MB6316182889B5CE8003A5324981EC9@PUZPR04MB6316.apcprd04.prod.outlook.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-free_anon_vma_name() is missing a check for anonymous shmem VMA which
-leads to a memory leak due to refcount not being dropped. Fix this by
-adding the missing check.
+> If the position is not aligned with the dentry size, the return
+> value of readdir() will be NULL and errno is 0, which means the
+> end of the directory stream is reached.
+> 
+> If the position is aligned with dentry size, but there is no file
+> or directory at the position, exfat_readdir() will continue to
+> get dentry from the next dentry. So the dentry gotten by readdir()
+> may not be at the position.
+> 
+> After this commit, if the position is not aligned with the dentry
+> size, round the position up to the dentry size and continue to get
+> the dentry.
+> 
+> Fixes: ca06197382bd ("exfat: add directory operations")
+> 
+> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+> Reviewed-by: Andy Wu <Andy.Wu@sony.com>
+> Reviewed-by: Aoyama Wataru <wataru.aoyama@sony.com>
+> Reported-by: Wang Yugui <wangyugui@e16-tech.com>
 
-Fixes: d09e8ca6cb93 ("mm: anonymous shared memory naming")
-Reported-by: syzbot+91edf9178386a07d06a7@syzkaller.appspotmail.com
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- include/linux/mm_inline.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Looks good. Thanks.
 
-diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-index e8ed225d8f7c..d650ca2c5d29 100644
---- a/include/linux/mm_inline.h
-+++ b/include/linux/mm_inline.h
-@@ -413,7 +413,7 @@ static inline void free_anon_vma_name(struct vm_area_struct *vma)
- 	 * Not using anon_vma_name because it generates a warning if mmap_lock
- 	 * is not held, which might be the case here.
- 	 */
--	if (!vma->vm_file)
-+	if (!vma->vm_file || vma_is_anon_shmem(vma))
- 		anon_vma_name_put(vma->anon_name);
- }
- 
--- 
-2.39.0.314.g84b9a713c41-goog
+Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+
+> ---
+>  fs/exfat/dir.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
+> index 1dfa67f307f1..1122bee3b634 100644
+> --- a/fs/exfat/dir.c
+> +++ b/fs/exfat/dir.c
+> @@ -234,10 +234,7 @@ static int exfat_iterate(struct file *file, struct
+> dir_context *ctx)
+>  		fake_offset = 1;
+>  	}
+> 
+> -	if (cpos & (DENTRY_SIZE - 1)) {
+> -		err = -ENOENT;
+> -		goto unlock;
+> -	}
+> +	cpos = round_up(cpos, DENTRY_SIZE);
+> 
+>  	/* name buffer should be allocated before use */
+>  	err = exfat_alloc_namebuf(nb);
+> --
+> 2.25.1
 
