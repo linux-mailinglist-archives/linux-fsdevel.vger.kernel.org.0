@@ -2,91 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 365B7658A79
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Dec 2022 09:23:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2E71F658ADB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Dec 2022 10:21:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233170AbiL2IXa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Dec 2022 03:23:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44034 "EHLO
+        id S230272AbiL2JVG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Dec 2022 04:21:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59552 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230193AbiL2IX3 (ORCPT
+        with ESMTP id S229625AbiL2JVF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Dec 2022 03:23:29 -0500
-Received: from mail1.bemta32.messagelabs.com (mail1.bemta32.messagelabs.com [195.245.230.2])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFD7610A9;
-        Thu, 29 Dec 2022 00:23:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fujitsu.com;
-        s=170520fj; t=1672302206; i=@fujitsu.com;
-        bh=SUSAOyphF+B29lskscxDvTF3FQCewU2rscBGHhh6gm4=;
-        h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-         In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        b=FjqWGmTuFguN7i+NUk81QEUGiW8CeKad7QUINXYTukOPyE5khuoATs0HniXwcpbn2
-         lIkN8gSvbMAdrQ/XeLdJtQImFVu9vLIR2G/ZwnVNqrdfDnh+c2/L3yRMGlJr4r7JD0
-         7wfU33sUye7vLx3sikmain6l+oR6dbBr3v0NMxuEDwKuUSvNbCysTYRQvipuN74MAQ
-         nllZfIGy02JtktXivHkXnHSv9lOA6NPcs2yVK/kJCAO16fQKMCjZOoTnZSmqTcKD4i
-         cjMmDbylN42AiqOHv1NgslfvuO3WOINBLNFhdiRivLOnRTLmD5jJ8s5iSwuhX9DYc4
-         3dJ6bAH6hRHdA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrCKsWRWlGSWpSXmKPExsViZ8ORpFvjtzb
-  Z4PkyfYs569ewWUyfeoHRYsuxe4wWl5/wWezZe5LF4vKuOWwWu/7sYLdY+eMPqwOHx6lFEh6L
-  97xk8ti0qpPN48SM3yweLzbPZPT4vEkugC2KNTMvKb8igTXj0KuJjAWXJCru/rzC1MC4SLiLk
-  YtDSGAjo0THw4ksEM5iJonLZ68yQzg7GCVeX/rG1MXIycErYCex9OgZMJtFQFXi8cMv7BBxQY
-  mTM5+wgNiiAskSL45+YwSxhQWsJaaufczaxcjBISJQKnHqYxZImFmgWmLi3/NQ85sYJVafmsg
-  MkmAT0JG4sOAvK4jNKeAp8WHlX2aIBguJxW8OskPY8hLNW2eDxSUElCR6G96zQtgVErNmtTFB
-  2GoSV89tYp7AKDQLyXmzkIyahWTUAkbmVYxmxalFZalFuoYmeklFmekZJbmJmTl6iVW6iXqpp
-  brlqcUluoZ6ieXFeqnFxXrFlbnJOSl6eaklmxiBEZZSzLZqB+OvZX/0DjFKcjApifJm2K1NFu
-  JLyk+pzEgszogvKs1JLT7EKMPBoSTBG+YNlBMsSk1PrUjLzAFGO0xagoNHSYR3Hkiat7ggMbc
-  4Mx0idYpRl2Ntw4G9zEIsefl5qVLivI6+QEUCIEUZpXlwI2CJ5xKjrJQwLyMDA4MQT0FqUW5m
-  Car8K0ZxDkYlYd54H6ApPJl5JXCbXgEdwQR0xIdDK0GOKElESEk1MEm8KLrSwRd5fEkt370To
-  hWHo/5HPZxkqnrqiLOTl0fbgbl7rnCtSVQR7bp39vjlDen8NrWLNe7v6phVsX4/5467lpYurr
-  fvTxeW2TpRkNG961pboNDhKXe/uHH6GLIqiDi/27oiTdhj88Se2PDDBhNZU3adE2K/bfdO/g7
-  jmsTQydwsZ24krJzLzZ6y9N/52SU7mBx00/PL1ylJzStme+PpeMnq5rzAlAnmWZXBnrPmri9T
-  yhZmUp7zZ4IHg9Dhm1l1b25q/Kk2+smw5CK34NMnU+WqqiQvNDpH+kQ6rrlmJia1IO36FYv8r
-  t7+68Y1l2NdV6nGme6eYhuhuHud2hkBuQkfryyceaGt3WLjOiWW4oxEQy3mouJEAD4S2ja3Aw
-  AA
-X-Env-Sender: ruansy.fnst@fujitsu.com
-X-Msg-Ref: server-9.tower-587.messagelabs.com!1672302204!842!1
-X-Originating-IP: [62.60.8.98]
-X-SYMC-ESS-Client-Auth: outbound-route-from=pass
-X-StarScan-Received: 
-X-StarScan-Version: 9.101.2; banners=-,-,-
-X-VirusChecked: Checked
-Received: (qmail 12139 invoked from network); 29 Dec 2022 08:23:24 -0000
-Received: from unknown (HELO n03ukasimr03.n03.fujitsu.local) (62.60.8.98)
-  by server-9.tower-587.messagelabs.com with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP; 29 Dec 2022 08:23:24 -0000
-Received: from n03ukasimr03.n03.fujitsu.local (localhost [127.0.0.1])
-        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTP id 517BD1B1;
-        Thu, 29 Dec 2022 08:23:24 +0000 (GMT)
-Received: from R01UKEXCASM126.r01.fujitsu.local (R01UKEXCASM126 [10.183.43.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by n03ukasimr03.n03.fujitsu.local (Postfix) with ESMTPS id 4604B7B;
-        Thu, 29 Dec 2022 08:23:24 +0000 (GMT)
-Received: from [10.167.201.145] (10.167.201.145) by
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178) with Microsoft SMTP Server
- (TLS) id 15.0.1497.42; Thu, 29 Dec 2022 08:23:20 +0000
-Message-ID: <5bbe8d22-0cdb-9c6f-d568-c183c4bd7dbe@fujitsu.com>
-Date:   Thu, 29 Dec 2022 16:23:13 +0800
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v2 0/8] fsdax,xfs: fix warning messages
-To:     Dan Williams <dan.j.williams@intel.com>, <djwong@kernel.org>,
-        <david@fromorbit.com>, <akpm@linux-foundation.org>
-CC:     <linux-kernel@vger.kernel.org>, <linux-xfs@vger.kernel.org>,
-        <nvdimm@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>
-References: <1669908538-55-1-git-send-email-ruansy.fnst@fujitsu.com>
- <638aa4a298879_3cbe0294ba@dwillia2-xfh.jf.intel.com.notmuch>
-From:   Shiyang Ruan <ruansy.fnst@fujitsu.com>
-In-Reply-To: <638aa4a298879_3cbe0294ba@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.167.201.145]
-X-ClientProxiedBy: G08CNEXCHPEKD07.g08.fujitsu.local (10.167.33.80) To
- R01UKEXCASM126.r01.fujitsu.local (10.183.43.178)
-X-Virus-Scanned: ClamAV using ClamSMTP
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        Thu, 29 Dec 2022 04:21:05 -0500
+Received: from out3-smtp.messagingengine.com (out3-smtp.messagingengine.com [66.111.4.27])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 859C6DEC9;
+        Thu, 29 Dec 2022 01:21:03 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id 168385C024D;
+        Thu, 29 Dec 2022 04:21:01 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Thu, 29 Dec 2022 04:21:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-type:date:date:from:from:in-reply-to:in-reply-to
+        :message-id:mime-version:references:reply-to:sender:subject
+        :subject:to:to; s=fm1; t=1672305661; x=1672392061; bh=L0EoTG3qDJ
+        ubgjvELC5diq0fKOZgb4tkHLVSHGjypzo=; b=rlOYwqUNgdnXQ8AWOWDlf12lwY
+        y3j9rkPML69pZMjIJvMHjx7zjNSVhQe1bOpgdrgpT20LV9z2bSUy8DZUZhDydFKD
+        tqOp6doVG8dKpxNO20dNSIIJ3DKpC4xWP0rmPIBcLduCqnlC3pWpCMl/7b9guUzV
+        8yYxWqQ6XpfJBa8OXlR8ASnl5QvAoacxuj06tc16fKj00UCwVrEL30N3tXQN/6uz
+        IvhzHNk/n+TmUxdBwqStFOlwAEhQLP+JuczEWCuuP/aV/K4bwTABAspkPPWSnEOZ
+        GYoi1PF9w3jeVnHJIdGJWndUgK3R/QDlK/ObyoNrqiKxGPWHlpAhziLUYTkQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-type:date:date:feedback-id
+        :feedback-id:from:from:in-reply-to:in-reply-to:message-id
+        :mime-version:references:reply-to:sender:subject:subject:to:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm2; t=1672305661; x=1672392061; bh=L0EoTG3qDJubgjvELC5diq0fKOZg
+        b4tkHLVSHGjypzo=; b=PxswnNSvJtQ4X8wU9PkLBFhmfR094T+Ats/VFIzsTQSz
+        S9QibOSuJUTpt/o5G7sMZw5zguZ1+Gp9X7gTMbbewxzH34s9jvXd7Nrk+tjxbyHP
+        2fKLjI5D2AqtpbgzGigfEJjeAilVHN09IfwYWZ8lNAdv+OxIR06Z2SgoKkR03yUs
+        KTnVDMu8yKDnpxLH4JTg0OkAukhIUIojVhGoJ0e/FosY7lCI+9oFv3K1xG1UDmQY
+        IXNfEwRZlRffM4VvkaqbDSHlDECpuoB3rzddYBlBa0gbT7iIKbtA0TVBqaA4Krnw
+        muZggS4Dwm4GcWT/rj4YcOlrHOuBdLw/nW8bJhpqJw==
+X-ME-Sender: <xms:_FutY1Znxef4lyd5V0LmBdp0UHMJcThN_KZ-AulsFLrwAUXoCdSkzw>
+    <xme:_FutY8ZfIilvqtcogVAL3r3CsDTRJsaSYRRqzWk9ypGEKMqjgozM1SokFYpH3r7ur
+    T90C21CZr5dWueSEUM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrieeggddtfecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
+    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
+    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
+    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
+    hnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:_FutY38Dl1u2sp8bIV_y36omhs0ePcMmwX1nUUNkcUF_j5okkUwdbw>
+    <xmx:_FutYzoDaExNz3baC3l-UECJ_FbcsPHRxvZnE9yw6fAHGgZDfAXOkQ>
+    <xmx:_FutYwpA63yAhIC8d0OSVosvBvxF5cmeo7bPpXChts6MfHMZTDt7Bg>
+    <xmx:_VutY1Q8qItFw4NUkgJUOGdcZjWtPC-2GdsQKa3Ms1cg2UKWa69pfA>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 56787B60089; Thu, 29 Dec 2022 04:21:00 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1185-g841157300a-fm-20221208.002-g84115730
+Mime-Version: 1.0
+Message-Id: <e25ee08c-7692-4042-9961-a499600f0a49@app.fastmail.com>
+In-Reply-To: <7815c8da-7d5f-c2c5-9dfd-7a77ac37c7f7@themaw.net>
+References: <166606025456.13363.3829702374064563472.stgit@donald.themaw.net>
+ <166606036215.13363.1288735296954908554.stgit@donald.themaw.net>
+ <Y2BMonmS0SdOn5yh@slm.duckdns.org> <20221221133428.GE69385@mutt>
+ <7815c8da-7d5f-c2c5-9dfd-7a77ac37c7f7@themaw.net>
+Date:   Thu, 29 Dec 2022 10:20:40 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Ian Kent" <raven@themaw.net>,
+        "Anders Roxell" <anders.roxell@linaro.org>,
+        "Tejun Heo" <tj@kernel.org>
+Cc:     "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+        "Minchan Kim" <minchan@kernel.org>,
+        "Eric Sandeen" <sandeen@sandeen.net>,
+        "Alexander Viro" <viro@zeniv.linux.org.uk>,
+        "Rick Lindsley" <ricklind@linux.vnet.ibm.com>,
+        "David Howells" <dhowells@redhat.com>,
+        "Miklos Szeredi" <miklos@szeredi.hu>,
+        "Carlos Maiolino" <cmaiolino@redhat.com>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        "Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        elver@google.com
+Subject: Re: [PATCH 1/2] kernfs: dont take i_lock on inode attr read
+Content-Type: text/plain
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -94,84 +97,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Dec 23, 2022, at 00:11, Ian Kent wrote:
+> On 21/12/22 21:34, Anders Roxell wrote:
+>> On 2022-10-31 12:30, Tejun Heo wrote:
+>>> On Tue, Oct 18, 2022 at 10:32:42AM +0800, Ian Kent wrote:
+>>>> The kernfs write lock is held when the kernfs node inode attributes
+>>>> are updated. Therefore, when either kernfs_iop_getattr() or
+>>>> kernfs_iop_permission() are called the kernfs node inode attributes
+>>>> won't change.
+>>>>
+>>>> Consequently concurrent kernfs_refresh_inode() calls always copy the
+>>>> same values from the kernfs node.
+>>>>
+>>>> So there's no need to take the inode i_lock to get consistent values
+>>>> for generic_fillattr() and generic_permission(), the kernfs read lock
+>>>> is sufficient.
+>>>>
+>>>> Signed-off-by: Ian Kent <raven@themaw.net>
+>>> Acked-by: Tejun Heo <tj@kernel.org>
+>> Hi,
+>>
+>> Building an allmodconfig arm64 kernel on yesterdays next-20221220 and
+>> booting that in qemu I see the following "BUG: KCSAN: data-race in
+>> set_nlink / set_nlink".
+>
+>
+> I'll check if I missed any places where set_link() could be
+> called where the link count could be different.
+>
+>
+> If there aren't any the question will then be can writing the
+> same value to this location in multiple concurrent threads
+> corrupt it?
 
+I think the race that is getting reported for set_nlink()
+is about this bit getting called simulatenously on multiple
+CPUs with only the read lock held for the inode:
 
-在 2022/12/3 9:21, Dan Williams 写道:
-> Shiyang Ruan wrote:
->> Changes since v1:
->>   1. Added a snippet of the warning message and some of the failed cases
->>   2. Separated the patch for easily review
->>   3. Added page->share and its helper functions
->>   4. Included the patch[1] that removes the restrictions of fsdax and reflink
->> [1] https://lore.kernel.org/linux-xfs/1663234002-17-1-git-send-email-ruansy.fnst@fujitsu.com/
->>
-...
->>
->> This also effects dax+noreflink mode if we run the test after a
->> dax+reflink test.  So, the most urgent thing is solving the warning
->> messages.
->>
->> With these fixes, most warning messages in dax_associate_entry() are
->> gone.  But honestly, generic/388 will randomly failed with the warning.
->> The case shutdown the xfs when fsstress is running, and do it for many
->> times.  I think the reason is that dax pages in use are not able to be
->> invalidated in time when fs is shutdown.  The next time dax page to be
->> associated, it still remains the mapping value set last time.  I'll keep
->> on solving it.
-> 
-> This one also sounds like it is going to be relevant for CXL PMEM, and
-> the improvements to the reference counting. CXL has a facility where the
-> driver asserts that no more writes are in-flight to the device so that
-> the device can assert a clean shutdown. Part of that will be making sure
-> that page access ends at fs shutdown.
+     /* Yes, some filesystems do change nlink from zero to one */
+     if (inode->i_nlink == 0)
+               atomic_long_dec(&inode->i_sb->s_remove_count);
+     inode->__i_nlink = nlink;
 
-I was trying to locate the root cause of the fail on generic/388.  But 
-since it's a fsstress test, I can't relpay the operation sequence to 
-help me locate the operations.  So, I tried to replace fsstress with 
-fsx, which can do replay after the case fails, but it can't reproduce 
-the fail.  I think another important factor is that fsstress tests with 
-multiple threads.  So, for now, it's hard for me to locate the cause by 
-running the test.
+Since i_nlink and __i_nlink refer to the same memory location,
+the 'inode->i_nlink == 0' check can be true for all of them
+before the nonzero nlink value gets set, and this results in
+s_remove_count being decremented more than once.
 
-Then I updated the kernel to the latest v6.2-rc1 and run generic/388 for 
-many times.  The warning dmesg doesn't show any more.
-
-How is your test on this case?  Does it still fail on the latest kernel? 
-  If so, I think I have to keep on locating the cause, and need your advice.
-
-
---
-Thanks,
-Ruan.
-
-> 
->> The warning message in dax_writeback_one() can also be fixed because of
->> the dax unshare.
->>
->>
->> Shiyang Ruan (8):
->>    fsdax: introduce page->share for fsdax in reflink mode
->>    fsdax: invalidate pages when CoW
->>    fsdax: zero the edges if source is HOLE or UNWRITTEN
->>    fsdax,xfs: set the shared flag when file extent is shared
->>    fsdax: dedupe: iter two files at the same time
->>    xfs: use dax ops for zero and truncate in fsdax mode
->>    fsdax,xfs: port unshare to fsdax
->>    xfs: remove restrictions for fsdax and reflink
->>
->>   fs/dax.c                   | 220 +++++++++++++++++++++++++------------
->>   fs/xfs/xfs_ioctl.c         |   4 -
->>   fs/xfs/xfs_iomap.c         |   6 +-
->>   fs/xfs/xfs_iops.c          |   4 -
->>   fs/xfs/xfs_reflink.c       |   8 +-
->>   include/linux/dax.h        |   2 +
->>   include/linux/mm_types.h   |   5 +-
->>   include/linux/page-flags.h |   2 +-
->>   8 files changed, 166 insertions(+), 85 deletions(-)
->>
->> -- 
->> 2.38.1
->>
->>
-> 
-> 
+      Arnd
