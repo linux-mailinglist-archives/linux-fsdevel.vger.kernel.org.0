@@ -2,170 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 257F86588A3
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Dec 2022 03:28:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 754A2658A3C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Dec 2022 09:13:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232678AbiL2C2m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 28 Dec 2022 21:28:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49538 "EHLO
+        id S229919AbiL2ING (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Dec 2022 03:13:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231584AbiL2C2b (ORCPT
+        with ESMTP id S230083AbiL2INE (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 28 Dec 2022 21:28:31 -0500
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7068412748
-        for <linux-fsdevel@vger.kernel.org>; Wed, 28 Dec 2022 18:28:29 -0800 (PST)
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20221229022827epoutp02fe324b925986d8d2ed42d1d45240909c~1IqApZMIu3007830078epoutp02l
-        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Dec 2022 02:28:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20221229022827epoutp02fe324b925986d8d2ed42d1d45240909c~1IqApZMIu3007830078epoutp02l
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1672280907;
-        bh=B/5YBfWgnCkRecqs7NGGcqjwzt+UYfoqtf1L2CsmvII=;
-        h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-        b=T4ECNvOQLtrLkfsYqayGK+YcvBdCwRvtfeFD95uM8F0Y+SdHYsVIBCf3H+bsJRIIz
-         f5q66MzPOfLrjKeAbfUDYHHvUOxqPHKDWdrlWWbs29XsKz94H5AaBZ8NA0y3YbwPr+
-         kQeO7NaLgeoB2y364gWukj3WiO4bnGPgl9/XnaKk=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20221229022827epcas1p1eebface5cb2a0ed7871081c13649bade~1IqAZlGFn0283202832epcas1p1A;
-        Thu, 29 Dec 2022 02:28:27 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.36.223]) by
-        epsnrtp2.localdomain (Postfix) with ESMTP id 4NjC4C2BpBz4x9Q0; Thu, 29 Dec
-        2022 02:28:27 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        C0.70.02461.B4BFCA36; Thu, 29 Dec 2022 11:28:27 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20221229022826epcas1p2cdc22486ee5080e220a15286cff5dbd2~1Ip-j2-yX3187131871epcas1p2O;
-        Thu, 29 Dec 2022 02:28:26 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20221229022826epsmtrp2d86d41ff34ce2e1ea5ebd73bcd4896e3~1Ip-jO3Sx0564305643epsmtrp2U;
-        Thu, 29 Dec 2022 02:28:26 +0000 (GMT)
-X-AuditID: b6c32a37-adffd7000000099d-2b-63acfb4b53e6
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        BF.F3.02211.A4BFCA36; Thu, 29 Dec 2022 11:28:26 +0900 (KST)
-Received: from W10PB11329 (unknown [10.253.152.129]) by epsmtip1.samsung.com
-        (KnoxPortal) with ESMTPA id
-        20221229022826epsmtip11bb862b4e83422ce8e9ce44156c95b4b~1Ip-bykXT0383203832epsmtip1B;
-        Thu, 29 Dec 2022 02:28:26 +0000 (GMT)
-From:   "Sungjong Seo" <sj1557.seo@samsung.com>
-To:     <linkinjeon@kernel.org>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <sj1557.seo@samsung.com>
-In-Reply-To: <PUZPR04MB6316579893496BC54C4FE96F81EC9@PUZPR04MB6316.apcprd04.prod.outlook.com>
-Subject: RE: [PATCH v1] exfat: fix reporting fs error when reading dir
- beyond EOF
-Date:   Thu, 29 Dec 2022 11:28:26 +0900
-Message-ID: <019301d91b2d$3b3c0dd0$b1b42970$@samsung.com>
+        Thu, 29 Dec 2022 03:13:04 -0500
+Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 92DEB10040
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Dec 2022 00:12:59 -0800 (PST)
+Received: by mail-pj1-x102d.google.com with SMTP id v23so18508829pju.3
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Dec 2022 00:12:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=THv6prYzDq2eXsCiqs3MdATdHNqWI4kkKeIbH/Zad64=;
+        b=kcc6RJTVV+2TkQyJSCeFHxHCvqGkX61fU5api+mTm4FoeljrR37YPZMYhuY7PSi34I
+         dVzq3WHy0oVAErA1ntoAfenJREFeiWAPXvpomnDmICPC7Lsjk2Iqk1e5hs4pz3lteU9e
+         gJktCqLkel+nkfKGeyyzLk2ONLcRio7yg64ig=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=THv6prYzDq2eXsCiqs3MdATdHNqWI4kkKeIbH/Zad64=;
+        b=SPv1g5LD92SbP592U7Alfm5WrIHqvlfiglvct9vIPkDtL/D7jDOhncfTnA6WxOOXQE
+         HILJBi0ksa+h5mNXAESqNJA2HdOVyXh0EYvPDW4ElTioNvKqu3gsCWO2wjlNMIVlz0aI
+         lbqs00CQRUNhpVKV8GH5AN+RGrnbwKBtBcjFxLoJY3S9nRAHNcIT/hGCl6uqoBA/t/32
+         YUW9PyAE2eV8kh3li3cqIX+VVC8uVUICiCWuQ2SSaH26Wqv7uQWEoPca+Qo2c9ijRl0O
+         /+NPe7ryXFSUk8MmNmaqatJWf14N72DMDZPQ//BfAJYtUuG7bqqT8SMDoKsOoUl07lGg
+         nEjg==
+X-Gm-Message-State: AFqh2kq/M3dPUdW520dNiNVPA7VWHTa/kBxxZ6ZdqSCOpM/BkRsrVJk2
+        GgDtZho1o5PRRunet8bVw1r9Fw==
+X-Google-Smtp-Source: AMrXdXu9lcGIP5E+xv/lfVaOI7oGNaTa8ZYVW9/FVtdg5eoc6mZA7pS4ycv7ew5XN0iSQz9w8aYiWA==
+X-Received: by 2002:a05:6a21:3a46:b0:9f:3197:bfa1 with SMTP id zu6-20020a056a213a4600b0009f3197bfa1mr40455755pzb.7.1672301579046;
+        Thu, 29 Dec 2022 00:12:59 -0800 (PST)
+Received: from sarthakkukreti-glaptop.hsd1.ca.comcast.net ([2601:647:4200:b5b0:75ff:1277:3d7b:d67a])
+        by smtp.gmail.com with ESMTPSA id 12-20020a170902e9cc00b00192820d00d0sm6496325plk.120.2022.12.29.00.12.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Dec 2022 00:12:58 -0800 (PST)
+From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
+To:     sarthakkukreti@google.com, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Jens Axboe <axboe@kernel.dk>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>,
+        Theodore Ts'o <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Bart Van Assche <bvanassche@google.com>,
+        Daniil Lunev <dlunev@google.com>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Subject: [PATCH v2 0/8] Introduce provisioning primitives for thinly provisioned storage
+Date:   Thu, 29 Dec 2022 00:12:45 -0800
+Message-Id: <20221229081252.452240-1-sarthakkukreti@chromium.org>
+X-Mailer: git-send-email 2.39.0.314.g84b9a713c41-goog
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQHGf8/eNee1lFo92Y4FqX1qCBeMTAHRB6CHrprSKTA=
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrEJsWRmVeSWpSXmKPExsWy7bCmrq737zXJBufe8llMnLaU2WLP3pMs
-        Fpd3zWGz2PLvCKsDi8emVZ1sHn1bVjF6fN4kF8Ac1cBok1iUnJFZlqqQmpecn5KZl26rFBri
-        pmuhpJCRX1xiqxRtaGikZ2hgrmdkZKRnbBlrZWSqpJCXmJtqq1ShC9WrpFCUXABUm1tZDDQg
-        J1UPKq5XnJqX4pCVXwpyol5xYm5xaV66XnJ+rpJCWWJOKdAIJf2ERuaMYz+usRS85KmYf+YO
-        UwPjEq4uRk4OCQETidf9j1i7GLk4hAR2MEocW7CdCcL5xCjxZcMnVpAqIYFvjBIPppnDdPxp
-        vwQV38so8eKJI0TDS0aJjgvb2EESbAK6Ek9u/GQGsUUEpCXmXZzCBGIzC8RLLN5xnA3E5hSI
-        lZh9ZwMLiC0sECzxa9lqRhCbRUBVYvWLjWA2r4ClxNbbk9kgbEGJkzOfsEDMkZfY/nYOM8RB
-        ChK7Px1lhdhlJdFz8xEbRI2IxOzONmaQ4yQEvrJLTDgNsUxCwEVi8aUZUM3CEq+Ob2GHsKUk
-        Pr/bywbR0M0ocfzjO6iGGYwSSzocIGx7iebWZqAiDqANmhLrd+lDhBUldv6eywhhC0qcvtbN
-        DHEEn8S7rz2sIOUSArwSHW1CECUqEt8/7GSZwKg8C8lrs5C8NgvJC7MQli1gZFnFKJZaUJyb
-        nlpsWGCMHN+bGMHpU8t8B+O0tx/0DjEycTAeYpTgYFYS4dU4uzpZiDclsbIqtSg/vqg0J7X4
-        EONERmBoT2SWEk3OB6bwvJJ4QzMzSwtLIxNDYzNDQ8LCJsYGBkbAVGtuaW5MhLClgYmZkYmF
-        saWxmZI4b/7+RclCAumJJanZqakFqUUwRzFxcEo1MIW47/49++imuhN5td/Pi6047nbure7Z
-        ELlJDNMEWDOr43hWhwfXxF746OrEZbj9+gG1jZukVQUWB///UOL3dtLEpWV8a1N4ZsUqmqWL
-        njRSPJlwza36/qnfPlkF8iqH5JaHzRI7Pd9lmmHn1OxpqtndShVRwud+vOp4FOzc/c7KWLmG
-        J4VPy2T9zEUHXRl0/5j+uZ8ae+3Qvr+8ouzx6rdu7LKpq7344P/0irxyjs92hed/zLokM2P7
-        zc1tv/ed7eWdYHWd74Nhk9FNN/PKmMjK+WpR8zZ+nfDvpugzo0OB6gfX6R+xNkqw0eGxvTL/
-        udmDw4fUGx8+WGF0pu2S0ZzsgMT/qnlih66nNzOZsCmxFGckGmoxFxUnAgB/Nlv8hQQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrJLMWRmVeSWpSXmKPExsWy7bCSnK7X7zXJBkt/aVlMnLaU2WLP3pMs
-        Fpd3zWGz2PLvCKsDi8emVZ1sHn1bVjF6fN4kF8AcxWWTkpqTWZZapG+XwJVx7Mc1loKXPBXz
-        z9xhamBcwtXFyMkhIWAi8af9EmsXIxeHkMBuRonXl54xdzFyACWkJA7u04QwhSUOHy6GKHnO
-        KLH8wXkmkF42AV2JJzd+MoPYIgLSEvMuTgGLMwskSpxZ0gY1cx2jxNrZT8GKOAViJWbf2cAC
-        YgsLBEpM3PyfDcRmEVCVWP1iIyOIzStgKbH19mQ2CFtQ4uTMJywQQ7Uleh+2MkLY8hLb385h
-        hnhAQWL3p6OsEEdYSfTcfMQGUSMiMbuzjXkCo/AsJKNmIRk1C8moWUhaFjCyrGKUTC0ozk3P
-        LTYsMMxLLdcrTswtLs1L10vOz93ECI4NLc0djNtXfdA7xMjEwXiIUYKDWUmEV+Ps6mQh3pTE
-        yqrUovz4otKc1OJDjNIcLErivBe6TsYLCaQnlqRmp6YWpBbBZJk4OKUamE6wzypdaKqxn3lF
-        gZbP/6gfrhXM1uze9gyPVgnt9S2PdAv8d3pdOMt3hckp27PNlR7e5n/RcdfQa8bFBIWOx7s9
-        J3VdScuoutTFlCfm8bZ4xXvex4ntRQd+tvReunX49+bO7eEbHd7G7jqce/pAgeCCJe7S08s3
-        SD/bc/7wce/F+4LXpN3yzDcpblCfIdyj9YVj4tdre2OKnLTWCsXf1ZpfXWyu9KX0auuF97lx
-        kxja/iZI+10R22P0kWth8OyPpx/6T7aSOrqV7bFZussGkSKhjxK7ZA7bV/IuM3cOvnpl9rap
-        j3dJRCfZzpuXNKu99YuEevxPYcW9mT639lqulGnkNEmwnDXP6tmrn2F31iixFGckGmoxFxUn
-        AgCMvNqu/AIAAA==
-X-CMS-MailID: 20221229022826epcas1p2cdc22486ee5080e220a15286cff5dbd2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-X-ArchiveUser: EV
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20221226072355epcas1p102afc2f21ff427877c8b34f650f9cb97
-References: <CGME20221226072355epcas1p102afc2f21ff427877c8b34f650f9cb97@epcas1p1.samsung.com>
-        <PUZPR04MB6316579893496BC54C4FE96F81EC9@PUZPR04MB6316.apcprd04.prod.outlook.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> Since seekdir() does not check whether the position is valid, the
-> position may exceed the size of the directory. We found that for
-> a directory with discontinuous clusters, if the position exceeds
-> the size of the directory and the excess size is greater than or
-> equal to the cluster size, exfat_readdir() will return -EIO,
-> causing a file system error and making the file system unavailable.
-> 
-> Reproduce this bug by:
-> 
-> seekdir(dir, dir_size + cluster_size);
-> dirent = readdir(dir);
-> 
-> The following log will be printed if mount with 'errors=remount-ro'.
-> 
-> [11166.712896] exFAT-fs (sdb1): error, invalid access to FAT (entry
-> 0xffffffff)
-> [11166.712905] exFAT-fs (sdb1): Filesystem has been set read-only
-> 
-> Fixes: 1e5654de0f51 ("exfat: handle wrong stream entry size in
-> exfat_readdir()")
-> 
-> Signed-off-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
-> Reviewed-by: Andy Wu <Andy.Wu@sony.com>
-> Reviewed-by: Aoyama Wataru <wataru.aoyama@sony.com>
+Hi,
 
-Looks good. Thanks.
+This patch series adds a mechanism to pass through provision requests on
+stacked thinly provisioned storage devices/filesystems.
 
-Reviewed-by: Sungjong Seo <sj1557.seo@samsung.com>
+The linux kernel provides several mechanisms to set up thinly provisioned
+block storage abstractions (eg. dm-thin, loop devices over sparse files),
+either directly as block devices or backing storage for filesystems. Currently,
+short of writing data to either the device or filesystem, there is no way for
+users to pre-allocate space for use in such storage setups. Consider the
+following use-cases:
 
-> ---
->  fs/exfat/dir.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/exfat/dir.c b/fs/exfat/dir.c
-> index 1122bee3b634..158427e8124e 100644
-> --- a/fs/exfat/dir.c
-> +++ b/fs/exfat/dir.c
-> @@ -100,7 +100,7 @@ static int exfat_readdir(struct inode *inode, loff_t
-> *cpos, struct exfat_dir_ent
->  			clu.dir = ei->hint_bmap.clu;
->  		}
-> 
-> -		while (clu_offset > 0) {
-> +		while (clu_offset > 0 && clu.dir != EXFAT_EOF_CLUSTER) {
->  			if (exfat_get_next_cluster(sb, &(clu.dir)))
->  				return -EIO;
-> 
-> --
-> 2.25.1
+1) Suspend-to-disk and resume from a dm-thin device: In order to ensure that
+   the underlying thinpool metadata is not modified during the suspend
+   mechanism, the dm-thin device needs to be fully provisioned.
+2) If a filesystem uses a loop device over a sparse file, fallocate() on the
+   filesystem will allocate blocks for files but the underlying sparse file
+   will remain intact.
+3) Another example is virtual machine using a sparse file/dm-thin as a storage
+   device; by default, allocations within the VM boundaries will not affect
+   the host.
+4) Several storage standards support mechanisms for thin provisioning on
+   real hardware devices. For example:
+   a. The NVMe spec 1.0b section 2.1.1 loosely talks about thin provisioning:
+      "When the THINP bit in the NSFEAT field of the Identify Namespace data
+       structure is set to ‘1’, the controller ... shall track the number of
+       allocated blocks in the Namespace Utilization field"
+   b. The SCSi Block Commands reference - 4 section references "Thin
+      provisioned logical units",
+   c. UFS 3.0 spec section 13.3.3 references "Thin provisioning".
 
+In all the above situations, currently, the only way for pre-allocating space
+is to issue writes (or use WRITE_ZEROES/WRITE_SAME). However, that does not
+scale well with larger pre-allocation sizes.
 
+This patchset introduces primitives to support block-level provisioning (note:
+the term 'provisioning' is used to prevent overloading the term
+'allocations/pre-allocations') requests across filesystems and block devices.
+This allows fallocate() and file creation requests to reserve space across
+stacked layers of block devices and filesystems. Currently, the patchset covers
+a prototype on the device-mapper targets, loop device and ext4, but the same
+mechanism can be extended to other filesystems/block devices as well as extended
+for use with devices in 4 a-c.
+
+Patch 1 introduces REQ_OP_PROVISION as a new request type.
+The provision request acts like the inverse of a discard request; instead
+of notifying lower layers that the block range will no longer be used, provision
+acts as a request to lower layers to provision disk space for the given block
+range. Real hardware storage devices will currently disable the provisioing
+capability but for the standards listed in 4a.-c., REQ_OP_PROVISION can be
+overloaded for use as the provisioing primitive for future devices.
+
+Patch 2 implements REQ_OP_PROVISION handling for some of the device-mapper
+targets. This additionally adds support for pre-allocating space for thinly
+provisioned logical volumes via fallocate()
+
+Patch 3 introduces an fallocate() mode (FALLOC_FL_PROVISION) that sends a
+provision request to the underlying block device (and beyond). This acts as the
+primary mechanism for file provisioning as well as disambiguates the notion of
+virtual and true disk space allocations for thinly provisioned storage devices/
+filesystems. With patch 3, the 'default' fallocate() mode is preserved to
+perform preallocation at the current allocation layer and 'provision' mode
+adds the capability to punch through the allocations to the underlying thinly
+provisioned storage layers. For regular filesystems, both allocation modes
+are equivalent.
+
+Patch 4 wires up the loop device handling of REQ_OP_PROVISION.
+
+Patches 5-7 cover a prototype implementation for ext4, which includes wiring up
+the fallocate() implementation, introducing a filesystem level option (called
+'provision') to control the default allocation behaviour and, finally, a
+file-level override to retain current handling, even on filesystems mounted with
+'provision'. These options allow users of stacked filesystems to flexibly take
+advantage of provisioning.
+
+Testing:
+--------
+- Tested on a VM running a 6.2 kernel.
+- The following perfomrmance measurements were collected with fallocate(2)
+patched to add support for FALLOC_FL_PROVISION via a command line option 
+`-p/--provision`.
+
+- Preallocation of dm-thin devices:
+As expected, avoiding the need to zero out thinly-provisioned block devices to
+preallocate space speeds up the provisioning operation significantly:
+
+The following was tested on a dm-thin device set up on top of a dm-thinp with
+skip_block_zeroing=true.
+A) Zeroout was measured using `fallocate -z ...`
+B) Provision was measured using `fallocate -p ...`.
+
+Size    Time     A	B
+512M    real     1.093  0.034
+        user     0      0
+        sys      0.022  0.01
+1G      real     2.182  0.048
+        user     0      0.01
+        sys      0.022  0
+2G      real     4.344  0.082
+        user     0      0.01
+        sys      0.036  0
+4G      real     8.679  0.153
+        user     0      0.01
+        sys      0.073  0
+8G      real    17.777  0.318
+        user     0      0.01
+        sys      0.144  0
+
+- Preallocation of files on filesystems
+Since fallocate() with FALLOC_FL_PROVISION can now pass down through
+filesystems/block devices, this results in an expected slowdown in fallocate()
+calls if the provision request is sent to the underlying layers.
+
+The measurements were taken using fallocate() on ext4 filesystems set up with
+the following opts/block devices:
+A) ext4 filesystem mounted with 'noprovision'
+B) ext4 filesystem mounted with 'provision' on a dm-thin device.
+C) ext4 filesystem mounted with 'provision' on a loop device with a sparse
+   backing file on the filesystem in (B).
+
+Size	Time	A	B	C
+512M	real	0.011	0.036	0.041
+	user	0.02	0.03	0.002
+	sys	0	0	0
+1G	real	0.011	0.055	0.064
+	user	0	0	0.03
+	sys	0.003	0.004	0
+2G	real	0.011	0.109	0.117
+	user	0	0	0.004
+	sys	0.003	0.006	0
+4G	real	0.011	0.224	0.231
+	user	0	0	0.006
+	sys	0.004	0.012	0
+8G	real	0.017	0.426	0.527
+	user	0	0	0.013
+	sys	0.009	0.024	0
+
+As expected, the additional provision requests will slow down fallocate() calls
+and the degree of slowdown depends on the number of layers that the provision
+request is passed through to as well as the complexity of allocation on those
+layers.
+
+TODOs:
+------
+- Xfstests for validating provisioning results in allocation.
+
+Changelog:
+
+V2:
+- Fix stacked limit handling.
+- Enable provision request handling in dm-snapshot
+- Don't call truncate_bdev_range if blkdev_fallocate() is called with
+  FALLOC_FL_PROVISION.
+- Clarify semantics of FALLOC_FL_PROVISION and why it needs to be a separate flag
+  (as opposed to overloading mode == 0).
