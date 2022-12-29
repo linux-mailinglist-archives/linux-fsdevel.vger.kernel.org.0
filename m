@@ -2,383 +2,261 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1F97D6592B2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Dec 2022 23:52:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D8BC0659348
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Dec 2022 00:36:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234161AbiL2Wvr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Dec 2022 17:51:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60396 "EHLO
+        id S234282AbiL2Xgt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Dec 2022 18:36:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45408 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234000AbiL2WvN (ORCPT
+        with ESMTP id S234027AbiL2Xgr (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 29 Dec 2022 17:51:13 -0500
-Received: from mail-wr1-x42c.google.com (mail-wr1-x42c.google.com [IPv6:2a00:1450:4864:20::42c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0085020A;
-        Thu, 29 Dec 2022 14:51:11 -0800 (PST)
-Received: by mail-wr1-x42c.google.com with SMTP id y16so18483573wrm.2;
-        Thu, 29 Dec 2022 14:51:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FuYI44yqA+jJ0GJlY6M75U/WDifI/BGOeeh04zYv+gQ=;
-        b=czGgzlq6ErQML0uDaeprZiSrlegHLztZxTOy78NAQvOfI1DQ5VyFkBW1D4o4kw/1fb
-         Mh3/on4hHMPwuzw7YYhn+fkTyIhljeTmnhFKxNFhgEOWyjXxrISGffE/8vOg3gxnnc4I
-         I9PfJKrcvMljesnCPljN+q227WfcK5BrniNYZCSVqF4WdoQ6GniJ8v3koHkhipFU3Rha
-         sY9tf5BFvj5zN1HNEl6DZprmPVZKCjrlH25ZqwkbEyRfRjO/RlLyU07Q+fiDbCnemE8E
-         OC2dZ/TR466lGBxuWsxALeOHmlFuGDqjD/NPJLTsph3jWwO4Ka1OB0kL0RhyONC2c0Ly
-         wlGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FuYI44yqA+jJ0GJlY6M75U/WDifI/BGOeeh04zYv+gQ=;
-        b=WGtaH1U4QctSlt38wvXknIkCdx6zdsrw9oRgzDglKtbhQLwmWlCen9jSoY/dJMIzG1
-         iLhHcJcFMMj2PnLyZlUPzNH5l9zI31/iZNlIpLhL5wo4RRY2Z8ejWhnrJG4pSZ/Ol4IB
-         FazDVIsVCKzijz4rsX0YeQJZAfgPcCvwLpzvIe5dHYPRPyJa/2caIlU7hSJyW746yaRa
-         zNnz5CDvkqpFhRRViMksvLXrkvPdfUwuw4tkIfsbzJcP7kX+C2LYcEgNGlYwmYEehe7b
-         4T8/rfsQ3f9YmcCP+uuXiKbBuKCwfOL83ObmZTdayEZqXDCRumRDW35q0DqhGAFOyhGa
-         7AQQ==
-X-Gm-Message-State: AFqh2ko4ZKo6ev12mjE0/wdW6z76+l8OnpKwpRRwwghCsa7AZMpMg1kc
-        8ZFe5X0l68L7uwJBYRXQK68o/EPTO6E=
-X-Google-Smtp-Source: AMrXdXuc7EYWnXzmJl85FArH4jBSWHgiBakOpbe+kr0eElPXzFuj7/GxT44QVHAM9Uus3eN5e0PCFA==
-X-Received: by 2002:adf:fd89:0:b0:24f:5890:6168 with SMTP id d9-20020adffd89000000b0024f58906168mr18975982wrr.10.1672354270380;
-        Thu, 29 Dec 2022 14:51:10 -0800 (PST)
-Received: from localhost.localdomain (host-79-56-217-20.retail.telecomitalia.it. [79.56.217.20])
-        by smtp.gmail.com with ESMTPSA id p3-20020adfcc83000000b0027a57c1a6fbsm13493312wrj.22.2022.12.29.14.51.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Dec 2022 14:51:09 -0800 (PST)
-From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Evgeniy Dushistov <dushistov@mail.ru>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Ira Weiny <ira.weiny@intel.com>, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Subject: [PATCH v5 4/4] fs/ufs: Replace kmap() with kmap_local_page()
-Date:   Thu, 29 Dec 2022 23:51:00 +0100
-Message-Id: <20221229225100.22141-5-fmdefrancesco@gmail.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20221229225100.22141-1-fmdefrancesco@gmail.com>
-References: <20221229225100.22141-1-fmdefrancesco@gmail.com>
+        Thu, 29 Dec 2022 18:36:47 -0500
+Received: from sonic305-28.consmr.mail.ne1.yahoo.com (sonic305-28.consmr.mail.ne1.yahoo.com [66.163.185.154])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAF4410FEE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 29 Dec 2022 15:36:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1672357005; bh=KX7zkZBp7l2N6LQXje2QMwa2gNSim7yyh6UG4FUkUF0=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=uc50UwulxgAu58w6QoDI5F3YFxGnrJZDfQkBeovPGBqko2oAJlvfH5UrzI4cQXoATfI3q7ZoX4Ag4KWHYVp4Zm1Mi6H6slgq2phq/Lqajt6P6rM+3MWeM0Tnur5iJgXrROUNEt5OXrMCSfTpvkaCrasJ+GFBGFpIqugzp3AOA1vcBDu7bTC17wKNx18G0q76daD1KN9PTxAQgeyaNISyJK5iN/tU1ACYkabrQ5USdSQbh/SQDU43jEyXRA/b0RKLkIS9X/qw6RW9+CIU7jXhdeC7QT5sGJcITRjkKKsNVwo49rvqoLeyh1lUZ8NWAo07b2E8mDYK3cNjINlkR1aKHA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1672357005; bh=5siTqCkMZhl7EPjmtvcYXVp4wf4GBa2tKpAXrSwUY+R=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=c3gYhLQmmGtgpe3VWrxW5KAXUulnJ6XeaLmtZdTO/iux+8gdFsEHeZFxnlppWqvs+RmhZm9hZrudLVTx8sI81OnIs4acvy+QnDlWv7DNEkS+LTfkEi4u1Jbm04T7W0/ukIMZ8D2xxrekgg+6A7KmQnO0WO6GVWESpHI6fTxHUTtQbR4qHt2nTABX0GQCWF/B7nDfEacwU/abLdochxo13mQaxG+GD1JzqAtJXhP8zE+4UEb42/7OqY+pGBtuNkx9BaaGBH5FkI1LPlDhozJ1xxV+OV8AohWTTlXCUBu4DrMTbIi84C/spXFIfklqJWND+9zb/5GRCwHWh4S8oGBfJA==
+X-YMail-OSG: rfnpcZ0VM1nkfoQtImrlwySptKCmE94Q.ic5B2yMX50bkK1hNjKp.p6dYCIBA_V
+ hNUiNcL9V8L80omcga3yXBmSTSAcSYqOaC5q81kuqUVreygH66If5nO_l8_7gVp9Y_y7P2VuALK6
+ G4qat3tLACygqhqegI.In7AP9GwuSS7b2.j9cBnHqCPAOd7Oo_tPEfJwqnQZscZp9KP559JIATR2
+ 0hx4A70jtRMGBZUFOz8SZLNk4DYe9WxHYAEYkiEunw_7kaYHEIfGoDKbcI_EdF2YjOnRPQQeNCSO
+ lO7One3asupJOanlAVLKryNwaaauyaNv1R53MTkZOH_4fFkC.5C64a_ot05ccI3EuWkEH8Jpbxet
+ vQ0prPfFhCkwhdnjAX_W6B69t526ffSplAr_DURiwMGB.FprJULAv73GwH1TmJnYnGwBuGea8Ku1
+ 92pVooU_8WoXk3GvEuPFSmKziHSJBwMHMMxk5lesZhEpw0hCxASsX77GO0F5JWLBk.KfDZEvZWnm
+ 42sF3gac.Edzm_ijxS87mVttAtyaALWDHEBT59VBKiwEH615ZeptKpqUTypF1WZoqb4dajQE0ZEO
+ 3MRqpdetmC4pTEv8HO1.rmGb_EapfgElFD2bzmL2sZN2TEYPDud.naIATQ1H1BX9vf5cLjhEPsHL
+ NAuvThHHAs1DIC8hFSpSRKsiv7oGAhFS5CAPC0D.Cw9GAstSDjRACSV4bJuCA6x4.yB37gQvcaLM
+ Fd3Wp2mLoRpy0ob5p7jgYD_q6W9V1TytxVn9qRbsTMx93gPCsAhQG64WCdhnsv1ppJNJZlKHg8wG
+ YqZ4lzdRYomFlSQfeA3FCLwWb9N7G0iHxR9yFnIAFuJtKmnHhdNDpFMcWnGJ88wr3Qg9rdI9PM1b
+ Ti4E0r.vCJead3eTtt.ARvhYkAM9bBcOdpDiVpTTEfyVjjo1BE3RJrEDR4Yr_ps6RFh0lj7AXZ7K
+ Ju9QGxxmyx1u4i8wncfViTa2KNZ7dSoT8eE7xV_0j..pG81PnqHDIQtw0Bb1xTphSLiqJvPVzSce
+ g9jE6tJoClyTqMMF41Z9WPs5gmKiOeDErhC9YWFOyVh4IwUB5DBanYkmNowU88sJTf9J_BP1e2ko
+ MZc2_jcA6ftZ3c8ZYFUAFqtyoIqDIs1q42sqmMe2R2wKsM15YLRIaOAvF3pfBd_lxqIUMX9.JR9p
+ FVpIeMVaVfL4iixsFRhcHfTkGv3Mj2QsCgASdIP1EKeZcXhIPHugEpFOQpOG68bNtXOL9Gin2.Be
+ jNxBzEfNLLVzC0hZ4O18ijvIBog2GaFrfjfWBNkXy.xHDYBGS4L8fvg9.tYTDy.INZB7_3BW04pG
+ lcxi5WpJf3Fh4ue8CrEoe6TJ2kUCBNxS7S3iLNlQP9spq1OLO5Dv38ANYX_s7K8.d6cqoAC3ovFn
+ sk9dQFVqN5m.YZb9IA9yppIRzqt7nFz1pQGPtjqts5FE7qFtyzz2x_zOlfYFdZfup41d4f9WqfCZ
+ ibOfOQwxsbhuXq80KkBKcwaMveBSjwGfMZfk0ZBLb8uKC7Bc_UFqvM_SZGY1Lnkk9KlbbBuv_apg
+ Hay6LdQ899MTVUj4HWgqj_uCr7iTNpUoiAGYh5qFD.ipm9bjBhrMzaRBXbWPRf675xii9uvfM2k3
+ XIyi0Qz49uqiBUSZygOrJKITWYuNiUiJzV7zQwdXOvPuo6dtOcVM7t7UWIBiqb7LKtIsRMkEAYKw
+ G0cNdhmlUYJU4rjRayTvpw0G4CL4odaZO8GxOEQejDuwz_Q4QA7nkZ7YNmh1ya0StiFfZ5lMoyEC
+ aMdHbZbRZ1pWZ9EfX.L.L27rR7HmuBt_P7YpWdmFqp8YVmnbfjFz6Fa8AsCz1q7WmuHiG_KW1WpB
+ xgGzZo38u.4vvluvmpLKJAIbEuUajG3SZ5W_cr1GQsu2TG3l0ZRYCfcFsD_nh26dHiwcchWHdawo
+ p6RH3B2LT6jlX_9GajVMsAdmgr_wEopBFKyVUNVSc5xzmVDshM6oZy2ju9v_zj2_jlbuihF5pvyF
+ 6moRC4ZXfzGVlAtVjFTtgKM2XEhAk6DEGmv7loM7LwsCBa_D2ZBdZPfk91Nj4WqB5yyuFGz5Nthl
+ 375IfGLUIl_eyA38VtHTI7r3YKZVjH0jUW4iGAFgHB1rKSVHacWq98jfD8LPsMLlxGFZ131YHfTH
+ 1gC.vKHQJWx2QWUAYfsnPJKyYonbVRljgrYBd7EmPdcEdpPHSNj7rBBU3w7UYh1j5D0xf2mekpaY
+ SUBlW2FC3Ns6P2awgKt6wQelckIecQWG1FCMiTSNfGw--
+X-Sonic-MF: <casey@schaufler-ca.com>
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Thu, 29 Dec 2022 23:36:45 +0000
+Received: by hermes--production-bf1-5458f64d4-x4bxm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 2c9ed6e23ac4176228a90f5214b07a1b;
+          Thu, 29 Dec 2022 23:36:42 +0000 (UTC)
+From:   Casey Schaufler <casey@schaufler-ca.com>
+To:     casey.schaufler@intel.com, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc:     casey@schaufler-ca.com, jmorris@namei.org, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        linux-api@vger.kernel.org, mic@digikod.net,
+        linux-fsdevel@vger.kernel.org
+Subject: [PATCH v4 3/8] proc: Use lsmids instead of lsm names for attrs
+Date:   Thu, 29 Dec 2022 15:34:49 -0800
+Message-Id: <20221229233454.43880-4-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20221229233454.43880-1-casey@schaufler-ca.com>
+References: <20221229233454.43880-1-casey@schaufler-ca.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-kmap() is being deprecated in favor of kmap_local_page().
+Use the LSM ID number instead of the LSM name to identify which
+security module's attibute data should be shown in /proc/self/attr.
+The security_[gs]etprocattr() functions have been changed to expect
+the LSM ID. The change from a string comparison to an integer comparison
+in these functions will provide a minor performance improvement.
 
-There are two main problems with kmap(): (1) It comes with an overhead as
-the mapping space is restricted and protected by a global lock for
-synchronization and (2) it also requires global TLB invalidation when the
-kmap’s pool wraps and it might block when the mapping space is fully
-utilized until a slot becomes available.
-
-With kmap_local_page() the mappings are per thread, CPU local, can take
-page faults, and can be called from any context (including interrupts).
-It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
-the tasks can be preempted and, when they are scheduled to run again, the
-kernel virtual addresses are restored and still valid.
-
-The use of kmap_local_page() in fs/ufs is "safe" because (1) the kernel
-virtual addresses are exclusively re-used by the thread which
-established the mappings (i.e., thread locality is never violated) and (2)
-the nestings of mappings and un-mappings are always stack based (LIFO).
-
-Therefore, replace kmap() with kmap_local_page() in fs/ufs. kunmap_local()
-requires the mapping address, so return that address from ufs_get_page()
-and use it as parameter for the second argument of ufs_put_page().
-
-Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
-Suggested-by: Ira Weiny <ira.weiny@intel.com>
-Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-fsdevel@vger.kernel.org
 ---
- fs/ufs/dir.c   | 72 +++++++++++++++++++++++++++++++++-----------------
- fs/ufs/namei.c |  8 +++---
- fs/ufs/ufs.h   |  2 +-
- 3 files changed, 53 insertions(+), 29 deletions(-)
+ fs/proc/base.c           | 29 +++++++++++++++--------------
+ fs/proc/internal.h       |  2 +-
+ include/linux/security.h | 11 +++++------
+ security/security.c      | 11 +++++------
+ 4 files changed, 26 insertions(+), 27 deletions(-)
 
-diff --git a/fs/ufs/dir.c b/fs/ufs/dir.c
-index 0bfd563ab0c2..8676a144e589 100644
---- a/fs/ufs/dir.c
-+++ b/fs/ufs/dir.c
-@@ -61,9 +61,9 @@ static int ufs_commit_chunk(struct page *page, loff_t pos, unsigned len)
- 	return err;
- }
+diff --git a/fs/proc/base.c b/fs/proc/base.c
+index 9e479d7d202b..9328b6b07dfc 100644
+--- a/fs/proc/base.c
++++ b/fs/proc/base.c
+@@ -96,6 +96,7 @@
+ #include <linux/time_namespace.h>
+ #include <linux/resctrl.h>
+ #include <linux/cn_proc.h>
++#include <uapi/linux/lsm.h>
+ #include <trace/events/oom.h>
+ #include "internal.h"
+ #include "fd.h"
+@@ -145,10 +146,10 @@ struct pid_entry {
+ 	NOD(NAME, (S_IFREG|(MODE)),			\
+ 		NULL, &proc_single_file_operations,	\
+ 		{ .proc_show = show } )
+-#define ATTR(LSM, NAME, MODE)				\
++#define ATTR(LSMID, NAME, MODE)				\
+ 	NOD(NAME, (S_IFREG|(MODE)),			\
+ 		NULL, &proc_pid_attr_operations,	\
+-		{ .lsm = LSM })
++		{ .lsmid = LSMID })
  
--inline void ufs_put_page(struct page *page)
-+inline void ufs_put_page(struct page *page, void *page_addr)
+ /*
+  * Count the number of hardlinks for the pid_entry table, excluding the .
+@@ -2730,7 +2731,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
+ 	if (!task)
+ 		return -ESRCH;
+ 
+-	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
++	length = security_getprocattr(task, PROC_I(inode)->op.lsmid,
+ 				      file->f_path.dentry->d_name.name,
+ 				      &p);
+ 	put_task_struct(task);
+@@ -2788,7 +2789,7 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
+ 	if (rv < 0)
+ 		goto out_free;
+ 
+-	rv = security_setprocattr(PROC_I(inode)->op.lsm,
++	rv = security_setprocattr(PROC_I(inode)->op.lsmid,
+ 				  file->f_path.dentry->d_name.name, page,
+ 				  count);
+ 	mutex_unlock(&current->signal->cred_guard_mutex);
+@@ -2837,27 +2838,27 @@ static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
+ 
+ #ifdef CONFIG_SECURITY_SMACK
+ static const struct pid_entry smack_attr_dir_stuff[] = {
+-	ATTR("smack", "current",	0666),
++	ATTR(LSM_ID_SMACK, "current",	0666),
+ };
+ LSM_DIR_OPS(smack);
+ #endif
+ 
+ #ifdef CONFIG_SECURITY_APPARMOR
+ static const struct pid_entry apparmor_attr_dir_stuff[] = {
+-	ATTR("apparmor", "current",	0666),
+-	ATTR("apparmor", "prev",	0444),
+-	ATTR("apparmor", "exec",	0666),
++	ATTR(LSM_ID_APPARMOR, "current",	0666),
++	ATTR(LSM_ID_APPARMOR, "prev",		0444),
++	ATTR(LSM_ID_APPARMOR, "exec",		0666),
+ };
+ LSM_DIR_OPS(apparmor);
+ #endif
+ 
+ static const struct pid_entry attr_dir_stuff[] = {
+-	ATTR(NULL, "current",		0666),
+-	ATTR(NULL, "prev",		0444),
+-	ATTR(NULL, "exec",		0666),
+-	ATTR(NULL, "fscreate",		0666),
+-	ATTR(NULL, "keycreate",		0666),
+-	ATTR(NULL, "sockcreate",	0666),
++	ATTR(0, "current",	0666),
++	ATTR(0, "prev",		0444),
++	ATTR(0, "exec",		0666),
++	ATTR(0, "fscreate",	0666),
++	ATTR(0, "keycreate",	0666),
++	ATTR(0, "sockcreate",	0666),
+ #ifdef CONFIG_SECURITY_SMACK
+ 	DIR("smack",			0555,
+ 	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index b701d0207edf..18db9722c81b 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -92,7 +92,7 @@ union proc_op {
+ 	int (*proc_show)(struct seq_file *m,
+ 		struct pid_namespace *ns, struct pid *pid,
+ 		struct task_struct *task);
+-	const char *lsm;
++	int lsmid;
+ };
+ 
+ struct proc_inode {
+diff --git a/include/linux/security.h b/include/linux/security.h
+index e70d546acf3d..18a481fef7fe 100644
+--- a/include/linux/security.h
++++ b/include/linux/security.h
+@@ -491,10 +491,9 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
+ int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
+ 			unsigned nsops, int alter);
+ void security_d_instantiate(struct dentry *dentry, struct inode *inode);
+-int security_getprocattr(struct task_struct *p, const char *lsm, const char *name,
++int security_getprocattr(struct task_struct *p, int lsmid, const char *name,
+ 			 char **value);
+-int security_setprocattr(const char *lsm, const char *name, void *value,
+-			 size_t size);
++int security_setprocattr(int lsmid, const char *name, void *value, size_t size);
+ int security_netlink_send(struct sock *sk, struct sk_buff *skb);
+ int security_ismaclabel(const char *name);
+ int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
+@@ -1362,14 +1361,14 @@ static inline void security_d_instantiate(struct dentry *dentry,
+ 					  struct inode *inode)
+ { }
+ 
+-static inline int security_getprocattr(struct task_struct *p, const char *lsm,
++static inline int security_getprocattr(struct task_struct *p, int lsmid,
+ 				       const char *name, char **value)
  {
--	kunmap(page);
-+	kunmap_local(page_addr);
- 	put_page(page);
- }
- 
-@@ -76,7 +76,7 @@ ino_t ufs_inode_by_name(struct inode *dir, const struct qstr *qstr)
- 	de = ufs_find_entry(dir, qstr, &page);
- 	if (de) {
- 		res = fs32_to_cpu(dir->i_sb, de->d_ino);
--		ufs_put_page(page);
-+		ufs_put_page(page, de);
- 	}
- 	return res;
- }
-@@ -99,18 +99,17 @@ void ufs_set_link(struct inode *dir, struct ufs_dir_entry *de,
- 	ufs_set_de_type(dir->i_sb, de, inode->i_mode);
- 
- 	err = ufs_commit_chunk(page, pos, len);
--	ufs_put_page(page);
-+	ufs_put_page(page, de);
- 	if (update_times)
- 		dir->i_mtime = dir->i_ctime = current_time(dir);
- 	mark_inode_dirty(dir);
- }
- 
- 
--static bool ufs_check_page(struct page *page)
-+static bool ufs_check_page(struct page *page, char *kaddr)
- {
- 	struct inode *dir = page->mapping->host;
- 	struct super_block *sb = dir->i_sb;
--	char *kaddr = page_address(page);
- 	unsigned offs, rec_len;
- 	unsigned limit = PAGE_SIZE;
- 	const unsigned chunk_mask = UFS_SB(sb)->s_uspi->s_dirblksize - 1;
-@@ -185,23 +184,32 @@ static bool ufs_check_page(struct page *page)
- 	return false;
- }
- 
-+/*
-+ * Calls to ufs_get_page()/ufs_put_page() must be nested according to the
-+ * rules documented in kmap_local_page()/kunmap_local().
-+ *
-+ * NOTE: ufs_find_entry() and ufs_dotdot() act as calls to ufs_get_page()
-+ * and must be treated accordingly for nesting purposes.
-+ */
- static void *ufs_get_page(struct inode *dir, unsigned long n, struct page **p)
- {
-+	char *kaddr;
-+
- 	struct address_space *mapping = dir->i_mapping;
- 	struct page *page = read_mapping_page(mapping, n, NULL);
- 	if (!IS_ERR(page)) {
--		kmap(page);
-+		kaddr = kmap_local_page(page);
- 		if (unlikely(!PageChecked(page))) {
--			if (!ufs_check_page(page))
-+			if (!ufs_check_page(page, kaddr))
- 				goto fail;
- 		}
- 		*p = page;
--		return page_address(page);
-+		return kaddr;
- 	}
- 	return ERR_CAST(page);
- 
- fail:
--	ufs_put_page(page);
-+	ufs_put_page(page, kaddr);
- 	return ERR_PTR(-EIO);
- }
- 
-@@ -227,6 +235,13 @@ ufs_next_entry(struct super_block *sb, struct ufs_dir_entry *p)
- 					fs16_to_cpu(sb, p->d_reclen));
- }
- 
-+/*
-+ * Calls to ufs_get_page()/ufs_put_page() must be nested according to the
-+ * rules documented in kmap_local_page()/kunmap_local().
-+ *
-+ * ufs_dotdot() acts as a call to ufs_get_page() and must be treated
-+ * accordingly for nesting purposes.
-+ */
- struct ufs_dir_entry *ufs_dotdot(struct inode *dir, struct page **p)
- {
- 	struct ufs_dir_entry *de = ufs_get_page(dir, 0, p);
-@@ -244,6 +259,11 @@ struct ufs_dir_entry *ufs_dotdot(struct inode *dir, struct page **p)
-  * returns the page in which the entry was found, and the entry itself
-  * (as a parameter - res_dir). Page is returned mapped and unlocked.
-  * Entry is guaranteed to be valid.
-+ *
-+ * On Success ufs_put_page() should be called on *res_page.
-+ *
-+ * ufs_find_entry() acts as a call to ufs_get_page() and must be treated
-+ * accordingly for nesting purposes.
-  */
- struct ufs_dir_entry *ufs_find_entry(struct inode *dir, const struct qstr *qstr,
- 				     struct page **res_page)
-@@ -282,7 +302,7 @@ struct ufs_dir_entry *ufs_find_entry(struct inode *dir, const struct qstr *qstr,
- 					goto found;
- 				de = ufs_next_entry(sb, de);
- 			}
--			ufs_put_page(page);
-+			ufs_put_page(page, kaddr);
- 		}
- 		if (++n >= npages)
- 			n = 0;
-@@ -360,7 +380,7 @@ int ufs_add_link(struct dentry *dentry, struct inode *inode)
- 			de = (struct ufs_dir_entry *) ((char *) de + rec_len);
- 		}
- 		unlock_page(page);
--		ufs_put_page(page);
-+		ufs_put_page(page, kaddr);
- 	}
- 	BUG();
  	return -EINVAL;
-@@ -390,7 +410,7 @@ int ufs_add_link(struct dentry *dentry, struct inode *inode)
- 	mark_inode_dirty(dir);
- 	/* OFFSET_CACHE */
- out_put:
--	ufs_put_page(page);
-+	ufs_put_page(page, kaddr);
- 	return err;
- out_unlock:
- 	unlock_page(page);
-@@ -468,13 +488,13 @@ ufs_readdir(struct file *file, struct dir_context *ctx)
- 					       ufs_get_de_namlen(sb, de),
- 					       fs32_to_cpu(sb, de->d_ino),
- 					       d_type)) {
--					ufs_put_page(page);
-+					ufs_put_page(page, kaddr);
- 					return 0;
- 				}
- 			}
- 			ctx->pos += fs16_to_cpu(sb, de->d_reclen);
- 		}
--		ufs_put_page(page);
-+		ufs_put_page(page, kaddr);
- 	}
- 	return 0;
  }
-@@ -485,10 +505,15 @@ ufs_readdir(struct file *file, struct dir_context *ctx)
-  * previous entry.
-  */
- int ufs_delete_entry(struct inode *inode, struct ufs_dir_entry *dir,
--		     struct page * page)
-+		     struct page *page)
+ 
+-static inline int security_setprocattr(const char *lsm, char *name,
+-				       void *value, size_t size)
++static inline int security_setprocattr(int lsmid, char *name, void *value,
++				       size_t size)
  {
- 	struct super_block *sb = inode->i_sb;
--	char *kaddr = page_address(page);
-+	/*
-+	 * The "dir" dentry points somewhere in the same page whose we need the
-+	 * address of; therefore, we can simply get the base address "kaddr" by
-+	 * masking the previous with PAGE_MASK.
-+	 */
-+	char *kaddr = (char *)((unsigned long)dir & PAGE_MASK);
- 	unsigned int from = offset_in_page(dir) & ~(UFS_SB(sb)->s_uspi->s_dirblksize - 1);
- 	unsigned int to = offset_in_page(dir) + fs16_to_cpu(sb, dir->d_reclen);
- 	loff_t pos;
-@@ -527,7 +552,7 @@ int ufs_delete_entry(struct inode *inode, struct ufs_dir_entry *dir,
- 	inode->i_ctime = inode->i_mtime = current_time(inode);
- 	mark_inode_dirty(inode);
- out:
--	ufs_put_page(page);
-+	ufs_put_page(page, kaddr);
- 	UFSD("EXIT\n");
- 	return err;
+ 	return -EINVAL;
  }
-@@ -551,8 +576,7 @@ int ufs_make_empty(struct inode * inode, struct inode *dir)
- 		goto fail;
+diff --git a/security/security.c b/security/security.c
+index 4acb14500bc3..dfbb236fcc39 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -2157,26 +2157,25 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
+ }
+ EXPORT_SYMBOL(security_d_instantiate);
+ 
+-int security_getprocattr(struct task_struct *p, const char *lsm,
+-			 const char *name, char **value)
++int security_getprocattr(struct task_struct *p, int lsmid, const char *name,
++			 char **value)
+ {
+ 	struct security_hook_list *hp;
+ 
+ 	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
+-		if (lsm != NULL && strcmp(lsm, hp->lsmid->lsm))
++		if (lsmid != 0 && lsmid != hp->lsmid->id)
+ 			continue;
+ 		return hp->hook.getprocattr(p, name, value);
  	}
- 
--	kmap(page);
--	base = (char*)page_address(page);
-+	base = kmap_local_page(page);
- 	memset(base, 0, PAGE_SIZE);
- 
- 	de = (struct ufs_dir_entry *) base;
-@@ -569,7 +593,7 @@ int ufs_make_empty(struct inode * inode, struct inode *dir)
- 	de->d_reclen = cpu_to_fs16(sb, chunk_size - UFS_DIR_REC_LEN(1));
- 	ufs_set_de_namlen(sb, de, 2);
- 	strcpy (de->d_name, "..");
--	kunmap(page);
-+	kunmap_local(base);
- 
- 	err = ufs_commit_chunk(page, 0, chunk_size);
- fail:
-@@ -585,9 +609,9 @@ int ufs_empty_dir(struct inode * inode)
- 	struct super_block *sb = inode->i_sb;
- 	struct page *page = NULL;
- 	unsigned long i, npages = dir_pages(inode);
-+	char *kaddr;
- 
- 	for (i = 0; i < npages; i++) {
--		char *kaddr;
- 		struct ufs_dir_entry *de;
- 
- 		kaddr = ufs_get_page(inode, i, &page);
-@@ -620,12 +644,12 @@ int ufs_empty_dir(struct inode * inode)
- 			}
- 			de = ufs_next_entry(sb, de);
- 		}
--		ufs_put_page(page);
-+		ufs_put_page(page, kaddr);
- 	}
- 	return 1;
- 
- not_empty:
--	ufs_put_page(page);
-+	ufs_put_page(page, kaddr);
- 	return 0;
+ 	return LSM_RET_DEFAULT(getprocattr);
  }
  
-diff --git a/fs/ufs/namei.c b/fs/ufs/namei.c
-index 486b0f2e8b7a..7175d45e704c 100644
---- a/fs/ufs/namei.c
-+++ b/fs/ufs/namei.c
-@@ -250,7 +250,7 @@ static int ufs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 	struct inode *old_inode = d_inode(old_dentry);
- 	struct inode *new_inode = d_inode(new_dentry);
- 	struct page *dir_page = NULL;
--	struct ufs_dir_entry * dir_de = NULL;
-+	struct ufs_dir_entry *dir_de = NULL;
- 	struct page *old_page;
- 	struct ufs_dir_entry *old_de;
- 	int err = -ENOENT;
-@@ -307,7 +307,7 @@ static int ufs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
- 		if (old_dir != new_dir)
- 			ufs_set_link(old_inode, dir_de, dir_page, new_dir, 0);
- 		else {
--			ufs_put_page(dir_page);
-+			ufs_put_page(dir_page, dir_de);
- 		}
- 		inode_dec_link_count(old_dir);
- 	}
-@@ -316,10 +316,10 @@ static int ufs_rename(struct user_namespace *mnt_userns, struct inode *old_dir,
+-int security_setprocattr(const char *lsm, const char *name, void *value,
+-			 size_t size)
++int security_setprocattr(int lsmid, const char *name, void *value, size_t size)
+ {
+ 	struct security_hook_list *hp;
  
- out_dir:
- 	if (dir_de) {
--		ufs_put_page(dir_page);
-+		ufs_put_page(dir_page, dir_de);
+ 	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
+-		if (lsm != NULL && strcmp(lsm, hp->lsmid->lsm))
++		if (lsmid != 0 && lsmid != hp->lsmid->id)
+ 			continue;
+ 		return hp->hook.setprocattr(name, value, size);
  	}
- out_old:
--	ufs_put_page(old_page);
-+	ufs_put_page(old_page, old_de);
- out:
- 	return err;
- }
-diff --git a/fs/ufs/ufs.h b/fs/ufs/ufs.h
-index f7ba8df25d03..942639e9a817 100644
---- a/fs/ufs/ufs.h
-+++ b/fs/ufs/ufs.h
-@@ -98,7 +98,7 @@ extern struct ufs_cg_private_info * ufs_load_cylinder (struct super_block *, uns
- extern void ufs_put_cylinder (struct super_block *, unsigned);
- 
- /* dir.c */
--extern void ufs_put_page(struct page *page);
-+extern void ufs_put_page(struct page *page, void *vaddr);
- extern const struct inode_operations ufs_dir_inode_operations;
- extern int ufs_add_link (struct dentry *, struct inode *);
- extern ino_t ufs_inode_by_name(struct inode *, const struct qstr *);
 -- 
-2.39.0
+2.38.1
 
