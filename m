@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B338658EC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Dec 2022 17:11:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C2DB4658EC4
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 29 Dec 2022 17:11:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233491AbiL2QLC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 29 Dec 2022 11:11:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50662 "EHLO
+        id S233576AbiL2QLG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 29 Dec 2022 11:11:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50670 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229535AbiL2QKy (ORCPT
+        with ESMTP id S231261AbiL2QKy (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 29 Dec 2022 11:10:54 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6207CFC2;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 75A1510DB;
         Thu, 29 Dec 2022 08:10:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=fEUbsjBI9KXdP6pghJ78AVl7+BFXIZGKll0p9tWCLUk=; b=t1S2jL2DHoW16PA0jk/pbHQHDg
-        RBs4GhrpF9YeRdVoZ5tq9A1aPdJeOjq91lfo7o5iKcunokcstvPbjfOb5C1qHOTZBoAGzMEgZ25d9
-        C5o7gFDbOXlZVoosJgILi0a9I3LR4lGcXGGPpDxMY8Z08Fs+hik9wVwCAUkCmR2OV7rxGJJyr2hjp
-        Zv4kGbTY2mD5jY+OJ8lwVOyAR4ZX1bDl+ikdrDdlU07hOw7f3AsQUBG1SNmOv77SPXjK1JIImv2No
-        Dbh0w8jo37mco9XgGK5mLl24utTvSDtaTj3J5LiN5/5CGoVanfP2Q7XBUN+yCvVYGXOsn3vy9A0Al
-        FxMX+glA==;
+        bh=JERcZZTMhkivNxo9SqHrHtIaAsMqudDjGhUiCLjWNr4=; b=uEGqoJWMD+5m6rJC3ueg05BpdS
+        yvzRe5kSxtpJEljm6rFhRT1KRo1MlimyyptGn9oxiqWwdzZsevEiRJQrIRs1dUZqZsBMxlA9BWQsg
+        M60+EvxQ4N/NiSFx77YOHKWe18eT6imHat7MQ+wu+cwl1ZsHZTSOBC43DUrAKHZSnlSSZSqwN25fl
+        2xfzM4yW8GRHjwfPnIoPzDtp0qJrNfdyY8+uGVOXTBVIWPnbEUn981Z7rFSjcIz4HWuKxyiJ9WbEn
+        sknQxfWX4y/0QjsHbAy7+s80zQxbjy4SGIct67u+X9EVRQv401lmk0efcwt/0lXTE79gy1wgzifMT
+        RD2bgzOQ==;
 Received: from rrcs-67-53-201-206.west.biz.rr.com ([67.53.201.206] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pAvUK-00HKL2-18; Thu, 29 Dec 2022 16:10:36 +0000
+        id 1pAvUL-00HKLm-6s; Thu, 29 Dec 2022 16:10:37 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.com>,
@@ -39,9 +39,9 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
 Cc:     linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com,
         linux-mm@kvack.org
-Subject: [PATCH 1/6] fs: remove an outdated comment on mpage_writepages
-Date:   Thu, 29 Dec 2022 06:10:26 -1000
-Message-Id: <20221229161031.391878-2-hch@lst.de>
+Subject: [PATCH 2/6] ntfs3: stop using generic_writepages
+Date:   Thu, 29 Dec 2022 06:10:27 -1000
+Message-Id: <20221229161031.391878-3-hch@lst.de>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20221229161031.391878-1-hch@lst.de>
 References: <20221229161031.391878-1-hch@lst.de>
@@ -58,33 +58,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-mpage_writepages doesn't do any of the page locking itself, so remove
-and outdated comment on the locking pattern there.
+Open code the resident inode handling in ntfs_writepages by directly
+using write_cache_pages to prepare removing the ->writepage handler
+in ntfs3.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/mpage.c | 8 --------
- 1 file changed, 8 deletions(-)
+ fs/ntfs3/inode.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-diff --git a/fs/mpage.c b/fs/mpage.c
-index 0f8ae954a57903..910cfe8a60d2e4 100644
---- a/fs/mpage.c
-+++ b/fs/mpage.c
-@@ -641,14 +641,6 @@ static int __mpage_writepage(struct page *page, struct writeback_control *wbc,
-  *
-  * This is a library function, which implements the writepages()
-  * address_space_operation.
-- *
-- * If a page is already under I/O, generic_writepages() skips it, even
-- * if it's dirty.  This is desirable behaviour for memory-cleaning writeback,
-- * but it is INCORRECT for data-integrity system calls such as fsync().  fsync()
-- * and msync() need to guarantee that all the data which was dirty at the time
-- * the call was made get new I/O started against them.  If wbc->sync_mode is
-- * WB_SYNC_ALL then we were called for data integrity and we must wait for
-- * existing IO to complete.
-  */
- int
- mpage_writepages(struct address_space *mapping,
+diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
+index 20b953871574b8..b6dad2da59501b 100644
+--- a/fs/ntfs3/inode.c
++++ b/fs/ntfs3/inode.c
+@@ -852,12 +852,29 @@ static int ntfs_writepage(struct page *page, struct writeback_control *wbc)
+ 	return block_write_full_page(page, ntfs_get_block, wbc);
+ }
+ 
++static int ntfs_resident_writepage(struct page *page,
++		struct writeback_control *wbc, void *data)
++{
++	struct address_space *mapping = data;
++	struct ntfs_inode *ni = ntfs_i(mapping->host);
++	int ret;
++
++	ni_lock(ni);
++	ret = attr_data_write_resident(ni, page);
++	ni_unlock(ni);
++
++	if (ret != E_NTFS_NONRESIDENT)
++		unlock_page(page);
++	mapping_set_error(mapping, ret);
++	return ret;
++}
++
+ static int ntfs_writepages(struct address_space *mapping,
+ 			   struct writeback_control *wbc)
+ {
+-	/* Redirect call to 'ntfs_writepage' for resident files. */
+ 	if (is_resident(ntfs_i(mapping->host)))
+-		return generic_writepages(mapping, wbc);
++		return write_cache_pages(mapping, wbc, ntfs_resident_writepage,
++					 mapping);
+ 	return mpage_writepages(mapping, wbc, ntfs_get_block);
+ }
+ 
 -- 
 2.35.1
 
