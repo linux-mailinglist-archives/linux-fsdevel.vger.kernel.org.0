@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BFDA0659CD4
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Dec 2022 23:30:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CFA33659CE6
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Dec 2022 23:32:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235513AbiL3Wal (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Dec 2022 17:30:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51736 "EHLO
+        id S235616AbiL3Wcq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Dec 2022 17:32:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52624 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231294AbiL3Wak (ORCPT
+        with ESMTP id S235530AbiL3Wco (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Dec 2022 17:30:40 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 810B61C913;
-        Fri, 30 Dec 2022 14:30:38 -0800 (PST)
+        Fri, 30 Dec 2022 17:32:44 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 178151AA0A;
+        Fri, 30 Dec 2022 14:32:43 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 1D2AAB81D94;
-        Fri, 30 Dec 2022 22:30:37 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D07A6C433D2;
-        Fri, 30 Dec 2022 22:30:35 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id AC8ABB81C22;
+        Fri, 30 Dec 2022 22:32:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6EB65C433D2;
+        Fri, 30 Dec 2022 22:32:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672439435;
-        bh=Q50enJVonzjtmHiF+TtjhEIAKhQXRUyl4v7o6wsE9GE=;
+        s=k20201202; t=1672439560;
+        bh=6Aoe2GdyvRmGtN1yuGaa5ztcY8ltADOrSv1g63Xmm1o=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=thWVR7wjNu3MZtDUYWxwFKMXMCK8P8RhTbBZLYM3lFhSZlXj9MS7Yww5m6kCnm7aD
-         dVjPnUAjNgVOyxzlP34oseBg2wNkAB5xRxbgwnZecRfcerrcxPr51VvAReOQ008nW7
-         Xc1B6TFkOf3ZfFsS5kg1FiABBZuzPj63IjgCNlYFICPAehoohoTcjNTRLi04UCFGpy
-         9LY9FVGTKNb62e/fcgcAK3+it4cGtzP8cpsDMrcecVmEZaAbNdHqVe8astCxc/7oNd
-         0ksLhR4JMEfw04R1Uw4kvFltLTn8pJSwqjK3yHve7CKR/4X+4l6Ye1ndEjWyc70YEa
-         QNcbElCZulLqQ==
-Subject: [PATCH 05/14] xfs: document the filesystem metadata checking strategy
+        b=QqmCITxIkNJt1nWXw0Yj+JU/czKc8UMZ5HybBTKe/6fGW3Jzp4DEudJPA/3W63yL7
+         376gIZbmKICUiQ+owsfO7TljvraYESbkT2zJ4npJHTQYc/YKpnKMjVREZ5u+e22vpt
+         HnAI6AD6dypTJUKUO0HKHX56ZJxT7/6I2AzJpiVDTPO8VkHlz1ffSNwq/uGL88n9Bk
+         BOb9Qr6FwGHLHWDeUKAiDA5bM1VyFD/+3Qej0NvmIX9ySxKl1Xwm3AOuA/zQBDTFwp
+         g7zvoxytruSJNLjvGUt6Fxxn3iFfRtex95chSwWPmDizxig5nwsRvwuES45e0mw+0Q
+         z/too1WrgJR3g==
+Subject: [PATCH 13/14] xfs: document the userspace fsck driver program
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
         chandan.babu@oracle.com, allison.henderson@oracle.com,
         linux-fsdevel@vger.kernel.org, hch@infradead.org,
         catherine.hoang@oracle.com, david@fromorbit.com
-Date:   Fri, 30 Dec 2022 14:10:52 -0800
-Message-ID: <167243825231.682859.8572572208487315258.stgit@magnolia>
+Date:   Fri, 30 Dec 2022 14:10:53 -0800
+Message-ID: <167243825345.682859.840912842203682928.stgit@magnolia>
 In-Reply-To: <167243825144.682859.12802259329489258661.stgit@magnolia>
 References: <167243825144.682859.12802259329489258661.stgit@magnolia>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -58,613 +58,342 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Begin the fifth chapter of the online fsck design documentation, where
+Add the sixth chapter of the online fsck design documentation, where
 we discuss the details of the data structures and algorithms used by the
-kernel to examine filesystem metadata and cross-reference it around the
-filesystem.
+driver program xfs_scrub.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- .../filesystems/xfs-online-fsck-design.rst         |  579 ++++++++++++++++++++
- .../filesystems/xfs-self-describing-metadata.rst   |    1 
- 2 files changed, 580 insertions(+)
+ .../filesystems/xfs-online-fsck-design.rst         |  313 ++++++++++++++++++++
+ 1 file changed, 313 insertions(+)
 
 
 diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs-online-fsck-design.rst
-index 42e82971e036..f45bf97fa9c4 100644
+index 2e20314f1831..05b9411fac7f 100644
 --- a/Documentation/filesystems/xfs-online-fsck-design.rst
 +++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-@@ -864,3 +864,582 @@ Proposed patchsets include
- and
- `preservation of sickness info during memory reclaim
- <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=indirect-health-reporting>`_.
-+
-+5. Kernel Algorithms and Data Structures
-+========================================
-+
-+This section discusses the key algorithms and data structures of the kernel
-+code that provide the ability to check and repair metadata while the system
-+is running.
-+The first chapters in this section reveal the pieces that provide the
-+foundation for checking metadata.
-+The remainder of this section presents the mechanisms through which XFS
-+regenerates itself.
-+
-+Self Describing Metadata
-+------------------------
-+
-+Starting with XFS version 5 in 2012, XFS updated the format of nearly every
-+ondisk block header to record a magic number, a checksum, a universally
-+"unique" identifier (UUID), an owner code, the ondisk address of the block,
-+and a log sequence number.
-+When loading a block buffer from disk, the magic number, UUID, owner, and
-+ondisk address confirm that the retrieved block matches the specific owner of
-+the current filesystem, and that the information contained in the block is
-+supposed to be found at the ondisk address.
-+The first three components enable checking tools to disregard alleged metadata
-+that doesn't belong to the filesystem, and the fourth component enables the
-+filesystem to detect lost writes.
-+
-+The logging code maintains the checksum and the log sequence number of the last
-+transactional update.
-+Checksums are useful for detecting torn writes and other mischief between the
-+computer and its storage devices.
-+Sequence number tracking enables log recovery to avoid applying out of date
-+log updates to the filesystem.
-+
-+These two features improve overall runtime resiliency by providing a means for
-+the filesystem to detect obvious corruption when reading metadata blocks from
-+disk, but these buffer verifiers cannot provide any consistency checking
-+between metadata structures.
-+
-+For more information, please see the documentation for
-+Documentation/filesystems/xfs-self-describing-metadata.rst
-+
-+Reverse Mapping
-+---------------
-+
-+The original design of XFS (circa 1993) is an improvement upon 1980s Unix
-+filesystem design.
-+In those days, storage density was expensive, CPU time was scarce, and
-+excessive seek time could kill performance.
-+For performance reasons, filesystem authors were reluctant to add redundancy to
-+the filesystem, even at the cost of data integrity.
-+Filesystems designers in the early 21st century choose different strategies to
-+increase internal redundancy -- either storing nearly identical copies of
-+metadata, or more space-efficient techniques such as erasure coding.
-+Obvious corruptions are typically repaired by copying replicas or
-+reconstructing from codes.
-+
-+For XFS, a different redundancy strategy was chosen to modernize the design:
-+a secondary space usage index that maps allocated disk extents back to their
-+owners.
-+By adding a new index, the filesystem retains most of its ability to scale
-+well to heavily threaded workloads involving large datasets, since the primary
-+file metadata (the directory tree, the file block map, and the allocation
-+groups) remain unchanged.
-+Although the reverse-mapping feature increases overhead costs for space
-+mapping activities just like any other system that improves redundancy, it
-+has two critical advantages: first, the reverse index is key to enabling online
-+fsck and other requested functionality such as filesystem reorganization,
-+better media failure reporting, and shrinking.
-+Second, the different ondisk storage format of the reverse mapping btree
-+defeats device-level deduplication, because the filesystem requires real
-+redundancy.
-+
-+A criticism of adding the secondary index is that it does nothing to improve
-+the robustness of user data storage itself.
-+This is a valid point, but adding a new index for file data block checksums
-+increases write amplification and turns data overwrites into copy-writes, which
-+age the filesystem prematurely.
-+In keeping with thirty years of precedent, users who want file data integrity
-+can supply as powerful a solution as they require.
-+As for metadata, the complexity of adding a new secondary index of space usage
-+is much less than adding volume management and storage device mirroring to XFS
-+itself.
-+Perfection of RAID and volume management are best left to existing layers in
-+the kernel.
-+
-+The information captured in a reverse space mapping record is as follows:
-+
-+.. code-block:: c
-+
-+	struct xfs_rmap_irec {
-+	    xfs_agblock_t    rm_startblock;   /* extent start block */
-+	    xfs_extlen_t     rm_blockcount;   /* extent length */
-+	    uint64_t         rm_owner;        /* extent owner */
-+	    uint64_t         rm_offset;       /* offset within the owner */
-+	    unsigned int     rm_flags;        /* state flags */
-+	};
-+
-+The first two fields capture the location and size of the physical space,
-+in units of filesystem blocks.
-+The owner field tells scrub which metadata structure or file inode have been
-+assigned this space.
-+For space allocated to files, the offset field tells scrub where the space was
-+mapped within the file fork.
-+Finally, the flags field provides extra information about the space usage --
-+is this an attribute fork extent?  A file mapping btree extent?  Or an
-+unwritten data extent?
-+
-+Online filesystem checking judges the consistency of each primary metadata
-+record by comparing its information against all other space indices.
-+The reverse mapping index plays a key role in the consistency checking process
-+because it contains a centralized alternate copy of all space allocation
-+information.
-+Program runtime and ease of resource acquisition are the only real limits to
-+what online checking can consult.
-+For example, a file data extent mapping can be checked against:
-+
-+* The absence of an entry in the free space information.
-+* The absence of an entry in the inode index.
-+* The absence of an entry in the reference count data if the file is not
-+  marked as having shared extents.
-+* The correspondence of an entry in the reverse mapping information.
-+
-+A key observation here is that only the reverse mapping can provide a positive
-+affirmation of correctness if the primary metadata is in doubt.
-+The checking code for most primary metadata follows a path similar to the
-+one outlined above.
-+
-+A second observation to make about this secondary index is that proving its
-+consistency with the primary metadata is difficult.
-+Demonstrating that a given reverse mapping record exactly corresponds to the
-+primary space metadata involves a full scan of all primary space metadata,
-+which is very time intensive.
-+Scanning activity for online fsck can only use non-blocking lock acquisition
-+primitives if the locking order is not the regular order as used by the rest of
-+the filesystem.
-+This means that forward progress during this part of a scan of the reverse
-+mapping data cannot be guaranteed if system load is especially heavy.
-+Therefore, it is not practical for online check to detect reverse mapping
-+records that lack a counterpart in the primary metadata.
-+Instead, scrub relies on rigorous cross-referencing during the primary space
-+mapping structure checks.
-+
-+Reverse mappings also play a key role in reconstruction of primary metadata.
-+The secondary information is general enough for online repair to synthesize a
-+complete copy of any primary space management metadata by locking that
-+resource, querying all reverse mapping indices looking for records matching
-+the relevant resource, and transforming the mapping into an appropriate format.
-+The details of how these records are staged, written to disk, and committed
-+into the filesystem are covered in subsequent sections.
-+
-+Checking and Cross-Referencing
-+------------------------------
-+
-+The first step of checking a metadata structure is to examine every record
-+contained within the structure and its relationship with the rest of the
-+system.
-+XFS contains multiple layers of checking to try to prevent inconsistent
-+metadata from wreaking havoc on the system.
-+Each of these layers contributes information that helps the kernel to make
-+three decisions about the health of a metadata structure:
-+
-+- Is a part of this structure obviously corrupt (``XFS_SCRUB_OFLAG_CORRUPT``) ?
-+- Is this structure inconsistent with the rest of the system
-+  (``XFS_SCRUB_OFLAG_XCORRUPT``) ?
-+- Is there so much damage around the filesystem that cross-referencing is not
-+  possible (``XFS_SCRUB_OFLAG_XFAIL``) ?
-+- Can the structure be optimized to improve performance or reduce the size of
-+  metadata (``XFS_SCRUB_OFLAG_PREEN``) ?
-+- Does the structure contain data that is not inconsistent but deserves review
-+  by the system administrator (``XFS_SCRUB_OFLAG_WARNING``) ?
-+
-+The following sections describe how the metadata scrubbing process works.
-+
-+Metadata Buffer Verification
-+````````````````````````````
-+
-+The lowest layer of metadata protection in XFS are the metadata verifiers built
-+into the buffer cache.
-+These functions perform inexpensive internal consistency checking of the block
-+itself, and answer these questions:
-+
-+- Does the block belong to this filesystem?
-+
-+- Does the block belong to the structure that asked for the read?
-+  This assumes that metadata blocks only have one owner, which is always true
-+  in XFS.
-+
-+- Is the type of data stored in the block within a reasonable range of what
-+  scrub is expecting?
-+
-+- Does the physical location of the block match the location it was read from?
-+
-+- Does the block checksum match the data?
-+
-+The scope of the protections here are very limited -- verifiers can only
-+establish that the filesystem code is reasonably free of gross corruption bugs
-+and that the storage system is reasonably competent at retrieval.
-+Corruption problems observed at runtime cause the generation of health reports,
-+failed system calls, and in the extreme case, filesystem shutdowns if the
-+corrupt metadata force the cancellation of a dirty transaction.
-+
-+Every online fsck scrubbing function is expected to read every ondisk metadata
-+block of a structure in the course of checking the structure.
-+Corruption problems observed during a check are immediately reported to
-+userspace as corruption; during a cross-reference, they are reported as a
-+failure to cross-reference once the full examination is complete.
-+Reads satisfied by a buffer already in cache (and hence already verified)
-+bypass these checks.
-+
-+Internal Consistency Checks
-+```````````````````````````
-+
-+The next higher level of metadata protection is the internal record
-+verification code built into the filesystem.
-+These checks are split between the buffer verifiers, the in-filesystem users of
-+the buffer cache, and the scrub code itself, depending on the amount of higher
-+level context required.
-+The scope of checking is still internal to the block.
-+For performance reasons, regular code may skip some of these checks unless
-+debugging is enabled or a write is about to occur.
-+Scrub functions, of course, must check all possible problems.
-+Either way, these higher level checking functions answer these questions:
-+
-+- Does the type of data stored in the block match what scrub is expecting?
-+
-+- Does the block belong to the owning structure that asked for the read?
-+
-+- If the block contains records, do the records fit within the block?
-+
-+- If the block tracks internal free space information, is it consistent with
-+  the record areas?
-+
-+- Are the records contained inside the block free of obvious corruptions?
-+
-+Record checks in this category are more rigorous and more time-intensive.
-+For example, block pointers and inumbers are checked to ensure that they point
-+within the dynamically allocated parts of an allocation group and within
-+the filesystem.
-+Names are checked for invalid characters, and flags are checked for invalid
-+combinations.
-+Other record attributes are checked for sensible values.
-+Btree records spanning an interval of the btree keyspace are checked for
-+correct order and lack of mergeability (except for file fork mappings).
-+
-+Validation of Userspace-Controlled Record Attributes
-+````````````````````````````````````````````````````
-+
-+Various pieces of filesystem metadata are directly controlled by userspace.
-+Because of this nature, validation work cannot be more precise than checking
-+that a value is within the possible range.
-+These fields include:
-+
-+- Superblock fields controlled by mount options
-+- Filesystem labels
-+- File timestamps
-+- File permissions
-+- File size
-+- File flags
-+- Names present in directory entries, extended attribute keys, and filesystem
-+  labels
-+- Extended attribute key namespaces
-+- Extended attribute values
-+- File data block contents
-+- Quota limits
-+- Quota timer expiration (if resource usage exceeds the soft limit)
-+
-+Cross-Referencing Space Metadata
-+````````````````````````````````
-+
-+The next higher level of checking is cross-referencing records between metadata
-+structures.
-+For regular runtime code, the cost of these checks is considered to be
-+prohibitively expensive, but as scrub is dedicated to rooting out
-+inconsistencies, it must pursue all avenues of inquiry.
-+The exact set of cross-referencing is highly dependent on the context of the
-+data structure being checked.
-+
-+The XFS btree code has keyspace scanning functions that online fsck uses to
-+cross reference one structure with another.
-+Specifically, scrub can scan the key space of an index to determine if that
-+keyspace is fully, sparsely, or not at all mapped to records.
-+For the reverse mapping btree, it is possible to mask parts of the key for the
-+purposes of performing a keyspace scan so that scrub can decide if the rmap
-+btree contains records mapping a certain extent of physical space without the
-+sparsenses of the rest of the rmap keyspace getting in the way.
-+
-+Btree blocks undergo the following checks before cross-referencing:
-+
-+- Does the type of data stored in the block match what scrub is expecting?
-+
-+- Does the block belong to the owning structure that asked for the read?
-+
-+- Do the records fit within the block?
-+
-+- Are the records contained inside the block free of obvious corruptions?
-+
-+- Are the name hashes in the correct order?
-+
-+- Do node pointers within the btree point to valid block addresses for the type
-+  of btree?
-+
-+- Do child pointers point towards the leaves?
-+
-+- Do sibling pointers point across the same level?
-+
-+- For each node block record, does the record key accurate reflect the contents
-+  of the child block?
-+
-+Space allocation records are cross-referenced as follows:
-+
-+1. Any space mentioned by any metadata structure are cross-referenced as
-+   follows:
-+
-+   - Does the reverse mapping index list only the appropriate owner as the
-+     owner of each block?
-+
-+   - Are none of the blocks claimed as free space?
-+
-+   - If these aren't file data blocks, are none of the blocks claimed as space
-+     shared by different owners?
-+
-+2. Btree blocks are cross-referenced as follows:
-+
-+   - Everything in class 1 above.
-+
-+   - If there's a parent node block, do the keys listed for this block match the
-+     keyspace of this block?
-+
-+   - Do the sibling pointers point to valid blocks?  Of the same level?
-+
-+   - Do the child pointers point to valid blocks?  Of the next level down?
-+
-+3. Free space btree records are cross-referenced as follows:
-+
-+   - Everything in class 1 and 2 above.
-+
-+   - Does the reverse mapping index list no owners of this space?
-+
-+   - Is this space not claimed by the inode index for inodes?
-+
-+   - Is it not mentioned by the reference count index?
-+
-+   - Is there a matching record in the other free space btree?
-+
-+4. Inode btree records are cross-referenced as follows:
-+
-+   - Everything in class 1 and 2 above.
-+
-+   - Is there a matching record in free inode btree?
-+
-+   - Do cleared bits in the holemask correspond with inode clusters?
-+
-+   - Do set bits in the freemask correspond with inode records with zero link
-+     count?
-+
-+5. Inode records are cross-referenced as follows:
-+
-+   - Everything in class 1.
-+
-+   - Do all the fields that summarize information about the file forks actually
-+     match those forks?
-+
-+   - Does each inode with zero link count correspond to a record in the free
-+     inode btree?
-+
-+6. File fork space mapping records are cross-referenced as follows:
-+
-+   - Everything in class 1 and 2 above.
-+
-+   - Is this space not mentioned by the inode btrees?
-+
-+   - If this is a CoW fork mapping, does it correspond to a CoW entry in the
-+     reference count btree?
-+
-+7. Reference count records are cross-referenced as follows:
-+
-+   - Everything in class 1 and 2 above.
-+
-+   - Within the space subkeyspace of the rmap btree (that is to say, all
-+     records mapped to a particular space extent and ignoring the owner info),
-+     are there the same number of reverse mapping records for each block as the
-+     reference count record claims?
-+
-+Proposed patchsets are the series to find gaps in
-+`refcount btree
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=scrub-detect-refcount-gaps>`_,
-+`inode btree
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=scrub-detect-inobt-gaps>`_, and
-+`rmap btree
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=scrub-detect-rmapbt-gaps>`_ records;
-+to find
-+`mergeable records
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=scrub-detect-mergeable-records>`_;
-+and to
-+`improve cross referencing with rmap
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=scrub-strengthen-rmap-checking>`_
-+before starting a repair.
-+
-+Checking Extended Attributes
-+````````````````````````````
-+
-+Extended attributes implement a key-value store that enable fragments of data
-+to be attached to any file.
-+Both the kernel and userspace can access the keys and values, subject to
-+namespace and privilege restrictions.
-+Most typically these fragments are metadata about the file -- origins, security
-+contexts, user-supplied labels, indexing information, etc.
-+
-+Names can be as long as 255 bytes and can exist in several different
-+namespaces.
-+Values can be as large as 64KB.
-+A file's extended attributes are stored in blocks mapped by the attr fork.
-+The mappings point to leaf blocks, remote value blocks, or dabtree blocks.
-+Block 0 in the attribute fork is always the top of the structure, but otherwise
-+each of the three types of blocks can be found at any offset in the attr fork.
-+Leaf blocks contain attribute key records that point to the name and the value.
-+Names are always stored elsewhere in the same leaf block.
-+Values that are less than 3/4 the size of a filesystem block are also stored
-+elsewhere in the same leaf block.
-+Remote value blocks contain values that are too large to fit inside a leaf.
-+If the leaf information exceeds a single filesystem block, a dabtree (also
-+rooted at block 0) is created to map hashes of the attribute names to leaf
-+blocks in the attr fork.
-+
-+Checking an extended attribute structure is not so straightfoward due to the
-+lack of separation between attr blocks and index blocks.
-+Scrub must read each block mapped by the attr fork and ignore the non-leaf
-+blocks:
-+
-+1. Walk the dabtree in the attr fork (if present) to ensure that there are no
-+   irregularities in the blocks or dabtree mappings that do not point to
-+   attr leaf blocks.
-+
-+2. Walk the blocks of the attr fork looking for leaf blocks.
-+   For each entry inside a leaf:
-+
-+   a. Validate that the name does not contain invalid characters.
-+
-+   b. Read the attr value.
-+      This performs a named lookup of the attr name to ensure the correctness
-+      of the dabtree.
-+      If the value is stored in a remote block, this also validates the
-+      integrity of the remote value block.
-+
-+Checking and Cross-Referencing Directories
-+``````````````````````````````````````````
-+
-+The filesystem directory tree is a directed acylic graph structure, with files
-+constituting the nodes, and directory entries (dirents) constituting the edges.
-+Directories are a special type of file containing a set of mappings from a
-+255-byte sequence (name) to an inumber.
-+These are called directory entries, or dirents for short.
-+Each directory file must have exactly one directory pointing to the file.
-+A root directory points to itself.
-+Directory entries point to files of any type.
-+Each non-directory file may have multiple directories point to it.
-+
-+In XFS, directories are implemented as a file containing up to three 32GB
-+partitions.
-+The first partition contains directory entry data blocks.
-+Each data block contains variable-sized records associating a user-provided
-+name with an inumber and, optionally, a file type.
-+If the directory entry data grows beyond one block, the second partition (which
-+exists as post-EOF extents) is populated with a block containing free space
-+information and an index that maps hashes of the dirent names to directory data
-+blocks in the first partition.
-+This makes directory name lookups very fast.
-+If this second partition grows beyond one block, the third partition is
-+populated with a linear array of free space information for faster
-+expansions.
-+If the free space has been separated and the second partition grows again
-+beyond one block, then a dabtree is used to map hashes of dirent names to
-+directory data blocks.
-+
-+Checking a directory is pretty straightfoward:
-+
-+1. Walk the dabtree in the second partition (if present) to ensure that there
-+   are no irregularities in the blocks or dabtree mappings that do not point to
-+   dirent blocks.
-+
-+2. Walk the blocks of the first partition looking for directory entries.
-+   Each dirent is checked as follows:
-+
-+   a. Does the name contain no invalid characters?
-+
-+   b. Does the inumber correspond to an actual, allocated inode?
-+
-+   c. Does the child inode have a nonzero link count?
-+
-+   d. If a file type is included in the dirent, does it match the type of the
-+      inode?
-+
-+   e. If the child is a subdirectory, does the child's dotdot pointer point
-+      back to the parent?
-+
-+   f. If the directory has a second partition, perform a named lookup of the
-+      dirent name to ensure the correctness of the dabtree.
-+
-+3. Walk the free space list in the third partition (if present) to ensure that
-+   the free spaces it describes are really unused.
-+
-+Checking operations involving :ref:`parents <dirparent>` and
-+:ref:`file link counts <nlinks>` are discussed in more detail in later
-+sections.
-+
-+Checking Directory/Attribute Btrees
-+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-+
-+As stated in previous sections, the directory/attribute btree (dabtree) index
-+maps user-provided names to improve lookup times by avoiding linear scans.
-+Internally, it maps a 32-bit hash of the name to a block offset within the
-+appropriate file fork.
-+
-+The internal structure of a dabtree closely resembles the btrees that record
-+fixed-size metadata records -- each dabtree block contains a magic number, a
-+checksum, sibling pointers, a UUID, a tree level, and a log sequence number.
-+The format of leaf and node records are the same -- each entry points to the
-+next level down in the hierarchy, with dabtree node records pointing to dabtree
-+leaf blocks, and dabtree leaf records pointing to non-dabtree blocks elsewhere
-+in the fork.
-+
-+Checking and cross-referencing the dabtree is very similar to what is done for
-+space btrees:
-+
-+- Does the type of data stored in the block match what scrub is expecting?
-+
-+- Does the block belong to the owning structure that asked for the read?
-+
-+- Do the records fit within the block?
-+
-+- Are the records contained inside the block free of obvious corruptions?
-+
-+- Are the name hashes in the correct order?
-+
-+- Do node pointers within the dabtree point to valid fork offsets for dabtree
-+  blocks?
-+
-+- Do leaf pointers within the dabtree point to valid fork offsets for directory
-+  or attr leaf blocks?
-+
-+- Do child pointers point towards the leaves?
-+
-+- Do sibling pointers point across the same level?
-+
-+- For each dabtree node record, does the record key accurate reflect the
-+  contents of the child dabtree block?
-+
-+- For each dabtree leaf record, does the record key accurate reflect the
-+  contents of the directory or attr block?
-+
-+Cross-Referencing Summary Counters
-+``````````````````````````````````
-+
-+XFS maintains three classes of summary counters: available resources, quota
-+resource usage, and file link counts.
-+
-+In theory, the amount of available resources (data blocks, inodes, realtime
-+extents) can be found by walking the entire filesystem.
-+This would make for very slow reporting, so a transactional filesystem can
-+maintain summaries of this information in the superblock.
-+Cross-referencing these values against the filesystem metadata should be a
-+simple matter of walking the free space and inode metadata in each AG and the
-+realtime bitmap, but there are complications that will be discussed in
-+:ref:`more detail <fscounters>` later.
-+
-+:ref:`Quota usage <quotacheck>` and :ref:`file link count <nlinks>`
-+checking are sufficiently complicated to warrant separate sections.
-+
-+Post-Repair Reverification
-+``````````````````````````
-+
-+After performing a repair, the checking code is run a second time to validate
-+the new structure, and the results of the health assessment are recorded
-+internally and returned to the calling process.
-+This step is critical for enabling system administrator to monitor the status
-+of the filesystem and the progress of any repairs.
-+For developers, it is a useful means to judge the efficacy of error detection
-+and correction in the online and offline checking tools.
-diff --git a/Documentation/filesystems/xfs-self-describing-metadata.rst b/Documentation/filesystems/xfs-self-describing-metadata.rst
-index b79dbf36dc94..a10c4ae6955e 100644
---- a/Documentation/filesystems/xfs-self-describing-metadata.rst
-+++ b/Documentation/filesystems/xfs-self-describing-metadata.rst
-@@ -1,4 +1,5 @@
- .. SPDX-License-Identifier: GPL-2.0
-+.. _xfs_self_describing_metadata:
+@@ -300,6 +300,9 @@ The seven phases are as follows:
+ 7. Re-check the summary counters and presents the caller with a summary of
+    space usage and file counts.
  
- ============================
- XFS Self Describing Metadata
++This allocation of responsibilities will be :ref:`revisited <scrubcheck>`
++later in this document.
++
+ Steps for Each Scrub Item
+ -------------------------
+ 
+@@ -4505,3 +4508,313 @@ The proposed patches are in the
+ `orphanage adoption
+ <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-orphanage>`_
+ series.
++
++6. Userspace Algorithms and Data Structures
++===========================================
++
++This section discusses the key algorithms and data structures of the userspace
++program, ``xfs_scrub``, that provide the ability to drive metadata checks and
++repairs in the kernel, verify file data, and look for other potential problems.
++
++.. _scrubcheck:
++
++Checking Metadata
++-----------------
++
++Recall the :ref:`phases of fsck work<scrubphases>` outlined earlier.
++That structure follows naturally from the data dependencies designed into the
++filesystem from its beginnings in 1993.
++In XFS, there are several groups of metadata dependencies:
++
++a. Filesystem summary counts depend on consistency within the inode indices,
++   the allocation group space btrees, and the realtime volume space
++   information.
++
++b. Quota resource counts depend on consistency within the quota file data
++   forks, inode indices, inode records, and the forks of every file on the
++   system.
++
++c. The naming hierarchy depends on consistency within the directory and
++   extended attribute structures.
++   This includes file link counts.
++
++d. Directories, extended attributes, and file data depend on consistency within
++   the file forks that map directory and extended attribute data to physical
++   storage media.
++
++e. The file forks depends on consistency within inode records and the space
++   metadata indices of the allocation groups and the realtime volume.
++   This includes quota and realtime metadata files.
++
++f. Inode records depends on consistency within the inode metadata indices.
++
++g. Realtime space metadata depend on the inode records and data forks of the
++   realtime metadata inodes.
++
++h. The allocation group metadata indices (free space, inodes, reference count,
++   and reverse mapping btrees) depend on consistency within the AG headers and
++   between all the AG metadata btrees.
++
++i. ``xfs_scrub`` depends on the filesystem being mounted and kernel support
++   for online fsck functionality.
++
++Therefore, a metadata dependency graph is a convenient way to schedule checking
++operations in the ``xfs_scrub`` program:
++
++- Phase 1 checks that the provided path maps to an XFS filesystem and detect
++  the kernel's scrubbing abilities, which validates group (i).
++
++- Phase 2 scrubs groups (g) and (h) in parallel using a threaded workqueue.
++
++- Phase 3 checks groups (f), (e), and (d), in that order.
++  These groups are all file metadata, which means that inodes are scanned in
++  parallel.
++
++- Phase 4 repairs everything in groups (i) through (d) so that phases 5 and 6
++  may run reliably.
++
++- Phase 5 starts by checking groups (b) and (c) in parallel before moving on
++  to checking names.
++
++- Phase 6 depends on groups (i) through (b) to find file data blocks to verify,
++  to read them, and to report which blocks of which files are affected.
++
++- Phase 7 checks group (a), having validated everything else.
++
++Notice that the data dependencies between groups are enforced by the structure
++of the program flow.
++
++Parallel Inode Scans
++--------------------
++
++An XFS filesystem can easily contain hundreds of millions of inodes.
++Given that XFS targets installations with large high-performance storage,
++it is desirable to scrub inodes in parallel to minimize runtime, particularly
++if the program has been invoked manually from a command line.
++This requires careful scheduling to keep the threads as evenly loaded as
++possible.
++
++Early iterations of the ``xfs_scrub`` inode scanner naïvely created a single
++workqueue and scheduled a single workqueue item per AG.
++Each workqueue item walked the inode btree (with ``XFS_IOC_INUMBERS``) to find
++inode chunks and then called bulkstat (``XFS_IOC_BULKSTAT``) to gather enough
++information to construct file handles.
++The file handle was then passed to a function to generate scrub items for each
++metadata object of each inode.
++This simple algorithm leads to thread balancing problems in phase 3 if the
++filesystem contains one AG with a few large sparse files and the rest of the
++AGs contain many smaller files.
++The inode scan dispatch function was not sufficiently granular; it should have
++been dispatching at the level of individual inodes, or, to constrain memory
++consumption, inode btree records.
++
++Thanks to Dave Chinner, bounded workqueues in userspace enable ``xfs_scrub`` to
++avoid this problem with ease by adding a second workqueue.
++Just like before, the first workqueue is seeded with one workqueue item per AG,
++and it uses INUMBERS to find inode btree chunks.
++The second workqueue, however, is configured with an upper bound on the number
++of items that can be waiting to be run.
++Each inode btree chunk found by the first workqueue's workers are queued to the
++second workqueue, and it is this second workqueue that queries BULKSTAT,
++creates a file handle, and passes it to a function to generate scrub items for
++each metadata object of each inode.
++If the second workqueue is too full, the workqueue add function blocks the
++first workqueue's workers until the backlog eases.
++This doesn't completely solve the balancing problem, but reduces it enough to
++move on to more pressing issues.
++
++The proposed patchsets are the scrub
++`performance tweaks
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-performance-tweaks>`_
++and the
++`inode scan rebalance
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-iscan-rebalance>`_
++series.
++
++.. _scrubrepair:
++
++Scheduling Repairs
++------------------
++
++During phase 2, corruptions and inconsistencies reported in any AGI header or
++inode btree are repaired immediately, because phase 3 relies on proper
++functioning of the inode indices to find inodes to scan.
++Failed repairs are rescheduled to phase 4.
++Problems reported in any other space metadata are deferred to phase 4.
++Optimization opportunities are always deferred to phase 4, no matter their
++origin.
++
++During phase 3, corruptions and inconsistencies reported in any part of a
++file's metadata are repaired immediately if all space metadata were validated
++during phase 2.
++Repairs that fail or cannot be repaired immediately are scheduled for phase 4.
++
++In the original design of ``xfs_scrub``, it was thought that repairs would be
++so infrequent that the ``struct xfs_scrub_metadata`` objects used to
++communicate with the kernel could also be used as the primary object to
++schedule repairs.
++With recent increases in the number of optimizations possible for a given
++filesystem object, it became much more memory-efficient to track all eligible
++repairs for a given filesystem object with a single repair item.
++Each repair item represents a single lockable object -- AGs, metadata files,
++individual inodes, or a class of summary information.
++
++Phase 4 is responsible for scheduling a lot of repair work in as quick a
++manner as is practical.
++The :ref:`data dependencies <scrubcheck>` outlined earlier still apply, which
++means that ``xfs_scrub`` must try to complete the repair work scheduled by
++phase 2 before trying repair work scheduled by phase 3.
++The repair process is as follows:
++
++1. Start a round of repair with a workqueue and enough workers to keep the CPUs
++   as busy as the user desires.
++
++   a. For each repair item queued by phase 2,
++
++      i.   Ask the kernel to repair everything listed in the repair item for a
++           given filesystem object.
++
++      ii.  Make a note if the kernel made any progress in reducing the number
++           of repairs needed for this object.
++
++      iii. If the object no longer requires repairs, revalidate all metadata
++           associated with this object.
++           If the revalidation succeeds, drop the repair item.
++           If not, requeue the item for more repairs.
++
++   b. If any repairs were made, jump back to 1a to retry all the phase 2 items.
++
++   c. For each repair item queued by phase 3,
++
++      i.   Ask the kernel to repair everything listed in the repair item for a
++           given filesystem object.
++
++      ii.  Make a note if the kernel made any progress in reducing the number
++           of repairs needed for this object.
++
++      iii. If the object no longer requires repairs, revalidate all metadata
++           associated with this object.
++           If the revalidation succeeds, drop the repair item.
++           If not, requeue the item for more repairs.
++
++   d. If any repairs were made, jump back to 1c to retry all the phase 3 items.
++
++2. If step 1 made any repair progress of any kind, jump back to step 1 to start
++   another round of repair.
++
++3. If there are items left to repair, run them all serially one more time.
++   Complain if the repairs were not successful, since this is the last chance
++   to repair anything.
++
++Corruptions and inconsistencies encountered during phases 5 and 7 are repaired
++immediately.
++Corrupt file data blocks reported by phase 6 cannot be recovered by the
++filesystem.
++
++The proposed patchsets are the
++`repair warning improvements
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-better-repair-warnings>`_,
++refactoring of the
++`repair data dependency
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-repair-data-deps>`_
++and
++`object tracking
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-object-tracking>`_,
++and the
++`repair scheduling
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=scrub-repair-scheduling>`_
++improvement series.
++
++Checking Names for Confusable Unicode Sequences
++-----------------------------------------------
++
++If ``xfs_scrub`` succeeds in validating the filesystem metadata by the end of
++phase 4, it moves on to phase 5, which checks for suspicious looking names in
++the filesystem.
++These names consist of the filesystem label, names in directory entries, and
++the names of extended attributes.
++Like most Unix filesystems, XFS imposes the sparest of constraints on the
++contents of a name -- slashes and null bytes are not allowed in directory
++entries; and null bytes are not allowed in extended attributes and the
++filesystem label.
++Directory entries and attribute keys store the length of the name explicitly
++ondisk, which means that nulls are not name terminators.
++For this section, the term "naming domain" refers to any place where names are
++presented together -- all the names in a directory, or all the attributes of a
++file.
++
++Although the Unix naming constraints are very permissive, the reality of most
++modern-day Linux systems is that programs work with Unicode character code
++points to support international languages.
++These programs typically encode those code points in UTF-8 when interfacing
++with the C library because the kernel expects null-terminated names.
++In the common case, therefore, names found in an XFS filesystem are actually
++UTF-8 encoded Unicode data.
++
++To maximize its expressiveness, the Unicode standard defines separate control
++points for various characters that render similarly or identically in writing
++systems around the world.
++For example, the character "Cyrillic Small Letter A" U+0430 "а" often renders
++identically to "Latin Small Letter A" U+0061 "a".
++
++The standard also permits characters to be constructed in multiple ways --
++either by using a defined code point, or by combining one code point with
++various combining marks.
++For example, the character "Angstrom Sign U+212B "Å" can also be expressed
++as "Latin Capital Letter A" U+0041 "A" followed by "Combining Ring Above"
++U+030A "◌̊".
++Both sequences render identically.
++
++Like the standards that preceded it, Unicode also defines various control
++characters to alter the presentation of text.
++For example, the character "Right-to-Left Override" U+202E can trick some
++programs into rendering "moo\\xe2\\x80\\xaegnp.txt" as "mootxt.png".
++A second category of rendering problems involves whitespace characters.
++If the character "Zero Width Space" U+200B is encountered in a file name, the
++name will render identically to a name that does not have the zero width
++space.
++
++If two names within a naming domain have different byte sequences but render
++identically, a user may be confused by it.
++The kernel, in its indifference to upper level encoding schemes, permits this.
++Most filesystem drivers persist the byte sequence names that are given to them
++by the VFS.
++
++Techniques for detecting confusable names are explained in great detail in
++sections 4 and 5 of the
++`Unicode Security Mechanisms <https://unicode.org/reports/tr39/>`_
++document.
++``xfs_scrub``, when it detects UTF-8 encoding in use on a system, uses the
++Unicode normalization form NFD in conjunction with the confusable name
++detection component of
++`libicu <https://github.com/unicode-org/icu>`_
++to identify names with a directory or within a file's extended attributes that
++could be confused for each other.
++Names are also checked for control characters, non-rendering characters, and
++mixing of bidirectional characters.
++All of these potential issues are reported to the system administrator during
++phase 5.
++
++Media Verification of File Data Extents
++---------------------------------------
++
++The system administrator can elect to initiate a media scan of all file data
++blocks.
++This scan after validation of all filesystem metadata (except for the summary
++counters) as phase 6.
++The scan starts by calling ``FS_IOC_GETFSMAP`` to scan the filesystem space map
++to find areas that are allocated to file data fork extents.
++Gaps betweeen data fork extents that are smaller than 64k are treated as if
++they were data fork extents to reduce the command setup overhead.
++When the space map scan accumulates a region larger than 32MB, a media
++verification request is sent to the disk as a directio read of the raw block
++device.
++
++If the verification read fails, ``xfs_scrub`` retries with single-block reads
++to narrow down the failure to the specific region of the media and recorded.
++When it has finished issuing verification requests, it again uses the space
++mapping ioctl to map the recorded media errors back to metadata structures
++and report what has been lost.
++For media errors in blocks owned by files, the lack of parent pointers means
++that the entire filesystem must be walked to report the file paths and offsets
++corresponding to the media error.
 
