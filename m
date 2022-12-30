@@ -2,45 +2,46 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0957E659E2C
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Dec 2022 00:26:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2006E659E7A
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Dec 2022 00:41:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235764AbiL3XZu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Dec 2022 18:25:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36672 "EHLO
+        id S235622AbiL3Xll (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Dec 2022 18:41:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235943AbiL3XZM (ORCPT
+        with ESMTP id S235598AbiL3Xlj (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Dec 2022 18:25:12 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7E22E1E3DE;
-        Fri, 30 Dec 2022 15:25:00 -0800 (PST)
+        Fri, 30 Dec 2022 18:41:39 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADB0C1DDE7;
+        Fri, 30 Dec 2022 15:41:38 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 0FC4361C2C;
-        Fri, 30 Dec 2022 23:25:00 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68B7CC433D2;
-        Fri, 30 Dec 2022 23:24:59 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2F5CBB81DCB;
+        Fri, 30 Dec 2022 23:41:37 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5618C433D2;
+        Fri, 30 Dec 2022 23:41:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672442699;
-        bh=5z3fd5l8ZAbcNUR/2OKoxyGqTHfDkVHL0P5ZYH67JjI=;
+        s=k20201202; t=1672443695;
+        bh=iV3LhJ9EAMhW9zWHRgbsuT27rQFSTxz3t2SSyTexDm4=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=diMSvwtyvEJ/4W8FN9hromo1Gx08e3L+Zb/9hIbDZ0uSxBaQGVW/TvSgXAWaTxkVg
-         ZtY0HV1HVbKsaTKvhzP2x8eDAchk+BOm26HV//LoQHuh4g6pTQKCGdNW1VfmZ0mDdY
-         2FEVP1aVqQOnF1SULv0WcraqFxCIsgGAl0zrl88rD6VyFUJUqWDHNCnqJu6U33Pipf
-         pPor9F0rGJ6pQmgX8AyyxKzq+15WW13VDMukTet85241dnuW01ob93CthDuborrVxQ
-         LpLV4np1tYE/lDGDNSILaCtpex76kIoLOl9d9ahwd58rx6ogLWiKc04JAgCyAoFYNS
-         nC5QCfFrHMMGQ==
-Subject: [PATCH 4/7] xfs: teach xfile to pass back direct-map pages to caller
+        b=NBtHTug/o5mwivAxoIWIge1m5jkvXYJinnjKSEbMjuSU4JSH7RoTrgrZUoX2FF0pk
+         1QaJlYdmaNOFQTAU0azvRMZ1X8Vlws+3JjIcXzquaBgVZJIcrB0bn88iRUuZdxmQ98
+         a20sbTmfrLEvoKHRqUYED27onSgy1BJ99ttGX4jcnHPmTenQc6zcMH59d22jnZIR3K
+         8ItEx/s4dLGK2sfwRprFCFHPPCz1/9YMyk9QQoHcZWP3nB/FjVeyw/TIOFHa1m0J9K
+         uRfEw/2tWGBfp1/zqY2nhIy/tdoVviRjy2pgFuPCqTFPXVPO+OTHckSz1Bo5L1k/y0
+         1NsOIF37M9wIA==
+Subject: [PATCH 2/7] xfs: teach buftargs to maintain their own buffer
+ hashtable
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
         linux-fsdevel@vger.kernel.org
-Date:   Fri, 30 Dec 2022 14:12:35 -0800
-Message-ID: <167243835545.692498.13924192102230205821.stgit@magnolia>
-In-Reply-To: <167243835481.692498.14657125042725378987.stgit@magnolia>
-References: <167243835481.692498.14657125042725378987.stgit@magnolia>
+Date:   Fri, 30 Dec 2022 14:13:26 -0800
+Message-ID: <167243840627.696535.15938554761194724741.stgit@magnolia>
+In-Reply-To: <167243840589.696535.4812770109109400531.stgit@magnolia>
+References: <167243840589.696535.4812770109109400531.stgit@magnolia>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -56,171 +57,368 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Certain xfile array operations (such as sorting) can be sped up quite a
-bit by allowing xfile users to grab a page to bulk-read the records
-contained within it.  Create helper methods to facilitate this.
+Currently, cached buffers are indexed by per-AG hashtables.  This works
+great for the data device, but won't work for in-memory btrees.  Make it
+so that buftargs can index buffers too.  Introduce XFS_BSTATE_CACHED as
+an explicit state flag for buffers that are cached in an rhashtable,
+since we can't rely on b_pag being set for buffers that are cached but
+not on behalf of an AG.  We'll soon be using the buffer cache for
+xfiles.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/scrub/trace.h |    2 +
- fs/xfs/scrub/xfile.c |  108 ++++++++++++++++++++++++++++++++++++++++++++++++++
- fs/xfs/scrub/xfile.h |   10 +++++
- 3 files changed, 120 insertions(+)
+ fs/xfs/xfs_buf.c |  142 ++++++++++++++++++++++++++++++++++++++++--------------
+ fs/xfs/xfs_buf.h |    9 +++
+ 2 files changed, 113 insertions(+), 38 deletions(-)
 
 
-diff --git a/fs/xfs/scrub/trace.h b/fs/xfs/scrub/trace.h
-index 9de9d4f795e8..79b844c969df 100644
---- a/fs/xfs/scrub/trace.h
-+++ b/fs/xfs/scrub/trace.h
-@@ -824,6 +824,8 @@ DEFINE_EVENT(xfile_class, name, \
- DEFINE_XFILE_EVENT(xfile_pread);
- DEFINE_XFILE_EVENT(xfile_pwrite);
- DEFINE_XFILE_EVENT(xfile_seek_data);
-+DEFINE_XFILE_EVENT(xfile_get_page);
-+DEFINE_XFILE_EVENT(xfile_put_page);
+diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
+index 2bea2c3f9ead..7dfc1db566fa 100644
+--- a/fs/xfs/xfs_buf.c
++++ b/fs/xfs/xfs_buf.c
+@@ -570,7 +570,7 @@ xfs_buf_find_lock(
  
- TRACE_EVENT(xfarray_create,
- 	TP_PROTO(struct xfarray *xfa, unsigned long long required_capacity),
-diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
-index 43455aa78243..7090a8e12b60 100644
---- a/fs/xfs/scrub/xfile.c
-+++ b/fs/xfs/scrub/xfile.c
-@@ -316,3 +316,111 @@ xfile_stat(
- 	statbuf->bytes = ks.blocks << SECTOR_SHIFT;
+ static inline int
+ xfs_buf_lookup(
+-	struct xfs_perag	*pag,
++	struct rhashtable	*bufhash,
+ 	struct xfs_buf_map	*map,
+ 	xfs_buf_flags_t		flags,
+ 	struct xfs_buf		**bpp)
+@@ -579,7 +579,7 @@ xfs_buf_lookup(
+ 	int			error;
+ 
+ 	rcu_read_lock();
+-	bp = rhashtable_lookup(&pag->pag_buf_hash, map, xfs_buf_hash_params);
++	bp = rhashtable_lookup(bufhash, map, xfs_buf_hash_params);
+ 	if (!bp || !atomic_inc_not_zero(&bp->b_hold)) {
+ 		rcu_read_unlock();
+ 		return -ENOENT;
+@@ -605,6 +605,8 @@ static int
+ xfs_buf_find_insert(
+ 	struct xfs_buftarg	*btp,
+ 	struct xfs_perag	*pag,
++	spinlock_t		*hashlock,
++	struct rhashtable	*bufhash,
+ 	struct xfs_buf_map	*cmap,
+ 	struct xfs_buf_map	*map,
+ 	int			nmaps,
+@@ -632,18 +634,18 @@ xfs_buf_find_insert(
+ 			goto out_free_buf;
+ 	}
+ 
+-	spin_lock(&pag->pag_buf_lock);
+-	bp = rhashtable_lookup_get_insert_fast(&pag->pag_buf_hash,
+-			&new_bp->b_rhash_head, xfs_buf_hash_params);
++	spin_lock(hashlock);
++	bp = rhashtable_lookup_get_insert_fast(bufhash, &new_bp->b_rhash_head,
++			xfs_buf_hash_params);
+ 	if (IS_ERR(bp)) {
+ 		error = PTR_ERR(bp);
+-		spin_unlock(&pag->pag_buf_lock);
++		spin_unlock(hashlock);
+ 		goto out_free_buf;
+ 	}
+ 	if (bp) {
+ 		/* found an existing buffer */
+ 		atomic_inc(&bp->b_hold);
+-		spin_unlock(&pag->pag_buf_lock);
++		spin_unlock(hashlock);
+ 		error = xfs_buf_find_lock(bp, flags);
+ 		if (error)
+ 			xfs_buf_rele(bp);
+@@ -654,14 +656,16 @@ xfs_buf_find_insert(
+ 
+ 	/* The new buffer keeps the perag reference until it is freed. */
+ 	new_bp->b_pag = pag;
+-	spin_unlock(&pag->pag_buf_lock);
++	new_bp->b_state |= XFS_BSTATE_CACHED;
++	spin_unlock(hashlock);
+ 	*bpp = new_bp;
  	return 0;
+ 
+ out_free_buf:
+ 	xfs_buf_free(new_bp);
+ out_drop_pag:
+-	xfs_perag_put(pag);
++	if (pag)
++		xfs_perag_put(pag);
+ 	return error;
  }
-+
-+/*
-+ * Grab the (locked) page for a memory object.  The object cannot span a page
-+ * boundary.  Returns 0 (and a locked page) if successful, -ENOTBLK if we
-+ * cannot grab the page, or the usual negative errno.
-+ */
-+int
-+xfile_get_page(
-+	struct xfile		*xf,
-+	loff_t			pos,
-+	unsigned int		len,
-+	struct xfile_page	*xfpage)
-+{
-+	struct inode		*inode = file_inode(xf->file);
-+	struct address_space	*mapping = inode->i_mapping;
-+	const struct address_space_operations *aops = mapping->a_ops;
-+	struct page		*page = NULL;
-+	void			*fsdata = NULL;
-+	loff_t			key = round_down(pos, PAGE_SIZE);
-+	unsigned int		pflags;
-+	int			error;
-+
-+	if (inode->i_sb->s_maxbytes - pos < len)
-+		return -ENOMEM;
-+	if (len > PAGE_SIZE - offset_in_page(pos))
-+		return -ENOTBLK;
-+
-+	trace_xfile_get_page(xf, pos, len);
-+
-+	pflags = memalloc_nofs_save();
-+
-+	/*
-+	 * We call write_begin directly here to avoid all the freezer
-+	 * protection lock-taking that happens in the normal path.  shmem
-+	 * doesn't support fs freeze, but lockdep doesn't know that and will
-+	 * trip over that.
-+	 */
-+	error = aops->write_begin(NULL, mapping, key, PAGE_SIZE, &page,
-+			&fsdata);
-+	if (error)
-+		goto out_pflags;
-+
-+	/* We got the page, so make sure we push out EOF. */
-+	if (i_size_read(inode) < pos + len)
-+		i_size_write(inode, pos + len);
-+
-+	/*
-+	 * If the page isn't up to date, fill it with zeroes before we hand it
-+	 * to the caller and make sure the backing store will hold on to them.
-+	 */
-+	if (!PageUptodate(page)) {
-+		void	*kaddr;
-+
-+		kaddr = kmap_local_page(page);
-+		memset(kaddr, 0, PAGE_SIZE);
-+		kunmap_local(kaddr);
-+		SetPageUptodate(page);
+ 
+@@ -678,6 +682,8 @@ xfs_buf_get_map(
+ 	xfs_buf_flags_t		flags,
+ 	struct xfs_buf		**bpp)
+ {
++	spinlock_t		*hashlock;
++	struct rhashtable	*bufhash;
+ 	struct xfs_perag	*pag;
+ 	struct xfs_buf		*bp = NULL;
+ 	struct xfs_buf_map	cmap = { .bm_bn = map[0].bm_bn };
+@@ -693,10 +699,18 @@ xfs_buf_get_map(
+ 	if (error)
+ 		return error;
+ 
+-	pag = xfs_perag_get(btp->bt_mount,
+-			    xfs_daddr_to_agno(btp->bt_mount, cmap.bm_bn));
++	if (btp->bt_flags & XFS_BUFTARG_SELF_CACHED) {
++		pag = NULL;
++		hashlock = &btp->bt_hashlock;
++		bufhash = &btp->bt_bufhash;
++	} else {
++		pag = xfs_perag_get(btp->bt_mount,
++				xfs_daddr_to_agno(btp->bt_mount, cmap.bm_bn));
++		hashlock = &pag->pag_buf_lock;
++		bufhash = &pag->pag_buf_hash;
++	}
+ 
+-	error = xfs_buf_lookup(pag, &cmap, flags, &bp);
++	error = xfs_buf_lookup(bufhash, &cmap, flags, &bp);
+ 	if (error && error != -ENOENT)
+ 		goto out_put_perag;
+ 
+@@ -708,13 +722,14 @@ xfs_buf_get_map(
+ 			goto out_put_perag;
+ 
+ 		/* xfs_buf_find_insert() consumes the perag reference. */
+-		error = xfs_buf_find_insert(btp, pag, &cmap, map, nmaps,
+-				flags, &bp);
++		error = xfs_buf_find_insert(btp, pag, hashlock, bufhash, &cmap,
++				map, nmaps, flags, &bp);
+ 		if (error)
+ 			return error;
+ 	} else {
+ 		XFS_STATS_INC(btp->bt_mount, xb_get_locked);
+-		xfs_perag_put(pag);
++		if (pag)
++			xfs_perag_put(pag);
+ 	}
+ 
+ 	/* We do not hold a perag reference anymore. */
+@@ -742,7 +757,8 @@ xfs_buf_get_map(
+ 	return 0;
+ 
+ out_put_perag:
+-	xfs_perag_put(pag);
++	if (pag)
++		xfs_perag_put(pag);
+ 	return error;
+ }
+ 
+@@ -996,12 +1012,14 @@ xfs_buf_rele(
+ 	struct xfs_buf		*bp)
+ {
+ 	struct xfs_perag	*pag = bp->b_pag;
++	spinlock_t		*hashlock;
++	struct rhashtable	*bufhash;
+ 	bool			release;
+ 	bool			freebuf = false;
+ 
+ 	trace_xfs_buf_rele(bp, _RET_IP_);
+ 
+-	if (!pag) {
++	if (!(bp->b_state & XFS_BSTATE_CACHED)) {
+ 		ASSERT(list_empty(&bp->b_lru));
+ 		if (atomic_dec_and_test(&bp->b_hold)) {
+ 			xfs_buf_ioacct_dec(bp);
+@@ -1012,6 +1030,14 @@ xfs_buf_rele(
+ 
+ 	ASSERT(atomic_read(&bp->b_hold) > 0);
+ 
++	if (bp->b_target->bt_flags & XFS_BUFTARG_SELF_CACHED) {
++		hashlock = &bp->b_target->bt_hashlock;
++		bufhash = &bp->b_target->bt_bufhash;
++	} else {
++		hashlock = &pag->pag_buf_lock;
++		bufhash = &pag->pag_buf_hash;
 +	}
 +
-+	/*
-+	 * Mark each page dirty so that the contents are written to some
-+	 * backing store when we drop this buffer, and take an extra reference
-+	 * to prevent the xfile page from being swapped or removed from the
-+	 * page cache by reclaim if the caller unlocks the page.
-+	 */
-+	set_page_dirty(page);
-+	get_page(page);
+ 	/*
+ 	 * We grab the b_lock here first to serialise racing xfs_buf_rele()
+ 	 * calls. The pag_buf_lock being taken on the last reference only
+@@ -1023,7 +1049,7 @@ xfs_buf_rele(
+ 	 * leading to a use-after-free scenario.
+ 	 */
+ 	spin_lock(&bp->b_lock);
+-	release = atomic_dec_and_lock(&bp->b_hold, &pag->pag_buf_lock);
++	release = atomic_dec_and_lock(&bp->b_hold, hashlock);
+ 	if (!release) {
+ 		/*
+ 		 * Drop the in-flight state if the buffer is already on the LRU
+@@ -1048,7 +1074,7 @@ xfs_buf_rele(
+ 			bp->b_state &= ~XFS_BSTATE_DISPOSE;
+ 			atomic_inc(&bp->b_hold);
+ 		}
+-		spin_unlock(&pag->pag_buf_lock);
++		spin_unlock(hashlock);
+ 	} else {
+ 		/*
+ 		 * most of the time buffers will already be removed from the
+@@ -1063,10 +1089,13 @@ xfs_buf_rele(
+ 		}
+ 
+ 		ASSERT(!(bp->b_flags & _XBF_DELWRI_Q));
+-		rhashtable_remove_fast(&pag->pag_buf_hash, &bp->b_rhash_head,
+-				       xfs_buf_hash_params);
+-		spin_unlock(&pag->pag_buf_lock);
+-		xfs_perag_put(pag);
++		rhashtable_remove_fast(bufhash, &bp->b_rhash_head,
++				xfs_buf_hash_params);
++		spin_unlock(hashlock);
++		if (pag)
++			xfs_perag_put(pag);
++		bp->b_state &= ~XFS_BSTATE_CACHED;
++		bp->b_pag = NULL;
+ 		freebuf = true;
+ 	}
+ 
+@@ -1946,6 +1975,8 @@ xfs_free_buftarg(
+ 	ASSERT(percpu_counter_sum(&btp->bt_io_count) == 0);
+ 	percpu_counter_destroy(&btp->bt_io_count);
+ 	list_lru_destroy(&btp->bt_lru);
++	if (btp->bt_flags & XFS_BUFTARG_SELF_CACHED)
++		rhashtable_destroy(&btp->bt_bufhash);
+ 
+ 	blkdev_issue_flush(btp->bt_bdev);
+ 	invalidate_bdev(btp->bt_bdev);
+@@ -1990,24 +2021,20 @@ xfs_setsize_buftarg_early(
+ 	return xfs_setsize_buftarg(btp, bdev_logical_block_size(bdev));
+ }
+ 
+-struct xfs_buftarg *
+-xfs_alloc_buftarg(
++static struct xfs_buftarg *
++__xfs_alloc_buftarg(
+ 	struct xfs_mount	*mp,
+-	struct block_device	*bdev)
++	unsigned int		flags)
+ {
+-	xfs_buftarg_t		*btp;
+-	const struct dax_holder_operations *ops = NULL;
++	struct xfs_buftarg	*btp;
++	int			error;
+ 
+-#if defined(CONFIG_FS_DAX) && defined(CONFIG_MEMORY_FAILURE)
+-	ops = &xfs_dax_holder_operations;
+-#endif
+ 	btp = kmem_zalloc(sizeof(*btp), KM_NOFS);
++	if (!btp)
++		return NULL;
+ 
+ 	btp->bt_mount = mp;
+-	btp->bt_dev =  bdev->bd_dev;
+-	btp->bt_bdev = bdev;
+-	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off,
+-					    mp, ops);
++	btp->bt_flags = flags;
+ 
+ 	/*
+ 	 * Buffer IO error rate limiting. Limit it to no more than 10 messages
+@@ -2016,9 +2043,6 @@ xfs_alloc_buftarg(
+ 	ratelimit_state_init(&btp->bt_ioerror_rl, 30 * HZ,
+ 			     DEFAULT_RATELIMIT_BURST);
+ 
+-	if (xfs_setsize_buftarg_early(btp, bdev))
+-		goto error_free;
+-
+ 	if (list_lru_init(&btp->bt_lru))
+ 		goto error_free;
+ 
+@@ -2032,8 +2056,18 @@ xfs_alloc_buftarg(
+ 	if (register_shrinker(&btp->bt_shrinker, "xfs-buf:%s",
+ 			      mp->m_super->s_id))
+ 		goto error_pcpu;
 +
-+	xfpage->page = page;
-+	xfpage->fsdata = fsdata;
-+	xfpage->pos = key;
-+out_pflags:
-+	memalloc_nofs_restore(pflags);
-+	return error;
-+}
++	if (btp->bt_flags & XFS_BUFTARG_SELF_CACHED) {
++		spin_lock_init(&btp->bt_hashlock);
++		error = rhashtable_init(&btp->bt_bufhash, &xfs_buf_hash_params);
++		if (error)
++			goto error_shrinker;
++	}
 +
-+/*
-+ * Release the (locked) page for a memory object.  Returns 0 or a negative
-+ * errno.
-+ */
-+int
-+xfile_put_page(
-+	struct xfile		*xf,
-+	struct xfile_page	*xfpage)
+ 	return btp;
+ 
++error_shrinker:
++	unregister_shrinker(&btp->bt_shrinker);
+ error_pcpu:
+ 	percpu_counter_destroy(&btp->bt_io_count);
+ error_lru:
+@@ -2043,6 +2077,38 @@ xfs_alloc_buftarg(
+ 	return NULL;
+ }
+ 
++/* Allocate a buffer cache target for a persistent block device. */
++struct xfs_buftarg *
++xfs_alloc_buftarg(
++	struct xfs_mount	*mp,
++	struct block_device	*bdev)
 +{
-+	struct inode		*inode = file_inode(xf->file);
-+	struct address_space	*mapping = inode->i_mapping;
-+	const struct address_space_operations *aops = mapping->a_ops;
-+	unsigned int		pflags;
-+	int			ret;
++	struct xfs_buftarg	*btp;
++	const struct dax_holder_operations *ops = NULL;
 +
-+	trace_xfile_put_page(xf, xfpage->pos, PAGE_SIZE);
++#if defined(CONFIG_FS_DAX) && defined(CONFIG_MEMORY_FAILURE)
++	ops = &xfs_dax_holder_operations;
++#endif
 +
-+	/* Give back the reference that we took in xfile_get_page. */
-+	put_page(xfpage->page);
++	btp = __xfs_alloc_buftarg(mp, 0);
++	if (!btp)
++		return NULL;
 +
-+	pflags = memalloc_nofs_save();
-+	ret = aops->write_end(NULL, mapping, xfpage->pos, PAGE_SIZE, PAGE_SIZE,
-+			xfpage->page, xfpage->fsdata);
-+	memalloc_nofs_restore(pflags);
-+	memset(xfpage, 0, sizeof(struct xfile_page));
++	btp->bt_dev =  bdev->bd_dev;
++	btp->bt_bdev = bdev;
++	btp->bt_daxdev = fs_dax_get_by_bdev(bdev, &btp->bt_dax_part_off,
++					    mp, ops);
 +
-+	if (ret < 0)
-+		return ret;
-+	if (ret != PAGE_SIZE)
-+		return -EIO;
-+	return 0;
++	if (xfs_setsize_buftarg_early(btp, bdev))
++		goto error_free;
++
++	return btp;
++
++error_free:
++	xfs_free_buftarg(btp);
++	return NULL;
 +}
-diff --git a/fs/xfs/scrub/xfile.h b/fs/xfs/scrub/xfile.h
-index b37dba1961d8..e34ab9c4aad9 100644
---- a/fs/xfs/scrub/xfile.h
-+++ b/fs/xfs/scrub/xfile.h
-@@ -6,6 +6,12 @@
- #ifndef __XFS_SCRUB_XFILE_H__
- #define __XFS_SCRUB_XFILE_H__
- 
-+struct xfile_page {
-+	struct page		*page;
-+	void			*fsdata;
-+	loff_t			pos;
-+};
 +
- struct xfile {
- 	struct file		*file;
- };
-@@ -55,4 +61,8 @@ struct xfile_stat {
+ /*
+  * Cancel a delayed write list.
+  *
+diff --git a/fs/xfs/xfs_buf.h b/fs/xfs/xfs_buf.h
+index 467ddb2e2f0d..d7bf7f657e99 100644
+--- a/fs/xfs/xfs_buf.h
++++ b/fs/xfs/xfs_buf.h
+@@ -82,6 +82,7 @@ typedef unsigned int xfs_buf_flags_t;
+  */
+ #define XFS_BSTATE_DISPOSE	 (1 << 0)	/* buffer being discarded */
+ #define XFS_BSTATE_IN_FLIGHT	 (1 << 1)	/* I/O in flight */
++#define XFS_BSTATE_CACHED	 (1 << 2)	/* cached buffer */
  
- int xfile_stat(struct xfile *xf, struct xfile_stat *statbuf);
+ /*
+  * The xfs_buftarg contains 2 notions of "sector size" -
+@@ -102,11 +103,16 @@ typedef struct xfs_buftarg {
+ 	struct dax_device	*bt_daxdev;
+ 	u64			bt_dax_part_off;
+ 	struct xfs_mount	*bt_mount;
++	unsigned int		bt_flags;
+ 	unsigned int		bt_meta_sectorsize;
+ 	size_t			bt_meta_sectormask;
+ 	size_t			bt_logical_sectorsize;
+ 	size_t			bt_logical_sectormask;
  
-+int xfile_get_page(struct xfile *xf, loff_t offset, unsigned int len,
-+		struct xfile_page *xbuf);
-+int xfile_put_page(struct xfile *xf, struct xfile_page *xbuf);
++	/* self-caching buftargs */
++	spinlock_t		bt_hashlock;
++	struct rhashtable	bt_bufhash;
 +
- #endif /* __XFS_SCRUB_XFILE_H__ */
+ 	/* LRU control structures */
+ 	struct shrinker		bt_shrinker;
+ 	struct list_lru		bt_lru;
+@@ -115,6 +121,9 @@ typedef struct xfs_buftarg {
+ 	struct ratelimit_state	bt_ioerror_rl;
+ } xfs_buftarg_t;
+ 
++/* the xfs_buftarg indexes buffers via bt_buf_hash */
++#define XFS_BUFTARG_SELF_CACHED	(1U << 0)
++
+ #define XB_PAGES	2
+ 
+ struct xfs_buf_map {
 
