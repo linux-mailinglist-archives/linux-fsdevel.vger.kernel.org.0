@@ -2,45 +2,45 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F639659E8A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Dec 2022 00:43:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5CAEA659EC7
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Dec 2022 00:51:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235631AbiL3XnB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Dec 2022 18:43:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44432 "EHLO
+        id S235719AbiL3XvQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Dec 2022 18:51:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235636AbiL3Xm5 (ORCPT
+        with ESMTP id S235566AbiL3XvP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Dec 2022 18:42:57 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B765E1DF3E;
-        Fri, 30 Dec 2022 15:42:54 -0800 (PST)
+        Fri, 30 Dec 2022 18:51:15 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EB664262A;
+        Fri, 30 Dec 2022 15:51:13 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 47FF461C31;
-        Fri, 30 Dec 2022 23:42:54 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D947C433EF;
-        Fri, 30 Dec 2022 23:42:53 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id A1632B81DCA;
+        Fri, 30 Dec 2022 23:51:12 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56BAFC433D2;
+        Fri, 30 Dec 2022 23:51:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672443773;
-        bh=5FzvphX985XLvoB32xECCU//Hc6LQDLerXs/IPEm3vg=;
+        s=k20201202; t=1672444271;
+        bh=6E8jbKf7iy1+nbQHRKu7MpZkjsB/2aoy1V0uNTM6rIM=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=I29jjV58rhhUiGlP1z8WVlgda1tZ+gXK9MV4gjyVNDTUoNCH6h/SavG1rpxGrItkF
-         tPG7mwnSgDk5/I2UfTwUZhaiYsYePG+ohrFeD6B3b6gAIN3jAEf7g9ixJXmeEbthuf
-         Ikh0xJqIoO4KqUOnj5iwKcMEB2eYMKQleXUi0MDDWzC7XH25BEDU+WZmLdcyz+leAK
-         5Z3y7UcKD5YdFQKijmfeYP4DqOgIhr0798/MTA0qEwPZV0DpV1FZ2Y1kXeSs0C7fAl
-         9ETMmqRMnHFfPJ4PRdh2DvMU53CEigTpjyVPg614yribm3izcF7w9azVv8TwL/mxdE
-         kGf6cRXaGFW+A==
-Subject: [PATCH 7/7] xfs: connect in-memory btrees to xfiles
+        b=kJ3Fvu5GjMzcMVl3jyibRIlIRrAZtio1jsftWP6Yp5x5zXEzBw7JGuzc1rakdjqhH
+         BV7mrjVG8GVHQCwXYvmtG0i828O776ZE6VJxGCoBt6t7UjRTTIag+GB0Npv7XgLMat
+         sRpXUEoXR9pzXWZvklhut8crgg0bdtgvntDbB+AbM3PRso/LYhFGXrFvXJDDsrPmCT
+         HKfJ7H+4oYIrFtQsT/dmMG98sBK48fvbCK8qfb/29IqrmMv+5A5KEBXbQZs/J8Sgjw
+         NYv2cYM9t7hgut6l+tYU3eGymu8ulau4N1x4rfAqOSVeNcvMUeudVD+Iy3jg8zGgZO
+         DCJYLDK/wZP1w==
+Subject: [PATCH 04/21] xfs: parameterize all the incompat log feature helpers
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
-Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
-        linux-fsdevel@vger.kernel.org
-Date:   Fri, 30 Dec 2022 14:13:27 -0800
-Message-ID: <167243840701.696535.15992619019191376975.stgit@magnolia>
-In-Reply-To: <167243840589.696535.4812770109109400531.stgit@magnolia>
-References: <167243840589.696535.4812770109109400531.stgit@magnolia>
+Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-api@vger.kernel.org
+Date:   Fri, 30 Dec 2022 14:13:55 -0800
+Message-ID: <167243843579.699466.1331325312571395676.stgit@magnolia>
+In-Reply-To: <167243843494.699466.5163281976943635014.stgit@magnolia>
+References: <167243843494.699466.5163281976943635014.stgit@magnolia>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -56,1106 +56,244 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add to our stubbed-out in-memory btrees the ability to connect them with
-an actual in-memory backing file (aka xfiles) and the necessary pieces
-to track free space in the xfile and flush dirty xfbtree buffers on
-demand, which we'll need for online repair.
+We're about to define a new XFS_SB_FEAT_INCOMPAT_LOG_ bit, which means
+that callers will soon require the ability to toggle on and off
+different log incompat feature bits.  Parameterize the
+xlog_{use,drop}_incompat_feat and xfs_sb_remove_incompat_log_features
+functions so that callers can specify which feature they're trying to
+use and so that we can clear individual log incompat bits as needed.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/libxfs/xfs_btree_mem.h |   41 ++++
- fs/xfs/scrub/bitmap.c         |   28 ++
- fs/xfs/scrub/bitmap.h         |    3 
- fs/xfs/scrub/scrub.c          |    4 
- fs/xfs/scrub/scrub.h          |    3 
- fs/xfs/scrub/trace.c          |   13 +
- fs/xfs/scrub/trace.h          |  110 ++++++++++
- fs/xfs/scrub/xfbtree.c        |  466 +++++++++++++++++++++++++++++++++++++++++
- fs/xfs/scrub/xfbtree.h        |   25 ++
- fs/xfs/scrub/xfile.c          |   83 +++++++
- fs/xfs/scrub/xfile.h          |    2 
- fs/xfs/xfs_buf.c              |    6 -
- fs/xfs/xfs_trace.h            |    1 
- fs/xfs/xfs_trans.h            |    1 
- fs/xfs/xfs_trans_buf.c        |   42 ++++
- 15 files changed, 825 insertions(+), 3 deletions(-)
+ fs/xfs/libxfs/xfs_format.h |    5 +++--
+ fs/xfs/xfs_log.c           |   34 +++++++++++++++++++++++++---------
+ fs/xfs/xfs_log.h           |    9 ++++++---
+ fs/xfs/xfs_log_priv.h      |    2 +-
+ fs/xfs/xfs_log_recover.c   |    3 ++-
+ fs/xfs/xfs_mount.c         |   11 +++++------
+ fs/xfs/xfs_mount.h         |    2 +-
+ fs/xfs/xfs_xattr.c         |    6 +++---
+ 8 files changed, 46 insertions(+), 26 deletions(-)
 
 
-diff --git a/fs/xfs/libxfs/xfs_btree_mem.h b/fs/xfs/libxfs/xfs_btree_mem.h
-index 6ca9ea64a9a4..5e7b1f20fb5b 100644
---- a/fs/xfs/libxfs/xfs_btree_mem.h
-+++ b/fs/xfs/libxfs/xfs_btree_mem.h
-@@ -8,6 +8,26 @@
+diff --git a/fs/xfs/libxfs/xfs_format.h b/fs/xfs/libxfs/xfs_format.h
+index 5ba2dae7aa2f..817adb36cb1e 100644
+--- a/fs/xfs/libxfs/xfs_format.h
++++ b/fs/xfs/libxfs/xfs_format.h
+@@ -404,9 +404,10 @@ xfs_sb_has_incompat_log_feature(
  
- struct xfbtree;
+ static inline void
+ xfs_sb_remove_incompat_log_features(
+-	struct xfs_sb	*sbp)
++	struct xfs_sb	*sbp,
++	uint32_t	feature)
+ {
+-	sbp->sb_features_log_incompat &= ~XFS_SB_FEAT_INCOMPAT_LOG_ALL;
++	sbp->sb_features_log_incompat &= ~feature;
+ }
  
-+struct xfbtree_config {
-+	/* Buffer ops for the btree root block */
-+	const struct xfs_btree_ops	*btree_ops;
+ static inline void
+diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+index b32a8e57f576..a0ef09addc84 100644
+--- a/fs/xfs/xfs_log.c
++++ b/fs/xfs/xfs_log.c
+@@ -1082,7 +1082,7 @@ xfs_log_quiesce(
+ 	 * failures, though it's not fatal to have a higher log feature
+ 	 * protection level than the log contents actually require.
+ 	 */
+-	if (xfs_clear_incompat_log_features(mp)) {
++	if (xfs_clear_incompat_log_features(mp, XFS_SB_FEAT_INCOMPAT_LOG_ALL)) {
+ 		int error;
+ 
+ 		error = xfs_sync_sb(mp, false);
+@@ -1489,6 +1489,7 @@ xlog_clear_incompat(
+ 	struct xlog		*log)
+ {
+ 	struct xfs_mount	*mp = log->l_mp;
++	uint32_t		incompat_mask = 0;
+ 
+ 	if (!xfs_sb_has_incompat_log_feature(&mp->m_sb,
+ 				XFS_SB_FEAT_INCOMPAT_LOG_ALL))
+@@ -1497,11 +1498,16 @@ xlog_clear_incompat(
+ 	if (log->l_covered_state != XLOG_STATE_COVER_DONE2)
+ 		return;
+ 
+-	if (!down_write_trylock(&log->l_incompat_users))
++	if (down_write_trylock(&log->l_incompat_xattrs))
++		incompat_mask |= XFS_SB_FEAT_INCOMPAT_LOG_XATTRS;
 +
-+	/* Buffer target for the xfile backing this btree. */
-+	struct xfs_buftarg		*target;
++	if (!incompat_mask)
+ 		return;
+ 
+-	xfs_clear_incompat_log_features(mp);
+-	up_write(&log->l_incompat_users);
++	xfs_clear_incompat_log_features(mp, incompat_mask);
 +
-+	/* Owner of this btree. */
-+	unsigned long long		owner;
-+
-+	/* Btree type number */
-+	xfs_btnum_t			btnum;
-+
-+	/* XFBTREE_CREATE_* flags */
-+	unsigned int			flags;
++	if (incompat_mask & XFS_SB_FEAT_INCOMPAT_LOG_XATTRS)
++		up_write(&log->l_incompat_xattrs);
+ }
+ 
+ /*
+@@ -1618,7 +1624,7 @@ xlog_alloc_log(
+ 	}
+ 	log->l_sectBBsize = 1 << log2_size;
+ 
+-	init_rwsem(&log->l_incompat_users);
++	init_rwsem(&log->l_incompat_xattrs);
+ 
+ 	xlog_get_iclog_buffer_size(mp, log);
+ 
+@@ -3909,15 +3915,25 @@ xfs_log_check_lsn(
+  */
+ void
+ xlog_use_incompat_feat(
+-	struct xlog		*log)
++	struct xlog		*log,
++	enum xlog_incompat_feat	what)
+ {
+-	down_read(&log->l_incompat_users);
++	switch (what) {
++	case XLOG_INCOMPAT_FEAT_XATTRS:
++		down_read(&log->l_incompat_xattrs);
++		break;
++	}
+ }
+ 
+ /* Notify the log that we've finished using log incompat features. */
+ void
+ xlog_drop_incompat_feat(
+-	struct xlog		*log)
++	struct xlog		*log,
++	enum xlog_incompat_feat	what)
+ {
+-	up_read(&log->l_incompat_users);
++	switch (what) {
++	case XLOG_INCOMPAT_FEAT_XATTRS:
++		up_read(&log->l_incompat_xattrs);
++		break;
++	}
+ }
+diff --git a/fs/xfs/xfs_log.h b/fs/xfs/xfs_log.h
+index 2728886c2963..d187f6445909 100644
+--- a/fs/xfs/xfs_log.h
++++ b/fs/xfs/xfs_log.h
+@@ -159,8 +159,11 @@ bool	xfs_log_check_lsn(struct xfs_mount *, xfs_lsn_t);
+ xfs_lsn_t xlog_grant_push_threshold(struct xlog *log, int need_bytes);
+ bool	  xlog_force_shutdown(struct xlog *log, uint32_t shutdown_flags);
+ 
+-void xlog_use_incompat_feat(struct xlog *log);
+-void xlog_drop_incompat_feat(struct xlog *log);
+-int xfs_attr_use_log_assist(struct xfs_mount *mp);
++enum xlog_incompat_feat {
++	XLOG_INCOMPAT_FEAT_XATTRS = XFS_SB_FEAT_INCOMPAT_LOG_XATTRS,
 +};
 +
-+/* btree has long pointers */
-+#define XFBTREE_CREATE_LONG_PTRS	(1U << 0)
-+
- #ifdef CONFIG_XFS_IN_MEMORY_BTREE
- unsigned int xfs_btree_mem_head_nlevels(struct xfs_buf *head_bp);
++void xlog_use_incompat_feat(struct xlog *log, enum xlog_incompat_feat what);
++void xlog_drop_incompat_feat(struct xlog *log, enum xlog_incompat_feat what);
  
-@@ -35,6 +55,16 @@ xfs_failaddr_t xfbtree_lblock_verify(struct xfs_buf *bp, unsigned int max_recs);
- xfs_failaddr_t xfbtree_sblock_verify(struct xfs_buf *bp, unsigned int max_recs);
- unsigned long long xfbtree_buf_to_xfoff(struct xfs_btree_cur *cur,
- 		struct xfs_buf *bp);
-+
-+int xfbtree_get_minrecs(struct xfs_btree_cur *cur, int level);
-+int xfbtree_get_maxrecs(struct xfs_btree_cur *cur, int level);
-+
-+int xfbtree_create(struct xfs_mount *mp, const struct xfbtree_config *cfg,
-+		struct xfbtree **xfbtreep);
-+int xfbtree_alloc_block(struct xfs_btree_cur *cur,
-+		const union xfs_btree_ptr *start, union xfs_btree_ptr *ptr,
-+		int *stat);
-+int xfbtree_free_block(struct xfs_btree_cur *cur, struct xfs_buf *bp);
- #else
- static inline unsigned int xfs_btree_mem_head_nlevels(struct xfs_buf *head_bp)
- {
-@@ -77,11 +107,22 @@ static inline unsigned int xfbtree_bbsize(void)
- #define xfbtree_set_root			NULL
- #define xfbtree_init_ptr_from_cur		NULL
- #define xfbtree_dup_cursor			NULL
-+#define xfbtree_get_minrecs			NULL
-+#define xfbtree_get_maxrecs			NULL
-+#define xfbtree_alloc_block			NULL
-+#define xfbtree_free_block			NULL
- #define xfbtree_verify_xfileoff(cur, xfoff)	(false)
- #define xfbtree_check_block_owner(cur, block)	NULL
- #define xfbtree_owner(cur)			(0ULL)
- #define xfbtree_buf_to_xfoff(cur, bp)		(-1)
+ #endif	/* __XFS_LOG_H__ */
+diff --git a/fs/xfs/xfs_log_priv.h b/fs/xfs/xfs_log_priv.h
+index 1bd2963e8fbd..a13b5b6b744d 100644
+--- a/fs/xfs/xfs_log_priv.h
++++ b/fs/xfs/xfs_log_priv.h
+@@ -447,7 +447,7 @@ struct xlog {
+ 	uint32_t		l_iclog_roundoff;/* padding roundoff */
  
-+static inline int
-+xfbtree_create(struct xfs_mount *mp, const struct xfbtree_config *cfg,
-+		struct xfbtree **xfbtreep)
-+{
-+	return -EOPNOTSUPP;
-+}
-+
- #endif /* CONFIG_XFS_IN_MEMORY_BTREE */
- 
- #endif /* __XFS_BTREE_MEM_H__ */
-diff --git a/fs/xfs/scrub/bitmap.c b/fs/xfs/scrub/bitmap.c
-index f707434b1c86..c98f4c45414a 100644
---- a/fs/xfs/scrub/bitmap.c
-+++ b/fs/xfs/scrub/bitmap.c
-@@ -379,3 +379,31 @@ xbitmap_test(
- 	*len = bn->bn_start - start;
- 	return false;
- }
-+
-+/*
-+ * Find the first set bit in this bitmap, clear it, and return the index of
-+ * that bit in @valp.  Returns -ENODATA if no bits were set, or the usual
-+ * negative errno.
-+ */
-+int
-+xbitmap_take_first_set(
-+	struct xbitmap		*bitmap,
-+	uint64_t		start,
-+	uint64_t		last,
-+	uint64_t		*valp)
-+{
-+	struct xbitmap_node	*bn;
-+	uint64_t		val;
-+	int			error;
-+
-+	bn = xbitmap_tree_iter_first(&bitmap->xb_root, start, last);
-+	if (!bn)
-+		return -ENODATA;
-+
-+	val = bn->bn_start;
-+	error = xbitmap_clear(bitmap, bn->bn_start, 1);
-+	if (error)
-+		return error;
-+	*valp = val;
-+	return 0;
-+}
-diff --git a/fs/xfs/scrub/bitmap.h b/fs/xfs/scrub/bitmap.h
-index 7f1b9c9c7831..1ebe1918bdb2 100644
---- a/fs/xfs/scrub/bitmap.h
-+++ b/fs/xfs/scrub/bitmap.h
-@@ -32,6 +32,9 @@ int xbitmap_walk(struct xbitmap *bitmap, xbitmap_walk_fn fn,
- bool xbitmap_empty(struct xbitmap *bitmap);
- bool xbitmap_test(struct xbitmap *bitmap, uint64_t start, uint64_t *len);
- 
-+int xbitmap_take_first_set(struct xbitmap *bitmap, uint64_t start,
-+		uint64_t last, uint64_t *valp);
-+
- /* Bitmaps, but for type-checked for xfs_agblock_t */
- 
- struct xagb_bitmap {
-diff --git a/fs/xfs/scrub/scrub.c b/fs/xfs/scrub/scrub.c
-index fd116531a0d9..5bbc12649277 100644
---- a/fs/xfs/scrub/scrub.c
-+++ b/fs/xfs/scrub/scrub.c
-@@ -191,6 +191,10 @@ xchk_teardown(
- 		sc->flags &= ~XCHK_HAVE_FREEZE_PROT;
- 		mnt_drop_write_file(sc->file);
- 	}
-+	if (sc->xfile_buftarg) {
-+		xfs_free_buftarg(sc->xfile_buftarg);
-+		sc->xfile_buftarg = NULL;
-+	}
- 	if (sc->xfile) {
- 		xfile_destroy(sc->xfile);
- 		sc->xfile = NULL;
-diff --git a/fs/xfs/scrub/scrub.h b/fs/xfs/scrub/scrub.h
-index 04afb584f504..6fe59d1a2518 100644
---- a/fs/xfs/scrub/scrub.h
-+++ b/fs/xfs/scrub/scrub.h
-@@ -99,6 +99,9 @@ struct xfs_scrub {
- 	/* xfile used by the scrubbers; freed at teardown. */
- 	struct xfile			*xfile;
- 
-+	/* buffer target for the xfile; also freed at teardown. */
-+	struct xfs_buftarg		*xfile_buftarg;
-+
- 	/* Lock flags for @ip. */
- 	uint				ilock_flags;
- 
-diff --git a/fs/xfs/scrub/trace.c b/fs/xfs/scrub/trace.c
-index 08e05d49e7c0..177fc4c75507 100644
---- a/fs/xfs/scrub/trace.c
-+++ b/fs/xfs/scrub/trace.c
-@@ -12,15 +12,19 @@
- #include "xfs_mount.h"
- #include "xfs_inode.h"
- #include "xfs_btree.h"
-+#include "xfs_btree_mem.h"
- #include "xfs_ag.h"
- #include "xfs_quota_defs.h"
- #include "xfs_dir2.h"
-+#include "xfs_da_format.h"
-+#include "xfs_btree_mem.h"
- #include "scrub/scrub.h"
- #include "scrub/xfile.h"
- #include "scrub/xfarray.h"
- #include "scrub/iscan.h"
- #include "scrub/nlinks.h"
- #include "scrub/fscounters.h"
-+#include "scrub/xfbtree.h"
- 
- /* Figure out which block the btree cursor was pointing to. */
- static inline xfs_fsblock_t
-@@ -39,6 +43,15 @@ xchk_btree_cur_fsbno(
- 	return NULLFSBLOCK;
- }
- 
-+#ifdef CONFIG_XFS_IN_MEMORY_BTREE
-+static inline unsigned long
-+xfbtree_ino(
-+	struct xfbtree		*xfbt)
-+{
-+	return file_inode(xfbt->target->bt_xfile->file)->i_ino;
-+}
-+#endif /* CONFIG_XFS_IN_MEMORY_BTREE */
-+
- /*
-  * We include this last to have the helpers above available for the trace
-  * event implementations.
-diff --git a/fs/xfs/scrub/trace.h b/fs/xfs/scrub/trace.h
-index 14569068b6ee..05b6a6e3d0ab 100644
---- a/fs/xfs/scrub/trace.h
-+++ b/fs/xfs/scrub/trace.h
-@@ -24,6 +24,8 @@ struct xfarray_sortinfo;
- struct xchk_iscan;
- struct xchk_nlink;
- struct xchk_fscounters;
-+struct xfbtree;
-+struct xfbtree_config;
- 
- /*
-  * ftrace's __print_symbolic requires that all enum values be wrapped in the
-@@ -866,6 +868,8 @@ DEFINE_XFILE_EVENT(xfile_pwrite);
- DEFINE_XFILE_EVENT(xfile_seek_data);
- DEFINE_XFILE_EVENT(xfile_get_page);
- DEFINE_XFILE_EVENT(xfile_put_page);
-+DEFINE_XFILE_EVENT(xfile_discard);
-+DEFINE_XFILE_EVENT(xfile_prealloc);
- 
- TRACE_EVENT(xfarray_create,
- 	TP_PROTO(struct xfarray *xfa, unsigned long long required_capacity),
-@@ -1971,8 +1975,114 @@ DEFINE_XREP_DQUOT_EVENT(xrep_quotacheck_dquot);
- DEFINE_SCRUB_NLINKS_DIFF_EVENT(xrep_nlinks_update_inode);
- DEFINE_SCRUB_NLINKS_DIFF_EVENT(xrep_nlinks_unfixable_inode);
- 
-+TRACE_EVENT(xfbtree_create,
-+	TP_PROTO(struct xfs_mount *mp, const struct xfbtree_config *cfg,
-+		 struct xfbtree *xfbt),
-+	TP_ARGS(mp, cfg, xfbt),
-+	TP_STRUCT__entry(
-+		__field(xfs_btnum_t, btnum)
-+		__field(unsigned int, xfbtree_flags)
-+		__field(unsigned long, xfino)
-+		__field(unsigned int, leaf_mxr)
-+		__field(unsigned int, leaf_mnr)
-+		__field(unsigned int, node_mxr)
-+		__field(unsigned int, node_mnr)
-+		__field(unsigned long long, owner)
-+	),
-+	TP_fast_assign(
-+		__entry->btnum = cfg->btnum;
-+		__entry->xfbtree_flags = cfg->flags;
-+		__entry->xfino = xfbtree_ino(xfbt);
-+		__entry->leaf_mxr = xfbt->maxrecs[0];
-+		__entry->node_mxr = xfbt->maxrecs[1];
-+		__entry->leaf_mnr = xfbt->minrecs[0];
-+		__entry->node_mnr = xfbt->minrecs[1];
-+		__entry->owner = cfg->owner;
-+	),
-+	TP_printk("xfino 0x%lx btnum %s owner 0x%llx leaf_mxr %u leaf_mnr %u node_mxr %u node_mnr %u",
-+		  __entry->xfino,
-+		  __print_symbolic(__entry->btnum, XFS_BTNUM_STRINGS),
-+		  __entry->owner,
-+		  __entry->leaf_mxr,
-+		  __entry->leaf_mnr,
-+		  __entry->node_mxr,
-+		  __entry->node_mnr)
-+);
-+
-+DECLARE_EVENT_CLASS(xfbtree_buf_class,
-+	TP_PROTO(struct xfbtree *xfbt, struct xfs_buf *bp),
-+	TP_ARGS(xfbt, bp),
-+	TP_STRUCT__entry(
-+		__field(unsigned long, xfino)
-+		__field(xfs_daddr_t, bno)
-+		__field(int, nblks)
-+		__field(int, hold)
-+		__field(int, pincount)
-+		__field(unsigned, lockval)
-+		__field(unsigned, flags)
-+	),
-+	TP_fast_assign(
-+		__entry->xfino = xfbtree_ino(xfbt);
-+		__entry->bno = xfs_buf_daddr(bp);
-+		__entry->nblks = bp->b_length;
-+		__entry->hold = atomic_read(&bp->b_hold);
-+		__entry->pincount = atomic_read(&bp->b_pin_count);
-+		__entry->lockval = bp->b_sema.count;
-+		__entry->flags = bp->b_flags;
-+	),
-+	TP_printk("xfino 0x%lx daddr 0x%llx bbcount 0x%x hold %d pincount %d "
-+		  "lock %d flags %s",
-+		  __entry->xfino,
-+		  (unsigned long long)__entry->bno,
-+		  __entry->nblks,
-+		  __entry->hold,
-+		  __entry->pincount,
-+		  __entry->lockval,
-+		  __print_flags(__entry->flags, "|", XFS_BUF_FLAGS))
-+)
-+
-+#define DEFINE_XFBTREE_BUF_EVENT(name) \
-+DEFINE_EVENT(xfbtree_buf_class, name, \
-+	TP_PROTO(struct xfbtree *xfbt, struct xfs_buf *bp), \
-+	TP_ARGS(xfbt, bp))
-+DEFINE_XFBTREE_BUF_EVENT(xfbtree_create_root_buf);
-+DEFINE_XFBTREE_BUF_EVENT(xfbtree_trans_commit_buf);
-+DEFINE_XFBTREE_BUF_EVENT(xfbtree_trans_cancel_buf);
-+
-+DECLARE_EVENT_CLASS(xfbtree_freesp_class,
-+	TP_PROTO(struct xfbtree *xfbt, struct xfs_btree_cur *cur,
-+		 xfs_fileoff_t fileoff),
-+	TP_ARGS(xfbt, cur, fileoff),
-+	TP_STRUCT__entry(
-+		__field(unsigned long, xfino)
-+		__field(xfs_btnum_t, btnum)
-+		__field(int, nlevels)
-+		__field(xfs_fileoff_t, fileoff)
-+	),
-+	TP_fast_assign(
-+		__entry->xfino = xfbtree_ino(xfbt);
-+		__entry->btnum = cur->bc_btnum;
-+		__entry->nlevels = cur->bc_nlevels;
-+		__entry->fileoff = fileoff;
-+	),
-+	TP_printk("xfino 0x%lx btree %s nlevels %d fileoff 0x%llx",
-+		  __entry->xfino,
-+		  __print_symbolic(__entry->btnum, XFS_BTNUM_STRINGS),
-+		  __entry->nlevels,
-+		  (unsigned long long)__entry->fileoff)
-+)
-+
-+#define DEFINE_XFBTREE_FREESP_EVENT(name) \
-+DEFINE_EVENT(xfbtree_freesp_class, name, \
-+	TP_PROTO(struct xfbtree *xfbt, struct xfs_btree_cur *cur, \
-+		 xfs_fileoff_t fileoff), \
-+	TP_ARGS(xfbt, cur, fileoff))
-+DEFINE_XFBTREE_FREESP_EVENT(xfbtree_alloc_block);
-+DEFINE_XFBTREE_FREESP_EVENT(xfbtree_free_block);
-+
- #endif /* IS_ENABLED(CONFIG_XFS_ONLINE_REPAIR) */
- 
-+
- #endif /* _TRACE_XFS_SCRUB_TRACE_H */
- 
- #undef TRACE_INCLUDE_PATH
-diff --git a/fs/xfs/scrub/xfbtree.c b/fs/xfs/scrub/xfbtree.c
-index 80f9ab4fec07..3eeb5110a1cc 100644
---- a/fs/xfs/scrub/xfbtree.c
-+++ b/fs/xfs/scrub/xfbtree.c
-@@ -9,14 +9,19 @@
- #include "xfs_format.h"
- #include "xfs_log_format.h"
- #include "xfs_trans_resv.h"
-+#include "xfs_bit.h"
- #include "xfs_mount.h"
- #include "xfs_trans.h"
-+#include "xfs_buf_item.h"
- #include "xfs_btree.h"
- #include "xfs_error.h"
- #include "xfs_btree_mem.h"
- #include "xfs_ag.h"
-+#include "scrub/scrub.h"
- #include "scrub/xfile.h"
- #include "scrub/xfbtree.h"
-+#include "scrub/bitmap.h"
-+#include "scrub/trace.h"
- 
- /* btree ops functions for in-memory btrees. */
- 
-@@ -142,9 +147,18 @@ xfbtree_check_ptr(
- 	else
- 		bt_xfoff = be32_to_cpu(ptr->s);
- 
--	if (!xfbtree_verify_xfileoff(cur, bt_xfoff))
-+	if (!xfbtree_verify_xfileoff(cur, bt_xfoff)) {
- 		fa = __this_address;
-+		goto done;
-+	}
- 
-+	/* Can't point to the head or anything before it */
-+	if (bt_xfoff < XFBTREE_INIT_LEAF_BLOCK) {
-+		fa = __this_address;
-+		goto done;
-+	}
-+
-+done:
- 	if (fa) {
- 		xfs_err(cur->bc_mp,
- "In-memory: Corrupt btree %d flags 0x%x pointer at level %d index %d fa %pS.",
-@@ -350,3 +364,453 @@ xfbtree_sblock_verify(
- 
- 	return NULL;
- }
-+
-+/* Close the btree xfile and release all resources. */
-+void
-+xfbtree_destroy(
-+	struct xfbtree		*xfbt)
-+{
-+	xbitmap_destroy(xfbt->freespace);
-+	kfree(xfbt->freespace);
-+	xfs_buftarg_drain(xfbt->target);
-+	kfree(xfbt);
-+}
-+
-+/* Compute the number of bytes available for records. */
-+static inline unsigned int
-+xfbtree_rec_bytes(
-+	struct xfs_mount		*mp,
-+	const struct xfbtree_config	*cfg)
-+{
-+	unsigned int			blocklen = xfo_to_b(1);
-+
-+	if (cfg->flags & XFBTREE_CREATE_LONG_PTRS) {
-+		if (xfs_has_crc(mp))
-+			return blocklen - XFS_BTREE_LBLOCK_CRC_LEN;
-+
-+		return blocklen - XFS_BTREE_LBLOCK_LEN;
-+	}
-+
-+	if (xfs_has_crc(mp))
-+		return blocklen - XFS_BTREE_SBLOCK_CRC_LEN;
-+
-+	return blocklen - XFS_BTREE_SBLOCK_LEN;
-+}
-+
-+/* Initialize an empty leaf block as the btree root. */
-+STATIC int
-+xfbtree_init_leaf_block(
-+	struct xfs_mount		*mp,
-+	struct xfbtree			*xfbt,
-+	const struct xfbtree_config	*cfg)
-+{
-+	struct xfs_buf			*bp;
-+	xfs_daddr_t			daddr;
-+	int				error;
-+	unsigned int			bc_flags = 0;
-+
-+	if (cfg->flags & XFBTREE_CREATE_LONG_PTRS)
-+		bc_flags |= XFS_BTREE_LONG_PTRS;
-+
-+	daddr = xfo_to_daddr(XFBTREE_INIT_LEAF_BLOCK);
-+	error = xfs_buf_get(xfbt->target, daddr, xfbtree_bbsize(), &bp);
-+	if (error)
-+		return error;
-+
-+	trace_xfbtree_create_root_buf(xfbt, bp);
-+
-+	bp->b_ops = cfg->btree_ops->buf_ops;
-+	xfs_btree_init_block_int(mp, bp->b_addr, daddr, cfg->btnum, 0, 0,
-+			cfg->owner, bc_flags);
-+	error = xfs_bwrite(bp);
-+	xfs_buf_relse(bp);
-+	if (error)
-+		return error;
-+
-+	xfbt->xf_used++;
-+	return 0;
-+}
-+
-+/* Initialize the in-memory btree header block. */
-+STATIC int
-+xfbtree_init_head(
-+	struct xfbtree		*xfbt)
-+{
-+	struct xfs_buf		*bp;
-+	xfs_daddr_t		daddr;
-+	int			error;
-+
-+	daddr = xfo_to_daddr(XFBTREE_HEAD_BLOCK);
-+	error = xfs_buf_get(xfbt->target, daddr, xfbtree_bbsize(), &bp);
-+	if (error)
-+		return error;
-+
-+	xfs_btree_mem_head_init(bp, xfbt->owner, XFBTREE_INIT_LEAF_BLOCK);
-+	error = xfs_bwrite(bp);
-+	xfs_buf_relse(bp);
-+	if (error)
-+		return error;
-+
-+	xfbt->xf_used++;
-+	return 0;
-+}
-+
-+/* Create an xfile btree backing thing that can be used for in-memory btrees. */
-+int
-+xfbtree_create(
-+	struct xfs_mount		*mp,
-+	const struct xfbtree_config	*cfg,
-+	struct xfbtree			**xfbtreep)
-+{
-+	struct xfbtree			*xfbt;
-+	unsigned int			blocklen = xfbtree_rec_bytes(mp, cfg);
-+	unsigned int			keyptr_len = cfg->btree_ops->key_len;
-+	int				error;
-+
-+	/* Requires an xfile-backed buftarg. */
-+	if (!(cfg->target->bt_flags & XFS_BUFTARG_IN_MEMORY)) {
-+		ASSERT(cfg->target->bt_flags & XFS_BUFTARG_IN_MEMORY);
-+		return -EINVAL;
-+	}
-+
-+	xfbt = kzalloc(sizeof(struct xfbtree), XCHK_GFP_FLAGS);
-+	if (!xfbt)
-+		return -ENOMEM;
-+
-+	/* Assign our memory file and the free space bitmap. */
-+	xfbt->target = cfg->target;
-+	xfbt->freespace = kmalloc(sizeof(struct xbitmap), XCHK_GFP_FLAGS);
-+	if (!xfbt->freespace) {
-+		error = -ENOMEM;
-+		goto err_buftarg;
-+	}
-+	xbitmap_init(xfbt->freespace);
-+
-+	/* Set up min/maxrecs for this btree. */
-+	if (cfg->flags & XFBTREE_CREATE_LONG_PTRS)
-+		keyptr_len += sizeof(__be64);
-+	else
-+		keyptr_len += sizeof(__be32);
-+	xfbt->maxrecs[0] = blocklen / cfg->btree_ops->rec_len;
-+	xfbt->maxrecs[1] = blocklen / keyptr_len;
-+	xfbt->minrecs[0] = xfbt->maxrecs[0] / 2;
-+	xfbt->minrecs[1] = xfbt->maxrecs[1] / 2;
-+	xfbt->owner = cfg->owner;
-+
-+	/* Initialize the empty btree. */
-+	error = xfbtree_init_leaf_block(mp, xfbt, cfg);
-+	if (error)
-+		goto err_freesp;
-+
-+	error = xfbtree_init_head(xfbt);
-+	if (error)
-+		goto err_freesp;
-+
-+	trace_xfbtree_create(mp, cfg, xfbt);
-+
-+	*xfbtreep = xfbt;
-+	return 0;
-+
-+err_freesp:
-+	xbitmap_destroy(xfbt->freespace);
-+	kfree(xfbt->freespace);
-+err_buftarg:
-+	xfs_buftarg_drain(xfbt->target);
-+	kfree(xfbt);
-+	return error;
-+}
-+
-+/* Read the in-memory btree head. */
-+int
-+xfbtree_head_read_buf(
-+	struct xfbtree		*xfbt,
-+	struct xfs_trans	*tp,
-+	struct xfs_buf		**bpp)
-+{
-+	struct xfs_buftarg	*btp = xfbt->target;
-+	struct xfs_mount	*mp = btp->bt_mount;
-+	struct xfs_btree_mem_head *mhead;
-+	struct xfs_buf		*bp;
-+	xfs_daddr_t		daddr;
-+	int			error;
-+
-+	daddr = xfo_to_daddr(XFBTREE_HEAD_BLOCK);
-+	error = xfs_trans_read_buf(mp, tp, btp, daddr, xfbtree_bbsize(), 0,
-+			&bp, &xfs_btree_mem_head_buf_ops);
-+	if (error)
-+		return error;
-+
-+	mhead = bp->b_addr;
-+	if (be64_to_cpu(mhead->mh_owner) != xfbt->owner) {
-+		xfs_verifier_error(bp, -EFSCORRUPTED, __this_address);
-+		xfs_trans_brelse(tp, bp);
-+		return -EFSCORRUPTED;
-+	}
-+
-+	*bpp = bp;
-+	return 0;
-+}
-+
-+static inline struct xfile *xfbtree_xfile(struct xfbtree *xfbt)
-+{
-+	return xfbt->target->bt_xfile;
-+}
-+
-+/* Allocate a block to our in-memory btree. */
-+int
-+xfbtree_alloc_block(
-+	struct xfs_btree_cur		*cur,
-+	const union xfs_btree_ptr	*start,
-+	union xfs_btree_ptr		*new,
-+	int				*stat)
-+{
-+	struct xfbtree			*xfbt = cur->bc_mem.xfbtree;
-+	xfileoff_t			bt_xfoff;
-+	loff_t				pos;
-+	int				error;
-+
-+	ASSERT(cur->bc_flags & XFS_BTREE_IN_MEMORY);
-+
-+	/*
-+	 * Find the first free block in the free space bitmap and take it.  If
-+	 * none are found, seek to end of the file.
-+	 */
-+	error = xbitmap_take_first_set(xfbt->freespace, 0, -1ULL, &bt_xfoff);
-+	if (error == -ENODATA) {
-+		bt_xfoff = xfbt->xf_used;
-+		xfbt->xf_used++;
-+	} else if (error) {
-+		return error;
-+	}
-+
-+	trace_xfbtree_alloc_block(xfbt, cur, bt_xfoff);
-+
-+	/* Fail if the block address exceeds the maximum for short pointers. */
-+	if (!(cur->bc_flags & XFS_BTREE_LONG_PTRS) && bt_xfoff >= INT_MAX) {
-+		*stat = 0;
-+		return 0;
-+	}
-+
-+	/* Make sure we actually can write to the block before we return it. */
-+	pos = xfo_to_b(bt_xfoff);
-+	error = xfile_prealloc(xfbtree_xfile(xfbt), pos, xfo_to_b(1));
-+	if (error)
-+		return error;
-+
-+	if (cur->bc_flags & XFS_BTREE_LONG_PTRS)
-+		new->l = cpu_to_be64(bt_xfoff);
-+	else
-+		new->s = cpu_to_be32(bt_xfoff);
-+
-+	*stat = 1;
-+	return 0;
-+}
-+
-+/* Free a block from our in-memory btree. */
-+int
-+xfbtree_free_block(
-+	struct xfs_btree_cur	*cur,
-+	struct xfs_buf		*bp)
-+{
-+	struct xfbtree		*xfbt = cur->bc_mem.xfbtree;
-+	xfileoff_t		bt_xfoff, bt_xflen;
-+
-+	ASSERT(cur->bc_flags & XFS_BTREE_IN_MEMORY);
-+
-+	bt_xfoff = xfs_daddr_to_xfot(xfs_buf_daddr(bp));
-+	bt_xflen = xfs_daddr_to_xfot(bp->b_length);
-+
-+	trace_xfbtree_free_block(xfbt, cur, bt_xfoff);
-+
-+	return xbitmap_set(xfbt->freespace, bt_xfoff, bt_xflen);
-+}
-+
-+/* Return the minimum number of records for a btree block. */
-+int
-+xfbtree_get_minrecs(
-+	struct xfs_btree_cur	*cur,
-+	int			level)
-+{
-+	struct xfbtree		*xfbt = cur->bc_mem.xfbtree;
-+
-+	return xfbt->minrecs[level != 0];
-+}
-+
-+/* Return the maximum number of records for a btree block. */
-+int
-+xfbtree_get_maxrecs(
-+	struct xfs_btree_cur	*cur,
-+	int			level)
-+{
-+	struct xfbtree		*xfbt = cur->bc_mem.xfbtree;
-+
-+	return xfbt->maxrecs[level != 0];
-+}
-+
-+/* If this log item is a buffer item that came from the xfbtree, return it. */
-+static inline struct xfs_buf *
-+xfbtree_buf_match(
-+	struct xfbtree			*xfbt,
-+	const struct xfs_log_item	*lip)
-+{
-+	const struct xfs_buf_log_item	*bli;
-+	struct xfs_buf			*bp;
-+
-+	if (lip->li_type != XFS_LI_BUF)
-+		return NULL;
-+
-+	bli = container_of(lip, struct xfs_buf_log_item, bli_item);
-+	bp = bli->bli_buf;
-+	if (bp->b_target != xfbt->target)
-+		return NULL;
-+
-+	return bp;
-+}
-+
-+/*
-+ * Detach this (probably dirty) xfbtree buffer from the transaction by any
-+ * means necessary.  Returns true if the buffer needs to be written.
-+ */
-+STATIC bool
-+xfbtree_trans_bdetach(
-+	struct xfs_trans	*tp,
-+	struct xfs_buf		*bp)
-+{
-+	struct xfs_buf_log_item	*bli = bp->b_log_item;
-+	bool			dirty;
-+
-+	ASSERT(bli != NULL);
-+
-+	dirty = bli->bli_flags & (XFS_BLI_DIRTY | XFS_BLI_ORDERED);
-+
-+	bli->bli_flags &= ~(XFS_BLI_DIRTY | XFS_BLI_ORDERED |
-+			    XFS_BLI_LOGGED | XFS_BLI_STALE);
-+	clear_bit(XFS_LI_DIRTY, &bli->bli_item.li_flags);
-+
-+	while (bp->b_log_item != NULL)
-+		xfs_trans_bdetach(tp, bp);
-+
-+	return dirty;
-+}
-+
-+/*
-+ * Commit changes to the incore btree immediately by writing all dirty xfbtree
-+ * buffers to the backing xfile.  This detaches all xfbtree buffers from the
-+ * transaction, even on failure.  The buffer locks are dropped between the
-+ * delwri queue and submit, so the caller must synchronize btree access.
-+ *
-+ * Normally we'd let the buffers commit with the transaction and get written to
-+ * the xfile via the log, but online repair stages ephemeral btrees in memory
-+ * and uses the btree_staging functions to write new btrees to disk atomically.
-+ * The in-memory btree (and its backing store) are discarded at the end of the
-+ * repair phase, which means that xfbtree buffers cannot commit with the rest
-+ * of a transaction.
-+ *
-+ * In other words, online repair only needs the transaction to collect buffer
-+ * pointers and to avoid buffer deadlocks, not to guarantee consistency of
-+ * updates.
-+ */
-+int
-+xfbtree_trans_commit(
-+	struct xfbtree		*xfbt,
-+	struct xfs_trans	*tp)
-+{
-+	LIST_HEAD(buffer_list);
-+	struct xfs_log_item	*lip, *n;
-+	bool			corrupt = false;
-+	bool			tp_dirty = false;
-+
-+	/*
-+	 * For each xfbtree buffer attached to the transaction, write the dirty
-+	 * buffers to the xfile and release them.
-+	 */
-+	list_for_each_entry_safe(lip, n, &tp->t_items, li_trans) {
-+		struct xfs_buf	*bp = xfbtree_buf_match(xfbt, lip);
-+		bool		dirty;
-+
-+		if (!bp) {
-+			if (test_bit(XFS_LI_DIRTY, &lip->li_flags))
-+				tp_dirty |= true;
-+			continue;
-+		}
-+
-+		trace_xfbtree_trans_commit_buf(xfbt, bp);
-+
-+		dirty = xfbtree_trans_bdetach(tp, bp);
-+		if (dirty && !corrupt) {
-+			xfs_failaddr_t	fa = bp->b_ops->verify_struct(bp);
-+
-+			/*
-+			 * Because this btree is ephemeral, validate the buffer
-+			 * structure before delwri_submit so that we can return
-+			 * corruption errors to the caller without shutting
-+			 * down the filesystem.
-+			 *
-+			 * If the buffer fails verification, log the failure
-+			 * but continue walking the transaction items so that
-+			 * we remove all ephemeral btree buffers.
-+			 */
-+			if (fa) {
-+				corrupt = true;
-+				xfs_verifier_error(bp, -EFSCORRUPTED, fa);
-+			} else {
-+				xfs_buf_delwri_queue_here(bp, &buffer_list);
-+			}
-+		}
-+
-+		xfs_buf_relse(bp);
-+	}
-+
-+	/*
-+	 * Reset the transaction's dirty flag to reflect the dirty state of the
-+	 * log items that are still attached.
-+	 */
-+	tp->t_flags = (tp->t_flags & ~XFS_TRANS_DIRTY) |
-+			(tp_dirty ? XFS_TRANS_DIRTY : 0);
-+
-+	if (corrupt) {
-+		xfs_buf_delwri_cancel(&buffer_list);
-+		return -EFSCORRUPTED;
-+	}
-+
-+	if (list_empty(&buffer_list))
-+		return 0;
-+
-+	return xfs_buf_delwri_submit(&buffer_list);
-+}
-+
-+/*
-+ * Cancel changes to the incore btree by detaching all the xfbtree buffers.
-+ * Changes are not written to the backing store.  This is needed for online
-+ * repair btrees, which are by nature ephemeral.
-+ */
-+void
-+xfbtree_trans_cancel(
-+	struct xfbtree		*xfbt,
-+	struct xfs_trans	*tp)
-+{
-+	struct xfs_log_item	*lip, *n;
-+	bool			tp_dirty = false;
-+
-+	list_for_each_entry_safe(lip, n, &tp->t_items, li_trans) {
-+		struct xfs_buf	*bp = xfbtree_buf_match(xfbt, lip);
-+
-+		if (!bp) {
-+			if (test_bit(XFS_LI_DIRTY, &lip->li_flags))
-+				tp_dirty |= true;
-+			continue;
-+		}
-+
-+		trace_xfbtree_trans_cancel_buf(xfbt, bp);
-+
-+		xfbtree_trans_bdetach(tp, bp);
-+		xfs_buf_relse(bp);
-+	}
-+
-+	/*
-+	 * Reset the transaction's dirty flag to reflect the dirty state of the
-+	 * log items that are still attached.
-+	 */
-+	tp->t_flags = (tp->t_flags & ~XFS_TRANS_DIRTY) |
-+			(tp_dirty ? XFS_TRANS_DIRTY : 0);
-+}
-diff --git a/fs/xfs/scrub/xfbtree.h b/fs/xfs/scrub/xfbtree.h
-index b3836f21085d..bdbf850bf7a1 100644
---- a/fs/xfs/scrub/xfbtree.h
-+++ b/fs/xfs/scrub/xfbtree.h
-@@ -22,13 +22,36 @@ struct xfs_btree_mem_head {
- /* xfile-backed in-memory btrees */
- 
- struct xfbtree {
--	/* buffer cache target for this in-memory btree */
-+	/* buffer cache target for the xfile backing this in-memory btree */
- 	struct xfs_buftarg		*target;
- 
-+	/* Bitmap of free space from pos to used */
-+	struct xbitmap			*freespace;
-+
-+	/* Number of xfile blocks actually used by this xfbtree. */
-+	xfileoff_t			xf_used;
-+
- 	/* Owner of this btree. */
- 	unsigned long long		owner;
-+
-+	/* Minimum and maximum records per block. */
-+	unsigned int			maxrecs[2];
-+	unsigned int			minrecs[2];
+ 	/* Users of log incompat features should take a read lock. */
+-	struct rw_semaphore	l_incompat_users;
++	struct rw_semaphore	l_incompat_xattrs;
  };
  
-+/* The head of the in-memory btree is always at block 0 */
-+#define XFBTREE_HEAD_BLOCK		0
-+
-+/* in-memory btrees are always created with an empty leaf block at block 1 */
-+#define XFBTREE_INIT_LEAF_BLOCK		1
-+
-+int xfbtree_head_read_buf(struct xfbtree *xfbt, struct xfs_trans *tp,
-+		struct xfs_buf **bpp);
-+
-+void xfbtree_destroy(struct xfbtree *xfbt);
-+int xfbtree_trans_commit(struct xfbtree *xfbt, struct xfs_trans *tp);
-+void xfbtree_trans_cancel(struct xfbtree *xfbt, struct xfs_trans *tp);
-+
- #endif /* CONFIG_XFS_IN_MEMORY_BTREE */
+ /*
+diff --git a/fs/xfs/xfs_log_recover.c b/fs/xfs/xfs_log_recover.c
+index 6b1f37bc3e95..81ce08c23306 100644
+--- a/fs/xfs/xfs_log_recover.c
++++ b/fs/xfs/xfs_log_recover.c
+@@ -3473,7 +3473,8 @@ xlog_recover_finish(
+ 	 * longer anything to protect.  We rely on the AIL push to write out the
+ 	 * updated superblock after everything else.
+ 	 */
+-	if (xfs_clear_incompat_log_features(log->l_mp)) {
++	if (xfs_clear_incompat_log_features(log->l_mp,
++				XFS_SB_FEAT_INCOMPAT_LOG_ALL)) {
+ 		error = xfs_sync_sb(log->l_mp, false);
+ 		if (error < 0) {
+ 			xfs_alert(log->l_mp,
+diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
+index 31f49211fdd6..54cd47882991 100644
+--- a/fs/xfs/xfs_mount.c
++++ b/fs/xfs/xfs_mount.c
+@@ -1357,13 +1357,13 @@ xfs_add_incompat_log_feature(
+  */
+ bool
+ xfs_clear_incompat_log_features(
+-	struct xfs_mount	*mp)
++	struct xfs_mount	*mp,
++	uint32_t		features)
+ {
+ 	bool			ret = false;
  
- #endif /* XFS_SCRUB_XFBTREE_H__ */
-diff --git a/fs/xfs/scrub/xfile.c b/fs/xfs/scrub/xfile.c
-index 1b858b6a53c8..b1cbf80f55d7 100644
---- a/fs/xfs/scrub/xfile.c
-+++ b/fs/xfs/scrub/xfile.c
-@@ -285,6 +285,89 @@ xfile_pwrite(
+ 	if (!xfs_has_crc(mp) ||
+-	    !xfs_sb_has_incompat_log_feature(&mp->m_sb,
+-				XFS_SB_FEAT_INCOMPAT_LOG_ALL) ||
++	    !xfs_sb_has_incompat_log_feature(&mp->m_sb, features) ||
+ 	    xfs_is_shutdown(mp))
+ 		return false;
+ 
+@@ -1375,9 +1375,8 @@ xfs_clear_incompat_log_features(
+ 	xfs_buf_lock(mp->m_sb_bp);
+ 	xfs_buf_hold(mp->m_sb_bp);
+ 
+-	if (xfs_sb_has_incompat_log_feature(&mp->m_sb,
+-				XFS_SB_FEAT_INCOMPAT_LOG_ALL)) {
+-		xfs_sb_remove_incompat_log_features(&mp->m_sb);
++	if (xfs_sb_has_incompat_log_feature(&mp->m_sb, features)) {
++		xfs_sb_remove_incompat_log_features(&mp->m_sb, features);
+ 		ret = true;
+ 	}
+ 
+diff --git a/fs/xfs/xfs_mount.h b/fs/xfs/xfs_mount.h
+index ec8b185d45f8..7c48a2b70f6f 100644
+--- a/fs/xfs/xfs_mount.h
++++ b/fs/xfs/xfs_mount.h
+@@ -547,7 +547,7 @@ struct xfs_error_cfg * xfs_error_get_cfg(struct xfs_mount *mp,
+ 		int error_class, int error);
+ void xfs_force_summary_recalc(struct xfs_mount *mp);
+ int xfs_add_incompat_log_feature(struct xfs_mount *mp, uint32_t feature);
+-bool xfs_clear_incompat_log_features(struct xfs_mount *mp);
++bool xfs_clear_incompat_log_features(struct xfs_mount *mp, uint32_t feature);
+ void xfs_mod_delalloc(struct xfs_mount *mp, int64_t delta);
+ 
+ #endif	/* __XFS_MOUNT_H__ */
+diff --git a/fs/xfs/xfs_xattr.c b/fs/xfs/xfs_xattr.c
+index 10aa1fd39d2b..e03f199f50c7 100644
+--- a/fs/xfs/xfs_xattr.c
++++ b/fs/xfs/xfs_xattr.c
+@@ -37,7 +37,7 @@ xfs_attr_grab_log_assist(
+ 	 * Protect ourselves from an idle log clearing the logged xattrs log
+ 	 * incompat feature bit.
+ 	 */
+-	xlog_use_incompat_feat(mp->m_log);
++	xlog_use_incompat_feat(mp->m_log, XLOG_INCOMPAT_FEAT_XATTRS);
+ 
+ 	/*
+ 	 * If log-assisted xattrs are already enabled, the caller can use the
+@@ -57,7 +57,7 @@ xfs_attr_grab_log_assist(
+ 
+ 	return 0;
+ drop_incompat:
+-	xlog_drop_incompat_feat(mp->m_log);
++	xlog_drop_incompat_feat(mp->m_log, XLOG_INCOMPAT_FEAT_XATTRS);
  	return error;
  }
  
-+/* Discard pages backing a range of the xfile. */
-+void
-+xfile_discard(
-+	struct xfile		*xf,
-+	loff_t			pos,
-+	u64			count)
-+{
-+	trace_xfile_discard(xf, pos, count);
-+	shmem_truncate_range(file_inode(xf->file), pos, pos + count - 1);
-+}
-+
-+/* Ensure that there is storage backing the given range. */
-+int
-+xfile_prealloc(
-+	struct xfile		*xf,
-+	loff_t			pos,
-+	u64			count)
-+{
-+	struct inode		*inode = file_inode(xf->file);
-+	struct address_space	*mapping = inode->i_mapping;
-+	const struct address_space_operations *aops = mapping->a_ops;
-+	struct page		*page = NULL;
-+	unsigned int		pflags;
-+	int			error = 0;
-+
-+	if (count > MAX_RW_COUNT)
-+		return -E2BIG;
-+	if (inode->i_sb->s_maxbytes - pos < count)
-+		return -EFBIG;
-+
-+	trace_xfile_prealloc(xf, pos, count);
-+
-+	pflags = memalloc_nofs_save();
-+	while (count > 0) {
-+		void		*fsdata = NULL;
-+		unsigned int	len;
-+		int		ret;
-+
-+		len = min_t(ssize_t, count, PAGE_SIZE - offset_in_page(pos));
-+
-+		/*
-+		 * We call write_begin directly here to avoid all the freezer
-+		 * protection lock-taking that happens in the normal path.
-+		 * shmem doesn't support fs freeze, but lockdep doesn't know
-+		 * that and will trip over that.
-+		 */
-+		error = aops->write_begin(NULL, mapping, pos, len, &page,
-+				&fsdata);
-+		if (error)
-+			break;
-+
-+		/*
-+		 * xfile pages must never be mapped into userspace, so we skip
-+		 * the dcache flush.  If the page is not uptodate, zero it to
-+		 * ensure we never go lacking for space here.
-+		 */
-+		if (!PageUptodate(page)) {
-+			void	*kaddr = kmap_local_page(page);
-+
-+			memset(kaddr, 0, PAGE_SIZE);
-+			SetPageUptodate(page);
-+			kunmap_local(kaddr);
-+		}
-+
-+		ret = aops->write_end(NULL, mapping, pos, len, len, page,
-+				fsdata);
-+		if (ret < 0) {
-+			error = ret;
-+			break;
-+		}
-+		if (ret != len) {
-+			error = -EIO;
-+			break;
-+		}
-+
-+		count -= len;
-+		pos += len;
-+	}
-+	memalloc_nofs_restore(pflags);
-+
-+	return error;
-+}
-+
- /* Find the next written area in the xfile data for a given offset. */
- loff_t
- xfile_seek_data(
-diff --git a/fs/xfs/scrub/xfile.h b/fs/xfs/scrub/xfile.h
-index c934e70f95e8..bf80bb796e83 100644
---- a/fs/xfs/scrub/xfile.h
-+++ b/fs/xfs/scrub/xfile.h
-@@ -64,6 +64,8 @@ xfile_obj_store(struct xfile *xf, const void *buf, size_t count, loff_t pos)
- 	return 0;
- }
- 
-+void xfile_discard(struct xfile *xf, loff_t pos, u64 count);
-+int xfile_prealloc(struct xfile *xf, loff_t pos, u64 count);
- loff_t xfile_seek_data(struct xfile *xf, loff_t pos);
- 
- struct xfile_stat {
-diff --git a/fs/xfs/xfs_buf.c b/fs/xfs/xfs_buf.c
-index bf3b7c96f207..410db46e7935 100644
---- a/fs/xfs/xfs_buf.c
-+++ b/fs/xfs/xfs_buf.c
-@@ -2066,8 +2066,12 @@ __xfs_alloc_buftarg(
- 	xfs_km_flags_t		km_flags)
+@@ -65,7 +65,7 @@ static inline void
+ xfs_attr_rele_log_assist(
+ 	struct xfs_mount	*mp)
  {
- 	struct xfs_buftarg	*btp;
-+	gfp_t			gfp = GFP_KERNEL;
- 	int			error;
- 
-+	if (km_flags & KM_MAYFAIL)
-+		gfp |= __GFP_RETRY_MAYFAIL;
-+
- 	btp = kmem_zalloc(sizeof(*btp), KM_NOFS | km_flags);
- 	if (!btp)
- 		return NULL;
-@@ -2085,7 +2089,7 @@ __xfs_alloc_buftarg(
- 	if (list_lru_init(&btp->bt_lru))
- 		goto error_free;
- 
--	if (percpu_counter_init(&btp->bt_io_count, 0, GFP_KERNEL))
-+	if (percpu_counter_init(&btp->bt_io_count, 0, gfp))
- 		goto error_lru;
- 
- 	btp->bt_shrinker.count_objects = xfs_buftarg_shrink_count;
-diff --git a/fs/xfs/xfs_trace.h b/fs/xfs/xfs_trace.h
-index 2d006bf0f9ce..d1620ea1c70f 100644
---- a/fs/xfs/xfs_trace.h
-+++ b/fs/xfs/xfs_trace.h
-@@ -632,6 +632,7 @@ DEFINE_BUF_ITEM_EVENT(xfs_trans_read_buf);
- DEFINE_BUF_ITEM_EVENT(xfs_trans_read_buf_recur);
- DEFINE_BUF_ITEM_EVENT(xfs_trans_log_buf);
- DEFINE_BUF_ITEM_EVENT(xfs_trans_brelse);
-+DEFINE_BUF_ITEM_EVENT(xfs_trans_bdetach);
- DEFINE_BUF_ITEM_EVENT(xfs_trans_bjoin);
- DEFINE_BUF_ITEM_EVENT(xfs_trans_bhold);
- DEFINE_BUF_ITEM_EVENT(xfs_trans_bhold_release);
-diff --git a/fs/xfs/xfs_trans.h b/fs/xfs/xfs_trans.h
-index ae587101e167..a43d6465b9d4 100644
---- a/fs/xfs/xfs_trans.h
-+++ b/fs/xfs/xfs_trans.h
-@@ -219,6 +219,7 @@ struct xfs_buf	*xfs_trans_getsb(struct xfs_trans *);
- 
- void		xfs_trans_brelse(xfs_trans_t *, struct xfs_buf *);
- void		xfs_trans_bjoin(xfs_trans_t *, struct xfs_buf *);
-+void		xfs_trans_bdetach(struct xfs_trans *tp, struct xfs_buf *bp);
- void		xfs_trans_bhold(xfs_trans_t *, struct xfs_buf *);
- void		xfs_trans_bhold_release(xfs_trans_t *, struct xfs_buf *);
- void		xfs_trans_binval(xfs_trans_t *, struct xfs_buf *);
-diff --git a/fs/xfs/xfs_trans_buf.c b/fs/xfs/xfs_trans_buf.c
-index 6549e50d852c..e28ab74af4f0 100644
---- a/fs/xfs/xfs_trans_buf.c
-+++ b/fs/xfs/xfs_trans_buf.c
-@@ -392,6 +392,48 @@ xfs_trans_brelse(
- 	xfs_buf_relse(bp);
+-	xlog_drop_incompat_feat(mp->m_log);
++	xlog_drop_incompat_feat(mp->m_log, XLOG_INCOMPAT_FEAT_XATTRS);
  }
  
-+/*
-+ * Forcibly detach a buffer previously joined to the transaction.  The caller
-+ * will retain its locked reference to the buffer after this function returns.
-+ * The buffer must be completely clean and must not be held to the transaction.
-+ */
-+void
-+xfs_trans_bdetach(
-+	struct xfs_trans	*tp,
-+	struct xfs_buf		*bp)
-+{
-+	struct xfs_buf_log_item	*bip = bp->b_log_item;
-+
-+	ASSERT(tp != NULL);
-+	ASSERT(bp->b_transp == tp);
-+	ASSERT(bip->bli_item.li_type == XFS_LI_BUF);
-+	ASSERT(atomic_read(&bip->bli_refcount) > 0);
-+
-+	trace_xfs_trans_bdetach(bip);
-+
-+	/*
-+	 * Erase all recursion count, since we're removing this buffer from the
-+	 * transaction.
-+	 */
-+	bip->bli_recur = 0;
-+
-+	/*
-+	 * The buffer must be completely clean.  Specifically, it had better
-+	 * not be dirty, stale, logged, ordered, or held to the transaction.
-+	 */
-+	ASSERT(!test_bit(XFS_LI_DIRTY, &bip->bli_item.li_flags));
-+	ASSERT(!(bip->bli_flags & XFS_BLI_DIRTY));
-+	ASSERT(!(bip->bli_flags & XFS_BLI_HOLD));
-+	ASSERT(!(bip->bli_flags & XFS_BLI_LOGGED));
-+	ASSERT(!(bip->bli_flags & XFS_BLI_ORDERED));
-+	ASSERT(!(bip->bli_flags & XFS_BLI_STALE));
-+
-+	/* Unlink the log item from the transaction and drop the log item. */
-+	xfs_trans_del_item(&bip->bli_item);
-+	xfs_buf_item_put(bip);
-+	bp->b_transp = NULL;
-+}
-+
- /*
-  * Mark the buffer as not needing to be unlocked when the buf item's
-  * iop_committing() routine is called.  The buffer must already be locked
+ static inline bool
 
