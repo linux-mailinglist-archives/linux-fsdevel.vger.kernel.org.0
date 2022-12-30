@@ -2,49 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7B498659791
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Dec 2022 12:25:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 33322659793
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Dec 2022 12:25:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230087AbiL3LZS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Dec 2022 06:25:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34062 "EHLO
+        id S234797AbiL3LZw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Dec 2022 06:25:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34574 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234778AbiL3LZR (ORCPT
+        with ESMTP id S234788AbiL3LZv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Dec 2022 06:25:17 -0500
+        Fri, 30 Dec 2022 06:25:51 -0500
 Received: from relayaws-01.paragon-software.com (relayaws-01.paragon-software.com [35.157.23.187])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 561321AA3D;
-        Fri, 30 Dec 2022 03:25:16 -0800 (PST)
-Received: from relayfre-01.paragon-software.com (unknown [172.30.72.12])
-        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id DE17120EE;
-        Fri, 30 Dec 2022 11:21:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1672399301;
-        bh=IhyjcyPjOgMswqZxmuu5gRIeIvP7uahHFtRFs1brtbo=;
-        h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=fNkB3w4M7B1DlwImb18fnuXOaqbVJHMipnCdhLUYFgn+lYhn1u2+QANaBcjhGhFJS
-         Yz2kq0eeB9y2QgA4OHtZ9mbheeLjaCNWcBtuFVtZtQ5JwbBnfmt+4fJguDUknaEtYB
-         e+d+u2olbAKUA6sp8HmbTPsBNG+EvlzUEIM7wEbA=
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 467BCC6A;
+        Fri, 30 Dec 2022 03:25:51 -0800 (PST)
 Received: from dlg2.mail.paragon-software.com (vdlg-exch-02.paragon-software.com [172.30.1.105])
-        by relayfre-01.paragon-software.com (Postfix) with ESMTPS id 7FDB6212E;
-        Fri, 30 Dec 2022 11:25:14 +0000 (UTC)
+        by relayaws-01.paragon-software.com (Postfix) with ESMTPS id B4A8220EE;
+        Fri, 30 Dec 2022 11:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paragon-software.com; s=mail; t=1672399514;
-        bh=IhyjcyPjOgMswqZxmuu5gRIeIvP7uahHFtRFs1brtbo=;
+        d=paragon-software.com; s=mail; t=1672399336;
+        bh=snwY2+VKm0LsKlpAvdxmC463EUj3w2PVok9aOOZl/rI=;
         h=Date:Subject:From:To:CC:References:In-Reply-To;
-        b=S4C/nd8YgpdR/ITjFElMBsYZSVSpv84wYac3uiuoBREKkvJLdGNjN3s7zb9oD/VTg
-         Ra8y9m19ehTPN3b98ttaKxslLDl9FGXotQtl4B8Lk3T06xVge11ByfWTXeJuboUXDA
-         QLWRbM6IcK5kyA2WkOTYtEq/2K0BmVRqHs5jL9AU=
+        b=rRz9SCjfJ8B7V/kgmkjToZKbuXssEC25O8lWLZ7lBJJaL4VBHMap3MRnA10pXH3UK
+         FJhG5btOP2lonbcl2n+UtyprUXZcCL7aLFJrezIUIqyieXDKpz0p8jL8ffTZ7yYj3S
+         kyzwnKco+Bqq3u3sx0ASikQ8HsGeHW0Sgl6xfGCI=
 Received: from [192.168.211.146] (192.168.211.146) by
  vdlg-exch-02.paragon-software.com (172.30.1.105) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2375.7; Fri, 30 Dec 2022 14:25:14 +0300
-Message-ID: <4e72d357-35de-f0d8-7f4b-f3f0e5f641b8@paragon-software.com>
-Date:   Fri, 30 Dec 2022 15:25:13 +0400
+ 15.1.2375.7; Fri, 30 Dec 2022 14:25:48 +0300
+Message-ID: <4628ae8a-39e9-ecf8-3efe-193a1ad14d23@paragon-software.com>
+Date:   Fri, 30 Dec 2022 15:25:48 +0400
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Subject: [PATCH 2/5] fs/ntfs3: Improved checking of attribute's name length
+Subject: [PATCH 3/5] fs/ntfs3: Check for extremely large size of $AttrDef
 Content-Language: en-US
 From:   Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 To:     <ntfs3@lists.linux.dev>
@@ -65,32 +55,39 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Added comment, added null pointer checking.
+Added additional checking for size of $AttrDef.
+Added comment.
 
 Signed-off-by: Konstantin Komarov <almaz.alexandrovich@paragon-software.com>
 ---
-  fs/ntfs3/inode.c | 8 +++++++-
-  1 file changed, 7 insertions(+), 1 deletion(-)
+  fs/ntfs3/super.c | 10 +++++++++-
+  1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 8225d0b7c48c..51f9542de7b0 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -137,7 +137,13 @@ static struct inode *ntfs_read_mft(struct inode *inode,
-      rsize = attr->non_res ? 0 : le32_to_cpu(attr->res.data_size);
-      asize = le32_to_cpu(attr->size);
-
--    if (le16_to_cpu(attr->name_off) + attr->name_len > asize)
-+    /*
-+     * Really this check was done in 'ni_enum_attr_ex' -> ... 
-'mi_enum_attr'.
-+     * There not critical to check this case again
-+     */
-+    if (attr->name_len &&
-+        sizeof(short) * attr->name_len + le16_to_cpu(attr->name_off) >
-+            asize)
+diff --git a/fs/ntfs3/super.c b/fs/ntfs3/super.c
+index ef4ea3f21905..0967035146ce 100644
+--- a/fs/ntfs3/super.c
++++ b/fs/ntfs3/super.c
+@@ -1185,10 +1185,18 @@ static int ntfs_fill_super(struct super_block 
+*sb, struct fs_context *fc)
           goto out;
+      }
 
-      if (attr->non_res) {
+-    if (inode->i_size < sizeof(struct ATTR_DEF_ENTRY)) {
++    /*
++     * Typical $AttrDef contains up to 20 entries.
++     * Check for extremely large size.
++     */
++    if (inode->i_size < sizeof(struct ATTR_DEF_ENTRY) ||
++        inode->i_size > 100 * sizeof(struct ATTR_DEF_ENTRY)) {
++        ntfs_err(sb, "Looks like $AttrDef is corrupted (size=%llu).",
++             inode->i_size);
+          err = -EINVAL;
+          goto put_inode_out;
+      }
++
+      bytes = inode->i_size;
+      sbi->def_table = t = kmalloc(bytes, GFP_NOFS | __GFP_NOWARN);
+      if (!t) {
 -- 
 2.34.1
+
