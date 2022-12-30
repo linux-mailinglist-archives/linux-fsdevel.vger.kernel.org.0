@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D2FE659CE8
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Dec 2022 23:33:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 047A2659CE3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Dec 2022 23:32:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235622AbiL3WdC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Dec 2022 17:33:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52694 "EHLO
+        id S235610AbiL3Wca (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Dec 2022 17:32:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52516 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235530AbiL3Wc7 (ORCPT
+        with ESMTP id S235614AbiL3Wc1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Dec 2022 17:32:59 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 851E01C935;
-        Fri, 30 Dec 2022 14:32:58 -0800 (PST)
+        Fri, 30 Dec 2022 17:32:27 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D626B1D0DF;
+        Fri, 30 Dec 2022 14:32:25 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 327B7B81C22;
-        Fri, 30 Dec 2022 22:32:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB254C433D2;
-        Fri, 30 Dec 2022 22:32:55 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 73F8860CF0;
+        Fri, 30 Dec 2022 22:32:25 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D64ADC433EF;
+        Fri, 30 Dec 2022 22:32:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672439576;
-        bh=VVak2OIsi5OSnNrnVaDFvY23yD5fubhAOe2TmQ4Lv9g=;
+        s=k20201202; t=1672439544;
+        bh=kULxrq3DfHNpV9dPzZBhHAETwjWYJl5X2ON0iBBZ6ss=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=f6E3Wdew45Jkc92ZllgIdBzUGtY3zTrfvtGF1a4vkUhG4FmnAX3xO2Z813xMcDYni
-         ZZv+wIUrsT839M9QK2SEv1UcW+5Nq9FaxGWiYSINvYlzTb39K2jBnXcsyCl2UyHL9M
-         0/vhIBkMM2YnEQAfpbL3+rh8+5MDiKY40PUbc22pRmnqdboNO0bZmUfFHyZfh3RDuZ
-         7xGuZbO7LJX+AyYHk3NaKUsFt/K16yJOH0xM0HRhcmisXak/WECuFwVsQak9mMKoG0
-         GXEBmochuPjc0khyuwKAjg/qrLEsFPtC2hDU06f90Dsr7mattHLNpmxVLLpScSW1kH
-         mXGP7IVlnYjFw==
-Subject: [PATCH 14/14] xfs: document future directions of online fsck
+        b=i8Ss0fvTRndljS72PoxrDiuINZkmgdpxt8i7q9le3N1YxU6XGyu5A4BgCgW+YCg2h
+         QD+zvsckgfUr5PWaVKL2oBAZ83+DMeX9MOeWP2zCeSX/MYx4Wmo1kaVOe4aWZnsjip
+         7bKlJt6kglmAOjkUeISl6Hp9u3dKMzGWwwGCaVKjUuU7N1+I/dEN7u4X8ZLIc6aU1k
+         P+jKO3Y4BYN+DJI/fRSUuwClMIzW9JZEzYsGS8O22uVc/6QUKXu/WqHGZw6+1c594g
+         jBa82xPp0j32P0yAzLRoeGwkJgbfAiCycduOtgTLMfdamHce85eRiiryF9wfHSJtna
+         VHZ9GfxZghfAA==
+Subject: [PATCH 12/14] xfs: document directory tree repairs
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
@@ -40,13 +40,13 @@ Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
         linux-fsdevel@vger.kernel.org, hch@infradead.org,
         catherine.hoang@oracle.com, david@fromorbit.com
 Date:   Fri, 30 Dec 2022 14:10:53 -0800
-Message-ID: <167243825360.682859.5189751153452545448.stgit@magnolia>
+Message-ID: <167243825331.682859.12874143420813343961.stgit@magnolia>
 In-Reply-To: <167243825144.682859.12802259329489258661.stgit@magnolia>
 References: <167243825144.682859.12802259329489258661.stgit@magnolia>
 User-Agent: StGit/0.19
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -58,184 +58,261 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add the seventh and final chapter of the online fsck documentation,
-where we talk about future functionality that can tie in with the
-functionality provided by the online fsck patchset.
+Directory tree repairs are the least complete part of online fsck, due
+to the lack of directory parent pointers.  However, even without that
+feature, we can still make some corrections to the directory tree -- we
+can salvage as many directory entries as we can from a damaged
+directory, and we can reattach orphaned inodes to the lost+found, just
+as xfs_repair does now.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- .../filesystems/xfs-online-fsck-design.rst         |  155 ++++++++++++++++++++
- 1 file changed, 155 insertions(+)
+ .../filesystems/xfs-online-fsck-design.rst         |  236 ++++++++++++++++++++
+ 1 file changed, 236 insertions(+)
 
 
 diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs-online-fsck-design.rst
-index 05b9411fac7f..41291edb02b9 100644
+index e32506acb66f..2e20314f1831 100644
 --- a/Documentation/filesystems/xfs-online-fsck-design.rst
 +++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-@@ -4067,6 +4067,8 @@ The extra flexibility enables several new use cases:
-   (``FIEXCHANGE_RANGE``) to exchange the file contents, thereby committing all
-   of the updates to the original file, or none of them.
- 
-+.. _swapext_if_unchanged:
+@@ -4269,3 +4269,239 @@ The proposed patchset is the
+ `extended attribute repair
+ <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-xattrs>`_
+ series.
 +
- - **Transactional file updates**: The same mechanism as above, but the caller
-   only wants the commit to occur if the original file's contents have not
-   changed.
-@@ -4818,3 +4820,156 @@ and report what has been lost.
- For media errors in blocks owned by files, the lack of parent pointers means
- that the entire filesystem must be walked to report the file paths and offsets
- corresponding to the media error.
++Fixing Directories
++------------------
 +
-+7. Conclusion and Future Work
-+=============================
++Fixing directories is difficult with currently available filesystem features.
++The offline repair tool scans all inodes to find files with nonzero link count,
++and then it scans all directories to establish parentage of those linked files.
++Damaged files and directories are zapped, and files with no parent are
++moved to the ``/lost+found`` directory.
++It does not try to salvage anything.
 +
-+It is hoped that the reader of this document has followed the designs laid out
-+in this document and now has some familiarity with how XFS performs online
-+rebuilding of its metadata indices, and how filesystem users can interact with
-+that functionality.
-+Although the scope of this work is daunting, it is hoped that this guide will
-+make it easier for code readers to understand what has been built, for whom it
-+has been built, and why.
-+Please feel free to contact the XFS mailing list with questions.
++The best that online repair can do at this time is to read directory data
++blocks and salvage any dirents that look plausible, correct link counts, and
++move orphans back into the directory tree.
++The salvage process is discussed in the case study at the end of this section.
++The second component to fixing the directory tree online is the :ref:`file link
++count fsck <nlinks>`, since it can scan the entire filesystem to make sure that
++files can neither be deleted while there are still parents nor forgotten after
++all parents sever their links to the child.
++The third part is discussed at the :ref:`end of this section<orphanage>`.
++However, there may be a solution to these deficiencies soon!
 +
-+FIEXCHANGE_RANGE
-+----------------
++Parent Pointers
++```````````````
 +
-+As discussed earlier, a second frontend to the atomic extent swap mechanism is
-+a new ioctl call that userspace programs can use to commit updates to files
++The lack of secondary directory metadata hinders directory tree reconstruction
++in much the same way that the historic lack of reverse space mapping
++information once hindered reconstruction of filesystem space metadata.
++Specifically, the lack of redundant metadata makes it nearly impossible to
++construct a true replacement for a damaged directory; the best repair can do is
++to salvage the dirents and use the file link count repair function to move
++orphaned files to the lost and found.
++The proposed parent pointer feature, however, will make total directory
++reconstruction possible.
++
++Directory parent pointers were first proposed as an XFS feature more than a
++decade ago by SGI.
++In that implementation, each link from a parent directory to a child file was
++augmented by an extended attribute in the child that could be used to identify
++the parent directory.
++Unfortunately, this early implementation had several major shortcomings:
++
++1. The XFS codebase of the late 2000s did not have the infrastructure to
++   enforce strong referential integrity in the directory tree, which is a fancy
++   way to say that it could not guarantee that a change in a forward link would
++   always be followed up by a corresponding change to the reverse links.
++
++2. Referential integrity was not integrated into either offline repair tool.
++   Checking had to be done online without taking any kernel or inode locks to
++   coordinate access.
++   It is not clear if this actually worked properly.
++
++3. The extended attribute did not record the name of the directory entry in the
++   parent, so the first parent pointer implementation cannot be used to
++   reconnect the directory tree.
++
++4. Extended attribute forks only support 65,536 extents, which means that
++   parent pointer attribute creation is likely to fail at some point before the
++   maximum file link count is achieved.
++
++In the second implementation (currently being developed by Allison Henderson
++and Chandan Babu), the extended attribute code will be enhanced to use log
++intent items to guarantee that an extended attribute update can always be
++completed by log recovery.
++The maximum extent counts of both the data and attribute forks have raised to
++allow for creation of as many parent pointers as possible.
++The parent pointer data will also include the entry name and location within
++the parent.
++In other words, child files will store parent pointer mappings of the form
++``(parent_ino, parent_gen, dirent_pos) → (dirent_name)`` in their extended
++attribute data.
++With that in place, XFS can guarantee strong referential integrity of directory
++tree operations -- forward links will always be complemented with reverse
++links.
++
++When the parent pointer feature lands, the directory checking process can be
++strengthened to ensure that the target of each dirent also contains a parent
++pointer pointing back to the dirent.
++The quality of directory repairs will improve because online fsck will be able
++to reconstruct a directory in its entirety instead of skipping unsalvageable
++areas.
++This process is imagined to involve a :ref:`coordinated inode scan <iscan>` and
++a :ref:`directory entry live update hook <liveupdate>`:
++Scan every file in the entire filesystem, and every time the scan encounters a
++file with a parent pointer to the directory that is being reconstructed, record
++this entry in the temporary directory.
++When the scan is complete, atomically swap the contents of the temporary
++directory and the directory being repaired.
++This code has not yet been constructed, so there is not yet a case study laying
++out exactly how this process works.
++
++Parent pointers themselves can be checked by scanning each pointer and
++verifying that the target of the pointer is a directory and that it contains a
++dirent that corresponds to the information recorded in the parent pointer.
++Reconstruction of the parent pointer information will work similarly to
++directory reconstruction -- scan the filesystem, record the dirents pointing to
++the file being repaired, and rebuild that part of the xattr namespace.
++
++**Question**: How will repair ensure that the ``dirent_pos`` fields match in
++the reconstructed directory?
++
++*Answer*: The field could be designated advisory, since the other three values
++are sufficient to find the entry in the parent.
++However, this makes indexed key lookup impossible while repairs are ongoing.
++A second option would be to allow creating directory entries at specified
++offsets, which solves the referential integrity problem but runs the risk that
++dirent creation will fail due to conflicts with the free space in the
++directory.
++These conflicts could be resolved by appending the directory entry and amending
++the xattr code to support updating an xattr key and reindexing the dabtree,
++though this would have to be performed with the parent directory still locked.
++A fourth option would be to remove the parent pointer entry and re-add it
 +atomically.
-+This frontend has been out for review for several years now, though the
-+necessary refinements to online repair and lack of customer demand mean that
-+the proposal has not been pushed very hard.
 +
-+Vectorized Scrub
-+----------------
++Case Study: Salvaging Directories
++`````````````````````````````````
 +
-+As it turns out, the :ref:`refactoring <scrubrepair>` of repair items mentioned
-+earlier was a catalyst for enabling a vectorized scrub system call.
-+Since 2018, the cost of making a kernel call has increased considerably on some
-+systems to mitigate the effects of speculative execution attacks.
-+This incentivizes program authors to make as few system calls as possible to
-+reduce the number of times an execution path crosses a security boundary.
++Unlike extended attributes, directory blocks are all the same size, so
++salvaging directories is straightforward:
 +
-+With vectorized scrub, userspace pushes to the kernel the identity of a
-+filesystem object, a list of scrub types to run against that object, and a
-+simple representation of the data dependencies between the selected scrub
-+types.
-+The kernel executes as much of the caller's plan as it can until it hits a
-+dependency that cannot be satisfied due to a corruption, and tells userspace
-+how much was accomplished.
-+It is hoped that ``io_uring`` will pick up enough of this functionality that
-+online fsck can use that instead of adding a separate vectored scrub system
-+call to XFS.
++1. Find the parent of the directory.
++   If the dotdot entry is not unreadable, try to confirm that the alleged
++   parent has a child entry pointing back to the directory being repaired.
++   Otherwise, walk the filesystem to find it.
 +
-+The relevant patchsets are the
-+`kernel vectorized scrub
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=vectorized-scrub>`_
-+and
-+`userspace vectorized scrub
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=vectorized-scrub>`_
++2. Walk the first partition of data fork of the directory to find the directory
++   entry data blocks.
++   When one is found,
++
++   a. Walk the directory data block to find candidate entries.
++      When an entry is found:
++
++      i. Check the name for problems, and ignore the name if there are.
++
++      ii. Retrieve the inumber and grab the inode.
++          If that succeeds, add the name, inode number, and file type to the
++          staging xfarray and xblob.
++
++3. If the memory usage of the xfarray and xfblob exceed a certain amount of
++   memory or there are no more directory data blocks to examine, unlock the
++   directory and add the staged dirents into the temporary directory.
++   Truncate the staging files.
++
++4. Use atomic extent swapping to exchange the new and old directory structures.
++   The old directory blocks are now attached to the temporary file.
++
++5. Reap the temporary file.
++
++**Question**: Should repair invalidate dentries when rebuilding a directory?
++
++**Question**: Can the dentry cache know about a directory entry that cannot be
++salvaged?
++
++In theory, the dentry cache should be a subset of the directory entries on disk
++because there's no way to load a dentry without having something to read in the
++directory.
++However, it is possible for a coherency problem to be introduced if the ondisk
++structures becomes corrupt *after* the cache loads.
++In theory it is necessary to scan all dentry cache entries for a directory to
++ensure that one of the following apply:
++
++1. The cached dentry reflects an ondisk dirent in the new directory.
++
++2. The cached dentry no longer has a corresponding ondisk dirent in the new
++   directory and the dentry can be purged from the cache.
++
++3. The cached dentry no longer has an ondisk dirent but the dentry cannot be
++   purged.
++   This is bad.
++
++Unfortunately, the dentry cache does not have a means to walk all the dentries
++with a particular directory as a parent.
++This makes detecting situations #2 and #3 impossible, and remains an
++interesting question for research.
++
++The proposed patchset is the
++`directory repair
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-dirs>`_
 +series.
 +
-+Quality of Service Targets for Scrub
-+------------------------------------
++.. _orphanage:
 +
-+One serious shortcoming of the online fsck code is that the amount of time that
-+it can spend in the kernel holding resource locks is basically unbounded.
-+Userspace is allowed to send a fatal signal to the process which will cause
-+``xfs_scrub`` to exit when it reaches a good stopping point, but there's no way
-+for userspace to provide a time budget to the kernel.
-+Given that the scrub codebase has helpers to detect fatal signals, it shouldn't
-+be too much work to allow userspace to specify a timeout for a scrub/repair
-+operation and abort the operation if it exceeds budget.
-+However, most repair functions have the property that once they begin to touch
-+ondisk metadata, the operation cannot be cancelled cleanly, after which a QoS
-+timeout is no longer useful.
++The Orphanage
++-------------
 +
-+Defragmenting Free Space
-+------------------------
++Filesystems present files as a directed, and hopefully acyclic, graph.
++In other words, a tree.
++The root of the filesystem is a directory, and each entry in a directory points
++downwards either to more subdirectories or to non-directory files.
++Unfortunately, a disruption in the directory graph pointers result in a
++disconnected graph, which makes files impossible to access via regular path
++resolution.
++The directory parent pointer online scrub code can detect a dotdot entry
++pointing to a parent directory that doesn't have a link back to the child
++directory, and the file link count checker can detect a file that isn't pointed
++to by any directory in the filesystem.
++If the file in question has a positive link count, the file in question is an
++orphan.
 +
-+Over the years, many XFS users have requested the creation of a program to
-+clear a portion of the physical storage underlying a filesystem so that it
-+becomes a contiguous chunk of free space.
-+Call this free space defragmenter ``clearspace`` for short.
++When orphans are found, they should be reconnected to the directory tree.
++Offline fsck solves the problem by creating a directory ``/lost+found`` to
++serve as an orphanage, and linking orphan files into the orphanage by using the
++inumber as the name.
++Reparenting a file to the orphanage does not reset any of its permissions or
++ACLs.
 +
-+The first piece the ``clearspace`` program needs is the ability to read the
-+reverse mapping index from userspace.
-+This already exists in the form of the ``FS_IOC_GETFSMAP`` ioctl.
-+The second piece it needs is a new fallocate mode
-+(``FALLOC_FL_MAP_FREE_SPACE``) that allocates the free space in a region and
-+maps it to a file.
-+Call this file the "space collector" file.
-+The third piece is the ability to force an online repair.
++This process is more involved in the kernel than it is in userspace.
++The directory and file link count repair setup functions must use the regular
++VFS mechanisms to create the orphanage directory with all the necessary
++security attributes and dentry cache entries, just like a regular directory
++tree modification.
 +
-+To clear all the metadata out of a portion of physical storage, clearspace
-+uses the new fallocate map-freespace call to map any free space in that region
-+to the space collector file.
-+Next, clearspace finds all metadata blocks in that region by way of
-+``GETFSMAP`` and issues forced repair requests on the data structure.
-+This often results in the metadata being rebuilt somewhere that is not being
-+cleared.
-+After each relocation, clearspace calls the "map free space" function again to
-+collect any newly freed space in the region being cleared.
++Orphaned files are adopted by the orphanage as follows:
 +
-+To clear all the file data out of a portion of the physical storage, clearspace
-+uses the FSMAP information to find relevant file data blocks.
-+Having identified a good target, it uses the ``FICLONERANGE`` call on that part
-+of the file to try to share the physical space with a dummy file.
-+Cloning the extent means that the original owners cannot overwrite the
-+contents; any changes will be written somewhere else via copy-on-write.
-+Clearspace makes its own copy of the frozen extent in an area that is not being
-+cleared, and uses ``FIEDEUPRANGE`` (or the :ref:`atomic extent swap
-+<swapext_if_unchanged>` feature) to change the target file's data extent
-+mapping away from the area being cleared.
-+When all other mappings have been moved, clearspace reflinks the space into the
-+space collector file so that it becomes unavailable.
++1. Call ``xrep_orphanage_try_create`` at the start of the scrub setup function
++   to try to ensure that the lost and found directory actually exists.
++   This also attaches the orphanage directory to the scrub context.
 +
-+There are further optimizations that could apply to the above algorithm.
-+To clear a piece of physical storage that has a high sharing factor, it is
-+strongly desirable to retain this sharing factor.
-+In fact, these extents should be moved first to maximize sharing factor after
-+the operation completes.
-+To make this work smoothly, clearspace needs a new ioctl
-+(``FS_IOC_GETREFCOUNTS``) to report reference count information to userspace.
-+With the refcount information exposed, clearspace can quickly find the longest,
-+most shared data extents in the filesystem, and target them first.
++2. If the decision is made to reconnect a file, take the IOLOCK of both the
++   orphanage and the file being reattached.
++   The ``xrep_orphanage_iolock_two`` function follows the inode locking
++   strategy discussed earlier.
 +
-+**Question**: How might the filesystem move inode chunks?
++3. Call ``xrep_orphanage_compute_blkres`` and ``xrep_orphanage_compute_name``
++   to compute the new name in the orphanage and the block reservation required.
 +
-+*Answer*: Dave Chinner has a prototype that creates a new file with the old
-+contents and then locklessly runs around the filesystem updating directory
-+entries.
-+The operation cannot complete if the filesystem goes down.
-+That problem isn't totally insurmountable: create an inode remapping table
-+hidden behind a jump label, and a log item that tracks the kernel walking the
-+filesystem to update directory entries.
-+The trouble is, the kernel can't do anything about open files, since it cannot
-+revoke them.
++4. Use ``xrep_orphanage_adoption_prep`` to reserve resources to the repair
++   transaction.
 +
-+**Question**: Can static keys be used to add a revoke bailout return to
-+*every* code path coming in from userspace?
++5. Call ``xrep_orphanage_adopt`` to reparent the orphaned file into the lost
++   and found, and update the kernel dentry cache.
 +
-+*Answer*: In principle, yes.
-+This would eliminate the overhead of the check until a revocation happens.
-+It's not clear what we do to a revoked file after all the callers are finished
-+with it, however.
-+
-+The relevant patchsets are the
-+`kernel freespace defrag
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=defrag-freespace>`_
-+and
-+`userspace freespace defrag
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.git/log/?h=defrag-freespace>`_
++The proposed patches are in the
++`orphanage adoption
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-orphanage>`_
 +series.
-+
-+Shrinking Filesystems
-+---------------------
-+
-+Removing the end of the filesystem ought to be a simple matter of evacuating
-+the data and metadata at the end of the filesystem, and handing the freed space
-+to the shrink code.
-+That requires an evacuation of the space at end of the filesystem, which is a
-+use of free space defragmentation!
 
