@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 280A4659CDE
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Dec 2022 23:32:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0F5B8659CD0
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 30 Dec 2022 23:30:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235602AbiL3Wbl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Dec 2022 17:31:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52188 "EHLO
+        id S235488AbiL3WaI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Dec 2022 17:30:08 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51658 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231256AbiL3Wbk (ORCPT
+        with ESMTP id S230117AbiL3WaH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Dec 2022 17:31:40 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 35D981DDC4;
-        Fri, 30 Dec 2022 14:31:39 -0800 (PST)
+        Fri, 30 Dec 2022 17:30:07 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B26201C913;
+        Fri, 30 Dec 2022 14:30:05 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id B1D1261C18;
-        Fri, 30 Dec 2022 22:31:38 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D0E1C433EF;
-        Fri, 30 Dec 2022 22:31:38 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 4B59561C17;
+        Fri, 30 Dec 2022 22:30:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7B83C433EF;
+        Fri, 30 Dec 2022 22:30:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672439498;
-        bh=07xGzHg6+kYxXAbabpB8SuoMg7wB57HiqSzkR/ug24c=;
+        s=k20201202; t=1672439404;
+        bh=ajVmJ/17P8va0rP1dk24T+EEllee7H4348kdGVeTSq8=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=rjARV89+zyBMpncs6rI/mMOlQC0rFu48mWqnDdzMLLbGoCcF5lSCWukqXrj16jEIY
-         M02/LXuYlrzbpnwrXsGfbEyhP6i0K11mAHD61BkB6ziYIO89QGuk6exmTBr33jzzCL
-         CMPKLPyzMNGiJmz/uqnLlD2Z4zmhLP0W0njjJdX1rR6S+sqM5ksRQVwPahKhMG+QZ1
-         SVOYi7b1WwLCijjgcoB2wpcFDMHx/dRkqC5rzMeB7YTKRj3l3gZnLAP2wFfqF53GKY
-         8l1le1bcXeD2fclcK9JXujGY37coRQxj6jOPcTePda9WiqrwNR6kMs2cE5H/+xqteS
-         RlFJXXCJsx5ig==
-Subject: [PATCH 09/14] xfs: document online file metadata repair code
+        b=U8l+xGQhJWpb3DpfP0J8JALxKqRpOzlVqJvbnCHcHetiUsu/wKmrXH9uwayBYv9uU
+         bFQ3765y8bG3QskQ/KRfcUxSNIPMa+/MZVeZVOh6N5+/j15mMjcXFtNaiJtsQm53tK
+         KV8Zbag2sXbPNXtZXx3SxvGfeOFTBC6g+iW5hIdN4TPMjWC7N0qJbdDAGrap8K7C3J
+         a8Kzlza5mmTqVX9JmgVRvzPLM3tLYZYyC5PBHkMvjITeefrjBTkKdf4YaLY4znOlxn
+         W38Jj3pyAIbbLXZ96XKI2p/QLMWjJPA7J8E0R2/sa4WjxC15TXhnuyKZpzLclmR9t0
+         0G87mf27l2YfA==
+Subject: [PATCH 03/14] xfs: document the testing plan for online fsck
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
@@ -40,7 +40,7 @@ Cc:     linux-xfs@vger.kernel.org, willy@infradead.org,
         linux-fsdevel@vger.kernel.org, hch@infradead.org,
         catherine.hoang@oracle.com, david@fromorbit.com
 Date:   Fri, 30 Dec 2022 14:10:52 -0800
-Message-ID: <167243825288.682859.15731800804908617970.stgit@magnolia>
+Message-ID: <167243825203.682859.1144819928544539264.stgit@magnolia>
 In-Reply-To: <167243825144.682859.12802259329489258661.stgit@magnolia>
 References: <167243825144.682859.12802259329489258661.stgit@magnolia>
 User-Agent: StGit/0.19
@@ -58,172 +58,210 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add to the fifth chapter of the online fsck design documentation, where
-we discuss the details of the data structures and algorithms used by the
-kernel to repair file metadata.
+Start the third chapter of the online fsck design documentation.  This
+covers the testing plan to make sure that both online and offline fsck
+can detect arbitrary problems and correct them without making things
+worse.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- .../filesystems/xfs-online-fsck-design.rst         |  150 ++++++++++++++++++++
- 1 file changed, 150 insertions(+)
+ .../filesystems/xfs-online-fsck-design.rst         |  187 ++++++++++++++++++++
+ 1 file changed, 187 insertions(+)
 
 
 diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs-online-fsck-design.rst
-index eb61d867e55c..a658da8fe4ae 100644
+index a03a7b9f0250..d630b6bdbe4a 100644
 --- a/Documentation/filesystems/xfs-online-fsck-design.rst
 +++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-@@ -2868,3 +2868,153 @@ The allocation group free block list (AGFL) is repaired as follows:
- 4. Once the AGFL is full, reap any blocks leftover.
- 
- 5. The next operation to fix the freelist will right-size the list.
+@@ -563,3 +563,190 @@ functionality.
+ Many of these risks are inherent to software programming.
+ Despite this, it is hoped that this new functionality will prove useful in
+ reducing unexpected downtime.
 +
-+Inode Record Repairs
-+--------------------
++3. Testing Plan
++===============
 +
-+Inode records must be handled carefully, because they have both ondisk records
-+("dinodes") and an in-memory ("cached") representation.
-+There is a very high potential for cache coherency issues if online fsck is not
-+careful to access the ondisk metadata *only* when the ondisk metadata is so
-+badly damaged that the filesystem cannot load the in-memory representation.
-+When online fsck wants to open a damaged file for scrubbing, it must use
-+specialized resource acquisition functions that return either the in-memory
-+representation *or* a lock on whichever object is necessary to prevent any
-+update to the ondisk location.
++As stated before, fsck tools have three main goals:
 +
-+The only repairs that should be made to the ondisk inode buffers are whatever
-+is necessary to get the in-core structure loaded.
-+This means fixing whatever is caught by the inode cluster buffer and inode fork
-+verifiers, and retrying the ``iget`` operation.
-+If the second ``iget`` fails, the repair has failed.
++1. Detect inconsistencies in the metadata;
 +
-+Once the in-memory representation is loaded, repair can lock the inode and can
-+subject it to comprehensive checks, repairs, and optimizations.
-+Most inode attributes are easy to check and constrain, or are user-controlled
-+arbitrary bit patterns; these are both easy to fix.
-+Dealing with the data and attr fork extent counts and the file block counts is
-+more complicated, because computing the correct value requires traversing the
-+forks, or if that fails, leaving the fields invalid and waiting for the fork
-+fsck functions to run.
++2. Eliminate those inconsistencies; and
 +
-+The proposed patchset is the
-+`inode
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-inodes>`_
-+repair series.
++3. Minimize further loss of data.
 +
-+Quota Record Repairs
-+--------------------
++Demonstrations of correct operation are necessary to build users' confidence
++that the software behaves within expectations.
++Unfortunately, it was not really feasible to perform regular exhaustive testing
++of every aspect of a fsck tool until the introduction of low-cost virtual
++machines with high-IOPS storage.
++With ample hardware availability in mind, the testing strategy for the online
++fsck project involves differential analysis against the existing fsck tools and
++systematic testing of every attribute of every type of metadata object.
++Testing can be split into four major categories, as discussed below.
 +
-+Similar to inodes, quota records ("dquots") also have both ondisk records and
-+an in-memory representation, and hence are subject to the same cache coherency
-+issues.
-+Somewhat confusingly, both are known as dquots in the XFS codebase.
++Integrated Testing with fstests
++-------------------------------
 +
-+The only repairs that should be made to the ondisk quota record buffers are
-+whatever is necessary to get the in-core structure loaded.
-+Once the in-memory representation is loaded, the only attributes needing
-+checking are obviously bad limits and timer values.
++The primary goal of any free software QA effort is to make testing as
++inexpensive and widespread as possible to maximize the scaling advantages of
++community.
++In other words, testing should maximize the breadth of filesystem configuration
++scenarios and hardware setups.
++This improves code quality by enabling the authors of online fsck to find and
++fix bugs early, and helps developers of new features to find integration
++issues earlier in their development effort.
 +
-+Quota usage counters are checked, repaired, and discussed separately in the
-+section about :ref:`live quotacheck <quotacheck>`.
++The Linux filesystem community shares a common QA testing suite,
++`fstests <https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/>`_, for
++functional and regression testing.
++Even before development work began on online fsck, fstests (when run on XFS)
++would run both the ``xfs_check`` and ``xfs_repair -n`` commands on the test and
++scratch filesystems between each test.
++This provides a level of assurance that the kernel and the fsck tools stay in
++alignment about what constitutes consistent metadata.
++During development of the online checking code, fstests was modified to run
++``xfs_scrub -n`` between each test to ensure that the new checking code
++produces the same results as the two existing fsck tools.
 +
-+The proposed patchset is the
-+`quota
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-quota>`_
-+repair series.
++To start development of online repair, fstests was modified to run
++``xfs_repair`` to rebuild the filesystem's metadata indices between tests.
++This ensures that offline repair does not crash, leave a corrupt filesystem
++after it exists, or trigger complaints from the online check.
++This also established a baseline for what can and cannot be repaired offline.
++To complete the first phase of development of online repair, fstests was
++modified to be able to run ``xfs_scrub`` in a "force rebuild" mode.
++This enables a comparison of the effectiveness of online repair as compared to
++the existing offline repair tools.
 +
-+.. _fscounters:
++General Fuzz Testing of Metadata Blocks
++---------------------------------------
 +
-+Freezing to Fix Summary Counters
-+--------------------------------
++XFS benefits greatly from having a very robust debugging tool, ``xfs_db``.
 +
-+Filesystem summary counters track availability of filesystem resources such
-+as free blocks, free inodes, and allocated inodes.
-+This information could be compiled by walking the free space and inode indexes,
-+but this is a slow process, so XFS maintains a copy in the ondisk superblock
-+that should reflect the ondisk metadata, at least when the filesystem has been
-+unmounted cleanly.
-+For performance reasons, XFS also maintains incore copies of those counters,
-+which are key to enabling resource reservations for active transactions.
-+Writer threads reserve the worst-case quantities of resources from the
-+incore counter and give back whatever they don't use at commit time.
-+It is therefore only necessary to serialize on the superblock when the
-+superblock is being committed to disk.
++Before development of online fsck even began, a set of fstests were created
++to test the rather common fault that entire metadata blocks get corrupted.
++This required the creation of fstests library code that can create a filesystem
++containing every possible type of metadata object.
++Next, individual test cases were created to create a test filesystem, identify
++a single block of a specific type of metadata object, trash it with the
++existing ``blocktrash`` command in ``xfs_db``, and test the reaction of a
++particular metadata validation strategy.
 +
-+The lazy superblock counter feature introduced in XFS v5 took this even further
-+by training log recovery to recompute the summary counters from the AG headers,
-+which eliminated the need for most transactions even to touch the superblock.
-+The only time XFS commits the summary counters is at filesystem unmount.
-+To reduce contention even further, the incore counter is implemented as a
-+percpu counter, which means that each CPU is allocated a batch of blocks from a
-+global incore counter and can satisfy small allocations from the local batch.
++This earlier test suite enabled XFS developers to test the ability of the
++in-kernel validation functions and the ability of the offline fsck tool to
++detect and eliminate the inconsistent metadata.
++This part of the test suite was extended to cover online fsck in exactly the
++same manner.
 +
-+The high-performance nature of the summary counters makes it difficult for
-+online fsck to check them, since there is no way to quiesce a percpu counter
-+while the system is running.
-+Although online fsck can read the filesystem metadata to compute the correct
-+values of the summary counters, there's no way to hold the value of a percpu
-+counter stable, so it's quite possible that the counter will be out of date by
-+the time the walk is complete.
-+Earlier versions of online scrub would return to userspace with an incomplete
-+scan flag, but this is not a satisfying outcome for a system administrator.
-+For repairs, the in-memory counters must be stabilize while walking the
-+filesystem metadata to get an accurate reading and install it in the percpu
-+counter.
++In other words, for a given fstests filesystem configuration:
 +
-+To satisfy this requirement, online fsck must prevent other programs in the
-+system from initiating new writes to the filesystem, it must disable background
-+garbage collection threads, and it must wait for existing writer programs to
-+exit the kernel.
-+Once that has been established, scrub can walk the AG free space indexes, the
-+inode btrees, and the realtime bitmap to compute the correct value of all
-+four summary counters.
-+This is very similar to a filesystem freeze.
++* For each metadata object existing on the filesystem:
 +
-+The initial implementation used the actual VFS filesystem freeze mechanism to
-+quiesce filesystem activity.
-+With the filesystem frozen, it is possible to resolve the counter values with
-+exact precision, but there are many problems with calling the VFS methods
-+directly:
++  * Write garbage to it
 +
-+- Other programs can unfreeze the filesystem without our knowledge.
-+  This leads to incorrect scan results and incorrect repairs.
++  * Test the reactions of:
 +
-+- Adding an extra lock to prevent others from thawing the filesystem required
-+  the addition of a ``->freeze_super`` function to wrap ``freeze_fs()``.
-+  This in turn caused other subtle problems because it turns out that the VFS
-+  ``freeze_super`` and ``thaw_super`` functions can drop the last reference to
-+  the VFS superblock, and any subsequent access becomes a UAF bug!
-+  This can happen if the filesystem is unmounted while the underlying block
-+  device has frozen the filesystem.
-+  This problem could be solved by grabbing extra references to the superblock,
-+  but it felt suboptimal given the other inadequacies of this approach:
++    1. The kernel verifiers to stop obviously bad metadata
++    2. Offline repair (``xfs_repair``) to detect and fix
++    3. Online repair (``xfs_scrub``) to detect and fix
 +
-+- The log need not be quiesced to check the summary counters, but a VFS freeze
-+  initiates one anyway.
-+  This adds unnecessary runtime to live fscounter fsck operations.
++Targeted Fuzz Testing of Metadata Records
++-----------------------------------------
 +
-+- Quiescing the log means that XFS flushes the (possibly incorrect) counters to
-+  disk as part of cleaning the log.
++A quick conversation with the other XFS developers revealed that the existing
++test infrastructure could be extended to provide a much more powerful
++facility: targeted fuzz testing of every metadata field of every metadata
++object in the filesystem.
++``xfs_db`` can modify every field of every metadata structure in every
++block in the filesystem to simulate the effects of memory corruption and
++software bugs.
++Given that fstests already contains the ability to create a filesystem
++containing every metadata format known to the filesystem, ``xfs_db`` can be
++used to perform exhaustive fuzz testing!
 +
-+- A bug in the VFS meant that freeze could complete even when sync_filesystem
-+  fails to flush the filesystem and returns an error.
-+  This bug was fixed in Linux 5.17.
++For a given fstests filesystem configuration:
 +
-+The author established that the only component of online fsck that requires the
-+ability to freeze the filesystem is the fscounter scrubber, so the code for
-+this could be localized to that source file.
-+fscounter freeze behaves the same as the VFS freeze method, except:
++* For each metadata object existing on the filesystem...
 +
-+- The final freeze state is set one higher than ``SB_FREEZE_COMPLETE`` to
-+  prevent other threads from thawing the filesystem.
++  * For each record inside that metadata object...
 +
-+- It does not quiesce the log.
++    * For each field inside that record...
 +
-+With this code in place, it is now possible to pause the filesystem for just
-+long enough to check and correct the summary counters.
++      * For each conceivable type of transformation that can be applied to a bit field...
 +
-+The proposed patchset is the
-+`summary counter cleanup
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-fscounters>`_
-+series.
++        1. Clear all bits
++        2. Set all bits
++        3. Toggle the most significant bit
++        4. Toggle the middle bit
++        5. Toggle the least significant bit
++        6. Add a small quantity
++        7. Subtract a small quantity
++        8. Randomize the contents
++
++        * ...test the reactions of:
++
++          1. The kernel verifiers to stop obviously bad metadata
++          2. Offline checking (``xfs_repair -n``)
++          3. Offline repair (``xfs_repair``)
++          4. Online checking (``xfs_scrub -n``)
++          5. Online repair (``xfs_scrub``)
++          6. Both repair tools (``xfs_scrub`` and then ``xfs_repair`` if online repair doesn't succeed)
++
++This is quite the combinatoric explosion!
++
++Fortunately, having this much test coverage makes it easy for XFS developers to
++check the responses of XFS' fsck tools.
++Since the introduction of the fuzz testing framework, these tests have been
++used to discover incorrect repair code and missing functionality for entire
++classes of metadata objects in ``xfs_repair``.
++The enhanced testing was used to finalize the deprecation of ``xfs_check`` by
++confirming that ``xfs_repair`` could detect at least as many corruptions as
++the older tool.
++
++These tests have been very valuable for ``xfs_scrub`` in the same ways -- they
++allow the online fsck developers to compare online fsck against offline fsck,
++and they enable XFS developers to find deficiencies in the code base.
++
++Proposed patchsets include
++`general fuzzer improvements
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=fuzzer-improvements>`_,
++`fuzzing baselines
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=fuzz-baseline>`_,
++and `improvements in fuzz testing comprehensiveness
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=more-fuzz-testing>`_.
++
++Stress Testing
++--------------
++
++A unique requirement to online fsck is the ability to operate on a filesystem
++concurrently with regular workloads.
++Although it is of course impossible to run ``xfs_scrub`` with *zero* observable
++impact on the running system, the online repair code should never introduce
++inconsistencies into the filesystem metadata, and regular workloads should
++never notice resource starvation.
++To verify that these conditions are being met, fstests has been enhanced in
++the following ways:
++
++* For each scrub item type, create a test to exercise checking that item type
++  while running ``fsstress``.
++* For each scrub item type, create a test to exercise repairing that item type
++  while running ``fsstress``.
++* Race ``fsstress`` and ``xfs_scrub -n`` to ensure that checking the whole
++  filesystem doesn't cause problems.
++* Race ``fsstress`` and ``xfs_scrub`` in force-rebuild mode to ensure that
++  force-repairing the whole filesystem doesn't cause problems.
++* Race ``xfs_scrub`` in check and force-repair mode against ``fsstress`` while
++  freezing and thawing the filesystem.
++* Race ``xfs_scrub`` in check and force-repair mode against ``fsstress`` while
++  remounting the filesystem read-only and read-write.
++* The same, but running ``fsx`` instead of ``fsstress``.  (Not done yet?)
++
++Success is defined by the ability to run all of these tests without observing
++any unexpected filesystem shutdowns due to corrupted metadata, kernel hang
++check warnings, or any other sort of mischief.
++
++Proposed patchsets include `general stress testing
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=race-scrub-and-mount-state-changes>`_
++and the `evolution of existing per-function stress testing
++<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.git/log/?h=refactor-scrub-stress>`_.
 
