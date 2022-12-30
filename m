@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 232E4659ED9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Dec 2022 00:52:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D40E7659ED2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Dec 2022 00:52:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235785AbiL3Xww (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Dec 2022 18:52:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49296 "EHLO
+        id S235828AbiL3XwQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Dec 2022 18:52:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49098 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235424AbiL3Xwr (ORCPT
+        with ESMTP id S235825AbiL3XwP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Dec 2022 18:52:47 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EFDC51DF3A;
-        Fri, 30 Dec 2022 15:52:45 -0800 (PST)
+        Fri, 30 Dec 2022 18:52:15 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BBBFE1E3C1;
+        Fri, 30 Dec 2022 15:52:14 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 8CA0861C43;
-        Fri, 30 Dec 2022 23:52:45 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2FC7C433EF;
-        Fri, 30 Dec 2022 23:52:44 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 592F460CF0;
+        Fri, 30 Dec 2022 23:52:14 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7BE6C433EF;
+        Fri, 30 Dec 2022 23:52:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672444365;
-        bh=2oh73mlzD1sPSN+bFzwE2eyzq1B6W0++rBwka2oIIUw=;
+        s=k20201202; t=1672444333;
+        bh=E36jUGCApd/U0WfGcZmj11kf51+yw1h25/Myy9ahPVo=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=iCpejZzscE79nVD1hBchW/BRPpS+L35hpusBRVYMwIINA3/RXBNTnnCuR8poWSWbz
-         v3lRmxfA6LoXRqTbZWZr21K37u4vNncKSBxZjGA8+ELQo2djD3qdjrVp/I5m2BnmJR
-         ZmICPqXdt0whrCWvaPZLNNyXNnfQzt7dCTKid2QzfFtKPFcetUY+pzu0pUuGkwHddO
-         EO82wDReMZHfzLHcwYmqNhRTl0bL25+AeRC43DRm+qaCft+wipJRrnUx+P6EcgOt8r
-         9XiuvZhSK+qZMBN5ecSrmAIrqjGSF6WTnQk0dvsDSB7rBS7hC7bRVWHf6o1lzjrGXP
-         i3X2miviI5sNw==
-Subject: [PATCH 10/21] xfs: add error injection to test swapext recovery
+        b=pXGO+oJSU+PQuz3FMghAu7cuZ9kMGOAvlXNYoyHBAGoFfOU2v7ztjtR8cdBMli48p
+         yRj/lfwhj/pElR9XqbRI5bPxhx3KWFDtE0VwBNbrfGAyHiY/4GdGC8hcRXB5LlcIVr
+         eqH/NpYJg2l4JqBhRhbyC67tg8oV4aC2hRVIkO84/LrhOFj8QBJbWlXD3+uNVRi/fw
+         ro8puXOpm+c1igxihyEPBxLVel0kBbv63G4Wj0X+ElMTImLoiPNlms0zrAI4PhCX/U
+         lF7tRDZMXo9EniyEtEXmQlumz8zVp6yUpYToUYc2MI2i6b2ISz1V6b3t/6Js30AwG8
+         VV/yYA1J2WiMw==
+Subject: [PATCH 08/21] xfs: enable xlog users to toggle atomic extent swapping
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org
 Date:   Fri, 30 Dec 2022 14:13:56 -0800
-Message-ID: <167243843669.699466.12618888634612571770.stgit@magnolia>
+Message-ID: <167243843639.699466.9221823995188278604.stgit@magnolia>
 In-Reply-To: <167243843494.699466.5163281976943635014.stgit@magnolia>
 References: <167243843494.699466.5163281976943635014.stgit@magnolia>
 User-Agent: StGit/0.19
@@ -56,77 +56,89 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Add an errortag so that we can test recovery of swapext log items.
+Plumb the necessary bits into the xlog code so that higher level callers
+can enable the atomic extent swapping feature and have it clear
+automatically when possible.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/libxfs/xfs_errortag.h |    4 +++-
- fs/xfs/libxfs/xfs_swapext.c  |    3 +++
- fs/xfs/xfs_error.c           |    3 +++
- 3 files changed, 9 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_log.c      |   13 +++++++++++++
+ fs/xfs/xfs_log.h      |    1 +
+ fs/xfs/xfs_log_priv.h |    1 +
+ 3 files changed, 15 insertions(+)
 
 
-diff --git a/fs/xfs/libxfs/xfs_errortag.h b/fs/xfs/libxfs/xfs_errortag.h
-index 01a9e86b3037..263d62a8d70f 100644
---- a/fs/xfs/libxfs/xfs_errortag.h
-+++ b/fs/xfs/libxfs/xfs_errortag.h
-@@ -63,7 +63,8 @@
- #define XFS_ERRTAG_ATTR_LEAF_TO_NODE			41
- #define XFS_ERRTAG_WB_DELAY_MS				42
- #define XFS_ERRTAG_WRITE_DELAY_MS			43
--#define XFS_ERRTAG_MAX					44
-+#define XFS_ERRTAG_SWAPEXT_FINISH_ONE			44
-+#define XFS_ERRTAG_MAX					45
+diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+index a0ef09addc84..37e85c1bb913 100644
+--- a/fs/xfs/xfs_log.c
++++ b/fs/xfs/xfs_log.c
+@@ -1501,11 +1501,17 @@ xlog_clear_incompat(
+ 	if (down_write_trylock(&log->l_incompat_xattrs))
+ 		incompat_mask |= XFS_SB_FEAT_INCOMPAT_LOG_XATTRS;
+ 
++	if (down_write_trylock(&log->l_incompat_swapext))
++		incompat_mask |= XFS_SB_FEAT_INCOMPAT_LOG_SWAPEXT;
++
+ 	if (!incompat_mask)
+ 		return;
+ 
+ 	xfs_clear_incompat_log_features(mp, incompat_mask);
+ 
++	if (incompat_mask & XFS_SB_FEAT_INCOMPAT_LOG_SWAPEXT)
++		up_write(&log->l_incompat_swapext);
++
+ 	if (incompat_mask & XFS_SB_FEAT_INCOMPAT_LOG_XATTRS)
+ 		up_write(&log->l_incompat_xattrs);
+ }
+@@ -1625,6 +1631,7 @@ xlog_alloc_log(
+ 	log->l_sectBBsize = 1 << log2_size;
+ 
+ 	init_rwsem(&log->l_incompat_xattrs);
++	init_rwsem(&log->l_incompat_swapext);
+ 
+ 	xlog_get_iclog_buffer_size(mp, log);
+ 
+@@ -3922,6 +3929,9 @@ xlog_use_incompat_feat(
+ 	case XLOG_INCOMPAT_FEAT_XATTRS:
+ 		down_read(&log->l_incompat_xattrs);
+ 		break;
++	case XLOG_INCOMPAT_FEAT_SWAPEXT:
++		down_read(&log->l_incompat_swapext);
++		break;
+ 	}
+ }
+ 
+@@ -3935,5 +3945,8 @@ xlog_drop_incompat_feat(
+ 	case XLOG_INCOMPAT_FEAT_XATTRS:
+ 		up_read(&log->l_incompat_xattrs);
+ 		break;
++	case XLOG_INCOMPAT_FEAT_SWAPEXT:
++		up_read(&log->l_incompat_swapext);
++		break;
+ 	}
+ }
+diff --git a/fs/xfs/xfs_log.h b/fs/xfs/xfs_log.h
+index d187f6445909..30bdbf8ee25c 100644
+--- a/fs/xfs/xfs_log.h
++++ b/fs/xfs/xfs_log.h
+@@ -161,6 +161,7 @@ bool	  xlog_force_shutdown(struct xlog *log, uint32_t shutdown_flags);
+ 
+ enum xlog_incompat_feat {
+ 	XLOG_INCOMPAT_FEAT_XATTRS = XFS_SB_FEAT_INCOMPAT_LOG_XATTRS,
++	XLOG_INCOMPAT_FEAT_SWAPEXT = XFS_SB_FEAT_INCOMPAT_LOG_SWAPEXT
+ };
+ 
+ void xlog_use_incompat_feat(struct xlog *log, enum xlog_incompat_feat what);
+diff --git a/fs/xfs/xfs_log_priv.h b/fs/xfs/xfs_log_priv.h
+index a13b5b6b744d..6cbee6996de5 100644
+--- a/fs/xfs/xfs_log_priv.h
++++ b/fs/xfs/xfs_log_priv.h
+@@ -448,6 +448,7 @@ struct xlog {
+ 
+ 	/* Users of log incompat features should take a read lock. */
+ 	struct rw_semaphore	l_incompat_xattrs;
++	struct rw_semaphore	l_incompat_swapext;
+ };
  
  /*
-  * Random factors for above tags, 1 means always, 2 means 1/2 time, etc.
-@@ -111,5 +112,6 @@
- #define XFS_RANDOM_ATTR_LEAF_TO_NODE			1
- #define XFS_RANDOM_WB_DELAY_MS				3000
- #define XFS_RANDOM_WRITE_DELAY_MS			3000
-+#define XFS_RANDOM_SWAPEXT_FINISH_ONE			1
- 
- #endif /* __XFS_ERRORTAG_H_ */
-diff --git a/fs/xfs/libxfs/xfs_swapext.c b/fs/xfs/libxfs/xfs_swapext.c
-index 0bc758c5cf5c..227a08ac5d4b 100644
---- a/fs/xfs/libxfs/xfs_swapext.c
-+++ b/fs/xfs/libxfs/xfs_swapext.c
-@@ -426,6 +426,9 @@ xfs_swapext_finish_one(
- 			return error;
- 	}
- 
-+	if (XFS_TEST_ERROR(false, tp->t_mountp, XFS_ERRTAG_SWAPEXT_FINISH_ONE))
-+		return -EIO;
-+
- 	/* If we still have work to do, ask for a new transaction. */
- 	if (sxi_has_more_swap_work(sxi) || sxi_has_postop_work(sxi)) {
- 		trace_xfs_swapext_defer(tp->t_mountp, sxi);
-diff --git a/fs/xfs/xfs_error.c b/fs/xfs/xfs_error.c
-index ae082808cfed..4b57a809ced5 100644
---- a/fs/xfs/xfs_error.c
-+++ b/fs/xfs/xfs_error.c
-@@ -62,6 +62,7 @@ static unsigned int xfs_errortag_random_default[] = {
- 	XFS_RANDOM_ATTR_LEAF_TO_NODE,
- 	XFS_RANDOM_WB_DELAY_MS,
- 	XFS_RANDOM_WRITE_DELAY_MS,
-+	XFS_RANDOM_SWAPEXT_FINISH_ONE,
- };
- 
- struct xfs_errortag_attr {
-@@ -179,6 +180,7 @@ XFS_ERRORTAG_ATTR_RW(da_leaf_split,	XFS_ERRTAG_DA_LEAF_SPLIT);
- XFS_ERRORTAG_ATTR_RW(attr_leaf_to_node,	XFS_ERRTAG_ATTR_LEAF_TO_NODE);
- XFS_ERRORTAG_ATTR_RW(wb_delay_ms,	XFS_ERRTAG_WB_DELAY_MS);
- XFS_ERRORTAG_ATTR_RW(write_delay_ms,	XFS_ERRTAG_WRITE_DELAY_MS);
-+XFS_ERRORTAG_ATTR_RW(swapext_finish_one, XFS_ERRTAG_SWAPEXT_FINISH_ONE);
- 
- static struct attribute *xfs_errortag_attrs[] = {
- 	XFS_ERRORTAG_ATTR_LIST(noerror),
-@@ -224,6 +226,7 @@ static struct attribute *xfs_errortag_attrs[] = {
- 	XFS_ERRORTAG_ATTR_LIST(attr_leaf_to_node),
- 	XFS_ERRORTAG_ATTR_LIST(wb_delay_ms),
- 	XFS_ERRORTAG_ATTR_LIST(write_delay_ms),
-+	XFS_ERRORTAG_ATTR_LIST(swapext_finish_one),
- 	NULL,
- };
- ATTRIBUTE_GROUPS(xfs_errortag);
 
