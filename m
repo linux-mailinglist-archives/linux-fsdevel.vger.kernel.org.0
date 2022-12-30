@@ -2,43 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 35419659EDE
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Dec 2022 00:53:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BF25A659EEB
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Dec 2022 00:54:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235783AbiL3XxV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 30 Dec 2022 18:53:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49748 "EHLO
+        id S235806AbiL3Xxu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 30 Dec 2022 18:53:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231348AbiL3XxT (ORCPT
+        with ESMTP id S235736AbiL3Xxt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 30 Dec 2022 18:53:19 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 922AC1DF3A;
-        Fri, 30 Dec 2022 15:53:18 -0800 (PST)
+        Fri, 30 Dec 2022 18:53:49 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 454FA1E3D6;
+        Fri, 30 Dec 2022 15:53:48 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 5358DB80883;
-        Fri, 30 Dec 2022 23:53:17 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 147CFC433EF;
-        Fri, 30 Dec 2022 23:53:16 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D627A61B98;
+        Fri, 30 Dec 2022 23:53:47 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 455D6C433D2;
+        Fri, 30 Dec 2022 23:53:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672444396;
-        bh=Z+WdyR21OnOkAeFJd2/2V5xKTkymJYwVNQwGZNWgWyI=;
+        s=k20201202; t=1672444427;
+        bh=AKaVQQmU9fM/WNiMCxkI/eFl5zhqdBthV24kVCilEYc=;
         h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-        b=RoHEcXPkIC0ZIWtPZKMaIdjba+Tl6GeRUpGzQCsShCBhbQWxxpdgNGqHJiYr1Id6C
-         YMwaDVb9KzbGzkzXRf1/wNb1unt/xTzize8L2hBPuhwoKcL1dRraurGOv5aFguvIfg
-         4bDNCkoBbr7goYUFs6boFTLoYwX5AhHNkhKJmAgRun6U2Sx13QwPLz6TN5/NCx+si5
-         S7WmhbtiEUnteZWsJBr2ltKFlMkF6cz5fCZAAzRhrYOraER+on3BZ6alPuJ8SvB/BY
-         uPbd1RVCzNu4Qyk3t2TLAzvcOGwq5NkDChfujF9km5TeWUHXSOc1js59a2C9njRvRL
-         DGJb+ekII01Sw==
-Subject: [PATCH 12/21] xfs: consolidate all of the xfs_swap_extent_forks code
+        b=kj0SjqgfuKHSNWH9nfHb20MSEgxo3J1fBsBnVPyNatJqyXA0usxKIF+FHDSpb1mrM
+         t9uE/6uJsKpwyf1IiyA50n6mmBPLjLBKjC99zAHuvp9wT3+5ENGWoNeHiOt4yEnaYD
+         06+zZeT1IXRTxgKf2SLmTOHYOiNyMXIpyydN0sOwUCQLkRhdQWiqu0S1q0Gfm9NDQV
+         IKLs3x5bHbfUw3F1eO74swLP1pFsh2tEUPXzb+PU5Zs7vuS841MbLM40YsxeyCXat0
+         x8hlHsxkcRIwbD9oTaLE2r8NOB+XKygjicYXXMuLftCaXCK6VLc4XQcT6KJfFxD7OH
+         eeaJVZ7OKX/Wg==
+Subject: [PATCH 14/21] xfs: allow xfs_swap_range to use older extent swap
+ algorithms
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     djwong@kernel.org
 Cc:     linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-api@vger.kernel.org
 Date:   Fri, 30 Dec 2022 14:13:57 -0800
-Message-ID: <167243843698.699466.5411234125659051866.stgit@magnolia>
+Message-ID: <167243843727.699466.11955722742191147402.stgit@magnolia>
 In-Reply-To: <167243843494.699466.5163281976943635014.stgit@magnolia>
 References: <167243843494.699466.5163281976943635014.stgit@magnolia>
 User-Agent: StGit/0.19
@@ -56,331 +57,195 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 From: Darrick J. Wong <djwong@kernel.org>
 
-Now that we've moved the old swapext code to use the new log-assisted
-extent swap code for rmap filesystems, let's start porting the old
-implementation to the new ioctl interface so that later we can port the
-old interface to the new interface.
-
-Consolidate the reflink flag swap code and the the bmbt owner change
-scan code in xfs_swap_extent_forks, since both interfaces are going to
-need that.
+If userspace permits non-atomic swap operations, use the older code
+paths to implement the same functionality.
 
 Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 ---
- fs/xfs/xfs_bmap_util.c |  220 ++++++++++++++++++++++++------------------------
- 1 file changed, 108 insertions(+), 112 deletions(-)
+ fs/xfs/xfs_bmap_util.c |    4 +-
+ fs/xfs/xfs_bmap_util.h |    4 ++
+ fs/xfs/xfs_xchgrange.c |   96 +++++++++++++++++++++++++++++++++++++++++++-----
+ 3 files changed, 92 insertions(+), 12 deletions(-)
 
 
 diff --git a/fs/xfs/xfs_bmap_util.c b/fs/xfs/xfs_bmap_util.c
-index 4d4696bf9b08..dbd95d86addb 100644
+index 9d6337a05544..e8562c4de7eb 100644
 --- a/fs/xfs/xfs_bmap_util.c
 +++ b/fs/xfs/xfs_bmap_util.c
-@@ -1360,19 +1360,61 @@ xfs_swap_extent_flush(
- 	return 0;
+@@ -1261,7 +1261,7 @@ xfs_insert_file_space(
+  * reject and log the attempt. basically we are putting the responsibility on
+  * userspace to get this right.
+  */
+-static int
++int
+ xfs_swap_extents_check_format(
+ 	struct xfs_inode	*ip,	/* target inode */
+ 	struct xfs_inode	*tip)	/* tmp inode */
+@@ -1403,7 +1403,7 @@ xfs_swap_change_owner(
  }
  
-+/*
-+ * Fix up the owners of the bmbt blocks to refer to the current inode. The
-+ * change owner scan attempts to order all modified buffers in the current
-+ * transaction. In the event of ordered buffer failure, the offending buffer is
-+ * physically logged as a fallback and the scan returns -EAGAIN. We must roll
-+ * the transaction in this case to replenish the fallback log reservation and
-+ * restart the scan. This process repeats until the scan completes.
-+ */
-+static int
-+xfs_swap_change_owner(
-+	struct xfs_trans	**tpp,
-+	struct xfs_inode	*ip,
-+	struct xfs_inode	*tmpip)
+ /* Swap the extents of two files by swapping data forks. */
+-STATIC int
++int
+ xfs_swap_extent_forks(
+ 	struct xfs_trans	**tpp,
+ 	struct xfs_swapext_req	*req)
+diff --git a/fs/xfs/xfs_bmap_util.h b/fs/xfs/xfs_bmap_util.h
+index 6888078f5c31..39c71da08403 100644
+--- a/fs/xfs/xfs_bmap_util.h
++++ b/fs/xfs/xfs_bmap_util.h
+@@ -69,6 +69,10 @@ int	xfs_free_eofblocks(struct xfs_inode *ip);
+ int	xfs_swap_extents(struct xfs_inode *ip, struct xfs_inode *tip,
+ 			 struct xfs_swapext *sx);
+ 
++struct xfs_swapext_req;
++int xfs_swap_extent_forks(struct xfs_trans **tpp, struct xfs_swapext_req *req);
++int xfs_swap_extents_check_format(struct xfs_inode *ip, struct xfs_inode *tip);
++
+ xfs_daddr_t xfs_fsb_to_db(struct xfs_inode *ip, xfs_fsblock_t fsb);
+ 
+ xfs_extnum_t xfs_bmap_count_leaves(struct xfs_ifork *ifp, xfs_filblks_t *count);
+diff --git a/fs/xfs/xfs_xchgrange.c b/fs/xfs/xfs_xchgrange.c
+index 9966938134c0..2b7aedc49923 100644
+--- a/fs/xfs/xfs_xchgrange.c
++++ b/fs/xfs/xfs_xchgrange.c
+@@ -297,6 +297,33 @@ xfs_xchg_range_rele_log_assist(
+ 	xlog_drop_incompat_feat(mp->m_log, XLOG_INCOMPAT_FEAT_SWAPEXT);
+ }
+ 
++/* Decide if we can use the old data fork exchange code. */
++static inline bool
++xfs_xchg_use_forkswap(
++	const struct file_xchg_range	*fxr,
++	struct xfs_inode		*ip1,
++	struct xfs_inode		*ip2)
 +{
-+	int			error;
-+	struct xfs_trans	*tp = *tpp;
-+
-+	do {
-+		error = xfs_bmbt_change_owner(tp, ip, XFS_DATA_FORK, ip->i_ino,
-+					      NULL);
-+		/* success or fatal error */
-+		if (error != -EAGAIN)
-+			break;
-+
-+		error = xfs_trans_roll(tpp);
-+		if (error)
-+			break;
-+		tp = *tpp;
-+
-+		/*
-+		 * Redirty both inodes so they can relog and keep the log tail
-+		 * moving forward.
-+		 */
-+		xfs_trans_ijoin(tp, ip, 0);
-+		xfs_trans_ijoin(tp, tmpip, 0);
-+		xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
-+		xfs_trans_log_inode(tp, tmpip, XFS_ILOG_CORE);
-+	} while (true);
-+
-+	return error;
++	if (!(fxr->flags & FILE_XCHG_RANGE_NONATOMIC))
++		return false;
++	if (!(fxr->flags & FILE_XCHG_RANGE_FULL_FILES))
++		return false;
++	if (fxr->flags & FILE_XCHG_RANGE_TO_EOF)
++		return false;
++	if (fxr->file1_offset != 0 || fxr->file2_offset != 0)
++		return false;
++	if (fxr->length != ip1->i_disk_size)
++		return false;
++	if (fxr->length != ip2->i_disk_size)
++		return false;
++	return true;
 +}
 +
- /* Swap the extents of two files by swapping data forks. */
- STATIC int
- xfs_swap_extent_forks(
--	struct xfs_trans	*tp,
-+	struct xfs_trans	**tpp,
- 	struct xfs_inode	*ip,
--	struct xfs_inode	*tip,
--	int			*src_log_flags,
--	int			*target_log_flags)
-+	struct xfs_inode	*tip)
- {
- 	xfs_filblks_t		aforkblks = 0;
- 	xfs_filblks_t		taforkblks = 0;
- 	xfs_extnum_t		junk;
- 	uint64_t		tmp;
-+	int			src_log_flags = XFS_ILOG_CORE;
-+	int			target_log_flags = XFS_ILOG_CORE;
- 	int			error;
- 
- 	/*
-@@ -1380,14 +1422,14 @@ xfs_swap_extent_forks(
- 	 */
- 	if (xfs_inode_has_attr_fork(ip) && ip->i_af.if_nextents > 0 &&
- 	    ip->i_af.if_format != XFS_DINODE_FMT_LOCAL) {
--		error = xfs_bmap_count_blocks(tp, ip, XFS_ATTR_FORK, &junk,
-+		error = xfs_bmap_count_blocks(*tpp, ip, XFS_ATTR_FORK, &junk,
- 				&aforkblks);
- 		if (error)
- 			return error;
- 	}
- 	if (xfs_inode_has_attr_fork(tip) && tip->i_af.if_nextents > 0 &&
- 	    tip->i_af.if_format != XFS_DINODE_FMT_LOCAL) {
--		error = xfs_bmap_count_blocks(tp, tip, XFS_ATTR_FORK, &junk,
-+		error = xfs_bmap_count_blocks(*tpp, tip, XFS_ATTR_FORK, &junk,
- 				&taforkblks);
- 		if (error)
- 			return error;
-@@ -1402,9 +1444,9 @@ xfs_swap_extent_forks(
- 	 */
- 	if (xfs_has_v3inodes(ip->i_mount)) {
- 		if (ip->i_df.if_format == XFS_DINODE_FMT_BTREE)
--			(*target_log_flags) |= XFS_ILOG_DOWNER;
-+			target_log_flags |= XFS_ILOG_DOWNER;
- 		if (tip->i_df.if_format == XFS_DINODE_FMT_BTREE)
--			(*src_log_flags) |= XFS_ILOG_DOWNER;
-+			src_log_flags |= XFS_ILOG_DOWNER;
- 	}
- 
- 	/*
-@@ -1434,71 +1476,80 @@ xfs_swap_extent_forks(
- 
- 	switch (ip->i_df.if_format) {
- 	case XFS_DINODE_FMT_EXTENTS:
--		(*src_log_flags) |= XFS_ILOG_DEXT;
-+		src_log_flags |= XFS_ILOG_DEXT;
- 		break;
- 	case XFS_DINODE_FMT_BTREE:
- 		ASSERT(!xfs_has_v3inodes(ip->i_mount) ||
--		       (*src_log_flags & XFS_ILOG_DOWNER));
--		(*src_log_flags) |= XFS_ILOG_DBROOT;
-+		       (src_log_flags & XFS_ILOG_DOWNER));
-+		src_log_flags |= XFS_ILOG_DBROOT;
- 		break;
- 	}
- 
- 	switch (tip->i_df.if_format) {
- 	case XFS_DINODE_FMT_EXTENTS:
--		(*target_log_flags) |= XFS_ILOG_DEXT;
-+		target_log_flags |= XFS_ILOG_DEXT;
- 		break;
- 	case XFS_DINODE_FMT_BTREE:
--		(*target_log_flags) |= XFS_ILOG_DBROOT;
-+		target_log_flags |= XFS_ILOG_DBROOT;
- 		ASSERT(!xfs_has_v3inodes(ip->i_mount) ||
--		       (*target_log_flags & XFS_ILOG_DOWNER));
-+		       (target_log_flags & XFS_ILOG_DOWNER));
- 		break;
- 	}
- 
-+	/* Do we have to swap reflink flags? */
-+	if ((ip->i_diflags2 & XFS_DIFLAG2_REFLINK) ^
-+	    (tip->i_diflags2 & XFS_DIFLAG2_REFLINK)) {
-+		uint64_t	f;
++enum xchg_strategy {
++	SWAPEXT		= 1,	/* xfs_swapext() */
++	FORKSWAP	= 2,	/* exchange forks */
++};
 +
-+		f = ip->i_diflags2 & XFS_DIFLAG2_REFLINK;
-+		ip->i_diflags2 &= ~XFS_DIFLAG2_REFLINK;
-+		ip->i_diflags2 |= tip->i_diflags2 & XFS_DIFLAG2_REFLINK;
-+		tip->i_diflags2 &= ~XFS_DIFLAG2_REFLINK;
-+		tip->i_diflags2 |= f & XFS_DIFLAG2_REFLINK;
-+	}
-+
-+	/* Swap the cow forks. */
-+	if (xfs_has_reflink(ip->i_mount)) {
-+		ASSERT(!ip->i_cowfp ||
-+		       ip->i_cowfp->if_format == XFS_DINODE_FMT_EXTENTS);
-+		ASSERT(!tip->i_cowfp ||
-+		       tip->i_cowfp->if_format == XFS_DINODE_FMT_EXTENTS);
-+
-+		swap(ip->i_cowfp, tip->i_cowfp);
-+
-+		if (ip->i_cowfp && ip->i_cowfp->if_bytes)
-+			xfs_inode_set_cowblocks_tag(ip);
-+		else
-+			xfs_inode_clear_cowblocks_tag(ip);
-+		if (tip->i_cowfp && tip->i_cowfp->if_bytes)
-+			xfs_inode_set_cowblocks_tag(tip);
-+		else
-+			xfs_inode_clear_cowblocks_tag(tip);
-+	}
-+
-+	xfs_trans_log_inode(*tpp, ip,  src_log_flags);
-+	xfs_trans_log_inode(*tpp, tip, target_log_flags);
-+
-+	/*
-+	 * The extent forks have been swapped, but crc=1,rmapbt=0 filesystems
-+	 * have inode number owner values in the bmbt blocks that still refer to
-+	 * the old inode. Scan each bmbt to fix up the owner values with the
-+	 * inode number of the current inode.
-+	 */
-+	if (src_log_flags & XFS_ILOG_DOWNER) {
-+		error = xfs_swap_change_owner(tpp, ip, tip);
-+		if (error)
-+			return error;
-+	}
-+	if (target_log_flags & XFS_ILOG_DOWNER) {
-+		error = xfs_swap_change_owner(tpp, tip, ip);
-+		if (error)
-+			return error;
-+	}
-+
- 	return 0;
- }
- 
--/*
-- * Fix up the owners of the bmbt blocks to refer to the current inode. The
-- * change owner scan attempts to order all modified buffers in the current
-- * transaction. In the event of ordered buffer failure, the offending buffer is
-- * physically logged as a fallback and the scan returns -EAGAIN. We must roll
-- * the transaction in this case to replenish the fallback log reservation and
-- * restart the scan. This process repeats until the scan completes.
-- */
--static int
--xfs_swap_change_owner(
--	struct xfs_trans	**tpp,
--	struct xfs_inode	*ip,
--	struct xfs_inode	*tmpip)
--{
--	int			error;
--	struct xfs_trans	*tp = *tpp;
--
--	do {
--		error = xfs_bmbt_change_owner(tp, ip, XFS_DATA_FORK, ip->i_ino,
--					      NULL);
--		/* success or fatal error */
--		if (error != -EAGAIN)
--			break;
--
--		error = xfs_trans_roll(tpp);
--		if (error)
--			break;
--		tp = *tpp;
--
--		/*
--		 * Redirty both inodes so they can relog and keep the log tail
--		 * moving forward.
--		 */
--		xfs_trans_ijoin(tp, ip, 0);
--		xfs_trans_ijoin(tp, tmpip, 0);
--		xfs_trans_log_inode(tp, ip, XFS_ILOG_CORE);
--		xfs_trans_log_inode(tp, tmpip, XFS_ILOG_CORE);
--	} while (true);
--
--	return error;
--}
--
+ /* Exchange the contents of two files. */
  int
- xfs_swap_extents(
- 	struct xfs_inode	*ip,	/* target inode */
-@@ -1508,9 +1559,7 @@ xfs_swap_extents(
- 	struct xfs_mount	*mp = ip->i_mount;
- 	struct xfs_trans	*tp;
- 	struct xfs_bstat	*sbp = &sxp->sx_stat;
--	int			src_log_flags, target_log_flags;
- 	int			error = 0;
--	uint64_t		f;
- 	int			resblks = 0;
- 	unsigned int		flags = 0;
+ xfs_xchg_range(
+@@ -316,19 +343,13 @@ xfs_xchg_range(
+ 	};
+ 	struct xfs_trans		*tp;
+ 	unsigned int			qretry;
++	unsigned int			flags = 0;
+ 	bool				retried = false;
++	enum xchg_strategy		strategy;
+ 	int				error;
  
-@@ -1640,9 +1689,6 @@ xfs_swap_extents(
- 	 * recovery is going to see the fork as owned by the swapped inode,
- 	 * not the pre-swapped inodes.
- 	 */
--	src_log_flags = XFS_ILOG_CORE;
--	target_log_flags = XFS_ILOG_CORE;
--
- 	if (xfs_has_rmapbt(mp)) {
- 		struct xfs_swapext_req	req = {
- 			.ip1		= tip,
-@@ -1655,62 +1701,12 @@ xfs_swap_extents(
- 		xfs_swapext(tp, &req);
- 		error = xfs_defer_finish(&tp);
- 	} else
--		error = xfs_swap_extent_forks(tp, ip, tip, &src_log_flags,
--				&target_log_flags);
-+		error = xfs_swap_extent_forks(&tp, ip, tip);
- 	if (error) {
- 		trace_xfs_swap_extent_error(ip, error, _THIS_IP_);
- 		goto out_trans_cancel;
- 	}
+ 	trace_xfs_xchg_range(ip1, fxr, ip2, xchg_flags);
  
--	/* Do we have to swap reflink flags? */
--	if ((ip->i_diflags2 & XFS_DIFLAG2_REFLINK) ^
--	    (tip->i_diflags2 & XFS_DIFLAG2_REFLINK)) {
--		f = ip->i_diflags2 & XFS_DIFLAG2_REFLINK;
--		ip->i_diflags2 &= ~XFS_DIFLAG2_REFLINK;
--		ip->i_diflags2 |= tip->i_diflags2 & XFS_DIFLAG2_REFLINK;
--		tip->i_diflags2 &= ~XFS_DIFLAG2_REFLINK;
--		tip->i_diflags2 |= f & XFS_DIFLAG2_REFLINK;
--	}
--
--	/* Swap the cow forks. */
--	if (xfs_has_reflink(mp)) {
--		ASSERT(!ip->i_cowfp ||
--		       ip->i_cowfp->if_format == XFS_DINODE_FMT_EXTENTS);
--		ASSERT(!tip->i_cowfp ||
--		       tip->i_cowfp->if_format == XFS_DINODE_FMT_EXTENTS);
--
--		swap(ip->i_cowfp, tip->i_cowfp);
--
--		if (ip->i_cowfp && ip->i_cowfp->if_bytes)
--			xfs_inode_set_cowblocks_tag(ip);
--		else
--			xfs_inode_clear_cowblocks_tag(ip);
--		if (tip->i_cowfp && tip->i_cowfp->if_bytes)
--			xfs_inode_set_cowblocks_tag(tip);
--		else
--			xfs_inode_clear_cowblocks_tag(tip);
--	}
--
--	xfs_trans_log_inode(tp, ip,  src_log_flags);
--	xfs_trans_log_inode(tp, tip, target_log_flags);
--
 -	/*
--	 * The extent forks have been swapped, but crc=1,rmapbt=0 filesystems
--	 * have inode number owner values in the bmbt blocks that still refer to
--	 * the old inode. Scan each bmbt to fix up the owner values with the
--	 * inode number of the current inode.
+-	 * This function only supports using log intent items (SXI items if
+-	 * atomic exchange is required, or BUI items if not) to exchange file
+-	 * data.  The legacy whole-fork swap will be ported in a later patch.
 -	 */
--	if (src_log_flags & XFS_ILOG_DOWNER) {
--		error = xfs_swap_change_owner(&tp, ip, tip);
--		if (error)
--			goto out_trans_cancel;
--	}
--	if (target_log_flags & XFS_ILOG_DOWNER) {
--		error = xfs_swap_change_owner(&tp, tip, ip);
--		if (error)
--			goto out_trans_cancel;
--	}
+-	if (!(xchg_flags & XFS_XCHG_RANGE_LOGGED) && !xfs_swapext_supported(mp))
+-		return -EOPNOTSUPP;
 -
+ 	if (fxr->flags & FILE_XCHG_RANGE_TO_EOF)
+ 		req.req_flags |= XFS_SWAP_REQ_SET_SIZES;
+ 	if (fxr->flags & FILE_XCHG_RANGE_SKIP_FILE1_HOLES)
+@@ -340,10 +361,25 @@ xfs_xchg_range(
+ 	if (error)
+ 		return error;
+ 
++	/*
++	 * We haven't decided which exchange strategy we want to use yet, but
++	 * here we must choose if we want freed blocks during the swap to be
++	 * added to the transaction block reservation (RES_FDBLKS) or freed
++	 * into the global fdblocks.  The legacy fork swap mechanism doesn't
++	 * free any blocks, so it doesn't require it.  It is also the only
++	 * option that works for older filesystems.
++	 *
++	 * The bmap log intent items that were added with rmap and reflink can
++	 * change the bmbt shape, so the intent-based swap strategies require
++	 * us to set RES_FDBLKS.
++	 */
++	if (xfs_has_lazysbcount(mp))
++		flags |= XFS_TRANS_RES_FDBLKS;
++
+ retry:
+ 	/* Allocate the transaction, lock the inodes, and join them. */
+ 	error = xfs_trans_alloc(mp, &M_RES(mp)->tr_write, req.resblks, 0,
+-			XFS_TRANS_RES_FDBLKS, &tp);
++			flags, &tp);
+ 	if (error)
+ 		return error;
+ 
+@@ -386,6 +422,40 @@ xfs_xchg_range(
+ 	if (error)
+ 		goto out_trans_cancel;
+ 
++	if ((xchg_flags & XFS_XCHG_RANGE_LOGGED) || xfs_swapext_supported(mp)) {
++		/*
++		 * xfs_swapext() uses deferred bmap log intent items to swap
++		 * extents between file forks.  If the atomic log swap feature
++		 * is enabled, it will also use swapext log intent items to
++		 * restart the operation in case of failure.
++		 *
++		 * This means that we can use it if we previously obtained
++		 * permission from the log to use log-assisted atomic extent
++		 * swapping; or if the fs supports rmap or reflink and the
++		 * user said NONATOMIC.
++		 */
++		strategy = SWAPEXT;
++	} else if (xfs_xchg_use_forkswap(fxr, ip1, ip2)) {
++		/*
++		 * Exchange the file contents by using the old bmap fork
++		 * exchange code, if we're a defrag tool doing a full file
++		 * swap.
++		 */
++		strategy = FORKSWAP;
++
++		error = xfs_swap_extents_check_format(ip2, ip1);
++		if (error) {
++			xfs_notice(mp,
++		"%s: inode 0x%llx format is incompatible for exchanging.",
++					__func__, ip2->i_ino);
++			goto out_trans_cancel;
++		}
++	} else {
++		/* We cannot exchange the file contents. */
++		error = -EOPNOTSUPP;
++		goto out_trans_cancel;
++	}
++
+ 	/* If we got this far on a dry run, all parameters are ok. */
+ 	if (fxr->flags & FILE_XCHG_RANGE_DRY_RUN)
+ 		goto out_trans_cancel;
+@@ -398,7 +468,13 @@ xfs_xchg_range(
+ 		xfs_trans_ichgtime(tp, ip2,
+ 				XFS_ICHGTIME_MOD | XFS_ICHGTIME_CHG);
+ 
+-	xfs_swapext(tp, &req);
++	if (strategy == SWAPEXT) {
++		xfs_swapext(tp, &req);
++	} else {
++		error = xfs_swap_extent_forks(&tp, &req);
++		if (error)
++			goto out_trans_cancel;
++	}
+ 
  	/*
- 	 * If this is a synchronous mount, make sure that the
- 	 * transaction goes to disk before returning to the user.
+ 	 * Force the log to persist metadata updates if the caller or the
 
