@@ -2,61 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C798C65A5F5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Dec 2022 18:42:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0247665A5F9
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 31 Dec 2022 18:44:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231481AbiLaRmO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 31 Dec 2022 12:42:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40234 "EHLO
+        id S235739AbiLaRot (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 31 Dec 2022 12:44:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40668 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbiLaRmN (ORCPT
+        with ESMTP id S229450AbiLaRor (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 31 Dec 2022 12:42:13 -0500
-Received: from mail-wm1-x333.google.com (mail-wm1-x333.google.com [IPv6:2a00:1450:4864:20::333])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0851CF52;
-        Sat, 31 Dec 2022 09:42:12 -0800 (PST)
-Received: by mail-wm1-x333.google.com with SMTP id c65-20020a1c3544000000b003cfffd00fc0so20976439wma.1;
-        Sat, 31 Dec 2022 09:42:11 -0800 (PST)
+        Sat, 31 Dec 2022 12:44:47 -0500
+Received: from mail-wm1-x32d.google.com (mail-wm1-x32d.google.com [IPv6:2a00:1450:4864:20::32d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54ADD644A;
+        Sat, 31 Dec 2022 09:44:45 -0800 (PST)
+Received: by mail-wm1-x32d.google.com with SMTP id fm16-20020a05600c0c1000b003d96fb976efso15691624wmb.3;
+        Sat, 31 Dec 2022 09:44:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VDxzoBipuwgJ9nXmM8IIPQyqkbvF/xMtt7DwxtCT5D8=;
-        b=pBKkIKnyLK8+/jEPZDupGUVaRyZrdOvlC2089EskdKymkUwbjENKm+zuo8Pldcfb53
-         zm2DVZjMwulgcyUrlgkoIfVSVnolqaWfE1We1P8mk7guvoWifd+1otzRUXghhWu6eQkq
-         O6VFCIwEwe9FS0fwxmAg2F73QY7mMgxTiD9zqItf1ellgexmGsKeXAqxEyx1jZ0yHOwG
-         Z4w+i663b/hCn2reqN3dWZCXO6khUNEdsO0qnOlWAGRUZH6j1pyRFbtulgMByMdfHQoM
-         PHVU8Rlzhj6d5D2gXdArBnS/7aAZBWi/KM6FkuAPutCxVW4tqbLVM6BVw1fg4H8D4YO3
-         q90A==
+        bh=vKGVwmg5J1Ql+fiJXPb+1gyrIp6pIUsxPUQhpeTa7cE=;
+        b=kVcjcnjVuAmiqvP8lYg9PmM0y1+l+1Uyott5Q46/0z+HvG+a+/ZbMLczaNiOfWRafr
+         U3ClLxdkF1sn468QqPW33lhOcize+mIP0EBhRJJITsiv8M591bqe4n+myFSlFnhZHESA
+         3XPgZio1FVG+seF0x49fzeIKSDQHl76+ZIPZtYkbb4fn1f4gIsZnfuc6s8tTww/FdjHP
+         WJyRA+KKdqoDNBUWp6HWIrcphEe8cBAA+ALUdNqYK+Cz7Ch43N5fHX/Z1Qn3BhnnNIFL
+         QdWszvr3DtkPYvr2J70t/rapTdrnq54Yz5FU/XNVBIQVL+QWgg9hHMgN/y1Lu8UBnYC6
+         0RDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VDxzoBipuwgJ9nXmM8IIPQyqkbvF/xMtt7DwxtCT5D8=;
-        b=5iKaP4Z7bfI20ia5UpbGHVq6wu1qVk9FshKtRNBqxsQzqf/vN37xnu2a2mtubCAfmE
-         /ifuv6u4V8gJ4SiII6ZCC35AuQeSES180EDZpJMElY/xklH/K8RqxQOvaUFb3kBK7yI3
-         adkMtGOz5U4XxH6s4R0h8SlWfU55RKk14nFug+frZ1uWpdAdAlNh9OB22yyaRfn+ILSk
-         2EuWJCSXmP6G86wAVOBNWGUhbdWo2uJElRuszqLQEF57NSDa9OqJlWP/2IpgZnKhDn+y
-         TMhec1m+JyPRsKGNN5VbtbXuSlTDyzY0QNeeDKPj3asd0NO3aGMUMH0N8u+7tC7+yfnO
-         rQ9Q==
-X-Gm-Message-State: AFqh2kpwrzAs7kJCKDXIPtuNCRUVCwbKCqfqoKuvsn4D1QwEw3Bm3vx1
-        YUpMN5VIZpOzy7lJGLksgMM=
-X-Google-Smtp-Source: AMrXdXvk9EdwSr2x+fYJ7G9WETsrhAGHJ30UHMcjghwfjLAuQ/oegP9lJa6m74KhxqF3Q08xJ1LmlQ==
-X-Received: by 2002:a05:600c:1c90:b0:3cf:75a8:ecf4 with SMTP id k16-20020a05600c1c9000b003cf75a8ecf4mr25553418wms.24.1672508530472;
-        Sat, 31 Dec 2022 09:42:10 -0800 (PST)
+        bh=vKGVwmg5J1Ql+fiJXPb+1gyrIp6pIUsxPUQhpeTa7cE=;
+        b=Kvu9c8BtrBrKSW7G0PDpUQLwyYGsJHurBkNfXNbrkNl+HQx3dRuftAxPgx5YrYeVsY
+         CH8lqwKQawNh+PzhlEM4bIkF/wKrjTH0DNiEbpzpOGs6Dfaia0y8GdsWtQU9ASVgNh36
+         tV+ikOoabiWFA9lWTr1em132Tp2bSPvjX4QQ2HHgiIxbwjiR1yhMIFBnugtvydbH5fGC
+         iM1GEPbbWnL/4ect7mpr0RQzkFrwEtrPyZBacwFruJdi6q7HrnGXt83lqIPGaIvqv/UO
+         FXrmO/uxFhlRgeR+U/9dPsOwfPCGaTqMX/V2H/o8GPgCpQ58qhZKz1BHzewx98tIl0Eo
+         R9MQ==
+X-Gm-Message-State: AFqh2krX4bbZdIm6v4DH0kmiMilt+zYdoxrtd+8A1gtXjcLuqNf5tN/S
+        8OtCOA2/wTftFP15mf9iTeTPOnxlkAc=
+X-Google-Smtp-Source: AMrXdXtOafM5UGHzLjN1Yn1s92x0yr1m0tQKluSwnvIJXRy3QMgYLJu9vPM4iCuysf6kS5kZjL2J+w==
+X-Received: by 2002:a7b:c414:0:b0:3d6:ecc4:6279 with SMTP id k20-20020a7bc414000000b003d6ecc46279mr25627186wmi.27.1672508683777;
+        Sat, 31 Dec 2022 09:44:43 -0800 (PST)
 Received: from localhost.localdomain (host-79-56-217-20.retail.telecomitalia.it. [79.56.217.20])
-        by smtp.gmail.com with ESMTPSA id bi14-20020a05600c3d8e00b003d9ad6783b1sm2032817wmb.6.2022.12.31.09.42.09
+        by smtp.gmail.com with ESMTPSA id d22-20020a1c7316000000b003d9862ec435sm19206066wmb.20.2022.12.31.09.44.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 31 Dec 2022 09:42:09 -0800 (PST)
+        Sat, 31 Dec 2022 09:44:43 -0800 (PST)
 From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-To:     Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+To:     "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Tom Rix <trix@redhat.com>, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+        linux-fsdevel@vger.kernel.org
 Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
         Ira Weiny <ira.weiny@intel.com>
-Subject: [PATCH] fs/ext2: Replace kmap_atomic() with kmap_local_page()
-Date:   Sat, 31 Dec 2022 18:42:05 +0100
-Message-Id: <20221231174205.8492-1-fmdefrancesco@gmail.com>
+Subject: [PATCH] fs/ext4: Replace kmap_atomic() with kmap_local_page()
+Date:   Sat, 31 Dec 2022 18:44:39 +0100
+Message-Id: <20221231174439.8557-1-fmdefrancesco@gmail.com>
 X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -76,7 +81,7 @@ replace kmap_atomic() with kmap_local_page().
 kmap_atomic() is implemented like a kmap_local_page() which also disables
 page-faults and preemption (the latter only for !PREEMPT_RT kernels).
 
-However, the code within the mapping and un-mapping in ext2_make_empty()
+However, the code within the mappings and un-mappings in ext4/inline.c
 does not depend on the above-mentioned side effects.
 
 Therefore, a mere replacement of the old API with the new one is all it
@@ -102,31 +107,50 @@ HIGHMEM64GB enabled.
 I'd like to hear whether or not the maintainers require these tests
 and/or other tests.
 
- fs/ext2/dir.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/ext4/inline.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
-index e5cbc27ba459..0f144c5c7861 100644
---- a/fs/ext2/dir.c
-+++ b/fs/ext2/dir.c
-@@ -646,7 +646,7 @@ int ext2_make_empty(struct inode *inode, struct inode *parent)
- 		unlock_page(page);
- 		goto fail;
- 	}
+diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
+index 2b42ececa46d..bfb044425d8a 100644
+--- a/fs/ext4/inline.c
++++ b/fs/ext4/inline.c
+@@ -490,10 +490,10 @@ static int ext4_read_inline_page(struct inode *inode, struct page *page)
+ 		goto out;
+ 
+ 	len = min_t(size_t, ext4_get_inline_size(inode), i_size_read(inode));
 -	kaddr = kmap_atomic(page);
 +	kaddr = kmap_local_page(page);
- 	memset(kaddr, 0, chunk_size);
- 	de = (struct ext2_dir_entry_2 *)kaddr;
- 	de->name_len = 1;
-@@ -661,7 +661,7 @@ int ext2_make_empty(struct inode *inode, struct inode *parent)
- 	de->inode = cpu_to_le32(parent->i_ino);
- 	memcpy (de->name, "..\0", 4);
- 	ext2_set_de_type (de, inode);
+ 	ret = ext4_read_inline_data(inode, kaddr, len, &iloc);
+ 	flush_dcache_page(page);
 -	kunmap_atomic(kaddr);
 +	kunmap_local(kaddr);
- 	ext2_commit_chunk(page, 0, chunk_size);
- 	err = ext2_handle_dirsync(inode);
- fail:
+ 	zero_user_segment(page, len, PAGE_SIZE);
+ 	SetPageUptodate(page);
+ 	brelse(iloc.bh);
+@@ -763,9 +763,9 @@ int ext4_write_inline_data_end(struct inode *inode, loff_t pos, unsigned len,
+ 		 */
+ 		(void) ext4_find_inline_data_nolock(inode);
+ 
+-		kaddr = kmap_atomic(page);
++		kaddr = kmap_local_page(page);
+ 		ext4_write_inline_data(inode, &iloc, kaddr, pos, copied);
+-		kunmap_atomic(kaddr);
++		kunmap_local(kaddr);
+ 		SetPageUptodate(page);
+ 		/* clear page dirty so that writepages wouldn't work for us. */
+ 		ClearPageDirty(page);
+@@ -831,9 +831,9 @@ ext4_journalled_write_inline_data(struct inode *inode,
+ 	}
+ 
+ 	ext4_write_lock_xattr(inode, &no_expand);
+-	kaddr = kmap_atomic(page);
++	kaddr = kmap_local_page(page);
+ 	ext4_write_inline_data(inode, &iloc, kaddr, 0, len);
+-	kunmap_atomic(kaddr);
++	kunmap_local(kaddr);
+ 	ext4_write_unlock_xattr(inode, &no_expand);
+ 
+ 	return iloc.bh;
 -- 
 2.39.0
 
