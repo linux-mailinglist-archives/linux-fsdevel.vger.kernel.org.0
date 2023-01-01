@@ -2,239 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7418265AA61
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Jan 2023 16:38:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A9F3D65AABA
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  1 Jan 2023 17:43:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231479AbjAAPia (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 1 Jan 2023 10:38:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34608 "EHLO
+        id S231281AbjAAQnh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 1 Jan 2023 11:43:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47462 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231421AbjAAPi1 (ORCPT
+        with ESMTP id S229447AbjAAQnf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 1 Jan 2023 10:38:27 -0500
-Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D1EF2DED
-        for <linux-fsdevel@vger.kernel.org>; Sun,  1 Jan 2023 07:38:25 -0800 (PST)
-Received: by mail-wm1-x335.google.com with SMTP id ja17so18566185wmb.3
-        for <linux-fsdevel@vger.kernel.org>; Sun, 01 Jan 2023 07:38:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ixsystems.com; s=google;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4e5rsOVvoPsB8/0IGCnvHUCFwzCz86SgBX4arQD6Bsk=;
-        b=iIz+0dD+Xqd9D7Aclt4WbtMz7FB/uNMAN19vTh+6DwoOScIf+jA5tIb6pl1sZbrOaW
-         XlLYQHnQ/0PyPvz0qvTAbzXKi09qSjTBYmGSnxvzBbdFRVbIvsgwji7HfzL/dg1Gk0Y+
-         V3CYrx7vxebfUhVMmDvLcttZh71xYJ2bXwn2IQvA2brc4xEH/FpvfiNOKwmIE+3+/3a3
-         aGxfOrAg6fPjQzN7n5StTR3W7Zq9HRIvBP9hKK/qbFPVmelZ5Bqrz5fO21NfQtRIVsHM
-         2C27VpRX929Xk3Bf3fEht9dzD2A4sp2tATdthjFDTt8SQ6Z6iV058eZOPa8Nj3UL5qEA
-         EvOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4e5rsOVvoPsB8/0IGCnvHUCFwzCz86SgBX4arQD6Bsk=;
-        b=qS9j6xpWZYvhBebMZXHLSlDq5KE4KsAEWuAP8kpXZGz8i6qGTfec2c9JGaDoI1KFz1
-         6dyKSoI2FVIRFgYxs46gNs4EMn5wdWOeNmo9W6JRxsIKgCJOl7ADGAbEekbaNwwA3QU5
-         /e1Y1AxVjWTx+StQMp88lkKpP7Rcbw92GyLvGF88Ht41XYwhGTgEdS82vTvhEQtu68hj
-         pB8XC1S/tuoOqUQ5NRrdU8mdGONr1k8H9mE9SSfTgpxRbD+1jsyc/UoMaNVilidr7ZKr
-         2IIVT7FYt5EX0JppnjtpPiUMzPtyllbuinq/gSx6wTi0FDrNPG4pW25EvGFeJpaCcQLZ
-         mwHw==
-X-Gm-Message-State: AFqh2krbJ7/TShA3NSplYNgOvzLeOTc1c2iGdcq0S2gQ54Ma2kK5eTsK
-        XTdMuVyrMjtJsTukA1mb1b5pPQ==
-X-Google-Smtp-Source: AMrXdXvmgsB9mkhQhPLutjUrJsEcNZBj3ZzRuTx0yHaXlM7F4s4uXk1dMC6Vuz5WxgOhV0eMYtO5Qw==
-X-Received: by 2002:a05:600c:4998:b0:3cf:68d3:3047 with SMTP id h24-20020a05600c499800b003cf68d33047mr26779179wmp.41.1672587503834;
-        Sun, 01 Jan 2023 07:38:23 -0800 (PST)
-Received: from localhost.localdomain ([2400:adc1:158:c700:ab52:9bd1:ee17:5669])
-        by smtp.googlemail.com with ESMTPSA id c4-20020a05600c0a4400b003cf75213bb9sm46153975wmq.8.2023.01.01.07.38.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 01 Jan 2023 07:38:23 -0800 (PST)
-From:   Ameer Hamza <ahamza@ixsystems.com>
-To:     viro@zeniv.linux.org.uk, jlayton@kernel.org,
-        chuck.lever@oracle.com, arnd@arndb.de, guoren@kernel.org,
-        palmer@rivosinc.com, f.fainelli@gmail.com, slark_xiao@163.com,
-        richard.henderson@linaro.org, ink@jurassic.park.msu.ru,
-        mattst88@gmail.com, James.Bottomley@HansenPartnership.com,
-        deller@gmx.de, davem@davemloft.net
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, ahamza@ixsystems.com,
-        awalker@ixsystems.com, sparclinux@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linux-alpha@vger.kernel.org
-Subject: [PATCH v3] Add new open(2) flag - O_EMPTY_PATH
-Date:   Sun,  1 Jan 2023 20:37:52 +0500
-Message-Id: <20230101153752.20165-1-ahamza@ixsystems.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <202301011901.GyiYVRyd-lkp@intel.com>
-References: <202301011901.GyiYVRyd-lkp@intel.com>
+        Sun, 1 Jan 2023 11:43:35 -0500
+Received: from sender-of-o50.zoho.in (sender-of-o50.zoho.in [103.117.158.50])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6C992621;
+        Sun,  1 Jan 2023 08:43:33 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; t=1672591398; cv=none; 
+        d=zohomail.in; s=zohoarc; 
+        b=ZdIco5S82jNZcc1SWnPRd9xwdwZWsyVleYrPay2ObR9BIbNwK3tGvTKj69THN6c6AZaif6T0N8hTYwPSY2bYu93xo/BQFYSoeu9T0u5PtdF2AO+Rq+fAgxOpeR1tHAkuwF+RxNOC60Mpg9HtP1oLD/NQrIViRmJ083HGbSmVKH8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
+        t=1672591398; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
+        bh=TEeQeO6TY4vFIEf1eZcrDvhLFzRqjIwITXNArJVWYK8=; 
+        b=AChNHaZE9bbaU5N5xZO4gGMZbyn5tqD4JqMlQiEHXIEawuuyhj9tia+JxH8wpnM/OdncsLEaH/5BSQZ2fZYG3diUPxLMChDS9Os3sJLuZ6OH9kChfyR6WyktOy7bjDVJ5cJR63h2XLV+fLpMYR5/HW7p0bh2xwyaMwqMsX+dPOk=
+ARC-Authentication-Results: i=1; mx.zohomail.in;
+        dkim=pass  header.i=siddh.me;
+        spf=pass  smtp.mailfrom=code@siddh.me;
+        dmarc=pass header.from=<code@siddh.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1672591398;
+        s=zmail; d=siddh.me; i=code@siddh.me;
+        h=Date:Date:MIME-Version:To:To:Cc:Cc:References:Subject:Subject:From:From:Message-ID:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+        bh=TEeQeO6TY4vFIEf1eZcrDvhLFzRqjIwITXNArJVWYK8=;
+        b=ai6IJ/on+tf3CDg14Kv9rbf6CiaO2Lm588IUYEabXutLxkedrJKgDQFd2Y/gGnET
+        HKFXJF8qmJUk2PGLvHdE8mlNYgDj+NT+PfuIQbDeVxAH8QCjE8jMWcFAo+kltd73ogc
+        I8rOyGNT5hDLijqFIAVht3fqu/LtksI1yOsfTxb0=
+Received: from [192.168.1.9] (110.226.31.37 [110.226.31.37]) by mx.zoho.in
+        with SMTPS id 1672591395924950.1870279856462; Sun, 1 Jan 2023 22:13:15 +0530 (IST)
+Date:   Sun, 1 Jan 2023 22:13:14 +0530
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+To:     Christian Brauner <brauner@kernel.org>,
+        Seth Forshee <sforshee@kernel.org>,
+        Shuah Khan <shuah@kernel.org>
+Cc:     linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kselftests <linux-kselftest@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <20221211092820.85527-1-code@siddh.me>
+Subject: Re: [PATCH] selftests/mount_setattr: Remove redefinition of struct
+ mount_attr
+Content-Language: en-US, en-GB, hi-IN
+From:   Siddh Raman Pant <code@siddh.me>
+Message-ID: <24a4ca6b-8e05-b45b-5cbc-1a470051f1d3@siddh.me>
+In-Reply-To: <20221211092820.85527-1-code@siddh.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-ZohoMailClient: External
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch adds a new flag O_EMPTY_PATH that allows openat and open
-system calls to open a file referenced by fd if the path is empty,
-and it is very similar to the FreeBSD O_EMPTY_PATH flag. This can be
-beneficial in some cases since it would avoid having to grant /proc
-access to things like samba containers for reopening files to change
-flags in a race-free way.
+On Sun, 11 Dec 2022 14:58:20 +0530, Siddh Raman Pant wrote:
+> It is already included via sys/mount.h on line 10.
+>=20
+> GCC error reproducible by: make kselftest TARGETS=3D"mount_setattr"
+>=20
+> mount_setattr_test.c:107:8: error: redefinition of =E2=80=98struct mount_=
+attr=E2=80=99
+>   107 | struct mount_attr {
+>       |        ^~~~~~~~~~
+> In file included from /usr/include/x86_64-linux-gnu/sys/mount.h:32,
+>                  from mount_setattr_test.c:10:
+> ../../../../usr/include/linux/mount.h:129:8: note: originally defined her=
+e
+>   129 | struct mount_attr {
+>       |        ^~~~~~~~~~
+>=20
+> Signed-off-by: Siddh Raman Pant <code@siddh.me>
+> ---
+>  tools/testing/selftests/mount_setattr/mount_setattr_test.c | 7 -------
+>  1 file changed, 7 deletions(-)
+>=20
+> diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b=
+/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> index 8c5fea68ae67..582669ca38e9 100644
+> --- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> +++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> @@ -103,13 +103,6 @@
+>   #else
+>     #define __NR_mount_setattr 442
+>   #endif
+> -
+> -struct mount_attr {
+> - __u64 attr_set;
+> - __u64 attr_clr;
+> - __u64 propagation;
+> - __u64 userns_fd;
+> -};
+>  #endif
+ >=20
+>  #ifndef __NR_open_tree
+> --=20
+> 2.35.1
 
-Signed-off-by: Ameer Hamza <ahamza@ixsystems.com>
+Hi,
 
----
-Change in v3:
-resolve O_EMPTY_PATH conflict with __FMODE_NONOTIFY for sparc.
+Please review the above patch, which can be found on the link below:
+https://lore.kernel.org/all/20221211092820.85527-1-code@siddh.me
 
-Change in v2:
-add nonconflicting values for O_EMPTY_PATH on architectures
-where default conflicts with existing flags.
----
----
- arch/alpha/include/uapi/asm/fcntl.h    | 1 +
- arch/parisc/include/uapi/asm/fcntl.h   | 1 +
- arch/sparc/include/uapi/asm/fcntl.h    | 1 +
- fs/fcntl.c                             | 2 +-
- fs/namei.c                             | 4 ++--
- fs/open.c                              | 2 +-
- include/linux/fcntl.h                  | 2 +-
- include/uapi/asm-generic/fcntl.h       | 4 ++++
- tools/include/uapi/asm-generic/fcntl.h | 4 ++++
- 9 files changed, 16 insertions(+), 5 deletions(-)
+This was encountered before the patch adding missing <sys/syscall.h>
+was applied, which just means that I went into the code path under
+#ifndef __NR_mount_setattr, and encountered the error.
 
-diff --git a/arch/alpha/include/uapi/asm/fcntl.h b/arch/alpha/include/uapi/asm/fcntl.h
-index 50bdc8e8a271..ea08341bb9fe 100644
---- a/arch/alpha/include/uapi/asm/fcntl.h
-+++ b/arch/alpha/include/uapi/asm/fcntl.h
-@@ -34,6 +34,7 @@
- 
- #define O_PATH		040000000
- #define __O_TMPFILE	0100000000
-+#define O_EMPTY_PATH	0200000000
- 
- #define F_GETLK		7
- #define F_SETLK		8
-diff --git a/arch/parisc/include/uapi/asm/fcntl.h b/arch/parisc/include/uapi/asm/fcntl.h
-index 03dee816cb13..e6144823ee5b 100644
---- a/arch/parisc/include/uapi/asm/fcntl.h
-+++ b/arch/parisc/include/uapi/asm/fcntl.h
-@@ -19,6 +19,7 @@
- 
- #define O_PATH		020000000
- #define __O_TMPFILE	040000000
-+#define O_EMPTY_PATH	0100000000
- 
- #define F_GETLK64	8
- #define F_SETLK64	9
-diff --git a/arch/sparc/include/uapi/asm/fcntl.h b/arch/sparc/include/uapi/asm/fcntl.h
-index 67dae75e5274..ed99e4e4a717 100644
---- a/arch/sparc/include/uapi/asm/fcntl.h
-+++ b/arch/sparc/include/uapi/asm/fcntl.h
-@@ -37,6 +37,7 @@
- 
- #define O_PATH		0x1000000
- #define __O_TMPFILE	0x2000000
-+#define O_EMPTY_PATH	0x8000000
- 
- #define F_GETOWN	5	/*  for sockets. */
- #define F_SETOWN	6	/*  for sockets. */
-diff --git a/fs/fcntl.c b/fs/fcntl.c
-index 146c9ab0cd4b..7aac650e16e2 100644
---- a/fs/fcntl.c
-+++ b/fs/fcntl.c
-@@ -1027,7 +1027,7 @@ static int __init fcntl_init(void)
- 	 * Exceptions: O_NONBLOCK is a two bit define on parisc; O_NDELAY
- 	 * is defined as O_NONBLOCK on some platforms and not on others.
- 	 */
--	BUILD_BUG_ON(21 - 1 /* for O_RDONLY being 0 */ !=
-+	BUILD_BUG_ON(22 - 1 /* for O_RDONLY being 0 */ !=
- 		HWEIGHT32(
- 			(VALID_OPEN_FLAGS & ~(O_NONBLOCK | O_NDELAY)) |
- 			__FMODE_EXEC | __FMODE_NONOTIFY));
-diff --git a/fs/namei.c b/fs/namei.c
-index 309ae6fc8c99..2b2735af6d03 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -192,7 +192,7 @@ getname_flags(const char __user *filename, int flags, int *empty)
- 	if (unlikely(!len)) {
- 		if (empty)
- 			*empty = 1;
--		if (!(flags & LOOKUP_EMPTY)) {
-+		if (!(flags & (LOOKUP_EMPTY | O_EMPTY_PATH))) {
- 			putname(result);
- 			return ERR_PTR(-ENOENT);
- 		}
-@@ -2347,7 +2347,7 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
- 	if ((flags & (LOOKUP_RCU | LOOKUP_CACHED)) == LOOKUP_CACHED)
- 		return ERR_PTR(-EAGAIN);
- 
--	if (!*s)
-+	if (!*s && unlikely(!(flags & O_EMPTY_PATH)))
- 		flags &= ~LOOKUP_RCU;
- 	if (flags & LOOKUP_RCU)
- 		rcu_read_lock();
-diff --git a/fs/open.c b/fs/open.c
-index 82c1a28b3308..b4ec054a418f 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1301,7 +1301,7 @@ static long do_sys_openat2(int dfd, const char __user *filename,
- 	if (fd)
- 		return fd;
- 
--	tmp = getname(filename);
-+	tmp = getname_flags(filename, how->flags & O_EMPTY_PATH, NULL);
- 	if (IS_ERR(tmp))
- 		return PTR_ERR(tmp);
- 
-diff --git a/include/linux/fcntl.h b/include/linux/fcntl.h
-index a332e79b3207..bf8467bb0bd2 100644
---- a/include/linux/fcntl.h
-+++ b/include/linux/fcntl.h
-@@ -10,7 +10,7 @@
- 	(O_RDONLY | O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_NOCTTY | O_TRUNC | \
- 	 O_APPEND | O_NDELAY | O_NONBLOCK | __O_SYNC | O_DSYNC | \
- 	 FASYNC	| O_DIRECT | O_LARGEFILE | O_DIRECTORY | O_NOFOLLOW | \
--	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE)
-+	 O_NOATIME | O_CLOEXEC | O_PATH | __O_TMPFILE | O_EMPTY_PATH)
- 
- /* List of all valid flags for the how->resolve argument: */
- #define VALID_RESOLVE_FLAGS \
-diff --git a/include/uapi/asm-generic/fcntl.h b/include/uapi/asm-generic/fcntl.h
-index 1ecdb911add8..a03f4275517b 100644
---- a/include/uapi/asm-generic/fcntl.h
-+++ b/include/uapi/asm-generic/fcntl.h
-@@ -89,6 +89,10 @@
- #define __O_TMPFILE	020000000
- #endif
- 
-+#ifndef O_EMPTY_PATH
-+#define O_EMPTY_PATH	040000000
-+#endif
-+
- /* a horrid kludge trying to make sure that this will fail on old kernels */
- #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
- #define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)      
-diff --git a/tools/include/uapi/asm-generic/fcntl.h b/tools/include/uapi/asm-generic/fcntl.h
-index b02c8e0f4057..f32a81604296 100644
---- a/tools/include/uapi/asm-generic/fcntl.h
-+++ b/tools/include/uapi/asm-generic/fcntl.h
-@@ -89,6 +89,10 @@
- #define __O_TMPFILE	020000000
- #endif
- 
-+#ifndef O_EMPTY_PATH
-+#define O_EMPTY_PATH	040000000
-+#endif
-+
- /* a horrid kludge trying to make sure that this will fail on old kernels */
- #define O_TMPFILE (__O_TMPFILE | O_DIRECTORY)
- #define O_TMPFILE_MASK (__O_TMPFILE | O_DIRECTORY | O_CREAT)      
--- 
-2.25.1
+Thanks,
+Siddh
 
