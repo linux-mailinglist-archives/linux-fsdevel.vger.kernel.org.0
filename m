@@ -2,128 +2,121 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0059465B1B3
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jan 2023 13:02:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4190165B1D8
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jan 2023 13:13:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231785AbjABMBq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Jan 2023 07:01:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37790 "EHLO
+        id S232707AbjABMNb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Jan 2023 07:13:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230062AbjABMB1 (ORCPT
+        with ESMTP id S230253AbjABMN2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Jan 2023 07:01:27 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5A26BAA
-        for <linux-fsdevel@vger.kernel.org>; Mon,  2 Jan 2023 04:00:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1672660840;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Mon, 2 Jan 2023 07:13:28 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B322E63C6;
+        Mon,  2 Jan 2023 04:13:27 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 6097A340C4;
+        Mon,  2 Jan 2023 12:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1672661606; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=DcpgJX30wscykTQ9ii4gKeBqfxvD6fUqo095Fyay8SQ=;
-        b=O2daqLDN+3gcL0mc70iRERTc63glq7BSjzvetkF0zDlVrOCINl/SomFFg0AMGN+4neL37N
-        0gwvx/jw8lLcx3g//k89gd1eNPb6UNhY4uJfvmsvbypVhh+jh9YENSUJoV7Ch1ZKh/7Qxq
-        IaM1jRoKAtt4y2F7fUezAR+u+11PxPk=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-660-qmGz5Mh4M-iwCncrzRd-xA-1; Mon, 02 Jan 2023 07:00:39 -0500
-X-MC-Unique: qmGz5Mh4M-iwCncrzRd-xA-1
-Received: by mail-wr1-f71.google.com with SMTP id r21-20020adfb1d5000000b0026e4c198a43so3188203wra.20
-        for <linux-fsdevel@vger.kernel.org>; Mon, 02 Jan 2023 04:00:39 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:organization:from:references
-         :cc:to:content-language:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DcpgJX30wscykTQ9ii4gKeBqfxvD6fUqo095Fyay8SQ=;
-        b=1jqtpXeRFrsfkQ96bscy/zzX2Z7bHv9xlSmGGOhjgDvG79zpc7hATe4bX6CRppfVBL
-         LN1t72RMTrkrzCwArbfDbGesS4dFlBRNBKhfoDGb6/CP6xHonApwwoAZE5MrU/MdmDJq
-         Ubj0y+jxBRbn61ZgFoeu9xB+7TKDfA2mAUgnm6Z0YoqRCFE+j5II0lhVBtn6I+jd+6S5
-         dnuPYPGWq9PIQycT0epdcJ1lmS6n1LEEkveAuqZ7RqzWFAmn+jaE+l1E3RoarE4EXO3G
-         f/WeZQqEeuvHcf/OhJT0We7JGa82LSWBQYnGZZzG+b3KrIuacvVn8c9eSYLqLMSdU+7m
-         kqVA==
-X-Gm-Message-State: AFqh2krN8xRDwdHXE7/gbJ5+t2jGE04U/s3o+6U/GJIxWBcqkDu0I8mG
-        NiNeadAn+fuVGi/LJo00wZFhkIrIfyNCeVAz3ZU+po9T9J0N2NZxTAlj1zxbbs10/qg3RWlX6OX
-        puvMiXOG7CI9d9UtsfkX2vA30yA==
-X-Received: by 2002:a05:600c:358e:b0:3d9:9755:d659 with SMTP id p14-20020a05600c358e00b003d99755d659mr11087422wmq.22.1672660838565;
-        Mon, 02 Jan 2023 04:00:38 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXsIJE0L73xRyosk2B5P5nocn3N827sBpnbPLGg2GCquluuPM084Hu2VzkaNzcO0cHEpOqxkvg==
-X-Received: by 2002:a05:600c:358e:b0:3d9:9755:d659 with SMTP id p14-20020a05600c358e00b003d99755d659mr11087392wmq.22.1672660838265;
-        Mon, 02 Jan 2023 04:00:38 -0800 (PST)
-Received: from ?IPV6:2003:cb:c703:500:9382:2e5a:fea:8889? (p200300cbc703050093822e5a0fea8889.dip0.t-ipconnect.de. [2003:cb:c703:500:9382:2e5a:fea:8889])
-        by smtp.gmail.com with ESMTPSA id a1-20020a05600c348100b003b47b80cec3sm42766964wmq.42.2023.01.02.04.00.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Jan 2023 04:00:37 -0800 (PST)
-Message-ID: <6ddb468a-3771-92a1-deb1-b07a954293a3@redhat.com>
-Date:   Mon, 2 Jan 2023 13:00:36 +0100
+        bh=tLH69wvDgw4zlrii5ssfaa8PJzW+0Xgf+S3GjAQjclc=;
+        b=O3X5uNr30fACrbTuGy88BO/nRLzdSVEm2bxn/xKiI+MpkbqJN5mRMd7HJ8HvLHcTYgjnul
+        T1kABhab6ZerssRLV+082h0drbFI0NxPisaG4yhBbgoUD7mZ3K5JF5IzFQSqBa4eM7UCjy
+        zsC5iKSZreJNKK8xkH3kwsC2ep5D8lg=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1672661606;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tLH69wvDgw4zlrii5ssfaa8PJzW+0Xgf+S3GjAQjclc=;
+        b=aB8cuOBt2GCeTl1/MOPlOVFJIPokVJ83QnUy+vrqechFA1EvlGXkDRJFBrSsx+awFiQdU7
+        tAP9c4Iwzy8UA7BQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4EF21139C8;
+        Mon,  2 Jan 2023 12:13:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id 12o6E2bKsmOoCQAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 02 Jan 2023 12:13:26 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id D6987A073E; Mon,  2 Jan 2023 13:13:25 +0100 (CET)
+Date:   Mon, 2 Jan 2023 13:13:25 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Theodore Ts'o <tytso@mit.edu>, Jan Kara <jack@suse.com>,
+        Konstantin Komarov <almaz.alexandrovich@paragon-software.com>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+        linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com,
+        linux-mm@kvack.org
+Subject: Re: [PATCH 1/6] fs: remove an outdated comment on mpage_writepages
+Message-ID: <20230102121325.swmgrnjgvvnxz2fh@quack3>
+References: <20221229161031.391878-1-hch@lst.de>
+ <20221229161031.391878-2-hch@lst.de>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH 1/1] mm: fix vma->anon_name memory leak for anonymous
- shmem VMAs
-Content-Language: en-US
-To:     Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc:     hughd@google.com, hannes@cmpxchg.org, vincent.whitchurch@axis.com,
-        seanjc@google.com, rppt@kernel.org, shy828301@gmail.com,
-        pasha.tatashin@soleen.com, paul.gortmaker@windriver.com,
-        peterx@redhat.com, vbabka@suse.cz, Liam.Howlett@Oracle.com,
-        ccross@google.com, willy@infradead.org, arnd@arndb.de,
-        cgel.zte@gmail.com, yuzhao@google.com, bagasdotme@gmail.com,
-        suleiman@google.com, steven@liquorix.net, heftig@archlinux.org,
-        cuigaosheng1@huawei.com, kirill@shutemov.name,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-mm@kvack.org,
-        syzbot+91edf9178386a07d06a7@syzkaller.appspotmail.com
-References: <20221228194249.170354-1-surenb@google.com>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-In-Reply-To: <20221228194249.170354-1-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-5.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221229161031.391878-2-hch@lst.de>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 28.12.22 20:42, Suren Baghdasaryan wrote:
-> free_anon_vma_name() is missing a check for anonymous shmem VMA which
-> leads to a memory leak due to refcount not being dropped. Fix this by
-> adding the missing check.
+On Thu 29-12-22 06:10:26, Christoph Hellwig wrote:
+> mpage_writepages doesn't do any of the page locking itself, so remove
+> and outdated comment on the locking pattern there.
 > 
-> Fixes: d09e8ca6cb93 ("mm: anonymous shared memory naming")
-> Reported-by: syzbot+91edf9178386a07d06a7@syzkaller.appspotmail.com
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+
+Looks good. Feel free to add:
+
+Reviewed-by: Jan Kara <jack@suse.cz>
+
+								Honza
+
 > ---
->   include/linux/mm_inline.h | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+>  fs/mpage.c | 8 --------
+>  1 file changed, 8 deletions(-)
 > 
-> diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
-> index e8ed225d8f7c..d650ca2c5d29 100644
-> --- a/include/linux/mm_inline.h
-> +++ b/include/linux/mm_inline.h
-> @@ -413,7 +413,7 @@ static inline void free_anon_vma_name(struct vm_area_struct *vma)
->   	 * Not using anon_vma_name because it generates a warning if mmap_lock
->   	 * is not held, which might be the case here.
->   	 */
-> -	if (!vma->vm_file)
-> +	if (!vma->vm_file || vma_is_anon_shmem(vma))
->   		anon_vma_name_put(vma->anon_name);
-
-Wouldn't it be me more consistent to check for "vma->anon_name"?
-
-That's what dup_anon_vma_name() checks. And it's safe now because 
-anon_name is no longer overloaded in vm_area_struct.
-
+> diff --git a/fs/mpage.c b/fs/mpage.c
+> index 0f8ae954a57903..910cfe8a60d2e4 100644
+> --- a/fs/mpage.c
+> +++ b/fs/mpage.c
+> @@ -641,14 +641,6 @@ static int __mpage_writepage(struct page *page, struct writeback_control *wbc,
+>   *
+>   * This is a library function, which implements the writepages()
+>   * address_space_operation.
+> - *
+> - * If a page is already under I/O, generic_writepages() skips it, even
+> - * if it's dirty.  This is desirable behaviour for memory-cleaning writeback,
+> - * but it is INCORRECT for data-integrity system calls such as fsync().  fsync()
+> - * and msync() need to guarantee that all the data which was dirty at the time
+> - * the call was made get new I/O started against them.  If wbc->sync_mode is
+> - * WB_SYNC_ALL then we were called for data integrity and we must wait for
+> - * existing IO to complete.
+>   */
+>  int
+>  mpage_writepages(struct address_space *mapping,
+> -- 
+> 2.35.1
+> 
 -- 
-Thanks,
-
-David / dhildenb
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
