@@ -2,54 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4190165B1D8
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jan 2023 13:13:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C273665B1DB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  2 Jan 2023 13:16:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232707AbjABMNb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 2 Jan 2023 07:13:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42488 "EHLO
+        id S232609AbjABMP6 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 2 Jan 2023 07:15:58 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43558 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230253AbjABMN2 (ORCPT
+        with ESMTP id S232718AbjABMPw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 2 Jan 2023 07:13:28 -0500
+        Mon, 2 Jan 2023 07:15:52 -0500
 Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B322E63C6;
-        Mon,  2 Jan 2023 04:13:27 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6918C321;
+        Mon,  2 Jan 2023 04:15:50 -0800 (PST)
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 6097A340C4;
-        Mon,  2 Jan 2023 12:13:26 +0000 (UTC)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 16C32340CE;
+        Mon,  2 Jan 2023 12:15:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1672661606; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+        t=1672661749; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=tLH69wvDgw4zlrii5ssfaa8PJzW+0Xgf+S3GjAQjclc=;
-        b=O3X5uNr30fACrbTuGy88BO/nRLzdSVEm2bxn/xKiI+MpkbqJN5mRMd7HJ8HvLHcTYgjnul
-        T1kABhab6ZerssRLV+082h0drbFI0NxPisaG4yhBbgoUD7mZ3K5JF5IzFQSqBa4eM7UCjy
-        zsC5iKSZreJNKK8xkH3kwsC2ep5D8lg=
+        bh=7p+1CYr35IMfZeXzMv9mW+b7Hyipf7RXjCQLefUwxuA=;
+        b=Vdfb5kx7HXP1I4jfRVpYYRPbixX/OUrc798QzUyANCeCVUgrahv/iTI/auD/sNIdXdZSKb
+        iI9TexVwDI77ARJL7kqzT3x7diyi2vgNz2rlIqnwPLKMMvZYqRyaCIEGL08IbqgzEk/L08
+        dTV7Fs4vSHI6NTBRRthFFsD9cE38F7c=
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1672661606;
+        s=susede2_ed25519; t=1672661749;
         h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
          mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=tLH69wvDgw4zlrii5ssfaa8PJzW+0Xgf+S3GjAQjclc=;
-        b=aB8cuOBt2GCeTl1/MOPlOVFJIPokVJ83QnUy+vrqechFA1EvlGXkDRJFBrSsx+awFiQdU7
-        tAP9c4Iwzy8UA7BQ==
+        bh=7p+1CYr35IMfZeXzMv9mW+b7Hyipf7RXjCQLefUwxuA=;
+        b=1syY9TgPoXIKMrutE+opNx6jC7wdgkUilzJMOgw1RjxHqG/Pa1+Zaf2Sg595NbauTyu4SI
+        CB/VK0K3JpeupHAA==
 Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
         (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
          key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 4EF21139C8;
-        Mon,  2 Jan 2023 12:13:26 +0000 (UTC)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 05C39139C8;
+        Mon,  2 Jan 2023 12:15:49 +0000 (UTC)
 Received: from dovecot-director2.suse.de ([192.168.254.65])
         by imap2.suse-dmz.suse.de with ESMTPSA
-        id 12o6E2bKsmOoCQAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 02 Jan 2023 12:13:26 +0000
+        id b71oAfXKsmPSCgAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 02 Jan 2023 12:15:49 +0000
 Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id D6987A073E; Mon,  2 Jan 2023 13:13:25 +0100 (CET)
-Date:   Mon, 2 Jan 2023 13:13:25 +0100
+        id BEB2BA073E; Mon,  2 Jan 2023 13:15:46 +0100 (CET)
+Date:   Mon, 2 Jan 2023 13:15:46 +0100
 From:   Jan Kara <jack@suse.cz>
 To:     Christoph Hellwig <hch@lst.de>
 Cc:     Andrew Morton <akpm@linux-foundation.org>,
@@ -62,14 +62,15 @@ Cc:     Andrew Morton <akpm@linux-foundation.org>,
         linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         ntfs3@lists.linux.dev, ocfs2-devel@oss.oracle.com,
         linux-mm@kvack.org
-Subject: Re: [PATCH 1/6] fs: remove an outdated comment on mpage_writepages
-Message-ID: <20230102121325.swmgrnjgvvnxz2fh@quack3>
+Subject: Re: [PATCH 5/6] ocfs2: use filemap_fdatawrite_wbc instead of
+ generic_writepages
+Message-ID: <20230102121546.fqpy55koaavfazm3@quack3>
 References: <20221229161031.391878-1-hch@lst.de>
- <20221229161031.391878-2-hch@lst.de>
+ <20221229161031.391878-6-hch@lst.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221229161031.391878-2-hch@lst.de>
+In-Reply-To: <20221229161031.391878-6-hch@lst.de>
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -79,9 +80,12 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu 29-12-22 06:10:26, Christoph Hellwig wrote:
-> mpage_writepages doesn't do any of the page locking itself, so remove
-> and outdated comment on the locking pattern there.
+On Thu 29-12-22 06:10:30, Christoph Hellwig wrote:
+> filemap_fdatawrite_wbc is a fairly thing wrapper around do_writepages,
+> and the big difference there is support for cgroup writeback, which
+> is not supported by ocfs2, and the potential to use ->writepages instead
+> of ->writepage, which ocfs2 does not currently implement but eventually
+> should.
 > 
 > Signed-off-by: Christoph Hellwig <hch@lst.de>
 
@@ -92,28 +96,22 @@ Reviewed-by: Jan Kara <jack@suse.cz>
 								Honza
 
 > ---
->  fs/mpage.c | 8 --------
->  1 file changed, 8 deletions(-)
+>  fs/ocfs2/journal.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/fs/mpage.c b/fs/mpage.c
-> index 0f8ae954a57903..910cfe8a60d2e4 100644
-> --- a/fs/mpage.c
-> +++ b/fs/mpage.c
-> @@ -641,14 +641,6 @@ static int __mpage_writepage(struct page *page, struct writeback_control *wbc,
->   *
->   * This is a library function, which implements the writepages()
->   * address_space_operation.
-> - *
-> - * If a page is already under I/O, generic_writepages() skips it, even
-> - * if it's dirty.  This is desirable behaviour for memory-cleaning writeback,
-> - * but it is INCORRECT for data-integrity system calls such as fsync().  fsync()
-> - * and msync() need to guarantee that all the data which was dirty at the time
-> - * the call was made get new I/O started against them.  If wbc->sync_mode is
-> - * WB_SYNC_ALL then we were called for data integrity and we must wait for
-> - * existing IO to complete.
->   */
->  int
->  mpage_writepages(struct address_space *mapping,
+> diff --git a/fs/ocfs2/journal.c b/fs/ocfs2/journal.c
+> index 59f612684c5178..25d8072ccfce46 100644
+> --- a/fs/ocfs2/journal.c
+> +++ b/fs/ocfs2/journal.c
+> @@ -852,7 +852,7 @@ static int ocfs2_journal_submit_inode_data_buffers(struct jbd2_inode *jinode)
+>  		.range_end = jinode->i_dirty_end,
+>  	};
+>  
+> -	return generic_writepages(mapping, &wbc);
+> +	return filemap_fdatawrite_wbc(mapping, &wbc);
+>  }
+>  
+>  int ocfs2_journal_init(struct ocfs2_super *osb, int *dirty)
 > -- 
 > 2.35.1
 > 
