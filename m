@@ -2,233 +2,134 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7A41F65C566
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jan 2023 18:52:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A1AB965C7C2
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jan 2023 20:54:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232749AbjACRwE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Jan 2023 12:52:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47714 "EHLO
+        id S233899AbjACTyP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Jan 2023 14:54:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43286 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233708AbjACRvf (ORCPT
+        with ESMTP id S233409AbjACTyM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Jan 2023 12:51:35 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0AF856478;
-        Tue,  3 Jan 2023 09:51:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6KPmKYkuGVQMb0p1rk1GNvc5vMpOMWKvDUXMCioA3/Y=; b=JwEXgEl0uy8Ssgd6MRHNx2hS49
-        W0+Bo53pHu8HUzMJkL5PoTG7EhJu5GG0qXmoYtwpJhhBUMBEt9l8cbHdU4c/wzzlHQtccHtpqwKTm
-        Psi2SvnxlQ7VrvIRPUOtOCR5c9GbxgCBBaob4uEv4k+O/bP8zdl9kKcnPzg527H6Nu5PjViej5Fpw
-        O4PQ4XOuVotdosde+cM3CEs0rv/4MZ3Liq+2iXq1eQq8zzgnOGqFFrxCuqxbn39yLs0oQP623zhk5
-        +JgL0ue2bdxr1hlTJwoLmh0XjqYujnaBlfesYuZAQuK9wE53xkfI1SzNd2x9esdq4XO5O/PPmLr4J
-        lBY4Pd3Q==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pClRY-00EIjp-F2; Tue, 03 Jan 2023 17:51:20 +0000
-Date:   Tue, 3 Jan 2023 17:51:20 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Hongchen Zhang <zhanghongchen@loongson.cn>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Eric Dumazet <edumazet@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] pipe: use __pipe_{lock,unlock} instead of spinlock
-Message-ID: <Y7RrGOE65XKkzJuz@casper.infradead.org>
-References: <20230103063303.23345-1-zhanghongchen@loongson.cn>
+        Tue, 3 Jan 2023 14:54:12 -0500
+Received: from mail-wr1-x42a.google.com (mail-wr1-x42a.google.com [IPv6:2a00:1450:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 250A5140B5
+        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jan 2023 11:54:12 -0800 (PST)
+Received: by mail-wr1-x42a.google.com with SMTP id d9so2222796wrp.10
+        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Jan 2023 11:54:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NxwQtp+mIoEoCmpBAjD17aoq2HWLP3++GrG0ABFdOrA=;
+        b=mgjTiM6+jaHOLzUHkjqOmI7bSAIp8wsc4DSTorCIbyK/KlQvYnhe18WKVpdK58hVba
+         UxF0QjpgNBXwfJyGRONiHdYbEShv4w4tCEOdaB+Ye2Hx1ikTLQ4c2rHrhmQf36y8ZS5j
+         Xt+rQdbi+HoaCRv3bnfkpqrAY86zd1uA/9c2/2n03NqbLi36JqgIRyCnaMq5KR5ZvA0N
+         af2g4rjTIhxwdRjb6yU8seukGzQw9hKx8dv2JQ+owyd9TB+hOzS50OkuliezMghPeaCz
+         tLWXi5Fr07W5154WdyFx49ALFAJKbrhI1TFCUsRChA9lq6MlMfHKBqYBtxqiJf35gXk+
+         hoJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NxwQtp+mIoEoCmpBAjD17aoq2HWLP3++GrG0ABFdOrA=;
+        b=a766xSdIqTlxKzhxCeE2mu5RNr9EsZx/OuBBJdMZVojMXezvhAvLFp+SBssqdURJ5u
+         V0DYA2CfPDANNNCdafAuXrGV/sGrU1fTXY6Z6/pepXLkN3hkuBKxGrLOmEX3+Z3ZaGA+
+         TxSarz2u880UAh/lKVChdnPY5ZSeRJPdZZF2/tZCdWExLo8TrU9hvMlF0LjqVBXJGg0p
+         R2qa5ElvXHjdeobL2OE0hw/Yu2mHqhbgk5B/83H4IB+jI5ScqWkcV2CZ3Va2OSKF5P48
+         0lQxsONbxS0v+0ffRiUNkv0FMcJqtg2ysf46VlXgK3TBpK1JPFsFxqJWHwvLj35Tb6FV
+         1EXQ==
+X-Gm-Message-State: AFqh2krKgoAbEJ1rkv3zDGmWZJsPj/DBPMgSIL/gqjlqTOw0Q9PhOiRy
+        Qkhpjo/ysqlQqXPA2oDT98FNM5qDlQXy3mAeNFvd3A==
+X-Google-Smtp-Source: AMrXdXvpwM2fYYhnaH4hpGj+cUKmpT4BxVdoiQS9zeBc1ccet5YOeOsvjGtxJep4pMZXaFrmg3ojYV23nCyVkP5eFFA=
+X-Received: by 2002:a5d:6381:0:b0:285:a49e:b114 with SMTP id
+ p1-20020a5d6381000000b00285a49eb114mr868121wru.246.1672775650517; Tue, 03 Jan
+ 2023 11:54:10 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230103063303.23345-1-zhanghongchen@loongson.cn>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <20221228194249.170354-1-surenb@google.com> <6ddb468a-3771-92a1-deb1-b07a954293a3@redhat.com>
+In-Reply-To: <6ddb468a-3771-92a1-deb1-b07a954293a3@redhat.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Tue, 3 Jan 2023 11:53:57 -0800
+Message-ID: <CAJuCfpGUpPPoKjAAmV7UK2H2o2NqsSa+-_M6JwesCfc+VRY2vw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm: fix vma->anon_name memory leak for anonymous
+ shmem VMAs
+To:     David Hildenbrand <david@redhat.com>
+Cc:     akpm@linux-foundation.org, hughd@google.com, hannes@cmpxchg.org,
+        vincent.whitchurch@axis.com, seanjc@google.com, rppt@kernel.org,
+        shy828301@gmail.com, pasha.tatashin@soleen.com,
+        paul.gortmaker@windriver.com, peterx@redhat.com, vbabka@suse.cz,
+        Liam.Howlett@oracle.com, ccross@google.com, willy@infradead.org,
+        arnd@arndb.de, cgel.zte@gmail.com, yuzhao@google.com,
+        bagasdotme@gmail.com, suleiman@google.com, steven@liquorix.net,
+        heftig@archlinux.org, cuigaosheng1@huawei.com,
+        kirill@shutemov.name, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        syzbot+91edf9178386a07d06a7@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 03, 2023 at 02:33:03PM +0800, Hongchen Zhang wrote:
-> Use spinlock in pipe_read/write cost too much time,IMO
+On Mon, Jan 2, 2023 at 4:00 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> On 28.12.22 20:42, Suren Baghdasaryan wrote:
+> > free_anon_vma_name() is missing a check for anonymous shmem VMA which
+> > leads to a memory leak due to refcount not being dropped. Fix this by
+> > adding the missing check.
+> >
+> > Fixes: d09e8ca6cb93 ("mm: anonymous shared memory naming")
+> > Reported-by: syzbot+91edf9178386a07d06a7@syzkaller.appspotmail.com
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > ---
+> >   include/linux/mm_inline.h | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
+> > index e8ed225d8f7c..d650ca2c5d29 100644
+> > --- a/include/linux/mm_inline.h
+> > +++ b/include/linux/mm_inline.h
+> > @@ -413,7 +413,7 @@ static inline void free_anon_vma_name(struct vm_area_struct *vma)
+> >        * Not using anon_vma_name because it generates a warning if mmap_lock
+> >        * is not held, which might be the case here.
+> >        */
+> > -     if (!vma->vm_file)
+> > +     if (!vma->vm_file || vma_is_anon_shmem(vma))
+> >               anon_vma_name_put(vma->anon_name);
+>
+> Wouldn't it be me more consistent to check for "vma->anon_name"?
+>
+> That's what dup_anon_vma_name() checks. And it's safe now because
+> anon_name is no longer overloaded in vm_area_struct.
 
-Everybody has an opinion.  Do you have data?
+Thanks for the suggestion, David. Yes, with the recent change that
+does not overload anon_name, checking for "vma->anon_name" would be
+simpler. I think we can also drop anon_vma_name() function now
+(https://elixir.bootlin.com/linux/v6.2-rc2/source/mm/madvise.c#L94)
+since vma->anon_name does not depend on vma->vm_file anymore, remove
+the last part of this comment:
+https://elixir.bootlin.com/linux/v6.2-rc2/source/include/linux/mm_types.h#L584
+and use vma->anon_name directly going forward. If all that sounds
+good, I'll post a separate patch implementing all these changes.
+So, for this patch I would suggest keeping it as is because
+functionally it is correct and will change this check along with other
+corrections I mentioned above in a separate patch. Does that sound
+good?
 
-> pipe->{head,tail} can be protected by __pipe_{lock,unlock}.
-> On the other hand, we can use __pipe_lock/unlock to protect the
-> pipe->head/tail in pipe_resize_ring and post_one_notification.
-> 
-> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
-> ---
 
-you're supposed to write here what changes you made between v1 and v2.
+-     if (!vma->vm_file)
++     if (!vma->vm_file || vma_is_anon_shmem(vma))
 
->  fs/pipe.c                 | 24 ++++--------------------
->  include/linux/pipe_fs_i.h | 12 ++++++++++++
->  kernel/watch_queue.c      |  8 ++++----
->  3 files changed, 20 insertions(+), 24 deletions(-)
-> 
-> diff --git a/fs/pipe.c b/fs/pipe.c
-> index 42c7ff41c2db..cf449779bf71 100644
-> --- a/fs/pipe.c
-> +++ b/fs/pipe.c
-> @@ -98,16 +98,6 @@ void pipe_unlock(struct pipe_inode_info *pipe)
->  }
->  EXPORT_SYMBOL(pipe_unlock);
->  
-> -static inline void __pipe_lock(struct pipe_inode_info *pipe)
-> -{
-> -	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
-> -}
-> -
-> -static inline void __pipe_unlock(struct pipe_inode_info *pipe)
-> -{
-> -	mutex_unlock(&pipe->mutex);
-> -}
-> -
->  void pipe_double_lock(struct pipe_inode_info *pipe1,
->  		      struct pipe_inode_info *pipe2)
->  {
-> @@ -253,8 +243,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->  	 */
->  	was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
->  	for (;;) {
-> -		/* Read ->head with a barrier vs post_one_notification() */
-> -		unsigned int head = smp_load_acquire(&pipe->head);
-> +		unsigned int head = pipe->head;
->  		unsigned int tail = pipe->tail;
->  		unsigned int mask = pipe->ring_size - 1;
->  
-> @@ -322,14 +311,12 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
->  
->  			if (!buf->len) {
->  				pipe_buf_release(pipe, buf);
-> -				spin_lock_irq(&pipe->rd_wait.lock);
->  #ifdef CONFIG_WATCH_QUEUE
->  				if (buf->flags & PIPE_BUF_FLAG_LOSS)
->  					pipe->note_loss = true;
->  #endif
->  				tail++;
->  				pipe->tail = tail;
-> -				spin_unlock_irq(&pipe->rd_wait.lock);
->  			}
->  			total_len -= chars;
->  			if (!total_len)
-> @@ -506,16 +493,13 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
->  			 * it, either the reader will consume it or it'll still
->  			 * be there for the next write.
->  			 */
-> -			spin_lock_irq(&pipe->rd_wait.lock);
->  
->  			head = pipe->head;
->  			if (pipe_full(head, pipe->tail, pipe->max_usage)) {
-> -				spin_unlock_irq(&pipe->rd_wait.lock);
->  				continue;
->  			}
->  
->  			pipe->head = head + 1;
-> -			spin_unlock_irq(&pipe->rd_wait.lock);
->  
->  			/* Insert it into the buffer array */
->  			buf = &pipe->bufs[head & mask];
-> @@ -1260,14 +1244,14 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
->  	if (unlikely(!bufs))
->  		return -ENOMEM;
->  
-> -	spin_lock_irq(&pipe->rd_wait.lock);
-> +	__pipe_lock(pipe);
->  	mask = pipe->ring_size - 1;
->  	head = pipe->head;
->  	tail = pipe->tail;
->  
->  	n = pipe_occupancy(head, tail);
->  	if (nr_slots < n) {
-> -		spin_unlock_irq(&pipe->rd_wait.lock);
-> +		__pipe_unlock(pipe);
->  		kfree(bufs);
->  		return -EBUSY;
->  	}
-> @@ -1303,7 +1287,7 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
->  	pipe->tail = tail;
->  	pipe->head = head;
->  
-> -	spin_unlock_irq(&pipe->rd_wait.lock);
-> +	__pipe_unlock(pipe);
->  
->  	/* This might have made more room for writers */
->  	wake_up_interruptible(&pipe->wr_wait);
-> diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-> index 6cb65df3e3ba..f5084daf6eaf 100644
-> --- a/include/linux/pipe_fs_i.h
-> +++ b/include/linux/pipe_fs_i.h
-> @@ -2,6 +2,8 @@
->  #ifndef _LINUX_PIPE_FS_I_H
->  #define _LINUX_PIPE_FS_I_H
->  
-> +#include <linux/fs.h>
-> +
->  #define PIPE_DEF_BUFFERS	16
->  
->  #define PIPE_BUF_FLAG_LRU	0x01	/* page is on the LRU */
-> @@ -223,6 +225,16 @@ static inline void pipe_discard_from(struct pipe_inode_info *pipe,
->  #define PIPE_SIZE		PAGE_SIZE
->  
->  /* Pipe lock and unlock operations */
-> +static inline void __pipe_lock(struct pipe_inode_info *pipe)
-> +{
-> +	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
-> +}
-> +
-> +static inline void __pipe_unlock(struct pipe_inode_info *pipe)
-> +{
-> +	mutex_unlock(&pipe->mutex);
-> +}
-> +
->  void pipe_lock(struct pipe_inode_info *);
->  void pipe_unlock(struct pipe_inode_info *);
->  void pipe_double_lock(struct pipe_inode_info *, struct pipe_inode_info *);
-> diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-> index a6f9bdd956c3..92e46cfe9419 100644
-> --- a/kernel/watch_queue.c
-> +++ b/kernel/watch_queue.c
-> @@ -108,7 +108,7 @@ static bool post_one_notification(struct watch_queue *wqueue,
->  	if (!pipe)
->  		return false;
->  
-> -	spin_lock_irq(&pipe->rd_wait.lock);
-> +	__pipe_lock(pipe);
->  
->  	mask = pipe->ring_size - 1;
->  	head = pipe->head;
-> @@ -135,17 +135,17 @@ static bool post_one_notification(struct watch_queue *wqueue,
->  	buf->offset = offset;
->  	buf->len = len;
->  	buf->flags = PIPE_BUF_FLAG_WHOLE;
-> -	smp_store_release(&pipe->head, head + 1); /* vs pipe_read() */
-> +	pipe->head = head + 1;
->  
->  	if (!test_and_clear_bit(note, wqueue->notes_bitmap)) {
-> -		spin_unlock_irq(&pipe->rd_wait.lock);
-> +		__pipe_unlock(pipe);
->  		BUG();
->  	}
->  	wake_up_interruptible_sync_poll_locked(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
->  	done = true;
->  
->  out:
-> -	spin_unlock_irq(&pipe->rd_wait.lock);
-> +	__pipe_unlock(pipe);
->  	if (done)
->  		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
->  	return done;
-> 
-> base-commit: c8451c141e07a8d05693f6c8d0e418fbb4b68bb7
-> -- 
-> 2.31.1
-> 
+>
+> --
+> Thanks,
+>
+> David / dhildenb
+>
