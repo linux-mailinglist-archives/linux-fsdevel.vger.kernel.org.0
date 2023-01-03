@@ -2,236 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD0E765BAA5
-	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jan 2023 07:33:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E9A1A65BE04
+	for <lists+linux-fsdevel@lfdr.de>; Tue,  3 Jan 2023 11:29:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232939AbjACGdT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Jan 2023 01:33:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58626 "EHLO
+        id S230124AbjACK2T (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Jan 2023 05:28:19 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229538AbjACGdS (ORCPT
+        with ESMTP id S236949AbjACK2C (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Jan 2023 01:33:18 -0500
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7DD56F23;
-        Mon,  2 Jan 2023 22:33:15 -0800 (PST)
-Received: from loongson.cn (unknown [10.180.13.185])
-        by gateway (Coremail) with SMTP id _____8AxSukqzLNjVRAKAA--.18688S3;
-        Tue, 03 Jan 2023 14:33:14 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.180.13.185])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxPuQizLNjS7kSAA--.58939S2;
-        Tue, 03 Jan 2023 14:33:13 +0800 (CST)
-From:   Hongchen Zhang <zhanghongchen@loongson.cn>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
-        Hongchen Zhang <zhanghongchen@loongson.cn>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Eric Dumazet <edumazet@google.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] pipe: use __pipe_{lock,unlock} instead of spinlock
-Date:   Tue,  3 Jan 2023 14:33:03 +0800
-Message-Id: <20230103063303.23345-1-zhanghongchen@loongson.cn>
-X-Mailer: git-send-email 2.20.1
+        Tue, 3 Jan 2023 05:28:02 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8E81710AA;
+        Tue,  3 Jan 2023 02:28:01 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 026BB61227;
+        Tue,  3 Jan 2023 10:28:01 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AECE4C433EF;
+        Tue,  3 Jan 2023 10:27:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672741680;
+        bh=6PGDo16yafa7I9D0QeQ4c1gBmHp7RJPl6cLfC9sVHg4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=MCmQ8uEWkUFm9M3qCEafRk7Obrh0hhcE4CZOm0g4So3eKAhOovlKEkecgIcY6VmQZ
+         PPMJk71kLnq2WZ487jmZqpZ1rYj5rS+8yxR8j3x5PYA6khDnIHuUvxmxx3uFOMIMnN
+         GwUs3D3C+oOcfMJJGjSWJ6EDblMJFDOFX/Ilca95/qcLuUVzkwVAps4yvu2guo+pzA
+         49iMu3mPaeqfCH0fxeiMohgXGuglz2uAa1yl2wzSUMSEpx1HEA59RmlTsuejwyo72J
+         ndPiyFiRohR6UXdSstod7guwn9cQI9kO+lmibZ9YmYeDLmW9QmftsuPkWPn3znB1Zf
+         tdQljd76RMI6w==
+Date:   Tue, 3 Jan 2023 11:27:55 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Siddh Raman Pant <code@siddh.me>
+Cc:     Seth Forshee <sforshee@kernel.org>, Shuah Khan <shuah@kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>,
+        linux-kselftests <linux-kselftest@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] selftests/mount_setattr: Remove redefinition of struct
+ mount_attr
+Message-ID: <20230103102755.eks34kwcufoz7znx@wittgenstein>
+References: <20221211092820.85527-1-code@siddh.me>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8CxPuQizLNjS7kSAA--.58939S2
-X-CM-SenderInfo: x2kd0w5krqwupkhqwqxorr0wxvrqhubq/
-X-Coremail-Antispam: 1Uk129KBjvJXoW3ArW3tw1UJryUCr48Ar43Wrg_yoW7XF1kpa
-        13tFW7WrW8Ar10grW8GrsxZr13W395Wa17JrWxWF1FvFnrGrySqFs2kFyakwn5JrZ7ZryY
-        vF4jq3WFyr1UArJanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bSxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s
-        1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-        wVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4
-        x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJVWxJr1l
-        n4kS14v26r126r1DM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI12xvs2x26I8E6x
-        ACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r126r1DMcIj6I8E
-        87Iv67AKxVW8JVWxJwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxV
-        Aaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxY
-        O2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGV
-        WUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_
-        JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rV
-        WUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4U
-        JbIYCTnIWIevJa73UjIFyTuYvjxU4SoGDUUUU
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20221211092820.85527-1-code@siddh.me>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use spinlock in pipe_read/write cost too much time,IMO
-pipe->{head,tail} can be protected by __pipe_{lock,unlock}.
-On the other hand, we can use __pipe_lock/unlock to protect the
-pipe->head/tail in pipe_resize_ring and post_one_notification.
+On Sun, Dec 11, 2022 at 02:58:20PM +0530, Siddh Raman Pant wrote:
+> It is already included via sys/mount.h on line 10.
+> 
+> GCC error reproducible by: make kselftest TARGETS="mount_setattr"
+> 
+> mount_setattr_test.c:107:8: error: redefinition of ‘struct mount_attr’
+>   107 | struct mount_attr {
+>       |        ^~~~~~~~~~
+> In file included from /usr/include/x86_64-linux-gnu/sys/mount.h:32,
+>                  from mount_setattr_test.c:10:
+> ../../../../usr/include/linux/mount.h:129:8: note: originally defined here
+>   129 | struct mount_attr {
+>       |        ^~~~~~~~~~
+> 
+> Signed-off-by: Siddh Raman Pant <code@siddh.me>
+> ---
+>  tools/testing/selftests/mount_setattr/mount_setattr_test.c | 7 -------
+>  1 file changed, 7 deletions(-)
+> 
+> diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> index 8c5fea68ae67..582669ca38e9 100644
+> --- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> +++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> @@ -103,13 +103,6 @@
+>  	#else
+>  		#define __NR_mount_setattr 442
+>  	#endif
+> -
+> -struct mount_attr {
+> -	__u64 attr_set;
+> -	__u64 attr_clr;
+> -	__u64 propagation;
+> -	__u64 userns_fd;
+> -};
+>  #endif
 
-Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
----
- fs/pipe.c                 | 24 ++++--------------------
- include/linux/pipe_fs_i.h | 12 ++++++++++++
- kernel/watch_queue.c      |  8 ++++----
- 3 files changed, 20 insertions(+), 24 deletions(-)
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 42c7ff41c2db..cf449779bf71 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -98,16 +98,6 @@ void pipe_unlock(struct pipe_inode_info *pipe)
- }
- EXPORT_SYMBOL(pipe_unlock);
- 
--static inline void __pipe_lock(struct pipe_inode_info *pipe)
--{
--	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
--}
--
--static inline void __pipe_unlock(struct pipe_inode_info *pipe)
--{
--	mutex_unlock(&pipe->mutex);
--}
--
- void pipe_double_lock(struct pipe_inode_info *pipe1,
- 		      struct pipe_inode_info *pipe2)
- {
-@@ -253,8 +243,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 	 */
- 	was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
- 	for (;;) {
--		/* Read ->head with a barrier vs post_one_notification() */
--		unsigned int head = smp_load_acquire(&pipe->head);
-+		unsigned int head = pipe->head;
- 		unsigned int tail = pipe->tail;
- 		unsigned int mask = pipe->ring_size - 1;
- 
-@@ -322,14 +311,12 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 
- 			if (!buf->len) {
- 				pipe_buf_release(pipe, buf);
--				spin_lock_irq(&pipe->rd_wait.lock);
- #ifdef CONFIG_WATCH_QUEUE
- 				if (buf->flags & PIPE_BUF_FLAG_LOSS)
- 					pipe->note_loss = true;
- #endif
- 				tail++;
- 				pipe->tail = tail;
--				spin_unlock_irq(&pipe->rd_wait.lock);
- 			}
- 			total_len -= chars;
- 			if (!total_len)
-@@ -506,16 +493,13 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			 * it, either the reader will consume it or it'll still
- 			 * be there for the next write.
- 			 */
--			spin_lock_irq(&pipe->rd_wait.lock);
- 
- 			head = pipe->head;
- 			if (pipe_full(head, pipe->tail, pipe->max_usage)) {
--				spin_unlock_irq(&pipe->rd_wait.lock);
- 				continue;
- 			}
- 
- 			pipe->head = head + 1;
--			spin_unlock_irq(&pipe->rd_wait.lock);
- 
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
-@@ -1260,14 +1244,14 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
- 	if (unlikely(!bufs))
- 		return -ENOMEM;
- 
--	spin_lock_irq(&pipe->rd_wait.lock);
-+	__pipe_lock(pipe);
- 	mask = pipe->ring_size - 1;
- 	head = pipe->head;
- 	tail = pipe->tail;
- 
- 	n = pipe_occupancy(head, tail);
- 	if (nr_slots < n) {
--		spin_unlock_irq(&pipe->rd_wait.lock);
-+		__pipe_unlock(pipe);
- 		kfree(bufs);
- 		return -EBUSY;
- 	}
-@@ -1303,7 +1287,7 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
- 	pipe->tail = tail;
- 	pipe->head = head;
- 
--	spin_unlock_irq(&pipe->rd_wait.lock);
-+	__pipe_unlock(pipe);
- 
- 	/* This might have made more room for writers */
- 	wake_up_interruptible(&pipe->wr_wait);
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 6cb65df3e3ba..f5084daf6eaf 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -2,6 +2,8 @@
- #ifndef _LINUX_PIPE_FS_I_H
- #define _LINUX_PIPE_FS_I_H
- 
-+#include <linux/fs.h>
-+
- #define PIPE_DEF_BUFFERS	16
- 
- #define PIPE_BUF_FLAG_LRU	0x01	/* page is on the LRU */
-@@ -223,6 +225,16 @@ static inline void pipe_discard_from(struct pipe_inode_info *pipe,
- #define PIPE_SIZE		PAGE_SIZE
- 
- /* Pipe lock and unlock operations */
-+static inline void __pipe_lock(struct pipe_inode_info *pipe)
-+{
-+	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
-+}
-+
-+static inline void __pipe_unlock(struct pipe_inode_info *pipe)
-+{
-+	mutex_unlock(&pipe->mutex);
-+}
-+
- void pipe_lock(struct pipe_inode_info *);
- void pipe_unlock(struct pipe_inode_info *);
- void pipe_double_lock(struct pipe_inode_info *, struct pipe_inode_info *);
-diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-index a6f9bdd956c3..92e46cfe9419 100644
---- a/kernel/watch_queue.c
-+++ b/kernel/watch_queue.c
-@@ -108,7 +108,7 @@ static bool post_one_notification(struct watch_queue *wqueue,
- 	if (!pipe)
- 		return false;
- 
--	spin_lock_irq(&pipe->rd_wait.lock);
-+	__pipe_lock(pipe);
- 
- 	mask = pipe->ring_size - 1;
- 	head = pipe->head;
-@@ -135,17 +135,17 @@ static bool post_one_notification(struct watch_queue *wqueue,
- 	buf->offset = offset;
- 	buf->len = len;
- 	buf->flags = PIPE_BUF_FLAG_WHOLE;
--	smp_store_release(&pipe->head, head + 1); /* vs pipe_read() */
-+	pipe->head = head + 1;
- 
- 	if (!test_and_clear_bit(note, wqueue->notes_bitmap)) {
--		spin_unlock_irq(&pipe->rd_wait.lock);
-+		__pipe_unlock(pipe);
- 		BUG();
- 	}
- 	wake_up_interruptible_sync_poll_locked(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 	done = true;
- 
- out:
--	spin_unlock_irq(&pipe->rd_wait.lock);
-+	__pipe_unlock(pipe);
- 	if (done)
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 	return done;
-
-base-commit: c8451c141e07a8d05693f6c8d0e418fbb4b68bb7
--- 
-2.31.1
-
+Honestly, until the conflicts between linux/mount.h and sys/mount.h are
+fixed properly we should probably just not include either linux/mount.h
+nor sys/mount.h and just define all the things we need in this single
+test file.
