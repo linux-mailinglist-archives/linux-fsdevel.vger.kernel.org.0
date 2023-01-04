@@ -2,223 +2,238 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C75065DE79
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 22:16:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 45BA365DF0B
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 22:28:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240694AbjADVQO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Jan 2023 16:16:14 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57650 "EHLO
+        id S240483AbjADV2k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Jan 2023 16:28:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240363AbjADVPa (ORCPT
+        with ESMTP id S240264AbjADV2Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Jan 2023 16:15:30 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C23191B9DA;
-        Wed,  4 Jan 2023 13:15:29 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id c6so3996382pls.4;
-        Wed, 04 Jan 2023 13:15:29 -0800 (PST)
+        Wed, 4 Jan 2023 16:28:16 -0500
+Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728AB3F121
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Jan 2023 13:22:18 -0800 (PST)
+Received: by mail-ed1-x530.google.com with SMTP id s5so50383368edc.12
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Jan 2023 13:22:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4RtaC30O7Atkln5EkUr8a2iVlJILm+qXX7isWy43phI=;
-        b=dI7AOinQpZsTE8QFnkWx5x7pHBIx2GIKp/y/hPSc1NHAIhQSCV/YW9CIK9cZelspMz
-         /UcbMNCeprdqj2GgjwjFWFax2vwmTS97zF8XvJynP1ckPDpwGdDlfgcvFL/67PrZtHoe
-         8p3Tw9Jon6YIgT2dQef0u6QzS5v45L3ZduPZ7Vuz5T+efr2+eM/L19V2q4WYQQWenBXe
-         r/FJhL2oCKug1uqMTJTCUDKbhH4a7abWBWe80Bzb0hil6lc0QxeilyS7fU95p9sAo3Hd
-         5RiIKFAfe4YEQeX4Nw8KbDxJ6n6FANkPiGgIF3O5WGmAPzm6MuSYa4JZ31MPUbzgC2kF
-         JUOQ==
+        d=chromium.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5r/V3HPXwjpuD7IphcjrrB8OiZUQp0rchrkxxQGzaWI=;
+        b=KEIC0i6TYit5Z0cdFjku8f3xpdIif4U2Ymvz3XlFlq2j6BxcLI8+aRhr5ueD/4NPZt
+         5J/8Tmn+RoO27XqmSSN+2MvKrF23PsPGVyxQsTSipAdevtpNTCAHHgE1Q/dRVQTvoBqO
+         4T5iaYELTABGEiuIT0Ntyw6CUkWJlk7WiKrlY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4RtaC30O7Atkln5EkUr8a2iVlJILm+qXX7isWy43phI=;
-        b=4Ere80a/DWT8+c83zXS1MqaWBoXiCRfyqo881LN9+OTMIUUdKZ6iqX1hKl52eDVZZb
-         JMOi5I7BX/1nFGy9Rn9G2TwSm0pI9cSj391OdaRmSP0B+SYcsfyKcUWlRXGUqF8MgC/u
-         yqn7bD2v2NCA/zshchAPAP/IslErQnVhQxn/jkS95DBUr5Wk2f++pFUCVc0pQqM7JW88
-         sBD5XGtEJuRxaQzzOOHG0I15pcZ3YEvbVlHe8vF1Dy2MgeublQNm/qMoewPZx41A+x/x
-         0RNfLqgCqg7vTP20oP13gE22oiQcgYiAx79aMT2G1+2p/Wtogf81tUZD9LZI4RcIoxvI
-         H7Fw==
-X-Gm-Message-State: AFqh2kqTliGqIwupH/VvrZw3rZWLDoDcCq2ZxyhOcTo5sAKBubT7kntQ
-        EU7EFPgXW0ZJlNfUo1rgqKB6HFJxjXje+g==
-X-Google-Smtp-Source: AMrXdXuPAz2h5R8V/Em6rEDV3mKeDGvzwSSguYGVRMwHcsp8CRceXnVJ+9DQaRs2mIwZh0/fEI9s7Q==
-X-Received: by 2002:a17:90a:ab8d:b0:226:7efc:989b with SMTP id n13-20020a17090aab8d00b002267efc989bmr10104588pjq.49.1672866929215;
-        Wed, 04 Jan 2023 13:15:29 -0800 (PST)
-Received: from fedora.hsd1.ca.comcast.net ([2601:644:8002:1c20::a55d])
-        by smtp.googlemail.com with ESMTPSA id i8-20020a17090a138800b00226369149cesm6408pja.21.2023.01.04.13.15.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jan 2023 13:15:28 -0800 (PST)
-From:   "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-To:     linux-fsdevel@vger.kernel.org
-Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org,
-        "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
-Subject: [PATCH v5 23/23] filemap: Remove find_get_pages_range_tag()
-Date:   Wed,  4 Jan 2023 13:14:48 -0800
-Message-Id: <20230104211448.4804-24-vishal.moola@gmail.com>
-X-Mailer: git-send-email 2.38.1
-In-Reply-To: <20230104211448.4804-1-vishal.moola@gmail.com>
-References: <20230104211448.4804-1-vishal.moola@gmail.com>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5r/V3HPXwjpuD7IphcjrrB8OiZUQp0rchrkxxQGzaWI=;
+        b=IVi80uie6UlqpdyhPXTs77YYS8FxqR6LKhD6BKxqv+vmSLUCgrm1MBYm/tvREw8Yo0
+         OKmHunn9OXOoZ915Go6hHqKOy4dQ86nxOmgb0Md2Q5RFmpfOlTFFrEc7bmpM1t+xOcMz
+         BGko39c7+dfAsV+TV3Djv2lpS+cChvhs4k/M1kcZBLOqsZTafj83irXrt28WlZ8y7I0a
+         n/tmsOAj1pj7CX0GaYKJCfhHfor79sUAYzCF0tYvPD26NoFJgbroj2rmNbRFcZ4YddgC
+         O4t1rd1QwfERBbcaAnFzXFhroSScQ5I64xGhiuy4IPoG1VCgC2nC9ixbG4/mwSnxjY7k
+         4WFg==
+X-Gm-Message-State: AFqh2kq0MhdCPwnNc8lIcKoSJkbDx0dK0b04TMHS6zQkP9GRPu+qGqLG
+        12qFOIsMfTdEyNsFKe7PLEZOeIqYTyHRwBCMxXRlRA==
+X-Google-Smtp-Source: AMrXdXvyL02g5V8vC60eMixSySeuV+cmNwoRkD+KYiZL+r9p1DmuiHRjgR21Y+li8eMYghzwdId8ULZTKPgGOnDzC2M=
+X-Received: by 2002:a05:6402:f27:b0:485:8114:9779 with SMTP id
+ i39-20020a0564020f2700b0048581149779mr3674496eda.41.1672867336970; Wed, 04
+ Jan 2023 13:22:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <20221229081252.452240-1-sarthakkukreti@chromium.org>
+ <20221229081252.452240-4-sarthakkukreti@chromium.org> <Y7Wr2uadI+82BB6a@magnolia>
+In-Reply-To: <Y7Wr2uadI+82BB6a@magnolia>
+From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
+Date:   Wed, 4 Jan 2023 13:22:06 -0800
+Message-ID: <CAG9=OMNbeU=Xg5bWvHUSfzRf8vsk6csvcw5BGZeMD5Lo7dfKFQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/7] fs: Introduce FALLOC_FL_PROVISION
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     sarthakkukreti@google.com, dm-devel@redhat.com,
+        linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Jens Axboe <axboe@kernel.dk>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Alasdair Kergon <agk@redhat.com>,
+        Mike Snitzer <snitzer@kernel.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        Brian Foster <bfoster@redhat.com>,
+        "Theodore Ts'o" <tytso@mit.edu>,
+        Andreas Dilger <adilger.kernel@dilger.ca>,
+        Bart Van Assche <bvanassche@google.com>,
+        Daniil Lunev <dlunev@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All callers to find_get_pages_range_tag(), find_get_pages_tag(),
-pagevec_lookup_range_tag(), and pagevec_lookup_tag() have been removed.
+(Resend; the text flow made the last reply unreadable)
 
-Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
----
- include/linux/pagemap.h | 10 -------
- include/linux/pagevec.h |  8 ------
- mm/filemap.c            | 60 -----------------------------------------
- mm/swap.c               | 10 -------
- 4 files changed, 88 deletions(-)
+On Wed, Jan 4, 2023 at 8:39 AM Darrick J. Wong <djwong@kernel.org> wrote:
+>
+> On Thu, Dec 29, 2022 at 12:12:48AM -0800, Sarthak Kukreti wrote:
+> > FALLOC_FL_PROVISION is a new fallocate() allocation mode that
+> > sends a hint to (supported) thinly provisioned block devices to
+> > allocate space for the given range of sectors via REQ_OP_PROVISION.
+> >
+> > The man pages for both fallocate(2) and posix_fallocate(3) describe
+> > the default allocation mode as:
+> >
+> > ```
+> > The default operation (i.e., mode is zero) of fallocate()
+> > allocates the disk space within the range specified by offset and len.
+> > ...
+> > subsequent writes to bytes in the specified range are guaranteed
+> > not to fail because of lack of disk space.
+> > ```
+> >
+> > For thinly provisioned storage constructs (dm-thin, filesystems on sparse
+> > files), the term 'disk space' is overloaded and can either mean the apparent
+> > disk space in the filesystem/thin logical volume or the true disk
+> > space that will be utilized on the underlying non-sparse allocation layer.
+> >
+> > The use of a separate mode allows us to cleanly disambiguate whether fallocate()
+> > causes allocation only at the current layer (default mode) or whether it propagates
+> > allocations to underlying layers (provision mode)
+>
+> Why is it important to make this distinction?  The outcome of fallocate
+> is supposed to be that subsequent writes do not fail with ENOSPC.  In my
+> (fs developer) mind, REQ_OP_PROVISION simply an extra step to be taken
+> after allocating file blocks.
+>
+Some use cases still benefit from keeping the default mode - eg.
+virtual machines running on massive storage pools that don't expect to
+hit the storage limit anytime soon (like most cloud storage
+providers). Essentially, if the 'no ENOSPC' guarantee is maintained
+via other means, then REQ_OP_PROVISION adds latency that isn't needed
+(and cloud storage providers don't need to set aside that extra space
+that may or may not be used).
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index bb3c1d51b1cb..9f1081683771 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -741,16 +741,6 @@ unsigned filemap_get_folios_contig(struct address_space *mapping,
- 		pgoff_t *start, pgoff_t end, struct folio_batch *fbatch);
- unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
- 		pgoff_t end, xa_mark_t tag, struct folio_batch *fbatch);
--unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
--			pgoff_t end, xa_mark_t tag, unsigned int nr_pages,
--			struct page **pages);
--static inline unsigned find_get_pages_tag(struct address_space *mapping,
--			pgoff_t *index, xa_mark_t tag, unsigned int nr_pages,
--			struct page **pages)
--{
--	return find_get_pages_range_tag(mapping, index, (pgoff_t)-1, tag,
--					nr_pages, pages);
--}
- 
- struct page *grab_cache_page_write_begin(struct address_space *mapping,
- 			pgoff_t index);
-diff --git a/include/linux/pagevec.h b/include/linux/pagevec.h
-index 215eb6c3bdc9..a520632297ac 100644
---- a/include/linux/pagevec.h
-+++ b/include/linux/pagevec.h
-@@ -26,14 +26,6 @@ struct pagevec {
- };
- 
- void __pagevec_release(struct pagevec *pvec);
--unsigned pagevec_lookup_range_tag(struct pagevec *pvec,
--		struct address_space *mapping, pgoff_t *index, pgoff_t end,
--		xa_mark_t tag);
--static inline unsigned pagevec_lookup_tag(struct pagevec *pvec,
--		struct address_space *mapping, pgoff_t *index, xa_mark_t tag)
--{
--	return pagevec_lookup_range_tag(pvec, mapping, index, (pgoff_t)-1, tag);
--}
- 
- static inline void pagevec_init(struct pagevec *pvec)
- {
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 85adbcf2d9a7..31bf18ec6d01 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -2337,66 +2337,6 @@ unsigned filemap_get_folios_tag(struct address_space *mapping, pgoff_t *start,
- }
- EXPORT_SYMBOL(filemap_get_folios_tag);
- 
--/**
-- * find_get_pages_range_tag - Find and return head pages matching @tag.
-- * @mapping:	the address_space to search
-- * @index:	the starting page index
-- * @end:	The final page index (inclusive)
-- * @tag:	the tag index
-- * @nr_pages:	the maximum number of pages
-- * @pages:	where the resulting pages are placed
-- *
-- * Like find_get_pages_range(), except we only return head pages which are
-- * tagged with @tag.  @index is updated to the index immediately after the
-- * last page we return, ready for the next iteration.
-- *
-- * Return: the number of pages which were found.
-- */
--unsigned find_get_pages_range_tag(struct address_space *mapping, pgoff_t *index,
--			pgoff_t end, xa_mark_t tag, unsigned int nr_pages,
--			struct page **pages)
--{
--	XA_STATE(xas, &mapping->i_pages, *index);
--	struct folio *folio;
--	unsigned ret = 0;
--
--	if (unlikely(!nr_pages))
--		return 0;
--
--	rcu_read_lock();
--	while ((folio = find_get_entry(&xas, end, tag))) {
--		/*
--		 * Shadow entries should never be tagged, but this iteration
--		 * is lockless so there is a window for page reclaim to evict
--		 * a page we saw tagged.  Skip over it.
--		 */
--		if (xa_is_value(folio))
--			continue;
--
--		pages[ret] = &folio->page;
--		if (++ret == nr_pages) {
--			*index = folio->index + folio_nr_pages(folio);
--			goto out;
--		}
--	}
--
--	/*
--	 * We come here when we got to @end. We take care to not overflow the
--	 * index @index as it confuses some of the callers. This breaks the
--	 * iteration when there is a page at index -1 but that is already
--	 * broken anyway.
--	 */
--	if (end == (pgoff_t)-1)
--		*index = (pgoff_t)-1;
--	else
--		*index = end + 1;
--out:
--	rcu_read_unlock();
--
--	return ret;
--}
--EXPORT_SYMBOL(find_get_pages_range_tag);
--
- /*
-  * CD/DVDs are error prone. When a medium error occurs, the driver may fail
-  * a _large_ part of the i/o request. Imagine the worst scenario:
-diff --git a/mm/swap.c b/mm/swap.c
-index 70e2063ef43a..5f20ba07d46b 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -1119,16 +1119,6 @@ void folio_batch_remove_exceptionals(struct folio_batch *fbatch)
- 	fbatch->nr = j;
- }
- 
--unsigned pagevec_lookup_range_tag(struct pagevec *pvec,
--		struct address_space *mapping, pgoff_t *index, pgoff_t end,
--		xa_mark_t tag)
--{
--	pvec->nr = find_get_pages_range_tag(mapping, index, end, tag,
--					PAGEVEC_SIZE, pvec->pages);
--	return pagevec_count(pvec);
--}
--EXPORT_SYMBOL(pagevec_lookup_range_tag);
--
- /*
-  * Perform any setup for the swap system
-  */
--- 
-2.38.1
+> If you *don't* add this API flag and simply bake the REQ_OP_PROVISION
+> call into mode 0 fallocate, then the new functionality can be added (or
+> even backported) to existing kernels and customers can use it
+> immediately.  If you *do*, then you get to wait a few years for
+> developers to add it to their codebases only after enough enterprise
+> distros pick up a new kernel to make it worth their while.
+>
+> > for thinly provisioned filesystems/
+> > block devices. For devices that do not support REQ_OP_PROVISION, both these
+> > allocation modes will be equivalent. Given the performance cost of sending provision
+> > requests to the underlying layers, keeping the default mode as-is allows users to
+> > preserve existing behavior.
+>
+> How expensive is this expected to be?  Is this why you wanted a separate
+> mode flag?
+>
+Yes, the exact latency will depend on the stacked block devices and
+the fragmentation at the allocation layers.
 
+I did a quick test for benchmarking fallocate() with an:
+A) ext4 filesystem mounted with 'noprovision'
+B) ext4 filesystem mounted with 'provision' on a dm-thin device.
+C) ext4 filesystem mounted with 'provision' on a loop device with a
+sparse backing file on the filesystem in (B).
+
+I tested file sizes from 512M to 8G, time taken for fallocate() in (A)
+remains expectedly flat at ~0.01-0.02s, but for (B), it scales from
+0.03-0.4s and for (C) it scales from 0.04s-0.52s (I captured the exact
+time distribution in the cover letter
+https://marc.info/?l=linux-ext4&m=167230113520636&w=2)
+
++0.5s for a 8G fallocate doesn't sound a lot but I think fragmentation
+and how the block device is layered can make this worse...
+
+> --D
+>
+> > Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
+> > ---
+> >  block/fops.c                | 15 +++++++++++----
+> >  include/linux/falloc.h      |  3 ++-
+> >  include/uapi/linux/falloc.h |  8 ++++++++
+> >  3 files changed, 21 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/block/fops.c b/block/fops.c
+> > index 50d245e8c913..01bde561e1e2 100644
+> > --- a/block/fops.c
+> > +++ b/block/fops.c
+> > @@ -598,7 +598,8 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
+> >
+> >  #define      BLKDEV_FALLOC_FL_SUPPORTED                                      \
+> >               (FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |           \
+> > -              FALLOC_FL_ZERO_RANGE | FALLOC_FL_NO_HIDE_STALE)
+> > +              FALLOC_FL_ZERO_RANGE | FALLOC_FL_NO_HIDE_STALE |       \
+> > +              FALLOC_FL_PROVISION)
+> >
+> >  static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+> >                            loff_t len)
+> > @@ -634,9 +635,11 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+> >       filemap_invalidate_lock(inode->i_mapping);
+> >
+> >       /* Invalidate the page cache, including dirty pages. */
+> > -     error = truncate_bdev_range(bdev, file->f_mode, start, end);
+> > -     if (error)
+> > -             goto fail;
+> > +     if (mode != FALLOC_FL_PROVISION) {
+> > +             error = truncate_bdev_range(bdev, file->f_mode, start, end);
+> > +             if (error)
+> > +                     goto fail;
+> > +     }
+> >
+> >       switch (mode) {
+> >       case FALLOC_FL_ZERO_RANGE:
+> > @@ -654,6 +657,10 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
+> >               error = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
+> >                                            len >> SECTOR_SHIFT, GFP_KERNEL);
+> >               break;
+> > +     case FALLOC_FL_PROVISION:
+> > +             error = blkdev_issue_provision(bdev, start >> SECTOR_SHIFT,
+> > +                                            len >> SECTOR_SHIFT, GFP_KERNEL);
+> > +             break;
+> >       default:
+> >               error = -EOPNOTSUPP;
+> >       }
+> > diff --git a/include/linux/falloc.h b/include/linux/falloc.h
+> > index f3f0b97b1675..b9a40a61a59b 100644
+> > --- a/include/linux/falloc.h
+> > +++ b/include/linux/falloc.h
+> > @@ -30,7 +30,8 @@ struct space_resv {
+> >                                        FALLOC_FL_COLLAPSE_RANGE |     \
+> >                                        FALLOC_FL_ZERO_RANGE |         \
+> >                                        FALLOC_FL_INSERT_RANGE |       \
+> > -                                      FALLOC_FL_UNSHARE_RANGE)
+> > +                                      FALLOC_FL_UNSHARE_RANGE |      \
+> > +                                      FALLOC_FL_PROVISION)
+> >
+> >  /* on ia32 l_start is on a 32-bit boundary */
+> >  #if defined(CONFIG_X86_64)
+> > diff --git a/include/uapi/linux/falloc.h b/include/uapi/linux/falloc.h
+> > index 51398fa57f6c..2d323d113eed 100644
+> > --- a/include/uapi/linux/falloc.h
+> > +++ b/include/uapi/linux/falloc.h
+> > @@ -77,4 +77,12 @@
+> >   */
+> >  #define FALLOC_FL_UNSHARE_RANGE              0x40
+> >
+> > +/*
+> > + * FALLOC_FL_PROVISION acts as a hint for thinly provisioned devices to allocate
+> > + * blocks for the range/EOF.
+> > + *
+> > + * FALLOC_FL_PROVISION can only be used with allocate-mode fallocate.
+> > + */
+> > +#define FALLOC_FL_PROVISION          0x80
+> > +
+> >  #endif /* _UAPI_FALLOC_H_ */
+> > --
+> > 2.37.3
+> >
