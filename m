@@ -2,207 +2,142 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9572D65DBB1
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 18:55:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A605465DC0A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 19:24:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240039AbjADRz0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Jan 2023 12:55:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50988 "EHLO
+        id S235476AbjADSYU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Jan 2023 13:24:20 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38598 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240163AbjADRzH (ORCPT
+        with ESMTP id S235099AbjADSYR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Jan 2023 12:55:07 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 524F74086E;
-        Wed,  4 Jan 2023 09:53:53 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id C24A5B8188A;
-        Wed,  4 Jan 2023 17:53:35 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BA2CC433EF;
-        Wed,  4 Jan 2023 17:53:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672854814;
-        bh=14iHohPaMDWcxHiPz7x3Ct3bJsKuuBxxpXFIJO8SUiQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ZWJpqmA3WP/UFajTb7dL3x0LikMreoVlzmoTtADAt20O59YFhQsIQNp0x20d3dnDC
-         9Mi/qj+Js8rLGIGymURZgW9uoWoDP9uGh7U80KBae6pWMeHMuZmtV+BbBgxqSE5igu
-         e/e6w3HQRs+awYXyADXcmhqdNecXDEX+WAfE6uOg650d9dfpfPIplgBcGS6+ZAu6I8
-         wzVWqAc5el1dTqM6+NIsMsA4Xt0Mogh7skLOjM4wEvZJI0tSw9AjdJfIvSe1eKw/Up
-         ComCL68G17Kzsv96K0Wy99+FV0e+OY/8C556eJ4BzjOUcZ6JXdKixA5O+9/jwUaRFv
-         pExfG72wszckw==
-Date:   Wed, 4 Jan 2023 09:53:34 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
-Subject: Re: [PATCH v5 8/9] iomap: Rename page_ops to folio_ops
-Message-ID: <Y7W9HlvH7zzIBJhO@magnolia>
-References: <20221231150919.659533-1-agruenba@redhat.com>
- <20221231150919.659533-9-agruenba@redhat.com>
+        Wed, 4 Jan 2023 13:24:17 -0500
+Received: from mail-yb1-xb29.google.com (mail-yb1-xb29.google.com [IPv6:2607:f8b0:4864:20::b29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 168B11B1DD
+        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Jan 2023 10:24:16 -0800 (PST)
+Received: by mail-yb1-xb29.google.com with SMTP id v126so37549186ybv.2
+        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Jan 2023 10:24:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KxFSAeIQaZ8kk0GXJhXrmy8k/ZlTX7XxQ3u7wqBqzBs=;
+        b=YJS1LnExeamCNJAbrtg2PnEtWZU1IrvxBWzYRgGDcjZcQaZC9cjUdy3lbhKZeA2JEA
+         +4mCGuPlCj8XRLGRtawqjnW0kyvJcFKaiRxDwjJOI0h/6YzyHsqk8kBKgcC/L6a1Vuvo
+         4E8CHjqOl/yXT7MIJOIdf3woNrLCunLBnoz+pBYpvKt9KxwQlVESIYheKTrmdNSN3WWg
+         ZAcdvxNQBLEvUJUpxFk+T/Hs1j6w6k/agMH5J1ugEoRRZYykhFbVyjPdMBa2y2gqgy2C
+         eB7MPF9relmzFoxjlThYd699W4ayeJh2AKdksCUFOOEuT+lJdMckTAhUiSiip67oCfk7
+         0rGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KxFSAeIQaZ8kk0GXJhXrmy8k/ZlTX7XxQ3u7wqBqzBs=;
+        b=rsZC5jQZ+qe4j1+iU3xpi1pM86PD5Oj1guHYyDuyr5YFr0wtAv3Fu9hFD9hjH52F+y
+         Nuy2e7V8CqZ9GVTHjdXuo1TlquVrBs+j6lkDDKTRQ9a1kvyBJAaG2EwCz2uL0vRM6oPD
+         9THIKqP+5Z34NZ0ZJ9VgwwxQcgIWVNb2/RVuBidXCYk2w7eVM56dsfE0pFHmZJDJEkpY
+         Go6C1c6H7seEQZal9FzKTPyZyoSoN+869jNXfZLGd2NjyRXHYBNp7+8bsJNIiLJMSL6R
+         Ou6womBzCKGn/TGcRC8+PE/A8jLqcSSG95EPCgK/+VK/SEqs2dpGkhFecRmnxobm16ru
+         a50g==
+X-Gm-Message-State: AFqh2kqiTBGRmm5asHVaQ3xSdiwyTC1WKRu1qqNfhqvreC5rXd2Gu+Pe
+        sPI64fACf7dgp7UaNZEMVF3XmN7SQzhl2xtgFITObg==
+X-Google-Smtp-Source: AMrXdXvUwl8o6DfThWFhqJEq7nM/XEsZYO493gPYNkjXoA33zsGhsbnOVROL9yMdxYEzzmHtfHq4IdxFIxwhkzG4RYk=
+X-Received: by 2002:a25:a292:0:b0:7b3:7fc6:2d52 with SMTP id
+ c18-20020a25a292000000b007b37fc62d52mr182755ybi.340.1672856655114; Wed, 04
+ Jan 2023 10:24:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221231150919.659533-9-agruenba@redhat.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20221228194249.170354-1-surenb@google.com> <6ddb468a-3771-92a1-deb1-b07a954293a3@redhat.com>
+ <CAJuCfpGUpPPoKjAAmV7UK2H2o2NqsSa+-_M6JwesCfc+VRY2vw@mail.gmail.com> <b3aec4d4-737d-255a-d25e-451222fc9bb9@redhat.com>
+In-Reply-To: <b3aec4d4-737d-255a-d25e-451222fc9bb9@redhat.com>
+From:   Suren Baghdasaryan <surenb@google.com>
+Date:   Wed, 4 Jan 2023 10:24:03 -0800
+Message-ID: <CAJuCfpGBrAjjX9Otyn1vRKSVGL5uh=VOsEtM7-B6V4oT4ufSxw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] mm: fix vma->anon_name memory leak for anonymous
+ shmem VMAs
+To:     David Hildenbrand <david@redhat.com>
+Cc:     akpm@linux-foundation.org, hughd@google.com, hannes@cmpxchg.org,
+        vincent.whitchurch@axis.com, seanjc@google.com, rppt@kernel.org,
+        shy828301@gmail.com, pasha.tatashin@soleen.com,
+        paul.gortmaker@windriver.com, peterx@redhat.com, vbabka@suse.cz,
+        Liam.Howlett@oracle.com, ccross@google.com, willy@infradead.org,
+        arnd@arndb.de, cgel.zte@gmail.com, yuzhao@google.com,
+        bagasdotme@gmail.com, suleiman@google.com, steven@liquorix.net,
+        heftig@archlinux.org, cuigaosheng1@huawei.com,
+        kirill@shutemov.name, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        syzbot+91edf9178386a07d06a7@syzkaller.appspotmail.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Dec 31, 2022 at 04:09:18PM +0100, Andreas Gruenbacher wrote:
-> The operations in struct page_ops all operate on folios, so rename
-> struct page_ops to struct folio_ops.
-> 
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+On Wed, Jan 4, 2023 at 1:04 AM David Hildenbrand <david@redhat.com> wrote:
+>
+> On 03.01.23 20:53, Suren Baghdasaryan wrote:
+> > On Mon, Jan 2, 2023 at 4:00 AM David Hildenbrand <david@redhat.com> wrote:
+> >>
+> >> On 28.12.22 20:42, Suren Baghdasaryan wrote:
+> >>> free_anon_vma_name() is missing a check for anonymous shmem VMA which
+> >>> leads to a memory leak due to refcount not being dropped. Fix this by
+> >>> adding the missing check.
+> >>>
+> >>> Fixes: d09e8ca6cb93 ("mm: anonymous shared memory naming")
+> >>> Reported-by: syzbot+91edf9178386a07d06a7@syzkaller.appspotmail.com
+> >>> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> >>> ---
+> >>>    include/linux/mm_inline.h | 2 +-
+> >>>    1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/include/linux/mm_inline.h b/include/linux/mm_inline.h
+> >>> index e8ed225d8f7c..d650ca2c5d29 100644
+> >>> --- a/include/linux/mm_inline.h
+> >>> +++ b/include/linux/mm_inline.h
+> >>> @@ -413,7 +413,7 @@ static inline void free_anon_vma_name(struct vm_area_struct *vma)
+> >>>         * Not using anon_vma_name because it generates a warning if mmap_lock
+> >>>         * is not held, which might be the case here.
+> >>>         */
+> >>> -     if (!vma->vm_file)
+> >>> +     if (!vma->vm_file || vma_is_anon_shmem(vma))
+> >>>                anon_vma_name_put(vma->anon_name);
+> >>
+> >> Wouldn't it be me more consistent to check for "vma->anon_name"?
+> >>
+> >> That's what dup_anon_vma_name() checks. And it's safe now because
+> >> anon_name is no longer overloaded in vm_area_struct.
+> >
+> > Thanks for the suggestion, David. Yes, with the recent change that
+> > does not overload anon_name, checking for "vma->anon_name" would be
+> > simpler. I think we can also drop anon_vma_name() function now
+> > (https://elixir.bootlin.com/linux/v6.2-rc2/source/mm/madvise.c#L94)
+> > since vma->anon_name does not depend on vma->vm_file anymore, remove
+> > the last part of this comment:
+> > https://elixir.bootlin.com/linux/v6.2-rc2/source/include/linux/mm_types.h#L584
+> > and use vma->anon_name directly going forward. If all that sounds
+> > good, I'll post a separate patch implementing all these changes.
+> > So, for this patch I would suggest keeping it as is because
+> > functionally it is correct and will change this check along with other
+> > corrections I mentioned above in a separate patch. Does that sound
+> > good?
+>
+> Works for me.
+>
+> Acked-by: David Hildenbrand <david@redhat.com>
 
-Yup.
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Thank you! Will post the followup cleanup patch shorly.
 
---D
-
-> ---
->  fs/gfs2/bmap.c         |  4 ++--
->  fs/iomap/buffered-io.c | 12 ++++++------
->  fs/xfs/xfs_iomap.c     |  4 ++--
->  include/linux/iomap.h  | 14 +++++++-------
->  4 files changed, 17 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
-> index d3adb715ac8c..e191ecfb1fde 100644
-> --- a/fs/gfs2/bmap.c
-> +++ b/fs/gfs2/bmap.c
-> @@ -997,7 +997,7 @@ static void gfs2_iomap_put_folio(struct inode *inode, loff_t pos,
->  	gfs2_trans_end(sdp);
->  }
->  
-> -static const struct iomap_page_ops gfs2_iomap_page_ops = {
-> +static const struct iomap_folio_ops gfs2_iomap_folio_ops = {
->  	.get_folio = gfs2_iomap_get_folio,
->  	.put_folio = gfs2_iomap_put_folio,
->  };
-> @@ -1075,7 +1075,7 @@ static int gfs2_iomap_begin_write(struct inode *inode, loff_t pos,
->  	}
->  
->  	if (gfs2_is_stuffed(ip) || gfs2_is_jdata(ip))
-> -		iomap->page_ops = &gfs2_iomap_page_ops;
-> +		iomap->folio_ops = &gfs2_iomap_folio_ops;
->  	return 0;
->  
->  out_trans_end:
-> diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
-> index df6fca11f18c..c4a7aef2a272 100644
-> --- a/fs/iomap/buffered-io.c
-> +++ b/fs/iomap/buffered-io.c
-> @@ -605,10 +605,10 @@ static int __iomap_write_begin(const struct iomap_iter *iter, loff_t pos,
->  static void iomap_put_folio(struct iomap_iter *iter, loff_t pos, size_t ret,
->  		struct folio *folio)
->  {
-> -	const struct iomap_page_ops *page_ops = iter->iomap.page_ops;
-> +	const struct iomap_folio_ops *folio_ops = iter->iomap.folio_ops;
->  
-> -	if (page_ops && page_ops->put_folio) {
-> -		page_ops->put_folio(iter->inode, pos, ret, folio);
-> +	if (folio_ops && folio_ops->put_folio) {
-> +		folio_ops->put_folio(iter->inode, pos, ret, folio);
->  	} else {
->  		folio_unlock(folio);
->  		folio_put(folio);
-> @@ -627,7 +627,7 @@ static int iomap_write_begin_inline(const struct iomap_iter *iter,
->  static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
->  		size_t len, struct folio **foliop)
->  {
-> -	const struct iomap_page_ops *page_ops = iter->iomap.page_ops;
-> +	const struct iomap_folio_ops *folio_ops = iter->iomap.folio_ops;
->  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
->  	struct folio *folio;
->  	int status;
-> @@ -642,8 +642,8 @@ static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
->  	if (!mapping_large_folio_support(iter->inode->i_mapping))
->  		len = min_t(size_t, len, PAGE_SIZE - offset_in_page(pos));
->  
-> -	if (page_ops && page_ops->get_folio)
-> -		folio = page_ops->get_folio(iter, pos, len);
-> +	if (folio_ops && folio_ops->get_folio)
-> +		folio = folio_ops->get_folio(iter, pos, len);
->  	else
->  		folio = iomap_get_folio(iter, pos);
->  	if (IS_ERR(folio)) {
-> diff --git a/fs/xfs/xfs_iomap.c b/fs/xfs/xfs_iomap.c
-> index d0bf99539180..5bddf31e21eb 100644
-> --- a/fs/xfs/xfs_iomap.c
-> +++ b/fs/xfs/xfs_iomap.c
-> @@ -98,7 +98,7 @@ xfs_get_folio(
->  	return folio;
->  }
->  
-> -const struct iomap_page_ops xfs_iomap_page_ops = {
-> +const struct iomap_folio_ops xfs_iomap_folio_ops = {
->  	.get_folio		= xfs_get_folio,
->  };
->  
-> @@ -148,7 +148,7 @@ xfs_bmbt_to_iomap(
->  		iomap->flags |= IOMAP_F_DIRTY;
->  
->  	iomap->validity_cookie = sequence_cookie;
-> -	iomap->page_ops = &xfs_iomap_page_ops;
-> +	iomap->folio_ops = &xfs_iomap_folio_ops;
->  	return 0;
->  }
->  
-> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
-> index 6f8e3321e475..2e2be828af86 100644
-> --- a/include/linux/iomap.h
-> +++ b/include/linux/iomap.h
-> @@ -86,7 +86,7 @@ struct vm_fault;
->   */
->  #define IOMAP_NULL_ADDR -1ULL	/* addr is not valid */
->  
-> -struct iomap_page_ops;
-> +struct iomap_folio_ops;
->  
->  struct iomap {
->  	u64			addr; /* disk offset of mapping, bytes */
-> @@ -98,7 +98,7 @@ struct iomap {
->  	struct dax_device	*dax_dev; /* dax_dev for dax operations */
->  	void			*inline_data;
->  	void			*private; /* filesystem private */
-> -	const struct iomap_page_ops *page_ops;
-> +	const struct iomap_folio_ops *folio_ops;
->  	u64			validity_cookie; /* used with .iomap_valid() */
->  };
->  
-> @@ -126,10 +126,10 @@ static inline bool iomap_inline_data_valid(const struct iomap *iomap)
->  }
->  
->  /*
-> - * When a filesystem sets page_ops in an iomap mapping it returns, get_folio
-> - * and put_folio will be called for each page written to.  This only applies to
-> - * buffered writes as unbuffered writes will not typically have pages
-> - * associated with them.
-> + * When a filesystem sets folio_ops in an iomap mapping it returns,
-> + * get_folio and put_folio will be called for each page written to.  This
-> + * only applies to buffered writes as unbuffered writes will not typically have
-> + * pages associated with them.
->   *
->   * When get_folio succeeds, put_folio will always be called to do any
->   * cleanup work necessary.  put_folio is responsible for unlocking and putting
-> @@ -140,7 +140,7 @@ static inline bool iomap_inline_data_valid(const struct iomap *iomap)
->   * get_folio handler that the iomap is no longer up to date and needs to be
->   * refreshed, it can return ERR_PTR(-ESTALE) to trigger a retry.
->   */
-> -struct iomap_page_ops {
-> +struct iomap_folio_ops {
->  	struct folio *(*get_folio)(struct iomap_iter *iter, loff_t pos,
->  			unsigned len);
->  	void (*put_folio)(struct inode *inode, loff_t pos, unsigned copied,
-> -- 
-> 2.38.1
-> 
+>
+> for this one, as it fixes the issue.
+>
+> --
+> Thanks,
+>
+> David / dhildenb
+>
