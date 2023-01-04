@@ -2,69 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AB58865DC44
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 19:37:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 10EBB65DC5E
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 19:51:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239947AbjADShA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Jan 2023 13:37:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45826 "EHLO
+        id S239961AbjADSv1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Jan 2023 13:51:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50776 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240082AbjADSgh (ORCPT
+        with ESMTP id S235020AbjADSvZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Jan 2023 13:36:37 -0500
-Received: from mail-wm1-x332.google.com (mail-wm1-x332.google.com [IPv6:2a00:1450:4864:20::332])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 96C0217E0E;
-        Wed,  4 Jan 2023 10:36:35 -0800 (PST)
-Received: by mail-wm1-x332.google.com with SMTP id fm16-20020a05600c0c1000b003d96fb976efso24966827wmb.3;
-        Wed, 04 Jan 2023 10:36:35 -0800 (PST)
+        Wed, 4 Jan 2023 13:51:25 -0500
+Received: from mail-qk1-x732.google.com (mail-qk1-x732.google.com [IPv6:2607:f8b0:4864:20::732])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BFB43313;
+        Wed,  4 Jan 2023 10:51:24 -0800 (PST)
+Received: by mail-qk1-x732.google.com with SMTP id e6so16743285qkl.4;
+        Wed, 04 Jan 2023 10:51:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rygkofvzOv4xwaY/JKfoRBXfGetYwDagXRjgt1zIpD0=;
-        b=OMkxtzrVCOrPcYJv+voq3zup5Nbwy88VB/lX3PlD3ZGZqRMrWsmcHexZZG5tTpuL+6
-         XMR2qeCpmZ4j+mNjvlSCNPYKeeVkL3wHar+nc+X1jQI7b/jCFNFXsyB/HRq7rUeatxK/
-         +mL6al7z960gVc+xNYaVXBVUU9gLwQhowwEQsW5x47RGMJCiOyto4XB4NwdWehahe25J
-         m/iJTKKKAPiYAk0qnFez/LVBwO7SlezMdFcabwl5RS1KXiBO34vWMHECWkdnFrpgpAUN
-         Ga7dWIxXAV0l0y45ODxfhvhkeDnLL//6qBCtOoFUQviUop8Tyo7t/tjFyz/GAFvUu9/y
-         nKmA==
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bQHtx1jV1iYY+5vmOG5eBZD9J3BMwuA/6luLhUEcbrA=;
+        b=TDExYjJjMUDUUy6AzN61xsH0jeF30hZHwoIFonbaB9tW4bZD2u9VZTOvIU3egt6YkV
+         qjDFO9cClpkhEfxStQv7QAnARC1cUz1J6J46oDCu5WAAxl3NEPfawETfMcz59E23VTph
+         FjIAVcr2JFYxDVEw20eno2RmkotjgTlpY0Z3M2EMWLaxQofHzDRgsLJzuZ75xAh0lgd8
+         oNt/BucLDPgLKXdMZBbLGP+UotKhlC2GuKsNbj8ybFi7MHAogWPubGcOXp8M+cCMmO24
+         +fBnHAJtnMeKbwXnWo51NiKRVZfwQf8uByj5XM78o3P46p+HcG2lznbYQnBaMfTpJXXa
+         hEzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rygkofvzOv4xwaY/JKfoRBXfGetYwDagXRjgt1zIpD0=;
-        b=wOaWdXYV6xOyJXhFLtlGOmvsHziqYJG2KZJ2if6CKGp3eyWJtyOM7dztqAPwZmDjmf
-         r/lcUK1elpzKQWsOiJNhgL1H5eT97PKKJ6WrUX+ll/UW5ZEvRzFNMnRhAqTaH8CetqUU
-         nwNj4HZrDijmHBMZbDatPnQYMv4iDjRz1v0M6ndNpmAY2zTZ6RulEqQS4oXmQ5E86uaj
-         0Nvc5gDnSAdskTSz2rqkQ/lNCQ7XbUUwuT3nuv7BeJYGuY1B19ViZ1OzaOHBfvxzrvMJ
-         IOoHbzRqFu4fHugdY5PDAY9rhsxqMezBgA8rVE2uspoyBUM7+NdpwY94SuERQqE91KY8
-         OhMg==
-X-Gm-Message-State: AFqh2kr7cuQAmlDXlTK+OE1O+BmoltKlz2rxR78PSTvGofNfkBxWSiWN
-        ecmZjVbYl+Vt2YhJ/gHuvw==
-X-Google-Smtp-Source: AMrXdXuj7lbhu8dfpTGGBU8qUISxvGXWxG5dyoYk0/Th6BTOnYUwCvJLv9Rra/k2RKMLEuBUWo3Yiw==
-X-Received: by 2002:a7b:cd99:0:b0:3d3:5506:1bac with SMTP id y25-20020a7bcd99000000b003d355061bacmr35060471wmj.30.1672857394124;
-        Wed, 04 Jan 2023 10:36:34 -0800 (PST)
-Received: from p183 ([46.53.251.191])
-        by smtp.gmail.com with ESMTPSA id i2-20020a05600c354200b003d35acb0fd7sm55836505wmq.34.2023.01.04.10.36.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 04 Jan 2023 10:36:33 -0800 (PST)
-Date:   Wed, 4 Jan 2023 21:36:31 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
-Cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Guo Zhengkui <guozhengkui@vivo.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: BUG: core dump in selftest of proc fs
-Message-ID: <Y7XHL8ZRBf7TA/q7@p183>
-References: <fd9206f6-3ec4-cafc-e313-dfddf957bd5e@alu.unizg.hr>
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bQHtx1jV1iYY+5vmOG5eBZD9J3BMwuA/6luLhUEcbrA=;
+        b=uujAh2ylC9rKIe2+l+u2CKgdk8TDkQmfloYRAYfTpVDkLNJQC8a+jaCBYZ0sQuBCUB
+         p3861MILePF8H+R/TIdlisbxtNex8yeXUllf16hSg8gZj5qVqXRz43sumsJyBtiLGyol
+         uLhIJ8/5w9RVGYMzQSz3EA2oa8IVmwHmXsvIcOjoZu59A/MiZuBmlM5T23UalxeIK0wJ
+         7QNiIXJiHH3acqh+Isp/r4rHtdxcyMZaQaXz8ZyqZPIhNQWBh/t7YjQaNaioyjcA3vg6
+         tK7zGxGF3Lb/ujMkP0f/jE8WmvL+TTDip7BAbUxMw9p52S0PSkWmguCxjibHzImJL/13
+         6r+Q==
+X-Gm-Message-State: AFqh2kr4YRSimJkilGsbMIqt7aVTbTRTYQwdbgSTXi6PrWcnzzVMaJXs
+        astCmnbdDiT0EbfoSO6fzSjKEAtXNfQ6iqXMWdg=
+X-Google-Smtp-Source: AMrXdXtBsLz6jVERQ2FgRgHifewHsGn5S/jauQZ041epROuzVCvMzwihHIjCh5xjhWaDvOR5Z42UK1HfWetvk4obWeM=
+X-Received: by 2002:a05:620a:8305:b0:6fe:e149:de1c with SMTP id
+ pa5-20020a05620a830500b006fee149de1cmr2415370qkn.572.1672858283805; Wed, 04
+ Jan 2023 10:51:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fd9206f6-3ec4-cafc-e313-dfddf957bd5e@alu.unizg.hr>
+References: <20221231150919.659533-1-agruenba@redhat.com> <20221231150919.659533-4-agruenba@redhat.com>
+ <Y7W5RGsOgOThtlg3@magnolia>
+In-Reply-To: <Y7W5RGsOgOThtlg3@magnolia>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Wed, 4 Jan 2023 19:51:12 +0100
+Message-ID: <CAHpGcMK_=KxrhBRxv2msUHSAJ=X=vJM0yG1rnVtJwiZbhhvxTw@mail.gmail.com>
+Subject: Re: [PATCH v5 3/9] iomap: Rename page_done handler to put_folio
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
         RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
@@ -75,26 +72,102 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 04, 2023 at 07:27:40PM +0100, Mirsad Goran Todorovac wrote:
-> Trying to complete `make kselftest` for the first time, so maybe I'm doing something wrong?
-> 
-> Or we are having a regression in 6.2-rc2 release candidate ...
-> 
-> However, the output of selftest run is:
+Am Mi., 4. Jan. 2023 um 18:47 Uhr schrieb Darrick J. Wong <djwong@kernel.org>:
+>
+> On Sat, Dec 31, 2022 at 04:09:13PM +0100, Andreas Gruenbacher wrote:
+> > The ->page_done() handler in struct iomap_page_ops is now somewhat
+> > misnamed in that it mainly deals with unlocking and putting a folio, so
+> > rename it to ->put_folio().
+> >
+> > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> > ---
+> >  fs/gfs2/bmap.c         |  4 ++--
+> >  fs/iomap/buffered-io.c |  4 ++--
+> >  include/linux/iomap.h  | 10 +++++-----
+> >  3 files changed, 9 insertions(+), 9 deletions(-)
+> >
+> > diff --git a/fs/gfs2/bmap.c b/fs/gfs2/bmap.c
+> > index 46206286ad42..0c041459677b 100644
+> > --- a/fs/gfs2/bmap.c
+> > +++ b/fs/gfs2/bmap.c
+> > @@ -967,7 +967,7 @@ static int gfs2_iomap_page_prepare(struct inode *inode, loff_t pos,
+> >       return gfs2_trans_begin(sdp, RES_DINODE + blocks, 0);
+> >  }
+> >
+> > -static void gfs2_iomap_page_done(struct inode *inode, loff_t pos,
+> > +static void gfs2_iomap_put_folio(struct inode *inode, loff_t pos,
+> >                                unsigned copied, struct folio *folio)
+> >  {
+> >       struct gfs2_trans *tr = current->journal_info;
+> > @@ -994,7 +994,7 @@ static void gfs2_iomap_page_done(struct inode *inode, loff_t pos,
+> >
+> >  static const struct iomap_page_ops gfs2_iomap_page_ops = {
+> >       .page_prepare = gfs2_iomap_page_prepare,
+> > -     .page_done = gfs2_iomap_page_done,
+> > +     .put_folio = gfs2_iomap_put_folio,
+> >  };
+> >
+> >  static int gfs2_iomap_begin_write(struct inode *inode, loff_t pos,
+> > diff --git a/fs/iomap/buffered-io.c b/fs/iomap/buffered-io.c
+> > index e13d5694e299..2a9bab4f3c79 100644
+> > --- a/fs/iomap/buffered-io.c
+> > +++ b/fs/iomap/buffered-io.c
+> > @@ -580,8 +580,8 @@ static void iomap_put_folio(struct iomap_iter *iter, loff_t pos, size_t ret,
+> >  {
+> >       const struct iomap_page_ops *page_ops = iter->iomap.page_ops;
+> >
+> > -     if (page_ops && page_ops->page_done) {
+> > -             page_ops->page_done(iter->inode, pos, ret, folio);
+> > +     if (page_ops && page_ops->put_folio) {
+> > +             page_ops->put_folio(iter->inode, pos, ret, folio);
+> >       } else if (folio) {
+> >               folio_unlock(folio);
+> >               folio_put(folio);
+> > diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> > index 743e2a909162..10ec36f373f4 100644
+> > --- a/include/linux/iomap.h
+> > +++ b/include/linux/iomap.h
+> > @@ -126,18 +126,18 @@ static inline bool iomap_inline_data_valid(const struct iomap *iomap)
+> >
+> >  /*
+> >   * When a filesystem sets page_ops in an iomap mapping it returns, page_prepare
+> > - * and page_done will be called for each page written to.  This only applies to
+> > + * and put_folio will be called for each page written to.  This only applies to
+>
+> "...for each folio written to."
 
-> # proc-empty-vm: proc-empty-vm.c:184: test_proc_pid_maps: Assertion `rv == 0' failed.
-> # /usr/bin/timeout: the monitored command dumped core
-> # Aborted
-> not ok 5 selftests: proc: proc-empty-vm # exit=134
-> # selftests: proc: proc-pid-vm
-> # proc-pid-vm: proc-pid-vm.c:365: main: Assertion `rv == len' failed.
-> # /usr/bin/timeout: the monitored command dumped core
-> # Aborted
-> 
-> Please find attached lshw output, dmesg, config and lsmod.
-> 
-> I am available for further diagnostics.
-> 
-> The platform is Ubuntu 22.10 kinetic kudu on a Lenovo Ideapad 3 15ITL6 laptop.
+Ah, yes.
 
-What the output of "cat /proc/self/maps" ?
+> With that fixed,
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+>
+> --D
+>
+>
+> >   * buffered writes as unbuffered writes will not typically have pages
+
+And here, it should be "folios" as well I'd say.
+
+Thanks,
+Andreas
+
+> >   * associated with them.
+> >   *
+> > - * When page_prepare succeeds, page_done will always be called to do any
+> > - * cleanup work necessary.  In that page_done call, @folio will be NULL if the
+> > - * associated folio could not be obtained.  When folio is not NULL, page_done
+> > + * When page_prepare succeeds, put_folio will always be called to do any
+> > + * cleanup work necessary.  In that put_folio call, @folio will be NULL if the
+> > + * associated folio could not be obtained.  When folio is not NULL, put_folio
+> >   * is responsible for unlocking and putting the folio.
+> >   */
+> >  struct iomap_page_ops {
+> >       int (*page_prepare)(struct inode *inode, loff_t pos, unsigned len);
+> > -     void (*page_done)(struct inode *inode, loff_t pos, unsigned copied,
+> > +     void (*put_folio)(struct inode *inode, loff_t pos, unsigned copied,
+> >                       struct folio *folio);
+> >
+> >       /*
+> > --
+> > 2.38.1
+> >
