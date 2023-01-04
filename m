@@ -2,113 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 752C665CD3D
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 07:41:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4667C65CD96
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 08:25:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233479AbjADGkj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Jan 2023 01:40:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53018 "EHLO
+        id S233678AbjADHZZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Jan 2023 02:25:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38406 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233462AbjADGkM (ORCPT
+        with ESMTP id S230387AbjADHZY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Jan 2023 01:40:12 -0500
-Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9AECE183B2
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jan 2023 22:40:09 -0800 (PST)
-Received: by mail-pf1-x42a.google.com with SMTP id 124so22188805pfy.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Jan 2023 22:40:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=to:subject:message-id:date:from:sender:reply-to:mime-version:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=Sm2IrX2as+k9LNhXBii+2EPLTtwp8Q7bZRIteVKR48Y=;
-        b=lxucC7WdJqs/f6vnO0xyjDIiYvkO1zIUbY5dvzc1gS3dAy3OfQQYNJY3qgkIp4IvGC
-         Oi3Qiq2J4RL2YPCvlge/HIY6+nyJiUXFhgSIFyzAmwWVXagd97/PUtXlb5jfygBt6BRf
-         fwWN260uJVbK/yc9R8WuWezkJeUQdhpjES8XGIHyH3AdF/AFkNlz+YfQuZN2gO1EmOPc
-         8KKIj6/qhE8i3Fe0WWEG9u5kvwBFlkiVo2YRHtZuVzM09AJ0QQD44w0muYyCcKVpzTF1
-         KpA5Z3tjS1NOBVAYcaIMzzN2x6CIMAwuhChhhugpiMtk+ck5Mr24ICxbQ/8nSTPVum7J
-         QJOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:subject:message-id:date:from:sender:reply-to:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sm2IrX2as+k9LNhXBii+2EPLTtwp8Q7bZRIteVKR48Y=;
-        b=mXduFm3vWJ3hTmopEUzYRHECWGE5TqW0zDQ09DuFp6Zrj1b1LnZmB75Qffj8np9bJN
-         gP+bbC3HefidF28Ro+ABYfvQoQyOCp12KQcnwl7LMqukHbqFaNqwynmU2+fD4GBnG8Iz
-         kCCxiG+9VVppVvSHHNwhVoStlnF54abUtzY15cMGXNHmmDU79mvEC+0vJ3pLGWPghw8R
-         Os8KwMUbPbHYOj4wchE8Pf40i6VgaFv9buvfi7KYbLo7o0bZQXrAWD9+nhsra/FT7hXO
-         4jlhHxx52nMv0WrYaK4FNxNKyvoV7kl2evhhGrvz53IEp/PxMtu2Ejp5q9K9eOqLfiuf
-         mnBA==
-X-Gm-Message-State: AFqh2kpAK33HOkHS8MbHSZlKDIPq0RMoa3WsmaKG99Xcx3VGnysMHem+
-        P7KCf61shmBREsqn/03G3J7AZp7JqbHf4wKhWws=
-X-Google-Smtp-Source: AMrXdXtzEgdGNYXviASYnSqNJC0ZiQxlpsBhKtwlV/fC9EHlEQAD4b0ufCVYBzwI8FMubEJLf3ti+D5YEYUYV8QjtJ4=
-X-Received: by 2002:a62:1d07:0:b0:582:e7c:f6f3 with SMTP id
- d7-20020a621d07000000b005820e7cf6f3mr1157112pfd.8.1672814408803; Tue, 03 Jan
- 2023 22:40:08 -0800 (PST)
+        Wed, 4 Jan 2023 02:25:24 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D022A44D;
+        Tue,  3 Jan 2023 23:25:23 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id B2E51B811A3;
+        Wed,  4 Jan 2023 07:25:21 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AFCBC433D2;
+        Wed,  4 Jan 2023 07:25:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1672817120;
+        bh=EY0QIS6ah2VRlLsuBHHzFqCxhBDp5eEMXYtwzaAjNBw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y8eevhPlbLQQByJxtZSN0ftIYXlnqoyA5BJUM6AP5KbL8Hdw0HMg2nuBQ5sdlamXc
+         LExL2VFObRchVEVgRsCm15mnz4C6rXRbtTsMN2cr4b6oRiHMmmABbSNflU3EWaJhst
+         5J1PEpb3DqjERtGwRqlzrEMz3WeV19T0b43MtEWOjh9knfnp7tviL6qmTp7aHZSXLT
+         IEN/P6uhszJ2K9eZEk+XPP3yijgHtnJlqNNbbV7wSwv2r5oqXKVzoj6Y3IR7JL9E+a
+         vEiPUYFi+z+qSUbJ0/w3bVi8IcSNUBhhDXmmHc9rII8AQDlMi9JWlYLQi6CtdvuVhT
+         N9g/5kMqBLp7w==
+Date:   Tue, 3 Jan 2023 23:25:18 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Andrey Albershteyn <aalbersh@redhat.com>
+Subject: Re: [PATCH v2 00/11] fsverity: support for non-4K pages
+Message-ID: <Y7Up3kpGcJr0FCgq@sol.localdomain>
+References: <20221223203638.41293-1-ebiggers@kernel.org>
+ <Y7UeuYVkyy2/fWF1@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
 MIME-Version: 1.0
-Reply-To: mrs.maryander1947@gmail.com
-Sender: mrs.janeval197@gmail.com
-Received: by 2002:a05:7300:7652:b0:94:fcda:856a with HTTP; Tue, 3 Jan 2023
- 22:40:08 -0800 (PST)
-From:   "Mrs. Mary Anderson" <amrsmary16@gmail.com>
-Date:   Wed, 4 Jan 2023 06:40:08 +0000
-X-Google-Sender-Auth: jTqv_0vHyo2y0EStaK-jLA4ClSk
-Message-ID: <CAL+V8fx8n5YVCBnyPw3TzcFWBtXqZO5w+9A_JwP7BB54jJSoEA@mail.gmail.com>
-Subject: Dear Beloved,
-To:     undisclosed-recipients:;
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: Yes, score=6.5 required=5.0 tests=BAYES_50,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
-        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_FM_MR_MRS,
-        UNDISC_FREEM,UNDISC_MONEY autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Report: *  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
-        *      [score: 0.5800]
-        * -0.0 RCVD_IN_DNSWL_NONE RBL: Sender listed at
-        *      https://www.dnswl.org/, no trust
-        *      [2607:f8b0:4864:20:0:0:0:42a listed in]
-        [list.dnswl.org]
-        * -0.0 SPF_PASS SPF: sender matches SPF record
-        *  0.0 SPF_HELO_NONE SPF: HELO does not publish an SPF Record
-        *  0.2 FREEMAIL_ENVFROM_END_DIGIT Envelope-from freemail username ends
-        *       in digit
-        *      [mrs.janeval197[at]gmail.com]
-        *  0.2 FREEMAIL_REPLYTO_END_DIGIT Reply-To freemail username ends in
-        *      digit
-        *      [mrs.maryander1947[at]gmail.com]
-        *  0.0 FREEMAIL_FROM Sender email is commonly abused enduser mail
-        *      provider
-        *      [amrsmary16[at]gmail.com]
-        * -0.1 DKIM_VALID_AU Message has a valid DKIM or DK signature from
-        *      author's domain
-        * -0.1 DKIM_VALID Message has at least one valid DKIM or DK signature
-        *  0.1 DKIM_SIGNED Message has a DKIM or DK signature, not necessarily
-        *       valid
-        * -0.1 DKIM_VALID_EF Message has a valid DKIM or DK signature from
-        *      envelope-from domain
-        *  0.0 T_HK_NAME_FM_MR_MRS No description available.
-        *  2.7 UNDISC_FREEM Undisclosed recipients + freemail reply-to
-        *  1.0 FREEMAIL_REPLYTO Reply-To/From or Reply-To/body contain
-        *      different freemails
-        *  1.7 UNDISC_MONEY Undisclosed recipients + money/fraud signs
-X-Spam-Level: ******
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y7UeuYVkyy2/fWF1@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+On Wed, Jan 04, 2023 at 12:08:09PM +0530, Ojaswin Mujoo wrote:
+> Hi Eric,
+> 
+> I have roughly gone through the series and run the (patched) xfstests on
+> this patchset on a powerpc machine with 64k pagesize and 64k,4k and 1k
+> merkle tree size on EXT4 and everything seems to work correctly. 
+> 
+> Just for records, test generic/692 takes a lot of time to complete with
+> 64k merkel tree size due to the calculations assuming it to be 4k,
+> however I was able to manually test that particular scenario. (I'll try
+> to send a patch to fix the fstest later).
+> 
+> Anyways, feel free to add:
+> 
+> Tested-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> 
+> Since I was not very familiar with the fsverty codebase, I'll try to
+> take some more time to review the code and get back with any
+> comments/RVBs.
+> 
+> Regards,
+> ojaswin
 
-Dear Beloved,
+Thanks Ojaswin!  That's a good point about generic/692.  The right fix for it is
+to make it use $FSV_BLOCK_SIZE instead of 4K in its calculations.
 
-I am Mrs. Mary Anderson, It is understandable that you may be a bit
-apprehensive because you do not know me, I found your email address
-from a Human resources database and decided to contact you. I would
-love to employ you into my charity work, I am ready to donate some
-money to you to carry on the Charity work in your country. Please
-reply so that i will give you further details and tell you about
-myself.
+I suppose you saw that issue by running the test on ext4 with fs_block_size ==
+page_size == 64K, causing xfstests to use merkle_tree_block_size == 64K by
+default.  Thanks for doing that; that's something I haven't been able to test
+yet.  My focus has been on merkle_tree_block_size < page_size.
+merkle_tree_block_size > 4K should just work, though, assuming
+merkle_tree_block_size <= min(fs_block_size, page_size).  (Or
+merkle_tree_block_size == fs_block_size == page_size before this patch series.)
 
-Yours Sincerely
-Mrs. Mary Anderson
+- Eric
