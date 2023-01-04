@@ -2,87 +2,111 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B52C865CB24
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 01:57:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6901465CC20
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 04:22:05 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238903AbjADA5c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 3 Jan 2023 19:57:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52926 "EHLO
+        id S234367AbjADDWE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 3 Jan 2023 22:22:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35120 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238892AbjADA5b (ORCPT
+        with ESMTP id S234363AbjADDWC (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 3 Jan 2023 19:57:31 -0500
-Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E0ABD17066
-        for <linux-fsdevel@vger.kernel.org>; Tue,  3 Jan 2023 16:57:30 -0800 (PST)
-Received: by mail-pj1-x1033.google.com with SMTP id v23so34635705pju.3
-        for <linux-fsdevel@vger.kernel.org>; Tue, 03 Jan 2023 16:57:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=message-id:date:content-id:mime-version:from:references:in-reply-to
-         :cc:to:subject:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wq1c/AvLXgc2roO2z2plGhlTBLyuyX2cMgq0YW/fCgw=;
-        b=qZ5jUlUANmMS58r1tOTXY8wBwc42KTBdlWAQWfX8z0ssl5FM4/DMZgkRGUq67yIfVU
-         3jb0rXFvZ+BKQVXek50mKgV3hz6ILc3XpBr8sRGwmAPk3pD8z+2OURwl3hrXfDU52COu
-         4RsD7qSybb59H6P1xwo4T2dlQeVy6H8r0ajUb7VqmXLo1IltP3sM49kQLkAuHknyOLk0
-         nGN883RkJGZYQDpEwfRYBE71uNVl6uLhlPhwGy1ie4UYV+aHlvO8gwIgwgbUsNY1av+X
-         Sd4mCmzYSvFcWpSEsa8CWQQLjM6EaKOeUd/QWA2uCgoAEKJ3IA3LqXXjpuqGo1n5IRXu
-         dnkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=message-id:date:content-id:mime-version:from:references:in-reply-to
-         :cc:to:subject:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wq1c/AvLXgc2roO2z2plGhlTBLyuyX2cMgq0YW/fCgw=;
-        b=fW3WchFVOIe3FsO9HSb9lyNcgbCfCcVfc7iMj2Gq+RY6Sd3UprLFidCxmgbpdZ+bik
-         AjYCF2Mhg4hCuDay5iC1SClxAxk/QKZr2nqutEZBaroCoFC9hLE9aUbm3HiJu8uVjXVY
-         ezQoZpjW7EWmdl+7KGCHwdx2pPITQlNVWOipsB22H+Q2OZgDEUW2ZEMxWSaNwiUJW+/3
-         GxhUvMlN8GZvk5mJV0PMhiit4aI1OFRUzkv3yy8xiauUfwRBnJQMs5akzxyP4HrPPgnO
-         aAgU29qQO7jLwv+FLBhGbKskZgcPLnJ9fx3FqnKQzB9O0HK4/QiurLc6aWoE25p3Aawt
-         xqFw==
-X-Gm-Message-State: AFqh2kpAYKMCRfEnHUANJvnn5I/MEvAOAcCbMUYzkx+VOnNxu2ktprVg
-        KKeF7UVskSxnLCfLHkti/rg=
-X-Google-Smtp-Source: AMrXdXs4s9Lz0A+N5j+kqLcZfgXZcOBuL/993XjEjkBa+JrfKiBCKrzpRFobfm7nwW89cc1XSEwTEw==
-X-Received: by 2002:a17:902:8c8b:b0:189:c536:c745 with SMTP id t11-20020a1709028c8b00b00189c536c745mr49691160plo.2.1672793850400;
-        Tue, 03 Jan 2023 16:57:30 -0800 (PST)
-Received: from jromail.nowhere (h219-110-108-104.catv02.itscom.jp. [219.110.108.104])
-        by smtp.gmail.com with ESMTPSA id n10-20020a170902f60a00b00188fdae6e0esm7368698plg.44.2023.01.03.16.57.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Jan 2023 16:57:30 -0800 (PST)
-Received: from localhost ([127.0.0.1] helo=jrobl) by jrobl id 1pCs5w-0004Ns-J0 ; Wed, 04 Jan 2023 09:57:28 +0900
-Subject: Re: [GIT PULL] acl updates for v6.2
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        Thorsten Leemhuis <regressions@leemhuis.info>,
-        "regressions@lists.linux.dev" <regressions@lists.linux.dev>
-In-Reply-To: <20221227183115.ho5irvmwednenxxq@wittgenstein>
-References: <20221212111919.98855-1-brauner@kernel.org> <29161.1672154875@jrobl> <20221227183115.ho5irvmwednenxxq@wittgenstein>
-From:   hooanon05g@gmail.com
+        Tue, 3 Jan 2023 22:22:02 -0500
+Received: from m12.mail.163.com (m12.mail.163.com [220.181.12.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 4E2B11789C;
+        Tue,  3 Jan 2023 19:22:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=NSE/V
+        BFSGdyolrkn2/uYBXDt5bVP5xQn71kPlTU2ij0=; b=DShXx0lqovfrrmcLp/sao
+        OBZ7+API/TJZ1FPKy8pbZaklzNwQXs1OZyLDMl7gZzVxJA6guXaFtGLgLJH9Y+3e
+        jWmlmJ6wiW4LS+Om0d0IXiNhOV04Ecemcv2fdHx7lE3vOD9OqANifahwQkl6aGjq
+        FsuFYF2wt/sdHbbDSH+R7c=
+Received: from qubt.localdomain (unknown [171.40.161.28])
+        by zwqz-smtp-mta-g2-0 (Coremail) with SMTP id _____wC3Vba28LRjndQoAA--.18469S2;
+        Wed, 04 Jan 2023 11:21:28 +0800 (CST)
+From:   coolqyj@163.com
+To:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Cc:     Matthew Wilcox <willy@infradead.org>, stable@vger.kernel.org,
+        qian@ddn.com
+Subject: [PATCH] mm/filemap: fix page end in filemap_get_read_batch
+Date:   Wed,  4 Jan 2023 11:21:24 +0800
+Message-Id: <20230104032124.72483-1-coolqyj@163.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <16854.1672793848.1@jrobl>
-Date:   Wed, 04 Jan 2023 09:57:28 +0900
-Message-ID: <16855.1672793848@jrobl>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: _____wC3Vba28LRjndQoAA--.18469S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tryDGFWrGw1kJw4DtF1kXwb_yoW8tr1Upr
+        s8Gw1vyr4DGF4UCrsrJ3WDu3WYk3srtay5ZFW8Ww1SvFn8JFnIgr9rKFy5Ar98XrWfZa4x
+        tF4jy348uF4jqrJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jjmhrUUUUU=
+X-Originating-IP: [171.40.161.28]
+X-CM-SenderInfo: xfrrz1l1m6il2tof0z/xtbBERvsz1aEMQJ12wAAsm
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christian Brauner:
-> On Wed, Dec 28, 2022 at 12:27:55AM +0900, J. R. Okajima wrote:
-	:::
-> > I've found a behaviour got changed from v6.1 to v6.2-rc1 on ext3 (ext4).
->
-> Hey, I'll try to take a look before new years.
+From: Qian Yingjin <qian@ddn.com>
 
-Now it becomes clear that the problem was on my side.
-The "acl updates for v6.2" in mainline has nothing to deal with it.
-Sorry for the noise.
+I was running traces of the read code against an RAID storage
+system to understand why read requests were being misaligned
+against the underlying RAID strips. I found that the page end
+offset calculation in filemap_get_read_batch() was off by one.
 
+When a read is submitted with end offset 1048575, then it
+calculates the end page for read of 256 when it should be 255.
+"last_index" is the index of the page beyond the end of the read
+and it should be skipped when get a batch of pages for read in
+@filemap_get_read_batch().
 
-J. R. Okajima
+The below simple patch fixes the problem. This code was introduced
+in kernel 5.12.
+
+Fixes: cbd59c48ae2b ("mm/filemap: use head pages in generic_file_buffered_read")
+
+Signed-off-by: Qian Yingjin <qian@ddn.com>
+---
+ mm/filemap.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/mm/filemap.c b/mm/filemap.c
+index c4d4ace9cc70..b7754760c09a 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -2371,7 +2371,7 @@ static void shrink_readahead_size_eio(struct file_ra_state *ra)
+  * clear so that the caller can take the appropriate action.
+  */
+ static void filemap_get_read_batch(struct address_space *mapping,
+-		pgoff_t index, pgoff_t max, struct folio_batch *fbatch)
++		pgoff_t index, pgoff_t last_index, struct folio_batch *fbatch)
+ {
+ 	XA_STATE(xas, &mapping->i_pages, index);
+ 	struct folio *folio;
+@@ -2380,7 +2380,11 @@ static void filemap_get_read_batch(struct address_space *mapping,
+ 	for (folio = xas_load(&xas); folio; folio = xas_next(&xas)) {
+ 		if (xas_retry(&xas, folio))
+ 			continue;
+-		if (xas.xa_index > max || xa_is_value(folio))
++		/*
++		 * "last_index" is the index of the page beyond the end of
++		 * the read.
++		 */
++		if (xas.xa_index >= last_index || xa_is_value(folio))
+ 			break;
+ 		if (xa_is_sibling(folio))
+ 			break;
+@@ -2588,6 +2592,7 @@ static int filemap_get_pages(struct kiocb *iocb, struct iov_iter *iter,
+ 	struct folio *folio;
+ 	int err = 0;
+ 
++	/* "last_index" is the index of the page beyond the end of the read */
+ 	last_index = DIV_ROUND_UP(iocb->ki_pos + iter->count, PAGE_SIZE);
+ retry:
+ 	if (fatal_signal_pending(current))
+-- 
+2.34.1
+
