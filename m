@@ -2,92 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4667C65CD96
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 08:25:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15AC965CDA9
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 08:36:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233678AbjADHZZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Jan 2023 02:25:25 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38406 "EHLO
+        id S231201AbjADHgr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Jan 2023 02:36:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40428 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230387AbjADHZY (ORCPT
+        with ESMTP id S229559AbjADHgq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Jan 2023 02:25:24 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5D022A44D;
-        Tue,  3 Jan 2023 23:25:23 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id B2E51B811A3;
-        Wed,  4 Jan 2023 07:25:21 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1AFCBC433D2;
-        Wed,  4 Jan 2023 07:25:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672817120;
-        bh=EY0QIS6ah2VRlLsuBHHzFqCxhBDp5eEMXYtwzaAjNBw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y8eevhPlbLQQByJxtZSN0ftIYXlnqoyA5BJUM6AP5KbL8Hdw0HMg2nuBQ5sdlamXc
-         LExL2VFObRchVEVgRsCm15mnz4C6rXRbtTsMN2cr4b6oRiHMmmABbSNflU3EWaJhst
-         5J1PEpb3DqjERtGwRqlzrEMz3WeV19T0b43MtEWOjh9knfnp7tviL6qmTp7aHZSXLT
-         IEN/P6uhszJ2K9eZEk+XPP3yijgHtnJlqNNbbV7wSwv2r5oqXKVzoj6Y3IR7JL9E+a
-         vEiPUYFi+z+qSUbJ0/w3bVi8IcSNUBhhDXmmHc9rII8AQDlMi9JWlYLQi6CtdvuVhT
-         N9g/5kMqBLp7w==
-Date:   Tue, 3 Jan 2023 23:25:18 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org,
-        Andrey Albershteyn <aalbersh@redhat.com>
-Subject: Re: [PATCH v2 00/11] fsverity: support for non-4K pages
-Message-ID: <Y7Up3kpGcJr0FCgq@sol.localdomain>
-References: <20221223203638.41293-1-ebiggers@kernel.org>
- <Y7UeuYVkyy2/fWF1@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+        Wed, 4 Jan 2023 02:36:46 -0500
+Received: from mailgw.kylinos.cn (unknown [124.126.103.232])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 06B0316585;
+        Tue,  3 Jan 2023 23:36:40 -0800 (PST)
+X-UUID: d4dc11e734dc43b28f8560359914f1f3-20230104
+X-CPASD-INFO: e2afb6bb2ecc4f77a279924541827dc2@roKbho9okJJehaWvg6mCcYFjZ2lpXlS
+        EdmtYYmWUj1KVhH5xTV5nX1V9gnNXZF5dXFV3dnBQYmBhXVJ3i3-XblBgXoZgUZB3tHSbhpJkkg==
+X-CLOUD-ID: e2afb6bb2ecc4f77a279924541827dc2
+X-CPASD-SUMMARY: SIP:-1,APTIP:-2.0,KEY:0.0,FROMBLOCK:1,OB:0.0,URL:-5,TVAL:184.
+        0,ESV:0.0,ECOM:-5.0,ML:0.0,FD:0.0,CUTS:94.0,IP:-2.0,MAL:-5.0,PHF:-5.0,PHC:-5.
+        0,SPF:4.0,EDMS:-5,IPLABEL:4480.0,FROMTO:0,AD:0,FFOB:0.0,CFOB:0.0,SPC:0,SIG:-5
+        ,AUF:4,DUF:11592,ACD:192,DCD:192,SL:0,EISP:0,AG:0,CFC:0.513,CFSR:0.065,UAT:0,
+        RAF:0,IMG:-5.0,DFA:0,DTA:0,IBL:-2.0,ADI:-5,SBL:0,REDM:0,REIP:0,ESB:0,ATTNUM:0
+        ,EAF:0,CID:-5.0,VERSION:2.3.17
+X-CPASD-ID: d4dc11e734dc43b28f8560359914f1f3-20230104
+X-CPASD-BLOCK: 1000
+X-CPASD-STAGE: 1
+X-UUID: d4dc11e734dc43b28f8560359914f1f3-20230104
+X-User: xurui@kylinos.cn
+Received: from localhost.localdomain [(116.128.244.169)] by mailgw
+        (envelope-from <xurui@kylinos.cn>)
+        (Generic MTA)
+        with ESMTP id 244177007; Wed, 04 Jan 2023 15:36:39 +0800
+From:   xurui <xurui@kylinos.cn>
+To:     viro@zeniv.linux.org.uk
+Cc:     trivial@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xurui <xurui@kylinos.cn>
+Subject: [PATCH] coredump: Fix a compilation issue with CONFIG_ELF_CORE=n
+Date:   Wed,  4 Jan 2023 15:36:26 +0800
+Message-Id: <20230104073626.1093400-1-xurui@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y7UeuYVkyy2/fWF1@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-0.9 required=5.0 tests=BAYES_00,PDS_RDNS_DYNAMIC_FP,
+        RDNS_DYNAMIC,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 04, 2023 at 12:08:09PM +0530, Ojaswin Mujoo wrote:
-> Hi Eric,
-> 
-> I have roughly gone through the series and run the (patched) xfstests on
-> this patchset on a powerpc machine with 64k pagesize and 64k,4k and 1k
-> merkle tree size on EXT4 and everything seems to work correctly. 
-> 
-> Just for records, test generic/692 takes a lot of time to complete with
-> 64k merkel tree size due to the calculations assuming it to be 4k,
-> however I was able to manually test that particular scenario. (I'll try
-> to send a patch to fix the fstest later).
-> 
-> Anyways, feel free to add:
-> 
-> Tested-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> 
-> Since I was not very familiar with the fsverty codebase, I'll try to
-> take some more time to review the code and get back with any
-> comments/RVBs.
-> 
-> Regards,
-> ojaswin
+A compilation issue occurred when CONFIG_ELF_CORE is not set:
+fs/coredump.c:841:12: error: ‘dump_emit_page’ defined but not used [-Werror=unused-function]
 
-Thanks Ojaswin!  That's a good point about generic/692.  The right fix for it is
-to make it use $FSV_BLOCK_SIZE instead of 4K in its calculations.
+Signed-off-by: xurui <xurui@kylinos.cn>
+---
+ fs/coredump.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-I suppose you saw that issue by running the test on ext4 with fs_block_size ==
-page_size == 64K, causing xfstests to use merkle_tree_block_size == 64K by
-default.  Thanks for doing that; that's something I haven't been able to test
-yet.  My focus has been on merkle_tree_block_size < page_size.
-merkle_tree_block_size > 4K should just work, though, assuming
-merkle_tree_block_size <= min(fs_block_size, page_size).  (Or
-merkle_tree_block_size == fs_block_size == page_size before this patch series.)
+diff --git a/fs/coredump.c b/fs/coredump.c
+index de78bde2991b..95390a73b912 100644
+--- a/fs/coredump.c
++++ b/fs/coredump.c
+@@ -838,6 +838,7 @@ static int __dump_skip(struct coredump_params *cprm, size_t nr)
+ 	}
+ }
+ 
++#ifdef CONFIG_ELF_CORE
+ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ {
+ 	struct bio_vec bvec = {
+@@ -870,6 +871,7 @@ static int dump_emit_page(struct coredump_params *cprm, struct page *page)
+ 
+ 	return 1;
+ }
++#endif
+ 
+ int dump_emit(struct coredump_params *cprm, const void *addr, int nr)
+ {
+-- 
+2.25.1
 
-- Eric
