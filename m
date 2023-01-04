@@ -2,238 +2,137 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 45BA365DF0B
-	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 22:28:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D72E365E00A
+	for <lists+linux-fsdevel@lfdr.de>; Wed,  4 Jan 2023 23:34:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240483AbjADV2k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 4 Jan 2023 16:28:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42126 "EHLO
+        id S240543AbjADWeQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 4 Jan 2023 17:34:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49806 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240264AbjADV2Q (ORCPT
+        with ESMTP id S240347AbjADWeP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 4 Jan 2023 16:28:16 -0500
-Received: from mail-ed1-x530.google.com (mail-ed1-x530.google.com [IPv6:2a00:1450:4864:20::530])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 728AB3F121
-        for <linux-fsdevel@vger.kernel.org>; Wed,  4 Jan 2023 13:22:18 -0800 (PST)
-Received: by mail-ed1-x530.google.com with SMTP id s5so50383368edc.12
-        for <linux-fsdevel@vger.kernel.org>; Wed, 04 Jan 2023 13:22:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5r/V3HPXwjpuD7IphcjrrB8OiZUQp0rchrkxxQGzaWI=;
-        b=KEIC0i6TYit5Z0cdFjku8f3xpdIif4U2Ymvz3XlFlq2j6BxcLI8+aRhr5ueD/4NPZt
-         5J/8Tmn+RoO27XqmSSN+2MvKrF23PsPGVyxQsTSipAdevtpNTCAHHgE1Q/dRVQTvoBqO
-         4T5iaYELTABGEiuIT0Ntyw6CUkWJlk7WiKrlY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5r/V3HPXwjpuD7IphcjrrB8OiZUQp0rchrkxxQGzaWI=;
-        b=IVi80uie6UlqpdyhPXTs77YYS8FxqR6LKhD6BKxqv+vmSLUCgrm1MBYm/tvREw8Yo0
-         OKmHunn9OXOoZ915Go6hHqKOy4dQ86nxOmgb0Md2Q5RFmpfOlTFFrEc7bmpM1t+xOcMz
-         BGko39c7+dfAsV+TV3Djv2lpS+cChvhs4k/M1kcZBLOqsZTafj83irXrt28WlZ8y7I0a
-         n/tmsOAj1pj7CX0GaYKJCfhHfor79sUAYzCF0tYvPD26NoFJgbroj2rmNbRFcZ4YddgC
-         O4t1rd1QwfERBbcaAnFzXFhroSScQ5I64xGhiuy4IPoG1VCgC2nC9ixbG4/mwSnxjY7k
-         4WFg==
-X-Gm-Message-State: AFqh2kq0MhdCPwnNc8lIcKoSJkbDx0dK0b04TMHS6zQkP9GRPu+qGqLG
-        12qFOIsMfTdEyNsFKe7PLEZOeIqYTyHRwBCMxXRlRA==
-X-Google-Smtp-Source: AMrXdXvyL02g5V8vC60eMixSySeuV+cmNwoRkD+KYiZL+r9p1DmuiHRjgR21Y+li8eMYghzwdId8ULZTKPgGOnDzC2M=
-X-Received: by 2002:a05:6402:f27:b0:485:8114:9779 with SMTP id
- i39-20020a0564020f2700b0048581149779mr3674496eda.41.1672867336970; Wed, 04
- Jan 2023 13:22:16 -0800 (PST)
-MIME-Version: 1.0
-References: <20221229081252.452240-1-sarthakkukreti@chromium.org>
- <20221229081252.452240-4-sarthakkukreti@chromium.org> <Y7Wr2uadI+82BB6a@magnolia>
-In-Reply-To: <Y7Wr2uadI+82BB6a@magnolia>
-From:   Sarthak Kukreti <sarthakkukreti@chromium.org>
-Date:   Wed, 4 Jan 2023 13:22:06 -0800
-Message-ID: <CAG9=OMNbeU=Xg5bWvHUSfzRf8vsk6csvcw5BGZeMD5Lo7dfKFQ@mail.gmail.com>
-Subject: Re: [PATCH v2 3/7] fs: Introduce FALLOC_FL_PROVISION
-To:     "Darrick J. Wong" <djwong@kernel.org>
-Cc:     sarthakkukreti@google.com, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Brian Foster <bfoster@redhat.com>,
-        "Theodore Ts'o" <tytso@mit.edu>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Bart Van Assche <bvanassche@google.com>,
-        Daniil Lunev <dlunev@google.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+        Wed, 4 Jan 2023 17:34:15 -0500
+Received: from out1-smtp.messagingengine.com (out1-smtp.messagingengine.com [66.111.4.25])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 363864260E;
+        Wed,  4 Jan 2023 14:34:13 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailout.nyi.internal (Postfix) with ESMTP id C324A5C00EA;
+        Wed,  4 Jan 2023 17:34:10 -0500 (EST)
+Received: from imap51 ([10.202.2.101])
+  by compute6.internal (MEProxy); Wed, 04 Jan 2023 17:34:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+        :cc:content-transfer-encoding:content-type:date:date:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to; s=fm2; t=1672871650; x=
+        1672958050; bh=GhHK13puG9rbbmVLp8YxJh1oi2E1z8eW7EP8WFvlzbE=; b=P
+        2rxRqqhwAYm82oHQZlx0eRquBq9ZbKOP3GKdJ563/G6LTzhGjkMpyJFzH5eUa/PX
+        DaoAw+MhLf5t9tMzc9+3GHXPUF9LYA77CjlOcFP46f3PYJa2fy7U7HMVVgphFDwG
+        /2QNvnirm2bH+0W8S3DJT1quRzS/nlbBZggpwkDPpCnOf76gYEEBn0HKaK/3s31u
+        I1gLXMRob7wXikMCPXv5ZDFRimmLxTp8ZnnNq47QSeU3gr3Tcp0oxIwy9V383U2u
+        aohzsLAqeKXo0Q9O1iKb4/s/upBfdrQxyQBLf19sBR7bdctl5vjxSwhcLjwlWivJ
+        yTQ9nSFLzQyXM4p2VRBmg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:cc:content-transfer-encoding
+        :content-type:date:date:feedback-id:feedback-id:from:from
+        :in-reply-to:in-reply-to:message-id:mime-version:references
+        :reply-to:sender:subject:subject:to:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1672871650; x=
+        1672958050; bh=GhHK13puG9rbbmVLp8YxJh1oi2E1z8eW7EP8WFvlzbE=; b=s
+        XjvCay9qgfp5zZA/FK9sFizwgm3P949Px1iTHcIgW8gTVg86SVON5Wfbk9cu7P4h
+        IufKBgZaD/y0adTibbCtd70bGu1wcKNqiggPDE8SZ3BfIz/ezIJLA7rXBpyO9lfm
+        eM0GadwVZqDfSaDY/hwqpMYHohA8QlCgljo1xvKYbTRugVk4vk+dXit1lNVSqEDn
+        +j+uLX8se25VVGGvly4Zz/t9lWJ3DUU+oxshdq8DGxmVjeMmORnRpkER5W+ftKTR
+        I5ivgROXearuZrs3UY5aOwws/2XFAnKoJmvR2z8dH7IuwZJl7/3jMM4ZABFD5gxh
+        e9zPd/1+v4UP3k/fKunug==
+X-ME-Sender: <xms:4f61Y0kq7rlqRwa5qrGsGybkL6fvzLhofq5cbBitIKGmcyWSwvl3SQ>
+    <xme:4f61Yz2zp7ViQ0uVBBNH1kf7n-onscPjH9L7mgZfYkU69rCQ8gCFcp5HaVsIa_-XL
+    vJCcakZ8eCNjSDtG5A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedrjeejucetufdoteggodetrfdotffvucfrrh
+    hofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgenuceurghi
+    lhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurh
+    epofgfggfkjghffffhvfevufgtgfesthhqredtreerjeenucfhrhhomhepfdetrhhnugcu
+    uegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtthgvrh
+    hnpefgkeeuleegieeghfduudeltdekfeffjeeuleehleefudettddtgfevueeffeeigeen
+    ucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:4f61Yyp3DB1iBTFWX1mslGa6YZRkjsTkLa0ihJVdErUrhV-OYzSxtg>
+    <xmx:4f61Ywnl-RxDAY2VGVQX6wdyc8nVnhG1BE6fwNKJ9i59vMLOAkwexQ>
+    <xmx:4f61Yy1fvAgq5OEIcQ4B2FVdKhaiVIrhU8pzKUnQQPaH6n7XRoI93Q>
+    <xmx:4v61Y7sWXUG5KKCDli-ondi4lSho29TgaWtYpUSJFStWM5SUaTI30w>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 9628CB60086; Wed,  4 Jan 2023 17:34:09 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.7.0-alpha0-1185-g841157300a-fm-20221208.002-g84115730
+Mime-Version: 1.0
+Message-Id: <ab7a9477-ddc7-430f-b4ee-c67251e879b0@app.fastmail.com>
+In-Reply-To: <CAHk-=wi8XyAUF9_z6-oa4Ava6PVZeE-=TVNcFK1puQHpOtqLLw@mail.gmail.com>
+References: <000000000000dbce4e05f170f289@google.com>
+ <5f45bb9a-5e00-48dd-82b0-46b19b1b98a3@app.fastmail.com>
+ <CAHk-=wi8XyAUF9_z6-oa4Ava6PVZeE-=TVNcFK1puQHpOtqLLw@mail.gmail.com>
+Date:   Wed, 04 Jan 2023 23:33:50 +0100
+From:   "Arnd Bergmann" <arnd@arndb.de>
+To:     "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc:     syzbot <syzbot+7bb7cd3595533513a9e7@syzkaller.appspotmail.com>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        christian.brauner@ubuntu.com,
+        "Damien Le Moal" <damien.lemoal@opensource.wdc.com>,
+        jlayton@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        "Matthew Wilcox" <willy@infradead.org>,
+        ZhangPeng <zhangpeng362@huawei.com>,
+        "Viacheslav Dubeyko" <slava@dubeyko.com>,
+        linux-m68k@lists.linux-m68k.org
+Subject: Re: [syzbot] [hfs?] WARNING in hfs_write_inode
+Content-Type: text/plain;charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-2.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_PASS,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-(Resend; the text flow made the last reply unreadable)
+On Wed, Jan 4, 2023, at 20:06, Linus Torvalds wrote:
+>
+> I suspect this code is basically all dead. From what I can tell, hfs
+> only gets updates for
+>
+>  (a) syzbot reports
+>
+>  (b) vfs interface changes
 
-On Wed, Jan 4, 2023 at 8:39 AM Darrick J. Wong <djwong@kernel.org> wrote:
->
-> On Thu, Dec 29, 2022 at 12:12:48AM -0800, Sarthak Kukreti wrote:
-> > FALLOC_FL_PROVISION is a new fallocate() allocation mode that
-> > sends a hint to (supported) thinly provisioned block devices to
-> > allocate space for the given range of sectors via REQ_OP_PROVISION.
-> >
-> > The man pages for both fallocate(2) and posix_fallocate(3) describe
-> > the default allocation mode as:
-> >
-> > ```
-> > The default operation (i.e., mode is zero) of fallocate()
-> > allocates the disk space within the range specified by offset and len.
-> > ...
-> > subsequent writes to bytes in the specified range are guaranteed
-> > not to fail because of lack of disk space.
-> > ```
-> >
-> > For thinly provisioned storage constructs (dm-thin, filesystems on sparse
-> > files), the term 'disk space' is overloaded and can either mean the apparent
-> > disk space in the filesystem/thin logical volume or the true disk
-> > space that will be utilized on the underlying non-sparse allocation layer.
-> >
-> > The use of a separate mode allows us to cleanly disambiguate whether fallocate()
-> > causes allocation only at the current layer (default mode) or whether it propagates
-> > allocations to underlying layers (provision mode)
->
-> Why is it important to make this distinction?  The outcome of fallocate
-> is supposed to be that subsequent writes do not fail with ENOSPC.  In my
-> (fs developer) mind, REQ_OP_PROVISION simply an extra step to be taken
-> after allocating file blocks.
->
-Some use cases still benefit from keeping the default mode - eg.
-virtual machines running on massive storage pools that don't expect to
-hit the storage limit anytime soon (like most cloud storage
-providers). Essentially, if the 'no ENOSPC' guarantee is maintained
-via other means, then REQ_OP_PROVISION adds latency that isn't needed
-(and cloud storage providers don't need to set aside that extra space
-that may or may not be used).
+There is clearly no new work going into it, and most data exchange
+with MacOS would use HFS+, but I think there are still some users.
 
-> If you *don't* add this API flag and simply bake the REQ_OP_PROVISION
-> call into mode 0 fallocate, then the new functionality can be added (or
-> even backported) to existing kernels and customers can use it
-> immediately.  If you *do*, then you get to wait a few years for
-> developers to add it to their codebases only after enough enterprise
-> distros pick up a new kernel to make it worth their while.
+> and the last real changes seem to have been by Ernesto A. Fern=C3=A1nd=
+ez
+> back in 2018.
 >
-> > for thinly provisioned filesystems/
-> > block devices. For devices that do not support REQ_OP_PROVISION, both these
-> > allocation modes will be equivalent. Given the performance cost of sending provision
-> > requests to the underlying layers, keeping the default mode as-is allows users to
-> > preserve existing behavior.
+> Hmm. Looking at that code, we have another bug in there, introduced by
+> an earlier fix for a similar issue: commit 8d824e69d9f3 ("hfs: fix OOB
+> Read in __hfs_brec_find") added
 >
-> How expensive is this expected to be?  Is this why you wanted a separate
-> mode flag?
+> +       if (HFS_I(main_inode)->cat_key.CName.len > HFS_NAMELEN)
+> +               return -EIO;
 >
-Yes, the exact latency will depend on the stacked block devices and
-the fragmentation at the allocation layers.
-
-I did a quick test for benchmarking fallocate() with an:
-A) ext4 filesystem mounted with 'noprovision'
-B) ext4 filesystem mounted with 'provision' on a dm-thin device.
-C) ext4 filesystem mounted with 'provision' on a loop device with a
-sparse backing file on the filesystem in (B).
-
-I tested file sizes from 512M to 8G, time taken for fallocate() in (A)
-remains expectedly flat at ~0.01-0.02s, but for (B), it scales from
-0.03-0.4s and for (C) it scales from 0.04s-0.52s (I captured the exact
-time distribution in the cover letter
-https://marc.info/?l=linux-ext4&m=167230113520636&w=2)
-
-+0.5s for a 8G fallocate doesn't sound a lot but I think fragmentation
-and how the block device is layered can make this worse...
-
-> --D
+> but it's after hfs_find_init(), so it should actually have done a
+> hfs_find_exit() to not leak memory.
 >
-> > Signed-off-by: Sarthak Kukreti <sarthakkukreti@chromium.org>
-> > ---
-> >  block/fops.c                | 15 +++++++++++----
-> >  include/linux/falloc.h      |  3 ++-
-> >  include/uapi/linux/falloc.h |  8 ++++++++
-> >  3 files changed, 21 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/block/fops.c b/block/fops.c
-> > index 50d245e8c913..01bde561e1e2 100644
-> > --- a/block/fops.c
-> > +++ b/block/fops.c
-> > @@ -598,7 +598,8 @@ static ssize_t blkdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
-> >
-> >  #define      BLKDEV_FALLOC_FL_SUPPORTED                                      \
-> >               (FALLOC_FL_KEEP_SIZE | FALLOC_FL_PUNCH_HOLE |           \
-> > -              FALLOC_FL_ZERO_RANGE | FALLOC_FL_NO_HIDE_STALE)
-> > +              FALLOC_FL_ZERO_RANGE | FALLOC_FL_NO_HIDE_STALE |       \
-> > +              FALLOC_FL_PROVISION)
-> >
-> >  static long blkdev_fallocate(struct file *file, int mode, loff_t start,
-> >                            loff_t len)
-> > @@ -634,9 +635,11 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
-> >       filemap_invalidate_lock(inode->i_mapping);
-> >
-> >       /* Invalidate the page cache, including dirty pages. */
-> > -     error = truncate_bdev_range(bdev, file->f_mode, start, end);
-> > -     if (error)
-> > -             goto fail;
-> > +     if (mode != FALLOC_FL_PROVISION) {
-> > +             error = truncate_bdev_range(bdev, file->f_mode, start, end);
-> > +             if (error)
-> > +                     goto fail;
-> > +     }
-> >
-> >       switch (mode) {
-> >       case FALLOC_FL_ZERO_RANGE:
-> > @@ -654,6 +657,10 @@ static long blkdev_fallocate(struct file *file, int mode, loff_t start,
-> >               error = blkdev_issue_discard(bdev, start >> SECTOR_SHIFT,
-> >                                            len >> SECTOR_SHIFT, GFP_KERNEL);
-> >               break;
-> > +     case FALLOC_FL_PROVISION:
-> > +             error = blkdev_issue_provision(bdev, start >> SECTOR_SHIFT,
-> > +                                            len >> SECTOR_SHIFT, GFP_KERNEL);
-> > +             break;
-> >       default:
-> >               error = -EOPNOTSUPP;
-> >       }
-> > diff --git a/include/linux/falloc.h b/include/linux/falloc.h
-> > index f3f0b97b1675..b9a40a61a59b 100644
-> > --- a/include/linux/falloc.h
-> > +++ b/include/linux/falloc.h
-> > @@ -30,7 +30,8 @@ struct space_resv {
-> >                                        FALLOC_FL_COLLAPSE_RANGE |     \
-> >                                        FALLOC_FL_ZERO_RANGE |         \
-> >                                        FALLOC_FL_INSERT_RANGE |       \
-> > -                                      FALLOC_FL_UNSHARE_RANGE)
-> > +                                      FALLOC_FL_UNSHARE_RANGE |      \
-> > +                                      FALLOC_FL_PROVISION)
-> >
-> >  /* on ia32 l_start is on a 32-bit boundary */
-> >  #if defined(CONFIG_X86_64)
-> > diff --git a/include/uapi/linux/falloc.h b/include/uapi/linux/falloc.h
-> > index 51398fa57f6c..2d323d113eed 100644
-> > --- a/include/uapi/linux/falloc.h
-> > +++ b/include/uapi/linux/falloc.h
-> > @@ -77,4 +77,12 @@
-> >   */
-> >  #define FALLOC_FL_UNSHARE_RANGE              0x40
-> >
-> > +/*
-> > + * FALLOC_FL_PROVISION acts as a hint for thinly provisioned devices to allocate
-> > + * blocks for the range/EOF.
-> > + *
-> > + * FALLOC_FL_PROVISION can only be used with allocate-mode fallocate.
-> > + */
-> > +#define FALLOC_FL_PROVISION          0x80
-> > +
-> >  #endif /* _UAPI_FALLOC_H_ */
-> > --
-> > 2.37.3
-> >
+> So we should probably fix that too.
+>
+> Something like this ENTIRELY UNTESTED patch?
+>
+> Do we have anybody who looks at hfs?
+
+Adding Viacheslav Dubeyko to Cc, he's at least been reviewing
+patches for HFS and HFS+ somewhat recently. The linux-m68k
+list may have some users dual-booting old MacOS.
+
+Viacheslav, see the start of the thread at
+https://lore.kernel.org/lkml/000000000000dbce4e05f170f289@google.com/
+
+     Arnd
