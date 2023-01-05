@@ -2,125 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9F66E65E9B1
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jan 2023 12:23:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9707F65E9D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jan 2023 12:25:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232453AbjAELXJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Jan 2023 06:23:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55674 "EHLO
+        id S233075AbjAELZQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Jan 2023 06:25:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57022 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231725AbjAELXH (ORCPT
+        with ESMTP id S233245AbjAELZF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Jan 2023 06:23:07 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6AB0F4E424;
-        Thu,  5 Jan 2023 03:23:06 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id EEDC761997;
-        Thu,  5 Jan 2023 11:23:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CCFDCC433F0;
-        Thu,  5 Jan 2023 11:23:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1672917785;
-        bh=MBba54j0/BydJyfXJmD3sqygtai2bpp7J4HBZnAheDI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=f/NyAx/uidnIXzxaIjlXTomDF3irlmzZ+PCY7P4/TbnJUSJRD8UQ7c36MWpV71/Tn
-         SYhuTjsjWfdmPqSLK8QE0FamFzSLRaWdbDObhW80t4Yhafl1J5jJ3bezM77sFrqnWb
-         7d/hzJOkyMc1nznD1fbjGD1fMn5JHCEwQ/N74LIUmis17aSfr3aoYAViHr5UwZIwBZ
-         vMhpJpECkrYJfV357eN/7+fWF/0BXMk6663rsy2BQ1Hqv+wpHrlCHOkVeWNUyq7jDe
-         MlCQt3z62ym96XHYhLSz9H4UynTy+xVr4M24uMVE/AY6qAUqNbC4TlEczADxwM5pwj
-         vjHmuNVYuOTeg==
-Date:   Thu, 5 Jan 2023 11:23:01 +0000
-From:   Jarkko Sakkinen <jarkko@kernel.org>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Sean Christopherson <seanjc@google.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH v10 3/9] KVM: Extend the memslot to support fd-based
- private memory
-Message-ID: <Y7azFdnnGAdGPqmv@kernel.org>
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-4-chao.p.peng@linux.intel.com>
+        Thu, 5 Jan 2023 06:25:05 -0500
+Received: from mx0a-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 64E994FD75;
+        Thu,  5 Jan 2023 03:25:00 -0800 (PST)
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 305BGe9v007451;
+        Thu, 5 Jan 2023 11:24:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date : from : to : cc :
+ subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=pp1; bh=LynWwuoBtbTAuC+gq6MIO5+/sTdrwQNrdj7hw7C9k5c=;
+ b=ZaHqwNGmDgFaA2BCR/4TxIdHCatsD318PRNxFYCtffGxLPneSaGeF9l88ctbfwh1MGaT
+ XAdBcCDBUEFPG4orWx1qoUB0wWzPhQ3Hs3dEO+wIkc9uyrLoe6AE9t3Sf5TmyHlJNcVv
+ H9IqfGGONcpHYmLvgKjaSLcaUFBd51WQzUdSMQs4ucijcbgeqUKgdg18RB4IrsV7GBDC
+ QplBGPQjjK+OZ5vCwt3PeSz/b31LpVoBaO0pV9O02qgWxZnaoGdsodES86MEXQB52MpH
+ /F9m8s3S4+hJV+ZA2bkd62KQyWJc/BgbiJ3ueyHQQkzYZMCgrXlWuexs3HyDrobf/Rl9 GA== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3mwwhng4f0-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Jan 2023 11:24:36 +0000
+Received: from m0098419.ppops.net (m0098419.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 305BM5qH025452;
+        Thu, 5 Jan 2023 11:24:35 GMT
+Received: from ppma06fra.de.ibm.com (48.49.7a9f.ip4.static.sl-reverse.com [159.122.73.72])
+        by mx0b-001b2d01.pphosted.com (PPS) with ESMTPS id 3mwwhng4ep-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Jan 2023 11:24:35 +0000
+Received: from pps.filterd (ppma06fra.de.ibm.com [127.0.0.1])
+        by ppma06fra.de.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 305176xm010137;
+        Thu, 5 Jan 2023 11:24:33 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+        by ppma06fra.de.ibm.com (PPS) with ESMTPS id 3mtcbfmwqb-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Thu, 05 Jan 2023 11:24:33 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+        by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 305BOVNF21823928
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 5 Jan 2023 11:24:31 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3107120040;
+        Thu,  5 Jan 2023 11:24:31 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 24D3220049;
+        Thu,  5 Jan 2023 11:24:29 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.169])
+        by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+        Thu,  5 Jan 2023 11:24:28 +0000 (GMT)
+Date:   Thu, 5 Jan 2023 16:54:21 +0530
+From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org,
+        Andrey Albershteyn <aalbersh@redhat.com>
+Subject: Re: [PATCH v2 00/11] fsverity: support for non-4K pages
+Message-ID: <Y7azZTcMvDZt9Eya@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20221223203638.41293-1-ebiggers@kernel.org>
+ <Y7UeuYVkyy2/fWF1@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+ <Y7Up3kpGcJr0FCgq@sol.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221202061347.1070246-4-chao.p.peng@linux.intel.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y7Up3kpGcJr0FCgq@sol.localdomain>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 890KEnm2Wi9_d5p_zTlxhAtZQDq7bwHI
+X-Proofpoint-ORIG-GUID: 3AV4vqvnUNdNa4KL2nVnBiy8hfxXvknE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.205,Aquarius:18.0.923,Hydra:6.0.545,FMLib:17.11.122.1
+ definitions=2023-01-05_04,2023-01-04_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 impostorscore=0 bulkscore=0 suspectscore=0
+ phishscore=0 malwarescore=0 mlxscore=0 spamscore=0 clxscore=1015
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301050089
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 02, 2022 at 02:13:41PM +0800, Chao Peng wrote:
-> In memory encryption usage, guest memory may be encrypted with special
-> key and can be accessed only by the guest itself. We call such memory
-> private memory. It's valueless and sometimes can cause problem to allow
-> userspace to access guest private memory. This new KVM memslot extension
-> allows guest private memory being provided through a restrictedmem
-> backed file descriptor(fd) and userspace is restricted to access the
-> bookmarked memory in the fd.
+On Tue, Jan 03, 2023 at 11:25:18PM -0800, Eric Biggers wrote:
 > 
-> This new extension, indicated by the new flag KVM_MEM_PRIVATE, adds two
-> additional KVM memslot fields restricted_fd/restricted_offset to allow
-> userspace to instruct KVM to provide guest memory through restricted_fd.
-> 'guest_phys_addr' is mapped at the restricted_offset of restricted_fd
-> and the size is 'memory_size'.
-> 
-> The extended memslot can still have the userspace_addr(hva). When use, a
-> single memslot can maintain both private memory through restricted_fd
-> and shared memory through userspace_addr. Whether the private or shared
-> part is visible to guest is maintained by other KVM code.
-> 
-> A restrictedmem_notifier field is also added to the memslot structure to
-> allow the restricted_fd's backing store to notify KVM the memory change,
-> KVM then can invalidate its page table entries or handle memory errors.
-> 
-> Together with the change, a new config HAVE_KVM_RESTRICTED_MEM is added
-> and right now it is selected on X86_64 only.
-> 
-> To make future maintenance easy, internally use a binary compatible
-> alias struct kvm_user_mem_region to handle both the normal and the
-> '_ext' variants.
 
-Feels bit hacky IMHO, and more like a completely new feature than
-an extension.
+Hi Eric,
 
-Why not just add a new ioctl? The commit message does not address
-the most essential design here.
+> Thanks Ojaswin!  That's a good point about generic/692.  The right fix for it is
+> to make it use $FSV_BLOCK_SIZE instead of 4K in its calculations.
+Yes, that should fix the issue, I'll try to send in a patch for this
+when I find some time.
 
-BR, Jarkko
+> 
+> I suppose you saw that issue by running the test on ext4 with fs_block_size ==
+> page_size == 64K, causing xfstests to use merkle_tree_block_size == 64K by
+> default.  Thanks for doing that; that's something I haven't been able to test
+> yet.  My focus has been on merkle_tree_block_size < page_size.
+Correct, I was testing "everything = 64k" scenario when I
+noticed the slowdown.
+
+> merkle_tree_block_size > 4K should just work, though, assuming
+> merkle_tree_block_size <= min(fs_block_size, page_size).  (Or
+> merkle_tree_block_size == fs_block_size == page_size before this patch series.)
+
+Yes true, I still tested them just in case :) 
+
+Regards,
+Ojaswin
