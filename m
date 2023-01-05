@@ -2,189 +2,271 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 21F3865F082
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jan 2023 16:51:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 635A565F09A
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jan 2023 16:56:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233417AbjAEPvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Jan 2023 10:51:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39310 "EHLO
+        id S234692AbjAEP4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Jan 2023 10:56:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43886 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234960AbjAEPuY (ORCPT
+        with ESMTP id S234788AbjAEP4Q (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Jan 2023 10:50:24 -0500
-Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 302AB5E09D;
-        Thu,  5 Jan 2023 07:50:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1672933822; x=1704469822;
-  h=date:from:to:cc:subject:message-id:mime-version:
-   content-transfer-encoding;
-  bh=RJatMYrbPfEvNurBxtLaBiUJD4LCEtP8VKvLxxz/leM=;
-  b=kd+ndZ8K31PGe55ZJiqMQis4fsu+hv8Rm63LgYwx5JxFW9JsIhuqBdsU
-   mUV2x5Jscn5rE5BjY3vePPgkoaYaz56cKPdGNYKuP4sRZal5LafympAro
-   8Gry/cIEmHQZK8kFSjgyEQ42SvcWVmih9WIPeRz6HicpQ4F1I/efKWDRx
-   U45aDrwzVvms7bgxa2YiAQr+44rJrMnUZkrcIw/U/OHnSaeDDlumeK9xR
-   xF9qVk4Ey39D7v53nkXypFoSQTGoSghKWaH2M4l5pQOsbTY2PPWg3RgHE
-   XmHRJBeyW+Me1s/I7vsi4I/4qv26uDvkN2g3YnTaRbi8io+T7QP+eHsKt
-   A==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10580"; a="310026053"
-X-IronPort-AV: E=Sophos;i="5.96,303,1665471600"; 
-   d="scan'208";a="310026053"
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jan 2023 07:50:21 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10580"; a="633190458"
-X-IronPort-AV: E=Sophos;i="5.96,303,1665471600"; 
-   d="scan'208";a="633190458"
-Received: from lkp-server02.sh.intel.com (HELO f1920e93ebb5) ([10.239.97.151])
-  by orsmga006.jf.intel.com with ESMTP; 05 Jan 2023 07:50:18 -0800
-Received: from kbuild by f1920e93ebb5 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pDSVV-0001zD-1E;
-        Thu, 05 Jan 2023 15:50:17 +0000
-Date:   Thu, 05 Jan 2023 23:49:40 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     loongarch@lists.linux.dev, linux-omap@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        Linux Memory Management List <linux-mm@kvack.org>
-Subject: [linux-next:master] BUILD REGRESSION
- cc3c08b41a9c9402ead726ec6deb1217081d0d8b
-Message-ID: <63b6f194.O4eKwdyFWFrII4HE%lkp@intel.com>
-User-Agent: Heirloom mailx 12.5 6/20/10
+        Thu, 5 Jan 2023 10:56:16 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4128B6326
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jan 2023 07:55:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1672934132;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=mBNU3VIvv0Lg3ecO5+t5pdiiz768VTqxLlFC0U2szuc=;
+        b=QCTF7UBeiddeQ8/EmCdNhA9AvhUuftcGnt98pJ7gEWA4MB4Rg5J//bRCKqaSwVA/7ykUYP
+        r5DyZ13p2AQ/4Cj9o7bD5mqdJmDXW1CXWHsbaLK7oHajGPmO3qEnKIE/F5b7dbgFfZe1sB
+        WWRcAtZYv9FymKN01DoUZAYJDOTcLCM=
+Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com
+ [209.85.221.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-662-xBELkGlOP_GhWdD0I2u_Lw-1; Thu, 05 Jan 2023 10:55:31 -0500
+X-MC-Unique: xBELkGlOP_GhWdD0I2u_Lw-1
+Received: by mail-vk1-f200.google.com with SMTP id w22-20020a1fad16000000b003d5d7c16e71so3068380vke.23
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jan 2023 07:55:31 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=mBNU3VIvv0Lg3ecO5+t5pdiiz768VTqxLlFC0U2szuc=;
+        b=l3wxLFhrQQH3SDQ3GgL0PVFGO4fZrxOSt/hAfntXwbqILK6DmRPkK80O3rCEFDo8/d
+         oKU5R4zCT78pVU3WcdcG25ShdFi67FUa/zKxJbPAjZpsoNZY0/1r8+WSrIRMBxPQsz6Q
+         xWTJXLbSDWgCDCsmkWmz+SmCTlyomFcTfij32FouHQMcrsjSycChHohOVQqUR3hz0Ev5
+         h5KGErNtaYV3v2L9OwXEM7fmL8kWPOAMWQ2iXB9kBdRjMPi5L6l6SekNlWCDfi/ZPK9A
+         iB1x9qFnGRxAfJ9k642k3ix+M+WOLd0N69MEeZ4PyqAeFRGNgsZHHEnND9u45ahlRkU0
+         NNwA==
+X-Gm-Message-State: AFqh2ko2TFEP04zDUs3WtFH6n+fQ21aB6yUxkw7fwspRkZGIfKtyfv70
+        x9u60wjsl/67TVKeOTsi3p7+VXXzPygDx5aBMp18QtkF+qwwh2+4fR69YGJQ1nSIn8vkOcdbaRu
+        iQFWWNDUyHBdBC9MQNPc/oNm/fQ==
+X-Received: by 2002:a05:6122:4d:b0:3d5:ec83:511c with SMTP id q13-20020a056122004d00b003d5ec83511cmr5525306vkn.12.1672934130769;
+        Thu, 05 Jan 2023 07:55:30 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXuLtn4rKDFfRiehYDUfitP/nNOf/5dbrgvceHVBDB3sl1tUmeZ5RWi95BuWEHBzKFVscMnExA==
+X-Received: by 2002:a05:6122:4d:b0:3d5:ec83:511c with SMTP id q13-20020a056122004d00b003d5ec83511cmr5525294vkn.12.1672934130505;
+        Thu, 05 Jan 2023 07:55:30 -0800 (PST)
+Received: from x1 (c-73-214-169-22.hsd1.pa.comcast.net. [73.214.169.22])
+        by smtp.gmail.com with ESMTPSA id q10-20020a05620a0d8a00b006b949afa980sm25726912qkl.56.2023.01.05.07.55.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Jan 2023 07:55:29 -0800 (PST)
+Date:   Thu, 5 Jan 2023 10:55:28 -0500
+From:   Brian Masney <bmasney@redhat.com>
+To:     Alexander Larsson <alexl@redhat.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        gscrivan@redhat.com
+Subject: Re: [PATCH 2/6] composefs: Add on-disk layout
+Message-ID: <Y7by8Pv6z+Z1o3pu@x1>
+References: <cover.1669631086.git.alexl@redhat.com>
+ <cbe0d67a97c8b5157de06cedb67c88794c9c304e.1669631086.git.alexl@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
-        autolearn=ham autolearn_force=no version=3.4.6
+Content-Disposition: inline
+In-Reply-To: <cbe0d67a97c8b5157de06cedb67c88794c9c304e.1669631086.git.alexl@redhat.com>
+User-Agent: Mutt/2.2.7 (2022-08-07)
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
-branch HEAD: cc3c08b41a9c9402ead726ec6deb1217081d0d8b  Add linux-next specific files for 20230105
+On Mon, Nov 28, 2022 at 12:16:23PM +0100, Alexander Larsson wrote:
+> This commit adds the on-disk layout header file of composefs.
+> 
+> Signed-off-by: Alexander Larsson <alexl@redhat.com>
+> Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
 
-Error/Warning reports:
+Add Co-Developed-By: Giuseppe ... ?
 
-https://lore.kernel.org/oe-kbuild-all/202212090509.NjAl9tbo-lkp@intel.com
-https://lore.kernel.org/oe-kbuild-all/202212170128.DFuMhkwh-lkp@intel.com
+Full disclosure: I'm not a file system developer but I'll attempt to
+help with the review of this series.
 
-Error/Warning: (recently discovered and may have been fixed)
+> ---
+>  fs/composefs/cfs.h | 242 +++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 242 insertions(+)
+>  create mode 100644 fs/composefs/cfs.h
+> 
+> diff --git a/fs/composefs/cfs.h b/fs/composefs/cfs.h
+> new file mode 100644
+> index 000000000000..8f001fd28d6b
+> --- /dev/null
+> +++ b/fs/composefs/cfs.h
+> @@ -0,0 +1,242 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * composefs
+> + *
+> + * Copyright (C) 2021 Giuseppe Scrivano
+> + * Copyright (C) 2022 Alexander Larsson
+> + *
+> + * This file is released under the GPL.
+> + */
+> +
+> +#ifndef _CFS_H
+> +#define _CFS_H
+> +
+> +#include <asm/byteorder.h>
+> +#include <crypto/sha2.h>
+> +#include <linux/fs.h>
+> +#include <linux/stat.h>
+> +#include <linux/types.h>
+> +
+> +#define CFS_VERSION 1
+> +
+> +#define CFS_MAGIC 0xc078629aU
+> +
+> +#define CFS_MAX_DIR_CHUNK_SIZE 4096
+> +#define CFS_MAX_XATTRS_SIZE 4096
+> +
+> +static inline u16 cfs_u16_to_file(u16 val)
+> +{
+> +	return cpu_to_le16(val);
+> +}
+> +
+> +static inline u32 cfs_u32_to_file(u32 val)
+> +{
+> +	return cpu_to_le32(val);
+> +}
+> +
+> +static inline u64 cfs_u64_to_file(u64 val)
+> +{
+> +	return cpu_to_le64(val);
+> +}
+> +
+> +static inline u16 cfs_u16_from_file(u16 val)
+> +{
+> +	return le16_to_cpu(val);
+> +}
+> +
+> +static inline u32 cfs_u32_from_file(u32 val)
+> +{
+> +	return le32_to_cpu(val);
+> +}
+> +
+> +static inline u64 cfs_u64_from_file(u64 val)
+> +{
+> +	return le64_to_cpu(val);
+> +}
 
-Documentation/gpu/drm-internals:179: ./include/drm/drm_file.h:411: WARNING: undefined label: drm_accel_node (if the link has no caption the label must precede a section header)
-Warning: tools/power/cpupower/man/cpupower-powercap-info.1 references a file that doesn't exist: Documentation/power/powercap/powercap.txt
-aarch64-linux-ld: ID map text too big or misaligned
-arch/loongarch/kernel/asm-offsets.c:265:6: warning: no previous prototype for 'output_pbe_defines' [-Wmissing-prototypes]
-drivers/gpu/drm/ttm/ttm_bo_util.c:364:32: error: implicit declaration of function 'vmap'; did you mean 'kmap'? [-Werror=implicit-function-declaration]
-drivers/gpu/drm/ttm/ttm_bo_util.c:429:17: error: implicit declaration of function 'vunmap'; did you mean 'kunmap'? [-Werror=implicit-function-declaration]
+I don't see where the cfs_xxx_{to,from}_file() approach is used in other
+filesystems. Instead, move the cpu() functions directly into the code.
 
-Unverified Error/Warning (likely false positive, please contact us if interested):
+> +static inline int cfs_xdigit_value(char c)
+> +{
+> +	if (c >= '0' && c <= '9')
+> +		return c - '0';
+> +	if (c >= 'A' && c <= 'F')
+> +		return c - 'A' + 10;
+> +	if (c >= 'a' && c <= 'f')
+> +		return c - 'a' + 10;
+> +	return -1;
+> +}
 
-drivers/block/null_blk/zoned.c:769 zone_cond_store() warn: potential spectre issue 'dev->zones' [w] (local cap)
-drivers/clk/qcom/camcc-sm6350.c:1745:15: sparse: sparse: symbol 'camcc_sm6350_hws' was not declared. Should it be static?
-fs/udf/file.c:177 udf_file_write_iter() warn: inconsistent returns '&iinfo->i_data_sem'.
+There's some utilities in lib/hexdump.c that you can use. hex_to_bin()
+will convert a single character and hex2bin() will convert a string for
+you.
 
-Error/Warning ids grouped by kconfigs:
+> +static inline int cfs_digest_from_payload(const char *payload,
+> +					  size_t payload_len,
+> +					  u8 digest_out[SHA256_DIGEST_SIZE])
+> +{
+> +	const char *p, *end;
+> +	u8 last_digit = 0;
+> +	int digit = 0;
+> +	size_t n_nibbles = 0;
 
-gcc_recent_errors
-|-- arm64-allyesconfig
-|   `-- aarch64-linux-ld:ID-map-text-too-big-or-misaligned
-|-- loongarch-allyesconfig
-|   `-- arch-loongarch-kernel-asm-offsets.c:warning:no-previous-prototype-for-output_pbe_defines
-|-- mips-allyesconfig
-|   |-- drivers-gpu-drm-ttm-ttm_bo_util.c:error:implicit-declaration-of-function-vmap
-|   `-- drivers-gpu-drm-ttm-ttm_bo_util.c:error:implicit-declaration-of-function-vunmap
-|-- parisc-randconfig-m041-20230102
-|   `-- fs-udf-file.c-udf_file_write_iter()-warn:inconsistent-returns-iinfo-i_data_sem-.
-|-- riscv-randconfig-m031-20230105
-|   |-- drivers-block-null_blk-zoned.c-zone_cond_store()-warn:potential-spectre-issue-dev-zones-w-(local-cap)
-|   `-- drivers-regulator-tps65219-regulator.c-tps65219_regulator_probe()-warn:unsigned-rdev-is-never-less-than-zero.
-|-- riscv-randconfig-s032-20230105
-|   `-- drivers-clk-qcom-camcc-sm6350.c:sparse:sparse:symbol-camcc_sm6350_hws-was-not-declared.-Should-it-be-static
-`-- x86_64-allnoconfig
-    |-- Documentation-gpu-drm-internals:.-include-drm-drm_file.h:WARNING:undefined-label:drm_accel_node-(if-the-link-has-no-caption-the-label-must-precede-a-section-header)
-    `-- Warning:tools-power-cpupower-man-cpupower-powercap-info.-references-a-file-that-doesn-t-exist:Documentation-power-powercap-powercap.txt
-clang_recent_errors
-`-- x86_64-rhel-8.3-rust
-    `-- vmlinux.o:warning:objtool:___ksymtab_gpl-_RNvNtCsfATHBUcknU9_6kernel5print16call_printk_cont:data-relocation-to-ENDBR:_RNvNtCsfATHBUcknU9_6kernel5print16call_printk_cont
+Put in reverse Christmas tree order.
 
-elapsed time: 726m
+> +
+> +	end = payload + payload_len;
+> +	for (p = payload; p != end; p++) {
+> +		/* Skip subdir structure */
+> +		if (*p == '/')
+> +			continue;
+> +
+> +		/* Break at (and ignore) extension */
+> +		if (*p == '.')
+> +			break;
 
-configs tested: 62
-configs skipped: 2
+A comment would be helpful in this area that shows what the payload is
+expected to be.
 
-gcc tested configs:
-um                             i386_defconfig
-x86_64                            allnoconfig
-um                           x86_64_defconfig
-i386                                defconfig
-x86_64                        randconfig-a004
-x86_64                        randconfig-a002
-x86_64                           rhel-8.3-bpf
-x86_64                           rhel-8.3-syz
-m68k                             allmodconfig
-powerpc                           allnoconfig
-x86_64                    rhel-8.3-kselftests
-x86_64                         rhel-8.3-kunit
-x86_64                        randconfig-a006
-x86_64                          rhel-8.3-func
-i386                          randconfig-a014
-x86_64                           rhel-8.3-kvm
-arc                              allyesconfig
-i386                          randconfig-a012
-alpha                            allyesconfig
-i386                          randconfig-a016
-x86_64                              defconfig
-m68k                             allyesconfig
-arc                                 defconfig
-x86_64                        randconfig-a013
-x86_64                        randconfig-a011
-ia64                             allmodconfig
-x86_64                               rhel-8.3
-x86_64                           allyesconfig
-i386                          randconfig-a001
-alpha                               defconfig
-arc                  randconfig-r043-20230105
-s390                                defconfig
-i386                          randconfig-a003
-s390                             allmodconfig
-x86_64                        randconfig-a015
-i386                          randconfig-a005
-s390                 randconfig-r044-20230105
-i386                             allyesconfig
-arm                                 defconfig
-s390                             allyesconfig
-riscv                randconfig-r042-20230105
-sh                               allmodconfig
-mips                             allyesconfig
-powerpc                          allmodconfig
-arm64                            allyesconfig
-arm                              allyesconfig
+> +
+> +		if (n_nibbles == SHA256_DIGEST_SIZE * 2)
+> +			return -1; /* Too long */
 
-clang tested configs:
-x86_64                          rhel-8.3-rust
-x86_64                        randconfig-a001
-i386                          randconfig-a013
-x86_64                        randconfig-a003
-x86_64                        randconfig-a005
-i386                          randconfig-a011
-i386                          randconfig-a015
-x86_64                        randconfig-a012
-x86_64                        randconfig-a014
-arm                  randconfig-r046-20230105
-i386                          randconfig-a002
-x86_64                        randconfig-a016
-hexagon              randconfig-r041-20230105
-i386                          randconfig-a004
-hexagon              randconfig-r045-20230105
-i386                          randconfig-a006
+return -EINVAL; ?
 
--- 
-0-DAY CI Kernel Test Service
-https://01.org/lkp
+> +
+> +		digit = cfs_xdigit_value(*p);
+> +		if (digit == -1)
+> +			return -1; /* Not hex digit */
+
+-EINVAL here as well
+
+> +
+> +		n_nibbles++;
+> +		if ((n_nibbles % 2) == 0) {
+> +			digest_out[n_nibbles / 2 - 1] =
+> +				(last_digit << 4) | digit;
+> +		}
+> +		last_digit = digit;
+> +	}
+> +
+> +	if (n_nibbles != SHA256_DIGEST_SIZE * 2)
+> +		return -1; /* Too short */
+
+-EINVAL here as well
+
+> +
+> +	return 0;
+> +}
+> +
+> +struct cfs_vdata_s {
+> +	u64 off;
+> +	u32 len;
+> +} __packed;
+> +
+> +struct cfs_header_s {
+> +	u8 version;
+> +	u8 unused1;
+> +	u16 unused2;
+> +
+> +	u32 magic;
+
+Should the magic number appear first?
+
+> +	u64 data_offset;
+> +	u64 root_inode;
+> +
+> +	u64 unused3[2];
+> +} __packed;
+> +
+> +enum cfs_inode_flags {
+> +	CFS_INODE_FLAGS_NONE = 0,
+> +	CFS_INODE_FLAGS_PAYLOAD = 1 << 0,
+> +	CFS_INODE_FLAGS_MODE = 1 << 1,
+> +	CFS_INODE_FLAGS_NLINK = 1 << 2,
+> +	CFS_INODE_FLAGS_UIDGID = 1 << 3,
+> +	CFS_INODE_FLAGS_RDEV = 1 << 4,
+> +	CFS_INODE_FLAGS_TIMES = 1 << 5,
+> +	CFS_INODE_FLAGS_TIMES_NSEC = 1 << 6,
+> +	CFS_INODE_FLAGS_LOW_SIZE = 1 << 7, /* Low 32bit of st_size */
+> +	CFS_INODE_FLAGS_HIGH_SIZE = 1 << 8, /* High 32bit of st_size */
+> +	CFS_INODE_FLAGS_XATTRS = 1 << 9,
+> +	CFS_INODE_FLAGS_DIGEST = 1
+> +				 << 10, /* fs-verity sha256 digest of content */
+
+Include << 10 on line above
+
+Brian
+
