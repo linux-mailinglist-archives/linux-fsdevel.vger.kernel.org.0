@@ -2,135 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1D09E65F085
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jan 2023 16:51:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 21F3865F082
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jan 2023 16:51:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234668AbjAEPvM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Jan 2023 10:51:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38644 "EHLO
+        id S233417AbjAEPvL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Jan 2023 10:51:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39310 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234970AbjAEPuY (ORCPT
+        with ESMTP id S234960AbjAEPuY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Thu, 5 Jan 2023 10:50:24 -0500
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D7AB55F481
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jan 2023 07:50:23 -0800 (PST)
-Received: from letrec.thunk.org (host-67-21-23-146.mtnsat.com [67.21.23.146] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 305FnZPB011422
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Thu, 5 Jan 2023 10:49:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1672933788; bh=SwRwXE7W0BAf789h44Lpm0WiZ8Jk4yCRVsQWnf58tQ0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=TWjo6ehQJMOdGDOS3GyzzMTHfBLKSbdtpKKlth14VGSLkrbqBtSQ2kroPogEvf4OX
-         lzrX97+nCQ51R0BJvoeTTIuhvLi60KUruuT8esOIiVi3Fvem7+pYZZDULwFcu03ZIl
-         h/C+KC8+HtlMhFZWqB77VShWfrvLnC5qa77df6rr1LtZvd1o+7y39ywk+S4FEk+nA3
-         F39uFVUQchu/C8AUqdg8wlrjQIqYYZbdu70FwNwia7Sh+4K7APP6cPeUUgrzy/lu/r
-         Jk9FEZn1y5U15N1HLLWLjtQ+fyh4GY29zG9tNgffaajL9CAJ5PdGy66Y+pZDtYIx4G
-         EkUGvnba+IlTg==
-Received: by letrec.thunk.org (Postfix, from userid 15806)
-        id 02E768C0850; Thu,  5 Jan 2023 10:49:32 -0500 (EST)
-Date:   Thu, 5 Jan 2023 10:49:32 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Sarthak Kukreti <sarthakkukreti@chromium.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>, sarthakkukreti@google.com,
-        dm-devel@redhat.com, linux-block@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Andreas Dilger <adilger.kernel@dilger.ca>,
-        Bart Van Assche <bvanassche@google.com>,
-        Daniil Lunev <dlunev@google.com>
-Subject: Re: [PATCH v2 3/7] fs: Introduce FALLOC_FL_PROVISION
-Message-ID: <Y7bxjKusa2L/TNRE@mit.edu>
-References: <20221229081252.452240-1-sarthakkukreti@chromium.org>
- <20221229081252.452240-4-sarthakkukreti@chromium.org>
- <Y7Wr2uadI+82BB6a@magnolia>
- <CAG9=OMNbeU=Xg5bWvHUSfzRf8vsk6csvcw5BGZeMD5Lo7dfKFQ@mail.gmail.com>
+Received: from mga02.intel.com (mga02.intel.com [134.134.136.20])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 302AB5E09D;
+        Thu,  5 Jan 2023 07:50:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1672933822; x=1704469822;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=RJatMYrbPfEvNurBxtLaBiUJD4LCEtP8VKvLxxz/leM=;
+  b=kd+ndZ8K31PGe55ZJiqMQis4fsu+hv8Rm63LgYwx5JxFW9JsIhuqBdsU
+   mUV2x5Jscn5rE5BjY3vePPgkoaYaz56cKPdGNYKuP4sRZal5LafympAro
+   8Gry/cIEmHQZK8kFSjgyEQ42SvcWVmih9WIPeRz6HicpQ4F1I/efKWDRx
+   U45aDrwzVvms7bgxa2YiAQr+44rJrMnUZkrcIw/U/OHnSaeDDlumeK9xR
+   xF9qVk4Ey39D7v53nkXypFoSQTGoSghKWaH2M4l5pQOsbTY2PPWg3RgHE
+   XmHRJBeyW+Me1s/I7vsi4I/4qv26uDvkN2g3YnTaRbi8io+T7QP+eHsKt
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10580"; a="310026053"
+X-IronPort-AV: E=Sophos;i="5.96,303,1665471600"; 
+   d="scan'208";a="310026053"
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by orsmga101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Jan 2023 07:50:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10580"; a="633190458"
+X-IronPort-AV: E=Sophos;i="5.96,303,1665471600"; 
+   d="scan'208";a="633190458"
+Received: from lkp-server02.sh.intel.com (HELO f1920e93ebb5) ([10.239.97.151])
+  by orsmga006.jf.intel.com with ESMTP; 05 Jan 2023 07:50:18 -0800
+Received: from kbuild by f1920e93ebb5 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pDSVV-0001zD-1E;
+        Thu, 05 Jan 2023 15:50:17 +0000
+Date:   Thu, 05 Jan 2023 23:49:40 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     loongarch@lists.linux.dev, linux-omap@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        Linux Memory Management List <linux-mm@kvack.org>
+Subject: [linux-next:master] BUILD REGRESSION
+ cc3c08b41a9c9402ead726ec6deb1217081d0d8b
+Message-ID: <63b6f194.O4eKwdyFWFrII4HE%lkp@intel.com>
+User-Agent: Heirloom mailx 12.5 6/20/10
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG9=OMNbeU=Xg5bWvHUSfzRf8vsk6csvcw5BGZeMD5Lo7dfKFQ@mail.gmail.com>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,MAY_BE_FORGED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
+        RCVD_IN_MSPIKE_H3,RCVD_IN_MSPIKE_WL,SPF_HELO_NONE,SPF_NONE
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 04, 2023 at 01:22:06PM -0800, Sarthak Kukreti wrote:
-> > How expensive is this expected to be?  Is this why you wanted a separate
-> > mode flag?
->
-> Yes, the exact latency will depend on the stacked block devices and
-> the fragmentation at the allocation layers.
-> 
-> I did a quick test for benchmarking fallocate() with an:
-> A) ext4 filesystem mounted with 'noprovision'
-> B) ext4 filesystem mounted with 'provision' on a dm-thin device.
-> C) ext4 filesystem mounted with 'provision' on a loop device with a
-> sparse backing file on the filesystem in (B).
-> 
-> I tested file sizes from 512M to 8G, time taken for fallocate() in (A)
-> remains expectedly flat at ~0.01-0.02s, but for (B), it scales from
-> 0.03-0.4s and for (C) it scales from 0.04s-0.52s (I captured the exact
-> time distribution in the cover letter
-> https://marc.info/?l=linux-ext4&m=167230113520636&w=2)
-> 
-> +0.5s for a 8G fallocate doesn't sound a lot but I think fragmentation
-> and how the block device is layered can make this worse...
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master
+branch HEAD: cc3c08b41a9c9402ead726ec6deb1217081d0d8b  Add linux-next specific files for 20230105
 
-If userspace uses fallocate(2) there are generally two reasons.
-Either they **really** don't want to get the NOSPC, in which case
-noprovision will not give them what they want unless we modify their
-source code to add this new FALLOC_FL_PROVISION flag --- which may not
-be possible if it is provided in a binary-only format (for example,
-proprietary databases shipped by companies beginning with the letters
-'I' or 'O').
+Error/Warning reports:
 
-Or, they really care about avoiding fragmentation by giving a hint to
-the file system that layout is important, and so **please** allocate
-the space right away so that it is more likely that the space will be
-laid out in a contiguous fashion.  Of course, the moment you use
-thin-provisioning this goes out the window, since even if the space is
-contiguous on the dm-thin layer, on the underlying storage layer it is
-likely that things will be fragmented to a fare-thee-well, and either
-(a) you have a vast amount of flash to try to mitigate the performance
-hit of using thin-provisioning (example, hardware thin-provisioning
-such as EMC storage arrays), or (b) you really don't care about
-performance since space savings is what you're going for.
+https://lore.kernel.org/oe-kbuild-all/202212090509.NjAl9tbo-lkp@intel.com
+https://lore.kernel.org/oe-kbuild-all/202212170128.DFuMhkwh-lkp@intel.com
 
-So.... because of the issue of changing the semantics of what
-fallocate(2) will guarantee, unless programs are forced to change
-their code to use this new FALLOC flag, I really am not very fond of
-it.
+Error/Warning: (recently discovered and may have been fixed)
 
-I suspect that using a mount option (which should default to
-"provision"; if you want to break user API expectations, it should
-require a mount option for the system administrator to explicitly OK
-such a change), is OK.
+Documentation/gpu/drm-internals:179: ./include/drm/drm_file.h:411: WARNING: undefined label: drm_accel_node (if the link has no caption the label must precede a section header)
+Warning: tools/power/cpupower/man/cpupower-powercap-info.1 references a file that doesn't exist: Documentation/power/powercap/powercap.txt
+aarch64-linux-ld: ID map text too big or misaligned
+arch/loongarch/kernel/asm-offsets.c:265:6: warning: no previous prototype for 'output_pbe_defines' [-Wmissing-prototypes]
+drivers/gpu/drm/ttm/ttm_bo_util.c:364:32: error: implicit declaration of function 'vmap'; did you mean 'kmap'? [-Werror=implicit-function-declaration]
+drivers/gpu/drm/ttm/ttm_bo_util.c:429:17: error: implicit declaration of function 'vunmap'; did you mean 'kunmap'? [-Werror=implicit-function-declaration]
 
-As far as the per-file mode --- I'm not convinced it's really
-necessary.  In general if you are using thin-provisioning file systems
-tend to be used explicitly for one purpose, so adding the complexity
-of doing it on a per-file basis is probably not really needed.  That
-being said, your existing prototype requires searching for the
-extended attribute on every single file allocation, which is not a
-great idea.  On a system with SELinux enabled, every file will have an
-xattr block, and requiring that it be searched on every file
-allocation would be unfortunate.  It would be better to check for the
-xattr when the file is opened, and then setting a flag in the struct
-file.  However, it might be better to see if it there is a real demand
-for such a feature before adding it.
+Unverified Error/Warning (likely false positive, please contact us if interested):
 
-						- Ted
+drivers/block/null_blk/zoned.c:769 zone_cond_store() warn: potential spectre issue 'dev->zones' [w] (local cap)
+drivers/clk/qcom/camcc-sm6350.c:1745:15: sparse: sparse: symbol 'camcc_sm6350_hws' was not declared. Should it be static?
+fs/udf/file.c:177 udf_file_write_iter() warn: inconsistent returns '&iinfo->i_data_sem'.
+
+Error/Warning ids grouped by kconfigs:
+
+gcc_recent_errors
+|-- arm64-allyesconfig
+|   `-- aarch64-linux-ld:ID-map-text-too-big-or-misaligned
+|-- loongarch-allyesconfig
+|   `-- arch-loongarch-kernel-asm-offsets.c:warning:no-previous-prototype-for-output_pbe_defines
+|-- mips-allyesconfig
+|   |-- drivers-gpu-drm-ttm-ttm_bo_util.c:error:implicit-declaration-of-function-vmap
+|   `-- drivers-gpu-drm-ttm-ttm_bo_util.c:error:implicit-declaration-of-function-vunmap
+|-- parisc-randconfig-m041-20230102
+|   `-- fs-udf-file.c-udf_file_write_iter()-warn:inconsistent-returns-iinfo-i_data_sem-.
+|-- riscv-randconfig-m031-20230105
+|   |-- drivers-block-null_blk-zoned.c-zone_cond_store()-warn:potential-spectre-issue-dev-zones-w-(local-cap)
+|   `-- drivers-regulator-tps65219-regulator.c-tps65219_regulator_probe()-warn:unsigned-rdev-is-never-less-than-zero.
+|-- riscv-randconfig-s032-20230105
+|   `-- drivers-clk-qcom-camcc-sm6350.c:sparse:sparse:symbol-camcc_sm6350_hws-was-not-declared.-Should-it-be-static
+`-- x86_64-allnoconfig
+    |-- Documentation-gpu-drm-internals:.-include-drm-drm_file.h:WARNING:undefined-label:drm_accel_node-(if-the-link-has-no-caption-the-label-must-precede-a-section-header)
+    `-- Warning:tools-power-cpupower-man-cpupower-powercap-info.-references-a-file-that-doesn-t-exist:Documentation-power-powercap-powercap.txt
+clang_recent_errors
+`-- x86_64-rhel-8.3-rust
+    `-- vmlinux.o:warning:objtool:___ksymtab_gpl-_RNvNtCsfATHBUcknU9_6kernel5print16call_printk_cont:data-relocation-to-ENDBR:_RNvNtCsfATHBUcknU9_6kernel5print16call_printk_cont
+
+elapsed time: 726m
+
+configs tested: 62
+configs skipped: 2
+
+gcc tested configs:
+um                             i386_defconfig
+x86_64                            allnoconfig
+um                           x86_64_defconfig
+i386                                defconfig
+x86_64                        randconfig-a004
+x86_64                        randconfig-a002
+x86_64                           rhel-8.3-bpf
+x86_64                           rhel-8.3-syz
+m68k                             allmodconfig
+powerpc                           allnoconfig
+x86_64                    rhel-8.3-kselftests
+x86_64                         rhel-8.3-kunit
+x86_64                        randconfig-a006
+x86_64                          rhel-8.3-func
+i386                          randconfig-a014
+x86_64                           rhel-8.3-kvm
+arc                              allyesconfig
+i386                          randconfig-a012
+alpha                            allyesconfig
+i386                          randconfig-a016
+x86_64                              defconfig
+m68k                             allyesconfig
+arc                                 defconfig
+x86_64                        randconfig-a013
+x86_64                        randconfig-a011
+ia64                             allmodconfig
+x86_64                               rhel-8.3
+x86_64                           allyesconfig
+i386                          randconfig-a001
+alpha                               defconfig
+arc                  randconfig-r043-20230105
+s390                                defconfig
+i386                          randconfig-a003
+s390                             allmodconfig
+x86_64                        randconfig-a015
+i386                          randconfig-a005
+s390                 randconfig-r044-20230105
+i386                             allyesconfig
+arm                                 defconfig
+s390                             allyesconfig
+riscv                randconfig-r042-20230105
+sh                               allmodconfig
+mips                             allyesconfig
+powerpc                          allmodconfig
+arm64                            allyesconfig
+arm                              allyesconfig
+
+clang tested configs:
+x86_64                          rhel-8.3-rust
+x86_64                        randconfig-a001
+i386                          randconfig-a013
+x86_64                        randconfig-a003
+x86_64                        randconfig-a005
+i386                          randconfig-a011
+i386                          randconfig-a015
+x86_64                        randconfig-a012
+x86_64                        randconfig-a014
+arm                  randconfig-r046-20230105
+i386                          randconfig-a002
+x86_64                        randconfig-a016
+hexagon              randconfig-r041-20230105
+i386                          randconfig-a004
+hexagon              randconfig-r045-20230105
+i386                          randconfig-a006
+
+-- 
+0-DAY CI Kernel Test Service
+https://01.org/lkp
