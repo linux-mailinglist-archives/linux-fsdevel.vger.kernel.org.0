@@ -2,76 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 635A565F09A
-	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jan 2023 16:56:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7988165F15B
+	for <lists+linux-fsdevel@lfdr.de>; Thu,  5 Jan 2023 17:45:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234692AbjAEP4e (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 5 Jan 2023 10:56:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43886 "EHLO
+        id S234361AbjAEQpj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 5 Jan 2023 11:45:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234788AbjAEP4Q (ORCPT
+        with ESMTP id S234074AbjAEQph (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 5 Jan 2023 10:56:16 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4128B6326
-        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jan 2023 07:55:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1672934132;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=mBNU3VIvv0Lg3ecO5+t5pdiiz768VTqxLlFC0U2szuc=;
-        b=QCTF7UBeiddeQ8/EmCdNhA9AvhUuftcGnt98pJ7gEWA4MB4Rg5J//bRCKqaSwVA/7ykUYP
-        r5DyZ13p2AQ/4Cj9o7bD5mqdJmDXW1CXWHsbaLK7oHajGPmO3qEnKIE/F5b7dbgFfZe1sB
-        WWRcAtZYv9FymKN01DoUZAYJDOTcLCM=
-Received: from mail-vk1-f200.google.com (mail-vk1-f200.google.com
- [209.85.221.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-662-xBELkGlOP_GhWdD0I2u_Lw-1; Thu, 05 Jan 2023 10:55:31 -0500
-X-MC-Unique: xBELkGlOP_GhWdD0I2u_Lw-1
-Received: by mail-vk1-f200.google.com with SMTP id w22-20020a1fad16000000b003d5d7c16e71so3068380vke.23
-        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jan 2023 07:55:31 -0800 (PST)
+        Thu, 5 Jan 2023 11:45:37 -0500
+Received: from mail-qt1-x829.google.com (mail-qt1-x829.google.com [IPv6:2607:f8b0:4864:20::829])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8966C57908
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jan 2023 08:45:35 -0800 (PST)
+Received: by mail-qt1-x829.google.com with SMTP id a16so30345440qtw.10
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jan 2023 08:45:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20210112.gappssmtp.com; s=20210112;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6arApO6IYFcLwiEx1xQQun777cX20MCWlNjtRHJ5Clg=;
+        b=uepsKThOle1iENJ7DV2TsYHwy/gOQiuTQF0fNpBMQRR8+VabvCU10BPMzbZh1ORZXg
+         3MkOl+1WmB/YOuAUHwDScjl7S9g8SKYkBR9BtOnrgK+DaApmIuxT+midA2oFCc1pshKL
+         /LBLrpF4wfUe3LCYZ7865wvKxInxFvIKQ/5OPQHJQMMcUP8NglSZDL1il/jyHarz2MTy
+         XUdQQGjOApmZcO4QeaaRW+nU0FJEWSCPAfKDCbDjx0aXkWjegpdTqb6mEVNEZ52MqR0u
+         IgC6ByABNBVj0lsR0KV++Fraa0FUxauGp1jP7KbvQz/h6DzdeffDZgyw2iGNH2NkrW6k
+         SfRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=mBNU3VIvv0Lg3ecO5+t5pdiiz768VTqxLlFC0U2szuc=;
-        b=l3wxLFhrQQH3SDQ3GgL0PVFGO4fZrxOSt/hAfntXwbqILK6DmRPkK80O3rCEFDo8/d
-         oKU5R4zCT78pVU3WcdcG25ShdFi67FUa/zKxJbPAjZpsoNZY0/1r8+WSrIRMBxPQsz6Q
-         xWTJXLbSDWgCDCsmkWmz+SmCTlyomFcTfij32FouHQMcrsjSycChHohOVQqUR3hz0Ev5
-         h5KGErNtaYV3v2L9OwXEM7fmL8kWPOAMWQ2iXB9kBdRjMPi5L6l6SekNlWCDfi/ZPK9A
-         iB1x9qFnGRxAfJ9k642k3ix+M+WOLd0N69MEeZ4PyqAeFRGNgsZHHEnND9u45ahlRkU0
-         NNwA==
-X-Gm-Message-State: AFqh2ko2TFEP04zDUs3WtFH6n+fQ21aB6yUxkw7fwspRkZGIfKtyfv70
-        x9u60wjsl/67TVKeOTsi3p7+VXXzPygDx5aBMp18QtkF+qwwh2+4fR69YGJQ1nSIn8vkOcdbaRu
-        iQFWWNDUyHBdBC9MQNPc/oNm/fQ==
-X-Received: by 2002:a05:6122:4d:b0:3d5:ec83:511c with SMTP id q13-20020a056122004d00b003d5ec83511cmr5525306vkn.12.1672934130769;
-        Thu, 05 Jan 2023 07:55:30 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXuLtn4rKDFfRiehYDUfitP/nNOf/5dbrgvceHVBDB3sl1tUmeZ5RWi95BuWEHBzKFVscMnExA==
-X-Received: by 2002:a05:6122:4d:b0:3d5:ec83:511c with SMTP id q13-20020a056122004d00b003d5ec83511cmr5525294vkn.12.1672934130505;
-        Thu, 05 Jan 2023 07:55:30 -0800 (PST)
-Received: from x1 (c-73-214-169-22.hsd1.pa.comcast.net. [73.214.169.22])
-        by smtp.gmail.com with ESMTPSA id q10-20020a05620a0d8a00b006b949afa980sm25726912qkl.56.2023.01.05.07.55.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Jan 2023 07:55:29 -0800 (PST)
-Date:   Thu, 5 Jan 2023 10:55:28 -0500
-From:   Brian Masney <bmasney@redhat.com>
-To:     Alexander Larsson <alexl@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gscrivan@redhat.com
-Subject: Re: [PATCH 2/6] composefs: Add on-disk layout
-Message-ID: <Y7by8Pv6z+Z1o3pu@x1>
-References: <cover.1669631086.git.alexl@redhat.com>
- <cbe0d67a97c8b5157de06cedb67c88794c9c304e.1669631086.git.alexl@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cbe0d67a97c8b5157de06cedb67c88794c9c304e.1669631086.git.alexl@redhat.com>
-User-Agent: Mutt/2.2.7 (2022-08-07)
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        bh=6arApO6IYFcLwiEx1xQQun777cX20MCWlNjtRHJ5Clg=;
+        b=APPguZHbsyckLI53wo0bT8YYwCCV3lUgIof20MZuKiw7AWWAnz2+H4deBwv/zzYXAE
+         cIn10EYSrXrXli5mMOQcxnovJ57XZVjOoIMj+NiDdmJDZxE878a8msniQUZWA3Ou3Jpf
+         RFswgldhSxX07R/H88SpzvyPgj1qr9uXS5/VxcpFE+6HUdApvGKHcnQ9k7nc4Yuw/G2D
+         mh20IxAq8GHP0lI4T96N2YI1rsaaLD0roNif4QbSI5eaCv8Gt7wvZWR9WMowCWA4MA8T
+         dPn6yfjnZiHoqMI9BwfRIR3OcryGRPy9mKIZcXF+WiV2pPpVDTFFKsUbh7Q+o8v++NhN
+         E2GA==
+X-Gm-Message-State: AFqh2kpiAmFOSieMHW2COO8fszZBRbwm1+du3Z2BZ1qN0+RPpgLW+4ne
+        ByRYltLHtP6OPkSQ9BOWLOOrkg==
+X-Google-Smtp-Source: AMrXdXsbTE4sJrzTmujne/EY/Ou99CTR4ifsI+W8HXA5+B6VmowpRpm7dSy8aUe89IRj2jXJHMV1KA==
+X-Received: by 2002:ac8:44b2:0:b0:3a9:89f1:82a with SMTP id a18-20020ac844b2000000b003a989f1082amr69143771qto.61.1672937134671;
+        Thu, 05 Jan 2023 08:45:34 -0800 (PST)
+Received: from smtpclient.apple (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
+        by smtp.gmail.com with ESMTPSA id c9-20020ac85189000000b003a54a19c550sm21840745qtn.57.2023.01.05.08.45.32
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Jan 2023 08:45:33 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
+Subject: Re: [syzbot] [hfs?] WARNING in hfs_write_inode
+From:   Viacheslav Dubeyko <slava@dubeyko.com>
+In-Reply-To: <Y7bw7X1Y5KtmPF5s@casper.infradead.org>
+Date:   Thu, 5 Jan 2023 08:45:31 -0800
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        syzbot <syzbot+7bb7cd3595533513a9e7@syzkaller.appspotmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        christian.brauner@ubuntu.com,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        ZhangPeng <zhangpeng362@huawei.com>,
+        linux-m68k@lists.linux-m68k.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <50D6A66B-D994-48F4-9EBA-360E57A37BBE@dubeyko.com>
+References: <000000000000dbce4e05f170f289@google.com>
+ <5f45bb9a-5e00-48dd-82b0-46b19b1b98a3@app.fastmail.com>
+ <CAHk-=wi8XyAUF9_z6-oa4Ava6PVZeE-=TVNcFK1puQHpOtqLLw@mail.gmail.com>
+ <ab7a9477-ddc7-430f-b4ee-c67251e879b0@app.fastmail.com>
+ <2575F983-D170-4B79-A6BA-912D4ED2CC73@dubeyko.com>
+ <46F233BB-E587-4F2B-AA62-898EB46C9DCE@dubeyko.com>
+ <Y7bw7X1Y5KtmPF5s@casper.infradead.org>
+To:     Matthew Wilcox <willy@infradead.org>
+X-Mailer: Apple Mail (2.3696.120.41.1.1)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,194 +89,34 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Nov 28, 2022 at 12:16:23PM +0100, Alexander Larsson wrote:
-> This commit adds the on-disk layout header file of composefs.
-> 
-> Signed-off-by: Alexander Larsson <alexl@redhat.com>
-> Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
 
-Add Co-Developed-By: Giuseppe ... ?
 
-Full disclosure: I'm not a file system developer but I'll attempt to
-help with the review of this series.
+> On Jan 5, 2023, at 7:46 AM, Matthew Wilcox <willy@infradead.org> =
+wrote:
+>=20
+> On Wed, Jan 04, 2023 at 08:37:16PM -0800, Viacheslav Dubeyko wrote:
+>> Also, as far as I can see, available volume in report (mount_0.gz) =
+somehow corrupted already:
+>=20
+> Syzbot generates deliberately-corrupted (aka fuzzed) filesystem =
+images.
+> So basically, you can't trust anything you read from the disc.
+>=20
 
-> ---
->  fs/composefs/cfs.h | 242 +++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 242 insertions(+)
->  create mode 100644 fs/composefs/cfs.h
-> 
-> diff --git a/fs/composefs/cfs.h b/fs/composefs/cfs.h
-> new file mode 100644
-> index 000000000000..8f001fd28d6b
-> --- /dev/null
-> +++ b/fs/composefs/cfs.h
-> @@ -0,0 +1,242 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * composefs
-> + *
-> + * Copyright (C) 2021 Giuseppe Scrivano
-> + * Copyright (C) 2022 Alexander Larsson
-> + *
-> + * This file is released under the GPL.
-> + */
-> +
-> +#ifndef _CFS_H
-> +#define _CFS_H
-> +
-> +#include <asm/byteorder.h>
-> +#include <crypto/sha2.h>
-> +#include <linux/fs.h>
-> +#include <linux/stat.h>
-> +#include <linux/types.h>
-> +
-> +#define CFS_VERSION 1
-> +
-> +#define CFS_MAGIC 0xc078629aU
-> +
-> +#define CFS_MAX_DIR_CHUNK_SIZE 4096
-> +#define CFS_MAX_XATTRS_SIZE 4096
-> +
-> +static inline u16 cfs_u16_to_file(u16 val)
-> +{
-> +	return cpu_to_le16(val);
-> +}
-> +
-> +static inline u32 cfs_u32_to_file(u32 val)
-> +{
-> +	return cpu_to_le32(val);
-> +}
-> +
-> +static inline u64 cfs_u64_to_file(u64 val)
-> +{
-> +	return cpu_to_le64(val);
-> +}
-> +
-> +static inline u16 cfs_u16_from_file(u16 val)
-> +{
-> +	return le16_to_cpu(val);
-> +}
-> +
-> +static inline u32 cfs_u32_from_file(u32 val)
-> +{
-> +	return le32_to_cpu(val);
-> +}
-> +
-> +static inline u64 cfs_u64_from_file(u64 val)
-> +{
-> +	return le64_to_cpu(val);
-> +}
+If the volume has been deliberately corrupted, then no guarantee that =
+file system
+driver will behave nicely. Technically speaking, inode write operation =
+should never
+happened for corrupted volume because the corruption should be detected =
+during
+b-tree node initialization time. If we would like to achieve such nice =
+state of HFS/HFS+
+drivers, then it requires a lot of refactoring/implementation efforts. I =
+am not sure that
+it is worth to do because not so many guys really use HFS/HFS+ as the =
+main file
+system under Linux.
 
-I don't see where the cfs_xxx_{to,from}_file() approach is used in other
-filesystems. Instead, move the cpu() functions directly into the code.
-
-> +static inline int cfs_xdigit_value(char c)
-> +{
-> +	if (c >= '0' && c <= '9')
-> +		return c - '0';
-> +	if (c >= 'A' && c <= 'F')
-> +		return c - 'A' + 10;
-> +	if (c >= 'a' && c <= 'f')
-> +		return c - 'a' + 10;
-> +	return -1;
-> +}
-
-There's some utilities in lib/hexdump.c that you can use. hex_to_bin()
-will convert a single character and hex2bin() will convert a string for
-you.
-
-> +static inline int cfs_digest_from_payload(const char *payload,
-> +					  size_t payload_len,
-> +					  u8 digest_out[SHA256_DIGEST_SIZE])
-> +{
-> +	const char *p, *end;
-> +	u8 last_digit = 0;
-> +	int digit = 0;
-> +	size_t n_nibbles = 0;
-
-Put in reverse Christmas tree order.
-
-> +
-> +	end = payload + payload_len;
-> +	for (p = payload; p != end; p++) {
-> +		/* Skip subdir structure */
-> +		if (*p == '/')
-> +			continue;
-> +
-> +		/* Break at (and ignore) extension */
-> +		if (*p == '.')
-> +			break;
-
-A comment would be helpful in this area that shows what the payload is
-expected to be.
-
-> +
-> +		if (n_nibbles == SHA256_DIGEST_SIZE * 2)
-> +			return -1; /* Too long */
-
-return -EINVAL; ?
-
-> +
-> +		digit = cfs_xdigit_value(*p);
-> +		if (digit == -1)
-> +			return -1; /* Not hex digit */
-
--EINVAL here as well
-
-> +
-> +		n_nibbles++;
-> +		if ((n_nibbles % 2) == 0) {
-> +			digest_out[n_nibbles / 2 - 1] =
-> +				(last_digit << 4) | digit;
-> +		}
-> +		last_digit = digit;
-> +	}
-> +
-> +	if (n_nibbles != SHA256_DIGEST_SIZE * 2)
-> +		return -1; /* Too short */
-
--EINVAL here as well
-
-> +
-> +	return 0;
-> +}
-> +
-> +struct cfs_vdata_s {
-> +	u64 off;
-> +	u32 len;
-> +} __packed;
-> +
-> +struct cfs_header_s {
-> +	u8 version;
-> +	u8 unused1;
-> +	u16 unused2;
-> +
-> +	u32 magic;
-
-Should the magic number appear first?
-
-> +	u64 data_offset;
-> +	u64 root_inode;
-> +
-> +	u64 unused3[2];
-> +} __packed;
-> +
-> +enum cfs_inode_flags {
-> +	CFS_INODE_FLAGS_NONE = 0,
-> +	CFS_INODE_FLAGS_PAYLOAD = 1 << 0,
-> +	CFS_INODE_FLAGS_MODE = 1 << 1,
-> +	CFS_INODE_FLAGS_NLINK = 1 << 2,
-> +	CFS_INODE_FLAGS_UIDGID = 1 << 3,
-> +	CFS_INODE_FLAGS_RDEV = 1 << 4,
-> +	CFS_INODE_FLAGS_TIMES = 1 << 5,
-> +	CFS_INODE_FLAGS_TIMES_NSEC = 1 << 6,
-> +	CFS_INODE_FLAGS_LOW_SIZE = 1 << 7, /* Low 32bit of st_size */
-> +	CFS_INODE_FLAGS_HIGH_SIZE = 1 << 8, /* High 32bit of st_size */
-> +	CFS_INODE_FLAGS_XATTRS = 1 << 9,
-> +	CFS_INODE_FLAGS_DIGEST = 1
-> +				 << 10, /* fs-verity sha256 digest of content */
-
-Include << 10 on line above
-
-Brian
+Thanks,
+Slava.
 
