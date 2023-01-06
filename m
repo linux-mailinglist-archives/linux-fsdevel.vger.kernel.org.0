@@ -2,120 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1B2AC65FF11
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 11:39:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C05A365FFCA
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 12:49:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232320AbjAFKjg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Jan 2023 05:39:36 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42644 "EHLO
+        id S232758AbjAFLtm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Jan 2023 06:49:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41846 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231297AbjAFKjZ (ORCPT
+        with ESMTP id S230164AbjAFLtk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Jan 2023 05:39:25 -0500
-Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 722986C2BA;
-        Fri,  6 Jan 2023 02:39:24 -0800 (PST)
-Received: by mail-ed1-x52a.google.com with SMTP id c34so1781227edf.0;
-        Fri, 06 Jan 2023 02:39:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Io70r00Nt8uTv7+PmyuFC/gWUcP4KkaEJZvkCpWCaqQ=;
-        b=oFpy4Ra/8QxNX57dJDeFCaMr5GTpHTJ4l0xldBOSncrChQyGUwobaMBXkoffUTVxKX
-         BvY4zuUsrNTODkKqrswmmaErMDYY+ETN98bgoNz12eMivqqFgY0+B4AvzbIHhdww62GT
-         KKa0zLzmhCmBR86WtZpiESV+qn3lnxifkiBqVSJWauaUPXmCaRDeP5sPjvzNiTji/RHz
-         wseKhi3NC/ATQT+TQUyE/HnNCmAGZlJFr0UVQHPgZvMkOzeM5cZqQ9AZ108ZRiRbTWQF
-         exb61VyB3Nt6tWO2pDHzkU0Ei3HADVEnUk1sZYkeFjFgHvb9RHDlAIVnq3YWCNHTvIDm
-         h2Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Io70r00Nt8uTv7+PmyuFC/gWUcP4KkaEJZvkCpWCaqQ=;
-        b=5PH+Hy2IAGpjsBpDGIX0Rxw5d07nEPl64crPE+uBoZXxOGFUATGoFn85uQGd+hzUcb
-         FaaSRYCyx219wLysKlKbA/Nx+mjEyr5gg2/tpC2wQvymGace/mEM5ylXOb/Fd8+ll0Pe
-         33SaxEAqEy9gz7xCpn++V5irsPjD4X5Lm+cPyZ3gQ7J+2FUSqVVwonJAWXMPMeXE5VVC
-         Lq6r027lj4UpXVt8iJtO861uk2Ow0PQ2+gVNg8BaFJWFZXZn5+NsYlHQhzEE0t0hfHy1
-         zsBIHlslxdc3r3BdYvJhq28A2/h7XabBSN+uf4jDqlGOnCX6EZBlH4guuaq44ASOcY/X
-         2Qqg==
-X-Gm-Message-State: AFqh2kq+y9jD/uOsD6rJvY/+BA0wnRkOnJXREOfXtyFNQ4XeWEP93s/o
-        Y30TrFV2jvKkLadLyj0x4Q==
-X-Google-Smtp-Source: AMrXdXvfYrea77To0XKr5bkGGgtW/QLQnQZnFbJP0UwISUZTUlVdxFoq68a40TZwdMS3GHqghNyFJA==
-X-Received: by 2002:a05:6402:3706:b0:472:9af1:163f with SMTP id ek6-20020a056402370600b004729af1163fmr48555537edb.37.1673001562912;
-        Fri, 06 Jan 2023 02:39:22 -0800 (PST)
-Received: from p183 ([46.53.252.178])
-        by smtp.gmail.com with ESMTPSA id fj20-20020a0564022b9400b0048ee88aa4d0sm363551edb.56.2023.01.06.02.39.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jan 2023 02:39:22 -0800 (PST)
-Date:   Fri, 6 Jan 2023 13:39:20 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
-Cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Brian Foster <bfoster@redhat.com>,
-        Guo Zhengkui <guozhengkui@vivo.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: Re: BUG: core dump in selftest of proc fs
-Message-ID: <Y7f6WBUXBz8tlr3b@p183>
-References: <fd9206f6-3ec4-cafc-e313-dfddf957bd5e@alu.unizg.hr>
+        Fri, 6 Jan 2023 06:49:40 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C6D4A72882
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jan 2023 03:49:39 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 38D6D248C5;
+        Fri,  6 Jan 2023 11:49:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1673005778; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DA5uEZA/6RMChqOFGO0GlDp5YkAKP7yAADZsWYuorDo=;
+        b=2uEfkrmt8YmCcjgEH535OSqVAv1+lY8FHf2aUEjegkNKT7JUldYMdG/mucVpKRVOvOIggy
+        usVxhGZolEsEHt/F62EQ+98+F1set+/UoDH4jgE98k5dN38DSLsSaGJ6FeVSQa7eB4Umnu
+        MZ8I+zhY9AgCHKzv8mxsi9fS/cGKlmU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1673005778;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=DA5uEZA/6RMChqOFGO0GlDp5YkAKP7yAADZsWYuorDo=;
+        b=YebzGhWCI7NmospGQ1bA1uGpDeTY+V1iOFOZ2y2+8PvdzWmV16oMS9MhLKJPKoDDY52N1I
+        AM0nEJE2QTcmkdDw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 29EBA13596;
+        Fri,  6 Jan 2023 11:49:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id ne0zCtIKuGNOLQAAMHmgww
+        (envelope-from <jack@suse.cz>); Fri, 06 Jan 2023 11:49:38 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id A5CB5A0742; Fri,  6 Jan 2023 12:49:37 +0100 (CET)
+Date:   Fri, 6 Jan 2023 12:49:37 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org
+Subject: Re: [GIT PULL] udf fixes for 6.2-rc3 and ext2 cleanup
+Message-ID: <20230106114937.pdiizpqyrjolwult@quack3>
+References: <20230105142644.ubqxsokgthyfi56h@quack3>
+ <CAHk-=wg59MK62LSR-Xs8KsxvmJSnyg1d-aZQ4n5+JKdTOc3RxA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fd9206f6-3ec4-cafc-e313-dfddf957bd5e@alu.unizg.hr>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <CAHk-=wg59MK62LSR-Xs8KsxvmJSnyg1d-aZQ4n5+JKdTOc3RxA@mail.gmail.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 04, 2023 at 07:27:40PM +0100, Mirsad Goran Todorovac wrote:
-> Dear all,
+On Thu 05-01-23 11:23:20, Linus Torvalds wrote:
+> On Thu, Jan 5, 2023 at 6:26 AM Jan Kara <jack@suse.cz> wrote:
+> >
+> > The pull request is somewhat large but given these are all fixes (except
+> > for ext2 conversion) and we are only at rc3, I hope it is fine.
 > 
-> Trying to complete `make kselftest` for the first time, so maybe I'm doing something wrong?
+> That
 > 
-> Or we are having a regression in 6.2-rc2 release candidate ...
+> > Jan Kara (30):
+> >       udf: New directory iteration code
 > 
-> However, the output of selftest run is:
+> really is entirely new code, I want to get these kinds of things
+> during the merge window.
 > 
-> make[2]: Entering directory '.../linux_torvalds/tools/testing/selftests/proc'
-> TAP version 13
-> 1..21
-> # selftests: proc: fd-001-lookup
-> ok 1 selftests: proc: fd-001-lookup
-> # selftests: proc: fd-002-posix-eq
-> ok 2 selftests: proc: fd-002-posix-eq
-> # selftests: proc: fd-003-kthread
-> ok 3 selftests: proc: fd-003-kthread
-> # selftests: proc: proc-loadavg-001
-> ok 4 selftests: proc: proc-loadavg-001
-> # selftests: proc: proc-empty-vm
-> # proc-empty-vm: proc-empty-vm.c:184: test_proc_pid_maps: Assertion `rv == 0' failed.
-> # /usr/bin/timeout: the monitored command dumped core
-> # Aborted
-> not ok 5 selftests: proc: proc-empty-vm # exit=134
-> # selftests: proc: proc-pid-vm
-> # proc-pid-vm: proc-pid-vm.c:365: main: Assertion `rv == len' failed.
-> # /usr/bin/timeout: the monitored command dumped core
-> # Aborted
+> This is not some kind of urgent new regression that needs fixing so
+> urgently that we take new development outside the merge window.
 > 
-> Please find attached lshw output, dmesg, config and lsmod.
+> This needs to go in for 6.3, and _if_ the syzbot reports are
+> considered super-urgent and important enough to be back-ported, then
+> it would need to be marked for stable and backported, simply because
+> then old kernels would need it too.
 > 
-> I am available for further diagnostics.
+> But clearly none of this was considered quite that important. So 6.3 it is.
 > 
-> The platform is Ubuntu 22.10 kinetic kudu on a Lenovo Ideapad 3 15ITL6 laptop.
+> If parts of this is more urgent, send just that part. Not this whole
+> "rewrite directory handling from scratch" stuff.
 
-The "bug" is that "call rel32" instruction testing for executable
-vsyscall page which should be relocated to "call 0xffffffffff600000"
-is messed up. Ubuntu 22.10 ships with "vsyscall=xonly" so there should not be
-any faults when executing from it. But segfault happens with normal
-randomised userspace address.
+Sure, fair enough. I also felt it was kind of borderline whether I should
+wait for the merge window or push. I'll go through the pile and see if
+there are bits which are important enough and can be easily carved out.
 
-I'll change it to "call *rax" which should be more robust (and works)
-and free from relocations.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
