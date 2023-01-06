@@ -2,251 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 980ED65FE59
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 10:52:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1B2AC65FF11
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 11:39:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231289AbjAFJts (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Jan 2023 04:49:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43746 "EHLO
+        id S232320AbjAFKjg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Jan 2023 05:39:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42644 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233757AbjAFJtO (ORCPT
+        with ESMTP id S231297AbjAFKjZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Jan 2023 04:49:14 -0500
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 420C76CFF2;
-        Fri,  6 Jan 2023 01:48:59 -0800 (PST)
-Received: from loongson.cn (unknown [111.207.111.194])
-        by gateway (Coremail) with SMTP id _____8BxUvCH7rdjzg8AAA--.584S3;
-        Fri, 06 Jan 2023 17:48:55 +0800 (CST)
-Received: from loongson.. (unknown [111.207.111.194])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8BxTL6A7rdjWCsVAA--.35666S2;
-        Fri, 06 Jan 2023 17:48:54 +0800 (CST)
-From:   Hongchen Zhang <zhanghongchen@loongson.cn>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Fri, 6 Jan 2023 05:39:25 -0500
+Received: from mail-ed1-x52a.google.com (mail-ed1-x52a.google.com [IPv6:2a00:1450:4864:20::52a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 722986C2BA;
+        Fri,  6 Jan 2023 02:39:24 -0800 (PST)
+Received: by mail-ed1-x52a.google.com with SMTP id c34so1781227edf.0;
+        Fri, 06 Jan 2023 02:39:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Io70r00Nt8uTv7+PmyuFC/gWUcP4KkaEJZvkCpWCaqQ=;
+        b=oFpy4Ra/8QxNX57dJDeFCaMr5GTpHTJ4l0xldBOSncrChQyGUwobaMBXkoffUTVxKX
+         BvY4zuUsrNTODkKqrswmmaErMDYY+ETN98bgoNz12eMivqqFgY0+B4AvzbIHhdww62GT
+         KKa0zLzmhCmBR86WtZpiESV+qn3lnxifkiBqVSJWauaUPXmCaRDeP5sPjvzNiTji/RHz
+         wseKhi3NC/ATQT+TQUyE/HnNCmAGZlJFr0UVQHPgZvMkOzeM5cZqQ9AZ108ZRiRbTWQF
+         exb61VyB3Nt6tWO2pDHzkU0Ei3HADVEnUk1sZYkeFjFgHvb9RHDlAIVnq3YWCNHTvIDm
+         h2Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Io70r00Nt8uTv7+PmyuFC/gWUcP4KkaEJZvkCpWCaqQ=;
+        b=5PH+Hy2IAGpjsBpDGIX0Rxw5d07nEPl64crPE+uBoZXxOGFUATGoFn85uQGd+hzUcb
+         FaaSRYCyx219wLysKlKbA/Nx+mjEyr5gg2/tpC2wQvymGace/mEM5ylXOb/Fd8+ll0Pe
+         33SaxEAqEy9gz7xCpn++V5irsPjD4X5Lm+cPyZ3gQ7J+2FUSqVVwonJAWXMPMeXE5VVC
+         Lq6r027lj4UpXVt8iJtO861uk2Ow0PQ2+gVNg8BaFJWFZXZn5+NsYlHQhzEE0t0hfHy1
+         zsBIHlslxdc3r3BdYvJhq28A2/h7XabBSN+uf4jDqlGOnCX6EZBlH4guuaq44ASOcY/X
+         2Qqg==
+X-Gm-Message-State: AFqh2kq+y9jD/uOsD6rJvY/+BA0wnRkOnJXREOfXtyFNQ4XeWEP93s/o
+        Y30TrFV2jvKkLadLyj0x4Q==
+X-Google-Smtp-Source: AMrXdXvfYrea77To0XKr5bkGGgtW/QLQnQZnFbJP0UwISUZTUlVdxFoq68a40TZwdMS3GHqghNyFJA==
+X-Received: by 2002:a05:6402:3706:b0:472:9af1:163f with SMTP id ek6-20020a056402370600b004729af1163fmr48555537edb.37.1673001562912;
+        Fri, 06 Jan 2023 02:39:22 -0800 (PST)
+Received: from p183 ([46.53.252.178])
+        by smtp.gmail.com with ESMTPSA id fj20-20020a0564022b9400b0048ee88aa4d0sm363551edb.56.2023.01.06.02.39.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Jan 2023 02:39:22 -0800 (PST)
+Date:   Fri, 6 Jan 2023 13:39:20 +0300
+From:   Alexey Dobriyan <adobriyan@gmail.com>
+To:     Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
+Cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
-        Hongchen Zhang <zhanghongchen@loongson.cn>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Eric Dumazet <edumazet@google.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] pipe: use __pipe_{lock,unlock} instead of spinlock
-Date:   Fri,  6 Jan 2023 17:48:44 +0800
-Message-Id: <20230106094844.26241-1-zhanghongchen@loongson.cn>
-X-Mailer: git-send-email 2.34.1
+        Brian Foster <bfoster@redhat.com>,
+        Guo Zhengkui <guozhengkui@vivo.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Thorsten Leemhuis <regressions@leemhuis.info>
+Subject: Re: BUG: core dump in selftest of proc fs
+Message-ID: <Y7f6WBUXBz8tlr3b@p183>
+References: <fd9206f6-3ec4-cafc-e313-dfddf957bd5e@alu.unizg.hr>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8BxTL6A7rdjWCsVAA--.35666S2
-X-CM-SenderInfo: x2kd0w5krqwupkhqwqxorr0wxvrqhubq/
-X-Coremail-Antispam: 1Uk129KBjvJXoW3XFykGw43tw18tryDuw1kuFg_yoW7Zr1UpF
-        43tFW7WrWUAr109rW8GrsxZrnIg398Wa1UJrW8WF4FvFnrGrySqFs2kFyakFs5JrZ7ZryY
-        vF4jqa4Fyr1UArDanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bfxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s
-        1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-        wVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4
-        x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AF
-        wI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-        Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE
-        14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7
-        AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C2
-        67AKxVWUtVW8ZwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
-        8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8
-        JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
-        1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
-        daVFxhVjvjDU0xZFpf9x07jFApnUUUUU=
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <fd9206f6-3ec4-cafc-e313-dfddf957bd5e@alu.unizg.hr>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use spinlock in pipe_read/write cost too much time,IMO
-pipe->{head,tail} can be protected by __pipe_{lock,unlock}.
-On the other hand, we can use __pipe_{lock,unlock} to protect
-the pipe->{head,tail} in pipe_resize_ring and
-post_one_notification.
+On Wed, Jan 04, 2023 at 07:27:40PM +0100, Mirsad Goran Todorovac wrote:
+> Dear all,
+> 
+> Trying to complete `make kselftest` for the first time, so maybe I'm doing something wrong?
+> 
+> Or we are having a regression in 6.2-rc2 release candidate ...
+> 
+> However, the output of selftest run is:
+> 
+> make[2]: Entering directory '.../linux_torvalds/tools/testing/selftests/proc'
+> TAP version 13
+> 1..21
+> # selftests: proc: fd-001-lookup
+> ok 1 selftests: proc: fd-001-lookup
+> # selftests: proc: fd-002-posix-eq
+> ok 2 selftests: proc: fd-002-posix-eq
+> # selftests: proc: fd-003-kthread
+> ok 3 selftests: proc: fd-003-kthread
+> # selftests: proc: proc-loadavg-001
+> ok 4 selftests: proc: proc-loadavg-001
+> # selftests: proc: proc-empty-vm
+> # proc-empty-vm: proc-empty-vm.c:184: test_proc_pid_maps: Assertion `rv == 0' failed.
+> # /usr/bin/timeout: the monitored command dumped core
+> # Aborted
+> not ok 5 selftests: proc: proc-empty-vm # exit=134
+> # selftests: proc: proc-pid-vm
+> # proc-pid-vm: proc-pid-vm.c:365: main: Assertion `rv == len' failed.
+> # /usr/bin/timeout: the monitored command dumped core
+> # Aborted
+> 
+> Please find attached lshw output, dmesg, config and lsmod.
+> 
+> I am available for further diagnostics.
+> 
+> The platform is Ubuntu 22.10 kinetic kudu on a Lenovo Ideapad 3 15ITL6 laptop.
 
-I tested this patch using UnixBench's pipe test case on a x86_64
-machine,and get the following data:
-1) before this patch
-System Benchmarks Partial Index  BASELINE       RESULT    INDEX
-Pipe Throughput                   12440.0     493023.3    396.3
-                                                        ========
-System Benchmarks Index Score (Partial Only)              396.3
+The "bug" is that "call rel32" instruction testing for executable
+vsyscall page which should be relocated to "call 0xffffffffff600000"
+is messed up. Ubuntu 22.10 ships with "vsyscall=xonly" so there should not be
+any faults when executing from it. But segfault happens with normal
+randomised userspace address.
 
-2) after this patch
-System Benchmarks Partial Index  BASELINE       RESULT    INDEX
-Pipe Throughput                   12440.0     507551.4    408.0
-                                                        ========
-System Benchmarks Index Score (Partial Only)              408.0
-
-so we get ~3% speedup.
-
-Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
----
- fs/pipe.c                 | 22 +---------------------
- include/linux/pipe_fs_i.h | 12 ++++++++++++
- kernel/watch_queue.c      |  8 ++++----
- 3 files changed, 17 insertions(+), 25 deletions(-)
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 42c7ff41c2db..4355ee5f754e 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -98,16 +98,6 @@ void pipe_unlock(struct pipe_inode_info *pipe)
- }
- EXPORT_SYMBOL(pipe_unlock);
- 
--static inline void __pipe_lock(struct pipe_inode_info *pipe)
--{
--	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
--}
--
--static inline void __pipe_unlock(struct pipe_inode_info *pipe)
--{
--	mutex_unlock(&pipe->mutex);
--}
--
- void pipe_double_lock(struct pipe_inode_info *pipe1,
- 		      struct pipe_inode_info *pipe2)
- {
-@@ -253,8 +243,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 	 */
- 	was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
- 	for (;;) {
--		/* Read ->head with a barrier vs post_one_notification() */
--		unsigned int head = smp_load_acquire(&pipe->head);
-+		unsigned int head = pipe->head;
- 		unsigned int tail = pipe->tail;
- 		unsigned int mask = pipe->ring_size - 1;
- 
-@@ -322,14 +311,12 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 
- 			if (!buf->len) {
- 				pipe_buf_release(pipe, buf);
--				spin_lock_irq(&pipe->rd_wait.lock);
- #ifdef CONFIG_WATCH_QUEUE
- 				if (buf->flags & PIPE_BUF_FLAG_LOSS)
- 					pipe->note_loss = true;
- #endif
- 				tail++;
- 				pipe->tail = tail;
--				spin_unlock_irq(&pipe->rd_wait.lock);
- 			}
- 			total_len -= chars;
- 			if (!total_len)
-@@ -506,16 +493,13 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			 * it, either the reader will consume it or it'll still
- 			 * be there for the next write.
- 			 */
--			spin_lock_irq(&pipe->rd_wait.lock);
- 
- 			head = pipe->head;
- 			if (pipe_full(head, pipe->tail, pipe->max_usage)) {
--				spin_unlock_irq(&pipe->rd_wait.lock);
- 				continue;
- 			}
- 
- 			pipe->head = head + 1;
--			spin_unlock_irq(&pipe->rd_wait.lock);
- 
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
-@@ -1260,14 +1244,12 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
- 	if (unlikely(!bufs))
- 		return -ENOMEM;
- 
--	spin_lock_irq(&pipe->rd_wait.lock);
- 	mask = pipe->ring_size - 1;
- 	head = pipe->head;
- 	tail = pipe->tail;
- 
- 	n = pipe_occupancy(head, tail);
- 	if (nr_slots < n) {
--		spin_unlock_irq(&pipe->rd_wait.lock);
- 		kfree(bufs);
- 		return -EBUSY;
- 	}
-@@ -1303,8 +1285,6 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
- 	pipe->tail = tail;
- 	pipe->head = head;
- 
--	spin_unlock_irq(&pipe->rd_wait.lock);
--
- 	/* This might have made more room for writers */
- 	wake_up_interruptible(&pipe->wr_wait);
- 	return 0;
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 6cb65df3e3ba..f5084daf6eaf 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -2,6 +2,8 @@
- #ifndef _LINUX_PIPE_FS_I_H
- #define _LINUX_PIPE_FS_I_H
- 
-+#include <linux/fs.h>
-+
- #define PIPE_DEF_BUFFERS	16
- 
- #define PIPE_BUF_FLAG_LRU	0x01	/* page is on the LRU */
-@@ -223,6 +225,16 @@ static inline void pipe_discard_from(struct pipe_inode_info *pipe,
- #define PIPE_SIZE		PAGE_SIZE
- 
- /* Pipe lock and unlock operations */
-+static inline void __pipe_lock(struct pipe_inode_info *pipe)
-+{
-+	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
-+}
-+
-+static inline void __pipe_unlock(struct pipe_inode_info *pipe)
-+{
-+	mutex_unlock(&pipe->mutex);
-+}
-+
- void pipe_lock(struct pipe_inode_info *);
- void pipe_unlock(struct pipe_inode_info *);
- void pipe_double_lock(struct pipe_inode_info *, struct pipe_inode_info *);
-diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-index a6f9bdd956c3..92e46cfe9419 100644
---- a/kernel/watch_queue.c
-+++ b/kernel/watch_queue.c
-@@ -108,7 +108,7 @@ static bool post_one_notification(struct watch_queue *wqueue,
- 	if (!pipe)
- 		return false;
- 
--	spin_lock_irq(&pipe->rd_wait.lock);
-+	__pipe_lock(pipe);
- 
- 	mask = pipe->ring_size - 1;
- 	head = pipe->head;
-@@ -135,17 +135,17 @@ static bool post_one_notification(struct watch_queue *wqueue,
- 	buf->offset = offset;
- 	buf->len = len;
- 	buf->flags = PIPE_BUF_FLAG_WHOLE;
--	smp_store_release(&pipe->head, head + 1); /* vs pipe_read() */
-+	pipe->head = head + 1;
- 
- 	if (!test_and_clear_bit(note, wqueue->notes_bitmap)) {
--		spin_unlock_irq(&pipe->rd_wait.lock);
-+		__pipe_unlock(pipe);
- 		BUG();
- 	}
- 	wake_up_interruptible_sync_poll_locked(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 	done = true;
- 
- out:
--	spin_unlock_irq(&pipe->rd_wait.lock);
-+	__pipe_unlock(pipe);
- 	if (done)
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 	return done;
-
-base-commit: 69b41ac87e4a664de78a395ff97166f0b2943210
--- 
-2.31.1
-
+I'll change it to "call *rax" which should be more robust (and works)
+and free from relocations.
