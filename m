@@ -2,129 +2,86 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DE0BB6600A4
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 13:54:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 721656600F5
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 14:08:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232291AbjAFMyB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Jan 2023 07:54:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41484 "EHLO
+        id S233050AbjAFNH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Jan 2023 08:07:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51984 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233864AbjAFMxo (ORCPT
+        with ESMTP id S233258AbjAFNG7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Jan 2023 07:53:44 -0500
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2BCE268CA1;
-        Fri,  6 Jan 2023 04:53:41 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R421e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018045192;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VZ-H5ZQ_1673009616;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VZ-H5ZQ_1673009616)
-          by smtp.aliyun-inc.com;
-          Fri, 06 Jan 2023 20:53:37 +0800
-From:   Jingbo Xu <jefflexu@linux.alibaba.com>
-To:     xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org
-Cc:     huyue2@coolpad.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [RFC PATCH 6/6] erofs: enable page cache sharing in fscache mode
-Date:   Fri,  6 Jan 2023 20:53:30 +0800
-Message-Id: <20230106125330.55529-7-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
-In-Reply-To: <20230106125330.55529-1-jefflexu@linux.alibaba.com>
-References: <20230106125330.55529-1-jefflexu@linux.alibaba.com>
+        Fri, 6 Jan 2023 08:06:59 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D766E406;
+        Fri,  6 Jan 2023 05:06:58 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D771461E2B;
+        Fri,  6 Jan 2023 13:06:57 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 826D8C433EF;
+        Fri,  6 Jan 2023 13:06:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673010417;
+        bh=1qhYVDm7j1muQ6+34gjzL4UJr40kZ7yhX+GsuvoA7u8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WnvsAYdW6FoAbWVo3OzFrj9soKEvjCqIdhyKr6ty1l9WD1KNt34PtgyhaF9BbRq0S
+         5d99vJORsQ3Dn2gdg8KW/P6hHryxLFOVN4T0gLkGM4bWlPvyaLvI0GjC6clA9hZmS3
+         8Rp8vQmW5Wz4rhrUXoGq0MyAKuJ9GGvqCFK8CRMDHx3Afe1JiKt2mTH4G5iX6T9Fc8
+         CD1wMSxbq4H/rZuP02RTgYkfogCKpA2RK/t/YqpwCSiiRP1c/CVEMw1Q59fMBY35/X
+         FBG7jOA1wgmRBcOgrdQJLkko0qhxfdAFF/0oXGwLwp8h4K3Lq7mfXwN3AnWnakB4Q7
+         9uj0HA+skT1cQ==
+Date:   Fri, 6 Jan 2023 14:06:51 +0100
+From:   Christian Brauner <brauner@kernel.org>
+To:     Ameer Hamza <ahamza@ixsystems.com>
+Cc:     viro@zeniv.linux.org.uk, jlayton@kernel.org,
+        chuck.lever@oracle.com, arnd@arndb.de, guoren@kernel.org,
+        palmer@rivosinc.com, f.fainelli@gmail.com, slark_xiao@163.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, awalker@ixsystems.com
+Subject: Re: [PATCH] Add new open(2) flag - O_EMPTY_PATH
+Message-ID: <20230106130651.vxz7pjtu5gvchdgt@wittgenstein>
+References: <20221228160249.428399-1-ahamza@ixsystems.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20221228160249.428399-1-ahamza@ixsystems.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Erofs supports chunk deduplication to reduce disk usage.  Furthermore we
-can make inodes share page cache of these deduplicated chunks to reduce
-the memory usage.  This shall be much usable in container scenarios as
-deduplication is requisite for container image.
+On Wed, Dec 28, 2022 at 09:02:49PM +0500, Ameer Hamza wrote:
+> This patch adds a new flag O_EMPTY_PATH that allows openat and open
+> system calls to open a file referenced by fd if the path is empty,
+> and it is very similar to the FreeBSD O_EMPTY_PATH flag. This can be
+> beneficial in some cases since it would avoid having to grant /proc
+> access to things like samba containers for reopening files to change
+> flags in a race-free way.
+> 
+> Signed-off-by: Ameer Hamza <ahamza@ixsystems.com>
+> ---
 
-This can be achieved by managing page cache of deduplicated chunks in
-blob's address space.  In this way, all inodes sharing the deduplicated
-chunk will refer to and share the page cache in the blob's address
-space.
+In general this isn't a bad idea and Aleksa and I proposed this as part
+of the openat2() patchset (see [1]).
 
-So far there are some restrictions for enabling this feature.
+However, the reason we didn't do this right away was that we concluded
+that it shouldn't be simply adding a flag. Reopening file descriptors
+through procfs is indeed very useful and is often required. But it's
+also been an endless source of subtle bugs and security holes as it
+allows reopening file descriptors with more permissions than the
+original file descriptor had.
 
-The page cache sharing feature also supports .mmap().  The reverse
-mapping requires that one vma can not be shared among inodes and can
-be linked to only one inode.  As the vma will be finally linked to the
-blob's address space when page cache sharing enabled, the restriction of
-the reverse mapping actually requires that the mapped file area can not
-be mapped to multiple blobs.  Thus page cache sharing can only be
-enabled for those files mapped to one blob.
+The same lax behavior should not be encoded into O_EMPTYPATH. Ideally we
+would teach O_EMPTYPATH to adhere to magic link modes by default. This
+would be tied to the idea of upgrade mask in openat2() (cf. [2]). They
+allow a caller to specify the permissions that a file descriptor may be
+reopened with at the time the fd is opened.
 
-The chunk based data layout guarantees that a chunk will not cross the
-device (blob) boundary.  Thus in chunk based data layout, those files
-smaller than the chunk size shall be guaranteed to be mapped to one
-blob.  As chunk size is tunable at a per-file basis, this restriction
-can be relaxed at image building phase.  As long as we ensure that the
-file can not be deduplicated, the file's chunk size can be set to a
-reasonable value larger than the file size, so that the page cache
-sharing feature can be enabled on this file later.
-
-The second restriction is that EROFS_BLKSIZ mus be multiples of
-PAGE_SIZE to avoid data leakage.  Otherwise unrelated data may be
-exposed at the end of the last page, since file's data is arranged in
-unit of EROFS_BLKSIZ in the image.
-
-Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
----
- fs/erofs/inode.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
-
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index d3b8736fa124..8fe9b29422b5 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -241,6 +241,29 @@ static int erofs_fill_symlink(struct inode *inode, void *kaddr,
- 	return 0;
- }
- 
-+static bool erofs_can_share_page_cache(struct inode *inode)
-+{
-+	struct erofs_inode *vi = EROFS_I(inode);
-+
-+	/* enable page cache sharing only in share domain mode */
-+	if (!erofs_is_fscache_mode(inode->i_sb) ||
-+	    !EROFS_SB(inode->i_sb)->domain_id)
-+		return false;
-+
-+	if (vi->datalayout != EROFS_INODE_CHUNK_BASED)
-+		return false;
-+
-+	/* avoid crossing multi devicces/blobs */
-+	if (inode->i_size > 1UL << vi->chunkbits)
-+		return false;
-+
-+	/* avoid data leakage in mmap routine */
-+	if (EROFS_BLKSIZ % PAGE_SIZE)
-+		return false;
-+
-+	return true;
-+}
-+
- static int erofs_fill_inode(struct inode *inode)
- {
- 	struct erofs_inode *vi = EROFS_I(inode);
-@@ -262,6 +285,10 @@ static int erofs_fill_inode(struct inode *inode)
- 		inode->i_op = &erofs_generic_iops;
- 		if (erofs_inode_is_data_compressed(vi->datalayout))
- 			inode->i_fop = &generic_ro_fops;
-+#ifdef CONFIG_EROFS_FS_ONDEMAND
-+		else if (erofs_can_share_page_cache(inode))
-+			inode->i_fop = &erofs_fscache_share_file_fops;
-+#endif
- 		else
- 			inode->i_fop = &erofs_file_fops;
- 		break;
--- 
-2.19.1.6.gb485710b
-
+[1]: https://lore.kernel.org/lkml/20190930183316.10190-4-cyphar@cyphar.com/
+[2]: https://lore.kernel.org/all/20220526130355.fo6gzbst455fxywy@senku/Kk
