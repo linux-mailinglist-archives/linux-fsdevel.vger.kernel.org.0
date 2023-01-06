@@ -2,86 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 721656600F5
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 14:08:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4B91F660156
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 14:34:40 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233050AbjAFNH3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Jan 2023 08:07:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51984 "EHLO
+        id S233258AbjAFNei (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Jan 2023 08:34:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34844 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233258AbjAFNG7 (ORCPT
+        with ESMTP id S234812AbjAFNeY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Jan 2023 08:06:59 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82D766E406;
-        Fri,  6 Jan 2023 05:06:58 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id D771461E2B;
-        Fri,  6 Jan 2023 13:06:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 826D8C433EF;
-        Fri,  6 Jan 2023 13:06:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673010417;
-        bh=1qhYVDm7j1muQ6+34gjzL4UJr40kZ7yhX+GsuvoA7u8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=WnvsAYdW6FoAbWVo3OzFrj9soKEvjCqIdhyKr6ty1l9WD1KNt34PtgyhaF9BbRq0S
-         5d99vJORsQ3Dn2gdg8KW/P6hHryxLFOVN4T0gLkGM4bWlPvyaLvI0GjC6clA9hZmS3
-         8Rp8vQmW5Wz4rhrUXoGq0MyAKuJ9GGvqCFK8CRMDHx3Afe1JiKt2mTH4G5iX6T9Fc8
-         CD1wMSxbq4H/rZuP02RTgYkfogCKpA2RK/t/YqpwCSiiRP1c/CVEMw1Q59fMBY35/X
-         FBG7jOA1wgmRBcOgrdQJLkko0qhxfdAFF/0oXGwLwp8h4K3Lq7mfXwN3AnWnakB4Q7
-         9uj0HA+skT1cQ==
-Date:   Fri, 6 Jan 2023 14:06:51 +0100
-From:   Christian Brauner <brauner@kernel.org>
-To:     Ameer Hamza <ahamza@ixsystems.com>
-Cc:     viro@zeniv.linux.org.uk, jlayton@kernel.org,
-        chuck.lever@oracle.com, arnd@arndb.de, guoren@kernel.org,
-        palmer@rivosinc.com, f.fainelli@gmail.com, slark_xiao@163.com,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, awalker@ixsystems.com
-Subject: Re: [PATCH] Add new open(2) flag - O_EMPTY_PATH
-Message-ID: <20230106130651.vxz7pjtu5gvchdgt@wittgenstein>
-References: <20221228160249.428399-1-ahamza@ixsystems.com>
+        Fri, 6 Jan 2023 08:34:24 -0500
+Received: from mail-lf1-x132.google.com (mail-lf1-x132.google.com [IPv6:2a00:1450:4864:20::132])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E1D8C4167D
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jan 2023 05:34:23 -0800 (PST)
+Received: by mail-lf1-x132.google.com with SMTP id b3so1978989lfv.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jan 2023 05:34:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5cJHSClaSNSC6CADWeDtciJpzEgHDP3Cx3FDxh15jpg=;
+        b=IScHOh10i5C8L5k0c1dA8+EkISFY9PKI2OpLYfIPDsa9+z7hmwIee+/WSWG/z5XTOZ
+         rI2eM2jr6fFtVUI9IbBIUGccEjNspUHo8K7jbi6HaAAXEBFuzziA/xekfQINLBWbGh7X
+         of+ioSs3P19CFk+kuSvRSH4jHvaQGU007RPYJQL6d7APizs4nOpwlwiOOlju6WDIMShR
+         bgXdc4IVCfge4ILGrIj2KzSE4ZIRU30VD1zvQQQBzvOGSo5TjlJCtZMvAgVgwNw+lFi3
+         YZYYQBx/6y1sx/YDy0Q9/3ypad7LK8Y0Asic6PWTjCEcsI+pif2sXi2+dT7NP6Bb75OB
+         34bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:subject:message-id:date:from:reply-to:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5cJHSClaSNSC6CADWeDtciJpzEgHDP3Cx3FDxh15jpg=;
+        b=McvfuA7tpuu7EgibWSVirroJICnXmp17IaFlXnuSCuXVmWqfw5cf7qtj7sG2CrTvpE
+         ptibmRC0ze9ZW2s8qGE5Rmx7f6sxg7W6bAM0eBv+CEtt/YRpR3cObrmFFiddI7xcFlze
+         fgIq3i5XJKHl83gesVXtcVaVV2psq6C6cSoVNqIIfgdeeVyKuwBzfWkWB/Ph7jANvc7j
+         XzAnsN3SHFCuRvo5H6VFyBYHEF56WyGZGvHjenhyxwVbYranfWQfRxJl93A4Jcf6ErU6
+         7YiHk4MPC0qKYYCtUTePoyRKobtSk3U7BDlsXjo1oEDPYTquUjN4JblQZLh4zH4u7fhT
+         FIeQ==
+X-Gm-Message-State: AFqh2kqPcDJsJTDgeQ46UZUi9eBPQbCdw487Qm/73h+EtFX4uEWyozTs
+        jHxuS4OlE66VisChXaYYmbJbi0+PiITewf04hforgPeUv7M=
+X-Google-Smtp-Source: AMrXdXtKaUUuYgnPYWfF9SYOq1rP1PUr2BCte7j8ySIBjmmHVsO+gyfeS/NZY+zZ/fL/JJLWzixvJ9Qd/U3+PZd6U1s=
+X-Received: by 2002:a17:906:7c53:b0:7c1:639:6b44 with SMTP id
+ g19-20020a1709067c5300b007c106396b44mr7022140ejp.200.1673011641729; Fri, 06
+ Jan 2023 05:27:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20221228160249.428399-1-ahamza@ixsystems.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Received: by 2002:a17:907:9c06:b0:84c:83fa:e436 with HTTP; Fri, 6 Jan 2023
+ 05:27:20 -0800 (PST)
+Reply-To: mr.abraham022@gmail.com
+From:   "Mr.Abraham" <joykekeli3@gmail.com>
+Date:   Fri, 6 Jan 2023 13:27:20 +0000
+Message-ID: <CAKaeHTfQ5pyr8quqvsMujnETkO=FAcONmzbh4itZzNr4t=Fs_Q@mail.gmail.com>
+Subject: Hi
+To:     undisclosed-recipients:;
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=4.8 required=5.0 tests=BAYES_50,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_ENVFROM_END_DIGIT,
+        FREEMAIL_FROM,FREEMAIL_REPLYTO,FREEMAIL_REPLYTO_END_DIGIT,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,T_HK_NAME_FM_MR_MRS,
+        UNDISC_FREEM autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: ****
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Dec 28, 2022 at 09:02:49PM +0500, Ameer Hamza wrote:
-> This patch adds a new flag O_EMPTY_PATH that allows openat and open
-> system calls to open a file referenced by fd if the path is empty,
-> and it is very similar to the FreeBSD O_EMPTY_PATH flag. This can be
-> beneficial in some cases since it would avoid having to grant /proc
-> access to things like samba containers for reopening files to change
-> flags in a race-free way.
-> 
-> Signed-off-by: Ameer Hamza <ahamza@ixsystems.com>
-> ---
-
-In general this isn't a bad idea and Aleksa and I proposed this as part
-of the openat2() patchset (see [1]).
-
-However, the reason we didn't do this right away was that we concluded
-that it shouldn't be simply adding a flag. Reopening file descriptors
-through procfs is indeed very useful and is often required. But it's
-also been an endless source of subtle bugs and security holes as it
-allows reopening file descriptors with more permissions than the
-original file descriptor had.
-
-The same lax behavior should not be encoded into O_EMPTYPATH. Ideally we
-would teach O_EMPTYPATH to adhere to magic link modes by default. This
-would be tied to the idea of upgrade mask in openat2() (cf. [2]). They
-allow a caller to specify the permissions that a file descriptor may be
-reopened with at the time the fd is opened.
-
-[1]: https://lore.kernel.org/lkml/20190930183316.10190-4-cyphar@cyphar.com/
-[2]: https://lore.kernel.org/all/20220526130355.fo6gzbst455fxywy@senku/Kk
+My Greeting, Did you receive the letter i sent to you. Please answer me.
+Best Regard,Mr.Abraham.
