@@ -2,240 +2,145 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D4A4065FE1B
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 10:39:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C6D4565FE3E
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 10:46:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233859AbjAFJiQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Jan 2023 04:38:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36220 "EHLO
+        id S232343AbjAFJqd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Jan 2023 04:46:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232940AbjAFJiA (ORCPT
+        with ESMTP id S232986AbjAFJqO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Jan 2023 04:38:00 -0500
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 400817C825;
-        Fri,  6 Jan 2023 01:29:04 -0800 (PST)
-Received: from loongson.cn (unknown [111.207.111.194])
-        by gateway (Coremail) with SMTP id _____8BxrOrf6bdj2A4AAA--.43S3;
-        Fri, 06 Jan 2023 17:29:03 +0800 (CST)
-Received: from loongson.. (unknown [111.207.111.194])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8DxD7_X6bdjVSgVAA--.63411S2;
-        Fri, 06 Jan 2023 17:29:00 +0800 (CST)
-From:   Hongchen Zhang <zhanghongchen@loongson.cn>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Fri, 6 Jan 2023 04:46:14 -0500
+Received: from mga11.intel.com (mga11.intel.com [192.55.52.93])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A6C3A625DC;
+        Fri,  6 Jan 2023 01:44:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1672998265; x=1704534265;
+  h=date:from:to:cc:subject:message-id:reply-to:references:
+   mime-version:in-reply-to;
+  bh=fhXY6C/6U5im9JnhiBqmPE5GvqslI6HKlZc88plC8HU=;
+  b=LCw2qM+/WlOf86kBXpCK6162AEhGv7KRqM1qPg0uofFdNn20fjPQJwKO
+   V6aYMzKzdtlnEh1Z5C7X54efd3WfmAW37qDCUDsspLCXBGZoloyjJU2U4
+   9bgMJjXrdcNUx9ilcP9N7LnBZ20ANVWcuwB/Kl9uqJYF7TjF9XkoPsJRU
+   UyqlpEaJ03UIT2QJ0sBOxSljSyyZpNnzkoxZ0cH7KfjzdXvdk/0/32H39
+   vY7hM2ZeyHuwy3FNmJxfjbQL6ssl62qAnLO8bLgZKGA6I7iKkP8VWdqpk
+   YnM5LjRrXip4R0EhqPG+fBxHenJu/jdm3l/O7q6RMr2D3o7yWqefhmMw0
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10581"; a="320148916"
+X-IronPort-AV: E=Sophos;i="5.96,304,1665471600"; 
+   d="scan'208";a="320148916"
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Jan 2023 01:44:25 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10581"; a="901237278"
+X-IronPort-AV: E=Sophos;i="5.96,304,1665471600"; 
+   d="scan'208";a="901237278"
+Received: from chaop.bj.intel.com (HELO localhost) ([10.240.193.75])
+  by fmsmga006.fm.intel.com with ESMTP; 06 Jan 2023 01:44:12 -0800
+Date:   Fri, 6 Jan 2023 17:40:00 +0800
+From:   Chao Peng <chao.p.peng@linux.intel.com>
+To:     Jarkko Sakkinen <jarkko@kernel.org>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Sean Christopherson <seanjc@google.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
-        Hongchen Zhang <zhanghongchen@loongson.cn>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Eric Dumazet <edumazet@google.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] pipe: use __pipe_{lock,unlock} instead of spinlock
-Date:   Fri,  6 Jan 2023 17:28:53 +0800
-Message-Id: <20230106092853.26038-1-zhanghongchen@loongson.cn>
-X-Mailer: git-send-email 2.34.1
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v10 3/9] KVM: Extend the memslot to support fd-based
+ private memory
+Message-ID: <20230106094000.GA2297836@chaop.bj.intel.com>
+Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-4-chao.p.peng@linux.intel.com>
+ <Y7azFdnnGAdGPqmv@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID: AQAAf8DxD7_X6bdjVSgVAA--.63411S2
-X-CM-SenderInfo: x2kd0w5krqwupkhqwqxorr0wxvrqhubq/
-X-Coremail-Antispam: 1Uk129KBjvJXoW3XFykGw43tw4xCw17GF1rWFg_yoW7Ww48pa
-        13KFW7WrWUAr18urW8GrsxZr1ag398Wa1UJrW8GF4FvFnrGrySqFs2kFyakFn5JrZ7ZryY
-        vF4jqa4Fyr1UArDanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bfxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s
-        1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-        wVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4
-        x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AF
-        wI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-        Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE
-        14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7
-        AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C2
-        67AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
-        8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8
-        JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
-        1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
-        daVFxhVjvjDU0xZFpf9x07jFApnUUUUU=
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y7azFdnnGAdGPqmv@kernel.org>
+X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use spinlock in pipe_read/write cost too much time,IMO
-pipe->{head,tail} can be protected by __pipe_{lock,unlock}.
-On the other hand, we can use __pipe_{lock,unlock} to protect
-the pipe->{head,tail} in pipe_resize_ring and
-post_one_notification.
+On Thu, Jan 05, 2023 at 11:23:01AM +0000, Jarkko Sakkinen wrote:
+> On Fri, Dec 02, 2022 at 02:13:41PM +0800, Chao Peng wrote:
+> > In memory encryption usage, guest memory may be encrypted with special
+> > key and can be accessed only by the guest itself. We call such memory
+> > private memory. It's valueless and sometimes can cause problem to allow
+> > userspace to access guest private memory. This new KVM memslot extension
+> > allows guest private memory being provided through a restrictedmem
+> > backed file descriptor(fd) and userspace is restricted to access the
+> > bookmarked memory in the fd.
+> > 
+> > This new extension, indicated by the new flag KVM_MEM_PRIVATE, adds two
+> > additional KVM memslot fields restricted_fd/restricted_offset to allow
+> > userspace to instruct KVM to provide guest memory through restricted_fd.
+> > 'guest_phys_addr' is mapped at the restricted_offset of restricted_fd
+> > and the size is 'memory_size'.
+> > 
+> > The extended memslot can still have the userspace_addr(hva). When use, a
+> > single memslot can maintain both private memory through restricted_fd
+> > and shared memory through userspace_addr. Whether the private or shared
+> > part is visible to guest is maintained by other KVM code.
+> > 
+> > A restrictedmem_notifier field is also added to the memslot structure to
+> > allow the restricted_fd's backing store to notify KVM the memory change,
+> > KVM then can invalidate its page table entries or handle memory errors.
+> > 
+> > Together with the change, a new config HAVE_KVM_RESTRICTED_MEM is added
+> > and right now it is selected on X86_64 only.
+> > 
+> > To make future maintenance easy, internally use a binary compatible
+> > alias struct kvm_user_mem_region to handle both the normal and the
+> > '_ext' variants.
+> 
+> Feels bit hacky IMHO, and more like a completely new feature than
+> an extension.
+> 
+> Why not just add a new ioctl? The commit message does not address
+> the most essential design here.
 
-I tested this patch using UnixBench's pipe test case on a x86_64
-machine,and get the following data:
-1) before this patch
-System Benchmarks Partial Index  BASELINE       RESULT    INDEX
-Pipe Throughput                   12440.0     493023.3    396.3
-                                                        ========
-System Benchmarks Index Score (Partial Only)              396.3
+Yes, people can always choose to add a new ioctl for this kind of change
+and the balance point here is we want to also avoid 'too many ioctls' if
+the functionalities are similar.  The '_ext' variant reuses all the
+existing fields in the 'normal' variant and most importantly KVM
+internally can reuse most of the code. I certainly can add some words in
+the commit message to explain this design choice.
 
-2) after this patch
-System Benchmarks Partial Index  BASELINE       RESULT    INDEX
-Pipe Throughput                   12440.0     507551.4    408.0
-                                                        ========
-System Benchmarks Index Score (Partial Only)              408.0
-
-so we get ~3% speedup.
-
-Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
----
- fs/pipe.c                 | 22 +---------------------
- include/linux/pipe_fs_i.h | 10 ++++++++++
- kernel/watch_queue.c      |  8 ++++----
- 3 files changed, 15 insertions(+), 25 deletions(-)
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index 42c7ff41c2db..4355ee5f754e 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -98,16 +98,6 @@ void pipe_unlock(struct pipe_inode_info *pipe)
- }
- EXPORT_SYMBOL(pipe_unlock);
- 
--static inline void __pipe_lock(struct pipe_inode_info *pipe)
--{
--	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
--}
--
--static inline void __pipe_unlock(struct pipe_inode_info *pipe)
--{
--	mutex_unlock(&pipe->mutex);
--}
--
- void pipe_double_lock(struct pipe_inode_info *pipe1,
- 		      struct pipe_inode_info *pipe2)
- {
-@@ -253,8 +243,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 	 */
- 	was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
- 	for (;;) {
--		/* Read ->head with a barrier vs post_one_notification() */
--		unsigned int head = smp_load_acquire(&pipe->head);
-+		unsigned int head = pipe->head;
- 		unsigned int tail = pipe->tail;
- 		unsigned int mask = pipe->ring_size - 1;
- 
-@@ -322,14 +311,12 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
- 
- 			if (!buf->len) {
- 				pipe_buf_release(pipe, buf);
--				spin_lock_irq(&pipe->rd_wait.lock);
- #ifdef CONFIG_WATCH_QUEUE
- 				if (buf->flags & PIPE_BUF_FLAG_LOSS)
- 					pipe->note_loss = true;
- #endif
- 				tail++;
- 				pipe->tail = tail;
--				spin_unlock_irq(&pipe->rd_wait.lock);
- 			}
- 			total_len -= chars;
- 			if (!total_len)
-@@ -506,16 +493,13 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 			 * it, either the reader will consume it or it'll still
- 			 * be there for the next write.
- 			 */
--			spin_lock_irq(&pipe->rd_wait.lock);
- 
- 			head = pipe->head;
- 			if (pipe_full(head, pipe->tail, pipe->max_usage)) {
--				spin_unlock_irq(&pipe->rd_wait.lock);
- 				continue;
- 			}
- 
- 			pipe->head = head + 1;
--			spin_unlock_irq(&pipe->rd_wait.lock);
- 
- 			/* Insert it into the buffer array */
- 			buf = &pipe->bufs[head & mask];
-@@ -1260,14 +1244,12 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
- 	if (unlikely(!bufs))
- 		return -ENOMEM;
- 
--	spin_lock_irq(&pipe->rd_wait.lock);
- 	mask = pipe->ring_size - 1;
- 	head = pipe->head;
- 	tail = pipe->tail;
- 
- 	n = pipe_occupancy(head, tail);
- 	if (nr_slots < n) {
--		spin_unlock_irq(&pipe->rd_wait.lock);
- 		kfree(bufs);
- 		return -EBUSY;
- 	}
-@@ -1303,8 +1285,6 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
- 	pipe->tail = tail;
- 	pipe->head = head;
- 
--	spin_unlock_irq(&pipe->rd_wait.lock);
--
- 	/* This might have made more room for writers */
- 	wake_up_interruptible(&pipe->wr_wait);
- 	return 0;
-diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
-index 6cb65df3e3ba..baae3d062422 100644
---- a/include/linux/pipe_fs_i.h
-+++ b/include/linux/pipe_fs_i.h
-@@ -223,6 +223,16 @@ static inline void pipe_discard_from(struct pipe_inode_info *pipe,
- #define PIPE_SIZE		PAGE_SIZE
- 
- /* Pipe lock and unlock operations */
-+static inline void __pipe_lock(struct pipe_inode_info *pipe)
-+{
-+	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
-+}
-+
-+static inline void __pipe_unlock(struct pipe_inode_info *pipe)
-+{
-+	mutex_unlock(&pipe->mutex);
-+}
-+
- void pipe_lock(struct pipe_inode_info *);
- void pipe_unlock(struct pipe_inode_info *);
- void pipe_double_lock(struct pipe_inode_info *, struct pipe_inode_info *);
-diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
-index a6f9bdd956c3..92e46cfe9419 100644
---- a/kernel/watch_queue.c
-+++ b/kernel/watch_queue.c
-@@ -108,7 +108,7 @@ static bool post_one_notification(struct watch_queue *wqueue,
- 	if (!pipe)
- 		return false;
- 
--	spin_lock_irq(&pipe->rd_wait.lock);
-+	__pipe_lock(pipe);
- 
- 	mask = pipe->ring_size - 1;
- 	head = pipe->head;
-@@ -135,17 +135,17 @@ static bool post_one_notification(struct watch_queue *wqueue,
- 	buf->offset = offset;
- 	buf->len = len;
- 	buf->flags = PIPE_BUF_FLAG_WHOLE;
--	smp_store_release(&pipe->head, head + 1); /* vs pipe_read() */
-+	pipe->head = head + 1;
- 
- 	if (!test_and_clear_bit(note, wqueue->notes_bitmap)) {
--		spin_unlock_irq(&pipe->rd_wait.lock);
-+		__pipe_unlock(pipe);
- 		BUG();
- 	}
- 	wake_up_interruptible_sync_poll_locked(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 	done = true;
- 
- out:
--	spin_unlock_irq(&pipe->rd_wait.lock);
-+	__pipe_unlock(pipe);
- 	if (done)
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
- 	return done;
--- 
-2.34.1
-
+Thanks,
+Chao
+> 
+> BR, Jarkko
