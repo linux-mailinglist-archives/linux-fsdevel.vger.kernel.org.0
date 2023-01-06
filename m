@@ -2,142 +2,253 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id F38B265FC41
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 08:50:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6FE0C65FC58
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 08:58:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230407AbjAFHuS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Jan 2023 02:50:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33204 "EHLO
+        id S231876AbjAFH6Y (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Jan 2023 02:58:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34850 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229490AbjAFHuQ (ORCPT
+        with ESMTP id S231888AbjAFH6U (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Jan 2023 02:50:16 -0500
-Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 7B4496E0C4;
-        Thu,  5 Jan 2023 23:50:12 -0800 (PST)
-Received: from loongson.cn (unknown [10.180.13.185])
-        by gateway (Coremail) with SMTP id _____8Ax3eqz0rdj6woAAA--.39S3;
-        Fri, 06 Jan 2023 15:50:11 +0800 (CST)
-Received: from [10.180.13.185] (unknown [10.180.13.185])
-        by localhost.localdomain (Coremail) with SMTP id AQAAf8Cxnb6x0rdjhRsVAA--.39619S3;
-        Fri, 06 Jan 2023 15:50:10 +0800 (CST)
-Subject: Re: [PATCH v2] pipe: use __pipe_{lock,unlock} instead of spinlock
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        David Howells <dhowells@redhat.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Eric Dumazet <edumazet@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20230103063303.23345-1-zhanghongchen@loongson.cn>
- <20230105185909.c77ce4d136279ec46a204d61@linux-foundation.org>
-From:   Hongchen Zhang <zhanghongchen@loongson.cn>
-Message-ID: <c3cbede6-f19e-3333-ba0f-d3f005e5d599@loongson.cn>
-Date:   Fri, 6 Jan 2023 15:50:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+        Fri, 6 Jan 2023 02:58:20 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D37217815C
+        for <linux-fsdevel@vger.kernel.org>; Thu,  5 Jan 2023 23:57:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1672991854;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=xmb3IcLHCLsi/xOiQHUkWYlXfS8doiaC8cJwdmVUFK4=;
+        b=SLVzg7+qVCkSPwpEXCMyFeNPY9fsRC3J6m6t9JyyNaGFIjjHxovBVrdPL/kwwpyv/tLyr+
+        uAEuds0xSUup0UDOyInIosfoE5Z2o/gfG+Wqj40CVNLzVuwrG63GucOn2dCZ3OWAJ+VClz
+        dumlyhgYGDzQ/s+rMBR1O1MSWa7geiY=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-613-FAXmGko9M-SdLbhjTIgrGw-1; Fri, 06 Jan 2023 02:57:32 -0500
+X-MC-Unique: FAXmGko9M-SdLbhjTIgrGw-1
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-4c19b153643so10516397b3.20
+        for <linux-fsdevel@vger.kernel.org>; Thu, 05 Jan 2023 23:57:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xmb3IcLHCLsi/xOiQHUkWYlXfS8doiaC8cJwdmVUFK4=;
+        b=0JMOMTnjqBi7/kAsB39dWhb7FbyUiRggOTSdYBpKrvjPo1n5e795nIILmiD2Ab5Pen
+         U4fC3V1PtrVl57O6bO7tP0ih5vlMaZP9V+NGhuaZq2zKtx7Pn8bOaBNbEPeNacDV6jvo
+         LbdJARj8SkxK9dePP22MKoqsIhNxCPXErBJoAJ6pYPnxwAUUH5e4sdINbWG00E0PacWR
+         Fs8cJ3YTu9P3pHpnPelpPyH42ut9vuAA+GiXlg5w1Cq9beslSvOdRf2lZarEm5mw1GnF
+         TdA+SRHtY9KLitw1f803Ddz9MxtzhGxzVzBRsFHf37sIZqc67EQpRoT6bWjFJPZFUW/l
+         PI7g==
+X-Gm-Message-State: AFqh2kpVNo2sV/gtIyKzJjY/OTPtOtKYGQU9Qmg5tW5aLk24/kz9ba1h
+        bGtDwlVTL0gb30PiRLAbDDn2JZ19GUZeBA4yrFawuTjNRaOzaQDkthZL9BwD56rKUlqrzVUgLV3
+        DomPDI6gvkHFATtmMAXXI2aa1+2rkxpZnbUtRGsO40w==
+X-Received: by 2002:a05:690c:87:b0:46f:36b1:a27 with SMTP id be7-20020a05690c008700b0046f36b10a27mr4200657ywb.147.1672991851847;
+        Thu, 05 Jan 2023 23:57:31 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXuC/bbIcMr4bQ8ok16zXLqM2NrU98mA2WJd0uc+HAfHs8BnKxPTLzGpg1jIsSESD/q9eqv3v1Jyw7xgl7+RWvk=
+X-Received: by 2002:a05:690c:87:b0:46f:36b1:a27 with SMTP id
+ be7-20020a05690c008700b0046f36b10a27mr4200651ywb.147.1672991851590; Thu, 05
+ Jan 2023 23:57:31 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20230105185909.c77ce4d136279ec46a204d61@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID: AQAAf8Cxnb6x0rdjhRsVAA--.39619S3
-X-CM-SenderInfo: x2kd0w5krqwupkhqwqxorr0wxvrqhubq/
-X-Coremail-Antispam: 1Uk129KBjvJXoW7tr1DGr1fXw1UGF18Kry3Arb_yoW8Aw13pF
-        Wxtr4vkr4kuFy5Xw12kry5W34rC3yFgrsrJrZYqF1q93W5uwn5KFWfJFWY9r13AF12k3W3
-        Zr4jqayUXFWUJaDanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
-        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
-        bDxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s
-        1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
-        wVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4
-        x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AF
-        wI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-        Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE
-        14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-        AE67vIY487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCj
-        c4AY6r1j6r4UMxCIbckI1I0E14v26r126r1DMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-        Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-        6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6x
-        AIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY
-        1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxUcbAwUUUUU
-X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20230104211448.4804-1-vishal.moola@gmail.com> <20230104211448.4804-18-vishal.moola@gmail.com>
+In-Reply-To: <20230104211448.4804-18-vishal.moola@gmail.com>
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Fri, 6 Jan 2023 08:57:20 +0100
+Message-ID: <CAHc6FU55EfV0qvtpPUWAvHm72kPd7Rzb8=-GX0oFgfJonXt7Pg@mail.gmail.com>
+Subject: Re: [Cluster-devel] [PATCH v5 17/23] gfs2: Convert
+ gfs2_write_cache_jdata() to use filemap_get_folios_tag()
+To:     "Vishal Moola (Oracle)" <vishal.moola@gmail.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-cifs@vger.kernel.org,
+        linux-nilfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
+        linux-mm@kvack.org, ceph-devel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-afs@lists.infradead.org,
+        linux-btrfs@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Andrew,
-On 2023/1/6 am 10:59, Andrew Morton wrote:
-> On Tue,  3 Jan 2023 14:33:03 +0800 Hongchen Zhang <zhanghongchen@loongson.cn> wrote:
-> 
->> Use spinlock in pipe_read/write cost too much time,IMO
->> pipe->{head,tail} can be protected by __pipe_{lock,unlock}.
->> On the other hand, we can use __pipe_lock/unlock to protect the
->> pipe->head/tail in pipe_resize_ring and post_one_notification.
-> 
-> Can you please test this with the test code in Linus's 0ddad21d3e99 and
-> check that performance is good?
-> 
-I tested with the test code in Linus's 0ddad21d3e99,and get the 
-following result:
+On Wed, Jan 4, 2023 at 10:15 PM Vishal Moola (Oracle)
+<vishal.moola@gmail.com> wrote:
+> Converted function to use folios throughout. This is in preparation for
+> the removal of find_get_pgaes_range_tag(). This change removes 8 calls
+> to compound_head().
+>
+> Also had to modify and rename gfs2_write_jdata_pagevec() to take in
+> and utilize folio_batch rather than pagevec and use folios rather
+> than pages. gfs2_write_jdata_batch() now supports large folios.
+>
+> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
+> ---
+>  fs/gfs2/aops.c | 64 +++++++++++++++++++++++++++-----------------------
+>  1 file changed, 35 insertions(+), 29 deletions(-)
+>
+> diff --git a/fs/gfs2/aops.c b/fs/gfs2/aops.c
+> index e782b4f1d104..0a47068f9acc 100644
+> --- a/fs/gfs2/aops.c
+> +++ b/fs/gfs2/aops.c
+> @@ -195,67 +195,71 @@ static int gfs2_writepages(struct address_space *mapping,
+>  }
+>
+>  /**
+> - * gfs2_write_jdata_pagevec - Write back a pagevec's worth of pages
+> + * gfs2_write_jdata_batch - Write back a folio batch's worth of folios
+>   * @mapping: The mapping
+>   * @wbc: The writeback control
+> - * @pvec: The vector of pages
+> - * @nr_pages: The number of pages to write
+> + * @fbatch: The batch of folios
+>   * @done_index: Page index
+>   *
+>   * Returns: non-zero if loop should terminate, zero otherwise
+>   */
+>
+> -static int gfs2_write_jdata_pagevec(struct address_space *mapping,
+> +static int gfs2_write_jdata_batch(struct address_space *mapping,
+>                                     struct writeback_control *wbc,
+> -                                   struct pagevec *pvec,
+> -                                   int nr_pages,
+> +                                   struct folio_batch *fbatch,
+>                                     pgoff_t *done_index)
+>  {
+>         struct inode *inode = mapping->host;
+>         struct gfs2_sbd *sdp = GFS2_SB(inode);
+> -       unsigned nrblocks = nr_pages * (PAGE_SIZE >> inode->i_blkbits);
+> +       unsigned nrblocks;
+>         int i;
+>         int ret;
+> +       int nr_pages = 0;
+> +       int nr_folios = folio_batch_count(fbatch);
+> +
+> +       for (i = 0; i < nr_folios; i++)
+> +               nr_pages += folio_nr_pages(fbatch->folios[i]);
+> +       nrblocks = nr_pages * (PAGE_SIZE >> inode->i_blkbits);
+>
+>         ret = gfs2_trans_begin(sdp, nrblocks, nrblocks);
+>         if (ret < 0)
+>                 return ret;
+>
+> -       for(i = 0; i < nr_pages; i++) {
+> -               struct page *page = pvec->pages[i];
+> +       for (i = 0; i < nr_folios; i++) {
+> +               struct folio *folio = fbatch->folios[i];
+>
+> -               *done_index = page->index;
+> +               *done_index = folio->index;
+>
+> -               lock_page(page);
+> +               folio_lock(folio);
+>
+> -               if (unlikely(page->mapping != mapping)) {
+> +               if (unlikely(folio->mapping != mapping)) {
+>  continue_unlock:
+> -                       unlock_page(page);
+> +                       folio_unlock(folio);
+>                         continue;
+>                 }
+>
+> -               if (!PageDirty(page)) {
+> +               if (!folio_test_dirty(folio)) {
+>                         /* someone wrote it for us */
+>                         goto continue_unlock;
+>                 }
+>
+> -               if (PageWriteback(page)) {
+> +               if (folio_test_writeback(folio)) {
+>                         if (wbc->sync_mode != WB_SYNC_NONE)
+> -                               wait_on_page_writeback(page);
+> +                               folio_wait_writeback(folio);
+>                         else
+>                                 goto continue_unlock;
+>                 }
+>
+> -               BUG_ON(PageWriteback(page));
+> -               if (!clear_page_dirty_for_io(page))
+> +               BUG_ON(folio_test_writeback(folio));
+> +               if (!folio_clear_dirty_for_io(folio))
+>                         goto continue_unlock;
+>
+>                 trace_wbc_writepage(wbc, inode_to_bdi(inode));
+>
+> -               ret = __gfs2_jdata_writepage(page, wbc);
+> +               ret = __gfs2_jdata_writepage(&folio->page, wbc);
+>                 if (unlikely(ret)) {
+>                         if (ret == AOP_WRITEPAGE_ACTIVATE) {
+> -                               unlock_page(page);
+> +                               folio_unlock(folio);
+>                                 ret = 0;
+>                         } else {
+>
+> @@ -268,7 +272,8 @@ static int gfs2_write_jdata_pagevec(struct address_space *mapping,
+>                                  * not be suitable for data integrity
+>                                  * writeout).
+>                                  */
+> -                               *done_index = page->index + 1;
+> +                               *done_index = folio->index +
+> +                                       folio_nr_pages(folio);
+>                                 ret = 1;
+>                                 break;
+>                         }
+> @@ -305,8 +310,8 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
+>  {
+>         int ret = 0;
+>         int done = 0;
+> -       struct pagevec pvec;
+> -       int nr_pages;
+> +       struct folio_batch fbatch;
+> +       int nr_folios;
+>         pgoff_t writeback_index;
+>         pgoff_t index;
+>         pgoff_t end;
+> @@ -315,7 +320,7 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
+>         int range_whole = 0;
+>         xa_mark_t tag;
+>
+> -       pagevec_init(&pvec);
+> +       folio_batch_init(&fbatch);
+>         if (wbc->range_cyclic) {
+>                 writeback_index = mapping->writeback_index; /* prev offset */
+>                 index = writeback_index;
+> @@ -341,17 +346,18 @@ static int gfs2_write_cache_jdata(struct address_space *mapping,
+>                 tag_pages_for_writeback(mapping, index, end);
+>         done_index = index;
+>         while (!done && (index <= end)) {
+> -               nr_pages = pagevec_lookup_range_tag(&pvec, mapping, &index, end,
+> -                               tag);
+> -               if (nr_pages == 0)
+> +               nr_folios = filemap_get_folios_tag(mapping, &index, end,
+> +                               tag, &fbatch);
+> +               if (nr_folios == 0)
+>                         break;
+>
+> -               ret = gfs2_write_jdata_pagevec(mapping, wbc, &pvec, nr_pages, &done_index);
+> +               ret = gfs2_write_jdata_batch(mapping, wbc, &fbatch,
+> +                               &done_index);
+>                 if (ret)
+>                         done = 1;
+>                 if (ret > 0)
+>                         ret = 0;
+> -               pagevec_release(&pvec);
+> +               folio_batch_release(&fbatch);
+>                 cond_resched();
+>         }
+>
+> --
+> 2.38.1
+>
 
-1) before this patch
-          13,136.54 msec task-clock           #    3.870 CPUs utilized 
+Reviewed-by: Andreas Gruenbacher <agruenba@redhat.com>
 
-          1,186,779      context-switches     #   90.342 K/sec 
-
-            668,867      cpu-migrations       #   50.917 K/sec 
-
-                895      page-faults          #   68.131 /sec 
-
-     29,875,711,543      cycles               #    2.274 GHz 
-
-     12,372,397,462      instructions         #    0.41  insn per cycle 
-
-      2,480,235,723      branches             #  188.804 M/sec 
-
-         47,191,943      branch-misses        #    1.90% of all branches 
-
-
-        3.394806886 seconds time elapsed
-
-        0.037869000 seconds user
-        0.189346000 seconds sys
-
-2) after this patch
-
-          12,395.63 msec task-clock          #    4.138 CPUs utilized 
-
-          1,193,381      context-switches    #   96.274 K/sec 
-
-            585,543      cpu-migrations      #   47.238 K/sec 
-
-              1,063      page-faults         #   85.756 /sec 
-
-     27,691,587,226      cycles              #    2.234 GHz 
-
-     11,738,307,999      instructions        #    0.42  insn per cycle 
-
-      2,351,299,522      branches            #  189.688 M/sec 
-
-         45,404,526      branch-misses       #    1.93% of all branches 
-
-
-        2.995280878 seconds time elapsed
-
-        0.010615000 seconds user
-        0.206999000 seconds sys
-After adding this patch, the time used on this test program becomes less.
-
-Another thing, because of my carelessness, trinity tool tested a bug, I
-will remove the unnecessary __pipe_{lock,unlock} in pipe_resize_ring in 
-v3, because the lock is owned in pipe_fcntl/pipe_ioctl.
-
-Thanks.
-
-
+Thanks,
+Andreas
 
