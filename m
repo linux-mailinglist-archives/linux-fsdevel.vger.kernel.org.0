@@ -2,72 +2,78 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7EB8660723
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 20:30:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B1BD660726
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 20:30:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235330AbjAFTaU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Jan 2023 14:30:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59726 "EHLO
+        id S235545AbjAFTaq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Jan 2023 14:30:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59814 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234720AbjAFTaT (ORCPT
+        with ESMTP id S235500AbjAFTao (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Jan 2023 14:30:19 -0500
-Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 135FB14D02;
-        Fri,  6 Jan 2023 11:30:18 -0800 (PST)
-Received: by mail-ej1-x633.google.com with SMTP id m18so5677126eji.5;
-        Fri, 06 Jan 2023 11:30:18 -0800 (PST)
+        Fri, 6 Jan 2023 14:30:44 -0500
+Received: from mail-oa1-x31.google.com (mail-oa1-x31.google.com [IPv6:2001:4860:4864:20::31])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D3B264F131
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jan 2023 11:30:43 -0800 (PST)
+Received: by mail-oa1-x31.google.com with SMTP id 586e51a60fabf-15085b8a2f7so2623419fac.2
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jan 2023 11:30:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mmDHBoIoLadMu0Asj1DLZDWnRgLsgqhRy9d3kzCtsbk=;
-        b=fBSt+s/kl5kXlV1FTvypk7dxtpv+6oPtbovssMhu4Q25Fp6vyR+EMA4tPOnB12Fc03
-         MvvrJGBQcviV5iUqCdonSuf0vrBgfR2qn0fnSaintaFBYBomCV5VcddZQG+nL2J5fpzB
-         pveWieFdK4GqaIFCY5wKDedE5QgQatt5hJ/+bUSDJRrLLs/1gCOpU6FKRYQP0/kpYIiI
-         64BQvCGYHfRYV6LttaTEra22DNt624VAFh+ddUNsg9P32oQjp8vUo6CJ7QQHNyYt+kvd
-         REKIvBr/8AhSUw3DS7XYnnsqMcnJHRawaJUbIgFvqrcLEhUowl69q6SGI1QNvf6Miecs
-         8UpA==
+        d=dubeyko-com.20210112.gappssmtp.com; s=20210112;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n1fk0YAUxvXFlZJTRQ3F9ZCTQJkHjJR6GtTYlUtgX2A=;
+        b=FmxcEfBuZ3BcJBPLeEXAm+2UU+kfkrYXMXnG8AYdHxqzNoxM5he0X9/wo2YMM5PGJR
+         6fHt3+425DZfxKvYI0IAAZPdnhDoCxSEXe6947GLQUfJnRv4PfS8POfHiGAu41H9mM6i
+         Nr2GZZwvpjqezvuVgiGhCnINqy9v0DVPL/AzvB7/aBZBPr6NVCsRBXiTk0wMuJ8EWSZ6
+         zV9Mtp+4av+TS2n57dEk0OqDfXSEEJ0sMu5X5JBZMY6zyVzCIedtxuqElF/pLUqI5IAR
+         9QLXlirxTuPm+E0mff4kOVHRKCqg01JldZN7T273QMFbjpeSFUa7+QXLHSR9m0iQo3Jn
+         S+2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mmDHBoIoLadMu0Asj1DLZDWnRgLsgqhRy9d3kzCtsbk=;
-        b=qmYhwlCjfGlpN1V6vuo8a/ktwcjz7md4craS8vIWm4YQVvG8ckCVLU9CzRW98csJFt
-         7KmR7z+LSAwyGOQfMNqgc91aP+apZiWPafUBUAdB7DHxlj7hiKj0NnZAjT1t/VX4nC1J
-         oqEnXJYKuVrjfL3nkEuuWJSWcA880wHjDSmia3/RMIuQCNRvbLhqslzLreFWuuO8s/Sj
-         H4gIt9ImxODxdILGKIkKUBDrN1+btZgVH5zb5c3jFfukZ1xZSMLp137QvdGf/0bcnzRB
-         EJ43Kr3fBZu4uHB+Mfyw4u6ZqtWQKtEGdtccO4OkFaSP5KXEgEbeJ5Jc61YxqZs5e9Zq
-         qxsw==
-X-Gm-Message-State: AFqh2kq0zw9pcVt05bPtt86QP6s1Ozn6RYGzLv3+u1CI5w8Xnluojctm
-        nGbPKCHfBx8GfOrdiDPlVrb1LbUdZQ==
-X-Google-Smtp-Source: AMrXdXuoEr49qzXo+JbmRXTlMavUPZCQXqCp1GFjHebdRFtRuCA6gEm1EM7jKSCFx89J5Q6Zxl17yg==
-X-Received: by 2002:a17:907:11cf:b0:7c2:3b8a:9f0d with SMTP id va15-20020a17090711cf00b007c23b8a9f0dmr49674013ejb.51.1673033416581;
-        Fri, 06 Jan 2023 11:30:16 -0800 (PST)
-Received: from p183 ([46.53.252.178])
-        by smtp.gmail.com with ESMTPSA id k9-20020a17090646c900b007806c1474e1sm666404ejs.127.2023.01.06.11.30.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Jan 2023 11:30:16 -0800 (PST)
-Date:   Fri, 6 Jan 2023 22:30:14 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
-        Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>,
-        Brian Foster <bfoster@redhat.com>,
-        Guo Zhengkui <guozhengkui@vivo.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thorsten Leemhuis <regressions@leemhuis.info>
-Subject: [PATCH] proc: fix PIE proc-empty-vm, proc-pid-vm tests
-Message-ID: <Y7h2xvzKLg36DSq8@p183>
-References: <fd9206f6-3ec4-cafc-e313-dfddf957bd5e@alu.unizg.hr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <fd9206f6-3ec4-cafc-e313-dfddf957bd5e@alu.unizg.hr>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n1fk0YAUxvXFlZJTRQ3F9ZCTQJkHjJR6GtTYlUtgX2A=;
+        b=6nMlD+X/rd3s9rGJeblOEwINmWq6/NK62HdFHPKgDCatiPzbX1AryDFLAzFBfyXf9v
+         F55efeixRsKLFk++Wd/BzloxYJOOJNP9pfSkEyS47Ekh0CduX7VunbI8qmH6dCTvT1JK
+         3KApjVp1LD52KRGG8NVKq9IodQtL01fY2UoB6gEDo9eJnq8SUFkDoNwCwp3TuhXlyfYl
+         vybPWSRZAHEqg0Qm11lZ3xyDQ8sslj2EQzi0igwECH/KXBeQLA6hBC9QjBA1SBWYLhbl
+         UINsi6gwKipGdtAeqls6I8MsWg1PC9eMyGCC7ir4+FTvoYkB0bFBX9lwI6HzPJsQxhXA
+         ff5A==
+X-Gm-Message-State: AFqh2kqCAzxGR45XqWBDDe/smZIkuTxIpRyq73vevQx7D086O+OOJGA7
+        bwnXpjbfFliGmvwAhXLZ1mDu3g==
+X-Google-Smtp-Source: AMrXdXsvHZ9u4bFQxdqZb/uJ+OAfMpLls8q+RcQZsj1KEc+W1LBtxDQpGAZZzeXMfu0NZUkW9EKUjg==
+X-Received: by 2002:a05:6870:f815:b0:14f:a68c:7c76 with SMTP id fr21-20020a056870f81500b0014fa68c7c76mr28267020oab.42.1673033443164;
+        Fri, 06 Jan 2023 11:30:43 -0800 (PST)
+Received: from smtpclient.apple (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
+        by smtp.gmail.com with ESMTPSA id f8-20020a056870d14800b00136f3e4bc29sm922396oac.9.2023.01.06.11.30.41
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Jan 2023 11:30:42 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
+Subject: Re: [LSF/MM/BPF BoF] Session for Zoned Storage 2023
+From:   Viacheslav Dubeyko <slava@dubeyko.com>
+In-Reply-To: <Y7h0F0w06cNM89hO@bombadil.infradead.org>
+Date:   Fri, 6 Jan 2023 11:30:39 -0800
+Cc:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier.gonz@samsung.com>,
+        =?utf-8?Q?Matias_Bj=C3=B8rling?= <Matias.Bjorling@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Hans Holmberg <hans.holmberg@wdc.com>,
+        "Viacheslav A. Dubeyko" <viacheslav.dubeyko@bytedance.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4CC4F55E-17B3-47E2-A8C5-9098CCEB65D6@dubeyko.com>
+References: <F6BF25E2-FF26-48F2-8378-3CB36E362313@dubeyko.com>
+ <Y7h0F0w06cNM89hO@bombadil.infradead.org>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+X-Mailer: Apple Mail (2.3696.120.41.1.1)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,99 +81,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-vsyscall detection code uses direct call to the beginning of
-the vsyscall page:
 
-	asm ("call %P0" :: "i" (0xffffffffff600000))
 
-It generates "call rel32" instruction but it is not relocated if binary
-is PIE, so binary segfaults into random userspace address and vsyscall
-page status is detected incorrectly.
+> On Jan 6, 2023, at 11:18 AM, Luis Chamberlain <mcgrof@kernel.org> =
+wrote:
+>=20
+> On Fri, Jan 06, 2023 at 11:17:19AM -0800, Viacheslav Dubeyko wrote:
+>> Hello,
+>>=20
+>> As far as I can see, I have two topics for discussion.
+>=20
+> What's that?
 
-Do more direct:
+I am going to share these topics in separate emails. :)
 
-	asm ("call *%rax")
+(1) I am going to share SSDFS patchset soon. And topic is:
+SSDFS + ZNS SSD: deterministic architecture decreasing TCO cost of data =
+infrastructure.
 
-which doesn't do need any relocaltions.
+(2) Second topic is:
+How to achieve better lifetime and performance of caching layer with ZNS =
+SSD?
 
-Mark g_vsyscall as volatile for a good measure, I didn't find instruction
-setting it to 0. Now the code is obviously correct:
+Thanks,
+Slava.
 
-	xor	eax, eax
-	mov	rdi, rbp
-	mov	rsi, rbp
-	mov	DWORD PTR [rip+0x2d15], eax      # g_vsyscall = 0
-	mov	rax, 0xffffffffff600000
-	call	rax
-	mov	DWORD PTR [rip+0x2d02], 1        # g_vsyscall = 1
-	mov	eax, DWORD PTR ds:0xffffffffff600000
-	mov	DWORD PTR [rip+0x2cf1], 2        # g_vsyscall = 2
-	mov	edi, [rip+0x2ceb]                # exit(g_vsyscall)
-	call	exit
-
-Note: fixed proc-empty-vm test oopses 5.19.0-28-generic kernel
-	but this is separate story.
-
-Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-Reported-by: Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
----
-
- tools/testing/selftests/proc/proc-empty-vm.c |   12 +++++++-----
- tools/testing/selftests/proc/proc-pid-vm.c   |    9 +++++----
- 2 files changed, 12 insertions(+), 9 deletions(-)
-
---- a/tools/testing/selftests/proc/proc-empty-vm.c
-+++ b/tools/testing/selftests/proc/proc-empty-vm.c
-@@ -25,6 +25,7 @@
- #undef NDEBUG
- #include <assert.h>
- #include <errno.h>
-+#include <stdint.h>
- #include <stdio.h>
- #include <stdlib.h>
- #include <string.h>
-@@ -41,7 +42,7 @@
-  * 1: vsyscall VMA is --xp		vsyscall=xonly
-  * 2: vsyscall VMA is r-xp		vsyscall=emulate
-  */
--static int g_vsyscall;
-+static volatile int g_vsyscall;
- static const char *g_proc_pid_maps_vsyscall;
- static const char *g_proc_pid_smaps_vsyscall;
- 
-@@ -147,11 +148,12 @@ static void vsyscall(void)
- 
- 		g_vsyscall = 0;
- 		/* gettimeofday(NULL, NULL); */
-+		uint64_t rax = 0xffffffffff600000;
- 		asm volatile (
--			"call %P0"
--			:
--			: "i" (0xffffffffff600000), "D" (NULL), "S" (NULL)
--			: "rax", "rcx", "r11"
-+			"call *%[rax]"
-+			: [rax] "+a" (rax)
-+			: "D" (NULL), "S" (NULL)
-+			: "rcx", "r11"
- 		);
- 
- 		g_vsyscall = 1;
---- a/tools/testing/selftests/proc/proc-pid-vm.c
-+++ b/tools/testing/selftests/proc/proc-pid-vm.c
-@@ -257,11 +257,12 @@ static void vsyscall(void)
- 
- 		g_vsyscall = 0;
- 		/* gettimeofday(NULL, NULL); */
-+		uint64_t rax = 0xffffffffff600000;
- 		asm volatile (
--			"call %P0"
--			:
--			: "i" (0xffffffffff600000), "D" (NULL), "S" (NULL)
--			: "rax", "rcx", "r11"
-+			"call *%[rax]"
-+			: [rax] "+a" (rax)
-+			: "D" (NULL), "S" (NULL)
-+			: "rcx", "r11"
- 		);
- 
- 		g_vsyscall = 1;
