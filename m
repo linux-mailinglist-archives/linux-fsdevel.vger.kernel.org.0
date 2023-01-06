@@ -2,118 +2,240 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BCB0E65FDE6
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 10:27:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D4A4065FE1B
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 10:39:53 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233148AbjAFJ02 convert rfc822-to-8bit (ORCPT
-        <rfc822;lists+linux-fsdevel@lfdr.de>); Fri, 6 Jan 2023 04:26:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45372 "EHLO
+        id S233859AbjAFJiQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Jan 2023 04:38:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36220 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234496AbjAFJZc (ORCPT
+        with ESMTP id S232940AbjAFJiA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Jan 2023 04:25:32 -0500
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CE4D75D00
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jan 2023 01:22:01 -0800 (PST)
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-214-FaFPO-QRMv2f2SfbtlhxTQ-1; Fri, 06 Jan 2023 09:21:49 +0000
-X-MC-Unique: FaFPO-QRMv2f2SfbtlhxTQ-1
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.42; Fri, 6 Jan
- 2023 09:21:47 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.044; Fri, 6 Jan 2023 09:21:47 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Ameer Hamza' <ahamza@ixsystems.com>
-CC:     "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "chuck.lever@oracle.com" <chuck.lever@oracle.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "guoren@kernel.org" <guoren@kernel.org>,
-        "palmer@rivosinc.com" <palmer@rivosinc.com>,
-        "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
-        "slark_xiao@163.com" <slark_xiao@163.com>,
-        "richard.henderson@linaro.org" <richard.henderson@linaro.org>,
-        "ink@jurassic.park.msu.ru" <ink@jurassic.park.msu.ru>,
-        "mattst88@gmail.com" <mattst88@gmail.com>,
-        "James.Bottomley@HansenPartnership.com" 
-        <James.Bottomley@HansenPartnership.com>,
-        "deller@gmx.de" <deller@gmx.de>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "awalker@ixsystems.com" <awalker@ixsystems.com>,
-        "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
-        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
-        "linux-alpha@vger.kernel.org" <linux-alpha@vger.kernel.org>
-Subject: RE: [PATCH v2] Add new open(2) flag - O_EMPTY_PATH
-Thread-Topic: [PATCH v2] Add new open(2) flag - O_EMPTY_PATH
-Thread-Index: AQHZHXO7YJxmMel9jU25EiVio9tPeK6LKkFQgAAJzgCABe+GwA==
-Date:   Fri, 6 Jan 2023 09:21:46 +0000
-Message-ID: <ea8739b122674695ba9bf991b589817c@AcuMS.aculab.com>
-References: <202212310842.ysbymPHY-lkp@intel.com>
- <20221231235618.117201-1-ahamza@ixsystems.com>
- <4b39cf528148470c934fb5823b35e9d5@AcuMS.aculab.com>
- <20230102143538.GA8886@hamza-HP-ZBook-15-G3>
-In-Reply-To: <20230102143538.GA8886@hamza-HP-ZBook-15-G3>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 6 Jan 2023 04:38:00 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 400817C825;
+        Fri,  6 Jan 2023 01:29:04 -0800 (PST)
+Received: from loongson.cn (unknown [111.207.111.194])
+        by gateway (Coremail) with SMTP id _____8BxrOrf6bdj2A4AAA--.43S3;
+        Fri, 06 Jan 2023 17:29:03 +0800 (CST)
+Received: from loongson.. (unknown [111.207.111.194])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8DxD7_X6bdjVSgVAA--.63411S2;
+        Fri, 06 Jan 2023 17:29:00 +0800 (CST)
+From:   Hongchen Zhang <zhanghongchen@loongson.cn>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
+        Hongchen Zhang <zhanghongchen@loongson.cn>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        David Howells <dhowells@redhat.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Eric Dumazet <edumazet@google.com>
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v3] pipe: use __pipe_{lock,unlock} instead of spinlock
+Date:   Fri,  6 Jan 2023 17:28:53 +0800
+Message-Id: <20230106092853.26038-1-zhanghongchen@loongson.cn>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,PDS_BAD_THREAD_QP_64,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID: AQAAf8DxD7_X6bdjVSgVAA--.63411S2
+X-CM-SenderInfo: x2kd0w5krqwupkhqwqxorr0wxvrqhubq/
+X-Coremail-Antispam: 1Uk129KBjvJXoW3XFykGw43tw4xCw17GF1rWFg_yoW7Ww48pa
+        13KFW7WrWUAr18urW8GrsxZr1ag398Wa1UJrW8GF4FvFnrGrySqFs2kFyakFn5JrZ7ZryY
+        vF4jqa4Fyr1UArDanT9S1TB71UUUUjDqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bfxYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s
+        1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
+        wVC0I7IYx2IY67AKxVW8JVW5JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwA2z4
+        x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oVCq3wAaw2AF
+        wI0_JF0_Jw1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
+        Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JF0_Jw1lYx0Ex4A2jsIE
+        14v26r4j6F4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwCY1x0262kKe7
+        AKxVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwCFI7km07C2
+        67AKxVWUAVWUtwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI
+        8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUCVW8
+        JwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r
+        1xMIIF0xvEx4A2jsIE14v26r4j6F4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBI
+        daVFxhVjvjDU0xZFpf9x07jFApnUUUUU=
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_PASS,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Ameer Hamza
-> Sent: 02 January 2023 14:36
-> 
-> On Mon, Jan 02, 2023 at 02:01:38PM +0000, David Laight wrote:
-> > From: Ameer Hamza
-> > > Sent: 31 December 2022 23:56
-> > >
-> > > This patch adds a new flag O_EMPTY_PATH that allows openat and open
-> > > system calls to open a file referenced by fd if the path is empty,
-> > > and it is very similar to the FreeBSD O_EMPTY_PATH flag. This can be
-> > > beneficial in some cases since it would avoid having to grant /proc
-> > > access to things like samba containers for reopening files to change
-> > > flags in a race-free way.
-> > >
-> >
-> > But what does it do?
-> > (Apart from add code to a common kernel code path.)
-> >
-> > 	David
->
-> It can convert an O_PATH descriptor to one suitable for r/w work.
-> If we already have a file descriptor: {opath_fd = open(&lt;path&gt;, O_PATH);}, we can call
-> {openat(opath_fd, "", O_EMPTY_PATH | O_RDWR)} instead of going through procfs
-> {open(/proc/self/fd/&lt;opath_fd&gt;, O_RDWR)}.
+Use spinlock in pipe_read/write cost too much time,IMO
+pipe->{head,tail} can be protected by __pipe_{lock,unlock}.
+On the other hand, we can use __pipe_{lock,unlock} to protect
+the pipe->{head,tail} in pipe_resize_ring and
+post_one_notification.
 
-Aren't both of those security problems?
+I tested this patch using UnixBench's pipe test case on a x86_64
+machine,and get the following data:
+1) before this patch
+System Benchmarks Partial Index  BASELINE       RESULT    INDEX
+Pipe Throughput                   12440.0     493023.3    396.3
+                                                        ========
+System Benchmarks Index Score (Partial Only)              396.3
 
-Testing the file's inode permission allow write access isn't enough
-to verify that the program could actually open the file for writing.
-The program also needs 'directory search' access on all the directories
-back as far as an open directory fd.
+2) after this patch
+System Benchmarks Partial Index  BASELINE       RESULT    INDEX
+Pipe Throughput                   12440.0     507551.4    408.0
+                                                        ========
+System Benchmarks Index Score (Partial Only)              408.0
 
-	David
+so we get ~3% speedup.
 
+Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
+---
+ fs/pipe.c                 | 22 +---------------------
+ include/linux/pipe_fs_i.h | 10 ++++++++++
+ kernel/watch_queue.c      |  8 ++++----
+ 3 files changed, 15 insertions(+), 25 deletions(-)
+
+diff --git a/fs/pipe.c b/fs/pipe.c
+index 42c7ff41c2db..4355ee5f754e 100644
+--- a/fs/pipe.c
++++ b/fs/pipe.c
+@@ -98,16 +98,6 @@ void pipe_unlock(struct pipe_inode_info *pipe)
+ }
+ EXPORT_SYMBOL(pipe_unlock);
+ 
+-static inline void __pipe_lock(struct pipe_inode_info *pipe)
+-{
+-	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
+-}
 -
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+-static inline void __pipe_unlock(struct pipe_inode_info *pipe)
+-{
+-	mutex_unlock(&pipe->mutex);
+-}
+-
+ void pipe_double_lock(struct pipe_inode_info *pipe1,
+ 		      struct pipe_inode_info *pipe2)
+ {
+@@ -253,8 +243,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 	 */
+ 	was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
+ 	for (;;) {
+-		/* Read ->head with a barrier vs post_one_notification() */
+-		unsigned int head = smp_load_acquire(&pipe->head);
++		unsigned int head = pipe->head;
+ 		unsigned int tail = pipe->tail;
+ 		unsigned int mask = pipe->ring_size - 1;
+ 
+@@ -322,14 +311,12 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+ 
+ 			if (!buf->len) {
+ 				pipe_buf_release(pipe, buf);
+-				spin_lock_irq(&pipe->rd_wait.lock);
+ #ifdef CONFIG_WATCH_QUEUE
+ 				if (buf->flags & PIPE_BUF_FLAG_LOSS)
+ 					pipe->note_loss = true;
+ #endif
+ 				tail++;
+ 				pipe->tail = tail;
+-				spin_unlock_irq(&pipe->rd_wait.lock);
+ 			}
+ 			total_len -= chars;
+ 			if (!total_len)
+@@ -506,16 +493,13 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+ 			 * it, either the reader will consume it or it'll still
+ 			 * be there for the next write.
+ 			 */
+-			spin_lock_irq(&pipe->rd_wait.lock);
+ 
+ 			head = pipe->head;
+ 			if (pipe_full(head, pipe->tail, pipe->max_usage)) {
+-				spin_unlock_irq(&pipe->rd_wait.lock);
+ 				continue;
+ 			}
+ 
+ 			pipe->head = head + 1;
+-			spin_unlock_irq(&pipe->rd_wait.lock);
+ 
+ 			/* Insert it into the buffer array */
+ 			buf = &pipe->bufs[head & mask];
+@@ -1260,14 +1244,12 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
+ 	if (unlikely(!bufs))
+ 		return -ENOMEM;
+ 
+-	spin_lock_irq(&pipe->rd_wait.lock);
+ 	mask = pipe->ring_size - 1;
+ 	head = pipe->head;
+ 	tail = pipe->tail;
+ 
+ 	n = pipe_occupancy(head, tail);
+ 	if (nr_slots < n) {
+-		spin_unlock_irq(&pipe->rd_wait.lock);
+ 		kfree(bufs);
+ 		return -EBUSY;
+ 	}
+@@ -1303,8 +1285,6 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
+ 	pipe->tail = tail;
+ 	pipe->head = head;
+ 
+-	spin_unlock_irq(&pipe->rd_wait.lock);
+-
+ 	/* This might have made more room for writers */
+ 	wake_up_interruptible(&pipe->wr_wait);
+ 	return 0;
+diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+index 6cb65df3e3ba..baae3d062422 100644
+--- a/include/linux/pipe_fs_i.h
++++ b/include/linux/pipe_fs_i.h
+@@ -223,6 +223,16 @@ static inline void pipe_discard_from(struct pipe_inode_info *pipe,
+ #define PIPE_SIZE		PAGE_SIZE
+ 
+ /* Pipe lock and unlock operations */
++static inline void __pipe_lock(struct pipe_inode_info *pipe)
++{
++	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
++}
++
++static inline void __pipe_unlock(struct pipe_inode_info *pipe)
++{
++	mutex_unlock(&pipe->mutex);
++}
++
+ void pipe_lock(struct pipe_inode_info *);
+ void pipe_unlock(struct pipe_inode_info *);
+ void pipe_double_lock(struct pipe_inode_info *, struct pipe_inode_info *);
+diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
+index a6f9bdd956c3..92e46cfe9419 100644
+--- a/kernel/watch_queue.c
++++ b/kernel/watch_queue.c
+@@ -108,7 +108,7 @@ static bool post_one_notification(struct watch_queue *wqueue,
+ 	if (!pipe)
+ 		return false;
+ 
+-	spin_lock_irq(&pipe->rd_wait.lock);
++	__pipe_lock(pipe);
+ 
+ 	mask = pipe->ring_size - 1;
+ 	head = pipe->head;
+@@ -135,17 +135,17 @@ static bool post_one_notification(struct watch_queue *wqueue,
+ 	buf->offset = offset;
+ 	buf->len = len;
+ 	buf->flags = PIPE_BUF_FLAG_WHOLE;
+-	smp_store_release(&pipe->head, head + 1); /* vs pipe_read() */
++	pipe->head = head + 1;
+ 
+ 	if (!test_and_clear_bit(note, wqueue->notes_bitmap)) {
+-		spin_unlock_irq(&pipe->rd_wait.lock);
++		__pipe_unlock(pipe);
+ 		BUG();
+ 	}
+ 	wake_up_interruptible_sync_poll_locked(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+ 	done = true;
+ 
+ out:
+-	spin_unlock_irq(&pipe->rd_wait.lock);
++	__pipe_unlock(pipe);
+ 	if (done)
+ 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+ 	return done;
+-- 
+2.34.1
 
