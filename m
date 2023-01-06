@@ -2,50 +2,49 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BC3D660189
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 14:49:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2B015660192
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 14:53:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233709AbjAFNtm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Jan 2023 08:49:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43640 "EHLO
+        id S233050AbjAFNxS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Jan 2023 08:53:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229908AbjAFNtl (ORCPT
+        with ESMTP id S229908AbjAFNxQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Jan 2023 08:49:41 -0500
-X-Greylist: delayed 156107 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Fri, 06 Jan 2023 05:49:39 PST
+        Fri, 6 Jan 2023 08:53:16 -0500
 Received: from domac.alu.hr (domac.alu.unizg.hr [IPv6:2001:b68:2:2800::3])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4898D265C;
-        Fri,  6 Jan 2023 05:49:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 298E81A210;
+        Fri,  6 Jan 2023 05:53:15 -0800 (PST)
 Received: from localhost (localhost [127.0.0.1])
-        by domac.alu.hr (Postfix) with ESMTP id 601CA604F1;
-        Fri,  6 Jan 2023 14:49:36 +0100 (CET)
+        by domac.alu.hr (Postfix) with ESMTP id C67AA604F1;
+        Fri,  6 Jan 2023 14:53:13 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
-        t=1673012976; bh=nrpGCol9vSWMjQ2sV6HMFGcy7zTh1fSvD6DJLZxpQvY=;
+        t=1673013193; bh=Q+AzEgTW/m2Pdu5fLVw0AFRlFGHoMItl3/gtOwW2H+s=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=mH5MF/fztODThvd5cOsRAnZJh6HXt1cf6/eLjk1o6AcjzR4kvRLVF2Z/87YnPZUy4
-         XIwQpadxP6EymogPf3gUCT+v+Xu7WJVqPOry8t+LexZef19PsSQz5c2aKMJJsx6xUz
-         RaZHptBl6eW5mHGLEmDlREL8FFX/0Ndby9nfux1tQZG1KOySE6hXnIDX1ktwXYRc1X
-         n1q6BO49ZT1bxZRakvbEs7TlqNbCGB3Uco7MpjHyn1qvKrobM7z5VZ5aUOIuErvGNx
-         G/KC1u1eN+bil6MReSFjScSG9uXEvpgxPXQo0o2Qf1T0tavOZ+jLbPL6a3smWwqsQa
-         //gINH4deGg5w==
+        b=iDcIOkiFJfGX+psihuAYtSFeBTC+eH+3vaa1iabieBOGzw65S55QwRNFgKRuOFjsi
+         vW8XCWnfQyi9YKIrbNjnEVVZ5jUYQ20Yt9JMKo+cSPwBLr+Jdao2ofxfCRN4l8X/N5
+         17nXBfR+Ecq7TYOB16BArFjBSdjgVPAvwQ9joHY0KkDJ62ilAcsoWN2sa/YqLwwLuA
+         KVfsrJPGPq9G7n+e+fZYiFD/oRD3RWPQFl0k14uaH470mrH3C1Nso+bGFM3R7oo+xo
+         Vq3jEnPE1HdLIYmzmeiw3mBmDdAL2ql8gcrtvbTGmkqPtA4jz+WBYyx4BXVojcS3uN
+         ISbHjCybQjeUQ==
 X-Virus-Scanned: Debian amavisd-new at domac.alu.hr
 Received: from domac.alu.hr ([127.0.0.1])
         by localhost (domac.alu.hr [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id WxSTEYOd956Q; Fri,  6 Jan 2023 14:49:34 +0100 (CET)
+        with ESMTP id SumuLJYPe6DP; Fri,  6 Jan 2023 14:53:11 +0100 (CET)
 Received: from [192.168.0.12] (unknown [188.252.196.35])
-        by domac.alu.hr (Postfix) with ESMTPSA id 831EE604F0;
-        Fri,  6 Jan 2023 14:49:33 +0100 (CET)
+        by domac.alu.hr (Postfix) with ESMTPSA id 729A0604F0;
+        Fri,  6 Jan 2023 14:53:11 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=alu.unizg.hr; s=mail;
-        t=1673012974; bh=nrpGCol9vSWMjQ2sV6HMFGcy7zTh1fSvD6DJLZxpQvY=;
+        t=1673013191; bh=Q+AzEgTW/m2Pdu5fLVw0AFRlFGHoMItl3/gtOwW2H+s=;
         h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=TBIScCXoaH7GsyEmyrE4lmAGBjbSptK05peZDw4rozCadokJ43+2XtsbBxswPax/R
-         xaZt0x2ydbeH6dN/lr3XcZIKnVBJ14o7Wz4GBjoEXuatDsBcaeKASupPH11o5TZEvb
-         sIoZiUpHt4Yc0t+xivo8d2CEORmNYhiBRs3zMhZHaVjqo3NAUKq3rNNza2RUaCmFV9
-         C3GGiKKqz7QlcMNTW3Kxg1dioGskyF2n+ZkRJnB8gdqIR+lPeSjj94wLLkvrtUzKUH
-         pxtWMc28tIswwDTPU99L+k0UmPwJb1dIo2eWkYus8gU1pYQzLz8T04n3SIWJ08XeOM
-         /qsqhrY1oFdpA==
-Message-ID: <144466ba-842f-1cb4-81e4-c5910b88a1bc@alu.unizg.hr>
-Date:   Fri, 6 Jan 2023 14:49:32 +0100
+        b=ZnyFrMUW2LV1zU3pbUA5kgndltV48IbcTEs0SF3zdqUiYclFx7gNOOK5opKKD07+T
+         mJsVriaFXLuRP3Cxs86+rIbErLJxMSam6BnR45PV5NlzXoqoFz9nSrhAbASPY8dwz0
+         F15DVizRhqtaZ9M8IvPnn0+a0j1ApwdxSfQSZ/HrBs1p0ky0/bgm/kLQDWI4ky9L4S
+         NO2r4BvdHO5cniVvOEhCaaRuCjTzTkGd3jAaRj4eA6NR95lbdgmOPGPp0snxqoRmNi
+         WIjZ7IcxEco19NG+GthNle9Hz5Mj/O0E0Z9FMjruJlZSMFHTWkcBKaF65KHuRCHs1g
+         6A5XdQSN2o6qg==
+Message-ID: <97a9b094-11cc-5ad1-4874-8ead69a54127@alu.unizg.hr>
+Date:   Fri, 6 Jan 2023 14:53:11 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.4.2
@@ -59,9 +58,9 @@ Cc:     linux-kselftest@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         Thorsten Leemhuis <regressions@leemhuis.info>
 References: <fd9206f6-3ec4-cafc-e313-dfddf957bd5e@alu.unizg.hr>
- <Y7XHL8ZRBf7TA/q7@p183>
+ <Y7f6WBUXBz8tlr3b@p183>
 From:   Mirsad Goran Todorovac <mirsad.todorovac@alu.unizg.hr>
-In-Reply-To: <Y7XHL8ZRBf7TA/q7@p183>
+In-Reply-To: <Y7f6WBUXBz8tlr3b@p183>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -73,14 +72,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 04. 01. 2023. 19:36, Alexey Dobriyan wrote:
+On 06. 01. 2023. 11:39, Alexey Dobriyan wrote:
 > On Wed, Jan 04, 2023 at 07:27:40PM +0100, Mirsad Goran Todorovac wrote:
+>> Dear all,
+>>
 >> Trying to complete `make kselftest` for the first time, so maybe I'm doing something wrong?
 >>
 >> Or we are having a regression in 6.2-rc2 release candidate ...
 >>
 >> However, the output of selftest run is:
-> 
+>>
+>> make[2]: Entering directory '.../linux_torvalds/tools/testing/selftests/proc'
+>> TAP version 13
+>> 1..21
+>> # selftests: proc: fd-001-lookup
+>> ok 1 selftests: proc: fd-001-lookup
+>> # selftests: proc: fd-002-posix-eq
+>> ok 2 selftests: proc: fd-002-posix-eq
+>> # selftests: proc: fd-003-kthread
+>> ok 3 selftests: proc: fd-003-kthread
+>> # selftests: proc: proc-loadavg-001
+>> ok 4 selftests: proc: proc-loadavg-001
+>> # selftests: proc: proc-empty-vm
 >> # proc-empty-vm: proc-empty-vm.c:184: test_proc_pid_maps: Assertion `rv == 0' failed.
 >> # /usr/bin/timeout: the monitored command dumped core
 >> # Aborted
@@ -96,50 +109,17 @@ On 04. 01. 2023. 19:36, Alexey Dobriyan wrote:
 >>
 >> The platform is Ubuntu 22.10 kinetic kudu on a Lenovo Ideapad 3 15ITL6 laptop.
 > 
-> What the output of "cat /proc/self/maps" ?
+> The "bug" is that "call rel32" instruction testing for executable
+> vsyscall page which should be relocated to "call 0xffffffffff600000"
+> is messed up. Ubuntu 22.10 ships with "vsyscall=xonly" so there should not be
+> any faults when executing from it. But segfault happens with normal
+> randomised userspace address.
+> 
+> I'll change it to "call *rax" which should be more robust (and works)
+> and free from relocations.
 
-root@marvin-IdeaPad-3-15ITL6:/home/marvin/linux/kernel/linux_torvalds# cat /proc/self/maps
-5606e3099000-5606e309b000 r--p 00000000 103:04 5505728                   /usr/bin/cat
-5606e309b000-5606e309f000 r-xp 00002000 103:04 5505728                   /usr/bin/cat
-5606e309f000-5606e30a1000 r--p 00006000 103:04 5505728                   /usr/bin/cat
-5606e30a1000-5606e30a2000 r--p 00007000 103:04 5505728                   /usr/bin/cat
-5606e30a2000-5606e30a3000 rw-p 00008000 103:04 5505728                   /usr/bin/cat
-5606e4804000-5606e4825000 rw-p 00000000 00:00 0                          [heap]
-7f9833400000-7f9833c42000 r--p 00000000 103:04 5505206                   /usr/lib/locale/locale-archive
-7f9833e00000-7f9833e22000 r--p 00000000 103:04 5506045                   /usr/lib/x86_64-linux-gnu/libc.so.6
-7f9833e22000-7f9833f9b000 r-xp 00022000 103:04 5506045                   /usr/lib/x86_64-linux-gnu/libc.so.6
-7f9833f9b000-7f9833ff2000 r--p 0019b000 103:04 5506045                   /usr/lib/x86_64-linux-gnu/libc.so.6
-7f9833ff2000-7f9833ff6000 r--p 001f1000 103:04 5506045                   /usr/lib/x86_64-linux-gnu/libc.so.6
-7f9833ff6000-7f9833ff8000 rw-p 001f5000 103:04 5506045                   /usr/lib/x86_64-linux-gnu/libc.so.6
-7f9833ff8000-7f9834005000 rw-p 00000000 00:00 0
-7f983401e000-7f9834040000 rw-p 00000000 00:00 0
-7f9834040000-7f9834097000 r--p 00000000 103:04 5636099                   /usr/lib/locale/C.utf8/LC_CTYPE
-7f9834097000-7f983409a000 rw-p 00000000 00:00 0
-7f983409d000-7f983409e000 r--p 00000000 103:04 5636115                   /usr/lib/locale/C.utf8/LC_NUMERIC
-7f983409e000-7f983409f000 r--p 00000000 103:04 5636123                   /usr/lib/locale/C.utf8/LC_TIME
-7f983409f000-7f98340a0000 r--p 00000000 103:04 5636098                   /usr/lib/locale/C.utf8/LC_COLLATE
-7f98340a0000-7f98340a1000 r--p 00000000 103:04 5636111                   /usr/lib/locale/C.utf8/LC_MONETARY
-7f98340a1000-7f98340a2000 r--p 00000000 103:04 5636109                   /usr/lib/locale/C.utf8/LC_MESSAGES/SYS_LC_MESSAGES
-7f98340a2000-7f98340a3000 r--p 00000000 103:04 5636117                   /usr/lib/locale/C.utf8/LC_PAPER
-7f98340a3000-7f98340a4000 r--p 00000000 103:04 5636113                   /usr/lib/locale/C.utf8/LC_NAME
-7f98340a4000-7f98340a5000 r--p 00000000 103:04 5636097                   /usr/lib/locale/C.utf8/LC_ADDRESS
-7f98340a5000-7f98340a6000 r--p 00000000 103:04 5636121                   /usr/lib/locale/C.utf8/LC_TELEPHONE
-7f98340a6000-7f98340a7000 r--p 00000000 103:04 5636107                   /usr/lib/locale/C.utf8/LC_MEASUREMENT
-7f98340a7000-7f98340ae000 r--s 00000000 103:04 6164284                   /usr/lib/x86_64-linux-gnu/gconv/gconv-modules.cache
-7f98340ae000-7f98340af000 r--p 00000000 103:04 5636106                   /usr/lib/locale/C.utf8/LC_IDENTIFICATION
-7f98340af000-7f98340b1000 rw-p 00000000 00:00 0
-7f98340b1000-7f98340b2000 r--p 00000000 103:04 5505669                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
-7f98340b2000-7f98340db000 r-xp 00001000 103:04 5505669                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
-7f98340db000-7f98340e5000 r--p 0002a000 103:04 5505669                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
-7f98340e5000-7f98340e7000 r--p 00034000 103:04 5505669                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
-7f98340e7000-7f98340e9000 rw-p 00036000 103:04 5505669                   /usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
-7ffd0e771000-7ffd0e792000 rw-p 00000000 00:00 0                          [stack]
-7ffd0e7ec000-7ffd0e7f0000 r--p 00000000 00:00 0                          [vvar]
-7ffd0e7f0000-7ffd0e7f2000 r-xp 00000000 00:00 0                          [vdso]
-ffffffffff600000-ffffffffff601000 --xp 00000000 00:00 0                  [vsyscall]
-root@marvin-IdeaPad-3-15ITL6:/home/marvin/linux/kernel/linux_torvalds#
-
-Sorry, overlooked your reply in the bunch of msgs. :(
+If you will need to test the patch in the same environment where the problem initially
+occurred, I am ready at your disposal.
 
 Thanks,
 Mirsad
