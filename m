@@ -2,96 +2,91 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 170CA6606F2
-	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 20:13:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BDCEB6606FB
+	for <lists+linux-fsdevel@lfdr.de>; Fri,  6 Jan 2023 20:17:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232399AbjAFTNW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Jan 2023 14:13:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51928 "EHLO
+        id S231376AbjAFTRZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Jan 2023 14:17:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52924 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229547AbjAFTNU (ORCPT
+        with ESMTP id S231277AbjAFTRY (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Jan 2023 14:13:20 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2DFB868799;
-        Fri,  6 Jan 2023 11:13:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=4fFJTo3td0EaVTFdM5bjLZ2rfCzevY+CZk+c5LeFYls=; b=gBTyIAy13xD19rRq3HNUq2LAQA
-        9519MzZCt8oZpCQDgIUYkvArms/BnXH5g0qNTXpM204LENwQnaf7n9L1f71TQRbBTdP/GfPUFoQGf
-        sYd0v+Uqz/Z50GBoNO9rtisMhd2JxoKzyL+K+hWyUpCKTgib667xXZrI7qBeYhiapb7APoEGZlSjN
-        EH4XR8rEn5nJo5f4ncJjf/fYGjOxOkoTOR60ShDJatQPocMEc8ByQF8lRGUlD+ZeZiDf2n5Rvv4rA
-        9NA+JTBhKSwM5zNDgs4oTLxfxbZGx8JkhmbDWO5xjstPxpw8m59i5n/za4+zeKCyvyDRxUHqSVzDO
-        oE7LCFDQ==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pDs9L-00EYJA-Gb; Fri, 06 Jan 2023 19:13:07 +0000
-Date:   Fri, 6 Jan 2023 11:13:07 -0800
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     Hongchen Zhang <zhanghongchen@loongson.cn>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
-        David Howells <dhowells@redhat.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Eric Dumazet <edumazet@google.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] pipe: use __pipe_{lock,unlock} instead of spinlock
-Message-ID: <Y7hyw+fTdgAF6uYP@bombadil.infradead.org>
-References: <20230106094844.26241-1-zhanghongchen@loongson.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230106094844.26241-1-zhanghongchen@loongson.cn>
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+        Fri, 6 Jan 2023 14:17:24 -0500
+Received: from mail-oo1-xc2a.google.com (mail-oo1-xc2a.google.com [IPv6:2607:f8b0:4864:20::c2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B5F801BC
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jan 2023 11:17:23 -0800 (PST)
+Received: by mail-oo1-xc2a.google.com with SMTP id m23-20020a4abc97000000b004bfe105c580so706817oop.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jan 2023 11:17:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dubeyko-com.20210112.gappssmtp.com; s=20210112;
+        h=to:cc:date:message-id:subject:mime-version
+         :content-transfer-encoding:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QPMCgZhfjIqLlZSt80mt/MRb1U8G1aCCF1CW+pU7nac=;
+        b=KaiVt9rKM65zPESuFOVGS1v+/3JN6NVMPQQEUcXYqixO60rEYkxp051HpigqjR51l/
+         nrO7HVdyQCS7CikIffgGj+uejriUtWp8T8DPnu2unjyioiDVZrCpA+4B51wPxk9S4Nbu
+         pl/JIfvgcUDCpZQ1yj08gy4UNG9FfS7GsSyPcqjJMOmNdfFWksedDu1CmVZlHP4wHyvI
+         XGCJKspb1aRKaISObbr5xsiSPCo0umh6PusOPUegj3zCSCCzsB9SXeTABxBOTbfjPZ0z
+         uuJr4ngWlik6jHtmfl2iMQZ76eUa6EkkTsJXC5XT+3tXTNekm/a+8t4vuKKbEl5qW6fR
+         Q2Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:cc:date:message-id:subject:mime-version
+         :content-transfer-encoding:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QPMCgZhfjIqLlZSt80mt/MRb1U8G1aCCF1CW+pU7nac=;
+        b=QmDirAoqEzG9lbdF4XQesd4mHWc9NdljTfXe5LYC8G8tMoZN0ZmVsoUkqWWXIhBL8V
+         PQ17Nxm5d9feva2XliJN5n8yDRyO7ElsckZhEoZz4lE/antu8HIW2psmd0WAAP1hSWWu
+         r5h8zGdviCNYWMdUqete9BCJjA86gr+sNvRga+5JtaR3t/9f0htlhBVOkYNxXZQJTOLQ
+         feBEjOLH3LH0vlaVgbqtRuzO1JYDTb0l4o3+3L89wRddq6zWiJ+aLu58K4/7OxlYfPKB
+         6ryu/rH/uWd+1c83ME7j1mnvg2WE9O9+3My7sV3bucrjvl4MuMd2OQiWSg37Awxxfwod
+         HN7w==
+X-Gm-Message-State: AFqh2kq4x/TFw0a3oyVvb7KvfjZ8slMJxVSYhc1MxTxit7K5aIaUfZpq
+        jNjfhWjg1BXvWmAC8cf8oD5A8cBrAFo05njfCGdprw==
+X-Google-Smtp-Source: AMrXdXton316KXaX80FK7xrsgx50aENyoJnxyNzKnafl+WXc6mJJNK11EKPRNTMiM+exSjlm1hzBWw==
+X-Received: by 2002:a4a:bd94:0:b0:49f:f3ef:33b3 with SMTP id k20-20020a4abd94000000b0049ff3ef33b3mr27165983oop.7.1673032642241;
+        Fri, 06 Jan 2023 11:17:22 -0800 (PST)
+Received: from smtpclient.apple (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
+        by smtp.gmail.com with ESMTPSA id bb9-20020a056820160900b0049be9c3c15dsm775975oob.33.2023.01.06.11.17.20
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 06 Jan 2023 11:17:21 -0800 (PST)
+From:   Viacheslav Dubeyko <slava@dubeyko.com>
+Content-Type: text/plain;
+        charset=us-ascii
+Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3696.120.41.1.1\))
+Subject: [LSF/MM/BPF BoF] Session for Zoned Storage 2023 
+Message-Id: <F6BF25E2-FF26-48F2-8378-3CB36E362313@dubeyko.com>
+Date:   Fri, 6 Jan 2023 11:17:19 -0800
+Cc:     Luis Chamberlain <mcgrof@kernel.org>,
+        =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier.gonz@samsung.com>,
+        =?utf-8?Q?Matias_Bj=C3=B8rling?= <Matias.Bjorling@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Hans Holmberg <hans.holmberg@wdc.com>,
+        "Viacheslav A. Dubeyko" <viacheslav.dubeyko@bytedance.com>
+To:     Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-block@vger.kernel.org
+X-Mailer: Apple Mail (2.3696.120.41.1.1)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 06, 2023 at 05:48:44PM +0800, Hongchen Zhang wrote:
-> Use spinlock in pipe_read/write cost too much time,IMO
-> pipe->{head,tail} can be protected by __pipe_{lock,unlock}.
-> On the other hand, we can use __pipe_{lock,unlock} to protect
-> the pipe->{head,tail} in pipe_resize_ring and
-> post_one_notification.
-> 
-> I tested this patch using UnixBench's pipe test case on a x86_64
-> machine,and get the following data:
-> 1) before this patch
-> System Benchmarks Partial Index  BASELINE       RESULT    INDEX
-> Pipe Throughput                   12440.0     493023.3    396.3
->                                                         ========
-> System Benchmarks Index Score (Partial Only)              396.3
-> 
-> 2) after this patch
-> System Benchmarks Partial Index  BASELINE       RESULT    INDEX
-> Pipe Throughput                   12440.0     507551.4    408.0
->                                                         ========
-> System Benchmarks Index Score (Partial Only)              408.0
-> 
-> so we get ~3% speedup.
-> 
-> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
-> ---
+Hello,
 
-After the above "---" line you should have the changlog descrption.
-For instance:
+I would like to suggest to have ZNS related session again. I think we =
+have a lot of to discuss.
+As far as I can see, I have two topics for discussion. And I believe =
+there are multiple other
+topics too.
 
-v3:
-  - fixes bleh blah blah
-v2:
-  - fixes 0-day report by ... etc..
-  - fixes spelling or whatever
+How everybody feels to have a room for ZNS related discussion?
 
-I cannot decipher what you did here differently, not do I want to go
-looking and diff'ing. So you are making the life of reviewer harder.
-
-  Luis
+Thanks,
+Slava.=
