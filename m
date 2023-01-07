@@ -2,68 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F4DF660ADC
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jan 2023 01:35:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C7B96660AE9
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jan 2023 01:35:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229780AbjAGAf1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Jan 2023 19:35:27 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43550 "EHLO
+        id S236760AbjAGAfn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Jan 2023 19:35:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236699AbjAGAfK (ORCPT
+        with ESMTP id S236669AbjAGAfP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Jan 2023 19:35:10 -0500
+        Fri, 6 Jan 2023 19:35:15 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95FE285C80
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jan 2023 16:34:05 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4870287287
+        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jan 2023 16:34:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673051644;
+        s=mimecast20190719; t=1673051654;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=oyiEXGzewi8BxhVfMwa0DpjJ6qICpqEootA6xhLl17A=;
-        b=XF9h1nH+HnNWSxRIzYU8sCCbvTWR7eFgK3LwraWOA0SrT524RRY2lrRDH89bvD3uUIK50O
-        N3HiVA7lgazI5jyZbmmjbXUuTNbPJffiVr9qgNGgWyZxSqmOkNTmxcrUnt9OuSkIHG24px
-        wJG9axCrnFrnsYc6Sg+INQazZjUfVK4=
+        bh=p5FqX6wgeTJdF7BCkVTnz37qBgc2kKUyMX+o8KfLQEw=;
+        b=MSnY6Rdfp/4lxnVy+uJznPcUK6Am7Fdt29CN6ZMulC6E7BgwIlPBK/FAWMAATe0NbkEzd0
+        kHXymXi1CVu8JviKyZj8NlAA5VrATQpj7k6UlGlD1nlhJd4nX9uvMoWGKK5BjQ5YtSfq5W
+        BAz1iwS2p3kGWlbK8AtFzYcy7vpplEw=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-618-_ATCgz3PMMOgiHpPqp77iw-1; Fri, 06 Jan 2023 19:34:01 -0500
-X-MC-Unique: _ATCgz3PMMOgiHpPqp77iw-1
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+ us-mta-654-i1vVWkQjNnuSPL2FXwyBrA-1; Fri, 06 Jan 2023 19:34:09 -0500
+X-MC-Unique: i1vVWkQjNnuSPL2FXwyBrA-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 320FA85A588;
-        Sat,  7 Jan 2023 00:34:01 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id CF31A1871CD5;
+        Sat,  7 Jan 2023 00:34:08 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 90A0D140EBF5;
-        Sat,  7 Jan 2023 00:33:59 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1A1FF40C2064;
+        Sat,  7 Jan 2023 00:34:07 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v4 4/7] iov_iter: Add a function to extract a page list from
- an iterator
+Subject: [PATCH v4 5/7] netfs: Add a function to extract a UBUF or IOVEC into
+ a BVEC iterator
 From:   David Howells <dhowells@redhat.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Christoph Hellwig <hch@lst.de>, John Hubbard <jhubbard@nvidia.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        dhowells@redhat.com, Christoph Hellwig <hch@infradead.org>,
+Cc:     Jeff Layton <jlayton@kernel.org>, Steve French <sfrench@samba.org>,
+        Shyam Prasad N <nspmangalore@gmail.com>,
+        Rohith Surabattula <rohiths.msft@gmail.com>,
+        linux-cachefs@redhat.com, linux-cifs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, dhowells@redhat.com,
+        Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Sat, 07 Jan 2023 00:33:58 +0000
-Message-ID: <167305163883.1521586.10777155475378874823.stgit@warthog.procyon.org.uk>
+Date:   Sat, 07 Jan 2023 00:34:06 +0000
+Message-ID: <167305164634.1521586.12199658904363317567.stgit@warthog.procyon.org.uk>
 In-Reply-To: <167305160937.1521586.133299343565358971.stgit@warthog.procyon.org.uk>
 References: <167305160937.1521586.133299343565358971.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/1.5
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -74,453 +76,190 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a function, iov_iter_extract_pages(), to extract a list of pages from
-an iterator.  The pages may be returned with a reference added or a pin
-added or neither, depending on the type of iterator and the direction of
-transfer.
+Add a function to extract the pages from a user-space supplied iterator
+(UBUF- or IOVEC-type) into a BVEC-type iterator, retaining the pages by
+getting a ref on them (ITER_SOURCE, ie. WRITE) or pinning them (ITER_DEST,
+ie. READ) as we go.
 
-The function also indicates the mode of retention that was employed for an
-iterator - and therefore how the caller should dispose of the pages later.
+This is useful in three situations:
 
-There are three cases:
+ (1) A userspace thread may have a sibling that unmaps or remaps the
+     process's VM during the operation, changing the assignment of the
+     pages and potentially causing an error.  Retaining the pages keeps
+     some pages around, even if this occurs; futher, we find out at the
+     point of extraction if EFAULT is going to be incurred.
 
- (1) Transfer *into* an ITER_IOVEC or ITER_UBUF iterator.
+ (2) Pages might get swapped out/discarded if not retained, so we want to
+     retain them to avoid the reload causing a deadlock due to a DIO
+     from/to an mmapped region on the same file.
 
-     Extracted pages will have pins obtained on them (but not references)
-     so that fork() doesn't CoW the pages incorrectly whilst the I/O is in
-     progress.
+ (3) The iterator may get passed to sendmsg() by the filesystem.  If a
+     fault occurs, we may get a short write to a TCP stream that's then
+     tricky to recover from.
 
-     The indicated mode of retention will be FOLL_PIN for this case.  The
-     caller should use something like unpin_user_page() to dispose of the
-     page.
-
- (2) Transfer is *out of* an ITER_IOVEC or ITER_UBUF iterator.
-
-     Extracted pages will have references obtained on them, but not pins.
-
-     The indicated mode of retention will be FOLL_GET.  The caller should
-     use something like put_page() for page disposal.
-
- (3) Any other sort of iterator.
-
-     No refs or pins are obtained on the page, the assumption is made that
-     the caller will manage page retention.
-
-     The indicated mode of retention will be 0.  The pages don't need
-     additional disposal.
+We don't deal with other types of iterator here, leaving it to other
+mechanisms to retain the pages (eg. PG_locked, PG_writeback and the pipe
+lock).
 
 Changes:
 ========
-vet #4)
- - Use ITER_SOURCE/DEST instead of WRITE/READ.
- - Allow additional FOLL_* flags, such as FOLL_PCI_P2PDMA to be passed in.
-
 ver #3)
  - Switch to using EXPORT_SYMBOL_GPL to prevent indirect 3rd-party access
    to get/pin_user_pages_fast()[1].
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Christoph Hellwig <hch@lst.de>
-cc: John Hubbard <jhubbard@nvidia.com>
-cc: Matthew Wilcox <willy@infradead.org>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Steve French <sfrench@samba.org>
+cc: Shyam Prasad N <nspmangalore@gmail.com>
+cc: Rohith Surabattula <rohiths.msft@gmail.com>
+cc: linux-cachefs@redhat.com
+cc: linux-cifs@vger.kernel.org
 cc: linux-fsdevel@vger.kernel.org
-cc: linux-mm@kvack.org
 
 Link: https://lore.kernel.org/r/Y3zFzdWnWlEJ8X8/@infradead.org/ [1]
-Link: https://lore.kernel.org/r/166722777971.2555743.12953624861046741424.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166732025748.3186319.8314014902727092626.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166869689451.3723671.18242195992447653092.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166920903885.1461876.692029808682876184.stgit@warthog.procyon.org.uk/ # v2
-Link: https://lore.kernel.org/r/166997421646.9475.14837976344157464997.stgit@warthog.procyon.org.uk/ # v3
+Link: https://lore.kernel.org/r/166697255265.61150.6289490555867717077.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166732026503.3186319.12020462741051772825.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166869690376.3723671.8813331570219190705.stgit@warthog.procyon.org.uk/ # rfc
+Link: https://lore.kernel.org/r/166920904810.1461876.11603559311247187100.stgit@warthog.procyon.org.uk/ # v2
+Link: https://lore.kernel.org/r/166997422579.9475.12101700945635692496.stgit@warthog.procyon.org.uk/ # v3
 ---
 
- include/linux/uio.h |    5 +
- lib/iov_iter.c      |  361 +++++++++++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 366 insertions(+)
+ fs/netfs/Makefile     |    1 
+ fs/netfs/iterator.c   |   99 +++++++++++++++++++++++++++++++++++++++++++++++++
+ include/linux/netfs.h |    3 +
+ 3 files changed, 103 insertions(+)
+ create mode 100644 fs/netfs/iterator.c
 
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index acb1ae3324ed..9a36b4cddb28 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -382,4 +382,9 @@ static inline void iov_iter_ubuf(struct iov_iter *i, enum iter_dir direction,
- 	};
- }
+diff --git a/fs/netfs/Makefile b/fs/netfs/Makefile
+index f684c0cd1ec5..386d6fb92793 100644
+--- a/fs/netfs/Makefile
++++ b/fs/netfs/Makefile
+@@ -3,6 +3,7 @@
+ netfs-y := \
+ 	buffered_read.o \
+ 	io.o \
++	iterator.o \
+ 	main.o \
+ 	objects.o
  
-+ssize_t iov_iter_extract_pages(struct iov_iter *i, struct page ***pages,
-+			       size_t maxsize, unsigned int maxpages,
-+			       unsigned int gup_flags,
-+			       size_t *offset0, unsigned int *cleanup_mode);
-+
- #endif
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index fec1c5513197..dc6db5ad108b 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1914,3 +1914,364 @@ void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state)
- 		i->iov -= state->nr_segs - i->nr_segs;
- 	i->nr_segs = state->nr_segs;
- }
-+
-+/*
-+ * Extract a list of contiguous pages from an ITER_PIPE iterator.  This does
-+ * not get references of its own on the pages, nor does it get a pin on them.
-+ * If there's a partial page, it adds that first and will then allocate and add
-+ * pages into the pipe to make up the buffer space to the amount required.
+diff --git a/fs/netfs/iterator.c b/fs/netfs/iterator.c
+new file mode 100644
+index 000000000000..7d802d21b9c5
+--- /dev/null
++++ b/fs/netfs/iterator.c
+@@ -0,0 +1,99 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/* Iterator helpers.
 + *
-+ * The caller must hold the pipe locked and only transferring into a pipe is
-+ * supported.
++ * Copyright (C) 2022 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
 + */
-+static ssize_t iov_iter_extract_pipe_pages(struct iov_iter *i,
-+					   struct page ***pages, size_t maxsize,
-+					   unsigned int maxpages,
-+					   unsigned int gup_flags,
-+					   size_t *offset0,
-+					   unsigned int *cleanup_mode)
-+{
-+	unsigned int nr, offset, chunk, j;
-+	struct page **p;
-+	size_t left;
 +
-+	if (!sanity(i))
-+		return -EFAULT;
-+
-+	offset = pipe_npages(i, &nr);
-+	if (!nr)
-+		return -EFAULT;
-+	*offset0 = offset;
-+
-+	maxpages = min_t(size_t, nr, maxpages);
-+	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
-+	if (!maxpages)
-+		return -ENOMEM;
-+	p = *pages;
-+
-+	left = maxsize;
-+	for (j = 0; j < maxpages; j++) {
-+		struct page *page = append_pipe(i, left, &offset);
-+		if (!page)
-+			break;
-+		chunk = min_t(size_t, left, PAGE_SIZE - offset);
-+		left -= chunk;
-+		*p++ = page;
-+	}
-+	if (!j)
-+		return -EFAULT;
-+	*cleanup_mode = 0;
-+	return maxsize - left;
-+}
-+
-+/*
-+ * Extract a list of contiguous pages from an ITER_XARRAY iterator.  This does not
-+ * get references on the pages, nor does it get a pin on them.
-+ */
-+static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
-+					     struct page ***pages, size_t maxsize,
-+					     unsigned int maxpages,
-+					     unsigned int gup_flags,
-+					     size_t *offset0,
-+					     unsigned int *cleanup_mode)
-+{
-+	struct page *page, **p;
-+	unsigned int nr = 0, offset;
-+	loff_t pos = i->xarray_start + i->iov_offset;
-+	pgoff_t index = pos >> PAGE_SHIFT;
-+	XA_STATE(xas, i->xarray, index);
-+
-+	offset = pos & ~PAGE_MASK;
-+	*offset0 = offset;
-+
-+	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
-+	if (!maxpages)
-+		return -ENOMEM;
-+	p = *pages;
-+
-+	rcu_read_lock();
-+	for (page = xas_load(&xas); page; page = xas_next(&xas)) {
-+		if (xas_retry(&xas, page))
-+			continue;
-+
-+		/* Has the page moved or been split? */
-+		if (unlikely(page != xas_reload(&xas))) {
-+			xas_reset(&xas);
-+			continue;
-+		}
-+
-+		p[nr++] = find_subpage(page, xas.xa_index);
-+		if (nr == maxpages)
-+			break;
-+	}
-+	rcu_read_unlock();
-+
-+	maxsize = min_t(size_t, nr * PAGE_SIZE - offset, maxsize);
-+	i->iov_offset += maxsize;
-+	i->count -= maxsize;
-+	*cleanup_mode = 0;
-+	return maxsize;
-+}
-+
-+/*
-+ * Extract a list of contiguous pages from an ITER_BVEC iterator.  This does
-+ * not get references on the pages, nor does it get a pin on them.
-+ */
-+static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
-+					   struct page ***pages, size_t maxsize,
-+					   unsigned int maxpages,
-+					   unsigned int gup_flags,
-+					   size_t *offset0,
-+					   unsigned int *cleanup_mode)
-+{
-+	struct page **p, *page;
-+	size_t skip = i->iov_offset, offset;
-+	int k;
-+
-+	maxsize = min(maxsize, i->bvec->bv_len - skip);
-+	skip += i->bvec->bv_offset;
-+	page = i->bvec->bv_page + skip / PAGE_SIZE;
-+	offset = skip % PAGE_SIZE;
-+	*offset0 = offset;
-+
-+	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
-+	if (!maxpages)
-+		return -ENOMEM;
-+	p = *pages;
-+	for (k = 0; k < maxpages; k++)
-+		p[k] = page + k;
-+
-+	maxsize = min_t(size_t, maxsize, maxpages * PAGE_SIZE - offset);
-+	i->count -= maxsize;
-+	i->iov_offset += maxsize;
-+	if (i->iov_offset == i->bvec->bv_len) {
-+		i->iov_offset = 0;
-+		i->bvec++;
-+		i->nr_segs--;
-+	}
-+	*cleanup_mode = 0;
-+	return maxsize;
-+}
-+
-+/*
-+ * Get the first segment from an ITER_UBUF or ITER_IOVEC iterator.  The
-+ * iterator must not be empty.
-+ */
-+static unsigned long iov_iter_extract_first_user_segment(const struct iov_iter *i,
-+							 size_t *size)
-+{
-+	size_t skip;
-+	long k;
-+
-+	if (iter_is_ubuf(i))
-+		return (unsigned long)i->ubuf + i->iov_offset;
-+
-+	for (k = 0, skip = i->iov_offset; k < i->nr_segs; k++, skip = 0) {
-+		size_t len = i->iov[k].iov_len - skip;
-+
-+		if (unlikely(!len))
-+			continue;
-+		if (*size > len)
-+			*size = len;
-+		return (unsigned long)i->iov[k].iov_base + skip;
-+	}
-+	BUG(); // if it had been empty, we wouldn't get called
-+}
-+
-+/*
-+ * Extract a list of contiguous pages from a user iterator and get references
-+ * on them.  This should only be used iff the iterator is user-backed
-+ * (IOBUF/UBUF) and data is being transferred out of the buffer described by
-+ * the iterator (ie. this is the source).
-+ *
-+ * The pages are returned with incremented refcounts that the caller must undo
-+ * once the transfer is complete, but no additional pins are obtained.
-+ *
-+ * This is only safe to be used where background IO/DMA is not going to be
-+ * modifying the buffer, and so won't cause a problem with CoW on fork.
-+ */
-+static ssize_t iov_iter_extract_user_pages_and_get(struct iov_iter *i,
-+						   struct page ***pages,
-+						   size_t maxsize,
-+						   unsigned int maxpages,
-+						   unsigned int gup_flags,
-+						   size_t *offset0,
-+						   unsigned int *cleanup_mode)
-+{
-+	unsigned long addr;
-+	size_t offset;
-+	int res;
-+
-+	if (WARN_ON_ONCE(!iov_iter_is_source(i)))
-+		return -EFAULT;
-+
-+	gup_flags |= FOLL_GET;
-+	if (i->nofault)
-+		gup_flags |= FOLL_NOFAULT;
-+
-+	addr = iov_iter_extract_first_user_segment(i, &maxsize);
-+	*offset0 = offset = addr % PAGE_SIZE;
-+	addr &= PAGE_MASK;
-+	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
-+	if (!maxpages)
-+		return -ENOMEM;
-+	res = get_user_pages_fast(addr, maxpages, gup_flags, *pages);
-+	if (unlikely(res <= 0))
-+		return res;
-+	maxsize = min_t(size_t, maxsize, res * PAGE_SIZE - offset);
-+	iov_iter_advance(i, maxsize);
-+	*cleanup_mode = FOLL_GET;
-+	return maxsize;
-+}
-+
-+/*
-+ * Extract a list of contiguous pages from a user iterator and get a pin on
-+ * each of them.  This should only be used iff the iterator is user-backed
-+ * (IOBUF/UBUF) and data is being transferred into the buffer described by the
-+ * iterator (ie. this is the destination).
-+ *
-+ * It does not get refs on the pages, but the pages must be unpinned by the
-+ * caller once the transfer is complete.
-+ *
-+ * This is safe to be used where background IO/DMA *is* going to be modifying
-+ * the buffer; using a pin rather than a ref makes sure that CoW happens
-+ * correctly in the parent during fork.
-+ */
-+static ssize_t iov_iter_extract_user_pages_and_pin(struct iov_iter *i,
-+						   struct page ***pages,
-+						   size_t maxsize,
-+						   unsigned int maxpages,
-+						   unsigned int gup_flags,
-+						   size_t *offset0,
-+						   unsigned int *cleanup_mode)
-+{
-+	unsigned long addr;
-+	size_t offset;
-+	int res;
-+
-+	if (WARN_ON_ONCE(!iov_iter_is_dest(i)))
-+		return -EFAULT;
-+
-+	gup_flags |= FOLL_PIN | FOLL_WRITE;
-+	if (i->nofault)
-+		gup_flags |= FOLL_NOFAULT;
-+
-+	addr = first_iovec_segment(i, &maxsize);
-+	*offset0 = offset = addr % PAGE_SIZE;
-+	addr &= PAGE_MASK;
-+	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
-+	if (!maxpages)
-+		return -ENOMEM;
-+	res = pin_user_pages_fast(addr, maxpages, gup_flags, *pages);
-+	if (unlikely(res <= 0))
-+		return res;
-+	maxsize = min_t(size_t, maxsize, res * PAGE_SIZE - offset);
-+	iov_iter_advance(i, maxsize);
-+	*cleanup_mode = FOLL_PIN;
-+	return maxsize;
-+}
-+
-+static ssize_t iov_iter_extract_user_pages(struct iov_iter *i,
-+					   struct page ***pages, size_t maxsize,
-+					   unsigned int maxpages,
-+					   unsigned int gup_flags,
-+					   size_t *offset0,
-+					   unsigned int *cleanup_mode)
-+{
-+	if (i->data_source)
-+		return iov_iter_extract_user_pages_and_get(i, pages, maxsize,
-+							   maxpages, gup_flags,
-+							   offset0, cleanup_mode);
-+	else
-+		return iov_iter_extract_user_pages_and_pin(i, pages, maxsize,
-+							   maxpages, gup_flags,
-+							   offset0, cleanup_mode);
-+}
++#include <linux/export.h>
++#include <linux/slab.h>
++#include <linux/uio.h>
++#include <linux/netfs.h>
++#include "internal.h"
 +
 +/**
-+ * iov_iter_extract_pages - Extract a list of contiguous pages from an iterator
-+ * @i: The iterator to extract from
-+ * @pages: Where to return the list of pages
-+ * @maxsize: The maximum amount of iterator to extract
-+ * @maxpages: The maximum size of the list of pages
-+ * @gup_flags: Addition flags when getting pages from a user-backed iterator
-+ * @offset0: Where to return the starting offset into (*@pages)[0]
-+ * @cleanup_mode: Where to return the cleanup mode
++ * netfs_extract_user_iter - Extract the pages from a user iterator into a bvec
++ * @orig: The original iterator
++ * @orig_len: The amount of iterator to copy
++ * @new: The iterator to be set up
++ * @cleanup_mode: Where to indicate the cleanup mode
 + *
-+ * Extract a list of contiguous pages from the current point of the iterator,
-+ * advancing the iterator.  The maximum number of pages and the maximum amount
-+ * of page contents can be set.
++ * Extract the page fragments from the given amount of the source iterator and
++ * build up a second iterator that refers to all of those bits.  This allows
++ * the original iterator to disposed of.
 + *
-+ * If *@pages is NULL, a page list will be allocated to the required size and
-+ * *@pages will be set to its base.  If *@pages is not NULL, it will be assumed
-+ * that the caller allocated a page list at least @maxpages in size and this
-+ * will be filled in.
-+ *
-+ * Extra refs or pins on the pages may be obtained as follows:
-+ *
-+ *  (*) If the iterator is user-backed (ITER_IOVEC/ITER_UBUF) and data is to be
-+ *      transferred /OUT OF/ the described buffer, refs will be taken on the
-+ *      pages, but pins will not be added.  This can be used for DMA from a
-+ *      page; it cannot be used for DMA to a page, as it may cause page-COW
-+ *      problems in fork.  *@cleanup_mode will be set to FOLL_GET.
-+ *
-+ *  (*) If the iterator is user-backed (ITER_IOVEC/ITER_UBUF) and data is to be
-+ *      transferred /INTO/ the described buffer, pins will be added to the
-+ *      pages, but refs will not be taken.  This must be used for DMA to a
-+ *      page.  *@cleanup_mode will be set to FOLL_PIN.
-+ *
-+ *  (*) If the iterator is ITER_PIPE, this must describe a destination for the
-+ *      data.  Additional pages may be allocated and added to the pipe (which
-+ *      will hold the refs), but neither refs nor pins will be obtained for the
-+ *      caller.  The caller must hold the pipe lock.  *@cleanup_mode will be
-+ *      set to 0.
-+ *
-+ *  (*) If the iterator is ITER_BVEC or ITER_XARRAY, the pages are merely
-+ *      listed; no extra refs or pins are obtained.  *@cleanup_mode will be set
-+ *      to 0.
-+ *
-+ * Note also:
-+ *
-+ *  (*) Use with ITER_KVEC is not supported as that may refer to memory that
-+ *      doesn't have associated page structs.
-+ *
-+ *  (*) Use with ITER_DISCARD is not supported as that has no content.
-+ *
-+ * On success, the function sets *@pages to the new pagelist, if allocated, and
-+ * sets *offset0 to the offset into the first page, *cleanup_mode to the
-+ * cleanup required and returns the amount of buffer space added represented by
-+ * the page list.
-+ *
-+ * It may also return -ENOMEM and -EFAULT.
++ * On success, the number of elements in the bvec is returned, the original
++ * iterator will have been advanced by the amount extracted and @*cleanup_mode
++ * will have been set to FOLL_GET, FOLL_PIN or 0.
 + */
-+ssize_t iov_iter_extract_pages(struct iov_iter *i,
-+			       struct page ***pages,
-+			       size_t maxsize,
-+			       unsigned int maxpages,
-+			       unsigned int gup_flags,
-+			       size_t *offset0,
-+			       unsigned int *cleanup_mode)
++ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
++				struct iov_iter *new, unsigned int *cleanup_mode)
 +{
-+	maxsize = min_t(size_t, min_t(size_t, maxsize, i->count), MAX_RW_COUNT);
-+	if (!maxsize)
-+		return 0;
++	struct bio_vec *bv = NULL;
++	struct page **pages;
++	unsigned int cur_npages;
++	unsigned int max_pages;
++	unsigned int npages = 0;
++	unsigned int i;
++	ssize_t ret;
++	size_t count = orig_len, offset, len;
++	size_t bv_size, pg_size;
 +
-+	if (likely(user_backed_iter(i)))
-+		return iov_iter_extract_user_pages(i, pages, maxsize,
-+						   maxpages, gup_flags,
-+						   offset0, cleanup_mode);
-+	if (iov_iter_is_bvec(i))
-+		return iov_iter_extract_bvec_pages(i, pages, maxsize,
-+						   maxpages, gup_flags,
-+						   offset0, cleanup_mode);
-+	if (iov_iter_is_pipe(i))
-+		return iov_iter_extract_pipe_pages(i, pages, maxsize,
-+						   maxpages, gup_flags,
-+						   offset0, cleanup_mode);
-+	if (iov_iter_is_xarray(i))
-+		return iov_iter_extract_xarray_pages(i, pages, maxsize,
-+						     maxpages, gup_flags,
-+						     offset0, cleanup_mode);
-+	return -EFAULT;
++	if (WARN_ON_ONCE(!iter_is_ubuf(orig) && !iter_is_iovec(orig)))
++		return -EIO;
++
++	max_pages = iov_iter_npages(orig, INT_MAX);
++	bv_size = array_size(max_pages, sizeof(*bv));
++	bv = kvmalloc(bv_size, GFP_KERNEL);
++	if (!bv)
++		return -ENOMEM;
++
++	*cleanup_mode = 0;
++
++	/* Put the page list at the end of the bvec list storage.  bvec
++	 * elements are larger than page pointers, so as long as we work
++	 * 0->last, we should be fine.
++	 */
++	pg_size = array_size(max_pages, sizeof(*pages));
++	pages = (void *)bv + bv_size - pg_size;
++
++	while (count && npages < max_pages) {
++		ret = iov_iter_extract_pages(orig, &pages, count,
++					     max_pages - npages, 0,
++					     &offset, cleanup_mode);
++		if (ret < 0) {
++			pr_err("Couldn't get user pages (rc=%zd)\n", ret);
++			break;
++		}
++
++		if (ret > count) {
++			pr_err("get_pages rc=%zd more than %zu\n", ret, count);
++			break;
++		}
++
++		count -= ret;
++		ret += offset;
++		cur_npages = DIV_ROUND_UP(ret, PAGE_SIZE);
++
++		if (npages + cur_npages > max_pages) {
++			pr_err("Out of bvec array capacity (%u vs %u)\n",
++			       npages + cur_npages, max_pages);
++			break;
++		}
++
++		for (i = 0; i < cur_npages; i++) {
++			len = ret > PAGE_SIZE ? PAGE_SIZE : ret;
++			bv[npages + i].bv_page	 = *pages++;
++			bv[npages + i].bv_offset = offset;
++			bv[npages + i].bv_len	 = len - offset;
++			ret -= len;
++			offset = 0;
++		}
++
++		npages += cur_npages;
++	}
++
++	iov_iter_bvec(new, iov_iter_rw(orig), bv, npages, orig_len - count);
++	return npages;
 +}
-+EXPORT_SYMBOL_GPL(iov_iter_extract_pages);
++EXPORT_SYMBOL_GPL(netfs_extract_user_iter);
+diff --git a/include/linux/netfs.h b/include/linux/netfs.h
+index 4c76ddfb6a67..26fe3e6bafa1 100644
+--- a/include/linux/netfs.h
++++ b/include/linux/netfs.h
+@@ -296,6 +296,9 @@ void netfs_get_subrequest(struct netfs_io_subrequest *subreq,
+ void netfs_put_subrequest(struct netfs_io_subrequest *subreq,
+ 			  bool was_async, enum netfs_sreq_ref_trace what);
+ void netfs_stats_show(struct seq_file *);
++ssize_t netfs_extract_user_iter(struct iov_iter *orig, size_t orig_len,
++				struct iov_iter *new,
++				unsigned int *cleanup_mode);
+ 
+ /**
+  * netfs_inode - Get the netfs inode context from the inode
 
 
