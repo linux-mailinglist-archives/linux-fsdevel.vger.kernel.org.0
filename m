@@ -2,129 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C8772660BAE
-	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jan 2023 02:56:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AAB15660C2C
+	for <lists+linux-fsdevel@lfdr.de>; Sat,  7 Jan 2023 04:31:48 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230439AbjAGB4j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 6 Jan 2023 20:56:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48392 "EHLO
+        id S230293AbjAGDbq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 6 Jan 2023 22:31:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37788 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229561AbjAGB4i (ORCPT
+        with ESMTP id S229552AbjAGDbo (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 6 Jan 2023 20:56:38 -0500
-Received: from mail-oi1-x22a.google.com (mail-oi1-x22a.google.com [IPv6:2607:f8b0:4864:20::22a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 81ACF6B5F9
-        for <linux-fsdevel@vger.kernel.org>; Fri,  6 Jan 2023 17:56:37 -0800 (PST)
-Received: by mail-oi1-x22a.google.com with SMTP id r205so2528203oib.9
-        for <linux-fsdevel@vger.kernel.org>; Fri, 06 Jan 2023 17:56:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J9ykbBgKBZV6FU4/LOBwCWniqrM4IT15rEg/LDaszi0=;
-        b=Hp7RDK1T4MTeLPWqoateGOJUUNQXKsaqDz53JVg8WmdPsfDAh7yOnQByCLm/cz69ao
-         xujnVoSsVoSpwYTwojx8VRI6xyaRQO32MQ3MdWcCuWz0wUY8My1LjRJU4BgJ7L4LG0fB
-         jCR5fPkFRpPWvzmGtqDF9m946/zeiPegD21MRirOZ/Qfnuw/hMeuhGNCHaT+i6bq5Rt5
-         0Wy+BlUcdnv1+cXLmGWZOytIUH8X2P1U8xn4S/TZCdpH2VsuMF2/f+aSPt3LCpcMenDn
-         3YF9kKedrkqXj70gUSYik3Cf+C2nwcqvUg0x1kOGsM/YFAEtEpQGwxdpuls0Q5cla1Z+
-         ZZpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J9ykbBgKBZV6FU4/LOBwCWniqrM4IT15rEg/LDaszi0=;
-        b=KaeAzFLvINZV2QPveke/TaHdwYel/shcpXiFR0S7DeTyqbLVXcWebjalzlVMSBjwOE
-         EDViJgxOPjGCvRz/kra4Hx4EC5508iqKOTfvRZBOIMspC4J1MJWLQ7sgD3BiXzIdvQBN
-         zer9NmjkAHZRP78TS1XxoYDD9rkDi667OB9F1RK6oahVcUn8vhkRAzioxvXOgc4VecV2
-         +UDqzE31Cuf0TBv/KwaFmdYrbDPZAc2spF51UMY2yykD8m6RV9pCl2plRgOY2HSO8pjj
-         RWRgz8VabT/M5PHouQpETLGKcX12K/ODyq81xLY8ZiqyIv2ZSIG+7domKkqEzS9nspWj
-         lmKA==
-X-Gm-Message-State: AFqh2krc56USqmLiyxuKhuZ5vWOXbzAUEA7aq7GAAH+bIR+ExX4xZjsn
-        HTn1ZdlcEtYjpCTBqfk4rmB7cg==
-X-Google-Smtp-Source: AMrXdXsX7/ocgMuBmhZAyTiWEsO26xIEVMPm87p+6teNszs25TWA/cRXzEPG3ohOcSqgH7/lPrPTRQ==
-X-Received: by 2002:a05:6808:1414:b0:35e:d937:7d35 with SMTP id w20-20020a056808141400b0035ed9377d35mr35703216oiv.11.1673056596809;
-        Fri, 06 Jan 2023 17:56:36 -0800 (PST)
-Received: from smtpclient.apple (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
-        by smtp.gmail.com with ESMTPSA id w18-20020a056830411200b00670747b88c9sm1287038ott.39.2023.01.06.17.56.35
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 06 Jan 2023 17:56:36 -0800 (PST)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.300.101.1.3\))
-Subject: Re: [External] [LSF/MM/BPF BoF] Session for Zoned Storage 2023
-From:   "Viacheslav A.Dubeyko" <viacheslav.dubeyko@bytedance.com>
-In-Reply-To: <4CC4F55E-17B3-47E2-A8C5-9098CCEB65D6@dubeyko.com>
-Date:   Fri, 6 Jan 2023 17:56:24 -0800
-Cc:     Luis Chamberlain <mcgrof@kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier.gonz@samsung.com>,
-        =?utf-8?Q?Matias_Bj=C3=B8rling?= <Matias.Bjorling@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Hans Holmberg <hans.holmberg@wdc.com>,
-        lsf-pc@lists.linux-foundation.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <5DF10459-88F3-48DA-AEB2-5B436549A194@bytedance.com>
-References: <F6BF25E2-FF26-48F2-8378-3CB36E362313@dubeyko.com>
- <Y7h0F0w06cNM89hO@bombadil.infradead.org>
- <4CC4F55E-17B3-47E2-A8C5-9098CCEB65D6@dubeyko.com>
-To:     Viacheslav Dubeyko <slava@dubeyko.com>
-X-Mailer: Apple Mail (2.3731.300.101.1.3)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        Fri, 6 Jan 2023 22:31:44 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 40A4A87F3B;
+        Fri,  6 Jan 2023 19:31:42 -0800 (PST)
+Received: from loongson.cn (unknown [10.180.13.185])
+        by gateway (Coremail) with SMTP id _____8AxnOqd57hjHTQAAA--.579S3;
+        Sat, 07 Jan 2023 11:31:41 +0800 (CST)
+Received: from [10.180.13.185] (unknown [10.180.13.185])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8CxXL6a57hjVYgVAA--.36667S3;
+        Sat, 07 Jan 2023 11:31:39 +0800 (CST)
+Subject: Re: [PATCH v3] pipe: use __pipe_{lock,unlock} instead of spinlock
+To:     sedat.dilek@gmail.com, Luis Chamberlain <mcgrof@kernel.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kuniyuki Iwashima <kuniyu@amazon.co.jp>,
+        David Howells <dhowells@redhat.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Eric Dumazet <edumazet@google.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230106094844.26241-1-zhanghongchen@loongson.cn>
+ <Y7hyw+fTdgAF6uYP@bombadil.infradead.org>
+ <CA+icZUUdGCdzYvdi3_vdpHqNvE12wsAw3CKCmeut1-R78kjHHg@mail.gmail.com>
+From:   Hongchen Zhang <zhanghongchen@loongson.cn>
+Message-ID: <f9d1231e-8a9f-487f-24d9-a3406de9d1f8@loongson.cn>
+Date:   Sat, 7 Jan 2023 11:31:38 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
+MIME-Version: 1.0
+In-Reply-To: <CA+icZUUdGCdzYvdi3_vdpHqNvE12wsAw3CKCmeut1-R78kjHHg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: AQAAf8CxXL6a57hjVYgVAA--.36667S3
+X-CM-SenderInfo: x2kd0w5krqwupkhqwqxorr0wxvrqhubq/
+X-Coremail-Antispam: 1Uk129KBjvJXoW7ZryfurWrCry5Kr1furykKrg_yoW8uryDpa
+        93Ca92kFWktFy8Cay29FW2vFW0v39xWa4vqrWY9F1kXFyvgFnxXr43Gr1UC34kWr1kC3W5
+        ua1UJr9a9r15ZaDanT9S1TB71UUUUj7qnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bq8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s
+        1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
+        wVC0I7IYx2IY67AKxVWUCVW8JwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwA2z4
+        x0Y4vEx4A2jsIE14v26F4j6r4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UM2kK
+        e7AKxVWUAVWUtwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI
+        0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2z280
+        aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2
+        xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC
+        6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_JF0_Jw1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s
+        026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF
+        0xvE2Ix0cI8IcVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0x
+        vE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv
+        6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4SoGDUUUU
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+Hi Sedat,
 
+On 2023/1/7 am 4:33, Sedat Dilek wrote:
+> On Fri, Jan 6, 2023 at 8:40 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+>>
+>> On Fri, Jan 06, 2023 at 05:48:44PM +0800, Hongchen Zhang wrote:
+>>> Use spinlock in pipe_read/write cost too much time,IMO
+>>> pipe->{head,tail} can be protected by __pipe_{lock,unlock}.
+>>> On the other hand, we can use __pipe_{lock,unlock} to protect
+>>> the pipe->{head,tail} in pipe_resize_ring and
+>>> post_one_notification.
+>>>
+>>> I tested this patch using UnixBench's pipe test case on a x86_64
+>>> machine,and get the following data:
+>>> 1) before this patch
+>>> System Benchmarks Partial Index  BASELINE       RESULT    INDEX
+>>> Pipe Throughput                   12440.0     493023.3    396.3
+>>>                                                          ========
+>>> System Benchmarks Index Score (Partial Only)              396.3
+>>>
+>>> 2) after this patch
+>>> System Benchmarks Partial Index  BASELINE       RESULT    INDEX
+>>> Pipe Throughput                   12440.0     507551.4    408.0
+>>>                                                          ========
+>>> System Benchmarks Index Score (Partial Only)              408.0
+>>>
+>>> so we get ~3% speedup.
+>>>
+>>> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
+>>> ---
+>>
+>> After the above "---" line you should have the changlog descrption.
+>> For instance:
+>>
+>> v3:
+>>    - fixes bleh blah blah
+>> v2:
+>>    - fixes 0-day report by ... etc..
+>>    - fixes spelling or whatever
+>>
+>> I cannot decipher what you did here differently, not do I want to go
+>> looking and diff'ing. So you are making the life of reviewer harder.
+>>
+> 
+> Happy new 2023.
+> 
+> Positive wording... You can make reviewers' life easy when...
+> (encourage people).
+> Life is easy, people live hard.
+> 
+> +1 Adding ChangeLog of patch history
+> 
+> Cannot say...
+> Might be good to add the link to Linus test-case + your results in the
+> commit message as well?
+> 
+> ...
+> Link: https://git.kernel.org/linus/0ddad21d3e99 (test-case of Linus
+> suggested-by Andrew)
+> ...
+> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
+> ...
+> 
+> Thanks.
+> 
+> Best regards,
+> -Sedat-
+> 
 
-> On Jan 6, 2023, at 11:30 AM, Viacheslav Dubeyko <slava@dubeyko.com> =
-wrote:
->=20
->=20
->=20
->> On Jan 6, 2023, at 11:18 AM, Luis Chamberlain <mcgrof@kernel.org> =
-wrote:
->>=20
->> On Fri, Jan 06, 2023 at 11:17:19AM -0800, Viacheslav Dubeyko wrote:
->>> Hello,
->>>=20
->>> As far as I can see, I have two topics for discussion.
->>=20
->> What's that?
->=20
-> I am going to share these topics in separate emails. :)
->=20
-> (1) I am going to share SSDFS patchset soon. And topic is:
-> SSDFS + ZNS SSD: deterministic architecture decreasing TCO cost of =
-data infrastructure.
->=20
-> (2) Second topic is:
-> How to achieve better lifetime and performance of caching layer with =
-ZNS SSD?
->=20
+OK, I have send a new v3 patch with these messages in commit message, 
+Please help to check and review again.
 
-I think we can consider such discussions:
-(1) I assume that we still need to discuss PO2 zone sizes?
-(2) Status of ZNS SSD support in F2FS, btrfs (maybe, bcachefs and other =
-file systems)
-(3) Any news from ZoneFS (+ ZenFS maybe)?
-(4) New ZNS standard features that we need to support on block layer + =
-FS levels?
-(5) ZNS drive emulation + additional testing features?
-(6) ZNS + computational drive? What new features would we like to see =
-from ZNS SSD?
-(7) ZNS + CXL: does it make sense?
-
-Thanks,
-Slava
-
-
+Best Regards,
+Hongchen Zhang
 
