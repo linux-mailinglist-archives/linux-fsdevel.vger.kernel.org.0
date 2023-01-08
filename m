@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48A4F6616ED
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jan 2023 17:57:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1E6CF6616FC
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jan 2023 17:57:17 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234729AbjAHQ5J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Jan 2023 11:57:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44094 "EHLO
+        id S234617AbjAHQ5P (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Jan 2023 11:57:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44130 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233617AbjAHQ5I (ORCPT
+        with ESMTP id S234482AbjAHQ5I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 8 Jan 2023 11:57:08 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99E6F5FD9;
-        Sun,  8 Jan 2023 08:57:04 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CE0FD615F;
+        Sun,  8 Jan 2023 08:57:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=w04Rctw8qyCjwLO2i1OjkI+LN8twYupiOrnbVDTEa+0=; b=3xxKbUYOQBIbQYRO8w6HvdN1R4
-        9OQTx9rAbhFdmf+fGmYydYTlIuwJkr3F4bGLLwPJxxUSG0Uwx2aYZvNXu9JdVOqkigNLVSMVUnDIE
-        Psz+/plZU4G45A3la//6lBz9RAD3770Mote9HxQPVLHNRllqYg4M2m23173VtyGQo1F73drNUgmeW
-        tbNy3JqZ6/44QmJbTmELuKvI/sJbV+e/ZzhVrXUj82kr1WETchKqaxpv82mrFBTS4cyy/ReyZU8N+
-        YsqCclyRwnDWYY6aAcNiM4Zo29IqQ4Vx8WyirZV+wC4u9rt5mnPNCpuwYKtyXQJjKrUS4Sd+CfwVD
-        k1TB835w==;
+        bh=LRWqWW8CxEBUBZTClfw9RwYeRYBhCeQ4pIrtvl3s68o=; b=oQx7Rv3KHPp6gTVM17C0X1F/0A
+        Ss7aKkMKn13YqMFTiyj9UovpO3YmHbFIkdRu6P1lm0x3YzRL/33E+Nm0c8v7BQiUB9dtCG6vzzb9d
+        G41l8V5rOwy6wLPJHKKUyuQ6evYLtxQubPvataSaZCelc+12PgJfW96pThp+vHnLueP3p23yrcT4r
+        T4i62q0kSRL41BsGk/4004k+MK+VqsohoC8D9EslgyHPJVq8uN74IO2CqRkbKPz+ZTHIKdyRRSA1J
+        LI9sFgAsTdSHr/VGk8960vHaAhlEZaxW4aRfr5eGg0W61z0hBEv5IpN8Y2QgFE8AkE/5sr+NKzDRt
+        VGJHblOw==;
 Received: from [2001:4bb8:198:a591:1c7c:bf66:af15:b282] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pEYyd-00ERru-V5; Sun, 08 Jan 2023 16:56:56 +0000
+        id 1pEYyg-00ERsb-Mk; Sun, 08 Jan 2023 16:56:59 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -41,9 +41,9 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
 Cc:     linux-btrfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
         ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH 3/7] minix: don't flush page immediately for DIRSYNC directories
-Date:   Sun,  8 Jan 2023 17:56:41 +0100
-Message-Id: <20230108165645.381077-4-hch@lst.de>
+Subject: [PATCH 4/7] sysv: don't flush page immediately for DIRSYNC directories
+Date:   Sun,  8 Jan 2023 17:56:42 +0100
+Message-Id: <20230108165645.381077-5-hch@lst.de>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20230108165645.381077-1-hch@lst.de>
 References: <20230108165645.381077-1-hch@lst.de>
@@ -70,15 +70,15 @@ Ported from an ext2 patch by Jan Kara.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/minix/dir.c | 30 ++++++++++++++++++++----------
- 1 file changed, 20 insertions(+), 10 deletions(-)
+ fs/sysv/dir.c | 29 +++++++++++++++++++----------
+ 1 file changed, 19 insertions(+), 10 deletions(-)
 
-diff --git a/fs/minix/dir.c b/fs/minix/dir.c
-index dcfe5b25378b54..d48b09271dc48f 100644
---- a/fs/minix/dir.c
-+++ b/fs/minix/dir.c
-@@ -46,21 +46,27 @@ minix_last_byte(struct inode *inode, unsigned long page_nr)
- 	return last_byte;
+diff --git a/fs/sysv/dir.c b/fs/sysv/dir.c
+index 88e38cd8f5c9ae..1d852ca6388297 100644
+--- a/fs/sysv/dir.c
++++ b/fs/sysv/dir.c
+@@ -34,21 +34,26 @@ static inline void dir_put_page(struct page *page)
+ 	put_page(page);
  }
  
 -static int dir_commit_chunk(struct page *page, loff_t pos, unsigned len)
@@ -87,9 +87,8 @@ index dcfe5b25378b54..d48b09271dc48f 100644
  	struct address_space *mapping = page->mapping;
  	struct inode *dir = mapping->host;
 -	int err = 0;
-+
- 	block_write_end(NULL, mapping, pos, len, len, page, NULL);
  
+ 	block_write_end(NULL, mapping, pos, len, len, page, NULL);
  	if (pos+len > dir->i_size) {
  		i_size_write(dir, pos+len);
  		mark_inode_dirty(dir);
@@ -101,7 +100,7 @@ index dcfe5b25378b54..d48b09271dc48f 100644
 +	unlock_page(page);
 +}
 +
-+static int minix_handle_dirsync(struct inode *dir)
++static int sysv_handle_dirsync(struct inode *dir)
 +{
 +	int err;
 +
@@ -111,54 +110,54 @@ index dcfe5b25378b54..d48b09271dc48f 100644
  	return err;
  }
  
-@@ -274,9 +280,10 @@ int minix_add_link(struct dentry *dentry, struct inode *inode)
- 		memset (namx + namelen, 0, sbi->s_dirsize - namelen - 2);
- 		de->inode = inode->i_ino;
- 	}
--	err = dir_commit_chunk(page, pos, sbi->s_dirsize);
-+	dir_commit_chunk(page, pos, sbi->s_dirsize);
+@@ -215,9 +220,10 @@ int sysv_add_link(struct dentry *dentry, struct inode *inode)
+ 	memcpy (de->name, name, namelen);
+ 	memset (de->name + namelen, 0, SYSV_DIRSIZE - namelen - 2);
+ 	de->inode = cpu_to_fs16(SYSV_SB(inode->i_sb), inode->i_ino);
+-	err = dir_commit_chunk(page, pos, SYSV_DIRSIZE);
++	dir_commit_chunk(page, pos, SYSV_DIRSIZE);
  	dir->i_mtime = dir->i_ctime = current_time(dir);
  	mark_inode_dirty(dir);
-+	minix_handle_dirsync(dir);
- out_put:
++	sysv_handle_dirsync(dir);
+ out_page:
  	dir_put_page(page);
  out:
-@@ -302,13 +309,15 @@ int minix_delete_entry(struct minix_dir_entry *de, struct page *page)
- 			((minix3_dirent *) de)->inode = 0;
- 		else
- 			de->inode = 0;
--		err = dir_commit_chunk(page, pos, len);
-+		dir_commit_chunk(page, pos, len);
- 	} else {
- 		unlock_page(page);
- 	}
+@@ -238,10 +244,11 @@ int sysv_delete_entry(struct sysv_dir_entry *de, struct page *page)
+ 	err = sysv_prepare_chunk(page, pos, SYSV_DIRSIZE);
+ 	BUG_ON(err);
+ 	de->inode = 0;
+-	err = dir_commit_chunk(page, pos, SYSV_DIRSIZE);
++	dir_commit_chunk(page, pos, SYSV_DIRSIZE);
  	dir_put_page(page);
  	inode->i_ctime = inode->i_mtime = current_time(inode);
  	mark_inode_dirty(inode);
-+	if (!err)
-+		err = minix_handle_dirsync(inode);
++	sysv_handle_dirsync(inode);
  	return err;
  }
  
-@@ -349,7 +358,8 @@ int minix_make_empty(struct inode *inode, struct inode *dir)
- 	}
- 	kunmap_atomic(kaddr);
+@@ -272,7 +279,8 @@ int sysv_make_empty(struct inode *inode, struct inode *dir)
+ 	strcpy(de->name,"..");
  
--	err = dir_commit_chunk(page, 0, 2 * sbi->s_dirsize);
-+	dir_commit_chunk(page, 0, 2 * sbi->s_dirsize);
-+	err = minix_handle_dirsync(inode);
+ 	kunmap(page);
+-	err = dir_commit_chunk(page, 0, 2 * SYSV_DIRSIZE);
++	dir_commit_chunk(page, 0, 2 * SYSV_DIRSIZE);
++	err = sysv_handle_dirsync(inode);
  fail:
  	put_page(page);
  	return err;
-@@ -426,7 +436,7 @@ void minix_set_link(struct minix_dir_entry *de, struct page *page,
- 			((minix3_dirent *) de)->inode = inode->i_ino;
- 		else
- 			de->inode = inode->i_ino;
--		err = dir_commit_chunk(page, pos, sbi->s_dirsize);
-+		dir_commit_chunk(page, pos, sbi->s_dirsize);
- 	} else {
- 		unlock_page(page);
- 	}
+@@ -336,10 +344,11 @@ void sysv_set_link(struct sysv_dir_entry *de, struct page *page,
+ 	err = sysv_prepare_chunk(page, pos, SYSV_DIRSIZE);
+ 	BUG_ON(err);
+ 	de->inode = cpu_to_fs16(SYSV_SB(inode->i_sb), inode->i_ino);
+-	err = dir_commit_chunk(page, pos, SYSV_DIRSIZE);
++	dir_commit_chunk(page, pos, SYSV_DIRSIZE);
+ 	dir_put_page(page);
+ 	dir->i_mtime = dir->i_ctime = current_time(dir);
+ 	mark_inode_dirty(dir);
++	sysv_handle_dirsync(inode);
+ }
+ 
+ struct sysv_dir_entry * sysv_dotdot (struct inode *dir, struct page **p)
 -- 
 2.35.1
 
