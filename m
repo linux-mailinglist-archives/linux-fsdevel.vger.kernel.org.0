@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2704E6616F6
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jan 2023 17:57:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 48A4F6616ED
+	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jan 2023 17:57:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235182AbjAHQ5M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Jan 2023 11:57:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44092 "EHLO
+        id S234729AbjAHQ5J (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Jan 2023 11:57:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44094 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233618AbjAHQ5I (ORCPT
+        with ESMTP id S233617AbjAHQ5I (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Sun, 8 Jan 2023 11:57:08 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B4E15FCC;
-        Sun,  8 Jan 2023 08:57:03 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 99E6F5FD9;
+        Sun,  8 Jan 2023 08:57:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=BznR/4w1o26qgOdWpgaXoEzrG7xwT/5BaeqDtDNhkG0=; b=KycIApiWI5yISCZouDp8O8ipc4
-        dsl/ueN8sUNA33Tp9c717pqGJ+DRYXWPrwamlDfC9ftc159YEu3rH4iisYVgqRu/w53sUAME1wPCf
-        MTqnBKQrVKo99G/ggyD2TGlKA9HTNX06xjiq6D39LxRqspHtjdzrjwPj/R4YOGTbHKRoxYyqU+GgO
-        hplk+/amqkkU5IiaF7B9o2QiTNtdVdmhnSylKAIJ1PkTIFxh3AiZkBHips001Vc6L9c4I1xFVKuNI
-        30m27hquq2Q0Y5e4zNu+1vbMwCxkSGN7IoC06MseeAUTxFVjrgD8hhd2XQ2oWt/MRiFklab9eYZBQ
-        21VcibDQ==;
+        bh=w04Rctw8qyCjwLO2i1OjkI+LN8twYupiOrnbVDTEa+0=; b=3xxKbUYOQBIbQYRO8w6HvdN1R4
+        9OQTx9rAbhFdmf+fGmYydYTlIuwJkr3F4bGLLwPJxxUSG0Uwx2aYZvNXu9JdVOqkigNLVSMVUnDIE
+        Psz+/plZU4G45A3la//6lBz9RAD3770Mote9HxQPVLHNRllqYg4M2m23173VtyGQo1F73drNUgmeW
+        tbNy3JqZ6/44QmJbTmELuKvI/sJbV+e/ZzhVrXUj82kr1WETchKqaxpv82mrFBTS4cyy/ReyZU8N+
+        YsqCclyRwnDWYY6aAcNiM4Zo29IqQ4Vx8WyirZV+wC4u9rt5mnPNCpuwYKtyXQJjKrUS4Sd+CfwVD
+        k1TB835w==;
 Received: from [2001:4bb8:198:a591:1c7c:bf66:af15:b282] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pEYyb-00ERql-3S; Sun, 08 Jan 2023 16:56:53 +0000
+        id 1pEYyd-00ERru-V5; Sun, 08 Jan 2023 16:56:56 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
@@ -41,9 +41,9 @@ To:     Andrew Morton <akpm@linux-foundation.org>,
 Cc:     linux-btrfs@vger.kernel.org, jfs-discussion@lists.sourceforge.net,
         ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
         linux-mm@kvack.org
-Subject: [PATCH 2/7] btrfs: stop using write_one_page in btrfs_scratch_superblock
-Date:   Sun,  8 Jan 2023 17:56:40 +0100
-Message-Id: <20230108165645.381077-3-hch@lst.de>
+Subject: [PATCH 3/7] minix: don't flush page immediately for DIRSYNC directories
+Date:   Sun,  8 Jan 2023 17:56:41 +0100
+Message-Id: <20230108165645.381077-4-hch@lst.de>
 X-Mailer: git-send-email 2.35.1
 In-Reply-To: <20230108165645.381077-1-hch@lst.de>
 References: <20230108165645.381077-1-hch@lst.de>
@@ -60,51 +60,105 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-write_one_page is an awkward interface that expects the page locked
-and ->writepage to be implemented.  Just mark the sb dirty, put
-the page and then call the proper bdev helper to sync the range.
+We do not need to writeout modified directory blocks immediately when
+modifying them while the page is locked. It is enough to do the flush
+somewhat later which has the added benefit that inode times can be
+flushed as well. It also allows us to stop depending on
+write_one_page() function.
+
+Ported from an ext2 patch by Jan Kara.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/volumes.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ fs/minix/dir.c | 30 ++++++++++++++++++++----------
+ 1 file changed, 20 insertions(+), 10 deletions(-)
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index 1378f5ad5ed4c4..10e98b004a2fa3 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -2009,23 +2009,22 @@ static void btrfs_scratch_superblock(struct btrfs_fs_info *fs_info,
- 				     struct block_device *bdev, int copy_num)
- {
- 	struct btrfs_super_block *disk_super;
--	struct page *page;
-+	const size_t len = sizeof(disk_super->magic);
-+	u64 bytenr = btrfs_sb_offset(copy_num);
- 	int ret;
- 
--	disk_super = btrfs_read_dev_one_super(bdev, copy_num, false);
-+	disk_super = btrfs_read_disk_super(bdev, bytenr, bytenr);
- 	if (IS_ERR(disk_super))
- 		return;
--	memset(&disk_super->magic, 0, sizeof(disk_super->magic));
--	page = virt_to_page(disk_super);
--	set_page_dirty(page);
--	lock_page(page);
--	/* write_on_page() unlocks the page */
--	ret = write_one_page(page);
-+	memset(&disk_super->magic, 0, len);
-+	set_page_dirty(virt_to_page(disk_super));
-+	btrfs_release_disk_super(disk_super);
-+
-+	ret = sync_blockdev_range(bdev, bytenr, bytenr + len - 1);
- 	if (ret)
- 		btrfs_warn(fs_info,
- 			"error clearing superblock number %d (%d)",
- 			copy_num, ret);
--	btrfs_release_disk_super(disk_super);
+diff --git a/fs/minix/dir.c b/fs/minix/dir.c
+index dcfe5b25378b54..d48b09271dc48f 100644
+--- a/fs/minix/dir.c
++++ b/fs/minix/dir.c
+@@ -46,21 +46,27 @@ minix_last_byte(struct inode *inode, unsigned long page_nr)
+ 	return last_byte;
  }
  
- void btrfs_scratch_superblocks(struct btrfs_fs_info *fs_info,
+-static int dir_commit_chunk(struct page *page, loff_t pos, unsigned len)
++static void dir_commit_chunk(struct page *page, loff_t pos, unsigned len)
+ {
+ 	struct address_space *mapping = page->mapping;
+ 	struct inode *dir = mapping->host;
+-	int err = 0;
++
+ 	block_write_end(NULL, mapping, pos, len, len, page, NULL);
+ 
+ 	if (pos+len > dir->i_size) {
+ 		i_size_write(dir, pos+len);
+ 		mark_inode_dirty(dir);
+ 	}
+-	if (IS_DIRSYNC(dir))
+-		err = write_one_page(page);
+-	else
+-		unlock_page(page);
++	unlock_page(page);
++}
++
++static int minix_handle_dirsync(struct inode *dir)
++{
++	int err;
++
++	err = filemap_write_and_wait(dir->i_mapping);
++	if (!err)
++		err = sync_inode_metadata(dir, 1);
+ 	return err;
+ }
+ 
+@@ -274,9 +280,10 @@ int minix_add_link(struct dentry *dentry, struct inode *inode)
+ 		memset (namx + namelen, 0, sbi->s_dirsize - namelen - 2);
+ 		de->inode = inode->i_ino;
+ 	}
+-	err = dir_commit_chunk(page, pos, sbi->s_dirsize);
++	dir_commit_chunk(page, pos, sbi->s_dirsize);
+ 	dir->i_mtime = dir->i_ctime = current_time(dir);
+ 	mark_inode_dirty(dir);
++	minix_handle_dirsync(dir);
+ out_put:
+ 	dir_put_page(page);
+ out:
+@@ -302,13 +309,15 @@ int minix_delete_entry(struct minix_dir_entry *de, struct page *page)
+ 			((minix3_dirent *) de)->inode = 0;
+ 		else
+ 			de->inode = 0;
+-		err = dir_commit_chunk(page, pos, len);
++		dir_commit_chunk(page, pos, len);
+ 	} else {
+ 		unlock_page(page);
+ 	}
+ 	dir_put_page(page);
+ 	inode->i_ctime = inode->i_mtime = current_time(inode);
+ 	mark_inode_dirty(inode);
++	if (!err)
++		err = minix_handle_dirsync(inode);
+ 	return err;
+ }
+ 
+@@ -349,7 +358,8 @@ int minix_make_empty(struct inode *inode, struct inode *dir)
+ 	}
+ 	kunmap_atomic(kaddr);
+ 
+-	err = dir_commit_chunk(page, 0, 2 * sbi->s_dirsize);
++	dir_commit_chunk(page, 0, 2 * sbi->s_dirsize);
++	err = minix_handle_dirsync(inode);
+ fail:
+ 	put_page(page);
+ 	return err;
+@@ -426,7 +436,7 @@ void minix_set_link(struct minix_dir_entry *de, struct page *page,
+ 			((minix3_dirent *) de)->inode = inode->i_ino;
+ 		else
+ 			de->inode = inode->i_ino;
+-		err = dir_commit_chunk(page, pos, sbi->s_dirsize);
++		dir_commit_chunk(page, pos, sbi->s_dirsize);
+ 	} else {
+ 		unlock_page(page);
+ 	}
 -- 
 2.35.1
 
