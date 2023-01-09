@@ -2,71 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BD3C366299F
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 16:16:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id EB09D6629D5
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 16:26:39 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237198AbjAIPQc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 10:16:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56356 "EHLO
+        id S232953AbjAIP0X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 10:26:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40650 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235065AbjAIPQJ (ORCPT
+        with ESMTP id S235178AbjAIP0H (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 10:16:09 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 52CEF39F99
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jan 2023 07:14:19 -0800 (PST)
+        Mon, 9 Jan 2023 10:26:07 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19B852BC7
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jan 2023 07:25:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673277258;
+        s=mimecast20190719; t=1673277917;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=mQ8tZs5IQ8tViKAxZPeB3mhvDmuPPKwdwZwivLRuLtc=;
-        b=YnwGarwHd16TYTOiXr/8a1+9iEj/P1wtAhnx1H0/mOyqyT7521knY0h/VkYMpWhcF/asFQ
-        bKuVj7AFygqiKVSY6/od1oEKrC9e4p3J88scC1kuhqOQtZ9wKERt6Xe1/pt/Dv8B9Cw28N
-        g7UoZrcMunUQ+PSJHZwNkR5IH7a6ITE=
-Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
- [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=2cwtPm83DzPm/dNeuelfshMOy2ruVKr8GdHiKUI1wQ4=;
+        b=d7vN8c5haB5h4UAC4N+0yq4DMIZ4I+lpoaYm8pgyX1Wws+1HrGzwOtLlgcY7baPrGkZ1Rm
+        M9beI/xLR8TovEhE7yEM9OqKVjHdNcTrAWoMkfSA37yCRHYNeW4jcAzzhfdSsE8tkEMg1q
+        laKiAyXWSwgNUZbkQz+b1D29waajCjo=
+Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
+ [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-170-hRm-0lENPzWZ-qjnEqOvqg-1; Mon, 09 Jan 2023 10:14:14 -0500
-X-MC-Unique: hRm-0lENPzWZ-qjnEqOvqg-1
-Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-46658ec0cfcso94766467b3.19
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Jan 2023 07:14:14 -0800 (PST)
+ us-mta-505-UjSzeQCvNLa2nYATh53KgA-1; Mon, 09 Jan 2023 10:25:15 -0500
+X-MC-Unique: UjSzeQCvNLa2nYATh53KgA-1
+Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-4c11ae6ab25so94754587b3.8
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Jan 2023 07:25:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=mime-version:user-agent:content-transfer-encoding:references
          :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=mQ8tZs5IQ8tViKAxZPeB3mhvDmuPPKwdwZwivLRuLtc=;
-        b=vPgClZ7ngGgseywPJfkvh16QJzr1hMYq0sggkQXElb/bQSp7VI+TzkUjopVHX9fj2S
-         fHdm65uPIVuGLKTE8g1c0DGJP6lKQE3oh0h/DLTMPx8FrI31dZtZSe9/3jTylFAA9h1t
-         6YSTgbo39IjPFHej3n1xkCu+/EN2ElDU2ZbgOpCAixhUjrCJqBPWL3pExDVIDJwqgiK+
-         uzW1yZ8YGPJRgegR9tyndixSy8hznZ8QV+ysudIk6soBhAPNyMGR8kzWA/AHQL6AZsNV
-         HWg0BWQfTymBc2QMVTgDWoSacS7bZfg8jg/BDpOFQVyLMUkNzWI8oZ85n2jvSoi+D9d8
-         16OQ==
-X-Gm-Message-State: AFqh2kplPd98ZhujTGqW5G3IEb0gxJF69inftmyqVulf177FcSL7lA1S
-        C5KOOOWxWaz3Nu33K2Me2XcROfeQOUwnx0O0KJfjRtnVcTAOGSq07ni1np6VyuJplalYSvowgTu
-        a6//EQOrgFsmwYB2WxM3apBt/zg==
-X-Received: by 2002:a05:690c:c05:b0:475:b3a:a4c5 with SMTP id cl5-20020a05690c0c0500b004750b3aa4c5mr2912336ywb.45.1673277253899;
-        Mon, 09 Jan 2023 07:14:13 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXt9FjiiWVTqShq0QW4xLjo26npQJ+ctx4FFo80NRDY7kXjEQdY4rWHuTqgPXE3e+uOyy0lqsQ==
-X-Received: by 2002:a05:690c:c05:b0:475:b3a:a4c5 with SMTP id cl5-20020a05690c0c0500b004750b3aa4c5mr2912319ywb.45.1673277253670;
-        Mon, 09 Jan 2023 07:14:13 -0800 (PST)
+        bh=2cwtPm83DzPm/dNeuelfshMOy2ruVKr8GdHiKUI1wQ4=;
+        b=pe9TvZOTYKb5ewAQoZ/JDtPF++ahMg3+Ka6jeQZsEFVIJfSbhKcYAe9tF1fBzDpG2J
+         NHWC4Br1xMSqtuErRna/298YrYCWKKXn1G/gkvTmrfSbG9Gw16g6PAjRJRm5QVonbGU8
+         9yO/PdRi5pm/nX4yhWRltyt5X3yQ+iM4uHxQ1JGeE97ZL9u5s20Fw/R1936pNOd7gUMs
+         7n0nr2YMzjTAM7JeZE2GmtdxVJdhf4bWxCdQ4VOoqqf1FhE5H3vg7djxgDOQUWAUSiaG
+         0u9TAyu52xwPmAhFyX6HdEbulss4CtKqBLnlXvLicGAOzT4xufmNcEP8FlJmYsxjQOBH
+         0WhA==
+X-Gm-Message-State: AFqh2ko+WdUyRaaFWBtNg7HtwctRer0GyKi0ZWDiN0cAuL2LgUYHcqb3
+        Q3s2hQzhK8giwWvWKjZzW9AJuuAfcWlrwmydKhd7yfZBfFLrwmNzJX4EYIL3ljGaIGqq3jmOtrC
+        9PWjZY9pcLOWKX6ezo/N8OLl5ig==
+X-Received: by 2002:a81:1252:0:b0:4a4:e76b:7160 with SMTP id 79-20020a811252000000b004a4e76b7160mr24182487yws.18.1673277914968;
+        Mon, 09 Jan 2023 07:25:14 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXuk+uM5VkDIcmYpnZqGv6C7Pu+cSJXlnrOuWyuHdaV8aegf77WPib+gB5SzG40m4PLEvJ5eqw==
+X-Received: by 2002:a81:1252:0:b0:4a4:e76b:7160 with SMTP id 79-20020a811252000000b004a4e76b7160mr24182473yws.18.1673277914758;
+        Mon, 09 Jan 2023 07:25:14 -0800 (PST)
 Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id t11-20020a05620a034b00b006fa31bf2f3dsm5446848qkm.47.2023.01.09.07.14.13
+        by smtp.gmail.com with ESMTPSA id g16-20020a05620a40d000b007055fa93060sm5536060qko.79.2023.01.09.07.25.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jan 2023 07:14:13 -0800 (PST)
-Message-ID: <74c40f813d4dc2bf90fbf80a80a5f0ba15365a90.camel@redhat.com>
-Subject: Re: [PATCH 08/11] cifs: Remove call to filemap_check_wb_err()
+        Mon, 09 Jan 2023 07:25:14 -0800 (PST)
+Message-ID: <6d1cd7ca1f2ea0f022af1d43999a61e6b17685c0.camel@redhat.com>
+Subject: Re: [PATCH 04/11] fuse: Convert fuse_flush() to use
+ file_check_and_advance_wb_err()
 From:   Jeff Layton <jlayton@redhat.com>
 To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Date:   Mon, 09 Jan 2023 10:14:12 -0500
-In-Reply-To: <7d1499fadf42052711e39f0d8c7656f4d3a4bc9d.camel@redhat.com>
+Date:   Mon, 09 Jan 2023 10:25:13 -0500
+In-Reply-To: <20230109051823.480289-5-willy@infradead.org>
 References: <20230109051823.480289-1-willy@infradead.org>
-         <20230109051823.480289-9-willy@infradead.org>
-         <7d1499fadf42052711e39f0d8c7656f4d3a4bc9d.camel@redhat.com>
+         <20230109051823.480289-5-willy@infradead.org>
 Content-Type: text/plain; charset="ISO-8859-15"
 Content-Transfer-Encoding: quoted-printable
 User-Agent: Evolution 3.46.2 (3.46.2-1.fc37) 
@@ -81,64 +81,42 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-01-09 at 09:42 -0500, Jeff Layton wrote:
-> On Mon, 2023-01-09 at 05:18 +0000, Matthew Wilcox (Oracle) wrote:
-> > filemap_write_and_wait() now calls filemap_check_wb_err(), so we cannot
-> > glean any additional information by calling it ourselves.  It may also
-> > be misleading as it will pick up on any errors since the beginning of
-> > time which may well be since before this program opened the file.
-> >=20
-> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > ---
-> >  fs/cifs/file.c | 8 +++-----
-> >  1 file changed, 3 insertions(+), 5 deletions(-)
-> >=20
-> > diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> > index 22dfc1f8b4f1..7e7ee26cf77d 100644
-> > --- a/fs/cifs/file.c
-> > +++ b/fs/cifs/file.c
-> > @@ -3042,14 +3042,12 @@ int cifs_flush(struct file *file, fl_owner_t id=
-)
-> >  	int rc =3D 0;
-> > =20
-> >  	if (file->f_mode & FMODE_WRITE)
-> > -		rc =3D filemap_write_and_wait(inode->i_mapping);
-> > +		rc =3D filemap_write_and_wait(file->f_mapping);
+On Mon, 2023-01-09 at 05:18 +0000, Matthew Wilcox (Oracle) wrote:
+> As with fsync, use the newer file_check_and_advance_wb_err() instead
+> of filemap_check_errors().
 >=20
-> If we're calling ->flush, then the file is being closed. Should this
-> just be?
-> 		rc =3D file_write_and_wait(file);
+> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> ---
+>  fs/fuse/file.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
 >=20
-> It's not like we need to worry about corrupting ->f_wb_err at that
-> point.
+> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
+> index 875314ee6f59..7174646ddf09 100644
+> --- a/fs/fuse/file.c
+> +++ b/fs/fuse/file.c
+> @@ -500,11 +500,10 @@ static int fuse_flush(struct file *file, fl_owner_t=
+ id)
+>  	fuse_sync_writes(inode);
+>  	inode_unlock(inode);
+> =20
+> -	err =3D filemap_check_errors(file->f_mapping);
+> +	err =3D file_check_and_advance_wb_err(file);
+>  	if (err)
+>  		return err;
+>=20
 >=20
 
-OTOH, I suppose it is possible for there to be racing fsync syscall with
-a filp_close, and in that case advancing the f_wb_err might be a bad
-idea, particularly since a lot of places ignore the return from
-filp_close. It's probably best to _not_ advance the f_wb_err on ->flush
-calls.
+I think it'd be best to not advance the f_wb_err here. ->flush is called
+on filp_close which is mainly close() syscalls, but there are some other
+callers too, and an error reported by ->flush can be discarded.
 
-That said...wonder if we ought to consider making filp_close and ->flush
-void return functions. There's no POSIX requirement to flush all of the
-data on close(), so an application really shouldn't rely on seeing
-writeback errors returned there since it's not reliable.
 
-If you care about writeback errors, you have to call fsync -- full stop.
 
-> > =20
-> >  	cifs_dbg(FYI, "Flush inode %p file %p rc %d\n", inode, file rc);
-> > -	if (rc) {
-> > -		/* get more nuanced writeback errors */
-> > -		rc =3D filemap_check_wb_err(file->f_mapping, 0);
-> > +	if (rc)
-> >  		trace_cifs_flush_err(inode->i_ino, rc);
-> > -	}
-> > +
-> >  	return rc;
-> >  }
-> > =20
->=20
+> =20
+> -	err =3D 0;
+>  	if (fm->fc->no_flush)
+>  		goto inval_attr_out;
+> =20
 
 --=20
 Jeff Layton <jlayton@redhat.com>
