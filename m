@@ -2,169 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 570AC662084
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 09:49:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15313662130
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 10:14:51 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234119AbjAIIt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 03:49:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59278 "EHLO
+        id S237004AbjAIJOl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 04:14:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45952 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236902AbjAIIsS (ORCPT
+        with ESMTP id S237124AbjAIJN2 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 03:48:18 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27A9D167D3;
-        Mon,  9 Jan 2023 00:43:46 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id BDFACB80D1F;
-        Mon,  9 Jan 2023 08:43:26 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD15AC433F1;
-        Mon,  9 Jan 2023 08:43:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673253805;
-        bh=myQoVYVwu0xpFEjib9aRjzoJPSgF2dGhxXTVvYigO18=;
-        h=Date:From:To:Cc:Subject:From;
-        b=iWxO8EK/yv7zohUYziC5XgjaW0HbP60L2g54Fsp6NPuQhygoH4HkYc+G+slCJCOVi
-         AP+HbwLsP7ARc0f3H7V4G4Ge6gXQd5NGqjL6rAUDk4qC2zsa9eH2G3NmaN+tv8ybmh
-         xq1UQX+6fJYhLVdIsVHPiqAlhkp9X3mQGI8UA5u88PuU/tLQ95NHtStPaP/UIK+v2m
-         SPukr4mIcL6vn3LfxuCRGhtHolPxGNit4n9bJ4B6ChOp3DyxNQ5ODsqP3IjljDaQqj
-         Ao9t1/KCu+VAnpAkE7Hy/XOYLgTTI7ryri9k2pIZqqb27D06GYYZv+EBQPshNZRtHJ
-         mIDkVKpVkG2gA==
-Date:   Mon, 9 Jan 2023 16:43:17 +0800
-From:   Gao Xiang <xiang@kernel.org>
-To:     lsf-pc@lists.linuxfoundation.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        kernel-team@android.com, linux-kernel@vger.kernel.org
-Subject: [LSF/MM/BPF TOPIC] Image-based read-only filesystem: further use
- cases & directions
-Message-ID: <Y7vTpeNRaw3Nlm9B@debian>
-Mail-Followup-To: lsf-pc@lists.linuxfoundation.org,
-        linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        kernel-team@android.com, linux-kernel@vger.kernel.org
+        Mon, 9 Jan 2023 04:13:28 -0500
+Received: from mx01.omp.ru (mx01.omp.ru [90.154.21.10])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5DE0313FB9;
+        Mon,  9 Jan 2023 01:10:25 -0800 (PST)
+Received: from [192.168.1.103] (31.173.86.218) by msexch01.omp.ru
+ (10.188.4.12) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.2.986.14; Mon, 9 Jan 2023
+ 12:10:15 +0300
+Subject: Re: [PATCH RFC v7 08/23] dept: Apply sdt_might_sleep_strong() to
+ PG_{locked,writeback} wait
+To:     Byungchul Park <byungchul.park@lge.com>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>,
+        <damien.lemoal@opensource.wdc.com>, <linux-ide@vger.kernel.org>,
+        <adilger.kernel@dilger.ca>, <linux-ext4@vger.kernel.org>,
+        <mingo@redhat.com>, <peterz@infradead.org>, <will@kernel.org>,
+        <tglx@linutronix.de>, <rostedt@goodmis.org>,
+        <joel@joelfernandes.org>, <sashal@kernel.org>,
+        <daniel.vetter@ffwll.ch>, <duyuyang@gmail.com>,
+        <johannes.berg@intel.com>, <tj@kernel.org>, <tytso@mit.edu>,
+        <willy@infradead.org>, <david@fromorbit.com>, <amir73il@gmail.com>,
+        <gregkh@linuxfoundation.org>, <kernel-team@lge.com>,
+        <linux-mm@kvack.org>, <akpm@linux-foundation.org>,
+        <mhocko@kernel.org>, <minchan@kernel.org>, <hannes@cmpxchg.org>,
+        <vdavydov.dev@gmail.com>, <sj@kernel.org>, <jglisse@redhat.com>,
+        <dennis@kernel.org>, <cl@linux.com>, <penberg@kernel.org>,
+        <rientjes@google.com>, <vbabka@suse.cz>, <ngupta@vflare.org>,
+        <linux-block@vger.kernel.org>, <paolo.valente@linaro.org>,
+        <josef@toxicpanda.com>, <linux-fsdevel@vger.kernel.org>,
+        <viro@zeniv.linux.org.uk>, <jack@suse.cz>, <jlayton@kernel.org>,
+        <dan.j.williams@intel.com>, <hch@infradead.org>,
+        <djwong@kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <rodrigosiqueiramelo@gmail.com>, <melissa.srw@gmail.com>,
+        <hamohammed.sa@gmail.com>, <42.hyeyoo@gmail.com>,
+        <chris.p.wilson@intel.com>, <gwan-gyeong.mun@intel.com>
+References: <1673235231-30302-1-git-send-email-byungchul.park@lge.com>
+ <1673235231-30302-9-git-send-email-byungchul.park@lge.com>
+From:   Sergey Shtylyov <s.shtylyov@omp.ru>
+Organization: Open Mobile Platform
+Message-ID: <e8b24129-536c-a367-1436-fe0e054259cf@omp.ru>
+Date:   Mon, 9 Jan 2023 12:10:15 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:78.0) Gecko/20100101
+ Thunderbird/78.10.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Disposition: inline
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.6.1
-X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_MUA_MOZILLA,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+In-Reply-To: <1673235231-30302-9-git-send-email-byungchul.park@lge.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [31.173.86.218]
+X-ClientProxiedBy: msexch01.omp.ru (10.188.4.12) To msexch01.omp.ru
+ (10.188.4.12)
+X-KSE-ServerInfo: msexch01.omp.ru, 9
+X-KSE-AntiSpam-Interceptor-Info: scan successful
+X-KSE-AntiSpam-Version: 5.9.59, Database issued on: 01/09/2023 08:47:21
+X-KSE-AntiSpam-Status: KAS_STATUS_NOT_DETECTED
+X-KSE-AntiSpam-Method: none
+X-KSE-AntiSpam-Rate: 19
+X-KSE-AntiSpam-Info: Lua profiles 174559 [Jan 09 2023]
+X-KSE-AntiSpam-Info: Version: 5.9.59.0
+X-KSE-AntiSpam-Info: Envelope from: s.shtylyov@omp.ru
+X-KSE-AntiSpam-Info: LuaCore: 502 502 69dee8ef46717dd3cb3eeb129cb7cc8dab9e30f6
+X-KSE-AntiSpam-Info: {rep_avail}
+X-KSE-AntiSpam-Info: {Tracking_from_domain_doesnt_match_to}
+X-KSE-AntiSpam-Info: {SMTP from is not routable}
+X-KSE-AntiSpam-Info: {Found in DNSBL: 31.173.86.218 in (user)
+ b.barracudacentral.org}
+X-KSE-AntiSpam-Info: d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;omp.ru:7.1.1
+X-KSE-AntiSpam-Info: ApMailHostAddress: 31.173.86.218
+X-KSE-AntiSpam-Info: {DNS response errors}
+X-KSE-AntiSpam-Info: Rate: 19
+X-KSE-AntiSpam-Info: Status: not_detected
+X-KSE-AntiSpam-Info: Method: none
+X-KSE-AntiSpam-Info: Auth:dmarc=temperror header.from=omp.ru;spf=temperror
+ smtp.mailfrom=omp.ru;dkim=none
+X-KSE-Antiphishing-Info: Clean
+X-KSE-Antiphishing-ScanningType: Heuristic
+X-KSE-Antiphishing-Method: None
+X-KSE-Antiphishing-Bases: 01/09/2023 08:50:00
+X-KSE-AttachmentFiltering-Interceptor-Info: protection disabled
+X-KSE-Antivirus-Interceptor-Info: scan successful
+X-KSE-Antivirus-Info: Clean, bases: 1/9/2023 6:18:00 AM
+X-KSE-BulkMessagesFiltering-Scan-Result: InTheLimit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi folks,
+On 1/9/23 6:33 AM, Byungchul Park wrote:
 
-* Background *
+> Makes Dept able to track dependencies by PG_{locked,writeback} waits.
+> 
+> Signed-off-by: Byungchul Park <byungchul.park@lge.com>
+> ---
+>  mm/filemap.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index c4d4ace..b013a5b 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+[...]
+> @@ -1226,6 +1230,11 @@ static inline int folio_wait_bit_common(struct folio *folio, int bit_nr,
+>  	unsigned long pflags;
+>  	bool in_thrashing;
+>  
+> +	if (bit_nr == PG_locked)
+> +		sdt_might_sleep_strong(&PG_locked_map);
+> +	else if (bit_nr == PG_writeback)
+> +		sdt_might_sleep_strong(&PG_writeback_map);
 
-We've been continuously working on forming a useful read-only
-(immutable) image solution since the end of 2017 (as a part of our
-work) until now as everyone may know:  EROFS.
+   Hm, this is asking to be a *switch* statement instead...
 
-Currently it has already successfully landed to (about) billions of
-Android-related devices, other types of embedded devices and containers
-with many vendors involved, and we've always been seeking more use
-cases such as incremental immutable rootfs, app sandboxes or packages
-(Android apk? with many duplicated libraries), dataset packages, etc.
+[...]
 
-The reasons why we always do believe immutable images can benefit
-various use cases are:
-
-  - much easier for all vendors to ship/distribute/keep original signing
-    (golden) images to each instance;
-
-  - (combined with the writable layer such as overlayfs) easy to roll
-    back to the original shipped state or do incremental updates;
-
-  - easy to check data corruption or do data recovery (no matter
-    whether physical device or network errors);
-
-  - easy for real storage devices to do hardware write-protection for
-    immutable images;
-
-  - can do various offline algorithms (such as reduced metadata,
-    content-defined rolling hash deduplication, compression) to minimize
-    image sizes;
-
-  - initrd with FSDAX to avoid double caching with advantages above;
-
-  - and more.
-
-In 2019, a LSF/MM/BPF topic was put forward to show EROFS initial use
-cases [1] as the read-only Android rootfs of a single instance on
-resource-limited devices so that effective compression became quite
-important at that time.
-
-
-* Problem *
-
-In addition to enhance data compression for single-instance deployment,
-as a self-contained approach (so that all use cases can share the only
-_one_ signed image), we've also focusing on multiple instances (such as
-containers or apps, each image represents a complete filesystem tree)
-all together on one device with similar data recently years so that
-effective data deduplication, on-demand lazy pulling, page cache
-sharing among such different golden images became vital as well.
-
-
-* Current progresses *
-
-In order to resolve the challenges above, we've worked out:
-
-  - (v5.15) chunk-based inodes (to form inode extents) to do data
-    deduplication among a single image;
-
-  - (v5.16) multiple shared blobs (to keep content-defined data) in
-    addition to the primary blob (to keep filesystem metadata) for wider
-    deduplication across different images:
-
-  - (v5.19) file-based distribution by introducing in-kernel local
-    caching fscache and on-demand lazy pulling feature [2];
-
-  - (v6.1) shared domain to share such multiple shared blobs in
-    fscache mode [3];
-
-  - [RFC] preliminary page cache sharing between diffenent images [4].
-
-
-* Potential topics to discuss *
-
-  - data verification of different images with thousands (or more)
-    shared blobs [5];
-
-  - encryption with per-extent keys for confidential containers [5][6];
-
-  - current page cache sharing limitation due to mm reserve mapping and
-    finer (folio or page-based) page cache sharing among images/blobs
-    [4][7];
-
-  - more effective in-kernel local caching features for fscache such as
-    failover and daemonless;
-
-  - (wild preliminary ideas, maybe) overlayfs partial copy-up with
-    fscache as the upper layer in order to form a unique caching
-    subsystem for better space saving?
-
-  - FSDAX enhancements for initial ramdisk or other use cases;
-
-  - other issues when landing.
-
-
-Finally, if our efforts (or plans) also make sense to you, we do hope
-more people could join us, Thanks!
-
-[1] https://lore.kernel.org/r/f44b1696-2f73-3637-9964-d73e3d5832b7@huawei.com
-[2] https://lore.kernel.org/r/Yoj1AcHoBPqir++H@debian
-[3] https://lore.kernel.org/r/20220918043456.147-1-zhujia.zj@bytedance.com
-[4] https://lore.kernel.org/r/20230106125330.55529-1-jefflexu@linux.alibaba.com
-[5] https://lore.kernel.org/r/Y6KqpGscDV6u5AfQ@B-P7TQMD6M-0146.local
-[6] https://lwn.net/SubscriberLink/918893/4d389217f9b8d679
-[7] https://lwn.net/Articles/895907
-
-Thanks,
-Gao Xiang
+MBR, Sergey
