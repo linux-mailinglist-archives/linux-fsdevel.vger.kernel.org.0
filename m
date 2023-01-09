@@ -2,74 +2,72 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 27BBF662E61
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 19:12:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 15807662E8B
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 19:17:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237358AbjAISKV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 13:10:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58506 "EHLO
+        id S233468AbjAISRF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 13:17:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35960 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237434AbjAISJk (ORCPT
+        with ESMTP id S237723AbjAISQ3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 13:09:40 -0500
-Received: from sonic302-28.consmr.mail.ne1.yahoo.com (sonic302-28.consmr.mail.ne1.yahoo.com [66.163.186.154])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 159666560
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jan 2023 10:09:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1673287747; bh=UkfRcDMPf/v1DcWo04q62pwUSUPbnp//erzjsjt01Vs=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=DTwP1PWzMxGoqT041JAZTuN7kRjnfPepw9YnmknPtmeQXTpRfHl5oLUwD/SENda2P7hhneYngAeV8NYVjvEXUwlV9pQCJr/D1xPuB1BUa94MWt9UgqdJ/M11J4bpz7Wp6ELSRoM/OF4XFOa6F0v3ekn9VrIbI76e+qbDAl92D/1POciUw4d/PrcR4hLmTrIfWZDyZWji8gZni10eMWEIsSLNEhmIgid0o5tS/Crc2afsZJQKSoILpT2g6dENb9hXMq+U0K1h9v/Wi5TkUAlotABfuFBK9aBnUQkTZIq7h39bEfx56LcAtTIe+4fq9Vh2M+oxqvLKHBMqAspBW3TxDw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1673287747; bh=0V71/1e8f/JUulk1j0yXLI4ibca3kGMAkCTPoIx8CKv=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=gZ4aNpsOnzWyS8h1EbpX1G5nCp5qmiHEEQ0l+MCMxPu9pJyXpLun9Ldkh3ewFyfF0A1SUrlLzrtGWJ/NBfMuMZ95EcHavzeU8j7yQPhdM28RK/8MW6NpYdvXXAI87wi8C2/yvU5ygIxsg7TtrfLjoi53EtRfAgO+YmwU7sjK8SOazG8Eun+eOPU+L2O6YS69oqhn7ZzQA5CnKTcTYTSQUPPrfUJKmHPygCpuZksUr1+QWGslH6b++PyhClGUpiSpoyUoqkUe9ZUFzIvk+T24d0e/MQ+Trf6ce5Wnqx/Y/ofaaL3UunNHW7fMhe0R+TXli3u1MRgYlZLuxnNdv4CTrA==
-X-YMail-OSG: CpzcW9UVM1mblJ2JGRpNGRRBVfYPbAxCcDUwbRlMQp.mvxCpKxnYVvRBTgH104R
- L0tNZ.ttFY8j6yb0OmBQhvjSMvWW0CQIcDlEDS3T4Vqyc6GD4kR9otl8q4EZb91jbgxbFQN5PQTj
- ZgA46h18pnKtGfePgANHcpsaZVAcpKJ5BI6oFi4vlUQQ4cAVkVBFn82Ca19twIv0Yo.7p9lMzjUL
- 5xdJX64zlD5GumMZhZqbuh5AV_w5qxQTu769E46iwJvlpEuYarpSYe5ZDhOHdAd8jiTy_xgCDKdh
- 7nr7noD7vnvfBsIUFWx6p6J3XS0Fv9altzty35n4AIxBuUJZLQyALIUmBtFhamkYBYf0RwYGB1Rt
- ZPiG8fjYDCXK3v2tXxQjMjnfZH8PjeGBVpn3G.uQ4.zjpTWSWXqrC68KJHFJ7sHmA3lDba1ew3ti
- Y3ICjAgOa7gIPX15szsSlr5Gm56XLX.kNRtb5TcY99sXwIEGsr176gJdnY61n73j0z98kmtGc65n
- FJjR4A7DoBLnnGI_ZPh8DAvqoAbS5Ec8bIKrGC15dl7V5AH3gjt3FC3dMtkZlaGRlx_A_LPZ9GWa
- vKWcsSRwTq.7GZfX9LeKb.YGksUJ6emdUymOZ7RZHKT5tjWn5T8Q6MOELa4GIH3qe6dms.d506JJ
- 1.9peYpcR6WH0ogmKXb9okbJeOLNvLq1ezMYmeaXeW8Wij9e7EApW1dn3enoAkyvbCc9FzZHRZm2
- jMCPC4EAzANHwVnaoImruIrpKB5t.nIMLv6k3g68itIXMo0xB1XTckm3y6pCMaYSSsmH7DKWdhUI
- Oe6r6I9cZUUVF6sHQruKRD3YxIkwE1tNo18mpSWlueLBY_.emoeZN1n3p2Entcelk_Dar73DIifZ
- wYxc9Mv5BSKzQIB9hbmt1UgVdx_PxjsZwMirBnWG2aD0_CJzF5OqJho1K2mXcXdWxkUcmTOaZRR5
- OTwwB1lROfldhGbNlSrYd4CF7u6gP_YlrfTnpTGnx0xRRuQEqp6FKgAzCWwANM7l6TEPj7RY2ZqL
- h4zpgp4mZDHAmvUVox0gTSYkqwmTDcMALCnS11b.3HU1i4WzKCx7DZozerUn1_aDL8xhtHm2aDE8
- zbvvuvRE2hjcnEGmEan1gV24Rc6L2pqo.WBYs8MlURVwY25DvUWdp1vf.67Ot.vPCS7aGu.knJ2s
- zKVzYpzG12tjUThyL47yjwv69Jj45qgFkEJK4E37GV8zTvmmj3bCiqRFtrZkbkESMKjVYykLodij
- PmdOfQv7pAwwxGUFFGVboSUKf5N7q97osjz3nDBOe0Nh3IAGdYLMjEBtNUSiHqv2uAqLtD_65wQk
- T3UEYZmVrNSBfvvj51OyLRnIxxN6OfvmNrVEB0xPiDU8Sf4QCUzJMn_vtrT7U0gH37IrLet4YgdA
- N8R7RkQlgmHgMdnAhl1sPU8NOJNuGdOWD7_jER6yiamcxKoj6LMFVTuynGZk82a6etYiOusm3Hcm
- ICBMxGVlnb75iNVfesnCtjgP7MAEPyDBmdB8CwQo1pzoTTjg4n3h8aNQcKprRNjc4M6Zwj.FSFrC
- L8aiiFxWO4QJTmwG2fOWFCtcHWT9k3CbvRkZO4.iwOzlE9m1wm16kpj48aJsYaI6WfdJkL2vgGws
- p6ntfgxUAvjUXix0zKLCfOAF8odzGFXc7qr_WN1zq8pCEaoZH3Ukn5NMm2631jbKmytwygy4ibp2
- XiamsL58G5gPmeTnL3UDjAn9rLCzYuOwuqAV3hPaHRdDCL0mZqf6EJaoR3vJXzzKVJ.HXGJnLREt
- zabCwjC.deWDzQO2mejPxnPbth7NvC3s1e8.YZDhY4fkJWfIJdTcqer1hwqfL_zb7n.jjLXjsdXq
- jyyn5UzCPJCtdgvG20AMDb0GCTxrSO6QEoE_6ZRrQt5Ud4.jKdsD8xUwITwjQttUy1wTzVLyGvyN
- LtRi5OlW7Pk0ob6W_37nqv3as4STd_fSy9RJ0S5dGE8gb3zKQls.fbOjVX8UleMvXAZcfQN.zkrI
- EdMZOWlZKnmxJau.5A5gPlQy.6CAadrPet0mXmQi9OU6sfT7pwpu21t_EX4L6uOg6UuUFDwFQHlw
- l4n9b8TE9OA3x7N54D2HQyfBYCtadNUR98QbibZJIywgk9aYw7UHtGWo2FXczmF.qeKNxOU77Amw
- GhmnmmHaRFb_vcuTWgyqZ48YA2GK2w6buPpbANLr0mQ8q7dLHW2gCV1ZJIRfJtNNjoZ9DTccFRQz
- iWDf7HDWfUrJpmkqI__aCrRcm3gECrjoCTNMSPLnDBAc1
-X-Sonic-MF: <casey@schaufler-ca.com>
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ne1.yahoo.com with HTTP; Mon, 9 Jan 2023 18:09:07 +0000
-Received: by hermes--production-ne1-7b69748c4d-474lb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3be57d1d3a3d9a781b586d3784815f58;
-          Mon, 09 Jan 2023 18:09:02 +0000 (UTC)
-From:   Casey Schaufler <casey@schaufler-ca.com>
-To:     casey.schaufler@intel.com, paul@paul-moore.com,
-        linux-security-module@vger.kernel.org
-Cc:     casey@schaufler-ca.com, jmorris@namei.org, keescook@chromium.org,
-        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
-        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
-        linux-api@vger.kernel.org, mic@digikod.net,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v5 3/8] proc: Use lsmids instead of lsm names for attrs
-Date:   Mon,  9 Jan 2023 10:07:12 -0800
-Message-Id: <20230109180717.58855-4-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.39.0
-In-Reply-To: <20230109180717.58855-1-casey@schaufler-ca.com>
-References: <20230109180717.58855-1-casey@schaufler-ca.com>
+        Mon, 9 Jan 2023 13:16:29 -0500
+Received: from mail-wm1-x335.google.com (mail-wm1-x335.google.com [IPv6:2a00:1450:4864:20::335])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 549EC676DF;
+        Mon,  9 Jan 2023 10:12:27 -0800 (PST)
+Received: by mail-wm1-x335.google.com with SMTP id c4-20020a1c3504000000b003d9e2f72093so4950083wma.1;
+        Mon, 09 Jan 2023 10:12:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aP681VH/DRNmhcZCYHTHRmQgpSCO53ttRPG7agMVOk4=;
+        b=UyCykFurxMOCPMVOSevkcLMvkVU04JiVBggv99OoG2lMYVTKA9/Yc4ccveSyVTQDSj
+         7o5WxgAbPB7pETSKiUKkxL3mKy8AWuX+DTRe5yIxrr2666h05mJz09nFtPTaSipWYUP3
+         6A4ipjBve2ICQaE1RSjDpMX8QH8XxVvZUkqq0KdCfXVYOsoDOVxsF/ZURzHCm/Q0gAAH
+         6qMUEDCrk6c+SGIkMWdbe2Sq36D1d9QD+KtChIF+KyL9qRQRwL21KsRqG3xUOAjy7Aqr
+         xeMwRWXgwu8Hw49lHdeH7pN2U1g4288U5J4xubAhymyi0MuziF2TN6mlqUnXFaCeEtcn
+         fxNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aP681VH/DRNmhcZCYHTHRmQgpSCO53ttRPG7agMVOk4=;
+        b=PDhrcg/Xdfda8QNznAqq7PrW1lYXgCTaHX12D7k4zEDsKGc6YBi1q5VCMrjf/lC5ZK
+         EYdvrzcVH3SdRdyAHRUv4YcekdbJGwGd8vjwGwPKyMgJJtYVtL2JkOmAKxUxIJZFiHfO
+         SbSAjMjZ+SWQwM2rPTr6rEBiIOG+A9+/Oq3UbHcs0TYnvwOPlj9nYksr/HXus0zMmMyu
+         eyNRV6sU8BxitIHIOhhw/DQ2o0Q1dMZuLKShwIKJlwMAop5sXV24wTLCtu+RyOr/XF6I
+         Og+zzoSTtZ9enRk1lZUdxUECjRouPRDt0JS8UkUT/AM9WPv+5i2iIGjeM6niVWJRwfM6
+         QgIw==
+X-Gm-Message-State: AFqh2kp+zq3nEUuIwC2Bqt7ww3jPrMB+CSr+8wWW9vWR+Se0fc9P6XtF
+        oncL8IAXyN+PMvlkpiBJhKk=
+X-Google-Smtp-Source: AMrXdXvdIf2dvwj8nk4q2bim5WRRzYWnCruchi7dBMSuj1arkemgUZgqH26xk1ZjaPll3iBcSuT43w==
+X-Received: by 2002:a05:600c:3485:b0:3d1:ee6c:f897 with SMTP id a5-20020a05600c348500b003d1ee6cf897mr47341850wmq.3.1673287945273;
+        Mon, 09 Jan 2023 10:12:25 -0800 (PST)
+Received: from suse.localnet (host-79-13-98-249.retail.telecomitalia.it. [79.13.98.249])
+        by smtp.gmail.com with ESMTPSA id f15-20020a7bcd0f000000b003d9a71ee54dsm11930914wmj.36.2023.01.09.10.12.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jan 2023 10:12:24 -0800 (PST)
+From:   "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
+To:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        Benjamin LaHaise <bcrl@kvack.org>
+Cc:     linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
+        linux-kernel@vger.kernel.org,
+        "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>, Jeff Moyer <jmoyer@redhat.com>
+Subject: Re: [RESEND PATCH] fs/aio: Replace kmap{,_atomic}() with kmap_local_page()
+Date:   Mon, 09 Jan 2023 19:12:23 +0100
+Message-ID: <2131868.irdbgypaU6@suse>
+In-Reply-To: <5882941.lOV4Wx5bFT@suse>
+References: <20221016150656.5803-1-fmdefrancesco@gmail.com> <5882941.lOV4Wx5bFT@suse>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -77,186 +75,257 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use the LSM ID number instead of the LSM name to identify which
-security module's attibute data should be shown in /proc/self/attr.
-The security_[gs]etprocattr() functions have been changed to expect
-the LSM ID. The change from a string comparison to an integer comparison
-in these functions will provide a minor performance improvement.
+On gioved=C3=AC 1 dicembre 2022 15:29:17 CET Fabio M. De Francesco wrote:
+> On domenica 16 ottobre 2022 17:06:56 CET Fabio M. De Francesco wrote:
+> > The use of kmap() and kmap_atomic() are being deprecated in favor of
+> > kmap_local_page().
+> >=20
+> > There are two main problems with kmap(): (1) It comes with an overhead =
+as
+> > the mapping space is restricted and protected by a global lock for
+> > synchronization and (2) it also requires global TLB invalidation when t=
+he
+> > kmap=E2=80=99s pool wraps and it might block when the mapping space is =
+fully
+> > utilized until a slot becomes available.
+> >=20
+> > With kmap_local_page() the mappings are per thread, CPU local, can take
+> > page faults, and can be called from any context (including interrupts).
+> > It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
+> > the tasks can be preempted and, when they are scheduled to run again, t=
+he
+> > kernel virtual addresses are restored and still valid.
+> >=20
+> > Since its use in fs/aio.c is safe everywhere, it should be preferred.
+> >=20
+> > Therefore, replace kmap() and kmap_atomic() with kmap_local_page() in
+> > fs/aio.c.
+> >=20
+> > Tested with xfstests on a QEMU/KVM x86_32 VM, 6GB RAM, booting a kernel
+> > with HIGHMEM64GB enabled.
+> >=20
+> > Cc: "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>
+> > Suggested-by: Ira Weiny <ira.weiny@intel.com>
+> > Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+>=20
+> Reviewed-by: Jeff Moyer <jmoyer@redhat.com>
+>=20
+> > Signed-off-by: Fabio M. De Francesco <fmdefrancesco@gmail.com>
+> > ---
+>=20
+> I'm sorry to resend again. Last time I forgot to forward the "Reviewed-by=
+:"
+> tag from Jeff (thanks!).
+>=20
+> > I've tested with "./check -g aio". The tests in this group fail 3/26
+> > times, with and without my patch. Therefore, these changes don't introd=
+uce
+> > further errors. I'm not aware of any further tests I may run, so that
+> > any suggestions would be precious and much appreciated :-)
+> >=20
+> > I'm resending this patch because some recipients were missing in the
+> > previous submissions. In the meantime I'm also adding some more=20
+information
+> > in the commit message. There are no changes in the code.
+> >=20
+> >  fs/aio.c | 32 ++++++++++++++++----------------
+> >  1 file changed, 16 insertions(+), 16 deletions(-)
+> >=20
+> > diff --git a/fs/aio.c b/fs/aio.c
+> > index 3c249b938632..343fea0c6d1a 100644
+> > --- a/fs/aio.c
+> > +++ b/fs/aio.c
+> > @@ -567,7 +567,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsig=
+ned
+>=20
+> int
+>=20
+> > nr_events) ctx->user_id =3D ctx->mmap_base;
+> >=20
+> >  	ctx->nr_events =3D nr_events; /* trusted copy */
+> >=20
+> > -	ring =3D kmap_atomic(ctx->ring_pages[0]);
+> > +	ring =3D kmap_local_page(ctx->ring_pages[0]);
+> >=20
+> >  	ring->nr =3D nr_events;	/* user copy */
+> >  	ring->id =3D ~0U;
+> >  	ring->head =3D ring->tail =3D 0;
+> >=20
+> > @@ -575,7 +575,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsig=
+ned
+>=20
+> int
+>=20
+> > nr_events) ring->compat_features =3D AIO_RING_COMPAT_FEATURES;
+> >=20
+> >  	ring->incompat_features =3D AIO_RING_INCOMPAT_FEATURES;
+> >  	ring->header_length =3D sizeof(struct aio_ring);
+> >=20
+> > -	kunmap_atomic(ring);
+> > +	kunmap_local(ring);
+> >=20
+> >  	flush_dcache_page(ctx->ring_pages[0]);
+> >  =09
+> >  	return 0;
+> >=20
+> > @@ -678,9 +678,9 @@ static int ioctx_add_table(struct kioctx *ctx, stru=
+ct
+> > mm_struct *mm) * we are protected from page migration
+> >=20
+> >  					 * changes ring_pages by -
+> >
+> >ring_lock.
+> >
+> >  					 */
+> >=20
+> > -					ring =3D kmap_atomic(ctx-
+> >
+> >ring_pages[0]);
+> >
+> > +					ring =3D kmap_local_page(ctx-
+> >
+> >ring_pages[0]);
+> >
+> >  					ring->id =3D ctx->id;
+> >=20
+> > -					kunmap_atomic(ring);
+> > +					kunmap_local(ring);
+> >=20
+> >  					return 0;
+> >  			=09
+> >  				}
+> >=20
+> > @@ -1024,9 +1024,9 @@ static void user_refill_reqs_available(struct kio=
+ctx
+> > *ctx) * against ctx->completed_events below will make sure we do the
+> >=20
+> >  		 * safe/right thing.
+> >  		 */
+> >=20
+> > -		ring =3D kmap_atomic(ctx->ring_pages[0]);
+> > +		ring =3D kmap_local_page(ctx->ring_pages[0]);
+> >=20
+> >  		head =3D ring->head;
+> >=20
+> > -		kunmap_atomic(ring);
+> > +		kunmap_local(ring);
+> >=20
+> >  		refill_reqs_available(ctx, head, ctx->tail);
+> >  =09
+> >  	}
+> >=20
+> > @@ -1132,12 +1132,12 @@ static void aio_complete(struct aio_kiocb *iocb)
+> >=20
+> >  	if (++tail >=3D ctx->nr_events)
+> >  =09
+> >  		tail =3D 0;
+> >=20
+> > -	ev_page =3D kmap_atomic(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+> > +	ev_page =3D kmap_local_page(ctx->ring_pages[pos /
+>=20
+> AIO_EVENTS_PER_PAGE]);
+>=20
+> >  	event =3D ev_page + pos % AIO_EVENTS_PER_PAGE;
+> >  =09
+> >  	*event =3D iocb->ki_res;
+> >=20
+> > -	kunmap_atomic(ev_page);
+> > +	kunmap_local(ev_page);
+> >=20
+> >  	flush_dcache_page(ctx->ring_pages[pos / AIO_EVENTS_PER_PAGE]);
+> >  =09
+> >  	pr_debug("%p[%u]: %p: %p %Lx %Lx %Lx\n", ctx, tail, iocb,
+> >=20
+> > @@ -1151,10 +1151,10 @@ static void aio_complete(struct aio_kiocb *iocb)
+> >=20
+> >  	ctx->tail =3D tail;
+> >=20
+> > -	ring =3D kmap_atomic(ctx->ring_pages[0]);
+> > +	ring =3D kmap_local_page(ctx->ring_pages[0]);
+> >=20
+> >  	head =3D ring->head;
+> >  	ring->tail =3D tail;
+> >=20
+> > -	kunmap_atomic(ring);
+> > +	kunmap_local(ring);
+> >=20
+> >  	flush_dcache_page(ctx->ring_pages[0]);
+> >  =09
+> >  	ctx->completed_events++;
+> >=20
+> > @@ -1214,10 +1214,10 @@ static long aio_read_events_ring(struct kioctx=
+=20
+*ctx,
+> >=20
+> >  	mutex_lock(&ctx->ring_lock);
+> >  =09
+> >  	/* Access to ->ring_pages here is protected by ctx->ring_lock. */
+> >=20
+> > -	ring =3D kmap_atomic(ctx->ring_pages[0]);
+> > +	ring =3D kmap_local_page(ctx->ring_pages[0]);
+> >=20
+> >  	head =3D ring->head;
+> >  	tail =3D ring->tail;
+> >=20
+> > -	kunmap_atomic(ring);
+> > +	kunmap_local(ring);
+> >=20
+> >  	/*
+> >  =09
+> >  	 * Ensure that once we've read the current tail pointer, that
+> >=20
+> > @@ -1249,10 +1249,10 @@ static long aio_read_events_ring(struct kioctx=
+=20
+*ctx,
+> >=20
+> >  		avail =3D min(avail, nr - ret);
+> >  		avail =3D min_t(long, avail, AIO_EVENTS_PER_PAGE - pos);
+> >=20
+> > -		ev =3D kmap(page);
+> > +		ev =3D kmap_local_page(page);
+> >=20
+> >  		copy_ret =3D copy_to_user(event + ret, ev + pos,
+> >  	=09
+> >  					sizeof(*ev) * avail);
+> >=20
+> > -		kunmap(page);
+> > +		kunmap_local(ev);
+> >=20
+> >  		if (unlikely(copy_ret)) {
+> >  	=09
+> >  			ret =3D -EFAULT;
+> >=20
+> > @@ -1264,9 +1264,9 @@ static long aio_read_events_ring(struct kioctx *c=
+tx,
+> >=20
+> >  		head %=3D ctx->nr_events;
+> >  =09
+> >  	}
+> >=20
+> > -	ring =3D kmap_atomic(ctx->ring_pages[0]);
+> > +	ring =3D kmap_local_page(ctx->ring_pages[0]);
+> >=20
+> >  	ring->head =3D head;
+> >=20
+> > -	kunmap_atomic(ring);
+> > +	kunmap_local(ring);
+> >=20
+> >  	flush_dcache_page(ctx->ring_pages[0]);
+> >  =09
+> >  	pr_debug("%li  h%u t%u\n", ret, head, tail);
+> >=20
+> > --
+> > 2.36.1
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: linux-fsdevel@vger.kernel.org
----
- fs/proc/base.c           | 29 +++++++++++++++--------------
- fs/proc/internal.h       |  2 +-
- include/linux/security.h | 11 +++++------
- security/security.c      | 11 +++++------
- 4 files changed, 26 insertions(+), 27 deletions(-)
+Please disregard this patch because I just sent a v2 with some additional=20
+information in the commit message and added Jeff's "Reviewed-by" tag.
 
-diff --git a/fs/proc/base.c b/fs/proc/base.c
-index 9e479d7d202b..9328b6b07dfc 100644
---- a/fs/proc/base.c
-+++ b/fs/proc/base.c
-@@ -96,6 +96,7 @@
- #include <linux/time_namespace.h>
- #include <linux/resctrl.h>
- #include <linux/cn_proc.h>
-+#include <uapi/linux/lsm.h>
- #include <trace/events/oom.h>
- #include "internal.h"
- #include "fd.h"
-@@ -145,10 +146,10 @@ struct pid_entry {
- 	NOD(NAME, (S_IFREG|(MODE)),			\
- 		NULL, &proc_single_file_operations,	\
- 		{ .proc_show = show } )
--#define ATTR(LSM, NAME, MODE)				\
-+#define ATTR(LSMID, NAME, MODE)				\
- 	NOD(NAME, (S_IFREG|(MODE)),			\
- 		NULL, &proc_pid_attr_operations,	\
--		{ .lsm = LSM })
-+		{ .lsmid = LSMID })
- 
- /*
-  * Count the number of hardlinks for the pid_entry table, excluding the .
-@@ -2730,7 +2731,7 @@ static ssize_t proc_pid_attr_read(struct file * file, char __user * buf,
- 	if (!task)
- 		return -ESRCH;
- 
--	length = security_getprocattr(task, PROC_I(inode)->op.lsm,
-+	length = security_getprocattr(task, PROC_I(inode)->op.lsmid,
- 				      file->f_path.dentry->d_name.name,
- 				      &p);
- 	put_task_struct(task);
-@@ -2788,7 +2789,7 @@ static ssize_t proc_pid_attr_write(struct file * file, const char __user * buf,
- 	if (rv < 0)
- 		goto out_free;
- 
--	rv = security_setprocattr(PROC_I(inode)->op.lsm,
-+	rv = security_setprocattr(PROC_I(inode)->op.lsmid,
- 				  file->f_path.dentry->d_name.name, page,
- 				  count);
- 	mutex_unlock(&current->signal->cred_guard_mutex);
-@@ -2837,27 +2838,27 @@ static const struct inode_operations proc_##LSM##_attr_dir_inode_ops = { \
- 
- #ifdef CONFIG_SECURITY_SMACK
- static const struct pid_entry smack_attr_dir_stuff[] = {
--	ATTR("smack", "current",	0666),
-+	ATTR(LSM_ID_SMACK, "current",	0666),
- };
- LSM_DIR_OPS(smack);
- #endif
- 
- #ifdef CONFIG_SECURITY_APPARMOR
- static const struct pid_entry apparmor_attr_dir_stuff[] = {
--	ATTR("apparmor", "current",	0666),
--	ATTR("apparmor", "prev",	0444),
--	ATTR("apparmor", "exec",	0666),
-+	ATTR(LSM_ID_APPARMOR, "current",	0666),
-+	ATTR(LSM_ID_APPARMOR, "prev",		0444),
-+	ATTR(LSM_ID_APPARMOR, "exec",		0666),
- };
- LSM_DIR_OPS(apparmor);
- #endif
- 
- static const struct pid_entry attr_dir_stuff[] = {
--	ATTR(NULL, "current",		0666),
--	ATTR(NULL, "prev",		0444),
--	ATTR(NULL, "exec",		0666),
--	ATTR(NULL, "fscreate",		0666),
--	ATTR(NULL, "keycreate",		0666),
--	ATTR(NULL, "sockcreate",	0666),
-+	ATTR(0, "current",	0666),
-+	ATTR(0, "prev",		0444),
-+	ATTR(0, "exec",		0666),
-+	ATTR(0, "fscreate",	0666),
-+	ATTR(0, "keycreate",	0666),
-+	ATTR(0, "sockcreate",	0666),
- #ifdef CONFIG_SECURITY_SMACK
- 	DIR("smack",			0555,
- 	    proc_smack_attr_dir_inode_ops, proc_smack_attr_dir_ops),
-diff --git a/fs/proc/internal.h b/fs/proc/internal.h
-index b701d0207edf..18db9722c81b 100644
---- a/fs/proc/internal.h
-+++ b/fs/proc/internal.h
-@@ -92,7 +92,7 @@ union proc_op {
- 	int (*proc_show)(struct seq_file *m,
- 		struct pid_namespace *ns, struct pid *pid,
- 		struct task_struct *task);
--	const char *lsm;
-+	int lsmid;
- };
- 
- struct proc_inode {
-diff --git a/include/linux/security.h b/include/linux/security.h
-index 33ed1860b96f..2d09e818a7d1 100644
---- a/include/linux/security.h
-+++ b/include/linux/security.h
-@@ -475,10 +475,9 @@ int security_sem_semctl(struct kern_ipc_perm *sma, int cmd);
- int security_sem_semop(struct kern_ipc_perm *sma, struct sembuf *sops,
- 			unsigned nsops, int alter);
- void security_d_instantiate(struct dentry *dentry, struct inode *inode);
--int security_getprocattr(struct task_struct *p, const char *lsm, const char *name,
-+int security_getprocattr(struct task_struct *p, int lsmid, const char *name,
- 			 char **value);
--int security_setprocattr(const char *lsm, const char *name, void *value,
--			 size_t size);
-+int security_setprocattr(int lsmid, const char *name, void *value, size_t size);
- int security_netlink_send(struct sock *sk, struct sk_buff *skb);
- int security_ismaclabel(const char *name);
- int security_secid_to_secctx(u32 secid, char **secdata, u32 *seclen);
-@@ -1346,14 +1345,14 @@ static inline void security_d_instantiate(struct dentry *dentry,
- 					  struct inode *inode)
- { }
- 
--static inline int security_getprocattr(struct task_struct *p, const char *lsm,
-+static inline int security_getprocattr(struct task_struct *p, int lsmid,
- 				       const char *name, char **value)
- {
- 	return -EINVAL;
- }
- 
--static inline int security_setprocattr(const char *lsm, char *name,
--				       void *value, size_t size)
-+static inline int security_setprocattr(int lsmid, char *name, void *value,
-+				       size_t size)
- {
- 	return -EINVAL;
- }
-diff --git a/security/security.c b/security/security.c
-index a590fa98ddd6..a0f4af2da5f3 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -2169,26 +2169,25 @@ void security_d_instantiate(struct dentry *dentry, struct inode *inode)
- }
- EXPORT_SYMBOL(security_d_instantiate);
- 
--int security_getprocattr(struct task_struct *p, const char *lsm,
--			 const char *name, char **value)
-+int security_getprocattr(struct task_struct *p, int lsmid, const char *name,
-+			 char **value)
- {
- 	struct security_hook_list *hp;
- 
- 	hlist_for_each_entry(hp, &security_hook_heads.getprocattr, list) {
--		if (lsm != NULL && strcmp(lsm, hp->lsmid->lsm))
-+		if (lsmid != 0 && lsmid != hp->lsmid->id)
- 			continue;
- 		return hp->hook.getprocattr(p, name, value);
- 	}
- 	return LSM_RET_DEFAULT(getprocattr);
- }
- 
--int security_setprocattr(const char *lsm, const char *name, void *value,
--			 size_t size)
-+int security_setprocattr(int lsmid, const char *name, void *value, size_t size)
- {
- 	struct security_hook_list *hp;
- 
- 	hlist_for_each_entry(hp, &security_hook_heads.setprocattr, list) {
--		if (lsm != NULL && strcmp(lsm, hp->lsmid->lsm))
-+		if (lsmid != 0 && lsmid != hp->lsmid->id)
- 			continue;
- 		return hp->hook.setprocattr(name, value, size);
- 	}
--- 
-2.39.0
+Thanks,
+
+=46abio
+
+[1] https://lore.kernel.org/lkml/20230109175629.9482-1-fmdefrancesco@gmail.=
+com/
+
+
 
