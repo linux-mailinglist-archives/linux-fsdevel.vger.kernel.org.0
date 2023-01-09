@@ -2,122 +2,115 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB09D6629D5
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 16:26:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 28B346629EB
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 16:30:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232953AbjAIP0X (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 10:26:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40650 "EHLO
+        id S237092AbjAIPaG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 10:30:06 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235178AbjAIP0H (ORCPT
+        with ESMTP id S234329AbjAIPaB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 10:26:07 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 19B852BC7
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jan 2023 07:25:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673277917;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=2cwtPm83DzPm/dNeuelfshMOy2ruVKr8GdHiKUI1wQ4=;
-        b=d7vN8c5haB5h4UAC4N+0yq4DMIZ4I+lpoaYm8pgyX1Wws+1HrGzwOtLlgcY7baPrGkZ1Rm
-        M9beI/xLR8TovEhE7yEM9OqKVjHdNcTrAWoMkfSA37yCRHYNeW4jcAzzhfdSsE8tkEMg1q
-        laKiAyXWSwgNUZbkQz+b1D29waajCjo=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-505-UjSzeQCvNLa2nYATh53KgA-1; Mon, 09 Jan 2023 10:25:15 -0500
-X-MC-Unique: UjSzeQCvNLa2nYATh53KgA-1
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-4c11ae6ab25so94754587b3.8
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Jan 2023 07:25:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2cwtPm83DzPm/dNeuelfshMOy2ruVKr8GdHiKUI1wQ4=;
-        b=pe9TvZOTYKb5ewAQoZ/JDtPF++ahMg3+Ka6jeQZsEFVIJfSbhKcYAe9tF1fBzDpG2J
-         NHWC4Br1xMSqtuErRna/298YrYCWKKXn1G/gkvTmrfSbG9Gw16g6PAjRJRm5QVonbGU8
-         9yO/PdRi5pm/nX4yhWRltyt5X3yQ+iM4uHxQ1JGeE97ZL9u5s20Fw/R1936pNOd7gUMs
-         7n0nr2YMzjTAM7JeZE2GmtdxVJdhf4bWxCdQ4VOoqqf1FhE5H3vg7djxgDOQUWAUSiaG
-         0u9TAyu52xwPmAhFyX6HdEbulss4CtKqBLnlXvLicGAOzT4xufmNcEP8FlJmYsxjQOBH
-         0WhA==
-X-Gm-Message-State: AFqh2ko+WdUyRaaFWBtNg7HtwctRer0GyKi0ZWDiN0cAuL2LgUYHcqb3
-        Q3s2hQzhK8giwWvWKjZzW9AJuuAfcWlrwmydKhd7yfZBfFLrwmNzJX4EYIL3ljGaIGqq3jmOtrC
-        9PWjZY9pcLOWKX6ezo/N8OLl5ig==
-X-Received: by 2002:a81:1252:0:b0:4a4:e76b:7160 with SMTP id 79-20020a811252000000b004a4e76b7160mr24182487yws.18.1673277914968;
-        Mon, 09 Jan 2023 07:25:14 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXuk+uM5VkDIcmYpnZqGv6C7Pu+cSJXlnrOuWyuHdaV8aegf77WPib+gB5SzG40m4PLEvJ5eqw==
-X-Received: by 2002:a81:1252:0:b0:4a4:e76b:7160 with SMTP id 79-20020a811252000000b004a4e76b7160mr24182473yws.18.1673277914758;
-        Mon, 09 Jan 2023 07:25:14 -0800 (PST)
-Received: from [192.168.1.3] (68-20-15-154.lightspeed.rlghnc.sbcglobal.net. [68.20.15.154])
-        by smtp.gmail.com with ESMTPSA id g16-20020a05620a40d000b007055fa93060sm5536060qko.79.2023.01.09.07.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Jan 2023 07:25:14 -0800 (PST)
-Message-ID: <6d1cd7ca1f2ea0f022af1d43999a61e6b17685c0.camel@redhat.com>
-Subject: Re: [PATCH 04/11] fuse: Convert fuse_flush() to use
- file_check_and_advance_wb_err()
-From:   Jeff Layton <jlayton@redhat.com>
-To:     "Matthew Wilcox (Oracle)" <willy@infradead.org>
+        Mon, 9 Jan 2023 10:30:01 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B4DB91274E;
+        Mon,  9 Jan 2023 07:29:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=bc3idNtsAWoy+2ncthmgzQVDyaeHH0rtTXHo3T/zuhY=; b=s5EGoru1cjrQGCeJd8V5jrtw8M
+        4F35tTEElZxf/CtwBjrbyUMGZaLo1nfwDDFZhuUBJcOzsS3fn/fcNpCl1YLHI7d0KkjxpgxkmrHt5
+        DbsKYCc6pQkXM/XeUS0SLTyWuI8dz9qEyeA41HHlmPDsIdlJL9wJ0By55ryA6muYyBoUFdFqNa0zR
+        dtLKHexYBfgPycRA7VqD2C8ovNa6hN2Mu0A2iWpf/pdRqDEU0VvGCj7TBmIu28ZY2mDggDREJ0uSI
+        Y1YL48eJzcmwLXjeSMjaXkVOTvwqNrnHLdsqhGTIFnMUXjg5ufmnsCsJTok1VDdgcQav145biosm3
+        2mCAIKig==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pEu6E-002Odi-Ac; Mon, 09 Jan 2023 15:30:10 +0000
+Date:   Mon, 9 Jan 2023 15:30:10 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Jeff Layton <jlayton@redhat.com>
 Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Date:   Mon, 09 Jan 2023 10:25:13 -0500
-In-Reply-To: <20230109051823.480289-5-willy@infradead.org>
+Subject: Re: [PATCH 08/11] cifs: Remove call to filemap_check_wb_err()
+Message-ID: <Y7wzAml5tAZXNMGV@casper.infradead.org>
 References: <20230109051823.480289-1-willy@infradead.org>
-         <20230109051823.480289-5-willy@infradead.org>
-Content-Type: text/plain; charset="ISO-8859-15"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.2 (3.46.2-1.fc37) 
+ <20230109051823.480289-9-willy@infradead.org>
+ <7d1499fadf42052711e39f0d8c7656f4d3a4bc9d.camel@redhat.com>
+ <74c40f813d4dc2bf90fbf80a80a5f0ba15365a90.camel@redhat.com>
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <74c40f813d4dc2bf90fbf80a80a5f0ba15365a90.camel@redhat.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 2023-01-09 at 05:18 +0000, Matthew Wilcox (Oracle) wrote:
-> As with fsync, use the newer file_check_and_advance_wb_err() instead
-> of filemap_check_errors().
->=20
-> Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> ---
->  fs/fuse/file.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->=20
-> diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-> index 875314ee6f59..7174646ddf09 100644
-> --- a/fs/fuse/file.c
-> +++ b/fs/fuse/file.c
-> @@ -500,11 +500,10 @@ static int fuse_flush(struct file *file, fl_owner_t=
- id)
->  	fuse_sync_writes(inode);
->  	inode_unlock(inode);
-> =20
-> -	err =3D filemap_check_errors(file->f_mapping);
-> +	err =3D file_check_and_advance_wb_err(file);
->  	if (err)
->  		return err;
->=20
->=20
+On Mon, Jan 09, 2023 at 10:14:12AM -0500, Jeff Layton wrote:
+> On Mon, 2023-01-09 at 09:42 -0500, Jeff Layton wrote:
+> > On Mon, 2023-01-09 at 05:18 +0000, Matthew Wilcox (Oracle) wrote:
+> > > filemap_write_and_wait() now calls filemap_check_wb_err(), so we cannot
+> > > glean any additional information by calling it ourselves.  It may also
+> > > be misleading as it will pick up on any errors since the beginning of
+> > > time which may well be since before this program opened the file.
+> > > 
+> > > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+> > > ---
+> > >  fs/cifs/file.c | 8 +++-----
+> > >  1 file changed, 3 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> > > index 22dfc1f8b4f1..7e7ee26cf77d 100644
+> > > --- a/fs/cifs/file.c
+> > > +++ b/fs/cifs/file.c
+> > > @@ -3042,14 +3042,12 @@ int cifs_flush(struct file *file, fl_owner_t id)
+> > >  	int rc = 0;
+> > >  
+> > >  	if (file->f_mode & FMODE_WRITE)
+> > > -		rc = filemap_write_and_wait(inode->i_mapping);
+> > > +		rc = filemap_write_and_wait(file->f_mapping);
+> > 
+> > If we're calling ->flush, then the file is being closed. Should this
+> > just be?
+> > 		rc = file_write_and_wait(file);
+> > 
+> > It's not like we need to worry about corrupting ->f_wb_err at that
+> > point.
+> > 
+> 
+> OTOH, I suppose it is possible for there to be racing fsync syscall with
+> a filp_close, and in that case advancing the f_wb_err might be a bad
+> idea, particularly since a lot of places ignore the return from
+> filp_close. It's probably best to _not_ advance the f_wb_err on ->flush
+> calls.
 
-I think it'd be best to not advance the f_wb_err here. ->flush is called
-on filp_close which is mainly close() syscalls, but there are some other
-callers too, and an error reported by ->flush can be discarded.
+There's only so much we can do to protect an application from itself.
+If it's racing an fsync() against close(), it might get an EBADF from
+fsync(), or end up fsyncing entirely the wrong file due to a close();
+open(); associating the fd with a different file.
 
+> That said...wonder if we ought to consider making filp_close and ->flush
+> void return functions. There's no POSIX requirement to flush all of the
+> data on close(), so an application really shouldn't rely on seeing
+> writeback errors returned there since it's not reliable.
+> 
+> If you care about writeback errors, you have to call fsync -- full stop.
 
+Yes, most filesystems do not writeback dirty data on close().
+Applications can't depend on that behaviour.  Interestingly, if you read
+https://pubs.opengroup.org/onlinepubs/9699919799/functions/close.html
+really carefully, it says:
 
-> =20
-> -	err =3D 0;
->  	if (fm->fc->no_flush)
->  		goto inval_attr_out;
-> =20
+   If an I/O error occurred while reading from or writing to the file
+   system during close(), it may return -1 with errno set to [EIO];
+   if this error is returned, the state of fildes is unspecified.
 
---=20
-Jeff Layton <jlayton@redhat.com>
-
+So if we return an error, userspace doesn't know if this fd is still
+open or not!  This feels like poor underspecification on POSIX's part
+(and probably stems from a historical unwillingness to declare any
+vendor's implementation as "not Unix").
