@@ -2,64 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 09F08661EE9
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 08:01:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 570AC662084
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 09:49:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230327AbjAIHBq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 02:01:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57604 "EHLO
+        id S234119AbjAIIt2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 03:49:28 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59278 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233477AbjAIHBl (ORCPT
+        with ESMTP id S236902AbjAIIsS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 02:01:41 -0500
-Received: from mail-vs1-xe2c.google.com (mail-vs1-xe2c.google.com [IPv6:2607:f8b0:4864:20::e2c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0B6E56362
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 Jan 2023 23:01:38 -0800 (PST)
-Received: by mail-vs1-xe2c.google.com with SMTP id i188so7636061vsi.8
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Jan 2023 23:01:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=FsDUH9fIuin5V6MIFnBRnLjyFYRx5gCeC8tSE52ZXtM=;
-        b=d75CHdPX4aaRg+tCWd+dE+UTkDcIlSk6nVfs0+FljsR0rQ6TRUUe/Q98lFYwZF9Atr
-         lE3inOzXYoANRfmlW+72s+jVsJQgHYq72vFOSH3moezzTjmt1eHqKUcJijurCJ74ZBen
-         ANhpqZ3wKQspscOuitlfNGJfQC90rRpOHfosxoptTL7EzYWbTrgIgJMYFoOjOE/0RRBa
-         g5LkX31jua0ADjndzAc2IrGHFyyvR2/68K8kRBLOtfRtee2Mc+dyD/iolERgnKvhhzV8
-         ySMwsCfyimhBjumWr+XOcPChpzriklaUp0NJDi/ebv2Cm/17ToK+1rkD+XAaIafZdEHQ
-         JeWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FsDUH9fIuin5V6MIFnBRnLjyFYRx5gCeC8tSE52ZXtM=;
-        b=QO0tBPnMDNUFXxAa3d2pVzs2Oczj2qTkOd6imkJJhx3RjDHeyHiqeFmUfLeiBbx7Bt
-         CS7x4kq9QDIJz/N/gay5p/+aoexeo6FSPF4R5yROrfU0TPSVdxfCgXwcJ4aaHSzW9sLg
-         FDb9Eo7ecLbuaq3OTp9vMjbzzHRfmiQbAhOVtgAsElVrBYUnK6KCVmBzu+ud0DTo9jCo
-         bdXIHbXKLdKQRC+w+iPShNQVho2zyfQxgjpPEeHFVto/E22nO436Y972FwzyfUfB9wTf
-         dp2BDiiv7ffHfwXrzp0UDVEA2gUgtOa/hwrvI6/ut6GP99E3+7OBu9rwzyzatYHQTj9V
-         r86Q==
-X-Gm-Message-State: AFqh2kpMurW0bRRHEq+2HEX/CexcXUIx8MzAP4ov8ji+6RHDTLMqlykM
-        PCFF18T+Oz++cFnpu0OpVD1yEkg0uVC++S6Sjk0=
-X-Google-Smtp-Source: AMrXdXv+SWDty5ro5feIgIruhugAmsapCe2ZtcSXs1q0WkaFccsXx441GDy+Is+1MHnTBXQkXVliIP56iNEyrMG5IGw=
-X-Received: by 2002:a05:6102:32d6:b0:3b5:3bd5:2a78 with SMTP id
- o22-20020a05610232d600b003b53bd52a78mr8566702vss.3.1673247697093; Sun, 08 Jan
- 2023 23:01:37 -0800 (PST)
+        Mon, 9 Jan 2023 03:48:18 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 27A9D167D3;
+        Mon,  9 Jan 2023 00:43:46 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id BDFACB80D1F;
+        Mon,  9 Jan 2023 08:43:26 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD15AC433F1;
+        Mon,  9 Jan 2023 08:43:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673253805;
+        bh=myQoVYVwu0xpFEjib9aRjzoJPSgF2dGhxXTVvYigO18=;
+        h=Date:From:To:Cc:Subject:From;
+        b=iWxO8EK/yv7zohUYziC5XgjaW0HbP60L2g54Fsp6NPuQhygoH4HkYc+G+slCJCOVi
+         AP+HbwLsP7ARc0f3H7V4G4Ge6gXQd5NGqjL6rAUDk4qC2zsa9eH2G3NmaN+tv8ybmh
+         xq1UQX+6fJYhLVdIsVHPiqAlhkp9X3mQGI8UA5u88PuU/tLQ95NHtStPaP/UIK+v2m
+         SPukr4mIcL6vn3LfxuCRGhtHolPxGNit4n9bJ4B6ChOp3DyxNQ5ODsqP3IjljDaQqj
+         Ao9t1/KCu+VAnpAkE7Hy/XOYLgTTI7ryri9k2pIZqqb27D06GYYZv+EBQPshNZRtHJ
+         mIDkVKpVkG2gA==
+Date:   Mon, 9 Jan 2023 16:43:17 +0800
+From:   Gao Xiang <xiang@kernel.org>
+To:     lsf-pc@lists.linuxfoundation.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        kernel-team@android.com, linux-kernel@vger.kernel.org
+Subject: [LSF/MM/BPF TOPIC] Image-based read-only filesystem: further use
+ cases & directions
+Message-ID: <Y7vTpeNRaw3Nlm9B@debian>
+Mail-Followup-To: lsf-pc@lists.linuxfoundation.org,
+        linux-fsdevel@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        kernel-team@android.com, linux-kernel@vger.kernel.org
 MIME-Version: 1.0
-References: <CAFkJGRdxR=0GeRWiu2g0QrVNzMLqYpqZm6+Ac5Baz2DcL39HTQ@mail.gmail.com>
-In-Reply-To: <CAFkJGRdxR=0GeRWiu2g0QrVNzMLqYpqZm6+Ac5Baz2DcL39HTQ@mail.gmail.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Mon, 9 Jan 2023 09:01:25 +0200
-Message-ID: <CAOQ4uxipt8xM_8q1Kdw981AddZUiPbVLuhNFZ5sQ24yBKcL_tA@mail.gmail.com>
-Subject: Re: Do I really need to add mount2 and umount3 syscalls for some
- crazy experiment
-To:     Anadon <joshua.r.marshall.1991@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.6.1
+X-Spam-Status: No, score=-4.8 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_MUA_MOZILLA,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -67,67 +58,113 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 9, 2023 at 7:08 AM Anadon <joshua.r.marshall.1991@gmail.com> wrote:
->
-> I never post, be gentle.
->
-> I am looking into implementing a distributed RAFT filesystem for
-> reasons.  Before this, I want what is in effect a simple pass-through
-> filesystem.  Something which just takes in calls to open, read, close,
-> etc and forwards them to a specified mounted* filesystem.  Hopefully
-> through FUSE before jumping straight into kernel development.
->
-> Doing this and having files appear in two places by calling `mount()`
-> then calling the (potentially) userland functions to the mapped file
-> by changing the file path is a way to technically accomplish
-> something.  This has the effect of the files being accessible in two
-> locations.  The problems start where the underlying filesystem won't
-> notify my passthrough layer if there are changes made.  Since my end
-> goal is to have a robust consensus filesystem, having all the files
-> able to silently be modified in such an easy and user accessible way
-> is a problem.
+Hi folks,
 
-Have you considered using fanotify for the FUSE implementsation?
+* Background *
 
-You can currently get async change notifications from fanotify.
-Do you require synchronous change notifications?
-Do you require the change notifications to survive system crashes?
+We've been continuously working on forming a useful read-only
+(immutable) image solution since the end of 2017 (as a part of our
+work) until now as everyone may know:  EROFS.
 
-Because that is what my HSM fanotify project is aiming to achieve:
-https://github.com/amir73il/fsnotify-utils/wiki/Hierarchical-Storage-Management-API#tracking-local-modifications
+Currently it has already successfully landed to (about) billions of
+Android-related devices, other types of embedded devices and containers
+with many vendors involved, and we've always been seeking more use
+cases such as incremental immutable rootfs, app sandboxes or packages
+(Android apk? with many duplicated libraries), dataset packages, etc.
 
-> What would be better is to have some struct with all
-> relevant function pointers and data accessible.  That sounds like
-> adding syscalls `int mount2(const char* device, ..., struct
-> return_fs_interface)` and `int umuont3(struct return_fs_interface)`.
-> Adding two new syscalls which look almost nothing like other syscalls
-> all in the name to break "everything is a file" in favor of
-> "everything is an API" is a lot.  It sounds like a fight and work I
-> would like to avoid.
+The reasons why we always do believe immutable images can benefit
+various use cases are:
 
-Don't go there.
+  - much easier for all vendors to ship/distribute/keep original signing
+    (golden) images to each instance;
 
->
-> I have looked at `fsopen(...)` as an alternative, but it still does
-> not meet my use case.  Another way would be to compile in every
-> filesystem driver but this just seems downright mad.  Is there a good
-> option I have overlooked?  Am I even asking in the right place?
+  - (combined with the writable layer such as overlayfs) easy to roll
+    back to the original shipped state or do incremental updates;
 
-If you are looking for similar code, the overlayfs filesystem driver
-is probably the closest to what you are looking for in upstream
-kernel, because it takes two underlying paths and merges them
-in one unified namespace.
+  - easy to check data corruption or do data recovery (no matter
+    whether physical device or network errors);
 
-Somewhat similar to leader change, some union files switch the backing
-file at runtime (a.k.a copy up).
+  - easy for real storage devices to do hardware write-protection for
+    immutable images;
 
-Upstream overlayfs does not watch for underlying filesystem changes,
-in fact, those changes are not allowed, but it could be done.
-I have another project where overlayfs driver watches the underlying
-filesystem for changes:
-https://github.com/amir73il/overlayfs/wiki/Overlayfs-watch
+  - can do various offline algorithms (such as reduced metadata,
+    content-defined rolling hash deduplication, compression) to minimize
+    image sizes;
 
-The out-of-tree aufs has had underlying change tracking for a long time.
+  - initrd with FSDAX to avoid double caching with advantages above;
+
+  - and more.
+
+In 2019, a LSF/MM/BPF topic was put forward to show EROFS initial use
+cases [1] as the read-only Android rootfs of a single instance on
+resource-limited devices so that effective compression became quite
+important at that time.
+
+
+* Problem *
+
+In addition to enhance data compression for single-instance deployment,
+as a self-contained approach (so that all use cases can share the only
+_one_ signed image), we've also focusing on multiple instances (such as
+containers or apps, each image represents a complete filesystem tree)
+all together on one device with similar data recently years so that
+effective data deduplication, on-demand lazy pulling, page cache
+sharing among such different golden images became vital as well.
+
+
+* Current progresses *
+
+In order to resolve the challenges above, we've worked out:
+
+  - (v5.15) chunk-based inodes (to form inode extents) to do data
+    deduplication among a single image;
+
+  - (v5.16) multiple shared blobs (to keep content-defined data) in
+    addition to the primary blob (to keep filesystem metadata) for wider
+    deduplication across different images:
+
+  - (v5.19) file-based distribution by introducing in-kernel local
+    caching fscache and on-demand lazy pulling feature [2];
+
+  - (v6.1) shared domain to share such multiple shared blobs in
+    fscache mode [3];
+
+  - [RFC] preliminary page cache sharing between diffenent images [4].
+
+
+* Potential topics to discuss *
+
+  - data verification of different images with thousands (or more)
+    shared blobs [5];
+
+  - encryption with per-extent keys for confidential containers [5][6];
+
+  - current page cache sharing limitation due to mm reserve mapping and
+    finer (folio or page-based) page cache sharing among images/blobs
+    [4][7];
+
+  - more effective in-kernel local caching features for fscache such as
+    failover and daemonless;
+
+  - (wild preliminary ideas, maybe) overlayfs partial copy-up with
+    fscache as the upper layer in order to form a unique caching
+    subsystem for better space saving?
+
+  - FSDAX enhancements for initial ramdisk or other use cases;
+
+  - other issues when landing.
+
+
+Finally, if our efforts (or plans) also make sense to you, we do hope
+more people could join us, Thanks!
+
+[1] https://lore.kernel.org/r/f44b1696-2f73-3637-9964-d73e3d5832b7@huawei.com
+[2] https://lore.kernel.org/r/Yoj1AcHoBPqir++H@debian
+[3] https://lore.kernel.org/r/20220918043456.147-1-zhujia.zj@bytedance.com
+[4] https://lore.kernel.org/r/20230106125330.55529-1-jefflexu@linux.alibaba.com
+[5] https://lore.kernel.org/r/Y6KqpGscDV6u5AfQ@B-P7TQMD6M-0146.local
+[6] https://lwn.net/SubscriberLink/918893/4d389217f9b8d679
+[7] https://lwn.net/Articles/895907
 
 Thanks,
-Amir.
+Gao Xiang
