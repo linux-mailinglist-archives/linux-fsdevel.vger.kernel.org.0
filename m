@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DC9DE661E5E
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 06:18:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 17209661E59
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 06:18:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236336AbjAIFSe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 00:18:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53590 "EHLO
+        id S236276AbjAIFSc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 00:18:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53592 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234366AbjAIFSS (ORCPT
+        with ESMTP id S234414AbjAIFST (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 00:18:18 -0500
+        Mon, 9 Jan 2023 00:18:19 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB478DE80;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DC210DE9C;
         Sun,  8 Jan 2023 21:18:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=lzB774qlWOGeuLTuMSFQPkmJwRXTwSiLN6M5EhwWaoI=; b=mKbzCktscn6Jx0BP1xTRqukdZF
-        nsrtNLVPeVuRjragXpmoIVeIzgGb0cnGyr1MUaySI1GDPtjn0IbSqa1+ySzdBGWA1S+PzmWo59/+f
-        wH9GGe5EvRbCf1EvX6MwIPKGc6bpARRvARTX+OeC+dTWgQAsx9Pq4h2GNzhFWNOFVSkYkGn9pCgRO
-        P8JFQRh+f9PZko0g5ck1IucaLmdMcqlO3ERpHcWUv0XNcctHTopQkPQOZ3QxjGmbwkUSMj0yMwp31
-        HxN2gKdn3STEHlZiuf/HEmUJitZ5FijtDNFgXX/ve9HDjDPTWu7ilckbmLKnRpQcSsvi0IiYuJ+8Z
-        ViBPmQCQ==;
+        bh=vQF/XULxVm6847KaRqQbhdaohxHXi2nEuadxTiR1ZyE=; b=aRa6C07mcL3ngPuqUeUeiq9Ewx
+        ojEY5TSS9TePzq8VcMu5ajWtwn4NiV+m5NNngSAtK9zTzdDs3q90VzpUCMIrSyZGbu7kEiTeRh619
+        6q3IWbwiybuoZMlQU/vqIim43gIyzhp3Ph8+GVUVj/vWGpTU/+Vxfh6YkJL/frk+TJxlOamIQqcWt
+        IzYn4QhNA4rFF0qJuAkxUWsHMRoGHusUQ/kdpMG6Wvwysl2pFmTgzmP41oczAMhe2Rntw6fQfNV5C
+        y5mvfiSAJm2MwpIQYvhXFRsv37zIzK32GV2QCdxDA5nlXXnWl94CSidw9tcoy3HcxKd6KOir4+OTQ
+        wQw0SzcQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pEkYE-0020xW-4R; Mon, 09 Jan 2023 05:18:26 +0000
+        id 1pEkYE-0020xc-8n; Mon, 09 Jan 2023 05:18:26 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Jeff Layton <jlayton@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 10/11] mm: Remove filemap_fdatawait_range_keep_errors()
-Date:   Mon,  9 Jan 2023 05:18:22 +0000
-Message-Id: <20230109051823.480289-11-willy@infradead.org>
+Subject: [PATCH 11/11] mm: Remove filemap_fdatawait_keep_errors()
+Date:   Mon,  9 Jan 2023 05:18:23 +0000
+Message-Id: <20230109051823.480289-12-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230109051823.480289-1-willy@infradead.org>
 References: <20230109051823.480289-1-willy@infradead.org>
@@ -50,59 +50,81 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This function is now the same as filemap_fdatawait_range(), so change
-both callers to use that instead.
+This function is now the same as filemap_fdatawait(), so change all
+callers to use that instead.  Remove the comments which talk about keeping
+the errors around for other callers as this is now the only behaviour.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/jbd2/commit.c        | 12 +++++-------
- include/linux/pagemap.h |  2 --
- 2 files changed, 5 insertions(+), 9 deletions(-)
+ block/bdev.c            | 8 +-------
+ fs/fs-writeback.c       | 7 +------
+ fs/xfs/scrub/bmap.c     | 2 +-
+ include/linux/pagemap.h | 2 --
+ 4 files changed, 3 insertions(+), 16 deletions(-)
 
-diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
-index 4810438b7856..36aa1b117a50 100644
---- a/fs/jbd2/commit.c
-+++ b/fs/jbd2/commit.c
-@@ -221,11 +221,10 @@ EXPORT_SYMBOL(jbd2_submit_inode_data);
- int jbd2_wait_inode_data(journal_t *journal, struct jbd2_inode *jinode)
- {
- 	if (!jinode || !(jinode->i_flags & JI_WAIT_DATA) ||
--		!jinode->i_vfs_inode || !jinode->i_vfs_inode->i_mapping)
-+	    !jinode->i_vfs_inode || !jinode->i_vfs_inode->i_mapping)
- 		return 0;
--	return filemap_fdatawait_range_keep_errors(
--		jinode->i_vfs_inode->i_mapping, jinode->i_dirty_start,
--		jinode->i_dirty_end);
-+	return filemap_fdatawait_range(jinode->i_vfs_inode->i_mapping,
-+				jinode->i_dirty_start, jinode->i_dirty_end);
- }
- EXPORT_SYMBOL(jbd2_wait_inode_data);
+diff --git a/block/bdev.c b/block/bdev.c
+index edc110d90df4..2fae19f0a5c2 100644
+--- a/block/bdev.c
++++ b/block/bdev.c
+@@ -1053,13 +1053,7 @@ void sync_bdevs(bool wait)
+ 		if (!atomic_read(&bdev->bd_openers)) {
+ 			; /* skip */
+ 		} else if (wait) {
+-			/*
+-			 * We keep the error status of individual mapping so
+-			 * that applications can catch the writeback error using
+-			 * fsync(2). See filemap_fdatawait_keep_errors() for
+-			 * details.
+-			 */
+-			filemap_fdatawait_keep_errors(inode->i_mapping);
++			filemap_fdatawait(inode->i_mapping);
+ 		} else {
+ 			filemap_fdatawrite(inode->i_mapping);
+ 		}
+diff --git a/fs/fs-writeback.c b/fs/fs-writeback.c
+index 6fba5a52127b..dc0158125e5d 100644
+--- a/fs/fs-writeback.c
++++ b/fs/fs-writeback.c
+@@ -2598,12 +2598,7 @@ static void wait_sb_inodes(struct super_block *sb)
+ 		spin_unlock(&inode->i_lock);
+ 		rcu_read_unlock();
  
-@@ -270,9 +269,8 @@ int jbd2_journal_finish_inode_data_buffers(struct jbd2_inode *jinode)
- {
- 	struct address_space *mapping = jinode->i_vfs_inode->i_mapping;
+-		/*
+-		 * We keep the error status of individual mapping so that
+-		 * applications can catch the writeback error using fsync(2).
+-		 * See filemap_fdatawait_keep_errors() for details.
+-		 */
+-		filemap_fdatawait_keep_errors(mapping);
++		filemap_fdatawait(mapping);
  
--	return filemap_fdatawait_range_keep_errors(mapping,
--						   jinode->i_dirty_start,
--						   jinode->i_dirty_end);
-+	return filemap_fdatawait_range(mapping, jinode->i_dirty_start,
-+			jinode->i_dirty_end);
- }
+ 		cond_resched();
  
- /*
+diff --git a/fs/xfs/scrub/bmap.c b/fs/xfs/scrub/bmap.c
+index d50d0eab196a..8f169047d410 100644
+--- a/fs/xfs/scrub/bmap.c
++++ b/fs/xfs/scrub/bmap.c
+@@ -64,7 +64,7 @@ xchk_setup_inode_bmap(
+ 		 */
+ 		error = filemap_fdatawrite(mapping);
+ 		if (!error)
+-			error = filemap_fdatawait_keep_errors(mapping);
++			error = filemap_fdatawait(mapping);
+ 		if (error && (error != -ENOSPC && error != -EIO))
+ 			goto out;
+ 	}
 diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 573b8cce3a85..7fe2a5ec1c12 100644
+index 7fe2a5ec1c12..69190335deb1 100644
 --- a/include/linux/pagemap.h
 +++ b/include/linux/pagemap.h
 @@ -40,8 +40,6 @@ static inline int filemap_fdatawait(struct address_space *mapping)
  	return filemap_fdatawait_range(mapping, 0, LLONG_MAX);
  }
  
--#define filemap_fdatawait_range_keep_errors(mapping, start, end)	\
--	filemap_fdatawait_range(mapping, start, end)
- #define filemap_fdatawait_keep_errors(mapping)	filemap_fdatawait(mapping)
- 
+-#define filemap_fdatawait_keep_errors(mapping)	filemap_fdatawait(mapping)
+-
  bool filemap_range_has_page(struct address_space *, loff_t lstart, loff_t lend);
+ int filemap_write_and_wait_range(struct address_space *mapping,
+ 		loff_t lstart, loff_t lend);
 -- 
 2.35.1
 
