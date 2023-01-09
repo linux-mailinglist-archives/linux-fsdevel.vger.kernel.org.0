@@ -2,169 +2,158 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5831466300B
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 20:13:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 76317663068
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 20:32:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234934AbjAITNP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 14:13:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51146 "EHLO
+        id S237426AbjAITcR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 14:32:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37292 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237072AbjAITM5 (ORCPT
+        with ESMTP id S237474AbjAITcN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 14:12:57 -0500
-Received: from mail-oi1-x22c.google.com (mail-oi1-x22c.google.com [IPv6:2607:f8b0:4864:20::22c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D910F6B193
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jan 2023 11:11:59 -0800 (PST)
-Received: by mail-oi1-x22c.google.com with SMTP id r205so8010699oib.9
-        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Jan 2023 11:11:59 -0800 (PST)
+        Mon, 9 Jan 2023 14:32:13 -0500
+Received: from mail-pf1-x435.google.com (mail-pf1-x435.google.com [IPv6:2607:f8b0:4864:20::435])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1E51115FD2
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jan 2023 11:32:10 -0800 (PST)
+Received: by mail-pf1-x435.google.com with SMTP id g20so6968649pfb.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Jan 2023 11:32:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5CLv/P4JEp5Ex9rXibMOi19GoQyezrkIjWD2yymGGSY=;
-        b=OoGCPFxFgLV7aQGpsUf6D9b1RoicEIwWIXMQAapFlcjL2K2uuwKku8DTjmFRw9MSLH
-         HeoBi0Thj3idj3GAXd7tt6WV7dCeUZ1H3XutKHWEBM79tbeHssor5C9cCPeWKkg84H1k
-         4fCo+ouuiKc75DwhFVdbQJVgqGXKzaxDjdUz8q6Bvno/PWGzUrAtlnD+3qE70T/VqBA2
-         yZ0UV4XAPVrXzNl/taVpXO3Kcqr23nb2W9C15wMw7gf0g+N9vxjefGX8nl/a7MZyRmLi
-         sW/GcJ7qBn4FDY5eAOGd2k3QORzLykXN5z0LmFq2NTH1q3ddD/Lu6y7ir5m+FuxQcOkE
-         nRGQ==
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MS9c8pSDmVucTZdPdHhH3mdXKbPND6bL5OXnhsaz428=;
+        b=sOIFmmww5t87chNqg4RrjKvRSK55mbJUfkLlDwVdXFzdUVNQpuL8j+67d+DkgdzGV/
+         cY+1zKjyGAv7inACtQNgX5uUKu4ApW+iH+DVN7GkXfrRLLF2Mvo9WifnFmurzCTgdAvo
+         yO0VsoKDonS/b5FpljJp4kIUzSG1uLseP8M04BYadiPR3LnDKhEB8JDIFZ6XY2cYQ9Ip
+         q/lAxkFfWGCi4n140C5isaU+LhXs1upwAI92uUGwcJ28pRBl0VFZtoKmw+InBC55cTsl
+         h4qHQp+F6duxw8RJ/SXhE+ei/WHcJpuK0DK+gQrpAmJlxVZpoBxyR4o9mafVKF6RyDWB
+         AG3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5CLv/P4JEp5Ex9rXibMOi19GoQyezrkIjWD2yymGGSY=;
-        b=OdMfyZEBnJho7Z1zohotpKQN0n3U9SnYojhganR70+GRFw6VYXapQ8QJY/5bhpNEQ1
-         65rIxUj2mnv6QT1zqNslSWC77+TjPVf7idjNd4CeZTNBrjfCeeipfjjE7fLDF9qVYLMZ
-         d0AbCgpZ7yxCTuUCXkmW5b5MCcT81hX0b7MXofJ615iCpwa2hL/YCOnFuI14SGjyV/ft
-         6o370bDK//JQwpRyCp1FOl+tyCPcGJK0s6yuWdaqdwLSEcgeH3K4IcwNPSVlLZaFUPPA
-         Kjz5CmGCU5JlPvoHy1C8GB4QBaYbArOzbDP0EuFPxifmkxlQJwQ3QuBSB/MgDGiLElJK
-         BpLA==
-X-Gm-Message-State: AFqh2krfNkx2L2MLZ79na9OMVzCzY5IEUMd8AW+f1CFx5eK7gRKn9Wcd
-        kmdy818Pl/ZFUCAi8vdVaqnw7g==
-X-Google-Smtp-Source: AMrXdXs8cnNq0YovQmXXwRPdxXElha0EMlat+xn4izmbck79CAnVPkLi8QNiIBXLawzROmB1Z3vq7g==
-X-Received: by 2002:aca:6285:0:b0:363:a5fd:9cd5 with SMTP id w127-20020aca6285000000b00363a5fd9cd5mr14032797oib.3.1673291519152;
-        Mon, 09 Jan 2023 11:11:59 -0800 (PST)
-Received: from smtpclient.apple (172-125-78-211.lightspeed.sntcca.sbcglobal.net. [172.125.78.211])
-        by smtp.gmail.com with ESMTPSA id i9-20020a9d6109000000b0066c3bbe927esm4977350otj.21.2023.01.09.11.11.57
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 09 Jan 2023 11:11:58 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.300.101.1.3\))
-Subject: Re: [External] [LSF/MM/BPF BoF] Session for Zoned Storage 2023
-From:   "Viacheslav A.Dubeyko" <viacheslav.dubeyko@bytedance.com>
-In-Reply-To: <20230109153315.waqfokse4srv6xlz@mpHalley-2.localdomain>
-Date:   Mon, 9 Jan 2023 11:11:46 -0800
-Cc:     Viacheslav Dubeyko <slava@dubeyko.com>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
-        linux-block@vger.kernel.org,
-        =?utf-8?Q?Matias_Bj=C3=B8rling?= <Matias.Bjorling@wdc.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
-        Adam Manzanares <a.manzanares@samsung.com>,
-        Hans Holmberg <hans.holmberg@wdc.com>,
-        lsf-pc@lists.linux-foundation.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <AF3750AD-1B66-4F8A-936F-A14EC17DAC16@bytedance.com>
-References: <F6BF25E2-FF26-48F2-8378-3CB36E362313@dubeyko.com>
- <Y7h0F0w06cNM89hO@bombadil.infradead.org>
- <4CC4F55E-17B3-47E2-A8C5-9098CCEB65D6@dubeyko.com>
- <CGME20230107015641eucas1p13c2b37b5ca7a5b64eb520b79316d5186@eucas1p1.samsung.com>
- <5DF10459-88F3-48DA-AEB2-5B436549A194@bytedance.com>
- <20230109153315.waqfokse4srv6xlz@mpHalley-2.localdomain>
-To:     =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier.gonz@samsung.com>
-X-Mailer: Apple Mail (2.3731.300.101.1.3)
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MS9c8pSDmVucTZdPdHhH3mdXKbPND6bL5OXnhsaz428=;
+        b=2zcXENkl1Uv04HeiTMJOvLNpZkkrNDEs8rRrIgDlVcu9Vi6KpCPRPBSKoa/Idy8g5J
+         mL4DwsBgqMzSGt2U6glsixO24Mz523JECG8fnnmX6sWAaiKf/M/5HJHcZpHaOnG5xwH+
+         eq/tddzCNrVJ6ytpIx9w2x38ke5FuHJ2UvtV8z6rPcJrUyOisJrcOwHQ00QiFf0dc+aq
+         xTxQz3fsQP5QxjeBmEMtzI4T/LPY1ZSSwu/UfDHn5ySh9Q7b+tXKQVZA3ab9mKnIxeYr
+         5CGbkmaMaU62nundkkmZVnUKPtbpshkqUVaP3v3g6FrppxxVtq8jJNKCpD7sh2wkLMOG
+         FWCg==
+X-Gm-Message-State: AFqh2kriIwyASVCYJFFhYkM/nAx9cVdAZKJM/LodVak+Y2Up9VOQER1/
+        gFaiEzu4uLYGHqUj9yUwUVSpyQ==
+X-Google-Smtp-Source: AMrXdXsOvwNIYYmxRZ1A4P2qL2M11DO9ETy3xVnstT6ROBE9IIpgFgsb6iMlmsjwANei+MKsQQb7Fw==
+X-Received: by 2002:aa7:973c:0:b0:574:8995:c0d0 with SMTP id k28-20020aa7973c000000b005748995c0d0mr742042pfg.1.1673292729425;
+        Mon, 09 Jan 2023 11:32:09 -0800 (PST)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id 194-20020a6214cb000000b005809d382016sm6429041pfu.74.2023.01.09.11.32.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jan 2023 11:32:09 -0800 (PST)
+Date:   Mon, 9 Jan 2023 19:32:05 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v10 3/9] KVM: Extend the memslot to support fd-based
+ private memory
+Message-ID: <Y7xrtf9FCuYRYm1q@google.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-4-chao.p.peng@linux.intel.com>
+ <Y7azFdnnGAdGPqmv@kernel.org>
+ <20230106094000.GA2297836@chaop.bj.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230106094000.GA2297836@chaop.bj.intel.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
+On Fri, Jan 06, 2023, Chao Peng wrote:
+> On Thu, Jan 05, 2023 at 11:23:01AM +0000, Jarkko Sakkinen wrote:
+> > On Fri, Dec 02, 2022 at 02:13:41PM +0800, Chao Peng wrote:
+> > > To make future maintenance easy, internally use a binary compatible
+> > > alias struct kvm_user_mem_region to handle both the normal and the
+> > > '_ext' variants.
+> > 
+> > Feels bit hacky IMHO, and more like a completely new feature than
+> > an extension.
+> > 
+> > Why not just add a new ioctl? The commit message does not address
+> > the most essential design here.
+> 
+> Yes, people can always choose to add a new ioctl for this kind of change
+> and the balance point here is we want to also avoid 'too many ioctls' if
+> the functionalities are similar.  The '_ext' variant reuses all the
+> existing fields in the 'normal' variant and most importantly KVM
+> internally can reuse most of the code. I certainly can add some words in
+> the commit message to explain this design choice.
 
-> On Jan 9, 2023, at 7:33 AM, Javier Gonz=C3=A1lez =
-<javier.gonz@samsung.com> wrote:
->=20
+After seeing the userspace side of this, I agree with Jarkko; overloading
+KVM_SET_USER_MEMORY_REGION is a hack.  E.g. the size validation ends up being
+bogus, and userspace ends up abusing unions or implementing kvm_user_mem_region
+itself.
 
-<skipped>
+It feels absolutely ridiculous, but I think the best option is to do:
 
->>>=20
->>> (1) I am going to share SSDFS patchset soon. And topic is:
->>> SSDFS + ZNS SSD: deterministic architecture decreasing TCO cost of =
-data infrastructure.
->=20
->=20
-> Would be good to see the patches before LSF/MM/BPF.
->=20
+#define KVM_SET_USER_MEMORY_REGION2 _IOW(KVMIO, 0x49, \
+					 struct kvm_userspace_memory_region2)
 
-I am making code cleanup now. I am expecting to share patches in two =
-weeks.
+/* for KVM_SET_USER_MEMORY_REGION2 */
+struct kvm_user_mem_region2 {
+	__u32 slot;
+	__u32 flags;
+	__u64 guest_phys_addr;
+	__u64 memory_size;
+	__u64 userspace_addr;
+	__u64 restricted_offset;
+	__u32 restricted_fd;
+	__u32 pad1;
+	__u64 pad2[14];
+}
 
-> I saw your talk at Plumbers. Do you think you have more data to share
-> too? Maybe even a comparisson with btrfs in terms of WAF and Space =
-Amp?
->=20
+And it's consistent with other KVM ioctls(), e.g. KVM_SET_CPUID2.
 
-I am working to share more data. So, I should have more details.
-I have data for btrfs already. Do you mean that you would like to see =
-comparison
-btrfs + compression vs. ssdfs? By the way, I am using my own methodology
-to estimate WAF and space amplification. What methodology do you have in =
-mind?
-Maybe, I could improve mine. :)
+Regarding the userspace side of things, please include Vishal's selftests in v11,
+it's impossible to properly review the uAPI changes without seeing the userspace
+side of things.  I'm in the process of reviewing Vishal's v2[*], I'll try to
+massage it into a set of patches that you can incorporate into your series.
 
-<skipped>
-
->>>=20
->>=20
->> I think we can consider such discussions:
->> (1) I assume that we still need to discuss PO2 zone sizes?
->=20
-> For this discussion to move forward, we need users rather than vendors
-> talking about the need. If someone is willing to drive this =
-discussion,
-> then it makes sense. I do not believe we will make progress otherwise.
->=20
-
-As part of ByteDance, I am on user side now. :) So, let me have some =
-internal
-discussion and to summarize vision(s) on our side. I believe that, =
-maybe, it makes
-sense to summarize a list of pros and cons and to have something like =
-analysis or
-brainstorming here.
-
-<skipped>
-
->=20
->> (4) New ZNS standard features that we need to support on block layer =
-+ FS levels?
->=20
-> Do you have any concrete examples in mind?
->=20
-
-My point here that we could summarize:
-(1) what features already implemented and supported,
-(2) what features are under implementation and what is progress,
-(3) what features need to be implemented yet.
-
-Have we implemented everything already? :)
-
->> (5) ZNS drive emulation + additional testing features?
->=20
-> Is this QEMU alone or do you have other ideas in mind?
->=20
-
-My point is the same here. Let=E2=80=99s summarize how reasonably good =
-is emulation now.
-Do we need to support the emulation of any additional features?
-And we can talk not only about QEMU.
-
-Thanks,
-Slava.
-=20
+[*] https://lore.kernel.org/all/20221205232341.4131240-1-vannapurve@google.com
