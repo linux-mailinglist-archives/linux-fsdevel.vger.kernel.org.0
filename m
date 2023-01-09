@@ -2,137 +2,117 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B6B6F661A48
-	for <lists+linux-fsdevel@lfdr.de>; Sun,  8 Jan 2023 22:59:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 11E0A661BB4
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 02:00:32 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233036AbjAHV7d (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 8 Jan 2023 16:59:33 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50098 "EHLO
+        id S231225AbjAIBAa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 8 Jan 2023 20:00:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34284 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233724AbjAHV7R (ORCPT
+        with ESMTP id S230431AbjAIBA3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 8 Jan 2023 16:59:17 -0500
-Received: from mail-pl1-x631.google.com (mail-pl1-x631.google.com [IPv6:2607:f8b0:4864:20::631])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC223A1BC
-        for <linux-fsdevel@vger.kernel.org>; Sun,  8 Jan 2023 13:59:16 -0800 (PST)
-Received: by mail-pl1-x631.google.com with SMTP id 17so7596416pll.0
-        for <linux-fsdevel@vger.kernel.org>; Sun, 08 Jan 2023 13:59:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CRwtLPQVjsAJ21UOF2AH7QhDRVRLxvztJgAiY0hGtps=;
-        b=DsZ97qPfn+vhMdmHYEQPR03qcl9I5p3jIShJCNMi//ZMrFVxdOkuAoJXqcs+tB5RSn
-         QcB2rzxaDJsmmMHCrqxeHYghKoFZvvg7wB5mLhGYKV48tedYlwkoEzx1s/m70EOBI2w2
-         klEp7yZCwCm88twDimFpRT6cC1lu+7jbwr+H0MoQAMbdhgTr3zn/4TglQJI7SViU4JGk
-         1KCpRBlXvfMm4ES6Pvk1YmnXNDU6K9Sy6JqxdOe3BWz24QSH3ChdaqmtlBtzXkPUiJ2c
-         s3DclSILRi9x57F4Db/3FKDA4w5rvwJooG2wdUG1z3gpMr3HgweiKuBc9blESspj6yTD
-         E6kA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CRwtLPQVjsAJ21UOF2AH7QhDRVRLxvztJgAiY0hGtps=;
-        b=MxY2oj5fPDWXPx18YXAgMKp5gEs95wmxTpSk8Kk2tK0cMHYvvsfEwRPG1p+SYwp71u
-         LusDVwtZKvcKF+ny5ndtdGD3Cjp/ES83VZPoSkxgp1hF//CIuhDZUStfI6frscrcNZGa
-         gTPuRqX5X2BWUNOLRQRe2m2us4OrIzt85dGyNih5N45tXJ9TCDaAyG8//F0GBg3Esm0i
-         8JdX1jQIa4mgBm6Inh1GN6930qfPPZxTfiqW4uFMiX6RTSgyJxP6ErvbmHzXlN6+pl+S
-         dqOmpKhxwVUIPzpRzki5K5HJrQ+6uv4mCx6esLXQ/saUfTCiwJwKA1LLoKHeBF/ijE3C
-         qaFQ==
-X-Gm-Message-State: AFqh2krz2WNnGR2B7F41c8GFobw1XzsJ8uSW4vVFjua4kFdyMtOSG/rX
-        REt6ZZwfjylhBMgU1b6h15P6pA==
-X-Google-Smtp-Source: AMrXdXsAIiWjmygk2jewqgV/cdCOSCNGl0lDa8UBdYidyZcmWqor2Pq9z7XkwyQwco4bwJjylZIz9g==
-X-Received: by 2002:a17:90a:aa92:b0:226:b425:3540 with SMTP id l18-20020a17090aaa9200b00226b4253540mr16679445pjq.36.1673215156237;
-        Sun, 08 Jan 2023 13:59:16 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-146-207.pa.vic.optusnet.com.au. [49.186.146.207])
-        by smtp.gmail.com with ESMTPSA id jx12-20020a17090b46cc00b00225a8024b8bsm4127825pjb.55.2023.01.08.13.59.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Jan 2023 13:59:15 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pEdh9-000l2I-TM; Mon, 09 Jan 2023 08:59:11 +1100
-Date:   Mon, 9 Jan 2023 08:59:11 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Andreas Gruenbacher <agruenba@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
-Subject: Re: [RFC v6 08/10] iomap/xfs: Eliminate the iomap_valid handler
-Message-ID: <20230108215911.GP1971568@dread.disaster.area>
-References: <20230108194034.1444764-1-agruenba@redhat.com>
- <20230108194034.1444764-9-agruenba@redhat.com>
+        Sun, 8 Jan 2023 20:00:29 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E4D7E0EF;
+        Sun,  8 Jan 2023 17:00:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=8Hhb3yO2xt6gqHF5G59d8rKyNf/7Spq2m0uP00f4G2Q=; b=lEOP6YPKYKgnbveh4FVdjua8eT
+        RoT2/kNjk9hzN54vMFOnV1u0kvRKVZYiwr7eIdgQSEHxjAqY4+9TobbyPLbHmj0BvoC/SwDM54lnl
+        xswvkHBu2aVOqP5NDxaaeYGXXbhUzm2f4WGqJsRoNZa8OGZ/fekp5jnqj4EP7zHhmnPHyrzVsOz7D
+        QqzJS0ySiBitbUWwnjDHw5EjniAqk+MTaksab6IiZ9yntc2IGQS9jHxVNqCe+DyUEVgZoVDwCnnTT
+        XpDmjqa+iCc9bz94N1/r2YEwNwSQeQua2QWCV9NOQrTSLlTySrNY9HLLQ6VyD8+mzrkPzTyOMl3zz
+        DrQjKS5A==;
+Received: from [2601:1c2:d80:3110::a2e7] (helo=bombadil.infradead.org)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pEgWX-00GZgZ-VC; Mon, 09 Jan 2023 01:00:26 +0000
+From:   Randy Dunlap <rdunlap@infradead.org>
+To:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: [PATCH] fuse: fix all W=1 kernel-doc warnings
+Date:   Sun,  8 Jan 2023 17:00:23 -0800
+Message-Id: <20230109010023.20719-1-rdunlap@infradead.org>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230108194034.1444764-9-agruenba@redhat.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 08, 2023 at 08:40:32PM +0100, Andreas Gruenbacher wrote:
-> Eliminate the ->iomap_valid() handler by switching to a ->get_folio()
-> handler and validating the mapping there.
-> 
-> Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+Use correct function name in kernel-doc notation. (1)
+Don't use "/**" to begin non-kernel-doc comments. (3)
 
-I think this is wrong.
+Fixes these warnings:
 
-The ->iomap_valid() function handles a fundamental architectural
-issue with cached iomaps: the iomap can become stale at any time
-whilst it is in use by the iomap core code.
+fs/fuse/cuse.c:272: warning: expecting prototype for cuse_parse_dev_info(). Prototype was for cuse_parse_devinfo() instead
+fs/fuse/dev.c:212: warning: expecting prototype for A new request is available, wake fiq(). Prototype was for fuse_dev_wake_and_unlock() instead
+fs/fuse/dir.c:149: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+ * Mark the attributes as stale due to an atime change.  Avoid the invalidate if
+fs/fuse/file.c:656: warning: This comment starts with '/**', but isn't a kernel-doc comment. Refer Documentation/doc-guide/kernel-doc.rst
+ * In case of short read, the caller sets 'pos' to the position of
 
-The current problem it solves in the iomap_write_begin() path has to
-do with writeback and memory reclaim races over unwritten extents,
-but the general case is that we must be able to check the iomap
-at any point in time to assess it's validity.
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Miklos Szeredi <miklos@szeredi.hu>
+---
+ fs/fuse/cuse.c |    2 +-
+ fs/fuse/dev.c  |    2 +-
+ fs/fuse/dir.c  |    2 +-
+ fs/fuse/file.c |    2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
-Indeed, we also have this same "iomap valid check" functionality in the
-writeback code as cached iomaps can become stale due to racing
-writeback, truncated, etc. But you wouldn't know it by looking at the iomap
-writeback code - this is currently hidden by XFS by embedding
-the checks into the iomap writeback ->map_blocks function.
-
-That is, the first thing that xfs_map_blocks() does is check if the
-cached iomap is valid, and if it is valid it returns immediately and
-the iomap writeback code uses it without question.
-
-The reason that this is embedded like this is that the iomap did not
-have a validity cookie field in it, and so the validity information
-was wrapped around the outside of the iomap_writepage_ctx and the
-filesystem has to decode it from that private wrapping structure.
-
-However, the validity information iin the structure wrapper is
-indentical to the iomap validity cookie, and so the direction I've
-been working towards is to replace this implicit, hidden cached
-iomap validity check with an explicit ->iomap_valid call and then
-only call ->map_blocks if the validity check fails (or is not
-implemented).
-
-I want to use the same code for all the iomap validity checks in all
-the iomap core code - this is an iomap issue, the conditions where
-we need to check for iomap validity are different for depending on
-the iomap context being run, and the checks are not necessarily
-dependent on first having locked a folio.
-
-Yes, the validity cookie needs to be decoded by the filesystem, but
-that does not dictate where the validity checking needs to be done
-by the iomap core.
-
-Hence I think removing ->iomap_valid is a big step backwards for the
-iomap core code - the iomap core needs to be able to formally verify
-the iomap is valid at any point in time, not just at the point in
-time a folio in the page cache has been locked...
-
--Dave.
--- 
-Dave Chinner
-david@fromorbit.com
+diff -- a/fs/fuse/cuse.c b/fs/fuse/cuse.c
+--- a/fs/fuse/cuse.c
++++ b/fs/fuse/cuse.c
+@@ -256,7 +256,7 @@ static int cuse_parse_one(char **pp, cha
+ }
+ 
+ /**
+- * cuse_parse_dev_info - parse device info
++ * cuse_parse_devinfo - parse device info
+  * @p: device info string
+  * @len: length of device info string
+  * @devinfo: out parameter for parsed device info
+diff -- a/fs/fuse/dev.c b/fs/fuse/dev.c
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -204,7 +204,7 @@ static unsigned int fuse_req_hash(u64 un
+ 	return hash_long(unique & ~FUSE_INT_REQ_BIT, FUSE_PQ_HASH_BITS);
+ }
+ 
+-/**
++/*
+  * A new request is available, wake fiq->waitq
+  */
+ static void fuse_dev_wake_and_unlock(struct fuse_iqueue *fiq)
+diff -- a/fs/fuse/dir.c b/fs/fuse/dir.c
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -145,7 +145,7 @@ static void fuse_dir_changed(struct inod
+ 	inode_maybe_inc_iversion(dir, false);
+ }
+ 
+-/**
++/*
+  * Mark the attributes as stale due to an atime change.  Avoid the invalidate if
+  * atime is not used.
+  */
+diff -- a/fs/fuse/file.c b/fs/fuse/file.c
+--- a/fs/fuse/file.c
++++ b/fs/fuse/file.c
+@@ -652,7 +652,7 @@ static ssize_t fuse_get_res_by_io(struct
+ 	return io->bytes < 0 ? io->size : io->bytes;
+ }
+ 
+-/**
++/*
+  * In case of short read, the caller sets 'pos' to the position of
+  * actual end of fuse request in IO request. Otherwise, if bytes_requested
+  * == bytes_transferred or rw == WRITE, the caller sets 'pos' to -1.
