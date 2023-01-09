@@ -2,130 +2,147 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 603C4662B4A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 17:33:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 46BA5662B52
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 17:35:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230031AbjAIQdJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 11:33:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33402 "EHLO
+        id S233106AbjAIQfS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 11:35:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34142 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229567AbjAIQdI (ORCPT
+        with ESMTP id S233189AbjAIQfR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 11:33:08 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1044DB8
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jan 2023 08:33:07 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id A453F3369C;
-        Mon,  9 Jan 2023 16:33:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1673281985; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Mon, 9 Jan 2023 11:35:17 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C790CB8
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jan 2023 08:34:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1673282067;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=FOMqudGlT1v37JyuSX5h3Sk+nY6O9kkiQLgmr0k5Vlw=;
-        b=gGU2aeYPWVjGlOnDnAUWgFvVVg7UTiSW8jYyX1KdzxKni08Pk43pNzCl3iN9T60f7LFheS
-        W0hNwWQkNeV7CD+7HyQQ134O1Imtj8cDJnkbjmdJvOJo2b3r+k87yvfpMgUoWzAu6+bHRc
-        xYZ4KxNscqqVuTGxVGxsdHVsCN0/0hw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1673281985;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=FOMqudGlT1v37JyuSX5h3Sk+nY6O9kkiQLgmr0k5Vlw=;
-        b=z8p4n93PIa8POcmC6KTF5EFDIhqMknufPqv+MGZcIP4agUYMxASnQEzeDNpQQpi62xEHmf
-        DuYPrA1qZy5XxlAw==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 9793713583;
-        Mon,  9 Jan 2023 16:33:05 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id KfXrJMFBvGOKdgAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 09 Jan 2023 16:33:05 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 21B24A0749; Mon,  9 Jan 2023 17:33:05 +0100 (CET)
-Date:   Mon, 9 Jan 2023 17:33:05 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     lijiazi <jqqlijiazi@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>, jiazi.li@transsion.com,
+        bh=QF1a5tKcYgole0jC8DNiwCqj35Xt7SSZg6oSwq6Hd2U=;
+        b=AEWEaKY1K6Yu6tk+utZQUv3aW6UH6+JedHH/mKK2ku5yYSP1UIosWf005W0UOCtAd6rCbi
+        UZAwtteuqKDH5mkj/SuobuF6lVGTEhTKvQdujl4ZSMtISUJvP7etfCBqpNxZzNRlL/CQL0
+        YjOP+tNxlwZ++SQmjxrr9cHYshRxeVI=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-257-G9to2boQPOOvI4ToSddqbg-1; Mon, 09 Jan 2023 11:34:26 -0500
+X-MC-Unique: G9to2boQPOOvI4ToSddqbg-1
+Received: by mail-ed1-f69.google.com with SMTP id x13-20020a05640226cd00b0047ac11c9774so5643375edd.17
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Jan 2023 08:34:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QF1a5tKcYgole0jC8DNiwCqj35Xt7SSZg6oSwq6Hd2U=;
+        b=oQGhDHMvckbLIxzHjAvft4NRrJTsjzRZkY6nvGnrhpP08hhsjAf/lhQ1aUFq1pZilW
+         mdNgxK9pM7OT+98293qkALI3VNv5NIgzA85HL1pG5DNvq7pofmNXk8Vb4jCxcl6RqTr6
+         T1lWv9I5A4lPwGgdz5DZBaEruDcm9a14d9V8o6VI7InrZ3AKD1vFO+kznPFTQwceaNa2
+         ZzbwENjbKCPgnQ7SH+j5Eff3+u7V3o3IvTAE+EG6JYp1KkGPNAJEpWmkRbS2fS5yjArH
+         9N6UAmgQJlWtGKA+cwqCPzjmr4iLCgIL27k09+IZrnsD540C6+2kYZRmhnBcmOH37jTF
+         yOhQ==
+X-Gm-Message-State: AFqh2kogX+03oPhBQl6B6zmfdpyKSSIMiwO+NCII59aGSSOb+fs5b1PY
+        CoA9GkicPOkja056IKv66K5QxAWlpe48n63QivSKvwoRLSbT0T6hqKcRM9T4/1q0scsL6OX8cfM
+        ShG6d//BgUgQLQ1st+A1NFYo3
+X-Received: by 2002:a05:6402:6c9:b0:46c:2c94:d30b with SMTP id n9-20020a05640206c900b0046c2c94d30bmr71921200edy.33.1673282065576;
+        Mon, 09 Jan 2023 08:34:25 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXtWq3XRc3T8ZfdZYEscSzO7mgFjxgNBvHYXWSEdpXL8eGnTOec2uHkncxWnZmWXlhYf4PjAmw==
+X-Received: by 2002:a05:6402:6c9:b0:46c:2c94:d30b with SMTP id n9-20020a05640206c900b0046c2c94d30bmr71921191edy.33.1673282065382;
+        Mon, 09 Jan 2023 08:34:25 -0800 (PST)
+Received: from aalbersh.remote.csb ([109.183.6.197])
+        by smtp.gmail.com with ESMTPSA id k26-20020a508ada000000b00487fc51c532sm4014812edk.33.2023.01.09.08.34.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Jan 2023 08:34:24 -0800 (PST)
+Date:   Mon, 9 Jan 2023 17:34:23 +0100
+From:   Andrey Albershteyn <aalbersh@redhat.com>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-xfs@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: Re: inactive buffer head in lrus prevents page migrate
-Message-ID: <20230109163305.wu7itl2jcm22ca7q@quack3>
-References: <20221012094011.GB19004@Jiazi.Li>
+Subject: Re: [RFC PATCH 02/11] pagemap: add mapping_clear_large_folios()
+ wrapper
+Message-ID: <20230109163423.45o5moxlh7h6yvbb@aalbersh.remote.csb>
+References: <20221213172935.680971-1-aalbersh@redhat.com>
+ <20221213172935.680971-3-aalbersh@redhat.com>
+ <Y5i8igBLu+6OQt8H@casper.infradead.org>
+ <20221213210813.GW3600936@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221012094011.GB19004@Jiazi.Li>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20221213210813.GW3600936@dread.disaster.area>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Reading some old email... Maybe the reply is still useful.
+On Wed, Dec 14, 2022 at 08:08:13AM +1100, Dave Chinner wrote:
+> On Tue, Dec 13, 2022 at 05:55:22PM +0000, Matthew Wilcox wrote:
+> > On Tue, Dec 13, 2022 at 06:29:26PM +0100, Andrey Albershteyn wrote:
+> > > Add wrapper to clear mapping's large folio flag. This is handy for
+> > > disabling large folios on already existing inodes (e.g. future XFS
+> > > integration of fs-verity).
+> > 
+> > I have two problems with this.  One is your use of __clear_bit().
+> > We can use __set_bit() because it's done as part of initialisation.
+> > As far as I can tell from your patches, mapping_clear_large_folios() is
+> > called on a live inode, so you'd have to use clear_bit() to avoid races.
+> 
+> I think we can do without mapping_clear_large_folios() - we
+> already have precedence for this sort of mapping state change with
+> the DAX inode feature flag.  That is, we change the on-disk state in
+> the ioctl context, but we don't change the in-memory inode state.
+> Instead, we mark it I_DONTCACHEi to get it turfed from memory with
+> expediency. Then when it is re-instantiated, we see the on-disk
+> state and then don't enable large mappings on that inode.
+> 
+> That will work just fine here, I think.
 
-On Wed 12-10-22 17:40:11, lijiazi wrote:
-> I recently encountered a CMA page migration failure issue.
-> This page has private, and private data is buffer_head struct pointer.
-> buffer_head->b_count is not zero, so drop_buffers failed.
-> 
-> This leads to the failure of both directly reclaim and migration attempts for
-> this page.
-> Finally, CMA memory alloc failed.
-> 
-> This buffer_head detail info are as follows:
-> 
-> crash> struct buffer_head 0xffffffec9f0200d0 -x
-> struct buffer_head {
->   b_state = 0x29, //has Uptodate, Req, Mapped flags
->   b_this_page = 0xffffffec9f0200d0,
->   b_page = 0xffffffbfb4bb0080,
->   b_blocknr = 0x801b,
->   b_size = 0x1000,
->   b_data = 0xffffffed2ec02000 "\244\201",
->   b_bdev = 0xffffffed169b2580,
->   b_end_io = 0xffffff91006c44e4 <end_buffer_read_sync>,
->   b_private = 0x0,
->   b_assoc_buffers = {
->     next = 0xffffffec9f020118,
->     prev = 0xffffffec9f020118
->   },
->   b_assoc_map = 0x0,
->   b_count = {
->     counter = 0x1
->   }
-> }
-> 
-> The b_count is 1, just because it's in cpu6 bh_lru:
-> crash> p bh_lrus:a | grep 0xffffffec9f0200d0 -B 1
-> per_cpu(bh_lrus, 6) = $7 = {
->   bhs = {0xffffffed146867b8, 0xffffffec9f020548, 0xffffffed0f7e3138, 0xffffffed0f7e30d0,
-> 	 0xffffffed0f6f7340, 0xffffffed0b8c59c0, 0xffffffeb7bdb7888, 0xffffffed0b8c5548,
-> 	 0xffffffed0f7b7270, 0xffffffed0f7b7208, 0xffffffed0f7b7138, 0xffffffec9f0200d0,//this entry
-> 	 0xffffffed0f7b7068, 0xffffffed0f7b7000, 0xffffffed0f7b7bc8, 0xffffffec9f020068}
-> 
-> On my device using kernel-4.19, inactive bh may be in bh_lrus for a long
-> time, and cause the corresponding page migration failure.
-> 
-> In function buffer_busy, can we check if b_count is greater than zero
-> just because it's in bh_lrus?
-> If yes, can we evict some inactive bhs to improve the success rate of
-> migration?
+Thanks for the suggestion, I will try to look into this. If it won't
+work out I will stick to large folio switch, if no other objections.
+In anyway I will remove the mapping_clear_large_folios() wrapper not
+to encourage further use of such approach.
 
-Not sure about your codebase but at least upstream __buffer_migrate_folio()
-(which used to be buffer_migrate_page() in your kernel) does
-invalidate_bh_lrus() call if it finds any buffer is busy, exactly to avoid
-this problem. Maybe you're missing some backport?
+> 
+> > The second is that verity should obviously be enhanced to support
+> > large folios (and for that matter, block sizes smaller than PAGE_SIZE).
+> > Without that, this is just a toy or a prototype.  Disabling large folios
+> > is not an option.
+> 
+> Disabling large folios is very much an option. Filesystems must opt
+> in to large mapping support, so they can also choose to opt out.
+> i.e. large mappings is a filesystem policy decision, not a core
+> infrastructure decision. Hence how we disable large mappings
+> for fsverity enabled inodes is open to discussion, but saying we
+> can't opt out of an optional feature is entirely non-sensical.
+> 
+> > I'm happy to work with you to add support for large folios to verity.
+> > It hasn't been high priority for me, but I'm now working on folio support
+> > for bufferhead filesystems and this would probably fit in.
+> 
+> Yes, we need fsverity to support multipage folios, but modifying
+> fsverity is outside the scope of initially enabling fsverity support
+> on XFS.  This patch set is about sorting out the on-disk format
+> changes and interfacing with the fsverity infrastructure to enable
+> the feature to be tested and verified.
+> 
+> Stuff like large mapping support in fsverity is a future concern,
+> not a show-stopper for initial feature support. We don't need every
+> bell and whistle in the initial merge....
+> 
+> Cheers,
+> 
+> Dave.
+> -- 
+> Dave Chinner
+> david@fromorbit.com
+> 
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Thanks
+Andrey
+
