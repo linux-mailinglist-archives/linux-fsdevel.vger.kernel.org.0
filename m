@@ -2,121 +2,130 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2E70E663347
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 22:40:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADC0D663394
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 22:57:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238159AbjAIVkf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 16:40:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44926 "EHLO
+        id S235477AbjAIV5k (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 16:57:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33448 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238234AbjAIVj7 (ORCPT
+        with ESMTP id S233142AbjAIV5j (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 16:39:59 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D996B1EF
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jan 2023 13:37:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673300262;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=a63DA35gJAAxc0zkeF1e3iqtqNPsmNmAAW3yG6Igeec=;
-        b=FfpQI4qQbYn45Vuha2NbQ3gyZo/nNNggXal0htJdOmvw0D+kKTWE0eWIvrOXNwmBxj1v9n
-        l9VifYE8pd9S2eaNIpBR4gfjmpH4Kaz7bNt4Y0Buqci3E5TIwG7clYyvFOiy0wyEcnrrek
-        g/qKwP4hmJSwwFXm7gt9jCSyUSNIHq0=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-1-FYzDasRJMNu5P2dWnJSLYw-1; Mon, 09 Jan 2023 16:37:38 -0500
-X-MC-Unique: FYzDasRJMNu5P2dWnJSLYw-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 7CDAC29AA3B4;
-        Mon,  9 Jan 2023 21:37:37 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 1BEEF40C2064;
-        Mon,  9 Jan 2023 21:37:36 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20230109173513.htfqbkrtqm52pnye@quack3>
-References: <20230109173513.htfqbkrtqm52pnye@quack3> <167305160937.1521586.133299343565358971.stgit@warthog.procyon.org.uk> <167305166150.1521586.10220949115402059720.stgit@warthog.procyon.org.uk>
-To:     Jan Kara <jack@suse.cz>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
+        Mon, 9 Jan 2023 16:57:39 -0500
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 667C3CD2
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jan 2023 13:57:38 -0800 (PST)
+Received: by mail-il1-x12c.google.com with SMTP id d10so5564636ilc.12
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Jan 2023 13:57:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mpprSQLash1JjtGcVOC2uBMzhrS34XgrKB7EUA5ofFQ=;
+        b=iNQqE0t54cDcMDepVodG26uZNcl2cwplYAaO95/e+TgG6GdYHVzO5tXwYPYU8OV2Xs
+         mvmFUEoHzkdUw4rMcvG4uRywPSgT/LHuXCaCYC2Lndry2MuDnr+Sfip5kBN02Bs53DXX
+         4Ih0oNGX5+Dsmj/BtINn8Bbo1OfK/cBbrAVz9hYSXmJVbYGA15l/ZW7ha1j+9iO/ogbN
+         A/Z9WbvqvgtR7jID1JCOL1Toj3IFJnJKQVPtHGbvOIFYxpcgxAJ+/wDoWIkmaq9kzZ6Z
+         rL1k77G/2saWvLV3+qniPKLvMqgV9ax+3asNwHXLAmmLc3nGx/OIdLr5ZuQmlm6x/v50
+         GxAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mpprSQLash1JjtGcVOC2uBMzhrS34XgrKB7EUA5ofFQ=;
+        b=txEJEPmpMj3DLB21jakpQHaaE9FIjXN24XXfr050h9iWi3qXtZDDPl/T5xO4OnDNCc
+         oFl7f2zc5TVPOuvsB+Wod7dXjpCOm59gzPIFp00IEjMZlAK7/y2tP+YQlQehnkOl2Tcp
+         CkHho7TmirY6KMV2kGhLbpeC345kq9LlBKq0TugMjtJsy5DYMnKZLeqiU7WEgOcl7Z29
+         Zq1Gis5nNjRFSFRrOXX/42WHT45ZbNz/yDaa/VgrKo7n3guZIFdkaryJfpRgOISMrz1i
+         htPnVhu5nEwE/yp74cpSR8xQHTvR6q0iV45rJ/HKdxwl6Vxr5+nB5zqcHOQekPRuxMdr
+         RIhw==
+X-Gm-Message-State: AFqh2kqCSvdiBNSuxalCJZbTUFsY7nsac1HrSVt1+XL6MCIXS7WtxjQn
+        EwnDN3dvAwKV0Xyyuhv/KLx/BA==
+X-Google-Smtp-Source: AMrXdXt4MYeZwrpGt3W51HEroht98TitmjFF+Hb5hFax2i5FVOJiT07Z7uh1ngWVFevpdlTOZgJvrg==
+X-Received: by 2002:a92:c151:0:b0:303:9c30:7eff with SMTP id b17-20020a92c151000000b003039c307effmr10063239ilh.2.1673301457640;
+        Mon, 09 Jan 2023 13:57:37 -0800 (PST)
+Received: from [192.168.1.94] ([207.135.234.126])
+        by smtp.gmail.com with ESMTPSA id w22-20020a02b0d6000000b0038aa0e5e9cfsm3080744jah.75.2023.01.09.13.57.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Jan 2023 13:57:37 -0800 (PST)
+Message-ID: <d0bb04e7-7e58-d494-0e39-6e98f3368a7b@kernel.dk>
+Date:   Mon, 9 Jan 2023 14:57:36 -0700
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v4 7/7] iov_iter, block: Make bio structs pin pages rather
+ than ref'ing if appropriate
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>, Jan Kara <jack@suse.cz>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, Christoph Hellwig <hch@lst.de>,
         Matthew Wilcox <willy@infradead.org>,
         Logan Gunthorpe <logang@deltatee.com>,
         Christoph Hellwig <hch@infradead.org>,
         Jeff Layton <jlayton@kernel.org>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 7/7] iov_iter, block: Make bio structs pin pages rather than ref'ing if appropriate
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2008443.1673300255.1@warthog.procyon.org.uk>
-Date:   Mon, 09 Jan 2023 21:37:35 +0000
-Message-ID: <2008444.1673300255@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+References: <20230109173513.htfqbkrtqm52pnye@quack3>
+ <167305160937.1521586.133299343565358971.stgit@warthog.procyon.org.uk>
+ <167305166150.1521586.10220949115402059720.stgit@warthog.procyon.org.uk>
+ <2008444.1673300255@warthog.procyon.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <2008444.1673300255@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jan Kara <jack@suse.cz> wrote:
+On 1/9/23 2:37?PM, David Howells wrote:
+> Jan Kara <jack@suse.cz> wrote:
+> 
+>> So currently we already have BIO_NO_PAGE_REF flag and what you do in this
+>> patch partially duplicates that. So either I'd drop that flag or instead of
+>> bi_cleanup_mode variable (which honestly looks a bit wasteful given how we
+>> microoptimize struct bio) just add another BIO_ flag...
+> 
+> I'm fine with translating the FOLL_* flags to the BIO_* flags.  I could add a
+> BIO_PAGE_PINNED and translate:
+> 
+> 	FOLL_GET => 0
+> 	FOLL_PIN => BIO_PAGE_PINNED
+> 	0	 => BIO_NO_PAGE_REF
+> 
+> It would seem that BIO_NO_PAGE_REF can't be set for BIO_PAGE_PINNED because
+> BIO_NO_PAGE_REF governs whether bio_release_pages() calls
+> __bio_release_pages() - which would be necessary.  However, bio_release_page()
+> can do one or the other on the basis of BIO_PAGE_PINNED being specified.  So
+> in my patch I would end up with:
+> 
+> 	static void bio_release_page(struct bio *bio, struct page *page)
+> 	{
+> 		if (bio->bi_flags & BIO_NO_PAGE_REF)
+> 			;
+> 		else if (bio->bi_flags & BIO_PAGE_PINNED)
+> 			unpin_user_page(page);
+> 		else
+> 			put_page(page);
+> 	}
 
-> So currently we already have BIO_NO_PAGE_REF flag and what you do in this
-> patch partially duplicates that. So either I'd drop that flag or instead of
-> bi_cleanup_mode variable (which honestly looks a bit wasteful given how we
-> microoptimize struct bio) just add another BIO_ flag...
+Let's please make this a bit more readable with:
 
-I'm fine with translating the FOLL_* flags to the BIO_* flags.  I could add a
-BIO_PAGE_PINNED and translate:
+static void bio_release_page(struct bio *bio, struct page *page)
+{
+	if (bio->bi_flags & BIO_NO_PAGE_REF)
+		return;
+	if (bio->bi_flags & BIO_PAGE_PINNED)
+		unpin_user_page(page);
+	else
+		put_page(page);
+}
 
-	FOLL_GET => 0
-	FOLL_PIN => BIO_PAGE_PINNED
-	0	 => BIO_NO_PAGE_REF
-
-It would seem that BIO_NO_PAGE_REF can't be set for BIO_PAGE_PINNED because
-BIO_NO_PAGE_REF governs whether bio_release_pages() calls
-__bio_release_pages() - which would be necessary.  However, bio_release_page()
-can do one or the other on the basis of BIO_PAGE_PINNED being specified.  So
-in my patch I would end up with:
-
-	static void bio_release_page(struct bio *bio, struct page *page)
-	{
-		if (bio->bi_flags & BIO_NO_PAGE_REF)
-			;
-		else if (bio->bi_flags & BIO_PAGE_PINNED)
-			unpin_user_page(page);
-		else
-			put_page(page);
-	}
-
-(This is called from four places, so it has to handle BIO_NO_PAGE_REF).
-
-It might make sense flip the logic of BIO_NO_PAGE_REF so that we have, say:
-
-	FOLL_GET => BIO_PAGE_REFFED
-	FOLL_PIN => BIO_PAGE_PINNED
-	0	 => 0
-
-Set BIO_PAGE_REFFED by default and clear it in bio_iov_bvec_set().
-
-Note that one reason I was thinking of saving the returned FOLL_* flags is
-that I don't know if, at some point, the VM will acquire yet more different
-cleanup modes - or even if a page could at some point be both ref'd *and*
-pinned.
-
-Also, I could change the interface to return something other than FOLL_* - it
-just seems that they're appropriate given the underlying VM interface.
-
-David
+-- 
+Jens Axboe
 
