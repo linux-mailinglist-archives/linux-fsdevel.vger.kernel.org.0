@@ -2,39 +2,39 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DB2F7661E5C
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 06:18:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DC9DE661E5E
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 06:18:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236219AbjAIFSa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 00:18:30 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53588 "EHLO
+        id S236336AbjAIFSe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 00:18:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234347AbjAIFSS (ORCPT
+        with ESMTP id S234366AbjAIFSS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Mon, 9 Jan 2023 00:18:18 -0500
 Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9929ED2DC;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB478DE80;
         Sun,  8 Jan 2023 21:18:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=casper.20170209; h=Content-Transfer-Encoding:MIME-Version:
         References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:
         Content-Type:Content-ID:Content-Description;
-        bh=YLUcsaMTdWzUTPeweatSYOos3qbQs6I0puU7586j9/8=; b=rAzQJTyZjPOc2dWheR771P9Y5N
-        zEFvxTxSDP0E8IpVfF6xp0gNN58oO9Dpqu10uAK0toI8KWtTrYdFheabjxryK47Fc/6XtgZMl/qcK
-        qFHVBKck4DfGAQMCUFkPHaYjIOxCKUezVTuKaQ5SABoD/vTuoEjpfNQOUqxuDHw5k8oDZq+xFcfSl
-        XJl+2VeymGOsq6o/fwSbipUr+VEFYqSYdhM6Eg9Z/n+gV0uwM27qKhuw14Nd2fpbBlbZj6Z0Xvh9O
-        JApINzQ7SNd06B2+cWVk5UY4YnSzbEpF03HpCfFRUUzauiuhQLMORV1XQIxAzasoT5c5qgxAGv65O
-        TUrFVwvQ==;
+        bh=lzB774qlWOGeuLTuMSFQPkmJwRXTwSiLN6M5EhwWaoI=; b=mKbzCktscn6Jx0BP1xTRqukdZF
+        nsrtNLVPeVuRjragXpmoIVeIzgGb0cnGyr1MUaySI1GDPtjn0IbSqa1+ySzdBGWA1S+PzmWo59/+f
+        wH9GGe5EvRbCf1EvX6MwIPKGc6bpARRvARTX+OeC+dTWgQAsx9Pq4h2GNzhFWNOFVSkYkGn9pCgRO
+        P8JFQRh+f9PZko0g5ck1IucaLmdMcqlO3ERpHcWUv0XNcctHTopQkPQOZ3QxjGmbwkUSMj0yMwp31
+        HxN2gKdn3STEHlZiuf/HEmUJitZ5FijtDNFgXX/ve9HDjDPTWu7ilckbmLKnRpQcSsvi0IiYuJ+8Z
+        ViBPmQCQ==;
 Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pEkYE-0020xQ-0e; Mon, 09 Jan 2023 05:18:26 +0000
+        id 1pEkYE-0020xW-4R; Mon, 09 Jan 2023 05:18:26 +0000
 From:   "Matthew Wilcox (Oracle)" <willy@infradead.org>
 Cc:     "Matthew Wilcox (Oracle)" <willy@infradead.org>,
         Jeff Layton <jlayton@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH 09/11] mm: Remove AS_EIO and AS_ENOSPC
-Date:   Mon,  9 Jan 2023 05:18:21 +0000
-Message-Id: <20230109051823.480289-10-willy@infradead.org>
+Subject: [PATCH 10/11] mm: Remove filemap_fdatawait_range_keep_errors()
+Date:   Mon,  9 Jan 2023 05:18:22 +0000
+Message-Id: <20230109051823.480289-11-willy@infradead.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230109051823.480289-1-willy@infradead.org>
 References: <20230109051823.480289-1-willy@infradead.org>
@@ -50,142 +50,59 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-All users are now converted to use wb_err, so convert the
-remaining comments, drop the unused filemap_check_errors()
-and remove the compatibility code in mapping_set_error() and
-file_check_and_advance_wb_err().
+This function is now the same as filemap_fdatawait_range(), so change
+both callers to use that instead.
 
 Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 ---
- fs/btrfs/extent_io.c    |  6 +++---
- fs/f2fs/data.c          |  2 +-
- include/linux/pagemap.h | 20 +++++---------------
- mm/filemap.c            | 21 ---------------------
- 4 files changed, 9 insertions(+), 40 deletions(-)
+ fs/jbd2/commit.c        | 12 +++++-------
+ include/linux/pagemap.h |  2 --
+ 2 files changed, 5 insertions(+), 9 deletions(-)
 
-diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-index 9bd32daa9b9a..f1c3572b6a90 100644
---- a/fs/btrfs/extent_io.c
-+++ b/fs/btrfs/extent_io.c
-@@ -2386,7 +2386,7 @@ static void set_btree_ioerr(struct page *page, struct extent_buffer *eb)
- 	 * or the content of some node/leaf from a past generation that got
- 	 * cowed or deleted and is no longer valid.
- 	 *
--	 * Note: setting AS_EIO/AS_ENOSPC in the btree inode's i_mapping would
-+	 * Note: setting wb_err in the btree inode's i_mapping would
- 	 * not be enough - we need to distinguish between log tree extents vs
- 	 * non-log tree extents, and the next filemap_fdatawait_range() call
- 	 * will catch and clear such errors in the mapping - and that call might
-@@ -2397,10 +2397,10 @@ static void set_btree_ioerr(struct page *page, struct extent_buffer *eb)
- 	 * set (since it's a runtime flag, not persisted on disk).
- 	 *
- 	 * Using the flags below in the btree inode also makes us achieve the
--	 * goal of AS_EIO/AS_ENOSPC when writepages() returns success, started
-+	 * goal of wb_err when writepages() returns success, started
- 	 * writeback for all dirty pages and before filemap_fdatawait_range()
- 	 * is called, the writeback for all dirty pages had already finished
--	 * with errors - because we were not using AS_EIO/AS_ENOSPC,
-+	 * with errors - because we were not using wb_err,
- 	 * filemap_fdatawait_range() would return success, as it could not know
- 	 * that writeback errors happened (the pages were no longer tagged for
- 	 * writeback).
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 97e816590cd9..566fe19ca57d 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2913,7 +2913,7 @@ int f2fs_write_single_data_page(struct page *page, int *submitted,
- 	redirty_page_for_writepage(wbc, page);
- 	/*
- 	 * pageout() in MM traslates EAGAIN, so calls handle_write_error()
--	 * -> mapping_set_error() -> set_bit(AS_EIO, ...).
-+	 * -> mapping_set_error().
- 	 * file_write_and_wait_range() will see EIO error, which is critical
- 	 * to return value of fsync() followed by atomic_write failure to user.
- 	 */
+diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+index 4810438b7856..36aa1b117a50 100644
+--- a/fs/jbd2/commit.c
++++ b/fs/jbd2/commit.c
+@@ -221,11 +221,10 @@ EXPORT_SYMBOL(jbd2_submit_inode_data);
+ int jbd2_wait_inode_data(journal_t *journal, struct jbd2_inode *jinode)
+ {
+ 	if (!jinode || !(jinode->i_flags & JI_WAIT_DATA) ||
+-		!jinode->i_vfs_inode || !jinode->i_vfs_inode->i_mapping)
++	    !jinode->i_vfs_inode || !jinode->i_vfs_inode->i_mapping)
+ 		return 0;
+-	return filemap_fdatawait_range_keep_errors(
+-		jinode->i_vfs_inode->i_mapping, jinode->i_dirty_start,
+-		jinode->i_dirty_end);
++	return filemap_fdatawait_range(jinode->i_vfs_inode->i_mapping,
++				jinode->i_dirty_start, jinode->i_dirty_end);
+ }
+ EXPORT_SYMBOL(jbd2_wait_inode_data);
+ 
+@@ -270,9 +269,8 @@ int jbd2_journal_finish_inode_data_buffers(struct jbd2_inode *jinode)
+ {
+ 	struct address_space *mapping = jinode->i_vfs_inode->i_mapping;
+ 
+-	return filemap_fdatawait_range_keep_errors(mapping,
+-						   jinode->i_dirty_start,
+-						   jinode->i_dirty_end);
++	return filemap_fdatawait_range(mapping, jinode->i_dirty_start,
++			jinode->i_dirty_end);
+ }
+ 
+ /*
 diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 985fd47739f4..573b8cce3a85 100644
+index 573b8cce3a85..7fe2a5ec1c12 100644
 --- a/include/linux/pagemap.h
 +++ b/include/linux/pagemap.h
-@@ -51,7 +51,6 @@ int __filemap_fdatawrite_range(struct address_space *mapping,
- 		loff_t start, loff_t end, int sync_mode);
- int filemap_fdatawrite_range(struct address_space *mapping,
- 		loff_t start, loff_t end);
--int filemap_check_errors(struct address_space *mapping);
- void __filemap_set_wb_err(struct address_space *mapping, int err);
- int filemap_fdatawrite_wbc(struct address_space *mapping,
- 			   struct writeback_control *wbc);
-@@ -192,14 +191,11 @@ static inline bool mapping_shrinkable(struct address_space *mapping)
-  * Bits in mapping->flags.
-  */
- enum mapping_flags {
--	AS_EIO		= 0,	/* IO error on async write */
--	AS_ENOSPC	= 1,	/* ENOSPC on async write */
--	AS_MM_ALL_LOCKS	= 2,	/* under mm_take_all_locks() */
--	AS_UNEVICTABLE	= 3,	/* e.g., ramdisk, SHM_LOCK */
--	AS_EXITING	= 4, 	/* final truncate in progress */
--	/* writeback related tags are not used */
--	AS_NO_WRITEBACK_TAGS = 5,
--	AS_LARGE_FOLIO_SUPPORT = 6,
-+	AS_MM_ALL_LOCKS	= 0,	/* under mm_take_all_locks() */
-+	AS_UNEVICTABLE,		/* e.g., ramdisk, SHM_LOCK */
-+	AS_EXITING, 		/* final truncate in progress */
-+	AS_NO_WRITEBACK_TAGS,	/* writeback related tags are not used */
-+	AS_LARGE_FOLIO_SUPPORT,
- };
- 
- /**
-@@ -227,12 +223,6 @@ static inline void mapping_set_error(struct address_space *mapping, int error)
- 	/* Record it in superblock */
- 	if (mapping->host)
- 		errseq_set(&mapping->host->i_sb->s_wb_err, error);
--
--	/* Record it in flags for now, for legacy callers */
--	if (error == -ENOSPC)
--		set_bit(AS_ENOSPC, &mapping->flags);
--	else
--		set_bit(AS_EIO, &mapping->flags);
+@@ -40,8 +40,6 @@ static inline int filemap_fdatawait(struct address_space *mapping)
+ 	return filemap_fdatawait_range(mapping, 0, LLONG_MAX);
  }
  
- static inline void mapping_set_unevictable(struct address_space *mapping)
-diff --git a/mm/filemap.c b/mm/filemap.c
-index 887520db115a..7bf8442bcfaa 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -341,20 +341,6 @@ void delete_from_page_cache_batch(struct address_space *mapping,
- 		filemap_free_folio(mapping, fbatch->folios[i]);
- }
+-#define filemap_fdatawait_range_keep_errors(mapping, start, end)	\
+-	filemap_fdatawait_range(mapping, start, end)
+ #define filemap_fdatawait_keep_errors(mapping)	filemap_fdatawait(mapping)
  
--int filemap_check_errors(struct address_space *mapping)
--{
--	int ret = 0;
--	/* Check for outstanding write errors */
--	if (test_bit(AS_ENOSPC, &mapping->flags) &&
--	    test_and_clear_bit(AS_ENOSPC, &mapping->flags))
--		ret = -ENOSPC;
--	if (test_bit(AS_EIO, &mapping->flags) &&
--	    test_and_clear_bit(AS_EIO, &mapping->flags))
--		ret = -EIO;
--	return ret;
--}
--EXPORT_SYMBOL(filemap_check_errors);
--
- /**
-  * filemap_fdatawrite_wbc - start writeback on mapping dirty pages in range
-  * @mapping:	address space structure to write
-@@ -684,13 +670,6 @@ int file_check_and_advance_wb_err(struct file *file)
- 		spin_unlock(&file->f_lock);
- 	}
- 
--	/*
--	 * We're mostly using this function as a drop in replacement for
--	 * filemap_check_errors. Clear AS_EIO/AS_ENOSPC to emulate the effect
--	 * that the legacy code would have had on these flags.
--	 */
--	clear_bit(AS_EIO, &mapping->flags);
--	clear_bit(AS_ENOSPC, &mapping->flags);
- 	return err;
- }
- EXPORT_SYMBOL(file_check_and_advance_wb_err);
+ bool filemap_range_has_page(struct address_space *, loff_t lstart, loff_t lend);
 -- 
 2.35.1
 
