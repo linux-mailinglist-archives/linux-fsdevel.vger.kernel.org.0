@@ -2,83 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 756C566295A
-	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 16:08:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2C35166298F
+	for <lists+linux-fsdevel@lfdr.de>; Mon,  9 Jan 2023 16:14:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235105AbjAIPIE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 10:08:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52740 "EHLO
+        id S237048AbjAIPOF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 10:14:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53910 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S234922AbjAIPHf (ORCPT
+        with ESMTP id S237040AbjAIPNH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 10:07:35 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B262B94;
-        Mon,  9 Jan 2023 07:07:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=3ur7C+W2r8wDUsaTYPPPMV6CzMQmfkaZSRCKEcopFFQ=; b=nh4Y1aUgxZvfFlpIE1QZR9wDiq
-        /r5xjZ2NMM7L6Y36kwT/MLtlC8F8AuB/KtP4F4v6S3SRt43AOrUfGVVzVfiM20rDZwkvdoJScmbAw
-        HK3wU1/SdXYDsDkI79q+B6cxODNDyPwuZ4YLzb3v0Dj0OyVZmXDiYSigjVdO6bf/XW7rjl6NUhzDB
-        F2e7GUTNuL4A9QqGrKXFiiuqb5wBwml+3ess0bGcAZNs1ruHFShbBv13oC2EruTOqq/3jsUt69RFv
-        kpTieWrVuEpi8yDQxFVaz9G0qsGraRybQUlNsjn8N77w+fArKfx1w5BhAggxcCUU3Q3uIusyPxfF+
-        RSOcf2HA==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pEtkW-002NXd-N3; Mon, 09 Jan 2023 15:07:44 +0000
-Date:   Mon, 9 Jan 2023 15:07:44 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Jeff Layton <jlayton@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH 08/11] cifs: Remove call to filemap_check_wb_err()
-Message-ID: <Y7wtwD/Yr+nWSqpx@casper.infradead.org>
-References: <20230109051823.480289-1-willy@infradead.org>
- <20230109051823.480289-9-willy@infradead.org>
- <7d1499fadf42052711e39f0d8c7656f4d3a4bc9d.camel@redhat.com>
+        Mon, 9 Jan 2023 10:13:07 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 85B311A1;
+        Mon,  9 Jan 2023 07:12:18 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 222726117E;
+        Mon,  9 Jan 2023 15:12:18 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB33AC433D2;
+        Mon,  9 Jan 2023 15:12:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673277137;
+        bh=uo7fc0mmKrGkfOcf5guy0Az6XhMXNwAy01tztDAqFu8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ARs3SeRseq7l2W5O8NbAsxmyFUlrz1czglO2P2+kEicK8nHKYaOIVANWlGwMoV1mw
+         uzXrhYeu+GFOZlGCDpCfh9UBE7wNzouby1DViZuJ+GhDWSZlIjijOceg810VWTNoaZ
+         4tZSVsqLkojuUS13ntWYF+PGXnu/DW9cg47uPLJFDpl6oC+TwaTSTDdDsaEl5U25t7
+         adKPRoSm2Z8k3F8RfnlQ0vP+2XfauwiedH1Kf/pUBTq9lJgb9LR0d05GK/FKolJQDe
+         JV4j00zhxAwW5S+KJcq+9cudh3nO6hPeSSGWzFrhg9RCmAEK0qaRNgdosxLnIe5rd+
+         CVqd0OL0jZ2rQ==
+Date:   Mon, 9 Jan 2023 08:12:13 -0700
+From:   Keith Busch <kbusch@kernel.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@meta.com>,
+        linux-kernel@vger.kernel.org,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, io-uring@vger.kernel.org,
+        Pavel Begunkov <asml.silence@gmail.com>,
+        Eric Dumazet <edumazet@google.com>,
+        Steven Rostedt <rostedt@goodmis.org>, davem@davemloft.net,
+        Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Paul Moore <paul@paul-moore.com>, keyrings@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-trace-kernel@vger.kernel.org, linux-block@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCHv2 00/12] iov_iter: replace import_single_range with ubuf
+Message-ID: <Y7wuzaXhypvExrNF@kbusch-mbp>
+References: <20230108171241.GA20314@lst.de>
+ <20230105190741.2405013-1-kbusch@meta.com>
+ <1880281.1673256668@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7d1499fadf42052711e39f0d8c7656f4d3a4bc9d.camel@redhat.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <1880281.1673256668@warthog.procyon.org.uk>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 09, 2023 at 09:42:36AM -0500, Jeff Layton wrote:
-> On Mon, 2023-01-09 at 05:18 +0000, Matthew Wilcox (Oracle) wrote:
-> > filemap_write_and_wait() now calls filemap_check_wb_err(), so we cannot
-> > glean any additional information by calling it ourselves.  It may also
-> > be misleading as it will pick up on any errors since the beginning of
-> > time which may well be since before this program opened the file.
-> > 
-> > Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-> > ---
-> >  fs/cifs/file.c | 8 +++-----
-> >  1 file changed, 3 insertions(+), 5 deletions(-)
-> > 
-> > diff --git a/fs/cifs/file.c b/fs/cifs/file.c
-> > index 22dfc1f8b4f1..7e7ee26cf77d 100644
-> > --- a/fs/cifs/file.c
-> > +++ b/fs/cifs/file.c
-> > @@ -3042,14 +3042,12 @@ int cifs_flush(struct file *file, fl_owner_t id)
-> >  	int rc = 0;
-> >  
-> >  	if (file->f_mode & FMODE_WRITE)
-> > -		rc = filemap_write_and_wait(inode->i_mapping);
-> > +		rc = filemap_write_and_wait(file->f_mapping);
+On Mon, Jan 09, 2023 at 09:31:08AM +0000, David Howells wrote:
+> lore.kernel.org doesn't seem to have the patches.
 > 
-> If we're calling ->flush, then the file is being closed. Should this
-> just be?
-> 		rc = file_write_and_wait(file);
-> 
-> It's not like we need to worry about corrupting ->f_wb_err at that
-> point.
+> https://lore.kernel.org/lkml/20230105190741.2405013-1-kbusch@meta.com/
 
-Yes, I think you're right, and then this is a standalone patch that can
-go in this cycle, perhaps.
+That's frustrating. Seems like an email setup problem on my end. I'll
+split this series up and resend.
