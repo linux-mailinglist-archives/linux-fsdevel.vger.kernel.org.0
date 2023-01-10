@@ -2,85 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C29D36637BB
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 04:11:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8CE8E6638CD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 06:50:21 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235571AbjAJDLA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 22:11:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44700 "EHLO
+        id S229915AbjAJFuR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Jan 2023 00:50:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230058AbjAJDK6 (ORCPT
+        with ESMTP id S229774AbjAJFtc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 22:10:58 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8DB8CAE6F;
-        Mon,  9 Jan 2023 19:10:57 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Tue, 10 Jan 2023 00:49:32 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 300A038B2;
+        Mon,  9 Jan 2023 21:49:30 -0800 (PST)
+Received: from [192.168.10.12] (unknown [39.45.186.163])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 2C4A4614BA;
-        Tue, 10 Jan 2023 03:10:57 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13C58C433EF;
-        Tue, 10 Jan 2023 03:10:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673320256;
-        bh=5NobUZe3e86WKsQ4ysdFkOmOmqcIBSN1keo/Nf7bv98=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ACfctoYBs5wi1feupJMe9VvOxeQIJMM5nrQwNmiCsToT47F8O1JSPDC53r7j98Hie
-         ygskpNxEW8BTQT+iX61Eqd+KkTTpJ5sYjWcAimwT/+8yyQKIYG7srPe2mg1QuCJDXn
-         qvssUtahGRb7IhvQCwFNdGgUs3nxR0Am1B7byOwQNUjMrPi1SO0eeW+rzMyRTEfnYp
-         /ahZRGjcKFJJ09ckTVh4PPkcRe5gyBh3W1ZfAR2G8+FkYLgHtrDIE/Q5bOXRwt9dde
-         DsKg9ToAo9oaTON9UdkOjX0B4UAgtK8OJ/xei+3gzSEIGadBLHsihDA+iYgEuhvId2
-         Qox8Csj6RpLlA==
-Date:   Mon, 9 Jan 2023 19:10:54 -0800
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     Andrey Albershteyn <aalbersh@redhat.com>
-Cc:     linux-fscrypt@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
-        linux-btrfs@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH v2 00/11] fsverity: support for non-4K pages
-Message-ID: <Y7zXPoEQkmQs/Whw@sol.localdomain>
-References: <20221223203638.41293-1-ebiggers@kernel.org>
- <Y7xRIZfla92yzK9N@sol.localdomain>
- <20230109193446.mpmbodoctaddovpv@aalbersh.remote.csb>
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id 225DA660230B;
+        Tue, 10 Jan 2023 05:49:24 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1673329768;
+        bh=IzktKiuA2C+7fFsNxOT5xp2wBaUGwyAnVvBi3Idir3E=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=JpkC/d8FVY+F4TtOcy4rj+hatadaGiVeh4gQRDbUXVPWKmVHn22jbsIquJ8kYQEUn
+         bNWgZ0EijaKY2vMy4dcQdMQB/VzUd7do14SXu2oV3RTEnePYwt0wwePoOeZC1233C4
+         duOmeLsaMUo56TjPeTNtsY3VvxR7e0o3uAuEF57c4VmAx321s0x6AjPBJHx1w0z9+V
+         62gvy1zeYf3zE/XxpUheETJ/lCM4VUlP2rckcJ603iC6c3j6AvbLuaVnGjXtN6RCKe
+         xHctrMfsbXkg6rHmj9a9lg83R8iwhfpYUJBwMT0EYsvOQZvc9SIu3NO7SvK19p6DBS
+         n98N+vk+ecZkQ==
+Message-ID: <8a0ebe48-c9fd-b030-71bd-4a806c6d5f29@collabora.com>
+Date:   Tue, 10 Jan 2023 10:49:20 +0500
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230109193446.mpmbodoctaddovpv@aalbersh.remote.csb>
-X-Spam-Status: No, score=-4.6 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS,SUSPICIOUS_RECIPS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>, kernel@collabora.com,
+        peterx@redhat.com, david@redhat.com, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC] mm: implement granular soft-dirty vma support
+To:     Cyrill Gorcunov <gorcunov@gmail.com>
+References: <20221220162606.1595355-1-usama.anjum@collabora.com>
+ <Y7ySt0XGnbzTyY6T@grain>
+Content-Language: en-US
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <Y7ySt0XGnbzTyY6T@grain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 09, 2023 at 08:34:46PM +0100, Andrey Albershteyn wrote:
-> On Mon, Jan 09, 2023 at 09:38:41AM -0800, Eric Biggers wrote:
-> > On Fri, Dec 23, 2022 at 12:36:27PM -0800, Eric Biggers wrote:
-> > > [This patchset applies to mainline + some fsverity cleanups I sent out
-> > >  recently.  You can get everything from tag "fsverity-non4k-v2" of
-> > >  https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git ]
-> > 
-> > I've applied this patchset for 6.3, but I'd still greatly appreciate reviews and
-> > acks, especially on the last 4 patches, which touch files outside fs/verity/.
-> > 
-> > (I applied it to
-> > https://git.kernel.org/pub/scm/fs/fscrypt/fscrypt.git/log/?h=fsverity for now,
-> > but there might be a new git repo soon, as is being discussed elsewhere.)
-> > 
-> > - Eric
-> > 
+On 1/10/23 3:18 AM, Cyrill Gorcunov wrote:
+> On Tue, Dec 20, 2022 at 09:26:05PM +0500, Muhammad Usama Anjum wrote:
+> ...
+>>
+>> +static inline int nsdr_adjust_new_first(struct vm_area_struct *new, struct vm_area_struct *vma)
+>> +{
+>> +	struct non_sd_reg *r, *r_tmp, *reg;
+>> +	unsigned long mid = vma->vm_start;
+>> +
+>> +	list_for_each_entry_safe(r, r_tmp, &vma->non_sd_reg, nsdr_head) {
+>> +		if (r->start < mid && r->end > mid) {
+>> +			reg = kmalloc(sizeof(struct non_sd_reg), GFP_KERNEL);
+>> +			if (!reg)
+>> +				return -ENOMEM;
+>> +			reg->start = r->start;
+>> +			reg->end = mid;
+>> +			list_add_tail(&reg->nsdr_head, &new->non_sd_reg);
+>> +
+>> +			r->start = mid;
+>> +		} else if (r->end <= mid) {
+>> +			list_move_tail(&r->nsdr_head, &new->non_sd_reg);
+>> +		}
+>> +	}
+>> +	return 0;
+>> +}
 > 
-> The fs/verity patches look good to me, I've checked them but forgot
-> to send RVB :( Haven't tested them yet though
-> 
-> Reviewed-by: Andrey Albershteyn <aalbersh@redhat.com>
-> 
+> Hi Muhhamad, really sorry for delay. Please enlighten me here if I get your
+No problem.
+> idea right -- every new VMA merge might create a new non_sd_seg entry, right?
+Every new VMA only has the non_sd_reg list initialized with no entries as
+the whole VMA is soft-dirty at creation time. We add entries in this list
+when the soft-dirty is cleared over the entire or the part of the VMA.
+Once soft_dirty has been cleared, there might be entries in the non_sd_reg
+lists of both VMAs which will be maintained properly if VMAs are
+split/merged or freed if removed. At this time, the soft-dirty can only be
+cleared over the entire process and hence over entire VMAs. So this list
+will have only one entry even if VMAs are merged until VMAs are split.
 
-Thanks Andrey!  I added your Reviewed-by to patches 1-7 only, since you said
-"the fs/verity patches".  Let me know if I can add it to patches 8-11 too.
+> And this operation will be applied again and again until vma get freed. IOW
+> we gonna have a chain of non_sd_reg which will be hanging around until VMA
+> get freed, right?
+Correct.
 
-- Eric
+I've posted the next version of PAGEMAP_SCAN ioctl [1] where soft-dirty
+support has been replaced with UFFD WP async. If that goes in, soft-dirty
+support can be left alone as people don't seem receptive of the idea that
+the soft-dirty support should be corrected.  UFFD WP async is better as it
+is PTE based. Please review it.
+
+[1]
+https://lore.kernel.org/all/20230109064519.3555250-1-usama.anjum@collabora.com
+
+-- 
+BR,
+Muhammad Usama Anjum
