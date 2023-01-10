@@ -2,68 +2,64 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2A8C8664811
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 19:04:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DA1E4664B1F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 19:39:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235357AbjAJSEs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Jan 2023 13:04:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42872 "EHLO
+        id S239564AbjAJSi4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Jan 2023 13:38:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238746AbjAJSE3 (ORCPT
+        with ESMTP id S239464AbjAJSiO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Jan 2023 13:04:29 -0500
-Received: from mail-ej1-x62a.google.com (mail-ej1-x62a.google.com [IPv6:2a00:1450:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 630E961306;
-        Tue, 10 Jan 2023 10:01:43 -0800 (PST)
-Received: by mail-ej1-x62a.google.com with SMTP id u19so30714625ejm.8;
-        Tue, 10 Jan 2023 10:01:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qG8hDJODvYil8hNrgIzOAxG9f3bsiBsalnyM2EStJCI=;
-        b=CiXWC9pIm6jKfBDvwwJgT/TNgnfFQlIHc4784m45ZIGbBpUSMYcOqiwBdLn/IbDaLB
-         IX9R4rK1fiGvCxJ25sGrS4Hpu12JRBAu19a5KVwoMRVECICZgVuM+XajchqKYu0SZdLJ
-         A+yRN2cdgaiccikssLQ+bWqyfQ0I7L+XonUmR+tO3QsSZEq9sDi0Kpszo2wqAXlSVY7f
-         4mlNggpnPFEkYT0CrZECbsk5eBcyJRV9SxNSEJPxS/jSrvqzdPan6OeO6FC7UZ3wRp5H
-         dySSEgKgUy2xZqyJ14A3+kSaYPIiQLB6zChKNJomt0jqfHkbGkIGR83B8YIi3Si6pADF
-         HlMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qG8hDJODvYil8hNrgIzOAxG9f3bsiBsalnyM2EStJCI=;
-        b=JL81/sd5gq9rdJoZz7/OB/f4mfdcbazBow4uLjLxx/pK573UJyQxQkdCARczlkcP5Q
-         n7adrTahThwQaKHzV1jMII/yYsZ58Qz4clVhQyYFzJCdPrtMlKuez2Xo5SL/fYbk57y8
-         yk4Aq/OsAWj1H7YVdfGjsb44uZTH3fCg1cYtBK8vR5EepX650+rFxUxOz0HCb5dLZk6b
-         UJi5kymTQj53CvmKqziWGlOIW5wtXcznlW7ge/WVBBcDs8p+1Seh+ojQiJRm856zfbuL
-         vhpfgtaaReBV4hV9gXdTWc65SOuDawnx9U00FioKMrgUbN+vEhwihRTOmyVQO3vTVIon
-         2NRw==
-X-Gm-Message-State: AFqh2koZiYfR/H6Aerh4LPUUWhF9+oSJ3yHA/BHNvWpAS2HNMcT6QokO
-        Ut/6UOdLvPPcwP+9YVjTQg==
-X-Google-Smtp-Source: AMrXdXu/XLwlE1T+PDMyStrwovvKSR9BITo9LUM/AE22Y5LT7QeVKxJbwLGV8dhFuqGLwrkcRALPUA==
-X-Received: by 2002:a17:907:8b85:b0:7c4:f4b8:f1c6 with SMTP id tb5-20020a1709078b8500b007c4f4b8f1c6mr64515291ejc.4.1673373702437;
-        Tue, 10 Jan 2023 10:01:42 -0800 (PST)
-Received: from p183 ([46.53.249.174])
-        by smtp.gmail.com with ESMTPSA id w22-20020a1709061f1600b0081bfc79beaesm5199065ejj.75.2023.01.10.10.01.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jan 2023 10:01:42 -0800 (PST)
-Date:   Tue, 10 Jan 2023 21:01:40 +0300
-From:   Alexey Dobriyan <adobriyan@gmail.com>
-To:     Chao Yu <chao@kernel.org>
-Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH] proc: fix to check name length in proc_lookup_de()
-Message-ID: <Y72oBFXX6DiEh2/p@p183>
-References: <20230110152112.1119517-1-chao@kernel.org>
+        Tue, 10 Jan 2023 13:38:14 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 092B58D5F7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 10:32:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1673375568;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=isX/xl/Gk4O2RcsWO9IXu2O1CLN73hFphddfEk/12nc=;
+        b=GkDgtAlptI7r0IZhyUyP42LmEKr20awq+4ld6qmOpld1o1Lco9UnYd/jdcDN8Dj5E4AH/i
+        l/L5zwfu8NZeZxgI6g9Tr4VZ71UQsUppICQ4EOeeP1r3cwckQJsbD0tCIsbCx82/r/wipy
+        o2qGMvoITOT/wcAIxrASHdDRXkudjyk=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-538-CeJyOlZoPEOV_EaDDCckkQ-1; Tue, 10 Jan 2023 13:32:44 -0500
+X-MC-Unique: CeJyOlZoPEOV_EaDDCckkQ-1
+Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id ED2F8811E9C;
+        Tue, 10 Jan 2023 18:32:43 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-0-3.rdu2.redhat.com [10.22.0.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B3EF0492B00;
+        Tue, 10 Jan 2023 18:32:42 +0000 (UTC)
+Date:   Tue, 10 Jan 2023 13:32:40 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Steve Grubb <sgrubb@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>, linux-api@vger.kernel.org,
+        Amir Goldstein <amir73il@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>,
+        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>
+Subject: Re: [PATCH v5 3/3] fanotify, audit: Allow audit to use the full
+ permission event response
+Message-ID: <Y72vSB+dEgD4HMCN@madcap2.tricolour.ca>
+References: <cover.1670606054.git.rgb@redhat.com>
+ <3211441.aeNJFYEL58@x2>
+ <Y7zWlFbrrNcfGauJ@madcap2.tricolour.ca>
+ <4778109.GXAFRqVoOG@x2>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230110152112.1119517-1-chao@kernel.org>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+In-Reply-To: <4778109.GXAFRqVoOG@x2>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -71,19 +67,38 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 10, 2023 at 11:21:12PM +0800, Chao Yu wrote:
-> __proc_create() has limited dirent's max name length with 255, let's
-> add this limitation in proc_lookup_de(), so that it can return
-> -ENAMETOOLONG correctly instead of -ENOENT when stating a file which
-> has out-of-range name length.
+On 2023-01-10 10:26, Steve Grubb wrote:
+> Hello Richard,
+> 
+> On Monday, January 9, 2023 10:08:04 PM EST Richard Guy Briggs wrote:
+> > When I use an application that expected the old API, meaning it simply
+> > does:
+> > > 
+> > > response.fd = metadata->fd;
+> > > response.response = reply;
+> > > close(metadata->fd);
+> > > write(fd, &response, sizeof(struct fanotify_response));
+> > > 
+> > > I get access denials. Every time. If the program is using the new API and
+> > > sets FAN_INFO, then it works as expected. I'll do some more testing but I
+> > > think there is something wrong in the compatibility path.
+> > 
+> > I'll have a closer look, because this wasn't the intended behaviour.
+> 
+> I have done more testing. I think what I saw might have been caused by a 
+> stale selinux label (label exists, policy is deleted). With selinux in 
+> permissive mode it's all working as expected - both old and new API.
 
-Both returns are correct and this is trading one errno for another.
+Ah good, thank you.
 
-> --- a/fs/proc/generic.c
-> +++ b/fs/proc/generic.c
-> @@ -246,6 +246,9 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
->  {
->  	struct inode *inode;
->  
-> +	if (dentry->d_name.len > PROC_NAME_LEN)
-> +		return ERR_PTR(-ENAMETOOLONG);
+> -Steve
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
+
