@@ -2,50 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2B5A1663669
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 01:48:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7892866368A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 02:09:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229845AbjAJAsj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 19:48:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39792 "EHLO
+        id S229853AbjAJBJ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 20:09:26 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46338 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237926AbjAJAs3 (ORCPT
+        with ESMTP id S229733AbjAJBJZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 19:48:29 -0500
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8749418B2F
-        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jan 2023 16:48:27 -0800 (PST)
-Received: from letrec.thunk.org (host-67-21-23-146.mtnsat.com [67.21.23.146] (may be forged))
-        (authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-        by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 30A0mBTk022940
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Mon, 9 Jan 2023 19:48:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-        t=1673311704; bh=/Qguy+w19nMJ/dPdiq0LvpnYKF7e9BDcp2Cx4Pspn0U=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To;
-        b=RmxML1AqeaLkd3JRTxQPepxH+UC+Rl9VmqP3JB+g6CuNpX5kvtVIwKylbzMW4pT6+
-         StButKgf3wY8E+E9RXTKvUSjy1AXfPvRFZdopsXQ+wCmJ4NIOOaHWXhSsgxVwqEyuj
-         xx3KHZ73FkoVviOKIVXJ64EuPXfjXLmipweeITZoRr+SQXY3OKa6xvNIq/woJkgnK/
-         m17mtHp3ZVGBeJzES8lhpWvouirDKjIS0AeABA0CU56/uxzXI4lDB02qABIL6uHoC7
-         YDGm8KnS/+IRoI89HX3GrvThSiKsdvgWcIuXa2D1BOTE9cQzdR1YfRjR8Vt51YlNic
-         IhL6Z1ovyNJbQ==
-Received: by letrec.thunk.org (Postfix, from userid 15806)
-        id 130828C0850; Mon,  9 Jan 2023 19:48:08 -0500 (EST)
-Date:   Mon, 9 Jan 2023 19:48:08 -0500
-From:   "Theodore Ts'o" <tytso@mit.edu>
-To:     Anadon <joshua.r.marshall.1991@gmail.com>
-Cc:     linux-fsdevel@vger.kernel.org
-Subject: Re: Do I really need to add mount2 and umount3 syscalls for some
- crazy experiment
-Message-ID: <Y7y1yNOfaGlOyhz6@mit.edu>
-References: <CAFkJGRdxR=0GeRWiu2g0QrVNzMLqYpqZm6+Ac5Baz2DcL39HTQ@mail.gmail.com>
+        Mon, 9 Jan 2023 20:09:25 -0500
+Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10DE31DF1F;
+        Mon,  9 Jan 2023 17:09:21 -0800 (PST)
+Received: by mail-qt1-x82a.google.com with SMTP id j15so4248208qtv.4;
+        Mon, 09 Jan 2023 17:09:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TmqhirOzDDtXwmx0NLp7blV5Oej3y3710g9PHT0bb28=;
+        b=j9dDvCbRFYcntTEob6QdnjwRiVZ6TYNhSF957DgL9bonxs2SUf20Hp9MHAkbBCCwEQ
+         zHqNYVWP3CVqv6DF9dxZtqcPFwnzx5DCl9lADR+tLn6ZodpPl4/RcKUmV+k/FuNnENKy
+         63QKqQefjLY/uEyoeB9qpNIBmEr/G8H0kW4YxHVzn9P4cepimD2lJ1dbGShbKJ535flc
+         R3X7IKwSsIYplRROpg8NxuCKmAA9mx/dWVtoZAyO3WeCgT/X2mhb9jcXMqbxhCKswy9z
+         DmBIdX4Do5eGP/2VBbVPlROvbnZS2i18cBZbW38vVhQzZ4DsXTfzmzG6eCegMwZgQP7/
+         eODQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TmqhirOzDDtXwmx0NLp7blV5Oej3y3710g9PHT0bb28=;
+        b=Vo07kSIBGtNvzNcCto7F42bJkuPI8olY1S67zOG2U2UO6omOiDrPGGiWbWen3A/KHg
+         9F6bxB2DpMRuGEC2feXRqIrVjASBTDo/quitlOTNp/qTDKW3kPe44ZaNS6gh6zsDKXke
+         SNJagXy42JOo2J1tu40FafHag+yBwPU3W46ZnnDI6YtyRwPNsbULk8kZI/foOCM28fbu
+         QtJ8c5ISMz3HhHI4iz6aKhPK45OrH0+B+7ZGLix438LtuTag/hpLWSBl/d+xD71KrSRj
+         Nsqid3k+47VZIVUmn+Zm4cow94fB0daHwmng7zcelLQh4i6NymugeSSPBgi3NZ+Rs/XG
+         F/DA==
+X-Gm-Message-State: AFqh2krzrKG9LbNBVEbM2kFwO4327Y8ilXi+OYEETMEA5b+tKVOOxCjX
+        6z/+liPovZZrdu8WqfNLvRb7O9juwwn2f1Ap9BM=
+X-Google-Smtp-Source: AMrXdXvk+K4+RN3tksqs1kPiKxsE5twKa+IITgQYkpfdHl8tgruIF9hA02G+Kj1rZ2Be7H2YickOaHkuNAknqvCwYGQ=
+X-Received: by 2002:a05:622a:4a8f:b0:3a6:7f4e:764c with SMTP id
+ fw15-20020a05622a4a8f00b003a67f4e764cmr1827398qtb.114.1673312960048; Mon, 09
+ Jan 2023 17:09:20 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFkJGRdxR=0GeRWiu2g0QrVNzMLqYpqZm6+Ac5Baz2DcL39HTQ@mail.gmail.com>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_INVALID,
-        DKIM_SIGNED,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+References: <20230108194034.1444764-1-agruenba@redhat.com> <20230108194034.1444764-9-agruenba@redhat.com>
+ <20230108215911.GP1971568@dread.disaster.area> <CAHc6FU4z1nC8zdM8NvUyMqU29_J7_oNu1pvBHuOvR+M6gq7F0Q@mail.gmail.com>
+ <20230109225453.GQ1971568@dread.disaster.area>
+In-Reply-To: <20230109225453.GQ1971568@dread.disaster.area>
+From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
+Date:   Tue, 10 Jan 2023 02:09:07 +0100
+Message-ID: <CAHpGcM+urV5LYpTZQWTRoK6VWaLx0sxk3mDe_kd3VznMY9woVw@mail.gmail.com>
+Subject: Re: [RFC v6 08/10] iomap/xfs: Eliminate the iomap_valid handler
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        "Darrick J . Wong" <djwong@kernel.org>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -53,76 +74,151 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 08, 2023 at 11:46:38PM -0500, Anadon wrote:
-> I am looking into implementing a distributed RAFT filesystem for
-> reasons.  Before this, I want what is in effect a simple pass-through
-> filesystem.  Something which just takes in calls to open, read, close,
-> etc and forwards them to a specified mounted* filesystem.  Hopefully
-> through FUSE before jumping straight into kernel development.
-> 
-> Doing this and having files appear in two places by calling `mount()`
-> then calling the (potentially) userland functions to the mapped file
-> by changing the file path is a way to technically accomplish
-> something.  This has the effect of the files being accessible in two
-> locations.
+Am Mo., 9. Jan. 2023 um 23:58 Uhr schrieb Dave Chinner <david@fromorbit.com>:
+> On Mon, Jan 09, 2023 at 07:45:27PM +0100, Andreas Gruenbacher wrote:
+> > On Sun, Jan 8, 2023 at 10:59 PM Dave Chinner <david@fromorbit.com> wrote:
+> > > On Sun, Jan 08, 2023 at 08:40:32PM +0100, Andreas Gruenbacher wrote:
+> > > > Eliminate the ->iomap_valid() handler by switching to a ->get_folio()
+> > > > handler and validating the mapping there.
+> > > >
+> > > > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
+> > >
+> > > I think this is wrong.
+> > >
+> > > The ->iomap_valid() function handles a fundamental architectural
+> > > issue with cached iomaps: the iomap can become stale at any time
+> > > whilst it is in use by the iomap core code.
+> > >
+> > > The current problem it solves in the iomap_write_begin() path has to
+> > > do with writeback and memory reclaim races over unwritten extents,
+> > > but the general case is that we must be able to check the iomap
+> > > at any point in time to assess it's validity.
+> > >
+> > > Indeed, we also have this same "iomap valid check" functionality in the
+> > > writeback code as cached iomaps can become stale due to racing
+> > > writeback, truncated, etc. But you wouldn't know it by looking at the iomap
+> > > writeback code - this is currently hidden by XFS by embedding
+> > > the checks into the iomap writeback ->map_blocks function.
+> > >
+> > > That is, the first thing that xfs_map_blocks() does is check if the
+> > > cached iomap is valid, and if it is valid it returns immediately and
+> > > the iomap writeback code uses it without question.
+> > >
+> > > The reason that this is embedded like this is that the iomap did not
+> > > have a validity cookie field in it, and so the validity information
+> > > was wrapped around the outside of the iomap_writepage_ctx and the
+> > > filesystem has to decode it from that private wrapping structure.
+> > >
+> > > However, the validity information iin the structure wrapper is
+> > > indentical to the iomap validity cookie,
+> >
+> > Then could that part of the xfs code be converted to use
+> > iomap->validity_cookie so that struct iomap_writepage_ctx can be
+> > eliminated?
+>
+> Yes, that is the plan.
+>
+> >
+> > > and so the direction I've
+> > > been working towards is to replace this implicit, hidden cached
+> > > iomap validity check with an explicit ->iomap_valid call and then
+> > > only call ->map_blocks if the validity check fails (or is not
+> > > implemented).
+> > >
+> > > I want to use the same code for all the iomap validity checks in all
+> > > the iomap core code - this is an iomap issue, the conditions where
+> > > we need to check for iomap validity are different for depending on
+> > > the iomap context being run, and the checks are not necessarily
+> > > dependent on first having locked a folio.
+> > >
+> > > Yes, the validity cookie needs to be decoded by the filesystem, but
+> > > that does not dictate where the validity checking needs to be done
+> > > by the iomap core.
+> > >
+> > > Hence I think removing ->iomap_valid is a big step backwards for the
+> > > iomap core code - the iomap core needs to be able to formally verify
+> > > the iomap is valid at any point in time, not just at the point in
+> > > time a folio in the page cache has been locked...
+> >
+> > We don't need to validate an iomap "at any time". It's two specific
+> > places in the code in which we need to check, and we're not going to
+> > end up with ten more such places tomorrow.
+>
+> Not immediately, but that doesn't change the fact this is not a
+> filesystem specific issue - it's an inherent characteristic of
+> cached iomaps and unsynchronised extent state changes that occur
+> outside exclusive inode->i_rwsem IO context (e.g. in writeback and
+> IO completion contexts).
+>
+> Racing mmap + buffered writes can expose these state changes as the
+> iomap bufferred write IO path is not serialised against the iomap
+> mmap IO path except via folio locks. Hence a mmap page fault can
+> invalidate a cached buffered write iomap by causing a hole ->
+> unwritten, hole -> delalloc or hole -> written conversion in the
+> middle of the buffered write range. The buffered write still has a
+> hole mapping cached for that entire range, and it is now incorrect.
+>
+> If the mmap write happens to change extent state at the trailing
+> edge of a partial buffered write, data corruption will occur if we
+> race just right with writeback and memory reclaim. I'm pretty sure
+> that this corruption can be reporduced on gfs2 if we try hard enough
+> - generic/346 triggers the mmap/write race condition, all that is
+> needed from that point is for writeback and reclaiming pages at
+> exactly the right time...
+>
+> > I'd prefer to keep those
+> > filesystem internals in the filesystem specific code instead of
+> > exposing them to the iomap layer. But that's just me ...
+>
+> My point is that there is nothing XFS specific about these stale
+> cached iomap race conditions, nor is it specifically related to
+> folio locking. The folio locking inversions w.r.t. iomap caching and
+> the interactions with writeback and reclaim are simply the
+> manifestation that brought the issue to our attention.
+>
+> This is why I think hiding iomap validation filesystem specific page
+> cache allocation/lookup functions is entirely the wrong layer to be
+> doing iomap validity checks. Especially as it prevents us from
+> adding more validity checks in the core infrastructure when we need
+> them in future.
+>
+> AFAIC, an iomap must carry with it a method for checking
+> that it is still valid. We need it in the write path, we need it in
+> the writeback path. If we want to relax the restrictions on clone
+> operations (e.g. shared locking on the source file), we'll need to
+> be able to detect stale cached iomaps in those paths, too. And I
+> haven't really thought through all the implications of shared
+> locking on buffered writes yet, but that may well require more
+> checks in other places as well.
+>
+> > If we ignore this particular commit for now, do you have any
+> > objections to the patches in this series? If not, it would be great if
+> > we could add the other patches to iomap-for-next.
+>
+> I still don't like moving page cache operations into individual
+> filesystems, but for the moment I can live with the IOMAP_NOCREATE
+> hack to drill iomap state through the filesystem without the
+> filesystem being aware of it.
 
-I fon't quite understand *why* you want to implement a passthrough
-filesystem in terms of how it relates to creating a distributed RAFT
-file system.
+Alright, works for me. Darrick?
 
-Files (and indeed, entire directory hierarchies) being accessible in
-two locations is not a big deal; this can be done using a bind mount
-without needing any kernel code.
+> > By the way, I'm still not sure if gfs2 is affected by this whole iomap
+> > validation drama given that it neither implements unwritten extents
+> > nor delayed allocation. This is a mess.
+>
+> See above - I'm pretty sure it will be, but it may be very difficult
+> to expose. After all, it's taken several years before anyone noticed
+> this issue with XFS, even though we were aware of the issue of stale
+> cached iomaps causing data corruption in the writeback path....
 
-And if the question is how to deal with files that can be modified
-externally, from a system elsewhere in the local network (or
-cluster/cell), well, all networked file systems such as NFS, et.al.,
-do this.  If a networked file system knows that a particular file has
-been modified, it can easily invalidate the local page cache copies of
-the file.  Now, if that file is currently being used, and is being
-mmap'ed into some process's address space, perhaps as the read-only
-text (code) segment, what the semantics should be if it is modified
-remotely out from under that process --- or whether the file should be
-allowed to be modified at all if it is being used in certain ways, is
-a semantic/design/policy question you need to answer before we can
-talk about how this might be implemented.
+Okay, that's all pretty ugly. Thanks a lot for the detailed explanation.
 
-> The problems start where the underlying filesystem won't
-> notify my passthrough layer if there are changes made.
+Cheers,
+Andreas
 
-Now, how an underlying file system might notify your passthrough layer
-will no doubt be comletely different from how a distributed/networked
-file system will notify the node-level implementation of that file
-system.  So I'm not at all sure how this is relevant for your use
-case.  (And if you want a file to appear in two places at the same
-time, just make that file *be* the same file in two places via a bind
-mount.)
-
->  What would be better is to have some struct with all
-> relevant function pointers and data accessible.  That sounds like
-> adding syscalls `int mount2(const char* device, ..., struct
-> return_fs_interface)` and `int umuont3(struct return_fs_interface)`.
-
-I don't understand what you want to do here.  What is going to be in
-this "struct return_fs_interface"?  Function pointers?  Do you really
-want to have kernel code calling userspace functions?  Uh, that's a
-really bad idea.  You should take a closer look at how the FUSE
-kernel/usersace interface works, if the goal is to do something like
-this via a userspace FUSE-like scheme.
-
-> I have looked at `fsopen(...)` as an alternative, but it still does
-> not meet my use case.  Another way would be to compile in every
-> filesystem driver but this just seems downright mad.  Is there a good
-> option I have overlooked?  Am I even asking in the right place?
-
-I'm not sure what "compiling in efvery filesystem driver" is trying to
-accomplish.  Compiling into *what*?   For what purpose?
-
-I'm not sure you are asking the right questions.  It might be better
-to say in more detail what are the functional requirements what it is
-you are trying to achieve, before asking people to evaluate potential
-implementation approaches.
-
-Best regards,
-
-						- Ted
+> Cheers,
+>
+> Dave.
+> --
+> Dave Chinner
+> david@fromorbit.com
