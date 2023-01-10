@@ -2,140 +2,208 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2BA1866465E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 17:42:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CE851664755
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 18:22:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233919AbjAJQmi (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Jan 2023 11:42:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:55386 "EHLO
+        id S233716AbjAJRWd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Jan 2023 12:22:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50112 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233733AbjAJQmd (ORCPT
+        with ESMTP id S238373AbjAJRVw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Jan 2023 11:42:33 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AF2105880C
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 08:41:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673368904;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=H2D5nUSU+0DUNDOHAwrQcfQIiMgma8cBzDuSUmWCZsU=;
-        b=LppJnA2O87b3SLehgzZvbu3NjNXceOmeqdR0Klva99blk2TWOmvlAqfLkFD2RAz3UDCYKT
-        8J9gQjrkK0owIDdyYN+TV0GXeXsGo1ay5ini+ZD6LUcCIokw0BKU+GJOsLYQZ5SCjpynTS
-        bJwi9/fmPiuaI1BotgFsRNlL5LeDD4g=
-Received: from mail-lj1-f199.google.com (mail-lj1-f199.google.com
- [209.85.208.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-434-4PiF651JMuyzpBBWPhVMhQ-1; Tue, 10 Jan 2023 11:41:43 -0500
-X-MC-Unique: 4PiF651JMuyzpBBWPhVMhQ-1
-Received: by mail-lj1-f199.google.com with SMTP id m4-20020a2ea584000000b0027a02705679so2994070ljp.4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 08:41:43 -0800 (PST)
+        Tue, 10 Jan 2023 12:21:52 -0500
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C104C5AC4B
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 09:21:43 -0800 (PST)
+Received: by mail-io1-f69.google.com with SMTP id t15-20020a5d81cf000000b006f95aa9ba6eso7312431iol.16
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 09:21:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=H2D5nUSU+0DUNDOHAwrQcfQIiMgma8cBzDuSUmWCZsU=;
-        b=fAMnis5801NEzzX8QkPPiJxY78VrHyzdG/wDdqd2vuNWorf0r/wyOE1fhLBKEXOnO6
-         H2wrowN1GR1A+PAGJF9gZLgOSxdcbXPKr3U7p0qEJYxXkM0HQHXeiUxlNlaQ4rgnj/Dy
-         fUD8pot+7Oj/QE2ffkK1Bbf8jh+TJ1Dmb68Q1G5Sfm59ect4SMY3QdHjlFNAl3cYm9WG
-         VFU7dgCVPtnDHCnpdRvTyD/Fn8oOVCDF3w/FSaGEJ1FhRryeAINnh7AskYi96q0gvL/L
-         30on9uCfMhbu9oC+Pyq9qhcgUxNlxvjQRr1bJT02Q8Ew7dXsnjFZkIjBrZ7X52Z0pRvs
-         It7Q==
-X-Gm-Message-State: AFqh2koRwMaLHhPhUCuON8bTUE+7Ot8MOWdsALJG9iHv2SoMZDS4QxmY
-        zBOkRKCVjefnBJpu60erh+Qte67ArxrKS7Da7RMKc6AqUAwaihMPhgQ5zG4YnrI02hzT01X7Y5p
-        VHtpSixFW+osJd5IhyaG2JQSBPg==
-X-Received: by 2002:a05:6512:70a:b0:4c0:4214:cd2c with SMTP id b10-20020a056512070a00b004c04214cd2cmr17074132lfs.43.1673368901807;
-        Tue, 10 Jan 2023 08:41:41 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXvHIn8I95b25WPkAD939sFhwT/03iSeUqX+5B9goWI7LXaw9tTuBAWfrDMtGIz/bjML64/OJw==
-X-Received: by 2002:a05:6512:70a:b0:4c0:4214:cd2c with SMTP id b10-20020a056512070a00b004c04214cd2cmr17074128lfs.43.1673368901635;
-        Tue, 10 Jan 2023 08:41:41 -0800 (PST)
-Received: from greebo.mooo.com (c-e6a5e255.022-110-73746f36.bbcust.telenor.se. [85.226.165.230])
-        by smtp.gmail.com with ESMTPSA id a6-20020a056512200600b004caf6f0b08csm2242676lfb.107.2023.01.10.08.41.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jan 2023 08:41:41 -0800 (PST)
-Message-ID: <b4ab67415708b67a2bd323acb69edf6dd3f3705b.camel@redhat.com>
-Subject: Re: [PATCH 4/6] composefs: Add filesystem implementation
-From:   Alexander Larsson <alexl@redhat.com>
-To:     Brian Masney <bmasney@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gscrivan@redhat.com
-Date:   Tue, 10 Jan 2023 17:41:40 +0100
-In-Reply-To: <Y7gRofheB9EaR4Mi@x1>
-References: <cover.1669631086.git.alexl@redhat.com>
-         <1f0bd3e3a0c68ee19dd96ee0d573bb113428f1b6.1669631086.git.alexl@redhat.com>
-         <Y7gRofheB9EaR4Mi@x1>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.46.2 (3.46.2-1.fc37) 
+        bh=fG5/9wCt2/DeBJtWFKEXgRT6q2M2jXQCQk4FnD0m+5U=;
+        b=kdjlRP8u4OJqnKcZrmoL+o13B02joSIYioZ8nLL4z4fnETU5N50ITTrViZpv6a3/dL
+         OzkjRBsy3HZ49ze63OwsWhrVq1HVDM7px4w3FnooNRbusPNfndxGnXbN5s8zvuFRTIcP
+         J0/lfp24RH/o7xO2uP8Kvie8Tn5253qzlJY1j69gWElTzJJ8y/GUK2ovTQrs2SEK1D05
+         Jcdm9Emc5MOV3lM/0TJlX0GOiBbG2bCEwG2bx2Xdv7NF6chzuc8YVpzlfmwr1mSwcyvZ
+         6BkmOhBwVkqZrVkVEa5YFElssb3eKIoNQMZurKiC3lIYwL490PbAnHrfu8vGvoFZQF8c
+         3ghQ==
+X-Gm-Message-State: AFqh2kr5H0hgqcXVc19Z9QvGFKxJf00cFaTQWHKM1DXtySDl/n++9b90
+        RUBnIdfsGkOZS5Zo/+nw8C2njpyGikys2W10q4RYSBhaq2u0
+X-Google-Smtp-Source: AMrXdXt+h0mIA5LHlZbABShqmkRZCHNaaQ0M4dcSbBHLxGpYVTt/uQtiSU1R5WEhkX9lUFs0Fg12rSu5BdsG0HLobV/1KU1YKpfT
 MIME-Version: 1.0
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+X-Received: by 2002:a92:1a41:0:b0:303:929:dc8d with SMTP id
+ z1-20020a921a41000000b003030929dc8dmr8754578ill.118.1673371303140; Tue, 10
+ Jan 2023 09:21:43 -0800 (PST)
+Date:   Tue, 10 Jan 2023 09:21:43 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000019ea1505f1ec1e26@google.com>
+Subject: [syzbot] [ntfs3?] KASAN: stack-out-of-bounds Read in filemap_get_read_batch
+From:   syzbot <syzbot+9d9efb38bb1425ff6283@syzkaller.appspotmail.com>
+To:     akpm@linux-foundation.org,
+        almaz.alexandrovich@paragon-software.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, ntfs3@lists.linux.dev,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=0.9 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SORTED_RECIPS,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-T24gRnJpLCAyMDIzLTAxLTA2IGF0IDA3OjE4IC0wNTAwLCBCcmlhbiBNYXNuZXkgd3JvdGU6Cj4g
-T24gTW9uLCBOb3YgMjgsIDIwMjIgYXQgMTI6MTc6MTJQTSArMDEwMCwgQWxleGFuZGVyIExhcnNz
-b24gd3JvdGU6Cj4gPiBUaGlzIGlzIHRoZSBiYXNpYyBpbm9kZSBhbmQgZmlsZXN5c3RlbSBpbXBs
-ZW1lbnRhdGlvbi4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTogQWxleGFuZGVyIExhcnNzb24gPGFs
-ZXhsQHJlZGhhdC5jb20+Cj4gPiBTaWduZWQtb2ZmLWJ5OiBHaXVzZXBwZSBTY3JpdmFubyA8Z3Nj
-cml2YW5AcmVkaGF0LmNvbT4KPiAKPiBOb3RlOiBJJ20gbG9va2luZyBhdCB0aGlzIGZyb20gdGhl
-IFZGUyB2aWV3cG9pbnQgc2luY2UgSSBoYXZlbid0IGRvbmUKPiBhbnl0aGluZyBpbiB0aGlzIHN1
-YnN5c3RlbS4gSnVzdCBsb29raW5nIGZvciBzb21lIGdlbmVyaWMKPiBzdWdnZXN0aW9ucy4KPiAK
-PiA+IAo+ID4gKwo+ID4gK3N0cnVjdCBjZnNfaW5vZGUgewo+ID4gK8KgwqDCoMKgwqDCoMKgLyog
-bXVzdCBiZSBmaXJzdCBmb3IgY2xlYXIgaW4gY2ZzX2FsbG9jX2lub2RlIHRvIHdvcmsgKi8KPiA+
-ICvCoMKgwqDCoMKgwqDCoHN0cnVjdCBpbm9kZSB2ZnNfaW5vZGU7Cj4gCj4gWyBzbmlwIF0KPiAK
-PiA+ICtzdGF0aWMgc3RydWN0IGlub2RlICpjZnNfYWxsb2NfaW5vZGUoc3RydWN0IHN1cGVyX2Js
-b2NrICpzYikKPiA+ICt7Cj4gPiArwqDCoMKgwqDCoMKgwqBzdHJ1Y3QgY2ZzX2lub2RlICpjaW5v
-ID0KPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBhbGxvY19pbm9kZV9zYihzYiwg
-Y2ZzX2lub2RlX2NhY2hlcCwgR0ZQX0tFUk5FTCk7Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqBp
-ZiAoIWNpbm8pCj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgcmV0dXJuIE5VTEw7
-Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqBtZW1zZXQoKHU4ICopY2lubyArIHNpemVvZihzdHJ1
-Y3QgaW5vZGUpLCAwLAo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIHNpemVvZihzdHJ1
-Y3QgY2ZzX2lub2RlKSAtIHNpemVvZihzdHJ1Y3QgaW5vZGUpKTsKPiAKPiBXaHkgbm90IHVzZSBj
-b250YWluZXJfb2YoKSB0byBsb29rIHVwIHRoZSB2ZnNfaW5vZGUgYW5kIHRoZW4geW91IGNhbgo+
-IGdldAo+IHJpZCBvZiB0aGUgcmVzdHJpY3Rpb24gb2YgdGhpcyBiZWluZyBmaXJzdC4gVGhpcyBt
-YXkgYWxzbyBicmVhayB3aXRoCj4gc3RydWN0dXJlIHJhbmRvbWl6YXRpb24gdHVybmVkIG9uLgoK
-VGhpcyBpcyBub3QgY2xlYXJpbmcgdmZzX2lub2RlIHRob3VnaCwgaXQgaXMgY2xlYXJpbmcgZXZl
-cnl0aGluZyBhZnRlcgp2ZnNfaW5vZGUsIGJlY2F1c2Ugd2UncmUgdXNpbmcgYW4gYWxsb2NhdGlv
-biBjYWNoZSBmb3IgdGhlIHZmc19pbm9kZQpwYXJ0LiBJIGRvbid0IHNlZSBob3cgY29udGFpbmVy
-X29mIGNhbiBoZWxwIHVzIGhlcmU/CgpBbHNvLCBzdXJlbHkgc3RydWN0dXJlIHJhbmRvbWl6YXRp
-b24gd29uJ3QgY2hhbmdlIHRoZSBvZmZzZXQgb2YgdGhlCmZpcnN0IGVsZW1lbnQgb2YgdGhlIHN0
-cnVjdD8gVGhhdCB3aWxsIGJyZWFrIGFsbCBzb3J0cyBvZiAiZGVyaXZlZApvYmplY3QiIHVzZWNh
-c2VzLgoKPiAKPiA+ICtzdGF0aWMgaW5saW5lIHN0cnVjdCBjZnNfaW5vZGUgKkNGU19JKHN0cnVj
-dCBpbm9kZSAqaW5vZGUpCj4gCj4gQ0ZTX0kgaW4gdXBwZXIgY2FzZSBkb2Vzbid0IG1hdGNoIG5h
-bWluZyBjb252ZW50aW9ucyBpbiB0aGUgcmVzdCBvZgo+IHRoZSBrZXJuZWwuCj4gCgpJdCBpcyBz
-aW1pbGFyIHRvIFZGU19JLCBYRlNfSSwgQlRSRlNfSSwgRVhUNF9JLCBldGMKCj4gPiArc3RhdGlj
-IHVuc2lnbmVkIGludCBjZnNfc3BsaXRfYmFzZWRpcnMoY2hhciAqc3RyKQo+ID4gK3sKPiA+ICvC
-oMKgwqDCoMKgwqDCoHVuc2lnbmVkIGludCBjdHIgPSAxOwo+ID4gK8KgwqDCoMKgwqDCoMKgY2hh
-ciAqcywgKmQ7Cj4gPiArCj4gPiArwqDCoMKgwqDCoMKgwqBmb3IgKHMgPSBkID0gc3RyOzsgcysr
-LCBkKyspIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBpZiAoKnMgPT0gJ1xc
-Jykgewo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqBz
-Kys7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfSBlbHNlIGlmICgqcyA9PSAn
-OicpIHsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-KmQgPSAnXDAnOwo+ID4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqBjdHIrKzsKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgY29udGludWU7Cj4gPiArwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfQo+ID4g
-K8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCpkID0gKnM7Cj4gPiArwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgaWYgKCEqcykKPiA+ICvCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgYnJlYWs7Cj4gPiArwqDCoMKgwqDCoMKgwqB9Cj4gPiArwqDC
-oMKgwqDCoMKgwqByZXR1cm4gY3RyOwo+ID4gK30KPiAKPiBUbyBleHBhbmQgb24gdGhlIGNvbW1l
-bnQsIHRoaXMgaXMgb3ZsX3NwbGl0X2xvd2VyZGlycyBpbgo+IGZzL292ZXJsYXlmcy9zdXBlci5j
-LiBJdCdkIGJlIG5pY2UgaWYgdGhlcmUgd2FzIGEgY29tbW9uIHBsYWNlIHdoZXJlCj4gdGhpcyBj
-b3VsZCBnby4KPiAKCkl0IHdvdWxkIGJlIG5pY2UsIGJ1dCBpdHMgbm90IGxpa2UgYSBodWdlIGFt
-b3VudCBvZiBjb2RlIGR1cGxpY2F0aW9uLAphcyBpdCBpcyByYXRoZXIgc3BlY2lhbGl6ZWQuCgo+
-IAo+IAoKLS0gCj0tPS09LT0tPS09LT0tPS09LT0tPS09LT0tPS09LT0tPS09LT0tPS09LT0tPS09
-LT0tPS09LT0tPS09LT0tPS09LT0tPS0KPS09LT0KIEFsZXhhbmRlciBMYXJzc29uICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBSZWQgSGF0LApJbmMgCiAgICAgICBh
-bGV4bEByZWRoYXQuY29tICAgICAgICAgICAgYWxleGFuZGVyLmxhcnNzb25AZ21haWwuY29tIApI
-ZSdzIGEgc3VwZXJodW1hbmx5IHN0cm9uZyBuZXVyb3RpYyBiYXJiYXJpYW4gd2l0aCBubyBuYW1l
-LiBTaGUncyBhCmJsaW5kIApjaWdhci1jaG9tcGluZyBib3VudHkgaHVudGVyIGZyb20gYSBkaWZm
-ZXJlbnQgdGltZSBhbmQgcGxhY2UuIFRoZXkKZmlnaHQgCmNyaW1lISAK
+Hello,
 
+syzbot found the following issue on:
+
+HEAD commit:    41c03ba9beea Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1042b176480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=9babfdc3dd4772d0
+dashboard link: https://syzkaller.appspot.com/bug?extid=9d9efb38bb1425ff6283
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1187a762480000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/041403c21ee3/disk-41c03ba9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/579dec11b65a/vmlinux-41c03ba9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/dcb6cfc03c78/bzImage-41c03ba9.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/8d89f17a9699/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9d9efb38bb1425ff6283@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: stack-out-of-bounds in native_save_fl arch/x86/include/asm/irqflags.h:35 [inline]
+BUG: KASAN: stack-out-of-bounds in arch_local_save_flags arch/x86/include/asm/irqflags.h:70 [inline]
+BUG: KASAN: stack-out-of-bounds in arch_irqs_disabled arch/x86/include/asm/irqflags.h:130 [inline]
+BUG: KASAN: stack-out-of-bounds in lock_acquire+0x1c3/0x3c0 kernel/locking/lockdep.c:5671
+Read of size 8 at addr ffffc9000473727f by task syz-executor.0/5208
+
+CPU: 0 PID: 5208 Comm: syz-executor.0 Not tainted 6.2.0-rc2-syzkaller-00057-g41c03ba9beea #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x1b1/0x290 lib/dump_stack.c:106
+ print_address_description+0x74/0x340 mm/kasan/report.c:306
+ print_report+0x107/0x1f0 mm/kasan/report.c:417
+ kasan_report+0xcd/0x100 mm/kasan/report.c:517
+ native_save_fl arch/x86/include/asm/irqflags.h:35 [inline]
+ arch_local_save_flags arch/x86/include/asm/irqflags.h:70 [inline]
+ arch_irqs_disabled arch/x86/include/asm/irqflags.h:130 [inline]
+ lock_acquire+0x1c3/0x3c0 kernel/locking/lockdep.c:5671
+ rcu_lock_acquire+0x2a/0x30 include/linux/rcupdate.h:325
+ rcu_read_lock include/linux/rcupdate.h:764 [inline]
+ filemap_get_read_batch+0x15a/0xe00 mm/filemap.c:2379
+ filemap_get_pages+0x47c/0x10d0 mm/filemap.c:2602
+ filemap_read+0x3cf/0xea0 mm/filemap.c:2694
+ call_read_iter include/linux/fs.h:2180 [inline]
+ generic_file_splice_read+0x1ff/0x5d0 fs/splice.c:309
+ do_splice_to fs/splice.c:793 [inline]
+ splice_direct_to_actor+0x41b/0xc00 fs/splice.c:865
+ do_splice_direct+0x279/0x3d0 fs/splice.c:974
+ do_sendfile+0x5fb/0xf80 fs/read_write.c:1255
+ __do_sys_sendfile64 fs/read_write.c:1323 [inline]
+ __se_sys_sendfile64+0x14f/0x1b0 fs/read_write.c:1309
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fa9e708c0c9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fa9e7dcd168 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007fa9e71abf80 RCX: 00007fa9e708c0c9
+RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000004
+RBP: 00007fa9e70e7ae9 R08: 0000000000000000 R09: 0000000000000000
+R10: 00008400fffffffa R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffe3f108fdf R14: 00007fa9e7dcd300 R15: 0000000000022000
+ </TASK>
+
+The buggy address belongs to stack of task syz-executor.0/5208
+ and is located at offset 31 in frame:
+ lock_acquire+0x0/0x3c0 kernel/locking/lockdep.c:5623
+
+This frame has 3 objects:
+ [32, 40) 'flags.i.i.i87'
+ [64, 72) 'flags.i.i.i'
+ [96, 136) 'hlock'
+
+The buggy address belongs to the virtual mapping at
+ [ffffc90004730000, ffffc90004739000) created by:
+ dup_task_struct+0x8b/0x490 kernel/fork.c:987
+
+The buggy address belongs to the physical page:
+page:ffffea0001dcdb40 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x7736d
+memcg:ffff8880200d6682
+flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000000000 0000000000000000 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000000000 00000001ffffffff ffff8880200d6682
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x102dc2(GFP_HIGHUSER|__GFP_NOWARN|__GFP_ZERO), pid 5195, tgid 5195 (syz-executor.1), ts 61000027517, free_ts 60960682032
+ prep_new_page mm/page_alloc.c:2531 [inline]
+ get_page_from_freelist+0x742/0x7c0 mm/page_alloc.c:4283
+ __alloc_pages+0x259/0x560 mm/page_alloc.c:5549
+ vm_area_alloc_pages mm/vmalloc.c:2989 [inline]
+ __vmalloc_area_node mm/vmalloc.c:3057 [inline]
+ __vmalloc_node_range+0x9b2/0x1400 mm/vmalloc.c:3227
+ alloc_thread_stack_node+0x307/0x500 kernel/fork.c:311
+ dup_task_struct+0x8b/0x490 kernel/fork.c:987
+ copy_process+0x53c/0x3f00 kernel/fork.c:2097
+ kernel_clone+0x21b/0x630 kernel/fork.c:2681
+ __do_sys_clone kernel/fork.c:2822 [inline]
+ __se_sys_clone kernel/fork.c:2806 [inline]
+ __x64_sys_clone+0x228/0x290 kernel/fork.c:2806
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1446 [inline]
+ free_pcp_prepare+0x751/0x780 mm/page_alloc.c:1496
+ free_unref_page_prepare mm/page_alloc.c:3369 [inline]
+ free_unref_page_list+0xb2/0x830 mm/page_alloc.c:3510
+ release_pages+0x233e/0x25e0 mm/swap.c:1076
+ __pagevec_release+0x7d/0xf0 mm/swap.c:1096
+ pagevec_release include/linux/pagevec.h:71 [inline]
+ folio_batch_release include/linux/pagevec.h:135 [inline]
+ truncate_inode_pages_range+0x452/0x1690 mm/truncate.c:372
+ kill_bdev block/bdev.c:76 [inline]
+ blkdev_flush_mapping+0x153/0x2c0 block/bdev.c:662
+ blkdev_put_whole block/bdev.c:693 [inline]
+ blkdev_put+0x4a5/0x730 block/bdev.c:953
+ deactivate_locked_super+0xa7/0xf0 fs/super.c:332
+ cleanup_mnt+0x494/0x520 fs/namespace.c:1291
+ task_work_run+0x243/0x300 kernel/task_work.c:179
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ exit_to_user_mode_loop+0x124/0x150 kernel/entry/common.c:171
+ exit_to_user_mode_prepare+0xb2/0x140 kernel/entry/common.c:203
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:285 [inline]
+ syscall_exit_to_user_mode+0x26/0x60 kernel/entry/common.c:296
+ do_syscall_64+0x49/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Memory state around the buggy address:
+ ffffc90004737100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffffc90004737180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>ffffc90004737200: 00 00 00 00 00 00 00 00 00 00 00 00 f1 f1 f1 f1
+                                                                ^
+ ffffc90004737280: 00 f2 f2 f2 00 f2 f2 f2 00 00 00 00 00 f3 f3 f3
+ ffffc90004737300: f3 f3 f3 f3 00 00 00 00 00 00 00 00 00 00 00 00
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+syzbot can test patches for this issue, for details see:
+https://goo.gl/tpsmEJ#testing-patches
