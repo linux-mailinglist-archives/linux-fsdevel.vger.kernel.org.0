@@ -2,223 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7892866368A
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 02:09:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8ABBD66368F
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 02:09:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229853AbjAJBJ0 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 9 Jan 2023 20:09:26 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46338 "EHLO
+        id S229707AbjAJBJu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 9 Jan 2023 20:09:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229733AbjAJBJZ (ORCPT
+        with ESMTP id S229984AbjAJBJt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 9 Jan 2023 20:09:25 -0500
-Received: from mail-qt1-x82a.google.com (mail-qt1-x82a.google.com [IPv6:2607:f8b0:4864:20::82a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10DE31DF1F;
-        Mon,  9 Jan 2023 17:09:21 -0800 (PST)
-Received: by mail-qt1-x82a.google.com with SMTP id j15so4248208qtv.4;
-        Mon, 09 Jan 2023 17:09:21 -0800 (PST)
+        Mon, 9 Jan 2023 20:09:49 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DAB8613CD2
+        for <linux-fsdevel@vger.kernel.org>; Mon,  9 Jan 2023 17:09:48 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id v23so10640797pju.3
+        for <linux-fsdevel@vger.kernel.org>; Mon, 09 Jan 2023 17:09:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=TmqhirOzDDtXwmx0NLp7blV5Oej3y3710g9PHT0bb28=;
-        b=j9dDvCbRFYcntTEob6QdnjwRiVZ6TYNhSF957DgL9bonxs2SUf20Hp9MHAkbBCCwEQ
-         zHqNYVWP3CVqv6DF9dxZtqcPFwnzx5DCl9lADR+tLn6ZodpPl4/RcKUmV+k/FuNnENKy
-         63QKqQefjLY/uEyoeB9qpNIBmEr/G8H0kW4YxHVzn9P4cepimD2lJ1dbGShbKJ535flc
-         R3X7IKwSsIYplRROpg8NxuCKmAA9mx/dWVtoZAyO3WeCgT/X2mhb9jcXMqbxhCKswy9z
-         DmBIdX4Do5eGP/2VBbVPlROvbnZS2i18cBZbW38vVhQzZ4DsXTfzmzG6eCegMwZgQP7/
-         eODQ==
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d6MijzBZB5rlx1R58nq0Sv7teK8nGEA82eTxDtWCKsE=;
+        b=Bn4yejJ7fm69v3cYkvQR6/XZ0ITpifW6lvLuH+6LO/RNIKd6RVLus29e3eNTTUYgPb
+         BhxS6AHI3lZE0WKKMqt0CS7vGXTLZB0fo63MFYyY8HBV68B62Y7LcdFA/1oUdIBP6AId
+         MhbA8lbdcfi9yjrqtzdnjy3FvUsTOOuCY1/MLUI9KzzIJWFAQcXbcGZV/tkLNJeTVaDR
+         GTlLW6X9HGj5gR68MlI+Ml1FDNcAgg83bb4DK4mQY8nMRJmQ5oVonvjIj1/ktoC9V5V3
+         K/B+XasBfZgXYKxE20Y8HVpB5cLiNjShSwyzTYelpX2QgmUAsQI7PDJTl4cK1SRlpf/8
+         k4pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TmqhirOzDDtXwmx0NLp7blV5Oej3y3710g9PHT0bb28=;
-        b=Vo07kSIBGtNvzNcCto7F42bJkuPI8olY1S67zOG2U2UO6omOiDrPGGiWbWen3A/KHg
-         9F6bxB2DpMRuGEC2feXRqIrVjASBTDo/quitlOTNp/qTDKW3kPe44ZaNS6gh6zsDKXke
-         SNJagXy42JOo2J1tu40FafHag+yBwPU3W46ZnnDI6YtyRwPNsbULk8kZI/foOCM28fbu
-         QtJ8c5ISMz3HhHI4iz6aKhPK45OrH0+B+7ZGLix438LtuTag/hpLWSBl/d+xD71KrSRj
-         Nsqid3k+47VZIVUmn+Zm4cow94fB0daHwmng7zcelLQh4i6NymugeSSPBgi3NZ+Rs/XG
-         F/DA==
-X-Gm-Message-State: AFqh2krzrKG9LbNBVEbM2kFwO4327Y8ilXi+OYEETMEA5b+tKVOOxCjX
-        6z/+liPovZZrdu8WqfNLvRb7O9juwwn2f1Ap9BM=
-X-Google-Smtp-Source: AMrXdXvk+K4+RN3tksqs1kPiKxsE5twKa+IITgQYkpfdHl8tgruIF9hA02G+Kj1rZ2Be7H2YickOaHkuNAknqvCwYGQ=
-X-Received: by 2002:a05:622a:4a8f:b0:3a6:7f4e:764c with SMTP id
- fw15-20020a05622a4a8f00b003a67f4e764cmr1827398qtb.114.1673312960048; Mon, 09
- Jan 2023 17:09:20 -0800 (PST)
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d6MijzBZB5rlx1R58nq0Sv7teK8nGEA82eTxDtWCKsE=;
+        b=Hq8motyq96bPuXD0qbyacYmPFG7S3U1UlKw685BcXuISf8E8v61uEDOKz/vPMzFeyu
+         ax1ISG1ho/xtpJo/y8n/MLPDfS3BRsunw9QSD6Drvd2n7/OHGYmzjvsqFZanHvsL4wzl
+         DWMDBnBt+/Vk9LHfsNxaLsRECeBdVxT6+IFdvcN7ew+fr/SYP3q/6NVsLYUBqo427ADW
+         AfvBDkSMP/3M4sJheKfaboib0xOPCxEnPotNloudgg9dHz9JrWKAIm1DTG/XI+DOUHyH
+         sBjVrkd9uCvWboGi2CKs0AHX/yapl9iKQVCh9rf1L655HciMq1XVswO4/54QvI5Z1y61
+         WwRA==
+X-Gm-Message-State: AFqh2kpsVBL6uQcM1KrRHc45Nwwa+fKT5lFJuNR5Edpn5GTqSm/FqEML
+        /Bztvx/HZE1VCAcso3/dlL4XMQ==
+X-Google-Smtp-Source: AMrXdXt/eG8JeXT+AOt5cuhRRWuhgub2urGxlAeT04df4poSCCuXhbRnkGeiLsicq4wsrvmtXpkYkg==
+X-Received: by 2002:a17:903:3311:b0:189:d0fa:230f with SMTP id jk17-20020a170903331100b00189d0fa230fmr17111254plb.4.1673312988310;
+        Mon, 09 Jan 2023 17:09:48 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id u18-20020a170903125200b00189adf6770fsm6733097plh.233.2023.01.09.17.09.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Jan 2023 17:09:47 -0800 (PST)
+Message-ID: <e4a972f4-50fd-4c0e-1b44-dc702fd9c445@kernel.dk>
+Date:   Mon, 9 Jan 2023 18:09:46 -0700
 MIME-Version: 1.0
-References: <20230108194034.1444764-1-agruenba@redhat.com> <20230108194034.1444764-9-agruenba@redhat.com>
- <20230108215911.GP1971568@dread.disaster.area> <CAHc6FU4z1nC8zdM8NvUyMqU29_J7_oNu1pvBHuOvR+M6gq7F0Q@mail.gmail.com>
- <20230109225453.GQ1971568@dread.disaster.area>
-In-Reply-To: <20230109225453.GQ1971568@dread.disaster.area>
-From:   =?UTF-8?Q?Andreas_Gr=C3=BCnbacher?= <andreas.gruenbacher@gmail.com>
-Date:   Tue, 10 Jan 2023 02:09:07 +0100
-Message-ID: <CAHpGcM+urV5LYpTZQWTRoK6VWaLx0sxk3mDe_kd3VznMY9woVw@mail.gmail.com>
-Subject: Re: [RFC v6 08/10] iomap/xfs: Eliminate the iomap_valid handler
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Andreas Gruenbacher <agruenba@redhat.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [External] [LSF/MM/BPF BoF] Session for Zoned Storage 2023
+Content-Language: en-US
+To:     "Viacheslav A.Dubeyko" <viacheslav.dubeyko@bytedance.com>
+Cc:     Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        =?UTF-8?Q?Javier_Gonz=c3=a1lez?= <javier.gonz@samsung.com>,
+        Viacheslav Dubeyko <slava@dubeyko.com>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Linux FS Devel <linux-fsdevel@vger.kernel.org>,
+        linux-block@vger.kernel.org,
+        =?UTF-8?Q?Matias_Bj=c3=b8rling?= <Matias.Bjorling@wdc.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Adam Manzanares <a.manzanares@samsung.com>,
+        Hans Holmberg <hans.holmberg@wdc.com>,
+        lsf-pc@lists.linux-foundation.org
+References: <F6BF25E2-FF26-48F2-8378-3CB36E362313@dubeyko.com>
+ <Y7h0F0w06cNM89hO@bombadil.infradead.org>
+ <4CC4F55E-17B3-47E2-A8C5-9098CCEB65D6@dubeyko.com>
+ <CGME20230107015641eucas1p13c2b37b5ca7a5b64eb520b79316d5186@eucas1p1.samsung.com>
+ <5DF10459-88F3-48DA-AEB2-5B436549A194@bytedance.com>
+ <20230109153315.waqfokse4srv6xlz@mpHalley-2.localdomain>
+ <AF3750AD-1B66-4F8A-936F-A14EC17DAC16@bytedance.com>
+ <04cc803e-0246-bf8a-c083-f556a373ae4f@opensource.wdc.com>
+ <ca30360e-ab51-6282-bd3c-208399e5a552@kernel.dk>
+ <E2BA234A-D3D3-440B-BBDB-230B772B2D01@bytedance.com>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <E2BA234A-D3D3-440B-BBDB-230B772B2D01@bytedance.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am Mo., 9. Jan. 2023 um 23:58 Uhr schrieb Dave Chinner <david@fromorbit.com>:
-> On Mon, Jan 09, 2023 at 07:45:27PM +0100, Andreas Gruenbacher wrote:
-> > On Sun, Jan 8, 2023 at 10:59 PM Dave Chinner <david@fromorbit.com> wrote:
-> > > On Sun, Jan 08, 2023 at 08:40:32PM +0100, Andreas Gruenbacher wrote:
-> > > > Eliminate the ->iomap_valid() handler by switching to a ->get_folio()
-> > > > handler and validating the mapping there.
-> > > >
-> > > > Signed-off-by: Andreas Gruenbacher <agruenba@redhat.com>
-> > >
-> > > I think this is wrong.
-> > >
-> > > The ->iomap_valid() function handles a fundamental architectural
-> > > issue with cached iomaps: the iomap can become stale at any time
-> > > whilst it is in use by the iomap core code.
-> > >
-> > > The current problem it solves in the iomap_write_begin() path has to
-> > > do with writeback and memory reclaim races over unwritten extents,
-> > > but the general case is that we must be able to check the iomap
-> > > at any point in time to assess it's validity.
-> > >
-> > > Indeed, we also have this same "iomap valid check" functionality in the
-> > > writeback code as cached iomaps can become stale due to racing
-> > > writeback, truncated, etc. But you wouldn't know it by looking at the iomap
-> > > writeback code - this is currently hidden by XFS by embedding
-> > > the checks into the iomap writeback ->map_blocks function.
-> > >
-> > > That is, the first thing that xfs_map_blocks() does is check if the
-> > > cached iomap is valid, and if it is valid it returns immediately and
-> > > the iomap writeback code uses it without question.
-> > >
-> > > The reason that this is embedded like this is that the iomap did not
-> > > have a validity cookie field in it, and so the validity information
-> > > was wrapped around the outside of the iomap_writepage_ctx and the
-> > > filesystem has to decode it from that private wrapping structure.
-> > >
-> > > However, the validity information iin the structure wrapper is
-> > > indentical to the iomap validity cookie,
-> >
-> > Then could that part of the xfs code be converted to use
-> > iomap->validity_cookie so that struct iomap_writepage_ctx can be
-> > eliminated?
->
-> Yes, that is the plan.
->
-> >
-> > > and so the direction I've
-> > > been working towards is to replace this implicit, hidden cached
-> > > iomap validity check with an explicit ->iomap_valid call and then
-> > > only call ->map_blocks if the validity check fails (or is not
-> > > implemented).
-> > >
-> > > I want to use the same code for all the iomap validity checks in all
-> > > the iomap core code - this is an iomap issue, the conditions where
-> > > we need to check for iomap validity are different for depending on
-> > > the iomap context being run, and the checks are not necessarily
-> > > dependent on first having locked a folio.
-> > >
-> > > Yes, the validity cookie needs to be decoded by the filesystem, but
-> > > that does not dictate where the validity checking needs to be done
-> > > by the iomap core.
-> > >
-> > > Hence I think removing ->iomap_valid is a big step backwards for the
-> > > iomap core code - the iomap core needs to be able to formally verify
-> > > the iomap is valid at any point in time, not just at the point in
-> > > time a folio in the page cache has been locked...
-> >
-> > We don't need to validate an iomap "at any time". It's two specific
-> > places in the code in which we need to check, and we're not going to
-> > end up with ten more such places tomorrow.
->
-> Not immediately, but that doesn't change the fact this is not a
-> filesystem specific issue - it's an inherent characteristic of
-> cached iomaps and unsynchronised extent state changes that occur
-> outside exclusive inode->i_rwsem IO context (e.g. in writeback and
-> IO completion contexts).
->
-> Racing mmap + buffered writes can expose these state changes as the
-> iomap bufferred write IO path is not serialised against the iomap
-> mmap IO path except via folio locks. Hence a mmap page fault can
-> invalidate a cached buffered write iomap by causing a hole ->
-> unwritten, hole -> delalloc or hole -> written conversion in the
-> middle of the buffered write range. The buffered write still has a
-> hole mapping cached for that entire range, and it is now incorrect.
->
-> If the mmap write happens to change extent state at the trailing
-> edge of a partial buffered write, data corruption will occur if we
-> race just right with writeback and memory reclaim. I'm pretty sure
-> that this corruption can be reporduced on gfs2 if we try hard enough
-> - generic/346 triggers the mmap/write race condition, all that is
-> needed from that point is for writeback and reclaiming pages at
-> exactly the right time...
->
-> > I'd prefer to keep those
-> > filesystem internals in the filesystem specific code instead of
-> > exposing them to the iomap layer. But that's just me ...
->
-> My point is that there is nothing XFS specific about these stale
-> cached iomap race conditions, nor is it specifically related to
-> folio locking. The folio locking inversions w.r.t. iomap caching and
-> the interactions with writeback and reclaim are simply the
-> manifestation that brought the issue to our attention.
->
-> This is why I think hiding iomap validation filesystem specific page
-> cache allocation/lookup functions is entirely the wrong layer to be
-> doing iomap validity checks. Especially as it prevents us from
-> adding more validity checks in the core infrastructure when we need
-> them in future.
->
-> AFAIC, an iomap must carry with it a method for checking
-> that it is still valid. We need it in the write path, we need it in
-> the writeback path. If we want to relax the restrictions on clone
-> operations (e.g. shared locking on the source file), we'll need to
-> be able to detect stale cached iomaps in those paths, too. And I
-> haven't really thought through all the implications of shared
-> locking on buffered writes yet, but that may well require more
-> checks in other places as well.
->
-> > If we ignore this particular commit for now, do you have any
-> > objections to the patches in this series? If not, it would be great if
-> > we could add the other patches to iomap-for-next.
->
-> I still don't like moving page cache operations into individual
-> filesystems, but for the moment I can live with the IOMAP_NOCREATE
-> hack to drill iomap state through the filesystem without the
-> filesystem being aware of it.
+On 1/9/23 4:20?PM, Viacheslav A.Dubeyko wrote:
+> 
+> 
+>> On Jan 9, 2023, at 3:00 PM, Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>>>> My point here that we could summarize:
+>>>> (1) what features already implemented and supported,
+>>>> (2) what features are under implementation and what is progress,
+>>>> (3) what features need to be implemented yet.
+>>>>
+>>>> Have we implemented everything already? :)
+>>>
+>>> Standards are full of features that are not useful in a general purpose
+>>> system. So we likely never will implement everything. We never did for
+>>> SCSI and ATA and never will either.
+>> Indeed, and that's a very important point. Some people read specs and
+>> find things that aren't in the Linux driver (any spec, not a specific
+>> one), and think they need to be added. No. We only add them if they make
+>> sense, both in terms of use cases, but also as long as they can get
+>> implemented cleanly. Parts of basically any spec is garbage and don't
+>> necessarily fit within the given subsystem either.
+>>
+>> The above would make me worried about patches coming from anyone with
+>> that mindset.
+>>
+> 
+> OK. We already have discussion about garbage in spec. :)
+> So, what would we like finally implement and what never makes sense to do?
+> Should we identify really important stuff for implementation?
 
-Alright, works for me. Darrick?
+Well if you did have that discussion, then it seemed you got nothing
+from it. Because asking that kind of question is EXACTLY what I'm saying
+is the opposite of what should be done. If there's a demand for a
+feature, then it can be looked at and ultimately implemented if it makes
+sense. You're still talking about proactively finding features and
+implementing them "just in case they are needed", which is very much the
+opposite and wrong approach, and how any kind of software ends up being
+bloated, slow, and buggy/useless.
 
-> > By the way, I'm still not sure if gfs2 is affected by this whole iomap
-> > validation drama given that it neither implements unwritten extents
-> > nor delayed allocation. This is a mess.
->
-> See above - I'm pretty sure it will be, but it may be very difficult
-> to expose. After all, it's taken several years before anyone noticed
-> this issue with XFS, even though we were aware of the issue of stale
-> cached iomaps causing data corruption in the writeback path....
+-- 
+Jens Axboe
 
-Okay, that's all pretty ugly. Thanks a lot for the detailed explanation.
-
-Cheers,
-Andreas
-
-> Cheers,
->
-> Dave.
-> --
-> Dave Chinner
-> david@fromorbit.com
