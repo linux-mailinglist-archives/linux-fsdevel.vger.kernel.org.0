@@ -2,380 +2,95 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 73D2E663E78
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 11:45:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 69B7D664072
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 13:28:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237994AbjAJKpT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Jan 2023 05:45:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34820 "EHLO
+        id S231512AbjAJM2M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Jan 2023 07:28:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42944 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232009AbjAJKpJ (ORCPT
+        with ESMTP id S238256AbjAJM1o (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Jan 2023 05:45:09 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1D2D2DE92;
-        Tue, 10 Jan 2023 02:45:07 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 9E802B811F3;
-        Tue, 10 Jan 2023 10:45:05 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D451BC433D2;
-        Tue, 10 Jan 2023 10:45:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673347503;
-        bh=YPYCeeaaXwh7aY9GYxh7P9qUFm2HxYcXT2ViDRDG18M=;
-        h=From:To:Cc:Subject:Date:From;
-        b=T4KGQDjXcLDVSRJVum2jhz/hgPOD/cd4TyAv07tJxdpHHbyNBtho4qwVB1Zl4+SWF
-         97PVTcWrb6DKoJsTIKilnOtrEU6pmOCsQb1FIWbkQACle0bYqUKd6TaiqVe120wVlh
-         u56DaxZoOcLAP+KyU5NoHADA1jKzOQuec9bKRJsbC+OoeIZnUDOIDEgDaG/nOt+OmG
-         xLN9d6h2tz3gYuieLmYsYipqXm2+ACPkvr0JdFzd+rbfxRJdIMVnzwhgqnS7hkq3+X
-         ibuYsC+oKAqmrdihk391seKGuwIng6owIXGhPjoaC0zG0oX17raRjFGR5yqECwToqm
-         DXRXERDNN851A==
-From:   Jeff Layton <jlayton@kernel.org>
-To:     David Howells <dhowells@redhat.com>,
-        Marc Dionne <marc.dionne@auristor.com>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     Miklos Szeredi <mszeredi@redhat.com>,
-        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH] fs: remove locks_inode
-Date:   Tue, 10 Jan 2023 05:44:59 -0500
-Message-Id: <20230110104501.11722-1-jlayton@kernel.org>
-X-Mailer: git-send-email 2.39.0
+        Tue, 10 Jan 2023 07:27:44 -0500
+Received: from mail-yb1-xb32.google.com (mail-yb1-xb32.google.com [IPv6:2607:f8b0:4864:20::b32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A322917061
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 04:27:40 -0800 (PST)
+Received: by mail-yb1-xb32.google.com with SMTP id o75so11629215yba.2
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 04:27:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6KndhW8ZthnZXH5GZJH/lEnO//E0T9z85lpDRJv/Coo=;
+        b=fLHC6l/L0Ijx5D2CAJDRuaGTh0+lAqH7wRXf4FXEos/1kCMAzIGNE/a19cTVHPstyj
+         JwaTeSROjJgdKlGX2jhdbFh9OyFkzqux7VGs0+lrSZRTtt+esc/w3XrW1M+qkRBOzrNd
+         2+HGDXTDKGfbMGyWkagwgv+cThJ+qjOtFr9rhUtHn7QO3oehJwbga1TlShhaSinIURvU
+         54pzeCiKxGHjU4wHJ1X9db9bwm7ajet6de0BfVL4IT7QfNxXO2bScK09DianQE/OI7tU
+         jt+NXznD2zJ0+5lt87pz53ZPLKBDIvsa2HqYHFm4kDDKjA7Qdg+pqmsS6UU0Sqqna8hx
+         /OvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6KndhW8ZthnZXH5GZJH/lEnO//E0T9z85lpDRJv/Coo=;
+        b=kr+Vd0JdSu/w7X1UxuBItPqK/6+yLaMSCHduSKYLcWDmVf523jNS8smCVVu+ybMhCY
+         hXIMyB1m7EmVghbpdB64ObqkJUb3UxOxvcfiRlI/yHjTIdyHT30t1R3jB+kEKz9WIPVR
+         9NsxxPfFA54iBZ0yQBgS2ZpaV6+ozVHBOMmzw+JP4iwI6qPEOHvVtv4Rdmw5RCoX6CqX
+         bABf4uc0nd3rJsjauJ0Xde+gn6FvibcAjojY4y+3u7mor7BqQEIC68hiauYKveyp4PNY
+         RixUZ2KoHTji4CDCwoqBQulhRHttznEpJZJ4WFVLgrVEHVvaMLZTV+ZkjwRwX4bvy9jc
+         +cLw==
+X-Gm-Message-State: AFqh2korT94mVx0cZ8i95f6e6NfEtyTooKwCM0UsB+46QbeZOrSuIqEs
+        xpIaQXCDWf7IW8TDd9+tjJIzAOOjrTcJ7Vj8KJ5u9Q==
+X-Google-Smtp-Source: AMrXdXuKs2wl/bseH+adSS22ymofeLisqiz/F7ZTp9k5notKnLu5IuY4AXMn8tcdHRycayafMh+GPeKHWlUwXyTIcIU=
+X-Received: by 2002:a25:bbc1:0:b0:6fd:ef90:2ae5 with SMTP id
+ c1-20020a25bbc1000000b006fdef902ae5mr5331591ybk.376.1673353659656; Tue, 10
+ Jan 2023 04:27:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+References: <20221121112134.407362-1-glider@google.com> <20221121112134.407362-2-glider@google.com>
+ <20221122145615.GE5824@twin.jikos.cz>
+In-Reply-To: <20221122145615.GE5824@twin.jikos.cz>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Tue, 10 Jan 2023 13:27:03 +0100
+Message-ID: <CAG_fn=Waivo=jEEqp7uMjKXdAvqP3XPtnAQeiRfu6ptwPmkyjw@mail.gmail.com>
+Subject: Re: [PATCH 2/5] fs: affs: initialize fsdata in affs_truncate()
+To:     dsterba@suse.cz
+Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        tytso@mit.edu, adilger.kernel@dilger.ca, jaegeuk@kernel.org,
+        chao@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+        Eric Biggers <ebiggers@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-locks_inode was turned into a wrapper around file_inode in de2a4a501e71
-(Partially revert "locks: fix file locking on overlayfs"). Finish
-replacing locks_inode invocations everywhere with file_inode.
+On Tue, Nov 22, 2022 at 3:56 PM David Sterba <dsterba@suse.cz> wrote:
+>
+> On Mon, Nov 21, 2022 at 12:21:31PM +0100, Alexander Potapenko wrote:
+> > When aops->write_begin() does not initialize fsdata, KMSAN may report
+> > an error passing the latter to aops->write_end().
+> >
+> > Fix this by unconditionally initializing fsdata.
+> >
+> > Suggested-by: Eric Biggers <ebiggers@kernel.org>
+> > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > Signed-off-by: Alexander Potapenko <glider@google.com>
+>
+> With the fixed Fixes: reference,
+>
+> Acked-by: David Sterba <dsterba@suse.com>
 
-Cc: Miklos Szeredi <mszeredi@redhat.com>
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
- fs/afs/flock.c              | 14 +++++++-------
- fs/lockd/clntlock.c         |  2 +-
- fs/lockd/clntproc.c         |  2 +-
- fs/locks.c                  | 28 ++++++++++++++--------------
- fs/nfsd/nfs4state.c         |  4 ++--
- fs/open.c                   |  2 +-
- include/linux/filelock.h    |  4 +---
- include/linux/lockd/lockd.h |  4 ++--
- 8 files changed, 29 insertions(+), 31 deletions(-)
+Hi David,
 
-diff --git a/fs/afs/flock.c b/fs/afs/flock.c
-index bbcc5afd1576..9c6dea3139f5 100644
---- a/fs/afs/flock.c
-+++ b/fs/afs/flock.c
-@@ -451,7 +451,7 @@ static int afs_do_setlk_check(struct afs_vnode *vnode, struct key *key,
-  */
- static int afs_do_setlk(struct file *file, struct file_lock *fl)
- {
--	struct inode *inode = locks_inode(file);
-+	struct inode *inode = file_inode(file);
- 	struct afs_vnode *vnode = AFS_FS_I(inode);
- 	enum afs_flock_mode mode = AFS_FS_S(inode->i_sb)->flock_mode;
- 	afs_lock_type_t type;
-@@ -701,7 +701,7 @@ static int afs_do_setlk(struct file *file, struct file_lock *fl)
-  */
- static int afs_do_unlk(struct file *file, struct file_lock *fl)
- {
--	struct afs_vnode *vnode = AFS_FS_I(locks_inode(file));
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
- 	int ret;
- 
- 	_enter("{%llx:%llu},%u", vnode->fid.vid, vnode->fid.vnode, fl->fl_type);
-@@ -721,7 +721,7 @@ static int afs_do_unlk(struct file *file, struct file_lock *fl)
-  */
- static int afs_do_getlk(struct file *file, struct file_lock *fl)
- {
--	struct afs_vnode *vnode = AFS_FS_I(locks_inode(file));
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
- 	struct key *key = afs_file_key(file);
- 	int ret, lock_count;
- 
-@@ -763,7 +763,7 @@ static int afs_do_getlk(struct file *file, struct file_lock *fl)
-  */
- int afs_lock(struct file *file, int cmd, struct file_lock *fl)
- {
--	struct afs_vnode *vnode = AFS_FS_I(locks_inode(file));
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
- 	enum afs_flock_operation op;
- 	int ret;
- 
-@@ -798,7 +798,7 @@ int afs_lock(struct file *file, int cmd, struct file_lock *fl)
-  */
- int afs_flock(struct file *file, int cmd, struct file_lock *fl)
- {
--	struct afs_vnode *vnode = AFS_FS_I(locks_inode(file));
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(file));
- 	enum afs_flock_operation op;
- 	int ret;
- 
-@@ -843,7 +843,7 @@ int afs_flock(struct file *file, int cmd, struct file_lock *fl)
-  */
- static void afs_fl_copy_lock(struct file_lock *new, struct file_lock *fl)
- {
--	struct afs_vnode *vnode = AFS_FS_I(locks_inode(fl->fl_file));
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(fl->fl_file));
- 
- 	_enter("");
- 
-@@ -861,7 +861,7 @@ static void afs_fl_copy_lock(struct file_lock *new, struct file_lock *fl)
-  */
- static void afs_fl_release_private(struct file_lock *fl)
- {
--	struct afs_vnode *vnode = AFS_FS_I(locks_inode(fl->fl_file));
-+	struct afs_vnode *vnode = AFS_FS_I(file_inode(fl->fl_file));
- 
- 	_enter("");
- 
-diff --git a/fs/lockd/clntlock.c b/fs/lockd/clntlock.c
-index a5bb3f721a9d..82b19a30e0f0 100644
---- a/fs/lockd/clntlock.c
-+++ b/fs/lockd/clntlock.c
-@@ -188,7 +188,7 @@ __be32 nlmclnt_grant(const struct sockaddr *addr, const struct nlm_lock *lock)
- 			continue;
- 		if (!rpc_cmp_addr(nlm_addr(block->b_host), addr))
- 			continue;
--		if (nfs_compare_fh(NFS_FH(locks_inode(fl_blocked->fl_file)), fh) != 0)
-+		if (nfs_compare_fh(NFS_FH(file_inode(fl_blocked->fl_file)), fh) != 0)
- 			continue;
- 		/* Alright, we found a lock. Set the return status
- 		 * and wake up the caller
-diff --git a/fs/lockd/clntproc.c b/fs/lockd/clntproc.c
-index e875a3571c41..16b4de868cd2 100644
---- a/fs/lockd/clntproc.c
-+++ b/fs/lockd/clntproc.c
-@@ -131,7 +131,7 @@ static void nlmclnt_setlockargs(struct nlm_rqst *req, struct file_lock *fl)
- 	char *nodename = req->a_host->h_rpcclnt->cl_nodename;
- 
- 	nlmclnt_next_cookie(&argp->cookie);
--	memcpy(&lock->fh, NFS_FH(locks_inode(fl->fl_file)), sizeof(struct nfs_fh));
-+	memcpy(&lock->fh, NFS_FH(file_inode(fl->fl_file)), sizeof(struct nfs_fh));
- 	lock->caller  = nodename;
- 	lock->oh.data = req->a_owner;
- 	lock->oh.len  = snprintf(req->a_owner, sizeof(req->a_owner), "%u@%s",
-diff --git a/fs/locks.c b/fs/locks.c
-index a5cc90c958c9..624c6ac92ede 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -234,7 +234,7 @@ locks_check_ctx_file_list(struct file *filp, struct list_head *list,
- 				char *list_type)
- {
- 	struct file_lock *fl;
--	struct inode *inode = locks_inode(filp);
-+	struct inode *inode = file_inode(filp);
- 
- 	list_for_each_entry(fl, list, fl_list)
- 		if (fl->fl_file == filp)
-@@ -888,7 +888,7 @@ posix_test_lock(struct file *filp, struct file_lock *fl)
- {
- 	struct file_lock *cfl;
- 	struct file_lock_context *ctx;
--	struct inode *inode = locks_inode(filp);
-+	struct inode *inode = file_inode(filp);
- 	void *owner;
- 	void (*func)(void);
- 
-@@ -1331,7 +1331,7 @@ static int posix_lock_inode(struct inode *inode, struct file_lock *request,
- int posix_lock_file(struct file *filp, struct file_lock *fl,
- 			struct file_lock *conflock)
- {
--	return posix_lock_inode(locks_inode(filp), fl, conflock);
-+	return posix_lock_inode(file_inode(filp), fl, conflock);
- }
- EXPORT_SYMBOL(posix_lock_file);
- 
-@@ -1630,7 +1630,7 @@ EXPORT_SYMBOL(lease_get_mtime);
- int fcntl_getlease(struct file *filp)
- {
- 	struct file_lock *fl;
--	struct inode *inode = locks_inode(filp);
-+	struct inode *inode = file_inode(filp);
- 	struct file_lock_context *ctx;
- 	int type = F_UNLCK;
- 	LIST_HEAD(dispose);
-@@ -1668,7 +1668,7 @@ int fcntl_getlease(struct file *filp)
- static int
- check_conflicting_open(struct file *filp, const long arg, int flags)
- {
--	struct inode *inode = locks_inode(filp);
-+	struct inode *inode = file_inode(filp);
- 	int self_wcount = 0, self_rcount = 0;
- 
- 	if (flags & FL_LAYOUT)
-@@ -1704,7 +1704,7 @@ static int
- generic_add_lease(struct file *filp, long arg, struct file_lock **flp, void **priv)
- {
- 	struct file_lock *fl, *my_fl = NULL, *lease;
--	struct inode *inode = locks_inode(filp);
-+	struct inode *inode = file_inode(filp);
- 	struct file_lock_context *ctx;
- 	bool is_deleg = (*flp)->fl_flags & FL_DELEG;
- 	int error;
-@@ -1820,7 +1820,7 @@ static int generic_delete_lease(struct file *filp, void *owner)
- {
- 	int error = -EAGAIN;
- 	struct file_lock *fl, *victim = NULL;
--	struct inode *inode = locks_inode(filp);
-+	struct inode *inode = file_inode(filp);
- 	struct file_lock_context *ctx;
- 	LIST_HEAD(dispose);
- 
-@@ -1862,7 +1862,7 @@ static int generic_delete_lease(struct file *filp, void *owner)
- int generic_setlease(struct file *filp, long arg, struct file_lock **flp,
- 			void **priv)
- {
--	struct inode *inode = locks_inode(filp);
-+	struct inode *inode = file_inode(filp);
- 	int error;
- 
- 	if ((!uid_eq(current_fsuid(), inode->i_uid)) && !capable(CAP_LEASE))
-@@ -2351,7 +2351,7 @@ int fcntl_setlk(unsigned int fd, struct file *filp, unsigned int cmd,
- 		struct flock *flock)
- {
- 	struct file_lock *file_lock = locks_alloc_lock();
--	struct inode *inode = locks_inode(filp);
-+	struct inode *inode = file_inode(filp);
- 	struct file *f;
- 	int error;
- 
-@@ -2555,7 +2555,7 @@ int fcntl_setlk64(unsigned int fd, struct file *filp, unsigned int cmd,
- void locks_remove_posix(struct file *filp, fl_owner_t owner)
- {
- 	int error;
--	struct inode *inode = locks_inode(filp);
-+	struct inode *inode = file_inode(filp);
- 	struct file_lock lock;
- 	struct file_lock_context *ctx;
- 
-@@ -2592,7 +2592,7 @@ static void
- locks_remove_flock(struct file *filp, struct file_lock_context *flctx)
- {
- 	struct file_lock fl;
--	struct inode *inode = locks_inode(filp);
-+	struct inode *inode = file_inode(filp);
- 
- 	if (list_empty(&flctx->flc_flock))
- 		return;
-@@ -2637,7 +2637,7 @@ void locks_remove_file(struct file *filp)
- {
- 	struct file_lock_context *ctx;
- 
--	ctx = locks_inode_context(locks_inode(filp));
-+	ctx = locks_inode_context(file_inode(filp));
- 	if (!ctx)
- 		return;
- 
-@@ -2721,7 +2721,7 @@ static void lock_get_status(struct seq_file *f, struct file_lock *fl,
- 	 */
- 
- 	if (fl->fl_file != NULL)
--		inode = locks_inode(fl->fl_file);
-+		inode = file_inode(fl->fl_file);
- 
- 	seq_printf(f, "%lld: ", id);
- 
-@@ -2862,7 +2862,7 @@ static void __show_fd_locks(struct seq_file *f,
- void show_fd_locks(struct seq_file *f,
- 		  struct file *filp, struct files_struct *files)
- {
--	struct inode *inode = locks_inode(filp);
-+	struct inode *inode = file_inode(filp);
- 	struct file_lock_context *ctx;
- 	int id = 0;
- 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 7b2ee535ade8..b989c72e54e4 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -5374,7 +5374,7 @@ static int nfsd4_check_conflicting_opens(struct nfs4_client *clp,
- {
- 	struct nfs4_ol_stateid *st;
- 	struct file *f = fp->fi_deleg_file->nf_file;
--	struct inode *ino = locks_inode(f);
-+	struct inode *ino = file_inode(f);
- 	int writes;
- 
- 	writes = atomic_read(&ino->i_writecount);
-@@ -7828,7 +7828,7 @@ check_for_locks(struct nfs4_file *fp, struct nfs4_lockowner *lowner)
- 		return status;
- 	}
- 
--	inode = locks_inode(nf->nf_file);
-+	inode = file_inode(nf->nf_file);
- 	flctx = locks_inode_context(inode);
- 
- 	if (flctx && !list_empty_careful(&flctx->flc_posix)) {
-diff --git a/fs/open.c b/fs/open.c
-index 9b1c08298a07..117ad27922a1 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -871,7 +871,7 @@ static int do_dentry_open(struct file *f,
- 	if (error)
- 		goto cleanup_all;
- 
--	error = break_lease(locks_inode(f), f->f_flags);
-+	error = break_lease(file_inode(f), f->f_flags);
- 	if (error)
- 		goto cleanup_all;
- 
-diff --git a/include/linux/filelock.h b/include/linux/filelock.h
-index dc5056a66e2c..efcdd1631d9b 100644
---- a/include/linux/filelock.h
-+++ b/include/linux/filelock.h
-@@ -133,8 +133,6 @@ struct file_lock_context {
- 	struct list_head	flc_lease;
- };
- 
--#define locks_inode(f) file_inode(f)
--
- #ifdef CONFIG_FILE_LOCKING
- int fcntl_getlk(struct file *, unsigned int, struct flock *);
- int fcntl_setlk(unsigned int, struct file *, unsigned int,
-@@ -345,7 +343,7 @@ locks_inode_context(const struct inode *inode)
- 
- static inline int locks_lock_file_wait(struct file *filp, struct file_lock *fl)
- {
--	return locks_lock_inode_wait(locks_inode(filp), fl);
-+	return locks_lock_inode_wait(file_inode(filp), fl);
- }
- 
- #ifdef CONFIG_FILE_LOCKING
-diff --git a/include/linux/lockd/lockd.h b/include/linux/lockd/lockd.h
-index 70ce419e2709..2b7f067af3c4 100644
---- a/include/linux/lockd/lockd.h
-+++ b/include/linux/lockd/lockd.h
-@@ -312,7 +312,7 @@ static inline struct file *nlmsvc_file_file(struct nlm_file *file)
- 
- static inline struct inode *nlmsvc_file_inode(struct nlm_file *file)
- {
--	return locks_inode(nlmsvc_file_file(file));
-+	return file_inode(nlmsvc_file_file(file));
- }
- 
- static inline int __nlm_privileged_request4(const struct sockaddr *sap)
-@@ -372,7 +372,7 @@ static inline int nlm_privileged_requester(const struct svc_rqst *rqstp)
- static inline int nlm_compare_locks(const struct file_lock *fl1,
- 				    const struct file_lock *fl2)
- {
--	return locks_inode(fl1->fl_file) == locks_inode(fl2->fl_file)
-+	return file_inode(fl1->fl_file) == file_inode(fl2->fl_file)
- 	     && fl1->fl_pid   == fl2->fl_pid
- 	     && fl1->fl_owner == fl2->fl_owner
- 	     && fl1->fl_start == fl2->fl_start
--- 
-2.39.0
-
+I've noticed that the ext4 counterpart of this patch is in the
+upstream tree already, whereas the affs, f2fs, hfs and hfsplus
+versions are not.
+Are they picked via a different tree?
