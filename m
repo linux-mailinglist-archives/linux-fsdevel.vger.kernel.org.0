@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2F4B7664472
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 16:21:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 261BE66447A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 16:22:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238820AbjAJPVA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Jan 2023 10:21:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56720 "EHLO
+        id S238932AbjAJPVv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Jan 2023 10:21:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238958AbjAJPUh (ORCPT
+        with ESMTP id S238946AbjAJPVb (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Jan 2023 10:20:37 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE783714B8;
-        Tue, 10 Jan 2023 07:20:34 -0800 (PST)
+        Tue, 10 Jan 2023 10:21:31 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2CF3B87F21;
+        Tue, 10 Jan 2023 07:21:30 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id DE7F6B81731;
-        Tue, 10 Jan 2023 15:20:32 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B6D3C433EF;
-        Tue, 10 Jan 2023 15:20:29 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 87B3D61762;
+        Tue, 10 Jan 2023 15:21:29 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C75EC433F1;
+        Tue, 10 Jan 2023 15:21:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673364030;
-        bh=ZcLcQ7QNnXhTOAkBBEi6YS0XdNLDkyedU2bQ3dix0z8=;
+        s=k20201202; t=1673364089;
+        bh=zl+JAJvLWEJRtU+N27yxQjit+w5i4sRPJ6RUeQgiYXM=;
         h=From:To:Cc:Subject:Date:From;
-        b=A14aw1yTqcUhUrNpI2bVbqfIxCPETmpzk7/ZGjlGMb4N6tAAoV1XcWjKg/fOHDo4U
-         FxTp74mxzJjTooDaRzxQMEfXAds0Z7VSIMH8SVNf2FyoOjjKShbsBHcj6Q2vnBtT7J
-         Z4o5wjo+fjG888Qt6K6Rz0aTdkWFnL8Zij4yblKJagksqbZQyXf56IYXFIMqAK8Qbl
-         dDVXXRSTSVk9zzNfJkQi7oejSvLxriQIgu4EfLZiUpyTg297DS/ect73DJGk4vNK/p
-         g8JCOMLpzdBs/QHcqaiYxbbwCNpmLxWVZ7DlM8W0UgoXS2bcGuH22NOtIwdF7v5Xzr
-         JrJBiSy6A2Nzg==
+        b=TgNINrzmmiGy6ZCyjNr7NWQ9VaMZJGLQ9RfUH0k1t6wRZ2MVjAMYLGyLim8tYAE4T
+         7jv+39pqGsCLGAcNKBeS24que0muIp52QjbZMGnoTGS/BPRrFErve+H1XGxtG7dw6U
+         ZnaQX2/zMPk1hhG64X3BqZfK3P55Gk3gtCzjWRCEN/tBMlkm2jzrJvmazCdJeq964J
+         rJ0YIXM4qWMR4xh5kvMB4GlNE5ZrDCJNJR00kEWPJEuzZvG4IaR/z0Ds1WVCtAg/mU
+         nWPjZWTzqx7OnUdLa7l8JCWMn/fRZeSs4GPz4COpRgOGUcvhgAKTzOsnXocmu8lXuw
+         E5Vf8+cl1ue9g==
 From:   Chao Yu <chao@kernel.org>
 To:     akpm@linux-foundation.org, adobriyan@gmail.com
 Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, Chao Yu <chao@kernel.org>
-Subject: [PATCH] proc: introduce proc_statfs()
-Date:   Tue, 10 Jan 2023 23:20:03 +0800
-Message-Id: <20230110152003.1118777-1-chao@kernel.org>
+Subject: [PATCH] proc: fix to check name length in proc_lookup_de()
+Date:   Tue, 10 Jan 2023 23:21:12 +0800
+Message-Id: <20230110152112.1119517-1-chao@kernel.org>
 X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -51,65 +51,54 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce proc_statfs() to replace simple_statfs(), so that
-f_bsize queried from statfs() can be consistent w/ the value we
-set in s_blocksize.
-
-stat -f /proc/
-
-Before:
-    ID: 0        Namelen: 255     Type: proc
-Block size: 4096       Fundamental block size: 4096
-Blocks: Total: 0          Free: 0          Available: 0
-Inodes: Total: 0          Free: 0
-
-After:
-    ID: 0        Namelen: 255     Type: proc
-Block size: 1024       Fundamental block size: 1024
-Blocks: Total: 0          Free: 0          Available: 0
-Inodes: Total: 0          Free: 0
+__proc_create() has limited dirent's max name length with 255, let's
+add this limitation in proc_lookup_de(), so that it can return
+-ENAMETOOLONG correctly instead of -ENOENT when stating a file which
+has out-of-range name length.
 
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/proc/inode.c | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ fs/proc/generic.c  | 5 ++++-
+ fs/proc/internal.h | 3 +++
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/fs/proc/inode.c b/fs/proc/inode.c
-index f495fdb39151..d39e3b9b3135 100644
---- a/fs/proc/inode.c
-+++ b/fs/proc/inode.c
-@@ -25,6 +25,7 @@
- #include <linux/slab.h>
- #include <linux/mount.h>
- #include <linux/bug.h>
-+#include <linux/statfs.h>
- 
- #include "internal.h"
- 
-@@ -176,6 +177,14 @@ static inline const char *hidepid2str(enum proc_hidepid v)
- 	return "unknown";
- }
- 
-+static int proc_statfs(struct dentry *dentry, struct kstatfs *buf)
-+{
-+	buf->f_type = dentry->d_sb->s_magic;
-+	buf->f_bsize = dentry->d_sb->s_blocksize;
-+	buf->f_namelen = PROC_NAME_LEN;
-+	return 0;
-+}
-+
- static int proc_show_options(struct seq_file *seq, struct dentry *root)
+diff --git a/fs/proc/generic.c b/fs/proc/generic.c
+index 587b91d9d998..5f52f20d5ed1 100644
+--- a/fs/proc/generic.c
++++ b/fs/proc/generic.c
+@@ -246,6 +246,9 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
  {
- 	struct proc_fs_info *fs_info = proc_sb_info(root->d_sb);
-@@ -195,7 +204,7 @@ const struct super_operations proc_sops = {
- 	.free_inode	= proc_free_inode,
- 	.drop_inode	= generic_delete_inode,
- 	.evict_inode	= proc_evict_inode,
--	.statfs		= simple_statfs,
-+	.statfs		= proc_statfs,
- 	.show_options	= proc_show_options,
- };
+ 	struct inode *inode;
  
++	if (dentry->d_name.len > PROC_NAME_LEN)
++		return ERR_PTR(-ENAMETOOLONG);
++
+ 	read_lock(&proc_subdir_lock);
+ 	de = pde_subdir_find(de, dentry->d_name.name, dentry->d_name.len);
+ 	if (de) {
+@@ -402,7 +405,7 @@ static struct proc_dir_entry *__proc_create(struct proc_dir_entry **parent,
+ 		goto out;
+ 	qstr.name = fn;
+ 	qstr.len = strlen(fn);
+-	if (qstr.len == 0 || qstr.len >= 256) {
++	if (qstr.len == 0 || qstr.len > PROC_NAME_LEN) {
+ 		WARN(1, "name len %u\n", qstr.len);
+ 		return NULL;
+ 	}
+diff --git a/fs/proc/internal.h b/fs/proc/internal.h
+index b701d0207edf..7611bc684d9e 100644
+--- a/fs/proc/internal.h
++++ b/fs/proc/internal.h
+@@ -142,6 +142,9 @@ unsigned name_to_int(const struct qstr *qstr);
+ /* Worst case buffer size needed for holding an integer. */
+ #define PROC_NUMBUF 13
+ 
++/* Max name length of procfs dirent */
++#define PROC_NAME_LEN		255
++
+ /*
+  * array.c
+  */
 -- 
 2.25.1
 
