@@ -2,87 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 8D7EA66437D
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 15:43:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F4B7664472
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 16:21:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232812AbjAJOnT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Jan 2023 09:43:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54648 "EHLO
+        id S238820AbjAJPVA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Jan 2023 10:21:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56720 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238330AbjAJOm4 (ORCPT
+        with ESMTP id S238958AbjAJPUh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Jan 2023 09:42:56 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAEF51CB2B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 06:42:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673361732;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=q7HvhAaAWNKOBG0AiE5jaW5da5KSq68kVSGiHSUvN0c=;
-        b=gBp1TpjwGrGImH0QKmg3xkI8fsPZus6xlvdd45oSvuyxz76uVWmVQkcnqFsTPTcSpJOaKL
-        o94wjng+ojvmbpRmYm5gvCA7lJubWl2GWV49GAZSsifIN1uTTjl+mFQpspmcpy/l42MO6f
-        jcpAjBm474Ekfo/Nduj5IvIjvPCxT8E=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-519-WbUP3gRIOfqrYIs8gRKVrg-1; Tue, 10 Jan 2023 09:42:07 -0500
-X-MC-Unique: WbUP3gRIOfqrYIs8gRKVrg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 10 Jan 2023 10:20:37 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DE783714B8;
+        Tue, 10 Jan 2023 07:20:34 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 62CF31C08790;
-        Tue, 10 Jan 2023 14:42:06 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.87])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 14E3B422FE;
-        Tue, 10 Jan 2023 14:42:04 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <20230109172500.bd4z2incticapm7x@quack3>
-References: <20230109172500.bd4z2incticapm7x@quack3> <d86e6340-534c-c34c-ab1d-6ebacb213bb9@kernel.dk> <167305160937.1521586.133299343565358971.stgit@warthog.procyon.org.uk> <167305166150.1521586.10220949115402059720.stgit@warthog.procyon.org.uk> <1880793.1673257404@warthog.procyon.org.uk>
-To:     Jan Kara <jack@suse.cz>
-Cc:     dhowells@redhat.com, Jens Axboe <axboe@kernel.dk>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 7/7] iov_iter, block: Make bio structs pin pages rather than ref'ing if appropriate
+        by ams.source.kernel.org (Postfix) with ESMTPS id DE7F6B81731;
+        Tue, 10 Jan 2023 15:20:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B6D3C433EF;
+        Tue, 10 Jan 2023 15:20:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673364030;
+        bh=ZcLcQ7QNnXhTOAkBBEi6YS0XdNLDkyedU2bQ3dix0z8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=A14aw1yTqcUhUrNpI2bVbqfIxCPETmpzk7/ZGjlGMb4N6tAAoV1XcWjKg/fOHDo4U
+         FxTp74mxzJjTooDaRzxQMEfXAds0Z7VSIMH8SVNf2FyoOjjKShbsBHcj6Q2vnBtT7J
+         Z4o5wjo+fjG888Qt6K6Rz0aTdkWFnL8Zij4yblKJagksqbZQyXf56IYXFIMqAK8Qbl
+         dDVXXRSTSVk9zzNfJkQi7oejSvLxriQIgu4EfLZiUpyTg297DS/ect73DJGk4vNK/p
+         g8JCOMLpzdBs/QHcqaiYxbbwCNpmLxWVZ7DlM8W0UgoXS2bcGuH22NOtIwdF7v5Xzr
+         JrJBiSy6A2Nzg==
+From:   Chao Yu <chao@kernel.org>
+To:     akpm@linux-foundation.org, adobriyan@gmail.com
+Cc:     viro@zeniv.linux.org.uk, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, Chao Yu <chao@kernel.org>
+Subject: [PATCH] proc: introduce proc_statfs()
+Date:   Tue, 10 Jan 2023 23:20:03 +0800
+Message-Id: <20230110152003.1118777-1-chao@kernel.org>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2155892.1673361724.1@warthog.procyon.org.uk>
-Date:   Tue, 10 Jan 2023 14:42:04 +0000
-Message-ID: <2155893.1673361724@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Jan Kara <jack@suse.cz> wrote:
+Introduce proc_statfs() to replace simple_statfs(), so that
+f_bsize queried from statfs() can be consistent w/ the value we
+set in s_blocksize.
 
-> ... So filesystems really need DIO reads to use FOLL_PIN instead of FOLL_GET
-> and consequently we need to pass information to bio completion function how
-> page references should be dropped.
+stat -f /proc/
 
-That information would be available in the bio struct with this patch if
-necessary, though transcribed into a combination of BIO_* flags instead off
-FOLL_* flags.
+Before:
+    ID: 0        Namelen: 255     Type: proc
+Block size: 4096       Fundamental block size: 4096
+Blocks: Total: 0          Free: 0          Available: 0
+Inodes: Total: 0          Free: 0
 
-I wonder if there's the possibility of the filesystem that generated the bio
-nicking the pages out of the bio and putting them itself.
+After:
+    ID: 0        Namelen: 255     Type: proc
+Block size: 1024       Fundamental block size: 1024
+Blocks: Total: 0          Free: 0          Available: 0
+Inodes: Total: 0          Free: 0
 
-David
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/proc/inode.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/fs/proc/inode.c b/fs/proc/inode.c
+index f495fdb39151..d39e3b9b3135 100644
+--- a/fs/proc/inode.c
++++ b/fs/proc/inode.c
+@@ -25,6 +25,7 @@
+ #include <linux/slab.h>
+ #include <linux/mount.h>
+ #include <linux/bug.h>
++#include <linux/statfs.h>
+ 
+ #include "internal.h"
+ 
+@@ -176,6 +177,14 @@ static inline const char *hidepid2str(enum proc_hidepid v)
+ 	return "unknown";
+ }
+ 
++static int proc_statfs(struct dentry *dentry, struct kstatfs *buf)
++{
++	buf->f_type = dentry->d_sb->s_magic;
++	buf->f_bsize = dentry->d_sb->s_blocksize;
++	buf->f_namelen = PROC_NAME_LEN;
++	return 0;
++}
++
+ static int proc_show_options(struct seq_file *seq, struct dentry *root)
+ {
+ 	struct proc_fs_info *fs_info = proc_sb_info(root->d_sb);
+@@ -195,7 +204,7 @@ const struct super_operations proc_sops = {
+ 	.free_inode	= proc_free_inode,
+ 	.drop_inode	= generic_delete_inode,
+ 	.evict_inode	= proc_evict_inode,
+-	.statfs		= simple_statfs,
++	.statfs		= proc_statfs,
+ 	.show_options	= proc_show_options,
+ };
+ 
+-- 
+2.25.1
 
