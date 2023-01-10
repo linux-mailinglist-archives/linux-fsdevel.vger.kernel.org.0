@@ -2,93 +2,114 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3FF44664C12
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 20:12:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7FE38664E31
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 22:42:00 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239565AbjAJTMB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Jan 2023 14:12:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54076 "EHLO
+        id S231704AbjAJVl5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Jan 2023 16:41:57 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48692 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239762AbjAJTLi (ORCPT
+        with ESMTP id S231409AbjAJVly (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Jan 2023 14:11:38 -0500
-Received: from sender-of-o50.zoho.in (sender-of-o50.zoho.in [103.117.158.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A0596DFBB;
-        Tue, 10 Jan 2023 11:11:35 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1673377846; cv=none; 
-        d=zohomail.in; s=zohoarc; 
-        b=fgjNUnZKnlS2NO43QnBV8y7avtKZwWUTLL/kVFRJkZPOzStFvsy+AgJ+42e4C5gKAAoOOLDIlH6lio9MAeFXvI6lrewPC2gBNVckzs3iLqE8K++zC9mfQVz891uB+6WHYdLtOGMC4zra+YvjyEt/hKOQrUNAJyOb5i96nxvd3ZQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1673377846; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=94w/84cEKuVEFn2g20pluke79PDKWPNFSLBsY9v/ql8=; 
-        b=WRgOCrgiJHyBP8Je59WuVLMKYNSpD1l1zy0B1pLOt9dG5JlgkWJ1RLZ8BFnSrx9A6OtR/nGFmZcvuK0WE6jxZZCwb6y5rtyxeKepfIyBexUFI3GFXA2B22hnikIdkJCHZvi7VjsiRl944vCTLzoiIcj+krKDfm5Jslwra1DprXY=
-ARC-Authentication-Results: i=1; mx.zohomail.in;
-        dkim=pass  header.i=siddh.me;
-        spf=pass  smtp.mailfrom=code@siddh.me;
-        dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1673377846;
-        s=zmail; d=siddh.me; i=code@siddh.me;
-        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=94w/84cEKuVEFn2g20pluke79PDKWPNFSLBsY9v/ql8=;
-        b=LsKe4OZPG0vKr3M78UgPtfxUXOmZn6E226af1nX/CH1sPXYNvt/dwivBe676PFIs
-        oY/i8i7Z390dKS9GBO5WpdB8AbUzqXBYV+ypC2ts9ziVu9cd6MX2XL5kNgdl6NSdohx
-        ndBuAxm0sEL6U0r7NSSgGLT0hkhfzRaVMmG8SzsA=
-Received: from mail.zoho.in by mx.zoho.in
-        with SMTP id 1673377834655807.4120717855777; Wed, 11 Jan 2023 00:40:34 +0530 (IST)
-Date:   Wed, 11 Jan 2023 00:40:34 +0530
-From:   Siddh Raman Pant <code@siddh.me>
-To:     "David Howells" <dhowells@redhat.com>
-Cc:     "mauro carvalho chehab" <mchehab@kernel.org>,
-        "randy dunlap" <rdunlap@infradead.org>,
-        "jonathan corbet" <corbet@lwn.net>,
-        "fabio m. de francesco" <fmdefrancesco@gmail.com>,
-        "eric dumazet" <edumazet@google.com>,
-        "christophe jaillet" <christophe.jaillet@wanadoo.fr>,
-        "eric biggers" <ebiggers@kernel.org>,
-        "keyrings" <keyrings@vger.kernel.org>,
-        "linux-security-module" <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>
-Message-ID: <1859d17668d.7b9d5469421579.5464668634216421773@siddh.me>
-In-Reply-To: <2121105.1673359772@warthog.procyon.org.uk>
-References: <97ce37e2fdcfbed29d9467057f0f870359d88b89.1673173920.git.code@siddh.me> <cover.1673173920.git.code@siddh.me> <2121105.1673359772@warthog.procyon.org.uk>
-Subject: Re: [PATCH v3 1/2] include/linux/watch_queue: Improve documentation
+        Tue, 10 Jan 2023 16:41:54 -0500
+Received: from mail-pl1-x62e.google.com (mail-pl1-x62e.google.com [IPv6:2607:f8b0:4864:20::62e])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C46E2392C6
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 13:41:49 -0800 (PST)
+Received: by mail-pl1-x62e.google.com with SMTP id p24so14606148plw.11
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 13:41:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D6WnFAop7d5E0yhy9sgHCW9UOo46MAfDHRFM7/8uo+E=;
+        b=KJo+O1YHeWC2lzofGztS9Z6uTDMmVlWLB0oOwFB4cWH+JefTudLQrBvQ9KR/wES1DH
+         s55YeZOuEP51yOAAqSkmWZNTq1yKCPsvdtJbtEoqrzV32YyGUkTOQfx8EHFErLRp0TIF
+         dbA0iy0r1v6/0akvMtV1mZ9eZ1Xm+KDuKznSApxUXkTJepJ/gIxqYdmukpDLEO/yhv6O
+         4jSkBBYbPKepc1xYtHutIvS2acl7WeWD5vnG8IrzesVNneu25TSYWCJVCXpv/mTi1Kf5
+         5MejEMdYxX8VvvuKXVwll3PIyn7LXsrSSFRHPyho/vfnYzF+Vgscw9ESWteLVqat2eMM
+         ZnGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=D6WnFAop7d5E0yhy9sgHCW9UOo46MAfDHRFM7/8uo+E=;
+        b=55V0np8be4Vb8l/ANN4D3aEPbqzNqougKHIeY1fPnwIK3sz5pq7jBo6IufAVLU6POk
+         +kHjMObK2fhmk1RmTlfUugAaASYLw1JdaMhv8A4Yt3SCTIUP2jzBJEK3cxs2A8KmOKqn
+         +6m29u3vYKmTaLbFUE/vmbazXfjMqOnhd++fYFNn92COHL3c42cLpIOhx54IxvmyLuJ/
+         MV5XXH4VgfClR1I8vyyhCoMFJ0f9rKatajpPAv0jowCxWoppJwtYLOUJz+0ED7Y+ZKrQ
+         GD7vLhMvrF90CPAuGAQtBBaLFQxXYbaRwbCyxCbhYQCyByl5peo5SWnejMZwFTRWaiAJ
+         oOdw==
+X-Gm-Message-State: AFqh2kpC3DtWjs6iKVriHQXk0tViJ/FrV88Gj+2LgguVxItz565BXFtE
+        40BwkB1imbjVGOThxPjIqgS60tOWswxmqlwa
+X-Google-Smtp-Source: AMrXdXs7FzdBhI0TXB5I4AqPO5fCt1v60GEvPvH/08IGgK0xUVt2vA/ipEy6fEEt1A6vaejEUraLhg==
+X-Received: by 2002:a05:6a20:54a1:b0:a5:170:9acf with SMTP id i33-20020a056a2054a100b000a501709acfmr25000775pzk.3.1673386908975;
+        Tue, 10 Jan 2023 13:41:48 -0800 (PST)
+Received: from [192.168.1.136] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id d16-20020a63ed10000000b00476799699e4sm7310757pgi.30.2023.01.10.13.41.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 10 Jan 2023 13:41:48 -0800 (PST)
+Message-ID: <2c01e100-852d-d082-02b5-0b481fc72477@kernel.dk>
+Date:   Tue, 10 Jan 2023 14:41:46 -0700
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v4 7/7] iov_iter, block: Make bio structs pin pages rather
+ than ref'ing if appropriate
+Content-Language: en-US
+To:     David Howells <dhowells@redhat.com>
+Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        Jeff Layton <jlayton@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <bbd9cde3-7cbb-f3e4-a2a4-7b1b5ae392e0@kernel.dk>
+ <d0bb04e7-7e58-d494-0e39-6e98f3368a7b@kernel.dk>
+ <20230109173513.htfqbkrtqm52pnye@quack3>
+ <167305160937.1521586.133299343565358971.stgit@warthog.procyon.org.uk>
+ <167305166150.1521586.10220949115402059720.stgit@warthog.procyon.org.uk>
+ <2008444.1673300255@warthog.procyon.org.uk>
+ <2084839.1673303046@warthog.procyon.org.uk>
+ <2155741.1673361430@warthog.procyon.org.uk>
+From:   Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <2155741.1673361430@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=1.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
+X-Spam-Level: *
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 10 Jan 2023 19:39:32 +0530, David Howells wrote:
-> Please don't.
+On 1/10/23 7:37 AM, David Howells wrote:
+> Jens Axboe <axboe@kernel.dk> wrote:
 > 
-> The structure is documented fully here:
+>> I think it makes more sense to have NO_REF check, to be honest, as that
+>> means the general path doesn't have to set that flag. But I don't feel
+>> too strongly about that part.
 > 
->       Documentation/core-api/watch_queue.rst
+> It's just that the logic seems weird with BIO_NO_PAGE_REF and BIO_PAGE_PINNED
+> being kind of opposite polarity.
 > 
-> See:
-> 
->       https://docs.kernel.org/core-api/watch_queue.html#event-filtering
-> 
-> The three column approach is much more readable in the code as it doesn't
-> separate the descriptions from the things described.  Putting things in
-> columns has been around for around 6000 years.
-> 
-> David
+> Anyway, see attached.
 
-Okay. Apologies for that.
+Yeah, I guess I'll have to agree with you. So let's go with that approach
+instead, but then please:
 
-But what about the second patch? Should I send that without these doc
-changes?
+1) Change that flag as a prep patch so you don't mix up the two
+2) Incorporate the feedback from the previous patch
 
-Thanks,
-Siddh
+Any chance we can get that cleanup_mode thing cleaned up as well?
+
+-- 
+Jens Axboe
+
+
