@@ -2,82 +2,93 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4F3DF66449B
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 16:25:23 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D5EAA6644B8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 16:27:55 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238955AbjAJPZT (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Jan 2023 10:25:19 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60982 "EHLO
+        id S238972AbjAJP1w (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Jan 2023 10:27:52 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60710 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238977AbjAJPYi (ORCPT
+        with ESMTP id S238659AbjAJP13 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Jan 2023 10:24:38 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 281918D5C4;
-        Tue, 10 Jan 2023 07:24:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=oNTdMR+VSzbfWekKWcdjtSu/K0LW9KTEw3USctOnxiU=; b=zDpFs6D6/Tjb+OJyb9xHVqz5ls
-        pFBMbIHtHrX5PunG/rgPabqbdWsIp1KBDrf94nAwIf9VYD6FmA/1emyHb1r0sQyyYkWM/4hPMTuYH
-        CjuTU2l4k73L7IxJXvEelJio32ymOa/d75HhexdbaH1Pm73qL+xhGiJHI9FGLfxoavkIFYh0jEdtH
-        zdctHIHRZL2kUGScC6WtgGn7TciKAR23dSJH5DDLnVpfqgaSthQAGfeSBcaaTPNgZDREUasnqBkig
-        kdHpEzl5txPM+j1xgPLyjr9/q0Y7/aL0jYStyfxdcapJzOIxqTOST0W0pqT6rhKzv6TlZxEw/VKXv
-        9aVLJvpQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pFGUF-007Yt2-4o; Tue, 10 Jan 2023 15:24:27 +0000
-Date:   Tue, 10 Jan 2023 07:24:27 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        "Darrick J . Wong" <djwong@kernel.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [RFC v6 04/10] iomap: Add iomap_get_folio helper
-Message-ID: <Y72DK9XuaJfN+ecj@infradead.org>
-References: <20230108213305.GO1971568@dread.disaster.area>
- <20230108194034.1444764-1-agruenba@redhat.com>
- <20230108194034.1444764-5-agruenba@redhat.com>
- <20230109124642.1663842-1-agruenba@redhat.com>
- <Y70l9ZZXpERjPqFT@infradead.org>
- <Y71pWJ0JHwGrJ/iv@casper.infradead.org>
+        Tue, 10 Jan 2023 10:27:29 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7596E8E991
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 07:26:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1673364372;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=v+NefOpcxugrX/y4MYy0C1CL3s92hQ9uzP66eCvp/+E=;
+        b=EBc2qjldm3LpPRmR4SSOHYIqB/O9Rk1/M7WP2JXLhV6rlEGMFD3RpsW45JJVkciIe2iRbz
+        GEG9rpP3/CsWVWClw+fs+j63IJoqMo12ANwjq5MwlmQZ6sAUWuEdSC8QQAVijFinR/JnTq
+        ZrCvR0n3bOwmDkcEspOPiC4JBFDOxRA=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-217-Afb7B3CoPiGxRwoGcJ0-BQ-1; Tue, 10 Jan 2023 10:26:08 -0500
+X-MC-Unique: Afb7B3CoPiGxRwoGcJ0-BQ-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6263B1C08790;
+        Tue, 10 Jan 2023 15:26:01 +0000 (UTC)
+Received: from x2.localnet (unknown [10.22.9.158])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C58831121314;
+        Tue, 10 Jan 2023 15:26:00 +0000 (UTC)
+From:   Steve Grubb <sgrubb@redhat.com>
+To:     Richard Guy Briggs <rgb@redhat.com>
+Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: Re: [PATCH v5 3/3] fanotify,audit: Allow audit to use the full permission
+ event response
+Date:   Tue, 10 Jan 2023 10:26:00 -0500
+Message-ID: <4778109.GXAFRqVoOG@x2>
+Organization: Red Hat
+In-Reply-To: <Y7zWlFbrrNcfGauJ@madcap2.tricolour.ca>
+References: <cover.1670606054.git.rgb@redhat.com> <3211441.aeNJFYEL58@x2>
+ <Y7zWlFbrrNcfGauJ@madcap2.tricolour.ca>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y71pWJ0JHwGrJ/iv@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 10, 2023 at 01:34:16PM +0000, Matthew Wilcox wrote:
-> > Exactly.  And as I already pointed out in reply to Dave's original
-> > patch what we really should be doing is returning an ERR_PTR from
-> > __filemap_get_folio instead of reverse-engineering the expected
-> > error code.
-> 
-> Ouch, we have a nasty problem.
-> 
-> If somebody passes FGP_ENTRY, we can return a shadow entry.  And the
-> encodings for shadow entries overlap with the encodings for ERR_PTR,
-> meaning that some shadow entries will look like errors.  The way I
-> solved this in the XArray code is by shifting the error values by
-> two bits and encoding errors as XA_ERROR(-ENOMEM) (for example).
-> 
-> I don't _object_ to introducing XA_ERROR() / xa_err() into the VFS,
-> but so far we haven't, and I'd like to make that decision intentionally.
+Hello Richard,
 
-So what would be an alternative way to tell the callers why no folio
-was found instead of trying to reverse engineer that?  Return an errno
-and the folio by reference?  The would work, but the calling conventions
-would be awful.
+On Monday, January 9, 2023 10:08:04 PM EST Richard Guy Briggs wrote:
+> When I use an application that expected the old API, meaning it simply
+> does:
+> > 
+> > response.fd = metadata->fd;
+> > response.response = reply;
+> > close(metadata->fd);
+> > write(fd, &response, sizeof(struct fanotify_response));
+> > 
+> > I get access denials. Every time. If the program is using the new API and
+> > sets FAN_INFO, then it works as expected. I'll do some more testing but I
+> > think there is something wrong in the compatibility path.
+> 
+> I'll have a closer look, because this wasn't the intended behaviour.
+
+I have done more testing. I think what I saw might have been caused by a 
+stale selinux label (label exists, policy is deleted). With selinux in 
+permissive mode it's all working as expected - both old and new API.
+
+-Steve
+
+
