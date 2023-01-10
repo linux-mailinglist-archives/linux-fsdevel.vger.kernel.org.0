@@ -2,103 +2,90 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DA1E4664B1F
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 19:39:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B751B664B88
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 10 Jan 2023 19:49:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239564AbjAJSi4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 10 Jan 2023 13:38:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51528 "EHLO
+        id S239589AbjAJStK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 10 Jan 2023 13:49:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33100 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239464AbjAJSiO (ORCPT
+        with ESMTP id S239727AbjAJSsg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 10 Jan 2023 13:38:14 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 092B58D5F7
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 10:32:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673375568;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=isX/xl/Gk4O2RcsWO9IXu2O1CLN73hFphddfEk/12nc=;
-        b=GkDgtAlptI7r0IZhyUyP42LmEKr20awq+4ld6qmOpld1o1Lco9UnYd/jdcDN8Dj5E4AH/i
-        l/L5zwfu8NZeZxgI6g9Tr4VZ71UQsUppICQ4EOeeP1r3cwckQJsbD0tCIsbCx82/r/wipy
-        o2qGMvoITOT/wcAIxrASHdDRXkudjyk=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-538-CeJyOlZoPEOV_EaDDCckkQ-1; Tue, 10 Jan 2023 13:32:44 -0500
-X-MC-Unique: CeJyOlZoPEOV_EaDDCckkQ-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        Tue, 10 Jan 2023 13:48:36 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9E37265372;
+        Tue, 10 Jan 2023 10:42:05 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id ED2F8811E9C;
-        Tue, 10 Jan 2023 18:32:43 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-0-3.rdu2.redhat.com [10.22.0.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B3EF0492B00;
-        Tue, 10 Jan 2023 18:32:42 +0000 (UTC)
-Date:   Tue, 10 Jan 2023 13:32:40 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-api@vger.kernel.org,
-        Amir Goldstein <amir73il@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        linux-fsdevel@vger.kernel.org, Eric Paris <eparis@parisplace.org>
-Subject: Re: [PATCH v5 3/3] fanotify, audit: Allow audit to use the full
- permission event response
-Message-ID: <Y72vSB+dEgD4HMCN@madcap2.tricolour.ca>
-References: <cover.1670606054.git.rgb@redhat.com>
- <3211441.aeNJFYEL58@x2>
- <Y7zWlFbrrNcfGauJ@madcap2.tricolour.ca>
- <4778109.GXAFRqVoOG@x2>
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 3A7B861881;
+        Tue, 10 Jan 2023 18:42:05 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 767D3C433EF;
+        Tue, 10 Jan 2023 18:42:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673376124;
+        bh=g3CRnTTazWLR2Hh58q3CRcJBbpAnJEnxst035yVP2JI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dqTUBuLoJqiA6XVnVZWR+jPO7aNl7WWPgJZJ6OhsJDk+nWTQLSw1HLn617q1B+IvI
+         /xTo4MhG+C4e92CmQbPuosfUhQ67lQURj0w8zUxeHdq7wEtl/3bEBJvRhFoDbkGOJ1
+         juAKdMMT2/e5U2s2Z4atHu89Hss1utQctXg5R6xhmnBzEolqYZJ9/xL0FFyEEibHXq
+         UrgmBT/fs/d6aBCiXmHVshq2kcdGkQVLUY96mAQK+qSTH9FU9V5Rlj1t5sZsxs0BL9
+         6Ggt3vRGC2qhEGPvw1rY/K8TD+43AXWwGLnhL4RQCfiKKgQkmW4pbmHcc4PYZM3eaa
+         whUGhcZMEyfNA==
+Date:   Tue, 10 Jan 2023 18:42:03 +0000
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Alexander Potapenko <glider@google.com>
+Cc:     dsterba@suse.cz, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+        jaegeuk@kernel.org, chao@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [PATCH 2/5] fs: affs: initialize fsdata in affs_truncate()
+Message-ID: <Y72xe72B+A1KrcaY@gmail.com>
+References: <20221121112134.407362-1-glider@google.com>
+ <20221121112134.407362-2-glider@google.com>
+ <20221122145615.GE5824@twin.jikos.cz>
+ <CAG_fn=Waivo=jEEqp7uMjKXdAvqP3XPtnAQeiRfu6ptwPmkyjw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4778109.GXAFRqVoOG@x2>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+In-Reply-To: <CAG_fn=Waivo=jEEqp7uMjKXdAvqP3XPtnAQeiRfu6ptwPmkyjw@mail.gmail.com>
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-01-10 10:26, Steve Grubb wrote:
-> Hello Richard,
+On Tue, Jan 10, 2023 at 01:27:03PM +0100, Alexander Potapenko wrote:
+> On Tue, Nov 22, 2022 at 3:56 PM David Sterba <dsterba@suse.cz> wrote:
+> >
+> > On Mon, Nov 21, 2022 at 12:21:31PM +0100, Alexander Potapenko wrote:
+> > > When aops->write_begin() does not initialize fsdata, KMSAN may report
+> > > an error passing the latter to aops->write_end().
+> > >
+> > > Fix this by unconditionally initializing fsdata.
+> > >
+> > > Suggested-by: Eric Biggers <ebiggers@kernel.org>
+> > > Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> > > Signed-off-by: Alexander Potapenko <glider@google.com>
+> >
+> > With the fixed Fixes: reference,
+> >
+> > Acked-by: David Sterba <dsterba@suse.com>
 > 
-> On Monday, January 9, 2023 10:08:04 PM EST Richard Guy Briggs wrote:
-> > When I use an application that expected the old API, meaning it simply
-> > does:
-> > > 
-> > > response.fd = metadata->fd;
-> > > response.response = reply;
-> > > close(metadata->fd);
-> > > write(fd, &response, sizeof(struct fanotify_response));
-> > > 
-> > > I get access denials. Every time. If the program is using the new API and
-> > > sets FAN_INFO, then it works as expected. I'll do some more testing but I
-> > > think there is something wrong in the compatibility path.
-> > 
-> > I'll have a closer look, because this wasn't the intended behaviour.
+> Hi David,
 > 
-> I have done more testing. I think what I saw might have been caused by a 
-> stale selinux label (label exists, policy is deleted). With selinux in 
-> permissive mode it's all working as expected - both old and new API.
+> I've noticed that the ext4 counterpart of this patch is in the
+> upstream tree already, whereas the affs, f2fs, hfs and hfsplus
+> versions are not.
+> Are they picked via a different tree?
 
-Ah good, thank you.
+Generally each filesystem has its own development tree.  All the information is
+in MAINTAINERS.  hfs and hfsplus are unmaintained, though.
 
-> -Steve
+Maybe try asking Andrew Morton to apply the hfs and hfsplus patches, and any
+others that don't get applied, as "maintainer of last resort".
 
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+- Eric
