@@ -2,154 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 73714665633
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jan 2023 09:34:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E860B665729
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jan 2023 10:17:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S238426AbjAKIdt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Jan 2023 03:33:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48362 "EHLO
+        id S238492AbjAKJRM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Jan 2023 04:17:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50762 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231889AbjAKIdJ (ORCPT
+        with ESMTP id S238487AbjAKJQl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Jan 2023 03:33:09 -0500
-Received: from out30-6.freemail.mail.aliyun.com (out30-6.freemail.mail.aliyun.com [115.124.30.6])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6FCCD109;
-        Wed, 11 Jan 2023 00:32:14 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R161e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VZMeLr-_1673425925;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VZMeLr-_1673425925)
-          by smtp.aliyun-inc.com;
-          Wed, 11 Jan 2023 16:32:06 +0800
-From:   Jingbo Xu <jefflexu@linux.alibaba.com>
-To:     xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org
-Cc:     huyue2@coolpad.com, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 7/7] erofs: introduce 'sharecache' mount option
-Date:   Wed, 11 Jan 2023 16:31:58 +0800
-Message-Id: <20230111083158.23462-8-jefflexu@linux.alibaba.com>
-X-Mailer: git-send-email 2.19.1.6.gb485710b
-In-Reply-To: <20230111083158.23462-1-jefflexu@linux.alibaba.com>
-References: <20230111083158.23462-1-jefflexu@linux.alibaba.com>
+        Wed, 11 Jan 2023 04:16:41 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CB8878FC6;
+        Wed, 11 Jan 2023 01:13:23 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 8DA92B81ACE;
+        Wed, 11 Jan 2023 09:13:22 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08D5BC433D2;
+        Wed, 11 Jan 2023 09:13:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673428401;
+        bh=0WVLdCVwcdgtGPOdr929/5D8vJGUAgy4wFl12/1hm9I=;
+        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+        b=urgqz4m9ghxcuXnHzqU12VEd6UaLsrYZDk02vDVv9vIKSWf35A8VyG+3dANyFgHyk
+         hQS0KEdk32KFrcSXpuPH1qbITmgTEwcTU/FTQYRCYoEmlFxqgtka5VlU+4ePjdJUxg
+         vZIV9fh/BqF9A3QJuDPM/kM46yxQBRo+oATSNlj7aTRzaciczDHXKxwYQeu+52P/2d
+         wwRFbsrf/3MgnvaQL7RTgE5lcu18wNCYb0mYC6f7Ap230/FN3E5tNg+PZHR9X/kW1T
+         SmMs5hhu+9EqruncQaA8HJnMIHNd15liZ3m8omnPphQ3VgsKiZlY4yMT7DyRL7dxQz
+         M3LSxqXfMZawA==
+Message-ID: <e015e927-283a-2685-07b5-11b28f12e4f9@kernel.org>
+Date:   Wed, 11 Jan 2023 17:13:17 +0800
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH] proc: fix to check name length in proc_lookup_de()
+Content-Language: en-US
+To:     Alexey Dobriyan <adobriyan@gmail.com>
+Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20230110152112.1119517-1-chao@kernel.org> <Y72oBFXX6DiEh2/p@p183>
+From:   Chao Yu <chao@kernel.org>
+In-Reply-To: <Y72oBFXX6DiEh2/p@p183>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Introduce 'sharecache' mount option to enable page cache sharing in
-fscache mode.
+On 2023/1/11 2:01, Alexey Dobriyan wrote:
+> On Tue, Jan 10, 2023 at 11:21:12PM +0800, Chao Yu wrote:
+>> __proc_create() has limited dirent's max name length with 255, let's
+>> add this limitation in proc_lookup_de(), so that it can return
+>> -ENAMETOOLONG correctly instead of -ENOENT when stating a file which
+>> has out-of-range name length.
+> 
+> Both returns are correct and this is trading one errno for another.
 
-Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
----
- Documentation/filesystems/erofs.rst |  2 ++
- fs/erofs/inode.c                    |  4 ++++
- fs/erofs/internal.h                 |  4 ++++
- fs/erofs/super.c                    | 13 +++++++++++++
- 4 files changed, 23 insertions(+)
+Oh, but it looks ENOENT is a little bit ambiguity, it may indicate file name
+length is valid for procfs, but the entry is not exist.
 
-diff --git a/Documentation/filesystems/erofs.rst b/Documentation/filesystems/erofs.rst
-index 958cad2c4997..1fe38323a1bb 100644
---- a/Documentation/filesystems/erofs.rst
-+++ b/Documentation/filesystems/erofs.rst
-@@ -123,6 +123,8 @@ fsid=%s                Specify a filesystem image ID for Fscache back-end.
- domain_id=%s           Specify a domain ID for Fscache back-end.  The blob
-                        images are shared among filesystem instances in the same
-                        domain.
-+(no)sharecache         Enable page cache sharing among filesystem instances in
-+                       the same domain.
- ===================    =========================================================
- 
- Sysfs Entries
-diff --git a/fs/erofs/inode.c b/fs/erofs/inode.c
-index d3b8736fa124..31d3ab8443d1 100644
---- a/fs/erofs/inode.c
-+++ b/fs/erofs/inode.c
-@@ -262,6 +262,10 @@ static int erofs_fill_inode(struct inode *inode)
- 		inode->i_op = &erofs_generic_iops;
- 		if (erofs_inode_is_data_compressed(vi->datalayout))
- 			inode->i_fop = &generic_ro_fops;
-+#ifdef CONFIG_EROFS_FS_ONDEMAND
-+		else if (erofs_can_share_page(inode))
-+			inode->i_fop = &erofs_fscache_share_file_fops;
-+#endif
- 		else
- 			inode->i_fop = &erofs_file_fops;
- 		break;
-diff --git a/fs/erofs/internal.h b/fs/erofs/internal.h
-index adf6be08b47c..c3ac6d613eb1 100644
---- a/fs/erofs/internal.h
-+++ b/fs/erofs/internal.h
-@@ -181,6 +181,7 @@ struct erofs_sb_info {
- #define EROFS_MOUNT_POSIX_ACL		0x00000020
- #define EROFS_MOUNT_DAX_ALWAYS		0x00000040
- #define EROFS_MOUNT_DAX_NEVER		0x00000080
-+#define EROFS_MOUNT_SHARE_CACHE		0x00000100
- 
- #define clear_opt(opt, option)	((opt)->mount_opt &= ~EROFS_MOUNT_##option)
- #define set_opt(opt, option)	((opt)->mount_opt |= EROFS_MOUNT_##option)
-@@ -373,6 +374,9 @@ static inline bool erofs_can_share_page(struct inode *inode)
- 	struct erofs_inode *vi = EROFS_I(inode);
- 	struct erofs_sb_info *sbi = EROFS_SB(inode->i_sb);
- 
-+	if (!test_opt(&sbi->opt, SHARE_CACHE))
-+		return false;
-+
- 	/* enable page cache sharing only in share domain mode */
- 	if (!erofs_is_fscache_mode(inode->i_sb) || !sbi->domain_id)
- 		return false;
-diff --git a/fs/erofs/super.c b/fs/erofs/super.c
-index 835b69c9511b..d05346d34ed8 100644
---- a/fs/erofs/super.c
-+++ b/fs/erofs/super.c
-@@ -456,6 +456,7 @@ enum {
- 	Opt_device,
- 	Opt_fsid,
- 	Opt_domain_id,
-+	Opt_sharecache,
- 	Opt_err
- };
- 
-@@ -482,6 +483,7 @@ static const struct fs_parameter_spec erofs_fs_parameters[] = {
- 	fsparam_string("device",	Opt_device),
- 	fsparam_string("fsid",		Opt_fsid),
- 	fsparam_string("domain_id",	Opt_domain_id),
-+	fsparam_flag_no("sharecache",	Opt_sharecache),
- 	{}
- };
- 
-@@ -590,9 +592,16 @@ static int erofs_fc_parse_param(struct fs_context *fc,
- 		if (!ctx->domain_id)
- 			return -ENOMEM;
- 		break;
-+	case Opt_sharecache:
-+		if (result.boolean)
-+			set_opt(&ctx->opt, SHARE_CACHE);
-+		else
-+			clear_opt(&ctx->opt, SHARE_CACHE);
-+		break;
- #else
- 	case Opt_fsid:
- 	case Opt_domain_id:
-+	case Opt_sharecache:
- 		errorfc(fc, "%s option not supported", erofs_fs_parameters[opt].name);
- 		break;
- #endif
-@@ -1108,6 +1117,10 @@ static int erofs_show_options(struct seq_file *seq, struct dentry *root)
- 		seq_printf(seq, ",fsid=%s", sbi->fsid);
- 	if (sbi->domain_id)
- 		seq_printf(seq, ",domain_id=%s", sbi->domain_id);
-+	if (test_opt(opt, SHARE_CACHE))
-+		seq_puts(seq, ",sharecache");
-+	else
-+		seq_puts(seq, ",nosharecache");
- #endif
- 	return 0;
- }
--- 
-2.19.1.6.gb485710b
+This change is trying to make lookup logic keeping align w/ most other
+filesystems' behavior. Also it can avoid running into unneeded lookup logic
+in proc_lookup_de() for such ENAMETOOLONG case.
 
+How do you think? :)
+
+Thanks,
+
+> 
+>> --- a/fs/proc/generic.c
+>> +++ b/fs/proc/generic.c
+>> @@ -246,6 +246,9 @@ struct dentry *proc_lookup_de(struct inode *dir, struct dentry *dentry,
+>>   {
+>>   	struct inode *inode;
+>>   
+>> +	if (dentry->d_name.len > PROC_NAME_LEN)
+>> +		return ERR_PTR(-ENAMETOOLONG);
