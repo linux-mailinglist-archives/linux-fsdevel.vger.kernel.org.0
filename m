@@ -2,155 +2,120 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 77B876653BF
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jan 2023 06:37:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 86D4666550D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jan 2023 08:15:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236100AbjAKFhL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Jan 2023 00:37:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44950 "EHLO
+        id S235452AbjAKHPp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Jan 2023 02:15:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35888 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229814AbjAKFgg (ORCPT
+        with ESMTP id S231599AbjAKHPn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Jan 2023 00:36:36 -0500
-Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4EAE813D0B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 21:25:47 -0800 (PST)
-Received: by mail-pj1-x102c.google.com with SMTP id b9-20020a17090a7ac900b00226ef160dcaso14166510pjl.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 21:25:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance-com.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zIpHcwHuLOh4SwnFnBbeF8LhMIZd7B1uohTZsNHDUqE=;
-        b=lSpQZ5Nl1oGZSNpIMCryP8PrFoR67A6GlkkwW9vZo8CD5btOX8PPc93muHthaWNoKy
-         D7CXmW0L+PtqlbTMaYsKksxeEXV2J8Jtlorc6bsUuGpLizxf7K7risMkBcP7+WH8b4d9
-         cmYK91t3GBHw7IxZT/XQM/4Bv0vbcGPGoMvsNB167guolV2JvVEHqur5YyX67Zk2uC+5
-         9iNih8DPSpq0lJeRqR3bo99I4HxVwMdBli9ioY5G6clMrBrOWbm53/xq9j/SZtwlfpgh
-         SLY8jNvHJbxEAnHLYa/sF6JQItsls4Pvnu846zRgjyotBkLOpjMHwXFe+ZI6VsWsBBNZ
-         bOCg==
+        Wed, 11 Jan 2023 02:15:43 -0500
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1F54562EC
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 23:15:42 -0800 (PST)
+Received: by mail-io1-f71.google.com with SMTP id be25-20020a056602379900b006f166af94d6so8429822iob.8
+        for <linux-fsdevel@vger.kernel.org>; Tue, 10 Jan 2023 23:15:42 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zIpHcwHuLOh4SwnFnBbeF8LhMIZd7B1uohTZsNHDUqE=;
-        b=gsQ1xylWfCnB6L8kXfhu/Ix/D1f0J0Jg0BC8C0NQvkZV9yruTmm5GV6aYIoGyO0un0
-         tZ5WHJ87+C/OZcRfKz3MI0m6oQUPegork5Jd5VeYEd6Llktj1bxn/3wGNZJWYz1AAFt7
-         tyx3PLbPj72zcW9vn+sPbGaZgNe3JZBtAueydwfoB2RVMBQ9Fqy9Uas7JRYvOzDivpcl
-         tYFToWKCSHyqkxGQF05yU4PmdB9coXhCymSmtu5msBoYj1i+cpNG0DEagIXQVJsbcEOE
-         Y6kM3eG1E1R15OGw93cDPZ9OF9NOHBxmL5LO2aWqQ4FoLOknVujl8UC9KCRuYPDLdTb5
-         5M6A==
-X-Gm-Message-State: AFqh2ko7SqBwJUQjb1/P5sMaTu7NsKX5qf0o+NoS1k84pCLGGtxHOuLc
-        D/GjGfoNgAAgNdQQEy3vx0+oUA==
-X-Google-Smtp-Source: AMrXdXvB7/2u85kjEwGxlcNYhbcb8dmOh3QsdpsZJEqb49naEuncdonDNg0WEQwkdPL58RcJMt18ZA==
-X-Received: by 2002:a17:902:9a0b:b0:189:d3dc:a9c4 with SMTP id v11-20020a1709029a0b00b00189d3dca9c4mr65777152plp.36.1673414746818;
-        Tue, 10 Jan 2023 21:25:46 -0800 (PST)
-Received: from C02G705SMD6V.bytedance.net ([61.213.176.10])
-        by smtp.gmail.com with ESMTPSA id l10-20020a170903244a00b0019334350ce6sm4934520pls.244.2023.01.10.21.25.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Jan 2023 21:25:46 -0800 (PST)
-From:   Jia Zhu <zhujia.zj@bytedance.com>
-To:     dhowells@redhat.com
-Cc:     linux-cachefs@redhat.com, linux-erofs@lists.ozlabs.org,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jia Zhu <zhujia.zj@bytedance.com>,
-        Gao Xiang <hsiangkao@linux.alibaba.com>,
-        Xin Yin <yinxin.x@bytedance.com>,
-        Jingbo Xu <jefflexu@linux.alibaba.com>
-Subject: [PATCH V4 5/5] cachefiles: add restore command to recover inflight ondemand read requests
-Date:   Wed, 11 Jan 2023 13:25:15 +0800
-Message-Id: <20230111052515.53941-6-zhujia.zj@bytedance.com>
-X-Mailer: git-send-email 2.37.1 (Apple Git-137.1)
-In-Reply-To: <20230111052515.53941-1-zhujia.zj@bytedance.com>
-References: <20230111052515.53941-1-zhujia.zj@bytedance.com>
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=k71p3Hh+VynGVOtf9V5gHEyYU8zX4tMeLYm1AflC7xk=;
+        b=1AY88C8nZfqfspVs9P3TquCwAv2oYbQUyUNRKV9rg8tPDO1viDW5Ongr8dzcyrQRJR
+         DTUwaYJrDZkEyC1aqlP97cmTUY1ZCOm1LvdghwPmy9YeOsPPJ8PcNSva3ExbHioVDS60
+         K7+rek3wXV8yq12gVXuge9yLSTbrQJtgXY4anqZv8PbmvHoc/j62Ee+RWZna5RVHYSOY
+         HA/wcpY2bNjOmp8uLXolGEAsEQhTmdmbto1zXLUuX7gXu8koDD0EhaYR3b6k0lSTR15K
+         Bgk9SZJCZw4dvKf8na/W8o6QBv36BRIz7fPZhzBDuGaCa1MpCowtf+XjubQZtG1SU3+c
+         aurA==
+X-Gm-Message-State: AFqh2krsgBBiTtNuvGRQYuncGpbjbuYNTrve0LNvvKW9PEMDNwi3DiGl
+        kIw09kTghn8u/M6X6gBi6WLSA124gY5NBh8jE/lCW+SE4m8R
+X-Google-Smtp-Source: AMrXdXtV2XxbIvW3wAbBI8rgzNWEv3d9HLnh+Z455xSJTRdsDdjhRUQSkX059Ywzi/cepv7HGE7q22gbXlGFAwUOMyiW/GUCc2Qh
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6638:52d:b0:38a:8db5:664 with SMTP id
+ j13-20020a056638052d00b0038a8db50664mr7961852jar.196.1673421341455; Tue, 10
+ Jan 2023 23:15:41 -0800 (PST)
+Date:   Tue, 10 Jan 2023 23:15:41 -0800
+In-Reply-To: <000000000000a0d7f305eecfcbb9@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000009dfa9805f1f7c43f@google.com>
+Subject: Re: [syzbot] [vfs?] [ntfs3?] WARNING in path_openat
+From:   syzbot <syzbot+be8872fcb764bf9fea73@syzkaller.appspotmail.com>
+To:     almaz.alexandrovich@paragon-software.com,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        ntfs3@lists.linux.dev, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Previously, in ondemand read scenario, if the anonymous fd was closed by
-user daemon, inflight and subsequent read requests would return EIO.
-As long as the device connection is not released, user daemon can hold
-and restore inflight requests by setting the request flag to
-CACHEFILES_REQ_NEW.
+syzbot has found a reproducer for the following issue on:
 
-Suggested-by: Gao Xiang <hsiangkao@linux.alibaba.com>
-Signed-off-by: Jia Zhu <zhujia.zj@bytedance.com>
-Signed-off-by: Xin Yin <yinxin.x@bytedance.com>
-Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
----
- fs/cachefiles/daemon.c   |  1 +
- fs/cachefiles/internal.h |  3 +++
- fs/cachefiles/ondemand.c | 23 +++++++++++++++++++++++
- 3 files changed, 27 insertions(+)
+HEAD commit:    40c18f363a08 Merge tag '6.2-rc3-ksmbd-server-fixes' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14a30e1c480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ebc110f9741920ed
+dashboard link: https://syzkaller.appspot.com/bug?extid=be8872fcb764bf9fea73
+compiler:       Debian clang version 13.0.1-++20220126092033+75e33f71c2da-1~exp1~20220126212112.63, GNU ld (GNU Binutils for Debian) 2.35.2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1505b0ce480000
 
-diff --git a/fs/cachefiles/daemon.c b/fs/cachefiles/daemon.c
-index b8d8f280fb7a..5d9ec62cdd5e 100644
---- a/fs/cachefiles/daemon.c
-+++ b/fs/cachefiles/daemon.c
-@@ -77,6 +77,7 @@ static const struct cachefiles_daemon_cmd cachefiles_daemon_cmds[] = {
- 	{ "tag",	cachefiles_daemon_tag		},
- #ifdef CONFIG_CACHEFILES_ONDEMAND
- 	{ "copen",	cachefiles_ondemand_copen	},
-+	{ "restore",	cachefiles_ondemand_restore	},
- #endif
- 	{ "",		NULL				}
- };
-diff --git a/fs/cachefiles/internal.h b/fs/cachefiles/internal.h
-index 3d94990a8b38..e1f8bd47a315 100644
---- a/fs/cachefiles/internal.h
-+++ b/fs/cachefiles/internal.h
-@@ -301,6 +301,9 @@ extern ssize_t cachefiles_ondemand_daemon_read(struct cachefiles_cache *cache,
- extern int cachefiles_ondemand_copen(struct cachefiles_cache *cache,
- 				     char *args);
- 
-+extern int cachefiles_ondemand_restore(struct cachefiles_cache *cache,
-+					char *args);
-+
- extern int cachefiles_ondemand_init_object(struct cachefiles_object *object);
- extern void cachefiles_ondemand_clean_object(struct cachefiles_object *object);
- 
-diff --git a/fs/cachefiles/ondemand.c b/fs/cachefiles/ondemand.c
-index 8e7f8c152a5b..711b47448c85 100644
---- a/fs/cachefiles/ondemand.c
-+++ b/fs/cachefiles/ondemand.c
-@@ -182,6 +182,29 @@ int cachefiles_ondemand_copen(struct cachefiles_cache *cache, char *args)
- 	return ret;
- }
- 
-+int cachefiles_ondemand_restore(struct cachefiles_cache *cache, char *args)
-+{
-+	struct cachefiles_req *req;
-+
-+	XA_STATE(xas, &cache->reqs, 0);
-+
-+	if (!test_bit(CACHEFILES_ONDEMAND_MODE, &cache->flags))
-+		return -EOPNOTSUPP;
-+
-+	/*
-+	 * Reset the requests to CACHEFILES_REQ_NEW state, so that the
-+	 * requests have been processed halfway before the crash of the
-+	 * user daemon could be reprocessed after the recovery.
-+	 */
-+	xas_lock(&xas);
-+	xas_for_each(&xas, req, ULONG_MAX)
-+		xas_set_mark(&xas, CACHEFILES_REQ_NEW);
-+	xas_unlock(&xas);
-+
-+	wake_up_all(&cache->daemon_pollwq);
-+	return 0;
-+}
-+
- static int cachefiles_ondemand_get_fd(struct cachefiles_req *req)
- {
- 	struct cachefiles_object *object;
--- 
-2.20.1
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/4b974f49dd49/disk-40c18f36.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/8d735ca0c438/vmlinux-40c18f36.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6aeef3d597b4/bzImage-40c18f36.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/e9ddd28ad880/mount_0.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+be8872fcb764bf9fea73@syzkaller.appspotmail.com
+
+DEBUG_RWSEMS_WARN_ON((rwsem_owner(sem) != current) && !rwsem_test_oflags(sem, RWSEM_NONSPINNABLE)): count = 0x0, magic = 0xffff88806a1ef1d0, owner = 0x0, curr 0xffff88802561ba80, list empty
+WARNING: CPU: 1 PID: 10307 at kernel/locking/rwsem.c:1361 __up_write kernel/locking/rwsem.c:1360 [inline]
+WARNING: CPU: 1 PID: 10307 at kernel/locking/rwsem.c:1361 up_write+0x4f9/0x580 kernel/locking/rwsem.c:1615
+Modules linked in:
+CPU: 1 PID: 10307 Comm: syz-executor.5 Not tainted 6.2.0-rc3-syzkaller-00014-g40c18f363a08 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+RIP: 0010:__up_write kernel/locking/rwsem.c:1360 [inline]
+RIP: 0010:up_write+0x4f9/0x580 kernel/locking/rwsem.c:1615
+Code: c7 00 ad ed 8a 48 c7 c6 a0 af ed 8a 48 8b 54 24 28 48 8b 4c 24 18 4d 89 e0 4c 8b 4c 24 30 31 c0 53 e8 9b 59 e8 ff 48 83 c4 08 <0f> 0b e9 6b fd ff ff 48 c7 c1 98 a4 96 8e 80 e1 07 80 c1 03 38 c1
+RSP: 0018:ffffc900053ef840 EFLAGS: 00010292
+RAX: 7a73507bb1e00700 RBX: ffffffff8aedade0 RCX: ffff88802561ba80
+RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
+RBP: ffffc900053ef910 R08: ffffffff816f2c9d R09: fffff52000a7dec1
+R10: fffff52000a7dec1 R11: 1ffff92000a7dec0 R12: 0000000000000000
+R13: ffff88806a1ef1d0 R14: 1ffff92000a7df10 R15: dffffc0000000000
+FS:  00007fd23b092700(0000) GS:ffff8880b9900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555555ea4848 CR3: 000000001d10d000 CR4: 00000000003506e0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ inode_unlock include/linux/fs.h:761 [inline]
+ open_last_lookups fs/namei.c:3485 [inline]
+ path_openat+0x14ff/0x2dd0 fs/namei.c:3711
+ do_filp_open+0x264/0x4f0 fs/namei.c:3741
+ do_sys_openat2+0x124/0x4e0 fs/open.c:1310
+ do_sys_open fs/open.c:1326 [inline]
+ __do_sys_openat fs/open.c:1342 [inline]
+ __se_sys_openat fs/open.c:1337 [inline]
+ __x64_sys_openat+0x243/0x290 fs/open.c:1337
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x3d/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fd23a28c0c9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fd23b092168 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007fd23a3ac050 RCX: 00007fd23a28c0c9
+RDX: 0000000000000240 RSI: 0000000020000000 RDI: ffffffffffffff9c
+RBP: 00007fd23a2e7ae9 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 00007ffdfbd42a1f R14: 00007fd23b092300 R15: 0000000000022000
+ </TASK>
 
