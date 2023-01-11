@@ -2,54 +2,67 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 605DB665741
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jan 2023 10:21:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0ABF2665804
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jan 2023 10:49:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229793AbjAKJUp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Jan 2023 04:20:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53730 "EHLO
+        id S229823AbjAKJsV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Jan 2023 04:48:21 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46852 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S238580AbjAKJUU (ORCPT
+        with ESMTP id S238079AbjAKJre (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Jan 2023 04:20:20 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 55AEF8FC6;
-        Wed, 11 Jan 2023 01:20:13 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Wed, 11 Jan 2023 04:47:34 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 32642192AF
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jan 2023 01:44:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1673430274;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=wiP+ZFnGGkh1MiQTCARjLEk6aqI2ytHljt2h0Oi6JYo=;
+        b=dJQOVA7M04bsRfyXucBZdUZzyX9pVhLhpIz3JNay9oVPzHltxU0l/PFnU0MyP5GNIJlNZi
+        gO2oU0Y4pl8wKjkBv8ZDBugUUnLgMHzlsoVHSnaOxKDql/HeiZkRCcTzeqhNnfJOimwPHN
+        yp4RFsBDPhNHlM8+e91w3GQxH+8t/WE=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-296-eCOgJBKgNr-X-GjcO5D0ZQ-1; Wed, 11 Jan 2023 04:44:30 -0500
+X-MC-Unique: eCOgJBKgNr-X-GjcO5D0ZQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 002C4B819CB;
-        Wed, 11 Jan 2023 09:20:12 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82E71C433D2;
-        Wed, 11 Jan 2023 09:20:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673428810;
-        bh=IIpBxlU0L54DWke4zCReMXd6KogdrVXfkHzyJQ5ykD4=;
-        h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-        b=mjxlvowW9RrfOKcbOBRXfs+pO86ATZQXIAsDyv/o+87R7CjIWJqel5HdZjBYxe02k
-         FRpKzLEvrpRVsh7ANAbn738SITntjHRbKyUgKmcjnLDrBurqmmJHg+Q1PD5sNhi65H
-         /Gc6tfZHy9xGtKW4v817BHa2t4oI0qzHH5MAO1gdwsBqf0H4mrXhZcJ/ua411wob49
-         c5tDgzcA2UL0+3AFHMEds0D10vrLembhx5HV9ZVZdOMbCNITeWri26UwggKFXmA/lF
-         UG8cXHfV4k4tPGtMCBLJ4w878CQN+4jQ1gFdZ7jWFNCzRRLPUPukOSZ6nkkXucpvKh
-         LlKTp8SDQrgZQ==
-Message-ID: <0dca406a-e331-a8f7-da8d-95ba89705598@kernel.org>
-Date:   Wed, 11 Jan 2023 17:20:07 +0800
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3DF223802B83;
+        Wed, 11 Jan 2023 09:44:30 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.87])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id CEF4E40C2064;
+        Wed, 11 Jan 2023 09:44:28 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <20230110104501.11722-1-jlayton@kernel.org>
+References: <20230110104501.11722-1-jlayton@kernel.org>
+To:     Jeff Layton <jlayton@kernel.org>
+Cc:     dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Miklos Szeredi <mszeredi@redhat.com>,
+        linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-nfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] fs: remove locks_inode
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH] proc: introduce proc_statfs()
-Content-Language: en-US
-To:     Alexey Dobriyan <adobriyan@gmail.com>
-Cc:     akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-References: <20230110152003.1118777-1-chao@kernel.org> <Y72nPcDDC/+10lYK@p183>
-From:   Chao Yu <chao@kernel.org>
-In-Reply-To: <Y72nPcDDC/+10lYK@p183>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS autolearn=ham
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2265540.1673430268.1@warthog.procyon.org.uk>
+Date:   Wed, 11 Jan 2023 09:44:28 +0000
+Message-ID: <2265541.1673430268@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,40 +70,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023/1/11 1:58, Alexey Dobriyan wrote:
-> On Tue, Jan 10, 2023 at 11:20:03PM +0800, Chao Yu wrote:
->> Introduce proc_statfs() to replace simple_statfs(), so that
->> f_bsize queried from statfs() can be consistent w/ the value we
->> set in s_blocksize.
->>
->> stat -f /proc/
->>
->> Before:
->>      ID: 0        Namelen: 255     Type: proc
->> Block size: 4096       Fundamental block size: 4096
->> Blocks: Total: 0          Free: 0          Available: 0
->> Inodes: Total: 0          Free: 0
->>
->> After:
->>      ID: 0        Namelen: 255     Type: proc
->> Block size: 1024       Fundamental block size: 1024
->> Blocks: Total: 0          Free: 0          Available: 0
->> Inodes: Total: 0          Free: 0
-> 
-> 4096 is better value is in fact.
-> 
-> seq_files allocate 1 page and fill it, therefore reading less than
-> PAGE_SIZE from /proc is mostly waste of syscalls.
+Jeff Layton <jlayton@kernel.org> wrote:
 
-Ah, thanks for correcting me, so, how about updating .s_blocksize and
-.s_blocksize_bits to PAGE_SIZE and PAGE_SHIFT?
-
+> locks_inode was turned into a wrapper around file_inode in de2a4a501e71
+> (Partially revert "locks: fix file locking on overlayfs"). Finish
+> replacing locks_inode invocations everywhere with file_inode.
 > 
-> I doubt anything uses f_bsize.
-> 
-> BTW this patch is not self contained.
+> Cc: Miklos Szeredi <mszeredi@redhat.com>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
 
-Oh, yes, my bad.
-
-Thanks,
+Reviewed-by: David Howells <dhowells@redhat.com>
 
