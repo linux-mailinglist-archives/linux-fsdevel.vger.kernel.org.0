@@ -2,77 +2,106 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 58A7B665FB9
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jan 2023 16:52:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 67E2C665FEB
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jan 2023 17:02:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239364AbjAKPwF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Jan 2023 10:52:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39920 "EHLO
+        id S235307AbjAKQCg (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Jan 2023 11:02:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48666 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239517AbjAKPvm (ORCPT
+        with ESMTP id S234315AbjAKQCe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Jan 2023 10:51:42 -0500
-Received: from sender-of-o50.zoho.in (sender-of-o50.zoho.in [103.117.158.50])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F194ABF5C;
-        Wed, 11 Jan 2023 07:51:37 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; t=1673452259; cv=none; 
-        d=zohomail.in; s=zohoarc; 
-        b=PSrX0HCKrVCLkrtVReJ5AYKdUSD1N4mHXqR3vMUay8tNA3ucXtKpBMpOR6WxPA8otJHMlsntEQ8TG1ahhlYtoKwC+ZO450sHdJJqEpIAs2Z8nwgEF+beLQ2BqLame0J3HYwMrF0o/gfmQHwGeRsb9hDz4gWgBOWTzxOM0Nl5pg0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.in; s=zohoarc; 
-        t=1673452259; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To; 
-        bh=PGIYJmsvItVwa4SA21sdOFO3fDcHeL/1qxeN028mnsk=; 
-        b=eyMhoYAr+odAJELVzciivZMlgsFmbRK22iLyGCaTB/Cn7NNqDo+hX0407WLDX4XaF+mMIBgg0u1V6BSj2j0PUOAlDxMz1ugr/7bwSL1IqCXHlz5Xrby2o0PQsX+ij3rbCZRB88C4soEMM0hW07w8IFLWvDhbYfmMulAsQ25UYOE=
-ARC-Authentication-Results: i=1; mx.zohomail.in;
-        dkim=pass  header.i=siddh.me;
-        spf=pass  smtp.mailfrom=code@siddh.me;
-        dmarc=pass header.from=<code@siddh.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1673452259;
-        s=zmail; d=siddh.me; i=code@siddh.me;
-        h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-        bh=PGIYJmsvItVwa4SA21sdOFO3fDcHeL/1qxeN028mnsk=;
-        b=Ldw/S6p8e7XH0d1wzBSmbkO8qE4BHtjwMOP7jgXqrfstlWE6rgQJriZbbnykliGV
-        cG7dWpu9xRNMl9w2fPE9y+uJT26cqk+fNagnOdVLvTq6ezfUzbayFqZbqJ5K4F6ufwR
-        hHDv/MgDWlEA4/v4sY7RybGO8mChGrtkooLXLnb0=
-Received: from mail.zoho.in by mx.zoho.in
-        with SMTP id 1673452248793661.4780019008354; Wed, 11 Jan 2023 21:20:48 +0530 (IST)
-Date:   Wed, 11 Jan 2023 21:20:48 +0530
-From:   Siddh Raman Pant <code@siddh.me>
-To:     "David Howells" <dhowells@redhat.com>
-Cc:     "mauro carvalho chehab" <mchehab@kernel.org>,
-        "randy dunlap" <rdunlap@infradead.org>,
-        "jonathan corbet" <corbet@lwn.net>,
-        "fabio m. de francesco" <fmdefrancesco@gmail.com>,
-        "eric dumazet" <edumazet@google.com>,
-        "christophe jaillet" <christophe.jaillet@wanadoo.fr>,
-        "eric biggers" <ebiggers@kernel.org>,
-        "keyrings" <keyrings@vger.kernel.org>,
-        "linux-security-module" <linux-security-module@vger.kernel.org>,
-        "linux-fsdevel" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel" <linux-kernel@vger.kernel.org>
-Message-ID: <185a186decb.743a09083686.6444154356172170497@siddh.me>
-In-Reply-To: <2430913.1673452085@warthog.procyon.org.uk>
-References: <1859d17668d.7b9d5469421579.5464668634216421773@siddh.me> <97ce37e2fdcfbed29d9467057f0f870359d88b89.1673173920.git.code@siddh.me> <cover.1673173920.git.code@siddh.me> <2121105.1673359772@warthog.procyon.org.uk> <2430913.1673452085@warthog.procyon.org.uk>
-Subject: Re: [PATCH v3 1/2] include/linux/watch_queue: Improve documentation
+        Wed, 11 Jan 2023 11:02:34 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 61190DFAD;
+        Wed, 11 Jan 2023 08:02:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=efDFlg+yOf7f+QHekxkFqaFu7IzDmipcTvP18voo0xg=; b=nHk3+6DFrTjYJgpsa2PRe+SndN
+        2Myzd1x/o3p9Pf7L2wTiQNAjYFoax1Rq7pyfPXMbw0+iibH4f2SjU/FFASPVl2Y7+tIcleGBq1ONa
+        HEfgv4sHB4WpSnbp8RavAMELKr7lyo4S0QJL/EggtAPGXCZ7drhgOI2Y/Xx4R/CpwCIcojqCXo4C+
+        kzXs3CT6dO/uEAnekZMwqoKpSisDWZP+EX+gFcdMYcIwUmAG8QEJhVelh/ChTqzzQ5gzVOfccpiOi
+        ssEUOomxggY4Wi6+/yxcp7htPEH9xvxTVsv0E6GN6RitOxAJWq3irOOes+P/s6OQ6umf5d8E1usGP
+        2vn6PKYw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pFdYY-001KCi-12;
+        Wed, 11 Jan 2023 16:02:26 +0000
+Date:   Wed, 11 Jan 2023 16:02:26 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Jeff Moyer <jmoyer@redhat.com>
+Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Benjamin LaHaise <bcrl@kvack.org>, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>,
+        Ira Weiny <ira.weiny@intel.com>
+Subject: Re: [PATCH v2] fs/aio: Replace kmap{,_atomic}() with
+ kmap_local_page()
+Message-ID: <Y77dkghufF6GVq1Y@ZenIV>
+References: <20230109175629.9482-1-fmdefrancesco@gmail.com>
+ <Y73+xKXDELSd14p1@ZenIV>
+ <x498ri9ma5n.fsf@segfault.boston.devel.redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <x498ri9ma5n.fsf@segfault.boston.devel.redhat.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, 11 Jan 2023 21:18:05 +0530, David Howells wrote:
-> Can you repost it without the first patch being present?
+On Wed, Jan 11, 2023 at 09:13:40AM -0500, Jeff Moyer wrote:
+> Hi, Al,
+> 
+> Al Viro <viro@zeniv.linux.org.uk> writes:
+> 
+> > On Mon, Jan 09, 2023 at 06:56:29PM +0100, Fabio M. De Francesco wrote:
+> >
+> >> -	ring = kmap_atomic(ctx->ring_pages[0]);
+> >> +	ring = kmap_local_page(ctx->ring_pages[0]);
+> >>  	ring->nr = nr_events;	/* user copy */
+> >>  	ring->id = ~0U;
+> >>  	ring->head = ring->tail = 0;
+> >> @@ -575,7 +575,7 @@ static int aio_setup_ring(struct kioctx *ctx, unsigned int nr_events)
+> >>  	ring->compat_features = AIO_RING_COMPAT_FEATURES;
+> >>  	ring->incompat_features = AIO_RING_INCOMPAT_FEATURES;
+> >>  	ring->header_length = sizeof(struct aio_ring);
+> >> -	kunmap_atomic(ring);
+> >> +	kunmap_local(ring);
+> >>  	flush_dcache_page(ctx->ring_pages[0]);
+> >
+> > I wonder if it would be more readable as memcpy_to_page(), actually...
+> 
+> I'm not sure I understand what you're suggesting.
 
-Sure.
+	memcpy_to_page(ctx->ring_pages[0], 0, &(struct aio_ring){
+			.nr = nr_events, .id = ~0U, .magic = AIO_RING_MAGIC,
+			.compat_features = AIO_RING_COMPAT_FEATURES,
+			.in_compat_features = AIO_RING_INCOMPAT_FEATURES,
+			.header_length = sizeof(struct aio_ring)},
+			sizeof(struct aio_ring));
 
-Thanks,
-Siddh 
- 
+instead of the lines from kmap_atomic to flush_dcache_page...
+
+> 
+> >>  
+> >>  	return 0;
+> >> @@ -678,9 +678,9 @@ static int ioctx_add_table(struct kioctx *ctx, struct mm_struct *mm)
+> >>  					 * we are protected from page migration
+> >>  					 * changes ring_pages by ->ring_lock.
+> >>  					 */
+> >> -					ring = kmap_atomic(ctx->ring_pages[0]);
+> >> +					ring = kmap_local_page(ctx->ring_pages[0]);
+> >>  					ring->id = ctx->id;
+> >> -					kunmap_atomic(ring);
+> >> +					kunmap_local(ring);
+> >
+> > Incidentally, does it need flush_dcache_page()?
+> 
+> Yes, good catch.
