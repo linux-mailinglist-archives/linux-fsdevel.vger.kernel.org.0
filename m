@@ -2,30 +2,30 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2975E66562F
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jan 2023 09:32:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 55263665630
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 11 Jan 2023 09:33:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236136AbjAKIcm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Jan 2023 03:32:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48110 "EHLO
+        id S236182AbjAKIcn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Jan 2023 03:32:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48150 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230074AbjAKIcP (ORCPT
+        with ESMTP id S236015AbjAKIcP (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Wed, 11 Jan 2023 03:32:15 -0500
 Received: from out30-7.freemail.mail.aliyun.com (out30-7.freemail.mail.aliyun.com [115.124.30.7])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E804EBC9F;
-        Wed, 11 Jan 2023 00:32:07 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R721e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VZMek6i_1673425922;
-Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VZMek6i_1673425922)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 33C353897;
+        Wed, 11 Jan 2023 00:32:08 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R811e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046056;MF=jefflexu@linux.alibaba.com;NM=1;PH=DS;RN=6;SR=0;TI=SMTPD_---0VZMek7P_1673425923;
+Received: from localhost(mailfrom:jefflexu@linux.alibaba.com fp:SMTPD_---0VZMek7P_1673425923)
           by smtp.aliyun-inc.com;
-          Wed, 11 Jan 2023 16:32:03 +0800
+          Wed, 11 Jan 2023 16:32:04 +0800
 From:   Jingbo Xu <jefflexu@linux.alibaba.com>
 To:     xiang@kernel.org, chao@kernel.org, linux-erofs@lists.ozlabs.org
 Cc:     huyue2@coolpad.com, linux-kernel@vger.kernel.org,
         linux-fsdevel@vger.kernel.org
-Subject: [PATCH v2 4/7] erofs: implement .read_iter for page cache sharing
-Date:   Wed, 11 Jan 2023 16:31:55 +0800
-Message-Id: <20230111083158.23462-5-jefflexu@linux.alibaba.com>
+Subject: [PATCH v2 5/7] erofs: implement .mmap for page cache sharing
+Date:   Wed, 11 Jan 2023 16:31:56 +0800
+Message-Id: <20230111083158.23462-6-jefflexu@linux.alibaba.com>
 X-Mailer: git-send-email 2.19.1.6.gb485710b
 In-Reply-To: <20230111083158.23462-1-jefflexu@linux.alibaba.com>
 References: <20230111083158.23462-1-jefflexu@linux.alibaba.com>
@@ -41,74 +41,66 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-When page cache sharing enabled, page caches are managed in the address
-space of blobs rather than erofs inodes.  All erofs inodes sharing one
-chunk will refer to and share the page cache in the blob's address
-space.
+In mmap(2), replace vma->vm_file with the anonymous file associated with
+the blob, so that the vma will be linked to the address_space of the
+blob.
+
+One thing worth noting is that, we return error early in mmap(2) if
+users attempt to map beyond the file size.  Normally filesystems won't
+restrict this in mmap(2).  The checking is done in the fault handler,
+and SIGBUS will be signaled to users if they actually attempt to access
+the area beyond the end of the file.  However since vma->vm_file has
+been changed to the anonymous file in mmap(2), we can no way derive the
+file size of the original file.  As file size is immutable in ro
+filesystem, let's fail early in mmap(2) in this case.
 
 Signed-off-by: Jingbo Xu <jefflexu@linux.alibaba.com>
 ---
- fs/erofs/fscache.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ fs/erofs/fscache.c | 31 +++++++++++++++++++++++++++++++
+ 1 file changed, 31 insertions(+)
 
 diff --git a/fs/erofs/fscache.c b/fs/erofs/fscache.c
-index f715b3efcc77..4075d9519a7d 100644
+index 4075d9519a7d..e3a65041c9b8 100644
 --- a/fs/erofs/fscache.c
 +++ b/fs/erofs/fscache.c
-@@ -384,8 +384,56 @@ static int erofs_fscache_share_file_open(struct inode *inode, struct file *filp)
- 	return 0;
+@@ -431,9 +431,40 @@ static ssize_t erofs_fscache_share_file_read_iter(struct kiocb *iocb,
+ 	return already_read ? already_read : ret;
  }
  
-+static ssize_t erofs_fscache_share_file_read_iter(struct kiocb *iocb,
-+						  struct iov_iter *to)
++vm_fault_t erofs_fscache_share_fault(struct vm_fault *vmf)
 +{
-+	struct file *filp = iocb->ki_filp;
-+	struct inode *inode = file_inode(filp);
-+	struct file *realfile = filp->private_data;
-+	struct inode *realinode = file_inode(realfile);
++	struct file *realfile = vmf->vma->vm_file;
 +	struct erofs_fscache_share_file_info *finfo = realfile->private_data;
-+	ssize_t already_read = 0;
-+	int ret = 0;
++	pgoff_t index = vmf->pgoff;
 +
-+	/* no need taking (shared) inode lock since it's a ro filesystem */
-+	if (!iov_iter_count(to))
-+		return 0;
++	if (unlikely(index >= finfo->max_idx))
++		return VM_FAULT_SIGBUS;
 +
-+	if (IS_DAX(inode) || iocb->ki_flags & IOCB_DIRECT)
-+		return -EOPNOTSUPP;
++	return filemap_fault(vmf);
++}
 +
-+	do {
-+		struct folio *folio;
-+		size_t bytes, copied, offset, fsize;
-+		pgoff_t index = (finfo->pa + iocb->ki_pos) >> PAGE_SHIFT;
++static const struct vm_operations_struct erofs_fscache_share_file_vm_ops = {
++	.fault = erofs_fscache_share_fault,
++};
 +
-+		folio = read_cache_folio(realinode->i_mapping, index, NULL, NULL);
-+		if (IS_ERR(folio)) {
-+			ret = PTR_ERR(folio);
-+			break;
-+		}
++static int erofs_fscache_share_file_mmap(struct file *file,
++					 struct vm_area_struct *vma)
++{
++	struct file *realfile = file->private_data;
++	struct erofs_fscache_share_file_info *finfo = realfile->private_data;
 +
-+		fsize = folio_size(folio);
-+		offset = iocb->ki_pos & (fsize - 1);
-+		bytes = min_t(size_t, inode->i_size - iocb->ki_pos, iov_iter_count(to));
-+		bytes = min_t(size_t, bytes, fsize - offset);
-+		copied = copy_folio_to_iter(folio, offset, bytes, to);
-+		folio_put(folio);
-+		iocb->ki_pos += copied;
-+		already_read += copied;
-+		if (copied < bytes) {
-+			ret = -EFAULT;
-+			break;
-+		}
-+	} while (iov_iter_count(to) && iocb->ki_pos < inode->i_size);
++	vma_set_file(vma, realfile);
++	vma->vm_pgoff = (finfo->pa >> PAGE_SHIFT) + vma->vm_pgoff;
++	vma->vm_ops = &erofs_fscache_share_file_vm_ops;
 +
-+	file_accessed(filp);
-+	return already_read ? already_read : ret;
++	file_accessed(file);
++	return 0;
 +}
 +
  const struct file_operations erofs_fscache_share_file_fops = {
  	.llseek		= generic_file_llseek,
-+	.read_iter	= erofs_fscache_share_file_read_iter,
+ 	.read_iter	= erofs_fscache_share_file_read_iter,
++	.mmap		= erofs_fscache_share_file_mmap,
  	.open		= erofs_fscache_share_file_open,
  	.release	= erofs_fscache_share_file_release,
  };
