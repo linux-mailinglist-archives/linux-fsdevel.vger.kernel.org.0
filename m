@@ -2,63 +2,56 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 110F4668594
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jan 2023 22:37:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0EF806685BB
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jan 2023 22:44:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240323AbjALVhq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Jan 2023 16:37:46 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33022 "EHLO
+        id S240801AbjALVoc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Jan 2023 16:44:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39246 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233851AbjALVhN (ORCPT
+        with ESMTP id S240997AbjALVnw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Jan 2023 16:37:13 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4DF761A22D
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jan 2023 13:28:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673558931;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         references:references; bh=Af/YXShLP9oV7U9zc/OSq6LcFZD/5nvdb67AvzkpNZw=;
-        b=BspB6qrhdmUETbSiyAzpqTYgrIjY42Gutlpvl4nW1HZG6B7KZAMD90Pmf2R4sYwN2GzY+v
-        UI1U1q/Lx4e+Vd7Fki9pOhBvc+0rs7I8x6waj0qkqkACk0jI5NPWLqer+SYAqtsJfCa32w
-        69Nez8H3xECyLQ3UyL9+HDzUmPiIy1c=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-173-UXvouLztN1S1kxB7G1LSCg-1; Thu, 12 Jan 2023 16:28:47 -0500
-X-MC-Unique: UXvouLztN1S1kxB7G1LSCg-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3C36E1815CF2;
-        Thu, 12 Jan 2023 21:28:47 +0000 (UTC)
-Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id CD2A140C2064;
-        Thu, 12 Jan 2023 21:28:46 +0000 (UTC)
-From:   Jeff Moyer <jmoyer@redhat.com>
-To:     Seth Jenkins <sethjenkins@google.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Pavel Emelyanov <xemul@parallels.com>, stable@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] aio: fix mremap after fork null-deref
-References: <20221104212519.538108-1-sethjenkins@google.com>
-        <x49tu0wlv0c.fsf@segfault.boston.devel.redhat.com>
-        <CALxfFW5d05H-nFuDdUDS4xVDKMgkV1vvEBAmw10h3-jMVb-PZw@mail.gmail.com>
-X-PGP-KeyID: 1F78E1B4
-X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
-Date:   Thu, 12 Jan 2023 16:32:42 -0500
-Message-ID: <x49ilhbl9qd.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Thu, 12 Jan 2023 16:43:52 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 02DE550F59;
+        Thu, 12 Jan 2023 13:36:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ZfduQZL3IipZOIkF4Xgr0mmrYNl5QDr/+4i3sr5yPPM=; b=VSyLSFkrZgZTtY1H+J7yxFySLS
+        33aG2/Gw3EE6z5TAtaH3HmstkAHm5A+8I9CerB8yz+myRTUTmOwJW+Ov+xoDnrqPxqJ1ab1kDrwuV
+        EOxOOWeX3kwBU7wvfA09bfHrkIkZz6YmbNot5uCJtmMLGUj7qinB79/SDGpUDRz9X0Ph0LjOzdS4r
+        VCswVD3Nhus7wE+4Fld3A8b1EME2jNeEZpbQJoLRX2scozFw7bFnX2X/c8MnHPAluWIfFKgJc+zKE
+        fnFuY7phwZ6+K9l7ylohGtJUPwOzRdaOOn4GXY6oZ0RM0EQHlGmDu7+HWpsHpNHfMkJluKJ7i8yKn
+        +Hv8pkEQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pG5Fe-001YzP-17;
+        Thu, 12 Jan 2023 21:36:46 +0000
+Date:   Thu, 12 Jan 2023 21:36:46 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/9] iov_iter: Add a function to extract a page list
+ from an iterator
+Message-ID: <Y8B9bvh3Mjed8EBc@ZenIV>
+References: <167344725490.2425628.13771289553670112965.stgit@warthog.procyon.org.uk>
+ <167344728530.2425628.9613910866466387722.stgit@warthog.procyon.org.uk>
+ <Y8B4hpF5czsk7pK1@ZenIV>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y8B4hpF5czsk7pK1@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,117 +59,28 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi, Seth,
+On Thu, Jan 12, 2023 at 09:15:50PM +0000, Al Viro wrote:
+> On Wed, Jan 11, 2023 at 02:28:05PM +0000, David Howells wrote:
+> 
+> > +ssize_t iov_iter_extract_pages(struct iov_iter *i,
+> > +			       struct page ***pages,
+> > +			       size_t maxsize,
+> > +			       unsigned int maxpages,
+> > +			       unsigned int gup_flags,
+> > +			       size_t *offset0,
+> > +			       unsigned int *cleanup_mode)
+> 
+> This cleanup_mode thing is wrong.  It's literally a trivial
+> function of ->user_backed and ->data_source - we don't
+> even need to look at the ->type.
+> 
+> Separate it into an inline helper and be done with that;
+> don't carry it all over the place.
+> 
+> It's really "if not user-backed => 0, otherwise it's FOLL_PIN or FOLL_GET,
+> depending upon the direction".
 
-Seth Jenkins <sethjenkins@google.com> writes:
-
->> I wonder if it would be better to not copy the ring mapping on fork.
->> Something like the below?  I think that would be more in line with
->> expectations (the ring isn't available in the child process).
->
-> I like this idea a lot, but would this be viewed as subtly changing
-> the userland to kernel interface?
-
-Yes, but...
-
-The way things stand today, if you setup an io context in a process and
-then fork a child, the child will be unable to use the aio system calls
-to submit and reap I/Os.  This is because the ioctx_table was cleared
-during fork, which means that lookup_ioctx() will not find the io
-context.  However, the child still has access to the ring through the
-memory mapping.  As a result, the child can reap I/O completions
-directly from the ring.  That wasn't always the case.  The aio ring used
-to be a MAP_PRIVATE mapping.  Commit 36bc08cc0170 ("fs/aio: Add support
-to aio ring pages migration") changed it from a private to a shared
-mapping, and I'm not sure why.  (That patch was included in v3.12, so
-it's been this way for quite some time.)
-
-With the patch I proposed (flagging the ring buffer with VM_DONTCOPY),
-the child process would still be unable to submit and reap I/Os via the
-aio system calls.  What changes is that the child process would now be
-unable to reap completions via the shared ring buffer.  In fact, because
-the ring is no longer mapped in the child process, any attempt to access
-that memory would result in a segmentation fault.  However, I would be
-very surprised if the interface was being used in this way.
-
-> If we're okay with this change though, I think it makes sense.
-
-My preference is to make the interface consistent.  I think setting
-VM_DONTCOPY on the mapping is the right way forward.  I'd welcome other
-opinions on whether the potential risk is worth it.
-
-Cheers,
-Jeff
-
->
->
-> On Wed, Jan 11, 2023 at 2:37 PM Jeff Moyer <jmoyer@redhat.com> wrote:
->>
->> Hi, Seth,
->>
->> Seth Jenkins <sethjenkins@google.com> writes:
->>
->> > Commit e4a0d3e720e7 ("aio: Make it possible to remap aio ring") introduced
->> > a null-deref if mremap is called on an old aio mapping after fork as
->> > mm->ioctx_table will be set to NULL.
->> >
->> > Fixes: e4a0d3e720e7 ("aio: Make it possible to remap aio ring")
->> > Cc: stable@vger.kernel.org
->> > Signed-off-by: Seth Jenkins <sethjenkins@google.com>
->> > ---
->> >  fs/aio.c | 20 +++++++++++---------
->> >  1 file changed, 11 insertions(+), 9 deletions(-)
->> >
->> > diff --git a/fs/aio.c b/fs/aio.c
->> > index 5b2ff20ad322..74eae7de7323 100644
->> > --- a/fs/aio.c
->> > +++ b/fs/aio.c
->> > @@ -361,16 +361,18 @@ static int aio_ring_mremap(struct vm_area_struct *vma)
->> >       spin_lock(&mm->ioctx_lock);
->> >       rcu_read_lock();
->> >       table = rcu_dereference(mm->ioctx_table);
->> > -     for (i = 0; i < table->nr; i++) {
->> > -             struct kioctx *ctx;
->> > -
->> > -             ctx = rcu_dereference(table->table[i]);
->> > -             if (ctx && ctx->aio_ring_file == file) {
->> > -                     if (!atomic_read(&ctx->dead)) {
->> > -                             ctx->user_id = ctx->mmap_base = vma->vm_start;
->> > -                             res = 0;
->> > +     if (table) {
->> > +             for (i = 0; i < table->nr; i++) {
->> > +                     struct kioctx *ctx;
->> > +
->> > +                     ctx = rcu_dereference(table->table[i]);
->> > +                     if (ctx && ctx->aio_ring_file == file) {
->> > +                             if (!atomic_read(&ctx->dead)) {
->> > +                                     ctx->user_id = ctx->mmap_base = vma->vm_start;
->> > +                                     res = 0;
->> > +                             }
->> > +                             break;
->> >                       }
->> > -                     break;
->> >               }
->> >       }
->>
->> I wonder if it would be better to not copy the ring mapping on fork.
->> Something like the below?  I think that would be more in line with
->> expectations (the ring isn't available in the child process).
->>
->> -Jeff
->>
->> diff --git a/fs/aio.c b/fs/aio.c
->> index 562916d85cba..dbf3b0749cb4 100644
->> --- a/fs/aio.c
->> +++ b/fs/aio.c
->> @@ -390,7 +390,7 @@ static const struct vm_operations_struct aio_ring_vm_ops = {
->>
->>  static int aio_ring_mmap(struct file *file, struct vm_area_struct *vma)
->>  {
->> -       vma->vm_flags |= VM_DONTEXPAND;
->> +       vma->vm_flags |= VM_DONTEXPAND|VM_DONTCOPY;
->>         vma->vm_ops = &aio_ring_vm_ops;
->>         return 0;
->>  }
->>
-
+Seriously, it would be easier to follow that way; if you really insist upon
+keeping these calling conventions, at least put the calculation in one place -
+don't make readers to chase down into every sodding helper to check if they
+do what you'd expect them to do.
