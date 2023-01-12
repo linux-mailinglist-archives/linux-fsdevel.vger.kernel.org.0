@@ -2,165 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1E45966870A
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jan 2023 23:35:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D15BB6686CE
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jan 2023 23:24:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232733AbjALWfA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Jan 2023 17:35:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48054 "EHLO
+        id S240086AbjALWXn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Jan 2023 17:23:43 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39400 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230451AbjALWe6 (ORCPT
+        with ESMTP id S240147AbjALWXA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Jan 2023 17:34:58 -0500
-X-Greylist: delayed 1516 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 12 Jan 2023 14:34:57 PST
-Received: from kanga.kvack.org (kanga.kvack.org [205.233.56.17])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0AA29C7
-        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jan 2023 14:34:56 -0800 (PST)
-Received: by kanga.kvack.org (Postfix, from userid 63042)
-        id 798C58E0001; Thu, 12 Jan 2023 17:09:39 -0500 (EST)
-Date:   Thu, 12 Jan 2023 17:09:39 -0500
-From:   Benjamin LaHaise <bcrl@kvack.org>
-To:     Jeff Moyer <jmoyer@redhat.com>
-Cc:     Seth Jenkins <sethjenkins@google.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>,
-        Pavel Emelyanov <xemul@parallels.com>, stable@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH] aio: fix mremap after fork null-deref
-Message-ID: <20230112220939.GO19133@kvack.org>
-References: <20221104212519.538108-1-sethjenkins@google.com> <x49tu0wlv0c.fsf@segfault.boston.devel.redhat.com> <CALxfFW5d05H-nFuDdUDS4xVDKMgkV1vvEBAmw10h3-jMVb-PZw@mail.gmail.com> <x49ilhbl9qd.fsf@segfault.boston.devel.redhat.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <x49ilhbl9qd.fsf@segfault.boston.devel.redhat.com>
-User-Agent: Mutt/1.4.2.2i
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Thu, 12 Jan 2023 17:23:00 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C3941CB1E;
+        Thu, 12 Jan 2023 14:18:05 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 31D53B81E63;
+        Thu, 12 Jan 2023 22:18:04 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2050C433EF;
+        Thu, 12 Jan 2023 22:18:01 +0000 (UTC)
+Date:   Thu, 12 Jan 2023 17:17:59 -0500
+From:   Steven Rostedt <rostedt@goodmis.org>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     lsf-pc@lists.linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, bpf@vger.kernel.org,
+        Joel Fernandes <joel@joelfernandes.org>,
+        Brian Norris <briannorris@chromium.org>,
+        Ching-lin Yu <chinglinyu@google.com>
+Subject: Re: [LSF/MM/BPF TOPIC] tracing mapped pages for quicker boot
+ performance
+Message-ID: <20230112171759.70132384@gandalf.local.home>
+In-Reply-To: <Y8BvKZFI9RIoS4C/@casper.infradead.org>
+References: <20230112132153.38d52708@gandalf.local.home>
+        <Y8BvKZFI9RIoS4C/@casper.infradead.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-6.7 required=5.0 tests=BAYES_00,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_HI,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 12, 2023 at 04:32:42PM -0500, Jeff Moyer wrote:
-> The way things stand today, if you setup an io context in a process and
-> then fork a child, the child will be unable to use the aio system calls
-> to submit and reap I/Os.  This is because the ioctx_table was cleared
-> during fork, which means that lookup_ioctx() will not find the io
-> context.  However, the child still has access to the ring through the
-> memory mapping.  As a result, the child can reap I/O completions
-> directly from the ring.  That wasn't always the case.  The aio ring used
-> to be a MAP_PRIVATE mapping.  Commit 36bc08cc0170 ("fs/aio: Add support
-> to aio ring pages migration") changed it from a private to a shared
-> mapping, and I'm not sure why.  (That patch was included in v3.12, so
-> it's been this way for quite some time.)
+On Thu, 12 Jan 2023 20:35:53 +0000
+Matthew Wilcox <willy@infradead.org> wrote:
 
-It is necessary to make migration work.  The pages have to be owned by
-the backing file and to map the backing file pages into the process
-without COW requires the mapping to be marked shared.  If they're COWed,
-events can be lost.  Migration is rare and ugly.
-
-> With the patch I proposed (flagging the ring buffer with VM_DONTCOPY),
-> the child process would still be unable to submit and reap I/Os via the
-> aio system calls.  What changes is that the child process would now be
-> unable to reap completions via the shared ring buffer.  In fact, because
-> the ring is no longer mapped in the child process, any attempt to access
-> that memory would result in a segmentation fault.  However, I would be
-> very surprised if the interface was being used in this way.
+> On Thu, Jan 12, 2023 at 01:21:53PM -0500, Steven Rostedt wrote:
+> > What I would like to discuss, is if there could be a way to add some sort
+> > of trace events that can tell an application exactly what pages in a file
+> > are being read from disk, where there is no such races. Then an application
+> > would simply have to read this information and store it, and then it can
+> > use this information later to call readahead() on these locations of the
+> > file so that they are available when needed.  
 > 
-> > If we're okay with this change though, I think it makes sense.
-> 
-> My preference is to make the interface consistent.  I think setting
-> VM_DONTCOPY on the mapping is the right way forward.  I'd welcome other
-> opinions on whether the potential risk is worth it.
+> trace_mm_filemap_add_to_page_cache()?
 
-VM_DONTCOPY makes sense, but a SEGV is a pretty bad failure mode.  Any
-process reaping events in the child after fork() isn't going to be
-consistent in behaviour, and is able to see partial completion of an I/O
-and other inconsistencies, so they're going to be subtly broken at best.
+Great! How do I translate this to files? Do I just do a full scan on the
+entire device to find which file maps to an inode? And I'm guessing that
+the ofs is the offset into the file?
 
-Unfortunately, we have no way of knowing if this behaviour is exercised
-anywhere without changing it and waiting for someone to holler.
+(from a 5.10 modified kernel)
 
-		-ben
+            <...>-177   [001]    13.166966: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776a0 pfn=2586272 ofs=1204224
+            <...>-177   [001]    13.166968: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776a1 pfn=2586273 ofs=1208320
+            <...>-177   [001]    13.166968: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776a2 pfn=2586274 ofs=1212416
+            <...>-177   [001]    13.166969: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776a3 pfn=2586275 ofs=1216512
+            <...>-177   [001]    13.166970: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776a4 pfn=2586276 ofs=1220608
+            <...>-177   [001]    13.166971: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776a5 pfn=2586277 ofs=1224704
+            <...>-177   [001]    13.166972: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776a6 pfn=2586278 ofs=1228800
+            <...>-177   [001]    13.166972: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776a7 pfn=2586279 ofs=1232896
+            <...>-177   [001]    13.166973: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776a8 pfn=2586280 ofs=1236992
+            <...>-177   [001]    13.166974: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776a9 pfn=2586281 ofs=1241088
+            <...>-177   [001]    13.166979: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776aa pfn=2586282 ofs=1245184
+            <...>-177   [001]    13.166980: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776ab pfn=2586283 ofs=1249280
+            <...>-177   [001]    13.166981: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776ac pfn=2586284 ofs=1253376
+            <...>-177   [001]    13.166981: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776ad pfn=2586285 ofs=1257472
+            <...>-177   [001]    13.166982: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776ae pfn=2586286 ofs=1261568
+            <...>-177   [001]    13.166983: mm_filemap_add_to_page_cache: dev 259:5 ino 9b11 page=0x2776af pfn=2586287 ofs=1265664
 
-> Cheers,
-> Jeff
-> 
-> >
-> >
-> > On Wed, Jan 11, 2023 at 2:37 PM Jeff Moyer <jmoyer@redhat.com> wrote:
-> >>
-> >> Hi, Seth,
-> >>
-> >> Seth Jenkins <sethjenkins@google.com> writes:
-> >>
-> >> > Commit e4a0d3e720e7 ("aio: Make it possible to remap aio ring") introduced
-> >> > a null-deref if mremap is called on an old aio mapping after fork as
-> >> > mm->ioctx_table will be set to NULL.
-> >> >
-> >> > Fixes: e4a0d3e720e7 ("aio: Make it possible to remap aio ring")
-> >> > Cc: stable@vger.kernel.org
-> >> > Signed-off-by: Seth Jenkins <sethjenkins@google.com>
-> >> > ---
-> >> >  fs/aio.c | 20 +++++++++++---------
-> >> >  1 file changed, 11 insertions(+), 9 deletions(-)
-> >> >
-> >> > diff --git a/fs/aio.c b/fs/aio.c
-> >> > index 5b2ff20ad322..74eae7de7323 100644
-> >> > --- a/fs/aio.c
-> >> > +++ b/fs/aio.c
-> >> > @@ -361,16 +361,18 @@ static int aio_ring_mremap(struct vm_area_struct *vma)
-> >> >       spin_lock(&mm->ioctx_lock);
-> >> >       rcu_read_lock();
-> >> >       table = rcu_dereference(mm->ioctx_table);
-> >> > -     for (i = 0; i < table->nr; i++) {
-> >> > -             struct kioctx *ctx;
-> >> > -
-> >> > -             ctx = rcu_dereference(table->table[i]);
-> >> > -             if (ctx && ctx->aio_ring_file == file) {
-> >> > -                     if (!atomic_read(&ctx->dead)) {
-> >> > -                             ctx->user_id = ctx->mmap_base = vma->vm_start;
-> >> > -                             res = 0;
-> >> > +     if (table) {
-> >> > +             for (i = 0; i < table->nr; i++) {
-> >> > +                     struct kioctx *ctx;
-> >> > +
-> >> > +                     ctx = rcu_dereference(table->table[i]);
-> >> > +                     if (ctx && ctx->aio_ring_file == file) {
-> >> > +                             if (!atomic_read(&ctx->dead)) {
-> >> > +                                     ctx->user_id = ctx->mmap_base = vma->vm_start;
-> >> > +                                     res = 0;
-> >> > +                             }
-> >> > +                             break;
-> >> >                       }
-> >> > -                     break;
-> >> >               }
-> >> >       }
-> >>
-> >> I wonder if it would be better to not copy the ring mapping on fork.
-> >> Something like the below?  I think that would be more in line with
-> >> expectations (the ring isn't available in the child process).
-> >>
-> >> -Jeff
-> >>
-> >> diff --git a/fs/aio.c b/fs/aio.c
-> >> index 562916d85cba..dbf3b0749cb4 100644
-> >> --- a/fs/aio.c
-> >> +++ b/fs/aio.c
-> >> @@ -390,7 +390,7 @@ static const struct vm_operations_struct aio_ring_vm_ops = {
-> >>
-> >>  static int aio_ring_mmap(struct file *file, struct vm_area_struct *vma)
-> >>  {
-> >> -       vma->vm_flags |= VM_DONTEXPAND;
-> >> +       vma->vm_flags |= VM_DONTEXPAND|VM_DONTCOPY;
-> >>         vma->vm_ops = &aio_ring_vm_ops;
-> >>         return 0;
-> >>  }
-> >>
-> 
-> 
+The dev 259:5 is the root partition.
 
--- 
-"Thought is the essence of where you are now."
+Doing the following:
+
+ $ printf "%d\n" 0x9b11
+39697
+
+ $ sudo find / -xdev -inum 39697
+/lib64/libc.so.6
+
+I guess that's what I need to do. Thanks!
+
+I'll try it out. But I'd still like to have an invite as I have lots of
+other fun stuff to talk to you all about (mm, fs, and BPF) ;-)
+
+-- Steve
+
