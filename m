@@ -2,128 +2,150 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 621C966676B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jan 2023 01:10:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C50B666679E
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jan 2023 01:29:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230085AbjALAKJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 11 Jan 2023 19:10:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47654 "EHLO
+        id S230308AbjALA3m (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 11 Jan 2023 19:29:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53878 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230325AbjALAKG (ORCPT
+        with ESMTP id S229955AbjALA3k (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 11 Jan 2023 19:10:06 -0500
-Received: from sin.source.kernel.org (sin.source.kernel.org [IPv6:2604:1380:40e1:4800::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E2F81CCD;
-        Wed, 11 Jan 2023 16:10:05 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by sin.source.kernel.org (Postfix) with ESMTPS id E501ACE1BF8;
-        Thu, 12 Jan 2023 00:10:03 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDE26C433EF;
-        Thu, 12 Jan 2023 00:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673482202;
-        bh=ALlRTKFHlW5QwyqwTok5YQDFTDeZU3gE8aHLnXq2SLM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ARBLAiCnbk3/mI2Xo8WsmJSUNVIpJWFairpw2tWVM14BnkskWDa+SL4w1vzbDkivl
-         xVL2Zm0PMu3AE8luQwnknvgOZjDgqdi7ea1bgdMvcmchoVDEu63TjG+nI3SKt7XA0M
-         dj1K6h8YuHUE7ZxTwA5I1luiWp1TPFG2zVWW0CmhNeq7dbvStj0KIpS1rsgW/hT5j3
-         X2zoKt7oEY6ehHGFg15z1i/XA5J9+cThFpH+sWyJVpcnaQ0JkcdcVlK56TUZq9a3vO
-         lCC3RPg5c/UMebn/d/U9/TNogG6aX3RZcebjpgDhZyxhEIwmNvNg1qspDoTC0eUUKj
-         BZCTCe+jff7sQ==
-Date:   Wed, 11 Jan 2023 16:10:01 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Allison Henderson <allison.henderson@oracle.com>
-Cc:     Catherine Hoang <catherine.hoang@oracle.com>,
-        "david@fromorbit.com" <david@fromorbit.com>,
+        Wed, 11 Jan 2023 19:29:40 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 95FD82F799
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jan 2023 16:29:39 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id bj3so14304710pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Wed, 11 Jan 2023 16:29:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kdjJ+qFPHeS00NuxsuodVT0aLef/544WpbdFPG95vJc=;
+        b=daIIUN9/u4Kn/9NvlKYXfIj5izCgVmqoQZkPuNo3ujpktk9/zGBnZRjcDxCNhHL1Qe
+         NNJOPEKKIW02Ps5O+ZHH+OsXiP8BNcTus40O8FHtXyiCosEDynWf/SrqhFaRwVKNoiqA
+         oT/uzjEsrr97r7K8jJudZAm7v9zVGfsvljXS7f/FfOEjb2sRoNQstEBUVVZHJqZ+xCdQ
+         7AdDFUZEpv2NYUpgpHIGxi736F93t8iPIllmDMmRnqEqCef4wYa4/YqRefQJXDLbN0vR
+         PNXzRqfKLissxNE66cd7YaV5xrpl4esALfpVL4zdcyx7eW7e+MDlZn13dGMSLg1ah/vT
+         9x0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kdjJ+qFPHeS00NuxsuodVT0aLef/544WpbdFPG95vJc=;
+        b=uQWeLPiyyGnRWY6lwg5wNn/7xy33VxL79pDB4hhwhk/D+xHAr4NtF9SQ0E8SkL3br/
+         kgHdrlnHVlJ3R0z+97Q05eLhbiqbJVQuDXCIWFFGYiIFp4qnyaUg15sh8XkDiMdReOJY
+         MPMSKbANfQVFKSWejXcByg8jz3KpviFBYlrqJWwYfXMbTEAZaIHIPyccYcLXuUtmodIU
+         Yq/IghvPG+0c1xqLi9xtpoRVTZv7uJdQgehQF3zieSHLLrYQACtersOPXbYy1aCqtQ9x
+         umrbPq0VS3JASyG0UjtX9TeuPdUf5rpz1qiWgHVDo1nNMvMfjlsCYyash1G3igSLngLd
+         hhuA==
+X-Gm-Message-State: AFqh2krhB2VX2Z2d74+rZRcvsxQ1RXViy3uSp99W/PXRDEROBnm82kti
+        BjxcuGL1NIuprGZs5CRCJmT6oQ==
+X-Google-Smtp-Source: AMrXdXvDN7KNcW+rVaCYvuc2ZDsQTd8oduFefihia9SWmhk9PtRvfRa1f5oPODbU2jAm5uDd4h04Ng==
+X-Received: by 2002:a17:902:e345:b0:192:b3d5:44ff with SMTP id p5-20020a170902e34500b00192b3d544ffmr38335681plc.26.1673483379139;
+        Wed, 11 Jan 2023 16:29:39 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-146-207.pa.vic.optusnet.com.au. [49.186.146.207])
+        by smtp.gmail.com with ESMTPSA id o14-20020a170902d4ce00b001886ff822ffsm4210774plg.186.2023.01.11.16.29.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 11 Jan 2023 16:29:38 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pFlTL-001z5b-LR; Thu, 12 Jan 2023 11:29:35 +1100
+Date:   Thu, 12 Jan 2023 11:29:35 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Allison Henderson <allison.henderson@oracle.com>,
+        Catherine Hoang <catherine.hoang@oracle.com>,
         "willy@infradead.org" <willy@infradead.org>,
         "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
         Chandan Babu <chandan.babu@oracle.com>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "hch@infradead.org" <hch@infradead.org>
-Subject: Re: [PATCH 01/14] xfs: document the motivation for online fsck design
-Message-ID: <Y79P2WpMhs/kAnt1@magnolia>
+Subject: Re: [PATCH 02/14] xfs: document the general theory underlying online
+ fsck design
+Message-ID: <20230112002935.GD360264@dread.disaster.area>
 References: <167243825144.682859.12802259329489258661.stgit@magnolia>
- <167243825174.682859.4770282034026097725.stgit@magnolia>
- <0607e986e96def5ba17bd53ff3f7e775a99d3d94.camel@oracle.com>
+ <167243825188.682859.4316880168755743654.stgit@magnolia>
+ <e195587838b284fea6e27934d4bdee210851a40e.camel@oracle.com>
+ <Y79InBUODrIaLDmC@magnolia>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0607e986e96def5ba17bd53ff3f7e775a99d3d94.camel@oracle.com>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <Y79InBUODrIaLDmC@magnolia>
+X-Spam-Status: No, score=0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE,URI_DOTEDU
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jan 07, 2023 at 05:01:54AM +0000, Allison Henderson wrote:
+On Wed, Jan 11, 2023 at 03:39:08PM -0800, Darrick J. Wong wrote:
+> On Wed, Jan 11, 2023 at 01:25:12AM +0000, Allison Henderson wrote:
+> > On Fri, 2022-12-30 at 14:10 -0800, Darrick J. Wong wrote:
+> > > +Primary metadata objects are the simplest for scrub to process.
+> > > +The principal filesystem object (either an allocation group or an
+> > > inode) that
+> > > +owns the item being scrubbed is locked to guard against concurrent
+> > > updates.
+> > > +The check function examines every record associated with the type
+> > > for obvious
+> > > +errors and cross-references healthy records against other metadata
+> > > to look for
+> > > +inconsistencies.
+> > > +Repairs for this class of scrub item are simple, since the repair
+> > > function
+> > > +starts by holding all the resources acquired in the previous step.
+> > > +The repair function scans available metadata as needed to record all
+> > > the
+> > > +observations needed to complete the structure.
+> > > +Next, it stages the observations in a new ondisk structure and
+> > > commits it
+> > > +atomically to complete the repair.
+> > > +Finally, the storage from the old data structure are carefully
+> > > reaped.
+> > > +
+> > > +Because ``xfs_scrub`` locks a primary object for the duration of the
+> > > repair,
+> > > +this is effectively an offline repair operation performed on a
+> > > subset of the
+> > > +filesystem.
+> > > +This minimizes the complexity of the repair code because it is not
+> > > necessary to
+> > > +handle concurrent updates from other threads, nor is it necessary to
+> > > access
+> > > +any other part of the filesystem.
+> > > +As a result, indexed structures can be rebuilt very quickly, and
+> > > programs
+> > > +trying to access the damaged structure will be blocked until repairs
+> > > complete.
+> > > +The only infrastructure needed by the repair code are the staging
+> > > area for
+> > > +observations and a means to write new structures to disk.
+> > > +Despite these limitations, the advantage that online repair holds is
+> > > clear:
+> > > +targeted work on individual shards of the filesystem avoids total
+> > > loss of
+> > > +service.
+> > > +
+> > > +This mechanism is described in section 2.1 ("Off-Line Algorithm") of
+> > > +V. Srinivasan and M. J. Carey, `"Performance of On-Line Index
+> > > Construction
+> > > +Algorithms" <https://dl.acm.org/doi/10.5555/645336.649870>`_,
+> > Hmm, this article is not displaying for me.  If the link is abandoned,
+> > probably there's not much need to keep it around
+> 
+> The actual paper is not directly available through that ACM link, but
+> the DOI is what I used to track down a paper copy(!) of that paper as
+> published in a journal.
 
-<snip> There was one part of your reply that I wanted to handle
-separately:
+PDF version here:
 
-> Something that I've noticed in my training sessions is that often
-> times, less is more.  People really only absorb so much over a
-> particular duration of time, so sometimes having too much detail in the
-> context is not as helpful as you might think.
+https://minds.wisconsin.edu/bitstream/handle/1793/59524/TR1047.pdf?sequence=1
 
-I'm very worried about this ^^^ exact problem making it more difficult
-to merge online fsck.
-
-As the online fsck patchset grew and grew and grew, I decided that it
-was absolutely necessary to write a design document to condense the
-information from 1200 patches, for this is the diffstat for the code
-changes themselves:
-
-225 files changed, 41244 insertions(+), 4388 deletions(-)
-205 files changed, 16802 insertions(+), 3405 deletions(-)
-438 files changed, 20123 insertions(+), 446 deletions(-)
-
-That's 78169 insertions and 8239 deletions, or about ~70k new LOC, and
-that doesn't include the scrub code that's already upstream (~60000).
-It's wild that online fsck is larger than the filesystem.
-
-You might recall that I sent it out for review twice last year, and the
-feedback I got from the experienced folk was that I needed to write in
-much more detail about the design -- specifically, what I was doing with
-the fs hooks, and all the data structures that I was layering atop tmpfs
-files to support rebuilds.
-
-Before I even got to /that/ point, the design documentation had reached
-4500 lines (or 90 pages) long, at which point I decided that it was
-necessary to write a summary to condense the 4500 lines down to a single
-chapter.
-
-Hence part 1 about what is a filesystem check.  It's supposed to
-introduce the very very broad concepts to a reader before they dive into
-successively higher levels of detail in the later parts.
-
-My guess is that the audience for the code deluges and this design doc
-fall into roughly these categories:
-
-* Experienced people who have been around XFS and Linux for a very long
-  time.  These people, I think, would benefit from scanning parts 2 and
-  3 as a refresher.  Then they can scan parts 5 and 6 before moving on
-  to the code.
-
-* Intermediate people, who probably need to read parts 2 - 6 and
-  understand them thoroughly before reading the code.  The case studies
-  in part 5 should be used as a guide to the patchsets.
-
-* People who have no idea what filesystems and fsck are, want to know
-  about them, but don't have any pre-existing knowledge.
-
-> A lot of times, paraphrasing excerpts to reflect the same info in a
-> more compact format will help you keep audience on track (a little
-> longer at least).
-
-Yes, thank you for your help in spotting these kinds of problems.  I've
-been too close to the code for years, which means I have severe myopia
-about things like "Am I confusing everyone?". :/
-
-Speaking of which, am I confusing everyone?
-
---D
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
