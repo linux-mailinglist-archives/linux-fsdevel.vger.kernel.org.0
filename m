@@ -2,123 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E25F1667872
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jan 2023 16:02:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 157336678AC
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jan 2023 16:11:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239940AbjALPCr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Jan 2023 10:02:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52590 "EHLO
+        id S240243AbjALPLy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Jan 2023 10:11:54 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S239778AbjALPCX (ORCPT
+        with ESMTP id S231210AbjALPLc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Jan 2023 10:02:23 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DB3D86A0C5;
-        Thu, 12 Jan 2023 06:48:34 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id BD0B03F0CB;
-        Thu, 12 Jan 2023 14:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-        t=1673534912; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
+        Thu, 12 Jan 2023 10:11:32 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D426A6B5CE
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jan 2023 06:58:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1673535536;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=zsa+fdfwdlDM2GetrLrqpou94nUfON/csukFq2m/izo=;
-        b=kSH/6kvbmwFCrzEEWGGvL2I7yKz/0cDBLQGnVISP472mTr6ExKDickiXG6C6K+KZtX5iuG
-        tOz/EgxbD9EltuY8CoTfas6xed9+rz+XZSvZD5nZq5QFCAPmfEStsRo2imWcxLR4WSq3Bj
-        UUU+eukN0ulxKY0Yv+szQQi4rm476TQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-        s=susede2_ed25519; t=1673534912;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=zsa+fdfwdlDM2GetrLrqpou94nUfON/csukFq2m/izo=;
-        b=2KNJsOzqPWJTzkRPymaNqNliovVGM6bjPs1WxlGHd0wVD9lIsbdd9Y3kxcnBOE7z9QB0Ne
-        s3obyhpx6c60AwBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=GztunHCq+mIngJvFy29Ro+sBMsKVWY2R+zU+9WUPV28=;
+        b=Iu2rIQKScJcE+lbrto1rDEhuZma+9H7aT/AIl5XKpkcqf7lFc/AkADMhDKJC/jr3JhvVWW
+        CobdEWfyFVkXa32d8LIqhWv1CCDAKmR0vs4vCT7kxTmNqqV5/iegvOmRqO/FXIpziRqilc
+        Txfqh3eAWzS/lj0adQirHlSBK94LF7Y=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-208-teJhew-AMAa7OkEPq8LOXA-1; Thu, 12 Jan 2023 09:58:52 -0500
+X-MC-Unique: teJhew-AMAa7OkEPq8LOXA-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 836B913776;
-        Thu, 12 Jan 2023 14:48:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id /6ZkH8AdwGOIEQAAMHmgww
-        (envelope-from <hare@suse.de>); Thu, 12 Jan 2023 14:48:32 +0000
-Message-ID: <20d7fde4-dd17-de97-53e8-aa808a325efd@suse.de>
-Date:   Thu, 12 Jan 2023 15:48:32 +0100
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v6 3/9] block: add emulation for copy
-Content-Language: en-US
-From:   Hannes Reinecke <hare@suse.de>
-To:     Nitesh Shetty <nj.shetty@samsung.com>,
-        Jens Axboe <axboe@kernel.dk>, Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@kernel.org>, dm-devel@redhat.com,
-        Keith Busch <kbusch@kernel.org>,
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 3290B857F82;
+        Thu, 12 Jan 2023 14:58:51 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id DAC02C15BAD;
+        Thu, 12 Jan 2023 14:58:49 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y8AWY991ilrO5Yco@infradead.org>
+References: <Y8AWY991ilrO5Yco@infradead.org> <Y7+6YVkhZsvdW+Hr@infradead.org> <167344725490.2425628.13771289553670112965.stgit@warthog.procyon.org.uk> <167344731521.2425628.5403113335062567245.stgit@warthog.procyon.org.uk> <15237.1673519321@warthog.procyon.org.uk> <Y8AUjB5hxkwxhnGK@infradead.org>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
         Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        James Smart <james.smart@broadcom.com>,
-        Chaitanya Kulkarni <kch@nvidia.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     anuj20.g@samsung.com, joshi.k@samsung.com, p.raghav@samsung.com,
-        nitheshshetty@gmail.com, gost.dev@samsung.com,
-        Vincent Fu <vincent.fu@samsung.com>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvme@lists.infradead.org, linux-fsdevel@vger.kernel.org
-References: <20230112115908.23662-1-nj.shetty@samsung.com>
- <CGME20230112120054epcas5p3ec5887c4e1de59f7529dafca1cd6aa65@epcas5p3.samsung.com>
- <20230112115908.23662-4-nj.shetty@samsung.com>
- <bfec42d1-a1bf-3b3a-10dd-8d3db0a6e6a0@suse.de>
-In-Reply-To: <bfec42d1-a1bf-3b3a-10dd-8d3db0a6e6a0@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+        Matthew Wilcox <willy@infradead.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-block@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 8/9] iov_iter, block: Make bio structs pin pages rather than ref'ing if appropriate
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <147886.1673535529.1@warthog.procyon.org.uk>
+Date:   Thu, 12 Jan 2023 14:58:49 +0000
+Message-ID: <147887.1673535529@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/12/23 15:46, Hannes Reinecke wrote:
-> On 1/12/23 12:58, Nitesh Shetty wrote:
->> For the devices which does not support copy, copy emulation is
->> added. Copy-emulation is implemented by reading from source ranges
->> into memory and writing to the corresponding destination asynchronously.
->> For zoned device we maintain a linked list of read submission and try to
->> submit corresponding write in same order.
->> Also emulation is used, if copy offload fails or partially completes.
->>
->> Signed-off-by: Nitesh Shetty <nj.shetty@samsung.com>
->> Signed-off-by: Vincent Fu <vincent.fu@samsung.com>
->> Signed-off-by: Anuj Gupta <anuj20.g@samsung.com>
->> ---
->>   block/blk-lib.c        | 241 ++++++++++++++++++++++++++++++++++++++++-
->>   block/blk-map.c        |   4 +-
->>   include/linux/blkdev.h |   3 +
->>   3 files changed, 245 insertions(+), 3 deletions(-)
->>
-> I'm not sure if I agree with this one.
-> 
-> You just submitted a patch for device-mapper to implement copy offload, 
-> which (to all intents and purposes) _is_ an emulation.
-> 
-> So why do we need to implement it in the block layer as an emulation?
-> Or, if we have to, why do we need the device-mapper emulation?
-> This emulation will be doing the same thing, no?
-> 
-Sheesh. One should read the entire patchset.
+Christoph Hellwig <hch@infradead.org> wrote:
 
-Disregard the above comment.
+> But given that all calls for the same iter type return the same
+> cleanup_mode by defintion I'm not even sure we need any of this
+> debug checking, and might as well just do:
+> 
+> 	if (cleanup_mode & FOLL_GET)
+>  		bio_set_flag(bio, BIO_PAGE_REFFED);
+>  	else if (cleanup_mode & FOLL_PIN)
+>  		bio_set_flag(bio, BIO_PAGE_PINNED);
 
-Cheers,
+That's kind of what I'm doing - though I've left out the else just in case the
+VM decides to indicate back both FOLL_GET and FOLL_PIN.  I'm not sure why it
+would but...
 
-Hannes
+David
 
