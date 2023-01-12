@@ -2,184 +2,245 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BE390666F09
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jan 2023 11:04:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 70674666F3B
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jan 2023 11:15:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S239895AbjALKES (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Jan 2023 05:04:18 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39428 "EHLO
+        id S236568AbjALKPb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Jan 2023 05:15:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46434 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236674AbjALKCT (ORCPT
+        with ESMTP id S240038AbjALKOt (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Jan 2023 05:02:19 -0500
-Received: from esa2.hgst.iphmx.com (esa2.hgst.iphmx.com [68.232.143.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 28C36F7A;
-        Thu, 12 Jan 2023 02:01:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1673517668; x=1705053668;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=joufdrNO2/FLdgGzlnaieoHfZ28FYCwNXGhrZ08f24E=;
-  b=l5sadyh0+46i62WI2ftIzDzmErNzP8fJ7Yu+6t7tlbKpeRhN02J2VJTR
-   jsUv5olzhPJm9quwT4KCOlgHqSkU9UpfRSVg0FsGXl0RNGi06YgQzrNvw
-   MsFMAGQq/DH2fbG048nx6HFfKvIBjWEy+nyfVNEL8VlX+QJa4EIlkjsco
-   7+5VkyNyAnfJE/mRo9E7T37d51qojVSPbYc1PIFe69qUjXjfU0VrWGvoX
-   2jc6s59tqvufoKIf5U8XQQhZ3MMkUInu5VPcIBfinyoqYUEq970lHWFJ+
-   NSEgNouFS2cMp1yoRrKs5czkuCmhw50yWS/Wq/PN9xSLxlcYcncccV4OK
-   A==;
-X-IronPort-AV: E=Sophos;i="5.96,319,1665417600"; 
-   d="scan'208";a="324914091"
-Received: from mail-dm6nam04lp2040.outbound.protection.outlook.com (HELO NAM04-DM6-obe.outbound.protection.outlook.com) ([104.47.73.40])
-  by ob1.hgst.iphmx.com with ESMTP; 12 Jan 2023 18:01:06 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UQ5XLfnXryhj6KuRmQZK+YWpjf51l/iI54Y+IjAkZ/5c48pd4GXnd2YBVSg9FBVTSsE0X9KccU0BCgfTlD4sqowJ3LkEhKPJInYze3Eloyu9f0yK3Nd92/LmHMI4hZUl31L/zPKmAsF92Ur049UyFaFh/1AYfqjBigkG6bGO/TyfkF9qeY5L9CMW8l81bqDv3ivXEcMUCT6RzCoqURkS8lx7O8RA0CHjBKC5+dTi6DVOT1R9OZvpmez2aLi61opG/6nWqclXcQbD9HF8NCFSCbhpF/uLNua6glHoiI9Fb2Z8O8aU6zq3br5459AK9V/xWGSo7dZBJA9VzZWjn1DN7g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=joufdrNO2/FLdgGzlnaieoHfZ28FYCwNXGhrZ08f24E=;
- b=BDy2QrS+cABafGwbkNjs4rOLsj2cmFHHS7LSIIcry/hj5+k7vhsl8TWNKL2EcEO/OJBuQ3ICpwdPudALJtwpFQdw+I+2zNk2KwVPZs8XmuGiTHM/nbAqQEg5a2mcxOu9M3CemZZpMfg+u+56owz33BAkNZT1N2WXh5mLX9fMcBFHBn8a22CtOcTDR+rAN67MPIqeC6aKY/76DWhi0jyyGmwKEuwdwwhTbNMpvh0nPMp/eB9T9v0vGaSN4yKw2EXIrluICVkUdCm68otlXrV6NkLUwOU4kYKMhiejDUCej3Apdk55v5mvZAQtnhpuawPcmodDnjnDaYSWxJ29/iSyaQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wdc.com; dmarc=pass action=none header.from=wdc.com; dkim=pass
- header.d=wdc.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=sharedspace.onmicrosoft.com; s=selector2-sharedspace-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=joufdrNO2/FLdgGzlnaieoHfZ28FYCwNXGhrZ08f24E=;
- b=kDEXZ2J5UBdBYAHwapEHV1UkO+dGyrppd1YOlTJQrtPMIUmPl7t3mc2DTID2gJ133mgnoATHkR7HG7gty4Z9LaSA3f/X3OYvefyg39C8B7aAqlo22Fj/HOssAI4mAn0HrfbgiTD+ApGxaacvNhMIvMhXEm0KjbNUIM5rB1xk7U8=
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com (2603:10b6:510:12::17)
- by MWHPR04MB0832.namprd04.prod.outlook.com (2603:10b6:300:f8::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.18; Thu, 12 Jan
- 2023 10:01:04 +0000
-Received: from PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::d4bd:b4ef:5bff:2329]) by PH0PR04MB7416.namprd04.prod.outlook.com
- ([fe80::d4bd:b4ef:5bff:2329%4]) with mapi id 15.20.6002.013; Thu, 12 Jan 2023
- 10:01:04 +0000
-From:   Johannes Thumshirn <Johannes.Thumshirn@wdc.com>
-To:     Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>,
-        Josef Bacik <josef@toxicpanda.com>,
-        David Sterba <dsterba@suse.com>
-CC:     Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>, Qu Wenruo <wqu@suse.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        "Darrick J. Wong" <djwong@kernel.org>,
-        "linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>
-Subject: Re: [PATCH 11/19] btrfs: remove stripe boundary calculation for
- compressed I/O
-Thread-Topic: [PATCH 11/19] btrfs: remove stripe boundary calculation for
- compressed I/O
-Thread-Index: AQHZJmUn4pYMeLi5zkONgRgqq50WrK6ajMSA
-Date:   Thu, 12 Jan 2023 10:01:04 +0000
-Message-ID: <196f7dc0-f10f-5711-fc26-eb4fe5d30eda@wdc.com>
-References: <20230112090532.1212225-1-hch@lst.de>
- <20230112090532.1212225-12-hch@lst.de>
-In-Reply-To: <20230112090532.1212225-12-hch@lst.de>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.6.1
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wdc.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH0PR04MB7416:EE_|MWHPR04MB0832:EE_
-x-ms-office365-filtering-correlation-id: e792396a-5288-4186-e9a1-08daf483eac6
-wdcipoutbound: EOP-TRUE
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nn5S0cDJjuHZjWxNsPrIgt321acvpbxCzzAILg6TvkvWoxLS9BYFS++OITjnrueql0wMnGEssByFKFKOw7K6YEVHvrAc8gmM8rqgPW5v8BJxb91Qiag2B7NPLDfEaBpFjjSqAIbgmbNF3DL5Lw83tz4V2YURvUOPaxhep6h9hr6rCEnpgOH9deRrjd2sOU78AGtaTQXC9DT8kQ2vNdsZgqm2T4Rg4C0pdbTkDSVNbISZC1mZF2+VUDqaHDIenPpLMnoX3mrjGsSw6WRCVTuA4H/eb9hWU0jHYvkj4fEo9OHvyhwIX1OLEjb1YsY8afPvwm/wuEh0R1rlVEqWQ58ZC4sykzSgPHUmLf0piywkOG2lr72uDdpj5C/TFnT2iyVpxKwagUBWfrbB6VBEK/sG+kY2jfieMc20+GutXoc+njbpZAA6VsSuQC+F9mP0xnh2SkGKPmuVTTf5dsOZUJ0T8GOS99wwMUShF5395/H8rF2OEH4ICgSYpCkF2GY0MguIUnRow67nQ750WEonYNBfz+B/7tVDtK6ZKDPuq9GLP7gT3ncOX6fMMJ5YZW3UvKnaxCuGGhX9UNa1/7Y3+VTlvJP2rBHQog7rMnvs38hbGLJAC1jDbT0pYde5bSTfLB3L1P2zwGTFCQhCcG5Xw6kQD2fyiy3CBpa4FdxLExp8s8mG/8nSt6LPkl7k3YyzlqNYiEvDL3JDu+hBAzKs61h5iEIBZeVHlQN0Od6LQbOzhODn4JsW12siyEoPJgt6oyWnMJ+XRzLAmIAO8zsjEeJm/A==
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR04MB7416.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(4636009)(136003)(376002)(346002)(366004)(396003)(39860400002)(451199015)(19618925003)(8936002)(5660300002)(2906002)(71200400001)(41300700001)(7416002)(66446008)(66556008)(4326008)(316002)(91956017)(8676002)(76116006)(64756008)(66946007)(66476007)(110136005)(54906003)(38070700005)(6512007)(122000001)(38100700002)(2616005)(31686004)(86362001)(4270600006)(186003)(31696002)(36756003)(558084003)(6506007)(82960400001)(478600001)(6486002)(43740500002)(45980500001);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?YVlWZS9sQXVmNTRtbC95NjlZN0FTQTFhRTlpMWNBdkMwYkZ2QWEyZ3MwZ3RG?=
- =?utf-8?B?ZkpiUHloSzdmVWNLb2dmVTNhQmw1MmVIVElHY2NXWWlNUnJ5Mk93UjhQS0lw?=
- =?utf-8?B?YU1CVEkyVXZWc1dHLzZXU2hkVThDVVFhUGVMdjJiY2dWT0k0b1o0cnU1VFha?=
- =?utf-8?B?a0NucG1zWFkrNTlUS3I0TGhDbGhMNml1L2ZNNHkwNnkveVRxYlFadDZ0d1BL?=
- =?utf-8?B?QWYxRFVmbWM0R1VpZUF2TGFQTXoxN1NZWHAra2wyRDd5bEV4Ym1wQ2h4R1Q2?=
- =?utf-8?B?aWlRMnVUd1pXMEN5dm4reG5pZm5tU2g1bTFXRzExRW8yK0ZpMTJEU01oZWxP?=
- =?utf-8?B?UHRIUzczbzk0c1VTVnpkcVhJY2hwem9VaTI0SDJjcTdzUUNWVmI2aUFJV2Ir?=
- =?utf-8?B?TzV6WnVpbFYxNUFVWGtST0F5bXFZaHdGanh0N3VoTysvZDEyazNpNS9FcEZz?=
- =?utf-8?B?MmNramtyaitSYnEzQnhJck15VHpQSGVNbEpPQ2VuWUx0OURHY0xlMWsxQVo2?=
- =?utf-8?B?a0pGUGVOZTdLTTdPZHo1SW1lVGRMd0poRXFDSk9QM2hhZmR1WXpvYXcvNDUw?=
- =?utf-8?B?TDVoeTdOcnI0aHYxaFNXNlFuUmVYbFJCbEM5UHFrL2p3SEw4eTN6S0doZXVs?=
- =?utf-8?B?SlJaaDFTZ00rUTlhYjdSYU16dlJYUXBBWmlzYit4MWp4Uk92VkR6REErTmdP?=
- =?utf-8?B?YjJtaGRVcjc0dTNrY0tnVTZPZ1VDZjBCMXRGeTRiUkxKVTV6WithWFBkVG9Y?=
- =?utf-8?B?RkErSXhLR2gzNGZMSEVRZ0lKRzAxTStNUG5iUDRTR0VWNjZ3RWJwZE5CK2J5?=
- =?utf-8?B?Qkt4YmZkVVlxM1FZa3l3L0lEVENoVXF1NzFkOUJVS1RwVU5zWlg1cWdDK054?=
- =?utf-8?B?c3A2aVFHcVZjMS9WYjdLNGplT3Y1OUIvUWhmcS9IMmwrdDd5ZzA4QUJHWGFv?=
- =?utf-8?B?a1ZsRDB5eXMyaWdJTDcvQWx0ZGJGTjd4RHpad0NqYTZFakg1NnFDaWZjdnNV?=
- =?utf-8?B?ZGdoNWxFd0dGOXF2K3gvQWc5d0pLbHRGeUxwU3RBR2dMSTlSYm1pU3MrWkpQ?=
- =?utf-8?B?by9vSE15QzdOakw2YUx2aXlMcGtpNGpoWktJd3JqOWRaSGZxSzJHOXZsalJs?=
- =?utf-8?B?M3FkMW00bEFFSXJIWHdod1dCeGd5VExvTUd3VVV3bkxibjU1a0hBcUdIU0dY?=
- =?utf-8?B?TFVxZDk1dkEyYU1rWWJrZUZTMVBYUFhpWktXNGcxWVg0TUVzb2RLcEJoaG8v?=
- =?utf-8?B?bHJtdEM2akZXRGtNb0Zuc0F4VnRvdjBDRjE0blVUWHQwc3RpU2IwQ0w1ZmFS?=
- =?utf-8?B?emQ5NDFpL1R4eHFGSG5vMUo0c3V5VjdtRUhlMnN4bGN0bDdoSmRqbTR5R3hV?=
- =?utf-8?B?RkJ3dUFhRklXVXI4QlM2UVFxeVZiVEVRYnhLbzl3TlM3N3M1T0xUQW1RZmho?=
- =?utf-8?B?VlJQbWJwemwyaUd0SC9mNUVQUkVJcmpOcTdKamtWd0ZhbFYwTHNXM0JtNE4x?=
- =?utf-8?B?cmYyeXRxbmU1dThpUzJoZit1eUFNaUk5dTQ5eEMxUmpuVW1sbzhUM1VrRVlY?=
- =?utf-8?B?MTU4ZmRiQ1lEYXFoL0JxK2d1LzJNVXZMUkV0cjhUc0Y5eThORS9udWNROEFP?=
- =?utf-8?B?M2w0R0tLL0I4amluWTNldVZMS2l4bEgySkEyaldoZzNpcm5haHZiTkFqTVk3?=
- =?utf-8?B?Z3RrSUNEckkzdUxiSjJFbkdTWjRSL1NRWEFMNmY4RU00VUJwL2JJYUxOTE9w?=
- =?utf-8?B?c1IvQzh1Yjl0RjVMOWozaEk3d1RrTnRtbWhsT2d5QnNzUGkrSko0eHFKdWgy?=
- =?utf-8?B?ZTE4dHNqS0dLcjB6bmlTTUlZYytWMjhuZTNBbkhYMWEvTzNKbWRGQ2kxSEdl?=
- =?utf-8?B?NFBGTVAvOFEvNU1mWFRMUFQxbmRMRlZDclJ4cStOS21aL3ZmVDRoQXgwZHpM?=
- =?utf-8?B?QVhjWUJYMy90VEdRSTlTTUJ5c1RuUjFZMis5S0xpWjZJeEU2QnE5N1VwOHVo?=
- =?utf-8?B?NHZOd3BZTHQ4ZXJTM1lqdlR5d0NKRWU3NXoralBtbHU5YmVNUVYyZGlKekls?=
- =?utf-8?B?RXFsYUt4RWpEc2RaS1lyZ1JJZnpCbyt3Tlk2TkZEWXhpSVQyYWlVd2RNVzhS?=
- =?utf-8?B?ZVpDTFRPMVdrZWxpR1pXL01Fc0NFRHNzVVhMK04zOHAyZnpqS0E4R3BaRCtS?=
- =?utf-8?B?bUJ3R3pVSlkwWlRJL2h0ZE9zeGhGY1B1R1MzYzdUOS92bmJTOVlxY2plTS9S?=
- =?utf-8?Q?1Gu8eECh3eS+d58LhDosnT5PLQYGGpynKwIKBGXcSA=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <52F0CF206F7E524FB56FCD1CDC3656AD@namprd04.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Thu, 12 Jan 2023 05:14:49 -0500
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0D01014D21
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jan 2023 02:13:41 -0800 (PST)
+Received: by mail-il1-f199.google.com with SMTP id l14-20020a056e02066e00b0030bff7a1841so13226844ilt.23
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jan 2023 02:13:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rLjm2ayRIxurrqVs1ufYqwPJYfqzfet16BX+SArwhO8=;
+        b=aBrDCtWvQJS+G1M3DLmusuQREv3npDKGeUDh1IqseAA/TGv3fc8kLjtme1yfpjwoq8
+         xw5WT+QP0O5/CkRv9L2Nk4cRUC7QPKoYL9Hx2fvau7gD081na6elYU3CDUTJMioeVhiJ
+         b/pBWLACZ8vL2T3Q8UhluFwb7B0Fe0GcmeggUG+daL2oBCnQnjYi7176btravrXPb90p
+         ViaqfeDU6tFfgcp1i7omEKgIbg+hntaVAtAfES3Ik7FFICMptwF6343HXQ+qFW32yTMZ
+         4SIacEmD4/Vd0DjR8FgognR7peOOZSZYckVDOPcHTMColvM9b/OAdzZB8ujAOm8ceR7I
+         +aVQ==
+X-Gm-Message-State: AFqh2kr2/RwF5vw/ERqANeOXRu/q0ICCikEXzIAhTnYw2TkGV53MNKfI
+        TJ1h9y5/HgorA+ni2o5kL5kUvZJBgAeCNQ9HBZ0agGdz2U27
+X-Google-Smtp-Source: AMrXdXs+NQm/91BIGaCVpgJkDHnCgJVI7qTGrxn1Zh7J3yF+1w6AfyLw5WiKF7iz+Sq6kwOIi3TV6C1W5VfuEKYfTKxIVOAy0Bjf
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?WEJ1c2pBNXA4WnlmUzErU0toM3hhTUdZWUpDbkRBbjVYQlY2SHlJcWxCWTZo?=
- =?utf-8?B?WEFkMHJaUVBDMUZ3eWE4Yld3NUFrdFZrcU5tSmErODlrdlBSQnV3SHNhckVj?=
- =?utf-8?B?RHlqVlZac0hpQ3l1VzZSY2dQcjlyTmowVjRHVVpnd0xqZTZmVkk4WUYrai9M?=
- =?utf-8?B?elN4ckdmZGIxelIwQjZLYWd3bzBKTkVzc0Zhc05iQXRBVkI4aHZ3TDNYV3hV?=
- =?utf-8?B?eWRCNHh3anlyM2lGTnVjUnMzckdDUnE0VGJiSHdTRlZ0ZUtPdXJZQnoxYUJp?=
- =?utf-8?B?Q1c2VUFBekZnOXk4YXN6dy9kdjJzdHdnZWYyc2VucHpFR2ZETUNMUTNoeTFJ?=
- =?utf-8?B?dm9ETlA3TTcyTGsrK0xmR0FuVDB3Y2ZZVGxHR0hWSFJZMEF6dHBhSTRaTWJZ?=
- =?utf-8?B?aUp5cU9UenRtdWxWOCtpd3prdGpHWXhVdkJPK0RHMGV0ZGZHOG8xWGhnT0ZU?=
- =?utf-8?B?VXJSSTdxZlNXcFhxQ29TZzh1S3BLMlhEL1BVVmhmOXR4TTVKV3FZcExOclZM?=
- =?utf-8?B?RWk5M1RqVlI2alZtQXhhWGJzZ0huaUdGWHQzTG5DQ25abyswRXlhdkhQV1dx?=
- =?utf-8?B?emFjZXVORXU4RkRXTDBEZWlIQS8wd1l1UmRTMEVOZy83TnJPU0cvdHQ1QXJj?=
- =?utf-8?B?cDFmRFlKUzl4L1h5ckVxTmIrR0VwQnk1YUpnSmFGSThkc1hGak1KanA2YUJ3?=
- =?utf-8?B?OHdlK3JPMzA2cDFQd3NiVmlzZGtnTFNuMThkRFFYYTUzR01oS3VZcWJKNGhU?=
- =?utf-8?B?WS9zekp2WXpqclUzTjFLdUthYWxzWWM2c0hqa0c3eTh3TlNaY0hlWjIwMkcv?=
- =?utf-8?B?VUU2Y0tueWEzcXc5UExlWUc4SDNnYTIyRXVnN0JGRnJUd3Ziek5IOEVQMklX?=
- =?utf-8?B?UTBxczRJaWJqVUpSdk5JMjlUbm9NYi9zdFU2c0tabkdQZ2pVRml0UlU0K2Qy?=
- =?utf-8?B?SzVHRXhHeFEvMkF4TTRUTmphcnRtODFyVEhreGhVRlZxUXQ2TGp1K1BXMWEr?=
- =?utf-8?B?czF3dklnU3ZZRFFwUVZtTjRudFlBVWt6Vmt4QWpmSzVSSDJxWHd4aGI1Ni9J?=
- =?utf-8?B?V2xPbm1GTkFyNjg1RUdXSGxmM0ZXaENQdVNLQ1B1eU5DRUNqY3h3Z2tjejZk?=
- =?utf-8?B?b2JTaDN6aEE3TGNKeDNuU1BjQ0liTDB5YXB4UzB4L01UbW9GU0ZSQlk1ekVH?=
- =?utf-8?B?NkU1SThiNHpaMkNqVEtrM3JTaVpsblozMlUvMjlKSm5Gb3FWam1VQkEvVE5B?=
- =?utf-8?Q?H08wplEFI6mxgry?=
-X-OriginatorOrg: wdc.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH0PR04MB7416.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e792396a-5288-4186-e9a1-08daf483eac6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Jan 2023 10:01:04.2674
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b61c8803-16f3-4c35-9b17-6f65f441df86
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LaNoqtavfVcU/FoB9geQXjGLrIHOG917ufeA8z38dKh1yI3Y0VdeTmH2J7SKct6Q+JAolgEBVgsAo27g4y+QDs2LpdWkLZxxPZ+xwi/zmzU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR04MB0832
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Received: by 2002:a05:6e02:1294:b0:30d:c258:ac1d with SMTP id
+ y20-20020a056e02129400b0030dc258ac1dmr654825ilq.79.1673518420392; Thu, 12 Jan
+ 2023 02:13:40 -0800 (PST)
+Date:   Thu, 12 Jan 2023 02:13:40 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f904fc05f20e5eb9@google.com>
+Subject: [syzbot] [vfs?] KASAN: use-after-free Write in pipe_poll
+From:   syzbot <syzbot+dcfe8e1b5dfc52d34d0d@syzkaller.appspotmail.com>
+To:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.6 required=5.0 tests=BAYES_00,FROM_LOCAL_HEX,
+        HEADER_FROM_DIFFERENT_DOMAINS,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-TG9va3MgZ29vZCwNClJldmlld2VkLWJ5OiBKb2hhbm5lcyBUaHVtc2hpcm4gPGpvaGFubmVzLnRo
-dW1zaGlybkB3ZGMuY29tPg0K
+Hello,
+
+syzbot found the following issue on:
+
+HEAD commit:    0a093b2893c7 Add linux-next specific files for 20230112
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=134c4d16480000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=835f3591019836d5
+dashboard link: https://syzkaller.appspot.com/bug?extid=dcfe8e1b5dfc52d34d0d
+compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/8111a570d6cb/disk-0a093b28.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ecc135b7fc9a/vmlinux-0a093b28.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ca8d73b446ea/bzImage-0a093b28.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+dcfe8e1b5dfc52d34d0d@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: use-after-free in pipe_poll+0x64d/0x7d0 fs/pipe.c:656
+Write of size 1 at addr ffff8880231edd5c by task syz-executor.1/11063
+
+CPU: 0 PID: 11063 Comm: syz-executor.1 Not tainted 6.2.0-rc3-next-20230112-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 10/26/2022
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0xd1/0x138 lib/dump_stack.c:106
+ print_address_description mm/kasan/report.c:306 [inline]
+ print_report+0x15e/0x45d mm/kasan/report.c:417
+ kasan_report+0xc0/0xf0 mm/kasan/report.c:517
+ pipe_poll+0x64d/0x7d0 fs/pipe.c:656
+ vfs_poll include/linux/poll.h:88 [inline]
+ io_poll_check_events io_uring/poll.c:279 [inline]
+ io_poll_task_func+0x3a6/0x1220 io_uring/poll.c:327
+ handle_tw_list+0xa8/0x460 io_uring/io_uring.c:1169
+ tctx_task_work+0x12e/0x530 io_uring/io_uring.c:1224
+ task_work_run+0x16f/0x270 kernel/task_work.c:179
+ get_signal+0x1c7/0x24f0 kernel/signal.c:2635
+ arch_do_signal_or_restart+0x79/0x5c0 arch/x86/kernel/signal.c:306
+ exit_to_user_mode_loop kernel/entry/common.c:168 [inline]
+ exit_to_user_mode_prepare+0x11f/0x240 kernel/entry/common.c:204
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
+ syscall_exit_to_user_mode+0x1d/0x50 kernel/entry/common.c:297
+ do_syscall_64+0x46/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+RIP: 0033:0x7fc34b68c0c9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 19 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fc34c41c218 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
+RAX: fffffffffffffe00 RBX: 00007fc34b7abf88 RCX: 00007fc34b68c0c9
+RDX: 0000000000000000 RSI: 0000000000000080 RDI: 00007fc34b7abf88
+RBP: 00007fc34b7abf80 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc34b7abf8c
+R13: 00007ffe7e36d89f R14: 00007fc34c41c300 R15: 0000000000022000
+ </TASK>
+
+Allocated by task 11063:
+ kasan_save_stack+0x22/0x40 mm/kasan/common.c:45
+ kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+ ____kasan_kmalloc mm/kasan/common.c:371 [inline]
+ ____kasan_kmalloc mm/kasan/common.c:330 [inline]
+ __kasan_kmalloc+0xa2/0xb0 mm/kasan/common.c:380
+ kmalloc include/linux/slab.h:580 [inline]
+ kzalloc include/linux/slab.h:720 [inline]
+ alloc_pipe_info+0x10e/0x590 fs/pipe.c:790
+ get_pipe_inode fs/pipe.c:881 [inline]
+ create_pipe_files+0x93/0x8d0 fs/pipe.c:913
+ __do_pipe_flags fs/pipe.c:962 [inline]
+ do_pipe2+0x96/0x1b0 fs/pipe.c:1010
+ __do_sys_pipe fs/pipe.c:1033 [inline]
+ __se_sys_pipe fs/pipe.c:1031 [inline]
+ __x64_sys_pipe+0x33/0x40 fs/pipe.c:1031
+ do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+ do_syscall_64+0x39/0xb0 arch/x86/entry/common.c:80
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+Freed by task 11062:
+ kasan_save_stack+0x22/0x40 mm/kasan/common.c:45
+ kasan_set_track+0x25/0x30 mm/kasan/common.c:52
+ kasan_save_free_info+0x2e/0x40 mm/kasan/generic.c:518
+ ____kasan_slab_free mm/kasan/common.c:236 [inline]
+ ____kasan_slab_free+0x160/0x1c0 mm/kasan/common.c:200
+ kasan_slab_free include/linux/kasan.h:162 [inline]
+ slab_free_hook mm/slub.c:1781 [inline]
+ slab_free_freelist_hook+0x8b/0x1c0 mm/slub.c:1807
+ slab_free mm/slub.c:3787 [inline]
+ __kmem_cache_free+0xaf/0x2d0 mm/slub.c:3800
+ put_pipe_info fs/pipe.c:711 [inline]
+ pipe_release+0x2ba/0x310 fs/pipe.c:734
+ __fput+0x27c/0xa90 fs/file_table.c:321
+ task_work_run+0x16f/0x270 kernel/task_work.c:179
+ resume_user_mode_work include/linux/resume_user_mode.h:49 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:171 [inline]
+ exit_to_user_mode_prepare+0x210/0x240 kernel/entry/common.c:204
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:286 [inline]
+ syscall_exit_to_user_mode+0x1d/0x50 kernel/entry/common.c:297
+ do_syscall_64+0x46/0xb0 arch/x86/entry/common.c:86
+ entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+The buggy address belongs to the object at ffff8880231edc00
+ which belongs to the cache kmalloc-cg-512 of size 512
+The buggy address is located 348 bytes inside of
+ 512-byte region [ffff8880231edc00, ffff8880231ede00)
+
+The buggy address belongs to the physical page:
+page:ffffea00008c7b00 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x231ec
+head:ffffea00008c7b00 order:2 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff8880285b5901
+flags: 0xfff00000010200(slab|head|node=0|zone=1|lastcpupid=0x7ff)
+raw: 00fff00000010200 ffff88801244f140 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000080100010 00000001ffffffff ffff8880285b5901
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 2, migratetype Unmovable, gfp_mask 0x1d20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC|__GFP_HARDWALL), pid 10953, tgid 10950 (syz-executor.2), ts 766638397032, free_ts 762478646412
+ prep_new_page mm/page_alloc.c:2549 [inline]
+ get_page_from_freelist+0x11bb/0x2d50 mm/page_alloc.c:4324
+ __alloc_pages+0x1cb/0x5c0 mm/page_alloc.c:5590
+ alloc_pages+0x1aa/0x270 mm/mempolicy.c:2281
+ alloc_slab_page mm/slub.c:1851 [inline]
+ allocate_slab+0x25f/0x350 mm/slub.c:1998
+ new_slab mm/slub.c:2051 [inline]
+ ___slab_alloc+0xa91/0x1400 mm/slub.c:3193
+ __slab_alloc.constprop.0+0x56/0xa0 mm/slub.c:3292
+ __slab_alloc_node mm/slub.c:3345 [inline]
+ slab_alloc_node mm/slub.c:3442 [inline]
+ __kmem_cache_alloc_node+0x136/0x330 mm/slub.c:3491
+ __do_kmalloc_node mm/slab_common.c:966 [inline]
+ __kmalloc_node_track_caller+0x4b/0xc0 mm/slab_common.c:987
+ kmalloc_reserve net/core/skbuff.c:490 [inline]
+ __alloc_skb+0xe9/0x310 net/core/skbuff.c:563
+ alloc_skb include/linux/skbuff.h:1270 [inline]
+ alloc_skb_with_frags+0x97/0x6c0 net/core/skbuff.c:6193
+ sock_alloc_send_pskb+0x7a7/0x930 net/core/sock.c:2741
+ unix_dgram_sendmsg+0x419/0x1c30 net/unix/af_unix.c:1943
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ sock_sendmsg+0xd3/0x120 net/socket.c:734
+ ____sys_sendmsg+0x334/0x8c0 net/socket.c:2476
+ ___sys_sendmsg+0x110/0x1b0 net/socket.c:2530
+ __sys_sendmmsg+0x18f/0x460 net/socket.c:2616
+page last free stack trace:
+ reset_page_owner include/linux/page_owner.h:24 [inline]
+ free_pages_prepare mm/page_alloc.c:1451 [inline]
+ free_pcp_prepare+0x4d0/0x910 mm/page_alloc.c:1501
+ free_unref_page_prepare mm/page_alloc.c:3387 [inline]
+ free_unref_page+0x1d/0x490 mm/page_alloc.c:3482
+ __unfreeze_partials+0x17c/0x1a0 mm/slub.c:2637
+ qlink_free mm/kasan/quarantine.c:168 [inline]
+ qlist_free_all+0x6a/0x170 mm/kasan/quarantine.c:187
+ kasan_quarantine_reduce+0x192/0x220 mm/kasan/quarantine.c:294
+ __kasan_slab_alloc+0x63/0x90 mm/kasan/common.c:302
+ kasan_slab_alloc include/linux/kasan.h:186 [inline]
+ slab_post_alloc_hook mm/slab.h:769 [inline]
+ slab_alloc_node mm/slub.c:3452 [inline]
+ __kmem_cache_alloc_node+0x17c/0x330 mm/slub.c:3491
+ __do_kmalloc_node mm/slab_common.c:966 [inline]
+ __kmalloc_node+0x4d/0xd0 mm/slab_common.c:974
+ kmalloc_array_node include/linux/slab.h:697 [inline]
+ kcalloc_node include/linux/slab.h:702 [inline]
+ memcg_alloc_slab_cgroups+0x8f/0x150 mm/memcontrol.c:2899
+ memcg_slab_post_alloc_hook+0xa9/0x390 mm/slab.h:546
+ slab_post_alloc_hook mm/slab.h:777 [inline]
+ slab_alloc_node mm/slub.c:3452 [inline]
+ kmem_cache_alloc_node+0x1b3/0x350 mm/slub.c:3497
+ __alloc_skb+0x216/0x310 net/core/skbuff.c:550
+ alloc_skb include/linux/skbuff.h:1270 [inline]
+ alloc_skb_with_frags+0x97/0x6c0 net/core/skbuff.c:6193
+ sock_alloc_send_pskb+0x7a7/0x930 net/core/sock.c:2741
+ unix_dgram_sendmsg+0x419/0x1c30 net/unix/af_unix.c:1943
+ sock_sendmsg_nosec net/socket.c:714 [inline]
+ sock_sendmsg+0xd3/0x120 net/socket.c:734
+
+Memory state around the buggy address:
+ ffff8880231edc00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880231edc80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff8880231edd00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                    ^
+ ffff8880231edd80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff8880231ede00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
