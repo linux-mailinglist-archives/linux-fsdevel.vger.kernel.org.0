@@ -2,191 +2,200 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A82B668751
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 12 Jan 2023 23:51:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3241B6687E3
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 00:37:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240497AbjALWvr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Jan 2023 17:51:47 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58322 "EHLO
+        id S233125AbjALXg7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Jan 2023 18:36:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240248AbjALWvb (ORCPT
+        with ESMTP id S232801AbjALXg5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Jan 2023 17:51:31 -0500
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2061.outbound.protection.outlook.com [40.107.212.61])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 13689140EA;
-        Thu, 12 Jan 2023 14:51:29 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RACg9R7CRrcvmc/pGaz4ZDoj5c0HhsaShAvYjSkeH6UhZ9eJ9I8m/CpR2fYY7MaSmkgyZG+Qp3FqL6FCiIsVWlNGEr7uGcAMAJvEIoBDFx9Tp1nu5mXWkh1V4NUxiNT7H9xUeizIDUD8wkUzsVLVTCOjjERNbB2ka2RQmr9q9uv84R1VsO+8BOEFfVt2Ymgk4fljjdFjWahPqTGt5pLZzkCsNOrQUBkz2eQYk9mLQhQ1jmqq0Xa5zXgqR/7mdfI3MbEYXwiGYB3+whVfmhfgtnrVL5wTyOZN1yN2f6aNz450GhGEILeIsI1pAu6c40mLKgPb/OMsVrGpo32KQ1rpGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p9VGLeuteCdv7YjaSFA1ONkPq8Kc6afv6TMIcfGBWz4=;
- b=ONlEiDQ/y2a3aeaFu6X3V23b3d1oQvsEYifnNFOrG5tH1TAWsRnGgjxu2Gk8j1RP9Sk1b36PFpjgrUByQWh9YHXz7GykogsOOsOnOPQpKQgopX305sG4bvHMhKBFgyAqB4lFhBKs4OXB7p0AK5JMqdnhlsNv8lC8feNZ/5XaQ5m1RafxjzpzhoniU1ZGnMVJsyp+hC4KWCiw8TSPBREJHZ7bhIWU1E0cDU5rUxAjoKpdSzR2YUJ9Y5TS2IXnASQ5SchtNFULoMSGiF9iIX7ReKWsq+GJzlR0XPP6yemW2EQY9gTsGHveHW8z4duI8dinjTuP1sJRRfoP2REzaIX44w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=memverge.com; dmarc=pass action=none header.from=memverge.com;
- dkim=pass header.d=memverge.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=memverge.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p9VGLeuteCdv7YjaSFA1ONkPq8Kc6afv6TMIcfGBWz4=;
- b=Uo+ZTOc/sM8HQ51FNYKyFJfeSAEAKlB07Xd8QHp70C6MPaVoQ+QDxLcsTEILcAKmmcfgr5wL8GM3xGclNegB+vljDxPPimgNr3SkYzDnLB3FeBldAR0LyS+AEnuU7YUSm0QEMnbL/IVj13rxpc4/PPRIBJHJ0pCpPrO/IeLXuqM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=memverge.com;
-Received: from BN6PR17MB3121.namprd17.prod.outlook.com (2603:10b6:405:7c::19)
- by DS0PR17MB6151.namprd17.prod.outlook.com (2603:10b6:8:c1::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.5986.18; Thu, 12 Jan
- 2023 22:51:27 +0000
-Received: from BN6PR17MB3121.namprd17.prod.outlook.com
- ([fe80::d253:1eb3:9347:c660]) by BN6PR17MB3121.namprd17.prod.outlook.com
- ([fe80::d253:1eb3:9347:c660%4]) with mapi id 15.20.5986.018; Thu, 12 Jan 2023
- 22:51:27 +0000
-Date:   Thu, 12 Jan 2023 17:51:20 -0500
-From:   Gregory Price <gregory.price@memverge.com>
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     Gregory Price <gourry.memverge@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
-        oleg@redhat.com, peterz@infradead.org, ebiederm@xmission.com,
-        akpm@linux-foundation.org, adobriyan@gmail.com, corbet@lwn.net,
-        shuah@kernel.org
-Subject: Re: [PATCH 3/3] prctl,syscall_user_dispatch: add a getter for
- configuration info
-Message-ID: <Y8CO6E0oOcEuveaD@memverge.com>
-References: <20230109153348.5625-1-gregory.price@memverge.com>
- <20230109153348.5625-4-gregory.price@memverge.com>
- <Y8BOSwkISphWtEQ5@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y8BOSwkISphWtEQ5@gmail.com>
-X-ClientProxiedBy: BYAPR01CA0046.prod.exchangelabs.com (2603:10b6:a03:94::23)
- To BN6PR17MB3121.namprd17.prod.outlook.com (2603:10b6:405:7c::19)
+        Thu, 12 Jan 2023 18:36:57 -0500
+Received: from mail-oi1-x230.google.com (mail-oi1-x230.google.com [IPv6:2607:f8b0:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CAD0BC81
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jan 2023 15:36:56 -0800 (PST)
+Received: by mail-oi1-x230.google.com with SMTP id j130so16545411oif.4
+        for <linux-fsdevel@vger.kernel.org>; Thu, 12 Jan 2023 15:36:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=OyKJUQtbXtAfFvc9DdHISkJE08GBS8U1MkoKFAxUAKQ=;
+        b=lpvMe6SDkX77s0ewCmh5sDGHXEaR8a8nPlU2wh23wal2DYvRPTtWGF1UI2uzxUlzeF
+         XkiCJO+G6fmxNMsQrhQnva66fDY4fkBWHQvKMiSl3IjsiXiE4PQh0MdlJEbXcO2iz1G9
+         UXWlQVOTcFV+nEz7brCGx51COd0VuUjZhjaf9Xmp382+rcaIZ0oKT8ic5aWH6lEHpr6k
+         1UrzkGYeUfQyqxbvmdt45Q1UkaW2hOgAoya7GIaj6pZXKUll1AafuQVYbHIcTjGlVf7S
+         XztmjUeaXTUCQRE3Q1B8pTiHNs0qUITl0VfaCRIykkKcYOP/qZULBT8pJr7tYB4dU4gZ
+         Jkwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OyKJUQtbXtAfFvc9DdHISkJE08GBS8U1MkoKFAxUAKQ=;
+        b=zyD5OXKfwRDPx7TlQhRcm4Y4jl3nabzQ9IirOc4ymAAzJOcA1ybjN5haUx81HRQyW4
+         toVcq7tqEzv1k9H6UlnrFZMtAZ1pirn1693oNrSuOZhL7Y7NpmI7E2+PZl3fWKXGU1pc
+         VZ05CBLyhi4Wz4AnxmGhXAz3FzfPwWNhrQImNqDPBwmZ9s90ScIt6aZudmJSOBv74Z0c
+         O2Ci8Kzbf/QTsrRZwoFOEaAlE1QT0l8fiOL+9uV0/n6yriBGpQLKV+4KnEwq523Ls9L3
+         WeKNozruaWYV15viYBp32RWoDEIO04aeR4rP3V2hbKai3ux6sTW6yMNutV5ix25i0+ZB
+         72SQ==
+X-Gm-Message-State: AFqh2ko3dc7NP8oDEU7ASd1k1oU0Orwv93DbzfCfkBF0D9TitZYUN6RF
+        LEL2IHcqRHFne3xVydfJ1fkU4/OynbpdMIM7dl7gC3vg
+X-Google-Smtp-Source: AMrXdXtkYNwksxe1OOG0q+HSCdM2dzTYffjddycnY81pqQgEnsRHwaCdqHlUubblpElNijOxRLRVEqFDRNWITWJXdUM=
+X-Received: by 2002:a05:6808:218c:b0:364:5474:688f with SMTP id
+ be12-20020a056808218c00b003645474688fmr840731oib.159.1673566615691; Thu, 12
+ Jan 2023 15:36:55 -0800 (PST)
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN6PR17MB3121:EE_|DS0PR17MB6151:EE_
-X-MS-Office365-Filtering-Correlation-Id: 646fe0bd-d8a6-4bda-495c-08daf4ef89fa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: HOITiUyVNo+h380lvlUaH4uYNfeoXuG5tV9EfbvIbTiteRC+B0+iekdMD4NPl/RvMWoUJRYzEw9393uQJKYfDcSDcDXY3etChS8K4OuDPVbt+HozyDBm+Yk2hJE5xz+dwnwe7jiwB4dcaMDVYkdiWIPdc+UfLAi+NVEP1eo5g3ChxuMyq8IKz5rtttyMjpN4Uh0zQhZjWud2I31npQfVngrYoMOcNExjY84TyzWdQC+gWEEOjo8UXOy/LYtwuH7KFnCECRNrI2QuA4omH16pU4N15au3C6dzDcsfqgC+GbIqaP+QAm0O5kyJjs+hxSGpb6sdc3Y0z8/VwTTJjyKozmWm+x+zjjon2cVjSmO8KJB1kwK4PwPQ/KDsGL2EhSBpaHXkD7ZZ6GvDvPsyVFEtse3R/fDKz4xEqvTeQqvfXij9v+f81TPCvjtqFbiLhWbkDOZhE0UBFZ0DnGB1a8etCsOtNrV/MTxrPMVqKpQess68Dcy2e5EzLfmHpvpGL2OCiEM4dtlJlZJLFg2HMI22ErQ5H3YHOYahcsdMdFdLLP697ZpwB7s4mmSznwwayVPUrvvwmyKU5ThRqyMIDicbvign5uAjOD0wiMMun7fnpafsfCPTOzPsyDU50cqiSjZE5YqUBOUb7ZG5GZOYznkLzQ==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR17MB3121.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(366004)(396003)(39840400004)(376002)(346002)(136003)(451199015)(6506007)(6512007)(6666004)(26005)(186003)(478600001)(2906002)(6486002)(66476007)(2616005)(66556008)(36756003)(66946007)(6916009)(8676002)(316002)(41300700001)(4326008)(38100700002)(5660300002)(44832011)(8936002)(83380400001)(7416002)(86362001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?/P6nEXLjs74d6utjzKjzIy91WR84CqeKprgmgiwSpr+VJUZ3jsRYAZWvWscc?=
- =?us-ascii?Q?B2pCNlH0ffDumk4rTEJWguQjDYiDtQyCBNFgz7uxyjeomSutvgmz6VJ/YswK?=
- =?us-ascii?Q?P+Wy9apTmN9oX1wCSVRD3DU8BN/h0A/C5CDJ3ShbqUtq7Bw9MtYssnR+o1xO?=
- =?us-ascii?Q?vBsEmadBqegfjmSQDFc0yAvjt8PhNATxbp9T9FC8SuuIuPP3aVSBKYhpzboJ?=
- =?us-ascii?Q?XIZcvUe87uHJeXT59M+M1z1Ig4ZIszKQOYPryXx9xeu/A74viNl1HH3yqvrU?=
- =?us-ascii?Q?4oDwE8nwptPDhZC0Ygf7OE+pbOUPSMKpt0e8PjKQe/b4BK0nH+SV4Yel22/J?=
- =?us-ascii?Q?IfQBgMghuSGpvDpfBWOAB2OXx5/aSr9Jz3ULaZccC0EYRyP2v9SZJRheQRqA?=
- =?us-ascii?Q?m+0tRccsirnkyjAZmXAgYUHiLFKYNiIIesb+AAbP8JhQkcKVI1OHco4YuNK7?=
- =?us-ascii?Q?fnXHM13N1ThEqyGoYN9dEuT4vZ9OwsLnldfoKneh8YcT/NtbnFmhZ7VOJpgy?=
- =?us-ascii?Q?FeuHyZW1/M1/dF4qw72cNnJ8qP6T5ugDQbg6o6Wz2xuNLdl5REklFbSQKM2A?=
- =?us-ascii?Q?xmMP0ifxQq8MvhpoRkPkesuUJCkO/8AEO3ueQGYQ7Z44nqejeE3GJKoS4mtF?=
- =?us-ascii?Q?3uJl7VkDMuTXaylejd30FF+0l94vldgp841oRWEifL0HgAVqxwS6UK+qx1Um?=
- =?us-ascii?Q?oA8MxbTC9w/9wrb69OE5bpHbyz01rKZ0Ctl7EGIZMIfBalO5GZyyfW8NiDJ1?=
- =?us-ascii?Q?szSojzRsKcBx5vELEK/yQBNrfjEx6k9FA/P4lGW4txDmfp2p44J6LTu9y4fT?=
- =?us-ascii?Q?iFJ1igq6usDEm618m2t609x/cp+LNS1qyyafV7ebp8OyHB7VDkeah/jmqXpM?=
- =?us-ascii?Q?aX9S8ROHahHJp18E2pofwiwn+qd+1OSPgNwFSrSMIbyGVr9em7UVQ/OlmgoH?=
- =?us-ascii?Q?7fGQzj4FiGR8X6wNhH8MhenkENG7HzMtEvi4cfWdbsWoyrJprkJRqtkSNv6K?=
- =?us-ascii?Q?kYqX66O/dKa9gj18WbIZd3yUWf6CsiAegk5rXxc73r4LOj981TABckoin+rY?=
- =?us-ascii?Q?yoQ5/Jchlz16qnxBoXD4Eun4iufO7g+awEf03tI71HPF5wpnIBOgBZ7fqHSH?=
- =?us-ascii?Q?L/AjSEqS0z3rMcXC/5rJUq4eOwx5amPDe00s434u8fLDGFqOfBCqKdYjph/J?=
- =?us-ascii?Q?+mEstyquK7k1o+GNvL0XiNljjsNfwj3DQGrhrzufIFuQUT9I6WwOa7J1dpX7?=
- =?us-ascii?Q?n2xArXofSnRZ3LJhVRo96OPr8hH70cSixnDY2evJj6br+725GEh+PiMI/Zzs?=
- =?us-ascii?Q?0zt5y5fYk71gwVi78xIlO5OR0PDfcsYI/hiRH//8ht3Ld47RRMxb8Oh7rM3w?=
- =?us-ascii?Q?s2y9BrbGYml3QJM9NFDkoy7i+jyug8StdNXbpTs8K/xEUxP4zq/jfyKGo2YW?=
- =?us-ascii?Q?vEDcfdNEToZUgF99B6aZmPib3qiYTOIIVdikws445hxx+ei8fS2/kkTLplMh?=
- =?us-ascii?Q?sTO8imWtTXHl5yRWE6aT7bOlKYixXu5wN0XvFPJtwlF+2zJUi7yxe5gkqNbb?=
- =?us-ascii?Q?fBOGMrQUJiFO6wqIdCKMBY2lzLFCk6gR3IbsdLcB3sxnvM2We2gtu/l7PtIB?=
- =?us-ascii?Q?nQ=3D=3D?=
-X-OriginatorOrg: memverge.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 646fe0bd-d8a6-4bda-495c-08daf4ef89fa
-X-MS-Exchange-CrossTenant-AuthSource: BN6PR17MB3121.namprd17.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Jan 2023 22:51:27.7932
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5c90cb59-37e7-4c81-9c07-00473d5fb682
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: nPJvCnAFiKukxuskUx76Zhn4tfUIctDcCUFRmhwzewAwcTFpEcrgX3/Mq2Y+007F2sgslFl6mjOlfV+4WjOUuBt0jRnFXLNLO8SdE08wfyQ=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR17MB6151
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE
-        autolearn=no autolearn_force=no version=3.4.6
+Received: by 2002:ac9:77d5:0:b0:491:8368:9bdd with HTTP; Thu, 12 Jan 2023
+ 15:36:55 -0800 (PST)
+From:   Mateusz Guzik <mjguzik@gmail.com>
+Date:   Fri, 13 Jan 2023 00:36:55 +0100
+Message-ID: <CAGudoHHx0Nqg6DE70zAVA75eV-HXfWyhVMWZ-aSeOofkA_=WdA@mail.gmail.com>
+Subject: lockref scalability on x86-64 vs cpu_relax
+To:     linux-fsdevel@vger.kernel.org
+Cc:     viro@zeniv.linux.org.uk, torvalds@linux-foundation.org,
+        Jan Glauber <jan.glauber@gmail.com>, tony.luck@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Spam-Status: No, score=-0.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URI_DOTEDU autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 12, 2023 at 10:15:39AM -0800, Andrei Vagin wrote:
-> On Mon, Jan 09, 2023 at 10:33:48AM -0500, Gregory Price wrote:
-> > This patch implements simple getter interface for syscall user dispatch
-> > configuration info.
-> > 
-> > To support checkpoint/resume of a syscall user dispatch process,
-> > the prctl settings for syscall user dispatch must be fetchable.
-> > Presently, these settings are write-only, making it impossible to
-> > implement transparent checkpoint (coordination with the software is
-> > required).
-> > 
-> > As Syscall User Dispatch is explicitly not for secure-container
-> > development, exposing the configuration state via prctl does not
-> > violate the original design intent.
-> > 
-> > Signed-off-by: Gregory Price <gregory.price@memverge.com>
-> > ---
-> >  .../admin-guide/syscall-user-dispatch.rst     | 18 +++++++
-> >  include/linux/syscall_user_dispatch.h         |  7 +++
-> >  include/uapi/linux/prctl.h                    |  3 ++
-> >  kernel/entry/syscall_user_dispatch.c          | 14 +++++
-> >  kernel/sys.c                                  |  4 ++
-> >  .../syscall_user_dispatch/sud_test.c          | 54 +++++++++++++++++++
-> >  6 files changed, 100 insertions(+)
-> > 
-> > diff --git a/Documentation/admin-guide/syscall-user-dispatch.rst b/Documentation/admin-guide/syscall-user-dispatch.rst
-> > index 60314953c728..8b2c8b6441b7 100644
-> > --- a/Documentation/admin-guide/syscall-user-dispatch.rst
-> > +++ b/Documentation/admin-guide/syscall-user-dispatch.rst
-> > @@ -45,6 +45,10 @@ only the syscall dispatcher address and the userspace key.
-> >  As the ABI of these intercepted syscalls is unknown to Linux, these
-> >  syscalls are not instrumentable via ptrace or the syscall tracepoints.
-> >  
-> > +A getter interface is supplied for the purpose of userland
-> > +checkpoint/restore software being able to suspend and restore the
-> > +current state of the system.
-> > +
-> >  Interface
-> >  ---------
-> >  
-> > @@ -73,6 +77,20 @@ thread-wide, without the need to invoke the kernel directly.  selector
-> >  can be set to SYSCALL_DISPATCH_FILTER_ALLOW or SYSCALL_DISPATCH_FILTER_BLOCK.
-> >  Any other value should terminate the program with a SIGSYS.
-> >  
-> > +
-> > +A thread can fetch the current Syscall User Dispatch configuration with the following prctl:
-> > +
-> > +  prctl(PR_GET_SYSCALL_USER_DISPATCH, <dispatch_config>))
-> > +
-> > +<dispatch_config> is a pointer to a ``struct syscall_user_dispatch`` as defined in ``linux/include/linux/syscall_user_dispatch.h``::
-> 
-> syscall_user_dispatch.h isn't a part of uapi, so I am not sure that it
-> is a good idea to use it here.
-> 
-> For criu, it is much more convinient to have a ptrace interface to get
-> this sort of parameters. prctl requires to execute a system call from a
-> context of the target process. It is tricky so we want to minimize a
-> number of such calls.
-> 
-> Thanks,
-> Andrei
+Hello,
 
+[cc is probably woefully incomplete, just grabbed people from lockref
+history; should this land on a x86 list instead of vfs?]
 
-Thank you for the feedback.
+I intended to send a patch which fixes cred-related bottleneck in
+access(), and while getting the expected win for calls with different
+files, I got a *slowdown* when benchmarking against the same file and
+according to perf top it was all lockref. I'm going to post it after
+this issue is resolved, interested parties can take a peek here:
+https://dpaste.com/8SVDF8HJH .
 
-I think you're right.  A Ptrace for this seems more in-line with the
-SECCOMP filter exporting that CRIU uses too.
+The problem is visible with open3 test ("Same file open/close") from
+will-it-scale. I ran the _processes variant against stock + no-pause
+kernel on Cascade Lake (2 sockets * 24 cores * 2 threads) running
+6.2-rc3.
 
-I'll look at implementing that instead.
+Results are:
+proc    stock   no-pause
+1       805603  814942
+2       1054980 1054781
+8       1544802 1822858
+24      1191064 2199665
+48      851582  1469860
+96      609481  1427170
+
+As you can see degradation already shows up at ~8 workers.
+
+While trying to do my homework regarding history in the area I found
+this thread:
+https://lkml.iu.edu/hypermail/linux/kernel/1309.0/02330.html
+
+It mentions a stat-based test, which I presume was multithreaded
+stat on the same dentry. will-it-scale somehow does not have stat
+benches, so I posted a PR to add some:
+https://github.com/antonblanchard/will-it-scale/pull/35/files
+
+With fstat2_processes (Same file fstat) I get:
+proc    stock   no-pause
+1       3013872 3047636
+2       4284687 4400421
+8       3257721 5530156
+24      2239819 5466127
+48      1701072 5256609
+96      1269157 6649326
+
+To my understanding on said architecture failed cmpxchg still grants you
+exclusive access to the cacheline, making immediate retry preferable
+when trying to inc/dec unless a certain value is found. By doing pause
+instead one not only induces a delay, but also increases likelihood that
+the line will have to be grabbed E again. Something to that extent was
+even stated in thread and it definitely lines up with results above.
+
+I see pause first shoed up first here:
+commit d472d9d98b463dd7a04f2bcdeafe4261686ce6ab
+Author: Tony Luck <tony.luck@intel.com>
+Date:   Tue Sep 3 14:49:49 2013 -0700
+
+    lockref: Relax in cmpxchg loop
+
+... without numbers attached to it. Given the above linked thread it
+looks like the arch this was targeting was itanium, not x86-64, but
+the change landed for everyone.
+
+Later it was further augmented with:
+commit 893a7d32e8e04ca4d6c882336b26ed660ca0a48d
+Author: Jan Glauber <jan.glauber@gmail.com>
+Date:   Wed Jun 5 15:48:49 2019 +0200
+
+    lockref: Limit number of cmpxchg loop retries
+[snip]
+    With the retry limit the performance of an open-close testcase
+    improved between 60-70% on ThunderX2.
+
+While the benchmark was specifically on ThunderX2, the change once more
+was made for all archs.
+
+I should note in my tests the retry limit was never reached fwiw.
+
+That aside, the open-close testcase mentioned should match open3.
+
+All that said, I think the thing to do here is to replace cpu_relax
+with a dedicated arch-dependent macro, akin to the following:
+
+diff --git a/lib/lockref.c b/lib/lockref.c
+index 45e93ece8ba0..e057e1630e7c 100644
+--- a/lib/lockref.c
++++ b/lib/lockref.c
+@@ -2,6 +2,10 @@
+=C2=A0#include <linux/export.h>
+=C2=A0#include <linux/lockref.h>
+
++#ifndef arch_cpu_relax_cmpxchg_loop
++#define arch_cpu_relax_cmpxchg_loop() cpu_relax()
++#endif
++
+=C2=A0#if USE_CMPXCHG_LOCKREF
+
+=C2=A0/*
+@@ -23,7 +27,7 @@
+                }
+         \
+                if (!--retry)
+         \
+                        break;
+         \
+-               cpu_relax();
+         \
++               arch_cpu_relax_cmpxchg_loop();
+         \
+        }
+         \
+=C2=A0} while (0)
+
+Then x86-64 would simply:
++#define        arch_cpu_relax_cmpxchg_loop do { } while (0)
+
+Not an actual patch and I don't care about the name, just illustrating
+what I mean.
+
+I have to note there are probably numerous other cmpxchg loops without
+the pause/fallback treatment, quick grep reveals one in
+refcount_dec_not_one, if the fallback and/or cpu_relax thing is indeed
+desirable the other loops should probably get augmented to have it.
+
+Any comments?
+
+If you agree with the idea I'll submit a  proper patch.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
