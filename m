@@ -2,130 +2,100 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 09050668F90
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 08:51:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AE461668FB8
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 08:56:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S234842AbjAMHvG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 02:51:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40048 "EHLO
+        id S236534AbjAMH4Q (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 02:56:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42794 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230385AbjAMHvA (ORCPT
+        with ESMTP id S240464AbjAMHz7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Jan 2023 02:51:00 -0500
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC0575F75;
-        Thu, 12 Jan 2023 23:50:55 -0800 (PST)
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
+        Fri, 13 Jan 2023 02:55:59 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CAA9528A;
+        Thu, 12 Jan 2023 23:55:57 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mxhk.zte.com.cn (FangMail) with ESMTPS id 4NtYWL1bQDz6FK2T;
-        Fri, 13 Jan 2023 15:50:54 +0800 (CST)
-Received: from szxlzmapp06.zte.com.cn ([10.5.230.252])
-        by mse-fl1.zte.com.cn with SMTP id 30D7ohY7091613;
-        Fri, 13 Jan 2023 15:50:43 +0800 (+08)
-        (envelope-from yang.yang29@zte.com.cn)
-Received: from mapi (szxlzmapp01[null])
-        by mapi (Zmail) with MAPI id mid14;
-        Fri, 13 Jan 2023 15:50:45 +0800 (CST)
-Date:   Fri, 13 Jan 2023 15:50:45 +0800 (CST)
-X-Zmail-TransId: 2b0363c10d55ffffffffcfca5f18
-X-Mailer: Zmail v1.0
-Message-ID: <202301131550455361823@zte.com.cn>
-Mime-Version: 1.0
-From:   <yang.yang29@zte.com.cn>
-To:     <akpm@linux-foundation.org>, <hannes@cmpxchg.org>,
-        <willy@infradead.org>
-Cc:     <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-mm@kvack.org>, <iamjoonsoo.kim@lge.com>,
-        <yang.yang29@zte.com.cn>, <ran.xiaokai@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHQgdjJdIHN3YXBfc3RhdGU6IHVwZGF0ZSBzaGFkb3dfbm9kZXMgZm9yIGFub255bW91cyBwYWdl?=
-Content-Type: text/plain;
-        charset="UTF-8"
-X-MAIL: mse-fl1.zte.com.cn 30D7ohY7091613
-X-Fangmail-Gw-Spam-Type: 0
-X-FangMail-Miltered: at cgslv5.04-192.168.250.138.novalocal with ID 63C10D5E.000 by FangMail milter!
-X-FangMail-Envelope: 1673596254/4NtYWL1bQDz6FK2T/63C10D5E.000/10.5.228.132/[10.5.228.132]/mse-fl1.zte.com.cn/<yang.yang29@zte.com.cn>
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 63C10D5E.000/4NtYWL1bQDz6FK2T
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-        version=3.4.6
+        by ams.source.kernel.org (Postfix) with ESMTPS id 78847B82097;
+        Fri, 13 Jan 2023 07:55:56 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22F6DC433EF;
+        Fri, 13 Jan 2023 07:55:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673596555;
+        bh=k+JG6cQhINTeraKycNX3AkA5hLXrGXirTSDubaW7RNA=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=f61ARbFwfAK87XLX3bLLADXyMKwh/q9KK7NSFMIdjboOltYG7sbrBsrHM8gsQcq8d
+         LuU8CeF7rfmQjvQQRK8g+CHrznSyDxa4gL2K0JJHzlWBX/N/IXeQFaIizRFty9e60O
+         dRCMsXyj6AVGFD+t2S7qofJYHOIXryBp95fB2eXYtnyUpfrtvy+kY5k3yvk+yRTU/r
+         +hpyg0V5p38xu4kBs0ccBCsu7ZNAT/wJoY1bpKy/Op89Vm9RIOda20LGNkIgO5NAx4
+         hRFg2xUWCL+NKqgf0ZUrZWp63Evo4RxeDzuJEMKbl6+g4WubbvNuP8iFaO1Z0TbLZc
+         QDuXydqasubaA==
+Received: by mail-lj1-f176.google.com with SMTP id n5so21164902ljc.9;
+        Thu, 12 Jan 2023 23:55:55 -0800 (PST)
+X-Gm-Message-State: AFqh2kp+V5WnUg5Q+nTUj9L4ZcdkCgtm24fe4kAPsdY/R5RUZAGBxN/F
+        xk4TK6OMp9VN0n/fWVrnfP3V/kx8NdNqeuajl6w=
+X-Google-Smtp-Source: AMrXdXvPBDKnkGS46Fnum+sBY6tUC4r2g2BIXBTSIujXdCK7arMiBySaB6Urx5uBQUaWUUyEymbKDknr+1U3RdEBQGg=
+X-Received: by 2002:a2e:a901:0:b0:27f:ef88:3ecb with SMTP id
+ j1-20020a2ea901000000b0027fef883ecbmr1881053ljq.189.1673596553124; Thu, 12
+ Jan 2023 23:55:53 -0800 (PST)
+MIME-Version: 1.0
+References: <CAGudoHHx0Nqg6DE70zAVA75eV-HXfWyhVMWZ-aSeOofkA_=WdA@mail.gmail.com>
+ <CAHk-=wjthxgrLEvgZBUwd35e_mk=dCWKMUEURC6YsX5nWom8kQ@mail.gmail.com> <SJ1PR11MB6083368BCA43E5B0D2822FD3FCC29@SJ1PR11MB6083.namprd11.prod.outlook.com>
+In-Reply-To: <SJ1PR11MB6083368BCA43E5B0D2822FD3FCC29@SJ1PR11MB6083.namprd11.prod.outlook.com>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Fri, 13 Jan 2023 08:55:41 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEqbMEcrKYzz2-huLPMnotPoxFY8adyH=Xb4Ex8o98x-w@mail.gmail.com>
+Message-ID: <CAMj1kXEqbMEcrKYzz2-huLPMnotPoxFY8adyH=Xb4Ex8o98x-w@mail.gmail.com>
+Subject: ia64 removal (was: Re: lockref scalability on x86-64 vs cpu_relax)
+To:     "Luck, Tony" <tony.luck@intel.com>
+Cc:     "Torvalds, Linus" <torvalds@linux-foundation.org>,
+        Mateusz Guzik <mjguzik@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        Jan Glauber <jan.glauber@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-From: Yang Yang <yang.yang29@zte.com.cn>
+On Fri, 13 Jan 2023 at 01:31, Luck, Tony <tony.luck@intel.com> wrote:
+>
+> > Yeah, if it was ia64-only, it's a non-issue these days. It's dead and
+> > in pure maintenance mode from a kernel perspective (if even that).
+>
+> There's not much "simultaneous" in the SMT on ia64. One thread in a
+> spin loop will hog the core until the h/w switches to the other thread some
+> number of cycles (hundreds, thousands? I really can remember). So I
+> was pretty generous with dropping cpu_relax() into any kind of spin loop.
+>
+> Is it time yet for:
+>
+> $ git rm -r arch/ia64
+>
 
-Shadow_nodes is for shadow nodes reclaiming of workingset handling,
-it is updated when page cache add or delete since long time ago
-workingset only supported page cache. But when workingset supports
-anonymous page detection, we missied updating shadow nodes for
-it. This caused that shadow nodes of anonymous page will never be
-reclaimd by scan_shadow_nodes() even they use much memory and
-system memory is tense.
+Hi Tony,
 
-This patch updates shadow_nodes of anonymous page when swap
-cache is add or delete.
+Can I take that as an ack on [0]? The EFI subsystem has evolved
+substantially over the years, and there is really no way to do any
+IA64 testing beyond build testing, so from that perspective, dropping
+it entirely would be welcomed.
 
-Fixes: aae466b0052e ("mm/swap: implement workingset detection for anonymous LRU")
-Signed-off-by: Yang Yang <yang.yang29@zte.com.cn>
-Reviewed-by: Ran Xiaokai <ran.xiaokai@zte.com.cn>
----
-change for v2
-- Include a description of the user-visible effect. Add fixes tag. Modify comments.
-Also call workingset_update_node() in clear_shadow_from_swap_cache(). Thanks
-to Matthew Wilcox.
----
-include/linux/xarray.h | 3 ++-
- mm/swap_state.c        | 6 ++++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
+Thanks,
+Ard.
 
-diff --git a/include/linux/xarray.h b/include/linux/xarray.h
-index 44dd6d6e01bc..5cc1f718fec9 100644
---- a/include/linux/xarray.h
-+++ b/include/linux/xarray.h
-@@ -1643,7 +1643,8 @@ static inline void xas_set_order(struct xa_state *xas, unsigned long index,
-  * @update: Function to call when updating a node.
-  *
-  * The XArray can notify a caller after it has updated an xa_node.
-- * This is advanced functionality and is only needed by the page cache.
-+ * This is advanced functionality and is only needed by the page cache
-+ * and swap cache.
-  */
- static inline void xas_set_update(struct xa_state *xas, xa_update_node_t update)
- {
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index cb9aaa00951d..7a003d8abb37 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -94,6 +94,8 @@ int add_to_swap_cache(struct folio *folio, swp_entry_t entry,
- 	unsigned long i, nr = folio_nr_pages(folio);
- 	void *old;
 
-+	xas_set_update(&xas, workingset_update_node);
-+
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 	VM_BUG_ON_FOLIO(folio_test_swapcache(folio), folio);
- 	VM_BUG_ON_FOLIO(!folio_test_swapbacked(folio), folio);
-@@ -145,6 +147,8 @@ void __delete_from_swap_cache(struct folio *folio,
- 	pgoff_t idx = swp_offset(entry);
- 	XA_STATE(xas, &address_space->i_pages, idx);
 
-+	xas_set_update(&xas, workingset_update_node);
-+
- 	VM_BUG_ON_FOLIO(!folio_test_locked(folio), folio);
- 	VM_BUG_ON_FOLIO(!folio_test_swapcache(folio), folio);
- 	VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
-@@ -252,6 +256,8 @@ void clear_shadow_from_swap_cache(int type, unsigned long begin,
- 		struct address_space *address_space = swap_address_space(entry);
- 		XA_STATE(xas, &address_space->i_pages, curr);
-
-+		xas_set_update(&xas, workingset_update_node);
-+
- 		xa_lock_irq(&address_space->i_pages);
- 		xas_for_each(&xas, old, end) {
- 			if (!xa_is_value(old))
--- 
-2.15.2
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/ardb/linux.git/commit/?h=remove-ia64
