@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id EB04066A596
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 23:02:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 7F31266A607
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 23:37:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231386AbjAMWCe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 17:02:34 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52460 "EHLO
+        id S231238AbjAMWhu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 17:37:50 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40450 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230382AbjAMWCb (ORCPT
+        with ESMTP id S231143AbjAMWhq (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Jan 2023 17:02:31 -0500
-Received: from mail-pl1-x62a.google.com (mail-pl1-x62a.google.com [IPv6:2607:f8b0:4864:20::62a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 562457465B
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 14:02:16 -0800 (PST)
-Received: by mail-pl1-x62a.google.com with SMTP id k18so739486pll.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 14:02:16 -0800 (PST)
+        Fri, 13 Jan 2023 17:37:46 -0500
+Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA99777C3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 14:37:45 -0800 (PST)
+Received: by mail-pl1-x633.google.com with SMTP id b17so17340205pld.7
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 14:37:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=z7l9vd6TJMxdcmrmIlHi+1aamG6yNr9jBZqHMxmbVBg=;
-        b=BR3tUqUT1wdTPEhuyI88J1yG4yZUf5PuICve+KLW/6jG7Wb1v6McPHOp0JH41FPvHo
-         cA2xNTdp4kP3XHFHgUTLdE2qj40XKo3fIu/xNDgFentclcLH8D4+aqHtGytwQRH7EFT0
-         SvW3dkQzsILPvPKa4Is4mjjYyZmLU2ZjXaSMTILUI2Ql4PmYTWFYg91PuBLsgKKGoru5
-         2kNrKIxXaIvBTzLY81Ye3wChF7mPYngBYjfHrPWew9lZluOUDNoM3QdVM4dxlS9vgJCj
-         1PCCo9ULYh3HxSCxalWt2dPVhw7cT4s2LG6uTB7ArEkfMypRVuMINSetLuB5egod0Oa5
-         0CYQ==
+        bh=oYGGpY3c8wYSsolPP7oPQ187xmYhIxXfoDRmESiHutM=;
+        b=tgwARpR6oX7pIqiIfedVsEF9/fVdX7R++KsquyR9ziZ7UzwRxscaS5kujj2zHNYPAs
+         HesOuR7Sx5qOtSVwO3krm9uRXR5UTvzOqDPwLsoUS2mCaA5ph+KP9eBNBsRpd0A9L435
+         C78pBQlFmakDJoSXEeoufowua/fVMOTGqx3NtP2NIvaMzedd/pr1PLOYbQsS6dFkx5/5
+         kwCkXGYgxwKfF8lpKdpuKcjcpYVGyJ9gllu5qeMUhB05/Ix+APK3DiMQF2xJm40Kxo/a
+         rgTKeVYwqHKt8DoSnIFSclpMZ4e19SkFrGNJvf/OTxDBdTMTbfjsPlmc3hwEOi/a1hX7
+         bWaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=z7l9vd6TJMxdcmrmIlHi+1aamG6yNr9jBZqHMxmbVBg=;
-        b=pzBhiy/vNle/tYjDQ/af4t+AhQsKruN03QQbJ9Do16jGIDE1I75K8uae3jDoiLll50
-         TJo7LzENyBgNaA4LKi3cwMYFwMSpna/010x/Bq9LMxcsHpseS632SijNxSJyve4u8Usd
-         +sNrXdGGfF2ihikw3gBZtmd5VV8iwY4wj3ecBVcVGDe9eIwW+dUvDptRIWBaQ9L31xag
-         QbTaCWbs5TD2MVMv7SWwRPzl+IXUNJSDgtYqk7RP6QTGl5K1kBmmFLwyojAs0oTIV7Fc
-         k15Py9HpTvR/dkfJX/JQIgIvbPZSOlzPPf737402mfqpL5PGWSK5qpAXRXwfb0tvncXp
-         8YPQ==
-X-Gm-Message-State: AFqh2kot6iti1HbVCgEBC8mqA/e+OA/xYWvgtGX04I0YWOASqrY4uV5m
-        X6hRqKLI/dGkgx54Hh4hH12ZGw==
-X-Google-Smtp-Source: AMrXdXttju4or509XUsZuP2ElabXRLq+UGu6WNhuAKj6QmwsUs3kftnSPzMWDd6fhBAAvxes/xEs1A==
-X-Received: by 2002:a05:6a20:47de:b0:b3:66b7:24ff with SMTP id ey30-20020a056a2047de00b000b366b724ffmr1359880pzb.1.1673647335304;
-        Fri, 13 Jan 2023 14:02:15 -0800 (PST)
+        bh=oYGGpY3c8wYSsolPP7oPQ187xmYhIxXfoDRmESiHutM=;
+        b=xWVUAB7Se8BDSsnaAptbnoaU8B0X2jRuwOAsaAiCXU9uhQDoclXybUZiW1muXBuXVH
+         6N7rHynFuEcGfLMwrRlL6CHpDHxUQYy5wbyQLGEQa7KGwjWuPR9dfDpoDPPCfn7U2sFy
+         S7Ri2ReRQ99bfOgnZqZDme+bFbqjyx7Mo6O1zDbAFwApY/iZL9zxOaZeYFyDIbKhT9wI
+         fUFVr79+EhnUL8r++h8Uivq4GbaVvfMbOGQHMdLM5yBLEqRJX+oAC0omydKPhr7iEQp+
+         6AyJ6pr9kSZdTBm4NeZCkd8suM/Px4jzTtlv1JXRO8+a/KmcF4oFd+kz6xY5DcYai9OB
+         S6Nw==
+X-Gm-Message-State: AFqh2kpDYLZjkgeMMdT4aqrrIFJn7Rt7U9uA1vpm4JuWjXGg80oPPIyY
+        lMmwTqKTELZDxImZDsuGWlvf+g==
+X-Google-Smtp-Source: AMrXdXt5stBpwIEJwVXkUT6AxYk7gqWiLYnlxJx1z/r5PInmsD3i+NPQ2hSxNQ6Dxd7BftBMBypz9g==
+X-Received: by 2002:a17:90a:d148:b0:229:1e87:365f with SMTP id t8-20020a17090ad14800b002291e87365fmr580615pjw.2.1673649464636;
+        Fri, 13 Jan 2023 14:37:44 -0800 (PST)
 Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id k36-20020a635a64000000b0048988ed9e4bsm11687157pgm.19.2023.01.13.14.02.14
+        by smtp.gmail.com with ESMTPSA id z7-20020a17090ad78700b002270155254csm10626708pju.24.2023.01.13.14.37.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 14:02:14 -0800 (PST)
-Date:   Fri, 13 Jan 2023 22:02:11 +0000
+        Fri, 13 Jan 2023 14:37:43 -0800 (PST)
+Date:   Fri, 13 Jan 2023 22:37:39 +0000
 From:   Sean Christopherson <seanjc@google.com>
 To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
+Cc:     Jarkko Sakkinen <jarkko@kernel.org>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
+        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
+        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
         Wanpeng Li <wanpengli@tencent.com>,
@@ -84,14 +84,19 @@ Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Quentin Perret <qperret@google.com>, tabba@google.com,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
         wei.w.wang@intel.com
-Subject: Re: [PATCH v10 2/9] KVM: Introduce per-page memory attributes
-Message-ID: <Y8HU45aISOPwX76D@google.com>
+Subject: Re: [PATCH v10 3/9] KVM: Extend the memslot to support fd-based
+ private memory
+Message-ID: <Y8HdMzlNFhFwlkGS@google.com>
 References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-3-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-4-chao.p.peng@linux.intel.com>
+ <Y7azFdnnGAdGPqmv@kernel.org>
+ <20230106094000.GA2297836@chaop.bj.intel.com>
+ <Y7xrtf9FCuYRYm1q@google.com>
+ <20230110091432.GA2441264@chaop.bj.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20221202061347.1070246-3-chao.p.peng@linux.intel.com>
+In-Reply-To: <20230110091432.GA2441264@chaop.bj.intel.com>
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
@@ -103,76 +108,61 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 02, 2022, Chao Peng wrote:
-> diff --git a/arch/x86/kvm/Kconfig b/arch/x86/kvm/Kconfig
-> index fbeaa9ddef59..a8e379a3afee 100644
-> --- a/arch/x86/kvm/Kconfig
-> +++ b/arch/x86/kvm/Kconfig
-> @@ -49,6 +49,7 @@ config KVM
->  	select SRCU
->  	select INTERVAL_TREE
->  	select HAVE_KVM_PM_NOTIFIER if PM
-> +	select HAVE_KVM_MEMORY_ATTRIBUTES
+On Tue, Jan 10, 2023, Chao Peng wrote:
+> On Mon, Jan 09, 2023 at 07:32:05PM +0000, Sean Christopherson wrote:
+> > On Fri, Jan 06, 2023, Chao Peng wrote:
+> > > On Thu, Jan 05, 2023 at 11:23:01AM +0000, Jarkko Sakkinen wrote:
+> > > > On Fri, Dec 02, 2022 at 02:13:41PM +0800, Chao Peng wrote:
+> > > > > To make future maintenance easy, internally use a binary compatible
+> > > > > alias struct kvm_user_mem_region to handle both the normal and the
+> > > > > '_ext' variants.
+> > > > 
+> > > > Feels bit hacky IMHO, and more like a completely new feature than
+> > > > an extension.
+> > > > 
+> > > > Why not just add a new ioctl? The commit message does not address
+> > > > the most essential design here.
+> > > 
+> > > Yes, people can always choose to add a new ioctl for this kind of change
+> > > and the balance point here is we want to also avoid 'too many ioctls' if
+> > > the functionalities are similar.  The '_ext' variant reuses all the
+> > > existing fields in the 'normal' variant and most importantly KVM
+> > > internally can reuse most of the code. I certainly can add some words in
+> > > the commit message to explain this design choice.
+> > 
+> > After seeing the userspace side of this, I agree with Jarkko; overloading
+> > KVM_SET_USER_MEMORY_REGION is a hack.  E.g. the size validation ends up being
+> > bogus, and userspace ends up abusing unions or implementing kvm_user_mem_region
+> > itself.
+> 
+> How is the size validation being bogus? I don't quite follow.
 
-I would prefer to call this KVM_GENERIC_MEMORY_ATTRIBUTES.  Similar to
-KVM_GENERIC_HARDWARE_ENABLING, ARM does need/have hardware enabling, it just
-doesn't want KVM's generic implementation.  In this case, pKVM does support memory
-attributes, but uses stage-2 tables to track ownership and doesn't need/want the
-overhead of the generic implementation.
+The ioctl() magic embeds the size of the payload (struct kvm_userspace_memory_region
+in this case) in the ioctl() number, and that information is visible to userspace
+via _IOCTL_SIZE().  Attempting to take a larger size can mess up sanity checks,
+e.g. KVM selftests get tripped up on this assert if KVM_SET_USER_MEMORY_REGION is
+passed an "extended" struct.
 
->  	help
+	#define kvm_do_ioctl(fd, cmd, arg)						\
+	({										\
+		kvm_static_assert(!_IOC_SIZE(cmd) || sizeof(*arg) == _IOC_SIZE(cmd));	\
+		ioctl(fd, cmd, arg);							\
+	})
 
-...
+> Then we will use kvm_userspace_memory_region2 as the KVM internal alias,
+> right?
 
-> +#define KVM_MEMORY_ATTRIBUTE_READ              (1ULL << 0)
-> +#define KVM_MEMORY_ATTRIBUTE_WRITE             (1ULL << 1)
-> +#define KVM_MEMORY_ATTRIBUTE_EXECUTE           (1ULL << 2)
-> +#define KVM_MEMORY_ATTRIBUTE_PRIVATE           (1ULL << 3)
+Yep.
 
-I think we should carve out bits 0-2 for RWX, but I don't think we should actually
-define them until they're actually accepted by KVM.
+> I see similar examples use different functions to handle different versions
+> but it does look easier if we use alias for this function.
+> 
+> > 
+> > It feels absolutely ridiculous, but I think the best option is to do:
+> > 
+> > #define KVM_SET_USER_MEMORY_REGION2 _IOW(KVMIO, 0x49, \
+> > 					 struct kvm_userspace_memory_region2)
+> 
+> Just interesting, is 0x49 a safe number we can use? 
 
-> +static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
-> +					   struct kvm_memory_attributes *attrs)
-> +{
-> +	gfn_t start, end;
-> +	unsigned long i;
-> +	void *entry;
-> +	u64 supported_attrs = kvm_supported_mem_attributes(kvm);
-> +
-> +	/* flags is currently not used. */
-> +	if (attrs->flags)
-> +		return -EINVAL;
-> +	if (attrs->attributes & ~supported_attrs)
-
-Nit, no need for "supported_attrs", just consume kvm_supported_mem_attributes()
-directly.
-
-> +		return -EINVAL;
-> +	if (attrs->size == 0 || attrs->address + attrs->size < attrs->address)
-> +		return -EINVAL;
-> +	if (!PAGE_ALIGNED(attrs->address) || !PAGE_ALIGNED(attrs->size))
-> +		return -EINVAL;
-> +
-> +	start = attrs->address >> PAGE_SHIFT;
-> +	end = (attrs->address + attrs->size - 1 + PAGE_SIZE) >> PAGE_SHIFT;
-> +
-> +	entry = attrs->attributes ? xa_mk_value(attrs->attributes) : NULL;
-> +
-> +	mutex_lock(&kvm->lock);
-
-Peeking forward multiple patches, this needs to take kvm->slots_lock, not kvm->lock.
-There's a bug in the lpage_disallowed patch that I believe can most easily be
-solved by making this mutually exclusive with memslot changes.
-
-When a memslot is created, KVM needs to walk through the attributes to detect
-whether or not the attributes are identical for the entire slot.  To avoid races,
-that means taking slots_lock.
-
-The alternative would be to query the attributes when adjusting the hugepage level
-and avoid lpage_disallowed entirely, but in the (very brief) time I've thought
-about this I haven't come up with a way to do that in a performant manner.
-
-> +	for (i = start; i < end; i++)
-
-Curly braces needed on the for-loop.
+Yes?  So long as its not used by KVM, it's safe.  AFAICT, it's unused.
