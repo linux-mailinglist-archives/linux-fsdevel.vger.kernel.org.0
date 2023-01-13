@@ -2,50 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9947E668825
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 01:11:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D0287668827
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 01:11:52 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240093AbjAMALp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Jan 2023 19:11:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56308 "EHLO
+        id S240378AbjAMALr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Jan 2023 19:11:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56358 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240087AbjAMALk (ORCPT
+        with ESMTP id S240098AbjAMALl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Jan 2023 19:11:40 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AA7DD2196;
-        Thu, 12 Jan 2023 16:11:36 -0800 (PST)
+        Thu, 12 Jan 2023 19:11:41 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F5045D882;
+        Thu, 12 Jan 2023 16:11:37 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 37015621E7;
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 48A35621F0;
         Fri, 13 Jan 2023 00:11:36 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DECEC4331E;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55B86C4331F;
         Fri, 13 Jan 2023 00:11:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=k20201202; t=1673568695;
-        bh=fHoR4awBBwDobL/5OpE5v/VOKzkbb2pwjwCxM8iuNdc=;
+        bh=TSW+es/7mkqAin48GNIt/poHNpNOZUx5YOK9cMi3/Gw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fvxZF9yNUhj1bZlIh2FFp/QWWmY8978MvkoYvggqN2rxsQ4WQwkuKO25w6bVb+6KY
-         6HVnkJfSRyecbTMq18WoPOgui5GHjdAfyXrcbkyxFfH2o9s9mrjAs6zEtVD7b2YUWV
-         5nh+crS9RfDP2xBD527PDNRcj6WvL/CqZDvnNJyW/hpmLZWB/e1Mv7ox0FIYUbg0XQ
-         goRmKs1MhJCVy6LJEh+Na69LzgSGjlrraW3lpQhNEtknUMi4+Z4PbkJXbJfDKRvt6v
-         zgOj3DyibRetiyui7PYLB5tTNmitPHDLu1Vh4cb1FIluxMNqzdPMuLIKYHKsDGqFB0
-         uEQ44Gx5LSv8Q==
+        b=kjyN1Y0m32N4ojq8b/3ykrHnZGjjwMz+qydoynbf+gotzOgANkkno5y+fxLkZ0P73
+         egs+6qQZLwtCRZ/UOGiIGjRlepjuNILJ2fg7CzdHiDFjDQCYfO0YCU31hsvWmV7n/B
+         xjCfuWbk9LNlCXMifRar6JkbRqoJG7Z0EvAn7lX0samxGnfLeLTpmF//tyJegzNbvA
+         IHnB9J/vBMzahW7dvthSdgRwAnnf+x215CiGk9eIH4FwKmiPCLe4+xHiWIUf4fzqjq
+         NJLb9FAO+N+HHChbt/nJFkprMlsav7pakWvRRo6H4TjT4ugcuL2lducvA2jUhY/6zg
+         BhdWHoNcaeWOQ==
 Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-        id A66815C17DC; Thu, 12 Jan 2023 16:11:34 -0800 (PST)
+        id AC7FD5C1C65; Thu, 12 Jan 2023 16:11:34 -0800 (PST)
 From:   "Paul E. McKenney" <paulmck@kernel.org>
 To:     rcu@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, kernel-team@meta.com,
         rostedt@goodmis.org, "Paul E. McKenney" <paulmck@kernel.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Jan Kara <jack@suse.cz>, Amir Goldstein <amir73il@gmail.com>,
         linux-fsdevel@vger.kernel.org,
         John Ogness <john.ogness@linutronix.de>
-Subject: [PATCH rcu v2 09/20] fs: Remove CONFIG_SRCU
-Date:   Thu, 12 Jan 2023 16:11:21 -0800
-Message-Id: <20230113001132.3375334-9-paulmck@kernel.org>
+Subject: [PATCH rcu v2 12/20] fs/notify: Remove "select SRCU"
+Date:   Thu, 12 Jan 2023 16:11:24 -0800
+Message-Id: <20230113001132.3375334-12-paulmck@kernel.org>
 X-Mailer: git-send-email 2.31.1.189.g2e36527f23
 In-Reply-To: <20230113001103.GA3374173@paulmck-ThinkPad-P17-Gen-1>
 References: <20230113001103.GA3374173@paulmck-ThinkPad-P17-Gen-1>
@@ -61,62 +59,31 @@ List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 Now that the SRCU Kconfig option is unconditionally selected, there is
-no longer any point in conditional compilation based on CONFIG_SRCU.
-Therefore, remove the #ifdef and throw away the #else clause.
+no longer any point in selecting it.  Therefore, remove the "select SRCU"
+Kconfig statements.
 
 Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-Cc: Jeff Layton <jlayton@kernel.org>
-Cc: Chuck Lever <chuck.lever@oracle.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Amir Goldstein <amir73il@gmail.com>
 Cc: <linux-fsdevel@vger.kernel.org>
+Acked-by: Jan Kara <jack@suse.cz>
 Reviewed-by: John Ogness <john.ogness@linutronix.de>
 ---
- fs/locks.c | 25 -------------------------
- 1 file changed, 25 deletions(-)
+ fs/notify/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/fs/locks.c b/fs/locks.c
-index 8f01bee177159..1909a9de242c8 100644
---- a/fs/locks.c
-+++ b/fs/locks.c
-@@ -1889,7 +1889,6 @@ int generic_setlease(struct file *filp, long arg, struct file_lock **flp,
- }
- EXPORT_SYMBOL(generic_setlease);
+diff --git a/fs/notify/Kconfig b/fs/notify/Kconfig
+index c020d26ba223e..c6c72c90fd253 100644
+--- a/fs/notify/Kconfig
++++ b/fs/notify/Kconfig
+@@ -1,7 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config FSNOTIFY
+ 	def_bool n
+-	select SRCU
  
--#if IS_ENABLED(CONFIG_SRCU)
- /*
-  * Kernel subsystems can register to be notified on any attempt to set
-  * a new lease with the lease_notifier_chain. This is used by (e.g.) nfsd
-@@ -1923,30 +1922,6 @@ void lease_unregister_notifier(struct notifier_block *nb)
- }
- EXPORT_SYMBOL_GPL(lease_unregister_notifier);
- 
--#else /* !IS_ENABLED(CONFIG_SRCU) */
--static inline void
--lease_notifier_chain_init(void)
--{
--}
--
--static inline void
--setlease_notifier(long arg, struct file_lock *lease)
--{
--}
--
--int lease_register_notifier(struct notifier_block *nb)
--{
--	return 0;
--}
--EXPORT_SYMBOL_GPL(lease_register_notifier);
--
--void lease_unregister_notifier(struct notifier_block *nb)
--{
--}
--EXPORT_SYMBOL_GPL(lease_unregister_notifier);
--
--#endif /* IS_ENABLED(CONFIG_SRCU) */
--
- /**
-  * vfs_setlease        -       sets a lease on an open file
-  * @filp:	file pointer
+ source "fs/notify/dnotify/Kconfig"
+ source "fs/notify/inotify/Kconfig"
 -- 
 2.31.1.189.g2e36527f23
 
