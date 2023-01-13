@@ -2,43 +2,43 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 12890669620
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 12:54:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9853566962A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 12:54:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S241289AbjAMLxC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 06:53:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35966 "EHLO
+        id S234010AbjAMLxJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 06:53:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36266 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S241495AbjAMLwW (ORCPT
+        with ESMTP id S240753AbjAMLwW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 13 Jan 2023 06:52:22 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B69963BEB0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 03:49:59 -0800 (PST)
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [139.178.84.217])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 49305392
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 03:50:01 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 553416156A
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 11:49:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B145EC433D2;
-        Fri, 13 Jan 2023 11:49:57 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id CBAB661697
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 11:50:00 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F2EC433EF;
+        Fri, 13 Jan 2023 11:49:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673610598;
-        bh=zZ7GXiiJuepLg6KuVSDnAVsR/Z5lsPnCkFI6JGaDgb8=;
+        s=k20201202; t=1673610600;
+        bh=QmJfmWG3+7PU2hyJWWNBTMeKfwYLDwZJmwlxeSQ17jE=;
         h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-        b=djXNc6M9JURoxQmxXZLLYmiekr7cq1x7FjfEMN5/7yS8YLSG40RLqO9dKnDy08f7m
-         mmsaAodm6/ollz8AkQBwaw+IzHSetKtccEDGEm3bkgBw5huLqKjIy1nQf4PHEHKd3M
-         u2NvmpbVBkwiMOwaQfTT6eymCqvXnEK1B+TYCvYRSnKX+e5p8ctFldLO6zTOHLG9py
-         mnpoIQrxWyzru4mEEd0w6JM+fMVoZKXm9jHHRnDwKsC7rKc2YvEs/cLp4NMOVHownQ
-         888ZQGipsPYbM3VRq3eTWjgfDw5smzI9LS1naNd7y/zr804uQqKfEfHOVuX3mTsr7T
-         ZLthHqZ/sCvHg==
+        b=PiH6IY7dUbYF9mCzNxhSD3Kw4fXelFwrLI7DJDwlt57rMxW9Gvu1U5AiCrIcpT4+7
+         YNWauK8UawaeTazPvV6DlSHPZH4cjOSHP72MlsZQ+OebIdkMuSZRSkLHTieal0c8U3
+         rNk35bE2myBB6HFm5uAD17IpvSzXvq5DD76czxOyrAMl5jD5p39NLlDl9SAGOT7NRx
+         soNDeBF8FGjGvqJOztnefrz+00HMzUVL5/lqSFiJP6vIS59kr1wQFUfan5yq2RtvZ+
+         10zyZwOIQoJJlu30rQykJjvPKwiKeqGJZAAwh20s/hS7vSTZTNE/rhTOqeZL0/B9O2
+         cASu1NloV6obw==
 From:   Christian Brauner <brauner@kernel.org>
-Date:   Fri, 13 Jan 2023 12:49:18 +0100
-Subject: [PATCH 10/25] fs: port ->tmpfile() to pass mnt_idmap
+Date:   Fri, 13 Jan 2023 12:49:19 +0100
+Subject: [PATCH 11/25] fs: port ->get_acl() to pass mnt_idmap
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20230113-fs-idmapped-mnt_idmap-conversion-v1-10-fc84fa7eba67@kernel.org>
+Message-Id: <20230113-fs-idmapped-mnt_idmap-conversion-v1-11-fc84fa7eba67@kernel.org>
 References: <20230113-fs-idmapped-mnt_idmap-conversion-v1-0-fc84fa7eba67@kernel.org>
 In-Reply-To: <20230113-fs-idmapped-mnt_idmap-conversion-v1-0-fc84fa7eba67@kernel.org>
 To:     linux-fsdevel@vger.kernel.org
@@ -47,11 +47,11 @@ Cc:     Christian Brauner <brauner@kernel.org>,
         Christoph Hellwig <hch@lst.de>,
         Al Viro <viro@zeniv.linux.org.uk>
 X-Mailer: b4 0.12-dev-5b205
-X-Developer-Signature: v=1; a=openpgp-sha256; l=11149; i=brauner@kernel.org;
- h=from:subject:message-id; bh=zZ7GXiiJuepLg6KuVSDnAVsR/Z5lsPnCkFI6JGaDgb8=;
- b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSQfdA2q/Zd59GtkiufTtOsn9nM1VH4S2BYRz2v2+6zZWtEV
- ZpYLOkpZGMS4GGTFFFkc2k3C5ZbzVGw2ytSAmcPKBDKEgYtTACZyroLhf56mVL7szfU2DkJvXreaGf
- 3b7vsr+PTDuoMdjquYHH2UbjL8j3/nGVU9+dhHjdOl5pX56YHnj7iIGMXw/N+bekPnfqolHwA=
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13025; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=QmJfmWG3+7PU2hyJWWNBTMeKfwYLDwZJmwlxeSQ17jE=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSQfdA2SlLx7iYn9d122yPftbbvqCvOjDnS+Lepely+rdsU9
+ bs6djlIWBjEuBlkxRRaHdpNwueU8FZuNMjVg5rAygQxh4OIUgIk8uc7wh6PxweLD/z5w7LZmTz396s
+ S1CnMxlSk3ohXvvVMJfv73RygjQ+fj+db7l10RE6i+ueGYV9vDv8Xb/tgd4Ow6tEVw66Rz03kA
 X-Developer-Key: i=brauner@kernel.org; a=openpgp;
  fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
@@ -84,261 +84,288 @@ only operate on struct mnt_idmap.
 
 Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
 ---
- Documentation/filesystems/locking.rst | 2 +-
- Documentation/filesystems/vfs.rst     | 2 +-
- fs/bad_inode.c                        | 2 +-
- fs/btrfs/inode.c                      | 3 ++-
- fs/ext2/namei.c                       | 2 +-
- fs/ext4/namei.c                       | 3 ++-
- fs/f2fs/namei.c                       | 3 ++-
- fs/fuse/dir.c                         | 2 +-
- fs/hugetlbfs/inode.c                  | 2 +-
- fs/minix/namei.c                      | 2 +-
- fs/namei.c                            | 2 +-
- fs/ramfs/inode.c                      | 2 +-
- fs/ubifs/dir.c                        | 2 +-
- fs/udf/namei.c                        | 2 +-
- fs/xfs/xfs_iops.c                     | 4 +++-
- include/linux/fs.h                    | 2 +-
- mm/shmem.c                            | 2 +-
- 17 files changed, 22 insertions(+), 17 deletions(-)
+ Documentation/filesystems/locking.rst |  2 +-
+ Documentation/filesystems/vfs.rst     |  2 +-
+ fs/9p/acl.c                           |  2 +-
+ fs/9p/acl.h                           |  2 +-
+ fs/cifs/cifsacl.c                     |  2 +-
+ fs/cifs/cifsproto.h                   |  2 +-
+ fs/ecryptfs/inode.c                   |  4 ++--
+ fs/overlayfs/inode.c                  | 10 ++++++----
+ fs/overlayfs/overlayfs.h              |  8 ++++----
+ fs/posix_acl.c                        | 15 ++++++++-------
+ include/linux/fs.h                    |  2 +-
+ include/linux/posix_acl.h             |  4 ++--
+ 12 files changed, 29 insertions(+), 26 deletions(-)
 
 diff --git a/Documentation/filesystems/locking.rst b/Documentation/filesystems/locking.rst
-index c63890845d95..429b8e4a6284 100644
+index 429b8e4a6284..d42d7b8de2f5 100644
 --- a/Documentation/filesystems/locking.rst
 +++ b/Documentation/filesystems/locking.rst
-@@ -79,7 +79,7 @@ prototypes::
- 	int (*atomic_open)(struct inode *, struct dentry *,
- 				struct file *, unsigned open_flag,
- 				umode_t create_mode);
--	int (*tmpfile) (struct user_namespace *, struct inode *,
-+	int (*tmpfile) (struct mnt_idmap *, struct inode *,
- 			struct file *, umode_t);
+@@ -84,7 +84,7 @@ prototypes::
  	int (*fileattr_set)(struct user_namespace *mnt_userns,
  			    struct dentry *dentry, struct fileattr *fa);
+ 	int (*fileattr_get)(struct dentry *dentry, struct fileattr *fa);
+-	struct posix_acl * (*get_acl)(struct user_namespace *, struct dentry *, int);
++	struct posix_acl * (*get_acl)(struct mnt_idmap *, struct dentry *, int);
+ 
+ locking rules:
+ 	all may block
 diff --git a/Documentation/filesystems/vfs.rst b/Documentation/filesystems/vfs.rst
-index 263fcc57b71f..3fcadfcf4e3a 100644
+index 3fcadfcf4e3a..056e446c70e0 100644
 --- a/Documentation/filesystems/vfs.rst
 +++ b/Documentation/filesystems/vfs.rst
-@@ -442,7 +442,7 @@ As of kernel 2.6.22, the following members are defined:
- 		void (*update_time)(struct inode *, struct timespec *, int);
+@@ -443,7 +443,7 @@ As of kernel 2.6.22, the following members are defined:
  		int (*atomic_open)(struct inode *, struct dentry *, struct file *,
  				   unsigned open_flag, umode_t create_mode);
--		int (*tmpfile) (struct user_namespace *, struct inode *, struct file *, umode_t);
-+		int (*tmpfile) (struct mnt_idmap *, struct inode *, struct file *, umode_t);
- 		struct posix_acl * (*get_acl)(struct user_namespace *, struct dentry *, int);
+ 		int (*tmpfile) (struct mnt_idmap *, struct inode *, struct file *, umode_t);
+-		struct posix_acl * (*get_acl)(struct user_namespace *, struct dentry *, int);
++		struct posix_acl * (*get_acl)(struct mnt_idmap *, struct dentry *, int);
  	        int (*set_acl)(struct user_namespace *, struct dentry *, struct posix_acl *, int);
  		int (*fileattr_set)(struct user_namespace *mnt_userns,
-diff --git a/fs/bad_inode.c b/fs/bad_inode.c
-index 1e24ce889a15..4bdf40b187ff 100644
---- a/fs/bad_inode.c
-+++ b/fs/bad_inode.c
-@@ -146,7 +146,7 @@ static int bad_inode_atomic_open(struct inode *inode, struct dentry *dentry,
- 	return -EIO;
+ 				    struct dentry *dentry, struct fileattr *fa);
+diff --git a/fs/9p/acl.c b/fs/9p/acl.c
+index 9848a245fa6f..cfd4545f2d02 100644
+--- a/fs/9p/acl.c
++++ b/fs/9p/acl.c
+@@ -139,7 +139,7 @@ struct posix_acl *v9fs_iop_get_inode_acl(struct inode *inode, int type, bool rcu
+ 
  }
  
--static int bad_inode_tmpfile(struct user_namespace *mnt_userns,
-+static int bad_inode_tmpfile(struct mnt_idmap *idmap,
- 			     struct inode *inode, struct file *file,
- 			     umode_t mode)
+-struct posix_acl *v9fs_iop_get_acl(struct user_namespace *mnt_userns,
++struct posix_acl *v9fs_iop_get_acl(struct mnt_idmap *idmap,
+ 				   struct dentry *dentry, int type)
  {
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index dbb6790d0268..c10157a5a6f8 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -10095,9 +10095,10 @@ static int btrfs_permission(struct user_namespace *mnt_userns,
- 	return generic_permission(mnt_userns, inode, mask);
+ 	struct v9fs_session_info *v9ses;
+diff --git a/fs/9p/acl.h b/fs/9p/acl.h
+index 4c60a2bce5de..e0e58967d916 100644
+--- a/fs/9p/acl.h
++++ b/fs/9p/acl.h
+@@ -10,7 +10,7 @@
+ int v9fs_get_acl(struct inode *inode, struct p9_fid *fid);
+ struct posix_acl *v9fs_iop_get_inode_acl(struct inode *inode, int type,
+ 				   bool rcu);
+-struct posix_acl *v9fs_iop_get_acl(struct user_namespace *mnt_userns,
++struct posix_acl *v9fs_iop_get_acl(struct mnt_idmap *idmap,
+ 					  struct dentry *dentry, int type);
+ int v9fs_iop_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		     struct posix_acl *acl, int type);
+diff --git a/fs/cifs/cifsacl.c b/fs/cifs/cifsacl.c
+index bbf58c2439da..1fae9b60e48f 100644
+--- a/fs/cifs/cifsacl.c
++++ b/fs/cifs/cifsacl.c
+@@ -1674,7 +1674,7 @@ id_mode_to_cifs_acl(struct inode *inode, const char *path, __u64 *pnmode,
+ 	return rc;
  }
  
--static int btrfs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
-+static int btrfs_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 			 struct file *file, umode_t mode)
+-struct posix_acl *cifs_get_acl(struct user_namespace *mnt_userns,
++struct posix_acl *cifs_get_acl(struct mnt_idmap *idmap,
+ 			       struct dentry *dentry, int type)
+ {
+ #if defined(CONFIG_CIFS_ALLOW_INSECURE_LEGACY) && defined(CONFIG_CIFS_POSIX)
+diff --git a/fs/cifs/cifsproto.h b/fs/cifs/cifsproto.h
+index 1207b39686fb..aeae6544cdd8 100644
+--- a/fs/cifs/cifsproto.h
++++ b/fs/cifs/cifsproto.h
+@@ -225,7 +225,7 @@ extern struct cifs_ntsd *get_cifs_acl(struct cifs_sb_info *, struct inode *,
+ 				      const char *, u32 *, u32);
+ extern struct cifs_ntsd *get_cifs_acl_by_fid(struct cifs_sb_info *,
+ 				const struct cifs_fid *, u32 *, u32);
+-extern struct posix_acl *cifs_get_acl(struct user_namespace *mnt_userns,
++extern struct posix_acl *cifs_get_acl(struct mnt_idmap *idmap,
+ 				      struct dentry *dentry, int type);
+ extern int cifs_set_acl(struct user_namespace *mnt_userns,
+ 			struct dentry *dentry, struct posix_acl *acl, int type);
+diff --git a/fs/ecryptfs/inode.c b/fs/ecryptfs/inode.c
+index cf85901d7a5d..8487ac0cc239 100644
+--- a/fs/ecryptfs/inode.c
++++ b/fs/ecryptfs/inode.c
+@@ -1122,10 +1122,10 @@ static int ecryptfs_fileattr_set(struct user_namespace *mnt_userns,
+ 	return rc;
+ }
+ 
+-static struct posix_acl *ecryptfs_get_acl(struct user_namespace *mnt_userns,
++static struct posix_acl *ecryptfs_get_acl(struct mnt_idmap *idmap,
+ 					  struct dentry *dentry, int type)
+ {
+-	return vfs_get_acl(mnt_userns, ecryptfs_dentry_to_lower(dentry),
++	return vfs_get_acl(idmap, ecryptfs_dentry_to_lower(dentry),
+ 			   posix_acl_xattr_name(type));
+ }
+ 
+diff --git a/fs/overlayfs/inode.c b/fs/overlayfs/inode.c
+index ad33253ed7e9..3ea4fc54f469 100644
+--- a/fs/overlayfs/inode.c
++++ b/fs/overlayfs/inode.c
+@@ -515,14 +515,16 @@ struct posix_acl *ovl_get_acl_path(const struct path *path,
+ {
+ 	struct posix_acl *real_acl, *clone;
+ 	struct user_namespace *mnt_userns;
++	struct mnt_idmap *idmap;
+ 	struct inode *realinode = d_inode(path->dentry);
+ 
+-	mnt_userns = mnt_user_ns(path->mnt);
++	idmap = mnt_idmap(path->mnt);
++	mnt_userns = mnt_idmap_owner(idmap);
+ 
+ 	if (noperm)
+ 		real_acl = get_inode_acl(realinode, posix_acl_type(acl_name));
+ 	else
+-		real_acl = vfs_get_acl(mnt_userns, path->dentry, acl_name);
++		real_acl = vfs_get_acl(idmap, path->dentry, acl_name);
+ 	if (IS_ERR_OR_NULL(real_acl))
+ 		return real_acl;
+ 
+@@ -555,7 +557,7 @@ struct posix_acl *ovl_get_acl_path(const struct path *path,
+  *
+  * This is obviously only relevant when idmapped layers are used.
+  */
+-struct posix_acl *do_ovl_get_acl(struct user_namespace *mnt_userns,
++struct posix_acl *do_ovl_get_acl(struct mnt_idmap *idmap,
+ 				 struct inode *inode, int type,
+ 				 bool rcu, bool noperm)
+ {
+@@ -618,7 +620,7 @@ static int ovl_set_or_remove_acl(struct dentry *dentry, struct inode *inode,
+ 
+ 		ovl_path_lower(dentry, &realpath);
+ 		old_cred = ovl_override_creds(dentry->d_sb);
+-		real_acl = vfs_get_acl(mnt_user_ns(realpath.mnt), realdentry,
++		real_acl = vfs_get_acl(mnt_idmap(realpath.mnt), realdentry,
+ 				       acl_name);
+ 		revert_creds(old_cred);
+ 		if (IS_ERR(real_acl)) {
+diff --git a/fs/overlayfs/overlayfs.h b/fs/overlayfs/overlayfs.h
+index b6e17f631b53..1e8b0be85e4b 100644
+--- a/fs/overlayfs/overlayfs.h
++++ b/fs/overlayfs/overlayfs.h
+@@ -610,18 +610,18 @@ int ovl_xattr_get(struct dentry *dentry, struct inode *inode, const char *name,
+ ssize_t ovl_listxattr(struct dentry *dentry, char *list, size_t size);
+ 
+ #ifdef CONFIG_FS_POSIX_ACL
+-struct posix_acl *do_ovl_get_acl(struct user_namespace *mnt_userns,
++struct posix_acl *do_ovl_get_acl(struct mnt_idmap *idmap,
+ 				 struct inode *inode, int type,
+ 				 bool rcu, bool noperm);
+ static inline struct posix_acl *ovl_get_inode_acl(struct inode *inode, int type,
+ 						  bool rcu)
+ {
+-	return do_ovl_get_acl(&init_user_ns, inode, type, rcu, true);
++	return do_ovl_get_acl(&nop_mnt_idmap, inode, type, rcu, true);
+ }
+-static inline struct posix_acl *ovl_get_acl(struct user_namespace *mnt_userns,
++static inline struct posix_acl *ovl_get_acl(struct mnt_idmap *idmap,
+ 					    struct dentry *dentry, int type)
+ {
+-	return do_ovl_get_acl(mnt_userns, d_inode(dentry), type, false, false);
++	return do_ovl_get_acl(idmap, d_inode(dentry), type, false, false);
+ }
+ int ovl_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		struct posix_acl *acl, int type);
+diff --git a/fs/posix_acl.c b/fs/posix_acl.c
+index d7bc81fc0840..17e141a94671 100644
+--- a/fs/posix_acl.c
++++ b/fs/posix_acl.c
+@@ -111,7 +111,7 @@ void forget_all_cached_acls(struct inode *inode)
+ }
+ EXPORT_SYMBOL(forget_all_cached_acls);
+ 
+-static struct posix_acl *__get_acl(struct user_namespace *mnt_userns,
++static struct posix_acl *__get_acl(struct mnt_idmap *idmap,
+ 				   struct dentry *dentry, struct inode *inode,
+ 				   int type)
+ {
+@@ -154,7 +154,7 @@ static struct posix_acl *__get_acl(struct user_namespace *mnt_userns,
+ 	 * we'll just create the negative cache entry.
+ 	 */
+ 	if (dentry && inode->i_op->get_acl) {
+-		acl = inode->i_op->get_acl(mnt_userns, dentry, type);
++		acl = inode->i_op->get_acl(idmap, dentry, type);
+ 	} else if (inode->i_op->get_inode_acl) {
+ 		acl = inode->i_op->get_inode_acl(inode, type, false);
+ 	} else {
+@@ -181,7 +181,7 @@ static struct posix_acl *__get_acl(struct user_namespace *mnt_userns,
+ 
+ struct posix_acl *get_inode_acl(struct inode *inode, int type)
+ {
+-	return __get_acl(&init_user_ns, NULL, inode, type);
++	return __get_acl(&nop_mnt_idmap, NULL, inode, type);
+ }
+ EXPORT_SYMBOL(get_inode_acl);
+ 
+@@ -1121,7 +1121,7 @@ EXPORT_SYMBOL_GPL(vfs_set_acl);
+ 
+ /**
+  * vfs_get_acl - get posix acls
+- * @mnt_userns: user namespace of the mount
++ * @idmap: idmap of the mount
+  * @dentry: the dentry based on which to retrieve the posix acls
+  * @acl_name: the name of the posix acl
+  *
+@@ -1130,9 +1130,10 @@ EXPORT_SYMBOL_GPL(vfs_set_acl);
+  *
+  * Return: On success POSIX ACLs in VFS format, on error negative errno.
+  */
+-struct posix_acl *vfs_get_acl(struct user_namespace *mnt_userns,
++struct posix_acl *vfs_get_acl(struct mnt_idmap *idmap,
+ 			      struct dentry *dentry, const char *acl_name)
  {
 +	struct user_namespace *mnt_userns = mnt_idmap_owner(idmap);
- 	struct btrfs_fs_info *fs_info = btrfs_sb(dir->i_sb);
- 	struct btrfs_trans_handle *trans;
- 	struct btrfs_root *root = BTRFS_I(dir)->root;
-diff --git a/fs/ext2/namei.c b/fs/ext2/namei.c
-index 8b5dfa46bcc8..81808e3d11c1 100644
---- a/fs/ext2/namei.c
-+++ b/fs/ext2/namei.c
-@@ -119,7 +119,7 @@ static int ext2_create (struct mnt_idmap * idmap,
- 	return ext2_add_nondir(dentry, inode);
- }
+ 	struct inode *inode = d_inode(dentry);
+ 	struct posix_acl *acl;
+ 	int acl_type, error;
+@@ -1154,7 +1155,7 @@ struct posix_acl *vfs_get_acl(struct user_namespace *mnt_userns,
+ 	if (S_ISLNK(inode->i_mode))
+ 		return ERR_PTR(-EOPNOTSUPP);
  
--static int ext2_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
-+static int ext2_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 			struct file *file, umode_t mode)
- {
- 	struct inode *inode = ext2_new_inode(dir, mode, NULL);
-diff --git a/fs/ext4/namei.c b/fs/ext4/namei.c
-index feb58508978e..74a2c3eae066 100644
---- a/fs/ext4/namei.c
-+++ b/fs/ext4/namei.c
-@@ -2863,9 +2863,10 @@ static int ext4_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	return err;
- }
+-	acl = __get_acl(mnt_userns, dentry, inode, acl_type);
++	acl = __get_acl(idmap, dentry, inode, acl_type);
+ 	if (IS_ERR(acl))
+ 		return acl;
+ 	if (!acl)
+@@ -1256,7 +1257,7 @@ ssize_t do_get_acl(struct mnt_idmap *idmap, struct dentry *dentry,
+ 	ssize_t error;
+ 	struct posix_acl *acl;
  
--static int ext4_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
-+static int ext4_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 			struct file *file, umode_t mode)
- {
-+	struct user_namespace *mnt_userns = mnt_idmap_owner(idmap);
- 	handle_t *handle;
- 	struct inode *inode;
- 	int err, retries = 0;
-diff --git a/fs/f2fs/namei.c b/fs/f2fs/namei.c
-index a87b9fcaf923..938032cbc1a8 100644
---- a/fs/f2fs/namei.c
-+++ b/fs/f2fs/namei.c
-@@ -911,9 +911,10 @@ static int __f2fs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
- 	return err;
- }
+-	acl = vfs_get_acl(mnt_idmap_owner(idmap), dentry, acl_name);
++	acl = vfs_get_acl(idmap, dentry, acl_name);
+ 	if (IS_ERR(acl))
+ 		return PTR_ERR(acl);
  
--static int f2fs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
-+static int f2fs_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 			struct file *file, umode_t mode)
- {
-+	struct user_namespace *mnt_userns = mnt_idmap_owner(idmap);
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
- 	int err;
- 
-diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
-index c95d610fa63f..ca07660a76a8 100644
---- a/fs/fuse/dir.c
-+++ b/fs/fuse/dir.c
-@@ -802,7 +802,7 @@ static int fuse_create(struct mnt_idmap *idmap, struct inode *dir,
- 	return fuse_mknod(&nop_mnt_idmap, dir, entry, mode, 0);
- }
- 
--static int fuse_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
-+static int fuse_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 			struct file *file, umode_t mode)
- {
- 	struct fuse_conn *fc = get_fuse_conn(dir);
-diff --git a/fs/hugetlbfs/inode.c b/fs/hugetlbfs/inode.c
-index b37e29dc125d..e1acab15e70d 100644
---- a/fs/hugetlbfs/inode.c
-+++ b/fs/hugetlbfs/inode.c
-@@ -1050,7 +1050,7 @@ static int hugetlbfs_create(struct mnt_idmap *idmap,
- 	return hugetlbfs_mknod(&nop_mnt_idmap, dir, dentry, mode | S_IFREG, 0);
- }
- 
--static int hugetlbfs_tmpfile(struct user_namespace *mnt_userns,
-+static int hugetlbfs_tmpfile(struct mnt_idmap *idmap,
- 			     struct inode *dir, struct file *file,
- 			     umode_t mode)
- {
-diff --git a/fs/minix/namei.c b/fs/minix/namei.c
-index aa308b12f40d..39ebe10d6a8b 100644
---- a/fs/minix/namei.c
-+++ b/fs/minix/namei.c
-@@ -52,7 +52,7 @@ static int minix_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	return error;
- }
- 
--static int minix_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
-+static int minix_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 			 struct file *file, umode_t mode)
- {
- 	int error;
-diff --git a/fs/namei.c b/fs/namei.c
-index 3be66e8b418f..34f020ae67ae 100644
---- a/fs/namei.c
-+++ b/fs/namei.c
-@@ -3613,7 +3613,7 @@ static int vfs_tmpfile(struct mnt_idmap *idmap,
- 	file->f_path.mnt = parentpath->mnt;
- 	file->f_path.dentry = child;
- 	mode = vfs_prepare_mode(mnt_userns, dir, mode, mode, mode);
--	error = dir->i_op->tmpfile(mnt_userns, dir, file, mode);
-+	error = dir->i_op->tmpfile(idmap, dir, file, mode);
- 	dput(child);
- 	if (error)
- 		return error;
-diff --git a/fs/ramfs/inode.c b/fs/ramfs/inode.c
-index 2ca68aa81895..ba14f18bd1e5 100644
---- a/fs/ramfs/inode.c
-+++ b/fs/ramfs/inode.c
-@@ -145,7 +145,7 @@ static int ramfs_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	return error;
- }
- 
--static int ramfs_tmpfile(struct user_namespace *mnt_userns,
-+static int ramfs_tmpfile(struct mnt_idmap *idmap,
- 			 struct inode *dir, struct file *file, umode_t mode)
- {
- 	struct inode *inode;
-diff --git a/fs/ubifs/dir.c b/fs/ubifs/dir.c
-index e11a2d76fb0e..832e6adf9a92 100644
---- a/fs/ubifs/dir.c
-+++ b/fs/ubifs/dir.c
-@@ -426,7 +426,7 @@ static void unlock_2_inodes(struct inode *inode1, struct inode *inode2)
- 	mutex_unlock(&ubifs_inode(inode1)->ui_mutex);
- }
- 
--static int ubifs_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
-+static int ubifs_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 			 struct file *file, umode_t mode)
- {
- 	struct dentry *dentry = file->f_path.dentry;
-diff --git a/fs/udf/namei.c b/fs/udf/namei.c
-index c93b10513bab..bdba2206a678 100644
---- a/fs/udf/namei.c
-+++ b/fs/udf/namei.c
-@@ -625,7 +625,7 @@ static int udf_create(struct mnt_idmap *idmap, struct inode *dir,
- 	return udf_add_nondir(dentry, inode);
- }
- 
--static int udf_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
-+static int udf_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 		       struct file *file, umode_t mode)
- {
- 	struct inode *inode = udf_new_inode(dir, mode);
-diff --git a/fs/xfs/xfs_iops.c b/fs/xfs/xfs_iops.c
-index fd0c62e0ddd2..43e746167d61 100644
---- a/fs/xfs/xfs_iops.c
-+++ b/fs/xfs/xfs_iops.c
-@@ -1098,11 +1098,13 @@ xfs_vn_fiemap(
- 
- STATIC int
- xfs_vn_tmpfile(
--	struct user_namespace	*mnt_userns,
-+	struct mnt_idmap	*idmap,
- 	struct inode		*dir,
- 	struct file		*file,
- 	umode_t			mode)
- {
-+	struct user_namespace *mnt_userns = mnt_idmap_owner(idmap);
-+
- 	int err = xfs_generic_create(mnt_userns, dir, file->f_path.dentry, mode, 0, file);
- 
- 	return finish_open_simple(file, err);
 diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 8d287bd2bf9b..4855fd071bf8 100644
+index 4855fd071bf8..31a714377ba2 100644
 --- a/include/linux/fs.h
 +++ b/include/linux/fs.h
-@@ -2162,7 +2162,7 @@ struct inode_operations {
- 	int (*atomic_open)(struct inode *, struct dentry *,
- 			   struct file *, unsigned open_flag,
+@@ -2164,7 +2164,7 @@ struct inode_operations {
  			   umode_t create_mode);
--	int (*tmpfile) (struct user_namespace *, struct inode *,
-+	int (*tmpfile) (struct mnt_idmap *, struct inode *,
+ 	int (*tmpfile) (struct mnt_idmap *, struct inode *,
  			struct file *, umode_t);
- 	struct posix_acl *(*get_acl)(struct user_namespace *, struct dentry *,
+-	struct posix_acl *(*get_acl)(struct user_namespace *, struct dentry *,
++	struct posix_acl *(*get_acl)(struct mnt_idmap *, struct dentry *,
  				     int);
-diff --git a/mm/shmem.c b/mm/shmem.c
-index c9998c2220d3..ab289abe5827 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -2946,7 +2946,7 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	int (*set_acl)(struct user_namespace *, struct dentry *,
+ 		       struct posix_acl *, int);
+diff --git a/include/linux/posix_acl.h b/include/linux/posix_acl.h
+index ee608d22ecb9..042ef62f9276 100644
+--- a/include/linux/posix_acl.h
++++ b/include/linux/posix_acl.h
+@@ -102,7 +102,7 @@ static inline void cache_no_acl(struct inode *inode)
+ 
+ int vfs_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		const char *acl_name, struct posix_acl *kacl);
+-struct posix_acl *vfs_get_acl(struct user_namespace *mnt_userns,
++struct posix_acl *vfs_get_acl(struct mnt_idmap *idmap,
+ 			      struct dentry *dentry, const char *acl_name);
+ int vfs_remove_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		   const char *acl_name);
+@@ -141,7 +141,7 @@ static inline int vfs_set_acl(struct user_namespace *mnt_userns,
+ 	return -EOPNOTSUPP;
  }
  
- static int
--shmem_tmpfile(struct user_namespace *mnt_userns, struct inode *dir,
-+shmem_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 	      struct file *file, umode_t mode)
+-static inline struct posix_acl *vfs_get_acl(struct user_namespace *mnt_userns,
++static inline struct posix_acl *vfs_get_acl(struct mnt_idmap *idmap,
+ 					    struct dentry *dentry,
+ 					    const char *acl_name)
  {
- 	struct inode *inode;
 
 -- 
 2.34.1
