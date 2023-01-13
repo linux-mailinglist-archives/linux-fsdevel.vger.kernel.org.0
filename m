@@ -2,61 +2,61 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7F31266A607
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 23:37:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3124666A637
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 23:50:34 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231238AbjAMWhu (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 17:37:50 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40450 "EHLO
+        id S231319AbjAMWua (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 17:50:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46482 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231143AbjAMWhq (ORCPT
+        with ESMTP id S230016AbjAMWu3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Jan 2023 17:37:46 -0500
-Received: from mail-pl1-x633.google.com (mail-pl1-x633.google.com [IPv6:2607:f8b0:4864:20::633])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4BA99777C3
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 14:37:45 -0800 (PST)
-Received: by mail-pl1-x633.google.com with SMTP id b17so17340205pld.7
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 14:37:45 -0800 (PST)
+        Fri, 13 Jan 2023 17:50:29 -0500
+Received: from mail-pj1-x1033.google.com (mail-pj1-x1033.google.com [IPv6:2607:f8b0:4864:20::1033])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 07AA97F9C3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 14:50:28 -0800 (PST)
+Received: by mail-pj1-x1033.google.com with SMTP id v23so23805305pju.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 14:50:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oYGGpY3c8wYSsolPP7oPQ187xmYhIxXfoDRmESiHutM=;
-        b=tgwARpR6oX7pIqiIfedVsEF9/fVdX7R++KsquyR9ziZ7UzwRxscaS5kujj2zHNYPAs
-         HesOuR7Sx5qOtSVwO3krm9uRXR5UTvzOqDPwLsoUS2mCaA5ph+KP9eBNBsRpd0A9L435
-         C78pBQlFmakDJoSXEeoufowua/fVMOTGqx3NtP2NIvaMzedd/pr1PLOYbQsS6dFkx5/5
-         kwCkXGYgxwKfF8lpKdpuKcjcpYVGyJ9gllu5qeMUhB05/Ix+APK3DiMQF2xJm40Kxo/a
-         rgTKeVYwqHKt8DoSnIFSclpMZ4e19SkFrGNJvf/OTxDBdTMTbfjsPlmc3hwEOi/a1hX7
-         bWaw==
+        bh=yQZCEBEaghsOR+zhl/QRIXPVX+uCKPvU91VQuy/V94s=;
+        b=X76rLWdZrm8cdm781bGE/NuVpMIrvPOi9lGhvncTfFs81VVxsQB/QGGTWKxHh1GL1W
+         d/AoRzt/BgZEnefw0frAVABgAhcfb0NjbvQQ6PThCX1YXedTBAqOobICTThGoiP6om5q
+         O3KMRfb6M32Bg7CVQSQvIy3h9U9bkySatLBmzLp/OFGTsGTVJq+w1gHMbDBjfBgq7rHh
+         ADYr+PPp2TF3nGbuwOKFE5/4euBQA3ZQaQSM4gqqLZGzGNJeHa+tfxiLoUS2z+t4YmPi
+         kKxrLU/4iehY+TcpZNW1WLdBUrSh7cY4mTcXmXq7RCEGkbTb53lk/EI3QzzxovpqZqg9
+         0htA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oYGGpY3c8wYSsolPP7oPQ187xmYhIxXfoDRmESiHutM=;
-        b=xWVUAB7Se8BDSsnaAptbnoaU8B0X2jRuwOAsaAiCXU9uhQDoclXybUZiW1muXBuXVH
-         6N7rHynFuEcGfLMwrRlL6CHpDHxUQYy5wbyQLGEQa7KGwjWuPR9dfDpoDPPCfn7U2sFy
-         S7Ri2ReRQ99bfOgnZqZDme+bFbqjyx7Mo6O1zDbAFwApY/iZL9zxOaZeYFyDIbKhT9wI
-         fUFVr79+EhnUL8r++h8Uivq4GbaVvfMbOGQHMdLM5yBLEqRJX+oAC0omydKPhr7iEQp+
-         6AyJ6pr9kSZdTBm4NeZCkd8suM/Px4jzTtlv1JXRO8+a/KmcF4oFd+kz6xY5DcYai9OB
-         S6Nw==
-X-Gm-Message-State: AFqh2kpDYLZjkgeMMdT4aqrrIFJn7Rt7U9uA1vpm4JuWjXGg80oPPIyY
-        lMmwTqKTELZDxImZDsuGWlvf+g==
-X-Google-Smtp-Source: AMrXdXt5stBpwIEJwVXkUT6AxYk7gqWiLYnlxJx1z/r5PInmsD3i+NPQ2hSxNQ6Dxd7BftBMBypz9g==
-X-Received: by 2002:a17:90a:d148:b0:229:1e87:365f with SMTP id t8-20020a17090ad14800b002291e87365fmr580615pjw.2.1673649464636;
-        Fri, 13 Jan 2023 14:37:44 -0800 (PST)
+        bh=yQZCEBEaghsOR+zhl/QRIXPVX+uCKPvU91VQuy/V94s=;
+        b=J0oZiJ2bHHk0CH2XDF0meGoc9dqSvm7sMEWLL6ZG9yjqvhZ0aWkxKtfyzVicWPYLem
+         atuGq9UQSI3bIii6Ljir71GtKTw5EmzXNRq7+AzKqlaryqtqzInhDiPayuvs2fKPwbLF
+         7A8omu+IkmiL1dU+tIuRRJ/rONwBqlKayHNTj9MgjFbxfha6ehusr/Fqq1aWuEzJcqmr
+         WbLudGzIMO2gYkqyA9CxEDwJ1RMbCAXzEj5LxDYdRvjU23rxYpF08xpbX0mf8wrO0JWI
+         YP4gq8b24h63MB7MSN973ooCWZgsAoLkHnUfG3Ubg0fcPefOdXXNnIFnPYpMCmHLueJK
+         dfyQ==
+X-Gm-Message-State: AFqh2krzi6OlVGyhxFi9XwfaUcJ6VGkLgvm5vPr1JGeI3kP2HJnfq96q
+        74pt4lo/ZNhKR7rLZhyg4561nQ==
+X-Google-Smtp-Source: AMrXdXuS4zXTytfOZ5xIh4bs+rkmeZmK+QXoBwGpkC3p2EnL8ac6bXz6nz3yQ+yKSuiIei2pYWQMCA==
+X-Received: by 2002:a17:902:b10e:b0:191:4367:7fde with SMTP id q14-20020a170902b10e00b0019143677fdemr1360463plr.0.1673650227268;
+        Fri, 13 Jan 2023 14:50:27 -0800 (PST)
 Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id z7-20020a17090ad78700b002270155254csm10626708pju.24.2023.01.13.14.37.43
+        by smtp.gmail.com with ESMTPSA id 13-20020a170902c24d00b0019460ac7c6asm3819704plg.283.2023.01.13.14.50.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 14:37:43 -0800 (PST)
-Date:   Fri, 13 Jan 2023 22:37:39 +0000
+        Fri, 13 Jan 2023 14:50:26 -0800 (PST)
+Date:   Fri, 13 Jan 2023 22:50:22 +0000
 From:   Sean Christopherson <seanjc@google.com>
 To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     Jarkko Sakkinen <jarkko@kernel.org>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
         Jonathan Corbet <corbet@lwn.net>,
         Vitaly Kuznetsov <vkuznets@redhat.com>,
         Wanpeng Li <wanpengli@tencent.com>,
@@ -84,23 +84,19 @@ Cc:     Jarkko Sakkinen <jarkko@kernel.org>, kvm@vger.kernel.org,
         Quentin Perret <qperret@google.com>, tabba@google.com,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
         wei.w.wang@intel.com
-Subject: Re: [PATCH v10 3/9] KVM: Extend the memslot to support fd-based
- private memory
-Message-ID: <Y8HdMzlNFhFwlkGS@google.com>
+Subject: Re: [PATCH v10 6/9] KVM: Unmap existing mappings when change the
+ memory attributes
+Message-ID: <Y8HgLq/CqTaEi/ME@google.com>
 References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-4-chao.p.peng@linux.intel.com>
- <Y7azFdnnGAdGPqmv@kernel.org>
- <20230106094000.GA2297836@chaop.bj.intel.com>
- <Y7xrtf9FCuYRYm1q@google.com>
- <20230110091432.GA2441264@chaop.bj.intel.com>
+ <20221202061347.1070246-7-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230110091432.GA2441264@chaop.bj.intel.com>
+In-Reply-To: <20221202061347.1070246-7-chao.p.peng@linux.intel.com>
 X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
         ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -108,61 +104,153 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 10, 2023, Chao Peng wrote:
-> On Mon, Jan 09, 2023 at 07:32:05PM +0000, Sean Christopherson wrote:
-> > On Fri, Jan 06, 2023, Chao Peng wrote:
-> > > On Thu, Jan 05, 2023 at 11:23:01AM +0000, Jarkko Sakkinen wrote:
-> > > > On Fri, Dec 02, 2022 at 02:13:41PM +0800, Chao Peng wrote:
-> > > > > To make future maintenance easy, internally use a binary compatible
-> > > > > alias struct kvm_user_mem_region to handle both the normal and the
-> > > > > '_ext' variants.
-> > > > 
-> > > > Feels bit hacky IMHO, and more like a completely new feature than
-> > > > an extension.
-> > > > 
-> > > > Why not just add a new ioctl? The commit message does not address
-> > > > the most essential design here.
-> > > 
-> > > Yes, people can always choose to add a new ioctl for this kind of change
-> > > and the balance point here is we want to also avoid 'too many ioctls' if
-> > > the functionalities are similar.  The '_ext' variant reuses all the
-> > > existing fields in the 'normal' variant and most importantly KVM
-> > > internally can reuse most of the code. I certainly can add some words in
-> > > the commit message to explain this design choice.
-> > 
-> > After seeing the userspace side of this, I agree with Jarkko; overloading
-> > KVM_SET_USER_MEMORY_REGION is a hack.  E.g. the size validation ends up being
-> > bogus, and userspace ends up abusing unions or implementing kvm_user_mem_region
-> > itself.
+On Fri, Dec 02, 2022, Chao Peng wrote:
+> @@ -785,11 +786,12 @@ struct kvm {
+>  
+>  #if defined(CONFIG_MMU_NOTIFIER) && defined(KVM_ARCH_WANT_MMU_NOTIFIER)
+>  	struct mmu_notifier mmu_notifier;
+> +#endif
+>  	unsigned long mmu_invalidate_seq;
+>  	long mmu_invalidate_in_progress;
+>  	gfn_t mmu_invalidate_range_start;
+>  	gfn_t mmu_invalidate_range_end;
+> -#endif
+
+Blech.  The existing code is a bit ugly, and trying to extend for this use case
+makes things even worse.
+
+Rather than use the base MMU_NOTIFIER Kconfig and an arbitrary define, I think we
+should first add a proper Kconfig, e.g. KVM_GENERIC_MMU_NOTIFIER, to replace the
+combination.  E.g
+
+	config KVM_GENERIC_MMU_NOTIFIER
+	       select MMU_NOTIFIER
+	       bool
+
+and then all architectures that currently #define KVM_ARCH_WANT_MMU_NOTIFIER can
+simply select the Kconfig, which is everything except s390.  "GENERIC" again because
+s390 does select MMU_NOTIFER and actually registers its own notifier for s390's
+version of protected VMs (at least, I think that's what its "pv" stands for).
+
+And then later down the line in this series, when the attributes and private mem
+needs to tie into the notifiers, we can do:
+
+
+	config KVM_GENERIC_MEMORY_ATTRIBUTES
+	       select KVM_GENERIC_MMU_NOTIFIER
+	       bool
+
+I.e. that way this patch doesn't need to partially expose KVM's notifier stuff
+and can instead just keep the soon-to-be-existing KVM_GENERIC_MMU_NOTIFIER.
+
+Taking a depending on KVM_GENERIC_MMU_NOTIFIER for KVM_GENERIC_MEMORY_ATTRIBUTES
+makes sense, because AFAICT, changing any type of attribute, e.g. RWX bits, is
+going to necessitate unmapping the affected gfn range.
+
+>  	struct list_head devices;
+>  	u64 manual_dirty_log_protect;
+>  	struct dentry *debugfs_dentry;
+> @@ -1480,6 +1482,7 @@ bool kvm_arch_dy_has_pending_interrupt(struct kvm_vcpu *vcpu);
+>  int kvm_arch_post_init_vm(struct kvm *kvm);
+>  void kvm_arch_pre_destroy_vm(struct kvm *kvm);
+>  int kvm_arch_create_vm_debugfs(struct kvm *kvm);
+> +bool kvm_arch_has_private_mem(struct kvm *kvm);
+
+The reference to private memory belongs in a later patch.  More below.
+
+> +static void kvm_unmap_mem_range(struct kvm *kvm, gfn_t start, gfn_t end)
+> +{
+> +	struct kvm_gfn_range gfn_range;
+> +	struct kvm_memory_slot *slot;
+> +	struct kvm_memslots *slots;
+> +	struct kvm_memslot_iter iter;
+> +	int i;
+> +	int r = 0;
+
+The return from kvm_unmap_gfn_range() is a bool, this should be:
+
+	bool flush = false;
+
+> +
+> +	gfn_range.pte = __pte(0);
+> +	gfn_range.may_block = true;
+> +
+> +	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
+> +		slots = __kvm_memslots(kvm, i);
+> +
+> +		kvm_for_each_memslot_in_gfn_range(&iter, slots, start, end) {
+> +			slot = iter.slot;
+> +			gfn_range.start = max(start, slot->base_gfn);
+> +			gfn_range.end = min(end, slot->base_gfn + slot->npages);
+> +			if (gfn_range.start >= gfn_range.end)
+> +				continue;
+> +			gfn_range.slot = slot;
+> +
+> +			r |= kvm_unmap_gfn_range(kvm, &gfn_range);
+> +		}
+> +	}
+> +
+> +	if (r)
+> +		kvm_flush_remote_tlbs(kvm);
+> +}
+> +
+>  static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
+>  					   struct kvm_memory_attributes *attrs)
+>  {
+>  	gfn_t start, end;
+>  	unsigned long i;
+>  	void *entry;
+> +	int idx;
+>  	u64 supported_attrs = kvm_supported_mem_attributes(kvm);
+>  
+> -	/* flags is currently not used. */
+> +	/* 'flags' is currently not used. */
+
+Kind of a spurious change.
+
+>  	if (attrs->flags)
+>  		return -EINVAL;
+>  	if (attrs->attributes & ~supported_attrs)
+> @@ -2372,6 +2409,13 @@ static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
+>  
+>  	entry = attrs->attributes ? xa_mk_value(attrs->attributes) : NULL;
+>  
+> +	if (kvm_arch_has_private_mem(kvm)) {
+
+I think we should assume that any future attributes will necessitate unmapping
+and invalidation, i.e. drop the private mem check.  That allows introducing
+kvm_arch_has_private_mem() in a later patch that is more directly related to
+private memory.
+
+> +		KVM_MMU_LOCK(kvm);
+> +		kvm_mmu_invalidate_begin(kvm);
+> +		kvm_mmu_invalidate_range_add(kvm, start, end);
+> +		KVM_MMU_UNLOCK(kvm);
+> +	}
+> +
+>  	mutex_lock(&kvm->lock);
+>  	for (i = start; i < end; i++)
+>  		if (xa_err(xa_store(&kvm->mem_attr_array, i, entry,
+> @@ -2379,6 +2423,16 @@ static int kvm_vm_ioctl_set_mem_attributes(struct kvm *kvm,
+>  			break;
+>  	mutex_unlock(&kvm->lock);
+>  
+> +	if (kvm_arch_has_private_mem(kvm)) {
+> +		idx = srcu_read_lock(&kvm->srcu);
+
+Mostly for reference, this goes away if slots_lock is used instead of kvm->lock.
+
+> +		KVM_MMU_LOCK(kvm);
+> +		if (i > start)
+> +			kvm_unmap_mem_range(kvm, start, i);
+> +		kvm_mmu_invalidate_end(kvm);
+> +		KVM_MMU_UNLOCK(kvm);
+> +		srcu_read_unlock(&kvm->srcu, idx);
+> +	}
+> +
+>  	attrs->address = i << PAGE_SHIFT;
+>  	attrs->size = (end - i) << PAGE_SHIFT;
+>  
+> -- 
+> 2.25.1
 > 
-> How is the size validation being bogus? I don't quite follow.
-
-The ioctl() magic embeds the size of the payload (struct kvm_userspace_memory_region
-in this case) in the ioctl() number, and that information is visible to userspace
-via _IOCTL_SIZE().  Attempting to take a larger size can mess up sanity checks,
-e.g. KVM selftests get tripped up on this assert if KVM_SET_USER_MEMORY_REGION is
-passed an "extended" struct.
-
-	#define kvm_do_ioctl(fd, cmd, arg)						\
-	({										\
-		kvm_static_assert(!_IOC_SIZE(cmd) || sizeof(*arg) == _IOC_SIZE(cmd));	\
-		ioctl(fd, cmd, arg);							\
-	})
-
-> Then we will use kvm_userspace_memory_region2 as the KVM internal alias,
-> right?
-
-Yep.
-
-> I see similar examples use different functions to handle different versions
-> but it does look easier if we use alias for this function.
-> 
-> > 
-> > It feels absolutely ridiculous, but I think the best option is to do:
-> > 
-> > #define KVM_SET_USER_MEMORY_REGION2 _IOW(KVMIO, 0x49, \
-> > 					 struct kvm_userspace_memory_region2)
-> 
-> Just interesting, is 0x49 a safe number we can use? 
-
-Yes?  So long as its not used by KVM, it's safe.  AFAICT, it's unused.
