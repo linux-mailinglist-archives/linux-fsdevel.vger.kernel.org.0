@@ -2,68 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5B353669CB2
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 16:46:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 63835669CBF
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 16:47:14 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230247AbjAMPqC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 10:46:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36848 "EHLO
+        id S229999AbjAMPrM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 10:47:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34822 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230210AbjAMPp3 (ORCPT
+        with ESMTP id S229908AbjAMPpx (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Jan 2023 10:45:29 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B51A3983CC
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 07:35:16 -0800 (PST)
+        Fri, 13 Jan 2023 10:45:53 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7706B633B6
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 07:35:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673624115;
+        s=mimecast20190719; t=1673624125;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=63yRlw50QwAg2S+oO0WXVS3FMVLfMSO7UiCDHBCNZAc=;
-        b=Y4QrIqhSEkn8uBdQjQbtBforA8/Aaos5Bdj1olCLUHAzKVAJ6wXcvRq8CCT6wvVLEwmTkU
-        Oq6hvYfcofrKJ1n3cwRCzGs2wunCO4A+rfMHKMXoemQaiUQVwYBzs9hWkbxoa7XPTs3+zO
-        EMCV5rJqysrh8vwP2t9teTEww61pf9I=
-Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
- [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=z/9uybYBXhUW4wkIRlveDlKdZJQqTPtcnsCUTg2vO2o=;
+        b=UvpPykrMPbhqvHxzBHW2JFrlptmcqPF2PpOaz202b0KQFt1JLBMa3vdnBY9gD0bOM9yVuD
+        rxIfhnyfunTo5XgQHkaJa+8I31+XnfR2eDh4QWcleJ7m60KpHbcp8ERUNQm68+4FpoMSPY
+        bxOwv5o6EcUKxK/lIB8N0+wZR3vbiU0=
+Received: from mail-lf1-f69.google.com (mail-lf1-f69.google.com
+ [209.85.167.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-182-p7l3CFouNi-BUO0igfVbGg-1; Fri, 13 Jan 2023 10:35:14 -0500
-X-MC-Unique: p7l3CFouNi-BUO0igfVbGg-1
-Received: by mail-lf1-f71.google.com with SMTP id bf20-20020a056512259400b004b57544aad2so8521046lfb.14
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 07:35:13 -0800 (PST)
+ us-mta-407--Za6LzElNTO6LPacGrcTmQ-1; Fri, 13 Jan 2023 10:35:16 -0500
+X-MC-Unique: -Za6LzElNTO6LPacGrcTmQ-1
+Received: by mail-lf1-f69.google.com with SMTP id a20-20020ac25214000000b004b57756f937so8449262lfl.3
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 07:35:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=63yRlw50QwAg2S+oO0WXVS3FMVLfMSO7UiCDHBCNZAc=;
-        b=7ujGey/9Ri4GLT8BlZL14pW2dzY6MhWUg2lURA2L83O0FKYz1RfelpEqc7c4wcKRPR
-         a9rgKjAdtHVz6KazEjADSoknO8XSPx/zB2EbIF+ZZjx/rB4e//M/8rcXsBQk5F+/mWIA
-         WQQ20g4zHHswUDaxlGpCYHvkJEcZOzB3D4MqzwdiF2istl3S6BzCoWnx8u2SEOYbn4s3
-         BB3J2HQCMC094O6XgOKUqWIsqIFpiWmMqClxZ/NI/2+mE+EvdhJmYvMa1P//UnEMnvbJ
-         EtdyBY5vi4rpcxoQ13bmhd/+kQq/tKjj0wYu7B99PKk94AaHXea/ucrJjCMJfi1Bqecp
-         76xA==
-X-Gm-Message-State: AFqh2kqRkEKsBFx8OENjrbWnW+8ZS5TLyvZpT12vswyPePIqt1qjPEnV
-        YfexEb2Mz2vhrBh/oFa04HMqZRJyUd52gxxMBWVTtMEXtK7JUcUtyflaRP5LQyARmY/UoHmofg6
-        PEB2Cuu223DixkCJ27wKHAEO1C+SDLdYmojUIZ77sUAjuLP0Hq4twh4PuatltfYYd0LBmieOwSQ
+        bh=z/9uybYBXhUW4wkIRlveDlKdZJQqTPtcnsCUTg2vO2o=;
+        b=nNHmR83esINdF0ve99Hx9jdmBz4AnT2ZSKtRaZ32rHp01aGD3djV8nidtwMmcN5Oui
+         OHopD2ieYQHZsZXCC+AO431XM73ca8YYjUQZ2Zj1tmwjbEqiI8h7FdcBTppOksmsOnCu
+         KGmPhdFi+cHyW/SVQIN4opkLmZOBd2aScVduJV0zYNtdrUWzPH/p2IQP2E4Zyq4prbkg
+         Cew3P5I9n+BXOLI+iuXIqWRpcs62efiqgfQXZ8Xxc5EZs+GzCbknjlNat7KJvH2CtW6K
+         364vVRjUSmynzSvLXzYfMvn7pvPJfI6q6mtoYht0WolllDZtJIezA9nilcVow3MTp5D5
+         4P3Q==
+X-Gm-Message-State: AFqh2krvlSVJoYqlkK8502HfrKRFvq0/4vXEgd6R8GyYHq/B5HM8Pdl0
+        peq6ctB0AL/tl8MeQ5+FI/Vnp5qIGLIQ+C5qVf5tnkIlmcwh2YokwcO3OTUlSKZgClZDZ3ASmNs
+        tJRlketcwk2AOrZaje4JeGCV4qVT1YdeHApspGZw3cbA+bFDJp32FwVXVoevLCceol9N19DeQmg
         ==
-X-Received: by 2002:a2e:a54d:0:b0:27f:c95e:7619 with SMTP id e13-20020a2ea54d000000b0027fc95e7619mr20724630ljn.13.1673624112345;
-        Fri, 13 Jan 2023 07:35:12 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXudRDOPCmu+bUNP6oPfCRhyg4b2ii5E1oqUtuNksLKb6lFaGB3utyCHzSPL4moOLJSEZfHZfA==
-X-Received: by 2002:a2e:a54d:0:b0:27f:c95e:7619 with SMTP id e13-20020a2ea54d000000b0027fc95e7619mr20724611ljn.13.1673624111861;
-        Fri, 13 Jan 2023 07:35:11 -0800 (PST)
+X-Received: by 2002:a05:651c:200f:b0:27f:bc6c:c4f0 with SMTP id s15-20020a05651c200f00b0027fbc6cc4f0mr15465560ljo.27.1673624114905;
+        Fri, 13 Jan 2023 07:35:14 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXtYodRfUAStZmVCxOmY2+uknl4/INwWxiaczsDBucjw7JhTayRFAlBAHSfshWHL/RiiUhmiHw==
+X-Received: by 2002:a05:651c:200f:b0:27f:bc6c:c4f0 with SMTP id s15-20020a05651c200f00b0027fbc6cc4f0mr15465545ljo.27.1673624114436;
+        Fri, 13 Jan 2023 07:35:14 -0800 (PST)
 Received: from localhost.localdomain (c-e6a5e255.022-110-73746f36.bbcust.telenor.se. [85.226.165.230])
-        by smtp.googlemail.com with ESMTPSA id p20-20020a2e9a94000000b00289bb528b8dsm725473lji.49.2023.01.13.07.35.11
+        by smtp.googlemail.com with ESMTPSA id p20-20020a2e9a94000000b00289bb528b8dsm725473lji.49.2023.01.13.07.35.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 07:35:11 -0800 (PST)
+        Fri, 13 Jan 2023 07:35:13 -0800 (PST)
 From:   Alexander Larsson <alexl@redhat.com>
 To:     linux-fsdevel@vger.kernel.org
 Cc:     linux-kernel@vger.kernel.org, gscrivan@redhat.com,
         Alexander Larsson <alexl@redhat.com>
-Subject: [PATCH v2 3/6] composefs: Add descriptor parsing code
-Date:   Fri, 13 Jan 2023 16:33:56 +0100
-Message-Id: <d343b4abd23e62ef082adb466147e070754f6f31.1673623253.git.alexl@redhat.com>
+Subject: [PATCH v2 4/6] composefs: Add filesystem implementation
+Date:   Fri, 13 Jan 2023 16:33:57 +0100
+Message-Id: <ee96ab52b9d2ab58e7b793e34ce5dc956686ada9.1673623253.git.alexl@redhat.com>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <cover.1673623253.git.alexl@redhat.com>
 References: <cover.1673623253.git.alexl@redhat.com>
@@ -79,1021 +79,925 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This adds the code to load and decode the filesystem descriptor file
-format.
+This is the basic inode and filesystem implementation.
 
 Signed-off-by: Alexander Larsson <alexl@redhat.com>
 Co-developed-by: Giuseppe Scrivano <gscrivan@redhat.com>
 Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
 ---
- fs/composefs/cfs-internals.h |  63 +++
- fs/composefs/cfs-reader.c    | 927 +++++++++++++++++++++++++++++++++++
- 2 files changed, 990 insertions(+)
- create mode 100644 fs/composefs/cfs-internals.h
- create mode 100644 fs/composefs/cfs-reader.c
+ fs/composefs/cfs.c | 903 +++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 903 insertions(+)
+ create mode 100644 fs/composefs/cfs.c
 
-diff --git a/fs/composefs/cfs-internals.h b/fs/composefs/cfs-internals.h
+diff --git a/fs/composefs/cfs.c b/fs/composefs/cfs.c
 new file mode 100644
-index 000000000000..007f40a95e51
+index 000000000000..b3c0adb69983
 --- /dev/null
-+++ b/fs/composefs/cfs-internals.h
-@@ -0,0 +1,63 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _CFS_INTERNALS_H
-+#define _CFS_INTERNALS_H
-+
-+#include "cfs.h"
-+
-+#define EFSCORRUPTED EUCLEAN /* Filesystem is corrupted */
-+
-+#define CFS_N_PRELOAD_DIR_CHUNKS 4
-+
-+struct cfs_inode_data_s {
-+	u32 payload_length;
-+	char *path_payload; /* Real pathname for files, target for symlinks */
-+	u32 n_dir_chunks;
-+	struct cfs_dir_chunk_s preloaded_dir_chunks[CFS_N_PRELOAD_DIR_CHUNKS];
-+
-+	u64 xattrs_offset;
-+	u32 xattrs_len;
-+
-+	bool has_digest;
-+	u8 digest[SHA256_DIGEST_SIZE]; /* fs-verity digest */
-+};
-+
-+struct cfs_context_s {
-+	struct cfs_header_s header;
-+	struct file *descriptor;
-+
-+	u64 descriptor_len;
-+};
-+
-+int cfs_init_ctx(const char *descriptor_path, const u8 *required_digest,
-+		 struct cfs_context_s *ctx);
-+
-+void cfs_ctx_put(struct cfs_context_s *ctx);
-+
-+void cfs_inode_data_put(struct cfs_inode_data_s *inode_data);
-+
-+struct cfs_inode_s *cfs_get_root_ino(struct cfs_context_s *ctx,
-+				     struct cfs_inode_s *ino_buf, u64 *index);
-+
-+struct cfs_inode_s *cfs_get_ino_index(struct cfs_context_s *ctx, u64 index,
-+				      struct cfs_inode_s *buffer);
-+
-+int cfs_init_inode_data(struct cfs_context_s *ctx, struct cfs_inode_s *ino,
-+			u64 index, struct cfs_inode_data_s *data);
-+
-+ssize_t cfs_list_xattrs(struct cfs_context_s *ctx, struct cfs_inode_data_s *inode_data,
-+			char *names, size_t size);
-+int cfs_get_xattr(struct cfs_context_s *ctx, struct cfs_inode_data_s *inode_data,
-+		  const char *name, void *value, size_t size);
-+
-+typedef bool (*cfs_dir_iter_cb)(void *private, const char *name, int namelen,
-+				u64 ino, unsigned int dtype);
-+
-+int cfs_dir_iterate(struct cfs_context_s *ctx, u64 index,
-+		    struct cfs_inode_data_s *inode_data, loff_t first,
-+		    cfs_dir_iter_cb cb, void *private);
-+
-+int cfs_dir_lookup(struct cfs_context_s *ctx, u64 index,
-+		   struct cfs_inode_data_s *inode_data, const char *name,
-+		   size_t name_len, u64 *index_out);
-+
-+#endif
-diff --git a/fs/composefs/cfs-reader.c b/fs/composefs/cfs-reader.c
-new file mode 100644
-index 000000000000..e68bfd0fca98
---- /dev/null
-+++ b/fs/composefs/cfs-reader.c
-@@ -0,0 +1,927 @@
++++ b/fs/composefs/cfs.c
+@@ -0,0 +1,903 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
 + * composefs
 + *
++ * Copyright (C) 2000 Linus Torvalds.
++ *               2000 Transmeta Corp.
 + * Copyright (C) 2021 Giuseppe Scrivano
 + * Copyright (C) 2022 Alexander Larsson
 + *
 + * This file is released under the GPL.
 + */
 +
++#include <linux/exportfs.h>
++#include <linux/fsverity.h>
++#include <linux/fs_parser.h>
++#include <linux/module.h>
++#include <linux/namei.h>
++#include <linux/seq_file.h>
++#include <linux/version.h>
++#include <linux/xattr.h>
++#include <linux/statfs.h>
++
 +#include "cfs-internals.h"
 +
-+#include <linux/file.h>
-+#include <linux/fsverity.h>
-+#include <linux/pagemap.h>
-+#include <linux/unaligned/packed_struct.h>
++MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Giuseppe Scrivano <gscrivan@redhat.com>");
 +
-+struct cfs_buf {
-+	struct page *page;
-+	void *base;
++#define CFS_MAX_STACK 500
++
++#define FILEID_CFS 0x91
++
++struct cfs_info {
++	struct cfs_context_s cfs_ctx;
++
++	char *base_path;
++
++	size_t n_bases;
++	struct vfsmount **bases;
++
++	u32 verity_check; /* 0 == none, 1 == if specified in image, 2 == require in image */
++	bool has_digest;
++	u8 digest[SHA256_DIGEST_SIZE]; /* fs-verity digest */
 +};
 +
-+static void cfs_buf_put(struct cfs_buf *buf)
++struct cfs_inode {
++	/* must be first for clear in cfs_alloc_inode to work */
++	struct inode vfs_inode;
++
++	struct cfs_inode_data_s inode_data;
++};
++
++static inline struct cfs_inode *CFS_I(struct inode *inode)
 +{
-+	if (buf->page) {
-+		if (buf->base)
-+			kunmap_local(buf->base);
-+		put_page(buf->page);
-+		buf->base = NULL;
-+		buf->page = NULL;
-+	}
++	return container_of(inode, struct cfs_inode, vfs_inode);
 +}
 +
-+static void *cfs_get_buf(struct cfs_context_s *ctx, u64 offset, u32 size,
-+			 struct cfs_buf *buf)
++static struct file empty_file;
++
++static const struct file_operations cfs_file_operations;
++
++static const struct super_operations cfs_ops;
++static const struct file_operations cfs_dir_operations;
++static const struct inode_operations cfs_dir_inode_operations;
++static const struct inode_operations cfs_file_inode_operations;
++static const struct inode_operations cfs_link_inode_operations;
++
++static const struct xattr_handler *cfs_xattr_handlers[];
++static const struct export_operations cfs_export_operations;
++
++static const struct address_space_operations cfs_aops = {
++	.direct_IO = noop_direct_IO,
++};
++
++static ssize_t cfs_listxattr(struct dentry *dentry, char *names, size_t size);
++
++/* copied from overlayfs.  */
++static unsigned int cfs_split_basedirs(char *str)
 +{
-+	struct inode *inode = ctx->descriptor->f_inode;
-+	struct address_space *const mapping = inode->i_mapping;
-+	u32 page_offset = offset & (PAGE_SIZE - 1);
-+	u64 index = offset >> PAGE_SHIFT;
-+	struct page *page = buf->page;
++	unsigned int ctr = 1;
++	char *s, *d;
 +
-+	if (offset > ctx->descriptor_len)
-+		return ERR_PTR(-EFSCORRUPTED);
-+
-+	if ((offset + size < offset) || (offset + size > ctx->descriptor_len))
-+		return ERR_PTR(-EFSCORRUPTED);
-+
-+	if (size > PAGE_SIZE)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (PAGE_SIZE - page_offset < size)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (!page || page->index != index) {
-+		cfs_buf_put(buf);
-+
-+		page = read_cache_page(mapping, index, NULL, NULL);
-+		if (IS_ERR(page))
-+			return page;
-+
-+		buf->page = page;
-+		buf->base = kmap_local_page(page);
-+	}
-+
-+	return buf->base + page_offset;
-+}
-+
-+static void *cfs_read_data(struct cfs_context_s *ctx, u64 offset, u64 size, u8 *dest)
-+{
-+	loff_t pos = offset;
-+	size_t copied;
-+
-+	if (offset > ctx->descriptor_len)
-+		return ERR_PTR(-EFSCORRUPTED);
-+
-+	if ((offset + size < offset) || (offset + size > ctx->descriptor_len))
-+		return ERR_PTR(-EFSCORRUPTED);
-+
-+	copied = 0;
-+	while (copied < size) {
-+		ssize_t bytes;
-+
-+		bytes = kernel_read(ctx->descriptor, dest + copied,
-+				    size - copied, &pos);
-+		if (bytes < 0)
-+			return ERR_PTR(bytes);
-+		if (bytes == 0)
-+			return ERR_PTR(-EINVAL);
-+
-+		copied += bytes;
-+	}
-+
-+	if (copied != size)
-+		return ERR_PTR(-EFSCORRUPTED);
-+	return dest;
-+}
-+
-+int cfs_init_ctx(const char *descriptor_path, const u8 *required_digest,
-+		 struct cfs_context_s *ctx_out)
-+{
-+	u8 verity_digest[FS_VERITY_MAX_DIGEST_SIZE];
-+	struct cfs_header_s *header;
-+	enum hash_algo verity_algo;
-+	struct cfs_context_s ctx;
-+	struct file *descriptor;
-+	loff_t i_size;
-+	int res;
-+
-+	descriptor = filp_open(descriptor_path, O_RDONLY, 0);
-+	if (IS_ERR(descriptor))
-+		return PTR_ERR(descriptor);
-+
-+	if (required_digest) {
-+		res = fsverity_get_digest(d_inode(descriptor->f_path.dentry),
-+					  verity_digest, &verity_algo);
-+		if (res < 0) {
-+			pr_err("ERROR: composefs descriptor has no fs-verity digest\n");
-+			goto fail;
++	for (s = d = str;; s++, d++) {
++		if (*s == '\\') {
++			s++;
++		} else if (*s == ':') {
++			*d = '\0';
++			ctr++;
++			continue;
 +		}
-+		if (verity_algo != HASH_ALGO_SHA256 ||
-+		    memcmp(required_digest, verity_digest, SHA256_DIGEST_SIZE) != 0) {
-+			pr_err("ERROR: composefs descriptor has wrong fs-verity digest\n");
-+			res = -EINVAL;
-+			goto fail;
++		*d = *s;
++		if (!*s)
++			break;
++	}
++	return ctr;
++}
++
++static struct inode *cfs_make_inode(struct cfs_context_s *ctx,
++				    struct super_block *sb, ino_t ino_num,
++				    struct cfs_inode_s *ino, const struct inode *dir)
++{
++	struct cfs_inode_data_s inode_data = { 0 };
++	struct cfs_xattr_header_s *xattrs = NULL;
++	struct inode *inode = NULL;
++	struct cfs_inode *cino;
++	int ret, res;
++
++	res = cfs_init_inode_data(ctx, ino, ino_num, &inode_data);
++	if (res < 0)
++		return ERR_PTR(res);
++
++	inode = new_inode(sb);
++	if (inode) {
++		inode_init_owner(&init_user_ns, inode, dir, ino->st_mode);
++		inode->i_mapping->a_ops = &cfs_aops;
++
++		cino = CFS_I(inode);
++		cino->inode_data = inode_data;
++
++		inode->i_ino = ino_num;
++		set_nlink(inode, ino->st_nlink);
++		inode->i_rdev = ino->st_rdev;
++		inode->i_uid = make_kuid(current_user_ns(), ino->st_uid);
++		inode->i_gid = make_kgid(current_user_ns(), ino->st_gid);
++		inode->i_mode = ino->st_mode;
++		inode->i_atime = ino->st_mtim;
++		inode->i_mtime = ino->st_mtim;
++		inode->i_ctime = ino->st_ctim;
++
++		switch (ino->st_mode & S_IFMT) {
++		case S_IFREG:
++			inode->i_op = &cfs_file_inode_operations;
++			inode->i_fop = &cfs_file_operations;
++			inode->i_size = ino->st_size;
++			break;
++		case S_IFLNK:
++			inode->i_link = cino->inode_data.path_payload;
++			inode->i_op = &cfs_link_inode_operations;
++			inode->i_fop = &cfs_file_operations;
++			break;
++		case S_IFDIR:
++			inode->i_op = &cfs_dir_inode_operations;
++			inode->i_fop = &cfs_dir_operations;
++			inode->i_size = 4096;
++			break;
++		case S_IFCHR:
++		case S_IFBLK:
++			if (current_user_ns() != &init_user_ns) {
++				ret = -EPERM;
++				goto fail;
++			}
++			fallthrough;
++		default:
++			inode->i_op = &cfs_file_inode_operations;
++			init_special_inode(inode, ino->st_mode, ino->st_rdev);
++			break;
 +		}
 +	}
-+
-+	i_size = i_size_read(file_inode(descriptor));
-+	if (i_size <= (sizeof(struct cfs_header_s) + sizeof(struct cfs_inode_s))) {
-+		res = -EINVAL;
-+		goto fail;
-+	}
-+
-+	/* Need this temporary ctx for cfs_read_data() */
-+	ctx.descriptor = descriptor;
-+	ctx.descriptor_len = i_size;
-+
-+	header = cfs_read_data(&ctx, 0, sizeof(struct cfs_header_s),
-+			       (u8 *)&ctx.header);
-+	if (IS_ERR(header)) {
-+		res = PTR_ERR(header);
-+		goto fail;
-+	}
-+	header->magic = le32_to_cpu(header->magic);
-+	header->data_offset = le64_to_cpu(header->data_offset);
-+	header->root_inode = le64_to_cpu(header->root_inode);
-+
-+	if (header->magic != CFS_MAGIC || header->data_offset > ctx.descriptor_len ||
-+	    sizeof(struct cfs_header_s) + header->root_inode > ctx.descriptor_len) {
-+		res = -EINVAL;
-+		goto fail;
-+	}
-+
-+	*ctx_out = ctx;
-+	return 0;
++	return inode;
 +
 +fail:
-+	fput(descriptor);
-+	return res;
++	if (inode)
++		iput(inode);
++	kfree(xattrs);
++	cfs_inode_data_put(&inode_data);
++	return ERR_PTR(ret);
 +}
 +
-+void cfs_ctx_put(struct cfs_context_s *ctx)
++static struct inode *cfs_get_root_inode(struct super_block *sb)
 +{
-+	if (ctx->descriptor) {
-+		fput(ctx->descriptor);
-+		ctx->descriptor = NULL;
++	struct cfs_info *fsi = sb->s_fs_info;
++	struct cfs_inode_s ino_buf;
++	struct cfs_inode_s *ino;
++	u64 index;
++
++	ino = cfs_get_root_ino(&fsi->cfs_ctx, &ino_buf, &index);
++	if (IS_ERR(ino))
++		return ERR_CAST(ino);
++
++	return cfs_make_inode(&fsi->cfs_ctx, sb, index, ino, NULL);
++}
++
++static bool cfs_iterate_cb(void *private, const char *name, int name_len,
++			   u64 ino, unsigned int dtype)
++{
++	struct dir_context *ctx = private;
++
++	if (!dir_emit(ctx, name, name_len, ino, dtype))
++		return 0;
++
++	ctx->pos++;
++	return 1;
++}
++
++static int cfs_iterate(struct file *file, struct dir_context *ctx)
++{
++	struct inode *inode = file->f_inode;
++	struct cfs_info *fsi = inode->i_sb->s_fs_info;
++	struct cfs_inode *cino = CFS_I(inode);
++
++	if (!dir_emit_dots(file, ctx))
++		return 0;
++
++	return cfs_dir_iterate(&fsi->cfs_ctx, inode->i_ino, &cino->inode_data,
++			       ctx->pos - 2, cfs_iterate_cb, ctx);
++}
++
++static struct dentry *cfs_lookup(struct inode *dir, struct dentry *dentry,
++				 unsigned int flags)
++{
++	struct cfs_info *fsi = dir->i_sb->s_fs_info;
++	struct cfs_inode *cino = CFS_I(dir);
++	struct cfs_inode_s ino_buf;
++	struct cfs_inode_s *ino_s;
++	struct inode *inode;
++	u64 index;
++	int ret;
++
++	if (dentry->d_name.len > NAME_MAX)
++		return ERR_PTR(-ENAMETOOLONG);
++
++	ret = cfs_dir_lookup(&fsi->cfs_ctx, dir->i_ino, &cino->inode_data,
++			     dentry->d_name.name, dentry->d_name.len, &index);
++	if (ret < 0)
++		return ERR_PTR(ret);
++	if (ret == 0)
++		goto return_negative;
++
++	ino_s = cfs_get_ino_index(&fsi->cfs_ctx, index, &ino_buf);
++	if (IS_ERR(ino_s))
++		return ERR_CAST(ino_s);
++
++	inode = cfs_make_inode(&fsi->cfs_ctx, dir->i_sb, index, ino_s, dir);
++	if (IS_ERR(inode))
++		return ERR_CAST(inode);
++
++	return d_splice_alias(inode, dentry);
++
++return_negative:
++	d_add(dentry, NULL);
++	return NULL;
++}
++
++static const struct file_operations cfs_dir_operations = {
++	.llseek = generic_file_llseek,
++	.read = generic_read_dir,
++	.iterate_shared = cfs_iterate,
++};
++
++static const struct inode_operations cfs_dir_inode_operations = {
++	.lookup = cfs_lookup,
++	.listxattr = cfs_listxattr,
++};
++
++static const struct inode_operations cfs_link_inode_operations = {
++	.get_link = simple_get_link,
++	.listxattr = cfs_listxattr,
++};
++
++static int digest_from_string(const char *digest_str, u8 *digest)
++{
++	int res;
++
++	res = hex2bin(digest, digest_str, SHA256_DIGEST_SIZE);
++	if (res < 0)
++		return res;
++
++	if (digest_str[2 * SHA256_DIGEST_SIZE] != 0)
++		return -EINVAL; /* Too long string */
++
++	return 0;
++}
++
++/*
++ * Display the mount options in /proc/mounts.
++ */
++static int cfs_show_options(struct seq_file *m, struct dentry *root)
++{
++	struct cfs_info *fsi = root->d_sb->s_fs_info;
++
++	if (fsi->base_path)
++		seq_show_option(m, "basedir", fsi->base_path);
++	if (fsi->has_digest)
++		seq_printf(m, ",digest=%*phN", SHA256_DIGEST_SIZE, fsi->digest);
++	if (fsi->verity_check != 0)
++		seq_printf(m, ",verity_check=%u", fsi->verity_check);
++
++	return 0;
++}
++
++static struct kmem_cache *cfs_inode_cachep;
++
++static struct inode *cfs_alloc_inode(struct super_block *sb)
++{
++	struct cfs_inode *cino = alloc_inode_sb(sb, cfs_inode_cachep, GFP_KERNEL);
++
++	if (!cino)
++		return NULL;
++
++	memset((u8 *)cino + sizeof(struct inode), 0,
++	       sizeof(struct cfs_inode) - sizeof(struct inode));
++
++	return &cino->vfs_inode;
++}
++
++static void cfs_destroy_inode(struct inode *inode)
++{
++	struct cfs_inode *cino = CFS_I(inode);
++
++	cfs_inode_data_put(&cino->inode_data);
++}
++
++static void cfs_free_inode(struct inode *inode)
++{
++	struct cfs_inode *cino = CFS_I(inode);
++
++	kmem_cache_free(cfs_inode_cachep, cino);
++}
++
++static void cfs_put_super(struct super_block *sb)
++{
++	struct cfs_info *fsi = sb->s_fs_info;
++
++	cfs_ctx_put(&fsi->cfs_ctx);
++	if (fsi->bases) {
++		kern_unmount_array(fsi->bases, fsi->n_bases);
++		kfree(fsi->bases);
 +	}
++	kfree(fsi->base_path);
++
++	kfree(fsi);
 +}
 +
-+static void *cfs_get_inode_data(struct cfs_context_s *ctx, u64 offset, u64 size,
-+				u8 *dest)
++static int cfs_statfs(struct dentry *dentry, struct kstatfs *buf)
 +{
-+	return cfs_read_data(ctx, offset + sizeof(struct cfs_header_s), size, dest);
-+}
++	struct cfs_info *fsi = dentry->d_sb->s_fs_info;
++	int err = 0;
 +
-+static void *cfs_get_inode_data_max(struct cfs_context_s *ctx, u64 offset,
-+				    u64 max_size, u64 *read_size, u8 *dest)
-+{
-+	u64 remaining = ctx->descriptor_len - sizeof(struct cfs_header_s);
-+	u64 size;
-+
-+	if (offset > remaining)
-+		return ERR_PTR(-EINVAL);
-+	remaining -= offset;
-+
-+	/* Read at most remaining bytes, and no more than max_size */
-+	size = min(remaining, max_size);
-+	*read_size = size;
-+
-+	return cfs_get_inode_data(ctx, offset, size, dest);
-+}
-+
-+static void *cfs_get_inode_payload_w_len(struct cfs_context_s *ctx,
-+					 u32 payload_length, u64 index,
-+					 u8 *dest, u64 offset, size_t len)
-+{
-+	/* Payload is stored before the inode, check it fits */
-+	if (payload_length > index)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (offset > payload_length)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (offset + len > payload_length)
-+		return ERR_PTR(-EINVAL);
-+
-+	return cfs_get_inode_data(ctx, index - payload_length + offset, len, dest);
-+}
-+
-+static void *cfs_get_inode_payload(struct cfs_context_s *ctx,
-+				   struct cfs_inode_s *ino, u64 index, u8 *dest)
-+{
-+	return cfs_get_inode_payload_w_len(ctx, ino->payload_length, index,
-+					   dest, 0, ino->payload_length);
-+}
-+
-+static void *cfs_get_vdata_buf(struct cfs_context_s *ctx, u64 offset, u32 len,
-+			       struct cfs_buf *buf)
-+{
-+	if (offset > ctx->descriptor_len - ctx->header.data_offset)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (len > ctx->descriptor_len - ctx->header.data_offset - offset)
-+		return ERR_PTR(-EINVAL);
-+
-+	return cfs_get_buf(ctx, ctx->header.data_offset + offset, len, buf);
-+}
-+
-+static u32 cfs_read_u32(u8 **data)
-+{
-+	u32 v = le32_to_cpu(__get_unaligned_cpu32(*data));
-+	*data += sizeof(u32);
-+	return v;
-+}
-+
-+static u64 cfs_read_u64(u8 **data)
-+{
-+	u64 v = le64_to_cpu(__get_unaligned_cpu64(*data));
-+	*data += sizeof(u64);
-+	return v;
-+}
-+
-+struct cfs_inode_s *cfs_get_ino_index(struct cfs_context_s *ctx, u64 index,
-+				      struct cfs_inode_s *ino)
-+{
-+	/* Buffer that fits the maximal encoded size: */
-+	u8 buffer[sizeof(struct cfs_inode_s)];
-+	u64 offset = index;
-+	u64 inode_size;
-+	u64 read_size;
-+	u8 *data;
-+
-+	data = cfs_get_inode_data_max(ctx, offset, sizeof(buffer), &read_size, buffer);
-+	if (IS_ERR(data))
-+		return ERR_CAST(data);
-+
-+	/* Need to fit at least flags to decode */
-+	if (read_size < sizeof(u32))
-+		return ERR_PTR(-EFSCORRUPTED);
-+
-+	memset(ino, 0, sizeof(*ino));
-+	ino->flags = cfs_read_u32(&data);
-+
-+	inode_size = cfs_inode_encoded_size(ino->flags);
-+	/* Shouldn't happen, but let's check */
-+	if (inode_size > sizeof(buffer))
-+		return ERR_PTR(-EFSCORRUPTED);
-+
-+	if (CFS_INODE_FLAG_CHECK(ino->flags, PAYLOAD))
-+		ino->payload_length = cfs_read_u32(&data);
-+	else
-+		ino->payload_length = 0;
-+
-+	if (CFS_INODE_FLAG_CHECK(ino->flags, MODE))
-+		ino->st_mode = cfs_read_u32(&data);
-+	else
-+		ino->st_mode = CFS_INODE_DEFAULT_MODE;
-+
-+	if (CFS_INODE_FLAG_CHECK(ino->flags, NLINK)) {
-+		ino->st_nlink = cfs_read_u32(&data);
-+	} else {
-+		if ((ino->st_mode & S_IFMT) == S_IFDIR)
-+			ino->st_nlink = CFS_INODE_DEFAULT_NLINK_DIR;
-+		else
-+			ino->st_nlink = CFS_INODE_DEFAULT_NLINK;
-+	}
-+
-+	if (CFS_INODE_FLAG_CHECK(ino->flags, UIDGID)) {
-+		ino->st_uid = cfs_read_u32(&data);
-+		ino->st_gid = cfs_read_u32(&data);
-+	} else {
-+		ino->st_uid = CFS_INODE_DEFAULT_UIDGID;
-+		ino->st_gid = CFS_INODE_DEFAULT_UIDGID;
-+	}
-+
-+	if (CFS_INODE_FLAG_CHECK(ino->flags, RDEV))
-+		ino->st_rdev = cfs_read_u32(&data);
-+	else
-+		ino->st_rdev = CFS_INODE_DEFAULT_RDEV;
-+
-+	if (CFS_INODE_FLAG_CHECK(ino->flags, TIMES)) {
-+		ino->st_mtim.tv_sec = cfs_read_u64(&data);
-+		ino->st_ctim.tv_sec = cfs_read_u64(&data);
-+	} else {
-+		ino->st_mtim.tv_sec = CFS_INODE_DEFAULT_TIMES;
-+		ino->st_ctim.tv_sec = CFS_INODE_DEFAULT_TIMES;
-+	}
-+
-+	if (CFS_INODE_FLAG_CHECK(ino->flags, TIMES_NSEC)) {
-+		ino->st_mtim.tv_nsec = cfs_read_u32(&data);
-+		ino->st_ctim.tv_nsec = cfs_read_u32(&data);
-+	} else {
-+		ino->st_mtim.tv_nsec = 0;
-+		ino->st_ctim.tv_nsec = 0;
-+	}
-+
-+	if (CFS_INODE_FLAG_CHECK(ino->flags, LOW_SIZE))
-+		ino->st_size = cfs_read_u32(&data);
-+	else
-+		ino->st_size = 0;
-+
-+	if (CFS_INODE_FLAG_CHECK(ino->flags, HIGH_SIZE))
-+		ino->st_size += (u64)cfs_read_u32(&data) << 32;
-+
-+	if (CFS_INODE_FLAG_CHECK(ino->flags, XATTRS)) {
-+		ino->xattrs.off = cfs_read_u64(&data);
-+		ino->xattrs.len = cfs_read_u32(&data);
-+	} else {
-+		ino->xattrs.off = 0;
-+		ino->xattrs.len = 0;
-+	}
-+
-+	if (CFS_INODE_FLAG_CHECK(ino->flags, DIGEST)) {
-+		memcpy(ino->digest, data, SHA256_DIGEST_SIZE);
-+		data += 32;
-+	}
-+
-+	return ino;
-+}
-+
-+struct cfs_inode_s *cfs_get_root_ino(struct cfs_context_s *ctx,
-+				     struct cfs_inode_s *ino_buf, u64 *index)
-+{
-+	u64 root_ino = ctx->header.root_inode;
-+
-+	*index = root_ino;
-+	return cfs_get_ino_index(ctx, root_ino, ino_buf);
-+}
-+
-+static int cfs_get_digest(struct cfs_context_s *ctx, struct cfs_inode_s *ino,
-+			  const char *payload, u8 digest_out[SHA256_DIGEST_SIZE])
-+{
-+	int r;
-+
-+	if (CFS_INODE_FLAG_CHECK(ino->flags, DIGEST)) {
-+		memcpy(digest_out, ino->digest, SHA256_DIGEST_SIZE);
-+		return 1;
++	/* We return the free space, etc from the first base dir. */
++	if (fsi->n_bases > 0) {
++		struct path root = { .mnt = fsi->bases[0],
++				     .dentry = fsi->bases[0]->mnt_root };
++		err = vfs_statfs(&root, buf);
 +	}
 +
-+	if (payload && CFS_INODE_FLAG_CHECK(ino->flags, DIGEST_FROM_PAYLOAD)) {
-+		r = cfs_digest_from_payload(payload, ino->payload_length, digest_out);
++	if (!err) {
++		buf->f_namelen = NAME_MAX;
++		buf->f_type = dentry->d_sb->s_magic;
++	}
++
++	return err;
++}
++
++static const struct super_operations cfs_ops = {
++	.statfs = cfs_statfs,
++	.drop_inode = generic_delete_inode,
++	.show_options = cfs_show_options,
++	.put_super = cfs_put_super,
++	.destroy_inode = cfs_destroy_inode,
++	.alloc_inode = cfs_alloc_inode,
++	.free_inode = cfs_free_inode,
++};
++
++enum cfs_param {
++	Opt_base_path,
++	Opt_digest,
++	Opt_verity_check,
++};
++
++const struct fs_parameter_spec cfs_parameters[] = {
++	fsparam_string("basedir", Opt_base_path),
++	fsparam_string("digest", Opt_digest),
++	fsparam_u32("verity_check", Opt_verity_check),
++	{}
++};
++
++static int cfs_parse_param(struct fs_context *fc, struct fs_parameter *param)
++{
++	struct cfs_info *fsi = fc->s_fs_info;
++	struct fs_parse_result result;
++	int opt, r;
++
++	opt = fs_parse(fc, cfs_parameters, param, &result);
++	if (opt == -ENOPARAM)
++		return vfs_parse_fs_param_source(fc, param);
++	if (opt < 0)
++		return opt;
++
++	switch (opt) {
++	case Opt_base_path:
++		kfree(fsi->base_path);
++		/* Take ownership.  */
++		fsi->base_path = param->string;
++		param->string = NULL;
++		break;
++	case Opt_digest:
++		r = digest_from_string(param->string, fsi->digest);
 +		if (r < 0)
 +			return r;
-+		return 1;
++		fsi->has_digest = true;
++		fsi->verity_check = 2; /* Default to full verity check */
++		break;
++	case Opt_verity_check:
++		if (result.uint_32 > 2)
++			return invalfc(fc, "Invalid verity_check mode");
++		fsi->verity_check = result.uint_32;
++		break;
 +	}
 +
 +	return 0;
 +}
 +
-+static bool cfs_validate_filename(const char *name, size_t name_len)
++static struct vfsmount *resolve_basedir(const char *name)
 +{
-+	if (name_len == 0)
-+		return false;
++	struct path path = {};
++	struct vfsmount *mnt;
++	int err = -EINVAL;
 +
-+	if (name_len == 1 && name[0] == '.')
-+		return false;
-+
-+	if (name_len == 2 && name[0] == '.' && name[1] == '.')
-+		return false;
-+
-+	if (memchr(name, '/', name_len))
-+		return false;
-+
-+	return true;
-+}
-+
-+static struct cfs_dir_s *cfs_dir_read_chunk_header(struct cfs_context_s *ctx,
-+						   size_t payload_length,
-+						   u64 index, u8 *chunk_buf,
-+						   size_t chunk_buf_size,
-+						   size_t max_n_chunks)
-+{
-+	struct cfs_dir_s *dir;
-+	size_t n_chunks;
-+
-+	/* Payload and buffer should be large enough to fit the n_chunks */
-+	if (payload_length < sizeof(struct cfs_dir_s) ||
-+	    chunk_buf_size < sizeof(struct cfs_dir_s))
-+		return ERR_PTR(-EFSCORRUPTED);
-+
-+	/* Make sure we fit max_n_chunks in buffer before reading it */
-+	if (chunk_buf_size < cfs_dir_size(max_n_chunks))
-+		return ERR_PTR(-EINVAL);
-+
-+	dir = cfs_get_inode_payload_w_len(ctx, payload_length, index, chunk_buf,
-+					  0, min(chunk_buf_size, payload_length));
-+	if (IS_ERR(dir))
-+		return ERR_CAST(dir);
-+
-+	n_chunks = le32_to_cpu(dir->n_chunks);
-+	dir->n_chunks = n_chunks;
-+
-+	/* Don't support n_chunks == 0, the canonical version of that is payload_length == 0 */
-+	if (n_chunks == 0)
-+		return ERR_PTR(-EFSCORRUPTED);
-+
-+	if (payload_length != cfs_dir_size(n_chunks))
-+		return ERR_PTR(-EFSCORRUPTED);
-+
-+	max_n_chunks = min(n_chunks, max_n_chunks);
-+
-+	/* Verify data (up to max_n_chunks) */
-+	for (size_t i = 0; i < max_n_chunks; i++) {
-+		struct cfs_dir_chunk_s *chunk = &dir->chunks[i];
-+
-+		chunk->n_dentries = le16_to_cpu(chunk->n_dentries);
-+		chunk->chunk_size = le16_to_cpu(chunk->chunk_size);
-+		chunk->chunk_offset = le64_to_cpu(chunk->chunk_offset);
-+
-+		if (chunk->chunk_size < sizeof(struct cfs_dentry_s) * chunk->n_dentries)
-+			return ERR_PTR(-EFSCORRUPTED);
-+
-+		if (chunk->chunk_size > CFS_MAX_DIR_CHUNK_SIZE)
-+			return ERR_PTR(-EFSCORRUPTED);
-+
-+		if (chunk->n_dentries == 0)
-+			return ERR_PTR(-EFSCORRUPTED);
-+
-+		if (chunk->chunk_size == 0)
-+			return ERR_PTR(-EFSCORRUPTED);
-+
-+		if (chunk->chunk_offset > ctx->descriptor_len - ctx->header.data_offset)
-+			return ERR_PTR(-EFSCORRUPTED);
++	if (!*name) {
++		pr_err("empty basedir\n");
++		goto out;
++	}
++	err = kern_path(name, LOOKUP_FOLLOW, &path);
++	if (err) {
++		pr_err("failed to resolve '%s': %i\n", name, err);
++		goto out;
 +	}
 +
-+	return dir;
-+}
-+
-+static char *cfs_dup_payload_path(struct cfs_context_s *ctx,
-+				  struct cfs_inode_s *ino, u64 index)
-+{
-+	const char *v;
-+	u8 *path;
-+
-+	if ((ino->st_mode & S_IFMT) != S_IFREG && (ino->st_mode & S_IFMT) != S_IFLNK)
-+		return ERR_PTR(-EINVAL);
-+
-+	if (ino->payload_length == 0 || ino->payload_length > PATH_MAX)
-+		return ERR_PTR(-EFSCORRUPTED);
-+
-+	path = kmalloc(ino->payload_length + 1, GFP_KERNEL);
-+	if (!path)
-+		return ERR_PTR(-ENOMEM);
-+
-+	v = cfs_get_inode_payload(ctx, ino, index, path);
-+	if (IS_ERR(v)) {
-+		kfree(path);
-+		return ERR_CAST(v);
++	mnt = clone_private_mount(&path);
++	err = PTR_ERR(mnt);
++	if (IS_ERR(mnt)) {
++		pr_err("failed to clone basedir\n");
++		goto out_put;
 +	}
 +
-+	/* zero terminate */
-+	path[ino->payload_length] = 0;
++	path_put(&path);
 +
-+	return (char *)path;
++	/* Don't inherit atime flags */
++	mnt->mnt_flags &= ~(MNT_NOATIME | MNT_NODIRATIME | MNT_RELATIME);
++
++	return mnt;
++
++out_put:
++	path_put(&path);
++out:
++	return ERR_PTR(err);
 +}
 +
-+int cfs_init_inode_data(struct cfs_context_s *ctx, struct cfs_inode_s *ino,
-+			u64 index, struct cfs_inode_data_s *inode_data)
++static int cfs_fill_super(struct super_block *sb, struct fs_context *fc)
 +{
-+	u8 buf[cfs_dir_size(CFS_N_PRELOAD_DIR_CHUNKS)];
-+	char *path_payload = NULL;
-+	struct cfs_dir_s *dir;
-+	int ret = 0;
++	struct cfs_info *fsi = sb->s_fs_info;
++	struct vfsmount **bases = NULL;
++	size_t numbasedirs = 0;
++	struct inode *inode;
++	struct vfsmount *mnt;
++	int ret;
 +
-+	inode_data->payload_length = ino->payload_length;
++	if (sb->s_root)
++		return -EINVAL;
 +
-+	if ((ino->st_mode & S_IFMT) != S_IFDIR || ino->payload_length == 0) {
-+		inode_data->n_dir_chunks = 0;
-+	} else {
-+		u32 n_chunks;
++	/* Set up the inode allocator early */
++	sb->s_op = &cfs_ops;
++	sb->s_flags |= SB_RDONLY;
++	sb->s_magic = CFS_MAGIC;
++	sb->s_xattr = cfs_xattr_handlers;
++	sb->s_export_op = &cfs_export_operations;
 +
-+		dir = cfs_dir_read_chunk_header(ctx, ino->payload_length, index,
-+						buf, sizeof(buf),
-+						CFS_N_PRELOAD_DIR_CHUNKS);
-+		if (IS_ERR(dir))
-+			return PTR_ERR(dir);
++	if (fsi->base_path) {
++		char *lower, *splitlower = NULL;
 +
-+		n_chunks = dir->n_chunks;
-+		inode_data->n_dir_chunks = n_chunks;
++		ret = -ENOMEM;
++		splitlower = kstrdup(fsi->base_path, GFP_KERNEL);
++		if (!splitlower)
++			goto fail;
 +
-+		for (size_t i = 0; i < n_chunks && i < CFS_N_PRELOAD_DIR_CHUNKS; i++)
-+			inode_data->preloaded_dir_chunks[i] = dir->chunks[i];
-+	}
-+
-+	if ((ino->st_mode & S_IFMT) == S_IFLNK ||
-+	    ((ino->st_mode & S_IFMT) == S_IFREG && ino->payload_length > 0)) {
-+		path_payload = cfs_dup_payload_path(ctx, ino, index);
-+		if (IS_ERR(path_payload)) {
-+			ret = PTR_ERR(path_payload);
++		ret = -EINVAL;
++		numbasedirs = cfs_split_basedirs(splitlower);
++		if (numbasedirs > CFS_MAX_STACK) {
++			pr_err("too many lower directories, limit is %d\n",
++			       CFS_MAX_STACK);
++			kfree(splitlower);
 +			goto fail;
 +		}
-+	}
-+	inode_data->path_payload = path_payload;
 +
-+	ret = cfs_get_digest(ctx, ino, path_payload, inode_data->digest);
++		ret = -ENOMEM;
++		bases = kcalloc(numbasedirs, sizeof(struct vfsmount *), GFP_KERNEL);
++		if (!bases) {
++			kfree(splitlower);
++			goto fail;
++		}
++
++		lower = splitlower;
++		for (size_t i = 0; i < numbasedirs; i++) {
++			mnt = resolve_basedir(lower);
++			if (IS_ERR(mnt)) {
++				ret = PTR_ERR(mnt);
++				kfree(splitlower);
++				goto fail;
++			}
++			bases[i] = mnt;
++
++			lower = strchr(lower, '\0') + 1;
++		}
++		kfree(splitlower);
++	}
++
++	/* Must be inited before calling cfs_get_inode.  */
++	ret = cfs_init_ctx(fc->source, fsi->has_digest ? fsi->digest : NULL,
++			   &fsi->cfs_ctx);
 +	if (ret < 0)
 +		goto fail;
 +
-+	inode_data->has_digest = ret != 0;
-+
-+	inode_data->xattrs_offset = ino->xattrs.off;
-+	inode_data->xattrs_len = ino->xattrs.len;
-+
-+	if (inode_data->xattrs_len != 0) {
-+		/* Validate xattr size */
-+		if (inode_data->xattrs_len < sizeof(struct cfs_xattr_header_s) ||
-+		    inode_data->xattrs_len > CFS_MAX_XATTRS_SIZE) {
-+			ret = -EFSCORRUPTED;
-+			goto fail;
-+		}
++	inode = cfs_get_root_inode(sb);
++	if (IS_ERR(inode)) {
++		ret = PTR_ERR(inode);
++		goto fail;
 +	}
++	sb->s_root = d_make_root(inode);
 +
++	ret = -ENOMEM;
++	if (!sb->s_root)
++		goto fail;
++
++	sb->s_maxbytes = MAX_LFS_FILESIZE;
++	sb->s_blocksize = PAGE_SIZE;
++	sb->s_blocksize_bits = PAGE_SHIFT;
++
++	sb->s_time_gran = 1;
++
++	fsi->bases = bases;
++	fsi->n_bases = numbasedirs;
 +	return 0;
-+
 +fail:
-+	cfs_inode_data_put(inode_data);
++	if (bases) {
++		for (size_t i = 0; i < numbasedirs; i++) {
++			if (bases[i])
++				kern_unmount(bases[i]);
++		}
++		kfree(bases);
++	}
++	cfs_ctx_put(&fsi->cfs_ctx);
 +	return ret;
 +}
 +
-+void cfs_inode_data_put(struct cfs_inode_data_s *inode_data)
++static int cfs_get_tree(struct fs_context *fc)
 +{
-+	inode_data->n_dir_chunks = 0;
-+	kfree(inode_data->path_payload);
-+	inode_data->path_payload = NULL;
++	return get_tree_nodev(fc, cfs_fill_super);
 +}
 +
-+ssize_t cfs_list_xattrs(struct cfs_context_s *ctx,
-+			struct cfs_inode_data_s *inode_data, char *names, size_t size)
-+{
-+	const struct cfs_xattr_header_s *xattrs;
-+	struct cfs_buf vdata_buf = { NULL };
-+	size_t n_xattrs = 0;
-+	u8 *data, *data_end;
-+	ssize_t copied = 0;
++static const struct fs_context_operations cfs_context_ops = {
++	.parse_param = cfs_parse_param,
++	.get_tree = cfs_get_tree,
++};
 +
-+	if (inode_data->xattrs_len == 0)
++static struct file *open_base_file(struct cfs_info *fsi, struct inode *inode,
++				   struct file *file)
++{
++	struct cfs_inode *cino = CFS_I(inode);
++	struct file *real_file;
++	char *real_path = cino->inode_data.path_payload;
++
++	for (size_t i = 0; i < fsi->n_bases; i++) {
++		real_file = file_open_root_mnt(fsi->bases[i], real_path,
++					       file->f_flags, 0);
++		if (!IS_ERR(real_file) || PTR_ERR(real_file) != -ENOENT)
++			return real_file;
++	}
++
++	return ERR_PTR(-ENOENT);
++}
++
++static int cfs_open_file(struct inode *inode, struct file *file)
++{
++	struct cfs_info *fsi = inode->i_sb->s_fs_info;
++	struct cfs_inode *cino = CFS_I(inode);
++	char *real_path = cino->inode_data.path_payload;
++	struct file *faked_file;
++	struct file *real_file;
++
++	if (WARN_ON(!file))
++		return -EIO;
++
++	if (file->f_flags & (O_WRONLY | O_RDWR | O_CREAT | O_EXCL | O_TRUNC))
++		return -EROFS;
++
++	if (!real_path) {
++		file->private_data = &empty_file;
++		return 0;
++	}
++
++	if (fsi->verity_check >= 2 && !cino->inode_data.has_digest) {
++		pr_warn("WARNING: composefs image file '%pd' specified no fs-verity digest\n",
++			file->f_path.dentry);
++		return -EIO;
++	}
++
++	real_file = open_base_file(fsi, inode, file);
++
++	if (IS_ERR(real_file))
++		return PTR_ERR(real_file);
++
++	/* If metadata records a digest for the file, ensure it is there
++	 * and correct before using the contents.
++	 */
++	if (cino->inode_data.has_digest && fsi->verity_check >= 1) {
++		u8 verity_digest[FS_VERITY_MAX_DIGEST_SIZE];
++		enum hash_algo verity_algo;
++		int res;
++
++		res = fsverity_get_digest(d_inode(real_file->f_path.dentry),
++					  verity_digest, &verity_algo);
++		if (res < 0) {
++			pr_warn("WARNING: composefs backing file '%pd' has no fs-verity digest\n",
++				real_file->f_path.dentry);
++			fput(real_file);
++			return -EIO;
++		}
++		if (verity_algo != HASH_ALGO_SHA256 ||
++		    memcmp(cino->inode_data.digest, verity_digest,
++			   SHA256_DIGEST_SIZE) != 0) {
++			pr_warn("WARNING: composefs backing file '%pd' has the wrong fs-verity digest\n",
++				real_file->f_path.dentry);
++			fput(real_file);
++			return -EIO;
++		}
++	}
++
++	faked_file = open_with_fake_path(&file->f_path, file->f_flags,
++					 real_file->f_inode, current_cred());
++	fput(real_file);
++
++	if (IS_ERR(faked_file))
++		return PTR_ERR(faked_file);
++
++	file->private_data = faked_file;
++	return 0;
++}
++
++#ifdef CONFIG_MMU
++static unsigned long cfs_mmu_get_unmapped_area(struct file *file, unsigned long addr,
++					       unsigned long len, unsigned long pgoff,
++					       unsigned long flags)
++{
++	struct file *realfile = file->private_data;
++
++	if (realfile == &empty_file)
 +		return 0;
 +
-+	/* xattrs_len basic size req was verified in cfs_init_inode_data */
-+
-+	xattrs = cfs_get_vdata_buf(ctx, inode_data->xattrs_offset,
-+				   inode_data->xattrs_len, &vdata_buf);
-+	if (IS_ERR(xattrs))
-+		return PTR_ERR(xattrs);
-+
-+	n_xattrs = le16_to_cpu(xattrs->n_attr);
-+
-+	/* Verify that array fits */
-+	if (inode_data->xattrs_len < cfs_xattr_header_size(n_xattrs)) {
-+		copied = -EFSCORRUPTED;
-+		goto exit;
-+	}
-+
-+	data = ((u8 *)xattrs) + cfs_xattr_header_size(n_xattrs);
-+	data_end = ((u8 *)xattrs) + inode_data->xattrs_len;
-+
-+	for (size_t i = 0; i < n_xattrs; i++) {
-+		const struct cfs_xattr_element_s *e = &xattrs->attr[i];
-+		u16 this_value_len = le16_to_cpu(e->value_length);
-+		u16 this_key_len = le16_to_cpu(e->key_length);
-+		const char *this_key;
-+
-+		if (this_key_len > XATTR_NAME_MAX ||
-+		    /* key and data needs to fit in data */
-+		    data_end - data < this_key_len + this_value_len) {
-+			copied = -EFSCORRUPTED;
-+			goto exit;
-+		}
-+
-+		this_key = data;
-+		data += this_key_len + this_value_len;
-+
-+		if (size) {
-+			if (size - copied < this_key_len + 1) {
-+				copied = -E2BIG;
-+				goto exit;
-+			}
-+
-+			memcpy(names + copied, this_key, this_key_len);
-+			names[copied + this_key_len] = '\0';
-+		}
-+
-+		copied += this_key_len + 1;
-+	}
-+
-+exit:
-+	cfs_buf_put(&vdata_buf);
-+
-+	return copied;
++	return current->mm->get_unmapped_area(file, addr, len, pgoff, flags);
 +}
++#endif
 +
-+int cfs_get_xattr(struct cfs_context_s *ctx, struct cfs_inode_data_s *inode_data,
-+		  const char *name, void *value, size_t size)
++static int cfs_release_file(struct inode *inode, struct file *file)
 +{
-+	struct cfs_xattr_header_s *xattrs;
-+	struct cfs_buf vdata_buf = { NULL };
-+	size_t name_len = strlen(name);
-+	size_t n_xattrs = 0;
-+	u8 *data, *data_end;
-+	int res;
++	struct file *realfile = file->private_data;
 +
-+	if (inode_data->xattrs_len == 0)
-+		return -ENODATA;
++	if (WARN_ON(!realfile))
++		return -EIO;
 +
-+	/* xattrs_len basic size req was verified in cfs_init_inode_data */
-+
-+	xattrs = cfs_get_vdata_buf(ctx, inode_data->xattrs_offset,
-+				   inode_data->xattrs_len, &vdata_buf);
-+	if (IS_ERR(xattrs))
-+		return PTR_ERR(xattrs);
-+
-+	n_xattrs = le16_to_cpu(xattrs->n_attr);
-+
-+	/* Verify that array fits */
-+	if (inode_data->xattrs_len < cfs_xattr_header_size(n_xattrs)) {
-+		res = -EFSCORRUPTED;
-+		goto exit;
-+	}
-+
-+	data = ((u8 *)xattrs) + cfs_xattr_header_size(n_xattrs);
-+	data_end = ((u8 *)xattrs) + inode_data->xattrs_len;
-+
-+	for (size_t i = 0; i < n_xattrs; i++) {
-+		const struct cfs_xattr_element_s *e = &xattrs->attr[i];
-+		u16 this_value_len = le16_to_cpu(e->value_length);
-+		u16 this_key_len = le16_to_cpu(e->key_length);
-+		const char *this_key, *this_value;
-+
-+		if (this_key_len > XATTR_NAME_MAX ||
-+		    /* key and data needs to fit in data */
-+		    data_end - data < this_key_len + this_value_len) {
-+			res = -EFSCORRUPTED;
-+			goto exit;
-+		}
-+
-+		this_key = data;
-+		this_value = data + this_key_len;
-+		data += this_key_len + this_value_len;
-+
-+		if (this_key_len != name_len || memcmp(this_key, name, name_len) != 0)
-+			continue;
-+
-+		if (size > 0) {
-+			if (size < this_value_len) {
-+				res = -E2BIG;
-+				goto exit;
-+			}
-+			memcpy(value, this_value, this_value_len);
-+		}
-+
-+		res = this_value_len;
-+		goto exit;
-+	}
-+
-+	res = -ENODATA;
-+
-+exit:
-+	return res;
-+}
-+
-+static struct cfs_dir_s *
-+cfs_dir_read_chunk_header_alloc(struct cfs_context_s *ctx, u64 index,
-+				struct cfs_inode_data_s *inode_data)
-+{
-+	size_t chunk_buf_size = cfs_dir_size(inode_data->n_dir_chunks);
-+	struct cfs_dir_s *dir;
-+	u8 *chunk_buf;
-+
-+	chunk_buf = kmalloc(chunk_buf_size, GFP_KERNEL);
-+	if (!chunk_buf)
-+		return ERR_PTR(-ENOMEM);
-+
-+	dir = cfs_dir_read_chunk_header(ctx, inode_data->payload_length, index,
-+					chunk_buf, chunk_buf_size,
-+					inode_data->n_dir_chunks);
-+	if (IS_ERR(dir)) {
-+		kfree(chunk_buf);
-+		return ERR_CAST(dir);
-+	}
-+
-+	return dir;
-+}
-+
-+static struct cfs_dir_chunk_s *
-+cfs_dir_get_chunk_info(struct cfs_context_s *ctx, u64 index,
-+		       struct cfs_inode_data_s *inode_data, void **chunks_buf)
-+{
-+	struct cfs_dir_s *full_dir;
-+
-+	if (inode_data->n_dir_chunks <= CFS_N_PRELOAD_DIR_CHUNKS) {
-+		*chunks_buf = NULL;
-+		return inode_data->preloaded_dir_chunks;
-+	}
-+
-+	full_dir = cfs_dir_read_chunk_header_alloc(ctx, index, inode_data);
-+	if (IS_ERR(full_dir))
-+		return ERR_CAST(full_dir);
-+
-+	*chunks_buf = full_dir;
-+	return full_dir->chunks;
-+}
-+
-+static inline int memcmp2(const void *a, const size_t a_size, const void *b,
-+			  size_t b_size)
-+{
-+	size_t common_size = min(a_size, b_size);
-+	int res;
-+
-+	res = memcmp(a, b, common_size);
-+	if (res != 0 || a_size == b_size)
-+		return res;
-+
-+	return a_size < b_size ? -1 : 1;
-+}
-+
-+int cfs_dir_iterate(struct cfs_context_s *ctx, u64 index,
-+		    struct cfs_inode_data_s *inode_data, loff_t first,
-+		    cfs_dir_iter_cb cb, void *private)
-+{
-+	struct cfs_buf vdata_buf = { NULL };
-+	struct cfs_dir_chunk_s *chunks;
-+	struct cfs_dentry_s *dentries;
-+	char *namedata, *namedata_end;
-+	void *chunks_buf;
-+	size_t n_chunks;
-+	loff_t pos;
-+	int res;
-+
-+	n_chunks = inode_data->n_dir_chunks;
-+	if (n_chunks == 0)
++	if (realfile == &empty_file)
 +		return 0;
 +
-+	chunks = cfs_dir_get_chunk_info(ctx, index, inode_data, &chunks_buf);
-+	if (IS_ERR(chunks))
-+		return PTR_ERR(chunks);
++	fput(file->private_data);
 +
-+	pos = 0;
-+	for (size_t i = 0; i < n_chunks; i++) {
-+		/* Chunks info are verified/converted in cfs_dir_read_chunk_header */
-+		u64 chunk_offset = chunks[i].chunk_offset;
-+		size_t chunk_size = chunks[i].chunk_size;
-+		size_t n_dentries = chunks[i].n_dentries;
-+
-+		/* Do we need to look at this chunk */
-+		if (first >= pos + n_dentries) {
-+			pos += n_dentries;
-+			continue;
-+		}
-+
-+		/* Read chunk dentries from page cache */
-+		dentries = cfs_get_vdata_buf(ctx, chunk_offset, chunk_size,
-+					     &vdata_buf);
-+		if (IS_ERR(dentries)) {
-+			res = PTR_ERR(dentries);
-+			goto exit;
-+		}
-+
-+		namedata = ((char *)dentries) +
-+			   sizeof(struct cfs_dentry_s) * n_dentries;
-+		namedata_end = ((char *)dentries) + chunk_size;
-+
-+		for (size_t j = 0; j < n_dentries; j++) {
-+			struct cfs_dentry_s *dentry = &dentries[j];
-+			size_t dentry_name_len = dentry->name_len;
-+			char *dentry_name = (char *)namedata + dentry->name_offset;
-+
-+			/* name needs to fit in namedata */
-+			if (dentry_name >= namedata_end ||
-+			    namedata_end - dentry_name < dentry_name_len) {
-+				res = -EFSCORRUPTED;
-+				goto exit;
-+			}
-+
-+			if (!cfs_validate_filename(dentry_name, dentry_name_len)) {
-+				res = -EFSCORRUPTED;
-+				goto exit;
-+			}
-+
-+			if (pos++ < first)
-+				continue;
-+
-+			if (!cb(private, dentry_name, dentry_name_len,
-+				le64_to_cpu(dentry->inode_index), dentry->d_type)) {
-+				res = 0;
-+				goto exit;
-+			}
-+		}
-+	}
-+
-+	res = 0;
-+exit:
-+	kfree(chunks_buf);
-+	cfs_buf_put(&vdata_buf);
-+	return res;
++	return 0;
 +}
 +
-+#define BEFORE_CHUNK 1
-+#define AFTER_CHUNK 2
-+// -1 => error, 0 == hit, 1 == name is before chunk, 2 == name is after chunk
-+static int cfs_dir_lookup_in_chunk(const char *name, size_t name_len,
-+				   struct cfs_dentry_s *dentries,
-+				   size_t n_dentries, char *namedata,
-+				   char *namedata_end, u64 *index_out)
++static int cfs_mmap(struct file *file, struct vm_area_struct *vma)
 +{
-+	int start_dentry, end_dentry;
-+	int cmp;
++	struct file *realfile = file->private_data;
++	int ret;
 +
-+	// This should not happen in a valid fs, and if it does we don't know if
-+	// the name is before or after the chunk.
-+	if (n_dentries == 0)
-+		return -EFSCORRUPTED;
-+
-+	start_dentry = 0;
-+	end_dentry = n_dentries - 1;
-+	while (start_dentry <= end_dentry) {
-+		int mid_dentry = start_dentry + (end_dentry - start_dentry) / 2;
-+		struct cfs_dentry_s *dentry = &dentries[mid_dentry];
-+		char *dentry_name = (char *)namedata + dentry->name_offset;
-+		size_t dentry_name_len = dentry->name_len;
-+
-+		/* name needs to fit in namedata */
-+		if (dentry_name >= namedata_end ||
-+		    namedata_end - dentry_name < dentry_name_len) {
-+			return -EFSCORRUPTED;
-+		}
-+
-+		cmp = memcmp2(name, name_len, dentry_name, dentry_name_len);
-+		if (cmp == 0) {
-+			*index_out = le64_to_cpu(dentry->inode_index);
-+			return 0;
-+		}
-+
-+		if (cmp > 0)
-+			start_dentry = mid_dentry + 1;
-+		else
-+			end_dentry = mid_dentry - 1;
-+	}
-+
-+	return cmp > 0 ? AFTER_CHUNK : BEFORE_CHUNK;
-+}
-+
-+int cfs_dir_lookup(struct cfs_context_s *ctx, u64 index,
-+		   struct cfs_inode_data_s *inode_data, const char *name,
-+		   size_t name_len, u64 *index_out)
-+{
-+	int n_chunks, start_chunk, end_chunk;
-+	struct cfs_buf vdata_buf = { NULL };
-+	char *namedata, *namedata_end;
-+	struct cfs_dir_chunk_s *chunks;
-+	struct cfs_dentry_s *dentries;
-+	void *chunks_buf;
-+	int res, r;
-+
-+	n_chunks = inode_data->n_dir_chunks;
-+	if (n_chunks == 0)
++	if (realfile == &empty_file)
 +		return 0;
 +
-+	chunks = cfs_dir_get_chunk_info(ctx, index, inode_data, &chunks_buf);
-+	if (IS_ERR(chunks))
-+		return PTR_ERR(chunks);
++	if (!realfile->f_op->mmap)
++		return -ENODEV;
 +
-+	start_chunk = 0;
-+	end_chunk = n_chunks - 1;
++	if (WARN_ON(file != vma->vm_file))
++		return -EIO;
 +
-+	while (start_chunk <= end_chunk) {
-+		int mid_chunk = start_chunk + (end_chunk - start_chunk) / 2;
++	vma_set_file(vma, realfile);
 +
-+		/* Chunks info are verified/converted in cfs_dir_read_chunk_header */
-+		u64 chunk_offset = chunks[mid_chunk].chunk_offset;
-+		size_t chunk_size = chunks[mid_chunk].chunk_size;
-+		size_t n_dentries = chunks[mid_chunk].n_dentries;
++	ret = call_mmap(vma->vm_file, vma);
 +
-+		/* Read chunk dentries from page cache */
-+		dentries = cfs_get_vdata_buf(ctx, chunk_offset, chunk_size,
-+					     &vdata_buf);
-+		if (IS_ERR(dentries)) {
-+			res = PTR_ERR(dentries);
-+			goto exit;
-+		}
++	return ret;
++}
 +
-+		namedata = ((u8 *)dentries) + sizeof(struct cfs_dentry_s) * n_dentries;
-+		namedata_end = ((u8 *)dentries) + chunk_size;
++static ssize_t cfs_read_iter(struct kiocb *iocb, struct iov_iter *iter)
++{
++	struct file *file = iocb->ki_filp;
++	struct file *realfile = file->private_data;
++	int ret;
 +
-+		r = cfs_dir_lookup_in_chunk(name, name_len, dentries, n_dentries,
-+					    namedata, namedata_end, index_out);
-+		if (r < 0) {
-+			res = r; /* error */
-+			goto exit;
-+		} else if (r == 0) {
-+			res = 1; /* found it */
-+			goto exit;
-+		} else if (r == AFTER_CHUNK) {
-+			start_chunk = mid_chunk + 1;
-+		} else { /* before */
-+			end_chunk = mid_chunk - 1;
-+		}
++	if (realfile == &empty_file)
++		return 0;
++
++	if (!realfile->f_op->read_iter)
++		return -ENODEV;
++
++	iocb->ki_filp = realfile;
++	ret = call_read_iter(realfile, iocb, iter);
++	iocb->ki_filp = file;
++
++	return ret;
++}
++
++static int cfs_fadvise(struct file *file, loff_t offset, loff_t len, int advice)
++{
++	struct file *realfile = file->private_data;
++
++	if (realfile == &empty_file)
++		return 0;
++
++	return vfs_fadvise(realfile, offset, len, advice);
++}
++
++static int cfs_encode_fh(struct inode *inode, u32 *fh, int *max_len,
++			 struct inode *parent)
++{
++	u32 generation;
++	int len = 3;
++	u64 nodeid;
++
++	if (*max_len < len) {
++		*max_len = len;
++		return FILEID_INVALID;
 +	}
 +
-+	/* not found */
-+	res = 0;
++	nodeid = inode->i_ino;
++	generation = inode->i_generation;
 +
-+exit:
-+	kfree(chunks_buf);
-+	cfs_buf_put(&vdata_buf);
-+	return res;
++	fh[0] = (u32)(nodeid >> 32);
++	fh[1] = (u32)(nodeid & 0xffffffff);
++	fh[2] = generation;
++
++	*max_len = len;
++
++	return FILEID_CFS;
 +}
++
++static struct dentry *cfs_fh_to_dentry(struct super_block *sb, struct fid *fid,
++				       int fh_len, int fh_type)
++{
++	struct cfs_info *fsi = sb->s_fs_info;
++	struct inode *ino;
++	u64 inode_index;
++	u32 generation;
++
++	if (fh_type != FILEID_CFS || fh_len < 3)
++		return NULL;
++
++	inode_index = (u64)(fid->raw[0]) << 32;
++	inode_index |= fid->raw[1];
++	generation = fid->raw[2];
++
++	ino = ilookup(sb, inode_index);
++	if (!ino) {
++		struct cfs_inode_s inode_buf;
++		struct cfs_inode_s *inode;
++
++		inode = cfs_get_ino_index(&fsi->cfs_ctx, inode_index, &inode_buf);
++		if (IS_ERR(inode))
++			return ERR_CAST(inode);
++
++		ino = cfs_make_inode(&fsi->cfs_ctx, sb, inode_index, inode, NULL);
++		if (IS_ERR(ino))
++			return ERR_CAST(ino);
++	}
++	if (ino->i_generation != generation) {
++		iput(ino);
++		return ERR_PTR(-ESTALE);
++	}
++	return d_obtain_alias(ino);
++}
++
++static struct dentry *cfs_fh_to_parent(struct super_block *sb, struct fid *fid,
++				       int fh_len, int fh_type)
++{
++	return ERR_PTR(-EACCES);
++}
++
++static int cfs_get_name(struct dentry *parent, char *name, struct dentry *child)
++{
++	WARN_ON_ONCE(1);
++	return -EIO;
++}
++
++static struct dentry *cfs_get_parent(struct dentry *dentry)
++{
++	WARN_ON_ONCE(1);
++	return ERR_PTR(-EIO);
++}
++
++static const struct export_operations cfs_export_operations = {
++	.fh_to_dentry = cfs_fh_to_dentry,
++	.fh_to_parent = cfs_fh_to_parent,
++	.encode_fh = cfs_encode_fh,
++	.get_parent = cfs_get_parent,
++	.get_name = cfs_get_name,
++};
++
++static int cfs_getxattr(const struct xattr_handler *handler,
++			struct dentry *unused2, struct inode *inode,
++			const char *name, void *value, size_t size)
++{
++	struct cfs_info *fsi = inode->i_sb->s_fs_info;
++	struct cfs_inode *cino = CFS_I(inode);
++
++	return cfs_get_xattr(&fsi->cfs_ctx, &cino->inode_data, name, value, size);
++}
++
++static ssize_t cfs_listxattr(struct dentry *dentry, char *names, size_t size)
++{
++	struct inode *inode = d_inode(dentry);
++	struct cfs_info *fsi = inode->i_sb->s_fs_info;
++	struct cfs_inode *cino = CFS_I(inode);
++
++	return cfs_list_xattrs(&fsi->cfs_ctx, &cino->inode_data, names, size);
++}
++
++static const struct file_operations cfs_file_operations = {
++	.read_iter = cfs_read_iter,
++	.mmap = cfs_mmap,
++	.fadvise = cfs_fadvise,
++	.fsync = noop_fsync,
++	.splice_read = generic_file_splice_read,
++	.llseek = generic_file_llseek,
++#ifdef CONFIG_MMU
++	.get_unmapped_area = cfs_mmu_get_unmapped_area,
++#endif
++	.release = cfs_release_file,
++	.open = cfs_open_file,
++};
++
++static const struct xattr_handler cfs_xattr_handler = {
++	.prefix = "", /* catch all */
++	.get = cfs_getxattr,
++};
++
++static const struct xattr_handler *cfs_xattr_handlers[] = {
++	&cfs_xattr_handler,
++	NULL,
++};
++
++static const struct inode_operations cfs_file_inode_operations = {
++	.setattr = simple_setattr,
++	.getattr = simple_getattr,
++
++	.listxattr = cfs_listxattr,
++};
++
++static int cfs_init_fs_context(struct fs_context *fc)
++{
++	struct cfs_info *fsi;
++
++	fsi = kzalloc(sizeof(*fsi), GFP_KERNEL);
++	if (!fsi)
++		return -ENOMEM;
++
++	fc->s_fs_info = fsi;
++	fc->ops = &cfs_context_ops;
++	return 0;
++}
++
++static struct file_system_type cfs_type = {
++	.owner = THIS_MODULE,
++	.name = "composefs",
++	.init_fs_context = cfs_init_fs_context,
++	.parameters = cfs_parameters,
++	.kill_sb = kill_anon_super,
++};
++
++static void cfs_inode_init_once(void *foo)
++{
++	struct cfs_inode *cino = foo;
++
++	inode_init_once(&cino->vfs_inode);
++}
++
++static int __init init_cfs(void)
++{
++	cfs_inode_cachep = kmem_cache_create(
++		"cfs_inode", sizeof(struct cfs_inode), 0,
++		(SLAB_RECLAIM_ACCOUNT | SLAB_MEM_SPREAD | SLAB_ACCOUNT),
++		cfs_inode_init_once);
++	if (!cfs_inode_cachep)
++		return -ENOMEM;
++
++	return register_filesystem(&cfs_type);
++}
++
++static void __exit exit_cfs(void)
++{
++	unregister_filesystem(&cfs_type);
++
++	/* Ensure all RCU free inodes are safe to be destroyed. */
++	rcu_barrier();
++
++	kmem_cache_destroy(cfs_inode_cachep);
++}
++
++module_init(init_cfs);
++module_exit(exit_cfs);
 -- 
 2.39.0
 
