@@ -2,225 +2,306 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 48FDB6689E0
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 04:03:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BA9026689FD
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 04:19:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240378AbjAMDDs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 12 Jan 2023 22:03:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35690 "EHLO
+        id S229643AbjAMDTW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 12 Jan 2023 22:19:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41210 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240644AbjAMDDe (ORCPT
+        with ESMTP id S229550AbjAMDTT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 12 Jan 2023 22:03:34 -0500
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9B84625DF;
-        Thu, 12 Jan 2023 19:03:31 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jja084DOvHz/ysl6drtblRoGPkerac58FjSfr5QRwAVlwwuNY7Xncux5MZZJ55R/Ta9O+KqcHTwHev6Esd1fBn3uFF+okKLkBUK69kL42NI4vxfPMyJm/BT9Xne/l+hGfeiZnM92dMimAGluE7s5Y4G2ZFnPz/zs0r22DS1WWe3mI3rNc0MclDLWEsU5q4ryNZQSmHu+YnIi65CDJzHYml8fMM19GdurQFgbvQ77TU2KZFts7CaK4gHUpZxo+jySN5vXywAxpx6WT6h04qCxF6Kjo8c5ovsmGJOD8hC0iHvyA8d8DVdg688eNxFBKi5E8NwbDxpaEF93NeCBSdi/Kw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8vTBhXyIif/stiznOMHNZceBPP7AhXrVUJXFpMBI7nY=;
- b=nfRhn1h8szrl94IYJ3gNSWNQhcQXifiKHWzdfUpVYr8oBBR5XETVQH/dCJipGP3SeZXIVlpiJWD3HUFv5swVMUh3KV5vCA+/rxc2Z9c5X8qYjsYg1fYP1YfZeQvJJuK/e/LcybG3ZR7uQw7BOPtNm7/bsIZP4/Tmp6+8gWfNHkdzs5KbA1J1w7qHUABuMSdrBosBz2lPkfdISOgIHrL228sDpQKXJ2Yjzr2EaGei91pcbV+TiUeZcl2M6KnTCe3hYFh2GsX0F6zLlHW9QM6/gfJkIRw1C71nnnUN174HAzDaRN1Dyd2aK+dPKXSV5YEpmo2Nd1hbtooh4JiOhRqEJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=talpey.com; dmarc=pass action=none header.from=talpey.com;
- dkim=pass header.d=talpey.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=talpey.com;
-Received: from SN6PR01MB4445.prod.exchangelabs.com (2603:10b6:805:e2::33) by
- MN0PR01MB7658.prod.exchangelabs.com (2603:10b6:208:379::14) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.5986.18; Fri, 13 Jan 2023 03:03:28 +0000
-Received: from SN6PR01MB4445.prod.exchangelabs.com
- ([fe80::d8d6:449f:967:ccb5]) by SN6PR01MB4445.prod.exchangelabs.com
- ([fe80::d8d6:449f:967:ccb5%7]) with mapi id 15.20.5986.018; Fri, 13 Jan 2023
- 03:03:28 +0000
-Message-ID: <c2b5b3b4-d5d0-bf35-d659-b2328689073a@talpey.com>
-Date:   Thu, 12 Jan 2023 22:03:27 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v5 09/23] cifs: Convert wdata_alloc_and_fillpages() to use
- filemap_get_folios_tag()
-To:     Vishal Moola <vishal.moola@gmail.com>,
-        linux-fsdevel@vger.kernel.org, pc@cjr.nz
-Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-btrfs@vger.kernel.org, ceph-devel@vger.kernel.org,
-        linux-cifs@vger.kernel.org, linux-ext4@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net, cluster-devel@redhat.com,
-        linux-nilfs@vger.kernel.org, linux-mm@kvack.org
-References: <20230104211448.4804-1-vishal.moola@gmail.com>
- <20230104211448.4804-10-vishal.moola@gmail.com>
- <CAOzc2pw9WCgHyA2epbz5=HEWN4bFzD4C7zL2452J_egv7iSLrw@mail.gmail.com>
-Content-Language: en-US
-From:   Tom Talpey <tom@talpey.com>
-In-Reply-To: <CAOzc2pw9WCgHyA2epbz5=HEWN4bFzD4C7zL2452J_egv7iSLrw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BL0PR02CA0054.namprd02.prod.outlook.com
- (2603:10b6:207:3d::31) To SN6PR01MB4445.prod.exchangelabs.com
- (2603:10b6:805:e2::33)
+        Thu, 12 Jan 2023 22:19:19 -0500
+Received: from loongson.cn (mail.loongson.cn [114.242.206.163])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 864E2559C5;
+        Thu, 12 Jan 2023 19:19:17 -0800 (PST)
+Received: from loongson.cn (unknown [10.180.13.185])
+        by gateway (Coremail) with SMTP id _____8BxLuuzzcBjXmABAA--.4312S3;
+        Fri, 13 Jan 2023 11:19:15 +0800 (CST)
+Received: from [10.180.13.185] (unknown [10.180.13.185])
+        by localhost.localdomain (Coremail) with SMTP id AQAAf8Bxjb6wzcBj38EYAA--.49428S3;
+        Fri, 13 Jan 2023 11:19:13 +0800 (CST)
+Subject: Re: [PATCH v3] pipe: use __pipe_{lock,unlock} instead of spinlock
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        David Howells <dhowells@redhat.com>,
+        Sedat Dilek <sedat.dilek@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>
+Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
+        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20230107012324.30698-1-zhanghongchen@loongson.cn>
+From:   Hongchen Zhang <zhanghongchen@loongson.cn>
+Message-ID: <9fcb3f80-cb55-9a72-0e74-03ace2408d21@loongson.cn>
+Date:   Fri, 13 Jan 2023 11:19:12 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN6PR01MB4445:EE_|MN0PR01MB7658:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6099c8fe-fcff-41dc-95df-08daf512bea2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: ogdor07xuDclJYNPGsRbT/sz7DkjlBIprcyyJ5VDb/QP0ZSqEspkIsHjDr4O8uU89V2ODuYmhU/2S6+E/i4Be1KVoFyrrWobvpnuv2OBwE6qVoYJ64NxpC+rTQYqfIRGMR6xopiiAnahLSQdaE6pUnRBX4s6AYauPdOFzOkxhgHRoMUH/kLt5p0JFThAjFDRFA/FmI5d6RXRcyhwDB6gWCsBIIBAaSJ4d/yOP4b/DiSGzP5WUIMbAbI8qq+46oFGwfb2a7Vm89dNVkS3thQH/NGP/48HAtGgoYyRIHMUCcSq0fyPpcz7lYInM7Q1Jj9sJYMfPHUddCAU8LH6Gq1RjBkmqL8UwY0WLvW9KuwxcQoffX9x2X1EntdTCgmxOvAWik2xu8DQPM8j9qSicQxazWile3NeB9jB/sksQKGSnZ/gEUJTLgM7+svaFiV3/HvVmkd2wwzi+LUyMamL/g8NTRLKTjMEu7z8MnHtF80a/8EXO1YgWGlwHM+2Y5CUHsSk3PRHv3AxPorc/E638x5n9eLn63OfiRuLujKsV3J8VN3P2utiW1L0AlfBVHfM6wobEcj1iFjrl0S7LlRwQgUz7tIsR0vr89AirxRLIc7n0GH27q4ABpPW4P/CULFUiGKu3vdvWNJZwZqsJ6DBJNqjLH2Y6qSwlm8hHoHtqSNeJGBDNyvP6cj864OsxKPB/k1qukyWWuQsuzXKasMvdRcNMOeD6p2qMD6QMT+7Tzvm3C8=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR01MB4445.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(346002)(39830400003)(136003)(366004)(396003)(451199015)(41300700001)(66556008)(4326008)(66476007)(2616005)(316002)(36756003)(66946007)(8676002)(86362001)(31696002)(38350700002)(38100700002)(5660300002)(8936002)(83380400001)(7416002)(6506007)(53546011)(31686004)(6486002)(2906002)(52116002)(26005)(478600001)(186003)(6512007)(43740500002);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?SzhCR3BscWI1QVRCc2thUzNHVmR2ckI4VTNGQnpoc2cwbTZKZUVCUS8zTGpD?=
- =?utf-8?B?ZG5vV2VoR0FlWWQ1dFhrN1RDakhVZ0dwaWJqY3NKNE9LSkZueDk2OTJSbnlW?=
- =?utf-8?B?UXQxYXlydnJOQnk5TU8wUzZBS0tMbEhzL0xOZWdOaEt2Y2l3d2Jwa3JqdXk5?=
- =?utf-8?B?a3lMeFFkYlNyclp4QUZ5YW9MMVFKNUs5bnRJdFlWamUvTFZ3YmxHZGdEUTdY?=
- =?utf-8?B?U3hBUEs5MDlhM1BDb2NKZWQwS2kyTHYyVTN1Tk9YMGtsVkZQbTBHbVhZdlR4?=
- =?utf-8?B?Wlp1amVGQk9CTklCa3lPMDdwelBGMjU3K2dRUjRxR1hQVkhDQ2VIeCtaUy9H?=
- =?utf-8?B?c1FhWFhYU28rU2gxRWFYSWN0K2VMOURxZWZYbmxnYnFReXlsVHN6UVMzNUgw?=
- =?utf-8?B?ckdHeXBrM3hoeDVxdnh2L3Y4NEdMbVNXMTN0dVJwaEtHR1FMUUJYTnQ3TnRC?=
- =?utf-8?B?ZGpudG1IdWFJRUdzVlRWR09UY0pGQjNvcFpUUjNoTFdxYTZWQ2ZNZmJVazlP?=
- =?utf-8?B?WU1sZGFJa3hpNHdKVi91d2pLb1ZEVE9qdERBNDBxL3lLTDZXNzV5aVlvR0lj?=
- =?utf-8?B?UkwwZjhhbUZGS1d1UkJaUVJZdlMvOEd4V0tOMEdmWDNBaTlSeVBibW1Yc3FU?=
- =?utf-8?B?aVp0blVqSWx3UnBIQTNBVEtIZm15QXRSWlpTMW1UMTBKczB6M29xVzVRKzFq?=
- =?utf-8?B?aDYzcXk1bE1PMis0SDhxZDlSdjIxVlFRTzYrSXdEKzM1WkhsN1IxNUxFUnkw?=
- =?utf-8?B?bzJ3aTUzMGVGcW12aGVlQ0VlSnFkMVhTOUZwb3JFY1pwUUJyY0VudlF1WERy?=
- =?utf-8?B?bjFoRnRTNHhleGVXMmJISldNQ2g1WkV0Q0pjZ3lnSEV2RnhObW1lYVZFQWFn?=
- =?utf-8?B?ZEZSaFJoQ0JSeFdNeVZyamhLNjNUNkVBaDJ1Z1Y5ZUdyOXJWOXF1VkxzOEQ0?=
- =?utf-8?B?S2k0T25jOEEzS2t1RUFNRCs4bHNWRGUyVk1mcE9SQmllc3hZL3lIWlhWQ1Bt?=
- =?utf-8?B?K0VQanVjSytmT2JTRFVINDVKdkUrdTE2UmIwUW4rSXRka3ZEQm1mNUxBK1Rm?=
- =?utf-8?B?Q1E0Wm1jRVJVOEYrdXdaOEYvK0N4T3p6NWVaSythNmRGQmhjSkllekJMUVZE?=
- =?utf-8?B?RWZFdlhWRHdBak5UMTliZFBvbVNQdzB3c2ZqZ2ZDcmkvbzNaWUE5S05PS0h3?=
- =?utf-8?B?WHFqK1lRZ1NVSHJlU0hmTGs4NjVqcm0xYWVIRjhkV1ZabytyeUFKN0dNOGVa?=
- =?utf-8?B?dE1XODNhUXFPZmFQSTBGbzZmNXFaZitkd0lIdS9QSXZ0ejZaN2xJdURCN3Ji?=
- =?utf-8?B?ZmtiOHFLaksyREVMdzVlNGpzZENvRDVuSTNPSVBoSE4vRHNMV3MxQVgzSVM5?=
- =?utf-8?B?RnFESG9LT1BhcFRCRVZMMVJCamQ1V29oaDdVQzNvRzR2eVRyNk85aTVSdDli?=
- =?utf-8?B?MU0xelREamI3WXBOTzNCUUthbTlpTWZuSUpCdzNLdDRWRGtZMm1WeVBuRksy?=
- =?utf-8?B?MzQyYWtjZmdJSTBTanJQTjYzVHlxb3dHOUN5UjJpK2pvM0VWQzNXVUJaYkU4?=
- =?utf-8?B?N0p0S2R0QXFSd1gxZU9ESlBSOTMrNEpsdmFjZTNZWWNZT3h0Wk9DQVhLekRn?=
- =?utf-8?B?VmptY3k0ZlpwWjcxcWpzUVF1dytXbkRyM2xuNlRkS2dBbkFHd0tCRkFwNjJ1?=
- =?utf-8?B?OW13bjBIdW5TSTcwOWtrd1BLNkVsanNSTkM2UktQZTR6cStrOEJkOWQzdGdr?=
- =?utf-8?B?d3l6ay9yM0o4TG9kRDdGa01ralpOREF6RXM3NWt1ejFhdHZxQzNCUzVoZXRm?=
- =?utf-8?B?RTZaekQ2MDlrN0h1bXptZWFvOS9EaGNJcEptNjNMRFVITEdxZ1lEb1ExQ2Zw?=
- =?utf-8?B?eVpVbUxscHFFeFJ4LzFtaTdnWEw5aGpNRHM0SWNVcGxOb0RucHlMSjJ2anAw?=
- =?utf-8?B?K0gveGUrV3BWZ2xtS0NlbVNFaHUvMDJ3RmhqK3cxekJsNEFqVEtwVjFFVHoy?=
- =?utf-8?B?STNJb2crSHpBK3pUUUhka1R5YW9odlJvdUhSdnludUw1L1d3REJ3VzFHMldZ?=
- =?utf-8?B?YjNwYzFoc0tKWUNBYWZLazVYbWtFUXFwK3NMaDdIaTErT04vZXlnQjNUbTJE?=
- =?utf-8?Q?VC8wdv4CgwH55vreVT4b906hn?=
-X-OriginatorOrg: talpey.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6099c8fe-fcff-41dc-95df-08daf512bea2
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR01MB4445.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Jan 2023 03:03:28.6482
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 2b2dcae7-2555-4add-bc80-48756da031d5
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: LNK8TCcsfiAm8iJpU/mL5rmUpyOxGTchhz9GynVpwsSRFaDDa6D2It6URxWjAJxZ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR01MB7658
+In-Reply-To: <20230107012324.30698-1-zhanghongchen@loongson.cn>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID: AQAAf8Bxjb6wzcBj38EYAA--.49428S3
+X-CM-SenderInfo: x2kd0w5krqwupkhqwqxorr0wxvrqhubq/
+X-Coremail-Antispam: 1Uk129KBjvJXoWxuw13uryrAr47Wr18JFWkJFb_yoW3GFyxpa
+        1rtFsxurWUAr10g34xGrsxuF1Sg395WF4UGrW8GF10vF9rGry0gFs7KFyakrn5Grs7Ca4Y
+        vF4jqasYvw4UA37anT9S1TB71UUUUjUqnTZGkaVYY2UrUUUUj1kv1TuYvTs0mT0YCTnIWj
+        qI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUIcSsGvfJTRUUU
+        bqkYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20xvaj40_Wr0E3s
+        1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28EF7xv
+        wVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1l84
+        ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVW8Jr0_Cr1U
+        M2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zV
+        CFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWUtwAv7VC2
+        z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2
+        IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E
+        4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGw
+        C20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48J
+        MIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMI
+        IF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E
+        87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jOiSdUUUUU=
 X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_PASS
-        autolearn=ham autolearn_force=no version=3.4.6
+        SPF_HELO_PASS,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This code would be a lot more readable if it had fewer goto's.
-The goto out's are ok but the again and add_more are easily
-eliminated.
+Hi All,
+any question about this patch, can it be merged?
 
-Two possibilities...
-
-On 1/12/2023 12:19 PM, Vishal Moola wrote:
-> On Wed, Jan 4, 2023 at 1:15 PM Vishal Moola (Oracle)
-> <vishal.moola@gmail.com> wrote:
->>
->> This is in preparation for the removal of find_get_pages_range_tag(). Now also
->> supports the use of large folios.
->>
->> Since tofind might be larger than the max number of folios in a
->> folio_batch (15), we loop through filling in wdata->pages pulling more
->> batches until we either reach tofind pages or run out of folios.
->>
->> This function may not return all pages in the last found folio before
->> tofind pages are reached.
->>
->> Signed-off-by: Vishal Moola (Oracle) <vishal.moola@gmail.com>
->> ---
->>   fs/cifs/file.c | 32 +++++++++++++++++++++++++++++---
->>   1 file changed, 29 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
->> index 22dfc1f8b4f1..8cdd2f67af24 100644
->> --- a/fs/cifs/file.c
->> +++ b/fs/cifs/file.c
->> @@ -2527,14 +2527,40 @@ wdata_alloc_and_fillpages(pgoff_t tofind, struct address_space *mapping,
->>                            unsigned int *found_pages)
->>   {
->>          struct cifs_writedata *wdata;
->> -
->> +       struct folio_batch fbatch;
->> +       unsigned int i, idx, p, nr;
->>          wdata = cifs_writedata_alloc((unsigned int)tofind,
->>                                       cifs_writev_complete);
->>          if (!wdata)
->>                  return NULL;
->>
->> -       *found_pages = find_get_pages_range_tag(mapping, index, end,
->> -                               PAGECACHE_TAG_DIRTY, tofind, wdata->pages);
->> +       folio_batch_init(&fbatch);
->> +       *found_pages = 0;
->> +
-
-
-This is really just the top of a while loop:
-
-   while (nr = filemap_get_folios_tag(...)) {
-
->> +again:
->> +       nr = filemap_get_folios_tag(mapping, index, end,
->> +                               PAGECACHE_TAG_DIRTY, &fbatch);
->> +       if (!nr)
->> +               goto out; /* No dirty pages left in the range */
->> +
->> +       for (i = 0; i < nr; i++) {
->> +               struct folio *folio = fbatch.folios[i];
->> +
->> +               idx = 0;
->> +               p = folio_nr_pages(folio);
-
-And this is a "do {"
-
->> +add_more:
->> +               wdata->pages[*found_pages] = folio_page(folio, idx);
->> +               folio_get(folio);
->> +               if (++*found_pages == tofind) {
->> +                       folio_batch_release(&fbatch);
->> +                       goto out;
->> +               }
->> +               if (++idx < p)
->> +                       goto add_more;
-
-To here "} while (++idx < p);"
-
->> +       }
->> +       folio_batch_release(&fbatch);
->> +       goto again;
-
-End while "}"
-
->> +out:
->>          return wdata;
->>   }
->>
->> --
->> 2.38.1
->>
+Thanks
+On 2023/1/7 am 9:23, Hongchen Zhang wrote:
+> Use spinlock in pipe_read/write cost too much time,IMO
+> pipe->{head,tail} can be protected by __pipe_{lock,unlock}.
+> On the other hand, we can use __pipe_{lock,unlock} to protect
+> the pipe->{head,tail} in pipe_resize_ring and
+> post_one_notification.
 > 
-> Could someone review this cifs patch, please? This is one of the
-> 2 remaining patches that need to be looked at in the series.
-
-It's otherwise ok.
-
-Tom.
+> Reminded by Matthew, I tested this patch using UnixBench's pipe
+> test case on a x86_64 machine,and get the following data:
+> 1) before this patch
+> System Benchmarks Partial Index  BASELINE       RESULT    INDEX
+> Pipe Throughput                   12440.0     493023.3    396.3
+>                                                          ========
+> System Benchmarks Index Score (Partial Only)              396.3
 > 
+> 2) after this patch
+> System Benchmarks Partial Index  BASELINE       RESULT    INDEX
+> Pipe Throughput                   12440.0     507551.4    408.0
+>                                                          ========
+> System Benchmarks Index Score (Partial Only)              408.0
+> 
+> so we get ~3% speedup.
+> 
+> Reminded by Andrew, I tested this patch with the test code in
+> Linus's 0ddad21d3e99 add get following result:
+> 1) before this patch
+>           13,136.54 msec task-clock           #    3.870 CPUs utilized
+>           1,186,779      context-switches     #   90.342 K/sec
+>             668,867      cpu-migrations       #   50.917 K/sec
+>                 895      page-faults          #   68.131 /sec
+>      29,875,711,543      cycles               #    2.274 GHz
+>      12,372,397,462      instructions         #    0.41  insn per cycle
+>       2,480,235,723      branches             #  188.804 M/sec
+>          47,191,943      branch-misses        #    1.90% of all branches
+> 
+>         3.394806886 seconds time elapsed
+> 
+>         0.037869000 seconds user
+>         0.189346000 seconds sys
+> 
+> 2) after this patch
+> 
+>           12,395.63 msec task-clock          #    4.138 CPUs utilized
+>           1,193,381      context-switches    #   96.274 K/sec
+>             585,543      cpu-migrations      #   47.238 K/sec
+>               1,063      page-faults         #   85.756 /sec
+>      27,691,587,226      cycles              #    2.234 GHz
+>      11,738,307,999      instructions        #    0.42  insn per cycle
+>       2,351,299,522      branches            #  189.688 M/sec
+>          45,404,526      branch-misses       #    1.93% of all branches
+> 
+>         2.995280878 seconds time elapsed
+> 
+>         0.010615000 seconds user
+>         0.206999000 seconds sys
+> After adding this patch, the time used on this test program becomes less.
+> 
+> Signed-off-by: Hongchen Zhang <zhanghongchen@loongson.cn>
+> 
+> v3:
+>    - fixes the error reported by kernel test robot <oliver.sang@intel.com>
+>      Link: https://lore.kernel.org/oe-lkp/202301061340.c954d61f-oliver.sang@intel.com
+>    - add perf stat data for the test code in Linus's 0ddad21d3e99 in
+>      commit message.
+> v2:
+>    - add UnixBench test data in commit message
+>    - fixes the test error reported by kernel test robot <lkp@intel.com>
+>      by adding the missing fs.h header file.
+> ---
+>   fs/pipe.c                 | 22 +---------------------
+>   include/linux/pipe_fs_i.h | 12 ++++++++++++
+>   kernel/watch_queue.c      |  8 ++++----
+>   3 files changed, 17 insertions(+), 25 deletions(-)
+> 
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index 42c7ff41c2db..4355ee5f754e 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -98,16 +98,6 @@ void pipe_unlock(struct pipe_inode_info *pipe)
+>   }
+>   EXPORT_SYMBOL(pipe_unlock);
+>   
+> -static inline void __pipe_lock(struct pipe_inode_info *pipe)
+> -{
+> -	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
+> -}
+> -
+> -static inline void __pipe_unlock(struct pipe_inode_info *pipe)
+> -{
+> -	mutex_unlock(&pipe->mutex);
+> -}
+> -
+>   void pipe_double_lock(struct pipe_inode_info *pipe1,
+>   		      struct pipe_inode_info *pipe2)
+>   {
+> @@ -253,8 +243,7 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>   	 */
+>   	was_full = pipe_full(pipe->head, pipe->tail, pipe->max_usage);
+>   	for (;;) {
+> -		/* Read ->head with a barrier vs post_one_notification() */
+> -		unsigned int head = smp_load_acquire(&pipe->head);
+> +		unsigned int head = pipe->head;
+>   		unsigned int tail = pipe->tail;
+>   		unsigned int mask = pipe->ring_size - 1;
+>   
+> @@ -322,14 +311,12 @@ pipe_read(struct kiocb *iocb, struct iov_iter *to)
+>   
+>   			if (!buf->len) {
+>   				pipe_buf_release(pipe, buf);
+> -				spin_lock_irq(&pipe->rd_wait.lock);
+>   #ifdef CONFIG_WATCH_QUEUE
+>   				if (buf->flags & PIPE_BUF_FLAG_LOSS)
+>   					pipe->note_loss = true;
+>   #endif
+>   				tail++;
+>   				pipe->tail = tail;
+> -				spin_unlock_irq(&pipe->rd_wait.lock);
+>   			}
+>   			total_len -= chars;
+>   			if (!total_len)
+> @@ -506,16 +493,13 @@ pipe_write(struct kiocb *iocb, struct iov_iter *from)
+>   			 * it, either the reader will consume it or it'll still
+>   			 * be there for the next write.
+>   			 */
+> -			spin_lock_irq(&pipe->rd_wait.lock);
+>   
+>   			head = pipe->head;
+>   			if (pipe_full(head, pipe->tail, pipe->max_usage)) {
+> -				spin_unlock_irq(&pipe->rd_wait.lock);
+>   				continue;
+>   			}
+>   
+>   			pipe->head = head + 1;
+> -			spin_unlock_irq(&pipe->rd_wait.lock);
+>   
+>   			/* Insert it into the buffer array */
+>   			buf = &pipe->bufs[head & mask];
+> @@ -1260,14 +1244,12 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
+>   	if (unlikely(!bufs))
+>   		return -ENOMEM;
+>   
+> -	spin_lock_irq(&pipe->rd_wait.lock);
+>   	mask = pipe->ring_size - 1;
+>   	head = pipe->head;
+>   	tail = pipe->tail;
+>   
+>   	n = pipe_occupancy(head, tail);
+>   	if (nr_slots < n) {
+> -		spin_unlock_irq(&pipe->rd_wait.lock);
+>   		kfree(bufs);
+>   		return -EBUSY;
+>   	}
+> @@ -1303,8 +1285,6 @@ int pipe_resize_ring(struct pipe_inode_info *pipe, unsigned int nr_slots)
+>   	pipe->tail = tail;
+>   	pipe->head = head;
+>   
+> -	spin_unlock_irq(&pipe->rd_wait.lock);
+> -
+>   	/* This might have made more room for writers */
+>   	wake_up_interruptible(&pipe->wr_wait);
+>   	return 0;
+> diff --git a/include/linux/pipe_fs_i.h b/include/linux/pipe_fs_i.h
+> index 6cb65df3e3ba..f5084daf6eaf 100644
+> --- a/include/linux/pipe_fs_i.h
+> +++ b/include/linux/pipe_fs_i.h
+> @@ -2,6 +2,8 @@
+>   #ifndef _LINUX_PIPE_FS_I_H
+>   #define _LINUX_PIPE_FS_I_H
+>   
+> +#include <linux/fs.h>
+> +
+>   #define PIPE_DEF_BUFFERS	16
+>   
+>   #define PIPE_BUF_FLAG_LRU	0x01	/* page is on the LRU */
+> @@ -223,6 +225,16 @@ static inline void pipe_discard_from(struct pipe_inode_info *pipe,
+>   #define PIPE_SIZE		PAGE_SIZE
+>   
+>   /* Pipe lock and unlock operations */
+> +static inline void __pipe_lock(struct pipe_inode_info *pipe)
+> +{
+> +	mutex_lock_nested(&pipe->mutex, I_MUTEX_PARENT);
+> +}
+> +
+> +static inline void __pipe_unlock(struct pipe_inode_info *pipe)
+> +{
+> +	mutex_unlock(&pipe->mutex);
+> +}
+> +
+>   void pipe_lock(struct pipe_inode_info *);
+>   void pipe_unlock(struct pipe_inode_info *);
+>   void pipe_double_lock(struct pipe_inode_info *, struct pipe_inode_info *);
+> diff --git a/kernel/watch_queue.c b/kernel/watch_queue.c
+> index a6f9bdd956c3..92e46cfe9419 100644
+> --- a/kernel/watch_queue.c
+> +++ b/kernel/watch_queue.c
+> @@ -108,7 +108,7 @@ static bool post_one_notification(struct watch_queue *wqueue,
+>   	if (!pipe)
+>   		return false;
+>   
+> -	spin_lock_irq(&pipe->rd_wait.lock);
+> +	__pipe_lock(pipe);
+>   
+>   	mask = pipe->ring_size - 1;
+>   	head = pipe->head;
+> @@ -135,17 +135,17 @@ static bool post_one_notification(struct watch_queue *wqueue,
+>   	buf->offset = offset;
+>   	buf->len = len;
+>   	buf->flags = PIPE_BUF_FLAG_WHOLE;
+> -	smp_store_release(&pipe->head, head + 1); /* vs pipe_read() */
+> +	pipe->head = head + 1;
+>   
+>   	if (!test_and_clear_bit(note, wqueue->notes_bitmap)) {
+> -		spin_unlock_irq(&pipe->rd_wait.lock);
+> +		__pipe_unlock(pipe);
+>   		BUG();
+>   	}
+>   	wake_up_interruptible_sync_poll_locked(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+>   	done = true;
+>   
+>   out:
+> -	spin_unlock_irq(&pipe->rd_wait.lock);
+> +	__pipe_unlock(pipe);
+>   	if (done)
+>   		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+>   	return done;
+> 
+> base-commit: c8451c141e07a8d05693f6c8d0e418fbb4b68bb7
+> 
+
