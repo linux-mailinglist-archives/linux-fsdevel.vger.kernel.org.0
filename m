@@ -2,131 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0F0DF66A6D9
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 00:16:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A7B7966A703
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 00:25:49 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230174AbjAMXQm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 18:16:42 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60392 "EHLO
+        id S230193AbjAMXZr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 18:25:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37664 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230182AbjAMXQf (ORCPT
+        with ESMTP id S231184AbjAMXZm (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Jan 2023 18:16:35 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0F58888A19
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 15:16:33 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id v13-20020a17090a6b0d00b00219c3be9830so25859732pjj.4
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 15:16:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=aWow72s2ZHPfyutUF3LRtthWGyQvB6TRG4mGrzQPS+Y=;
-        b=E/wbWTkGCcwoXs6O8irB3PXyBwoRW4uEkWDuoU13XByhJzTvIiq4OfNzvKMYIxRBd8
-         N5dRvUnnXxuGkG1NqPLQ9NcLguZ/hQembSMTLovSWxd/eNEA47F4pw2VMvBTgCh83EhX
-         bKzfh13CLYQPbU31yNkCeE7nVtvWxeSrEzOQXXJn3Ra1e263z8sIZrm9ZwC48e/SEbDs
-         3aEzaEkItlDgZ56c4opqTh+L6mEGkhcrmVBFbTe1hFC/UfsbAkExmK+Dw6Q5zVDBQe5Z
-         vQO9KR1KEhsZRidc5t6FXrTt3AyPbDNocZckiEhBhgfdJEwaG1EcApBlL60GoZCzvH2P
-         EHwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aWow72s2ZHPfyutUF3LRtthWGyQvB6TRG4mGrzQPS+Y=;
-        b=br6pXJKNwtI+FYJ199fxJug3BZQ8HDrHhMIp9yxDPC+Txr/lnrMBPUwSVasazzYV1K
-         eiTLTf4UFfUMqdis4/JNMAgfzIEkA3XoHxHyVDVWkMI5DuYfNDliemPEusb6oBCcP48n
-         wh6pxp91tQmty8mf9OtqWivIUuJYJq/aonGduXvZtIYhRw3EdKKzBjol1F3KVn2Wu4sL
-         JOnq3qcQz7s8/PBk96hT4OPJ8TWi2MljPtdFKrNIl/tMsC3OyMgRtrCV0FGVSYGnlwdM
-         8v7Ds8Uddx4rQp1FgWvVTaK+Jxon67UoJ8GD7cPEj1FcVUg/Z9lxXqXio5sEva/iGhyn
-         8a9A==
-X-Gm-Message-State: AFqh2kpEV4h78owP5J9ztFn4UWQa9pbRT0msntqlNeTvEOgR97Ya+IBX
-        sd3Kf71CeRPgM8GUAjs34aD2Ow==
-X-Google-Smtp-Source: AMrXdXsw5eR35BhM0SQtUTPreOToQACUohVatv5rPzW7S1K5nzUfkKmIR6WQPAlOT0G0H1aK7d4JHA==
-X-Received: by 2002:a17:902:c409:b0:194:6d3c:38a5 with SMTP id k9-20020a170902c40900b001946d3c38a5mr502925plk.1.1673651792454;
-        Fri, 13 Jan 2023 15:16:32 -0800 (PST)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id q3-20020a17090311c300b0018c990ce7fesm14720017plh.239.2023.01.13.15.16.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Jan 2023 15:16:31 -0800 (PST)
-Date:   Fri, 13 Jan 2023 23:16:27 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH v10 7/9] KVM: Update lpage info when private/shared
- memory are mixed
-Message-ID: <Y8HmS2iE4u0Gfkrn@google.com>
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-8-chao.p.peng@linux.intel.com>
+        Fri, 13 Jan 2023 18:25:42 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9D7C6719A;
+        Fri, 13 Jan 2023 15:25:41 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 62707B82278;
+        Fri, 13 Jan 2023 23:25:40 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE949C43392;
+        Fri, 13 Jan 2023 23:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1673652338;
+        bh=qVbsd05KHLBi1A1+RbPFk566wcNZkDulba+8c+3hkj8=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Lkqvn5tWFHlQ1g1zeASqiqPqpVLLfb7NI47LYm8e0HaA97hOuaTrQHMdecL65a5nu
+         kz/sbvYcMIUEDXHsSCpRRK8wnno16ARVe2DLHhidqVu0ScSl6AskyZaOYxj9ODjOwP
+         UyoK2ydCSoA8eUdS1/O7BT3GUQ3wGrc/9ptKJscR6XnE4tveeHwlpGO+XVD/8xVcjU
+         eeICahu97ChW949649TXRwc0WN7arLTxyEScTAABdzso9BUtaP7FrDOPArjqOu1srN
+         Bk9jw/n0tTz02C/X4+0KOv0LM0yyrOlZfu02uwbIFtUMw3G6gy6/Hq9YBVpkVrcGGS
+         WtG9wdpYuWZLA==
+Received: by mail-lf1-f42.google.com with SMTP id j17so35208817lfr.3;
+        Fri, 13 Jan 2023 15:25:38 -0800 (PST)
+X-Gm-Message-State: AFqh2krvOUYQ3n2xkLDv2aA44HacwH7cTCSqR9Mxe5673phNOAxri5KP
+        8DvwGn4OTb/0L3nhln3N7y2WL+A5XW363ILu+WA=
+X-Google-Smtp-Source: AMrXdXsiVcvp4M0sdC7uvlVrEchvlWch7gsiC5oLxJ7MUg+sdhbvU1pVuoSujQ7D12h8RonWIO1ypm2Vdq0KlsYUOC4=
+X-Received: by 2002:a05:6512:3d93:b0:4b8:9001:a694 with SMTP id
+ k19-20020a0565123d9300b004b89001a694mr3999732lfv.426.1673652336888; Fri, 13
+ Jan 2023 15:25:36 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20221202061347.1070246-8-chao.p.peng@linux.intel.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
-        autolearn_force=no version=3.4.6
+References: <CAMj1kXEqbMEcrKYzz2-huLPMnotPoxFY8adyH=Xb4Ex8o98x-w@mail.gmail.com>
+ <db6937a1-e817-2d7b-0062-9aff012bb3e8@physik.fu-berlin.de>
+In-Reply-To: <db6937a1-e817-2d7b-0062-9aff012bb3e8@physik.fu-berlin.de>
+From:   Ard Biesheuvel <ardb@kernel.org>
+Date:   Sat, 14 Jan 2023 00:25:24 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXEtTuaNFiKWn3cJngR0J2vr0G07HR6+5PBodtr1b7vNxg@mail.gmail.com>
+Message-ID: <CAMj1kXEtTuaNFiKWn3cJngR0J2vr0G07HR6+5PBodtr1b7vNxg@mail.gmail.com>
+Subject: Re: ia64 removal (was: Re: lockref scalability on x86-64 vs cpu_relax)
+To:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+Cc:     "Luck, Tony" <tony.luck@intel.com>,
+        "Torvalds, Linus" <torvalds@linux-foundation.org>,
+        Mateusz Guzik <mjguzik@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+        Jan Glauber <jan.glauber@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Dec 02, 2022, Chao Peng wrote:
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 9a07380f8d3c..5aefcff614d2 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -12362,6 +12362,8 @@ static int kvm_alloc_memslot_metadata(struct kvm *kvm,
->  		if ((slot->base_gfn + npages) & (KVM_PAGES_PER_HPAGE(level) - 1))
->  			linfo[lpages - 1].disallow_lpage = 1;
->  		ugfn = slot->userspace_addr >> PAGE_SHIFT;
-> +		if (kvm_slot_can_be_private(slot))
-> +			ugfn |= slot->restricted_offset >> PAGE_SHIFT;
->  		/*
->  		 * If the gfn and userspace address are not aligned wrt each
->  		 * other, disable large page support for this slot.
+On Fri, 13 Jan 2023 at 22:06, John Paul Adrian Glaubitz
+<glaubitz@physik.fu-berlin.de> wrote:
+>
+> Hello Ard!
+>
+> > Can I take that as an ack on [0]? The EFI subsystem has evolved
+> > substantially over the years, and there is really no way to do any
+> > IA64 testing beyond build testing, so from that perspective, dropping
+> > it entirely would be welcomed.
+>
+> ia64 is regularly tested in Debian and Gentoo [1][2].
+>
+> Debian's ia64 porterbox yttrium runs a recent kernel without issues:
+>
+> root@yttrium:~# uname -a
+> Linux yttrium 5.19.0-2-mckinley #1 SMP Debian 5.19.11-1 (2022-09-24) ia64 GNU/Linux
+> root@yttrium:~#
+>
+> root@yttrium:~# journalctl -b|head -n10
+> Nov 14 14:46:10 yttrium kernel: Linux version 5.19.0-2-mckinley (debian-kernel@lists.debian.org) (gcc-11 (Debian 11.3.0-6) 11.3.0, GNU ld (GNU Binutils for Debian) 2.39) #1 SMP Debian 5.19.11-1 (2022-09-24)
+> Nov 14 14:46:10 yttrium kernel: efi: EFI v2.10 by HP
+> Nov 14 14:46:10 yttrium kernel: efi: SALsystab=0xdfdd63a18 ESI=0xdfdd63f18 ACPI 2.0=0x3d3c4014 HCDP=0xdffff8798 SMBIOS=0x3d368000
+> Nov 14 14:46:10 yttrium kernel: PCDP: v3 at 0xdffff8798
+> Nov 14 14:46:10 yttrium kernel: earlycon: uart8250 at I/O port 0x4000 (options '115200n8')
+> Nov 14 14:46:10 yttrium kernel: printk: bootconsole [uart8250] enabled
+> Nov 14 14:46:10 yttrium kernel: ACPI: Early table checksum verification disabled
+> Nov 14 14:46:10 yttrium kernel: ACPI: RSDP 0x000000003D3C4014 000024 (v02 HP    )
+> Nov 14 14:46:10 yttrium kernel: ACPI: XSDT 0x000000003D3C4580 000124 (v01 HP     RX2800-2 00000001      01000013)
+> Nov 14 14:46:10 yttrium kernel: ACPI: FACP 0x000000003D3BE000 0000F4 (v03 HP     RX2800-2 00000001 HP   00000001)
+> root@yttrium:~#
+>
+> Same applies to the buildds:
+>
+> root@lifshitz:~# uname -a
+> Linux lifshitz 6.0.0-4-mckinley #1 SMP Debian 6.0.8-1 (2022-11-11) ia64 GNU/Linux
+> root@lifshitz:~#
+>
+> root@lenz:~# uname -a
+> Linux lenz 6.0.0-4-mckinley #1 SMP Debian 6.0.8-1 (2022-11-11) ia64 GNU/Linux
+> root@lenz:~#
+>
+> EFI works fine as well using the latest version of GRUB2.
+>
+> Thanks,
+> Adrian
+>
+> > [1] https://cdimage.debian.org/cdimage/ports/snapshots/
+> > [2] https://mirror.yandex.ru/gentoo-distfiles//releases/ia64/autobuilds/
 
-Forgot to talk about the bug.  This code needs to handle the scenario where a
-memslot is created with existing, non-uniform attributes.  It might be a bit ugly
-(I didn't even try to write the code), but it's definitely possible, and since
-memslot updates are already slow I think it's best to handle things here.
+Thanks for reporting back. I (mis)read the debian ports page [3],
+which mentions Debian 7 as the highest Debian version that supports
+IA64, and so I assumed that support had been dropped from Debian.
 
-In the meantime, I added this so we don't forget to fix it before merging.
+However, if only a handful of people want to keep this port alive for
+reasons of nostalgia, it is obviously obsolete, and we should ask
+ourselves whether it is reasonable to expect Linux contributors to
+keep spending time on this.
 
-#ifdef CONFIG_KVM_GENERIC_MEMORY_ATTRIBUTES
-	pr_crit_once("FIXME: Walk the memory attributes of the slot and set the mixed status appropriately");
-#endif
+Does the Debian ia64 port have any users? Or is the system that builds
+the packages the only one that consumes them?
 
+
+[3] https://www.debian.org/ports/ia64/
