@@ -2,66 +2,57 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 94040669345
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 10:49:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9B17B669355
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 13 Jan 2023 10:52:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S240960AbjAMJtz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 04:49:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39492 "EHLO
+        id S240940AbjAMJwk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 04:52:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38998 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S240752AbjAMJsZ (ORCPT
+        with ESMTP id S240752AbjAMJwA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Jan 2023 04:48:25 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 685F4390
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 01:40:00 -0800 (PST)
+        Fri, 13 Jan 2023 04:52:00 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6C093AB0C;
+        Fri, 13 Jan 2023 01:46:32 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 04542B820D0
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 09:39:59 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6A7AC433D2
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 09:39:57 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id 738F961129;
+        Fri, 13 Jan 2023 09:46:32 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3DEBC433D2;
+        Fri, 13 Jan 2023 09:46:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673602797;
-        bh=tVoOMfxF9jKUq1BTc9d/pw/Q4l4wfqqk5P1IRqJsETI=;
-        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
-        b=XjoRELITNz2UkkvJINOmamgimgReEOsK5nWOo/qI2nFkIiMKz4UmXZ9CADWSqzR/F
-         aLhYuvVPOdEix+EmjS+Iz33ZOv1N+m3jbZkpr+95tdEHuK8oNZTFpKxD2tSHaD2bjM
-         /Bq5+V5ae71LELBqoiOLK6LTRSeQknBYWv7meEsZoFjL3b+3GT+9KXl9fvqLedXNI+
-         X+ZnxNkS8Ck/xph+MJ+a+UsICCIcsnyrvewPnV9iA56qJxUJ5SRGm3x8EMHhGRMi9d
-         CAVlMVbYB8/Uc84P7TMHGWjD6HakyZxzFT6XnM3SdV6KJ2VIltB+EkF4xkWlM1LmJk
-         ne7BWfXLVMcGg==
-Received: by mail-oi1-f179.google.com with SMTP id o66so17303370oia.6
-        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 01:39:57 -0800 (PST)
-X-Gm-Message-State: AFqh2krw2+LUyn3sINkFIohx9+9pAV3OnA3jLc31sFTWA4xIvwK5SDaK
-        btIs9vk3SSlpxSPSN0tcaW3IedkPprSv0VjI0Q0=
-X-Google-Smtp-Source: AMrXdXt/H1QV0HO/bew/MGmM0nnGZlLfaf5UzXxFkPXMztDOBe0lVv6WSubPk0FGRNteM/pWDb9xKLgQ9ZMa2R0CyXA=
-X-Received: by 2002:aca:62c5:0:b0:363:a539:4f with SMTP id w188-20020aca62c5000000b00363a539004fmr3951625oib.189.1673602796748;
- Fri, 13 Jan 2023 01:39:56 -0800 (PST)
+        s=k20201202; t=1673603191;
+        bh=kDe7hS+qa0Bf7KyA3VgUqyS71vPuErxEYrU/YagG7mA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=jI9DnyYMV4DxUmCjBcxXADH2AifhseMB7Vnetety5OQkISbdvZJ0AtIvvkI7iE7F+
+         R6YO+tnbkzWAlWr2e5EevipFGVhCJdar6D+9j5wGcke8xUFHMlcwnflEWKTL4vYyyz
+         S2DVuAdUoeqF17dzj4o46ZlRZt9s1d7RBgladKzDfuxphvZsW03ojfdOx90ntxR2/H
+         NGR7oWcy6USxj4dso4H0kDqHBNsVV2gGNo3vQqm/d4yAVl4N5HFRQMEQf46F9vR5Yj
+         bxkjYP2p5/xV9q5lUH5KX0Zv/KGJjYxL2Jel58w2PPdGdtOTmUcz7NjplbdfrRoQRo
+         EX59UNORygCNg==
+Date:   Fri, 13 Jan 2023 09:46:25 +0000
+From:   Will Deacon <will@kernel.org>
+To:     Mateusz Guzik <mjguzik@gmail.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        Jan Glauber <jan.glauber@gmail.com>, tony.luck@intel.com,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Subject: Re: lockref scalability on x86-64 vs cpu_relax
+Message-ID: <20230113094625.GA12235@willie-the-truck>
+References: <CAGudoHHx0Nqg6DE70zAVA75eV-HXfWyhVMWZ-aSeOofkA_=WdA@mail.gmail.com>
+ <CAHk-=wjthxgrLEvgZBUwd35e_mk=dCWKMUEURC6YsX5nWom8kQ@mail.gmail.com>
+ <CAGudoHE0tzL8OAqvwpDR4Nn_g70a8qBdE_+-fmhXF-DEx_K6kg@mail.gmail.com>
 MIME-Version: 1.0
-Received: by 2002:a05:6802:191:b0:48f:4f77:6cb1 with HTTP; Fri, 13 Jan 2023
- 01:39:55 -0800 (PST)
-In-Reply-To: <PUZPR04MB631648B2F33E68B31379AFD381C29@PUZPR04MB6316.apcprd04.prod.outlook.com>
-References: <20230112140509.11525-1-linkinjeon@kernel.org> <PUZPR04MB63165533693F8FD12046D19581C29@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <CAKYAXd8p8mmSaXLNjkzDH=AmrOyhA5DYsjuKEA7=c+1pYfY5AQ@mail.gmail.com>
- <CGME20230113061305epcas1p2ec0bdad0fbe3cca6e3142f99e9260226@epcas1p2.samsung.com>
- <PUZPR04MB63167FAB29A81DB38D43DD5A81C29@PUZPR04MB6316.apcprd04.prod.outlook.com>
- <626742236.41673593803778.JavaMail.epsvc@epcpadp3> <PUZPR04MB631648B2F33E68B31379AFD381C29@PUZPR04MB6316.apcprd04.prod.outlook.com>
-From:   Namjae Jeon <linkinjeon@kernel.org>
-Date:   Fri, 13 Jan 2023 18:39:55 +0900
-X-Gmail-Original-Message-ID: <CAKYAXd8Cdu28bXiZaY5PzicBVo40hvdRaNx91a=hiB2G=WymQQ@mail.gmail.com>
-Message-ID: <CAKYAXd8Cdu28bXiZaY5PzicBVo40hvdRaNx91a=hiB2G=WymQQ@mail.gmail.com>
-Subject: Re: [PATCH v2] exfat: handle unreconized benign secondary entries
-To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
-Cc:     Sungjong Seo <sj1557.seo@samsung.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        Wang Yugui <wangyugui@e16-tech.com>,
-        =?UTF-8?B?QmFyw7Njc2kgRMOpbmVz?= <admin@tveger.hu>,
-        "cpgs@samsung.com" <cpgs@samsung.com>,
-        "Andy.Wu@sony.com" <Andy.Wu@sony.com>,
-        "Wataru.Aoyama@sony.com" <Wataru.Aoyama@sony.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGudoHE0tzL8OAqvwpDR4Nn_g70a8qBdE_+-fmhXF-DEx_K6kg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -71,118 +62,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-2023-01-13 17:35 GMT+09:00, Yuezhang.Mo@sony.com <Yuezhang.Mo@sony.com>:
->> > > >
->> > > >> +		if (exfat_get_entry_type(ep) & TYPE_BENIGN_SEC)
->> > > >> +			exfat_free_benign_secondary_clusters(inode, ep);
->> > > >> +
->> > > >
->> > > > Only vendor allocation entry(0xE1) have associated cluster
->> > > > allocations, vendor extension entry(0xE0) do not have associated
->> > > > cluster
->> > > allocations.
->> > > This is to free associated cluster allocation of the unrecognized
->> > > benign secondary entries, not only vendor alloc entry. Could you
->> > > elaborate more if there is any issue ?
->> >
->> > From exFAT spec, there are 2 types benign secondary entries only,
->> > Vendor Extension entry and Vendor Allocation entry.
->> >
->> > For different Vendor, Different Vendors are distinguished by different
->> > VendorGuid.
->> >
->> > For a better understanding, please refer to
->> > https://urldefense.com/v3/__https://dokumen.pub/sd-__;!!JmoZiZGBv3RvKR
->> >
->> Sx!-iaK3DSO2yh1pGjdOLoZjMhH7s6QEAbN-Yd05bnBzTzpPks10JNCptYbvAdHZ
->> XYYvox
->> > 5D4Pi2xC3TBqH1pHEIg$
->> > specifications-part-2-file-system-specification-version-300.html. This
->> > is the specification that the SD Card Association defines Vendor
->> > Extension entries and Vendor Allocation entries for SD card. "Figure 5-3
->> > :
->> > Continuous Information Management" is an example of an entry set
->> > containing a Vendor Extension entry and a Vendor Allocation entry. In
->> > the example, we can see vendor extension entry(0xE0) do not have
->> > associated cluster allocations.
->>
->> From "8.2 in the exFAT spec" as below, it is needed to handle all
->> unrecognized
->> benign secondary entries that include NOT specified in Revision 1.00.
->>
->> 8.2 Implications of Unrecognized Directory Entries Future exFAT
->> specifications
->> of the same major revision number, 1, and minor revision number higher
->> than
->> 0, may define new benign primary, critical secondary, and benign
->> secondary
->> directory entries. Only exFAT specifications of a higher major revision
->> number
->> may define new critical primary directory entries. Implementations of
->> this
->> specification, exFAT Revision 1.00 File System Basic Specification, should
->> be
->> able to mount and access any exFAT volume of major revision number 1 and
->> any minor revision number. This presents scenarios in which an
->> implementation may encounter directory entries which it does not
->> recognize.
->> The following describe implications of these scenarios:
->> ...
->>   4. Implementations shall not modify unrecognized benign secondary
->>   directory entries or their associated cluster allocations.
->>   Implementations should ignore unrecognized benign secondary directory
->>   entries. When deleting a directory entry set, implementations shall
->>   free all cluster allocations, if any, associated with unrecognized
->>   benign secondary directory entries.
->>
->
-> My understanding are
->
-> 1. If new benign directory entries are defined in the future, the minor
-> version number will be incremented.
->   - If FileSystemRevision is 1.0, Benign secondary is only Vendor Extension
-> DirectoryEntry or Vendor Allocation DirectoryEntry.
->   - If FileSystemRevision is higher than 1.0, another Benign secondary
-> entries are defined.
->   - So it seems we need to add a check for FileSystemRevision in
-> exfat_read_boot_sector()
->     - If FileSystemRevision is higher than 1.0, mount with read only,
-> because we can not handle the version.
-Well, I can't agree it. The current problem is that exfat has no
-handling for unrecognized benign secondary entries. Currently, exfat
-does not support vendor alloc/ext entries, so exfat handle
-unrecognized benign secondary entry as described in the spec. Of
-course, even if a new entry is added to the updated specification
-later, there is no problem because it is handled as an unrecognized
-benign secondary entry.
+On Fri, Jan 13, 2023 at 02:12:50AM +0100, Mateusz Guzik wrote:
+> On 1/13/23, Linus Torvalds <torvalds@linux-foundation.org> wrote:
+> > Side note on your access() changes - if it turns out that you can
+> > remove all the cred games, we should possibly then revert my old
+> > commit d7852fbd0f04 ("access: avoid the RCU grace period for the
+> > temporary subjective credentials") which avoided the biggest issue
+> > with the unnecessary cred switching.
+> >
+> > I *think* access() is the only user of that special 'non_rcu' thing,
+> > but it is possible that the whole 'non_rcu' thing ends up mattering
+> > for cases where the cred actually does change because euid != uid (ie
+> > suid programs), so this would need a bit more effort to do performance
+> > testing on.
+> >
+> 
+> I don't think the games are avoidable. For one I found non-root
+> processes with non-empty cap_effective even on my laptop, albeit I did
+> not check how often something like this is doing access().
+> 
+> Discussion for another time.
+> 
+> > On Thu, Jan 12, 2023 at 5:36 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> >> All that said, I think the thing to do here is to replace cpu_relax
+> >> with a dedicated arch-dependent macro, akin to the following:
+> >
+> > I would actually prefer just removing it entirely and see if somebody
+> > else hollers. You have the numbers to prove it hurts on real hardware,
+> > and I don't think we have any numbers to the contrary.
+> >
+> > So I think it's better to trust the numbers and remove it as a
+> > failure, than say "let's just remove it on x86-64 and leave everybody
+> > else with the potentially broken code"
+> >
+> [snip]
+> > Then other architectures can try to run their numbers, and only *if*
+> > it then turns out that they have a reason to do something else should
+> > we make this conditional and different on different architectures.
+> >
+> > Let's try to keep the code as common as possibly until we have hard
+> > evidence for special cases, in other words.
+> >
+> 
+> I did not want to make such a change without redoing the ThunderX2
+> benchmark, or at least something else arm64-y. I may be able to bench it
+> tomorrow on whatever arm-y stuff can be found on Amazon's EC2, assuming
+> no arm64 people show up with their results.
+> 
+> Even then IMHO the safest route is to patch it out on x86-64 and give
+> other people time to bench their archs as they get around to it, and
+> ultimately whack the thing if it turns out nobody benefits from it.
+> I would say beats backpedaling on the removal, but I'm not going to
+> fight for it.
+> 
+> That said, does waiting for arm64 numbers and/or producing them for the
+> removal commit message sound like a plan? If so, I'll post soon(tm).
 
->
-> 2. Not all Benign secondary have FirstCluster and DataLength Fields.
->   - Vendor Extension DirectoryEntry has no FirstCluster and DataLength
-> Fields, and there are no clusters to free when deleting it.
-We can know if it is defined by checking the AllocationPossible field
-of GeneralSecondaryFlags. If that bit is set, the FirstCluster and
-DataLength fields are defined. This patch has code that checks it.
+Honestly, I wouldn't worry about us (arm64) here. I don't think any real
+hardware implements the YIELD instruction (i.e. it behaves as a NOP in
+practice). The only place I'm aware of where it _does_ something is in
+QEMU, which was actually the motivation behind having it in cpu_relax() to
+start with (see 1baa82f48030 ("arm64: Implement cpu_relax as yield")).
 
->
->   Table 36 Vendor Extension DirectoryEntry
->   Field Name 			Offset(byte)	Size(byte)
->   EntryType 				0 			1
->   GeneralSecondaryFlags 	1 			1
->   VendorGuid				2			16
->   VendorDefined			18			14
->
->  - Vendor Allocation DirectoryEntry has FirstCluster and DataLength Fields,
-> the associated cluster should be freed when deleting it.
->
->   Field Name 			Offset(byte)	Size(byte)
->   EntryType				0 			1
->   GeneralSecondaryFlags 	1			1
->   VendorGuid				2			16
->   VendorDefined			18 			2
->   FirstCluster				20 			4
->   DataLength				24 			8
->
-> BTW, I start my Spring Festival vacation tomorrow, so I may not be able to
-> respond to emails in time.
->
+So, from the arm64 side of the fence, I'm perfectly happy just removing
+the cpu_relax() calls from lockref.
+
+Will
