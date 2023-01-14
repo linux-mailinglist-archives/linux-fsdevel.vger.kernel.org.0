@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 707DF66A7A7
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 01:35:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E71E566A7A5
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 01:35:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231487AbjANAfP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 19:35:15 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34878 "EHLO
+        id S231480AbjANAfM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 19:35:12 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34898 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229641AbjANAe1 (ORCPT
+        with ESMTP id S231337AbjANAe1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 13 Jan 2023 19:34:27 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25E0D87900;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE3B888DFA;
         Fri, 13 Jan 2023 16:34:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=06HkOlYxNDNauIY+aptrMNX1Acam7rQQdFMEW91x4gI=; b=dmobBKVRKmnC/djRsU22pKKjLH
-        qHbvEMvdQ7jSL6MOO0ti+uOE3mgxAkhbkfOQK8K/cuAO5xROLulOEejlmOKd2dpI3461QqAeCPgBD
-        EmbzkV0fiwb5Sa5ncA+xYq3F1IqOUIGfw20IROWKFtoxujjdWl5WJTSEiUcH7zz0qekdbgOLRbsSR
-        ZyITxoU4MnLoCU1M/6CBK+Egm7p7vOrYcEa8Y4g7SCBcrpxHAOglVwNeb7a857rtU82HSjLGWZKk6
-        nyrxiOnTBB024+zM6onfA2+xjlkpdyOdixZRvblmDognu/mCVXFbxidE1FzdDpj0DF+lOFJIlI+Kp
-        VUtXAcOQ==;
+        bh=sA46072UUIGL5Kh0iBH2gpikSfm/h334hpGh720jgWo=; b=YLTLwqO2Mt7VDCHtk8T6vakI82
+        esk2gGAdnKSYN1dtEJq1DdVjlVXyN4nAEuDTutXWuTHNdBJ9KZNOKcNQa+nNfLHeJTrl54EcCIb1m
+        jVIfR2XOTESqrjCvK4V1baDAsC2qCjSZGZF6utoIydLJFHjSewTKPRtcdNEe0FYDqi5GC1Ksr7A5C
+        D2yVITq1Fowfx0soPeK5x/ztVBYNLQcbPcVoBWVXE4FwppdQ6XpY2GiBNtpCSJCtCJIiBGfM/SuB1
+        BbK41+LF+QJbvyUwW1DC9QbVmbaIrw0guejOE20rC8m7smqjuEQ1qWTEVoYeFXwyzKekS8E4sn8m9
+        i5Xcgs0A==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pGUUt-004twF-Aq; Sat, 14 Jan 2023 00:34:11 +0000
+        id 1pGUUt-004twH-CP; Sat, 14 Jan 2023 00:34:11 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     hch@infradead.org, djwong@kernel.org, song@kernel.org,
         rafael@kernel.org, gregkh@linuxfoundation.org,
@@ -36,9 +36,9 @@ Cc:     mchehab@kernel.org, keescook@chromium.org, p.raghav@samsung.com,
         linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
         kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [RFC v3 10/24] cifs: replace kthread freezing with auto fs freezing
-Date:   Fri, 13 Jan 2023 16:33:55 -0800
-Message-Id: <20230114003409.1168311-11-mcgrof@kernel.org>
+Subject: [RFC v3 11/24] gfs2: replace kthread freezing with auto fs freezing
+Date:   Fri, 13 Jan 2023 16:33:56 -0800
+Message-Id: <20230114003409.1168311-12-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230114003409.1168311-1-mcgrof@kernel.org>
 References: <20230114003409.1168311-1-mcgrof@kernel.org>
@@ -69,7 +69,7 @@ it knows better than how the VFS handles it.
 The following Coccinelle rule was used as to remove the now superflous
 freezer calls:
 
-spatch --sp-file fs-freeze-cleanup.cocci --in-place --timeout 120 --dir fs/cifs --jobs 12 --use-gitgrep
+spatch --sp-file fs-freeze-cleanup.cocci --in-place --timeout 120 --dir fs/gfs2 --jobs 12 --use-gitgrep
 
 @ remove_set_freezable @
 expression time;
@@ -164,129 +164,101 @@ struct file_system_type fs_type = {
 Generated-by: Coccinelle SmPL
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/cifs/cifsfs.c    | 14 +++++++-------
- fs/cifs/connect.c   |  8 --------
- fs/cifs/dfs_cache.c |  2 +-
- 3 files changed, 8 insertions(+), 16 deletions(-)
+ fs/gfs2/glock.c      | 6 +++---
+ fs/gfs2/log.c        | 2 --
+ fs/gfs2/main.c       | 4 ++--
+ fs/gfs2/ops_fstype.c | 4 ++--
+ fs/gfs2/quota.c      | 2 --
+ 5 files changed, 7 insertions(+), 11 deletions(-)
 
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index f052f190b2e8..25ee05c8af65 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -1104,7 +1104,7 @@ struct file_system_type cifs_fs_type = {
- 	.init_fs_context = smb3_init_fs_context,
- 	.parameters = smb3_fs_parameters,
- 	.kill_sb = cifs_kill_sb,
--	.fs_flags = FS_RENAME_DOES_D_MOVE,
-+	.fs_flags = FS_RENAME_DOES_D_MOVE | FS_AUTOFREEZE,
- };
- MODULE_ALIAS_FS("cifs");
+diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
+index 524f3c96b9a4..7ad1a1229ae3 100644
+--- a/fs/gfs2/glock.c
++++ b/fs/gfs2/glock.c
+@@ -2459,14 +2459,14 @@ int __init gfs2_glock_init(void)
+ 	if (ret < 0)
+ 		return ret;
  
-@@ -1114,7 +1114,7 @@ struct file_system_type smb3_fs_type = {
- 	.init_fs_context = smb3_init_fs_context,
- 	.parameters = smb3_fs_parameters,
- 	.kill_sb = cifs_kill_sb,
--	.fs_flags = FS_RENAME_DOES_D_MOVE,
-+	.fs_flags = FS_RENAME_DOES_D_MOVE | FS_AUTOFREEZE,
- };
- MODULE_ALIAS_FS("smb3");
- MODULE_ALIAS("smb3");
-@@ -1668,7 +1668,7 @@ init_cifs(void)
- 			 CIFS_MAX_REQ);
- 	}
- 
--	cifsiod_wq = alloc_workqueue("cifsiod", WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+	cifsiod_wq = alloc_workqueue("cifsiod", WQ_MEM_RECLAIM, 0);
- 	if (!cifsiod_wq) {
- 		rc = -ENOMEM;
- 		goto out_clean_proc;
-@@ -1682,28 +1682,28 @@ init_cifs(void)
- 
- 	/* WQ_UNBOUND allows decrypt tasks to run on any CPU */
- 	decrypt_wq = alloc_workqueue("smb3decryptd",
--				     WQ_UNBOUND|WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+				     WQ_UNBOUND | WQ_MEM_RECLAIM, 0);
- 	if (!decrypt_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_cifsiod_wq;
- 	}
- 
- 	fileinfo_put_wq = alloc_workqueue("cifsfileinfoput",
--				     WQ_UNBOUND|WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+				     WQ_UNBOUND | WQ_MEM_RECLAIM, 0);
- 	if (!fileinfo_put_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_decrypt_wq;
- 	}
- 
- 	cifsoplockd_wq = alloc_workqueue("cifsoplockd",
--					 WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+					 WQ_MEM_RECLAIM, 0);
- 	if (!cifsoplockd_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_fileinfo_put_wq;
- 	}
- 
- 	deferredclose_wq = alloc_workqueue("deferredclose",
--					   WQ_FREEZABLE|WQ_MEM_RECLAIM, 0);
-+					   WQ_MEM_RECLAIM, 0);
- 	if (!deferredclose_wq) {
- 		rc = -ENOMEM;
- 		goto out_destroy_cifsoplockd_wq;
-diff --git a/fs/cifs/connect.c b/fs/cifs/connect.c
-index 164beb365bfe..43a86a369a31 100644
---- a/fs/cifs/connect.c
-+++ b/fs/cifs/connect.c
-@@ -375,7 +375,6 @@ static int __cifs_reconnect(struct TCP_Server_Info *server,
- 	cifs_abort_connection(server);
- 
- 	do {
--		try_to_freeze();
- 		cifs_server_lock(server);
- 
- 		if (!cifs_swn_set_server_dstaddr(server)) {
-@@ -504,7 +503,6 @@ static int reconnect_dfs_server(struct TCP_Server_Info *server)
- 	cifs_abort_connection(server);
- 
- 	do {
--		try_to_freeze();
- 		cifs_server_lock(server);
- 
- 		rc = reconnect_target_unlocked(server, &tl, &target_hint);
-@@ -678,8 +676,6 @@ cifs_readv_from_socket(struct TCP_Server_Info *server, struct msghdr *smb_msg)
- 	int total_read;
- 
- 	for (total_read = 0; msg_data_left(smb_msg); total_read += length) {
--		try_to_freeze();
--
- 		/* reconnect if no credits and no requests in flight */
- 		if (zero_credits(server)) {
- 			cifs_reconnect(server, false);
-@@ -1132,12 +1128,8 @@ cifs_demultiplex_thread(void *p)
- 	if (length > 1)
- 		mempool_resize(cifs_req_poolp, length + cifs_min_rcv);
- 
--	set_freezable();
- 	allow_kernel_signal(SIGKILL);
- 	while (server->tcpStatus != CifsExiting) {
--		if (try_to_freeze())
--			continue;
--
- 		if (!allocate_buffers(server))
- 			continue;
- 
-diff --git a/fs/cifs/dfs_cache.c b/fs/cifs/dfs_cache.c
-index e20f8880363f..371c5f0a3523 100644
---- a/fs/cifs/dfs_cache.c
-+++ b/fs/cifs/dfs_cache.c
-@@ -376,7 +376,7 @@ int dfs_cache_init(void)
- 	int rc;
- 	int i;
- 
--	dfscache_wq = alloc_workqueue("cifs-dfscache", WQ_FREEZABLE | WQ_UNBOUND, 1);
-+	dfscache_wq = alloc_workqueue("cifs-dfscache", WQ_UNBOUND, 1);
- 	if (!dfscache_wq)
+-	glock_workqueue = alloc_workqueue("glock_workqueue", WQ_MEM_RECLAIM |
+-					  WQ_HIGHPRI | WQ_FREEZABLE, 0);
++	glock_workqueue = alloc_workqueue("glock_workqueue",
++					  WQ_MEM_RECLAIM | WQ_HIGHPRI, 0);
+ 	if (!glock_workqueue) {
+ 		rhashtable_destroy(&gl_hash_table);
  		return -ENOMEM;
+ 	}
+ 	gfs2_delete_workqueue = alloc_workqueue("delete_workqueue",
+-						WQ_MEM_RECLAIM | WQ_FREEZABLE,
++						WQ_MEM_RECLAIM,
+ 						0);
+ 	if (!gfs2_delete_workqueue) {
+ 		destroy_workqueue(glock_workqueue);
+diff --git a/fs/gfs2/log.c b/fs/gfs2/log.c
+index 1fcc829f02ab..213fafc367f4 100644
+--- a/fs/gfs2/log.c
++++ b/fs/gfs2/log.c
+@@ -1330,8 +1330,6 @@ int gfs2_logd(void *data)
+ 
+ 		t = gfs2_tune_get(sdp, gt_logd_secs) * HZ;
+ 
+-		try_to_freeze();
+-
+ 		do {
+ 			prepare_to_wait(&sdp->sd_logd_waitq, &wait,
+ 					TASK_INTERRUPTIBLE);
+diff --git a/fs/gfs2/main.c b/fs/gfs2/main.c
+index afcb32854f14..43d4748ad183 100644
+--- a/fs/gfs2/main.c
++++ b/fs/gfs2/main.c
+@@ -153,12 +153,12 @@ static int __init init_gfs2_fs(void)
+ 
+ 	error = -ENOMEM;
+ 	gfs_recovery_wq = alloc_workqueue("gfs_recovery",
+-					  WQ_MEM_RECLAIM | WQ_FREEZABLE, 0);
++					  WQ_MEM_RECLAIM, 0);
+ 	if (!gfs_recovery_wq)
+ 		goto fail_wq1;
+ 
+ 	gfs2_control_wq = alloc_workqueue("gfs2_control",
+-					  WQ_UNBOUND | WQ_FREEZABLE, 0);
++					  WQ_UNBOUND, 0);
+ 	if (!gfs2_control_wq)
+ 		goto fail_wq2;
+ 
+diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
+index c0cf1d2d0ef5..8f5a63148eaf 100644
+--- a/fs/gfs2/ops_fstype.c
++++ b/fs/gfs2/ops_fstype.c
+@@ -1740,7 +1740,7 @@ static void gfs2_kill_sb(struct super_block *sb)
+ 
+ struct file_system_type gfs2_fs_type = {
+ 	.name = "gfs2",
+-	.fs_flags = FS_REQUIRES_DEV,
++	.fs_flags = FS_REQUIRES_DEV | FS_AUTOFREEZE,
+ 	.init_fs_context = gfs2_init_fs_context,
+ 	.parameters = gfs2_fs_parameters,
+ 	.kill_sb = gfs2_kill_sb,
+@@ -1750,7 +1750,7 @@ MODULE_ALIAS_FS("gfs2");
+ 
+ struct file_system_type gfs2meta_fs_type = {
+ 	.name = "gfs2meta",
+-	.fs_flags = FS_REQUIRES_DEV,
++	.fs_flags = FS_REQUIRES_DEV | FS_AUTOFREEZE,
+ 	.init_fs_context = gfs2_meta_init_fs_context,
+ 	.owner = THIS_MODULE,
+ };
+diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
+index 1ed17226d9ed..710764af9d04 100644
+--- a/fs/gfs2/quota.c
++++ b/fs/gfs2/quota.c
+@@ -1555,8 +1555,6 @@ int gfs2_quotad(void *data)
+ 		quotad_check_timeo(sdp, "sync", gfs2_quota_sync, t,
+ 				   &quotad_timeo, &tune->gt_quota_quantum);
+ 
+-		try_to_freeze();
+-
+ bypass:
+ 		t = min(quotad_timeo, statfs_timeo);
  
 -- 
 2.35.1
