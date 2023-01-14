@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A529066A79E
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 01:35:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 79E8066A7A4
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 01:35:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231459AbjANAfA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 19:35:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34860 "EHLO
+        id S231476AbjANAfK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 19:35:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34854 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231326AbjANAe1 (ORCPT
+        with ESMTP id S231327AbjANAe1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
         Fri, 13 Jan 2023 19:34:27 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 45F3B82F88;
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6CEB188DE8;
         Fri, 13 Jan 2023 16:34:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=bTcIj0E6C1LT2MxJpwN073+v9Nbxvlh20rybT6xgLns=; b=YcmOWGpYE9Jw1dEOQmJHfkuD+b
-        9SYB+UWxgbowAnhxbUjnH1lj27JvJxFam6T6lrSjbHeKwSW06XLOC0e7ImTuaP8mWghy0il36zDJv
-        /t8fn9YJx67lajCN60WMj3XC2cg0F/JBByK9msCIq+mDaLFULl4V717Rn1zFQxbguxAzsDAZ2NXCv
-        vEMmD+X5S4BdMt/eok6zZcahnTN1WsKPqUqEvJqonbfbtbVvFkanfXuf3xAJ3FNu8zdrWkUciCjCa
-        rXeXM1m8wWFjTG5NVHxEJ5O9pB3FoCbrDHFgF6n2dhLb5ig1vkY8y4yibaBh2AYHT7iQCmeeDpj9h
-        v5SyPzeA==;
+        bh=CCUfcpN4x/0Xi0jTJWkJ/jCEx8NEnlfKV4sQV1U7TQ0=; b=VMOixw9IkMgNv5e9sfrKE1iPor
+        X12c3Lc0b0L0J65RYhqSm64eBz9ngJsL2Vo/4EzvrSc37i0CFf2/y33CqkWtVBLy7ysZd4LcFq61+
+        IDHLx+PTFmSDnZB28YvaKhCgVY0BhYtboWjjMAt14f1jfazsPtGtJInZd0Lwp5NyDsFBQkAe1U+9R
+        kuSvpT4qmfqNV7Cd3fL6jn5bne189EY5/EL+cH66RjAmPX9pRhDbMLxcsedeOGzMhNsZbR+7wL5W9
+        3pg8Y0TCsWClwxnHYcQOMcDNVC6+tLH2SUPREEWaC4D8JJJExaChJTg76HiYxaqQtSM33cXJ+R/vE
+        kIvXbAFw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pGUUt-004tw5-36; Sat, 14 Jan 2023 00:34:11 +0000
+        id 1pGUUt-004tw7-4e; Sat, 14 Jan 2023 00:34:11 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     hch@infradead.org, djwong@kernel.org, song@kernel.org,
         rafael@kernel.org, gregkh@linuxfoundation.org,
@@ -36,9 +36,9 @@ Cc:     mchehab@kernel.org, keescook@chromium.org, p.raghav@samsung.com,
         linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
         kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [RFC v3 05/24] fs: add automatic kernel fs freeze / thaw and remove kthread freezing
-Date:   Fri, 13 Jan 2023 16:33:50 -0800
-Message-Id: <20230114003409.1168311-6-mcgrof@kernel.org>
+Subject: [RFC v3 06/24] xfs: replace kthread freezing with auto fs freezing
+Date:   Fri, 13 Jan 2023 16:33:51 -0800
+Message-Id: <20230114003409.1168311-7-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230114003409.1168311-1-mcgrof@kernel.org>
 References: <20230114003409.1168311-1-mcgrof@kernel.org>
@@ -55,189 +55,262 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add support to automatically handle freezing and thawing filesystems
-during the kernel's suspend/resume cycle.
+The kernel power management now supports allowing the VFS
+to handle filesystem freezing freezes and thawing. Take advantage
+of that and remove the kthread freezing. This is needed so that we
+properly really stop IO in flight without races after userspace
+has been frozen. Without this we rely on kthread freezing and
+its semantics are loose and error prone.
 
-This is needed so that we properly really stop IO in flight without
-races after userspace has been frozen. Without this we rely on
-kthread freezing and its semantics are loose and error prone.
-For instance, even though a kthread may use try_to_freeze() and end
-up being frozen we have no way of being sure that everything that
-has been spawned asynchronously from it (such as timers) have also
-been stopped as well.
+The filesystem therefore is in charge of properly dealing with
+quiescing of the filesystem through its callbacks if it thinks
+it knows better than how the VFS handles it.
 
-A long term advantage of also adding filesystem freeze / thawing
-supporting during suspend / hibernation is that long term we may
-be able to eventually drop the kernel's thread freezing completely
-as it was originally added to stop disk IO in flight as we hibernate
-or suspend.
+The following Coccinelle rule was used as to remove the now superflous
+freezer calls:
 
-This does not remove the superflous freezer calls on all filesystems.
-Each filesystem must remove all the kthread freezer stuff and peg
-the fs_type flags as supporting auto-freezing with the FS_AUTOFREEZE
-flag.
+spatch --sp-file fs-freeze-cleanup.cocci --in-place --timeout 120 --dir fs/xfs --jobs 12 --use-gitgrep
 
-Subsequent patches remove the kthread freezer usage from each
-filesystem, one at a time to make all this work bisectable.
-Once all filesystems remove the usage of the kthread freezer we
-can remove the FS_AUTOFREEZE flag.
+@ remove_set_freezable @
+expression time;
+statement S, S2;
+expression task, current;
+@@
 
+(
+-       set_freezable();
+|
+-       if (try_to_freeze())
+-               continue;
+|
+-       try_to_freeze();
+|
+-       freezable_schedule();
++       schedule();
+|
+-       freezable_schedule_timeout(time);
++       schedule_timeout(time);
+|
+-       if (freezing(task)) { S }
+|
+-       if (freezing(task)) { S }
+-       else
+	    { S2 }
+|
+-       freezing(current)
+)
+
+@ remove_wq_freezable @
+expression WQ_E, WQ_ARG1, WQ_ARG2, WQ_ARG3, WQ_ARG4;
+identifier fs_wq_fn;
+@@
+
+(
+    WQ_E = alloc_workqueue(WQ_ARG1,
+-                              WQ_ARG2 | WQ_FREEZABLE,
++                              WQ_ARG2,
+			   ...);
+|
+    WQ_E = alloc_workqueue(WQ_ARG1,
+-                              WQ_ARG2 | WQ_FREEZABLE | WQ_ARG3,
++                              WQ_ARG2 | WQ_ARG3,
+			   ...);
+|
+    WQ_E = alloc_workqueue(WQ_ARG1,
+-                              WQ_ARG2 | WQ_ARG3 | WQ_FREEZABLE,
++                              WQ_ARG2 | WQ_ARG3,
+			   ...);
+|
+    WQ_E = alloc_workqueue(WQ_ARG1,
+-                              WQ_ARG2 | WQ_ARG3 | WQ_FREEZABLE | WQ_ARG4,
++                              WQ_ARG2 | WQ_ARG3 | WQ_ARG4,
+			   ...);
+|
+	    WQ_E =
+-               WQ_ARG1 | WQ_FREEZABLE
++               WQ_ARG1
+|
+	    WQ_E =
+-               WQ_ARG1 | WQ_FREEZABLE | WQ_ARG3
++               WQ_ARG1 | WQ_ARG3
+|
+    fs_wq_fn(
+-               WQ_FREEZABLE | WQ_ARG2 | WQ_ARG3
++               WQ_ARG2 | WQ_ARG3
+    )
+|
+    fs_wq_fn(
+-               WQ_FREEZABLE | WQ_ARG2
++               WQ_ARG2
+    )
+|
+    fs_wq_fn(
+-               WQ_FREEZABLE
++               0
+    )
+)
+
+@ add_auto_flag @
+expression E1;
+identifier fs_type;
+@@
+
+struct file_system_type fs_type = {
+	.fs_flags = E1
++                   | FS_AUTOFREEZE
+	,
+};
+
+Generated-by: Coccinelle SmPL
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/super.c             | 69 ++++++++++++++++++++++++++++++++++++++++++
- include/linux/fs.h     | 14 +++++++++
- kernel/power/process.c | 15 ++++++++-
- 3 files changed, 97 insertions(+), 1 deletion(-)
+ fs/xfs/xfs_log.c       |  3 +--
+ fs/xfs/xfs_log_cil.c   |  2 +-
+ fs/xfs/xfs_mru_cache.c |  2 +-
+ fs/xfs/xfs_pwork.c     |  2 +-
+ fs/xfs/xfs_super.c     | 16 ++++++++--------
+ fs/xfs/xfs_trans_ail.c |  3 ---
+ 6 files changed, 12 insertions(+), 16 deletions(-)
 
-diff --git a/fs/super.c b/fs/super.c
-index 2f77fcb6e555..e8af4c8269ad 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1853,3 +1853,72 @@ int thaw_super(struct super_block *sb, bool usercall)
+diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
+index fc61cc024023..fbdbc81dc8ad 100644
+--- a/fs/xfs/xfs_log.c
++++ b/fs/xfs/xfs_log.c
+@@ -1678,8 +1678,7 @@ xlog_alloc_log(
+ 	log->l_iclog->ic_prev = prev_iclog;	/* re-write 1st prev ptr */
+ 
+ 	log->l_ioend_workqueue = alloc_workqueue("xfs-log/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM |
+-				    WQ_HIGHPRI),
++			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_HIGHPRI),
+ 			0, mp->m_super->s_id);
+ 	if (!log->l_ioend_workqueue)
+ 		goto out_free_iclog;
+diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
+index eccbfb99e894..bcc5c8234ce8 100644
+--- a/fs/xfs/xfs_log_cil.c
++++ b/fs/xfs/xfs_log_cil.c
+@@ -1842,7 +1842,7 @@ xlog_cil_init(
+ 	 * concurrency the log spinlocks will be exposed to.
+ 	 */
+ 	cil->xc_push_wq = alloc_workqueue("xfs-cil/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM | WQ_UNBOUND),
++			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_UNBOUND),
+ 			4, log->l_mp->m_super->s_id);
+ 	if (!cil->xc_push_wq)
+ 		goto out_destroy_cil;
+diff --git a/fs/xfs/xfs_mru_cache.c b/fs/xfs/xfs_mru_cache.c
+index f85e3b07ab44..98832a84be66 100644
+--- a/fs/xfs/xfs_mru_cache.c
++++ b/fs/xfs/xfs_mru_cache.c
+@@ -294,7 +294,7 @@ int
+ xfs_mru_cache_init(void)
+ {
+ 	xfs_mru_reap_wq = alloc_workqueue("xfs_mru_cache",
+-			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE), 1);
++			XFS_WQFLAGS(WQ_MEM_RECLAIM), 1);
+ 	if (!xfs_mru_reap_wq)
+ 		return -ENOMEM;
  	return 0;
- }
- EXPORT_SYMBOL(thaw_super);
-+
-+#ifdef CONFIG_PM_SLEEP
-+static bool super_should_freeze(struct super_block *sb)
-+{
-+	if (!(sb->s_type->fs_flags & FS_AUTOFREEZE))
-+		return false;
-+	/*
-+	 * We don't freeze virtual filesystems, we skip those filesystems with
-+	 * no backing device.
-+	 */
-+	if (sb->s_bdi == &noop_backing_dev_info)
-+		return false;
-+
-+	return true;
-+}
-+
-+int fs_suspend_freeze_sb(struct super_block *sb, void *priv)
-+{
-+	int error = 0;
-+
-+	if (!grab_lock_super(sb)) {
-+		pr_err("%s (%s): freezing failed to grab_super()\n",
-+		       sb->s_type->name, sb->s_id);
-+		return -ENOTTY;
-+	}
-+
-+	if (!super_should_freeze(sb))
-+		goto out;
-+
-+	pr_info("%s (%s): freezing\n", sb->s_type->name, sb->s_id);
-+
-+	error = freeze_super(sb, false);
-+	if (!error)
-+		lockdep_sb_freeze_release(sb);
-+	else if (error != -EBUSY)
-+		pr_notice("%s (%s): Unable to freeze, error=%d",
-+			  sb->s_type->name, sb->s_id, error);
-+
-+out:
-+	deactivate_locked_super(sb);
-+	return error;
-+}
-+
-+int fs_suspend_thaw_sb(struct super_block *sb, void *priv)
-+{
-+	int error = 0;
-+
-+	if (!grab_lock_super(sb)) {
-+		pr_err("%s (%s): thawing failed to grab_super()\n",
-+		       sb->s_type->name, sb->s_id);
-+		return -ENOTTY;
-+	}
-+
-+	if (!super_should_freeze(sb))
-+		goto out;
-+
-+	pr_info("%s (%s): thawing\n", sb->s_type->name, sb->s_id);
-+
-+	error = thaw_super(sb, false);
-+	if (error && error != -EBUSY)
-+		pr_notice("%s (%s): Unable to unfreeze, error=%d",
-+			  sb->s_type->name, sb->s_id, error);
-+
-+out:
-+	deactivate_locked_super(sb);
-+	return error;
-+}
-+
-+#endif
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index f168e72f6ca1..e5bee359e804 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2231,6 +2231,7 @@ struct file_system_type {
- #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
- #define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
- #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
-+#define FS_AUTOFREEZE           (1<<16)	/*  temporary as we phase kthread freezer out */
- 	int (*init_fs_context)(struct fs_context *);
- 	const struct fs_parameter_spec *parameters;
- 	struct dentry *(*mount) (struct file_system_type *, int,
-@@ -2306,6 +2307,19 @@ extern int user_statfs(const char __user *, struct kstatfs *);
- extern int fd_statfs(int, struct kstatfs *);
- extern int freeze_super(struct super_block *super, bool usercall);
- extern int thaw_super(struct super_block *super, bool usercall);
-+#ifdef CONFIG_PM_SLEEP
-+int fs_suspend_freeze_sb(struct super_block *sb, void *priv);
-+int fs_suspend_thaw_sb(struct super_block *sb, void *priv);
-+#else
-+static inline int fs_suspend_freeze_sb(struct super_block *sb, void *priv)
-+{
-+	return 0;
-+}
-+static inline int fs_suspend_thaw_sb(struct super_block *sb, void *priv)
-+{
-+	return 0;
-+}
-+#endif
- extern __printf(2, 3)
- int super_setup_bdi_name(struct super_block *sb, char *fmt, ...);
- extern int super_setup_bdi(struct super_block *sb);
-diff --git a/kernel/power/process.c b/kernel/power/process.c
-index 6c1c7e566d35..1dd6b0b6b4e5 100644
---- a/kernel/power/process.c
-+++ b/kernel/power/process.c
-@@ -140,6 +140,16 @@ int freeze_processes(void)
+diff --git a/fs/xfs/xfs_pwork.c b/fs/xfs/xfs_pwork.c
+index c283b801cc5d..3f5bf53f8778 100644
+--- a/fs/xfs/xfs_pwork.c
++++ b/fs/xfs/xfs_pwork.c
+@@ -72,7 +72,7 @@ xfs_pwork_init(
+ 	trace_xfs_pwork_init(mp, nr_threads, current->pid);
  
- 	BUG_ON(in_atomic());
+ 	pctl->wq = alloc_workqueue("%s-%d",
+-			WQ_UNBOUND | WQ_SYSFS | WQ_FREEZABLE, nr_threads, tag,
++			WQ_UNBOUND | WQ_SYSFS, nr_threads, tag,
+ 			current->pid);
+ 	if (!pctl->wq)
+ 		return -ENOMEM;
+diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
+index 0c4b73e9b29d..54cbf15fc459 100644
+--- a/fs/xfs/xfs_super.c
++++ b/fs/xfs/xfs_super.c
+@@ -526,37 +526,37 @@ xfs_init_mount_workqueues(
+ 	struct xfs_mount	*mp)
+ {
+ 	mp->m_buf_workqueue = alloc_workqueue("xfs-buf/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
++			XFS_WQFLAGS(WQ_MEM_RECLAIM),
+ 			1, mp->m_super->s_id);
+ 	if (!mp->m_buf_workqueue)
+ 		goto out;
  
-+	pr_info("Freezing filesystems ... ");
-+	error = iterate_supers_reverse_excl(fs_suspend_freeze_sb, NULL);
-+	if (error) {
-+		pr_cont("failed\n");
-+		iterate_supers_excl(fs_suspend_thaw_sb, NULL);
-+		thaw_processes();
-+		return error;
-+	}
-+	pr_cont("done.\n");
-+
- 	/*
- 	 * Now that the whole userspace is frozen we need to disable
- 	 * the OOM killer to disallow any further interference with
-@@ -149,8 +159,10 @@ int freeze_processes(void)
- 	if (!error && !oom_killer_disable(msecs_to_jiffies(freeze_timeout_msecs)))
- 		error = -EBUSY;
+ 	mp->m_unwritten_workqueue = alloc_workqueue("xfs-conv/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
++			XFS_WQFLAGS(WQ_MEM_RECLAIM),
+ 			0, mp->m_super->s_id);
+ 	if (!mp->m_unwritten_workqueue)
+ 		goto out_destroy_buf;
  
--	if (error)
-+	if (error) {
-+		iterate_supers_excl(fs_suspend_thaw_sb, NULL);
- 		thaw_processes();
-+	}
- 	return error;
- }
+ 	mp->m_reclaim_workqueue = alloc_workqueue("xfs-reclaim/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
++			XFS_WQFLAGS(WQ_MEM_RECLAIM),
+ 			0, mp->m_super->s_id);
+ 	if (!mp->m_reclaim_workqueue)
+ 		goto out_destroy_unwritten;
  
-@@ -188,6 +200,7 @@ void thaw_processes(void)
- 	pm_nosig_freezing = false;
+ 	mp->m_blockgc_wq = alloc_workqueue("xfs-blockgc/%s",
+-			XFS_WQFLAGS(WQ_UNBOUND | WQ_FREEZABLE | WQ_MEM_RECLAIM),
++			XFS_WQFLAGS(WQ_UNBOUND | WQ_MEM_RECLAIM),
+ 			0, mp->m_super->s_id);
+ 	if (!mp->m_blockgc_wq)
+ 		goto out_destroy_reclaim;
  
- 	oom_killer_enable();
-+	iterate_supers_excl(fs_suspend_thaw_sb, NULL);
+ 	mp->m_inodegc_wq = alloc_workqueue("xfs-inodegc/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE | WQ_MEM_RECLAIM),
++			XFS_WQFLAGS(WQ_MEM_RECLAIM),
+ 			1, mp->m_super->s_id);
+ 	if (!mp->m_inodegc_wq)
+ 		goto out_destroy_blockgc;
  
- 	pr_info("Restarting tasks ... ");
+ 	mp->m_sync_workqueue = alloc_workqueue("xfs-sync/%s",
+-			XFS_WQFLAGS(WQ_FREEZABLE), 0, mp->m_super->s_id);
++			XFS_WQFLAGS(0), 0, mp->m_super->s_id);
+ 	if (!mp->m_sync_workqueue)
+ 		goto out_destroy_inodegc;
+ 
+@@ -1966,7 +1966,7 @@ static struct file_system_type xfs_fs_type = {
+ 	.init_fs_context	= xfs_init_fs_context,
+ 	.parameters		= xfs_fs_parameters,
+ 	.kill_sb		= kill_block_super,
+-	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
++	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_AUTOFREEZE,
+ };
+ MODULE_ALIAS_FS("xfs");
+ 
+@@ -2205,7 +2205,7 @@ xfs_init_workqueues(void)
+ 	 * max_active value for this workqueue.
+ 	 */
+ 	xfs_alloc_wq = alloc_workqueue("xfsalloc",
+-			XFS_WQFLAGS(WQ_MEM_RECLAIM | WQ_FREEZABLE), 0);
++			XFS_WQFLAGS(WQ_MEM_RECLAIM), 0);
+ 	if (!xfs_alloc_wq)
+ 		return -ENOMEM;
+ 
+diff --git a/fs/xfs/xfs_trans_ail.c b/fs/xfs/xfs_trans_ail.c
+index 7d4109af193e..03a9bb64927c 100644
+--- a/fs/xfs/xfs_trans_ail.c
++++ b/fs/xfs/xfs_trans_ail.c
+@@ -600,7 +600,6 @@ xfsaild(
+ 	unsigned int	noreclaim_flag;
+ 
+ 	noreclaim_flag = memalloc_noreclaim_save();
+-	set_freezable();
+ 
+ 	while (1) {
+ 		if (tout && tout <= 20)
+@@ -666,8 +665,6 @@ xfsaild(
+ 
+ 		__set_current_state(TASK_RUNNING);
+ 
+-		try_to_freeze();
+-
+ 		tout = xfsaild_push(ailp);
+ 	}
  
 -- 
 2.35.1
