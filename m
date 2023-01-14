@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A56266A789
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 01:34:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 77ECE66A795
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 01:34:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231340AbjANAe3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 19:34:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34852 "EHLO
+        id S231426AbjANAeq (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 19:34:46 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34880 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231177AbjANAeZ (ORCPT
+        with ESMTP id S231241AbjANAe0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Jan 2023 19:34:25 -0500
+        Fri, 13 Jan 2023 19:34:26 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CA1D88DE8;
-        Fri, 13 Jan 2023 16:34:24 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 150D38A237;
+        Fri, 13 Jan 2023 16:34:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=Hpr/9jQDqw/KS+tNzRfC56bSFqyP+99s0sQ8H7c0B8s=; b=2alpiXcCssfDdK52ROORFPcF3V
-        8YM3/lsIO4xIwH6lET7RQv5nSWXC10JTqp25CXwpLOcgh37iv4duhWMVoC6k/p7GNmip2k7Uui/NM
-        E6IYvQLVWCSLzbhavkQAqAOcUb0lnn061EHM1bsF86swFdnpoCLBMUooJycWvyV9H0wlQw2PYapuK
-        WCK5qBV+nkmQE1lTlcwdBrgWUDVHoBo9NzG8QkpobpQ42rpuRYebQV3IRimCzc09lJlxqslGt4Xhm
-        XeHysnS09FFh8jJqSHdIbQV7fbGageM97bIMcXzUgaxtClqrQ+g3KrUYMsM08graJ8wrKUFXTk8js
-        NqXe0K8w==;
+        bh=HwgFzZ0upWY+kkSvtpAx/++H+vOuzyz3KForuTKaWO0=; b=Fp3A6ArpN3t2pNbx47RdRmxJBX
+        N4eLlFAJC7cMOngkBMUJtkZpl4FZBnM19c4Ka6oQiIh1oc3+b8PAyTHuEbMPPHehGXON1oKe9aSCt
+        hxqJYyWWyQJK0F6PFocpXN63JnA58se0n4d1eeq/Rb87gjnmI+vCJv6iPM/9rpwzXeARxf9btST7U
+        ny3qMtUol7yBUIslaQgVElq8msTFmZTXLk1gAgF+m1rU9MlunhOuaQE0Nz+pM02Xgbk85uDHuStub
+        Yx3HN1bu92cf0JWcXGYXZ2iC4I6rlNjSSd0tKhxXcK7guXxvuLcHWBiU/DmepW94jyIdt8i6ZrJiK
+        hSoWJ1CQ==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pGUUt-004twP-IT; Sat, 14 Jan 2023 00:34:11 +0000
+        id 1pGUUt-004twR-Js; Sat, 14 Jan 2023 00:34:11 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     hch@infradead.org, djwong@kernel.org, song@kernel.org,
         rafael@kernel.org, gregkh@linuxfoundation.org,
@@ -36,9 +36,9 @@ Cc:     mchehab@kernel.org, keescook@chromium.org, p.raghav@samsung.com,
         linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
         kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [RFC v3 15/24] nfsd: replace kthread freezing with auto fs freezing
-Date:   Fri, 13 Jan 2023 16:34:00 -0800
-Message-Id: <20230114003409.1168311-16-mcgrof@kernel.org>
+Subject: [RFC v3 16/24] ubifs: replace kthread freezing with auto fs freezing
+Date:   Fri, 13 Jan 2023 16:34:01 -0800
+Message-Id: <20230114003409.1168311-17-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230114003409.1168311-1-mcgrof@kernel.org>
 References: <20230114003409.1168311-1-mcgrof@kernel.org>
@@ -69,7 +69,7 @@ it knows better than how the VFS handles it.
 The following Coccinelle rule was used as to remove the now superflous
 freezer calls:
 
-spatch --sp-file fs-freeze-cleanup.cocci --in-place --timeout 120 --dir fs/nfs --jobs 12 --use-gitgrep
+spatch --sp-file fs-freeze-cleanup.cocci --in-place --timeout 120 --dir fs/ubifs --jobs 12 --use-gitgrep
 
 @ remove_set_freezable @
 expression time;
@@ -164,22 +164,29 @@ struct file_system_type fs_type = {
 Generated-by: Coccinelle SmPL
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/nfsd/nfssvc.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/ubifs/commit.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/fs/nfsd/nfssvc.c b/fs/nfsd/nfssvc.c
-index 1ed29eac80ed..5345c415c2bc 100644
---- a/fs/nfsd/nfssvc.c
-+++ b/fs/nfsd/nfssvc.c
-@@ -963,8 +963,6 @@ nfsd(void *vrqstp)
+diff --git a/fs/ubifs/commit.c b/fs/ubifs/commit.c
+index c4fc1047fc07..bdebb1702e88 100644
+--- a/fs/ubifs/commit.c
++++ b/fs/ubifs/commit.c
+@@ -279,15 +279,11 @@ int ubifs_bg_thread(void *info)
  
- 	atomic_inc(&nfsdstats.th_cnt);
- 
+ 	ubifs_msg(c, "background thread \"%s\" started, PID %d",
+ 		  c->bgt_name, current->pid);
 -	set_freezable();
+ 
+ 	while (1) {
+ 		if (kthread_should_stop())
+ 			break;
+ 
+-		if (try_to_freeze())
+-			continue;
 -
- 	/*
- 	 * The main request loop
- 	 */
+ 		set_current_state(TASK_INTERRUPTIBLE);
+ 		/* Check if there is something to do */
+ 		if (!c->need_bgt) {
 -- 
 2.35.1
 
