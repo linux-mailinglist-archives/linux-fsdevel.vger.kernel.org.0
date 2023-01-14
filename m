@@ -2,52 +2,99 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 00D0966A79A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 01:34:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4984B66A7C2
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 01:43:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231440AbjANAey (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 19:34:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34904 "EHLO
+        id S231607AbjANAnA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 19:43:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43096 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231294AbjANAe0 (ORCPT
+        with ESMTP id S231384AbjANAmk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Jan 2023 19:34:26 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 609188A23D;
-        Fri, 13 Jan 2023 16:34:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=7rKi7M9XeA7u/BSdnD6EYSAF+nkJ3hBQm4/7Xq4xJq0=; b=MWp/2mhiBI6iJXCiQzwVkKCytJ
-        lA2Kzj+3t8CLt1BN05olQVxJ5NP3NTZaI4scHtp0LPS51FLLK+4u1tIXU3LcUONkX2GC4hEos6gkj
-        txw5vsPmbsqf3DTwagKy5gjl+lXhdEYXK9Wid09YdQxjAh9NlwUKe4gRSY77ehFxicz0ITbyZpUV+
-        qP84D5GWe4WdRggvZgtawBWd6ILP4C8nkzq2vN34Hqicbn4xuy9anWNlk/FFa7yhst/o6nZrUyW2O
-        alPlKICOGMXS+WQRDB9JNFGYzBLsqaQKoRMXBOAZ7v+y39+HjcEBQDmrQZzGF7GFuzV7JSJfEOD/o
-        2asCTbqA==;
-Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pGUUt-004twi-Vl; Sat, 14 Jan 2023 00:34:11 +0000
-From:   Luis Chamberlain <mcgrof@kernel.org>
-To:     hch@infradead.org, djwong@kernel.org, song@kernel.org,
-        rafael@kernel.org, gregkh@linuxfoundation.org,
-        viro@zeniv.linux.org.uk, jack@suse.cz, bvanassche@acm.org,
-        ebiederm@xmission.com
-Cc:     mchehab@kernel.org, keescook@chromium.org, p.raghav@samsung.com,
-        linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
-        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Luis Chamberlain <mcgrof@kernel.org>
-Subject: [RFC v3 24/24] fs: remove FS_AUTOFREEZE
-Date:   Fri, 13 Jan 2023 16:34:09 -0800
-Message-Id: <20230114003409.1168311-25-mcgrof@kernel.org>
-X-Mailer: git-send-email 2.37.1
-In-Reply-To: <20230114003409.1168311-1-mcgrof@kernel.org>
-References: <20230114003409.1168311-1-mcgrof@kernel.org>
+        Fri, 13 Jan 2023 19:42:40 -0500
+Received: from mail-pj1-x102c.google.com (mail-pj1-x102c.google.com [IPv6:2607:f8b0:4864:20::102c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BD933A6BE4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 16:38:21 -0800 (PST)
+Received: by mail-pj1-x102c.google.com with SMTP id u1-20020a17090a450100b0022936a63a21so2104833pjg.4
+        for <linux-fsdevel@vger.kernel.org>; Fri, 13 Jan 2023 16:38:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MgBnQ26ItOkyYKiu1oV6JX0ska5GpfEn/0b8SeFBGOs=;
+        b=fZz4bsSG6rplxu+/+bbAGu03TpfBRqzSERj11fI9gPC3YiJL/UeAPW98CKZYKTN7Ws
+         j53XSFyQZNUTcXaOijVfFvsqXEfJGx6cLcfKMLjiLO/bW7eqi7LulykqxZENOBL1WwJN
+         RayxBQjRABfgAcBUTV5MtEdBlwhGdejOfhp+6x1ylwnSaQw5/5CItg/TVLAvnSFoGFQD
+         lbGhWsb6A9IEcn0SbTi5gMac6RtBt94MErdTeqH8q/FrYZ43WZq9AALzNfaHFxf2mxJm
+         5DgARQXIRLPhEsnlbzOh8dlw4D9+iPLKzKCIvdG2Ml019sB1Ej5N2/v0hQswCEcOzBeL
+         65NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MgBnQ26ItOkyYKiu1oV6JX0ska5GpfEn/0b8SeFBGOs=;
+        b=D32ApQiMonMFp3on/tuEEyusplzvoIvKBwx4qvhIM1QxuOEImpzqZRg+VzqcZNICf/
+         KvWyMY3PsW0HcZbY9aweVFwbgO05xJD7iyi6BwmNfgiWKBn0AcR1kMEWHs/epcVQbsPm
+         KJGLRz08F3q1m95MyQ8BqekDo+a58lKIbjFYvk3OIhy80XbCalqrCKZfpSBdjwS10QSh
+         blLZSsqsuXwPeu/QX4yvITfFy7XBoju+QkfE3y49yHplmTSXLpMTf8/4YTtVj04uekHE
+         q9lUjy624BMjEb69z9orljP0Uuq8S5Dbqs/kKK5N/gPDOaM5sJObJV+eIr7Oe7KqTUYe
+         DKSg==
+X-Gm-Message-State: AFqh2kqYJrn32gTAnuudJ6kPp5X2zQyYa988IwtvhjCTSY3pJQVFY1IU
+        FSZAIeCvDccpQ8Fc5kyZT0yqeQ==
+X-Google-Smtp-Source: AMrXdXvO5lr0leGyzGM7js7Dp/RGVdcEkNK6lyE8EJsgzKqjTO8ro2/W2YgLE7h5m81d74tyNSIgGA==
+X-Received: by 2002:a05:6a20:1394:b0:b5:a970:8d5a with SMTP id w20-20020a056a20139400b000b5a9708d5amr2026776pzh.0.1673656683660;
+        Fri, 13 Jan 2023 16:38:03 -0800 (PST)
+Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
+        by smtp.gmail.com with ESMTPSA id d12-20020a634f0c000000b0047829d1b8eesm9871303pgb.31.2023.01.13.16.38.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jan 2023 16:38:03 -0800 (PST)
+Date:   Sat, 14 Jan 2023 00:37:59 +0000
+From:   Sean Christopherson <seanjc@google.com>
+To:     Chao Peng <chao.p.peng@linux.intel.com>
+Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Wanpeng Li <wanpengli@tencent.com>,
+        Jim Mattson <jmattson@google.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Naoya Horiguchi <naoya.horiguchi@nec.com>,
+        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
+        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J . Bruce Fields" <bfields@fieldses.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
+        Steven Price <steven.price@arm.com>,
+        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Vishal Annapurve <vannapurve@google.com>,
+        Yu Zhang <yu.c.zhang@linux.intel.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
+        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
+        ddutile@redhat.com, dhildenb@redhat.com,
+        Quentin Perret <qperret@google.com>, tabba@google.com,
+        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
+        wei.w.wang@intel.com
+Subject: Re: [PATCH v10 0/9] KVM: mm: fd-based approach for supporting KVM
+Message-ID: <Y8H5Z3e4hZkFxAVS@google.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Sender: Luis Chamberlain <mcgrof@infradead.org>
-X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
-        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,235 +102,53 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Now that all filesystems have been converted over to stop using the
-kthread freezer APIs we can remove FS_AUTOFREEZE and its check.
+On Fri, Dec 02, 2022, Chao Peng wrote:
+> This patch series implements KVM guest private memory for confidential
+> computing scenarios like Intel TDX[1]. If a TDX host accesses
+> TDX-protected guest memory, machine check can happen which can further
+> crash the running host system, this is terrible for multi-tenant
+> configurations. The host accesses include those from KVM userspace like
+> QEMU. This series addresses KVM userspace induced crash by introducing
+> new mm and KVM interfaces so KVM userspace can still manage guest memory
+> via a fd-based approach, but it can never access the guest memory
+> content.
+> 
+> The patch series touches both core mm and KVM code. I appreciate
+> Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
+> reviews are always welcome.
+>   - 01: mm change, target for mm tree
+>   - 02-09: KVM change, target for KVM tree
 
-The following Coccinelle rule was used as to remove the flag:
+A version with all of my feedback, plus reworked versions of Vishal's selftest,
+is available here:
 
-spatch --sp-file remove-fs-autofreezeflag.cocci --in-place --timeout 120 --dir fs/ --jobs 12 --use-gitgrep
-@ rm_auto_flag @
-expression E1;
-identifier fs_type;
-@@
+  git@github.com:sean-jc/linux.git x86/upm_base_support
 
-struct file_system_type fs_type = {
-	.fs_flags = E1
--                   | FS_AUTOFREEZE
-	,
-};
+It compiles and passes the selftest, but it's otherwise barely tested.  There are
+a few todos (2 I think?) and many of the commits need changelogs, i.e. it's still
+a WIP.
 
-Generated-by: Coccinelle SmPL
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
----
- fs/btrfs/super.c     | 4 ++--
- fs/cifs/cifsfs.c     | 4 ++--
- fs/ecryptfs/main.c   | 2 +-
- fs/ext4/super.c      | 6 +++---
- fs/f2fs/super.c      | 2 +-
- fs/gfs2/ops_fstype.c | 4 ++--
- fs/jfs/super.c       | 2 +-
- fs/nfs/fs_context.c  | 4 ++--
- fs/super.c           | 2 --
- fs/xfs/xfs_super.c   | 2 +-
- include/linux/fs.h   | 1 -
- 11 files changed, 15 insertions(+), 18 deletions(-)
+As for next steps, can you (handwaving all of the TDX folks) take a look at what
+I pushed and see if there's anything horrifically broken, and that it still works
+for TDX?
 
-diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
-index 35059fe276ac..433ce221dc5c 100644
---- a/fs/btrfs/super.c
-+++ b/fs/btrfs/super.c
-@@ -2138,7 +2138,7 @@ static struct file_system_type btrfs_fs_type = {
- 	.name		= "btrfs",
- 	.mount		= btrfs_mount,
- 	.kill_sb	= btrfs_kill_super,
--	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA | FS_AUTOFREEZE,
-+	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA,
- };
- 
- static struct file_system_type btrfs_root_fs_type = {
-@@ -2146,7 +2146,7 @@ static struct file_system_type btrfs_root_fs_type = {
- 	.name		= "btrfs",
- 	.mount		= btrfs_mount_root,
- 	.kill_sb	= btrfs_kill_super,
--	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA | FS_ALLOW_IDMAP | FS_AUTOFREEZE,
-+	.fs_flags	= FS_REQUIRES_DEV | FS_BINARY_MOUNTDATA | FS_ALLOW_IDMAP,
- };
- 
- MODULE_ALIAS_FS("btrfs");
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index 25ee05c8af65..1f7af4087b44 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -1104,7 +1104,7 @@ struct file_system_type cifs_fs_type = {
- 	.init_fs_context = smb3_init_fs_context,
- 	.parameters = smb3_fs_parameters,
- 	.kill_sb = cifs_kill_sb,
--	.fs_flags = FS_RENAME_DOES_D_MOVE | FS_AUTOFREEZE,
-+	.fs_flags = FS_RENAME_DOES_D_MOVE,
- };
- MODULE_ALIAS_FS("cifs");
- 
-@@ -1114,7 +1114,7 @@ struct file_system_type smb3_fs_type = {
- 	.init_fs_context = smb3_init_fs_context,
- 	.parameters = smb3_fs_parameters,
- 	.kill_sb = cifs_kill_sb,
--	.fs_flags = FS_RENAME_DOES_D_MOVE | FS_AUTOFREEZE,
-+	.fs_flags = FS_RENAME_DOES_D_MOVE,
- };
- MODULE_ALIAS_FS("smb3");
- MODULE_ALIAS("smb3");
-diff --git a/fs/ecryptfs/main.c b/fs/ecryptfs/main.c
-index a91f5184edb7..2dc927ba067f 100644
---- a/fs/ecryptfs/main.c
-+++ b/fs/ecryptfs/main.c
-@@ -637,7 +637,7 @@ static struct file_system_type ecryptfs_fs_type = {
- 	.name = "ecryptfs",
- 	.mount = ecryptfs_mount,
- 	.kill_sb = ecryptfs_kill_block_super,
--	.fs_flags = 0| FS_AUTOFREEZE
-+	.fs_flags = 0
- };
- MODULE_ALIAS_FS("ecryptfs");
- 
-diff --git a/fs/ext4/super.c b/fs/ext4/super.c
-index 0ae6f13c7fa4..4c83eab8d769 100644
---- a/fs/ext4/super.c
-+++ b/fs/ext4/super.c
-@@ -136,7 +136,7 @@ static struct file_system_type ext2_fs_type = {
- 	.init_fs_context	= ext4_init_fs_context,
- 	.parameters		= ext4_param_specs,
- 	.kill_sb		= kill_block_super,
--	.fs_flags		= FS_REQUIRES_DEV | FS_AUTOFREEZE,
-+	.fs_flags		= FS_REQUIRES_DEV,
- };
- MODULE_ALIAS_FS("ext2");
- MODULE_ALIAS("ext2");
-@@ -152,7 +152,7 @@ static struct file_system_type ext3_fs_type = {
- 	.init_fs_context	= ext4_init_fs_context,
- 	.parameters		= ext4_param_specs,
- 	.kill_sb		= kill_block_super,
--	.fs_flags		= FS_REQUIRES_DEV | FS_AUTOFREEZE,
-+	.fs_flags		= FS_REQUIRES_DEV,
- };
- MODULE_ALIAS_FS("ext3");
- MODULE_ALIAS("ext3");
-@@ -7189,7 +7189,7 @@ static struct file_system_type ext4_fs_type = {
- 	.init_fs_context	= ext4_init_fs_context,
- 	.parameters		= ext4_param_specs,
- 	.kill_sb		= kill_block_super,
--	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_AUTOFREEZE,
-+	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
- };
- MODULE_ALIAS_FS("ext4");
- 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index e9c6fb04c713..87d56a9883e6 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -4645,7 +4645,7 @@ static struct file_system_type f2fs_fs_type = {
- 	.name		= "f2fs",
- 	.mount		= f2fs_mount,
- 	.kill_sb	= kill_f2fs_super,
--	.fs_flags	= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_AUTOFREEZE,
-+	.fs_flags	= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
- };
- MODULE_ALIAS_FS("f2fs");
- 
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index 8f5a63148eaf..c0cf1d2d0ef5 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -1740,7 +1740,7 @@ static void gfs2_kill_sb(struct super_block *sb)
- 
- struct file_system_type gfs2_fs_type = {
- 	.name = "gfs2",
--	.fs_flags = FS_REQUIRES_DEV | FS_AUTOFREEZE,
-+	.fs_flags = FS_REQUIRES_DEV,
- 	.init_fs_context = gfs2_init_fs_context,
- 	.parameters = gfs2_fs_parameters,
- 	.kill_sb = gfs2_kill_sb,
-@@ -1750,7 +1750,7 @@ MODULE_ALIAS_FS("gfs2");
- 
- struct file_system_type gfs2meta_fs_type = {
- 	.name = "gfs2meta",
--	.fs_flags = FS_REQUIRES_DEV | FS_AUTOFREEZE,
-+	.fs_flags = FS_REQUIRES_DEV,
- 	.init_fs_context = gfs2_meta_init_fs_context,
- 	.owner = THIS_MODULE,
- };
-diff --git a/fs/jfs/super.c b/fs/jfs/super.c
-index 8ca77aa0b6f9..d2f82cb7db1b 100644
---- a/fs/jfs/super.c
-+++ b/fs/jfs/super.c
-@@ -906,7 +906,7 @@ static struct file_system_type jfs_fs_type = {
- 	.name		= "jfs",
- 	.mount		= jfs_do_mount,
- 	.kill_sb	= kill_block_super,
--	.fs_flags	= FS_REQUIRES_DEV | FS_AUTOFREEZE,
-+	.fs_flags	= FS_REQUIRES_DEV,
- };
- MODULE_ALIAS_FS("jfs");
- 
-diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
-index 04753962db9a..9bcd53d5c7d4 100644
---- a/fs/nfs/fs_context.c
-+++ b/fs/nfs/fs_context.c
-@@ -1583,7 +1583,7 @@ struct file_system_type nfs_fs_type = {
- 	.init_fs_context	= nfs_init_fs_context,
- 	.parameters		= nfs_fs_parameters,
- 	.kill_sb		= nfs_kill_super,
--	.fs_flags		= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA | FS_AUTOFREEZE,
-+	.fs_flags		= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
- };
- MODULE_ALIAS_FS("nfs");
- EXPORT_SYMBOL_GPL(nfs_fs_type);
-@@ -1595,7 +1595,7 @@ struct file_system_type nfs4_fs_type = {
- 	.init_fs_context	= nfs_init_fs_context,
- 	.parameters		= nfs_fs_parameters,
- 	.kill_sb		= nfs_kill_super,
--	.fs_flags		= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA | FS_AUTOFREEZE,
-+	.fs_flags		= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
- };
- MODULE_ALIAS_FS("nfs4");
- MODULE_ALIAS("nfs4");
-diff --git a/fs/super.c b/fs/super.c
-index e8af4c8269ad..2943157aa41c 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -1857,8 +1857,6 @@ EXPORT_SYMBOL(thaw_super);
- #ifdef CONFIG_PM_SLEEP
- static bool super_should_freeze(struct super_block *sb)
- {
--	if (!(sb->s_type->fs_flags & FS_AUTOFREEZE))
--		return false;
- 	/*
- 	 * We don't freeze virtual filesystems, we skip those filesystems with
- 	 * no backing device.
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 54cbf15fc459..e71e69895a94 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1966,7 +1966,7 @@ static struct file_system_type xfs_fs_type = {
- 	.init_fs_context	= xfs_init_fs_context,
- 	.parameters		= xfs_fs_parameters,
- 	.kill_sb		= kill_block_super,
--	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP | FS_AUTOFREEZE,
-+	.fs_flags		= FS_REQUIRES_DEV | FS_ALLOW_IDMAP,
- };
- MODULE_ALIAS_FS("xfs");
- 
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index e5bee359e804..64b0ed66e87f 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -2231,7 +2231,6 @@ struct file_system_type {
- #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
- #define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
- #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
--#define FS_AUTOFREEZE           (1<<16)	/*  temporary as we phase kthread freezer out */
- 	int (*init_fs_context)(struct fs_context *);
- 	const struct fs_parameter_spec *parameters;
- 	struct dentry *(*mount) (struct file_system_type *, int,
--- 
-2.35.1
+Fuad (and pKVM folks) same ask for you with respect to pKVM.  Absolutely no rush
+(and I mean that).
 
+On my side, the two things on my mind are (a) tests and (b) downstream dependencies
+(SEV and TDX).  For tests, I want to build a lists of tests that are required for
+merging so that the criteria for merging are clear, and so that if the list is large
+(haven't thought much yet), the work of writing and running tests can be distributed.
+
+Regarding downstream dependencies, before this lands, I want to pull in all the
+TDX and SNP series and see how everything fits together.  Specifically, I want to
+make sure that we don't end up with a uAPI that necessitates ugly code, and that we
+don't miss an opportunity to make things simpler.  The patches in the SNP series to
+add "legacy" SEV support for UPM in particular made me slightly rethink some minor
+details.  Nothing remotely major, but something that needs attention since it'll
+be uAPI.
+
+I'm off Monday, so it'll be at least Tuesday before I make any more progress on
+my side.
+
+Thanks!
