@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E71E566A7A5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 01:35:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 846DA66A793
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 01:34:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231480AbjANAfM (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 19:35:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34898 "EHLO
+        id S230313AbjANAep (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 19:34:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34860 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231337AbjANAe1 (ORCPT
+        with ESMTP id S231217AbjANAe0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Jan 2023 19:34:27 -0500
+        Fri, 13 Jan 2023 19:34:26 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BE3B888DFA;
-        Fri, 13 Jan 2023 16:34:26 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8ED2B8A232;
+        Fri, 13 Jan 2023 16:34:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=sA46072UUIGL5Kh0iBH2gpikSfm/h334hpGh720jgWo=; b=YLTLwqO2Mt7VDCHtk8T6vakI82
-        esk2gGAdnKSYN1dtEJq1DdVjlVXyN4nAEuDTutXWuTHNdBJ9KZNOKcNQa+nNfLHeJTrl54EcCIb1m
-        jVIfR2XOTESqrjCvK4V1baDAsC2qCjSZGZF6utoIydLJFHjSewTKPRtcdNEe0FYDqi5GC1Ksr7A5C
-        D2yVITq1Fowfx0soPeK5x/ztVBYNLQcbPcVoBWVXE4FwppdQ6XpY2GiBNtpCSJCtCJIiBGfM/SuB1
-        BbK41+LF+QJbvyUwW1DC9QbVmbaIrw0guejOE20rC8m7smqjuEQ1qWTEVoYeFXwyzKekS8E4sn8m9
-        i5Xcgs0A==;
+        bh=Nm6yy7WuMOF8pxYI0a9Pe6CVHrk6rbCeCvRHe0iPtqA=; b=Ss2OsukcwNh7GsWQ4BS73ZmBVs
+        Y/sd5rMUPg2gd2YAst8oUymPcLDz1NPCddlACh4vukJZDkdyBPCzZqlAx4cEJPFLRCQogCWHBoq0o
+        F8AoZv7OLrxTP0qdOt4Pr/R4IxXJrOwD62yDGI2JPX/zEvXt7hRaPhxnkE/SCu39mbahy/Qfdja4Y
+        +qaA4L2kEXMmE23FM71Kxx9jXcsCl7MQTP3uRx4Zher3BM7v4dBZNJjchAMm/KvziOEu+Xd+7cBhS
+        0Sg/y+V2z/RqLaWBSrIUn4Vapg1YbDFsIiuPVtglrVQdccCbbhP1vObzdWpt8kicfjCHrshEsVJSI
+        zbJKbSCw==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pGUUt-004twH-CP; Sat, 14 Jan 2023 00:34:11 +0000
+        id 1pGUUt-004twJ-Dw; Sat, 14 Jan 2023 00:34:11 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     hch@infradead.org, djwong@kernel.org, song@kernel.org,
         rafael@kernel.org, gregkh@linuxfoundation.org,
@@ -36,9 +36,9 @@ Cc:     mchehab@kernel.org, keescook@chromium.org, p.raghav@samsung.com,
         linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
         kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [RFC v3 11/24] gfs2: replace kthread freezing with auto fs freezing
-Date:   Fri, 13 Jan 2023 16:33:56 -0800
-Message-Id: <20230114003409.1168311-12-mcgrof@kernel.org>
+Subject: [RFC v3 12/24] jfs: replace kthread freezing with auto fs freezing
+Date:   Fri, 13 Jan 2023 16:33:57 -0800
+Message-Id: <20230114003409.1168311-13-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230114003409.1168311-1-mcgrof@kernel.org>
 References: <20230114003409.1168311-1-mcgrof@kernel.org>
@@ -69,7 +69,7 @@ it knows better than how the VFS handles it.
 The following Coccinelle rule was used as to remove the now superflous
 freezer calls:
 
-spatch --sp-file fs-freeze-cleanup.cocci --in-place --timeout 120 --dir fs/gfs2 --jobs 12 --use-gitgrep
+spatch --sp-file fs-freeze-cleanup.cocci --in-place --timeout 120 --dir fs/jfs --jobs 12 --use-gitgrep
 
 @ remove_set_freezable @
 expression time;
@@ -164,101 +164,101 @@ struct file_system_type fs_type = {
 Generated-by: Coccinelle SmPL
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/gfs2/glock.c      | 6 +++---
- fs/gfs2/log.c        | 2 --
- fs/gfs2/main.c       | 4 ++--
- fs/gfs2/ops_fstype.c | 4 ++--
- fs/gfs2/quota.c      | 2 --
- 5 files changed, 7 insertions(+), 11 deletions(-)
+ fs/jfs/jfs_logmgr.c | 11 +++--------
+ fs/jfs/jfs_txnmgr.c | 31 +++++++++----------------------
+ fs/jfs/super.c      |  2 +-
+ 3 files changed, 13 insertions(+), 31 deletions(-)
 
-diff --git a/fs/gfs2/glock.c b/fs/gfs2/glock.c
-index 524f3c96b9a4..7ad1a1229ae3 100644
---- a/fs/gfs2/glock.c
-+++ b/fs/gfs2/glock.c
-@@ -2459,14 +2459,14 @@ int __init gfs2_glock_init(void)
- 	if (ret < 0)
- 		return ret;
+diff --git a/fs/jfs/jfs_logmgr.c b/fs/jfs/jfs_logmgr.c
+index 695415cbfe98..32df79fc09a2 100644
+--- a/fs/jfs/jfs_logmgr.c
++++ b/fs/jfs/jfs_logmgr.c
+@@ -2317,14 +2317,9 @@ int jfsIOWait(void *arg)
+ 			spin_lock_irq(&log_redrive_lock);
+ 		}
  
--	glock_workqueue = alloc_workqueue("glock_workqueue", WQ_MEM_RECLAIM |
--					  WQ_HIGHPRI | WQ_FREEZABLE, 0);
-+	glock_workqueue = alloc_workqueue("glock_workqueue",
-+					  WQ_MEM_RECLAIM | WQ_HIGHPRI, 0);
- 	if (!glock_workqueue) {
- 		rhashtable_destroy(&gl_hash_table);
- 		return -ENOMEM;
- 	}
- 	gfs2_delete_workqueue = alloc_workqueue("delete_workqueue",
--						WQ_MEM_RECLAIM | WQ_FREEZABLE,
-+						WQ_MEM_RECLAIM,
- 						0);
- 	if (!gfs2_delete_workqueue) {
- 		destroy_workqueue(glock_workqueue);
-diff --git a/fs/gfs2/log.c b/fs/gfs2/log.c
-index 1fcc829f02ab..213fafc367f4 100644
---- a/fs/gfs2/log.c
-+++ b/fs/gfs2/log.c
-@@ -1330,8 +1330,6 @@ int gfs2_logd(void *data)
+-		if (freezing(current)) {
+-			spin_unlock_irq(&log_redrive_lock);
+-			try_to_freeze();
+-		} else {
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			spin_unlock_irq(&log_redrive_lock);
+-			schedule();
+-		}
++		set_current_state(TASK_INTERRUPTIBLE);
++		spin_unlock_irq(&log_redrive_lock);
++		schedule();
+ 	} while (!kthread_should_stop());
  
- 		t = gfs2_tune_get(sdp, gt_logd_secs) * HZ;
+ 	jfs_info("jfsIOWait being killed!");
+diff --git a/fs/jfs/jfs_txnmgr.c b/fs/jfs/jfs_txnmgr.c
+index ffd4feece078..6c6dee3a16cc 100644
+--- a/fs/jfs/jfs_txnmgr.c
++++ b/fs/jfs/jfs_txnmgr.c
+@@ -2696,6 +2696,7 @@ int jfs_lazycommit(void *arg)
+ 	struct tblock *tblk;
+ 	unsigned long flags;
+ 	struct jfs_sb_info *sbi;
++	DECLARE_WAITQUEUE(wq, current);
  
--		try_to_freeze();
+ 	do {
+ 		LAZY_LOCK(flags);
+@@ -2742,19 +2743,11 @@ int jfs_lazycommit(void *arg)
+ 		}
+ 		/* In case a wakeup came while all threads were active */
+ 		jfs_commit_thread_waking = 0;
 -
- 		do {
- 			prepare_to_wait(&sdp->sd_logd_waitq, &wait,
- 					TASK_INTERRUPTIBLE);
-diff --git a/fs/gfs2/main.c b/fs/gfs2/main.c
-index afcb32854f14..43d4748ad183 100644
---- a/fs/gfs2/main.c
-+++ b/fs/gfs2/main.c
-@@ -153,12 +153,12 @@ static int __init init_gfs2_fs(void)
+-		if (freezing(current)) {
+-			LAZY_UNLOCK(flags);
+-			try_to_freeze();
+-		} else {
+-			DECLARE_WAITQUEUE(wq, current);
+-
+-			add_wait_queue(&jfs_commit_thread_wait, &wq);
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			LAZY_UNLOCK(flags);
+-			schedule();
+-			remove_wait_queue(&jfs_commit_thread_wait, &wq);
+-		}
++		add_wait_queue(&jfs_commit_thread_wait, &wq);
++		set_current_state(TASK_INTERRUPTIBLE);
++		LAZY_UNLOCK(flags);
++		schedule();
++		remove_wait_queue(&jfs_commit_thread_wait, &wq);
+ 	} while (!kthread_should_stop());
  
- 	error = -ENOMEM;
- 	gfs_recovery_wq = alloc_workqueue("gfs_recovery",
--					  WQ_MEM_RECLAIM | WQ_FREEZABLE, 0);
-+					  WQ_MEM_RECLAIM, 0);
- 	if (!gfs_recovery_wq)
- 		goto fail_wq1;
+ 	if (!list_empty(&TxAnchor.unlock_queue))
+@@ -2931,15 +2924,9 @@ int jfs_sync(void *arg)
+ 		}
+ 		/* Add anon_list2 back to anon_list */
+ 		list_splice_init(&TxAnchor.anon_list2, &TxAnchor.anon_list);
+-
+-		if (freezing(current)) {
+-			TXN_UNLOCK();
+-			try_to_freeze();
+-		} else {
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			TXN_UNLOCK();
+-			schedule();
+-		}
++		set_current_state(TASK_INTERRUPTIBLE);
++		TXN_UNLOCK();
++		schedule();
+ 	} while (!kthread_should_stop());
  
- 	gfs2_control_wq = alloc_workqueue("gfs2_control",
--					  WQ_UNBOUND | WQ_FREEZABLE, 0);
-+					  WQ_UNBOUND, 0);
- 	if (!gfs2_control_wq)
- 		goto fail_wq2;
- 
-diff --git a/fs/gfs2/ops_fstype.c b/fs/gfs2/ops_fstype.c
-index c0cf1d2d0ef5..8f5a63148eaf 100644
---- a/fs/gfs2/ops_fstype.c
-+++ b/fs/gfs2/ops_fstype.c
-@@ -1740,7 +1740,7 @@ static void gfs2_kill_sb(struct super_block *sb)
- 
- struct file_system_type gfs2_fs_type = {
- 	.name = "gfs2",
--	.fs_flags = FS_REQUIRES_DEV,
-+	.fs_flags = FS_REQUIRES_DEV | FS_AUTOFREEZE,
- 	.init_fs_context = gfs2_init_fs_context,
- 	.parameters = gfs2_fs_parameters,
- 	.kill_sb = gfs2_kill_sb,
-@@ -1750,7 +1750,7 @@ MODULE_ALIAS_FS("gfs2");
- 
- struct file_system_type gfs2meta_fs_type = {
- 	.name = "gfs2meta",
--	.fs_flags = FS_REQUIRES_DEV,
-+	.fs_flags = FS_REQUIRES_DEV | FS_AUTOFREEZE,
- 	.init_fs_context = gfs2_meta_init_fs_context,
- 	.owner = THIS_MODULE,
+ 	jfs_info("jfs_sync being killed");
+diff --git a/fs/jfs/super.c b/fs/jfs/super.c
+index d2f82cb7db1b..8ca77aa0b6f9 100644
+--- a/fs/jfs/super.c
++++ b/fs/jfs/super.c
+@@ -906,7 +906,7 @@ static struct file_system_type jfs_fs_type = {
+ 	.name		= "jfs",
+ 	.mount		= jfs_do_mount,
+ 	.kill_sb	= kill_block_super,
+-	.fs_flags	= FS_REQUIRES_DEV,
++	.fs_flags	= FS_REQUIRES_DEV | FS_AUTOFREEZE,
  };
-diff --git a/fs/gfs2/quota.c b/fs/gfs2/quota.c
-index 1ed17226d9ed..710764af9d04 100644
---- a/fs/gfs2/quota.c
-+++ b/fs/gfs2/quota.c
-@@ -1555,8 +1555,6 @@ int gfs2_quotad(void *data)
- 		quotad_check_timeo(sdp, "sync", gfs2_quota_sync, t,
- 				   &quotad_timeo, &tune->gt_quota_quantum);
- 
--		try_to_freeze();
--
- bypass:
- 		t = min(quotad_timeo, statfs_timeo);
+ MODULE_ALIAS_FS("jfs");
  
 -- 
 2.35.1
