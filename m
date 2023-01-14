@@ -2,401 +2,442 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C7A7B66A8B5
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 03:32:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B50B766A8F0
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 04:20:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230347AbjANCcY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 21:32:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49676 "EHLO
+        id S230432AbjANDUk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 22:20:40 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59936 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229941AbjANCcW (ORCPT
+        with ESMTP id S229379AbjANDUf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Jan 2023 21:32:22 -0500
-Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E3BC78CBC8;
-        Fri, 13 Jan 2023 18:32:20 -0800 (PST)
-Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by dfw.source.kernel.org (Postfix) with ESMTPS id 7065E62384;
-        Sat, 14 Jan 2023 02:32:20 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3DCBC433D2;
-        Sat, 14 Jan 2023 02:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1673663539;
-        bh=BqkNhXn9PxuERE2HAQ6W8qM892tY77yAbcZgnWz/4fY=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=G+KHWhNoOWuaJqGa7BK7UVz2F9FyvTt7k/gmk2SRymtpJ4ctvGfROg24E0mpH7b8y
-         jBQN+8MHwLBXro5Ppazp8vjVbBv3rBgWH513XsSn7BLg8Geh1w0jcapqv4Rwa9yvuh
-         sN3ph/DTbDEloJC9niPaQpw8vu4fhTzmmQy+8O+swYdeJVBnfB1s6mZkJR3RncMnjj
-         qzuxO5pbZd60QuWd6PYVqGY+Qi+I2BwKC2iXe6HTz5SFNhJBv0G3yMpMwH/fwrQuiC
-         xfyLjpgey3UFwYTQc1j3hEYr/dpU/rqBwgy7bMgeywrIZaIZBEFU9lEuaFAjnqMwNu
-         ERtpuGMBzP4Dg==
-Date:   Fri, 13 Jan 2023 18:32:19 -0800
-From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     linux-xfs@vger.kernel.org, willy@infradead.org,
-        chandan.babu@oracle.com, allison.henderson@oracle.com,
-        linux-fsdevel@vger.kernel.org, hch@infradead.org,
-        catherine.hoang@oracle.com, david@fromorbit.com
-Subject: [PATCH v24.2 12/14] xfs: document directory tree repairs
-Message-ID: <Y8IUM6HcxiYAxp1c@magnolia>
-References: <167243825144.682859.12802259329489258661.stgit@magnolia>
- <167243825331.682859.12874143420813343961.stgit@magnolia>
+        Fri, 13 Jan 2023 22:20:35 -0500
+Received: from mail-pf1-x42a.google.com (mail-pf1-x42a.google.com [IPv6:2607:f8b0:4864:20::42a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7150389BC1;
+        Fri, 13 Jan 2023 19:20:34 -0800 (PST)
+Received: by mail-pf1-x42a.google.com with SMTP id i65so14012366pfc.0;
+        Fri, 13 Jan 2023 19:20:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=fCzL8v3ly3g0ylHbK5wRwT9XHRJBFF6QOfk8IB/d0Vw=;
+        b=ZcItH0qs0MzglNbnC6OE+dJpknidaPXJeCgShs2GJFhT4VZOWa7eC2/U5GglcZkZiN
+         x8vGjZ4hD5ITUdkzeDj5st73i0mLk7NWYSXCGU4Lu/SK5l1zrC+GqpQBlYJpFEQJDGlb
+         S8S7ev5Sje0kX+zgFKmluxCmZdNDREMtY2nmeXEd4jW7Uw6SFAIeB5TUeq5w2k77qXcJ
+         D0NT/zUEzt7NZwGD3uGZ2A8d9DlLxhv9p1Xn3CGxc6GbT4IahRaMgEOIGts2+VHno6n7
+         dIjhQPNuSUCM44wKfy9YSEjVeAAgVK7g5cdGNUNkM4K5hC+79ycpdtOrhB0nE8Sxur1D
+         h2AA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fCzL8v3ly3g0ylHbK5wRwT9XHRJBFF6QOfk8IB/d0Vw=;
+        b=yf16sbT4KEPB4MmLqr5Qxyk8/X7CRyyr7OGuYtJZdkOgnmj1wdnt0ZezR0x1IOkYHT
+         2aZsNU3ZR9t3gjycjH1HRNsNkaKImqpaEi6PeHYsN0d+dBGynzh5t7UI6WIUxh0zdKPM
+         +0tK9IjZ3ohRKYaPkLfGWXyBUjA6glgiA8kGWkQBdZJPhxmAHHtGB+bALEXbhPh8rvh8
+         ONsykEr8oYhPQGWDfNgL1K5OdAbRS2rQtCJBZ1hR7hVbcoug6D7USoReleXm7eTW1D6x
+         D2a/oUFfsLby6U/JztaDIpOo2D02IaZj3Zi4PqcDn2N+PBa9qP/+hV5mlck9/OiKirp2
+         fqUw==
+X-Gm-Message-State: AFqh2krMOvzO/3BcEsg+31oxOjzqvrsFQfnaAsNwODCIuwoJnSGiWfIU
+        rJv5mTU4UZs1SjQKeyIQfBc=
+X-Google-Smtp-Source: AMrXdXsxTIJyux/zsw+qWZlHLc7KwjNMruKvKnTEUumjp9cBXf17Q56UZFDHvotpqTKiBMqBA4bzdg==
+X-Received: by 2002:a62:a510:0:b0:58b:9473:7ae0 with SMTP id v16-20020a62a510000000b0058b94737ae0mr11351716pfm.32.1673666433650;
+        Fri, 13 Jan 2023 19:20:33 -0800 (PST)
+Received: from debian.me (subs03-180-214-233-21.three.co.id. [180.214.233.21])
+        by smtp.gmail.com with ESMTPSA id z4-20020aa79f84000000b00573a9d13e9esm14447722pfr.36.2023.01.13.19.20.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Jan 2023 19:20:33 -0800 (PST)
+Received: by debian.me (Postfix, from userid 1000)
+        id 1115E104B0A; Sat, 14 Jan 2023 10:20:28 +0700 (WIB)
+Date:   Sat, 14 Jan 2023 10:20:28 +0700
+From:   Bagas Sanjaya <bagasdotme@gmail.com>
+To:     Alexander Larsson <alexl@redhat.com>, linux-fsdevel@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, gscrivan@redhat.com,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH v2 5/6] composefs: Add documentation
+Message-ID: <Y8IffF7xjyX6BzUE@debian.me>
+References: <cover.1673623253.git.alexl@redhat.com>
+ <a9616059dd7d094c2756cb426e29ce2ac7d8e998.1673623253.git.alexl@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="3PByOgCSIFD9ivr4"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <167243825331.682859.12874143420813343961.stgit@magnolia>
-X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <a9616059dd7d094c2756cb426e29ce2ac7d8e998.1673623253.git.alexl@redhat.com>
+X-Spam-Status: No, score=-0.6 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_SORBS_WEB,SPF_HELO_NONE,SPF_PASS
+        autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Directory tree repairs are the least complete part of online fsck, due
-to the lack of directory parent pointers.  However, even without that
-feature, we can still make some corrections to the directory tree -- we
-can salvage as many directory entries as we can from a damaged
-directory, and we can reattach orphaned inodes to the lost+found, just
-as xfs_repair does now.
 
-Signed-off-by: Darrick J. Wong <djwong@kernel.org>
----
-v24.2: updated with my latest thoughts about how to use parent pointers
----
- .../filesystems/xfs-online-fsck-design.rst         |  322 ++++++++++++++++++++
- 1 file changed, 322 insertions(+)
+--3PByOgCSIFD9ivr4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst b/Documentation/filesystems/xfs-online-fsck-design.rst
-index 163be2847c24..15e3a4acd40a 100644
---- a/Documentation/filesystems/xfs-online-fsck-design.rst
-+++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-@@ -4319,3 +4319,325 @@ The proposed patchset is the
- `extended attribute repair
- <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-xattrs>`_
- series.
-+
-+Fixing Directories
-+------------------
-+
-+Fixing directories is difficult with currently available filesystem features.
-+The offline repair tool scans all inodes to find files with nonzero link count,
-+and then it scans all directories to establish parentage of those linked files.
-+Damaged files and directories are zapped, and files with no parent are
-+moved to the ``/lost+found`` directory.
-+It does not try to salvage anything.
-+
-+The best that online repair can do at this time is to read directory data
-+blocks and salvage any dirents that look plausible, correct link counts, and
-+move orphans back into the directory tree.
-+The salvage process is discussed in the case study at the end of this section.
-+The second component to fixing the directory tree online is the :ref:`file link
-+count fsck <nlinks>`, since it can scan the entire filesystem to make sure that
-+files can neither be deleted while there are still parents nor forgotten after
-+all parents sever their links to the child.
-+The third part is discussed at the :ref:`end of this section<orphanage>`.
-+However, there may be a solution to these deficiencies soon!
-+
-+Parent Pointers
-+```````````````
-+
-+The lack of secondary directory metadata hinders directory tree reconstruction
-+in much the same way that the historic lack of reverse space mapping
-+information once hindered reconstruction of filesystem space metadata.
-+Specifically, dirents are not redundant, which makes it impossible to construct
-+a true replacement for a damaged directory.
-+The best that online repair can do currently is to construct a new directory
-+from any dirents that are salvageable and use the file link count repair
-+function to move orphaned files to the lost and found.
-+Offline repair doesn't salvage broken directories.
-+The proposed parent pointer feature, however, will make total directory
-+reconstruction possible.
-+
-+Directory parent pointers were first proposed as an XFS feature more than a
-+decade ago by SGI.
-+In that implementation, each link from a parent directory to a child file was
-+augmented by an extended attribute in the child that could be used to identify
-+the parent directory.
-+Unfortunately, this early implementation had several major shortcomings:
-+
-+1. The XFS codebase of the late 2000s did not have the infrastructure to
-+   enforce strong referential integrity in the directory tree, which is a fancy
-+   way to say that it could not guarantee that a change in a forward link would
-+   always be followed up with the corresponding change to the reverse links.
-+
-+2. Referential integrity was not integrated into offline repair.
-+   Checking and repairs were performed on mounted filesystems without taking
-+   any kernel or inode locks to coordinate access.
-+   It is not clear if this actually worked properly.
-+
-+3. The extended attribute did not record the name of the directory entry in the
-+   parent, so the first parent pointer implementation cannot be used to
-+   reconnect the directory tree.
-+
-+4. Extended attribute forks only support 65,536 extents, which means that
-+   parent pointer attribute creation is likely to fail at some point before the
-+   maximum file link count is achieved.
-+
-+Allison Henderson, Chandan Babu, and Catherine Hoang are working on a second
-+implementation that solves the shortcomings of the first.
-+During 2022, Allison introduced log intent items to track physical
-+manipulations of the extended attribute structures.
-+This solves the referential integrity problem by making it possible to commit
-+a dirent update and a parent pointer update in the same transaction.
-+Chandan increased the maximum extent counts of both data and attribute forks,
-+thereby addressing the fourth problem.
-+
-+Allison has proposed a second implementation of parent pointers.
-+This time around, parent pointer data will also include the dirent name and
-+location within the parent.
-+In other words, child files use extended attributes to store pointers to
-+parents in the form ``(parent_inum, parent_gen, dirent_pos) → (dirent_name)``.
-+This solves the third problem.
-+
-+When the parent pointer feature lands, the directory checking process can be
-+strengthened to ensure that the target of each dirent also contains a parent
-+pointer pointing back to the dirent.
-+Likewise, each parent pointer can be checked by ensuring that the target of
-+each parent pointer is a directory and that it contains a dirent matching
-+the parent pointer.
-+Both online and offline repair can use this strategy.
-+
-+The quality of directory repairs will improve because online fsck will be able
-+to reconstruct a directory in its entirety instead of skipping unsalvageable
-+areas.
-+This process is imagined to involve a :ref:`coordinated inode scan <iscan>` and
-+a :ref:`directory entry live update hook <liveupdate>`, and goes as follows:
-+
-+1. Visit every file in the entire filesystem.
-+
-+2. Every time the scan encounters a file with a parent pointer to the directory
-+   that is being reconstructed, record this entry in the temporary directory.
-+
-+3. When the scan is complete, atomically swap the contents of the temporary
-+   directory and the directory being repaired.
-+
-+4. Update the dirent position field of parent pointers as necessary.
-+   This may require the queuing of a substantial number of xattr log intent
-+   items.
-+
-+**Question**: How will repair ensure that the ``dirent_pos`` fields match in
-+the reconstructed directory?
-+
-+*Answer*: There are a few ways to solve this problem:
-+
-+1. The field could be designated advisory, since the other three values are
-+   sufficient to find the entry in the parent.
-+   However, this makes indexed key lookup impossible while repairs are ongoing.
-+
-+2. We could allow creating directory entries at specified offsets, which solves
-+   the referential integrity problem but runs the risk that dirent creation
-+   will fail due to conflicts with the free space in the directory.
-+
-+   These conflicts could be resolved by appending the directory entry and
-+   amending the xattr code to support updating an xattr key and reindexing the
-+   dabtree, though this would have to be performed with the parent directory
-+   still locked.
-+
-+3. Same as above, but remove the old parent pointer entry and add a new one
-+   atomically.
-+
-+4. Change the ondisk xattr format to ``(parent_inum, name) → (parent_gen)``,
-+   which would provide the key uniqueness that we require, without forcing
-+   repair code to update the dirent position.
-+
-+Online reconstruction of a file's parent pointer information is imagined to
-+work similarly to directory reconstruction:
-+
-+1. Visit every directory in the entire filesystem.
-+
-+2. Every time the scan encounters a directory with a dirent pointing to the
-+   file that is being reconstructed, record this entry in the temporary file's
-+   extended attributes.
-+
-+3. When the scan is complete, copy the file's other extended attributes to the
-+   temporary file.
-+
-+4. Atomically swap the contents of the temporary file's extended attributes and
-+   the file being repaired.
-+   If the other extended attributes are large compared to the parent pointers,
-+   it may be faster to use xattr log items to copy the parent pointers from the
-+   temporary file to the file being reconstructed.
-+   We lose the atomicity guarantee if we do this.
-+
-+This code has not yet been constructed, so there is not yet a case study laying
-+out exactly how this process works.
-+
-+Examining parent pointers in offline repair works differently because corrupt
-+files are erased long before directory tree connectivity checks are performed.
-+Parent pointer checks are therefore a second pass to be added to the existing
-+connectivity checks:
-+
-+1. After the set of surviving files has been established (i.e. phase 6),
-+   walk the surviving directories of each AG in the filesystem.
-+
-+2. For each dirent found, add ``(child_ag_inum, parent_inum, dirent_pos)``
-+   tuples to an in-memory index.
-+   This may require creation of another type of xfile btree.
-+
-+3. Walk each file a second time to compare compare the ondisk parent pointers
-+   against the in-memory index.
-+   Parent pointers missing in the ondisk structure should be added, and ondisk
-+   pointers not found by the scan should be removed.
-+
-+4. Move on to examining link counts, as we do today.
-+
-+Rebuilding directories from parent pointers in offline repair is very
-+challenging because it currently uses a single-pass scan of the filesystem
-+during phase 3 to decide which files are corrupt enough to be zapped.
-+This scan would have to be converted into a multi-pass scan:
-+
-+1. The first pass of the scan zaps corrupt inodes, forks, and attributes
-+   much as it does now.
-+   Corrupt directories are noted but not zapped.
-+
-+2. The next pass records parent pointers pointing to the directories noted
-+   as being corrupt in the first pass.
-+   This second pass may have to happen after the phase 4 scan for duplicate
-+   blocks, if phase 4 is also capable of zapping directories.
-+
-+3. The third pass resets corrupt directories to an empty shortform directory.
-+   Free space metadata has not been ensured yet, so repair cannot yet use the
-+   directory building code in libxfs.
-+
-+4. At the start of phase 6, space metadata have been rebuilt.
-+   Use the parent pointer information recorded during step 2 to reconstruct
-+   the dirents and add them to the now-empty directories.
-+
-+This code has also not yet been constructed.
-+
-+Case Study: Salvaging Directories
-+`````````````````````````````````
-+
-+Unlike extended attributes, directory blocks are all the same size, so
-+salvaging directories is straightforward:
-+
-+1. Find the parent of the directory.
-+   If the dotdot entry is not unreadable, try to confirm that the alleged
-+   parent has a child entry pointing back to the directory being repaired.
-+   Otherwise, walk the filesystem to find it.
-+
-+2. Walk the first partition of data fork of the directory to find the directory
-+   entry data blocks.
-+   When one is found,
-+
-+   a. Walk the directory data block to find candidate entries.
-+      When an entry is found:
-+
-+      i. Check the name for problems, and ignore the name if there are.
-+
-+      ii. Retrieve the inumber and grab the inode.
-+          If that succeeds, add the name, inode number, and file type to the
-+          staging xfarray and xblob.
-+
-+3. If the memory usage of the xfarray and xfblob exceed a certain amount of
-+   memory or there are no more directory data blocks to examine, unlock the
-+   directory and add the staged dirents into the temporary directory.
-+   Truncate the staging files.
-+
-+4. Use atomic extent swapping to exchange the new and old directory structures.
-+   The old directory blocks are now attached to the temporary file.
-+
-+5. Reap the temporary file.
-+
-+**Question**: Should repair revalidate the dentry cache when rebuilding a
-+directory?
-+
-+*Answer*: Yes, though the current dentry cache code doesn't provide a means
-+to walk every dentry of a specific directory.
-+If the cache contains an entry that the salvaging code does not find, the
-+repair cannot proceed.
-+
-+**Question**: Can the dentry cache know about a directory entry that cannot be
-+salvaged?
-+
-+*Answer*: In theory, the dentry cache should be a subset of the directory
-+entries on disk because there's no way to load a dentry without having
-+something to read in the directory.
-+However, it is possible for a coherency problem to be introduced if the ondisk
-+structures becomes corrupt *after* the cache loads.
-+In theory it is necessary to scan all dentry cache entries for a directory to
-+ensure that one of the following apply:
-+
-+1. The cached dentry reflects an ondisk dirent in the new directory.
-+
-+2. The cached dentry no longer has a corresponding ondisk dirent in the new
-+   directory and the dentry can be purged from the cache.
-+
-+3. The cached dentry no longer has an ondisk dirent but the dentry cannot be
-+   purged.
-+   This is bad.
-+
-+As mentioned above, the dentry cache does not have a means to walk all the
-+dentries with a particular directory as a parent.
-+This makes detecting situations #2 and #3 impossible, and remains an
-+interesting question for research.
-+
-+The proposed patchset is the
-+`directory repair
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-dirs>`_
-+series.
-+
-+.. _orphanage:
-+
-+The Orphanage
-+-------------
-+
-+Filesystems present files as a directed, and hopefully acyclic, graph.
-+In other words, a tree.
-+The root of the filesystem is a directory, and each entry in a directory points
-+downwards either to more subdirectories or to non-directory files.
-+Unfortunately, a disruption in the directory graph pointers result in a
-+disconnected graph, which makes files impossible to access via regular path
-+resolution.
-+The directory parent pointer online scrub code can detect a dotdot entry
-+pointing to a parent directory that doesn't have a link back to the child
-+directory, and the file link count checker can detect a file that isn't pointed
-+to by any directory in the filesystem.
-+If the file in question has a positive link count, the file in question is an
-+orphan.
-+
-+When orphans are found, they should be reconnected to the directory tree.
-+Offline fsck solves the problem by creating a directory ``/lost+found`` to
-+serve as an orphanage, and linking orphan files into the orphanage by using the
-+inumber as the name.
-+Reparenting a file to the orphanage does not reset any of its permissions or
-+ACLs.
-+
-+This process is more involved in the kernel than it is in userspace.
-+The directory and file link count repair setup functions must use the regular
-+VFS mechanisms to create the orphanage directory with all the necessary
-+security attributes and dentry cache entries, just like a regular directory
-+tree modification.
-+
-+Orphaned files are adopted by the orphanage as follows:
-+
-+1. Call ``xrep_orphanage_try_create`` at the start of the scrub setup function
-+   to try to ensure that the lost and found directory actually exists.
-+   This also attaches the orphanage directory to the scrub context.
-+
-+2. If the decision is made to reconnect a file, take the IOLOCK of both the
-+   orphanage and the file being reattached.
-+   The ``xrep_orphanage_iolock_two`` function follows the inode locking
-+   strategy discussed earlier.
-+
-+3. Call ``xrep_orphanage_compute_blkres`` and ``xrep_orphanage_compute_name``
-+   to compute the new name in the orphanage and the block reservation required.
-+
-+4. Use ``xrep_orphanage_adoption_prep`` to reserve resources to the repair
-+   transaction.
-+
-+5. Call ``xrep_orphanage_adopt`` to reparent the orphaned file into the lost
-+   and found, and update the kernel dentry cache.
-+
-+The proposed patches are in the
-+`orphanage adoption
-+<https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/log/?h=repair-orphanage>`_
-+series.
+On Fri, Jan 13, 2023 at 04:33:58PM +0100, Alexander Larsson wrote:
+> Adds documentation about the composefs filesystem and
+> how to use it.
+
+s/Adds documentation/Add documentation/
+
+> diff --git a/Documentation/filesystems/composefs.rst b/Documentation/file=
+systems/composefs.rst
+> new file mode 100644
+> index 000000000000..306f0e2e22ba
+> --- /dev/null
+> +++ b/Documentation/filesystems/composefs.rst
+> @@ -0,0 +1,169 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +Composefs Filesystem
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Introduction
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Composefs is a read-only file system that is backed by regular files
+> +(rather than a block device). It is designed to help easily share
+> +content between different directory trees, such as container images in
+> +a local store or ostree checkouts. In addition it also has support for
+> +integrity validation of file content and directory metadata, in an
+> +efficient way (using fs-verity).
+> +
+> +The filesystem mount source is a binary blob called the descriptor. It
+> +contains all the inode and directory entry data for the entire
+> +filesystem. However, instead of storing the file content each regular
+> +file inode stores a relative path name, and the filesystem gets the
+> +file content from the filesystem by looking up that filename in a set
+> +of base directories.
+> +
+> +Given such a descriptor called "image.cfs" and a directory with files
+> +called "/dir" you can mount it like::
+> +
+> +  mount -t composefs image.cfs -o basedir=3D/dir /mnt
+> +
+> +Content sharing
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Suppose you have a single basedir where the files are content
+> +addressed (i.e. named by content digest), and a set of composefs
+> +descriptors using this basedir. Any file that happen to be shared
+> +between two images (same content, so same digest) will now only be
+> +stored once on the disk.
+> +
+> +Such sharing is possible even if the metadata for the file in the
+> +image differs (common reasons for metadata difference are mtime,
+> +permissions, xattrs, etc). The sharing is also anonymous in the sense
+> +that you can't tell the difference on the mounted files from a
+> +non-shared file (for example by looking at the link count for a
+> +hardlinked file).
+> +
+> +In addition, any shared files that are actively in use will share
+> +page-cache, because the page cache for the file contents will be
+> +addressed by the backing file in the basedir, This means (for example)
+> +that shared libraries between images will only be mmap:ed once across
+> +all mounts.
+> +
+> +Integrity validation
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Composefs uses :doc:`fs-verity <fsverity>` for integrity validation,
+> +and extends it by making the validation also apply to the directory
+> +metadata.  This happens on two levels, validation of the descriptor
+> +and validation of the backing files.
+> +
+> +For descriptor validation, the idea is that you enable fs-verity on
+> +the descriptor file which seals it from changes that would affect the
+> +directory metadata. Additionally you can pass a `digest` mount option,
+> +which composefs verifies against the descriptor fs-verity
+> +measure. Such a mount option could be encoded in a trusted source
+> +(like a signed kernel command line) and be used as a root of trust if
+> +using composefs for the root filesystem.
+
+Quote mount option names (like other keywords for consistency):
+
+---- >8 ----
+diff --git a/Documentation/filesystems/composefs.rst b/Documentation/filesy=
+stems/composefs.rst
+index c96f9b99d72979..cc65945e3d5302 100644
+--- a/Documentation/filesystems/composefs.rst
++++ b/Documentation/filesystems/composefs.rst
+@@ -58,7 +58,7 @@ and validation of the backing files.
+=20
+ For descriptor validation, the idea is that you enable fs-verity on
+ the descriptor file which seals it from changes that would affect the
+-directory metadata. Additionally you can pass a `digest` mount option,
++directory metadata. Additionally you can pass a "digest" mount option,
+ which composefs verifies against the descriptor fs-verity
+ measure. Such a mount option could be encoded in a trusted source
+ (like a signed kernel command line) and be used as a root of trust if
+@@ -125,7 +125,7 @@ verity_check=3D[0,1,2]
+=20
+ digest
+     A fs-verity sha256 digest that the descriptor file must match. If set,
+-    `verity_check` defaults to 2.
++    "verity_check" defaults to 2.
+=20
+=20
+ Filesystem format
+
+> +
+> +For file validation, the descriptor can contain digest for each
+> +backing file, and you can enable fs-verity on the backing
+> +files. Composefs will validate the digest before using the backing
+> +files. This means any (accidental or malicious) modification of the
+> +basedir will be detected at the time the file is used.
+> +
+> +Expected use-cases
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Container Image Storage
+> +```````````````````````
+> +
+> +Typically a container image is stored as a set of "layer"
+> +directories. merged into one mount by using overlayfs.  The lower
+> +layers are read-only image content and the upper layer is the
+> +writable state of a running container. Multiple uses of the same
+> +layer can be shared this way, but it is hard to share individual
+> +files between unrelated layers.
+> +
+> +Using composefs, we can instead use a shared, content-addressed
+> +store for all the images in the system, and use a composefs image
+> +for the read-only image content of each image, pointing into the
+> +shared store. Then for a running container we use an overlayfs
+> +with the lower dir being the composefs and the upper dir being
+> +the writable state.
+> +
+> +
+> +Ostree root filesystem validation
+> +`````````````````````````````````
+> +
+> +Ostree uses a content-addressed on-disk store for file content,
+> +allowing efficient updates and sharing of content. However to actually
+> +use these as a root filesystem it needs to create a real
+> +"chroot-style" directory, containing hard links into the store. The
+> +store itself is validated when created, but once the hard-link
+> +directory is created, nothing validates the directory structure of
+> +that.
+> +
+> +Instead of a chroot we can we can use composefs. We create a composefs
+> +image pointing into the object store, enable fs-verity for everything
+> +and encode the fs-verity digest of the descriptor in the
+> +kernel-command line. This will allow booting a trusted system where
+> +all directory metadata and file content is validated lazily at use.
+> +
+> +
+> +Mount options
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +basedir
+> +    A colon separated list of directories to use as a base when resolving
+> +    relative content paths.
+> +
+> +verity_check=3D[0,1,2]
+> +    When to verify backing file fs-verity: 0 =3D=3D never, 1 =3D=3D if s=
+pecified in
+> +    image, 2 =3D=3D always and require it in image.
+
+I think bullet lists should do the job for verity_check values:
+
+---- >8 ----
+diff --git a/Documentation/filesystems/composefs.rst b/Documentation/filesy=
+stems/composefs.rst
+index 306f0e2e22baf5..c96f9b99d72979 100644
+--- a/Documentation/filesystems/composefs.rst
++++ b/Documentation/filesystems/composefs.rst
+@@ -117,8 +117,11 @@ basedir
+     relative content paths.
+=20
+ verity_check=3D[0,1,2]
+-    When to verify backing file fs-verity: 0 =3D=3D never, 1 =3D=3D if spe=
+cified in
+-    image, 2 =3D=3D always and require it in image.
++    When to verify backing file fs-verity:
++
++    * 0: never
++    * 1: if specified in image
++    * 2: always and require it in image.
+=20
+ digest
+     A fs-verity sha256 digest that the descriptor file must match. If set,
+
+> +
+> +digest
+> +    A fs-verity sha256 digest that the descriptor file must match. If se=
+t,
+> +    `verity_check` defaults to 2.
+> +
+> +
+> +Filesystem format
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +The format of the descriptor is contains three sections: header,
+> +inodes and variable data. All data in the file is stored in
+> +little-endian form.
+> +
+> +The header starts at the beginning of the file and contains version,
+> +magic value, offsets to the variable data and the root inode nr.
+> +
+> +The inode section starts at a fixed location right after the
+> +header. It is a array of inode data, where for each inode there is
+> +first a variable length chunk and then a fixed size chunk. An inode nr
+> +is the offset in the inode data to the start of the fixed chunk.
+> +
+> +The fixed inode chunk starts with a flag that tells what parts of the
+> +inode are stored in the file (meaning it is only the maximal size that
+> +is fixed). After that the various inode attributes are serialized in
+> +order, such as mode, ownership, xattrs, and payload length. The
+> +payload length attribute gives the size of the variable chunk.
+> +
+> +The inode variable chunk contains different things depending on the
+> +file type.  For regular files it is the backing filename. For symlinks
+> +it is the symlink target. For directories it is a list of references to
+> +dentries, stored in chunks of maximum 4k. The dentry chunks themselves
+> +are stored in the variable data section.
+> +
+> +The variable data section is stored after the inode section, and you
+> +can find it from the offset in the header. It contains dentries and
+> +Xattrs data. The xattrs are referred to by offset and size in the
+> +xattr attribute in the inode data. Each xattr data can be used by many
+> +inodes in the filesystem. The variable data chunks are all smaller than
+> +a page (4K) and are padded to not span pages.
+> +
+> +Tools
+> +=3D=3D=3D=3D=3D
+> +
+> +Tools for composefs can be found at https://github.com/containers/compos=
+efs
+> +
+> +There is a mkcomposefs tool which can be used to create images on the
+> +CLI, and a library that applications can use to create composefs
+> +images.
+
+The rest can be slightly reworded:
+
+---- >8 ----
+diff --git a/Documentation/filesystems/composefs.rst b/Documentation/filesy=
+stems/composefs.rst
+index cc65945e3d5302..9bd5a6f4e5d676 100644
+--- a/Documentation/filesystems/composefs.rst
++++ b/Documentation/filesystems/composefs.rst
+@@ -59,16 +59,16 @@ and validation of the backing files.
+ For descriptor validation, the idea is that you enable fs-verity on
+ the descriptor file which seals it from changes that would affect the
+ directory metadata. Additionally you can pass a "digest" mount option,
+-which composefs verifies against the descriptor fs-verity
+-measure. Such a mount option could be encoded in a trusted source
+-(like a signed kernel command line) and be used as a root of trust if
+-using composefs for the root filesystem.
++which composefs verifies against the descriptor fs-verity measure. Such
++an option could be embedded in a trusted source (like a signed kernel
++command line) and be used as a root of trust if using composefs for the
++root filesystem.
+=20
+ For file validation, the descriptor can contain digest for each
+-backing file, and you can enable fs-verity on the backing
+-files. Composefs will validate the digest before using the backing
+-files. This means any (accidental or malicious) modification of the
+-basedir will be detected at the time the file is used.
++backing file, and you can enable fs-verity on them too. Composefs will
++validate the digest before using the backing files. This means any
++(accidental or malicious) modification of the basedir will be detected
++at the time the file is used.
+=20
+ Expected use-cases
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+@@ -76,19 +76,18 @@ Expected use-cases
+ Container Image Storage
+ ```````````````````````
+=20
+-Typically a container image is stored as a set of "layer"
+-directories. merged into one mount by using overlayfs.  The lower
+-layers are read-only image content and the upper layer is the
+-writable state of a running container. Multiple uses of the same
+-layer can be shared this way, but it is hard to share individual
+-files between unrelated layers.
++Typically a container image is stored as a set of "layer" directories,
++merged into one mount by using overlayfs.  The lower layers are
++read-only image and the upper layer is the writable directory of a
++running container. Multiple uses of the same layer can be shared this
++way, but it is hard to share individual files between unrelated layers.
+=20
+ Using composefs, we can instead use a shared, content-addressed
+-store for all the images in the system, and use a composefs image
+-for the read-only image content of each image, pointing into the
++store for all the images in the system, and use composefs
++for the read-only image of each container, pointing into the
+ shared store. Then for a running container we use an overlayfs
+ with the lower dir being the composefs and the upper dir being
+-the writable state.
++the writable directory.
+=20
+=20
+ Ostree root filesystem validation
+@@ -99,12 +98,12 @@ allowing efficient updates and sharing of content. Howe=
+ver to actually
+ use these as a root filesystem it needs to create a real
+ "chroot-style" directory, containing hard links into the store. The
+ store itself is validated when created, but once the hard-link
+-directory is created, nothing validates the directory structure of
+-that.
++directory is created, the directory structure is impossible to
++verify.
+=20
+-Instead of a chroot we can we can use composefs. We create a composefs
+-image pointing into the object store, enable fs-verity for everything
+-and encode the fs-verity digest of the descriptor in the
++Instead of a chroot we can use composefs. The composefs image pointing
++to the object store is created, then fs-verity is enabled for
++everything and the descriptor digest is encoded in the
+ kernel-command line. This will allow booting a trusted system where
+ all directory metadata and file content is validated lazily at use.
+=20
+@@ -119,9 +118,9 @@ basedir
+ verity_check=3D[0,1,2]
+     When to verify backing file fs-verity:
+=20
+-    * 0: never
+-    * 1: if specified in image
+-    * 2: always and require it in image.
++    * 0: never verify
++    * 1: if the digest is specified in the image
++    * 2: always verify the image (and requires verification).
+=20
+ digest
+     A fs-verity sha256 digest that the descriptor file must match. If set,
+@@ -147,7 +146,7 @@ The fixed inode chunk starts with a flag that tells wha=
+t parts of the
+ inode are stored in the file (meaning it is only the maximal size that
+ is fixed). After that the various inode attributes are serialized in
+ order, such as mode, ownership, xattrs, and payload length. The
+-payload length attribute gives the size of the variable chunk.
++latter attribute gives the size of the variable chunk.
+=20
+ The inode variable chunk contains different things depending on the
+ file type.  For regular files it is the backing filename. For symlinks
+=20
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--3PByOgCSIFD9ivr4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCY8IfdAAKCRD2uYlJVVFO
+o51qAQCB0PgDA0cD3NdbS0zuFtqaUYl07Qxv6h728IvLIjHBqQD/b2mpVxEZKL3W
+lcruSRLGsQq80T9axetF4h9UCGklZws=
+=thWP
+-----END PGP SIGNATURE-----
+
+--3PByOgCSIFD9ivr4--
