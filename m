@@ -2,31 +2,31 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B350266A788
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 01:34:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 025B266A79C
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 01:34:59 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231344AbjANAe2 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 13 Jan 2023 19:34:28 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34850 "EHLO
+        id S231448AbjANAez (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 13 Jan 2023 19:34:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34918 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230040AbjANAeZ (ORCPT
+        with ESMTP id S231305AbjANAe1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 13 Jan 2023 19:34:25 -0500
+        Fri, 13 Jan 2023 19:34:27 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1C20282F88;
-        Fri, 13 Jan 2023 16:34:24 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 996398B503;
+        Fri, 13 Jan 2023 16:34:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Sender:Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
         Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=CzX5TNn6oh8/8V1ep/+qFHA/PZO960nB4oCzG0Ioh0Y=; b=eeeTwrvd/zAeqsSVvWWa0CJ1o9
-        Id5NPecHtcqGVSSvzqzvauFzB/rMhxeEp6OjPkz0NIdhEpFZrtCDyvMqJ1vH399n8Bzp1T+UBSaeB
-        RHVFarvAgYVPUEgxiSQZ9YqtlU799K7DhtfXRo+iKsZmr+bkUrzfv/hvMYPhTP5y+uapMzgEbsdKR
-        xX9hLbJoIqL1d+fosURSBbzjUn3iyzdNXPeNdPjerQ2ecBGaz0wVHP5Vc3znbq9uD/iUbgPRGyx0h
-        +u4KL8wjyExPxMwp0V0aZNPGYgn48yh+A3dKBrm44iQy2y4KlF3vBSxc/KpgYU0wA/Fpp7dLk1Fxg
-        ZXlqQCbQ==;
+        bh=IWJAcTlsi8ryaxDVWH2nmdINNVfn/iAaGN3EvUk7iBg=; b=Mi22gS6oqSXUxRA13EGgc4HHnX
+        wNkKl8VX84iIEA+HoUigSGJt/l+lI9YkT4xw6705TcIpQ7E5XXNd7twIh+ckKu9FkUfVcxijCARzR
+        qbVix/oxCjaCbx1fmZ9TqrsR+x+4nz5ZYwMy9aslYiS/6qEHETxFL5ne2dmERvM55J4hKwPWKJc5N
+        63ofvf3XA2EZyaoaYUsIWyTs+tEdFytDNflZQ297SjjxCTIILiWfcPmsjgHsy0OZHqbbRTyrPp5Cl
+        xOTgUeo2zftx63wEntVhGL9kLPKEXjTSOMsnli/ql7JfEAQpU/tK1tqP7Lvh7gwSOmfzJq3lFx7/F
+        cQ4MdSlA==;
 Received: from mcgrof by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pGUUt-004twL-FW; Sat, 14 Jan 2023 00:34:11 +0000
+        id 1pGUUt-004twN-Gz; Sat, 14 Jan 2023 00:34:11 +0000
 From:   Luis Chamberlain <mcgrof@kernel.org>
 To:     hch@infradead.org, djwong@kernel.org, song@kernel.org,
         rafael@kernel.org, gregkh@linuxfoundation.org,
@@ -36,9 +36,9 @@ Cc:     mchehab@kernel.org, keescook@chromium.org, p.raghav@samsung.com,
         linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
         kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
         Luis Chamberlain <mcgrof@kernel.org>
-Subject: [RFC v3 13/24] nilfs2: replace kthread freezing with auto fs freezing
-Date:   Fri, 13 Jan 2023 16:33:58 -0800
-Message-Id: <20230114003409.1168311-14-mcgrof@kernel.org>
+Subject: [RFC v3 14/24] nfs: replace kthread freezing with auto fs freezing
+Date:   Fri, 13 Jan 2023 16:33:59 -0800
+Message-Id: <20230114003409.1168311-15-mcgrof@kernel.org>
 X-Mailer: git-send-email 2.37.1
 In-Reply-To: <20230114003409.1168311-1-mcgrof@kernel.org>
 References: <20230114003409.1168311-1-mcgrof@kernel.org>
@@ -69,7 +69,7 @@ it knows better than how the VFS handles it.
 The following Coccinelle rule was used as to remove the now superflous
 freezer calls:
 
-spatch --sp-file fs-freeze-cleanup.cocci --in-place --timeout 120 --dir fs/nilfs2 --jobs 12 --use-gitgrep
+spatch --sp-file fs-freeze-cleanup.cocci --in-place --timeout 120 --dir fs/nfs --jobs 12 --use-gitgrep
 
 @ remove_set_freezable @
 expression time;
@@ -164,79 +164,54 @@ struct file_system_type fs_type = {
 Generated-by: Coccinelle SmPL
 Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 ---
- fs/nilfs2/segment.c | 48 +++++++++++++++++++--------------------------
- 1 file changed, 20 insertions(+), 28 deletions(-)
+ fs/nfs/callback.c   | 4 ----
+ fs/nfs/fs_context.c | 4 ++--
+ 2 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/fs/nilfs2/segment.c b/fs/nilfs2/segment.c
-index f7a14ed12a66..1c48aa9c7f56 100644
---- a/fs/nilfs2/segment.c
-+++ b/fs/nilfs2/segment.c
-@@ -2541,6 +2541,8 @@ static int nilfs_segctor_thread(void *arg)
- 	struct nilfs_sc_info *sci = (struct nilfs_sc_info *)arg;
- 	struct the_nilfs *nilfs = sci->sc_super->s_fs_info;
- 	int timeout = 0;
-+	DEFINE_WAIT(wait);
-+	int should_sleep = 1;
+diff --git a/fs/nfs/callback.c b/fs/nfs/callback.c
+index 456af7d230cf..f5ba4d6bf2a7 100644
+--- a/fs/nfs/callback.c
++++ b/fs/nfs/callback.c
+@@ -77,8 +77,6 @@ nfs4_callback_svc(void *vrqstp)
+ 	int err;
+ 	struct svc_rqst *rqstp = vrqstp;
  
- 	sci->sc_timer_task = current;
- 
-@@ -2572,38 +2574,28 @@ static int nilfs_segctor_thread(void *arg)
- 		timeout = 0;
- 	}
- 
-+	prepare_to_wait(&sci->sc_wait_daemon, &wait,
-+			TASK_INTERRUPTIBLE);
- 
--	if (freezing(current)) {
-+	if (sci->sc_seq_request != sci->sc_seq_done)
-+		should_sleep = 0;
-+	else if (sci->sc_flush_request)
-+		should_sleep = 0;
-+	else if (sci->sc_state & NILFS_SEGCTOR_COMMIT)
-+		should_sleep = time_before(jiffies,
-+				sci->sc_timer.expires);
-+
-+	if (should_sleep) {
- 		spin_unlock(&sci->sc_state_lock);
--		try_to_freeze();
-+		schedule();
- 		spin_lock(&sci->sc_state_lock);
--	} else {
--		DEFINE_WAIT(wait);
--		int should_sleep = 1;
+-	set_freezable();
 -
--		prepare_to_wait(&sci->sc_wait_daemon, &wait,
--				TASK_INTERRUPTIBLE);
--
--		if (sci->sc_seq_request != sci->sc_seq_done)
--			should_sleep = 0;
--		else if (sci->sc_flush_request)
--			should_sleep = 0;
--		else if (sci->sc_state & NILFS_SEGCTOR_COMMIT)
--			should_sleep = time_before(jiffies,
--					sci->sc_timer.expires);
--
--		if (should_sleep) {
--			spin_unlock(&sci->sc_state_lock);
--			schedule();
--			spin_lock(&sci->sc_state_lock);
--		}
--		finish_wait(&sci->sc_wait_daemon, &wait);
--		timeout = ((sci->sc_state & NILFS_SEGCTOR_COMMIT) &&
--			   time_after_eq(jiffies, sci->sc_timer.expires));
--
--		if (nilfs_sb_dirty(nilfs) && nilfs_sb_need_update(nilfs))
--			set_nilfs_discontinued(nilfs);
- 	}
-+	finish_wait(&sci->sc_wait_daemon, &wait);
-+	timeout = ((sci->sc_state & NILFS_SEGCTOR_COMMIT) &&
-+		   time_after_eq(jiffies, sci->sc_timer.expires));
-+
-+	if (nilfs_sb_dirty(nilfs) && nilfs_sb_need_update(nilfs))
-+		set_nilfs_discontinued(nilfs);
- 	goto loop;
+ 	while (!kthread_freezable_should_stop(NULL)) {
  
-  end_thread:
+ 		if (signal_pending(current))
+@@ -109,8 +107,6 @@ nfs41_callback_svc(void *vrqstp)
+ 	int error;
+ 	DEFINE_WAIT(wq);
+ 
+-	set_freezable();
+-
+ 	while (!kthread_freezable_should_stop(NULL)) {
+ 
+ 		if (signal_pending(current))
+diff --git a/fs/nfs/fs_context.c b/fs/nfs/fs_context.c
+index 9bcd53d5c7d4..04753962db9a 100644
+--- a/fs/nfs/fs_context.c
++++ b/fs/nfs/fs_context.c
+@@ -1583,7 +1583,7 @@ struct file_system_type nfs_fs_type = {
+ 	.init_fs_context	= nfs_init_fs_context,
+ 	.parameters		= nfs_fs_parameters,
+ 	.kill_sb		= nfs_kill_super,
+-	.fs_flags		= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
++	.fs_flags		= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA | FS_AUTOFREEZE,
+ };
+ MODULE_ALIAS_FS("nfs");
+ EXPORT_SYMBOL_GPL(nfs_fs_type);
+@@ -1595,7 +1595,7 @@ struct file_system_type nfs4_fs_type = {
+ 	.init_fs_context	= nfs_init_fs_context,
+ 	.parameters		= nfs_fs_parameters,
+ 	.kill_sb		= nfs_kill_super,
+-	.fs_flags		= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA,
++	.fs_flags		= FS_RENAME_DOES_D_MOVE|FS_BINARY_MOUNTDATA | FS_AUTOFREEZE,
+ };
+ MODULE_ALIAS_FS("nfs4");
+ MODULE_ALIAS("nfs4");
 -- 
 2.35.1
 
