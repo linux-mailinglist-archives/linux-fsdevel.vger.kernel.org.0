@@ -2,78 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A4AC266AB2F
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 12:29:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8C86B66AB49
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 14 Jan 2023 13:09:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229808AbjANL3M (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 14 Jan 2023 06:29:12 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53482 "EHLO
+        id S229653AbjANMJ1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 14 Jan 2023 07:09:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58564 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229635AbjANL3K (ORCPT
+        with ESMTP id S229676AbjANMJZ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 14 Jan 2023 06:29:10 -0500
-Received: from mail-lj1-x22d.google.com (mail-lj1-x22d.google.com [IPv6:2a00:1450:4864:20::22d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9822176AD;
-        Sat, 14 Jan 2023 03:29:09 -0800 (PST)
-Received: by mail-lj1-x22d.google.com with SMTP id y19so3687208ljq.7;
-        Sat, 14 Jan 2023 03:29:09 -0800 (PST)
+        Sat, 14 Jan 2023 07:09:25 -0500
+Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5466E448A
+        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Jan 2023 04:09:22 -0800 (PST)
+Received: by mail-pj1-x102f.google.com with SMTP id bj3so21700602pjb.0
+        for <linux-fsdevel@vger.kernel.org>; Sat, 14 Jan 2023 04:09:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=J454pkV9x088Xk1LCtd7Klprj/qr0Ti1c3F79rejMvw=;
-        b=a+9Pq8xgGNN7sQ06zWv9LJoR0UbAKyfbeGHm5UwJ5hari93Mm5bs07UMpUA/dJFXKl
-         b9Delo3UYvChotwZibmVoSpUpwjR0ykLPn/FZIILUxG0S/Jquv2rThKFVdB8++LYkjXL
-         jmEYA2m94sFh2JOVAc2+S4aMyWK+9mMi0VkmQfcjXac7gIc27Qs6YRYBicitHqaSzDhP
-         qix7FBcITeRhB1a7eDYnpZuh9OGD0Q3PaiHSyqZdOH8uzPkS3EQgsi1Ray99ud1PFhnm
-         nNtQDPaHCtSJvie5MNJGGVVb22b8MpHDSWw+KrEISI9D3Rc8ra0wNmJTydpsebjE+4Ts
-         tPhQ==
+        d=dilger-ca.20210112.gappssmtp.com; s=20210112;
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=R+o3aaAuolf2/uRomR6WtHUNv1uFhVkDXFlfeWDDe0E=;
+        b=XemS6r+6V5QQxqi/VYBPu+Lkm/RatFiqztHVe/R15ZAk7LT8pwa76EPm5b+Z2kZTgT
+         uD1qgKoMk00wAGyZoMZ/6n8G9FPxV4Sk6UztEG19nU8cMqhywx51wzrDMhvnICL2sCjB
+         qw9yjagJV0sLJJsw3jGFCNk2G9IPiTLfbYi8ZF2j2QclHATEg0M+clTiG9SiHe7tjRNd
+         CjM3afg0SfE316bT/q0VJoVjyV6bc/y8cvjksB3/JJ3bwIQt2E2Zm5+hhvEmUgKecYy8
+         rWzBafdXsOVoFi36U1BWtVkivfZtoEN3nXdzSDa8PFkUndYxvKzstjDui5P9+Yse5ylw
+         rrQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J454pkV9x088Xk1LCtd7Klprj/qr0Ti1c3F79rejMvw=;
-        b=HrjMuWquA0R0rvSbGdKVgjupT73QNlaC4A3azHEo8zUFlAqyzRY3T/Z82ZrsTNEn8K
-         SZy08pd3SDjRL0vYxAv78P3PqxzvWvBCAB5zWNrY7GtvfNWJ2fvZ3/eiWGe41Kg6Bl/G
-         Aqt0GXIlXam/HUJRwfVDtk9+cjKfPYPUr7algIuTRvheuSXjSJeGHpcJYvsRs3fduiU+
-         X37kDsBLCz1WwIoiR7iGxRZ6LsdpDN+pc9jJ4InwiqIi7PKF5eQq47sCh7nd7+cs5Fga
-         eT/FXHrEhi7eCVaiT7iEpb0GnRMqeGUHqbPc7AuhIeoZUQixJJ3Cq5xv8Q0tEXAl7sfy
-         KFBg==
-X-Gm-Message-State: AFqh2koJ087s+xoURFDPVfgmZQ0BGQ62U0fUFCgU8iSYZTyxs434ixjo
-        6VXt/9vqBRdJ1bYR/1z94Iuqz5ug/iOU8KRs3qc=
-X-Google-Smtp-Source: AMrXdXt9P26wU2KaxUPQ7u+dDkaFi/gJPVRtrNjzK7YwvRjaDioXiMHSHfoocsW+UWn//GyhRRT335zTz6XSa5pIu+o=
-X-Received: by 2002:a05:651c:179e:b0:27f:eef3:921d with SMTP id
- bn30-20020a05651c179e00b0027feef3921dmr4234301ljb.515.1673695747727; Sat, 14
- Jan 2023 03:29:07 -0800 (PST)
-MIME-Version: 1.0
-References: <CAMj1kXEqbMEcrKYzz2-huLPMnotPoxFY8adyH=Xb4Ex8o98x-w@mail.gmail.com>
- <db6937a1-e817-2d7b-0062-9aff012bb3e8@physik.fu-berlin.de>
- <CAMj1kXEtTuaNFiKWn3cJngR0J2vr0G07HR6+5PBodtr1b7vNxg@mail.gmail.com> <CA+icZUXEz7ZxmkV5bw5O2ORjF4bwDXBMyj3Wk_HST98gMPt97g@mail.gmail.com>
-In-Reply-To: <CA+icZUXEz7ZxmkV5bw5O2ORjF4bwDXBMyj3Wk_HST98gMPt97g@mail.gmail.com>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Sat, 14 Jan 2023 12:28:30 +0100
-Message-ID: <CA+icZUUhY7-F5Bpw-jxofhw4nMP3nzyfpt9huzeSWwUguguNsA@mail.gmail.com>
-Subject: Re: ia64 removal (was: Re: lockref scalability on x86-64 vs cpu_relax)
-To:     Ard Biesheuvel <ardb@kernel.org>
-Cc:     John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Torvalds, Linus" <torvalds@linux-foundation.org>,
-        Mateusz Guzik <mjguzik@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        Jan Glauber <jan.glauber@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        h=to:in-reply-to:cc:references:message-id:date:subject:mime-version
+         :from:content-transfer-encoding:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R+o3aaAuolf2/uRomR6WtHUNv1uFhVkDXFlfeWDDe0E=;
+        b=aaH8oD0UQmEnG9jZosomBeptGrVyL7rwyYAwRZTfgt9K+81MGjZtde1TtmEZsx8n44
+         zkUcgHgbJoOLC+5bYOz9Vfy6c6qZi4M+N2g/r99kjVUNEdYcY6vsCYRXWjgGJTEHhJtE
+         nEVPw46OUaBlg2BqZNBhu1neesXNiKTI1UR4SJmvd12ZgKYUtuabQJZY91+4iLKpf9wH
+         PUg7P52LUcdwrmL6tK9ehHu6wbCk2PrJaTPb+/nWhlHrhV6Gv0oumTqdyhG6EKwmJkAj
+         crt8kH/QaZbJSIljVBCNqoCCRaryq+9+e/FAiuQzvbgqxxTlORzHIAx9/1rOhTFIQeJM
+         5fOQ==
+X-Gm-Message-State: AFqh2ko+oJIF8OUwXP/hXt1EZyEXpGaEYQt7MwdPwTbXXIdnbMRHx3aY
+        sSHVPqzHTN+IqesqktI25dd0eg==
+X-Google-Smtp-Source: AMrXdXtK5wXM0KcfuPhTmm7EQ3X4jDr1pU5000kNB7pAPFaSlyJ4FnFnuAIrM36BhM9z2aR9TWyBcQ==
+X-Received: by 2002:a17:90b:1958:b0:227:1d0e:3696 with SMTP id nk24-20020a17090b195800b002271d0e3696mr20742421pjb.11.1673698161833;
+        Sat, 14 Jan 2023 04:09:21 -0800 (PST)
+Received: from smtpclient.apple (S01061cabc081bf83.cg.shawcable.net. [70.77.221.9])
+        by smtp.gmail.com with ESMTPSA id j14-20020a17090a318e00b00226d0165d97sm15434011pjb.22.2023.01.14.04.09.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 14 Jan 2023 04:09:21 -0800 (PST)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+From:   Andreas Dilger <adilger@dilger.ca>
+Mime-Version: 1.0 (1.0)
+Subject: Re: Should we orphan JFS?
+Date:   Sat, 14 Jan 2023 05:09:10 -0700
+Message-Id: <393B8E4A-8C9A-4941-9AFF-FAC9C0D0B2DA@dilger.ca>
+References: <f99e5221-4493-dba3-3e80-e85ada6b3545@oracle.com>
+Cc:     Harald Arnesen <harald@skogtun.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        jfs-discussion@lists.sourceforge.net,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <f99e5221-4493-dba3-3e80-e85ada6b3545@oracle.com>
+To:     Dave Kleikamp <dave.kleikamp@oracle.com>
+X-Mailer: iPhone Mail (20B101)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,18 +74,35 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-[ ... ]
+On Jan 13, 2023, at 08:15, Dave Kleikamp <dave.kleikamp@oracle.com> wrote:
+>=20
+> =EF=BB=BFOn 1/13/23 7:08AM, Harald Arnesen wrote:
+>> Christoph Hellwig [13/01/2023 06.42]:
+>>> Hi all,
+>>>=20
+>>> A while ago we've deprecated reiserfs and scheduled it for removal.
+>>> Looking into the hairy metapage code in JFS I wonder if we should do
+>>> the same.  While JFS isn't anywhere as complicated as reiserfs, it's
+>>> also way less used and never made it to be the default file system
+>>> in any major distribution.  It's also looking pretty horrible in
+>>> xfstests, and with all the ongoing folio work and hopeful eventual
+>>> phaseout of buffer head based I/O path it's going to be a bit of a drag.=
 
-> Best is to ask the Debian release-team or (if there exist) maintainers
-> or responsibles for the IA64 port - which is an ***unofficial*** port.
->
+>>> (Which also can be said for many other file system, most of them being
+>>> a bit simpler, though).
+>> The Norwegian ISP/TV provider used to have IPTV-boxes which had JFS on th=
+e hard disk that was used to record TV programmes.
+>> However, I don't think these boxes are used anymore.
+>=20
+> I know at one time it was one of the recommended filesystems for MythTV. I=
+ don't know of any other major users of JFS. I don't know if there is anyone=
+ familiar with the MythTV community that could weigh in.
+>=20
+> Obviously, I haven't put much effort into JFS in a long time and I would n=
+ot miss it if it were to be removed.
 
-Here we go:
+I've used MythTV for many years but haven't seen any particular recommendati=
+ons for JFS there. Mainly ext4 and XFS are the common filesystems to follow t=
+he main distros (Ubuntu in particular).=20
 
-https://lists.debian.org/debian-ia64/
-
-Posting address: debian-ia64@lists.debian.org
-
-Found via <https://lists.debian.org/completeindex.html>
-
--Sedat-
+Cheers, Andreas=
