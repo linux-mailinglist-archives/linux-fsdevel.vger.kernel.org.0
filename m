@@ -2,129 +2,160 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 539DE66B0D9
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Jan 2023 13:05:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0B01F66B1A5
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 15 Jan 2023 15:49:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229739AbjAOMFA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Jan 2023 07:05:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43904 "EHLO
+        id S231327AbjAOOtR (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 15 Jan 2023 09:49:17 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43932 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230392AbjAOME6 (ORCPT
+        with ESMTP id S230322AbjAOOtM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Jan 2023 07:04:58 -0500
-Received: from mail-lf1-x136.google.com (mail-lf1-x136.google.com [IPv6:2a00:1450:4864:20::136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7C67DCDD5;
-        Sun, 15 Jan 2023 04:04:57 -0800 (PST)
-Received: by mail-lf1-x136.google.com with SMTP id g18so6335752lfh.0;
-        Sun, 15 Jan 2023 04:04:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=71uR/HEov5DHYjQr21uUwUAdHQnBZ2QO6kQLmE+g0jc=;
-        b=pydXXibcbCfrT9nF/qicQk4EV/JNOxmm03zN03F+z/B1/ZmEEBAQdVF1nlM8iCNi4t
-         e38ZvFkOxNHKr67yXbQhvV9QIDM66Vfxlgon9Rx1EhBLX5BRyIbkHxB0RowNWOSas4ry
-         bi5Onq16Fvx0NSlCMXL0qQv3oXgm0i48GEUS1fjGxjA0K3WcX4ce7A8FP9ecc2zNg6TE
-         B7SqMbr/Ojxp8cUse+xC1beu3taSEi2TmtL3tMOKDzngwQF0Fgh/GUl48RnTi/wOFdQ2
-         h/0p3ZDmCh78wSLi4KbqxGJzNG3+xg0V/pesZNiQven6V2/epFsn+vQZdOc/cp36FL4l
-         QXJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=71uR/HEov5DHYjQr21uUwUAdHQnBZ2QO6kQLmE+g0jc=;
-        b=N4f3hLNhV+3aot+oXLkTHcSAKX99Ys1K+ni4ZkPxbYBpIuM0f0G+nMmrdKYLNvNPfL
-         vi0M8oxCLapzbejyhw47sVNKd07uhh6DtdbPaRXoLu68A0O7DsmQDGhai75LoU0I9AEm
-         Oeq+9i20s0t+fEklPb/PM43XYhWmXEocl3XNAGVKotK2LnB4JEC/opd4KFo0SDYOSTWG
-         xMizHIBkgRUVw95K7PUtYtRRapv+j9pSujWhBOpNWnHsy63SamZCimAegJmlbmZkJUcE
-         /UlHd+oHfn5VsNG5RzYTfOSQzW2KCCtk9vNjlT64jcwgUsicdq9JxXlKf5zeOPR1Sa9z
-         y6EQ==
-X-Gm-Message-State: AFqh2krB5FvLqkqNkK5s/EHgRQR+upCqHEISx87YAClOZy5paqmKpOyI
-        zt+zNQa/cwkxH+gZSYk1LfIWAAggB2FDkls65A8=
-X-Google-Smtp-Source: AMrXdXuZiMMaI6GQr60G7R1W1fg8EVNZ3MW70Kcq0hYkEwHQj7d791HP/UVwtN2jDqJDim8CfbzLgz071fchF4CvjZM=
-X-Received: by 2002:a05:6512:12c8:b0:4cc:98fe:1917 with SMTP id
- p8-20020a05651212c800b004cc98fe1917mr785704lfg.650.1673784295630; Sun, 15 Jan
- 2023 04:04:55 -0800 (PST)
+        Sun, 15 Jan 2023 09:49:12 -0500
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6304F10401;
+        Sun, 15 Jan 2023 06:49:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+        s=s201512; t=1673794143;
+        bh=ndxiOKIjgMog/hMr4F9xvx2c1YwIDASPYXvZJKXmyfg=;
+        h=From:To:Cc:Subject:Date;
+        b=MjZRB76581YOWXPquSibalgaepyv0r2leB0d7VhYYoeFMwA2uS6oRWR3Us4KZAErm
+         8l/b53y95jRNe1v2J1+1C7qeAuVQ0Emn4OGdc9omJePDkp1MY9c+aO/QLVUALiECsT
+         dyxvHllwuPv5kYhyo2G3XjhR2/k4Dih37QlUf7eE=
+Received: from localhost.localdomain ([119.4.52.193])
+        by newxmesmtplogicsvrsza10-0.qq.com (NewEsmtp) with SMTP
+        id C41B8881; Sun, 15 Jan 2023 22:49:01 +0800
+X-QQ-mid: xmsmtpt1673794141t4gkux1a8
+Message-ID: <tencent_B0E8F40B6620BFE2E79CAA06EAADA085C907@qq.com>
+X-QQ-XMAILINFO: OKkKo7I1HxIeJ98xPC2ML3gxFdU9GLYGLIJpFY6vbaR9HG+2YTSlQeNnZX6DLb
+         ypj1mQKa+3bunvAFHycNbTWFcJb0vtW3ODdtiQM0ThhY7UrnEJzPbdQkilLP8AElJnRcVvc51Xvf
+         qgeSoeX0ICRgnlTSRHWovj/9Tjx8gCPWaXWEaWGOmzDSlzmPD7uj2TaZ9uvFdcJwZJV8UBauT916
+         i7o2j3OKzl179IDiXs2eAZc53Zs3oUt56uURkOcb3Wlo1kMDW11UndPJ2tbhEijNuSmPV/LB5mpx
+         XFmZI5xNGGu+jLOLL2m1yckbBVXcFvJhcqbZxbQqwXqDnUPxo4p5f20oEBBA9R/giO3ZIjjKHiCT
+         afbES7PnVCXwnhfFdJdRVgOpQ8cCRh5bSkZUwqP/oGlo/xwzI4vCUB9bWM3QSaxtph+M1LwSIjr8
+         tLTNNICrMXgNr1U78uIrn14M2oCczfigG2QReV7tlIv3KqDQTV7eKxVyP5CjZRqSTRnYEkiiCgJG
+         TPwOw33K3gw95A1LnJ54SwH2apzf/vTgFX9jVjMIbV3ESw8WLj9Nx+aAwb2eY3/MNL0kLjzn/csr
+         iykufJr1GFnA0OkaQ9kaUJFNz1EYS7xCVvoh421urNAH2kTuD9O0Q+Nu9x2t7B/0r1AX/82900ik
+         Yr7ebZgOfdsSkloGnYl8EF6gnxhGEpwr59/+IZkFtylaChozbV+WoeTYumL/dbcnSxGcqRmECM/5
+         QfYhWthFXTNSf3XETAAR2n2TXBrOPulGyFoOchhhf4rzMIqH6dcpOV5TdG+hTzOLFqAzGLHslKN5
+         m8jOVLlHr7lENggsYUgkxVDcLiCRP6m9vt0kw1Lrl4CdZUmGAFeQaYagmEvXOG5SCsL22D6bUFmP
+         IjSWAwK3BJbsK6C+dJsWybDE1Bh+lGLKmFSWL4KjREkX7wEsfBTQXoRoIYobRb4gG8U1UDt55XYA
+         1OPwcawgSUdmE23hA7Q2R2vw3scoq7
+From:   wenyang.linux@foxmail.com
+To:     Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     Wen Yang <wenyang.linux@foxmail.com>,
+        kernel test robot <lkp@intel.com>,
+        Dan Carpenter <error27@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH v2] eventfd: use a generic helper instead of an open coded wait_event
+Date:   Sun, 15 Jan 2023 22:48:29 +0800
+X-OQ-MSGID: <20230115144829.9786-1-wenyang.linux@foxmail.com>
+X-Mailer: git-send-email 2.25.1
 MIME-Version: 1.0
-References: <CAMj1kXEqbMEcrKYzz2-huLPMnotPoxFY8adyH=Xb4Ex8o98x-w@mail.gmail.com>
- <db6937a1-e817-2d7b-0062-9aff012bb3e8@physik.fu-berlin.de>
- <CAMj1kXEtTuaNFiKWn3cJngR0J2vr0G07HR6+5PBodtr1b7vNxg@mail.gmail.com>
- <CA+icZUXEz7ZxmkV5bw5O2ORjF4bwDXBMyj3Wk_HST98gMPt97g@mail.gmail.com>
- <CA+icZUUhY7-F5Bpw-jxofhw4nMP3nzyfpt9huzeSWwUguguNsA@mail.gmail.com> <Y8NIYSMqAk7BhSv5@casper.infradead.org>
-In-Reply-To: <Y8NIYSMqAk7BhSv5@casper.infradead.org>
-Reply-To: sedat.dilek@gmail.com
-From:   Sedat Dilek <sedat.dilek@gmail.com>
-Date:   Sun, 15 Jan 2023 13:04:18 +0100
-Message-ID: <CA+icZUV6usk0KOsK=xQSVp0TQmrsx_ELkc3tWjCBFFnUjAO_Vw@mail.gmail.com>
-Subject: Re: ia64 removal (was: Re: lockref scalability on x86-64 vs cpu_relax)
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     Ard Biesheuvel <ardb@kernel.org>,
-        John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "Torvalds, Linus" <torvalds@linux-foundation.org>,
-        Mateusz Guzik <mjguzik@gmail.com>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
-        Jan Glauber <jan.glauber@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=0.8 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+        HELO_DYNAMIC_IPADDR,RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,RDNS_DYNAMIC,
+        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Jan 15, 2023 at 1:27 AM Matthew Wilcox <willy@infradead.org> wrote:
->
-> On Sat, Jan 14, 2023 at 12:28:30PM +0100, Sedat Dilek wrote:
-> > [ ... ]
-> >
-> > > Best is to ask the Debian release-team or (if there exist) maintainers
-> > > or responsibles for the IA64 port - which is an ***unofficial*** port.
-> > >
-> >
-> > Here we go:
-> >
-> > https://lists.debian.org/debian-ia64/
-> >
-> > Posting address: debian-ia64@lists.debian.org
-> >
-> > Found via <https://lists.debian.org/completeindex.html>
->
-> More useful perhaps is to look at https://popcon.debian.org/
->
-> There are three machines reporting popcon results.  It's dead.
+From: Wen Yang <wenyang.linux@foxmail.com>
 
-Exactly, Debian Popularity Contest was what I was looking for yesterday.
+Use wait_event_interruptible_locked_irq() in the eventfd_{write,read} to
+avoid the longer, open coded equivalent.
 
-Thanks Matthew.
+Signed-off-by: Wen Yang <wenyang.linux@foxmail.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: kernel test robot <lkp@intel.com>
+Cc: Dan Carpenter <error27@gmail.com>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+v2:
+- fix smatch warnings: eventfd_read() warn: inconsistent returns '&ctx->wqh.lock'.
 
-[1] says in Inst (204701):
+ fs/eventfd.c | 41 +++++++----------------------------------
+ 1 file changed, 7 insertions(+), 34 deletions(-)
 
-Name                              || Number  || %
-==================================
-binutils-x86-64-linux-gnu || 101548  || 49.61%
-binutils-ia64-linux-gnu     ||          11  || 0.01%
+diff --git a/fs/eventfd.c b/fs/eventfd.c
+index 249ca6c0b784..c5bda3df4a28 100644
+--- a/fs/eventfd.c
++++ b/fs/eventfd.c
+@@ -228,7 +228,6 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
+ 	struct file *file = iocb->ki_filp;
+ 	struct eventfd_ctx *ctx = file->private_data;
+ 	__u64 ucnt = 0;
+-	DECLARE_WAITQUEUE(wait, current);
+ 
+ 	if (iov_iter_count(to) < sizeof(ucnt))
+ 		return -EINVAL;
+@@ -239,23 +238,11 @@ static ssize_t eventfd_read(struct kiocb *iocb, struct iov_iter *to)
+ 			spin_unlock_irq(&ctx->wqh.lock);
+ 			return -EAGAIN;
+ 		}
+-		__add_wait_queue(&ctx->wqh, &wait);
+-		for (;;) {
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			if (ctx->count)
+-				break;
+-			if (signal_pending(current)) {
+-				__remove_wait_queue(&ctx->wqh, &wait);
+-				__set_current_state(TASK_RUNNING);
+-				spin_unlock_irq(&ctx->wqh.lock);
+-				return -ERESTARTSYS;
+-			}
++
++		if (wait_event_interruptible_locked_irq(ctx->wqh, ctx->count)) {
+ 			spin_unlock_irq(&ctx->wqh.lock);
+-			schedule();
+-			spin_lock_irq(&ctx->wqh.lock);
++			return -ERESTARTSYS;
+ 		}
+-		__remove_wait_queue(&ctx->wqh, &wait);
+-		__set_current_state(TASK_RUNNING);
+ 	}
+ 	eventfd_ctx_do_read(ctx, &ucnt);
+ 	current->in_eventfd = 1;
+@@ -275,7 +262,6 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
+ 	struct eventfd_ctx *ctx = file->private_data;
+ 	ssize_t res;
+ 	__u64 ucnt;
+-	DECLARE_WAITQUEUE(wait, current);
+ 
+ 	if (count < sizeof(ucnt))
+ 		return -EINVAL;
+@@ -288,23 +274,10 @@ static ssize_t eventfd_write(struct file *file, const char __user *buf, size_t c
+ 	if (ULLONG_MAX - ctx->count > ucnt)
+ 		res = sizeof(ucnt);
+ 	else if (!(file->f_flags & O_NONBLOCK)) {
+-		__add_wait_queue(&ctx->wqh, &wait);
+-		for (res = 0;;) {
+-			set_current_state(TASK_INTERRUPTIBLE);
+-			if (ULLONG_MAX - ctx->count > ucnt) {
+-				res = sizeof(ucnt);
+-				break;
+-			}
+-			if (signal_pending(current)) {
+-				res = -ERESTARTSYS;
+-				break;
+-			}
+-			spin_unlock_irq(&ctx->wqh.lock);
+-			schedule();
+-			spin_lock_irq(&ctx->wqh.lock);
+-		}
+-		__remove_wait_queue(&ctx->wqh, &wait);
+-		__set_current_state(TASK_RUNNING);
++		res = wait_event_interruptible_locked_irq(ctx->wqh,
++							  ULLONG_MAX - ctx->count > ucnt);
++		if (!res)
++			res = sizeof(ucnt);
+ 	}
+ 	if (likely(res > 0)) {
+ 		ctx->count += ucnt;
+-- 
+2.25.1
 
-HELP: Inst. is the number of people who installed this package (sum of
-the four categories below)
-
-There may be more popular packages than binutils.
-( binutils might tell something about development happening or not. )
-
-Anyway, I am not a popcon expert and never participated in Debian's
-Popularity Contest.
-
--Sedat-
-
-[1] https://qa.debian.org/popcon.php?package=binutils
