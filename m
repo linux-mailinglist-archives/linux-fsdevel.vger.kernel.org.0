@@ -2,60 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B11CC66D0BF
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 22:11:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 680B966D0DE
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 22:21:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233876AbjAPVK4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Jan 2023 16:10:56 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56660 "EHLO
+        id S233878AbjAPVVS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Jan 2023 16:21:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33006 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232797AbjAPVKv (ORCPT
+        with ESMTP id S232590AbjAPVVQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Jan 2023 16:10:51 -0500
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E8FCE1CAE3;
-        Mon, 16 Jan 2023 13:10:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=tbJsb8AeSzDDqs11g0B47Rm8rooKmyn09jFAV9Yw+ew=; b=rB+0N5Qm4HfhKlL4v0qpenMM2+
-        67T5hKcBYGeI52VwfnVNg1ANcL+Btun64b00eWQRlxmZqHICgaw6yjD2QraBkrEyE5NCsYYXJ/kuI
-        P7lqVK6Gnctzh4QCJnCQmUrItL79nOT6o3Iq0PgrCBkZnpKtVqA4ZGSp9sm3ujPCfEoY6d5sRY5Gk
-        huy65ZOZB5v4haRjmSJjvFFdQEopBgxt1svDD+Sq5KIjA0tuydi3etiMLlvWurqZAM66HtjVjrrvB
-        t/Ggk/bkpkxFvVf521svqtcQciC3n+kITFPVMQnP7SjNAqFy78HivTk1XV/+yt9jxJsv68av3TdUI
-        rL9Ch4Ug==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pHWkX-002Ejr-2z;
-        Mon, 16 Jan 2023 21:10:37 +0000
-Date:   Mon, 16 Jan 2023 21:10:37 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     maobibo <maobibo@loongson.cn>,
-        Hongchen Zhang <zhanghongchen@loongson.cn>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        David Howells <dhowells@redhat.com>,
-        Sedat Dilek <sedat.dilek@gmail.com>,
-        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
-        Luis Chamberlain <mcgrof@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] pipe: use __pipe_{lock,unlock} instead of spinlock
-Message-ID: <Y8W9TR5ifZmRADLB@ZenIV>
-References: <20230107012324.30698-1-zhanghongchen@loongson.cn>
- <9fcb3f80-cb55-9a72-0e74-03ace2408d21@loongson.cn>
- <4b140bd0-9b7f-50b5-9e3b-16d8afe52a50@loongson.cn>
- <Y8TUqcSO5VrbYfcM@casper.infradead.org>
+        Mon, 16 Jan 2023 16:21:16 -0500
+Received: from mail-ej1-x633.google.com (mail-ej1-x633.google.com [IPv6:2a00:1450:4864:20::633])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CEDE623858;
+        Mon, 16 Jan 2023 13:21:15 -0800 (PST)
+Received: by mail-ej1-x633.google.com with SMTP id v6so27887374ejg.6;
+        Mon, 16 Jan 2023 13:21:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1ZUr775SZEUdEUVQ50LyInwYmbWVTce14ME9QhXkqM8=;
+        b=EXi/YH/G3S3FVDSqo2MMGTcu9D/1ESejD72sgxsRBtmzrBOrZU5zlWQmckWD2bY+jr
+         FrCHz8y6RUp2GyS49S8LKfpMqLQKjSx25pz3bqFWCrefLFzuOWr5pbDibIyJMqLSgXFq
+         34SmGJHjFpHi4AA5yMRIyqIcEqTPOm2vHqx/oKv3QjWd73L22NArkdUr5YDSB7mkThtq
+         ISyULCs8LUoeFh24UHcBgZz4D4nAdCK11Olhk68L95Qe6pYyd6QJU95MBrVSReULPPiW
+         44Y+HmMWRYet6UVRWy2vlhlGuJkfxZ3YTS4tl+zzjrqHmTekATEzm6QOXDWY+TfVa4V/
+         BW+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1ZUr775SZEUdEUVQ50LyInwYmbWVTce14ME9QhXkqM8=;
+        b=RO7NF9eWpoxbELFNLxhcK05nbkLm6dzf7Bc0KdLRDgOScT6KRMl9fH+DSYvnP4xcb4
+         iG58ps4VEcZE4/e2QZILF0k2oBJml3I/60wMaq0E/Q0XKgTBMHuw05rh0/1+cY0IIL/3
+         Fass/r+7qmF/WblIi2jHlhwmsqzK734b6QRx7mklddbxMdJG7Cek5ktMz838Q//jOQ4l
+         bw8hm43Slul1glyK+PrTA8qTfdnv/x4EILFOh7dByF3gXwgy+6jlNalNtcdTotqoYAEq
+         ico0SAR9qtn53dryLTjrC0EP4zBcEWwf2Hnbrb5rkJUBW3+7zbzi0vOV14ypM0J3XyQ5
+         7r8g==
+X-Gm-Message-State: AFqh2krSzOl9rWnGTdEoMxM3xXbzbXadZiexGlHstBYpBy6gMfaXYdyX
+        i00xuWrLRNJooIGnmW5FFVE=
+X-Google-Smtp-Source: AMrXdXtRA6viwDNQpmAscLu1ZrTmv8E2nfZRNDx6J5yodEg7Yk/dH6aw081jjftiYPC2/kdo95W07w==
+X-Received: by 2002:a17:907:2bdf:b0:86e:38ae:8713 with SMTP id gv31-20020a1709072bdf00b0086e38ae8713mr431733ejc.51.1673904074355;
+        Mon, 16 Jan 2023 13:21:14 -0800 (PST)
+Received: from f.. (cst-prg-72-175.cust.vodafone.cz. [46.135.72.175])
+        by smtp.gmail.com with ESMTPSA id q18-20020a17090676d200b00857c2c29553sm7961721ejn.197.2023.01.16.13.21.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Jan 2023 13:21:13 -0800 (PST)
+From:   Mateusz Guzik <mjguzik@gmail.com>
+To:     viro@zeniv.linux.org.uk
+Cc:     serge@hallyn.com, torvalds@linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2 1/2] capability: add cap_isidentical
+Date:   Mon, 16 Jan 2023 22:21:04 +0100
+Message-Id: <20230116212105.1840362-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.34.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y8TUqcSO5VrbYfcM@casper.infradead.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,29 +71,33 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 04:38:01AM +0000, Matthew Wilcox wrote:
-> On Mon, Jan 16, 2023 at 11:16:13AM +0800, maobibo wrote:
-> > Hongchen,
-> > 
-> > I have a glance with this patch, it simply replaces with
-> > spinlock_irqsave with mutex lock. There may be performance
-> > improvement with two processes competing with pipe, however
-> > for N processes, there will be complex context switches
-> > and ipi interruptts.
-> > 
-> > Can you find some cases with more than 2 processes competing
-> > pipe, rather than only unixbench?
-> 
-> What real applications have pipes with more than 1 writer & 1 reader?
-> I'm OK with slowing down the weird cases if the common cases go faster.
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+Reviewed-by: Serge Hallyn <serge@hallyn.com>
+---
+ include/linux/capability.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-From commit 0ddad21d3e99c743a3aa473121dc5561679e26bb:
-    While this isn't a common occurrence in the traditional "use a pipe as a
-    data transport" case, where you typically only have a single reader and
-    a single writer process, there is one common special case: using a pipe
-    as a source of "locking tokens" rather than for data communication.
-    
-    In particular, the GNU make jobserver code ends up using a pipe as a way
-    to limit parallelism, where each job consumes a token by reading a byte
-    from the jobserver pipe, and releases the token by writing a byte back
-    to the pipe.
+diff --git a/include/linux/capability.h b/include/linux/capability.h
+index 65efb74c3585..736a973c677a 100644
+--- a/include/linux/capability.h
++++ b/include/linux/capability.h
+@@ -156,6 +156,16 @@ static inline bool cap_isclear(const kernel_cap_t a)
+ 	return true;
+ }
+ 
++static inline bool cap_isidentical(const kernel_cap_t a, const kernel_cap_t b)
++{
++	unsigned __capi;
++	CAP_FOR_EACH_U32(__capi) {
++		if (a.cap[__capi] != b.cap[__capi])
++			return false;
++	}
++	return true;
++}
++
+ /*
+  * Check if "a" is a subset of "set".
+  * return true if ALL of the capabilities in "a" are also in "set"
+-- 
+2.34.1
+
