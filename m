@@ -2,52 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D73A066D2D1
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 00:14:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 49C5366D2D6
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 00:14:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235381AbjAPXOL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Jan 2023 18:14:11 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49068 "EHLO
+        id S235397AbjAPXOd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Jan 2023 18:14:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48874 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235407AbjAPXNe (ORCPT
+        with ESMTP id S235298AbjAPXNv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Jan 2023 18:13:34 -0500
+        Mon, 16 Jan 2023 18:13:51 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E9D392ED79
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 15:10:11 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id ADF112F792
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 15:10:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673910611;
+        s=mimecast20190719; t=1673910616;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=EU0pOV6WBLH3AThSCCtWqw1z4qNF39IxpGe04ts73SI=;
-        b=KMOzHRIJJUWXBlyRWBI/M6tafkITKUDRyjvzdXGhznL4aBIYbHRP/+WCdb4MA9aTTbHWHZ
-        y870npR6fRffOMvDSkMlXyJoGzcAWt+LULKM/5GvfFBbFg/8GCXuuVFlOCgNI46H1jSj+L
-        gRGm52/wLSvCgTqwuCVjUZuOJGKdn74=
+        bh=jarh3eMoc9hZrrF4c4ACwfJRYikpAl6+h2t1z40q5Pk=;
+        b=VkqXekKWGlgvPHdiBnhSr1uO6KEveFBM2oxV/+dJjLq7rcsDU8WgiE/XuuYpnB2U5wi6Tk
+        sf4JQ2BaOXhi+/H6xFaALl9VlwxArqsb++EzLwnRDzly840lvZpi2v+6TEPeSYiMKEdFO3
+        U/2YIVeg8JDk2FTDC0eUWaQYniav/yQ=
 Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
  [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-185-RByxuKzUOKioXzZbR3mJUw-1; Mon, 16 Jan 2023 18:10:06 -0500
-X-MC-Unique: RByxuKzUOKioXzZbR3mJUw-1
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
+ us-mta-193-WvNlc5M6Mx-qoev1bLXoGA-1; Mon, 16 Jan 2023 18:10:13 -0500
+X-MC-Unique: WvNlc5M6Mx-qoev1bLXoGA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0ACC71C0432B;
-        Mon, 16 Jan 2023 23:10:06 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 1F0A42A59569;
+        Mon, 16 Jan 2023 23:10:13 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 57C3C1121319;
-        Mon, 16 Jan 2023 23:10:04 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B36BE53AA;
+        Mon, 16 Jan 2023 23:10:11 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v6 17/34] scsi: [RFC] Use netfs_extract_iter_to_sg()
+Subject: [PATCH v6 18/34] dio: Pin pages rather than ref'ing if appropriate
 From:   David Howells <dhowells@redhat.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Christoph Hellwig <hch@lst.de>, linux-scsi@vger.kernel.org,
+Cc:     Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         dhowells@redhat.com, Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
@@ -55,15 +57,15 @@ Cc:     "James E.J. Bottomley" <jejb@linux.ibm.com>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Mon, 16 Jan 2023 23:10:03 +0000
-Message-ID: <167391060380.2311931.5962669831677025433.stgit@warthog.procyon.org.uk>
+Date:   Mon, 16 Jan 2023 23:10:11 +0000
+Message-ID: <167391061117.2311931.16807283804788007499.stgit@warthog.procyon.org.uk>
 In-Reply-To: <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
 References: <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/1.5
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -74,156 +76,218 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use netfs_extract_iter_to_sg() to build a scatterlist from an iterator.
+Convert the generic direct-I/O code to use iov_iter_extract_pages() instead
+of iov_iter_get_pages().  This will pin pages or leave them unaltered
+rather than getting a ref on them as appropriate to the iterator.
 
-Note that if this fits, netfs_extract_iter_to_sg() should move to core
-code.
+The pages need to be pinned for DIO-read rather than having refs taken on
+them to prevent VM copy-on-write from malfunctioning during a concurrent
+fork() (the result of the I/O would otherwise end up only visible to the
+child process and not the parent).
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: James E.J. Bottomley <jejb@linux.ibm.com>
-cc: Martin K. Petersen <martin.petersen@oracle.com>
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Jan Kara <jack@suse.cz>
 cc: Christoph Hellwig <hch@lst.de>
-cc: linux-scsi@vger.kernel.org
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Logan Gunthorpe <logang@deltatee.com>
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-block@vger.kernel.org
 ---
 
- drivers/vhost/scsi.c |   78 +++++++++++++++-----------------------------------
- 1 file changed, 23 insertions(+), 55 deletions(-)
+ fs/direct-io.c |   57 ++++++++++++++++++++++++++++++++++++--------------------
+ 1 file changed, 37 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
-index 5d10837d19ec..af897cc4036d 100644
---- a/drivers/vhost/scsi.c
-+++ b/drivers/vhost/scsi.c
-@@ -34,6 +34,7 @@
- #include <linux/virtio_scsi.h>
- #include <linux/llist.h>
- #include <linux/bitmap.h>
-+#include <linux/netfs.h>
+diff --git a/fs/direct-io.c b/fs/direct-io.c
+index b1e26a706e31..b4d2c9f85a5b 100644
+--- a/fs/direct-io.c
++++ b/fs/direct-io.c
+@@ -142,9 +142,11 @@ struct dio {
  
- #include "vhost.h"
+ 	/*
+ 	 * pages[] (and any fields placed after it) are not zeroed out at
+-	 * allocation time.  Don't add new fields after pages[] unless you
+-	 * wish that they not be zeroed.
++	 * allocation time.  Don't add new fields after pages[] unless you wish
++	 * that they not be zeroed.  Pages may have a ref taken, a pin emplaced
++	 * or no retention measures.
+ 	 */
++	unsigned int cleanup_mode;	/* How pages should be cleaned up (0/FOLL_GET/PIN) */
+ 	union {
+ 		struct page *pages[DIO_PAGES];	/* page buffer */
+ 		struct work_struct complete_work;/* deferred AIO completion */
+@@ -167,12 +169,13 @@ static inline unsigned dio_pages_present(struct dio_submit *sdio)
+ static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
+ {
+ 	const enum req_op dio_op = dio->opf & REQ_OP_MASK;
++	unsigned int gup_flags =
++		op_is_write(dio_op) ? FOLL_SOURCE_BUF : FOLL_DEST_BUF;
++	struct page **pages = dio->pages;
+ 	ssize_t ret;
  
-@@ -75,6 +76,9 @@ struct vhost_scsi_cmd {
- 	u32 tvc_prot_sgl_count;
- 	/* Saved unpacked SCSI LUN for vhost_scsi_target_queue_cmd() */
- 	u32 tvc_lun;
-+	/* Cleanup modes for scatterlists */
-+	unsigned int tvc_cleanup_mode;
-+	unsigned int tvc_prot_cleanup_mode;
- 	/* Pointer to the SGL formatted memory from virtio-scsi */
- 	struct scatterlist *tvc_sgl;
- 	struct scatterlist *tvc_prot_sgl;
-@@ -339,11 +343,13 @@ static void vhost_scsi_release_cmd_res(struct se_cmd *se_cmd)
+-	ret = iov_iter_get_pages(sdio->iter, dio->pages, LONG_MAX, DIO_PAGES,
+-				 &sdio->from,
+-				 op_is_write(dio_op) ?
+-				 FOLL_SOURCE_BUF : FOLL_DEST_BUF);
++	ret = iov_iter_extract_pages(sdio->iter, &pages, LONG_MAX, DIO_PAGES,
++				     gup_flags, &sdio->from);
  
- 	if (tv_cmd->tvc_sgl_count) {
- 		for (i = 0; i < tv_cmd->tvc_sgl_count; i++)
--			put_page(sg_page(&tv_cmd->tvc_sgl[i]));
-+			page_put_unpin(sg_page(&tv_cmd->tvc_sgl[i]),
-+				       tv_cmd->tvc_cleanup_mode);
+ 	if (ret < 0 && sdio->blocks_available && dio_op == REQ_OP_WRITE) {
+ 		struct page *page = ZERO_PAGE(0);
+@@ -183,7 +186,7 @@ static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
+ 		 */
+ 		if (dio->page_errors == 0)
+ 			dio->page_errors = ret;
+-		get_page(page);
++		dio->cleanup_mode = 0;
+ 		dio->pages[0] = page;
+ 		sdio->head = 0;
+ 		sdio->tail = 1;
+@@ -197,6 +200,8 @@ static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
+ 		sdio->head = 0;
+ 		sdio->tail = (ret + PAGE_SIZE - 1) / PAGE_SIZE;
+ 		sdio->to = ((ret - 1) & (PAGE_SIZE - 1)) + 1;
++		dio->cleanup_mode =
++			iov_iter_extract_mode(sdio->iter, gup_flags);
+ 		return 0;
  	}
- 	if (tv_cmd->tvc_prot_sgl_count) {
- 		for (i = 0; i < tv_cmd->tvc_prot_sgl_count; i++)
--			put_page(sg_page(&tv_cmd->tvc_prot_sgl[i]));
-+			page_put_unpin(sg_page(&tv_cmd->tvc_prot_sgl[i]),
-+				       tv_cmd->tvc_prot_cleanup_mode);
- 	}
- 
- 	sbitmap_clear_bit(&svq->scsi_tags, se_cmd->map_tag);
-@@ -631,41 +637,6 @@ vhost_scsi_get_cmd(struct vhost_virtqueue *vq, struct vhost_scsi_tpg *tpg,
- 	return cmd;
+ 	return ret;	
+@@ -400,6 +405,10 @@ dio_bio_alloc(struct dio *dio, struct dio_submit *sdio,
+ 	 * we request a valid number of vectors.
+ 	 */
+ 	bio = bio_alloc(bdev, nr_vecs, dio->opf, GFP_KERNEL);
++	if (!(dio->cleanup_mode & FOLL_GET))
++		bio_clear_flag(bio, BIO_PAGE_REFFED);
++	if (dio->cleanup_mode & FOLL_PIN)
++		bio_set_flag(bio, BIO_PAGE_PINNED);
+ 	bio->bi_iter.bi_sector = first_sector;
+ 	if (dio->is_async)
+ 		bio->bi_end_io = dio_bio_end_aio;
+@@ -443,13 +452,18 @@ static inline void dio_bio_submit(struct dio *dio, struct dio_submit *sdio)
+ 	sdio->logical_offset_in_bio = 0;
  }
  
--/*
-- * Map a user memory range into a scatterlist
-- *
-- * Returns the number of scatterlist entries used or -errno on error.
-- */
--static int
--vhost_scsi_map_to_sgl(struct vhost_scsi_cmd *cmd,
--		      struct iov_iter *iter,
--		      struct scatterlist *sgl,
--		      bool write)
--{
--	struct page **pages = cmd->tvc_upages;
--	struct scatterlist *sg = sgl;
--	ssize_t bytes;
--	size_t offset;
--	unsigned int npages = 0, gup_flags = 0;
--
--	gup_flags |= write ? FOLL_SOURCE_BUF : FOLL_DEST_BUF;
--
--	bytes = iov_iter_get_pages(iter, pages, LONG_MAX,
--				   VHOST_SCSI_PREALLOC_UPAGES, &offset,
--				   gup_flags);
--	/* No pages were pinned */
--	if (bytes <= 0)
--		return bytes < 0 ? bytes : -EFAULT;
--
--	while (bytes) {
--		unsigned n = min_t(unsigned, PAGE_SIZE - offset, bytes);
--		sg_set_page(sg++, pages[npages++], n, offset);
--		bytes -= n;
--		offset = 0;
--	}
--	return npages;
--}
--
- static int
- vhost_scsi_calc_sgls(struct iov_iter *iter, size_t bytes, int max_sgls)
- {
-@@ -689,24 +660,19 @@ vhost_scsi_calc_sgls(struct iov_iter *iter, size_t bytes, int max_sgls)
- static int
- vhost_scsi_iov_to_sgl(struct vhost_scsi_cmd *cmd, bool write,
- 		      struct iov_iter *iter,
--		      struct scatterlist *sg, int sg_count)
-+		      struct scatterlist *sg, int sg_count,
-+		      unsigned int *cleanup_mode)
- {
--	struct scatterlist *p = sg;
--	int ret;
-+	struct sg_table sgt = { .sgl = sg };
-+	unsigned int gup_flags = write ? FOLL_SOURCE_BUF : FOLL_DEST_BUF;
-+	ssize_t ret;
- 
--	while (iov_iter_count(iter)) {
--		ret = vhost_scsi_map_to_sgl(cmd, iter, sg, write);
--		if (ret < 0) {
--			while (p < sg) {
--				struct page *page = sg_page(p++);
--				if (page)
--					put_page(page);
--			}
--			return ret;
--		}
--		sg += ret;
--	}
--	return 0;
-+	ret = netfs_extract_iter_to_sg(iter, LONG_MAX, &sgt, sg_count, gup_flags);
-+	if (ret > 0)
-+		sg_mark_end(sg + sgt.nents - 1);
++static void dio_cleanup_page(struct dio *dio, struct page *page)
++{
++	page_put_unpin(page, dio->cleanup_mode);
++}
 +
-+	*cleanup_mode = iov_iter_extract_mode(iter, gup_flags);
-+	return ret;
+ /*
+  * Release any resources in case of a failure
+  */
+ static inline void dio_cleanup(struct dio *dio, struct dio_submit *sdio)
+ {
+ 	while (sdio->head < sdio->tail)
+-		put_page(dio->pages[sdio->head++]);
++		dio_cleanup_page(dio, dio->pages[sdio->head++]);
  }
  
- static int
-@@ -730,7 +696,8 @@ vhost_scsi_mapal(struct vhost_scsi_cmd *cmd,
+ /*
+@@ -704,7 +718,7 @@ static inline int dio_new_bio(struct dio *dio, struct dio_submit *sdio,
+  *
+  * Return zero on success.  Non-zero means the caller needs to start a new BIO.
+  */
+-static inline int dio_bio_add_page(struct dio_submit *sdio)
++static inline int dio_bio_add_page(struct dio *dio, struct dio_submit *sdio)
+ {
+ 	int ret;
  
- 		ret = vhost_scsi_iov_to_sgl(cmd, write, prot_iter,
- 					    cmd->tvc_prot_sgl,
--					    cmd->tvc_prot_sgl_count);
-+					    cmd->tvc_prot_sgl_count,
-+					    &cmd->tvc_prot_cleanup_mode);
- 		if (ret < 0) {
- 			cmd->tvc_prot_sgl_count = 0;
+@@ -771,11 +785,11 @@ static inline int dio_send_cur_page(struct dio *dio, struct dio_submit *sdio,
+ 			goto out;
+ 	}
+ 
+-	if (dio_bio_add_page(sdio) != 0) {
++	if (dio_bio_add_page(dio, sdio) != 0) {
+ 		dio_bio_submit(dio, sdio);
+ 		ret = dio_new_bio(dio, sdio, sdio->cur_page_block, map_bh);
+ 		if (ret == 0) {
+-			ret = dio_bio_add_page(sdio);
++			ret = dio_bio_add_page(dio, sdio);
+ 			BUG_ON(ret != 0);
+ 		}
+ 	}
+@@ -832,13 +846,16 @@ submit_page_section(struct dio *dio, struct dio_submit *sdio, struct page *page,
+ 	 */
+ 	if (sdio->cur_page) {
+ 		ret = dio_send_cur_page(dio, sdio, map_bh);
+-		put_page(sdio->cur_page);
++		dio_cleanup_page(dio, sdio->cur_page);
+ 		sdio->cur_page = NULL;
+ 		if (ret)
  			return ret;
-@@ -747,7 +714,8 @@ vhost_scsi_mapal(struct vhost_scsi_cmd *cmd,
- 		  cmd->tvc_sgl, cmd->tvc_sgl_count);
+ 	}
  
- 	ret = vhost_scsi_iov_to_sgl(cmd, write, data_iter,
--				    cmd->tvc_sgl, cmd->tvc_sgl_count);
-+				    cmd->tvc_sgl, cmd->tvc_sgl_count,
-+				    &cmd->tvc_cleanup_mode);
- 	if (ret < 0) {
- 		cmd->tvc_sgl_count = 0;
- 		return ret;
+-	get_page(page);		/* It is in dio */
++	ret = try_grab_page(page, dio->cleanup_mode);		/* It is in dio */
++	if (ret < 0)
++		return ret;
++
+ 	sdio->cur_page = page;
+ 	sdio->cur_page_offset = offset;
+ 	sdio->cur_page_len = len;
+@@ -853,7 +870,7 @@ submit_page_section(struct dio *dio, struct dio_submit *sdio, struct page *page,
+ 		ret = dio_send_cur_page(dio, sdio, map_bh);
+ 		if (sdio->bio)
+ 			dio_bio_submit(dio, sdio);
+-		put_page(sdio->cur_page);
++		dio_cleanup_page(dio, sdio->cur_page);
+ 		sdio->cur_page = NULL;
+ 	}
+ 	return ret;
+@@ -954,7 +971,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 
+ 				ret = get_more_blocks(dio, sdio, map_bh);
+ 				if (ret) {
+-					put_page(page);
++					dio_cleanup_page(dio, page);
+ 					goto out;
+ 				}
+ 				if (!buffer_mapped(map_bh))
+@@ -999,7 +1016,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 
+ 				/* AKPM: eargh, -ENOTBLK is a hack */
+ 				if (dio_op == REQ_OP_WRITE) {
+-					put_page(page);
++					dio_cleanup_page(dio, page);
+ 					return -ENOTBLK;
+ 				}
+ 
+@@ -1012,7 +1029,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 				if (sdio->block_in_file >=
+ 						i_size_aligned >> blkbits) {
+ 					/* We hit eof */
+-					put_page(page);
++					dio_cleanup_page(dio, page);
+ 					goto out;
+ 				}
+ 				zero_user(page, from, 1 << blkbits);
+@@ -1052,7 +1069,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 						  sdio->next_block_for_io,
+ 						  map_bh);
+ 			if (ret) {
+-				put_page(page);
++				dio_cleanup_page(dio, page);
+ 				goto out;
+ 			}
+ 			sdio->next_block_for_io += this_chunk_blocks;
+@@ -1068,7 +1085,7 @@ static int do_direct_IO(struct dio *dio, struct dio_submit *sdio,
+ 		}
+ 
+ 		/* Drop the ref which was taken in get_user_pages() */
+-		put_page(page);
++		dio_cleanup_page(dio, page);
+ 	}
+ out:
+ 	return ret;
+@@ -1288,7 +1305,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
+ 		ret2 = dio_send_cur_page(dio, &sdio, &map_bh);
+ 		if (retval == 0)
+ 			retval = ret2;
+-		put_page(sdio.cur_page);
++		dio_cleanup_page(dio, sdio.cur_page);
+ 		sdio.cur_page = NULL;
+ 	}
+ 	if (sdio.bio)
 
 
