@@ -2,103 +2,276 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A93D666C5CC
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 17:10:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A11A866C643
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 17:17:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232621AbjAPQK3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Jan 2023 11:10:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50828 "EHLO
+        id S232960AbjAPQRd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Jan 2023 11:17:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60034 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232333AbjAPQJ6 (ORCPT
+        with ESMTP id S232547AbjAPQQs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Jan 2023 11:09:58 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9DB3223DB0
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 08:06:30 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id z4-20020a17090a170400b00226d331390cso31471383pjd.5
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 08:06:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20210112.gappssmtp.com; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S9gM8x3cA80HqU3e2luPT3SBWdSZm60Sxg3tlhcnbas=;
-        b=YVvQ/VNmlxI9+70G9+L+xZiF8Yt9U7zV43DBl9Rt9ZB+aiOkNsGX8xmxrxdl4od2I3
-         23+PVRwUalnF5kxsnwMH6teOhr2HB4Mhv+kex3/o2repuRxP6Vfs3z38VZonsnsEuCQL
-         cWJvQF7JXvJpbUrV/dozhhy9/6HFVpvHDCdXRMbDXE1SbYQB5A6WDl82X6+MSvRCGkDB
-         urJyNNnyo2cXGnxm59yt3r30pnid+dmJNOjAxo383FJTGnILsCTrnq5JRoyEPd2klpMK
-         Io68eE1qrnWlBX92es8RJmKDcOC+twlvIhU0WtXP8yyx0box2wBOSUtXn5Xf/9psurpU
-         tHgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S9gM8x3cA80HqU3e2luPT3SBWdSZm60Sxg3tlhcnbas=;
-        b=qaqHElLziVUuKoc597xYA+Q5r6/nsvwiYG8dc6wQBqzpQ55L1JIzlSsMznYw2fE9G5
-         mZCM8si6uPuhq72Cu6cJpurNCOBkC4R2cT0MEUWgC0Ooge5I+al54twZMyUjpSphzP6G
-         5Itgm0t69R27jum8QbUyNU/5U6dDMIybmH5kcULqZ4Z4SN9RLoWnBewLfmnbHimdVPFR
-         dDQ+ZK99YgDHTsA2HE0w1xv0fgYNQlKnZTgO6uGqcUlMi1rV5ZL3OmlOEUxkghAyLvW9
-         hsyc2zYzj0SySv08QT7KRG/mo14Oh1c78Ncf9C4V1kGBzq8WZGB/7zmmHYLCsb1dsfR3
-         RP9w==
-X-Gm-Message-State: AFqh2kpNkNkojsJp7p8JjMkmiGS3TxHGcegj8s0awpJHcZRPMxrD1led
-        LEtryFl46aPkEpPIa0jKCUog6w==
-X-Google-Smtp-Source: AMrXdXsLh8uS3Aoxku3KEh1nP9y/QeKTnjERWbT/UnhUamaax19+qcuq1F44NN6vFG4lX2YX1a8sgA==
-X-Received: by 2002:a17:902:7041:b0:194:5b98:4342 with SMTP id h1-20020a170902704100b001945b984342mr57781plt.5.1673885189855;
-        Mon, 16 Jan 2023 08:06:29 -0800 (PST)
-Received: from [192.168.1.136] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id x4-20020a170902ec8400b0017f72a430adsm19677815plg.71.2023.01.16.08.06.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Jan 2023 08:06:29 -0800 (PST)
-Message-ID: <70e4869e-1ab8-9838-5af8-8cd41a536f2b@kernel.dk>
-Date:   Mon, 16 Jan 2023 09:06:28 -0700
-MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: Is there a reason why REQ_OP_READ has to be 0?
-Content-Language: en-US
-To:     Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>
-Cc:     linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Mon, 16 Jan 2023 11:16:48 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D6FF42DE63;
+        Mon, 16 Jan 2023 08:09:44 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out2.suse.de (Postfix) with ESMTPS id 3B60D67973;
+        Mon, 16 Jan 2023 16:09:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1673885383; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lEqhEm8m9g3c7Pky7UfroueEnnbYZOk7iGJcOupvfZg=;
+        b=b6KYgdSaYfmtyWec91ajKPAuvjXhKI3QreOTviMD4Ie0VF/Na4ESXxhLIf2vBsugxKz9vx
+        Jf7EpjE06lT+L9nEg7sXI0183s7+2lgeuZWWAnyI3/xmfEeLIkDbLgFJuGU0yyx2KUXllf
+        WyaEchKJosk0r4umDMaWZdg9GM2ppck=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1673885383;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=lEqhEm8m9g3c7Pky7UfroueEnnbYZOk7iGJcOupvfZg=;
+        b=UNvozQaPwD5Pujnva3ARZxmZ0QPsZHRvFlI1XWaNk+sv3OSk43KFe1gNxLfmINLmPopZsG
+        MLh10BLpod35DHAw==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 239E5138FE;
+        Mon, 16 Jan 2023 16:09:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id PWSnCMd2xWN7IwAAMHmgww
+        (envelope-from <jack@suse.cz>); Mon, 16 Jan 2023 16:09:43 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id B3B3DA06AD; Mon, 16 Jan 2023 17:09:42 +0100 (CET)
+Date:   Mon, 16 Jan 2023 17:09:42 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     hch@infradead.org, djwong@kernel.org, song@kernel.org,
+        rafael@kernel.org, gregkh@linuxfoundation.org,
+        viro@zeniv.linux.org.uk, jack@suse.cz, bvanassche@acm.org,
+        ebiederm@xmission.com, mchehab@kernel.org, keescook@chromium.org,
+        p.raghav@samsung.com, linux-fsdevel@vger.kernel.org,
+        kernel@tuxforce.de, kexec@lists.infradead.org,
         linux-kernel@vger.kernel.org
-References: <2117829.1673884910@warthog.procyon.org.uk>
- <Y8V1n4e/eeOd4n8/@infradead.org>
-From:   Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <Y8V1n4e/eeOd4n8/@infradead.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=1.3 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,RCVD_IN_SBL_CSS,
-        SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.6
-X-Spam-Level: *
+Subject: Re: [RFC v3 05/24] fs: add automatic kernel fs freeze / thaw and
+ remove kthread freezing
+Message-ID: <20230116160942.gcngdac2gee2svsy@quack3>
+References: <20230114003409.1168311-1-mcgrof@kernel.org>
+ <20230114003409.1168311-6-mcgrof@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230114003409.1168311-6-mcgrof@kernel.org>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/16/23 9:04?AM, Christoph Hellwig wrote:
-> On Mon, Jan 16, 2023 at 04:01:50PM +0000, David Howells wrote:
->> Hi Jens, Christoph,
->>
->> Do you know if there's a reason why REQ_OP_READ has to be 0?  I'm seeing a
->> circumstance where a direct I/O write on a blockdev is BUG'ing in my modified
->> iov_iter code because the iterator says it's a source iterator (correct), but
->> the bio->bi_opf == REQ_OP_READ (which should be wrong).
->>
->> I thought I'd move REQ_OP_READ to, say, 4 so that I could try and see if it's
->> just undefined but the kernel BUGs and then panics during boot.
+On Fri 13-01-23 16:33:50, Luis Chamberlain wrote:
+> Add support to automatically handle freezing and thawing filesystems
+> during the kernel's suspend/resume cycle.
 > 
-> There's all kind of assumptions of that from basically day 1 of
-> Linux.  The most obvious one is in op_is_write, but I'm pretty sure
-> there are more hidden somewhere.
+> This is needed so that we properly really stop IO in flight without
+> races after userspace has been frozen. Without this we rely on
+> kthread freezing and its semantics are loose and error prone.
+> For instance, even though a kthread may use try_to_freeze() and end
+> up being frozen we have no way of being sure that everything that
+> has been spawned asynchronously from it (such as timers) have also
+> been stopped as well.
+> 
+> A long term advantage of also adding filesystem freeze / thawing
+> supporting during suspend / hibernation is that long term we may
+> be able to eventually drop the kernel's thread freezing completely
+> as it was originally added to stop disk IO in flight as we hibernate
+> or suspend.
+> 
+> This does not remove the superflous freezer calls on all filesystems.
+> Each filesystem must remove all the kthread freezer stuff and peg
+> the fs_type flags as supporting auto-freezing with the FS_AUTOFREEZE
+> flag.
+> 
+> Subsequent patches remove the kthread freezer usage from each
+> filesystem, one at a time to make all this work bisectable.
+> Once all filesystems remove the usage of the kthread freezer we
+> can remove the FS_AUTOFREEZE flag.
+> 
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
 
-I didn't get this original email...
+Looks good to me. Feel free to add:
 
-I would not change this frivilously, as Christoph says we've used 0/1
-for basic read/write data direction since basically forever. So for all
-intents and purposes, yes that is basically hardwired.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
+								Honza
+
+> ---
+>  fs/super.c             | 69 ++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/fs.h     | 14 +++++++++
+>  kernel/power/process.c | 15 ++++++++-
+>  3 files changed, 97 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/super.c b/fs/super.c
+> index 2f77fcb6e555..e8af4c8269ad 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1853,3 +1853,72 @@ int thaw_super(struct super_block *sb, bool usercall)
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL(thaw_super);
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static bool super_should_freeze(struct super_block *sb)
+> +{
+> +	if (!(sb->s_type->fs_flags & FS_AUTOFREEZE))
+> +		return false;
+> +	/*
+> +	 * We don't freeze virtual filesystems, we skip those filesystems with
+> +	 * no backing device.
+> +	 */
+> +	if (sb->s_bdi == &noop_backing_dev_info)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +int fs_suspend_freeze_sb(struct super_block *sb, void *priv)
+> +{
+> +	int error = 0;
+> +
+> +	if (!grab_lock_super(sb)) {
+> +		pr_err("%s (%s): freezing failed to grab_super()\n",
+> +		       sb->s_type->name, sb->s_id);
+> +		return -ENOTTY;
+> +	}
+> +
+> +	if (!super_should_freeze(sb))
+> +		goto out;
+> +
+> +	pr_info("%s (%s): freezing\n", sb->s_type->name, sb->s_id);
+> +
+> +	error = freeze_super(sb, false);
+> +	if (!error)
+> +		lockdep_sb_freeze_release(sb);
+> +	else if (error != -EBUSY)
+> +		pr_notice("%s (%s): Unable to freeze, error=%d",
+> +			  sb->s_type->name, sb->s_id, error);
+> +
+> +out:
+> +	deactivate_locked_super(sb);
+> +	return error;
+> +}
+> +
+> +int fs_suspend_thaw_sb(struct super_block *sb, void *priv)
+> +{
+> +	int error = 0;
+> +
+> +	if (!grab_lock_super(sb)) {
+> +		pr_err("%s (%s): thawing failed to grab_super()\n",
+> +		       sb->s_type->name, sb->s_id);
+> +		return -ENOTTY;
+> +	}
+> +
+> +	if (!super_should_freeze(sb))
+> +		goto out;
+> +
+> +	pr_info("%s (%s): thawing\n", sb->s_type->name, sb->s_id);
+> +
+> +	error = thaw_super(sb, false);
+> +	if (error && error != -EBUSY)
+> +		pr_notice("%s (%s): Unable to unfreeze, error=%d",
+> +			  sb->s_type->name, sb->s_id, error);
+> +
+> +out:
+> +	deactivate_locked_super(sb);
+> +	return error;
+> +}
+> +
+> +#endif
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index f168e72f6ca1..e5bee359e804 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -2231,6 +2231,7 @@ struct file_system_type {
+>  #define FS_DISALLOW_NOTIFY_PERM	16	/* Disable fanotify permission events */
+>  #define FS_ALLOW_IDMAP         32      /* FS has been updated to handle vfs idmappings. */
+>  #define FS_RENAME_DOES_D_MOVE	32768	/* FS will handle d_move() during rename() internally. */
+> +#define FS_AUTOFREEZE           (1<<16)	/*  temporary as we phase kthread freezer out */
+>  	int (*init_fs_context)(struct fs_context *);
+>  	const struct fs_parameter_spec *parameters;
+>  	struct dentry *(*mount) (struct file_system_type *, int,
+> @@ -2306,6 +2307,19 @@ extern int user_statfs(const char __user *, struct kstatfs *);
+>  extern int fd_statfs(int, struct kstatfs *);
+>  extern int freeze_super(struct super_block *super, bool usercall);
+>  extern int thaw_super(struct super_block *super, bool usercall);
+> +#ifdef CONFIG_PM_SLEEP
+> +int fs_suspend_freeze_sb(struct super_block *sb, void *priv);
+> +int fs_suspend_thaw_sb(struct super_block *sb, void *priv);
+> +#else
+> +static inline int fs_suspend_freeze_sb(struct super_block *sb, void *priv)
+> +{
+> +	return 0;
+> +}
+> +static inline int fs_suspend_thaw_sb(struct super_block *sb, void *priv)
+> +{
+> +	return 0;
+> +}
+> +#endif
+>  extern __printf(2, 3)
+>  int super_setup_bdi_name(struct super_block *sb, char *fmt, ...);
+>  extern int super_setup_bdi(struct super_block *sb);
+> diff --git a/kernel/power/process.c b/kernel/power/process.c
+> index 6c1c7e566d35..1dd6b0b6b4e5 100644
+> --- a/kernel/power/process.c
+> +++ b/kernel/power/process.c
+> @@ -140,6 +140,16 @@ int freeze_processes(void)
+>  
+>  	BUG_ON(in_atomic());
+>  
+> +	pr_info("Freezing filesystems ... ");
+> +	error = iterate_supers_reverse_excl(fs_suspend_freeze_sb, NULL);
+> +	if (error) {
+> +		pr_cont("failed\n");
+> +		iterate_supers_excl(fs_suspend_thaw_sb, NULL);
+> +		thaw_processes();
+> +		return error;
+> +	}
+> +	pr_cont("done.\n");
+> +
+>  	/*
+>  	 * Now that the whole userspace is frozen we need to disable
+>  	 * the OOM killer to disallow any further interference with
+> @@ -149,8 +159,10 @@ int freeze_processes(void)
+>  	if (!error && !oom_killer_disable(msecs_to_jiffies(freeze_timeout_msecs)))
+>  		error = -EBUSY;
+>  
+> -	if (error)
+> +	if (error) {
+> +		iterate_supers_excl(fs_suspend_thaw_sb, NULL);
+>  		thaw_processes();
+> +	}
+>  	return error;
+>  }
+>  
+> @@ -188,6 +200,7 @@ void thaw_processes(void)
+>  	pm_nosig_freezing = false;
+>  
+>  	oom_killer_enable();
+> +	iterate_supers_excl(fs_suspend_thaw_sb, NULL);
+>  
+>  	pr_info("Restarting tasks ... ");
+>  
+> -- 
+> 2.35.1
+> 
 -- 
-Jens Axboe
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
