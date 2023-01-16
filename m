@@ -2,40 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 2814166BA6B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 10:33:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3B11D66BA8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 10:37:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232085AbjAPJdK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Jan 2023 04:33:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57026 "EHLO
+        id S231679AbjAPJhe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Jan 2023 04:37:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60890 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232046AbjAPJdJ (ORCPT
+        with ESMTP id S231794AbjAPJhc (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Jan 2023 04:33:09 -0500
+        Mon, 16 Jan 2023 04:37:32 -0500
 Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 468A0559E;
-        Mon, 16 Jan 2023 01:33:08 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F1CDC679;
+        Mon, 16 Jan 2023 01:37:31 -0800 (PST)
 Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
           by outpost.zedat.fu-berlin.de (Exim 4.95)
           with esmtps (TLS1.3)
           tls TLS_AES_256_GCM_SHA384
           (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1pHLrP-000P6e-3D; Mon, 16 Jan 2023 10:32:59 +0100
+          id 1pHLvi-000QzZ-WB; Mon, 16 Jan 2023 10:37:27 +0100
 Received: from p57bd9464.dip0.t-ipconnect.de ([87.189.148.100] helo=[192.168.178.81])
           by inpost2.zedat.fu-berlin.de (Exim 4.95)
           with esmtpsa (TLS1.3)
           tls TLS_AES_128_GCM_SHA256
           (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1pHLrO-000a2m-Ss; Mon, 16 Jan 2023 10:32:59 +0100
-Message-ID: <9f91942e-f4bf-e38c-2bb9-b32941b6d5f1@physik.fu-berlin.de>
-Date:   Mon, 16 Jan 2023 10:32:58 +0100
+          id 1pHLvi-000aks-Mt; Mon, 16 Jan 2023 10:37:26 +0100
+Message-ID: <094a8bcc-33eb-5443-77b3-4e81e0c2d5bf@physik.fu-berlin.de>
+Date:   Mon, 16 Jan 2023 10:37:24 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.1
 Subject: Re: ia64 removal (was: Re: lockref scalability on x86-64 vs
  cpu_relax)
 Content-Language: en-US
-To:     Ard Biesheuvel <ardb@kernel.org>
+To:     sedat.dilek@gmail.com, Ard Biesheuvel <ardb@kernel.org>
 Cc:     "Luck, Tony" <tony.luck@intel.com>,
         "Torvalds, Linus" <torvalds@linux-foundation.org>,
         Mateusz Guzik <mjguzik@gmail.com>,
@@ -51,8 +51,9 @@ Cc:     "Luck, Tony" <tony.luck@intel.com>,
 References: <CAMj1kXEqbMEcrKYzz2-huLPMnotPoxFY8adyH=Xb4Ex8o98x-w@mail.gmail.com>
  <db6937a1-e817-2d7b-0062-9aff012bb3e8@physik.fu-berlin.de>
  <CAMj1kXEtTuaNFiKWn3cJngR0J2vr0G07HR6+5PBodtr1b7vNxg@mail.gmail.com>
+ <CA+icZUXEz7ZxmkV5bw5O2ORjF4bwDXBMyj3Wk_HST98gMPt97g@mail.gmail.com>
 From:   John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-In-Reply-To: <CAMj1kXEtTuaNFiKWn3cJngR0J2vr0G07HR6+5PBodtr1b7vNxg@mail.gmail.com>
+In-Reply-To: <CA+icZUXEz7ZxmkV5bw5O2ORjF4bwDXBMyj3Wk_HST98gMPt97g@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 X-Original-Sender: glaubitz@physik.fu-berlin.de
@@ -66,32 +67,44 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Ard!
+On 1/14/23 12:24, Sedat Dilek wrote:
+> Example #1: binutils packages
+> 
+> Checking available binutils package for Debian/unstable IA64 (version:
+> 2.39.90.20230110-1):
+> 
+> https://packages.debian.org/sid/binutils <--- Clearly states IA64 as
+> "unofficial port"
 
-On 1/14/23 00:25, Ard Biesheuvel wrote:
-> Thanks for reporting back. I (mis)read the debian ports page [3],
-> which mentions Debian 7 as the highest Debian version that supports
-> IA64, and so I assumed that support had been dropped from Debian.
+And?
 
-This page talks about officially supported ports. Debian Ports is an
-unofficial spin maintained by a number of Debian Developers and external
-developers that are volunteering to maintain these ports.
+> https://packages.debian.org/sid/ia64/binutils/filelist
+> 
+> Example #2: linux-image packages
+> 
+> Cannot say what this means...
+> 
+> https://packages.debian.org/search?arch=amd64&keywords=linux-image
+> (AMD64 - matches)
+> 
+> https://packages.debian.org/search?arch=ia64&keywords=linux-image
+> (IA64 - no matches)
+> 
+> https://packages.debian.org/search?arch=ia64&keywords=linux (IA64 -
+> matches - but no linux-image which ships normally a bootable
+> Linux-kernel)
 
-> However, if only a handful of people want to keep this port alive for
-> reasons of nostalgia, it is obviously obsolete, and we should ask
-> ourselves whether it is reasonable to expect Linux contributors to
-> keep spending time on this.
+No, the package is called "linux-image-$ARCH-$FLAVOR". There is no "linux-image"
+package for amd64 either. Does that prove amd64 is dead?
 
-You could say this about a lot of hardware, can't you?
+What you are looking for can be found here:
 
-> Does the Debian ia64 port have any users? Or is the system that builds
-> the packages the only one that consumes them?
+> http://ftp.ports.debian.org/debian-ports/pool-ia64/main/l/linux/
 
-There is the popcon statistics. However, that is opt-on and the numbers are
-not really trustworthy. We are getting feedback from time to time from people
-using it.
+> As stated I have no expertise in Debian whatever release for IA64 arch.
 
-Is there any problem with the ia64 port at the moment that would justify removal?
+Well, maybe let me answer the questions then since I am maintaining the port
+in Debian.
 
 Adrian
 
