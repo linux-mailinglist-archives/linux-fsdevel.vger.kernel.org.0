@@ -2,220 +2,73 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D9AB566C68C
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 17:21:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E3B4B66C768
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 17:30:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233027AbjAPQVW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Jan 2023 11:21:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36936 "EHLO
+        id S233303AbjAPQag (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Jan 2023 11:30:36 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46488 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233003AbjAPQUf (ORCPT
+        with ESMTP id S233256AbjAPQaD (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Jan 2023 11:20:35 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A07D725E1B;
-        Mon, 16 Jan 2023 08:11:22 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id BC2283787D;
-        Mon, 16 Jan 2023 16:11:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1673885480; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Mon, 16 Jan 2023 11:30:03 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7D69436FE7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 08:17:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1673885859;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=kO5Zu3yPwNvCAAUDZ07+m5RoPCtEo+Dj5i9lnugzX7M=;
-        b=q2GGC+2raxFjqqiFYUcJq3xqTfalWgv5pF14EcEJKrxt1eKgr3xFhfv1tsnqqul22zTkwT
-        zp2rqQUeV8BiAm29KUnGNy+/Hphv4I+rqdtYs7xvY0657qEP142Wqx5hOgzoQJkuYnUgSk
-        Bzhyp/9PtqsyIHStvm1mLxNNDJ2pLVg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1673885480;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kO5Zu3yPwNvCAAUDZ07+m5RoPCtEo+Dj5i9lnugzX7M=;
-        b=1QNgj9756PHrSnqUi7xrd/tDSvNe5Pv80lsWnuYV3IoyRJbQffnrH4RD95LxR1/u89jYI8
-        WYSYGyNToyWslEBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=e31RvkaYoBXUi6IUkpSgeZzLhAlyWB0nDu0W8hJQeBU=;
+        b=dJhgjS+Z6M9StFYfoc2vcJk9q2Y46fpVkwBdd581EiZRP4SkjZu/oQ3uYi/5YJgDrrJz1S
+        4SUF6EXi0K9QqhwumADlnDz8VfmBDC8DzdW48GSU7jvhMIt+Y1wO/E8uP6GxkpXS32I9IT
+        xqSRFBAeKBQZCUTjPslDIuWBp203q8o=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-664-UHi9Bv3fMqiCIvuUMyr86A-1; Mon, 16 Jan 2023 11:17:35 -0500
+X-MC-Unique: UHi9Bv3fMqiCIvuUMyr86A-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AD0D0138FE;
-        Mon, 16 Jan 2023 16:11:20 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id LwA9Kih3xWNfJAAAMHmgww
-        (envelope-from <jack@suse.cz>); Mon, 16 Jan 2023 16:11:20 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 4B352A06AD; Mon, 16 Jan 2023 17:11:20 +0100 (CET)
-Date:   Mon, 16 Jan 2023 17:11:20 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Luis Chamberlain <mcgrof@kernel.org>
-Cc:     hch@infradead.org, djwong@kernel.org, song@kernel.org,
-        rafael@kernel.org, gregkh@linuxfoundation.org,
-        viro@zeniv.linux.org.uk, jack@suse.cz, bvanassche@acm.org,
-        ebiederm@xmission.com, mchehab@kernel.org, keescook@chromium.org,
-        p.raghav@samsung.com, linux-fsdevel@vger.kernel.org,
-        kernel@tuxforce.de, kexec@lists.infradead.org,
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8E517857F40;
+        Mon, 16 Jan 2023 16:17:35 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D4C8540C2004;
+        Mon, 16 Jan 2023 16:17:34 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y8V1n4e/eeOd4n8/@infradead.org>
+References: <Y8V1n4e/eeOd4n8/@infradead.org> <2117829.1673884910@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [RFC v3 02/24] fs: add frozen sb state helpers
-Message-ID: <20230116161120.fczsdy2vptgpb5z4@quack3>
-References: <20230114003409.1168311-1-mcgrof@kernel.org>
- <20230114003409.1168311-3-mcgrof@kernel.org>
+Subject: Re: Is there a reason why REQ_OP_READ has to be 0?
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230114003409.1168311-3-mcgrof@kernel.org>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2127556.1673885854.1@warthog.procyon.org.uk>
+Date:   Mon, 16 Jan 2023 16:17:34 +0000
+Message-ID: <2127557.1673885854@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri 13-01-23 16:33:47, Luis Chamberlain wrote:
-> Provide helpers so that we can check a superblock frozen state.
-> This will make subsequent changes easier to read. This makes
-> no functional changes.
-> 
-> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+Aha!
 
-Sure. Feel free to add:
+The problem is that whilst aio, io_uring and cachefiles set IOCB_WRITE when
+giving a write op to the VFS, the write() syscall does not...
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+David
 
-								Honza
-
-> ---
->  fs/ext4/ext4_jbd2.c |  2 +-
->  fs/gfs2/sys.c       |  2 +-
->  fs/quota/quota.c    |  4 ++--
->  fs/super.c          |  4 ++--
->  fs/xfs/xfs_trans.c  |  3 +--
->  include/linux/fs.h  | 22 ++++++++++++++++++++++
->  6 files changed, 29 insertions(+), 8 deletions(-)
-> 
-> diff --git a/fs/ext4/ext4_jbd2.c b/fs/ext4/ext4_jbd2.c
-> index 77f318ec8abb..ef441f15053b 100644
-> --- a/fs/ext4/ext4_jbd2.c
-> +++ b/fs/ext4/ext4_jbd2.c
-> @@ -72,7 +72,7 @@ static int ext4_journal_check_start(struct super_block *sb)
->  
->  	if (sb_rdonly(sb))
->  		return -EROFS;
-> -	WARN_ON(sb->s_writers.frozen == SB_FREEZE_COMPLETE);
-> +	WARN_ON(sb_is_frozen(sb));
->  	journal = EXT4_SB(sb)->s_journal;
->  	/*
->  	 * Special case here: if the journal has aborted behind our
-> diff --git a/fs/gfs2/sys.c b/fs/gfs2/sys.c
-> index d0b80552a678..b98be03d0d1e 100644
-> --- a/fs/gfs2/sys.c
-> +++ b/fs/gfs2/sys.c
-> @@ -146,7 +146,7 @@ static ssize_t uuid_show(struct gfs2_sbd *sdp, char *buf)
->  static ssize_t freeze_show(struct gfs2_sbd *sdp, char *buf)
->  {
->  	struct super_block *sb = sdp->sd_vfs;
-> -	int frozen = (sb->s_writers.frozen == SB_UNFROZEN) ? 0 : 1;
-> +	int frozen = sb_is_unfrozen(sb) ? 0 : 1;
->  
->  	return snprintf(buf, PAGE_SIZE, "%d\n", frozen);
->  }
-> diff --git a/fs/quota/quota.c b/fs/quota/quota.c
-> index 052f143e2e0e..d8147c21bf03 100644
-> --- a/fs/quota/quota.c
-> +++ b/fs/quota/quota.c
-> @@ -890,13 +890,13 @@ static struct super_block *quotactl_block(const char __user *special, int cmd)
->  	sb = user_get_super(dev, excl);
->  	if (!sb)
->  		return ERR_PTR(-ENODEV);
-> -	if (thawed && sb->s_writers.frozen != SB_UNFROZEN) {
-> +	if (thawed && sb_is_unfrozen(sb)) {
->  		if (excl)
->  			up_write(&sb->s_umount);
->  		else
->  			up_read(&sb->s_umount);
->  		wait_event(sb->s_writers.wait_unfrozen,
-> -			   sb->s_writers.frozen == SB_UNFROZEN);
-> +			   sb_is_unfrozen(sb));
->  		put_super(sb);
->  		goto retry;
->  	}
-> diff --git a/fs/super.c b/fs/super.c
-> index a31a41b313f3..fdcf5a87af0a 100644
-> --- a/fs/super.c
-> +++ b/fs/super.c
-> @@ -883,7 +883,7 @@ int reconfigure_super(struct fs_context *fc)
->  
->  	if (fc->sb_flags_mask & ~MS_RMT_MASK)
->  		return -EINVAL;
-> -	if (sb->s_writers.frozen != SB_UNFROZEN)
-> +	if (!(sb_is_unfrozen(sb)))
->  		return -EBUSY;
->  
->  	retval = security_sb_remount(sb, fc->security);
-> @@ -907,7 +907,7 @@ int reconfigure_super(struct fs_context *fc)
->  			down_write(&sb->s_umount);
->  			if (!sb->s_root)
->  				return 0;
-> -			if (sb->s_writers.frozen != SB_UNFROZEN)
-> +			if (!sb_is_unfrozen(sb))
->  				return -EBUSY;
->  			remount_ro = !sb_rdonly(sb);
->  		}
-> diff --git a/fs/xfs/xfs_trans.c b/fs/xfs/xfs_trans.c
-> index 7bd16fbff534..ceb4890a4c96 100644
-> --- a/fs/xfs/xfs_trans.c
-> +++ b/fs/xfs/xfs_trans.c
-> @@ -267,8 +267,7 @@ xfs_trans_alloc(
->  	 * Zero-reservation ("empty") transactions can't modify anything, so
->  	 * they're allowed to run while we're frozen.
->  	 */
-> -	WARN_ON(resp->tr_logres > 0 &&
-> -		mp->m_super->s_writers.frozen == SB_FREEZE_COMPLETE);
-> +	WARN_ON(resp->tr_logres > 0 && sb_is_frozen(mp->m_super));
->  	ASSERT(!(flags & XFS_TRANS_RES_FDBLKS) ||
->  	       xfs_has_lazysbcount(mp));
->  
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 5042f5ab74a4..c0cab61f9f9a 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -1604,6 +1604,28 @@ static inline bool sb_start_intwrite_trylock(struct super_block *sb)
->  	return __sb_start_write_trylock(sb, SB_FREEZE_FS);
->  }
->  
-> +/**
-> + * sb_is_frozen - is superblock frozen
-> + * @sb: the super to check
-> + *
-> + * Returns true if the super is frozen.
-> + */
-> +static inline bool sb_is_frozen(struct super_block *sb)
-> +{
-> +	return sb->s_writers.frozen == SB_FREEZE_COMPLETE;
-> +}
-> +
-> +/**
-> + * sb_is_unfrozen - is superblock unfrozen
-> + * @sb: the super to check
-> + *
-> + * Returns true if the super is unfrozen.
-> + */
-> +static inline bool sb_is_unfrozen(struct super_block *sb)
-> +{
-> +	return sb->s_writers.frozen == SB_UNFROZEN;
-> +}
-> +
->  bool inode_owner_or_capable(struct user_namespace *mnt_userns,
->  			    const struct inode *inode);
->  
-> -- 
-> 2.35.1
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
