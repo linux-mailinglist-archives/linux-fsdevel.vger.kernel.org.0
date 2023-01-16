@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 240D666D29E
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 00:10:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 242CA66D2A2
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 00:10:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235244AbjAPXJ5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Jan 2023 18:09:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48302 "EHLO
+        id S235268AbjAPXKP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Jan 2023 18:10:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48554 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235265AbjAPXJM (ORCPT
+        with ESMTP id S233936AbjAPXJT (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Jan 2023 18:09:12 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC3C623642
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 15:08:23 -0800 (PST)
+        Mon, 16 Jan 2023 18:09:19 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A9F5923C46
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 15:08:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673910503;
+        s=mimecast20190719; t=1673910511;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=/M45GDyobIrHzzTTPdxvHNS6ahkXl3LWGYzDNmotxYs=;
-        b=Sfqjs0j9slXxyQeHcLmH7T/70HIn+1sfXaYPMpQEIe9wfioAh2YuY2wULhPW8Rz05RXfA6
-        INWfAIFAdRr2IhF0z30GdvgL3iF1RnD9GkNZaerJnbFeJ0dQtpkuKuPa/2ql1D0CiL/JxG
-        cBNgRSpenNVXpT4B5wH7pDglPpg7nio=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=tVennCGgg329YaWBH1MuYWHNl9yn102yVqT3Ftw70OY=;
+        b=GW2naVR37i38bZDSmxP66xcq8MDkhCjidR0UK/Q8aqWSoKT1q+59/yQkfl5tZFIKJr2Owc
+        E0jr36IJcO0D3szEV5S3iQt85hwYHS4MmCWwYOyrl1Tv/TKjmfu34bW3ywytC25PsLZcDd
+        lHpMSRYmKj7c/ose6MyL0AGwiy8p04k=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-617-Hy5vodhWN_CQKmWbF5lN4w-1; Mon, 16 Jan 2023 18:08:19 -0500
-X-MC-Unique: Hy5vodhWN_CQKmWbF5lN4w-1
-Received: from smtp.corp.redhat.com (int-mx10.intmail.prod.int.rdu2.redhat.com [10.11.54.10])
+ us-mta-642-9iYowuiSPQ2ft8O_1VfWHQ-1; Mon, 16 Jan 2023 18:08:26 -0500
+X-MC-Unique: 9iYowuiSPQ2ft8O_1VfWHQ-1
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id EA79B3C0CD55;
-        Mon, 16 Jan 2023 23:08:18 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 161DB811E6E;
+        Mon, 16 Jan 2023 23:08:26 +0000 (UTC)
 Received: from warthog.procyon.org.uk (unknown [10.33.36.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 884EF492B00;
-        Mon, 16 Jan 2023 23:08:17 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AA8C040C6EC4;
+        Mon, 16 Jan 2023 23:08:24 +0000 (UTC)
 Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
         Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
         Kingdom.
         Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH v6 02/34] iov_iter: Use IOCB/IOMAP_WRITE/op_is_write rather
- than iterator direction
+Subject: [PATCH v6 03/34] iov_iter: Pass I/O direction into
+ iov_iter_get_pages*()
 From:   David Howells <dhowells@redhat.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>
 Cc:     dhowells@redhat.com, Christoph Hellwig <hch@infradead.org>,
@@ -53,15 +53,15 @@ Cc:     dhowells@redhat.com, Christoph Hellwig <hch@infradead.org>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Date:   Mon, 16 Jan 2023 23:08:17 +0000
-Message-ID: <167391049698.2311931.13641162904441620555.stgit@warthog.procyon.org.uk>
+Date:   Mon, 16 Jan 2023 23:08:24 +0000
+Message-ID: <167391050409.2311931.7103784292954267373.stgit@warthog.procyon.org.uk>
 In-Reply-To: <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
 References: <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
 User-Agent: StGit/1.5
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.10
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -72,693 +72,566 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Use information other than the iterator direction to determine the
-direction of the I/O:
+Define FOLL_SOURCE_BUF and FOLL_DEST_BUF to indicate to get_user_pages*()
+and iov_iter_get_pages*() how the buffer is intended to be used in an I/O
+operation.  Don't use READ and WRITE as a read I/O writes to memory and
+vice versa - which causes confusion.
 
- (*) If a kiocb is available, use the IOCB_WRITE flag.
-
- (*) If an iomap_iter is available, use the IOMAP_WRITE flag.
-
- (*) If a request is available, use op_is_write().
-
-Drop the check on the iterator in smbd_recv() and its warning.
-
-This leaves __iov_iter_get_pages_alloc() the only user of iov_iter_rw(), so
-move it there and uninline it.
-
-Changes:
-========
-ver #6)
- - Move to the front of the patchset.
- - Added iocb_is_read() and iocb_is_write() to check IOCB_WRITE.
- - Use op_is_write() in bio_copy_user_iov().
- - Drop the checks from smbd_recv().
+The direction is checked against the iterator's data_source.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
-cc: Al Viro <viro@zeniv.linux.org.uk>
-Link: https://lore.kernel.org/r/167305163159.1521586.9460968250704377087.stgit@warthog.procyon.org.uk/ # v4
-Link: https://lore.kernel.org/r/167344727810.2425628.4715663653893036683.stgit@warthog.procyon.org.uk/ # v5
 ---
 
- block/blk-map.c      |    2 +-
- block/fops.c         |    8 ++++----
- fs/9p/vfs_addr.c     |    2 +-
- fs/affs/file.c       |    4 ++--
- fs/ceph/file.c       |    2 +-
- fs/cifs/smbdirect.c  |    9 ---------
- fs/dax.c             |    6 +++---
- fs/direct-io.c       |   22 +++++++++++-----------
- fs/exfat/inode.c     |    6 +++---
- fs/ext2/inode.c      |    2 +-
- fs/f2fs/file.c       |   10 +++++-----
- fs/fat/inode.c       |    4 ++--
- fs/fuse/dax.c        |    2 +-
- fs/fuse/file.c       |    8 ++++----
- fs/hfs/inode.c       |    2 +-
- fs/hfsplus/inode.c   |    2 +-
- fs/iomap/direct-io.c |    6 +++---
- fs/jfs/inode.c       |    2 +-
- fs/nfs/direct.c      |    2 +-
- fs/nilfs2/inode.c    |    2 +-
- fs/ntfs3/inode.c     |    2 +-
- fs/ocfs2/aops.c      |    2 +-
- fs/orangefs/inode.c  |    2 +-
- fs/reiserfs/inode.c  |    2 +-
- fs/udf/inode.c       |    2 +-
- include/linux/fs.h   |   10 ++++++++++
- include/linux/uio.h  |    5 -----
- lib/iov_iter.c       |    5 +++++
- 28 files changed, 67 insertions(+), 66 deletions(-)
+ block/bio.c             |    6 ++++++
+ block/blk-map.c         |    2 ++
+ crypto/af_alg.c         |    9 ++++++---
+ crypto/algif_hash.c     |    3 ++-
+ drivers/vhost/scsi.c    |    9 ++++++---
+ fs/ceph/addr.c          |    2 +-
+ fs/ceph/file.c          |   14 ++++++++------
+ fs/cifs/file.c          |    8 ++++----
+ fs/cifs/misc.c          |    3 ++-
+ fs/direct-io.c          |    6 ++++--
+ fs/fuse/dev.c           |    3 ++-
+ fs/fuse/file.c          |    8 ++++----
+ fs/nfs/direct.c         |   10 ++++++----
+ fs/splice.c             |    3 ++-
+ include/crypto/if_alg.h |    3 ++-
+ include/linux/bio.h     |   18 ++++++++++++++++--
+ include/linux/mm.h      |   10 ++++++++++
+ lib/iov_iter.c          |   14 +++++++-------
+ net/9p/trans_virtio.c   |   12 ++++++++----
+ net/core/datagram.c     |    5 +++--
+ net/core/skmsg.c        |    4 ++--
+ net/rds/message.c       |    4 ++--
+ net/tls/tls_sw.c        |    5 ++---
+ 23 files changed, 107 insertions(+), 54 deletions(-)
 
+diff --git a/block/bio.c b/block/bio.c
+index 5f96fcae3f75..867cf4db87ea 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1242,6 +1242,8 @@ static int bio_iov_add_zone_append_page(struct bio *bio, struct page *page,
+  * pages will have to be released using put_page() when done.
+  * For multi-segment *iter, this function only adds pages from the
+  * next non-empty segment of the iov iterator.
++ *
++ * The I/O direction is determined from the bio operation type.
+  */
+ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ {
+@@ -1263,6 +1265,8 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 	BUILD_BUG_ON(PAGE_PTRS_PER_BVEC < 2);
+ 	pages += entries_left * (PAGE_PTRS_PER_BVEC - 1);
+ 
++	gup_flags |= bio_is_write(bio) ? FOLL_SOURCE_BUF : FOLL_DEST_BUF;
++
+ 	if (bio->bi_bdev && blk_queue_pci_p2pdma(bio->bi_bdev->bd_disk->queue))
+ 		gup_flags |= FOLL_PCI_P2PDMA;
+ 
+@@ -1332,6 +1336,8 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+  * fit into the bio, or are requested in @iter, whatever is smaller. If
+  * MM encounters an error pinning the requested pages, it stops. Error
+  * is returned only if 0 pages could be pinned.
++ *
++ * The bio operation indicates the data direction.
+  */
+ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ {
 diff --git a/block/blk-map.c b/block/blk-map.c
-index 19940c978c73..08cbb7ff3b19 100644
+index 08cbb7ff3b19..c30be529fb55 100644
 --- a/block/blk-map.c
 +++ b/block/blk-map.c
-@@ -203,7 +203,7 @@ static int bio_copy_user_iov(struct request *rq, struct rq_map_data *map_data,
- 	/*
- 	 * success
- 	 */
--	if ((iov_iter_rw(iter) == WRITE &&
-+	if ((op_is_write(rq->cmd_flags) &&
- 	     (!map_data || !map_data->null_mapped)) ||
- 	    (map_data && map_data->from_user)) {
- 		ret = bio_copy_from_iter(bio, iter);
-diff --git a/block/fops.c b/block/fops.c
-index 50d245e8c913..5d376285edde 100644
---- a/block/fops.c
-+++ b/block/fops.c
-@@ -73,7 +73,7 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
- 			return -ENOMEM;
- 	}
+@@ -279,6 +279,8 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
+ 	if (bio == NULL)
+ 		return -ENOMEM;
  
--	if (iov_iter_rw(iter) == READ) {
-+	if (iocb_is_read(iocb)) {
- 		bio_init(&bio, bdev, vecs, nr_pages, REQ_OP_READ);
- 		if (user_backed_iter(iter))
- 			should_dirty = true;
-@@ -88,7 +88,7 @@ static ssize_t __blkdev_direct_IO_simple(struct kiocb *iocb,
- 		goto out;
- 	ret = bio.bi_iter.bi_size;
++	gup_flags |= bio_is_write(bio) ? FOLL_SOURCE_BUF : FOLL_DEST_BUF;
++
+ 	if (blk_queue_pci_p2pdma(rq->q))
+ 		gup_flags |= FOLL_PCI_P2PDMA;
  
--	if (iov_iter_rw(iter) == WRITE)
-+	if (iocb_is_write(iocb))
- 		task_io_account_write(ret);
+diff --git a/crypto/af_alg.c b/crypto/af_alg.c
+index 0a4fa2a429e2..7a68db157fae 100644
+--- a/crypto/af_alg.c
++++ b/crypto/af_alg.c
+@@ -531,13 +531,15 @@ static const struct net_proto_family alg_family = {
+ 	.owner	=	THIS_MODULE,
+ };
  
- 	if (iocb->ki_flags & IOCB_NOWAIT)
-@@ -174,7 +174,7 @@ static ssize_t __blkdev_direct_IO(struct kiocb *iocb, struct iov_iter *iter,
- 	struct blk_plug plug;
- 	struct blkdev_dio *dio;
- 	struct bio *bio;
--	bool is_read = (iov_iter_rw(iter) == READ), is_sync;
-+	bool is_read = iocb_is_read(iocb), is_sync;
- 	blk_opf_t opf = is_read ? REQ_OP_READ : dio_bio_write_op(iocb);
- 	loff_t pos = iocb->ki_pos;
- 	int ret = 0;
-@@ -296,7 +296,7 @@ static ssize_t __blkdev_direct_IO_async(struct kiocb *iocb,
- 					unsigned int nr_pages)
+-int af_alg_make_sg(struct af_alg_sgl *sgl, struct iov_iter *iter, int len)
++int af_alg_make_sg(struct af_alg_sgl *sgl, struct iov_iter *iter, int len,
++		   unsigned int gup_flags)
  {
- 	struct block_device *bdev = iocb->ki_filp->private_data;
--	bool is_read = iov_iter_rw(iter) == READ;
-+	bool is_read = iocb_is_read(iocb);
- 	blk_opf_t opf = is_read ? REQ_OP_READ : dio_bio_write_op(iocb);
- 	struct blkdev_dio *dio;
- 	struct bio *bio;
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index 97599edbc300..080be076b7b6 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -254,7 +254,7 @@ v9fs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
+ 	size_t off;
  	ssize_t n;
- 	int err = 0;
+ 	int npages, i;
  
--	if (iov_iter_rw(iter) == WRITE) {
-+	if (iocb_is_write(iocb)) {
- 		n = p9_client_write(file->private_data, pos, iter, &err);
- 		if (n) {
- 			struct inode *inode = file_inode(file);
-diff --git a/fs/affs/file.c b/fs/affs/file.c
-index cefa222f7881..0dc67fc5d6cb 100644
---- a/fs/affs/file.c
-+++ b/fs/affs/file.c
-@@ -400,7 +400,7 @@ affs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	loff_t offset = iocb->ki_pos;
- 	ssize_t ret;
+-	n = iov_iter_get_pages2(iter, sgl->pages, len, ALG_MAX_PAGES, &off);
++	n = iov_iter_get_pages(iter, sgl->pages, len, ALG_MAX_PAGES, &off,
++			       gup_flags);
+ 	if (n < 0)
+ 		return n;
  
--	if (iov_iter_rw(iter) == WRITE) {
-+	if (iocb_is_write(iocb)) {
- 		loff_t size = offset + count;
+@@ -1310,7 +1312,8 @@ int af_alg_get_rsgl(struct sock *sk, struct msghdr *msg, int flags,
+ 		list_add_tail(&rsgl->list, &areq->rsgl_list);
  
- 		if (AFFS_I(inode)->mmu_private < size)
-@@ -408,7 +408,7 @@ affs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	}
+ 		/* make one iovec available as scatterlist */
+-		err = af_alg_make_sg(&rsgl->sgl, &msg->msg_iter, seglen);
++		err = af_alg_make_sg(&rsgl->sgl, &msg->msg_iter, seglen,
++				     FOLL_DEST_BUF);
+ 		if (err < 0) {
+ 			rsgl->sg_num_bytes = 0;
+ 			return err;
+diff --git a/crypto/algif_hash.c b/crypto/algif_hash.c
+index 1d017ec5c63c..fe3d2258145f 100644
+--- a/crypto/algif_hash.c
++++ b/crypto/algif_hash.c
+@@ -91,7 +91,8 @@ static int hash_sendmsg(struct socket *sock, struct msghdr *msg,
+ 		if (len > limit)
+ 			len = limit;
  
- 	ret = blockdev_direct_IO(iocb, inode, iter, affs_get_block);
--	if (ret < 0 && iov_iter_rw(iter) == WRITE)
-+	if (ret < 0 && iocb_is_write(iocb))
- 		affs_write_failed(mapping, offset + count);
- 	return ret;
- }
+-		len = af_alg_make_sg(&ctx->sgl, &msg->msg_iter, len);
++		len = af_alg_make_sg(&ctx->sgl, &msg->msg_iter, len,
++				     FOLL_SOURCE_BUF);
+ 		if (len < 0) {
+ 			err = copied ? 0 : len;
+ 			goto unlock;
+diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+index dca6346d75b3..5d10837d19ec 100644
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -646,10 +646,13 @@ vhost_scsi_map_to_sgl(struct vhost_scsi_cmd *cmd,
+ 	struct scatterlist *sg = sgl;
+ 	ssize_t bytes;
+ 	size_t offset;
+-	unsigned int npages = 0;
++	unsigned int npages = 0, gup_flags = 0;
+ 
+-	bytes = iov_iter_get_pages2(iter, pages, LONG_MAX,
+-				VHOST_SCSI_PREALLOC_UPAGES, &offset);
++	gup_flags |= write ? FOLL_SOURCE_BUF : FOLL_DEST_BUF;
++
++	bytes = iov_iter_get_pages(iter, pages, LONG_MAX,
++				   VHOST_SCSI_PREALLOC_UPAGES, &offset,
++				   gup_flags);
+ 	/* No pages were pinned */
+ 	if (bytes <= 0)
+ 		return bytes < 0 ? bytes : -EFAULT;
+diff --git a/fs/ceph/addr.c b/fs/ceph/addr.c
+index 8c74871e37c9..cfc3353e5604 100644
+--- a/fs/ceph/addr.c
++++ b/fs/ceph/addr.c
+@@ -328,7 +328,7 @@ static void ceph_netfs_issue_read(struct netfs_io_subrequest *subreq)
+ 
+ 	dout("%s: pos=%llu orig_len=%zu len=%llu\n", __func__, subreq->start, subreq->len, len);
+ 	iov_iter_xarray(&iter, ITER_DEST, &rreq->mapping->i_pages, subreq->start, len);
+-	err = iov_iter_get_pages_alloc2(&iter, &pages, len, &page_off);
++	err = iov_iter_get_pages_alloc(&iter, &pages, len, &page_off, FOLL_DEST_BUF);
+ 	if (err < 0) {
+ 		dout("%s: iov_ter_get_pages_alloc returned %d\n", __func__, err);
+ 		goto out;
 diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 764598e1efd9..27c72a2f6af5 100644
+index 27c72a2f6af5..ffd36eeea186 100644
 --- a/fs/ceph/file.c
 +++ b/fs/ceph/file.c
-@@ -1284,7 +1284,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
- 	struct timespec64 mtime = current_time(inode);
- 	size_t count = iov_iter_count(iter);
- 	loff_t pos = iocb->ki_pos;
--	bool write = iov_iter_rw(iter) == WRITE;
-+	bool write = iocb_is_write(iocb);
- 	bool should_dirty = !write && user_backed_iter(iter);
+@@ -81,7 +81,7 @@ static __le32 ceph_flags_sys2wire(u32 flags)
+ #define ITER_GET_BVECS_PAGES	64
  
- 	if (write && ceph_snap(file_inode(file)) != CEPH_NOSNAP)
-diff --git a/fs/cifs/smbdirect.c b/fs/cifs/smbdirect.c
-index 90789aaa6567..3e693ffd0662 100644
---- a/fs/cifs/smbdirect.c
-+++ b/fs/cifs/smbdirect.c
-@@ -1938,14 +1938,6 @@ int smbd_recv(struct smbd_connection *info, struct msghdr *msg)
- 	unsigned int to_read, page_offset;
- 	int rc;
+ static ssize_t __iter_get_bvecs(struct iov_iter *iter, size_t maxsize,
+-				struct bio_vec *bvecs)
++				struct bio_vec *bvecs, bool write)
+ {
+ 	size_t size = 0;
+ 	int bvec_idx = 0;
+@@ -95,8 +95,9 @@ static ssize_t __iter_get_bvecs(struct iov_iter *iter, size_t maxsize,
+ 		size_t start;
+ 		int idx = 0;
  
--	if (iov_iter_rw(&msg->msg_iter) == WRITE) {
--		/* It's a bug in upper layer to get there */
--		cifs_dbg(VFS, "Invalid msg iter dir %u\n",
--			 iov_iter_rw(&msg->msg_iter));
--		rc = -EINVAL;
--		goto out;
--	}
--
- 	switch (iov_iter_type(&msg->msg_iter)) {
- 	case ITER_KVEC:
- 		buf = msg->msg_iter.kvec->iov_base;
-@@ -1967,7 +1959,6 @@ int smbd_recv(struct smbd_connection *info, struct msghdr *msg)
- 		rc = -EINVAL;
- 	}
+-		bytes = iov_iter_get_pages2(iter, pages, maxsize - size,
+-					   ITER_GET_BVECS_PAGES, &start);
++		bytes = iov_iter_get_pages(iter, pages, maxsize - size,
++					   ITER_GET_BVECS_PAGES, &start,
++					   write ? FOLL_SOURCE_BUF : FOLL_DEST_BUF);
+ 		if (bytes < 0)
+ 			return size ?: bytes;
  
--out:
- 	/* SMBDirect will read it all or nothing */
- 	if (rc > 0)
- 		msg->msg_iter.count = 0;
-diff --git a/fs/dax.c b/fs/dax.c
-index c48a3a93ab29..b538a2ab7b66 100644
---- a/fs/dax.c
-+++ b/fs/dax.c
-@@ -1405,7 +1405,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
- 	loff_t pos = iomi->pos;
- 	struct dax_device *dax_dev = iomap->dax_dev;
- 	loff_t end = pos + length, done = 0;
--	bool write = iov_iter_rw(iter) == WRITE;
-+	bool write = iomi->flags & IOMAP_WRITE;
- 	bool cow = write && iomap->flags & IOMAP_F_SHARED;
- 	ssize_t ret = 0;
- 	size_t xfer;
-@@ -1455,7 +1455,7 @@ static loff_t dax_iomap_iter(const struct iomap_iter *iomi,
+@@ -127,7 +128,8 @@ static ssize_t __iter_get_bvecs(struct iov_iter *iter, size_t maxsize,
+  * Return the number of bytes in the created bio_vec array, or an error.
+  */
+ static ssize_t iter_get_bvecs_alloc(struct iov_iter *iter, size_t maxsize,
+-				    struct bio_vec **bvecs, int *num_bvecs)
++				    struct bio_vec **bvecs, int *num_bvecs,
++				    bool write)
+ {
+ 	struct bio_vec *bv;
+ 	size_t orig_count = iov_iter_count(iter);
+@@ -146,7 +148,7 @@ static ssize_t iter_get_bvecs_alloc(struct iov_iter *iter, size_t maxsize,
+ 	if (!bv)
+ 		return -ENOMEM;
  
- 		map_len = dax_direct_access(dax_dev, pgoff, PHYS_PFN(size),
- 				DAX_ACCESS, &kaddr, NULL);
--		if (map_len == -EIO && iov_iter_rw(iter) == WRITE) {
-+		if (map_len == -EIO && write) {
- 			map_len = dax_direct_access(dax_dev, pgoff,
- 					PHYS_PFN(size), DAX_RECOVERY_WRITE,
- 					&kaddr, NULL);
-@@ -1530,7 +1530,7 @@ dax_iomap_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	if (!iomi.len)
- 		return 0;
+-	bytes = __iter_get_bvecs(iter, maxsize, bv);
++	bytes = __iter_get_bvecs(iter, maxsize, bv, write);
+ 	if (bytes < 0) {
+ 		/*
+ 		 * No pages were pinned -- just free the array.
+@@ -1334,7 +1336,7 @@ ceph_direct_read_write(struct kiocb *iocb, struct iov_iter *iter,
+ 			break;
+ 		}
  
--	if (iov_iter_rw(iter) == WRITE) {
-+	if (iocb_is_write(iocb)) {
- 		lockdep_assert_held_write(&iomi.inode->i_rwsem);
- 		iomi.flags |= IOMAP_WRITE;
- 	} else {
+-		len = iter_get_bvecs_alloc(iter, size, &bvecs, &num_pages);
++		len = iter_get_bvecs_alloc(iter, size, &bvecs, &num_pages, write);
+ 		if (len < 0) {
+ 			ceph_osdc_put_request(req);
+ 			ret = len;
+diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+index 22dfc1f8b4f1..d100b9cb8682 100644
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -3290,8 +3290,8 @@ cifs_write_from_iter(loff_t offset, size_t len, struct iov_iter *from,
+ 		if (ctx->direct_io) {
+ 			ssize_t result;
+ 
+-			result = iov_iter_get_pages_alloc2(
+-				from, &pagevec, cur_len, &start);
++			result = iov_iter_get_pages_alloc(
++				from, &pagevec, cur_len, &start, FOLL_SOURCE_BUF);
+ 			if (result < 0) {
+ 				cifs_dbg(VFS,
+ 					 "direct_writev couldn't get user pages (rc=%zd) iter type %d iov_offset %zd count %zd\n",
+@@ -4031,9 +4031,9 @@ cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *open_file,
+ 		if (ctx->direct_io) {
+ 			ssize_t result;
+ 
+-			result = iov_iter_get_pages_alloc2(
++			result = iov_iter_get_pages_alloc(
+ 					&direct_iov, &pagevec,
+-					cur_len, &start);
++					cur_len, &start, FOLL_DEST_BUF);
+ 			if (result < 0) {
+ 				cifs_dbg(VFS,
+ 					 "Couldn't get user pages (rc=%zd) iter type %d iov_offset %zd count %zd\n",
+diff --git a/fs/cifs/misc.c b/fs/cifs/misc.c
+index 4d3c586785a5..9655cf359ab9 100644
+--- a/fs/cifs/misc.c
++++ b/fs/cifs/misc.c
+@@ -1030,7 +1030,8 @@ setup_aio_ctx_iter(struct cifs_aio_ctx *ctx, struct iov_iter *iter, int rw)
+ 	saved_len = count;
+ 
+ 	while (count && npages < max_pages) {
+-		rc = iov_iter_get_pages2(iter, pages, count, max_pages, &start);
++		rc = iov_iter_get_pages(iter, pages, count, max_pages, &start,
++					rw == WRITE ? FOLL_SOURCE_BUF : FOLL_DEST_BUF);
+ 		if (rc < 0) {
+ 			cifs_dbg(VFS, "Couldn't get user pages (rc=%zd)\n", rc);
+ 			break;
 diff --git a/fs/direct-io.c b/fs/direct-io.c
-index 03d381377ae1..cf196f2a211e 100644
+index cf196f2a211e..b1e26a706e31 100644
 --- a/fs/direct-io.c
 +++ b/fs/direct-io.c
-@@ -1143,7 +1143,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	 */
- 
- 	/* watch out for a 0 len io from a tricksy fs */
--	if (iov_iter_rw(iter) == READ && !count)
-+	if (iocb_is_read(iocb) && !count)
- 		return 0;
- 
- 	dio = kmem_cache_alloc(dio_cache, GFP_KERNEL);
-@@ -1157,14 +1157,14 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	memset(dio, 0, offsetof(struct dio, pages));
- 
- 	dio->flags = flags;
--	if (dio->flags & DIO_LOCKING && iov_iter_rw(iter) == READ) {
-+	if (dio->flags & DIO_LOCKING && iocb_is_read(iocb)) {
- 		/* will be released by direct_io_worker */
- 		inode_lock(inode);
- 	}
- 
- 	/* Once we sampled i_size check for reads beyond EOF */
- 	dio->i_size = i_size_read(inode);
--	if (iov_iter_rw(iter) == READ && offset >= dio->i_size) {
-+	if (iocb_is_read(iocb) && offset >= dio->i_size) {
- 		retval = 0;
- 		goto fail_dio;
- 	}
-@@ -1177,7 +1177,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 			goto fail_dio;
- 	}
- 
--	if (dio->flags & DIO_LOCKING && iov_iter_rw(iter) == READ) {
-+	if (dio->flags & DIO_LOCKING && iocb_is_read(iocb)) {
- 		struct address_space *mapping = iocb->ki_filp->f_mapping;
- 
- 		retval = filemap_write_and_wait_range(mapping, offset, end - 1);
-@@ -1193,13 +1193,13 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	 */
- 	if (is_sync_kiocb(iocb))
- 		dio->is_async = false;
--	else if (iov_iter_rw(iter) == WRITE && end > i_size_read(inode))
-+	else if (iocb_is_write(iocb) && end > i_size_read(inode))
- 		dio->is_async = false;
- 	else
- 		dio->is_async = true;
- 
- 	dio->inode = inode;
--	if (iov_iter_rw(iter) == WRITE) {
-+	if (iocb_is_write(iocb)) {
- 		dio->opf = REQ_OP_WRITE | REQ_SYNC | REQ_IDLE;
- 		if (iocb->ki_flags & IOCB_NOWAIT)
- 			dio->opf |= REQ_NOWAIT;
-@@ -1211,7 +1211,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	 * For AIO O_(D)SYNC writes we need to defer completions to a workqueue
- 	 * so that we can call ->fsync.
- 	 */
--	if (dio->is_async && iov_iter_rw(iter) == WRITE) {
-+	if (dio->is_async && iocb_is_write(iocb)) {
- 		retval = 0;
- 		if (iocb_is_dsync(iocb))
- 			retval = dio_set_defer_completion(dio);
-@@ -1248,7 +1248,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	spin_lock_init(&dio->bio_lock);
- 	dio->refcount = 1;
- 
--	dio->should_dirty = user_backed_iter(iter) && iov_iter_rw(iter) == READ;
-+	dio->should_dirty = user_backed_iter(iter) && iocb_is_read(iocb);
- 	sdio.iter = iter;
- 	sdio.final_block_in_request = end >> blkbits;
- 
-@@ -1305,7 +1305,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	 * we can let i_mutex go now that its achieved its purpose
- 	 * of protecting us from looking up uninitialized blocks.
- 	 */
--	if (iov_iter_rw(iter) == READ && (dio->flags & DIO_LOCKING))
-+	if (iocb_is_read(iocb) && (dio->flags & DIO_LOCKING))
- 		inode_unlock(dio->inode);
- 
- 	/*
-@@ -1317,7 +1317,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	 */
- 	BUG_ON(retval == -EIOCBQUEUED);
- 	if (dio->is_async && retval == 0 && dio->result &&
--	    (iov_iter_rw(iter) == READ || dio->result == count))
-+	    (iocb_is_read(iocb) || dio->result == count))
- 		retval = -EIOCBQUEUED;
- 	else
- 		dio_await_completion(dio);
-@@ -1330,7 +1330,7 @@ ssize_t __blockdev_direct_IO(struct kiocb *iocb, struct inode *inode,
- 	return retval;
- 
- fail_dio:
--	if (dio->flags & DIO_LOCKING && iov_iter_rw(iter) == READ)
-+	if (dio->flags & DIO_LOCKING && iocb_is_read(iocb))
- 		inode_unlock(inode);
- 
- 	kmem_cache_free(dio_cache, dio);
-diff --git a/fs/exfat/inode.c b/fs/exfat/inode.c
-index 5b644cb057fa..82554aaf4fd0 100644
---- a/fs/exfat/inode.c
-+++ b/fs/exfat/inode.c
-@@ -412,10 +412,10 @@ static ssize_t exfat_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	struct address_space *mapping = iocb->ki_filp->f_mapping;
- 	struct inode *inode = mapping->host;
- 	loff_t size = iocb->ki_pos + iov_iter_count(iter);
--	int rw = iov_iter_rw(iter);
-+	bool writing = iocb_is_write(iocb);
+@@ -169,8 +169,10 @@ static inline int dio_refill_pages(struct dio *dio, struct dio_submit *sdio)
+ 	const enum req_op dio_op = dio->opf & REQ_OP_MASK;
  	ssize_t ret;
  
--	if (rw == WRITE) {
-+	if (writing) {
- 		/*
- 		 * FIXME: blockdev_direct_IO() doesn't use ->write_begin(),
- 		 * so we need to update the ->i_size_aligned to block boundary.
-@@ -434,7 +434,7 @@ static ssize_t exfat_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	 * condition of exfat_get_block() and ->truncate().
- 	 */
- 	ret = blockdev_direct_IO(iocb, inode, iter, exfat_get_block);
--	if (ret < 0 && (rw & WRITE))
-+	if (ret < 0 && writing)
- 		exfat_write_failed(mapping, size);
- 	return ret;
- }
-diff --git a/fs/ext2/inode.c b/fs/ext2/inode.c
-index 69aed9e2359e..26a61f886844 100644
---- a/fs/ext2/inode.c
-+++ b/fs/ext2/inode.c
-@@ -919,7 +919,7 @@ ext2_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	ssize_t ret;
+-	ret = iov_iter_get_pages2(sdio->iter, dio->pages, LONG_MAX, DIO_PAGES,
+-				&sdio->from);
++	ret = iov_iter_get_pages(sdio->iter, dio->pages, LONG_MAX, DIO_PAGES,
++				 &sdio->from,
++				 op_is_write(dio_op) ?
++				 FOLL_SOURCE_BUF : FOLL_DEST_BUF);
  
- 	ret = blockdev_direct_IO(iocb, inode, iter, ext2_get_block);
--	if (ret < 0 && iov_iter_rw(iter) == WRITE)
-+	if (ret < 0 && iocb_is_write(iocb))
- 		ext2_write_failed(mapping, offset + count);
- 	return ret;
- }
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index ecbc8c135b49..51a24580cfec 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -809,7 +809,7 @@ int f2fs_truncate(struct inode *inode)
- 	return 0;
- }
- 
--static bool f2fs_force_buffered_io(struct inode *inode, int rw)
-+static bool f2fs_force_buffered_io(struct inode *inode, bool writing)
- {
- 	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
- 
-@@ -827,9 +827,9 @@ static bool f2fs_force_buffered_io(struct inode *inode, int rw)
- 	 * for blkzoned device, fallback direct IO to buffered IO, so
- 	 * all IOs can be serialized by log-structured write.
- 	 */
--	if (f2fs_sb_has_blkzoned(sbi) && (rw == WRITE))
-+	if (f2fs_sb_has_blkzoned(sbi) && writing)
- 		return true;
--	if (f2fs_lfs_mode(sbi) && rw == WRITE && F2FS_IO_ALIGNED(sbi))
-+	if (f2fs_lfs_mode(sbi) && writing && F2FS_IO_ALIGNED(sbi))
- 		return true;
- 	if (is_sbi_flag_set(sbi, SBI_CP_DISABLED))
- 		return true;
-@@ -865,7 +865,7 @@ int f2fs_getattr(struct user_namespace *mnt_userns, const struct path *path,
- 		unsigned int bsize = i_blocksize(inode);
- 
- 		stat->result_mask |= STATX_DIOALIGN;
--		if (!f2fs_force_buffered_io(inode, WRITE)) {
-+		if (!f2fs_force_buffered_io(inode, true)) {
- 			stat->dio_mem_align = bsize;
- 			stat->dio_offset_align = bsize;
+ 	if (ret < 0 && sdio->blocks_available && dio_op == REQ_OP_WRITE) {
+ 		struct page *page = ZERO_PAGE(0);
+diff --git a/fs/fuse/dev.c b/fs/fuse/dev.c
+index e8b60ce72c9a..e3d8443e24a6 100644
+--- a/fs/fuse/dev.c
++++ b/fs/fuse/dev.c
+@@ -730,7 +730,8 @@ static int fuse_copy_fill(struct fuse_copy_state *cs)
  		}
-@@ -4254,7 +4254,7 @@ static bool f2fs_should_use_dio(struct inode *inode, struct kiocb *iocb,
- 	if (!(iocb->ki_flags & IOCB_DIRECT))
- 		return false;
- 
--	if (f2fs_force_buffered_io(inode, iov_iter_rw(iter)))
-+	if (f2fs_force_buffered_io(inode, iocb_is_write(iocb)))
- 		return false;
- 
- 	/*
-diff --git a/fs/fat/inode.c b/fs/fat/inode.c
-index d99b8549ec8f..237e20891df2 100644
---- a/fs/fat/inode.c
-+++ b/fs/fat/inode.c
-@@ -261,7 +261,7 @@ static ssize_t fat_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	loff_t offset = iocb->ki_pos;
- 	ssize_t ret;
- 
--	if (iov_iter_rw(iter) == WRITE) {
-+	if (iocb_is_write(iocb)) {
- 		/*
- 		 * FIXME: blockdev_direct_IO() doesn't use ->write_begin(),
- 		 * so we need to update the ->mmu_private to block boundary.
-@@ -281,7 +281,7 @@ static ssize_t fat_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	 * condition of fat_get_block() and ->truncate().
- 	 */
- 	ret = blockdev_direct_IO(iocb, inode, iter, fat_get_block);
--	if (ret < 0 && iov_iter_rw(iter) == WRITE)
-+	if (ret < 0 && iocb_is_write(iocb))
- 		fat_write_failed(mapping, offset + count);
- 
- 	return ret;
-diff --git a/fs/fuse/dax.c b/fs/fuse/dax.c
-index e23e802a8013..4351376db4a1 100644
---- a/fs/fuse/dax.c
-+++ b/fs/fuse/dax.c
-@@ -720,7 +720,7 @@ static bool file_extending_write(struct kiocb *iocb, struct iov_iter *from)
- {
- 	struct inode *inode = file_inode(iocb->ki_filp);
- 
--	return (iov_iter_rw(from) == WRITE &&
-+	return (iocb_is_write(iocb) &&
- 		((iocb->ki_pos) >= i_size_read(inode) ||
- 		  (iocb->ki_pos + iov_iter_count(from) > i_size_read(inode))));
- }
+ 	} else {
+ 		size_t off;
+-		err = iov_iter_get_pages2(cs->iter, &page, PAGE_SIZE, 1, &off);
++		err = iov_iter_get_pages(cs->iter, &page, PAGE_SIZE, 1, &off,
++					 cs->write ? FOLL_SOURCE_BUF : FOLL_DEST_BUF);
+ 		if (err < 0)
+ 			return err;
+ 		BUG_ON(!err);
 diff --git a/fs/fuse/file.c b/fs/fuse/file.c
-index 875314ee6f59..d68b45f8b3ae 100644
+index d68b45f8b3ae..68c196437306 100644
 --- a/fs/fuse/file.c
 +++ b/fs/fuse/file.c
-@@ -2897,7 +2897,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	inode = file->f_mapping->host;
- 	i_size = i_size_read(inode);
- 
--	if ((iov_iter_rw(iter) == READ) && (offset >= i_size))
-+	if (iocb_is_read(iocb) && (offset >= i_size))
- 		return 0;
- 
- 	io = kmalloc(sizeof(struct fuse_io_priv), GFP_KERNEL);
-@@ -2909,7 +2909,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	io->bytes = -1;
- 	io->size = 0;
- 	io->offset = offset;
--	io->write = (iov_iter_rw(iter) == WRITE);
-+	io->write = iocb_is_write(iocb);
- 	io->err = 0;
- 	/*
- 	 * By default, we want to optimize all I/Os with async request
-@@ -2942,7 +2942,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 		io->done = &wait;
- 	}
- 
--	if (iov_iter_rw(iter) == WRITE) {
-+	if (iocb_is_write(iocb)) {
- 		ret = fuse_direct_io(io, iter, &pos, FUSE_DIO_WRITE);
- 		fuse_invalidate_attr_mask(inode, FUSE_STATX_MODSIZE);
- 	} else {
-@@ -2965,7 +2965,7 @@ fuse_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 
- 	kref_put(&io->refcnt, fuse_io_release);
- 
--	if (iov_iter_rw(iter) == WRITE) {
-+	if (iocb_is_write(iocb)) {
- 		fuse_write_update_attr(inode, pos, ret);
- 		/* For extending writes we already hold exclusive lock */
- 		if (ret < 0 && offset + count > i_size)
-diff --git a/fs/hfs/inode.c b/fs/hfs/inode.c
-index 9c329a365e75..eec166e039d5 100644
---- a/fs/hfs/inode.c
-+++ b/fs/hfs/inode.c
-@@ -141,7 +141,7 @@ static ssize_t hfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	 * In case of error extending write may have instantiated a few
- 	 * blocks outside i_size. Trim these off again.
- 	 */
--	if (unlikely(iov_iter_rw(iter) == WRITE && ret < 0)) {
-+	if (unlikely(iocb_is_write(iocb) && ret < 0)) {
- 		loff_t isize = i_size_read(inode);
- 		loff_t end = iocb->ki_pos + count;
- 
-diff --git a/fs/hfsplus/inode.c b/fs/hfsplus/inode.c
-index 840577a0c1e7..2b4effb6ca3e 100644
---- a/fs/hfsplus/inode.c
-+++ b/fs/hfsplus/inode.c
-@@ -138,7 +138,7 @@ static ssize_t hfsplus_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	 * In case of error extending write may have instantiated a few
- 	 * blocks outside i_size. Trim these off again.
- 	 */
--	if (unlikely(iov_iter_rw(iter) == WRITE && ret < 0)) {
-+	if (unlikely(iocb_is_write(iocb) && ret < 0)) {
- 		loff_t isize = i_size_read(inode);
- 		loff_t end = iocb->ki_pos + count;
- 
-diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
-index 9804714b1751..b03d87f116fc 100644
---- a/fs/iomap/direct-io.c
-+++ b/fs/iomap/direct-io.c
-@@ -519,7 +519,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	dio->submit.waiter = current;
- 	dio->submit.poll_bio = NULL;
- 
--	if (iov_iter_rw(iter) == READ) {
-+	if (iocb_is_read(iocb)) {
- 		if (iomi.pos >= dio->i_size)
- 			goto out_free_dio;
- 
-@@ -573,7 +573,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	if (ret)
- 		goto out_free_dio;
- 
--	if (iov_iter_rw(iter) == WRITE) {
-+	if (iomi.flags & IOMAP_WRITE) {
- 		/*
- 		 * Try to invalidate cache pages for the range we are writing.
- 		 * If this invalidation fails, let the caller fall back to
-@@ -613,7 +613,7 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
- 	 * Revert iter to a state corresponding to that as some callers (such
- 	 * as the splice code) rely on it.
- 	 */
--	if (iov_iter_rw(iter) == READ && iomi.pos >= dio->i_size)
-+	if (!(iomi.flags & IOMAP_WRITE) && iomi.pos >= dio->i_size)
- 		iov_iter_revert(iter, iomi.pos - dio->i_size);
- 
- 	if (ret == -EFAULT && dio->size && (dio_flags & IOMAP_DIO_PARTIAL)) {
-diff --git a/fs/jfs/inode.c b/fs/jfs/inode.c
-index 8ac10e396050..0d1f94ac9488 100644
---- a/fs/jfs/inode.c
-+++ b/fs/jfs/inode.c
-@@ -334,7 +334,7 @@ static ssize_t jfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	 * In case of error extending write may have instantiated a few
- 	 * blocks outside i_size. Trim these off again.
- 	 */
--	if (unlikely(iov_iter_rw(iter) == WRITE && ret < 0)) {
-+	if (unlikely(iocb_is_write(iocb) && ret < 0)) {
- 		loff_t isize = i_size_read(inode);
- 		loff_t end = iocb->ki_pos + count;
+@@ -1414,10 +1414,10 @@ static int fuse_get_user_pages(struct fuse_args_pages *ap, struct iov_iter *ii,
+ 	while (nbytes < *nbytesp && ap->num_pages < max_pages) {
+ 		unsigned npages;
+ 		size_t start;
+-		ret = iov_iter_get_pages2(ii, &ap->pages[ap->num_pages],
+-					*nbytesp - nbytes,
+-					max_pages - ap->num_pages,
+-					&start);
++		ret = iov_iter_get_pages(ii, &ap->pages[ap->num_pages],
++					 *nbytesp - nbytes,
++					 max_pages - ap->num_pages,
++					 &start, write ? FOLL_SOURCE_BUF : FOLL_DEST_BUF);
+ 		if (ret < 0)
+ 			break;
  
 diff --git a/fs/nfs/direct.c b/fs/nfs/direct.c
-index 1707f46b1335..d865945f2a63 100644
+index d865945f2a63..42af84685f20 100644
 --- a/fs/nfs/direct.c
 +++ b/fs/nfs/direct.c
-@@ -133,7 +133,7 @@ int nfs_swap_rw(struct kiocb *iocb, struct iov_iter *iter)
+@@ -332,8 +332,9 @@ static ssize_t nfs_direct_read_schedule_iovec(struct nfs_direct_req *dreq,
+ 		size_t pgbase;
+ 		unsigned npages, i;
  
- 	VM_BUG_ON(iov_iter_count(iter) != PAGE_SIZE);
+-		result = iov_iter_get_pages_alloc2(iter, &pagevec,
+-						  rsize, &pgbase);
++		result = iov_iter_get_pages_alloc(iter, &pagevec,
++						  rsize, &pgbase,
++						  FOLL_DEST_BUF);
+ 		if (result < 0)
+ 			break;
+ 	
+@@ -791,8 +792,9 @@ static ssize_t nfs_direct_write_schedule_iovec(struct nfs_direct_req *dreq,
+ 		size_t pgbase;
+ 		unsigned npages, i;
  
--	if (iov_iter_rw(iter) == READ)
-+	if (iocb_is_read(iocb))
- 		ret = nfs_file_direct_read(iocb, iter, true);
- 	else
- 		ret = nfs_file_direct_write(iocb, iter, true);
-diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-index 232dd7b6cca1..496801507083 100644
---- a/fs/nilfs2/inode.c
-+++ b/fs/nilfs2/inode.c
-@@ -289,7 +289,7 @@ nilfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- {
- 	struct inode *inode = file_inode(iocb->ki_filp);
+-		result = iov_iter_get_pages_alloc2(iter, &pagevec,
+-						  wsize, &pgbase);
++		result = iov_iter_get_pages_alloc(iter, &pagevec,
++						  wsize, &pgbase,
++						  FOLL_SOURCE_BUF);
+ 		if (result < 0)
+ 			break;
  
--	if (iov_iter_rw(iter) == WRITE)
-+	if (iocb_is_write(iocb))
- 		return 0;
+diff --git a/fs/splice.c b/fs/splice.c
+index 5969b7a1d353..19c5b5adc548 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1165,7 +1165,8 @@ static int iter_to_pipe(struct iov_iter *from,
+ 		size_t start;
+ 		int i, n;
  
- 	/* Needs synchronization with the cleaner */
-diff --git a/fs/ntfs3/inode.c b/fs/ntfs3/inode.c
-index 20b953871574..675be8d629fc 100644
---- a/fs/ntfs3/inode.c
-+++ b/fs/ntfs3/inode.c
-@@ -761,7 +761,7 @@ static ssize_t ntfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	struct ntfs_inode *ni = ntfs_i(inode);
- 	loff_t vbo = iocb->ki_pos;
- 	loff_t end;
--	int wr = iov_iter_rw(iter) & WRITE;
-+	bool wr = iocb_is_write(iocb);
- 	size_t iter_count = iov_iter_count(iter);
- 	loff_t valid;
- 	ssize_t ret;
-diff --git a/fs/ocfs2/aops.c b/fs/ocfs2/aops.c
-index 1d65f6ef00ca..b741068a0a7e 100644
---- a/fs/ocfs2/aops.c
-+++ b/fs/ocfs2/aops.c
-@@ -2441,7 +2441,7 @@ static ssize_t ocfs2_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	    !ocfs2_supports_append_dio(osb))
- 		return 0;
+-		left = iov_iter_get_pages2(from, pages, ~0UL, 16, &start);
++		left = iov_iter_get_pages(from, pages, ~0UL, 16, &start,
++					  FOLL_SOURCE_BUF);
+ 		if (left <= 0) {
+ 			ret = left;
+ 			break;
+diff --git a/include/crypto/if_alg.h b/include/crypto/if_alg.h
+index a5db86670bdf..12058ab6cad9 100644
+--- a/include/crypto/if_alg.h
++++ b/include/crypto/if_alg.h
+@@ -165,7 +165,8 @@ int af_alg_release(struct socket *sock);
+ void af_alg_release_parent(struct sock *sk);
+ int af_alg_accept(struct sock *sk, struct socket *newsock, bool kern);
  
--	if (iov_iter_rw(iter) == READ)
-+	if (iocb_is_read(iocb))
- 		get_block = ocfs2_lock_get_block;
- 	else
- 		get_block = ocfs2_dio_wr_get_block;
-diff --git a/fs/orangefs/inode.c b/fs/orangefs/inode.c
-index 4df560894386..ece65907ff83 100644
---- a/fs/orangefs/inode.c
-+++ b/fs/orangefs/inode.c
-@@ -521,7 +521,7 @@ static ssize_t orangefs_direct_IO(struct kiocb *iocb,
- 	 */
- 	struct file *file = iocb->ki_filp;
- 	loff_t pos = iocb->ki_pos;
--	enum ORANGEFS_io_type type = iov_iter_rw(iter) == WRITE ?
-+	enum ORANGEFS_io_type type = iocb_is_write(iocb) ?
-             ORANGEFS_IO_WRITE : ORANGEFS_IO_READ;
- 	loff_t *offset = &pos;
- 	struct inode *inode = file->f_mapping->host;
-diff --git a/fs/reiserfs/inode.c b/fs/reiserfs/inode.c
-index c7d1fa526dea..0ed65feda193 100644
---- a/fs/reiserfs/inode.c
-+++ b/fs/reiserfs/inode.c
-@@ -3249,7 +3249,7 @@ static ssize_t reiserfs_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	 * In case of error extending write may have instantiated a few
- 	 * blocks outside i_size. Trim these off again.
- 	 */
--	if (unlikely(iov_iter_rw(iter) == WRITE && ret < 0)) {
-+	if (unlikely(iocb_is_write(iocb) && ret < 0)) {
- 		loff_t isize = i_size_read(inode);
- 		loff_t end = iocb->ki_pos + count;
+-int af_alg_make_sg(struct af_alg_sgl *sgl, struct iov_iter *iter, int len);
++int af_alg_make_sg(struct af_alg_sgl *sgl, struct iov_iter *iter, int len,
++		   unsigned int gup_flags);
+ void af_alg_free_sg(struct af_alg_sgl *sgl);
  
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index 1d7c2a812fc1..66a1b9e85cb2 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -219,7 +219,7 @@ static ssize_t udf_direct_IO(struct kiocb *iocb, struct iov_iter *iter)
- 	ssize_t ret;
+ static inline struct alg_sock *alg_sk(struct sock *sk)
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 22078a28d7cb..3f7ba7fe48ac 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -40,11 +40,25 @@ static inline unsigned int bio_max_segs(unsigned int nr_segs)
+ #define bio_sectors(bio)	bvec_iter_sectors((bio)->bi_iter)
+ #define bio_end_sector(bio)	bvec_iter_end_sector((bio)->bi_iter)
  
- 	ret = blockdev_direct_IO(iocb, inode, iter, udf_get_block);
--	if (unlikely(ret < 0 && iov_iter_rw(iter) == WRITE))
-+	if (unlikely(ret < 0 && iocb_is_write(iocb)))
- 		udf_write_failed(mapping, iocb->ki_pos + count);
- 	return ret;
- }
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 649ff061440e..6a488ae69f5d 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -353,6 +353,16 @@ static inline bool is_sync_kiocb(struct kiocb *kiocb)
- 	return kiocb->ki_complete == NULL;
- }
- 
-+static inline bool iocb_is_write(const struct kiocb *kiocb)
++/**
++ * bio_is_write - Query if the I/O direction is towards the disk
++ * @bio: The bio to query
++ *
++ * Return true if this is some sort of write operation - ie. the data is going
++ * towards the disk.
++ */
++static inline bool bio_is_write(const struct bio *bio)
 +{
-+	return kiocb->ki_flags & IOCB_WRITE;
++	return op_is_write(bio_op(bio));
 +}
 +
-+static inline bool iocb_is_read(const struct kiocb *kiocb)
+ /*
+  * Return the data direction, READ or WRITE.
+  */
+-#define bio_data_dir(bio) \
+-	(op_is_write(bio_op(bio)) ? WRITE : READ)
++static inline int bio_data_dir(const struct bio *bio)
 +{
-+	return !iocb_is_write(kiocb);
++	return bio_is_write(bio) ? WRITE : READ;
 +}
+ 
+ /*
+  * Check whether this bio carries any data or not. A NULL bio is allowed.
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index f3f196e4d66d..3af4ca8b1fe7 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3090,6 +3090,10 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
+ #define FOLL_PCI_P2PDMA	0x100000 /* allow returning PCI P2PDMA pages */
+ #define FOLL_INTERRUPTIBLE  0x200000 /* allow interrupts from generic signals */
+ 
++#define FOLL_SOURCE_BUF	0		/* Memory will be read from by I/O */
++#define FOLL_DEST_BUF	FOLL_WRITE	/* Memory will be written to by I/O */
++#define FOLL_BUF_MASK	FOLL_WRITE
 +
- struct address_space_operations {
- 	int (*writepage)(struct page *page, struct writeback_control *wbc);
- 	int (*read_folio)(struct file *, struct folio *);
-diff --git a/include/linux/uio.h b/include/linux/uio.h
-index 9f158238edba..6f4dfa96324d 100644
---- a/include/linux/uio.h
-+++ b/include/linux/uio.h
-@@ -114,11 +114,6 @@ static inline bool iov_iter_is_xarray(const struct iov_iter *i)
- 	return iov_iter_type(i) == ITER_XARRAY;
+ /*
+  * FOLL_PIN and FOLL_LONGTERM may be used in various combinations with each
+  * other. Here is what they mean, and how to use them:
+@@ -3143,6 +3147,12 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
+  * releasing pages: get_user_pages*() pages must be released via put_page(),
+  * while pin_user_pages*() pages must be released via unpin_user_page().
+  *
++ * FOLL_SOURCE_BUF and FOLL_DEST_BUF are indicators to get_user_pages*() and
++ * iov_iter_*_pages*() as to how the pages obtained are going to be used.
++ * FOLL_SOURCE_BUF indicates that I/O op is going to transfer from memory to
++ * device; FOLL_DEST_BUF that the op is going to transfer from device to
++ * memory.
++ *
+  * Please see Documentation/core-api/pin_user_pages.rst for more information.
+  */
+ 
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 68497d9c1452..f53583836009 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1429,11 +1429,6 @@ static struct page *first_bvec_segment(const struct iov_iter *i,
+ 	return page;
  }
  
--static inline unsigned char iov_iter_rw(const struct iov_iter *i)
+-static unsigned char iov_iter_rw(const struct iov_iter *i)
 -{
 -	return i->data_source ? WRITE : READ;
 -}
 -
- static inline bool user_backed_iter(const struct iov_iter *i)
- {
- 	return i->user_backed;
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index f9a3ff37ecd1..68497d9c1452 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1429,6 +1429,11 @@ static struct page *first_bvec_segment(const struct iov_iter *i,
- 	return page;
- }
- 
-+static unsigned char iov_iter_rw(const struct iov_iter *i)
-+{
-+	return i->data_source ? WRITE : READ;
-+}
-+
  static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
  		   struct page ***pages, size_t maxsize,
  		   unsigned int maxpages, size_t *start,
+@@ -1448,12 +1443,17 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
+ 	if (maxsize > MAX_RW_COUNT)
+ 		maxsize = MAX_RW_COUNT;
+ 
++	if (WARN_ON_ONCE((gup_flags & FOLL_BUF_MASK) == FOLL_SOURCE_BUF &&
++			 i->data_source == ITER_DEST))
++		return -EIO;
++	if (WARN_ON_ONCE((gup_flags & FOLL_BUF_MASK) == FOLL_DEST_BUF &&
++			 i->data_source == ITER_SOURCE))
++		return -EIO;
++
+ 	if (likely(user_backed_iter(i))) {
+ 		unsigned long addr;
+ 		int res;
+ 
+-		if (iov_iter_rw(i) != WRITE)
+-			gup_flags |= FOLL_WRITE;
+ 		if (i->nofault)
+ 			gup_flags |= FOLL_NOFAULT;
+ 
+diff --git a/net/9p/trans_virtio.c b/net/9p/trans_virtio.c
+index 3c27ffb781e3..eb28b54fe5f6 100644
+--- a/net/9p/trans_virtio.c
++++ b/net/9p/trans_virtio.c
+@@ -310,7 +310,8 @@ static int p9_get_mapped_pages(struct virtio_chan *chan,
+ 			       struct iov_iter *data,
+ 			       int count,
+ 			       size_t *offs,
+-			       int *need_drop)
++			       int *need_drop,
++			       unsigned int gup_flags)
+ {
+ 	int nr_pages;
+ 	int err;
+@@ -330,7 +331,8 @@ static int p9_get_mapped_pages(struct virtio_chan *chan,
+ 			if (err == -ERESTARTSYS)
+ 				return err;
+ 		}
+-		n = iov_iter_get_pages_alloc2(data, pages, count, offs);
++		n = iov_iter_get_pages_alloc(data, pages, count, offs,
++					     gup_flags);
+ 		if (n < 0)
+ 			return n;
+ 		*need_drop = 1;
+@@ -437,7 +439,8 @@ p9_virtio_zc_request(struct p9_client *client, struct p9_req_t *req,
+ 	if (uodata) {
+ 		__le32 sz;
+ 		int n = p9_get_mapped_pages(chan, &out_pages, uodata,
+-					    outlen, &offs, &need_drop);
++					    outlen, &offs, &need_drop,
++					    FOLL_DEST_BUF);
+ 		if (n < 0) {
+ 			err = n;
+ 			goto err_out;
+@@ -456,7 +459,8 @@ p9_virtio_zc_request(struct p9_client *client, struct p9_req_t *req,
+ 		memcpy(&req->tc.sdata[0], &sz, sizeof(sz));
+ 	} else if (uidata) {
+ 		int n = p9_get_mapped_pages(chan, &in_pages, uidata,
+-					    inlen, &offs, &need_drop);
++					    inlen, &offs, &need_drop,
++					    FOLL_SOURCE_BUF);
+ 		if (n < 0) {
+ 			err = n;
+ 			goto err_out;
+diff --git a/net/core/datagram.c b/net/core/datagram.c
+index e4ff2db40c98..9f0914b781ad 100644
+--- a/net/core/datagram.c
++++ b/net/core/datagram.c
+@@ -632,8 +632,9 @@ int __zerocopy_sg_from_iter(struct msghdr *msg, struct sock *sk,
+ 		if (frag == MAX_SKB_FRAGS)
+ 			return -EMSGSIZE;
+ 
+-		copied = iov_iter_get_pages2(from, pages, length,
+-					    MAX_SKB_FRAGS - frag, &start);
++		copied = iov_iter_get_pages(from, pages, length,
++					    MAX_SKB_FRAGS - frag, &start,
++					    FOLL_SOURCE_BUF);
+ 		if (copied < 0)
+ 			return -EFAULT;
+ 
+diff --git a/net/core/skmsg.c b/net/core/skmsg.c
+index 53d0251788aa..f63a13690712 100644
+--- a/net/core/skmsg.c
++++ b/net/core/skmsg.c
+@@ -324,8 +324,8 @@ int sk_msg_zerocopy_from_iter(struct sock *sk, struct iov_iter *from,
+ 			goto out;
+ 		}
+ 
+-		copied = iov_iter_get_pages2(from, pages, bytes, maxpages,
+-					    &offset);
++		copied = iov_iter_get_pages(from, pages, bytes, maxpages,
++					    &offset, FOLL_SOURCE_BUF);
+ 		if (copied <= 0) {
+ 			ret = -EFAULT;
+ 			goto out;
+diff --git a/net/rds/message.c b/net/rds/message.c
+index b47e4f0a1639..fcfd406b97af 100644
+--- a/net/rds/message.c
++++ b/net/rds/message.c
+@@ -390,8 +390,8 @@ static int rds_message_zcopy_from_user(struct rds_message *rm, struct iov_iter *
+ 		size_t start;
+ 		ssize_t copied;
+ 
+-		copied = iov_iter_get_pages2(from, &pages, PAGE_SIZE,
+-					    1, &start);
++		copied = iov_iter_get_pages(from, &pages, PAGE_SIZE,
++					    1, &start, FOLL_SOURCE_BUF);
+ 		if (copied < 0) {
+ 			struct mmpin *mmp;
+ 			int i;
+diff --git a/net/tls/tls_sw.c b/net/tls/tls_sw.c
+index 9ed978634125..59acaeb24f54 100644
+--- a/net/tls/tls_sw.c
++++ b/net/tls/tls_sw.c
+@@ -1354,9 +1354,8 @@ static int tls_setup_from_iter(struct iov_iter *from,
+ 			rc = -EFAULT;
+ 			goto out;
+ 		}
+-		copied = iov_iter_get_pages2(from, pages,
+-					    length,
+-					    maxpages, &offset);
++		copied = iov_iter_get_pages(from, pages, length,
++					    maxpages, &offset, FOLL_DEST_BUF);
+ 		if (copied <= 0) {
+ 			rc = -EFAULT;
+ 			goto out;
 
 
