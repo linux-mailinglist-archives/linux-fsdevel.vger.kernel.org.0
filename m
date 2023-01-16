@@ -2,67 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 27F8466D053
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 21:43:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A309866D060
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 21:47:19 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231390AbjAPUnW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Jan 2023 15:43:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43890 "EHLO
+        id S232168AbjAPUrS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Jan 2023 15:47:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44906 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230193AbjAPUnV (ORCPT
+        with ESMTP id S231364AbjAPUrQ (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Jan 2023 15:43:21 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9412D2411E
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 12:42:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673901756;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=kgpmwAld50T/RlTnaDgeJfep1BuT7u8rE0qOi5VFIA8=;
-        b=Y7ieMtXmHeE6UYTZiQPzkDcV+Cn0AS8Pcg+jHP1i13YWsWcT/TbZpplnKehhneeYXv/aCr
-        G4/JBpdisTLTzoz9krQNKbxXP7q/SOJhcVw7vJxbhc8O8bXZCzOYpnw5mTl5dsTr7IwBox
-        vqUt7wQJmwS3ngDwst1QqaX10s/5FF8=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-597-l-zUWM7dMJCE9cSXcAtiJA-1; Mon, 16 Jan 2023 15:42:33 -0500
-X-MC-Unique: l-zUWM7dMJCE9cSXcAtiJA-1
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.rdu2.redhat.com [10.11.54.2])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D3D5929AA384;
-        Mon, 16 Jan 2023 20:42:32 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-0-3.rdu2.redhat.com [10.22.0.3])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 62B9140C6EC4;
-        Mon, 16 Jan 2023 20:42:31 +0000 (UTC)
-Date:   Mon, 16 Jan 2023 15:42:29 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Jan Kara <jack@suse.cz>
-Cc:     Linux-Audit Mailing List <linux-audit@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
-        Paul Moore <paul@paul-moore.com>,
-        Eric Paris <eparis@parisplace.org>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Amir Goldstein <amir73il@gmail.com>
-Subject: Re: [PATCH v5 2/3] fanotify: define struct members to hold response
- decision context
-Message-ID: <Y8W2tcXFoUajzojc@madcap2.tricolour.ca>
-References: <cover.1670606054.git.rgb@redhat.com>
- <45da8423b9b1e8fc7abd68cd2269acff8cf9022a.1670606054.git.rgb@redhat.com>
- <20221216164342.ojcbdifdmafq5njw@quack3>
- <Y6TCWe4/nR957pFh@madcap2.tricolour.ca>
- <20230103124201.iopasddbtb6vi362@quack3>
+        Mon, 16 Jan 2023 15:47:16 -0500
+Received: from mail-io1-xd2a.google.com (mail-io1-xd2a.google.com [IPv6:2607:f8b0:4864:20::d2a])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 8CC352884E
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 12:47:14 -0800 (PST)
+Received: by mail-io1-xd2a.google.com with SMTP id n85so6406733iod.7
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 12:47:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iC+oOTJgto8VDtuk5xPA5HP7pWMeJabRRCEJJKrELSQ=;
+        b=aDz7ZJO9m418+GwGL0HiNp1x++f0x45vkBMs4mHss64uYt10pryVzFQ9OQNBejhG96
+         1iELx/+OW4A/oPxA3WPfURAp3NJFNSnUPNYb0u+E7p82d6E5acpm+Y+Isrbz9G/6OhI5
+         KXiGIq1qO7Iwei44ssy4doUpPlmggCjZQk/dI7gCvmJpt4Kw0IwA9R3/5I8N8FT+kOeR
+         lrirY2DKDRZAiMs5ELa1/1qOYGFvzOfN9lbcZVxEEgy2VExl1VgxI0EtLhLJ4VxnLhbU
+         yE2nr4Qr+QM7+vn11jZTtDxay9dxwIdJlKJRkePs2yqV5yZEjnRiZxtE+82nkvn/2bbx
+         nYPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iC+oOTJgto8VDtuk5xPA5HP7pWMeJabRRCEJJKrELSQ=;
+        b=xPhhdjuwLHHB2cGZhQ2yv00wULcwAI/eJYWKKjK+xIKLp2joDHSNk8tF8vw5BqmQ7B
+         v2VYze6RsWDOZEfBO+Ub0IL/GXZOaTiYvGTgUhL0BjOD08TrUSr3Z97C3TFfZIw95/+z
+         1RFH1kitZAQ/kgTU5eSfx1gy5EzFHnA88bWRXShou9tKz0Qz4hOOqRSVP5U9hQxanHqz
+         b3kC4O65MMIyRtS4nUX+SuxAYMiWavjdkSUBk5P3Xo9ogECRQ1n36uVzWlHkVWWMsYQz
+         Sb/tfz+deQs+cgrh4Rmv4hGi/jlB8++VN57SPYrhXYeiz6hPljSF0tMjcmFQpT1R8WL2
+         CvtA==
+X-Gm-Message-State: AFqh2kpprcR2xEW6w0QvP/ujPEvWdbg0yglu8w89wOu9FB2CoKgNoNBk
+        1rEipwyJ4CVgl6ZcByopJ/R0DcmHLr6OF+/I8cX2vQ==
+X-Google-Smtp-Source: AMrXdXtIenOHKGALstnNyTTVSZWahRV/Av5bE6uzHxah75ffnBwJid1mFHkItGWCVEWwtzut5lEKaSIAPMTQyU8O0lw=
+X-Received: by 2002:a02:2a4b:0:b0:38c:886a:219a with SMTP id
+ w72-20020a022a4b000000b0038c886a219amr16110jaw.133.1673902033675; Mon, 16 Jan
+ 2023 12:47:13 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230103124201.iopasddbtb6vi362@quack3>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.2
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+References: <000000000000baa88c05eaa934bb@google.com> <CACT4Y+bVtOb+CxiAKHaSsrym-4JKn-E8exY7aypfp_yGzkUGDQ@mail.gmail.com>
+In-Reply-To: <CACT4Y+bVtOb+CxiAKHaSsrym-4JKn-E8exY7aypfp_yGzkUGDQ@mail.gmail.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 16 Jan 2023 21:46:37 +0100
+Message-ID: <CAG48ez0fZm4CHoG2-Zup8z9XGk-+hfdet=YpnY003iJpQOaBHg@mail.gmail.com>
+Subject: Re: [syzbot] stack segment fault in truncate_inode_pages_final
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     syzbot <syzbot+0f7dd5852be940800ca4@syzkaller.appspotmail.com>,
+        almaz.alexandrovich@paragon-software.com, ntfs3@lists.linux.dev,
+        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        syzkaller-bugs@googlegroups.com, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
+        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
+        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -70,140 +71,156 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 2023-01-03 13:42, Jan Kara wrote:
-> On Thu 22-12-22 15:47:21, Richard Guy Briggs wrote:
-> > On 2022-12-16 17:43, Jan Kara wrote:
-> > > On Mon 12-12-22 09:06:10, Richard Guy Briggs wrote:
-> > > > This patch adds a flag, FAN_INFO and an extensible buffer to provide
-> > > > additional information about response decisions.  The buffer contains
-> > > > one or more headers defining the information type and the length of the
-> > > > following information.  The patch defines one additional information
-> > > > type, FAN_RESPONSE_INFO_AUDIT_RULE, to audit a rule number.  This will
-> > > > allow for the creation of other information types in the future if other
-> > > > users of the API identify different needs.
-> > > > 
-> > > > Suggested-by: Steve Grubb <sgrubb@redhat.com>
-> > > > Link: https://lore.kernel.org/r/2745105.e9J7NaK4W3@x2
-> > > > Suggested-by: Jan Kara <jack@suse.cz>
-> > > > Link: https://lore.kernel.org/r/20201001101219.GE17860@quack2.suse.cz
-> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+On Mon, Oct 10, 2022 at 9:42 AM Dmitry Vyukov <dvyukov@google.com> wrote:
+> On Mon, 10 Oct 2022 at 09:35, syzbot
+> <syzbot+0f7dd5852be940800ca4@syzkaller.appspotmail.com> wrote:
+> >
+> > Hello,
+> >
+> > syzbot found the following issue on:
+> >
+> > HEAD commit:    833477fce7a1 Merge tag 'sound-6.1-rc1' of git://git.kernel..
+> > git tree:       upstream
+> > console output: https://syzkaller.appspot.com/x/log.txt?x=17cae158880000
+> > kernel config:  https://syzkaller.appspot.com/x/.config?x=676645938ad4c02f
+> > dashboard link: https://syzkaller.appspot.com/bug?extid=0f7dd5852be940800ca4
+> > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
+> >
+> > Unfortunately, I don't have any reproducer for this issue yet.
+> >
+> > Downloadable assets:
+> > disk image: https://storage.googleapis.com/syzbot-assets/f66757bbae28/disk-833477fc.raw.xz
+> > vmlinux: https://storage.googleapis.com/syzbot-assets/50ec5a2788dd/vmlinux-833477fc.xz
+> >
+> > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > Reported-by: syzbot+0f7dd5852be940800ca4@syzkaller.appspotmail.com
+>
+> +ntfs3 maintainers
 
-> > > > +{
-> > > > +	if (fd == FAN_NOFD)
-> > > > +		return -ENOENT;
-> > > 
-> > > I would not test 'fd' in this function at all. After all it is not part of
-> > > the response info structure and you do check it in
-> > > process_access_response() anyway.
-> > 
-> > I wrestled with that.  I was even tempted to swallow the following fd
-> > check too, but the flow would not have made as much sense for the
-> > non-INFO case.
-> > 
-> > My understanding from Amir was that FAN_NOFD was only to be sent in in
-> > conjuction with FAN_INFO to test if a newer kernel was present.
-> 
-> Yes, that is correct. But we not only want to check that FAN_INFO flag is
-> understood (as you do in your patch) but also whether a particular response
-> type is understood (which you don't verify for FAN_NOFD). Currently, there
-> is only one response type (FAN_RESPONSE_INFO_AUDIT_RULE) but if there are
-> more in the future we need old kernels to refuse new response types even
-> for FAN_NOFD case.
+There's something deeply wrong with this one; it looks like we're
+trying to execute from an RIP that is not aligned to a full
+instruction. RIP points to the last byte of a CALL instruction. It
+looks like, somehow, while we were somewhere inside
+_raw_spin_unlock_irq, something stomped over RIP. Note how the "Code
+starting with the faulting instruction" section shows an instruction
+that's not visible in the "All code" dump above.
 
-Ok, I agree the NOFD check should be after.
+Code: 48 c7 c0 40 e8 ca 8d 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03
+80 3c 10 00 0f 85 e0 01 00 00 48 8b 05 65 42 6d 0c e8 80 2e 06 <00> 85
+c0 74 17 65 ff 0d 55 c9 a4 7e 0f 85 3e fb ff ff e8 ec ce a2
+All code
+========
+   0: 48 c7 c0 40 e8 ca 8d mov    $0xffffffff8dcae840,%rax
+   7: 48 ba 00 00 00 00 00 movabs $0xdffffc0000000000,%rdx
+   e: fc ff df
+  11: 48 c1 e8 03          shr    $0x3,%rax
+  15: 80 3c 10 00          cmpb   $0x0,(%rax,%rdx,1)
+  19: 0f 85 e0 01 00 00    jne    0x1ff
+  1f: 48 8b 05 65 42 6d 0c mov    0xc6d4265(%rip),%rax        # 0xc6d428b
+  26:* e8 80 2e 06 00        call   0x62eab <-- trapping instruction
+  2b: 85 c0                test   %eax,%eax
+  2d: 74 17                je     0x46
+  2f: 65 ff 0d 55 c9 a4 7e decl   %gs:0x7ea4c955(%rip)        # 0x7ea4c98b
+  36: 0f 85 3e fb ff ff    jne    0xfffffffffffffb7a
+  3c: e8                    .byte 0xe8
+  3d: ec                    in     (%dx),%al
+  3e: ce                    (bad)
+  3f: a2                    .byte 0xa2
 
-> > I presumed that if FAN_NOFD was present without FAN_INFO that was an
-> > invalid input to an old kernel.
-> 
-> Yes, that is correct and I agree the conditions I've suggested below are
-> wrong in that regard and need a bit of tweaking. Thanks for catching it.
-> 
-> > > > +
-> > > > +	if (info_len != sizeof(*friar))
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	if (copy_from_user(friar, info, sizeof(*friar)))
-> > > > +		return -EFAULT;
-> > > > +
-> > > > +	if (friar->hdr.type != FAN_RESPONSE_INFO_AUDIT_RULE)
-> > > > +		return -EINVAL;
-> > > > +	if (friar->hdr.pad != 0)
-> > > > +		return -EINVAL;
-> > > > +	if (friar->hdr.len != sizeof(*friar))
-> > > > +		return -EINVAL;
-> > > > +
-> > > > +	return info_len;
-> > > > +}
-> > > > +
-> > > 
-> > > ...
-> > > 
-> > > > @@ -327,10 +359,18 @@ static int process_access_response(struct fsnotify_group *group,
-> > > >  		return -EINVAL;
-> > > >  	}
-> > > >  
-> > > > -	if (fd < 0)
-> > > > +	if ((response & FAN_AUDIT) && !FAN_GROUP_FLAG(group, FAN_ENABLE_AUDIT))
-> > > >  		return -EINVAL;
-> > > >  
-> > > > -	if ((response & FAN_AUDIT) && !FAN_GROUP_FLAG(group, FAN_ENABLE_AUDIT))
-> > > > +	if (response & FAN_INFO) {
-> > > > +		ret = process_access_response_info(fd, info, info_len, &friar);
-> > > > +		if (ret < 0)
-> > > > +			return ret;
-> > > > +	} else {
-> > > > +		ret = 0;
-> > > > +	}
-> > > > +
-> > > > +	if (fd < 0)
-> > > >  		return -EINVAL;
-> > > 
-> > > And here I'd do:
-> > > 
-> > > 	if (fd == FAN_NOFD)
-> > > 		return 0;
-> > > 	if (fd < 0)
-> > > 		return -EINVAL;
-> > > 
-> > > As we talked in previous revisions we'd specialcase FAN_NOFD to just verify
-> > > extra info is understood by the kernel so that application writing fanotify
-> > > responses has a way to check which information it can provide to the
-> > > kernel.
-> > 
-> > The reason for including it in process_access_response_info() is to make
-> > sure that it is included in the FAN_INFO case to detect this extension.
-> > If it were included here
-> 
-> I see what you're getting at now. So the condition
-> 
->  	if (fd == FAN_NOFD)
->  		return 0;
-> 
-> needs to be moved into 
-> 
-> 	if (response & FAN_INFO)
-> 
-> branch after process_access_response_info(). I still prefer to keep it
-> outside of the process_access_response_info() function itself as it looks
-> more logical to me. Does it address your concerns?
+Code starting with the faulting instruction
+===========================================
+   0: 00 85 c0 74 17 65    add    %al,0x651774c0(%rbp)
+   6: ff 0d 55 c9 a4 7e    decl   0x7ea4c955(%rip)        # 0x7ea4c961
+   c: 0f 85 3e fb ff ff    jne    0xfffffffffffffb50
+  12: e8                    .byte 0xe8
+  13: ec                    in     (%dx),%al
+  14: ce                    (bad)
+  15: a2                    .byte 0xa2
 
-Ok.  Note that this does not return zero to userspace, since this
-function's return value is added to the size of the struct
-fanotify_response when there is no error.
+We're interpreting unaligned instruction bytes as "add
+%al,0x651774c0(%rbp)", and RBP is non-canonical (1ffff92000a6cf44), so
+we get a Stack Segment fault.
 
-For that reason, I think it makes more sense to return -ENOENT, or some
-other unused error code that fits, unless you think it is acceptable to
-return sizeof(struct fanotify_response) when FAN_INFO is set to indicate
-this.
+Unless this is some kind of asynchronous stack UAF decrement, I think
+this might not be NTFS's fault.
 
-> Jan Kara <jack@suse.com>
-
-- RGB
-
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
-
+> > stack segment: 0000 [#1] PREEMPT SMP KASAN
+> > CPU: 1 PID: 22407 Comm: syz-executor.5 Not tainted 6.0.0-syzkaller-05118-g833477fce7a1 #0
+> > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
+> > RIP: 0010:trace_lock_release include/trace/events/lock.h:69 [inline]
+> > RIP: 0010:lock_release+0x55f/0x780 kernel/locking/lockdep.c:5677
+> > Code: 48 c7 c0 40 e8 ca 8d 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03 80 3c 10 00 0f 85 e0 01 00 00 48 8b 05 65 42 6d 0c e8 80 2e 06 <00> 85 c0 74 17 65 ff 0d 55 c9 a4 7e 0f 85 3e fb ff ff e8 ec ce a2
+> > RSP: 0018:ffffc90005367a10 EFLAGS: 00010002
+> > RAX: 0000000000000001 RBX: 0000000000000001 RCX: 0000000000000001
+> > RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+> > RBP: 1ffff92000a6cf44 R08: 0000000000000000 R09: ffffffff8ddf9957
+> > R10: fffffbfff1bbf32a R11: 0000000000000000 R12: ffff888093973498
+> > R13: ffff888093973278 R14: ffffffff8a22b140 R15: ffff8880478d8a00
+> > FS:  00007f9ae3bb2700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 0000001b2e927000 CR3: 000000003f6b9000 CR4: 00000000003506e0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > Call Trace:
+> >  <TASK>
+> >  __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:157 [inline]
+> >  _raw_spin_unlock_irq+0x12/0x40 kernel/locking/spinlock.c:202
+> >  spin_unlock_irq include/linux/spinlock.h:399 [inline]
+> >  truncate_inode_pages_final+0x5f/0x80 mm/truncate.c:484
+> >  ntfs_evict_inode+0x16/0xa0 fs/ntfs3/inode.c:1741
+> >  evict+0x2ed/0x6b0 fs/inode.c:665
+> >  iput_final fs/inode.c:1748 [inline]
+> >  iput.part.0+0x55d/0x810 fs/inode.c:1774
+> >  iput+0x58/0x70 fs/inode.c:1764
+> >  ntfs_fill_super+0x2e89/0x37f0 fs/ntfs3/super.c:1190
+> >  get_tree_bdev+0x440/0x760 fs/super.c:1323
+> >  vfs_get_tree+0x89/0x2f0 fs/super.c:1530
+> >  do_new_mount fs/namespace.c:3040 [inline]
+> >  path_mount+0x1326/0x1e20 fs/namespace.c:3370
+> >  do_mount fs/namespace.c:3383 [inline]
+> >  __do_sys_mount fs/namespace.c:3591 [inline]
+> >  __se_sys_mount fs/namespace.c:3568 [inline]
+> >  __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
+> >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
+> >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
+> >  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+> > RIP: 0033:0x7f9ae2a8bada
+> > Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+> > RSP: 002b:00007f9ae3bb1f88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
+> > RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007f9ae2a8bada
+> > RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f9ae3bb1fe0
+> > RBP: 00007f9ae3bb2020 R08: 00007f9ae3bb2020 R09: 0000000020000000
+> > R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020000000
+> > R13: 0000000020000100 R14: 00007f9ae3bb1fe0 R15: 0000000020000140
+> >  </TASK>
+> > Modules linked in:
+> > ---[ end trace 0000000000000000 ]---
+> > RIP: 0010:trace_lock_release include/trace/events/lock.h:69 [inline]
+> > RIP: 0010:lock_release+0x55f/0x780 kernel/locking/lockdep.c:5677
+> > Code: 48 c7 c0 40 e8 ca 8d 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03 80 3c 10 00 0f 85 e0 01 00 00 48 8b 05 65 42 6d 0c e8 80 2e 06 <00> 85 c0 74 17 65 ff 0d 55 c9 a4 7e 0f 85 3e fb ff ff e8 ec ce a2
+> > RSP: 0018:ffffc90005367a10 EFLAGS: 00010002
+> > RAX: 0000000000000001 RBX: 0000000000000001 RCX: 0000000000000001
+> > RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
+> > RBP: 1ffff92000a6cf44 R08: 0000000000000000 R09: ffffffff8ddf9957
+> > R10: fffffbfff1bbf32a R11: 0000000000000000 R12: ffff888093973498
+> > R13: ffff888093973278 R14: ffffffff8a22b140 R15: ffff8880478d8a00
+> > FS:  00007f9ae3bb2700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
+> > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > CR2: 0000001b2e927000 CR3: 000000003f6b9000 CR4: 00000000003506e0
+> > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> >
+> >
+> > ---
+> > This report is generated by a bot. It may contain errors.
+> > See https://goo.gl/tpsmEJ for more information about syzbot.
+> > syzbot engineers can be reached at syzkaller@googlegroups.com.
+> >
+> > syzbot will keep track of this issue. See:
+> > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> >
+> > --
+> > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000baa88c05eaa934bb%40google.com.
+>
