@@ -2,157 +2,116 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0270B66CF67
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 20:14:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2EB6E66CFCF
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 20:52:06 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232599AbjAPTOn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Jan 2023 14:14:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38194 "EHLO
+        id S229712AbjAPTwD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Jan 2023 14:52:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54500 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232458AbjAPTOl (ORCPT
+        with ESMTP id S232201AbjAPTv7 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Jan 2023 14:14:41 -0500
-Received: from mail-wr1-x42f.google.com (mail-wr1-x42f.google.com [IPv6:2a00:1450:4864:20::42f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E17CC21A36
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 11:14:39 -0800 (PST)
-Received: by mail-wr1-x42f.google.com with SMTP id z5so27375583wrt.6
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 11:14:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3I9TKz0QCRwStrORKwRYbo4zYDMGw/8qyv/2PPzcTIw=;
-        b=JhpTDkNcmd/K/PpIamox+UvMbgveXuheag7i9hm8ma5NnX7ZfIOvhDb1HEwnrhqXgV
-         DMPZY4t81B1oRlC1xwXXjkqUDt3e/oxumkm8f58ziGzt6ueDgTdxVpSbxmWLa5Y/LqIP
-         b3h5/Wepronyk03vMqkjLgLzU2Nh6Zcq+b8Ard3BfdYwkBmsxc9039CJba7v7FTcQ6ef
-         3swlGUN78iSzOIxCdqSboYpAB4+ZEFVbKXJU/A2J4I1H+gpE/GmWLAd7i2MSNVcGX1Jj
-         Dp+HqtxFWRKw2OFt6pSgbCTWBBfOfZmdFLGKnK7jqQS3hYgr3ggvMSbka3FiLg4x9//h
-         b8zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3I9TKz0QCRwStrORKwRYbo4zYDMGw/8qyv/2PPzcTIw=;
-        b=CXfa/ultlnmoy4fBwvrLk91Mr0ghELB03u9Rn7X/esvp+oX0Nz5VWw9ts0YR1FZufN
-         RgoaiquGz7/UHFWl7PfoLFpa8OeOso4DMrTTY/dU3s+6X2uN6cSn8kTqVd4ImtUh266s
-         Q6SuqGTwXWdyNzxfXlB4RTmBU5N88G3Dkg4nVPoVi5S5IWIbeHbKRIndJdJiwJI+dDpp
-         LmodtanhDC/qAzeEKfIpJnDBgqMaEhzSAGdT52e7Fw2L68Ndijatu8nHqLjOO3EFsI12
-         EcfH48TTb3Vr1DiuN1pZEPIzEToRxT55K0EuGkq6dSbSF3WF8eA//42IhgG3SteHEGxQ
-         mW9w==
-X-Gm-Message-State: AFqh2ko1NZ1owLlCwU09c6FuMKhvJaQbQkqPeDIC8SJqSRwj+67u1fW6
-        6xxUGRtr8Rqn2IsHMwX2DzS/fw==
-X-Google-Smtp-Source: AMrXdXtWSSV63Ld25GuO0BsX3I2Wu43PREgvm5mdCHutcYHBaybO5RRT8NbVv9KhGzTM4D2Fl8Waig==
-X-Received: by 2002:a05:6000:1d87:b0:2a1:602d:ff3 with SMTP id bk7-20020a0560001d8700b002a1602d0ff3mr1103593wrb.3.1673896478372;
-        Mon, 16 Jan 2023 11:14:38 -0800 (PST)
-Received: from localhost ([2a00:79e0:9d:4:e2d9:b90f:9307:af59])
-        by smtp.gmail.com with ESMTPSA id u13-20020a05600c19cd00b003c6f1732f65sm42619579wmq.38.2023.01.16.11.14.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Jan 2023 11:14:37 -0800 (PST)
-From:   Jann Horn <jannh@google.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-        kernel-hardening@lists.openwall.com
-Subject: [PATCH] fs: Use CHECK_DATA_CORRUPTION() when kernel bugs are detected
-Date:   Mon, 16 Jan 2023 20:14:25 +0100
-Message-Id: <20230116191425.458864-1-jannh@google.com>
-X-Mailer: git-send-email 2.39.0.314.g84b9a713c41-goog
+        Mon, 16 Jan 2023 14:51:59 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C2BBC2B2BF;
+        Mon, 16 Jan 2023 11:51:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=sVpM1mtW3MN+VZv9WJeM6OcVWT6pY0gr9be30QEiFF4=; b=v6Wbig+JaiPH4eX5Rzg2eO5G0o
+        44wcgWigoUXogzv4WZhH7Ix7GQc5ZLLX32DsewWcDQCViwLNcGH2MjnBedpjnb2VyX1pn/6QK7gr8
+        2akQdyrK8LwUJDOHBYj/FcyCIp40ED/9LuDsCsMjIrW6g9Y+9oVdO2aI7wY2Xz2ajqM8lYM/xHERJ
+        0ES8d3O93yZPCGfimX+tJ+Z6XGnXc/AQytUQRYIvsID8rLIzhqsyx1/B5CPzeW6B7O5G/jAqZ9V6y
+        Zuu/9FP9+Rsm+gWVm2KzJNmUFpho9iyAFPeL8UJkwpCDi6YQPqFBTCpR4BYAb6oIujh5W3m4GFx+/
+        4GinB/lQ==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pHVWP-0091Si-Ga; Mon, 16 Jan 2023 19:51:57 +0000
+Date:   Mon, 16 Jan 2023 19:51:57 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     yang.yang29@zte.com.cn
+Cc:     akpm@linux-foundation.org, hannes@cmpxchg.org,
+        bagasdotme@gmail.com, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        iamjoonsoo.kim@lge.com, ran.xiaokai@zte.com.cn
+Subject: Re: [PATCH linux-next v3] swap_state: update shadow_nodes for
+ anonymous page
+Message-ID: <Y8Wq3apsJh7keUVA@casper.infradead.org>
+References: <202301131736452546903@zte.com.cn>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202301131736452546903@zte.com.cn>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Currently, filp_close() and generic_shutdown_super() use printk() to log
-messages when bugs are detected. This is problematic because infrastructure
-like syzkaller has no idea that this message indicates a bug.
-In addition, some people explicitly want their kernels to BUG() when kernel
-data corruption has been detected (CONFIG_BUG_ON_DATA_CORRUPTION).
-And finally, when generic_shutdown_super() detects remaining inodes on a
-system without CONFIG_BUG_ON_DATA_CORRUPTION, it would be nice if later
-accesses to a busy inode would at least crash somewhat cleanly rather than
-walking through freed memory.
+On Fri, Jan 13, 2023 at 05:36:45PM +0800, yang.yang29@zte.com.cn wrote:
+> From: Yang Yang <yang.yang29@zte.com.cn>
+> 
+> Shadow_nodes is for shadow nodes reclaiming of workingset handling,
+> it is updated when page cache add or delete since long time ago
+> workingset only supported page cache. But when workingset supports
+> anonymous page detection, we missied updating shadow nodes for
+> it. This caused that shadow nodes of anonymous page will never be
+> reclaimd by scan_shadow_nodes() even they use much memory and
+> system memory is tense.
+> 
+> So update shadow_nodes of anonymous page when swap cache is
+> add or delete by calling  xas_set_update(..workingset_update_node).
 
-To address all three, use CHECK_DATA_CORRUPTION() when kernel bugs are
-detected.
+What testing did you do of this?  I have this crash in today's testing:
 
-Signed-off-by: Jann Horn <jannh@google.com>
----
- fs/open.c              |  5 +++--
- fs/super.c             | 21 +++++++++++++++++----
- include/linux/poison.h |  3 +++
- 3 files changed, 23 insertions(+), 6 deletions(-)
+04304 BUG: kernel NULL pointer dereference, address: 0000000000000080
+04304 #PF: supervisor read access in kernel mode
+04304 #PF: error_code(0x0000) - not-present page
+04304 PGD 0 P4D 0
+04304 Oops: 0000 [#1] PREEMPT SMP NOPTI
+04304 CPU: 4 PID: 3219629 Comm: sh Kdump: loaded Not tainted 6.2.0-rc4-next-20230116-00016-gd289d3de8ce5-dirty #69
+04304 Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.0-debian-1.16.0-4 04/01/2014
+04304 RIP: 0010:_raw_spin_trylock+0x12/0x50
+04304 Code: e0 41 5c 5d c3 89 c6 48 89 df e8 89 06 00 00 4c 89 e0 5b 41 5c 5d c3 90 55 48 89 e5 53 48 89 fb bf 01 00 00 00 e8 be 5b 71 ff <8b> 03 85 c0 75 16 ba 01 00 00 00 f0 0f b1 13 b8 01 00 00 00 75 06
+04304 RSP: 0018:ffff888059afbbb8 EFLAGS: 00010093
+04304 RAX: 0000000000000003 RBX: 0000000000000080 RCX: 0000000000000000
+04304 RDX: 0000000000000000 RSI: ffff8880033e24c8 RDI: 0000000000000001
+04304 RBP: ffff888059afbbc0 R08: 0000000000000000 R09: ffff888059afbd68
+04304 R10: ffff88807d9db868 R11: 0000000000000000 R12: ffff8880033e24c0
+04304 R13: ffff88800a1d8008 R14: ffff8880033e24c8 R15: ffff8880033e24c0
+04304 FS:  00007feeeabc6740(0000) GS:ffff88807d900000(0000) knlGS:0000000000000000
+04304 CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+04304 CR2: 0000000000000080 CR3: 0000000059830003 CR4: 0000000000770ea0
+04304 PKRU: 55555554
+04304 Call Trace:
+04304  <TASK>
+04304  shadow_lru_isolate+0x3a/0x120
+04304  __list_lru_walk_one+0xa3/0x190
+04304  ? memcg_list_lru_alloc+0x330/0x330
+04304  ? memcg_list_lru_alloc+0x330/0x330
+04304  list_lru_walk_one_irq+0x59/0x80
+04304  scan_shadow_nodes+0x27/0x30
+04304  do_shrink_slab+0x13b/0x2e0
+04304  shrink_slab+0x92/0x250
+04304  drop_slab+0x41/0x90
+04304  drop_caches_sysctl_handler+0x70/0x80
+04304  proc_sys_call_handler+0x162/0x210
+04304  proc_sys_write+0xe/0x10
+04304  vfs_write+0x1c7/0x3a0
+04304  ksys_write+0x57/0xd0
+04304  __x64_sys_write+0x14/0x20
+04304  do_syscall_64+0x34/0x80
+04304  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+04304 RIP: 0033:0x7feeeacc1190
 
-diff --git a/fs/open.c b/fs/open.c
-index 82c1a28b3308..ceb88ac0ca3b 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -1411,8 +1411,9 @@ int filp_close(struct file *filp, fl_owner_t id)
- {
- 	int retval = 0;
- 
--	if (!file_count(filp)) {
--		printk(KERN_ERR "VFS: Close: file count is 0\n");
-+	if (CHECK_DATA_CORRUPTION(file_count(filp) == 0,
-+			"VFS: Close: file count is 0 (f_op=%ps)",
-+			filp->f_op)) {
- 		return 0;
- 	}
- 
-diff --git a/fs/super.c b/fs/super.c
-index 12c08cb20405..cf737ec2bd05 100644
---- a/fs/super.c
-+++ b/fs/super.c
-@@ -491,10 +491,23 @@ void generic_shutdown_super(struct super_block *sb)
- 		if (sop->put_super)
- 			sop->put_super(sb);
- 
--		if (!list_empty(&sb->s_inodes)) {
--			printk("VFS: Busy inodes after unmount of %s. "
--			   "Self-destruct in 5 seconds.  Have a nice day...\n",
--			   sb->s_id);
-+		if (CHECK_DATA_CORRUPTION(!list_empty(&sb->s_inodes),
-+				"VFS: Busy inodes after unmount of %s (%s)",
-+				sb->s_id, sb->s_type->name)) {
-+			/*
-+			 * Adding a proper bailout path here would be hard, but
-+			 * we can at least make it more likely that a later
-+			 * iput_final() or such crashes cleanly.
-+			 */
-+			struct inode *inode;
-+
-+			spin_lock(&sb->s_inode_list_lock);
-+			list_for_each_entry(inode, &sb->s_inodes, i_sb_list) {
-+				inode->i_op = VFS_PTR_POISON;
-+				inode->i_sb = VFS_PTR_POISON;
-+				inode->i_mapping = VFS_PTR_POISON;
-+			}
-+			spin_unlock(&sb->s_inode_list_lock);
- 		}
- 	}
- 	spin_lock(&sb_lock);
-diff --git a/include/linux/poison.h b/include/linux/poison.h
-index 2d3249eb0e62..0e8a1f2ceb2f 100644
---- a/include/linux/poison.h
-+++ b/include/linux/poison.h
-@@ -84,4 +84,7 @@
- /********** kernel/bpf/ **********/
- #define BPF_PTR_POISON ((void *)(0xeB9FUL + POISON_POINTER_DELTA))
- 
-+/********** VFS **********/
-+#define VFS_PTR_POISON ((void *)(0xF5 + POISON_POINTER_DELTA))
-+
- #endif
+Decoding it, shadow_lru_isolate+0x3a/0x120 maps back to this line:
 
-base-commit: 5dc4c995db9eb45f6373a956eb1f69460e69e6d4
--- 
-2.39.0.314.g84b9a713c41-goog
+        if (!spin_trylock(&mapping->host->i_lock)) {
 
+i_lock is at offset 128 of struct inode, so that matches the dump.
+I believe that swapper_spaces never have ->host set, so I don't
+believe you've tested this patch since 51b8c1fe250d went in
+back in 2021.
