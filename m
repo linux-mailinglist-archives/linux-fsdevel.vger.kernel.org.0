@@ -2,210 +2,113 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 91C9466B6B7
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 05:45:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2F52A66B6F2
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 06:46:03 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231927AbjAPEp3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 15 Jan 2023 23:45:29 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60310 "EHLO
+        id S231776AbjAPFqA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Jan 2023 00:46:00 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41072 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231905AbjAPEoy (ORCPT
+        with ESMTP id S231735AbjAPFp5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 15 Jan 2023 23:44:54 -0500
-Received: from out30-98.freemail.mail.aliyun.com (out30-98.freemail.mail.aliyun.com [115.124.30.98])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB917903C;
-        Sun, 15 Jan 2023 20:44:52 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R191e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046049;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=4;SR=0;TI=SMTPD_---0VZc75Er_1673844287;
-Received: from 30.97.48.228(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VZc75Er_1673844287)
-          by smtp.aliyun-inc.com;
-          Mon, 16 Jan 2023 12:44:49 +0800
-Message-ID: <3065ecb6-8e6a-307f-69ea-fb72854aeb0f@linux.alibaba.com>
-Date:   Mon, 16 Jan 2023 12:44:47 +0800
+        Mon, 16 Jan 2023 00:45:57 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1B2D959C8;
+        Sun, 15 Jan 2023 21:45:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=DyqbCFVVSRH9BdL+CtsL2Q0IUbjE2/UgdwZHHo8qQB0=; b=VpLfGMnSfQj8FrosrID5nRtle+
+        nzIT4ANfYFRckuOCdbv2oJ2HnpBcXVwqkfI/P1K9FPFM70xt8YwOt0UfDlcVci11nIxWv9Wgt1evQ
+        rdOf6sTwJiLeX0Z6uD3pIY9oEcYwVZtaMAmBSZxLqLcKgX2/Me0xLNWLmX2P6h4dKu4t7g8bRZXqy
+        Le5zW6+zPyY5sN2iyBiTMjLuZ3FiUerwjh4u8H1XUfZc4940SNTBY26wmHKnJtdrvVhX+BN1TNLqQ
+        RaEf9hS4DtPfCb3mW/ffI/L1Yax3IOQY5bbo8l723yeF4pU2FduhlWFnNj1DoIm6cOglPov/O6q+0
+        BoQrNtNA==;
+Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pHIJl-008SpC-8k; Mon, 16 Jan 2023 05:46:01 +0000
+Date:   Mon, 16 Jan 2023 05:46:01 +0000
+From:   Matthew Wilcox <willy@infradead.org>
+To:     "Darrick J. Wong" <djwong@kernel.org>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Dave Chinner <dchinner@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [RFC v6 04/10] iomap: Add iomap_get_folio helper
+Message-ID: <Y8TkmbZfe3L/Yeky@casper.infradead.org>
+References: <20230108213305.GO1971568@dread.disaster.area>
+ <20230108194034.1444764-1-agruenba@redhat.com>
+ <20230108194034.1444764-5-agruenba@redhat.com>
+ <20230109124642.1663842-1-agruenba@redhat.com>
+ <Y70l9ZZXpERjPqFT@infradead.org>
+ <Y71pWJ0JHwGrJ/iv@casper.infradead.org>
+ <Y8QxYjy+4Kjg05rB@magnolia>
+ <Y8QyqlAkLyysv8Qd@magnolia>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
- Gecko/20100101 Thunderbird/102.6.1
-Subject: Re: [PATCH v2 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-To:     Alexander Larsson <alexl@redhat.com>, linux-fsdevel@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, gscrivan@redhat.com
-References: <cover.1673623253.git.alexl@redhat.com>
-From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <cover.1673623253.git.alexl@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-9.9 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
-        version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y8QyqlAkLyysv8Qd@magnolia>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Alexander and folks,
+On Sun, Jan 15, 2023 at 09:06:50AM -0800, Darrick J. Wong wrote:
+> On Sun, Jan 15, 2023 at 09:01:22AM -0800, Darrick J. Wong wrote:
+> > On Tue, Jan 10, 2023 at 01:34:16PM +0000, Matthew Wilcox wrote:
+> > > On Tue, Jan 10, 2023 at 12:46:45AM -0800, Christoph Hellwig wrote:
+> > > > On Mon, Jan 09, 2023 at 01:46:42PM +0100, Andreas Gruenbacher wrote:
+> > > > > We can handle that by adding a new IOMAP_NOCREATE iterator flag and
+> > > > > checking for that in iomap_get_folio().  Your patch then turns into
+> > > > > the below.
+> > > > 
+> > > > Exactly.  And as I already pointed out in reply to Dave's original
+> > > > patch what we really should be doing is returning an ERR_PTR from
+> > > > __filemap_get_folio instead of reverse-engineering the expected
+> > > > error code.
+> > > 
+> > > Ouch, we have a nasty problem.
+> > > 
+> > > If somebody passes FGP_ENTRY, we can return a shadow entry.  And the
+> > > encodings for shadow entries overlap with the encodings for ERR_PTR,
+> > > meaning that some shadow entries will look like errors.  The way I
+> > > solved this in the XArray code is by shifting the error values by
+> > > two bits and encoding errors as XA_ERROR(-ENOMEM) (for example).
+> > > 
+> > > I don't _object_ to introducing XA_ERROR() / xa_err() into the VFS,
+> > > but so far we haven't, and I'd like to make that decision intentionally.
+> > 
+> > Sorry, I'm not following this at all -- where in buffered-io.c does
+> > anyone pass FGP_ENTRY?  Andreas' code doesn't seem to introduce it
+> > either...?
+> 
+> Oh, never mind, I worked out that the conflict is between iomap not
+> passing FGP_ENTRY and wanting a pointer or a negative errno; and someone
+> who does FGP_ENTRY, in which case the xarray value can be confused for a
+> negative errno.
+> 
+> OFC now I wonder, can we simply say that the return value is "The found
+> folio or NULL if you set FGP_ENTRY; or the found folio or a negative
+> errno if you don't" ?
 
-On 2023/1/13 23:33, Alexander Larsson wrote:
-> Giuseppe Scrivano and I have recently been working on a new project we
-> call composefs. This is the first time we propose this publically and
-> we would like some feedback on it.
-> 
-> At its core, composefs is a way to construct and use read only images
-> that are used similar to how you would use e.g. loop-back mounted
-> squashfs images. On top of this composefs has two fundamental
-> features. First it allows sharing of file data (both on disk and in
-> page cache) between images, and secondly it has dm-verity like
-> validation on read.
-> 
-> Let me first start with a minimal example of how this can be used,
-> before going into the details:
-> 
-> Suppose we have this source for an image:
-> 
-> rootfs/
-> ├── dir
-> │   └── another_a
-> ├── file_a
-> └── file_b
-> 
-> We can then use this to generate an image file and a set of
-> content-addressed backing files:
-> 
-> # mkcomposefs --digest-store=objects rootfs/ rootfs.img
-> # ls -l rootfs.img objects/*/*
-> -rw-------. 1 root root   10 Nov 18 13:20 objects/02/927862b4ab9fb69919187bb78d394e235ce444eeb0a890d37e955827fe4bf4
-> -rw-------. 1 root root   10 Nov 18 13:20 objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
-> -rw-r--r--. 1 root root 4228 Nov 18 13:20 rootfs.img
-> 
-> The rootfs.img file contains all information about directory and file
-> metadata plus references to the backing files by name. We can now
-> mount this and look at the result:
-> 
-> # mount -t composefs rootfs.img -o basedir=objects /mnt
-> # ls  /mnt/
-> dir  file_a  file_b
-> # cat /mnt/file_a
-> content_a
-> 
-> When reading this file the kernel is actually reading the backing
-> file, in a fashion similar to overlayfs. Since the backing file is
-> content-addressed, the objects directory can be shared for multiple
-> images, and any files that happen to have the same content are
-> shared. I refer to this as opportunistic sharing, as it is different
-> than the more course-grained explicit sharing used by e.g. container
-> base images.
-> 
+Erm ... I would rather not!
 
+Part of me remembers that x86-64 has the rather nice calling convention
+of being able to return a struct containing two values in two registers:
 
-I'd like to say sorry about comments in LWN.net article.  If it helps
-to the community,  my own concern about this new overlay model was
-(which is different from overlayfs since overlayfs doesn't have
-  different permission of original files) somewhat a security issue (as
-I told Giuseppe Scrivano before when he initially found me on slack):
+: Integer return values up to 64 bits in size are stored in RAX while
+: values up to 128 bit are stored in RAX and RDX.
 
-As composefs on-disk shown:
+so maybe we can return:
 
-struct cfs_inode_s {
-
-         ...
-
-	u32 st_mode; /* File type and mode.  */
-	u32 st_nlink; /* Number of hard links, only for regular files.  */
-	u32 st_uid; /* User ID of owner.  */
-	u32 st_gid; /* Group ID of owner.  */
-
-         ...
+struct OptionFolio {
+	int err;
+	struct folio *folio;
 };
-
-It seems Composefs can override uid / gid and mode bits of the
-original file
-
-    considering a rootfs image:
-      ├── /bin
-      │   └── su
-
-/bin/su has SUID bit set in the Composefs inode metadata, but I didn't
-find some clues if ostree "objects/abc" could be actually replaced
-with data of /bin/sh if composefs fsverity feature is disabled (it
-doesn't seem composefs enforcely enables fsverity according to
-documentation).
-
-I think that could cause _privilege escalation attack_ of these SUID
-files is replaced with some root shell.  Administrators cannot keep
-all the time of these SUID files because such files can also be
-replaced at runtime.
-
-Composefs may assume that ostree is always for such content-addressed
-directory.  But if considering it could laterly be an upstream fs, I
-think we cannot always tell people "no, don't use this way, it doesn't
-work" if people use Composefs under an untrusted repo (maybe even
-without ostree).
-
-That was my own concern at that time when Giuseppe Scrivano told me
-to enhance EROFS as this way, and I requested him to discuss this in
-the fsdevel mailing list in order to resolve this, but it doesn't
-happen.
-
-Otherwise, EROFS could face such issue as well, that is why I think
-it needs to be discussed first.
-
-
-> The next step is the validation. Note how the object files have
-> fs-verity enabled. In fact, they are named by their fs-verity digest:
-> 
-> # fsverity digest objects/*/*
-> sha256:02927862b4ab9fb69919187bb78d394e235ce444eeb0a890d37e955827fe4bf4 objects/02/927862b4ab9fb69919187bb78d394e235ce444eeb0a890d37e955827fe4bf4
-> sha256:cc3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
-> 
-> The generated filesystm image may contain the expected digest for the
-> backing files. When the backing file digest is incorrect, the open
-> will fail, and if the open succeeds, any other on-disk file-changes
-> will be detected by fs-verity:
-> 
-> # cat objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
-> content_a
-> # rm -f objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
-> # echo modified > objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
-> # cat /mnt/file_a
-> WARNING: composefs backing file '3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f' unexpectedly had no fs-verity digest
-> cat: /mnt/file_a: Input/output error
-> 
-> This re-uses the existing fs-verity functionallity to protect against
-> changes in file contents, while adding on top of it protection against
-> changes in filesystem metadata and structure. I.e. protecting against
-> replacing a fs-verity enabled file or modifying file permissions or
-> xattrs.
-> 
-> To be fully verified we need another step: we use fs-verity on the
-> image itself. Then we pass the expected digest on the mount command
-> line (which will be verified at mount time):
-> 
-> # fsverity enable rootfs.img
-> # fsverity digest rootfs.img
-> sha256:da42003782992856240a3e25264b19601016114775debd80c01620260af86a76 rootfs.img
-> # mount -t composefs rootfs.img -o basedir=objects,digest=da42003782992856240a3e25264b19601016114775debd80c01620260af86a76 /mnt
-> 
-
-
-It seems that Composefs uses fsverity_get_digest() to do fsverity
-check.  If Composefs uses symlink-like payload to redirect a file to
-another underlayfs file, such underlayfs file can exist in any other
-fses.
-
-I can see Composefs could work with ext4, btrfs, f2fs, and later XFS
-but I'm not sure how it could work with overlayfs, FUSE, or other
-network fses.  That could limit the use cases as well.
-
-Except for the above, I think EROFS could implement this in about
-300~500 new lines of code as Giuseppe found me, or squashfs or
-overlayfs.
-
-I'm very happy to implement such model if it can be proved as safe
-(I'd also like to say here by no means I dislike ostree) and I'm
-also glad if folks feel like to introduce a new file system for
-this as long as this overlay model is proved as safe.
-
-Hopefully it helps.
-
-Thanks,
-Gao Xiang
