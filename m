@@ -2,263 +2,236 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3B46E66B83A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 08:34:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5B9D866B8AD
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 16 Jan 2023 09:03:47 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231861AbjAPHel (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Jan 2023 02:34:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49396 "EHLO
+        id S232263AbjAPIDa (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Jan 2023 03:03:30 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34126 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231658AbjAPHej (ORCPT
+        with ESMTP id S232170AbjAPIDB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Jan 2023 02:34:39 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2089446B1;
-        Sun, 15 Jan 2023 23:34:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=v+Y/Qbu9bnR4CAANcDCF/aewkUrEMou8fk9syv0UZ7Y=; b=4sPI06ClLPiTXUKdwwI7mhp/Cx
-        tSzz1J7Urf2ntBaI8Hzxz29gPmXdcrNzVk6j29NvOJb+okjveROEH1pXXkNGgE5bxVz0GBzrBl+eA
-        sGTprbR9ACupdIrRkTEWCTzIb/UuBeEbLtlfYJ0TcnORmKw9N5PumvpplqfVCSYfmRqBeQyH8IQKm
-        feN1yQY6fS68e8oKXmox2KVNFp1zk46N/9E2R8VPwtczW0GW9mmtTWUQIOzeocAjTEfE0PxPJzz5l
-        //CwR+RvP5CHiAxAydxOz4QkVdh2+RI26pD918F3lM+qzv5wb4Odkjp/z/+zO7QnP0Sbf3L3AEWQ6
-        WuymAxDA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pHK0g-008zqQ-5p; Mon, 16 Jan 2023 07:34:26 +0000
-Date:   Sun, 15 Jan 2023 23:34:26 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Darrick J. Wong" <djwong@kernel.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>,
-        Dave Chinner <dchinner@redhat.com>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [RFC v6 04/10] iomap: Add iomap_get_folio helper
-Message-ID: <Y8T+Al0aqRcXWzwt@infradead.org>
-References: <20230108213305.GO1971568@dread.disaster.area>
- <20230108194034.1444764-1-agruenba@redhat.com>
- <20230108194034.1444764-5-agruenba@redhat.com>
- <20230109124642.1663842-1-agruenba@redhat.com>
- <Y70l9ZZXpERjPqFT@infradead.org>
- <Y71pWJ0JHwGrJ/iv@casper.infradead.org>
- <Y8QxYjy+4Kjg05rB@magnolia>
- <Y8QyqlAkLyysv8Qd@magnolia>
- <Y8TkmbZfe3L/Yeky@casper.infradead.org>
+        Mon, 16 Jan 2023 03:03:01 -0500
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 582CB9037;
+        Mon, 16 Jan 2023 00:02:31 -0800 (PST)
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30G5pns7027887;
+        Mon, 16 Jan 2023 08:02:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from : to : cc : subject
+ : date : message-id : content-type : content-transfer-encoding :
+ mime-version; s=pp1; bh=tKJnaSuh0gk2/PgYtpQ9Ek4Pt9KmBgD1iTaER+1klZ8=;
+ b=agY0ZvbRxVh5FVyWxcR/wZHdy+AS1n0NXcB7zyAXczocOoW47O097m61HuHhf8pddP9D
+ 39ly94MV7iDAs4WnAYwFWq+q6sxQ974GYAqqlhzh/fQELxqiKB8unQF48YWp59vAgWCO
+ i4PdsvIuzfcNgiCWdjAuydtu9FJjl7UVG8wFNmKYe9PdI4kd56FKwhVoPOzGxtpU+U4p
+ MM6+tNy/GHxYcDhyUc7xMOGjkqLuqEP+l25/2dq10kPYcxvvcorTWGEHtPLHgwkxVupu
+ 3YwQGZQ3UfLYa9SUCYg/cZ7zp/vEQEd3n5LQxCwJQVgPRAxeIKrtS6AjJF3QUSVxebUR Iw== 
+Received: from pps.reinject (localhost [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n48ntfmes-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 Jan 2023 08:02:24 +0000
+Received: from m0098417.ppops.net (m0098417.ppops.net [127.0.0.1])
+        by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 30G80gFH031321;
+        Mon, 16 Jan 2023 08:02:24 GMT
+Received: from ppma03ams.nl.ibm.com (62.31.33a9.ip4.static.sl-reverse.com [169.51.49.98])
+        by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3n48ntfme7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 Jan 2023 08:02:23 +0000
+Received: from pps.filterd (ppma03ams.nl.ibm.com [127.0.0.1])
+        by ppma03ams.nl.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 30G1W669023694;
+        Mon, 16 Jan 2023 08:02:22 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+        by ppma03ams.nl.ibm.com (PPS) with ESMTPS id 3n3m16j3ee-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 16 Jan 2023 08:02:22 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+        by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 30G82JTm38863168
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 16 Jan 2023 08:02:19 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8F23120043;
+        Mon, 16 Jan 2023 08:02:19 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 0B99420040;
+        Mon, 16 Jan 2023 08:02:18 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.in.ibm.com (unknown [9.109.253.169])
+        by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
+        Mon, 16 Jan 2023 08:02:17 +0000 (GMT)
+From:   Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To:     linux-ext4@vger.kernel.org, "Theodore Ts'o" <tytso@mit.edu>
+Cc:     Ritesh Harjani <riteshh@linux.ibm.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jan Kara <jack@suse.cz>, rookxu <brookxu.cn@gmail.com>
+Subject: [PATCH v3 0/8] ext4: Convert inode preallocation list to an rbtree
+Date:   Mon, 16 Jan 2023 13:32:08 +0530
+Message-Id: <20230116080216.249195-1-ojaswin@linux.ibm.com>
+X-Mailer: git-send-email 2.31.1
+Content-Type: text/plain; charset=UTF-8
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Tn7k4d_BFt5uvBrUfs6RufdIfMw6NJWD
+X-Proofpoint-ORIG-GUID: qgj0R7Fom99sOn5HxK-s_Bt4QHx2byOV
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y8TkmbZfe3L/Yeky@casper.infradead.org>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.923,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-16_06,2023-01-13_02,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ phishscore=0 mlxscore=0 malwarescore=0 spamscore=0 impostorscore=0
+ mlxlogscore=999 clxscore=1015 lowpriorityscore=0 adultscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-2212070000 definitions=main-2301160058
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 05:46:01AM +0000, Matthew Wilcox wrote:
-> > OFC now I wonder, can we simply say that the return value is "The found
-> > folio or NULL if you set FGP_ENTRY; or the found folio or a negative
-> > errno if you don't" ?
-> 
-> Erm ... I would rather not!
+This patch series aim to improve the performance and scalability of
+inode preallocation by changing inode preallocation linked list to an
+rbtree. I've ran xfstests quick on this series and plan to run auto group
+as well to confirm we have no regressions.
 
-Agreed.
+** Shortcomings of existing implementation **
 
-> 
-> Part of me remembers that x86-64 has the rather nice calling convention
-> of being able to return a struct containing two values in two registers:
+Right now, we add all the inode preallocations(PAs) to a per inode linked
+list ei->i_prealloc_list. To prevent the list from growing infinitely
+during heavy sparse workloads, the length of this list was capped at 512
+and a trimming logic was added to trim the list whenever it grew over
+this threshold, in patch 27bc446e2. This was discussed in detail in the
+following lore thread [1].
 
-We could do that.  But while reading what Darrick wrote I came up with
-another idea I quite like.  Just split the FGP_ENTRY handling into
-a separate helper.  The logic and use cases are quite different from
-the normal page cache lookup, and the returning of the xarray entry
-is exactly the kind of layering violation that Dave is complaining
-about.  So what about just splitting that use case into a separate
-self contained helper?
+[1] https://lore.kernel.org/all/d7a98178-056b-6db5-6bce-4ead23f4a257@gmail.com/
 
----
-From b4d10f98ea57f8480c03c0b00abad6f2b7186f56 Mon Sep 17 00:00:00 2001
-From: Christoph Hellwig <hch@lst.de>
-Date: Mon, 16 Jan 2023 08:26:57 +0100
-Subject: mm: replace FGP_ENTRY with a new __filemap_get_folio_entry helper
+But from our testing, we noticed that the current implementation still
+had issues with scalability as the performance degraded when the PAs
+stored in the list grew. Most of the degradation was seen in
+ext4_mb_normalize_request() and ext4_mb_use_preallocated() functions as
+they iterated the inode PA list.
 
-Split the xarray entry returning logic into a separate helper.  This will
-allow returning ERR_PTRs from __filemap_get_folio, and also isolates the
-logic that needs to known about xarray internals into a separate
-function.  This causes some code duplication, but as most flags to
-__filemap_get_folio are not applicable for the users that care about an
-entry that amount is very limited.
+** Improvements in this patchset **
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- include/linux/pagemap.h |  6 +++--
- mm/filemap.c            | 50 ++++++++++++++++++++++++++++++++++++-----
- mm/huge_memory.c        |  4 ++--
- mm/shmem.c              |  5 ++---
- mm/swap_state.c         |  2 +-
- 5 files changed, 53 insertions(+), 14 deletions(-)
+To counter the above shortcomings, this patch series modifies the inode
+PA list to an rbtree, which:
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 4b3a7124c76712..e06c14b610caf2 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -504,8 +504,7 @@ pgoff_t page_cache_prev_miss(struct address_space *mapping,
- #define FGP_NOFS		0x00000010
- #define FGP_NOWAIT		0x00000020
- #define FGP_FOR_MMAP		0x00000040
--#define FGP_ENTRY		0x00000080
--#define FGP_STABLE		0x00000100
-+#define FGP_STABLE		0x00000080
- 
- struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 		int fgp_flags, gfp_t gfp);
-@@ -546,6 +545,9 @@ static inline struct folio *filemap_lock_folio(struct address_space *mapping,
- 	return __filemap_get_folio(mapping, index, FGP_LOCK, 0);
- }
- 
-+struct folio *__filemap_get_folio_entry(struct address_space *mapping,
-+		pgoff_t index, int fgp_flags);
-+
- /**
-  * find_get_page - find and get a page reference
-  * @mapping: the address_space to search
-diff --git a/mm/filemap.c b/mm/filemap.c
-index c4d4ace9cc7003..d04613347b3e71 100644
---- a/mm/filemap.c
-+++ b/mm/filemap.c
-@@ -1887,8 +1887,6 @@ static void *mapping_get_entry(struct address_space *mapping, pgoff_t index)
-  *
-  * * %FGP_ACCESSED - The folio will be marked accessed.
-  * * %FGP_LOCK - The folio is returned locked.
-- * * %FGP_ENTRY - If there is a shadow / swap / DAX entry, return it
-- *   instead of allocating a new folio to replace it.
-  * * %FGP_CREAT - If no page is present then a new page is allocated using
-  *   @gfp and added to the page cache and the VM's LRU list.
-  *   The page is returned locked and with an increased refcount.
-@@ -1914,11 +1912,8 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- 
- repeat:
- 	folio = mapping_get_entry(mapping, index);
--	if (xa_is_value(folio)) {
--		if (fgp_flags & FGP_ENTRY)
--			return folio;
-+	if (xa_is_value(folio))
- 		folio = NULL;
--	}
- 	if (!folio)
- 		goto no_page;
- 
-@@ -1994,6 +1989,49 @@ struct folio *__filemap_get_folio(struct address_space *mapping, pgoff_t index,
- }
- EXPORT_SYMBOL(__filemap_get_folio);
- 
-+
-+/**
-+ * __filemap_get_folio_entry - Find and get a reference to a folio.
-+ * @mapping: The address_space to search.
-+ * @index: The page index.
-+ * @fgp_flags: %FGP flags modify how the folio is returned.
-+ *
-+ * Looks up the page cache entry at @mapping & @index.  If there is a shadow /
-+ * swap / DAX entry, return it instead of allocating a new folio to replace it.
-+ *
-+ * @fgp_flags can be zero or more of these flags:
-+ *
-+ * * %FGP_LOCK - The folio is returned locked.
-+ *
-+ * If there is a page cache page, it is returned with an increased refcount.
-+ *
-+ * Return: The found folio or %NULL otherwise.
-+ */
-+struct folio *__filemap_get_folio_entry(struct address_space *mapping,
-+		pgoff_t index, int fgp_flags)
-+{
-+	struct folio *folio;
-+
-+	if (WARN_ON_ONCE(fgp_flags & ~FGP_LOCK))
-+		return NULL;
-+
-+repeat:
-+	folio = mapping_get_entry(mapping, index);
-+	if (folio && !xa_is_value(folio) && (fgp_flags & FGP_LOCK)) {
-+		folio_lock(folio);
-+
-+		/* Has the page been truncated? */
-+		if (unlikely(folio->mapping != mapping)) {
-+			folio_unlock(folio);
-+			folio_put(folio);
-+			goto repeat;
-+		}
-+		VM_BUG_ON_FOLIO(!folio_contains(folio, index), folio);
-+	}
-+
-+	return folio;
-+}
-+
- static inline struct folio *find_get_entry(struct xa_state *xas, pgoff_t max,
- 		xa_mark_t mark)
- {
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index abe6cfd92ffa0e..88b517c338a6db 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -3088,10 +3088,10 @@ static int split_huge_pages_in_file(const char *file_path, pgoff_t off_start,
- 	mapping = candidate->f_mapping;
- 
- 	for (index = off_start; index < off_end; index += nr_pages) {
--		struct folio *folio = __filemap_get_folio(mapping, index,
--						FGP_ENTRY, 0);
-+		struct folio *folio;
- 
- 		nr_pages = 1;
-+		folio = __filemap_get_folio_entry(mapping, index, 0);
- 		if (xa_is_value(folio) || !folio)
- 			continue;
- 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index c301487be5fb40..0a36563ef7a0c1 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -888,8 +888,7 @@ static struct folio *shmem_get_partial_folio(struct inode *inode, pgoff_t index)
- 	 * At first avoid shmem_get_folio(,,,SGP_READ): that fails
- 	 * beyond i_size, and reports fallocated pages as holes.
- 	 */
--	folio = __filemap_get_folio(inode->i_mapping, index,
--					FGP_ENTRY | FGP_LOCK, 0);
-+	folio = __filemap_get_folio_entry(inode->i_mapping, index, FGP_LOCK);
- 	if (!xa_is_value(folio))
- 		return folio;
- 	/*
-@@ -1860,7 +1859,7 @@ static int shmem_get_folio_gfp(struct inode *inode, pgoff_t index,
- 	sbinfo = SHMEM_SB(inode->i_sb);
- 	charge_mm = vma ? vma->vm_mm : NULL;
- 
--	folio = __filemap_get_folio(mapping, index, FGP_ENTRY | FGP_LOCK, 0);
-+	folio = __filemap_get_folio_entry(mapping, index, FGP_LOCK);
- 	if (folio && vma && userfaultfd_minor(vma)) {
- 		if (!xa_is_value(folio)) {
- 			folio_unlock(folio);
-diff --git a/mm/swap_state.c b/mm/swap_state.c
-index 2927507b43d819..1f45241987aea2 100644
---- a/mm/swap_state.c
-+++ b/mm/swap_state.c
-@@ -384,7 +384,7 @@ struct folio *filemap_get_incore_folio(struct address_space *mapping,
- {
- 	swp_entry_t swp;
- 	struct swap_info_struct *si;
--	struct folio *folio = __filemap_get_folio(mapping, index, FGP_ENTRY, 0);
-+	struct folio *folio = __filemap_get_folio_entry(mapping, index, 0);
- 
- 	if (!xa_is_value(folio))
- 		goto out;
+- improves the performance of functions discussed above due to the
+  improved lookup speed.
+  
+- improves scalability by changing lookup complexity from O(n) to
+  O(logn). We no longer need the trimming logic as well.
+
+As a result, the RCU implementation was needed to be changed since
+lockless lookups of rbtrees do have some issues like skipping
+subtrees. Hence, RCU was replaced with read write locks for inode
+PAs. More information can be found in Patch 7 (that has the core
+changes).
+
+** Performance Numbers **
+
+Performance numbers were collected with and without these patches, using an
+nvme device. Details of tests/benchmarks used are as follows:
+
+Test 1: 200,000 1KiB sparse writes using (fio)
+Test 2: Fill 5GiB w/ random writes, 1KiB burst size using (fio)
+Test 3: Test 2, but do 4 sequential writes before jumping to random
+        offset (fio)
+Test 4: Fill 8GB FS w/ 2KiB files, 64 threads in parallel (fsmark)
+
++──────────+──────────────────+────────────────+──────────────────+──────────────────+
+|          |            nodelalloc             |              delalloc               |
++──────────+──────────────────+────────────────+──────────────────+──────────────────+
+|          | Unpatched        | Patched        | Unpatched        | Patched          |
++──────────+──────────────────+────────────────+──────────────────+──────────────────+
+| Test 1   | 11.8 MB/s        | 23.3 MB/s      | 27.2 MB/s        | 63.7 MB/s        |
+| Test 2   | 1617 MB/s        | 1740 MB/s      | 2223 MB/s        | 2208 MB/s        |
+| Test 3   | 1715 MB/s        | 1823 MB/s      | 2346 MB/s        | 2364 MB/s        |
+| Test 4   | 14284 files/sec  | 14347 files/s  | 13762 files/sec  | 13882 files/sec  |
++──────────+──────────────────+────────────────+──────────────────+──────────────────+
+
+In test 1, we almost see 100 to 200% increase in performance due to the high number
+of sparse writes highlighting the bottleneck in the unpatched kernel. Further, on running
+"perf diff patched.data unpatched.data" for test 1, we see something as follows:
+
+     2.83%    +29.67%  [kernel.vmlinux]          [k] _raw_spin_lock
+												...
+               +3.33%  [ext4]                    [k] ext4_mb_normalize_request.constprop.30
+     0.25%     +2.81%  [ext4]                    [k] ext4_mb_use_preallocated
+
+Here we can see that the biggest different is in the _raw_spin_lock() function
+of unpatched kernel, that is called from `ext4_mb_normalize_request()` as seen
+here:
+
+    32.47%  fio              [kernel.vmlinux]            [k] _raw_spin_lock
+            |
+            ---_raw_spin_lock
+               |          
+                --32.22%--ext4_mb_normalize_request.constprop.30
+
+This is coming from the spin_lock(&pa->pa_lock) that is called for
+each PA that we iterate over, in ext4_mb_normalize_request(). Since in rbtrees,
+we lookup log(n) PAs rather than n PAs, this spin lock is taken less frequently,
+as evident in the perf. 
+
+Furthermore, we see some improvements in other tests however since they don't
+exercise the PA traversal path as much as test 1, the improvements are relatively
+smaller. 
+
+** Summary of patches **
+
+- Patch 1-5: Abstractions/Minor optimizations
+- Patch 6: Split common inode & locality group specific fields to a union
+- Patch 7: Core changes to move inode PA logic from list to rbtree
+- Patch 8: Remove the trim logic as it is not needed
+
+** Changes since PATCH v2 [1] **
+- In patch 7, include a design change related to 
+  encountering deleted PAs in inode rbtree that overlap with to be
+  inserted PA, when adjusting overlap. More details in the patch.
+  (Removed Jan's RVB for this patch)
+
+** Changes since PATCH v1 **
+- fixed styling issue
+- merged ext4_mb_rb_insert() and ext4_mb_pa_cmp()
+
+** Changes since RFC v3 **
+- Changed while loops to for loops in patch 7
+- Fixed some data types
+- Made rbtree comparison logic more intuitive. The
+  rbtree insertion function still kept separate from
+  comparison function for reusability.
+
+** Changes since RFC v2 **
+- Added a function definition that was deleted during v2 rebase
+
+** Changes since RFC v1 **
+- Rebased over ext4 dev branch which includes Jan's patchset
+  that changed some code in mballoc.c
+
+[1] https://lore.kernel.org/linux-ext4/cover.1665776268.git.ojaswin@linux.ibm.com/
+
+Ojaswin Mujoo (8):
+  ext4: Stop searching if PA doesn't satisfy non-extent file
+  ext4: Refactor code related to freeing PAs
+  ext4: Refactor code in ext4_mb_normalize_request() and
+    ext4_mb_use_preallocated()
+  ext4: Move overlap assert logic into a separate function
+  ext4: Abstract out overlap fix/check logic in
+    ext4_mb_normalize_request()
+  ext4: Convert pa->pa_inode_list and pa->pa_obj_lock into a union
+  ext4: Use rbtrees to manage PAs instead of inode i_prealloc_list
+  ext4: Remove the logic to trim inode PAs
+
+ Documentation/admin-guide/ext4.rst |   3 -
+ fs/ext4/ext4.h                     |   5 +-
+ fs/ext4/mballoc.c                  | 477 +++++++++++++++++++----------
+ fs/ext4/mballoc.h                  |  17 +-
+ fs/ext4/super.c                    |   4 +-
+ fs/ext4/sysfs.c                    |   2 -
+ 6 files changed, 333 insertions(+), 175 deletions(-)
+
 -- 
-2.39.0
+2.31.1
 
