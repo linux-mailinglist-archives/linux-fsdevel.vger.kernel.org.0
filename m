@@ -2,81 +2,94 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3300B66D79C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 09:10:05 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C8CD466D7F1
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 09:21:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236018AbjAQIKC (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Jan 2023 03:10:02 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56114 "EHLO
+        id S235974AbjAQIVS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Jan 2023 03:21:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35110 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235986AbjAQIJm (ORCPT
+        with ESMTP id S235968AbjAQIVR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Jan 2023 03:09:42 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 373512748C;
-        Tue, 17 Jan 2023 00:09:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=pQjSKmSw6p/N0OMSHc7at4GiVU7Rg/XB3qkDkMiu+rs=; b=sFzD+basG4rvAZOsDrubDxcusL
-        KFAWUTWkOY8ubdQ9rE5S0ri3fww/A//S0+L4dcIVxCUc8J4WVyFO+NRipr3GI5MV48YehqqS+7PIP
-        B9uaCAs/Y2fc6HCamTtbb5sRHsKgRex7dDNaEKfnO2WIc4fX2F+My4M+KBm2AsuDiukCA8FWLvNy6
-        RR6mZTk8cYOaAKhP8LHq52JGxWcLoRB7XXKnlxzSEofxxsNnIywjle0Edqar0aRttUtBtp9M+ZdLR
-        r5TF5S6JJ2KD9UgNmaw7nsUn0w+ck/yj60pHY4vaLLkqTKZjT8u5Gf+qR5KAXI+kg0jeX4ZmtNZCS
-        kBvwUJ/A==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pHh2A-00DHQP-F9; Tue, 17 Jan 2023 08:09:30 +0000
-Date:   Tue, 17 Jan 2023 00:09:30 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+        Tue, 17 Jan 2023 03:21:17 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A7857EC7
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 00:20:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1673943634;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=qYjsZAmItyxO/xUrcysAZG44bv1fujnhVpm9qnfE2C8=;
+        b=WoImxlfvqsVcvoWqM65ytQgKfOBSTtuWHfI3uLrjfjbwHFp2BWS7+PONZQmYmstkXrMg3l
+        Vnrl0F/+3TtaD70beDnbB1h5mX1tBtCuNHxdK3DKrgnqk57m+fo2xhAwOstOBfHw7/cfoL
+        rvsMtKdlCMu6omNZaUUNkdZ/m15YoWo=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-37-uuAQjnpbN6SzClURILUZzA-1; Tue, 17 Jan 2023 03:20:03 -0500
+X-MC-Unique: uuAQjnpbN6SzClURILUZzA-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 44E603C10687;
+        Tue, 17 Jan 2023 08:20:02 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 9CFD9175AD;
+        Tue, 17 Jan 2023 08:20:00 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y8ZV9x9gawJPbQho@infradead.org>
+References: <Y8ZV9x9gawJPbQho@infradead.org> <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk> <167391053207.2311931.16398133457201442907.stgit@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
         Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
         Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
         Jeff Layton <jlayton@kernel.org>,
         Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH v6 03/34] iov_iter: Pass I/O direction into
- iov_iter_get_pages*()
-Message-ID: <Y8ZXukUbg0/9cYtV@infradead.org>
-References: <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
- <167391050409.2311931.7103784292954267373.stgit@warthog.procyon.org.uk>
- <Y8ZU1Jjx5VSetvOn@infradead.org>
- <3515368f-d622-f7d2-5854-9503d4a19fb2@redhat.com>
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 07/34] iov_iter: Add a function to extract a page list from an iterator
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3515368f-d622-f7d2-5854-9503d4a19fb2@redhat.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2330482.1673943599.1@warthog.procyon.org.uk>
+Date:   Tue, 17 Jan 2023 08:19:59 +0000
+Message-ID: <2330483.1673943599@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 17, 2023 at 09:07:48AM +0100, David Hildenbrand wrote:
-> Agreed. What I understand, David considers that confusing when considering
-> the I/O side of things.
-> 
-> I recall that there is
-> 
-> DMA_BIDIRECTIONAL -> FOLL_WRITE
-> DMA_TO_DEVICE -> !FOLL_WRITE
-> DMA_FROM_DEVICE -> FOLL_WRITE
-> 
-> that used different defines for a different API. Such terminology would be
-> easier to get ... but then, again, not sure if we really need acronyms here.
-> 
-> We're pinning pages and FOLL_WRITE defines how we (pinning the page) are
-> going to access these pages: R/O or R/W. So the read vs. write is never from
-> the POC of the device (DMA read will write to the page).
+Christoph Hellwig <hch@infradead.org> wrote:
 
-Yes.  Maybe the name could be a little more verboe, FOLL_MEM_WRITE or
-FOLL_WRITE_TO_MEM.  But I'd really prefer any renaming to be split from
-logic changes.
+> > +ssize_t iov_iter_extract_pages(struct iov_iter *i, struct page ***pages,
+> > +			       size_t maxsize, unsigned int maxpages,
+> > +			       unsigned int gup_flags, size_t *offset0);
+> 
+> This function isn't actually added in the current patch.
+
+Oh...  It ended up in the wrong patch.
+
+> > +#define iov_iter_extract_mode(iter, gup_flags) \
+> > +	(user_backed_iter(iter) ?				\
+> > +	 (gup_flags & FOLL_BUF_MASK) == FOLL_SOURCE_BUF ?	\
+> > +	 FOLL_GET : FOLL_PIN : 0)
+> 
+> And inline function would be nice here.  I guess that would require
+> moving the FULL flags into mm_types.h, though.
+
+Yeah, the movement of FOLL_* flags is queued in a patch in akpm's tree.
+
+David
+
