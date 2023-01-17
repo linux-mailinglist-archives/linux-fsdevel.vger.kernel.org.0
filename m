@@ -2,44 +2,44 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38DBB66DEAD
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 14:20:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 2763F66DEBD
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 14:27:42 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S237069AbjAQNU5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Jan 2023 08:20:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56988 "EHLO
+        id S237064AbjAQN1j (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Jan 2023 08:27:39 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S237012AbjAQNUx (ORCPT
+        with ESMTP id S236347AbjAQN1h (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Jan 2023 08:20:53 -0500
-Received: from mga17.intel.com (mga17.intel.com [192.55.52.151])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EEC3439BA0;
-        Tue, 17 Jan 2023 05:20:52 -0800 (PST)
+        Tue, 17 Jan 2023 08:27:37 -0500
+Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A086534C01;
+        Tue, 17 Jan 2023 05:27:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1673961653; x=1705497653;
+  t=1673962056; x=1705498056;
   h=date:from:to:cc:subject:message-id:reply-to:references:
    mime-version:in-reply-to;
-  bh=ydzl4pu/BnSzLPZ1RlJR0Y9KESs9mzMw8rQlYf4Kzvo=;
-  b=Wa1lDjtgpSU4uygKkHIz1Dsj/E2ZHLW/CrnpG91ieGgCT0zvuxJQAYrm
-   vp7y+IQ70RsSj6ArReb10U+53BXVsw95KCrBJ+YsOOC2mpHB0uQRXE57S
-   2zMR+fAhwQUWwOKViE41UUL4EeKgWn4ZB214VWlwiDajl0WibgXPzK00P
-   PCdx/qV8X7kAPsNxnxx98C8F/lrLeSIpHZgHMDHKgEZXe/ghiDSXDLjos
-   s9xQMBGwkomNSbhpjWGeguhCQCsLjT7cG1KK+B+ppPntvBmbp+iAGuyXV
-   GYO1uWKPbN6iHsjNy4fj9BUXIDp/MXS9HL70CkVpMPDmhCmcqKmHubRCk
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10592"; a="305067244"
+  bh=OkxN9qHIfugzlGcYWrmJzkTgsJkFyQ0089rnB9xhbso=;
+  b=FZZ67c5fd67JbVwO7XsESIoD/yIBVevp/EuOVI6JMN/vb1e3rb5QghW+
+   xW3WzHxkFezkA6H5M4B6PIQJ3ocXJTrcMXDx5fQ9xJMDqY/xkz/jv0Jxe
+   MMOgo00Ut1cnuyScd1obC/JgTIRJnFmToGuk9PihgCkMNRSM7foyg8qYi
+   ra/Ft3lQlZDbxzvLY6Euo4xschTv6pYVZYZ03GkwqUPAlE0HatBGOGQfh
+   Hpfyg9+JmneyxbNuWHTviVrDajfWKtEeaQbJNuh1yDiir40oi53WfpQWi
+   QEIEVeaUsIILnxfhQ45K1GoDvVPrVmFPrhzf4q4ZowOpOQovTBkWXzEjA
+   A==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10592"; a="410930540"
 X-IronPort-AV: E=Sophos;i="5.97,224,1669104000"; 
-   d="scan'208";a="305067244"
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2023 05:20:51 -0800
+   d="scan'208";a="410930540"
+Received: from fmsmga008.fm.intel.com ([10.253.24.58])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Jan 2023 05:27:35 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10592"; a="689797088"
+X-IronPort-AV: E=McAfee;i="6500,9779,10592"; a="722655367"
 X-IronPort-AV: E=Sophos;i="5.97,224,1669104000"; 
-   d="scan'208";a="689797088"
+   d="scan'208";a="722655367"
 Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.105])
-  by orsmga008.jf.intel.com with ESMTP; 17 Jan 2023 05:20:39 -0800
-Date:   Tue, 17 Jan 2023 21:12:51 +0800
+  by fmsmga008.fm.intel.com with ESMTP; 17 Jan 2023 05:27:25 -0800
+Date:   Tue, 17 Jan 2023 21:19:37 +0800
 From:   Chao Peng <chao.p.peng@linux.intel.com>
 To:     Sean Christopherson <seanjc@google.com>
 Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -74,16 +74,15 @@ Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
         Quentin Perret <qperret@google.com>, tabba@google.com,
         Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
         wei.w.wang@intel.com
-Subject: Re: [PATCH v10 9/9] KVM: Enable and expose KVM_MEM_PRIVATE
-Message-ID: <20230117131251.GC273037@chaop.bj.intel.com>
+Subject: Re: [PATCH v10 0/9] KVM: mm: fd-based approach for supporting KVM
+Message-ID: <20230117131937.GD273037@chaop.bj.intel.com>
 Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
 References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-10-chao.p.peng@linux.intel.com>
- <Y8HwvTik/2avrCOU@google.com>
+ <Y8H5Z3e4hZkFxAVS@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y8HwvTik/2avrCOU@google.com>
+In-Reply-To: <Y8H5Z3e4hZkFxAVS@google.com>
 X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
         SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
@@ -93,136 +92,69 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jan 14, 2023 at 12:01:01AM +0000, Sean Christopherson wrote:
+On Sat, Jan 14, 2023 at 12:37:59AM +0000, Sean Christopherson wrote:
 > On Fri, Dec 02, 2022, Chao Peng wrote:
-> > @@ -10357,6 +10364,12 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
-> >  
-> >  		if (kvm_check_request(KVM_REQ_UPDATE_CPU_DIRTY_LOGGING, vcpu))
-> >  			static_call(kvm_x86_update_cpu_dirty_logging)(vcpu);
-> > +
-> > +		if (kvm_check_request(KVM_REQ_MEMORY_MCE, vcpu)) {
-> > +			vcpu->run->exit_reason = KVM_EXIT_SHUTDOWN;
+> > This patch series implements KVM guest private memory for confidential
+> > computing scenarios like Intel TDX[1]. If a TDX host accesses
+> > TDX-protected guest memory, machine check can happen which can further
+> > crash the running host system, this is terrible for multi-tenant
+> > configurations. The host accesses include those from KVM userspace like
+> > QEMU. This series addresses KVM userspace induced crash by introducing
+> > new mm and KVM interfaces so KVM userspace can still manage guest memory
+> > via a fd-based approach, but it can never access the guest memory
+> > content.
+> > 
+> > The patch series touches both core mm and KVM code. I appreciate
+> > Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
+> > reviews are always welcome.
+> >   - 01: mm change, target for mm tree
+> >   - 02-09: KVM change, target for KVM tree
 > 
-> Synthesizing triple fault shutdown is not the right approach.  Even with TDX's
-> MCE "architecture" (heavy sarcasm), it's possible that host userspace and the
-> guest have a paravirt interface for handling memory errors without killing the
-> host.
+> A version with all of my feedback, plus reworked versions of Vishal's selftest,
+> is available here:
+> 
+>   git@github.com:sean-jc/linux.git x86/upm_base_support
+> 
+> It compiles and passes the selftest, but it's otherwise barely tested.  There are
+> a few todos (2 I think?) and many of the commits need changelogs, i.e. it's still
+> a WIP.
 
-Agree shutdown is not the correct choice. I see you made below change:
-
-send_sig_mceerr(BUS_MCEERR_AR, (void __user *)hva, PAGE_SHIFT, current)
-
-The MCE may happen in any thread than KVM thread, sending siginal to
-'current' thread may not be the expected behavior. Also how userspace
-can tell is the MCE on the shared page or private page? Do we care?
-
-> 
-> > +			r = 0;
-> > +			goto out;
-> > +		}
-> >  	}
-> 
-> 
-> > @@ -1982,6 +2112,10 @@ int __kvm_set_memory_region(struct kvm *kvm,
-> >  	     !access_ok((void __user *)(unsigned long)mem->userspace_addr,
-> >  			mem->memory_size))
-> >  		return -EINVAL;
-> > +	if (mem->flags & KVM_MEM_PRIVATE &&
-> > +		(mem->restricted_offset & (PAGE_SIZE - 1) ||
-> 
-> Align indentation.
-> 
-> > +		 mem->restricted_offset > U64_MAX - mem->memory_size))
-> 
-> Strongly prefer to use similar logic to existing code that detects wraps:
-> 
-> 		mem->restricted_offset + mem->memory_size < mem->restricted_offset
-> 
-> This is also where I'd like to add the "gfn is aligned to offset" check, though
-> my brain is too fried to figure that out right now.
-> 
-> > +		return -EINVAL;
-> >  	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_MEM_SLOTS_NUM)
-> >  		return -EINVAL;
-> >  	if (mem->guest_phys_addr + mem->memory_size < mem->guest_phys_addr)
-> > @@ -2020,6 +2154,9 @@ int __kvm_set_memory_region(struct kvm *kvm,
-> >  		if ((kvm->nr_memslot_pages + npages) < kvm->nr_memslot_pages)
-> >  			return -EINVAL;
-> >  	} else { /* Modify an existing slot. */
-> > +		/* Private memslots are immutable, they can only be deleted. */
-> 
-> I'm 99% certain I suggested this, but if we're going to make these memslots
-> immutable, then we should straight up disallow dirty logging, otherwise we'll
-> end up with a bizarre uAPI.
-
-But in my mind dirty logging will be needed in the very short time, when
-live migration gets supported?
+Thanks very much for doing this. Almost all of your comments are well
+received, except for two cases that need more discussions which have
+replied individually.
 
 > 
-> > +		if (mem->flags & KVM_MEM_PRIVATE)
-> > +			return -EINVAL;
-> >  		if ((mem->userspace_addr != old->userspace_addr) ||
-> >  		    (npages != old->npages) ||
-> >  		    ((mem->flags ^ old->flags) & KVM_MEM_READONLY))
-> > @@ -2048,10 +2185,28 @@ int __kvm_set_memory_region(struct kvm *kvm,
-> >  	new->npages = npages;
-> >  	new->flags = mem->flags;
-> >  	new->userspace_addr = mem->userspace_addr;
-> > +	if (mem->flags & KVM_MEM_PRIVATE) {
-> > +		new->restricted_file = fget(mem->restricted_fd);
-> > +		if (!new->restricted_file ||
-> > +		    !file_is_restrictedmem(new->restricted_file)) {
-> > +			r = -EINVAL;
-> > +			goto out;
-> > +		}
-> > +		new->restricted_offset = mem->restricted_offset;
+> As for next steps, can you (handwaving all of the TDX folks) take a look at what
+> I pushed and see if there's anything horrifically broken, and that it still works
+> for TDX?
 
-I see you changed slot->restricted_offset type from loff_t to gfn_t and
-used pgoff_t when doing the restrictedmem_bind/unbind(). Using page
-index is reasonable KVM internally and sounds simpler than loff_t. But
-we also need initialize it to page index here as well as changes in
-another two cases. This is needed when restricted_offset != 0.
+I have integrated this into my local TDX repo, with some changes (as I
+replied individually), the new code basically still works with TDX.
 
-diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 547b92215002..49e375e78f30 100644
---- a/include/linux/kvm_host.h
-+++ b/include/linux/kvm_host.h
-@@ -2364,8 +2364,7 @@ static inline int kvm_restricted_mem_get_pfn(struct kvm_memory_slot *slot,
-                                             gfn_t gfn, kvm_pfn_t *pfn,
-                                             int *order)
- {
--       pgoff_t index = gfn - slot->base_gfn +
--                       (slot->restricted_offset >> PAGE_SHIFT);
-+       pgoff_t index = gfn - slot->base_gfn + slot->restricted_offset;
-        struct page *page;
-        int ret;
- 
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 01db35ddd5b3..7439bdcb0d04 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -935,7 +935,7 @@ static bool restrictedmem_range_is_valid(struct kvm_memory_slot *slot,
-                                         pgoff_t start, pgoff_t end,
-                                         gfn_t *gfn_start, gfn_t *gfn_end)
- {
--       unsigned long base_pgoff = slot->restricted_offset >> PAGE_SHIFT;
-+       unsigned long base_pgoff = slot->restricted_offset;
- 
-        if (start > base_pgoff)
-                *gfn_start = slot->base_gfn + start - base_pgoff;
-@@ -2275,7 +2275,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
-                        r = -EINVAL;
-                        goto out;
-                }
--               new->restricted_offset = mem->restricted_offset;
-+               new->restricted_offset = mem->restricted_offset >> PAGE_SHIFT;
-        }
- 
-        r = kvm_set_memslot(kvm, old, new, change);
+I have also asked other TDX folks to take a look.
 
+> 
+> Fuad (and pKVM folks) same ask for you with respect to pKVM.  Absolutely no rush
+> (and I mean that).
+> 
+> On my side, the two things on my mind are (a) tests and (b) downstream dependencies
+> (SEV and TDX).  For tests, I want to build a lists of tests that are required for
+> merging so that the criteria for merging are clear, and so that if the list is large
+> (haven't thought much yet), the work of writing and running tests can be distributed.
+> 
+> Regarding downstream dependencies, before this lands, I want to pull in all the
+> TDX and SNP series and see how everything fits together.  Specifically, I want to
+> make sure that we don't end up with a uAPI that necessitates ugly code, and that we
+> don't miss an opportunity to make things simpler.  The patches in the SNP series to
+> add "legacy" SEV support for UPM in particular made me slightly rethink some minor
+> details.  Nothing remotely major, but something that needs attention since it'll
+> be uAPI.
+> 
+> I'm off Monday, so it'll be at least Tuesday before I make any more progress on
+> my side.
+
+Appreciate your effort. As for the next steps, if you see something we
+can do parallel, feel free to let me know.
+
+Thanks,
 Chao
-> > +	}
-> > +
-> > +	new->kvm = kvm;
-> 
-> Set this above, just so that the code flows better.
