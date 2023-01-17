@@ -2,107 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C3DC866E084
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 15:25:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D110966E0A9
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 15:30:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232550AbjAQOZz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Jan 2023 09:25:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42706 "EHLO
+        id S232622AbjAQOaJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Jan 2023 09:30:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47704 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232112AbjAQOZ2 (ORCPT
+        with ESMTP id S232643AbjAQO3p (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Jan 2023 09:25:28 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 744253D08F;
-        Tue, 17 Jan 2023 06:23:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=QdqcFyVr8K0bup5NOO0aq0lzzZUH+Wzn1LDI5nJW77c=; b=mxTYTDSKj/goJrJLHb58cdw9tT
-        ltWEFXNkv2h+QwO6+wa951yVIN2Ne2cAd/sL1NcQBFjDgSh0Z5Yxbzm7vqkdHTQxhDynpGX3W4ojD
-        BZZMKmdbqJ8mZ9bv6x2ITjaDUD4ixBchGeDLZ2mRhHynzgZhjqgbRL2mMEguCaxMwVVAdSOB9SF6F
-        wOu3B+/o7udidpfKTD0ewrLsnpSSZqJbmFd6rHc/8oQEVK7ol9EsNwq1H/GJsC3Qc711MH8wFJgGB
-        plQQf08SB3V51oZbhdP0hOzaUzu8+m0Q7le2pM8BN16PE0mv8Yo2LdUy6lmeY21Ts5rRCRvjPKqhk
-        K9g8FxsQ==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pHmsY-009kDG-01; Tue, 17 Jan 2023 14:23:58 +0000
-Date:   Tue, 17 Jan 2023 14:23:57 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Amy Parker <apark0006@student.cerritos.edu>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dax: use switch statement over chained ifs
-Message-ID: <Y8avfR1Q4BzDe9sH@casper.infradead.org>
-References: <CAPOgqxF_xEgKspetRJ=wq1_qSG3h8mkyXC58TXkUvx0agzEm_A@mail.gmail.com>
- <Y8YK4c6KQg2xjM+E@casper.infradead.org>
- <CAPOgqxEYzDkfX9re+yZry4BNV8PGAd_G-qsWdpePAOC4dNcAgQ@mail.gmail.com>
+        Tue, 17 Jan 2023 09:29:45 -0500
+Received: from out30-6.freemail.mail.aliyun.com (out30-6.freemail.mail.aliyun.com [115.124.30.6])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC2381E287;
+        Tue, 17 Jan 2023 06:28:42 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R171e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0VZnLW.p_1673965717;
+Received: from 192.168.3.7(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VZnLW.p_1673965717)
+          by smtp.aliyun-inc.com;
+          Tue, 17 Jan 2023 22:28:38 +0800
+Message-ID: <74810a5f-3ed3-27f1-caa6-8d3724f1c85e@linux.alibaba.com>
+Date:   Tue, 17 Jan 2023 22:28:37 +0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPOgqxEYzDkfX9re+yZry4BNV8PGAd_G-qsWdpePAOC4dNcAgQ@mail.gmail.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
+ Gecko/20100101 Thunderbird/102.6.1
+Subject: Re: [PATCH v2 0/6] Composefs: an opportunistically sharing verified
+ image filesystem
+To:     Giuseppe Scrivano <gscrivan@redhat.com>,
+        Christian Brauner <brauner@kernel.org>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Alexander Larsson <alexl@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Yurii Zubrytskyi <zyy@google.com>,
+        Eugene Zemtsov <ezemtsov@google.com>,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+References: <cover.1673623253.git.alexl@redhat.com>
+ <3065ecb6-8e6a-307f-69ea-fb72854aeb0f@linux.alibaba.com>
+ <d3c63da908ef16c43a6a65a22a8647bf874695c7.camel@redhat.com>
+ <0a144ffd-38bb-0ff3-e8b2-bca5e277444c@linux.alibaba.com>
+ <9d44494fdf07df000ce1b9bafea7725ea240ca41.camel@redhat.com>
+ <d7c4686b-24cc-0991-d6db-0dec8fb9942e@linux.alibaba.com>
+ <2856820a46a6e47206eb51a7f66ec51a7ef0bd06.camel@redhat.com>
+ <8f854339-1cc0-e575-f320-50a6d9d5a775@linux.alibaba.com>
+ <CAOQ4uxh34udueT-+Toef6TmTtyLjFUnSJs=882DH=HxADX8pKw@mail.gmail.com>
+ <20230117101202.4v4zxuj2tbljogbx@wittgenstein> <87fsc9gt7b.fsf@redhat.com>
+From:   Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <87fsc9gt7b.fsf@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,
+        SPF_PASS,UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 09:07:23PM -0800, Amy Parker wrote:
-> On Mon, Jan 16, 2023 at 6:41 PM Matthew Wilcox <willy@infradead.org> wrote:
-> > CAUTION: This email originated from outside your organization. Exercise caution when opening attachments or clicking links, especially from unknown senders.
 
-Muahaha.  I am evil.
 
-> > Thanks for the patch!  Two problems.  First, your mailer seems to have
-> > mangled the patch; in my tree these are tab indents, and the patch has
-> > arrived with four-space indents, so it can't be applied.
+On 2023/1/17 21:56, Giuseppe Scrivano wrote:
+> Christian Brauner <brauner@kernel.org> writes:
 > 
-> Ah, gotcha. Next time I'll just use git send-email, was hoping this
-> time I'd be able to use my normal mailing system directly. (Also
-> hoping my mail server isn't applying anything outgoing that messes it
-> up... should probably check on that)
 
-Feel free to send me the patch again, off-list, and I can check if it
-arrived correctly.
+...
 
-> > The second problem is that this function should simply not exist.
-> > I forget how we ended up with enum page_entry_size, but elsewhere
-> > we simply pass 'order' around.  So what I'd really like to see is
-> > a patch series that eliminates page_entry_size everywhere.
 > 
-> Hmm, alright... I'm not really familiar with the enum/how it's used, I
-> pretty much just added this as a cleanup. If you've got any
-> information on it so I know how to actually work with it, that'd be
-> great!
-
-The intent is to describe which "layer" of the page tables we're trying
-to hadle a fault for -- PTE, PMD or PUD.  But as you can see by this
-pe_order() function, the rest of the kernel tends to use the order
-to communicate this information, so pass in 0, PMD_ORDER or PUD_ORDER.
-Also PMD_ORDER and PUD_ORDER should exist in mm.h ;-)
-
-> > I can outline a way to do that in individual patches if that would be
-> > helpful.
+> We looked at EROFS since it is already upstream but it is quite
+> different than what we are doing as Alex already pointed out.
 > 
-> Alright - although, would it actually need to be individual patches?
-> I'm not 100% sure whether the page_entry_size used across the kernel
-> is the same enum or different enums, my guess looking at the grep
-> context summary is that they are the same, but the number of usages (I
-> count 18) should fit in a single patch just fine...
 
-I'd take it step by step.  First, I'd lift pe_order() to mm.h.
-Second patch, convert dax_finish_sync_fault() to take an order instead
-of a pe_size, making each caller call pe_order().  And do it at
-the start of each function, eg the very first line of
-__xfs_filemap_fault() should be
+Sigh..  please kindly help me find out what's the difference if
+EROFS uses some symlink layout for each regular inode?
 
-	unsigned int order = pe_order(pe_size);
+Some question for me to ask about this new overlay permission
+model once again:
 
-Third, convert dax_iomap_fault() to take an order instead of a pe_size.
-Fourth, convert huge_fault() to take an order.  Fifth, remove the
-enum and pe_order.
+What's the difference between symlink (maybe with some limitations)
+and this new overlay model? I'm not sure why symlink permission bits
+is ignored (AFAIK)?  I don't think it too further since I don't quite
+an experienced one in the unionfs field, but if possible, I'm quite
+happy to learn new stuffs as a newbie filesystem developer to gain
+more knowledge if it could be some topic at LSF/MM/BPF 2023.
 
-This makes it easier to review, as well as looking good for your
-contribution stats ;-)
+> Sure we could bloat EROFS and add all the new features there, after all
+> composefs is quite simple, but I don't see how this is any cleaner than
+> having a simple file system that does just one thing.
+
+Also if I have time, I could do a code-truncated EROFS without any
+useless features specificly for ostree use cases.  Or I could just
+seperate out all of that useless code of Ostree-specific use cases
+by using Kconfig.
+
+If you don't want to use EROFS from whatever reason, I'm not oppose
+to it (You also could use other in-kernel local filesystem for this
+as well).  Except for this new overlay model, I just tried to say
+how it works similiar to EROFS.
+
+> 
+> On top of what was already said: I wish at some point we can do all of
+> this from a user namespace.  That is the main reason for having an easy
+> on-disk format for composefs.  This seems much more difficult to achieve
+> with EROFS given its complexity.
+
+Why?
+
+
+[ Gao Xiang: this time I will try my best stop talking about EROFS under
+   the Composefs patchset anymore because I'd like to avoid appearing at
+   the first time (unless such permission model is never discussed until
+   now)...
+
+   No matter in the cover letter it never mentioned EROFS at all. ]
+
+Thanks,
+Gao Xiang
