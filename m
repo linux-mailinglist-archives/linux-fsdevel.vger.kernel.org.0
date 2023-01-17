@@ -2,72 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7D726670C1C
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 23:50:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3738D670D3D
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 00:24:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230009AbjAQWuQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Jan 2023 17:50:16 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46072 "EHLO
+        id S229672AbjAQXYS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Jan 2023 18:24:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45420 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229732AbjAQWtY (ORCPT
+        with ESMTP id S229843AbjAQXXw (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Jan 2023 17:49:24 -0500
-Received: from mail-pj1-x102a.google.com (mail-pj1-x102a.google.com [IPv6:2607:f8b0:4864:20::102a])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 294A75955A
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 14:31:28 -0800 (PST)
-Received: by mail-pj1-x102a.google.com with SMTP id z1-20020a17090a66c100b00226f05b9595so369932pjl.0
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 14:31:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JqJXYBDmrbeooCmHDsMGFLU6mELdGFs2m6PX0do2Leo=;
-        b=XSp9mNuzfeV7YL2+QebLgQgfbenDRmm31Be5wzz++x7Y9GR0l395ibEpFvTuka9qAK
-         RKEKLNyS3GB+EMK//o6CEsI98iveWI4RKA3TYakp0HNODLt4DXJHuZTEaItPEYXSy1Zg
-         ozc+k4FMMnvEh3fqBD6dmD5vw2fTcA1HQ/OjcnVwkb7y1nd1m66DU+pXr6XXImNWTVaz
-         PrVhvcORW/KYpAxFcuOwOX55W5Rs4u1jyF5X+hiC6ORAX6NP+T7IFjYy8d6+Ii9ONv5/
-         vzbg+dLn5XjnVC35br5TKe8cD8TESDxA1x+mIJi0d7E7QsKvpH+tsSikIVCPZSRZfjaw
-         v6Dg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JqJXYBDmrbeooCmHDsMGFLU6mELdGFs2m6PX0do2Leo=;
-        b=TPF97kC71CcdPwfJtFwmawgqGqTxNy9JOUkhWcs4aV9noB9hIgu8TLfFQnl04nxWt+
-         +tg4NUdz1Mv94mTbyRE0dUmnX6N+bRsY7askF51lFCIQTLQ1231QQx8UAS/Y0g3Be0Ot
-         9cmMAHCRY7n62rRo4re2CErJktdLo8b4Lvjanooik6tRyrvc86JL4i6pOlqpIIiSyy0h
-         FbBOmXORoAyCc4gMW0RJ2pGOUPRFg5AhXKPlNMshalu+FEac3B/90VPT/V1csDmjQp8T
-         fHUxJr2GalEW4pQ+BkAtcFX/lxnEsX4MQpOicpEC+/5vQcUWHmxvhRyaAXpiscrrOyrS
-         gJtg==
-X-Gm-Message-State: AFqh2koWoObva/ZezKOSlvI+UgtBFsy3wGxHakF8q+t0xiccD1QkpRzM
-        AobJLgPsl+UMnD67sOf64XhsCUU18D03vmV0
-X-Google-Smtp-Source: AMrXdXv5Dr3iUyBLNo5LWjnUOYzDLJGJ6ceeYn1SGwwWblFxt933HUOe+nLrDb2GtQVMWS/Sx58wiQ==
-X-Received: by 2002:a17:90b:4fcf:b0:229:869e:c916 with SMTP id qa15-20020a17090b4fcf00b00229869ec916mr4777396pjb.3.1673994687638;
-        Tue, 17 Jan 2023 14:31:27 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-146-207.pa.vic.optusnet.com.au. [49.186.146.207])
-        by smtp.gmail.com with ESMTPSA id y2-20020a17090a16c200b002272616d3e1sm40321pje.40.2023.01.17.14.31.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jan 2023 14:31:27 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pHuUF-004JqG-BQ; Wed, 18 Jan 2023 09:31:23 +1100
-Date:   Wed, 18 Jan 2023 09:31:23 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Christian Brauner <brauner@kernel.org>
-Cc:     linux-fsdevel@vger.kernel.org,
-        "Seth Forshee (Digital Ocean)" <sforshee@kernel.org>,
-        Christoph Hellwig <hch@lst.de>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [PATCH 00/25] fs: finish conversion to mnt_idmap
-Message-ID: <20230117223123.GA937597@dread.disaster.area>
-References: <20230113-fs-idmapped-mnt_idmap-conversion-v1-0-fc84fa7eba67@kernel.org>
+        Tue, 17 Jan 2023 18:23:52 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7BF5D6D363
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 13:14:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1673990060;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=BLiSOjNb0xDOzALeAyTD+mR9sLdYm4aLnwXALKfDdxk=;
+        b=SrIMRlWAjOZmxWWsgniGm2JsKyav9/AQt340tKVgs5oZ6Rxw1sC1N6P8C6K8zSrQTxG6jh
+        1Utg0e6TT8fuDoNLebtARKskQ8xaQC9Zck5sl54x2kte26zBKjxpisNbCEGavsFY+skaZV
+        5KxA6soyDt9P3H6tCAkbPwaaSOmFcfY=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-118-j3vvkZ7oNiyvg7oiQl3fyQ-1; Tue, 17 Jan 2023 16:14:19 -0500
+X-MC-Unique: j3vvkZ7oNiyvg7oiQl3fyQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 0389680D180;
+        Tue, 17 Jan 2023 21:14:19 +0000 (UTC)
+Received: from madcap2.tricolour.com (ovpn-0-3.rdu2.redhat.com [10.22.0.3])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 84C2EC15BAD;
+        Tue, 17 Jan 2023 21:14:17 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Linux-Audit Mailing List <linux-audit@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org
+Cc:     Paul Moore <paul@paul-moore.com>,
+        Eric Paris <eparis@parisplace.org>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>, Jan Kara <jack@suse.cz>,
+        Amir Goldstein <amir73il@gmail.com>
+Subject: [PATCH v6 0/3] fanotify: Allow user space to pass back additional audit info
+Date:   Tue, 17 Jan 2023 16:14:04 -0500
+Message-Id: <cover.1673989212.git.rgb@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230113-fs-idmapped-mnt_idmap-conversion-v1-0-fc84fa7eba67@kernel.org>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -75,62 +63,118 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 13, 2023 at 12:49:09PM +0100, Christian Brauner wrote:
-> Hey everyone,
-> 
-> Last cycle we introduced struct mnt_idmap in
-> 256c8aed2b42 ("fs: introduce dedicated idmap type for mounts")
-> and converted the posix acl high-level helpers over in
-> 5a6f52d20ce3 ("acl: conver higher-level helpers to rely on mnt_idmap").
-> 
-> This series converts all places that currently still pass around a plain
-> namespace attached to a mount to passing around a separate type eliminating
-> all bugs that can arise from conflating filesystem and mount idmappings.
-> After this series nothing will have changed semantically.
-> 
-> Currently, functions that map filesystem wide {g,u}ids into a mount
-> specific idmapping take two namespace pointers, the pointer to the mount
-> idmapping and the pointer to the filesystem idmapping. As they are of the
-> same type it is easy to accidently pass a mount idmapping as a filesystem
-> idmapping and vica versa. In addition, as the mount idmapping is of the
-> same type as the filesystem idmapping, it can be passed to all {g,u}id
-> translation functions. This is a source of bugs. We fixed a few such bugs
-> already and in fact this series starts with a similar bugfix.
-> 
-> With the introduction of struct mnt_idmap last cycle we can now eliminate
-> all these bugs. Instead of two namespace arguments all functions that map
-> filesystem wide {g,u}ids into mount specific idmappings now take a struct
-> mnt_idmap and a filesystem namespace argument. This lets the compiler catch
-> any error where a mount idmapping is conflated with a filesystem idmapping.
-> 
-> Similarly, since all functions that generate filesystem wide k{g,u}id_ts
-> only accept a namespace as an argument it is impossible to pass a mount
-> idmapping to them eliminating the possibility of accidently generating
-> nonsense {g,u}ids.
-> 
-> At the end of this conversion struct mnt_idmap becomes opaque to nearly all
-> of the vfs and to all filesystems. It's moved into separate file and this file
-> is the only place where it is accessed. In addition to type safety, easier
-> maintenance, and easier handling and development for filesystem developers it
-> also makes it possible to extend idmappings in the future such that we can
-> allow userspace to set up idmapping without having to go through the detour of
-> using namespaces at all.
-> 
-> Note, that this is an additional improvement on top of the introduction of
-> the vfs{g,u}id_t conversion we did in earlier cycles which already makes it
-> impossible to conflate filesystem wide k{g,u}id_t with mount specific
-> vfs{g,u}id_t.
-> 
-> The series is available in the Git repository at:
-> 
-> ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/vfs/idmapping.git tags/fs.idmapped.mnt_idmap.conversion.v1
-> 
-> Fstests, selftests, and LTP pass without regressions.
+The Fanotify API can be used for access control by requesting permission
+event notification. The user space tooling that uses it may have a
+complicated policy that inherently contains additional context for the
+decision. If this information were available in the audit trail, policy
+writers can close the loop on debugging policy. Also, if this additional
+information were available, it would enable the creation of tools that
+can suggest changes to the policy similar to how audit2allow can help
+refine labeled security.
 
-All the XFS modifications in the series look OK. So for them:
+This patchset defines a new flag (FAN_INFO) and new extensions that
+define additional information which are appended after the response
+structure returned from user space on a permission event.  The appended
+information is organized with headers containing a type and size that
+can be delegated to interested subsystems.  One new information type is
+defined to audit the triggering rule number.  
 
-Acked-by: Dave Chinner <dchinner@redhat.com>
+A newer kernel will work with an older userspace and an older kernel
+will behave as expected and reject a newer userspace, leaving it up to
+the newer userspace to test appropriately and adapt as necessary.  This
+is done by providing a a fully-formed FAN_INFO extension but setting the
+fd to FAN_NOFD.  On a capable kernel, it will succeed but issue no audit
+record, whereas on an older kernel it will fail.
+
+The audit function was updated to log the additional information in the
+AUDIT_FANOTIFY record. The following are examples of the new record
+format:
+  type=FANOTIFY msg=audit(1600385147.372:590): resp=2 fan_type=1 fan_info=3137 subj_trust=3 obj_trust=5
+  type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0 fan_info=3F subj_trust=? obj_trust=?
+
+changelog:
+v1:
+- first version by Steve Grubb <sgrubb@redhat.com>
+Link: https://lore.kernel.org/r/2042449.irdbgypaU6@x2
+
+v2:
+- enhancements suggested by Jan Kara <jack@suse.cz>
+- 1/3 change %d to %u in pr_debug
+- 2/3 change response from __u32 to __u16
+- mod struct fanotify_response and fanotify_perm_event add extra_info_type, extra_info_buf
+- extra_info_buf size max FANOTIFY_MAX_RESPONSE_EXTRA_LEN, add struct fanotify_response_audit_rule
+- extend debug statements
+- remove unneeded macros
+- [internal] change interface to finish_permission_event() and process_access_response()
+- 3/3 update format of extra information
+- [internal] change interface to audit_fanotify()
+- change ctx_type= to fan_type=
+Link: https://lore.kernel.org/r/cover.1651174324.git.rgb@redhat.com
+
+v3:
+- 1/3 switch {,__}audit_fanotify() from uint to u32
+- 2/3 re-add fanotify_get_response switch case FAN_DENY: to avoid unnecessary churn
+- add FAN_EXTRA flag to indicate more info and break with old kernel
+- change response from u16 to u32 to avoid endian issues
+- change extra_info_buf to union
+- move low-cost fd check earlier
+- change FAN_RESPONSE_INFO_AUDIT_NONE to FAN_RESPONSE_INFO_NONE
+- switch to u32 for internal and __u32 for uapi
+Link: https://lore.kernel.org/all/cover.1652730821.git.rgb@redhat.com
+
+v4:
+- scrap FAN_INVALID_RESPONSE_MASK in favour of original to catch invalid response == 0
+- introduce FANOTIFY_RESPONSE_* macros
+- uapi: remove union
+- keep original struct fanotify_response, add fan_info infra starting with audit reason
+- uapi add struct fanotify_response_info_header{type/pad/len} and struct fanotify_response_info_audit_rule{hdr/rule}
+- rename fan_ctx= to fan_info=, FAN_EXTRA to FAN_INFO
+- change event struct from type/buf to len/buf
+- enable multiple info extensions in one message
+- hex encode fan_info in __audit_fanotify()
+- record type FANOTIFY extended to "type=FANOTIFY msg=audit(1659730979.839:284): resp=1 fan_type=0 fan_info=3F"                                                                                                                     
+Link: https://lore.kernel.org/all/cover.1659996830.git.rgb@redhat.com
+
+v5:
+- fixed warnings in p2/4 and p3/4 found by <lkp@intel.com>
+- restore original behaviour for !FAN_INFO case and fanotify_get_response()
+- rename member audit_rule to rule_number
+- eliminate memory leak of info_buf on failure (no longer dynamic)
+- rename buf:info, count:info_len, c:remain, ib:infop
+- fix pr_debug
+- return -ENOENT on FAN_INFO and fd==FAN_NOFD to signal new kernel
+- fanotify_write() remove redundant size check
+- add u32 subj_trust obj_trust fields with unknown value "2"
+- split out to helper process_access_response_info()
+- restore finish_permission_event() response_struct to u32
+- assume and enforce one rule to audit, pass struct directly to __audit_fanotify()
+- change fanotify_perm_event struct to union hdr/audir_rule
+- add vspace to fanotify_write() and process_access_response_info()
+- squash 3/4 with 4/4
+- fix v3 and v4 links
+Link: https://lore.kernel.org/all/cover.1670606054.git.rgb@redhat.com
+
+v6:
+- simplify __audit_fanotify() from audit_log_format/audit_log_n_hex to audit_log/%X
+- add comment to clarify {subj,obj}_trust values
+- remove fd processing from process_access_response_info()
+- return info_len immediately from process_access_response() on FAN_NOFD after process_access_response_info()
+Link: https://lore.kernel.org/all/cover.1673989212.git.rgb@redhat.com
+
+Richard Guy Briggs (3):
+  fanotify: Ensure consistent variable type for response
+  fanotify: define struct members to hold response decision context
+  fanotify,audit: Allow audit to use the full permission event response
+
+ fs/notify/fanotify/fanotify.c      |  8 ++-
+ fs/notify/fanotify/fanotify.h      |  6 +-
+ fs/notify/fanotify/fanotify_user.c | 88 ++++++++++++++++++++++--------
+ include/linux/audit.h              |  9 +--
+ include/linux/fanotify.h           |  5 ++
+ include/uapi/linux/fanotify.h      | 30 +++++++++-
+ kernel/auditsc.c                   | 16 +++++-
+ 7 files changed, 129 insertions(+), 33 deletions(-)
 
 -- 
-Dave Chinner
-david@fromorbit.com
+2.27.0
+
