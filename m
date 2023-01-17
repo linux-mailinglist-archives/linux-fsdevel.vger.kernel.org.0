@@ -2,68 +2,98 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E844A66D3CC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 02:27:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1245066D41D
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 03:11:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233886AbjAQB1l (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 16 Jan 2023 20:27:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39988 "EHLO
+        id S235184AbjAQCLD (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 16 Jan 2023 21:11:03 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56812 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233226AbjAQB1h (ORCPT
+        with ESMTP id S234743AbjAQCLA (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 16 Jan 2023 20:27:37 -0500
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id CC3B321A10;
-        Mon, 16 Jan 2023 17:27:35 -0800 (PST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mxct.zte.com.cn (FangMail) with ESMTPS id 4Nwrq97001z501Zn;
-        Tue, 17 Jan 2023 09:27:33 +0800 (CST)
-Received: from szxlzmapp01.zte.com.cn ([10.5.231.85])
-        by mse-fl2.zte.com.cn with SMTP id 30H1RUoE039328;
-        Tue, 17 Jan 2023 09:27:30 +0800 (+08)
-        (envelope-from yang.yang29@zte.com.cn)
-Received: from mapi (szxlzmapp04[null])
-        by mapi (Zmail) with MAPI id mid14;
-        Tue, 17 Jan 2023 09:27:30 +0800 (CST)
-Date:   Tue, 17 Jan 2023 09:27:30 +0800 (CST)
-X-Zmail-TransId: 2b0663c5f982ffffffffef3fda09
-X-Mailer: Zmail v1.0
-Message-ID: <202301170927309483808@zte.com.cn>
-In-Reply-To: <Y8Wq3apsJh7keUVA@casper.infradead.org>
-References: 202301131736452546903@zte.com.cn,Y8Wq3apsJh7keUVA@casper.infradead.org
-Mime-Version: 1.0
-From:   <yang.yang29@zte.com.cn>
-To:     <willy@infradead.org>
-Cc:     <akpm@linux-foundation.org>, <hannes@cmpxchg.org>,
-        <bagasdotme@gmail.com>, <linux-fsdevel@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        <iamjoonsoo.kim@lge.com>, <ran.xiaokai@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCBsaW51eC1uZXh0IHYzXSBzd2FwX3N0YXRlOiB1cGRhdGUgc2hhZG93X25vZGVzIGZvciBhbm9ueW1vdXMgcGFnZQ==?=
-Content-Type: text/plain;
-        charset="UTF-8"
-X-MAIL: mse-fl2.zte.com.cn 30H1RUoE039328
-X-Fangmail-Gw-Spam-Type: 0
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 63C5F985.000/4Nwrq97001z501Zn
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
-        T_SPF_PERMERROR,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no
-        version=3.4.6
+        Mon, 16 Jan 2023 21:11:00 -0500
+Received: from mail-oa1-x2d.google.com (mail-oa1-x2d.google.com [IPv6:2001:4860:4864:20::2d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B40DA1F92A
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 18:10:59 -0800 (PST)
+Received: by mail-oa1-x2d.google.com with SMTP id 586e51a60fabf-142b72a728fso30599862fac.9
+        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 18:10:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=student.cerritos.edu; s=google;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=0OQq6sgsmukTPLDtsi9sQirhnS6juHbF/KtUXWbWsQw=;
+        b=UE+D5RBHuqgPxFaUfvL0pMCO2VdpmpiH/iGxIY6bhROO7PC0m4Qz+qhO9z1xctMzbS
+         c/wJZdNcCgNreZ/bCC0U5LdfkroOieXOh21UBP8W2AgdZlH673u9W6/UBb7YTYJkMEA9
+         MouajhwfTa+yAyVBNF4TnqqxNxeAXZ2wwA/70=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0OQq6sgsmukTPLDtsi9sQirhnS6juHbF/KtUXWbWsQw=;
+        b=vBcB8Da9yeebU8n6vcF4OrFrW/HbwrtjjJ0N1mwM56Y2ArzICXR7JxW9z6XAdHQtsO
+         X/J+DOBXW7z5z8/fOnoqGbRIQ5V3iNVCaKcBWV2kkttVp2q+I6SkNVdbFj4K1UwfUBOQ
+         LSmds1roVr3csoVIXKyx+bm57H3T3CpGgIrehaRs2peo5QPi6QtPNYQU8bPjCLcJl89b
+         WbENV1jLvbX9+EGbEIo1vQWZZ1Q1hiET2ylMrlK+H5xr4BzZuVYQ/6mN+KZiKtxu15Nb
+         CaxQS3n06qHyvA3j3/F+9DZOfTcftJzVeCoeWwXhIEFE5FmxfENMJ4GsdLtKlEEk/dwr
+         sVUA==
+X-Gm-Message-State: AFqh2koNklj+GbpStvNWZH5sr5t7ZZoKp377B3jl6fYtLCLBABp/Z1xG
+        8ZEo3MjSKhUW4QepoA7+VxX1F1fK4D5yRZOgGuTpaGA1WRwKHbCx
+X-Google-Smtp-Source: AMrXdXs/GIZ2QFT/lL5r3nXrYUYMPp3XALm9kB4VA9t1YRxoA3vWiyPbll+Kw4SBtelCDAotyTHNjc12EdyeKEqOlhs=
+X-Received: by 2002:a05:6870:4949:b0:144:8d99:ef86 with SMTP id
+ fl9-20020a056870494900b001448d99ef86mr152873oab.254.1673921459055; Mon, 16
+ Jan 2023 18:10:59 -0800 (PST)
+MIME-Version: 1.0
+From:   Amy Parker <apark0006@student.cerritos.edu>
+Date:   Mon, 16 Jan 2023 18:11:00 -0800
+Message-ID: <CAPOgqxF_xEgKspetRJ=wq1_qSG3h8mkyXC58TXkUvx0agzEm_A@mail.gmail.com>
+Subject: [PATCH] dax: use switch statement over chained ifs
+To:     willy@infradead.org
+Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,
+        T_SPF_PERMERROR autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-> What testing did you do of this?  I have this crash in today's testing:
+This patch uses a switch statement for pe_order, which improves
+readability and on some platforms may minorly improve performance. It
+also, to improve readability, recognizes that `PAGE_SHIFT - PAGE_SHIFT' is
+a constant, and uses 0 in its place instead.
 
-My test is this: 
-1.Configure zram for swap.
-2.Run some program malloc and access large memory, make sure they
-can cause swap.
-3.Watch count_shadow_nodes() and shadow_lru_isolate() to make sure
-that shadow_nodes are really shrinking by adding printk().
+Signed-off-by: Amy Parker <apark0006@student.cerritos.edu>
+---
+ fs/dax.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-Really sorry for inadequate test, I will try more tests include drop_caches
-by sysctl.
+diff --git a/fs/dax.c b/fs/dax.c
+index c48a3a93ab29..e8beed601384 100644
+--- a/fs/dax.c
++++ b/fs/dax.c
+@@ -32,13 +32,16 @@
+
+ static inline unsigned int pe_order(enum page_entry_size pe_size)
+ {
+-    if (pe_size == PE_SIZE_PTE)
+-        return PAGE_SHIFT - PAGE_SHIFT;
+-    if (pe_size == PE_SIZE_PMD)
++    switch (pe_size) {
++    case PE_SIZE_PTE:
++        return 0;
++    case PE_SIZE_PMD:
+         return PMD_SHIFT - PAGE_SHIFT;
+-    if (pe_size == PE_SIZE_PUD)
++    case PE_SIZE_PUD:
+         return PUD_SHIFT - PAGE_SHIFT;
+-    return ~0;
++    default:
++        return ~0;
++    }
+ }
+
+ /* We choose 4096 entries - same as per-zone page wait tables */
+-- 
+2.39.0
