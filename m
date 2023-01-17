@@ -2,147 +2,87 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BC29966DBBC
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 12:03:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A479566DBF8
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 12:12:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236466AbjAQLDv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Jan 2023 06:03:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:57586 "EHLO
+        id S236669AbjAQLM3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Jan 2023 06:12:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34912 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236578AbjAQLDi (ORCPT
+        with ESMTP id S236704AbjAQLMH (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Jan 2023 06:03:38 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EAA732CFE0;
-        Tue, 17 Jan 2023 03:03:36 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 9226F68532;
-        Tue, 17 Jan 2023 11:03:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1673953415; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Tue, 17 Jan 2023 06:12:07 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 522B7241D0
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 03:11:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1673953880;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=yM3o6KrDzy3CUB2wOjjiKrt7RPQ6X4k5rLiKiQpyu3U=;
-        b=XhKYi0zY0UB1U2ncTOlegAXCinDng7M4A6EXyUdBCU5XW1TBjGVFKl2eCZle4P48TFowSh
-        Nflap+aM6BwnGgRSz4jL0Reh/wEgUmqCZ3tgRdJYKLE6IpX93IWlPjMXtWs8syY0iyNiUJ
-        fMyr1Yj1iJNsNkLH7OdDdj0Bz95ktMk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1673953415;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=yM3o6KrDzy3CUB2wOjjiKrt7RPQ6X4k5rLiKiQpyu3U=;
-        b=f3lXwvzuS7GBitbpHTVaYC7Oeqp7346EqDXG8dg3bQbX9pHfBchHLmQzWdnckThHCQK/0l
-        6KVZSpJLlEv36jDA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=nuM9+xr5fOVlA89rJyyrxh9F5lYvIvToBzJga0NsV4M=;
+        b=YnBI436Y2GrmZ70KYQWtOPczJPTuwhBFTXb6fDZ7ZPY2lwuRhDyQTd+hlP3Q9zPL5NhsFD
+        Gw2++2Nn3qNkX4Nopz8GCbG7Qrc0j9zJ9A7n/1NVYshbemeTkM0E/UHQfx3h5i2/Bt4hlY
+        E6WxlB6aAoFSOrIosKO5OgaOD8pcoGE=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-617-2CnmrGpNOjuBRZ-OVGrQfQ-1; Tue, 17 Jan 2023 06:11:19 -0500
+X-MC-Unique: 2CnmrGpNOjuBRZ-OVGrQfQ-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 8530E1390C;
-        Tue, 17 Jan 2023 11:03:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id Ai57IIeAxmPwLwAAMHmgww
-        (envelope-from <jack@suse.cz>); Tue, 17 Jan 2023 11:03:35 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 15D5BA06B2; Tue, 17 Jan 2023 12:03:35 +0100 (CET)
-Date:   Tue, 17 Jan 2023 12:03:35 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc:     Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org,
-        Theodore Ts'o <tytso@mit.edu>,
-        Ritesh Harjani <riteshh@linux.ibm.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        rookxu <brookxu.cn@gmail.com>,
-        Ritesh Harjani <ritesh.list@gmail.com>
-Subject: Re: [PATCH v3 7/8] ext4: Use rbtrees to manage PAs instead of inode
- i_prealloc_list
-Message-ID: <20230117110335.7dtlq4catefgjrm3@quack3>
-References: <20230116080216.249195-1-ojaswin@linux.ibm.com>
- <20230116080216.249195-8-ojaswin@linux.ibm.com>
- <20230116122334.k2hlom22o2hlek3m@quack3>
- <Y8Z413XTPMr//bln@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AB446857A88;
+        Tue, 17 Jan 2023 11:11:18 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 60AABC15BA0;
+        Tue, 17 Jan 2023 11:11:17 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y8ZTyx7vM8NpnUAj@infradead.org>
+References: <Y8ZTyx7vM8NpnUAj@infradead.org> <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk> <167391048988.2311931.1567396746365286847.stgit@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/34] vfs: Unconditionally set IOCB_WRITE in call_write_iter()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y8Z413XTPMr//bln@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-X-Spam-Status: No, score=-3.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_SOFTFAIL autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2337530.1673953876.1@warthog.procyon.org.uk>
+Date:   Tue, 17 Jan 2023 11:11:16 +0000
+Message-ID: <2337531.1673953876@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 17-01-23 16:00:47, Ojaswin Mujoo wrote:
-> On Mon, Jan 16, 2023 at 01:23:34PM +0100, Jan Kara wrote:
-> > > Since this covers the special case we discussed above, we will always
-> > > un-delete the PA when we encounter the special case and we can then
-> > > adjust for overlap and traverse the PA rbtree without any issues.
-> > > 
-> > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > > Reviewed-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> 
-> Hi Jan,
-> Thanks for the review, sharing some of my thoughts below.
-> 
-> > 
-> > So I find this putting back of already deleted inode PA very fragile. For
-> > example in current code I suspect you've missed a case in ext4_mb_put_pa()
-> > which can mark inode PA (so it can then be spotted by
-> > ext4_mb_pa_adjust_overlap() and marked as in use again) but
-> > ext4_mb_put_pa() still goes on and destroys the PA.
-> 
-> The 2 code paths that clash here are:
-> 
-> ext4_mb_new_blocks() -> ext4_mb_release_context() -> ext4_mb_put_pa()
-> ext4_mb_new_blocks() -> ext4_mb_normalize_request() -> ext4_mb_pa_adjust_overlap()
-> 
-> Since these are the only code paths from which these 2 functions are
-> called, for a given inode, access will always be serialized by the upper
-> level ei->i_data_sem, which is always taken when writing data blocks
-> using ext4_mb_new_block(). 
+Christoph Hellwig <hch@infradead.org> wrote:
 
-Indeed, inode->i_data_sem prevents the race I was afraid of.
- 
-> From my understanding of the code, I feel only
-> ext4_mb_discard_group_preallocations() can race against other functions
-> that are modifying the PA rbtree since it does not take any inode locks.
+> I suspect the best is to:
 > 
-> That being said, I do understand your concerns regarding the solution,
-> however I'm willing to work with the community to ensure our
-> implementation of this undelete feature is as robust as possible. Along
-> with fixing the bug reported here [1], I believe that it is also a good
-> optimization to have especially when the disk is near full and we are
-> seeing a lot of group discards going on. 
-> 
-> Also, in case the deleted PA completely lies inside our new range, it is
-> much better to just undelete and use it rather than deleting the
-> existing PA and reallocating the range again. I think the advantage
-> would be even bigger in ext4_mb_use_preallocated() function where we can
-> just undelete and use the PA and skip the entire allocation, incase original
-> range lies in a deleted PA.
+>  - rename init_sync_kiocb to init_kiocb
+>  - pass a new argument for the direction to it.  I'm not entirely
+>    sure if flags is a good thing, or an explicit READ/WRITE might be
+>    better because it's harder to get wrong, even if a the compiler
+>    might generate worth code for it.
 
-Thanks for explantion. However I think you're optimizing the wrong thing.
-We are running out of space (to run ext4_mb_discard_group_preallocations()
-at all) and we allocate from an area covered by PA that we've just decided
-to discard - if anything relies on performance of the filesystem in ENOSPC
-conditions it has serious problems no matter what. Sure, we should deliver
-the result (either ENOSPC or some block allocation) in a reasonable time
-but the performance does not really matter much because all the scanning
-and flushing is going to slow down everything a lot anyway. One additional
-scan of the rbtree is really negligible in this case. So what we should
-rather optimize for in this case is the code simplicity and maintainability
-of this rare corner-case that will also likely get only a small amount of
-testing. And in terms of code simplicity the delete & restart solution
-seems to be much better (at least as far as I'm imagining it - maybe the
-code will prove me wrong ;)).
+So something like:
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+	init_kiocb(kiocb, file, WRITE);
+	init_kiocb(kiocb, file, READ);
+
+David
+
