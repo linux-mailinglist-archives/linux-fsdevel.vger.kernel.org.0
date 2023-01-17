@@ -2,106 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 122F866D880
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 09:45:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 314C966D87A
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 09:45:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S236276AbjAQIpn (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Jan 2023 03:45:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49982 "EHLO
+        id S236171AbjAQIpE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Jan 2023 03:45:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49970 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S236275AbjAQIpW (ORCPT
+        with ESMTP id S236177AbjAQIov (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Jan 2023 03:45:22 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BB54E2E0D4
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 00:44:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1673945063;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=c67qk7OnPaxl+dFH8J1vvUn1qi1Q5Jd+6lO39BMhpQ4=;
-        b=bVM7bY2zxoH8G5/wHmoVDaz55GBcLXd6o3gh3wj6eiS1vLGqqXR5+57JSWbS05a7uNHqAU
-        IiSK+eZLSWEXQ/ytVVF+w9mrH3x7WlNgW2SeHp/EtLTzxcBS+ouq/+KKQQ74VGLq+IfNQJ
-        U6bOsdZoEBJhKR9/m+0SjkJUuL0TTa0=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-500-3va1GWDUOD-6VU-y9Sk50A-1; Tue, 17 Jan 2023 03:44:18 -0500
-X-MC-Unique: 3va1GWDUOD-6VU-y9Sk50A-1
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 510563C0E456;
-        Tue, 17 Jan 2023 08:44:18 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id DC2C52166B29;
-        Tue, 17 Jan 2023 08:44:16 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <Y8ZU1Jjx5VSetvOn@infradead.org>
-References: <Y8ZU1Jjx5VSetvOn@infradead.org> <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk> <167391050409.2311931.7103784292954267373.stgit@warthog.procyon.org.uk>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Matthew Wilcox <willy@infradead.org>,
+        Tue, 17 Jan 2023 03:44:51 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C63312CFD0;
+        Tue, 17 Jan 2023 00:44:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=B78y0VpcNvaNsUxIiihgFPrvqCbss5Z11dzMWjX4LvA=; b=rfYsJlEozbyBZuSblQN507XRqm
+        DRWDdxv5x1kqdV9WC8xnqWa2pPT/7YeYN8mVG36tuua/QNFFtl9BpY4DjQP7D+nwWrEslHS7ETTO9
+        Gr59jLK5bp6lLBdHPQozGA62c/yyLthADMEA4ep9cbFmWL29oBouWOUAk2oCJb2VmLTNj1ZmMkJel
+        OSlCSnLfEiD2NxmvVhhyoFzk2INF1yZmg14JZFxRQl0pz3iXLffiI06e49ekYEBvvyJof2kcZtRB1
+        mlY8Jn5kHSRovvNc7qrkhZUU30SSeVoVOyrU3GjFhMYtu5t3ybcenG6rimkGDNkeyWeWEVFAkOxdU
+        ICLfiW9w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pHhaE-00DMe7-M0; Tue, 17 Jan 2023 08:44:42 +0000
+Date:   Tue, 17 Jan 2023 00:44:42 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
+        Christoph Hellwig <hch@lst.de>,
+        Matthew Wilcox <willy@infradead.org>,
         Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH v6 03/34] iov_iter: Pass I/O direction into iov_iter_get_pages*()
+        linux-block@vger.kernel.org, Jeff Layton <jlayton@kernel.org>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 11/34] iov_iter, block: Make bio structs pin pages
+ rather than ref'ing if appropriate
+Message-ID: <Y8Zf+gooUKwAZC7J@infradead.org>
+References: <Y8ZXQArEsIRNO9k/@infradead.org>
+ <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
+ <167391056047.2311931.6772604381276147664.stgit@warthog.procyon.org.uk>
+ <2330754.1673943968@warthog.procyon.org.uk>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2331409.1673945056.1@warthog.procyon.org.uk>
-Date:   Tue, 17 Jan 2023 08:44:16 +0000
-Message-ID: <2331410.1673945056@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2330754.1673943968@warthog.procyon.org.uk>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Christoph Hellwig <hch@infradead.org> wrote:
+On Tue, Jan 17, 2023 at 08:26:08AM +0000, David Howells wrote:
+> Um... With these patches, BIO_PAGE_REFFED is set by default when the bio is
+> initialised otherwise every user of struct bio that currently adds pages
+> directly (assuming there are any) rather than going through
+> bio_iov_iter_get_pages() will have to set the flag, hence the need to clear
+> it.
 
-> On Mon, Jan 16, 2023 at 11:08:24PM +0000, David Howells wrote:
-> > Define FOLL_SOURCE_BUF and FOLL_DEST_BUF to indicate to get_user_pages*()
-> > and iov_iter_get_pages*() how the buffer is intended to be used in an I/O
-> > operation.  Don't use READ and WRITE as a read I/O writes to memory and
-> > vice versa - which causes confusion.
-> > 
-> > The direction is checked against the iterator's data_source.
-> 
-> Why can't we use the existing FOLL_WRITE?
+I think we need to fix that (in the patch inverting the polarity) and
+only set the flag where it is needed.
 
-Because FOLL_WRITE doesn't mean the same as WRITE:
-
- (1) It looks like it should really be FOLL_CHECK_PTES_WRITABLE.  It's not
-     defined as being anything to do with the I/O.
-
- (2) The reason Al added ITER_SOURCE and ITER_DEST is that the use of READ and
-     WRITE with the iterators is confusing and kind of inverted - and the same
-     would apply with using FOLL_WRITE:
-
-	if (rw == READ)
-		gup_flags |= FOLL_WRITE;
-
-So my thought is to make how you are using the buffer described by the
-iterator explicit: "I'm using it as a source buffer" or "I'm using it as a
-destination buffer".
-
-Also, I don't want it to be FOLL_WRITE or 0.  I want it to be written
-explicitly in both cases.  If you're going to insist on using FOLL_WRITE, then
-there should be a FOLL_READ to go with it, even if it's #defined to 0.
-
-David
-
+All eventually calls come from the direct I/O code in the block layer,
+iomap, legacy generic and zonefs, and they release pages that came
+from some form of hup.  So we can just set BIO_PAGE_REFFED in
+bio_iov_iter_get_pages and dio_refill_pages.
