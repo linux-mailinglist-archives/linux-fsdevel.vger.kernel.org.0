@@ -2,69 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 84F5166D5E4
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 07:07:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 31D9766D689
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 07:55:30 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S235631AbjAQGHX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Jan 2023 01:07:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54050 "EHLO
+        id S235794AbjAQGz3 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Jan 2023 01:55:29 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49190 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S235177AbjAQGHR (ORCPT
+        with ESMTP id S235778AbjAQGz1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Jan 2023 01:07:17 -0500
-Received: from mail-lj1-x234.google.com (mail-lj1-x234.google.com [IPv6:2a00:1450:4864:20::234])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 71C781E5C3
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 22:07:15 -0800 (PST)
-Received: by mail-lj1-x234.google.com with SMTP id f20so32108087lja.4
-        for <linux-fsdevel@vger.kernel.org>; Mon, 16 Jan 2023 22:07:15 -0800 (PST)
+        Tue, 17 Jan 2023 01:55:27 -0500
+Received: from mail-lj1-x230.google.com (mail-lj1-x230.google.com [IPv6:2a00:1450:4864:20::230])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87D2A2312A;
+        Mon, 16 Jan 2023 22:55:26 -0800 (PST)
+Received: by mail-lj1-x230.google.com with SMTP id n5so31661567ljc.9;
+        Mon, 16 Jan 2023 22:55:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
+        d=gmail.com; s=20210112;
+        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=lB+N5hDJu7j1hmIQtvxGWBe1fqIaRUGQGcJBc+PwjY0=;
-        b=I4bEeBAYRAfXZoab00XgXsczCOGBTC0QHQIXU3lb7S7KVibpH6j4u2n1s4Lkx0dnF7
-         XLjvlmo0XmMPGSzfAYBVtU4EY8ymhnFKZCkEToeY9FE8ZJz87IKsop+5f88XBCD9dUoX
-         GQDMwXvEfi+nZ4vMNvZfm+xsQ9Hho3yH1a+MLNdMQKQqcAdpjz+JmTWO2JdEiKLbVIiT
-         hKp1MYCNXRaiYizamc7oHtY/V0zwPEFXk72qVg5yErKeK35txJu/ArWzZJK1z7AZbb0W
-         y/ZZI3bFeK7KJM3FX12TdmAPRxrJP23T9vFhbO0NFP+sAENxlVnjPug6qb10D3Y/R3y0
-         5G3A==
+        bh=7fsyWypeAMY0JG1EEfmucwsYJ8Jkxy8QnCP30FOG3DM=;
+        b=ge9qmfNZOKrTVbnhqKB41V/JLvba3r8CnvOXqwvE3ZvreVy36aGGsxectcEDl8PMpX
+         Isn1UQykNLwm+TVO2Z2N42rEqNOmnNYVDlRABbg9iLrBgiGgHNnaRxjfeU0qk5tA/oeK
+         mmBy9LICe4UrFoMh6o4X/dr/dVYxxEnDZccGsaSeJC4eYlKX5x3gKacoGZ6gxGOppCXu
+         KsFVnqHm40yaZcmC1rmVgplvnKl2eGtGbGrOykPkmNpQ93g9kPBmGdMCfvmRneFBP9oN
+         dX8B6N2BgLGo+S9lGMoLyLfNc04ID6AbsF8wG1dtP2bDskFa+X+4fqxTPin3TTKYcOuJ
+         HXQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
+        h=cc:to:subject:message-id:date:from:reply-to:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lB+N5hDJu7j1hmIQtvxGWBe1fqIaRUGQGcJBc+PwjY0=;
-        b=RLUIjo0YHaHVkYurl71O0ibmaOYuTU9mdItoszJuGYOkbVAxzFsiGDm8zkaJAPrYsn
-         Ao2d9Uh6dAY+l5qRsqZm+cuCi4mro8ydpZ/eNHTTrNLl7sJ5d87mY7kkVWd3MRyNOxSz
-         93Iik2kYKpI1x932DwWNtUlCviF7HWocguU9WRzsaojg4dIvz3f43nqKGEwQfxfsbnNo
-         3xprTR1E9TDwp1KeUQ6AWviJHYUSnbrzhk8s5EfJ66xQ/CNZfRPwVMcus9VhwZ9e8CqX
-         SCuP5DT0rHbwqFiwbYLk6JZP64lz04+s5aeUgV4+7AfkGf2PclmbeX2TEeStzV/fYGhf
-         11Jw==
-X-Gm-Message-State: AFqh2kouFnwM2vqWVSjgF6HIBRQIvz+sEfeQvyPuBMmSa0kOD74n3nvv
-        +YEBtsUW+I9gCesgUwzP9lzLISsaKVXdd53h4OMj6g==
-X-Google-Smtp-Source: AMrXdXvmqA7rduDtf5Al4c0Iccf2xerVDa9obCy7StxCB2kQyMhf0s0mhEy6O9ZyUeNORadahyVYCeGY64bU5+XLrvY=
-X-Received: by 2002:a2e:a1cb:0:b0:285:7172:61ff with SMTP id
- c11-20020a2ea1cb000000b00285717261ffmr183106ljm.79.1673935633433; Mon, 16 Jan
- 2023 22:07:13 -0800 (PST)
+        bh=7fsyWypeAMY0JG1EEfmucwsYJ8Jkxy8QnCP30FOG3DM=;
+        b=DimcfJ6rMjam2yK6Y5XuwjOTvB8A33NE3UynVuzz8cPwNanJi2f0szMP43k1L48JRP
+         Ljx1u7Zp6zx9hNqoZnVuFocRvcR1qxkK032QCg1SUGNOmEwSDjJ1i6He9RuVQ8CqfDbC
+         pnNCrm7kcqt6+pMlHe5Nx+MvVX6h2yMba9vQAIjHodz0YNXG+CV4qJSUfM4wRMeot91S
+         Rv5wW2QHLZKgHraYWTAjnGiT4BVBOShS6EKxAPaqKvEvAyE1zGESGNM0EoIHvnCWZ+BP
+         kmiri5SUjOrmwASfMhAaRA81byXX49zsKzUig/13ItLWheDI0ap5Cgqeimsa/DN0b90Z
+         4j0w==
+X-Gm-Message-State: AFqh2kq09xlmLjYu7K26k57nMSKgfJVmblrMmVJ9TGoNMIUlXAWLjujF
+        ZBJQn6r7e/4S5A1A8gGLBrQ4LV4FFshi3W72oC4=
+X-Google-Smtp-Source: AMrXdXvmBNPQO9jgbltbUh91NFG7RZih0v//EXtq4LQgVpuBF6K8m+DGKok+S1Wwy5EVGU9wVEPiIZI2RZFzcncQXSM=
+X-Received: by 2002:a2e:9645:0:b0:28b:9588:55a4 with SMTP id
+ z5-20020a2e9645000000b0028b958855a4mr221382ljh.238.1673938524528; Mon, 16 Jan
+ 2023 22:55:24 -0800 (PST)
 MIME-Version: 1.0
-References: <000000000000baa88c05eaa934bb@google.com> <CACT4Y+bVtOb+CxiAKHaSsrym-4JKn-E8exY7aypfp_yGzkUGDQ@mail.gmail.com>
- <CAG48ez0fZm4CHoG2-Zup8z9XGk-+hfdet=YpnY003iJpQOaBHg@mail.gmail.com>
-In-Reply-To: <CAG48ez0fZm4CHoG2-Zup8z9XGk-+hfdet=YpnY003iJpQOaBHg@mail.gmail.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Tue, 17 Jan 2023 07:07:00 +0100
-Message-ID: <CACT4Y+bd9-NrnvGUcnJ+tq+VN+TCKHqmPavxvj2Y3Br-GhKLvw@mail.gmail.com>
-Subject: Re: [syzbot] stack segment fault in truncate_inode_pages_final
-To:     Jann Horn <jannh@google.com>
-Cc:     syzbot <syzbot+0f7dd5852be940800ca4@syzkaller.appspotmail.com>,
-        almaz.alexandrovich@paragon-software.com, ntfs3@lists.linux.dev,
-        akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        syzkaller-bugs@googlegroups.com, willy@infradead.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=ham
+References: <20230107012324.30698-1-zhanghongchen@loongson.cn>
+ <9fcb3f80-cb55-9a72-0e74-03ace2408d21@loongson.cn> <4b140bd0-9b7f-50b5-9e3b-16d8afe52a50@loongson.cn>
+ <Y8TUqcSO5VrbYfcM@casper.infradead.org> <Y8W9TR5ifZmRADLB@ZenIV> <20230116141608.a72015bdd8bbbedd5c50cc3e@linux-foundation.org>
+In-Reply-To: <20230116141608.a72015bdd8bbbedd5c50cc3e@linux-foundation.org>
+Reply-To: sedat.dilek@gmail.com
+From:   Sedat Dilek <sedat.dilek@gmail.com>
+Date:   Tue, 17 Jan 2023 07:54:46 +0100
+Message-ID: <CA+icZUXN-6TRq1CO3O5i+0WAs91mk8iM-kASgPCjMzVv9yragA@mail.gmail.com>
+Subject: Re: [PATCH v3] pipe: use __pipe_{lock,unlock} instead of spinlock
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Matthew Wilcox <willy@infradead.org>,
+        maobibo <maobibo@loongson.cn>,
+        Hongchen Zhang <zhanghongchen@loongson.cn>,
+        David Howells <dhowells@redhat.com>,
+        "Christian Brauner (Microsoft)" <brauner@kernel.org>,
+        Luis Chamberlain <mcgrof@kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Eric Dumazet <edumazet@google.com>,
+        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="00000000000021993605f2702fe0"
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -72,169 +80,242 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, 16 Jan 2023 at 21:47, Jann Horn <jannh@google.com> wrote:
+--00000000000021993605f2702fe0
+Content-Type: text/plain; charset="UTF-8"
+
+On Mon, Jan 16, 2023 at 11:16 PM Andrew Morton
+<akpm@linux-foundation.org> wrote:
 >
-> On Mon, Oct 10, 2022 at 9:42 AM Dmitry Vyukov <dvyukov@google.com> wrote:
-> > On Mon, 10 Oct 2022 at 09:35, syzbot
-> > <syzbot+0f7dd5852be940800ca4@syzkaller.appspotmail.com> wrote:
+> On Mon, 16 Jan 2023 21:10:37 +0000 Al Viro <viro@zeniv.linux.org.uk> wrote:
+>
+> > On Mon, Jan 16, 2023 at 04:38:01AM +0000, Matthew Wilcox wrote:
+> > > On Mon, Jan 16, 2023 at 11:16:13AM +0800, maobibo wrote:
+> > > > Hongchen,
+> > > >
+> > > > I have a glance with this patch, it simply replaces with
+> > > > spinlock_irqsave with mutex lock. There may be performance
+> > > > improvement with two processes competing with pipe, however
+> > > > for N processes, there will be complex context switches
+> > > > and ipi interruptts.
+> > > >
+> > > > Can you find some cases with more than 2 processes competing
+> > > > pipe, rather than only unixbench?
 > > >
-> > > Hello,
-> > >
-> > > syzbot found the following issue on:
-> > >
-> > > HEAD commit:    833477fce7a1 Merge tag 'sound-6.1-rc1' of git://git.kernel..
-> > > git tree:       upstream
-> > > console output: https://syzkaller.appspot.com/x/log.txt?x=17cae158880000
-> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=676645938ad4c02f
-> > > dashboard link: https://syzkaller.appspot.com/bug?extid=0f7dd5852be940800ca4
-> > > compiler:       gcc (Debian 10.2.1-6) 10.2.1 20210110, GNU ld (GNU Binutils for Debian) 2.35.2
-> > >
-> > > Unfortunately, I don't have any reproducer for this issue yet.
-> > >
-> > > Downloadable assets:
-> > > disk image: https://storage.googleapis.com/syzbot-assets/f66757bbae28/disk-833477fc.raw.xz
-> > > vmlinux: https://storage.googleapis.com/syzbot-assets/50ec5a2788dd/vmlinux-833477fc.xz
-> > >
-> > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> > > Reported-by: syzbot+0f7dd5852be940800ca4@syzkaller.appspotmail.com
+> > > What real applications have pipes with more than 1 writer & 1 reader?
+> > > I'm OK with slowing down the weird cases if the common cases go faster.
 > >
-> > +ntfs3 maintainers
->
-> There's something deeply wrong with this one; it looks like we're
-> trying to execute from an RIP that is not aligned to a full
-> instruction. RIP points to the last byte of a CALL instruction. It
-> looks like, somehow, while we were somewhere inside
-> _raw_spin_unlock_irq, something stomped over RIP. Note how the "Code
-> starting with the faulting instruction" section shows an instruction
-> that's not visible in the "All code" dump above.
-
-
-There is a number of stack corruptions reported for ntfs3:
-
-https://lore.kernel.org/all/000000000000bdf37505f1a7fc09@google.com/
-https://lore.kernel.org/all/0000000000004b7b3a05f0bc25f8@google.com/
-https://lore.kernel.org/all/000000000000b7bd0405f059129a@google.com/
-
-It seems that it somehow very badly corrupts memory and that's not
-caught by KASAN.
-
-
-> Code: 48 c7 c0 40 e8 ca 8d 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03
-> 80 3c 10 00 0f 85 e0 01 00 00 48 8b 05 65 42 6d 0c e8 80 2e 06 <00> 85
-> c0 74 17 65 ff 0d 55 c9 a4 7e 0f 85 3e fb ff ff e8 ec ce a2
-> All code
-> ========
->    0: 48 c7 c0 40 e8 ca 8d mov    $0xffffffff8dcae840,%rax
->    7: 48 ba 00 00 00 00 00 movabs $0xdffffc0000000000,%rdx
->    e: fc ff df
->   11: 48 c1 e8 03          shr    $0x3,%rax
->   15: 80 3c 10 00          cmpb   $0x0,(%rax,%rdx,1)
->   19: 0f 85 e0 01 00 00    jne    0x1ff
->   1f: 48 8b 05 65 42 6d 0c mov    0xc6d4265(%rip),%rax        # 0xc6d428b
->   26:* e8 80 2e 06 00        call   0x62eab <-- trapping instruction
->   2b: 85 c0                test   %eax,%eax
->   2d: 74 17                je     0x46
->   2f: 65 ff 0d 55 c9 a4 7e decl   %gs:0x7ea4c955(%rip)        # 0x7ea4c98b
->   36: 0f 85 3e fb ff ff    jne    0xfffffffffffffb7a
->   3c: e8                    .byte 0xe8
->   3d: ec                    in     (%dx),%al
->   3e: ce                    (bad)
->   3f: a2                    .byte 0xa2
->
-> Code starting with the faulting instruction
-> ===========================================
->    0: 00 85 c0 74 17 65    add    %al,0x651774c0(%rbp)
->    6: ff 0d 55 c9 a4 7e    decl   0x7ea4c955(%rip)        # 0x7ea4c961
->    c: 0f 85 3e fb ff ff    jne    0xfffffffffffffb50
->   12: e8                    .byte 0xe8
->   13: ec                    in     (%dx),%al
->   14: ce                    (bad)
->   15: a2                    .byte 0xa2
->
-> We're interpreting unaligned instruction bytes as "add
-> %al,0x651774c0(%rbp)", and RBP is non-canonical (1ffff92000a6cf44), so
-> we get a Stack Segment fault.
->
-> Unless this is some kind of asynchronous stack UAF decrement, I think
-> this might not be NTFS's fault.
->
-> > > stack segment: 0000 [#1] PREEMPT SMP KASAN
-> > > CPU: 1 PID: 22407 Comm: syz-executor.5 Not tainted 6.0.0-syzkaller-05118-g833477fce7a1 #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/22/2022
-> > > RIP: 0010:trace_lock_release include/trace/events/lock.h:69 [inline]
-> > > RIP: 0010:lock_release+0x55f/0x780 kernel/locking/lockdep.c:5677
-> > > Code: 48 c7 c0 40 e8 ca 8d 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03 80 3c 10 00 0f 85 e0 01 00 00 48 8b 05 65 42 6d 0c e8 80 2e 06 <00> 85 c0 74 17 65 ff 0d 55 c9 a4 7e 0f 85 3e fb ff ff e8 ec ce a2
-> > > RSP: 0018:ffffc90005367a10 EFLAGS: 00010002
-> > > RAX: 0000000000000001 RBX: 0000000000000001 RCX: 0000000000000001
-> > > RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-> > > RBP: 1ffff92000a6cf44 R08: 0000000000000000 R09: ffffffff8ddf9957
-> > > R10: fffffbfff1bbf32a R11: 0000000000000000 R12: ffff888093973498
-> > > R13: ffff888093973278 R14: ffffffff8a22b140 R15: ffff8880478d8a00
-> > > FS:  00007f9ae3bb2700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 0000001b2e927000 CR3: 000000003f6b9000 CR4: 00000000003506e0
-> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > > Call Trace:
-> > >  <TASK>
-> > >  __raw_spin_unlock_irq include/linux/spinlock_api_smp.h:157 [inline]
-> > >  _raw_spin_unlock_irq+0x12/0x40 kernel/locking/spinlock.c:202
-> > >  spin_unlock_irq include/linux/spinlock.h:399 [inline]
-> > >  truncate_inode_pages_final+0x5f/0x80 mm/truncate.c:484
-> > >  ntfs_evict_inode+0x16/0xa0 fs/ntfs3/inode.c:1741
-> > >  evict+0x2ed/0x6b0 fs/inode.c:665
-> > >  iput_final fs/inode.c:1748 [inline]
-> > >  iput.part.0+0x55d/0x810 fs/inode.c:1774
-> > >  iput+0x58/0x70 fs/inode.c:1764
-> > >  ntfs_fill_super+0x2e89/0x37f0 fs/ntfs3/super.c:1190
-> > >  get_tree_bdev+0x440/0x760 fs/super.c:1323
-> > >  vfs_get_tree+0x89/0x2f0 fs/super.c:1530
-> > >  do_new_mount fs/namespace.c:3040 [inline]
-> > >  path_mount+0x1326/0x1e20 fs/namespace.c:3370
-> > >  do_mount fs/namespace.c:3383 [inline]
-> > >  __do_sys_mount fs/namespace.c:3591 [inline]
-> > >  __se_sys_mount fs/namespace.c:3568 [inline]
-> > >  __x64_sys_mount+0x27f/0x300 fs/namespace.c:3568
-> > >  do_syscall_x64 arch/x86/entry/common.c:50 [inline]
-> > >  do_syscall_64+0x35/0xb0 arch/x86/entry/common.c:80
-> > >  entry_SYSCALL_64_after_hwframe+0x63/0xcd
-> > > RIP: 0033:0x7f9ae2a8bada
-> > > Code: 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 b8 ff ff ff ff eb d2 e8 b8 04 00 00 0f 1f 84 00 00 00 00 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-> > > RSP: 002b:00007f9ae3bb1f88 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-> > > RAX: ffffffffffffffda RBX: 0000000020000200 RCX: 00007f9ae2a8bada
-> > > RDX: 0000000020000000 RSI: 0000000020000100 RDI: 00007f9ae3bb1fe0
-> > > RBP: 00007f9ae3bb2020 R08: 00007f9ae3bb2020 R09: 0000000020000000
-> > > R10: 0000000000000000 R11: 0000000000000202 R12: 0000000020000000
-> > > R13: 0000000020000100 R14: 00007f9ae3bb1fe0 R15: 0000000020000140
-> > >  </TASK>
-> > > Modules linked in:
-> > > ---[ end trace 0000000000000000 ]---
-> > > RIP: 0010:trace_lock_release include/trace/events/lock.h:69 [inline]
-> > > RIP: 0010:lock_release+0x55f/0x780 kernel/locking/lockdep.c:5677
-> > > Code: 48 c7 c0 40 e8 ca 8d 48 ba 00 00 00 00 00 fc ff df 48 c1 e8 03 80 3c 10 00 0f 85 e0 01 00 00 48 8b 05 65 42 6d 0c e8 80 2e 06 <00> 85 c0 74 17 65 ff 0d 55 c9 a4 7e 0f 85 3e fb ff ff e8 ec ce a2
-> > > RSP: 0018:ffffc90005367a10 EFLAGS: 00010002
-> > > RAX: 0000000000000001 RBX: 0000000000000001 RCX: 0000000000000001
-> > > RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000000
-> > > RBP: 1ffff92000a6cf44 R08: 0000000000000000 R09: ffffffff8ddf9957
-> > > R10: fffffbfff1bbf32a R11: 0000000000000000 R12: ffff888093973498
-> > > R13: ffff888093973278 R14: ffffffff8a22b140 R15: ffff8880478d8a00
-> > > FS:  00007f9ae3bb2700(0000) GS:ffff8880b9b00000(0000) knlGS:0000000000000000
-> > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> > > CR2: 0000001b2e927000 CR3: 000000003f6b9000 CR4: 00000000003506e0
-> > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> > >
-> > >
-> > > ---
-> > > This report is generated by a bot. It may contain errors.
-> > > See https://goo.gl/tpsmEJ for more information about syzbot.
-> > > syzbot engineers can be reached at syzkaller@googlegroups.com.
-> > >
-> > > syzbot will keep track of this issue. See:
-> > > https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-> > >
-> > > --
-> > > You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> > > To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> > > To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/000000000000baa88c05eaa934bb%40google.com.
+> > >From commit 0ddad21d3e99c743a3aa473121dc5561679e26bb:
+> >     While this isn't a common occurrence in the traditional "use a pipe as a
+> >     data transport" case, where you typically only have a single reader and
+> >     a single writer process, there is one common special case: using a pipe
+> >     as a source of "locking tokens" rather than for data communication.
 > >
+> >     In particular, the GNU make jobserver code ends up using a pipe as a way
+> >     to limit parallelism, where each job consumes a token by reading a byte
+> >     from the jobserver pipe, and releases the token by writing a byte back
+> >     to the pipe.
+>
+> The author has tested this patch with Linus's test code from 0ddad21d3e
+> and the results were OK
+> (https://lkml.kernel.org/r/c3cbede6-f19e-3333-ba0f-d3f005e5d599@loongson.cn).
+>
+
+Yesterday, I had some time to play with and without this patch on my
+Debian/unstable AMD64 box.
+
+[ TEST-CASE ]
+
+BASE: Linux v6.2-rc4
+
+PATCH: [PATCH v3] pipe: use __pipe_{lock,unlock} instead of spinlock
+
+TEST-CASE: Taken from commit 0ddad21d3e99
+
+RUN: gcc-12 -o 0ddad21d3e99 0ddad21d3e99.c
+
+Link: https://lore.kernel.org/all/20230107012324.30698-1-zhanghongchen@loongson.cn/
+Link: https://git.kernel.org/linus/0ddad21d3e99
+
+
+[ INSTRUCTIONS ]
+
+echo 0 | sudo tee /proc/sys/kernel/kptr_restrict
+/proc/sys/kernel/perf_event_paranoid
+
+10 runs: /usr/bin/perf stat --repeat=10 ./0ddad21d3e99
+
+echo 1 | sudo tee /proc/sys/kernel/kptr_restrict
+/proc/sys/kernel/perf_event_paranoid
+
+
+[ BEFORE ]
+
+Performance counter stats for './0ddad21d3e99' (10 runs):
+
+        23.985,50 msec task-clock                       #    3,246
+CPUs utilized            ( +-  0,20% )
+        1.112.822      context-switches                 #   46,696
+K/sec                    ( +-  0,30% )
+          403.033      cpu-migrations                   #   16,912
+K/sec                    ( +-  0,28% )
+            1.508      page-faults                      #   63,278
+/sec                     ( +-  2,95% )
+   39.436.000.959      cycles                           #    1,655 GHz
+                     ( +-  0,22% )
+   29.364.329.413      stalled-cycles-frontend          #   74,91%
+frontend cycles idle     ( +-  0,24% )
+   22.139.448.400      stalled-cycles-backend           #   56,48%
+backend cycles idle      ( +-  0,23% )
+   18.565.538.523      instructions                     #    0,47
+insn per cycle
+                                                 #    1,57  stalled
+cycles per insn  ( +-  0,17% )
+    4.059.885.546      branches                         #  170,359
+M/sec                    ( +-  0,17% )
+       59.991.226      branch-misses                    #    1,48% of
+all branches          ( +-  0,19% )
+
+           7,3892 +- 0,0127 seconds time elapsed  ( +-  0,17% )
+
+
+[ AFTER ]
+
+Performance counter stats for './0ddad21d3e99' (10 runs):
+
+        24.175,94 msec task-clock                       #    3,362
+CPUs utilized            ( +-  0,11% )
+        1.139.152      context-switches                 #   47,119
+K/sec                    ( +-  0,12% )
+          407.994      cpu-migrations                   #   16,876
+K/sec                    ( +-  0,26% )
+            1.555      page-faults                      #   64,319
+/sec                     ( +-  3,11% )
+   40.904.849.091      cycles                           #    1,692 GHz
+                     ( +-  0,13% )
+   30.587.623.034      stalled-cycles-frontend          #   74,84%
+frontend cycles idle     ( +-  0,15% )
+   23.145.533.537      stalled-cycles-backend           #   56,63%
+backend cycles idle      ( +-  0,16% )
+   18.762.964.037      instructions                     #    0,46
+insn per cycle
+                                                 #    1,63  stalled
+cycles per insn  ( +-  0,11% )
+    4.057.182.849      branches                         #  167,817
+M/sec                    ( +-  0,09% )
+       63.887.806      branch-misses                    #    1,58% of
+all branches          ( +-  0,25% )
+
+          7,19157 +- 0,00644 seconds time elapsed  ( +-  0,09% )
+
+
+[ RESULT ]
+
+seconds time elapsed: - 2,67%
+
+The test-case c-file is attached and for the case the above lines were
+truncated I have attached as a README file.
+
+Feel free to add a...
+
+   Tested-by: Sedat Dilek <sedat.dilek@gmail.com> # LLVM v15.0.3 (x86-64)
+
+If you need further information, please let me know.
+
+-Sedat-
+
+> I've been stalling on this patch until Linus gets back to his desk,
+> which now appears to have happened.
+>
+> Hongchen, when convenient, please capture this discussion (as well as
+> the testing results with Linus's sample code) in the changelog and send
+> us a v4, with Linus on cc?
+>
+
+--00000000000021993605f2702fe0
+Content-Type: text/x-csrc; charset="US-ASCII"; name="0ddad21d3e99.c"
+Content-Disposition: attachment; filename="0ddad21d3e99.c"
+Content-Transfer-Encoding: base64
+Content-ID: <f_lczvlfim0>
+X-Attachment-Id: f_lczvlfim0
+
+Ly8gVGVzdC1jYXNlOiBCZW5jaG1hcmsgcGlwZSBwZXJmb3JtYW5jZQovLyAgICBBdXRob3I6IExp
+bnVzIFRvcnZhbGRzCi8vICAgICAgTGluazogaHR0cHM6Ly9naXQua2VybmVsLm9yZy9saW51cy8w
+ZGRhZDIxZDNlOTkKLy8KLy8gICBDb21waWxlOiBnY2MtMTIgLW8gMGRkYWQyMWQzZTk5IDBkZGFk
+MjFkM2U5OS5jCi8vCiNpbmNsdWRlIDx1bmlzdGQuaD4KCmludCBtYWluKGludCBhcmdjLCBjaGFy
+ICoqYXJndikKICAgIHsKICAgICAgICBpbnQgZmRbMl0sIGNvdW50ZXJzWzJdOwoKICAgICAgICBw
+aXBlKGZkKTsKICAgICAgICBjb3VudGVyc1swXSA9IDA7CiAgICAgICAgY291bnRlcnNbMV0gPSAt
+MTsKICAgICAgICB3cml0ZShmZFsxXSwgY291bnRlcnMsIHNpemVvZihjb3VudGVycykpOwoKICAg
+ICAgICAvKiA2NCBwcm9jZXNzZXMgKi8KICAgICAgICBmb3JrKCk7IGZvcmsoKTsgZm9yaygpOyBm
+b3JrKCk7IGZvcmsoKTsgZm9yaygpOwoKICAgICAgICBkbyB7CiAgICAgICAgICAgICAgICBpbnQg
+aTsKICAgICAgICAgICAgICAgIHJlYWQoZmRbMF0sICZpLCBzaXplb2YoaSkpOwogICAgICAgICAg
+ICAgICAgaWYgKGkgPCAwKQogICAgICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsKICAgICAg
+ICAgICAgICAgIGNvdW50ZXJzWzBdID0gaSsxOwogICAgICAgICAgICAgICAgd3JpdGUoZmRbMV0s
+IGNvdW50ZXJzLCAoMSsoaSAmIDEpKSAqc2l6ZW9mKGludCkpOwogICAgICAgIH0gd2hpbGUgKGNv
+dW50ZXJzWzBdIDwgMTAwMDAwMCk7CiAgICAgICAgcmV0dXJuIDA7CiAgICB9Cg==
+--00000000000021993605f2702fe0
+Content-Type: application/octet-stream; 
+	name=README_zhanghongchen-pipe-v3-0ddad21d3e99
+Content-Disposition: attachment; 
+	filename=README_zhanghongchen-pipe-v3-0ddad21d3e99
+Content-Transfer-Encoding: base64
+Content-ID: <f_lczvmufq1>
+X-Attachment-Id: f_lczvmufq1
+
+WyBURVNULUNBU0UgXQoKQkFTRTogTGludXggdjYuMi1yYzQKClBBVENIOiBbUEFUQ0ggdjNdIHBp
+cGU6IHVzZSBfX3BpcGVfe2xvY2ssdW5sb2NrfSBpbnN0ZWFkIG9mIHNwaW5sb2NrCgpURVNULUNB
+U0U6IFRha2VuIGZyb20gY29tbWl0IDBkZGFkMjFkM2U5OQoKUlVOOiBnY2MtMTIgLW8gMGRkYWQy
+MWQzZTk5IDBkZGFkMjFkM2U5OS5jCgpMaW5rOiBodHRwczovL2xvcmUua2VybmVsLm9yZy9hbGwv
+MjAyMzAxMDcwMTIzMjQuMzA2OTgtMS16aGFuZ2hvbmdjaGVuQGxvb25nc29uLmNuLwpMaW5rOiBo
+dHRwczovL2dpdC5rZXJuZWwub3JnL2xpbnVzLzBkZGFkMjFkM2U5OQoKClsgSU5TVFJVQ1RJT05T
+IF0KCmVjaG8gMCB8IHN1ZG8gdGVlIC9wcm9jL3N5cy9rZXJuZWwva3B0cl9yZXN0cmljdCAvcHJv
+Yy9zeXMva2VybmVsL3BlcmZfZXZlbnRfcGFyYW5vaWQKCjEwIHJ1bnM6IC91c3IvYmluL3BlcmYg
+c3RhdCAtLXJlcGVhdD0xMCAuLzBkZGFkMjFkM2U5OQoKZWNobyAxIHwgc3VkbyB0ZWUgL3Byb2Mv
+c3lzL2tlcm5lbC9rcHRyX3Jlc3RyaWN0IC9wcm9jL3N5cy9rZXJuZWwvcGVyZl9ldmVudF9wYXJh
+bm9pZAoKClsgQkVGT1JFIF0KCiBQZXJmb3JtYW5jZSBjb3VudGVyIHN0YXRzIGZvciAnLi8wZGRh
+ZDIxZDNlOTknICgxMCBydW5zKToKCiAgICAgICAgIDIzLjk4NSw1MCBtc2VjIHRhc2stY2xvY2sg
+ICAgICAgICAgICAgICAgICAgICAgICMgICAgMywyNDYgQ1BVcyB1dGlsaXplZCAgICAgICAgICAg
+ICggKy0gIDAsMjAlICkKICAgICAgICAgMS4xMTIuODIyICAgICAgY29udGV4dC1zd2l0Y2hlcyAg
+ICAgICAgICAgICAgICAgIyAgIDQ2LDY5NiBLL3NlYyAgICAgICAgICAgICAgICAgICAgKCArLSAg
+MCwzMCUgKQogICAgICAgICAgIDQwMy4wMzMgICAgICBjcHUtbWlncmF0aW9ucyAgICAgICAgICAg
+ICAgICAgICAjICAgMTYsOTEyIEsvc2VjICAgICAgICAgICAgICAgICAgICAoICstICAwLDI4JSAp
+CiAgICAgICAgICAgICAxLjUwOCAgICAgIHBhZ2UtZmF1bHRzICAgICAgICAgICAgICAgICAgICAg
+ICMgICA2MywyNzggL3NlYyAgICAgICAgICAgICAgICAgICAgICggKy0gIDIsOTUlICkKICAgIDM5
+LjQzNi4wMDAuOTU5ICAgICAgY3ljbGVzICAgICAgICAgICAgICAgICAgICAgICAgICAgIyAgICAx
+LDY1NSBHSHogICAgICAgICAgICAgICAgICAgICAgKCArLSAgMCwyMiUgKQogICAgMjkuMzY0LjMy
+OS40MTMgICAgICBzdGFsbGVkLWN5Y2xlcy1mcm9udGVuZCAgICAgICAgICAjICAgNzQsOTElIGZy
+b250ZW5kIGN5Y2xlcyBpZGxlICAgICAoICstICAwLDI0JSApCiAgICAyMi4xMzkuNDQ4LjQwMCAg
+ICAgIHN0YWxsZWQtY3ljbGVzLWJhY2tlbmQgICAgICAgICAgICMgICA1Niw0OCUgYmFja2VuZCBj
+eWNsZXMgaWRsZSAgICAgICggKy0gIDAsMjMlICkKICAgIDE4LjU2NS41MzguNTIzICAgICAgaW5z
+dHJ1Y3Rpb25zICAgICAgICAgICAgICAgICAgICAgIyAgICAwLDQ3ICBpbnNuIHBlciBjeWNsZSAg
+ICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICMgICAgMSw1NyAgc3RhbGxlZCBjeWNsZXMgcGVyIGluc24gICggKy0gIDAsMTclICkKICAgICA0
+LjA1OS44ODUuNTQ2ICAgICAgYnJhbmNoZXMgICAgICAgICAgICAgICAgICAgICAgICAgIyAgMTcw
+LDM1OSBNL3NlYyAgICAgICAgICAgICAgICAgICAgKCArLSAgMCwxNyUgKQogICAgICAgIDU5Ljk5
+MS4yMjYgICAgICBicmFuY2gtbWlzc2VzICAgICAgICAgICAgICAgICAgICAjICAgIDEsNDglIG9m
+IGFsbCBicmFuY2hlcyAgICAgICAgICAoICstICAwLDE5JSApCgogICAgICAgICAgICA3LDM4OTIg
+Ky0gMCwwMTI3IHNlY29uZHMgdGltZSBlbGFwc2VkICAoICstICAwLDE3JSApCgoKWyBBRlRFUiBd
+CgogUGVyZm9ybWFuY2UgY291bnRlciBzdGF0cyBmb3IgJy4vMGRkYWQyMWQzZTk5JyAoMTAgcnVu
+cyk6CgogICAgICAgICAyNC4xNzUsOTQgbXNlYyB0YXNrLWNsb2NrICAgICAgICAgICAgICAgICAg
+ICAgICAjICAgIDMsMzYyIENQVXMgdXRpbGl6ZWQgICAgICAgICAgICAoICstICAwLDExJSApCiAg
+ICAgICAgIDEuMTM5LjE1MiAgICAgIGNvbnRleHQtc3dpdGNoZXMgICAgICAgICAgICAgICAgICMg
+ICA0NywxMTkgSy9zZWMgICAgICAgICAgICAgICAgICAgICggKy0gIDAsMTIlICkKICAgICAgICAg
+ICA0MDcuOTk0ICAgICAgY3B1LW1pZ3JhdGlvbnMgICAgICAgICAgICAgICAgICAgIyAgIDE2LDg3
+NiBLL3NlYyAgICAgICAgICAgICAgICAgICAgKCArLSAgMCwyNiUgKQogICAgICAgICAgICAgMS41
+NTUgICAgICBwYWdlLWZhdWx0cyAgICAgICAgICAgICAgICAgICAgICAjICAgNjQsMzE5IC9zZWMg
+ICAgICAgICAgICAgICAgICAgICAoICstICAzLDExJSApCiAgICA0MC45MDQuODQ5LjA5MSAgICAg
+IGN5Y2xlcyAgICAgICAgICAgICAgICAgICAgICAgICAgICMgICAgMSw2OTIgR0h6ICAgICAgICAg
+ICAgICAgICAgICAgICggKy0gIDAsMTMlICkKICAgIDMwLjU4Ny42MjMuMDM0ICAgICAgc3RhbGxl
+ZC1jeWNsZXMtZnJvbnRlbmQgICAgICAgICAgIyAgIDc0LDg0JSBmcm9udGVuZCBjeWNsZXMgaWRs
+ZSAgICAgKCArLSAgMCwxNSUgKQogICAgMjMuMTQ1LjUzMy41MzcgICAgICBzdGFsbGVkLWN5Y2xl
+cy1iYWNrZW5kICAgICAgICAgICAjICAgNTYsNjMlIGJhY2tlbmQgY3ljbGVzIGlkbGUgICAgICAo
+ICstICAwLDE2JSApCiAgICAxOC43NjIuOTY0LjAzNyAgICAgIGluc3RydWN0aW9ucyAgICAgICAg
+ICAgICAgICAgICAgICMgICAgMCw0NiAgaW5zbiBwZXIgY3ljbGUgICAgICAgICAKICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAjICAgIDEsNjMgIHN0YWxs
+ZWQgY3ljbGVzIHBlciBpbnNuICAoICstICAwLDExJSApCiAgICAgNC4wNTcuMTgyLjg0OSAgICAg
+IGJyYW5jaGVzICAgICAgICAgICAgICAgICAgICAgICAgICMgIDE2Nyw4MTcgTS9zZWMgICAgICAg
+ICAgICAgICAgICAgICggKy0gIDAsMDklICkKICAgICAgICA2My44ODcuODA2ICAgICAgYnJhbmNo
+LW1pc3NlcyAgICAgICAgICAgICAgICAgICAgIyAgICAxLDU4JSBvZiBhbGwgYnJhbmNoZXMgICAg
+ICAgICAgKCArLSAgMCwyNSUgKQoKICAgICAgICAgICA3LDE5MTU3ICstIDAsMDA2NDQgc2Vjb25k
+cyB0aW1lIGVsYXBzZWQgICggKy0gIDAsMDklICkKCgpbIFJFU1VMVCBdCgpzZWNvbmRzIHRpbWUg
+ZWxhcHNlZDogLSAyLDY3JQoKCi1kaWxla3MgLy8gMTYtSmFuLTIwMjMK
+--00000000000021993605f2702fe0--
