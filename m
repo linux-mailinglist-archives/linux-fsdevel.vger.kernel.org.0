@@ -2,102 +2,71 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1805F66E838
-	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 22:13:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DB527670C32
+	for <lists+linux-fsdevel@lfdr.de>; Tue, 17 Jan 2023 23:54:08 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229579AbjAQVNj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Jan 2023 16:13:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40338 "EHLO
+        id S229642AbjAQWyF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Jan 2023 17:54:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51146 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229651AbjAQVMm (ORCPT
+        with ESMTP id S229963AbjAQWxi (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Jan 2023 16:12:42 -0500
-Received: from mail-pl1-x62b.google.com (mail-pl1-x62b.google.com [IPv6:2607:f8b0:4864:20::62b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A21804A21B
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 11:36:03 -0800 (PST)
-Received: by mail-pl1-x62b.google.com with SMTP id r21so2505754plg.13
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 11:36:03 -0800 (PST)
+        Tue, 17 Jan 2023 17:53:38 -0500
+Received: from mail-pj1-x1029.google.com (mail-pj1-x1029.google.com [IPv6:2607:f8b0:4864:20::1029])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3DB12A7334
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 13:45:01 -0800 (PST)
+Received: by mail-pj1-x1029.google.com with SMTP id s13-20020a17090a6e4d00b0022900843652so267289pjm.1
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 13:45:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
+        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/Y/+6b+/J99MLnqP/RvN51sj3DHWazl0lw52Vf0WKHU=;
-        b=mO/P06835gXK/fd1eBgp4cGBD2kC3K+6imr5T+2jtDjdUBhDC2ZA6VrIPZfU/f9xjC
-         IEFaPiulMS/0ZqDbxbtw2cJsM7Tc3tGTV1WEaKwKEM7/onV7W8gwNEZgbjFg1D9VPFPt
-         zOrBnI+uh6uL/yAkjlKRTpwIo5mbtRcjK3EEpUEcbJ7VVRL/gSQAf4SQnwHxKqHb/sTQ
-         MXdsYhc4zLlGvKOCRi98eQbAPaNpu9G8SHim8g88Gvn8/JWvst4ReoqQ54dQnmQu9Cx8
-         q4mO4VJKRFbwHLXOegE1kYwL9GcvTKshaR6/+a9qCY329OuOlMsj+GHmm1PrfY3+znUl
-         l0+g==
+        bh=USmZ3gy1BtrvJEjQBDI3lCph9qcXhvk22Q1eYhBS7oY=;
+        b=RzlLBPcasIN4kEzbfwMjk5cRM6RzwFCQycQzVF/x4CvKYodGJqRrS9P5q74WNvc6Im
+         sDWvEIyNad70vlaiE6T40dRq5QUvZXsqoq0NXlZB7cmswZRDhil02hlp0EswfhbYDaUk
+         pd/nv9SJeu522LsTq6VLRAhoTLIvaozFDG5jLwWqU3xOBIqEgBYVlWWKsrSzSeARYQR4
+         y78EEbm0a5Q6LDKTJy99roURs/IxG5iRb0G4vxXbkZX8afv5Jnrinw0ihUUqjURO6eUv
+         FubRf20KyCuUdR73WoBP8CQ1GMNILJs936p5zQJtUZNrm02T05XIEZDWRpoeFnX0UPQ0
+         wPAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/Y/+6b+/J99MLnqP/RvN51sj3DHWazl0lw52Vf0WKHU=;
-        b=tSsfAPYiboIz1rrhwUHbMtlPskLJb05tvKjz6I9bGBsC+LCnl29RW6TtrOuvqj0rEh
-         RVsXcDuNskTtgDjMhOW0Iqx07Ds5l0qrhY/jfxtshATDWH2KOfQT+LCw1aKlq7Vk1OAb
-         At/giaS57pDvQPZnV7cFh8sAbN1uRplxVSqErw+9WvtO0L8ovMWM6eiyk3ccunaeCB8t
-         cQ8MkH/DAeY7MQRuJIkcMxhcYBD+XDboirKbl6pLdNbtKGlNifjaw1m/RTjeg7JP1usf
-         9XivPek4fgRy8uj4zDi+/TUO+Xr5cfgJuqvND+QZmXhkp6e6KsduEydv9/F1UOvDcbWc
-         G6qQ==
-X-Gm-Message-State: AFqh2kqH/c+vjATl3/IJ8BaYXF0j1IjzN8vCl+ZU7IyjORsxFXcpcsfA
-        R4FVTjkr+F7JzGULeaJcWwx0ig==
-X-Google-Smtp-Source: AMrXdXu1hk8ysrAGJplB4OjNB7xeVQaqK5fZ7KwLIxI5L/arUaD+5uicI01yTWHuGz/H+vtFbMLBdw==
-X-Received: by 2002:a05:6a20:93a4:b0:b8:e33c:f160 with SMTP id x36-20020a056a2093a400b000b8e33cf160mr178599pzh.0.1673984162308;
-        Tue, 17 Jan 2023 11:36:02 -0800 (PST)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id t1-20020a63d241000000b004c974bb9a4esm5296842pgi.83.2023.01.17.11.36.01
+        bh=USmZ3gy1BtrvJEjQBDI3lCph9qcXhvk22Q1eYhBS7oY=;
+        b=tMDjOSx84KlLHmIgAyAnXcV3hHR3QliR0n81KIIeN1rhqJoWgHJGwopze7D0/9jzdE
+         1XtYl6aW66UwQfNxJDDlZ4OAjIfEYN1YBhtV33nLSCvKQt04F/qXtOMh0xqMCpvJQAfQ
+         IHPY4mFjzkSjXFEWNRb/kHzBbBkUmxEBBYH9a6/fsXJa96vmRXpDhsYhhVNoX1E3+66Z
+         AliHD1NTesd+ngSXyl24GIM3Ns2AVIgi8c6AtN4+D9yOH1hnXxapI0rQ9jXUyPIt0bKB
+         mtD+niUMC8UR7PVmjz60Cxpd5TSR2S93gNpoQUtPt7ZyWdsCgw6sPL0iaGJYI753PMXl
+         pKMw==
+X-Gm-Message-State: AFqh2koI9ug7O+eoBkvTrLrWzObCnFhcGZi8E/J69nO7cVdaN40shrSd
+        BJSJFLgGVzHO6zkwSsXvCRvnmw==
+X-Google-Smtp-Source: AMrXdXsjLWlijwip6i3qxiUNT6rq/EuKFl3lJ7Oc5PLOZ9TkVQf8fY86eptlCDPi8YvH3xl+tGL+uQ==
+X-Received: by 2002:a17:903:1ce:b0:193:29db:e0b7 with SMTP id e14-20020a17090301ce00b0019329dbe0b7mr6977692plh.54.1673991900952;
+        Tue, 17 Jan 2023 13:45:00 -0800 (PST)
+Received: from dread.disaster.area (pa49-186-146-207.pa.vic.optusnet.com.au. [49.186.146.207])
+        by smtp.gmail.com with ESMTPSA id x15-20020a170902ec8f00b00189fd83eb95sm21754927plg.69.2023.01.17.13.45.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jan 2023 11:36:01 -0800 (PST)
-Date:   Tue, 17 Jan 2023 19:35:58 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Chao Peng <chao.p.peng@linux.intel.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH v10 9/9] KVM: Enable and expose KVM_MEM_PRIVATE
-Message-ID: <Y8b4nsMJm+4Hr/e0@google.com>
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-10-chao.p.peng@linux.intel.com>
- <Y8HwvTik/2avrCOU@google.com>
- <20230117131251.GC273037@chaop.bj.intel.com>
+        Tue, 17 Jan 2023 13:45:00 -0800 (PST)
+Received: from dave by dread.disaster.area with local (Exim 4.92.3)
+        (envelope-from <david@fromorbit.com>)
+        id 1pHtlJ-004Ivt-MX; Wed, 18 Jan 2023 08:44:57 +1100
+Date:   Wed, 18 Jan 2023 08:44:57 +1100
+From:   Dave Chinner <david@fromorbit.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, Ted Tso <tytso@mit.edu>,
+        linux-xfs@vger.kernel.org
+Subject: Re: Locking issue with directory renames
+Message-ID: <20230117214457.GG360264@dread.disaster.area>
+References: <20230117123735.un7wbamlbdihninm@quack3>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230117131251.GC273037@chaop.bj.intel.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+In-Reply-To: <20230117123735.un7wbamlbdihninm@quack3>
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -105,186 +74,85 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 17, 2023, Chao Peng wrote:
-> On Sat, Jan 14, 2023 at 12:01:01AM +0000, Sean Christopherson wrote:
-> > On Fri, Dec 02, 2022, Chao Peng wrote:
-> > > @@ -10357,6 +10364,12 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
-> > >  
-> > >  		if (kvm_check_request(KVM_REQ_UPDATE_CPU_DIRTY_LOGGING, vcpu))
-> > >  			static_call(kvm_x86_update_cpu_dirty_logging)(vcpu);
-> > > +
-> > > +		if (kvm_check_request(KVM_REQ_MEMORY_MCE, vcpu)) {
-> > > +			vcpu->run->exit_reason = KVM_EXIT_SHUTDOWN;
-> > 
-> > Synthesizing triple fault shutdown is not the right approach.  Even with TDX's
-> > MCE "architecture" (heavy sarcasm), it's possible that host userspace and the
-> > guest have a paravirt interface for handling memory errors without killing the
-> > host.
+On Tue, Jan 17, 2023 at 01:37:35PM +0100, Jan Kara wrote:
+> Hello!
 > 
-> Agree shutdown is not the correct choice. I see you made below change:
+> I've some across an interesting issue that was spotted by syzbot [1]. The
+> report is against UDF but AFAICS the problem exists for ext4 as well and
+> possibly other filesystems. The problem is the following: When we are
+> renaming directory 'dir' say rename("foo/dir", "bar/") we lock 'foo' and
+> 'bar' but 'dir' is unlocked because the locking done by vfs_rename() is
 > 
-> send_sig_mceerr(BUS_MCEERR_AR, (void __user *)hva, PAGE_SHIFT, current)
+>         if (!is_dir || (flags & RENAME_EXCHANGE))
+>                 lock_two_nondirectories(source, target);
+>         else if (target)
+>                 inode_lock(target);
 > 
-> The MCE may happen in any thread than KVM thread, sending siginal to
-> 'current' thread may not be the expected behavior.
+> However some filesystems (e.g. UDF but ext4 as well, I suspect XFS may be
+> hurt by this as well because it converts among multiple dir formats) need
+> to update parent pointer in 'dir' and nothing protects this update against
+> a race with someone else modifying 'dir'. Now this is mostly harmless
+> because the parent pointer (".." directory entry) is at the beginning of
+> the directory and stable however if for example the directory is converted
+> from packed "in-inode" format to "expanded" format as a result of
+> concurrent operation on 'dir', the filesystem gets corrupted (or crashes as
+> in case of UDF).
 
-This is already true today, e.g. a #MC in memory that is mapped into the guest can
-be triggered by a host access.  Hrm, but in this case we actually have a KVM
-instance, and we know that the #MC is relevant to the KVM instance, so I agree
-that signaling 'current' is kludgy.
+No, xfs_rename() does not have this problem - we pass four inodes to
+the function - the source directory, source inode, destination
+directory and destination inode.
 
->  Also how userspace can tell is the MCE on the shared page or private page?
->  Do we care?
+In the above case, "dir/" is passed to XFs as the source inode - the
+src_dir is "foo/", the target dir is "bar/" and the target inode is
+null. src_dir != target_dir, so we set the "new_parent" flag. the
+srouce inode is a directory, so we set the src_is_directory flag,
+too.
 
-We care.  I was originally thinking we could require userspace to keep track of
-things, but that's quite prescriptive and flawed, e.g. could race with conversions.
+We lock all three inodes that are passed. We do various things, then
+run:
 
-One option would be to KVM_EXIT_MEMORY_FAULT, and then wire up a generic (not x86
-specific) KVM request to exit to userspace, e.g.
+        if (new_parent && src_is_directory) {
+                /*
+                 * Rewrite the ".." entry to point to the new
+                 * directory.
+                 */
+                error = xfs_dir_replace(tp, src_ip, &xfs_name_dotdot,
+                                        target_dp->i_ino, spaceres);
+                ASSERT(error != -EEXIST);
+                if (error)
+                        goto out_trans_cancel;
+        }
 
-		/* KVM_EXIT_MEMORY_FAULT */
-		struct {
-#define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1ULL << 3)
-#define KVM_MEMORY_EXIT_FLAG_HW_ERROR	(1ULL << 4)
-			__u64 flags;
-			__u64 gpa;
-			__u64 size;
-		} memory;
+which replaces the ".." entry in source inode atomically whilst it
+is locked.  Any directory format changes that occur during the
+rename are done while the ILOCK is held, so they appear atomic to
+outside observers that are trying to parse the directory structure
+(e.g. readdir).
 
-But I'm not sure that's the correct approach.  It kinda feels like we're reinventing
-the wheel.  It seems like restrictedmem_get_page() _must_ be able to reject attempts
-to get a poisoned page, i.e. restrictedmem_get_page() should yield KVM_PFN_ERR_HWPOISON.
-Assuming that's the case, then I believe KVM simply needs to zap SPTEs in response
-to an error notification in order to force vCPUs to fault on the poisoned page.
+> So we'd need to lock 'source' if it is a directory.
 
-> > > +		return -EINVAL;
-> > >  	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_MEM_SLOTS_NUM)
-> > >  		return -EINVAL;
-> > >  	if (mem->guest_phys_addr + mem->memory_size < mem->guest_phys_addr)
-> > > @@ -2020,6 +2154,9 @@ int __kvm_set_memory_region(struct kvm *kvm,
-> > >  		if ((kvm->nr_memslot_pages + npages) < kvm->nr_memslot_pages)
-> > >  			return -EINVAL;
-> > >  	} else { /* Modify an existing slot. */
-> > > +		/* Private memslots are immutable, they can only be deleted. */
-> > 
-> > I'm 99% certain I suggested this, but if we're going to make these memslots
-> > immutable, then we should straight up disallow dirty logging, otherwise we'll
-> > end up with a bizarre uAPI.
-> 
-> But in my mind dirty logging will be needed in the very short time, when
-> live migration gets supported?
+Yup, and XFS goes further by always locking the source inode in a
+rename, even if it is not a directory. This ensures the inode being
+moved cannot have it's metadata otherwise modified whilst the rename
+is in progress, even if that modification would have no impact on
+the rename. It's a pretty strict interpretation of "rename is an
+atomic operation", but it avoids accidentally missing nasty corner
+cases like the one described above...
 
-Ya, but if/when live migration support is added, private memslots will no longer
-be immutable as userspace will want to enable dirty logging only when a VM is
-being migrated, i.e. something will need to change.
+> Ideally this would
+> happen in VFS as otherwise I bet a lot of filesystems will get this wrong
+> so could vfs_rename() lock 'source' if it is a dir as well? Essentially
+> this would amount to calling lock_two_nondirectories(source, target)
+> unconditionally but that would become a serious misnomer ;). Al, any
+> thought?
 
-Given that it looks like we have clear line of sight to SEV+UPM guests, my
-preference would be to allow toggling dirty logging from the get-go.  It doesn't
-necessarily have to be in the first patch, e.g. KVM could initially reject
-KVM_MEM_LOG_DIRTY_PAGES + KVM_MEM_PRIVATE and then add support separately to make
-the series easier to review, test, and bisect.
+XFS just has a function that allows for an arbitrary number of
+inodes to be locked in the given order: xfs_lock_inodes(). For
+rename, the lock order is determined by xfs_sort_for_rename().
 
-static int check_memory_region_flags(struct kvm *kvm,
-				     const struct kvm_userspace_memory_region2 *mem)
-{
-	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
+Cheers,
 
-	if (kvm_arch_has_private_mem(kvm) &&
-	    ~(mem->flags & KVM_MEM_LOG_DIRTY_PAGES))
-		valid_flags |= KVM_MEM_PRIVATE;
-
-
-	...
-}
-
-> > > +		if (mem->flags & KVM_MEM_PRIVATE)
-> > > +			return -EINVAL;
-> > >  		if ((mem->userspace_addr != old->userspace_addr) ||
-> > >  		    (npages != old->npages) ||
-> > >  		    ((mem->flags ^ old->flags) & KVM_MEM_READONLY))
-> > > @@ -2048,10 +2185,28 @@ int __kvm_set_memory_region(struct kvm *kvm,
-> > >  	new->npages = npages;
-> > >  	new->flags = mem->flags;
-> > >  	new->userspace_addr = mem->userspace_addr;
-> > > +	if (mem->flags & KVM_MEM_PRIVATE) {
-> > > +		new->restricted_file = fget(mem->restricted_fd);
-> > > +		if (!new->restricted_file ||
-> > > +		    !file_is_restrictedmem(new->restricted_file)) {
-> > > +			r = -EINVAL;
-> > > +			goto out;
-> > > +		}
-> > > +		new->restricted_offset = mem->restricted_offset;
-> 
-> I see you changed slot->restricted_offset type from loff_t to gfn_t and
-> used pgoff_t when doing the restrictedmem_bind/unbind(). Using page
-> index is reasonable KVM internally and sounds simpler than loff_t. But
-> we also need initialize it to page index here as well as changes in
-> another two cases. This is needed when restricted_offset != 0.
-
-Oof.  I'm pretty sure I completely missed that loff_t is used for byte offsets,
-whereas pgoff_t is a frame index. 
-
-Given that the restrictmem APIs take pgoff_t, I definitely think it makes sense
-to the index, but I'm very tempted to store pgoff_t instead of gfn_t, and name
-the field "index" to help connect the dots to the rest of kernel, where "pgoff_t index"
-is quite common.
-
-And looking at those bits again, we should wrap all of the restrictedmem fields
-with CONFIG_KVM_PRIVATE_MEM.  It'll require minor tweaks to __kvm_set_memory_region(),
-but I think will yield cleaner code (and internal APIs) overall.
-
-And wrap the three fields in an anonymous struct?  E.g. this is a little more
-versbose (restrictedmem instead restricted), but at first glance it doesn't seem
-to cause widespared line length issues.
-
-#ifdef CONFIG_KVM_PRIVATE_MEM
-	struct {
-		struct file *file;
-		pgoff_t index;
-		struct restrictedmem_notifier notifier;
-	} restrictedmem;
-#endif
-
-> diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> index 547b92215002..49e375e78f30 100644
-> --- a/include/linux/kvm_host.h
-> +++ b/include/linux/kvm_host.h
-> @@ -2364,8 +2364,7 @@ static inline int kvm_restricted_mem_get_pfn(struct kvm_memory_slot *slot,
->                                              gfn_t gfn, kvm_pfn_t *pfn,
->                                              int *order)
->  {
-> -       pgoff_t index = gfn - slot->base_gfn +
-> -                       (slot->restricted_offset >> PAGE_SHIFT);
-> +       pgoff_t index = gfn - slot->base_gfn + slot->restricted_offset;
->         struct page *page;
->         int ret;
->  
-> diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> index 01db35ddd5b3..7439bdcb0d04 100644
-> --- a/virt/kvm/kvm_main.c
-> +++ b/virt/kvm/kvm_main.c
-> @@ -935,7 +935,7 @@ static bool restrictedmem_range_is_valid(struct kvm_memory_slot *slot,
->                                          pgoff_t start, pgoff_t end,
->                                          gfn_t *gfn_start, gfn_t *gfn_end)
->  {
-> -       unsigned long base_pgoff = slot->restricted_offset >> PAGE_SHIFT;
-> +       unsigned long base_pgoff = slot->restricted_offset;
->  
->         if (start > base_pgoff)
->                 *gfn_start = slot->base_gfn + start - base_pgoff;
-> @@ -2275,7 +2275,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
->                         r = -EINVAL;
->                         goto out;
->                 }
-> -               new->restricted_offset = mem->restricted_offset;
-> +               new->restricted_offset = mem->restricted_offset >> PAGE_SHIFT;
->         }
->  
->         r = kvm_set_memslot(kvm, old, new, change);
-> 
-> Chao
-> > > +	}
-> > > +
-> > > +	new->kvm = kvm;
-> > 
-> > Set this above, just so that the code flows better.
+Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
