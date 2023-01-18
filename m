@@ -2,37 +2,37 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 04293671142
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 03:38:57 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id F2F1B671145
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 03:42:16 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229716AbjARCiz (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Jan 2023 21:38:55 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60078 "EHLO
+        id S229468AbjARCmP (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Jan 2023 21:42:15 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60600 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229658AbjARCix (ORCPT
+        with ESMTP id S229446AbjARCmO (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Jan 2023 21:38:53 -0500
+        Tue, 17 Jan 2023 21:42:14 -0500
 Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 298DD4FCF0;
-        Tue, 17 Jan 2023 18:38:50 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 62F644FC10;
+        Tue, 17 Jan 2023 18:42:12 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 50E0BB81A3D;
-        Wed, 18 Jan 2023 02:38:49 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E354CC433D2;
-        Wed, 18 Jan 2023 02:38:47 +0000 (UTC)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 111E6B819EE;
+        Wed, 18 Jan 2023 02:42:11 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93E29C433D2;
+        Wed, 18 Jan 2023 02:42:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674009527;
-        bh=RCaC9ZBWKlyghYvcm99QSQPUb+L+JOUFGH09vUmXACw=;
+        s=k20201202; t=1674009729;
+        bh=GIj69U+p/3fjL/EJp7AIoI6YdpXbL7BOm8JswWVL47Q=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=QlLLs8BGBBcHsP15uZ2JQ692jyhRJs/4a5n31xktNOGWBxYOgqAbjLnGHIojiUdli
-         tg30BJJTN7l3+hS9NcHKHJ+oPcmkjfUxdBBQ8NGvc5s9grvSG43SMpDKEXiJjMpGTw
-         rqFeNNTlWq5w+P+ie2VJgj83qq0OBz/hBijup6JVo4G96wn8rjoNBMnDHS6bKMXhb6
-         cJck8eVVNh4M+1x5+MFoMsKqDLMyeR0bgLrZJZDnPSXP3is+DJl8L9V3tegIH49FX5
-         WrHByEQgk55OJaMk5jzSwzt/cAh5Qkmm3OPKTZ2XaLoCGvAwIKFY9/HSQ3YQiEPDWS
-         UWClTW6PHfN8g==
-Date:   Tue, 17 Jan 2023 18:38:47 -0800
+        b=XGvsDlm7NEN/ChZxI+MUrCb2QobdVI1xLDij1rHYIJVhpbgjplqAqi2V3e0dOSI4F
+         xfk2yS3od+bRKYM3D4XD/Y9/5fzBhaq9FSCKvtPgEmXhjp8k2YEWvp2J6X77TaWFaL
+         RY/D4rNwcmg5PkWmq0nXQL2vJPbZvc0663fDzhtd7De7EVfDy3j63+fQDJlB/HIVNi
+         iIpDRSgNYG8Yx32kXsDA95/Ukz8xzgpoXK4LByQEQMLWH7DZaDv5RopY5BjEgeSUIV
+         OwOMYvG8hm3Sxw1AH2PxNSgZGbB/DM96D4U+rBNkl6JsLgJLU0G8zClHTqweo63IX7
+         dH+a4i3/sEQ9g==
+Date:   Tue, 17 Jan 2023 18:42:09 -0800
 From:   "Darrick J. Wong" <djwong@kernel.org>
 To:     Allison Henderson <allison.henderson@oracle.com>
 Cc:     Catherine Hoang <catherine.hoang@oracle.com>,
@@ -42,16 +42,16 @@ Cc:     Catherine Hoang <catherine.hoang@oracle.com>,
         Chandan Babu <chandan.babu@oracle.com>,
         "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
         "hch@infradead.org" <hch@infradead.org>
-Subject: Re: [PATCH 03/14] xfs: document the testing plan for online fsck
-Message-ID: <Y8dbt1g7SS6P3kKA@magnolia>
+Subject: Re: [PATCH 04/14] xfs: document the user interface for online fsck
+Message-ID: <Y8dcge12A7FP9nrW@magnolia>
 References: <167243825144.682859.12802259329489258661.stgit@magnolia>
- <167243825203.682859.1144819928544539264.stgit@magnolia>
- <77b0b494dc2a78c14805c2d9300f839ec25f0330.camel@oracle.com>
+ <167243825217.682859.14201039734624895373.stgit@magnolia>
+ <4098826a3f69a53fd23df08eb8ffbb733d7f75ce.camel@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <77b0b494dc2a78c14805c2d9300f839ec25f0330.camel@oracle.com>
+In-Reply-To: <4098826a3f69a53fd23df08eb8ffbb733d7f75ce.camel@oracle.com>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -61,321 +61,229 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 18, 2023 at 12:03:17AM +0000, Allison Henderson wrote:
+On Wed, Jan 18, 2023 at 12:03:29AM +0000, Allison Henderson wrote:
 > On Fri, 2022-12-30 at 14:10 -0800, Darrick J. Wong wrote:
 > > From: Darrick J. Wong <djwong@kernel.org>
 > > 
-> > Start the third chapter of the online fsck design documentation. 
-> > This
-> > covers the testing plan to make sure that both online and offline
-> > fsck
-> > can detect arbitrary problems and correct them without making things
-> > worse.
+> > Start the fourth chapter of the online fsck design documentation,
+> > which
+> > discusses the user interface and the background scrubbing service.
 > > 
 > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
 > > ---
-> >  .../filesystems/xfs-online-fsck-design.rst         |  187
+> >  .../filesystems/xfs-online-fsck-design.rst         |  114
 > > ++++++++++++++++++++
-> >  1 file changed, 187 insertions(+)
+> >  1 file changed, 114 insertions(+)
 > > 
 > > 
 > > diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst
 > > b/Documentation/filesystems/xfs-online-fsck-design.rst
-> > index a03a7b9f0250..d630b6bdbe4a 100644
+> > index d630b6bdbe4a..42e82971e036 100644
 > > --- a/Documentation/filesystems/xfs-online-fsck-design.rst
 > > +++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-> > @@ -563,3 +563,190 @@ functionality.
-> >  Many of these risks are inherent to software programming.
-> >  Despite this, it is hoped that this new functionality will prove
-> > useful in
-> >  reducing unexpected downtime.
+> > @@ -750,3 +750,117 @@ Proposed patchsets include `general stress
+> > testing
+> >  <
+> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.g
+> > it/log/?h=race-scrub-and-mount-state-changes>`_
+> >  and the `evolution of existing per-function stress testing
+> >  <
+> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.g
+> > it/log/?h=refactor-scrub-stress>`_.
 > > +
-> > +3. Testing Plan
-> > +===============
+> > +4. User Interface
+> > +=================
 > > +
-> > +As stated before, fsck tools have three main goals:
+> > +The primary user of online fsck is the system administrator, just
+> > like offline
+> > +repair.
+> > +Online fsck presents two modes of operation to administrators:
+> > +A foreground CLI process for online fsck on demand, and a background
+> > service
+> > +that performs autonomous checking and repair.
 > > +
-> > +1. Detect inconsistencies in the metadata;
+> > +Checking on Demand
+> > +------------------
 > > +
-> > +2. Eliminate those inconsistencies; and
-> > +
-> > +3. Minimize further loss of data.
-> > +
-> > +Demonstrations of correct operation are necessary to build users'
-> > confidence
-> > +that the software behaves within expectations.
-> > +Unfortunately, it was not really feasible to perform regular
-> > exhaustive testing
-> > +of every aspect of a fsck tool until the introduction of low-cost
-> > virtual
-> > +machines with high-IOPS storage.
-> > +With ample hardware availability in mind, the testing strategy for
-> > the online
-> > +fsck project involves differential analysis against the existing
-> > fsck tools and
-> > +systematic testing of every attribute of every type of metadata
-> > object.
-> > +Testing can be split into four major categories, as discussed below.
-> > +
-> > +Integrated Testing with fstests
-> > +-------------------------------
-> > +
-> > +The primary goal of any free software QA effort is to make testing
-> > as
-> > +inexpensive and widespread as possible to maximize the scaling
-> > advantages of
-> > +community.
-> > +In other words, testing should maximize the breadth of filesystem
-> > configuration
-> > +scenarios and hardware setups.
-> > +This improves code quality by enabling the authors of online fsck to
-> > find and
-> > +fix bugs early, and helps developers of new features to find
-> > integration
-> > +issues earlier in their development effort.
-> > +
-> > +The Linux filesystem community shares a common QA testing suite,
-> > +`fstests
-> > <https://git.kernel.org/pub/scm/fs/xfs/xfstests-dev.git/>`_, for
-> > +functional and regression testing.
-> > +Even before development work began on online fsck, fstests (when run
-> > on XFS)
-> > +would run both the ``xfs_check`` and ``xfs_repair -n`` commands on
-> > the test and
-> > +scratch filesystems between each test.
-> > +This provides a level of assurance that the kernel and the fsck
-> > tools stay in
-> > +alignment about what constitutes consistent metadata.
-> > +During development of the online checking code, fstests was modified
-> > to run
-> > +``xfs_scrub -n`` between each test to ensure that the new checking
-> > code
-> > +produces the same results as the two existing fsck tools.
-> > +
-> > +To start development of online repair, fstests was modified to run
-> > +``xfs_repair`` to rebuild the filesystem's metadata indices between
-> > tests.
-> > +This ensures that offline repair does not crash, leave a corrupt
-> > filesystem
-> > +after it exists, or trigger complaints from the online check.
-> > +This also established a baseline for what can and cannot be repaired
-> > offline.
-> > +To complete the first phase of development of online repair, fstests
-> > was
-> > +modified to be able to run ``xfs_scrub`` in a "force rebuild" mode.
-> > +This enables a comparison of the effectiveness of online repair as
-> > compared to
-> > +the existing offline repair tools.
-> > +
-> > +General Fuzz Testing of Metadata Blocks
-> > +---------------------------------------
-> > +
-> > +XFS benefits greatly from having a very robust debugging tool,
-> > ``xfs_db``.
-> > +
-> > +Before development of online fsck even began, a set of fstests were
-> > created
-> > +to test the rather common fault that entire metadata blocks get
-> > corrupted.
-> > +This required the creation of fstests library code that can create a
-> > filesystem
-> > +containing every possible type of metadata object.
-> > +Next, individual test cases were created to create a test
-> > filesystem, identify
-> > +a single block of a specific type of metadata object, trash it with
+> > +For administrators who want the absolute freshest information about
 > > the
-> > +existing ``blocktrash`` command in ``xfs_db``, and test the reaction
-> > of a
-> > +particular metadata validation strategy.
-> > +
-> > +This earlier test suite enabled XFS developers to test the ability
-> > of the
-> > +in-kernel validation functions and the ability of the offline fsck
-> > tool to
-> > +detect and eliminate the inconsistent metadata.
-> > +This part of the test suite was extended to cover online fsck in
-> > exactly the
-> > +same manner.
-> > +
-> > +In other words, for a given fstests filesystem configuration:
-> > +
-> > +* For each metadata object existing on the filesystem:
-> > +
-> > +  * Write garbage to it
-> > +
-> > +  * Test the reactions of:
-> > +
-> > +    1. The kernel verifiers to stop obviously bad metadata
-> > +    2. Offline repair (``xfs_repair``) to detect and fix
-> > +    3. Online repair (``xfs_scrub``) to detect and fix
-> > +
-> > +Targeted Fuzz Testing of Metadata Records
-> > +-----------------------------------------
-> > +
-> > +A quick conversation with the other XFS developers revealed that the
+> > +metadata in a filesystem, ``xfs_scrub`` can be run as a foreground
+> > process on
+> > +a command line.
+> > +The program checks every piece of metadata in the filesystem while
+> > the
+> > +administrator waits for the results to be reported, just like the
 > > existing
-> > +test infrastructure could be extended to provide 
-> 
-> "The testing plan for ofsck includes extending the existing test 
-> infrastructure to provide..."
-> 
-> Took me a moment to notice we're not talking about history any more....
-
-Ah.  Sorry about that.  The sentence now reads:
-
-"The testing plan for online fsck includes extending the existing fs
-testing infrastructure to provide a much more powerful facility:
-targeted fuzz testing of every metadata field of every metadata object
-in the filesystem."
-
-> > a much more powerful
-> > +facility: targeted fuzz testing of every metadata field of every
-> > metadata
-> > +object in the filesystem.
-> > +``xfs_db`` can modify every field of every metadata structure in
-> > every
-> > +block in the filesystem to simulate the effects of memory corruption
+> > +``xfs_repair`` tool.
+> > +Both tools share a ``-n`` option to perform a read-only scan, and a
+> > ``-v``
+> > +option to increase the verbosity of the information reported.
+> > +
+> > +A new feature of ``xfs_scrub`` is the ``-x`` option, which employs
+> > the error
+> > +correction capabilities of the hardware to check data file contents.
+> > +The media scan is not enabled by default because it may dramatically
+> > increase
+> > +program runtime and consume a lot of bandwidth on older storage
+> > hardware.
+> > +
+> > +The output of a foreground invocation is captured in the system log.
+> > +
+> > +The ``xfs_scrub_all`` program walks the list of mounted filesystems
 > > and
-> > +software bugs.
-> > +Given that fstests already contains the ability to create a
-> > filesystem
-> > +containing every metadata format known to the filesystem, ``xfs_db``
-> > can be
-> > +used to perform exhaustive fuzz testing!
+> > +initiates ``xfs_scrub`` for each of them in parallel.
+> > +It serializes scans for any filesystems that resolve to the same top
+> > level
+> > +kernel block device to prevent resource overconsumption.
 > > +
-> > +For a given fstests filesystem configuration:
+> > +Background Service
+> > +------------------
 > > +
-> > +* For each metadata object existing on the filesystem...
-> > +
-> > +  * For each record inside that metadata object...
-> > +
-> > +    * For each field inside that record...
-> > +
-> > +      * For each conceivable type of transformation that can be
-> > applied to a bit field...
-> > +
-> > +        1. Clear all bits
-> > +        2. Set all bits
-> > +        3. Toggle the most significant bit
-> > +        4. Toggle the middle bit
-> > +        5. Toggle the least significant bit
-> > +        6. Add a small quantity
-> > +        7. Subtract a small quantity
-> > +        8. Randomize the contents
-> > +
-> > +        * ...test the reactions of:
-> > +
-> > +          1. The kernel verifiers to stop obviously bad metadata
-> > +          2. Offline checking (``xfs_repair -n``)
-> > +          3. Offline repair (``xfs_repair``)
-> > +          4. Online checking (``xfs_scrub -n``)
-> > +          5. Online repair (``xfs_scrub``)
-> > +          6. Both repair tools (``xfs_scrub`` and then
-> > ``xfs_repair`` if online repair doesn't succeed)
-> I like the indented bullet list format tho
+> I'm assuming the below systemd services are configurable right?
 
-Thanks!  I'm pleased that ... whatever renders this stuff ... actually
-supports nested lists.
+Yes, through the standard systemd overriddes.
 
-> > +
-> > +This is quite the combinatoric explosion!
-> > +
-> > +Fortunately, having this much test coverage makes it easy for XFS
-> > developers to
-> > +check the responses of XFS' fsck tools.
-> > +Since the introduction of the fuzz testing framework, these tests
-> > have been
-> > +used to discover incorrect repair code and missing functionality for
-> > entire
-> > +classes of metadata objects in ``xfs_repair``.
-> > +The enhanced testing was used to finalize the deprecation of
-> > ``xfs_check`` by
-> > +confirming that ``xfs_repair`` could detect at least as many
-> > corruptions as
-> > +the older tool.
-> > +
-> > +These tests have been very valuable for ``xfs_scrub`` in the same
-> > ways -- they
-> > +allow the online fsck developers to compare online fsck against
-> > offline fsck,
-> > +and they enable XFS developers to find deficiencies in the code
-> > base.
-> > +
-> > +Proposed patchsets include
-> > +`general fuzzer improvements
-> > +<
-> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.g
-> > it/log/?h=fuzzer-improvements>`_,
-> > +`fuzzing baselines
-> > +<
-> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.g
-> > it/log/?h=fuzz-baseline>`_,
-> > +and `improvements in fuzz testing comprehensiveness
-> > +<
-> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.g
-> > it/log/?h=more-fuzz-testing>`_.
-> > +
-> > +Stress Testing
-> > +--------------
-> > +
-> > +A unique requirement to online fsck is the ability to operate on a
-> > filesystem
-> > +concurrently with regular workloads.
-> > +Although it is of course impossible to run ``xfs_scrub`` with *zero*
-> > observable
-> > +impact on the running system, the online repair code should never
-> > introduce
-> > +inconsistencies into the filesystem metadata, and regular workloads
-> > should
-> > +never notice resource starvation.
-> > +To verify that these conditions are being met, fstests has been
-> > enhanced in
-> > +the following ways:
-> > +
-> > +* For each scrub item type, create a test to exercise checking that
-> > item type
-> > +  while running ``fsstress``.
-> > +* For each scrub item type, create a test to exercise repairing that
-> > item type
-> > +  while running ``fsstress``.
-> > +* Race ``fsstress`` and ``xfs_scrub -n`` to ensure that checking the
-> > whole
-> > +  filesystem doesn't cause problems.
-> > +* Race ``fsstress`` and ``xfs_scrub`` in force-rebuild mode to
-> > ensure that
-> > +  force-repairing the whole filesystem doesn't cause problems.
-> > +* Race ``xfs_scrub`` in check and force-repair mode against
-> > ``fsstress`` while
-> > +  freezing and thawing the filesystem.
-> > +* Race ``xfs_scrub`` in check and force-repair mode against
-> > ``fsstress`` while
-> > +  remounting the filesystem read-only and read-write.
-> > +* The same, but running ``fsx`` instead of ``fsstress``.  (Not done
-> > yet?)
-> > +
-> > +Success is defined by the ability to run all of these tests without
-> > observing
-> > +any unexpected filesystem shutdowns due to corrupted metadata,
-> > kernel hang
-> > +check warnings, or any other sort of mischief.
-> 
-> Seems reasonable.  Other than the one nit, I think this section reads
-> pretty well.
-> Reviewed-by: Allison Henderson <allison.henderson@oracle.com>
+> > +To reduce the workload of system administrators, the ``xfs_scrub``
+> > package
+> > +provides a suite of `systemd <https://systemd.io/>`_ timers and
+> > services that
+> > +run online fsck automatically on weekends.
+> by default.
 
-Woo!
+Fixed.
+
+> > +The background service configures scrub to run with as little
+> > privilege as
+> > +possible, the lowest CPU and IO priority, and in a CPU-constrained
+> > single
+> > +threaded mode.
+> "This can be tuned at anytime to best suit the needs of the customer
+> workload."
+
+Fixed.
+
+> Then I think you can drop the below line...
+> > +It is hoped that this minimizes the amount of load generated on the
+> > system and
+> > +avoids starving regular workloads.
+
+Done.
+
+> > +The output of the background service is also captured in the system
+> > log.
+> > +If desired, reports of failures (either due to inconsistencies or
+> > mere runtime
+> > +errors) can be emailed automatically by setting the ``EMAIL_ADDR``
+> > environment
+> > +variable in the following service files:
+> > +
+> > +* ``xfs_scrub_fail@.service``
+> > +* ``xfs_scrub_media_fail@.service``
+> > +* ``xfs_scrub_all_fail.service``
+> > +
+> > +The decision to enable the background scan is left to the system
+> > administrator.
+> > +This can be done by enabling either of the following services:
+> > +
+> > +* ``xfs_scrub_all.timer`` on systemd systems
+> > +* ``xfs_scrub_all.cron`` on non-systemd systems
+> > +
+> > +This automatic weekly scan is configured out of the box to perform
+> > an
+> > +additional media scan of all file data once per month.
+> > +This is less foolproof than, say, storing file data block checksums,
+> > but much
+> > +more performant if application software provides its own integrity
+> > checking,
+> > +redundancy can be provided elsewhere above the filesystem, or the
+> > storage
+> > +device's integrity guarantees are deemed sufficient.
+> > +
+> > +The systemd unit file definitions have been subjected to a security
+> > audit
+> > +(as of systemd 249) to ensure that the xfs_scrub processes have as
+> > little
+> > +access to the rest of the system as possible.
+> > +This was performed via ``systemd-analyze security``, after which
+> > privileges
+> > +were restricted to the minimum required, sandboxing was set up to
+> > the maximal
+> > +extent possible with sandboxing and system call filtering; and
+> > access to the
+> > +filesystem tree was restricted to the minimum needed to start the
+> > program and
+> > +access the filesystem being scanned.
+> > +The service definition files restrict CPU usage to 80% of one CPU
+> > core, and
+> > +apply as nice of a priority to IO and CPU scheduling as possible.
+> > +This measure was taken to minimize delays in the rest of the
+> > filesystem.
+> > +No such hardening has been performed for the cron job.
+> > +
+> > +Proposed patchset:
+> > +`Enabling the xfs_scrub background service
+> > +<
+> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-dev.g
+> > it/log/?h=scrub-media-scan-service>`_.
+> > +
+> > +Health Reporting
+> > +----------------
+> > +
+> > +XFS caches a summary of each filesystem's health status in memory.
+> > +The information is updated whenever ``xfs_scrub`` is run, or
+> > whenever
+> > +inconsistencies are detected in the filesystem metadata during
+> > regular
+> > +operations.
+> > +System administrators should use the ``health`` command of
+> > ``xfs_spaceman`` to
+> > +download this information into a human-readable format.
+> > +If problems have been observed, the administrator can schedule a
+> > reduced
+> > +service window to run the online repair tool to correct the problem.
+> > +Failing that, the administrator can decide to schedule a maintenance
+> > window to
+> > +run the traditional offline repair tool to correct the problem.
+> > +
+> > +**Question**: Should the health reporting integrate with the new
+> > inotify fs
+> > +error notification system?
+> > +
+> > +**Question**: Would it be helpful for sysadmins to have a daemon to
+> > listen for
+> > +corruption notifications and initiate a repair?
+> > +
+> > +*Answer*: These questions remain unanswered, but should be a part of
+> > the
+> > +conversation with early adopters and potential downstream users of
+> > XFS.
+> I think if there's been no commentary at this point then likely they
+> can't be answered at this time.  Perhaps for now it is reasonable to
+> just let the be a potential improvement in the future if the demand for
+> it arises. In any case, I think we should probably clean out the Q&A
+> discussion prompts.
+
+I'll change them to "future work Q's" so I don't forget to pursue them
+after part 1 is merged.
+
+> Rest looks good tho
+
+:-D  Thanks!
 
 --D
 
 > Allison
+> 
 > > +
-> > +Proposed patchsets include `general stress testing
+> > +Proposed patchsets include
+> > +`wiring up health reports to correction returns
 > > +<
-> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.g
-> > it/log/?h=race-scrub-and-mount-state-changes>`_
-> > +and the `evolution of existing per-function stress testing
+> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/
+> > log/?h=corruption-health-reports>`_
+> > +and
+> > +`preservation of sickness info during memory reclaim
 > > +<
-> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-dev.g
-> > it/log/?h=refactor-scrub-stress>`_.
+> > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/
+> > log/?h=indirect-health-reporting>`_.
 > > 
 > 
