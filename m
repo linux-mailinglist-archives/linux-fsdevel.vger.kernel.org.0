@@ -2,365 +2,167 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5F3BE671183
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 04:08:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id BB675671212
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 04:42:01 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229605AbjARDIt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Jan 2023 22:08:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39832 "EHLO
+        id S229699AbjARDl7 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Jan 2023 22:41:59 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58014 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbjARDIn (ORCPT
+        with ESMTP id S229678AbjARDl4 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Jan 2023 22:08:43 -0500
-Received: from mail-pf1-x42e.google.com (mail-pf1-x42e.google.com [IPv6:2607:f8b0:4864:20::42e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CF3B5084E
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 19:08:42 -0800 (PST)
-Received: by mail-pf1-x42e.google.com with SMTP id z3so855030pfb.2
-        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 19:08:42 -0800 (PST)
+        Tue, 17 Jan 2023 22:41:56 -0500
+Received: from mail-il1-x12c.google.com (mail-il1-x12c.google.com [IPv6:2607:f8b0:4864:20::12c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10BD45410D
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 19:41:53 -0800 (PST)
+Received: by mail-il1-x12c.google.com with SMTP id g2so16484717ila.4
+        for <linux-fsdevel@vger.kernel.org>; Tue, 17 Jan 2023 19:41:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20210112.gappssmtp.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bUKXZKTsbYRCrRiyD4l6vOhZZfGrn2LcV5GgwuQd5oM=;
-        b=ws4AS0/475a+w48Ib6Rjf9rozR62HpyHQErj7HgS5N0CgmbYSU+PZx2lElJWJxowEM
-         ssYE3qHzMgANfNvqdQNmB4xRyhkP2tvLDCtxtY40UHUJ5alYuhCXmHCM3YE66judtB+o
-         J2h8r1aYHDw0XtO16N+KRmi9v4g5RdV/R9TUxsvOROenzqRbK0HWL9S+n3yDqoNNH5U4
-         GwZ71iEo3ZRlqbn3ee8hFRaNswWvelyyGt+YsC0TjzHzw3xD9HOaEb3gbbhaYsz5aIK+
-         z8SR9nHhudauw2Zu45tPcVS4SiYvGvrB6Fd7b6Gurw91d3uqVIDD+TYvJKB5ozoesVK7
-         SFVg==
+        d=eitmlabs-org.20210112.gappssmtp.com; s=20210112;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:reply-to:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=KNEkL77+Yf10oyJKy3gBDpH06+cEzlkxsfnfr0mnfTo=;
+        b=oiy1xxThU4TFxhrAjE4jpkIiZq0/F5ktgVCk6aJt7iQ87rcGRpNxwun+e96tcls+Cg
+         BfW4+OLjuZ0K+Dz70cqs8lph8Y5UR7Jqtp2v4tEALqp630TySTyD1XmPEOIRXtYi/MIV
+         s9jb6lpgMWaefgtJ6YogmQ29Uf+Fpv6qgauk3jFjBL2B318a2yGPaFJe1sgNIByPlcRS
+         OjleCEHthooLMneQb87mjnH8XJPVM2RNETm1TGs21GKuVXVXy14TbWfDRB0VEH/ERbgn
+         M7qlkF79CorfUc5CLHPjA8LxbKdTMWm+CG+9CNW8wUxaVar9tlUchDTLvgMzr5AcvW4+
+         87aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bUKXZKTsbYRCrRiyD4l6vOhZZfGrn2LcV5GgwuQd5oM=;
-        b=2czAiCYrL1DPDMznXe5AQx2OLzjUbg0HJb8NRZI2MQSDaQzj/Lcq1TnoAtA+Gg5YdE
-         QsgyuUE+C6nLLl8hJk6zkNaCduL7FLW0Eq8Ob9EWs8GuAENrQVcvrIG5gkqmQd8d6RWJ
-         oalcD3mSvcZ9+cZdQMe66vIY4uU4wnsXQW/PtnUVDHvhd3MdiRrqPHSxOkXooTPiTP3G
-         QE6wu8vQHxCx1nj9bSaMhhU82BgcSRT5ekwJd3PMcUwbc6SG6lC3h0c+pX5iHixRm2GY
-         Pt9EYtNaJR7pLvk79G/oCfE5N+17HGZs8dR+MWnowqdX9m+MqkkgrYDORN5nfZdqE/yj
-         5/7w==
-X-Gm-Message-State: AFqh2kpb4f0RK1m5bfdB8b+8PHht+CL5m2xxV1VZuJEKM4wRpm/+QxUT
-        8OUTkiVvvzWC5HmM+nS/x9DN4tW0CsdtKwNX
-X-Google-Smtp-Source: AMrXdXt/KzrjhRmABn7lDjx3EJ4ebYagvAILhg+/QLmG+T7BF/shtTNtJhQlzpkeAoHzcCilo18OSg==
-X-Received: by 2002:a05:6a00:1ca3:b0:58d:bce6:3d52 with SMTP id y35-20020a056a001ca300b0058dbce63d52mr5875479pfw.29.1674011321490;
-        Tue, 17 Jan 2023 19:08:41 -0800 (PST)
-Received: from dread.disaster.area (pa49-186-146-207.pa.vic.optusnet.com.au. [49.186.146.207])
-        by smtp.gmail.com with ESMTPSA id 3-20020a621503000000b00581c741f95csm19041666pfv.46.2023.01.17.19.08.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Jan 2023 19:08:40 -0800 (PST)
-Received: from dave by dread.disaster.area with local (Exim 4.92.3)
-        (envelope-from <david@fromorbit.com>)
-        id 1pHyoW-004OV9-8m; Wed, 18 Jan 2023 14:08:36 +1100
-Date:   Wed, 18 Jan 2023 14:08:36 +1100
-From:   Dave Chinner <david@fromorbit.com>
-To:     Alexander Larsson <alexl@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gscrivan@redhat.com
-Subject: Re: [PATCH v2 2/6] composefs: Add on-disk layout
-Message-ID: <20230118030836.GC937597@dread.disaster.area>
-References: <cover.1673623253.git.alexl@redhat.com>
- <819f49676080b05c1e87bff785849f0cc375d245.1673623253.git.alexl@redhat.com>
- <20230116012904.GJ2703033@dread.disaster.area>
- <fe2e39b16d42ca871428e508935f1aa21608b4ee.camel@redhat.com>
- <20230116230647.GK2703033@dread.disaster.area>
- <c0c928880f35b40f8231036d21251ae3efa340db.camel@redhat.com>
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:reply-to:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KNEkL77+Yf10oyJKy3gBDpH06+cEzlkxsfnfr0mnfTo=;
+        b=zD2+H2TCL1F0kq0tOJ47ZCKdh3mxL0EqrOxanldaZUtaVn7t87g+kky/XyypJZM2LT
+         wbmDweRQdr1zGtfQld5w8UNOAlcfvcbxFEoZH9r3aOPOXvON/nxQmy2ovfXLJ53oGVPb
+         vFZE9ECP28qiXSpUoUmq74jwdmsGAhzrPtPey9mMSvxCv7aVokni1MwzdOOYYSD3qfgJ
+         ZF3ReIkEVPVccjNhFgrLufRsLrvK6aXymUu2uCjSlGFRHHbjaDHKn6o6vHuODO67aQ4v
+         JRoJVN+CxwnqtqMkJ1wa+6grswGTzHeG1vFMisNVceKSS23CkWfk5a4QTiOJsybYYWUx
+         z6Lw==
+X-Gm-Message-State: AFqh2krgBtaUF4tGGCmVayAfaocWzmtUblann4o56EWWJwGUZqNRhL7e
+        D6KX9VPN/mp8g5O8rDos4KaQWw==
+X-Google-Smtp-Source: AMrXdXtjU9IvuRmxEnZdXLhtBtHEFFNLDGdXdyTm2tLugU+NULYRyziEbXCZHfGHYW3aaARACHUSKA==
+X-Received: by 2002:a92:3601:0:b0:30f:1c5:fb89 with SMTP id d1-20020a923601000000b0030f01c5fb89mr4634861ila.5.1674013312438;
+        Tue, 17 Jan 2023 19:41:52 -0800 (PST)
+Received: from [10.20.22.12] ([64.124.71.89])
+        by smtp.gmail.com with ESMTPSA id b91-20020a0295e4000000b0038a760ab9a4sm4850261jai.161.2023.01.17.19.41.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 17 Jan 2023 19:41:51 -0800 (PST)
+Message-ID: <490c5026-27bd-1126-65dd-2ec975aae94c@eitmlabs.org>
+Date:   Tue, 17 Jan 2023 19:41:46 -0800
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Reply-To: jonathan@eitm.org
+Subject: Re: [PATCH] [REGRESSION] ovl: Handle ENOSYS when fileattr support is
+ missing in lower/upper fs
+Content-Language: en-US
+To:     =?UTF-8?Q?Christian_Kohlsch=c3=bctter?= 
+        <christian@kohlschutter.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Miklos Szeredi <miklos@szeredi.hu>,
+        overlayfs <linux-unionfs@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+References: <4B9D76D5-C794-4A49-A76F-3D4C10385EE0@kohlschutter.com>
+ <CAJfpegs1Kta-HcikDGFt4=fa_LDttCeRmffKhUjWLr=DxzXg-A@mail.gmail.com>
+ <83A29F9C-1A91-4753-953A-0C98E8A9832C@kohlschutter.com>
+ <CAJfpegv5W0CycWCc2-kcn4=UVqk1hP7KrvBpzXHwW-Nmkjx8zA@mail.gmail.com>
+ <FFA26FD1-60EF-457E-B914-E1978CCC7B57@kohlschutter.com>
+ <CAJfpeguDAJpLMABsomBFQ=w6Li0=sBW0bFyALv4EJrAmR2BkpQ@mail.gmail.com>
+ <A31096BA-C128-4D0B-B27D-C34560844ED0@kohlschutter.com>
+ <CAJfpegvBSCQwkCv=5LJDx1LRCN_ztTh9VMvrTbCyt0zf7W2trw@mail.gmail.com>
+ <CAHk-=wjg+xyBwMpQwLx_QWPY7Qf8gUOVek8rXdQccukDyVmE+w@mail.gmail.com>
+ <EE5E5841-3561-4530-8813-95C16A36D94A@kohlschutter.com>
+ <CAHk-=wh5V8tQScw9Bgc8OiD0r5XmfVSCPp2OHPEf0p5T3obuZg@mail.gmail.com>
+ <CAJfpeguXB9mAk=jwWQmk3rivYnaWoLrju_hq-LwtYyNXG4JOeg@mail.gmail.com>
+ <CAHk-=wg+bpP5cvcaBhnmJKzTmAtgx12UhR4qzFXXb52atn9gDw@mail.gmail.com>
+ <56E6CAAE-FF25-4898-8F9D-048164582E7B@kohlschutter.com>
+From:   Jonathan Katz <jkatz@eitmlabs.org>
+In-Reply-To: <56E6CAAE-FF25-4898-8F9D-048164582E7B@kohlschutter.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <c0c928880f35b40f8231036d21251ae3efa340db.camel@redhat.com>
-X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS
+        autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 17, 2023 at 01:11:33PM +0100, Alexander Larsson wrote:
-> On Tue, 2023-01-17 at 10:06 +1100, Dave Chinner wrote:
-> > On Mon, Jan 16, 2023 at 12:00:03PM +0100, Alexander Larsson wrote:
-> > > On Mon, 2023-01-16 at 12:29 +1100, Dave Chinner wrote:
-> > > > On Fri, Jan 13, 2023 at 04:33:55PM +0100, Alexander Larsson
-> > > > wrote:
-> > > > > +} __packed;
-> > > > > +
-> > > > > +struct cfs_header_s {
-> > > > > +       u8 version;
-> > > > > +       u8 unused1;
-> > > > > +       u16 unused2;
-> > > > 
-> > > > Why are you hyper-optimising these structures for minimal space
-> > > > usage? This is 2023 - we can use a __le32 for the version number,
-> > > > the magic number and then leave....
-> > > > 
-> > > > > +
-> > > > > +       u32 magic;
-> > > > > +       u64 data_offset;
-> > > > > +       u64 root_inode;
-> > > > > +
-> > > > > +       u64 unused3[2];
-> > > > 
-> > > > a whole heap of space to round it up to at least a CPU cacheline
-> > > > size using something like "__le64 unused[15]".
-> > > > 
-> > > > That way we don't need packed structures nor do we care about
-> > > > having
-> > > > weird little holes in the structures to fill....
-> > > 
-> > > Sure.
-> > 
-> > FWIW, now I see how this is used, this header kinda defines what
-> > we'd call the superblock in the on-disk format of a filesystem. It's
-> > at a fixed location in the image file, so there should be a #define
-> > somewhere in this file to document it's fixed location.
-> 
-> It is at offset zero. I don't really think that needs a define, does
-> it? Maybe a comment though.
 
-Having the code use magic numbers for accessing fixed structures
-(e.g. the hard coded 0 in the superblock read function)
-is generally considered bad form.
+On 7/18/22 13:33, Christian KohlschÃ¼tter wrote:
+>> Am 18.07.2022 um 22:12 schrieb Linus Torvalds <torvalds@linux-foundation.org>:
+>>
+>> On Mon, Jul 18, 2022 at 12:28 PM Miklos Szeredi <miklos@szeredi.hu> wrote:
+>>> So this is a bug in the kernel part of fuse, that doesn't catch and
+>>> convert ENOSYS in case of the ioctl request.
+>> Ahh, even better. No need to worry about external issues.
+>>
+>>             Linus
+> My concern was fixing it in fuse instead of ovl would leave non-fuse filesystems affected (even though I don't have proof that such filesystems exist).
+>
+> I'm glad you are OK with Miklos' change; the outcome of this discussion certainly adds some nuance to the famous "don't break userspace" / error code thread from 2012.
+>
+> Best,
+> Christian
+>
+I believe that I am still having issues occur within Ubuntu 22.10 with 
+the 5.19 version of the kernel that might be associated with this 
+discussion.Â  I apologize up front for any faux pas I make in writing 
+this email.
 
-If someone needs to understand how an image file is laid out, where
-do they look to find where structures are physically located? Should
-it be defined in a header file that is easy to find, or should they
-have to read all the code to find where the magic number is embedded
-in the code that defines the location of critical structures?
+An example error from our syslog:
+
+kernel: [2702258.538549] overlayfs: failed to retrieve lower fileattr 
+(8020 MeOHH2O 
+RecoverySample2-20221219-A-JJL-WebinarHilic10C-TOF-TT54-Neg-1722.d/analysis.tsf, 
+err=-38)
+
+The only other related log notification I get occurs when I do the 
+overlay mount:
+
+kernel: [2702222.266404] overlayfs: null uuid detected in lower fs '/', 
+falling back to xino=off,index=off,nfs_export=off.
 
 
-> > Also, if this is the in-memory representation of the structure and
-> > not the actual on-disk format, why does it even need padding,
-> > packing or even store the magic number?
-> 
-> In this case it is the on-disk format though.
+In the following description, the error is occurring on FileServer2
 
-Yeah, that wasn't obvious at first glance.
+Our configuration is as follows:
 
-> > > > > +} __packed;
-> > > > > +
-> > > > > +enum cfs_inode_flags {
-> > > > > +       CFS_INODE_FLAGS_NONE = 0,
-> > > > > +       CFS_INODE_FLAGS_PAYLOAD = 1 << 0,
-> > > > > +       CFS_INODE_FLAGS_MODE = 1 << 1,
-> > > > > +       CFS_INODE_FLAGS_NLINK = 1 << 2,
-> > > > > +       CFS_INODE_FLAGS_UIDGID = 1 << 3,
-> > > > > +       CFS_INODE_FLAGS_RDEV = 1 << 4,
-> > > > > +       CFS_INODE_FLAGS_TIMES = 1 << 5,
-> > > > > +       CFS_INODE_FLAGS_TIMES_NSEC = 1 << 6,
-> > > > > +       CFS_INODE_FLAGS_LOW_SIZE = 1 << 7, /* Low 32bit of
-> > > > > st_size
-> > > > > */
-> > > > > +       CFS_INODE_FLAGS_HIGH_SIZE = 1 << 8, /* High 32bit of
-> > > > > st_size */
-> > > > 
-> > > > Why do we need to complicate things by splitting the inode size
-> > > > like this?
-> > > > 
-> > > 
-> > > The goal is to minimize the image size for a typical rootfs or
-> > > container image. Almost zero files in any such images are > 4GB. 
-> > 
-> > Sure, but how much space does this typically save, versus how much
-> > complexity it adds to runtime decoding of inodes?
-> > 
-> > I mean, in a dense container system the critical resources that need
-> > to be saved is runtime memory and CPU overhead of operations, not
-> > the storage space. Saving a 30-40 bytes of storage space per inode
-> > means a typical image might ber a few MB smaller, but given the
-> > image file is not storing data we're only talking about images the
-> > use maybe 500 bytes of data per inode. Storage space for images
-> > is not a limiting factor, nor is network transmission (because
-> > compression), so it comes back to runtime CPU and memory usage.
-> 
-> Here are some example sizes of composefs images with the current packed
-> inodes: 
-> 
-> 6.2M cs9-developer-rootfs.composefs
-> 2.1M cs9-minimal-rootfs.composefs
-> 1.2M fedora-37-container.composefs
-> 433K ubuntu-22.04-container.composefs
-> 
-> If we set all the flags for the inodes (i.e. fixed size inodes) we get:
-> 
-> 8.8M cs9-developer-rootfs.composefs
-> 3.0M cs9-minimal-rootfs.composefs
-> 1.6M fedora-37-container.composefs
-> 625K ubuntu-22.04-container.composefs
-> 
-> So, images are about 40% larger with fixed size inodes.
+FileServer1 "/data" --- NFS(ro)----->Â  FileServer2
 
-40% sounds like a lot, but in considering the size magnitude of the
-image files I'd say we just don't care about a few hundred KB to a
-couple of MB extra space usage. Indeed, we'll use much more than 40%
-extra space on XFS internally via speculative EOF preallocation when
-writing those files to disk....
+On FileServer2 I wish to export that /data directory via Samba so it 
+appears as RW by a specific user.Â  I accomplish this with bindfs 
+followed by overlayfs:
 
-Also, I don't think that this is an issue for shipping them across
-the network or archiving the images for the long term: compression
-should remove most of the extra zeros.
+# bindfs -u 1001 -g 1001 /data /overlay/lowers/data-1001
+# mount -t overlay overlay -o lowerdir= /overlay/lowers/data-1001,\
+upperdir=/overlay/uppers/upper-1001,\
+workdir=/overlay/work/work-1001,\
+/overlay/mountpoints/data-1001
 
-Hence I'm still not convinced that the complexity of conditional
-field storage is worth the decrease in image file size...
+Then I serve this out via Samba:
 
-> > The inodes are decoded out of the page cache, so the memory for the
-> > raw inode information is volatile and reclaimed when needed.
-> > Similarly, the VFS inode built from this information is reclaimable
-> > when not in use, too. So the only real overhead for runtime is the
-> > decoding time to find the inode in the image file and then decode
-> > it.
-> 
-> I disagree with this characterization. It is true that page cache is
-> volatile, but if you can fit 40% less inode data in the page cache then
-> there is additional overhead where you need to read this from disk. So,
-> decoding time is not the only thing that affects overhead.
+FileServer2 "/overlay/mountpoints/data-1001" ------ ( SAMBA/CIFS) --->Â  
+Win-Client
 
-True, but the page cache is a secondary cache for inodes - if you
-are relying on secondary caches for performance then you've already
-lost because it means the primary cache is not functioning
-effectively for your production workload.
 
-> Additionally, just by being larger and less dense, more data has to be
-> read from disk, which itself is slower.
+I repeat this bind/mount for several users - each with their own 
+"writable" copy of the data.Â  This mostly works very well... but there 
+are some software packages on the win client that fail mysteriously and 
+my FileSystem2 log shows "err=-38" messages for various files at the 
+same time.
 
-That's a surprisingly common fallacy.
+I am guessing there is some relation between the lack of uuid (because 
+it is NFS or a bindfs?) and the failure to retrieve the low fileattr, 
+but, I am humbly out of my depth here.
 
-e.g. we can do a 64kB read IO for only 5% more time and CPU cost
-than a 4kB read IO. This means we can pull 16x as much information
-into the cache for almost no extra cost. This has been true since
-spinning disks were invented more than 4 decades ago, but it's still
-true with modern SSDs (for different reasons).
+-Jonathan
 
-A 64kb IO is going to allow more inodes to be bought into the cache
-for effectively the same IO cost, yet it provides a 16x improvement
-in subsequent cache hit probability compared to doing 4kB IO. In
-comparison, saving 40% in object size only improves the cache hit
-probability for the same IO by ~1.5x....
 
-Hence I don't consider object density isn't a primary issue for a
-secondary IO caches; what matters is how many objects you can bring
-into cache per IO, and how likely a primary level cache miss for
-those objects will be in the near future before memory reclaim
-removes them from the cache again.
 
-As an example of this, the XFS inode allocation layout and caching
-architecture is from the early 1990s, and it is a direct embodiment
-of the the above principle. We move inodes in and out of the
-secondary cache in clusters of 32 inodes (16KB IOs) because it is
-much more CPU and IO efficient than doing it in 4kB IOs... 
-
-> > Given the decoding of the inode -all branches- and is not
-> > straight-line code, it cannot be well optimised and the CPU branch
-> > predictor is not going to get it right every time. Straight line
-> > code that decodes every field whether it is zero or not is going to
-> > be faster.
-> >
-> > Further, with a fixed size inode in the image file, the inode table
-> > can be entirely fixed size, getting rid of the whole unaligned data
-> > retreival problem that code currently has (yes, all that
-> > "le32_to_cpu(__get_unaligned(__le32, data)" code) because we can
-> > ensure that all the inode fields are aligned in the data pages. This
-> > will significantly speed up decoding into the in-memory inode
-> > structures.
-> 
-> I agree it could be faster. But is inode decode actually the limiting
-> factor, compared to things like disk i/o or better use of page cache?
-
-The limiting factor in filesystem lookup paths tends to CPU usage.
-It's spread across many parts of the kernel, but every bit we can
-save makes a difference. Especially on a large server running
-thousands of containers - the less CPU we use doing inode lookup and
-instantiation, the more CPU there is for the user workloads. We are
-rarely IO limited on machines like this, and as SSDs get even faster
-in the near future, that's going to be even less of a problem than
-it now.
-
-> > > > > +struct cfs_dir_s {
-> > > > > +       u32 n_chunks;
-> > > > > +       struct cfs_dir_chunk_s chunks[];
-> > > > > +} __packed;
-> > > > 
-> > > > So directory data is packed in discrete chunks? Given that this
-> > > > is a
-> > > > static directory format, and the size of the directory is known
-> > > > at
-> > > > image creation time, why does the storage need to be chunked?
-> > > 
-> > > We chunk the data such that each chunk fits inside a single page in
-> > > the
-> > > image file. I did this to make accessing image data directly from
-> > > the
-> > > page cache easier.
-> > 
-> > Hmmmm. So you defined a -block size- that matched the x86-64 -page
-> > size- to avoid page cache issues.  Now, what about ARM or POWER
-> > which has 64kB page sizes?
-> > 
-> > IOWs, "page size" is not the same on all machines, whilst the
-> > on-disk format for a filesystem image needs to be the same on all
-> > machines. Hence it appears that this:
-> > 
-> > > > > +#define CFS_MAX_DIR_CHUNK_SIZE 4096
-> > 
-> > should actually be defined in terms of the block size for the
-> > filesystem image, and this size of these dir chunks should be
-> > recorded in the superblock of the filesystem image. That way it
-> > is clear that the image has a specific chunk size, and it also paves
-> > the way for supporting more efficient directory structures using
-> > larger-than-page size chunks in future.
-> 
-> Yes, its true that assuming a (min) 4k page size is wasteful on some
-> arches, but it would be hard to read a filesystem created for 64k pages
-> on a 4k page machine, which is not ideal. However, wrt your commend on
-> multi-page mappings, maybe we can just totally drop these limits. I'll
-> have a look at that.
-
-It's not actually that hard - just read in all the pages into the
-page cache, look them up, map them, do the operation, unmap them.
-
-After all, you already ahve a cfs_buf that you could store a page
-array in, and then you have an object that you can use for single
-pages (on a 64kB machine) or 16 pages (4kB page machine) without the
-code that is walking the buffers caring about the underlying page
-size. This is exactly what we do with the struct xfs_buf. :)
-
-> 
-> > > If we had dirent data spanning multiple pages
-> > > then we would either need to map the pages consecutively (which
-> > > seems
-> > > hard/costly) or have complex in-kernel code to handle the case
-> > > where a
-> > > dirent straddles two pages.
-> > 
-> > Actually pretty easy - we do this with XFS for multi-page directory
-> > buffers. We just use vm_map_ram() on a page array at the moment,
-> > but in the near future there will be other options based on
-> > multipage folios.
-> > 
-> > That is, the page cache now stores folios rather than pages, and is
-> > capable of using contiguous multi-page folios in the cache. As a
-> > result, multipage folios could be used to cache multi-page
-> > structures in the page cache and efficiently map them as a whole.
-> > 
-> > That mapping code isn't there yet - kmap_local_folio() only maps the
-> > page within the folio at the offset given - but the foundation is
-> > there for supporting this functionality natively....
-> > 
-> > I certainly wouldn't be designing a new filesystem these days that
-> > has it's on-disk format constrained by the x86-64 4kB page size...
-> 
-> Yes, I agree. I'm gonna look at using multi-page mapping for both
-> dirents and xattr data, which should completely drop these limits, as
-> well as get rid of the dirent chunking.
-
-That will be interesting to see :)
-
-Cheers,
-
-Dave.
--- 
-Dave Chinner
-david@fromorbit.com
