@@ -2,54 +2,66 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D5EA0672C54
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 00:16:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CD72D672C61
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 00:18:45 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229765AbjARXQB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Jan 2023 18:16:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60282 "EHLO
+        id S229626AbjARXSo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Jan 2023 18:18:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33254 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229584AbjARXQB (ORCPT
+        with ESMTP id S229524AbjARXSf (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Jan 2023 18:16:01 -0500
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 30AA1613E1;
-        Wed, 18 Jan 2023 15:16:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MB9kq0fFFlGTsboelqAWCteqxEtqCr2RNwDw4mwuDis=; b=vB/sKZ5ty7EdMSxKZeNMzxWY1F
-        zGbSqs74vKdUGL2TL5qC9uwj6oKK7gnVoCozYR0/DYyNGrhEK5LXYtGct7NUf7Fnkx1xA6WET+yy3
-        QLD43JVTtZoT9VT+2x714a/oSr8/LJNTfb9moCoEIRq4tvipgCWdxAyMJtVEHM8wzBMaPuDBbaHTi
-        1Ny8gb7pGDu+/YR6CyahAaLAgzi63yRTCyOujmCf3EHtNmIj4YnbNoZlQBm2WDyvXqSBIN2rVWSNy
-        KVAAvODuwUUrNnQumoYojbGIrWUbUZWAJyZ/SXrMTQiN6lktCbzjDvftamhBy9y/CjYWrbqeA9fzS
-        AgYmBZPw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pIHeq-002dSD-3C;
-        Wed, 18 Jan 2023 23:15:53 +0000
-Date:   Wed, 18 Jan 2023 23:15:52 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
+        Wed, 18 Jan 2023 18:18:35 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D59273B0CB
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jan 2023 15:17:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674083869;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=Hg2jXXAtk6m9gvEb3I0IOZBD7jFgu2O5sybYB7vcpUY=;
+        b=HRmb/f09LY5ydYjHWR1ymEptWenCY+tMoOJT3uNowcOeyCJjAJfQNt4nXbiwWZrO0wwjcQ
+        MTyaBqqpp4pORRTfexqO6UuPYTxiMq+OrLCGySuyaaWDsu0Qo68ttOs+bPYetb4Hu/ihq+
+        UiUGe228Q14/+6YscQ/yEDk2OvPz6hc=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-193-URabi9yEOai8HsPbnJJJSg-1; Wed, 18 Jan 2023 18:17:45 -0500
+X-MC-Unique: URabi9yEOai8HsPbnJJJSg-1
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4BC5380D0E3;
+        Wed, 18 Jan 2023 23:17:44 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 12C3CC15BAD;
+        Wed, 18 Jan 2023 23:17:41 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y8h9Q9fyUGBFsiMj@ZenIV>
+References: <Y8h9Q9fyUGBFsiMj@ZenIV> <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk> <167391051810.2311931.8545361041888737395.stgit@warthog.procyon.org.uk>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     dhowells@redhat.com, Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
         Jeff Layton <jlayton@kernel.org>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 06/34] iov_iter: Use the direction in the iterator
- functions
-Message-ID: <Y8h9qAZ9ePz+8MFj@ZenIV>
-References: <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
- <167391052497.2311931.9463379582932734164.stgit@warthog.procyon.org.uk>
+Subject: Re: [PATCH v6 05/34] iov_iter: Change the direction macros into an enum
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <167391052497.2311931.9463379582932734164.stgit@warthog.procyon.org.uk>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2704043.1674083861.1@warthog.procyon.org.uk>
+Date:   Wed, 18 Jan 2023 23:17:41 +0000
+Message-ID: <2704044.1674083861@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,12 +69,21 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 11:08:44PM +0000, David Howells wrote:
-> Use the direction in the iterator functions rather than READ/WRITE.
-> 
-> Add a check into __iov_iter_get_pages_alloc() that the supplied
-> FOLL_SOURCE/DEST_BUF gup_flag matches the ITER_SOURCE/DEST flag on the
-> iterator.
+Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-Incidentally, s/iterator/initializer/ (or constructor, for that matter).
-Those are not iterators...
+> > Change the ITER_SOURCE and ITER_DEST direction macros into an enum and
+> > provide three new helper functions:
+> > 
+> >  iov_iter_dir() - returns the iterator direction
+> >  iov_iter_is_dest() - returns true if it's an ITER_DEST iterator
+> >  iov_iter_is_source() - returns true if it's an ITER_SOURCE iterator
+> 
+> What for?  We have two valid values -
+> 	1) it is a data source
+> 	2) it is not a data source
+> Why do we need to store that as an enum?
+
+Compile time type checking.
+
+David
+
