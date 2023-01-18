@@ -2,58 +2,55 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DCE6B671003
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 02:29:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id CF8BE67111F
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 03:25:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229607AbjARB36 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Tue, 17 Jan 2023 20:29:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49822 "EHLO
+        id S229511AbjARCZo (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Tue, 17 Jan 2023 21:25:44 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53528 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229499AbjARB3z (ORCPT
+        with ESMTP id S229455AbjARCZn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Tue, 17 Jan 2023 20:29:55 -0500
-Received: from ams.source.kernel.org (ams.source.kernel.org [145.40.68.75])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 073073D936;
-        Tue, 17 Jan 2023 17:29:52 -0800 (PST)
+        Tue, 17 Jan 2023 21:25:43 -0500
+Received: from dfw.source.kernel.org (dfw.source.kernel.org [IPv6:2604:1380:4641:c500::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5511B3E087;
+        Tue, 17 Jan 2023 18:25:42 -0800 (PST)
 Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by ams.source.kernel.org (Postfix) with ESMTPS id 8F7F8B80B49;
-        Wed, 18 Jan 2023 01:29:50 +0000 (UTC)
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37D05C433D2;
-        Wed, 18 Jan 2023 01:29:49 +0000 (UTC)
+        by dfw.source.kernel.org (Postfix) with ESMTPS id D6EC861577;
+        Wed, 18 Jan 2023 02:25:41 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34C59C433D2;
+        Wed, 18 Jan 2023 02:25:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=k20201202; t=1674005389;
-        bh=Gjjfa3xCwJf3MUJGyowj6AemNPFBvxtxSVKPS+KAEpU=;
+        s=k20201202; t=1674008741;
+        bh=9APqVKi9+dB9Tl/YCAY2w7jj/icl+yAWWx0FP3Plktc=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GkfMlUE87qkH+gzC9B6tw3JMxPcsTOgK6ZiiD+Wftlwvlq3OpyCpNNYXsUySU6v/0
-         bdw4AN0znTVbYgMZIe7i5QLNDfaOO2kjp/4qK/TJZy9CWIZYm4VPgDVvV31qPcFxN3
-         9C2lugDcx8iVcA8ctIzkJ5sXVwAsE2AGTyXmt+QrcCEm3e6ZP4DdMNZNZCCtJaX8k2
-         UULVKBzf0RNLBXB/qN6bMcmJYFmMlZQP7gcp/N82+lpDXA97k0cSyrKJJdfP+RyWM6
-         GwChuFncEI3Oe/SBSu+2CgUetFCGHPHhELhBzwOtCcYgZvPMYlebnrzM0hqXXwdCY8
-         qG8c4NoFhRO6A==
-Date:   Tue, 17 Jan 2023 17:29:48 -0800
+        b=qShf5lxXRVBIntTP9TwAhjUFeyJj1lHr35PM25lY8qWxUlXCVcxJn5WvwL681SB5y
+         OQKriKYcSPi0Jf9C86ustnS+Wobhh6R59ZJa2dX3t/Mq9BQfg8/JbNj6cRU1/wOZ64
+         0PYbTA5symuX5gItN4pkbKXa6wT8kRgeJs+ZeDBaUiqyLMxXTU3N1Mi6FG5uuTkU2c
+         sUprOqDXtjiqcqXaSjkFKBXoxLmquhTkSpZWfHP8cIsB4GYZ9r+RIwCnL/6dgnZGmL
+         Wf4DtGPuneIYB00MNSlXYpSfGD+qefrZU6rW7wMwk1VRsxza2le4k0ipvUipLNXRed
+         W5jZ3wWkFuvcg==
+Date:   Tue, 17 Jan 2023 18:25:40 -0800
 From:   "Darrick J. Wong" <djwong@kernel.org>
-To:     Allison Henderson <allison.henderson@oracle.com>
-Cc:     Catherine Hoang <catherine.hoang@oracle.com>,
-        "david@fromorbit.com" <david@fromorbit.com>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
-        Chandan Babu <chandan.babu@oracle.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "hch@infradead.org" <hch@infradead.org>
-Subject: Re: [PATCH 01/14] xfs: document the motivation for online fsck design
-Message-ID: <Y8dLjPithMcXN8Bs@magnolia>
-References: <167243825144.682859.12802259329489258661.stgit@magnolia>
- <167243825174.682859.4770282034026097725.stgit@magnolia>
- <0607e986e96def5ba17bd53ff3f7e775a99d3d94.camel@oracle.com>
- <Y78Js8BP+s6xFfzm@magnolia>
- <c5da03bb44356a8dec9e62cecfb4e95703cf5f3a.camel@oracle.com>
+To:     Luis Chamberlain <mcgrof@kernel.org>
+Cc:     hch@infradead.org, song@kernel.org, rafael@kernel.org,
+        gregkh@linuxfoundation.org, viro@zeniv.linux.org.uk, jack@suse.cz,
+        bvanassche@acm.org, ebiederm@xmission.com, mchehab@kernel.org,
+        keescook@chromium.org, p.raghav@samsung.com,
+        linux-fsdevel@vger.kernel.org, kernel@tuxforce.de,
+        kexec@lists.infradead.org, linux-kernel@vger.kernel.org,
+        xfs <linux-xfs@vger.kernel.org>
+Subject: Re: [RFC v3 03/24] fs: distinguish between user initiated freeze and
+ kernel initiated freeze
+Message-ID: <Y8dYpOyR/jOsO267@magnolia>
+References: <20230114003409.1168311-1-mcgrof@kernel.org>
+ <20230114003409.1168311-4-mcgrof@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c5da03bb44356a8dec9e62cecfb4e95703cf5f3a.camel@oracle.com>
+In-Reply-To: <20230114003409.1168311-4-mcgrof@kernel.org>
 X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
         SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
@@ -63,679 +60,374 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 18, 2023 at 12:03:09AM +0000, Allison Henderson wrote:
-> On Wed, 2023-01-11 at 11:10 -0800, Darrick J. Wong wrote:
-> > On Sat, Jan 07, 2023 at 05:01:54AM +0000, Allison Henderson wrote:
-> > > On Fri, 2022-12-30 at 14:10 -0800, Darrick J. Wong wrote:
-> > > > From: Darrick J. Wong <djwong@kernel.org>
-> > > > 
-> > > > Start the first chapter of the online fsck design documentation.
-> > > > This covers the motivations for creating this in the first place.
-> > > > 
-> > > > Signed-off-by: Darrick J. Wong <djwong@kernel.org>
-> > > > ---
-> > > >  Documentation/filesystems/index.rst                |    1 
-> > > >  .../filesystems/xfs-online-fsck-design.rst         |  199
-> > > > ++++++++++++++++++++
-> > > >  2 files changed, 200 insertions(+)
-> > > >  create mode 100644 Documentation/filesystems/xfs-online-fsck-
-> > > > design.rst
-> > > > 
-> > > > 
-> > > > diff --git a/Documentation/filesystems/index.rst
-> > > > b/Documentation/filesystems/index.rst
-> > > > index bee63d42e5ec..fbb2b5ada95b 100644
-> > > > --- a/Documentation/filesystems/index.rst
-> > > > +++ b/Documentation/filesystems/index.rst
-> > > > @@ -123,4 +123,5 @@ Documentation for filesystem implementations.
-> > > >     vfat
-> > > >     xfs-delayed-logging-design
-> > > >     xfs-self-describing-metadata
-> > > > +   xfs-online-fsck-design
-> > > >     zonefs
-> > > > diff --git a/Documentation/filesystems/xfs-online-fsck-design.rst
-> > > > b/Documentation/filesystems/xfs-online-fsck-design.rst
-> > > > new file mode 100644
-> > > > index 000000000000..25717ebb5f80
-> > > > --- /dev/null
-> > > > +++ b/Documentation/filesystems/xfs-online-fsck-design.rst
-> > > > @@ -0,0 +1,199 @@
-> > > > +.. SPDX-License-Identifier: GPL-2.0
-> > > > +.. _xfs_online_fsck_design:
-> > > > +
-> > > > +..
-> > > > +        Mapping of heading styles within this document:
-> > > > +        Heading 1 uses "====" above and below
-> > > > +        Heading 2 uses "===="
-> > > > +        Heading 3 uses "----"
-> > > > +        Heading 4 uses "````"
-> > > > +        Heading 5 uses "^^^^"
-> > > > +        Heading 6 uses "~~~~"
-> > > > +        Heading 7 uses "...."
-> > > > +
-> > > > +        Sections are manually numbered because apparently that's
-> > > > what everyone
-> > > > +        does in the kernel.
-> > > > +
-> > > > +======================
-> > > > +XFS Online Fsck Design
-> > > > +======================
-> > > > +
-> > > > +This document captures the design of the online filesystem check
-> > > > feature for
-> > > > +XFS.
-> > > > +The purpose of this document is threefold:
-> > > > +
-> > > > +- To help kernel distributors understand exactly what the XFS
-> > > > online
-> > > > fsck
-> > > > +  feature is, and issues about which they should be aware.
-> > > > +
-> > > > +- To help people reading the code to familiarize themselves with
-> > > > the
-> > > > relevant
-> > > > +  concepts and design points before they start digging into the
-> > > > code.
-> > > > +
-> > > > +- To help developers maintaining the system by capturing the
-> > > > reasons
-> > > > +  supporting higher level decisionmaking.
-> > > nit: decision making
-> > 
-> > Fixed.
-> > 
-> > > > +
-> > > > +As the online fsck code is merged, the links in this document to
-> > > > topic branches
-> > > > +will be replaced with links to code.
-> > > > +
-> > > > +This document is licensed under the terms of the GNU Public
-> > > > License,
-> > > > v2.
-> > > > +The primary author is Darrick J. Wong.
-> > > > +
-> > > > +This design document is split into seven parts.
-> > > > +Part 1 defines what fsck tools are and the motivations for
-> > > > writing a
-> > > > new one.
-> > > > +Parts 2 and 3 present a high level overview of how online fsck
-> > > > process works
-> > > > +and how it is tested to ensure correct functionality.
-> > > > +Part 4 discusses the user interface and the intended usage modes
-> > > > of
-> > > > the new
-> > > > +program.
-> > > > +Parts 5 and 6 show off the high level components and how they
-> > > > fit
-> > > > together, and
-> > > > +then present case studies of how each repair function actually
-> > > > works.
-> > > > +Part 7 sums up what has been discussed so far and speculates
-> > > > about
-> > > > what else
-> > > > +might be built atop online fsck.
-> > > > +
-> > > > +.. contents:: Table of Contents
-> > > > +   :local:
-> > > > +
-> > > 
-> > > Something that I've noticed in my training sessions is that often
-> > > times, less is more.  People really only absorb so much over a
-> > > particular duration of time, so sometimes having too much detail in
-> > > the
-> > > context is not as helpful as you might think.  A lot of times,
-> > > paraphrasing excerpts to reflect the same info in a more compact
-> > > format
-> > > will help you keep audience on track (a little longer at least). 
-> > > 
-> > > > +1. What is a Filesystem Check?
-> > > > +==============================
-> > > > +
-> > > > +A Unix filesystem has three main jobs: to provide a hierarchy of
-> > > > names through
-> > > > +which application programs can associate arbitrary blobs of data
-> > > > for
-> > > > any
-> > > > +length of time, to virtualize physical storage media across
-> > > > those
-> > > > names, and
-> > > > +to retrieve the named data blobs at any time.
-> > > Consider the following paraphrase:
-> > > 
-> > > A Unix filesystem has three main jobs:
-> > >  * Provide a hierarchy of names by which applications access data
-> > > for a
-> > > length of time.
-> > >  * Store or retrieve that data at any time.
-> > >  * Virtualize physical storage media across those names
-> > 
-> > Ooh, listifying.  I did quite a bit of that to break up the walls of
-> > text in earlier revisions, but apparently I missed this one.
-> > 
-> > > Also... I dont think it would be inappropriate to just skip the
-> > > above,
-> > > and jump right into fsck.  That's a very limited view of a
-> > > filesystem,
-> > > likely a reader seeking an fsck doc probably has some idea of what
-> > > a fs
-> > > is otherwise supposed to be doing.  
-> > 
-> > This will become part of the general kernel documentation, so we
-> > can't
-> > assume that all readers are going to know what a fs really does.
-> > 
-> > "A Unix filesystem has four main responsibilities:
-> > 
-> > - Provide a hierarchy of names through which application programs can
-> >   associate arbitrary blobs of data for any length of time,
-> > 
-> > - Virtualize physical storage media across those names, and
-> > 
-> > - Retrieve the named data blobs at any time.
-> > 
-> > - Examine resource usage.
-> > 
-> > "Metadata directly supporting these functions (e.g. files,
-> > directories,
-> > space mappings) are sometimes called primary metadata.
-> > Secondary metadata (e.g. reverse mapping and directory parent
-> > pointers)
-> > support operations internal to the filesystem, such as internal
-> > consistency checking and reorganization."
-> Sure, I think that sounds good and helps to set up the metadata
-> concepts that are discussed later.
-> > 
-> > (I added those last two sentences in response to a point you made
-> > below.)
-> > 
-> > > > +The filesystem check (fsck) tool examines all the metadata in a
-> > > > filesystem
-> > > > +to look for errors.
-> > > > +Simple tools only check for obvious corruptions, but the more
-> > > > sophisticated
-> > > > +ones cross-reference metadata records to look for
-> > > > inconsistencies.
-> > > > +People do not like losing data, so most fsck tools also contains
-> > > > some ability
-> > > > +to deal with any problems found.
-> > > 
-> > > While simple tools can detect data corruptions, a filesystem check
-> > > (fsck) uses metadata records as a cross-reference to find and
-> > > correct
-> > > more inconsistencies.
-> > > 
-> > > ?
-> > 
-> > Let's be careful with the term 'data corruption' here -- a lot of
-> > people
-> > (well ok me) will see that as *user* data corruption, whereas we're
-> > talking about *metadata* corruption.
-> > 
-> > I think I'll rework that second sentence further:
-> > 
-> > "In addition to looking for obvious metadata corruptions, fsck also
-> > cross-references different types of metadata records with each other
-> > to
-> > look for inconsistencies."
-> > 
-> Alrighty, that sounds good
+[add linux-xfs to cc on this one]
+
+On Fri, Jan 13, 2023 at 04:33:48PM -0800, Luis Chamberlain wrote:
+> Userspace can initiate a freeze call using ioctls. If the kernel decides
+> to freeze a filesystem later it must be able to distinguish if userspace
+> had initiated the freeze, so that it does not unfreeze it later
+> automatically on resume.
+
+Hm.  Zooming out a bit here, I want to think about how kernel freezes
+should behave...
+
+> Likewise if the kernel is initiating a freeze on its own it should *not*
+> fail to freeze a filesystem if a user had already frozen it on our behalf.
+
+...because kernel freezes can absorb an existing userspace freeze.  Does
+that mean that userspace should be prevented from undoing a kernel
+freeze?  Even in that absorption case?
+
+Also, should we permit multiple kernel freezes of the same fs at the
+same time?  And if we do allow that, would they nest like freeze used to
+do?
+
+(My suggestions here are 'yes', 'yes', and '**** no'.)
+
+The reason I ask (besides wanting to drop the xfs vs. suspend fix
+that I've been carrying for years) is that I've been playing in this
+space in the online fsck patchset[1].
+
+[1]
+https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.git/commit/?h=repair-fscounters&id=3f842a53b29f70502a4331b34decb06bf46130c8
+
+For this somewhat different use case, I need to stabilize the free block
+and inodes counters in the incore xfs superblock so that I can check and
+repair them.  To do that, I've forked enough of the vfs freeze code
+(yuck) to block the filesystem from updating those counters or starting
+new transactions.  To prevent anyone /else/ from thawing the fs, I set
+sb->s_writers.frozen to an unknown value (SB_FREEZE_COMPLETE + 1) for
+the duration.
+
+I /think/ these are pretty similar concepts, with two differences:
+
+1. nobody else may thaw the fs while fsck is running
+
+2. online fsck doesn't need to quiesce the log, which means that suspend
+   must wait for fsck to finish
+
+> This same concept applies to thawing, even if its not possible for
+> userspace to beat the kernel in thawing a filesystem. This logic however
+> has never applied to userspace freezing and thawing, two consecutive
+> userspace freeze calls will results in only the first one succeeding, so
+> we must retain the same behaviour in userspace.
+
+(ISTR that we used to allow nested freezes, but that's been gone for
+years.)
+
+> This doesn't implement yet kernel initiated filesystem freeze calls,
+> this will be done in subsequent calls. This change should introduce
+> no functional changes, it just extends the definitions of a frozen
+> filesystem to account for future kernel initiated filesystem freeze
+> and let's us keep record of when userpace initiated it so the kernel
+> can respect a userspace initiated freeze upon kernel initiated freeze
+> and its respective thaw cycle.
 > 
-> > Since the really dumb fscks of the 1970s are a long ways past now.
-> > 
-> > > > +As a word of caution -- the primary goal of most Linux fsck
-> > > > tools is
-> > > > to restore
-> > > > +the filesystem metadata to a consistent state, not to maximize
-> > > > the
-> > > > data
-> > > > +recovered.
-> > > > +That precedent will not be challenged here.
-> > > > +
-> > > > +Filesystems of the 20th century generally lacked any redundancy
-> > > > in
-> > > > the ondisk
-> > > > +format, which means that fsck can only respond to errors by
-> > > > erasing
-> > > > files until
-> > > > +errors are no longer detected.
-> > > > +System administrators avoid data loss by increasing the number
-> > > > of
-> > > > separate
-> > > > +storage systems through the creation of backups; 
-> > > 
-> > > 
-> > > > and they avoid downtime by
-> > > > +increasing the redundancy of each storage system through the
-> > > > creation of RAID.
-> > > Mmm, raids help more for hardware failures right?  They dont really
-> > > have a notion of when the fs is corrupted.
-> > 
-> > Right.
-> > 
-> > > While an fsck can help
-> > > navigate around a corruption possibly caused by a hardware failure,
-> > > I
-> > > think it's really a different kind of redundancy. I think I'd
-> > > probably
-> > > drop the last line and keep the selling point focused online
-> > > repair.
-> > 
-> > Yes, RAIDs provide a totally different type of redundancy.  I decided
-> > to
-> > make this point specifically to counter the people who argue that
-> > RAID
-> > makes them impervious to corruption problems, etc.
-> > 
-> > This attitude seemed rather prevalent in the early days of btrfs and
-> > a
-> > certain other filesystem that Shall Not Be Named, even though the
-> > btrfs
-> > developers themselves acknowledge this distinction, given the
-> > existence
-> > of `btrfs scrub' and `btrfs check'.
-> > 
-> > However you do have a good point that this sentence doesn't add much
-> > where it is.  I think I'll add it as a sidebar at the end of the
-> > paragraph.
-> > 
-> > > > +More recent filesystem designs contain enough redundancy in
-> > > > their
-> > > > metadata that
-> > > > +it is now possible to regenerate data structures when non-
-> > > > catastrophic errors
-> > > > +occur; 
-> > > 
-> > > 
-> > > > this capability aids both strategies.
-> > > > +Over the past few years, XFS has added a storage space reverse
-> > > > mapping index to
-> > > > +make it easy to find which files or metadata objects think they
-> > > > own
-> > > > a
-> > > > +particular range of storage.
-> > > > +Efforts are under way to develop a similar reverse mapping index
-> > > > for
-> > > > the naming
-> > > > +hierarchy, which will involve storing directory parent pointers
-> > > > in
-> > > > each file.
-> > > > +With these two pieces in place, XFS uses secondary information
-> > > > to
-> > > > perform more
-> > > > +sophisticated repairs.
-> > > This part here I think I would either let go or relocate.  The
-> > > topic of
-> > > this section is supposed to discuss roughly what a filesystem check
-> > > is.
-> > > Ideally so we can start talking about how ofsck is different.  It
-> > > feels
-> > > like a bit of a jump to suddenly hop into rmap and pptrs, and for
-> > > "sophisticated repairs" that we havn't really gotten into the
-> > > details
-> > > of yet.  So I think it would read easier if we saved this part
-> > > until we
-> > > start talking about how they are used later.  
-> > 
-> > Agreed.
-> > 
-> > > > +
-> > > > +TLDR; Show Me the Code!
-> > > > +-----------------------
-> > > > +
-> > > > +Code is posted to the kernel.org git trees as follows:
-> > > > +`kernel changes
-> > > > <
-> > > > https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfs-linux.g
-> > > > it
-> > > > /log/?h=repair-symlink>`_,
-> > > > +`userspace changes
-> > > > <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfsprogs-
-> > > > dev.
-> > > > git/log/?h=scrub-media-scan-service>`_, and
-> > > > +`QA test changes
-> > > > <https://git.kernel.org/pub/scm/linux/kernel/git/djwong/xfstests-
-> > > > dev.
-> > > > git/log/?h=repair-dirs>`_.
-> > > > +Each kernel patchset adding an online repair function will use
-> > > > the
-> > > > same branch
-> > > > +name across the kernel, xfsprogs, and fstests git repos.
-> > > > +
-> > > > +Existing Tools
-> > > > +--------------
-> > > > +
-> > > > +The online fsck tool described here will be the third tool in
-> > > > the
-> > > > history of
-> > > > +XFS (on Linux) to check and repair filesystems.
-> > > > +Two programs precede it:
-> > > > +
-> > > > +The first program, ``xfs_check``, was created as part of the XFS
-> > > > debugger
-> > > > +(``xfs_db``) and can only be used with unmounted filesystems.
-> > > > +It walks all metadata in the filesystem looking for
-> > > > inconsistencies
-> > > > in the
-> > > > +metadata, though it lacks any ability to repair what it finds.
-> > > > +Due to its high memory requirements and inability to repair
-> > > > things,
-> > > > this
-> > > > +program is now deprecated and will not be discussed further.
-> > > > +
-> > > > +The second program, ``xfs_repair``, was created to be faster and
-> > > > more robust
-> > > > +than the first program.
-> > > > +Like its predecessor, it can only be used with unmounted
-> > > > filesystems.
-> > > > +It uses extent-based in-memory data structures to reduce memory
-> > > > consumption,
-> > > > +and tries to schedule readahead IO appropriately to reduce I/O
-> > > > waiting time
-> > > > +while it scans the metadata of the entire filesystem.
-> > > > +The most important feature of this tool is its ability to
-> > > > respond to
-> > > > +inconsistencies in file metadata and directory tree by erasing
-> > > > things as needed
-> > > > +to eliminate problems.
-> > > > +Space usage metadata are rebuilt from the observed file
-> > > > metadata.
-> > > > +
-> > > > +Problem Statement
-> > > > +-----------------
-> > > > +
-> > > > +The current XFS tools leave several problems unsolved:
-> > > > +
-> > > > +1. **User programs** suddenly **lose access** to information in
-> > > > the
-> > > > computer
-> > > > +   when unexpected shutdowns occur as a result of silent
-> > > > corruptions
-> > > > in the
-> > > > +   filesystem metadata.
-> > > > +   These occur **unpredictably** and often without warning.
-> > > 
-> > > 
-> > > 1. **User programs** suddenly **lose access** to the filesystem
-> > >    when unexpected shutdowns occur as a result of silent
-> > > corruptions
-> > > that could have otherwise been avoided with an online repair
-> > > 
-> > > While some of these issues are not untrue, I think it makes sense
-> > > to
-> > > limit them to the issue you plan to solve, and therefore discuss.
-> > 
-> > Fair enough, it's not like one loses /all/ the data in the computer.
-> > 
-> > That said, we're still in the problem definition phase, so I don't
-> > want
-> > to mention online repair just yet.
-> > 
-> > > > +2. **Users** experience a **total loss of service** during the
-> > > > recovery period
-> > > > +   after an **unexpected shutdown** occurs.
-> > > > +
-> > > > +3. **Users** experience a **total loss of service** if the
-> > > > filesystem is taken
-> > > > +   offline to **look for problems** proactively.
-> > > > +
-> > > > +4. **Data owners** cannot **check the integrity** of their
-> > > > stored
-> > > > data without
-> > > > +   reading all of it.
-> > > 
-> > > > +   This may expose them to substantial billing costs when a
-> > > > linear
-> > > > media scan
-> > > > +   might suffice.
-> > > Ok, I had to re-read this one a few times, but I think this reads a
-> > > little cleaner:
-> > > 
-> > >     Customers that are billed for data egress may incur unnecessary
-> > > cost when a background media scan on the host may have sufficed
-> > > 
-> > > ?
-> > 
-> > "...when a linear media scan performed by the storage system
-> > administrator would suffice."
-> > 
-> That sounds fine to me
+> Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> ---
+>  block/bdev.c       |  4 ++--
+>  fs/f2fs/gc.c       |  4 ++--
+>  fs/gfs2/glops.c    |  2 +-
+>  fs/gfs2/super.c    |  2 +-
+>  fs/gfs2/sys.c      |  4 ++--
+>  fs/gfs2/util.c     |  2 +-
+>  fs/ioctl.c         |  4 ++--
+>  fs/super.c         | 31 ++++++++++++++++++++++++++-----
+>  include/linux/fs.h | 16 ++++++++++++++--
+>  9 files changed, 51 insertions(+), 18 deletions(-)
 > 
-> > I was tempted to say "storage owner" instead of "storage system
-> > administrator" but that sounded a little too IBM.
-> > 
-> > > > +5. **System administrators** cannot **schedule** a maintenance
-> > > > window to deal
-> > > > +   with corruptions if they **lack the means** to assess
-> > > > filesystem
-> > > > health
-> > > > +   while the filesystem is online.
-> > > > +
-> > > > +6. **Fleet monitoring tools** cannot **automate periodic
-> > > > checks** of
-> > > > filesystem
-> > > > +   health when doing so requires **manual intervention** and
-> > > > downtime.
-> > > > +
-> > > > +7. **Users** can be tricked into **doing things they do not
-> > > > desire**
-> > > > when
-> > > > +   malicious actors **exploit quirks of Unicode** to place
-> > > > misleading names
-> > > > +   in directories.
-> > > hrmm, I guess I'm not immediately extrapolating what things users
-> > > are
-> > > being tricked into doing, or how ofsck solves this?  Otherwise I
-> > > might
-> > > drop the last one here, I think the rest of the bullets are plenty
-> > > of
-> > > motivation.
-> > 
-> > The doc gets into this later[1], but it's possible to create two
-> > entries
-> > within the same directory that have different byte sequences in the
-> > name
-> > but render identically in file choosers.  These pathnames:
-> > 
-> > /home/djwong/Downloads/rustup.sh
-> > /home/djwong/Downloads/rus<zero width space>tup.sh
-> > 
-> > refer to different files, but a naïve file open dialog will render
-> > them
-> > identically as "rustup.sh".  If the first is the Rust installer and
-> > the
-> > second name is actually a ransomware payload, I can victimize you by
-> > tricking you into opening the wrong one.
-> > 
-> > Firefox had a whole CVE over this in 2018:
-> > https://bugzilla.mozilla.org/show_bug.cgi?id=1438025
-> > 
-> > xfs_scrub is (so far) the only linux filesystem fsck tool that will
-> > warn
-> > system administrators about this kind of thing.
-> > 
-> > See generic/453 and generic/454.
-> > 
-> > [1] https://djwong.org/docs/xfs-online-fsck-design/#id108
-> > 
-> hmm ok, how about:
-> 
-> 7. Malicious attacks may use uncommon unicode characters to create file
-> names that resemble normal files, which may go undetected until the
-> filesystem is scanned.
+> diff --git a/block/bdev.c b/block/bdev.c
+> index 8fd3a7991c02..668ebf2015bf 100644
+> --- a/block/bdev.c
+> +++ b/block/bdev.c
+> @@ -250,7 +250,7 @@ int freeze_bdev(struct block_device *bdev)
+>  	if (sb->s_op->freeze_super)
+>  		error = sb->s_op->freeze_super(sb);
+>  	else
+> -		error = freeze_super(sb);
+> +		error = freeze_super(sb, true);
+>  	deactivate_locked_super(sb);
+>  
+>  	if (error) {
+> @@ -295,7 +295,7 @@ int thaw_bdev(struct block_device *bdev)
+>  	if (sb->s_op->thaw_super)
+>  		error = sb->s_op->thaw_super(sb);
+>  	else
+> -		error = thaw_super(sb);
+> +		error = thaw_super(sb, true);
+>  	if (error)
+>  		bdev->bd_fsfreeze_count++;
+>  	else
+> diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
+> index 4c681fe487ee..8eac3042786b 100644
+> --- a/fs/f2fs/gc.c
+> +++ b/fs/f2fs/gc.c
+> @@ -2141,7 +2141,7 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+>  
+>  	if (!get_active_super(sbi->sb->s_bdev))
+>  		return -ENOTTY;
+> -	freeze_super(sbi->sb);
+> +	freeze_super(sbi->sb, true);
+>  
+>  	f2fs_down_write(&sbi->gc_lock);
+>  	f2fs_down_write(&sbi->cp_global_sem);
+> @@ -2194,7 +2194,7 @@ int f2fs_resize_fs(struct f2fs_sb_info *sbi, __u64 block_count)
+>  	f2fs_up_write(&sbi->cp_global_sem);
+>  	f2fs_up_write(&sbi->gc_lock);
+>  	/* We use the same active reference from freeze */
+> -	thaw_super(sbi->sb);
+> +	thaw_super(sbi->sb, true);
+>  	deactivate_locked_super(sbi->sb);
+>  	return err;
+>  }
+> diff --git a/fs/gfs2/glops.c b/fs/gfs2/glops.c
+> index 081422644ec5..62a7e0693efa 100644
+> --- a/fs/gfs2/glops.c
+> +++ b/fs/gfs2/glops.c
+> @@ -574,7 +574,7 @@ static int freeze_go_sync(struct gfs2_glock *gl)
+>  	if (gl->gl_state == LM_ST_SHARED && !gfs2_withdrawn(sdp) &&
+>  	    !test_bit(SDF_NORECOVERY, &sdp->sd_flags)) {
+>  		atomic_set(&sdp->sd_freeze_state, SFS_STARTING_FREEZE);
+> -		error = freeze_super(sdp->sd_vfs);
+> +		error = freeze_super(sdp->sd_vfs, true);
+>  		if (error) {
+>  			fs_info(sdp, "GFS2: couldn't freeze filesystem: %d\n",
+>  				error);
+> diff --git a/fs/gfs2/super.c b/fs/gfs2/super.c
+> index 48df7b276b64..9c55b8042aa4 100644
+> --- a/fs/gfs2/super.c
+> +++ b/fs/gfs2/super.c
+> @@ -672,7 +672,7 @@ void gfs2_freeze_func(struct work_struct *work)
+>  		gfs2_assert_withdraw(sdp, 0);
+>  	} else {
+>  		atomic_set(&sdp->sd_freeze_state, SFS_UNFROZEN);
+> -		error = thaw_super(sb);
+> +		error = thaw_super(sb, true);
+>  		if (error) {
+>  			fs_info(sdp, "GFS2: couldn't thaw filesystem: %d\n",
+>  				error);
+> diff --git a/fs/gfs2/sys.c b/fs/gfs2/sys.c
+> index b98be03d0d1e..69514294215b 100644
+> --- a/fs/gfs2/sys.c
+> +++ b/fs/gfs2/sys.c
+> @@ -167,10 +167,10 @@ static ssize_t freeze_store(struct gfs2_sbd *sdp, const char *buf, size_t len)
+>  
+>  	switch (n) {
+>  	case 0:
+> -		error = thaw_super(sdp->sd_vfs);
+> +		error = thaw_super(sdp->sd_vfs, true);
+>  		break;
+>  	case 1:
+> -		error = freeze_super(sdp->sd_vfs);
+> +		error = freeze_super(sdp->sd_vfs, true);
+>  		break;
+>  	default:
+>  		deactivate_locked_super(sb);
+> diff --git a/fs/gfs2/util.c b/fs/gfs2/util.c
+> index 3a0cd5e9ad84..be9705d618ec 100644
+> --- a/fs/gfs2/util.c
+> +++ b/fs/gfs2/util.c
+> @@ -191,7 +191,7 @@ static void signal_our_withdraw(struct gfs2_sbd *sdp)
+>  		/* Make sure gfs2_unfreeze works if partially-frozen */
+>  		flush_work(&sdp->sd_freeze_work);
+>  		atomic_set(&sdp->sd_freeze_state, SFS_FROZEN);
+> -		thaw_super(sdp->sd_vfs);
+> +		thaw_super(sdp->sd_vfs, true);
+>  	} else {
+>  		wait_on_bit(&i_gl->gl_flags, GLF_DEMOTE,
+>  			    TASK_UNINTERRUPTIBLE);
+> diff --git a/fs/ioctl.c b/fs/ioctl.c
+> index 3d2536e1ea58..0ac1622785ad 100644
+> --- a/fs/ioctl.c
+> +++ b/fs/ioctl.c
+> @@ -401,7 +401,7 @@ static int ioctl_fsfreeze(struct file *filp)
+>  	/* Freeze */
+>  	if (sb->s_op->freeze_super)
+>  		ret = sb->s_op->freeze_super(sb);
+> -	ret = freeze_super(sb);
+> +	ret = freeze_super(sb, true);
+>  
+>  	deactivate_locked_super(sb);
+>  
+> @@ -418,7 +418,7 @@ static int ioctl_fsthaw(struct file *filp)
+>  	/* Thaw */
+>  	if (sb->s_op->thaw_super)
+>  		return sb->s_op->thaw_super(sb);
+> -	return thaw_super(sb);
+> +	return thaw_super(sb, true);
+>  }
+>  
+>  static int ioctl_file_dedupe_range(struct file *file,
+> diff --git a/fs/super.c b/fs/super.c
+> index fdcf5a87af0a..0d6b4de8da88 100644
+> --- a/fs/super.c
+> +++ b/fs/super.c
+> @@ -1004,7 +1004,7 @@ static void do_thaw_all_callback(struct super_block *sb)
+>  		return;
+>  	if (sb->s_root && sb->s_flags & SB_BORN) {
+>  		emergency_thaw_bdev(sb);
+> -		thaw_super(sb);
+> +		thaw_super(sb, true);
+>  	}
+>  	deactivate_locked_super(sb);
+>  }
+> @@ -1614,6 +1614,8 @@ static void sb_freeze_unlock(struct super_block *sb, int level)
+>  /**
+>   * freeze_super - lock the filesystem and force it into a consistent state
+>   * @sb: the super to lock
+> + * @usercall: whether or not userspace initiated this via an ioctl or if it
+> + * 	was a kernel freeze
+>   *
+>   * Syncs the super to make sure the filesystem is consistent and calls the fs's
+>   * freeze_fs.  Subsequent calls to this without first thawing the fs will return
+> @@ -1644,11 +1646,14 @@ static void sb_freeze_unlock(struct super_block *sb, int level)
+>   *
+>   * sb->s_writers.frozen is protected by sb->s_umount.
+>   */
+> -int freeze_super(struct super_block *sb)
+> +int freeze_super(struct super_block *sb, bool usercall)
+>  {
+>  	int ret;
+>  
+> -	if (sb->s_writers.frozen != SB_UNFROZEN)
+> +	if (!usercall && sb_is_frozen(sb))
+> +		return 0;
 
-They resemble *other filenames* in the same directory, normal or
-otherwise.
+Hrm.  Are user freezes capable of thawing a kernel freeze?  Let's say
+the following happens:
 
-Note that xattrs have the same problem -- a listing of attrs will show
-two names that render identically but map to different things.  There's
-less double-click danger there, at least.
+1. userspace calls FIFREEZE
 
-Another class of unicode problem is that you can use directional
-controls to spoof file extensions.  The sequence:
+2. kernel calls freeze_super(, true) due to suspend
 
-pu<right to left>txt.pl
+3. "Freezing filesystems..." step completes, process gets preempted
 
-renders as "pulp.txt" if you're not careful, but file managers think
-it's actually a perl script file!  Granted, nobody should allow
-execution of random a-x downloaded scripts.
+4. userspace calls FITHAW
 
-There are enough weird twists to this sort of deception that I left #7
-worded as broadly as I needed.
+AFAICT at this point the fs is now thawed, but the freezer thinks it
+finished freezing all filesystems.  That's not good, I don't think.
+
+Also: does hibernation need to wake the fs back up?  I hope it doesn't,
+but I do not know.
+
+> +
+> +	if (!sb_is_unfrozen(sb))
+>  		return -EBUSY;
+>  
+>  	if (!(sb->s_flags & SB_BORN))
+> @@ -1657,6 +1662,7 @@ int freeze_super(struct super_block *sb)
+>  	if (sb_rdonly(sb)) {
+>  		/* Nothing to do really... */
+>  		sb->s_writers.frozen = SB_FREEZE_COMPLETE;
+> +		sb->s_writers.frozen_by_user = usercall;
+>  		return 0;
+>  	}
+>  
+> @@ -1674,6 +1680,7 @@ int freeze_super(struct super_block *sb)
+>  	ret = sync_filesystem(sb);
+>  	if (ret) {
+>  		sb->s_writers.frozen = SB_UNFROZEN;
+> +		sb->s_writers.frozen_by_user = false;
+>  		sb_freeze_unlock(sb, SB_FREEZE_PAGEFAULT);
+>  		wake_up(&sb->s_writers.wait_unfrozen);
+>  		return ret;
+> @@ -1699,6 +1706,7 @@ int freeze_super(struct super_block *sb)
+>  	 * when frozen is set to SB_FREEZE_COMPLETE, and for thaw_super().
+>  	 */
+>  	sb->s_writers.frozen = SB_FREEZE_COMPLETE;
+> +	sb->s_writers.frozen_by_user = usercall;
+>  	lockdep_sb_freeze_release(sb);
+>  	return 0;
+>  }
+> @@ -1707,18 +1715,30 @@ EXPORT_SYMBOL(freeze_super);
+>  /**
+>   * thaw_super -- unlock filesystem
+>   * @sb: the super to thaw
+> + * @usercall: whether or not userspace initiated this thaw or if it was the
+> + * 	kernel which initiated it
+>   *
+>   * Unlocks the filesystem and marks it writeable again after freeze_super().
+>   */
+> -int thaw_super(struct super_block *sb)
+> +int thaw_super(struct super_block *sb, bool usercall)
+>  {
+>  	int error;
+>  
+> -	if (sb->s_writers.frozen != SB_FREEZE_COMPLETE)
+> +	if (!usercall) {
+> +		/*
+> +		 * If userspace initiated the freeze don't let the kernel
+> +		 * thaw it on return from a kernel initiated freeze.
+> +		 */
+> +		if (sb_is_unfrozen(sb) || sb_is_frozen_by_user(sb))
+> +			return 0;
+> +	}
+> +
+> +	if (!sb_is_frozen(sb))
+>  		return -EINVAL;
+
+I guess the downside of implementing my ramblings above is that now
+userspace can freeze and thaw the fs, and the thaw can return EINVAL
+because the program is racing with a suspend.
 
 --D
 
-> 
-> ?
-> 
-> > > > +
-> > > > +Given this definition of the problems to be solved and the
-> > > > actors
-> > > > who would
-> > > > +benefit, the proposed solution is a third fsck tool that acts on
-> > > > a
-> > > > running
-> > > > +filesystem.
-> > > > +
-> > > > +This new third program has three components: an in-kernel
-> > > > facility
-> > > > to check
-> > > > +metadata, an in-kernel facility to repair metadata, and a
-> > > > userspace
-> > > > driver
-> > > > +program to drive fsck activity on a live filesystem.
-> > > > +``xfs_scrub`` is the name of the driver program.
-> > > > +The rest of this document presents the goals and use cases of
-> > > > the
-> > > > new fsck
-> > > > +tool, describes its major design points in connection to those
-> > > > goals, and
-> > > > +discusses the similarities and differences with existing tools.
-> > > > +
-> > > > ++---------------------------------------------------------------
-> > > > ----
-> > > > -------+
-> > > > +|
-> > > > **Note**:                                                        
-> > > >     
-> > > >     |
-> > > > ++---------------------------------------------------------------
-> > > > ----
-> > > > -------+
-> > > > +| Throughout this document, the existing offline fsck tool can
-> > > > also
-> > > > be     |
-> > > > +| referred to by its current name
-> > > > "``xfs_repair``".                        |
-> > > > +| The userspace driver program for the new online fsck tool can
-> > > > be         |
-> > > > +| referred to as
-> > > > "``xfs_scrub``".                                          |
-> > > > +| The kernel portion of online fsck that validates metadata is
-> > > > called      |
-> > > > +| "online scrub", and portion of the kernel that fixes metadata
-> > > > is
-> > > > called  |
-> > > > +| "online
-> > > > repair".                                                        
-> > > > |
-> > > > ++---------------------------------------------------------------
-> > > > ----
-> > > > -------+
-> > 
-> > Errr ^^^^ is Evolution doing line wrapping here?
-> > 
-> > > Hmm, maybe here might be a good spot to move rmap and pptrs?  It's
-> > > not
-> > > otherwise clear to me what "secondary metadata" is.  If that is
-> > > what it
-> > > is meant to refer to, I think the reader will more intuitively make
-> > > the
-> > > connection if those two blurbs appear in the same context.
-> > 
-> > Ooh, you found a significant gap-- nowhere in this chapter do I
-> > actually
-> > define what is primary metadata.  Or secondary metadata.
-> > 
-> > > > +
-> > > > +Secondary metadata indices enable the reconstruction of parts of
-> > > > a
-> > > > damaged
-> > > > +primary metadata object from secondary information.
-> > > 
-> > > I would take out this blurb...
-> > > > +XFS filesystems shard themselves into multiple primary objects
-> > > > to
-> > > > enable better
-> > > > +performance on highly threaded systems and to contain the blast
-> > > > radius when
-> > > > +problems happen.
-> > > 
-> > > 
-> > > > +The naming hierarchy is broken up into objects known as
-> > > > directories
-> > > > and files;
-> > > > +and the physical space is split into pieces known as allocation
-> > > > groups.
-> > > And add here:
-> > > 
-> > > "This enables better performance on highly threaded systems and
-> > > helps
-> > > to contain corruptions when they occur."
-> > > 
-> > > I think that reads cleaner
-> > 
-> > Ok.  Mind if I reword this slightly?  The entire paragraph now reads
-> > like this:
-> > 
-> > "The naming hierarchy is broken up into objects known as directories
-> > and
-> > files and the physical space is split into pieces known as allocation
-> > groups.  Sharding enables better performance on highly parallel
-> > systems
-> > and helps to contain the damage when corruptions occur.  The division
-> > of
-> > the filesystem into principal objects (allocation groups and inodes)
-> > means that there are ample opportunities to perform targeted checks
-> > and
-> > repairs on a subset of the filesystem."
-> I think that sounds cleaner
-> 
-> > 
-> > > > +The division of the filesystem into principal objects
-> > > > (allocation
-> > > > groups and
-> > > > +inodes) means that there are ample opportunities to perform
-> > > > targeted
-> > > > checks and
-> > > > +repairs on a subset of the filesystem.
-> > > > +While this is going on, other parts continue processing IO
-> > > > requests.
-> > > > +Even if a piece of filesystem metadata can only be regenerated
-> > > > by
-> > > > scanning the
-> > > > +entire system, the scan can still be done in the background
-> > > > while
-> > > > other file
-> > > > +operations continue.
-> > > > +
-> > > > +In summary, online fsck takes advantage of resource sharding and
-> > > > redundant
-> > > > +metadata to enable targeted checking and repair operations while
-> > > > the
-> > > > system
-> > > > +is running.
-> > > > +This capability will be coupled to automatic system management
-> > > > so
-> > > > that
-> > > > +autonomous self-healing of XFS maximizes service availability.
-> > > > 
-> > > 
-> > > Nits and paraphrases aside, I think this looks pretty good?
-> > 
-> > Woot.  Thanks for digging in! :)
-> > 
-> Sure, no problem!
-> 
-> > > Allison
-> > > 
+>  
+>  	if (sb_rdonly(sb)) {
+>  		sb->s_writers.frozen = SB_UNFROZEN;
+> +		sb->s_writers.frozen_by_user = false;
+>  		goto out;
+>  	}
+>  
+> @@ -1735,6 +1755,7 @@ int thaw_super(struct super_block *sb)
+>  	}
+>  
+>  	sb->s_writers.frozen = SB_UNFROZEN;
+> +	sb->s_writers.frozen_by_user = false;
+>  	sb_freeze_unlock(sb, SB_FREEZE_FS);
+>  out:
+>  	wake_up(&sb->s_writers.wait_unfrozen);
+> diff --git a/include/linux/fs.h b/include/linux/fs.h
+> index c0cab61f9f9a..3b2586de4364 100644
+> --- a/include/linux/fs.h
+> +++ b/include/linux/fs.h
+> @@ -1129,6 +1129,7 @@ enum {
+>  
+>  struct sb_writers {
+>  	int				frozen;		/* Is sb frozen? */
+> +	bool				frozen_by_user;	/* User freeze? */
+>  	wait_queue_head_t		wait_unfrozen;	/* wait for thaw */
+>  	struct percpu_rw_semaphore	rw_sem[SB_FREEZE_LEVELS];
+>  };
+> @@ -1615,6 +1616,17 @@ static inline bool sb_is_frozen(struct super_block *sb)
+>  	return sb->s_writers.frozen == SB_FREEZE_COMPLETE;
+>  }
+>  
+> +/**
+> + * sb_is_frozen_by_user - was the superblock frozen by userspace?
+> + * @sb: the super to check
+> + *
+> + * Returns true if the super is frozen by userspace, such as an ioctl.
+> + */
+> +static inline bool sb_is_frozen_by_user(struct super_block *sb)
+> +{
+> +	return sb_is_frozen(sb) && sb->s_writers.frozen_by_user;
+> +}
+> +
+>  /**
+>   * sb_is_unfrozen - is superblock unfrozen
+>   * @sb: the super to check
+> @@ -2292,8 +2304,8 @@ extern int unregister_filesystem(struct file_system_type *);
+>  extern int vfs_statfs(const struct path *, struct kstatfs *);
+>  extern int user_statfs(const char __user *, struct kstatfs *);
+>  extern int fd_statfs(int, struct kstatfs *);
+> -extern int freeze_super(struct super_block *super);
+> -extern int thaw_super(struct super_block *super);
+> +extern int freeze_super(struct super_block *super, bool usercall);
+> +extern int thaw_super(struct super_block *super, bool usercall);
+>  extern __printf(2, 3)
+>  int super_setup_bdi_name(struct super_block *sb, char *fmt, ...);
+>  extern int super_setup_bdi(struct super_block *sb);
+> -- 
+> 2.35.1
 > 
