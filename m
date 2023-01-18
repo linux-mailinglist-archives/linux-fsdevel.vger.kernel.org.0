@@ -2,136 +2,92 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id DEAB2671800
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 10:42:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 43FAC67185A
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 10:59:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229895AbjARJmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Jan 2023 04:42:23 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60868 "EHLO
+        id S229775AbjARJ7h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Jan 2023 04:59:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39184 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230168AbjARJj1 (ORCPT
+        with ESMTP id S230300AbjARJyh (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Jan 2023 04:39:27 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29E2A16334;
-        Wed, 18 Jan 2023 00:56:39 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id 4DF8B3E98B;
-        Wed, 18 Jan 2023 08:56:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1674032198; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Wed, 18 Jan 2023 04:54:37 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B17DA4858C
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jan 2023 01:05:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674032752;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=tgBJPKX6OrvfX7vt7VeuwRYdAa1JYzlRkPsncNLXpXI=;
-        b=BmBHBQR+zuTDcSZg7eP3ujTQmmYoHkhFL7UHQnOfaLn4X+8t6GJCTB2lHWId0KdMifpI2B
-        7vV8O4S7uzbYuMML8bte/sATQ7YPyN9lA0xGyolZk4BxPQZPanpexstsnYSPsf5RhFCUhV
-        YWrEtQba5mUUXVSSL86STuKIwx1R3V0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1674032198;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=tgBJPKX6OrvfX7vt7VeuwRYdAa1JYzlRkPsncNLXpXI=;
-        b=atRN1VcwzH95sn4fF0V2e0yJNbP4744YGS7ZBjufI9NJH7+jLIRm1F3G4QUTx17qhiGXr4
-        VDKCovOTvCse/FBg==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        bh=Z4moWFALmL+jvvZ7hSHk+TWPnTGBQGuY1t1l6WXVsh0=;
+        b=iSz+CTxUlaGUKiucuvnI64B4xolRox6P9UnYhSNNgOH9A1cdjCgn8XTcDPT7ZRyDoGx5W9
+        j6IAWSs3jM4cX3hHObz/7QU0AUwxS8j/tMOWsVzyZrj3HqZFcBB+SfnDBW00cWtP/m87PX
+        iNdZzjUsW1io6xZbk63bBbt9VSkdg0Y=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-567-PwoHsNd1MzGsAVjYpfOIfQ-1; Wed, 18 Jan 2023 04:05:46 -0500
+X-MC-Unique: PwoHsNd1MzGsAVjYpfOIfQ-1
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.rdu2.redhat.com [10.11.54.7])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3E2DE138FE;
-        Wed, 18 Jan 2023 08:56:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id KIklD0a0x2NBJwAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 18 Jan 2023 08:56:38 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 9C505A06B2; Wed, 18 Jan 2023 09:56:37 +0100 (CET)
-Date:   Wed, 18 Jan 2023 09:56:37 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dave Chinner <david@fromorbit.com>
-Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
-        Ted Tso <tytso@mit.edu>, linux-xfs@vger.kernel.org
-Subject: Re: Locking issue with directory renames
-Message-ID: <20230118085637.56u4tbocimzhrjly@quack3>
-References: <20230117123735.un7wbamlbdihninm@quack3>
- <20230117214457.GG360264@dread.disaster.area>
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 5D5CC85C06A;
+        Wed, 18 Jan 2023 09:05:45 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A3FA8140EBF5;
+        Wed, 18 Jan 2023 09:05:43 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <CAHk-=whjFwzEq0u04=n=t7-kNJdX0HkAOjAMjmLXDDycJ+j9yQ@mail.gmail.com>
+References: <CAHk-=whjFwzEq0u04=n=t7-kNJdX0HkAOjAMjmLXDDycJ+j9yQ@mail.gmail.com> <CAGudoHHx0Nqg6DE70zAVA75eV-HXfWyhVMWZ-aSeOofkA_=WdA@mail.gmail.com> <CAHk-=wjthxgrLEvgZBUwd35e_mk=dCWKMUEURC6YsX5nWom8kQ@mail.gmail.com> <CPQQLU1ISBIJ.2SHU1BOMNO7TY@bobo> <CAHk-=wiRm+Z613bHt2d=N1yWJAiDiQVXkh0dN8z02yA_JS-rew@mail.gmail.com> <1966767.1673878095@warthog.procyon.org.uk>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     dhowells@redhat.com, Nicholas Piggin <npiggin@gmail.com>,
+        Mateusz Guzik <mjguzik@gmail.com>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>,
+        Michael Ellerman <mpe@ellerman.id.au>, tony.luck@intel.com,
+        viro@zeniv.linux.org.uk, linux-fsdevel@vger.kernel.org,
+        Jan Glauber <jan.glauber@gmail.com>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Subject: Re: Memory transaction instructions
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230117214457.GG360264@dread.disaster.area>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2496130.1674032743.1@warthog.procyon.org.uk>
+Date:   Wed, 18 Jan 2023 09:05:43 +0000
+Message-ID: <2496131.1674032743@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.7
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hello,
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-On Wed 18-01-23 08:44:57, Dave Chinner wrote:
-> On Tue, Jan 17, 2023 at 01:37:35PM +0100, Jan Kara wrote:
-> > I've some across an interesting issue that was spotted by syzbot [1]. The
-> > report is against UDF but AFAICS the problem exists for ext4 as well and
-> > possibly other filesystems. The problem is the following: When we are
-> > renaming directory 'dir' say rename("foo/dir", "bar/") we lock 'foo' and
-> > 'bar' but 'dir' is unlocked because the locking done by vfs_rename() is
-> > 
-> >         if (!is_dir || (flags & RENAME_EXCHANGE))
-> >                 lock_two_nondirectories(source, target);
-> >         else if (target)
-> >                 inode_lock(target);
-> > 
-> > However some filesystems (e.g. UDF but ext4 as well, I suspect XFS may be
-> > hurt by this as well because it converts among multiple dir formats) need
-> > to update parent pointer in 'dir' and nothing protects this update against
-> > a race with someone else modifying 'dir'. Now this is mostly harmless
-> > because the parent pointer (".." directory entry) is at the beginning of
-> > the directory and stable however if for example the directory is converted
-> > from packed "in-inode" format to "expanded" format as a result of
-> > concurrent operation on 'dir', the filesystem gets corrupted (or crashes as
-> > in case of UDF).
-> 
-> No, xfs_rename() does not have this problem - we pass four inodes to
-> the function - the source directory, source inode, destination
-> directory and destination inode.
-> 
-> In the above case, "dir/" is passed to XFs as the source inode - the
-> src_dir is "foo/", the target dir is "bar/" and the target inode is
-> null. src_dir != target_dir, so we set the "new_parent" flag. the
-> srouce inode is a directory, so we set the src_is_directory flag,
+> And for the kernel, where we don't have bad locking, and where we
+> actually use fine-grained locks that are _near_ the data that we are
+> locking (the lockref of the dcache is obviously one example of that,
+> but the skbuff queue you mention is almost certainly exactly the same
+> situation): the lock is right by the data that the lock protects, and
+> the "shared lock cacheline" model simply does not work. You'll bounce
+> the data, and most likely you'll also touch the same lock cacheline
 > too.
-> 
-> We lock all three inodes that are passed. We do various things, then
-> run:
-> 
->         if (new_parent && src_is_directory) {
->                 /*
->                  * Rewrite the ".." entry to point to the new
->                  * directory.
->                  */
->                 error = xfs_dir_replace(tp, src_ip, &xfs_name_dotdot,
->                                         target_dp->i_ino, spaceres);
->                 ASSERT(error != -EEXIST);
->                 if (error)
->                         goto out_trans_cancel;
->         }
-> 
-> which replaces the ".." entry in source inode atomically whilst it
-> is locked.  Any directory format changes that occur during the
-> rename are done while the ILOCK is held, so they appear atomic to
-> outside observers that are trying to parse the directory structure
-> (e.g. readdir).
 
-Thanks for explanation! I've missed the ILOCK locking in xfs_rename() when
-I was glancing over the function...
+Yeah.  The reason I was actually wondering about them was if it would be
+possible to avoid the requirement to disable interrupts/softirqs to, say,
+modify the skbuff queue.  On some arches actually disabling irqs is quite a
+heavy operation (I think this is/was true on ppc64, for example; it certainly
+was on frv) and it was necessary to "emulate" the disablement.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+David
+
