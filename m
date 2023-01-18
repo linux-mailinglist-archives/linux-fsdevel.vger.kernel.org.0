@@ -2,129 +2,156 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 44F55671875
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 11:05:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D417767187E
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 11:06:43 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230046AbjARKEj (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Jan 2023 05:04:39 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42158 "EHLO
+        id S230075AbjARKGf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Jan 2023 05:06:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:43060 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230073AbjARKCr (ORCPT
+        with ESMTP id S230216AbjARKFW (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Jan 2023 05:02:47 -0500
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.220.29])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CC955C0EC;
-        Wed, 18 Jan 2023 01:10:38 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out2.suse.de (Postfix) with ESMTPS id 16D4B21008;
-        Wed, 18 Jan 2023 09:10:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1674033037; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1sYf0I/w6JuWYkzGVkseG3wppzKMRwYJVj/+zNP8Ra4=;
-        b=gu5fonY/PXsDJC6ZqlQk+8ME1jV58LQopC0NBgaVmvt2A3fsZHn/DkA5/Ezqb7AxsH0oV6
-        vzdoTMOTOzmsidJfZ187rCTgrfizJb5nfe2475JpitZMFUtvYggPiw4Kj8ufSZkkG0GWga
-        eo7oKgZFiKvc6PTCWFJP/PcmXU8s6cE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1674033037;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=1sYf0I/w6JuWYkzGVkseG3wppzKMRwYJVj/+zNP8Ra4=;
-        b=t4geP6QmsGVatK5X3Ay7mgvoInl7/ZqmfZ//X9Upvn+ydMagiJDDSDoqCBIgl/q9KbRoti
-        uRuTDWjQ1E2ESXBA==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 04FE4139D2;
-        Wed, 18 Jan 2023 09:10:37 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id 3AQ1AY23x2OcLgAAMHmgww
-        (envelope-from <jack@suse.cz>); Wed, 18 Jan 2023 09:10:37 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-        id 6411FA06B2; Wed, 18 Jan 2023 10:10:36 +0100 (CET)
-Date:   Wed, 18 Jan 2023 10:10:36 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Jan Kara <jack@suse.cz>, linux-fsdevel@vger.kernel.org,
-        linux-ext4@vger.kernel.org, Ted Tso <tytso@mit.edu>,
-        linux-xfs@vger.kernel.org
-Subject: Re: Locking issue with directory renames
-Message-ID: <20230118091036.qqscls22q6htxscf@quack3>
-References: <20230117123735.un7wbamlbdihninm@quack3>
- <Y8bTk1CsH9AaAnLt@ZenIV>
+        Wed, 18 Jan 2023 05:05:22 -0500
+Received: from esa6.hgst.iphmx.com (esa6.hgst.iphmx.com [216.71.154.45])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id EE29F6B99B
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jan 2023 01:11:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
+  t=1674033080; x=1705569080;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=z6BysG4KL98DqsIpUTGvi6mt5tSfxRSvpbiiNzn9uKM=;
+  b=SNj70+Yk6v5KDJ81NNS3VA+0nsdLwQV/J/rHY6Bi0mrQhBNaafreVLO4
+   mU9HSqJeEhfScnPKChaJDG1MR10poSt40QPHrwi2C6JO5ESKbYGlnsEgw
+   nAGtXzvtjA/oNNUubu8fTiaAI5x7H/7Ex/RlkQa0gq1mF0i8bGVIoY/O1
+   My0R5arVuYZHPzLsZvHXKb0/q0xgu+9f+lhr/Md0ZSaK5ghDEpaeI2DSf
+   hKp3rUfLPryAx7G0Hff5Oai5+zXPYkYO7CIguY4JedeMpj9OpZn1PP8Fw
+   LxfJ+o/t0qwpKuYQ9J2wX6D/eBcwNWvgHrGJ5tUelFvzupfKFc/Irwszf
+   Q==;
+X-IronPort-AV: E=Sophos;i="5.97,224,1669046400"; 
+   d="scan'208";a="221199188"
+Received: from h199-255-45-14.hgst.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 18 Jan 2023 17:11:07 +0800
+IronPort-SDR: arxgt4jdo+I55xnYSLuHAqYvlpD1G0Wlb3GcJpDkPKnxQSeXhgCN5V2uSdF8SmW0FoxQbd3RSa
+ 84OX6yL0ZfftaNXFT0zUD1zpMeHP+T3TB7hFZseVRiHEplrH59Osm0+dOG6vWBbjMG7Vo4nNzH
+ i4g5vsl4cVrxUphhliBh5dYJ6FsTUIm8sCME6pJv2Es8NJRuoTWokFaa9qBGWPH+yqjKK7N0pQ
+ pgZfEio66X3wSO8p5G3rFtrwTvGlaJxz8bBA5WFqGOTKTc/0CsvR/tYQ0Jpu3pqiF1lLrhlZF9
+ C2g=
+Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
+  by uls-op-cesaep01.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Jan 2023 00:28:48 -0800
+IronPort-SDR: lfSvhDJhXnrRR9nkzWLA8RoE4QCpfNugzAAujYRqgs43+O4Od5PgVwQoqiQ0CyqWr/SCmIkxWq
+ vWWrP8dHX1kYkUCn4HB4u8nwJNMqCley8V2vol+oo4TK4RTAcdHsBfY5ru5UTC+E9hr3mv+bO6
+ 40Fqt2BG3UWjxNlGbxTpEKilSgjfhHa5acjnxi5ER4It9EwMdEM/rhNX+sC0ypz6BzYKopxW3y
+ N/VmVET2M0ukRttUgpqoCw9pUSAo2PaHzH9EGzKY/3rB7vCnvCo1WTnUIRsDQQAn5Vhf4imNAe
+ RG8=
+WDCIronportException: Internal
+Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
+  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 18 Jan 2023 01:11:09 -0800
+Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Nxg3b5Qxqz1RwqL
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jan 2023 01:11:07 -0800 (PST)
+Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
+        reason="pass (just generated, assumed good)"
+        header.d=opensource.wdc.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
+        opensource.wdc.com; h=content-transfer-encoding:content-type
+        :in-reply-to:organization:from:references:to:content-language
+        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
+        1674033067; x=1676625068; bh=z6BysG4KL98DqsIpUTGvi6mt5tSfxRSvpbi
+        iNzn9uKM=; b=Ga3takGvh+J+i7baxfPg8EsKVzqG8+qfIZBhYx0Y1fKrLOUEE1F
+        CeqynFOIi/QYls9toCQc2be+9JUXbeUUqMD3fTt9E2ZQzVVD/rocU+UaICXzKHLR
+        JpXHM9BSsdrsIhvJH4ELmOUrWeGU5hx0yMLqyxyFz2h2rykU/1pHIbUm9VLhA+ia
+        XwQQ0zsq1vmGKV0b7APXF2R4L6vgHFCQfIAFt10/oNWp3yRXvnmpC+vXREgW7jWQ
+        quw8DByP6O+2Hno02DR23ivqpBSrDapBZ5vf/zWXT8/ACrUGmxZ6Cb5bWA9cpQBz
+        bOwip/HCJ31zLsqAntEsKMpB5vDo8Bendjg==
+X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
+Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
+        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id muTWhwzeEC3v for <linux-fsdevel@vger.kernel.org>;
+        Wed, 18 Jan 2023 01:11:07 -0800 (PST)
+Received: from [10.225.163.40] (unknown [10.225.163.40])
+        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Nxg3Y0J3Zz1RvLy;
+        Wed, 18 Jan 2023 01:11:04 -0800 (PST)
+Message-ID: <3855fa1d-ec30-2c63-c5e2-b388e8a02b3e@opensource.wdc.com>
+Date:   Wed, 18 Jan 2023 18:11:03 +0900
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y8bTk1CsH9AaAnLt@ZenIV>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.0
+Subject: Re: [RFC v6 08/10] iomap/xfs: Eliminate the iomap_valid handler
+Content-Language: en-US
+To:     Christoph Hellwig <hch@infradead.org>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Cc:     =?UTF-8?Q?Andreas_Gr=c3=bcnbacher?= <andreas.gruenbacher@gmail.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Andreas Gruenbacher <agruenba@redhat.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com
+References: <20230108194034.1444764-1-agruenba@redhat.com>
+ <20230108194034.1444764-9-agruenba@redhat.com>
+ <20230108215911.GP1971568@dread.disaster.area>
+ <CAHc6FU4z1nC8zdM8NvUyMqU29_J7_oNu1pvBHuOvR+M6gq7F0Q@mail.gmail.com>
+ <20230109225453.GQ1971568@dread.disaster.area>
+ <CAHpGcM+urV5LYpTZQWTRoK6VWaLx0sxk3mDe_kd3VznMY9woVw@mail.gmail.com>
+ <Y8Q4FmhYehpQPZ3Z@magnolia> <Y8eeAmm1Vutq3Fc9@infradead.org>
+From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
+Organization: Western Digital Research
+In-Reply-To: <Y8eeAmm1Vutq3Fc9@infradead.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue 17-01-23 16:57:55, Al Viro wrote:
-> On Tue, Jan 17, 2023 at 01:37:35PM +0100, Jan Kara wrote:
-> > Hello!
-> > 
-> > I've some across an interesting issue that was spotted by syzbot [1]. The
-> > report is against UDF but AFAICS the problem exists for ext4 as well and
-> > possibly other filesystems. The problem is the following: When we are
-> > renaming directory 'dir' say rename("foo/dir", "bar/") we lock 'foo' and
-> > 'bar' but 'dir' is unlocked because the locking done by vfs_rename() is
-> > 
-> >         if (!is_dir || (flags & RENAME_EXCHANGE))
-> >                 lock_two_nondirectories(source, target);
-> >         else if (target)
-> >                 inode_lock(target);
-> > 
-> > However some filesystems (e.g. UDF but ext4 as well, I suspect XFS may be
-> > hurt by this as well because it converts among multiple dir formats) need
-> > to update parent pointer in 'dir' and nothing protects this update against
-> > a race with someone else modifying 'dir'. Now this is mostly harmless
-> > because the parent pointer (".." directory entry) is at the beginning of
-> > the directory and stable however if for example the directory is converted
-> > from packed "in-inode" format to "expanded" format as a result of
-> > concurrent operation on 'dir', the filesystem gets corrupted (or crashes as
-> > in case of UDF).
-> > 
-> > So we'd need to lock 'source' if it is a directory. Ideally this would
-> > happen in VFS as otherwise I bet a lot of filesystems will get this wrong
-> > so could vfs_rename() lock 'source' if it is a dir as well? Essentially
-> > this would amount to calling lock_two_nondirectories(source, target)
-> > unconditionally but that would become a serious misnomer ;). Al, any
-> > thought?
+On 1/18/23 16:21, Christoph Hellwig wrote:
+> On Sun, Jan 15, 2023 at 09:29:58AM -0800, Darrick J. Wong wrote:
+>> I don't have any objections to pulling everything except patches 8 and
+>> 10 for testing this week. 
 > 
-> FWIW, I suspect that majority of filesystems that do implement rename
-> do not have that problem.  Moreover, on cross-directory rename we already
-> have
-> 	* tree topology stabilized
-> 	* source guaranteed not to be an ancestor of target or either of
-> the parents
-> so the method instance should be free to lock the source if it needs to
-> do so.
+> That would be great.  I now have a series to return the ERR_PTR
+> from __filemap_get_folio which will cause a minor conflict, but
+> I think that's easy enough for Linux to handle.
+> 
+>>
+>> 1. Does zonefs need to revalidate mappings?  The mappings are 1:1 so I
+>> don't think it does, but OTOH zone pointer management might complicate
+>> that.
+> 
+> Adding Damien.
 
-Yes, we can lock the source inode in ->rename() if we need it. The snag is
-that if 'target' exists, it is already locked so when locking 'source' we
-are possibly not following the VFS lock ordering of i_rwsem by inode
-address (I don't think it can cause any real dealock but still it looks
-suspicious). Also we'll have to lock with I_MUTEX_NONDIR2 lockdep class to
-make lockdep happy but that's just a minor annoyance. Finally, we'll have
-to check for RENAME_EXCHANGE because in that case, both source and target
-will be already locked. Thus if we do the additional locking in the
-filesystem, we will leak quite some details about rename locking into the
-filesystem which seems undesirable to me.
+zonefs has a static mapping of file blocks that never changes and is fully
+populated up to a file max size from mount. So zonefs is not using the
+iomap_valid page operation. In fact, zonefs is not even using struct
+iomap_page_ops.
 
-								Honza
+> 
+>> 2. How about porting the writeback iomap validation to use this
+>> mechanism?  (I suspect Dave might already be working on this...)
+> 
+> What is "this mechanism"?  Do you mean the here removed ->iomap_valid
+> ?   writeback calls into ->map_blocks for every block while under the
+> folio lock, so the validation can (and for XFS currently is) done
+> in that.  Moving it out into a separate method with extra indirect
+> functiona call overhead and interactions between the methods seems
+> like a retrograde step to me.
+> 
+>> 2. Do we need to revalidate mappings for directio writes?  I think the
+>> answer is no (for xfs) because the ->iomap_begin call will allocate
+>> whatever blocks are needed and truncate/punch/reflink block on the
+>> iolock while the directio writes are pending, so you'll never end up
+>> with a stale mapping.
+> 
+> Yes.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Damien Le Moal
+Western Digital Research
+
