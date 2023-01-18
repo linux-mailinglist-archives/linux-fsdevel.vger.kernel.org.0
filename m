@@ -2,98 +2,77 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 39CDE6724A2
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 18:17:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6B1536724F8
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 18:31:35 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230489AbjARRRF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Jan 2023 12:17:05 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46904 "EHLO
+        id S231166AbjARRbc (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Jan 2023 12:31:32 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58362 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231175AbjARRQ4 (ORCPT
+        with ESMTP id S231169AbjARRbF (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Jan 2023 12:16:56 -0500
-Received: from desiato.infradead.org (desiato.infradead.org [IPv6:2001:8b0:10b:1:d65d:64ff:fe57:4e05])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B6324E529;
-        Wed, 18 Jan 2023 09:16:48 -0800 (PST)
+        Wed, 18 Jan 2023 12:31:05 -0500
+Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5CCA54B189
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jan 2023 09:30:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=UiaXdyQfqOt+6WwaLnuzqkN2uc7Go0jhzWYcMdFqIEU=; b=HqOF5yLycZqDpix07Wa88U3B5z
-        PV+/OuawmGvHXon+V/NTHJO4/hAbMGN4g/ngBlG1PxYXFmW3biP2WJviIM5ke7Ipp6ssbdY7YRUki
-        sTvKtZLK5hHgUk9IahRiPHErAzQhRSnAErMtzdP17+tHybH3AeIdYLBo/DcnAzBSO6pkkfID7e9Ke
-        Is6/xXp8olzFV5cJU7Buzu91LCDft1CQx1FD6SXygcfJqiHQj05Ovli4iFSsDM3j1eqyFix6iFNhr
-        SJt3QCrObUHCcDwUwwJmBO6hLfVVE9OVRCjEk2OlSCXHBb5OANTpBps1L8ypjUEVZZzbCbDnOV7T4
-        IW0JVL2Q==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-        by desiato.infradead.org with esmtpsa (Exim 4.96 #2 (Red Hat Linux))
-        id 1pIC2Y-0003H1-1h;
-        Wed, 18 Jan 2023 17:15:59 +0000
-Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature RSA-PSS (4096 bits))
-        (Client did not present a certificate)
-        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id 22EE8300094;
-        Wed, 18 Jan 2023 18:16:23 +0100 (CET)
-Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
-        id D7DC920B2B4E5; Wed, 18 Jan 2023 18:16:23 +0100 (CET)
-Date:   Wed, 18 Jan 2023 18:16:23 +0100
-From:   Peter Zijlstra <peterz@infradead.org>
-To:     Gregory Price <gourry.memverge@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
-        oleg@redhat.com, ebiederm@xmission.com, akpm@linux-foundation.org,
-        adobriyan@gmail.com, corbet@lwn.net, shuah@kernel.org,
-        Gregory Price <gregory.price@memverge.com>
-Subject: Re: [PATCH 1/3] ptrace,syscall_user_dispatch: Implement Syscall User
- Dispatch Suspension
-Message-ID: <Y8gpZ+T/re7mEDjB@hirez.programming.kicks-ass.net>
-References: <20230109153348.5625-1-gregory.price@memverge.com>
- <20230109153348.5625-2-gregory.price@memverge.com>
+        d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+        Content-ID:Content-Description:In-Reply-To:References;
+        bh=IB6WV4RAFpXXvsO5sBFMk+O+geVt8PsPN31oUBOFl9k=; b=cy9FW+bOa13ByFBuCfAvfL/v8q
+        NS1mxTNJf/T38OgWLc5a8VnouHuTDQJBbc1BjHuGyBh2TFkGfdKHzIBE3MYwEprvh5abAENudfpk+
+        E8K51u3tZUT4jO3uZ91Mf8R/wDuKuQ9C7fQJk/JZX6ai8CL5vdB2/Dovn5I1GRxjLrJSeTI40pmUW
+        uQRxpGUFJpXlOg5RiOfIfE63/QT1tFRff7ydAT4rtsxb7OiOFB3p45G63u2OxKrVHhGF7qo3VinQi
+        iBQR5lg6roGhzoccKYSrPZ+8N8Dn2JdXK4CLioeITx5MA1iOZE31iVLb5P4fUf7QfXtDzMcda0SN2
+        smzE/r5A==;
+Received: from [2001:4bb8:19a:2039:cce7:a1cd:f61c:a80d] (helo=localhost)
+        by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pICGc-00224b-6w; Wed, 18 Jan 2023 17:30:30 +0000
+From:   Christoph Hellwig <hch@lst.de>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Mark Fasheh <mark@fasheh.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <joseph.qi@linux.alibaba.com>,
+        Evgeniy Dushistov <dushistov@mail.ru>,
+        "Matthew Wilcox (Oracle)" <willy@infradead.org>
+Cc:     ocfs2-devel@oss.oracle.com, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org
+Subject: remove most callers of write_one_page v3
+Date:   Wed, 18 Jan 2023 18:30:20 +0100
+Message-Id: <20230118173027.294869-1-hch@lst.de>
+X-Mailer: git-send-email 2.39.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230109153348.5625-2-gregory.price@memverge.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-Spam-Status: No, score=-4.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 09, 2023 at 10:33:46AM -0500, Gregory Price wrote:
-> @@ -36,6 +37,10 @@ bool syscall_user_dispatch(struct pt_regs *regs)
->  	struct syscall_user_dispatch *sd = &current->syscall_dispatch;
->  	char state;
->  
-> +	if (IS_ENABLED(CONFIG_CHECKPOINT_RESTORE) &&
-> +			unlikely(current->ptrace & PT_SUSPEND_SYSCALL_USER_DISPATCH))
-> +		return false;
-> +
->  	if (likely(instruction_pointer(regs) - sd->offset < sd->len))
->  		return false;
->  
+Hi all,
 
-So by making syscall_user_dispatch() return false, we'll make
-syscall_trace_enter() continue to handle things, and supposedly you want
-to land in ptrace_report_syscall_entry(), right?
+this series removes most users of the write_one_page API.  These helpers
+internally call ->writepage which we are gradually removing from the
+kernel.
 
-> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
-> index 54482193e1ed..a6ad815bd4be 100644
-> --- a/kernel/ptrace.c
-> +++ b/kernel/ptrace.c
-> @@ -370,6 +370,11 @@ static int check_ptrace_options(unsigned long data)
->  	if (data & ~(unsigned long)PTRACE_O_MASK)
->  		return -EINVAL;
->  
-> +	if (unlikely(data & PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH)) {
-> +		if (!IS_ENABLED(CONFIG_CHECKPOINT_RESTART))
-> +			return -EINVAL;
-> +	}
+Changes since v2:
+ - more minix error handling fixes
 
-Should setting this then not also depend on having
-SYSCALL_WORK_SYSCALL_TRACE set? Because without that, you get 'funny'
-things.
+Changes since v1:
+ - drop the btrfs changes (queue up in the btrfs tree)
+ - drop the finaly move to jfs (can't be done without the btrfs patches)
+ - fix the existing minix code to properly propagate errors
+
+Diffstat:
+ minix/dir.c          |   62 +++++++++++++++++++++++++++------------------------
+ minix/minix.h        |    3 +-
+ minix/namei.c        |   27 ++++++++++++----------
+ ocfs2/refcounttree.c |    9 ++++---
+ sysv/dir.c           |   30 +++++++++++++++---------
+ ufs/dir.c            |   29 +++++++++++++++--------
+ 6 files changed, 94 insertions(+), 66 deletions(-)
