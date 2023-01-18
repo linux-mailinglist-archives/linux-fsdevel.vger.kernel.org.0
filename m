@@ -2,296 +2,136 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id E1993671735
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 10:15:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id DEAB2671800
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 10:42:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230147AbjARJOs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Jan 2023 04:14:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41442 "EHLO
+        id S229895AbjARJmX (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Jan 2023 04:42:23 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60868 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229925AbjARJO0 (ORCPT
+        with ESMTP id S230168AbjARJj1 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Jan 2023 04:14:26 -0500
-Received: from mga12.intel.com (mga12.intel.com [192.55.52.136])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2562070C71;
-        Wed, 18 Jan 2023 00:31:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674030683; x=1705566683;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   mime-version:in-reply-to;
-  bh=IaruPOH1D3wCRj1gFgYkLc0hyR2BZ5VY51Nzyl07GbA=;
-  b=bicnT9dSKfznsK+9kivTrellVqdU4ZNR8kKwQH2GsZuyppCkTLSGwbCf
-   NPVTVswhi7W9+tPgessgMUAOOGgMn3RFl24h0BSXDKWodXD/C7kwQVIz6
-   0+pVx+fB398WN92i7lQe4aRfsHkhmw4L36Zh4dyHezz+dChauyDJEURYJ
-   CF9SzyEyyW3gyRGZhUMaiZzKWUSQxEXaxfdT+G0gs2jrQGqRiU7fCkS9+
-   7VsM2LTaYIvfsvJftYHORgtg/zl8ZS4pWCAMCIzMMzIS6q09ZNmKQzcdJ
-   NB4+1CzLqTnNYPBFWaWUIZrUFuvAOOEdycBUpLaYpg7p5lvb7Ip1jEvRV
-   g==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10593"; a="304612190"
-X-IronPort-AV: E=Sophos;i="5.97,224,1669104000"; 
-   d="scan'208";a="304612190"
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2023 00:31:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10593"; a="661627035"
-X-IronPort-AV: E=Sophos;i="5.97,224,1669104000"; 
-   d="scan'208";a="661627035"
-Received: from chaop.bj.intel.com (HELO localhost) ([10.240.192.105])
-  by fmsmga007.fm.intel.com with ESMTP; 18 Jan 2023 00:30:56 -0800
-Date:   Wed, 18 Jan 2023 16:23:09 +0800
-From:   Chao Peng <chao.p.peng@linux.intel.com>
-To:     Sean Christopherson <seanjc@google.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        linux-doc@vger.kernel.org, qemu-devel@nongnu.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH v10 9/9] KVM: Enable and expose KVM_MEM_PRIVATE
-Message-ID: <20230118082309.GB303785@chaop.bj.intel.com>
-Reply-To: Chao Peng <chao.p.peng@linux.intel.com>
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-10-chao.p.peng@linux.intel.com>
- <Y8HwvTik/2avrCOU@google.com>
- <20230117131251.GC273037@chaop.bj.intel.com>
- <Y8b4nsMJm+4Hr/e0@google.com>
+        Wed, 18 Jan 2023 04:39:27 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.220.28])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 29E2A16334;
+        Wed, 18 Jan 2023 00:56:39 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id 4DF8B3E98B;
+        Wed, 18 Jan 2023 08:56:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1674032198; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tgBJPKX6OrvfX7vt7VeuwRYdAa1JYzlRkPsncNLXpXI=;
+        b=BmBHBQR+zuTDcSZg7eP3ujTQmmYoHkhFL7UHQnOfaLn4X+8t6GJCTB2lHWId0KdMifpI2B
+        7vV8O4S7uzbYuMML8bte/sATQ7YPyN9lA0xGyolZk4BxPQZPanpexstsnYSPsf5RhFCUhV
+        YWrEtQba5mUUXVSSL86STuKIwx1R3V0=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1674032198;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=tgBJPKX6OrvfX7vt7VeuwRYdAa1JYzlRkPsncNLXpXI=;
+        b=atRN1VcwzH95sn4fF0V2e0yJNbP4744YGS7ZBjufI9NJH7+jLIRm1F3G4QUTx17qhiGXr4
+        VDKCovOTvCse/FBg==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id 3E2DE138FE;
+        Wed, 18 Jan 2023 08:56:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id KIklD0a0x2NBJwAAMHmgww
+        (envelope-from <jack@suse.cz>); Wed, 18 Jan 2023 08:56:38 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+        id 9C505A06B2; Wed, 18 Jan 2023 09:56:37 +0100 (CET)
+Date:   Wed, 18 Jan 2023 09:56:37 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Dave Chinner <david@fromorbit.com>
+Cc:     Jan Kara <jack@suse.cz>, Al Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
+        Ted Tso <tytso@mit.edu>, linux-xfs@vger.kernel.org
+Subject: Re: Locking issue with directory renames
+Message-ID: <20230118085637.56u4tbocimzhrjly@quack3>
+References: <20230117123735.un7wbamlbdihninm@quack3>
+ <20230117214457.GG360264@dread.disaster.area>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y8b4nsMJm+4Hr/e0@google.com>
-X-Spam-Status: No, score=-4.3 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_PASS,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <20230117214457.GG360264@dread.disaster.area>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 17, 2023 at 07:35:58PM +0000, Sean Christopherson wrote:
-> On Tue, Jan 17, 2023, Chao Peng wrote:
-> > On Sat, Jan 14, 2023 at 12:01:01AM +0000, Sean Christopherson wrote:
-> > > On Fri, Dec 02, 2022, Chao Peng wrote:
-> > > > @@ -10357,6 +10364,12 @@ static int vcpu_enter_guest(struct kvm_vcpu *vcpu)
-> > > >  
-> > > >  		if (kvm_check_request(KVM_REQ_UPDATE_CPU_DIRTY_LOGGING, vcpu))
-> > > >  			static_call(kvm_x86_update_cpu_dirty_logging)(vcpu);
-> > > > +
-> > > > +		if (kvm_check_request(KVM_REQ_MEMORY_MCE, vcpu)) {
-> > > > +			vcpu->run->exit_reason = KVM_EXIT_SHUTDOWN;
-> > > 
-> > > Synthesizing triple fault shutdown is not the right approach.  Even with TDX's
-> > > MCE "architecture" (heavy sarcasm), it's possible that host userspace and the
-> > > guest have a paravirt interface for handling memory errors without killing the
-> > > host.
+Hello,
+
+On Wed 18-01-23 08:44:57, Dave Chinner wrote:
+> On Tue, Jan 17, 2023 at 01:37:35PM +0100, Jan Kara wrote:
+> > I've some across an interesting issue that was spotted by syzbot [1]. The
+> > report is against UDF but AFAICS the problem exists for ext4 as well and
+> > possibly other filesystems. The problem is the following: When we are
+> > renaming directory 'dir' say rename("foo/dir", "bar/") we lock 'foo' and
+> > 'bar' but 'dir' is unlocked because the locking done by vfs_rename() is
 > > 
-> > Agree shutdown is not the correct choice. I see you made below change:
+> >         if (!is_dir || (flags & RENAME_EXCHANGE))
+> >                 lock_two_nondirectories(source, target);
+> >         else if (target)
+> >                 inode_lock(target);
 > > 
-> > send_sig_mceerr(BUS_MCEERR_AR, (void __user *)hva, PAGE_SHIFT, current)
-> > 
-> > The MCE may happen in any thread than KVM thread, sending siginal to
-> > 'current' thread may not be the expected behavior.
+> > However some filesystems (e.g. UDF but ext4 as well, I suspect XFS may be
+> > hurt by this as well because it converts among multiple dir formats) need
+> > to update parent pointer in 'dir' and nothing protects this update against
+> > a race with someone else modifying 'dir'. Now this is mostly harmless
+> > because the parent pointer (".." directory entry) is at the beginning of
+> > the directory and stable however if for example the directory is converted
+> > from packed "in-inode" format to "expanded" format as a result of
+> > concurrent operation on 'dir', the filesystem gets corrupted (or crashes as
+> > in case of UDF).
 > 
-> This is already true today, e.g. a #MC in memory that is mapped into the guest can
-> be triggered by a host access.  Hrm, but in this case we actually have a KVM
-> instance, and we know that the #MC is relevant to the KVM instance, so I agree
-> that signaling 'current' is kludgy.
+> No, xfs_rename() does not have this problem - we pass four inodes to
+> the function - the source directory, source inode, destination
+> directory and destination inode.
 > 
-> >  Also how userspace can tell is the MCE on the shared page or private page?
-> >  Do we care?
+> In the above case, "dir/" is passed to XFs as the source inode - the
+> src_dir is "foo/", the target dir is "bar/" and the target inode is
+> null. src_dir != target_dir, so we set the "new_parent" flag. the
+> srouce inode is a directory, so we set the src_is_directory flag,
+> too.
 > 
-> We care.  I was originally thinking we could require userspace to keep track of
-> things, but that's quite prescriptive and flawed, e.g. could race with conversions.
+> We lock all three inodes that are passed. We do various things, then
+> run:
 > 
-> One option would be to KVM_EXIT_MEMORY_FAULT, and then wire up a generic (not x86
-> specific) KVM request to exit to userspace, e.g.
+>         if (new_parent && src_is_directory) {
+>                 /*
+>                  * Rewrite the ".." entry to point to the new
+>                  * directory.
+>                  */
+>                 error = xfs_dir_replace(tp, src_ip, &xfs_name_dotdot,
+>                                         target_dp->i_ino, spaceres);
+>                 ASSERT(error != -EEXIST);
+>                 if (error)
+>                         goto out_trans_cancel;
+>         }
 > 
-> 		/* KVM_EXIT_MEMORY_FAULT */
-> 		struct {
-> #define KVM_MEMORY_EXIT_FLAG_PRIVATE	(1ULL << 3)
-> #define KVM_MEMORY_EXIT_FLAG_HW_ERROR	(1ULL << 4)
-> 			__u64 flags;
-> 			__u64 gpa;
-> 			__u64 size;
-> 		} memory;
-> 
-> But I'm not sure that's the correct approach.  It kinda feels like we're reinventing
-> the wheel.  It seems like restrictedmem_get_page() _must_ be able to reject attempts
-> to get a poisoned page, i.e. restrictedmem_get_page() should yield KVM_PFN_ERR_HWPOISON.
+> which replaces the ".." entry in source inode atomically whilst it
+> is locked.  Any directory format changes that occur during the
+> rename are done while the ILOCK is held, so they appear atomic to
+> outside observers that are trying to parse the directory structure
+> (e.g. readdir).
 
-Yes, I see there is -EHWPOISON handling for hva_to_pfn() for shared
-memory. It makes sense doing similar for private page.
+Thanks for explanation! I've missed the ILOCK locking in xfs_rename() when
+I was glancing over the function...
 
-> Assuming that's the case, then I believe KVM simply needs to zap SPTEs in response
-> to an error notification in order to force vCPUs to fault on the poisoned page.
-
-Agree, this is waht we should do anyway.
-
-> 
-> > > > +		return -EINVAL;
-> > > >  	if (as_id >= KVM_ADDRESS_SPACE_NUM || id >= KVM_MEM_SLOTS_NUM)
-> > > >  		return -EINVAL;
-> > > >  	if (mem->guest_phys_addr + mem->memory_size < mem->guest_phys_addr)
-> > > > @@ -2020,6 +2154,9 @@ int __kvm_set_memory_region(struct kvm *kvm,
-> > > >  		if ((kvm->nr_memslot_pages + npages) < kvm->nr_memslot_pages)
-> > > >  			return -EINVAL;
-> > > >  	} else { /* Modify an existing slot. */
-> > > > +		/* Private memslots are immutable, they can only be deleted. */
-> > > 
-> > > I'm 99% certain I suggested this, but if we're going to make these memslots
-> > > immutable, then we should straight up disallow dirty logging, otherwise we'll
-> > > end up with a bizarre uAPI.
-> > 
-> > But in my mind dirty logging will be needed in the very short time, when
-> > live migration gets supported?
-> 
-> Ya, but if/when live migration support is added, private memslots will no longer
-> be immutable as userspace will want to enable dirty logging only when a VM is
-> being migrated, i.e. something will need to change.
-> 
-> Given that it looks like we have clear line of sight to SEV+UPM guests, my
-> preference would be to allow toggling dirty logging from the get-go.  It doesn't
-> necessarily have to be in the first patch, e.g. KVM could initially reject
-> KVM_MEM_LOG_DIRTY_PAGES + KVM_MEM_PRIVATE and then add support separately to make
-> the series easier to review, test, and bisect.
-> 
-> static int check_memory_region_flags(struct kvm *kvm,
-> 				     const struct kvm_userspace_memory_region2 *mem)
-> {
-> 	u32 valid_flags = KVM_MEM_LOG_DIRTY_PAGES;
-> 
-> 	if (kvm_arch_has_private_mem(kvm) &&
-> 	    ~(mem->flags & KVM_MEM_LOG_DIRTY_PAGES))
-> 		valid_flags |= KVM_MEM_PRIVATE;
-
-Adding this limitation is OK to me. It's not too hard to remove it when
-live migration gets added.
-
-> 
-> 
-> 	...
-> }
-> 
-> > > > +		if (mem->flags & KVM_MEM_PRIVATE)
-> > > > +			return -EINVAL;
-> > > >  		if ((mem->userspace_addr != old->userspace_addr) ||
-> > > >  		    (npages != old->npages) ||
-> > > >  		    ((mem->flags ^ old->flags) & KVM_MEM_READONLY))
-> > > > @@ -2048,10 +2185,28 @@ int __kvm_set_memory_region(struct kvm *kvm,
-> > > >  	new->npages = npages;
-> > > >  	new->flags = mem->flags;
-> > > >  	new->userspace_addr = mem->userspace_addr;
-> > > > +	if (mem->flags & KVM_MEM_PRIVATE) {
-> > > > +		new->restricted_file = fget(mem->restricted_fd);
-> > > > +		if (!new->restricted_file ||
-> > > > +		    !file_is_restrictedmem(new->restricted_file)) {
-> > > > +			r = -EINVAL;
-> > > > +			goto out;
-> > > > +		}
-> > > > +		new->restricted_offset = mem->restricted_offset;
-> > 
-> > I see you changed slot->restricted_offset type from loff_t to gfn_t and
-> > used pgoff_t when doing the restrictedmem_bind/unbind(). Using page
-> > index is reasonable KVM internally and sounds simpler than loff_t. But
-> > we also need initialize it to page index here as well as changes in
-> > another two cases. This is needed when restricted_offset != 0.
-> 
-> Oof.  I'm pretty sure I completely missed that loff_t is used for byte offsets,
-> whereas pgoff_t is a frame index. 
-> 
-> Given that the restrictmem APIs take pgoff_t, I definitely think it makes sense
-> to the index, but I'm very tempted to store pgoff_t instead of gfn_t, and name
-> the field "index" to help connect the dots to the rest of kernel, where "pgoff_t index"
-> is quite common.
-> 
-> And looking at those bits again, we should wrap all of the restrictedmem fields
-> with CONFIG_KVM_PRIVATE_MEM.  It'll require minor tweaks to __kvm_set_memory_region(),
-> but I think will yield cleaner code (and internal APIs) overall.
-> 
-> And wrap the three fields in an anonymous struct?  E.g. this is a little more
-> versbose (restrictedmem instead restricted), but at first glance it doesn't seem
-> to cause widespared line length issues.
-> 
-> #ifdef CONFIG_KVM_PRIVATE_MEM
-> 	struct {
-> 		struct file *file;
-> 		pgoff_t index;
-> 		struct restrictedmem_notifier notifier;
-> 	} restrictedmem;
-> #endif
-
-Looks better.
-
-Thanks,
-Chao
-> 
-> > diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-> > index 547b92215002..49e375e78f30 100644
-> > --- a/include/linux/kvm_host.h
-> > +++ b/include/linux/kvm_host.h
-> > @@ -2364,8 +2364,7 @@ static inline int kvm_restricted_mem_get_pfn(struct kvm_memory_slot *slot,
-> >                                              gfn_t gfn, kvm_pfn_t *pfn,
-> >                                              int *order)
-> >  {
-> > -       pgoff_t index = gfn - slot->base_gfn +
-> > -                       (slot->restricted_offset >> PAGE_SHIFT);
-> > +       pgoff_t index = gfn - slot->base_gfn + slot->restricted_offset;
-> >         struct page *page;
-> >         int ret;
-> >  
-> > diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-> > index 01db35ddd5b3..7439bdcb0d04 100644
-> > --- a/virt/kvm/kvm_main.c
-> > +++ b/virt/kvm/kvm_main.c
-> > @@ -935,7 +935,7 @@ static bool restrictedmem_range_is_valid(struct kvm_memory_slot *slot,
-> >                                          pgoff_t start, pgoff_t end,
-> >                                          gfn_t *gfn_start, gfn_t *gfn_end)
-> >  {
-> > -       unsigned long base_pgoff = slot->restricted_offset >> PAGE_SHIFT;
-> > +       unsigned long base_pgoff = slot->restricted_offset;
-> >  
-> >         if (start > base_pgoff)
-> >                 *gfn_start = slot->base_gfn + start - base_pgoff;
-> > @@ -2275,7 +2275,7 @@ int __kvm_set_memory_region(struct kvm *kvm,
-> >                         r = -EINVAL;
-> >                         goto out;
-> >                 }
-> > -               new->restricted_offset = mem->restricted_offset;
-> > +               new->restricted_offset = mem->restricted_offset >> PAGE_SHIFT;
-> >         }
-> >  
-> >         r = kvm_set_memslot(kvm, old, new, change);
-> > 
-> > Chao
-> > > > +	}
-> > > > +
-> > > > +	new->kvm = kvm;
-> > > 
-> > > Set this above, just so that the code flows better.
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
