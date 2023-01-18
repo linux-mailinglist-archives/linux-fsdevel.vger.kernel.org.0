@@ -2,81 +2,74 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 38517671F82
-	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 15:25:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3759671FA9
+	for <lists+linux-fsdevel@lfdr.de>; Wed, 18 Jan 2023 15:34:24 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231288AbjAROZs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Jan 2023 09:25:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54494 "EHLO
+        id S229961AbjAROeW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Jan 2023 09:34:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33230 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231295AbjAROZ2 (ORCPT
+        with ESMTP id S230273AbjAROdv (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Jan 2023 09:25:28 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E923D8B303;
-        Wed, 18 Jan 2023 06:09:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=MFcR0OGBOZF6nFAA9jXYIyh+Hu0YfDAUMAAwjfRCkqc=; b=3SD7Vdt5AdW0YvzZzC12FMR9aL
-        W9WO1g7u7H/F/QxKA94pPX4KgPaws20mnQRb9EWhS61g3sN+SkwoJNIApn55lUy+3+rwB1CfjS10z
-        rUdZ4zwzUYCfdxtc36QlvXCRBE5ze8P3CniwiDeoU5yAFhtanBI30KfBwMSN1YGPtqlUAmO416saT
-        tctAs+YVGlvg9RsOb/6dtOVKnuJPD+NXC+2sewv4aTXnZND9MFqgCwy2HHGlE4BNSn5rtJiOFakcJ
-        ix7/T8E6dBA/F6hiLhPZcDu701pHd2DriNYKHCiWtW35N+VL5Jdwz1quemNt9yDeCbx6mzsc2PpBj
-        DlBYgbjA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pI985-001HFU-3c; Wed, 18 Jan 2023 14:09:29 +0000
-Date:   Wed, 18 Jan 2023 06:09:29 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Christoph Hellwig <hch@lst.de>, Al Viro <viro@zeniv.linux.org.uk>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Matthew Wilcox <willy@infradead.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-block@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 09/34] bio: Rename BIO_NO_PAGE_REF to BIO_PAGE_REFFED
- and invert the meaning
-Message-ID: <Y8f9mSt+QuxuHOm9@infradead.org>
-References: <167391054631.2311931.7588488803802952158.stgit@warthog.procyon.org.uk>
- <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
- <2673696.1674050454@warthog.procyon.org.uk>
+        Wed, 18 Jan 2023 09:33:51 -0500
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [IPv6:2001:67c:2178:6::1d])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 587A947EC4;
+        Wed, 18 Jan 2023 06:22:28 -0800 (PST)
+Received: from relay2.suse.de (relay2.suse.de [149.44.160.134])
+        by smtp-out2.suse.de (Postfix) with ESMTP id 3CCB35BF6C;
+        Wed, 18 Jan 2023 14:22:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+        t=1674051747; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+        bh=Jcvj5AuIWP9Pb77zhjsuy7TzYwBrXQiPoMee0HPJxts=;
+        b=CsrbCjbTet6gaNQrGpoaGz/IEtIro4VUp3Tm0t/1pnCljnZcHFfpKeHMof9r4HGbDzZqmY
+        YFUBW3geSLzV9SRvpmlGjf+4M4NXV5Q2LhmxHOUv7/b5vpPo7OmZm0MCaWG38S/VJso7Jk
+        tfVX2DFFeNza6/S0Sn06q/z+fS3slhk=
+Received: from ds.suse.cz (ds.suse.cz [10.100.12.205])
+        by relay2.suse.de (Postfix) with ESMTP id 336D52C141;
+        Wed, 18 Jan 2023 14:22:27 +0000 (UTC)
+Received: by ds.suse.cz (Postfix, from userid 10065)
+        id D4828DA7FB; Wed, 18 Jan 2023 15:16:49 +0100 (CET)
+From:   David Sterba <dsterba@suse.com>
+To:     torvalds@linux-foundation.org
+Cc:     David Sterba <dsterba@suse.com>, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [GIT PULL] AFFS fix for 6.2
+Date:   Wed, 18 Jan 2023 15:16:49 +0100
+Message-Id: <cover.1674051240.git.dsterba@suse.com>
+X-Mailer: git-send-email 2.37.3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2673696.1674050454@warthog.procyon.org.uk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-3.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_MED,SPF_HELO_NONE,SPF_SOFTFAIL autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 18, 2023 at 02:00:54PM +0000, David Howells wrote:
-> Actually, should I make it so that the bottom two bits of bi_flags are a
-> four-state variable and make it such that bio_release_page() gives a warning
-> if the state is 0 - ie. unset?
-> 
-> The states would then be, say:
-> 
-> 	0	WARN(), do no cleanup
-> 	1	FOLL_GET
-> 	2	FOLL_PUT
-> 	3	do no cleanup
-> 
-> This should help debug any places, such as iomap_dio_zero() that I just found,
-> that add pages with refs without calling iov_iter_extract_pages().
+Hi,
 
-I don't really see a point.  The fundamental use case of the bio itself
-isn't really to this at all.  So we're stealing one, or in the future
-two bits mostly to optimize some direct I/O use cases.  In fact I
-wonder if instead we should just drop this micro-optimization entirely
-an just add a member for the foll flags to the direct I/O container
-structures (struct blkdev_dio, strut iomap_dio, struct dio, or just on
-stack for __blkdev_direct_IO_simple and zonefs_file_dio_append) and
-pass that to bio_release_pages.
+there's one minor fix for a KCSAN report. Please pull, thanks.
+
+----------------------------------------------------------------
+The following changes since commit b7bfaa761d760e72a969d116517eaa12e404c262:
+
+  Linux 6.2-rc3 (2023-01-08 11:49:43 -0600)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux.git affs-for-6.2-tag
+
+for you to fetch changes up to eef034ac6690118c88f357b00e2b3239c9d8575d:
+
+  affs: initialize fsdata in affs_truncate() (2023-01-10 14:55:20 +0100)
+
+----------------------------------------------------------------
+Alexander Potapenko (1):
+      affs: initialize fsdata in affs_truncate()
+
+ fs/affs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
