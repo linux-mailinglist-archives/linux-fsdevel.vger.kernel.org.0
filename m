@@ -2,88 +2,70 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3EF98674B8A
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 06:00:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id C1310674C03
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 06:20:02 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229755AbjATFAh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Jan 2023 00:00:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56396 "EHLO
+        id S231223AbjATFT4 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Jan 2023 00:19:56 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51614 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231177AbjATE7k (ORCPT
+        with ESMTP id S230479AbjATFTk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Jan 2023 23:59:40 -0500
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1CD9873ED4;
-        Thu, 19 Jan 2023 20:48:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Cov0rXHHoLE4f+kl9R89J62b4kSvWbnh7UW1AJK9oFk=; b=fd/Fa82p/WURC4xtDBGJlEnjNk
-        P+W1YpsqDnMKJRTzWBju+9CRa90zk1D3D8puiwFkAVT8PCiBVUJEDAzh4Jbw8hc3JLfNh50C5wGTx
-        qGx3VH3l9C8wqaIT8Y7/L2LWQLDwX6x/t7TBiFwjhdSZd4zIy3BbnKtK0vM+nc1yC+fBmTg20nRHn
-        S8+/nV5Z3jM+vmet9ZuuK9TgrgzE6JP+Hh6ckcBDS6aQ0FcCD5IYL/yUVwAXl/lHFYx1GZLVtLWXR
-        XufUARJ+l3QPAlA1+UIsKjOoCMrlH1ObmNAFBnQNNzT65/KhSwg4mztJWCZJnD68JvwPv/z8lWflE
-        MznE6u9g==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pIjHB-002vQx-1p;
-        Fri, 20 Jan 2023 04:45:17 +0000
-Date:   Fri, 20 Jan 2023 04:45:17 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [PATCH v3 4/4] fs/sysv: Replace kmap() with kmap_local_page()
-Message-ID: <Y8ocXbztTPbxu3bq@ZenIV>
-References: <20230119153232.29750-1-fmdefrancesco@gmail.com>
- <20230119153232.29750-5-fmdefrancesco@gmail.com>
- <Y8oWsiNWSXlDNn5i@ZenIV>
- <Y8oYXEjunDDAzSbe@casper.infradead.org>
+        Fri, 20 Jan 2023 00:19:40 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 67F154203
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 21:09:12 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 69F6DB82108
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 09:08:55 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24526C433EF
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 09:08:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674119334;
+        bh=qejyfDvgC0h4X76jJioTD2pH6biUEpZhXPfnY9HRh8Q=;
+        h=In-Reply-To:References:From:Date:Subject:To:Cc:From;
+        b=toEzO9Fxw5+Dd5h/vu8kx8Ojr1ojQOjCWg7Kjxy8EcJ02DBqVzKjmfAPuuK/RgfbA
+         Qeh/9BpQNj+1H70y5CcZ9uI3ko4Ai0i8hxm+HVzpSekwmP14nzw1HHPGqBvwjimq5S
+         05yS3je+BzJYvTkl2Rl29MbdipvdbkLqptSiHMezagW3dOTCqXiUx5wAeHihu6Sa31
+         VvNuo1QKthtz0cfu2TAPRfY0sbqxiUbJKEG5aVXNnCOITUtsEAtaexYHNtlbIq0jgn
+         lswBjneX+NJtzeRjVTVoUh2E6V6lcwPceyREt/oBmy8sMdRsuxhGjpvej9kBRjTlOg
+         i41ZItAf8zyjA==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-15f97c478a8so1774580fac.13
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 01:08:54 -0800 (PST)
+X-Gm-Message-State: AFqh2krNN05L2DJXwyL9ySQD59/isEMSd26H4t82h7Jabon1KgA+oZXs
+        ZyZkMKFrheR5JD2p0joxBr77I1iE00FcJsx59u0=
+X-Google-Smtp-Source: AMrXdXsCmSpoil0k8Lwu5L1J1QGh1Gcm0plkvEtynZqhGj4iE99y0JptFH2TtJIzbHj44GA5wLX3wqIyPO7XHw7J2oU=
+X-Received: by 2002:a05:6870:280e:b0:15f:1a6a:4010 with SMTP id
+ gz14-20020a056870280e00b0015f1a6a4010mr798911oab.215.1674119333276; Thu, 19
+ Jan 2023 01:08:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y8oYXEjunDDAzSbe@casper.infradead.org>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Received: by 2002:a05:6802:195:b0:49c:ff2e:6ecb with HTTP; Thu, 19 Jan 2023
+ 01:08:52 -0800 (PST)
+In-Reply-To: <PUZPR04MB63168725D434A4FB60D6A03381C49@PUZPR04MB6316.apcprd04.prod.outlook.com>
+References: <20230114041900.4458-1-linkinjeon@kernel.org> <PUZPR04MB63168725D434A4FB60D6A03381C49@PUZPR04MB6316.apcprd04.prod.outlook.com>
+From:   Namjae Jeon <linkinjeon@kernel.org>
+Date:   Thu, 19 Jan 2023 18:08:52 +0900
+X-Gmail-Original-Message-ID: <CAKYAXd9-i5Cypow4v4RRMDgvxBXxm3r6Mhc89BWCjM2NUzCHxQ@mail.gmail.com>
+Message-ID: <CAKYAXd9-i5Cypow4v4RRMDgvxBXxm3r6Mhc89BWCjM2NUzCHxQ@mail.gmail.com>
+Subject: Re: [PATCH v3] exfat: handle unreconized benign secondary entries
+To:     "Yuezhang.Mo@sony.com" <Yuezhang.Mo@sony.com>
+Cc:     "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        Wang Yugui <wangyugui@e16-tech.com>,
+        =?UTF-8?B?QmFyw7Njc2kgRMOpbmVz?= <admin@tveger.hu>,
+        Sungjong Seo <sj1557.seo@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 20, 2023 at 04:28:12AM +0000, Matthew Wilcox wrote:
-> On Fri, Jan 20, 2023 at 04:21:06AM +0000, Al Viro wrote:
-> > On Thu, Jan 19, 2023 at 04:32:32PM +0100, Fabio M. De Francesco wrote:
-> > 
-> > > -inline void dir_put_page(struct page *page)
-> > > +inline void dir_put_page(struct page *page, void *page_addr)
-> > >  {
-> > > -	kunmap(page);
-> > > +	kunmap_local(page_addr);
-> > 
-> > ... and that needed to be fixed - at some point "round down to beginning of
-> > page" got lost in rebasing...
-> 
-> You don't need to round down in kunmap().  See:
-> 
-> void kunmap_local_indexed(const void *vaddr)
-> {
->         unsigned long addr = (unsigned long) vaddr & PAGE_MASK;
-> 
-
-Sure, but... there's also this:
-
-static inline void __kunmap_local(const void *addr)
-{
-#ifdef ARCH_HAS_FLUSH_ON_KUNMAP
-        kunmap_flush_on_unmap(addr);
-#endif
-}
-
-Are you sure that the guts of that thing will be happy with address that is not
-page-aligned?  I've looked there at some point, got scared of parisc (IIRC)
-MMU details and decided not to rely upon that...
+2023-01-19 17:31 GMT+09:00, Yuezhang.Mo@sony.com <Yuezhang.Mo@sony.com>:
+> Reviewed-by: Yuezhang Mo <Yuezhang.Mo@sony.com>
+Applied. Thanks for your review!
+>
