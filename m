@@ -2,89 +2,82 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 79DEB6734BF
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 10:49:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 04610673504
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 11:03:22 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230007AbjASJtb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Jan 2023 04:49:31 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58486 "EHLO
+        id S230375AbjASKDQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Jan 2023 05:03:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38092 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229771AbjASJta (ORCPT
+        with ESMTP id S230289AbjASKCg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Jan 2023 04:49:30 -0500
-X-Greylist: delayed 492 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 19 Jan 2023 01:49:27 PST
-Received: from out-78.mta0.migadu.com (out-78.mta0.migadu.com [IPv6:2001:41d0:1004:224b::4e])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3E0107681
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 01:49:27 -0800 (PST)
-Date:   Thu, 19 Jan 2023 04:41:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-        t=1674121271;
+        Thu, 19 Jan 2023 05:02:36 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 87B4E6E806
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 02:01:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674122494;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=rUe7Jkojk2oaxll/dmHbgXg519+vydqtLcAsij+B87Y=;
-        b=ZMIt/hBIr+ut/k0D3f08qLXybt/n/lJBrsn2bNQG87AocIzCyGAJ+3/kd2GTFutCR6W+ZU
-        2sCLRg7RFZntRo95ih49u/llg55AdtZfheae9mbYGQhuB89+yQo7n+GAaIVHkJk+DLL3Ws
-        /6h22U865gYGvxnVmFaIKDNhjRBJqbs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From:   Kent Overstreet <kent.overstreet@linux.dev>
-To:     "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Cc:     Alexander Viro <viro@zeniv.linux.org.uk>,
-        Benjamin LaHaise <bcrl@kvack.org>,
-        linux-fsdevel@vger.kernel.org, linux-aio@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Venkataramanan, Anirudh" <anirudh.venkataramanan@intel.com>,
-        Ira Weiny <ira.weiny@intel.com>
-Subject: Re: [RESEND PATCH] fs/aio: Replace kmap{,_atomic}() with
- kmap_local_page()
-Message-ID: <Y8kQM9kzC7cHh/Wh@moria.home.lan>
-References: <20221016150656.5803-1-fmdefrancesco@gmail.com>
+        bh=MlfOpaZo8+JXQHQHhPM627Bpxxgi0KKq6Kx0UKuosSU=;
+        b=Fl3FDHVUSWWNKUu2oeZRlBliP8UAKmX7aWWuQiRuIq6z/rcASLH1X2ew6B9+2ru/PIXXje
+        xu7uyGWJkJQPADCC2zpaOneQb51Kdd9z5BEkb7DuPdz+VoAzRe7xkBYIHK61zEoIQdNGox
+        jgF8L4+4sPbmjjUJbT/Mvz9c/8S3UEI=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-351-t_bvYwokPH-AQe0Qgd0v9A-1; Thu, 19 Jan 2023 05:01:28 -0500
+X-MC-Unique: t_bvYwokPH-AQe0Qgd0v9A-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 293E1811E9C;
+        Thu, 19 Jan 2023 10:01:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id C6DD12026D68;
+        Thu, 19 Jan 2023 10:01:26 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y8htMvG33I73oG9z@ZenIV>
+References: <Y8htMvG33I73oG9z@ZenIV> <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk> <167391048988.2311931.1567396746365286847.stgit@warthog.procyon.org.uk>
+To:     Al Viro <viro@zeniv.linux.org.uk>
+Cc:     dhowells@redhat.com, Christoph Hellwig <hch@lst.de>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/34] vfs: Unconditionally set IOCB_WRITE in call_write_iter()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20221016150656.5803-1-fmdefrancesco@gmail.com>
-X-Migadu-Flow: FLOW_OUT
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,SPF_PASS
-        autolearn=unavailable autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2724946.1674122486.1@warthog.procyon.org.uk>
+Date:   Thu, 19 Jan 2023 10:01:26 +0000
+Message-ID: <2724947.1674122486@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sun, Oct 16, 2022 at 05:06:56PM +0200, Fabio M. De Francesco wrote:
-> The use of kmap() and kmap_atomic() are being deprecated in favor of
-> kmap_local_page().
-> 
-> There are two main problems with kmap(): (1) It comes with an overhead as
-> the mapping space is restricted and protected by a global lock for
-> synchronization and (2) it also requires global TLB invalidation when the
-> kmap’s pool wraps and it might block when the mapping space is fully
-> utilized until a slot becomes available.
-> 
-> With kmap_local_page() the mappings are per thread, CPU local, can take
-> page faults, and can be called from any context (including interrupts).
-> It is faster than kmap() in kernels with HIGHMEM enabled. Furthermore,
-> the tasks can be preempted and, when they are scheduled to run again, the
-> kernel virtual addresses are restored and still valid.
-> 
-> Since its use in fs/aio.c is safe everywhere, it should be preferred.
-> 
-> Therefore, replace kmap() and kmap_atomic() with kmap_local_page() in
-> fs/aio.c.
-> 
-> Tested with xfstests on a QEMU/KVM x86_32 VM, 6GB RAM, booting a kernel
-> with HIGHMEM64GB enabled.
+Al Viro <viro@zeniv.linux.org.uk> wrote:
 
-I was just looking over this code and made the same kmap -> kmap_local
-change, but you've done a more complete version - nice.
+> 	Which does nothing for places that do not use call_write_iter()...
+> __kernel_write_iter() is one such; for less obvious specimen see
+> drivers/nvme/target/io-cmd-file.c:nvmet_file_submit_bvec()
 
-For context, I was the one who added the kmap() call, because
-copy_to_user() can sleep - anything else at the time would've been more
-awkward, and highmem machines were already on the way out. But
-kmap_local is perfect here :)
+Should these be calling call_read/write_iter()?  If not, should
+call_read/write_iter() be dropped?
 
-Reviewed-by: Kent Overstreet <kent.overstreet@linux.dev>
+David
+
