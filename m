@@ -2,159 +2,195 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 30AEE672F13
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 03:39:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4296A672F41
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 03:52:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229834AbjASCjk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Jan 2023 21:39:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:48760 "EHLO
+        id S230008AbjASCwe (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Jan 2023 21:52:34 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:56584 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229446AbjASCji (ORCPT
+        with ESMTP id S229838AbjASCwe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Jan 2023 21:39:38 -0500
-Received: from mga04.intel.com (mga04.intel.com [192.55.52.120])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 980FD69B37;
-        Wed, 18 Jan 2023 18:39:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674095977; x=1705631977;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=G/dmJqT2Xj1iMyfuzcvUrdcL1Qhb/ASAsS90qZQMtJ8=;
-  b=fOCGk3bI+zXZT515dPdiW9FuYQQlrRLMrT3ZuBqjxLJozvdihR5Bv5gn
-   XyEuWDXdXyBMxBnaUC4thUGkZrKw/9/xMwmFdqllHF/EOOxdAkHMNlcNW
-   CiUW/HvdjOe1xPraZyRAmCwZKmcJvZqXAB/fCLBYMdhm5pNw1Z2QP0nSW
-   lXEzgPPC3ZYmCMrB1WyTatpI8n2A9+erZ8KszJgvNGbbtDuIJ5Mc2emXX
-   TY10UWwIyP2SUG+LXaUnSdW5I4VyWPiSloyR99WpbUcZPmAo8cg5uWgCl
-   Sh1l0yyva2hToMKrY7314p4K2f2+fW5jTXznPINkVR8O52iSfD2g4FKpu
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="323857732"
-X-IronPort-AV: E=Sophos;i="5.97,226,1669104000"; 
-   d="scan'208";a="323857732"
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2023 18:39:36 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="692253881"
-X-IronPort-AV: E=Sophos;i="5.97,226,1669104000"; 
-   d="scan'208";a="692253881"
-Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
-  by orsmga001.jf.intel.com with ESMTP; 18 Jan 2023 18:39:32 -0800
-Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
-        (envelope-from <lkp@intel.com>)
-        id 1pIKpq-0000yo-0g;
-        Thu, 19 Jan 2023 02:39:26 +0000
-Date:   Thu, 19 Jan 2023 10:39:08 +0800
-From:   kernel test robot <lkp@intel.com>
-To:     Gregory Price <gourry.memverge@gmail.com>,
+        Wed, 18 Jan 2023 21:52:34 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AF114490;
+        Wed, 18 Jan 2023 18:52:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=HnE8fVbkB/BVCYxP+S1x8sDjBJ0ldtemNXen2hWnksk=; b=oqdy5dQXQK8UKr2bchgDpmzr4u
+        /YEa4vss13qzDFzF/5SZ6+YIyD4koYihP2urPA99HHyQPAeqFTwNoDCD/nwRMM99Gud8hcYQ6kWQO
+        3NNQaUuORpB5S2seuDUMhMGySxvMub3F89zZnCiXz9KHoAAHJdZMXDiLpsAp6znVF4da8iOzr0OlJ
+        +QiwMga1XvlbOpQz+A4ICPE0otE5Y88xCqIwMlyvaVVGTJ+Ydurhxd3SADgPaxnJ8iVYYPN4h04JC
+        tmtjCQB/Ozgx7lcaNDD7I9yYZ5Ja69xsVH95GxSK8u16M5ZaZ3m/9nHWKGUeSsd/a5KcWAHDZbfft
+        Vmx9DLiw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pIL2C-002f1r-1E;
+        Thu, 19 Jan 2023 02:52:12 +0000
+Date:   Thu, 19 Jan 2023 02:52:12 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     David Howells <dhowells@redhat.com>
+Cc:     Dominique Martinet <asmadeus@codewreck.org>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        Christian Schoenebeck <linux_oss@crudebyte.com>,
+        v9fs-developer@lists.sourceforge.net,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
-        oleg@redhat.com, peterz@infradead.org, ebiederm@xmission.com,
-        akpm@linux-foundation.org, adobriyan@gmail.com, corbet@lwn.net,
-        shuah@kernel.org, Gregory Price <gregory.price@memverge.com>
-Subject: Re: [PATCH 3/3] ptrace,syscall_user_dispatch: add a getter/setter
- for sud configuration
-Message-ID: <202301191010.U5yAKr05-lkp@intel.com>
-References: <20230118201055.147228-4-gregory.price@memverge.com>
+Subject: Re: [PATCH v6 21/34] 9p: Pin pages rather than ref'ing if appropriate
+Message-ID: <Y8iwXJ2gMcCyXzm4@ZenIV>
+References: <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
+ <167391063242.2311931.3275290816918213423.stgit@warthog.procyon.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230118201055.147228-4-gregory.price@memverge.com>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+In-Reply-To: <167391063242.2311931.3275290816918213423.stgit@warthog.procyon.org.uk>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Gregory,
+On Mon, Jan 16, 2023 at 11:10:32PM +0000, David Howells wrote:
 
-Thank you for the patch! Perhaps something to improve:
+> @@ -310,73 +310,34 @@ static int p9_get_mapped_pages(struct virtio_chan *chan,
+>  			       struct iov_iter *data,
+>  			       int count,
+>  			       size_t *offs,
+> -			       int *need_drop,
+> +			       int *cleanup_mode,
+>  			       unsigned int gup_flags)
+>  {
+>  	int nr_pages;
+>  	int err;
+> +	int n;
+>  
+>  	if (!iov_iter_count(data))
+>  		return 0;
+>  
+> -	if (!iov_iter_is_kvec(data)) {
+> -		int n;
+> -		/*
+> -		 * We allow only p9_max_pages pinned. We wait for the
+> -		 * Other zc request to finish here
+> -		 */
+> -		if (atomic_read(&vp_pinned) >= chan->p9_max_pages) {
+> -			err = wait_event_killable(vp_wq,
+> -			      (atomic_read(&vp_pinned) < chan->p9_max_pages));
+> -			if (err == -ERESTARTSYS)
+> -				return err;
+> -		}
+> -		n = iov_iter_get_pages_alloc(data, pages, count, offs,
+> -					     gup_flags);
+> -		if (n < 0)
+> -			return n;
+> -		*need_drop = 1;
+> -		nr_pages = DIV_ROUND_UP(n + *offs, PAGE_SIZE);
+> -		atomic_add(nr_pages, &vp_pinned);
+> -		return n;
+> -	} else {
+> -		/* kernel buffer, no need to pin pages */
+> -		int index;
+> -		size_t len;
+> -		void *p;
+> -
+> -		/* we'd already checked that it's non-empty */
+> -		while (1) {
+> -			len = iov_iter_single_seg_count(data);
+> -			if (likely(len)) {
+> -				p = data->kvec->iov_base + data->iov_offset;
+> -				break;
+> -			}
+> -			iov_iter_advance(data, 0);
+> -		}
+> -		if (len > count)
+> -			len = count;
+> -
+> -		nr_pages = DIV_ROUND_UP((unsigned long)p + len, PAGE_SIZE) -
+> -			   (unsigned long)p / PAGE_SIZE;
+> -
+> -		*pages = kmalloc_array(nr_pages, sizeof(struct page *),
+> -				       GFP_NOFS);
+> -		if (!*pages)
+> -			return -ENOMEM;
+> -
+> -		*need_drop = 0;
+> -		p -= (*offs = offset_in_page(p));
+> -		for (index = 0; index < nr_pages; index++) {
+> -			if (is_vmalloc_addr(p))
+> -				(*pages)[index] = vmalloc_to_page(p);
+> -			else
+> -				(*pages)[index] = kmap_to_page(p);
+> -			p += PAGE_SIZE;
+> -		}
+> -		iov_iter_advance(data, len);
+> -		return len;
+> +	/*
+> +	 * We allow only p9_max_pages pinned. We wait for the
+> +	 * Other zc request to finish here
+> +	 */
+> +	if (atomic_read(&vp_pinned) >= chan->p9_max_pages) {
+> +		err = wait_event_killable(vp_wq,
+> +					  (atomic_read(&vp_pinned) < chan->p9_max_pages));
+> +		if (err == -ERESTARTSYS)
+> +			return err;
+>  	}
+> +
+> +	n = iov_iter_extract_pages(data, pages, count, offs, gup_flags);
 
-[auto build test WARNING on linus/master]
-[also build test WARNING on v6.2-rc4 next-20230118]
-[cannot apply to tip/core/entry]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Wait a sec; just how would that work for ITER_KVEC?  AFAICS, in your
+tree that would blow with -EFAULT...
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Gregory-Price/ptrace-syscall_user_dispatch-Implement-Syscall-User-Dispatch-Suspension/20230119-041259
-patch link:    https://lore.kernel.org/r/20230118201055.147228-4-gregory.price%40memverge.com
-patch subject: [PATCH 3/3] ptrace,syscall_user_dispatch: add a getter/setter for sud configuration
-config: x86_64-randconfig-s022 (https://download.01.org/0day-ci/archive/20230119/202301191010.U5yAKr05-lkp@intel.com/config)
-compiler: gcc-11 (Debian 11.3.0-8) 11.3.0
-reproduce:
-        # apt-get install sparse
-        # sparse version: v0.6.4-39-gce1a6720-dirty
-        # https://github.com/intel-lab-lkp/linux/commit/bd6833b41ed48c444c09346f695efe229deec2e9
-        git remote add linux-review https://github.com/intel-lab-lkp/linux
-        git fetch --no-tags linux-review Gregory-Price/ptrace-syscall_user_dispatch-Implement-Syscall-User-Dispatch-Suspension/20230119-041259
-        git checkout bd6833b41ed48c444c09346f695efe229deec2e9
-        # save the config file
-        mkdir build_dir && cp config build_dir/.config
-        make W=1 C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=x86_64 olddefconfig
-        make W=1 C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__' O=build_dir ARCH=x86_64 SHELL=/bin/bash kernel/entry/
+Yup; in p9_client_readdir() in your tree:
 
-If you fix the issue, kindly add following tag where applicable
-| Reported-by: kernel test robot <lkp@intel.com>
+net/9p/client.c:2057:	iov_iter_kvec(&to, ITER_DEST, &kv, 1, count);
 
-sparse warnings: (new ones prefixed by >>)
->> kernel/entry/syscall_user_dispatch.c:128:33: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected signed char [usertype] *[assigned] selector @@     got char [noderef] __user *selector @@
-   kernel/entry/syscall_user_dispatch.c:128:33: sparse:     expected signed char [usertype] *[assigned] selector
-   kernel/entry/syscall_user_dispatch.c:128:33: sparse:     got char [noderef] __user *selector
->> kernel/entry/syscall_user_dispatch.c:156:31: sparse: sparse: incorrect type in argument 4 (different address spaces) @@     expected char [noderef] __user *selector @@     got signed char [usertype] *[addressable] selector @@
-   kernel/entry/syscall_user_dispatch.c:156:31: sparse:     expected char [noderef] __user *selector
-   kernel/entry/syscall_user_dispatch.c:156:31: sparse:     got signed char [usertype] *[addressable] selector
+net/9p/client.c:2077:		req = p9_client_zc_rpc(clnt, P9_TREADDIR, &to, NULL, rsize, 0,
+net/9p/client.c:2078:				       11, "dqd", fid->fid, offset, rsize);
 
-vim +128 kernel/entry/syscall_user_dispatch.c
+where
+net/9p/client.c:799:	err = c->trans_mod->zc_request(c, req, uidata, uodata,
+net/9p/client.c:800:				       inlen, olen, in_hdrlen);
 
-   114	
-   115	int syscall_user_dispatch_get_config(struct task_struct *task, unsigned long size,
-   116			void __user *data)
-   117	{
-   118		struct syscall_user_dispatch *sd = &task->syscall_dispatch;
-   119		struct syscall_user_dispatch_config config;
-   120	
-   121		if (size != sizeof(struct syscall_user_dispatch_config))
-   122			return -EINVAL;
-   123	
-   124		if (sd->selector) {
-   125			config.mode = PR_SYS_DISPATCH_ON;
-   126			config.offset = sd->offset;
-   127			config.len = sd->len;
- > 128			config.selector = sd->selector;
-   129			config.on_dispatch = sd->on_dispatch;
-   130		} else {
-   131			config.mode = PR_SYS_DISPATCH_OFF;
-   132			config.offset = 0;
-   133			config.len = 0;
-   134			config.selector = NULL;
-   135			config.on_dispatch = false;
-   136		}
-   137		if (copy_to_user(data, &config, sizeof(config)))
-   138			return -EFAULT;
-   139	
-   140		return 0;
-   141	}
-   142	
-   143	int syscall_user_dispatch_set_config(struct task_struct *task, unsigned long size,
-   144			void __user *data)
-   145	{
-   146		struct syscall_user_dispatch_config config;
-   147		int ret;
-   148	
-   149		if (size != sizeof(struct syscall_user_dispatch_config))
-   150			return -EINVAL;
-   151	
-   152		if (copy_from_user(&config, data, sizeof(config)))
-   153			return -EFAULT;
-   154	
-   155		ret = set_syscall_user_dispatch(config.mode, config.offset, config.len,
- > 156				config.selector);
+and in p9_virtio_zc_request(), which is a possible ->zc_request() instance
+net/9p/trans_virtio.c:402:		int n = p9_get_mapped_pages(chan, &out_pages, uodata,
+net/9p/trans_virtio.c:403:					    outlen, &offs, &cleanup_mode,
+net/9p/trans_virtio.c:404:					    FOLL_DEST_BUF);
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests
+with p9_get_mapped_pages() hitting
+net/9p/trans_virtio.c:334:	n = iov_iter_extract_pages(data, pages, count, offs, gup_flags);
+net/9p/trans_virtio.c:335:	if (n < 0)
+net/9p/trans_virtio.c:336:		return n;
+
+and in iov_iter_extract_get_pages()
+lib/iov_iter.c:2250:	if (likely(user_backed_iter(i)))
+lib/iov_iter.c:2251:		return iov_iter_extract_user_pages(i, pages, maxsize,
+lib/iov_iter.c:2252:						   maxpages, gup_flags,
+lib/iov_iter.c:2253:						   offset0);
+lib/iov_iter.c:2254:	if (iov_iter_is_bvec(i))
+lib/iov_iter.c:2255:		return iov_iter_extract_bvec_pages(i, pages, maxsize,
+lib/iov_iter.c:2256:						   maxpages, gup_flags,
+lib/iov_iter.c:2257:						   offset0);
+lib/iov_iter.c:2258:	if (iov_iter_is_pipe(i))
+lib/iov_iter.c:2259:		return iov_iter_extract_pipe_pages(i, pages, maxsize,
+lib/iov_iter.c:2260:						   maxpages, gup_flags,
+lib/iov_iter.c:2261:						   offset0);
+lib/iov_iter.c:2262:	if (iov_iter_is_xarray(i))
+lib/iov_iter.c:2263:		return iov_iter_extract_xarray_pages(i, pages, maxsize,
+lib/iov_iter.c:2264:						     maxpages, gup_flags,
+lib/iov_iter.c:2265:						     offset0);
+lib/iov_iter.c:2266:	return -EFAULT;
+
+All quoted lines by your
+https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/tree/
+How could that possibly work?
