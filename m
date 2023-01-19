@@ -2,76 +2,68 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D025C6740D9
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 19:25:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 913136740C7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 19:21:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230190AbjASSZf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Jan 2023 13:25:35 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49394 "EHLO
+        id S230026AbjASSVs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Jan 2023 13:21:48 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47040 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230146AbjASSZa (ORCPT
+        with ESMTP id S229943AbjASSVn (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Jan 2023 13:25:30 -0500
-X-Greylist: delayed 1799 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 19 Jan 2023 10:25:16 PST
-Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E015394323;
-        Thu, 19 Jan 2023 10:25:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
-        s=42; h=From:Cc:To:Date:Message-ID;
-        bh=Gc4QRic3oOW9jZaNZmu54QNDymxEhCF0UTpzB08co6Q=; b=H9EbDT6g8xJehZrjzjvPj+Rpdl
-        3shbnqV44QWZV+w7vBunk5zdZ7YXF3sI6hxb6JV3OVBooar0NU3XBfM2tKiNuwf9UoQL+jD2V4WwV
-        zDNk3V2sCPp5HpPUMFtw+KbAehs8opS6wHqVgmhAbjgYFNoG/7iG2Q8UperkhaXb/QX+vLgwCNgco
-        oojp2E6wKCr397zSM1qC4/a8iRCJoE4AUGxAEVq8tNRp7oT/HbcbCPcS/5KpvFqSVjir5Ur+j1/xT
-        NSSnlHjie1IIVn7M13BQKihQ1qIE75CbEZyPG7DJm64CelF0gWPM/i/VktaCgp2Y9en+8mOb0rYet
-        kCRny1lG6BjlEOSL58IrUKexITfdQzYVpb2j+/8YtU/5Rfa9bd9lsM2qbDp4D+gIJP9DiiOLVvwT6
-        qh8gVjGxc1cdfqhzr45zp4adk6oICkANGJDXh9QOhr8tuDzf+vRkbWM7366YhDGO1KB3YaS7DAm0n
-        JSm6H6/Kuvj4uXNUi6OeVuUh;
-Received: from [127.0.0.2] (localhost [127.0.0.1])
-        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
-        (Exim)
-        id 1pIXjP-009NuW-1f; Thu, 19 Jan 2023 16:25:39 +0000
-Message-ID: <8a6b6192-0413-a0cf-218e-4b86c5de3f8a@samba.org>
-Date:   Thu, 19 Jan 2023 17:25:38 +0100
+        Thu, 19 Jan 2023 13:21:43 -0500
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 844059373F;
+        Thu, 19 Jan 2023 10:21:41 -0800 (PST)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id BD4F468D0D; Thu, 19 Jan 2023 19:21:37 +0100 (CET)
+Date:   Thu, 19 Jan 2023 19:21:37 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     David Sterba <dsterba@suse.cz>
+Cc:     Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>,
+        Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 02/19] btrfs: handle checksum validation and repair at
+ the storage layer
+Message-ID: <20230119182137.GA9388@lst.de>
+References: <20230112090532.1212225-1-hch@lst.de> <20230112090532.1212225-3-hch@lst.de> <20230117191222.GC11562@twin.jikos.cz>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.4.2
-Subject: Re: [PATCH v6 31/34] cifs: Fix problem with encrypted RDMA data read
-Content-Language: en-US, de-DE
-To:     David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Cc:     Steve French <smfrench@gmail.com>, Tom Talpey <tom@talpey.com>,
-        Long Li <longli@microsoft.com>,
-        Namjae Jeon <linkinjeon@kernel.org>,
-        linux-cifs@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
- <167391070712.2311931.8909671251130425914.stgit@warthog.procyon.org.uk>
-From:   Stefan Metzmacher <metze@samba.org>
-In-Reply-To: <167391070712.2311931.8909671251130425914.stgit@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230117191222.GC11562@twin.jikos.cz>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Am 17.01.23 um 00:11 schrieb David Howells:
-> When the cifs client is talking to the ksmbd server by RDMA and the ksmbd
-> server has "smb3 encryption = yes" in its config file, the normal PDU
-> stream is encrypted, but the directly-delivered data isn't in the stream
-> (and isn't encrypted), but is rather delivered by DDP/RDMA packets (at
-> least with IWarp).
+On Tue, Jan 17, 2023 at 08:12:22PM +0100, David Sterba wrote:
+> The changelog sounds like a good cover letter for a series, overall
+> description but lacks more details.
 
-In that case the client must not use DDP/RDMA offload!
-This needs to be fixed in the request code for both read and write!
+So, I've done a massive split, but I need guidance on what you
+want for a changelog.  There is one bit here which I've incorporated:
 
-metze
+> - use of mempool must be mentioned in the changelog with explanation
+>   that it's the safe usage pattern and why it cannot lead to lockups
+
+but otherwise I'm at at loss.  Do you want descriptions of what the
+low-level changes are counter to the normal normal Linux way of
+explain why the changes are done an what the high level design
+decisions are?  Or is there something else that is not obvious
+from the patch and needs more elaboration?  I can't really think
+of much that's missing, but maybe it's easy to overlook important
+points when you've been staring at the code for half a year.
+
+Here is the current commit text:
+
+http://git.infradead.org/users/hch/misc.git/commitdiff/c88b5ef41a8e0b5daf645eea415ade683e2d8b72
