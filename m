@@ -2,123 +2,153 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id AA5A0672DC0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 01:58:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B9AB8672DD2
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 02:06:33 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229874AbjASA6p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Jan 2023 19:58:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60590 "EHLO
+        id S229804AbjASBGb (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Jan 2023 20:06:31 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34778 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229644AbjASA6n (ORCPT
+        with ESMTP id S229483AbjASBGa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Jan 2023 19:58:43 -0500
-Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E51F3683D9
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jan 2023 16:58:41 -0800 (PST)
-Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
-        by 156.147.23.53 with ESMTP; 19 Jan 2023 09:58:39 +0900
-X-Original-SENDERIP: 156.147.1.151
-X-Original-MAILFROM: byungchul.park@lge.com
-Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
-        by 156.147.1.151 with ESMTP; 19 Jan 2023 09:58:39 +0900
-X-Original-SENDERIP: 10.177.244.38
-X-Original-MAILFROM: byungchul.park@lge.com
-From:   Byungchul Park <byungchul.park@lge.com>
-To:     torvalds@linux-foundation.org
-Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
-        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
-        mingo@redhat.com, linux-kernel@vger.kernel.org,
-        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
-        rostedt@goodmis.org, joel@joelfernandes.org, sashal@kernel.org,
-        daniel.vetter@ffwll.ch, duyuyang@gmail.com,
-        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
-        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
-        gregkh@linuxfoundation.org, kernel-team@lge.com,
-        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
-        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
-        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
-        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
-        ngupta@vflare.org, linux-block@vger.kernel.org,
-        paolo.valente@linaro.org, josef@toxicpanda.com,
-        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        jack@suse.cz, jlayton@kernel.org, dan.j.williams@intel.com,
-        hch@infradead.org, djwong@kernel.org,
-        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
-        melissa.srw@gmail.com, hamohammed.sa@gmail.com,
-        42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
-        gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com
-Subject: Re: [PATCH RFC v7 00/23] DEPT(Dependency Tracker)
-Date:   Thu, 19 Jan 2023 09:58:27 +0900
-Message-Id: <1674089907-31690-1-git-send-email-byungchul.park@lge.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <CAHk-=whpkWbdeZE1zask8YPzVYevJU2xOXqOposBujxZsa2-tQ@mail.gmail.com>
-References: <CAHk-=whpkWbdeZE1zask8YPzVYevJU2xOXqOposBujxZsa2-tQ@mail.gmail.com>
-X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+        Wed, 18 Jan 2023 20:06:30 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D81E0611FF;
+        Wed, 18 Jan 2023 17:06:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674090388; x=1705626388;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BPmuKu3ALXclWFXWYEerlnT/WujFOtJ7HOkbe6NnTqc=;
+  b=NeFTwucmzbT66JAoOXSispTexKqmB+nmEgKIr6PjIXDkHPvKYlIawsGv
+   yPsHewROUXqQT9Eyjg19cTtVZ0hWcLBdkUmoMgn+UPetadXanAVsdkcIW
+   rxlf5N5BifbCwhDFhHdyV0xROzFBKDxqAsBCTS9FfPy88MCmi3g3UR90J
+   DTd55ryN695LZ/nlELRPyGuQekiF8V2XfNl+atsWT4MzEyg+61rYbUgFJ
+   9M1pYea4bT5RlNdsuCFu3ysZwDOebhkVxVmm14rWzj95U7z+8DAdRC87J
+   5GIKcrry2tOlTWfYQ/1mmUerCRJkgM+1KjZIDzbAIVMsFGMxPvThyI75M
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="308715844"
+X-IronPort-AV: E=Sophos;i="5.97,226,1669104000"; 
+   d="scan'208";a="308715844"
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jan 2023 17:06:28 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10594"; a="767990286"
+X-IronPort-AV: E=Sophos;i="5.97,226,1669104000"; 
+   d="scan'208";a="767990286"
+Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
+  by fmsmga002.fm.intel.com with ESMTP; 18 Jan 2023 17:06:24 -0800
+Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pIJNn-0000vH-1h;
+        Thu, 19 Jan 2023 01:06:23 +0000
+Date:   Thu, 19 Jan 2023 09:06:18 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Gregory Price <gourry.memverge@gmail.com>,
+        linux-kernel@vger.kernel.org
+Cc:     oe-kbuild-all@lists.linux.dev, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
+        oleg@redhat.com, ebiederm@xmission.com, akpm@linux-foundation.org,
+        adobriyan@gmail.com, corbet@lwn.net, shuah@kernel.org,
+        Gregory Price <gregory.price@memverge.com>
+Subject: Re: [PATCH 3/3] ptrace,syscall_user_dispatch: add a getter/setter
+ for sud configuration
+Message-ID: <202301190817.vjgEwo3J-lkp@intel.com>
+References: <20230118201055.147228-4-gregory.price@memverge.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230118201055.147228-4-gregory.price@memverge.com>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Torvalds wrote:
-> On Sun, Jan 8, 2023 at 7:33 PM Byungchul Park <byungchul.park@lge.com> wrote:
->>
->> I've been developing a tool for detecting deadlock possibilities by
->> tracking wait/event rather than lock(?) acquisition order to try to
->> cover all synchonization machanisms. It's done on v6.2-rc2.
-> 
-> Ugh. I hate how this adds random patterns like
+Hi Gregory,
 
-I undertand what you mean.. But all the synchronization primitives
-should let DEPT know the beginning and the end of each. However, I will
-remove the 'if' statement that looks ugly from the next spin, and place
-the pattern to a better place if possible.
+Thank you for the patch! Yet something to improve:
 
-> 	if (timeout == MAX_SCHEDULE_TIMEOUT)
-> 		sdt_might_sleep_strong(NULL);
-> 	else
-> 		sdt_might_sleep_strong_timeout(NULL);
-> 	...
-> 	sdt_might_sleep_finish();
-> 
-> to various places, it seems so very odd and unmaintainable.
-> 
-> I also recall this giving a fair amount of false positives, are they all fixed?
+[auto build test ERROR on linus/master]
+[also build test ERROR on v6.2-rc4 next-20230118]
+[cannot apply to tip/core/entry]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Yes. Of course I removed all the false positives we found.
+url:    https://github.com/intel-lab-lkp/linux/commits/Gregory-Price/ptrace-syscall_user_dispatch-Implement-Syscall-User-Dispatch-Suspension/20230119-041259
+patch link:    https://lore.kernel.org/r/20230118201055.147228-4-gregory.price%40memverge.com
+patch subject: [PATCH 3/3] ptrace,syscall_user_dispatch: add a getter/setter for sud configuration
+config: sparc-buildonly-randconfig-r005-20230118 (https://download.01.org/0day-ci/archive/20230119/202301190817.vjgEwo3J-lkp@intel.com/config)
+compiler: sparc64-linux-gcc (GCC) 12.1.0
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # https://github.com/intel-lab-lkp/linux/commit/bd6833b41ed48c444c09346f695efe229deec2e9
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Gregory-Price/ptrace-syscall_user_dispatch-Implement-Syscall-User-Dispatch-Suspension/20230119-041259
+        git checkout bd6833b41ed48c444c09346f695efe229deec2e9
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sparc olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=gcc-12.1.0 make.cross W=1 O=build_dir ARCH=sparc SHELL=/bin/bash arch/sparc/mm/
 
-> Anyway, I'd really like the lockdep people to comment and be involved.
-> We did have a fairly recent case of "lockdep doesn't track page lock
-> dependencies because it fundamentally cannot" issue, so DEPT might fix
-> those kinds of missing dependency analysis. See
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
 
-Sure. That's exactly what DEPT works for e.g. PG_locked.
+All errors (new ones prefixed by >>):
 
-> 	https://lore.kernel.org/lkml/00000000000060d41f05f139aa44@google.com/
+   In file included from include/linux/sched.h:31,
+                    from include/linux/mm.h:28,
+                    from arch/sparc/mm/tlb.c:9:
+>> include/linux/syscall_user_dispatch.h:45:5: error: no previous prototype for 'syscall_user_dispatch_get_config' [-Werror=missing-prototypes]
+      45 | int syscall_user_dispatch_get_config(struct task_struct *task, unsigned long size,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> include/linux/syscall_user_dispatch.h:51:5: error: no previous prototype for 'syscall_user_dispatch_set_config' [-Werror=missing-prototypes]
+      51 | int syscall_user_dispatch_set_config(struct task_struct *task, unsigned long size,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   cc1: all warnings being treated as errors
+--
+   In file included from include/linux/sched.h:31,
+                    from arch/sparc/mm/init_64.c:11:
+>> include/linux/syscall_user_dispatch.h:45:5: error: no previous prototype for 'syscall_user_dispatch_get_config' [-Werror=missing-prototypes]
+      45 | int syscall_user_dispatch_get_config(struct task_struct *task, unsigned long size,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> include/linux/syscall_user_dispatch.h:51:5: error: no previous prototype for 'syscall_user_dispatch_set_config' [-Werror=missing-prototypes]
+      51 | int syscall_user_dispatch_set_config(struct task_struct *task, unsigned long size,
+         |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/sparc/mm/init_64.c: In function 'arch_hugetlb_valid_size':
+   arch/sparc/mm/init_64.c:355:24: error: variable 'hv_pgsz_idx' set but not used [-Werror=unused-but-set-variable]
+     355 |         unsigned short hv_pgsz_idx;
+         |                        ^~~~~~~~~~~
+   arch/sparc/mm/init_64.c: At top level:
+   arch/sparc/mm/init_64.c:2630:6: error: no previous prototype for 'vmemmap_free' [-Werror=missing-prototypes]
+    2630 | void vmemmap_free(unsigned long start, unsigned long end,
+         |      ^~~~~~~~~~~~
+   cc1: all warnings being treated as errors
 
-I will reproduce it and share the result.
 
-> for some context to that one, but at teh same time I would *really*
-> want the lockdep people more involved and acking this work.
-> 
-> Maybe I missed the email where you reported on things DEPT has found
-> (and on the lack of false positives)?
+vim +/syscall_user_dispatch_get_config +45 include/linux/syscall_user_dispatch.h
 
-Maybe you didn't miss. It's still too hard to make a decision between:
+    44	
+  > 45	int syscall_user_dispatch_get_config(struct task_struct *task, unsigned long size,
+    46		void __user *data)
+    47	{
+    48		return -EINVAL;
+    49	}
+    50	
+  > 51	int syscall_user_dispatch_set_config(struct task_struct *task, unsigned long size,
+    52		void __user *data)
+    53	{
+    54		return -EINVAL;
+    55	}
+    56	
 
-	Aggressive detection with false alarms that need to be fixed by
-	manual classification as Lockdep did, focusing on potential
-	possibility more.
-
-	versus
-
-	Conservative detection with few false alarms, which requires us
-	to test much longer to get result we expect, focusing on actual
-	happening.
-
-> 
-> 	Linus
-
-	Byungchul
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
