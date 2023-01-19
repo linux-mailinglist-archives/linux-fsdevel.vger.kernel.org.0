@@ -2,101 +2,58 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 834FF673D6E
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 16:25:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A0B44673D80
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 16:30:29 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230271AbjASPZU (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Jan 2023 10:25:20 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33094 "EHLO
+        id S230417AbjASPa1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Jan 2023 10:30:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230079AbjASPZP (ORCPT
+        with ESMTP id S230491AbjASPaS (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Jan 2023 10:25:15 -0500
-Received: from mail-pj1-x102d.google.com (mail-pj1-x102d.google.com [IPv6:2607:f8b0:4864:20::102d])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 25C2D81014
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 07:25:13 -0800 (PST)
-Received: by mail-pj1-x102d.google.com with SMTP id m3-20020a17090a414300b00229ef93c5b0so1418391pjg.2
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 07:25:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=u3x+gqjTmgbestDAk4Awmq54vOdmydIW5Pid7KApIj0=;
-        b=mBCVF1D4CCb5Ux/a0sTklFD5Mi8L9pIXDGbMCkJlimD4PHSACap2p25+kVgwBgrsIq
-         EvdnQ1DJdyozyD6i/NGQ9LHUxMYOj57ZDAvsSBtrXrWSIG9rE81ZQPLMflUW9tlr3kaQ
-         W5HhRhzDrOZXVo2eJJX+pBBPi5F1VgqXmlz+Dn+5py/XCqnPsdSKBwTESeGVpPIz964i
-         Y7hB+IGNBYCrP1QuYyMwMmClI1OOCW3cnNMzXyQEA2j3fMpJV5G+s3nKt4FHhRG/KAkL
-         4FVfZGb2GwNGLwVQhykEPhQCdeJbS7eHn+w6UX0yqcdlwsdurSpSSE/duLw9iP7/BBnl
-         1UDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u3x+gqjTmgbestDAk4Awmq54vOdmydIW5Pid7KApIj0=;
-        b=7oSdlJ/frpsvDmHg5SYrBXWyE1O9qThZkZfdmT8rv0/IEvB2cIP2xIfdN5yoTQZ2M0
-         jVSTeI5cltZRB2auMydncROvEFCzEsJNISy6S1Ohye0tZRdlDntUHGBaBB7cqAa9PD7/
-         kwCMpQskDmZZ0pR2ZbNnGQuPpbpnDqdOucQRDx8vjBo9+IFE1v71wwNjwzEXqRKEWd3N
-         7G+Rvmfag5OFuy1R3ZkqPSEF67zwsMo8FuamE7Jh5zKMJ2nHo/sSj5p6gdgtzRB5TkxE
-         U9R4CVQi3w3NFXwjiqZpdAN07bM9TnPw/Pg0Od4dMta1OBMMpy5xkM9boB1TD951mMwT
-         q/qw==
-X-Gm-Message-State: AFqh2kqpjVQYXXrpO4t9AntceYKe41YGiGlgPouasl3aEd5TiW3geKKS
-        8wvJOolS+BAehSjbQddzxGMENg==
-X-Google-Smtp-Source: AMrXdXuFbwGpoS/BOsR3GLdQjSETsa46BfhBRwIB416u+GXbq71Q0+uUKVzOwXl/a9TU4tZ66S2N/Q==
-X-Received: by 2002:a05:6a20:ce43:b0:b8:c3c0:e7f7 with SMTP id id3-20020a056a20ce4300b000b8c3c0e7f7mr1187627pzb.1.1674141912349;
-        Thu, 19 Jan 2023 07:25:12 -0800 (PST)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id z16-20020a170903019000b001945339354asm5530181plg.197.2023.01.19.07.25.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jan 2023 07:25:11 -0800 (PST)
-Date:   Thu, 19 Jan 2023 15:25:08 +0000
-From:   Sean Christopherson <seanjc@google.com>
-To:     Isaku Yamahata <isaku.yamahata@gmail.com>
-Cc:     Chao Peng <chao.p.peng@linux.intel.com>, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-        qemu-devel@nongnu.org, Paolo Bonzini <pbonzini@redhat.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Wanpeng Li <wanpengli@tencent.com>,
-        Jim Mattson <jmattson@google.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Naoya Horiguchi <naoya.horiguchi@nec.com>,
-        Miaohe Lin <linmiaohe@huawei.com>, x86@kernel.org,
-        "H . Peter Anvin" <hpa@zytor.com>, Hugh Dickins <hughd@google.com>,
-        Jeff Layton <jlayton@kernel.org>,
-        "J . Bruce Fields" <bfields@fieldses.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Shuah Khan <shuah@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-        Steven Price <steven.price@arm.com>,
-        "Maciej S . Szmigiero" <mail@maciej.szmigiero.name>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Vishal Annapurve <vannapurve@google.com>,
-        Yu Zhang <yu.c.zhang@linux.intel.com>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        luto@kernel.org, jun.nakajima@intel.com, dave.hansen@intel.com,
-        ak@linux.intel.com, david@redhat.com, aarcange@redhat.com,
-        ddutile@redhat.com, dhildenb@redhat.com,
-        Quentin Perret <qperret@google.com>, tabba@google.com,
-        Michael Roth <michael.roth@amd.com>, mhocko@suse.com,
-        wei.w.wang@intel.com
-Subject: Re: [PATCH v10 0/9] KVM: mm: fd-based approach for supporting KVM
-Message-ID: <Y8lg1G2lRIrI/hld@google.com>
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <Y8H5Z3e4hZkFxAVS@google.com>
- <20230119111308.GC2976263@ls.amr.corp.intel.com>
+        Thu, 19 Jan 2023 10:30:18 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3AC6983F8
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 07:29:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674142170;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=Df5LVFvtrQu6/8aH2DWTvdQzTx5gKr69K5KXG9KebXs=;
+        b=L2qoQkxg0P7RUmJII8yhMKaL7wD0HgtVhm8i7DqrtFr7ekWgfYqTLOyK/b9rmL0SCRdJTE
+        Oh4we3Vkb4JjtSw1PflfE9XXMfEfoL2VSGdx02bwDJg9rW7GFugkqcDgbq8xn9CAMNvrFx
+        H/3rUzbskWZNsThHcIn5qDiW7rQxZKA=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-590-iZPaT-zyOGGYRRtLopoVdQ-1; Thu, 19 Jan 2023 10:29:29 -0500
+X-MC-Unique: iZPaT-zyOGGYRRtLopoVdQ-1
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.rdu2.redhat.com [10.11.54.6])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id B16A91C189A9;
+        Thu, 19 Jan 2023 15:29:28 +0000 (UTC)
+Received: from warthog.procyon.org.uk.com (unknown [10.33.36.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 977FB2166B2C;
+        Thu, 19 Jan 2023 15:29:27 +0000 (UTC)
+From:   David Howells <dhowells@redhat.com>
+To:     dhowells@vger.kernel.org
+Cc:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH] iov_iter: Add a function to extract a page list from an iterator
+Date:   Thu, 19 Jan 2023 15:29:26 +0000
+Message-Id: <20230119152926.2899954-1-dhowells@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230119111308.GC2976263@ls.amr.corp.intel.com>
-X-Spam-Status: No, score=-17.6 required=5.0 tests=BAYES_00,DKIMWL_WL_MED,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,
-        ENV_AND_HDR_SPF_MATCH,RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,
-        USER_IN_DEF_DKIM_WL,USER_IN_DEF_SPF_WL autolearn=unavailable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.6
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,TO_MALFORMED autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -104,66 +61,497 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 19, 2023, Isaku Yamahata wrote:
-> On Sat, Jan 14, 2023 at 12:37:59AM +0000,
-> Sean Christopherson <seanjc@google.com> wrote:
-> 
-> > On Fri, Dec 02, 2022, Chao Peng wrote:
-> > > This patch series implements KVM guest private memory for confidential
-> > > computing scenarios like Intel TDX[1]. If a TDX host accesses
-> > > TDX-protected guest memory, machine check can happen which can further
-> > > crash the running host system, this is terrible for multi-tenant
-> > > configurations. The host accesses include those from KVM userspace like
-> > > QEMU. This series addresses KVM userspace induced crash by introducing
-> > > new mm and KVM interfaces so KVM userspace can still manage guest memory
-> > > via a fd-based approach, but it can never access the guest memory
-> > > content.
-> > > 
-> > > The patch series touches both core mm and KVM code. I appreciate
-> > > Andrew/Hugh and Paolo/Sean can review and pick these patches. Any other
-> > > reviews are always welcome.
-> > >   - 01: mm change, target for mm tree
-> > >   - 02-09: KVM change, target for KVM tree
-> > 
-> > A version with all of my feedback, plus reworked versions of Vishal's selftest,
-> > is available here:
-> > 
-> >   git@github.com:sean-jc/linux.git x86/upm_base_support
-> > 
-> > It compiles and passes the selftest, but it's otherwise barely tested.  There are
-> > a few todos (2 I think?) and many of the commits need changelogs, i.e. it's still
-> > a WIP.
-> > 
-> > As for next steps, can you (handwaving all of the TDX folks) take a look at what
-> > I pushed and see if there's anything horrifically broken, and that it still works
-> > for TDX?
-> > 
-> > Fuad (and pKVM folks) same ask for you with respect to pKVM.  Absolutely no rush
-> > (and I mean that).
-> > 
-> > On my side, the two things on my mind are (a) tests and (b) downstream dependencies
-> > (SEV and TDX).  For tests, I want to build a lists of tests that are required for
-> > merging so that the criteria for merging are clear, and so that if the list is large
-> > (haven't thought much yet), the work of writing and running tests can be distributed.
-> > 
-> > Regarding downstream dependencies, before this lands, I want to pull in all the
-> > TDX and SNP series and see how everything fits together.  Specifically, I want to
-> > make sure that we don't end up with a uAPI that necessitates ugly code, and that we
-> > don't miss an opportunity to make things simpler.  The patches in the SNP series to
-> > add "legacy" SEV support for UPM in particular made me slightly rethink some minor
-> > details.  Nothing remotely major, but something that needs attention since it'll
-> > be uAPI.
-> 
-> Although I'm still debuging with TDX KVM, I needed the following.
-> kvm_faultin_pfn() is called without mmu_lock held.  the race to change
-> private/shared is handled by mmu_seq.  Maybe dedicated function only for
-> kvm_faultin_pfn().
+Add a function, iov_iter_extract_pages(), to extract a list of pages from
+an iterator.  The pages may be returned with a reference added or a pin
+added or neither, depending on the type of iterator and the direction of
+transfer.  The caller must pass FOLL_READ_FROM_MEM or FOLL_WRITE_TO_MEM
+as part of gup_flags to indicate how the iterator contents are to be used.
 
-Gah, you're not on the other thread where this was discussed[*].  Simply deleting
-the lockdep assertion is safe, for guest types that rely on the attributes to
-define shared vs. private, KVM rechecks the attributes under the protection of
-mmu_seq.
+Add a second function, iov_iter_extract_mode(), to determine how the
+cleanup should be done.
 
-I'll get a fixed version pushed out today.
+There are three cases:
 
-[*] https://lore.kernel.org/all/Y8gpl+LwSuSgBFks@google.com
+ (1) Transfer *into* an ITER_IOVEC or ITER_UBUF iterator.
+
+     Extracted pages will have pins obtained on them (but not references)
+     so that fork() doesn't CoW the pages incorrectly whilst the I/O is in
+     progress.
+
+     iov_iter_extract_mode() will return FOLL_PIN for this case.  The
+     caller should use something like unpin_user_page() to dispose of the
+     page.
+
+ (2) Transfer is *out of* an ITER_IOVEC or ITER_UBUF iterator.
+
+     Extracted pages will have references obtained on them, but not pins.
+
+     iov_iter_extract_mode() will return FOLL_GET.  The caller should use
+     something like put_page() for page disposal.
+
+ (3) Any other sort of iterator.
+
+     No refs or pins are obtained on the page, the assumption is made that
+     the caller will manage page retention.  ITER_ALLOW_P2PDMA is not
+     permitted.
+
+     iov_iter_extract_mode() will return 0.  The pages don't need
+     additional disposal.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: Christoph Hellwig <hch@lst.de>
+cc: John Hubbard <jhubbard@nvidia.com>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
+---
+
+Notes:
+    ver #7)
+     - Switch to passing in iter-specific flags rather than FOLL_* flags.
+     - Use READ_FROM_ITER/WRITE_TO_ITER to indicate direction.
+     - Use ITER_ALLOW_P2PDMA to request FOLL_PCI_P2PDMA.
+     - Disallow use of ITER_ALLOW_P2PDMA with non-user-backed iter.
+    
+    ver #6)
+     - Add back the function to indicate the cleanup mode.
+     - Drop the cleanup_mode return arg to iov_iter_extract_pages().
+     - Pass FOLL_SOURCE/DEST_BUF in gup_flags.  Check this against the iter
+       data_source.
+    
+    ver #4)
+     - Use ITER_SOURCE/DEST instead of WRITE/READ.
+     - Allow additional FOLL_* flags, such as FOLL_PCI_P2PDMA to be passed in.
+    
+    ver #3)
+     - Switch to using EXPORT_SYMBOL_GPL to prevent indirect 3rd-party access
+       to get/pin_user_pages_fast()[1].
+    
+    Link: https://lore.kernel.org/r/166920903885.1461876.692029808682876184.stgit@warthog.procyon.org.uk/ # v2
+    Link: https://lore.kernel.org/r/166997421646.9475.14837976344157464997.stgit@warthog.procyon.org.uk/ # v3
+    Link: https://lore.kernel.org/r/167305163883.1521586.10777155475378874823.stgit@warthog.procyon.org.uk/ # v4
+    Link: https://lore.kernel.org/r/167344728530.2425628.9613910866466387722.stgit@warthog.procyon.org.uk/ # v5
+
+ include/linux/uio.h |  28 ++++
+ lib/iov_iter.c      | 370 ++++++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 398 insertions(+)
+
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 4348d37c008b..bac0852de820 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -356,4 +356,32 @@ static inline void iov_iter_ubuf(struct iov_iter *i, unsigned int direction,
+ #define WRITE_TO_ITER		0x02	/* We will be writing data to the iterator */
+ #define ITER_ALLOW_P2PDMA	0x04	/* Allow P2PDMA on the extracted pages */
+ 
++ssize_t iov_iter_extract_pages(struct iov_iter *i, struct page ***pages,
++			       size_t maxsize, unsigned int maxpages,
++			       unsigned int extract_flags, size_t *offset0);
++
++/**
++ * iov_iter_extract_mode - Indicate how pages from the iterator will be retained
++ * @iter: The iterator
++ * @gup_flags: How the iterator is to be used (FOLL_WRITE_TO/READ_FROM_MEM)
++ *
++ * Examine the iterator and the gup_flags and indicate by returning FOLL_PIN,
++ * FOLL_GET or 0 as to how, if at all, pages extracted from the iterator will
++ * be retained by the extraction function.
++ *
++ * FOLL_GET indicates that the pages will have a reference taken on them that
++ * the caller must put.  This can be done for DMA/async DIO write from a page.
++ *
++ * FOLL_PIN indicates that the pages will have a pin placed in them that the
++ * caller must unpin.  This is must be done for DMA/async DIO read to a page to
++ * avoid CoW problems in fork.
++ *
++ * 0 indicates that no measures are taken and that it's up to the caller to
++ * retain the pages.
++ */
++#define iov_iter_extract_mode(iter, gup_flags) \
++	(user_backed_iter(iter) ?				\
++	 (gup_flags & FOLL_IO_DIR_MASK) == FOLL_READ_FROM_MEM ?	\
++	 FOLL_GET : FOLL_PIN : 0)
++
+ #endif
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 77b2192cda68..9e6f6a6257a8 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1915,3 +1915,373 @@ void iov_iter_restore(struct iov_iter *i, struct iov_iter_state *state)
+ 		i->iov -= state->nr_segs - i->nr_segs;
+ 	i->nr_segs = state->nr_segs;
+ }
++
++/*
++ * Extract a list of contiguous pages from an ITER_PIPE iterator.  This does
++ * not get references of its own on the pages, nor does it get a pin on them.
++ * If there's a partial page, it adds that first and will then allocate and add
++ * pages into the pipe to make up the buffer space to the amount required.
++ *
++ * The caller must hold the pipe locked and only transferring into a pipe is
++ * supported.
++ */
++static ssize_t iov_iter_extract_pipe_pages(struct iov_iter *i,
++					   struct page ***pages, size_t maxsize,
++					   unsigned int maxpages,
++					   unsigned int gup_flags,
++					   size_t *offset0)
++{
++	unsigned int nr, offset, chunk, j;
++	struct page **p;
++	size_t left;
++
++	if (!sanity(i))
++		return -EFAULT;
++
++	offset = pipe_npages(i, &nr);
++	if (!nr)
++		return -EFAULT;
++	*offset0 = offset;
++
++	maxpages = min_t(size_t, nr, maxpages);
++	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
++	if (!maxpages)
++		return -ENOMEM;
++	p = *pages;
++
++	left = maxsize;
++	for (j = 0; j < maxpages; j++) {
++		struct page *page = append_pipe(i, left, &offset);
++		if (!page)
++			break;
++		chunk = min_t(size_t, left, PAGE_SIZE - offset);
++		left -= chunk;
++		*p++ = page;
++	}
++	if (!j)
++		return -EFAULT;
++	return maxsize - left;
++}
++
++/*
++ * Extract a list of contiguous pages from an ITER_XARRAY iterator.  This does not
++ * get references on the pages, nor does it get a pin on them.
++ */
++static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
++					     struct page ***pages, size_t maxsize,
++					     unsigned int maxpages,
++					     unsigned int gup_flags,
++					     size_t *offset0)
++{
++	struct page *page, **p;
++	unsigned int nr = 0, offset;
++	loff_t pos = i->xarray_start + i->iov_offset;
++	pgoff_t index = pos >> PAGE_SHIFT;
++	XA_STATE(xas, i->xarray, index);
++
++	offset = pos & ~PAGE_MASK;
++	*offset0 = offset;
++
++	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
++	if (!maxpages)
++		return -ENOMEM;
++	p = *pages;
++
++	rcu_read_lock();
++	for (page = xas_load(&xas); page; page = xas_next(&xas)) {
++		if (xas_retry(&xas, page))
++			continue;
++
++		/* Has the page moved or been split? */
++		if (unlikely(page != xas_reload(&xas))) {
++			xas_reset(&xas);
++			continue;
++		}
++
++		p[nr++] = find_subpage(page, xas.xa_index);
++		if (nr == maxpages)
++			break;
++	}
++	rcu_read_unlock();
++
++	maxsize = min_t(size_t, nr * PAGE_SIZE - offset, maxsize);
++	i->iov_offset += maxsize;
++	i->count -= maxsize;
++	return maxsize;
++}
++
++/*
++ * Extract a list of contiguous pages from an ITER_BVEC iterator.  This does
++ * not get references on the pages, nor does it get a pin on them.
++ */
++static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
++					   struct page ***pages, size_t maxsize,
++					   unsigned int maxpages,
++					   unsigned int gup_flags,
++					   size_t *offset0)
++{
++	struct page **p, *page;
++	size_t skip = i->iov_offset, offset;
++	int k;
++
++	maxsize = min(maxsize, i->bvec->bv_len - skip);
++	skip += i->bvec->bv_offset;
++	page = i->bvec->bv_page + skip / PAGE_SIZE;
++	offset = skip % PAGE_SIZE;
++	*offset0 = offset;
++
++	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
++	if (!maxpages)
++		return -ENOMEM;
++	p = *pages;
++	for (k = 0; k < maxpages; k++)
++		p[k] = page + k;
++
++	maxsize = min_t(size_t, maxsize, maxpages * PAGE_SIZE - offset);
++	i->count -= maxsize;
++	i->iov_offset += maxsize;
++	if (i->iov_offset == i->bvec->bv_len) {
++		i->iov_offset = 0;
++		i->bvec++;
++		i->nr_segs--;
++	}
++	return maxsize;
++}
++
++/*
++ * Get the first segment from an ITER_UBUF or ITER_IOVEC iterator.  The
++ * iterator must not be empty.
++ */
++static unsigned long iov_iter_extract_first_user_segment(const struct iov_iter *i,
++							 size_t *size)
++{
++	size_t skip;
++	long k;
++
++	if (iter_is_ubuf(i))
++		return (unsigned long)i->ubuf + i->iov_offset;
++
++	for (k = 0, skip = i->iov_offset; k < i->nr_segs; k++, skip = 0) {
++		size_t len = i->iov[k].iov_len - skip;
++
++		if (unlikely(!len))
++			continue;
++		if (*size > len)
++			*size = len;
++		return (unsigned long)i->iov[k].iov_base + skip;
++	}
++	BUG(); // if it had been empty, we wouldn't get called
++}
++
++/*
++ * Extract a list of contiguous pages from a user iterator and get references
++ * on them.  This should only be used iff the iterator is user-backed
++ * (IOBUF/UBUF) and data is being transferred out of the buffer described by
++ * the iterator (ie. this is the source).
++ *
++ * The pages are returned with incremented refcounts that the caller must undo
++ * once the transfer is complete, but no additional pins are obtained.
++ *
++ * This is only safe to be used where background IO/DMA is not going to be
++ * modifying the buffer, and so won't cause a problem with CoW on fork.
++ */
++static ssize_t iov_iter_extract_user_pages_and_get(struct iov_iter *i,
++						   struct page ***pages,
++						   size_t maxsize,
++						   unsigned int maxpages,
++						   unsigned int gup_flags,
++						   size_t *offset0)
++{
++	unsigned long addr;
++	size_t offset;
++	int res;
++
++	if (WARN_ON_ONCE(i->data_source != ITER_SOURCE))
++		return -EFAULT;
++
++	gup_flags |= FOLL_GET;
++	if (i->nofault)
++		gup_flags |= FOLL_NOFAULT;
++
++	addr = iov_iter_extract_first_user_segment(i, &maxsize);
++	*offset0 = offset = addr % PAGE_SIZE;
++	addr &= PAGE_MASK;
++	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
++	if (!maxpages)
++		return -ENOMEM;
++	res = get_user_pages_fast(addr, maxpages, gup_flags, *pages);
++	if (unlikely(res <= 0))
++		return res;
++	maxsize = min_t(size_t, maxsize, res * PAGE_SIZE - offset);
++	iov_iter_advance(i, maxsize);
++	return maxsize;
++}
++
++/*
++ * Extract a list of contiguous pages from a user iterator and get a pin on
++ * each of them.  This should only be used iff the iterator is user-backed
++ * (IOBUF/UBUF) and data is being transferred into the buffer described by the
++ * iterator (ie. this is the destination).
++ *
++ * It does not get refs on the pages, but the pages must be unpinned by the
++ * caller once the transfer is complete.
++ *
++ * This is safe to be used where background IO/DMA *is* going to be modifying
++ * the buffer; using a pin rather than a ref makes sure that CoW happens
++ * correctly in the parent during fork.
++ */
++static ssize_t iov_iter_extract_user_pages_and_pin(struct iov_iter *i,
++						   struct page ***pages,
++						   size_t maxsize,
++						   unsigned int maxpages,
++						   unsigned int gup_flags,
++						   size_t *offset0)
++{
++	unsigned long addr;
++	size_t offset;
++	int res;
++
++	if (WARN_ON_ONCE(i->data_source != ITER_DEST))
++		return -EFAULT;
++
++	gup_flags |= FOLL_PIN | FOLL_WRITE;
++	if (i->nofault)
++		gup_flags |= FOLL_NOFAULT;
++
++	addr = first_iovec_segment(i, &maxsize);
++	*offset0 = offset = addr % PAGE_SIZE;
++	addr &= PAGE_MASK;
++	maxpages = want_pages_array(pages, maxsize, offset, maxpages);
++	if (!maxpages)
++		return -ENOMEM;
++	res = pin_user_pages_fast(addr, maxpages, gup_flags, *pages);
++	if (unlikely(res <= 0))
++		return res;
++	maxsize = min_t(size_t, maxsize, res * PAGE_SIZE - offset);
++	iov_iter_advance(i, maxsize);
++	return maxsize;
++}
++
++static ssize_t iov_iter_extract_user_pages(struct iov_iter *i,
++					   struct page ***pages, size_t maxsize,
++					   unsigned int maxpages,
++					   unsigned int gup_flags,
++					   size_t *offset0)
++{
++	if (iov_iter_extract_mode(i, gup_flags) == FOLL_GET)
++		return iov_iter_extract_user_pages_and_get(i, pages, maxsize,
++							   maxpages, gup_flags,
++							   offset0);
++	else
++		return iov_iter_extract_user_pages_and_pin(i, pages, maxsize,
++							   maxpages, gup_flags,
++							   offset0);
++}
++
++/**
++ * iov_iter_extract_pages - Extract a list of contiguous pages from an iterator
++ * @i: The iterator to extract from
++ * @pages: Where to return the list of pages
++ * @maxsize: The maximum amount of iterator to extract
++ * @maxpages: The maximum size of the list of pages
++ * @gup_flags: Direction indicator and additional flags
++ * @offset0: Where to return the starting offset into (*@pages)[0]
++ *
++ * Extract a list of contiguous pages from the current point of the iterator,
++ * advancing the iterator.  The maximum number of pages and the maximum amount
++ * of page contents can be set.
++ *
++ * If *@pages is NULL, a page list will be allocated to the required size and
++ * *@pages will be set to its base.  If *@pages is not NULL, it will be assumed
++ * that the caller allocated a page list at least @maxpages in size and this
++ * will be filled in.
++ *
++ * @gup_flags can be set to either FOLL_READ_FROM_MEM or FOLL_WRITE_TO_MEM,
++ * indicating how the buffer is to be used, and can have FOLL_PCI_P2PDMA OR'd
++ * with that.
++ *
++ * The iov_iter_extract_mode() function can be used to query how cleanup should
++ * be performed.
++ *
++ * Extra refs or pins on the pages may be obtained as follows:
++ *
++ *  (*) If the iterator is user-backed (ITER_IOVEC/ITER_UBUF) and data is to be
++ *      transferred /OUT OF/ the buffer (@gup_flags |= FOLL_READ_FROM_MEM),
++ *      refs will be taken on the pages, but pins will not be added.  This can
++ *      be used for DMA from a page; it cannot be used for DMA to a page, as it
++ *      may cause page-COW problems in fork.  iov_iter_extract_mode() will
++ *      return FOLL_GET.
++ *
++ *  (*) If the iterator is user-backed (ITER_IOVEC/ITER_UBUF) and data is to be
++ *      transferred /INTO/ the described buffer (@gup_flags |=
++ *      FOLL_WRITE_TO_MEM), pins will be added to the pages, but refs will not
++ *      be taken.  This must be used for DMA to a page.
++ *      iov_iter_extract_mode() will return FOLL_PIN.
++ *
++ *  (*) If the iterator is ITER_PIPE, this must describe a destination for the
++ *      data.  Additional pages may be allocated and added to the pipe (which
++ *      will hold the refs), but neither refs nor pins will be obtained for the
++ *      caller.  The caller must hold the pipe lock.  iov_iter_extract_mode()
++ *      will return 0.
++ *
++ *  (*) If the iterator is ITER_BVEC or ITER_XARRAY, the pages are merely
++ *      listed; no extra refs or pins are obtained.  iov_iter_extract_mode()
++ *      will return 0.
++ *
++ * Note also:
++ *
++ *  (*) Use with ITER_KVEC is not supported as that may refer to memory that
++ *      doesn't have associated page structs.
++ *
++ *  (*) Use with ITER_DISCARD is not supported as that has no content.
++ *
++ * On success, the function sets *@pages to the new pagelist, if allocated, and
++ * sets *offset0 to the offset into the first page..
++ *
++ * It may also return -ENOMEM and -EFAULT.
++ */
++ssize_t iov_iter_extract_pages(struct iov_iter *i,
++			       struct page ***pages,
++			       size_t maxsize,
++			       unsigned int maxpages,
++			       unsigned int gup_flags,
++			       size_t *offset0)
++{
++
++	switch (gup_flags & FOLL_IO_DIR_MASK) {
++	case FOLL_READ_FROM_MEM:
++		if (WARN_ON_ONCE(i->data_source == ITER_DEST))
++			return -EIO;
++		break;
++	case FOLL_WRITE_TO_MEM:
++		if (WARN_ON_ONCE(i->data_source == ITER_SOURCE))
++			return -EIO;
++		break;
++	default:
++		WARN_ON_ONCE(1);
++		return -EIO;
++	}
++
++	maxsize = min_t(size_t, min_t(size_t, maxsize, i->count), MAX_RW_COUNT);
++	if (!maxsize)
++		return 0;
++
++	if (likely(user_backed_iter(i)))
++		return iov_iter_extract_user_pages(i, pages, maxsize,
++						   maxpages, gup_flags,
++						   offset0);
++	if (iov_iter_is_bvec(i))
++		return iov_iter_extract_bvec_pages(i, pages, maxsize,
++						   maxpages, gup_flags,
++						   offset0);
++	if (iov_iter_is_pipe(i))
++		return iov_iter_extract_pipe_pages(i, pages, maxsize,
++						   maxpages, gup_flags,
++						   offset0);
++	if (iov_iter_is_xarray(i))
++		return iov_iter_extract_xarray_pages(i, pages, maxsize,
++						     maxpages, gup_flags,
++						     offset0);
++	return -EFAULT;
++}
++EXPORT_SYMBOL_GPL(iov_iter_extract_pages);
+-- 
+2.39.0
+
