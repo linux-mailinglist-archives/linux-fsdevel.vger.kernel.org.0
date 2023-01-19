@@ -2,73 +2,63 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 1743C674435
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 22:22:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 12E53674445
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 22:24:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229801AbjASVWY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Jan 2023 16:22:24 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37948 "EHLO
+        id S230254AbjASVYd (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Jan 2023 16:24:33 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39718 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229834AbjASVV7 (ORCPT
+        with ESMTP id S229575AbjASVW3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Jan 2023 16:21:59 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5A7F9F3B3
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 13:14:39 -0800 (PST)
+        Thu, 19 Jan 2023 16:22:29 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 53F4CA295F
+        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 13:14:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674162859;
+        s=mimecast20190719; t=1674162895;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          in-reply-to:in-reply-to:references:references;
-        bh=+iHY1JhHo7sNRnq5TCZlVvfIFAGkKRvvynfD4YQ8b9Q=;
-        b=DRcAqwNV4HxukkKMUGswPaSzi+x1SaoxCy/O2R/GGie7oCD3P6QuDM8spIQMIkCGzY9V3q
-        kkf0FwMoeDCVcA4jgzdoVhgvHB9YPU0oxGselaiWu9YUdv3QLnl7hBv1HF4Q/zPYeJ0wcR
-        qxr3oO5SBSsjuCIVmK/N2MGtohZ77VQ=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-190-mdqu-pZaOjeAcZnVBVo3FA-1; Thu, 19 Jan 2023 16:14:15 -0500
-X-MC-Unique: mdqu-pZaOjeAcZnVBVo3FA-1
-Received: by mail-qv1-f70.google.com with SMTP id t13-20020a056214118d00b00535360c0b52so1588653qvv.1
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 13:14:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+iHY1JhHo7sNRnq5TCZlVvfIFAGkKRvvynfD4YQ8b9Q=;
-        b=yDm2SLfthHK4xVrbB5IucVp303Cm3Lyqv3x8pfCbT5A0sucEr9KV6VXdij5CpJDlXw
-         eFwNa74cZdWFoLBrZ2LWGxGtG49/qjAf5ByAc6zxVjJrvrRkikNCjk7gjP5Q2lS3aSsk
-         9jqLtTwWMgZ1+CcCVWZseHiK1qJTwI8/Zfdt284Tfjt43pGyyB8xvmYA7PBCIfwbDo84
-         dbgnoYG6oA1Q+d39eYtYhQJ5IGLMX50MtJtGzAo37MiNzmbrwJ0pK7P2bzrMicALDykb
-         wcuHA+2HAAHfhqkCmqn8VTSHvcGeeFVA6oYAkK2RmPvbmI6e4n6hTob1OWw9HSeBkbbf
-         Q4kg==
-X-Gm-Message-State: AFqh2kr/R7HAVzhPrG03ZXNDUpogpOJP4mF4dLFAHz6CxgvMuXUvPdJ0
-        UF6e1swPT0yn8xPWLI4nvBXoiQPeaaZv//CkQ/vSjHiyEK0Tc3gRKUI+OONJefMYyjug8s2+Q9b
-        f2UIDivt+JMS0GxUyLgcNmAkqng==
-X-Received: by 2002:ad4:424f:0:b0:535:5a09:8312 with SMTP id l15-20020ad4424f000000b005355a098312mr3170021qvq.34.1674162855301;
-        Thu, 19 Jan 2023 13:14:15 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXt2pAh2PbL6ofFXjhTL8NCW+Ds/0+z/BXxNI16rcaTPJz1b1RTgCytbMYeE0N9f5zuezGPMrg==
-X-Received: by 2002:ad4:424f:0:b0:535:5a09:8312 with SMTP id l15-20020ad4424f000000b005355a098312mr3169995qvq.34.1674162855013;
-        Thu, 19 Jan 2023 13:14:15 -0800 (PST)
-Received: from localhost (pool-71-184-142-128.bstnma.fios.verizon.net. [71.184.142.128])
-        by smtp.gmail.com with ESMTPSA id q44-20020a05620a2a6c00b006fc9fe67e34sm10705407qkp.81.2023.01.19.13.14.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jan 2023 13:14:14 -0800 (PST)
-Date:   Thu, 19 Jan 2023 16:14:14 -0500
-From:   Eric Chanudet <echanude@redhat.com>
-To:     Alexander Viro <viro@zeniv.linux.org.uk>
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Alexander Larsson <alexl@redhat.com>,
-        Andrew Halaney <ahalaney@redhat.com>
-Subject: Re: [RFC PATCH 0/1] fs/namespace: defer free_mount from
- namespace_unlock
-Message-ID: <20230119211414.qfkh3hrmupcynrrb@echanude>
-References: <20230119205521.497401-1-echanude@redhat.com>
+        bh=i1IMCqddgWykv8AXR/YeAqVJq9PsFQed00N0J64kJGo=;
+        b=MpdbxkbQ8BHJ+SCUOPjSG6TsL9kIyZ08m44DPAo84draWE/fGQHZDJVKMdWqE3Zshay2Xg
+        roOY+0nulyMwQcq+rhGled+TzFgAcP2tqhH+AYekziVElT4kAnMprxuaL+VGss1E/Ju+rG
+        sqmiQfTK2K+IKS1UadvVx5C917eT98c=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-153-hi1FagP5OzO-eBN77YCRog-1; Thu, 19 Jan 2023 16:14:49 -0500
+X-MC-Unique: hi1FagP5OzO-eBN77YCRog-1
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id BAE92181E3F4;
+        Thu, 19 Jan 2023 21:14:48 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.33.36.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id D291A51EF;
+        Thu, 19 Jan 2023 21:14:46 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+        Kingdom.
+        Registered in England and Wales under Company Registration No. 3798903
+From:   David Howells <dhowells@redhat.com>
+In-Reply-To: <Y8l0Xdd0MKbuVa7z@infradead.org>
+References: <Y8l0Xdd0MKbuVa7z@infradead.org> <Y8jYrahu45kkCRlq@infradead.org> <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk> <167391048988.2311931.1567396746365286847.stgit@warthog.procyon.org.uk> <Y8ZTyx7vM8NpnUAj@infradead.org> <Y8huoSe4j6ysLUTT@ZenIV> <2731230.1674128066@warthog.procyon.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Matthew Wilcox <willy@infradead.org>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v6 01/34] vfs: Unconditionally set IOCB_WRITE in call_write_iter()
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230119205521.497401-1-echanude@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <3037548.1674162886.1@warthog.procyon.org.uk>
+Date:   Thu, 19 Jan 2023 21:14:46 +0000
+Message-ID: <3037549.1674162886@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -79,16 +69,16 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 19, 2023 at 03:55:20PM -0500, Eric Chanudet wrote:
-> We noticed a significant slow down when running a containers on an
-> Aarch64 system with the RT patch set using the following test:
-> [...]
-> With the following patch, namespace_unlock will queue up the resources
-> that needs to be released and defer the operation through call_rcu to
-> return without waiting for the grace period.
+Christoph Hellwig <hch@infradead.org> wrote:
 
-I did not CC:linux-rt-users. Resending with them included, my apologies.
+> So what about deferring this whole cleanup for now?
 
--- 
-Eric Chanudet
+So you'd rather I stick with the direction indicator in the iov_iter struct
+for now?
+
+I still want to add iov_iter_extract_pages(), netfs_extract_user_iter() and
+netfs_extract_iter_to_sg(), even if it's only cifs and netfslib that use them
+for the moment.
+
+David
 
