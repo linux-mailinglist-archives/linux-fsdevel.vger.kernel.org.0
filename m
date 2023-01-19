@@ -2,78 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 3958C672E6B
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 02:48:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A2955672EA6
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 03:11:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230050AbjASBsV (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Jan 2023 20:48:21 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50776 "EHLO
+        id S229744AbjASCLf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Jan 2023 21:11:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:35686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230047AbjASBps (ORCPT
+        with ESMTP id S229496AbjASCLe (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Jan 2023 20:45:48 -0500
-Received: from mail-pg1-x52b.google.com (mail-pg1-x52b.google.com [IPv6:2607:f8b0:4864:20::52b])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B6C1A5A817;
-        Wed, 18 Jan 2023 17:42:08 -0800 (PST)
-Received: by mail-pg1-x52b.google.com with SMTP id r18so339369pgr.12;
-        Wed, 18 Jan 2023 17:42:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1jTlfNksJalEp/A5sUIxTgRksg/f/RnRMjUOcu8kx0c=;
-        b=HhQ0xvQYH31klAmXtATKS3umnYmXZLm1jhsZWhY3zxBGOzV5UvC5+HOPQ74rr4IVdi
-         viO/Y5h6rjpyVuXjVmkMpid4adWtXK4TcpYhNdh+uqU61rqAA1IX1TTxWrgFsu0nAjYv
-         pEHPxHYljLtPQJXN+O6urbgXNUpZIUh/KPHt2pNpVujsQKrpObeQwaVMOXNVtZ2ZTmgG
-         mCabkxYu51M5Et0B+06U98ut2+y9rh+wqmiT9RAjZd/7Qpxgy2qIxFHyXRB0ecZzXka8
-         35bnEcCT49LzCAgRfD16Hw63IDP1lVjOfzJsgtTU1yLw/mkfQipeMdguETXNW4GFO4kl
-         JyXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1jTlfNksJalEp/A5sUIxTgRksg/f/RnRMjUOcu8kx0c=;
-        b=hj/c/uBBgfRr0zc4GwkK1M1A6B3nJ1YDJPkxZH1Hej1Z6uiTKarUwx4IycScUhLcEN
-         LRBYRYD83/JSg+5trOTMp2rp0zhbtXVf3kbV/cE5x1Z1oaPJrxEog0G+Ype/dchRhKIv
-         /25bF1gUUQGwcgqg3OWbJW/Uqf52vzg87QVCpjwefNHh05BnyXvmaFKIRilTID4UE70N
-         LcxJ+PTYEG7TTO9+vgWFvbams2zusxVP0+JLlV1zYz2Kk1qveqhh9GVJgE88OelYVzva
-         16CE4QEhNrawAE0Z4S5zvK7TSu3nmys7/ZGjgiBGNfvRxWhiIy4Q8FaYIDS8Du9Tgkyi
-         7y4Q==
-X-Gm-Message-State: AFqh2kp8K6XAbpvyRWHBDAwBoJZ8y1ltY7VV+MgmQGtjZQlSAbiim4Rn
-        +sLtuTR04yNg43E7QBL0s2Y=
-X-Google-Smtp-Source: AMrXdXvV7ofDOm4aFHya2EIoCDpKJMrm+bHqraoK2hS0COfWYM90GBxg+hCw2OE54Bb8LzJ88DhU0g==
-X-Received: by 2002:a62:ab02:0:b0:58d:982a:f1ed with SMTP id p2-20020a62ab02000000b0058d982af1edmr8724476pff.27.1674092528248;
-        Wed, 18 Jan 2023 17:42:08 -0800 (PST)
-Received: from localhost (193-116-102-45.tpgi.com.au. [193.116.102.45])
-        by smtp.gmail.com with ESMTPSA id z13-20020aa79e4d000000b0058bc1a13ffcsm9337947pfq.25.2023.01.18.17.41.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 18 Jan 2023 17:42:07 -0800 (PST)
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date:   Thu, 19 Jan 2023 11:41:57 +1000
-Message-Id: <CPVS9PAXZRPK.3HFH2LTB662XP@bobo>
-Subject: Re: Memory transaction instructions
-From:   "Nicholas Piggin" <npiggin@gmail.com>
-To:     "David Howells" <dhowells@redhat.com>,
-        "Linus Torvalds" <torvalds@linux-foundation.org>
-Cc:     "Mateusz Guzik" <mjguzik@gmail.com>,
-        "linux-arch" <linux-arch@vger.kernel.org>,
-        "Catalin Marinas" <catalin.marinas@arm.com>,
-        "Will Deacon" <will@kernel.org>,
-        "Michael Ellerman" <mpe@ellerman.id.au>, <tony.luck@intel.com>,
-        <viro@zeniv.linux.org.uk>, <linux-fsdevel@vger.kernel.org>,
-        "Jan Glauber" <jan.glauber@gmail.com>,
-        "linuxppc-dev" <linuxppc-dev@lists.ozlabs.org>,
-        "Linux ARM" <linux-arm-kernel@lists.infradead.org>
-X-Mailer: aerc 0.13.0
-References: <CAHk-=whjFwzEq0u04=n=t7-kNJdX0HkAOjAMjmLXDDycJ+j9yQ@mail.gmail.com> <CAGudoHHx0Nqg6DE70zAVA75eV-HXfWyhVMWZ-aSeOofkA_=WdA@mail.gmail.com> <CAHk-=wjthxgrLEvgZBUwd35e_mk=dCWKMUEURC6YsX5nWom8kQ@mail.gmail.com> <CPQQLU1ISBIJ.2SHU1BOMNO7TY@bobo> <CAHk-=wiRm+Z613bHt2d=N1yWJAiDiQVXkh0dN8z02yA_JS-rew@mail.gmail.com> <1966767.1673878095@warthog.procyon.org.uk> <2496131.1674032743@warthog.procyon.org.uk>
-In-Reply-To: <2496131.1674032743@warthog.procyon.org.uk>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        Wed, 18 Jan 2023 21:11:34 -0500
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2515C67948;
+        Wed, 18 Jan 2023 18:11:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=ZR+GRLBgNh/Ng8xqc/RxuaVbFzLK3bT534eeqsxAPwE=; b=Te3nlsRa4q9MEVwWN+jf5HtCkz
+        uA0J/KznGpk0eYKKdhda+JQAS5IHvdwZW0C1w5bJUgCBa+TKQdbRY+nC/T7BEdVGH6d8pexRvOdRm
+        LB7+pcqMrF9c2A5tmyuHEXlcIo1E8AcnMl6PXQrZ6KKS3kdIxSeS0BK4uRNCTUoKRtodkwgMInd80
+        Raa8/kNSmOcakF0hrp7Brz4ZfYl9jd59gfzOqckzOEBDKrL9imnm5DigRqSMNsMmDShoKoBajpSwL
+        9dVkyE8wTRlu+8Yg+mymqp0ycCbU7hGqXILm6ksQutliA/1yCuGv4IMAD2ExVjxyUPynk+6Gz7jTG
+        0H1BhMcA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
+        id 1pIKOd-002enL-2a;
+        Thu, 19 Jan 2023 02:11:19 +0000
+Date:   Thu, 19 Jan 2023 02:11:19 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Christoph Hellwig <hch@infradead.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH v6 03/34] iov_iter: Pass I/O direction into
+ iov_iter_get_pages*()
+Message-ID: <Y8imx/UQB/W/yONu@ZenIV>
+References: <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
+ <167391050409.2311931.7103784292954267373.stgit@warthog.procyon.org.uk>
+ <Y8ZU1Jjx5VSetvOn@infradead.org>
+ <Y8h62KsnI8g/xaRz@ZenIV>
+ <Y8iLsPlSLy5YVffX@ZenIV>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Y8iLsPlSLy5YVffX@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
+X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -81,32 +62,43 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed Jan 18, 2023 at 7:05 PM AEST, David Howells wrote:
-> Linus Torvalds <torvalds@linux-foundation.org> wrote:
->
-> > And for the kernel, where we don't have bad locking, and where we
-> > actually use fine-grained locks that are _near_ the data that we are
-> > locking (the lockref of the dcache is obviously one example of that,
-> > but the skbuff queue you mention is almost certainly exactly the same
-> > situation): the lock is right by the data that the lock protects, and
-> > the "shared lock cacheline" model simply does not work. You'll bounce
-> > the data, and most likely you'll also touch the same lock cacheline
-> > too.
->
-> Yeah.  The reason I was actually wondering about them was if it would be
-> possible to avoid the requirement to disable interrupts/softirqs to, say,
-> modify the skbuff queue.  On some arches actually disabling irqs is quite=
- a
-> heavy operation (I think this is/was true on ppc64, for example; it certa=
-inly
-> was on frv) and it was necessary to "emulate" the disablement.
+On Thu, Jan 19, 2023 at 12:15:44AM +0000, Al Viro wrote:
+> On Wed, Jan 18, 2023 at 11:03:52PM +0000, Al Viro wrote:
+> > On Mon, Jan 16, 2023 at 11:57:08PM -0800, Christoph Hellwig wrote:
+> > > On Mon, Jan 16, 2023 at 11:08:24PM +0000, David Howells wrote:
+> > > > Define FOLL_SOURCE_BUF and FOLL_DEST_BUF to indicate to get_user_pages*()
+> > > > and iov_iter_get_pages*() how the buffer is intended to be used in an I/O
+> > > > operation.  Don't use READ and WRITE as a read I/O writes to memory and
+> > > > vice versa - which causes confusion.
+> > > > 
+> > > > The direction is checked against the iterator's data_source.
+> > > 
+> > > Why can't we use the existing FOLL_WRITE?
+> > 
+> > 	I'm really not fond of passing FOLL_... stuff into iov_iter
+> > primitives.  That space contains things like FOLL_PIN, which makes
+> > no sense whatsoever for non-user-backed iterators; having the
+> > callers pass it in makes them automatically dependent upon the
+> > iov_iter flavour.
+> 
+> Actually, looking at that thing...  Currently we use it only for
+> FOLL_PCI_P2PDMA.  It alters behaviour of get_user_pages_fast(), but...
+> it is completely ignored for ITER_BVEC or ITER_PIPE.  So how the
+> hell is it supposed to work?
+> 
+> And ITER_BVEC *can* get there.  blkdev_direct_IO() can get anything
+> ->write_iter() can get, and io_uring will feed stuff to it.  For
+> that matter, ->read_iter() can lead to it as well, so
+> generic_file_splice_read() can end up passing ITER_PIPE to that
+> sucker.
+> 
+> Could somebody give a braindump on that thing?  It looks like we
+> have pages that should not be DMA'd to/from unless driver takes
+> some precautions and we want to make sure they won't be fed to
+> drivers that don't take such.  With checks done in a very odd
+> place...
 
-Not too bad on modern ppc64. Changing MSR in general has to flush the
-pipe and even re-fetch, because it can alter memory translation among
-other things, so it was heavy. Everything we support has a lightweight
-MSR change that just modifies the interrupt enable bit and only needs
-minor serialisation (although we still have that software-irq-disable
-thing which avoids the heavy MSR problem on old CPUs).
-
-Thanks,
-Nick
+PS: Documentation/driver-api/pci/p2pdma.rst seems to imply that those
+pages should not be possible to mmap, so either that needs to be
+updated, or... how the hell could we run into those in g-u-p,
+anyway?  Really confused...
