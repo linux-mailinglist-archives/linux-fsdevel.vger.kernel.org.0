@@ -2,58 +2,59 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id C6131672D48
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 01:15:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id AA5A0672DC0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 01:58:46 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229622AbjASAP5 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Wed, 18 Jan 2023 19:15:57 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41862 "EHLO
+        id S229874AbjASA6p (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Wed, 18 Jan 2023 19:58:45 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:60590 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229606AbjASAP4 (ORCPT
+        with ESMTP id S229644AbjASA6n (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Wed, 18 Jan 2023 19:15:56 -0500
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [IPv6:2a03:a000:7:0:5054:ff:fe1c:15ff])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 03CEE5355F;
-        Wed, 18 Jan 2023 16:15:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=B4JKTopwf+ah1JzO+o8lKdNMaw0A3fc5NXU+YNHQFBU=; b=RQ+fXNP99ggIbZtBXxqO4wTlTl
-        5hJSTT5zs8PR1I7e3wiqq5aC8sq0ARV3Xp7QGdkSLljcjiLdfklaz5WAs6eCPn49gFu0N9VQqFXDM
-        oM05bDhNraV2tKr1XSZfPIazui4XxePY0SFJyITfItPI/5d9a59kxoo7qCK/suhZiDtunkbg3fHJC
-        SOF8gaSn70LL+c97Xei2fWI03cNHSqga8PhaRRmTeyEEgPjx28qXC+1IlM9o5WaX9P4BcmAZ2F6+5
-        uOzCs5+WZFkgTV3bBj65ecJsnymTxkrNBXqvxxZxMbo8mcEB45B2nqHOLJFr5A93nMKWKbnKG/2uo
-        UyOdFPkA==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.96 #2 (Red Hat Linux))
-        id 1pIIam-002dwf-2G;
-        Thu, 19 Jan 2023 00:15:44 +0000
-Date:   Thu, 19 Jan 2023 00:15:44 +0000
-From:   Al Viro <viro@zeniv.linux.org.uk>
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     David Howells <dhowells@redhat.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Peter Zijlstra <peterz@infradead.org>,
-        David Hildenbrand <david@redhat.com>
-Subject: Re: [PATCH v6 03/34] iov_iter: Pass I/O direction into
- iov_iter_get_pages*()
-Message-ID: <Y8iLsPlSLy5YVffX@ZenIV>
-References: <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
- <167391050409.2311931.7103784292954267373.stgit@warthog.procyon.org.uk>
- <Y8ZU1Jjx5VSetvOn@infradead.org>
- <Y8h62KsnI8g/xaRz@ZenIV>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Y8h62KsnI8g/xaRz@ZenIV>
-Sender: Al Viro <viro@ftp.linux.org.uk>
-X-Spam-Status: No, score=-2.0 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_EF,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        Wed, 18 Jan 2023 19:58:43 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id E51F3683D9
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jan 2023 16:58:41 -0800 (PST)
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+        by 156.147.23.53 with ESMTP; 19 Jan 2023 09:58:39 +0900
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
+        by 156.147.1.151 with ESMTP; 19 Jan 2023 09:58:39 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     torvalds@linux-foundation.org
+Cc:     damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        mingo@redhat.com, linux-kernel@vger.kernel.org,
+        peterz@infradead.org, will@kernel.org, tglx@linutronix.de,
+        rostedt@goodmis.org, joel@joelfernandes.org, sashal@kernel.org,
+        daniel.vetter@ffwll.ch, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jlayton@kernel.org, dan.j.williams@intel.com,
+        hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com,
+        42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
+        gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com
+Subject: Re: [PATCH RFC v7 00/23] DEPT(Dependency Tracker)
+Date:   Thu, 19 Jan 2023 09:58:27 +0900
+Message-Id: <1674089907-31690-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <CAHk-=whpkWbdeZE1zask8YPzVYevJU2xOXqOposBujxZsa2-tQ@mail.gmail.com>
+References: <CAHk-=whpkWbdeZE1zask8YPzVYevJU2xOXqOposBujxZsa2-tQ@mail.gmail.com>
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -61,37 +62,63 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 18, 2023 at 11:03:52PM +0000, Al Viro wrote:
-> On Mon, Jan 16, 2023 at 11:57:08PM -0800, Christoph Hellwig wrote:
-> > On Mon, Jan 16, 2023 at 11:08:24PM +0000, David Howells wrote:
-> > > Define FOLL_SOURCE_BUF and FOLL_DEST_BUF to indicate to get_user_pages*()
-> > > and iov_iter_get_pages*() how the buffer is intended to be used in an I/O
-> > > operation.  Don't use READ and WRITE as a read I/O writes to memory and
-> > > vice versa - which causes confusion.
-> > > 
-> > > The direction is checked against the iterator's data_source.
-> > 
-> > Why can't we use the existing FOLL_WRITE?
+Torvalds wrote:
+> On Sun, Jan 8, 2023 at 7:33 PM Byungchul Park <byungchul.park@lge.com> wrote:
+>>
+>> I've been developing a tool for detecting deadlock possibilities by
+>> tracking wait/event rather than lock(?) acquisition order to try to
+>> cover all synchonization machanisms. It's done on v6.2-rc2.
 > 
-> 	I'm really not fond of passing FOLL_... stuff into iov_iter
-> primitives.  That space contains things like FOLL_PIN, which makes
-> no sense whatsoever for non-user-backed iterators; having the
-> callers pass it in makes them automatically dependent upon the
-> iov_iter flavour.
+> Ugh. I hate how this adds random patterns like
 
-Actually, looking at that thing...  Currently we use it only for
-FOLL_PCI_P2PDMA.  It alters behaviour of get_user_pages_fast(), but...
-it is completely ignored for ITER_BVEC or ITER_PIPE.  So how the
-hell is it supposed to work?
+I undertand what you mean.. But all the synchronization primitives
+should let DEPT know the beginning and the end of each. However, I will
+remove the 'if' statement that looks ugly from the next spin, and place
+the pattern to a better place if possible.
 
-And ITER_BVEC *can* get there.  blkdev_direct_IO() can get anything
-->write_iter() can get, and io_uring will feed stuff to it.  For
-that matter, ->read_iter() can lead to it as well, so
-generic_file_splice_read() can end up passing ITER_PIPE to that
-sucker.
+> 	if (timeout == MAX_SCHEDULE_TIMEOUT)
+> 		sdt_might_sleep_strong(NULL);
+> 	else
+> 		sdt_might_sleep_strong_timeout(NULL);
+> 	...
+> 	sdt_might_sleep_finish();
+> 
+> to various places, it seems so very odd and unmaintainable.
+> 
+> I also recall this giving a fair amount of false positives, are they all fixed?
 
-Could somebody give a braindump on that thing?  It looks like we
-have pages that should not be DMA'd to/from unless driver takes
-some precautions and we want to make sure they won't be fed to
-drivers that don't take such.  With checks done in a very odd
-place...
+Yes. Of course I removed all the false positives we found.
+
+> Anyway, I'd really like the lockdep people to comment and be involved.
+> We did have a fairly recent case of "lockdep doesn't track page lock
+> dependencies because it fundamentally cannot" issue, so DEPT might fix
+> those kinds of missing dependency analysis. See
+
+Sure. That's exactly what DEPT works for e.g. PG_locked.
+
+> 	https://lore.kernel.org/lkml/00000000000060d41f05f139aa44@google.com/
+
+I will reproduce it and share the result.
+
+> for some context to that one, but at teh same time I would *really*
+> want the lockdep people more involved and acking this work.
+> 
+> Maybe I missed the email where you reported on things DEPT has found
+> (and on the lack of false positives)?
+
+Maybe you didn't miss. It's still too hard to make a decision between:
+
+	Aggressive detection with false alarms that need to be fixed by
+	manual classification as Lockdep did, focusing on potential
+	possibility more.
+
+	versus
+
+	Conservative detection with few false alarms, which requires us
+	to test much longer to get result we expect, focusing on actual
+	happening.
+
+> 
+> 	Linus
+
+	Byungchul
