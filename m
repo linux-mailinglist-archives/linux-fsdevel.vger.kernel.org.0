@@ -2,80 +2,76 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 14C39673F58
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 17:52:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id D025C6740D9
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 19:25:36 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230386AbjASQwv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Jan 2023 11:52:51 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:44480 "EHLO
+        id S230190AbjASSZf (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Jan 2023 13:25:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49394 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230208AbjASQwf (ORCPT
+        with ESMTP id S230146AbjASSZa (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Jan 2023 11:52:35 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 373098C90B;
-        Thu, 19 Jan 2023 08:52:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=6baCIjpxFWqtburgiU9owFRWWB+OsgVl9mMP/UXy3Fs=; b=ON5gWcaPIXHKSUs8dzkEuU5BPU
-        E2GWyQaoM8UfBF+ZUDUdpuHhHlruqqIPtXHXqmt+mgvZT1sfp/Dh0QYYtv2EUSpmtbOvQZLPRuJDO
-        5rWOkb7+GjTsosErJw2uBcDWrKvIzPiVH3/m+o520DwKyYx5EVdHyAupcLIbnC8ax1bfl4/LCZOE/
-        GNuUEi9vWjW7bG0yw/aC4oKTIOCFNi6C6xwYQFFB+at8qozQ4lMz0zQ0PKxqVsnII/NJuzbkxRvV+
-        OkCSI8sUeM/EFMa85/AeOdvJSQbuHiWCZcTkuDZgOl+X1ZeqLuTwmm/2beh/7wE1bCpVozxEBUane
-        //PIDckA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pIY8t-0066Rw-Pc; Thu, 19 Jan 2023 16:51:59 +0000
-Date:   Thu, 19 Jan 2023 08:51:59 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Dominique Martinet <asmadeus@codewreck.org>,
-        Eric Van Hensbergen <ericvh@gmail.com>,
-        Latchesar Ionkov <lucho@ionkov.net>,
-        Christian Schoenebeck <linux_oss@crudebyte.com>,
-        v9fs-developer@lists.sourceforge.net,
-        Christoph Hellwig <hch@infradead.org>,
+        Thu, 19 Jan 2023 13:25:30 -0500
+X-Greylist: delayed 1799 seconds by postgrey-1.37 at lindbergh.monkeyblade.net; Thu, 19 Jan 2023 10:25:16 PST
+Received: from hr2.samba.org (hr2.samba.org [IPv6:2a01:4f8:192:486::2:0])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E015394323;
+        Thu, 19 Jan 2023 10:25:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=samba.org;
+        s=42; h=From:Cc:To:Date:Message-ID;
+        bh=Gc4QRic3oOW9jZaNZmu54QNDymxEhCF0UTpzB08co6Q=; b=H9EbDT6g8xJehZrjzjvPj+Rpdl
+        3shbnqV44QWZV+w7vBunk5zdZ7YXF3sI6hxb6JV3OVBooar0NU3XBfM2tKiNuwf9UoQL+jD2V4WwV
+        zDNk3V2sCPp5HpPUMFtw+KbAehs8opS6wHqVgmhAbjgYFNoG/7iG2Q8UperkhaXb/QX+vLgwCNgco
+        oojp2E6wKCr397zSM1qC4/a8iRCJoE4AUGxAEVq8tNRp7oT/HbcbCPcS/5KpvFqSVjir5Ur+j1/xT
+        NSSnlHjie1IIVn7M13BQKihQ1qIE75CbEZyPG7DJm64CelF0gWPM/i/VktaCgp2Y9en+8mOb0rYet
+        kCRny1lG6BjlEOSL58IrUKexITfdQzYVpb2j+/8YtU/5Rfa9bd9lsM2qbDp4D+gIJP9DiiOLVvwT6
+        qh8gVjGxc1cdfqhzr45zp4adk6oICkANGJDXh9QOhr8tuDzf+vRkbWM7366YhDGO1KB3YaS7DAm0n
+        JSm6H6/Kuvj4uXNUi6OeVuUh;
+Received: from [127.0.0.2] (localhost [127.0.0.1])
+        by hr2.samba.org with esmtpsa (TLS1.3:ECDHE_SECP256R1__ECDSA_SECP256R1_SHA256__CHACHA20_POLY1305:256)
+        (Exim)
+        id 1pIXjP-009NuW-1f; Thu, 19 Jan 2023 16:25:39 +0000
+Message-ID: <8a6b6192-0413-a0cf-218e-4b86c5de3f8a@samba.org>
+Date:   Thu, 19 Jan 2023 17:25:38 +0100
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.4.2
+Subject: Re: [PATCH v6 31/34] cifs: Fix problem with encrypted RDMA data read
+Content-Language: en-US, de-DE
+To:     David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Cc:     Steve French <smfrench@gmail.com>, Tom Talpey <tom@talpey.com>,
+        Long Li <longli@microsoft.com>,
+        Namjae Jeon <linkinjeon@kernel.org>,
+        linux-cifs@vger.kernel.org, Christoph Hellwig <hch@infradead.org>,
         Matthew Wilcox <willy@infradead.org>,
         Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
         Jeff Layton <jlayton@kernel.org>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 21/34] 9p: Pin pages rather than ref'ing if appropriate
-Message-ID: <Y8l1L9B48prS2o9c@infradead.org>
-References: <Y8iwXJ2gMcCyXzm4@ZenIV>
- <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
- <167391063242.2311931.3275290816918213423.stgit@warthog.procyon.org.uk>
- <3030212.1674146654@warthog.procyon.org.uk>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3030212.1674146654@warthog.procyon.org.uk>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+References: <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
+ <167391070712.2311931.8909671251130425914.stgit@warthog.procyon.org.uk>
+From:   Stefan Metzmacher <metze@samba.org>
+In-Reply-To: <167391070712.2311931.8909671251130425914.stgit@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 19, 2023 at 04:44:14PM +0000, David Howells wrote:
-> Al Viro <viro@zeniv.linux.org.uk> wrote:
-> You're right.  I wonder if I should handle ITER_KVEC in
-> iov_iter_extract_pages(), though I'm sure I've been told that a kvec might
-> point to data that doesn't have a matching page struct.  Or maybe it's that
-> the refcount shouldn't be changed on it.
+Am 17.01.23 um 00:11 schrieb David Howells:
+> When the cifs client is talking to the ksmbd server by RDMA and the ksmbd
+> server has "smb3 encryption = yes" in its config file, the normal PDU
+> stream is encrypted, but the directly-delivered data isn't in the stream
+> (and isn't encrypted), but is rather delivered by DDP/RDMA packets (at
+> least with IWarp).
 
-They could in theory contain non-page backed memory, even if I don't
-think we currently have that in tree.  The worst case is probably
-vmalloc()ed memory.  Many instance will have no good way to deal with
-something that isn't page backed.  That's one reason why I'd relaly
-love to see ITER_KVEC go away - for most use cases ITER_BVEC is the
-right thing, and the others are probably broken for various combinations
-already, but that's going to be a fair amount of work.  For now just
-failing the I/O if the instance can't deal with it is probably the
-right thing.
+In that case the client must not use DDP/RDMA offload!
+This needs to be fixed in the request code for both read and write!
+
+metze
