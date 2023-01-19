@@ -2,54 +2,40 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0C51F6731A0
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 07:14:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 82FF66731B7
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 07:22:20 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230112AbjASGOK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Jan 2023 01:14:10 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46802 "EHLO
+        id S229685AbjASGWS (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Jan 2023 01:22:18 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:51136 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229789AbjASGN3 (ORCPT
+        with ESMTP id S229515AbjASGWR (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Jan 2023 01:13:29 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6287A66CDA;
-        Wed, 18 Jan 2023 22:13:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=Xdy392OgNUxqb5TQg+GwRmeIQ1dBw7Q064Z/xIIHoEQ=; b=4KYOTnXgxy+iDt6rI0dK9ZOezo
-        dj4jDRdPFcqgoHwptzOburbslhnRCZ4caKXUIIkjb+4f534D9uANxdh6JP7vRvq9SH38L07fcU1xa
-        5NBbmW2fGaYYBzMxusRQ21jveHSBUmNTQRKAgGO32JNEJxCIf7q15QWDu1Bjal13VGzWvCPC8/1ZR
-        xXSX7VhSq8t2Mrup/IlWlhtcqW0eHmqUgnVe6Pr4ye/mSrGCXKBf9CYtaCIG46YxQjGYTODlseoRI
-        yPpAYH3zbJ7tihgPhWVqFxrANrLoDJ5LmFL5CEDqGIYu/s49qCV43TErawg/y/ci+CUIHMJEuA1MI
-        xw+FGtpg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pIOAs-003imG-Et; Thu, 19 Jan 2023 06:13:22 +0000
-Date:   Wed, 18 Jan 2023 22:13:22 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Karel Zak <kzak@redhat.com>
-Cc:     Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
-        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "util-linux@vger.kernel.org" <util-linux@vger.kernel.org>,
-        Damien Le Moal <Damien.LeMoal@wdc.com>,
-        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
-        Naohiro Aota <Naohiro.Aota@wdc.com>,
-        David Howells <dhowells@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: btrfs mount failure with context option and latest mount command
-Message-ID: <Y8jfgsNbcKTLdnmQ@infradead.org>
-References: <20230116101556.neld5ddm6brssy4n@shindev>
- <20230117164234.znsa4oeoovcdpntu@ws.net.home>
+        Thu, 19 Jan 2023 01:22:17 -0500
+Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id DA30AE3;
+        Wed, 18 Jan 2023 22:22:16 -0800 (PST)
+Received: by verein.lst.de (Postfix, from userid 2407)
+        id 6466367373; Thu, 19 Jan 2023 07:22:13 +0100 (CET)
+Date:   Thu, 19 Jan 2023 07:22:13 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Andreas Gruenbacher <agruenba@redhat.com>
+Cc:     Christoph Hellwig <hch@lst.de>, Bob Peterson <rpeterso@redhat.com>,
+        "Darrick J. Wong" <djwong@kernel.org>,
+        Damien Le Moal <damien.lemoal@opensource.wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <jth@kernel.org>, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 1/4] gfs2: stop using generic_writepages in
+ gfs2_ail1_start_one
+Message-ID: <20230119062213.GA17855@lst.de>
+References: <20220719041311.709250-1-hch@lst.de> <20220719041311.709250-2-hch@lst.de> <CAHc6FU5A71L0r2k5z7QoBZe3pO+5G1nMNvKfGmJzprQWFyDCog@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230117164234.znsa4oeoovcdpntu@ws.net.home>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+In-Reply-To: <CAHc6FU5A71L0r2k5z7QoBZe3pO+5G1nMNvKfGmJzprQWFyDCog@mail.gmail.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
+X-Spam-Status: No, score=-1.9 required=5.0 tests=BAYES_00,SPF_HELO_NONE,
         SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -57,14 +43,30 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, Jan 17, 2023 at 05:42:34PM +0100, Karel Zak wrote:
-> It's a serious issue if btrfs is not ready for the new kernel fsconfig
-> interface. I guess libmount cannot do anything else in this case
-> (well, we can switch back to classic mount(2), but it sounds as a
-> wrong solution).
+On Wed, Jan 18, 2023 at 10:22:20PM +0100, Andreas Gruenbacher wrote:
+> The above change means that instead of calling generic_writepages(),
+> we end up calling filemap_fdatawrite_wbc() -> do_writepages() ->
+> mapping->a_ops->writepages(). But that's something completely
+> different; the writepages address space operation operates is outward
+> facing, while we really only want to write out the dirty buffers /
+> pages in the underlying address space. In case of journaled data
+> inodes, gfs2_jdata_writepages() actually ends up trying to create a
+> filesystem transaction, which immediately hangs because we're in the
+> middle of a log flush.
+> 
+> So I'm tempted to revert the following two of your commits; luckily
+> that's independent from the iomap_writepage() removal:
+> 
+>   d3d71901b1ea ("gfs2: remove ->writepage")
+>   b2b0a5e97855 ("gfs2: stop using generic_writepages in gfs2_ail1_start_one")
 
-Unfortunately a lot of file systems haven't been converted to the
-fsconfig code yet, it's another case of adding new infrastructure to
-the kernel then not following up on the conversion, and all too common
-patter unfortunately :(  btrfs might be the only major disk file system,
-but there's lot of others.
+generic_writepages is gone in linux-next, and I'd really like to keep
+it that way.  So if you have to do this, please open code it
+using write_cache_pages and a direct call to the writepage method of
+choice.
+
+> I think we could go through iomap_writepages() instead of
+> generic_writepages() here as well,  but that's for another day.
+
+Well, that would obviously be much better, and actually help with the
+goal of removing ->writepage.
