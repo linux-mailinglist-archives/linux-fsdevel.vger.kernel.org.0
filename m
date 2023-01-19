@@ -2,71 +2,60 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 31EE8673212
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 08:05:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 9AA7E67321C
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 08:07:07 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229593AbjASHFh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Jan 2023 02:05:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33706 "EHLO
+        id S229528AbjASHHF (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Jan 2023 02:07:05 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33772 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229468AbjASHFf (ORCPT
+        with ESMTP id S229723AbjASHHB (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Jan 2023 02:05:35 -0500
-Received: from mail-pj1-x102f.google.com (mail-pj1-x102f.google.com [IPv6:2607:f8b0:4864:20::102f])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A192830D3
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jan 2023 23:05:33 -0800 (PST)
-Received: by mail-pj1-x102f.google.com with SMTP id b10so1507615pjo.1
-        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jan 2023 23:05:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=txG1XI7DK5qkyfzJsKyT2pWmLht7EdUGbR24ELqCUHo=;
-        b=lxqHsMH2HIghXj4gFBlPCciC9Iw+prjvBTBsMieEaNPRpj0rthzQo0CNTH3sx6kocj
-         AyEj86BLZB5WET6qEiF5+HPDKjPetcbMIwu44wa4YD1FHl+0X/ew3/IC5zSuHxHpK0l+
-         kPpPB7XJxISSXJZwCfkhzDDDEY8TN0Y/fefk466VY1C/WZQf3yRP638cfmdteBeYMyhn
-         F8BP5t2vMlXKJvaBgZL2vRZDAj4uyXzFwjV28yciqxDchSzciyawcRkXRsTmY9oWOe9i
-         SgWrD7lRAveYJ4ENRgIRt9S4mhdkd72ce0UoY5A0VqInxZdUqfFO2CSXMtHHFE/HerdG
-         9NgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=txG1XI7DK5qkyfzJsKyT2pWmLht7EdUGbR24ELqCUHo=;
-        b=UDqu1Gqs0p2Fx5ynMoBegvwBgmy0xNfqui5RXg34gvMiygVd8PJahb9u7sav0JXFac
-         PK9e16Kmi/X2D2NswacCbojEgBlMI60b8pI2TyM1mfmXxMoxxytJF1TUxxPsdpDZ5ZkU
-         rRC1os2e71f6tEu3WnikfUJxeii7pYX2+7K64P0R2oIqHEQ3cVpi4PcS8Tb8MnyaqFBS
-         tCYaxRCylLvMDLneRmi01vDDP6xK46z5YFD9bEc8lSEXSypoYxvD096nXggKDVmEhtt4
-         s8nclTXUMwlC38to0cBoiDBSJAbrxpOVOQY+I1565qyTo6Fy/MW4m1Tz9kdBlr2rFy12
-         NMrw==
-X-Gm-Message-State: AFqh2kqTrI8mIbw4gCUO+0PtvtDa6J5p4DuVYbrK1KxfgxCpvXmrM0lm
-        dkyc4gbroogZwbpuNeJvoM0=
-X-Google-Smtp-Source: AMrXdXt58siXWKsK0SGOpumac1dFmRQ4jmOmPF5wpgCiZeEMvDmOFznZXC79asasvoPNM1i9j8atJQ==
-X-Received: by 2002:a17:902:7fc9:b0:194:84f2:c1ec with SMTP id t9-20020a1709027fc900b0019484f2c1ecmr10354245plb.21.1674111933032;
-        Wed, 18 Jan 2023 23:05:33 -0800 (PST)
-Received: from ubuntu ([210.99.119.24])
-        by smtp.gmail.com with ESMTPSA id j6-20020a170902690600b00192aecb231asm24263298plk.121.2023.01.18.23.05.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Jan 2023 23:05:32 -0800 (PST)
-Date:   Wed, 18 Jan 2023 23:05:28 -0800
-From:   "YoungJun.Park" <her0gyugyu@gmail.com>
-To:     Miklos Szeredi <miklos@szeredi.hu>
-Cc:     Alex Murray <alex.murray@canonical.com>,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: Re: question about fuse livelock situation
-Message-ID: <20230119070528.GA1337007@ubuntu>
-References: <CAJ16EqgEd-BP3XStsR_Cm88Qw2=CTppZo7Ewqv9se+YyzrbzCQ@mail.gmail.com>
- <CAJfpegugtmfjkW9ysDobNJGZM=G0Y_wrK1uHwANjSnKX1K++SA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJfpegugtmfjkW9ysDobNJGZM=G0Y_wrK1uHwANjSnKX1K++SA@mail.gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
+        Thu, 19 Jan 2023 02:07:01 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo13.lge.com [156.147.23.53])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 0E5E259240
+        for <linux-fsdevel@vger.kernel.org>; Wed, 18 Jan 2023 23:06:52 -0800 (PST)
+Received: from unknown (HELO lgemrelse7q.lge.com) (156.147.1.151)
+        by 156.147.23.53 with ESMTP; 19 Jan 2023 16:06:51 +0900
+X-Original-SENDERIP: 156.147.1.151
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
+        by 156.147.1.151 with ESMTP; 19 Jan 2023 16:06:51 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     boqun.feng@gmail.com
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org, will@kernel.org,
+        tglx@linutronix.de, rostedt@goodmis.org, joel@joelfernandes.org,
+        sashal@kernel.org, daniel.vetter@ffwll.ch, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jlayton@kernel.org, dan.j.williams@intel.com,
+        hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com,
+        42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
+        gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
+        longman@redhat.com
+Subject: Re: [PATCH RFC v7 00/23] DEPT(Dependency Tracker)
+Date:   Thu, 19 Jan 2023 16:06:38 +0900
+Message-Id: <1674111998-25175-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1674109388-6663-1-git-send-email-byungchul.park@lge.com>
+References: <1674109388-6663-1-git-send-email-byungchul.park@lge.com>
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -74,71 +63,156 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Aug 31, 2022 at 11:58:50AM +0200, Miklos Szeredi wrote:
-> On Tue, 30 Aug 2022 at 03:58, 박영준 <her0gyugyu@gmail.com> wrote:
-> >
-> > I found fuse livelock situation and report it for possibility of problem.
-> >
-> > [Environment]
-> > 22.04 5.15.0-43-generic ubuntu kernel.
-> > ntfs-3g version ntfs-3g 2021.8.22 integrated FUSE 28 - Third
-> > Generation NTFS Driver
-> >
-> > [Problem]
-> > I bumped on livelock and analyze it. and concluded that it is needed
-> > to be fixed.
-> > it happends when 3 operation concurrently progressing.
-> >
-> > 1) usb detach by user. and kernel detect it.
-> > 2) mount.ntfs umount request & device release operation
-> > 3) pool-udisksd umount operation.
-> >
-> > [Conclusion]
-> > 1. mounted target device file must be released after /dev/fuse
-> > release. it makes deadlocky scenario.
+Byungchul wrote:
+> Boqun wrote:
+> > On Mon, Jan 16, 2023 at 10:00:52AM -0800, Linus Torvalds wrote:
+> > > [ Back from travel, so trying to make sense of this series..  ]
+> > > 
+> > > On Sun, Jan 8, 2023 at 7:33 PM Byungchul Park <byungchul.park@lge.com> wrote:
+> > > >
+> > > > I've been developing a tool for detecting deadlock possibilities by
+> > > > tracking wait/event rather than lock(?) acquisition order to try to
+> > > > cover all synchonization machanisms. It's done on v6.2-rc2.
+> > > 
+> > > Ugh. I hate how this adds random patterns like
+> > > 
+> > >         if (timeout == MAX_SCHEDULE_TIMEOUT)
+> > >                 sdt_might_sleep_strong(NULL);
+> > >         else
+> > >                 sdt_might_sleep_strong_timeout(NULL);
+> > >    ...
+> > >         sdt_might_sleep_finish();
+> > > 
+> > > to various places, it seems so very odd and unmaintainable.
+> > > 
+> > > I also recall this giving a fair amount of false positives, are they all fixed?
+> > > 
+> > 
+> > From the following part in the cover letter, I guess the answer is no?
 > 
-> Shouldn't this be reported to ntfs-3g developers then?
+> I fixed what we found anyway.
 > 
-> Thanks,
-> Miklos
+> > 	...
+> > 	6. Multiple reports are allowed.
+> > 	7. Deduplication control on multiple reports.
+> > 	8. Withstand false positives thanks to 6.
+> > 	...
+> > 
+> > seems to me that the logic is since DEPT allows multiple reports so that
+> > false positives are fitlerable by users?
+> 
+> At lease, it's needed until DEPT is considered stable because stronger
+> detection inevitably has more chance of false alarms unless we do manual
+> fix on each, which is the same as Lockdep.
+> 
+> > > Anyway, I'd really like the lockdep people to comment and be involved.
+> > 
+> > I never get Cced, so I'm unware of this for a long time...
+> 
+> Sorry I missed it. I will cc you from now on.
+> 
+> > A few comments after a quick look:
+> > 
+> > *	Looks like the DEPT dependency graph doesn't handle the
+> > 	fair/unfair readers as lockdep current does. Which bring the
+> > 	next question.
+> 
+> No. DEPT works better for unfair read. It works based on wait/event. So
+> read_lock() is considered a potential wait waiting on write_unlock()
+> while write_lock() is considered a potential wait waiting on either
+> write_unlock() or read_unlock(). DEPT is working perfect for it.
+> 
+> For fair read (maybe you meant queued read lock), I think the case
+> should be handled in the same way as normal lock. I might get it wrong.
+> Please let me know if I miss something.
+> 
+> > *	Can DEPT pass all the selftests of lockdep in
+> > 	lib/locking-selftests.c?
+> > 
+> > *	Instead of introducing a brand new detector/dependency tracker,
+> > 	could we first improve the lockdep's dependency tracker? I think
+> 
+> At the beginning of this work, of course I was thinking to improve
+> Lockdep but I decided to implement a new tool because:
+> 
+> 	1. What we need to check for deadlock detection is no longer
+> 	   lock dependency but more fundamental dependency by wait/event.
+> 	   A better design would have a separate dependency engine for
+> 	   that, not within Lockdep. Remind lock/unlock are also
+> 	   wait/event after all.
+> 
+> 	2. I was thinking to revert the revert of cross-release. But it
+> 	   will start to report false alarms as Lockdep was at the
+> 	   beginning, and require us to keep fixing things until being
+> 	   able to see what we are interested in, maybe for ever. How
+> 	   can we control that situation? I wouldn't use this extention.
+> 
+> 	3. Okay. Let's think about modifying the current Lockdep to make
+> 	   it work similar to DEPT. It'd require us to pay more effort
+> 	   than developing a new simple tool from the scratch with the
+> 	   basic requirement.
+> 
+> 	4. Big change at once right away? No way. The new tool need to
+> 	   be matured and there are ones who want to make use of DEPT at
+> 	   the same time. The best approach would be I think to go along
+> 	   together for a while.
 
-I reported it ntfs-3g and ubuntu bug report channel. 
-ntfs-3g does not respond and ubuntu bug report channel response it like below.
-(If you want a detail scenario flow picture, calltack etc check the link 
-https://github.com/tuxera/ntfs-3g/issues/56)
+(Appologize for this. Let me re-write this part.)
 
-> Hi
-
-> Thanks for reporting this issue - in general it is better to report bugs
-> via launchpad than email (e.g. by running the following command (without
-> the quotation marks) in a terminal: "ubuntu-bug ntfs-3g" or by
-> https://bugs.launchpad.net/ubuntu/+source/ntfs-3g/+filebug)
-
-> I notice you also appear to have reported this to the upstream nfts-3g
-> project at https://github.com/tuxera/ntfs-3g/issues/56 but have had no
-> response.
-
-> However, my initial thoughts when looking at this is that it appears you
-> can trigger a livelock within the kernel from an unprivileged user in
-> userspace - as such I wonder if this is a bug in the FUSE subsystem
-> within the Linux kernel and hence whether it should be reported to the
-> upstream kernel developers as well? As per
-> https://www.kernel.org/doc/html/v4.15/admin-guide/reporting-bugs.html it
-> would appear that this should be reported to the following email
-> addresses (assuming this is a real kernel bug rather than a bug within
-> the ntfs-3g userspace project):
-
-> $ ./scripts/get_maintainer.pl fs/fuse/fuse_i.h
-> Miklos Szeredi <miklos@szeredi.hu> (maintainer:FUSE: FILESYSTEM IN USERSPACE)
-> linux-fsdevel@vger.kernel.org (open list:FUSE: FILESYSTEM IN USERSPACE)
-> linux-kernel@vger.kernel.org (open list)
-
-> Thanks,
-> Alex
-
-Could you explan why it shoulde be fixed in userspace?
-then I try to fix this issue and to report it one more based on your comment.
+	4. Big change at once right away? No way. The new feature need
+	   to be matured and there are ones who want to use the new
+	   feature at the same time. The best approach would be I think
+	   to go along together for a while.
 
 Thanks,
-YoungJun park. 
+	Byungchul
 
+> Please don't look at each detail but the big picture, the architecture.
+> Plus, please consider I introduce a tool only focucing on fundamental
+> dependency itself that Lockdep can make use of. I wish great developers
+> like you would join improve the common engine togather.
+> 
+> > 	Byungchul also agrees that DEPT and lockdep should share the
+> > 	same dependency tracker and the benefit of improving the
+> 
+> I agree that both should share a single tracker.
+> 
+> > 	existing one is that we can always use the self test to catch
+> > 	any regression. Thoughts?
+> 
+> I imagine the follownig look for the final form:
+> 
+>      Lock correctness checker(LOCKDEP)
+>      +-----------------------------------------+
+>      | Lock usage correctness check            |
+>      |                                         |
+>      |                                         |
+>      |       (Request dependency check)        |
+>      |                           T             |
+>      +---------------------------|-------------+
+>                                  |
+>      Dependency tracker(DEPT)    V
+>      +-----------------------------------------+
+>      | Dependency check                        |
+>      | (by tracking wait and event context)    |
+>      +-----------------------------------------+
+> 
+> > Actually the above sugguest is just to revert revert cross-release
+> > without exposing any annotation, which I think is more practical to
+> > review and test.
+> 
+> Reverting the revert of cross-release is not bad. But I'd suggest a
+> nicer design for the reasons I explained above.
+> 
+> 	Byungchul
+> 
+> > I'd sugguest we 1) first improve the lockdep dependency tracker with
+> > wait/event in mind and then 2) introduce wait related annotation so that
+> > users can use, and then 3) look for practical ways to resolve false
+> > positives/multi reports with the help of users, if all goes well,
+> > 4) make it all operation annotated.
+> > 
+> > Thoughts?
+> > 
+> > Regards,
+> > Boqun
