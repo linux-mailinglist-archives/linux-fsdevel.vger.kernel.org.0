@@ -2,51 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 5192C673164
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 06:52:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 0C51F6731A0
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 07:14:13 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229762AbjASFwI (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Jan 2023 00:52:08 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40396 "EHLO
+        id S230112AbjASGOK (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Jan 2023 01:14:10 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229593AbjASFwH (ORCPT
+        with ESMTP id S229789AbjASGN3 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Jan 2023 00:52:07 -0500
+        Thu, 19 Jan 2023 01:13:29 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 79F83BA;
-        Wed, 18 Jan 2023 21:52:05 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 6287A66CDA;
+        Wed, 18 Jan 2023 22:13:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
         :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=HV20o5DJoYejH4ZxhgolHlvJcr34R1PSBryHehLovgc=; b=OA+Vp86krsp9Bm3bY8YID9wbtz
-        l4r1JaKf6WSW/XCx1VilImlA4K2In6L3j7JmCCVGvg+qj1gx3MZK/WnznqYdCdsKLjdNi6CZWMN+9
-        q0KGasFax4jUaAIRwi2w9dJD1Y5JTab2CAxJBfjuNqZ/P+8332Fqou7UGYPI1sOsI+5/ne9a99vmI
-        r2tIXLg70iTdrz7UCbdrvAY8plHIWklrKAtfcd8F3u+tXq1sIRBdyd6vbTKo966UriXiRa4vCdVtb
-        7C8G/1chYtTsrdA9pvz1yWo+shpaKpcJbwVDMwDrBkfR+Dh0albhuyWyoF/evf6xafPeT9M6PUYTg
-        zFvO+imQ==;
+        bh=Xdy392OgNUxqb5TQg+GwRmeIQ1dBw7Q064Z/xIIHoEQ=; b=4KYOTnXgxy+iDt6rI0dK9ZOezo
+        dj4jDRdPFcqgoHwptzOburbslhnRCZ4caKXUIIkjb+4f534D9uANxdh6JP7vRvq9SH38L07fcU1xa
+        5NBbmW2fGaYYBzMxusRQ21jveHSBUmNTQRKAgGO32JNEJxCIf7q15QWDu1Bjal13VGzWvCPC8/1ZR
+        xXSX7VhSq8t2Mrup/IlWlhtcqW0eHmqUgnVe6Pr4ye/mSrGCXKBf9CYtaCIG46YxQjGYTODlseoRI
+        yPpAYH3zbJ7tihgPhWVqFxrANrLoDJ5LmFL5CEDqGIYu/s49qCV43TErawg/y/ci+CUIHMJEuA1MI
+        xw+FGtpg==;
 Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pINq9-003hee-Da; Thu, 19 Jan 2023 05:51:57 +0000
-Date:   Wed, 18 Jan 2023 21:51:57 -0800
+        id 1pIOAs-003imG-Et; Thu, 19 Jan 2023 06:13:22 +0000
+Date:   Wed, 18 Jan 2023 22:13:22 -0800
 From:   Christoph Hellwig <hch@infradead.org>
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     David Howells <dhowells@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Jan Kara <jack@suse.cz>, Christoph Hellwig <hch@lst.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        Christoph Hellwig <hch@infradead.org>,
-        Jeff Layton <jlayton@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 18/34] dio: Pin pages rather than ref'ing if
- appropriate
-Message-ID: <Y8jafackRu7t2Jf4@infradead.org>
-References: <167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk>
- <167391061117.2311931.16807283804788007499.stgit@warthog.procyon.org.uk>
- <Y8jPVLewUaaiuplq@ZenIV>
+To:     Karel Zak <kzak@redhat.com>
+Cc:     Shinichiro Kawasaki <shinichiro.kawasaki@wdc.com>,
+        "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "util-linux@vger.kernel.org" <util-linux@vger.kernel.org>,
+        Damien Le Moal <Damien.LeMoal@wdc.com>,
+        Johannes Thumshirn <Johannes.Thumshirn@wdc.com>,
+        Naohiro Aota <Naohiro.Aota@wdc.com>,
+        David Howells <dhowells@redhat.com>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: btrfs mount failure with context option and latest mount command
+Message-ID: <Y8jfgsNbcKTLdnmQ@infradead.org>
+References: <20230116101556.neld5ddm6brssy4n@shindev>
+ <20230117164234.znsa4oeoovcdpntu@ws.net.home>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Y8jPVLewUaaiuplq@ZenIV>
+In-Reply-To: <20230117164234.znsa4oeoovcdpntu@ws.net.home>
 X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
         DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
@@ -57,35 +57,14 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Thu, Jan 19, 2023 at 05:04:20AM +0000, Al Viro wrote:
-> 1) fs/direct-io.c is ancient, grotty and has few remaining users.
-> The case of block devices got split off first; these days it's in
-> block/fops.c.  Then iomap-using filesystems went to fs/iomap/direct-io.c,
-> leaving this sucker used only by affs, ext2, fat, exfat, hfs, hfsplus, jfs,
-> nilfs2, ntfs3, reiserfs, udf and ocfs2.  And frankly, the sooner it dies
-> the better off we are.  IOW, you've picked an uninteresting part and left
-> the important ones untouched.
+On Tue, Jan 17, 2023 at 05:42:34PM +0100, Karel Zak wrote:
+> It's a serious issue if btrfs is not ready for the new kernel fsconfig
+> interface. I guess libmount cannot do anything else in this case
+> (well, we can switch back to classic mount(2), but it sounds as a
+> wrong solution).
 
-Agreed.  That being said if we want file systems (including those not
-using this legacy version) to be able to rely on correct page dirtying
-eventually everything needs to pin pages it writes to.  So we need to
-either actually fix or remove this code in the forseeable future.  It's
-by far not the most interesting and highest priority, though.   And as
-I said this series is already too large too review anyway, I'd really
-prefer to get a core set done ASAP and then iterate on the callers and
-additional bits.
-
-> Unless I misunderstand something fundamental about the whole thing,
-> this crap should become useless with that conversion.
-
-It should - mostly.  But we need to be very careful about that, so
-I'd prefer a separate small series for it to be honest.
-
-> BTW, where do we dirty the pages on IO_URING_OP_READ_FIXED with
-> O_DIRECT file?  AFAICS, bio_set_pages_dirty() won't be called
-> (ITER_BVEC iter) and neither will bio_release_pages() do anything
-> (BIO_NO_PAGE_REF set on the bio by bio_iov_bvec_set() called
-> due to the same ITER_BVEC iter).  Am I missing something trivial
-> here?  Jens?
-
-I don't think we do that all right now.
+Unfortunately a lot of file systems haven't been converted to the
+fsconfig code yet, it's another case of adding new infrastructure to
+the kernel then not following up on the conversion, and all too common
+patter unfortunately :(  btrfs might be the only major disk file system,
+but there's lot of others.
