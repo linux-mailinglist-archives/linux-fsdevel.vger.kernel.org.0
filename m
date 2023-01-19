@@ -2,76 +2,119 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 0A1746742A2
-	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 20:20:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5240F6742C5
+	for <lists+linux-fsdevel@lfdr.de>; Thu, 19 Jan 2023 20:26:09 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231237AbjASTUp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Thu, 19 Jan 2023 14:20:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:32982 "EHLO
+        id S229811AbjAST0E (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Thu, 19 Jan 2023 14:26:04 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41968 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230502AbjASTUP (ORCPT
+        with ESMTP id S229876AbjASTZ5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Thu, 19 Jan 2023 14:20:15 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id C616C9AA91
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 11:18:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674155891;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         in-reply-to:in-reply-to:references:references;
-        bh=YATicmREZ+7hBulqV///P49Tpvz3JAexF3cwhSVqvZw=;
-        b=MHrCPDsLX2ZKSgjz9V0iBHbLGJND3njQRNIbhGnY4iUBQi1tl/eF/ZXzvDB1myKNansTp2
-        ykF5bxgk2Db2XUTTqn11jaa27YMoJHkzRTJcJ8v3wXPT+cUbetGYnfO5G68ld3r/1LmVGw
-        CTvYfME5kfMscW59icgqFVK2kJzCHGc=
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
- [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-325-82vwkGxINWaJ8obmQbBS1Q-1; Thu, 19 Jan 2023 14:18:09 -0500
-X-MC-Unique: 82vwkGxINWaJ8obmQbBS1Q-1
-Received: by mail-pg1-f198.google.com with SMTP id 193-20020a6305ca000000b004cece0d0d64so1436933pgf.13
-        for <linux-fsdevel@vger.kernel.org>; Thu, 19 Jan 2023 11:18:09 -0800 (PST)
+        Thu, 19 Jan 2023 14:25:57 -0500
+Received: from mail-qt1-x835.google.com (mail-qt1-x835.google.com [IPv6:2607:f8b0:4864:20::835])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 46BDC530ED;
+        Thu, 19 Jan 2023 11:25:45 -0800 (PST)
+Received: by mail-qt1-x835.google.com with SMTP id s4so2378091qtx.6;
+        Thu, 19 Jan 2023 11:25:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20210112;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xamYJZSiEPy9Mjo2njH+JPn5/UHZCpsx0WYfjjoyGiY=;
+        b=MrwOCC5ehcze1hpMjcT+s1KhKEgcE4YPuq3yqI1Cm5uRCIw1PUevaLEC6XkTcNhbT9
+         Zw0OvgbmLEFdn1tUM2fjgufvEQCRxf9F5A/ADdKpwTfdOwWf/0FqKiy1RuuQeUDtT2r1
+         WOQNX4WCd5xldt11cYOVTcAYa8grKYNOtlZuJLBY7Hqr8xr25RNCaSO7DWHMR1iJ2wZ4
+         jILLDKWwZP8GiSLOga1KZkHZ1Quhj6gfAe4Q0cx1AezAz9Aw7s1aRjjoXenbgYqQO8nm
+         QgeiFuARK8oNcrVywEUZQ78eB39jl9apcTRWslHRMXoRBD4K3HuCxamntvSxOTPxK4uE
+         BODA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YATicmREZ+7hBulqV///P49Tpvz3JAexF3cwhSVqvZw=;
-        b=IJziEmGh2UaEpDD1Vqwhe4CIknYjej6PqA5KLQ8GK0vYizhc8QW3Cb3bGJ/z3+y/VL
-         47Gj1oFFeWbiJ9jT9hTr17F1SjwGWLwwnNmR99pwO1eRBMWvFtSwlMhRufPYkn3ikDaE
-         mniGi55O5k2VbdRqo8u2zTjPs4bamz/DFzZLJ7/N+rNvMkGtYrt7LoFpBpaTYPsh6Cyn
-         0nNiuYf3w6NBMrDW6VewZoynIvtnEATp7JDx5O+CqGIoenH20nk6DoXEbi8Dbrb6b+DC
-         LH3arvMs3nnADCcGwshWkqbpwAtcSW3FIGLVAhKIKtLY1aryrrPyvuwnp1dQpmKHZEBe
-         1W8A==
-X-Gm-Message-State: AFqh2krC0+pOC1mrKhOGbU3GP7EqHXD0k/JnywiN/COKKjd8TTAcI0xN
-        YBP2JJt/iKjKkVS7jdrn4JtPAv53hLqtua5fbgEF4euEmG6n+caK5X8r4RcOApCcOCgY5pzShi0
-        m9GQI+o3kxKy7Rvxfc/iee3Gy+Q==
-X-Received: by 2002:a17:902:cec7:b0:191:3993:801e with SMTP id d7-20020a170902cec700b001913993801emr16234561plg.56.1674155888731;
-        Thu, 19 Jan 2023 11:18:08 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXtBjGJF1dsMSWhoXTd7u+m08fWODNygWMruoC7vJ7fp/LBVk93THNTUFM1QgX08aQU2T2AadA==
-X-Received: by 2002:a17:902:cec7:b0:191:3993:801e with SMTP id d7-20020a170902cec700b001913993801emr16234538plg.56.1674155888374;
-        Thu, 19 Jan 2023 11:18:08 -0800 (PST)
-Received: from zlang-mailbox ([43.228.180.230])
-        by smtp.gmail.com with ESMTPSA id j14-20020a170903024e00b0019101215f63sm25582375plh.93.2023.01.19.11.18.05
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xamYJZSiEPy9Mjo2njH+JPn5/UHZCpsx0WYfjjoyGiY=;
+        b=tq+trOZ8NniRqlPpQ7ZVgULWMFj+94r3w+jkwm10HiVyr9mcUrJ1zM7eWM1RuvhA+J
+         AyiD9Sa8Ldoz3wvlkRJkMH9300p0A/e0MFDMlnGHARDj/0+DlKPcagJ5bXYiWHSt+kzX
+         PzMqIrIfRaPSrIXqtFGORt3MQ0WHbSNtmF4LMbsuAJYlmZD9OwNT4f8fKb18oTh4XFjI
+         p87Dhz2pBuiTEuikcF4jj+o4nmt75pbcPai2AjYAgD/AVjjWH2aci8Nig3JnN4brCfTV
+         Q89Kvvr62SK2CBdPhcxuKwgF2m7EKkdczO1pXLHPt2HOiJiOQeJZ5LlARTOz29kyPn8A
+         SKJg==
+X-Gm-Message-State: AFqh2ko8vWAYA3M0ykHLj3EZ8kOcTjd2Gh/vh+wqy610HCTwbnbroTIh
+        9iKSTNRumdPDf0csLzDAu+SmksT/kbk=
+X-Google-Smtp-Source: AMrXdXv6/5PtZaK3QzptagCsxzBPPETPDBX9eIEhj7kPWY4WuBsc33JbZzxeaNRbDyw281mOZy4DMg==
+X-Received: by 2002:ac8:4446:0:b0:3b6:377b:e05c with SMTP id m6-20020ac84446000000b003b6377be05cmr12291034qtn.47.1674156344292;
+        Thu, 19 Jan 2023 11:25:44 -0800 (PST)
+Received: from auth2-smtp.messagingengine.com (auth2-smtp.messagingengine.com. [66.111.4.228])
+        by smtp.gmail.com with ESMTPSA id ej4-20020a05622a4f8400b003b693fe4427sm727836qtb.90.2023.01.19.11.25.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Jan 2023 11:18:07 -0800 (PST)
-Date:   Fri, 20 Jan 2023 03:18:03 +0800
-From:   Zorro Lang <zlang@redhat.com>
-To:     Jakob Unterwurzacher <jakobunt@gmail.com>
-Cc:     guaneryu@gmail.com, fstests@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org, miklos@szeredi.hu,
-        Miklos Szeredi <mszeredi@redhat.com>
-Subject: Re: [PATCH] xfstests: add fuse support
-Message-ID: <20230119191803.uekrd4azayp35r2b@zlang-mailbox>
-References: <20200217100800.GH2697@desktop>
- <20230104193932.984531-1-jakobunt@gmail.com>
+        Thu, 19 Jan 2023 11:25:43 -0800 (PST)
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+        by mailauth.nyi.internal (Postfix) with ESMTP id 20B2C27C0054;
+        Thu, 19 Jan 2023 14:25:42 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Thu, 19 Jan 2023 14:25:43 -0500
+X-ME-Sender: <xms:NZnJYwTxwYLfh8N7togMMPPYVeKdqLNSU6cBkqgYw1MVfb1Q7g283w>
+    <xme:NZnJY9xSw9qvXrrAIJEbpvx12Y2TyP_RnRTmtBw-y1f1OYtEkrBMU_4YXAozbQqOh
+    zbQZ0y4tj_ONrG2QQ>
+X-ME-Received: <xmr:NZnJY91HzMP2Iy60XcV_ZcT4yKf2IQY3ocx0fpLzHGwRF2CeF0X43zzN0DQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvhedruddutddguddviecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhq
+    uhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrf
+    grthhtvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveei
+    udffiedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedt
+    ieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfh
+    higihmvgdrnhgrmhgv
+X-ME-Proxy: <xmx:NZnJY0CTKhGEBWy1veKc6w2hVzbwm1Rf2uZ1Xsyyk9_pC7SbEHDNOw>
+    <xmx:NZnJY5j2rwpIuu1Rn9fBKWIyoQvQrI42uB43xg7d0VHM2TJ04SwWGA>
+    <xmx:NZnJYworf0mYeiLAkASjr3os2e8ECpvW0MlaGgzHEya6_0aWJpdS2A>
+    <xmx:NpnJY464YDfl0tqd71pt0eI__JWNhiE-bQVw-oxLk6HFFui_uQOFPuiI1T8>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 19 Jan 2023 14:25:40 -0500 (EST)
+Date:   Thu, 19 Jan 2023 11:25:16 -0800
+From:   Boqun Feng <boqun.feng@gmail.com>
+To:     Matthew Wilcox <willy@infradead.org>
+Cc:     Byungchul Park <byungchul.park@lge.com>,
+        linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org, will@kernel.org,
+        tglx@linutronix.de, rostedt@goodmis.org, joel@joelfernandes.org,
+        sashal@kernel.org, daniel.vetter@ffwll.ch, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jlayton@kernel.org, dan.j.williams@intel.com,
+        hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com,
+        42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
+        gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
+        longman@redhat.com
+Subject: Re: [PATCH RFC v7 00/23] DEPT(Dependency Tracker)
+Message-ID: <Y8mZHKJV4FH17vGn@boqun-archlinux>
+References: <Y8bmeffIQ3iXU3Ux@boqun-archlinux>
+ <1674109388-6663-1-git-send-email-byungchul.park@lge.com>
+ <Y8lGxkBrls6qQOdM@casper.infradead.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20230104193932.984531-1-jakobunt@gmail.com>
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+In-Reply-To: <Y8lGxkBrls6qQOdM@casper.infradead.org>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -79,274 +122,65 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Wed, Jan 04, 2023 at 08:39:33PM +0100, Jakob Unterwurzacher wrote:
-> From: Miklos Szeredi <miklos@szeredi.hu>
+On Thu, Jan 19, 2023 at 01:33:58PM +0000, Matthew Wilcox wrote:
+> On Thu, Jan 19, 2023 at 03:23:08PM +0900, Byungchul Park wrote:
+> > Boqun wrote:
+> > > *	Looks like the DEPT dependency graph doesn't handle the
+> > > 	fair/unfair readers as lockdep current does. Which bring the
+> > > 	next question.
+> > 
+> > No. DEPT works better for unfair read. It works based on wait/event. So
+> > read_lock() is considered a potential wait waiting on write_unlock()
+> > while write_lock() is considered a potential wait waiting on either
+> > write_unlock() or read_unlock(). DEPT is working perfect for it.
+> > 
+> > For fair read (maybe you meant queued read lock), I think the case
+> > should be handled in the same way as normal lock. I might get it wrong.
+> > Please let me know if I miss something.
 > 
-> This allows using any fuse filesystem that can be mounted with
+> From the lockdep/DEPT point of view, the question is whether:
 > 
->   mount -t fuse.$FUSE_SUBTYP ...
+> 	read_lock(A)
+> 	read_lock(A)
 > 
-> Changelog:
-> 
-> v2: Jan 3, 2022, Jakob Unterwurzacher
-> * Rebased to master
-> * Instructions updated
-> ** To not fail with libfuse version mismatch on passthrough_ll exe
->    on Fedora
-> ** To use sudo
-> * Review comments from Eryu Guan addressed:
-> ** Comment updated to mention fuse
-> ** Renamed SUBTYP to FUSE_SUBTYP
-> ** Removed $SCRATCH_MNT/bin/sh check before "rm -rf"
-> ** _require_scratch_nocheck for fuse also checks for $SCRATCH_MNT
-> ** _require_test for fuse also checks for $TEST_DIR
-> 
-> v1: Jan 8, 2020, Miklos Szeredi
-> * Initial submission
-> * https://patchwork.kernel.org/project/linux-fsdevel/patch/20200108192504.GA893@miu.piliscsaba.redhat.com/
-> 
-> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
-> Signed-off-by: Jakob Unterwurzacher <jakobunt@gmail.com>
-> ---
->  README.fuse       | 26 ++++++++++++++++++++++++++
->  check             |  3 ++-
->  common/config     |  9 +++++++--
->  common/rc         | 24 ++++++++++++++++++------
->  tests/generic/020 |  4 ++--
->  5 files changed, 55 insertions(+), 11 deletions(-)
->  create mode 100644 README.fuse
-> 
-> diff --git a/README.fuse b/README.fuse
-> new file mode 100644
-> index 00000000..35ad9c46
-> --- /dev/null
-> +++ b/README.fuse
-> @@ -0,0 +1,26 @@
-> +Here are instructions for testing fuse using the passthrough_ll example
-> +filesystem provided in the libfuse source tree:
-> +
-> +git clone git://github.com/libfuse/libfuse.git
-> +cd libfuse
-> +meson build
-> +cd build
-> +ninja
-> +cat << EOF | sudo tee /sbin/mount.fuse.passthrough_ll
-> +#!/bin/bash
-> +ulimit -n 1048576
-> +exec $(pwd)/example/passthrough_ll -ofsname="\$@"
-> +EOF
-> +sudo chmod +x /sbin/mount.fuse.passthrough_ll
-> +mkdir -p /mnt/test /mnt/scratch /home/test/test /home/test/scratch
-> +
-> +Use the following local.config file:
-> +
-> +export TEST_DEV=non1
-> +export TEST_DIR=/mnt/test
-> +export SCRATCH_DEV=non2
-> +export SCRATCH_MNT=/mnt/scratch
-> +export FSTYP=fuse
-> +export FUSE_SUBTYP=.passthrough_ll
-> +export FUSE_MOUNT_OPTIONS="-osource=/home/test/scratch,allow_other,default_permissions"
-> +export TEST_FS_MOUNT_OPTS="-osource=/home/test/test,allow_other,default_permissions"
-
-Hi,
-
-Long time ago I added glusterfs supporting, for testing kernel fuse module.
-Now we'll have general fuse supporting, that's good news. More and more things
-start to use fuse, I'm glad to see fstests support the fuse test :)
-
-This version looks good to me, just a tiny problem on the README.fuse. Generally
-if we want to set mount options for both TEST_DEV and SCRATCH_DEV, we use the
-the parameter likes FUSE_MOUNT_OPTIONS (refer to _mount_opts(), _test_mount_opts()
-and _common_mount_opts()). If you just want to set mount options for SCRATCH_DEV
-particularly, you might want:
-
-  export MOUNT_OPTIONS="-osource=/home/test/scratch,allow_other,default_permissions"
-  export TEST_FS_MOUNT_OPTS="-osource=/home/test/test,allow_other,default_permissions"
-
-Others looks good to me, I'll give it a little testing, and merge it if can't
-find any issue.
-
-Thanks,
-Zorro
-
-
-> diff --git a/check b/check
-> index 1ff0f44a..e25037f1 100755
-> --- a/check
-> +++ b/check
-> @@ -60,6 +60,7 @@ check options
->      -glusterfs		test GlusterFS
->      -cifs		test CIFS
->      -9p			test 9p
-> +    -fuse		test fuse
->      -virtiofs		test virtiofs
->      -overlay		test overlay
->      -pvfs2		test PVFS2
-> @@ -279,7 +280,7 @@ while [ $# -gt 0 ]; do
->  	case "$1" in
->  	-\? | -h | --help) usage ;;
->  
-> -	-nfs|-glusterfs|-cifs|-9p|-virtiofs|-pvfs2|-tmpfs|-ubifs)
-> +	-nfs|-glusterfs|-cifs|-9p|-fuse|-virtiofs|-pvfs2|-tmpfs|-ubifs)
->  		FSTYP="${1:1}"
->  		;;
->  	-overlay)
-> diff --git a/common/config b/common/config
-> index e2aba5a9..6c8cb3a5 100644
-> --- a/common/config
-> +++ b/common/config
-> @@ -341,6 +341,9 @@ _common_mount_opts()
->  	9p)
->  		echo $PLAN9_MOUNT_OPTIONS
->  		;;
-> +	fuse)
-> +		echo $FUSE_MOUNT_OPTIONS
-> +		;;
->  	xfs)
->  		echo $XFS_MOUNT_OPTIONS
->  		;;
-> @@ -511,6 +514,8 @@ _source_specific_fs()
->  		;;
->  	9p)
->  		;;
-> +	fuse)
-> +		;;
->  	ceph)
->  		. ./common/ceph
->  		;;
-> @@ -583,8 +588,8 @@ _check_device()
->  	fi
->  
->  	case "$FSTYP" in
-> -	9p|tmpfs|virtiofs)
-> -		# 9p and virtiofs mount tags are just plain strings, so anything is allowed
-> +	9p|fuse|tmpfs|virtiofs)
-> +		# 9p, fuse and virtiofs mount tags are just plain strings, so anything is allowed
->  		# tmpfs doesn't use mount source, ignore
->  		;;
->  	ceph)
-> diff --git a/common/rc b/common/rc
-> index 23530413..c17e3f6e 100644
-> --- a/common/rc
-> +++ b/common/rc
-> @@ -274,7 +274,7 @@ _try_scratch_mount()
->  		_overlay_scratch_mount $*
->  		return $?
->  	fi
-> -	_mount -t $FSTYP `_scratch_mount_options $*`
-> +	_mount -t $FSTYP$FUSE_SUBTYP `_scratch_mount_options $*`
->  	mount_ret=$?
->  	[ $mount_ret -ne 0 ] && return $mount_ret
->  	_idmapped_mount $SCRATCH_DEV $SCRATCH_MNT
-> @@ -458,7 +458,7 @@ _test_mount()
->      fi
->  
->      _test_options mount
-> -    _mount -t $FSTYP $TEST_OPTIONS $TEST_FS_MOUNT_OPTS $SELINUX_MOUNT_OPTIONS $* $TEST_DEV $TEST_DIR
-> +    _mount -t $FSTYP$FUSE_SUBTYP $TEST_OPTIONS $TEST_FS_MOUNT_OPTS $SELINUX_MOUNT_OPTIONS $* $TEST_DEV $TEST_DIR
->      mount_ret=$?
->      [ $mount_ret -ne 0 ] && return $mount_ret
->      _idmapped_mount $TEST_DEV $TEST_DIR
-> @@ -584,6 +584,9 @@ _test_mkfs()
->      9p)
->  	# do nothing for 9p
->  	;;
-> +    fuse)
-> +	# do nothing for fuse
-> +	;;
->      virtiofs)
->  	# do nothing for virtiofs
->  	;;
-> @@ -624,6 +627,9 @@ _mkfs_dev()
->      9p)
->  	# do nothing for 9p
->  	;;
-> +    fuse)
-> +	# do nothing for fuse
-> +	;;
->      virtiofs)
->  	# do nothing for virtiofs
->  	;;
-> @@ -691,7 +697,7 @@ _scratch_mkfs()
->  	local mkfs_status
->  
->  	case $FSTYP in
-> -	nfs*|cifs|ceph|overlay|glusterfs|pvfs2|9p|virtiofs)
-> +	nfs*|cifs|ceph|overlay|glusterfs|pvfs2|9p|fuse|virtiofs)
->  		# unable to re-create this fstyp, just remove all files in
->  		# $SCRATCH_MNT to avoid EEXIST caused by the leftover files
->  		# created in previous runs
-> @@ -1587,7 +1593,7 @@ _require_scratch_nocheck()
->  			_notrun "this test requires a valid \$SCRATCH_MNT"
->  		fi
->  		;;
-> -	9p|virtiofs)
-> +	9p|fuse|virtiofs)
->  		if [ -z "$SCRATCH_DEV" ]; then
->  			_notrun "this test requires a valid \$SCRATCH_DEV"
->  		fi
-> @@ -1787,7 +1793,7 @@ _require_test()
->  			_notrun "this test requires a valid \$TEST_DIR"
->  		fi
->  		;;
-> -	9p|virtiofs)
-> +	9p|fuse|virtiofs)
->  		if [ -z "$TEST_DEV" ]; then
->  			_notrun "this test requires a valid \$TEST_DEV"
->  		fi
-> @@ -2986,7 +2992,7 @@ _mount_or_remount_rw()
->  
->  	if [ $USE_REMOUNT -eq 0 ]; then
->  		if [ "$FSTYP" != "overlay" ]; then
-> -			_mount -t $FSTYP $mount_opts $device $mountpoint
-> +			_mount -t $FSTYP$FUSE_SUBTYP $mount_opts $device $mountpoint
->  			_idmapped_mount $device $mountpoint
->  		else
->  			_overlay_mount $device $mountpoint
-> @@ -3124,6 +3130,9 @@ _check_test_fs()
->      9p)
->  	# no way to check consistency for 9p
->  	;;
-> +    fuse)
-> +	# no way to check consistency for fuse
-> +	;;
->      virtiofs)
->  	# no way to check consistency for virtiofs
->  	;;
-> @@ -3185,6 +3194,9 @@ _check_scratch_fs()
->      9p)
->  	# no way to check consistency for 9p
->  	;;
-> +    fuse)
-> +	# no way to check consistency for fuse
-> +	;;
->      virtiofs)
->  	# no way to check consistency for virtiofs
->  	;;
-> diff --git a/tests/generic/020 b/tests/generic/020
-> index b91bca34..be5cecad 100755
-> --- a/tests/generic/020
-> +++ b/tests/generic/020
-> @@ -56,7 +56,7 @@ _attr_get_max()
->  {
->  	# set maximum total attr space based on fs type
->  	case "$FSTYP" in
-> -	xfs|udf|pvfs2|9p|ceph|nfs)
-> +	xfs|udf|pvfs2|9p|ceph|fuse|nfs)
->  		max_attrs=1000
->  		;;
->  	ext2|ext3|ext4)
-> @@ -134,7 +134,7 @@ _attr_get_maxval_size()
->  	pvfs2)
->  		max_attrval_size=8192
->  		;;
-> -	xfs|udf|9p)
-> +	xfs|udf|9p|fuse)
->  		max_attrval_size=65536
->  		;;
->  	bcachefs)
-> -- 
-> 2.38.1
+> can deadlock if a writer comes in between the two acquisitions and
+> sleeps waiting on A to be released.  A fair lock will block new
+> readers when a writer is waiting, while an unfair lock will allow
+> new readers even while a writer is waiting.
 > 
 
+To be more accurate, a fair reader will wait if there is a writer
+waiting for other reader (fair or not) to unlock, and an unfair reader
+won't.
+
+In kernel there are read/write locks that can have both fair and unfair
+readers (e.g. queued rwlock). Regarding deadlocks,
+
+	T0		T1		T2
+	--		--		--
+	fair_read_lock(A);
+			write_lock(B);
+					write_lock(A);
+	write_lock(B);
+			unfair_read_lock(A);
+
+the above is not a deadlock, since T1's unfair reader can "steal" the
+lock. However the following is a deadlock:
+
+	T0		T1		T2
+	--		--		--
+	unfair_read_lock(A);
+			write_lock(B);
+					write_lock(A);
+	write_lock(B);
+			fair_read_lock(A);
+
+, since T'1 fair reader will wait.
+
+FWIW, lockdep is able to catch this (figuring out which is deadlock and
+which is not) since two years ago, plus other trivial deadlock detection
+for read/write locks. Needless to say, if lib/lock-selftests.c was given
+a try, one could find it out on one's own.
+
+Regards,
+Boqun
