@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id BB53A675C46
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 18:58:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5124A675C4A
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 18:58:41 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229446AbjATR6h (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Jan 2023 12:58:37 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46796 "EHLO
+        id S229586AbjATR6i (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Jan 2023 12:58:38 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:47656 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231168AbjATR6X (ORCPT
+        with ESMTP id S229653AbjATR6Z (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Jan 2023 12:58:23 -0500
+        Fri, 20 Jan 2023 12:58:25 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 82EA14ED21
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 09:56:20 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 10FFD58967
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 09:56:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674237379;
+        s=mimecast20190719; t=1674237387;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=BIdz+Kfhb3Mbi+adj+F0X2Vrzxptw0enhnglhrMvwYk=;
-        b=BQ8ypXTtytYYOh3H2PxRuNc7eZQxB05qr6x/a6xX/Kg6XzO3WH9bhemJjwhPcxLBif6Kou
-        afq7jI8zKg289jd5R5qiwtcHNH8MeUqGsbkdvo5cKz4PiIOsiP7rEyl7eBnuCxZNs8OEnB
-        mOoFjLEChpBrEvGR+5KDq+nihmjHcDs=
+        bh=MdinPY6vQ8fVw027uUZU584MsmM5YD/+rGjhklLF+d8=;
+        b=cFO/QjjTbCLg0xDh6iXEiLW4oUTkbM58OgkI2fVY9QDq9K1Zjcm+L5Ds+99sNPnQI9Wjvq
+        7DvKgvfHnnRE9Y7SA5UPvTmAxtzNPyelmxEQqo/O7I3HbUL0aDDuI7wQSj1fr+9WwxYHZE
+        sGW+Bc6mu1NASZ/5NL8XLtM9hF2YPFE=
 Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
  [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-552-eICs1qe3OOy62k6d_alEGg-1; Fri, 20 Jan 2023 12:56:18 -0500
-X-MC-Unique: eICs1qe3OOy62k6d_alEGg-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+ us-mta-442-XWXguqUFNAG-6TTKujd0rA-1; Fri, 20 Jan 2023 12:56:20 -0500
+X-MC-Unique: XWXguqUFNAG-6TTKujd0rA-1
+Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 52365811E9C;
-        Fri, 20 Jan 2023 17:56:17 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6D11A101A521;
+        Fri, 20 Jan 2023 17:56:19 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.33.36.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E11401759E;
-        Fri, 20 Jan 2023 17:56:15 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E593A492C3C;
+        Fri, 20 Jan 2023 17:56:17 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -47,18 +47,19 @@ Cc:     David Howells <dhowells@redhat.com>,
         Jeff Layton <jlayton@kernel.org>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v7 7/8] block: Fix bio_flagged() so that gcc can better optimise it
-Date:   Fri, 20 Jan 2023 17:55:55 +0000
-Message-Id: <20230120175556.3556978-8-dhowells@redhat.com>
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-mm@kvack.org
+Subject: [PATCH v7 8/8] mm: Renumber FOLL_GET and FOLL_PIN down
+Date:   Fri, 20 Jan 2023 17:55:56 +0000
+Message-Id: <20230120175556.3556978-9-dhowells@redhat.com>
 In-Reply-To: <20230120175556.3556978-1-dhowells@redhat.com>
 References: <20230120175556.3556978-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -66,64 +67,51 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Fix bio_flagged() so that multiple instances of it, such as:
+Renumber FOLL_GET and FOLL_PIN down to bit 0 and 1 respectively so that
+they are coincidentally the same as BIO_PAGE_REFFED and BIO_PAGE_PINNED and
+also so that they can be stored in the bottom two bits of a page pointer
+(something I'm looking at for zerocopy socket fragments).
 
-	if (bio_flagged(bio, BIO_PAGE_REFFED) ||
-	    bio_flagged(bio, BIO_PAGE_PINNED))
-
-can be combined by the gcc optimiser into a single test in assembly
-(arguably, this is a compiler optimisation issue[1]).
-
-The missed optimisation stems from bio_flagged() comparing the result of
-the bitwise-AND to zero.  This results in an out-of-line bio_release_page()
-being compiled to something like:
-
-   <+0>:     mov    0x14(%rdi),%eax
-   <+3>:     test   $0x1,%al
-   <+5>:     jne    0xffffffff816dac53 <bio_release_pages+11>
-   <+7>:     test   $0x2,%al
-   <+9>:     je     0xffffffff816dac5c <bio_release_pages+20>
-   <+11>:    movzbl %sil,%esi
-   <+15>:    jmp    0xffffffff816daba1 <__bio_release_pages>
-   <+20>:    jmp    0xffffffff81d0b800 <__x86_return_thunk>
-
-However, the test is superfluous as the return type is bool.  Removing it
-results in:
-
-   <+0>:     testb  $0x3,0x14(%rdi)
-   <+4>:     je     0xffffffff816e4af4 <bio_release_pages+15>
-   <+6>:     movzbl %sil,%esi
-   <+10>:    jmp    0xffffffff816dab7c <__bio_release_pages>
-   <+15>:    jmp    0xffffffff81d0b7c0 <__x86_return_thunk>
-
-instead.
-
-Also, the MOVZBL instruction looks unnecessary[2] - I think it's just
-'re-booling' the mark_dirty parameter.
-
-Fixes: b7c44ed9d2fc ("block: manipulate bio->bi_flags through helpers")
 Signed-off-by: David Howells <dhowells@redhat.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: linux-block@vger.kernel.org
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108370 [1]
-Link: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108371 [2]
-Link: https://lore.kernel.org/r/167391056756.2311931.356007731815807265.stgit@warthog.procyon.org.uk/ # v6
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: Christoph Hellwig <hch@lst.de>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
 ---
- include/linux/bio.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/mm.h | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/bio.h b/include/linux/bio.h
-index 1c6f051f6ff2..2e6109b0fca8 100644
---- a/include/linux/bio.h
-+++ b/include/linux/bio.h
-@@ -227,7 +227,7 @@ static inline void bio_cnt_set(struct bio *bio, unsigned int count)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index f1cf8f4eb946..33c9eacd9548 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3074,12 +3074,13 @@ static inline vm_fault_t vmf_error(int err)
+ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
+ 			 unsigned int foll_flags);
  
- static inline bool bio_flagged(struct bio *bio, unsigned int bit)
- {
--	return (bio->bi_flags & (1U << bit)) != 0;
-+	return bio->bi_flags & (1U << bit);
- }
- 
- static inline void bio_set_flag(struct bio *bio, unsigned int bit)
+-#define FOLL_WRITE	0x01	/* check pte is writable */
+-#define FOLL_TOUCH	0x02	/* mark page accessed */
+-#define FOLL_GET	0x04	/* do get_page on page */
+-#define FOLL_DUMP	0x08	/* give error on hole if it would be zero */
+-#define FOLL_FORCE	0x10	/* get_user_pages read/write w/o permission */
+-#define FOLL_NOWAIT	0x20	/* if a disk transfer is needed, start the IO
++#define FOLL_GET	0x01	/* do get_page on page (equivalent to BIO_FOLL_GET) */
++#define FOLL_PIN	0x02	/* pages must be released via unpin_user_page */
++#define FOLL_WRITE	0x04	/* check pte is writable */
++#define FOLL_TOUCH	0x08	/* mark page accessed */
++#define FOLL_DUMP	0x10	/* give error on hole if it would be zero */
++#define FOLL_FORCE	0x20	/* get_user_pages read/write w/o permission */
++#define FOLL_NOWAIT	0x40	/* if a disk transfer is needed, start the IO
+ 				 * and return without waiting upon it */
+ #define FOLL_NOFAULT	0x80	/* do not fault in pages */
+ #define FOLL_HWPOISON	0x100	/* check page is hwpoisoned */
+@@ -3088,7 +3089,6 @@ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
+ #define FOLL_ANON	0x8000	/* don't do file mappings */
+ #define FOLL_LONGTERM	0x10000	/* mapping lifetime is indefinite: see below */
+ #define FOLL_SPLIT_PMD	0x20000	/* split huge pmd before returning */
+-#define FOLL_PIN	0x40000	/* pages must be released via unpin_user_page */
+ #define FOLL_FAST_ONLY	0x80000	/* gup_fast: prevent fall-back to slow gup */
+ #define FOLL_PCI_P2PDMA	0x100000 /* allow returning PCI P2PDMA pages */
+ #define FOLL_INTERRUPTIBLE  0x200000 /* allow interrupts from generic signals */
 
