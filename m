@@ -2,91 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id D66DE67514F
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 10:37:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 40EB7675169
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 10:45:11 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229861AbjATJhG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Jan 2023 04:37:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:58436 "EHLO
+        id S229749AbjATJpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Jan 2023 04:45:09 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229886AbjATJhF (ORCPT
+        with ESMTP id S229533AbjATJpI (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Jan 2023 04:37:05 -0500
+        Fri, 20 Jan 2023 04:45:08 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 341439EE31
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 01:36:04 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D1007AF0B
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 01:44:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674207363;
+        s=mimecast20190719; t=1674207865;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=vcgb4AWInvRFGMvemLC1b9tF/CflE/dOe40pqP7k7hM=;
-        b=UxoOXkJxpu28fdZBPrDJMyJZnV59z4JZ7IKeSj3L5hCFuesM75XGYf8cosM04tJOh94iX9
-        s6A6mrNeKeAOWvd9gtd1kiIa7JtoyYL1kTfF2X7/DKtCLXnSaVW1lbgXMms8VyVPJ7Hx1x
-        xDY3ZDeHKBIBH4iYgfjTpApdaIwBuu4=
-Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
- [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-653-kZXmVN35POWtRJhAFQJt9g-1; Fri, 20 Jan 2023 04:22:27 -0500
-X-MC-Unique: kZXmVN35POWtRJhAFQJt9g-1
-Received: by mail-ed1-f69.google.com with SMTP id y2-20020a056402440200b0049e4d71f5dcso3480791eda.5
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 01:22:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=vcgb4AWInvRFGMvemLC1b9tF/CflE/dOe40pqP7k7hM=;
-        b=WzaOfmRDgOHIrY2q0+w5zbsfmWENePTexquI47wfxHNxDfoD5aihBjoMnwbSzD46EV
-         Pdf7EC+osa/LvGaOkGtWhhxiWfJ9d6NmUsWWtASXdIK5v1A6mpy9oiIavHo/edMYT19p
-         VVkOT4M1BGPp1GzRZH9iYJDZIeEXk3AoJkI475DwInLwoTSwCZs1HDb1NRlpLgrsK8AB
-         p6bJFDgUkYVUsXOvArGZ3+6bh2sL6wR0bqJ84N6QKlEOo96oR2tzsDTkM3TLVcrkyljF
-         PRhCA2gldCywRxIcM+YjtgNh77qQTRruIglShl8Y7XaRzOzgBFH9XWxKccKZIH36WyKz
-         yWzw==
-X-Gm-Message-State: AFqh2kp1CSNvTiURLNu/bVmhAARgxX1FPGCeHmom0neDdq1YOeen64Bg
-        ZJ751C7lbntcboHb0L1da+zZw8OGeNt+287R2QSnt/9DixxSHc5mveFOBSqM5VTfCUnOHvNo4+c
-        xpptLwMnKZ0GV8KeZgYf2RXJqPQ==
-X-Received: by 2002:a17:906:5acf:b0:86c:8f4a:58b4 with SMTP id x15-20020a1709065acf00b0086c8f4a58b4mr14440438ejs.13.1674206546300;
-        Fri, 20 Jan 2023 01:22:26 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXtFrxhhFxAuF+GcMJQRNThLC5DHRALaKEBBMEZuV+AoIhuADVBBTjDNmuZw1VHTaPQLSTkolw==
-X-Received: by 2002:a17:906:5acf:b0:86c:8f4a:58b4 with SMTP id x15-20020a1709065acf00b0086c8f4a58b4mr14440421ejs.13.1674206545963;
-        Fri, 20 Jan 2023 01:22:25 -0800 (PST)
-Received: from greebo.mooo.com (c-e6a5e255.022-110-73746f36.bbcust.telenor.se. [85.226.165.230])
-        by smtp.gmail.com with ESMTPSA id hq15-20020a1709073f0f00b0084c7029b24dsm17794966ejc.151.2023.01.20.01.22.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jan 2023 01:22:25 -0800 (PST)
-Message-ID: <46f05b5f986b4377f02907c2660f2d144030c3b8.camel@redhat.com>
-Subject: Re: [PATCH v2 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-From:   Alexander Larsson <alexl@redhat.com>
-To:     Christian Brauner <brauner@kernel.org>,
-        Amir Goldstein <amir73il@gmail.com>
-Cc:     Gao Xiang <hsiangkao@linux.alibaba.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        gscrivan@redhat.com, Miklos Szeredi <miklos@szeredi.hu>,
-        Yurii Zubrytskyi <zyy@google.com>,
-        Eugene Zemtsov <ezemtsov@google.com>,
-        Vivek Goyal <vgoyal@redhat.com>
-Date:   Fri, 20 Jan 2023 10:22:24 +0100
-In-Reply-To: <20230117101202.4v4zxuj2tbljogbx@wittgenstein>
-References: <cover.1673623253.git.alexl@redhat.com>
-         <3065ecb6-8e6a-307f-69ea-fb72854aeb0f@linux.alibaba.com>
-         <d3c63da908ef16c43a6a65a22a8647bf874695c7.camel@redhat.com>
-         <0a144ffd-38bb-0ff3-e8b2-bca5e277444c@linux.alibaba.com>
-         <9d44494fdf07df000ce1b9bafea7725ea240ca41.camel@redhat.com>
-         <d7c4686b-24cc-0991-d6db-0dec8fb9942e@linux.alibaba.com>
-         <2856820a46a6e47206eb51a7f66ec51a7ef0bd06.camel@redhat.com>
-         <8f854339-1cc0-e575-f320-50a6d9d5a775@linux.alibaba.com>
-         <CAOQ4uxh34udueT-+Toef6TmTtyLjFUnSJs=882DH=HxADX8pKw@mail.gmail.com>
-         <20230117101202.4v4zxuj2tbljogbx@wittgenstein>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.2 (3.46.2-1.fc37) 
+         to:to:cc:cc:mime-version:mime-version:
+         content-transfer-encoding:content-transfer-encoding;
+        bh=m292PQ83GoaOas7duljZc/n5N3aCG8DPEh4PPdCEr3U=;
+        b=OYhrCZOXuZP5OeZr+bt1kE5ofGRmti2MnBYHvu06G30OdjpnzIMIQwcFcjlMBueC3SpVT7
+        Ri8VooKXmkShJjkMygZgi/1Jh7yp+4heJvjuFVpIzxJPduQKH+GSs5nL3V9CtN7y4oOZ8r
+        FHeukrSwOofkjET8IHWVrGuulBeZb3w=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-484-9LdOn1LDPK676ZSp_vQ2iQ-1; Fri, 20 Jan 2023 04:44:21 -0500
+X-MC-Unique: 9LdOn1LDPK676ZSp_vQ2iQ-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4964A3806644;
+        Fri, 20 Jan 2023 09:44:21 +0000 (UTC)
+Received: from lithium.redhat.com (unknown [10.39.194.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id BD2BC40C2064;
+        Fri, 20 Jan 2023 09:44:19 +0000 (UTC)
+From:   Giuseppe Scrivano <gscrivan@redhat.com>
+To:     brauner@kernel.org, linux-fsdevel@vger.kernel.org
+Cc:     hughd@google.com, sforshee@kernel.org, hch@lst.de,
+        gscrivan@redhat.com, rodrigoca@microsoft.com
+Subject: [PATCH] shmem: support idmapped mounts for tmpfs
+Date:   Fri, 20 Jan 2023 10:43:46 +0100
+Message-Id: <20230120094346.3182328-1-gscrivan@redhat.com>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -94,147 +57,182 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Tue, 2023-01-17 at 11:12 +0100, Christian Brauner wrote:
-> On Tue, Jan 17, 2023 at 09:05:53AM +0200, Amir Goldstein wrote:
-> > > It seems rather another an incomplete EROFS from several points
-> > > of view.=C2=A0 Also see:
-> > > https://lore.kernel.org/all/1b192a85-e1da-0925-ef26-178b93d0aa45@plex=
-istor.com/T/#u
-> > >=20
-> >=20
-> > Ironically, ZUFS is one of two new filesystems that were discussed
-> > in LSFMM19,
-> > where the community reactions rhyme with the reactions to
-> > composefs.
-> > The discussion on Incremental FS resembles composefs case even more
-> > [1].
-> > AFAIK, Android is still maintaining Incremental FS out-of-tree.
-> >=20
-> > Alexander and Giuseppe,
-> >=20
-> > I'd like to join Gao is saying that I think it is in the best
-> > interest
-> > of everyone,
-> > composefs developers and prospect users included,
-> > if the composefs requirements would drive improvement to existing
-> > kernel subsystems rather than adding a custom filesystem driver
-> > that partly duplicates other subsystems.
-> >=20
-> > Especially so, when the modifications to existing components
-> > (erofs and overlayfs) appear to be relatively minor and the
-> > maintainer
-> > of erofs is receptive to new features and happy to collaborate with
-> > you.
-> >=20
-> > w.r.t overlayfs, I am not even sure that anything needs to be
-> > modified
-> > in the driver.
-> > overlayfs already supports "metacopy" feature which means that an
-> > upper layer
-> > could be composed in a way that the file content would be read from
-> > an arbitrary
-> > path in lower fs, e.g. objects/cc/XXX.
-> >=20
-> > I gave a talk on LPC a few years back about overlayfs and container
-> > images [2].
-> > The emphasis was that overlayfs driver supports many new features,
-> > but userland
-> > tools for building advanced overlayfs images based on those new
-> > features are
-> > nowhere to be found.
-> >=20
-> > I may be wrong, but it looks to me like composefs could potentially
-> > fill this void,
-> > without having to modify the overlayfs driver at all, or maybe just
-> > a
-> > little bit.
-> > Please start a discussion with overlayfs developers about missing
-> > driver
-> > features if you have any.
->=20
-> Surprising that I and others weren't Cced on this given that we had a
-> meeting with the main developers and a few others where we had said
-> the
-> same thing. I hadn't followed this.=20
+This patch enables idmapped mounts for tmpfs when CONFIG_SHMEM is defined.
+Since all dedicated helpers for this functionality exist, in this
+patch we just pass down the idmap argument from the VFS methods to the
+relevant helpers.
 
-Sorry about that, I'm just not very used to the kernel submission
-mechanism. I'll CC you on the next version.
+Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
+Tested-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+---
+ mm/shmem.c | 47 ++++++++++++++++++++++++++++-------------------
+ 1 file changed, 28 insertions(+), 19 deletions(-)
 
->=20
-> We have at least 58 filesystems currently in the kernel (and that's a
-> conservative count just based on going by obvious directories and
-> ignoring most virtual filesystems).
->=20
-> A non-insignificant portion is probably slowly rotting away with
-> little
-> fixes coming in, with few users, and not much attention is being paid
-> to
-> syzkaller reports for them if they show up. I haven't quantified this
-> of
-> course.
->=20
-> Taking in a new filesystems into kernel in the worst case means that
-> it's being dumped there once and will slowly become unmaintained.
-> Then
-> we'll have a few users for the next 20 years and we can't reasonably
-> deprecate it (Maybe that's another good topic: How should we fade out
-> filesystems.).
->=20
-> Of course, for most fs developers it probably doesn't matter how many
-> other filesystems there are in the kernel (aside from maybe competing
-> for the same users).
->=20
-> But for developers who touch the vfs every new filesystems may
-> increase
-> the cost of maintaining and reworking existing functionality, or
-> adding
-> new functionality. Making it more likely to accumulate hacks, adding
-> workarounds, or flatout being unable to kill off infrastructure that
-> should reasonably go away. Maybe this is an unfair complaint but just
-> from experience a new filesystem potentially means one or two weeks
-> to
-> make a larger vfs change.
->=20
-> I want to stress that I'm not at all saying "no more new fs" but we
-> should be hesitant before we merge new filesystems into the kernel.
-
-Well, it sure reads as "no more new fs" to me. But I understand that
-there is hesitation towards this. The new version will be even simpler
-(based on feedback from dave), weighing in at < 2000 lines. Hopefully
-this will make it easier to review and maintain and somewhat countering
-the cost of yet another filesystem.
-
-> Especially for filesystems that are tailored to special use-cases.
-> Every few years another filesystem tailored to container use-cases
-> shows
-> up. And frankly, a good portion of the issues that they are trying to
-> solve are caused by design choices in userspace.
-
-Well, we have at least two use cases, but sure, it is not a general
-purpose filesystem.
-
-> And I have to say I'm especially NAK-friendly about anything that
-> comes
-> even close to yet another stacking filesystems or anything that
-> layers
-> on top of a lower filesystem/mount such as ecryptfs, ksmbd, and
-> overlayfs. They are hard to get right, with lots of corner cases and
-> they cause the most headaches when making vfs changes.
-
-I can't disagree here, because I'm not a vfs maintainer, but I will say
-that composefs is fundamentally much simpler that these examples. First
-because it is completely read-only, and secondly because it doesn't
-rely on the lower filesystem for anything but file content (i.e. lower
-fs metadata or directory structure doesn't affect the upper fs).
-
---=20
-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D=
--=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-=3D-
-=3D-=3D-=3D
- Alexander Larsson                                            Red Hat,
-Inc=20
-       alexl@redhat.com            alexander.larsson@gmail.com=20
-He's a jaded white trash astronaut haunted by an iconic dead American=20
-confidante She's a brilliant extravagent femme fatale who can talk to=20
-animals. They fight crime!=20
+diff --git a/mm/shmem.c b/mm/shmem.c
+index 028675cd97d4..2fdd76ab337f 100644
+--- a/mm/shmem.c
++++ b/mm/shmem.c
+@@ -1068,7 +1068,7 @@ static int shmem_getattr(struct mnt_idmap *idmap,
+ 	stat->attributes_mask |= (STATX_ATTR_APPEND |
+ 			STATX_ATTR_IMMUTABLE |
+ 			STATX_ATTR_NODUMP);
+-	generic_fillattr(&nop_mnt_idmap, inode, stat);
++	generic_fillattr(idmap, inode, stat);
+ 
+ 	if (shmem_is_huge(NULL, inode, 0, false))
+ 		stat->blksize = HPAGE_PMD_SIZE;
+@@ -1091,7 +1091,7 @@ static int shmem_setattr(struct mnt_idmap *idmap,
+ 	bool update_mtime = false;
+ 	bool update_ctime = true;
+ 
+-	error = setattr_prepare(&nop_mnt_idmap, dentry, attr);
++	error = setattr_prepare(idmap, dentry, attr);
+ 	if (error)
+ 		return error;
+ 
+@@ -1129,9 +1129,9 @@ static int shmem_setattr(struct mnt_idmap *idmap,
+ 		}
+ 	}
+ 
+-	setattr_copy(&nop_mnt_idmap, inode, attr);
++	setattr_copy(idmap, inode, attr);
+ 	if (attr->ia_valid & ATTR_MODE)
+-		error = posix_acl_chmod(&nop_mnt_idmap, dentry, inode->i_mode);
++		error = posix_acl_chmod(idmap, dentry, inode->i_mode);
+ 	if (!error && update_ctime) {
+ 		inode->i_ctime = current_time(inode);
+ 		if (update_mtime)
+@@ -2329,8 +2329,9 @@ static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
+ #define shmem_initxattrs NULL
+ #endif
+ 
+-static struct inode *shmem_get_inode(struct super_block *sb, struct inode *dir,
+-				     umode_t mode, dev_t dev, unsigned long flags)
++static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block *sb,
++				     struct inode *dir, umode_t mode, dev_t dev,
++				     unsigned long flags)
+ {
+ 	struct inode *inode;
+ 	struct shmem_inode_info *info;
+@@ -2343,7 +2344,7 @@ static struct inode *shmem_get_inode(struct super_block *sb, struct inode *dir,
+ 	inode = new_inode(sb);
+ 	if (inode) {
+ 		inode->i_ino = ino;
+-		inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
++		inode_init_owner(idmap, inode, dir, mode);
+ 		inode->i_blocks = 0;
+ 		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
+ 		inode->i_generation = get_random_u32();
+@@ -2921,7 +2922,7 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
+ 	struct inode *inode;
+ 	int error = -ENOSPC;
+ 
+-	inode = shmem_get_inode(dir->i_sb, dir, mode, dev, VM_NORESERVE);
++	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, dev, VM_NORESERVE);
+ 	if (inode) {
+ 		error = simple_acl_create(dir, inode);
+ 		if (error)
+@@ -2952,7 +2953,7 @@ shmem_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
+ 	struct inode *inode;
+ 	int error = -ENOSPC;
+ 
+-	inode = shmem_get_inode(dir->i_sb, dir, mode, 0, VM_NORESERVE);
++	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, 0, VM_NORESERVE);
+ 	if (inode) {
+ 		error = security_inode_init_security(inode, dir,
+ 						     NULL,
+@@ -2975,8 +2976,8 @@ static int shmem_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ {
+ 	int error;
+ 
+-	if ((error = shmem_mknod(&nop_mnt_idmap, dir, dentry,
+-				 mode | S_IFDIR, 0)))
++	error = shmem_mknod(idmap, dir, dentry, mode | S_IFDIR, 0);
++	if (error)
+ 		return error;
+ 	inc_nlink(dir);
+ 	return 0;
+@@ -2985,7 +2986,7 @@ static int shmem_mkdir(struct mnt_idmap *idmap, struct inode *dir,
+ static int shmem_create(struct mnt_idmap *idmap, struct inode *dir,
+ 			struct dentry *dentry, umode_t mode, bool excl)
+ {
+-	return shmem_mknod(&nop_mnt_idmap, dir, dentry, mode | S_IFREG, 0);
++	return shmem_mknod(idmap, dir, dentry, mode | S_IFREG, 0);
+ }
+ 
+ /*
+@@ -3055,7 +3056,7 @@ static int shmem_whiteout(struct mnt_idmap *idmap,
+ 	if (!whiteout)
+ 		return -ENOMEM;
+ 
+-	error = shmem_mknod(&nop_mnt_idmap, old_dir, whiteout,
++	error = shmem_mknod(idmap, old_dir, whiteout,
+ 			    S_IFCHR | WHITEOUT_MODE, WHITEOUT_DEV);
+ 	dput(whiteout);
+ 	if (error)
+@@ -3098,7 +3099,7 @@ static int shmem_rename2(struct mnt_idmap *idmap,
+ 	if (flags & RENAME_WHITEOUT) {
+ 		int error;
+ 
+-		error = shmem_whiteout(&nop_mnt_idmap, old_dir, old_dentry);
++		error = shmem_whiteout(idmap, old_dir, old_dentry);
+ 		if (error)
+ 			return error;
+ 	}
+@@ -3136,7 +3137,7 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
+ 	if (len > PAGE_SIZE)
+ 		return -ENAMETOOLONG;
+ 
+-	inode = shmem_get_inode(dir->i_sb, dir, S_IFLNK | 0777, 0,
++	inode = shmem_get_inode(idmap, dir->i_sb, dir, S_IFLNK | 0777, 0,
+ 				VM_NORESERVE);
+ 	if (!inode)
+ 		return -ENOSPC;
+@@ -3819,7 +3820,8 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
+ #endif
+ 	uuid_gen(&sb->s_uuid);
+ 
+-	inode = shmem_get_inode(sb, NULL, S_IFDIR | sbinfo->mode, 0, VM_NORESERVE);
++	inode = shmem_get_inode(&nop_mnt_idmap, sb, NULL, S_IFDIR | sbinfo->mode, 0,
++				VM_NORESERVE);
+ 	if (!inode)
+ 		goto failed;
+ 	inode->i_uid = sbinfo->uid;
+@@ -4044,7 +4046,11 @@ static struct file_system_type shmem_fs_type = {
+ 	.parameters	= shmem_fs_parameters,
+ #endif
+ 	.kill_sb	= kill_litter_super,
++#ifdef CONFIG_SHMEM
++	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP,
++#else
+ 	.fs_flags	= FS_USERNS_MOUNT,
++#endif
+ };
+ 
+ void __init shmem_init(void)
+@@ -4196,7 +4202,7 @@ EXPORT_SYMBOL_GPL(shmem_truncate_range);
+ #define shmem_vm_ops				generic_file_vm_ops
+ #define shmem_anon_vm_ops			generic_file_vm_ops
+ #define shmem_file_operations			ramfs_file_operations
+-#define shmem_get_inode(sb, dir, mode, dev, flags)	ramfs_get_inode(sb, dir, mode, dev)
++#define shmem_get_inode(idmap, sb, dir, mode, dev, flags) ramfs_get_inode(sb, dir, mode, dev)
+ #define shmem_acct_size(flags, size)		0
+ #define shmem_unacct_size(flags, size)		do {} while (0)
+ 
+@@ -4219,8 +4225,11 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, l
+ 	if (shmem_acct_size(flags, size))
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	inode = shmem_get_inode(mnt->mnt_sb, NULL, S_IFREG | S_IRWXUGO, 0,
+-				flags);
++	if (is_idmapped_mnt(mnt))
++		return ERR_PTR(-EINVAL);
++
++	inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
++				S_IFREG | S_IRWXUGO, 0, flags);
+ 	if (unlikely(!inode)) {
+ 		shmem_unacct_size(flags, size);
+ 		return ERR_PTR(-ENOSPC);
+-- 
+2.38.1
 
