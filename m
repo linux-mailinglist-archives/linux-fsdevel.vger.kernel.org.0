@@ -2,184 +2,294 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4C92675F11
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 21:45:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id E16F1676013
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 23:19:38 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229501AbjATUpt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Jan 2023 15:45:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46826 "EHLO
+        id S229925AbjATWTh (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Jan 2023 17:19:37 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37076 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229447AbjATUpr (ORCPT
+        with ESMTP id S229807AbjATWTg (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Jan 2023 15:45:47 -0500
-Received: from mail-pj1-x1034.google.com (mail-pj1-x1034.google.com [IPv6:2607:f8b0:4864:20::1034])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B8B9294C98
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 12:45:46 -0800 (PST)
-Received: by mail-pj1-x1034.google.com with SMTP id b10so6727101pjo.1
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 12:45:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=x62E/nl+ONbICiSsmar4KjRWoAfoTSBdrOdf9qKQras=;
-        b=LlMl9c3NNGZmycFs5fSTn3CIyY+wd5nQUAS9vIqtV2A1S10Snz9ztD6ABsdBAIJMRX
-         oOqyZ9S+OA9lpbBymTACh/JWRKDGwvqeTHfjPnQKyCRpvfE8/kR08j3fH1/fBHcmzXW+
-         TameGWN6nJVw0vttTbxWtt9aJX7iXSs3sRQbx3v6Im2BnGLE8bw+ILl7oI/tGr8nE3K9
-         w0W39/8ApnDEXH2dAz1PRBoVc6nRzQCJet7n6Dt4cJAHBnHCBFVZCcL2Cuuj+41U6mTN
-         5YH9HJS4Zk1qsDfsPa38q/o9UzgT13gMNA75WHbP8gGNlwakrQWhF/PC1Ia7CBB96akN
-         hkbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=x62E/nl+ONbICiSsmar4KjRWoAfoTSBdrOdf9qKQras=;
-        b=Z7cWgIXUbaiBqh0hWyxXuCVvCloZZmH9q9g/GVRHvDrOs7o2RptqHiynmM83vXOD0h
-         /5AvtWbtX1fn+P7QVB8oVMFO8wEIsPZvjECnbDkXYcHSQryH4ONS5+5FzpQDps/je9Cr
-         Ra2mN+oPXvzL5eU7k4Y9o3/e0HpMs4kzKNTV/eqSQzxHo5OrNIXlWeEwK08SdevZmoeU
-         FT87jYO8Xu8kDXZCRmVURxEPNb6C2lvkX8iksow2WObMfm0Tt14GegqTeOWESV3uSNEr
-         okoCXcioJe57f1+ueglEgXilZOL7rKejrMOhE8zj7eEHfbaDa5A4+L/JQZPIX/mU450q
-         6t6g==
-X-Gm-Message-State: AFqh2krsVp1lZVs3EBVPr5M4ReVpnzdApg/zYl3/u1+Pws72kAoOrxVl
-        9Pgyj4Owetykz5sr9/qgvhr5C+HFsQhEWjjxz6kX
-X-Google-Smtp-Source: AMrXdXvQWGH+TfxgJ4yUEtio0sfEpYaSLEATZ2oGg7OHBsGmzao1b/xL9lJ3//JRhrCw2Td14bRYp8jbP4onPyGj+Rw=
-X-Received: by 2002:a17:90a:17a1:b0:229:9ffe:135b with SMTP id
- q30-20020a17090a17a100b002299ffe135bmr1730636pja.72.1674247546190; Fri, 20
- Jan 2023 12:45:46 -0800 (PST)
+        Fri, 20 Jan 2023 17:19:36 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B735F3756D
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 14:18:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674253135;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ttCtnEhmcdmpjXT22WyUtaA03omrvJCxRoqh5h6JIuI=;
+        b=QgRbng8nOJ8iC0BTdqxJD5+lVnPjboEffX0VNRMyhyjSbpZN1/XaApP+ORaI6r8S9c7QZA
+        33K3A4b0p0gh05H1BAj9f2nKau8Px5+iCGyjvHHxk/Ad6LK1Fb+spWRTRdqp1h525u8jHu
+        LbfFOzql6Oo7uDYjkj0TUKuWZNGSzpE=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-136-4ISMl0y1NpmIY0VAfhs5Iw-1; Fri, 20 Jan 2023 17:18:52 -0500
+X-MC-Unique: 4ISMl0y1NpmIY0VAfhs5Iw-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 325241C05B12;
+        Fri, 20 Jan 2023 22:18:52 +0000 (UTC)
+Received: from localhost (unknown [10.39.194.249])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 163C72026D68;
+        Fri, 20 Jan 2023 22:18:50 +0000 (UTC)
+From:   Giuseppe Scrivano <gscrivan@redhat.com>
+To:     Amir Goldstein <amir73il@gmail.com>
+Cc:     Alexander Larsson <alexl@redhat.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        david@fromorbit.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
+        Vivek Goyal <vgoyal@redhat.com>,
+        Miklos Szeredi <miklos@szeredi.hu>
+Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
+ image filesystem
+References: <cover.1674227308.git.alexl@redhat.com>
+        <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
+Date:   Fri, 20 Jan 2023 23:18:48 +0100
+In-Reply-To: <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
+        (Amir Goldstein's message of "Fri, 20 Jan 2023 21:44:46 +0200")
+Message-ID: <87ilh0g88n.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.1 (gnu/linux)
 MIME-Version: 1.0
-References: <20230116212105.1840362-1-mjguzik@gmail.com> <20230116212105.1840362-2-mjguzik@gmail.com>
-In-Reply-To: <20230116212105.1840362-2-mjguzik@gmail.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 20 Jan 2023 15:45:34 -0500
-Message-ID: <CAHC9VhSKEyyd-s_j=1UbA0+vOK7ggyCp6e-FNSG7XVYvCxoLnA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] vfs: avoid duplicating creds in faccessat if possible
-To:     Mateusz Guzik <mjguzik@gmail.com>
-Cc:     viro@zeniv.linux.org.uk, serge@hallyn.com,
-        torvalds@linux-foundation.org, linux-fsdevel@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 16, 2023 at 4:21 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
->
-> access(2) remains commonly used, for example on exec:
-> access("/etc/ld.so.preload", R_OK)
->
-> or when running gcc: strace -c gcc empty.c
-> % time     seconds  usecs/call     calls    errors syscall
-> ------ ----------- ----------- --------- --------- ----------------
->   0.00    0.000000           0        42        26 access
->
-> It falls down to do_faccessat without the AT_EACCESS flag, which in turn
-> results in allocation of new creds in order to modify fsuid/fsgid and
-> caps. This is a very expensive process single-threaded and most notably
-> multi-threaded, with numerous structures getting refed and unrefed on
-> imminent new cred destruction.
->
-> Turns out for typical consumers the resulting creds would be identical
-> and this can be checked upfront, avoiding the hard work.
->
-> An access benchmark plugged into will-it-scale running on Cascade Lake
-> shows:
-> test    proc    before  after
-> access1 1       1310582 2908735  (+121%)  # distinct files
-> access1 24      4716491 63822173 (+1353%) # distinct files
-> access2 24      2378041 5370335  (+125%)  # same file
+Hi Amir,
 
-Out of curiosity, do you have any measurements of the impact this
-patch has on the AT_EACCESS case when the creds do need to be
-modified?
+Amir Goldstein <amir73il@gmail.com> writes:
 
-> The above benchmarks are not integrated into will-it-scale, but can be
-> found in a pull request:
-> https://github.com/antonblanchard/will-it-scale/pull/36/files
+> On Fri, Jan 20, 2023 at 5:30 PM Alexander Larsson <alexl@redhat.com> wrot=
+e:
+>>
+>> Giuseppe Scrivano and I have recently been working on a new project we
+>> call composefs. This is the first time we propose this publically and
+>> we would like some feedback on it.
+>>
+>> At its core, composefs is a way to construct and use read only images
+>> that are used similar to how you would use e.g. loop-back mounted
+>> squashfs images. On top of this composefs has two fundamental
+>> features. First it allows sharing of file data (both on disk and in
+>> page cache) between images, and secondly it has dm-verity like
+>> validation on read.
+>>
+>> Let me first start with a minimal example of how this can be used,
+>> before going into the details:
+>>
+>> Suppose we have this source for an image:
+>>
+>> rootfs/
+>> =E2=94=9C=E2=94=80=E2=94=80 dir
+>> =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 another_a
+>> =E2=94=9C=E2=94=80=E2=94=80 file_a
+>> =E2=94=94=E2=94=80=E2=94=80 file_b
+>>
+>> We can then use this to generate an image file and a set of
+>> content-addressed backing files:
+>>
+>> # mkcomposefs --digest-store=3Dobjects rootfs/ rootfs.img
+>> # ls -l rootfs.img objects/*/*
+>> -rw-------. 1 root root   10 Nov 18 13:20 objects/02/927862b4ab9fb699191=
+87bb78d394e235ce444eeb0a890d37e955827fe4bf4
+>> -rw-------. 1 root root   10 Nov 18 13:20 objects/cc/3da5b14909626fc9944=
+3f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
+>> -rw-r--r--. 1 root root 4228 Nov 18 13:20 rootfs.img
+>>
+>> The rootfs.img file contains all information about directory and file
+>> metadata plus references to the backing files by name. We can now
+>> mount this and look at the result:
+>>
+>> # mount -t composefs rootfs.img -o basedir=3Dobjects /mnt
+>> # ls  /mnt/
+>> dir  file_a  file_b
+>> # cat /mnt/file_a
+>> content_a
+>>
+>> When reading this file the kernel is actually reading the backing
+>> file, in a fashion similar to overlayfs. Since the backing file is
+>> content-addressed, the objects directory can be shared for multiple
+>> images, and any files that happen to have the same content are
+>> shared. I refer to this as opportunistic sharing, as it is different
+>> than the more course-grained explicit sharing used by e.g. container
+>> base images.
+>>
+>> The next step is the validation. Note how the object files have
+>> fs-verity enabled. In fact, they are named by their fs-verity digest:
+>>
+>> # fsverity digest objects/*/*
+>> sha256:02927862b4ab9fb69919187bb78d394e235ce444eeb0a890d37e955827fe4bf4 =
+objects/02/927862b4ab9fb69919187bb78d394e235ce444eeb0a890d37e955827fe4bf4
+>> sha256:cc3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f =
+objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
+>>
+>> The generated filesystm image may contain the expected digest for the
+>> backing files. When the backing file digest is incorrect, the open
+>> will fail, and if the open succeeds, any other on-disk file-changes
+>> will be detected by fs-verity:
+>>
+>> # cat objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d=
+43e173f
+>> content_a
+>> # rm -f objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b2=
+3d43e173f
+>> # echo modified > objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d1=
+8883dc89b23d43e173f
+>> # cat /mnt/file_a
+>> WARNING: composefs backing file '3da5b14909626fc99443f580e4d8c9b990e85e0=
+a1d18883dc89b23d43e173f' unexpectedly had no fs-verity digest
+>> cat: /mnt/file_a: Input/output error
+>>
+>> This re-uses the existing fs-verity functionallity to protect against
+>> changes in file contents, while adding on top of it protection against
+>> changes in filesystem metadata and structure. I.e. protecting against
+>> replacing a fs-verity enabled file or modifying file permissions or
+>> xattrs.
+>>
+>> To be fully verified we need another step: we use fs-verity on the
+>> image itself. Then we pass the expected digest on the mount command
+>> line (which will be verified at mount time):
+>>
+>> # fsverity enable rootfs.img
+>> # fsverity digest rootfs.img
+>> sha256:da42003782992856240a3e25264b19601016114775debd80c01620260af86a76 =
+rootfs.img
+>> # mount -t composefs rootfs.img -o basedir=3Dobjects,digest=3Dda42003782=
+992856240a3e25264b19601016114775debd80c01620260af86a76 /mnt
+>>
+>> So, given a trusted set of mount options (say unlocked from TPM), we
+>> have a fully verified filesystem tree mounted, with opportunistic
+>> finegrained sharing of identical files.
+>>
+>> So, why do we want this? There are two initial users. First of all we
+>> want to use the opportunistic sharing for the podman container image
+>> baselayer. The idea is to use a composefs mount as the lower directory
+>> in an overlay mount, with the upper directory being the container work
+>> dir. This will allow automatical file-level disk and page-cache
+>> sharning between any two images, independent of details like the
+>> permissions and timestamps of the files.
+>>
+>> Secondly we are interested in using the verification aspects of
+>> composefs in the ostree project. Ostree already supports a
+>> content-addressed object store, but it is currently referenced by
+>> hardlink farms. The object store and the trees that reference it are
+>> signed and verified at download time, but there is no runtime
+>> verification. If we replace the hardlink farm with a composefs image
+>> that points into the existing object store we can use the verification
+>> to implement runtime verification.
+>>
+>> In fact, the tooling to create composefs images is 100% reproducible,
+>> so all we need is to add the composefs image fs-verity digest into the
+>> ostree commit. Then the image can be reconstructed from the ostree
+>> commit info, generating a file with the same fs-verity digest.
+>>
+>> These are the usecases we're currently interested in, but there seems
+>> to be a breadth of other possible uses. For example, many systems use
+>> loopback mounts for images (like lxc or snap), and these could take
+>> advantage of the opportunistic sharing. We've also talked about using
+>> fuse to implement a local cache for the backing files. I.e. you would
+>> have the second basedir be a fuse filesystem. On lookup failure in the
+>> first basedir it downloads the file and saves it in the first basedir
+>> for later lookups. There are many interesting possibilities here.
+>>
+>> The patch series contains some documentation on the file format and
+>> how to use the filesystem.
+>>
+>> The userspace tools (and a standalone kernel module) is available
+>> here:
+>>   https://github.com/containers/composefs
+>>
+>> Initial work on ostree integration is here:
+>>   https://github.com/ostreedev/ostree/pull/2640
+>>
+>> Changes since v2:
+>> - Simplified filesystem format to use fixed size inodes. This resulted
+>>   in simpler (now < 2k lines) code as well as higher performance at
+>>   the cost of slightly (~40%) larger images.
+>> - We now use multi-page mappings from the page cache, which removes
+>>   limits on sizes of xattrs and makes the dirent handling code simpler.
+>> - Added more documentation about the on-disk file format.
+>> - General cleanups based on review comments.
+>>
 >
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+> Hi Alexander,
 >
-> v2:
-> - fix current->cred usage warn reported by the kernel test robot
-> Link: https://lore.kernel.org/all/202301150709.9EC6UKBT-lkp@intel.com/
-> ---
->  fs/open.c | 32 +++++++++++++++++++++++++++++++-
->  1 file changed, 31 insertions(+), 1 deletion(-)
+> I must say that I am a little bit puzzled by this v3.
+> Gao, Christian and myself asked you questions on v2
+> that are not mentioned in v3 at all.
 >
-> diff --git a/fs/open.c b/fs/open.c
-> index 82c1a28b3308..3c068a38044c 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -367,7 +367,37 @@ COMPAT_SYSCALL_DEFINE6(fallocate, int, fd, int, mode, compat_arg_u64_dual(offset
->   * access() needs to use the real uid/gid, not the effective uid/gid.
->   * We do this by temporarily clearing all FS-related capabilities and
->   * switching the fsuid/fsgid around to the real ones.
-> + *
-> + * Creating new credentials is expensive, so we try to skip doing it,
-> + * which we can if the result would match what we already got.
->   */
-> +static bool access_need_override_creds(int flags)
-> +{
-> +       const struct cred *cred;
-> +
-> +       if (flags & AT_EACCESS)
-> +               return false;
-> +
-> +       cred = current_cred();
-> +       if (!uid_eq(cred->fsuid, cred->uid) ||
-> +           !gid_eq(cred->fsgid, cred->gid))
-> +               return true;
-> +
-> +       if (!issecure(SECURE_NO_SETUID_FIXUP)) {
-> +               kuid_t root_uid = make_kuid(cred->user_ns, 0);
-> +               if (!uid_eq(cred->uid, root_uid)) {
-> +                       if (!cap_isclear(cred->cap_effective))
-> +                               return true;
-> +               } else {
-> +                       if (!cap_isidentical(cred->cap_effective,
-> +                           cred->cap_permitted))
-> +                               return true;
-> +               }
-> +       }
-> +
-> +       return false;
-> +}
+> To sum it up, please do not propose composefs without explaining
+> what are the barriers for achieving the exact same outcome with
+> the use of a read-only overlayfs with two lower layer -
+> uppermost with erofs containing the metadata files, which include
+> trusted.overlay.metacopy and trusted.overlay.redirect xattrs that refer
+> to the lowermost layer containing the content files.
 
-I worry a little that with nothing connecting
-access_need_override_creds() to access_override_creds() there is a bug
-waiting to happen if/when only one of the functions is updated.
+I think Dave explained quite well why using overlay is not comparable to
+what composefs does.
 
-Given the limited credential changes in access_override_creds(), I
-wonder if a better solution would be to see if we could create a
-light(er)weight prepare_creds()/override_creds() that would avoid some
-of the prepare_creds() hotspots (I'm assuming that is where most of
-the time is being spent).  It's possible this could help improve the
-performance of other, similar operations that need to modify task
-creds for a brief, and synchronous, period of time.
+One big difference is that overlay still requires at least a syscall for
+each file in the image, and then we need the equivalent of "rm -rf" to
+clean it up.  It is somehow acceptable for long-running services, but it
+is not for "serverless" containers where images/containers are created
+and destroyed frequently.  So even in the case we already have all the
+image files available locally, we still need to create a checkout with
+the final structure we need for the image.
 
-Have you done any profiling inside of access_override_creds() to see
-where the most time is spent?  Looking at the code I have some gut
-feelings on the hotspots, but it would be good to see some proper data
-before jumping to any conclusions.
+I also don't see how overlay would solve the verified image problem.  We
+would have the same problem we have today with fs-verity as it can only
+validate a single file but not the entire directory structure.  Changes
+that affect the layer containing the trusted.overlay.{metacopy,redirect}
+xattrs won't be noticed.
 
->  static const struct cred *access_override_creds(void)
->  {
->         const struct cred *old_cred;
-> @@ -436,7 +466,7 @@ static long do_faccessat(int dfd, const char __user *filename, int mode, int fla
->         if (flags & AT_EMPTY_PATH)
->                 lookup_flags |= LOOKUP_EMPTY;
+There are at the moment two ways to handle container images, both somehow
+guided by the available file systems in the kernel.
+
+- A single image mounted as a block device.
+- A list of tarballs (OCI image) that are unpacked and mounted as
+  overlay layers.
+
+One big advantage of the block devices model is that you can use
+dm-verity, this is something we miss today with OCI container images
+that use overlay.
+
+What we are proposing with composefs is a way to have "dm-verity" style
+validation based on fs-verity and the possibility to share individual
+files instead of layers.  These files can also be on different file
+systems, which is something not possible with the block device model.
+
+The composefs manifest blob could be generated remotely and signed.  A
+client would need just to validate the signature for the manifest blob
+and from there retrieve the files that are not in the local CAS (even
+from an insecure source) and mount directly the manifest file.
+
+Regards,
+Giuseppe
+
+> Any current functionality gap in erofs and/or in overlayfs
+> cannot be considered as a reason to maintain a new filesystem
+> driver unless you come up with an explanation why closing that
+> functionality gap is not possible or why the erofs+overlayfs alternative
+> would be inferior to maintaining a new filesystem driver.
 >
-> -       if (!(flags & AT_EACCESS)) {
-> +       if (access_need_override_creds(flags)) {
->                 old_cred = access_override_creds();
->                 if (!old_cred)
->                         return -ENOMEM;
-> --
-> 2.34.1
+> From the conversations so far, it does not seem like Gao thinks
+> that the functionality gap in erofs cannot be closed and I don't
+> see why the functionality gap in overlayfs cannot be closed.
+>
+> Are we missing something?
+>
+> Thanks,
+> Amir.
 
--- 
-paul-moore.com
