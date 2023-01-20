@@ -2,221 +2,443 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id CD0A46752C3
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 11:50:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ACCE46753E5
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 12:55:26 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229668AbjATKuB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Jan 2023 05:50:01 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:54318 "EHLO
+        id S229865AbjATLzZ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Jan 2023 06:55:25 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34318 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229479AbjATKuA (ORCPT
+        with ESMTP id S229977AbjATLzX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Jan 2023 05:50:00 -0500
-Received: from esa4.hgst.iphmx.com (esa4.hgst.iphmx.com [216.71.154.42])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 925A4A272
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 02:49:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1674211799; x=1705747799;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=yDfXRh62CXOhxwkokMUICkJH6hx8gFfOCEE7kFzoojM=;
-  b=OgMd2ZR5iVoFR1ipqAz9A6+DlzQu03Du/apZcGYvGZudahNsiF76ZxvK
-   +R5K48YKAjSl6d2GC/n94ChIPakb6QcyGeBaIJtMSgiqQLOodwIDgQOmx
-   RJrPDI1AijW8aiaRt1z2TMMHBvXeLUww7w6i+UHCIT7y6AwNcyG1GnQbB
-   LLLyW9Jf0UhQg6Yj3MCs55VA6O0+og/4ML96AzQH3kIx0cv15nFYrsnpX
-   HDgcxumQaEGCGGGPQDhKKownhS6p3M2X6Y5gNPPWVodbVEop5eAbUpiuq
-   ZM5pk8p0GjbSpxr+U7dat5BgnSh8lTFX9gWsykPTPMdRqy7czD+LT1aKL
-   w==;
-X-IronPort-AV: E=Sophos;i="5.97,232,1669046400"; 
-   d="scan'208";a="219701724"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 20 Jan 2023 18:49:57 +0800
-IronPort-SDR: eSzi7vb4BRBSeczzFRCGJ/C792KZu+s7NRpSb2DxiLkkIUkCeRVvha0IdzMV9to2S3Y3QNdKoy
- Q3gM5aQCtkfmnP0lmc8k6vHn7wHtRa6GLEknzL4u2DbsWg6DK8oFXwb/hems7Qhqi0rYTRpz4u
- 3nQXShLHsVtDwj2xS3jVGSGXVA4DkJkLjg2lMP99k7HEI5H/TWPJuy2yd09ZAtpx+TvuxEcKFk
- s8GM3FUsh3N1hNejZuxi2oKOc+4TBzUzNYmnQPMssYkgf9U5cJJok1PndkKq7k0e/lgoSaaGHV
- aX0=
-Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Jan 2023 02:01:50 -0800
-IronPort-SDR: cGzG9mrGjH9c4bbTTleOwCVaa/iwxMv3doo2oKIQ9bUf6FAx7J1QA7Nn/FoGrrMAf+z2tBxjAm
- KF1baDbGEWG9G4BUGDdIoILFEdb3F2GXSxik2piXSPZzf/M6TPDAB8RhbCir8pKxh2W/Gnp3uC
- gLjNHgvcy/5Gn3LUPc6ixpGMseUvs7VA9Et/F5E1YlR+6AtTD5OVFwOSX5EAN6y+Y2huBZGRwY
- VA0Tj/UFIAq75662VrQ981da5oSbqYLz72bd2E8xl1PjFhHd0ulSY0LjqEC4Qd61tNXh+UYqkb
- Zt0=
-WDCIronportException: Internal
-Received: from usg-ed-osssrv.wdc.com ([10.3.10.180])
-  by uls-op-cesaip02.wdc.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 20 Jan 2023 02:49:57 -0800
-Received: from usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTP id 4Nyx8h6rSMz1RvTp
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 02:49:56 -0800 (PST)
-Authentication-Results: usg-ed-osssrv.wdc.com (amavisd-new); dkim=pass
-        reason="pass (just generated, assumed good)"
-        header.d=opensource.wdc.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=
-        opensource.wdc.com; h=content-transfer-encoding:content-type
-        :in-reply-to:organization:from:references:to:content-language
-        :subject:user-agent:mime-version:date:message-id; s=dkim; t=
-        1674211795; x=1676803796; bh=yDfXRh62CXOhxwkokMUICkJH6hx8gFfOCEE
-        7kFzoojM=; b=IKIlu8sKhW69D9kmzWqNRa5wDX/WdgQiojQQf/8grzSmBWVsoK1
-        5III3ooowvXfG04nsLri3yaRhGHrDvgq4ZoxNZKR4KNFdPaLZZb4Oa9EbfVrNDIO
-        CqQ6+MFx4cyY5E3H0YpdPcvzvndxVSxJFgy4P5nDoU66e/ShAlBZLzaWpyKlhRpl
-        rOQlD8GIYj9b3HI+mLR6qpbv8zMoYPheOxSWdCKlvVoWrKERIoI2ibqqNxm96Dqf
-        IPxZ1NbREKyaTJQ4K5TK/AN0wytLoRVuIUiKg+x/Kx+s8WxlDFoUWMvGuyVIZz72
-        5wh9dvs6nAFwb0pLdLQHKQULZPRK2CZXR8g==
-X-Virus-Scanned: amavisd-new at usg-ed-osssrv.wdc.com
-Received: from usg-ed-osssrv.wdc.com ([127.0.0.1])
-        by usg-ed-osssrv.wdc.com (usg-ed-osssrv.wdc.com [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id nw9DysUj9Tud for <linux-fsdevel@vger.kernel.org>;
-        Fri, 20 Jan 2023 02:49:55 -0800 (PST)
-Received: from [10.225.163.44] (unknown [10.225.163.44])
-        by usg-ed-osssrv.wdc.com (Postfix) with ESMTPSA id 4Nyx8d0FFgz1RvLy;
-        Fri, 20 Jan 2023 02:49:52 -0800 (PST)
-Message-ID: <a324b292-8e3f-686e-ee6f-846fd7678192@opensource.wdc.com>
-Date:   Fri, 20 Jan 2023 19:49:51 +0900
+        Fri, 20 Jan 2023 06:55:23 -0500
+Received: from ams.source.kernel.org (ams.source.kernel.org [IPv6:2604:1380:4601:e00::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 9F711A3152
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 03:55:17 -0800 (PST)
+Received: from smtp.kernel.org (relay.kernel.org [52.25.139.140])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ams.source.kernel.org (Postfix) with ESMTPS id 2ED86B82608
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 11:55:16 +0000 (UTC)
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD7EEC433EF;
+        Fri, 20 Jan 2023 11:55:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=k20201202; t=1674215714;
+        bh=knx/Gz5yGZv7oLgiyU5vNuZr7RfnF0fyyvz/YB0R9pE=;
+        h=From:Date:Subject:To:Cc:From;
+        b=UT4yhau5HjQ+xbrN3TQfoRJXMsfOw1V66X4ph0tOOCgvJpbIm50IfSgIfkyuVtkBO
+         WFfIjW1iCbu0GT+xEFAHDA3AYlMhg9wzoGSIrqf2aa9OfzjBhCMh5NmaBHLeb22n2D
+         gFBbr9hqHJPTC+UzJh+wravqjcAy2uBZQfOce6PJX+0ldm99Q11VmfqHX9DiVE5qwE
+         i2oRgDIDkREe/o9tdIPT65Yfaxvek86837z1iKQUz7KC4Rh1aYrueS1zQuro34fNmR
+         dXeWBsCJNZ0OOagnOFFNcwlCdS7ejLghJ6k60p/MkCKbepzEz74kSTUaEsZscSdqX3
+         39IpW0veHC7Hg==
+From:   Christian Brauner <brauner@kernel.org>
+Date:   Fri, 20 Jan 2023 12:55:04 +0100
+Subject: [PATCH] fuse: fixes after adapting to new posix acl api
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH 1/3] ptrace,syscall_user_dispatch: Implement Syscall User
- Dispatch Suspension
-Content-Language: en-US
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Gregory Price <gourry.memverge@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
-        oleg@redhat.com, ebiederm@xmission.com, akpm@linux-foundation.org,
-        adobriyan@gmail.com, corbet@lwn.net, shuah@kernel.org,
-        Gregory Price <gregory.price@memverge.com>
-References: <20230118201055.147228-1-gregory.price@memverge.com>
- <20230118201055.147228-2-gregory.price@memverge.com>
- <Y8prnDT0YUhEzI8+@hirez.programming.kicks-ass.net>
-From:   Damien Le Moal <damien.lemoal@opensource.wdc.com>
-Organization: Western Digital Research
-In-Reply-To: <Y8prnDT0YUhEzI8+@hirez.programming.kicks-ass.net>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-4.5 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_PASS,SPF_PASS autolearn=unavailable autolearn_force=no
-        version=3.4.6
+Message-Id: <20230118-fs-fuse-acl-v1-1-a628a9bb55ef@kernel.org>
+X-B4-Tracking: v=1; b=H4sIABiBymMC/x2NQQrCQAwAv1JyNtBdRVq/Ih6yabYN6CpJW4TSv
+ 7v1OAzDbOBiKg63ZgOTVV3fpUI4NcATlVFQh8oQ23huQ+gwO+bFBYmfyDldrjGkvh8YapGoimR
+ UeDqaF/ksdoiPSdbvf3N/7PsP35Vs5nYAAAA=
+To:     Miklos Szeredi <miklos@szeredi.hu>
+Cc:     linux-fsdevel@vger.kernel.org, Seth Forshee <sforshee@kernel.org>,
+        "Christian Brauner (Microsoft)" <brauner@kernel.org>
+X-Mailer: b4 0.12-dev-5b205
+X-Developer-Signature: v=1; a=openpgp-sha256; l=14096; i=brauner@kernel.org;
+ h=from:subject:message-id; bh=knx/Gz5yGZv7oLgiyU5vNuZr7RfnF0fyyvz/YB0R9pE=;
+ b=owGbwMvMwCU28Zj0gdSKO4sYT6slMSSfalRMWjzzSZuMy8OFqf0TWpdLz5jTPG2qs9wd6XdXemz3
+ RD7z6ihlYRDjYpAVU2RxaDcJl1vOU7HZKFMDZg4rE8gQBi5OAZiIjQfD/8jWl4t5Bd7srJp93epo6K
+ HLTnGMMd3tO00i5HuSfkw2F2dkWLn3v769Cn/lGxuu1aJ30ndctlJ2vXZ+Qd0JRnlDdsXzLAA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp;
+ fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
+X-Spam-Status: No, score=-7.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 1/20/23 19:23, Peter Zijlstra wrote:
-> On Wed, Jan 18, 2023 at 03:10:53PM -0500, Gregory Price wrote:
->> Adds PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH to ptrace options, and
->> modify Syscall User Dispatch to suspend interception when enabled.
->>
->> This is modeled after the SUSPEND_SECCOMP feature, which suspends
->> SECCOMP interposition.  Without doing this, software like CRIU will
->> inject system calls into a process and be intercepted by Syscall
->> User Dispatch, either causing a crash (due to blocked signals) or
->> the delivery of those signals to a ptracer (not the intended behavior).
->>
->> Since Syscall User Dispatch is not a privileged feature, a check
->> for permissions is not required, however attempting to set this
->> option when CONFIG_CHECKPOINT_RESTORE it not supported should be
->> disallowed, as its intended use is checkpoint/resume.
->>
->> Signed-off-by: Gregory Price <gregory.price@memverge.com>
-> 
-> One small nit -- see below, otherwise:
-> 
-> Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-> 
->> ---
->>  include/linux/ptrace.h               | 2 ++
->>  include/uapi/linux/ptrace.h          | 6 +++++-
->>  kernel/entry/syscall_user_dispatch.c | 5 +++++
->>  kernel/ptrace.c                      | 5 +++++
->>  4 files changed, 17 insertions(+), 1 deletion(-)
->>
->> diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
->> index eaaef3ffec22..461ae5c99d57 100644
->> --- a/include/linux/ptrace.h
->> +++ b/include/linux/ptrace.h
->> @@ -45,6 +45,8 @@ extern int ptrace_access_vm(struct task_struct *tsk, unsigned long addr,
->>  
->>  #define PT_EXITKILL		(PTRACE_O_EXITKILL << PT_OPT_FLAG_SHIFT)
->>  #define PT_SUSPEND_SECCOMP	(PTRACE_O_SUSPEND_SECCOMP << PT_OPT_FLAG_SHIFT)
->> +#define PT_SUSPEND_SYSCALL_USER_DISPATCH \
->> +	(PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH << PT_OPT_FLAG_SHIFT)
->>  
->>  extern long arch_ptrace(struct task_struct *child, long request,
->>  			unsigned long addr, unsigned long data);
->> diff --git a/include/uapi/linux/ptrace.h b/include/uapi/linux/ptrace.h
->> index 195ae64a8c87..ba9e3f19a22c 100644
->> --- a/include/uapi/linux/ptrace.h
->> +++ b/include/uapi/linux/ptrace.h
->> @@ -146,9 +146,13 @@ struct ptrace_rseq_configuration {
->>  /* eventless options */
->>  #define PTRACE_O_EXITKILL		(1 << 20)
->>  #define PTRACE_O_SUSPEND_SECCOMP	(1 << 21)
->> +#define PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH	(1 << 22)
->>  
->>  #define PTRACE_O_MASK		(\
->> -	0x000000ff | PTRACE_O_EXITKILL | PTRACE_O_SUSPEND_SECCOMP)
->> +	0x000000ff | \
->> +	PTRACE_O_EXITKILL | \
->> +	PTRACE_O_SUSPEND_SECCOMP | \
->> +	PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH)
->>  
->>  #include <asm/ptrace.h>
->>  
->> diff --git a/kernel/entry/syscall_user_dispatch.c b/kernel/entry/syscall_user_dispatch.c
->> index 0b6379adff6b..7607f4598dd8 100644
->> --- a/kernel/entry/syscall_user_dispatch.c
->> +++ b/kernel/entry/syscall_user_dispatch.c
->> @@ -8,6 +8,7 @@
->>  #include <linux/uaccess.h>
->>  #include <linux/signal.h>
->>  #include <linux/elf.h>
->> +#include <linux/ptrace.h>
->>  
->>  #include <linux/sched/signal.h>
->>  #include <linux/sched/task_stack.h>
->> @@ -36,6 +37,10 @@ bool syscall_user_dispatch(struct pt_regs *regs)
->>  	struct syscall_user_dispatch *sd = &current->syscall_dispatch;
->>  	char state;
->>  
->> +	if (IS_ENABLED(CONFIG_CHECKPOINT_RESTORE) &&
->> +		unlikely(current->ptrace & PT_SUSPEND_SYSCALL_USER_DISPATCH))
-> 
-> Align with the '(' pleaase.
-> 
->> +		return false;
->> +
->>  	if (likely(instruction_pointer(regs) - sd->offset < sd->len))
->>  		return false;
->>  
->> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
->> index 54482193e1ed..a6ad815bd4be 100644
->> --- a/kernel/ptrace.c
->> +++ b/kernel/ptrace.c
->> @@ -370,6 +370,11 @@ static int check_ptrace_options(unsigned long data)
->>  	if (data & ~(unsigned long)PTRACE_O_MASK)
->>  		return -EINVAL;
->>  
->> +	if (unlikely(data & PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH)) {
->> +		if (!IS_ENABLED(CONFIG_CHECKPOINT_RESTART))
+This cycle we ported all filesystems to the new posix acl api. While
+looking at further simplifications in this area to remove the last
+remnants of the generic dummy posix acl handlers we realized that we
+regressed fuse daemons that don't set FUSE_POSIX_ACL but still make use
+of posix acls.
 
-Why not one if with a && ?
+With the change to a dedicated posix acl api interacting with posix acls
+doesn't go through the old xattr codepaths anymore and instead only
+relies the get acl and set acl inode operations.
 
->> +			return -EINVAL;
->> +	}
->> +
->>  	if (unlikely(data & PTRACE_O_SUSPEND_SECCOMP)) {
->>  		if (!IS_ENABLED(CONFIG_CHECKPOINT_RESTORE) ||
->>  		    !IS_ENABLED(CONFIG_SECCOMP))
->> -- 
->> 2.39.0
->>
+Before this change fuse daemons that don't set FUSE_POSIX_ACL were able
+to get and set posix acl albeit with two caveats. First, that posix acls
+aren't cached. And second, that they aren't used for permission checking
+in the vfs.
 
--- 
-Damien Le Moal
-Western Digital Research
+We regressed that use-case as we currently refuse to retrieve any posix
+acls if they aren't enabled via FUSE_POSIX_ACL. So older fuse daemons
+would see a change in behavior.
+
+We can restore the old behavior in multiple ways. We could change the
+new posix acl api and look for a dedicated xattr handler and if we find
+one prefer that over the dedicated posix acl api. That would break the
+consistency of the new posix acl api so we would very much prefer not to
+do that.
+
+We could introduce a new ACL_*_CACHE sentinel that would instruct the
+vfs permission checking codepath to not call into the filesystem and
+ignore acls.
+
+But a more straightforward fix for v6.2 is to do the same thing that
+Overlayfs does and give fuse a separate get acl method for permission
+checking. Overlayfs uses this to express different needs for vfs
+permission lookup and acl based retrieval via the regular system call
+path as well. Let fuse do the same for now. This way fuse can continue
+to refuse to retrieve posix acls for daemons that don't set
+FUSE_POSXI_ACL for permission checking while allowing a fuse server to
+retrieve it via the usual system calls.
+
+In the future, we could extend the get acl inode operation to not just
+pass a simple boolean to indicate rcu lookup but instead make it a flag
+argument. Then in addition to passing the information that this is an
+rcu lookup to the filesystem we could also introduce a flag that tells
+the filesystem that this is a request from the vfs to use these acls for
+permission checking. Then fuse could refuse the get acl request for
+permission checking when the daemon doesn't have FUSE_POSIX_ACL set in
+the same get acl method. This would also help Overlayfs and allow us to
+remove the second method for it as well.
+
+But since that change is more invasive as we need to update the get acl
+inode operation for multiple filesystems we should not do this as a fix
+for v6.2. Instead we will do this for the v6.3 merge window.
+
+Fwiw, since posix acls are now always correctly translated in the new
+posix acl api we could also allow them to be used for daemons without
+FUSE_POSIX_ACL that are not mounted on the host. But this is behavioral
+change and again if dones should be done for v6.3. For now, let's just
+restore the original behavior.
+
+A nice side-effect of this change is that for fuse daemons with and
+without FUSE_POSIX_ACL the same code is used for posix acls in a
+backwards compatible way. This also means we can remove the legacy xattr
+handlers completely. We've also added comments to explain the expected
+behavior for daemons without FUSE_POSIX_ACL into the code.
+
+Fixes: 318e66856dde ("xattr: use posix acl api")
+Signed-off-by: Seth Forshee (Digital Ocean) <sforshee@kernel.org>
+Signed-off-by: Christian Brauner (Microsoft) <brauner@kernel.org>
+---
+
+Hey Miklos,
+
+If you're fine with this approach then could you please route this to
+Linus during v6.2 still? If you prefer I do it I'm happy to as well.
+
+Thanks!
+Christian
+---
+ fs/fuse/acl.c    | 68 ++++++++++++++++++++++++++++++++++++++++++++++++++------
+ fs/fuse/dir.c    |  6 +++--
+ fs/fuse/fuse_i.h |  6 ++---
+ fs/fuse/inode.c  | 21 +++++++++--------
+ fs/fuse/xattr.c  | 51 ------------------------------------------
+ 5 files changed, 78 insertions(+), 74 deletions(-)
+
+diff --git a/fs/fuse/acl.c b/fs/fuse/acl.c
+index a4850aee2639..ad670369955f 100644
+--- a/fs/fuse/acl.c
++++ b/fs/fuse/acl.c
+@@ -11,9 +11,10 @@
+ #include <linux/posix_acl.h>
+ #include <linux/posix_acl_xattr.h>
+ 
+-struct posix_acl *fuse_get_acl(struct inode *inode, int type, bool rcu)
++static struct posix_acl *__fuse_get_acl(struct fuse_conn *fc,
++					struct user_namespace *mnt_userns,
++					struct inode *inode, int type, bool rcu)
+ {
+-	struct fuse_conn *fc = get_fuse_conn(inode);
+ 	int size;
+ 	const char *name;
+ 	void *value = NULL;
+@@ -25,7 +26,7 @@ struct posix_acl *fuse_get_acl(struct inode *inode, int type, bool rcu)
+ 	if (fuse_is_bad(inode))
+ 		return ERR_PTR(-EIO);
+ 
+-	if (!fc->posix_acl || fc->no_getxattr)
++	if (fc->no_getxattr)
+ 		return NULL;
+ 
+ 	if (type == ACL_TYPE_ACCESS)
+@@ -53,6 +54,46 @@ struct posix_acl *fuse_get_acl(struct inode *inode, int type, bool rcu)
+ 	return acl;
+ }
+ 
++static inline bool fuse_no_acl(const struct fuse_conn *fc,
++			       const struct inode *inode)
++{
++	/*
++	 * Refuse interacting with POSIX ACLs for daemons that
++	 * don't support FUSE_POSIX_ACL and are not mounted on
++	 * the host to retain backwards compatibility.
++	 */
++	return !fc->posix_acl && (i_user_ns(inode) != &init_user_ns);
++}
++
++struct posix_acl *fuse_get_acl(struct user_namespace *mnt_userns,
++			       struct dentry *dentry, int type)
++{
++	struct inode *inode = d_inode(dentry);
++	struct fuse_conn *fc = get_fuse_conn(inode);
++
++	if (fuse_no_acl(fc, inode))
++		return ERR_PTR(-EOPNOTSUPP);
++
++	return __fuse_get_acl(fc, mnt_userns, inode, type, false);
++}
++
++struct posix_acl *fuse_get_inode_acl(struct inode *inode, int type, bool rcu)
++{
++	struct fuse_conn *fc = get_fuse_conn(inode);
++
++	/*
++	 * FUSE daemons before FUSE_POSIX_ACL was introduced could get and set
++	 * POSIX ACLs without them being used for permission checking by the
++	 * vfs. Retain that behavior for backwards compatibility as there are
++	 * filesystems that do all permission checking for acls in the daemon
++	 * and not in the kernel.
++	 */
++	if (!fc->posix_acl)
++		return NULL;
++
++	return __fuse_get_acl(fc, &init_user_ns, inode, type, rcu);
++}
++
+ int fuse_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		 struct posix_acl *acl, int type)
+ {
+@@ -64,7 +105,7 @@ int fuse_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 	if (fuse_is_bad(inode))
+ 		return -EIO;
+ 
+-	if (!fc->posix_acl || fc->no_setxattr)
++	if (fc->no_setxattr || fuse_no_acl(fc, inode))
+ 		return -EOPNOTSUPP;
+ 
+ 	if (type == ACL_TYPE_ACCESS)
+@@ -99,7 +140,13 @@ int fuse_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 			return ret;
+ 		}
+ 
+-		if (!vfsgid_in_group_p(i_gid_into_vfsgid(&init_user_ns, inode)) &&
++		/*
++		 * Fuse daemons without FUSE_POSIX_ACL never changed the passed
++		 * through POSIX ACLs. Such daemons don't expect setgid bits to
++		 * be stripped.
++		 */
++		if (fc->posix_acl &&
++		    !vfsgid_in_group_p(i_gid_into_vfsgid(&init_user_ns, inode)) &&
+ 		    !capable_wrt_inode_uidgid(&init_user_ns, inode, CAP_FSETID))
+ 			extra_flags |= FUSE_SETXATTR_ACL_KILL_SGID;
+ 
+@@ -108,8 +155,15 @@ int fuse_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 	} else {
+ 		ret = fuse_removexattr(inode, name);
+ 	}
+-	forget_all_cached_acls(inode);
+-	fuse_invalidate_attr(inode);
++
++	if (fc->posix_acl) {
++		/*
++		 * Fuse daemons without FUSE_POSIX_ACL never cached POSIX ACLs
++		 * and didn't invalidate attributes. Retain that behavior.
++		 */
++		forget_all_cached_acls(inode);
++		fuse_invalidate_attr(inode);
++	}
+ 
+ 	return ret;
+ }
+diff --git a/fs/fuse/dir.c b/fs/fuse/dir.c
+index cd1a071b625a..2725fb54328e 100644
+--- a/fs/fuse/dir.c
++++ b/fs/fuse/dir.c
+@@ -1942,7 +1942,8 @@ static const struct inode_operations fuse_dir_inode_operations = {
+ 	.permission	= fuse_permission,
+ 	.getattr	= fuse_getattr,
+ 	.listxattr	= fuse_listxattr,
+-	.get_inode_acl	= fuse_get_acl,
++	.get_inode_acl	= fuse_get_inode_acl,
++	.get_acl	= fuse_get_acl,
+ 	.set_acl	= fuse_set_acl,
+ 	.fileattr_get	= fuse_fileattr_get,
+ 	.fileattr_set	= fuse_fileattr_set,
+@@ -1964,7 +1965,8 @@ static const struct inode_operations fuse_common_inode_operations = {
+ 	.permission	= fuse_permission,
+ 	.getattr	= fuse_getattr,
+ 	.listxattr	= fuse_listxattr,
+-	.get_inode_acl	= fuse_get_acl,
++	.get_inode_acl	= fuse_get_inode_acl,
++	.get_acl	= fuse_get_acl,
+ 	.set_acl	= fuse_set_acl,
+ 	.fileattr_get	= fuse_fileattr_get,
+ 	.fileattr_set	= fuse_fileattr_set,
+diff --git a/fs/fuse/fuse_i.h b/fs/fuse/fuse_i.h
+index c673faefdcb9..46797a171a84 100644
+--- a/fs/fuse/fuse_i.h
++++ b/fs/fuse/fuse_i.h
+@@ -1264,11 +1264,11 @@ ssize_t fuse_getxattr(struct inode *inode, const char *name, void *value,
+ ssize_t fuse_listxattr(struct dentry *entry, char *list, size_t size);
+ int fuse_removexattr(struct inode *inode, const char *name);
+ extern const struct xattr_handler *fuse_xattr_handlers[];
+-extern const struct xattr_handler *fuse_acl_xattr_handlers[];
+-extern const struct xattr_handler *fuse_no_acl_xattr_handlers[];
+ 
+ struct posix_acl;
+-struct posix_acl *fuse_get_acl(struct inode *inode, int type, bool rcu);
++struct posix_acl *fuse_get_inode_acl(struct inode *inode, int type, bool rcu);
++struct posix_acl *fuse_get_acl(struct user_namespace *mnt_userns,
++			       struct dentry *dentry, int type);
+ int fuse_set_acl(struct user_namespace *mnt_userns, struct dentry *dentry,
+ 		 struct posix_acl *acl, int type);
+ 
+diff --git a/fs/fuse/inode.c b/fs/fuse/inode.c
+index 6b3beda16c1b..de9b9ec5ce81 100644
+--- a/fs/fuse/inode.c
++++ b/fs/fuse/inode.c
+@@ -311,7 +311,8 @@ void fuse_change_attributes(struct inode *inode, struct fuse_attr *attr,
+ 		fuse_dax_dontcache(inode, attr->flags);
+ }
+ 
+-static void fuse_init_inode(struct inode *inode, struct fuse_attr *attr)
++static void fuse_init_inode(struct inode *inode, struct fuse_attr *attr,
++			    struct fuse_conn *fc)
+ {
+ 	inode->i_mode = attr->mode & S_IFMT;
+ 	inode->i_size = attr->size;
+@@ -333,6 +334,12 @@ static void fuse_init_inode(struct inode *inode, struct fuse_attr *attr)
+ 				   new_decode_dev(attr->rdev));
+ 	} else
+ 		BUG();
++	/*
++	 * Ensure that we don't cache acls for daemons without FUSE_POSIX_ACL
++	 * so they see the exact same behavior as before.
++	 */
++	if (!fc->posix_acl)
++		inode->i_acl = inode->i_default_acl = ACL_DONT_CACHE;
+ }
+ 
+ static int fuse_inode_eq(struct inode *inode, void *_nodeidp)
+@@ -372,7 +379,7 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+ 		if (!inode)
+ 			return NULL;
+ 
+-		fuse_init_inode(inode, attr);
++		fuse_init_inode(inode, attr, fc);
+ 		get_fuse_inode(inode)->nodeid = nodeid;
+ 		inode->i_flags |= S_AUTOMOUNT;
+ 		goto done;
+@@ -388,7 +395,7 @@ struct inode *fuse_iget(struct super_block *sb, u64 nodeid,
+ 		if (!fc->writeback_cache || !S_ISREG(attr->mode))
+ 			inode->i_flags |= S_NOCMTIME;
+ 		inode->i_generation = generation;
+-		fuse_init_inode(inode, attr);
++		fuse_init_inode(inode, attr, fc);
+ 		unlock_new_inode(inode);
+ 	} else if (fuse_stale_inode(inode, generation, attr)) {
+ 		/* nodeid was reused, any I/O on the old inode should fail */
+@@ -1174,7 +1181,6 @@ static void process_init_reply(struct fuse_mount *fm, struct fuse_args *args,
+ 			if ((flags & FUSE_POSIX_ACL)) {
+ 				fc->default_permissions = 1;
+ 				fc->posix_acl = 1;
+-				fm->sb->s_xattr = fuse_acl_xattr_handlers;
+ 			}
+ 			if (flags & FUSE_CACHE_SYMLINKS)
+ 				fc->cache_symlinks = 1;
+@@ -1420,13 +1426,6 @@ static void fuse_sb_defaults(struct super_block *sb)
+ 	if (sb->s_user_ns != &init_user_ns)
+ 		sb->s_iflags |= SB_I_UNTRUSTED_MOUNTER;
+ 	sb->s_flags &= ~(SB_NOSEC | SB_I_VERSION);
+-
+-	/*
+-	 * If we are not in the initial user namespace posix
+-	 * acls must be translated.
+-	 */
+-	if (sb->s_user_ns != &init_user_ns)
+-		sb->s_xattr = fuse_no_acl_xattr_handlers;
+ }
+ 
+ static int fuse_fill_super_submount(struct super_block *sb,
+diff --git a/fs/fuse/xattr.c b/fs/fuse/xattr.c
+index 0d3e7177fce0..9fe571ab569e 100644
+--- a/fs/fuse/xattr.c
++++ b/fs/fuse/xattr.c
+@@ -203,27 +203,6 @@ static int fuse_xattr_set(const struct xattr_handler *handler,
+ 	return fuse_setxattr(inode, name, value, size, flags, 0);
+ }
+ 
+-static bool no_xattr_list(struct dentry *dentry)
+-{
+-	return false;
+-}
+-
+-static int no_xattr_get(const struct xattr_handler *handler,
+-			struct dentry *dentry, struct inode *inode,
+-			const char *name, void *value, size_t size)
+-{
+-	return -EOPNOTSUPP;
+-}
+-
+-static int no_xattr_set(const struct xattr_handler *handler,
+-			struct user_namespace *mnt_userns,
+-			struct dentry *dentry, struct inode *nodee,
+-			const char *name, const void *value,
+-			size_t size, int flags)
+-{
+-	return -EOPNOTSUPP;
+-}
+-
+ static const struct xattr_handler fuse_xattr_handler = {
+ 	.prefix = "",
+ 	.get    = fuse_xattr_get,
+@@ -234,33 +213,3 @@ const struct xattr_handler *fuse_xattr_handlers[] = {
+ 	&fuse_xattr_handler,
+ 	NULL
+ };
+-
+-const struct xattr_handler *fuse_acl_xattr_handlers[] = {
+-	&posix_acl_access_xattr_handler,
+-	&posix_acl_default_xattr_handler,
+-	&fuse_xattr_handler,
+-	NULL
+-};
+-
+-static const struct xattr_handler fuse_no_acl_access_xattr_handler = {
+-	.name  = XATTR_NAME_POSIX_ACL_ACCESS,
+-	.flags = ACL_TYPE_ACCESS,
+-	.list  = no_xattr_list,
+-	.get   = no_xattr_get,
+-	.set   = no_xattr_set,
+-};
+-
+-static const struct xattr_handler fuse_no_acl_default_xattr_handler = {
+-	.name  = XATTR_NAME_POSIX_ACL_DEFAULT,
+-	.flags = ACL_TYPE_ACCESS,
+-	.list  = no_xattr_list,
+-	.get   = no_xattr_get,
+-	.set   = no_xattr_set,
+-};
+-
+-const struct xattr_handler *fuse_no_acl_xattr_handlers[] = {
+-	&fuse_no_acl_access_xattr_handler,
+-	&fuse_no_acl_default_xattr_handler,
+-	&fuse_xattr_handler,
+-	NULL
+-};
+
+---
+base-commit: 292a089d78d3e2f7944e60bb897c977785a321e3
+change-id: 20230118-fs-fuse-acl-cfb4621b99dc
 
