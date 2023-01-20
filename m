@@ -2,53 +2,54 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B4B7F6757A7
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 15:45:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4DD2B6757A9
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 15:45:18 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230499AbjATOpE (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Jan 2023 09:45:04 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50430 "EHLO
+        id S231173AbjATOpQ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Jan 2023 09:45:16 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:50706 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230456AbjATOpC (ORCPT
+        with ESMTP id S231154AbjATOpM (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Jan 2023 09:45:02 -0500
-Received: from mail-io1-xd44.google.com (mail-io1-xd44.google.com [IPv6:2607:f8b0:4864:20::d44])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1832BCFD26;
-        Fri, 20 Jan 2023 06:44:38 -0800 (PST)
-Received: by mail-io1-xd44.google.com with SMTP id q130so2537422iod.4;
-        Fri, 20 Jan 2023 06:44:38 -0800 (PST)
+        Fri, 20 Jan 2023 09:45:12 -0500
+Received: from mail-il1-x143.google.com (mail-il1-x143.google.com [IPv6:2607:f8b0:4864:20::143])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id AC817D0D8D;
+        Fri, 20 Jan 2023 06:44:43 -0800 (PST)
+Received: by mail-il1-x143.google.com with SMTP id u8so2770748ilq.13;
+        Fri, 20 Jan 2023 06:44:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hDCYG8WxS/pUjt/n8MvGqQ4mEBFsqI4uxAOlI7paeNc=;
-        b=ZKv2kJnbHZoYZy1tJyO4tdeh91R61byMjNI2lb14x8KJae1X5W0y4SjIBSNS1kHRdb
-         oigCmrD81gGVVGUbcrqhcIFKQz6nDsSr5DazytIj3JGvflF/m2P6KyFYPTlTVvVuTxKF
-         +CCZvCHJ20T0wdFaUFkadoTZO92RW8K6iiqfnrrGwPtJz5XlVdOVELQkcnQwSlf8vekW
-         jLCkuE7eZFleOD4LEysRktAkKxR/OUdQDMYlodZFOEgM2s3cv73ohw2KPUYkZVt3G/ct
-         2WD1tWGgvuTcdRDQ8D6tW9faTAs/szW+tedVcUEXKO15Ibc57FL/ptN/1uFkGrw3wXIz
-         pqzg==
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Y4L1pQ0JM1hC2pJHglk8l3j+fJVDjADjEl6sXRJ77Xs=;
+        b=WkrvGr7UQb8Qru2B3v0x5Ay72pxJQYUv6DeKNen0IezGFgdRcayY42tSeeLpsB6fo4
+         wO7PVmqxDKlhNMhpgMySgtT1W6mI9atfP+o9jBZAT7PaYq+MSCcfaAEG+zBtEh+ZK8hS
+         3NqgsPJ2mp+amhb7fLnp1b3zL5Sbe1aRATddLqf5BZC5178EYZ63cy9uqm807y0c2jke
+         S/mlNesYvJIVnkw71blPkNHQRKcc/CMEyJu+k+ddVwWEY1SAiwbfihJ3bYareLGkjlwN
+         1sCSLzLnDdtFlmSF9XtqklE/F9i7iZtTolT466tH1PVc/iuct47xdg2XycyYknKpAly7
+         uLSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20210112;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hDCYG8WxS/pUjt/n8MvGqQ4mEBFsqI4uxAOlI7paeNc=;
-        b=a1hcwUn/ThxYlF+tuzUb2bA5ERssRJcEX+0n+IZZ8iYCf67WCeSePo4CAoBrmyc6vS
-         ymY8EUbAz6Ur6ZhtUd/PGeEfDJYriVKDPkzBUr0IhZ0vmi3h8cW3FBaN1lS2hbiFzyN3
-         4P8NuKgJD7LOM0lArSelE1kkS8L9dfkSls6uxrB70/fpWdcFhBRKlN2CbPtXtPKxq75G
-         Hfn4QyEDJbRrY3b0Y3hXfasHCTFXHPetS+7Hq2x/knELXQJO2fhCw8Pd1LneR6k/E34B
-         JPD52OpBXb04X6b4/sGJyrr78MTbeTqqZzIIP+sk6fHZNQuJXFRs1KNyg1HFbzjkcaBi
-         JXEA==
-X-Gm-Message-State: AFqh2koFdht3Qx1OpBMLifFfRDlOkhQjvw3xqWI5cdw8Q+CWxBIZbRZT
-        knKbX+9ea2jTv7fSyZFCFb3TpTVunD68
-X-Google-Smtp-Source: AMrXdXuMycxFXCNiEYKeHDhmhI7Qlr14maanOHP2VLUa80rQsKw4EVW4q2yPZ6+LLLQfFL6ThMcBsA==
-X-Received: by 2002:a5d:8348:0:b0:6e3:c112:3339 with SMTP id q8-20020a5d8348000000b006e3c1123339mr9578231ior.16.1674225846816;
-        Fri, 20 Jan 2023 06:44:06 -0800 (PST)
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Y4L1pQ0JM1hC2pJHglk8l3j+fJVDjADjEl6sXRJ77Xs=;
+        b=sZxxJJaFyZO4HJrj2fLR79xvkMnauDrTMK4nUAGuunZezgO3+8SeEOJKlN/J9e1BdZ
+         euRLF8vo+vicw7yBbfYRsaYf0CQEUDZi2vYb3PCvAC4kMjETYo+Ki2lCmb/K7xLNzSK/
+         0CsXnJAEJg8lzH+VMUaZid+IrSI9ondcX1DjH/CHlDohf+Auhx8vj0ibrB+hDZjDyXro
+         VNUVJwHpaoXNeNxbDQ1YJ9Wuz0XMtj0kFjHhwvWSJ3P6OfgfrE+C254MpjuaX9UbVL9L
+         iwueU4EWbR+3Rh20pBppYRmdJ1azy2+qtExgztQCpPAoBYqHZ62639Vcbg1Ezn37+V2N
+         iv6A==
+X-Gm-Message-State: AFqh2kpWj2GSNNWtrBuTmRD5TmkObAH4udwF3YJHv2cBPjlOzqT6p8qf
+        j/WRXeNH9AKcpJpii3diRq1En2NZC/ux
+X-Google-Smtp-Source: AMrXdXuTVKrotbzpNTgVhUT8ksOkhPVRLjQ2O1iU40UyKuopiGYvDqMz06qyac7d/RCk3MpXgtiG/A==
+X-Received: by 2002:a05:6e02:1544:b0:30e:f4d0:c092 with SMTP id j4-20020a056e02154400b0030ef4d0c092mr21505925ilu.3.1674225851136;
+        Fri, 20 Jan 2023 06:44:11 -0800 (PST)
 Received: from fedora.mshome.net ([104.184.156.161])
-        by smtp.gmail.com with ESMTPSA id p185-20020a0229c2000000b003a7c47efde0sm1513852jap.11.2023.01.20.06.44.04
+        by smtp.gmail.com with ESMTPSA id p185-20020a0229c2000000b003a7c47efde0sm1513852jap.11.2023.01.20.06.44.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Jan 2023 06:44:06 -0800 (PST)
+        Fri, 20 Jan 2023 06:44:10 -0800 (PST)
 From:   Gregory Price <gourry.memverge@gmail.com>
 X-Google-Original-From: Gregory Price <gregory.price@memverge.com>
 To:     linux-kernel@vger.kernel.org
@@ -58,10 +59,12 @@ Cc:     linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
         peterz@infradead.org, ebiederm@xmission.com,
         akpm@linux-foundation.org, adobriyan@gmail.com, corbet@lwn.net,
         shuah@kernel.org, Gregory Price <gregory.price@memverge.com>
-Subject: [PATCH v3 0/3] Checkpoint Support for Syscall User Dispatch
-Date:   Fri, 20 Jan 2023 09:43:53 -0500
-Message-Id: <20230120144356.40717-1-gregory.price@memverge.com>
+Subject: [PATCH v3 1/3] ptrace,syscall_user_dispatch: Implement Syscall User Dispatch Suspension
+Date:   Fri, 20 Jan 2023 09:43:54 -0500
+Message-Id: <20230120144356.40717-2-gregory.price@memverge.com>
 X-Mailer: git-send-email 2.39.0
+In-Reply-To: <20230120144356.40717-1-gregory.price@memverge.com>
+References: <20230120144356.40717-1-gregory.price@memverge.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
@@ -74,58 +77,99 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-v3: Kernel test robot static function fix
-    Whitespace nitpicks
+Adds PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH to ptrace options, and
+modify Syscall User Dispatch to suspend interception when enabled.
 
-v2: Implements the getter/setter interface in ptrace rather than prctl
+This is modeled after the SUSPEND_SECCOMP feature, which suspends
+SECCOMP interposition.  Without doing this, software like CRIU will
+inject system calls into a process and be intercepted by Syscall
+User Dispatch, either causing a crash (due to blocked signals) or
+the delivery of those signals to a ptracer (not the intended behavior).
 
-Syscall user dispatch makes it possible to cleanly intercept system
-calls from user-land.  However, most transparent checkpoint software
-presently leverages some combination of ptrace and system call
-injection to place software in a ready-to-checkpoint state.
+Since Syscall User Dispatch is not a privileged feature, a check
+for permissions is not required, however attempting to set this
+option when CONFIG_CHECKPOINT_RESTORE it not supported should be
+disallowed, as its intended use is checkpoint/resume.
 
-If Syscall User Dispatch is enabled at the time of being quiesced,
-injected system calls will subsequently be interposed upon and
-dispatched to the task's signal handler.
+Signed-off-by: Gregory Price <gregory.price@memverge.com>
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+---
+ include/linux/ptrace.h               | 2 ++
+ include/uapi/linux/ptrace.h          | 6 +++++-
+ kernel/entry/syscall_user_dispatch.c | 5 +++++
+ kernel/ptrace.c                      | 4 ++++
+ 4 files changed, 16 insertions(+), 1 deletion(-)
 
-This patch set implements 3 features to enable software such as CRIU
-to cleanly interpose upon software leveraging syscall user dispatch.
-
-- Implement PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH, akin to a similar
-  feature for SECCOMP.  This allows a ptracer to temporarily disable
-  syscall user dispatch, making syscall injection possible.
-
-- Implement an fs/proc extension that reports whether Syscall User
-  Dispatch is being used in proc/status.  A similar value is present
-  for SECCOMP, and is used to determine whether special logic is
-  needed during checkpoint/resume.
-
-- Implement a getter interface for Syscall User Dispatch config info.
-  To resume successfully, the checkpoint/resume software has to
-  save and restore this information.  Presently this configuration
-  is write-only, with no way for C/R software to save it.
-
-  This was done in ptrace because syscall user dispatch is not part of
-  uapi. The syscall_user_dispatch_config structure was added to the
-  ptrace exports.
-
-
-Gregory Price (3):
-  ptrace,syscall_user_dispatch: Implement Syscall User Dispatch
-    Suspension
-  fs/proc/array: Add Syscall User Dispatch to proc status
-  ptrace,syscall_user_dispatch: add a getter/setter for sud
-    configuration
-
- .../admin-guide/syscall-user-dispatch.rst     |  5 +-
- fs/proc/array.c                               |  8 +++
- include/linux/ptrace.h                        |  2 +
- include/linux/syscall_user_dispatch.h         | 19 +++++++
- include/uapi/linux/ptrace.h                   | 16 +++++-
- kernel/entry/syscall_user_dispatch.c          | 54 +++++++++++++++++++
- kernel/ptrace.c                               | 13 +++++
- 7 files changed, 115 insertions(+), 2 deletions(-)
-
+diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
+index eaaef3ffec22..461ae5c99d57 100644
+--- a/include/linux/ptrace.h
++++ b/include/linux/ptrace.h
+@@ -45,6 +45,8 @@ extern int ptrace_access_vm(struct task_struct *tsk, unsigned long addr,
+ 
+ #define PT_EXITKILL		(PTRACE_O_EXITKILL << PT_OPT_FLAG_SHIFT)
+ #define PT_SUSPEND_SECCOMP	(PTRACE_O_SUSPEND_SECCOMP << PT_OPT_FLAG_SHIFT)
++#define PT_SUSPEND_SYSCALL_USER_DISPATCH \
++	(PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH << PT_OPT_FLAG_SHIFT)
+ 
+ extern long arch_ptrace(struct task_struct *child, long request,
+ 			unsigned long addr, unsigned long data);
+diff --git a/include/uapi/linux/ptrace.h b/include/uapi/linux/ptrace.h
+index 195ae64a8c87..ba9e3f19a22c 100644
+--- a/include/uapi/linux/ptrace.h
++++ b/include/uapi/linux/ptrace.h
+@@ -146,9 +146,13 @@ struct ptrace_rseq_configuration {
+ /* eventless options */
+ #define PTRACE_O_EXITKILL		(1 << 20)
+ #define PTRACE_O_SUSPEND_SECCOMP	(1 << 21)
++#define PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH	(1 << 22)
+ 
+ #define PTRACE_O_MASK		(\
+-	0x000000ff | PTRACE_O_EXITKILL | PTRACE_O_SUSPEND_SECCOMP)
++	0x000000ff | \
++	PTRACE_O_EXITKILL | \
++	PTRACE_O_SUSPEND_SECCOMP | \
++	PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH)
+ 
+ #include <asm/ptrace.h>
+ 
+diff --git a/kernel/entry/syscall_user_dispatch.c b/kernel/entry/syscall_user_dispatch.c
+index 0b6379adff6b..b5ec75164805 100644
+--- a/kernel/entry/syscall_user_dispatch.c
++++ b/kernel/entry/syscall_user_dispatch.c
+@@ -8,6 +8,7 @@
+ #include <linux/uaccess.h>
+ #include <linux/signal.h>
+ #include <linux/elf.h>
++#include <linux/ptrace.h>
+ 
+ #include <linux/sched/signal.h>
+ #include <linux/sched/task_stack.h>
+@@ -36,6 +37,10 @@ bool syscall_user_dispatch(struct pt_regs *regs)
+ 	struct syscall_user_dispatch *sd = &current->syscall_dispatch;
+ 	char state;
+ 
++	if (IS_ENABLED(CONFIG_CHECKPOINT_RESTORE) &&
++	    unlikely(current->ptrace & PT_SUSPEND_SYSCALL_USER_DISPATCH))
++		return false;
++
+ 	if (likely(instruction_pointer(regs) - sd->offset < sd->len))
+ 		return false;
+ 
+diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+index 54482193e1ed..99467ba5f55b 100644
+--- a/kernel/ptrace.c
++++ b/kernel/ptrace.c
+@@ -370,6 +370,10 @@ static int check_ptrace_options(unsigned long data)
+ 	if (data & ~(unsigned long)PTRACE_O_MASK)
+ 		return -EINVAL;
+ 
++	if (unlikely(data & PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH) &&
++	    (!IS_ENABLED(CONFIG_CHECKPOINT_RESTART)))
++			return -EINVAL;
++
+ 	if (unlikely(data & PTRACE_O_SUSPEND_SECCOMP)) {
+ 		if (!IS_ENABLED(CONFIG_CHECKPOINT_RESTORE) ||
+ 		    !IS_ENABLED(CONFIG_SECCOMP))
 -- 
 2.39.0
 
