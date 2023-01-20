@@ -2,41 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 446A4675C35
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 18:56:51 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 3DACB675C37
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 18:56:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230326AbjATR4t (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Jan 2023 12:56:49 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46678 "EHLO
+        id S230479AbjATR4x (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Jan 2023 12:56:53 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46686 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S230002AbjATR4s (ORCPT
+        with ESMTP id S229786AbjATR4w (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Jan 2023 12:56:48 -0500
+        Fri, 20 Jan 2023 12:56:52 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5F77EC17E
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id E60113B0C4
         for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 09:56:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674237367;
+        s=mimecast20190719; t=1674237368;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=L1vbMszv9II0pr/36LhZgm3t0G5zZlJBs1R5Ur/EGww=;
-        b=CKfWbxXeBa7aMnhtztYh99aPfvRIcOhvdqrCfjg0FBMuxF4NoHiQ0ImhAy9oLVAnBgTXdw
-        ShViXthNEi/hVZ/dSDOUSe7T9McLhTI43VXoeJyfhuW8+y++PYgxCHoKga9ru0YFPnPoce
-        t+4NjGvp/IjAcl4q416U0101aPkjRsE=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=JDZ/7Ot8U6XN3/To5ec8B6LyI9EVCy/1UijSgurXyM0=;
+        b=huSP1DCOdvvgvIsLijUuUm63C+BEcF5TBbBmFUnJRXAWJOeNsopNbjboYSuftCs4bGKiH8
+        6i9+X0H/GTrxbKpM4NcdvHYkDY6ZJXasTVWn+S3SIxTKJJCB0siX24asT7u54GsUwNcuqB
+        +GbUKeTlGpv6EXQoR38j09YaeymmQOY=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-160-JeBkd2PCM0urfNQeCIc4vA-1; Fri, 20 Jan 2023 12:56:04 -0500
-X-MC-Unique: JeBkd2PCM0urfNQeCIc4vA-1
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.rdu2.redhat.com [10.11.54.5])
+ us-mta-202-JcCxSbnaOqC3-mkXQoC8KA-1; Fri, 20 Jan 2023 12:56:05 -0500
+X-MC-Unique: JcCxSbnaOqC3-mkXQoC8KA-1
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 8474B802C1D;
-        Fri, 20 Jan 2023 17:56:02 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6EE811C426B3;
+        Fri, 20 Jan 2023 17:56:04 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.33.36.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 31E7253AA;
-        Fri, 20 Jan 2023 17:56:01 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 216682026D68;
+        Fri, 20 Jan 2023 17:56:03 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -47,15 +48,17 @@ Cc:     David Howells <dhowells@redhat.com>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 0/8] iov_iter: Improve page extraction (ref, pin or just list)
-Date:   Fri, 20 Jan 2023 17:55:48 +0000
-Message-Id: <20230120175556.3556978-1-dhowells@redhat.com>
+Subject: [PATCH v7 1/8] iov_iter: Define flags to qualify page extraction.
+Date:   Fri, 20 Jan 2023 17:55:49 +0000
+Message-Id: <20230120175556.3556978-2-dhowells@redhat.com>
+In-Reply-To: <20230120175556.3556978-1-dhowells@redhat.com>
+References: <20230120175556.3556978-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.5
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
         autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -63,138 +66,183 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Hi Al, Christoph,
+Define flags to qualify page extraction to pass into iov_iter_*_pages*()
+rather than passing in FOLL_* flags.
 
-Here are patches to provide support for extracting pages from an iov_iter
-and a patch to use the primary extraction function in the block layer bio
-code.
+For now only a flag to allow peer-to-peer DMA is allowed; but in future,
+additional flags will be provided to indicate the I/O direction.
 
-The patches make the following changes:
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: Christoph Hellwig <hch@infradead.org>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Logan Gunthorpe <logang@deltatee.com>
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-block@vger.kernel.org
+---
 
- (1) Add a function, iov_iter_extract_pages() to replace
-     iov_iter_get_pages*() that gets refs, pins or just lists the pages as
-     appropriate to the iterator type and the I/O direction.
+Notes:
+    ver #7)
+     - Don't use FOLL_* as a parameter, but rather define constants
+       specifically to use with iov_iter_*_pages*().
+     - Drop the I/O direction constants for now.
 
-     Add a function, iov_iter_extract_mode() that will indicate from the
-     iterator type and the I/O direction how the cleanup is to be
-     performed, returning FOLL_GET, FOLL_PIN or 0.
+ block/bio.c         |  6 +++---
+ block/blk-map.c     |  8 ++++----
+ include/linux/uio.h |  7 +++++--
+ lib/iov_iter.c      | 14 ++++++++------
+ 4 files changed, 20 insertions(+), 15 deletions(-)
 
- (2) Add a function, folio_put_unpin(), and a wrapper, page_put_unpin(),
-     that take a page and the return from iov_iter_extract_mode() and do
-     the right thing to clean up the page.
-
- (3) Make the bio struct carry a pair of flags to indicate the cleanup
-     mode.  BIO_NO_PAGE_REF is replaced with BIO_PAGE_REFFED (equivalent to
-     FOLL_GET) and BIO_PAGE_PINNED (equivalent to BIO_PAGE_PINNED) is
-     added.
-
- (4) Add a function, bio_release_page(), to release a page appropriately to
-     the cleanup mode indicated by the BIO_PAGE_* flags.
-
- (5) Make the iter-to-bio code use iov_iter_extract_pages() to retain the
-     pages appropriately and clean them up later.
-
- (6) Fix bio_flagged() so that it doesn't prevent a gcc optimisation.
-
- (7) Renumber FOLL_GET and FOLL_PIN down so that they're at bits 0 and 1
-     and coincident with BIO_PAGE_REFFED and BIO_PAGE_PINNED.  The compiler
-     can then optimise on that.  Also, it's probably going to be necessary
-     to embed these in the page pointer in sk_buff fragments.  This patch
-     can go independently through the mm tree.
-
-Changes:
-========
-ver #7)
- - For now, drop the parts to pass the I/O direction to iov_iter_*pages*()
-   as it turned out to be a lot more complicated, with places not setting
-   IOCB_WRITE when they should, for example.
- - Drop all the patches that changed things other then the block layer's
-   bio handling.  The netfslib and cifs changes can go into a separate
-   patchset.
- - Add support for extracting pages from KVEC-type iterators.
- - When extracting from BVEC/KVEC, skip over empty vecs at the front.
-
-ver #6)
- - Fix write() syscall and co. not setting IOCB_WRITE.
- - Added iocb_is_read() and iocb_is_write() to check IOCB_WRITE.
- - Use op_is_write() in bio_copy_user_iov().
- - Drop the iterator direction checks from smbd_recv().
- - Define FOLL_SOURCE_BUF and FOLL_DEST_BUF and pass them in as part of
-   gup_flags to iov_iter_get/extract_pages*().
- - Replace iov_iter_get_pages*2() with iov_iter_get_pages*() and remove.
- - Add back the function to indicate the cleanup mode.
- - Drop the cleanup_mode return arg to iov_iter_extract_pages().
- - Provide a helper to clean up a page.
- - Renumbered FOLL_GET and FOLL_PIN and made BIO_PAGE_REFFED/PINNED have
-   the same numerical values, enforced with an assertion.
- - Converted AF_ALG, SCSI vhost, generic DIO, FUSE, splice to pipe, 9P and
-   NFS.
- - Added in the patches to make CIFS do top-to-bottom iterators and use
-   various of the added extraction functions.
- - Added a pair of work-in-progess patches to make sk_buff fragments store
-   FOLL_GET and FOLL_PIN.
-
-ver #5)
- - Replace BIO_NO_PAGE_REF with BIO_PAGE_REFFED and split into own patch.
- - Transcribe FOLL_GET/PIN into BIO_PAGE_REFFED/PINNED flags.
- - Add patch to allow bio_flagged() to be combined by gcc.
-
-ver #4)
- - Drop the patch to move the FOLL_* flags to linux/mm_types.h as they're
-   no longer referenced by linux/uio.h.
- - Add ITER_SOURCE/DEST cleanup patches.
- - Make iov_iter/netfslib iter extraction patches use ITER_SOURCE/DEST.
- - Allow additional gup_flags to be passed into iov_iter_extract_pages().
- - Add struct bio patch.
-
-ver #3)
- - Switch to using EXPORT_SYMBOL_GPL to prevent indirect 3rd-party access
-   to get/pin_user_pages_fast()[1].
-
-ver #2)
- - Rolled the extraction cleanup mode query function into the extraction
-   function, returning the indication through the argument list.
- - Fixed patch 4 (extract to scatterlist) to actually use the new
-   extraction API.
-
-I've pushed the patches (excluding the two WIP networking patches) here
-also:
-
-	https://git.kernel.org/pub/scm/linux/kernel/git/dhowells/linux-fs.git/log/?h=iov-extract
-
-David
-
-Link: https://lore.kernel.org/r/Y3zFzdWnWlEJ8X8/@infradead.org/ [1]
-Link: https://lore.kernel.org/r/166697254399.61150.1256557652599252121.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166722777223.2555743.162508599131141451.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166732024173.3186319.18204305072070871546.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166869687556.3723671.10061142538708346995.stgit@warthog.procyon.org.uk/ # rfc
-Link: https://lore.kernel.org/r/166920902005.1461876.2786264600108839814.stgit@warthog.procyon.org.uk/ # v2
-Link: https://lore.kernel.org/r/166997419665.9475.15014699817597102032.stgit@warthog.procyon.org.uk/ # v3
-Link: https://lore.kernel.org/r/167305160937.1521586.133299343565358971.stgit@warthog.procyon.org.uk/ # v4
-Link: https://lore.kernel.org/r/167344725490.2425628.13771289553670112965.stgit@warthog.procyon.org.uk/ # v5
-Link: https://lore.kernel.org/r/167391047703.2311931.8115712773222260073.stgit@warthog.procyon.org.uk/ # v6
-
-David Howells (8):
-  iov_iter: Define flags to qualify page extraction.
-  iov_iter: Add a function to extract a page list from an iterator
-  mm: Provide a helper to drop a pin/ref on a page
-  block: Rename BIO_NO_PAGE_REF to BIO_PAGE_REFFED and invert the
-    meaning
-  block: Add BIO_PAGE_PINNED
-  block: Make bio structs pin pages rather than ref'ing if appropriate
-  block: Fix bio_flagged() so that gcc can better optimise it
-  mm: Renumber FOLL_GET and FOLL_PIN down
-
- block/bio.c               |  43 ++--
- block/blk-map.c           |  26 +--
- block/blk.h               |  29 +++
- fs/iomap/direct-io.c      |   1 -
- include/linux/bio.h       |   5 +-
- include/linux/blk_types.h |   3 +-
- include/linux/mm.h        |  17 +-
- include/linux/uio.h       |  35 ++-
- lib/iov_iter.c            | 438 +++++++++++++++++++++++++++++++++++++-
- mm/gup.c                  |  22 ++
- 10 files changed, 571 insertions(+), 48 deletions(-)
+diff --git a/block/bio.c b/block/bio.c
+index 5f96fcae3f75..6a6c73d14bfd 100644
+--- a/block/bio.c
++++ b/block/bio.c
+@@ -1249,7 +1249,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 	unsigned short entries_left = bio->bi_max_vecs - bio->bi_vcnt;
+ 	struct bio_vec *bv = bio->bi_io_vec + bio->bi_vcnt;
+ 	struct page **pages = (struct page **)bv;
+-	unsigned int gup_flags = 0;
++	unsigned int extract_flags = 0;
+ 	ssize_t size, left;
+ 	unsigned len, i = 0;
+ 	size_t offset, trim;
+@@ -1264,7 +1264,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 	pages += entries_left * (PAGE_PTRS_PER_BVEC - 1);
+ 
+ 	if (bio->bi_bdev && blk_queue_pci_p2pdma(bio->bi_bdev->bd_disk->queue))
+-		gup_flags |= FOLL_PCI_P2PDMA;
++		extract_flags |= ITER_ALLOW_P2PDMA;
+ 
+ 	/*
+ 	 * Each segment in the iov is required to be a block size multiple.
+@@ -1275,7 +1275,7 @@ static int __bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
+ 	 */
+ 	size = iov_iter_get_pages(iter, pages,
+ 				  UINT_MAX - bio->bi_iter.bi_size,
+-				  nr_pages, &offset, gup_flags);
++				  nr_pages, &offset, extract_flags);
+ 	if (unlikely(size <= 0))
+ 		return size ? size : -EFAULT;
+ 
+diff --git a/block/blk-map.c b/block/blk-map.c
+index 19940c978c73..bc111261fc82 100644
+--- a/block/blk-map.c
++++ b/block/blk-map.c
+@@ -267,7 +267,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
+ {
+ 	unsigned int max_sectors = queue_max_hw_sectors(rq->q);
+ 	unsigned int nr_vecs = iov_iter_npages(iter, BIO_MAX_VECS);
+-	unsigned int gup_flags = 0;
++	unsigned int extract_flags = 0;
+ 	struct bio *bio;
+ 	int ret;
+ 	int j;
+@@ -280,7 +280,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
+ 		return -ENOMEM;
+ 
+ 	if (blk_queue_pci_p2pdma(rq->q))
+-		gup_flags |= FOLL_PCI_P2PDMA;
++		extract_flags |= ITER_ALLOW_P2PDMA;
+ 
+ 	while (iov_iter_count(iter)) {
+ 		struct page **pages, *stack_pages[UIO_FASTIOV];
+@@ -291,10 +291,10 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
+ 		if (nr_vecs <= ARRAY_SIZE(stack_pages)) {
+ 			pages = stack_pages;
+ 			bytes = iov_iter_get_pages(iter, pages, LONG_MAX,
+-						   nr_vecs, &offs, gup_flags);
++						   nr_vecs, &offs, extract_flags);
+ 		} else {
+ 			bytes = iov_iter_get_pages_alloc(iter, &pages,
+-						LONG_MAX, &offs, gup_flags);
++						LONG_MAX, &offs, extract_flags);
+ 		}
+ 		if (unlikely(bytes <= 0)) {
+ 			ret = bytes ? bytes : -EFAULT;
+diff --git a/include/linux/uio.h b/include/linux/uio.h
+index 9f158238edba..46d5080314c6 100644
+--- a/include/linux/uio.h
++++ b/include/linux/uio.h
+@@ -252,12 +252,12 @@ void iov_iter_xarray(struct iov_iter *i, unsigned int direction, struct xarray *
+ 		     loff_t start, size_t count);
+ ssize_t iov_iter_get_pages(struct iov_iter *i, struct page **pages,
+ 		size_t maxsize, unsigned maxpages, size_t *start,
+-		unsigned gup_flags);
++		unsigned extract_flags);
+ ssize_t iov_iter_get_pages2(struct iov_iter *i, struct page **pages,
+ 			size_t maxsize, unsigned maxpages, size_t *start);
+ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+ 		struct page ***pages, size_t maxsize, size_t *start,
+-		unsigned gup_flags);
++		unsigned extract_flags);
+ ssize_t iov_iter_get_pages_alloc2(struct iov_iter *i, struct page ***pages,
+ 			size_t maxsize, size_t *start);
+ int iov_iter_npages(const struct iov_iter *i, int maxpages);
+@@ -360,4 +360,7 @@ static inline void iov_iter_ubuf(struct iov_iter *i, unsigned int direction,
+ 	};
+ }
+ 
++/* Flags for iov_iter_get/extract_pages*() */
++#define ITER_ALLOW_P2PDMA	0x01	/* Allow P2PDMA on the extracted pages */
++
+ #endif
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index f9a3ff37ecd1..fb04abe7d746 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1432,9 +1432,9 @@ static struct page *first_bvec_segment(const struct iov_iter *i,
+ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
+ 		   struct page ***pages, size_t maxsize,
+ 		   unsigned int maxpages, size_t *start,
+-		   unsigned int gup_flags)
++		   unsigned int extract_flags)
+ {
+-	unsigned int n;
++	unsigned int n, gup_flags = 0;
+ 
+ 	if (maxsize > i->count)
+ 		maxsize = i->count;
+@@ -1442,6 +1442,8 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
+ 		return 0;
+ 	if (maxsize > MAX_RW_COUNT)
+ 		maxsize = MAX_RW_COUNT;
++	if (extract_flags & ITER_ALLOW_P2PDMA)
++		gup_flags |= FOLL_PCI_P2PDMA;
+ 
+ 	if (likely(user_backed_iter(i))) {
+ 		unsigned long addr;
+@@ -1495,14 +1497,14 @@ static ssize_t __iov_iter_get_pages_alloc(struct iov_iter *i,
+ 
+ ssize_t iov_iter_get_pages(struct iov_iter *i,
+ 		   struct page **pages, size_t maxsize, unsigned maxpages,
+-		   size_t *start, unsigned gup_flags)
++		   size_t *start, unsigned extract_flags)
+ {
+ 	if (!maxpages)
+ 		return 0;
+ 	BUG_ON(!pages);
+ 
+ 	return __iov_iter_get_pages_alloc(i, &pages, maxsize, maxpages,
+-					  start, gup_flags);
++					  start, extract_flags);
+ }
+ EXPORT_SYMBOL_GPL(iov_iter_get_pages);
+ 
+@@ -1515,14 +1517,14 @@ EXPORT_SYMBOL(iov_iter_get_pages2);
+ 
+ ssize_t iov_iter_get_pages_alloc(struct iov_iter *i,
+ 		   struct page ***pages, size_t maxsize,
+-		   size_t *start, unsigned gup_flags)
++		   size_t *start, unsigned extract_flags)
+ {
+ 	ssize_t len;
+ 
+ 	*pages = NULL;
+ 
+ 	len = __iov_iter_get_pages_alloc(i, pages, maxsize, ~0U, start,
+-					 gup_flags);
++					 extract_flags);
+ 	if (len <= 0) {
+ 		kvfree(*pages);
+ 		*pages = NULL;
 
