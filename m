@@ -2,237 +2,169 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 40EB7675169
-	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 10:45:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 1D73A67524B
+	for <lists+linux-fsdevel@lfdr.de>; Fri, 20 Jan 2023 11:23:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229749AbjATJpJ (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Jan 2023 04:45:09 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:37604 "EHLO
+        id S229761AbjATKXm (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Jan 2023 05:23:42 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34978 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229533AbjATJpI (ORCPT
+        with ESMTP id S229543AbjATKXl (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Jan 2023 04:45:08 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D1007AF0B
-        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 01:44:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674207865;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding;
-        bh=m292PQ83GoaOas7duljZc/n5N3aCG8DPEh4PPdCEr3U=;
-        b=OYhrCZOXuZP5OeZr+bt1kE5ofGRmti2MnBYHvu06G30OdjpnzIMIQwcFcjlMBueC3SpVT7
-        Ri8VooKXmkShJjkMygZgi/1Jh7yp+4heJvjuFVpIzxJPduQKH+GSs5nL3V9CtN7y4oOZ8r
-        FHeukrSwOofkjET8IHWVrGuulBeZb3w=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-484-9LdOn1LDPK676ZSp_vQ2iQ-1; Fri, 20 Jan 2023 04:44:21 -0500
-X-MC-Unique: 9LdOn1LDPK676ZSp_vQ2iQ-1
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4964A3806644;
-        Fri, 20 Jan 2023 09:44:21 +0000 (UTC)
-Received: from lithium.redhat.com (unknown [10.39.194.249])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id BD2BC40C2064;
-        Fri, 20 Jan 2023 09:44:19 +0000 (UTC)
-From:   Giuseppe Scrivano <gscrivan@redhat.com>
-To:     brauner@kernel.org, linux-fsdevel@vger.kernel.org
-Cc:     hughd@google.com, sforshee@kernel.org, hch@lst.de,
-        gscrivan@redhat.com, rodrigoca@microsoft.com
-Subject: [PATCH] shmem: support idmapped mounts for tmpfs
-Date:   Fri, 20 Jan 2023 10:43:46 +0100
-Message-Id: <20230120094346.3182328-1-gscrivan@redhat.com>
+        Fri, 20 Jan 2023 05:23:41 -0500
+Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 744158B76A;
+        Fri, 20 Jan 2023 02:23:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description;
+        bh=CeGv0JtmRE31bDGztcRu8iAtRTnI2gcf4GZAbDeGXW4=; b=EfQaYrQTpC9FZgAc9US9UUa6qO
+        ZhdSTQznBD6VDiTXzgG8ZlpaU2hIhwKHJHmG269zfqliyfIcm+01zSYLyqMSWkOyC2Qo2f4hB4xSv
+        dXtmag26HNKiu7xwd7191QKfvFdedR4z+tFk2bXlNrem7pMXdKnDFQAdwRvgOovyPUJo9VzxH46gg
+        e5GtdKEZ0PuSQayAddqCHFHxJMkJwatPs7l3ZybOctMTRleAHEo/phby55tWZ23hNHbeVcL5JPR62
+        32JA7mFYMgzxeVgNhqTAWtwbptjejO8DhY1S0F8Mog9qxmxJOX3UYzKS6xhWDMi/jutqdEHzxxF4Y
+        juf72uXg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+        by casper.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
+        id 1pIoYP-001rMS-Oy; Fri, 20 Jan 2023 10:23:26 +0000
+Received: from hirez.programming.kicks-ass.net (hirez.programming.kicks-ass.net [192.168.1.225])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits))
+        (Client did not present a certificate)
+        by noisy.programming.kicks-ass.net (Postfix) with ESMTPS id BEC95300033;
+        Fri, 20 Jan 2023 11:23:24 +0100 (CET)
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 9AE5E2011D472; Fri, 20 Jan 2023 11:23:24 +0100 (CET)
+Date:   Fri, 20 Jan 2023 11:23:24 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Gregory Price <gourry.memverge@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
+        oleg@redhat.com, ebiederm@xmission.com, akpm@linux-foundation.org,
+        adobriyan@gmail.com, corbet@lwn.net, shuah@kernel.org,
+        Gregory Price <gregory.price@memverge.com>
+Subject: Re: [PATCH 1/3] ptrace,syscall_user_dispatch: Implement Syscall User
+ Dispatch Suspension
+Message-ID: <Y8prnDT0YUhEzI8+@hirez.programming.kicks-ass.net>
+References: <20230118201055.147228-1-gregory.price@memverge.com>
+ <20230118201055.147228-2-gregory.price@memverge.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230118201055.147228-2-gregory.price@memverge.com>
+X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
+        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This patch enables idmapped mounts for tmpfs when CONFIG_SHMEM is defined.
-Since all dedicated helpers for this functionality exist, in this
-patch we just pass down the idmap argument from the VFS methods to the
-relevant helpers.
+On Wed, Jan 18, 2023 at 03:10:53PM -0500, Gregory Price wrote:
+> Adds PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH to ptrace options, and
+> modify Syscall User Dispatch to suspend interception when enabled.
+> 
+> This is modeled after the SUSPEND_SECCOMP feature, which suspends
+> SECCOMP interposition.  Without doing this, software like CRIU will
+> inject system calls into a process and be intercepted by Syscall
+> User Dispatch, either causing a crash (due to blocked signals) or
+> the delivery of those signals to a ptracer (not the intended behavior).
+> 
+> Since Syscall User Dispatch is not a privileged feature, a check
+> for permissions is not required, however attempting to set this
+> option when CONFIG_CHECKPOINT_RESTORE it not supported should be
+> disallowed, as its intended use is checkpoint/resume.
+> 
+> Signed-off-by: Gregory Price <gregory.price@memverge.com>
 
-Signed-off-by: Giuseppe Scrivano <gscrivan@redhat.com>
-Tested-by: Christian Brauner (Microsoft) <brauner@kernel.org>
----
- mm/shmem.c | 47 ++++++++++++++++++++++++++++-------------------
- 1 file changed, 28 insertions(+), 19 deletions(-)
+One small nit -- see below, otherwise:
 
-diff --git a/mm/shmem.c b/mm/shmem.c
-index 028675cd97d4..2fdd76ab337f 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -1068,7 +1068,7 @@ static int shmem_getattr(struct mnt_idmap *idmap,
- 	stat->attributes_mask |= (STATX_ATTR_APPEND |
- 			STATX_ATTR_IMMUTABLE |
- 			STATX_ATTR_NODUMP);
--	generic_fillattr(&nop_mnt_idmap, inode, stat);
-+	generic_fillattr(idmap, inode, stat);
- 
- 	if (shmem_is_huge(NULL, inode, 0, false))
- 		stat->blksize = HPAGE_PMD_SIZE;
-@@ -1091,7 +1091,7 @@ static int shmem_setattr(struct mnt_idmap *idmap,
- 	bool update_mtime = false;
- 	bool update_ctime = true;
- 
--	error = setattr_prepare(&nop_mnt_idmap, dentry, attr);
-+	error = setattr_prepare(idmap, dentry, attr);
- 	if (error)
- 		return error;
- 
-@@ -1129,9 +1129,9 @@ static int shmem_setattr(struct mnt_idmap *idmap,
- 		}
- 	}
- 
--	setattr_copy(&nop_mnt_idmap, inode, attr);
-+	setattr_copy(idmap, inode, attr);
- 	if (attr->ia_valid & ATTR_MODE)
--		error = posix_acl_chmod(&nop_mnt_idmap, dentry, inode->i_mode);
-+		error = posix_acl_chmod(idmap, dentry, inode->i_mode);
- 	if (!error && update_ctime) {
- 		inode->i_ctime = current_time(inode);
- 		if (update_mtime)
-@@ -2329,8 +2329,9 @@ static void shmem_set_inode_flags(struct inode *inode, unsigned int fsflags)
- #define shmem_initxattrs NULL
- #endif
- 
--static struct inode *shmem_get_inode(struct super_block *sb, struct inode *dir,
--				     umode_t mode, dev_t dev, unsigned long flags)
-+static struct inode *shmem_get_inode(struct mnt_idmap *idmap, struct super_block *sb,
-+				     struct inode *dir, umode_t mode, dev_t dev,
-+				     unsigned long flags)
- {
- 	struct inode *inode;
- 	struct shmem_inode_info *info;
-@@ -2343,7 +2344,7 @@ static struct inode *shmem_get_inode(struct super_block *sb, struct inode *dir,
- 	inode = new_inode(sb);
- 	if (inode) {
- 		inode->i_ino = ino;
--		inode_init_owner(&nop_mnt_idmap, inode, dir, mode);
-+		inode_init_owner(idmap, inode, dir, mode);
- 		inode->i_blocks = 0;
- 		inode->i_atime = inode->i_mtime = inode->i_ctime = current_time(inode);
- 		inode->i_generation = get_random_u32();
-@@ -2921,7 +2922,7 @@ shmem_mknod(struct mnt_idmap *idmap, struct inode *dir,
- 	struct inode *inode;
- 	int error = -ENOSPC;
- 
--	inode = shmem_get_inode(dir->i_sb, dir, mode, dev, VM_NORESERVE);
-+	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, dev, VM_NORESERVE);
- 	if (inode) {
- 		error = simple_acl_create(dir, inode);
- 		if (error)
-@@ -2952,7 +2953,7 @@ shmem_tmpfile(struct mnt_idmap *idmap, struct inode *dir,
- 	struct inode *inode;
- 	int error = -ENOSPC;
- 
--	inode = shmem_get_inode(dir->i_sb, dir, mode, 0, VM_NORESERVE);
-+	inode = shmem_get_inode(idmap, dir->i_sb, dir, mode, 0, VM_NORESERVE);
- 	if (inode) {
- 		error = security_inode_init_security(inode, dir,
- 						     NULL,
-@@ -2975,8 +2976,8 @@ static int shmem_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- {
- 	int error;
- 
--	if ((error = shmem_mknod(&nop_mnt_idmap, dir, dentry,
--				 mode | S_IFDIR, 0)))
-+	error = shmem_mknod(idmap, dir, dentry, mode | S_IFDIR, 0);
-+	if (error)
- 		return error;
- 	inc_nlink(dir);
- 	return 0;
-@@ -2985,7 +2986,7 @@ static int shmem_mkdir(struct mnt_idmap *idmap, struct inode *dir,
- static int shmem_create(struct mnt_idmap *idmap, struct inode *dir,
- 			struct dentry *dentry, umode_t mode, bool excl)
- {
--	return shmem_mknod(&nop_mnt_idmap, dir, dentry, mode | S_IFREG, 0);
-+	return shmem_mknod(idmap, dir, dentry, mode | S_IFREG, 0);
- }
- 
- /*
-@@ -3055,7 +3056,7 @@ static int shmem_whiteout(struct mnt_idmap *idmap,
- 	if (!whiteout)
- 		return -ENOMEM;
- 
--	error = shmem_mknod(&nop_mnt_idmap, old_dir, whiteout,
-+	error = shmem_mknod(idmap, old_dir, whiteout,
- 			    S_IFCHR | WHITEOUT_MODE, WHITEOUT_DEV);
- 	dput(whiteout);
- 	if (error)
-@@ -3098,7 +3099,7 @@ static int shmem_rename2(struct mnt_idmap *idmap,
- 	if (flags & RENAME_WHITEOUT) {
- 		int error;
- 
--		error = shmem_whiteout(&nop_mnt_idmap, old_dir, old_dentry);
-+		error = shmem_whiteout(idmap, old_dir, old_dentry);
- 		if (error)
- 			return error;
- 	}
-@@ -3136,7 +3137,7 @@ static int shmem_symlink(struct mnt_idmap *idmap, struct inode *dir,
- 	if (len > PAGE_SIZE)
- 		return -ENAMETOOLONG;
- 
--	inode = shmem_get_inode(dir->i_sb, dir, S_IFLNK | 0777, 0,
-+	inode = shmem_get_inode(idmap, dir->i_sb, dir, S_IFLNK | 0777, 0,
- 				VM_NORESERVE);
- 	if (!inode)
- 		return -ENOSPC;
-@@ -3819,7 +3820,8 @@ static int shmem_fill_super(struct super_block *sb, struct fs_context *fc)
- #endif
- 	uuid_gen(&sb->s_uuid);
- 
--	inode = shmem_get_inode(sb, NULL, S_IFDIR | sbinfo->mode, 0, VM_NORESERVE);
-+	inode = shmem_get_inode(&nop_mnt_idmap, sb, NULL, S_IFDIR | sbinfo->mode, 0,
-+				VM_NORESERVE);
- 	if (!inode)
- 		goto failed;
- 	inode->i_uid = sbinfo->uid;
-@@ -4044,7 +4046,11 @@ static struct file_system_type shmem_fs_type = {
- 	.parameters	= shmem_fs_parameters,
- #endif
- 	.kill_sb	= kill_litter_super,
-+#ifdef CONFIG_SHMEM
-+	.fs_flags	= FS_USERNS_MOUNT | FS_ALLOW_IDMAP,
-+#else
- 	.fs_flags	= FS_USERNS_MOUNT,
-+#endif
- };
- 
- void __init shmem_init(void)
-@@ -4196,7 +4202,7 @@ EXPORT_SYMBOL_GPL(shmem_truncate_range);
- #define shmem_vm_ops				generic_file_vm_ops
- #define shmem_anon_vm_ops			generic_file_vm_ops
- #define shmem_file_operations			ramfs_file_operations
--#define shmem_get_inode(sb, dir, mode, dev, flags)	ramfs_get_inode(sb, dir, mode, dev)
-+#define shmem_get_inode(idmap, sb, dir, mode, dev, flags) ramfs_get_inode(sb, dir, mode, dev)
- #define shmem_acct_size(flags, size)		0
- #define shmem_unacct_size(flags, size)		do {} while (0)
- 
-@@ -4219,8 +4225,11 @@ static struct file *__shmem_file_setup(struct vfsmount *mnt, const char *name, l
- 	if (shmem_acct_size(flags, size))
- 		return ERR_PTR(-ENOMEM);
- 
--	inode = shmem_get_inode(mnt->mnt_sb, NULL, S_IFREG | S_IRWXUGO, 0,
--				flags);
-+	if (is_idmapped_mnt(mnt))
-+		return ERR_PTR(-EINVAL);
-+
-+	inode = shmem_get_inode(&nop_mnt_idmap, mnt->mnt_sb, NULL,
-+				S_IFREG | S_IRWXUGO, 0, flags);
- 	if (unlikely(!inode)) {
- 		shmem_unacct_size(flags, size);
- 		return ERR_PTR(-ENOSPC);
--- 
-2.38.1
+Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
 
+> ---
+>  include/linux/ptrace.h               | 2 ++
+>  include/uapi/linux/ptrace.h          | 6 +++++-
+>  kernel/entry/syscall_user_dispatch.c | 5 +++++
+>  kernel/ptrace.c                      | 5 +++++
+>  4 files changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/ptrace.h b/include/linux/ptrace.h
+> index eaaef3ffec22..461ae5c99d57 100644
+> --- a/include/linux/ptrace.h
+> +++ b/include/linux/ptrace.h
+> @@ -45,6 +45,8 @@ extern int ptrace_access_vm(struct task_struct *tsk, unsigned long addr,
+>  
+>  #define PT_EXITKILL		(PTRACE_O_EXITKILL << PT_OPT_FLAG_SHIFT)
+>  #define PT_SUSPEND_SECCOMP	(PTRACE_O_SUSPEND_SECCOMP << PT_OPT_FLAG_SHIFT)
+> +#define PT_SUSPEND_SYSCALL_USER_DISPATCH \
+> +	(PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH << PT_OPT_FLAG_SHIFT)
+>  
+>  extern long arch_ptrace(struct task_struct *child, long request,
+>  			unsigned long addr, unsigned long data);
+> diff --git a/include/uapi/linux/ptrace.h b/include/uapi/linux/ptrace.h
+> index 195ae64a8c87..ba9e3f19a22c 100644
+> --- a/include/uapi/linux/ptrace.h
+> +++ b/include/uapi/linux/ptrace.h
+> @@ -146,9 +146,13 @@ struct ptrace_rseq_configuration {
+>  /* eventless options */
+>  #define PTRACE_O_EXITKILL		(1 << 20)
+>  #define PTRACE_O_SUSPEND_SECCOMP	(1 << 21)
+> +#define PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH	(1 << 22)
+>  
+>  #define PTRACE_O_MASK		(\
+> -	0x000000ff | PTRACE_O_EXITKILL | PTRACE_O_SUSPEND_SECCOMP)
+> +	0x000000ff | \
+> +	PTRACE_O_EXITKILL | \
+> +	PTRACE_O_SUSPEND_SECCOMP | \
+> +	PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH)
+>  
+>  #include <asm/ptrace.h>
+>  
+> diff --git a/kernel/entry/syscall_user_dispatch.c b/kernel/entry/syscall_user_dispatch.c
+> index 0b6379adff6b..7607f4598dd8 100644
+> --- a/kernel/entry/syscall_user_dispatch.c
+> +++ b/kernel/entry/syscall_user_dispatch.c
+> @@ -8,6 +8,7 @@
+>  #include <linux/uaccess.h>
+>  #include <linux/signal.h>
+>  #include <linux/elf.h>
+> +#include <linux/ptrace.h>
+>  
+>  #include <linux/sched/signal.h>
+>  #include <linux/sched/task_stack.h>
+> @@ -36,6 +37,10 @@ bool syscall_user_dispatch(struct pt_regs *regs)
+>  	struct syscall_user_dispatch *sd = &current->syscall_dispatch;
+>  	char state;
+>  
+> +	if (IS_ENABLED(CONFIG_CHECKPOINT_RESTORE) &&
+> +		unlikely(current->ptrace & PT_SUSPEND_SYSCALL_USER_DISPATCH))
+
+Align with the '(' pleaase.
+
+> +		return false;
+> +
+>  	if (likely(instruction_pointer(regs) - sd->offset < sd->len))
+>  		return false;
+>  
+> diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+> index 54482193e1ed..a6ad815bd4be 100644
+> --- a/kernel/ptrace.c
+> +++ b/kernel/ptrace.c
+> @@ -370,6 +370,11 @@ static int check_ptrace_options(unsigned long data)
+>  	if (data & ~(unsigned long)PTRACE_O_MASK)
+>  		return -EINVAL;
+>  
+> +	if (unlikely(data & PTRACE_O_SUSPEND_SYSCALL_USER_DISPATCH)) {
+> +		if (!IS_ENABLED(CONFIG_CHECKPOINT_RESTART))
+> +			return -EINVAL;
+> +	}
+> +
+>  	if (unlikely(data & PTRACE_O_SUSPEND_SECCOMP)) {
+>  		if (!IS_ENABLED(CONFIG_CHECKPOINT_RESTORE) ||
+>  		    !IS_ENABLED(CONFIG_SECCOMP))
+> -- 
+> 2.39.0
+> 
