@@ -2,50 +2,51 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 6E50E676762
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jan 2023 17:26:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B0B96676799
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jan 2023 18:15:54 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229744AbjAUQ0c (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Jan 2023 11:26:32 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:33322 "EHLO
+        id S229744AbjAURPv (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Jan 2023 12:15:51 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46802 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229484AbjAUQ0b (ORCPT
+        with ESMTP id S229493AbjAURPu (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Jan 2023 11:26:31 -0500
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id F178024489;
-        Sat, 21 Jan 2023 08:26:27 -0800 (PST)
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R201e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046059;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0VZyXkiY_1674318382;
-Received: from 30.121.21.55(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VZyXkiY_1674318382)
+        Sat, 21 Jan 2023 12:15:50 -0500
+Received: from out30-57.freemail.mail.aliyun.com (out30-57.freemail.mail.aliyun.com [115.124.30.57])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 946C11B557;
+        Sat, 21 Jan 2023 09:15:45 -0800 (PST)
+X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R981e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=ay29a033018046050;MF=hsiangkao@linux.alibaba.com;NM=1;PH=DS;RN=11;SR=0;TI=SMTPD_---0VZyktr4_1674321340;
+Received: from 30.121.21.55(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0VZyktr4_1674321340)
           by smtp.aliyun-inc.com;
-          Sun, 22 Jan 2023 00:26:23 +0800
-Message-ID: <7ee72d29-6ba6-77e6-7515-e710a26a1e0d@linux.alibaba.com>
-Date:   Sun, 22 Jan 2023 00:26:22 +0800
+          Sun, 22 Jan 2023 01:15:42 +0800
+Message-ID: <3ae1205a-b666-3211-e649-ad402c69e724@linux.alibaba.com>
+Date:   Sun, 22 Jan 2023 01:15:40 +0800
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:102.0)
  Gecko/20100101 Thunderbird/102.6.1
 Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
  image filesystem
-To:     Amir Goldstein <amir73il@gmail.com>,
-        Giuseppe Scrivano <gscrivan@redhat.com>
-Cc:     Alexander Larsson <alexl@redhat.com>,
+To:     Giuseppe Scrivano <gscrivan@redhat.com>
+Cc:     Amir Goldstein <amir73il@gmail.com>,
+        Alexander Larsson <alexl@redhat.com>,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         david@fromorbit.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
         Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
+        Miklos Szeredi <miklos@szeredi.hu>,
+        Linus Torvalds <torvalds@linux-foundation.org>
 References: <cover.1674227308.git.alexl@redhat.com>
  <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
  <87ilh0g88n.fsf@redhat.com>
- <CAOQ4uxi7wT09MPf+edS6AkJzBCxjzOnCTfcdwn===q-+G2C4Gw@mail.gmail.com>
- <87cz78exub.fsf@redhat.com>
- <CAOQ4uxi2W=HwoXbrLo3yePTGzMxb++EDLj-fAcQZgGWU5Pz3vQ@mail.gmail.com>
+ <321dfdb1-3771-b16d-604f-224ce8aa22cf@linux.alibaba.com>
+ <878rhvg8ru.fsf@redhat.com>
 From:   Gao Xiang <hsiangkao@linux.alibaba.com>
-In-Reply-To: <CAOQ4uxi2W=HwoXbrLo3yePTGzMxb++EDLj-fAcQZgGWU5Pz3vQ@mail.gmail.com>
+In-Reply-To: <878rhvg8ru.fsf@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 X-Spam-Status: No, score=-10.0 required=5.0 tests=BAYES_00,
-        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,SPF_HELO_NONE,SPF_PASS,
-        UNPARSEABLE_RELAY,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
+        ENV_AND_HDR_SPF_MATCH,NICE_REPLY_A,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+        URIBL_BLOCKED,USER_IN_DEF_SPF_WL autolearn=ham autolearn_force=no
         version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
@@ -55,308 +56,326 @@ X-Mailing-List: linux-fsdevel@vger.kernel.org
 
 
 
-On 2023/1/21 23:54, Amir Goldstein wrote:
-> On Sat, Jan 21, 2023 at 5:01 PM Giuseppe Scrivano <gscrivan@redhat.com> wrote:
+On 2023/1/22 00:19, Giuseppe Scrivano wrote:
+> Gao Xiang <hsiangkao@linux.alibaba.com> writes:
+> 
+>> On 2023/1/21 06:18, Giuseppe Scrivano wrote:
+>>> Hi Amir,
+>>> Amir Goldstein <amir73il@gmail.com> writes:
+>>>
+>>>> On Fri, Jan 20, 2023 at 5:30 PM Alexander Larsson <alexl@redhat.com> wrote:
 >>
->> Amir Goldstein <amir73il@gmail.com> writes:
+>> ...
 >>
->>> On Sat, Jan 21, 2023 at 12:18 AM Giuseppe Scrivano <gscrivan@redhat.com> wrote:
->>>>
->>>> Hi Amir,
->>>>
->>>> Amir Goldstein <amir73il@gmail.com> writes:
->>>>
->>>>> On Fri, Jan 20, 2023 at 5:30 PM Alexander Larsson <alexl@redhat.com> wrote:
->>>>>>
->>>>>> Giuseppe Scrivano and I have recently been working on a new project we
->>>>>> call composefs. This is the first time we propose this publically and
->>>>>> we would like some feedback on it.
->>>>>>
->>>>>> At its core, composefs is a way to construct and use read only images
->>>>>> that are used similar to how you would use e.g. loop-back mounted
->>>>>> squashfs images. On top of this composefs has two fundamental
->>>>>> features. First it allows sharing of file data (both on disk and in
->>>>>> page cache) between images, and secondly it has dm-verity like
->>>>>> validation on read.
->>>>>>
->>>>>> Let me first start with a minimal example of how this can be used,
->>>>>> before going into the details:
->>>>>>
->>>>>> Suppose we have this source for an image:
->>>>>>
->>>>>> rootfs/
->>>>>> ├── dir
->>>>>> │   └── another_a
->>>>>> ├── file_a
->>>>>> └── file_b
->>>>>>
->>>>>> We can then use this to generate an image file and a set of
->>>>>> content-addressed backing files:
->>>>>>
->>>>>> # mkcomposefs --digest-store=objects rootfs/ rootfs.img
->>>>>> # ls -l rootfs.img objects/*/*
->>>>>> -rw-------. 1 root root   10 Nov 18 13:20 objects/02/927862b4ab9fb69919187bb78d394e235ce444eeb0a890d37e955827fe4bf4
->>>>>> -rw-------. 1 root root   10 Nov 18 13:20 objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
->>>>>> -rw-r--r--. 1 root root 4228 Nov 18 13:20 rootfs.img
->>>>>>
->>>>>> The rootfs.img file contains all information about directory and file
->>>>>> metadata plus references to the backing files by name. We can now
->>>>>> mount this and look at the result:
->>>>>>
->>>>>> # mount -t composefs rootfs.img -o basedir=objects /mnt
->>>>>> # ls  /mnt/
->>>>>> dir  file_a  file_b
->>>>>> # cat /mnt/file_a
->>>>>> content_a
->>>>>>
->>>>>> When reading this file the kernel is actually reading the backing
->>>>>> file, in a fashion similar to overlayfs. Since the backing file is
->>>>>> content-addressed, the objects directory can be shared for multiple
->>>>>> images, and any files that happen to have the same content are
->>>>>> shared. I refer to this as opportunistic sharing, as it is different
->>>>>> than the more course-grained explicit sharing used by e.g. container
->>>>>> base images.
->>>>>>
->>>>>> The next step is the validation. Note how the object files have
->>>>>> fs-verity enabled. In fact, they are named by their fs-verity digest:
->>>>>>
->>>>>> # fsverity digest objects/*/*
->>>>>> sha256:02927862b4ab9fb69919187bb78d394e235ce444eeb0a890d37e955827fe4bf4 objects/02/927862b4ab9fb69919187bb78d394e235ce444eeb0a890d37e955827fe4bf4
->>>>>> sha256:cc3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
->>>>>>
->>>>>> The generated filesystm image may contain the expected digest for the
->>>>>> backing files. When the backing file digest is incorrect, the open
->>>>>> will fail, and if the open succeeds, any other on-disk file-changes
->>>>>> will be detected by fs-verity:
->>>>>>
->>>>>> # cat objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
->>>>>> content_a
->>>>>> # rm -f objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
->>>>>> # echo modified > objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
->>>>>> # cat /mnt/file_a
->>>>>> WARNING: composefs backing file '3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f' unexpectedly had no fs-verity digest
->>>>>> cat: /mnt/file_a: Input/output error
->>>>>>
->>>>>> This re-uses the existing fs-verity functionallity to protect against
->>>>>> changes in file contents, while adding on top of it protection against
->>>>>> changes in filesystem metadata and structure. I.e. protecting against
->>>>>> replacing a fs-verity enabled file or modifying file permissions or
->>>>>> xattrs.
->>>>>>
->>>>>> To be fully verified we need another step: we use fs-verity on the
->>>>>> image itself. Then we pass the expected digest on the mount command
->>>>>> line (which will be verified at mount time):
->>>>>>
->>>>>> # fsverity enable rootfs.img
->>>>>> # fsverity digest rootfs.img
->>>>>> sha256:da42003782992856240a3e25264b19601016114775debd80c01620260af86a76 rootfs.img
->>>>>> # mount -t composefs rootfs.img -o basedir=objects,digest=da42003782992856240a3e25264b19601016114775debd80c01620260af86a76 /mnt
->>>>>>
->>>>>> So, given a trusted set of mount options (say unlocked from TPM), we
->>>>>> have a fully verified filesystem tree mounted, with opportunistic
->>>>>> finegrained sharing of identical files.
->>>>>>
->>>>>> So, why do we want this? There are two initial users. First of all we
->>>>>> want to use the opportunistic sharing for the podman container image
->>>>>> baselayer. The idea is to use a composefs mount as the lower directory
->>>>>> in an overlay mount, with the upper directory being the container work
->>>>>> dir. This will allow automatical file-level disk and page-cache
->>>>>> sharning between any two images, independent of details like the
->>>>>> permissions and timestamps of the files.
->>>>>>
->>>>>> Secondly we are interested in using the verification aspects of
->>>>>> composefs in the ostree project. Ostree already supports a
->>>>>> content-addressed object store, but it is currently referenced by
->>>>>> hardlink farms. The object store and the trees that reference it are
->>>>>> signed and verified at download time, but there is no runtime
->>>>>> verification. If we replace the hardlink farm with a composefs image
->>>>>> that points into the existing object store we can use the verification
->>>>>> to implement runtime verification.
->>>>>>
->>>>>> In fact, the tooling to create composefs images is 100% reproducible,
->>>>>> so all we need is to add the composefs image fs-verity digest into the
->>>>>> ostree commit. Then the image can be reconstructed from the ostree
->>>>>> commit info, generating a file with the same fs-verity digest.
->>>>>>
->>>>>> These are the usecases we're currently interested in, but there seems
->>>>>> to be a breadth of other possible uses. For example, many systems use
->>>>>> loopback mounts for images (like lxc or snap), and these could take
->>>>>> advantage of the opportunistic sharing. We've also talked about using
->>>>>> fuse to implement a local cache for the backing files. I.e. you would
->>>>>> have the second basedir be a fuse filesystem. On lookup failure in the
->>>>>> first basedir it downloads the file and saves it in the first basedir
->>>>>> for later lookups. There are many interesting possibilities here.
->>>>>>
->>>>>> The patch series contains some documentation on the file format and
->>>>>> how to use the filesystem.
->>>>>>
->>>>>> The userspace tools (and a standalone kernel module) is available
->>>>>> here:
->>>>>>    https://github.com/containers/composefs
->>>>>>
->>>>>> Initial work on ostree integration is here:
->>>>>>    https://github.com/ostreedev/ostree/pull/2640
->>>>>>
->>>>>> Changes since v2:
->>>>>> - Simplified filesystem format to use fixed size inodes. This resulted
->>>>>>    in simpler (now < 2k lines) code as well as higher performance at
->>>>>>    the cost of slightly (~40%) larger images.
->>>>>> - We now use multi-page mappings from the page cache, which removes
->>>>>>    limits on sizes of xattrs and makes the dirent handling code simpler.
->>>>>> - Added more documentation about the on-disk file format.
->>>>>> - General cleanups based on review comments.
->>>>>>
 >>>>>
->>>>> Hi Alexander,
->>>>>
->>>>> I must say that I am a little bit puzzled by this v3.
->>>>> Gao, Christian and myself asked you questions on v2
->>>>> that are not mentioned in v3 at all.
->>>>>
->>>>> To sum it up, please do not propose composefs without explaining
->>>>> what are the barriers for achieving the exact same outcome with
->>>>> the use of a read-only overlayfs with two lower layer -
->>>>> uppermost with erofs containing the metadata files, which include
->>>>> trusted.overlay.metacopy and trusted.overlay.redirect xattrs that refer
->>>>> to the lowermost layer containing the content files.
 >>>>
->>>> I think Dave explained quite well why using overlay is not comparable to
->>>> what composefs does.
+>>>> Hi Alexander,
 >>>>
->>>
->>> Where? Can I get a link please?
->>
->> I am referring to this message: https://lore.kernel.org/lkml/20230118002242.GB937597@dread.disaster.area/
->>
-> 
-> That is a good explanation why the current container runtime
-> overlay storage driver is inadequate, because the orchestration
-> requires untar of OCI tarball image before mounting overlayfs.
-> 
-> It is not a kernel issue, it is a userspace issue, because userspace
-> does not utilize overlayfs driver features that are now 6 years
-> old (redirect_dir) and 4 years old (metacopy).
-> 
-> I completely agree that reflink and hardlinks are not a viable solution
-> to ephemeral containers.
-> 
->>> If there are good reasons why composefs is superior to erofs+overlayfs
->>> Please include them in the submission, since several developers keep
->>> raising the same questions - that is all I ask.
->>>
->>>> One big difference is that overlay still requires at least a syscall for
->>>> each file in the image, and then we need the equivalent of "rm -rf" to
->>>> clean it up.  It is somehow acceptable for long-running services, but it
->>>> is not for "serverless" containers where images/containers are created
->>>> and destroyed frequently.  So even in the case we already have all the
->>>> image files available locally, we still need to create a checkout with
->>>> the final structure we need for the image.
+>>>> I must say that I am a little bit puzzled by this v3.
+>>>> Gao, Christian and myself asked you questions on v2
+>>>> that are not mentioned in v3 at all.
 >>>>
->>>
->>> I think you did not understand my suggestion:
->>>
->>> overlay read-only mount:
->>>      layer 1: erofs mount of a precomposed image (same as mkcomposefs)
->>>      layer 2: any pre-existing fs path with /blocks repository
->>>      layer 3: any per-existing fs path with /blocks repository
->>>      ...
->>>
->>> The mkcomposefs flow is exactly the same in this suggestion
->>> the upper layer image is created without any syscalls and
->>> removed without any syscalls.
+>>>> To sum it up, please do not propose composefs without explaining
+>>>> what are the barriers for achieving the exact same outcome with
+>>>> the use of a read-only overlayfs with two lower layer -
+>>>> uppermost with erofs containing the metadata files, which include
+>>>> trusted.overlay.metacopy and trusted.overlay.redirect xattrs that refer
+>>>> to the lowermost layer containing the content files.
+>>> I think Dave explained quite well why using overlay is not
+>>> comparable to
+>>> what composefs does.
+>>> One big difference is that overlay still requires at least a syscall
+>>> for
+>>> each file in the image, and then we need the equivalent of "rm -rf" to
+>>> clean it up.  It is somehow acceptable for long-running services, but it
+>>> is not for "serverless" containers where images/containers are created
+>>> and destroyed frequently.  So even in the case we already have all the
+>>> image files available locally, we still need to create a checkout with
+>>> the final structure we need for the image.
+>>> I also don't see how overlay would solve the verified image problem.
+>>> We
+>>> would have the same problem we have today with fs-verity as it can only
+>>> validate a single file but not the entire directory structure.  Changes
+>>> that affect the layer containing the trusted.overlay.{metacopy,redirect}
+>>> xattrs won't be noticed.
+>>> There are at the moment two ways to handle container images, both
+>>> somehow
+>>> guided by the available file systems in the kernel.
+>>> - A single image mounted as a block device.
+>>> - A list of tarballs (OCI image) that are unpacked and mounted as
+>>>     overlay layers.
+>>> One big advantage of the block devices model is that you can use
+>>> dm-verity, this is something we miss today with OCI container images
+>>> that use overlay.
+>>> What we are proposing with composefs is a way to have "dm-verity"
+>>> style
+>>> validation based on fs-verity and the possibility to share individual
+>>> files instead of layers.  These files can also be on different file
+>>> systems, which is something not possible with the block device model.
 >>
->> mkcomposefs is supposed to be used server side, when the image is built.
->> The clients that will mount the image don't have to create it (at least
->> for images that will provide the manifest).
+>> That is not a new idea honestly, including chain of trust.  Even laterly
+>> out-of-tree incremental fs using fs-verity for this as well, except that
+>> it's in a real self-contained way.
 >>
->> So this is quite different as in the overlay model we must create the
->> layout, that is the equivalent of the composefs manifest, on any node
->> the image is pulled to.
+>>> The composefs manifest blob could be generated remotely and signed.
+>>> A
+>>> client would need just to validate the signature for the manifest blob
+>>> and from there retrieve the files that are not in the local CAS (even
+>>> from an insecure source) and mount directly the manifest file.
 >>
+>>
+>> Back to the topic, after thinking something I have to make a
+>> compliment for reference.
+>>
+>> First, EROFS had the same internal dissussion and decision at
+>> that time almost _two years ago_ (June 2021), it means:
+>>
+>>    a) Some internal people really suggested EROFS could develop
+>>       an entire new file-based in-kernel local cache subsystem
+>>       (as you called local CAS, whatever) with stackable file
+>>       interface so that the exist Nydus image service [1] (as
+>>       ostree, and maybe ostree can use it as well) don't need to
+>>       modify anything to use exist blobs;
+>>
+>>    b) Reuse exist fscache/cachefiles;
+>>
+>> The reason why we (especially me) finally selected b) because:
+>>
+>>    - see the people discussion of Google's original Incremental
+>>      FS topic [2] [3] in 2019, as Amir already mentioned.  At
+>>      that time all fs folks really like to reuse exist subsystem
+>>      for in-kernel caching rather than reinvent another new
+>>      in-kernel wheel for local cache.
+>>
+>>      [ Reinventing a new wheel is not hard (fs or caching), just
+>>        makes Linux more fragmented.  Especially a new filesystem
+>>        is just proposed to generate images full of massive massive
+>>        new magical symlinks with *overriden* uid/gid/permissions
+>>        to replace regular files. ]
+>>
+>>    - in-kernel cache implementation usually met several common
+>>      potential security issues; reusing exist subsystem can
+>>      make all fses addressed them and benefited from it.
+>>
+>>    - Usually an exist widely-used userspace implementation is
+>>      never an excuse for a new in-kernel feature.
+>>
+>> Although David Howells is always quite busy these months to
+>> develop new netfs interface, otherwise (we think) we should
+>> already support failover, multiple daemon/dirs, daemonless and
+>> more.
 > 
-> You don't need to re-create the erofs manifest on the client.
-> Unless I am completely missing something, the flow that I am
-> suggesting is drop-in replacement to what you have done.
+> we have not added any new cache system.  overlay does "layer
+> deduplication" and in similar way composefs does "file deduplication".
+> That is not a built-in feature, it is just a side effect of how things
+> are packed together.
 > 
-> IIUC, you invented an on-disk format for composefs manifest.
-> Is there anything preventing you from using the existing
-> erofs on-disk format to pack the manifest file?
-> The files in the manifest would be inodes with no blocks, only
-> with size and attributes and overlay xattrs with references to
-> the real object blocks, same as you would do with mkcomposefs.
-> Is it not?
+> Using fscache seems like a good idea and it has many advantages but it
+> is a centralized cache mechanism and it looks like a potential problem
+> when you think about allowing mounts from a user namespace.
 
-Yes, some EROFS special images work as all regular files with empty
-data and some overlay "trusted" xattrs included as lower dir would
-be ok.
+I think Christian [1] had the same feeling of my own at that time:
+
+"I'm pretty skeptical of this plan whether we should add more filesystems
+  that are mountable by unprivileged users. FUSE and Overlayfs are
+  adventurous enough and they don't have their own on-disk format. The
+  track record of bugs exploitable due to userns isn't making this
+  very attractive."
+
+Yes, you could add fs-verity, but EROFS could add fs-verity (or just use
+dm-verity) as well, but it doesn't change _anything_ about concerns of
+"allowing mounts from a user namespace".
 
 > 
-> Maybe what I am missing is how are the blob objects distributed?
-> Are they also shipped as composefs image bundles?
-> That can still be the case with erofs images that may contain both
-> blobs with data and metadata files referencing blobs in older images.
+> As you know as I've contacted you, I've looked at EROFS in the past
+> and tried to get our use cases to work with it before thinking about
+> submitting composefs upstream.
+> 
+>  From what I could see EROFS and composefs use two different approaches
+> to solve a similar problem, but it is not possible to do exactly with
+> EROFS what we are trying to do.  To oversimplify it: I see EROFS as a
+> block device that uses fscache, and composefs as an overlay for files
+> instead of directories.
 
-Maybe just empty regular files in EROFS (or whatever else fs) with
-a magic "trusted.overlay.blablabla" xattr to point to the real file.
+I don't think so honestly.  EROFS "Multiple device" feature is
+actually "multiple blobs" feature if you really think "device"
+is block device.
+
+Primary device -- primary blob -- "composefs manifest blob"
+Blob device -- data blobs -- "composefs backing files"
+
+any difference?
 
 > 
->>> Overlayfs already has the feature of redirecting from upper layer
->>> to relative paths in lower layers.
+> Sure composefs is quite simple and you could embed the composefs
+> features in EROFS and let EROFS behave as composefs when provided a
+> similar manifest file.  But how is that any better than having a
+
+EROFS always has such feature since v5.16, we called primary device,
+or Nydus concept --- "bootstrap file".
+
+> separate implementation that does just one thing well instead of merging
+> different paradigms together?
+
+It's exist fs on-disk compatible (people can deploy the same image
+to wider scenarios), or you could modify/enhacnce any in-kernel local
+fs to do so like I already suggested, such as enhancing "fs/romfs" and
+make it maintained again due to this magic symlink feature
+
+(because composefs don't have other on-disk requirements other than
+  a symlink path and a SHA256 verity digest from its original
+  requirement.  Any local fs can be enhanced like this.)
+
+> 
+>> I know that you guys repeatedly say it's a self-contained
+>> stackable fs and has few code (the same words as Incfs
+>> folks [3] said four years ago already), four reasons make it
+>> weak IMHO:
 >>
->> Could you please provide more information on how you would compose the
->> overlay image first?
+>>    - I think core EROFS is about 2~3 kLOC as well if
+>>      compression, sysfs and fscache are all code-truncated.
 >>
->>  From what I can see, it still requires at least one syscall for each
->> file in the image to be created and these images are not portable to a
->> different machine.
+>>      Also, it's always welcome that all people could submit
+>>      patches for cleaning up.  I always do such cleanups
+>>      from time to time and makes it better.
+>>
+>>    - "Few code lines" is somewhat weak because people do
+>>      develop new features, layout after upstream.
+>>
+>>      Such claim is usually _NOT_ true in the future if you
+>>      guys do more to optimize performance, new layout or even
+>>      do your own lazy pulling with your local CAS codebase in
+>>      the future unless
+>>      you *promise* you once dump the code, and do bugfix
+>>      only like Christian said [4].
+>>
+>>      From LWN.net comments, I do see the opposite
+>>      possibility that you'd like to develop new features
+>>      later.
+>>
+>>    - In the past, all in-tree kernel filesystems were
+>>      designed and implemented without some user-space
+>>      specific indication, including Nydus and ostree (I did
+>>      see a lot of discussion between folks before in ociv2
+>>      brainstorm [5]).
 > 
-> Terminology nuance - you do not create an overlayfs image on the server
-> you create an erofs image on the server, exactly as you would create
-> a composefs image on the server.
+> Since you are mentioning OCI:
 > 
-> The shipped overlay "image" would then be the erofs image with
-> references to prereqisite images that contain the blobs and the digest
-> of the erofs image.
+> Potentially composefs can be the file system that enables something very
+> close to "ociv2", but it won't need to be called v2 since it is
+> completely compatible with the current OCI image format.
 > 
-> # mount -t composefs rootfs.img -o basedir=objects /mnt
-> 
-> client will do:
-> 
-> # mount -t erofs rootfs.img -o digest=da.... /metadata
-> # mount -t overlay -o ro,metacopy=on,lowerdir=/metadata:/objects /mnt
+> It won't require a different image format, just a seekable tarball that
+> is compatible with old "v1" clients and we need to provide the composefs
+> manifest file.
 
-Currently maybe not even introduce "-o digest", just loop+dm-verity for
-such manifest is already ok.
+May I ask did you really look into what Nydus + EROFS already did (as you
+mentioned we discussed before)?
+
+Your "composefs manifest file" is exactly "Nydus bootstrap file", see:
+https://github.com/dragonflyoss/image-service/blob/master/docs/nydus-design.md
+
+"Rafs is a filesystem image containing a separated metadata blob and
+  several data-deduplicated content-addressable data blobs. In a typical
+  rafs filesystem, the metadata is stored in bootstrap while the data
+  is stored in blobfile.
+  ...
+
+  bootstrap:  The metadata is a merkle tree (I think that is typo, should be
+  filesystem tree) whose nodes represents a regular filesystem's
+  directory/file a leaf node refers to a file and contains hash value of
+  its file data.
+  
+  Root node and internal nodes refer to directories and contain the hash value
+  of their children nodes."
+
+Nydus is already supported "It won't require a different image format, just
+a seekable tarball that is compatible with old "v1" clients and we need to
+provide the composefs manifest file." feature in v2.2 and will be released
+later.
 
 > 
->>
->> Should we always make "/blocks" a whiteout to prevent it is leaked in
->> the container?
+> The seekable tarball allows individual files to be retrieved.  OCI
+> clients will not need to pull the entire tarball, but only the individual
+> files that are not already present in the local CAS. They won't also need
+> to create the overlay layout at all, as we do today, since it is already
+> described with the composefs manifest file.
 > 
-> That would be the simplest option, yes.
-> If needed we can also make it a hidden layer whose objects
-> never appear in the namespace and can only be referenced
-> from an upper layer redirection.
+> The manifest is portable on different machines with different
+> configurations, as you can use multiple CAS when mounting composefs.
 > 
->>
->> And what prevents files under "/blocks" to be replaced with a different
->> version?  I think fs-verity on the EROFS image itself won't cover it.
->>
+> Some users might have a local CAS, some others could have a secondary
+> CAS on a network file system and composefs support all these
+> configurations with the same signed manifest file.
 > 
-> I think that part should be added to the overlayfs kernel driver.
-> We could enhance overlayfs to include optional "overlay.verity" digest
-> on the metacopy upper files to be fed into fsverity when opening lower
-> blob files that reside on an fsverity supported filesystem.
+>>      That is why EROFS selected exist in-kernel fscache and
+>>      made userspace Nydus adapt it:
+>>
+>>        even (here called) manifest on-disk format ---
+>>             EROFS call primary device ---
+>>             they call Nydus bootstrap;
+>>
+>>      I'm not sure why it becomes impossible for ... ($$$$).
+> 
+> I am not sure what you mean, care to elaborate?
 
-Agreed, another overlayfs "trusted.overlay.verity" xattr in EROFS (or
-whatever else fs) for each empty regular files to do the same
-fsverity_get_digest() trick.  That would have the same impact IMO.
+I just meant these concepts are actually the same concept with
+different names and:
+   Nydus is a 2020 stuff;
+   EROFS + primary device is a 2021-mid stuff.
+
+> 
+>> In addition, if fscache is used, it can also use
+>> fsverity_get_digest() to enable fsverity for non-on-demand
+>> files.
+>>
+>> But again I think even Google's folks think that is
+>> (somewhat) broken so that they added fs-verity to its incFS
+>> in a self-contained way in Feb 2021 [6].
+>>
+>> Finally, again, I do hope a LSF/MM discussion for this new
+>> overlay model (full of massive magical symlinks to override
+>> permission.)
+> 
+> you keep pointing it out but nobody is overriding any permission.  The
+> "symlinks" as you call them are just a way to refer to the payload files
+> so they can be shared among different mounts.  It is the same idea used
+> by "overlay metacopy" and nobody is complaining about it being a
+> security issue (because it is not).
+
+See overlay documentation clearly wrote such metacopy behavior:
+https://docs.kernel.org/filesystems/overlayfs.html
+
+"
+Do not use metacopy=on with untrusted upper/lower directories.
+Otherwise it is possible that an attacker can create a handcrafted file
+with appropriate REDIRECT and METACOPY xattrs, and gain access to file
+on lower pointed by REDIRECT. This should not be possible on local
+system as setting “trusted.” xattrs will require CAP_SYS_ADMIN. But
+it should be possible for untrusted layers like from a pen drive.
+"
+
+Do we really need such behavior working on another fs especially with
+on-disk format?  At least Christian said,
+"FUSE and Overlayfs are adventurous enough and they don't have their
+own on-disk format."
+
+> 
+> The files in the CAS are owned by the user that creates the mount, so
+> there is no need to circumvent any permission check to access them.
+> We use fs-verity for these files to make sure they are not modified by a
+> malicious user that could get access to them (e.g. a container breakout).
+
+fs-verity is not always enforcing and it's broken here if fsverity is not
+supported in underlay fses, that is another my arguable point.
 
 Thanks,
 Gao Xiang
 
-...
+[1] https://lore.kernel.org/linux-fsdevel/20230117152756.jbwmeq724potyzju@wittgenstein/
 
 > 
-> Thanks,
-> Amir.
+> Regards,
+> Giuseppe
+> 
+>>
