@@ -2,342 +2,187 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B30AE6765CB
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jan 2023 11:57:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6EBBE67661B
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jan 2023 12:53:27 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229637AbjAUK5n (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Jan 2023 05:57:43 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36154 "EHLO
+        id S229725AbjAULxY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Jan 2023 06:53:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53300 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229631AbjAUK5j (ORCPT
+        with ESMTP id S229523AbjAULxX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Jan 2023 05:57:39 -0500
-Received: from mail-vs1-xe31.google.com (mail-vs1-xe31.google.com [IPv6:2607:f8b0:4864:20::e31])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 47D072702;
-        Sat, 21 Jan 2023 02:57:37 -0800 (PST)
-Received: by mail-vs1-xe31.google.com with SMTP id t10so8285595vsr.3;
-        Sat, 21 Jan 2023 02:57:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d3biplUWGJfsf66JQLG/s47IVawBkuREWHbwWCNlIjo=;
-        b=FoWMM9U7BzA9sow+UnZnyui3ntlJYJwQzGyaAWTR2CFvitYYxNDCb78y2C7+cqyaO0
-         uYVLybTHnKfG0OEWHJeIF3S12WnJVs/XIHh3nE066GCTr1Dk8Rz0aSZWRcYG4u+RI0om
-         CYOoYtpCGCEzz+RVzP5ppW/ebk9LT/+BHDt8cNVyVxm2ll5DalQdzLsBNcy7REraPEB/
-         0j+oVDuKJJchU9T3usVwu8ATUPL7l5uuAN3Bh9A9XQNa6jJSJLR/rC+8PCaEYS46JpW2
-         P1hdc82ieqnmoRM7gggicYU4QZxtb3KIB5ajiPuIf0E1Pe0PXlqa4Ct6ATFoShpQhbCY
-         5sWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d3biplUWGJfsf66JQLG/s47IVawBkuREWHbwWCNlIjo=;
-        b=m3vDoiqTxs589+vbzRRfKQk6e6bkw/L1NA1+e+kgou0TzazLyL7NOmnnPSUt+EOpce
-         hf3fbEnjwrcrlsg1EIgZK4Kz+4U+86ivTbJneMMl5wZZSGM44b7p2f6FocfngDSoK4TI
-         1dTG9M16ifSmH3I7O/Ro4+2OIegnfbbyGtckM6eUFDcY9UYkdfXzIYCgzd8w85m4IRA9
-         Osat3un0fvEP+yMp17qbc96DBHi6M5beKY9hZc8E2COMoU3KyYiY3rivxK5TLalJ6LHu
-         JNwJ4MbhfO/J34FiYSrLnrSoNpVneBxavPrNF52QXCLiwtk1FqxX4feMP2PlvQcI1Jk9
-         M3zw==
-X-Gm-Message-State: AFqh2kp6Xnk93uGRRsc9VnCkZ/F3XFrgVRu4xfpaIkvHh9mwYSw8OBLD
-        4BwriM250WwRt1PxcQWbr2fuBSdXmm/kfb5uYCc=
-X-Google-Smtp-Source: AMrXdXsHZRUKEzVz2KZmjOQBkW8l/4uzi1VYPQeLO0CMMa0gVe4ivFO0g4G6CSVgXcrWVz4VS4FzsM+Au2sUtFSXiwI=
-X-Received: by 2002:a05:6102:f98:b0:3d3:c7d9:7b62 with SMTP id
- e24-20020a0561020f9800b003d3c7d97b62mr2251158vsv.72.1674298656241; Sat, 21
- Jan 2023 02:57:36 -0800 (PST)
+        Sat, 21 Jan 2023 06:53:23 -0500
+Received: from mga18.intel.com (mga18.intel.com [134.134.136.126])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 184842BEC3;
+        Sat, 21 Jan 2023 03:53:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1674302002; x=1705838002;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=YAXz73bfRzC4TRnCjnoOuIBuHFdhFbzfUfvKWYHlwQM=;
+  b=jz7ixWo7douEGUfTWgQPm4ABzJYu7JsqXiXK9DRzpPJ8spFQVrk/K2um
+   4HxFSOSOWhMlGzWuUMgbwqRyAtxZ28Lx8viUsZISv4SbKdjDF2MXe4423
+   4XqWHod1NZQjWA+szShmtRstY0SYoWeqbjN01qRczpd2O2iT8jXLStdKA
+   Imac2OUf9+u+uOLJQ/9LJZTSwosVUMI8uAqBKB0y5G/UIGcKAEW06Kdfs
+   ZJPm9EBVDxdWJDl8vwNVfK4axY+h+rpAXzaeZofNDsiJX9R8Gi4N82a4J
+   6DGLR7HN5Djsf7WEc5yhJHC4B2DKI+OKwMPCK5oDKzWnn6vYeTGD/VlAQ
+   Q==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10596"; a="309353720"
+X-IronPort-AV: E=Sophos;i="5.97,235,1669104000"; 
+   d="scan'208";a="309353720"
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2023 03:53:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=McAfee;i="6500,9779,10596"; a="610768753"
+X-IronPort-AV: E=Sophos;i="5.97,235,1669104000"; 
+   d="scan'208";a="610768753"
+Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
+  by orsmga003.jf.intel.com with ESMTP; 21 Jan 2023 03:53:17 -0800
+Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
+        (envelope-from <lkp@intel.com>)
+        id 1pJCQv-00041S-0Y;
+        Sat, 21 Jan 2023 11:53:17 +0000
+Date:   Sat, 21 Jan 2023 19:52:54 +0800
+From:   kernel test robot <lkp@intel.com>
+To:     Christoph Hellwig <hch@lst.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Hugh Dickins <hughd@google.com>
+Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        linux-afs@lists.infradead.org, linux-btrfs@vger.kernel.org,
+        linux-ext4@vger.kernel.org, cluster-devel@redhat.com,
+        linux-xfs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-nilfs@vger.kernel.org
+Subject: Re: [PATCH 7/7] mm: return an ERR_PTR from __filemap_get_folio
+Message-ID: <202301211944.5T9l1RgA-lkp@intel.com>
+References: <20230121065755.1140136-8-hch@lst.de>
 MIME-Version: 1.0
-References: <cover.1674227308.git.alexl@redhat.com> <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
- <87ilh0g88n.fsf@redhat.com>
-In-Reply-To: <87ilh0g88n.fsf@redhat.com>
-From:   Amir Goldstein <amir73il@gmail.com>
-Date:   Sat, 21 Jan 2023 12:57:24 +0200
-Message-ID: <CAOQ4uxi7wT09MPf+edS6AkJzBCxjzOnCTfcdwn===q-+G2C4Gw@mail.gmail.com>
-Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-To:     Giuseppe Scrivano <gscrivan@redhat.com>
-Cc:     Alexander Larsson <alexl@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        david@fromorbit.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FREEMAIL_FROM,
-        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS autolearn=ham
-        autolearn_force=no version=3.4.6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230121065755.1140136-8-hch@lst.de>
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,SPF_HELO_NONE,
+        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Sat, Jan 21, 2023 at 12:18 AM Giuseppe Scrivano <gscrivan@redhat.com> wr=
-ote:
->
-> Hi Amir,
->
-> Amir Goldstein <amir73il@gmail.com> writes:
->
-> > On Fri, Jan 20, 2023 at 5:30 PM Alexander Larsson <alexl@redhat.com> wr=
-ote:
-> >>
-> >> Giuseppe Scrivano and I have recently been working on a new project we
-> >> call composefs. This is the first time we propose this publically and
-> >> we would like some feedback on it.
-> >>
-> >> At its core, composefs is a way to construct and use read only images
-> >> that are used similar to how you would use e.g. loop-back mounted
-> >> squashfs images. On top of this composefs has two fundamental
-> >> features. First it allows sharing of file data (both on disk and in
-> >> page cache) between images, and secondly it has dm-verity like
-> >> validation on read.
-> >>
-> >> Let me first start with a minimal example of how this can be used,
-> >> before going into the details:
-> >>
-> >> Suppose we have this source for an image:
-> >>
-> >> rootfs/
-> >> =E2=94=9C=E2=94=80=E2=94=80 dir
-> >> =E2=94=82   =E2=94=94=E2=94=80=E2=94=80 another_a
-> >> =E2=94=9C=E2=94=80=E2=94=80 file_a
-> >> =E2=94=94=E2=94=80=E2=94=80 file_b
-> >>
-> >> We can then use this to generate an image file and a set of
-> >> content-addressed backing files:
-> >>
-> >> # mkcomposefs --digest-store=3Dobjects rootfs/ rootfs.img
-> >> # ls -l rootfs.img objects/*/*
-> >> -rw-------. 1 root root   10 Nov 18 13:20 objects/02/927862b4ab9fb6991=
-9187bb78d394e235ce444eeb0a890d37e955827fe4bf4
-> >> -rw-------. 1 root root   10 Nov 18 13:20 objects/cc/3da5b14909626fc99=
-443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
-> >> -rw-r--r--. 1 root root 4228 Nov 18 13:20 rootfs.img
-> >>
-> >> The rootfs.img file contains all information about directory and file
-> >> metadata plus references to the backing files by name. We can now
-> >> mount this and look at the result:
-> >>
-> >> # mount -t composefs rootfs.img -o basedir=3Dobjects /mnt
-> >> # ls  /mnt/
-> >> dir  file_a  file_b
-> >> # cat /mnt/file_a
-> >> content_a
-> >>
-> >> When reading this file the kernel is actually reading the backing
-> >> file, in a fashion similar to overlayfs. Since the backing file is
-> >> content-addressed, the objects directory can be shared for multiple
-> >> images, and any files that happen to have the same content are
-> >> shared. I refer to this as opportunistic sharing, as it is different
-> >> than the more course-grained explicit sharing used by e.g. container
-> >> base images.
-> >>
-> >> The next step is the validation. Note how the object files have
-> >> fs-verity enabled. In fact, they are named by their fs-verity digest:
-> >>
-> >> # fsverity digest objects/*/*
-> >> sha256:02927862b4ab9fb69919187bb78d394e235ce444eeb0a890d37e955827fe4bf=
-4 objects/02/927862b4ab9fb69919187bb78d394e235ce444eeb0a890d37e955827fe4bf4
-> >> sha256:cc3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173=
-f objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b23d43e173f
-> >>
-> >> The generated filesystm image may contain the expected digest for the
-> >> backing files. When the backing file digest is incorrect, the open
-> >> will fail, and if the open succeeds, any other on-disk file-changes
-> >> will be detected by fs-verity:
-> >>
-> >> # cat objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89b2=
-3d43e173f
-> >> content_a
-> >> # rm -f objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1d18883dc89=
-b23d43e173f
-> >> # echo modified > objects/cc/3da5b14909626fc99443f580e4d8c9b990e85e0a1=
-d18883dc89b23d43e173f
-> >> # cat /mnt/file_a
-> >> WARNING: composefs backing file '3da5b14909626fc99443f580e4d8c9b990e85=
-e0a1d18883dc89b23d43e173f' unexpectedly had no fs-verity digest
-> >> cat: /mnt/file_a: Input/output error
-> >>
-> >> This re-uses the existing fs-verity functionallity to protect against
-> >> changes in file contents, while adding on top of it protection against
-> >> changes in filesystem metadata and structure. I.e. protecting against
-> >> replacing a fs-verity enabled file or modifying file permissions or
-> >> xattrs.
-> >>
-> >> To be fully verified we need another step: we use fs-verity on the
-> >> image itself. Then we pass the expected digest on the mount command
-> >> line (which will be verified at mount time):
-> >>
-> >> # fsverity enable rootfs.img
-> >> # fsverity digest rootfs.img
-> >> sha256:da42003782992856240a3e25264b19601016114775debd80c01620260af86a7=
-6 rootfs.img
-> >> # mount -t composefs rootfs.img -o basedir=3Dobjects,digest=3Dda420037=
-82992856240a3e25264b19601016114775debd80c01620260af86a76 /mnt
-> >>
-> >> So, given a trusted set of mount options (say unlocked from TPM), we
-> >> have a fully verified filesystem tree mounted, with opportunistic
-> >> finegrained sharing of identical files.
-> >>
-> >> So, why do we want this? There are two initial users. First of all we
-> >> want to use the opportunistic sharing for the podman container image
-> >> baselayer. The idea is to use a composefs mount as the lower directory
-> >> in an overlay mount, with the upper directory being the container work
-> >> dir. This will allow automatical file-level disk and page-cache
-> >> sharning between any two images, independent of details like the
-> >> permissions and timestamps of the files.
-> >>
-> >> Secondly we are interested in using the verification aspects of
-> >> composefs in the ostree project. Ostree already supports a
-> >> content-addressed object store, but it is currently referenced by
-> >> hardlink farms. The object store and the trees that reference it are
-> >> signed and verified at download time, but there is no runtime
-> >> verification. If we replace the hardlink farm with a composefs image
-> >> that points into the existing object store we can use the verification
-> >> to implement runtime verification.
-> >>
-> >> In fact, the tooling to create composefs images is 100% reproducible,
-> >> so all we need is to add the composefs image fs-verity digest into the
-> >> ostree commit. Then the image can be reconstructed from the ostree
-> >> commit info, generating a file with the same fs-verity digest.
-> >>
-> >> These are the usecases we're currently interested in, but there seems
-> >> to be a breadth of other possible uses. For example, many systems use
-> >> loopback mounts for images (like lxc or snap), and these could take
-> >> advantage of the opportunistic sharing. We've also talked about using
-> >> fuse to implement a local cache for the backing files. I.e. you would
-> >> have the second basedir be a fuse filesystem. On lookup failure in the
-> >> first basedir it downloads the file and saves it in the first basedir
-> >> for later lookups. There are many interesting possibilities here.
-> >>
-> >> The patch series contains some documentation on the file format and
-> >> how to use the filesystem.
-> >>
-> >> The userspace tools (and a standalone kernel module) is available
-> >> here:
-> >>   https://github.com/containers/composefs
-> >>
-> >> Initial work on ostree integration is here:
-> >>   https://github.com/ostreedev/ostree/pull/2640
-> >>
-> >> Changes since v2:
-> >> - Simplified filesystem format to use fixed size inodes. This resulted
-> >>   in simpler (now < 2k lines) code as well as higher performance at
-> >>   the cost of slightly (~40%) larger images.
-> >> - We now use multi-page mappings from the page cache, which removes
-> >>   limits on sizes of xattrs and makes the dirent handling code simpler=
-.
-> >> - Added more documentation about the on-disk file format.
-> >> - General cleanups based on review comments.
-> >>
-> >
-> > Hi Alexander,
-> >
-> > I must say that I am a little bit puzzled by this v3.
-> > Gao, Christian and myself asked you questions on v2
-> > that are not mentioned in v3 at all.
-> >
-> > To sum it up, please do not propose composefs without explaining
-> > what are the barriers for achieving the exact same outcome with
-> > the use of a read-only overlayfs with two lower layer -
-> > uppermost with erofs containing the metadata files, which include
-> > trusted.overlay.metacopy and trusted.overlay.redirect xattrs that refer
-> > to the lowermost layer containing the content files.
->
-> I think Dave explained quite well why using overlay is not comparable to
-> what composefs does.
->
+Hi Christoph,
 
-Where? Can I get a link please?
-If there are good reasons why composefs is superior to erofs+overlayfs
-Please include them in the submission, since several developers keep
-raising the same questions - that is all I ask.
+I love your patch! Perhaps something to improve:
 
-> One big difference is that overlay still requires at least a syscall for
-> each file in the image, and then we need the equivalent of "rm -rf" to
-> clean it up.  It is somehow acceptable for long-running services, but it
-> is not for "serverless" containers where images/containers are created
-> and destroyed frequently.  So even in the case we already have all the
-> image files available locally, we still need to create a checkout with
-> the final structure we need for the image.
->
+[auto build test WARNING on next-20230120]
+[cannot apply to akpm-mm/mm-everything tytso-ext4/dev kdave/for-next xfs-linux/for-next konis-nilfs2/upstream linus/master v6.2-rc4 v6.2-rc3 v6.2-rc2 v6.2-rc4]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I think you did not understand my suggestion:
+url:    https://github.com/intel-lab-lkp/linux/commits/Christoph-Hellwig/mm-make-mapping_get_entry-available-outside-of-filemap-c/20230121-155847
+patch link:    https://lore.kernel.org/r/20230121065755.1140136-8-hch%40lst.de
+patch subject: [PATCH 7/7] mm: return an ERR_PTR from __filemap_get_folio
+config: riscv-randconfig-r013-20230119 (https://download.01.org/0day-ci/archive/20230121/202301211944.5T9l1RgA-lkp@intel.com/config)
+compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 4196ca3278f78c6e19246e54ab0ecb364e37d66a)
+reproduce (this is a W=1 build):
+        wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
+        chmod +x ~/bin/make.cross
+        # install riscv cross compiling tool for clang build
+        # apt-get install binutils-riscv-linux-gnu
+        # https://github.com/intel-lab-lkp/linux/commit/3c8a98fd03b82ace84668b3f8bb48d48e9f34af2
+        git remote add linux-review https://github.com/intel-lab-lkp/linux
+        git fetch --no-tags linux-review Christoph-Hellwig/mm-make-mapping_get_entry-available-outside-of-filemap-c/20230121-155847
+        git checkout 3c8a98fd03b82ace84668b3f8bb48d48e9f34af2
+        # save the config file
+        mkdir build_dir && cp config build_dir/.config
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv olddefconfig
+        COMPILER_INSTALL_PATH=$HOME/0day COMPILER=clang make.cross W=1 O=build_dir ARCH=riscv SHELL=/bin/bash fs/iomap/
 
-overlay read-only mount:
-    layer 1: erofs mount of a precomposed image (same as mkcomposefs)
-    layer 2: any pre-existing fs path with /blocks repository
-    layer 3: any per-existing fs path with /blocks repository
-    ...
+If you fix the issue, kindly add following tag where applicable
+| Reported-by: kernel test robot <lkp@intel.com>
 
-The mkcomposefs flow is exactly the same in this suggestion
-the upper layer image is created without any syscalls and
-removed without any syscalls.
+All warnings (new ones prefixed by >>):
 
-Overlayfs already has the feature of redirecting from upper layer
-to relative paths in lower layers.
+>> fs/iomap/buffered-io.c:669:28: warning: variable 'folio' is uninitialized when used here [-Wuninitialized]
+           if (pos + len > folio_pos(folio) + folio_size(folio))
+                                     ^~~~~
+   fs/iomap/buffered-io.c:636:21: note: initialize the variable 'folio' to silence this warning
+           struct folio *folio;
+                              ^
+                               = NULL
+   fs/iomap/buffered-io.c:598:22: warning: unused function '__iomap_get_folio' [-Wunused-function]
+   static struct folio *__iomap_get_folio(struct iomap_iter *iter, loff_t pos,
+                        ^
+   2 warnings generated.
 
-> I also don't see how overlay would solve the verified image problem.  We
-> would have the same problem we have today with fs-verity as it can only
-> validate a single file but not the entire directory structure.  Changes
-> that affect the layer containing the trusted.overlay.{metacopy,redirect}
-> xattrs won't be noticed.
->
 
-The entire erofs image would be fsverified including the overlayfs xattrs.
-That is exactly the same model as composefs.
-I am not even saying that your model is wrong, only that you are within
-reach of implementing it with existing subsystems.
+vim +/folio +669 fs/iomap/buffered-io.c
 
-> There are at the moment two ways to handle container images, both somehow
-> guided by the available file systems in the kernel.
->
-> - A single image mounted as a block device.
-> - A list of tarballs (OCI image) that are unpacked and mounted as
->   overlay layers.
->
-> One big advantage of the block devices model is that you can use
-> dm-verity, this is something we miss today with OCI container images
-> that use overlay.
->
-> What we are proposing with composefs is a way to have "dm-verity" style
-> validation based on fs-verity and the possibility to share individual
-> files instead of layers.  These files can also be on different file
-> systems, which is something not possible with the block device model.
->
-> The composefs manifest blob could be generated remotely and signed.  A
-> client would need just to validate the signature for the manifest blob
-> and from there retrieve the files that are not in the local CAS (even
-> from an insecure source) and mount directly the manifest file.
->
+69f4a26c1e0c7c Gao Xiang               2021-08-03  630  
+d7b64041164ca1 Dave Chinner            2022-11-29  631  static int iomap_write_begin(struct iomap_iter *iter, loff_t pos,
+bc6123a84a71b5 Matthew Wilcox (Oracle  2021-05-02  632) 		size_t len, struct folio **foliop)
+afc51aaa22f26c Darrick J. Wong         2019-07-15  633  {
+471859f57d4253 Andreas Gruenbacher     2023-01-15  634  	const struct iomap_folio_ops *folio_ops = iter->iomap.folio_ops;
+fad0a1ab34f777 Christoph Hellwig       2021-08-10  635  	const struct iomap *srcmap = iomap_iter_srcmap(iter);
+d1bd0b4ebfe052 Matthew Wilcox (Oracle  2021-11-03  636) 	struct folio *folio;
+afc51aaa22f26c Darrick J. Wong         2019-07-15  637  	int status = 0;
+afc51aaa22f26c Darrick J. Wong         2019-07-15  638  
+1b5c1e36dc0e0f Christoph Hellwig       2021-08-10  639  	BUG_ON(pos + len > iter->iomap.offset + iter->iomap.length);
+1b5c1e36dc0e0f Christoph Hellwig       2021-08-10  640  	if (srcmap != &iter->iomap)
+c039b997927263 Goldwyn Rodrigues       2019-10-18  641  		BUG_ON(pos + len > srcmap->offset + srcmap->length);
+afc51aaa22f26c Darrick J. Wong         2019-07-15  642  
+afc51aaa22f26c Darrick J. Wong         2019-07-15  643  	if (fatal_signal_pending(current))
+afc51aaa22f26c Darrick J. Wong         2019-07-15  644  		return -EINTR;
+afc51aaa22f26c Darrick J. Wong         2019-07-15  645  
+d454ab82bc7f4a Matthew Wilcox (Oracle  2021-12-09  646) 	if (!mapping_large_folio_support(iter->inode->i_mapping))
+d454ab82bc7f4a Matthew Wilcox (Oracle  2021-12-09  647) 		len = min_t(size_t, len, PAGE_SIZE - offset_in_page(pos));
+d454ab82bc7f4a Matthew Wilcox (Oracle  2021-12-09  648) 
+d7b64041164ca1 Dave Chinner            2022-11-29  649  	/*
+d7b64041164ca1 Dave Chinner            2022-11-29  650  	 * Now we have a locked folio, before we do anything with it we need to
+d7b64041164ca1 Dave Chinner            2022-11-29  651  	 * check that the iomap we have cached is not stale. The inode extent
+d7b64041164ca1 Dave Chinner            2022-11-29  652  	 * mapping can change due to concurrent IO in flight (e.g.
+d7b64041164ca1 Dave Chinner            2022-11-29  653  	 * IOMAP_UNWRITTEN state can change and memory reclaim could have
+d7b64041164ca1 Dave Chinner            2022-11-29  654  	 * reclaimed a previously partially written page at this index after IO
+d7b64041164ca1 Dave Chinner            2022-11-29  655  	 * completion before this write reaches this file offset) and hence we
+d7b64041164ca1 Dave Chinner            2022-11-29  656  	 * could do the wrong thing here (zero a page range incorrectly or fail
+d7b64041164ca1 Dave Chinner            2022-11-29  657  	 * to zero) and corrupt data.
+d7b64041164ca1 Dave Chinner            2022-11-29  658  	 */
+471859f57d4253 Andreas Gruenbacher     2023-01-15  659  	if (folio_ops && folio_ops->iomap_valid) {
+471859f57d4253 Andreas Gruenbacher     2023-01-15  660  		bool iomap_valid = folio_ops->iomap_valid(iter->inode,
+d7b64041164ca1 Dave Chinner            2022-11-29  661  							 &iter->iomap);
+d7b64041164ca1 Dave Chinner            2022-11-29  662  		if (!iomap_valid) {
+d7b64041164ca1 Dave Chinner            2022-11-29  663  			iter->iomap.flags |= IOMAP_F_STALE;
+d7b64041164ca1 Dave Chinner            2022-11-29  664  			status = 0;
+d7b64041164ca1 Dave Chinner            2022-11-29  665  			goto out_unlock;
+d7b64041164ca1 Dave Chinner            2022-11-29  666  		}
+d7b64041164ca1 Dave Chinner            2022-11-29  667  	}
+d7b64041164ca1 Dave Chinner            2022-11-29  668  
+d454ab82bc7f4a Matthew Wilcox (Oracle  2021-12-09 @669) 	if (pos + len > folio_pos(folio) + folio_size(folio))
+d454ab82bc7f4a Matthew Wilcox (Oracle  2021-12-09  670) 		len = folio_pos(folio) + folio_size(folio) - pos;
+afc51aaa22f26c Darrick J. Wong         2019-07-15  671  
+c039b997927263 Goldwyn Rodrigues       2019-10-18  672  	if (srcmap->type == IOMAP_INLINE)
+bc6123a84a71b5 Matthew Wilcox (Oracle  2021-05-02  673) 		status = iomap_write_begin_inline(iter, folio);
+1b5c1e36dc0e0f Christoph Hellwig       2021-08-10  674  	else if (srcmap->flags & IOMAP_F_BUFFER_HEAD)
+d1bd0b4ebfe052 Matthew Wilcox (Oracle  2021-11-03  675) 		status = __block_write_begin_int(folio, pos, len, NULL, srcmap);
+afc51aaa22f26c Darrick J. Wong         2019-07-15  676  	else
+bc6123a84a71b5 Matthew Wilcox (Oracle  2021-05-02  677) 		status = __iomap_write_begin(iter, pos, len, folio);
+afc51aaa22f26c Darrick J. Wong         2019-07-15  678  
+afc51aaa22f26c Darrick J. Wong         2019-07-15  679  	if (unlikely(status))
+afc51aaa22f26c Darrick J. Wong         2019-07-15  680  		goto out_unlock;
+afc51aaa22f26c Darrick J. Wong         2019-07-15  681  
+bc6123a84a71b5 Matthew Wilcox (Oracle  2021-05-02  682) 	*foliop = folio;
+afc51aaa22f26c Darrick J. Wong         2019-07-15  683  	return 0;
+afc51aaa22f26c Darrick J. Wong         2019-07-15  684  
+afc51aaa22f26c Darrick J. Wong         2019-07-15  685  out_unlock:
+7a70a5085ed028 Andreas Gruenbacher     2023-01-15  686  	__iomap_put_folio(iter, pos, 0, folio);
+1b5c1e36dc0e0f Christoph Hellwig       2021-08-10  687  	iomap_write_failed(iter->inode, pos, len);
+afc51aaa22f26c Darrick J. Wong         2019-07-15  688  
+afc51aaa22f26c Darrick J. Wong         2019-07-15  689  	return status;
+afc51aaa22f26c Darrick J. Wong         2019-07-15  690  }
+afc51aaa22f26c Darrick J. Wong         2019-07-15  691  
 
-Excellent description of the problem.
-I agree that we need a hybrid solution between the block
-and tarball image model.
-
-All I am saying is that this solution can use existing kernel
-components and existing established on-disk formats
-(erofs+overlayfs).
-
-What was missing all along was the userspace component
-(i.e. composefs) and I am very happy that you guys are
-working on this project.
-
-These userspace tools could be useful for other use cases.
-For example, overlayfs is able to describe a large directory
-rename with redirect xattr since v4.9, but image composing
-tools do not make use of that, so an OCI image describing a
-large dir rename will currently contain all the files within.
-
-Once again, you may or may not be able to use erofs and
-overlayfs out of the box for your needs, but so far I did not
-see any functionality gap that is not possible to close.
-
-Please let me know if you know of such gaps or if my
-proposal does not meet the goals of composefs.
-
-Thanks,
-Amir.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests
