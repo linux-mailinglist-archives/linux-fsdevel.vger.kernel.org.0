@@ -2,48 +2,48 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B231E67665D
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jan 2023 14:05:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 37481676665
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jan 2023 14:05:50 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229679AbjAUNFk (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Jan 2023 08:05:40 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40586 "EHLO
+        id S229843AbjAUNFr (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Jan 2023 08:05:47 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40628 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbjAUNFi (ORCPT
+        with ESMTP id S229575AbjAUNFk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Jan 2023 08:05:38 -0500
+        Sat, 21 Jan 2023 08:05:40 -0500
 Received: from mga05.intel.com (mga05.intel.com [192.55.52.43])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 54E912942F;
-        Sat, 21 Jan 2023 05:05:27 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2858829E1E;
+        Sat, 21 Jan 2023 05:05:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1674306327; x=1705842327;
+  t=1674306338; x=1705842338;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=4a3N1Km9mHK9ZXK0JuIPrz6+ArmsXDbFxAx8IVWpHzo=;
-  b=N1E30/iEnlStDMG130B/H/mdsvoLUBLR0g33ip4ehv7V4RPkf0ywogqv
-   s2ilN8InkK7b3HV8VhhOvmfRv9ci1BTkKNZeJRq5Zo2/PTqLlw3QsSFgK
-   rMrlbnREUgZvsTT0AmjRcsopEaE0GQva/G3Ms3Wxb2OnqIz/VYwPNDz4w
-   caWlvSJtGR8Y5DSHalG2RZkFs369sz0c20hEvjuWEwHDN8IKmfxlQmkar
-   OUyxFZ8nKKAV08l42Xb+cZWgITFyHCnYGMGJM2cl9EJoPPKknvc2Yp8s3
-   N/gcCQTP4wsxwfddvW/2TnnjV9nd/cAsn7TePNetU4Gc/QTroiqqJxAuG
-   Q==;
-X-IronPort-AV: E=McAfee;i="6500,9779,10596"; a="412015612"
+  bh=mYPaUET6yMOwGGV2IxKGzIaVsssVsIa9IyUsova1n/0=;
+  b=HiMMIfSawWQ/8+JG3AJ362LXZ5Ath/niOQfL4c+tib2Xkm9NSFsOy4Rz
+   tT5oD4ReGVyDDxthy2kOKQ6H3G6iI+umZ8YADhl/qU2X13rxbfoxtLFZ8
+   Ty7wjtEMsWNLwsJAg5Cs09fyea5arpdIoSprnc9X7bCEQR/rcIc88+dbU
+   PnUyq+R1GpIHiuc21cXMj0RajafTuo6pzqnuvewTtIVsCelav2OU1VvQf
+   zkYMjfK3rbMgXAyBqauLKlEU/avc+fFgEelWD6dJc0sO6Uro+7vY8E1pq
+   46omzp1QrVa5VSTNPuUc9Fj08wG5r/aF7Vo3APf7uMCCWJOUUVJB4LJhH
+   w==;
+X-IronPort-AV: E=McAfee;i="6500,9779,10596"; a="412015640"
 X-IronPort-AV: E=Sophos;i="5.97,235,1669104000"; 
-   d="scan'208";a="412015612"
+   d="scan'208";a="412015640"
 Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2023 05:05:27 -0800
+  by fmsmga105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Jan 2023 05:05:28 -0800
 X-ExtLoop1: 1
-X-IronPort-AV: E=McAfee;i="6500,9779,10596"; a="654087126"
+X-IronPort-AV: E=McAfee;i="6500,9779,10596"; a="654087129"
 X-IronPort-AV: E=Sophos;i="5.97,235,1669104000"; 
-   d="scan'208";a="654087126"
+   d="scan'208";a="654087129"
 Received: from lkp-server01.sh.intel.com (HELO 5646d64e7320) ([10.239.97.150])
   by orsmga007.jf.intel.com with ESMTP; 21 Jan 2023 05:05:22 -0800
 Received: from kbuild by 5646d64e7320 with local (Exim 4.96)
         (envelope-from <lkp@intel.com>)
-        id 1pJDYf-00045I-15;
+        id 1pJDYf-00045M-1L;
         Sat, 21 Jan 2023 13:05:21 +0000
-Date:   Sat, 21 Jan 2023 21:04:31 +0800
+Date:   Sat, 21 Jan 2023 21:04:32 +0800
 From:   kernel test robot <lkp@intel.com>
 To:     Gregory Price <gourry.memverge@gmail.com>,
         linux-kernel@vger.kernel.org
@@ -56,7 +56,7 @@ Cc:     llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
         shuah@kernel.org, Gregory Price <gregory.price@memverge.com>
 Subject: Re: [PATCH v4 2/3] fs/proc/array: Add Syscall User Dispatch to proc
  status
-Message-ID: <202301212023.KjbRqxRz-lkp@intel.com>
+Message-ID: <202301212030.OheLeUFY-lkp@intel.com>
 References: <20230121102316.331935-3-gregory.price@memverge.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
@@ -85,7 +85,7 @@ https://git-scm.com/docs/git-format-patch#_base_tree_information]
 url:    https://github.com/intel-lab-lkp/linux/commits/Gregory-Price/ptrace-syscall_user_dispatch-Implement-Syscall-User-Dispatch-Suspension/20230121-182401
 patch link:    https://lore.kernel.org/r/20230121102316.331935-3-gregory.price%40memverge.com
 patch subject: [PATCH v4 2/3] fs/proc/array: Add Syscall User Dispatch to proc status
-config: hexagon-randconfig-r041-20230119 (https://download.01.org/0day-ci/archive/20230121/202301212023.KjbRqxRz-lkp@intel.com/config)
+config: hexagon-randconfig-r016-20230119 (https://download.01.org/0day-ci/archive/20230121/202301212030.OheLeUFY-lkp@intel.com/config)
 compiler: clang version 16.0.0 (https://github.com/llvm/llvm-project 4196ca3278f78c6e19246e54ab0ecb364e37d66a)
 reproduce (this is a W=1 build):
         wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
@@ -161,7 +161,7 @@ All errors (new ones prefixed by >>):
    include/linux/thread_info.h:168:45: note: expanded from macro 'test_syscall_work'
            test_ti_thread_flag(current_thread_info(), TIF_##fl)
                                                       ^
-   <scratch space>:70:1: note: expanded from here
+   <scratch space>:37:1: note: expanded from here
    TIF_SYSCALL_USER_DISPATCH
    ^
    6 warnings and 1 error generated.
