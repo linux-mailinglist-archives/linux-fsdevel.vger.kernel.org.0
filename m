@@ -2,32 +2,32 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 57E6B676444
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jan 2023 07:51:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 5C018676441
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jan 2023 07:51:10 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229883AbjAUGvA (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sat, 21 Jan 2023 01:51:00 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38734 "EHLO
+        id S229890AbjAUGvB (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sat, 21 Jan 2023 01:51:01 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38792 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229863AbjAUGuy (ORCPT
+        with ESMTP id S229867AbjAUGu5 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sat, 21 Jan 2023 01:50:54 -0500
+        Sat, 21 Jan 2023 01:50:57 -0500
 Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 5916A60C9B;
-        Fri, 20 Jan 2023 22:50:53 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BA9D760C8F;
+        Fri, 20 Jan 2023 22:50:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description;
-        bh=g4BMgkyFkJpwD9T3cD317rkUEi3U2bIiwt8HEpkAamw=; b=xbZFutkhwLHwRtxdyAjA7U4Y22
-        gC1DZYVa0F2yPSp2iv/+HEvFy2gSh5jzagH8N7ZW1PWqFuL2Lyrg4Lb29CbsPfOcXr28QDG9Wexgt
-        Z4boud00P2audYLMl9xpUrLOSxuGucxIGBSOm25SxYnvO5lwVeqpBoa4+ncoSAFs0EZbngKA5wEKG
-        4DEQe+Usm5pmBSlMkIivHc8MM1WpSPQjV7rcVN05thm2s26/kYEu8msVz3SLLWq0BOk0LxwWI3/Zg
-        ld2jQI08Cs5Fo3OwID9pE2a6QTVYKG5mFqICFfMorMoSfbt3R6D7dqpkb3ImlJOp8xhxvNZWYws6G
-        OZ++9hbw==;
+        bh=APcbCXsenqwfoaUYCzz2s/4DCQcwsm+X+AI7RSavdIo=; b=FhSF8mS7Ey3PqG91cruuGUcwUz
+        v6cF99G4hnsKF6IVKWw+HdUbaSRcmuqkd3NeFwKy8DyxR7Cf6T4TiEZLmxiq36at+2l3mM52BYewZ
+        T/HeKqmZSaqHfEfvtG3PRRSLUkwEoYa0FieXuWv6o6dUoOlFK6B1/pHky86MOMsKdUztWD80Ow32y
+        HhRnO3w0rPxzx/jRFKTG56KjRngWR1yw3Z5ELcB6ZsgMngni6rEyav5/ufat227RUw7bI5sBdou/Z
+        hjX+akC61aaAuZkTgYMeN/t9z0ZvADwvZV5zZabQVqDKGCehG29sMWXN8xrxk3EQ66+lhrHAsr8cA
+        t74IBzbQ==;
 Received: from [2001:4bb8:19a:2039:6754:cc81:9ace:36fc] (helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pJ7iD-00DRJF-Il; Sat, 21 Jan 2023 06:50:50 +0000
+        id 1pJ7iG-00DRK0-4r; Sat, 21 Jan 2023 06:50:52 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
         David Sterba <dsterba@suse.com>
@@ -37,9 +37,9 @@ Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
         Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
         "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
         linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [PATCH 06/34] btrfs: slightly refactor btrfs_submit_bio
-Date:   Sat, 21 Jan 2023 07:50:03 +0100
-Message-Id: <20230121065031.1139353-7-hch@lst.de>
+Subject: [PATCH 07/34] btrfs: save the bio iter for checksum validation in common code
+Date:   Sat, 21 Jan 2023 07:50:04 +0100
+Message-Id: <20230121065031.1139353-8-hch@lst.de>
 X-Mailer: git-send-email 2.39.0
 In-Reply-To: <20230121065031.1139353-1-hch@lst.de>
 References: <20230121065031.1139353-1-hch@lst.de>
@@ -56,72 +56,95 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add a bbio local variable and to prepare for calling functions that
-return a blk_status_t, rename the existing int used for error handling
-so that ret can be reused for the blk_status_t, and a label that can be
-reused for failing the passed in bio.
+All callers of btrfs_submit_bio that want to validate checksums
+currently have to store a copy of the iter in the btrfs_bio.  Move
+the assignment into common code.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- fs/btrfs/bio.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
+ fs/btrfs/bio.c         | 7 ++++++-
+ fs/btrfs/compression.c | 4 ----
+ fs/btrfs/extent_io.c   | 1 -
+ fs/btrfs/inode.c       | 7 -------
+ 4 files changed, 6 insertions(+), 13 deletions(-)
 
 diff --git a/fs/btrfs/bio.c b/fs/btrfs/bio.c
-index 2398bb263957b2..23afeeb6dbc8eb 100644
+index 23afeeb6dbc8eb..2651f20891f08f 100644
 --- a/fs/btrfs/bio.c
 +++ b/fs/btrfs/bio.c
-@@ -230,20 +230,21 @@ static void btrfs_submit_mirrored_bio(struct btrfs_io_context *bioc, int dev_nr)
+@@ -63,7 +63,6 @@ struct bio *btrfs_bio_clone_partial(struct bio *orig, u64 offset, u64 size,
+ 	btrfs_bio_init(bbio, inode, end_io, private);
  
- void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio, int mirror_num)
- {
-+	struct btrfs_bio *bbio = btrfs_bio(bio);
- 	u64 logical = bio->bi_iter.bi_sector << 9;
- 	u64 length = bio->bi_iter.bi_size;
- 	u64 map_length = length;
- 	struct btrfs_io_context *bioc = NULL;
- 	struct btrfs_io_stripe smap;
--	int ret;
-+	blk_status_t ret;
-+	int error;
- 
- 	btrfs_bio_counter_inc_blocked(fs_info);
--	ret = __btrfs_map_block(fs_info, btrfs_op(bio), logical, &map_length,
--				&bioc, &smap, &mirror_num, 1);
--	if (ret) {
--		btrfs_bio_counter_dec(fs_info);
--		btrfs_bio_end_io(btrfs_bio(bio), errno_to_blk_status(ret));
--		return;
-+	error = __btrfs_map_block(fs_info, btrfs_op(bio), logical, &map_length,
-+				  &bioc, &smap, &mirror_num, 1);
-+	if (error) {
-+		ret = errno_to_blk_status(error);
-+		goto fail;
- 	}
- 
- 	if (map_length < length) {
-@@ -255,8 +256,8 @@ void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio, int mirror
- 
- 	if (!bioc) {
- 		/* Single mirror read/write fast path */
--		btrfs_bio(bio)->mirror_num = mirror_num;
--		btrfs_bio(bio)->device = smap.dev;
-+		bbio->mirror_num = mirror_num;
-+		bbio->device = smap.dev;
- 		bio->bi_iter.bi_sector = smap.physical >> SECTOR_SHIFT;
- 		bio->bi_private = fs_info;
- 		bio->bi_end_io = btrfs_simple_end_io;
-@@ -278,6 +279,11 @@ void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio, int mirror
- 		for (dev_nr = 0; dev_nr < total_devs; dev_nr++)
- 			btrfs_submit_mirrored_bio(bioc, dev_nr);
- 	}
-+	return;
-+
-+fail:
-+	btrfs_bio_counter_dec(fs_info);
-+	btrfs_bio_end_io(bbio, ret);
+ 	bio_trim(bio, offset >> 9, size >> 9);
+-	bbio->iter = bio->bi_iter;
+ 	return bio;
  }
  
- /*
+@@ -254,6 +253,12 @@ void btrfs_submit_bio(struct btrfs_fs_info *fs_info, struct bio *bio, int mirror
+ 		BUG();
+ 	}
+ 
++	/*
++	 * Save the iter for the end_io handler for data reads.
++	 */
++	if (bio_op(bio) == REQ_OP_READ && !(bio->bi_opf & REQ_META))
++		bbio->iter = bio->bi_iter;
++
+ 	if (!bioc) {
+ 		/* Single mirror read/write fast path */
+ 		bbio->mirror_num = mirror_num;
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index ab7f7ea499d9ca..ba458b88be26b0 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -789,10 +789,6 @@ void btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+ 			submit = true;
+ 
+ 		if (submit) {
+-			/* Save the original iter for read repair */
+-			if (bio_op(comp_bio) == REQ_OP_READ)
+-				btrfs_bio(comp_bio)->iter = comp_bio->bi_iter;
+-
+ 			/*
+ 			 * Save the initial offset of this chunk, as there
+ 			 * is no direct correlation between compressed pages and
+diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+index faf9312a46c0e1..44cacf62e4314e 100644
+--- a/fs/btrfs/extent_io.c
++++ b/fs/btrfs/extent_io.c
+@@ -756,7 +756,6 @@ int btrfs_repair_one_sector(struct btrfs_inode *inode, struct btrfs_bio *failed_
+ 	}
+ 
+ 	bio_add_page(repair_bio, page, failrec->len, pgoff);
+-	repair_bbio->iter = repair_bio->bi_iter;
+ 
+ 	btrfs_debug(fs_info,
+ 		    "repair read error: submitting new read to mirror %d",
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index 7c8f5349ed7a4c..c368a45bc079d6 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -2773,9 +2773,6 @@ void btrfs_submit_data_read_bio(struct btrfs_inode *inode, struct bio *bio,
+ 		return;
+ 	}
+ 
+-	/* Save the original iter for read repair */
+-	btrfs_bio(bio)->iter = bio->bi_iter;
+-
+ 	/*
+ 	 * Lookup bio sums does extra checks around whether we need to csum or
+ 	 * not, which is why we ignore skip_sum here.
+@@ -7988,10 +7985,6 @@ static void btrfs_submit_dio_bio(struct bio *bio, struct btrfs_inode *inode,
+ 	struct btrfs_fs_info *fs_info = inode->root->fs_info;
+ 	blk_status_t ret;
+ 
+-	/* Save the original iter for read repair */
+-	if (btrfs_op(bio) == BTRFS_MAP_READ)
+-		btrfs_bio(bio)->iter = bio->bi_iter;
+-
+ 	if (inode->flags & BTRFS_INODE_NODATASUM)
+ 		goto map;
+ 
 -- 
 2.39.0
 
