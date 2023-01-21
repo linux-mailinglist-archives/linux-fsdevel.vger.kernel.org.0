@@ -2,195 +2,263 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 30F0167635A
-	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jan 2023 04:27:25 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id A549467635F
+	for <lists+linux-fsdevel@lfdr.de>; Sat, 21 Jan 2023 04:28:37 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229518AbjAUD1W (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Fri, 20 Jan 2023 22:27:22 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:45598 "EHLO
+        id S229714AbjAUD2f (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Fri, 20 Jan 2023 22:28:35 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:46332 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229450AbjAUD1V (ORCPT
+        with ESMTP id S229631AbjAUD2e (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Fri, 20 Jan 2023 22:27:21 -0500
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2040.outbound.protection.outlook.com [40.107.236.40])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id A824B1B541;
-        Fri, 20 Jan 2023 19:27:19 -0800 (PST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=GDdH3tkLSqkrLKA2MTLojaAqjRy6y8CbiolI8qlwESmdpZStBkPzYQ2bF5r6vOtH2McVs4ZsmaUI3E/Riwp4sGzTnhVtY/OHqH8C8pQQSSHgPEjYbPMX3AxD+9NPPZ9Gz4lJA61zBbswbK/z2yQbh32SXsLQXbYCEtQc1TkEeQdiVin3R/dxblTuYfHValU2qZKP2qzWo5Mia9Gw/9D500CqnbkYiRiz8XxZllrpXAob71Bf8WfS14ch52P57kbXwkZJ4z1bNS76b7HBOrOt+ilkxE4WBn4iX0q+/zYtC2HvgsseGQaT8myG9AyMmk85hwHGCDNIP42n4GGZGEnBGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=KBgeGfn5mAfqmfSvzmRlgN7H6tUWWIJCcEONlOXDIgk=;
- b=TzUBVB450XHG62eYvuNriRVbILrofGv6diXYtdQUvsoOWV5nyx1UKWI9wg1LPN81xirshCatmG2CWlc4BAvWLgFZV0f2rkep3nCFx+OAg5EUXTiYftRJz6kz6T6KQFAooAIwEvyzH0Qqb8KlIbLXYLMQjjWq+JLuESAeR+hM7meVC2LO/kbbp4Rs2FjD4s4zxIJMyF7SWlL8/bzCTcGxRdR/hAOCqLA0NRQrTokSJ2h8UKlATBd6gH+ILuIVz/yYntW4SxPAG440XjZAk2/M4sA46w9tzbggqgaLm81KMVbXG76Wpip3lM3Rm3XD21qmrn1z+Lp4CZXalHps25Gzbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=memverge.com; dmarc=pass action=none header.from=memverge.com;
- dkim=pass header.d=memverge.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=memverge.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=KBgeGfn5mAfqmfSvzmRlgN7H6tUWWIJCcEONlOXDIgk=;
- b=teG3t4iYOC4iS7FHq5Qe83tXniQ8FODDUZfu7EVGVLy/vkF7WXpuVRrxc9I1vw0nmvvQ3qxIpCB6qrXlbebyD9GxqqRtJNDjM5FFcU1fawlhdxH3tBs+Qr0wHzTjffCa37qu45gSMOzmWlEkWnNC0QkgnCbP6fzw03MSX//S01I=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=memverge.com;
-Received: from BN6PR17MB3121.namprd17.prod.outlook.com (2603:10b6:405:7c::19)
- by DM4PR17MB5948.namprd17.prod.outlook.com (2603:10b6:8:53::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6002.24; Sat, 21 Jan
- 2023 03:27:17 +0000
-Received: from BN6PR17MB3121.namprd17.prod.outlook.com
- ([fe80::d253:1eb3:9347:c660]) by BN6PR17MB3121.namprd17.prod.outlook.com
- ([fe80::d253:1eb3:9347:c660%4]) with mapi id 15.20.6002.027; Sat, 21 Jan 2023
- 03:27:17 +0000
-Date:   Fri, 20 Jan 2023 22:27:14 -0500
-From:   Gregory Price <gregory.price@memverge.com>
-To:     Andrei Vagin <avagin@gmail.com>
-Cc:     Gregory Price <gourry.memverge@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        krisman@collabora.com, tglx@linutronix.de, luto@kernel.org,
-        oleg@redhat.com, peterz@infradead.org, ebiederm@xmission.com,
-        akpm@linux-foundation.org, adobriyan@gmail.com, corbet@lwn.net,
-        shuah@kernel.org
-Subject: Re: [PATCH v3 3/3] ptrace,syscall_user_dispatch: add a getter/setter
- for sud configuration
-Message-ID: <Y8tbks5q6hL3B3pI@memverge.com>
-References: <20230120144356.40717-1-gregory.price@memverge.com>
- <20230120144356.40717-4-gregory.price@memverge.com>
- <CANaxB-zet4+S4saBHgYPP6feppBVHkCRJxTkL8R-OyXa_gXG3Q@mail.gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANaxB-zet4+S4saBHgYPP6feppBVHkCRJxTkL8R-OyXa_gXG3Q@mail.gmail.com>
-X-ClientProxiedBy: MN2PR20CA0005.namprd20.prod.outlook.com
- (2603:10b6:208:e8::18) To BN6PR17MB3121.namprd17.prod.outlook.com
- (2603:10b6:405:7c::19)
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN6PR17MB3121:EE_|DM4PR17MB5948:EE_
-X-MS-Office365-Filtering-Correlation-Id: a5bbcf58-e2e6-41dc-7cd3-08dafb5f656c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;
-X-Microsoft-Antispam-Message-Info: 8XIL0krENnKtUfzKAztwrZBZPuORXABty9grp1AfW/uL/wmR3WSy6TvEBuvh7QiNJEqjfoEi8G8Tx404eyqLtjDm+LIQQ4rC9H3yRI2Gv9Mq9n7umr7AfJIPUmn2B94iwQ9fSmQq0t6/xd77+e35UtZFC9eTxo2DlgmAEAGwAvcxu/9gd1j+43CYDU/4EShf1hBXoLAuggqTkGWoJQ4V5wmTWI7DlQyXGRhhAEeplz/FpE5t8FY/U8zHMdG7KyWW2wJDKxe/s7CV76lyNm/p3Ii56uy2JWfS9WYdl2M6ZqxGo2fjs56JVi9QL8h2rwyiLii0HuGOk9uP5qHEzgSsXQtcdDnLHwUEMu7CFaCOlJTaRlS8nyo8SQJOAgclpbCSF8Wq4ZTeYHbPYzjPptzp9VAmB8r2CiK/SZ4ViBscjYpcBMWlKxzRLMvqVDxlRQp3TvFL8vSuw+aK321o7wMG8u/4o8lRRSSb/bbyR6KxPqN3W7RoW9VoeaWaQLQ3ygD5XFaxS7Og3Hnpl9uR+NHYpcR5TQ5fP9vaEds9JD4QfRo4evrYxc1EpkF4cvP59YRyycOp3sVcn7d6a6UVAyl2c8ZJUR73IqMfuxHP6zQtoDCPJ5nw/0QPSRFYnzawEtFBlLtGSn4bzO7xloi6yPS2xw==
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN6PR17MB3121.namprd17.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(366004)(39840400004)(396003)(376002)(136003)(346002)(451199015)(38100700002)(4326008)(66556008)(2906002)(478600001)(66476007)(86362001)(8936002)(66946007)(5660300002)(44832011)(7416002)(8676002)(6512007)(2616005)(186003)(26005)(83380400001)(6666004)(316002)(6486002)(6506007)(53546011)(36756003)(6916009)(41300700001);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?V0InV0gR8SHKGTRR65Ti5Z/grM7DDYVB8M/axCAUU0rBQy0R+mMvcQoukXm+?=
- =?us-ascii?Q?1gS7k+V2OAEYcBBmtoHEc7vNaLZnuYO1mwKXYNvcQ9ygO4bE4KqMrrtSrcxi?=
- =?us-ascii?Q?14msJD1aTSLGiCN64tM2vj3gifAslr9BdGIxnnYuPkF2ewBql2KBWp3P+Dgf?=
- =?us-ascii?Q?2UBmX7zsnhw+qsWvvMvkLrp0NuuEVIpFI9CJNI027kQ+HzNxx513Svvdvk5d?=
- =?us-ascii?Q?KLC0Cfxpx+UZiddNtASLv2/66JkH5MgkZDvjkIm9IpBgQt1Wm+AxVs80A3Xs?=
- =?us-ascii?Q?HyhxJsRZOP+2lB7f5oO+wkyOdr0q7lsiG45uLChwW2K5TOa9Pio5vkqQriSi?=
- =?us-ascii?Q?t1JVqMBSzHppX2UmjLWwUaC8nUc3svAB6eokZCMVbTAdZ7d+LOcsjnIbwiok?=
- =?us-ascii?Q?H7nknv5yPv705kPYW6d9g6RjGvvm8uR2gH4GhKB+dESTXg2yS81ldGDyIAPy?=
- =?us-ascii?Q?+0FvqliG+68L9qkGWvPJ9YCENwYD5lZBFaHltbuAyujbE0b8fN2TzoEiHqlA?=
- =?us-ascii?Q?93zozwW73h2A2s6LIjk+dMiTYKUGwMHkTA7ditFCr/Yri9Amkdyz3/vehJHN?=
- =?us-ascii?Q?2BvYOsjnJ0FnCmSFY2paLuaUyC3oM8DliLXOMBuhTvwBlV0f404/qc3m7a3R?=
- =?us-ascii?Q?6OLOhpNNzH6pujtoF0LUZnDgXVcxS9IU8rPMCPTTP40SijSoWiPa68KEdFMe?=
- =?us-ascii?Q?3i34GV7Vz3oNAQx65/jsP+ovCCGliQjFOC4PGCfK/mDHliyWpWWYqrBpXYmf?=
- =?us-ascii?Q?JIvRxuaztDp8AoIhm3wXTC1oEx3isOdbgGXG+KRsxPKJCuXOC42WTfu77cGa?=
- =?us-ascii?Q?JEs6qplPmxSxvefO+DyN3FsLMytaLLPweFdnXceYU+CUJjqn6LSZhOm48BJu?=
- =?us-ascii?Q?uKI5KME6VLx0Of5pqklcnN7QyS7FPlBxPiGVD1h0VXhRDM3zD4pW7ffQ21I7?=
- =?us-ascii?Q?wDOO6fohnDVGRCgdp+33s18NZ8nlHGGkTW8Yj2XAJ77hqPke93kD4N2jTCrj?=
- =?us-ascii?Q?kHv08H83magLDynOCk6UAVI9smM2qNna1leJ6Hn6LHJY4OlpbwyGMiY446w6?=
- =?us-ascii?Q?nAIqhS7BBgsRy8F4kqhsntt0OtxljrG4Am4lqRhYXmarNCmajYKPo7FFeDed?=
- =?us-ascii?Q?I7Kqp6AIB6aJaQel8Ta7PTV6W3EqXwuRWZNYenHXypxmUF8Pn4UQmjJbPTAh?=
- =?us-ascii?Q?lN9RBiKIDg3iLhUcuQkrCkj7WAGvm1U1QuM8HUNrytD/Ntj/FGQav8J0SJdt?=
- =?us-ascii?Q?oReJwpoexUhiw0DD5S7Rdne3UPzBWXbgnd6AYVeF80HIN2/1D2d2+Nh6zg4D?=
- =?us-ascii?Q?ndD3qg/U2+5ybqctPhACPO7qy75i7hhtMyqpeLSK4b2xrYEJYrMlLxYuzEXS?=
- =?us-ascii?Q?96HpY2YbB8HmavJ9rGstl6xxMDZuDzoE6mac79SKP1c6egD/RaWZmTavprq9?=
- =?us-ascii?Q?pCOKCieK+2SaD6rnKx7eOU8rPFatkPt4tahs2vr+Cu1yMA8OeWJXx98qLIA+?=
- =?us-ascii?Q?/Ssbq20zYuFUJUVVY2YJHSsBqYVxHi6EU165y14lDfH+HVejv1hqgQlXXx3v?=
- =?us-ascii?Q?Z4l/uZLyklJGTRhZDanmJyzYEDMA2i2xdUBD9N/CF688h4y8zGpm21cSRo++?=
- =?us-ascii?Q?/A=3D=3D?=
-X-OriginatorOrg: memverge.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a5bbcf58-e2e6-41dc-7cd3-08dafb5f656c
-X-MS-Exchange-CrossTenant-AuthSource: BN6PR17MB3121.namprd17.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 21 Jan 2023 03:27:17.0919
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5c90cb59-37e7-4c81-9c07-00473d5fb682
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rHuty7KCxBbyo2uP4xkvkfDnPHYwCCGgkO+6P8r6wx31RmvZ1t6tGZdwVukBuQ+yJUjVwpqlDt4lI/+x2Ker0bCCU7r022INFUsH0kZcx3U=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR17MB5948
-X-Spam-Status: No, score=-1.1 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,FORGED_SPF_HELO,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_PASS,SPF_NONE,
-        URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.6
+        Fri, 20 Jan 2023 22:28:34 -0500
+Received: from lgeamrelo11.lge.com (lgeamrelo12.lge.com [156.147.23.52])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTP id 66CBA79E81
+        for <linux-fsdevel@vger.kernel.org>; Fri, 20 Jan 2023 19:28:30 -0800 (PST)
+Received: from unknown (HELO lgeamrelo02.lge.com) (156.147.1.126)
+        by 156.147.23.52 with ESMTP; 21 Jan 2023 12:28:29 +0900
+X-Original-SENDERIP: 156.147.1.126
+X-Original-MAILFROM: byungchul.park@lge.com
+Received: from unknown (HELO localhost.localdomain) (10.177.244.38)
+        by 156.147.1.126 with ESMTP; 21 Jan 2023 12:28:29 +0900
+X-Original-SENDERIP: 10.177.244.38
+X-Original-MAILFROM: byungchul.park@lge.com
+From:   Byungchul Park <byungchul.park@lge.com>
+To:     boqun.feng@gmail.com
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        damien.lemoal@opensource.wdc.com, linux-ide@vger.kernel.org,
+        adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org,
+        mingo@redhat.com, peterz@infradead.org, will@kernel.org,
+        tglx@linutronix.de, rostedt@goodmis.org, joel@joelfernandes.org,
+        sashal@kernel.org, daniel.vetter@ffwll.ch, duyuyang@gmail.com,
+        johannes.berg@intel.com, tj@kernel.org, tytso@mit.edu,
+        willy@infradead.org, david@fromorbit.com, amir73il@gmail.com,
+        gregkh@linuxfoundation.org, kernel-team@lge.com,
+        linux-mm@kvack.org, akpm@linux-foundation.org, mhocko@kernel.org,
+        minchan@kernel.org, hannes@cmpxchg.org, vdavydov.dev@gmail.com,
+        sj@kernel.org, jglisse@redhat.com, dennis@kernel.org, cl@linux.com,
+        penberg@kernel.org, rientjes@google.com, vbabka@suse.cz,
+        ngupta@vflare.org, linux-block@vger.kernel.org,
+        paolo.valente@linaro.org, josef@toxicpanda.com,
+        linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
+        jack@suse.cz, jlayton@kernel.org, dan.j.williams@intel.com,
+        hch@infradead.org, djwong@kernel.org,
+        dri-devel@lists.freedesktop.org, rodrigosiqueiramelo@gmail.com,
+        melissa.srw@gmail.com, hamohammed.sa@gmail.com,
+        42.hyeyoo@gmail.com, chris.p.wilson@intel.com,
+        gwan-gyeong.mun@intel.com, max.byungchul.park@gmail.com,
+        longman@redhat.com
+Subject: Re: [PATCH RFC v7 00/23] DEPT(Dependency Tracker)
+Date:   Sat, 21 Jan 2023 12:28:14 +0900
+Message-Id: <1674271694-18950-1-git-send-email-byungchul.park@lge.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <Y8oFj9A19cw3enHB@boqun-archlinux>
+References: <Y8oFj9A19cw3enHB@boqun-archlinux>
+X-Spam-Status: No, score=-6.9 required=5.0 tests=BAYES_00,RCVD_IN_DNSWL_HI,
+        SPF_HELO_NONE,SPF_NONE autolearn=unavailable autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 20, 2023 at 07:18:49PM -0800, Andrei Vagin wrote:
-> On Fri, Jan 20, 2023 at 7:05 AM Gregory Price <gourry.memverge@gmail.com> wrote:
-> >
-> > Implement ptrace getter/setter interface for syscall user dispatch.
-> >
-> > Presently, these settings are write-only via prctl, making it impossible
-> > to implement transparent checkpoint (coordination with the software is
-> > required).
-> >
-> > This is modeled after a similar interface for SECCOMP, which can have
-> > its configuration dumped by ptrace for software like CRIU.
-> >
-> > Signed-off-by: Gregory Price <gregory.price@memverge.com>
-> > ---
-> >  .../admin-guide/syscall-user-dispatch.rst     |  5 +-
-> >  include/linux/syscall_user_dispatch.h         | 19 +++++++
-> >  include/uapi/linux/ptrace.h                   | 10 ++++
-> >  kernel/entry/syscall_user_dispatch.c          | 49 +++++++++++++++++++
-> >  kernel/ptrace.c                               |  9 ++++
-> >  5 files changed, 91 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/admin-guide/syscall-user-dispatch.rst b/Documentation/admin-guide/syscall-user-dispatch.rst
-> > index 60314953c728..a23ae21a1d5b 100644
-> > --- a/Documentation/admin-guide/syscall-user-dispatch.rst
-> > +++ b/Documentation/admin-guide/syscall-user-dispatch.rst
-> 
-> <snip>
-> 
-> > +
-> > +int syscall_user_dispatch_get_config(struct task_struct *task, unsigned long size,
-> > +               void __user *data)
-> > +{
-> > +       struct syscall_user_dispatch *sd = &task->syscall_dispatch;
-> > +       struct syscall_user_dispatch_config config;
-> > +
-> > +       if (size != sizeof(struct syscall_user_dispatch_config))
-> > +               return -EINVAL;
-> > +
-> > +       if (sd->selector) {
-> > +               config.mode = PR_SYS_DISPATCH_ON;
-> > +               config.offset = sd->offset;
-> > +               config.len = sd->len;
-> > +               config.selector = sd->selector;
-> > +               config.on_dispatch = sd->on_dispatch;
-> > +       } else {
-> 
-> This doesn't look right for me. selector is optional and if it is 0,
-> it doesn't mean that
-> mode is PR_SYS_DISPATCH_OFF, does it?
-> 
-> > +               config.mode = PR_SYS_DISPATCH_OFF;
-> > +               config.offset = 0;
-> > +               config.len = 0;
-> > +               config.selector = NULL;
-> > +               config.on_dispatch = false;
-> > +       }
-> > +       if (copy_to_user(data, &config, sizeof(config)))
-> > +               return -EFAULT;
-> > +
-> > +       return 0;
-> > +}
-> > +
+On Thu, Jan 19, 2023 at 07:07:59PM -0800, Boqun Feng wrote:
+> On Thu, Jan 19, 2023 at 06:23:49PM -0800, Boqun Feng wrote:
+> > On Fri, Jan 20, 2023 at 10:51:45AM +0900, Byungchul Park wrote:
 
-Hm.  Right you are.  I suppose I should change this to checking offset
-instead.  Will need to validate the fields are correctly cleared on
-disable and on task allocate (i presume this is true).
+[...]
 
-Otherwise it might behoove us to actually add a state field.
+> > > T0		T1		T2
+> > > --		--		--
+> > > unfair_read_lock(A);
+> > >			write_lock(B);
+> > >					write_lock(A);
+> > > write_lock(B);
+> > >			fair_read_lock(A);
+> > > write_unlock(B);
+> > > read_unlock(A);
+> > >			read_unlock(A);
+> > >			write_unlock(B);
+> > >					write_unlock(A);
+> > > 
+> > > T0: read_unlock(A) cannot happen if write_lock(B) is stuck by a B owner
+> > >     not doing either write_unlock(B) or read_unlock(B). In other words:
+> > > 
+> > >       1. read_unlock(A) happening depends on write_unlock(B) happening.
+> > >       2. read_unlock(A) happening depends on read_unlock(B) happening.
+> > > 
+> > > T1: write_unlock(B) cannot happen if fair_read_lock(A) is stuck by a A
+> > >     owner not doing either write_unlock(A) or read_unlock(A). In other
+> > >     words:
+> > > 
+> > >       3. write_unlock(B) happening depends on write_unlock(A) happening.
+> > >       4. write_unlock(B) happening depends on read_unlock(A) happening.
+> > > 
+> > > 1, 2, 3 and 4 give the following dependencies:
+> > > 
+> > >     1. read_unlock(A) -> write_unlock(B)
+> > >     2. read_unlock(A) -> read_unlock(B)
+> > >     3. write_unlock(B) -> write_unlock(A)
+> > >     4. write_unlock(B) -> read_unlock(A)
+> > > 
+> > > With 1 and 4, there's a circular dependency so DEPT definitely report
+> > > this as a problem.
+> > > 
+> > > REMIND: DEPT focuses on waits and events.
+> > 
+> > Do you have the test cases showing DEPT can detect this?
+> > 
+> 
+> Just tried the following on your latest GitHub branch, I commented all
+> but one deadlock case. Lockdep CAN detect it but DEPT CANNOT detect it.
+> Feel free to double check.
 
-Thank you, i'll push an update tomorrow.
+I tried the 'queued read lock' test cases with DEPT on. I can see DEPT
+detect and report it. But yeah.. it's too verbose now. It's because DEPT
+is not aware of the test environment so it's just working hard to report
+every case.
 
-I also need change patch 2/3 as well.
+To make DEPT work with the selftest better, some works are needed. I
+will work on it later or you please work on it.
+
+The corresponding report is the following.
+
+---
+
+[    4.583997] ===================================================
+[    4.585094] DEPT: Circular dependency has been detected.
+[    4.585620] 6.0.0-00023-g331e0412f735 #2 Tainted: G        W         
+[    4.586347] ---------------------------------------------------
+[    4.586942] summary
+[    4.587161] ---------------------------------------------------
+[    4.587757] *** DEADLOCK ***
+[    4.587757] 
+[    4.588198] context A
+[    4.588434]     [S] lock(&rwlock_A:0)
+[    4.588804]     [W] lock(&rwlock_B:0)
+[    4.589175]     [E] unlock(&rwlock_A:0)
+[    4.589565] 
+[    4.589727] context B
+[    4.589963]     [S] lock(&rwlock_B:0)
+[    4.590375]     [W] lock(&rwlock_A:0)
+[    4.590749]     [E] unlock(&rwlock_B:0)
+[    4.591136] 
+[    4.591295] [S]: start of the event context
+[    4.591716] [W]: the wait blocked
+[    4.592049] [E]: the event not reachable
+[    4.592443] ---------------------------------------------------
+[    4.593037] context A's detail
+[    4.593351] ---------------------------------------------------
+[    4.593944] context A
+[    4.594182]     [S] lock(&rwlock_A:0)
+[    4.594577]     [W] lock(&rwlock_B:0)
+[    4.594952]     [E] unlock(&rwlock_A:0)
+[    4.595341] 
+[    4.595501] [S] lock(&rwlock_A:0):
+[    4.595848] [<ffffffff814eb244>] queued_read_lock_hardirq_ER_rE+0xf4/0x170
+[    4.596547] stacktrace:
+[    4.596797]       _raw_read_lock+0xcf/0x110
+[    4.597215]       queued_read_lock_hardirq_ER_rE+0xf4/0x170
+[    4.597766]       dotest+0x30/0x7bc
+[    4.598118]       locking_selftest+0x2c6f/0x2ead
+[    4.598602]       start_kernel+0x5aa/0x6d5
+[    4.599017]       secondary_startup_64_no_verify+0xe0/0xeb
+[    4.599562] 
+[    4.599721] [W] lock(&rwlock_B:0):
+[    4.600064] [<ffffffff814eb250>] queued_read_lock_hardirq_ER_rE+0x100/0x170
+[    4.600823] stacktrace:
+[    4.601075]       dept_wait+0x12c/0x1d0
+[    4.601465]       _raw_write_lock+0xa0/0xd0
+[    4.601892]       queued_read_lock_hardirq_ER_rE+0x100/0x170
+[    4.602496]       dotest+0x30/0x7bc
+[    4.602854]       locking_selftest+0x2c6f/0x2ead
+[    4.603333]       start_kernel+0x5aa/0x6d5
+[    4.603745]       secondary_startup_64_no_verify+0xe0/0xeb
+[    4.604298] 
+[    4.604458] [E] unlock(&rwlock_A:0):
+[    4.604820] (N/A)
+[    4.605023] ---------------------------------------------------
+[    4.605617] context B's detail
+[    4.605930] ---------------------------------------------------
+[    4.606551] context B
+[    4.606790]     [S] lock(&rwlock_B:0)
+[    4.607163]     [W] lock(&rwlock_A:0)
+[    4.607534]     [E] unlock(&rwlock_B:0)
+[    4.607920] 
+[    4.608080] [S] lock(&rwlock_B:0):
+[    4.608427] [<ffffffff814eb3b4>] queued_read_lock_hardirq_RE_Er+0xf4/0x170
+[    4.609113] stacktrace:
+[    4.609366]       _raw_write_lock+0xc3/0xd0
+[    4.609788]       queued_read_lock_hardirq_RE_Er+0xf4/0x170
+[    4.610371]       dotest+0x30/0x7bc
+[    4.610730]       locking_selftest+0x2c41/0x2ead
+[    4.611195]       start_kernel+0x5aa/0x6d5
+[    4.611615]       secondary_startup_64_no_verify+0xe0/0xeb
+[    4.612164] 
+[    4.612325] [W] lock(&rwlock_A:0):
+[    4.612671] [<ffffffff814eb3c0>] queued_read_lock_hardirq_RE_Er+0x100/0x170
+[    4.613369] stacktrace:
+[    4.613622]       _raw_read_lock+0xac/0x110
+[    4.614047]       queued_read_lock_hardirq_RE_Er+0x100/0x170
+[    4.614652]       dotest+0x30/0x7bc
+[    4.615007]       locking_selftest+0x2c41/0x2ead
+[    4.615468]       start_kernel+0x5aa/0x6d5
+[    4.615879]       secondary_startup_64_no_verify+0xe0/0xeb
+[    4.616607] 
+[    4.616769] [E] unlock(&rwlock_B:0):
+[    4.617132] (N/A)
+[    4.617336] ---------------------------------------------------
+[    4.617927] information that might be helpful
+[    4.618390] ---------------------------------------------------
+[    4.618981] CPU: 0 PID: 0 Comm: swapper/0 Tainted: G        W          6.0.0-00023-g331e0412f735 #2
+[    4.619886] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
+[    4.620699] Call Trace:
+[    4.620958]  <TASK>
+[    4.621182]  dump_stack_lvl+0x5d/0x81
+[    4.621561]  print_circle.cold+0x52b/0x545
+[    4.621983]  ? print_circle+0xd0/0xd0
+[    4.622385]  cb_check_dl+0x58/0x60
+[    4.622737]  bfs+0xba/0x170
+[    4.623029]  add_dep+0x85/0x170
+[    4.623355]  ? from_pool+0x4c/0x160
+[    4.623714]  __dept_wait+0x1fd/0x600
+[    4.624081]  ? queued_read_lock_hardirq_ER_rE+0x100/0x170
+[    4.624628]  ? rcu_read_lock_held_common+0x9/0x50
+[    4.625108]  ? queued_read_lock_hardirq_ER_rE+0x100/0x170
+[    4.625652]  dept_wait+0x12c/0x1d0
+[    4.626000]  _raw_write_lock+0xa0/0xd0
+[    4.626417]  queued_read_lock_hardirq_ER_rE+0x100/0x170
+[    4.626951]  dotest+0x30/0x7bc
+[    4.627270]  locking_selftest+0x2c6f/0x2ead
+[    4.627702]  start_kernel+0x5aa/0x6d5
+[    4.628081]  secondary_startup_64_no_verify+0xe0/0xeb
+[    4.628597]  </TASK>
+---
+
+The most important part is the following.
+
+[    4.588198] context A
+[    4.588434]     [S] lock(&rwlock_A:0)
+[    4.588804]     [W] lock(&rwlock_B:0)
+[    4.589175]     [E] unlock(&rwlock_A:0)
+[    4.589565] 
+[    4.589727] context B
+[    4.589963]     [S] lock(&rwlock_B:0)
+[    4.590375]     [W] lock(&rwlock_A:0)
+[    4.590749]     [E] unlock(&rwlock_B:0)
+
+As I told you, DEPT treats a queued lock as a normal type lock, no
+matter whether it's a read lock. That's why it prints just
+'lock(&rwlock_A:0)' instead of 'read_lock(&rwlock_A:0)'. If needed, I'm
+gonna change the format.
+
+I checked the selftest code and found, LOCK(B) is transformed like:
+
+	LOCK(B) -> WL(B) -> write_lock(&rwlock_B)
+
+That's why '&rwlock_B' is printed instead of just 'B', JFYI.
+
+Plus, for your information, you should turn on CONFIG_DEPT to use it.
+
+	Byungchul
