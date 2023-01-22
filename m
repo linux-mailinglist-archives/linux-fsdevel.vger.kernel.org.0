@@ -2,203 +2,101 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 20D1C676CE7
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jan 2023 13:37:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4350F677233
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jan 2023 21:06:15 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S230106AbjAVMhG (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Jan 2023 07:37:06 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39544 "EHLO
+        id S230486AbjAVUGO (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Jan 2023 15:06:14 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34988 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229949AbjAVMhF (ORCPT
+        with ESMTP id S230137AbjAVUGN (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Jan 2023 07:37:05 -0500
-Received: from casper.infradead.org (casper.infradead.org [IPv6:2001:8b0:10b:1236::1])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D5D241A95D
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jan 2023 04:37:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=SGNhBhqNCIpBI9HhG3N2nX6Tciz/iXZGKmi8TMa3TTE=; b=oQxQRzWWRM16ul6rLzZ29l95DU
-        UhTSOU4iKQihNIYq5l+o+r31CaOc8ZPNhvwHLBCashGXqU02suwPMkmPhnrraZlrooM2caVzdHJSY
-        iTfno1Tqb0OdOauS+BTjPBhdqxtmkyGdRkV6JQotRvCW5uj8bsfwM+V9LX5CGt2O8H2JJO7eCwmIT
-        9EvShG3oiKnDjdbBTsDGZse/qHvpZ3AHR8bv89/canf9TR25xdEjx3Y4Szu0rJiQWM6yWuia9nUi+
-        mpdndAOZPMCxCW6X2OWrUwOc6FD8PxzMp8fJ7xTRIe+TOwkJ8m/4hE3WNmJhHIK6QcowPVm14pWbz
-        Aexq5Xvw==;
-Received: from willy by casper.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pJZad-003YM0-A0; Sun, 22 Jan 2023 12:36:51 +0000
-Date:   Sun, 22 Jan 2023 12:36:51 +0000
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Ira Weiny <ira.weiny@intel.com>
-Cc:     linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        "Fabio M. De Francesco" <fmdefrancesco@gmail.com>
-Subject: Re: [RFC] memcpy_from_folio()
-Message-ID: <Y80t49tQtWO5N22J@casper.infradead.org>
-References: <Y8qr8c3+SJLGWhUo@casper.infradead.org>
- <63cb9105105ce_bd04c29434@iweiny-mobl.notmuch>
+        Sun, 22 Jan 2023 15:06:13 -0500
+Received: from mail-qt1-x82c.google.com (mail-qt1-x82c.google.com [IPv6:2607:f8b0:4864:20::82c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3B203E3B5
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jan 2023 12:06:12 -0800 (PST)
+Received: by mail-qt1-x82c.google.com with SMTP id s4so8266232qtx.6
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jan 2023 12:06:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=M3P+Sxuip0JpXG7+ldpgmEp2EenukjcoZIDETYOhkzk=;
+        b=AxA6vhZvWvf4Ly02xlfimgdl7Mc4SsAq21xlSc5ob2ZJN/c+Ewq6nEdGEnHBezxMEQ
+         q89Z0xlyCdda5W59uRY2wm/deBWEk/+CusXOSvkD38qN/864plKvpxf1eXijXmHmSedv
+         Z8QjFmJ5xByp+RvZZBjOGhgKugQgMTz3pBtwU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M3P+Sxuip0JpXG7+ldpgmEp2EenukjcoZIDETYOhkzk=;
+        b=QhD6YnQe/f6mLPNDGX44x5HE0KbSYyzX8RfolBAA8gJFQ8Wsmj/3Slbp+tpzgDChoD
+         MLw37puNQWACWdkbbUStsWDthffuyAmdQjQDdVn3K/bD2Lp1P5n14q8Kzw/aKdTTJ/6j
+         VCWLVCe3RlSvwCO46Wy9o465xybj8mJO0PnaZMSJzQIlzj2Hhk8pu/e9R+K+pTL5rQg2
+         C4bB/KIB2l1vpeQk7urxL5vTNViC/WZPuHZf/lCH6IeoI2AZtk695O8a/VkhbKR1Uym7
+         01nEx5RqVxaRo5w1ZzgRvaZzpCDbOdO8n0pPtHh4+lgqHae9SGKy07xJu3BaUJ1LthEU
+         0Qgw==
+X-Gm-Message-State: AFqh2kqu7Axo7H95jPkMG4mLrjpp5i2uNM2RjJhtV0geoiYwppgaQVGt
+        J5L9dMgqtgN0UT842T3t81/NReZpFCYvalNn
+X-Google-Smtp-Source: AMrXdXtB5u0PqcABzT9wWgy84iXlcA9bFfEf1zkEoUaIr7qdGgYNu/q5eqts1ugpszAOCltJXJXSKw==
+X-Received: by 2002:ac8:6b81:0:b0:3a8:1677:bc39 with SMTP id z1-20020ac86b81000000b003a81677bc39mr30489124qts.52.1674417970837;
+        Sun, 22 Jan 2023 12:06:10 -0800 (PST)
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com. [209.85.222.178])
+        by smtp.gmail.com with ESMTPSA id m3-20020a05620a24c300b007055dce4cecsm6655123qkn.97.2023.01.22.12.06.10
+        for <linux-fsdevel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 22 Jan 2023 12:06:10 -0800 (PST)
+Received: by mail-qk1-f178.google.com with SMTP id f23so3035326qkg.1
+        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jan 2023 12:06:10 -0800 (PST)
+X-Received: by 2002:a05:620a:99d:b0:705:efa8:524c with SMTP id
+ x29-20020a05620a099d00b00705efa8524cmr1089614qkx.594.1674417969782; Sun, 22
+ Jan 2023 12:06:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <63cb9105105ce_bd04c29434@iweiny-mobl.notmuch>
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.6
+References: <20230122090115.1563753-1-agruenba@redhat.com>
+In-Reply-To: <20230122090115.1563753-1-agruenba@redhat.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Sun, 22 Jan 2023 12:05:53 -0800
+X-Gmail-Original-Message-ID: <CAHk-=wgjMNbNG0FMatHtmzEZPj0ZmQpNRsnRvH47igJoC9TBww@mail.gmail.com>
+Message-ID: <CAHk-=wgjMNbNG0FMatHtmzEZPj0ZmQpNRsnRvH47igJoC9TBww@mail.gmail.com>
+Subject: Re: [GIT PULL] gfs2 writepage fix
+To:     Andreas Gruenbacher <agruenba@redhat.com>,
+        David Howells <dhowells@redhat.com>,
+        Steve French <smfrench@gmail.com>,
+        "Theodore Ts'o" <tytso@mit.edu>, Jan Kara <jack@suse.cz>,
+        Trond Myklebust <trondmy@hammerspace.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Darrick J. Wong" <djwong@kernel.org>
+Cc:     cluster-devel@redhat.com, linux-kernel@vger.kernel.org,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Spam-Status: No, score=-1.7 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+        RCVD_IN_DNSWL_NONE,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Fri, Jan 20, 2023 at 11:15:17PM -0800, Ira Weiny wrote:
-> Matthew Wilcox wrote:
-> > I think I have a good folio replacement for memcpy_from_page().  One of
-> > the annoying things about dealing with multi-page folios is that you
-> > can't kmap the entire folio, yet on systems without highmem, you don't
-> > need to.  It's also somewhat annoying in the caller to keep track
-> > of n/len/offset/pos/...
-> > 
-> > I think this is probably the best option.  We could have a loop that
-> > kmaps each page in the folio, but that seems like excessive complexity.
-> 
-> Why?  IMO better to contain the complexity of highmem systems into any
-> memcpy_[to,from]_folio() calls then spread them around the kernel.
+On Sun, Jan 22, 2023 at 1:01 AM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+>
+> gfs2 writepage fix
+>
+> - Fix a regression introduced by commit "gfs2: stop using
+>   generic_writepages in gfs2_ail1_start_one".
 
-Sure, but look at the conversion that I posted.  It's actually simpler
-than using the memcpy_from_page() API.
+Hmm. I'm adding a few more people and linux-fsdevel to the reply,
+because we had a number of filesystems remove writepages use lately,
+including some that did it as a fix after the merge window.
 
-> > I'm happy to have highmem systems be less efficient, since they are
-> > anyway.  Another potential area of concern is that folios can be quite
-> > large and maybe having preemption disabled while we copy 2MB of data
-> > might be a bad thing.  If so, the API is fine with limiting the amount
-> > of data we copy, we just need to find out that it is a problem and
-> > decide what the correct limit is, if it's not folio_size().
-> 
-> Why not map the pages only when needed?  I agree that keeping preemption
-> disabled for a long time is a bad thing.  But kmap_local_page does not
-> disable preemption, only migration.
+Everybody involved seemed to claim it was just a no-brainer
+switch-over, and I just took that on faith. Now it looks like that
+wasn't true at least for gfs2 due to different semantics.
 
-Some of the scheduler people aren't terribly happy about even disabling
-migration for a long time.  Is "copying 2MB of data" a long time?  If I've
-done my sums correctly, my current laptop has 2x 16 bit LP-DDR4-4267
-DIMMs installed.  That works out to 17GB/s and so copying 2MB of data
-will take 118us.  Probably OK for even the most demanding workload.
+Maybe the gfs2 issue is purely because of how gfs2 did the conversion
+(generic_writepages -> filemap_fdatawrite_wbc), but let's make people
+look at their own cases.
 
-> Regardless any looping on the maps is going to only be on highmem systems
-> and we can map the pages only if/when needed.  Synchronization of the folio
-> should be handled by the caller.  So it is fine to all allow migration
-> during memcpy_from_folio().
-> 
-> So why not loop through the pages only when needed?
-
-So you're proposing re-enabling migration after calling
-kmap_local_folio()?  I don't really understand.
-
-> > 
-> >  fs/ext4/verity.c           |   16 +++++++---------
-> >  include/linux/highmem.h    |   29 +++++++++++++++++++++++++++++
-> >  include/linux/page-flags.h |    1 +
-> >  3 files changed, 37 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/fs/ext4/verity.c b/fs/ext4/verity.c
-> > index e4da1704438e..afe847c967a4 100644
-> > --- a/fs/ext4/verity.c
-> > +++ b/fs/ext4/verity.c
-> > @@ -42,18 +42,16 @@ static int pagecache_read(struct inode *inode, void *buf, size_t count,
-> >  			  loff_t pos)
-> >  {
-> >  	while (count) {
-> > -		size_t n = min_t(size_t, count,
-> > -				 PAGE_SIZE - offset_in_page(pos));
-> > -		struct page *page;
-> > +		struct folio *folio;
-> > +		size_t n;
-> >  
-> > -		page = read_mapping_page(inode->i_mapping, pos >> PAGE_SHIFT,
-> > +		folio = read_mapping_folio(inode->i_mapping, pos >> PAGE_SHIFT,
-> >  					 NULL);
-> 
-> Is this an issue with how many pages get read into the page
-> cache?  I went off on a tangent thinking this read the entire folio into
-> the cache.  But I see now I was wrong.  If this is operating page by page
-> why change this function at all?
-
-The folio may (indeed _should_) be already present in the cache, otherwise
-the cache isn't doing a very good job.  If read_mapping_folio() ends up
-having to allocate the folio, today it only allocates a single page folio.
-But if somebody else allocated it through the readahead code, and the
-filesystem supports multi-page folios, then it will be larger than a
-single page.  All callers must be prepared to handle a multi-page folio.
-
-> > -		if (IS_ERR(page))
-> > -			return PTR_ERR(page);
-> > -
-> > -		memcpy_from_page(buf, page, offset_in_page(pos), n);
-> > +		if (IS_ERR(folio))
-> > +			return PTR_ERR(folio);
-> >  
-> > -		put_page(page);
-> > +		n = memcpy_from_file_folio(buf, folio, pos, count);
-> > +		folio_put(folio);
-> >  
-> >  		buf += n;
-> >  		pos += n;
-> > diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-> > index 9fa462561e05..9917357b9e8f 100644
-> > --- a/include/linux/highmem.h
-> > +++ b/include/linux/highmem.h
-> > @@ -414,6 +414,35 @@ static inline void memzero_page(struct page *page, size_t offset, size_t len)
-> >  	kunmap_local(addr);
-> >  }
-> >  
-> > +/**
-> > + * memcpy_from_file_folio - Copy some bytes from a file folio.
-> > + * @to: The destination buffer.
-> > + * @folio: The folio to copy from.
-> > + * @pos: The position in the file.
-> > + * @len: The maximum number of bytes to copy.
-> > + *
-> > + * Copy up to @len bytes from this folio.  This may be limited by PAGE_SIZE
-> 
-> I have a problem with 'may be limited'.  How is the caller to know this?
-
-... from the return value?
-
-> Won't this propagate a lot of checks in the caller?  Effectively replacing
-> one complexity in the callers for another?
-
-Look at the caller I converted!  It _reduces_ the amount of checks in
-the caller.
-
-> > + * if the folio comes from HIGHMEM, and by the size of the folio.
-> > + *
-> > + * Return: The number of bytes copied from the folio.
-> > + */
-> > +static inline size_t memcpy_from_file_folio(char *to, struct folio *folio,
-> > +		loff_t pos, size_t len)
-> > +{
-> > +	size_t offset = offset_in_folio(folio, pos);
-> > +	char *from = kmap_local_folio(folio, offset);
-> > +
-> > +	if (folio_test_highmem(folio))
-> > +		len = min(len, PAGE_SIZE - offset);
-> > +	else
-> > +		len = min(len, folio_size(folio) - offset);
-> > +
-> > +	memcpy(to, from, len);
-> 
-> Do we need flush_dcache_page() for the pages?
-
-Why?  memcpy_from_page() doesn't have one.
-
-> I gave this an attempt today before I realized read_mapping_folio() only
-> reads a single page.  :-(
-> 
-> How does memcpy_from_file_folio() work beyond a single page?  And in that
-> case what is the point?  The more I think about this the more confused I
-> get.
-
-In the highmem case, we map a single page and so cannot go beyond a
-single page.  If the folio wasn't allocated from highmem, we're just
-using its address directly, so we can access the whole folio.
-
-Hope I've cleared up your confusions.
+                 Linus
