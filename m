@@ -2,589 +2,189 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id A7E72676BDE
-	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jan 2023 10:33:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 6F1C4676C10
+	for <lists+linux-fsdevel@lfdr.de>; Sun, 22 Jan 2023 11:20:12 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S229863AbjAVJdp (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Sun, 22 Jan 2023 04:33:45 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:40544 "EHLO
+        id S229989AbjAVKUL (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Sun, 22 Jan 2023 05:20:11 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53070 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S229617AbjAVJdj (ORCPT
+        with ESMTP id S229987AbjAVKUK (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Sun, 22 Jan 2023 04:33:39 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 2823C2D50
-        for <linux-fsdevel@vger.kernel.org>; Sun, 22 Jan 2023 01:32:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674379966;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=h11VY6wYEWBWJdX9TmJpCfeZX9Pdj6XZk7AY2pPSfCA=;
-        b=jC9hGL8VLdlTjLKpxSE4GCcrpGp0lghvg6IGKp3I4Ur/ad29qeIQUDwxN8Znv9TBM5G4sH
-        PBva5CPwhAT5bHb+99DFFYEatv1rFXyxNoIX8R8lbGD5fMbfSr5HgM9rsAG6XyR6a7hYO1
-        rNBzPuWc33I+xsrxNm0Ucr65ZTA4UMw=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-52-fcO4KRqpMieine4snbgxNA-1; Sun, 22 Jan 2023 04:32:43 -0500
-X-MC-Unique: fcO4KRqpMieine4snbgxNA-1
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.rdu2.redhat.com [10.11.54.8])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6E84918ABF82;
-        Sun, 22 Jan 2023 09:32:42 +0000 (UTC)
-Received: from localhost (unknown [10.39.192.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id BC435C15BAD;
-        Sun, 22 Jan 2023 09:32:41 +0000 (UTC)
-From:   Giuseppe Scrivano <gscrivan@redhat.com>
-To:     Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc:     Amir Goldstein <amir73il@gmail.com>,
-        Alexander Larsson <alexl@redhat.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        david@fromorbit.com, brauner@kernel.org, viro@zeniv.linux.org.uk,
-        Vivek Goyal <vgoyal@redhat.com>,
-        Miklos Szeredi <miklos@szeredi.hu>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Subject: Re: [PATCH v3 0/6] Composefs: an opportunistically sharing verified
- image filesystem
-References: <cover.1674227308.git.alexl@redhat.com>
-        <CAOQ4uxgGc33_QVBXMbQTnmbpHio4amv=W7ax2vQ1UMet0k_KoA@mail.gmail.com>
-        <87ilh0g88n.fsf@redhat.com>
-        <321dfdb1-3771-b16d-604f-224ce8aa22cf@linux.alibaba.com>
-        <878rhvg8ru.fsf@redhat.com>
-        <3ae1205a-b666-3211-e649-ad402c69e724@linux.alibaba.com>
-        <87sfg3ecv5.fsf@redhat.com>
-        <31fc4be5-0e53-b1fb-9a2c-f34d598c0fe7@linux.alibaba.com>
-        <87cz77djte.fsf@redhat.com>
-Date:   Sun, 22 Jan 2023 10:32:39 +0100
-In-Reply-To: <87cz77djte.fsf@redhat.com> (Giuseppe Scrivano's message of "Sun,
-        22 Jan 2023 10:01:33 +0100")
-Message-ID: <878rhuewy0.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.1 (gnu/linux)
+        Sun, 22 Jan 2023 05:20:10 -0500
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id D2FE71E9F6;
+        Sun, 22 Jan 2023 02:20:08 -0800 (PST)
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+        by mx0b-00069f02.pphosted.com (8.17.1.19/8.17.1.19) with ESMTP id 30M4uMSK018855;
+        Sun, 22 Jan 2023 10:19:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=message-id : date :
+ from : subject : to : cc : references : in-reply-to : content-type :
+ content-transfer-encoding : mime-version; s=corp-2022-7-12;
+ bh=SMA9KbT/Wzg9El37iDuPDmmJj0sy/jNh066E90ifcwo=;
+ b=nA4eP8E7K8lAMtlUFyWsbh8u3JQEFJXJbBNUHnHz7DM99h/HeOGJ9hCrY2imNRbpqFYd
+ JVvAkfrDKpbloatgntjqsNtffO+A9uRt60Zx/pVCh0VuZe3UZN/Zp4zXUNSxglTCNJxf
+ npySs1+qPezC1c0+nP4JRmZxLmiySwpMmlGD3a4Ab36u2IhmZbGB2w5dxxgUSQ98/ie5
+ U5Om2IvRylIkTrhwb4C5t2bZtefER4yHHyg+44eLeJN6uipXKI2rpDFGodsS0iYpRcP4
+ IDhRwngO2JXp2qcJy0ncx0AEBUoDMIpLxzr9eqS5/qWwiw/yVccZWAsCNSiNLOgnYgZB Nw== 
+Received: from iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta02.appoci.oracle.com [147.154.18.20])
+        by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 3n87nt19ns-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 22 Jan 2023 10:19:58 +0000
+Received: from pps.filterd (iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (8.17.1.5/8.17.1.5) with ESMTP id 30M9NUgR004800;
+        Sun, 22 Jan 2023 10:19:58 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2177.outbound.protection.outlook.com [104.47.59.177])
+        by iadpaimrmta02.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 3n86g97xgv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Sun, 22 Jan 2023 10:19:57 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=PAiJ5qNd7Uw1UHmC0MGlfY14DbD8YpZVrxefnsHQQ3x7/3IahZatGdjovmvqzuBIPh9l3fNOcZ7d0LGMJM61WMxbO0Rxay4aWVSJO+GA/4ESBkHbjNnCydm2Hih1/94gFZHg73kpe+mzUWPwdZQYXZBKg4kRx/8CVzT3O2dkRF01xAQhLna/ACgsO0nmLpggxOcP6XWmNjSqh7HtJVZFmNJglnAUXSMVEa0722DXlMxma4PCY7yYwf92i07YKXq+1wsPBRKdc0IrMOhPJ+umgniZdEeE/fZu45aWe8TN784MRPesD8qX/1tJdBQzgfoDvrXVtkkt/9Ld6fuMjzymOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SMA9KbT/Wzg9El37iDuPDmmJj0sy/jNh066E90ifcwo=;
+ b=gGvcRXEcwsXrGJdxSbSmBZb7drEK3ANgSDI4j4Q6U7WHPgurPZ4UdOfl2O7Izl88f4deM+FWZmAlxkPEARWF4wCbDzE6ucDrAvdxHH5ZgenDf3OwNIW+00QdD54bRGm2xlSb/S3c4VNfejk1xJKy4CDUWLmK1XFkPCDgSRJc6EAd8uYKLhQeLxKfjxRk4o3NPb++okArxUZ83ZRsQ1DPoT15NB226iYBIjB7KXnQ3c6GdkQPQcXJtrVfzrlvXDs0dJmTdYVAhJMdNqfAhpknhVLOGuGjO/+TYrs+X4vMFrcS16v4iSw6Cgr45r9McZb3ZA2LLS14aHGUHr3mimb6PA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SMA9KbT/Wzg9El37iDuPDmmJj0sy/jNh066E90ifcwo=;
+ b=hw4Fy3a+ZOwf79An84RlPXZ79HboMmiq7DnBaa2VohAm4Xk+rQZzrUOC2hikoBFwpG3lnirJ+DPKyBDwYU0jIpT1PZyWR4tyLFOxf0IOJPffNgBpzPBeVZrvrSKcdsSNpJ8sZwma+Uz+LBnS0seMBuov/b1+zK9Vw39u+AMQqbo=
+Received: from PH0PR10MB5706.namprd10.prod.outlook.com (2603:10b6:510:148::10)
+ by PH7PR10MB5724.namprd10.prod.outlook.com (2603:10b6:510:125::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.6043.9; Sun, 22 Jan
+ 2023 10:19:56 +0000
+Received: from PH0PR10MB5706.namprd10.prod.outlook.com
+ ([fe80::560e:9c52:a6bd:4036]) by PH0PR10MB5706.namprd10.prod.outlook.com
+ ([fe80::560e:9c52:a6bd:4036%8]) with mapi id 15.20.6043.009; Sun, 22 Jan 2023
+ 10:19:55 +0000
+Message-ID: <d512af99-50c7-e9f1-ef0a-e0ab57c51e5e@oracle.com>
+Date:   Sun, 22 Jan 2023 18:19:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.3.0
+From:   Anand Jain <anand.jain@oracle.com>
+Subject: Re: [PATCH 02/34] btrfs: better document struct btrfs_bio
+To:     Christoph Hellwig <hch@lst.de>, Chris Mason <clm@fb.com>,
+        Josef Bacik <josef@toxicpanda.com>,
+        David Sterba <dsterba@suse.com>
+Cc:     Damien Le Moal <damien.lemoal@wdc.com>,
+        Naohiro Aota <naohiro.aota@wdc.com>,
+        Johannes Thumshirn <johannes.thumshirn@wdc.com>,
+        Qu Wenruo <wqu@suse.com>, Jens Axboe <axboe@kernel.dk>,
+        "Darrick J. Wong" <djwong@kernel.org>, linux-block@vger.kernel.org,
+        linux-btrfs@vger.kernel.org, linux-fsdevel@vger.kernel.org
+References: <20230121065031.1139353-1-hch@lst.de>
+ <20230121065031.1139353-3-hch@lst.de>
+Content-Language: en-US
+In-Reply-To: <20230121065031.1139353-3-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG2PR02CA0053.apcprd02.prod.outlook.com
+ (2603:1096:4:54::17) To PH0PR10MB5706.namprd10.prod.outlook.com
+ (2603:10b6:510:148::10)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.8
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE,URIBL_BLOCKED
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH0PR10MB5706:EE_|PH7PR10MB5724:EE_
+X-MS-Office365-Filtering-Correlation-Id: a74338f1-8d1d-4219-3121-08dafc6234e2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: q+1Ua3anU+9SfXZfjNDIgRwun2bxLT/fdvVsV9IYbnMKogYCbr5sfLiZS8qU8es0SoKI/RB/PoA9u4KQ0uZVLEjYIiFX2FCtQ8VUaMXXhRnKwKOXXjTMrxSVLcx6V3MTqL1yP6UyVTyhWvPdU4codQ0bK9nCxdNWXpCN6lmtOaMZW509rDPWCFGWMY9+C8qcz39CSk/IgjqRDOibLctXN/hOzbQbUcUs1PA5o4fJSpnFvqGzReExuvpRnVQQr6DgvoK07Am5ieKBCmYzrdaRESaaKY/Xz8YbUtK6yFDoR3fT7q2k74FRJYFTBZrDqmnRy/tx1lnVTn/IU6DoPLBCWeRx1UGAbhy1yuIi+rvPtOob8GSnMLhKG/fcZuoWgVx0MMy9oOzGszrXw6qNQU10fN1DNxApfCnl4+D8fBZWgVYD0kVNF9Mo/m1xEy8pK20nzp+wcE/t7gNdvZJHLnhrACXci+/Z40UtHJ1NT/NaTodlevzVRJvs4hicfnPSoLv2wu007ZQrEBtqg2zlmR2cWu/3BKI4OPBybWfOkwPb5z44Ii3QeRLtsOgoHKr2P5wb7qFumO2c0ZCvH7AP5eUGMlFg85MBTaMAYiXV56GwbuxKqhm+AEywUk+Jw79YeOqzq4PpiQ7a7/uy/7loTLH+GS097myExBzJynr2lyoN3HmPIAqABY9Cv3qQ/Ywizc6CiyitpYy37HXA8OiPUS8fJ4BgHmO61SUgpMOhdU8VjRc=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH0PR10MB5706.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230022)(376002)(396003)(366004)(136003)(39860400002)(346002)(451199015)(36756003)(2616005)(558084003)(316002)(66946007)(66556008)(66476007)(4326008)(110136005)(8676002)(54906003)(19618925003)(7416002)(2906002)(31696002)(5660300002)(44832011)(31686004)(6666004)(26005)(6506007)(186003)(6512007)(6486002)(478600001)(4270600006)(41300700001)(38100700002)(86362001)(8936002)(45980500001)(43740500002);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RTFqaFJlTmxiNU0rSWErR0h6dStMdnBLU3JIa2gwaVpMOFNnVnQwNXBtVEpG?=
+ =?utf-8?B?TEQvVE5UcWcxV1g2RnkwZk5Md1ByR2VZM0FBM2h0M25hS2ZLNnp3NURhK29v?=
+ =?utf-8?B?c3BhT3Y1c2lWNnk4aFFGOWhYT2ZZZUs4RlJDTGhFdzJRZys2SmJhZlVTeFRl?=
+ =?utf-8?B?Q2xYYXcyUlNRZmwrcFZocXkrQkJlRzhLWEJabE9TR0czVGIvVlVDQmNFeWs2?=
+ =?utf-8?B?RnpKNVdNK3hyemYweVFxM1VkU3gzRVJiV0M5ZWQyN284TTdRZXpKNVpSZHJR?=
+ =?utf-8?B?bjNSd3IwQjYwcmFxeVhBenlXS0JZZldETTA1YjJLTjlKSjBZU3FoV2dtSWFX?=
+ =?utf-8?B?ZEhKeGJJUVh5K1dqZTdKYi80cFN3ZmkxRjVkbFNaWkdiQTBic2lZOVNvSUVN?=
+ =?utf-8?B?SXVuQjE0TDgzNmN4WE5yalh0amJLWVNFd3p3ak9VblZxRy9BcDRacXRCcWtw?=
+ =?utf-8?B?cXczc2NnSkl4WkE3R2ErRUoyRXpVSTlmNXdJVmZzREZjOTYvcmFacVFCNFFU?=
+ =?utf-8?B?VjgwR3ozSVJEQjJOK05WQkVVRS9RdS91UTNBaXFOR2ZERHlTZ0ZQa3paaVZF?=
+ =?utf-8?B?S2xwWlB6cFpaQjltVEE4NHpGaUNxSUhrVUlJRndmU2U5WUtQbCt4dkJOcHoz?=
+ =?utf-8?B?bnpadEZOOEpkSldyTy9YTnBMekdrYXJpKzdYRS9Ud2Y1dllNemQreDRYaGVk?=
+ =?utf-8?B?Q0N4U3l1TjNsdEMyR3JadEN1c29JYUZkMlJLUGF6SzZsTForR2g0cmEvQjlV?=
+ =?utf-8?B?S1NkanVuNFBlRlpQTGNRRisxekZlbEtEU1hCQnY0WTlpOUszRXVSUXVkZzZE?=
+ =?utf-8?B?N0tzSTk4aXdKdU9UUFgyL2w4Yy9DYThtOEdsOHRXNnhmLzV3TVAreGZGUEs5?=
+ =?utf-8?B?Vmo1UUcxWklmUE5VWnNlNUVMTjFvMnBybjdJa3I3SUxpbnBHci9PRU9sV0pS?=
+ =?utf-8?B?THkybWphR1Bka3UrbGdWZnB4Y0wwbTdsOWlXVWNISnFZajhBY21IVE9Ra2Zx?=
+ =?utf-8?B?a2FTZmxvRVIwYU5pSzlQQjNUNFcyZVlYMjRUVE4rNWdBb00xRHNEYW5SbldT?=
+ =?utf-8?B?cWY5SUNVU0hmbmpvOGNuOUpraHhJakRCaGFpcjhSUGJmVmU3NHozK0l4ZElE?=
+ =?utf-8?B?WTR0ZU1RL0VlL3E1L0tqR1hKb0xXVFNUR2s5NDZJL2ZUTHpVQ0V5NjNKQzJt?=
+ =?utf-8?B?RVhWZENYVTZCR2F6YmlFek0xeVpucVRsZDVxVjdxSTJkZ3BtYmtES2RHUDJO?=
+ =?utf-8?B?cGdVUlhEc2FLMHJzOHl6ek5sQ2dsc2dKU091SzRZNHlCaEkwUGNkMUlhbnNm?=
+ =?utf-8?B?ZXVqMXhTTlhXMnBWQUlPTnRZOXVkN05tRWVpdFJzc3hTbnFhb0E0czlhVVVi?=
+ =?utf-8?B?WkE2aWxoYlNSRURYa1hBbXppM0g4MEJVQ3RudEtmTlBYc0FtTEl4dmFsT2JR?=
+ =?utf-8?B?NWJZYXpKZ0h6MmYzNW5CVXVVQjRWUHl5NlUrcC93V01SalYrVmk2bGxkUzhs?=
+ =?utf-8?B?RTFjQVg2Q3F6a2pRS0M1QXVoajZZeVdxM1dEYllFdlY4eDBTVmdxSTAzN0VG?=
+ =?utf-8?B?cHRkNmJLa1hvNURDcUI4LzhhK3p1SHRUVW0vaXBnOVNMcXdrNVhSOGNRNDFE?=
+ =?utf-8?B?N29HWWFBZk5wVWlsblZCT2E0YnFtM0JMRVNpZ0EySnVQaTcrZjRpa0JNUWtz?=
+ =?utf-8?B?WEtnYkVheGNrR1VtQlJZQTZIamI2ajVaelU5OUVpQm9iejgxbkZUb3BZdU5V?=
+ =?utf-8?B?cHpOcnBXeHhBWnJSSFRSSkZvSlozYnFvdmhmN0NIYVZhdWdKQVJId1BEYWds?=
+ =?utf-8?B?UFlITWt1R2lGb3FxZFpyTlZYVTUwbGRpVTRpMVF0K1lsVWswNG1wS29idUpJ?=
+ =?utf-8?B?bnBBSzhMd0xpM3BrMmNkQ3l5aEozZzZtWmV4bTVBZUFUVDBsczZsSEpFSDUr?=
+ =?utf-8?B?Rlk4S3NoekIxQUttMjVMNHJIOGNWWXM1RGtnNjc0WTNIUnFPQUJTRkF3QVlC?=
+ =?utf-8?B?UUwreGNLTlNiT0tMWkM3U21oMnYweU5wZitVTCtzUTkwcFp2WmNjSEEwdm5j?=
+ =?utf-8?B?cEg2aXdBWDlEWExyd0V2TXBpM2ZHMHFmdk5tOG1FZlNmakxsdDV1cldBeFdq?=
+ =?utf-8?B?WStMUjREcjdLaDdPT25EamJ5alA0aDlzYXFsOWpsdTRubmNpdVcvSVlKTnlx?=
+ =?utf-8?B?Q3c9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: =?utf-8?B?NEJxNTZ6eGZXbGhwTWs1c242MHByTG9BVW1qaktDSHFjdGx0THRCMHNDK2Uy?=
+ =?utf-8?B?M2UwTGthMEtSWWpsZCtrRGtnaTZqSzRzbm5QLzk0S0k4REVEU04zSnIzZjd3?=
+ =?utf-8?B?bi8rdG9LMURVbkFDQnJPeEJHZTBxemJiRitoSjlqUTczQ2JiKzdiN21SdjUw?=
+ =?utf-8?B?UFpIVU9JOVBBVUpjYlhTY09nVWVrRThUVGR6eU84ZWNyVytacGF4T1ZPVnRP?=
+ =?utf-8?B?NHRLYmc0a0w1RWN4dUh6REZYUE1PVllrZzQ5MFNhUW9CYnZFMHhpaXZ6bDhp?=
+ =?utf-8?B?SStnUFhwYkpBWjJqZndCcHNNTDYvR1RoWjQ3VlBqSDZpdHZPY1ZENnJ1MXRO?=
+ =?utf-8?B?ajhTamY4dGNwM0I4eERhWXVsZFNURDRJWVUrT1R1UWJQd0lUOSswaThhUTRF?=
+ =?utf-8?B?N0VoN0FSaUl3RTU0MGxDTzkvSit3TCs3Y0lNZ3pyT0VSNnJLanhpdDJsdWpo?=
+ =?utf-8?B?NmdGa3c0aFhmeHFkalZ0eVVXdHBBaFZNQ2UySnRuRjQxK0NNNWhLVzY2Qm51?=
+ =?utf-8?B?MTlhVlpTeHFob0VwVkhlbEM0aDV0VGlZTEZ0ZStWeThWNDlDZU1haVNsejJP?=
+ =?utf-8?B?REliMzFGZkJQOVBOMjVuKzd4NzYyVDdKNXhWSXZHMy85TTM4czhGS2luUDh6?=
+ =?utf-8?B?UUxiVXZDc0JXcGo4QVdoTU5pcitlTmFsdkhMV1g2MHZvQkVqWEJ0N1NZSnBM?=
+ =?utf-8?B?Y0FHZWR6T0NSZlY4djQ2Y2R0RlpPcXU0Vmw5eEFiSVc3cnRZaGF4NSszZ3RV?=
+ =?utf-8?B?T3k3YWM0RC8xVmVzZUVob24zSkNNaUk3a1RnTjlvaGRDSFhUTHlRRFduTFlh?=
+ =?utf-8?B?Unp0eElvMjZxRXZRVEtDRGd2U0hZdVlWRis3b1Eyb3FJNTdhdiszTStUdU9z?=
+ =?utf-8?B?K3FVOUNoK3hGNXd6cnA5bVhRMGlwNnBIRXVidG5BckVQTlhuTG1SQm9LTndT?=
+ =?utf-8?B?YVg5aHUvRkdRTzBkcWhoeE16R2FhSVhkcTZYS0h2Q3JkaEt6V3hLaWdVV1cv?=
+ =?utf-8?B?ZHpFUGdpUDNHUDR0MHh5K0hCaFV1Y2R3MWxJUEJKbTZkZTQ1Q0dMWXdMdzdT?=
+ =?utf-8?B?WnhLME8vajY0b0J4L3NVNndkZ3BETG5qdGMwWkQ3UUgwQUxtNVp2TlBqMGR3?=
+ =?utf-8?B?RTluQzFWcm51RVVDVG4yNk5OSUZ4ODFPVUtoQ2Jud0lDTFQzbHF3SmZlMWhE?=
+ =?utf-8?B?MFBvZmNMQjN6bHFoUVlOc25YM0ZHcGVXVnY0ZDlBV1NTeFo1L25lT2g4ZU9t?=
+ =?utf-8?Q?S2XyrpvnBD87UcO?=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a74338f1-8d1d-4219-3121-08dafc6234e2
+X-MS-Exchange-CrossTenant-AuthSource: PH0PR10MB5706.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 22 Jan 2023 10:19:55.5109
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d4gJEmuJqv1QhABuHBBk87mwIKGxKE18NzNAyEBFTLwulerEe9hmHtjRkM5sbtCNRVh46aiC4uIvni5WBOOS+g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR10MB5724
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.219,Aquarius:18.0.930,Hydra:6.0.562,FMLib:17.11.122.1
+ definitions=2023-01-22_07,2023-01-20_01,2022-06-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 mlxscore=0 spamscore=0
+ bulkscore=0 mlxlogscore=958 malwarescore=0 adultscore=0 suspectscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2212070000
+ definitions=main-2301220100
+X-Proofpoint-ORIG-GUID: c8aFUgRuTTDVWtSM0T6c5RK2QGSIT29Z
+X-Proofpoint-GUID: c8aFUgRuTTDVWtSM0T6c5RK2QGSIT29Z
+X-Spam-Status: No, score=-3.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_LOW,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=ham
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Giuseppe Scrivano <gscrivan@redhat.com> writes:
-
-> Gao Xiang <hsiangkao@linux.alibaba.com> writes:
->
->> On 2023/1/22 06:34, Giuseppe Scrivano wrote:
->>> Gao Xiang <hsiangkao@linux.alibaba.com> writes:
->>>=20
->>>> On 2023/1/22 00:19, Giuseppe Scrivano wrote:
->>>>> Gao Xiang <hsiangkao@linux.alibaba.com> writes:
->>>>>
->>>>>> On 2023/1/21 06:18, Giuseppe Scrivano wrote:
->>>>>>> Hi Amir,
->>>>>>> Amir Goldstein <amir73il@gmail.com> writes:
->>>>>>>
->>>>>>>> On Fri, Jan 20, 2023 at 5:30 PM Alexander Larsson <alexl@redhat.co=
-m> wrote:
->>>>>>
->>>>>> ...
->>>>>>
->>>>>>>>>
->>>>>>>>
->>>>>>>> Hi Alexander,
->>>>>>>>
->>>>>>>> I must say that I am a little bit puzzled by this v3.
->>>>>>>> Gao, Christian and myself asked you questions on v2
->>>>>>>> that are not mentioned in v3 at all.
->>>>>>>>
->>>>>>>> To sum it up, please do not propose composefs without explaining
->>>>>>>> what are the barriers for achieving the exact same outcome with
->>>>>>>> the use of a read-only overlayfs with two lower layer -
->>>>>>>> uppermost with erofs containing the metadata files, which include
->>>>>>>> trusted.overlay.metacopy and trusted.overlay.redirect xattrs that =
-refer
->>>>>>>> to the lowermost layer containing the content files.
->>>>>>> I think Dave explained quite well why using overlay is not
->>>>>>> comparable to
->>>>>>> what composefs does.
->>>>>>> One big difference is that overlay still requires at least a syscall
->>>>>>> for
->>>>>>> each file in the image, and then we need the equivalent of "rm -rf"=
- to
->>>>>>> clean it up.  It is somehow acceptable for long-running services, b=
-ut it
->>>>>>> is not for "serverless" containers where images/containers are crea=
-ted
->>>>>>> and destroyed frequently.  So even in the case we already have all =
-the
->>>>>>> image files available locally, we still need to create a checkout w=
-ith
->>>>>>> the final structure we need for the image.
->>>>>>> I also don't see how overlay would solve the verified image problem.
->>>>>>> We
->>>>>>> would have the same problem we have today with fs-verity as it can =
-only
->>>>>>> validate a single file but not the entire directory structure.  Cha=
-nges
->>>>>>> that affect the layer containing the trusted.overlay.{metacopy,redi=
-rect}
->>>>>>> xattrs won't be noticed.
->>>>>>> There are at the moment two ways to handle container images, both
->>>>>>> somehow
->>>>>>> guided by the available file systems in the kernel.
->>>>>>> - A single image mounted as a block device.
->>>>>>> - A list of tarballs (OCI image) that are unpacked and mounted as
->>>>>>>      overlay layers.
->>>>>>> One big advantage of the block devices model is that you can use
->>>>>>> dm-verity, this is something we miss today with OCI container images
->>>>>>> that use overlay.
->>>>>>> What we are proposing with composefs is a way to have "dm-verity"
->>>>>>> style
->>>>>>> validation based on fs-verity and the possibility to share individu=
-al
->>>>>>> files instead of layers.  These files can also be on different file
->>>>>>> systems, which is something not possible with the block device mode=
-l.
->>>>>>
->>>>>> That is not a new idea honestly, including chain of trust.  Even lat=
-erly
->>>>>> out-of-tree incremental fs using fs-verity for this as well, except =
-that
->>>>>> it's in a real self-contained way.
->>>>>>
->>>>>>> The composefs manifest blob could be generated remotely and signed.
->>>>>>> A
->>>>>>> client would need just to validate the signature for the manifest b=
-lob
->>>>>>> and from there retrieve the files that are not in the local CAS (ev=
-en
->>>>>>> from an insecure source) and mount directly the manifest file.
->>>>>>
->>>>>>
->>>>>> Back to the topic, after thinking something I have to make a
->>>>>> compliment for reference.
->>>>>>
->>>>>> First, EROFS had the same internal dissussion and decision at
->>>>>> that time almost _two years ago_ (June 2021), it means:
->>>>>>
->>>>>>     a) Some internal people really suggested EROFS could develop
->>>>>>        an entire new file-based in-kernel local cache subsystem
->>>>>>        (as you called local CAS, whatever) with stackable file
->>>>>>        interface so that the exist Nydus image service [1] (as
->>>>>>        ostree, and maybe ostree can use it as well) don't need to
->>>>>>        modify anything to use exist blobs;
->>>>>>
->>>>>>     b) Reuse exist fscache/cachefiles;
->>>>>>
->>>>>> The reason why we (especially me) finally selected b) because:
->>>>>>
->>>>>>     - see the people discussion of Google's original Incremental
->>>>>>       FS topic [2] [3] in 2019, as Amir already mentioned.  At
->>>>>>       that time all fs folks really like to reuse exist subsystem
->>>>>>       for in-kernel caching rather than reinvent another new
->>>>>>       in-kernel wheel for local cache.
->>>>>>
->>>>>>       [ Reinventing a new wheel is not hard (fs or caching), just
->>>>>>         makes Linux more fragmented.  Especially a new filesystem
->>>>>>         is just proposed to generate images full of massive massive
->>>>>>         new magical symlinks with *overriden* uid/gid/permissions
->>>>>>         to replace regular files. ]
->>>>>>
->>>>>>     - in-kernel cache implementation usually met several common
->>>>>>       potential security issues; reusing exist subsystem can
->>>>>>       make all fses addressed them and benefited from it.
->>>>>>
->>>>>>     - Usually an exist widely-used userspace implementation is
->>>>>>       never an excuse for a new in-kernel feature.
->>>>>>
->>>>>> Although David Howells is always quite busy these months to
->>>>>> develop new netfs interface, otherwise (we think) we should
->>>>>> already support failover, multiple daemon/dirs, daemonless and
->>>>>> more.
->>>>> we have not added any new cache system.  overlay does "layer
->>>>> deduplication" and in similar way composefs does "file deduplication".
->>>>> That is not a built-in feature, it is just a side effect of how things
->>>>> are packed together.
->>>>> Using fscache seems like a good idea and it has many advantages but
->>>>> it
->>>>> is a centralized cache mechanism and it looks like a potential problem
->>>>> when you think about allowing mounts from a user namespace.
->>>>
->>>> I think Christian [1] had the same feeling of my own at that time:
->>>>
->>>> "I'm pretty skeptical of this plan whether we should add more filesyst=
-ems
->>>>   that are mountable by unprivileged users. FUSE and Overlayfs are
->>>>   adventurous enough and they don't have their own on-disk format. The
->>>>   track record of bugs exploitable due to userns isn't making this
->>>>   very attractive."
->>>>
->>>> Yes, you could add fs-verity, but EROFS could add fs-verity (or just u=
-se
->>>> dm-verity) as well, but it doesn't change _anything_ about concerns of
->>>> "allowing mounts from a user namespace".
->>> I've mentioned that as a potential feature we could add in future,
->>> given
->>> the simplicity of the format and that it uses a CAS for its data instead
->>> of fscache.  Each user can have and use their own store to mount the
->>> images.
->>> At this point it is just a wish from userspace, as it would improve
->>> a
->>> few real use cases we have.
->>> Having the possibility to run containers without root privileges is
->>> a
->>> big deal for many users, look at Flatpak apps for example, or rootless
->>> Podman.  Mounting and validating images would be a a big security
->>> improvement.  It is something that is not possible at the moment as
->>> fs-verity doesn't cover the directory structure and dm-verity seems out
->>> of reach from a user namespace.
->>> Composefs delegates the entire logic of dealing with files to the
->>> underlying file system in a similar way to overlay.
->>> Forging the inode metadata from a user namespace mount doesn't look
->>> like an insurmountable problem as well since it is already possible
->>> with a FUSE filesystem.
->>> So the proposal/wish here is to have a very simple format, that at
->>> some
->>> point could be considered safe to mount from a user namespace, in
->>> addition to overlay and FUSE.
->>
->> My response is quite similar to
->> https://lore.kernel.org/r/CAJfpeguyajzHwhae=3D4PWLF4CUBorwFWeybO-xX6UBD2=
-Ekg81fg@mail.gmail.com/
->
-> I don't see how that applies to what I said about unprivileged mounts,
-> except the part about lazy download where I agree with Miklos that
-> should be handled through FUSE and that is something possible with
-> composefs:
->
-> mount -t composefs composefs -obasedir=3D/path/to/store:/mnt/fuse /mnt/cfs
->
-> where /mnt/fuse is handled by a FUSE file system that takes care of
-> loading the files from the remote server, and possibly write them to
-> /path/to/store once they are completed.
->
-> So each user could have their "lazy download" without interfering with
-> other users or the centralized cache.
->
->>>=20
->>>>> As you know as I've contacted you, I've looked at EROFS in the past
->>>>> and tried to get our use cases to work with it before thinking about
->>>>> submitting composefs upstream.
->>>>>   From what I could see EROFS and composefs use two different
->>>>> approaches
->>>>> to solve a similar problem, but it is not possible to do exactly with
->>>>> EROFS what we are trying to do.  To oversimplify it: I see EROFS as a
->>>>> block device that uses fscache, and composefs as an overlay for files
->>>>> instead of directories.
->>>>
->>>> I don't think so honestly.  EROFS "Multiple device" feature is
->>>> actually "multiple blobs" feature if you really think "device"
->>>> is block device.
->>>>
->>>> Primary device -- primary blob -- "composefs manifest blob"
->>>> Blob device -- data blobs -- "composefs backing files"
->>>>
->>>> any difference?
->>> I wouldn't expect any substancial difference between two RO file
->>> systems.
->>> Please correct me if I am wrong: EROFS uses 16 bits for the blob
->>> device
->>> ID, so if we map each file to a single blob device we are kind of
->>> limited on how many files we can have.
->>
->> I was here just to represent "composefs manifest file" concept rather th=
-an
->> device ID.
->>
->>> Sure this is just an artificial limit and can be bumped in a future
->>> version but the major difference remains: EROFS uses the blob device
->>> through fscache while the composefs files are looked up in the specified
->>> repositories.
->>
->> No, fscache can also open any cookie when opening file.  Again, even with
->> fscache, EROFS doesn't need to modify _any_ on-disk format to:
->>
->>   - record a "cookie id" for such special "magical symlink" with a simil=
-ar
->>     symlink on-disk format (or whatever on-disk format with data, just w=
-ith
->>     a new on-disk flag);
->>
->>   - open such "cookie id" on demand when opening such EROFS file just as
->>     any other network fses.  I don't think blob device is limited here.
->>
->> some difference now?
->
-> recording the "cookie id" is done by a singleton userspace daemon that=20
-> controls the cachefiles device and requires one operation for each file
-> before the image can be mounted.
->
-> Is that the case or I misunderstood something?
->
->>>=20
->>>>> Sure composefs is quite simple and you could embed the composefs
->>>>> features in EROFS and let EROFS behave as composefs when provided a
->>>>> similar manifest file.  But how is that any better than having a
->>>>
->>>> EROFS always has such feature since v5.16, we called primary device,
->>>> or Nydus concept --- "bootstrap file".
->>>>
->>>>> separate implementation that does just one thing well instead of merg=
-ing
->>>>> different paradigms together?
->>>>
->>>> It's exist fs on-disk compatible (people can deploy the same image
->>>> to wider scenarios), or you could modify/enhacnce any in-kernel local
->>>> fs to do so like I already suggested, such as enhancing "fs/romfs" and
->>>> make it maintained again due to this magic symlink feature
->>>>
->>>> (because composefs don't have other on-disk requirements other than
->>>>   a symlink path and a SHA256 verity digest from its original
->>>>   requirement.  Any local fs can be enhanced like this.)
->>>>
->>>>>
->>>>>> I know that you guys repeatedly say it's a self-contained
->>>>>> stackable fs and has few code (the same words as Incfs
->>>>>> folks [3] said four years ago already), four reasons make it
->>>>>> weak IMHO:
->>>>>>
->>>>>>     - I think core EROFS is about 2~3 kLOC as well if
->>>>>>       compression, sysfs and fscache are all code-truncated.
->>>>>>
->>>>>>       Also, it's always welcome that all people could submit
->>>>>>       patches for cleaning up.  I always do such cleanups
->>>>>>       from time to time and makes it better.
->>>>>>
->>>>>>     - "Few code lines" is somewhat weak because people do
->>>>>>       develop new features, layout after upstream.
->>>>>>
->>>>>>       Such claim is usually _NOT_ true in the future if you
->>>>>>       guys do more to optimize performance, new layout or even
->>>>>>       do your own lazy pulling with your local CAS codebase in
->>>>>>       the future unless
->>>>>>       you *promise* you once dump the code, and do bugfix
->>>>>>       only like Christian said [4].
->>>>>>
->>>>>>       From LWN.net comments, I do see the opposite
->>>>>>       possibility that you'd like to develop new features
->>>>>>       later.
->>>>>>
->>>>>>     - In the past, all in-tree kernel filesystems were
->>>>>>       designed and implemented without some user-space
->>>>>>       specific indication, including Nydus and ostree (I did
->>>>>>       see a lot of discussion between folks before in ociv2
->>>>>>       brainstorm [5]).
->>>>> Since you are mentioning OCI:
->>>>> Potentially composefs can be the file system that enables something
->>>>> very
->>>>> close to "ociv2", but it won't need to be called v2 since it is
->>>>> completely compatible with the current OCI image format.
->>>>> It won't require a different image format, just a seekable tarball
->>>>> that
->>>>> is compatible with old "v1" clients and we need to provide the compos=
-efs
->>>>> manifest file.
->>>>
->>>> May I ask did you really look into what Nydus + EROFS already did (as =
-you
->>>> mentioned we discussed before)?
->>>>
->>>> Your "composefs manifest file" is exactly "Nydus bootstrap file", see:
->>>> https://github.com/dragonflyoss/image-service/blob/master/docs/nydus-d=
-esign.md
->>>>
->>>> "Rafs is a filesystem image containing a separated metadata blob and
->>>>   several data-deduplicated content-addressable data blobs. In a typic=
-al
->>>>   rafs filesystem, the metadata is stored in bootstrap while the data
->>>>   is stored in blobfile.
->>>>   ...
->>>>
->>>>   bootstrap:  The metadata is a merkle tree (I think that is typo, sho=
-uld be
->>>>   filesystem tree) whose nodes represents a regular filesystem's
->>>>   directory/file a leaf node refers to a file and contains hash value =
-of
->>>>   its file data.
->>>>     Root node and internal nodes refer to directories and contain the
->>>>    hash value
->>>>   of their children nodes."
->>>>
->>>> Nydus is already supported "It won't require a different image format,=
- just
->>>> a seekable tarball that is compatible with old "v1" clients and we nee=
-d to
->>>> provide the composefs manifest file." feature in v2.2 and will be rele=
-ased
->>>> later.
->>> Nydus is not using a tarball compatible with OCI v1.
->>> It defines a media type
->>> "application/vnd.oci.image.layer.nydus.blob.v1", that
->>> means it is not compatible with existing clients that don't know about
->>> it and you need special handling for that.
->>
->> I am not sure what you're saying: "media type" is quite out of topic her=
-e.
->>
->> If you said "mkcomposefs" is done in the server side, what is the media
->> type of such manifest files?
->>
->> And why not Nydus cannot do in the same way?
->> https://github.com/dragonflyoss/image-service/blob/master/docs/nydus-zra=
-n.md
->>
->
-> I am not talking about the manifest or the bootstrap file, I am talking
-> about the data blobs.
->
->>> Anyway, let's not bother LKML folks with these userspace details.
->>> It
->>> has no relevance to the kernel and what file systems do.
->>
->> I'd like to avoid, I did't say anything about userspace details, I just =
-would
->> like to say
->> "merged filesystem tree is also _not_ a new idea of composefs"
->> not "media type", etc.
->>
->>>=20
->>>>> The seekable tarball allows individual files to be retrieved.  OCI
->>>>> clients will not need to pull the entire tarball, but only the indivi=
-dual
->>>>> files that are not already present in the local CAS. They won't also =
-need
->>>>> to create the overlay layout at all, as we do today, since it is alre=
-ady
->>>>> described with the composefs manifest file.
->>>>> The manifest is portable on different machines with different
->>>>> configurations, as you can use multiple CAS when mounting composefs.
->>>>> Some users might have a local CAS, some others could have a
->>>>> secondary
->>>>> CAS on a network file system and composefs support all these
->>>>> configurations with the same signed manifest file.
->>>>>
->>>>>>       That is why EROFS selected exist in-kernel fscache and
->>>>>>       made userspace Nydus adapt it:
->>>>>>
->>>>>>         even (here called) manifest on-disk format ---
->>>>>>              EROFS call primary device ---
->>>>>>              they call Nydus bootstrap;
->>>>>>
->>>>>>       I'm not sure why it becomes impossible for ... ($$$$).
->>>>> I am not sure what you mean, care to elaborate?
->>>>
->>>> I just meant these concepts are actually the same concept with
->>>> different names and:
->>>>    Nydus is a 2020 stuff;
->>> CRFS[1] is 2019 stuff.
->>
->> Does CRFS have anything similiar to a merged filesystem tree?
->>
->> Here we talked about local CAS:
->> I have no idea CRFS has anything similar to it.
->
-> yes it does and it uses it with a FUSE file system.  So neither
-> composefs nor EROFS have invented anything here.
->
-> Anyway, does it really matter who made what first?  I don't see how it
-> helps to understand if there are relevant differences in composefs to
-> justify its presence in the kernel.
->
->>>=20
->>>>    EROFS + primary device is a 2021-mid stuff.
->>>>
->>>>>> In addition, if fscache is used, it can also use
->>>>>> fsverity_get_digest() to enable fsverity for non-on-demand
->>>>>> files.
->>>>>>
->>>>>> But again I think even Google's folks think that is
->>>>>> (somewhat) broken so that they added fs-verity to its incFS
->>>>>> in a self-contained way in Feb 2021 [6].
->>>>>>
->>>>>> Finally, again, I do hope a LSF/MM discussion for this new
->>>>>> overlay model (full of massive magical symlinks to override
->>>>>> permission.)
->>>>> you keep pointing it out but nobody is overriding any permission.
->>>>> The
->>>>> "symlinks" as you call them are just a way to refer to the payload fi=
-les
->>>>> so they can be shared among different mounts.  It is the same idea us=
-ed
->>>>> by "overlay metacopy" and nobody is complaining about it being a
->>>>> security issue (because it is not).
->>>>
->>>> See overlay documentation clearly wrote such metacopy behavior:
->>>> https://docs.kernel.org/filesystems/overlayfs.html
->>>>
->>>> "
->>>> Do not use metacopy=3Don with untrusted upper/lower directories.
->>>> Otherwise it is possible that an attacker can create a handcrafted file
->>>> with appropriate REDIRECT and METACOPY xattrs, and gain access to file
->>>> on lower pointed by REDIRECT. This should not be possible on local
->>>> system as setting =E2=80=9Ctrusted.=E2=80=9D xattrs will require CAP_S=
-YS_ADMIN. But
->>>> it should be possible for untrusted layers like from a pen drive.
->>>> "
->>>>
->>>> Do we really need such behavior working on another fs especially with
->>>> on-disk format?  At least Christian said,
->>>> "FUSE and Overlayfs are adventurous enough and they don't have their
->>>> own on-disk format."
->>> If users want to do something really weird then they can always find
->>> a
->>> way but the composefs lookup is limited under the directories specified
->>> at mount time, so it is not possible to access any file outside the
->>> repository.
->>>=20
->>>>> The files in the CAS are owned by the user that creates the mount,
->>>>> so
->>>>> there is no need to circumvent any permission check to access them.
->>>>> We use fs-verity for these files to make sure they are not modified b=
-y a
->>>>> malicious user that could get access to them (e.g. a container breako=
-ut).
->>>>
->>>> fs-verity is not always enforcing and it's broken here if fsverity is =
-not
->>>> supported in underlay fses, that is another my arguable point.
->>> It is a trade-off.  It is up to the user to pick a configuration
->>> that
->>> allows using fs-verity if they care about this feature.
->>
->> I don't think fsverity is optional with your plan.
->
-> yes it is optional.  without fs-verity it would behave the same as today
-> with overlay mounts without any fs-verity.
->
-> How does validation work in EROFS for files served from fscache and that
-> are on a remote file system?
-
-nevermind my last question, I guess it would still go through the block
-device in EROFS.
-This is clearly a point in favor of a block device approach that a
-stacking file system like overlay or composefs cannot achieve without
-support from the underlying file system.
-
->
->> I wrote this all because it seems I didn't mention the original motivati=
-on
->> to use fscache in v2: kernel already has such in-kernel local cache, and
->> people liked to use it in 2019 rather than another stackable way (as
->> mentioned in incremental fs thread.)
->
-> still for us the stackable way works better.
->
->> Thanks,
->> Gao Xiang
->>
->>> Regards,
->>> Giuseppe
->>> [1] https://github.com/google/crfs
-
+LGTM
+Reviewed-by: Anand Jain <anand.jain@oralce.com>
