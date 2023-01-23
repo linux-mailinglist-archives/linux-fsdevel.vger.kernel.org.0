@@ -2,164 +2,149 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 4CBED677D8D
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jan 2023 15:05:44 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 789CF677DD1
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jan 2023 15:21:28 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232136AbjAWOFl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Jan 2023 09:05:41 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53894 "EHLO
+        id S232250AbjAWOV1 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Jan 2023 09:21:27 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36206 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231977AbjAWOFk (ORCPT
+        with ESMTP id S230377AbjAWOV0 (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Jan 2023 09:05:40 -0500
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FA9840F2;
-        Mon, 23 Jan 2023 06:05:39 -0800 (PST)
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by smtp-out1.suse.de (Postfix) with ESMTPS id B4712339C7;
-        Mon, 23 Jan 2023 14:05:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-        t=1674482737; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
+        Mon, 23 Jan 2023 09:21:26 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 4A94420059
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 06:20:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674483647;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=TboMeQ08DPimFEa6aGsq7T2+45CHDly2y+c6BUvgQZk=;
-        b=Ohw7JlX3WCQz37Vbj1oIjlnjYp5zGfZW6t2Ldf4VxPph/WnY/v38NDh/e4hQhfkYr0L2nM
-        tTDy+o417yh7yO/LPXj1Z8n7gftKOHJarxHrklKDBQus+7cmh+qEymeZvwvGa3iSoerIoa
-        I9j84jts3ZCF0osIEYwGrzJjD6qJmeM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-        s=susede2_ed25519; t=1674482737;
-        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-         mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=TboMeQ08DPimFEa6aGsq7T2+45CHDly2y+c6BUvgQZk=;
-        b=sUrDJ3R05y4rVwKZW1U5xV5ItVofPAnrWqkqedb0xLRv5AUbA46qNL6KwfAMuDVn1ihKfs
-        SrGGxk/QC3zf4NAQ==
-Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
-        (No client certificate requested)
-        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AE567134F5;
-        Mon, 23 Jan 2023 14:05:36 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([192.168.254.65])
-        by imap2.suse-dmz.suse.de with ESMTPSA
-        id cjdAKTCUzmN6IwAAMHmgww
-        (envelope-from <vbabka@suse.cz>); Mon, 23 Jan 2023 14:05:36 +0000
-Message-ID: <010a330c-a4d5-9c1a-3212-f9107d1c5f4e@suse.cz>
-Date:   Mon, 23 Jan 2023 15:03:45 +0100
+        bh=3Qw6OoQIblD+SHFIDSF3ygbKeoxmTzUe8MMuhcikIz8=;
+        b=CwcgjHdtBxbVthQJ9Okm8lNn7jgQDWxxZHhSXXCkPZSDRjQOAaXjFcsmbhZwZK01XSaTGG
+        ow7VZ0bkK6qOEK6ndTObV8t/OeCi/HXOeEJ4Chfx6ifyITvPl7EjnCd8m4TwWcsSidc0sW
+        l5enL2J1rNAqQfEoSTzdP0KfcxygkLo=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
+ us-mta-292-uy0XG-9qOeaa5idTdAXTAg-1; Mon, 23 Jan 2023 09:20:45 -0500
+X-MC-Unique: uy0XG-9qOeaa5idTdAXTAg-1
+Received: by mail-wr1-f72.google.com with SMTP id v15-20020adfe4cf000000b002bf9413bc50so1246043wrm.16
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 06:20:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20210112;
+        h=content-transfer-encoding:in-reply-to:organization:from:references
+         :cc:to:content-language:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3Qw6OoQIblD+SHFIDSF3ygbKeoxmTzUe8MMuhcikIz8=;
+        b=DiLcbOxbfXdBAIB3VdESwWdHfFH1npnXJ2MGROXzcLxfGaZvto1RVpSTv5JNXZxckd
+         uHv1w4nfso8c03IPRl19UqQhLVi+Whovsm2LuKHi30ayE8d/8w+7oB225uDrYUUu0wnF
+         dfCX4Tek7RzUxuhQbODUOGdi1IC9A1jB2ZaS4t/ewvelUv4wh6B63ExDxBsDVHi2YiT/
+         i3aEmqTXPyPA8UhukAdXjAIlcgSNm7vLX2+9aDba5aZmCtukdEPx7eAjy/gNaTBAn0Px
+         8RhPuvGFNjFxFicXQ+Pw/QrDAI78VlQTSGTLRuacHX4COxfOpy8PinsVFmQget7NBzms
+         ewyQ==
+X-Gm-Message-State: AFqh2kqimS370il135vZKaFyCdZknGIamW7+0Jii2o2RWts2UAAG7bmV
+        ob5fTQfT04KFOoxSrh0nanOiQaTnTZsOGpaoNyPGtE3NibZrXH2XB80w705czHj7oCNqRoAZ/ls
+        YXTSFC2C4YZKx+C4wH7LI5YxNTQ==
+X-Received: by 2002:a05:600c:3083:b0:3da:e4d:e6ba with SMTP id g3-20020a05600c308300b003da0e4de6bamr23672665wmn.14.1674483643851;
+        Mon, 23 Jan 2023 06:20:43 -0800 (PST)
+X-Google-Smtp-Source: AMrXdXtA0SmMxGfIXBjxWwrkcsAPkrTFymy9qeDOZWk2TkY+Bo+QqROnDkmX5yaFF9e6G40kzNARmg==
+X-Received: by 2002:a05:600c:3083:b0:3da:e4d:e6ba with SMTP id g3-20020a05600c308300b003da0e4de6bamr23672641wmn.14.1674483643563;
+        Mon, 23 Jan 2023 06:20:43 -0800 (PST)
+Received: from ?IPV6:2003:cb:c704:1100:65a0:c03a:142a:f914? (p200300cbc704110065a0c03a142af914.dip0.t-ipconnect.de. [2003:cb:c704:1100:65a0:c03a:142a:f914])
+        by smtp.gmail.com with ESMTPSA id 21-20020a05600c26d500b003d9b87296a9sm10216753wmv.25.2023.01.23.06.20.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 23 Jan 2023 06:20:43 -0800 (PST)
+Message-ID: <77f3fc56-05d8-def0-e518-0906c729e7df@redhat.com>
+Date:   Mon, 23 Jan 2023 15:20:41 +0100
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.1
-Subject: Re: [PATCH v10 1/9] mm: Introduce memfd_restricted system call to
- create restricted user memory
+ Thunderbird/102.6.0
+Subject: Re: [PATCH v7 2/8] iov_iter: Add a function to extract a page list
+ from an iterator
 Content-Language: en-US
-To:     "Huang, Kai" <kai.huang@intel.com>,
-        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "jmattson@google.com" <jmattson@google.com>,
-        "Hocko, Michal" <mhocko@suse.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "Lutomirski, Andy" <luto@kernel.org>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "tabba@google.com" <tabba@google.com>,
-        "david@redhat.com" <david@redhat.com>,
-        "michael.roth@amd.com" <michael.roth@amd.com>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
-        "dhildenb@redhat.com" <dhildenb@redhat.com>,
-        "bfields@fieldses.org" <bfields@fieldses.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
-        "ddutile@redhat.com" <ddutile@redhat.com>,
-        "rppt@kernel.org" <rppt@kernel.org>,
-        "shuah@kernel.org" <shuah@kernel.org>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>,
-        "naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
-        "qperret@google.com" <qperret@google.com>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
-        "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
-        "Christopherson,, Sean" <seanjc@google.com>,
-        "wanpengli@tencent.com" <wanpengli@tencent.com>,
-        "vannapurve@google.com" <vannapurve@google.com>,
-        "hughd@google.com" <hughd@google.com>,
-        "aarcange@redhat.com" <aarcange@redhat.com>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "Nakajima, Jun" <jun.nakajima@intel.com>,
-        "jlayton@kernel.org" <jlayton@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "Wang, Wei W" <wei.w.wang@intel.com>,
-        "steven.price@arm.com" <steven.price@arm.com>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "Hansen, Dave" <dave.hansen@intel.com>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linmiaohe@huawei.com" <linmiaohe@huawei.com>
-References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
- <20221202061347.1070246-2-chao.p.peng@linux.intel.com>
- <5c6e2e516f19b0a030eae9bf073d555c57ca1f21.camel@intel.com>
- <20221219075313.GB1691829@chaop.bj.intel.com>
- <deba096c85e41c3a15d122f2159986a74b16770f.camel@intel.com>
- <20221220072228.GA1724933@chaop.bj.intel.com>
- <126046ce506df070d57e6fe5ab9c92cdaf4cf9b7.camel@intel.com>
- <20221221133905.GA1766136@chaop.bj.intel.com>
- <b898e28d7fd7182e5d069646f84b650c748d9ca2.camel@intel.com>
-From:   Vlastimil Babka <vbabka@suse.cz>
-In-Reply-To: <b898e28d7fd7182e5d069646f84b650c748d9ca2.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
-        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=ham autolearn_force=no
-        version=3.4.6
+To:     David Howells <dhowells@redhat.com>
+Cc:     Al Viro <viro@zeniv.linux.org.uk>,
+        Christoph Hellwig <hch@infradead.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
+        Jeff Layton <jlayton@kernel.org>,
+        Logan Gunthorpe <logang@deltatee.com>,
+        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org
+References: <c742e47b-dcc0-1fef-dc8c-3bf85d26b046@redhat.com>
+ <7bbcccc9-6ebf-ffab-7425-2a12f217ba15@redhat.com>
+ <246ba813-698b-8696-7f4d-400034a3380b@redhat.com>
+ <20230120175556.3556978-1-dhowells@redhat.com>
+ <20230120175556.3556978-3-dhowells@redhat.com>
+ <3814749.1674474663@warthog.procyon.org.uk>
+ <3903251.1674479992@warthog.procyon.org.uk>
+ <3911637.1674481111@warthog.procyon.org.uk>
+From:   David Hildenbrand <david@redhat.com>
+Organization: Red Hat
+In-Reply-To: <3911637.1674481111@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
+        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
+        autolearn=unavailable autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 12/22/22 01:37, Huang, Kai wrote:
->>> I argue that this page pinning (or page migration prevention) is not
->>> tied to where the page comes from, instead related to how the page will
->>> be used. Whether the page is restrictedmem backed or GUP() backed, once
->>> it's used by current version of TDX then the page pinning is needed. So
->>> such page migration prevention is really TDX thing, even not KVM generic
->>> thing (that's why I think we don't need change the existing logic of
->>> kvm_release_pfn_clean()). 
->>>
-> This essentially boils down to who "owns" page migration handling, and sadly,
-> page migration is kinda "owned" by the core-kernel, i.e. KVM cannot handle page
-> migration by itself -- it's just a passive receiver.
+On 23.01.23 14:38, David Howells wrote:
+> David Hildenbrand <david@redhat.com> wrote:
 > 
-> For normal pages, page migration is totally done by the core-kernel (i.e. it
-> unmaps page from VMA, allocates a new page, and uses migrate_pape() or a_ops-
->> migrate_page() to actually migrate the page).
-> In the sense of TDX, conceptually it should be done in the same way. The more
-> important thing is: yes KVM can use get_page() to prevent page migration, but
-> when KVM wants to support it, KVM cannot just remove get_page(), as the core-
-> kernel will still just do migrate_page() which won't work for TDX (given
-> restricted_memfd doesn't have a_ops->migrate_page() implemented).
+>> That would be the ideal case: whenever intending to access page content, use
+>> FOLL_PIN instead of FOLL_GET.
+>>
+>> The issue that John was trying to sort out was that there are plenty of
+>> callsites that do a simple put_page() instead of calling
+>> unpin_user_page(). IIRC, handling that correctly in existing code -- what was
+>> pinned must be released via unpin_user_page() -- was the biggest workitem.
+>>
+>> Not sure how that relates to your work here (that's why I was asking): if you
+>> could avoid FOLL_GET, that would be great :)
 > 
-> So I think the restricted_memfd filesystem should own page migration handling,
-> (i.e. by implementing a_ops->migrate_page() to either just reject page migration
-> or somehow support it).
+> Well, it simplifies things a bit.
+> 
+> I can make the new iov_iter_extract_pages() just do "pin" or "don't pin" and
+> do no ref-getting at all.  Things can be converted over to "unpin the pages or
+> doing nothing" as they're converted over to using iov_iter_extract_pages()
+> from iov_iter_get_pages*().
+> 
+> The block bio code then only needs a single bit of state: pinned or not
+> pinned.
 
-While this thread seems to be settled on refcounts already, just wanted
-to point out that it wouldn't be ideal to prevent migrations by
-a_ops->migrate_page() rejecting them. It would mean cputime wasted (i.e.
-by memory compaction) by isolating the pages for migration and then
-releasing them after the callback rejects it (at least we wouldn't waste
-time creating and undoing migration entries in the userspace page tables
-as there's no mmap). Elevated refcount on the other hand is detected
-very early in compaction so no isolation is attempted, so from that
-aspect it's optimal.
+Unfortunately, I'll have to let BIO experts comment on that :) I only 
+know the MM side of things here.
+
+> 
+> For cifs RDMA, do I need to make it pass in FOLL_LONGTERM?  And does that need
+> a special cleanup?
+
+Anything that holds pins "possibly forever" should that. vmsplice() is 
+another example that should use it, once properly using FOLL_PIN. 
+[FOLL_GET | FOLL_LONGTERM is not really used/defined with semantics]
+
+> 
+> sk_buff fragment handling could still be tricky.  I'm thinking that in that
+> code I'll need to store FOLL_GET/PIN in the bottom two bits of the frag page
+> pointer.  Sometimes it allocates a new page and attaches it (have ref);
+> sometimes it does zerocopy to/from a page (have pin) and sometimes it may be
+> pointing to a kernel buffer (don't pin or ref).
+> 
+> David
+> 
+
+-- 
+Thanks,
+
+David / dhildenb
+
