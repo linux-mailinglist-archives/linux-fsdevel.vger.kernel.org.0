@@ -2,29 +2,29 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B30E86783C3
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jan 2023 18:57:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 8DACF6783BB
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jan 2023 18:56:56 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S232883AbjAWR56 (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Jan 2023 12:57:58 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:36280 "EHLO
+        id S232815AbjAWR4z (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Jan 2023 12:56:55 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:34982 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S232919AbjAWR5z (ORCPT
+        with ESMTP id S232580AbjAWR4y (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Jan 2023 12:57:55 -0500
+        Mon, 23 Jan 2023 12:56:54 -0500
 Received: from 66-220-144-178.mail-mxout.facebook.com (66-220-144-178.mail-mxout.facebook.com [66.220.144.178])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3D198B479
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 09:57:54 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 7EC982BECF
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 09:56:53 -0800 (PST)
 Received: by dev0134.prn3.facebook.com (Postfix, from userid 425415)
-        id 8CE0B5616BF9; Mon, 23 Jan 2023 09:37:56 -0800 (PST)
+        id 910905616BFB; Mon, 23 Jan 2023 09:37:56 -0800 (PST)
 From:   Stefan Roesch <shr@devkernel.io>
 To:     linux-mm@kvack.org
 Cc:     shr@devkernel.io, linux-doc@vger.kernel.org,
         linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-kselftest@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: [RESEND RFC PATCH v1 19/20] selftests/vm: add KSM fork test
-Date:   Mon, 23 Jan 2023 09:37:47 -0800
-Message-Id: <20230123173748.1734238-20-shr@devkernel.io>
+Subject: [RESEND RFC PATCH v1 20/20] selftests/vm: add two functions for debugging merge outcome
+Date:   Mon, 23 Jan 2023 09:37:48 -0800
+Message-Id: <20230123173748.1734238-21-shr@devkernel.io>
 X-Mailer: git-send-email 2.30.2
 In-Reply-To: <20230123173748.1734238-1-shr@devkernel.io>
 References: <20230123173748.1734238-1-shr@devkernel.io>
@@ -40,120 +40,96 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-Add fork test to verify that the MMF_VM_MERGE_ANY flag is inherited by
-the child process.
+This adds two functions to report the metrics in /proc/self/ksm_stat and
+/sys/kernel/debug/mm/ksm.
+
+The debugging can be enabled with the following command line:
+make -C tools/testing/selftests TARGETS=3D"vm" --keep-going \
+        EXTRA_CFLAGS=3D-DDEBUG=3D1
 
 Signed-off-by: Stefan Roesch <shr@devkernel.io>
 ---
- tools/testing/selftests/vm/ksm_tests.c | 53 +++++++++++++++++++++++++-
- 1 file changed, 51 insertions(+), 2 deletions(-)
+ tools/testing/selftests/vm/ksm_tests.c | 54 ++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
 diff --git a/tools/testing/selftests/vm/ksm_tests.c b/tools/testing/selft=
 ests/vm/ksm_tests.c
-index 9667cb3b8c6a..a0a48ac43b29 100644
+index a0a48ac43b29..9fb21b982dc9 100644
 --- a/tools/testing/selftests/vm/ksm_tests.c
 +++ b/tools/testing/selftests/vm/ksm_tests.c
-@@ -44,6 +44,7 @@ enum ksm_merge_type {
-=20
- enum ksm_test_name {
- 	CHECK_KSM_MERGE,
-+	CHECK_KSM_MERGE_FORK,
- 	CHECK_KSM_UNMERGE,
- 	CHECK_KSM_GET_MERGE_TYPE,
- 	CHECK_KSM_ZERO_PAGE_MERGE,
-@@ -126,7 +127,8 @@ static void print_help(void)
- 	       "    For this test, the size of duplicated memory area (in MiB)\=
-n"
- 	       "    must be provided using -s option\n"
- 	       " -C evaluate the time required to break COW of merged pages.\n"
--	       " -G query merge mode\n\n");
-+	       " -G query merge mode\n"
-+	       " -F evaluate that the KSM process flag is inherited\n\n");
-=20
- 	printf(" -a: specify the access protections of pages.\n"
- 	       "     <prot> must be of the form [rwx].\n"
-@@ -325,6 +327,47 @@ static int check_ksm_merge(int merge_type, int mappi=
-ng, int prot,
- 	return KSFT_FAIL;
+@@ -93,6 +93,55 @@ static int ksm_read_sysfs(const char *file_path, unsig=
+ned long *val)
+ 	return 0;
  }
 =20
-+/* Verify that prctl ksm flag is inherited. */
-+static int check_ksm_fork(void)
++#ifdef DEBUG
++static void ksm_print_sysfs(void)
 +{
-+	int rc =3D KSFT_FAIL;
-+	pid_t child_pid;
++	unsigned long max_page_sharing, pages_sharing, pages_shared;
++	unsigned long full_scans, pages_unshared, pages_volatile;
++	unsigned long stable_node_chains, stable_node_dups;
++	long general_profit;
 +
-+	if (prctl(PR_SET_MEMORY_MERGE, 1)) {
-+		perror("prctl");
-+		return KSFT_FAIL;
-+	}
++	if (ksm_read_sysfs(KSM_FP("pages_shared"), &pages_shared) ||
++	    ksm_read_sysfs(KSM_FP("pages_sharing"), &pages_sharing) ||
++	    ksm_read_sysfs(KSM_FP("max_page_sharing"), &max_page_sharing) ||
++	    ksm_read_sysfs(KSM_FP("full_scans"), &full_scans) ||
++	    ksm_read_sysfs(KSM_FP("pages_unshared"), &pages_unshared) ||
++	    ksm_read_sysfs(KSM_FP("pages_volatile"), &pages_volatile) ||
++	    ksm_read_sysfs(KSM_FP("stable_node_chains"), &stable_node_chains) |=
+|
++	    ksm_read_sysfs(KSM_FP("stable_node_dups"), &stable_node_dups) ||
++	    ksm_read_sysfs(KSM_FP("general_profit"), (unsigned long *)&general_=
+profit))
++		return;
 +
-+	child_pid =3D fork();
-+	if (child_pid =3D=3D 0) {
-+		int is_on =3D prctl(PR_GET_MEMORY_MERGE, 0);
-+
-+		if (!is_on)
-+			exit(KSFT_FAIL);
-+
-+		exit(KSFT_PASS);
-+	}
-+
-+	if (child_pid < 0)
-+		goto out;
-+
-+	if (waitpid(child_pid, &rc, 0) < 0)
-+		rc =3D KSFT_FAIL;
-+
-+	if (prctl(PR_SET_MEMORY_MERGE, 0)) {
-+		perror("prctl");
-+		rc =3D KSFT_FAIL;
-+	}
-+
-+out:
-+	if (rc =3D=3D KSFT_PASS)
-+		printf("OK\n");
-+	else
-+		printf("Not OK\n");
-+
-+	return rc;
++	printf("pages_shared      : %lu\n", pages_shared);
++	printf("pages_sharing     : %lu\n", pages_sharing);
++	printf("max_page_sharing  : %lu\n", max_page_sharing);
++	printf("full_scans        : %lu\n", full_scans);
++	printf("pages_unshared    : %lu\n", pages_unshared);
++	printf("pages_volatile    : %lu\n", pages_volatile);
++	printf("stable_node_chains: %lu\n", stable_node_chains);
++	printf("stable_node_dups  : %lu\n", stable_node_dups);
++	printf("general_profit    : %ld\n", general_profit);
 +}
 +
- static int check_ksm_get_merge_type(void)
++static void ksm_print_procfs(void)
++{
++	const char *file_name =3D "/proc/self/ksm_stat";
++	char buffer[512];
++	FILE *f =3D fopen(file_name, "r");
++
++	if (!f) {
++		fprintf(stderr, "f %s\n", file_name);
++		perror("fopen");
++		return;
++	}
++
++	while (fgets(buffer, sizeof(buffer), f))
++		printf("%s", buffer);
++
++	fclose(f);
++}
++#endif
++
+ static int str_to_prot(char *prot_str)
  {
- 	if (prctl(PR_SET_MEMORY_MERGE, 1)) {
-@@ -760,7 +803,7 @@ int main(int argc, char *argv[])
- 	bool merge_across_nodes =3D KSM_MERGE_ACROSS_NODES_DEFAULT;
- 	long size_MB =3D 0;
+ 	int prot =3D 0;
+@@ -237,6 +286,11 @@ static bool assert_ksm_pages_count(long dupl_page_co=
+unt)
+ 	    ksm_read_sysfs(KSM_FP("max_page_sharing"), &max_page_sharing))
+ 		return false;
 =20
--	while ((opt =3D getopt(argc, argv, "ha:p:l:z:m:s:t:GMUZNPCHD")) !=3D -1=
-) {
-+	while ((opt =3D getopt(argc, argv, "ha:p:l:z:m:s:t:FGMUZNPCHD")) !=3D -=
-1) {
- 		switch (opt) {
- 		case 'a':
- 			prot =3D str_to_prot(optarg);
-@@ -811,6 +854,9 @@ int main(int argc, char *argv[])
- 				merge_type =3D atoi(optarg);
- 			}
- 			break;
-+		case 'F':
-+			test_name =3D CHECK_KSM_MERGE_FORK;
-+			break;
- 		case 'M':
- 			break;
- 		case 'U':
-@@ -867,6 +913,9 @@ int main(int argc, char *argv[])
- 		ret =3D check_ksm_merge(merge_type, MAP_PRIVATE | MAP_ANONYMOUS, prot,=
- page_count,
- 				      ksm_scan_limit_sec, page_size);
- 		break;
-+	case CHECK_KSM_MERGE_FORK:
-+		ret =3D check_ksm_fork();
-+		break;
- 	case CHECK_KSM_UNMERGE:
- 		ret =3D check_ksm_unmerge(merge_type, MAP_PRIVATE | MAP_ANONYMOUS, pro=
-t,
- 					ksm_scan_limit_sec, page_size);
++#ifdef DEBUG
++	ksm_print_sysfs();
++	ksm_print_procfs();
++#endif
++
+ 	/*
+ 	 * Since there must be at least 2 pages for merging and 1 page can be
+ 	 * shared with the limited number of pages (max_page_sharing), sometime=
+s
 --=20
 2.30.2
 
