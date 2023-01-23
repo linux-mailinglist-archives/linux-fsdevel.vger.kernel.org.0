@@ -2,136 +2,199 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 7DD2F677C2B
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jan 2023 14:12:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ABDB6677C36
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jan 2023 14:15:25 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231837AbjAWNMw (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Jan 2023 08:12:52 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:41016 "EHLO
+        id S231609AbjAWNPY (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Jan 2023 08:15:24 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:42604 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231649AbjAWNMv (ORCPT
+        with ESMTP id S229502AbjAWNPX (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Jan 2023 08:12:51 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B2D1023D81
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 05:11:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674479517;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=FQv8e3zi0tb0sZVAWv+R67RLgpAS0mltaNdAlpxPgD4=;
-        b=OJNrUTM7vLosCPcR+AvoVInAO9JApPOt63Dnt0YQ2K+K7GDvBSLSkeY9E9+ALccEBt6lsY
-        oHkUFCNe7lGwClwvarhVkVPp9aSTSU+bvqKx//mqksAOVhkKK4/IJDxAUNqaEfA9J8u0xy
-        57ZIVctUk4K/lgRKdPHOxcttcnVU6YQ=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_128_GCM_SHA256) id
- us-mta-605-Z73e88IcMXy_DgMf892cYw-1; Mon, 23 Jan 2023 08:11:56 -0500
-X-MC-Unique: Z73e88IcMXy_DgMf892cYw-1
-Received: by mail-wm1-f71.google.com with SMTP id az37-20020a05600c602500b003da50af44b3so7490814wmb.1
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 05:11:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20210112;
-        h=content-transfer-encoding:in-reply-to:subject:organization:from
-         :references:cc:to:content-language:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FQv8e3zi0tb0sZVAWv+R67RLgpAS0mltaNdAlpxPgD4=;
-        b=txr8tmAcx+65p9LpqdhBiwI6FXC1JtghUlZlXbGtTZgzpZ9xZ5vJSoUJxKssZDpIDa
-         /R3QtDXQ0DuIl3mL+J2+4chyqs3grFhZNx4wd0gkGdbONu4dftwCFONAJIwZeqqhA/fS
-         3qLYvKFvh3Yvw/GLYE5nBbOkD0ditdpcblFSXtUFVro5QyTPf5bbgTvQ58iJoVTPRRbc
-         08q5XOmML6lUNOWEgEhpAdMjsv6B2sMopXsvneGr/njyuzcRymYbqfM6l8WwvE88u0Y8
-         uzvJRZuTkGB/YYiBYReYRl8La0xm6c39y2lB2j96UNeF/yl+v7htdrBBXU8DS+LmcXHK
-         VGMg==
-X-Gm-Message-State: AFqh2krUGcyU7QwwJYlSZziKaCqIqt0ad4fPbq5w5V4QQoAeT8uz4Fu1
-        PbIqzDYpKFbdq6yv65hQauLnkFK8n0N2e1oRaTYIS/g9MIYchdv9jpdw+ibKlcIY/hImzhj/i9S
-        L7RTkJQiMnTSxgb1gjasZCKlGiQ==
-X-Received: by 2002:a05:600c:4d08:b0:3da:fef0:226b with SMTP id u8-20020a05600c4d0800b003dafef0226bmr23798171wmp.32.1674479515646;
-        Mon, 23 Jan 2023 05:11:55 -0800 (PST)
-X-Google-Smtp-Source: AMrXdXsRmwBRBfSgTGOZ07Dfbcl+YnLqnHekKSXbUAgHGKp4HT9xIK23+Golki9zb+CdiaKU8XQ7wg==
-X-Received: by 2002:a05:600c:4d08:b0:3da:fef0:226b with SMTP id u8-20020a05600c4d0800b003dafef0226bmr23798149wmp.32.1674479515328;
-        Mon, 23 Jan 2023 05:11:55 -0800 (PST)
-Received: from ?IPV6:2003:cb:c704:1100:65a0:c03a:142a:f914? (p200300cbc704110065a0c03a142af914.dip0.t-ipconnect.de. [2003:cb:c704:1100:65a0:c03a:142a:f914])
-        by smtp.gmail.com with ESMTPSA id c40-20020a05600c4a2800b003db16770bc5sm10278946wmp.6.2023.01.23.05.11.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 23 Jan 2023 05:11:54 -0800 (PST)
-Message-ID: <7bbcccc9-6ebf-ffab-7425-2a12f217ba15@redhat.com>
-Date:   Mon, 23 Jan 2023 14:11:45 +0100
+        Mon, 23 Jan 2023 08:15:23 -0500
+Received: from madras.collabora.co.uk (madras.collabora.co.uk [46.235.227.172])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 0CFA413DFC;
+        Mon, 23 Jan 2023 05:15:22 -0800 (PST)
+Received: from [192.168.10.12] (unknown [39.45.186.163])
+        (using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+         key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+        (No client certificate requested)
+        (Authenticated sender: usama.anjum)
+        by madras.collabora.co.uk (Postfix) with ESMTPSA id CACAE66029A5;
+        Mon, 23 Jan 2023 13:15:07 +0000 (GMT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+        s=mail; t=1674479720;
+        bh=eZUiVTNJd98+gtT/nMH4QDYraaSsAMNKpFlsv+UCbg8=;
+        h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+        b=j3gTk8oDtmYafOYZGKoyCrDpDCujE9melTSWyjfS9iFaunWaHVPhVh70RN3pSH/uq
+         W9Pi/tpMVFBy2oNRDbebNXvPn1/2Voeqf+dIR6i5qiVqpuDz+xppbeK+OO8SZONXxI
+         XowHQIQqYjM2tYb3UW34ZPC/zDudGOTS9mKQQ5o/HUxKXbGMeRkTtPZrOCr8NOPnaL
+         2TSCQc3Jn21b0/n5FlbOd7SHwHPSUqvo4GBQHh/d4OEgoqXWYFtkKvGZNF1X3JZu16
+         WoDRWlugm1tN/UsoYje24rujYkiLTYN1kW2/gEBdJQfKDgWZySqTGO3oB84r0tEbk0
+         eGD9cQYgDYfkA==
+Message-ID: <0eb79bb3-7384-11c6-a380-c027f09305f2@collabora.com>
+Date:   Mon, 23 Jan 2023 18:15:00 +0500
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
  Thunderbird/102.6.0
-Content-Language: en-US
-To:     David Howells <dhowells@redhat.com>
-Cc:     Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
+Cc:     Muhammad Usama Anjum <usama.anjum@collabora.com>,
+        David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        =?UTF-8?B?TWljaGHFgiBNaXJvc8WC?= =?UTF-8?Q?aw?= 
+        <emmir@google.com>, Paul Gofman <pgofman@codeweavers.com>,
+        Cyrill Gorcunov <gorcunov@gmail.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        Shuah Khan <shuah@kernel.org>,
+        Christian Brauner <brauner@kernel.org>,
+        Yang Shi <shy828301@gmail.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Yun Zhou <yun.zhou@windriver.com>,
+        Suren Baghdasaryan <surenb@google.com>,
+        Alex Sierra <alex.sierra@amd.com>,
         Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org
-References: <246ba813-698b-8696-7f4d-400034a3380b@redhat.com>
- <20230120175556.3556978-1-dhowells@redhat.com>
- <20230120175556.3556978-3-dhowells@redhat.com>
- <3814749.1674474663@warthog.procyon.org.uk>
-From:   David Hildenbrand <david@redhat.com>
-Organization: Red Hat
-Subject: Re: [PATCH v7 2/8] iov_iter: Add a function to extract a page list
- from an iterator
-In-Reply-To: <3814749.1674474663@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+        Pasha Tatashin <pasha.tatashin@soleen.com>,
+        Mike Rapoport <rppt@kernel.org>, Nadav Amit <namit@vmware.com>,
+        Axel Rasmussen <axelrasmussen@google.com>,
+        "Gustavo A . R . Silva" <gustavoars@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-mm@kvack.org, linux-kselftest@vger.kernel.org,
+        Greg KH <gregkh@linuxfoundation.org>, kernel@collabora.com
+Subject: Re: [PATCH v7 0/4] Implement IOCTL to get and/or the clear info about
+ PTEs
+Content-Language: en-US
+To:     Peter Xu <peterx@redhat.com>, Andrei Vagin <avagin@gmail.com>,
+        Danylo Mocherniuk <mdanylo@google.com>
+References: <20230109064519.3555250-1-usama.anjum@collabora.com>
+ <Y8hutCGec6je5toG@x1n>
+From:   Muhammad Usama Anjum <usama.anjum@collabora.com>
+In-Reply-To: <Y8hutCGec6je5toG@x1n>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,
-        RCVD_IN_DNSWL_NONE,RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE
-        autolearn=unavailable autolearn_force=no version=3.4.6
+X-Spam-Status: No, score=-3.2 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,SPF_HELO_NONE,
+        SPF_PASS autolearn=ham autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On 23.01.23 12:51, David Howells wrote:
-> David Hildenbrand <david@redhat.com> wrote:
+On 1/19/23 3:12 AM, Peter Xu wrote:
+> On Mon, Jan 09, 2023 at 11:45:15AM +0500, Muhammad Usama Anjum wrote:
+>> *Changes in v7:*
+>> - Add uffd wp async
+>> - Update the IOCTL to use uffd under the hood instead of soft-dirty
+>>   flags
+>>
+>> Stop using the soft-dirty flags for finding which pages have been
+>> written to. It is too delicate and wrong as it shows more soft-dirty
+>> pages than the actual soft-dirty pages. There is no interest in
+>> correcting it [A][B] as this is how the feature was written years ago.
+>> It shouldn't be updated to changed behaviour. Peter Xu has suggested
+>> using the async version of the UFFD WP [C] as it is based inherently
+>> on the PTEs.
+>>
+>> So in this patch series, I've added a new mode to the UFFD which is
+>> asynchronous version of the write protect. When this variant of the
+>> UFFD WP is used, the page faults are resolved automatically by the
+>> kernel. The pages which have been written-to can be found by reading
+>> pagemap file (!PM_UFFD_WP). This feature can be used successfully to
+>> find which pages have been written to from the time the pages were
+>> write protected. This works just like the soft-dirty flag without
+>> showing any extra pages which aren't soft-dirty in reality.
+>>
+>> [A] https://lore.kernel.org/all/20221220162606.1595355-1-usama.anjum@collabora.com
+>> [B] https://lore.kernel.org/all/20221122115007.2787017-1-usama.anjum@collabora.com
+>> [C] https://lore.kernel.org/all/Y6Hc2d+7eTKs7AiH@x1n
+>>
+>> *Changes in v6:*
+>> - Updated the interface and made cosmetic changes
+>>
+>> *Cover Letter in v5:*
+>> Hello,
 > 
->> How does this work align with the goal of no longer using FOLL_GET for
->> O_DIRECT? We should get rid of any FOLL_GET usage for accessing page content.
-> 
-> Would that run the risk of changes being made by the child being visible to
-> the a DIO write if the parent changes the buffer first?
-> 
-> 
-> 	PARENT			CHILD
-> 	======			=====
-> 	start-DIO-write
-> 	fork() = pid		fork() = 0
-> 	alter-buffer
-> 	CoW happens
-> 	page copied		original page retained
-> 				alter-buffer
-> 		<DMA-happens>
+> Please consider either drop the cover letter below this point or rephrase,
+> otherwise many of them are not true anymore and it can confuse the
+> reviewers.
+I'll remove.
 
-FOLL_PIN users are fine in that regard, because we properly detect 
-"maybe pinned" during fork() and copy the page. See 
-tools/testing/selftests/mm/cow.c (still called 
-tools/testing/selftests/vm/cow.c upstream IIRC) for some test cases for 
-that handling.
+> 
+> I have a few high level comments/questions here, please bare with me if any
+> of them are already discussed by others in the old versions; I'd be happy
+> to read them when there's a pointer to the relevant answers.
+> 
+> Firstly, doc update is more than welcomed to explain the new interface
+> first (before throwing the code..).  That can be done in pagemap.rst on
+> pagemap changes, or userfaultfd.rst on userfaultfd.
+Okay. I'll add the documentation in next version or after the series has
+been accepted. Initially I'd added the documentation. But the code kept on
+changing so much that I had to spend considerable time on updating the
+documentation. I know it is better to add documentation with the patches.
+I'll try to add it.
 
-FOLL_GET does not work as expected in that regard: pages can't be 
-detected as pinned and we won't be copying them during fork(). We'll end 
-up COW-sharing them, which can result in trouble later.
+> 
+> Besides, can you provide more justification on the new pagemap-side
+> interface design?
+> 
+> It seems it came from the Windows API GetWriteWatch(), but it's definitely
+> not exactly that.  Let me spell some points out..
+Initially, we just wanted a way to emulate Windows API GetWriteWatch(). So
+we had added `max_pages` in the IOCTL arguments which is optional and can
+be used to specify how many pages we want to find of our interest. There
+was only one set of flags to be matched with the pages.
 
-Switching from FOLL_GET to FOLL_PIN was in the works by John H. Not sure 
-what the status is. Interestingly, 
-Documentation/core-api/pin_user_pages.rst already documents that "CASE 
-1: Direct IO (DIO)" uses FOLL_PIN ... which does, unfortunately, no 
-reflect reality yet.
+> 
+> There're four kinds of masks (required/anyof/excluded/return).  Are they
+> all needed?  Why this is a good interface design?
+Then, CRIU developers Andrea [1] and Danylo [2], asked to include all these
+different kinds of masks. I'd thought of these masks as fancy filter inside
+the kernel. But there wasn't anyone else to review. So I'd included them to
+move forward. Please let me know your thoughts after reading emails from [1].
+
+> 
+> I saw you used page_region structure to keep the information.  I think you
+> wanted to have a densed output, especially if counting in the "return mask"
+> above it starts to make more sense. If with a very limited return mask it
+> means many of the (continuous) page information can be merged into a single
+> page_region struct when the kernel is scanning.
+Correct.
+
+> 
+> However, at the meantime the other three masks (required/anyof/excluded)
+> made me quite confused - it means you wanted to somehow filter the pages
+> and only some of them will get collected.  The thing is for a continuous
+> page range if any of the page got skipped due to the masks (e.g. not in
+> "required" or in "excluded") it also means it can never be merged into
+> previous page_region either.  That seems to be against the principle of
+> having densed output.
+The filtering is being done. But the output can still be condensed
+regardless. There isn't that randomness in the page flags of the
+consecutive pages.
+
+> 
+> I hope you can help clarify what's the major use case here.
+> 
+> There's also the new interface to do atomic "fetch + update" on wrprotected
+> pages.  Is that just for efficiency or is the accuracy required in some of
+> the applications?
+"Atomic fetch and update/clear" or "Atomic fetch Written-to status and
+clear it" is needed to support GetWriteWatch() and there is no already
+present way to perform this operation atomically. We want efficiency and
+accuracy both to get good performance/speed. So this IOCTL is needed to
+achieve:
+1) New functionality which isn't already present
+2) Most efficient and accurate method to perform the operation (it isn't
+possible through soft-dirty feature)
+
+> 
+> Thanks,
+> 
+
+[1] https://lore.kernel.org/all/YyiDg79flhWoMDZB@gmail.com
+[2] https://lore.kernel.org/all/20221014134802.1361436-1-mdanylo@google.com
 
 -- 
-Thanks,
-
-David / dhildenb
-
+BR,
+Muhammad Usama Anjum
