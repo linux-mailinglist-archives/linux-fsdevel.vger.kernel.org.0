@@ -2,120 +2,164 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 68B52677CB1
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jan 2023 14:39:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id 4CBED677D8D
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jan 2023 15:05:44 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231591AbjAWNji (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Jan 2023 08:39:38 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:59488 "EHLO
+        id S232136AbjAWOFl (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Jan 2023 09:05:41 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:53894 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S231496AbjAWNjh (ORCPT
+        with ESMTP id S231977AbjAWOFk (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Jan 2023 08:39:37 -0500
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3A7542529F
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 05:38:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674481121;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+        Mon, 23 Jan 2023 09:05:40 -0500
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [IPv6:2001:67c:2178:6::1c])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 1FA9840F2;
+        Mon, 23 Jan 2023 06:05:39 -0800 (PST)
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
+        (No client certificate requested)
+        by smtp-out1.suse.de (Postfix) with ESMTPS id B4712339C7;
+        Mon, 23 Jan 2023 14:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+        t=1674482737; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=WPilpoakSHmLf1IHUm8451fbPrKn+kFkLmYeiPr3VRk=;
-        b=LGBp9OOy2UaccOpxBLOknhvDbXMZIhg0ue83OYbVg4L8Cjiu/g0zHFr8LSb5Yy5CNzOYqi
-        lKv/VTQRAsIszRP9jjQhaLMBiNl08dfhwshFpNe6pxxzmh5bYg8cmNczQTEKWDGmXVRT+b
-        20A2IK+6hzlx1Ybg9t6hzDWvww9t34o=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-139-W9xSYacsPoiXHiW6bj2Uzw-1; Mon, 23 Jan 2023 08:38:34 -0500
-X-MC-Unique: W9xSYacsPoiXHiW6bj2Uzw-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        bh=TboMeQ08DPimFEa6aGsq7T2+45CHDly2y+c6BUvgQZk=;
+        b=Ohw7JlX3WCQz37Vbj1oIjlnjYp5zGfZW6t2Ldf4VxPph/WnY/v38NDh/e4hQhfkYr0L2nM
+        tTDy+o417yh7yO/LPXj1Z8n7gftKOHJarxHrklKDBQus+7cmh+qEymeZvwvGa3iSoerIoa
+        I9j84jts3ZCF0osIEYwGrzJjD6qJmeM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+        s=susede2_ed25519; t=1674482737;
+        h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+         mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=TboMeQ08DPimFEa6aGsq7T2+45CHDly2y+c6BUvgQZk=;
+        b=sUrDJ3R05y4rVwKZW1U5xV5ItVofPAnrWqkqedb0xLRv5AUbA46qNL6KwfAMuDVn1ihKfs
+        SrGGxk/QC3zf4NAQ==
+Received: from imap2.suse-dmz.suse.de (imap2.suse-dmz.suse.de [192.168.254.74])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange X25519 server-signature ECDSA (P-521) server-digest SHA512)
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id A0B5A857F43;
-        Mon, 23 Jan 2023 13:38:33 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.33.36.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0E46F2026D2A;
-        Mon, 23 Jan 2023 13:38:31 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-        Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-        Kingdom.
-        Registered in England and Wales under Company Registration No. 3798903
-From:   David Howells <dhowells@redhat.com>
-In-Reply-To: <c742e47b-dcc0-1fef-dc8c-3bf85d26b046@redhat.com>
-References: <c742e47b-dcc0-1fef-dc8c-3bf85d26b046@redhat.com> <7bbcccc9-6ebf-ffab-7425-2a12f217ba15@redhat.com> <246ba813-698b-8696-7f4d-400034a3380b@redhat.com> <20230120175556.3556978-1-dhowells@redhat.com> <20230120175556.3556978-3-dhowells@redhat.com> <3814749.1674474663@warthog.procyon.org.uk> <3903251.1674479992@warthog.procyon.org.uk>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     dhowells@redhat.com, Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jan Kara <jack@suse.cz>,
-        Jeff Layton <jlayton@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org
-Subject: Re: [PATCH v7 2/8] iov_iter: Add a function to extract a page list from an iterator
+        by imap2.suse-dmz.suse.de (Postfix) with ESMTPS id AE567134F5;
+        Mon, 23 Jan 2023 14:05:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([192.168.254.65])
+        by imap2.suse-dmz.suse.de with ESMTPSA
+        id cjdAKTCUzmN6IwAAMHmgww
+        (envelope-from <vbabka@suse.cz>); Mon, 23 Jan 2023 14:05:36 +0000
+Message-ID: <010a330c-a4d5-9c1a-3212-f9107d1c5f4e@suse.cz>
+Date:   Mon, 23 Jan 2023 15:03:45 +0100
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3911636.1674481111.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date:   Mon, 23 Jan 2023 13:38:31 +0000
-Message-ID: <3911637.1674481111@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.4
-X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
-        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
-        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
-        autolearn_force=no version=3.4.6
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.6.1
+Subject: Re: [PATCH v10 1/9] mm: Introduce memfd_restricted system call to
+ create restricted user memory
+Content-Language: en-US
+To:     "Huang, Kai" <kai.huang@intel.com>,
+        "chao.p.peng@linux.intel.com" <chao.p.peng@linux.intel.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "jmattson@google.com" <jmattson@google.com>,
+        "Hocko, Michal" <mhocko@suse.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "ak@linux.intel.com" <ak@linux.intel.com>,
+        "Lutomirski, Andy" <luto@kernel.org>,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        "tabba@google.com" <tabba@google.com>,
+        "david@redhat.com" <david@redhat.com>,
+        "michael.roth@amd.com" <michael.roth@amd.com>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "qemu-devel@nongnu.org" <qemu-devel@nongnu.org>,
+        "dhildenb@redhat.com" <dhildenb@redhat.com>,
+        "bfields@fieldses.org" <bfields@fieldses.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+        "ddutile@redhat.com" <ddutile@redhat.com>,
+        "rppt@kernel.org" <rppt@kernel.org>,
+        "shuah@kernel.org" <shuah@kernel.org>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "mail@maciej.szmigiero.name" <mail@maciej.szmigiero.name>,
+        "naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
+        "qperret@google.com" <qperret@google.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-api@vger.kernel.org" <linux-api@vger.kernel.org>,
+        "yu.c.zhang@linux.intel.com" <yu.c.zhang@linux.intel.com>,
+        "Christopherson,, Sean" <seanjc@google.com>,
+        "wanpengli@tencent.com" <wanpengli@tencent.com>,
+        "vannapurve@google.com" <vannapurve@google.com>,
+        "hughd@google.com" <hughd@google.com>,
+        "aarcange@redhat.com" <aarcange@redhat.com>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "hpa@zytor.com" <hpa@zytor.com>,
+        "Nakajima, Jun" <jun.nakajima@intel.com>,
+        "jlayton@kernel.org" <jlayton@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "Wang, Wei W" <wei.w.wang@intel.com>,
+        "steven.price@arm.com" <steven.price@arm.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Hansen, Dave" <dave.hansen@intel.com>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linmiaohe@huawei.com" <linmiaohe@huawei.com>
+References: <20221202061347.1070246-1-chao.p.peng@linux.intel.com>
+ <20221202061347.1070246-2-chao.p.peng@linux.intel.com>
+ <5c6e2e516f19b0a030eae9bf073d555c57ca1f21.camel@intel.com>
+ <20221219075313.GB1691829@chaop.bj.intel.com>
+ <deba096c85e41c3a15d122f2159986a74b16770f.camel@intel.com>
+ <20221220072228.GA1724933@chaop.bj.intel.com>
+ <126046ce506df070d57e6fe5ab9c92cdaf4cf9b7.camel@intel.com>
+ <20221221133905.GA1766136@chaop.bj.intel.com>
+ <b898e28d7fd7182e5d069646f84b650c748d9ca2.camel@intel.com>
+From:   Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <b898e28d7fd7182e5d069646f84b650c748d9ca2.camel@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Spam-Status: No, score=-4.9 required=5.0 tests=BAYES_00,DKIM_SIGNED,
+        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,NICE_REPLY_A,RCVD_IN_DNSWL_MED,
+        SPF_HELO_NONE,SPF_SOFTFAIL autolearn=ham autolearn_force=no
+        version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-David Hildenbrand <david@redhat.com> wrote:
+On 12/22/22 01:37, Huang, Kai wrote:
+>>> I argue that this page pinning (or page migration prevention) is not
+>>> tied to where the page comes from, instead related to how the page will
+>>> be used. Whether the page is restrictedmem backed or GUP() backed, once
+>>> it's used by current version of TDX then the page pinning is needed. So
+>>> such page migration prevention is really TDX thing, even not KVM generic
+>>> thing (that's why I think we don't need change the existing logic of
+>>> kvm_release_pfn_clean()). 
+>>>
+> This essentially boils down to who "owns" page migration handling, and sadly,
+> page migration is kinda "owned" by the core-kernel, i.e. KVM cannot handle page
+> migration by itself -- it's just a passive receiver.
+> 
+> For normal pages, page migration is totally done by the core-kernel (i.e. it
+> unmaps page from VMA, allocates a new page, and uses migrate_pape() or a_ops-
+>> migrate_page() to actually migrate the page).
+> In the sense of TDX, conceptually it should be done in the same way. The more
+> important thing is: yes KVM can use get_page() to prevent page migration, but
+> when KVM wants to support it, KVM cannot just remove get_page(), as the core-
+> kernel will still just do migrate_page() which won't work for TDX (given
+> restricted_memfd doesn't have a_ops->migrate_page() implemented).
+> 
+> So I think the restricted_memfd filesystem should own page migration handling,
+> (i.e. by implementing a_ops->migrate_page() to either just reject page migration
+> or somehow support it).
 
-> That would be the ideal case: whenever intending to access page content,=
- use
-> FOLL_PIN instead of FOLL_GET.
-> =
-
-> The issue that John was trying to sort out was that there are plenty of
-> callsites that do a simple put_page() instead of calling
-> unpin_user_page(). IIRC, handling that correctly in existing code -- wha=
-t was
-> pinned must be released via unpin_user_page() -- was the biggest workite=
-m.
-> =
-
-> Not sure how that relates to your work here (that's why I was asking): i=
-f you
-> could avoid FOLL_GET, that would be great :)
-
-Well, it simplifies things a bit.
-
-I can make the new iov_iter_extract_pages() just do "pin" or "don't pin" a=
-nd
-do no ref-getting at all.  Things can be converted over to "unpin the page=
-s or
-doing nothing" as they're converted over to using iov_iter_extract_pages()
-from iov_iter_get_pages*().
-
-The block bio code then only needs a single bit of state: pinned or not
-pinned.
-
-For cifs RDMA, do I need to make it pass in FOLL_LONGTERM?  And does that =
-need
-a special cleanup?
-
-sk_buff fragment handling could still be tricky.  I'm thinking that in tha=
-t
-code I'll need to store FOLL_GET/PIN in the bottom two bits of the frag pa=
-ge
-pointer.  Sometimes it allocates a new page and attaches it (have ref);
-sometimes it does zerocopy to/from a page (have pin) and sometimes it may =
-be
-pointing to a kernel buffer (don't pin or ref).
-
-David
-
+While this thread seems to be settled on refcounts already, just wanted
+to point out that it wouldn't be ideal to prevent migrations by
+a_ops->migrate_page() rejecting them. It would mean cputime wasted (i.e.
+by memory compaction) by isolating the pages for migration and then
+releasing them after the callback rejects it (at least we wouldn't waste
+time creating and undoing migration entries in the userspace page tables
+as there's no mmap). Elevated refcount on the other hand is detected
+very early in compaction so no isolation is attempted, so from that
+aspect it's optimal.
