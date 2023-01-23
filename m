@@ -2,76 +2,103 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id B957A67812A
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jan 2023 17:17:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id B3CE967811F
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jan 2023 17:14:58 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S231899AbjAWQRs (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Jan 2023 11:17:48 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:52020 "EHLO
+        id S233104AbjAWQOt (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Jan 2023 11:14:49 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:49648 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233099AbjAWQRq (ORCPT
+        with ESMTP id S233098AbjAWQOs (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Jan 2023 11:17:46 -0500
-Received: from bombadil.infradead.org (bombadil.infradead.org [IPv6:2607:7c80:54:3::133])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id BC0917EF3;
-        Mon, 23 Jan 2023 08:17:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description;
-        bh=2oyH4uwBJfH4CW8T0wxFC0vvZrlsbUBreyPfi1FyKZs=; b=EntaRPhadqA1Nj+d1RMtgBU1gv
-        BTJ28jeBqspXGCTAIYeRU1734xb3P9i47y201NwcFak3c5RTGE41kILunmTh9PWr8pD3mV85aOxRO
-        0QLKCBLiBkm7KGN3QVc1uuWksmF2xeHJjUO/NoXPQpGVe25TSgydXvlvB3DBW5WENfBOznv8I0nE5
-        xMi6zoS+rsYjqh6f/iG3h+4urXOduIcoos7c/Gze8gXngrPez1wOZZ+czO+mlZwBxxQZpbrPaRdyJ
-        ufY9MbDlkDoqdEunTbZj1wNtUr+/um8xEzsG/uugCCDkwfg9ePTqNmtvxrKfsNmlQXB2FAQiqqfnI
-        6KnjNNPg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.94.2 #2 (Red Hat Linux))
-        id 1pJzVl-000U36-2B; Mon, 23 Jan 2023 16:17:33 +0000
-Date:   Mon, 23 Jan 2023 08:17:33 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Jan Kara <jack@suse.cz>
-Cc:     David Howells <dhowells@redhat.com>,
-        David Hildenbrand <david@redhat.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
-        Christoph Hellwig <hch@infradead.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jens Axboe <axboe@kernel.dk>, Jeff Layton <jlayton@kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>,
-        linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        John Hubbard <jhubbard@nvidia.com>, linux-mm@kvack.org
-Subject: Re: [PATCH v7 2/8] iov_iter: Add a function to extract a page list
- from an iterator
-Message-ID: <Y86zHQ2GKzmPA7vI@infradead.org>
-References: <c742e47b-dcc0-1fef-dc8c-3bf85d26b046@redhat.com>
- <7bbcccc9-6ebf-ffab-7425-2a12f217ba15@redhat.com>
- <246ba813-698b-8696-7f4d-400034a3380b@redhat.com>
- <20230120175556.3556978-1-dhowells@redhat.com>
- <20230120175556.3556978-3-dhowells@redhat.com>
- <3814749.1674474663@warthog.procyon.org.uk>
- <3903251.1674479992@warthog.procyon.org.uk>
- <3911637.1674481111@warthog.procyon.org.uk>
- <20230123161114.4jv6hnnbckqyrurs@quack3>
+        Mon, 23 Jan 2023 11:14:48 -0500
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id B809512844
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 08:14:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+        s=mimecast20190719; t=1674490441;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         in-reply-to:in-reply-to:references:references;
+        bh=LDRokBji3H//aUw+TxNZ5cyuNmI344JxNA+bsayunTs=;
+        b=EFZwm5qQVE/EztUWy65bVeLcEBs79r8FII99iWt/8yZVX1tqo24szHCgJPhm3KH+A1838d
+        qanDVscw/hCZzXVvMkt5z5EIUsnAG4IFmPcD/nipNuRseLckQnWI4VJHlGxm4KBJaNUH5o
+        VL0gcalU1xgOi05bwK6NB09wkU7TjCw=
+Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
+ [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ us-mta-39-yO-SeMwmOfG2zLIJUksghg-1; Mon, 23 Jan 2023 11:13:56 -0500
+X-MC-Unique: yO-SeMwmOfG2zLIJUksghg-1
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.rdu2.redhat.com [10.11.54.1])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id D8E76281DE60;
+        Mon, 23 Jan 2023 16:13:55 +0000 (UTC)
+Received: from segfault.boston.devel.redhat.com (segfault.boston.devel.redhat.com [10.19.60.26])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B662240C2004;
+        Mon, 23 Jan 2023 16:13:55 +0000 (UTC)
+From:   Jeff Moyer <jmoyer@redhat.com>
+To:     Kent Overstreet <kent.overstreet@linux.dev>
+Cc:     linux-kernel@vger.kernel.org, linux-aio@kvack.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2] fs/aio: obey min_nr when doing wakeups
+References: <20230118152603.28301-1-kent.overstreet@linux.dev>
+        <20230120140347.2133611-1-kent.overstreet@linux.dev>
+        <x49cz7956ox.fsf@segfault.boston.devel.redhat.com>
+X-PGP-KeyID: 1F78E1B4
+X-PGP-CertKey: F6FE 280D 8293 F72C 65FD  5A58 1FF8 A7CA 1F78 E1B4
+Date:   Mon, 23 Jan 2023 11:17:53 -0500
+In-Reply-To: <x49cz7956ox.fsf@segfault.boston.devel.redhat.com> (Jeff Moyer's
+        message of "Fri, 20 Jan 2023 14:47:42 -0500")
+Message-ID: <x491qnl5ioe.fsf@segfault.boston.devel.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20230123161114.4jv6hnnbckqyrurs@quack3>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
-X-Spam-Status: No, score=-4.4 required=5.0 tests=BAYES_00,DKIM_SIGNED,
-        DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_MED,SPF_HELO_NONE,
-        SPF_NONE autolearn=ham autolearn_force=no version=3.4.6
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.1
+X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
+        DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
+        RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
+        autolearn_force=no version=3.4.6
 X-Spam-Checker-Version: SpamAssassin 3.4.6 (2021-04-09) on
         lindbergh.monkeyblade.net
 Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-On Mon, Jan 23, 2023 at 05:11:14PM +0100, Jan Kara wrote:
-> I'm all for using only pin/unpin in the end. But you'd still need to handle
-> the 'put' for the intermediate time when there are still FOLL_GET users of
-> the bio infrastructure, wouldn't you?
+Jeff Moyer <jmoyer@redhat.com> writes:
 
-Yes, we need it for the transition.  But Dave already has a patch to
-convert the legacy direct-io code as well, at which point we can
-the retire the get bit.
+> Hi, Kent,
+>
+> Kent Overstreet <kent.overstreet@linux.dev> writes:
+>
+>> I've been observing workloads where IPIs due to wakeups in
+>> aio_complete() are ~15% of total CPU time in the profile. Most of those
+>> wakeups are unnecessary when completion batching is in use in
+>> io_getevents().
+>>
+>> This plumbs min_nr through via the wait eventry, so that aio_complete()
+>> can avoid doing unnecessary wakeups.
+>>
+>> v2: This fixes a race in the first version of the patch. If we read some
+>> events out after adding to the waitlist, we need to update wait.min_nr
+>> call prepare_to_wait_event() again before scheduling.
+>
+> I like the idea of the patch, and I'll get some real world performance
+> numbers soon.  But first, this version (and the previous version as
+> well) fails test case 23 in the libaio regression test suite:
+>
+> Starting cases/23.p
+> FAIL: poll missed an event!
+> FAIL: poll missed an event!
+> test cases/23.t completed FAILED.
+
+It turns out that this only fails on the (relatively) old kernel against
+which I applied the patches.  When I apply both patches to the latest
+tree, there is no test failure.
+
+Sorry for the noise, I'll be sure to test on the latest going forward.
+Now to figure out what changed elsewhere to fix this....
+
+Cheers,
+Jeff
 
