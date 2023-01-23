@@ -2,42 +2,42 @@ Return-Path: <linux-fsdevel-owner@vger.kernel.org>
 X-Original-To: lists+linux-fsdevel@lfdr.de
 Delivered-To: lists+linux-fsdevel@lfdr.de
 Received: from out1.vger.email (out1.vger.email [IPv6:2620:137:e000::1:20])
-	by mail.lfdr.de (Postfix) with ESMTP id 9D67B678339
-	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jan 2023 18:32:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTP id ADA6867834C
+	for <lists+linux-fsdevel@lfdr.de>; Mon, 23 Jan 2023 18:33:23 +0100 (CET)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S233448AbjAWRcy (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
-        Mon, 23 Jan 2023 12:32:54 -0500
-Received: from lindbergh.monkeyblade.net ([23.128.96.19]:38314 "EHLO
+        id S233212AbjAWRdW (ORCPT <rfc822;lists+linux-fsdevel@lfdr.de>);
+        Mon, 23 Jan 2023 12:33:22 -0500
+Received: from lindbergh.monkeyblade.net ([23.128.96.19]:39046 "EHLO
         lindbergh.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S233320AbjAWRck (ORCPT
+        with ESMTP id S233782AbjAWRco (ORCPT
         <rfc822;linux-fsdevel@vger.kernel.org>);
-        Mon, 23 Jan 2023 12:32:40 -0500
+        Mon, 23 Jan 2023 12:32:44 -0500
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 572A02ED4C
-        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 09:30:39 -0800 (PST)
+        by lindbergh.monkeyblade.net (Postfix) with ESMTPS id 3BF8C2ED57
+        for <linux-fsdevel@vger.kernel.org>; Mon, 23 Jan 2023 09:30:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-        s=mimecast20190719; t=1674495038;
+        s=mimecast20190719; t=1674495051;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=zi65h8kb+iIzTHBTD5yjY8npgp3PwB4fOrnEoPzlk1s=;
-        b=iUoscgl/quBZkUH7UL6Bye19nNd3XnfGcYbpfvont0ZYfsoTb0AkB+tGL/HNdkZtlnN9aa
-        GxO2CMnE/Zv5DqmGtxprRf1YsSXlHU+zh9AwzScko7LHzB4nsnA0ZxVPkP5UpDwcXt7PQo
-        SfOyNiwtWl6MvwH85bxPcpYbiikm4yM=
-Received: from mimecast-mx02.redhat.com (mx3-rdu2.redhat.com
- [66.187.233.73]) by relay.mimecast.com with ESMTP with STARTTLS
+        bh=JKkpA1QDyFR8sFnII4BY3UsDy9lIqmuw1mdMwZBIzUs=;
+        b=U71n6Sdih0HLOLwUdKad/ne4Z87oZbljIaHByy87BczCPpZASaLb/+D6qN0cUWpxg4JELN
+        cMrGPpzXIsQaJHZU83/vsnQAm2siptJ2yh8Ja/MChhClnqKZ+Sw7qkq63KEx0yVfP4iv2J
+        MDWrARRX9ZV6NPRwrLy6thCmZA1KAcU=
+Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
+ [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- us-mta-659-FeZB6NtzO5eUR41mHESISA-1; Mon, 23 Jan 2023 12:30:33 -0500
-X-MC-Unique: FeZB6NtzO5eUR41mHESISA-1
-Received: from smtp.corp.redhat.com (int-mx09.intmail.prod.int.rdu2.redhat.com [10.11.54.9])
+ us-mta-639-Tr5hk-wmOh-yYRPR03ZbOg-1; Mon, 23 Jan 2023 12:30:35 -0500
+X-MC-Unique: Tr5hk-wmOh-yYRPR03ZbOg-1
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.rdu2.redhat.com [10.11.54.3])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 4FD0B1C0896F;
-        Mon, 23 Jan 2023 17:30:32 +0000 (UTC)
+        by mimecast-mx02.redhat.com (Postfix) with ESMTPS id 6A0DF858F09;
+        Mon, 23 Jan 2023 17:30:34 +0000 (UTC)
 Received: from warthog.procyon.org.uk.com (unknown [10.33.36.97])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id E0742492C1B;
-        Mon, 23 Jan 2023 17:30:30 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id E23071121330;
+        Mon, 23 Jan 2023 17:30:32 +0000 (UTC)
 From:   David Howells <dhowells@redhat.com>
 To:     Al Viro <viro@zeniv.linux.org.uk>,
         Christoph Hellwig <hch@infradead.org>
@@ -47,15 +47,16 @@ Cc:     David Howells <dhowells@redhat.com>,
         Jeff Layton <jlayton@kernel.org>,
         Logan Gunthorpe <logang@deltatee.com>,
         linux-fsdevel@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v8 09/10] block: convert bio_map_user_iov to use iov_iter_extract_pages
-Date:   Mon, 23 Jan 2023 17:30:06 +0000
-Message-Id: <20230123173007.325544-10-dhowells@redhat.com>
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        linux-mm@kvack.org
+Subject: [PATCH v8 10/10] mm: Renumber FOLL_PIN and FOLL_GET down
+Date:   Mon, 23 Jan 2023 17:30:07 +0000
+Message-Id: <20230123173007.325544-11-dhowells@redhat.com>
 In-Reply-To: <20230123173007.325544-1-dhowells@redhat.com>
 References: <20230123173007.325544-1-dhowells@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.1 on 10.11.54.9
+X-Scanned-By: MIMEDefang 3.1 on 10.11.54.3
 X-Spam-Status: No, score=-2.1 required=5.0 tests=BAYES_00,DKIMWL_WL_HIGH,
         DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,DKIM_VALID_EF,RCVD_IN_DNSWL_NONE,
         RCVD_IN_MSPIKE_H2,SPF_HELO_NONE,SPF_NONE autolearn=unavailable
@@ -66,91 +67,78 @@ Precedence: bulk
 List-ID: <linux-fsdevel.vger.kernel.org>
 X-Mailing-List: linux-fsdevel@vger.kernel.org
 
-This will pin pages or leave them unaltered rather than getting a ref on
-them as appropriate to the iterator.
+Renumber FOLL_PIN and FOLL_GET down to bit 0 and 1 respectively so that
+they are coincidentally the same as BIO_PAGE_PINNED and BIO_PAGE_REFFED and
+also so that they can be stored in the bottom two bits of a page pointer
+(something I'm looking at for zerocopy socket fragments).
 
-The pages need to be pinned for DIO rather than having refs taken on them
-to prevent VM copy-on-write from malfunctioning during a concurrent fork()
-(the result of the I/O could otherwise end up being visible to/affected by
-the child process).
+(Note that BIO_PAGE_REFFED should probably be got rid of at some point,
+hence why FOLL_PIN is at 0.)
+
+Also renumber down the other FOLL_* flags to close the gaps.
 
 Signed-off-by: David Howells <dhowells@redhat.com>
 cc: Al Viro <viro@zeniv.linux.org.uk>
-cc: Jens Axboe <axboe@kernel.dk>
-cc: Jan Kara <jack@suse.cz>
 cc: Christoph Hellwig <hch@lst.de>
 cc: Matthew Wilcox <willy@infradead.org>
-cc: Logan Gunthorpe <logang@deltatee.com>
-cc: linux-block@vger.kernel.org
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-mm@kvack.org
 ---
 
 Notes:
     ver #8)
-     - Split the patch up a bit [hch].
-     - We should only be using pinned/non-pinned pages and not ref'd pages,
-       so adjust the comments appropriately.
-    
-    ver #7)
-     - Don't treat BIO_PAGE_REFFED/PINNED as being the same as FOLL_GET/PIN.
-    
-    ver #5)
-     - Transcribe the FOLL_* flags returned by iov_iter_extract_pages() to
-       BIO_* flags and got rid of bi_cleanup_mode.
-     - Replaced BIO_NO_PAGE_REF to BIO_PAGE_REFFED in the preceding patch.
+     - Put FOLL_PIN at bit 0 and FOLL_GET at bit 1 to match BIO_PAGE_*.
+     - Renumber the remaining flags down to fill in the gap.
 
- block/blk-map.c | 22 ++++++++++------------
- 1 file changed, 10 insertions(+), 12 deletions(-)
+ include/linux/mm.h | 32 +++++++++++++++++---------------
+ 1 file changed, 17 insertions(+), 15 deletions(-)
 
-diff --git a/block/blk-map.c b/block/blk-map.c
-index a4ada4389d5e..b9b36af3c3f7 100644
---- a/block/blk-map.c
-+++ b/block/blk-map.c
-@@ -282,21 +282,19 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 	if (blk_queue_pci_p2pdma(rq->q))
- 		extract_flags |= ITER_ALLOW_P2PDMA;
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 3de9d88f8524..c95bc4f77e8f 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3074,26 +3074,28 @@ static inline vm_fault_t vmf_error(int err)
+ struct page *follow_page(struct vm_area_struct *vma, unsigned long address,
+ 			 unsigned int foll_flags);
  
--	bio_set_flag(bio, BIO_PAGE_REFFED);
-+	bio_set_cleanup_mode(bio, iter);
- 	while (iov_iter_count(iter)) {
--		struct page **pages, *stack_pages[UIO_FASTIOV];
-+		struct page *stack_pages[UIO_FASTIOV];
-+		struct page **pages = stack_pages;
- 		ssize_t bytes;
- 		size_t offs;
- 		int npages;
+-#define FOLL_WRITE	0x01	/* check pte is writable */
+-#define FOLL_TOUCH	0x02	/* mark page accessed */
+-#define FOLL_GET	0x04	/* do get_page on page */
+-#define FOLL_DUMP	0x08	/* give error on hole if it would be zero */
+-#define FOLL_FORCE	0x10	/* get_user_pages read/write w/o permission */
+-#define FOLL_NOWAIT	0x20	/* if a disk transfer is needed, start the IO
++#define FOLL_PIN	0x01	/* pages must be released via unpin_user_page */
++#define FOLL_GET	0x02	/* do get_page on page (equivalent to BIO_FOLL_GET) */
++#define FOLL_WRITE	0x04	/* check pte is writable */
++#define FOLL_TOUCH	0x08	/* mark page accessed */
++#define FOLL_DUMP	0x10	/* give error on hole if it would be zero */
++#define FOLL_FORCE	0x20	/* get_user_pages read/write w/o permission */
++#define FOLL_NOWAIT	0x40	/* if a disk transfer is needed, start the IO
+ 				 * and return without waiting upon it */
+ #define FOLL_NOFAULT	0x80	/* do not fault in pages */
+ #define FOLL_HWPOISON	0x100	/* check page is hwpoisoned */
+-#define FOLL_TRIED	0x800	/* a retry, previous pass started an IO */
+-#define FOLL_REMOTE	0x2000	/* we are working on non-current tsk/mm */
+-#define FOLL_ANON	0x8000	/* don't do file mappings */
+-#define FOLL_LONGTERM	0x10000	/* mapping lifetime is indefinite: see below */
+-#define FOLL_SPLIT_PMD	0x20000	/* split huge pmd before returning */
+-#define FOLL_PIN	0x40000	/* pages must be released via unpin_user_page */
+-#define FOLL_FAST_ONLY	0x80000	/* gup_fast: prevent fall-back to slow gup */
+-#define FOLL_PCI_P2PDMA	0x100000 /* allow returning PCI P2PDMA pages */
+-#define FOLL_INTERRUPTIBLE  0x200000 /* allow interrupts from generic signals */
++#define FOLL_TRIED	0x200	/* a retry, previous pass started an IO */
++#define FOLL_REMOTE	0x400	/* we are working on non-current tsk/mm */
++#define FOLL_ANON	0x800	/* don't do file mappings */
++#define FOLL_LONGTERM	0x1000	/* mapping lifetime is indefinite: see below */
++#define FOLL_SPLIT_PMD	0x2000	/* split huge pmd before returning */
++#define FOLL_FAST_ONLY	0x4000	/* gup_fast: prevent fall-back to slow gup */
++#define FOLL_PCI_P2PDMA	0x8000 /* allow returning PCI P2PDMA pages */
++#define FOLL_INTERRUPTIBLE  0x10000 /* allow interrupts from generic signals */
  
--		if (nr_vecs <= ARRAY_SIZE(stack_pages)) {
--			pages = stack_pages;
--			bytes = iov_iter_get_pages(iter, pages, LONG_MAX,
--						   nr_vecs, &offs, extract_flags);
--		} else {
--			bytes = iov_iter_get_pages_alloc(iter, &pages,
--						LONG_MAX, &offs, extract_flags);
--		}
-+		if (nr_vecs > ARRAY_SIZE(stack_pages))
-+			pages = NULL;
-+
-+		bytes = iov_iter_extract_pages(iter, &pages, LONG_MAX,
-+					       nr_vecs, extract_flags, &offs);
- 		if (unlikely(bytes <= 0)) {
- 			ret = bytes ? bytes : -EFAULT;
- 			goto out_unmap;
-@@ -318,7 +316,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 				if (!bio_add_hw_page(rq->q, bio, page, n, offs,
- 						     max_sectors, &same_page)) {
- 					if (same_page)
--						put_page(page);
-+						bio_release_page(bio, page);
- 					break;
- 				}
- 
-@@ -330,7 +328,7 @@ static int bio_map_user_iov(struct request *rq, struct iov_iter *iter,
- 		 * release the pages we didn't map into the bio, if any
- 		 */
- 		while (j < npages)
--			put_page(pages[j++]);
-+			bio_release_page(bio, pages[j++]);
- 		if (pages != stack_pages)
- 			kvfree(pages);
- 		/* couldn't stuff something into bio? */
+ /*
++ * Note that FOLL_PIN is sorted to bit 0 to be coincident with BIO_PAGE_PINNED.
++ *
+  * FOLL_PIN and FOLL_LONGTERM may be used in various combinations with each
+  * other. Here is what they mean, and how to use them:
+  *
 
